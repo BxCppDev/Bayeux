@@ -1,8 +1,8 @@
 // -*- mode: c++ ; -*-
 /* utils.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-11-01
- * Last modified: 2010-11-01
+ * Last modified: 2013-04-22
  *
  * License:
  *
@@ -13,8 +13,8 @@
  *
  */
 
-#ifndef __brio__utils_h
-#define __brio__utils_h 1
+#ifndef BRIO_UTILS_H_
+#define BRIO_UTILS_H_ 1
 
 #include <vector>
 #include <map>
@@ -86,7 +86,7 @@ namespace brio {
 
 } // end of namespace brio
 
-#endif // __brio__utils_h
+#endif // BRIO_UTILS_H_
 
 // end of utils.h
 

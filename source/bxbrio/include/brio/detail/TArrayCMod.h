@@ -15,7 +15,7 @@
 #endif
 
 //! \brief The internal ROOT I/O buffer of bytes
-class TArrayCMod : public TArray 
+class TArrayCMod : public TArray
 {
 public:
   Char_t *fArray;    //! Array of bytes
@@ -33,7 +33,8 @@ public:
    void SetAt(Double_t x, Int_t i) { return; }
 
    // Workaround
-   void __Streamer(TBuffer &b); 
+private:
+   void _Streamer_(TBuffer &b);
 
    ClassDef(TArrayCMod,1)  //Array of chars
 };

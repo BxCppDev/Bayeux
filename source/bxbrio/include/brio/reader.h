@@ -1,21 +1,21 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* reader.h
  * Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-11-01
- * Last modified: 2010-11-01
- * 
- * License: 
- * 
- * Description: 
+ * Last modified: 2013-04-22
+ *
+ * License:
+ *
+ * Description:
  *
  *   A Boost archive from ROOT file reader
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
-#ifndef __brio__reader_h
-#define __brio__reader_h 1
+#ifndef BRIO_READER_H_
+#define BRIO_READER_H_ 1
 
 #include <iostream>
 #include <stdexcept>
@@ -35,7 +35,7 @@ namespace brio {
 
   //! \brief The brio generic reader class
   class reader : public detail::base_io
-  {    
+  {
 
   public:
 
@@ -64,11 +64,11 @@ namespace brio {
      */
     void unwind_store (const std::string & label_ = "");
 
-    /** Check if some previous entry exists relatively to the current entry 
+    /** Check if some previous entry exists relatively to the current entry
      */
     bool has_previous (const std::string & label_ = "") const;
 
-    /** Check if some next entry exists relatively to the current entry 
+    /** Check if some next entry exists relatively to the current entry
      */
     bool has_next (const std::string & label_ = "") const;
 
@@ -76,29 +76,29 @@ namespace brio {
 
     void _set_default ();
 
-  public: 
+  public:
 
     //! Default constructor
     reader ();
 
     //! Constructor
-    reader (const std::string & filename_, 
-            bool verbose_ = false, 
+    reader (const std::string & filename_,
+            bool verbose_ = false,
             bool debug_ = false);
 
     //! Constructor
-    reader (const std::string & filename_, 
+    reader (const std::string & filename_,
             const std::string & format_str_,
-            bool verbose_ = false, 
+            bool verbose_ = false,
             bool debug_ = false);
 
     //! Destructor
     virtual ~reader ();
 
     //! Smart print
-    virtual void tree_dump (std::ostream & out_ = std::clog, 
-                            const std::string & title_ = "", 
-                            const std::string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_ = std::clog,
+                            const std::string & title_ = "",
+                            const std::string & indent_ = "",
                             bool inherit_ = false) const;
 
     //! Print
@@ -106,7 +106,7 @@ namespace brio {
 
     //! Load template method for next entry
     template<class T>
-    int load_next (T & data_, 
+    int load_next (T & data_,
                    const std::string & label_ = "")
     {
       int64_t entry = get_current_entry (label_);
@@ -115,7 +115,7 @@ namespace brio {
 
     //! Load template method for previous entry
     template<class T>
-    int load_previous (T & data_, 
+    int load_previous (T & data_,
                        const std::string & label_ = "")
     {
       int64_t entry = get_current_entry (label_);
@@ -128,7 +128,7 @@ namespace brio {
     {
       return load <T> (data_, "", nentry_);
     }
-    
+
     //! Load template method for arbitrary store and entry
     template<class T>
     int load (T & data_, const std::string & label_, int64_t nentry_ = -1)
@@ -166,10 +166,10 @@ namespace brio {
   protected:
 
     virtual void _at_open (const std::string & filename_);
-    
+
     template<class T>
-    int _at_load (T & data_, 
-                  store_info * ptr_si_, 
+    int _at_load (T & data_,
+                  store_info * ptr_si_,
                   int64_t nentry_)
     {
       if (is_debug ())
@@ -178,7 +178,7 @@ namespace brio {
                     << "Entering..." << std::endl;
         }
       store_info & si = *ptr_si_;
-      
+
       if (_check_serial_tag_)
         {
           // We check if the serialization tag from the store matches the data's one:
@@ -190,13 +190,13 @@ namespace brio {
                 {
                   std::ostringstream message;
                   message << "brio::reader::_at_load: "
-                          << "Data serialization tag '" << data_.get_serial_tag () 
+                          << "Data serialization tag '" << data_.get_serial_tag ()
                           << "' does not match source store's serialization tag '" << si.get_serialization_tag () << "' !";
                   throw std::logic_error (message.str ());
                 }
             }
         }
-      
+
       if (si.number_of_entries == 0)
         {
           std::ostringstream message;
@@ -204,7 +204,7 @@ namespace brio {
                   << "Source store '" << si.label << "' has no entry !";
           throw std::logic_error (message.str ());
         }
-      
+
       int64_t nentry = nentry_;
       if (nentry >= 0)
         {
@@ -242,26 +242,26 @@ namespace brio {
         {
           std::ostringstream message;
           message << "brio::reader::_at_load: "
-                  << "No entry '" 
-                  << nentry << "' at entry # " << nentry 
-                  << " in source store labelled '" << si.label.c_str () 
+                  << "No entry '"
+                  << nentry << "' at entry # " << nentry
+                  << " in source store labelled '" << si.label.c_str ()
                   << "' from  file '" << _filename << "' !";
-          throw std::logic_error (message.str ());               
+          throw std::logic_error (message.str ());
         }
       else if (ret == -1)
         {
           std::ostringstream message;
           message << "brio::reader::_at_load: "
-                  << "An I/O error occurs from entry '" 
-                  << nentry << "' in source store labelled '" << si.label.c_str () 
+                  << "An I/O error occurs from entry '"
+                  << nentry << "' in source store labelled '" << si.label.c_str ()
                   << "' from  file '" << _filename << "' !";
-          throw std::runtime_error (message.str ());                     
+          throw std::runtime_error (message.str ());
         }
       else
         {
           si.current_entry = nentry;
         }
-      
+
       if (_check_serial_tag_)
         {
           /* We may be confused with stores without dedicated serialization tag.
@@ -277,32 +277,32 @@ namespace brio {
                 {
                   std::ostringstream message;
                   message << "brio::reader::_at_load: "
-                          << "Entry '" 
-                          << nentry << "' with serial tag '" << serial_tag << "' in (mixed) source store labelled '" << si.label.c_str () 
-                          << "' from  file '" << _filename << "' does not match the requested '" 
+                          << "Entry '"
+                          << nentry << "' with serial tag '" << serial_tag << "' in (mixed) source store labelled '" << si.label.c_str ()
+                          << "' from  file '" << _filename << "' does not match the requested '"
                           << data_.get_serial_tag () << "' data type !";
-                  throw std::logic_error (message.str ());               
+                  throw std::logic_error (message.str ());
                 }
             }
         }
-      
+
       // Deserialize from the archive:
-      boost::iostreams::stream<boost::iostreams::array_source> input_stream (si.record.fDataBuffer.fArray, 
+      boost::iostreams::stream<boost::iostreams::array_source> input_stream (si.record.fDataBuffer.fArray,
                                                                              si.record.fDataBuffer.fN);
-      // 2011-06-16 FM: restored 
+      // 2011-06-16 FM: restored
       if (is_format_pba ())
         {
-          //boost::archive::portable_binary_iarchive ia (input_stream);   
-          eos::portable_iarchive ia (input_stream);   
+          //boost::archive::portable_binary_iarchive ia (input_stream);
+          eos::portable_iarchive ia (input_stream);
           ia >> data_;
         }
       if (is_format_text ())
         {
           input_stream.imbue (*_locale);
-          boost::archive::text_iarchive ia (input_stream);   
+          boost::archive::text_iarchive ia (input_stream);
           ia >> data_;
         }
-      
+
       _current_store = &si;
       if (is_debug ())
         {
@@ -312,17 +312,17 @@ namespace brio {
       return 0;
     }
 
-  private: 
+  private:
 
     bool _allow_mixed_types_in_stores_; /// Flag to allow stores with mixed types
     bool _allow_automatic_store_;       /// Flag to allow an default automatic store
     bool _check_serial_tag_;            /// Flag to automatically check coherence between the store's serialization tag and the stored objects serialization tag
     store_info * _automatic_store_;     /// A handle to the automatic store (if any)
-    
+
   };
 
 } // end of namespace brio
 
-#endif // __brio__reader_h
+#endif // BRIO_READER_H_
 
 // end of reader.h

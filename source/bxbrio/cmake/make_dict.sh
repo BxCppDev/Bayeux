@@ -64,7 +64,7 @@ fi
 
 ###tree -L 1 ${BINARY_PATH}/src
 cat brio_dict.cc | sed \
-  -e 's@void TArrayCMod::Streamer@void TArrayCMod::__Streamer@g' \
+  -e 's@void TArrayCMod::Streamer@void TArrayCMod::_Streamer_@g' \
     > ${BINARY_PATH}/src/brio_dict.cc
 cat brio_dict.h > ${BINARY_PATH}/src/brio_dict.h
 

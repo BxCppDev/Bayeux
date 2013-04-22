@@ -1,21 +1,21 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* writer.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-11-01
- * Last modified: 2010-11-01
- * 
- * License: 
- * 
- * Description: 
+ * Last modified: 2013-04-22
+ *
+ * License:
+ *
+ * Description:
  *
  *   A Boost archive to ROOT file writer
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
-#ifndef __brio__writer_h
-#define __brio__writer_h 1
+#ifndef BRIO_WRITER_H_
+#define BRIO_WRITER_H_ 1
 
 #include <stdexcept>
 #include <iostream>
@@ -36,9 +36,9 @@ namespace brio {
 
   //! \brief The brio generic writer class
   class writer : public detail::base_io
-  {    
+  {
 
-  public: 
+  public:
 
     //! Lock the writer
     void lock ();
@@ -59,10 +59,10 @@ namespace brio {
 
     //! Check if protection against file overwriting exists
     bool is_existing_file_protected () const;
-    
+
     // setters:
 
-    /** Allow to serialize different types of objects within stores. 
+    /** Allow to serialize different types of objects within stores.
      *  Usually, each store is setup in order to accept only one
      *  kind of serializable object (potato) , in such a way one cannot mix
      *  several object's types (ex: potato and carot) within the same branch
@@ -70,16 +70,16 @@ namespace brio {
      */
     void set_allow_mixed_types_in_stores (bool a_new_value = true);
 
-    /** Enables the use of some automatic store (with 
+    /** Enables the use of some automatic store (with
      *  standard label == store_info::AUTOMATIC_STORE_LABEL)
-     *  within the writer. 
+     *  within the writer.
      *  Default at construction is true.
      */
     void set_allow_automatic_store (bool a_new_value = true);
 
     //! Set the protection against file overwriting
     void set_existing_file_protected (bool a_new_value = true);
-  
+
   private:
 
     void __only_if_unlocked (const std::string & a_where) const;
@@ -90,21 +90,21 @@ namespace brio {
 
     void _set_default ();
 
-  public: 
+  public:
 
     //! Default constructor
     writer ();
 
     //! Constructor
-    writer (const std::string & a_filename, 
-            bool a_verbose = false, 
+    writer (const std::string & a_filename,
+            bool a_verbose = false,
             bool a_debug = false);
 
 
     //! Constructor
-    writer (const std::string & a_filename, 
+    writer (const std::string & a_filename,
             const std::string & a_format_str,
-            bool a_verbose = false, 
+            bool a_verbose = false,
             bool a_debug = false);
 
     //! Destructor
@@ -113,36 +113,36 @@ namespace brio {
   public:
 
     //! Smart print
-    virtual void tree_dump (std::ostream & a_out = std::clog, 
-                            const std::string & a_title = "", 
-                            const std::string & a_indent = "", 
+    virtual void tree_dump (std::ostream & a_out = std::clog,
+                            const std::string & a_title = "",
+                            const std::string & a_indent = "",
                             bool a_inherit = false) const;
 
     //! Print
     void print_info (std::ostream & a_out = std::clog) const;
 
     /** Add a new store with label 'label_'
-     *  to store objects with a dedicated serialization tag 'serial_tag_' 
+     *  to store objects with a dedicated serialization tag 'serial_tag_'
      */
-    int add_store (const std::string & a_label, 
+    int add_store (const std::string & a_label,
                    const std::string & a_serial_tag,
                    size_t a_buffer_size = 256000);
 
     /** Add a new store with label 'label_'
-     *  to store objects with a dedicated serialization tag 'serial_tag_' 
+     *  to store objects with a dedicated serialization tag 'serial_tag_'
      */
-    int add_store (const std::string & a_label, 
+    int add_store (const std::string & a_label,
                    size_t a_buffer_size = 256000);
 
     /** Add a new store with label 'label_'
-     *  to store objects with arbitrary serialization tags 
+     *  to store objects with arbitrary serialization tags
      */
-    int add_mixed_store (const std::string & a_label, 
+    int add_mixed_store (const std::string & a_label,
                          size_t a_buffer_size = store_info::DEFAULT_STORE_BUFFER_SIZE);
 
   protected:
 
-    store_info * _add_store (const std::string & a_label, 
+    store_info * _add_store (const std::string & a_label,
                              const std::string & a_serial_tag,
                              size_t a_buffer_size);
 
@@ -170,14 +170,14 @@ namespace brio {
                 }
               else
                 {
-                  ptr_si = _add_store (store_info::AUTOMATIC_STORE_LABEL, 
+                  ptr_si = _add_store (store_info::AUTOMATIC_STORE_LABEL,
                                        a_data.get_serial_tag (),
                                        store_info::DEFAULT_STORE_BUFFER_SIZE);
                 }
             }
           else
             {
-              ptr_si =_add_store (a_label, 
+              ptr_si =_add_store (a_label,
                                   a_data.get_serial_tag (),
                                   store_info::DEFAULT_STORE_BUFFER_SIZE);
             }
@@ -200,7 +200,7 @@ namespace brio {
                << "Using store with label '" << ptr_si->label << "'..." << std::endl;
           ptr_si->tree->Print ();
         }
- 
+
       return _at_store<T> (a_data, ptr_si);
     }
 
@@ -230,19 +230,19 @@ namespace brio {
               std::ostringstream message;
               message << "brio::writer::_at_store: "
                       << "Serialization tag mismatch ! "
-                      << "Attempt to store an object with `" << a_data.get_serial_tag () 
+                      << "Attempt to store an object with `" << a_data.get_serial_tag ()
                       << "' serialization tag "
                       << "in the store labelled '" << ptr_si->label << "' with dedicated `"
                       << ptr_si->get_serialization_tag () << "' serialization tag !";
               throw std::logic_error (message.str ());
-            }     
+            }
         }
 
-      // Prepare the (std::vector<char>) buffer to host the binary archive as a sequence of bytes: 
+      // Prepare the (std::vector<char>) buffer to host the binary archive as a sequence of bytes:
       typedef std::vector<char> buffer_type;
 
-      /* Clear the buffer of characters for streaming but 
-       * intrinsic capacity is kept as is (this is a behaviour of vector 
+      /* Clear the buffer of characters for streaming but
+       * intrinsic capacity is kept as is (this is a behaviour of vector
        * class from the STL library):
        */
       if (! ptr_si->buffer.empty ())
@@ -259,11 +259,11 @@ namespace brio {
       // Archiving is redirected to the buffer:
       namespace io = boost::iostreams;
       io::stream<io::back_insert_device<buffer_type> > output_stream (ptr_si->buffer);
-      // 2011-06-16 FM: restored 
+      // 2011-06-16 FM: restored
       if (is_format_pba ())
         {
-          //boost::archive::portable_binary_oarchive oa (output_stream);   
-          eos::portable_oarchive oa (output_stream);   
+          //boost::archive::portable_binary_oarchive oa (output_stream);
+          eos::portable_oarchive oa (output_stream);
           oa << a_data;
         }
       if (is_format_text ())
@@ -274,14 +274,14 @@ namespace brio {
         }
      output_stream.flush ();
 
-      // Now the buffer contains the final sequence of bytes corresponding to 
+      // Now the buffer contains the final sequence of bytes corresponding to
       // the serialized output binary archive:
       if (is_debug ())
         {
           std::cerr << "DEBUG: " <<  "brio::writer::_at_store: "
-               << "buffer size = " 
+               << "buffer size = "
                << ptr_si->buffer.size ()
-               << "   buffer capacity = " 
+               << "   buffer capacity = "
                << ptr_si->buffer.capacity () << std::endl;
         }
 
@@ -290,7 +290,7 @@ namespace brio {
       ptr_si->record.fVersionTag = 0; // not used
       ptr_si->record.fDataBuffer.fN     = ptr_si->buffer.size ();
       ptr_si->record.fDataBuffer.fArray =  &(ptr_si->buffer[0]);
-     
+
       // Store this tree entry in the ROOT I/O system:
       ptr_si->tree->Fill ();
 
@@ -313,7 +313,7 @@ namespace brio {
       return 0;
     }
 
-  private: 
+  private:
 
     bool _locked_; /// Flag to lock the writer storage structure
     bool _allow_mixed_types_in_stores_; /// Flag to allow stores with mixed types
@@ -325,6 +325,6 @@ namespace brio {
 
 } // end of namespace brio
 
-#endif // __brio__writer_h
+#endif // BRIO_WRITER_H_
 
 // end of writer.h

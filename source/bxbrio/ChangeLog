@@ -26,3 +26,7 @@
 	* version: prepare tag 4.X in trunk
 	* add documentation material
 	* depends: datatools >=5.0
+2013-04-22 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* change some cpp guards in header files
+	* make the hacked TArrayCMod::_Streamer_ method private
+	* tag version 4.0.0
