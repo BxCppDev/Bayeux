@@ -162,8 +162,7 @@ int ocd_manual::run()
 
   if (_params_.interactive) {
     _run_interactive();
-  }
-  else {
+  } else {
     error_code = _run_action();
   }
 
@@ -184,17 +183,13 @@ int ocd_manual::_run_action()
 
   if (_params_.action == "list") {
     error_code = _run_list();
-  }
-  else if (_params_.action == "show") {
+  } else if (_params_.action == "show") {
     error_code = _run_show(_params_.class_id);
-  }
-  else if (_params_.action == "skeleton") {
+  } else if (_params_.action == "skeleton") {
     error_code = _run_generate_skeleton(_params_.class_id, _params_.output_path);
-  }
-  else if (_params_.action == "validate") {
+  } else if (_params_.action == "validate") {
     error_code = _run_validate(_params_.class_id, _params_.input_path);
-  }
-  else {
+  } else {
     std::cerr << datatools::io::error
               << "datatools::ocd_manual::_run_action: Unknown action '" << _params_.action  << "' !"
               << std::endl;
@@ -229,22 +224,19 @@ int ocd_manual::_run_show(const std::string & class_id_)
   if (class_id_.empty()) {
     std::cerr << datatools::io::error << "datatools::ocd_manual::_run_show: Missing class ID !"<< '\n';
     error_code = EXIT_FAILURE;
-  }
-  else if (! ocd_system_reg.has_id(class_id_)){
+  } else if (! ocd_system_reg.has_id(class_id_)) {
     std::cerr << datatools::io::error
               << "datatools::ocd_manual::_run_show: "
               << "Class ID '" << class_id_
               << "' is not registered in the datatools' OCD system register !"<< '\n';
     error_code = EXIT_FAILURE;
-  }
-  else {
+  } else {
     const datatools::object_configuration_description & OCD
       = ocd_system_reg.get(class_id_);
     uint32_t po_flags = 0;
     if (std::find(_params_.action_options.begin(),
                   _params_.action_options.end(),
-                  "--no-configuration-infos") != _params_.action_options.end())
-      {
+                  "--no-configuration-infos") != _params_.action_options.end()) {
         po_flags |= datatools::object_configuration_description::po_no_config;
       }
     OCD.print(std::cout, "", po_flags);
@@ -257,16 +249,13 @@ int ocd_manual::_run_generate_skeleton(const std::string & class_id_,
                                        const std::string & skeleton_path_)
 {
   int error_code = EXIT_SUCCESS;
-
   if (class_id_.empty()) {
     std::cerr << datatools::io::error << "datatools::ocd_manual::_run_generate_skeleton: Missing class ID !"<< '\n';
     error_code = EXIT_FAILURE;
-  }
-  else if (! datatools::detail::ocd::ocd_registration::get_system_registration().has_id(class_id_)){
+  } else if (! datatools::detail::ocd::ocd_registration::get_system_registration().has_id(class_id_)){
     std::cerr << datatools::io::error << "datatools::ocd_manual::_run_generate_skeleton: Class ID '" << class_id_ << "' is not registered in the datatools' OCD system register !"<< '\n';
     error_code = EXIT_FAILURE;
-  }
-  else {
+  } else {
     uint32_t sgo_flags = 0;
     if (std::find(_params_.action_options.begin(),
                   _params_.action_options.end(),
@@ -282,15 +271,13 @@ int ocd_manual::_run_generate_skeleton(const std::string & class_id_,
       = datatools::detail::ocd::ocd_registration::get_system_registration().get(class_id_);
     if (skeleton_path_.empty()) {
       OCD.generate_sample_configuration(std::cout, "", sgo_flags);
-    }
-    else {
+    } else {
       std::string skeleton_path = skeleton_path_;
       datatools::fetch_path_with_env(skeleton_path);
       if (boost::filesystem::exists(skeleton_path)) {
         std::cerr << datatools::io::error << "datatools::ocd_manual::_run_generate_skeleton: File '" << skeleton_path << "' already exists ! Overwriting is not allowed !"<< '\n';
         error_code = EXIT_FAILURE;
-      }
-      else {
+      } else {
         std::ofstream fout(skeleton_path.c_str());
         if (!fout) {
           std::cerr << datatools::io::error
@@ -310,27 +297,22 @@ int ocd_manual::_run_validate(const std::string & class_id_,
                               const std::string & setup_path_)
 {
   int error_code = EXIT_SUCCESS;
-
   if (class_id_.empty()) {
     std::cerr << datatools::io::error << "datatools::ocd_manual::_run_validate: Missing class ID !"<< '\n';
     error_code = EXIT_FAILURE;
-  }
-  else if (! datatools::detail::ocd::ocd_registration::get_system_registration().has_id(class_id_)){
+  }else if (! datatools::detail::ocd::ocd_registration::get_system_registration().has_id(class_id_)){
     std::cerr << datatools::io::error << "datatools::ocd_manual::_run_validate: Class ID '" << class_id_ << "' is not registered in the datatools' OCD system register !"<< '\n';
     error_code = EXIT_FAILURE;
-  }
-  else if (setup_path_.empty()) {
+  } else if (setup_path_.empty()) {
     std::cerr << datatools::io::error << "datatools::ocd_manual::_run_validate: Input filename is missing !"<< '\n';
     error_code = EXIT_FAILURE;
-  }
-  else {
+  } else {
     std::string setup_path = setup_path_;
     datatools::fetch_path_with_env(setup_path);
     if (! boost::filesystem::exists(setup_path)) {
       std::cerr << datatools::io::error << "datatools::ocd_manual::_run_validate: File '" << setup_path << "' does not exist !"<< '\n';
       error_code = EXIT_FAILURE;
-    }
-    else {
+    } else {
       datatools::properties setup;
       datatools::properties::read_config(setup_path, setup);
       const datatools::object_configuration_description & OCD
@@ -338,8 +320,7 @@ int ocd_manual::_run_validate(const std::string & class_id_,
       if (! OCD.has_validation_support()) {
         std::cerr << datatools::io::error << "datatools::ocd_manual::_run_validate: Class '" << class_id_ << "' has no validation support !"<< '\n';
         error_code = EXIT_FAILURE;
-      }
-      else {
+      } else {
         std::string error_message;
         if (! OCD.validate(setup, error_message)) {
           std::cerr << datatools::io::error
@@ -347,8 +328,7 @@ int ocd_manual::_run_validate(const std::string & class_id_,
                     << "Cannot validate setup file '" << setup_path << "' for class '"
                     << class_id_ << "' ! Reason is '" << error_message << "' !"<< '\n';
           error_code = EXIT_FAILURE;
-        }
-        else {
+        } else {
           std::clog << "File '" << setup_path << "' is validated for class '"
                     << class_id_ << "'." << '\n';
         }
