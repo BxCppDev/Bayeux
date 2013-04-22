@@ -3,9 +3,9 @@
 %%
 \documentclass[a4paper,12pt]{article}
 
-\usepackage[T1]{fontenc} 
-\usepackage{ucs} 
-\usepackage[utf8x]{inputenc} 
+\usepackage[T1]{fontenc}
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
 %%french%%\usepackage[frenchb]{babel}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -13,8 +13,8 @@
 \usepackage{verbatim}
 \usepackage{moreverb}
 \usepackage{fancyvrb}
-\usepackage{alltt} 
-\usepackage{eurosym} 
+\usepackage{alltt}
+\usepackage{eurosym}
 \usepackage{hyperref}
 \usepackage{colortbl}
 \usepackage{epsfig}
@@ -48,9 +48,10 @@
 \newcommand{\TT}[1]{"\texttt{#1}"}
 
 \title{Serialization with the \texttt{datatools} program library\\%
-{\small{(Software/DatatoolsSerializationTutorial -- version 0.1)}}}
+%%{\small{(Software/DatatoolsSerializationTutorial -- version 0.1)}}}
+{\small{(datatools version 5.0.0)}}}
 \author{F. Mauger <\texttt{mauger@lpccaen.in2p3.fr}>}
-\date{2011-11-29}
+\date{2013-04-22}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
@@ -58,8 +59,9 @@
 \maketitle
 
 \begin{abstract}
-This note  explains how to implement class serialization functionnality
-using the \texttt{datatools} program library serialization interface.
+This   note   explains    how   to   implement   class   serialization
+functionnalities   using   the   \texttt{datatools}  program   library
+serialization interface.
 \end{abstract}
 
 \section{Introduction}
@@ -67,12 +69,12 @@ using the \texttt{datatools} program library serialization interface.
 \pn Serialization means  storing and/or loading data to  and/or from a
 storage media. Typical storage media are files that we use everyday to
 save some data  produced by some program $A$ then  reload it in memory
-within program $B$ and so on and so on.
+within program $B$.
 
 \pn The \texttt{datatools} program  library proposes some tools to add
-serialization functionnalities  in (mostly)  any user classes.  As its
-native I/O  system, it uses the serialization  concepts and techniques
-from the Boost/Serialization library.
+serialization functionnalities in (mostly)  any user classes.  It uses
+the serialization concepts and techniques from the Boost/Serialization
+library.
 
 
 \vskip 5mm
@@ -83,7 +85,7 @@ in the \texttt{doc/Memos/DatatoolsSerializationTutorial} subdirectory
 \pn
 DocDB reference: \texttt{NemoDocDB-doc-2003}
 \pn
-References: 
+References:
 \begin{itemize}
 \item The Boost/Serialization library documentation (\texttt{http://www.boost.org/}),
 \item \textit{Using container objects in} \texttt{datatools}
@@ -103,22 +105,22 @@ format) is  distinct from the  storage media (streams/files)  and thus
 can be  redirect to  whatever media the  user chooses :  files, memory
 region, containers of bytes\dots
 
-Practically,  if  we  use  a  class, we  must  implement  the  special
+Practically,  for a given  class, we  must  implement  the  special
 \texttt{serialize} template  method that will  allow the serialization
 (input  and output)  of all  (or  only part  of) data  members of  the
-class. It is up to the user  to choose what he want to store/load from
-the specialized serialize method.
+class. It is up to the user  to choose what he/she wants to store and
+load from this specialized serialization method.
 
 The Boost/Serialization library has many  features that are out of the
 scope of this document. However we can mention a few ones:
 \begin{itemize}
-  
+
 \item support for versioning of serialization for each class,
 
 \item support for inherited  serialization between mother and daughter
   classes,
 
-\item support for  all basic types in C++  (for example using portable
+\item support for  all basic types in C++  (typically using portable
   \emph{typedefs} from the \texttt{boost/cstdint.hpp} header file),
 
 \item support for some basic STL containers (vector, list, map, string\dots),
@@ -127,7 +129,7 @@ scope of this document. However we can mention a few ones:
   serializable object or between different serializable objects,
 
 \item support  for standard  ASCII and XML  input and  output archives
-  contribution external library  implementing support for binary input
+  as well as contribution external library  implementing binary input
   and output archives,
 
 \item support for \emph{by-pointer} serialization of objects belonging to
@@ -148,7 +150,9 @@ framework. In  this way,  serialization is made  very easy  using with
 very limited intrusive  code in user's classes and  no external tools.
 Note also  that, within an  archive, Boost serialization  implements a
 memory  tracking   algorithm  that  enables   to  serialize  transient
-references (pointers) between objects.
+references (pointers) between objects. It is thus possible to save in a file
+the exact memory layout used by a collection of objects, possibly referencing
+each others.
 
 \subsection{A practical case}
 
@@ -238,7 +242,7 @@ firstline=1,
 %lastline=53,
 fontsize=\footnotesize,
 showspaces=false]{\codingpath/data_1.cxx}
-\caption{A program that serializes and deserializes an 
+\caption{A program that serializes and deserializes an
 object of \texttt{data} class using text archives.
 }
 \label{program:bs:0}
@@ -250,7 +254,7 @@ numbers=left,
 numbersep=2pt,
 firstline=1,
 fontsize=\footnotesize,
-showspaces=false]{\codingpath/stored_data.txt.out}
+showspaces=false]{\codingpath/stored_data.txt}
 \caption{The output file with a Boost text archive produced by program
   \ref{program:bs:0}.      Here       the      leading      \texttt{22
     serialization::archive 9}  string is the  Boost archive identifier
@@ -274,7 +278,7 @@ firstline=1,
 %lastline=53,
 fontsize=\footnotesize,
 showspaces=false]{\codingpath/data_2.cxx}
-\caption{A program that serializes and deserializes an 
+\caption{A program that serializes and deserializes an
 object of \texttt{data} class using XML archives.
 }
 \label{program:bs:1}
@@ -286,7 +290,7 @@ numbers=left,
 numbersep=2pt,
 firstline=1,
 fontsize=\footnotesize,
-showspaces=false]{\codingpath/stored_data.xml.out}
+showspaces=false]{\codingpath/stored_data.xml}
 \caption{The output file with a  Boost XML archive produced by program
   \ref{program:bs:1}. The  internal composition  of the object  can be
   easily investigated  with this  human-friendly format which  is very
@@ -367,7 +371,7 @@ implementation of a portable binary archive by Christian Pfligersdorffer.
 %% needed but things are on the right way.
 
 The \texttt{datatools} library addresses these issues through some
-special reader/writer classes that  are implemented in order 
+special reader/writer classes that  are implemented in order
 to garantee portable serialization.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -381,14 +385,14 @@ and writer classes :
 
 \begin{itemize}
 
-\item \texttt{datatools::serialization::data\_writer} : a general purpose serializer class (writer)  
+\item \texttt{datatools::data\_writer} : a general purpose serializer class (writer)
 
-\item \texttt{datatools::serialization::data\_reader} : a general purpose deserializer class (reader)  
-  
+\item \texttt{datatools::data\_reader} : a general purpose deserializer class (reader)
+
 \end{itemize}
 
 \pn      These      classes      are      available      from      the
-\texttt{datatools/serialization/io\_factory.h} header file.
+\texttt{datatools/io\_factory.h} header file.
 
 \pn The  storage media consists in  a standard file  (I/O file stream)
 which can be compressed (or not) using:
@@ -402,14 +406,14 @@ which can be compressed (or not) using:
 \pn The  writer and reader classes support  serialization of different
 kinds of archive:
 
-\begin{itemize}  
+\begin{itemize}
 
 \item    text archives (ASCII) from the Boost/Serialization library : file extension is \TT{.txt},
 
 \item    XML archives (ASCII too) from the Boost/Serialization library : file extension is \TT{.xml},
 
 \item    portable binary archives using the Boost/Serialization library interface
-\footnote{a contribution by Christian Pfligersdorffer} : file extension is \TT{.data}. 
+\footnote{a contribution by Christian Pfligersdorffer} : file extension is \TT{.data}.
 
 \end{itemize}
 
@@ -428,17 +432,17 @@ compression to be used. Examples:
 
 \pn Typical usage uses the simple interfaces from these classes:
 
-\begin{itemize}    
+\begin{itemize}
 
-\item the \texttt{data\_writer} class uses its template \texttt{store} 
+\item the \texttt{data\_writer} class uses its template \texttt{store}
   method to serialize a serializable object within a file,
 
-\item the \texttt{data\_reader} class uses its template \texttt{load} 
+\item the \texttt{data\_reader} class uses its template \texttt{load}
   method to deserialize a serialized object from a file,
-  
+
 \end{itemize}
 
-\pn In their basics implementation the \texttt{store} and \texttt{load} 
+\pn In their basics implementation the \texttt{store} and \texttt{load}
 method requires :
 
 \begin{itemize}
@@ -448,17 +452,17 @@ method requires :
 \item the object must fulfill the Boost serialization interface, i.e.
 has a \texttt{serialize} template method,
 
-\item a special character string, namely the \emph{record tag}, must be passed
-to the store/load methods to associate the serialized object wih some 
-unique identifier,
+\item  a special character  string, namely  the \emph{record  tag} (or
+  \emph{serial  tag}), must  be passed  to the  store/load  methods to
+  associate the serialized object with some unique type identifier,
 
 \end{itemize}
 
 \subsection{Examples}
 
-\pn The program \ref{program:bs:3} shows how to use the writer and reader classes
-to serialize several object of some serializable class. The output file contents is shown in sample
-\ref{sample:bs:3}.
+\pn The  program \ref{program:bs:3}  shows how to  use the  writer and
+reader  classes  to  serialize  several object  of  some  serializable
+class. The output file contents is shown in sample \ref{sample:bs:3}.
 
 \begin{program}[h]
 \VerbatimInput[frame=single,
@@ -468,8 +472,8 @@ firstline=1,
 %lastline=53,
 fontsize=\footnotesize,
 showspaces=false]{\codingpath/data_3.cxx}
-\caption{A program that serializes and deserializes an 
-object of \texttt{data} class using XML archives.
+\caption{A program that serializes and deserializes an
+object of the \texttt{data} class using XML archives.
 }
 \label{program:bs:3}
 \end{program}
@@ -480,16 +484,16 @@ numbers=left,
 numbersep=2pt,
 firstline=1,
 fontsize=\footnotesize,
-showspaces=false]{\codingpath/data_3.txt.out}
-\caption{The output file from a writer object produced by the program
-  \ref{program:bs:3}. 
-Here the writer has been configurated to \emph{encapsulate} each \texttt{data} object
-within its own archive (see the \texttt{ds::using\_multi\_archives} flag at
- the writer's construction), thus we observe three serialization blocks. Note that each block
-has an archive header (\texttt{2 serialization::archive 9}) 
-immediately followed by the  \emph{record tag} (the \texttt{4 data} tokens serialize
-the \TT{data} string) associated to the object which is streamed just after (\texttt{0 0 1 63\dots}).
-}
+showspaces=false]{\codingpath/data_3.txt.save}
+\caption{The output file from a  writer object produced by the program
+  \ref{program:bs:3}.   Here  the  writer  has  been  configurated  to
+  \emph{encapsulate} each \texttt{data}  object within its own archive
+  (see  the \texttt{ds::using\_multi\_archives}  flag at  the writer's
+  construction), thus we observe three serialization archive blocks. Note that
+  each block  has an archive  header (\texttt{2 serialization::archive
+    9}) immediately  followed by the \emph{record/serial  tag} (the \texttt{4
+    data}  tokens serialize  the \TT{data}  string) associated  to the
+  object which is streamed just after (\texttt{0 0 1 63\dots}).  }
 \label{sample:bs:3}
 \end{sample}
 \clearpage
@@ -503,10 +507,10 @@ provided by \texttt{datatools}, serialized  objects can only be stored
 in files sequentially and then reloaded  in the same way. This is thus
 not  possible to implement  random access  to serialized  objects with
 this   simple  technique.    Archive  files   generated   through  the
-\texttt{datatools::serialization::data\_writer} may be compared with a
+\texttt{datatools::data\_writer} may be compared with a
 magnetic  tape.   Particularly,   if  the  serialization  flow  failed
-somewhere  in the  middle of  the stream  media, the  stream  from the
-failure point to its end is likely to be unusable.
+somewhere  in the  middle of  the streamed  media, the  stream
+ is likely to be unusable from the  failure point to its end.
 
 
 \pn Note that  the reader class has some method to  check if some data
@@ -530,8 +534,8 @@ firstline=1,
 %lastline=53,
 fontsize=\footnotesize,
 showspaces=false]{\codingpath/data_3X.cxx}
-\caption{Serialization and deserialization of two different  types of  
-objects in some arbitrary order. 
+\caption{Serialization and deserialization of two different  types of
+objects in some arbitrary order.
 }
 \label{program:bs:3X}
 \end{program}
@@ -564,19 +568,20 @@ strategies (\emph{modes}) :
 
 \pn This behavior implies the following declaration syntax:
 \begin{CppVerbatim}
-namespace ds = datatools::serialization;
-ds::data_writer the_writer ("data_3.txt", ds::using_single_archive);
-ds::data_reader the_reader ("data_3.txt", ds::using_single_archive);
+datatools::data_writer the_writer ("data_3.txt", datatools::using_single_archive);
+datatools::data_reader the_reader ("data_3.txt", datatools::using_single_archive);
 \end{CppVerbatim}
 
 \pn Because of some internal functionnalities (\emph{memory tracking})
 in  the Boost/Serialization  library, this  mode should  be  used with
-care.
+care. Particularly, user must not modify any object to be serialized
+during the serialization process. This is because Boost/Serialization
+acts like a instant snapshot of the memory so the store or load operations
+must ne considered as \emph{atomic}.
 
 \item One archive is associated to  \emph{each} serialized
-objects. This leads to a file with as many archives as serialized objects, thus 
-the following internal
-structure :
+object. This leads to a file with as many archives as serialized objects, with
+the following internal structure :
 \begin{PathVerbatim}
 <archive>
   <object #1 record tag>
@@ -598,29 +603,30 @@ structure :
 \end{PathVerbatim}
 \pn This behavior implies the following declaration syntax:
 \begin{CppVerbatim}
-namespace ds = datatools::serialization;
-ds::data_writer the_writer ("data_3.txt", ds::using_multi_archives);
-ds::data_reader the_reader ("data_3.txt", ds::using_multi_archives);
+datatools::data_writer the_writer ("data_3.txt", datatools::using_multi_archives);
+datatools::data_reader the_reader ("data_3.txt", datatools::using_multi_archives);
 \end{CppVerbatim}
 
-\pn The use of this mode is recommended, unless the user knows what he/she is doing.
+\pn The use of this mode is recommended,
+unless the user knows what he/she is doing.
 \end{itemize}
 
 \pn Note that if an archive file has been created with one of these modes,
-it must be read with the same mode.
+it must be read with the same mode. This is the user's responsability to ensure
+the proper I/O archive mode.
 
 \clearpage
-\section{The \texttt{datatools::serialization::i\_serializable} interface}
+\section{The \texttt{datatools::i\_serializable} interface}
 
 \pn We  have shown in the  previous sections that  developpers have to
 provide the \texttt{serialize} template  method for each class that is
-supposed  to be serialized  through Boost/Serialization.  However with
+supposed to  be serialized through  Boost/Serialization.  However with
 datatools serialization tools (reader and writer), a special interface
 is provided  in order to equip  a given classes  with some dynamically
 inherited   \emph{serializable}   trait.    On   this   purpose,   the
-\texttt{datatools::serialization::i\_serializable}  abstract class has
-been                implemented                (from               the
-\texttt{datatools/serialization/i\_serializable.h} header file).
+\texttt{datatools::i\_serializable}    abstract    class   has    been
+implemented  (from   the  \texttt{datatools/i\_serializable.h}  header
+file).
 
 \subsection{The \emph{serializable} tag}
 
@@ -640,10 +646,10 @@ possible, for an object \texttt{obj1}  of which the class fulfills the
 \texttt{i\_serializable} interface, to use the alternative methods :
 \begin{CppVerbatim}
   ...
-  the_writer.store (obj1); // The get_serial_tag () method is invoked 
+  the_writer.store (obj1); // The get_serial_tag () method is invoked
                            // internally
   ...
-  the_reader.load (obj1);  // The get_serial_tag () method is invoked 
+  the_reader.load (obj1);  // The get_serial_tag () method is invoked
                            // and checked internally
   ...
 \end{CppVerbatim}
@@ -654,12 +660,12 @@ and  implemented through  the \texttt{i\_serializable}  interface, one
 does not have to remind it.
 
 The   samples    \ref{sample:bs:4},    \ref{sample:bs:4b}   and
-\ref{sample:bs:4c}  illustrates the case of a  \texttt{sdata} class  
+\ref{sample:bs:4c}  illustrates the case of a  \texttt{sdata} class
 that inherits
 the \\
-\texttt{datatools::serialization::i\_serializable} interface.
+\texttt{datatools::i\_serializable} interface.
 The program \ref{program:bs:4} shows how to use the writer and reader classes
-to serialize several \texttt{sdata} objects. 
+to serialize several \texttt{sdata} objects.
 
 \begin{sample}[h]
 \VerbatimInput[frame=single,
@@ -734,10 +740,10 @@ showspaces=false]{\codingpath/sdata2.h}
 numbers=left,
 numbersep=2pt,
 firstline=3,
-lastline=11,
+lastline=4,
 fontsize=\footnotesize,
 showspaces=false]{\codingpath/sdata2.cc}
-\caption{The implementation of the \texttt{sdata} class (excerpt).}
+\caption{The implementation of the serialization features of the \texttt{sdata} class.}
 \label{sample:bs:5b}
 \end{sample}
 
@@ -765,14 +771,14 @@ This  system  relies on  some  useful  macros  to automate  a  complex
 mechanism to register  the mother/daughter class relationships between
 classes and determine the actual derived type of a serialized object.
 
-Practically,  the \texttt{datatools::utils::i\_serializable} interface
+Practically,  the \texttt{datatools::i\_serializable} interface
 behaves like such a mother  class. Thus, each class that inherits from
 it can be (de)serialized through this mechanism.
 
 The    program    samples   \ref{sample:ps:6a},    \ref{sample:ps:6b},
 \ref{sample:ps:6c}  and  \ref{sample:ps:6d}  illustrate  the  case  of
 serializable  objects of  classes \texttt{sdata1}  and \texttt{sdata2}
-derived from  \texttt{datatools::utils::i\_serializable}.  An array of
+derived   from  \texttt{datatools::i\_serializable}.    An   array  of
 pointers  to  such \emph{serializable}  objects  is  filled with  such
 randomly generated  objects.  The array  is then serialized  through a
 \texttt{datatools} writer that uses a  text archive file.  In a second
@@ -784,9 +790,10 @@ step,   the  array   is   deserialized  from   the   file  through   a
 numbers=left,
 numbersep=2pt,
 firstline=1,
-lastline=29,
+lastline=27,
 fontsize=\footnotesize,
-showspaces=false]{\codingpath/data_6.cxx}
+showspaces=false,
+label=data\_6.cxx]{\codingpath/data_6.cxx}
 \caption{The interface of classes  \texttt{sdata1}  and \texttt{sdata2}.  }
 \label{sample:ps:6a}
 \end{sample}
@@ -795,10 +802,11 @@ showspaces=false]{\codingpath/data_6.cxx}
 \VerbatimInput[frame=single,
 numbers=left,
 numbersep=2pt,
-firstline=31,
-lastline=41,
+firstline=30,
+lastline=38,
 fontsize=\footnotesize,
-showspaces=false]{\codingpath/data_6.cxx}
+showspaces=false,
+label=data\_6.cxx]{\codingpath/data_6.cxx}
 \caption{The implementation code for classes  \texttt{sdata1}  and \texttt{sdata2}.  }
 \label{sample:ps:6b}
 \end{sample}
@@ -808,10 +816,11 @@ showspaces=false]{\codingpath/data_6.cxx}
 \VerbatimInput[frame=single,
 numbers=left,
 numbersep=2pt,
-firstline=43,
-lastline=71,
+firstline=41,
+lastline=67,
 fontsize=\footnotesize,
-showspaces=false]{\codingpath/data_6.cxx}
+showspaces=false,
+label=data\_6.cxx]{\codingpath/data_6.cxx}
 \caption{Definition and automated instantiation of serialization and exporting code.  }
 \label{sample:ps:6c}
 \end{sample}
@@ -820,11 +829,12 @@ showspaces=false]{\codingpath/data_6.cxx}
 \VerbatimInput[frame=single,
 numbers=left,
 numbersep=2pt,
-firstline=74,
-lastline=124,
+firstline=70,
+lastline=116,
 fontsize=\footnotesize,
-showspaces=false]{\codingpath/data_6.cxx}
-\caption{Main program.  }
+showspaces=false,
+label=data\_6.cxx]{\codingpath/data_6.cxx}
+\caption{Main program.}
 \label{sample:ps:6d}
 \end{sample}
 
@@ -851,9 +861,9 @@ is :
 \end{itemize}
 
 \pn This allows:
-\begin{itemize} 
+\begin{itemize}
 
-\item to link easily some executable with both object files 
+\item to link easily some executable with both object files
  \texttt{foo.o} and \texttt{foo\_bio.o},
 
 \item but also, if we  don't need the serialization functionnalities, to
@@ -871,14 +881,14 @@ is :
 \section{Conclusion}
 
 The     \texttt{datatools}     library    implements     serialization
-functionnalities based on the Boost/Se\-rialization library. Most of the
+functionnalities based on the Boost/Se\-ria\-li\-za\-tion library. Most of the
 code is handled through  templates and high-level preprocessing macros
 are  provided to  ease  the implementation  of  serialization code  in
 users' applications.
 
 An  interface for  \emph{serializable} object  has been  designed. The
 container   classes  provided   by  \texttt{datatools}   fulfill  this
-interface. Particularly, the \texttt{datatools::utils::things} generic
+interface. Particularly, the \texttt{datatools::things} generic
 container can store any of these \emph{serializable} objects.
 
 In this note, some recommendations have been done in order to organize
@@ -889,7 +899,7 @@ optionnal, versatile and  extensible for all new classes  that enter a
 project.   The  integration with  the  high-level  generic reader  and
 writer classes provided by \texttt{datatools} is thus straightforward.
 
-Three Boost  archive formats  are available from  \texttt{datatools} 
+Three Boost  archive formats  are available from  \texttt{datatools}
 in both input and output versions :
 ASCII text, XML  and binary. All are made portable  and can handle all
 integral types  up the  64-bits as well  as floating point  numbers in

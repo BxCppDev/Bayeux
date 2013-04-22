@@ -14,17 +14,17 @@ sdata::sdata ()
   _dvec_.reserve (3);
   _dvec_.push_back (_dval_);
   _dvec_.push_back (_dval_ * 2);
-  _dvec_.push_back (_dval_ * 3); 
+  _dvec_.push_back (_dval_ * 3);
   return;
 }
-  
+
 // Implementation of a setter method :
 void sdata::set_bval (bool bval_)
 {
   _bval_ = bval_;
   return;
 }
-  
+
 // Implementation of a getter method :
 bool sdata::is_bval () const
 {

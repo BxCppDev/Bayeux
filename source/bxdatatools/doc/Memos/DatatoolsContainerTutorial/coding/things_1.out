@@ -1,7 +1,0 @@
-foo :
-|-- Name : "Devil"
-|   |-- Type  : integer (scalar)
-|   `-- Value : 666
-`-- Name : "debug"
-    |-- Type  : boolean (scalar)
-    `-- Value : 1
