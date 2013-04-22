@@ -27,7 +27,7 @@ project(datatools)
 # - Versioning
 set(datatools_VERSION_MAJOR 5)
 set(datatools_VERSION_MINOR 0)
-set(datatools_VERSION_PATCH 0)
+set(datatools_VERSION_PATCH 1)
 set(datatools_VERSION "${datatools_VERSION_MAJOR}.${datatools_VERSION_MINOR}.${datatools_VERSION_PATCH}")
 
 message ( STATUS "${PROJECT_NAME} : datatools version = '${datatools_VERSION}' " )
@@ -45,12 +45,12 @@ include(InstallDirs)
 #-----------------------------------------------------------------------
 # Build options
 #
-#option(DATATOOLS_WITH_DEBUG "Build debug code" OFF) 
-option(DATATOOLS_WITH_BIO   "Build auxiliary Boost I/O library" ON) 
-option(DATATOOLS_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" ON) 
+#option(DATATOOLS_WITH_DEBUG "Build debug code" OFF)
+option(DATATOOLS_WITH_BIO   "Build auxiliary Boost I/O library" ON)
+option(DATATOOLS_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" ON)
 option(DATATOOLS_WITH_DOC   "Build the datatools documentation" ON)
-option(DATATOOLS_WITH_TEST  "Build the datatools test suite"    ON) 
- 
+option(DATATOOLS_WITH_TEST  "Build the datatools test suite"    ON)
+
 # if(DATATOOLS_WITH_DEBUG)
 #   set(DATATOOLS_WITH_DEBUG 1)
 # else()
@@ -75,7 +75,7 @@ endif()
 
 #-----------------------------------------------------------------------
 # On Apple, we fixup the install prefix to handle installing documentation,
-# support files and so on under the framework's "Resources" directory. 
+# support files and so on under the framework's "Resources" directory.
 # This follows the pattern used in CMake to fixup their app bundle
 # NB: THIS REQUIRES SOME FIXES IN CPACKAGING (see CMake's Qt dialog
 # packaging).
@@ -89,16 +89,16 @@ endif()
 #-----------------------------------------------------------------------
 # Build the submodules as required
 #
-add_subdirectory(src)   
+add_subdirectory(src)
 
-add_subdirectory(programs)   
+add_subdirectory(programs)
 
 if(DATATOOLS_WITH_DOC)
   add_subdirectory(doc)
 endif()
 
 if(DATATOOLS_WITH_TEST)
-  enable_testing() 
+  enable_testing()
   add_subdirectory(testing)
 endif()
 
@@ -123,17 +123,17 @@ if(UNIX)
   endif()
 
   configure_file(
-    ${PROJECT_SOURCE_DIR}/cmake/datatools-config.in 
+    ${PROJECT_SOURCE_DIR}/cmake/datatools-config.in
     ${PROJECT_BINARY_DIR}/cmake/datatools-config
     @ONLY
     )
 
   install(FILES ${PROJECT_BINARY_DIR}/cmake/datatools-config
     DESTINATION "${CMAKE_INSTALL_BINDIR}"
-    PERMISSIONS 
-      OWNER_READ OWNER_EXECUTE 
-    	GROUP_READ GROUP_EXECUTE 
-      WORLD_READ WORLD_EXECUTE    
+    PERMISSIONS
+      OWNER_READ OWNER_EXECUTE
+    	GROUP_READ GROUP_EXECUTE
+      WORLD_READ WORLD_EXECUTE
     COMPONENT Development
     )
 
@@ -154,9 +154,9 @@ endif()
 # Install resources :
 #
 
-set ( _datatools_testing_FULL_LOCAL_PATH 
-      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/testing" 
-    ) 
+set ( _datatools_testing_FULL_LOCAL_PATH
+      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/testing"
+    )
 message ( STATUS "${PROJECT_NAME} : datatools testing full local path = '${_datatools_testing_FULL_LOCAL_PATH}' " )
 
 install ( DIRECTORY ${PROJECT_SOURCE_DIR}/testing
@@ -164,8 +164,8 @@ install ( DIRECTORY ${PROJECT_SOURCE_DIR}/testing
           FILE_PERMISSIONS OWNER_READ OWNER_WRITE
                            GROUP_READ GROUP_WRITE
                            WORLD_READ
-          DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE 
-                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE 
+          DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE
                                 WORLD_READ WORLD_EXECUTE
           PATTERN ".svn" EXCLUDE
           PATTERN "*~" EXCLUDE
