@@ -28,8 +28,8 @@
  *
  */
 
-#ifndef __mygsl__prng_state_manager_h
-#define __mygsl__prng_state_manager_h 1
+#ifndef MYGSL_PRNG_STATE_MANAGER_H_
+#define MYGSL_PRNG_STATE_MANAGER_H_ 1
 
 #include <iostream>
 #include <string>
@@ -55,9 +55,7 @@ namespace mygsl {
     public:
 
       /// Default size of a buffer used to store PRNG's internal state
-      static const size_t DEFAULT_BUFFER_SIZE; 
-
-    public:
+      static const size_t DEFAULT_BUFFER_SIZE;
 
       /// Default constructor
       record ();
@@ -80,8 +78,6 @@ namespace mygsl {
     static const int    INVALID_COUNTER_VALUE; //!< Constant that represents an invalid value for a counter
     static const std::string DEFAULT_FILENAME; //!< Default backup filename
 
-  public:
-
     /// Check if a backup filename is associated to the manager
     bool has_filename () const;
 
@@ -94,13 +90,13 @@ namespace mygsl {
     /// Check if the manager has a running counter value
     bool has_counter () const;
 
-    /// Get the manager's running counter value 
+    /// Get the manager's running counter value
     int get_counter () const;
 
-    /// Set the manager's running counter value 
+    /// Set the manager's running counter value
     void set_counter (int);
 
-    /// Reset the manager's running counter value 
+    /// Reset the manager's running counter value
     void reset_counter ();
 
     /// Increment the manager's running counter value by a given value
@@ -109,7 +105,7 @@ namespace mygsl {
     /// Default constructor
     prng_state_manager ();
 
-    /// Constructor with a filename 
+    /// Constructor with a filename
     prng_state_manager (const std::string &);
 
     /// Destructor:
@@ -144,7 +140,7 @@ namespace mygsl {
     /// Return the number of internal state records
     size_t size () const;
 
-    /// Check if the manager has no stored internal state records 
+    /// Check if the manager has no stored internal state records
     bool empty () const;
 
     /// Store the content of the manager in a file with given filename
@@ -166,7 +162,7 @@ namespace mygsl {
 
 }  // end of namespace mygsl
 
-#endif // __mygsl__prng_state_manager_h
+#endif // MYGSL_PRNG_STATE_MANAGER_H_
 
 // end of prng_state_manager.h
 /*

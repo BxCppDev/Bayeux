@@ -1,26 +1,24 @@
-// -*- mode: c++; -*- 
-/* mygsl::min_max.h
+// -*- mode: c++; -*-
+/* min_max.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009-10-02
- * Last modified: 2009-10-02
- * 
- * License: 
- * 
- * Description: 
+ * Last modified: 2013-04-23
+ *
+ * License:
+ *
+ * Description:
  *
  *   A collection of algorithm to compute the min_max of
  *   a list of numbers
  *
  */
 
-#ifndef __mygsl__min_max_h
-#define __mygsl__min_max_h 1
-
-// using   namespace std;
+#ifndef MYGSL_MIN_MAX_H_
+#define MYGSL_MIN_MAX_H_ 1
 
 namespace mygsl {
 
-  class min_max 
+  class min_max
     {
     public:
       bool is_valid () const;
@@ -37,6 +35,6 @@ namespace mygsl {
 
 } // end of namespace mygsl
 
-#endif // __mygsl__min_max_h
+#endif // MYGSL_MIN_MAX_H_
 
-// end of mygsl::min_max.h
+// end of min_max.h

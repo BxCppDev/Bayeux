@@ -1,7 +1,7 @@
-// gsl::linear_system_solver.h
+// linear_system_solver.h
 
-#ifndef __gsl__linear_system_solver_h
-#define __gsl__linear_system_solver_h 1
+#ifndef MYGSL_LINEAR_SYSTEM_SOLVER_H_
+#define MYGSL_LINEAR_SYSTEM_SOLVER_H_ 1
 
 #include <gsl/gsl_histogram.h>
 #include <gsl/gsl_vector.h>
@@ -30,10 +30,28 @@
 
 namespace mygsl {
 
-  class linear_system_solver 
+  class linear_system_solver
   {
   public:
     static bool g_debug;
+
+    bool is_initialized () const;
+
+    size_t get_dimension () const;
+
+    linear_system_solver (size_t dimension_ = 0);
+
+    virtual ~linear_system_solver ();
+
+    int solve (const std::vector<double> & a_,
+	       const std::vector<double> & b_,
+	       std::vector<double>       & x_);
+
+  private:
+
+    void _reset_ ();
+
+    void _init_ (size_t dimension_);
 
   private:
 
@@ -48,42 +66,20 @@ namespace mygsl {
     gsl_permutation *   _p_;
     gsl_vector *        _x_;
 
-  public:
-
-    bool is_initialized () const;
-
-    size_t get_dimension () const;
-    
-    linear_system_solver (size_t dimension_ = 0);
-
-    virtual ~linear_system_solver ();
-
-  private:
-
-    void _reset_ ();
-
-    void _init_ (size_t dimension_);
-
-  public:
-
-    int solve (const std::vector<double> & a_, 
-	       const std::vector<double> & b_,
-	       std::vector<double>       & x_);
-    
   };
 
   /* Solve:
    *
    *  a1 x + b1 y = c1
-   *  a2 x + b2 y = c2 
+   *  a2 x + b2 y = c2
    *
    */
   bool linear_system_2x2_solve (double a1_, double b1_, double c1_,
 				double a2_, double b2_, double c2_,
 				double & x_, double & y_);
-  
+
 } // end of namespace mygsl
 
-#endif // __gsl__linear_system_solver_h
+#endif // MYGSL_LINEAR_SYSTEM_SOLVER_H_
 
-// end of gsl::linear_system_solver.h
+// end of linear_system_solver.h

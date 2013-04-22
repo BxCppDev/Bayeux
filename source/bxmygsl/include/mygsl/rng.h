@@ -1,7 +1,7 @@
-// gsl::rng.h
+// rng.h
 /*
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
  */
@@ -41,7 +41,7 @@ namespace mygsl {
   class rng
   {
   public:
- 
+
     static const std::string DEFAULT_RNG_ID;   // "taus2"
     static const std::string DEFAULT_RNG_TYPE; // idem
 
@@ -62,7 +62,7 @@ namespace mygsl {
     void initialize (int32_t seed_);
 
     void initialize (const std::string & id_, int32_t seed_ = 0);
- 
+
     void initialize (const datatools::properties & config_);
 
     /// Deprecated :
@@ -87,13 +87,13 @@ namespace mygsl {
     rng ();
 
     rng (int32_t seed_, bool init_now_ = true);
-            
+
     rng (const std::string & id_, int32_t seed_, bool init_now_ = true);
 
     void reset ();
 
     void clear ();
-      
+
     virtual ~rng ();
 
     rng (const rng &); // not implemented
@@ -101,21 +101,21 @@ namespace mygsl {
     void dump (std::ostream & = std::clog) const;
 
     rng & operator= (const rng &); // not implemented
-      
+
     unsigned long int get ();
-      
+
     double uniform ();
-      
+
     double uniform_pos ();
-      
+
     unsigned long int uniform_int (unsigned long int n_);
-      
+
     std::string name () const;
-      
+
     unsigned long int min () const;
-      
+
     unsigned long int max () const;
- 
+
     void store (const std::string & filename_) const;
 
     void load (const std::string & filename_);
@@ -127,15 +127,15 @@ namespace mygsl {
     void to_buffer (state_buffer_type &) const;
 
     void from_buffer (const state_buffer_type &);
-   
+
     size_t get_internal_state_size () const;
 
     // specific distributions:
- 
+
     double flat (double a_, double b_) const;
-      
+
     double gaussian (double sigma_ = 1.0) const;
-      
+
     double gaussian (double mu_, double sigma_) const;
 
     double gaussian_tail (double min_, double sigma_ = 1.0) const;
@@ -148,18 +148,18 @@ namespace mygsl {
 
     unsigned long int bernoulli (double p_ = 0.5) const;
 
-    unsigned long int binomial (double p_, 
+    unsigned long int binomial (double p_,
                                 unsigned long int n_) const;
 
     // 2009-11-08 FM: to be used as a functor:
     double operator () (void);
 
   private:
-   
+
     void _init_defaults_();
-     
+
     void _initialize_();
-    
+
     void _reset_();
 
   private:
@@ -169,12 +169,12 @@ namespace mygsl {
     gsl_rng *    _r_;    /// The internal GSL random number generator
 
   };
-  
+
 }
 
 #endif // MYGSL_RNG_H_
 
-// end of gsl::rng.h
+// end of rng.h
 /*
 ** Local Variables: --
 ** mode: c++ --

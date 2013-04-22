@@ -1,22 +1,22 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* mygsl::permutation.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009-10-02
- * Last modified: 2009-10-02
- * 
- * License: 
- * 
- * 
- * Description: 
+ * Last modified: 2013-04-23
+ *
+ * License:
+ *
+ *
+ * Description:
  *
  *   Interface for GSL permutation
  *
- * History: 
- * 
+ * History:
+ *
  */
 
-#ifndef __mygsl__permutation_h
-#define __mygsl__permutation_h 1
+#ifndef MYGSL_PERMUTATION_H_
+#define MYGSL_PERMUTATION_H_ 1
 
 #include <iostream>
 #include <string>
@@ -86,7 +86,7 @@ class permutation {
 
 } // end of namespace mygsl
 
-#endif // __mygsl__permutation_h
+#endif // MYGSL_PERMUTATION_H_
 
-// end of mygsl::permutation.h
+// end of permutation.h
 

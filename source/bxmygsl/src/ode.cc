@@ -1,6 +1,6 @@
 // mygsl::ode.cc
- 
-#include <mygsl/ode.h> 
+
+#include <mygsl/ode.h>
 
 #include <gsl/gsl_errno.h>
 
@@ -9,18 +9,23 @@ namespace mygsl {
   using namespace std;
 
   bool ode_system::g_debug = false;
- 
+
+  bool ode_system::has_jacobian () const
+  {
+    return false;
+  }
+
   int ode_system::gsl_ode_function (double         t_,
                                     const double * y_,
                                     double *       f_,
                                     void   *       params_)
   {
     if (ode_system::g_debug) {
-      std::cerr << "DEBUG: gsl_ode_function: " 
+      std::cerr << "DEBUG: gsl_ode_function: "
                 << " entering..." << std::endl;
     }
     if (ode_system::g_debug) {
-      std::cerr << "DEBUG: ode_system::gsl_ode_function: test..." 
+      std::cerr << "DEBUG: ode_system::gsl_ode_function: test..."
                 << std::endl;
     }
     ode_system * sys = static_cast<ode_system *> (params_);
@@ -37,7 +42,7 @@ namespace mygsl {
                                     void   *       params_)
   {
     if (ode_system::g_debug) {
-      std::cerr << "DEBUG: gsl_ode_jacobian: " 
+      std::cerr << "DEBUG: gsl_ode_jacobian: "
                 << " entering..." << std::endl;
     }
     ode_system * sys = static_cast<ode_system *> (params_);
@@ -47,10 +52,10 @@ namespace mygsl {
     return sys->compute_jacobian (t_,y_,dfdy_,dfdt_);
   }
 
-  int ode_system::compute_jacobian (double         t_   , 
+  int ode_system::compute_jacobian (double         t_   ,
                                     const double * y_   ,
                                     double  *      dfdy_,
-                                    double  *      dfdt_ ) 
+                                    double  *      dfdt_ )
   {
     return GSL_EINVAL;
   }
@@ -63,20 +68,20 @@ namespace mygsl {
 
   ode_driver::default_step_action ode_driver::_default_step_action_;
 
-  bool ode_driver::is_regular () const 
+  bool ode_driver::is_regular () const
   {
     return _regular_;
   }
 
   void ode_driver::regular ()
   {
-    _regular_=true; 
+    _regular_=true;
     return;
   }
 
   void ode_driver::not_regular ()
   {
-    _regular_=false; 
+    _regular_=false;
     return;
   }
 
@@ -124,7 +129,7 @@ namespace mygsl {
     if (type_ == "rk4imp") return true;
     if (type_ == "bsimp") return true;
     if (type_ == "gear1") return true;
-    if (type_ == "gear2") return true; 
+    if (type_ == "gear2") return true;
     return false;
   }
 
@@ -134,20 +139,20 @@ namespace mygsl {
     return false;
   }
 
-  const std::string & ode_driver::get_type () const 
+  const std::string & ode_driver::get_type () const
   {
     return _type_;
   }
- 
-  void ode_driver::set_type (const std::string & type_) 
+
+  void ode_driver::set_type (const std::string & type_)
   {
     if (! type_is_valid (type_)) {
       throw std::runtime_error ("mygsl::ode_driver::set_type: Invalid type!");
-    } 
+    }
     if (ode_driver::g_debug) {
-      std::cerr << "DEBUG: ode_driver::set_type: type='" 
+      std::cerr << "DEBUG: ode_driver::set_type: type='"
                 << type_ << "'" << std::endl;
-    } 
+    }
     _type_ = type_;
     return;
   }
@@ -157,9 +162,9 @@ namespace mygsl {
     return _system_.dimension;
   }
 
-  ode_driver::ode_driver (ode_system & sys_, 
+  ode_driver::ode_driver (ode_system & sys_,
                           const std::string & type_,
-                          double epsabs_, 
+                          double epsabs_,
                           double epsrel_,
                           bool   regular_)
   {
@@ -184,10 +189,10 @@ namespace mygsl {
     _evolve_    = 0;
 
     _system_.function  = ode_system::gsl_ode_function;
-    _has_jacobian_ = false; 
+    _has_jacobian_ = false;
     _system_.jacobian  = 0;
     if (_ode_sys_->has_jacobian ()) {
-      _has_jacobian_     = true; 
+      _has_jacobian_     = true;
       _system_.jacobian  = ode_system::gsl_ode_jacobian;
     }
     _system_.dimension = _ode_sys_->get_dimension ();
@@ -215,16 +220,16 @@ namespace mygsl {
     if (_evolve_) {
       gsl_odeiv_evolve_free (_evolve_);
       _evolve_=0;
-    } 
+    }
     if (_control_) {
       gsl_odeiv_control_free (_control_);
       _control_=0;
-    } 
+    }
     if (_step_) {
       gsl_odeiv_step_free (_step_);
       _step_=0;
-    } 
-    return;      
+    }
+    return;
   }
 
   ode_driver::~ode_driver ()
@@ -268,14 +273,14 @@ namespace mygsl {
 
     if (type_requires_jacobian (_type_) &&  ! _has_jacobian_) {
       std::ostringstream message;
-      message << "ode_driver::_init_step_: " 
-              << "ODE stepper '" << _type_ 
+      message << "ode_driver::_init_step_: "
+              << "ODE stepper '" << _type_
               << "' requires Jacobian but ODE system does not provide one!";
       throw std::runtime_error (message.str ());
     }
 
     if (ode_driver::g_debug) {
-      std::cerr << "DEBUG: _init_step_: " 
+      std::cerr << "DEBUG: _init_step_: "
                 << "_step_type_=" << _step_type_ << std::endl;
     }
     return;
@@ -299,25 +304,25 @@ namespace mygsl {
   int ode_driver::_inner_run_not_regular_ ()
   {
     if (ode_driver::g_debug) {
-      std::cerr << "DEBUG: _inner_run_not_regular_: " 
+      std::cerr << "DEBUG: _inner_run_not_regular_: "
                 << "entering..." << std::endl;
     }
     int ret = GSL_SUCCESS;
     while (_t_ < _t_end_) {
       if (ode_driver::g_debug) {
-        std::cerr << "DEBUG: _inner_run_not_regular_: " 
+        std::cerr << "DEBUG: _inner_run_not_regular_: "
                   << "_t_begin_=" << _t_begin_ << std::endl;
-        std::cerr << "DEBUG: _inner_run_not_regular_: " 
+        std::cerr << "DEBUG: _inner_run_not_regular_: "
                   << "_t_=" << _t_ << std::endl;
-        std::cerr << "DEBUG: _inner_run_not_regular_: " 
+        std::cerr << "DEBUG: _inner_run_not_regular_: "
                   << "_t_end_=" << _t_end_ << std::endl;
-        std::cerr << "DEBUG: _inner_run_not_regular_: " 
+        std::cerr << "DEBUG: _inner_run_not_regular_: "
                   << "_evolve_=" << _evolve_ << std::endl;
-        std::cerr << "DEBUG: _inner_run_not_regular_: " 
+        std::cerr << "DEBUG: _inner_run_not_regular_: "
                   << "_control_=" << _control_ << std::endl;
-        std::cerr << "DEBUG: _inner_run_not_regular_: " 
+        std::cerr << "DEBUG: _inner_run_not_regular_: "
                   << "_step_=" << _step_ << std::endl;
-        std::cerr << "DEBUG: _inner_run_not_regular_: " 
+        std::cerr << "DEBUG: _inner_run_not_regular_: "
                   << "_y_=" << _y_ << std::endl;
       }
 
@@ -332,7 +337,7 @@ namespace mygsl {
                                            _y_);
 
       if (ode_driver::g_debug) {
-        std::cerr << "DEBUG: _inner_run_not_regular_: " 
+        std::cerr << "DEBUG: _inner_run_not_regular_: "
                   << "status=" << status << std::endl;
       }
 
@@ -345,7 +350,7 @@ namespace mygsl {
 
     }
     if (ode_driver::g_debug) {
-      std::cerr << "DEBUG: _inner_run_not_regular_: " 
+      std::cerr << "DEBUG: _inner_run_not_regular_: "
                 << "exiting." << std::endl;
     }
     return ret;
@@ -369,15 +374,15 @@ namespace mygsl {
                                              ti,
                                              &_h_,
                                              _y_);
-          
+
         /*
           if (status != GSL_SUCCESS) {
           ret = status;
           break;
           }
         */
-          
-          
+
+
       }
 
       _at_step_hook ();
@@ -409,8 +414,8 @@ namespace mygsl {
     return;
   }
 
-  int ode_driver::run (double t_begin_, 
-                       double t_end_, 
+  int ode_driver::run (double t_begin_,
+                       double t_end_,
                        double h_)
   {
     if (ode_driver::g_debug) {
@@ -442,7 +447,7 @@ namespace mygsl {
 
     // fetch system's data from working array:
     _ode_sys_->from_double_star (_y_,_system_.dimension);
-      
+
     if (ode_driver::g_debug) {
       std::cerr << "DEBUG: run: " << " from_double_star done." << std::endl;
     }
@@ -454,16 +459,16 @@ namespace mygsl {
   }
 
 
-  void ode_driver::default_step_action::action (double t_, 
-                                                double * y_, 
-                                                size_t dim_) 
+  void ode_driver::default_step_action::action (double t_,
+                                                double * y_,
+                                                size_t dim_)
   {
     double   t = t_;
     double * y = y_;
     std::cout << t << ' ';
     for (int i=0; i<dim_ ; i++) {
       std::cout << y[i] << ' ';
-    } 
+    }
     std::cout << std::endl;
     return;
   }

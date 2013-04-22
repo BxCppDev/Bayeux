@@ -1,15 +1,13 @@
-// -*- mode: c++; -*- 
-// mygsl::param_entry.h
+// -*- mode: c++; -*-
+// param_entry.h
 
-#ifndef __mygsl__param_entry_h
-#define __mygsl__param_entry_h 1
+#ifndef MYGSL_PARAM_ENTRY_H_
+#define MYGSL_PARAM_ENTRY_H_ 1
 
 #include <iostream>
 #include <string>
 
 #include <mygsl/best_value.h>
-
-//using   namespace std;
 
 namespace mygsl {
 
@@ -42,12 +40,6 @@ namespace mygsl {
         TYPE_AUTO  = 0x4,
         TYPE_AUTO_COMPUTED = 0x8
       };
-
-  private:
-
-    param_entry (const std::string & name_ = "parameter");
-
-  public:
 
     bool has_step () const;
 
@@ -140,53 +132,57 @@ namespace mygsl {
     void set_value (double value_);
 
     void set_value_no_check (double value_);
-  
+
     bool check_value () const;
-    
+
     static param_entry make_auto (const std::string & name_,
                                   double step_ = AUTO_STEP);
-      
+
     static param_entry make_auto_range (const std::string & name_,
                                         double min_,
                                         double max_,
-                                        double step_ = AUTO_STEP); 
-      
+                                        double step_ = AUTO_STEP);
+
     static param_entry make_auto_min (const std::string & name_,
                                       double min_,
-                                      double step_ = AUTO_STEP); 
-      
+                                      double step_ = AUTO_STEP);
+
     static param_entry make_auto_max (const std::string & name_,
                                       double max_,
-                                      double step_ = AUTO_STEP); 
-      
+                                      double step_ = AUTO_STEP);
+
     static param_entry make_free (const std::string & name_,
                                   double value_,
                                   double step_ = AUTO_STEP);
-      
+
     static param_entry make_free_range (const std::string & name_,
                                         double min_,
                                         double max_,
                                         double value_,
-                                        double step_ = AUTO_STEP);      
-      
+                                        double step_ = AUTO_STEP);
+
     static param_entry make_free_min (const std::string & name_,
                                       double min_,
                                       double value_,
-                                      double step_ = AUTO_STEP);        
-      
+                                      double step_ = AUTO_STEP);
+
     static param_entry make_free_max (const std::string & name_,
                                       double max_,
                                       double value_,
-                                      double step_ = AUTO_STEP);        
-      
+                                      double step_ = AUTO_STEP);
+
     static param_entry make_const (const std::string & name_,
                                    double value_);
-      
-    void print (std::ostream & out_ = std::clog, 
-                const std::string & title_ = "Parameter", 
+
+    void print (std::ostream & out_ = std::clog,
+                const std::string & title_ = "Parameter",
                 const std::string & indent_ = "") const;
 
     void print_status (std::ostream & out_ = std::clog) const;
+
+  private:
+
+    param_entry (const std::string & name_ = "parameter");
 
   private:
 
@@ -207,7 +203,7 @@ namespace mygsl {
   {
     std::string _name_;
 
-    param_has_name (const std::string & name_) : _name_ (name_) 
+    param_has_name (const std::string & name_) : _name_ (name_)
     {
     }
 
@@ -222,7 +218,7 @@ namespace mygsl {
   {
     std::string _name_;
 
-    param_ptr_has_name (const std::string & name_) : _name_ (name_) 
+    param_ptr_has_name (const std::string & name_) : _name_ (name_)
     {
     }
 
@@ -235,7 +231,7 @@ namespace mygsl {
   // predicate:
   struct param_is_free : std::unary_function<bool,param_entry>
   {
-    param_is_free ()  
+    param_is_free ()
     {
       return;
     }
@@ -249,7 +245,7 @@ namespace mygsl {
   // predicate:
   struct param_is_const : std::unary_function<bool,param_entry>
   {
-    param_is_const ()  
+    param_is_const ()
     {
       return;
     }
@@ -263,7 +259,7 @@ namespace mygsl {
   // predicate:
   struct param_is_auto : std::unary_function<bool,param_entry>
   {
-    param_is_auto ()  
+    param_is_auto ()
     {
       return;
     }
@@ -273,9 +269,9 @@ namespace mygsl {
       return pe_.is_auto ();
     }
   };
-  
+
 } // namespace mygsl
 
-#endif // __mygsl__param_entry_h
+#endif // MYGSL_PARAM_ENTRY_H_
 
-// end of mygsl::param_entry.h
+// end of param_entry.h

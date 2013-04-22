@@ -26,6 +26,7 @@ This is the mygsl package ChangeLog
 	* version: prepare tag 3.2.0 in trunk
 2013-01-29 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* simplify the CMake build interface
+	* depends on datatools 5.0.0
 	* version: prepare tag 4.0.0 in trunk
 2013-03-08 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* add histogram_service class
@@ -38,7 +39,7 @@ This is the mygsl package ChangeLog
 	  - propagate the modification to other classes
 	* add serialization support for several classes:
 	  - mygsl::best_value
-	  - mygsl::datapoints
+	  - mygsl::datapoint
 	  - mygsl::polynomial
 
 

@@ -1,11 +1,11 @@
 // -*- mode: c++; -*-
 // histogram_1d.h
 
-#ifndef __mygsl__histogram_1d_h
-#define __mygsl__histogram_1d_h 1
+#ifndef MYGSL_HISTOGRAM_1D_H_
+#define MYGSL_HISTOGRAM_1D_H_ 1
 
 #include <mygsl/histogram.h>
 
-#endif // __mygsl__histogram_1d_h
+#endif // MYGSL_HISTOGRAM_1D_H_
 
 // end of mygsl::histogram_1d.h

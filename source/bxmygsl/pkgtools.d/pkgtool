@@ -314,21 +314,37 @@ function do_check ()
     missing_material=""
     missing_material_alt=""
 
-    # which datatools-config > /dev/null 2>&1
-    # if [ $? -ne 0 ]; then
-    # 	missing_material="${missing_material}datatools "
-    # 	pkgtools__msg_warning "Cannot find datatools !"
-    # else
-    # 	pkgtools__msg_notice "Found datatools $(datatools-config --version) !"
-    # fi
+    which datatools-config > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+    	missing_material="${missing_material}datatools "
+    	pkgtools__msg_warning "Cannot find datatools !"
+    else
+    	pkgtools__msg_notice "Found datatools $(datatools-config --version) !"
+    fi
 
-    # which yyy-config > /dev/null 2>&1
-    # if [ $? -ne 0 ]; then
-    # 	missing_material="${missing_material}Yyy "
-    # 	pkgtools__msg_warning "Cannot find Yyy !"
-    # else
-    # 	pkgtools__msg_notice "Found mygsl $(yyy-config --version) !"
-    # fi
+    which gsl-config > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+    	missing_material="${missing_material}GSL "
+    	pkgtools__msg_warning "Cannot find GSL !"
+    else
+    	pkgtools__msg_notice "Found GSL $(gsl-config --version) !"
+    fi
+
+    which root-config > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+    	missing_material="${missing_material}Root "
+    	pkgtools__msg_warning "Cannot find Root !"
+    else
+    	pkgtools__msg_notice "Found Root $(root-config --version) !"
+    fi
+
+    which cmake > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+    	missing_material="${missing_material}CMake "
+    	pkgtools__msg_warning "Cannot find CMake !"
+    else
+    	pkgtools__msg_notice "Found CMake $(cmake --version) !"
+    fi
 
     which doxygen > /dev/null 2>&1
     if [ $? -ne 0 ]; then
@@ -746,7 +762,7 @@ function do_uninstall ()
 	    pkgtools__msg_error "No installation prefix could be extracted from CMake build directory !"
 	    __pkgtools__at_function_exit
 	    return 1
- 	fi 
+ 	fi
 
 	if [ -d ${the_install_prefix} ]; then
 	    test -w ${the_install_prefix}

@@ -1,14 +1,12 @@
-// mygsl::multiparameter_system.h
+// multiparameter_system.h
 
-#ifndef __mygsl__multiparameter_system_h
-#define __mygsl__multiparameter_system_h 1
+#ifndef MYGSL_MULTIPARAMETER_SYSTEM_H_
+#define MYGSL_MULTIPARAMETER_SYSTEM_H_ 1
 
 #include <iostream>
 #include <vector>
 
 #include <mygsl/param_entry.h>
-
-//using   namespace std;
 
 namespace mygsl {
 
@@ -16,17 +14,7 @@ namespace mygsl {
     {
     public:
 
-      typedef std::vector<param_entry *> params_col;
-
-    private:
-
-      bool       _lock_params_;
-      params_col _params_;
-      params_col _free_params_;
-      params_col _auto_params_;
-      params_col _const_params_;
-
-    public:
+      typedef std::vector<param_entry *> params_col_type;
 
       bool is_lock_params () const;
 
@@ -65,13 +53,13 @@ namespace mygsl {
       param_entry & get_auto_param (int i_);
 
       void add_param (const param_entry & pe_, const std::string & comment_ = "");
-      
+
       multiparameter_system ();
 
       virtual ~multiparameter_system ();
-      
-      void print (std::ostream & out_ = std::clog, 
-		  const std::string & title_ = "Multi-parameter system", 
+
+      void print (std::ostream & out_ = std::clog,
+		  const std::string & title_ = "Multi-parameter system",
 		  const std::string & indent_ = "") const;
 
       void print_line (std::ostream & out_ = std::clog) const;
@@ -93,10 +81,10 @@ namespace mygsl {
       virtual void compute_automatic_params ();
 
       /* Any sub-class inherited from the 'multiparameter_system'
-       * class must implement the virtual 'compute_automatic_params' 
-       * method in order to set valid values to the parameters marked 
+       * class must implement the virtual 'compute_automatic_params'
+       * method in order to set valid values to the parameters marked
        * as 'automatic'.
-       * 
+       *
        * At least these automatic parameters should invoke
        * the 'set_auto_computed (true)' or the 'set_value (XXX)' methods
        *
@@ -117,6 +105,14 @@ namespace mygsl {
        *
        */
 
+    private:
+
+      bool            _lock_params_;
+      params_col_type _params_;
+      params_col_type _free_params_;
+      params_col_type _auto_params_;
+      params_col_type _const_params_;
+
     };
 
   struct multiparameter_system_test : public multiparameter_system
@@ -134,6 +130,6 @@ namespace mygsl {
 
 } // namespace mygsl
 
-#endif // __mygsl__multiparameter_system_h
+#endif // MYGSL_MULTIPARAMETER_SYSTEM_H_
 
-// end of mygsl::multiparameter_system.h
+// end of multiparameter_system.h

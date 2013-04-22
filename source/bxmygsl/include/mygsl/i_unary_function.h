@@ -1,8 +1,8 @@
-// -*- mode:c++; -*- 
-// i_function.h
+// -*- mode:c++; -*-
+// i_unary_function.h
 
-#ifndef MYGSL_I_FUNCTION_H_ 
-#define MYGSL_I_FUNCTION_H_ 1
+#ifndef MYGSL_I_UNARY_FUNCTION_H_
+#define MYGSL_I_UNARY_FUNCTION_H_ 1
 
 #include <iostream>
 #include <limits>
@@ -17,18 +17,17 @@
 
 namespace mygsl {
 
-
   /// \brief Abstract interface for unary functions : R -> R
-  class i_unary_function : public std::unary_function<double,double> 
+  class i_unary_function : public std::unary_function<double,double>
   {
   public:
 
     static const double DEFAULT_EPSILON;
     static const double AUTO_EPSILON;
-    
+
     /// Typedef for a function C-style function :
     typedef double (*plain_function_type)(double);
-    
+
     /// Typedef for a function C-style function with anonymous parameters :
     typedef double (*plain_function_with_parameters_type)(double, void*);
 
@@ -48,7 +47,7 @@ namespace mygsl {
 
     /// Destructor
     virtual ~i_unary_function();
-    
+
     /// Check if the function has an explicit domain of definition (default: false)
     virtual bool has_explicit_domain_of_definition() const;
 
@@ -69,36 +68,36 @@ namespace mygsl {
 
     /// Check the minimum bound of the non-zero domain
     bool has_non_zero_domain_min() const;
-    
+
     /// The maximum bound of the non-zero domain (default is plus infinity)
     virtual double get_non_zero_domain_max() const;
-    
+
     /// Check the maximum bound of the non-zero domain
     bool has_non_zero_domain_max() const;
-    
+
     /// Check if a value is in the non-zero domain
     bool is_in_non_zero_domain(double x_) const;
-    
+
     /// Check if a value is in the zero domain
     bool is_in_zero_domain(double x_) const;
 
-    /// Standard C++ functor interface 
+    /// Standard C++ functor interface
     double operator() (double x_) const;
 
     /// Write the (x,y=f(x)) value pairs in an ASCII stream :
-    void write_ascii(std::ostream & fout_, 
-                     double min_, double max_, unsigned int nsamples_, 
+    void write_ascii(std::ostream & fout_,
+                     double min_, double max_, unsigned int nsamples_,
                      int x_precision_ = 16,
                      int fx_precision_ = 16,
                      uint32_t options_ = wo_default) const;
 
     /// Write the (x,y=f(x)) value pairs in an ASCII file (typical Gnuplot input) :
-    void write_ascii_file(const std::string & filename_, 
+    void write_ascii_file(const std::string & filename_,
                           double min_, double max_, unsigned int nsamples_,
                           int x_precision_ = 16,
                           int fx_precision_ = 16,
                           uint32_t options_ = wo_default) const;
-     
+
     /// A generic static function to feed the GSL gsl_function interface:
     static double g_function(double x_, void * functor_);
 
@@ -116,7 +115,7 @@ namespace mygsl {
   private :
 
     double _epsilon_;
-    
+
   };
 
   class plain_function_wrapper : public i_unary_function
@@ -160,7 +159,7 @@ namespace mygsl {
   protected:
 
     virtual double _eval(double x_) const;
-    
+
   private:
 
     const i_unary_function * _functor_;

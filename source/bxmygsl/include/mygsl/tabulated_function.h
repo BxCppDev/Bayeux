@@ -1,16 +1,16 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* tabulated_function.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2007-12-07
- * Last modified: 2007-12-07
- * 
- * License: 
- * 
- * 
- * Description: 
+ * Last modified: 2013-04-23
+ *
+ * License:
+ *
+ *
+ * Description:
  *   Tabulated function
- * History: 
- * 
+ * History:
+ *
  */
 
 #ifndef MYGSL_TABULATED_FUNCTION_H_
@@ -26,7 +26,7 @@ namespace mygsl {
 
   class tabulated_function : public i_unary_function {
   public:
-    typedef std::map<double,double> points_map_t;
+    typedef std::map<double,double> points_map_type;
 
     static const std::string LINEAR_INTERP_NAME;
     static const std::string POLYNOMIAL_INTERP_NAME;
@@ -52,16 +52,16 @@ namespace mygsl {
     tabulated_function(const tabulated_function& tab_func_);
 
     virtual ~tabulated_function();
- 
+
     tabulated_function& operator=(const tabulated_function& tab_func_);
-  
+
     bool is_verbose() const;
     void set_verbose(bool v_ = true);
     bool is_valid(double x_) const;
 
     const std::string& interpolator_name() const;
 
-    const points_map_t& points() const;
+    const points_map_type& points() const;
 
     static const std::string& default_interpolator_name();
 
@@ -80,7 +80,7 @@ namespace mygsl {
     void relock_table(const std::string& interp_name_ = "");
 
     void add_point(double x_, double y_, bool lock_after_ = false);
- 
+
     double x_min() const;
 
     double x_max() const;
@@ -91,13 +91,13 @@ namespace mygsl {
 
     virtual void tabfunc_store(std::ostream& out_, void * context_ = 0) const;
 
-    void print_points(std::ostream& out_, 
+    void print_points(std::ostream& out_,
                       const std::string& header_comment_ = "",
                       const std::string& footer_comment_ = "") const;
   protected:
-  
+
     virtual double _eval(double x_) const;
-  
+
   private:
     struct tabfunc_impl;
     tabfunc_impl *pImpl;

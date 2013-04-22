@@ -32,7 +32,7 @@ namespace mygsl {
     bool             _verbose_;
     bool             _table_locked_;
     std::string      _interpolator_name_;
-    tabulated_function::points_map_t _points_;
+    tabulated_function::points_map_type _points_;
     gsl_spline       *_gs_;
     gsl_interp_accel *_giacc_;
     double           _x_min_;
@@ -46,8 +46,8 @@ namespace mygsl {
 
   bool tabulated_function::is_in_domain_of_definition(double x_) const
   {
-    if (x_ < x_min()) return false; 
-    if (x_ > x_max()) return false; 
+    if (x_ < x_min()) return false;
+    if (x_ > x_max()) return false;
     return true;
   }
 
@@ -82,7 +82,7 @@ namespace mygsl {
     pImpl->_points_ = tab_func_.pImpl->_points_;
     if (tab_func_.is_table_locked()) {
       lock_table();
-    }    
+    }
     return *this;
   }
 
@@ -104,7 +104,7 @@ namespace mygsl {
     return pImpl->_interpolator_name_;
   }
 
-  const tabulated_function::points_map_t& tabulated_function::points() const {
+  const tabulated_function::points_map_type& tabulated_function::points() const {
     return pImpl->_points_;
   }
 
@@ -123,7 +123,7 @@ namespace mygsl {
   }
 
   void tabulated_function::scale(double s_) {
-    for (points_map_t::iterator i = pImpl->_points_.begin();
+    for (points_map_type::iterator i = pImpl->_points_.begin();
          i != pImpl->_points_.end();
          i++) {
       i->second *= s_;
@@ -140,22 +140,22 @@ namespace mygsl {
 
   void tabulated_function::lock_table(const std::string& interp_name_) {
     if (is_table_locked()) unlock_table();
-  
+
     if (!interp_name_.empty()) {
       if (g_debug) {
-        std::cerr << "DEBUG: tabulated_function::lock_table: interpolator name='" 
+        std::cerr << "DEBUG: tabulated_function::lock_table: interpolator name='"
                   << interp_name_ << "'" << std::endl;
       }
       pImpl->_interpolator_name_ = interp_name_;
     }
     size_t npoints = pImpl->_points_.size();
     if (g_debug) {
-      std::cerr << "DEBUG: tabulated_function::lock_table: npoints='" 
+      std::cerr << "DEBUG: tabulated_function::lock_table: npoints='"
                 << npoints << "'" << std::endl;
     }
 
     if (npoints == 0) return;
-  
+
     bool polynomial_alert = false;
     size_t polynomial_alert_max_points = 4;
     const gsl_interp_type *git = 0;
@@ -163,12 +163,12 @@ namespace mygsl {
       std::ostringstream message;
       message << "tabulated_function::lock_table: "
               << "Interpolator '"
-              << pImpl->_interpolator_name_ 
+              << pImpl->_interpolator_name_
               << "' is not supported!";
       throw std::logic_error(message.str());
     } else {
       if (g_debug) {
-        std::cerr << "DEBUG: tabulated_function::lock_table: name='" 
+        std::cerr << "DEBUG: tabulated_function::lock_table: name='"
                   << pImpl->_interpolator_name_ << "'" << std::endl;
       }
       if (pImpl->_interpolator_name_ == LINEAR_INTERP_NAME) {
@@ -197,11 +197,11 @@ namespace mygsl {
     std::string name = gsl_spline_name(pImpl->_gs_);
 
     if (g_debug) {
-      std::cerr << "DEBUG: tabulated_function::lock_table: #points=" 
+      std::cerr << "DEBUG: tabulated_function::lock_table: #points="
                 << npoints << "" << std::endl;
-      std::cerr << "DEBUG: tabulated_function::lock_table: min_size=" 
+      std::cerr << "DEBUG: tabulated_function::lock_table: min_size="
                 << min_size << "" << std::endl;
-      std::cerr << "DEBUG: tabulated_function::lock_table: name='" 
+      std::cerr << "DEBUG: tabulated_function::lock_table: name='"
                 << name << "'" << std::endl;
     }
 
@@ -209,7 +209,7 @@ namespace mygsl {
       std::ostringstream message;
       message << "tabulated_function::lock_table: "
               << "Not enough data points for '"
-              << name 
+              << name
               << "' interpolator!";
       if (pImpl->_gs_ != 0) gsl_spline_free(pImpl->_gs_);
       pImpl->_gs_ = 0;
@@ -220,7 +220,7 @@ namespace mygsl {
       std::ostringstream message;
       message << "tabulated_function::lock_table: "
               << "Polynomial interpolation scheme uses a too large data set with more than "
-              << polynomial_alert_max_points 
+              << polynomial_alert_max_points
               << " points!";
       if (is_verbose()) std::clog << "WARNING: " << message.str() << endl;
     }
@@ -231,7 +231,7 @@ namespace mygsl {
     double *y_tmp = new double[npoints];
 
     int bin(0);
-    for (points_map_t::const_iterator i = pImpl->_points_.begin();
+    for (points_map_type::const_iterator i = pImpl->_points_.begin();
          i != pImpl->_points_.end();
          i++) {
       double x, y;
@@ -240,7 +240,7 @@ namespace mygsl {
       if (pImpl->_x_max_ < pImpl->_x_min_) {
         pImpl->_x_min_ = x;
         pImpl->_x_max_ = x;
-      } else 
+      } else
         {
           if (x > pImpl->_x_max_) pImpl->_x_max_ = x;
           if (x < pImpl->_x_min_) pImpl->_x_min_ = x;
@@ -248,7 +248,7 @@ namespace mygsl {
       x_tmp[bin] = i->first;
       y_tmp[bin] = i->second;
       bin++;
-    } 
+    }
 
     gsl_spline_init(pImpl->_gs_, x_tmp, y_tmp, npoints);
 
@@ -284,7 +284,7 @@ namespace mygsl {
   void tabulated_function::add_point(double x_, double y_, bool lock_after_) {
     bool local_debug = g_debug;
     if (local_debug) {
-      std::cerr << "DEBUG: tabulated_function::add_point: " 
+      std::cerr << "DEBUG: tabulated_function::add_point: "
                 << " (" << x_ << ", " << y_ << ")" << std::endl;
     }
     if (is_table_locked()) unlock_table();
@@ -347,29 +347,29 @@ namespace mygsl {
     lock_table(interpolator_name);
   }
 
-  void tabulated_function::tabfunc_store(std::ostream& out_, 
+  void tabulated_function::tabfunc_store(std::ostream& out_,
                                          void *context_) const {
     out_ << pImpl->_interpolator_name_ << ' ';
     out_ << pImpl->_points_.size() << std::endl;
-    for (points_map_t::const_iterator i = pImpl->_points_.begin();
+    for (points_map_type::const_iterator i = pImpl->_points_.begin();
          i != pImpl->_points_.end();
          ++i) {
       out_ << i->first << ' ' << i->second << ' ';
-    } 
+    }
   }
 
-  void tabulated_function::print_points(std::ostream& out_, 
-                                        const std::string& header_comment_, 
-                                        const std::string& footer_comment_  
+  void tabulated_function::print_points(std::ostream& out_,
+                                        const std::string& header_comment_,
+                                        const std::string& footer_comment_
                                         ) const {
     if (!header_comment_.empty()) {
       out_ << "# " << header_comment_ << std::endl;
     }
-    for (points_map_t::const_iterator i = pImpl->_points_.begin();
+    for (points_map_type::const_iterator i = pImpl->_points_.begin();
          i != pImpl->_points_.end();
          ++i) {
       out_ << i->first << ' ' << i->second << std::endl;
-    } 
+    }
     if (!footer_comment_.empty()) {
       out_ << "# " << footer_comment_ << std::endl;
     }

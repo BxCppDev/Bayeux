@@ -1,4 +1,4 @@
-// mygsl::multiparameter_system.cc 
+// multiparameter_system.cc
 
 #include <mygsl/multiparameter_system.h>
 
@@ -32,22 +32,22 @@ namespace mygsl {
   {
     return _lock_params_;
   }
-  
+
   size_t multiparameter_system::get_number_of_params () const
   {
     return _params_.size ();
   }
-  
+
   size_t multiparameter_system::get_number_of_free_params () const
   {
     return _free_params_.size ();
   }
-  
+
   size_t multiparameter_system::get_number_of_auto_params () const
   {
     return _auto_params_.size ();
   }
-  
+
   size_t multiparameter_system::get_number_of_const_params () const
   {
     return _const_params_.size ();
@@ -59,10 +59,10 @@ namespace mygsl {
     for (int i = 0; i < _auto_params_.size (); i++)
       {
         /*
-        cerr << "DEVEL: multiparameter_system::init: " 
-             << "check wheter automatic parameter '" 
-             << _auto_params_[i]->get_name ()
-             << "' has been computed..." << endl;
+          cerr << "DEVEL: multiparameter_system::init: "
+          << "check wheter automatic parameter '"
+          << _auto_params_[i]->get_name ()
+          << "' has been computed..." << endl;
         */
         if (! _auto_params_[i]->is_auto_computed ())
           {
@@ -84,7 +84,7 @@ namespace mygsl {
              << "entering..."
              << endl;
       }
-    if (_lock_params_) 
+    if (_lock_params_)
       {
         unlock_params ();
       }
@@ -102,7 +102,7 @@ namespace mygsl {
         clog << "DEVEL: multiparameter_system::reset: "
              << "done."
              << endl;
-        
+
         clog << "DEVEL: multiparameter_system::reset: "
              << "deleting params..."
              << endl;
@@ -114,7 +114,7 @@ namespace mygsl {
             delete _params_[i];
           }
         _params_[i] = 0;
-      }    
+      }
     if (devel)
       {
         clog << "DEVEL: multiparameter_system::reset: "
@@ -126,35 +126,35 @@ namespace mygsl {
 
   void multiparameter_system::lock_params ()
   {
-    if (_lock_params_) 
+    if (_lock_params_)
       {
         unlock_params ();
-      } 
+      }
     compute_automatic_params ();
-    _lock_params_ = true;       
+    _lock_params_ = true;
   }
 
   void multiparameter_system::unlock_params ()
   {
     _lock_params_ = false;
   }
-  
+
   bool multiparameter_system::has_param_with_name (const string & name_) const
   {
-    return find_if (_params_.begin (), 
-                    _params_.end (), 
+    return find_if (_params_.begin (),
+                    _params_.end (),
                     param_ptr_has_name (name_)) != _params_.end ();
   }
 
   const param_entry & multiparameter_system::get_param_by_name (const string & name_) const
   {
-    params_col::const_iterator found = find_if (_params_.begin (), 
-                                _params_.end (), 
-                                param_ptr_has_name (name_));
+    params_col_type::const_iterator found = find_if (_params_.begin (),
+                                                     _params_.end (),
+                                                     param_ptr_has_name (name_));
     if (found == _params_.end ())
       {
         ostringstream message;
-        message << "multiparameter_system::get_param_by_name: No parameter named '" << name_ << "'!"; 
+        message << "multiparameter_system::get_param_by_name: No parameter named '" << name_ << "'!";
         throw runtime_error (message.str ());
       }
     return **found;
@@ -162,13 +162,13 @@ namespace mygsl {
 
   param_entry & multiparameter_system::get_param_by_name (const string & name_)
   {
-    params_col::iterator found = find_if (_params_.begin (), 
-                                _params_.end (), 
-                                param_ptr_has_name (name_));
+    params_col_type::iterator found = find_if (_params_.begin (),
+                                               _params_.end (),
+                                               param_ptr_has_name (name_));
     if (found == _params_.end ())
       {
         ostringstream message;
-        message << "multiparameter_system::get_param_by_name: No parameter named '" << name_ << "'!"; 
+        message << "multiparameter_system::get_param_by_name: No parameter named '" << name_ << "'!";
         throw runtime_error (message.str ());
       }
     return **found;
@@ -207,21 +207,21 @@ namespace mygsl {
   void multiparameter_system::add_param (const param_entry & pe_, const string & comment_)
   {
     bool devel = false;
-    if (is_lock_params ()) 
+    if (is_lock_params ())
       {
         std::ostringstream message;
         message << "multiparameter_system::add_param: ";
         message << "system is locked!";
-        throw std::runtime_error (message.str ());            
+        throw std::runtime_error (message.str ());
       }
-    if (std::find_if (_params_.begin (), 
-                      _params_.end (), 
-                      param_ptr_has_name (pe_.get_name ())) != _params_.end ()) 
+    if (std::find_if (_params_.begin (),
+                      _params_.end (),
+                      param_ptr_has_name (pe_.get_name ())) != _params_.end ())
       {
         std::ostringstream message;
         message << "multiparameter_system::add_param: ";
         message << "parameter '" << pe_.get_name () << "' already exist!";
-        throw std::runtime_error (message.str ());       
+        throw std::runtime_error (message.str ());
       }
 
     if (devel) pe_.print (clog, "multiparameter_system::add_param: New param", "DEVEL: ");
@@ -230,18 +230,18 @@ namespace mygsl {
     if (devel) new_pe->print (clog, "multiparameter_system::add_param: New entry", "DEVEL: ");
     _params_.push_back (new_pe);
     if (! comment_.empty ())new_pe->set_comment (comment_);
-    params_col::reverse_iterator last = _params_.rbegin ();
+    params_col_type::reverse_iterator last = _params_.rbegin ();
     //clog << "DEVEL: last_pe= " << last  << endl;
 
-    if (devel) 
+    if (devel)
       {
         for (int i = 0; i < _params_.size (); i++)
           {
             _params_[i]->print (clog, "multiparameter_system::add_param: List of params", "DEVEL: ");
           }
       }
-    param_entry * last_pe = *last; 
-    if (devel) 
+    param_entry * last_pe = *last;
+    if (devel)
       {
         last_pe->print (clog, "multiparameter_system::add_param: Last entry: ", "DEVEL: ");
         clog << "DEVEL: last_pe= " << last_pe << endl;
@@ -270,7 +270,7 @@ namespace mygsl {
     if (get_number_of_auto_params () > 0)
       {
         throw runtime_error ("multiparameter_system::compute_automatic_params: Not implemented! Please overload this virtual method for your own inherited class!");
-      }      
+      }
   }
 
   // ctor:
@@ -292,9 +292,9 @@ namespace mygsl {
         out_ << _params_[i]->get_value () << ' ';
       }
   }
-      
-  void multiparameter_system::print (std::ostream & out_, 
-                                     const string & title_, 
+
+  void multiparameter_system::print (std::ostream & out_,
+                                     const string & title_,
                                      const string & indent_) const
   {
     string indent = indent_;
@@ -316,7 +316,7 @@ namespace mygsl {
       {
         string atag = tag;
         string atag2 = stag;
-        if (i == (_params_.size () - 1)) 
+        if (i == (_params_.size () - 1))
           {
             atag  = ltag;
             atag2 = sltag;
@@ -325,7 +325,7 @@ namespace mygsl {
         title_ss << atag << "Parameter '" << _params_[i]->get_name () << "'";
         indent_ss << indent << sltag << atag2; // << sltag << atag2;
         out_ << indent << sltag << title_ss.str () << ":" << endl;
-        _params_[i]->print (out_, "", indent_ss.str ()); 
+        _params_[i]->print (out_, "", indent_ss.str ());
       }
   }
 
@@ -352,45 +352,45 @@ namespace mygsl {
     load_parameters (f);
     f.close ();
   }
- 
+
   void multiparameter_system::load_parameters (std::istream & in_ )
   {
-    bool local_debug = false; 
-    //local_debug = true; 
-    if (local_debug) clog << "DEVEL: multiparameter_system::load_parameters: entering..." << endl; 
+    bool local_debug = false;
+    //local_debug = true;
+    if (local_debug) clog << "DEVEL: multiparameter_system::load_parameters: entering..." << endl;
     this->unlock_params ();
-    while (in_) 
-      { 
-        string line; 
+    while (in_)
+      {
+        string line;
         getline (in_, line);
-        if (in_.eof ()) 
-          { 
-            clog << "NOTICE: multiparameter_system::load_parameters: " 
+        if (in_.eof ())
+          {
+            clog << "NOTICE: multiparameter_system::load_parameters: "
                  << "End of stream has been reached." << endl;
             break;
-          } 
+          }
         {
-          istringstream line_iss (line); 
+          istringstream line_iss (line);
           string word;
           line_iss >> word;
           if (word.empty ())
-            { 
+            {
               if (local_debug) clog << "DEVEL: multiparameter_system::load_parameters: skipping blank line..." << endl;
-              continue; 
+              continue;
             }
-          if (word[0] == '#') 
-            { 
+          if (word[0] == '#')
+            {
               if (local_debug) clog << "DEVEL: multiparameter_system::load_parameters: skipping commented line..." << endl;
               continue;
             }
-        } 
+        }
         if (local_debug) clog << "DEVEL: multiparameter_system::load_parameters: parsing line '" << line << "'" << endl;
-        
-        
-        istringstream line_iss (line); 
+
+
+        istringstream line_iss (line);
         string name, type, comment;
         double min, max, value, step;
-       
+
         string token;
         getline (line_iss, token, ':');
         if (line_iss)
@@ -402,7 +402,7 @@ namespace mygsl {
                 throw runtime_error (" multiparameter_system::load_parameters: Invalid format!");
               }
           }
-        
+
         getline (line_iss, token, ':');
         if (line_iss)
           {
@@ -412,14 +412,14 @@ namespace mygsl {
               {
                 throw runtime_error (" multiparameter_system::load_parameters: Invalid format!");
               }
-            if ((type != param_entry::FREE_LABEL) 
-                && (type != param_entry::AUTO_LABEL) 
+            if ((type != param_entry::FREE_LABEL)
+                && (type != param_entry::AUTO_LABEL)
                 && (type != param_entry::CONST_LABEL))
               {
                 throw runtime_error (" multiparameter_system::load_parameters: Invalid type!");
               }
           }
-        
+
         getline (line_iss, token, ':');
         if (line_iss)
           {
@@ -430,7 +430,7 @@ namespace mygsl {
                 min = param_entry::NO_MIN_VALUE;
               }
           }
-        
+
         getline (line_iss, token, ':');
         if (line_iss)
           {
@@ -441,7 +441,7 @@ namespace mygsl {
                 max = param_entry::NO_MAX_VALUE;
               }
           }
-        
+
         getline (line_iss, token, ':');
         if (line_iss)
           {
@@ -452,7 +452,7 @@ namespace mygsl {
                 value = param_entry::NO_VALUE;
               }
           }
-        
+
         getline (line_iss, token, ':');
         if (line_iss)
           {
@@ -463,14 +463,14 @@ namespace mygsl {
                 step = param_entry::AUTO_STEP;
               }
           }
-        
+
         getline (line_iss, comment);
         if (! line_iss)
           {
             comment = "";
           }
 
-        if (local_debug) 
+        if (local_debug)
           {
             clog << "DEVEL: multiparameter_system::load_parameters: " << endl;
             clog << "|-- name:    " << name    << endl;
@@ -486,45 +486,45 @@ namespace mygsl {
 
         if (type == param_entry::CONST_LABEL)
           {
-                add_param (pe::make_const (name, 
-                                           value),
-                           comment);
+            add_param (pe::make_const (name,
+                                       value),
+                       comment);
           }
-        
+
         if (type == param_entry::FREE_LABEL)
           {
             if (isfinite (min) && isfinite (max))
               {
-                add_param (pe::make_free_range (name, 
-                                                min, 
-                                                max, 
-                                                value, 
+                add_param (pe::make_free_range (name,
+                                                min,
+                                                max,
+                                                value,
                                                 step),
                            comment);
 
-              } 
+              }
             else if (isfinite (min) && ! isfinite (max))
               {
-                add_param (pe::make_free_min (name, 
-                                              min, 
-                                              value, 
-                                              step),
-                           comment);
-
-              } 
-            else if (! isfinite (min) && isfinite (max))
-              {
-                add_param (pe::make_free_min (name, 
-                                              max, 
-                                              value, 
+                add_param (pe::make_free_min (name,
+                                              min,
+                                              value,
                                               step),
                            comment);
 
               }
-            else 
+            else if (! isfinite (min) && isfinite (max))
               {
-                add_param (pe::make_free (name, 
-                                          value, 
+                add_param (pe::make_free_min (name,
+                                              max,
+                                              value,
+                                              step),
+                           comment);
+
+              }
+            else
+              {
+                add_param (pe::make_free (name,
+                                          value,
                                           step),
                            comment);
               }
@@ -534,43 +534,43 @@ namespace mygsl {
           {
             if (isfinite (min) && isfinite (max))
               {
-                add_param (pe::make_auto_range (name, 
-                                                min, 
-                                                max, 
+                add_param (pe::make_auto_range (name,
+                                                min,
+                                                max,
                                                 step),
                            comment);
 
-              } 
+              }
             else if (isfinite (min) && ! isfinite (max))
               {
-                add_param (pe::make_auto_min (name, 
-                                              min, 
-                                              step),
-                           comment);
-
-              } 
-            else if (! isfinite (min) && isfinite (max))
-              {
-                add_param (pe::make_auto_min (name, 
-                                              max, 
+                add_param (pe::make_auto_min (name,
+                                              min,
                                               step),
                            comment);
 
               }
-            else 
+            else if (! isfinite (min) && isfinite (max))
               {
-                add_param (pe::make_auto (name, 
+                add_param (pe::make_auto_min (name,
+                                              max,
+                                              step),
+                           comment);
+
+              }
+            else
+              {
+                add_param (pe::make_auto (name,
                                           step),
                            comment);
               }
           }
-       } 
+      }
     this->lock_params ();
     if (local_debug) clog << "DEVEL: multiparameter_system::load_parameters: exiting." << endl;
-  } 
+  }
 
   void multiparameter_system::store_parameters (const std::string & filename_) const
-  { 
+  {
     std::ofstream f (filename_.c_str ());
     if (! f)
       {
@@ -583,7 +583,7 @@ namespace mygsl {
     f.width (12);
     f.setf (ios::left);
     f << "# Name";
-      
+
     f << " : " ;
 
     f.width (6);
@@ -595,31 +595,31 @@ namespace mygsl {
     f << "Minimum";
 
     f << " : " ;
-    
+
     f.width (10);
     f << "Maximum";
 
     f << " : " ;
-    
+
     f.width (10);
     f << "Value";
 
     f << " : " ;
-    
+
     f.width (10);
     f << "Step";
 
     f << " : " ;
-    
+
     f.width (10);
     f << "Comment";
-    
+
     f << endl;
     store_parameters (f);
     f << "# mygsl::multiparameter_system: end of list." << endl;
     f.close ();
   }
-      
+
   void multiparameter_system::store_parameters (std::ostream & out_ ) const
   {
 
@@ -695,9 +695,8 @@ namespace mygsl {
 
         out_ << std::endl;
       }
-   
   }
 
 }
 
-// end of mygsl::multiparameter_system.cc
+// end of multiparameter_system.cc

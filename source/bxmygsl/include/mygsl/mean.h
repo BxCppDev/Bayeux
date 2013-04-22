@@ -1,27 +1,27 @@
-// -*- mode: c++; -*- 
-/* mygsl::mean.h
+// -*- mode: c++; -*-
+/* mean.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009-10-02
- * Last modified: 2009-10-02
- * 
- * License: 
- * 
- * Description: 
+ * Last modified: 2013-04-23
+ *
+ * License:
+ *
+ * Description:
  *
  *   A collection of algorithm to compute the mean of
  *   a list of numbers
  *
  */
 
-#ifndef __mygsl__mean_h
-#define __mygsl__mean_h 1
+#ifndef MYGSL_MEAN_H_
+#define MYGSL_MEAN_H_ 1
 
 #include <cstdlib>
 #include <boost/cstdint.hpp>
 
 namespace mygsl {
 
-  class arithmetic_mean 
+  class arithmetic_mean
     {
     public:
       bool is_valid () const;
@@ -41,7 +41,7 @@ namespace mygsl {
       double  _sum_of_squared_;
    };
 
-  class weighted_mean 
+  class weighted_mean
     {
     public:
       bool is_valid () const;
@@ -58,6 +58,6 @@ namespace mygsl {
 
 } // end of namespace mygsl
 
-#endif // __mygsl__mean_h
+#endif // MYGSL_MEAN_H_
 
-// end of mygsl::mean.h
+// end ofmean.h

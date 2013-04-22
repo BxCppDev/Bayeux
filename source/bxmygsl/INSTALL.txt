@@ -5,19 +5,16 @@ mygsl installation instructions:
 1 - Third-party software setup :
 --------------------------------
 
-Instructions to setup dependencies...
-
 mygsl depends on the following libraries and/or programs :
- - GSL the GNU scientific library
- - datatools
- 
+ - GSL the GNU scientific library (from Cadfael)
+ - datatools (from Bayeux)
 
 2- Plain CMake installation :
 -----------------------------
 
-Change to the mygsl base directory :
+Change to the mygsl source base directory :
 {{{
-bash$ cd <mygsl base dir>
+bash$ cd <mygsl_source_base_dir>
 }}}
 
 Create a 'build' directory :
@@ -33,6 +30,8 @@ Note: you must choose a directory where you have write access.
 bash$ cmake \
    -DCMAKE_INSTALL_PREFIX:PATH=${HOME}/software \
    -DCMAKE_BUILD_TYPE:STRING=Release \
+   -Ddatatools_DIR=<path_to_datatools_cmake_config_dir> \
+   -DCMAKE_MODULE_PATH=<path_to_find_gsl_file_dir> \
    ..
 }}}
 
@@ -45,7 +44,7 @@ This prints :
 
 -- Configuring done
 -- Generating done
--- Build files have been written to: <mygsl base dir>/build
+-- Build files have been written to: <mygsl_source_base_dir>/build
 }}}
 
 Build :
@@ -85,7 +84,7 @@ bash$ rm -fr build
 
 Change to the mygsl base directory :
 {{{
-bash$ cd <mygsl base dir>
+bash$ cd <mygsl_source_base_dir>
 }}}
 
 Getting help :
@@ -114,7 +113,7 @@ bash$ ./pkgtools.d/pkgtool reset
 }}}
 
 
-4 - Setup : 
+4 - Setup :
 -----------
 
 The following instructions applies to the bash shell.
@@ -134,10 +133,10 @@ NOTICE: do_mygsl_setup: Setup mygsl done.
 
 Use mygsl :
 {{{
-bash$ which mygsl-config 
+bash$ which mygsl-config
 /home/<login>/software/bin/mygsl-config
 bash$ mygsl-config --version
-0.1.0
+4.0.0
 bash$ mygsl-config --cflags
 ...
 bash$ mygsl-config --ldflags
@@ -146,9 +145,9 @@ bash$ mygsl-config --ldflags
 
 --
 François Mauger <mauger@lpccaen.in2p3.fr>
-Updated: 2012-01-26
+Updated: 2013-04-23
 
 
- 
+
 
 
