@@ -2,7 +2,7 @@
 /* manager.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-22
- * Last modified: 2013-02-23
+ * Last modified: 2013-04-22
  *
  * License:
  *
@@ -45,7 +45,7 @@ namespace materials {
     bool is_alias_allow_overload () const;
 
     void set_alias_allow_overload (bool aao_);
-    
+
     bool has_material(const std::string & entry_name_) const;
 
     bool is_alias(const std::string & entry_name_) const;
@@ -82,15 +82,15 @@ namespace materials {
 
   private:
 
-    bool               _debug_;
-    bool               _locked_;
-    bool               _alias_allow_overload_;
-    factory            _creator_;
-    isotope_dict_type  _isotopes_;
-    element_dict_type  _elements_;
-    material_dict_type _materials_;
-    std::list<std::string>  _ordered_materials_;
- 
+    bool                   _debug_; /// Debug flag
+    bool                   _locked_; /// Lock flag
+    bool                   _alias_allow_overload_; /// Flag to allow alias overloading
+    factory                _creator_; /// Embeded factory
+    isotope_dict_type      _isotopes_; /// Dictionnary of isotopes
+    element_dict_type      _elements_; /// Dictionnary of elements
+    material_dict_type     _materials_; /// Dictionnary of materials
+    std::list<std::string> _ordered_materials_; /// Ordered list of materials by name
+
   };
 
 } // end of namespace materials

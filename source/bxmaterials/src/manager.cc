@@ -482,15 +482,28 @@ namespace materials {
 // OCD support for class '::materials::manager' :
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::materials::manager,ocd_)
 {
-  ocd_.set_class_name ("materials::manager");
-  ocd_.set_class_description ("A manager for isotopes, elements and materials");
-  ocd_.set_class_library ("materials");
-  ocd_.set_class_documentation ("not documented yet");
+  ocd_.set_class_name("materials::manager");
+  ocd_.set_class_description("A manager for isotopes, elements and materials");
+  ocd_.set_class_library("materials");
+  ocd_.set_class_documentation("not documented yet");
 
-  ocd_.set_configuration_hints ("A materials manager is configured through a configuration file that  \n"
-                                "obeys the format of 'datatools::multi_properties' setup file.        \n"
-                                "Example :                                                            \n"
-                                "  |                                                                  \n"
+  ocd_.set_configuration_hints ("A materials manager is configured through a set of configuration      \n"
+                                "files that obeys the format of 'datatools::multi_properties' setup    \n"
+                                "file.                                                                 \n"
+                                "The method used to instantiate isotopes, elements and materials       \n"
+                                "objects is :                                                          \n"
+                                "   void manager::load (const datatools::multi_properties & config_);  \n"
+                                "Each file contains a list of records that describe isotopes, elements,\n"
+                                "materials and possibly material aliases.                              \n"
+                                "The order used to load the files is important because some materials  \n"
+                                "may depend on some elements or other materials, elements themselves   \n"
+                                "may depend on isotopes. Also material aliases depends on existing     \n"
+                                "materials. It is thus recommended to load the files in such a way     \n"
+                                "isotopes, elements, then materials than material aliases are          \n"
+                                "described, possibly from separated files for clarity and reusability. \n"
+                                "                                                                      \n"
+                                "Here is an example of a single file that contains all kind of objects:\n"
+                                "  |                                                                   \n"
                                 "  | #@key_label   \"name\"                                           \n"
                                 "  | #@meta_label  \"type\"                                           \n"
                                 "  |                                                                  \n"
@@ -544,17 +557,17 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::materials::manager,ocd_)
                                 "  | temperature.unit : string = \"kelvin\"                           \n"
                                 "  | pressure         : real   = 1.                                   \n"
                                 "  | pressure.unit    : string = \"bar\"                              \n"
-                                "  | state            : string = \"liquid\"                                \n"
-                                "  | composition.mode            : string       = \"number_of_atoms\"      \n"
-                                "  | composition.names           : string  [2]  = \"Hydrogen\" \"Oxygen\"  \n"
-                                "  | composition.number_of_atoms : integer [2]  =      2        1          \n"
-                                "  | mpt.op.pp        : real [5] = 1.0    2.0  3.0   5.0  10.0             \n"
-                                "  | mpt.op.rindex    : real [5] = 1.33  1.34  1.35  1.40  1.42            \n"
-                                "  |                                                                       \n"
-                                "  | [name=\"Fluid\" type=\"alias\"]                                  \n"
-                                "  | #@config An material alias for water                             \n"
-                                "  | material : string = \"Water\"                                    \n"
-                                "  |                                                                  \n"
+                                "  | state            : string = \"liquid\"                              \n"
+                                "  | composition.mode            : string       = \"number_of_atoms\"    \n"
+                                "  | composition.names           : string  [2]  = \"Hydrogen\" \"Oxygen\"\n"
+                                "  | composition.number_of_atoms : integer [2]  =      2        1        \n"
+                                "  | mpt.op.pp        : real [5] = 1.0    2.0  3.0   5.0  10.0           \n"
+                                "  | mpt.op.rindex    : real [5] = 1.33  1.34  1.35  1.40  1.42          \n"
+                                "  |                                                                     \n"
+                                "  | [name=\"Fluid\" type=\"alias\"]                                     \n"
+                                "  | #@config An material alias for water                                \n"
+                                "  | material : string = \"Water\"                                       \n"
+                                "  |                                                                     \n"
                                 );
 
   ocd_.set_validation_support(false);

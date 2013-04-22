@@ -1,5 +1,5 @@
 2010-03-06 Benoit Guillon <guillon@lpccaen.in2p3.fr>
-        * creation of the materials package 
+        * creation of the materials package
 2012-01-09 François Mauger <mauger@lpccaen.in2p3.fr>
         * CMake: new built system
 2012-03-20 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
@@ -8,7 +8,7 @@
         * depends on geomtools 3.1
 2012-04-04 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* resources/data/std_materials.def: add "std::pfte"
-	Polytetrafluoroethylene (C2F4, PFTE) 
+	Polytetrafluoroethylene (C2F4, PFTE)
 2012-11-04 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* support for "mpt." prefixed properties (Material Properties Table) in factory class
 	* version: prepare tag 3.1.0 in trunk
@@ -28,3 +28,4 @@
 	  * no alias of alias
 	  * no alias in material combined from material
 	  * option allowing alias overwriting from different setup files
+	- add OCD support

@@ -283,12 +283,12 @@ function do_check ()
 	pkgtools__msg_notice "Found datatools $(datatools-config --version) !"
     fi
 
-    which mygsl-config > /dev/null 2>&1
+    which cmake > /dev/null 2>&1
     if [ $? -ne 0 ]; then
-	missing_material="${missing_material}mygsl "
-	pkgtools__msg_warning "Cannot find mygsl !"
+	missing_material_alt="${missing_material_alt}CMake "
+	pkgtools__msg_warning "Cannot find CMake !"
     else
-	pkgtools__msg_notice "Found mygsl $(mygsl-config --version) !"
+	pkgtools__msg_notice "Found CMake $(cmake --version 2>&1) !"
     fi
 
     which doxygen > /dev/null 2>&1
@@ -328,7 +328,6 @@ function do_configure ()
     if [ ${bio_support} -eq 1 ]; then
 	with_bio=1 # default
     fi
-
 
     while [ -n "$1" ]; do
 	local option="$1"
