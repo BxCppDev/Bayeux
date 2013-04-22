@@ -1,7 +1,7 @@
 /* things_macros.h
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2012-03-31
- * Last modified : 2012-12-16
+ * Last modified : 2013-04-22
  */
 #ifndef DATATOOLS_THINGS_MACROS_H_
 #define DATATOOLS_THINGS_MACROS_H_
@@ -21,21 +21,24 @@
   (ThingsVar.has(BankName) && ThingsVar.is_a<BankType>(BankName))	\
   /**/
 
-
 #define DATATOOLS_THINGS_CONST_BANK(ThingsVar,BankName,BankType,BankVar) \
-  if (!ThingsVar.is_a<BankType>(BankName)) {				\
-    std::ostringstream message;						\
-    message << "No bank named '" << BankName << "' in '" << "ThingsVar" << "' !"; \
-    throw std::logic_error(message.str());				\
+  {									\
+    if (!ThingsVar.is_a<BankType>(BankName)) {				\
+      std::ostringstream message;					\
+      message << "No bank named '" << BankName << "' in '" << "ThingsVar" << "' !"; \
+      throw std::logic_error(message.str());				\
+    }									\
   }									\
-  const BankType& BankVar = ThingsVar.get<BankType>(BankName);		\
+  const BankType& BankVar = ThingsVar.get<BankType>(BankName);	\
   /**/
 
 #define DATATOOLS_THINGS_MUTABLE_BANK(ThingsVar,BankName,BankType,BankVar) \
-  if (!ThingsVar.is_a<BankType>(BankName)) {				\
-    std::ostringstream message;						\
-    message << "No bank named '" << BankName << "' in '" << "ThingsVar" << "' !"; \
-    throw std::logic_error(message.str());				\
+  {									\
+    if (!ThingsVar.is_a<BankType>(BankName)) {				\
+      std::ostringstream message;					\
+      message << "No bank named '" << BankName << "' in '" << "ThingsVar" << "' !"; \
+      throw std::logic_error(message.str());				\
+    }									\
   }									\
   BankType& BankVar = ThingsVar.grab<BankType>(BankName);		\
   /**/
