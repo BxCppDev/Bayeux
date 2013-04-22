@@ -27,7 +27,7 @@ project(materials)
 # - Versioning
 set(materials_VERSION_MAJOR 4)
 set(materials_VERSION_MINOR 0)
-set(materials_PATCH_VERSION 0)
+set(materials_PATCH_VERSION 1)
 set(materials_VERSION "${materials_VERSION_MAJOR}.${materials_VERSION_MINOR}.${materials_PATCH_VERSION}")
 math(EXPR _materials_VERSION_NUMERIC "${materials_VERSION_MAJOR}*100000+${materials_VERSION_MINOR}*100+${materials_PATCH_VERSION}")
 
@@ -48,14 +48,14 @@ endif()
 #-----------------------------------------------------------------------
 # Build options
 #
-option(MATERIALS_WITH_DEBUG "Build debug stuff" OFF) 
-option(MATERIALS_WITH_BIO  "Build auxiliary Boost I/O library" OFF) 
-option(MATERIALS_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" OFF) 
+option(MATERIALS_WITH_DEBUG "Build debug stuff" OFF)
+option(MATERIALS_WITH_BIO  "Build auxiliary Boost I/O library" OFF)
+option(MATERIALS_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" OFF)
 option(MATERIALS_WITH_DOC  "Build the materials documentation" ON)
-option(MATERIALS_WITH_TEST "Build the materials test suite"    ON) 
+option(MATERIALS_WITH_TEST "Build the materials test suite"    ON)
 option(MATERIALS_WITH_BASH_SETUP "Build the materials with Bash setup macro" ON)
 option(MATERIALS_WITH_GNUPLOT_DISPLAY  "Build the Gnuplot-based display tools" ON )
- 
+
 
 if (MATERIALS_WITH_DEBUG)
   set (MATERIALS_WITH_DEBUG 1)
@@ -77,7 +77,7 @@ find_package(datatools 5.0.0 REQUIRED)
 
 #-----------------------------------------------------------------------
 # On Apple, we fixup the install prefix to handle installing documentation,
-# support files and so on under the framework's "Resources" directory. 
+# support files and so on under the framework's "Resources" directory.
 # This follows the pattern used in CMake to fixup their app bundle
 # NB: THIS REQUIRES SOME FIXES IN CPACKAGING (see CMake's Qt dialog
 # packaging).
@@ -91,7 +91,7 @@ endif()
 #-----------------------------------------------------------------------
 # Build the submodules as required
 #
-add_subdirectory(src)   
+add_subdirectory(src)
 
 if(MATERIALS_WITH_DOC)
   set (MATERIALS_WITH_DOC 1)
@@ -102,7 +102,7 @@ endif()
 
 if(MATERIALS_WITH_TEST)
   set (MATERIALS_WITH_TEST 1)
-  enable_testing() 
+  enable_testing()
   add_subdirectory(testing)
 else()
   set (MATERIALS_WITH_TEST 0)
@@ -111,24 +111,24 @@ endif()
 # ----------------------------------------------------------------------------
 # Install resources :
 #
-set ( _materials_DATA_SCHEMA_FULL_LOCAL_PATH 
-      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/resources/data" 
-    ) 
+set ( _materials_DATA_SCHEMA_FULL_LOCAL_PATH
+      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/resources/data"
+    )
 
 install ( DIRECTORY ${PROJECT_SOURCE_DIR}/resources/data
           DESTINATION ${CMAKE_INSTALL_DATADIR}/resources
           FILE_PERMISSIONS OWNER_READ OWNER_WRITE
                            GROUP_READ GROUP_WRITE
                            WORLD_READ
-          DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE 
-                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE 
+          DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE
                                 WORLD_READ WORLD_EXECUTE
           PATTERN ".svn" EXCLUDE
          )
 
-set ( _materials_TESTING_FULL_LOCAL_PATH 
-      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/testing" 
-    ) 
+set ( _materials_TESTING_FULL_LOCAL_PATH
+      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/testing"
+    )
 message ( STATUS "${PROJECT_NAME} : materials testing full local path = '${_materials_TESTING_FULL_LOCAL_PATH}' " )
 
 install ( DIRECTORY ${PROJECT_SOURCE_DIR}/testing
@@ -136,8 +136,8 @@ install ( DIRECTORY ${PROJECT_SOURCE_DIR}/testing
           FILE_PERMISSIONS OWNER_READ OWNER_WRITE
                            GROUP_READ GROUP_WRITE
                            WORLD_READ
-          DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE 
-                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE 
+          DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE
                                 WORLD_READ WORLD_EXECUTE
           PATTERN 		".svn" EXCLUDE
           PATTERN "*~" EXCLUDE
