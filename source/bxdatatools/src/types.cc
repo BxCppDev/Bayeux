@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
 // types.cc
-// Ourselves 
+// Ourselves
 #include <datatools/types.h>
 
 #include <boost/scoped_ptr.hpp>
@@ -29,6 +29,16 @@ namespace datatools {
       = get_type_to_labels_map().left.find(type_);
     if (found == get_type_to_labels_map().left.end()) {
       return "?";
+    }
+    return found->second;
+  }
+
+  const int get_type_from_label(const std::string & label_)
+  {
+    const boost::bimap< int, std::string >::right_const_iterator found
+      = get_type_to_labels_map().right.find(label_);
+    if (found == get_type_to_labels_map().right.end()) {
+      return TYPE_NONE;
     }
     return found->second;
   }
