@@ -619,7 +619,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::materials::manager,ocd_)
                                 "  |                                                                     \n"
                                 );
 
-  ocd_.set_validation_support(false);
+  ocd_.set_validation_support(true);
   ocd_.lock();
   return;
 }
