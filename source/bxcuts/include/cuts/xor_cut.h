@@ -1,20 +1,20 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* xor_cut.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-18
- * Last modified: 2010-09-18
- * 
- * License: 
- * 
- * Description: 
+ * Last modified: 2013-04-22
+ *
+ * License:
+ *
+ * Description:
  *   XOR binary cut
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
-#ifndef _CUTS_XOR_CUT_H
-#define _CUTS_XOR_CUT_H 1
+#ifndef CUTS_XOR_CUT_H_
+#define CUTS_XOR_CUT_H_ 1
 
 #include <cuts/i_binary_cut.h>
 
@@ -23,8 +23,8 @@ namespace cuts {
   /// \brief The XOR binary cut
   class xor_cut : public i_binary_cut
   {
-  
-  public: 
+
+  public:
 
     // ctor:
     CUT_INTERFACE_NORESET_CTOR_DTOR (xor_cut);
@@ -38,6 +38,6 @@ namespace cuts {
 
 } // end of namespace cuts
 
-#endif // _CUTS_XOR_CUT_H
+#endif // CUTS_XOR_CUT_H_
 
 // end of xor_cut.h

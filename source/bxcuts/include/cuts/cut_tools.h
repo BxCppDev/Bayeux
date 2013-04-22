@@ -1,10 +1,10 @@
 /* cut_tools.h
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
- * Last modified : 2012-06-08
- * 
- * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ * Last modified : 2013-03-22
+ *
+ * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -17,21 +17,21 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
- * 
- * 
- * Description: 
+ *
+ *
+ * Description:
  *
  *   Typedefs for the cut factory/manager.
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
-#ifndef _CUTS_CUT_TOOLS_H
-#define _CUTS_CUT_TOOLS_H 1
+#ifndef CUTS_CUT_TOOLS_H_
+#define CUTS_CUT_TOOLS_H_ 1
 
 #include <iostream>
 #include <string>
@@ -53,7 +53,7 @@ namespace datatools {
 namespace cuts {
 
   class i_cut;
- 
+
   typedef std::map<std::string, i_cut *> cut_dict_type;
 
   typedef datatools::handle<i_cut> cut_handle_type;
@@ -64,10 +64,10 @@ namespace cuts {
    *
    *   It also contains additional setup/status informations.
    */
-  class cut_entry_type : public datatools::i_tree_dumpable 
+  class cut_entry_type : public datatools::i_tree_dumpable
   {
   public:
-    
+
     /// Status of the cut entry
     enum status_type
       {
@@ -75,10 +75,10 @@ namespace cuts {
         STATUS_CREATED     = datatools::bit_mask::bit00,
         STATUS_INITIALIZED = datatools::bit_mask::bit01,
       };
-    
+
     std::string                  cut_name;    //!< The name of the cut
     std::string                  cut_id;      //!< The ID (type) of the cut
-    datatools::properties cut_config;  //!< The configuration of the cut 
+    datatools::properties cut_config;  //!< The configuration of the cut
     uint32_t                     cut_status;  //!< The status of the cut
     cut_handle_type              cut_handle;  //!< The handle for the allocated cut
 
@@ -98,17 +98,17 @@ namespace cuts {
     void set_ptr (i_cut *);
 
     void set_cut_id (const std::string &);
-        
+
     bool has_manager () const;
 
     void set_manager (cut_manager &);
-      
+
     void set_blank ();
-         
+
     void set_created ();
-       
+
     void set_initialized ();
-       
+
     void set_uninitialized ();
 
     bool is_created () const;
@@ -122,7 +122,7 @@ namespace cuts {
     bool has_cut () const;
 
     const i_cut & get_cut () const;
- 
+
     i_cut & grab_cut ();
 
     const cut_handle_type & get_cut_handle () const;
@@ -132,7 +132,7 @@ namespace cuts {
     cut_handle_type & grab_initialized_cut_handle ();
 
     /// Smart print
-    virtual void tree_dump (std::ostream & out_         = std::clog, 
+    virtual void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
                             bool inherit_               = false) const;
@@ -141,20 +141,20 @@ namespace cuts {
 
     std::string                  _cut_name_;   /// Cut name
     std::string                  _cut_id_;     /// Cut class registration ID
-    datatools::properties        _cut_config_; /// The configuration of the cut 
+    datatools::properties        _cut_config_; /// The configuration of the cut
     uint32_t                     _cut_status_; /// The status of the cut
     cut_handle_type              _cut_handle_; /// The handle for the allocated service
     cut_manager *                _manager_;    /// Handle to the module manager
 
     friend class cut_manager;
-   
+
   };
-  
+
   typedef std::map<std::string, cut_entry_type> cut_handle_dict_type;
 
 } // end of cuts
 
-#endif // _CUTS_CUT_TOOLS_H
+#endif // CUTS_CUT_TOOLS_H_
 
 // end of cut_tools.h
 /*

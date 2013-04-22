@@ -1,20 +1,20 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* xnor_cut.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-18
- * Last modified: 2010-09-18
- * 
- * License: 
- * 
- * Description: 
+ * Last modified: 2013-04-éé
+ *
+ * License:
+ *
+ * Description:
  *   XNOR binary cut
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
-#ifndef _CUTS_XNOR_CUT_H
-#define _CUTS_XNOR_CUT_H 1
+#ifndef CUTS_XNOR_CUT_H_
+#define CUTS_XNOR_CUT_H_ 1
 
 #include <cuts/i_binary_cut.h>
 
@@ -23,8 +23,8 @@ namespace cuts {
   /// \brief The XNOR binary cut
   class xnor_cut : public i_binary_cut
   {
-  
-  public: 
+
+  public:
 
     CUT_INTERFACE_NORESET_CTOR_DTOR (xnor_cut);
 
@@ -35,6 +35,6 @@ namespace cuts {
 
 } // end of namespace cuts
 
-#endif // _CUTS_XNOR_CUT_H
+#endif // CUTS_XNOR_CUT_H_
 
 // end of xnor_cut.h

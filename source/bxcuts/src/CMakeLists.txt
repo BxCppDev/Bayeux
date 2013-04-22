@@ -26,7 +26,6 @@ include/cuts/and_cut.h
 include/cuts/cut_macros.h
 include/cuts/cut_manager.h
 include/cuts/cut_service.h
-include/cuts/cuts.h
 include/cuts/cut_tools.h
 include/cuts/i_binary_cut.h
 include/cuts/i_cut.h
@@ -72,7 +71,7 @@ set_source_files_properties(${cuts_eos_HEADERS}
 #     MACOSX_PACKAGE_LOCATION Headers/detail
 #   )
 
-# # We have to install the detail header modules separately if cuts 
+# # We have to install the detail header modules separately if cuts
 # # isn't built as a Framework.
 # if(NOT APPLE)
 #   foreach(_module detail eos)
@@ -115,14 +114,14 @@ ocd_support.cc
 # resources on Mac. This allows them to be easily imported into the
 # Framework with minimal platform specific commands by adding them
 # as sources of the framework/library.
-# We have to deal with the library depends part of this later because 
+# We have to deal with the library depends part of this later because
 # their generation require the targets to be present...
 #
 if(APPLE)
   set(TO_CUTS_INCLUDEDIR "../..")
 else()
-  file(RELATIVE_PATH TO_CUTS_INCLUDEDIR 
-    "${CMAKE_INSTALL_FULL_LIBDIR}/cmake/cuts-${cuts_VERSION}" 
+  file(RELATIVE_PATH TO_CUTS_INCLUDEDIR
+    "${CMAKE_INSTALL_FULL_LIBDIR}/cmake/cuts-${cuts_VERSION}"
     "${CMAKE_INSTALL_FULL_INCLUDEDIR}"
     )
 endif()
@@ -134,7 +133,7 @@ set(cuts_RESOURCES
 
 foreach(_dtresource ${cuts_RESOURCES})
   configure_file(
-    ${PROJECT_SOURCE_DIR}/${_dtresource}.in 
+    ${PROJECT_SOURCE_DIR}/${_dtresource}.in
     ${PROJECT_BINARY_DIR}/${_dtresource}
     @ONLY
     )
@@ -155,16 +154,16 @@ if(NOT APPLE)
 endif()
 
 configure_file(
-    ${PROJECT_SOURCE_DIR}/cmake/cuts-config.in 
+    ${PROJECT_SOURCE_DIR}/cmake/cuts-config.in
     ${PROJECT_BINARY_DIR}/cmake/cuts-config
     @ONLY
     )
 
 install(FILES ${PROJECT_BINARY_DIR}/cmake/cuts-config
     DESTINATION "${CMAKE_INSTALL_BINDIR}"
-    PERMISSIONS OWNER_READ OWNER_EXECUTE 
-    		GROUP_READ GROUP_EXECUTE 
-                WORLD_READ WORLD_EXECUTE    
+    PERMISSIONS OWNER_READ OWNER_EXECUTE
+    		GROUP_READ GROUP_EXECUTE
+                WORLD_READ WORLD_EXECUTE
     COMPONENT Development
     )
 
@@ -187,7 +186,7 @@ endif ()
 #
 include_directories(
   ${PROJECT_BINARY_DIR}/include
-  ${PROJECT_SOURCE_DIR}/include	
+  ${PROJECT_SOURCE_DIR}/include
   ${datatools_INCLUDE_DIRS}
   )
 
@@ -197,8 +196,8 @@ if ( CUTS_WITH_REFLECTION )
     )
 endif ()
 
-add_library(cuts SHARED  
-  ${cuts_PUBLIC_HEADERS} 
+add_library(cuts SHARED
+  ${cuts_PUBLIC_HEADERS}
   ${cuts_SOURCES}
   ${cuts_RESOURCES_OUTPUTS}
   )
@@ -206,7 +205,7 @@ add_library(cuts SHARED
   #${cuts_detail_HEADERS}
 
 set_target_properties(cuts
-  PROPERTIES 
+  PROPERTIES
     FRAMEWORK                             ON
     MACOSX_FRAMEWORK_IDENTIFIER           org.supernemo.cuts
     MACOSX_FRAMEWORK_BUNDLE_VERSION       ${cuts_VERSION}
@@ -237,7 +236,7 @@ set(CUTS_TARGETS cuts)
 #     src/the_serializable.cc
 #     )
 #   list_prepend(cuts_bio_SOURCES "${PROJECT_SOURCE_DIR}/")
-  
+
 #   add_library(cuts_bio SHARED ${cuts_bio_SOURCES})
 
 #   if(APPLE)
@@ -262,7 +261,7 @@ set(CUTS_TARGETS cuts)
 #     #src/the_introspectable.cc
 #     )
 #   list_prepend(cuts_reflection_SOURCES "${PROJECT_SOURCE_DIR}/")
-  
+
 #   add_library(cuts_reflection SHARED ${cuts_reflection_SOURCES})
 
 #   if(APPLE)
@@ -276,18 +275,18 @@ set(CUTS_TARGETS cuts)
 
 #-----------------------------------------------------------------------
 # EXPORT AND INSTALL LIBRARY TARGETS
-# We make use of the full signature 
+# We make use of the full signature
 install(TARGETS ${CUTS_TARGETS}
   EXPORT        cuts-libraries
-  RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR} 
+  RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
                 COMPONENT Runtime
-  LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR} 
+  LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
                 COMPONENT Runtime
-  FRAMEWORK     DESTINATION ${CUTS_FRAMEWORK_LOCATION} 
+  FRAMEWORK     DESTINATION ${CUTS_FRAMEWORK_LOCATION}
                 COMPONENT Runtime
-  ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} 
+  ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
                 COMPONENT Development
-  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/cuts 
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/cuts
                 COMPONENT Development
   )
 
@@ -295,11 +294,11 @@ install(TARGETS ${CUTS_TARGETS}
 # We also need to generate a file for the build tree, but at present
 # we leave this out for simplicity.
 if(APPLE)
-  install(EXPORT cuts-libraries 
+  install(EXPORT cuts-libraries
     DESTINATION CMake COMPONENT Development
     )
 else()
-  install(EXPORT cuts-libraries 
+  install(EXPORT cuts-libraries
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/cuts-${cuts_VERSION}    COMPONENT Development
     )
 endif()

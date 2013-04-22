@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 // cuts::test_manager.cxx
 
 #include <cstdlib>
@@ -11,8 +11,8 @@
 #include <map>
 
 #include <datatools/utils.h>
-#include <datatools/properties.h> 
- 
+#include <datatools/properties.h>
+
 #include <cuts/cut_manager.h>
 #include <cuts_test_data.h>
 
@@ -28,8 +28,8 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'cuts::cut_manager' !" << endl; 
-  
+      clog << "Test program for class 'cuts::cut_manager' !" << endl;
+
       bool debug = false;
       long seed = 314159;
       string config_filename = "";
@@ -42,37 +42,37 @@ int main (int argc_, char ** argv_)
 
           if (token[0] == '-')
             {
-              string option = token; 
-              if ((option == "-d") || (option == "--debug")) 
+              string option = token;
+              if ((option == "-d") || (option == "--debug"))
                 {
                   debug = true;
                 }
-              else 
-                { 
-                  clog << "warning: ignoring option '" 
-                       << option << "'!" << endl; 
+              else
+                {
+                  clog << "warning: ignoring option '"
+                       << option << "'!" << endl;
                 }
             }
           else
             {
-              string argument = token; 
+              string argument = token;
               if (config_filename.empty ())
-                { 
+                {
                   config_filename = argument;
                 }
               else if (cut_name.empty ())
-                { 
+                {
                   cut_name = argument;
                 }
               else
-                { 
-                  clog << "warning: ignoring argument '" 
-                       << argument << "'!" << endl; 
+                {
+                  clog << "warning: ignoring argument '"
+                       << argument << "'!" << endl;
                 }
             }
           iarg++;
         }
-    
+
       srand48 (seed);
 
       cuts::cut_manager my_cut_manager;
@@ -80,7 +80,7 @@ int main (int argc_, char ** argv_)
       datatools::properties cut_manager_config;
 
       if (config_filename.empty ())
-        { 
+        {
           config_filename = "${CUTS_DATA_DIR}/testing/config/test_cut_manager.conf";
         }
       datatools::fetch_path_with_env (config_filename);
@@ -88,10 +88,10 @@ int main (int argc_, char ** argv_)
                                           cut_manager_config);
 
       if (cut_name.empty ())
-        { 
+        {
           cut_name = "selector";
-        }    
-      clog << "NOTICE: Cut name is '" << cut_name << "'" << endl; 
+        }
+      clog << "NOTICE: Cut name is '" << cut_name << "'" << endl;
 
       my_cut_manager.set_debug (debug);
       my_cut_manager.initialize (cut_manager_config);
@@ -100,14 +100,14 @@ int main (int argc_, char ** argv_)
         {
           ostringstream message;
           message << "No cut with name '" << cut_name << "' !";
-          throw logic_error (message.str ());    
+          throw logic_error (message.str ());
         }
       the_cut = &my_cut_manager.grab (cut_name);
 
       // build a collection of points:
       list<cuts::test::data> points;
       map<string,ostringstream *> ss0;
-      for (int i = 0; i < 100000; i++)
+      for (int i = 0; i < 10000; i++)
         {
           cuts::test::data dummy;
           points.push_back (dummy);
@@ -119,7 +119,7 @@ int main (int argc_, char ** argv_)
           ostringstream * pss = 0;
           if (d.color == cuts::test::data::BLACK)
             {
-              if (ss0.find ("black") == ss0.end ()) 
+              if (ss0.find ("black") == ss0.end ())
                 {
                   ss0["black"] = new ostringstream ();
                 }
@@ -127,7 +127,7 @@ int main (int argc_, char ** argv_)
             }
           else if (d.color == cuts::test::data::RED)
             {
-              if (ss0.find ("red") == ss0.end ()) 
+              if (ss0.find ("red") == ss0.end ())
                 {
                   ss0["red"] = new ostringstream ();
                 }
@@ -135,7 +135,7 @@ int main (int argc_, char ** argv_)
             }
           else if (d.color == cuts::test::data::GREEN)
             {
-              if (ss0.find ("green") == ss0.end ()) 
+              if (ss0.find ("green") == ss0.end ())
                 {
                   ss0["green"] = new ostringstream ();
                 }
@@ -143,18 +143,18 @@ int main (int argc_, char ** argv_)
             }
           else if (d.color == cuts::test::data::BLUE)
             {
-              if (ss0.find ("blue") == ss0.end ()) 
+              if (ss0.find ("blue") == ss0.end ())
                 {
                   ss0["blue"] = new ostringstream ();
                 }
               pss = ss0["blue"];
             }
-          if (pss != 0) 
+          if (pss != 0)
             {
               d.print (*pss);
             }
         }
-      
+
       {
         ofstream forig ("test_manager.orig.data");
         // print original points in colored streams:
@@ -192,7 +192,7 @@ int main (int argc_, char ** argv_)
               ostringstream * pss = 0;
               if (i->color == cuts::test::data::BLACK)
                 {
-                  if (ss.find ("black") == ss.end ()) 
+                  if (ss.find ("black") == ss.end ())
                     {
                       ss["black"] = new ostringstream ();
                     }
@@ -201,7 +201,7 @@ int main (int argc_, char ** argv_)
                 }
               else if (i->color == cuts::test::data::RED)
                 {
-                  if (ss.find ("red") == ss.end ()) 
+                  if (ss.find ("red") == ss.end ())
                     {
                       ss["red"] = new ostringstream ();
                     }
@@ -210,7 +210,7 @@ int main (int argc_, char ** argv_)
                 }
               else if (i->color == cuts::test::data::GREEN)
                 {
-                  if (ss.find ("green") == ss.end ()) 
+                  if (ss.find ("green") == ss.end ())
                     {
                       ss["green"] = new ostringstream ();
                     }
@@ -219,14 +219,14 @@ int main (int argc_, char ** argv_)
                 }
               else if (i->color == cuts::test::data::BLUE)
                 {
-                  if (ss.find ("blue") == ss.end ()) 
+                  if (ss.find ("blue") == ss.end ())
                     {
                       ss["blue"] = new ostringstream ();
                     }
                   pss = ss["blue"];
                   has_blue = true;
                 }
-              if (pss != 0) 
+              if (pss != 0)
                 {
                   i->print (*pss);
                 }
@@ -243,19 +243,19 @@ int main (int argc_, char ** argv_)
           {
             fselected << "# " << i->first << endl;
             fselected << i->second->str ();
-            if (i->first == "black" && ! has_black) 
+            if (i->first == "black" && ! has_black)
               {
                 fselected << "1000 1000 1000" << endl;
               }
-            if (i->first == "red" && ! has_red) 
+            if (i->first == "red" && ! has_red)
               {
                 fselected << "1000 1000 1000" << endl;
               }
-            if (i->first == "blue" && ! has_blue) 
+            if (i->first == "blue" && ! has_blue)
               {
                 fselected << "1000 1000 1000" << endl;
               }
-            if (i->first == "green" && ! has_green) 
+            if (i->first == "green" && ! has_green)
               {
                 fselected << "1000 1000 1000" << endl;
               }
@@ -267,7 +267,7 @@ int main (int argc_, char ** argv_)
 
       {
         datatools::object_configuration_description OCD;
-        if ( datatools::load_ocd<cuts::cut_manager>(OCD)) {   
+        if ( datatools::load_ocd<cuts::cut_manager>(OCD)) {
           OCD.print(std::clog, "*** ");
           OCD.dump(std::clog, "OCD: ");
           std::ofstream fscf ("test_OCD_cut_manager.sample.conf");
@@ -275,19 +275,19 @@ int main (int argc_, char ** argv_)
         }
         else {
           std::cerr << "ERROR: Cannot find OCD support for the 'cuts::cut_manager' class."
-                    << std::endl;       
-        } 
+                    << std::endl;
+        }
       }
 
     }
   catch (exception & x)
     {
-      cerr << "ERROR: " << x.what () << endl; 
+      cerr << "ERROR: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "ERROR: " << "unexpected error!" << endl; 
+      cerr << "ERROR: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);

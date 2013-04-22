@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* multi_and_cut.cc
  */
 
@@ -14,7 +14,7 @@
 namespace cuts {
 
   using namespace std;
-  
+
   // Registration instantiation macro :
   CUT_REGISTRATION_IMPLEMENT(multi_and_cut, "cuts::multi_and_cut");
 
@@ -27,7 +27,7 @@ namespace cuts {
                 << "Self-referenced multi_and_cut is not allowed !";
         throw logic_error (message.str ( ));
       }
-    for (cuts_col_t::iterator i = _cuts_.begin ();
+    for (cuts_col_type::iterator i = _cuts_.begin ();
          i != _cuts_.end ();
          i++)
       {
@@ -44,14 +44,14 @@ namespace cuts {
     _cuts_.push_back (a_cut_handle);
     return;
   }
-    
+
   void multi_and_cut::set_user_data (void * user_data_)
   {
-    if (_cuts_.size () == 0) 
+    if (_cuts_.size () == 0)
       {
         throw logic_error ("cuts::multi_and_cut::set_user_data: Missing cuts !");
       }
-    for (cuts_col_t::iterator i = _cuts_.begin ();
+    for (cuts_col_type::iterator i = _cuts_.begin ();
          i !=  _cuts_.end ();
          i++)
       {
@@ -60,7 +60,7 @@ namespace cuts {
       }
     return;
   }
-  
+
   // ctor:
   CUT_CONSTRUCTOR_IMPLEMENT_HEAD (multi_and_cut,
                                   a_debug_devel,
@@ -71,7 +71,7 @@ namespace cuts {
     return;
   }
 
-  
+
   // dtor:
   CUT_DEFAULT_DESTRUCTOR_IMPLEMENT (multi_and_cut)
 
@@ -85,12 +85,12 @@ namespace cuts {
 
   CUT_ACCEPT_IMPLEMENT_HEAD(multi_and_cut)
   {
-    if (_cuts_.size () == 0) 
+    if (_cuts_.size () == 0)
       {
         throw logic_error ("cuts::multi_and_cut::_accept: Missing cuts !");
       }
-    
-    for (cuts_col_t::iterator i = _cuts_.begin ();
+
+    for (cuts_col_type::iterator i = _cuts_.begin ();
          i !=  _cuts_.end ();
          i++)
       {
@@ -118,8 +118,8 @@ namespace cuts {
         throw logic_error (message.str ());
       }
 
-    if (_cuts_.size () == 0) 
-      { 
+    if (_cuts_.size () == 0)
+      {
         vector<string> cut_names;
         if (a_configuration.has_key ("cuts"))
           {
@@ -135,7 +135,7 @@ namespace cuts {
           {
             throw logic_error ("cuts::multi_and_cut::initialize: Missing 'cuts' name property !");
           }
-        
+
         for (int i = 0; i < cut_names.size (); i++)
           {
             const string & cut_name = cut_names[i];
@@ -144,7 +144,7 @@ namespace cuts {
               {
                 ostringstream message;
                 message << "cuts::multi_and_cut::initialize: "
-                        << "Can't find any cut named '" << cut_name 
+                        << "Can't find any cut named '" << cut_name
                         << "' from the external dictionnary ! ";
                 throw logic_error (message.str ());
               }
@@ -154,7 +154,7 @@ namespace cuts {
       }
 
     _set_initialized (true);
-    return;      
+    return;
   }
 
 } // end of namespace cuts

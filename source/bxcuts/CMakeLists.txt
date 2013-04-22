@@ -48,12 +48,12 @@ endif()
 #-----------------------------------------------------------------------
 # Build options
 #
-option(CUTS_WITH_DEBUG "Build debug stuff" OFF) 
-#option(CUTS_WITH_BIO  "Build auxiliary Boost I/O library" ON) 
-#option(CUTS_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" OFF) 
+option(CUTS_WITH_DEBUG "Build debug stuff" OFF)
+#option(CUTS_WITH_BIO  "Build auxiliary Boost I/O library" ON)
+#option(CUTS_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" OFF)
 option(CUTS_WITH_DOC  "Build the cuts documentation" ON)
-option(CUTS_WITH_TEST "Build the cuts test suite"    ON) 
-option(CUTS_WITH_BASH_SETUP "Build the cuts with Bash setup macro" ON) 
+option(CUTS_WITH_TEST "Build the cuts test suite"    ON)
+option(CUTS_WITH_BASH_SETUP "Build the cuts with Bash setup macro" ON)
 
 # if (CUTS_WITH_DEBUG)
 #   set (CUTS_WITH_DEBUG 1)
@@ -61,11 +61,6 @@ option(CUTS_WITH_BASH_SETUP "Build the cuts with Bash setup macro" ON)
 #   set (CUTS_WITH_DEBUG 0)
 # endif ()
 
-# if(CUTS_WITH_BIO)
-#   set (CUTS_WITH_BIO 1)
-# else()
-#   set (CUTS_WITH_BIO 0)
-# endif ()
 
 #-----------------------------------------------------------------------
 # Find external packages needed to build
@@ -73,17 +68,9 @@ option(CUTS_WITH_BASH_SETUP "Build the cuts with Bash setup macro" ON)
 # - datatools
 find_package(datatools 5.0.0 REQUIRED)
 
-# - CAMP
-# if (CUTS_WITH_REFLECTION)
-#   set (CUTS_WITH_REFLECTION 1)
-#   find_package(CAMP 0.7.1 REQUIRED)
-# else()
-#   set (CUTS_WITH_REFLECTION 0)
-# endif ()
-
 #-----------------------------------------------------------------------
 # On Apple, we fixup the install prefix to handle installing documentation,
-# support files and so on under the framework's "Resources" directory. 
+# support files and so on under the framework's "Resources" directory.
 # This follows the pattern used in CMake to fixup their app bundle
 # NB: THIS REQUIRES SOME FIXES IN CPACKAGING (see CMake's Qt dialog
 # packaging).
@@ -97,7 +84,7 @@ endif()
 #-----------------------------------------------------------------------
 # Build the submodules as required
 #
-add_subdirectory(src)   
+add_subdirectory(src)
 
 if(CUTS_WITH_DOC)
   set (CUTS_WITH_DOC 1)
@@ -108,7 +95,7 @@ endif()
 
 if(CUTS_WITH_TEST)
   set (CUTS_WITH_TEST 1)
-  enable_testing() 
+  enable_testing()
   add_subdirectory(testing)
 else()
   set (CUTS_WITH_TEST 0)
@@ -119,9 +106,9 @@ endif()
 # Install resources :
 #
 
-set ( _cuts_testing_FULL_LOCAL_PATH 
-      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/testing" 
-    ) 
+set ( _cuts_testing_FULL_LOCAL_PATH
+      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/testing"
+    )
 message ( STATUS "${PROJECT_NAME} : cuts testing full local path = '${_cuts_testing_FULL_LOCAL_PATH}' " )
 
 install ( DIRECTORY ${PROJECT_SOURCE_DIR}/testing
@@ -129,8 +116,8 @@ install ( DIRECTORY ${PROJECT_SOURCE_DIR}/testing
           FILE_PERMISSIONS OWNER_READ OWNER_WRITE
                            GROUP_READ GROUP_WRITE
                            WORLD_READ
-          DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE 
-                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE 
+          DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE
                                 WORLD_READ WORLD_EXECUTE
           PATTERN ".svn" EXCLUDE
           PATTERN "*~" EXCLUDE

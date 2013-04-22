@@ -1,10 +1,10 @@
 /* cut_macros.h
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
- * Last modified : 2011-06-07
- * 
- * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ * Last modified : 2013-04-22
+ *
+ * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -17,19 +17,19 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- * 
- * Description: 
+ *
+ * Description:
  *
  *   Macros to help build cut classes.
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
-#ifndef _CUTS_CUT_MACROS_H
-#define _CUTS_CUT_MACROS_H 1
+#ifndef CUTS_CUT_MACROS_H_
+#define CUTS_CUT_MACROS_H_ 1
 
 #include <cuts/i_cut.h>
 
@@ -111,7 +111,7 @@
                                                 \
   CUT_ACCEPT_DECLARE();                         \
                                                 \
-  /**/  
+  /**/
 
 /*** Macro for the declaration of the full cut interface, including ctor/dtor ***/
 #define CUT_INTERFACE_CTOR_DTOR(CUT_CLASS_NAME) \
@@ -122,7 +122,7 @@
                                                 \
   CUT_INTERFACE ();                             \
                                                 \
-  /**/  
+  /**/
 
 /*** Macro for the declaration of the full cut interface, including ctor/dtor, excluding reset ***/
 #define CUT_INTERFACE_NORESET_CTOR_DTOR(CUT_CLASS_NAME) \
@@ -135,7 +135,7 @@
                                                 \
   CUT_ACCEPT_DECLARE();                         \
                                                 \
-  /**/  
+  /**/
 
 /*** Macros for interface/implementation of static creator methods in cut classes ***/
 
@@ -150,7 +150,7 @@
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (::cuts::i_cut,CUT_CLASS_NAME,CUT_ID); \
   /**/
 
-#endif // _CUTS_CUT_MACROS_H
+#endif // CUTS_CUT_MACROS_H_
 
 // end of cut_macros.h
 /*
