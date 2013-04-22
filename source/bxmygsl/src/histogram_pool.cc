@@ -1549,8 +1549,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_pool,ocd_)
   ocd_.set_class_name ("mygsl::histogram_pool");
   ocd_.set_class_description ("A pool of histograms");
   ocd_.set_class_library ("mygsl");
-  ocd_.set_class_documentation ("not documented yet");
-
+  ocd_.set_class_documentation ("A container for 1D and/or 2D histogram objects");
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
@@ -1558,8 +1557,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_pool,ocd_)
       .set_terse_description("The embeded description string")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
-      .set_long_description(
-                            "Superseded by a former call of :                  \n"
+      .set_long_description("Superseded by a former call of :                  \n"
                             "  mygsl::histogram_pool::set_description(...)     \n"
                             )
       ;
@@ -1573,8 +1571,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_pool,ocd_)
                   datatools::configuration_property_description::ARRAY)
       .set_mandatory(false)
       .set_path(true)
-      .set_long_description(
-                            "A list of filenames from where the histogram pool      \n"
+      .set_long_description("A list of filenames from where the histogram pool      \n"
                             "loads the directives to dynamically instantiate        \n"
                             "new embeded histogram objects. The filenames may contain\n"
                             "some environment variables.                            \n"
@@ -1592,8 +1589,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_pool,ocd_)
                             "Extends the instantiation of histograms triggered by   \n"
                             "former calls to :                                      \n"
                             "  mygsl::histogram_pool::load(...)                     \n"
-                            "See OCD support for 'mygsl::histogram_1d'              \n"
-                            "and 'mygsl::histogram_2d' classes.                     \n"
+                            "See OCD support for 'mygsl::histogram_1d' and          \n"
+                            "'mygsl::histogram_2d' classes.                         \n"
                             )
     ;
   }
@@ -1605,7 +1602,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_pool,ocd_)
                                 "  |                                                             \n"
                                 "  | description  : string = \"The data analysis histogram pool\"\n"
                                 "  | histo.setups : string[1] as path = \"histos.conf\"          \n"
-                                "  |                                                              \n"
+                                "  |                                                             \n"
                                 "                                                                \n"
                                 "Example of associated file 'histos.conf' for automated          \n"
                                 "construction of four histograms :                               \n"
@@ -1656,7 +1653,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_pool,ocd_)
                                 "  | y.number_of_bins : integer = 120                            \n"
                                 "  | display.yaxis.unit  : string = \"keV\"                      \n"
                                 "  | display.yaxis.label : string = \"E2\"                       \n"
-                                "  |                                                              \n"
+                                "  |                                                             \n"
                                 );
   ocd_.set_validation_support(true);
   ocd_.lock();
@@ -1671,7 +1668,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram,ocd_)
   ocd_.set_class_name ("mygsl::histogram_1d");
   ocd_.set_class_description ("One dimension histogram as built by the 'mygsl::histogram_pool' class");
   ocd_.set_class_library ("mygsl");
-  ocd_.set_class_documentation ("not documented yet");
+  ocd_.set_class_documentation ("A one dimensional histogram class.");
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
@@ -2016,7 +2013,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_2d,ocd_)
   ocd_.set_class_name ("mygsl::histogram_2d");
   ocd_.set_class_description ("Two dimension histogram as built by the 'mygsl::histogram_pool' class");
   ocd_.set_class_library ("mygsl");
-  ocd_.set_class_documentation ("not documented yet");
+  ocd_.set_class_documentation ("A two dimensional histogram class.");
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
@@ -2061,7 +2058,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_2d,ocd_)
                                 "  Not implemented yet.                                          \n"
                                 );
 
-  ocd_.set_validation_support(true);
+  ocd_.set_validation_support(false);
   ocd_.lock();
   return;
 }
