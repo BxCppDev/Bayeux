@@ -2,10 +2,10 @@
 //! \file datatools/caster_utils.h
 /* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-04-01
- * Last modified : 2011-04-01
- * 
- * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ * Last modified : 2013-04-22
+ *
+ * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -18,10 +18,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- * 
- * Description: 
+ *
+ * Description:
  *
  *  Some templatized caster utilities and associated macros.
  *
@@ -42,7 +42,7 @@
 namespace datatools {
 
 /*!<  \struct i_caster
-  \brief  Templatized abstract interface class with a cast method using covariant return types . 
+  \brief  Templatized abstract interface class with a cast method using covariant return types .
   */
 template<typename From, typename ToBase>
 struct i_caster {
@@ -50,7 +50,7 @@ struct i_caster {
 };
 
 /*!<  \struct caster
-  \brief  Templatized concrete caster class for casting pointers from a covariant class hierarchy to some other type. 
+  \brief  Templatized concrete caster class for casting pointers from a covariant class hierarchy to some other type.
   */
 template <typename From, typename ToBase, typename ToDaughter>
 struct caster : public i_caster<From, ToBase> {
@@ -72,7 +72,7 @@ bool is_covariant(const Base& b) {
   return true;
 }
 
-} // end of namespace datatools 
+} // end of namespace datatools
 
 #define DATATOOLS_CASTER_DECLARATION(From,ToBase,ToDaughter,CasterId,CasterGetter) \
  private:                                                              \

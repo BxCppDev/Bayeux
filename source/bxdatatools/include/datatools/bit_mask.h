@@ -1,18 +1,18 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /*! \file datatools/bit_mask.h */
 /* bit_mask.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2011-02-07
- * Last modified: 2011-02-07
- * 
- * License: 
- * 
- * Description: 
+ * Last modified: 2013-22-04
+ *
+ * License:
+ *
+ * Description:
  *
  *   Some utilities for manipulating bit masks.
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 #ifndef DATATOOLS_BIT_MASK_H_
 #define DATATOOLS_BIT_MASK_H_
@@ -27,7 +27,7 @@
 
 namespace datatools {
 /**!  \struct bit_mask
-  \brief Some useful constants to manipulate bits typically within an unsigned integer of 32 bits. 
+  \brief Some useful constants to manipulate bits typically within an unsigned integer of 32 bits.
   */
 struct bit_mask {
  public:

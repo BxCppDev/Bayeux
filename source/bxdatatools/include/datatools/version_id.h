@@ -19,7 +19,7 @@ namespace datatools {
  *  - "tag" an alpha numeric character string not starting with
  *   a digit or '-' and with no punctuation symbols in it, however
  *   '-' and '_' are allowed.
- *  
+ *
  *  - "major" a numeric value
  *  - "major.minor" two numeric values
  *  - "major.minor.revision" three numeric values
@@ -30,7 +30,7 @@ namespace datatools {
  *     - "rcN" for 'release candidate' version
  *        with N a positive integer (<10000)
  *     Examples: "alpha", "beta", "rc0", "rc1"...
- *     "tag" can also be a string reprensenting a positive 
+ *     "tag" can also be a string reprensenting a positive
  *     integer: "0", "1"...
  *     or any combinaison of alphanumeric character
  *     excluding punctuation symbols but '-' and '_' are still allowed.
@@ -38,26 +38,27 @@ namespace datatools {
  *      "3.1.4-15", "3.1.4-test", "3.1.4-007"
  *
  *  Version ID objects can be relatively ordered unless :
- *   - they are composed by a single tag 
+ *   - they are composed by a single tag
  *     Example: "Natty"
  *   - they have "major.minor.revision" and a "tag" that cannot be
- *     compared. However an ordering convention is used for special tags ("alpha" < "beta" < "rcX" < pure number "X")
- * 
+ *     compared. However an ordering convention is used for special
+ *     tags ("alpha" < "beta" < "rcX" < pure number "X")
+ *
  *  Version ID objects can also be converted to and parsed from
  *  character strings.
- * 
- *  Version ID can be checked to match version requirements 
+ *
+ *  Version ID can be checked to match version requirements
  *  (version rules) :
  *
- *  Examples : 
+ *  Examples :
  *   - "> 3.12" or ">3.12"
  *   - ">= 3.12" or ">=3.12"
  *   - "< 3.12" or "<3.12"
  *   - "<= 3.12" or "<=3.12"
  *   - "! 3.1.4-159" or  "!3.1.4-159" or "!= 3.1.4-159" or "!=3.1.4-159"
  *   - "= 3.1.4-159" or  "=3.1.4-159" or "== 3.1.4-159" or "==3.1.4-159"
- * 
- *  Version ID can be invalidated : format is then "?" 
+ *
+ *  Version ID can be invalidated : format is then "?"
  *
  */
 class version_id {
@@ -81,7 +82,7 @@ class version_id {
 
   version_id(const std::string& tag);
 
-  version_id(int major, int minor = -1, int revision = -1, 
+  version_id(int major, int minor = -1, int revision = -1,
              const std::string& tag = "");
 
   // Global operations
@@ -149,26 +150,26 @@ class version_id {
 
   bool from_string(const std::string&);
 
-  void dump(std::ostream& out = std::clog, 
-            const std::string& title = "", 
+  void dump(std::ostream& out = std::clog,
+            const std::string& title = "",
             const std::string& indent = "") const;
 
 
   // These could/should be free functions
   static int compare(const version_id& vid0,
-                     const version_id& vid1, 
+                     const version_id& vid1,
                      bool major_only = false);
 
-  static bool are_orderable(const version_id& vid0, 
-                            const version_id& vid1, 
+  static bool are_orderable(const version_id& vid0,
+                            const version_id& vid1,
                             bool major_only = false);
 
  private:
-  int32_t major_;
-  int32_t minor_;
-  int32_t revision_;
-  std::string tag_;
-  int32_t tag_number_;
+  int32_t major_;      /// The major number
+  int32_t minor_;      /// The minor number
+  int32_t revision_;   /// The revision number
+  std::string tag_;    /// An additionnal tag (string)
+  int32_t tag_number_; /// An additionnal tag (numeric)
 };
 
 } // namespace datatools

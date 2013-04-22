@@ -1,5 +1,5 @@
 
-datatools is a multi-purpose library for data storage and manipulation.
+datatools is a multi-purpose C++ library for data storage and manipulation.
 
 datatools  has been originally  developped by  François Mauger  at LPC
 Caen   (CNRS/IN2P3)    and   Université   de    Caen   Basse-Normandie

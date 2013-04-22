@@ -1,13 +1,13 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* datatools/integer_range.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2011-09-22
- * Last modified: 2011-09-22
- * 
- * License: 
- * 
- * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ * Last modified: 2013-04-22
+ *
+ * License:
+ *
+ * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -20,15 +20,15 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- * 
- * Description: 
+ *
+ * Description:
  *
  *   Integer range class.
- * 
- * History: 
- *  
+ *
+ * History:
+ *
  */
 #ifndef DATATOOLS_INTEGER_RANGE_H_
 #define DATATOOLS_INTEGER_RANGE_H_
@@ -57,8 +57,8 @@ class integer_range {
   integer_range();
 
   // Ctor:
-  integer_range(value_type from, value_type to, 
-                int from_policy = range_bound_included, 
+  integer_range(value_type from, value_type to,
+                int from_policy = range_bound_included,
                 int to_policy = range_bound_included);
 
 
@@ -76,8 +76,8 @@ class integer_range {
 
   void set_upper(value_type to, int policy = range_bound_included);
 
-  void set(value_type from, value_type to, 
-           int from_policy = range_bound_included, 
+  void set(value_type from, value_type to,
+           int from_policy = range_bound_included,
            int to_policy = range_bound_included);
 
   bool is_lower_bounded() const;
@@ -121,15 +121,15 @@ class integer_range {
   // "]lower;upper]" or "]lower;upper["
   // "[lower;upper]" or "[lower;upper["
   void make_bounded(value_type from, value_type to,
-                    bool lower_included = true, 
+                    bool lower_included = true,
                     bool upper_included = true);
 
   bool has(value_type value) const;
 
   void dump(std::ostream& out = std::clog) const;
 
-  friend std::ostream& operator<<(std::ostream& out, 
-                                  const integer_range& a_range); 
+  friend std::ostream& operator<<(std::ostream& out,
+                                  const integer_range& a_range);
 
   value_type begin() const;
 
@@ -140,7 +140,6 @@ class integer_range {
   value_type last() const;
 
  private:
-  //uint8_t    flags_;
   int8_t     lower_flag_;
   value_type lower_;
   int8_t     upper_flag_;
@@ -148,7 +147,7 @@ class integer_range {
 };
 
 
-} // end of namespace datatools 
+} // end of namespace datatools
 
 #endif // DATATOOLS_INTEGER_RANGE_H_
 

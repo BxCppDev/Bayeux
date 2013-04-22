@@ -1,10 +1,10 @@
 /* datatools/handle.h */
 /* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-05-10
- * Last modified : 2011-05-10
- * 
- * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ * Last modified : 2013-04-22
+ *
+ * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -17,16 +17,17 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- * 
- * Description: 
+ *
+ * Description:
  *
  *  A pool of handles.
  *
  */
-#ifndef DATATOOLS_HANDLE_POOL_H
-#define DATATOOLS_HANDLE_POOL_H
+#ifndef DATATOOLS_HANDLE_POOL_H_
+#define DATATOOLS_HANDLE_POOL_H_
+
 // Standard Library
 #include <iostream>
 #include <string>
@@ -58,31 +59,31 @@ class handle_pool  {
   explicit handle_pool(size_t size);
 
   /// Destructor
-  virtual ~handle_pool(); 
+  virtual ~handle_pool();
 
  public:
   /// Empty the pool
-  void clear(); 
+  void clear();
 
   /// Return the number of handles the pool can contain
   size_t get_capacity() const;
 
   /// Return the number of handles currently in use
-  size_t get_number_of_used_item() const; 
+  size_t get_number_of_used_item() const;
 
   /// Set the number of used handles in the pool to zero
-  void reset(); 
+  void reset();
 
   /// Change number of handles pool can contain
-  void resize(size_t size); 
+  void resize(size_t size);
 
   /// Return a const reference to a new handle
-  const handle_type& create(); 
+  const handle_type& create();
 
   /// Input pool capacity and used handles to an output stream
-  void dump(std::ostream& out, const std::string& title, 
+  void dump(std::ostream& out, const std::string& title,
             bool abridged = true) const;
-  
+
  protected:
   /// Implementation for public resize method
   void resize_impl(size_t size);
@@ -127,7 +128,7 @@ handle_pool<T>::~handle_pool() {
   std::clog << "DEVEL: " << "handle_pool<T>::dtor: Entering...\n";
   std::clog << "DEVEL: " << "handle_pool<T>::dtor: "
       << "  buffer size is " << buffer.size() << "\n";
-  std::clog << "DEVEL: " << "handle_pool<T>::dtor: " 
+  std::clog << "DEVEL: " << "handle_pool<T>::dtor: "
       << " number of used element " << _number_of_used_item << "\n";
 #endif
   number_of_used_item_ = 0;
@@ -168,24 +169,24 @@ void handle_pool<T>::resize(size_t size) {
     throw std::logic_error("datatools::handle_pool<T>::resize: Cannot resize pool with items in use");
   }
   this->resize_impl(size);
-} 
+}
 
 
 template <typename T>
 const typename handle_pool<T>::handle_type& handle_pool<T>::create() {
 #ifdef DATATOOLS_HANDLE_POOL_DEVEL
   std::clog << "DEVEL: " << "handle_pool<T>::create: Entering...\n";
-  std::clog << "DEVEL: " << "handle_pool<T>::create:   buffer size is " 
+  std::clog << "DEVEL: " << "handle_pool<T>::create:   buffer size is "
             << buffer_.size() << "\n";
-  std::clog << "DEVEL: " << "handle_pool<T>::create: " 
-            << "  number of used element " 
+  std::clog << "DEVEL: " << "handle_pool<T>::create: "
+            << "  number of used element "
             << number_of_used_item_ << "\n";
 #endif
 
   if (number_of_used_item_ < buffer_.size()) {
 #ifdef DATATOOLS_HANDLE_POOL_DEVEL
-    std::clog << "DEVEL: " << "handle_pool<T>::create: " 
-        << "  Use a pre-allocated element @ position " 
+    std::clog << "DEVEL: " << "handle_pool<T>::create: "
+        << "  Use a pre-allocated element @ position "
         << number_of_used_item_  << " \n";
     std::clog << "DEVEL: " << "handle_pool<T>::create: Exiting.\n";
 #endif
@@ -196,8 +197,8 @@ const typename handle_pool<T>::handle_type& handle_pool<T>::create() {
   buffer_.push_back(handle_type(ptr));
   number_of_used_item_++;
 #ifdef DATATOOLS_HANDLE_POOL_DEVEL
-  std::clog << "DEVEL: " << "handle_pool<T>::create: " 
-      << "  Use a newly allocated element @ position " 
+  std::clog << "DEVEL: " << "handle_pool<T>::create: "
+      << "  Use a newly allocated element @ position "
       << (number_of_used_item_ - 1) << " \n";
   std::clog << "DEVEL: " << "handle_pool<T>::create: Exiting.\n";
 #endif
@@ -206,7 +207,7 @@ const typename handle_pool<T>::handle_type& handle_pool<T>::create() {
 
 
 template <typename T>
-void handle_pool<T>::dump(std::ostream& out, const std::string& title, 
+void handle_pool<T>::dump(std::ostream& out, const std::string& title,
                           bool abridged) const {
   if (!title.empty()) {
     out << title << " : " << std::endl;
@@ -231,7 +232,7 @@ void handle_pool<T>::dump(std::ostream& out, const std::string& title,
     }
     else {
       out << "@ " << &h.get() << " [" << h.count() << "]"<< std::endl;
-    } 
+    }
   }
 }
 
@@ -263,7 +264,7 @@ void handle_pool<T>::resize_impl(size_t size) {
     buffer_.push_back(handle_type(new element_type));
   }
 
-  number_of_used_item_ = 0; 
+  number_of_used_item_ = 0;
 
 #ifdef DATATOOLS_HANDLE_POOL_DEVEL
   std::clog << "DEVEL: " << "handle_pool<T>::_resize: Exiting.\n";
@@ -272,7 +273,7 @@ void handle_pool<T>::resize_impl(size_t size) {
   return;
 }
 
-} // namespace datatools 
+} // namespace datatools
 
-#endif // DATATOOLS_HANDLE_POOL_H
+#endif // DATATOOLS_HANDLE_POOL_H_
 

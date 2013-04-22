@@ -1,7 +1,7 @@
 /* datatools/factory.h */
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2012-03-19
- * Last modified : 2012-04-30
+ * Last modified : 2013-04-22
  *
  */
 #ifndef DATATOOLS_FACTORY_H_
@@ -33,16 +33,16 @@ class base_factory_register {
     verbose = 0x1,
   };
 
- public:    
+ public:
   base_factory_register();
   virtual ~base_factory_register ();
 };
-    
+
 
 /*! \brief Template factory registration class
  */
 template <class BaseType>
-class factory_register 
+class factory_register
     : public base_factory_register,
       public datatools::i_tree_dumpable {
  public:
@@ -55,17 +55,17 @@ class factory_register
   factory_register();
 
   /// Constructor
-  factory_register(const std::string& label, unsigned int flags = 0x0); 
+  factory_register(const std::string& label, unsigned int flags = 0x0);
 
   /// Destructor
-  virtual ~factory_register(); 
+  virtual ~factory_register();
 
   //! Check if verbosity flag is activated
   bool is_verbose() const;
 
   //! Set verbosity flag
   void set_verbose(bool verbose);
- 
+
   //! Get the label associated to the factory
   const std::string& get_label() const;
 
@@ -75,7 +75,7 @@ class factory_register
   //! Set the label associated to the factory
   void set_label(const std::string& label);
 
-  /// Copy factory IDs into supplied vector  
+  /// Copy factory IDs into supplied vector
   void list_of_factories(std::vector<std::string>& ids) const;
 
   /// Return true if factory with given ID is registered
@@ -85,7 +85,7 @@ class factory_register
   void clear();
 
   /// Reset
-  void reset(); 
+  void reset();
 
   /// Return a mutable reference to a factory given by registration ID
   // TODO : STL practice for const vs non-const is same method name,
@@ -100,24 +100,24 @@ class factory_register
 
   /// Remove registration of the factory stored under supplied ID
   /// TODO : better naming "unregister" for example
-  /// COMMENT: "register"/"unregister" would be fine names but "register" 
+  /// COMMENT: "register"/"unregister" would be fine names but "register"
   ///          is a reserved word
   void unregistration(const std::string& id);
 
   /// Import registered factories from another factory register
   /// So, err, copy assignment in other words...
-  /// COMMENT: not a copy, but an append. 
+  /// COMMENT: not a copy, but an append.
   void import(const factory_register& factory_register);
 
   /// Simple print
-  void print(std::ostream& out, const std::string& indent = "") const; 
- 
+  void print(std::ostream& out, const std::string& indent = "") const;
+
   /// Smart print
-  virtual void tree_dump(std::ostream& out = std::clog, 
-                         const std::string& title = "", 
+  virtual void tree_dump(std::ostream& out = std::clog,
+                         const std::string& title = "",
                          const std::string& indent_ = "",
-                         bool inherit = false) const; 
- 
+                         bool inherit = false) const;
+
  private:
   std::string      label_;      /// Label of the factory
   bool             verbose_;    /// Verbosity flag
@@ -133,25 +133,25 @@ class factory_register
 namespace datatools {
 
 template <typename BaseType>
-factory_register<BaseType>::factory_register() 
-    : label_(), 
+factory_register<BaseType>::factory_register()
+    : label_(),
       verbose_(false),
       registered_() {}
 
 template <typename BaseType>
-factory_register<BaseType>::factory_register(const std::string& label, 
+factory_register<BaseType>::factory_register(const std::string& label,
                                              unsigned int flags)
     : label_(label),
       verbose_(false) {
   if (flags & verbose) {
     verbose_ = true;
     std::clog << "INFO: " << "datatools::factory_register<"
-              << label_ 
+              << label_
               << ">: Construction..." << std::endl;
   }
   if (this->is_verbose()) {
     std::clog << "INFO: " << "datatools::factory_register<"
-              << label_ 
+              << label_
               << ">: Construction done." << std::endl;
   }
 }
@@ -162,7 +162,7 @@ template <typename BaseType>
 factory_register<BaseType>::~factory_register() {
   if (this->is_verbose()) {
     std::clog << "INFO: " << "datatools::factory_register<"
-              << label_ 
+              << label_
               << ">: Destruction..." << std::endl;
   }
 
@@ -170,7 +170,7 @@ factory_register<BaseType>::~factory_register() {
 
   if (this->is_verbose()) {
     std::clog << "INFO: " << "datatools::factory_register<"
-              << label_ 
+              << label_
               << ">: Destruction done." << std::endl;
   }
 }
@@ -233,7 +233,7 @@ void factory_register<BaseType>::clear() {
         std::clog << "INFO: "
             << "datatools::factory_register::clear: "
             << "Destroying registered allocator/functor '"
-            << i->first 
+            << i->first
             << "'" << std::endl;
       }
     }
@@ -251,14 +251,14 @@ void factory_register<BaseType>::reset() {
 
 
 template <typename BaseType>
-typename factory_register<BaseType>::factory_type& 
+typename factory_register<BaseType>::factory_type&
 factory_register<BaseType>::grab(const std::string& id) {
   typename factory_map_type::iterator found = registered_.find(id);
   if (found == registered_.end()) {
     std::ostringstream message;
     message << "datatools::factory::factory_register::grab: "
-            << "Class ID '" 
-            << id 
+            << "Class ID '"
+            << id
             << "' is not registered !";
     throw std::logic_error(message.str());
   }
@@ -267,14 +267,14 @@ factory_register<BaseType>::grab(const std::string& id) {
 
 
 template <typename BaseType>
-const typename factory_register<BaseType>::factory_type& 
+const typename factory_register<BaseType>::factory_type&
 factory_register<BaseType>::get(const std::string& id) const {
   typename factory_map_type::const_iterator found = registered_.find(id);
   if (found == registered_.end()) {
     std::ostringstream message;
     message << "datatools::factory_register::get: "
-            << "Class ID '" 
-            << id 
+            << "Class ID '"
+            << id
             << "' is not registered !";
     throw std::logic_error(message.str());
   }
@@ -283,24 +283,24 @@ factory_register<BaseType>::get(const std::string& id) const {
 
 
 template <typename BaseType>
-void factory_register<BaseType>::registration(const std::string& id, 
+void factory_register<BaseType>::registration(const std::string& id,
                                               const factory_type& factory) {
   if (this->is_verbose()) {
     std::clog << "INFO: " << "datatools::factory_register<"
-              << label_ 
+              << label_
               << ">::registration: "
-              << "registration of class with ID '" 
-              << id << "'" 
+              << "registration of class with ID '"
+              << id << "'"
               << std::endl;
   }
 
   typename factory_map_type::const_iterator found = registered_.find(id);
   if (found != registered_.end()) {
     std::ostringstream message;
-    message << "datatools::factory_register<" 
-            << label_ 
+    message << "datatools::factory_register<"
+            << label_
             << ">::registration: "
-            << "Class ID '" 
+            << "Class ID '"
             << id << "' is already registered !";
     throw std::logic_error(message.str());
   }
@@ -312,20 +312,20 @@ template <typename BaseType>
 void factory_register<BaseType>::unregistration(const std::string& id) {
   if (this->is_verbose()) {
     std::clog << "INFO: " << "datatools::factory_register<"
-              << label_ 
+              << label_
               << ">::unregistration:  "
-              << "unregistration of class with ID '" 
-              << id 
+              << "unregistration of class with ID '"
+              << id
               << "'" << std::endl;
   }
   typename factory_map_type::const_iterator found = registered_.find(id);
   if (found == registered_.end()) {
     std::ostringstream message;
-    message << "datatools::factory_register<" 
-            << label_ 
+    message << "datatools::factory_register<"
+            << label_
             << ">::unregistration: "
-            << "Class ID '" 
-            << id 
+            << "Class ID '"
+            << id
             << "' is not registered !";
     throw std::logic_error(message.str());
   }
@@ -337,9 +337,9 @@ template <typename BaseType>
 void factory_register<BaseType>::import(const factory_register& other) {
   if (this->is_verbose()) {
     std::clog << "INFO: " << "datatools::factory_register<"
-              << label_ 
+              << label_
               << ">::import: Importing registered factories from register '"
-              << other.label() 
+              << other.label()
               << "'..." << std::endl;
   }
 
@@ -352,26 +352,26 @@ void factory_register<BaseType>::import(const factory_register& other) {
 
   if (this->is_verbose()) {
     std::clog << "INFO: " << "datatools::factory_register<"
-              << label_ 
+              << label_
               << ">::import: Done." << std::endl;
   }
 }
 
 
 template <typename BaseType>
-void factory_register<BaseType>::print(std::ostream& out, 
+void factory_register<BaseType>::print(std::ostream& out,
                                        const std::string& indent) const {
   std::ostringstream title_oss;
   title_oss << "List of registered allocators/functors for label \""
-            << label_ 
+            << label_
             << "\" : ";
   this->tree_dump(out, title_oss.str(), indent);
 }
 
 
 template <typename BaseType>
-void factory_register<BaseType>::tree_dump(std::ostream& out, 
-                                           const std::string& title, 
+void factory_register<BaseType>::tree_dump(std::ostream& out,
+                                           const std::string& title,
                                            const std::string& a_indent,
                                            bool inherit) const {
   std::string indent;
@@ -380,12 +380,12 @@ void factory_register<BaseType>::tree_dump(std::ostream& out,
   if (!title.empty()) { out << indent << title << std::endl; }
 
   out << indent << i_tree_dumpable::tag
-      << "Label   : '" 
+      << "Label   : '"
       << label_ << "'" << std::endl;
-  out << indent << i_tree_dumpable::tag 
-      << "Verbose : " 
+  out << indent << i_tree_dumpable::tag
+      << "Verbose : "
       << verbose_ << std::endl;
-  out << indent << i_tree_dumpable::inherit_tag(inherit) 
+  out << indent << i_tree_dumpable::inherit_tag(inherit)
       << "Registered factories : " << std::endl;
 
   for (typename factory_map_type::const_iterator i = registered_.begin();

@@ -1,9 +1,9 @@
 /* base_service.h
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
- * Last modified : 2011-06-07
+ * Last modified : 2013-04-22
  *
- * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,7 +123,7 @@ class base_service : public datatools::i_tree_dumpable {
   // Factory stuff :
   DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_service);
 };
-      
+
 }  // end of namespace datatools
 
 #endif // DATATOOLS_BASE_SERVICE_H_

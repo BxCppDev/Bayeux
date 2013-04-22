@@ -1,18 +1,18 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 //! \file datatools/event_id.h
 /* event_id.h
  * Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-02-15
- * Last modified: 2008-02-15
- * 
- * License: 
- * 
- * 
- * Description: 
+ * Last modified: 2013-03-22
+ *
+ * License:
+ *
+ *
+ * Description:
  *  A generic event id with run number and event number
  *
- * History: 
- * 
+ * History:
+ *
  */
 #ifndef DATATOOLS_EVENT_ID_H_
 #define DATATOOLS_EVENT_ID_H_
@@ -34,9 +34,9 @@
 
 namespace datatools {
 
-/*! \brief A simple event identifier based on a run number and an event number      
+/*! \brief A simple event identifier based on a run number and an event number
  *  Run and event numbers are represented by 32 bits signed integrals.
- *  The event_id class is serializable through the 
+ *  The event_id class is serializable through the
  *  Boost.Serialization library.
  *  Utilities for standard I/O streams is also provided.
  *
@@ -53,7 +53,7 @@ namespace datatools {
  *   return 0;
  * }
  * \endcode
- * 
+ *
  */
 
 class event_id :
@@ -91,10 +91,10 @@ class event_id :
 
   //! The destructor.
   virtual ~event_id();
-  
+
   //! Invalidate the id.
   virtual void clear();
-  
+
   //! Invalidate the id.
   void reset();
 
@@ -168,12 +168,12 @@ class event_id :
   *   @param indent the indentation string
   *   @param inherit the inheritance flag.
   */
-  virtual void tree_dump(std::ostream& out = std::cerr, 
+  virtual void tree_dump(std::ostream& out = std::cerr,
                          const std::string& title  = "",
                          const std::string& indent = "",
                          bool inherit = false) const;
 
-  void smart_print(std::ostream& out, 
+  void smart_print(std::ostream& out,
                    const std::string& title,
                    const std::string& indent) const;
 
@@ -192,7 +192,7 @@ class event_id :
 
   //! Support for backward compatibility serialization tag
   DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT()
-    
+
 #if DATATOOLS_WITH_REFLECTION == 1
     DR_CLASS_RTTI();
 #endif
@@ -205,12 +205,12 @@ class event_id :
 */
 class event_id_equal_predicate : public std::unary_function<event_id, bool> {
  public:
-  //! Constructor 
+  //! Constructor
   /** @param id the reference event ID.
   */
   event_id_equal_predicate(const event_id & id) : id_(id) {}
 
-  //! Functionnal operator 
+  //! Functionnal operator
   /** @param id the event ID to be checked to the embedded reference ID.
   */
   bool operator() (const event_id & id) const {
@@ -220,7 +220,7 @@ class event_id_equal_predicate : public std::unary_function<event_id, bool> {
  private:
   event_id id_;
 };
-} // end of namespace datatools 
+} // end of namespace datatools
 
 DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::datatools::event_id)
 

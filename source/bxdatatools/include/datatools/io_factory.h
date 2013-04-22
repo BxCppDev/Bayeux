@@ -5,7 +5,7 @@
  *
  *  Some generic reader and writer based on Boost archives.
  *
- * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,10 +117,10 @@ class io_factory : public datatools::i_tree_dumpable {
 
  public:
 
-  static int guess_mode_from_filename(const std::string& a_filename, 
+  static int guess_mode_from_filename(const std::string& a_filename,
                                       int& mode);
 
- public: 
+ public:
 
   // ctor
   io_factory(int mode = io_factory::MODE_DEFAULT);
@@ -222,11 +222,11 @@ class io_factory : public datatools::i_tree_dumpable {
       // here for unzipped text and XML archives?
       char c = 0;
       in_fs_->get(c);
-     
+
       if (in_fs_) {
         in_fs_->putback(c);
       }
-    } 
+    }
 
     if (! *in_fs_) {
       if (in_fs_->eof()) {
@@ -241,7 +241,7 @@ class io_factory : public datatools::i_tree_dumpable {
         throw std::logic_error("datatools::io_factory::load: input stream in bad status!");
       }
     }
-     
+
     try {
       if (itar_ptr_ != 0) {
         this->load_text<Data>(*itar_ptr_, data);
@@ -257,7 +257,7 @@ class io_factory : public datatools::i_tree_dumpable {
     catch (boost::archive::archive_exception& x) {
       if (io_factory::g_warning) {
         std::clog << "WARNING: datatools::io_factory::load: archive exception is: "
-                  << x.what() 
+                  << x.what()
                   << std::endl;
       }
       throw x;
@@ -266,7 +266,7 @@ class io_factory : public datatools::i_tree_dumpable {
       if (io_factory::g_warning) {
         std::cerr << "WARNING: datatools::io_factory::load: "
                   << "cannot load data from archive: "
-                  << x.what() 
+                  << x.what()
                   << "!"
                   << std::endl;
       }
@@ -324,7 +324,7 @@ class io_factory : public datatools::i_tree_dumpable {
 
  private:
   template <typename Data>
-  void store_text(boost::archive::text_oarchive& archive, 
+  void store_text(boost::archive::text_oarchive& archive,
                   const Data& data) {
     const Data& b = data;
     archive << b;
@@ -373,10 +373,10 @@ class io_factory : public datatools::i_tree_dumpable {
 
   std::ifstream *fin_;
   std::ofstream *fout_;
- 
+
   boost::iostreams::filtering_istream *in_fs_;
   boost::iostreams::filtering_ostream *out_fs_;
- 
+
   std::locale *default_locale_;
   std::locale *locale_;
 
@@ -441,14 +441,14 @@ static const bool no_append_mode       = false;
 // data_reader class
 //
 /*! \brief A generic data reader based on Boost/Serialization
- * 
+ *
  * The data_reader class supports :
  * - portable text (ASCII) archives
  * - portable XML archives
  * - portable binary archives
  *
  * Example :
- * \code 
+ * \code
  * #include <datatools/io_factory.h>
  * #include <datatools/properties.h>
  *
@@ -457,7 +457,7 @@ static const bool no_append_mode       = false;
  *   datatools::data_reader reader ("test.xml");
  *   datatools::properties setup;
  *   if (reader.has_record_tag () &&
- *       reader.record_tag_is (datatools::properties::SERIAL_TAG)) 
+ *       reader.record_tag_is (datatools::properties::SERIAL_TAG))
  *   {
  *     reader.load (setup);
  *   }
@@ -583,9 +583,9 @@ class data_reader {
   void load_serializable(Data& data,
     typename boost::disable_if< has_bsts<Data> >::type* dummy = 0) {
     /*
-    std::cerr << "DEVEL: " << "load_serializable: Serializable '" 
+    std::cerr << "DEVEL: " << "load_serializable: Serializable '"
               << typeid(Data).name ()
-              << "' has no BST support !" << '\n'; 
+              << "' has no BST support !" << '\n';
     */
     this->load(data.get_serial_tag(), data);
   }
@@ -594,10 +594,10 @@ class data_reader {
   void load_serializable(
     Data& data,
     typename boost::enable_if< has_bsts<Data> >::type* dummy = 0) {
-    std::cerr << "DEVEL: " << "load_serializable: Serializable '" 
+    std::cerr << "DEVEL: " << "load_serializable: Serializable '"
               << typeid(Data).name ()
-              << "' has BST support !" << '\n'; 
-    this->load_alt(data.get_serial_tag(), 
+              << "' has BST support !" << '\n';
+    this->load_alt(data.get_serial_tag(),
                    ::datatools::backward_serial_tag<Data> (0),
                    data);
   }
@@ -667,13 +667,13 @@ class data_reader {
 // data_writer class
 //
 /*! \brief A generic data writer based on Boost/Serialization
- * 
+ *
  * The data_reader class supports :
  * - portable text (ASCII) archives
  * - portable XML archives
  * - portable binary archives
  * Example :
- * \code 
+ * \code
  * #include <datatools/io_factory.h>
  * #include <datatools/properties.h>
  *
@@ -743,7 +743,7 @@ class data_writer {
 
     this->basic_store<std::string>(tag);
     this->basic_store<Data>(data);
-  
+
     if (writer_->is_multi_archives()) {
       writer_->stop_archive();
     }
@@ -762,7 +762,7 @@ class data_writer {
     if (writer_ == 0) {
       throw std::logic_error("datatools::data_writer::basic_store(...): not initialized!");
     }
-  
+
     writer_->store<Data>(data);
   }
 

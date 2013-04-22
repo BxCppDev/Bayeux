@@ -19,7 +19,6 @@ list_of_actions="check configure unconfigure build doc test untest clean install
 pkgtools_dir="pkgtools.d"
 
 the_base_dir=$(pwd)
-
 if [ ! -d ./${pkgtools_dir} ]; then
     echo "ERROR: current directory is : $(pwd)" >&2
     echo "ERROR: ${appname}: Please run this script from the package base directory ! Abort !" >&2
@@ -269,6 +268,14 @@ function do_check ()
     missing_material=""
     missing_material_alt=""
 
+    which cmake > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+	missing_material="${missing_material}cmake "
+	pkgtools__msg_warning "Cannot find cmake !"
+    else
+	pkgtools__msg_notice "Found CMake $(cmake --version) !"
+    fi
+
     which boost-config > /dev/null 2>&1
     if [ $? -ne 0 ]; then
 	missing_material="${missing_material}Boost "
@@ -287,22 +294,14 @@ function do_check ()
 
     if [ "x${CAMP_DIR}" = "x" ]; then
     	missing_material="${missing_material}CAMP "
-    	pkgtools__msg_warning "Cannot find CAMP !"
+    	pkgtools__msg_warning "Cannot find CAMP (CAMP_DIR environment variable is missing) !"
     else
 	if [ ! -d ${CAMP_DIR} ]; then
     	    pkgtools__msg_warning "Cannot find CAMP directory : CAMP_DIR=${CAMP_DIR} !"
-	else 
-    	    pkgtools__msg_notice "Found CAMP (CAMP_DIR environment variable is missing) !"
+	else
+    	    pkgtools__msg_notice "Found CAMP in '${CAMP_DIR}' !"
 	fi
     fi
-
-    #which camp-config > /dev/null 2>&1
-    # if [ $? -ne 0 ]; then
-    # 	missing_material="${missing_material}CLHEP "
-    # 	pkgtools__msg_warning "Cannot find CLHEP !"
-    # else
-    # 	pkgtools__msg_notice "Found CLHEP $(clhep-config --version) !"
-    # fi
 
     which doxygen > /dev/null 2>&1
     if [ $? -ne 0 ]; then
@@ -470,7 +469,7 @@ function do_configure ()
     fi
     cd ${the_base_dir}
 
-###	-DBOOST_ROOT=${BOOST_ROOT_DIR} 
+###	-DBOOST_ROOT=${BOOST_ROOT_DIR}
 
     __pkgtools__at_function_exit
     return 0

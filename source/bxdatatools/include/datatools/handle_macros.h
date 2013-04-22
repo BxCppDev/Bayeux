@@ -1,10 +1,12 @@
 /* datatools/handle_macros.h */
 /* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2012-03-20
- * Last modified : 2012-03-20
+ * Last modified : 2013-04-23
  */
+
 #ifndef DATATOOLS_HANDLE_MACROS_H_
 #define DATATOOLS_HANDLE_MACROS_H_
+
 // Standard Library
 #include <stdexcept>
 #include <sstream>

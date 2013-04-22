@@ -28,7 +28,6 @@ include/datatools/bio_guard.h
 include/datatools/bit_mask.h
 include/datatools/caster_utils.h
 include/datatools/clhep_units.h
-include/datatools/datatools.h
 include/datatools/event_id.h
 include/datatools/factory.h
 include/datatools/factory_macros.h
@@ -127,7 +126,7 @@ set_source_files_properties(${datatools_detail_HEADERS}
     MACOSX_PACKAGE_LOCATION Headers/detail
   )
 
-# We have to install the detail header modules separately if datatools 
+# We have to install the detail header modules separately if datatools
 # isn't built as a Framework.
 if(NOT APPLE)
   foreach(_module detail eos)
@@ -177,14 +176,14 @@ set(datatools_SOURCES
 # resources on Mac. This allows them to be easily imported into the
 # Framework with minimal platform specific commands by adding them
 # as sources of the framework/library.
-# We have to deal with the library depends part of this later because 
+# We have to deal with the library depends part of this later because
 # their generation require the targets to be present...
 #
 if(APPLE)
   set(TO_DATATOOLS_INCLUDEDIR "../..")
 else()
-  file(RELATIVE_PATH TO_DATATOOLS_INCLUDEDIR 
-    "${CMAKE_INSTALL_FULL_LIBDIR}/cmake/datatools-${datatools_VERSION}" 
+  file(RELATIVE_PATH TO_DATATOOLS_INCLUDEDIR
+    "${CMAKE_INSTALL_FULL_LIBDIR}/cmake/datatools-${datatools_VERSION}"
     "${CMAKE_INSTALL_FULL_INCLUDEDIR}"
     )
 endif()
@@ -196,7 +195,7 @@ set(datatools_RESOURCES
 
 foreach(_dtresource ${datatools_RESOURCES})
   configure_file(
-    ${PROJECT_SOURCE_DIR}/${_dtresource}.in 
+    ${PROJECT_SOURCE_DIR}/${_dtresource}.in
     ${PROJECT_BINARY_DIR}/${_dtresource}
     @ONLY
     )
@@ -221,7 +220,7 @@ endif()
 #
 include_directories(
   ${PROJECT_BINARY_DIR}/include
-  ${PROJECT_SOURCE_DIR}/include	
+  ${PROJECT_SOURCE_DIR}/include
   ${CLHEP_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIRS}
   )
@@ -230,8 +229,8 @@ if(DATATOOLS_WITH_REFLECTION)
   include_directories(${CAMP_INCLUDE_DIR})
 endif()
 
-add_library(datatools SHARED  
-  ${datatools_PUBLIC_HEADERS} 
+add_library(datatools SHARED
+  ${datatools_PUBLIC_HEADERS}
   ${datatools_eos_HEADERS}
   ${datatools_detail_HEADERS}
   ${datatools_SOURCES}
@@ -239,7 +238,7 @@ add_library(datatools SHARED
   )
 
 set_target_properties(datatools
-  PROPERTIES 
+  PROPERTIES
     FRAMEWORK                             ON
     MACOSX_FRAMEWORK_IDENTIFIER           org.supernemo.datatools
     MACOSX_FRAMEWORK_BUNDLE_VERSION       ${datatools_VERSION}
@@ -270,7 +269,7 @@ if(DATATOOLS_WITH_BIO)
     src/the_serializable.cc
     )
   list_prepend(datatools_bio_SOURCES "${PROJECT_SOURCE_DIR}/")
-  
+
   add_library(datatools_bio SHARED ${datatools_bio_SOURCES})
 
   if(APPLE)
@@ -299,7 +298,7 @@ if(DATATOOLS_WITH_REFLECTION)
     src/the_introspectable.cc
     )
   list_prepend(datatools_reflection_SOURCES "${PROJECT_SOURCE_DIR}/")
-  
+
   add_library(datatools_reflection SHARED ${datatools_reflection_SOURCES})
 
   if(APPLE)
@@ -313,18 +312,18 @@ endif()
 
 #-----------------------------------------------------------------------
 # EXPORT AND INSTALL LIBRARY TARGETS
-# We make use of the full signature 
+# We make use of the full signature
 install(TARGETS ${DATATOOLS_TARGETS}
   EXPORT        datatools-libraries
-  RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR} 
+  RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
                 COMPONENT Runtime
-  LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR} 
+  LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
                 COMPONENT Runtime
-  FRAMEWORK     DESTINATION ${DATATOOLS_FRAMEWORK_LOCATION} 
+  FRAMEWORK     DESTINATION ${DATATOOLS_FRAMEWORK_LOCATION}
                 COMPONENT Runtime
-  ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} 
+  ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
                 COMPONENT Development
-  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/datatools 
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/datatools
                 COMPONENT Development
   )
 
@@ -332,11 +331,11 @@ install(TARGETS ${DATATOOLS_TARGETS}
 # We also need to generate a file for the build tree, but at present
 # we leave this out for simplicity.
 if(APPLE)
-  install(EXPORT datatools-libraries 
+  install(EXPORT datatools-libraries
     DESTINATION CMake COMPONENT Development
     )
 else()
-  install(EXPORT datatools-libraries 
+  install(EXPORT datatools-libraries
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/datatools-${datatools_VERSION}
     COMPONENT Development
     )

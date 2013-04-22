@@ -1,10 +1,10 @@
 /* datatools/i_cloneable.h */
 /* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-03-24
- * Last modified : 2012-12-16
- * 
- * Copyright (C) 2011-2012 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ * Last modified : 2013-04-22
+ *
+ * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -17,10 +17,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- * 
- * Description: 
+ *
+ * Description:
  *
  *  An abstract interface for cloneable objects
  *
@@ -29,6 +29,7 @@
 //! \file datatools/i_cloneable.h
 #ifndef DATATOOLS_I_CLONEABLE_H_
 #define DATATOOLS_I_CLONEABLE_H_
+
 // Standard Library
 #include <iostream>
 #include <typeinfo>
@@ -39,7 +40,6 @@
 // This Project
 #include <datatools/caster_utils.h>
 
-
 namespace datatools {
 
 class i_serializable; // forward declaration
@@ -47,10 +47,10 @@ class i_serializable; // forward declaration
 //! \brief A pure abstract class (interface) for inherited cloneable classes.
 /**
  * This is a pure abstract class that can be
- *  inherited for class cloning service (only for 
+ *  inherited for class cloning service (only for
  *  copyable objects).
  *
- *  Some macros are provided for declaration and definition 
+ *  Some macros are provided for declaration and definition
  *  of a clone method within a class. Should be in public scope.
  *
  *  \b Example:
@@ -69,13 +69,13 @@ class i_serializable; // forward declaration
  *  @code
  *  #include <my_data.h>
  *
- *  DATATOOLS_CLONEABLE_IMPLEMENTATION(my_data) 
+ *  DATATOOLS_CLONEABLE_IMPLEMENTATION(my_data)
  *  @endcode
  *
- * The my_data class must have a copy constructor (or a 
+ * The my_data class must have a copy constructor (or a
  * default copy constructor provided by the compiler).
  *
- */     
+ */
 class i_cloneable {
  public:
   /**
@@ -94,10 +94,10 @@ class i_cloneable {
   template<class Copyable>
   static Copyable* clone_it(const Copyable& a_copyable) {
     return new Copyable (a_copyable);
-  }  
+  }
 };
 
-} // end of namespace datatools 
+} // end of namespace datatools
 
 
 //----------------------------------------------------------------------
