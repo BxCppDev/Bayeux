@@ -348,8 +348,10 @@ int ocd_manual::_run_validate(const std::string & class_id_,
                     << class_id_ << "' ! Reason is '" << error_message << "' !"<< '\n';
           error_code = EXIT_FAILURE;
         }
-        std::clog << "File '" << setup_path << "' is validated for class '"
-                  << class_id_ << "'." << '\n';
+        else {
+          std::clog << "File '" << setup_path << "' is validated for class '"
+                    << class_id_ << "'." << '\n';
+        }
       }
     }
   }
