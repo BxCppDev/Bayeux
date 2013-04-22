@@ -138,7 +138,7 @@ Use cuts :
 bash$ which cuts-config
 /home/<login>/software/bin/cuts-config
 bash$ cuts-config --version
-0.1.0
+4.0.1
 bash$ cuts-config --cflags
 ...
 bash$ cuts-config --ldflags
