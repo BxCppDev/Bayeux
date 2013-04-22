@@ -1,46 +1,38 @@
 #include <iostream>
 #include <vector>
+#include <datatools/properties.h>
 
-#include <datatools/utils/properties.h>
-
-int main (void)
-{
-
+int main (void) {
   {
-    datatools::utils::properties config;
-    
+    datatools::properties config;
+
     // Default value is set at 'true' for this boolean property :
     config.store_flag ("debug", "Activation of debugging feature");
-    
+
     // Set explicitely the values of some boolean properties :
     config.store ("test", false);
     config.store_boolean ("another", true);
 
-    if (config.is_boolean ("test"))
-      {
-	std::cout << "Boolean 'test' exists !" << std::endl;
-      }
+    if (config.is_boolean ("test")) {
+      std::cout << "Boolean 'test' exists !" << std::endl;
+    }
 
-    if (config.has_flag ("debug"))
-      {
-	std::cout << "Flag 'debug' is set !" << std::endl;
-      }
+    if (config.has_flag ("debug")) {
+      std::cout << "Flag 'debug' is set !" << std::endl;
+    }
 
-    if (config.has_flag ("another"))
-      {
-	std::cout << "Flag 'another' is also set !" << std::endl;
-      }
+    if (config.has_flag ("another")) {
+      std::cout << "Flag 'another' is also set !" << std::endl;
+    }
 
-    if (! config.has_flag ("test"))
-      {
-	std::cout << "Flag 'test' is not set !" << std::endl;
-      }
+    if (! config.has_flag ("test")) {
+      std::cout << "Flag 'test' is not set !" << std::endl;
+    }
 
-    if (config.has_key ("debug"))
-      {
-	bool debug = config.fetch_boolean ("debug");
-	std::cout << "Fetched boolean value for 'debug' is : " << debug << std::endl;
-      }
+    if (config.has_key ("debug")) {
+      bool debug = config.fetch_boolean ("debug");
+      std::cout << "Fetched boolean value for 'debug' is : " << debug << std::endl;
+    }
 
     {
       std::vector<bool> bits;
@@ -51,14 +43,12 @@ int main (void)
 
     {
       std::vector<bool> bits;
-      if (config.has_key ("bits") && config.is_vector ("bits"))
-	{
-	  config.fetch ("bits", bits);
-	}
-      for (int i = 0; i < bits.size (); ++i)
-	{
-	  std::clog << bits[i] << ' ';
-	}
+      if (config.has_key ("bits") && config.is_vector ("bits")) {
+        config.fetch ("bits", bits);
+      }
+      for (int i = 0; i < bits.size (); ++i) {
+        std::clog << bits[i] << ' ';
+      }
       std::clog << std::endl;
     }
 

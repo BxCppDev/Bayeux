@@ -1,36 +1,30 @@
 %% things_howto.tex
-\section{The \texttt{datatools::utils::things} class}\label{sec:things}
+\section{The \texttt{datatools::things} class}\label{sec:things}
 
 \subsection{Introduction}
 
-The  \texttt{datatools::utils::things} class  is a  general container.
+The  \texttt{datatools::things} class  is a  general container.
 It is able to store various  types of objects, depending on the needs.
 It  is  serializable and  implements  a  dictionary interface.  Stored
 objects must fulfill a special interface.
 
 \subsection{Header file and instantiation}
 
-\pn  In   order  to  use  \texttt{datatools::utils::things}
+\pn  In   order  to  use  \texttt{datatools::things}
 objects, one must use the following include directive:
-\begin{CppVerbatim} 
-#include <datatools/utils/things.h>
+\begin{CppVerbatim}
+#include <datatools/things.h>
 \end{CppVerbatim}
 
-\pn The  declaration of a \texttt{datatools::utils::things}
+\pn The  declaration of a \texttt{datatools::things}
 instance can be simply done with:
-\begin{CppVerbatim} 
-datatools::utils::things my_bag;
+\begin{CppVerbatim}
+datatools::things my_bag;
 \end{CppVerbatim}
-\pn Note  the use  of the nested  \texttt{datatools::utils} namespace.
 Alternatively one can use :
-\begin{CppVerbatim} 
-using namespace datatools::utils;
-multi_properties my_bag;
-\end{CppVerbatim}
-\pn or:
-\begin{CppVerbatim} 
-namespace du = datatools::utils;
-du::multi_properties my_bag;
+\begin{CppVerbatim}
+using namespace datatools;
+things my_bag;
 \end{CppVerbatim}
 
 \subsection{Design}
@@ -39,12 +33,12 @@ du::multi_properties my_bag;
 
 A  \emph{things} container  allows  to store  an  arbitrary number  of
 objects   of    any   type,    provided   they   inherit    from   the
-\texttt{datatools::serialization::i\_serializable}   interface.   This
+\texttt{datatools::i\_serializable}   interface.   This
 design choice has  been done to enable the  \emph{things} container to
 be serializable itself, using the Boost/Serialization mechanism as the
 native I/O  system. Also a  \emph{things} container can  store another
 \emph{things}   container.  Note  that   the  implementation   of  the
-\texttt{datatools::utils::things}   class  relies   on   runtime  type
+\texttt{datatools::things}   class  relies   on   runtime  type
 identification (RTTI) functionnalities of the C++ language.
 
 \subsubsection{Banks}
@@ -67,7 +61,7 @@ are:
 \item the stored  objects can only be manipulated  by const or mutable
   \emph{references},
 
-\item      the     \texttt{datatools::utils::things}      class     is
+\item      the     \texttt{datatools::things}      class     is
   \emph{non-copyable}.
 
 \end{itemize}
@@ -77,7 +71,7 @@ is a very flexible container that is adapted for many applications.
 It provides some powerfull management tools :
 \begin{itemize}
 
-\item add/remove arbitrary \emph{banks} of data 
+\item add/remove arbitrary \emph{banks} of data
   (with the serializable interface),
 
 \item internal dynamic memory management,
@@ -86,14 +80,14 @@ It provides some powerfull management tools :
 
 \item a dictionnary interface to check and access to \emph{banks} of data,
 
-\item fully serializable (Boost/Serialization).
+\item full serialization support (text/XML/binary, Boost/Serialization based).
 
 \end{itemize}
 
 
 \subsubsection{Interface}
 
-\pn List of public \texttt{datatools::utils::things} class methods :
+\pn List of public \texttt{datatools::things} class methods :
 \begin{itemize}
 
 \item \texttt{size} : return the number of stored objects/banks,
@@ -105,8 +99,8 @@ It provides some powerfull management tools :
 
 \item \texttt{has}: check if an object/bank with a given name is stored,
 
-\item \texttt{has\_serial\_tag}: 
-  check if an object/bank with a given name and given \emph{serialization tag} 
+\item \texttt{has\_serial\_tag}:
+  check if an object/bank with a given name and given \emph{serialization tag}
   is stored,
 
 \item \texttt{set\_constant}  : mark an object/bank with  a given name as
@@ -142,154 +136,17 @@ objects/banks :
 \item \texttt{add<T>} : add a new object/bank of type \texttt{T} with
   a given name, return a mutable reference to the new allocated instance,
 
-\item \texttt{is\_a<T>} : check if an existing object/bank with a given 
+\item \texttt{is\_a<T>} : check if an existing object/bank with a given
   name is of type \texttt{T},
 
-\item \texttt{get<T>} : return a non-mutable reference to an existing object/bank 
+\item \texttt{get<T>} : return a non-mutable reference to an existing object/bank
   with a given name of type \texttt{T},
 
-\item \texttt{grab<T>} : return a mutable reference to an existing object/bank 
+\item \texttt{grab<T>} : return a mutable reference to an existing object/bank
   with a given name of type \texttt{T}.
 
 \end{itemize}
 
-\subsection{Examples}
-
-\subsubsection{Declare a \emph{things} container and add objects in it}
-
-\pn The  program source sample  \ref{program:things:0} shows
-how to declare a \emph{things} container object and add two \emph{properties}
-objects in it. It prints
-the  contents of  the container  in a  human readable  formaty (sample
-\ref{sample:things:0}.
-
-\begin{program}[h]
-\VerbatimInput[frame=single,
-numbers=left,
-numbersep=2pt,
-firstline=1,
-fontsize=\footnotesize,
-showspaces=false]{\codingpath/things_0.cxx}
-\caption{Adding objects in  a
-  \texttt{datatools::utils::things} container. Note that all low-level
-  memory allocation operation is performed internally. The user does not
-  have to care about it.  
-}
-\label{program:things:0}
-\end{program}
-
-
-
-\begin{sample}[h]
-\VerbatimInput[frame=single,
-numbers=left,
-numbersep=2pt,
-firstline=1,
-%lastline=3,
-fontsize=\footnotesize,
-showspaces=false]{\codingpath/things_0.out}
-\caption{The  output of the  program \ref{program:things:0}.
-  We  can  check that  the  two banks of data  have been  stored. Both are
-  \texttt{datatools::utils::properties} objects, which are empty here.
-}
-\label{sample:things:0}
-\end{sample}
-
-
-\subsubsection{Instant manipulation of added objects through references}
-
-\pn The  program source sample  \ref{sample:things:1} shows
-how to declare a \emph{things} container object, add two \emph{properties}
-objects in it and make use of the mutable reference returned by the template 
-\texttt{add} methods.
-
-\begin{sample}[h]
-\VerbatimInput[frame=single,
-numbers=left,
-numbersep=2pt,
-firstline=13,
-lastline=26,
-fontsize=\footnotesize,
-showspaces=false]{\codingpath/things_1.cxx}
-\caption{We use the references returned while adding objects in  a
-  \texttt{datatools::utils::things} container in order to manipulate
-  the stored object.  
-}
-\label{sample:things:1}
-\end{sample}
-
-
-\subsubsection{Get references to manipulate stored objects}
-
-\pn  The  program source  sample  \ref{sample:things:2}  shows how  to
-obtain non-mutable  and mutable  references to an  object stored  in a
-\emph{things} container object with a given name.  The \texttt{get<T>}
-and \texttt{grab<T>} template  methods respectively return non-mutable
-and   mutable  references  (here   class  \texttt{T}   corresponds  to
-\texttt{datatools::utils::properties}).  The  references are then used
-to manipulate the stored object through its own interface.
-
-\begin{sample}[h]
-\VerbatimInput[frame=single,
-numbers=left,
-numbersep=2pt,
-firstline=28,
-lastline=42,
-fontsize=\footnotesize,
-showspaces=false]{\codingpath/things_1.cxx}
-\caption{We explicitely  initialize references to an  object stored in
-  the   \texttt{datatools::utils::things}   container   in  order   to
-  manipulate the stored object.  }
-\label{sample:things:2}
-\end{sample}
-
-\subsubsection{Create a new class to be stored in a \emph{things} container}
-
-\pn The  program source samples  \ref{program:things:2a}
-and \ref{program:things:2b} shows
-how to declare new serializable class \texttt{storable\_type} that can be
-stored in a \emph{things} container object (output is shown on sample
-\ref{sample:things:2}).
-
-\begin{program}[h]
-\VerbatimInput[frame=single,
-numbers=left,
-numbersep=2pt,
-firstline=1,
-lastline=53,
-fontsize=\footnotesize,
-showspaces=false]{\codingpath/things_2.cxx}
-\caption{Creation of a new storable class for
-  \texttt{datatools::utils::things} container.
-}
-\label{program:things:2a}
-\end{program}
-
-\begin{program}[h]
-\VerbatimInput[frame=single,
-numbers=left,
-numbersep=2pt,
-firstline=56,
-fontsize=\footnotesize,
-showspaces=false]{\codingpath/things_2.cxx}
-\caption{Program  to   store  a   new  storable  class   (see  program
-  \ref{program:things:2a})   in   a  \texttt{datatools::utils::things}
-  container.  }
-\label{program:things:2b}
-\end{program}
-
-
-\begin{sample}[h]
-\VerbatimInput[frame=single,
-numbers=left,
-numbersep=2pt,
-firstline=1,
-%lastline=3,
-fontsize=\footnotesize,
-showspaces=false]{\codingpath/things_2.out}
-\caption{The          output          of          the          program
-  \ref{program:things:2a}-\ref{program:things:2b}.  }
-\label{sample:things:2}
-\end{sample}
+\input{things_howto_examples}
 
 %% end of things_howto.tex

@@ -1,10 +1,5 @@
-#include <datatools::utils::properties.h>
-
-int main (void)
-{
-  datatools::utils::properties config;
-
-
-
+#include <datatools::properties.h>
+int main (void) {
+  datatools::properties config;
   return 0;
 }

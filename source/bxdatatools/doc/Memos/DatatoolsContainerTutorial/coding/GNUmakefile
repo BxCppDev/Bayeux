@@ -25,6 +25,7 @@ clean :
 	$(RM) properties_4 properties_4.conf
 	$(RM) properties_5
 	$(RM) properties_6
+	$(RM) properties_*.out
 	$(RM) properties_*.log
 	$(RM) properties_7
 	$(RM) properties_8
@@ -33,76 +34,78 @@ clean :
 	$(RM) multi_properties_2
 	$(RM) multi_properties_3
 	$(RM) multi_properties_4
+	$(RM) multi_properties_*.out
 	$(RM) multi_properties_*.log
 	$(RM) things_0
 	$(RM) things_1
 	$(RM) things_2
+	$(RM) things_*.out
 	$(RM) things_*.log
 
 .PHONY : run
 run : run_2 run_3 run_4 run_5 run_6 run_7 run_8 \
       mrun_0 mrun_1 mrun_2 mrun_3 mrun_4 \
-      trun_0 trun_1  trun_É
+      trun_0 trun_1 trun_2
 
 .PHONY : run_2
 run_2 : properties_2
-	./properties_2 > properties_2.log 2>&1 
+	./properties_2 > properties_2.out 2>&1
 
 .PHONY : run_3
 run_3 : properties_3
-	./properties_3 > properties_3.log 2>&1 
+	./properties_3 > properties_3.out 2>&1
 
 .PHONY : run_4
 run_4 : properties_4
-	./properties_4 > properties_4.log 2>&1 
+	./properties_4 > properties_4.out 2>&1
 
 .PHONY : run_5
 run_5 : properties_5
-	./properties_5 > properties_5.log 2>&1 
+	./properties_5 > properties_5.out 2>&1
 
 .PHONY : run_6
 run_6 : properties_6
-	./properties_6 > properties_6.log 2>&1 
+	./properties_6 > properties_6.out 2>&1
 
 .PHONY : run_7
 run_7 : properties_7
-	./properties_7 > properties_7.log 2>&1 
+	./properties_7 > properties_7.out 2>&1
 
 .PHONY : run_8
 run_8 : properties_8
-	./properties_8 > properties_8.log 2>&1 
+	./properties_8 > properties_8.out 2>&1
 
 .PHONY : mrun_0
 mrun_0 : multi_properties_0
-	./multi_properties_0 > multi_properties_0.log 2>&1 
+	./multi_properties_0 > multi_properties_0.out 2>&1
 
 .PHONY : mrun_1
 mrun_1 : multi_properties_1
-	./multi_properties_1 > multi_properties_1.log 2>&1 
+	./multi_properties_1 > multi_properties_1.out 2>&1
 
 .PHONY : mrun_2
 mrun_2 : multi_properties_2
-	./multi_properties_2 > multi_properties_2.log 2>&1 
+	./multi_properties_2 > multi_properties_2.out 2>&1
 
 .PHONY : mrun_3
 mrun_3 : multi_properties_3
-	./multi_properties_3 > multi_properties_3.log 2>&1 
+	./multi_properties_3 > multi_properties_3.out 2>&1
 
 .PHONY : mrun_4
 mrun_4 : multi_properties_4
-	./multi_properties_4 > multi_properties_4.log 2>&1 
+	./multi_properties_4 > multi_properties_4.out 2>&1
 
 .PHONY : trun_0
 trun_0 : things_0
-	./things_0 > things_0.log 2>&1 
+	./things_0 > things_0.out 2>&1
 
 .PHONY : trun_1
 trun_1 : things_1
-	./things_1 > things_1.log 2>&1 
+	./things_1 > things_1.out 2>&1
 
 .PHONY : trun_2
 trun_2 : things_2
-	./things_2 > things_2.log 2>&1 
+	./things_2 > things_2.out 2>&1
 
 properties_2 : properties_2.cxx
 	$(CXX) $(CPPFLAGS) $< -o $@ $(LDFLAGS)

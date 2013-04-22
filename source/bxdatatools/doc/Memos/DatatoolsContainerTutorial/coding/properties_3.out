@@ -1,5 +1,5 @@
 Original container :
-|-- Description  : A test properties container
+|-- Description  : 'A test properties container'
 |-- Name : "debug.filename"
 |   |-- Type  : string (scalar)
 |   `-- Value : "debug.log"

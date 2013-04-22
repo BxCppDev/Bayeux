@@ -2,10 +2,10 @@ The bag:
 |-- Description  : A test things container
 |-- Name : "dummy"
 |   |-- Const  : 0
-|   `-- Handle  : 0x985abd8 (serial tag: 'storable_type')
+|   `-- Handle  : 0x24bfaf0 (serial tag: 'storable_type')
 `-- Name : "foo"
     |-- Const  : 0
-    `-- Handle  : 0x985ab70 (serial tag: 'datatools:utils::properties')
+    `-- Handle  : 0x24c5240 (serial tag: 'datatools::properties')
 
 foo : 
 `-- Name : "test"
@@ -17,4 +17,4 @@ The bag:
 |-- Description  : A test things container
 `-- Name : "dummy"
     |-- Const  : 0
-    `-- Handle  : 0x985abd8 (serial tag: 'storable_type')
+    `-- Handle  : 0x24bfaf0 (serial tag: 'storable_type')

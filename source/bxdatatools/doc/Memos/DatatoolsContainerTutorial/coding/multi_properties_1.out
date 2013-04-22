@@ -4,18 +4,18 @@ A multi-properties container with 3 empty sections :
 |-- Meta label   : "type"
 |-- Entries      : [3]
 |   |-- Entry : "debug"
-|   |   |-- Key         : "debug"
-|   |   |-- Meta        : "gnus"
+|   |   |-- Key        : "debug"
+|   |   |-- Meta       : "gnus"
 |   |   `-- Properties : <empty>
 |   |       `-- <no property>
 |   |-- Entry : "log"
-|   |   |-- Key         : "log"
-|   |   |-- Meta        : "gnats"
+|   |   |-- Key        : "log"
+|   |   |-- Meta       : "gnats"
 |   |   `-- Properties : <empty>
 |   |       `-- <no property>
 |   `-- Entry : "test"
-|       |-- Key         : "test"
-|       |-- Meta        : "foo"
+|       |-- Key        : "test"
+|       |-- Meta       : "foo"
 |       `-- Properties : <empty>
 |           `-- <no property>
 `-- Ordered entries      : [3]

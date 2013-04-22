@@ -1,54 +1,52 @@
 #include <iostream>
-
-#include <datatools/utils/properties.h>
+#include <functional>
+#include <datatools/properties.h>
 
 // A predicate on 'string' that searches for a given substring :
-class contains_string_predicate : public std::unary_function<const string &, bool>
+class contains_string_predicate : public std::unary_function<const std::string &, bool>
 {
-  string _token_; // the substring to be found in the string argument
+  std::string _token_; // the substring to be found in the string argument
 public:
-  contains_string_predicate (const string & token_) : _token_ (token_)
-  {
+  contains_string_predicate (const std::string & token_) : _token_ (token_) {
   }
-  bool operator () (const string & key_)const
-  {
+  bool operator () (const std::string & key_) const {
     return key_.find (_token_) != key_.npos;
   }
 };
 
 int main (void)
 {
-  datatools::utils::properties config ("A test properties container");
+  datatools::properties config ("A test properties container");
   config.store_flag ("test");
   config.store_flag ("program_name", "prog");
   config.store ("debug.level", 1);
   config.store ("debug.filename", "debug.log");
   config.tree_dump (std::cout, "Original container :");
-  std::cout << endl;
+  std::cout << std::endl;
 
-  datatools::utils::properties debug_config;
+  datatools::properties debug_config;
   config.export_starting_with (debug_config, "debug.");
-  debug_config.tree_dump (std::cout, 
+  debug_config.tree_dump (std::cout,
     "Exported properties container with the 'debug.' key prefix :");
-  std::cout << endl;
+  std::cout << std::endl;
 
-  datatools::utils::properties non_debug_config;
+  datatools::properties non_debug_config;
   config.export_not_starting_with (non_debug_config, "debug.");
-  non_debug_config.tree_dump (std::cout, 
+  non_debug_config.tree_dump (std::cout,
     "Exported properties container without the 'debug.' key prefix :");
-  std::cout << endl;
+  std::cout << std::endl;
 
-  datatools::utils::properties with_name_config;
+  datatools::properties with_name_config;
   config.export_if (with_name_config, contains_string_predicate ("name"));
-  with_name_config.tree_dump (std::cout, 
+  with_name_config.tree_dump (std::cout,
     "Exported properties container with the 'name' string in key :");
-  std::cout << endl;
-  
-  datatools::utils::properties without_name_config;
+  std::cout << std::endl;
+
+  datatools::properties without_name_config;
   config.export_not_if (without_name_config, contains_string_predicate ("name"));
-  without_name_config.tree_dump (std::cout, 
+  without_name_config.tree_dump (std::cout,
     "Exported properties container without the 'name' string in key :");
-  std::cout << endl;
+  std::cout << std::endl;
 
   return 0;
 }

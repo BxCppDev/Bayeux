@@ -1,5 +1,5 @@
 Original container :
-|-- Description  : A test properties container
+|-- Description  : 'A test properties container'
 |-- Name : "name"
 |   |-- Type  : string (scalar)
 |   `-- Value : "Monty"
@@ -7,8 +7,8 @@ Original container :
     |-- Type  : boolean (scalar)
     `-- Value : 1
 
-Properties container copied through affectation :
-|-- Description  : A test properties container
+Properties container copied through assignment :
+|-- Description  : 'A test properties container'
 |-- Name : "name"
 |   |-- Type  : string (scalar)
 |   `-- Value : "Monty"
@@ -17,7 +17,7 @@ Properties container copied through affectation :
     `-- Value : 1
 
 Properties container copied at construction :
-|-- Description  : A test properties container
+|-- Description  : 'A test properties container'
 |-- Name : "name"
 |   |-- Type  : string (scalar)
 |   `-- Value : "Monty"

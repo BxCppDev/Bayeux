@@ -1,11 +1,9 @@
 #include <iostream>
+#include <datatools/things.h>
+#include <datatools/properties.h>
 
-#include <datatools/utils/things.h>
-#include <datatools/utils/properties.h>
-
-int main (void)
-{
-  datatools::utils::things bag;
+int main (void) {
+  datatools::things bag;
 
   // Give it a description string :
   bag.set_description ("A test things container");
@@ -14,11 +12,11 @@ int main (void)
   // use the mutable reference returned by the 'add' method :
 
   // 'On the fly' usage of the returned reference :
-  bag.add<datatools::utils::properties> ("foo").store_flag ("debug");
+  bag.add<datatools::properties> ("foo").store_flag ("debug");
 
   // 'Off-line' usage of the returned reference :
-  datatools::utils::properties & bar_ref = 
-    bag.add<datatools::utils::properties> ("bar");
+  datatools::properties & bar_ref =
+    bag.add<datatools::properties> ("bar");
   // Now we are free to use the 'properties' class interface :
   bar_ref.store_flag ("test");
   bar_ref.store ("number_of_gate", 9);
@@ -29,20 +27,18 @@ int main (void)
   // in the 'things' container and get :
   //   a) a non-mutable reference to it
   //   b) a mutable reference to it
-  if (bag.has ("foo") && bag.is_a<datatools::utils::properties> ("foo"))
+  if (bag.has ("foo") && bag.is_a<datatools::properties> ("foo"))
     {
-      const datatools::utils::properties & const_foo_ref = 
-	bag.get<datatools::utils::properties> ("foo");
+      const datatools::properties & const_foo_ref =
+        bag.get<datatools::properties> ("foo");
       if (! const_foo_ref.has_key ("Devil"))
-	{
-	  datatools::utils::properties & foo_ref = 
-	    bag.grab<datatools::utils::properties> ("foo");
-	  foo_ref.store ("Devil", 666);
-	}
+        {
+          datatools::properties & foo_ref =
+            bag.grab<datatools::properties> ("foo");
+          foo_ref.store ("Devil", 666);
+        }
+      const_foo_ref.tree_dump (std::cout, "foo :");
    }
 
-  bag.get<datatools::utils::properties> ("foo").tree_dump (std::cout,
-							   "foo :");
-
-  return 0;
+   return 0;
 }

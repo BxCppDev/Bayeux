@@ -2,7 +2,7 @@ A things container with 2 banks :
 |-- Description  : A test things container
 |-- Name : "bar"
 |   |-- Const  : 0
-|   `-- Handle  : 0x816c870 (serial tag: 'datatools:utils::properties')
+|   `-- Handle  : 0x1a66fc0 (serial tag: 'datatools::properties')
 `-- Name : "foo"
     |-- Const  : 0
-    `-- Handle  : 0x816c7f0 (serial tag: 'datatools:utils::properties')
+    `-- Handle  : 0x1a66ec0 (serial tag: 'datatools::properties')

@@ -1,8 +1,7 @@
-A things container with 2 banks :
-|-- Description  : A test things container
-|-- Name : "bar"
-|   |-- Const  : 0
-|   `-- Handle  : 0x993e948 (serial tag: 'datatools:utils::properties')
-`-- Name : "foo"
-    |-- Const  : 0
-    `-- Handle  : 0x993e808 (serial tag: 'datatools:utils::properties')
+foo :
+|-- Name : "Devil"
+|   |-- Type  : integer (scalar)
+|   `-- Value : 666
+`-- Name : "debug"
+    |-- Type  : boolean (scalar)
+    `-- Value : 1

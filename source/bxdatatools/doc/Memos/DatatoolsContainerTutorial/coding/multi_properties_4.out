@@ -34,6 +34,7 @@ A multi-properties container restored from a file :
 |       |-- Meta       : "test::config"
 |       `-- Properties : [5]
 |           |-- Name : "bird"
+|           |   |-- Description  : A test multi-properties container
 |           |   |-- Type  : string (scalar)
 |           |   `-- Value : "African swallow"
 |           |-- Name : "color"

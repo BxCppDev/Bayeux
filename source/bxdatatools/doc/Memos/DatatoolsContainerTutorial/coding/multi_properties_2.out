@@ -4,9 +4,9 @@ A multi-properties container with 4 sections :
 |-- Meta label   : "type"
 |-- Entries      : [4]
 |   |-- Entry : "config"
-|   |   |-- Key         : "config"
-|   |   |-- Meta        : "blah"
-|   |   `-- Properties : 
+|   |   |-- Key        : "config"
+|   |   |-- Meta       : "blah"
+|   |   `-- Properties : [2]
 |   |       |-- Name : "dummy"
 |   |       |   |-- Type  : boolean (scalar)
 |   |       |   `-- Value : 1
@@ -14,18 +14,18 @@ A multi-properties container with 4 sections :
 |   |           |-- Type  : string (scalar)
 |   |           `-- Value : "/tmp"
 |   |-- Entry : "debug"
-|   |   |-- Key         : "debug"
-|   |   |-- Meta        : "gnus"
+|   |   |-- Key        : "debug"
+|   |   |-- Meta       : "gnus"
 |   |   `-- Properties : <empty>
 |   |       `-- <no property>
 |   |-- Entry : "log"
-|   |   |-- Key         : "log"
-|   |   |-- Meta        : "gnats"
+|   |   |-- Key        : "log"
+|   |   |-- Meta       : "gnats"
 |   |   `-- Properties : <empty>
 |   |       `-- <no property>
 |   `-- Entry : "test"
-|       |-- Key         : "test"
-|       |-- Meta        : "foo"
+|       |-- Key        : "test"
+|       |-- Meta       : "foo"
 |       `-- Properties : <empty>
 |           `-- <no property>
 `-- Ordered entries      : [4]

@@ -1,5 +1,5 @@
-The transcient properties container built from a file :
-|-- Description  : A set of configuration parameters for an application
+The properties container built from a file :
+|-- Description  : 'A set of configuration parameters for an application'
 |-- Name : "app.alarm.emails"
 |   |-- Description  : The list of email addresses to send alarm messages
 |   |-- Type  : string[2] (vector)

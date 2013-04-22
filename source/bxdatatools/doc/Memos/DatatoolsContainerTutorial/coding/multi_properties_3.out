@@ -6,9 +6,9 @@ A multi-properties container with 1 section :
 |-- Meta label   : "type"
 |-- Entries      : [1]
 |   `-- Entry : "test"
-|       |-- Key         : "test"
-|       |-- Meta        : "foo"
-|       `-- Properties : 
+|       |-- Key        : "test"
+|       |-- Meta       : "foo"
+|       `-- Properties : [4]
 |           |-- Name : "color"
 |           |   |-- Type  : string (scalar)
 |           |   `-- Value : "blue"

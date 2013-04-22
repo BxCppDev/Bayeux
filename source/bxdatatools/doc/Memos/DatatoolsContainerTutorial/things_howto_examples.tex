@@ -1,0 +1,136 @@
+%% things_howto_examples.tex
+
+\subsection{Examples}
+
+\subsubsection{Declare a \emph{things} container and add objects in it}
+
+\pn  The sample program \ref{program:things:0}  shows how  to
+declare a \emph{things} container object and add two \emph{properties}
+objects in  it. It  prints the  contents of the  container in  a human
+readable format (sample \ref{sample:things:0}.
+
+\begin{program}[h]
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=1,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/things_0.cxx}
+\caption{Adding     objects     in    a     \texttt{datatools::things}
+  container. Note  that all  low-level memory allocation  operation is
+  performed internally. The user does not have to care about it.  }
+\label{program:things:0}
+\end{program}
+
+
+
+\begin{sample}[h]
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=1,
+%lastline=3,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/things_0.out}
+\caption{The  output of  the program  \ref{program:things:0}.   We can
+  check  that  the  two banks  of  data  have  been stored.  Both  are
+  \texttt{datatools::properties} objects, which are empty here.  }
+\label{sample:things:0}
+\end{sample}
+
+
+\subsubsection{Instant manipulation of added objects through references}
+
+\pn  The sample program  \ref{sample:things:1}  shows how  to
+declare  a \emph{things} container  object, add  two \emph{properties}
+objects in  it and make use  of the mutable reference  returned by the
+template \texttt{add} methods.
+
+\begin{sample}[h]
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=14,
+lastline=24,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/things_1.cxx}
+\caption{We use the mutable  references that are returned while adding
+  objects  in  a  \texttt{datatools::things}  container  in  order  to
+  manipulate the stored objects.  }
+\label{sample:things:1}
+\end{sample}
+
+
+\subsubsection{Get references to manipulate stored objects}
+
+\pn  The  program source  sample  \ref{sample:things:2}  shows how  to
+obtain non-mutable  and mutable  references to an  object stored  in a
+\emph{things} container object with a given name.  The \texttt{get<T>}
+and \texttt{grab<T>} template  methods respectively return non-mutable
+and   mutable  references  (here   class  \texttt{T}   corresponds  to
+\texttt{datatools::properties}).   The  references  are then  used  to
+manipulate the stored object through its own interface.
+
+\begin{sample}[h]
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=26,
+lastline=42,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/things_1.cxx}
+\caption{We explicitely  initialize references to an  object stored in
+  the \texttt{datatools::things} container  in order to manipulate the
+  stored object.  }
+\label{sample:things:2}
+\end{sample}
+
+\subsubsection{Create a new class to be stored in a \emph{things} container}
+
+\pn     The     sample     programs    \ref{program:things:2a}     and
+\ref{program:things:2b}  show how to  declare a new  serializable class
+\texttt{storable\_type}  that   can  be  stored   in  a  \emph{things}
+container object (output is shown on sample \ref{sample:things:2}).
+
+\begin{program}[h]
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=1,
+lastline=50,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/things_2.cxx}
+\caption{Creation of a new storable class for
+  \texttt{datatools::things} container.
+}
+\label{program:things:2a}
+\end{program}
+
+\begin{program}[h]
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=52,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/things_2.cxx}
+\caption{Program  to   store  a   new  storable  class   (see  program
+  \ref{program:things:2a})   in   a  \texttt{datatools::things}
+  container.  }
+\label{program:things:2b}
+\end{program}
+
+
+\begin{sample}[h]
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=1,
+%lastline=3,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/things_2.out}
+\caption{The          output          of          the          program
+  \ref{program:things:2a}-\ref{program:things:2b}.  }
+\label{sample:things:2}
+\end{sample}
+
+%% end of things_howto_examples.tex
