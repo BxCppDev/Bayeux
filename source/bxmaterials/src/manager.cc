@@ -6,6 +6,7 @@
 #include <sstream>
 
 #include <datatools/multi_properties.h>
+#include <datatools/utils.h>
 
 #include <materials/isotope.h>
 #include <materials/element.h>
@@ -16,6 +17,11 @@ namespace materials {
 
   using namespace std;
   using namespace datatools;
+
+  bool manager::is_initialized () const
+  {
+    return is_locked();
+  }
 
   bool manager::is_debug () const
   {
@@ -59,10 +65,9 @@ namespace materials {
     material_dict_type::const_iterator found    = _materials_.find(entry_name_);
     const ::materials::smart_ref<material> & sr = found->second;
     std::string mat_alias;
-    if (sr.is_alias ())
-      {
-        return sr.get_alias_of();
-      }
+    if (sr.is_alias ()) {
+      return sr.get_alias_of();
+    }
     return mat_alias;
   }
 
@@ -117,171 +122,176 @@ namespace materials {
     return;
   }
 
+  void manager::initialize (const datatools::properties & setup_)
+  {
+    if (is_locked ()) {
+      throw std::logic_error ("materials::manager::initialize: Manager is locked !");
+    }
+
+    if (setup_.has_flag("debug")) {
+      set_debug(true);
+    }
+
+    if (setup_.has_flag("alias_allow_overload")) {
+      set_alias_allow_overload(true);
+    }
+    std::vector<std::string> conf_files;
+
+    if (setup_.has_key("configuration_files")) {
+      setup_.fetch("configuration_files", conf_files);
+    }
+
+    for (int i = 0; i < conf_files.size(); i++) {
+      std::string filename = conf_files[i];
+      datatools::fetch_path_with_env(filename);
+      datatools::multi_properties mconfig;
+      mconfig.read(filename);
+      load(mconfig);
+    }
+
+    lock();
+    return;
+  }
+
   void manager::load (const datatools::multi_properties & config_)
   {
-    if (is_locked ())
-      {
-        throw std::logic_error ("materials::manager::load: Manager is locked !");
-      }
+    if (is_locked ()) {
+      throw std::logic_error ("materials::manager::load: Manager is locked !");
+    }
 
     for (multi_properties::entries_ordered_col_type::const_iterator i
            = config_.ordered_entries ().begin ();
          i != config_.ordered_entries ().end ();
-         i++)
-      {
-        multi_properties::entry * e = *i;
-        const string & name = e->get_key ();
-        const string & type = e->get_meta ();
-        const datatools::properties & props = e->get_properties ();
+         i++) {
+      multi_properties::entry * e = *i;
+      const string & name = e->get_key ();
+      const string & type = e->get_meta ();
+      const datatools::properties & props = e->get_properties ();
 
-        if (_debug_)
-          {
-            clog << "DEBUG: " << "materials::manager::load: " << "Name = '" << name << "'" << endl;
-            clog << "DEBUG: " << "materials::manager::load: " << "Type = '" << type << "'" << endl;
+      if (_debug_) {
+        clog << "DEBUG: " << "materials::manager::load: " << "Name = '" << name << "'" << endl;
+        clog << "DEBUG: " << "materials::manager::load: " << "Type = '" << type << "'" << endl;
+      }
+      if (type == "isotope") {
+        if (_isotopes_.find (name) != _isotopes_.end ()) {
+          std::ostringstream message;
+          message << "materials::manager::load: "
+                  << "Isotope with name '" << name << "' already exists !";
+          throw std::logic_error (message.str ());
+        }
+        isotope * iso = _creator_.create_isotope (name, props);
+        _isotopes_[iso->get_name ()] = materials::smart_ref<isotope> ();
+        _isotopes_[iso->get_name ()].set_ref (iso);
+        if (_debug_) clog << "DEBUG: " << "materials::manager::load: " << "Add new isotope = '" << iso->get_zai_name () << "'" << endl;
+      }
+      else if (type == "element") {
+        if (_elements_.find (name) != _elements_.end ()) {
+          std::ostringstream message;
+          message << "materials::manager::load: "
+                  << "Element with name '" << name << "' already exists !";
+          throw std::logic_error (message.str ());
+        }
+        bool unique_element_material = false;
+        if (unique_element_material) {
+          if (_materials_.find (name) != _materials_.end ()) {
+            std::ostringstream message;
+            message << "materials::manager::load: "
+                    << "Material with name '" << name << "' already exists !";
+            throw std::logic_error (message.str ());
           }
-        if (type == "isotope")
-          {
-            if (_isotopes_.find (name) != _isotopes_.end ())
-              {
-                std::ostringstream message;
-                message << "materials::manager::load: "
-                        << "Isotope with name '" << name << "' already exists !";
-                throw std::logic_error (message.str ());
-              }
-            isotope * iso = _creator_.create_isotope (name, props);
-            _isotopes_[iso->get_name ()] = materials::smart_ref<isotope> ();
-            _isotopes_[iso->get_name ()].set_ref (iso);
-            if (_debug_) clog << "DEBUG: " << "materials::manager::load: " << "Add new isotope = '" << iso->get_zai_name () << "'" << endl;
+        }
+        element * elmt = _creator_.create_element (name, props, _isotopes_);
+        _elements_[elmt->get_name ()] = materials::smart_ref<element> ();
+        _elements_[elmt->get_name ()].set_ref (elmt);
+        if (_debug_) clog << "DEBUG: " << "materials::manager::load: " << "Add new element = '" << elmt->get_name () << "'" << endl;
+      } else if (type == "material") {
+        if (_materials_.find (name) != _materials_.end ()) {
+          std::ostringstream message;
+          message << "materials::manager::load: "
+                  << "Material with name '" << name << "' already exists !";
+          throw std::logic_error (message.str ());
+        }
+        bool unique_element_material = false;
+        if (unique_element_material) {
+          if (_elements_.find (name) != _elements_.end ()) {
+            std::ostringstream message;
+            message << "materials::manager::load: "
+                    << "Elements with name '" << name << "' already exists !";
+            throw std::logic_error (message.str ());
           }
-        else if (type == "element")
-          {
-            if (_elements_.find (name) != _elements_.end ())
-              {
-                std::ostringstream message;
-                message << "materials::manager::load: "
-                        << "Element with name '" << name << "' already exists !";
-                throw std::logic_error (message.str ());
-              }
-            bool unique_element_material = false;
-            if (unique_element_material)
-              {
-                if (_materials_.find (name) != _materials_.end ())
-                  {
-                    std::ostringstream message;
-                    message << "materials::manager::load: "
-                            << "Material with name '" << name << "' already exists !";
-                    throw std::logic_error (message.str ());
-                  }
-              }
-            element * elmt = _creator_.create_element (name, props, _isotopes_);
-            _elements_[elmt->get_name ()] = materials::smart_ref<element> ();
-            _elements_[elmt->get_name ()].set_ref (elmt);
-            if (_debug_) clog << "DEBUG: " << "materials::manager::load: " << "Add new element = '" << elmt->get_name () << "'" << endl;
+        }
+        material * matl = _creator_.create_material (name,
+                                                     props,
+                                                     _elements_,
+                                                     _materials_);
+        _materials_[matl->get_name ()] = materials::smart_ref<material> ();
+        _materials_[matl->get_name ()].set_ref (matl);
+        if (_debug_) clog << "DEBUG: " << "materials::manager::load: "
+                          << "Add new material = '"
+                          << matl->get_name () << "'" << endl;
+        _ordered_materials_.push_back (matl->get_name ());
+      }
+      else if (type == "alias") {
+        material_dict_type::const_iterator mat_found = _materials_.find (name);
+        if (mat_found != _materials_.end ()) {
+          const smart_ref<material> & sref = mat_found->second;
+          if (! sref.is_alias()) {
+            // Already existing plain material:
+            std::ostringstream message;
+            message << "materials::manager::load: "
+                    << "Material with name '" << name
+                    << "' already exists ! It cannot be overloaded !";
+            throw std::logic_error (message.str ());
+          } else {
+            // Already existing material alias:
+            if (! is_alias_allow_overload()) {
+              std::ostringstream message;
+              message << "materials::manager::load: "
+                      << "Alias with name '" << name
+                      << "' cannot be overloaded !";
+              throw std::logic_error (message.str ());
+            } else {
+              std::clog << "WARNING: "
+                        << "materials::manager::load: "
+                        << "Redefinition of alias '" << name << "' !"
+                        << std::endl;
+            }
           }
-        else if (type == "material")
-          {
-            if (_materials_.find (name) != _materials_.end ())
-              {
-                std::ostringstream message;
-                message << "materials::manager::load: "
-                        << "Material with name '" << name << "' already exists !";
-                throw std::logic_error (message.str ());
-              }
-            bool unique_element_material = false;
-            if (unique_element_material)
-              {
-                if (_elements_.find (name) != _elements_.end ())
-                  {
-                    std::ostringstream message;
-                    message << "materials::manager::load: "
-                            << "Elements with name '" << name << "' already exists !";
-                    throw std::logic_error (message.str ());
-                  }
-              }
-            material * matl = _creator_.create_material (name,
-                                                         props,
-                                                         _elements_,
-                                                         _materials_);
-            _materials_[matl->get_name ()] = materials::smart_ref<material> ();
-            _materials_[matl->get_name ()].set_ref (matl);
-            if (_debug_) clog << "DEBUG: " << "materials::manager::load: "
-                              << "Add new material = '"
-                              << matl->get_name () << "'" << endl;
-            _ordered_materials_.push_back (matl->get_name ());
-          }
-        else if (type == "alias")
-          {
-            material_dict_type::const_iterator mat_found = _materials_.find (name);
-            if (mat_found != _materials_.end ())
-              {
-                const smart_ref<material> & sref = mat_found->second;
-                if (! sref.is_alias())
-                  {
-                    // Already existing plain material:
-                    std::ostringstream message;
-                    message << "materials::manager::load: "
-                            << "Material with name '" << name
-                            << "' already exists ! It cannot be overloaded !";
-                    throw std::logic_error (message.str ());
-                  }
-                else
-                  {
-                    // Already existing material alias:
-                    if (! is_alias_allow_overload())
-                      {
-                        std::ostringstream message;
-                        message << "materials::manager::load: "
-                                << "Alias with name '" << name
-                                << "' cannot be overloaded !";
-                        throw std::logic_error (message.str ());
-                      }
-                    else
-                      {
-                        std::clog << "WARNING: "
-                                  << "materials::manager::load: "
-                                  << "Redefinition of alias '" << name << "' !"
-                                  << std::endl;
-                      }
-                  }
-              }
-            if (! props.has_key ("material"))
-              {
-                std::ostringstream message;
-                message << "materials::manager::load: "
-                        << "Missing property 'material' for a material alias !";
-                throw std::logic_error (message.str ());
-              }
-            std::string alias_material = props.fetch_string ("material");
-            material_dict_type::iterator found = _materials_.find (alias_material);
-            if (found == _materials_.end ())
-              {
-                std::ostringstream message;
-                message << "materials::manager::load: "
-                        << "Aliased material named '" << alias_material << "' does not exist !";
-                throw std::logic_error (message.str ());
-              }
-            if (found->second.is_alias())
-              {
-                // An alias:
-                std::ostringstream message;
-                message << "materials::manager::load: "
-                        << "Material alias with name '" << name
-                        << "' cannot refer itself to another alias ('" << alias_material << "') !";
-                throw std::logic_error (message.str ());
-              }
-            _materials_[name] = materials::smart_ref<material> ();
-            _materials_[name].set_ref (found->second.grab_ref ());
-            _materials_[name].set_alias_of(alias_material);
-            std::list<std::string>::iterator ofound = std::find(_ordered_materials_.begin(),_ordered_materials_.end(), name);
-            if (ofound != _ordered_materials_.end())
-              {
-                _ordered_materials_.erase(ofound);
-              }
-            _ordered_materials_.push_back (name);
-            if (_debug_) clog << "DEBUG: " << "materials::manager::load: " << "Add new material alias = '" << name << "' for material '" << alias_material << "'" << endl;
-          }
+        }
+        if (! props.has_key ("material")) {
+          std::ostringstream message;
+          message << "materials::manager::load: "
+                  << "Missing property 'material' for a material alias !";
+          throw std::logic_error (message.str ());
+        }
+        std::string alias_material = props.fetch_string ("material");
+        material_dict_type::iterator found = _materials_.find (alias_material);
+        if (found == _materials_.end ()) {
+          std::ostringstream message;
+          message << "materials::manager::load: "
+                  << "Aliased material named '" << alias_material << "' does not exist !";
+          throw std::logic_error (message.str ());
+        }
+        if (found->second.is_alias()) {
+          // An alias:
+          std::ostringstream message;
+          message << "materials::manager::load: "
+                  << "Material alias with name '" << name
+                  << "' cannot refer itself to another alias ('" << alias_material << "') !";
+          throw std::logic_error (message.str ());
+        }
+        _materials_[name] = materials::smart_ref<material> ();
+        _materials_[name].set_ref (found->second.grab_ref ());
+        _materials_[name].set_alias_of(alias_material);
+        std::list<std::string>::iterator ofound = std::find(_ordered_materials_.begin(),_ordered_materials_.end(), name);
+        if (ofound != _ordered_materials_.end()) {
+          _ordered_materials_.erase(ofound);
+        }
+        _ordered_materials_.push_back (name);
+        if (_debug_) clog << "DEBUG: " << "materials::manager::load: " << "Add new material alias = '" << name << "' for material '" << alias_material << "'" << endl;
+      }
 
-      } // for
+    } // for
 
     return;
   }
@@ -303,10 +313,9 @@ namespace materials {
     namespace du = datatools;
     string indent;
     if (! indent_.empty ()) indent = indent_;
-    if (! title_.empty ())
-      {
-        out_ << indent << title_ << endl;
-      }
+    if (! title_.empty ()) {
+      out_ << indent << title_ << endl;
+    }
 
     out_ << indent << i_tree_dumpable::tag
          << "Debug : " << is_debug () << endl;
@@ -314,158 +323,126 @@ namespace materials {
     {
       out_ << indent << du::i_tree_dumpable::tag
            << "Isotopes";
-      if ( _isotopes_.size () == 0)
-        {
-          out_ << " : <empty>" << endl;
+      if ( _isotopes_.size () == 0) {
+        out_ << " : <empty>" << endl;
+      } else {
+        out_ << " [" << _isotopes_.size () << "] :" << endl;
+        for (isotope_dict_type::const_iterator i = _isotopes_.begin ();
+             i != _isotopes_.end ();
+             i++) {
+          std::ostringstream indent_oss;
+          indent_oss << indent;
+          indent_oss << du::i_tree_dumpable::skip_tag;
+          isotope_dict_type::const_iterator j = i;
+          j++;
+          out_ << indent << du::i_tree_dumpable::skip_tag;;
+          if (j != _isotopes_.end ()) {
+            out_ << du::i_tree_dumpable::tag;
+            indent_oss << du::i_tree_dumpable::skip_tag;;
+          } else {
+            out_ << du::i_tree_dumpable::last_tag;
+            indent_oss << du::i_tree_dumpable::last_skip_tag;;
+          }
+          out_ << "Isotope '" << i->first << "' :" << endl;
+          i->second.get_ref ().tree_dump (out_, "", indent_oss.str ());
         }
-      else
-        {
-          out_ << " [" << _isotopes_.size () << "] :" << endl;
-          for (isotope_dict_type::const_iterator i = _isotopes_.begin ();
-               i != _isotopes_.end ();
-               i++)
-            {
-              std::ostringstream indent_oss;
-              indent_oss << indent;
-              indent_oss << du::i_tree_dumpable::skip_tag;
-              isotope_dict_type::const_iterator j = i;
-              j++;
-              out_ << indent << du::i_tree_dumpable::skip_tag;;
-              if (j != _isotopes_.end ())
-                {
-                  out_ << du::i_tree_dumpable::tag;
-                  indent_oss << du::i_tree_dumpable::skip_tag;;
-                }
-              else
-                {
-                  out_ << du::i_tree_dumpable::last_tag;
-                  indent_oss << du::i_tree_dumpable::last_skip_tag;;
-                }
-              out_ << "Isotope '" << i->first << "' :" << endl;
-              i->second.get_ref ().tree_dump (out_, "", indent_oss.str ());
-            }
-        }
+      }
     }
 
     {
       out_ << indent << du::i_tree_dumpable::tag
            << "Elements";
-      if ( _elements_.size () == 0)
-        {
-          out_ << " : <empty>" << endl;
+      if ( _elements_.size () == 0) {
+        out_ << " : <empty>" << endl;
+      } else {
+        out_ << " [" << _elements_.size () << "] :" << endl;
+        for (element_dict_type::const_iterator i = _elements_.begin ();
+             i != _elements_.end ();
+             i++) {
+          std::ostringstream indent_oss;
+          indent_oss << indent;
+          indent_oss << du::i_tree_dumpable::skip_tag;
+          element_dict_type::const_iterator j = i;
+          j++;
+          out_ << indent << du::i_tree_dumpable::skip_tag;;
+          if (j != _elements_.end ()) {
+            out_ << du::i_tree_dumpable::tag;
+            indent_oss << du::i_tree_dumpable::skip_tag;;
+          } else {
+            out_ << du::i_tree_dumpable::last_tag;
+            indent_oss << du::i_tree_dumpable::last_skip_tag;;
+          }
+          out_ << "Element '" << i->first << "' :" << endl;
+          i->second.get_ref ().tree_dump (out_, "", indent_oss.str ());
         }
-      else
-        {
-          out_ << " [" << _elements_.size () << "] :" << endl;
-          for (element_dict_type::const_iterator i = _elements_.begin ();
-               i != _elements_.end ();
-               i++)
-            {
-              std::ostringstream indent_oss;
-              indent_oss << indent;
-              indent_oss << du::i_tree_dumpable::skip_tag;
-              element_dict_type::const_iterator j = i;
-              j++;
-              out_ << indent << du::i_tree_dumpable::skip_tag;;
-              if (j != _elements_.end ())
-                {
-                  out_ << du::i_tree_dumpable::tag;
-                  indent_oss << du::i_tree_dumpable::skip_tag;;
-                }
-              else
-                {
-                  out_ << du::i_tree_dumpable::last_tag;
-                  indent_oss << du::i_tree_dumpable::last_skip_tag;;
-                }
-              out_ << "Element '" << i->first << "' :" << endl;
-              i->second.get_ref ().tree_dump (out_, "", indent_oss.str ());
-            }
-        }
+      }
     }
 
     {
       out_ << indent << du::i_tree_dumpable::tag
            << "Materials";
-      if ( _materials_.size () == 0)
-        {
-          out_ << " : <empty>" << endl;
-        }
-      else
-        {
-          out_ << " [" << _materials_.size () << "] :" << endl;
-          for (material_dict_type::const_iterator i = _materials_.begin ();
-               i != _materials_.end ();
-               i++)
-            {
-              std::ostringstream indent_oss;
-              indent_oss << indent;
-              indent_oss << du::i_tree_dumpable::skip_tag;
-              material_dict_type::const_iterator j = i;
-              j++;
-              out_ << indent << du::i_tree_dumpable::skip_tag;;
-              if (j != _materials_.end ())
-                {
-                  out_ << du::i_tree_dumpable::tag;
-                  indent_oss << du::i_tree_dumpable::skip_tag;;
-                }
-              else
-                {
-                  out_ << du::i_tree_dumpable::last_tag;
-                  indent_oss << du::i_tree_dumpable::last_skip_tag;;
-                }
-              out_ << "Material '" << i->first << "'";
-              if (i->second.is_alias ())
-                {
-                  out_ << " (alias of '" << i->second.get_alias_of() << "')";
-                  out_ << endl;
-                }
-              else
-                {
-                  if (! i->second.is_owned ())
-                    {
-                      out_ << " (external)";
-                    }
-                  out_ << " : " << endl;
-                  i->second.get_ref ().tree_dump (out_, "", indent_oss.str ());
-                }
+      if ( _materials_.size () == 0) {
+        out_ << " : <empty>" << endl;
+      } else {
+        out_ << " [" << _materials_.size () << "] :" << endl;
+        for (material_dict_type::const_iterator i = _materials_.begin ();
+             i != _materials_.end ();
+             i++) {
+          std::ostringstream indent_oss;
+          indent_oss << indent;
+          indent_oss << du::i_tree_dumpable::skip_tag;
+          material_dict_type::const_iterator j = i;
+          j++;
+          out_ << indent << du::i_tree_dumpable::skip_tag;;
+          if (j != _materials_.end ()) {
+            out_ << du::i_tree_dumpable::tag;
+            indent_oss << du::i_tree_dumpable::skip_tag;;
+          } else {
+            out_ << du::i_tree_dumpable::last_tag;
+            indent_oss << du::i_tree_dumpable::last_skip_tag;;
+          }
+          out_ << "Material '" << i->first << "'";
+          if (i->second.is_alias ()) {
+            out_ << " (alias of '" << i->second.get_alias_of() << "')";
+            out_ << endl;
+          } else {
+            if (! i->second.is_owned ()) {
+              out_ << " (external)";
             }
+            out_ << " : " << endl;
+            i->second.get_ref ().tree_dump (out_, "", indent_oss.str ());
+          }
         }
+      }
     }
 
 
     {
       out_ << indent << du::i_tree_dumpable::tag
            << "Materials (ordered)";
-      if ( _ordered_materials_.size () == 0)
-        {
-          out_ << " : <empty>" << endl;
+      if ( _ordered_materials_.size () == 0) {
+        out_ << " : <empty>" << endl;
+      } else {
+        out_ << " [" << _ordered_materials_.size () << "] :" << endl;
+        for (std::list<std::string>::const_iterator i = _ordered_materials_.begin ();
+             i != _ordered_materials_.end ();
+             i++) {
+          std::ostringstream indent_oss;
+          indent_oss << indent;
+          indent_oss << du::i_tree_dumpable::skip_tag;
+          std::list<std::string>::const_iterator j = i;
+          j++;
+          out_ << indent << du::i_tree_dumpable::skip_tag;
+          if (j != _ordered_materials_.end ()) {
+            out_ << du::i_tree_dumpable::tag;
+            indent_oss << du::i_tree_dumpable::skip_tag;
+          } else {
+            out_ << du::i_tree_dumpable::last_tag;
+            indent_oss << du::i_tree_dumpable::last_skip_tag;;
+          }
+          out_ << "Material '" << *i << "' " << endl;
         }
-      else
-        {
-          out_ << " [" << _ordered_materials_.size () << "] :" << endl;
-          for (std::list<std::string>::const_iterator i = _ordered_materials_.begin ();
-               i != _ordered_materials_.end ();
-               i++)
-            {
-              std::ostringstream indent_oss;
-              indent_oss << indent;
-              indent_oss << du::i_tree_dumpable::skip_tag;
-              std::list<std::string>::const_iterator j = i;
-              j++;
-              out_ << indent << du::i_tree_dumpable::skip_tag;
-              if (j != _ordered_materials_.end ())
-                {
-                  out_ << du::i_tree_dumpable::tag;
-                  indent_oss << du::i_tree_dumpable::skip_tag;
-                }
-              else
-                {
-                  out_ << du::i_tree_dumpable::last_tag;
-                  indent_oss << du::i_tree_dumpable::last_skip_tag;;
-                }
-              out_ << "Material '" << *i << "' " << endl;
-            }
-        }
+      }
     }
 
     out_ << indent << i_tree_dumpable::last_tag
@@ -486,6 +463,78 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::materials::manager,ocd_)
   ocd_.set_class_description("A manager for isotopes, elements and materials");
   ocd_.set_class_library("materials");
   ocd_.set_class_documentation("not documented yet");
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("debug")
+      .set_terse_description("Flag to activate debugging output")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("Superseded by a former call of :              \n"
+                            "  materials::manager::set_debug(true)         \n"
+                            )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("alias_allow_overload")
+      .set_terse_description("Flag to allow material alias overloading")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("Users are invited to define material aliases, i.e. some    \n"
+                            "human-friendly character strings that are associated       \n"
+                            "to materials objects stored in the manager's dictionnary.  \n"
+                            "Typically, one may want to use the alias 'metal' as a      \n"
+                            "shortcut for the 'std::inox' material.                     \n"
+                            "If the use changes his/her mind, is is easy to make the    \n"
+                            "'metal' string the alias of the 'std::copper' material.    \n"
+                            "This gives some flexibility by just changing the definition\n"
+                            "of an alias without changing the definitions of standard   \n"
+                            "materials like copper or inox registered in some standard  \n"
+                            "dictionnary.                                               \n"
+                            "When the 'alias_allow_overload' is set, it is possible to  \n"
+                            "provide duplicated definitions of an alias, the last one   \n"
+                            "overloading the former ones. Otherwise, multiple alias     \n"
+                            "definition is considered as an error.                      \n"
+                            "Superseded by a former call of :                           \n"
+                            "  materials::manager::set_alias_allow_overload(true)       \n"
+                            )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("configuration_files")
+      .set_terse_description("A list of configuration file names for isotopes, elements and materials")
+      .set_traits(datatools::TYPE_STRING,
+                  configuration_property_description::ARRAY)
+      .set_mandatory(false)
+      .set_path(true)
+      .set_long_description("A list of filenames from where the manager loads the      \n"
+                            "directives to dynamically instantiate new isotopes,       \n"
+                            "elements, materials and material aliases objects.         \n"
+                            "The filenames may contains some environment variables.    \n"
+                            "Example:                                                  \n"
+                            " |                                                        \n"
+                            " | configuration_files : string[4] as path =   \\         \n"
+                            " |   \"${CONFIG_REPOSITORY_DIR}/isotopes.conf\"  \\       \n"
+                            " |   \"${CONFIG_REPOSITORY_DIR}/elements.conf\"  \\       \n"
+                            " |   \"${CONFIG_REPOSITORY_DIR}/materials.conf\" \\       \n"
+                            " |   \"${CONFIG_REPOSITORY_DIR}/aliases.conf\"            \n"
+                            " |                                                        \n"
+                            "The target files must use the format of the               \n"
+                            "'datatools::multi_properties' class.                      \n"
+                            "The loading order of the files is critical                \n"
+                            "because some isotopes, elements or materials objects may  \n"
+                            "depend on other ones which should thus be defined *before*\n"
+                            "their dependers.                                          \n"
+                            "Extends the instantiation of objects triggered by         \n"
+                            "former calls to :                                         \n"
+                            "  materials::manager::load(...)                           \n"
+                            )
+      ;
+  }
 
   ocd_.set_configuration_hints ("A materials manager is configured through a set of configuration      \n"
                                 "files that obeys the format of 'datatools::multi_properties' setup    \n"

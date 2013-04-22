@@ -36,6 +36,8 @@ namespace materials {
 
   public:
 
+    bool is_initialized () const;
+
     bool is_debug () const;
 
     void set_debug (bool);
@@ -67,6 +69,8 @@ namespace materials {
     virtual ~manager ();
 
     void load (const datatools::multi_properties & config_);
+
+    void initialize (const datatools::properties & setup_);
 
     void reset ();
 
