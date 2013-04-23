@@ -594,9 +594,11 @@ class data_reader {
   void load_serializable(
     Data& data,
     typename boost::enable_if< has_bsts<Data> >::type* dummy = 0) {
+    /*
     std::cerr << "DEVEL: " << "load_serializable: Serializable '"
               << typeid(Data).name ()
               << "' has BST support !" << '\n';
+    */
     this->load_alt(data.get_serial_tag(),
                    ::datatools::backward_serial_tag<Data> (0),
                    data);
