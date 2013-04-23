@@ -27,7 +27,7 @@ project(mygsl)
 # - Versioning
 set(mygsl_VERSION_MAJOR 4)
 set(mygsl_VERSION_MINOR 0)
-set(mygsl_PATCH_VERSION 0)
+set(mygsl_PATCH_VERSION 1)
 set(mygsl_VERSION "${mygsl_VERSION_MAJOR}.${mygsl_VERSION_MINOR}.${mygsl_PATCH_VERSION}")
 math(EXPR _mygsl_VERSION_NUMERIC "${mygsl_VERSION_MAJOR}*100000+${mygsl_VERSION_MINOR}*100+${mygsl_PATCH_VERSION}")
 
@@ -48,12 +48,12 @@ endif()
 #-----------------------------------------------------------------------
 # Build options
 #
-option(MYGSL_WITH_DEBUG "Build debug stuff" OFF) 
-option(MYGSL_WITH_BIO  "Build auxiliary Boost I/O library" ON) 
-option(MYGSL_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" OFF) 
+option(MYGSL_WITH_DEBUG "Build debug stuff" OFF)
+option(MYGSL_WITH_BIO  "Build auxiliary Boost I/O library" ON)
+option(MYGSL_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" OFF)
 option(MYGSL_WITH_DOC  "Build the mygsl documentation" ON)
-option(MYGSL_WITH_TEST "Build the mygsl test suite"    ON) 
-option(MYGSL_WITH_BASH_SETUP "Build the mygsl with Bash setup macro" ON) 
+option(MYGSL_WITH_TEST "Build the mygsl test suite"    ON)
+option(MYGSL_WITH_BASH_SETUP "Build the mygsl with Bash setup macro" ON)
 
 if (MYGSL_WITH_DEBUG)
   set (MYGSL_WITH_DEBUG 1)
@@ -90,7 +90,7 @@ endif ()
 
 #-----------------------------------------------------------------------
 # On Apple, we fixup the install prefix to handle installing documentation,
-# support files and so on under the framework's "Resources" directory. 
+# support files and so on under the framework's "Resources" directory.
 # This follows the pattern used in CMake to fixup their app bundle
 # NB: THIS REQUIRES SOME FIXES IN CPACKAGING (see CMake's Qt dialog
 # packaging).
@@ -104,7 +104,7 @@ endif()
 #-----------------------------------------------------------------------
 # Build the submodules as required
 #
-add_subdirectory(src)   
+add_subdirectory(src)
 
 if(MYGSL_WITH_DOC)
   set (MYGSL_WITH_DOC 1)
@@ -115,7 +115,7 @@ endif()
 
 if(MYGSL_WITH_TEST)
   set (MYGSL_WITH_TEST 1)
-  enable_testing() 
+  enable_testing()
   add_subdirectory(testing)
 else()
   set (MYGSL_WITH_TEST 0)
@@ -126,9 +126,9 @@ endif()
 # Install resources :
 #
 
-set ( _mygsl_testing_FULL_LOCAL_PATH 
-      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/testing" 
-    ) 
+set ( _mygsl_testing_FULL_LOCAL_PATH
+      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/testing"
+    )
 message ( STATUS "${PROJECT_NAME} : mygsl testing full local path = '${_mygsl_testing_FULL_LOCAL_PATH}' " )
 
 install ( DIRECTORY ${PROJECT_SOURCE_DIR}/testing
@@ -136,8 +136,8 @@ install ( DIRECTORY ${PROJECT_SOURCE_DIR}/testing
           FILE_PERMISSIONS OWNER_READ OWNER_WRITE
                            GROUP_READ GROUP_WRITE
                            WORLD_READ
-          DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE 
-                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE 
+          DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE
                                 WORLD_READ WORLD_EXECUTE
           PATTERN ".svn" EXCLUDE
           PATTERN "*~" EXCLUDE
