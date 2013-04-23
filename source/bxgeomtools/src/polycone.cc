@@ -201,12 +201,12 @@ namespace geomtools {
       }
     //mygsl::tabulated_function tf2 (interpolation_mode);
     mygsl::tabulated_function tf3 (interpolation_mode);
-    for (mygsl::tabulated_function::points_map_t::const_iterator
+    for (mygsl::tabulated_function::points_map_type::const_iterator
            i = tf.points ().begin ();
          i != tf.points ().end ();
          i++)
       {
-        mygsl::tabulated_function::points_map_t::const_iterator j = i;
+        mygsl::tabulated_function::points_map_type::const_iterator j = i;
         double xi = i->first;
         double yi = i->second;
         j++;
@@ -236,7 +236,7 @@ namespace geomtools {
              << endl;
       }
     mygsl::tabulated_function tf3bis (interpolation_mode);
-    for (mygsl::tabulated_function::points_map_t::const_iterator
+    for (mygsl::tabulated_function::points_map_type::const_iterator
            i = tf.points ().begin ();
          i != tf.points ().end ();
          i++)
@@ -380,8 +380,8 @@ namespace geomtools {
     _points_.clear ();
 
     //ofstream fp ("fp.data");
-    mygsl::tabulated_function::points_map_t::const_iterator i = tf_outer.points ().begin ();
-    mygsl::tabulated_function::points_map_t::const_iterator j = tf_inner.points ().begin ();
+    mygsl::tabulated_function::points_map_type::const_iterator i = tf_outer.points ().begin ();
+    mygsl::tabulated_function::points_map_type::const_iterator j = tf_inner.points ().begin ();
     for (int k = 0; k < tf_outer.points ().size (); k++)
       {
         double z = i->first;
