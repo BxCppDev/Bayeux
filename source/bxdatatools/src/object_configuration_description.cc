@@ -405,13 +405,22 @@ namespace datatools {
     //&& _triggered_by_label_.triggering_labels.size() != 0;
   }
 
+  bool configuration_property_description::has_single_type() const
+  {
+    if (_type_ == TYPE_BOOLEAN) return true;
+    if (_type_ == TYPE_INTEGER) return true;
+    if (_type_ == TYPE_REAL) return true;
+    if (_type_ == TYPE_STRING) return true;
+    return false;
+  }
+
   configuration_property_description &
   configuration_property_description::set_traits(int type_,
                                                  bool array_,
                                                  int fixed_size_)
   {
     if (type_ < TYPE_BOOLEAN
-        || type_ > TYPE_STRING)
+        || type_ > TYPE_ANY)
       {
         std::ostringstream message;
         message << "datatools::configuration_property_description::set_name_pattern: "

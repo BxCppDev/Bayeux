@@ -19,6 +19,15 @@ namespace datatools {
     TYPE_INTEGER = 0x2,
     TYPE_REAL    = 0x3,
     TYPE_STRING  = 0x4,
+    TYPE_ANY     = TYPE_BOOLEAN | TYPE_INTEGER | TYPE_REAL | TYPE_STRING
+  };
+
+  enum data_type
+  {
+    DATA_NONE    = 0x0,
+    DATA_SCALAR  = 0x1,
+    DATA_ARRAY   = 0x2,
+    DATA_ANY     = DATA_SCALAR | DATA_ARRAY
   };
 
   const boost::bimap< int, std::string > & get_type_to_labels_map();

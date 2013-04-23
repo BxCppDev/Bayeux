@@ -109,6 +109,7 @@ public:
   bool has_type() const;
   bool is_const() const;
   bool is_mutable() const;
+  bool has_single_type() const;
   bool is_boolean() const;
   bool is_integer() const;
   bool is_real() const;

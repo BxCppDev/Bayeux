@@ -104,6 +104,7 @@ This is the datatools package ChangeLog
   	  'datatools::properties' and related ASCII I/O
 	* add support for 'NaN' and '+/-infinity' for real property
 	  in 'datatools::properties and related ASCII I/O
+	* add types enum (for OCD support and properties compatibility)
 	* add 'object_configuration_description' class (OCD support)
-2013-04-22 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
-
+2013-04-23 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* tag 5.0.0
