@@ -25,8 +25,8 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(dpp)
 
 # - Versioning
-set(dpp_VERSION_MAJOR 0)
-set(dpp_VERSION_MINOR 1)
+set(dpp_VERSION_MAJOR 1)
+set(dpp_VERSION_MINOR 0)
 set(dpp_PATCH_VERSION 0)
 set(dpp_VERSION "${dpp_VERSION_MAJOR}.${dpp_VERSION_MINOR}.${dpp_PATCH_VERSION}")
 math(EXPR _dpp_VERSION_NUMERIC "${dpp_VERSION_MAJOR}*100000+${dpp_VERSION_MINOR}*100+${dpp_PATCH_VERSION}")
@@ -48,12 +48,12 @@ endif()
 #-----------------------------------------------------------------------
 # Build options
 #
-option(DPP_WITH_DEBUG "Build debug stuff" OFF) 
-#option(DPP_WITH_BIO  "Build auxiliary Boost I/O library" ON) 
-#option(DPP_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" OFF) 
+option(DPP_WITH_DEBUG "Build debug stuff" OFF)
+#option(DPP_WITH_BIO  "Build auxiliary Boost I/O library" ON)
+#option(DPP_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" OFF)
 option(DPP_WITH_DOC  "Build the dpp documentation" ON)
-option(DPP_WITH_TEST "Build the dpp test suite"    ON) 
-option(DPP_WITH_BASH_SETUP "Build the dpp with Bash setup macro" ON) 
+option(DPP_WITH_TEST "Build the dpp test suite"    ON)
+option(DPP_WITH_BASH_SETUP "Build the dpp with Bash setup macro" ON)
 
 # if (DPP_WITH_DEBUG)
 #   set (DPP_WITH_DEBUG 1)
@@ -98,7 +98,7 @@ find_package(mygsl 4.0.0 REQUIRED)
 
 #-----------------------------------------------------------------------
 # On Apple, we fixup the install prefix to handle installing documentation,
-# support files and so on under the framework's "Resources" directory. 
+# support files and so on under the framework's "Resources" directory.
 # This follows the pattern used in CMake to fixup their app bundle
 # NB: THIS REQUIRES SOME FIXES IN CPACKAGING (see CMake's Qt dialog
 # packaging).
@@ -112,12 +112,12 @@ endif()
 #-----------------------------------------------------------------------
 # Build the submodules as required
 #
-add_subdirectory(src)   
+add_subdirectory(src)
 
 #-----------------------------------------------------------------------
 # Build the executables as required
 #
-add_subdirectory(programs)   
+add_subdirectory(programs)
 
 if(DPP_WITH_DOC)
   set (DPP_WITH_DOC 1)
@@ -128,7 +128,7 @@ endif()
 
 if(DPP_WITH_TEST)
   set (DPP_WITH_TEST 1)
-  enable_testing() 
+  enable_testing()
   add_subdirectory(testing)
 else()
   set (DPP_WITH_TEST 0)

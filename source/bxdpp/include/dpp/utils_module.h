@@ -56,13 +56,18 @@ namespace dpp {
     /// Special method to remove several banks by label (name)
     void _process_remove_banks (datatools::things & a_event_record);
 
+    /// Special method to add some property in a 'datatools::properties' bank
+    void _process_add_property (datatools::things & a_event_record);
+
+
   public:
 
     enum mode_type {
       MODE_INVALID         = 0, //!< Undefined mode
       MODE_CLEAR           = 0x1, //!< Clear all banks mode
-      MODE_REMOVE_ONE_TYPED_BANK = 0x2, //!< Remove one single bank, optionaly with a given type (serial tag) 
+      MODE_REMOVE_ONE_TYPED_BANK = 0x2, //!< Remove one single bank, optionaly with a given type (serial tag)
       MODE_REMOVE_BANKS    = 0x4, //!< Remove several banks by label (name)
+      MODE_ADD_PROPERTY    = 0x8, //!< Add a property in a bank
     };
 
   private:
@@ -71,7 +76,12 @@ namespace dpp {
     std::string              _remove_one_typed_bank_label_; //!< Labels of (optionnaly typed) bank to be removed
     std::string              _remove_one_typed_bank_type_;  //!< Type (serial tag) of the bank to be removed
     std::vector<std::string> _remove_bank_labels_; //!< Labels of the banks to be removed
- 
+    std::string              _add_property_bank_label_; //!< Label of a 'datatools::property' bank to be enriched with a property
+    std::string              _add_property_key_; //!< Key of the property to be added in a 'datatools::property' bank
+    datatools::properties    _add_property_value_; //!< Value of the property to be added in a 'datatools::property' bank
+    std::string              _add_property_description_; //!< Description of the property to be added in a 'datatools::property' bank
+    bool                     _add_property_update_; //!< Flag to allow update of an existing property in a 'datatools::property' bank
+
     // Macro to automate the registration of the module :
     DPP_MODULE_REGISTRATION_INTERFACE(utils_module);
 

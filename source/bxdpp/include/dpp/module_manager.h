@@ -22,7 +22,7 @@
  *
  * Description:
  *
- *   A manager/factory class for event record processing modules.
+ *   A manager/factory class for data (event record?) processing modules.
  *
  * History:
  *
@@ -107,13 +107,13 @@ namespace dpp {
     void load_module (const std::string & module_name_,
                       const std::string & module_id_,
                       const datatools::properties & module_config_);
-         
+
     void create_module (module_entry_type & module_entry_);
-        
+
     void initialize_module (module_entry_type & module_entry_);
- 
+
     void load_modules (const datatools::multi_properties & modules_config_);
-       
+
   protected:
 
     void _load_module (const std::string & module_name_,
@@ -123,34 +123,34 @@ namespace dpp {
     void _load_modules (const datatools::multi_properties & modules_config_);
 
     void _create_module (module_entry_type & module_entry_);
-        
+
     void _initialize_module (module_entry_type & module_entry_);
-        
+
     void _reset_module (module_entry_type & module_entry_);
 
     bool has_module_type (const std::string & module_id_) const;
-        
+
     template <class ModuleClass>
     void register_module_type (const std::string & module_id_)
     {
       _factory_register_.registration (module_id_, boost::factory<ModuleClass*>());
       return;
     }
-        
+
     void unregister_module_type (const std::string & module_id_);
 
   protected:
 
     void _preload_global_dict ();
-        
+
   private:
 
-    bool                    _initialized_; //!< Initialization status
-    uint32_t                _flags_;       //!< Some flags
+    bool                               _initialized_;           //!< Initialization status
+    uint32_t                           _flags_;                 //!< Some flags
     base_module::factory_register_type _factory_register_;      //!< Factory register
     module_handle_dict_type            _modules_;               //!< Dictionnary of modules
     bool                               _service_manager_owner_; //!< Owner flag for the embedded service manager
-    datatools::service_manager * _service_manager_;    //!< Handle to the embedded service manager
+    datatools::service_manager *       _service_manager_;       //!< Handle to the embedded service manager
 
   };
 

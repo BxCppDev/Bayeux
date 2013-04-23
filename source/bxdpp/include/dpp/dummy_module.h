@@ -2,9 +2,9 @@
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-19
  * Last modified : 2013-02-15
- * 
+ *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -17,16 +17,16 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
- * 
- * Description: 
+ *
+ * Description:
  *
  *   A dummy data processing module.
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
 #ifndef DPP_DUMMY_MODULE_H_
@@ -38,12 +38,12 @@
 #include <dpp/module_macros.h>
 
 namespace dpp {
- 
+
   /// \brief A dummy data processing module for tests
   /** The 'dummy_module' class inherits the interface of the
    * 'dpp::base_module' abstract class.
-   * 
-   * Declaration of the 'dummy_module' class 
+   *
+   * Declaration of the 'dummy_module' class
    * can also be done with the following macro :
    *   \code
    *   DPP_MODULE_CLASS_DECLARE(dummy_module)
@@ -51,7 +51,7 @@ namespace dpp {
    *      // blah-blah...
    *   };
    *   \endcode
-   * 
+   *
    */
   class dummy_module : public base_module
   //DPP_MODULE_CLASS_DECLARE(dummy_module)
@@ -78,10 +78,10 @@ namespace dpp {
 
   public:
 
-    /// Constructor 
-    dummy_module (int a_debug_level = dpp::NO_DEBUG); 
+    /// Constructor
+    dummy_module (int a_debug_level = dpp::NO_DEBUG);
 
-    /// Destructor 
+    /// Destructor
     virtual ~dummy_module ();
 
     /** Initialization method :
@@ -93,7 +93,7 @@ namespace dpp {
      * \param a_mod_dict a reference to a dictionnary of pre-existing modules
      * (provided by some external agent)
      *
-     * The module interface (initialize, reset and process methods) 
+     * The module interface (initialize, reset and process methods)
      * can also be declared with the following macro :
      * \code
      * DPP_MODULE_INTERFACE (dummy_module);
@@ -103,19 +103,19 @@ namespace dpp {
                              datatools::service_manager & a_srv_mgr,
                              module_handle_dict_type & a_mod_dict);
 
-    /// Termination method 
+    /// Termination method
     virtual void reset ();
 
     /** Event processing method :
      *  \param a_event_record is a mutable reference to the event data model to be processed.
      *  \return the error status of the event data processing
      */
-    virtual int process (datatools::things & a_data_record);  
+    virtual int process (datatools::things & a_data_record);
 
   private:
 
-    std::string _GP_label_; //!< The name of the "General properties" data bank in the data record.
-    std::string _flag_name_;     //!< The flag to be stored inside the "General properties" data bank.
+    std::string _GP_label_;  //!< The name of the "General properties" data bank in the data record.
+    std::string _flag_name_; //!< The flag to be stored inside the "General properties" data bank.
 
     // Macro to automate the registration of the module :
     DPP_MODULE_REGISTRATION_INTERFACE(dummy_module);

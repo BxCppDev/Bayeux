@@ -10,7 +10,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::dump_module,ocd_)
 {
   ocd_.set_class_name ("dpp::dump_module");
   ocd_.set_class_library ("dpp");
-  ocd_.set_class_description ("A module that dumps the structure of the 'things' data record");
+  ocd_.set_class_description ("A module that dumps the structure of the data record");
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
@@ -103,7 +103,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::dump_module,ocd_)
   ocd_.set_configuration_hints ("A 'dpp::dump_module' object can be setup with the following syntax    \n"
                                 "in a 'datatools::multi_properties' configuration file, typically from \n"
                                 "a module manager object.                                              \n"
-                                "Examples :                                                             \n"
+                                "Examples :                                                            \n"
                                 "  |                                                                   \n"
                                 "  | #@key_label   \"name\"                                            \n"
                                 "  | #@meta_label  \"type\"                                            \n"
@@ -135,14 +135,18 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::chain_module,ocd_)
   ocd_.set_class_name ("dpp::chain_module");
   ocd_.set_class_library ("dpp");
   ocd_.set_class_description ("A module that chains several data processing modules");
+  ocd_.set_class_documentation ("The chain module organizes the data processing along  \n"
+                                "an ordered queue of data processing modules.          \n"
+                                );
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("debug")
-      .set_terse_description("The debug flag")
+      .set_terse_description("Flag to activate debugging output")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
-      .set_long_description("The debug flag.                                \n"
+      .set_long_description("This flag activates debugging output.          \n"
+                            "It is not recommended for a production run.    \n"
                             "Default value is false.                        \n"
                             "Example :                                      \n"
                             "  |                                            \n"
@@ -159,8 +163,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::chain_module,ocd_)
       .set_traits(datatools::TYPE_STRING,
                   datatools::configuration_property_description::ARRAY)
       .set_mandatory(false)
-      .set_long_description("The modules are searched by name from an external\n"
-                            "dictionnary, typically by a module manager object. \n"
+      .set_long_description("The modules are searched by name from an external    \n"
+                            "dictionnary, typically from a module manager object. \n"
                             "Example :                                      \n"
                             "  |                                            \n"
                             "  | modules : string[3] = \\                   \n"
@@ -434,5 +438,195 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::io_module,ocd_)
 DOCD_CLASS_IMPLEMENT_LOAD_END()
 DOCD_CLASS_SYSTEM_REGISTRATION(::dpp::io_module,"dpp::io_module")
 
+
+// OCD support for class '::dpp::utils_module' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::utils_module,ocd_)
+{
+  ocd_.set_class_name ("dpp::utils_module");
+  ocd_.set_class_library ("dpp");
+  ocd_.set_class_description ("A generic module that performs basic operations on the data");
+  ocd_.set_class_documentation ("This module is capable of limited operations the data record.\n"
+                                "Typicaly, it is possible to remove some data bank(s), add some \n"
+                                "arbitrary property in bank of type 'datatools::properties'.  \n"
+                                );
+
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("debug")
+      .set_terse_description("Flag to activate debugging output")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("This flag activates debugging output.             \n"
+                            "It is not recommended for a production run.       \n"
+                            )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("mode")
+      .set_terse_description("The running mode")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .set_long_description("This module can perform one special action chosen from \n"
+                            "the following list :                                   \n"
+                            " 'clear'  : remove all data banks from the data record \n"
+                            " 'remove_one_typed_bank'  :                            \n"
+                            "            remove a bank given its name and optionnaly\n"
+                            "            its type                                   \n"
+                            " 'remove_banks' :                                      \n"
+                            "            remove a list of banks given their names   \n"
+                            " 'add_property' :                                      \n"
+                            "            radd a kay/valu property in a bank         \n"
+                            )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("mode.remove_one_typed_bank.label")
+      .set_terse_description("The name of the bank to be removed")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .set_triggered_by_label("mode", "remove_one_typed_bank")
+      .set_long_description("This property specifies the name of the data bank to be\n"
+                            "removed from the data record while using the           \n"
+                            "'remove_one_typed_bank' mode.                          \n"
+                            "Example to remove a bank named 'CD' (calibration data):\n"
+                            " |                                                     \n"
+                            " | mode : string = \"remove_one_typed_bank\"           \n"
+                            " | mode.remove_one_typed_bank.label : string = \"CD\"  \n"
+                            " |                                                     \n"
+                            )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("mode.remove_one_typed_bank.type")
+      .set_terse_description("The type of the bank to be removed")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_triggered_by_label("mode", "remove_one_typed_bank")
+      .set_long_description("This property specifies the type of the data bank to be \n"
+                            "removed from the data record while using the            \n"
+                            "'remove_one_typed_bank' mode.                           \n"
+                            "As each data bank stored in a 'datatools::things' data  \n"
+                            "record implement the serializable interface, we une here\n"
+                            "the data bank's class' serial tag character string to   \n"
+                            "identify the type of the bank object.                   \n"
+                            "This property is optional.                              \n"
+                            "Example to remove a bank named 'CD' of type 'foo::calibration_data' :\n"
+                            " |                                                     \n"
+                            " | mode : string = \"remove_one_typed_bank\"           \n"
+                            " | mode.remove_one_typed_bank.label : string = \"CD\"  \n"
+                            " | mode.remove_one_typed_bank.type : string = \\       \n"
+                            " |   \"foo::calibration_data\"                         \n"
+                            " |                                                     \n"
+                            )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("mode.remove_banks.labels")
+      .set_terse_description("The labels of the banks to be removed")
+      .set_traits(datatools::TYPE_STRING,
+                  datatools::configuration_property_description::ARRAY)
+      .set_mandatory(true)
+      .set_triggered_by_label("mode", "remove_banks")
+      .set_long_description("This property specifies the array of names of the data  \n"
+                            "bansk to be removed from the data record while using the\n"
+                            "'remove_banks' mode.                                    \n"
+                            "Example to remove two banks named 'RD' and 'CD' :       \n"
+                            " |                                                      \n"
+                            " | mode : string = \"remove_banks\"                     \n"
+                            " | mode.remove_banks.labels : string[2] = \\            \n"
+                            " |   \"RD\" \\                                          \n"
+                            " |   \"CD\"                                             \n"
+                            " |                                                      \n"
+                            )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("mode.add_property.bank_label")
+      .set_terse_description("The label of the bank where to add a property")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .set_triggered_by_label("mode", "add_property")
+      .set_long_description("This property specifies the name of the data  \n"
+                            "bank to be enriched with one arbitrary property.       \n"
+                            "Example :                                               \n"
+                            " |                                                      \n"
+                            " | mode : string = \"add_property\"                     \n"
+                            " | mode.add_property.bank_label : string = \"Header\"   \n"
+                            " |                                                      \n"
+                            )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("mode.add_property.key")
+      .set_terse_description("The key of the property to be added")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .set_triggered_by_label("mode", "add_property")
+      .set_long_description("This property specifies the name/key of the property    \n"
+                            "to be added within the bank.                            \n"
+                            "Example :                                               \n"
+                            " |                                                      \n"
+                            " | mode : string = \"add_property\"                     \n"
+                            " | mode.add_property.bank_label : string = \"Header\"   \n"
+                            " | mode.add_property.key        : string = \"my_name\"  \n"
+                            " |                                                      \n"
+                            )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("mode.add_property.value")
+      .set_terse_description("The value to be added to be added")
+      .set_traits(datatools::TYPE_BOOLEAN|datatools::TYPE_INTEGER|datatools::TYPE_REAL|datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .set_triggered_by_label("mode", "add_property")
+      .set_long_description("This property specifies the property value to be added  \n"
+                            "in the data bank. It must be one of the 4 basic types:  \n"
+                            " - boolean                                              \n"
+                            " - integer                                              \n"
+                            " - real                                                 \n"
+                            " - string                                               \n"
+                            "It may be a scalar or an array.                         \n"
+                            "Examples :                                              \n"
+                            " |                                                      \n"
+                            " | mode : string = \"add_property\"                     \n"
+                            " | mode.add_property.bank_label : string = \"Header\"   \n"
+                            " | mode.add_property.key   : string  = \"number\"       \n"
+                            " | mode.add_property.value : integer = 4                \n"
+                            " |                                                      \n"
+                            "or :                                                    \n"
+                            " | mode : string = \"add_property\"                     \n"
+                            " | mode.add_property.bank_label : string = \"Header\"   \n"
+                            " | mode.add_property.key   : string    = \"tokens\"     \n"
+                            " | mode.add_property.value : string[2] = \"foo\" \"bar\"\n"
+                            " |                                                      \n"
+                            )
+      ;
+  }
+
+
+
+
+  //ocd_.set_configuration_hints ("Nothing special.");
+  ocd_.set_validation_support(true);
+  ocd_.lock();
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+DOCD_CLASS_SYSTEM_REGISTRATION(dpp::utils_module,"dpp::utils_module")
 
 // end of ocd_support.cc

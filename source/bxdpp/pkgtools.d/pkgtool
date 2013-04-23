@@ -290,13 +290,29 @@ function do_check ()
 	pkgtools__msg_notice "Found cuts $(cuts-config --version) !"
     fi
 
-    # which mygsl-config > /dev/null 2>&1
-    # if [ $? -ne 0 ]; then
-    # 	missing_material="${missing_material}mygsl "
-    # 	pkgtools__msg_warning "Cannot find mygsl !"
-    # else
-    # 	pkgtools__msg_notice "Found mygsl $(mygsl-config --version) !"
-    # fi
+    which mygsl-config > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+    	missing_material="${missing_material}mygsl "
+    	pkgtools__msg_warning "Cannot find mygsl !"
+    else
+    	pkgtools__msg_notice "Found mygsl $(mygsl-config --version) !"
+    fi
+
+    which brio-config > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+    	missing_material="${missing_material}brio "
+    	pkgtools__msg_warning "Cannot find brio !"
+    else
+    	pkgtools__msg_notice "Found brio $(brio-config --version) !"
+    fi
+
+    which cmake > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+    	missing_material="${missing_material}CMake "
+    	pkgtools__msg_warning "Cannot find CMake !"
+    else
+    	pkgtools__msg_notice "Found CMake $(cmake --version) !"
+    fi
 
     which doxygen > /dev/null 2>&1
     if [ $? -ne 0 ]; then

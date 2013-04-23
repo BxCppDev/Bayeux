@@ -1,7 +1,7 @@
 /* dummy_module.cc
- * 
+ *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -14,9 +14,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- * 
+ *
  */
 
 #include <stdexcept>
@@ -29,7 +29,7 @@
 #include <datatools/things.h>
 
 namespace dpp {
- 
+
   // Registration instantiation macro :
   DPP_MODULE_REGISTRATION_IMPLEMENT(dummy_module, "dpp::dummy_module");
 
@@ -71,24 +71,24 @@ namespace dpp {
   /*** Implementation of the interface ***/
 
   // Constructor :
-  dummy_module::dummy_module (int a_debug_level)        
-    : base_module ("dpp::dummy_module",         
-                   "An data record processor dummy module",        
-                   "0.1",         
-                   a_debug_level) 
+  dummy_module::dummy_module (int a_debug_level)
+    : base_module ("dpp::dummy_module",
+                   "An data record processor dummy module",
+                   "0.1",
+                   a_debug_level)
   {
     _flag_name_    = UNINITIALIZED_LABEL;
     _GP_label_ = "GP"; // default value
     return;
   }
-      
+
   // Destructor :
   dummy_module::~dummy_module ()
-  {         
-    // Make sure all internal resources are terminated 
-    // before destruction : 
+  {
+    // Make sure all internal resources are terminated
+    // before destruction :
     if (is_initialized ()) reset ();
-    return; 
+    return;
   }
 
   // Initialization :
@@ -96,63 +96,54 @@ namespace dpp {
                                  datatools::service_manager & a_service_manager,
                                  module_handle_dict_type & a_module_dict)
   {
-    if (is_initialized ())
-      {
-        std::ostringstream message;
-        message << "dummy_module::initialize: "
-                << "Module '" << get_name () << "' is already initialized ! ";
-        throw std::logic_error (message.str ());
-      }
+    if (is_initialized ()) {
+      std::ostringstream message;
+      message << "dummy_module::initialize: "
+              << "Module '" << get_name () << "' is already initialized ! ";
+      throw std::logic_error (message.str ());
+    }
 
     // Note: is_debug and set_debug are inherited from the base class.
-    if (! is_debug ())
-      {
-        if (a_config.has_flag ("debug"))
-          {
-            set_debug (true); 
-          }
+    if (! is_debug ()) {
+      if (a_config.has_flag ("debug")) {
+        set_debug (true);
       }
-  
-    if (_flag_name_ == UNINITIALIZED_LABEL)
-      {
-        // If the label is no setup, pickup from the configuration list:
-        if (a_config.has_key ("flag_name"))
-          {
-            std::string flag_name = a_config.fetch_string ("flag_name");
-            set_flag_name (flag_name);
-          }
-      }
+    }
 
-    if (a_config.has_key ("GP_label"))
-      {
-        std::string gp_label = a_config.fetch_string ("GP_label");
-        set_GP_label (gp_label);
+    if (_flag_name_ == UNINITIALIZED_LABEL) {
+      // If the label is no setup, pickup from the configuration list:
+      if (a_config.has_key ("flag_name")) {
+        std::string flag_name = a_config.fetch_string ("flag_name");
+        set_flag_name (flag_name);
       }
- 
+    }
+
+    if (a_config.has_key ("GP_label")) {
+      std::string gp_label = a_config.fetch_string ("GP_label");
+      set_GP_label (gp_label);
+    }
+
     // Default :
-    if (_flag_name_ == UNINITIALIZED_LABEL)
-      {
-        _flag_name_ = DEFAULT_FLAG_NAME;
-      }
+    if (_flag_name_ == UNINITIALIZED_LABEL) {
+      _flag_name_ = DEFAULT_FLAG_NAME;
+    }
 
     // Flag the initialization status :
-    if (_GP_label_ != UNINITIALIZED_LABEL)
-      {
-        _set_initialized (true);
-      }
+    if (_GP_label_ != UNINITIALIZED_LABEL) {
+      _set_initialized (true);
+    }
     return;
   }
-  
+
   // Reset :
   void dummy_module::reset ()
   {
-    if (! is_initialized ())
-      {
-        std::ostringstream message;
-        message << "dpp::dummy_module::reset: "
-                << "Module '" << get_name () << "' is not initialized !";
-        throw std::logic_error (message.str ());
-      }
+    if (! is_initialized ()) {
+      std::ostringstream message;
+      message << "dpp::dummy_module::reset: "
+              << "Module '" << get_name () << "' is not initialized !";
+      throw std::logic_error (message.str ());
+    }
     _set_initialized (false);
 
     _flag_name_ = "";
@@ -162,50 +153,52 @@ namespace dpp {
   }
 
   // Processing :
-  int dummy_module::process (datatools::things & the_data_record) 
+  int dummy_module::process (datatools::things & the_data_record)
   {
-    if (! is_initialized ())
-      {
-        std::ostringstream message;
-        message << "dpp::dummy_module::process: "
-                << "Module '" << get_name () << "' is not initialized !";
-        throw std::logic_error (message.str ());
-      }
+    if (! is_initialized ()) {
+      std::ostringstream message;
+      message << "dpp::dummy_module::process: "
+              << "Module '" << get_name () << "' is not initialized !";
+      throw std::logic_error (message.str ());
+    }
 
-    if (the_data_record.has (_GP_label_) 
-        && the_data_record.is_a<datatools::properties> (_GP_label_))
-      {
-        // Find the GP bank :
-        datatools::properties & the_gp_bank 
-          = the_data_record.grab<datatools::properties> (_GP_label_);
-        if (is_debug ())
-          {
-            std::clog << datatools::io::debug
-                 << "dpp::dummy_module::process: "
-                 << "Found the '" << _GP_label_ << "' bank !"
-                 << std::endl;
-          }
-        // Add a string property in it with value '_label_' :
-        if (is_debug ())
-          {
-            std::clog << datatools::io::debug
-                 << "dpp::dummy_module::process: "
-                 << "Adding the '" << _flag_name_ << "' flag property..."
-                 << std::endl;
-          }
-        std::string key = _flag_name_;
-        int count = 0;
-        the_gp_bank.update_flag (key);
+    // If no GP bank is present, add one :
+    if (! the_data_record.has (_GP_label_)) {
+      datatools::properties & the_gp_bank = the_data_record.add<datatools::properties> (_GP_label_);
+      the_gp_bank.set_description("Bank of general properties");
+    }
+
+    // Grab the GB bank and add a flag with given name :
+    if (the_data_record.has (_GP_label_)
+        && the_data_record.is_a<datatools::properties> (_GP_label_)) {
+      // Find the GP bank :
+      datatools::properties & the_gp_bank
+        = the_data_record.grab<datatools::properties> (_GP_label_);
+      if (is_debug ()) {
+        std::clog << datatools::io::debug
+                  << "dpp::dummy_module::process: "
+                  << "Found the '" << _GP_label_ << "' bank !"
+                  << std::endl;
       }
-    else
-      {
-        std::clog << datatools::io::error
-             << "dpp::dummy_module::process: "
-             << "Could not find any GP bank !"
-             << std::endl;
-        // Cannot find the event header :
-        return ERROR;
+      // Add a boolean property with value '_flag_name_' :
+      if (is_debug ()) {
+        std::clog << datatools::io::debug
+                  << "dpp::dummy_module::process: "
+                  << "Adding the '" << _flag_name_ << "' flag property..."
+                  << std::endl;
       }
+      std::string key = _flag_name_;
+      int count = 0;
+      the_gp_bank.update_flag (key);
+    }
+    else {
+      std::clog << datatools::io::error
+                << "dpp::dummy_module::process: "
+                << "Could not find any GP bank !"
+                << std::endl;
+      // Cannot find the event header :
+      return ERROR;
+    }
     return SUCCESS;
   }
 
