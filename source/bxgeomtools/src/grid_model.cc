@@ -110,7 +110,7 @@ namespace geomtools {
     double x;
     double y;
     double z;
-    string material_name = material::constants::instance ().MATERIAL_REF_DEFAULT;
+    string material_name; // = material::constants::instance ().MATERIAL_REF_DEFAULT;
     string model_name;
     size_t number_of_items[2];
     number_of_items[0] = number_of_items[1] = 0;
@@ -118,6 +118,19 @@ namespace geomtools {
     string grid_daughter_label;
     string grid_plane_label = "";
     double length_unit = CLHEP::mm;
+
+    /*** material ***/
+    if (config_.has_key ("material.ref"))
+      {
+        material_name = config_.fetch_string ("material.ref");
+      }
+    else
+      {
+        ostringstream message;
+        message << "geomtools::stacked_model::_at_construct: "
+                << "Missing 'material.ref' property !";
+        throw logic_error (message.str ());
+      }
 
     if (config_.has_flag ("grid.force_stackable"))
       {
@@ -553,7 +566,7 @@ namespace geomtools {
       }
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (_solid_);
-    if (_model_->get_logical ().has_material_ref ())
+    if (material_name.empty() && _model_->get_logical ().has_material_ref ())
       {
         material_name = _model_->get_logical ().get_material_ref ();
       }

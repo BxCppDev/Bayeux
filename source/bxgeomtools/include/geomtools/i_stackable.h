@@ -1,17 +1,17 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* i_stackable.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-02
  * Last modified: 2010-04-02
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *
  *   Abstract interface for stackable shape.
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
 #ifndef GEOMTOOLS_I_STACKABLE_H_
@@ -20,8 +20,8 @@
 #include <iostream>
 #include <string>
 #include <datatools/utils.h>
-#include <datatools/properties.h> 
-#include <datatools/i_tree_dump.h> 
+#include <datatools/properties.h>
+#include <datatools/i_tree_dump.h>
 
 namespace geomtools {
 
@@ -29,7 +29,7 @@ namespace geomtools {
   {
 
   public:
-    
+
     bool has_xmin() const;
     bool has_xmax() const;
     bool has_ymin() const;
@@ -42,7 +42,7 @@ namespace geomtools {
     virtual double get_ymax () const = 0;
     virtual double get_zmin () const = 0;
     virtual double get_zmax () const = 0;
- 
+
   };
 
   class stackable
@@ -76,17 +76,23 @@ namespace geomtools {
 
     static bool has_zmax (const datatools::properties & source_);
 
-    static double get_xmin (const datatools::properties & source_);
+    static double get_xmin (const datatools::properties & source_,
+                            double length_unit_ = -1.0);
 
-    static double get_xmax (const datatools::properties & source_);
+    static double get_xmax (const datatools::properties & source_,
+                            double length_unit_ = -1.0);
 
-    static double get_ymin (const datatools::properties & source_);
+    static double get_ymin (const datatools::properties & source_,
+                            double length_unit_ = -1.0);
 
-    static double get_ymax (const datatools::properties & source_);
+    static double get_ymax (const datatools::properties & source_,
+                            double length_unit_ = -1.0);
 
-    static double get_zmin (const datatools::properties & source_);
+    static double get_zmin (const datatools::properties & source_,
+                            double length_unit_ = -1.0);
 
-    static double get_zmax (const datatools::properties & source_);
+    static double get_zmax (const datatools::properties & source_,
+                            double length_unit_ = -1.0);
 
     static void set_xmin (datatools::properties & target_,
                           double xmin_);
@@ -120,7 +126,7 @@ namespace geomtools {
 
     static void unset (datatools::properties & target_);
 
-    static void set (datatools::properties & target_, 
+    static void set (datatools::properties & target_,
                      const i_stackable & sd_);
 
   };
@@ -128,15 +134,6 @@ namespace geomtools {
   class stackable_data : public i_stackable,
                          public datatools::i_tree_dumpable
   {
-  public:
-
-    double xmin;
-    double xmax;
-    double ymin;
-    double ymax;
-    double zmin;
-    double zmax;
-
   public:
 
     bool is_valid_x () const;
@@ -152,7 +149,7 @@ namespace geomtools {
     void invalidate ();
 
     stackable_data ();
-  
+
     virtual double get_xmin () const {return xmin;}
     virtual double get_xmax () const {return xmax;}
     virtual double get_ymin () const {return ymin;}
@@ -160,15 +157,24 @@ namespace geomtools {
     virtual double get_zmin () const {return zmin;}
     virtual double get_zmax () const {return zmax;}
 
-    virtual void tree_dump (std::ostream & out_         = std::clog, 
-                            const std::string & title_  = "", 
-                            const std::string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_         = std::clog,
+                            const std::string & title_  = "",
+                            const std::string & indent_ = "",
                             bool inherit_          = false) const;
-    
+
     void dump (std::ostream & out_ = std::clog) const;
 
     bool initialize (const datatools::properties & config_);
-                       
+
+  public:
+
+    double xmin;
+    double xmax;
+    double ymin;
+    double ymax;
+    double zmin;
+    double zmax;
+
   };
 
 } // end of namespace geomtools

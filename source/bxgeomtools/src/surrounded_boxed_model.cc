@@ -1,13 +1,13 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* surrounded_boxed_model.cc
  */
 
 #include <geomtools/surrounded_boxed_model.h>
 
 #include <exception>
-#include <limits> 
-#include <list> 
-#include <map> 
+#include <limits>
+#include <list>
+#include <map>
 
 #include <mygsl/min_max.h>
 
@@ -49,7 +49,7 @@ namespace geomtools {
     assert_constructed ("surrounded_boxed_model::get_box");
     return _solid_;
   }
-  
+
   const geomtools::box & surrounded_boxed_model::get_solid () const
   {
     assert_constructed ("surrounded_boxed_model::get_solid");
@@ -93,8 +93,8 @@ namespace geomtools {
     return found != _surrounding_labels_.end ();
   }
 
-  void surrounded_boxed_model::add_surrounding_model (int i_, 
-                                                      const i_model & model_, 
+  void surrounded_boxed_model::add_surrounding_model (int i_,
+                                                      const i_model & model_,
                                                       const string & label_)
   {
     assert_unconstructed("surrounded_boxed_model::add_surrounding_model");
@@ -146,7 +146,7 @@ namespace geomtools {
     return _surrounding_labels_;
   }
 
-  const surrounded_boxed_model::surrounding_item & 
+  const surrounded_boxed_model::surrounding_item &
   surrounded_boxed_model::get_surrounding_item (const string & label_) const
   {
     labels_dict_type::const_iterator found = _surrounding_labels_.find (label_);
@@ -161,7 +161,7 @@ namespace geomtools {
     return (this->get_surrounding_item (found->second));
   }
 
-  const surrounded_boxed_model::surrounding_item & 
+  const surrounded_boxed_model::surrounding_item &
   surrounded_boxed_model::get_surrounding_item (int i_) const
   {
     surrounding_dict_type::const_iterator found = _surrounding_items_.find (i_);
@@ -215,13 +215,13 @@ namespace geomtools {
   {
     return _debug_;
   }
-    
+
   void surrounded_boxed_model::set_debug (bool d_)
   {
     _debug_ = d_;
     return;
   }
-  
+
   // ctor:
   surrounded_boxed_model::surrounded_boxed_model () : i_boxed_model ()
   {
@@ -242,13 +242,13 @@ namespace geomtools {
     _centered_z_ = false;
     return;
   }
-  
+
   // dtor:
   surrounded_boxed_model::~surrounded_boxed_model ()
   {
     return;
   }
-  
+
   void surrounded_boxed_model::_at_construct (const string & name_,
                                               const datatools::properties & config_,
                                               models_col_type * models_)
@@ -257,10 +257,10 @@ namespace geomtools {
     if (config_.has_flag ("devel"))
       {
         devel = true;
-      }  
+      }
     if (devel)
       {
-        clog << datatools::io::devel 
+        clog << datatools::io::devel
              << "surrounded_boxed_model::_at_construct: Entering..." << endl;
       }
     set_name (name_);
@@ -275,19 +275,19 @@ namespace geomtools {
     if (config_.has_flag ("debug"))
       {
         set_debug (true);
-      }  
+      }
 
     /*** material ***/
     if (config_.has_key ("material.ref"))
       {
         material_name = config_.fetch_string ("material.ref");
-      }  
+      }
     else
       {
         ostringstream message;
         message << "surrounded_boxed_model::_at_construct: "
-                << "Missing 'material.ref' property !"; 
-        throw runtime_error (message.str ());           
+                << "Missing 'material.ref' property !";
+        throw runtime_error (message.str ());
       }
     set_material_name (material_name);
 
@@ -296,25 +296,25 @@ namespace geomtools {
       {
         string length_unit_str = config_.fetch_string ("length_unit");
         lunit = datatools::units::get_length_unit_from (length_unit_str);
-      }  
+      }
 
     /*** Surrounded model ***/
     if (config_.has_key ("surrounded.model"))
       {
         surrounded_model_name = config_.fetch_string ("surrounded.model");
-      }  
+      }
     /*
       else if (config_.has_key ("surrounded_model")) // obsolete
       {
       surrounded_model_name = config_.fetch_string ("surrounded_model");
       }
-    */  
+    */
     else
       {
         ostringstream message;
         message << "surrounded_boxed_model::_at_construct: "
-                << "Missing 'surrounded.model' property !"; 
-        throw runtime_error (message.str ());           
+                << "Missing 'surrounded.model' property !";
+        throw runtime_error (message.str ());
       }
 
     /*** Surrounded label ***/
@@ -322,50 +322,50 @@ namespace geomtools {
     if (config_.has_key ("surrounded.label"))
       {
         set_surrounded_label (config_.fetch_string ("surrounded.label"));
-      }  
+      }
     /*
       else if (config_.has_key ("surrounded_label")) // obsolete
       {
       set_surrounded_label (config_.fetch_string ("surrounded_label"));
-      }  
+      }
     */
 
     /*** Centering of the surrounded item ***/
     if (config_.has_flag ("surrounded.centered_x"))
       {
-        if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: X-centered" << endl; 
+        if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: X-centered" << endl;
         _centered_x_ = true;
       }
     /*
       else if (config_.has_flag ("centered.x")) // obsolete
       {
-      if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: X-centered" << endl; 
+      if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: X-centered" << endl;
       _centered_x_ = true;
       }
     */
 
     if (config_.has_flag ("surrounded.centered_y"))
       {
-        if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: Y-centered" << endl; 
+        if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: Y-centered" << endl;
         _centered_y_ = true;
       }
     /*
       else if (config_.has_flag ("centered.y")) // obsolete
       {
-      if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: Y-centered" << endl; 
+      if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: Y-centered" << endl;
       _centered_y_ = true;
       }
     */
 
     if (config_.has_flag ("surrounded.centered_z"))
       {
-        if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: Z-centered" << endl; 
+        if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: Z-centered" << endl;
         _centered_z_ = true;
       }
     /*
       else if (config_.has_flag ("centered.z")) // obsolete
       {
-      if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: Z-centered" << endl; 
+      if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: Z-centered" << endl;
       _centered_z_ = true;
       }
     */
@@ -375,13 +375,13 @@ namespace geomtools {
       {
         ostringstream message;
         message << "surrounded_boxed_model::_at_construct: "
-                << "Missing logicals dictionary !"; 
+                << "Missing logicals dictionary !";
         throw runtime_error (message.str ());
       }
 
     /*** check if surrounded model exists ***/
     {
-      models_col_type::const_iterator found = 
+      models_col_type::const_iterator found =
         models_->find (surrounded_model_name);
       if (found != models_->end ())
         {
@@ -390,8 +390,8 @@ namespace geomtools {
             {
               ostringstream message;
               message << "stacked_boxed_model::_at_construct: "
-                      << "The surrounded model '" << found->second->get_name () 
-                      << "' is not stackable !"; 
+                      << "The surrounded model '" << found->second->get_name ()
+                      << "' is not stackable !";
               throw runtime_error (message.str ());
             }
           set_surrounded_model (*(found->second));
@@ -400,7 +400,7 @@ namespace geomtools {
         {
           ostringstream message;
           message << "surrounded_boxed_model::_at_construct: "
-                  << "Cannot find surrounded model with name '" 
+                  << "Cannot find surrounded model with name '"
                   << surrounded_model_name << "' !";
           throw runtime_error (message.str ());
         }
@@ -420,15 +420,15 @@ namespace geomtools {
           if (config_.has_key (surrounding_item_prop.str ()))
             {
               surrounding_model_name = config_.fetch_string (surrounding_item_prop.str ());
-            }  
+            }
           else
             {
               if (devel)
                 {
                   ostringstream message;
                   message << "surrounded_boxed_model::_at_construct: "
-                          << "No '" << surrounding_item_prop.str () << "' property !"; 
-                  clog << datatools::io::devel << message.str () << endl;        
+                          << "No '" << surrounding_item_prop.str () << "' property !";
+                  clog << datatools::io::devel << message.str () << endl;
                 }
               continue;
             }
@@ -438,9 +438,9 @@ namespace geomtools {
           if (config_.has_key (label_item_prop.str ()))
             {
               label_name = config_.fetch_string (label_item_prop.str ());
-            }  
-          
-          models_col_type::const_iterator found = 
+            }
+
+          models_col_type::const_iterator found =
             models_->find (surrounding_model_name);
           if (found != models_->end ())
             {
@@ -449,9 +449,9 @@ namespace geomtools {
                 {
                   ostringstream message;
                   message << "surrounded_boxed_model::_at_construct: "
-                          << "The " << *ilabel << " surrounding model '" 
-                          << found->second->get_name () 
-                          << "' is not stackable !"; 
+                          << "The " << *ilabel << " surrounding model '"
+                          << found->second->get_name ()
+                          << "' is not stackable !";
                   throw runtime_error (message.str ());
                 }
               add_surrounding_model (ipos, *(found->second), label_name);
@@ -460,13 +460,13 @@ namespace geomtools {
             {
               ostringstream message;
               message << "surrounded_boxed_model::_at_construct: "
-                      << "Cannot find surrounding model with name '" 
+                      << "Cannot find surrounding model with name '"
                       << surrounding_model_name << "' !";
               throw runtime_error (message.str ());
             }
         }
     }
-    
+
     /*** compute main box dimensions ***/
     mygsl::min_max mmx0;
     mygsl::min_max mmy0;
@@ -482,7 +482,7 @@ namespace geomtools {
       {
         ostringstream message;
         message << "surrounded_boxed_model::_at_construct: "
-                << "Cannot surround/stack the '" 
+                << "Cannot surround/stack the '"
                 << the_shape.get_shape_name () << "' shape !";
         throw runtime_error (message.str ());
       }
@@ -522,7 +522,7 @@ namespace geomtools {
           {
             ostringstream message;
             message << "surrounded_boxed_model::_at_construct: "
-                    << "Cannot surround/stack the '" 
+                    << "Cannot surround/stack the '"
                     << the_surrounding_shape.get_shape_name () << "' surrounding shape !";
             throw runtime_error (message.str ());
           }
@@ -532,7 +532,7 @@ namespace geomtools {
         double g2ymax = the_SD2.get_ymax ();
         double g2zmin = the_SD2.get_zmin ();
         double g2zmax = the_SD2.get_zmax ();
-        
+
         if (position == BACK)
           {
             dx0 = abs (g2xmax - g2xmin);
@@ -588,7 +588,7 @@ namespace geomtools {
             mmy1.add (g2ymax);
           }
       }
-    
+
     if (mmx0.get_min () < x0) x0 = mmx0.get_min ();
     if (mmx1.get_max () > x1) x1 = mmx1.get_max ();
     if (mmy0.get_min () < y0) y0 = mmy0.get_min ();
@@ -603,79 +603,79 @@ namespace geomtools {
     double dim_z = 2 * max (z1, abs (z0));
     if (! _centered_x_)
       {
-        if (devel) cerr << "DEVEL: geomtools::surrounded_boxed_model: ! X-centered with x0=" << x0 << endl; 
+        if (devel) cerr << "DEVEL: geomtools::surrounded_boxed_model: ! X-centered with x0=" << x0 << endl;
         dim_x = x1 - x0;
         surrounded_x = -0.5 * dim_x - x0;
       }
     else
       {
-        if (devel) cerr << "DEVEL: geomtools::surrounded_boxed_model: X-centered" << endl; 
+        if (devel) cerr << "DEVEL: geomtools::surrounded_boxed_model: X-centered" << endl;
       }
     if (! _centered_y_)
       {
-        if (devel) cerr << "DEVEL: geomtools::surrounded_boxed_model: ! Y-centered with y0=" << y0 << endl; 
+        if (devel) cerr << "DEVEL: geomtools::surrounded_boxed_model: ! Y-centered with y0=" << y0 << endl;
         dim_y = y1 - y0;
         surrounded_y = -0.5 * dim_y - y0;
       }
     else
       {
-        if (devel) cerr << "DEVEL: geomtools::surrounded_boxed_model: Y-centered" << endl; 
+        if (devel) cerr << "DEVEL: geomtools::surrounded_boxed_model: Y-centered" << endl;
       }
     if (! _centered_z_)
       {
-        if (devel) cerr << "DEVEL: geomtools::surrounded_boxed_model: ! Z-centered with z0=" << z0 << endl; 
+        if (devel) cerr << "DEVEL: geomtools::surrounded_boxed_model: ! Z-centered with z0=" << z0 << endl;
         dim_z = z1 - z0;
         surrounded_z = -0.5 * dim_z - z0;
       }
     else
       {
-        if (devel) cerr << "DEVEL: geomtools::surrounded_boxed_model: Z-centered" << endl; 
+        if (devel) cerr << "DEVEL: geomtools::surrounded_boxed_model: Z-centered" << endl;
       }
 
     if (config_.has_key ("x"))
       {
         x = config_.fetch_real ("x");
-        x *= lunit;
+        if (! config_.has_explicit_unit ("x")) x *= lunit;
         if (x < dim_x)
           {
             ostringstream message;
             message << "surrounded_boxed_model::_at_construct: "
-                    << "Enforced X dimension '" << x / CLHEP::mm 
-                    << "' mm (<" << dim_x / CLHEP::mm << ") is too small for surrounded components to fit !"; 
-            throw runtime_error (message.str ());    
+                    << "Enforced X dimension '" << x / CLHEP::mm
+                    << "' mm (<" << dim_x / CLHEP::mm << ") is too small for surrounded components to fit !";
+            throw runtime_error (message.str ());
           }
         dim_x = x;
-      }  
+      }
 
     if (config_.has_key ("y"))
       {
         y = config_.fetch_real ("y");
-        y *= lunit;
+        if (! config_.has_explicit_unit ("y")) y *= lunit;
         if (y < dim_y)
           {
             ostringstream message;
             message << "surrounded_boxed_model::_at_construct: "
-                    << "Enforced Y dimension '" << y / CLHEP::mm 
-                    << "' mm (<" << dim_y / CLHEP::mm << ") is too small for surrounded components to fit !"; 
-            throw runtime_error (message.str ());    
+                    << "Enforced Y dimension '" << y / CLHEP::mm
+                    << "' mm (<" << dim_y / CLHEP::mm << ") is too small for surrounded components to fit !";
+            throw runtime_error (message.str ());
           }
         dim_y = y;
-      }  
+      }
 
     if (config_.has_key ("z"))
       {
         z = config_.fetch_real ("z");
-        z *= lunit;
+        if (! config_.has_explicit_unit ("z")) z *= lunit;
         if (z < dim_z)
           {
             ostringstream message;
             message << "surrounded_boxed_model::_at_construct: "
-                    << "Enforced Z dimension '" << z / CLHEP::mm 
-                    << "' mm (<" << dim_z / CLHEP::mm << ") is too small for surrounded components to fit !"; 
-            throw runtime_error (message.str ());    
+                    << "Enforced Z dimension '" << z / CLHEP::mm
+                    << "' mm (<" << dim_z / CLHEP::mm << ") is too small for surrounded components to fit !";
+            throw runtime_error (message.str ());
           }
         dim_z = z;
-      }  
+      }
 
     // define the enclosing solid box:
     _solid_.reset ();
@@ -686,7 +686,7 @@ namespace geomtools {
       {
         throw runtime_error ("surrounded_boxed_model::_at_construct: Invalid solid !");
       }
-    if (devel) 
+    if (devel)
       {
         _solid_.tree_dump (cerr, "surrounded_boxed_model::_at_construct: Solid: ", "DEVEL: ");
       }
@@ -694,15 +694,15 @@ namespace geomtools {
     get_logical ().set_shape (_solid_);
     get_logical ().set_material_ref (__get_material_name ());
 
-    // placement of the surrounded solid: 
-    _surrounded_placmt_.set (surrounded_x, surrounded_y, surrounded_z, 
+    // placement of the surrounded solid:
+    _surrounded_placmt_.set (surrounded_x, surrounded_y, surrounded_z,
                              0.0, 0.0, 0.0);
     _surrounded_phys_.set_name (i_model::make_physical_volume_name (_surrounded_label_));
     _surrounded_phys_.set_placement (_surrounded_placmt_);
     _surrounded_phys_.set_logical (_surrounded_model_->get_logical ());
     _surrounded_phys_.set_mother (get_logical ());
 
-    // placement of the surrounding solids: 
+    // placement of the surrounding solids:
     for (surrounding_dict_type::iterator i = _surrounding_items_.begin ();
          i != _surrounding_items_.end ();
          i++)
@@ -765,7 +765,7 @@ namespace geomtools {
     // 2011-12-05 FM : add support for additional internal objects :
     if (_internals_.get_number_of_items () == 0)
       {
-        if (devel) cerr << endl << endl 
+        if (devel) cerr << endl << endl
              << "DEVEL ****************************"
              << "DEVEL: surrounded_boxed_model::_at_construct: process MWIM"
              << endl
@@ -774,15 +774,15 @@ namespace geomtools {
                                          get_logical (),
                                          models_);
       }
-    
-    if (devel) clog << datatools::io::devel 
+
+    if (devel) clog << datatools::io::devel
                     << "surrounded_boxed_model::_at_construct: Exiting." << endl;
     return;
   }
-  
-  void surrounded_boxed_model::tree_dump (ostream & out_, 
-                                          const string & title_ , 
-                                          const string & indent_, 
+
+  void surrounded_boxed_model::tree_dump (ostream & out_,
+                                          const string & title_ ,
+                                          const string & indent_,
                                           bool inherit_) const
   {
     using namespace datatools;
@@ -791,49 +791,49 @@ namespace geomtools {
     i_model::tree_dump (out_, title_, indent, true);
 
     {
-      out_ << indent << i_tree_dumpable::tag 
+      out_ << indent << i_tree_dumpable::tag
            << "Material : " << get_material_name () << endl;
     }
 
     {
-      out_ << indent << i_tree_dumpable::tag 
+      out_ << indent << i_tree_dumpable::tag
            << "X-centered : " << _centered_x_ << endl;
-      out_ << indent << i_tree_dumpable::tag 
+      out_ << indent << i_tree_dumpable::tag
            << "Y-centered : " << _centered_y_ << endl;
-      out_ << indent << i_tree_dumpable::tag 
+      out_ << indent << i_tree_dumpable::tag
            << "Z-centered : " << _centered_z_ << endl;
     }
 
     {
-      out_ << indent << i_tree_dumpable::tag 
+      out_ << indent << i_tree_dumpable::tag
            << "Surrounded model : " << _surrounded_label_ << endl;
     }
-     
+
     {
       for (labels_dict_type::const_iterator i = _surrounding_labels_.begin ();
            i != _surrounding_labels_.end ();
            i++)
         {
-          out_ << indent << i_tree_dumpable::tag 
+          out_ << indent << i_tree_dumpable::tag
                << "Surrounding model : " << "'" << i->first << "'" << " [rank==" << i->second << "]" << endl;
         }
     }
 
     {
-      out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
+      out_ << indent << i_tree_dumpable::inherit_tag (inherit_)
            << "Solid : " << endl;
       {
         ostringstream indent_oss;
         indent_oss << indent;
         indent_oss << i_tree_dumpable::inherit_skip_tag (inherit_);
         _solid_.tree_dump (out_, "", indent_oss.str ());
-      }   
+      }
     }
 
     return;
   }
-  
-  // registration :   
+
+  // registration :
   GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(surrounded_boxed_model,"geomtools::surrounded_boxed_model");
 
 } // end of namespace geomtools

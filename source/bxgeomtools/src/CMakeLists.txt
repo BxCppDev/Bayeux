@@ -114,6 +114,7 @@ include/geomtools/manager_macros.h
 include/geomtools/geometry_service.h
 include/geomtools/materials_plugin.h
 include/geomtools/materials_utils.h
+include/geomtools/ocd_support.h
 include/geomtools/base_hit.ipp
 include/geomtools/blur_spot.ipp
 include/geomtools/display_data.ipp
@@ -152,7 +153,7 @@ set_source_files_properties(${geomtools_detail_HEADERS}
     MACOSX_PACKAGE_LOCATION Headers/detail
   )
 
-# We have to install the detail header modules separately if geomtools 
+# We have to install the detail header modules separately if geomtools
 # isn't built as a Framework.
 if(NOT APPLE)
   foreach(_module detail)
@@ -167,92 +168,93 @@ endif()
 # SOURCE FILES
 # Pretty basic!
 set(geomtools_SOURCES
-  base_hit.cc 
-  blur_spot.cc 
+  base_hit.cc
+  blur_spot.cc
   address_set.cc
-  gdml_export.cc 
-  gdml_writer.cc 
+  gdml_export.cc
+  gdml_writer.cc
   geom_id.cc
-  geom_info.cc 
-  geom_map.cc 
-  hexagon_box.cc 
-  id_mgr.cc 
-  id_selector.cc 
-  i_locator.cc  
-  intersection.cc  
-  i_placement.cc 
-  i_stackable.cc 
-  logical_volume.cc 
-  materials_plugin.cc 
-  materials_utils.cc 
-  mapping.cc 
-  mapping_plugin.cc 
-  mapping_utils.cc  
-  model_factory.cc 
-  model_with_internal_items_tools.cc 
-  multiple_items_model.cc 
-  physical_volume.cc 
-  multiple_placement.cc 
-  regular_grid_placement.cc 
-  regular_linear_placement.cc 
-  placement.cc 
-  regular_polygon.cc 
-  sensitive.cc 
-  smart_id_locator.cc 
-  helix_3d.cc 
-  line_3d.cc 
-  polyline_3d.cc 
-  circle.cc 
-  rectangle.cc 
-  disk.cc 
-  plane.cc 
-  plate_with_hole_model.cc 
-  spherical_extrusion_cylinder_model.cc 
-  spherical_extrusion_box_model.cc 
-  cylindric_extrusion_boxed_model.cc 
-  replicated_boxed_model.cc 
-  replicated_model.cc 
-  grid_model.cc 
-  rotated_boxed_model.cc 
-  simple_boxed_model.cc 
-  simple_shaped_model.cc 
-  simple_world_model.cc 
-  stacked_model.cc 
+  geom_info.cc
+  geom_map.cc
+  hexagon_box.cc
+  id_mgr.cc
+  id_selector.cc
+  i_locator.cc
+  intersection.cc
+  i_placement.cc
+  i_stackable.cc
+  logical_volume.cc
+  materials_plugin.cc
+  materials_utils.cc
+  mapping.cc
+  mapping_plugin.cc
+  mapping_utils.cc
+  model_factory.cc
+  model_with_internal_items_tools.cc
+  multiple_items_model.cc
+  physical_volume.cc
+  multiple_placement.cc
+  regular_grid_placement.cc
+  regular_linear_placement.cc
+  placement.cc
+  regular_polygon.cc
+  sensitive.cc
+  smart_id_locator.cc
+  helix_3d.cc
+  line_3d.cc
+  polyline_3d.cc
+  circle.cc
+  rectangle.cc
+  disk.cc
+  plane.cc
+  plate_with_hole_model.cc
+  spherical_extrusion_cylinder_model.cc
+  spherical_extrusion_box_model.cc
+  cylindric_extrusion_boxed_model.cc
+  replicated_boxed_model.cc
+  replicated_model.cc
+  grid_model.cc
+  rotated_boxed_model.cc
+  simple_boxed_model.cc
+  simple_shaped_model.cc
+  simple_world_model.cc
+  stacked_model.cc
   i_boxed_model.cc
-  surrounded_boxed_model.cc 
-  cylinder.cc 
+  surrounded_boxed_model.cc
+  cylinder.cc
   box.cc
-  sphere.cc 
-  tube.cc 
-  tessellation.cc 
-  stl_tools.cc 
-  polycone.cc 
-  polyhedra.cc 
-  subtraction_3d.cc 
-  union_3d.cc 
-  intersection_3d.cc 
+  sphere.cc
+  tube.cc
+  tessellation.cc
+  stl_tools.cc
+  polycone.cc
+  polyhedra.cc
+  subtraction_3d.cc
+  union_3d.cc
+  intersection_3d.cc
   i_composite_shape_3d.cc
-  geomtools_config.cc 
+  geomtools_config.cc
   i_model.cc
-  i_shape_1d.cc 
-  i_shape_2d.cc 
-  i_shape_3d.cc 
-  i_object_3d.cc 
-  visibility.cc 
-  color.cc 
-  material.cc 
+  i_shape_1d.cc
+  i_shape_2d.cc
+  i_shape_3d.cc
+  i_object_3d.cc
+  visibility.cc
+  color.cc
+  material.cc
   utils.cc
-  gnuplot_draw.cc 
-  display_data.cc 
-  manager.cc 
-  geometry_service.cc 
+  gnuplot_draw.cc
+  display_data.cc
+  manager.cc
+  geometry_service.cc
+  ocd_support.cc
   )
 
 #message(STATUS "********** GEOMTOOLS_WITH_GNUPLOT_DISPLAY=${GEOMTOOLS_WITH_GNUPLOT_DISPLAY}")
 if (GEOMTOOLS_WITH_GNUPLOT_DISPLAY)
   list (APPEND geomtools_SOURCES
-    ${PROJECT_SOURCE_DIR}/src/gnuplot_i.cc 
-    ${PROJECT_SOURCE_DIR}/src/gnuplot_drawer.cc 
+    ${PROJECT_SOURCE_DIR}/src/gnuplot_i.cc
+    ${PROJECT_SOURCE_DIR}/src/gnuplot_drawer.cc
     )
 endif ()
 #message(STATUS "********** geomtools_SOURCES=${geomtools_SOURCES}")
@@ -263,14 +265,14 @@ endif ()
 # resources on Mac. This allows them to be easily imported into the
 # Framework with minimal platform specific commands by adding them
 # as sources of the framework/library.
-# We have to deal with the library depends part of this later because 
+# We have to deal with the library depends part of this later because
 # their generation require the targets to be present...
 #
 if(APPLE)
   set(TO_GEOMTOOLS_INCLUDEDIR "../..")
 else()
-  file(RELATIVE_PATH TO_GEOMTOOLS_INCLUDEDIR 
-    "${CMAKE_INSTALL_FULL_LIBDIR}/cmake/geomtools-${geomtools_VERSION}" 
+  file(RELATIVE_PATH TO_GEOMTOOLS_INCLUDEDIR
+    "${CMAKE_INSTALL_FULL_LIBDIR}/cmake/geomtools-${geomtools_VERSION}"
     "${CMAKE_INSTALL_FULL_INCLUDEDIR}"
     )
 endif()
@@ -282,7 +284,7 @@ set(geomtools_RESOURCES
 
 foreach(_dtresource ${geomtools_RESOURCES})
   configure_file(
-    ${PROJECT_SOURCE_DIR}/${_dtresource}.in 
+    ${PROJECT_SOURCE_DIR}/${_dtresource}.in
     ${PROJECT_BINARY_DIR}/${_dtresource}
     @ONLY
     )
@@ -303,16 +305,16 @@ if(NOT APPLE)
 endif()
 
 configure_file(
-    ${PROJECT_SOURCE_DIR}/cmake/geomtools-config.in 
+    ${PROJECT_SOURCE_DIR}/cmake/geomtools-config.in
     ${PROJECT_BINARY_DIR}/cmake/geomtools-config
     @ONLY
     )
 
 install(FILES ${PROJECT_BINARY_DIR}/cmake/geomtools-config
     DESTINATION "${CMAKE_INSTALL_BINDIR}"
-    PERMISSIONS OWNER_READ OWNER_EXECUTE 
-    		GROUP_READ GROUP_EXECUTE 
-                WORLD_READ WORLD_EXECUTE    
+    PERMISSIONS OWNER_READ OWNER_EXECUTE
+    		GROUP_READ GROUP_EXECUTE
+                WORLD_READ WORLD_EXECUTE
     COMPONENT Development
     )
 
@@ -335,7 +337,7 @@ endif ()
 #
 include_directories(
   ${PROJECT_BINARY_DIR}/include
-  ${PROJECT_SOURCE_DIR}/include	
+  ${PROJECT_SOURCE_DIR}/include
   ${mygsl_INCLUDE_DIRS}
   ${materials_INCLUDE_DIRS}
   ${CLHEP_INCLUDE_DIR}
@@ -347,15 +349,15 @@ if ( GEOMTOOLS_WITH_REFLECTION )
     )
 endif ()
 
-add_library(geomtools SHARED  
-  ${geomtools_PUBLIC_HEADERS} 
+add_library(geomtools SHARED
+  ${geomtools_PUBLIC_HEADERS}
   ${geomtools_detail_HEADERS}
   ${geomtools_SOURCES}
   ${geomtools_RESOURCES_OUTPUTS}
   )
 
 set_target_properties(geomtools
-  PROPERTIES 
+  PROPERTIES
     FRAMEWORK                             ON
     MACOSX_FRAMEWORK_IDENTIFIER           org.supernemo.geomtools
     MACOSX_FRAMEWORK_BUNDLE_VERSION       ${geomtools_VERSION}
@@ -367,17 +369,17 @@ set_target_properties(geomtools
 
 
 if ( GEOMTOOLS_WITH_REFLECTION )
-  target_link_libraries(geomtools 
-     ${mygsl_LIBRARIES} 
-     ${materials_LIBRARIES} 
-     ${CLHEP_LIBRARIES} 
-     ${CAMP_LIBRARIES} 
+  target_link_libraries(geomtools
+     ${mygsl_LIBRARIES}
+     ${materials_LIBRARIES}
+     ${CLHEP_LIBRARIES}
+     ${CAMP_LIBRARIES}
      ${CMAKE_DL_LIBS})
 else ()
-  target_link_libraries(geomtools 
-     ${mygsl_LIBRARIES} 
-     ${materials_LIBRARIES} 
-     ${CLHEP_LIBRARIES} 
+  target_link_libraries(geomtools
+     ${mygsl_LIBRARIES}
+     ${materials_LIBRARIES}
+     ${CLHEP_LIBRARIES}
      ${CMAKE_DL_LIBS})
 endif ()
 
@@ -396,7 +398,7 @@ if(GEOMTOOLS_WITH_BIO)
     src/the_serializable.cc
     )
   list_prepend(geomtools_bio_SOURCES "${PROJECT_SOURCE_DIR}/")
-  
+
   add_library(geomtools_bio SHARED ${geomtools_bio_SOURCES})
 
   if(APPLE)
@@ -421,7 +423,7 @@ if(GEOMTOOLS_WITH_REFLECTION)
     #src/the_introspectable.cc
     )
   list_prepend(geomtools_reflection_SOURCES "${PROJECT_SOURCE_DIR}/")
-  
+
   add_library(geomtools_reflection SHARED ${geomtools_reflection_SOURCES})
 
   if(APPLE)
@@ -435,18 +437,18 @@ endif()
 
 #-----------------------------------------------------------------------
 # EXPORT AND INSTALL LIBRARY TARGETS
-# We make use of the full signature 
+# We make use of the full signature
 install(TARGETS ${GEOMTOOLS_TARGETS}
   EXPORT        geomtools-libraries
-  RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR} 
+  RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
                 COMPONENT Runtime
-  LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR} 
+  LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
                 COMPONENT Runtime
-  FRAMEWORK     DESTINATION ${GEOMTOOLS_FRAMEWORK_LOCATION} 
+  FRAMEWORK     DESTINATION ${GEOMTOOLS_FRAMEWORK_LOCATION}
                 COMPONENT Runtime
-  ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} 
+  ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
                 COMPONENT Development
-  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/geomtools 
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/geomtools
                 COMPONENT Development
   )
 
@@ -454,11 +456,11 @@ install(TARGETS ${GEOMTOOLS_TARGETS}
 # We also need to generate a file for the build tree, but at present
 # we leave this out for simplicity.
 if(APPLE)
-  install(EXPORT geomtools-libraries 
+  install(EXPORT geomtools-libraries
     DESTINATION CMake COMPONENT Development
     )
 else()
-  install(EXPORT geomtools-libraries 
+  install(EXPORT geomtools-libraries
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/geomtools-${geomtools_VERSION}    COMPONENT Development
     )
 endif()

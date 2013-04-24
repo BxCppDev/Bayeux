@@ -1,5 +1,5 @@
-// -*- mode: c++ ; -*- 
-/* gdml_writer.cc 
+// -*- mode: c++ ; -*-
+/* gdml_writer.cc
  */
 
 #include <stdexcept>
@@ -81,10 +81,10 @@ namespace geomtools {
     if (i == _streams_.end ())
       {
         ostringstream message;
-        message << "gdml_writer::_get_stream: " 
-                << "Invalid section '" << section_ 
+        message << "gdml_writer::_get_stream: "
+                << "Invalid section '" << section_
                 << "' !";
-        throw logic_error (message.str ());           
+        throw logic_error (message.str ());
       }
     return *(i->second);
   }
@@ -95,10 +95,10 @@ namespace geomtools {
     if (i == _streams_.end ())
       {
         ostringstream message;
-        message << "gdml_writer::_get_stream: " 
-                << "Invalid section '" << section_ 
+        message << "gdml_writer::_get_stream: "
+                << "Invalid section '" << section_
                 << "' !";
-        throw logic_error (message.str ());           
+        throw logic_error (message.str ());
       }
     return *(i->second);
   }
@@ -108,7 +108,7 @@ namespace geomtools {
     return _external_materials_stream_ != 0;
   }
 
-  void gdml_writer::reset_external_materials_stream () 
+  void gdml_writer::reset_external_materials_stream ()
   {
     _external_materials_stream_ = 0;
   }
@@ -136,10 +136,10 @@ namespace geomtools {
     _external_materials_stream_ = 0;
     init ();
   }
-  
+
   gdml_writer::~gdml_writer ()
   {
-    if (_initialized_) 
+    if (_initialized_)
       {
         reset ();
       }
@@ -152,7 +152,7 @@ namespace geomtools {
 
   void gdml_writer::init ()
   {
-    if (_initialized_) 
+    if (_initialized_)
       {
         if (is_verbose ()) clog << "WARNING: gdml_writer::init: Already initialized !" << endl;
       }
@@ -163,10 +163,10 @@ namespace geomtools {
     _streams_[SETUP_SECTION]     = new ostringstream;
     _initialized_ = true;
   }
-  
+
   void gdml_writer::reset ()
   {
-    if (! _initialized_) 
+    if (! _initialized_)
       {
         if (is_verbose ()) clog << "WARNING: gdml_writer::reset: Not initialized !" << endl;
         return;
@@ -186,41 +186,41 @@ namespace geomtools {
   }
 
   /*** Defines ***/
-  
-  void gdml_writer::add_constant (const string & name_, 
+
+  void gdml_writer::add_constant (const string & name_,
                                   double value_)
   {
-    _get_stream (DEFINE_SECTION) << "<constant" 
-                                 << " name=" << '"' << to_html (name_) << '"' 
+    _get_stream (DEFINE_SECTION) << "<constant"
+                                 << " name=" << '"' << to_html (name_) << '"'
                                  << " value="  << '"';
     _get_stream (DEFINE_SECTION).precision (15);
     _get_stream (DEFINE_SECTION) << value_ << '"';
     _get_stream (DEFINE_SECTION) << " />" << endl;
     _get_stream (DEFINE_SECTION) << endl;
   }
-  
-  void gdml_writer::add_quantity (const string & name_, 
-                                  const string & quantity_type_, 
-                                  const string & unit_str_, 
+
+  void gdml_writer::add_quantity (const string & name_,
+                                  const string & quantity_type_,
+                                  const string & unit_str_,
                                   double value_)
   {
     double unit = datatools::units::get_unit_from (quantity_type_, unit_str_);
-    _get_stream (DEFINE_SECTION) << "<quantity" 
-                                 << " name=" << '"' << to_html (name_) << '"' 
-                                 << " type=" << '"' << quantity_type_ << '"' 
+    _get_stream (DEFINE_SECTION) << "<quantity"
+                                 << " name=" << '"' << to_html (name_) << '"'
+                                 << " type=" << '"' << quantity_type_ << '"'
                                  << " value="  << '"';
     _get_stream (DEFINE_SECTION).precision (15);
     _get_stream (DEFINE_SECTION) << (value_ / unit) << '"'
-                                 << " unit=" << '"' << unit_str_ << '"' 
+                                 << " unit=" << '"' << unit_str_ << '"'
                                  << " />" << endl;
     _get_stream (DEFINE_SECTION) << endl;
   }
 
-  void gdml_writer::add_variable (const string & name_, 
+  void gdml_writer::add_variable (const string & name_,
                                   double value_)
   {
-    _get_stream (DEFINE_SECTION) << "<variable" 
-                                 << " name=" << '"' << to_html (name_) << '"' 
+    _get_stream (DEFINE_SECTION) << "<variable"
+                                 << " name=" << '"' << to_html (name_) << '"'
                                  << " value="  << '"';
     _get_stream (DEFINE_SECTION).precision (15);
     _get_stream (DEFINE_SECTION) << value_ << '"'
@@ -228,24 +228,24 @@ namespace geomtools {
     _get_stream (DEFINE_SECTION) << endl;
   }
 
-  void gdml_writer::add_variable (const string & name_, 
+  void gdml_writer::add_variable (const string & name_,
                                   const string & expr_value_)
   {
-    _get_stream (DEFINE_SECTION) << "<variable" 
-                                 << " name=" << '"' << to_html (name_) << '"' 
-                                 << " value="  << '"' << expr_value_ << '"' 
+    _get_stream (DEFINE_SECTION) << "<variable"
+                                 << " name=" << '"' << to_html (name_) << '"'
+                                 << " value="  << '"' << expr_value_ << '"'
                                  << " />" << endl;
     _get_stream (DEFINE_SECTION) << endl;
   }
 
-  void gdml_writer::add_position (const string & name_, 
-                                  double x_, double y_, double z_, 
+  void gdml_writer::add_position (const string & name_,
+                                  double x_, double y_, double z_,
                                   const string & unit_str_)
   {
     //clog << "DEVEL: gdml_writer::add_position: Entering..." << endl;
     double unit = datatools::units::get_length_unit_from (unit_str_);
-    _get_stream (DEFINE_SECTION) << "<position" 
-                                 << " name=" << '"' << to_html (name_) << '"' 
+    _get_stream (DEFINE_SECTION) << "<position"
+                                 << " name=" << '"' << to_html (name_) << '"'
                                  << " x=" << '"';
     _get_stream (DEFINE_SECTION).precision (15);
     _get_stream (DEFINE_SECTION) << x_ / unit << '"'
@@ -255,20 +255,20 @@ namespace geomtools {
                                  << " z=" << '"';
     _get_stream (DEFINE_SECTION).precision (15);
     _get_stream (DEFINE_SECTION) << z_ / unit << '"'
-                                 << " unit=" << '"' << unit_str_ << '"' 
+                                 << " unit=" << '"' << unit_str_ << '"'
                                  << " />" << endl;
     _get_stream (DEFINE_SECTION) << endl;
   }
-  
-  void gdml_writer::add_position (const string & name_, 
-                                  const vector_3d & v_, 
+
+  void gdml_writer::add_position (const string & name_,
+                                  const vector_3d & v_,
                                   const string & unit_str_)
   {
     add_position (name_, v_.x (), v_.y (), v_.z (), unit_str_);
   }
 
-  void gdml_writer::add_rotation (const string & name_, 
-                                  const string & axis_, 
+  void gdml_writer::add_rotation (const string & name_,
+                                  const string & axis_,
                                   double angle_,
                                   const string & unit_str_)
   {
@@ -276,60 +276,60 @@ namespace geomtools {
     if ((axis_ != "x") && (axis_ != "y") && (axis_ != "z"))
       {
         ostringstream message;
-        message << "gdml_writer::add_rotation: " 
-                << "Invalid rotation axis '" << axis_ 
+        message << "gdml_writer::add_rotation: "
+                << "Invalid rotation axis '" << axis_
                 << "' for rotation '" << name_ << "' !";
-        throw logic_error (message.str ());           
+        throw logic_error (message.str ());
       }
-    _get_stream (DEFINE_SECTION) << "<rotation" 
-                                 << " name=" << '"' << to_html (name_) << '"' 
+    _get_stream (DEFINE_SECTION) << "<rotation"
+                                 << " name=" << '"' << to_html (name_) << '"'
                                  << " " << axis_ << "=" << '"';
     _get_stream (DEFINE_SECTION).precision (15);
-    _get_stream (DEFINE_SECTION) << (angle_ / angle_unit) << '"' 
-                                 << " unit=" << '"' << unit_str_ << '"' 
+    _get_stream (DEFINE_SECTION) << (angle_ / angle_unit) << '"'
+                                 << " unit=" << '"' << unit_str_ << '"'
                                  << " />" << endl;
     _get_stream (DEFINE_SECTION) << endl;
   }
 
-  void gdml_writer::add_rotation (const string & name_, 
-                                  const rotation_3d & rot_, 
+  void gdml_writer::add_rotation (const string & name_,
+                                  const rotation_3d & rot_,
                                   const string & unit_str_)
   {
     double angle_unit = datatools::units::get_angle_unit_from (unit_str_);
-    _get_stream (DEFINE_SECTION) << "<rotation" 
-                                 << " name=" << '"' << to_html (name_) << '"'; 
+    _get_stream (DEFINE_SECTION) << "<rotation"
+                                 << " name=" << '"' << to_html (name_) << '"';
 
     double a, b, c;
     extract_xyz_euler_angle_from_rotation (rot_, a, b, c);
 
     _get_stream (DEFINE_SECTION) << " " << "x" << "=" << '"';
     _get_stream (DEFINE_SECTION).precision (15);
-    _get_stream (DEFINE_SECTION) << (-a / angle_unit) << '"'; 
- 
+    _get_stream (DEFINE_SECTION) << (-a / angle_unit) << '"';
+
     _get_stream (DEFINE_SECTION) << " " << "y" << "=" << '"';
     _get_stream (DEFINE_SECTION).precision (15);
-    _get_stream (DEFINE_SECTION) << (-b / angle_unit) << '"'; 
- 
+    _get_stream (DEFINE_SECTION) << (-b / angle_unit) << '"';
+
     _get_stream (DEFINE_SECTION) << " " << "z" << "=" << '"';
     _get_stream (DEFINE_SECTION).precision (15);
-    _get_stream (DEFINE_SECTION) << (-c / angle_unit) << '"'; 
+    _get_stream (DEFINE_SECTION) << (-c / angle_unit) << '"';
 
-    _get_stream (DEFINE_SECTION) << " unit=" << '"' << unit_str_ << '"' 
+    _get_stream (DEFINE_SECTION) << " unit=" << '"' << unit_str_ << '"'
                                  << " />" << endl;
     _get_stream (DEFINE_SECTION) << endl;
   }
 
   /*** Materials ***/
 
-  void gdml_writer::add_isotope (const string & name_, 
+  void gdml_writer::add_isotope (const string & name_,
                                  size_t atomic_number_,
                                  size_t number_of_nucleons_,
                                  double a_)
   {
-    _get_stream (MATERIALS_SECTION) << "<isotope" 
-                                    << " name=" << '"' << to_html (name_) << '"' 
-                                    << " Z=" << '"' << atomic_number_ << '"' 
-                                    << " N=" << '"' << number_of_nucleons_ << '"' 
+    _get_stream (MATERIALS_SECTION) << "<isotope"
+                                    << " name=" << '"' << to_html (name_) << '"'
+                                    << " Z=" << '"' << atomic_number_ << '"'
+                                    << " N=" << '"' << number_of_nucleons_ << '"'
                                     << " >" << endl;
     _get_stream (MATERIALS_SECTION) << "  <atom"
                                     << " type=" << '"' << "A" << '"'
@@ -337,34 +337,34 @@ namespace geomtools {
     _get_stream (MATERIALS_SECTION).precision (15);
     _get_stream (MATERIALS_SECTION) << a_ << '"' << " />" << endl;
     // 2010-10-24 FM: the " />" termination string does not appear in the GDML user manual !
-    _get_stream (MATERIALS_SECTION) << "</isotope>" << endl; 
-    _get_stream (MATERIALS_SECTION) << endl; 
+    _get_stream (MATERIALS_SECTION) << "</isotope>" << endl;
+    _get_stream (MATERIALS_SECTION) << endl;
   }
 
-  void gdml_writer::add_element (const string & name_, 
+  void gdml_writer::add_element (const string & name_,
                                  size_t atomic_number_,
                                  const string & formula_,
                                  double a_)
   {
-    _get_stream (MATERIALS_SECTION) << "<element" 
-                                    << " name=" << '"' << to_html (name_) << '"' 
-                                    << " Z=" << '"' << atomic_number_ << '"' 
-                                    << " formula=" << '"' << formula_ << '"' 
+    _get_stream (MATERIALS_SECTION) << "<element"
+                                    << " name=" << '"' << to_html (name_) << '"'
+                                    << " Z=" << '"' << atomic_number_ << '"'
+                                    << " formula=" << '"' << formula_ << '"'
                                     << " >" << endl;
     _get_stream (MATERIALS_SECTION) << "  <atom"
                                     << " value=" << '"';
     _get_stream (MATERIALS_SECTION).precision (15);
     _get_stream (MATERIALS_SECTION) << a_ << '"' << " />" << endl;
-    _get_stream (MATERIALS_SECTION) << "</element>" << endl; 
-    _get_stream (MATERIALS_SECTION) << endl; 
+    _get_stream (MATERIALS_SECTION) << "</element>" << endl;
+    _get_stream (MATERIALS_SECTION) << endl;
   }
 
-  void gdml_writer::add_element (const string & name_, 
+  void gdml_writer::add_element (const string & name_,
                                  const map<string, double> & fractions_)
   {
     ostringstream materials_stream;
-    materials_stream << "<element" 
-                     << " name=" << '"' << to_html (name_) << '"' 
+    materials_stream << "<element"
+                     << " name=" << '"' << to_html (name_) << '"'
                      << " >" << endl;
     double s = 0.0;
     for (map<string, double>::const_iterator i = fractions_.begin ();
@@ -374,17 +374,17 @@ namespace geomtools {
         string ref = i->first;
         double n = i->second;
         if (n < 0.0 || n > 1.0)
-          {    
+          {
             ostringstream message;
-            message << "gdml_writer::add_element: " 
-                    << "Invalid fraction value '" << n 
-                    << "' for referenced '" << ref << "' in element '" 
+            message << "gdml_writer::add_element: "
+                    << "Invalid fraction value '" << n
+                    << "' for referenced '" << ref << "' in element '"
                     << name_ << "' !";
-            throw logic_error (message.str ());       
+            throw logic_error (message.str ());
           }
         s += n;
-        
-        materials_stream << "  <fraction" 
+
+        materials_stream << "  <fraction"
                          << " ref=" << '"' << to_html (ref) << '"'
                          << " n=" << '"';
         materials_stream.precision (15);
@@ -392,28 +392,28 @@ namespace geomtools {
       }
     if (s > 1.000000000001)
       {    ostringstream message;
-        message << "gdml_writer::add_element: " 
-                << "Invalid fraction sum in element '" 
+        message << "gdml_writer::add_element: "
+                << "Invalid fraction sum in element '"
                 << name_ << "' !";
-        throw logic_error (message.str ());   
+        throw logic_error (message.str ());
       }
-  
-    materials_stream << "</element>" << endl; 
+
+    materials_stream << "</element>" << endl;
 
     _get_stream (MATERIALS_SECTION) << materials_stream.str ();
-    _get_stream (MATERIALS_SECTION) << endl; 
+    _get_stream (MATERIALS_SECTION) << endl;
   }
 
-  void gdml_writer::add_element (const string & name_, 
+  void gdml_writer::add_element (const string & name_,
                                  const string & ref_)
   {
     map<string, double> m;
     m[ref_] = 1.0;
     add_element (name_, m);
   }
-  
-  void gdml_writer::add_element (const string & name_, 
-                                 const string & ref1_, double fraction1_, 
+
+  void gdml_writer::add_element (const string & name_,
+                                 const string & ref1_, double fraction1_,
                                  const string & ref2_, double fraction2_)
   {
     map<string, double> m;
@@ -422,9 +422,9 @@ namespace geomtools {
     add_element (name_, m);
   }
 
-  void gdml_writer::add_element (const string & name_, 
-                                 const string & ref1_, double fraction1_, 
-                                 const string & ref2_, double fraction2_, 
+  void gdml_writer::add_element (const string & name_,
+                                 const string & ref1_, double fraction1_,
+                                 const string & ref2_, double fraction2_,
                                  const string & ref3_, double fraction3_)
   {
     map<string, double> m;
@@ -434,10 +434,10 @@ namespace geomtools {
     add_element (name_, m);
   }
 
-  void gdml_writer::add_element (const string & name_, 
-                                 const string & ref1_, double fraction1_, 
-                                 const string & ref2_, double fraction2_, 
-                                 const string & ref3_, double fraction3_, 
+  void gdml_writer::add_element (const string & name_,
+                                 const string & ref1_, double fraction1_,
+                                 const string & ref2_, double fraction2_,
+                                 const string & ref3_, double fraction3_,
                                  const string & ref4_, double fraction4_)
   {
     map<string, double> m;
@@ -447,12 +447,12 @@ namespace geomtools {
     m[ref4_] = fraction4_;
     add_element (name_, m);
   }
-  
-  void gdml_writer::add_element (const string & name_, 
-                                 const string & ref1_, double fraction1_, 
-                                 const string & ref2_, double fraction2_, 
-                                 const string & ref3_, double fraction3_, 
-                                 const string & ref4_, double fraction4_, 
+
+  void gdml_writer::add_element (const string & name_,
+                                 const string & ref1_, double fraction1_,
+                                 const string & ref2_, double fraction2_,
+                                 const string & ref3_, double fraction3_,
+                                 const string & ref4_, double fraction4_,
                                  const string & ref5_, double fraction5_)
   {
     map<string, double> m;
@@ -463,52 +463,52 @@ namespace geomtools {
     m[ref5_] = fraction5_;
     add_element (name_, m);
   }
- 
-  void gdml_writer::add_material (const string & name_, 
+
+  void gdml_writer::add_material (const string & name_,
                                   double atomic_number_,
                                   double density_,
                                   double a_)
   {
-    _get_stream (MATERIALS_SECTION) << "<material" 
-                                    << " name=" << '"' << to_html (name_) << '"' 
+    _get_stream (MATERIALS_SECTION) << "<material"
+                                    << " name=" << '"' << to_html (name_) << '"'
                                     << " Z=" << '"';
     _get_stream (MATERIALS_SECTION).precision (15);
     _get_stream (MATERIALS_SECTION) << atomic_number_ << '"' << " >" << endl;
-     
+
     _get_stream (MATERIALS_SECTION) << "  <D"
                                     << " value=" << '"';
     _get_stream (MATERIALS_SECTION).precision (15);
-    _get_stream (MATERIALS_SECTION) << (density_ / (CLHEP::g / CLHEP::cm3)) 
-                                    << '"' 
-                                    << " unit=" << '"' << "g/cm3" << '"' 
+    _get_stream (MATERIALS_SECTION) << (density_ / (CLHEP::g / CLHEP::cm3))
+                                    << '"'
+                                    << " unit=" << '"' << "g/cm3" << '"'
                                     << " />" << endl;
 
     _get_stream (MATERIALS_SECTION) << "  <atom"
                                     << " value=" << '"';
     _get_stream (MATERIALS_SECTION).precision (15);
     _get_stream (MATERIALS_SECTION) << a_ << '"' << " />" << endl;
-     
-    _get_stream (MATERIALS_SECTION) << "</material >" << endl; 
-    _get_stream (MATERIALS_SECTION) << endl; 
+
+    _get_stream (MATERIALS_SECTION) << "</material >" << endl;
+    _get_stream (MATERIALS_SECTION) << endl;
   }
 
   void gdml_writer::add_material (const string & name_,
                                   const string & formula_,
-                                  double density_,  
+                                  double density_,
                                   const map<string, double> & fractions_)
   {
     ostringstream materials_stream;
-    materials_stream << "<material" 
-                     << " name=" << '"' << to_html (name_) << '"' 
-                     << " formula=" << '"' << formula_ << '"' 
+    materials_stream << "<material"
+                     << " name=" << '"' << to_html (name_) << '"'
+                     << " formula=" << '"' << formula_ << '"'
                      << " >" << endl;
-     
+
     materials_stream << "  <D"
                      << " value=" << '"';
     materials_stream.precision (15);
-    materials_stream << (density_ / (CLHEP::g / CLHEP::cm3)) 
-                     << '"' 
-                     << " unit=" << '"' << "g/cm3" << '"' 
+    materials_stream << (density_ / (CLHEP::g / CLHEP::cm3))
+                     << '"'
+                     << " unit=" << '"' << "g/cm3" << '"'
                      << " />" << endl;
 
     double s = 0.0;
@@ -519,17 +519,17 @@ namespace geomtools {
         string ref = i->first;
         double n = i->second;
         if (n < 0.0 || n > 1.0)
-          {    
+          {
             ostringstream message;
-            message << "gdml_writer::add_material: " 
-                    << "Invalid fraction value '" << n 
-                    << "' for referenced '" << ref << "' in element '" 
+            message << "gdml_writer::add_material: "
+                    << "Invalid fraction value '" << n
+                    << "' for referenced '" << ref << "' in element '"
                     << name_ << "' !";
-            throw logic_error (message.str ());       
+            throw logic_error (message.str ());
           }
         s += n;
-        
-        materials_stream << "  <fraction" 
+
+        materials_stream << "  <fraction"
                          << " ref=" << '"' << to_html (ref) << '"'
                          << " n=" << '"';
         materials_stream.precision (15);
@@ -537,36 +537,36 @@ namespace geomtools {
       }
     if (s > 1.000000000001)
       {    ostringstream message;
-        message << "gdml_writer::add_material: " 
-                << "Invalid fraction sum in material '" 
+        message << "gdml_writer::add_material: "
+                << "Invalid fraction sum in material '"
                 << name_ << "' !";
-        throw logic_error (message.str ());   
+        throw logic_error (message.str ());
       }
-  
-    materials_stream << "</material>" << endl; 
+
+    materials_stream << "</material>" << endl;
 
     _get_stream (MATERIALS_SECTION) << materials_stream.str ();
-    _get_stream (MATERIALS_SECTION) << endl; 
+    _get_stream (MATERIALS_SECTION) << endl;
   }
-  
+
 
   void gdml_writer::add_material (const string & name_,
                                   const string & formula_,
-                                  double density_,  
+                                  double density_,
                                   const map<string, size_t> & composites_)
   {
     ostringstream materials_stream;
-    materials_stream << "<material" 
-                     << " name=" << '"' << to_html (name_) << '"' 
-                     << " formula=" << '"' << formula_ << '"' 
+    materials_stream << "<material"
+                     << " name=" << '"' << to_html (name_) << '"'
+                     << " formula=" << '"' << formula_ << '"'
                      << " >" << endl;
-     
+
     materials_stream << "  <D"
                      << " value=" << '"';
     materials_stream.precision (15);
-    materials_stream << (density_ / (CLHEP::g / CLHEP::cm3)) 
-                     << '"' 
-                     << " unit=" << '"' << "g/cm3" << '"' 
+    materials_stream << (density_ / (CLHEP::g / CLHEP::cm3))
+                     << '"'
+                     << " unit=" << '"' << "g/cm3" << '"'
                      << " />" << endl;
 
     for (map<string, size_t>::const_iterator i = composites_.begin ();
@@ -576,48 +576,48 @@ namespace geomtools {
         string ref = i->first;
         size_t n = i->second;
         if (n == 0)
-          {    
+          {
             ostringstream message;
-            message << "gdml_writer::add_material: " 
-                    << "Invalid composite value '" << n 
-                    << "' for referenced '" << ref << "' in element '" 
+            message << "gdml_writer::add_material: "
+                    << "Invalid composite value '" << n
+                    << "' for referenced '" << ref << "' in element '"
                     << name_ << "' !";
-            throw logic_error (message.str ());       
+            throw logic_error (message.str ());
           }
-        materials_stream << "  <composite" 
+        materials_stream << "  <composite"
                          << " ref=" << '"' << to_html (ref) << '"'
                          << " n=" << '"' << n << '"' << " />" << endl;;
       }
-    materials_stream << "</material>" << endl; 
+    materials_stream << "</material>" << endl;
     _get_stream (MATERIALS_SECTION) << materials_stream.str ();
-    _get_stream (MATERIALS_SECTION) << endl; 
+    _get_stream (MATERIALS_SECTION) << endl;
   }
- 
+
   /*** solid ***/
- 
+
   bool gdml_writer::solid_type_is_supported (const string & solid_type_)
   {
-    if (solid_type_ == "box") 
+    if (solid_type_ == "box")
       {
         return true;
       }
-    if (solid_type_ == "cylinder") 
+    if (solid_type_ == "cylinder")
       {
         return true;
       }
-    if (solid_type_ == "tube") 
+    if (solid_type_ == "tube")
       {
         return true;
       }
-    if (solid_type_ == "sphere") 
+    if (solid_type_ == "sphere")
       {
         return true;
       }
-    if (solid_type_ == "polycone") 
+    if (solid_type_ == "polycone")
       {
         return true;
       }
-    if (solid_type_ == "polyhedra") 
+    if (solid_type_ == "polyhedra")
       {
         return true;
       }
@@ -637,11 +637,11 @@ namespace geomtools {
       }
     return false;
   };
-     
+
   bool gdml_writer::solid_type_is_valid (const string & solid_type_)
   {
     //list<string> supported_solid_types;
-    if (solid_type_ == "box") 
+    if (solid_type_ == "box")
       {
         return true;
       }
@@ -752,8 +752,8 @@ namespace geomtools {
     return false;
   }
 
-  void gdml_writer::add_gdml_box (const string & name_, 
-                                  double x_, double y_, double z_, 
+  void gdml_writer::add_gdml_box (const string & name_,
+                                  double x_, double y_, double z_,
                                   const string & lunit_str_)
   {
     double lunit = datatools::units::get_length_unit_from (lunit_str_);
@@ -775,21 +775,21 @@ namespace geomtools {
     solids_stream << z_ / lunit << '"';
 
     solids_stream << " lunit=" << '"' << lunit_str_ << '"';
-    solids_stream << " />" << endl << endl; 
+    solids_stream << " />" << endl << endl;
 
     _get_stream (SOLIDS_SECTION) << solids_stream.str ();
   }
-  
 
-  void gdml_writer::add_box (const string & name_, 
+
+  void gdml_writer::add_box (const string & name_,
                              const box & b_,
                              const string & lunit_str_)
   {
     add_gdml_box (name_, b_.get_x (), b_.get_y (), b_.get_z (), lunit_str_);
   }
-    
 
-  void gdml_writer::add_gdml_orb (const string & name_, 
+
+  void gdml_writer::add_gdml_orb (const string & name_,
                                   double r_,
                                   const string & lunit_str_)
   {
@@ -805,13 +805,13 @@ namespace geomtools {
 
     solids_stream << " lunit=" << '"' << lunit_str_ << '"';
 
-    solids_stream << " />" << endl << endl; 
-    _get_stream (SOLIDS_SECTION) << solids_stream.str ();    
+    solids_stream << " />" << endl << endl;
+    _get_stream (SOLIDS_SECTION) << solids_stream.str ();
   }
-    
 
-  void gdml_writer::add_gdml_sphere (const string & name_, 
-                                     double rmin_, double rmax_, 
+
+  void gdml_writer::add_gdml_sphere (const string & name_,
+                                     double rmin_, double rmax_,
                                      double start_phi_, double delta_phi_,
                                      double start_theta_, double delta_theta_,
                                      const string & lunit_str_,
@@ -860,13 +860,13 @@ namespace geomtools {
     solids_stream << " lunit=" << '"' << lunit_str_ << '"';
     solids_stream << " aunit=" << '"' << aunit_str_ << '"';
 
-    solids_stream << " />" << endl << endl; 
-    _get_stream (SOLIDS_SECTION) << solids_stream.str ();    
+    solids_stream << " />" << endl << endl;
+    _get_stream (SOLIDS_SECTION) << solids_stream.str ();
   }
 
 
-  void gdml_writer::add_gdml_tube (const string & name_, 
-                                   double rmin_, double rmax_, double z_, 
+  void gdml_writer::add_gdml_tube (const string & name_,
+                                   double rmin_, double rmax_, double z_,
                                    double start_phi_, double delta_phi_,
                                    const string & lunit_str_,
                                    const string & aunit_str_)
@@ -907,19 +907,19 @@ namespace geomtools {
     solids_stream << " lunit=" << '"' << lunit_str_ << '"';
     solids_stream << " aunit=" << '"' << aunit_str_ << '"';
 
-    solids_stream << " />" << endl << endl; 
+    solids_stream << " />" << endl << endl;
     _get_stream (SOLIDS_SECTION) << solids_stream.str ();
   }
 
   /*
-   * <polycone name = "thepolycone" 
+   * <polycone name = "thepolycone"
    startphi="1" deltaphi="4" aunit="rad" lunit= "mm">
    * <zplane rmin="1" rmax="9" z="10" />
    * <zplane rmin="3" rmax="5" z="12" />
-   * </polycone>            
+   * </polycone>
    */
-  void gdml_writer::add_gdml_polycone (const string & name_, 
-                                       map<double, pair<double, double> > zplanes_, 
+  void gdml_writer::add_gdml_polycone (const string & name_,
+                                       map<double, pair<double, double> > zplanes_,
                                        double start_phi_, double delta_phi_,
                                        const string & lunit_str_,
                                        const string & aunit_str_)
@@ -930,7 +930,7 @@ namespace geomtools {
     ostringstream solids_stream;
     solids_stream << "<" <<  "polycone"
                   << " name=" << '"' << to_html (name_) << '"';
-    
+
     if (start_phi_ != 0.0)
       {
         solids_stream << " startphi=" << '"';
@@ -945,8 +945,8 @@ namespace geomtools {
     solids_stream << " lunit=" << '"' << lunit_str_ << '"';
     solids_stream << " aunit=" << '"' << aunit_str_ << '"';
 
-    solids_stream << " >" << endl << endl; 
-    
+    solids_stream << " >" << endl << endl;
+
     for (map<double, pair<double, double> >::const_iterator i = zplanes_.begin ();
          i != zplanes_.end ();
          i++)
@@ -961,13 +961,13 @@ namespace geomtools {
           }
         solids_stream << "rmax=\"" << rmax / lunit << "\" ";
         solids_stream << "z=\"" << z / lunit << "\" ";
-        solids_stream << "/>" << endl;  
+        solids_stream << "/>" << endl;
       }
-    solids_stream << "<" <<  "/polycone>" << endl << endl; 
+    solids_stream << "<" <<  "/polycone>" << endl << endl;
     _get_stream (SOLIDS_SECTION) << solids_stream.str ();
     return;
   }
-  
+
   /*
    * <polyhedra name= "thepolyhedra" startphi="1" deltaphi="4" numsides="10" aunit="rad"
    lunit= "mm">
@@ -975,9 +975,9 @@ namespace geomtools {
    * <zplane rmin="3" rmax="5" z="12" />
    * </polyhedra>
    */
-  void gdml_writer::add_gdml_polyhedra (const string & name_, 
+  void gdml_writer::add_gdml_polyhedra (const string & name_,
                                         size_t num_sides_,
-                                        map<double, pair<double, double> > zplanes_, 
+                                        map<double, pair<double, double> > zplanes_,
                                         double start_phi_, double delta_phi_,
                                         const string & lunit_str_,
                                         const string & aunit_str_)
@@ -990,7 +990,7 @@ namespace geomtools {
                   << " name=" << '"' << to_html (name_) << '"';
 
     solids_stream << " numsides=" << '"' << num_sides_ << '"';
-    
+
     // if (start_phi_ != 0.0)
     // {
     solids_stream << " startphi=" << '"';
@@ -1005,8 +1005,8 @@ namespace geomtools {
     solids_stream << " lunit=" << '"' << lunit_str_ << '"';
     solids_stream << " aunit=" << '"' << aunit_str_ << '"';
 
-    solids_stream << " >" << endl << endl; 
-    
+    solids_stream << " >" << endl << endl;
+
     for (map<double, pair<double, double> >::const_iterator i = zplanes_.begin ();
          i != zplanes_.end ();
          i++)
@@ -1021,58 +1021,58 @@ namespace geomtools {
           }
         solids_stream << "rmax=\"" << rmax / lunit << "\" ";
         solids_stream << "z=\"" << z / lunit << "\" ";
-        solids_stream << "/>" << endl;  
+        solids_stream << "/>" << endl;
       }
-    solids_stream << "<" <<  "/polyhedra>" << endl << endl; 
+    solids_stream << "<" <<  "/polyhedra>" << endl << endl;
     _get_stream (SOLIDS_SECTION) << solids_stream.str ();
     return;
   }
-  
-  void gdml_writer::add_gdml_union (const string & name_, 
-                                    const string & first_ref_, 
-                                    const string & second_ref_, 
-                                    const string & position_ref_, 
+
+  void gdml_writer::add_gdml_union (const string & name_,
+                                    const string & first_ref_,
+                                    const string & second_ref_,
+                                    const string & position_ref_,
                                     const string & rotation_ref_)
   {
-    gdml_writer::add_gdml_boolean (name_, "union", first_ref_, second_ref_, 
+    gdml_writer::add_gdml_boolean (name_, "union", first_ref_, second_ref_,
                                    position_ref_, rotation_ref_);
   }
-  
-  void gdml_writer::add_gdml_subtraction (const string & name_, 
-                                          const string & first_ref_, 
-                                          const string & second_ref_, 
-                                          const string & position_ref_, 
+
+  void gdml_writer::add_gdml_subtraction (const string & name_,
+                                          const string & first_ref_,
+                                          const string & second_ref_,
+                                          const string & position_ref_,
                                           const string & rotation_ref_)
   {
-    gdml_writer::add_gdml_boolean (name_, "subtraction", first_ref_, second_ref_, 
+    gdml_writer::add_gdml_boolean (name_, "subtraction", first_ref_, second_ref_,
                                    position_ref_, rotation_ref_);
   }
-  
-  void gdml_writer::add_gdml_intersection (const string & name_, 
-                                           const string & first_ref_, 
-                                           const string & second_ref_, 
-                                           const string & position_ref_, 
+
+  void gdml_writer::add_gdml_intersection (const string & name_,
+                                           const string & first_ref_,
+                                           const string & second_ref_,
+                                           const string & position_ref_,
                                            const string & rotation_ref_)
   {
-    gdml_writer::add_gdml_boolean (name_, "intersection", first_ref_, second_ref_, 
+    gdml_writer::add_gdml_boolean (name_, "intersection", first_ref_, second_ref_,
                                    position_ref_, rotation_ref_);
   }
-  
-  void gdml_writer::add_gdml_boolean (const string & name_, 
-                                      const string & boolean_type_, 
-                                      const string & first_ref_, 
-                                      const string & second_ref_, 
-                                      const string & position_ref_, 
+
+  void gdml_writer::add_gdml_boolean (const string & name_,
+                                      const string & boolean_type_,
+                                      const string & first_ref_,
+                                      const string & second_ref_,
+                                      const string & position_ref_,
                                       const string & rotation_ref_)
   {
-    if ((boolean_type_ != "union") 
+    if ((boolean_type_ != "union")
         && (boolean_type_ != "subtraction") && (boolean_type_ != "intersection"))
       {
         ostringstream message;
-        message << "gdml_writer::add_gdml_boolean: " 
-                << "Invalid boolean solid type '" << boolean_type_ 
+        message << "gdml_writer::add_gdml_boolean: "
+                << "Invalid boolean solid type '" << boolean_type_
                 << "' for solid '" << name_ << "' !";
-        throw logic_error (message.str ());           
+        throw logic_error (message.str ());
       }
     ostringstream solids_stream;
     solids_stream << "<" <<  boolean_type_
@@ -1084,62 +1084,62 @@ namespace geomtools {
     solids_stream << "  <positionref ref=" << '"' <<  to_html (position_ref_) << '"' << " />" << endl;
     solids_stream << "  <rotationref ref=" << '"' <<  to_html (rotation_ref_) << '"' << " />" << endl;
 
-    solids_stream << "</" <<  boolean_type_ << ">" << endl << endl; 
-    _get_stream (SOLIDS_SECTION) << solids_stream.str (); 
+    solids_stream << "</" <<  boolean_type_ << ">" << endl << endl;
+    _get_stream (SOLIDS_SECTION) << solids_stream.str ();
   }
 
-  void gdml_writer::add_cylinder (const string & name_, 
+  void gdml_writer::add_cylinder (const string & name_,
                                   const cylinder & c_,
                                   const string & lunit_str_,
                                   const string & aunit_str_)
   {
-    add_gdml_tube (name_, 
-                   0.0, 
-                   c_.get_radius (), 
-                   c_.get_z (), 
-                   0.0, 
-                   2. * M_PI * CLHEP::radian, 
-                   lunit_str_, 
+    add_gdml_tube (name_,
+                   0.0,
+                   c_.get_radius (),
+                   c_.get_z (),
+                   0.0,
+                   2. * M_PI * CLHEP::radian,
+                   lunit_str_,
                    aunit_str_);
   }
 
 
-  void gdml_writer::add_tube (const string & name_, 
+  void gdml_writer::add_tube (const string & name_,
                               const tube & t_,
                               const string & lunit_str_,
                               const string & aunit_str_)
   {
-    add_gdml_tube (name_, 
-                   t_.get_inner_r (), 
-                   t_.get_outer_r (), 
-                   t_.get_z (), 
-                   0.0, 
-                   2. * M_PI * CLHEP::radian, 
-                   lunit_str_, 
+    add_gdml_tube (name_,
+                   t_.get_inner_r (),
+                   t_.get_outer_r (),
+                   t_.get_z (),
+                   0.0,
+                   2. * M_PI * CLHEP::radian,
+                   lunit_str_,
                    aunit_str_);
   }
 
-  void gdml_writer::add_orb (const string & name_, 
+  void gdml_writer::add_orb (const string & name_,
                              const sphere & s_,
                              const string & lunit_str_,
                              const string & aunit_str_)
   {
-    add_gdml_orb (name_, 
-                  s_.get_r (), 
+    add_gdml_orb (name_,
+                  s_.get_r (),
                   lunit_str_);
   }
 
-  void gdml_writer::add_sphere (const string & name_, 
+  void gdml_writer::add_sphere (const string & name_,
                                 const sphere & s_,
                                 const string & lunit_str_,
                                 const string & aunit_str_)
   {
-    add_gdml_orb (name_, 
-                  s_.get_r (), 
+    add_gdml_orb (name_,
+                  s_.get_r (),
                   lunit_str_);
   }
 
-  void gdml_writer::add_polycone (const string & name_, 
+  void gdml_writer::add_polycone (const string & name_,
                                   const polycone & p_,
                                   const string & lunit_str_,
                                   const string & aunit_str_)
@@ -1155,16 +1155,16 @@ namespace geomtools {
         rminmax.second = i->second.rmax;
         zplanes[z] = rminmax;
       }
-    add_gdml_polycone (name_, 
+    add_gdml_polycone (name_,
                        zplanes,
                        0.0,
-                       2. * M_PI * CLHEP::radian, 
-                       lunit_str_, 
+                       2. * M_PI * CLHEP::radian,
+                       lunit_str_,
                        aunit_str_);
     return;
   }
 
-  void gdml_writer::add_polyhedra (const string & name_, 
+  void gdml_writer::add_polyhedra (const string & name_,
                                    const polyhedra & p_,
                                    const string & lunit_str_,
                                    const string & aunit_str_)
@@ -1180,97 +1180,16 @@ namespace geomtools {
         rminmax.second = i->second.rmax;
         zplanes[z] = rminmax;
       }
-    add_gdml_polyhedra (name_, 
+    add_gdml_polyhedra (name_,
                         p_.get_n_sides (),
                         zplanes,
                         0.0,
-                        2. * M_PI * CLHEP::radian, 
-                        lunit_str_, 
+                        2. * M_PI * CLHEP::radian,
+                        lunit_str_,
                         aunit_str_);
     return;
   }
 
-
-  /*
-    void gdml_writer::add_solid (const string & name_, 
-    const string & solid_type_,
-    const datatools::properties & params_)
-    {
-    if (! gdml_writer::solid_type_is_valid (solid_type_))
-    {
-    ostringstream message;
-    message << "gdml_writer::add_solid: " 
-    << "Invalid solit type '" << solid_type_ 
-    << "' for solid '"
-    << name_ << "' !";
-    throw logic_error (message.str ());               
-    }
-    bool has_length = true;
-    bool has_angle = false;
-    size_t count_length = 0;
-    size_t count_angle = 0;
-
-    ostringstream solids_stream;
-    solids_stream << "<" <<  solid_type_
-    << " name=" << '"' << to_html (name_) << '"';
-    datatools::properties::keys_col_type keys;
-    params_.keys (keys);
-    for (datatools::properties::keys_col_type::const_iterator i = keys.begin ();
-    i != keys.end ();
-    i++)
-    {
-    if (params_.is_integer (*i))
-    {
-    solids_stream << " " << *i << "=" << '"';
-    int ivalue = params_.fetch_integer (*i);
-    solids_stream << ivalue;
-    }
-    else if (params_.is_real (*i))
-    {
-    bool is_length = false;
-    bool is_angle = false;
-    string propname;
-    if (*i.substr (0,7) == "length.")
-    {
-    is_length = true;
-    propname = *i.substr (7);
-    }
-    if (*i.substr (0,6) == "angle.")
-    {
-    is_angle = true;
-    propname = *i.substr (6);
-    }
-    if (! propname.empty ())
-    {
-    double dvalue = params_.fetch_real (*i);
-    solids_stream.precision (15);
-    if (is_length)
-    {
-    count_length++;
-    solids_stream << dvalue / CLHEP::mm;
-    }
-    if (is_angle)
-    {
-    count_angle++;
-    solids_stream << dvalue / CLHEP::degree;
-    }
-    }
-    }
-    solids_stream << '"';
-    } 
-    if (count_length)
-    {
-    solids_stream << " lunit=" << '"' << "mm" << '"';
-    }
-    if (count_angle)
-    {
-    solids_stream << " aunit=" << '"' << "degree" << '"';
-    }
-    solids_stream << " />" << endl; 
-    _get_stream (SOLIDS_SECTION) << solids_stream.str ();
-    }
-  */
- 
   /*** Structure ***/
 
   gdml_writer::physvol::physvol (const string & volumeref_,
@@ -1282,7 +1201,7 @@ namespace geomtools {
     positionref = positionref_;
     rotationref = rotationref_;
     scaleref = scaleref_;
-  } 
+  }
 
   const string gdml_writer::replicavol::REPLICATED_ALONG_AXIS = "replicated_along_axis";
 
@@ -1304,34 +1223,34 @@ namespace geomtools {
 
     _get_stream (STRUCTURE_SECTION) << "    <" << replicavol_.mode << ">" << endl;
 
-    _get_stream (STRUCTURE_SECTION) << "      <direction  " 
+    _get_stream (STRUCTURE_SECTION) << "      <direction  "
                                     << replicavol_.direction<< "=" << '"' << "1" << '"' << " />" << endl;
 
-    _get_stream (STRUCTURE_SECTION) << "      <width" 
-                                    << " value=" 
-                                    << '"' << replicavol_.width / lunit << '"' 
-                                    << " unit=" 
-                                    << '"' << lunit_str_ << '"' 
+    _get_stream (STRUCTURE_SECTION) << "      <width"
+                                    << " value="
+                                    << '"' << replicavol_.width / lunit << '"'
+                                    << " unit="
+                                    << '"' << lunit_str_ << '"'
                                     << " />" << endl;
- 
-    _get_stream (STRUCTURE_SECTION) << "      <offset" 
-                                    << " value=" 
-                                    << '"' << replicavol_.offset / lunit << '"' 
-                                    << " unit=" 
-                                    << '"' << lunit_str_ << '"' 
+
+    _get_stream (STRUCTURE_SECTION) << "      <offset"
+                                    << " value="
+                                    << '"' << replicavol_.offset / lunit << '"'
+                                    << " unit="
+                                    << '"' << lunit_str_ << '"'
                                     << " />" << endl;
 
     _get_stream (STRUCTURE_SECTION) << "    </" << replicavol_.mode << ">" << endl;
-    _get_stream (STRUCTURE_SECTION) << "  </replicavol >" << endl << endl; 
+    _get_stream (STRUCTURE_SECTION) << "  </replicavol >" << endl << endl;
 
     add_volume_auxiliaries (aux_);
 
-    _get_stream (STRUCTURE_SECTION) << "</volume>" << endl << endl; 
+    _get_stream (STRUCTURE_SECTION) << "</volume>" << endl << endl;
   }
-  
+
   void gdml_writer::add_volume_auxiliaries (const map<string,string> & aux_)
   {
-    _get_stream (STRUCTURE_SECTION) << endl;  
+    _get_stream (STRUCTURE_SECTION) << endl;
     for (map<string,string>::const_iterator i = aux_.begin ();
          i != aux_.end ();
          i++)
@@ -1382,7 +1301,7 @@ namespace geomtools {
 
     add_volume_auxiliaries (aux_);
 
-    _get_stream (STRUCTURE_SECTION) << "</volume>" << endl << endl; 
+    _get_stream (STRUCTURE_SECTION) << "</volume>" << endl << endl;
   }
 
   void gdml_writer::add_volume (const string & name_,
@@ -1403,20 +1322,20 @@ namespace geomtools {
     add_volume (name_, material_ref_, solid_ref_, empty_phys_vols, aux_);
     //cerr << "DEVEL: gdml_writer::add_volume: " << "Exiting." << endl;
   }
-  
+
   void gdml_writer::add_volume (const string & name_,
                                 const string & material_ref_,
                                 const string & solid_ref_,
                                 const list<physvol> & phys_vols_)
   {
     map<string, string> aux;
-    add_volume (name_, 
-                material_ref_, 
-                solid_ref_, 
-                phys_vols_, 
+    add_volume (name_,
+                material_ref_,
+                solid_ref_,
+                phys_vols_,
                 aux);
   }
-    
+
   void gdml_writer::add_replica_volume (const string & name_,
                                         const string & material_ref_,
                                         const string & solid_ref_,
@@ -1425,39 +1344,39 @@ namespace geomtools {
                                         const string & aunit_str_)
   {
     map<string, string> aux;
-    add_replica_volume (name_, 
-                        material_ref_, 
-                        solid_ref_, 
-                        replicavol_, 
-                        lunit_str_, 
+    add_replica_volume (name_,
+                        material_ref_,
+                        solid_ref_,
+                        replicavol_,
+                        lunit_str_,
                         aunit_str_,
                         aux);
   }
- 
+
   /*** Setup ***/
 
-  void gdml_writer::add_setup (const string & name_, 
+  void gdml_writer::add_setup (const string & name_,
                                const string & world_ref_,
                                const string & version_)
   {
-    _get_stream (SETUP_SECTION) << "<setup" 
-                                << " name=" << '"' << to_html (name_) << '"' 
+    _get_stream (SETUP_SECTION) << "<setup"
+                                << " name=" << '"' << to_html (name_) << '"'
                                 << " version=" << '"' << version_ << '"'
                                 << " >" << endl;
     _get_stream (SETUP_SECTION) << "  <world ref=" << '"' << to_html (world_ref_) << '"'
-                                << " />" << endl; 
-    _get_stream (SETUP_SECTION) << "</setup>" << endl << endl; 
+                                << " />" << endl;
+    _get_stream (SETUP_SECTION) << "</setup>" << endl << endl;
   }
-   
-  
+
+
   /*** Section ***/
 
-  void gdml_writer::xml_header (ostream & out_, 
-                                const string & version_, 
+  void gdml_writer::xml_header (ostream & out_,
+                                const string & version_,
                                 const string & encoding_,
                                 bool standalone_)
   {
-    out_ << "<?xml version=" << '"' << version_ << '"'; 
+    out_ << "<?xml version=" << '"' << version_ << '"';
     out_ << " encoding=" << '"' << encoding_ << '"';
     if (standalone_)
       {
@@ -1478,24 +1397,24 @@ namespace geomtools {
     <gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
 
   */
-  void gdml_writer::gdml_begin (ostream & out_, 
-                                const string & schema_, 
+  void gdml_writer::gdml_begin (ostream & out_,
+                                const string & schema_,
                                 const string & xsi_)
   {
     out_ << "<gdml ";
     if (! xsi_.empty ())
       {
         out_ << "xmlns:xsi="
-             << '"' << xsi_ << '"' 
+             << '"' << xsi_ << '"'
              << " ";
-        
+
       }
     out_ << "xsi:noNamespaceSchemaLocation="
-         << '"' << schema_ << '"' 
+         << '"' << schema_ << '"'
          << " ";
 
     out_ << " >" << endl;
-    
+
     return;
   }
 
@@ -1504,20 +1423,20 @@ namespace geomtools {
     out_ << "</gdml>" << endl;
   }
 
-  void gdml_writer::gdml_section_begin (ostream & out_, 
+  void gdml_writer::gdml_section_begin (ostream & out_,
                                         const string & section_)
   {
     out_ << "<" << section_ << ">" << endl << endl;
   }
 
-  void gdml_writer::gdml_section_end (ostream & out_, 
+  void gdml_writer::gdml_section_end (ostream & out_,
                                       const string & section_)
   {
     out_ << "</" << section_ << ">" << endl << endl;
   }
-  
+
   /*** Utilities ***/
-   
+
   void gdml_writer::full_write (ostream & out_,
                                 const string & version_,
                                 const string & encoding_,
@@ -1567,13 +1486,13 @@ namespace geomtools {
 
     return;
   }
- 
+
   void gdml_writer::attach_external_materials (const ostringstream & oss_)
   {
     _external_materials_stream_ = &oss_;
     return;
   }
-  
+
   void gdml_writer::save_file (const string & filename_,
                                const string & version_,
                                const string & encoding_,
@@ -1596,7 +1515,7 @@ namespace geomtools {
     full_write (fout, version_, encoding_, schema_, xsi_);
     return;
   }
- 
+
   void gdml_writer::dump (ostream & out_) const
   {
     out_ << "gdml_writer::dump: " << endl;
@@ -1612,7 +1531,7 @@ namespace geomtools {
     out_ << _get_stream (SETUP_SECTION).str ();
     out_ << endl;
   }
-  
+
 } // end of namespace geomtools
 
 // end of gdml_writer.cc

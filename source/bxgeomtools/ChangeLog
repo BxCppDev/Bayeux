@@ -7,7 +7,7 @@ This is the geomtools package ChangeLog
 2011-02-22 : Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* GPL version 3 is now used for geomtools
 2011-03-19  Francois Mauger <mauger@lpccaen.in2p3.fr>
-	* need datatools 3.0	
+	* need datatools 3.0
 2011-07-01 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* explicit linking with dependency shared libs
 	* pre-tag 2.1
@@ -48,7 +48,7 @@ This is the geomtools package ChangeLog
 	* version: prepare tag 4.0.0 in trunk
 	* depend on: datatools pre-5.0.0 (datatools/trunk)
 	* add geometry "manager" class (moved from sngeometry)
-	* add geometry plugin support in the manager class 
+	* add geometry plugin support in the manager class
 	* add system factory support for manager's geometry plugin
 	* add "mapping_plugin" class
 2013-03-09 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
@@ -58,3 +58,6 @@ This is the geomtools package ChangeLog
 	* add "grid_model" class
 	* add "materials_plugin" class
 	* add "materials_utils" stuff (GDML export)
+2013-04-24 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* partial OCD support
+	* support explicit unit at parsing of real properties

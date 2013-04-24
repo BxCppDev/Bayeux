@@ -1276,7 +1276,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
                                "d) A manager for geometry plugins which allows to dynamically\n"
                                "   add new geometry-related functionnalities to the manager.\n"
                                );
-{
+
+  {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("debug")
       .set_terse_description("The debug flag")
@@ -1485,7 +1486,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
                             "  |   \"${CONFIG_REPOSITORY_DIR}/geom/models/vessel.geom\"    \\ \n"
                             "  |   \"${CONFIG_REPOSITORY_DIR}/geom/models/lab.geom\"       \\ \n"
                             "  |   \"${CONFIG_REPOSITORY_DIR}/geom/models/world.geom\"        \n"
-                            "  |                                                              \n"
                             "  |                                                              \n"
                             "The order of the geometry files (*.geom) is critical             \n"
                             "because some geometry models may depend on other ones            \n"

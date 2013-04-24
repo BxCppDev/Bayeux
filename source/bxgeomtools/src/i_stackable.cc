@@ -1,7 +1,7 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* i_stackable.cc
  */
- 
+
 #include <geomtools/i_stackable.h>
 #include <sstream>
 #include <stdexcept>
@@ -23,7 +23,7 @@ namespace geomtools {
   const string stackable::STACKABLE_ZMAX_PROPERTY = "zmax";
   const string stackable::STACKABLE_PLAY_PROPERTY = "play";
   const string stackable::STACKABLE_LIMITS_PROPERTY = "limits";
- 
+
   bool i_stackable::has_xmin() const
   {
     return datatools::is_valid(get_xmin ());
@@ -53,14 +53,14 @@ namespace geomtools {
   {
     return datatools::is_valid(get_zmax ());
   }
-  
+
   string stackable::make_key (const string & key_)
   {
     ostringstream key_oss;
     key_oss << stackable::STACKABLE_PREFIX << key_;
     return key_oss.str ();
   }
-  
+
   void stackable::extract (const datatools::properties & source_,
                            datatools::properties & target_)
   {
@@ -72,27 +72,27 @@ namespace geomtools {
   {
     return source_.has_key (stackable::make_key (stackable::STACKABLE_XMIN_PROPERTY));
   }
-  
+
   bool stackable::has_xmax (const datatools::properties & source_)
   {
     return source_.has_key (stackable::make_key (stackable::STACKABLE_XMAX_PROPERTY));
   }
-  
+
   bool stackable::has_ymin (const datatools::properties & source_)
   {
     return source_.has_key (stackable::make_key (stackable::STACKABLE_YMIN_PROPERTY));
   }
-  
+
   bool stackable::has_ymax (const datatools::properties & source_)
   {
     return source_.has_key (stackable::make_key (stackable::STACKABLE_YMAX_PROPERTY));
   }
-  
+
   bool stackable::has_zmin (const datatools::properties & source_)
   {
     return source_.has_key (stackable::make_key (stackable::STACKABLE_ZMIN_PROPERTY));
   }
-  
+
   bool stackable::has_zmax (const datatools::properties & source_)
   {
     return source_.has_key (stackable::make_key (stackable::STACKABLE_ZMAX_PROPERTY));
@@ -100,34 +100,52 @@ namespace geomtools {
 
   /****************************/
 
-  double stackable::get_xmin (const datatools::properties & source_)
+  double stackable::get_xmin (const datatools::properties & source_, double length_unit_)
   {
-    return source_.fetch_real (stackable::make_key (stackable::STACKABLE_XMIN_PROPERTY));
+    static const std::string xmin_key = stackable::make_key (stackable::STACKABLE_XMIN_PROPERTY);
+    double xmin = source_.fetch_real (xmin_key);
+    if (length_unit_ > 0.0 && source_.has_explicit_unit(xmin_key)) xmin *= length_unit_;
+    return xmin;
   }
-  
-  double stackable::get_xmax (const datatools::properties & source_)
+
+  double stackable::get_xmax (const datatools::properties & source_, double length_unit_)
   {
-    return source_.fetch_real (stackable::make_key (stackable::STACKABLE_XMAX_PROPERTY));
+    static const std::string xmax_key = stackable::make_key (stackable::STACKABLE_XMAX_PROPERTY);
+    double xmax = source_.fetch_real (xmax_key);
+    if (length_unit_ > 0.0 && source_.has_explicit_unit(xmax_key)) xmax *= length_unit_;
+    return xmax;
   }
-  
-  double stackable::get_ymin (const datatools::properties & source_)
+
+  double stackable::get_ymin (const datatools::properties & source_, double length_unit_)
   {
-    return source_.fetch_real (stackable::make_key (stackable::STACKABLE_YMIN_PROPERTY));
+    static const std::string ymin_key = stackable::make_key (stackable::STACKABLE_YMIN_PROPERTY);
+    double ymin = source_.fetch_real (ymin_key);
+    if (length_unit_ > 0.0 && source_.has_explicit_unit(ymin_key)) ymin *= length_unit_;
+    return ymin;
   }
-  
-  double stackable::get_ymax (const datatools::properties & source_)
+
+  double stackable::get_ymax (const datatools::properties & source_, double length_unit_)
   {
-    return source_.fetch_real (stackable::make_key (stackable::STACKABLE_YMAX_PROPERTY));
+    static const std::string ymax_key = stackable::make_key (stackable::STACKABLE_YMAX_PROPERTY);
+    double ymax = source_.fetch_real (ymax_key);
+    if (length_unit_ > 0.0 && source_.has_explicit_unit(ymax_key)) ymax *= length_unit_;
+    return ymax;
   }
-  
-  double stackable::get_zmin (const datatools::properties & source_)
+
+  double stackable::get_zmin (const datatools::properties & source_, double length_unit_)
   {
-    return source_.fetch_real (stackable::make_key (stackable::STACKABLE_ZMIN_PROPERTY));
+    static const std::string zmin_key = stackable::make_key (stackable::STACKABLE_ZMIN_PROPERTY);
+    double zmin = source_.fetch_real (zmin_key);
+    if (length_unit_ > 0.0 && source_.has_explicit_unit(zmin_key)) zmin *= length_unit_;
+    return zmin;
   }
-  
-  double stackable::get_zmax (const datatools::properties & source_)
+
+  double stackable::get_zmax (const datatools::properties & source_, double length_unit_)
   {
-    return source_.fetch_real (stackable::make_key (stackable::STACKABLE_ZMAX_PROPERTY));
+    static const std::string zmax_key = stackable::make_key (stackable::STACKABLE_ZMAX_PROPERTY);
+    double zmax = source_.fetch_real (zmax_key);
+    if (length_unit_ > 0.0 && source_.has_explicit_unit(zmax_key)) zmax *= length_unit_;
+    return zmax;
   }
 
   /****************************/
@@ -228,8 +246,8 @@ namespace geomtools {
     unset_zmax (target_);
     return;
   }
-  
-  void stackable::set (datatools::properties & target_, 
+
+  void stackable::set (datatools::properties & target_,
                        const i_stackable & sd_)
   {
     set_xmin (target_, sd_.get_xmin ());
@@ -237,107 +255,105 @@ namespace geomtools {
     set_ymin (target_, sd_.get_ymin ());
     set_xmax (target_, sd_.get_ymax ());
     set_zmin (target_, sd_.get_zmin ());
-    set_zmax (target_, sd_.get_zmax ()); 
+    set_zmax (target_, sd_.get_zmax ());
     return;
   }
- 
+
   /***********************************************/
 
   bool stackable_data::initialize (const datatools::properties & config_)
   {
     double lunit = CLHEP::mm;
-    
+
     string length_unit_key = stackable::make_key (stackable::STACKABLE_LENGTH_UNIT_PROPERTY);
-    if (config_.has_key (length_unit_key))
-      {
-        string length_unit_str = config_.fetch_string (length_unit_key);
-        lunit = datatools::units::get_length_unit_from (length_unit_str);
+    if (config_.has_key (length_unit_key)) {
+      string length_unit_str = config_.fetch_string (length_unit_key);
+      lunit = datatools::units::get_length_unit_from (length_unit_str);
+    }
+
+    static const string stackable_limits_key = stackable::make_key (stackable::STACKABLE_LIMITS_PROPERTY);
+    if (config_.has_key (stackable_limits_key)) {
+      vector<double> limits;
+      config_.fetch (stackable_limits_key, limits);
+      if (limits.size () != 6) {
+        ostringstream message;
+        message << "geomtools::stackable_data::initialize: "
+                << "Stacking limits vector should provide 6 dimensions !";
+        throw logic_error (message.str ());
+      }
+      if (! config_.has_explicit_unit (stackable_limits_key)) {
+        limits[0] *= lunit;
+        limits[2] *= lunit;
+        limits[4] *= lunit;
+        limits[1] *= lunit;
+        limits[3] *= lunit;
+        limits[5] *= lunit;
+      }
+      xmin = limits[0];
+      ymin = limits[2];
+      zmin = limits[4];
+      xmax = limits[1];
+      ymax = limits[3];
+      zmax = limits[5];
+    }
+    else {
+      string xmin_key = stackable::make_key (stackable::STACKABLE_XMIN_PROPERTY);
+      if (config_.has_key (xmin_key)) {
+        xmin = config_.fetch_real (xmin_key);
+        if (! config_.has_explicit_unit (xmin_key)) xmin *= lunit;
       }
 
-    string stackable_limits_key = stackable::make_key (stackable::STACKABLE_LIMITS_PROPERTY);
-    if (config_.has_key (stackable_limits_key))
-      {
-        vector<double> limits;
-        config_.fetch (stackable_limits_key, limits);
-        if (limits.size () != 6)
-          {
-            ostringstream message;
-            message << "stackable_data::initialize: "
-                    << "Stacking limits vector should provide 6 dimensions !";
-            throw logic_error (message.str ());
-          }
-        xmin = limits[0] *= lunit;
-        ymin = limits[2] *= lunit;
-        zmin = limits[4] *= lunit;
-        xmax = limits[1] *= lunit;
-        ymax = limits[3] *= lunit;
-        zmax = limits[5] *= lunit;
+      string xmax_key = stackable::make_key (stackable::STACKABLE_XMAX_PROPERTY);
+      if (config_.has_key (xmax_key)) {
+        xmax = config_.fetch_real (xmax_key);
+        if (! config_.has_explicit_unit (xmax_key)) xmax *= lunit;
       }
-    else 
-      {
-        string xmin_key = stackable::make_key (stackable::STACKABLE_XMIN_PROPERTY);
-        if (config_.has_key (xmin_key))
-          {
-            xmin = config_.fetch_real (xmin_key);
-            xmin *= lunit;
-          }
-        
-        string xmax_key = stackable::make_key (stackable::STACKABLE_XMAX_PROPERTY);
-        if (config_.has_key (xmax_key))
-          {
-            xmax = config_.fetch_real (xmax_key);
-            xmax *= lunit;
-          }
-        
-        string ymin_key = stackable::make_key (stackable::STACKABLE_YMIN_PROPERTY);
-        if (config_.has_key (ymin_key))
-          {
-            ymin = config_.fetch_real (ymin_key);
-            ymin *= lunit;
-          }
-        
-        string ymax_key = stackable::make_key (stackable::STACKABLE_YMAX_PROPERTY);
-        if (config_.has_key (ymax_key))
-          {
-            ymax = config_.fetch_real (ymax_key);
-            ymax *= lunit;
-          }
-        
-        string zmin_key = stackable::make_key (stackable::STACKABLE_ZMIN_PROPERTY);
-        if (config_.has_key (zmin_key))
-          {
-            zmin = config_.fetch_real (zmin_key);
-            zmin *= lunit;
-          }
-        
-        string zmax_key = stackable::make_key (stackable::STACKABLE_ZMAX_PROPERTY);
-        if (config_.has_key (zmax_key))
-          {
-            zmax = config_.fetch_real (zmax_key);
-            zmax *= lunit;
-          }
+
+      string ymin_key = stackable::make_key (stackable::STACKABLE_YMIN_PROPERTY);
+      if (config_.has_key (ymin_key)) {
+        ymin = config_.fetch_real (ymin_key);
+        if (! config_.has_explicit_unit (ymin_key)) ymin *= lunit;
       }
+
+      string ymax_key = stackable::make_key (stackable::STACKABLE_YMAX_PROPERTY);
+      if (config_.has_key (ymax_key)) {
+        ymax = config_.fetch_real (ymax_key);
+        if (! config_.has_explicit_unit (ymax_key)) ymax *= lunit;
+      }
+
+      string zmin_key = stackable::make_key (stackable::STACKABLE_ZMIN_PROPERTY);
+      if (config_.has_key (zmin_key)) {
+        zmin = config_.fetch_real (zmin_key);
+        if (! config_.has_explicit_unit (zmin_key)) zmin *= lunit;
+      }
+
+      string zmax_key = stackable::make_key (stackable::STACKABLE_ZMAX_PROPERTY);
+      if (config_.has_key (zmax_key)) {
+        zmax = config_.fetch_real (zmax_key);
+        if (! config_.has_explicit_unit (zmax_key)) zmax *= lunit;
+      }
+    }
 
     return is_valid ();
   }
 
   bool stackable_data::is_valid_x () const
   {
-    return 
+    return
       datatools::is_valid (xmin)
       && datatools::is_valid (xmax);
   }
-  
+
   bool stackable_data::is_valid_y () const
   {
-    return 
+    return
       datatools::is_valid (ymin)
       && datatools::is_valid (ymax);
   }
-  
+
   bool stackable_data::is_valid_z () const
   {
-    return 
+    return
       datatools::is_valid (zmin)
       && datatools::is_valid (zmax);
   }
@@ -351,7 +367,7 @@ namespace geomtools {
   {
     return is_valid_x () || is_valid_y () || is_valid_z ();
   }
-  
+
   void stackable_data::invalidate ()
   {
     datatools::invalidate (xmin);
@@ -367,38 +383,37 @@ namespace geomtools {
   {
     invalidate ();
   }
- 
-  void stackable_data::tree_dump (ostream & out_, 
-                                  const string & title_, 
-                                  const string & indent_, 
+
+  void stackable_data::tree_dump (ostream & out_,
+                                  const string & title_,
+                                  const string & indent_,
                                   bool inherit_) const
-  { 
+  {
     string indent;
     if (! indent_.empty ()) indent = indent_;
-    if (! title_.empty ()) 
-      {
-        out_ << indent << title_ << endl;
-      }
-    out_ << indent << datatools::i_tree_dumpable::tag << "xmin = " << xmin << endl;
-    out_ << indent << datatools::i_tree_dumpable::tag << "xmax = " << xmax << endl;
-    out_ << indent << datatools::i_tree_dumpable::tag << "ymin = " << ymin << endl;
-    out_ << indent << datatools::i_tree_dumpable::tag << "ymax = " << ymax << endl;
-    out_ << indent << datatools::i_tree_dumpable::tag << "zmin = " << zmin << endl;
+    if (! title_.empty ()) {
+      out_ << indent << title_ << endl;
+    }
+    out_ << indent << datatools::i_tree_dumpable::tag << "xmin = " << xmin / CLHEP::mm << " mm" << endl;
+    out_ << indent << datatools::i_tree_dumpable::tag << "xmax = " << xmax / CLHEP::mm << " mm" << endl;
+    out_ << indent << datatools::i_tree_dumpable::tag << "ymin = " << ymin / CLHEP::mm << " mm" << endl;
+    out_ << indent << datatools::i_tree_dumpable::tag << "ymax = " << ymax / CLHEP::mm << " mm" << endl;
+    out_ << indent << datatools::i_tree_dumpable::tag << "zmin = " << zmin / CLHEP::mm << " mm" << endl;
     out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
-         << "zmax = " << zmax << endl;
+         << "zmax = " << zmax / CLHEP::mm << " mm" << endl;
     return;
   }
-  
+
   void stackable_data::dump (ostream & out_) const
   {
     tree_dump (out_, "geomtools::stackable_data: ");
 
-    out_ << "|-- " << "xmin = " << xmin << endl;
-    out_ << "|-- " << "xmax = " << xmax << endl;
-    out_ << "|-- " << "ymin = " << ymin << endl;
-    out_ << "|-- " << "ymax = " << ymax << endl;
-    out_ << "|-- " << "zmin = " << zmin << endl;
-    out_ << "`-- " << "zmax = " << zmax << endl;
+    out_ << "|-- " << "xmin = " << xmin / CLHEP::mm << " mm" << endl;
+    out_ << "|-- " << "xmax = " << xmax / CLHEP::mm << " mm" << endl;
+    out_ << "|-- " << "ymin = " << ymin / CLHEP::mm << " mm" << endl;
+    out_ << "|-- " << "ymax = " << ymax / CLHEP::mm << " mm" << endl;
+    out_ << "|-- " << "zmin = " << zmin / CLHEP::mm << " mm" << endl;
+    out_ << "`-- " << "zmax = " << zmax / CLHEP::mm << " mm" << endl;
     return;
   }
 

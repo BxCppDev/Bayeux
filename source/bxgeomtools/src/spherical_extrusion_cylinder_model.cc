@@ -15,7 +15,7 @@ namespace geomtools {
 
   using namespace std;
 
-  // registration :   
+  // registration :
   GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(spherical_extrusion_cylinder_model,"geomtools::spherical_extrusion_cylinder_model");
 
   string spherical_extrusion_cylinder_model::get_model_id () const
@@ -93,6 +93,7 @@ namespace geomtools {
     if (config_.has_key ("z"))
       {
         z = config_.fetch_real ("z");
+        if (! config_.has_explicit_unit ("z")) z *= lunit;
       }
     else
       {
@@ -105,6 +106,7 @@ namespace geomtools {
     if (config_.has_key ("r"))
       {
         r = config_.fetch_real ("r");
+        if (! config_.has_explicit_unit ("r")) r *= lunit;
       }
     else
       {
@@ -117,7 +119,8 @@ namespace geomtools {
     if (config_.has_key ("r_extrusion"))
       {
         re = config_.fetch_real ("r_extrusion");
-      }
+        if (! config_.has_explicit_unit ("r_extrusion")) re *= lunit;
+     }
     else
       {
         ostringstream message;
@@ -129,6 +132,7 @@ namespace geomtools {
     if (config_.has_key ("r_sphere"))
       {
         rs = config_.fetch_real ("r_sphere");
+        if (! config_.has_explicit_unit ("r_sphere")) rs *= lunit;
       }
     else
       {
@@ -141,10 +145,6 @@ namespace geomtools {
 
     if (devel) clog << "DEVEL: geomtools::spherical_extrusion_cylinder_model::_at_construct: Properties are parsed !" << endl;
 
-    z *= lunit;
-    r *= lunit;
-    re *= lunit;
-    rs *= lunit;
     _r_ = r;
     _z_ = z;
     _r_extrusion_ = re;
@@ -182,7 +182,7 @@ namespace geomtools {
 
     _extrusion_.set (_r_sphere_);
 
-    double a = std::sqrt (_r_sphere_ * _r_sphere_ 
+    double a = std::sqrt (_r_sphere_ * _r_sphere_
                           - _r_extrusion_ * _r_extrusion_);
     double c = _r_sphere_ - a;
     if (c > _z_)
@@ -195,21 +195,21 @@ namespace geomtools {
     if (devel)
       {
         cerr << "DEVEL: " << "geomtools::spherical_extrusion_cylinder_model::_at_construct: "
-             << "z=" << z << endl;
+             << "z=" << z / CLHEP::mm << " mm" << endl;
         cerr << "DEVEL: " << "geomtools::spherical_extrusion_cylinder_model::_at_construct: "
-             << "r=" << r << endl;
+             << "r=" << r / CLHEP::mm << " mm" << endl;
         cerr << "DEVEL: " << "geomtools::spherical_extrusion_cylinder_model::_at_construct: "
-             << "re=" << re << endl;
+             << "re=" << re / CLHEP::mm << " mm" << endl;
         cerr << "DEVEL: " << "geomtools::spherical_extrusion_cylinder_model::_at_construct: "
-             << "rs=" << rs << endl;
+             << "rs=" << rs / CLHEP::mm << " mm" << endl;
         cerr << "DEVEL: " << "geomtools::spherical_extrusion_cylinder_model::_at_construct: "
-             << "h=" << h << endl;
+             << "h=" << h / CLHEP::mm << " mm" << endl;
       }
 
     geomtools::placement sphere_extrusion_placement (0, 0, zsphere, 0, 0, 0);
     if (devel) clog << "DEVEL: geomtools::spherical_extrusion_cylinder_model::_at_construct: zsphere=" << zsphere / CLHEP::mm << " mm" << endl;
-    _solid_.set_shapes (_mother_, 
-                        _extrusion_, 
+    _solid_.set_shapes (_mother_,
+                        _extrusion_,
                         sphere_extrusion_placement);
 
     _solid_.properties ().store ("h", h);
@@ -456,7 +456,7 @@ namespace geomtools {
             double rs = extrusion_sphere.get_r ();
             double a2 = rs - c2;
             double r2 = sqrt (rs *rs - a2 * a2);
-            
+
             placement c1_plcmt;
             c1_plcmt.set (0., 0., z, 0. , 0. , 0.);
             placement world_item_placement;
