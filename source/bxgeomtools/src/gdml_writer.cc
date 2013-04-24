@@ -884,6 +884,10 @@ namespace geomtools {
         solids_stream.precision (15);
         solids_stream << rmin_ / lunit << '"';
       }
+    else
+      {
+        solids_stream << " rmin=" << '"' << "0" << '"';
+      }
 
     solids_stream << " rmax=" << '"';
     solids_stream.precision (15);
@@ -955,10 +959,11 @@ namespace geomtools {
         double rmin = i->second.first;
         double rmax = i->second.second;
         solids_stream << "  " << "<zplane ";
-        if (rmin != 0.0)
-          {
-            solids_stream << "rmin=\"" << rmin / lunit << "\" ";
-          }
+        if (rmin != 0.0) {
+          solids_stream << "rmin=\"" << rmin / lunit << "\" ";
+        } else {
+          solids_stream << "rmin=\"0\" ";
+        }
         solids_stream << "rmax=\"" << rmax / lunit << "\" ";
         solids_stream << "z=\"" << z / lunit << "\" ";
         solids_stream << "/>" << endl;
@@ -1018,6 +1023,10 @@ namespace geomtools {
         if (rmin != 0.0)
           {
             solids_stream << "rmin=\"" << rmin / lunit << "\" ";
+          }
+        else
+          {
+            solids_stream << "rmin=\"0\" ";
           }
         solids_stream << "rmax=\"" << rmax / lunit << "\" ";
         solids_stream << "z=\"" << z / lunit << "\" ";

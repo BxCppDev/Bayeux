@@ -5,18 +5,21 @@ geomtools installation instructions:
 1 - Third-party software setup :
 --------------------------------
 
-Instructions to setup dependencies...
-
 geomtools depends on the following libraries and/or programs :
- - mygsl and thus datatools, GSL, CLHEP and Boost
- 
+ - CLHEP (through Cadfael)
+ - CAMP (through Cadfael)
+ - gnuplot (through Cadfael)
+ - Root (through Cadfael)
+ - mygsl (through Bayeux)
+ - materials (through Bayeux)
+
 
 2- Plain CMake installation :
 -----------------------------
 
-Change to the geomtools base directory :
+Change to the geomtools source base directory :
 {{{
-bash$ cd <geomtools base dir>
+bash$ cd <geomtools_source_base_dir>
 }}}
 
 Create a 'build' directory :
@@ -32,6 +35,14 @@ Note: you must choose a directory where you have write access.
 bash$ cmake \
    -DCMAKE_INSTALL_PREFIX:PATH=${HOME}/software \
    -DCMAKE_BUILD_TYPE:STRING=Release \
+   -Dmygsl_DIR=<mygsl_CMake_config_file_dir> \
+   -Dmaterials_DIR=<materials_CMake_config_file_dir> \
+   -DCMAKE_MODULE_PATH=<Cadfael_CMake_find_package_files_dir> \
+   -DGEOMTOOLS_WITH_DEBUG=0 \
+   -DGEOMTOOLS_WITH_BIO=1 \
+   -DGEOMTOOLS_WITH_DOC=1 \
+   -DGEOMTOOLS_WITH_TEST=1 \
+   -DGEOMTOOLS_WITH_GNUPLOT_DISPLAY=1
    ..
 }}}
 
@@ -44,7 +55,7 @@ This prints :
 
 -- Configuring done
 -- Generating done
--- Build files have been written to: <geomtools base dir>/build
+-- Build files have been written to: <geomtools_source_base_dir>/build
 }}}
 
 Build :
@@ -82,9 +93,9 @@ bash$ rm -fr build
 3 - Production CMake installation using the 'pkgtool' wrapper :
 ---------------------------------------------------------------
 
-Change to the geomtools base directory :
+Change to the geomtools source base directory :
 {{{
-bash$ cd <geomtools base dir>
+bash$ cd <geomtools_source_base_dir>
 }}}
 
 Getting help :
@@ -113,7 +124,7 @@ bash$ ./pkgtools.d/pkgtool reset
 }}}
 
 
-4 - Setup : 
+4 - Setup :
 -----------
 
 The following instructions applies to the bash shell.
@@ -133,7 +144,7 @@ NOTICE: do_geomtools_setup: Setup geomtools done.
 
 Use geomtools :
 {{{
-bash$ which geomtools-config 
+bash$ which geomtools-config
 /home/<login>/software/bin/geomtools-config
 bash$ geomtools-config --version
 0.1.0
@@ -141,13 +152,14 @@ bash$ geomtools-config --cflags
 ...
 bash$ geomtools-config --ldflags
 ...
+bash$ geomtools_check_setup -GRD -c ${GEOMTOOLS_DATA_DIR}/testing/config/test-1.0/test_manager.conf
 }}}
 
 --
 François Mauger <mauger@lpccaen.in2p3.fr>
-Updated: 2012-01-30
+Updated: 2013-04-24
 
 
- 
+
 
 

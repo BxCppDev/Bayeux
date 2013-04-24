@@ -1,8 +1,8 @@
 
 geomtools is a  C++ library which provides some basic geometry classes and
-tools.
+tools for geometry modeling and management.
 
-geomtools depends on  the datatools and mygsl libraries.  It relies on
+geomtools depends on  the materials and mygsl C++ libraries.  It relies on
 some CLHEP classes and is compatible with GDML and GEANT4 concepts.
 
 Authors :

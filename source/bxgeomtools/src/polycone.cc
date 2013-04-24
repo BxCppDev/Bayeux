@@ -152,21 +152,21 @@ namespace geomtools {
 
     if (devel)
       {
-        clog << "DEVEL: " << "polycone::_build_from_envelope_and_skin_: "
+        clog << "DEVEL: " << "geomtools::polycone::_build_from_envelope_and_skin_: "
              << "Entering..." << endl;
       }
     if (skin_thickness_ < 0.0)
       {
-        throw runtime_error ("polycone::_build_from_envelope_and_skin_: Invalid skin thickness !");
+        throw runtime_error ("geomtools::polycone::_build_from_envelope_and_skin_: Invalid skin thickness !");
       }
 
     if (_points_.size () < 2)
       {
-        throw runtime_error ("polycone::_build_from_envelope_and_skin_: Not enough points !");
+        throw runtime_error ("geomtools::polycone::_build_from_envelope_and_skin_: Not enough points !");
       }
     if (devel)
       {
-        clog << "DEVEL: " << "polycone::_build_from_envelope_and_skin_: "
+        clog << "DEVEL: " << "geomtools::polycone::_build_from_envelope_and_skin_: "
              << "Building interpolated primary outer envelope..." << endl;
       }
     string interpolation_mode = "linear";
@@ -196,7 +196,7 @@ namespace geomtools {
       }
     if (devel)
       {
-        clog << "DEVEL: " << "polycone::_build_from_envelope_and_skin_: "
+        clog << "DEVEL: " << "geomtools::polycone::_build_from_envelope_and_skin_: "
              << "Building interpolated inner envelope..." << endl;
       }
     //mygsl::tabulated_function tf2 (interpolation_mode);
@@ -231,7 +231,7 @@ namespace geomtools {
     // Manage bounds:
     if (devel)
       {
-        clog << "DEVEL: " << "polycone::_build_from_envelope_and_skin_: "
+        clog << "DEVEL: " << "geomtools::polycone::_build_from_envelope_and_skin_: "
              << "Building properly bounded interpolated inner envelope..."
              << endl;
       }
@@ -266,20 +266,20 @@ namespace geomtools {
 
     if (devel)
       {
-        clog << "DEVEL: " << "polycone::_build_from_envelope_and_skin_: "
+        clog << "DEVEL: " << "geomtools::polycone::_build_from_envelope_and_skin_: "
              << "Building final interpolated outer and inner envelopes with requested Z sampling..." << endl;
       }
     mygsl::tabulated_function tf_outer ("linear");
     mygsl::tabulated_function tf_inner ("linear");
     double z1 = tf.x_min ();
     double z2 = tf.x_max ();
-    if (devel) cerr << "DEVEL: " << "polycone::_build_from_envelope_and_skin_: "
+    if (devel) cerr << "DEVEL: " << "geomtools::polycone::_build_from_envelope_and_skin_: "
                     << "z1=" << z1 << endl;
-    if (devel) cerr << "DEVEL: " << "polycone::_build_from_envelope_and_skin_: "
+    if (devel) cerr << "DEVEL: " << "geomtools::polycone::_build_from_envelope_and_skin_: "
                     << "z2=" << z2 << endl;
     if (datatools::is_valid (zmin))
       {
-        if (devel) cerr << "DEVEL: " << "polycone::_build_from_envelope_and_skin_: "
+        if (devel) cerr << "DEVEL: " << "geomtools::polycone::_build_from_envelope_and_skin_: "
                         << "Z(min)=" << zmin << endl;
         if (zmin > tf.x_min ())
           {
@@ -289,7 +289,7 @@ namespace geomtools {
     double zlim = tf.x_max ();
     if (datatools::is_valid (zmax))
       {
-        if (devel) cerr << "DEVEL: "  << "polycone::_build_from_envelope_and_skin_: "
+        if (devel) cerr << "DEVEL: "  << "geomtools::polycone::_build_from_envelope_and_skin_: "
                         << "Z(max)=" << zmax << endl;
         if (zmax < tf.x_max ())
           {
@@ -305,12 +305,12 @@ namespace geomtools {
     do
       {
         /*
-          cerr << "DEVEL: "  << "polycone::_build_from_envelope_and_skin_: "
+          cerr << "DEVEL: "  << "geomtools::polycone::_build_from_envelope_and_skin_: "
           << "Loop: z=" << z << endl;
         */
         if (z >= z2)
           {
-            if (devel) cerr << "DEVEL: "  << "polycone::_build_from_envelope_and_skin_: "
+            if (devel) cerr << "DEVEL: "  << "geomtools::polycone::_build_from_envelope_and_skin_: "
                             << "z2 stop" << endl;
             z = z2;
             stop = true;
@@ -368,18 +368,11 @@ namespace geomtools {
     tf_inner.lock_table ();
     if (devel)
       {
-        cerr << "DEVEL: " << "polycone::_build_from_envelope_and_skin_: "
+        cerr << "DEVEL: " << "geomtools::polycone::_build_from_envelope_and_skin_: "
              << "Locked !" << endl;
       }
-    /*
-      ofstream fo ("fo.data");
-      ofstream fi ("fi.data");
-      tf_outer.print_points (fo);
-      tf_inner.print_points (fi);
-    */
     _points_.clear ();
 
-    //ofstream fp ("fp.data");
     mygsl::tabulated_function::points_map_type::const_iterator i = tf_outer.points ().begin ();
     mygsl::tabulated_function::points_map_type::const_iterator j = tf_inner.points ().begin ();
     for (int k = 0; k < tf_outer.points ().size (); k++)
@@ -392,10 +385,13 @@ namespace geomtools {
           {
             rmin = 0.0;
           }
+        if (rmin < 1e-300)
+          {
+            rmin = 0.0;
+          }
         this->add (z, rmin, rmax, false);
         i++;
         j++;
-        //fp << z << ' ' << rmin << ' ' << rmax << endl;
       }
 
     _compute_all_ ();
@@ -436,7 +432,7 @@ namespace geomtools {
             if (zs.size () < 2)
               {
                 ostringstream message;
-                message << "polycone::initialize: "
+                message << "geomtools::polycone::initialize: "
                         << "'list_of_z' has not enough points !";
                 throw logic_error (message.str ());
               }
@@ -444,7 +440,7 @@ namespace geomtools {
         else
           {
             ostringstream message;
-            message << "polycone::initialize: "
+            message << "geomtools::polycone::initialize: "
                     << "Missing 'list_of_z' property !";
             throw logic_error (message.str ());
           }
@@ -455,7 +451,7 @@ namespace geomtools {
             if (rmaxs.size () != zs.size ())
               {
                 ostringstream message;
-                message << "polycone::initialize: "
+                message << "geomtools::polycone::initialize: "
                         << "'list_of_z' and 'list_of_rmax' have not the same size !";
                 throw logic_error (message.str ());
 
@@ -464,7 +460,7 @@ namespace geomtools {
         else
           {
             ostringstream message;
-            message << "polycone::initialize: "
+            message << "geomtools::polycone::initialize: "
                     << "Missing 'list_of_rmax' property !";
             throw logic_error (message.str ());
           }
@@ -475,7 +471,7 @@ namespace geomtools {
             if (rmins.size () != zs.size ())
               {
                 ostringstream message;
-                message << "polycone::initialize: "
+                message << "geomtools::polycone::initialize: "
                         << "'list_of_rmin' and 'list_of_rmax' have not the same size !";
                 throw logic_error (message.str ());
 
@@ -524,7 +520,7 @@ namespace geomtools {
         else
           {
             ostringstream message;
-            message << "polycone::initialize: "
+            message << "geomtools::polycone::initialize: "
                     << "Missing 'datafile' property !";
             throw runtime_error (message.str ());
           }
@@ -551,7 +547,7 @@ namespace geomtools {
     else
       {
         ostringstream message;
-        message << "polycone::initialize: "
+        message << "geomtools::polycone::initialize: "
                 << "Invalid build mode '" << build_mode_label << "' !";
         throw logic_error (message.str ());
       }
@@ -578,7 +574,7 @@ namespace geomtools {
     if (! ifs)
       {
         std::ostringstream message;
-        message << "polycone::initialize: "
+        message << "geomtools::polycone::initialize: "
                 << "Cannot open data file '"
                 << filename << "' !";
         throw std::runtime_error (message.str ());
@@ -615,7 +611,7 @@ namespace geomtools {
                       if (! iss)
                         {
                           ostringstream message;
-                          message << "polycone::initialize: "
+                          message << "geomtools::polycone::initialize: "
                                   << "Invalid format for the length unit directive in data file '"
                                   << filename << "' at line " << count << " !";
                           throw std::logic_error (message.str ());
@@ -632,7 +628,7 @@ namespace geomtools {
                       if (! iss)
                         {
                           ostringstream message;
-                          message << "polycone::initialize: "
+                          message << "geomtools::polycone::initialize: "
                                   << "Invalid format for the Z-factor directive in data file '"
                                   << filename << "' at line " << count << " !";
                           throw runtime_error (message.str ());
@@ -644,7 +640,7 @@ namespace geomtools {
                       if (! iss)
                         {
                           ostringstream message;
-                          message << "polycone::initialize: "
+                          message << "geomtools::polycone::initialize: "
                                   << "Invalid format for the R-factor directive in data file '"
                                   << filename << "' at line " << count << " !";
                           throw runtime_error (message.str ());
@@ -656,7 +652,7 @@ namespace geomtools {
                       if (! iss)
                         {
                           ostringstream message;
-                          message << "polycone::initialize: "
+                          message << "geomtools::polycone::initialize: "
                                   << "Invalid format for the skin_thickness directive in data file '"
                                   << filename << "' at line " << count << " !";
                           throw logic_error (message.str ());
@@ -668,7 +664,7 @@ namespace geomtools {
                       if (! iss)
                         {
                           ostringstream message;
-                          message << "polycone::initialize: "
+                          message << "geomtools::polycone::initialize: "
                                   << "Invalid format for the skin_thickness directive in data file '"
                                   << filename << "' at line " << count << " !";
                           throw logic_error (message.str ());
@@ -689,7 +685,7 @@ namespace geomtools {
           if (! iss)
             {
               ostringstream message;
-              message << "polycone::initialize: "
+              message << "geomtools::polycone::initialize: "
                       << "Format error for 'z' in data file '"
                       << filename << "' at line " << count << " !";
               throw logic_error (message.str ());
@@ -698,7 +694,7 @@ namespace geomtools {
           if (! iss)
             {
               ostringstream message;
-              message << "polycone::initialize: "
+              message << "geomtools::polycone::initialize: "
                       << "Format error for 'r1' in data file '"
                       << filename << "' at line " << count << " !";
               throw logic_error (message.str ());
@@ -728,7 +724,7 @@ namespace geomtools {
                   if (! iss2)
                     {
                       ostringstream message;
-                      message << "polycone::initialize: "
+                      message << "geomtools::polycone::initialize: "
                               << "Format error for 'r2' in data file '"
                               << filename << "' at line " << count << " !";
                       throw runtime_error (message.str ());
@@ -740,7 +736,7 @@ namespace geomtools {
                   else if (datatools::is_valid (skin_thickness))
                     {
                       ostringstream message;
-                      message << "polycone::initialize: "
+                      message << "geomtools::polycone::initialize: "
                               << "Invalid format for 'z r2' pair "
                               << "in 'skin_thickness' mode from data file '"
                               << filename << "' at line " << count << " !";
@@ -751,7 +747,7 @@ namespace geomtools {
           if (datatools::is_valid (r2) && (r2 < 0.0))
             {
               ostringstream message;
-              message << "polycone::initialize: "
+              message << "geomtools::polycone::initialize: "
                       << "Invalid value '" << r2 << "' for '2' in data file '"
                       << filename << "' at line " << count << " !";
               throw runtime_error (message.str ());
@@ -795,14 +791,13 @@ namespace geomtools {
   {
     if (rmax_ < 0.0)
       {
-        throw runtime_error ("polycone::add: Invalid negative 'rmax' !");
+        throw std::domain_error ("geomtools::polycone::add: Invalid negative 'rmax' !");
       }
     r_min_max RMM;
     RMM.rmin = 0.0;
     RMM.rmax = rmax_;
     _points_[z_] = RMM;
-    if (_points_.size () > 1)
-      {
+    if (_points_.size () > 1) {
         if (compute_) _compute_all_ ();
       }
     return;
@@ -815,24 +810,21 @@ namespace geomtools {
 
   void polycone::add (double z_, double rmin_,  double rmax_, bool compute_)
   {
-    if (rmin_ < 0.0)
-      {
-        throw runtime_error ("polycone::add: Invalid negative 'rmin' !");
+    if (rmin_ < 0.0) {
+        throw std::domain_error ("geomtools::polycone::add: Invalid negative 'rmin' !");
       }
-    if (rmax_ < rmin_)
-      {
+    if (rmax_ < rmin_) {
         ostringstream message;
-        message <<  "polycone::add: "
+        message << "geomtools::polycone::add: "
                 << "Invalid value for 'rmax==" << rmax_ << "' ! ('rmin==" << rmin_ << "')";
-        throw runtime_error (message.str ());
+        throw domain_error (message.str ());
       }
     r_min_max RMM;
     if (rmin_ > 0.0) _extruded_ = true;
     RMM.rmin = rmin_;
     RMM.rmax = rmax_;
     _points_[z_] = RMM;
-    if (_points_.size () > 1)
-      {
+    if (_points_.size () > 1) {
         if (compute_) _compute_all_ ();
       }
     return;
@@ -862,7 +854,7 @@ namespace geomtools {
   {
     if (! is_valid ())
       {
-        throw runtime_error ("polycone::initialize: Polycone is not valid !");
+        throw runtime_error ("geomtools::polycone::initialize: Polycone is not valid !");
       }
     _compute_all_ ();
     return;
@@ -1098,7 +1090,7 @@ namespace geomtools {
     if ( flag_ == "surface.outer_side" ) return get_surface (FACE_OUTER_SIDE);
     if ( flag_ == "surface" ) return get_surface (FACE_ALL);
 
-    throw runtime_error ("polycone::get_parameter: Unknown parameter flag !");
+    throw runtime_error ("geomtools::polycone::get_parameter: Unknown parameter flag !");
   }
 
   bool polycone::is_inside (const vector_3d & point_,
@@ -1143,7 +1135,7 @@ namespace geomtools {
 
   vector_3d polycone::get_normal_on_surface (const vector_3d & position_) const
   {
-    throw runtime_error ("polycone::get_normal_on_surface: Not implemented yet !");
+    throw runtime_error ("geomtools::polycone::get_normal_on_surface: Not implemented yet !");
     vector_3d normal;
     invalidate (normal);
     double x = position_.x ();
@@ -1188,7 +1180,7 @@ namespace geomtools {
                                 int    mask_ ,
                                 double skin_) const
   {
-    throw runtime_error ("polycone::is_on_surface: Not implemented yet !");
+    throw runtime_error ("geomtools::polycone::is_on_surface: Not implemented yet !");
     double skin = get_skin ();
     if (skin_ > USING_PROPER_SKIN) skin = skin_;
     double z = point_.z ();
@@ -1216,7 +1208,7 @@ namespace geomtools {
 
     if (mask & FACE_INNER_SIDE)
       {
-        throw runtime_error ("polycone::is_on_surface: Not implemented yet !");
+        throw runtime_error ("geomtools::polycone::is_on_surface: Not implemented yet !");
       }
 
     if (mask & FACE_OUTER_SIDE)
@@ -1257,7 +1249,7 @@ namespace geomtools {
                                  intercept_t & intercept_,
                                  double skin_) const
   {
-    throw runtime_error ("polycone::find_intercept: Not implemented yet !");
+    throw runtime_error ("geomtools::polycone::find_intercept: Not implemented yet !");
     return false;
   }
 
@@ -1267,8 +1259,7 @@ namespace geomtools {
     out_ << ' ' << p_._points_.size ();
     for (polycone::rz_col_type::const_iterator i = p_._points_.begin ();
          i != p_._points_.end ();
-         i++)
-      {
+         i++) {
         double z = i->first;
         double rmin = i->second.rmin;
         double rmax = i->second.rmax;
