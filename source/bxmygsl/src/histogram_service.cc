@@ -118,6 +118,10 @@ namespace mygsl {
       config_.export_and_rename_starting_with (pool_config, "pool.", "");
     }
     // Initialize the pool :
+    /*
+    pool_config.tree_dump(std::cerr, "pool_config: ",
+                          "DEVEL: histogram_service: ");
+    */
     _pool_.initialize (pool_config);
 
     _initialized_ = true;
@@ -640,6 +644,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_service,ocd_)
                                 "  | pool.histo.setups : string[2] = \\                           \n"
                                 "  |   \"${MYGSL_DATA_DIR}/testing/config/test_histos_1.conf\" \\ \n"
                                 "  |   \"${MYGSL_DATA_DIR}/testing/config/test_histos_2.conf\"    \n"
+                                "  | pool.histo.export_prefixes : string[1] = \\                  \n"
+                                "  |   \"value.\" \\                                              \n"
                                 "  |                                                              \n"
                                 "See dedicated OCD support for class 'mygsl::histogram_pool' for  \n"
                                 "the description of histogram builing rules.                      \n"
