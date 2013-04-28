@@ -1,8 +1,8 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* i_serializable.h */
-/* 
+/*
  * Copyright (C) 2011-2012 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -15,10 +15,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
- */ 
+ */
 #ifndef DATATOOLS_I_SERIALIZABLE_H_
 #define DATATOOLS_I_SERIALIZABLE_H_
 
@@ -45,7 +45,7 @@
 #include <datatools/reflection_macros.h>
 #endif
 
-/// Main namespace of the datatools library 
+/// Main namespace of the datatools library
 namespace datatools {
 
   //! \brief Base abstract class of all serializable (and possibly introspectable) classes
@@ -63,14 +63,14 @@ namespace datatools {
 
     // Factory stuff :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_serializable);
-    
+
 #if DATATOOLS_WITH_REFLECTION == 1
     DR_CLASS_RTTI();
 #endif
-    
+
   };
 
-} // end of namespace datatools 
+} // end of namespace datatools
 
 #if DATATOOLS_WITH_REFLECTION == 1
 //#warning Activate reflection layer for the 'datatools::i_serializable' class.
@@ -91,7 +91,7 @@ DR_CLASS_INIT(::datatools::i_serializable);
  *  'datatools::utils::things' class.
  *
  * Example:
- * \code          
+ * \code
  * class Foo : DATATOOLS_SERIALIZABLE_CLASS , ...
  * {
  *   ...
@@ -103,15 +103,15 @@ DR_CLASS_INIT(::datatools::i_serializable);
   /**/
 
 
-namespace datatools {                                                   
+namespace datatools {
   template <class T>
   const std::string & serial_tag ();
 }
 
-/// Template support for serializable type (backward compatibility support) 
+/// Template support for serializable type (backward compatibility support)
 BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
 
-namespace datatools {                                                   
+namespace datatools {
   template <class T>
   const std::string & backward_serial_tag (int i = 0);
 }
@@ -124,10 +124,10 @@ namespace datatools {
   /**/
 
 
-/** Intrusive macro invoked from the class declaration to 
+/** Intrusive macro invoked from the class declaration to
  *  declare serial tag support :
  * Example:
- * \code        
+ * \code
  * class Foo : DATATOOLS_SERIALIZABLE_CLASS()
  * {
  *   DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION ()
@@ -143,7 +143,7 @@ namespace datatools {
 
 /** Macro invoked to implement serial tag support :
  * Example:
- * \code        
+ * \code
  * class Foo : DATATOOLS_SERIALIZABLE_CLASS()
  * {
  *   DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION ()
@@ -173,10 +173,10 @@ namespace datatools {
   /**/
 
 
-/** Intrusive macro invoked from the class declaration to 
+/** Intrusive macro invoked from the class declaration to
  *  declare backward compatibility serial tag support :
  * Example:
- * \code        
+ * \code
  * class Foo : DATATOOLS_SERIALIZABLE_CLASS()
  * {
  *   DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION ()
@@ -212,12 +212,12 @@ namespace datatools {
   /**/
 
 
-/** Macro invoked to specify the inheritance to the 
+/** Macro invoked to specify the inheritance to the
  *  ::datatools::i_serializable within the
  * serialization method :
- *           
+ *
  * Example:
- * \code          
+ * \code
  * class Foo : DATATOOLS_SERIALIZABLE_CLASS()
  * {
  *   ...
@@ -236,12 +236,12 @@ namespace datatools {
   /**/
 
 
-/** Macro invoked to specify the inheritance to the 
+/** Macro invoked to specify the inheritance to the
  *  ::datatools::i_serializable within the
  * serialization method (this is the original version, now obsolete) :
- *           
+ *
  * Example:
- * \code          
+ * \code
  * class Foo : DATATOOLS_SERIALIZABLE_CLASS
  * {
  *   ...
@@ -253,7 +253,7 @@ namespace datatools {
  *   }
  *   else {
  *     ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
- *   } 
+ *   }
  *    ...
  * }
  * \endcode
@@ -265,11 +265,11 @@ namespace datatools {
   /**/
 
 
-/** Intrusive macro invoked from the class declaration to activate 
+/** Intrusive macro invoked from the class declaration to activate
  *  basic serialization support for the class :
- * 
+ *
  * Example:
- * \code          
+ * \code
  *   class Foo : public ::datatools::serialization::i_serializable
  *   {
  *      DATATOOLS_SERIALIZATION_DECLARATION();
@@ -286,16 +286,16 @@ namespace datatools {
  * Boost serialization method :
  * @param ClassName The class name (without
  * @param ArchiveId The archive identifier
- * @param VersionId The version version number 
+ * @param VersionId The version version number
  * Example:
- * \code 
- * namespace Bar {         
+ * \code
+ * namespace Bar {
  *   class Foo : DATATOOLS_SERIALIZABLE_CLASS()
  *   {
  *     DATATOOLS_SERIALIZATION_DECLARATION_BASIC()
  *   };
  * }
- * namespace Bar {       
+ * namespace Bar {
  *   DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER (Foo, ar, version)
  *   {
  *     ar & ...;
@@ -309,11 +309,11 @@ namespace datatools {
   /**/
 
 
-/** Intrusive macro invoked from the class declaration to 
+/** Intrusive macro invoked from the class declaration to
  *  declare the automatic registration the class in a dedicated factory :
- *  @param ClassName The class name (possibly with its full namespace path prefix by ::)         
+ *  @param ClassName The class name (possibly with its full namespace path prefix by ::)
  * Example:
- * \code         
+ * \code
  * class Foo : DATATOOLS_SERIALIZABLE_CLASS
  * {
  *   DATATOOLS_SERIALIZATION_FACTORY_INTERFACE (::Foo)
@@ -325,12 +325,12 @@ namespace datatools {
   /**/
 
 
-/** Macro invoked to implement the automatic registration the class 
+/** Macro invoked to implement the automatic registration the class
  *  in a dedicated factory :
- *  @param ClassName      The class name (possibly with its full namespace path prefix by ::)  
+ *  @param ClassName      The class name (possibly with its full namespace path prefix by ::)
  *  @param ClassSerialTag The unique class ID used by the factory (including full namespace prefix)
  * Example:
- * \code        
+ * \code
  * class Foo : DATATOOLS_SERIALIZABLE_CLASS
  * {
  *   DATATOOLS_SERIALIZATION_FACTORY_INTERFACE (::Foo)
@@ -348,7 +348,7 @@ namespace datatools {
  *  @param ClassSerialTag The unique class serialization ID (tag)
  *
  * Example:
- * \code          
+ * \code
  *   class Foo : DATATOOLS_SERIALIZABLE_CLASS
  *   {
  *      DATATOOLS_SERIALIZATION_DECLARATION();
@@ -363,19 +363,19 @@ namespace datatools {
   /**/
 
 
-/** Intrusive macro invoked from the class declaration to activate 
+/** Intrusive macro invoked from the class declaration to activate
  *  advanced serialization support for the class :
  *  @param ClassName The class name (without namespace)
- *           
+ *
  * Example:
- * \code          
+ * \code
  * class Foo : DATATOOLS_SERIALIZABLE_CLASS
  * {
  *    DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(Foo);
  * };
  * namespace James {
  *   class Bond : DATATOOLS_SERIALIZABLE_CLASS
- *   { 
+ *   {
  *     DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(Bond);
  *   };
  * }
@@ -392,7 +392,7 @@ namespace datatools {
  *  @param ClassSerialTag The unique class serialization ID (tag)
  *
  * Example:
- * \code          
+ * \code
  * class Foo : DATATOOLS_SERIALIZABLE_CLASS
  * {
  *    DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(::Foo);
@@ -400,7 +400,7 @@ namespace datatools {
  * DATATOOLS_SERIALIZATION_IMPLEMENTATION_ADVANCED (::Foo, "Foo")
  * namespace James {
  *   class Bond : DATATOOLS_SERIALIZABLE_CLASS
- *   { 
+ *   {
  *     DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(::James::Bond);
  *   };
  * DATATOOLS_SERIALIZATION_IMPLEMENTATION_ADVANCED (::James::Bond, "James::Bond")
@@ -418,7 +418,7 @@ namespace datatools {
 namespace datatools {
 
   template <typename T>
-  bool check_serial_tag(const std::string stag_, 
+  bool check_serial_tag(const std::string stag_,
                         const std::string alt_tag_ = "",
                         typename boost::disable_if< has_bsts<T> >::type* dummy = 0) {
     if (stag_ == T::SERIAL_TAG) return true;
@@ -428,9 +428,9 @@ namespace datatools {
       }
     return false;
   }
-  
+
   template <typename T>
-  bool check_serial_tag(const std::string stag_, 
+  bool check_serial_tag(const std::string stag_,
                         const std::string alt_tag_ = "",
                         typename boost::enable_if< has_bsts<T> >::type* dummy = 0) {
     if (stag_ == T::SERIAL_TAG) return true;

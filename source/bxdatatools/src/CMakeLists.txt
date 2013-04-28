@@ -79,6 +79,11 @@ include/datatools/the_serializable.ipp
 include/datatools/object_configuration_description.h
 include/datatools/ocd_macros.h
 include/datatools/types.h
+include/datatools/event_id-reflect.h
+include/datatools/i_serializable-reflect.h
+include/datatools/multi_properties-reflect.h
+include/datatools/properties-reflect.h
+include/datatools/things-reflect.h
   )
 list_prepend(datatools_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 

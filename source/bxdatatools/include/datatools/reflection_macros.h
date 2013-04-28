@@ -1,12 +1,12 @@
 /* -*- mode: c++; -*- */
 /* reflection_macros.h */
-/* 
+/*
  * Description :
  *
  *  Some useful classes and macros related to datatools/Camp reflection.
  *
  * Copyright (C) 2012 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -19,10 +19,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
- */ 
+ */
 #ifndef DATATOOLS_REFLECTION_MACROS_H_
 #define DATATOOLS_REFLECTION_MACROS_H_
 
@@ -306,6 +306,14 @@
 #define DR_SET           set
 #define DR_CALL          call
 #define DR_GET           get
+#define DR_NOTYPE        camp::noType
+#define DR_BOOLEAN       camp::boolType
+#define DR_INTEGER       camp::intType
+#define DR_REAL          camp::realType
+#define DR_STRING        camp::stringType
+#define DR_ENUM          camp::enumType
+#define DR_ARRAY         camp::arrayType
+#define DR_USERTYPE      camp::userType
 
 #define DR_REF(TypeId)                          \
   boost::ref( TypeId )                          \
@@ -334,7 +342,7 @@
           guid_initializer< T > const & init_guid< T >::g =             \
             ::boost::serialization::singleton< guid_initializer< T > >  \
             ::get_mutable_instance().export_guid();                     \
-        }}}                                                            \
+      }}}                                                               \
   /**/
 
 
@@ -369,11 +377,9 @@
           typedef boost::mpl::integral_c_tag tag;                       \
           BOOST_STATIC_CONSTANT(int, value = version::type::value);     \
           BOOST_MPL_ASSERT((                                            \
-                            boost::mpl::less<                           \
-                                                                        boost::mpl::int_<N>, \
-                                                                        boost::mpl::int_<256> > \
-                           ));                                          \
-        };                                                              \
+                            boost::mpl::less<boost::mpl::int_<N>,       \
+                                             boost::mpl::int_<256> >)); \
+      };                                                                \
       }}}                                                               \
   /**/
 

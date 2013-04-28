@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 //! \file datatools/i_serializable-reflect.h
 #ifndef DATATOOLS_I_SERIALIZABLE_REFLECT_H_
 #define DATATOOLS_I_SERIALIZABLE_REFLECT_H_
@@ -16,16 +16,16 @@ DR_CLASS_EXPORT (::datatools::i_serializable, "datatools::i_serializable")
 namespace datatools {
   namespace detail {
     namespace reflection {
-      
+
       DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::i_serializable, tag_)
       {
         DR_CLASS_DECLARE (::datatools::i_serializable)
           ;
         return;
       }
-      
-    } // end of namespace reflection 
-  } // end of namespace detail 
-} // end of namespace datatools 
+
+    } // end of namespace reflection
+  } // end of namespace detail
+} // end of namespace datatools
 
 #endif // DATATOOLS_I_SERIALIZABLE_REFLECT_H_

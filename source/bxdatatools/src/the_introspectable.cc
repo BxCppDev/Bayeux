@@ -1,12 +1,9 @@
-// -*- mode: c++; -*-  
-/* the_introspectable.cc  
- */ 
+// -*- mode: c++; -*-
+/* the_introspectable.cc
+ */
 // Third Party
 // - Boost
 #include <boost/scoped_ptr.hpp>
-
-//#include <iostream>
-#include <datatools/the_introspectable.h>
 
 // Load the link guard definition :
 #include <datatools/detail/reflection_link_guard.h>
@@ -32,9 +29,11 @@ namespace reflection {
         }
       return *g_global_guard.get ();
     }
-    
+
 } // end namespace reflection
 } // end namespace detail
 } // end namespace datatools
+
+#include <datatools/the_introspectable.h>
 
 // end of the_introspectable.cc
