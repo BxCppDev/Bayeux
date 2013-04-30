@@ -222,8 +222,8 @@ namespace mygsl {
     double      xunit = 1.0; // The unit intrinsic value of the X axis
 
     /*
-    histo_pool_->_auxiliaries_.tree_dump(std::cerr, "Pool's auxiliaries: ",
-                                         "DEVEL: mygsl::histogram_pool::init_histo_1d: ");
+      histo_pool_->_auxiliaries_.tree_dump(std::cerr, "Pool's auxiliaries: ",
+      "DEVEL: mygsl::histogram_pool::init_histo_1d: ");
     */
 
     // Store all display properties :
@@ -235,329 +235,264 @@ namespace mygsl {
       for (int i = 0; i < export_prefixes.size(); i++) {
         const std::string & aux_prefix = export_prefixes[i];
         /*
-        std::cerr << "DEVEL: " << "mygsl::histogram_pool::init_histo_1d: "
-                  << "Export '" << aux_prefix << "'..."
-                  << std::endl;
+          std::cerr << "DEVEL: " << "mygsl::histogram_pool::init_histo_1d: "
+          << "Export '" << aux_prefix << "'..."
+          << std::endl;
         */
         h1_setup_.export_starting_with (h1_.grab_auxiliaries (), aux_prefix);
       }
     }
     /*
-    h1_.grab_auxiliaries ().tree_dump(std::cerr,
-                                      "****** H1's auxiliaries: ",
-                                      "DEVEL: mygsl::histogram_pool::init_histo_1d: ");
+      h1_.grab_auxiliaries ().tree_dump(std::cerr,
+      "****** H1's auxiliaries: ",
+      "DEVEL: mygsl::histogram_pool::init_histo_1d: ");
     */
 
     // Extract the unit used for X axis bins :
-    if (h1_setup_.has_key ("unit"))
-      {
-        xunit_str = h1_setup_.fetch_string ("unit");
-        if (! datatools::units::find_unit(xunit_str, xunit, xunit_type))
-          {
-            std::ostringstream message;
-            message << "mygsl::histogram_pool::init_histo_1d: "
-                    << "Invalid X binning unit ('" << xunit_str << "') !";
-            throw std::logic_error (message.str ());
-          }
+    if (h1_setup_.has_key ("unit")) {
+      xunit_str = h1_setup_.fetch_string ("unit");
+      if (! datatools::units::find_unit(xunit_str, xunit, xunit_type)) {
+        std::ostringstream message;
+        message << "mygsl::histogram_pool::init_histo_1d: "
+                << "Invalid X binning unit ('" << xunit_str << "') !";
+        throw std::logic_error (message.str ());
       }
+    }
 
-    if (mode == "regular" || mode == "table")
-      {
-        // Extract the physical dimension for the X axis :
-        if (h1_setup_.has_key ("unit.type"))
-          {
-            std::string xunit_type2 = h1_setup_.fetch_string ("unit.type");
-            if (! datatools::units::is_unit_label_valid (xunit_type2))
-              {
-                std::ostringstream message;
-                message << "mygsl::histogram_pool::init_histo_1d: "
-                        << "Invalid binning unit type ('" << xunit_type << "') !";
-                throw std::logic_error (message.str ());
-              }
-            if (! xunit_type.empty () && xunit_type2 != xunit_type)
-              {
-                std::ostringstream message;
-                message << "mygsl::histogram_pool::init_histo_1d: "
-                        << "Incompatible unit type ('" << xunit_type2
-                        << "') with bins unit ('" << xunit_type << "') !";
-                throw std::logic_error (message.str ());
-              }
-          }
-
-        // Extract the optional display unit for X axis and check it :
-        if (h1_setup_.has_key ("display.xaxis.unit"))
-          {
-            std::string display_xunit_str = h1_setup_.fetch_string ("display.xaxis.unit");
-            std::string display_xunit_type;
-            double display_xunit = 1.0;
-            if (datatools::units::find_unit(display_xunit_str, display_xunit, display_xunit_type))
-              {
-                if (xunit_type.empty ())
-                  {
-                    xunit_type = display_xunit_type;
-                  }
-                else
-                  {
-                    if (display_xunit_type != xunit_type)
-                      {
-                        std::ostringstream message;
-                        message << "mygsl::histogram_pool::init_histo_1d: "
-                                << "X axis display unit type ('" << display_xunit_type << "') does not match the X axis unit !";
-                        throw std::logic_error (message.str ());
-                      }
-                  }
-              }
-          }
-        else
-          {
-            // Default display unit for X axis :
-            if (! xunit_str.empty ())
-              {
-                h1_.grab_auxiliaries ().update ("display.xaxis.unit", xunit_str);
-              }
-          }
-      }
-
-    if (! xunit_type.empty ())
-      {
-        h1_.grab_auxiliaries ().store ("unit.type", xunit_type);
-      }
-
-    if (mode == "regular")
-      {
-        double xmin, xmax;
-        int nxbins = -1;
-        int xbinmode = BIN_MODE_INVALID;
-        datatools::invalidate (xmin);
-        datatools::invalidate (xmax);
-
-        if (h1_setup_.has_flag ("linear"))
-          {
-            xbinmode = BIN_MODE_LINEAR;
-          }
-
-        if (h1_setup_.has_flag ("logarithmic"))
-          {
-            xbinmode = BIN_MODE_LOG;
-          }
-
-        if (xbinmode == BIN_MODE_INVALID)
-          {
-            xbinmode = BIN_MODE_LINEAR;
-          }
-
-        if (h1_setup_.has_key ("min"))
-          {
-            xmin = h1_setup_.fetch_real ("min");
-          }
-
-        if (h1_setup_.has_key ("max"))
-          {
-            xmax = h1_setup_.fetch_real ("max");
-          }
-
-        if (! datatools::is_valid (xmin))
-          {
-            if (xmax > 0.0)
-              {
-                xmin = 0.0;
-              }
-            else
-              {
-                std::ostringstream message;
-                message << "mygsl::histogram_pool::init_histo_1d: "
-                        << "Invalid 1D-histogram X range [" << xmin << ":" << xmax << "[ !";
-                throw std::logic_error (message.str ());
-              }
-          }
-
-        if (! datatools::is_valid (xmax))
-          {
-            if (xmin < 0.0)
-              {
-                xmax = 0.0;
-              }
-            else
-              {
-                std::ostringstream message;
-                message << "mygsl::histogram_pool::init_histo_1d: "
-                        << "Invalid 1D-histogram X range [" << xmin << ":" << xmax << "[ !";
-                throw std::logic_error (message.str ());
-              }
-          }
-        if (! h1_setup_.has_explicit_unit ("min")) {
-          xmin *= xunit;
+    if (mode == "regular" || mode == "table") {
+      // Extract the physical dimension for the X axis :
+      if (h1_setup_.has_key ("unit.type")) {
+        std::string xunit_type2 = h1_setup_.fetch_string ("unit.type");
+        if (! datatools::units::is_unit_label_valid (xunit_type2)) {
+          std::ostringstream message;
+          message << "mygsl::histogram_pool::init_histo_1d: "
+                  << "Invalid X binning unit type ('" << xunit_type << "') !";
+          throw std::logic_error (message.str ());
         }
-        if (! h1_setup_.has_explicit_unit ("max")) {
-          xmax *= xunit;
+        if (! xunit_type.empty () && xunit_type2 != xunit_type) {
+          std::ostringstream message;
+          message << "mygsl::histogram_pool::init_histo_1d: "
+                  << "Incompatible unit type ('" << xunit_type2
+                  << "') with bins unit ('" << xunit_type << "') !";
+          throw std::logic_error (message.str ());
         }
-
-        if (h1_setup_.has_key ("number_of_bins"))
-          {
-            nxbins = h1_setup_.fetch_integer ("number_of_bins");
-          }
-        else
-          {
-            std::ostringstream message;
-            message << "mygsl::histogram_pool::init_histo_1d: "
-                    << "Missing number of bins in 1D-histogram !";
-            throw std::logic_error (message.str ());
-          }
-        if (nxbins < 1)
-          {
-            std::ostringstream message;
-            message << "mygsl::histogram_pool::init_histo_1d: "
-                    << "Invalid number of bins ('" << nxbins << "') in 1D-histogram !";
-            throw std::logic_error (message.str ());
-          }
-        h1_.initialize (nxbins, xmin, xmax, xbinmode);
       }
-    else if (mode == "table")
-      {
-        std::vector<double> xranges;
-        if (h1_setup_.has_key ("bounds"))
-          {
-            h1_setup_.fetch ("bounds", xranges);
-          }
-        else if (h1_setup_.has_key ("bounds.file"))
-          {
-            std::string bounds_file;
-            bounds_file = h1_setup_.fetch_string ("bounds.file");
 
-            std::string bounds_file2 = bounds_file;
-            datatools::fetch_path_with_env (bounds_file2);
-            std::ifstream bounds_ifs (bounds_file2.c_str ());
-            if (! bounds_ifs)
-              {
-                std::ostringstream message;
-                message << "mygsl::histogram_pool::init_histo_1d: "
-                        << "Cannot open file '" << bounds_file2 << "' !";
-                throw std::logic_error (message.str ());
-              }
-            while (bounds_ifs)
-              {
-                double bound;
-                bounds_ifs >> bound;
-                if (! bounds_ifs)
-                  {
-                    std::ostringstream message;
-                    message << "mygsl::histogram_pool::init_histo_1d: "
-                            << "Invalid format in file '" << bounds_file << "' !";
-                    throw std::logic_error (message.str ());
-                  }
-                xranges.push_back (bound * xunit);
-                bounds_ifs >> std::ws;
-                if (bounds_ifs.eof ())
-                  {
-                    break;
-                  }
-              }
+      // Extract the optional display unit for X axis and check it :
+      if (h1_setup_.has_key ("display.xaxis.unit")) {
+        std::string display_xunit_str = h1_setup_.fetch_string ("display.xaxis.unit");
+        std::string display_xunit_type;
+        double display_xunit = 1.0;
+        if (datatools::units::find_unit(display_xunit_str, display_xunit, display_xunit_type)) {
+          if (xunit_type.empty ()) {
+            xunit_type = display_xunit_type;
+          } else {
+            if (display_xunit_type != xunit_type) {
+              std::ostringstream message;
+              message << "mygsl::histogram_pool::init_histo_1d: "
+                      << "X axis display unit type ('" << display_xunit_type << "') does not match the X axis unit !";
+              throw std::logic_error (message.str ());
+            }
           }
-        else
-          {
-            std::ostringstream message;
-            message << "mygsl::histogram_pool::init_histo_1d: "
-                    << "No rule was given to setup the bins (bounds, bounds.file)!";
-            throw std::logic_error (message.str ());
-          }
-        if (xranges.size () < 2)
-          {
-            std::ostringstream message;
-            message << "mygsl::histogram_pool::init_histo_1d: "
-                    << "Invalid number of bins ('" << xranges.size () << "') in 1D-histogram !";
-            throw std::logic_error (message.str ());
-          }
-        h1_.initialize (xranges);
+        }
+      } else {
+        // Default display unit for X axis :
+        if (! xunit_str.empty ()) {
+          h1_.grab_auxiliaries ().update ("display.xaxis.unit", xunit_str);
+        }
       }
-    else if (mode == "mimic")
-      {
-        // extract information about another histogram :
-        // 1D clone
-        // 2D use X or Y
-        if (histo_pool_ == 0)
-          {
-            std::ostringstream message;
-            message << "mygsl::histogram_pool::init_histo_1d: "
-                    << "Missing pool of histograms !";
-            throw std::logic_error (message.str ());
-          }
+    }
 
-        if (h1_setup_.has_key ("mimic.histogram_1d"))
-          {
-            // Copy the structure of another 1D histogram :
-            std::string h1d_name = h1_setup_.fetch_string ("mimic.histogram_1d");
+    if (! xunit_type.empty ()) {
+      h1_.grab_auxiliaries ().store ("unit.type", xunit_type);
+    }
 
-            if (! histo_pool_->has (h1d_name, histogram_pool::HISTOGRAM_DIM_1D))
-              {
-                std::ostringstream message;
-                message << "mygsl::histogram_pool::init_histo_1d: "
-                        << "No 1D-histogram named '" << h1d_name << "' does exist !";
-                throw std::logic_error (message.str ());
-              }
-            const histogram & mimic_h1 = histo_pool_->get_1d (h1d_name);
-            std::vector<std::string> import_prop_prefixes;
-            if (h1_setup_.has_flag ("mimic.histogram_1d.import_aux"))
-              {
-                h1_setup_.fetch ("mimic.histogram_1d.import_aux", import_prop_prefixes);
-              }
-            h1_.initialize (mimic_h1, import_prop_prefixes);
-          }
-        else if (h1_setup_.has_key ("mimic.histogram_2d"))
-          {
-            // Copy the structure of one of the axis of a 2D histogram :
-            std::string h2d_name = h1_setup_.fetch_string ("mimic.histogram_2d");
+    if (mode == "regular") {
+      double xmin, xmax;
+      int nxbins = -1;
+      int xbinmode = BIN_MODE_INVALID;
+      datatools::invalidate (xmin);
+      datatools::invalidate (xmax);
 
-            if (! histo_pool_->has (h2d_name, histogram_pool::HISTOGRAM_DIM_2D))
-              {
-                std::ostringstream message;
-                message << "mygsl::histogram_pool::init_histo_1d: "
-                        << "No 2D-histogram named '" << h2d_name << "' does exist !";
-                throw std::logic_error (message.str ());
-              }
-            const histogram_2d & mimic_h2 = histo_pool_->get_2d (h2d_name);
-            int bin_axis = BIN_AXIS_INVALID;
-            // Extract the axis of the 2D histogram to copy :
-            if (h1_setup_.has_key ("mimic.histogram_2d.axis"))
-              {
-                std::string axis_label = h1_setup_.fetch_string ("mimic.histogram_2d.axis");
-                if (axis_label == "x")
-                  {
-                    bin_axis = BIN_AXIS_X;
-                  }
-                else if (axis_label == "y")
-                  {
-                    bin_axis = BIN_AXIS_Y;
-                  }
-                else
-                  {
-                    std::ostringstream message;
-                    message << "mygsl::histogram_pool::init_histo_1d: "
-                            << "Invalid bin axis label '" << axis_label << "' !";
-                    throw std::logic_error (message.str ());
-                  }
-              }
-            else
-              {
-                std::ostringstream message;
-                message << "mygsl::histogram_pool::init_histo_1d: "
-                        << "Missing bin axis property '" << "mimic.histogram_2d.axis" << "' !";
-                throw std::logic_error (message.str ());
-              }
-            std::vector<std::string> import_aux_prefixes;
-            if (h1_setup_.has_flag ("mimic.histogram_2d.import_aux"))
-              {
-                h1_setup_.fetch ("mimic.histogram_2d.import_aux", import_aux_prefixes);
-              }
-            h1_.initialize (mimic_h2, bin_axis, import_aux_prefixes);
-          }
-        else
-          {
-            std::ostringstream message;
-            message << "mygsl::histogram_pool::init_histo_1d: "
-                    << "Missing mimic mode !";
-            throw std::logic_error (message.str ());
-          }
+      if (h1_setup_.has_flag ("linear")) {
+        xbinmode = BIN_MODE_LINEAR;
       }
+
+      if (h1_setup_.has_flag ("logarithmic")) {
+        xbinmode = BIN_MODE_LOG;
+      }
+
+      if (xbinmode == BIN_MODE_INVALID) {
+        xbinmode = BIN_MODE_LINEAR;
+      }
+
+      if (h1_setup_.has_key ("min")) {
+        xmin = h1_setup_.fetch_real ("min");
+      }
+
+      if (h1_setup_.has_key ("max")) {
+        xmax = h1_setup_.fetch_real ("max");
+      }
+
+      if (! datatools::is_valid (xmin)) {
+        if (xmax > 0.0) {
+          xmin = 0.0;
+        } else {
+          std::ostringstream message;
+          message << "mygsl::histogram_pool::init_histo_1d: "
+                  << "Invalid 1D-histogram X range [" << xmin << ":" << xmax << "[ !";
+          throw std::logic_error (message.str ());
+        }
+      }
+
+      if (! datatools::is_valid (xmax)) {
+        if (xmin < 0.0) {
+          xmax = 0.0;
+        } else {
+          std::ostringstream message;
+          message << "mygsl::histogram_pool::init_histo_1d: "
+                  << "Invalid 1D-histogram X range [" << xmin << ":" << xmax << "[ !";
+          throw std::logic_error (message.str ());
+        }
+      }
+      if (! h1_setup_.has_explicit_unit ("min")) {
+        xmin *= xunit;
+      }
+      if (! h1_setup_.has_explicit_unit ("max")) {
+        xmax *= xunit;
+      }
+
+      if (h1_setup_.has_key ("number_of_bins")) {
+        nxbins = h1_setup_.fetch_integer ("number_of_bins");
+      } else {
+        std::ostringstream message;
+        message << "mygsl::histogram_pool::init_histo_1d: "
+                << "Missing number of bins in 1D-histogram !";
+        throw std::logic_error (message.str ());
+      }
+      if (nxbins < 1) {
+        std::ostringstream message;
+        message << "mygsl::histogram_pool::init_histo_1d: "
+                << "Invalid number of bins ('" << nxbins << "') in 1D-histogram !";
+        throw std::logic_error (message.str ());
+      }
+      h1_.initialize (nxbins, xmin, xmax, xbinmode);
+    }  else if (mode == "table") {
+      std::vector<double> xranges;
+      if (h1_setup_.has_key ("bounds")) {
+        h1_setup_.fetch ("bounds", xranges);
+      } else if (h1_setup_.has_key ("bounds.file"))
+        {
+          std::string bounds_file;
+          bounds_file = h1_setup_.fetch_string ("bounds.file");
+
+          std::string bounds_file2 = bounds_file;
+          datatools::fetch_path_with_env (bounds_file2);
+          std::ifstream bounds_ifs (bounds_file2.c_str ());
+          if (! bounds_ifs) {
+            std::ostringstream message;
+            message << "mygsl::histogram_pool::init_histo_1d: "
+                    << "Cannot open file '" << bounds_file2 << "' !";
+            throw std::logic_error (message.str ());
+          }
+          while (bounds_ifs) {
+            double bound;
+            bounds_ifs >> bound;
+            if (! bounds_ifs) {
+              std::ostringstream message;
+              message << "mygsl::histogram_pool::init_histo_1d: "
+                      << "Invalid format in file '" << bounds_file << "' !";
+              throw std::logic_error (message.str ());
+            }
+            xranges.push_back (bound * xunit);
+            bounds_ifs >> std::ws;
+            if (bounds_ifs.eof ()) {
+              break;
+            }
+          }
+        } else {
+        std::ostringstream message;
+        message << "mygsl::histogram_pool::init_histo_1d: "
+                << "No rule was given to setup the bins (bounds, bounds.file)!";
+        throw std::logic_error (message.str ());
+      }
+      if (xranges.size () < 2) {
+        std::ostringstream message;
+        message << "mygsl::histogram_pool::init_histo_1d: "
+                << "Invalid number of bins ('" << xranges.size () << "') in 1D-histogram !";
+        throw std::logic_error (message.str ());
+      }
+      h1_.initialize (xranges);
+    } else if (mode == "mimic") {
+      // extract information about another histogram :
+      // 1D clone
+      // 2D use X or Y
+      if (histo_pool_ == 0) {
+        std::ostringstream message;
+        message << "mygsl::histogram_pool::init_histo_1d: "
+                << "Missing pool of histograms !";
+        throw std::logic_error (message.str ());
+      }
+
+      if (h1_setup_.has_key ("mimic.histogram_1d")) {
+        // Copy the structure of another 1D histogram :
+        std::string h1d_name = h1_setup_.fetch_string ("mimic.histogram_1d");
+
+        if (! histo_pool_->has (h1d_name, histogram_pool::HISTOGRAM_DIM_1D)) {
+          std::ostringstream message;
+          message << "mygsl::histogram_pool::init_histo_1d: "
+                  << "No 1D-histogram named '" << h1d_name << "' does exist !";
+          throw std::logic_error (message.str ());
+        }
+        const histogram & mimic_h1 = histo_pool_->get_1d (h1d_name);
+        std::vector<std::string> import_prop_prefixes;
+        if (h1_setup_.has_flag ("mimic.histogram_1d.import_aux")) {
+          h1_setup_.fetch ("mimic.histogram_1d.import_aux", import_prop_prefixes);
+        }
+        h1_.initialize (mimic_h1, import_prop_prefixes);
+      }  else if (h1_setup_.has_key ("mimic.histogram_2d")) {
+        // Copy the structure of one of the axis of a 2D histogram :
+        std::string h2d_name = h1_setup_.fetch_string ("mimic.histogram_2d");
+
+        if (! histo_pool_->has (h2d_name, histogram_pool::HISTOGRAM_DIM_2D)) {
+          std::ostringstream message;
+          message << "mygsl::histogram_pool::init_histo_1d: "
+                  << "No 2D-histogram named '" << h2d_name << "' does exist !";
+          throw std::logic_error (message.str ());
+        }
+        const histogram_2d & mimic_h2 = histo_pool_->get_2d (h2d_name);
+        int bin_axis = BIN_AXIS_INVALID;
+        // Extract the axis of the 2D histogram to copy :
+        if (h1_setup_.has_key ("mimic.histogram_2d.axis")) {
+          std::string axis_label = h1_setup_.fetch_string ("mimic.histogram_2d.axis");
+          if (axis_label == "x") {
+            bin_axis = BIN_AXIS_X;
+          } else if (axis_label == "y") {
+            bin_axis = BIN_AXIS_Y;
+          } else {
+            std::ostringstream message;
+            message << "mygsl::histogram_pool::init_histo_1d: "
+                    << "Invalid bin axis label '" << axis_label << "' !";
+            throw std::logic_error (message.str ());
+          }
+        } else {
+          std::ostringstream message;
+          message << "mygsl::histogram_pool::init_histo_1d: "
+                  << "Missing bin axis property '" << "mimic.histogram_2d.axis" << "' !";
+          throw std::logic_error (message.str ());
+        }
+        std::vector<std::string> import_aux_prefixes;
+        if (h1_setup_.has_flag ("mimic.histogram_2d.import_aux")) {
+          h1_setup_.fetch ("mimic.histogram_2d.import_aux", import_aux_prefixes);
+        }
+        h1_.initialize (mimic_h2, bin_axis, import_aux_prefixes);
+      } else {
+        std::ostringstream message;
+        message << "mygsl::histogram_pool::init_histo_1d: "
+                << "Missing mimic mode !";
+        throw std::logic_error (message.str ());
+      }
+    }
     //h1_.grab_auxiliaries ().tree_dump (std::cerr, "H1D : ", "DEVEL: *********** ");
 
     return;
@@ -1007,6 +942,7 @@ namespace mygsl {
 
   void histogram_pool::initialize (const datatools::properties & setup_)
   {
+    /*
     std::cerr << "DEVEL: "
               << "mygsl::histogram_pool::initialize: "
               << "Entering..."
@@ -1015,7 +951,7 @@ namespace mygsl {
     setup_.tree_dump(std::cerr,
                      "********** setup_: ",
                      "DEVEL: mygsl::histogram_pool::initialize: ");
-
+    */
     if (is_initialized ()) {
       std::ostringstream message;
       message << "mygsl::histogram_pool::initialize: "
@@ -1046,10 +982,11 @@ namespace mygsl {
 
     _auxiliaries_.set_flag (_INITIALIZED_FLAG_KEY_);
 
+    /*
     _auxiliaries_.tree_dump(std::cerr,
                             "********** _auxiliaries_: ",
                             "DEVEL: histogram_pool:");
-
+    */
     return;
   }
 
