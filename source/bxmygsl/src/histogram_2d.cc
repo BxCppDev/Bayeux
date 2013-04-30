@@ -256,14 +256,18 @@ namespace mygsl {
       {
         _y_binning_info_ = (ymax_ -  ymin_) / ny_;
       }
+    /*
     std::cerr << "DEVEL: mygsl::histogram_2d::init: "
               << "_x_binning_info_=" << _x_binning_info_ << '\n';
     std::cerr << "DEVEL: mygsl::histogram_2d::init: "
               << "_y_binning_info_=" << _y_binning_info_ << '\n';
+    */
     if (xmode_ == BIN_MODE_LINEAR && ymode_ == BIN_MODE_LINEAR)
       {
+        /*
         std::cerr << "DEVEL: mygsl::histogram_2d::init: "
                   << "X linear & Y linear" << '\n';
+        */
         _h_ = gsl_histogram2d_alloc (nx_, ny_);
         gsl_histogram2d_set_ranges_uniform (_h_, xmin_, xmax_, ymin_, ymax_);
       }
@@ -273,8 +277,10 @@ namespace mygsl {
         xranges.reserve (nx_ + 1);
         if (xmode_ == BIN_MODE_LINEAR)
           {
+            /*
             std::cerr << "DEVEL: mygsl::histogram_2d::init: "
                       << "X linear" << '\n';
+            */
             for (int i = 0; i < (nx_ + 1); i++)
               {
                 xranges.push_back (xmin_ + i * _x_binning_info_);
@@ -282,8 +288,10 @@ namespace mygsl {
           }
         else
           {
+            /*
             std::cerr << "DEVEL: mygsl::histogram_2d::init: "
                       << "X log" << '\n';
+            */
             double xfactor = pow (xmax_/xmin_, 1./nx_);
             for (int i = 0; i < (nx_ + 1); i++)
               {
@@ -297,8 +305,10 @@ namespace mygsl {
         yranges.reserve (ny_ + 1);
         if (ymode_ == BIN_MODE_LINEAR)
           {
+            /*
             std::cerr << "DEVEL: mygsl::histogram_2d::init: "
                       << "Y linear" << '\n';
+            */
             for (int i = 0; i < (ny_ + 1); i++)
               {
                 yranges.push_back (ymin_ + i * _y_binning_info_);
@@ -306,8 +316,10 @@ namespace mygsl {
           }
         else
           {
+            /*
             std::cerr << "DEVEL: mygsl::histogram_2d::init: "
                       << "Y log" << '\n';
+            */
             double yfactor = pow (ymax_/ymin_, 1./ny_);
             for (int i = 0; i < (ny_ + 1); i++)
               {
@@ -316,17 +328,20 @@ namespace mygsl {
               }
             _y_binning_info_ = -1.0 * yfactor;
           }
-
+        /*
         std::cerr << "DEVEL: mygsl::histogram_2d::init: "
                   << "_x_binning_info_=" << _x_binning_info_ << '\n';
         std::cerr << "DEVEL: mygsl::histogram_2d::init: "
                   << "_y_binning_info_=" << _y_binning_info_ << '\n';
+        */
         const double & ax = * (xranges.begin ());
         const double & ay = * (yranges.begin ());
         _h_ = gsl_histogram2d_alloc (nx_, ny_);
         gsl_histogram2d_set_ranges (_h_, &ax, xranges.size (), &ay, yranges.size ());
+        /*
         std::cerr << "DEVEL: mygsl::histogram_2d::init: "
                   << "done." << '\n';
+        */
       }
     return;
   }
@@ -579,7 +594,7 @@ namespace mygsl {
       }
     gsl_histogram2d_accumulate (_h_,x_,y_,weight_);
     increment_counts ();
-    return; 
+    return;
   }
 
   void histogram_2d::fill (double x_ , double y_ , double weight_)
