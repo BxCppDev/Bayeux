@@ -19,24 +19,36 @@ endfunction()
 # Because we're in the awkward position of separate headers and sources,
 # use a simple listing and then prepend the actual source dir root
 
-file ( GLOB genbb_help_F77_PUBLIC_HEADERS
-  ${PROJECT_SOURCE_DIR}/include/genbb_help/dummy.inc
-  ${PROJECT_SOURCE_DIR}/include/genbb_help/genbb_commons.inc
-  ${PROJECT_SOURCE_DIR}/include/genbb_help/fermi.h
-  ${PROJECT_SOURCE_DIR}/include/genbb_help/rng.h
+if (GENBB_HELP_WITH_FORTRAN)
+
+  file ( GLOB genbb_help_decay0_fortran_PUBLIC_HEADERS
+    ${PROJECT_SOURCE_DIR}/include/genbb_help/decay0_fortran/dummy.inc
+    ${PROJECT_SOURCE_DIR}/include/genbb_help/decay0_fortran/genbb_commons.inc
+    ${PROJECT_SOURCE_DIR}/include/genbb_help/decay0_fortran/fermi.h
+    ${PROJECT_SOURCE_DIR}/include/genbb_help/decay0_fortran/rng.h
   )
 
-file ( GLOB genbb_help_F77_SOURCES
-  ${genbb_help_F77_PUBLIC_HEADERS}
-  ${PROJECT_SOURCE_DIR}/src/fermi.cc
-  ${PROJECT_SOURCE_DIR}/src/rng.cc
-  ${PROJECT_SOURCE_DIR}/src/*.f
+  file ( GLOB genbb_help_decay0_fortran_SOURCES
+    ${genbb_help_decay0_fortran_PUBLIC_HEADERS}
+    ${PROJECT_SOURCE_DIR}/src/decay0_fortran/fermi.cc
+    ${PROJECT_SOURCE_DIR}/src/decay0_fortran/rng.cc
+    ${PROJECT_SOURCE_DIR}/src/decay0_fortran/*.f
+  )
+
+endif (GENBB_HELP_WITH_FORTRAN)
+
+file ( GLOB genbb_help_decay0_cpp_PUBLIC_HEADERS
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/decay0/*.h
+  )
+
+file ( GLOB genbb_help_decay0_cpp_SOURCES
+  ${genbb_help_decay0_cpp_PUBLIC_HEADERS}
+  ${PROJECT_SOURCE_DIR}/src/decay0/*.cc
   )
 
 file ( GLOB genbb_help_PUBLIC_HEADERS
   ${PROJECT_SOURCE_DIR}/include/genbb_help/bio_guard.h
   ${PROJECT_SOURCE_DIR}/include/genbb_help/genbb_commons.h
-  ${PROJECT_SOURCE_DIR}/include/genbb_help/genbb.h
   ${PROJECT_SOURCE_DIR}/include/genbb_help/genbb_macros.h
   ${PROJECT_SOURCE_DIR}/include/genbb_help/genbb_mgr.h
   ${PROJECT_SOURCE_DIR}/include/genbb_help/genbb_utils.h
@@ -47,11 +59,18 @@ file ( GLOB genbb_help_PUBLIC_HEADERS
   ${PROJECT_SOURCE_DIR}/include/genbb_help/primary_particle.h
   ${PROJECT_SOURCE_DIR}/include/genbb_help/single_particle_generator.h
   ${PROJECT_SOURCE_DIR}/include/genbb_help/the_serializable.h
-  ${PROJECT_SOURCE_DIR}/include/genbb_help/wgenbb.h
   ${PROJECT_SOURCE_DIR}/include/genbb_help/primary_event.ipp
   ${PROJECT_SOURCE_DIR}/include/genbb_help/primary_particle.ipp
   ${PROJECT_SOURCE_DIR}/include/genbb_help/the_serializable.ipp
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/wdecay0.h
   )
+
+if (GENBB_HELP_WITH_FORTRAN)
+   list (APPEND  genbb_help_PUBLIC_HEADERS
+     ${PROJECT_SOURCE_DIR}/include/genbb_help/genbb.h)
+   list (APPEND  genbb_help_PUBLIC_HEADERS
+     ${PROJECT_SOURCE_DIR}/include/genbb_help/wgenbb.h)
+endif (GENBB_HELP_WITH_FORTRAN)
 
 # - Add config header
 configure_file(
@@ -59,12 +78,12 @@ configure_file(
   ${PROJECT_BINARY_DIR}/include/genbb_help/genbb_help_config.h
   )
 
-list(APPEND genbb_help_PUBLIC_HEADERS 
+list(APPEND genbb_help_PUBLIC_HEADERS
      ${PROJECT_BINARY_DIR}/include/genbb_help/genbb_help_config.h)
 
 #-----------------------------------------------------------------------
 # PRIVATE HEADERS
-#  
+#
 
 # - DETAIL headers: Again a list, but we also set their Mac OSX
 # package location because they are nested...
@@ -74,18 +93,22 @@ set(genbb_help_detail_HEADERS
    )
 list_prepend(genbb_help_detail_HEADERS "${PROJECT_SOURCE_DIR}/")
 
-list(APPEND genbb_help_detail_HEADERS ${PROJECT_BINARY_DIR}/include/genbb_help/detail/__genbb_help_FC.h)
-list(APPEND genbb_help_detail_HEADERS ${PROJECT_BINARY_DIR}/include/genbb_help/detail/__genbb_help_FC2.h)
+if (GENBB_HELP_WITH_FORTRAN)
+  list(APPEND genbb_help_detail_HEADERS
+       ${PROJECT_BINARY_DIR}/include/genbb_help/detail/__genbb_help_FC.h)
+  list(APPEND genbb_help_detail_HEADERS
+       ${PROJECT_BINARY_DIR}/include/genbb_help/detail/__genbb_help_FC2.h)
+endif (GENBB_HELP_WITH_FORTRAN)
 
 set_source_files_properties(${genbb_help_detail_HEADERS}
   PROPERTIES
     MACOSX_PACKAGE_LOCATION Headers/detail
   )
 
-# We have to install the detail header modules separately if genbb_help 
+# We have to install the detail header modules separately if genbb_help
 # isn't built as a Framework.
 if(NOT APPLE)
-  foreach(_module detail)
+  foreach(_module detail decay0 decay0_fortran)
     install(FILES ${genbb_help_${_module}_HEADERS}
       DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genbb_help/${_module}
       COMPONENT   Development
@@ -97,9 +120,9 @@ endif()
 # SOURCE FILES
 # Pretty basic!
 set(genbb_help_SOURCES
-      genbb.cc
       genbb_commons.cc
       genbb_mgr.cc
+      wdecay0.cc
       genbb_utils.cc
       genbb_writer.cc
       i_genbb.cc
@@ -109,8 +132,12 @@ set(genbb_help_SOURCES
       primary_particle.cc
       single_particle_generator.cc
       combined_particle_generator.cc
-      wgenbb.cc
 )
+
+if (GENBB_HELP_WITH_FORTRAN)
+   list(APPEND genbb_help_SOURCES genbb.cc)
+   list(APPEND genbb_help_SOURCES wgenbb.cc)
+endif (GENBB_HELP_WITH_FORTRAN)
 
 #-----------------------------------------------------------------------
 # CMAKE RESOURCE FILES
@@ -118,14 +145,14 @@ set(genbb_help_SOURCES
 # resources on Mac. This allows them to be easily imported into the
 # Framework with minimal platform specific commands by adding them
 # as sources of the framework/library.
-# We have to deal with the library depends part of this later because 
+# We have to deal with the library depends part of this later because
 # their generation require the targets to be present...
 #
 if(APPLE)
   set(TO_GENBB_HELP_INCLUDEDIR "../..")
 else()
-  file(RELATIVE_PATH TO_GENBB_HELP_INCLUDEDIR 
-    "${CMAKE_INSTALL_FULL_LIBDIR}/cmake/genbb_help-${genbb_help_VERSION}" 
+  file(RELATIVE_PATH TO_GENBB_HELP_INCLUDEDIR
+    "${CMAKE_INSTALL_FULL_LIBDIR}/cmake/genbb_help-${genbb_help_VERSION}"
     "${CMAKE_INSTALL_FULL_INCLUDEDIR}"
     )
 endif()
@@ -137,7 +164,7 @@ set(genbb_help_RESOURCES
 
 foreach(_dtresource ${genbb_help_RESOURCES})
   configure_file(
-    ${PROJECT_SOURCE_DIR}/${_dtresource}.in 
+    ${PROJECT_SOURCE_DIR}/${_dtresource}.in
     ${PROJECT_BINARY_DIR}/${_dtresource}
     @ONLY
     )
@@ -162,7 +189,7 @@ endif()
 #
 include_directories(
   ${PROJECT_BINARY_DIR}/include
-  ${PROJECT_SOURCE_DIR}/include	
+  ${PROJECT_SOURCE_DIR}/include
   ${geomtools_INCLUDE_DIRS}
   )
 
@@ -172,38 +199,63 @@ include_directories(
 
 # ----------------------------------------------------------------------------
 # Build the Fortran part of the library :
+set (_fortran_libs "")
+if (GENBB_HELP_WITH_FORTRAN)
 
-add_library(genbb_help_f77 SHARED  
-  ${genbb_help_F77_PUBLIC_HEADERS} 
-  ${genbb_help_F77_SOURCES}
-  )
+  add_library(genbb_help_decay0_fortran SHARED
+    ${genbb_help_decay0_fortran_PUBLIC_HEADERS}
+    ${genbb_help_decay0_fortran_SOURCES}
+    )
 
-set_target_properties(genbb_help_f77
-  PROPERTIES 
+  set_target_properties(genbb_help_decay0_fortran
+    PROPERTIES
     FRAMEWORK                             ON
     MACOSX_FRAMEWORK_IDENTIFIER           org.supernemo.genbb_help
     MACOSX_FRAMEWORK_BUNDLE_VERSION       ${genbb_help_VERSION}
     MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${genbb_help_VERSION}
     VERSION                               ${genbb_help_VERSION}
     SOVERSION                             ${genbb_help_VERSION_MAJOR}
-    PUBLIC_HEADER                         "${genbb_help_F77_PUBLIC_HEADERS}"
+    PUBLIC_HEADER                         "${genbb_help_decay0_fortran_PUBLIC_HEADERS}"
   )
-  
-target_link_libraries(genbb_help_f77 ${geomtools_LIBRARIES} ${CMAKE_DL_LIBS})
 
+  target_link_libraries(genbb_help_decay0_fortran ${geomtools_LIBRARIES} ${CMAKE_DL_LIBS})
+  set (_fortran_libs genbb_help_decay0_fortran)
+
+endif()
+
+# ----------------------------------------------------------------------------
+# Build the C++ decay0 port library :
+
+add_library(genbb_help_decay0_cpp SHARED
+  ${genbb_help_decay0_cpp_PUBLIC_HEADERS}
+  ${genbb_help_decay0_cpp_SOURCES}
+  )
+
+set_target_properties(genbb_help_decay0_cpp
+    PROPERTIES
+    FRAMEWORK                             ON
+    MACOSX_FRAMEWORK_IDENTIFIER           org.supernemo.genbb_help
+    MACOSX_FRAMEWORK_BUNDLE_VERSION       ${genbb_help_VERSION}
+    MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${genbb_help_VERSION}
+    VERSION                               ${genbb_help_VERSION}
+    SOVERSION                             ${genbb_help_VERSION_MAJOR}
+    PUBLIC_HEADER                         "${genbb_help_decay0_cpp_PUBLIC_HEADERS}"
+)
+
+target_link_libraries(genbb_help_decay0_cpp ${geomtools_LIBRARIES} ${CMAKE_DL_LIBS})
 
 # ----------------------------------------------------------------------------
 # Build the C++ part of the library :
 
-add_library(genbb_help SHARED  
-  ${genbb_help_PUBLIC_HEADERS} 
-  ${genbb_help_detail_HEADERS} 
+add_library(genbb_help SHARED
+  ${genbb_help_PUBLIC_HEADERS}
+  ${genbb_help_detail_HEADERS}
   ${genbb_help_SOURCES}
   ${genbb_help_RESOURCES_OUTPUTS}
   )
 
 set_target_properties(genbb_help
-  PROPERTIES 
+  PROPERTIES
     FRAMEWORK                             ON
     MACOSX_FRAMEWORK_IDENTIFIER           org.supernemo.genbb_help
     MACOSX_FRAMEWORK_BUNDLE_VERSION       ${genbb_help_VERSION}
@@ -212,14 +264,14 @@ set_target_properties(genbb_help
     SOVERSION                             ${genbb_help_VERSION_MAJOR}
     PUBLIC_HEADER                         "${genbb_help_PUBLIC_HEADERS}"
   )
- 
+
 if(GENBB_HELP_WITH_REFLECTION)
-  target_link_libraries(genbb_help genbb_help_f77 ${CAMP_LIBRARIES} ${CMAKE_DL_LIBS})
+  target_link_libraries(genbb_help genbb_help_decay0_cpp ${_fortran_libs} ${CAMP_LIBRARIES} ${CMAKE_DL_LIBS})
 else()
-  target_link_libraries(genbb_help genbb_help_f77 ${CMAKE_DL_LIBS})
+  target_link_libraries(genbb_help genbb_help_decay0_cpp ${_fortran_libs} ${CMAKE_DL_LIBS})
 endif()
 
-set(GENBB_HELP_TARGETS genbb_help genbb_help_f77)
+set(GENBB_HELP_TARGETS genbb_help genbb_help_decay0_cpp ${_fortran_libs})
 
 #-----------------------------------------------------------------------
 # BUILD THE GENBB_HELP BOOST I/O COMPONENT
@@ -234,7 +286,7 @@ if(GENBB_HELP_WITH_BIO)
     src/the_serializable.cc
     )
   list_prepend(genbb_help_bio_SOURCES "${PROJECT_SOURCE_DIR}/")
-  
+
   add_library(genbb_help_bio SHARED ${genbb_help_bio_SOURCES})
 
   if(APPLE)
@@ -246,20 +298,21 @@ if(GENBB_HELP_WITH_BIO)
   list(APPEND GENBB_HELP_TARGETS genbb_help_bio)
 endif()
 
+
 #-----------------------------------------------------------------------
 # EXPORT AND INSTALL LIBRARY TARGETS
-# We make use of the full signature 
+# We make use of the full signature
 install(TARGETS ${GENBB_HELP_TARGETS}
   EXPORT        genbb_help-libraries
-  RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR} 
+  RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
                 COMPONENT Runtime
-  LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR} 
+  LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
                 COMPONENT Runtime
-  FRAMEWORK     DESTINATION ${GENBB_HELP_FRAMEWORK_LOCATION} 
+  FRAMEWORK     DESTINATION ${GENBB_HELP_FRAMEWORK_LOCATION}
                 COMPONENT Runtime
-  ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} 
+  ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
                 COMPONENT Development
-  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genbb_help 
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genbb_help
                 COMPONENT Development
   )
 
@@ -267,11 +320,11 @@ install(TARGETS ${GENBB_HELP_TARGETS}
 # We also need to generate a file for the build tree, but at present
 # we leave this out for simplicity.
 if(APPLE)
-  install(EXPORT genbb_help-libraries 
+  install(EXPORT genbb_help-libraries
     DESTINATION CMake COMPONENT Development
     )
 else()
-  install(EXPORT genbb_help-libraries 
+  install(EXPORT genbb_help-libraries
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/genbb_help-${genbb_help_VERSION}
     COMPONENT Development
     )

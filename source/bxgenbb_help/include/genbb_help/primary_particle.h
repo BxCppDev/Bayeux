@@ -1,31 +1,31 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* primary_particle.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-11
  * Last modified: 2010-04-11
- * 
- * License: 
+ *
+ * License:
  * Copyright 2007-2011 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * 
- * Description: 
+ *
+ * Description:
  *   Primary particle for GENBB generator
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
 #ifndef GENBB_HELP_PRIMARY_PARTICLE_H_
@@ -54,15 +54,15 @@
 
 namespace genbb {
 
-  struct primary_particle 
+  struct primary_particle
     : DATATOOLS_SERIALIZABLE_CLASS,
-      public datatools::i_tree_dumpable 
+      public datatools::i_tree_dumpable
   {
   public:
-    
+
     enum particle_type
     {
-      // Using GEANT3 definition from: 
+      // Using GEANT3 definition from:
       // http://wwwasdoc.web.cern.ch/wwwasdoc/geant_html3/node72.html#SECTION024000000000000000000000
       UNDEF      = -1,
       PARTICLE_UNDEFINED = -1,
@@ -93,6 +93,8 @@ namespace genbb {
 
     double get_time () const;
 
+    double & grab_time ();
+
     const std::string & get_particle_label () const;
 
     // Only if particle type == UNDEF:
@@ -103,15 +105,15 @@ namespace genbb {
     bool is_valid () const;
 
     bool is_gamma () const;
-    
+
     bool is_positron () const;
-    
+
     bool is_electron () const;
-    
+
     bool is_alpha () const;
-    
+
     bool is_neutron () const;
-    
+
     bool is_muon_plus () const;
 
     bool is_muon_minus () const;
@@ -148,8 +150,8 @@ namespace genbb {
     primary_particle ();
 
     /// Constructor
-    primary_particle (int32_t a_type, 
-                      double a_time, 
+    primary_particle (int32_t a_type,
+                      double a_time,
                       const geomtools::vector_3d &);
 
     /// Destructor
@@ -160,18 +162,18 @@ namespace genbb {
                const std::string & title_  = "",
                const std::string & indent_ = "",
                bool inherit_               = false) const;
- 
-    void dump (std::ostream & out_ = std::clog, 
+
+    void dump (std::ostream & out_ = std::clog,
                const std::string & a_indent = "") const;
- 
+
     static std::string get_label (int a_type);
 
     static std::string get_particle_label_from_type (int a_type);
-   
+
     static int get_particle_type_from_label (const std::string & a_label);
 
   private:
-    
+
     int32_t              _type_;
     std::string          _particle_label_;
     double               _mass_;     // CLHEP energy unit
@@ -181,10 +183,10 @@ namespace genbb {
 
     //! Support for Boost-based serialization
     DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(primary_particle)
-    
+
     //! Support for backward compatibility serialization tag
     DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT()
-    
+
   };
 
 } // end of namespace genbb

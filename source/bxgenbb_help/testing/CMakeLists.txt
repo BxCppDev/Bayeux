@@ -1,6 +1,6 @@
 ###############################################################################
 ##
-## Copyright (C) 2012-2013 François Mauger 
+## Copyright (C) 2012-2013 François Mauger
 ## Contact: mauger@lpccaen.in2p3.fr
 ##
 ## This file is part of the genbb_help library.
@@ -9,24 +9,22 @@
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation, either version 3 of the License, or
 ## (at your option) any later version.
-## 
+##
 ## genbb_help is distributed in the hope that it will be useful,
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
-## 
+##
 ## You should have received a copy of the GNU General Public License
 ## along with genbb_help.  If not, see <http://www.gnu.org/licenses/>.
 ##
 ###############################################################################
 
-set ( genbb_help_tests_programs_list_CXX
-      test_genbb_help.cxx 
+set ( genbb_help_tests_programs_list_CPP
+      test_genbb_help.cxx
       test_bb0nu_channel_2.cxx
       test_bb0nu_channel.cxx
       test_bb0nu_cos_theta.cxx
-      test_fermi.cxx
-      test_genbb.cxx
       test_genbb_help_serialization.cxx
       test_genbb_mgr_2.cxx
       test_genbb_mgr_3.cxx
@@ -38,23 +36,31 @@ set ( genbb_help_tests_programs_list_CXX
       test_single_particle_generator_2.cxx
       test_single_particle_generator_3.cxx
       test_single_particle_generator.cxx
-      test_wgenbb.cxx
+      test_wdecay0.cxx
       test_manager.cxx
     )
 
-set ( genbb_help_tests_programs_list_Fortran
+if (GENBB_HELP_WITH_FORTRAN)
+  list (APPEND genbb_help_tests_programs_list_CPP
+        test_genbb.cxx)
+  list (APPEND genbb_help_tests_programs_list_CPP
+        test_wgenbb.cxx)
+  set ( genbb_help_tests_programs_list_FORTRAN
       test_beta.F
+      test_fermi.cxx
       test_fermi_f.F
       test_rnd2.F
       test_rnd.F
-    )
+      )
+endif (GENBB_HELP_WITH_FORTRAN)
+
 # message ( STATUS "testing: datatools_INCLUDE_DIRS : ${datatools_INCLUDE_DIRS}" )
 # message ( STATUS "testing:     mygsl_INCLUDE_DIRS : ${mygsl_INCLUDE_DIRS}" )
 # message ( STATUS "testing: geomtools_INCLUDE_DIRS : ${geomtools_INCLUDE_DIRS}" )
 
 # include files search paths
-include_directories ( ${PROJECT_SOURCE_DIR}/include	
-                      ${PROJECT_BINARY_DIR}/include	
+include_directories ( ${PROJECT_SOURCE_DIR}/include
+                      ${PROJECT_BINARY_DIR}/include
                       ${geomtools_INCLUDE_DIRS}
                       ${PROJECT_SOURCE_DIR}/testing
                     )
@@ -63,7 +69,6 @@ include_directories ( ${PROJECT_SOURCE_DIR}/include
 link_directories ( ${PROJECT_BINARY_DIR}/src )
 
 set(_test_tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/testing_output")
-
 
 # depends on materials data dir:
 if (DEFINED materials_DATA_DIR
@@ -79,10 +84,9 @@ if (DEFINED geomtools_DATA_DIR
   message ( STATUS "${PROJECT_NAME}: testing: Using option '${_genbb_help_test_additional_options}'" )
 endif ()
 
-
 execute_process (COMMAND cmake -E remove_directory ${_test_tmp_dir} )
 
-  foreach ( test_program ${genbb_help_tests_programs_list_CXX} )
+foreach ( test_program ${genbb_help_tests_programs_list_CPP} )
     get_filename_component ( test_executable ${test_program} NAME_WE )
     message ( STATUS "testing: Building C++ test target '${test_executable}'" )
     add_executable ( ${test_executable} ${test_program} )
@@ -91,14 +95,13 @@ execute_process (COMMAND cmake -E remove_directory ${_test_tmp_dir} )
       set_target_properties ( ${test_executable} PROPERTIES DEBUG_POSTFIX d )
     endif ()
 
- 
     if ( GENBB_HELP_WITH_DEBUG )
       add_definitions ( "-g" )
     endif ()
 
-    # last thing we have to do is to tell CMake what libraries 
+    # last thing we have to do is to tell CMake what libraries
     # our executable needs,
-    set ( _test_libraries genbb_help )
+    set ( _test_libraries genbb_help genbb_help_decay0_cpp)
 
     # BIO plugin DLLs :
     if ( GENBB_HELP_WITH_BIO )
@@ -112,23 +115,25 @@ execute_process (COMMAND cmake -E remove_directory ${_test_tmp_dir} )
     endif ()
 
     message ( STATUS "testing: Libraries = '${_test_libraries}'" )
-	 
+
     target_link_libraries ( ${test_executable} ${_test_libraries} )
 
     add_test ( NAME ${test_executable}.run
-               COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
+               COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash
                        --tmp-dir ${_test_tmp_dir}
-                       --source-dir ${PROJECT_SOURCE_DIR} 
-                       --binary-dir ${PROJECT_BINARY_DIR} 
-                       --data-dir ${PROJECT_SOURCE_DIR} 
+                       --source-dir ${PROJECT_SOURCE_DIR}
+                       --binary-dir ${PROJECT_BINARY_DIR}
+                       --data-dir ${PROJECT_SOURCE_DIR}
                        --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
                        ${_genbb_help_test_additional_options}
 	               run
-             )	 	
+             )
 
-  endforeach ()
+endforeach ()
 
-  foreach ( test_program ${genbb_help_tests_programs_list_Fortran} )
+if (GENBB_HELP_WITH_FORTRAN)
+
+  foreach ( test_program ${genbb_help_tests_programs_list_FORTRAN} )
     get_filename_component ( test_executable ${test_program} NAME_WE )
     message ( STATUS "testing: Building Fortran test target '${test_executable}'" )
     add_executable ( ${test_executable} ${test_program} )
@@ -137,34 +142,35 @@ execute_process (COMMAND cmake -E remove_directory ${_test_tmp_dir} )
       set_target_properties ( ${test_executable} PROPERTIES DEBUG_POSTFIX d )
     endif ()
 
-    # last thing we have to do is to tell CMake what libraries 
+    # last thing we have to do is to tell CMake what libraries
     # our executable needs,
-    target_link_libraries ( ${test_executable} 
-      genbb_help_f77
-      ${mygsl_LIBRARIES} 
+    target_link_libraries ( ${test_executable}
+      genbb_help_decay0_fortran
+      ${mygsl_LIBRARIES}
       )
 
     add_test ( NAME ${test_executable}.run
-               COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
+               COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash
                        --tmp-dir ${_test_tmp_dir}
-                       --source-dir ${PROJECT_SOURCE_DIR} 
-                       --binary-dir ${PROJECT_BINARY_DIR} 
-                       --data-dir ${PROJECT_SOURCE_DIR} 
+                       --source-dir ${PROJECT_SOURCE_DIR}
+                       --binary-dir ${PROJECT_BINARY_DIR}
+                       --data-dir ${PROJECT_SOURCE_DIR}
                        --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
                        ${_genbb_help_test_additional_options}
 	               run
-             )	 	
+             )
 
   endforeach ()
-  
-  add_custom_target ( clean_test
-                      COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
+
+endif (GENBB_HELP_WITH_FORTRAN)
+
+add_custom_target ( clean_test
+                    COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash
                       --tmp-dir ${_test_tmp_dir}
-                      --source-dir ${PROJECT_SOURCE_DIR} 
-                      --binary-dir ${PROJECT_BINARY_DIR} 
-                      --data-dir ${PROJECT_SOURCE_DIR} 
+                      --source-dir ${PROJECT_SOURCE_DIR}
+                      --binary-dir ${PROJECT_BINARY_DIR}
+                      --data-dir ${PROJECT_SOURCE_DIR}
                       clean
                     )
-
 
 # end of CMakeLists.txt

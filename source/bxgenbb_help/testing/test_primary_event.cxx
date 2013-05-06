@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_primary_event.cxx
 
 #include <cstdlib>
@@ -8,27 +8,24 @@
 
 #include <genbb_help/primary_event.h>
 
-using namespace std;
-
 int main (int argc_, char ** argv_)
 {
+  using namespace std;
   int error_code = EXIT_SUCCESS;
-  try
-  {
-    clog << "Hello, this is a sample program for class 'dummy_genbb_help'!" << endl; 
-  
+  try {
+    clog << "Hello, this is a sample program for class 'dummy_genbb_help'!" << endl;
+
     bool debug = false;
 
     int iarg = 1;
-    while (iarg < argc_)
-    {
+    while (iarg < argc_) {
       string arg = argv_[iarg];
 
       if (arg == "-d" || arg == "--debug") debug = true;
 
       iarg++;
     }
-    
+
     genbb::primary_event my_event;
     my_event.set_time (15 * CLHEP::ns);
 
@@ -57,19 +54,18 @@ int main (int argc_, char ** argv_)
     my_event.dump (clog);
 
     int count = 0;
-    for (genbb::primary_event::particles_col_t::const_iterator 
-	   it = my_event.get_particles ().begin ();
-	 it !=my_event.get_particles ().end ();
-	 it++)
-      {
-	const genbb::primary_particle & part = *it;
-	geomtools::vector_3d p = part.get_momentum ();
-	cout << "0 0 0" << endl;
-	if (count % 2) cout << "0 0 0" << endl;
-	cout << p.x ( ) << ' ' << p.y () << " " << p.z () << endl;
-	cout << endl;
-	count++;
-      }
+    for (genbb::primary_event::particles_col_t::const_iterator
+           it = my_event.get_particles ().begin ();
+         it !=my_event.get_particles ().end ();
+         it++) {
+      const genbb::primary_particle & part = *it;
+      geomtools::vector_3d p = part.get_momentum ();
+      cout << "0 0 0" << endl;
+      if (count % 2) cout << "0 0 0" << endl;
+      cout << p.x ( ) << ' ' << p.y () << " " << p.z () << endl;
+      cout << endl;
+      count++;
+    }
     cout << endl;
 
     double phi   = 20.0 * CLHEP::degree;
@@ -80,31 +76,28 @@ int main (int argc_, char ** argv_)
     my_event.rotate (phi, theta, psi);
 
     count = 0;
-    for (genbb::primary_event::particles_col_t::const_iterator 
-	   it = my_event.get_particles ().begin ();
-	 it !=my_event.get_particles ().end ();
-	 it++)
-      {
-	const genbb::primary_particle & part = *it;
-	geomtools::vector_3d p = part.get_momentum ();
-	cout << "0 0 0" << endl;
-	if (count % 2) cout << "0 0 0" << endl;
-	cout << p.x ( ) << ' ' << p.y () << " " << p.z () << endl;
-	cout << endl;
-	count++;
-      }
+    for (genbb::primary_event::particles_col_t::const_iterator
+           it = my_event.get_particles ().begin ();
+         it !=my_event.get_particles ().end ();
+         it++) {
+      const genbb::primary_particle & part = *it;
+      geomtools::vector_3d p = part.get_momentum ();
+      cout << "0 0 0" << endl;
+      if (count % 2) cout << "0 0 0" << endl;
+      cout << p.x ( ) << ' ' << p.y () << " " << p.z () << endl;
+      cout << endl;
+      count++;
+    }
     cout << endl;
   }
-  catch (exception & x)
-    {
-      cerr << "error: " << x.what () << endl; 
-      error_code = EXIT_FAILURE;
-    }
-  catch (...)
-    {
-      cerr << "error: " << "unexpected error !" << endl; 
-      error_code = EXIT_FAILURE;
-    }
+  catch (exception & x) {
+    cerr << "error: " << x.what () << endl;
+    error_code = EXIT_FAILURE;
+  }
+  catch (...) {
+    cerr << "error: " << "unexpected error !" << endl;
+    error_code = EXIT_FAILURE;
+  }
   return error_code;
 }
 

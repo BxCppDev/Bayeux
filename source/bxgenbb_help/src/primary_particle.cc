@@ -1,7 +1,7 @@
 // -*- mode: c++; -*-
 // primary_particle.cc
 /*
- * Copyright 2007-2011 F. Mauger
+ * Copyright 2007-2013 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,10 +43,9 @@ namespace genbb {
 
   void primary_particle::set_particle_label (const std::string & pl_)
   {
-    if (_type_ == UNDEF)
-      {
-        _particle_label_ = pl_;
-      }
+    if (_type_ == UNDEF) {
+      _particle_label_ = pl_;
+    }
     return;
   }
 
@@ -66,27 +65,27 @@ namespace genbb {
   {
     return get_type () == GAMMA;
   }
-  
+
   bool primary_particle::is_positron () const
   {
     return get_type () == POSITRON;
   }
-  
+
   bool primary_particle::is_electron () const
   {
     return get_type () == ELECTRON;
   }
-  
+
   bool primary_particle::is_alpha () const
   {
     return get_type () == ALPHA;
   }
-  
+
   bool primary_particle::is_neutron () const
   {
     return get_type () == NEUTRON;
   }
-    
+
   bool primary_particle::is_muon_plus () const
   {
     return get_type () == MUON_PLUS;
@@ -98,6 +97,11 @@ namespace genbb {
   }
 
   double primary_particle::get_time () const
+  {
+    return _time_;
+  }
+
+  double & primary_particle::grab_time ()
   {
     return _time_;
   }
@@ -220,40 +224,33 @@ namespace genbb {
     double a_mass;
     datatools::invalidate (a_mass);
 
-    if (is_positron () || is_electron ())
-      {
-        a_mass = CLHEP::electron_mass_c2;
-      }
+    if (is_positron () || is_electron ()) {
+      a_mass = CLHEP::electron_mass_c2;
+    }
 
-    if (is_alpha ())
-      {
-        a_mass = 3.727417 * CLHEP::GeV;
-      }
+    if (is_alpha ()) {
+      a_mass = 3.727417 * CLHEP::GeV;
+    }
 
-    if (is_gamma ())
-      {
-        a_mass = 0.0;
-      }
+    if (is_gamma ()) {
+      a_mass = 0.0;
+    }
 
-    if (_type_ == NEUTRON)
-      {
-        a_mass = 939.565560 * CLHEP::MeV;
-      }
+    if (_type_ == NEUTRON) {
+      a_mass = 939.565560 * CLHEP::MeV;
+    }
 
-    if (_type_ == PROTON)
-      {
-        a_mass = 938.272013 * CLHEP::MeV;
-      }
+    if (_type_ == PROTON) {
+      a_mass = 938.272013 * CLHEP::MeV;
+    }
 
-    if (_type_ == MUON_PLUS || _type_ == MUON_MINUS)
-      {
-        a_mass = 105.658369 * CLHEP::MeV;
-      }
+    if (_type_ == MUON_PLUS || _type_ == MUON_MINUS) {
+      a_mass = 105.658369 * CLHEP::MeV;
+    }
 
-    if (_type_ == NEUTRINO)
-      {
-        a_mass = 0.0 * CLHEP::MeV;
-      }
+    if (_type_ == NEUTRINO) {
+      a_mass = 0.0 * CLHEP::MeV;
+    }
 
     return a_mass;
   }
@@ -291,16 +288,15 @@ namespace genbb {
     std::string indent;
     if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ()) {
-        out_ << indent << title_ << std::endl;
-      }
+      out_ << indent << title_ << std::endl;
+    }
     double mass = get_mass ();
     double energy = get_kinetic_energy ();
 
     out_ << indent << du::i_tree_dumpable::tag << "Type           : " << _type_;
-    if (_type_ != UNDEF)
-      {
-        out_ << " (" << get_particle_label_from_type (_type_) << ')';
-      }
+    if (_type_ != UNDEF) {
+      out_ << " (" << get_particle_label_from_type (_type_) << ')';
+    }
     out_ << std::endl;
     out_ << indent << du::i_tree_dumpable::tag << "Particle label : '" << _particle_label_ << "'"
          << std::endl;
@@ -315,40 +311,36 @@ namespace genbb {
          << _momentum_ / CLHEP::MeV
          << " MeV" << std::endl;
     out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
-                                               << "Vertex         : ";
-    if (has_vertex ())
-      {
-        out_ << _vertex_ / CLHEP::mm
-             << " mm" << std::endl;
-      }
-    else
-      {
-        out_ << "<no vertex>" << std::endl;
-      }
-    
+         << "Vertex         : ";
+    if (has_vertex ()) {
+      out_ << _vertex_ / CLHEP::mm
+           << " mm" << std::endl;
+    } else {
+      out_ << "<no vertex>" << std::endl;
+    }
+
     return;
   }
 
-  std::string primary_particle::get_label (int type_) 
+  std::string primary_particle::get_label (int type_)
   {
-    switch (type_)
-      {
-      case 1: return "gamma";
-      case 2: return "e+";
-      case 3: return "e-";
-      case 4: return "neutrino";
-      case 5: return "mu+";
-      case 6: return "mu-";
-      case 7: return "pi0";
-      case 8: return "pi+";
-      case 9: return "pi-";
-      case 13: return "neutron";
-      case 14: return "proton";
-      case 45: return "deuteron";
-      case 46: return "tritium";
-      case 47: return "alpha";
-      case 49: return "he3";
-      }
+    switch (type_)  {
+    case 1: return "gamma";
+    case 2: return "e+";
+    case 3: return "e-";
+    case 4: return "neutrino";
+    case 5: return "mu+";
+    case 6: return "mu-";
+    case 7: return "pi0";
+    case 8: return "pi+";
+    case 9: return "pi-";
+    case 13: return "neutron";
+    case 14: return "proton";
+    case 45: return "deuteron";
+    case 46: return "tritium";
+    case 47: return "alpha";
+    case 49: return "he3";
+    }
     return "<unknown>";
   }
 
@@ -359,66 +351,51 @@ namespace genbb {
 
   int primary_particle::get_particle_type_from_label (const std::string & label_)
   {
-    if (label_ == "electron" || label_ == "e-")
-      {
-        return primary_particle::ELECTRON;
-      }
-    else if (label_ == "positron" || label_ == "e+")
-      {
-        return primary_particle::POSITRON;
-      }
-    else if (label_ == "gamma")
-      {
-        return primary_particle::GAMMA;
-      }
-    else if (label_ == "neutrino")
-      {
-        return primary_particle::NEUTRINO;
-      }
-    else if (label_ == "mu+")
-      {
-        return primary_particle::MUON_PLUS;
-      }
-    else if (label_ == "mu-")
-      {
-        return primary_particle::MUON_MINUS;
-      }
-    else if (label_ == "pi+")
-      {
-        return primary_particle::PION_PLUS;
-      }
-    else if (label_ == "pi-")
-      {
-        return primary_particle::PION_MINUS;
-      }
-    else if (label_ == "pi0")
-      {
-        return primary_particle::PION_0;
-      }
-    else if (label_ == "neutron")
-      {
-        return primary_particle::NEUTRON;
-      }
-    else if (label_ == "proton")
-      {
-        return primary_particle::PROTON;
-      }
-    else if (label_ == "deuteron")
-      {
-        return primary_particle::DEUTERON;
-      }
-    else if (label_ == "tritium")
-      {
-        return primary_particle::TRITIUM;
-      }
-    else if (label_ == "alpha")
-      {
-        return primary_particle::ALPHA;
-      }
-    else if (label_ == "he3")
-      {
-        return primary_particle::HE3;
-      }
+    if (label_ == "electron" || label_ == "e-") {
+      return primary_particle::ELECTRON;
+    }
+    else if (label_ == "positron" || label_ == "e+") {
+      return primary_particle::POSITRON;
+    }
+    else if (label_ == "gamma") {
+      return primary_particle::GAMMA;
+    }
+    else if (label_ == "neutrino") {
+      return primary_particle::NEUTRINO;
+    }
+    else if (label_ == "mu+") {
+      return primary_particle::MUON_PLUS;
+    }
+    else if (label_ == "mu-") {
+      return primary_particle::MUON_MINUS;
+    }
+    else if (label_ == "pi+") {
+      return primary_particle::PION_PLUS;
+    }
+    else if (label_ == "pi-") {
+      return primary_particle::PION_MINUS;
+    }
+    else if (label_ == "pi0") {
+      return primary_particle::PION_0;
+    }
+    else if (label_ == "neutron") {
+      return primary_particle::NEUTRON;
+    }
+    else if (label_ == "proton") {
+      return primary_particle::PROTON;
+    }
+    else if (label_ == "deuteron") {
+      return primary_particle::DEUTERON;
+    }
+    else if (label_ == "tritium") {
+      return primary_particle::TRITIUM;
+    }
+    else if (label_ == "alpha") {
+      return primary_particle::ALPHA;
+    }
+    else if (label_ == "he3") {
+      return primary_particle::HE3;
+    }
     else return primary_particle::UNDEF;
   }
 

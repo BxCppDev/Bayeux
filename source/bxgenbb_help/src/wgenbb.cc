@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // wgenbb.cc
 /*
  * Copyright 2007-2012 F. Mauger
@@ -7,19 +7,19 @@
  * it under the terms of the GNU General Public 3.0 License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public 3.0 License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Publi * License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
  */
- 
+
 #include <genbb_help/wgenbb.h>
 
 #include <stdexcept>
@@ -28,20 +28,21 @@
 #include <fstream>
 #include <algorithm>
 
-#include <genbb_help/rng.h>
+//#include <boost/filesystem.hpp>
 
 #include <datatools/utils.h>
 #include <datatools/units.h>
-#include <boost/filesystem.hpp>
+
 #include <genbb_help/genbb_utils.h>
 #include <genbb_help/primary_event.h>
+#include <genbb_help/decay0_fortran/rng.h>
 
 extern GENEVENT_DEF genevent;
 extern ENRANGE_DEF  enrange;
 extern GENBBPAR_DEF genbbpar;
 
 namespace genbb {
- 
+
   using namespace std;
 
   GENBB_PG_REGISTRATION_IMPLEMENT(wgenbb,"genbb::wgenbb");
@@ -57,7 +58,7 @@ namespace genbb {
   {
     return _debug_;
   }
- 
+
   void wgenbb::set_debug (bool d_)
   {
     _debug_ = d_;
@@ -80,8 +81,8 @@ namespace genbb {
     for (int i = 0; i < ISOTOPE_NAME_MAXSIZE; i++)
       {
         _c_decay_isotope_[i] = 0;
-      }  
-    _decay_dbd_level_ = 0;  
+      }
+    _decay_dbd_level_ = 0;
     _decay_dbd_mode_ = DBD_MODE_INVALID;
     _use_local_prng_ = false;
     _seed_ = 0;
@@ -89,7 +90,7 @@ namespace genbb {
     datatools::invalidate (_energy_max_);
     return;
   }
-  
+
   // dtor:
   wgenbb::~wgenbb ()
   {
@@ -150,9 +151,9 @@ namespace genbb {
     for (int i = 0; i < ISOTOPE_NAME_MAXSIZE; i++)
       {
         _c_decay_isotope_[i] = 0;
-      }  
-    _decay_isotope_ = "";  
-    _decay_dbd_level_ = 0;  
+      }
+    _decay_isotope_ = "";
+    _decay_dbd_level_ = 0;
     _decay_dbd_mode_ = DBD_MODE_INVALID;
 
     datatools::invalidate (_energy_min_);
@@ -180,7 +181,7 @@ namespace genbb {
   {
     return _use_local_prng_;
   }
- 
+
   void wgenbb::set_use_local_prng (bool u_)
   {
     if (_initialized_)
@@ -218,7 +219,7 @@ namespace genbb {
           {
             set_use_local_prng (true);
           }
-        
+
         if (config_.has_key ("seed"))
           {
             long seed = config_.fetch_integer ("seed");
@@ -246,12 +247,12 @@ namespace genbb {
                     << tmp << "' !";
             throw logic_error (message.str());
           }
-        if (tmp == "background") 
+        if (tmp == "background")
           {
             _decay_type_ = DECAY_TYPE_BACKGROUND;
           }
 
-        if (tmp == "DBD") 
+        if (tmp == "DBD")
           {
             _decay_type_ = DECAY_TYPE_DBD;
 
@@ -273,7 +274,7 @@ namespace genbb {
           }
 
       }
- 
+
     if (! config_.has_key ("decay_isotope"))
       {
         ostringstream message;
@@ -289,7 +290,7 @@ namespace genbb {
 
     if (_decay_type_ == DECAY_TYPE_DBD)
       {
-        const std::vector<int> & dbdmwer 
+        const std::vector<int> & dbdmwer
           = utils::get_dbd_modes_with_energy_range ();
         if (std::find (dbdmwer.begin (), dbdmwer.end (),_decay_dbd_mode_) != dbdmwer.end ())
           {
@@ -349,7 +350,7 @@ namespace genbb {
       {
         clog << "NOTICE: " << "genbb::wgenbb::initialize: "
              << "Installing the external PRNG as the global PRNG for the fortran interface..." << endl;
-        genbb::rng::set_genbb_external_prng (grab_external_random ());  
+        genbb::rng::set_genbb_external_prng (grab_external_random ());
       }
     else if (use_local_prng ())
       {
@@ -387,7 +388,7 @@ namespace genbb {
     return;
   }
 
-  void wgenbb::_load_next (primary_event & event_, 
+  void wgenbb::_load_next (primary_event & event_,
                            bool compute_classification_)
   {
     if (_debug_)
@@ -408,10 +409,10 @@ namespace genbb {
     // reset Fortran common block:
     genevent.reset ();
 
-    genbbsub (&_decay_type_, 
-              _c_decay_isotope_, 
-              &_decay_dbd_level_, 
-              &_decay_dbd_mode_, 
+    genbbsub (&_decay_type_,
+              _c_decay_isotope_,
+              &_decay_dbd_level_,
+              &_decay_dbd_mode_,
               &start,
               &error);
     if (error != 0)
@@ -446,9 +447,9 @@ namespace genbb {
         z = genevent.pmoment[i][2];
         /*
           clog << "DEVEL: " << "genbb::wgenbb::_load_next: "
-          << " px=" << x 
+          << " px=" << x
           << " py=" << y
-          << " pz=" << z 
+          << " pz=" << z
           << endl;
         */
         time_shift = genevent.ptime[i];
@@ -456,7 +457,7 @@ namespace genbb {
           clog << "DEVEL: " << "genbb::wgenbb::_load_next: "
           << "time_shift=" << time_shift << endl;
         */
-        part_time += time_shift; 
+        part_time += time_shift;
         pp.set_type (part_type);
         pp.set_time (part_time * CLHEP::second); // GENBB unit is s
         geomtools::vector_3d p (x, y, z);
@@ -479,7 +480,7 @@ namespace genbb {
       }
     if (get_to_all_events () > 1.0)
       {
-        event_.set_genbb_weight (1.0 / get_to_all_events ());   
+        event_.set_genbb_weight (1.0 / get_to_all_events ());
       }
 
     //event_.dump (clog , "GENBB event: ", "DEVEL: ");
@@ -514,31 +515,31 @@ namespace genbb {
 
     if (_decay_type_ == DECAY_TYPE_UNDEFINED)
       {
-        throw logic_error ("genbb::wgenbb::_init_: Decay type is not defined !");     
+        throw logic_error ("genbb::wgenbb::_init_: Decay type is not defined !");
       }
     if (_decay_type_ == DECAY_TYPE_DBD && _decay_dbd_mode_ == DBD_MODE_INVALID)
       {
-        throw logic_error ("genbb::wgenbb::_init_: Invalid DBD mode !");     
+        throw logic_error ("genbb::wgenbb::_init_: Invalid DBD mode !");
       }
 
     enrange.reset ();
-    const std::vector<int> & dbdmwer 
+    const std::vector<int> & dbdmwer
       = utils::get_dbd_modes_with_energy_range ();
-    if (_debug_) clog << "DEBUG: genbb::wgenbb::_init_: Decay DBD mode : " 
+    if (_debug_) clog << "DEBUG: genbb::wgenbb::_init_: Decay DBD mode : "
                       << _decay_dbd_mode_ << endl;
     if (std::find (dbdmwer.begin (), dbdmwer.end (),_decay_dbd_mode_) != dbdmwer.end ())
       {
         if (datatools::is_valid (_energy_min_))
           {
-            clog << "NOTICE: genbb::wgenbb::_init_: Setting energy min to " 
+            clog << "NOTICE: genbb::wgenbb::_init_: Setting energy min to "
                  << _energy_min_ / CLHEP::MeV << " MeV" << endl;
-            enrange.ebb1 = (float) (_energy_min_ / CLHEP::MeV);     
+            enrange.ebb1 = (float) (_energy_min_ / CLHEP::MeV);
           }
         if (datatools::is_valid (_energy_max_))
           {
             clog << "NOTICE: genbb::wgenbb::_init_: Setting energy max to "
                  << _energy_max_ / CLHEP::MeV << " MeV" << endl;
-            enrange.ebb2 = (float) (_energy_max_ / CLHEP::MeV);     
+            enrange.ebb2 = (float) (_energy_max_ / CLHEP::MeV);
           }
         if (enrange.ebb1 >= enrange.ebb2)
           {
@@ -550,7 +551,7 @@ namespace genbb {
       }
     else
       {
-        if (_debug_)  clog << "DEBUG: genbb::wgenbb::_init_: Not a DBD energy range mode." 
+        if (_debug_)  clog << "DEBUG: genbb::wgenbb::_init_: Not a DBD energy range mode."
                            << endl;
       }
 
@@ -561,10 +562,10 @@ namespace genbb {
       }
     int error = 0;
     int start = -1; // special initialization value without event generation
-    genbbsub (&_decay_type_, 
-              _c_decay_isotope_, 
-              &_decay_dbd_level_, 
-              &_decay_dbd_mode_, 
+    genbbsub (&_decay_type_,
+              _c_decay_isotope_,
+              &_decay_dbd_level_,
+              &_decay_dbd_mode_,
               &start,
               &error);
     if (error != 0)

@@ -118,6 +118,10 @@ EOF
 EOF
     fi
     cat <<EOF
+      --with-fortran             : generate the Fortran version of the decay0
+                                   library and associated tools
+      --without-fortran          : do not generate the Fortran version of the decay0
+                                   library and associated tools (default)
       --with-documentation       : generate documentation material (default)
       --without-documentation    : do not generate documentation material
       --with-test                : generate test material (default)
@@ -322,6 +326,7 @@ function do_configure ()
     local with_doc=1
     local with_test=1
     local with_dependency_check=0
+    local with_fortran=0
 
     local with_bio=0
     if [ ${bio_support} -eq 1 ]; then
@@ -353,6 +358,10 @@ function do_configure ()
 	    with_dependency_check=1
 	elif [ "${option}" = "--without-dependency-check" ]; then
 	    with_dependency_check=0
+	elif [ "${option}" = "--with-fortran" ]; then
+	    with_fortran=1
+	elif [ "${option}" = "--without-fortran" ]; then
+	    with_fortran=0
 	elif [ ${bio_support} -eq 1 -a "${option}" = "--with-bio" ]; then
 	    with_bio=1
 	elif [ ${bio_support} -eq 1 -a "${option}" = "--without-bio" ]; then
@@ -390,6 +399,7 @@ function do_configure ()
     pkgtools__msg_notice "Installation prefix   : '${install_prefix}'"
     pkgtools__msg_notice "With documentation    : '${with_doc}'"
     pkgtools__msg_notice "With test material    : '${with_test}'"
+    pkgtools__msg_notice "With Fortran          : '${with_fortran}'"
     if [ ${bio_support} -eq 1 ]; then
 	pkgtools__msg_notice "With Boost I/O DLL    : '${with_bio}'"
     fi
@@ -412,9 +422,11 @@ function do_configure ()
     cmake \
 	-DCMAKE_INSTALL_PREFIX:PATH=${install_prefix} \
 	-DCMAKE_BUILD_TYPE:STRING=Release \
+	-Ddatatools_DIR=${DATATOOLS_CMAKE_CONFIG_DIR} \
 	-Dgeomtools_DIR=${GEOMTOOLS_CMAKE_CONFIG_DIR} \
 	-DCMAKE_MODULE_PATH:PATH="${CADFAEL_SHARE_DIR}/cmake/Modules;${CMAKE_MODULE_PATH}" \
 	-DGENBB_HELP_WITH_BIO=${with_bio} \
+	-DGENBB_HELP_WITH_FORTRAN=${with_fortran} \
 	-DGENBB_HELP_WITH_DOC=${with_doc} \
 	-DGENBB_HELP_WITH_TEST=${with_test} \
 	${additional_options} \

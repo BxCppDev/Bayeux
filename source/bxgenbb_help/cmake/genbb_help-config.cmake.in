@@ -7,6 +7,7 @@
 #  genbb_help_LIBRARIES    - libraries to link against
 #  genbb_help_WITH_BIO     - flag for Boost/Serialization I/O DLL (a.k.a. 'bio')
 #  genbb_help_WITH_REFLECTION  - flag for reflection DLL
+#  genbb_help_WITH_FORTRAN  - flag for Fortran
 
 #-----------------------------------------------------------------------
 # This program is free software: you can redistribute it and/or modify
@@ -24,6 +25,7 @@
 #-----------------------------------------------------------------------
 
 set(genbb_help_WITH_BIO        @GENBB_HELP_WITH_BIO@)
+set(genbb_help_WITH_FORTRAN    @GENBB_HELP_WITH_FORTRAN@)
 set(genbb_help_WITH_REFLECTION @GENBB_HELP_WITH_REFLECTION@)
 set(genbb_help_GEOMTOOLS_DIR   @geomtools_DIR@)
 set(genbb_help_DATA_DIR        @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@)
@@ -90,7 +92,7 @@ set(genbb_help_LIBRARY genbb_help CACHE PATH "Path to genbb_help library")
 # if(genbb_help_WITH_REFLECTION)
 #   set(genbb_help_REFLECTION_LIBRARY genbb_help_reflection)
 # endif()
-  
+
 set(genbb_help_LIBRARIES ${genbb_help_LIBRARY})
 
 unset(_genbb_help_inc)

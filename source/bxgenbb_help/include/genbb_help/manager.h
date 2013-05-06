@@ -54,10 +54,6 @@
 #include <genbb_help/detail/pg_tools.h>
 #include <genbb_help/i_genbb.h>
 
-// namespace mygsl {
-//   class rng;
-// }
-
 namespace datatools {
   class properties;
   class multi_properties;
@@ -69,7 +65,7 @@ namespace genbb {
   /*! \brief GENBB particle manager management class
    *
    */
-  class manager : public ::datatools::i_tree_dumpable 
+  class manager : public ::datatools::i_tree_dumpable
   {
   public:
     enum flag_type {
@@ -111,13 +107,13 @@ namespace genbb {
 
     /// Return a mutable reference to the external PRNG
     mygsl::rng & grab_external_prng ();
- 
+
     /// Return a non-mutable reference to the external PRNG
     const mygsl::rng & get_external_prng () const;
 
     /// Return a mutable reference to the embeded PRNG
     mygsl::rng & grab_embeded_prng ();
- 
+
     /// Return a non-mutable reference to the embeded PRNG
     const mygsl::rng & get_embeded_prng () const;
 
@@ -126,26 +122,26 @@ namespace genbb {
 
     /// Return a mutable reference to the active PRNG
     mygsl::rng & grab_prng ();
- 
+
     /// Return a non-mutable reference to the active PRNG
     const mygsl::rng & get_prng () const;
 
     /// Check the initialization flag
     bool is_initialized() const;
 
-    /// Initialize the manager from a container of properties 
+    /// Initialize the manager from a container of properties
     void initialize(const datatools::properties& config);
 
     /// Reset the manager
     void reset();
 
-    /// Check if the factory has a given type 
+    /// Check if the factory has a given type
     bool has_pg_type(const std::string& id) const;
 
     /// Register a given type in the factory
     template <class PgClass>
     void register_pg_type(const std::string& id);
-    
+
     /// Unregister a given type from the factory
     void unregister_pg_type(const std::string& id);
 
@@ -162,11 +158,11 @@ namespace genbb {
     /**  Check if a given PG can be removed
      *   @param name The name of the PG to be completely removed
      */
-      bool can_drop(const std::string& name) const;
+    bool can_drop(const std::string& name) const;
 
     /**  @param name The name of the PG to be completely removed
      */
-      void drop(const std::string& name);
+    void drop(const std::string& name);
 
     /**  @param name The name of the PG to be reset
      */
@@ -175,17 +171,17 @@ namespace genbb {
     /**  @param name The name of the PG to be reset
      *   @return the registration ID of the PG
      */
-    const std::string & get_id(const std::string& name) const; 
+    const std::string & get_id(const std::string& name) const;
 
     /**  @param name The name of the PG to be returned
      *   @return a non-mutable reference to the PG
      */
-     const i_genbb & get(const std::string& name) const; 
+    const i_genbb & get(const std::string& name) const;
 
     /**  @param name The name of the PG to be returned
      *   @return a mutable reference to the PG
      */
-    i_genbb & grab(const std::string& name); 
+    i_genbb & grab(const std::string& name);
 
     void load(const std::string& name,
               const std::string& id,
@@ -244,10 +240,10 @@ namespace genbb {
   };
 
 
-template <class PgClass>
-void manager::register_pg_type(const std::string& id) {
-  _factory_register_.registration(id, boost::factory<PgClass*>());
-}
+  template <class PgClass>
+  void manager::register_pg_type(const std::string& id) {
+    _factory_register_.registration(id, boost::factory<PgClass*>());
+  }
 
 }  // end of namespace genbb
 

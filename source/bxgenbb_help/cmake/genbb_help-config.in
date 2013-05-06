@@ -51,6 +51,11 @@ if [ "x@GENBB_HELP_WITH_REFLECTION@" == "x1" -o "x@GENBB_HELP_WITH_REFLECTION@" 
     with_reflection=1
 fi
 
+with_fortran=0
+if [ "x@GENBB_HELP_WITH_FORTRAN@" == "x1" -o "x@GENBB_HELP_WITH_FORTRAN@" == "xON" ]; then
+    with_fortran=1
+fi
+
 option="$1"
 shift 1
 
@@ -84,7 +89,7 @@ Known values for OPTION are:
   --cflags              print include path pre-processor flags with dependencies
   --libs    [option]    print library linking information, without dependencies
   --ldflags [option]
-    Options: 
+    Options:
     --relative-path     use relative DLL path (default)
     --absolute-path     use absolute DLL path
     --with-bio          with linkage against the 'libgenbb_help_bio@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL (default)
@@ -192,10 +197,17 @@ if [ ${with_reflection} -eq 1 ]; then
     reflection_ldflags_abs=${genbb_help_lib_dir}/libgenbb_help_reflection@CMAKE_SHARED_LIBRARY_SUFFIX@
 fi
 
+decay0_fortran_ldflags=
+decay0_fortran_ldflags_abs=
+if [ ${with_fortran} -eq 1 ]; then
+    decay0_fortran_ldflags=-lgenbb_help_decay0_fortran
+    decay0_fortran_ldflags_abs=${genbb_help_lib_dir}/libgenbb_help_decay0_fortran@CMAKE_SHARED_LIBRARY_SUFFIX@
+fi
+
 ldflags_abs_path=0
 if [ "x${GENBB_HELP_LDFLAGS_ABSOLUTE_PATH}" = "x1" ]; then
     ldflags_abs_path=1
-fi 
+fi
 if [ "x${option}" = "x--libs" -o "x${option}" = "x--ldflags" ]; then
     while [ -n "$1" ]; do
 	lib_option="$1"
@@ -205,6 +217,12 @@ if [ "x${option}" = "x--libs" -o "x${option}" = "x--ldflags" ]; then
 	elif [ "x${lib_option}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
 	    bio_ldflags=-lgenbb_help_bio
 	    bio_ldflags_abs=${genbb_help_lib_dir}/libgenbb_help_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
+	# elif [ "x${lib_option}" = "x--without-fortran" ]; then
+	#     decay0_fortran_ldflags=
+	#     decay0_fortran_ldflags_abs=
+	# elif [ "x${lib_option}" = "x--with-fortran" -a ${with_fortran} -eq 1 ]; then
+	#     decay0_fortran_ldflags=-lgenbb_help_decay0_fortran
+	#     decay0_fortran_ldflags_abs=${genbb_help_lib_dir}/libgenbb_help_decay0_fortran@CMAKE_SHARED_LIBRARY_SUFFIX@
 	elif [ "x${lib_option}" = "x--without-reflection" ]; then
 	    reflection_ldflags=
 	    reflection_ldflags_abs=
@@ -229,11 +247,13 @@ if [ "x${option}" = "x--libs" ]; then
 	echo -n "${reflection_ldflags_abs} "
 	echo -n "${bio_ldflags_abs} "
 	echo -n "${genbb_help_lib_dir}/libgenbb_help@CMAKE_SHARED_LIBRARY_SUFFIX@ "
+	echo -n "${genbb_help_lib_dir}/libgenbb_help_decay0_cpp@CMAKE_SHARED_LIBRARY_SUFFIX@ "
     else
 	echo -n "-L${genbb_help_lib_dir} "
 	echo -n "${reflection_ldflags} "
 	echo -n "${bio_ldflags} "
 	echo -n "-lgenbb_help "
+	echo -n "-lgenbb_help_decay0_cpp "
     fi
     echo
     my_exit 0
@@ -245,11 +265,13 @@ if [ "x${option}" = "x--ldflags" ]; then
 	    echo -n "${reflection_ldflags_abs} "
 	    echo -n "${bio_ldflags_abs} "
 	    echo -n "${genbb_help_lib_dir}/libgenbb_help@CMAKE_SHARED_LIBRARY_SUFFIX@ "
+	    echo -n "${genbb_help_lib_dir}/libgenbb_help_decay0_cpp@CMAKE_SHARED_LIBRARY_SUFFIX@ "
 	else
 	    echo -n "-L${genbb_help_lib_dir} "
 	    echo -n "${reflection_ldflags} "
 	    echo -n "${bio_ldflags} "
 	    echo -n "-lgenbb_help "
+	    echo -n "-lgenbb_help_decay0_cpp "
 	fi
         echo -n "`geomtools-config --ldflags ${ldflags_abs_path_option}` "
 	if [ ${with_reflection} -eq 1 ]; then
@@ -270,23 +292,23 @@ if [ "x${option}" = "x--with-debug" ]; then
     fi
 fi
 
-# if [ "x${option}" = "x--with-bio" ]; then
-#     echo "${with_bio}"
-#     if [ "${with_bio}" = "1" ]; then
-# 	my_exit 0
-#     else
-# 	my_exit 1
-#     fi
-# fi
+if [ "x${option}" = "x--with-bio" ]; then
+    echo "${with_bio}"
+    if [ "${with_bio}" = "1" ]; then
+	my_exit 0
+    else
+	my_exit 1
+    fi
+fi
 
-# if [ "x${option}" = "x--with-reflection" ]; then
-#     echo "${with_reflection}"
-#     if [ "${with_reflection}" = "1" ]; then
-# 	my_exit 0
-#     else
-# 	my_exit 1
-#     fi
-# fi
+if [ "x${option}" = "x--with-reflection" ]; then
+    echo "${with_reflection}"
+    if [ "${with_reflection}" = "1" ]; then
+	my_exit 0
+    else
+	my_exit 1
+    fi
+fi
 
 echo "ERROR: ${script_name}: Unknown option !" 1>&2
 print_help

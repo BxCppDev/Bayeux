@@ -191,6 +191,11 @@ namespace genbb {
         datatools::fetch_path_with_env(*i);
         datatools::multi_properties mconfig;
         mconfig.read(*i);
+        /*
+        if (is_debug()) {
+        // XXX
+        }
+        */
         this->load(mconfig);
       }
     }
@@ -751,6 +756,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::manager,ocd_)
 {
   ocd_.set_class_name ("genbb::manager");
   ocd_.set_class_description ("A generic manager for event generators");
+  ocd_.set_class_library("genbb_help");
+  //ocd_.set_class_documentation("blah-blah...");
 
   {
     configuration_property_description & cpd = ocd_.add_property_info();

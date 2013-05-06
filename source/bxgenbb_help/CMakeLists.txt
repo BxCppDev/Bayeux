@@ -45,47 +45,53 @@ if(APPLE)
   set(_ld_library_path_env "DYLD_LIBRARY_PATH")
 endif()
 
+option(GENBB_HELP_WITH_FORTRAN "Build the original Fortran decay0 library and associated tools" OFF)
+
 # ----------------------------------------------------------------------------
 # Fortran/C/C++ stuff
 # See : http://www.cmake.org/cmake/help/cmake-2-8-docs.html#module:FortranCInterface
-include(FortranCInterface)
-FortranCInterface_VERIFY( CXX QUIET )
-if (NOT FortranCInterface_VERIFIED_CXX )
-  message ( FATAL_ERROR "${PROJECT_NAME}: No Fortran/C++ compatible interface was found !" )
-else ()
-  message ( STATUS "${PROJECT_NAME}: Fortran/C++ compatible interface was found !" )
-endif ()
-message ( STATUS "${PROJECT_NAME}: FortranCInterface_GLOBAL_FOUND=${FortranCInterface_GLOBAL_FOUND}" )
-message ( STATUS "${PROJECT_NAME}: FortranCInterface_MODULE_FOUND=${FortranCInterface_MODULE_FOUND}" )
+if (GENBB_HELP_WITH_FORTRAN)
+  include(FortranCInterface)
+  FortranCInterface_VERIFY( CXX QUIET )
+  if (NOT FortranCInterface_VERIFIED_CXX )
+    message ( FATAL_ERROR "${PROJECT_NAME}: No Fortran/C++ compatible interface was found !" )
+  else ()
+    message ( STATUS "${PROJECT_NAME}: Fortran/C++ compatible interface was found !" )
+  endif ()
+  message ( STATUS "${PROJECT_NAME}: FortranCInterface_GLOBAL_FOUND=${FortranCInterface_GLOBAL_FOUND}" )
+  message ( STATUS "${PROJECT_NAME}: FortranCInterface_MODULE_FOUND=${FortranCInterface_MODULE_FOUND}" )
 
-message ( STATUS "${PROJECT_NAME}: Preparing special mangling name for the Fortran/C interface..." )
-FortranCInterface_HEADER (${PROJECT_BINARY_DIR}/include/genbb_help/detail/__genbb_help_FC.h
-  MACRO_NAMESPACE GENBB_HELP_FortranCInterface_
-  SYMBOLS fermi_wrap rng_shoot_reset rng_shoot_flat)
+  message ( STATUS "${PROJECT_NAME}: Preparing special mangling name for the Fortran/C interface..." )
+  FortranCInterface_HEADER (${PROJECT_BINARY_DIR}/include/genbb_help/detail/__genbb_help_FC.h
+    MACRO_NAMESPACE GENBB_HELP_FortranCInterface_
+     SYMBOLS fermi_wrap rng_shoot_reset rng_shoot_flat)
 
-install ( FILES ${PROJECT_BINARY_DIR}/include/genbb_help/detail/__genbb_help_FC.h
-          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genbb_help/detail
-          PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-        )
+  install ( FILES ${PROJECT_BINARY_DIR}/include/genbb_help/detail/__genbb_help_FC.h
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genbb_help/detail
+            PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+          )
 
-FortranCInterface_HEADER (${PROJECT_BINARY_DIR}/include/genbb_help/detail/__genbb_help_FC2.h
-  MACRO_NAMESPACE GENBB_HELP_FortranCInterface_
-  SYMBOLS set_genbb_random_seed enrange genevent genbbsub genbbpar)
+  FortranCInterface_HEADER (${PROJECT_BINARY_DIR}/include/genbb_help/detail/__genbb_help_FC2.h
+    MACRO_NAMESPACE GENBB_HELP_FortranCInterface_
+    SYMBOLS set_genbb_random_seed enrange genevent genbbsub genbbpar)
 
-install ( FILES ${PROJECT_BINARY_DIR}/include/genbb_help/detail/__genbb_help_FC2.h
-          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genbb_help/detail
-          PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-        )
+  install ( FILES ${PROJECT_BINARY_DIR}/include/genbb_help/detail/__genbb_help_FC2.h
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genbb_help/detail
+            PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+          )
+else()
+  message ( STATUS "${PROJECT_NAME}: Do not build the Fortran genbb/decay0 library !" )
+endif()
 
 #-----------------------------------------------------------------------
 # Build options
 #
-option(GENBB_HELP_WITH_DEBUG "Build debug stuff" OFF) 
+option(GENBB_HELP_WITH_DEBUG "Build debug stuff" OFF)
 set ( GENBB_HELP_WITH_BIO_SUPPORT 1 )
-option(GENBB_HELP_WITH_BIO  "Build auxiliary Boost I/O library" ON) 
-# option(GENBB_HELP_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" OFF) 
+option(GENBB_HELP_WITH_BIO  "Build auxiliary Boost I/O library" ON)
+# option(GENBB_HELP_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" OFF)
 option(GENBB_HELP_WITH_DOC  "Build the genbb_help documentation" ON)
-option(GENBB_HELP_WITH_TEST "Build the genbb_help test suite"    ON) 
+option(GENBB_HELP_WITH_TEST "Build the genbb_help test suite"    ON)
 
 if (GENBB_HELP_WITH_DEBUG)
   set (GENBB_HELP_WITH_DEBUG 1)
@@ -107,7 +113,7 @@ find_package(geomtools 4.0.0 REQUIRED)
 
 #-----------------------------------------------------------------------
 # On Apple, we fixup the install prefix to handle installing documentation,
-# support files and so on under the framework's "Resources" directory. 
+# support files and so on under the framework's "Resources" directory.
 # This follows the pattern used in CMake to fixup their app bundle
 # NB: THIS REQUIRES SOME FIXES IN CPACKAGING (see CMake's Qt dialog
 # packaging).
@@ -121,20 +127,20 @@ endif()
 #-----------------------------------------------------------------------
 # Build the submodules as required
 #
-add_subdirectory(src)   
+add_subdirectory(src)
 
-add_subdirectory(programs)   
+add_subdirectory(programs)
 
 if(GENBB_HELP_WITH_DOC)
   set (GENBB_HELP_WITH_DOC 1)
-  add_subdirectory(doc)
+  #add_subdirectory(doc)
 else()
   set (GENBB_HELP_WITH_DOC 0)
 endif()
 
 if(GENBB_HELP_WITH_TEST)
   set (GENBB_HELP_WITH_TEST 1)
-  enable_testing() 
+  enable_testing()
   add_subdirectory(testing)
 else()
   set (GENBB_HELP_WITH_TEST 0)
@@ -143,8 +149,8 @@ endif()
 
 install ( FILES ${PROJECT_SOURCE_DIR}/scripts/genbb
   DESTINATION ${CMAKE_INSTALL_BINDIR}
-  PERMISSIONS OWNER_READ OWNER_EXECUTE 
-  GROUP_READ GROUP_EXECUTE 
+  PERMISSIONS OWNER_READ OWNER_EXECUTE
+  GROUP_READ GROUP_EXECUTE
   WORLD_READ WORLD_EXECUTE
   )
 
@@ -169,17 +175,17 @@ if(UNIX)
   endif()
 
   configure_file(
-    ${PROJECT_SOURCE_DIR}/cmake/genbb_help-config.in 
+    ${PROJECT_SOURCE_DIR}/cmake/genbb_help-config.in
     ${PROJECT_BINARY_DIR}/cmake/genbb_help-config
     @ONLY
     )
 
   install(FILES ${PROJECT_BINARY_DIR}/cmake/genbb_help-config
     DESTINATION "${CMAKE_INSTALL_BINDIR}"
-    PERMISSIONS 
-      OWNER_READ OWNER_EXECUTE 
-      GROUP_READ GROUP_EXECUTE 
-      WORLD_READ WORLD_EXECUTE    
+    PERMISSIONS
+      OWNER_READ OWNER_EXECUTE
+      GROUP_READ GROUP_EXECUTE
+      WORLD_READ WORLD_EXECUTE
     COMPONENT Development
     )
 
@@ -200,9 +206,26 @@ endif()
 # Install resources :
 #
 
-set ( _genbb_help_TESTING_FULL_LOCAL_PATH 
-      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/testing" 
-    ) 
+set ( _genbb_help_RESOURCES_FULL_LOCAL_PATH
+      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/resources"
+    )
+message ( STATUS "${PROJECT_NAME} : genbb_help resources full local path = '${_genbb_help_RESOURCES_FULL_LOCAL_PATH}' " )
+
+install ( DIRECTORY ${PROJECT_SOURCE_DIR}/resources
+          DESTINATION ${CMAKE_INSTALL_DATADIR}
+          FILE_PERMISSIONS OWNER_READ OWNER_WRITE
+                           GROUP_READ GROUP_WRITE
+                           WORLD_READ
+          DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE
+                                WORLD_READ WORLD_EXECUTE
+          PATTERN 		".svn" EXCLUDE
+          PATTERN "*~" EXCLUDE
+         )
+
+set ( _genbb_help_TESTING_FULL_LOCAL_PATH
+      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/testing"
+    )
 message ( STATUS "${PROJECT_NAME} : genbb_help testing full local path = '${_genbb_help_TESTING_FULL_LOCAL_PATH}' " )
 
 install ( DIRECTORY ${PROJECT_SOURCE_DIR}/testing
@@ -210,8 +233,8 @@ install ( DIRECTORY ${PROJECT_SOURCE_DIR}/testing
           FILE_PERMISSIONS OWNER_READ OWNER_WRITE
                            GROUP_READ GROUP_WRITE
                            WORLD_READ
-          DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE 
-                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE 
+          DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE
                                 WORLD_READ WORLD_EXECUTE
           PATTERN 		".svn" EXCLUDE
           PATTERN "*~" EXCLUDE

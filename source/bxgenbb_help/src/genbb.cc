@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // genbb.cc
 /*
  * Copyright 2007-2012, F. Mauger
@@ -7,15 +7,15 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
  */
@@ -28,18 +28,18 @@
 #include <cstdlib>
 
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
 
 #include <datatools/utils.h>
 #include <datatools/units.h>
- 
+
 #include <genbb_help/genbb.h>
 #include <genbb_help/genbb_utils.h>
 #include <genbb_help/primary_event.h>
-#include <boost/algorithm/string/split.hpp> 
-#include <boost/algorithm/string/classification.hpp> 
 
 namespace genbb {
- 
+
   using namespace std;
 
   GENBB_PG_REGISTRATION_IMPLEMENT(genbb,"genbb::genbb");
@@ -53,7 +53,7 @@ namespace genbb {
   {
     return _debug_;
   }
- 
+
   void genbb::set_debug (bool d_)
   {
     _debug_ = d_;
@@ -158,7 +158,7 @@ namespace genbb {
     _buffer_count_++;
     return;
   }
-  
+
   // ctor:
   genbb::genbb () : i_genbb ()
   {
@@ -181,11 +181,11 @@ namespace genbb {
     _tmp_base_dir_ = "/tmp/${USER}";
 
     _decay_type_ = utils::INVALID_DECAY_TYPE;
-    _decay_isotope_ = "";  
-    _decay_dbd_level_ = 0;  
+    _decay_isotope_ = "";
+    _decay_dbd_level_ = 0;
     _decay_dbd_mode_ = 1;
     _use_energy_range_ = false;
-    _energy_min_ = utils::DEFAULT_ENERGY_RANGE_MIN; 
+    _energy_min_ = utils::DEFAULT_ENERGY_RANGE_MIN;
     _energy_max_ = utils::DEFAULT_ENERGY_RANGE_MAX;
     _seed_ = 0;
     _tmp_dir_[0] = 0;
@@ -195,7 +195,7 @@ namespace genbb {
 
     return;
   }
-  
+
   // dtor:
   genbb::~genbb ()
   {
@@ -278,11 +278,11 @@ namespace genbb {
 
     _tmp_base_dir_ = "/tmp/${USER}";
     _decay_type_ = utils::INVALID_DECAY_TYPE;
-    _decay_isotope_ = "";  
-    _decay_dbd_level_ = 0;  
+    _decay_isotope_ = "";
+    _decay_dbd_level_ = 0;
     _decay_dbd_mode_ = 1;
     _use_energy_range_ = false;
-    _energy_min_ = utils::DEFAULT_ENERGY_RANGE_MIN; 
+    _energy_min_ = utils::DEFAULT_ENERGY_RANGE_MIN;
     _energy_max_ = utils::DEFAULT_ENERGY_RANGE_MAX;
 
     _seed_ = 0;
@@ -317,7 +317,7 @@ namespace genbb {
 
     if (! has_external_random ())
       {
-        
+
         if (config_.has_key ("seed"))
           {
             long seed = config_.fetch_integer ("seed");
@@ -327,7 +327,7 @@ namespace genbb {
               }
             _seed_ = seed;
           }
-        
+
         if (config_.has_flag ("test"))
           {
             _test_ = true;
@@ -393,7 +393,7 @@ namespace genbb {
                     << tmp << "' !";
             throw logic_error (message.str());
           }
-        if (tmp == "background") 
+        if (tmp == "background")
           {
             _decay_type_ = utils::DECAY_TYPE_BACKGROUND;
 
@@ -406,7 +406,7 @@ namespace genbb {
             _decay_isotope_ = config_.fetch_string ("decay_isotope");
           }
 
-        if (tmp == "DBD") 
+        if (tmp == "DBD")
           {
             _decay_type_ = utils::DECAY_TYPE_DBD;
 
@@ -441,7 +441,7 @@ namespace genbb {
       {
         double energy_unit = CLHEP::MeV;
         _use_energy_range_ = false;
-        const std::vector<int> & dbdmwer 
+        const std::vector<int> & dbdmwer
           = utils::get_dbd_modes_with_energy_range ();
         if (std::find (dbdmwer.begin (), dbdmwer.end (),_decay_dbd_mode_) != dbdmwer.end ())
           {
@@ -476,10 +476,10 @@ namespace genbb {
                 message << "genbb::genbb::initialize: Invalid energy range !";
                 throw logic_error (message.str());
               }
-            
+
           }
       }
-    
+
     if (! has_external_random ())
       {
         _random_.init ("taus2", _seed_);
@@ -508,7 +508,7 @@ namespace genbb {
                 throw logic_error (message.str());
               }
           }
-        
+
           ostringstream oss;
           oss << _tmp_base_dir_ << '/' << "genbb_help.genbb.XXXXXX";
           int i;
@@ -517,7 +517,7 @@ namespace genbb {
               _tmp_dir_[i] = oss.str ()[i];
             }
           _tmp_dir_[i] = 0;
-        
+
           char * ret = mkdtemp (_tmp_dir_);
           if (ret == NULL)
             {
@@ -535,7 +535,7 @@ namespace genbb {
               ostringstream message;
               message << "genbb::genbb::initialize: Temporary directory name is too long (<" << TMP_DIR_BUFSZ << ")!";
               throw logic_error (message.str());
-              
+
             }
           if (! boost::filesystem::is_directory (_forced_tmp_dir_))
             {
@@ -558,7 +558,7 @@ namespace genbb {
         oss << _tmp_dir_ << '/' << "genbb.conf";
         _genbb_conf_ = oss.str ();
       }
- 
+
       {
         _genbb_conf_file_.open (_genbb_conf_.c_str ());
         if (! _genbb_conf_file_)
@@ -578,7 +578,7 @@ namespace genbb {
             _genbb_conf_file_ << "betabeta-nucleide=" << _decay_isotope_ << endl;
             _genbb_conf_file_ << "betabeta-level=" << _decay_dbd_level_ << endl;
             _genbb_conf_file_ << "betabeta-mode=" << _decay_dbd_mode_ << endl;
-            const std::vector<int> & dbdmwer 
+            const std::vector<int> & dbdmwer
               = utils::get_dbd_modes_with_energy_range ();
             if (std::find (dbdmwer.begin (), dbdmwer.end (), _decay_dbd_mode_) != dbdmwer.end ())
               {
@@ -596,7 +596,7 @@ namespace genbb {
         _genbb_conf_file_ << "output-file=" << "out.genbb" << endl;
 
       }
-      
+
     }
 
     _init_ ();
@@ -610,7 +610,7 @@ namespace genbb {
     return true;
   }
 
-  void genbb::_load_next (primary_event & event_, 
+  void genbb::_load_next (primary_event & event_,
                           bool compute_classification_)
   {
     bool local_debug = _debug_;
@@ -665,8 +665,8 @@ namespace genbb {
           }
         typedef vector<string> split_vector_type;
         split_vector_type svec;
-        boost::algorithm::split(svec, line, 
-                                boost::algorithm::is_any_of("="), 
+        boost::algorithm::split(svec, line,
+                                boost::algorithm::is_any_of("="),
                                 boost::algorithm::token_compress_on );
         if (svec.size () != 2)
           {
@@ -674,7 +674,7 @@ namespace genbb {
             message << "genbb::genbb::_load_next_genbb_: Invalid syntax ("
                     << line << ") !";
             throw logic_error (message.str ());
-          } 
+          }
         if (svec[0] == "#@toallevents")
           {
             std::istringstream iss (svec[1]);
@@ -683,7 +683,7 @@ namespace genbb {
             if (! iss)
               {
                 std::ostringstream message;
-                message << "genbb::genbb::_load_next_genbb_: " 
+                message << "genbb::genbb::_load_next_genbb_: "
                         << "Invalid format for 'toallevents' weight ("
                         << line << ") !";
                 throw logic_error (message.str ());
@@ -691,14 +691,14 @@ namespace genbb {
             if (toallevents < 1.0)
               {
                 std::ostringstream message;
-                message << "genbb::genbb::_load_next_genbb_: " 
+                message << "genbb::genbb::_load_next_genbb_: "
                         << "Invalid value for 'toallevents' weight ("
                         << line << ") !";
                 throw logic_error (message.str ());
-              } 
+              }
             _genbb_weight_ = 1.0  / toallevents;
             std::clog << "NOTICE: genbb::genbb::_load_next_genbb_: "
-                      << "Load GENBB event weight = " 
+                      << "Load GENBB event weight = "
                       << _genbb_weight_ << std::endl;
           }
       }
@@ -724,7 +724,7 @@ namespace genbb {
         int part_type;
         double px, py ,pz, time_shift;
         *_genbb_in_ >> std::ws >> part_type >> px >> py >> pz >> time_shift;
-        part_time += time_shift; 
+        part_time += time_shift;
         pp.set_type (part_type);
         pp.set_time (part_time * CLHEP::second); // GENBB unit is s
         geomtools::vector_3d p (px, py, pz);
@@ -767,23 +767,23 @@ namespace genbb {
              << "Entering..."
              << endl;
       }
-    
+
     if (_decay_type_ == utils::INVALID_DECAY_TYPE)
       {
         ostringstream message;
-        message << "genbb::genbb::_init_: " 
+        message << "genbb::genbb::_init_: "
                 << "Missing decay type !";
         _clean_ ();
-        throw logic_error (message.str());      
+        throw logic_error (message.str());
       }
 
     if (_decay_isotope_.empty ())
       {
         ostringstream message;
-        message << "genbb::genbb::_init_: " 
+        message << "genbb::genbb::_init_: "
                 << "Missing decay isotope !";
         _clean_ ();
-        throw logic_error (message.str());      
+        throw logic_error (message.str());
       }
 
     if (_decay_type_ == utils::DECAY_TYPE_DBD)
@@ -792,10 +792,10 @@ namespace genbb {
         if (std::find(dbdnucs.begin (), dbdnucs.end (), _decay_isotope_) == dbdnucs.end ())
           {
             ostringstream message;
-            message << "genbb::genbb::_init_: " 
+            message << "genbb::genbb::_init_: "
                     << "Unknown isotope (" << _decay_isotope_ << ") !";
             _clean_ ();
-            throw logic_error (message.str());          
+            throw logic_error (message.str());
           }
       }
     else if (_decay_type_ == utils::DECAY_TYPE_BACKGROUND)
@@ -804,13 +804,13 @@ namespace genbb {
     else
       {
         ostringstream message;
-        message << "genbb::genbb::_init_: " 
+        message << "genbb::genbb::_init_: "
                 << "Invalid decay type !";
         _clean_ ();
-        throw logic_error (message.str());      
+        throw logic_error (message.str());
       }
 
-    // build the Genbb/Decay0 output data file name : 
+    // build the Genbb/Decay0 output data file name :
     {
       ostringstream oss;
       oss << _tmp_dir_ << '/' << "data_" << _buffer_count_ << ".genbb";
@@ -818,16 +818,16 @@ namespace genbb {
     }
 
     // reset counter:
-    _buffer_item_ = 0; 
+    _buffer_item_ = 0;
     datatools::fetch_path_with_env (_genbb_data_);
- 
+
     if (_debug_)
       {
         clog << "debug: " << "genbb::genbb::_init_: "
              << "Generate a new GENBB buffer data file '" << _genbb_data_ << "'..."
              << endl;
       }
-   
+
     bool test = _test_;
     if (test)
       {
@@ -860,7 +860,7 @@ namespace genbb {
                       << std::endl;
           }
         datatools::fetch_path_with_env (genbb_script);
-        
+
         unsigned long genbb_seed = grab_random ().uniform_int (0xFFFFFFF);
 
         ostringstream genbb_log_file_ss;
@@ -869,7 +869,7 @@ namespace genbb {
         genbb_cmd << "bash " << genbb_script << " "
                   << "--temp-directory" << " "
                   << _tmp_dir_ << " "
-                  << _genbb_conf_ << " " 
+                  << _genbb_conf_ << " "
                   << genbb_seed << " "
                   << _buffer_size_ << " "
                   << _genbb_data_ << " "
