@@ -27,7 +27,7 @@ project(dpp)
 # - Versioning
 set(dpp_VERSION_MAJOR 1)
 set(dpp_VERSION_MINOR 0)
-set(dpp_PATCH_VERSION 0)
+set(dpp_PATCH_VERSION 1)
 set(dpp_VERSION "${dpp_VERSION_MAJOR}.${dpp_VERSION_MINOR}.${dpp_PATCH_VERSION}")
 math(EXPR _dpp_VERSION_NUMERIC "${dpp_VERSION_MAJOR}*100000+${dpp_VERSION_MINOR}*100+${dpp_PATCH_VERSION}")
 
