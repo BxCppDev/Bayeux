@@ -63,7 +63,7 @@ namespace mygsl {
     std::vector<std::string> & grab_output_files ();
 
     void add_output_file (const std::string & fn_);
- 
+
     const mygsl::histogram_pool & get_pool () const;
 
     mygsl::histogram_pool & grab_pool ();
@@ -110,6 +110,7 @@ namespace mygsl {
     mygsl::histogram_pool     _pool_;        /// Embeded histogram pool
     std::vector<std::string>  _output_files_; /// List of output files
     bool                      _root_export_stats_; /// Flag for stat box (ROOT export)
+    std::string               _root_export_title_prefix_; /// General common user title (ROOT export)
     // Registration :
     DATATOOLS_SERVICE_REGISTRATION_INTERFACE (histogram_service);
 
