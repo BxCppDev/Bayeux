@@ -27,7 +27,7 @@ project(geomtools)
 # - Versioning
 set(geomtools_VERSION_MAJOR 4)
 set(geomtools_VERSION_MINOR 0)
-set(geomtools_PATCH_VERSION 0)
+set(geomtools_PATCH_VERSION 1)
 set(geomtools_VERSION "${geomtools_VERSION_MAJOR}.${geomtools_VERSION_MINOR}.${geomtools_PATCH_VERSION}")
 math(EXPR _geomtools_VERSION_NUMERIC "${geomtools_VERSION_MAJOR}*100000+${geomtools_VERSION_MINOR}*100+${geomtools_PATCH_VERSION}")
 
@@ -48,11 +48,11 @@ endif()
 #-----------------------------------------------------------------------
 # Build options
 #
-option(GEOMTOOLS_WITH_DEBUG "Build debug stuff" OFF) 
-option(GEOMTOOLS_WITH_BIO  "Build auxiliary Boost I/O library" ON) 
-option(GEOMTOOLS_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" OFF) 
+option(GEOMTOOLS_WITH_DEBUG "Build debug stuff" OFF)
+option(GEOMTOOLS_WITH_BIO  "Build auxiliary Boost I/O library" ON)
+option(GEOMTOOLS_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" OFF)
 option(GEOMTOOLS_WITH_DOC  "Build the geomtools documentation" ON)
-option(GEOMTOOLS_WITH_TEST "Build the geomtools test suite"    ON) 
+option(GEOMTOOLS_WITH_TEST "Build the geomtools test suite"    ON)
 option(GEOMTOOLS_WITH_BASH_SETUP "Build the geomtools with Bash setup macro" ON)
 option(GEOMTOOLS_WITH_GNUPLOT_DISPLAY  "Build the Gnuplot-based display tools" ON )
 option(GEOMTOOLS_WITH_ROOT_DISPLAY  "Allow the ROOT display tools" ON )
@@ -93,9 +93,9 @@ endif ()
 
 if(GEOMTOOLS_WITH_GNUPLOT_DISPLAY)
   set (GEOMTOOLS_WITH_GNUPLOT_DISPLAY 1)
-  # Gnuplot dependency :  
-  set ( _gnuplot_min_version 4.4 ) 
-  if ( NOT "$ENV{GNUPLOT_ROOT_DIR}" STREQUAL "")  
+  # Gnuplot dependency :
+  set ( _gnuplot_min_version 4.4 )
+  if ( NOT "$ENV{GNUPLOT_ROOT_DIR}" STREQUAL "")
     message ( STATUS "Environment GNUPLOT_ROOT_DIR exists : '$ENV{GNUPLOT_ROOT_DIR}' ")
     set ( GNUPLOT_ROOT_DIR $ENV{GNUPLOT_ROOT_DIR} )
   endif ()
@@ -113,7 +113,7 @@ endif ()
 
 #-----------------------------------------------------------------------
 # On Apple, we fixup the install prefix to handle installing documentation,
-# support files and so on under the framework's "Resources" directory. 
+# support files and so on under the framework's "Resources" directory.
 # This follows the pattern used in CMake to fixup their app bundle
 # NB: THIS REQUIRES SOME FIXES IN CPACKAGING (see CMake's Qt dialog
 # packaging).
@@ -127,9 +127,9 @@ endif()
 #-----------------------------------------------------------------------
 # Build the submodules as required
 #
-add_subdirectory(src)   
+add_subdirectory(src)
 
-add_subdirectory(programs)   
+add_subdirectory(programs)
 
 if(GEOMTOOLS_WITH_DOC)
   set (GEOMTOOLS_WITH_DOC 1)
@@ -140,7 +140,7 @@ endif()
 
 if(GEOMTOOLS_WITH_TEST)
   set (GEOMTOOLS_WITH_TEST 1)
-  enable_testing() 
+  enable_testing()
   add_subdirectory(testing)
 else()
   set (GEOMTOOLS_WITH_TEST 0)
@@ -149,9 +149,9 @@ endif()
 # ----------------------------------------------------------------------------
 # Install resources :
 #
-set ( _geomtools_GDML_SCHEMA_FULL_LOCAL_PATH 
-      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/resources/gdml_schema" 
-    ) 
+set ( _geomtools_GDML_SCHEMA_FULL_LOCAL_PATH
+      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/resources/gdml_schema"
+    )
 message ( STATUS "${PROJECT_NAME} : GDML schema full local path = '${_geomtools_GDML_SCHEMA_FULL_LOCAL_PATH}' " )
 
 install ( DIRECTORY ${PROJECT_SOURCE_DIR}/resources/gdml_schema
@@ -159,16 +159,16 @@ install ( DIRECTORY ${PROJECT_SOURCE_DIR}/resources/gdml_schema
           FILE_PERMISSIONS OWNER_READ OWNER_WRITE
                            GROUP_READ GROUP_WRITE
                            WORLD_READ
-          DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE 
-                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE 
+          DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE
                                 WORLD_READ WORLD_EXECUTE
           PATTERN ".svn" EXCLUDE
           PATTERN "*~" EXCLUDE
          )
 
-set ( _geomtools_testing_FULL_LOCAL_PATH 
-      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/testing" 
-    ) 
+set ( _geomtools_testing_FULL_LOCAL_PATH
+      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/testing"
+    )
 message ( STATUS "${PROJECT_NAME} : geomtools testing full local path = '${_geomtools_testing_FULL_LOCAL_PATH}' " )
 
 install ( DIRECTORY ${PROJECT_SOURCE_DIR}/testing
@@ -176,8 +176,8 @@ install ( DIRECTORY ${PROJECT_SOURCE_DIR}/testing
           FILE_PERMISSIONS OWNER_READ OWNER_WRITE
                            GROUP_READ GROUP_WRITE
                            WORLD_READ
-          DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE 
-                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE 
+          DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE
                                 WORLD_READ WORLD_EXECUTE
           PATTERN ".svn" EXCLUDE
           PATTERN "*~" EXCLUDE
@@ -187,9 +187,9 @@ install ( DIRECTORY ${PROJECT_SOURCE_DIR}/testing
 # Install resources :
 #
 
-set ( _geomtools_testing_FULL_LOCAL_PATH 
-      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/testing" 
-    ) 
+set ( _geomtools_testing_FULL_LOCAL_PATH
+      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/testing"
+    )
 message ( STATUS "${PROJECT_NAME} : geomtools testing full local path = '${_geomtools_testing_FULL_LOCAL_PATH}' " )
 
 install ( DIRECTORY ${PROJECT_SOURCE_DIR}/testing
@@ -197,8 +197,8 @@ install ( DIRECTORY ${PROJECT_SOURCE_DIR}/testing
           FILE_PERMISSIONS OWNER_READ OWNER_WRITE
                            GROUP_READ GROUP_WRITE
                            WORLD_READ
-          DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE 
-                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE 
+          DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE
                                 WORLD_READ WORLD_EXECUTE
           PATTERN ".svn" EXCLUDE
           PATTERN "*~" EXCLUDE
