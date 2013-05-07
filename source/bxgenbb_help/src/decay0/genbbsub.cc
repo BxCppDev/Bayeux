@@ -24,6 +24,8 @@
 #include <cmath>
 #include <limits>
 
+#include <boost/algorithm/string/predicate.hpp>
+
 #include <datatools/units.h>
 #include <mygsl/rng.h>
 
@@ -612,7 +614,7 @@ namespace genbb {
       if (istart_ != GENBBSUB_ISTART_GENERATE) {
 
         if (i2bbs_ == GENBBSUB_I2BBS_DBD) {
-          if (chnuclide_ == "Ca48") {
+          if (boost::algorithm::starts_with(chnuclide_,"Ca48")) {
             bb_params_.Qbb=4.272;
             bb_params_.Zdbb=22.;
             bb_params_.Adbb=48.;
@@ -628,7 +630,7 @@ namespace genbb {
             if (ilevel_ == 2) bb_params_.levelE=2421;
             if (ilevel_ == 0) bb_params_.itrans02=0;
             if (ilevel_ == 1 || ilevel_ == 2) bb_params_.itrans02=2;
-          } else if (chnuclide_ == "Ni58") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Ni58")) {
             bb_params_.Qbb=1.926;
             bb_params_.Zdbb=-26.;
             bb_params_.Adbb=58.;
@@ -644,7 +646,7 @@ namespace genbb {
             if (ilevel_ == 2) bb_params_.levelE=1675;
             if (ilevel_ == 0) bb_params_.itrans02=0;
             if (ilevel_ == 1 || ilevel_ == 2) bb_params_.itrans02=2;
-          } else if (chnuclide_ == "Zn64") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Zn64")) {
             bb_params_.Qbb=1.096;
             bb_params_.Zdbb=-28.;
             bb_params_.Adbb=64.;
@@ -657,7 +659,7 @@ namespace genbb {
             }
             bb_params_.levelE=0;
             bb_params_.itrans02=0;
-          } else if (chnuclide_ == "Zn70") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Zn70")) {
             bb_params_.Qbb=1.001;
             bb_params_.Zdbb=32.;
             bb_params_.Adbb=70.;
@@ -670,7 +672,7 @@ namespace genbb {
             }
             bb_params_.levelE=0;
             bb_params_.itrans02=0;
-          } else if (chnuclide_ == "Ge76") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Ge76")) {
             bb_params_.Qbb=2.039;
             bb_params_.Zdbb=34.;
             bb_params_.Adbb=76.;
@@ -687,7 +689,7 @@ namespace genbb {
             if (ilevel_ == 3) bb_params_.levelE=1216;
             if (ilevel_ == 0 || ilevel_ == 2) bb_params_.itrans02=0;
             if (ilevel_ == 1 || ilevel_ == 3) bb_params_.itrans02=2;
-          } else if (chnuclide_ == "Se74") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Se74")) {
             bb_params_.Qbb=1.209;
             bb_params_.Zdbb=-32.;
             bb_params_.Adbb=74.;
@@ -703,7 +705,7 @@ namespace genbb {
             if (ilevel_ == 2) bb_params_.levelE=1204;
             if (ilevel_ == 0) bb_params_.itrans02=0;
             if (ilevel_ == 1 || ilevel_ == 2) bb_params_.itrans02=2;
-          } else if (chnuclide_ == "Se82") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Se82")) {
             bb_params_.Qbb=2.995;
             bb_params_.Zdbb=36.;
             bb_params_.Adbb=82.;
@@ -719,7 +721,7 @@ namespace genbb {
             if (ilevel_ == 2) bb_params_.levelE=1475;
             if (ilevel_ == 0) bb_params_.itrans02=0;
             if (ilevel_ == 1 || ilevel_ == 2) bb_params_.itrans02=2;
-          } else if (chnuclide_ == "Sr84") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Sr84")) {
             bb_params_.Qbb=1.787;
             bb_params_.Zdbb=-36.;
             bb_params_.Adbb=84.;
@@ -734,7 +736,7 @@ namespace genbb {
             if (ilevel_ == 1) bb_params_.levelE=882;
             if (ilevel_ == 0) bb_params_.itrans02=0;
             if (ilevel_ == 1) bb_params_.itrans02=2;
-          } else if (chnuclide_ == "Zr94") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Zr94")) {
             bb_params_.Qbb=1.144;
             bb_params_.Zdbb=42.;
             bb_params_.Adbb=94.;
@@ -749,7 +751,7 @@ namespace genbb {
             if (ilevel_ == 1) bb_params_.levelE=871;
             if (ilevel_ == 0) bb_params_.itrans02=0;
             if (ilevel_ == 1) bb_params_.itrans02=2;
-          } else if (chnuclide_ == "Zr96") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Zr96")) {
             bb_params_.Qbb=3.350;
             bb_params_.Zdbb=42.;
             bb_params_.Adbb=96.;
@@ -775,7 +777,7 @@ namespace genbb {
                 ilevel_ == 5 || ilevel_ == 6 || ilevel_ == 8 ||
                 // we suppose here that 2713 keV level is 2+
                 ilevel_ == 9) bb_params_.itrans02=2;
-          } else if (chnuclide_ == "Mo92") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Mo92")) {
             bb_params_.Qbb=1.649;
             bb_params_.Zdbb=-40.;
             bb_params_.Adbb=92.;
@@ -791,7 +793,7 @@ namespace genbb {
             if (ilevel_ == 2) bb_params_.levelE=1383;
             if (ilevel_ == 0 || ilevel_ == 2) bb_params_.itrans02=0;
             if (ilevel_ == 1) bb_params_.itrans02=2;
-          } else if (chnuclide_ == "Mo100") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Mo100")) {
             bb_params_.Qbb=3.034;
             bb_params_.Zdbb=44.;
             bb_params_.Adbb=100.;
@@ -809,7 +811,7 @@ namespace genbb {
             if (ilevel_ == 4) bb_params_.levelE=1741;
             if (ilevel_ == 0 || ilevel_ == 2 || ilevel_ == 4) bb_params_.itrans02=0;
             if (ilevel_ == 1 || ilevel_ == 3) bb_params_.itrans02=2;
-          } else if (chnuclide_ == "Ru96") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Ru96")) {
             bb_params_.Qbb=2.718;
             bb_params_.Zdbb=-42.;
             bb_params_.Adbb=96.;
@@ -837,7 +839,7 @@ namespace genbb {
                 ilevel_ == 9) bb_params_.itrans02=2;
             if (ilevel_ == 8)  bb_params_.EK=0.003;
             if (ilevel_ == 9)  bb_params_.EK=0.002;
-          } else if (chnuclide_ == "Ru104") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Ru104")) {
             bb_params_.Qbb=1.301;
             bb_params_.Zdbb=46.;
             bb_params_.Adbb=104.;
@@ -852,7 +854,7 @@ namespace genbb {
             if (ilevel_ == 1) bb_params_.levelE=556;
             if (ilevel_ == 0) bb_params_.itrans02=0;
             if (ilevel_ == 1) bb_params_.itrans02=2;
-          } else if (chnuclide_ == "Cd106") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Cd106")) {
             bb_params_.Qbb=2.771;
             bb_params_.Zdbb=-46.;
             bb_params_.Adbb=106.;
@@ -873,7 +875,7 @@ namespace genbb {
             bb_params_.itrans02=0;
             if (ilevel_ == 1 || ilevel_ == 2 || ilevel_ == 4);
             bb_params_.itrans02=2;
-          } else if (chnuclide_ == "Cd108") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Cd108")) {
             bb_params_.Qbb=0.269;
             bb_params_.Zdbb=-46.;
             bb_params_.Adbb=108.;
@@ -886,7 +888,7 @@ namespace genbb {
             }
             bb_params_.levelE=0;
             bb_params_.itrans02=0;
-          } else if (chnuclide_ == "Cd114") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Cd114")) {
             bb_params_.Qbb=0.536;
             bb_params_.Zdbb=50.;
             bb_params_.Adbb=114.;
@@ -899,7 +901,7 @@ namespace genbb {
             }
             bb_params_.levelE=0;
             bb_params_.itrans02=0;
-          } else if (chnuclide_ == "Cd116") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Cd116")) {
             bb_params_.Qbb=2.805;
             bb_params_.Zdbb=50.;
             bb_params_.Adbb=116.;
@@ -918,7 +920,7 @@ namespace genbb {
             if (ilevel_ == 5) bb_params_.levelE=2225;
             if (ilevel_ == 0 || ilevel_ == 2 || ilevel_ == 3) bb_params_.itrans02=0;
             if (ilevel_ == 1 || ilevel_ == 4 || ilevel_ == 5) bb_params_.itrans02=2;
-          } else if (chnuclide_ == "Sn112") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Sn112")) {
             bb_params_.Qbb=1.919;
             bb_params_.Zdbb=-48.;
             bb_params_.Adbb=112.;
@@ -939,7 +941,7 @@ namespace genbb {
             if (ilevel_ == 0 || ilevel_ == 2 || ilevel_ == 4 ||
                 ilevel_ == 6) bb_params_.itrans02=0;
             if (ilevel_ == 1 || ilevel_ == 3 || ilevel_ == 5) bb_params_.itrans02=2;
-          } else if (chnuclide_ == "Sn122") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Sn122")) {
             bb_params_.Qbb=0.368;
             bb_params_.Zdbb=52.;
             bb_params_.Adbb=122.;
@@ -952,7 +954,7 @@ namespace genbb {
             }
             bb_params_.levelE=0;
             bb_params_.itrans02=0;
-          } else if (chnuclide_ == "Sn124") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Sn124")) {
             bb_params_.Qbb=2.288;
             bb_params_.Zdbb=52.;
             bb_params_.Adbb=124.;
@@ -976,7 +978,7 @@ namespace genbb {
                 ilevel_ == 7) bb_params_.itrans02=0;
             if (ilevel_ == 1 || ilevel_ == 2 || ilevel_ == 5 ||
                 ilevel_ == 6 || ilevel_ == 8) bb_params_.itrans02=2;
-          } else if (chnuclide_ == "Te120") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Te120")) {
             bb_params_.Qbb=1.698;
             bb_params_.Zdbb=-50.;
             bb_params_.Adbb=120.;
@@ -991,7 +993,7 @@ namespace genbb {
             if (ilevel_ == 1) bb_params_.levelE=1171;
             if (ilevel_ == 0) bb_params_.itrans02=0;
             if (ilevel_ == 1) bb_params_.itrans02=2;
-          } else if (chnuclide_ == "Te128") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Te128")) {
             bb_params_.Qbb=0.867;
             bb_params_.Zdbb=54.;
             bb_params_.Adbb=128.;
@@ -1006,7 +1008,7 @@ namespace genbb {
             if (ilevel_ == 1) bb_params_.levelE=443;
             if (ilevel_ == 0) bb_params_.itrans02=0;
             if (ilevel_ == 1) bb_params_.itrans02=2;
-          } else if (chnuclide_ == "Te130") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Te130")) {
             bb_params_.Qbb=2.529;
             bb_params_.Zdbb=54.;
             bb_params_.Adbb=130.;
@@ -1023,7 +1025,7 @@ namespace genbb {
             if (ilevel_ == 3) bb_params_.levelE=1794;
             if (ilevel_ == 0 || ilevel_ == 3) bb_params_.itrans02=0;
             if (ilevel_ == 1 || ilevel_ == 2) bb_params_.itrans02=2;
-          } else if (chnuclide_ == "Xe136") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Xe136")) {
             bb_params_.Qbb=2.468;
             bb_params_.Zdbb=56.;
             bb_params_.Adbb=136.;
@@ -1049,7 +1051,7 @@ namespace genbb {
             if (ilevel_ == 1 || ilevel_ == 2
                 || ilevel_ == 4 || ilevel_ == 5
                 || ilevel_ == 7 || ilevel_ == 9) bb_params_.itrans02=2;
-          } else if (chnuclide_ == "Ce136") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Ce136")) {
             bb_params_.Qbb=2.419;
             bb_params_.Zdbb=-56.;
             bb_params_.Adbb=136.;
@@ -1076,7 +1078,7 @@ namespace genbb {
                 == 5 || ilevel_ == 7 || ilevel_ == 9) bb_params_.itrans02=2;
             // only 2L capture is allowed energetically for 2400 keV level
             if (ilevel_ == 9)  bb_params_.EK=0.006;
-          } else if (chnuclide_ == "Ce138") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Ce138")) {
             bb_params_.Qbb=0.693;
             bb_params_.Zdbb=-56.;
             bb_params_.Adbb=138.;
@@ -1089,7 +1091,7 @@ namespace genbb {
             }
             bb_params_.levelE=0;
             bb_params_.itrans02=0;
-          } else if (chnuclide_ == "Ce142") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Ce142")) {
             bb_params_.Qbb=1.417;
             bb_params_.Zdbb=60.;
             bb_params_.Adbb=142.;
@@ -1102,7 +1104,7 @@ namespace genbb {
             }
             bb_params_.levelE=0;
             bb_params_.itrans02=0;
-          } else if (chnuclide_ == "Nd148") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Nd148")) {
             bb_params_.Qbb=1.929;
             bb_params_.Zdbb=62.;
             bb_params_.Adbb=148.;
@@ -1118,7 +1120,7 @@ namespace genbb {
             if (ilevel_ == 2) bb_params_.levelE=1455;
             if (ilevel_ == 0) bb_params_.itrans02=0;
             if (ilevel_ == 1 || ilevel_ == 2) bb_params_.itrans02=2;
-          } else if (chnuclide_ == "Nd150") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Nd150")) {
             bb_params_.Qbb=3.367;
             bb_params_.Zdbb=62.;
             bb_params_.Adbb=150.;
@@ -1137,7 +1139,7 @@ namespace genbb {
             if (ilevel_ == 5) bb_params_.levelE=1256;
             if (ilevel_ == 0 || ilevel_ == 2 || ilevel_ == 5) bb_params_.itrans02=0;
             if (ilevel_ == 1 || ilevel_ == 3 || ilevel_ == 4) bb_params_.itrans02=2;
-          } else if (chnuclide_ == "Dy156") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Dy156")) {
             bb_params_.Qbb=2.012;
             bb_params_.Zdbb=-64.;
             bb_params_.Adbb=156.;
@@ -1173,7 +1175,7 @@ namespace genbb {
             if (ilevel_ >= 11  &&  ilevel_ <= 13)  bb_params_.EK=0.029;
             if (ilevel_ == 14)  bb_params_.EK=0.008;
             if (ilevel_ == 15)  bb_params_.EK=0.004;
-          } else if (chnuclide_ == "Dy158") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Dy158")) {
             bb_params_.Qbb=0.285;
             bb_params_.Zdbb=-64.;
             bb_params_.Adbb=158.;
@@ -1190,7 +1192,7 @@ namespace genbb {
             if (ilevel_ == 0) bb_params_.itrans02=0;
             if (ilevel_ == 1) bb_params_.itrans02=2;
             if (ilevel_ == 2)  bb_params_.EK=0.008;
-          } else if (chnuclide_ == "W180") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"W180")) {
             bb_params_.Qbb=0.144;
             bb_params_.Zdbb=-72.;
             bb_params_.Adbb=180.;
@@ -1204,7 +1206,7 @@ namespace genbb {
             }
             bb_params_.levelE=0;
             bb_params_.itrans02=0;
-          } else if (chnuclide_ == "W186") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"W186")) {
             bb_params_.Qbb=0.490;
             bb_params_.Zdbb=76.;
             bb_params_.Adbb=186.;
@@ -1220,7 +1222,7 @@ namespace genbb {
             if (ilevel_ == 1) bb_params_.levelE=137;
             if (ilevel_ == 0) bb_params_.itrans02=0;
             if (ilevel_ == 1) bb_params_.itrans02=2;
-          } else if (chnuclide_ == "Pt190") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Pt190")) {
             bb_params_.Qbb=1.383;
             bb_params_.Zdbb=-76.;
             bb_params_.Adbb=190.;
@@ -1242,7 +1244,7 @@ namespace genbb {
             if (ilevel_ == 1 || ilevel_ == 2 || ilevel_ == 4) bb_params_.itrans02=2;
             // for decay to 1382 keV level, electron captures from N or higher atomic shells are possible
             if (ilevel_ == 5)  bb_params_.EK=0.;
-          } else if (chnuclide_ == "Pt198") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Pt198")) {
             bb_params_.Qbb=1.047;
             bb_params_.Zdbb=80.;
             bb_params_.Adbb=198.;
@@ -1258,7 +1260,7 @@ namespace genbb {
             if (ilevel_ == 1) bb_params_.levelE=412;
             if (ilevel_ == 0) bb_params_.itrans02=0;
             if (ilevel_ == 1) bb_params_.itrans02=2;
-          } else if (chnuclide_ == "Bi214") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Bi214")) {
             bb_params_.Qbb=2.180;
             bb_params_.Zdbb=85.;
             bb_params_.Adbb=214.;
@@ -1272,7 +1274,7 @@ namespace genbb {
             }
             bb_params_.levelE=0;
             bb_params_.itrans02=0;
-          } else if (chnuclide_ == "Pb214") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Pb214")) {
             bb_params_.Qbb=4.289;
             bb_params_.Zdbb=84.;
             bb_params_.Adbb=214.;
@@ -1286,7 +1288,7 @@ namespace genbb {
             }
             bb_params_.levelE=0;
             bb_params_.itrans02=0;
-          } else if (chnuclide_ == "Po218") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Po218")) {
             bb_params_.Qbb=3.141;
             bb_params_.Zdbb=86.;
             bb_params_.Adbb=218.;
@@ -1300,7 +1302,7 @@ namespace genbb {
             }
             bb_params_.levelE=0;
             bb_params_.itrans02=0;
-          } else if (chnuclide_ == "Rn222") {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Rn222")) {
             bb_params_.Qbb=2.052;
             bb_params_.Zdbb=88.;
             bb_params_.Adbb=222.;
@@ -1323,7 +1325,8 @@ namespace genbb {
           }
           if (bb_params_.itrans02 == 0) bb_params_.chdspin="0+";
           if (bb_params_.itrans02 == 2) bb_params_.chdspin="2+";
-          if (bb_params_.itrans02 == 0  &&  chnuclide_ == "Bi214") bb_params_.chdspin="1-";
+          if (bb_params_.itrans02 == 0
+              && boost::algorithm::starts_with(chnuclide_,"Bi214")) bb_params_.chdspin="1-";
           if (bb_params_.modebb < 1 || bb_params_.modebb > 18) {
             std::cerr << "ERROR: " << "genbb::decay0::genbbsub: "
                       << "Unknown double beta mode (" << bb_params_.modebb << ") ! \n";
@@ -1386,66 +1389,67 @@ namespace genbb {
 
 
         if (i2bbs_ == GENBBSUB_I2BBS_BACKGROUND) {
-          if (chnuclide_ == "Ac228") {
-          } else if (chnuclide_ == "Am241") {
-          } else if (chnuclide_ == "Ar39") {
-          } else if (chnuclide_ == "Ar42") {
-          } else if (chnuclide_ == "As79") {
-          } else if (chnuclide_ == "Bi207") {
-          } else if (chnuclide_ == "Bi208") {
-          } else if (chnuclide_ == "Bi210") {
-          } else if (chnuclide_ == "Bi212") {
-          } else if (chnuclide_ == "Bi214") {
-          } else if (chnuclide_ == "C14") {
-          } else if (chnuclide_ == "Ca48") {
-          } else if (chnuclide_ == "Cd113") {
-          } else if (chnuclide_ == "Co60") {
-          } else if (chnuclide_ == "Cs136") {
-          } else if (chnuclide_ == "Cs137") {
-          } else if (chnuclide_ == "Eu147") {
-          } else if (chnuclide_ == "Eu152") {
-          } else if (chnuclide_ == "Eu154") {
-          } else if (chnuclide_ == "Gd146") {
-          } else if (chnuclide_ == "Hf182") {
-          } else if (chnuclide_ == "I126") {
-          } else if (chnuclide_ == "I133") {
-          } else if (chnuclide_ == "I134") {
-          } else if (chnuclide_ == "I135") {
-          } else if (chnuclide_ == "K40") {
-          } else if (chnuclide_ == "K42") {
-          } else if (chnuclide_ == "Kr81") {
-          } else if (chnuclide_ == "Kr85") {
-          } else if (chnuclide_ == "Mn54") {
-          } else if (chnuclide_ == "Na22") {
-          } else if (chnuclide_ == "P32") {
-          } else if (chnuclide_ == "Pa234m") {
-          } else if (chnuclide_ == "Pb210") {
-          } else if (chnuclide_ == "Pb211") {
-          } else if (chnuclide_ == "Pb212") {
-          } else if (chnuclide_ == "Pb214") {
-          } else if (chnuclide_ == "Ra228") {
-          } else if (chnuclide_ == "Rb87") {
-          } else if (chnuclide_ == "Rh106") {
-          } else if (chnuclide_ == "Sb125") {
-          } else if (chnuclide_ == "Sb126") {
-          } else if (chnuclide_ == "Sb133") {
-          } else if (chnuclide_ == "Sr90") {
-          } else if (chnuclide_ == "Ta182") {
-          } else if (chnuclide_ == "Te133m") {
-          } else if (chnuclide_ == "Te134") {
-          } else if (chnuclide_ == "Th234") {
-          } else if (chnuclide_ == "Tl207") {
-          } else if (chnuclide_ == "Tl208") {
-          } else if (chnuclide_ == "Xe129m") {
-          } else if (chnuclide_ == "Xe131m") {
-          } else if (chnuclide_ == "Xe133") {
-          } else if (chnuclide_ == "Xe135") {
-          } else if (chnuclide_ == "Y88") {
-          } else if (chnuclide_ == "Y90") {
-          } else if (chnuclide_ == "Zn65") {
-          } else if (chnuclide_ == "Zr96") {
+          if (boost::algorithm::starts_with(chnuclide_,"Ac228")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Am241")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Ar39")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Ar42")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"As79")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Bi207")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Bi208")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Bi210")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Bi212")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Bi214")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"C14")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Ca48")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Cd113")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Co60")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Cs136")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Cs137")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Eu147")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Eu152")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Eu154")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Gd146")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Hf182")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"I126")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"I133")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"I134")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"I135")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"K40")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"K42")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Kr81")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Kr85")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Mn54")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Na22")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"P32")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Pa234m")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Pb210")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Pb211")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Pb212")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Pb214")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Ra228")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Rb87")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Rh106")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Sb125")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Sb126")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Sb133")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Sr90")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Ta182")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Te133m")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Te134")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Th234")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Tl207")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Tl208")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Xe129m")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Xe131m")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Xe133")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Xe135")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Y88")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Y90")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Zn65")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Zr96")) {
+          }
             /*
-              } else if (chnuclide_ == "Artificial") {
+              } else if (boost::algorithm::starts_with(chnuclide_,"Artificial") {
               nartparts=min0(10, nartparts);
               for (int i=1; i <= nartparts; i++) {
               chn=chart(i);
@@ -1496,7 +1500,7 @@ namespace genbb {
               artfmin(1)=artfmin(1)/180.*pi;
               artfmax(1)=artfmax(1)/180.*pi;
             */
-          } else {
+          else {
             std::cerr << "ERROR: " << "genbb::decay0::genbbsub: "
                       << "Unknown background & source nuclide '"
                       << chnuclide_ << "' !\n";
@@ -1569,7 +1573,7 @@ namespace genbb {
         //write(77, 10) chnuclide_;
 
         /*
-          if (chnuclide_ == "Artificial") {
+          if (boost::algorithm::starts_with(chnuclide_,"Artificial") {
           //write(77, *) " number of parts in artificial event", " = ", nartparts;
           for (int i=1; i<=nartparts; i++) {
           if (chart(i) == "GP") {
@@ -1635,7 +1639,7 @@ namespace genbb {
           }
         */
 
-        // if (chnuclide_ == "Compton") {
+        // if (boost::algorithm::starts_with(chnuclide_,"Compton") {
         //   write(77, 16) artemin(1), artemax(1);
         // label_16  :
         //   format(4x, "initial gamma: min and max E", 18x, "= ",
@@ -1647,7 +1651,7 @@ namespace genbb {
         //          4g16.7);
         // }
 
-        // if (chnuclide_ == "Moller") {
+        // if (boost::algorithm::starts_with(chnuclide_,"Moller") {
         //   write(77, 18) artemin(1), artemax(1);
         // label_18  :
         //   format(4x, "initial e-: min and max E", 18x, "= ",
@@ -1663,7 +1667,7 @@ namespace genbb {
         //          , g16.7);
         // }
 
-        // if (chnuclide_ == "E+E- external") {
+        // if (boost::algorithm::starts_with(chnuclide_,"E+E- external") {
         //   write(77, 21) artemin(1), artemax(1);
         // label_21  :
         //   format(4x, "initial gamma: min and max E", 18x, "= ",
@@ -1718,55 +1722,55 @@ namespace genbb {
       if (i2bbs_ == GENBBSUB_I2BBS_DBD) {
         event_.set_time(0.0*CLHEP::second);
         decay0_bb(prng_, event_, &bb_params_);
-        if (chnuclide_ == "Ca48") Ti48low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Ni58") Fe58low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Ge76") Se76low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Zn64") Ni64low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Zn70") Ge70low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Se74") Ge74low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Se82") Kr82low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Sr84") Kr84low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Zr94") Mo94low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Zr96") Mo96low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Mo92") Zr92low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Mo100") Ru100low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Ru96") Mo96low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Ru104") Pd104low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Cd106") Pd106low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Cd108") Pd108low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Cd114") Sn114low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Cd116") Sn116low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Sn112") Cd112low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Sn122") Te122low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Sn124") Te124low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Te120") Sn120low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Te128") Xe128low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Te130") Xe130low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Xe136") Ba136low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Ce136") Ba136low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Ce138") Ba138low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Ce142") Nd142low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Nd148") Sm148low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Nd150") Sm150low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Dy156") Gd156low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Dy158") Gd158low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "W180") Hf180low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "W186") Os186low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Pt190") Os190low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Pt198") Hg198low(prng_, event_, bb_params_.levelE);
-        if (chnuclide_ == "Bi214") {
+        if (boost::algorithm::starts_with(chnuclide_,"Ca48")) Ti48low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Ni58")) Fe58low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Ge76")) Se76low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Zn64")) Ni64low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Zn70")) Ge70low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Se74")) Ge74low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Se82")) Kr82low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Sr84")) Kr84low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Zr94")) Mo94low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Zr96")) Mo96low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Mo92")) Zr92low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Mo100")) Ru100low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Ru96")) Mo96low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Ru104")) Pd104low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Cd106")) Pd106low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Cd108")) Pd108low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Cd114")) Sn114low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Cd116")) Sn116low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Sn112")) Cd112low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Sn122")) Te122low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Sn124")) Te124low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Te120")) Sn120low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Te128")) Xe128low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Te130")) Xe130low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Xe136")) Ba136low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Ce136")) Ba136low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Ce138")) Ba138low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Ce142")) Nd142low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Nd148")) Sm148low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Nd150")) Sm150low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Dy156")) Gd156low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Dy158")) Gd158low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"W180")) Hf180low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"W186")) Os186low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Pt190")) Os190low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Pt198")) Hg198low(prng_, event_, bb_params_.levelE);
+        if (boost::algorithm::starts_with(chnuclide_,"Bi214")) {
           At214low(prng_, event_, 0);
           At214(prng_, event_, 0., tdnuc1);
           event_.get_particles ().back().grab_time() += tdnuc1 * CLHEP::second;
           //XXX ptime(npfull0+1)=ptime(npfull0+1)+tdnuc1;
         }
-        if (chnuclide_ == "Pb214") {
+        if (boost::algorithm::starts_with(chnuclide_,"Pb214")) {
           Po214low(prng_, event_, 0);
           Po214(prng_, event_, 0., tdnuc1);
           event_.get_particles ().back().grab_time() += tdnuc1 * CLHEP::second;
           //XXX ptime(npfull0+1)=ptime(npfull0+1)+tdnuc1;
         }
-        if (chnuclide_ == "Po218") {
+        if (boost::algorithm::starts_with(chnuclide_,"Po218")) {
           Rn218low(prng_, event_, 0);
           Rn218(prng_, event_, 0., tdnuc1);
           event_.get_particles ().back().grab_time() += tdnuc1 * CLHEP::second;
@@ -1775,7 +1779,7 @@ namespace genbb {
           event_.get_particles ().back().grab_time() += tdnuc1 * CLHEP::second;
           //XXX ptime(npfull0+1)=ptime(npfull0+1)+tdnuc1;
         }
-        if (chnuclide_ == "Rn222") {
+        if (boost::algorithm::starts_with(chnuclide_,"Rn222")) {
           Ra222low(prng_, event_, 0);
           Ra222(prng_, event_, 0., tdnuc1);
           event_.get_particles ().back().grab_time() += tdnuc1 * CLHEP::second;
@@ -1793,15 +1797,15 @@ namespace genbb {
        * Backgrounds *
        ***************/
       if (i2bbs_ == 2) {
-        if (chnuclide_ == "Ac228") Ac228(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Am241") Am241(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Ar39") Ar39(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Ar42") Ar42(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "As79") As79(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Bi207") Bi207(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Bi208") Bi208(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Bi210") Bi210(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Bi212") {
+        if (boost::algorithm::starts_with(chnuclide_,"Ac228")) Ac228(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Am241")) Am241(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Ar39")) Ar39(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Ar42")) Ar42(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"As79")) As79(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Bi207")) Bi207(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Bi208")) Bi208(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Bi210")) Bi210(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Bi212")) {
           Bi212(prng_, event_, 0., tdnuc);
           // XXX
           if (! event_.get_particles ().back().is_alpha()) {
@@ -1810,7 +1814,7 @@ namespace genbb {
             //XXX ptime(npfull0+1)=ptime(npfull0+1)+tdnuc1;
           }
         }
-        if (chnuclide_ == "Bi214") {
+        if (boost::algorithm::starts_with(chnuclide_,"Bi214")) {
           Bi214(prng_, event_, 0., tdnuc);
           if (! event_.get_particles ().back().is_alpha()) {
             Po214(prng_, event_, 0., tdnuc1);
@@ -1818,60 +1822,60 @@ namespace genbb {
             //XXX ptime(npfull0+1)=ptime(npfull0+1)+tdnuc1;
           }
         }
-        if (chnuclide_ == "Ca48") {
+        if (boost::algorithm::starts_with(chnuclide_,"Ca48")) {
           Ca48(prng_, event_, 0., tdnuc);
           Sc48(prng_, event_, 0., tdnuc1);
           event_.get_particles ().back().grab_time() += tdnuc1 * CLHEP::second;
           //XXX ptime(npfull0+1)=ptime(npfull0+1)+tdnuc1;
         }
-        if (chnuclide_ == "C14") C14(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Cd113") Cd113(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Co60") Co60(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Cs136") Cs136(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Cs137") Cs137(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Eu147") Eu147(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Eu152") Eu152(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Eu154") Eu154(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Gd146") Gd146(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Hf182") Hf182(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "I126") I126(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "I133") I133(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "I134") I134(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "I135") I135(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "K40") K40(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "K42") K42(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Kr81") Kr81(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Kr85") Kr85(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Mn54") Mn54(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Na22") Na22(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "P32") P32(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Pa234m") Pa234m(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Pb210") Pb210(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Pb211") Pb211(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Pb212") Pb212(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Pb214") Pb214(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Ra228") Ra228(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Rb87") Rb87(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Rh106") Rh106(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Sb125") Sb125(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Sb126") Sb126(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Sb133") Sb133(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Sr90") Sr90(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Ta182") Ta182(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Te133") Te133(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Te133m") Te133m(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Te134") Te134(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Th234") Th234(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Tl207") Tl207(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Tl208") Tl208(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Xe129m") Xe129m(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Xe131m") Xe131m(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Xe133") Xe133(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Xe135") Xe135(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Y88") Y88(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Y90") Y90(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Zn65") Zn65(prng_, event_, 0., tdnuc);
-        if (chnuclide_ == "Zr96") {
+        if (boost::algorithm::starts_with(chnuclide_,"C14")) C14(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Cd113")) Cd113(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Co60")) Co60(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Cs136")) Cs136(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Cs137")) Cs137(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Eu147")) Eu147(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Eu152")) Eu152(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Eu154")) Eu154(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Gd146")) Gd146(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Hf182")) Hf182(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"I126")) I126(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"I133")) I133(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"I134")) I134(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"I135")) I135(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"K40")) K40(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"K42")) K42(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Kr81")) Kr81(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Kr85")) Kr85(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Mn54")) Mn54(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Na22")) Na22(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"P32")) P32(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Pa234m")) Pa234m(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Pb210")) Pb210(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Pb211")) Pb211(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Pb212")) Pb212(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Pb214")) Pb214(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Ra228")) Ra228(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Rb87")) Rb87(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Rh106")) Rh106(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Sb125")) Sb125(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Sb126")) Sb126(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Sb133")) Sb133(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Sr90")) Sr90(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Ta182")) Ta182(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Te133")) Te133(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Te133m")) Te133m(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Te134")) Te134(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Th234")) Th234(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Tl207")) Tl207(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Tl208")) Tl208(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Xe129m")) Xe129m(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Xe131m")) Xe131m(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Xe133")) Xe133(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Xe135")) Xe135(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Y88")) Y88(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Y90")) Y90(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Zn65")) Zn65(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Zr96")) {
           Zr96(prng_, event_, 0., tdnuc);
           Nb96(prng_, event_, 0., tdnuc1);
           event_.get_particles ().back().grab_time() += tdnuc1 * CLHEP::second;
@@ -1880,7 +1884,7 @@ namespace genbb {
         //tevst=tdnuc;
         event_.set_time(tdnuc * CLHEP::second);
         /*
-          if (chnuclide_ == "Artificial") {
+          if (boost::algorithm::starts_with(chnuclide_,"Artificial")) {
           tevst=0.;
           for (int j=1; j <=nartparts; j++) {
           if (chart(j) == "Be") {
@@ -1896,17 +1900,17 @@ namespace genbb {
           }
           }
           }
-          if (chnuclide_ == "Compton") {
+          if (boost::algorithm::starts_with(chnuclide_,"Compton")) {
           tevst=0.;
           compton(artemin(1), artemax(1), arttmin(1), arttmax(1),
           artfmin(1), artfmax(1));
           }
-          if (chnuclide_ == "Moller") {
+          if (boost::algorithm::starts_with(chnuclide_,"Moller")) {
           tevst=0.;
           moller(artemin(1), artemax(1), arttmin(1), arttmax(1),
           artfmin(1), artfmax(1), artQb(1));
           }
-          if (chnuclide_ == "E+E- external") {
+          if (boost::algorithm::starts_with(chnuclide_,"E+E- external")) {
           tevst=0.;
           pairext(artemin(1), artemax(1), arttmin(1), arttmax(1),
           artfmin(1), artfmax(1), artZd(1));

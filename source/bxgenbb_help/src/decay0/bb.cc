@@ -163,11 +163,11 @@ c             line 3 - 7 NMEs: chi_GTw, chi_Fw, chi'_GT, chi'_F, chi'_T, chi'_P,
     eta_nme::eta_nme()
     {
       reset();
-      std::clog << "WARNING: "
-                << "genbb::decay0::eta_nme::eta_nme: "
-                << "NME should be read from an input file "
-                << "or setup by some way !!!"
-                << std::endl;
+      // std::clog << "WARNING: "
+      //           << "genbb::decay0::eta_nme::eta_nme: "
+      //           << "NME should be read from an input file "
+      //           << "or setup by some way !!!"
+      //           << std::endl;
       return;
     }
 

@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Publi * License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
  */
@@ -43,11 +43,9 @@ namespace genbb {
 
   void combined_particle_generator::_check_locked (const string & where_) const
   {
-    if (_initialized_)
-      {
+    if (_initialized_) {
         ostringstream message;
-        if (! where_.empty ())
-          {
+        if (! where_.empty ()) {
             message << where_ << ": ";
           }
         message << "Operation prohibited ! Object is locked/initialized !";
@@ -60,7 +58,7 @@ namespace genbb {
   {
     return _initialized_;
   }
-  
+
   void combined_particle_generator::set_mode(int mode_)
   {
     _mode_ = mode_;
@@ -69,12 +67,12 @@ namespace genbb {
 
   bool combined_particle_generator::is_mode_plain_probability () const
   {
-    return _mode_ == MODE_PLAIN_PROBABILITY; 
+    return _mode_ == MODE_PLAIN_PROBABILITY;
   }
-  
+
   bool combined_particle_generator::is_mode_activity () const
   {
-    return _mode_ == MODE_ACTIVITY; 
+    return _mode_ == MODE_ACTIVITY;
   }
 
   bool combined_particle_generator::is_debug () const
@@ -87,7 +85,7 @@ namespace genbb {
     _debug_ = new_value_;
     return;
   }
-   
+
   bool combined_particle_generator::can_external_random () const
   {
     return true;
@@ -98,7 +96,7 @@ namespace genbb {
   {
     _debug_ = false;
     _initialized_ = false;
-    _mode_ = MODE_PLAIN_PROBABILITY; 
+    _mode_ = MODE_PLAIN_PROBABILITY;
     _seed_ = 0;
     return;
   }
@@ -106,8 +104,7 @@ namespace genbb {
   // dtor:
   combined_particle_generator::~combined_particle_generator ()
   {
-    if (_initialized_)
-      {
+    if (_initialized_) {
         reset ();
       }
     return;
@@ -124,21 +121,19 @@ namespace genbb {
 
   mygsl::rng & combined_particle_generator::grab_random ()
   {
-    if (has_external_random ())
-      {
+    if (has_external_random ()) {
         return grab_external_random ();
       }
     return _random_;
   }
- 
+
   void combined_particle_generator::_at_reset_ ()
   {
-    if (_random_.is_initialized ())
-      {
+    if (_random_.is_initialized ()) {
         _random_.reset ();
       }
     _seed_ = 0;
-    _mode_ = MODE_PLAIN_PROBABILITY; 
+    _mode_ = MODE_PLAIN_PROBABILITY;
     return;
   }
 
@@ -154,85 +149,68 @@ namespace genbb {
                                                 datatools::service_manager & service_manager_,
                                                 detail::pg_dict_type & dictionary_)
   {
-    if (config_.has_flag ("debug"))
-      {
+    if (config_.has_flag ("debug")) {
         set_debug (true);
       }
 
-    if (! has_external_random ())
-      {
-        if (config_.has_key ("seed"))
-          {
+    if (! has_external_random ()) {
+        if (config_.has_key ("seed")) {
             long seed = config_.fetch_integer ("seed");
             if (seed < 0)
               {
                 throw logic_error ("genbb::combined_particle_generator::initialize: Invalid seed value (>=0) !");
               }
             _seed_ = seed;
-          }
-        else
-          {
+          } else {
             throw std::logic_error ("genbb::combined_particle_generator::initialize: Missing 'seed' property !");
           }
       }
 
-    if (config_.has_key ("mode"))
-      {
+    if (config_.has_key ("mode")) {
         std::string mode_str = config_.fetch_string ("mode");
-        if (mode_str == "plain_probability")
-          {
+        if (mode_str == "plain_probability") {
             set_mode (MODE_PLAIN_PROBABILITY);
-          }
-        else if (mode_str == "activity")
-          {
+          } else if (mode_str == "activity") {
             set_mode (MODE_ACTIVITY);
-          }
-        else
-          {
+          } else {
             std::ostringstream message;
             message << "genbb::combined_particle_generator::initialize: "
                     << "Unknown mode '" << mode_str << "' !";
             throw std::logic_error (message.str ());
           }
       }
- 
+
     double activity_unit = 1. * CLHEP::becquerel;
-    if (is_mode_activity ())
-      {
-        if (config_.has_key ("activity_unit"))
-          {
+    if (is_mode_activity ()) {
+        if (config_.has_key ("activity_unit")) {
             std::string activity_unit_str = config_.fetch_string ("activity_unit");
             activity_unit = datatools::units::get_activity_unit_from (activity_unit_str);
           }
       }
 
-    if (config_.has_key ("generators.labels"))
-      {
+    if (config_.has_key ("generators.labels")) {
         std::vector<std::string> pg_labels;
         config_.fetch ("generators.labels", pg_labels);
-        for (int i = 0; i < pg_labels.size(); i++)
-          {
+        for (int i = 0; i < pg_labels.size(); i++) {
             const std::string & pg_label = pg_labels[i];
-            
+
             // Extract the name of the PG contribution with given label :
             std::ostringstream pg_name_key_oss;
             pg_name_key_oss << "generators." << pg_label << ".name";
             std::string pg_name_key = pg_name_key_oss.str();
-            if (! config_.has_key (pg_name_key))
-              {
+            if (! config_.has_key (pg_name_key)) {
                 std::ostringstream message;
                 message << "genbb::combined_particle_generator::initialize: "
-                        << "Missing particle generator name property '" << pg_name_key << "' for contribution with label '" 
+                        << "Missing particle generator name property '" << pg_name_key << "' for contribution with label '"
                         << pg_label << "' !";
-                throw std::logic_error (message.str ());                
+                throw std::logic_error (message.str ());
               }
             std::string pg_name = config_.fetch_string (pg_name_key);
             detail::pg_dict_type::iterator found = dictionary_.find(pg_name);
-            if (found == dictionary_.end())
-              {
+            if (found == dictionary_.end()) {
                 std::ostringstream message;
                 message << "genbb::combined_particle_generator::initialize: "
-                        << "No particle generator named '" << pg_name << "' for contribution with label '" 
+                        << "No particle generator named '" << pg_name << "' for contribution with label '"
                         << pg_label << "' !";
                 throw std::logic_error (message.str ());
               }
@@ -249,12 +227,10 @@ namespace genbb {
             pge.cumul_prob = 0.0;
             detail::pg_entry_type & pet = found->second;
             // Intialize the entry :
-            if (! pet.is_initialized())
-              {
+            if (! pet.is_initialized()) {
                 datatools::factory_register<i_genbb> * facreg = 0;
                 // Check if a manager can provide a factory object :
-                if (pet.has_manager())
-                  {
+                if (pet.has_manager()) {
                     facreg = &pet.grab_manager().grab_factory_register();
                   }
                 detail::initialize(pet,
@@ -267,80 +243,78 @@ namespace genbb {
             pge.pg = &(pet.grab ());
 
             // Extract probability associated to the PG contribution :
-            if (is_mode_plain_probability ())
-              {
+            if (is_mode_plain_probability ()) {
                 // Plain probability mode :
                 std::ostringstream prob_prop_key_oss;
                 prob_prop_key_oss << "generators." << pg_label << ".probability";
                 std::string prob_prop_key = prob_prop_key_oss.str();
-                if (! config_.has_key (prob_prop_key))
-                  {
+                if (! config_.has_key (prob_prop_key)) {
                     std::ostringstream message;
                     message << "genbb::combined_particle_generator::initialize: "
-                            << "Missing probability property '" << prob_prop_key << "' for particle generator with label '" 
+                            << "Missing probability property '" << prob_prop_key << "' for particle generator with label '"
                             << pg_label << "' !";
-                    throw std::logic_error (message.str ());                
+                    throw std::logic_error (message.str ());
                   }
                 double pg_prob =  config_.fetch_real (prob_prop_key);
-                if (pg_prob < 0.0)
-                  {
+                if (pg_prob < 0.0) {
                     std::ostringstream message;
                     message << "genbb::combined_particle_generator::initialize: "
-                            << "Invalid probability value for particle generator with label '" 
+                            << "Invalid probability value for particle generator with label '"
                             << pg_label << "' (" << pg_prob << ") !";
-                    throw std::logic_error (message.str ());                
+                    throw std::logic_error (message.str ());
                   }
                 pge.prob = pg_prob;
               }
-            if (is_mode_activity ())
-              {
+            if (is_mode_activity ()) {
                 // Activity mode :
                 std::ostringstream act_prop_key_oss;
                 act_prop_key_oss << "generators." << pg_label << ".activity";
                 std::string act_prop_key = act_prop_key_oss.str();
-                if (! config_.has_key (act_prop_key))
-                  {
+                if (! config_.has_key (act_prop_key)) {
                     std::ostringstream message;
                     message << "genbb::combined_particle_generator::initialize: "
-                            << "Missing activity property '" << act_prop_key << "' for particle generator '" 
+                            << "Missing activity property '" << act_prop_key << "' for particle generator '"
                             << pg_name << "' !";
-                    throw std::logic_error (message.str ());                
+                    throw std::logic_error (message.str ());
                   }
+                double pg_act =  config_.fetch_real (act_prop_key);
+                if (! config_.has_explicit_unit (act_prop_key)) pg_act *= activity_unit;
+                /*
                 std::string pg_act_str = config_.fetch_string (act_prop_key);
-                double pg_act;
                 std::string unit_label;
-                if (! datatools::units::find_value_with_unit (pg_act_str, 
-                                                              pg_act, 
+                if (! datatools::units::find_value_with_unit (pg_act_str,
+                                                              pg_act,
                                                               unit_label,
                                                               activity_unit))
                   {
                     std::ostringstream message;
                     message << "genbb::combined_particle_generator::initialize: "
-                            << "Cannot parse activity value with its unit for particle generator '" 
+                            << "Cannot parse activity value with its unit for particle generator '"
                             << pg_label << "' (" << pg_act_str << ") !";
-                    throw std::logic_error (message.str ());                
+                    throw std::logic_error (message.str ());
                   }
                 if (! unit_label.empty() && unit_label != "activity")
                   {
                     std::ostringstream message;
                     message << "genbb::combined_particle_generator::initialize: "
-                            << "Invalid unit ('" << unit_label << "') for the activity of the particle generator '" 
+                            << "Invalid unit ('" << unit_label << "') for the activity of the particle generator '"
                             << pg_label << "' (" << pg_act << ") !";
-                    throw std::logic_error (message.str ());                
+                    throw std::logic_error (message.str ());
                   }
+                */
                 if (pg_act < 0.0)
                   {
                     std::ostringstream message;
                     message << "genbb::combined_particle_generator::initialize: "
-                            << "Invalid activity value for particle generator '" 
+                            << "Invalid activity value for particle generator '"
                             << pg_label << "' (" << pg_act << ") !";
-                    throw std::logic_error (message.str ());                
+                    throw std::logic_error (message.str ());
                   }
                 pge.prob = pg_act;
               }
-          }        
+          }
       }
- 
+
     /*
     clog << "debug: " << "genbb::combined_particle_generator::initialize: "
          << " Entering _at_init_ ... "
@@ -378,7 +352,7 @@ namespace genbb {
     for (int i = 0; i < _generators_info_.size(); i++)
       {
         if (prob < _generators_info_[i].cumul_prob)
-          { 
+          {
             pg_index = i;
             //std::cerr << "DEVEL: " << "  pg_index=" << pg_index << '\n';
             break;
@@ -389,9 +363,9 @@ namespace genbb {
       {
         std::ostringstream message;
         message << "genbb::combined_particle_generator::_load_next: "
-                << "Particle generator '" 
+                << "Particle generator '"
                 << _generators_info_[pg_index].name << "' has no more event !";
-        throw std::logic_error (message.str ());                                
+        throw std::logic_error (message.str ());
       }
     _generators_info_[pg_index].pg->load_next(event_,compute_classification_);
     std::ostringstream label_oss;
@@ -427,7 +401,7 @@ namespace genbb {
         std::ostringstream message;
         message << "genbb::combined_particle_generator::_at_init_: "
                 << "No particle generator was defined in the combo !";
-        throw std::logic_error (message.str ());                        
+        throw std::logic_error (message.str ());
       }
 
     // Compute the sum of probabilities :
@@ -455,8 +429,8 @@ namespace genbb {
     return;
   }
 
-  void combined_particle_generator::dump(std::ostream & out_, 
-                                         const std::string & title_, 
+  void combined_particle_generator::dump(std::ostream & out_,
+                                         const std::string & title_,
                                          const std::string & indent_) const
   {
     if (!title_.empty())
@@ -467,13 +441,13 @@ namespace genbb {
     std::string tag = "|-- ";
     std::string ctag = "`-- ";
     if (inherited)
-      { 
+      {
         tag = "    ";
         ctag = "`-- ";
       }
     out_ << indent_ << "|-- " << "Mode          : "  << _mode_ << std::endl;
     out_ << indent_ << "|-- " << "External PRNG : "  << (has_external_random() ? "Yes": "No") << std::endl;
-    out_ << indent_ << "|-- " << "Embeded PRNG  : "  
+    out_ << indent_ << "|-- " << "Embeded PRNG  : "
          << (!has_external_random() && _random_.is_initialized() ? "Yes": "No") << std::endl;
     out_ << indent_ << "`-- " << "Generators    : "
          << "[" << _generators_info_.size() << "]"
@@ -500,7 +474,7 @@ namespace genbb {
              << std::endl;
         out_.precision(prec);
       }
-   
+
 
     return;
   }

@@ -63,6 +63,7 @@ namespace genbb {
     std::vector<std::string> histos_definitions; /// Histograms' definition files
     bool prompt; /// Flag to analyze prompt event
     bool delayed; /// Flag to analyze delayed event
+    std::string title_prefix; /// User title prefix
   };
 
   void inspector_params::dump(std::ostream & out_) const
@@ -72,13 +73,16 @@ namespace genbb {
     out_ << "|-- interactive = " << interactive << std::endl;
     out_ << "|-- unrecognized_options = " << unrecognized_options.size()
          << std::endl;
-    out_ << "|-- configuration     = " << configuration << std::endl;
-    out_ << "|-- generator         = " << generator << std::endl;
-    out_ << "|-- output_paths      = " << output_paths.size() << std::endl;
-    out_ << "|-- number_of_events  = " << number_of_events << std::endl;
-    out_ << "|-- seed              = " << seed << std::endl;
-    out_ << "|-- prompt_time_limit = " << prompt_time_limit << std::endl;
-    out_ << "`-- histos_definitions = " << histos_definitions.size() << std::endl;
+    out_ << "|-- configuration      = " << configuration << std::endl;
+    out_ << "|-- generator          = " << generator << std::endl;
+    out_ << "|-- output_paths       = " << output_paths.size() << std::endl;
+    out_ << "|-- number_of_events   = " << number_of_events << std::endl;
+    out_ << "|-- seed               = " << seed << std::endl;
+    out_ << "|-- prompt_time_limit  = " << prompt_time_limit << std::endl;
+    out_ << "|-- histos_definitions = " << histos_definitions.size() << std::endl;
+    out_ << "|-- prompt             = " << prompt << std::endl;
+    out_ << "|-- delayed            = " << delayed << std::endl;
+    out_ << "`-- title_prefix       = " << title_prefix << std::endl;
     return;
   }
 
@@ -94,6 +98,7 @@ namespace genbb {
     histos_definitions.clear();
     prompt = true;
     delayed = false;
+    title_prefix.clear();
     return;
   }
 
@@ -172,7 +177,6 @@ namespace genbb {
     int number_of_other_neutral_particles;
     int number_of_other_positive_particles;
     int number_of_other_negative_particles;
-
 
     std::vector<double> electrons_energies;
     std::vector<double> positrons_energies;
@@ -635,6 +639,7 @@ namespace genbb {
     genbb::i_genbb * _generator_;
     mygsl::histogram_service _histos_service_;
     mygsl::histogram_pool * _histos_;
+    std::string _title_prefix_;
 
   };
 
@@ -975,6 +980,11 @@ int main (int argc_, char ** argv_)
        "analyze delayed particles"
        )
 
+      ("title-prefix,T",
+       po::value<std::string>(&params.title_prefix),
+       "set a title prefix for exported histograms"
+       )
+
       ; // end of options' description
 
     // Describe command line arguments :
@@ -1063,6 +1073,7 @@ void usage (const boost::program_options::options_description & options_,
   out_ << "    --prompt-time-limit 1 \\\n";
   out_ << "    --prompt \\\n";
   out_ << "    --delayed \\\n";
+  out_ << "    --title-prefix \"Bi214-Po214 (decay0 C++ port)\" \\\n";
   out_ << "    --output-file \"histos_Bi214_Po214.root\" \n";
   out_ << "\n";
 
@@ -1102,6 +1113,10 @@ namespace genbb {
       _params_.seed = (int32_t) time(0);
     }
     _prng_.initialize("taus2", _params_.seed);
+
+    if (_title_prefix_.empty() && ! _params_.title_prefix.empty()) {
+      _title_prefix_ = _params_.title_prefix;
+    }
 
     // Event generator manager :
     _manager_.set_debug(_params_.debug);
@@ -1162,6 +1177,7 @@ namespace genbb {
     hs_config.store_string("pool.description", "GENBB inspector histograms");
     hs_config.store("pool.histo.setups", pool_histo_setups);
     hs_config.store_flag("root_export.stats");
+    hs_config.store("root_export.title_prefix", _title_prefix_);
     hs_config.store("output_files", _params_.output_paths);
     std::vector<std::string> pool_export_prefixes;
     pool_export_prefixes.push_back("value.");
