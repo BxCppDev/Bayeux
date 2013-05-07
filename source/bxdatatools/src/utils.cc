@@ -1,13 +1,13 @@
 // -*- mode: c++; -*-
 // utils.cc
-// Ourselves 
+// Ourselves
 #include <datatools/utils.h>
 
 // Standard Library
 #include <cstdlib>
 #include <cmath>
 #include <unistd.h>
-
+#include <wordexp.h>
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -22,6 +22,7 @@
 #include <boost/scoped_ptr.hpp>
 
 // This Project
+#include <datatools/ioutils.h>
 
 namespace datatools {
 
@@ -81,19 +82,104 @@ void infinity(float& x) {
   plus_infinity(x);
 }
 
+struct _gp {
+  enum action_type {
+    ACTION_GET = 1,
+    ACTION_SET = 2,
+    ACTION_RESET = 3
+  };
+  static const std::string & global_path(int action_,
+                                         const std::string & gpath_ = "");
+};
+
+bool has_global_path()
+{
+  return ! _gp::global_path(_gp::ACTION_GET).empty();
+}
+
+void set_global_path(const std::string & gpath_)
+{
+  _gp::global_path(_gp::ACTION_SET, gpath_);
+}
+
+void reset_global_path()
+{
+  _gp::global_path(_gp::ACTION_RESET);
+}
+
+const std::string & get_global_path()
+{
+  return _gp::global_path(_gp::ACTION_GET);
+}
+
 /**************************************************/
 class fetch_path_processor {
  public:
-  fetch_path_processor();
+  fetch_path_processor(std::string parent_path_ = "",
+                       bool use_global_path_ = false);
 
   bool process(std::string&);
 
+  void set_use_global_path(bool);
+
+  bool use_global_path() const;
+
  private:
   bool process_impl(std::string &);
+  bool _use_global_path_;
+  std::string _parent_path_;
 };
 
 
-fetch_path_processor::fetch_path_processor() {}
+const std::string & _gp::global_path(int action_,
+                                     const std::string & gpath_)
+{
+  static boost::scoped_ptr<std::string> g_path(0);
+  if (g_path.get() == 0) {
+    g_path.reset(new std::string);
+  }
+  std::string & gpath = *g_path.get();
+  {
+    char * egp = ::getenv("DATATOOLS_GLOBAL_PATH");
+    if (gpath.empty() && egp != 0) {
+      std::clog << datatools::io::notice
+                << "datatools::_gp::global_path: "
+                << "Set the global path from the 'DATATOOLS_GLOBAL_PATH' environment variable."
+                << std::endl;
+      gpath = egp;
+    }
+  }
+  if (action_ == ACTION_RESET) {
+    gpath.clear();
+  } else if (action_ == ACTION_GET) {
+  } else if (action_ == ACTION_SET) {
+    if (! gpath_.empty()) {
+      fetch_path_processor fpp;
+      fpp.set_use_global_path(false);
+      std::string p = gpath_;
+      fpp.process(p);
+      gpath = p;
+    }
+  }
+  return gpath;
+}
+
+void fetch_path_processor::set_use_global_path(bool ugp_)
+{
+  _use_global_path_ = ugp_;
+}
+
+bool fetch_path_processor::use_global_path() const
+{
+  return _use_global_path_;
+}
+
+
+fetch_path_processor::fetch_path_processor(std::string parent_path_,
+                                           bool use_global_path_) {
+  _use_global_path_ = use_global_path_;
+  _parent_path_ = parent_path_;
+}
 
 
 bool fetch_path_processor::process(std::string& path) {
@@ -104,17 +190,62 @@ bool fetch_path_processor::process(std::string& path) {
 bool fetch_path_processor::process_impl(std::string& path) {
   std::string::size_type dollar;
   std::string text = path;
+  if (path.find('?') != path.npos ||
+      path.find('*') != path.npos) {
+      std::ostringstream message;
+      message << "datatools::fetch_path_processor::process_impl: "
+              << "Wildcard characters are not supported in path='" << path << "' !";
+      throw std::logic_error(message.str());
+   }
+  {
+    std::ostringstream s;
+    wordexp_t p;
+    int we_error = wordexp( text.c_str(), &p, WRDE_NOCMD|WRDE_SHOWERR|WRDE_UNDEF);
+    if (we_error != 0) {
+      std::ostringstream message;
+      message << "datatools::fetch_path_processor::process_impl: "
+              << "wordexp failed with code : " << we_error << "; broken path is='" << path << "' !";
+      throw std::logic_error(message.str());
+    }
+    if (p.we_wordc == 0) {
+      return false;
+    }
+    char** w = p.we_wordv;
+    //std::cerr << "************ WORDEXP=";
+    if (p.we_wordc > 1) {
+      std::ostringstream message;
+      message << "datatools::fetch_path_processor::process_impl: "
+              << "wordexp expands to many tokens : ";
+      for (size_t i = 0; i < p.we_wordc; i++) {
+        //std::cerr << w[i];
+        message << " '" << w[i]<< "'";
+      }
+      throw std::logic_error(message.str());
+    }
+    s << w[0];
+    wordfree( &p );
+    text = s.str();
+  }
+  path = text;
+
+  // Old implementation :
+  /*
   if (text.substr(0, 2) == "~/") {
+    // Process special HOME dir :
     std::string tmp = text.substr(2);
     text = "${HOME}/" + tmp;
   } else if (text == "~") {
+    // Process special HOME dir :
     text = "${HOME}";
   }
+  */
+
+  /*
   while ((dollar = text.find ('$')) != std::string::npos) {
     std::string::size_type slash = text.find('/', dollar + 1);
     std::string::size_type back_slash = text.find('\\', dollar + 1);
     std::string::size_type pos = std::string::npos;
-    
+
     if (slash != std::string::npos) {
       if (back_slash != std::string::npos) {
         pos = std::min(slash, back_slash);
@@ -163,13 +294,51 @@ bool fetch_path_processor::process_impl(std::string& path) {
     if (!val) return false; // Stop looping if env variable not found.
   }
   path = text;
+  */
+
+  // Check for an explicit parent path :
+  std::string parent_path = _parent_path_;
+  if (parent_path.empty()) {
+    // Check for an implicit parent path :
+    if (use_global_path() && datatools::has_global_path())  {
+      parent_path = get_global_path();
+    }
+  }
+  if (! parent_path.empty()
+      && (path.substr(0, 1) != "/")
+      && (path != ".")
+      && (path.substr(0, 2) != "./")
+      && (path.find(":/") == std::string::npos)) {
+    // Process relative path with prepend parent path :
+    text = parent_path + '/' + path;
+  }
+  path = text;
   return true;
 }
 /**************************************************/
 
 
 bool fetch_path_with_env(std::string& path) {
-  fetch_path_processor fpp;
+  fetch_path_processor fpp("",false);
+  return fpp.process(path);
+}
+
+
+bool fetch_path_with_env_p(std::string& path,
+                           const std::string & parent_path_) {
+  fetch_path_processor fpp(parent_path_, false);
+  return fpp.process(path);
+}
+
+
+bool fetch_path_with_env_g(std::string& path) {
+  fetch_path_processor fpp("", true);
+  return fpp.process(path);
+}
+
+bool fetch_path_with_env_pg(std::string& path,
+                           const std::string & parent_path_) {
+  fetch_path_processor fpp(parent_path_, true);
   return fpp.process(path);
 }
 

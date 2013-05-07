@@ -65,9 +65,38 @@ void infinity(double& value);
 bool fetch_path_with_env(std::string& word);
 
 /** Extract the expanded path computed from the 'word' string.
+ * Internally uses the 'getenv' function.
+ */
+bool fetch_path_with_env_p(std::string& word,
+                           const std::string & parent_path_);
+
+/** Extract the expanded path computed from the 'word' string.
+ * Internally uses the 'getenv' function.
+ */
+bool fetch_path_with_env_g(std::string& word);
+
+/** Extract the expanded path computed from the 'word' string.
+ * Internally uses the 'getenv' function.
+ */
+bool fetch_path_with_env_pg(std::string& word,
+                            const std::string & parent_path_);
+
+/** Check if datatools has its global path activated */
+bool has_global_path();
+
+/** Reset the datatools' global path */
+void reset_global_path();
+
+/** Set/activate the datatools' global path */
+void set_global_path(const std::string & gpath_);
+
+/** Get the datatools' global path */
+const std::string & get_global_path();
+
+/** Extract the expanded path computed from the 'word' string.
  * Internally uses the system's shell.
  *
- * This method is not very elegant. I use
+ * This method is not very elegant. It uses
  * brute force, asking a shell to interpret the string via a 'system' call
  * and using a temporary file to save the result. Urrkkk!
  * That enables the expansion of environment variables embeded
@@ -83,7 +112,7 @@ std::string expand_path(const std::string& path_str);
  *  'a_words'.
  *
  * The Boost library provides some powerful alternative through
- * the tokenizer class.
+ * the tokenizer class and split string algorithm.
  *
  */
 void split_string(const std::string& word, const std::string& separators,
