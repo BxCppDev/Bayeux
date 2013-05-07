@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // genbb_mgr.cc
 /*
  * Copyright 2007-2013 F. Mauger
@@ -7,15 +7,15 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
  */
@@ -34,10 +34,14 @@
 #include <CLHEP/Vector/ThreeVector.h>
 
 #include <datatools/utils.h>
-#include <boost/algorithm/string/split.hpp> 
-#include <boost/algorithm/string/classification.hpp> 
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
 #include <geomtools/utils.h>
 #include <genbb_help/primary_event.h>
+
+// Implementation of serialization method for the 'primary_event'
+// class, implies also <genbb_help/primary_particle.ipp> :
+#include <genbb_help/primary_event.ipp>
 
 namespace genbb {
 
@@ -89,14 +93,14 @@ namespace genbb {
     set_format (format_);
     return;
   }
-  
+
   // dtor:
   genbb_mgr::~genbb_mgr ()
   {
     reset ();
     return;
   }
-  
+
   void genbb_mgr::set_format (const string & format_label_)
   {
     if (_initialized_)
@@ -104,26 +108,26 @@ namespace genbb {
         throw logic_error ("genbb::genbb_mgr::set: Operation not allowed ! Manager is locked !");
       }
     int fmt = FORMAT_GENBB;
-    if ((format_label_ != FORMAT_GENBB_LABEL) 
+    if ((format_label_ != FORMAT_GENBB_LABEL)
         && (format_label_ != FORMAT_BOOST_LABEL))
       {
         ostringstream message;
-        message << "genbb::genbb_mgr::set: Invalid format label '" 
+        message << "genbb::genbb_mgr::set: Invalid format label '"
                 << format_label_ << "' !";
         throw logic_error (message.str ());
       }
-    if (format_label_ == FORMAT_GENBB_LABEL) 
+    if (format_label_ == FORMAT_GENBB_LABEL)
       {
         fmt = FORMAT_GENBB;
       }
-    if (format_label_ == FORMAT_BOOST_LABEL) 
+    if (format_label_ == FORMAT_BOOST_LABEL)
       {
         fmt = FORMAT_BOOST;
       }
     this->set_format (fmt);
     return;
   }
-  
+
   void genbb_mgr::set_format (int format_)
   {
     if (_initialized_)
@@ -152,14 +156,13 @@ namespace genbb {
   {
     return _current_.is_valid ();
   }
-  
-  void genbb_mgr::_load_next (primary_event & event_, 
+
+  void genbb_mgr::_load_next (primary_event & event_,
                               bool compute_classification_)
   {
     //provide the preloaded current event:
     event_ = _current_;
-    if (compute_classification_) 
-      {
+    if (compute_classification_) {
         event_.compute_classification ();
       }
     // try to load the next event:
@@ -174,20 +177,20 @@ namespace genbb {
         string filename;
 
         if (_filenames_.size () == 0)
-          { 
+          {
             if (is_debug ()) clog << "genbb::genbb_mgr::_load_next_boost_: no more filenames!" << endl;
             return;
           }
 
         filename = _filenames_.front ();
         _filenames_.pop_front ();
-        if (filename.empty ()) 
+        if (filename.empty ())
           {
             if (is_debug ()) clog << "DEVEL: genbb_mgr::_load_next_boost_: filename = '" << filename << "'" << endl;
             return;
           }
         datatools::fetch_path_with_env (filename);
-        _reader_.init (filename, 
+        _reader_.init (filename,
                        datatools::using_multi_archives);
         _current_filename_ = filename;
         return;
@@ -195,14 +198,14 @@ namespace genbb {
 
     if (! _reader_.is_initialized ())
       {
-        throw logic_error ("genbb::genbb_mgr::_load_next_boost_: Reader is not initialized !");  
+        throw logic_error ("genbb::genbb_mgr::_load_next_boost_: Reader is not initialized !");
       }
 
     if (! _reader_.has_record_tag ())
       {
-        throw logic_error ("genbb::genbb_mgr::_load_next_boost_: Reader has no data !");  
+        throw logic_error ("genbb::genbb_mgr::_load_next_boost_: Reader has no data !");
       }
-    if (_reader_.record_tag_is (primary_event::SERIAL_TAG)) 
+    if (_reader_.record_tag_is (primary_event::SERIAL_TAG))
       {
         _reader_.load (_current_);
       }
@@ -227,7 +230,7 @@ namespace genbb {
       }
     return;
   }
-    
+
   void genbb_mgr::_load_next_genbb_ ()
   {
     if (_in_ == 0)
@@ -237,14 +240,14 @@ namespace genbb {
         string filename;
 
         if (_filenames_.size () == 0)
-          { 
+          {
             if (is_debug ()) clog << "genbb::genbb_mgr::_load_next_genbb_: No more filenames!" << endl;
             return;
           }
 
         filename = _filenames_.front ();
         _filenames_.pop_front ();
-        if (filename.empty ()) 
+        if (filename.empty ())
           {
             if (is_debug ()) clog << "DEVEL: genbb_mgr::_load_next_genbb_: Input filename = '" << filename << "'" << endl;
             return;
@@ -263,7 +266,7 @@ namespace genbb {
         _in_ = &_fin_;
         _current_filename_ = filename;
       }
-     
+
     std::string line;
     while (true)
       {
@@ -295,8 +298,8 @@ namespace genbb {
           }
         typedef vector<string> split_vector_type;
         split_vector_type svec;
-        boost::algorithm::split(svec, line, 
-                                boost::algorithm::is_any_of("="), 
+        boost::algorithm::split(svec, line,
+                                boost::algorithm::is_any_of("="),
                                 boost::algorithm::token_compress_on );
         if (svec.size () != 2)
           {
@@ -304,7 +307,7 @@ namespace genbb {
             message << "genbb::genbb_mgr::_load_next_genbb_: Invalid syntax ("
                     << line << ") !";
             throw logic_error (message.str ());
-          } 
+          }
         if (svec[0] == "#@toallevents")
           {
             std::istringstream iss (svec[1]);
@@ -313,7 +316,7 @@ namespace genbb {
             if (! iss || toallevents < 0.0)
               {
                 std::ostringstream message;
-                message << "genbb::genbb_mgr::_load_next_genbb_: " 
+                message << "genbb::genbb_mgr::_load_next_genbb_: "
                         << "Invalid value for 'toallevents' weight ("
                         << line << ") !";
                 throw logic_error (message.str ());
@@ -323,9 +326,9 @@ namespace genbb {
                       << "Load GENBB event weight = " << _genbb_weight_ << std::endl;
           }
       }
-     
+
     if (is_debug ()) clog << "DEVEL: genbb_mgr::_load_next_genbb_: _in_ = " << _in_ << endl;
-    
+
     if (! *_in_)
       {
         ostringstream message;
@@ -345,7 +348,7 @@ namespace genbb {
           throw logic_error (message.str ());
         }
     }
-  
+
     /*
      *_in_ >> ws >> evnum >> time >> npart;
      if (! *_in_)
@@ -363,12 +366,12 @@ namespace genbb {
         primary_particle pp;
         int part_type;
         double x, y ,z, time_shift;
-        // 2009-07-14 FM: Vladimir Tretyak email about particles' time shifts: 
+        // 2009-07-14 FM: Vladimir Tretyak email about particles' time shifts:
         *_in_ >> ws >> part_type >> x >> y >> z >> time_shift;
-        part_time += time_shift; 
+        part_time += time_shift;
         pp.set_type (part_type);
         pp.set_time (part_time * CLHEP::second); // GENBB unit is s
-        
+
         if (! *_in_)
           {
             ostringstream message;
@@ -414,20 +417,20 @@ namespace genbb {
           {
             out_ << "|-- ";
           }
-        out_ << "Filename : '" << *it << "'" << endl; 
-      } 
+        out_ << "Filename : '" << *it << "'" << endl;
+      }
     if (_format_ == FORMAT_GENBB)
       {
-        out_ << "|-- GENBB current file address : " << hex << _in_ 
+        out_ << "|-- GENBB current file address : " << hex << _in_
              << dec << endl;
       }
     if (_format_ == FORMAT_BOOST)
       {
-        out_ << "|-- Current Boost reader : " 
+        out_ << "|-- Current Boost reader : "
              << (_reader_.is_initialized ()? "Yes": "No") << endl;
       }
     out_ << "`-- Current event: " << endl;
-    _current_.dump (out_, "    "); 
+    _current_.dump (out_, "    ");
     return;
   }
 
@@ -441,16 +444,16 @@ namespace genbb {
                               datatools::service_manager & service_manager_,
                               detail::pg_dict_type & dictionary_)
   {
-    if (_initialized_) 
+    if (_initialized_)
       {
         throw logic_error ("genbb::genbb_mgr::initialize: Already initialized !");
       }
-    
+
     if (config_.has_flag ("debug"))
       {
         set_debug (true);
       }
-    
+
     if (config_.has_key ("format"))
       {
         string format = config_.fetch_string ("format");
@@ -458,7 +461,7 @@ namespace genbb {
       }
     // else
     //   {
-    //     throw logic_error ("genbb::genbb_mgr::initialize: Missing 'format' of input files !");     
+    //     throw logic_error ("genbb::genbb_mgr::initialize: Missing 'format' of input files !");
     //   }
 
     // try to build a list of input filenames from a pattern:
@@ -470,13 +473,13 @@ namespace genbb {
           input_files_pattern = config_.fetch_string ("input_files.pattern");
           if (input_files_pattern.empty ())
             {
-              throw logic_error ("genbb::genbb_mgr::initialize: Input files pattern is empty !");    
+              throw logic_error ("genbb::genbb_mgr::initialize: Input files pattern is empty !");
             }
           if (config_.has_key ("input_files.directory"))
             {
               input_files_dir = config_.fetch_string ("input_files.directory");
             }
-        
+
           char tmp_buffer[256];
           for (int i = 0; i < 256; i++)
             {
@@ -488,7 +491,7 @@ namespace genbb {
           if (file_desc == -1)
             {
               //cerr << "DEVEL: " << tmp_buffer << endl;
-              throw runtime_error ("genbb::genbb_mgr::initialize: Cannot create temporary file !");              
+              throw runtime_error ("genbb::genbb_mgr::initialize: Cannot create temporary file !");
             }
           if (is_debug ()) clog << "DEBUG: genbb_mgr::initialize: Temporary file is: '" << tmp_buffer << "'" << endl;
           close (file_desc);
@@ -497,8 +500,8 @@ namespace genbb {
           ostringstream genbb_mgr_log_file_ss;
           genbb_mgr_log_file_ss << tmp_dir << '/' << "genbb_mgr.log";
           string genbb_mgr_log_file = genbb_mgr_log_file_ss.str ();
-          sys_command << "find " << input_files_dir 
-                      << " -maxdepth 1" 
+          sys_command << "find " << input_files_dir
+                      << " -maxdepth 1"
                       << " -name " << input_files_pattern
                       << " | sort > " << tmp_file
                       << " 2> " << genbb_mgr_log_file_ss.str ();
@@ -511,7 +514,7 @@ namespace genbb {
                       << genbb_mgr_log_file << "' !";
               throw runtime_error (message.str());
             }
-        
+
           ifstream fin (tmp_file.c_str ());
           if (! fin)
             {
@@ -553,9 +556,9 @@ namespace genbb {
         }
       else
         {
-          if (_filenames_.empty ()) 
+          if (_filenames_.empty ())
             {
-              throw logic_error ("genbb::genbb_mgr::initialize: Missing list of input files !");     
+              throw logic_error ("genbb::genbb_mgr::initialize: Missing list of input files !");
             }
         }
     }
@@ -584,7 +587,7 @@ namespace genbb {
       {
         if (_in_ != 0)
           {
-            _in_ = 0; 
+            _in_ = 0;
             _fin_.close ();
           }
       }
@@ -601,7 +604,7 @@ namespace genbb {
 
     return;
   }
-  
+
 } // end of namespace genbb
 
 // end of genbb_mgr.cc

@@ -1,33 +1,33 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* genbb_mgr.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009-01-19
  * Last modified: 2013-02-25
- * 
- * License: 
+ *
+ * License:
  * Copyright 2007-2013 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- * 
- * Description: 
+ *
+ * Description:
  *
  *   A GENBB input data file manager class using the i_genbb interface
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
 #ifndef GENBB_HELP_GENBB_MGR_H_
@@ -43,9 +43,9 @@
 #include <datatools/io_factory.h>
 #include <datatools/properties.h>
 
-// Implementation of serialization method for the 'primary_event' 
+// Implementation of serialization method for the 'primary_event'
 // class, implies also <genbb_help/primary_particle.ipp> :
-#include <genbb_help/primary_event.ipp>
+//#include <genbb_help/primary_event.ipp>
 
 namespace genbb {
 
@@ -78,12 +78,12 @@ namespace genbb {
 
     /// Constructor
     genbb_mgr (int format_ = FORMAT_GENBB);
-    
+
     /// Destructor
     virtual ~genbb_mgr ();
 
     void dump (std::ostream & out_ = std::clog) const;
-  
+
     void set (const std::string & filename_);
 
     virtual bool is_initialized () const;
@@ -98,7 +98,7 @@ namespace genbb {
 
   protected:
 
-    virtual void _load_next (primary_event & event_, 
+    virtual void _load_next (primary_event & event_,
                              bool compute_classification_ = true);
 
   private:
@@ -121,9 +121,9 @@ namespace genbb {
     std::string            _current_filename_; /// Current file's name
     int                    _format_;       /// Format of the input file
     std::istream *         _in_;           /// Handle to the current input stream
-    std::ifstream          _fin_;          /// Current input file stream 
+    std::ifstream          _fin_;          /// Current input file stream
     datatools::data_reader _reader_;       /// GENBB event reader
-    primary_event          _current_;      /// Current primary event 
+    primary_event          _current_;      /// Current primary event
     double                 _genbb_weight_; /// GENBB event weight (for DBD energy range)
 
     GENBB_PG_REGISTRATION_INTERFACE(genbb_mgr);

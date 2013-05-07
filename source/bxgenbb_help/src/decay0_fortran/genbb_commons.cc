@@ -1,7 +1,7 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // genbb_commons.cc
- 
-#include <genbb_help/genbb_commons.h>
+
+#include <genbb_help/decay0_fortran/genbb_commons.h>
 
 void ENRANGE_t::reset ()
 {
@@ -11,7 +11,7 @@ void ENRANGE_t::reset ()
   levelE = 0;
   return;
 }
-  
+
 ENRANGE_t::ENRANGE_t ()
 {
   reset ();

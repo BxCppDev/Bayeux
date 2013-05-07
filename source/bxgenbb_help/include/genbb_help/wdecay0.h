@@ -34,14 +34,12 @@
 #define GENBB_HELP_WDECAY0_H_ 1
 
 #include <iostream>
+#include <boost/scoped_ptr.hpp>
 
 #include <datatools/properties.h>
 #include <mygsl/rng.h>
 
 #include <genbb_help/i_genbb.h>
-#include <genbb_help/genbb_commons.h>
-
-#include <genbb_help/decay0/bb.h>
 
 namespace genbb {
 
@@ -94,6 +92,8 @@ namespace genbb {
 
     virtual bool is_initialized () const;
 
+    genbb::decay0::bbpars & bb_params();
+
   protected:
 
     virtual void _load_next (primary_event & event_,
@@ -121,10 +121,10 @@ namespace genbb {
     double _energy_min_;
     double _energy_max_;
 
-    unsigned long _seed_;           //> PRNG seed (local or global)
-    mygsl::rng    _random_;         //> Local PRNG
+    unsigned long _seed_;   /// PRNG seed (local or global)
+    mygsl::rng    _random_; /// Local PRNG
 
-    genbb::decay0::bbpars _bb_params_;
+    boost::scoped_ptr<genbb::decay0::bbpars> _bb_params_;
 
     GENBB_PG_REGISTRATION_INTERFACE(wdecay0);
 

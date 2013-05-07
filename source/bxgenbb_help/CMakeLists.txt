@@ -60,25 +60,6 @@ if (GENBB_HELP_WITH_FORTRAN)
   endif ()
   message ( STATUS "${PROJECT_NAME}: FortranCInterface_GLOBAL_FOUND=${FortranCInterface_GLOBAL_FOUND}" )
   message ( STATUS "${PROJECT_NAME}: FortranCInterface_MODULE_FOUND=${FortranCInterface_MODULE_FOUND}" )
-
-  message ( STATUS "${PROJECT_NAME}: Preparing special mangling name for the Fortran/C interface..." )
-  FortranCInterface_HEADER (${PROJECT_BINARY_DIR}/include/genbb_help/detail/__genbb_help_FC.h
-    MACRO_NAMESPACE GENBB_HELP_FortranCInterface_
-     SYMBOLS fermi_wrap rng_shoot_reset rng_shoot_flat)
-
-  install ( FILES ${PROJECT_BINARY_DIR}/include/genbb_help/detail/__genbb_help_FC.h
-            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genbb_help/detail
-            PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-          )
-
-  FortranCInterface_HEADER (${PROJECT_BINARY_DIR}/include/genbb_help/detail/__genbb_help_FC2.h
-    MACRO_NAMESPACE GENBB_HELP_FortranCInterface_
-    SYMBOLS set_genbb_random_seed enrange genevent genbbsub genbbpar)
-
-  install ( FILES ${PROJECT_BINARY_DIR}/include/genbb_help/detail/__genbb_help_FC2.h
-            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genbb_help/detail
-            PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-          )
 else()
   message ( STATUS "${PROJECT_NAME}: Do not build the Fortran genbb/decay0 library !" )
 endif()

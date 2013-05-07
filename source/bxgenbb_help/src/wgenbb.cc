@@ -1,7 +1,7 @@
 // -*- mode: c++; -*-
 // wgenbb.cc
 /*
- * Copyright 2007-2012 F. Mauger
+ * Copyright 2007-2013 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public 3.0 License as published by
@@ -28,18 +28,41 @@
 #include <fstream>
 #include <algorithm>
 
-//#include <boost/filesystem.hpp>
-
 #include <datatools/utils.h>
 #include <datatools/units.h>
 
 #include <genbb_help/genbb_utils.h>
 #include <genbb_help/primary_event.h>
-#include <genbb_help/decay0_fortran/rng.h>
 
-extern GENEVENT_DEF genevent;
-extern ENRANGE_DEF  enrange;
-extern GENBBPAR_DEF genbbpar;
+#include <genbb_help/decay0_fortran/rng.h>
+#include <genbb_help/decay0_fortran/genbb_commons.h>
+
+typedef GENEVENT_t GENEVENT_DEF;
+typedef ENRANGE_t  ENRANGE_DEF;
+
+// 2013-05-07 FM: does not work if included from the wgenbb.cc file !
+// but is ok if included from the wgenbb.h. I don't understand !
+//#include <genbb_help/decay0_fortran/__genbb_help_FC2.h>
+// So I prefer to provide the following names with
+// an explicit trailing underscore because the FC2 macros fail :
+extern "C"
+{
+  void set_genbb_random_seed_ (int *);
+  // was: void set_genbb_random_seed (int *);
+
+  void genbbsub_ (int *,
+                 const char *,
+                 int *,
+                 int *,
+                 int *,
+                 int *);
+ // was:  void genbbsub (int *, ...)
+}
+extern GENEVENT_DEF genevent_;
+extern ENRANGE_DEF  enrange_;
+// was: extern GENEVENT_DEF genevent;
+// was: extern ENRANGE_DEF  enrange;
+
 
 namespace genbb {
 
@@ -47,7 +70,7 @@ namespace genbb {
 
   GENBB_PG_REGISTRATION_IMPLEMENT(wgenbb,"genbb::wgenbb");
 
-  size_t wgenbb::_g_counter_ = 0;
+  int wgenbb::_g_counter_ = 0;
 
   bool wgenbb::is_initialized () const
   {
@@ -68,20 +91,18 @@ namespace genbb {
   // ctor:
   wgenbb::wgenbb () : i_genbb ()
   {
-    if (wgenbb::_g_counter_ > 0)
-      {
-        throw logic_error ("genbb::wgenbb::wgenbb: Only one instance of wgenbb is allowed !");
-      }
+    if (wgenbb::_g_counter_ > 0) {
+      throw logic_error ("genbb::wgenbb::wgenbb: Only one instance of wgenbb is allowed !");
+    }
     wgenbb::_g_counter_++;
     _debug_ = false;
     _initialized_ = false;
     _event_count_ = 0;
     _decay_type_ = DECAY_TYPE_UNDEFINED;
     _decay_isotope_ = "";
-    for (int i = 0; i < ISOTOPE_NAME_MAXSIZE; i++)
-      {
-        _c_decay_isotope_[i] = 0;
-      }
+    for (int i = 0; i < ISOTOPE_NAME_MAXSIZE; i++) {
+      _c_decay_isotope_[i] = 0;
+    }
     _decay_dbd_level_ = 0;
     _decay_dbd_mode_ = DBD_MODE_INVALID;
     _use_local_prng_ = false;
@@ -94,10 +115,9 @@ namespace genbb {
   // dtor:
   wgenbb::~wgenbb ()
   {
-    if (_initialized_)
-      {
-        reset ();
-      }
+    if (_initialized_) {
+      reset ();
+    }
     return;
   }
 
@@ -108,27 +128,23 @@ namespace genbb {
 
   const mygsl::rng & wgenbb::get_random () const
   {
-    if (has_external_random ())
-      {
-        return get_external_random ();
-      }
-    if (! _use_local_prng_)
-      {
-        return genbb::rng::get_genbb_external_prng ();
-      }
+    if (has_external_random ()) {
+      return get_external_random ();
+    }
+    if (! _use_local_prng_) {
+      return genbb::rng::get_genbb_external_prng ();
+    }
     return _random_;
   }
 
   mygsl::rng & wgenbb::grab_random ()
   {
-    if (has_external_random ())
-      {
-        return grab_external_random ();
-      }
-    if (! _use_local_prng_)
-      {
-        return genbb::rng::grab_genbb_external_prng ();
-      }
+    if (has_external_random ()) {
+      return grab_external_random ();
+    }
+    if (! _use_local_prng_) {
+      return genbb::rng::grab_genbb_external_prng ();
+    }
     return _random_;
   }
 
@@ -139,19 +155,17 @@ namespace genbb {
 
   void wgenbb::reset ()
   {
-    if (! _initialized_)
-      {
-        return;
-      }
+    if (! _initialized_) {
+      return;
+    }
     _initialized_ = false;
     _clean_ ();
     _event_count_ = 0;
 
     _decay_type_ = DECAY_TYPE_UNDEFINED;
-    for (int i = 0; i < ISOTOPE_NAME_MAXSIZE; i++)
-      {
-        _c_decay_isotope_[i] = 0;
-      }
+    for (int i = 0; i < ISOTOPE_NAME_MAXSIZE; i++) {
+      _c_decay_isotope_[i] = 0;
+    }
     _decay_isotope_ = "";
     _decay_dbd_level_ = 0;
     _decay_dbd_mode_ = DBD_MODE_INVALID;
@@ -160,18 +174,15 @@ namespace genbb {
     datatools::invalidate (_energy_max_);
 
     _seed_ = 0;
-    if (! has_external_random ())
-      {
-        if (use_local_prng ())
-          {
-            clog << "NOTICE: " << "genbb::wgenbb::reset: "
-                 << "Reseting the local PRNG..." << endl;
-            if (_random_.is_initialized ())
-              {
-                _random_.reset ();
-              }
-          }
+    if (! has_external_random ()) {
+      if (use_local_prng ()) {
+        clog << "NOTICE: " << "genbb::wgenbb::reset: "
+             << "Reseting the local PRNG..." << endl;
+        if (_random_.is_initialized ()) {
+          _random_.reset ();
+        }
       }
+    }
     _use_local_prng_ = false;
 
     return;
@@ -184,10 +195,9 @@ namespace genbb {
 
   void wgenbb::set_use_local_prng (bool u_)
   {
-    if (_initialized_)
-      {
-        throw logic_error ("genbb::wgenbb::set_use_local_prng: Already initialized !");
-      }
+    if (_initialized_) {
+      throw logic_error ("genbb::wgenbb::set_use_local_prng: Already initialized !");
+    }
     _use_local_prng_ = u_;
     return;
   }
@@ -196,10 +206,9 @@ namespace genbb {
                            datatools::service_manager & service_manager_,
                            detail::pg_dict_type & dictionary_)
   {
-    if (_initialized_)
-      {
-        throw logic_error ("genbb::wgenbb::initialize: Already initialized !");
-      }
+    if (_initialized_) {
+      throw logic_error ("genbb::wgenbb::initialize: Already initialized !");
+    }
 
     string decay_isotope;
     double energy_unit = CLHEP::MeV;
@@ -208,159 +217,129 @@ namespace genbb {
     datatools::invalidate (emin);
     datatools::invalidate (emax);
 
-    if (config_.has_flag ("debug"))
-      {
-        _debug_ = true;
+    if (config_.has_flag ("debug")) {
+      _debug_ = true;
+    }
+
+    if (! has_external_random ()) {
+      if (config_.has_key ("local_prng")) {
+        set_use_local_prng (true);
       }
 
-    if (! has_external_random ())
-      {
-        if (config_.has_key ("local_prng"))
-          {
-            set_use_local_prng (true);
-          }
-
-        if (config_.has_key ("seed"))
-          {
-            long seed = config_.fetch_integer ("seed");
-            if (seed < 0)
-              {
-                throw logic_error ("genbb::wgenbb::initialize: Invalid seed value (>=0) !");
-              }
-            _seed_ = seed;
-          }
+      if (config_.has_key ("seed")) {
+        long seed = config_.fetch_integer ("seed");
+        if (seed < 0) {
+          throw logic_error ("genbb::wgenbb::initialize: Invalid seed value (>=0) !");
+        }
+        _seed_ = seed;
       }
+    }
 
-    if (! config_.has_key ("decay_type"))
-      {
+    if (! config_.has_key ("decay_type")) {
+      ostringstream message;
+      message << "genbb::wgenbb::initialize: Missing 'decay_type' property !";
+      throw logic_error (message.str());
+    } else {
+      string tmp = config_.fetch_string ("decay_type");
+      if ((tmp != "DBD") && (tmp != "background")) {
         ostringstream message;
-        message << "genbb::wgenbb::initialize: Missing 'decay_type' property !";
+        message << "genbb::wgenbb::initialize: Invalid decay type '"
+                << tmp << "' !";
         throw logic_error (message.str());
       }
-    else
-      {
-        string tmp = config_.fetch_string ("decay_type");
-        if ((tmp != "DBD") && (tmp != "background"))
-          {
-            ostringstream message;
-            message << "genbb::wgenbb::initialize: Invalid decay type '"
-                    << tmp << "' !";
-            throw logic_error (message.str());
-          }
-        if (tmp == "background")
-          {
-            _decay_type_ = DECAY_TYPE_BACKGROUND;
-          }
-
-        if (tmp == "DBD")
-          {
-            _decay_type_ = DECAY_TYPE_DBD;
-
-            if (! config_.has_key ("decay_dbd_level"))
-              {
-                ostringstream message;
-                message << "genbb::wgenbb::initialize: Missing DBD decay level !";
-                throw logic_error (message.str());
-              }
-            _decay_dbd_level_ = config_.fetch_integer ("decay_dbd_level");
-
-            if (! config_.has_key ("decay_dbd_mode"))
-              {
-                ostringstream message;
-                message << "genbb::wgenbb::initialize: Missing DBD decay mode !";
-                throw logic_error (message.str());
-              }
-            _decay_dbd_mode_ = config_.fetch_integer ("decay_dbd_mode");
-          }
-
+      if (tmp == "background") {
+        _decay_type_ = DECAY_TYPE_BACKGROUND;
       }
 
-    if (! config_.has_key ("decay_isotope"))
-      {
-        ostringstream message;
-        message << "genbb::wgenbb::initialize: Missing 'decay_isotope' property !";
-        throw logic_error (message.str());
+      if (tmp == "DBD") {
+        _decay_type_ = DECAY_TYPE_DBD;
+
+        if (! config_.has_key ("decay_dbd_level")) {
+          ostringstream message;
+          message << "genbb::wgenbb::initialize: Missing DBD decay level !";
+          throw logic_error (message.str());
+        }
+        _decay_dbd_level_ = config_.fetch_integer ("decay_dbd_level");
+
+        if (! config_.has_key ("decay_dbd_mode")) {
+          ostringstream message;
+          message << "genbb::wgenbb::initialize: Missing DBD decay mode !";
+          throw logic_error (message.str());
+        }
+        _decay_dbd_mode_ = config_.fetch_integer ("decay_dbd_mode");
       }
-    else
-      {
-        decay_isotope = config_.fetch_string ("decay_isotope");
-      }
+
+    }
+
+    if (! config_.has_key ("decay_isotope")) {
+      ostringstream message;
+      message << "genbb::wgenbb::initialize: Missing 'decay_isotope' property !";
+      throw logic_error (message.str());
+    } else {
+      decay_isotope = config_.fetch_string ("decay_isotope");
+    }
 
     _set_decay_isotope_ (decay_isotope);
 
-    if (_decay_type_ == DECAY_TYPE_DBD)
-      {
-        const std::vector<int> & dbdmwer
-          = utils::get_dbd_modes_with_energy_range ();
-        if (std::find (dbdmwer.begin (), dbdmwer.end (),_decay_dbd_mode_) != dbdmwer.end ())
-          {
-            if (config_.has_key ("energy_unit"))
-              {
-                string unit_str = config_.fetch_string ("energy_unit");
-                energy_unit = datatools::units::get_energy_unit_from (unit_str);
-              }
+    if (_decay_type_ == DECAY_TYPE_DBD) {
+      const std::vector<int> & dbdmwer
+        = utils::get_dbd_modes_with_energy_range ();
+      if (std::find (dbdmwer.begin (), dbdmwer.end (),_decay_dbd_mode_) != dbdmwer.end ()) {
+        if (config_.has_key ("energy_unit")) {
+          string unit_str = config_.fetch_string ("energy_unit");
+          energy_unit = datatools::units::get_energy_unit_from (unit_str);
+        }
 
-            if (config_.has_key ("energy_max"))
-              {
-                emax = config_.fetch_real ("energy_max");
-                if (emax < 0.0)
-                  {
-                    throw logic_error ("genbb::wgenbb::initialize: Invalid maximum value !");
-                  }
-                emax *= energy_unit;
-                _energy_max_ = emax;
-              }
+        if (config_.has_key ("energy_max")) {
+          emax = config_.fetch_real ("energy_max");
+          if (emax < 0.0)
+            {
+              throw logic_error ("genbb::wgenbb::initialize: Invalid maximum value !");
+            }
+          emax *= energy_unit;
+          _energy_max_ = emax;
+        }
 
-            if (config_.has_key ("energy_min"))
-              {
-                emin = config_.fetch_real ("energy_min");
-                if (emin < 0.0)
-                  {
-                    throw logic_error ("genbb::wgenbb::initialize: Invalid minimum value !");
-                  }
-                emin *= energy_unit;
-                _energy_min_ = emin;
-              }
-
+        if (config_.has_key ("energy_min")) {
+          emin = config_.fetch_real ("energy_min");
+          if (emin < 0.0) {
+            throw logic_error ("genbb::wgenbb::initialize: Invalid minimum value !");
           }
-      }
+          emin *= energy_unit;
+          _energy_min_ = emin;
+        }
 
-    if (datatools::is_valid (_energy_min_))
-      {
-        if (! datatools::is_valid (_energy_max_))
-          {
-            _energy_max_ = utils::DEFAULT_ENERGY_RANGE_MAX;
-          }
       }
-    if (datatools::is_valid (_energy_max_))
-      {
-        if (! datatools::is_valid (_energy_min_))
-          {
-            _energy_min_ = utils::DEFAULT_ENERGY_RANGE_MIN;
-          }
-      }
-    if (_energy_min_ >= _energy_max_)
-      {
-        ostringstream message;
-        message << "genbb::wgenbb::initialize: Invalid energy range !";
-        throw logic_error (message.str());
-      }
+    }
 
-    if (has_external_random ())
-      {
-        clog << "NOTICE: " << "genbb::wgenbb::initialize: "
-             << "Installing the external PRNG as the global PRNG for the fortran interface..." << endl;
-        genbb::rng::set_genbb_external_prng (grab_external_random ());
+    if (datatools::is_valid (_energy_min_)) {
+      if (! datatools::is_valid (_energy_max_)) {
+        _energy_max_ = utils::DEFAULT_ENERGY_RANGE_MAX;
       }
-    else if (use_local_prng ())
-      {
-        clog << "NOTICE: " << "genbb::wgenbb::initialize: "
-             << "Initializing the local PRNG..." << endl;
-        _random_.init ("taus2", _seed_);
-        clog << "NOTICE: " << "genbb::wgenbb::initialize: "
-             << "Installing the local PRNG as the global PRNG for the fortran interface..." << endl;
-        genbb::rng::set_genbb_external_prng (_random_);
+    }
+    if (datatools::is_valid (_energy_max_)) {
+      if (! datatools::is_valid (_energy_min_)) {
+        _energy_min_ = utils::DEFAULT_ENERGY_RANGE_MIN;
       }
+    }
+    if (_energy_min_ >= _energy_max_) {
+      ostringstream message;
+      message << "genbb::wgenbb::initialize: Invalid energy range !";
+      throw logic_error (message.str());
+    }
+
+    if (has_external_random ()) {
+      clog << "NOTICE: " << "genbb::wgenbb::initialize: "
+           << "Installing the external PRNG as the global PRNG for the fortran interface..." << endl;
+      genbb::rng::set_genbb_external_prng (grab_external_random ());
+    } else if (use_local_prng ()) {
+      clog << "NOTICE: " << "genbb::wgenbb::initialize: "
+           << "Initializing the local PRNG..." << endl;
+      _random_.init ("taus2", _seed_);
+      clog << "NOTICE: " << "genbb::wgenbb::initialize: "
+           << "Installing the local PRNG as the global PRNG for the fortran interface..." << endl;
+      genbb::rng::set_genbb_external_prng (_random_);
+    }
 
     _init_ ();
 
@@ -377,120 +356,110 @@ namespace genbb {
   {
     _decay_isotope_ = di_;
     size_t sz = di_.length ();
-    if (sz >= 15)
-      {
-        throw logic_error ("genbb::wgenbb::_set_decay_isotope_: Decay isotope string too long !");
-      }
-    for (int i = 0; i < sz; i++)
-      {
-        _c_decay_isotope_[i] = di_[i];
-      }
+    if (sz >= 15) {
+      throw logic_error ("genbb::wgenbb::_set_decay_isotope_: Decay isotope string too long !");
+    }
+    for (int i = 0; i < sz; i++) {
+      _c_decay_isotope_[i] = di_[i];
+    }
     return;
   }
 
   void wgenbb::_load_next (primary_event & event_,
                            bool compute_classification_)
   {
-    if (_debug_)
-      {
-        clog << "debug: " << "genbb::wgenbb::_load_next: "
-             << "Entering..."
-             << endl;
-      }
-    if (! _initialized_)
-      {
-        throw logic_error ("genbb::wgenbb::_load_next: Not initialized !");
-      }
+    if (_debug_) {
+      clog << "debug: " << "genbb::wgenbb::_load_next: "
+           << "Entering..."
+           << endl;
+    }
+    if (! _initialized_) {
+      throw logic_error ("genbb::wgenbb::_load_next: Not initialized !");
+    }
     event_.reset ();
 
     int error;
     int start = 1;
 
     // reset Fortran common block:
-    genevent.reset ();
+    genevent_.reset ();
 
-    genbbsub (&_decay_type_,
+    genbbsub_ (&_decay_type_,
               _c_decay_isotope_,
               &_decay_dbd_level_,
               &_decay_dbd_mode_,
               &start,
               &error);
-    if (error != 0)
-      {
-        throw logic_error ("genbb::wgenbb::_load_next: genbbsub failed !");
-      }
+    if (error != 0) {
+      throw logic_error ("genbb::wgenbb::_load_next: genbbsub failed !");
+    }
 
     int    evnum;
     double time;
     int    npart;
 
     evnum = 0;
-    event_.set_time (genevent.tevst * CLHEP::second);
+    event_.set_time (genevent_.tevst * CLHEP::second);
     double part_time = 0.0;
-    npart = genevent.npfull;
+    npart = genevent_.npfull;
     /*
       clog << "DEVEL: " << "genbb::wgenbb::_load_next: "
       << "npart=" << npart << endl;
     */
-    for (int i = 0; i < npart; i++)
-      {
-        primary_particle pp;
-        int part_type;
-        double x, y ,z, time_shift;
-        part_type = genevent.npgeant[i];
-        /*
-          clog << "DEVEL: " << "genbb::wgenbb::_load_next: "
-          << "part_type=" << part_type << endl;
-        */
-        x = genevent.pmoment[i][0];
-        y = genevent.pmoment[i][1];
-        z = genevent.pmoment[i][2];
-        /*
-          clog << "DEVEL: " << "genbb::wgenbb::_load_next: "
-          << " px=" << x
-          << " py=" << y
-          << " pz=" << z
-          << endl;
-        */
-        time_shift = genevent.ptime[i];
-        /*
-          clog << "DEVEL: " << "genbb::wgenbb::_load_next: "
-          << "time_shift=" << time_shift << endl;
-        */
-        part_time += time_shift;
-        pp.set_type (part_type);
-        pp.set_time (part_time * CLHEP::second); // GENBB unit is s
-        geomtools::vector_3d p (x, y, z);
-        p *= CLHEP::MeV; // GENBB unit is MeV/c
-        pp.set_momentum (p);
-        event_.add_particle (pp);
-      }
+    for (int i = 0; i < npart; i++) {
+      primary_particle pp;
+      int part_type;
+      double x, y ,z, time_shift;
+      part_type = genevent_.npgeant[i];
+      /*
+        clog << "DEVEL: " << "genbb::wgenbb::_load_next: "
+        << "part_type=" << part_type << endl;
+      */
+      x = genevent_.pmoment[i][0];
+      y = genevent_.pmoment[i][1];
+      z = genevent_.pmoment[i][2];
+      /*
+        clog << "DEVEL: " << "genbb::wgenbb::_load_next: "
+        << " px=" << x
+        << " py=" << y
+        << " pz=" << z
+        << endl;
+      */
+      time_shift = genevent_.ptime[i];
+      /*
+        clog << "DEVEL: " << "genbb::wgenbb::_load_next: "
+        << "time_shift=" << time_shift << endl;
+      */
+      part_time += time_shift;
+      pp.set_type (part_type);
+      pp.set_time (part_time * CLHEP::second); // GENBB unit is s
+      geomtools::vector_3d p (x, y, z);
+      p *= CLHEP::MeV; // GENBB unit is MeV/c
+      pp.set_momentum (p);
+      event_.add_particle (pp);
+    }
 
-    if (compute_classification_)
-      {
-        event_.compute_classification ();
-      }
+    if (compute_classification_) {
+      event_.compute_classification ();
+    }
 
     event_.set_genbb_weight (1.0);
-    if (_debug_)
-      {
-        clog << "debug: " << "genbb::wgenbb::_load_next: "
-             << "GENBB weight = " << get_to_all_events ()
-             << endl;
-      }
-    if (get_to_all_events () > 1.0)
-      {
-        event_.set_genbb_weight (1.0 / get_to_all_events ());
-      }
+    if (_debug_) {
+      clog << "debug: " << "genbb::wgenbb::_load_next: "
+           << "GENBB weight = " << get_to_all_events ()
+           << endl;
+    }
+    if (get_to_all_events () > 1.0) {
+      event_.set_genbb_weight (1.0 / get_to_all_events ());
+    }
 
     //event_.dump (clog , "GENBB event: ", "DEVEL: ");
     _event_count_++;
-    if (_debug_)
-      {
-        clog << "debug: " << "genbb::wgenbb::_load_next: "
-             << "Exiting."
-             << endl;
-      }
+    if (_debug_) {
+      clog << "debug: " << "genbb::wgenbb::_load_next: "
+           << "Exiting."
+           << endl;
+    }
     return;
   }
 
@@ -501,84 +470,72 @@ namespace genbb {
 
   double wgenbb::get_to_all_events () const
   {
-    return 1.0 * enrange.toallevents;
+    return 1.0 * enrange_.toallevents;
   }
 
   void wgenbb::_init_ ()
   {
-    if (_debug_)
-      {
-        clog << "DEBUG: " << "genbb::wgenbb::_init_: "
-             << "Entering..."
-             << endl;
-      }
+    if (_debug_) {
+      clog << "DEBUG: " << "genbb::wgenbb::_init_: "
+           << "Entering..."
+           << endl;
+    }
 
-    if (_decay_type_ == DECAY_TYPE_UNDEFINED)
-      {
-        throw logic_error ("genbb::wgenbb::_init_: Decay type is not defined !");
-      }
-    if (_decay_type_ == DECAY_TYPE_DBD && _decay_dbd_mode_ == DBD_MODE_INVALID)
-      {
-        throw logic_error ("genbb::wgenbb::_init_: Invalid DBD mode !");
-      }
+    if (_decay_type_ == DECAY_TYPE_UNDEFINED) {
+      throw logic_error ("genbb::wgenbb::_init_: Decay type is not defined !");
+    }
+    if (_decay_type_ == DECAY_TYPE_DBD && _decay_dbd_mode_ == DBD_MODE_INVALID) {
+      throw logic_error ("genbb::wgenbb::_init_: Invalid DBD mode !");
+    }
 
-    enrange.reset ();
+    enrange_.reset ();
     const std::vector<int> & dbdmwer
       = utils::get_dbd_modes_with_energy_range ();
     if (_debug_) clog << "DEBUG: genbb::wgenbb::_init_: Decay DBD mode : "
                       << _decay_dbd_mode_ << endl;
-    if (std::find (dbdmwer.begin (), dbdmwer.end (),_decay_dbd_mode_) != dbdmwer.end ())
-      {
-        if (datatools::is_valid (_energy_min_))
-          {
-            clog << "NOTICE: genbb::wgenbb::_init_: Setting energy min to "
-                 << _energy_min_ / CLHEP::MeV << " MeV" << endl;
-            enrange.ebb1 = (float) (_energy_min_ / CLHEP::MeV);
-          }
-        if (datatools::is_valid (_energy_max_))
-          {
-            clog << "NOTICE: genbb::wgenbb::_init_: Setting energy max to "
-                 << _energy_max_ / CLHEP::MeV << " MeV" << endl;
-            enrange.ebb2 = (float) (_energy_max_ / CLHEP::MeV);
-          }
-        if (enrange.ebb1 >= enrange.ebb2)
-          {
-            ostringstream message;
-            message << "genbb::wgenbb::_init_: "
-                    << "Invalid energy range !";
-            throw logic_error (message.str ());
-          }
+    if (std::find (dbdmwer.begin (), dbdmwer.end (),_decay_dbd_mode_) != dbdmwer.end ()) {
+      if (datatools::is_valid (_energy_min_)) {
+        clog << "NOTICE: genbb::wgenbb::_init_: Setting energy min to "
+             << _energy_min_ / CLHEP::MeV << " MeV" << endl;
+        enrange_.ebb1 = (float) (_energy_min_ / CLHEP::MeV);
       }
-    else
-      {
-        if (_debug_)  clog << "DEBUG: genbb::wgenbb::_init_: Not a DBD energy range mode."
-                           << endl;
+      if (datatools::is_valid (_energy_max_)) {
+        clog << "NOTICE: genbb::wgenbb::_init_: Setting energy max to "
+             << _energy_max_ / CLHEP::MeV << " MeV" << endl;
+        enrange_.ebb2 = (float) (_energy_max_ / CLHEP::MeV);
       }
+      if (enrange_.ebb1 >= enrange_.ebb2) {
+        ostringstream message;
+        message << "genbb::wgenbb::_init_: "
+                << "Invalid energy range !";
+        throw logic_error (message.str ());
+      }
+    } else {
+      if (_debug_)  clog << "DEBUG: genbb::wgenbb::_init_: Not a DBD energy range mode."
+                         << endl;
+    }
 
-    if (! _use_local_prng_)
-      {
-        int genbb_seed = _seed_;
-        set_genbb_random_seed (&genbb_seed);
-      }
+    if (! _use_local_prng_) {
+      int genbb_seed = _seed_;
+      set_genbb_random_seed_ (&genbb_seed);
+    }
     int error = 0;
     int start = -1; // special initialization value without event generation
-    genbbsub (&_decay_type_,
+    genbbsub_ (&_decay_type_,
               _c_decay_isotope_,
               &_decay_dbd_level_,
               &_decay_dbd_mode_,
               &start,
               &error);
-    if (error != 0)
-      {
-        throw logic_error ("genbb::wgenbb::_init_: genbbsub failed !");
-      }
+    if (error != 0) {
+      throw logic_error ("genbb::wgenbb::_init_: genbbsub failed !");
+    }
 
-    if (_debug_)
-      {
-        clog << "DEBUG: " << "genbb::wgenbb::_init_: "
-             << "Exiting."
-             << endl;
-      }
+    if (_debug_) {
+      clog << "DEBUG: " << "genbb::wgenbb::_init_: "
+           << "Exiting."
+           << endl;
+    }
     return;
   }
 
@@ -593,14 +550,12 @@ namespace genbb {
     out_ << tag << "decay_dbd_level  : " << _decay_dbd_level_ << endl;
     out_ << tag << "decay_dbd_mode   : " << _decay_dbd_mode_ << endl;
     out_ << tag << "event_count      : " << _event_count_ << endl;
-    if (datatools::is_valid (_energy_min_))
-      {
-        out_ << tag << "energy_min       : " << _energy_min_ / CLHEP::keV << " keV" << endl;
-      }
-    if (datatools::is_valid (_energy_max_))
-      {
-        out_ << tag << "energy_max       : " << _energy_max_ / CLHEP::keV << " keV" << endl;
-      }
+    if (datatools::is_valid (_energy_min_)) {
+      out_ << tag << "energy_min       : " << _energy_min_ / CLHEP::keV << " keV" << endl;
+    }
+    if (datatools::is_valid (_energy_max_)) {
+      out_ << tag << "energy_max       : " << _energy_max_ / CLHEP::keV << " keV" << endl;
+    }
     out_ << tag << "use local PRNG   : " << _use_local_prng_ << endl;
     out_ << last_tag << "seed             : " << _seed_ << endl;
     return;

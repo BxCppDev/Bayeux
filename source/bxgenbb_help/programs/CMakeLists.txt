@@ -32,7 +32,7 @@ endif (GENBB_HELP_WITH_FORTRAN)
 set ( genbb_help_programs_list_CPP
   g2b.cxx
   genbbmgr.cxx
-  )
+)
 
 find_package(datatools 5.0.0 REQUIRED)
 if(datatools_WITH_REFLECTION)
@@ -110,9 +110,9 @@ foreach ( pro_program ${genbb_help_programs_list_CPP} )
   # our executable needs,
   set ( _pro_libraries
     genbb_help
-    ${_genbb_fortran_libs}
-    genbb_help_decay0_cpp
-    ${geomtools_LIBRARIES}
+    # ${_genbb_fortran_libs}
+    # genbb_help_decay0_cpp
+    # ${geomtools_LIBRARIES}
     )
 
   if ( ${pro_program} STREQUAL "genbb_inspector.cxx" )
@@ -122,6 +122,7 @@ foreach ( pro_program ${genbb_help_programs_list_CPP} )
     list ( INSERT _pro_libraries 0 ${CAMP_LIBRARIES} )
     list ( INSERT _pro_libraries 0 ${datatools_REFLECTION_LIBRARY} )
   endif()
+
   if ( datatools_WITH_BIO )
     list ( INSERT _pro_libraries 0 ${datatools_BIO_LIBRARY} )
   endif ()

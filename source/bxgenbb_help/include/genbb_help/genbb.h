@@ -1,33 +1,33 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* genbb.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-28
- * Last modified: 
- * 
- * License: 
+ * Last modified:
+ *
+ * License:
  * Copyright 2007-2013 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- * 
- * Description: 
+ *
+ * Description:
  *
  *   GENBB/Decay0 generator
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
 #ifndef GENBB_HELP_GENBB_H_
@@ -37,11 +37,13 @@
 #include <fstream>
 #include <string>
 
-#include <genbb_help/i_genbb.h>
+#include <datatools/properties.h>
+
 #include <mygsl/rng.h>
+
+#include <genbb_help/i_genbb.h>
 #include <genbb_help/genbb_utils.h>
 
-#include <datatools/properties.h>
 
 namespace genbb {
 
@@ -55,7 +57,7 @@ namespace genbb {
   public:
 
     bool is_debug () const;
- 
+
     void set_debug (bool d_);
 
     void set_delete_conf_file (bool);
@@ -103,7 +105,7 @@ namespace genbb {
 
   protected:
 
-    virtual void _load_next (primary_event & event_, 
+    virtual void _load_next (primary_event & event_,
                             bool compute_classification_ = true);
 
   private:
@@ -111,7 +113,7 @@ namespace genbb {
     void _init_ ();  /// Initialize material associated to a new buffer file
 
     void _clean_ (); /// Clean material associated to the current buffer file
- 
+
   private:
     bool   _initialized_;
     bool   _debug_;
@@ -125,9 +127,9 @@ namespace genbb {
     bool   _delete_tmp_dir_;
 
     int    _decay_type_;
-    std::string _decay_isotope_;  
-    int    _decay_dbd_level_;  
-    int    _decay_dbd_mode_;  
+    std::string _decay_isotope_;
+    int    _decay_dbd_level_;
+    int    _decay_dbd_mode_;
 
     // Only for BB decay mode :
     bool   _use_energy_range_;
@@ -148,7 +150,7 @@ namespace genbb {
     double          _genbb_weight_; /// GENBB event weight (for DBD energy range)
 
     GENBB_PG_REGISTRATION_INTERFACE(genbb);
- 
+
   };
 
 } // end of namespace genbb

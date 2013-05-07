@@ -33,11 +33,17 @@
 
 #include <genbb_help/genbb_utils.h>
 #include <genbb_help/primary_event.h>
+#include <genbb_help/decay0/bb.h>
 #include <genbb_help/decay0/genbbsub.h>
 
 namespace genbb {
 
   GENBB_PG_REGISTRATION_IMPLEMENT(wdecay0,"genbb::wdecay0");
+
+  genbb::decay0::bbpars & wdecay0::bb_params()
+  {
+    return *_bb_params_.get();
+  }
 
   bool wdecay0::is_initialized () const
   {
@@ -119,7 +125,12 @@ namespace genbb {
         _random_.reset ();
       }
     }
-     return;
+
+    if (_bb_params_.get() != 0) {
+      _bb_params_.get()->reset();
+      _bb_params_.reset(0);
+    }
+    return;
   }
 
   void wdecay0::reset ()
@@ -305,7 +316,7 @@ namespace genbb {
                         _decay_dbd_mode_,
                         decay0::GENBBSUB_ISTART_GENERATE,
                         error,
-                        _bb_params_);
+                        bb_params());
       if (error != 0) {
         throw std::logic_error ("genbb::wdecay0::_load_next: genbbsub DBD generation failed !");
       }
@@ -318,7 +329,7 @@ namespace genbb {
                        -1,
                        decay0::GENBBSUB_ISTART_GENERATE,
                        error,
-                       _bb_params_);
+                       bb_params());
       if (error != 0) {
         throw std::logic_error ("genbb::wdecay0::_init_: genbbsub background generation failed !");
       }
@@ -355,7 +366,7 @@ namespace genbb {
 
   double wdecay0::get_to_all_events () const
   {
-    return _bb_params_.toallevents;
+    return _bb_params_.get()->toallevents;
   }
 
   void wdecay0::_init_ ()
@@ -383,10 +394,12 @@ namespace genbb {
       }
     }
 
-    _bb_params_.reset();
+    _bb_params_.reset(new genbb::decay0::bbpars);
+
+    bb_params().reset();
     if (_decay_type_ == DECAY_TYPE_DBD) {
-      _bb_params_.modebb   = _decay_dbd_mode_;
-      _bb_params_.istartbb = 0;
+      bb_params().modebb   = _decay_dbd_mode_;
+      bb_params().istartbb = 0;
 
       const std::vector<int> & dbdmwer
         = utils::get_dbd_modes_with_energy_range ();
@@ -396,17 +409,17 @@ namespace genbb {
         if (datatools::is_valid (_energy_min_)) {
           std::clog << "NOTICE: genbb::wdecay0::_init_: Setting DBD energy min to "
                     << _energy_min_ / CLHEP::MeV << " MeV" << std::endl;
-          _bb_params_.ebb1 = (float) (_energy_min_ / CLHEP::MeV);
+          bb_params().ebb1 = (float) (_energy_min_ / CLHEP::MeV);
         }
         if (datatools::is_valid (_energy_max_)) {
           std::clog << "NOTICE: genbb::wdecay0::_init_: Setting DBD energy max to "
                     << _energy_max_ / CLHEP::MeV << " MeV" << std::endl;
-          _bb_params_.ebb2 = (float) (_energy_max_ / CLHEP::MeV);
+          bb_params().ebb2 = (float) (_energy_max_ / CLHEP::MeV);
         }
-        if (_bb_params_.ebb1 >= _bb_params_.ebb2) {
+        if (bb_params().ebb1 >= bb_params().ebb2) {
           std::ostringstream message;
           message << "genbb::wdecay0::_init_: "
-                  << "Invalid DBD energy range (Emin="<< _bb_params_.ebb1 << " >= Emax=" << _bb_params_.ebb2 << ") (MeV) !";
+                  << "Invalid DBD energy range (Emin="<< bb_params().ebb1 << " >= Emax=" << bb_params().ebb2 << ") (MeV) !";
           throw std::logic_error (message.str ());
         }
       } else {
@@ -426,7 +439,7 @@ namespace genbb {
                        _decay_dbd_mode_,
                        decay0::GENBBSUB_ISTART_INIT, // initialization without event generation
                        error,
-                       _bb_params_);
+                       bb_params());
       if (error != 0) {
         throw std::logic_error ("genbb::wdecay0::_init_: genbbsub DBD initialization failed !");
       }
@@ -440,7 +453,7 @@ namespace genbb {
                        -1,
                        decay0::GENBBSUB_ISTART_INIT, // initialization without event generation
                        error,
-                       _bb_params_);
+                       bb_params());
       if (error != 0) {
         throw std::logic_error ("genbb::wdecay0::_init_: genbbsub background initialization failed !");
       }

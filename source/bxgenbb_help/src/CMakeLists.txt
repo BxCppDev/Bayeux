@@ -21,34 +21,57 @@ endfunction()
 
 if (GENBB_HELP_WITH_FORTRAN)
 
-  file ( GLOB genbb_help_decay0_fortran_PUBLIC_HEADERS
+  message ( STATUS "${PROJECT_NAME}: Preparing special mangling name for the Fortran/C interface..." )
+  FortranCInterface_HEADER (${PROJECT_BINARY_DIR}/include/genbb_help/decay0_fortran/__genbb_help_FC.h
+    MACRO_NAMESPACE GENBB_HELP_FortranCInterface_
+     SYMBOLS fermi_wrap rng_shoot_reset rng_shoot_flat)
+
+  install ( FILES ${PROJECT_BINARY_DIR}/include/genbb_help/decay0_fortran/__genbb_help_FC.h
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genbb_help/decay0_fortran
+            PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+          )
+
+  FortranCInterface_HEADER (${PROJECT_BINARY_DIR}/include/genbb_help/decay0_fortran/__genbb_help_FC2.h
+    MACRO_NAMESPACE GENBB_HELP_FortranCInterface_
+    SYMBOLS set_genbb_random_seed enrange genevent genbbsub )
+    # genbbpar)
+
+  # install ( FILES ${PROJECT_BINARY_DIR}/include/genbb_help/decay0_fortran/__genbb_help_FC2.h
+  #           DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genbb_help/decay0_fortran
+  #           PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+  #         )
+
+  file ( GLOB genbb_help_decay0_fortran_HEADERS
     ${PROJECT_SOURCE_DIR}/include/genbb_help/decay0_fortran/dummy.inc
     ${PROJECT_SOURCE_DIR}/include/genbb_help/decay0_fortran/genbb_commons.inc
+    ${PROJECT_SOURCE_DIR}/include/genbb_help/decay0_fortran/genbb_commons.h
     ${PROJECT_SOURCE_DIR}/include/genbb_help/decay0_fortran/fermi.h
     ${PROJECT_SOURCE_DIR}/include/genbb_help/decay0_fortran/rng.h
   )
 
   file ( GLOB genbb_help_decay0_fortran_SOURCES
-    ${genbb_help_decay0_fortran_PUBLIC_HEADERS}
+    ${genbb_help_decay0_fortran_HEADERS}
     ${PROJECT_SOURCE_DIR}/src/decay0_fortran/fermi.cc
     ${PROJECT_SOURCE_DIR}/src/decay0_fortran/rng.cc
+    ${PROJECT_SOURCE_DIR}/src/decay0_fortran/genbb_commons.cc
     ${PROJECT_SOURCE_DIR}/src/decay0_fortran/*.f
   )
 
 endif (GENBB_HELP_WITH_FORTRAN)
 
-file ( GLOB genbb_help_decay0_cpp_PUBLIC_HEADERS
+file ( GLOB genbb_help_decay0_HEADERS
   ${PROJECT_SOURCE_DIR}/include/genbb_help/decay0/*.h
   )
 
-file ( GLOB genbb_help_decay0_cpp_SOURCES
-  ${genbb_help_decay0_cpp_PUBLIC_HEADERS}
+file ( GLOB genbb_help_decay0_SOURCES
+  ${genbb_help_decay0_PUBLIC_HEADERS}
   ${PROJECT_SOURCE_DIR}/src/decay0/*.cc
   )
 
+#${PROJECT_SOURCE_DIR}/include/genbb_help/genbb_commons.h
+
 file ( GLOB genbb_help_PUBLIC_HEADERS
   ${PROJECT_SOURCE_DIR}/include/genbb_help/bio_guard.h
-  ${PROJECT_SOURCE_DIR}/include/genbb_help/genbb_commons.h
   ${PROJECT_SOURCE_DIR}/include/genbb_help/genbb_macros.h
   ${PROJECT_SOURCE_DIR}/include/genbb_help/genbb_mgr.h
   ${PROJECT_SOURCE_DIR}/include/genbb_help/genbb_utils.h
@@ -93,13 +116,6 @@ set(genbb_help_detail_HEADERS
    )
 list_prepend(genbb_help_detail_HEADERS "${PROJECT_SOURCE_DIR}/")
 
-if (GENBB_HELP_WITH_FORTRAN)
-  list(APPEND genbb_help_detail_HEADERS
-       ${PROJECT_BINARY_DIR}/include/genbb_help/detail/__genbb_help_FC.h)
-  list(APPEND genbb_help_detail_HEADERS
-       ${PROJECT_BINARY_DIR}/include/genbb_help/detail/__genbb_help_FC2.h)
-endif (GENBB_HELP_WITH_FORTRAN)
-
 set_source_files_properties(${genbb_help_detail_HEADERS}
   PROPERTIES
     MACOSX_PACKAGE_LOCATION Headers/detail
@@ -118,20 +134,20 @@ endif()
 
 #-----------------------------------------------------------------------
 # SOURCE FILES
+###      genbb_commons.cc
 # Pretty basic!
 set(genbb_help_SOURCES
-      genbb_commons.cc
-      genbb_mgr.cc
-      wdecay0.cc
       genbb_utils.cc
       genbb_writer.cc
-      i_genbb.cc
-      manager.cc
       pg_tools.cc
+      i_genbb.cc
       primary_event.cc
       primary_particle.cc
+      wdecay0.cc
+      genbb_mgr.cc
       single_particle_generator.cc
       combined_particle_generator.cc
+      manager.cc
 )
 
 if (GENBB_HELP_WITH_FORTRAN)
@@ -227,8 +243,8 @@ endif()
 # Build the C++ decay0 port library :
 
 add_library(genbb_help_decay0_cpp SHARED
-  ${genbb_help_decay0_cpp_PUBLIC_HEADERS}
-  ${genbb_help_decay0_cpp_SOURCES}
+  ${genbb_help_decay0_PUBLIC_HEADERS}
+  ${genbb_help_decay0_SOURCES}
   )
 
 set_target_properties(genbb_help_decay0_cpp
@@ -239,7 +255,7 @@ set_target_properties(genbb_help_decay0_cpp
     MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${genbb_help_VERSION}
     VERSION                               ${genbb_help_VERSION}
     SOVERSION                             ${genbb_help_VERSION_MAJOR}
-    PUBLIC_HEADER                         "${genbb_help_decay0_cpp_PUBLIC_HEADERS}"
+    PUBLIC_HEADER                         "${genbb_help_decay0_PUBLIC_HEADERS}"
 )
 
 target_link_libraries(genbb_help_decay0_cpp ${geomtools_LIBRARIES} ${CMAKE_DL_LIBS})

@@ -58,7 +58,7 @@ namespace genbb {
 
 } // end of namespace genbb
 
-#include <genbb_help/detail/__genbb_help_FC.h>
+#include <genbb_help/decay0_fortran/__genbb_help_FC.h>
 
 extern "C"
 {
