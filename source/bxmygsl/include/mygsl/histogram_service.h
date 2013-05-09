@@ -110,7 +110,8 @@ namespace mygsl {
     mygsl::histogram_pool     _pool_;        /// Embeded histogram pool
     std::vector<std::string>  _output_files_; /// List of output files
     bool                      _root_export_stats_; /// Flag for stat box (ROOT export)
-    std::string               _root_export_title_prefix_; /// General common user title (ROOT export)
+    std::string               _root_export_title_prefix_; /// General common user histogram title prefix (ROOT export)
+    std::string               _root_export_name_suffix_; /// General common user histogram name suffix (ROOT export)
     // Registration :
     DATATOOLS_SERVICE_REGISTRATION_INTERFACE (histogram_service);
 

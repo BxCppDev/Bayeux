@@ -41,6 +41,8 @@ This is the mygsl package ChangeLog
 	  - mygsl::best_value
 	  - mygsl::datapoint
 	  - mygsl::polynomial
-
+2013-05-09 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* add 'tracker' output stream in the rng class
+	* add options for ROOT export of histograms
 
 

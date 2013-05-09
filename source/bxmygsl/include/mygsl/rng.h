@@ -23,11 +23,13 @@
 #define MYGSL_RNG_H_ 1
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <map>
 #include <vector>
 
 #include <boost/cstdint.hpp>
+#include <boost/scoped_ptr.hpp>
 
 #include <gsl/gsl_rng.h>
 #include <mygsl/random_utils.h>
@@ -84,6 +86,12 @@ namespace mygsl {
 
     void set_id (const std::string & id_ = "");
 
+    bool has_tracker() const;
+
+    void set_tracker (const std::string & filename_);
+
+    void reset_tracker ();
+
     rng ();
 
     rng (int32_t seed_, bool init_now_ = true);
@@ -130,26 +138,26 @@ namespace mygsl {
 
     size_t get_internal_state_size () const;
 
-    // specific distributions:
+    // specific useful distributions:
 
-    double flat (double a_, double b_) const;
+    double flat (double a_, double b_);
 
-    double gaussian (double sigma_ = 1.0) const;
+    double gaussian (double sigma_ = 1.0);
 
-    double gaussian (double mu_, double sigma_) const;
+    double gaussian (double mu_, double sigma_);
 
-    double gaussian_tail (double min_, double sigma_ = 1.0) const;
+    double gaussian_tail (double min_, double sigma_ = 1.0);
 
-    double exponential (double sigma_ = 1.0) const;
+    double exponential (double sigma_ = 1.0);
 
-    double chisquare (double nu_ = 1.0) const;
+    double chisquare (double nu_ = 1.0);
 
-    unsigned long int poisson (double mu_) const;
+    unsigned long int poisson (double mu_);
 
-    unsigned long int bernoulli (double p_ = 0.5) const;
+    unsigned long int bernoulli (double p_ = 0.5);
 
     unsigned long int binomial (double p_,
-                                unsigned long int n_) const;
+                                unsigned long int n_);
 
     // 2009-11-08 FM: to be used as a functor:
     double operator () (void);
@@ -167,6 +175,8 @@ namespace mygsl {
     std::string  _id_;   /// The ID(type) of GSL random number generator algorithm
     int32_t      _seed_; /// The initial seed set before initialization
     gsl_rng *    _r_;    /// The internal GSL random number generator
+    boost::scoped_ptr<std::ofstream> _tracker_;
+    int _tracker_counter_;
 
   };
 

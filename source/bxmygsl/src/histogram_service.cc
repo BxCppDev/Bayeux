@@ -112,6 +112,12 @@ namespace mygsl {
       }
     }
 
+    if (_root_export_name_suffix_.empty()) {
+      if (config_.has_key ("root_export.name_suffix")) {
+        _root_export_name_suffix_ = config_.fetch_string ("root_export.name_suffix");
+      }
+    }
+
     datatools::properties pool_config;
     if (config_.has_key ("pool_config")) {
       std::string pool_config_path = config_.fetch_string("pool_config");
@@ -147,6 +153,7 @@ namespace mygsl {
     }
     _output_files_.clear ();
     _root_export_title_prefix_.clear ();
+    _root_export_name_suffix_.clear ();
     _initialized_ = false;
     return EXIT_SUCCESS;
   }
@@ -422,7 +429,7 @@ namespace mygsl {
       TH1D rootH1d;
       rootH1d.SetDirectory (&orf);
       rootH1d.SetStats (_root_export_stats_);
-      export_to_root (h1d, hname, title_oss.str (), rootH1d,
+      export_to_root (h1d, hname + _root_export_name_suffix_, title_oss.str (), rootH1d,
                       _root_export_stats_);
       rootH1d.SetDirectory(&orf);
       rootH1d.Write ();
@@ -450,7 +457,7 @@ namespace mygsl {
       TH2D rootH2d;
       rootH2d.SetDirectory (&orf);
       rootH2d.SetStats (_root_export_stats_);
-      export_to_root (h2d, hname, title_oss.str (), rootH2d,
+      export_to_root (h2d, hname + _root_export_name_suffix_, title_oss.str (), rootH2d,
                       _root_export_stats_);
       rootH2d.SetDirectory(&orf);
       rootH2d.Write ();
