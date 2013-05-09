@@ -30,8 +30,6 @@ set(datatools_VERSION_MINOR 0)
 set(datatools_VERSION_PATCH 0)
 set(datatools_VERSION "${datatools_VERSION_MAJOR}.${datatools_VERSION_MINOR}.${datatools_VERSION_PATCH}")
 
-message ( STATUS "${PROJECT_NAME} : datatools version = '${datatools_VERSION}' " )
-message ( STATUS "${PROJECT_NAME} : CMAKE_MODULE_PATH = '${CMAKE_MODULE_PATH}' " )
 
 # - Fixup default install prefix on Mac
 if(APPLE AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
@@ -50,12 +48,6 @@ option(DATATOOLS_WITH_BIO   "Build auxiliary Boost I/O library" ON)
 option(DATATOOLS_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" ON)
 option(DATATOOLS_WITH_DOC   "Build the datatools documentation" ON)
 option(DATATOOLS_WITH_TEST  "Build the datatools test suite"    ON)
-
-# if(DATATOOLS_WITH_DEBUG)
-#   set(DATATOOLS_WITH_DEBUG 1)
-# else()
-#   set(DATATOOLS_WITH_DEBUG 0)
-# endif()
 
 #-----------------------------------------------------------------------
 # Find external packages needed to build
@@ -90,7 +82,6 @@ endif()
 # Build the submodules as required
 #
 add_subdirectory(src)
-
 add_subdirectory(programs)
 
 if(DATATOOLS_WITH_DOC)
@@ -150,30 +141,29 @@ if(UNIX)
     )
 endif()
 
-# ----------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 # Install resources :
 #
+set(_datatools_testing_FULL_LOCAL_PATH
+  "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/testing"
+  )
 
-set ( _datatools_testing_FULL_LOCAL_PATH
-      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/testing"
-    )
-message ( STATUS "${PROJECT_NAME} : datatools testing full local path = '${_datatools_testing_FULL_LOCAL_PATH}' " )
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/testing
+  DESTINATION ${CMAKE_INSTALL_DATADIR}
+  FILE_PERMISSIONS 
+    OWNER_READ OWNER_WRITE
+    GROUP_READ GROUP_WRITE
+    WORLD_READ
+  DIRECTORY_PERMISSIONS 
+    OWNER_READ OWNER_WRITE OWNER_EXECUTE
+    GROUP_READ GROUP_WRITE GROUP_EXECUTE
+    WORLD_READ WORLD_EXECUTE
+  PATTERN ".svn" EXCLUDE
+  PATTERN "*~" EXCLUDE
+  PATTERN CMakeLists.txt EXCLUDE
+  PATTERN testDriver.bash EXCLUDE
+  )
 
-install ( DIRECTORY ${PROJECT_SOURCE_DIR}/testing
-          DESTINATION ${CMAKE_INSTALL_DATADIR}
-          FILE_PERMISSIONS OWNER_READ OWNER_WRITE
-                           GROUP_READ GROUP_WRITE
-                           WORLD_READ
-          DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
-                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE
-                                WORLD_READ WORLD_EXECUTE
-          PATTERN ".svn" EXCLUDE
-          PATTERN "*~" EXCLUDE
-          PATTERN CMakeLists.txt EXCLUDE
-          PATTERN testDriver.bash EXCLUDE
-         )
-
-#
 #-----------------------------------------------------------------------
 # Package
 #

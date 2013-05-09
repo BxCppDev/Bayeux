@@ -22,7 +22,6 @@
 
 
 file(GLOB datatools_tests_programs test_*.cxx)
-###message (STATUS "datatools_tests_programs=${datatools_tests_programs}" )
 list(REMOVE_ITEM datatools_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
 if(DATATOOLS_WITH_REFLECTION)
   list(APPEND datatools_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)

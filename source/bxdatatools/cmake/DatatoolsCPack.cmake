@@ -41,37 +41,6 @@ set(CPACK_RESOURCE_FILE_README  ${PROJECT_SOURCE_DIR}/README.txt)
 set(CPACK_RESOURCE_FILE_WELCOME ${PROJECT_SOURCE_DIR}/README.txt)
 
 #-----------------------------------------------------------------------
-# Component Configuration
-#
-#set(CPACK_COMPONENTS_ALL bin devel apidoc utils)
-#set(CPACK_ALL_INSTALL_TYPES Runtime Development)
-
-#set(CPACK_COMPONENT_BIN_DISPLAY_NAME "datatools library")
-#set(CPACK_COMPONENT_BIN_DESCRIPTION "The datatools library binaries")
-#set(CPACK_COMPONENT_BIN_INSTALL_TYPES Runtime Development)
-
-#set(CPACK_COMPONENT_DEVEL_DISPLAY_NAME "datatools development files")
-#set(CPACK_COMPONENT_DEVEL_DESCRIPTION "C++ header files, import library")
-#set(CPACK_COMPONENT_DEVEL_DEPENDS bin)
-#set(CPACK_COMPONENT_DEVEL_GROUP "Development")
-#set(CPACK_COMPONENT_DEVEL_INSTALL_TYPES Development)
-
-#set(CPACK_COMPONENT_APIDOC_DISPLAY_NAME "datatools API documentation")
-#set(CPACK_COMPONENT_APIDOC_DESCRIPTION "Documentation for developers")
-#set(CPACK_COMPONENT_APIDOC_GROUP "Development")
-#set(CPACK_COMPONENT_APIDOC_INSTALL_TYPES Development)
-
-#set(CPACK_COMPONENT_UTILS_DISPLAY_NAME "datatools utilities")
-#set(CPACK_COMPONENT_UTILS_DESCRIPTION
-#    "Provides a FindDatatools.cmake file to be used with project based on CMake"
-#)
-#set(CPACK_COMPONENT_UTILS_GROUP "Development")
-#set(CPACK_COMPONENT_UTILS_DISABLED TRUE)
-
-#set(CPACK_COMPONENT_GROUP_DEVELOPMENT_DESCRIPTION "Components related to software development based on datatools")
-#set(CPACK_COMPONENT_GROUP_DEVELOPMENT_EXPANDED TRUE)
-
-#-----------------------------------------------------------------------
 # Source Package Configuration
 #
 set(CPACK_SOURCE_GENERATOR TBZ2;ZIP)
