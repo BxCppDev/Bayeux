@@ -1,4 +1,4 @@
-c nucltransKLM.f 
+c nucltransKLM.f
 c
 c This file was extracted from the 'decay0' program by V.I. Tretyak
 c
@@ -8,16 +8,16 @@ c This program is free software; you can redistribute it and/or modify
 c it under the terms of the GNU General Public License as published by
 c the Free Software Foundation; either version 3 of the License, or (at
 c your option) any later version.
-c 
+c
 c This program is distributed in the hope that it will be useful, but
 c WITHOUT ANY WARRANTY; without even the implied warranty of
 c MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 c General Public License for more details.
-c 
+c
 c You should have received a copy of the GNU General Public License
 c along with this program; if not, write to the Free Software
 c Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-c 
+c
 c
 	subroutine nucltransKLM(Egamma,EbindeK,conveK,EbindeL,conveL,
      +                          EbindeM,conveM,convp,tclev,thlev,tdlev)
@@ -25,7 +25,7 @@ c Subroutine nucltransKLM choises one of the three concurent processes
 c by which the transition from one nuclear state to another is
 c occured: gamma-ray emission, internal conversion and internal
 c pair creation. Conversion electrons are emitted with three fixed energies:
-c Egamma-E(K)_binding_energy, Egamma-E(L)_binding_energy and 
+c Egamma-E(K)_binding_energy, Egamma-E(L)_binding_energy and
 c Egamma-E(M)_binding_energy).
 c Call  : common/genevent/tevst,npfull,npgeant(100),pmoment(3,100),ptime(100)
 c         call nucltransKLM(Egamma,EbindeK,conveK,EbindeL,conveL,
@@ -55,6 +55,8 @@ c                               when particle was emitted (sec).
 c VIT, 4.01.2007.
 	common/const/pi,emass,datamass(50)
 	p=(1.+conveK+conveL+conveM+convp)*rnd1(d)
+c$$$	p=100000000.3 ! XXX
+c$$$	print * , '***', p
 	if(p.le.1.) then
 	   call gamma(Egamma,tclev,thlev,tdlev)
 	else if(p.le.1.+conveK) then

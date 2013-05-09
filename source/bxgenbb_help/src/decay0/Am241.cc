@@ -1,11 +1,12 @@
 
+#include <genbb_help/decay0/Am241.h>
+
 #include <sstream>
 #include <stdexcept>
 #include <cmath>
 
 #include <mygsl/rng.h>
 
-#include <genbb_help/decay0/Am241.h>
 #include <genbb_help/primary_event.h>
 #include <genbb_help/decay0/alpha.h>
 #include <genbb_help/decay0/gamma.h>
@@ -26,23 +27,23 @@
 namespace genbb {
   namespace decay0 {
 
-    // Am241.f 
+    // Am241.f
     // This file was extracted from the 'decay0' program by V.I. Tretyak
     // Copyright 1995-2011 V.I. Tretyak
     // This program is free software
     // it under the terms of the GNU General Public License as published by
     // the Free Software Foundation
     // your option) any later version.
-    // 
+    //
     // This program is distributed in the hope that it will be useful, but
     // WITHOUT ANY WARRANTY
     // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
     // General Public License for more details.
-    // 
+    //
     // You should have received a copy of the GNU General Public License
     // along with this program
     // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-    // 
+    //
 
     void Am241(mygsl::rng & prng_, genbb::primary_event & event_, double tcnuc, double & tdnuc)
     {
@@ -64,6 +65,7 @@ namespace genbb {
       tdnuc=tcnuc-thnuc/std::log(2.)*std::log(prng_());
       tclev=0.;
       palpha=100.*prng_();
+      //palpha=99.5; //XXX
       if (palpha <=  0.015) goto label_226;
       if (palpha <=  1.672) goto label_159;
       if (palpha <=  1.682) goto label_130;
@@ -81,15 +83,15 @@ namespace genbb {
       goto label_22603;
     label_22601  :
       decay0_nucltransKLM(prng_, event_, 0.150,0.119,1.5e-1,0.022,3.4e-2,0.005,8.4e-3,
-			  0.,tclev,thlev,tdlev);
+                          0.,tclev,thlev,tdlev);
       goto label_76000;
     label_22602  :
       decay0_nucltransKLM(prng_, event_, 0.123,0.119,1.9e-1,0.022,4.13,0.005,1.59,
-			  0.,tclev,thlev,tdlev);
+                          0.,tclev,thlev,tdlev);
       goto label_10300;
     label_22603  :
       decay0_nucltransKLM(prng_, event_, 0.067,0.119,0.,0.022,23.,0.005,8.1,
-			  0.,tclev,thlev,tdlev);
+                          0.,tclev,thlev,tdlev);
       goto label_15900;
     label_159  :
       decay0_alpha(prng_, event_, 5.388,0.,0.,t);
@@ -101,22 +103,22 @@ namespace genbb {
       goto label_15903;
     label_15901  :
       decay0_nucltransKLM(prng_, event_, 0.125,0.119,2.3e-1,0.022,5.5e-2,0.005,1.7e-2,
-			  0.,tclev,thlev,tdlev);
+                          0.,tclev,thlev,tdlev);
       goto label_33000;
     label_15902  :
       decay0_nucltransKLM(prng_, event_, 0.099,0.119,0.,0.022,11.3,0.005,4.33,
-			  0.,tclev,thlev,tdlev);
+                          0.,tclev,thlev,tdlev);
       goto label_60000;
     label_15903  :
       decay0_nucltransKLM(prng_, event_, 0.056,0.119,0.,0.022,49.,0.005,18.,
-			  0.,tclev,thlev,tdlev);
+                          0.,tclev,thlev,tdlev);
       goto label_10300;
     label_130  :
       decay0_alpha(prng_, event_, 5.416,0.,0.,t);
     label_13000  :
       thlev=0.;
       decay0_nucltransKLM(prng_, event_, 0.054,0.119,0.,0.022,23.2,0.005,7.7,
-			  0.,tclev,thlev,tdlev);
+                          0.,tclev,thlev,tdlev);
       goto label_76000;
     label_103  :
       decay0_alpha(prng_, event_, 5.443,0.,0.,t);
@@ -128,15 +130,15 @@ namespace genbb {
       goto label_10303;
     label_10301  :
       decay0_nucltransKLM(prng_, event_, 0.103,0.119,0.,0.022,9.1e-2,0.005,3.0e-2,
-			  0.,tclev,thlev,tdlev);
+                          0.,tclev,thlev,tdlev);
       return;
     label_10302  :
       decay0_nucltransKLM(prng_, event_, 0.070,0.119,0.,0.022,2.5e-1,0.005,8.4e-2,
-			  0.,tclev,thlev,tdlev);
+                          0.,tclev,thlev,tdlev);
       goto label_33000;
     label_10303  :
       decay0_nucltransKLM(prng_, event_, 0.043,0.119,0.,0.022,124.,0.005,43.,
-			  0.,tclev,thlev,tdlev);
+                          0.,tclev,thlev,tdlev);
       goto label_60000;
     label_76000  :
       thlev=56.e-12;
@@ -145,11 +147,11 @@ namespace genbb {
       goto label_76002;
     label_76001  :
       decay0_nucltransKLM(prng_, event_, 0.076,0.119,0.,0.022,39.4,0.005,15.0,
-			  0.,tclev,thlev,tdlev);
+                          0.,tclev,thlev,tdlev);
       return;
     label_76002  :
       decay0_nucltransKLM(prng_, event_, 0.043,0.119,0.,0.022,59.,0.005,21.,
-			  0.,tclev,thlev,tdlev);
+                          0.,tclev,thlev,tdlev);
       goto label_33000;
     label_60  :
       decay0_alpha(prng_, event_, 5.486,0.,0.,t);
@@ -160,18 +162,18 @@ namespace genbb {
       goto label_60002;
     label_60001  :
       decay0_nucltransKLM(prng_, event_, 0.060,0.119,0.,0.022,0.84,0.005,0.32,
-			  0.,tclev,thlev,tdlev);
+                          0.,tclev,thlev,tdlev);
       return;
     label_60002  :
       decay0_nucltransKLM(prng_, event_, 0.026,0.119,0.,0.022,6.,0.005,2.,
-			  0.,tclev,thlev,tdlev);
+                          0.,tclev,thlev,tdlev);
       goto label_33000;
     label_33  :
       decay0_alpha(prng_, event_, 5.512,0.,0.,t);
     label_33000  :
       thlev=54.e-12;
       decay0_nucltransKLM(prng_, event_, 0.033,0.119,0.,0.022,138.,0.005,47.,
-			  0.,tclev,thlev,tdlev);
+      0.,tclev,thlev,tdlev);
       return;
     label_10000  :
       decay0_alpha(prng_, event_, 5.544,0.,0.,t);
@@ -182,8 +184,8 @@ namespace genbb {
 
 
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
+  } // end of namespace decay0
+} // end of namespace genbb
 
 // end of Am241.cc
 // Local Variables: --

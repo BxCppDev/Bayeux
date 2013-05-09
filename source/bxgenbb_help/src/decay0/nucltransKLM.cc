@@ -1,12 +1,12 @@
-// nucltransKLM.cc 
+// nucltransKLM.cc
+
+#include <genbb_help/decay0/nucltransKLM.h>
 
 #include <cmath>
 
 #include <mygsl/rng.h>
 
 #include <genbb_help/primary_event.h>
-
-#include <genbb_help/decay0/nucltransKLM.h>
 #include <genbb_help/decay0/particle.h>
 #include <genbb_help/decay0/electron.h>
 #include <genbb_help/decay0/gamma.h>
@@ -16,13 +16,22 @@ namespace genbb {
   namespace decay0 {
 
     void decay0_nucltransKLM(mygsl::rng & prng, primary_event & event,
-                             double Egamma,double EbindeK,double conveK,double EbindeL,double conveL,
+                             double Egamma,
+                             double EbindeK,double conveK,
+                             double EbindeL,double conveL,
                              double EbindeM,double conveM,
                              double convp,double tclev,double thlev,
                              double & tdlev)
     {
       static double emass = decay0_emass();
       double p=(1.+conveK+conveL+conveM+convp)*prng();
+      // p=100000000.3; // XXX
+      // std::cout << " ***   ";
+      // std::cout.precision(8);
+      // std::cout.width (9);
+      // //std::cout.fill ('0');
+      // std::cout.flags ( std::ios::left );
+      // std::cout << p << "    " << std::endl;
       if (p <= 1.) {
         decay0_gamma(prng,event,Egamma,tclev,thlev,tdlev);
       }
@@ -48,9 +57,9 @@ namespace genbb {
         }
       return;
     }
-  } // end of namespace decay0 
-} // end of namespace genbb 
-// 
+  } // end of namespace decay0
+} // end of namespace genbb
+//
 // end of nucltransKLM.cc
 //
 // Local Variables: --

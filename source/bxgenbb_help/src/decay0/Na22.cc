@@ -26,23 +26,23 @@
 namespace genbb {
   namespace decay0 {
 
-    // Na22.f 
+    // Na22.f
     // This file was extracted from the 'decay0' program by V.I. Tretyak
     // Copyright 1995-2011 V.I. Tretyak
     // This program is free software
     // it under the terms of the GNU General Public License as published by
     // the Free Software Foundation
     // your option) any later version.
-    // 
+    //
     // This program is distributed in the hope that it will be useful, but
     // WITHOUT ANY WARRANTY
     // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
     // General Public License for more details.
-    // 
+    //
     // You should have received a copy of the GNU General Public License
     // along with this program
     // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-    // 
+    //
 
     void Na22(mygsl::rng & prng_, genbb::primary_event & event_, double tcnuc, double & tdnuc)
     {
@@ -70,12 +70,15 @@ namespace genbb {
       goto label_10000;
     label_1275  :
       thlev=3.63e-12;
-      if (pdecay <= 9.618) decay0_gamma(prng_, event_, 0.001,0.,0.,t);
+      if (pdecay <= 9.618) {
+        decay0_gamma(prng_, event_, 0.001,0.,0.,t);
+      }
       // if (pdecay > 9.618) decay0_beta(prng_, event_, 0.545,-10.,0.,0.,t)
       // std::experimental correction to the shape of the beta spectrum from:
       // H.Daniel, RMP 40(1968)659 and H.Wenninger et al., NPA 109(1968)561
-      if (pdecay > 9.618);
-      decay0_beta1(prng_, event_, 0.545,-10.,0.,0.,t,1.e-3,0.,0.,0.);
+      if (pdecay > 9.618) {
+        decay0_beta1(prng_, event_, 0.545,-10.,0.,0.,t,1.e-3,0.,0.,0.);
+      }
       decay0_nucltransK(prng_, event_, 1.275,0.001,6.8e-6,2.1e-5,tclev,thlev,tdlev);
       return;
       // change to 2nd unique shape in accordance with H.Daniel, RMP 40(1968)659
@@ -88,8 +91,8 @@ namespace genbb {
 
 
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
+  } // end of namespace decay0
+} // end of namespace genbb
 
 // end of Na22.cc
 // Local Variables: --

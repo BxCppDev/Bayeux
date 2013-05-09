@@ -58,7 +58,8 @@ namespace genbb {
     std::string generator; /// Particle generator name
     std::vector<std::string> output_paths;
     int number_of_events; /// Number of generated events
-    int seed; /// PRNG seed
+    int prng_seed; /// PRNG seed
+    std::string prng_tracker; /// PRNG tracker output file
     double prompt_time_limit; // Prompt time limit (in ns)
     std::vector<std::string> histos_definitions; /// Histograms' definition files
     bool prompt; /// Flag to analyze prompt event
@@ -77,7 +78,8 @@ namespace genbb {
     out_ << "|-- generator          = " << generator << std::endl;
     out_ << "|-- output_paths       = " << output_paths.size() << std::endl;
     out_ << "|-- number_of_events   = " << number_of_events << std::endl;
-    out_ << "|-- seed               = " << seed << std::endl;
+    out_ << "|-- prng_seed          = " << prng_seed << std::endl;
+    out_ << "|-- prng_tracker       = " << prng_tracker << std::endl;
     out_ << "|-- prompt_time_limit  = " << prompt_time_limit << std::endl;
     out_ << "|-- histos_definitions = " << histos_definitions.size() << std::endl;
     out_ << "|-- prompt             = " << prompt << std::endl;
@@ -93,7 +95,8 @@ namespace genbb {
     unrecognized_options.clear();
     output_paths.clear();
     number_of_events = -1;
-    seed = 0;
+    prng_seed = 0;
+    prng_tracker.clear();
     prompt_time_limit = 1.0;
     histos_definitions.clear();
     prompt = true;
@@ -929,12 +932,19 @@ int main (int argc_, char ** argv_)
        " --number-of-events 10000             "
        )
 
-      ("seed,s",
-       po::value<int>(&params.seed)
+      ("prng-seed,s",
+       po::value<int>(&params.prng_seed)
        ->default_value (0),
-       "set the seed of random number generator. \n"
-       "Example :                                \n"
-       " --seed 314159                             "
+       "set the seed of random number generator (PRNG). \n"
+       "Example :                                       \n"
+       " --prng-seed 314159                               "
+       )
+
+      ("prng-tracker,K",
+       po::value<std::string> (&params.prng_tracker),
+       "set the PRNG tracker file. \n"
+       "Example :                                   \n"
+       " --prng-tracker \"genbb_inspector_prng.trk\"  "
        )
 
       ("configuration,c",
@@ -961,7 +971,7 @@ int main (int argc_, char ** argv_)
        "set the name of an output filename."
        )
 
-      ("prompt-time-limit,T",
+      ("prompt-time-limit,t",
        po::value<double> (&params.prompt_time_limit),
        "set the limit on prompt time in ns."
        )
@@ -985,7 +995,7 @@ int main (int argc_, char ** argv_)
        "set a title prefix for exported histograms"
        )
 
-      ; // end of options' description
+      ; // end of options description
 
     // Describe command line arguments :
     //args.add ("generator", 1);
@@ -1017,7 +1027,7 @@ int main (int argc_, char ** argv_)
     }
 
     if (params.debug) {
-      params.dump();
+      params.dump(std::clog);
     }
     genbb::inspector GI;
     GI.initialize(params);
@@ -1060,7 +1070,8 @@ void usage (const boost::program_options::options_description & options_,
        << "/resources/manager/config/pro-1.0/manager.conf"
        << "\" \\\n";
   out_ << "    --generator \"Bi214_Po214\" \\\n";
-  out_ << "    --seed 314159 \\\n";
+  out_ << "    --prng-seed 314159 \\\n";
+  out_ << "    --prng-tracker \"genbb_inspector_prng.trk\" \\\n";
   out_ << "    --number-of-events 100000 \\\n";
   out_ << "    --histo-def \""
        << GENBB_HELP_DATA_INSTALL_DIR
@@ -1109,11 +1120,13 @@ namespace genbb {
     _params_ = params_;
 
     // PRNG :
-    if (_params_.seed <= 0) {
-      _params_.seed = (int32_t) time(0);
+    if (_params_.prng_seed <= 0) {
+      _params_.prng_seed = (int32_t) time(0);
     }
-    _prng_.initialize("taus2", _params_.seed);
-
+    _prng_.initialize("taus2", _params_.prng_seed);
+    if (! _params_.prng_tracker.empty()) {
+      _prng_.set_tracker(_params_.prng_tracker);
+    }
     if (_title_prefix_.empty() && ! _params_.title_prefix.empty()) {
       _title_prefix_ = _params_.title_prefix;
     }
@@ -1174,7 +1187,12 @@ namespace genbb {
 
     datatools::properties hs_config;
     hs_config.store_boolean("debug", _params_.debug);
-    hs_config.store_string("pool.description", "GENBB inspector histograms");
+    std::ostringstream hpdesc_oss;
+    hpdesc_oss << "GENBB inspector histograms";
+    if (!_params_.title_prefix.empty()) {
+      hpdesc_oss << " -- " << _params_.title_prefix;
+    }
+    hs_config.store_string("pool.description", hpdesc_oss.str());
     hs_config.store("pool.histo.setups", pool_histo_setups);
     hs_config.store_flag("root_export.stats");
     hs_config.store("root_export.title_prefix", _title_prefix_);

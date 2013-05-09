@@ -400,7 +400,7 @@ namespace genbb {
 
     evnum = 0;
     event_.set_time (genevent_.tevst * CLHEP::second);
-    double part_time = 0.0;
+    double part_time = 0.0; // GENBB time unit : second
     npart = genevent_.npfull;
     /*
       clog << "DEVEL: " << "genbb::wgenbb::_load_next: "
@@ -425,7 +425,7 @@ namespace genbb {
         << " pz=" << z
         << endl;
       */
-      time_shift = genevent_.ptime[i];
+      time_shift = genevent_.ptime[i]; // GENBB time unit : second
       /*
         clog << "DEVEL: " << "genbb::wgenbb::_load_next: "
         << "time_shift=" << time_shift << endl;

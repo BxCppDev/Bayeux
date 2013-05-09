@@ -109,7 +109,7 @@ namespace genbb {
       throw std::logic_error(message.str());
     }
     if (! mygsl::rng::is_seed_valid(seed_)) {
-      throw std::logic_error("genbb::manager::set_embeded_prng_seed: Invalid seed for embeded PRNG !");
+      throw std::logic_error("genbb::manager::set_embeded_prng_seed: Invalid seed value for embeded PRNG !");
     }
     _embeded_prng_seed_ = seed_;
     return;

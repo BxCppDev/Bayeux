@@ -113,24 +113,30 @@ namespace genbb {
                          double phi1, double phi2,
                          double tclev, double thlev, double & tdlev)
     {
+      double last_time = 0.0 * CLHEP::second;
+      if (event_.get_particles ().size() > 0) {
+        primary_particle & last_part = event_.get_particles ().back();
+        last_time = last_part.get_time();
+      }
+
       primary_particle part;
       double pmass = decay0_particle_mass (np);
       if (isnan(pmass)) {
-          std::ostringstream message;
-          message << "genbb::decay0::decay0_particle: "
-                  << "Unknown mass for particle with ID=" << np << " !";
-          throw std::logic_error(message.str());
-        }
+        std::ostringstream message;
+        message << "genbb::decay0::decay0_particle: "
+                << "Unknown mass for particle with ID=" << np << " !";
+        throw std::logic_error(message.str());
+      }
       double phi=phi1+(phi2-phi1)*prng_();
       double ctet1=1.;
       if (teta1 != 0.) ctet1=std::cos(teta1);
       double ctet2=-1.;
       if (teta2 != M_PI) ctet2=std::cos(teta2);
       double ctet=ctet1+(ctet2-ctet1)*prng_();
-      double stet=sqrt(1.-ctet*ctet);
+      double stet=std::sqrt(1.-ctet*ctet);
       double E=E1;
       if (E1 != E2) E=E1+(E2-E1)*prng_();
-      double p=sqrt(E*(E+2.*pmass));
+      double p=std::sqrt(E*(E+2.*pmass));
       geomtools::vector_3d momentum(p*stet*std::cos(phi),
                                     p*stet*std::sin(phi),
                                     p*ctet);
@@ -138,10 +144,10 @@ namespace genbb {
       geomtools::invalidate(vertex);
 
       tdlev=tclev;
-      if (thlev != 0.) tdlev = tclev - thlev / std::log(2.) * std::log(prng_());
+      if (thlev > 0.) tdlev = tclev - thlev / std::log(2.) * std::log(prng_());
 
       part.set_type(np);
-      part.set_time (tdlev * CLHEP::second);
+      part.set_time (last_time + tdlev * CLHEP::second);
       part.set_momentum (momentum * CLHEP::MeV);
       part.set_vertex (vertex);
       event_.grab_particles ().push_back(part);

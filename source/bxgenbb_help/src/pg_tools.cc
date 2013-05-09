@@ -8,8 +8,8 @@
 
 namespace genbb {
   namespace detail {
- 
-      
+
+
     bool pg_entry_type::has_manager () const
     {
       return _manager_ != 0;
@@ -31,7 +31,7 @@ namespace genbb {
     {
       return *_manager_;
     }
- 
+
     manager & pg_entry_type::grab_manager()
     {
       return *_manager_;
@@ -41,7 +41,7 @@ namespace genbb {
     {
       return _status_;
     }
- 
+
     void pg_entry_type::update_status(uint32_t bits)
     {
       _status_ |= bits;
@@ -65,24 +65,24 @@ namespace genbb {
         {
           std::ostringstream message;
           message << "genbb::detail::pg_entry_type::grab_config: "
-                  << "Cannot modify the configuration of PG named '" 
+                  << "Cannot modify the configuration of PG named '"
                   << get_name () << "' !";
           throw std::logic_error(message.str());
         }
       return _config_;
     }
-  
+
     void pg_entry_type::set_config (const datatools::properties & sc_)
     {
       if (_status_ != STATUS_BLANK)
         {
           std::ostringstream message;
           message << "genbb::detail::pg_entry_type::set_config: "
-                  << "Cannot modify the configuration of PG named '" 
+                  << "Cannot modify the configuration of PG named '"
                   << get_name () << "' !";
           throw std::logic_error(message.str());
         }
-      _config_ = sc_; 
+      _config_ = sc_;
       return;
     }
 
@@ -99,7 +99,7 @@ namespace genbb {
           message << "genbb::detail::pg_entry_type::set_id: "
                   << "Empty PG ID is not allowed !";
           throw std::logic_error(message.str());
-        }  
+        }
       _id_ = sid_;
       return;
     }
@@ -119,14 +119,14 @@ namespace genbb {
           throw std::logic_error(message.str());
         }
       _name_ = sn_;
-      return; 
+      return;
     }
-  
+
     const i_genbb & pg_entry_type::get () const
     {
       return _handle_.get();
     }
- 
+
     i_genbb & pg_entry_type::grab ()
     {
       return _handle_.grab();
@@ -164,7 +164,7 @@ namespace genbb {
       return _status_ & STATUS_INITIALIZED;
     }
 
-    void pg_entry_type::tree_dump(std::ostream& out, 
+    void pg_entry_type::tree_dump(std::ostream& out,
                                   const std::string& title,
                                   const std::string& a_indent,
                                   bool a_inherit) const {
@@ -173,19 +173,19 @@ namespace genbb {
 
       if (!title.empty()) out << indent << title << std::endl;
 
-      out << indent << datatools::i_tree_dumpable::tag 
-          << "name     : '" 
-          << _name_ 
+      out << indent << datatools::i_tree_dumpable::tag
+          << "name     : '"
+          << _name_
           << "'" << std::endl;
 
-      out << indent << datatools::i_tree_dumpable::tag 
-          << "ID       : '" 
-          << _id_ 
+      out << indent << datatools::i_tree_dumpable::tag
+          << "ID       : '"
+          << _id_
           << "'" << std::endl;
 
 
-      out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit) 
-          << "Status   : " 
+      out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
+          << "Status   : "
           << _status_;
       {
         size_t count = 0;
@@ -201,38 +201,37 @@ namespace genbb {
           count++;
         }
         if (count) {
-          out << ' ' << '(' 
-              << status_info.str() 
+          out << ' ' << '('
+              << status_info.str()
               << ')';
         }
       }
       out << std::endl;
     }
 
-    void create(pg_entry_type & entry_, 
+    void create(pg_entry_type & entry_,
                 datatools::factory_register<i_genbb> * factory_,
                 mygsl::rng * external_random_)
     {
       if (entry_.is_created()) return;
-      std::clog << datatools::io::notice 
+      std::clog << datatools::io::notice
                 << "genbb::detail::create: "
                 << "Creating the particle generator entry with name '"
                 <<  entry_.get_name()
                 << "'..."
                 << std::endl;
-      
-     datatools::factory_register<i_genbb> * fact_reg = factory_;
-     if (fact_reg == 0)
-       {
-         fact_reg = &DATATOOLS_FACTORY_GRAB_SYSTEM_REGISTER(genbb::i_genbb);
-       }
 
-      // Search for the PG's label in the factory dictionary:
+      datatools::factory_register<i_genbb> * fact_reg = factory_;
+      if (fact_reg == 0) {
+          fact_reg = &DATATOOLS_FACTORY_GRAB_SYSTEM_REGISTER(genbb::i_genbb);
+        }
+      fact_reg->tree_dump(std::clog, "i_genbb factory", "************ ");
+     // Search for the PG's label in the factory dictionary:
       if (!fact_reg->has(entry_.get_id())) {
         std::ostringstream message;
         message << "genbb::detail::create: "
                 << "Cannot find PG factory with ID '"
-                << entry_.get_id() 
+                << entry_.get_id()
                 << "' for particle generator named '"
                 << entry_.get_name() << "' !";
         throw std::logic_error(message.str());
@@ -245,7 +244,7 @@ namespace genbb {
 
       if (external_random_ != 0 && ptr->can_external_random())
         {
-          std::clog << datatools::io::notice 
+          std::clog << datatools::io::notice
                     << "genbb::detail::create: "
                     << "Set the external PRNG for the particle generator '"
                     <<  entry_.get_name()
@@ -255,7 +254,7 @@ namespace genbb {
         }
       return;
     }
-    
+
     void initialize(pg_entry_type& entry_,
                     datatools::service_manager * service_manager_,
                     detail::pg_dict_type * dictionary_,
@@ -263,11 +262,11 @@ namespace genbb {
                     mygsl::rng * external_random_)
     {
       if (entry_.is_initialized()) return;
-      if (!entry_.is_created()) 
+      if (!entry_.is_created())
         {
           create(entry_,factory_,external_random_);
         }
-      std::clog << datatools::io::notice 
+      std::clog << datatools::io::notice
                 << "genbb::detail::initialize: "
                 << "Initializing the particle generator entry with name '"
                 <<  entry_.get_name()
@@ -276,13 +275,13 @@ namespace genbb {
       i_genbb& the_pg = entry_.grab();
       if (service_manager_ != 0 && dictionary_ != 0)
         {
-          the_pg.initialize(entry_.get_config(), 
-                            *service_manager_, 
+          the_pg.initialize(entry_.get_config(),
+                            *service_manager_,
                             *dictionary_);
         }
       if (service_manager_ == 0 && dictionary_ != 0)
         {
-          the_pg.initialize_with_dictionary_only(entry_.get_config(), 
+          the_pg.initialize_with_dictionary_only(entry_.get_config(),
                                                  *dictionary_);
         }
       if (service_manager_ == 0 && dictionary_ == 0)
