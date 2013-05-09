@@ -33,7 +33,7 @@ pgs_fortran=$(grep -n "^\[name=\"" ${GENBB_HELP_ROOT_DIR}/share/genbb_help/resou
 echo "Generators: ${pgs}"
 ###pgs="Bi214_Po214"
 
-nevents=1000
+nevents=50000
 seed=314159
 ofext=.xml
 
@@ -41,7 +41,7 @@ work_dir="/transcend/work/tmp"
 if [ ! -d ${work_dir} ]; then
     mkdir -p ${work_dir}
     if [ $? -ne 0 ]; then
-	echo "ERROR: Cannot create temp dir '$work_dir}' !" 1>&2
+	echo "ERROR: Cannot create temp dir '${work_dir}' !" 1>&2
 	exit 1
     fi
 fi
@@ -56,7 +56,7 @@ for pg in ${pgs}; do
 	nevents=50000
     fi
 
-    echo "NOTICE: Validate '${pg}' with C++ library..." 1>&2
+    echo "NOTICE: Run '${pg}' with C++ library..." 1>&2
     ofcpp="${work_dir}/histos_${pg}-cpp${ofext}"
     offortran="${work_dir}/histos_${pg}-fortran${ofext}"
     delayed_opt=" "
@@ -67,12 +67,14 @@ for pg in ${pgs}; do
 	delayed_opt="--delayed"
 	delayed_histos_opt=" --histo-def ./config/inspector_histos_delayed.conf "
     fi
+    name_suffix_cpp=".cpp"
+    name_suffix_fortran=".fortran"
     title_prefix_cpp="${pg}"
     title_prefix_fortran="${pg}"
-    if [ "x${ofext}" = "x.root" ]; then
-      title_prefix_cpp="${pg} (decay0 C++ port)"
-      title_prefix_fortran="${pg} (decay0 fortran version)"
-    fi
+    #if [ "x${ofext}" = "x.root" ]; then
+    title_prefix_cpp="${pg} (decay0 C++ port)"
+    title_prefix_fortran="${pg} (decay0 fortran version)"
+    #fi
     genbb_inspector \
 	--configuration "${GENBB_HELP_ROOT_DIR}/share/genbb_help/resources/manager/config/pro-1.0/manager.conf" \
 	--generator "${pg}" \
@@ -84,12 +86,13 @@ for pg in ${pgs}; do
 	--prompt-time-limit 1 \
 	--prompt \
 	${delayed_opt} \
+	--name-suffix "${name_suffix_cpp}" \
 	--title-prefix "${title_prefix_cpp}" \
 	--output-file ${ofcpp} \
 	--output-file ${work_dir}/histos_${pg}-cpp.root \
 	> ${work_dir}/${pg}-cpp.log
 
-    echo "NOTICE: Validate '${pg}' with Fortran lib..." 1>&2
+    echo "NOTICE: Run '${pg}' with Fortran lib..." 1>&2
 
     dummy=$(echo $pgs_fortran| tr ' ' '\n' | grep ${pg})
     if [ "x${dummy}" = "x" ]; then
@@ -107,11 +110,11 @@ for pg in ${pgs}; do
 	--prompt-time-limit 1 \
 	--prompt \
 	${delayed_opt} \
+	--name-suffix "${name_suffix_fortran}" \
 	--title-prefix "${title_prefix_fortran}" \
 	--output-file ${offortran} \
 	--output-file ${work_dir}/histos_${pg}-fortran.root \
 	> ${work_dir}/${pg}-fortran.log
-
 
     diff ${ofcpp} ${offortran}
     if [ $? -ne 0 ]; then

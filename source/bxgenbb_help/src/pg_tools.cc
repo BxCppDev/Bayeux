@@ -223,9 +223,11 @@ namespace genbb {
 
       datatools::factory_register<i_genbb> * fact_reg = factory_;
       if (fact_reg == 0) {
-          fact_reg = &DATATOOLS_FACTORY_GRAB_SYSTEM_REGISTER(genbb::i_genbb);
-        }
-      fact_reg->tree_dump(std::clog, "i_genbb factory", "************ ");
+        fact_reg = &DATATOOLS_FACTORY_GRAB_SYSTEM_REGISTER(genbb::i_genbb);
+      }
+      if (entry_.get_config ().has_flag("debug")) {
+        fact_reg->tree_dump(std::clog, "The current i_genbb factory : ", "DEBUG: genbb::detail::create: ");
+      }
      // Search for the PG's label in the factory dictionary:
       if (!fact_reg->has(entry_.get_id())) {
         std::ostringstream message;

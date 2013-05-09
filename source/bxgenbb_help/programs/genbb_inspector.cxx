@@ -64,7 +64,8 @@ namespace genbb {
     std::vector<std::string> histos_definitions; /// Histograms' definition files
     bool prompt; /// Flag to analyze prompt event
     bool delayed; /// Flag to analyze delayed event
-    std::string title_prefix; /// User title prefix
+    std::string title_prefix; /// User title prefix for histograms
+    std::string name_suffix; /// User name suffix for histograms
   };
 
   void inspector_params::dump(std::ostream & out_) const
@@ -84,7 +85,8 @@ namespace genbb {
     out_ << "|-- histos_definitions = " << histos_definitions.size() << std::endl;
     out_ << "|-- prompt             = " << prompt << std::endl;
     out_ << "|-- delayed            = " << delayed << std::endl;
-    out_ << "`-- title_prefix       = " << title_prefix << std::endl;
+    out_ << "|-- title_prefix       = " << title_prefix << std::endl;
+    out_ << "`-- name_suffix        = " << name_suffix << std::endl;
     return;
   }
 
@@ -102,6 +104,7 @@ namespace genbb {
     prompt = true;
     delayed = false;
     title_prefix.clear();
+    name_suffix.clear();
     return;
   }
 
@@ -643,6 +646,7 @@ namespace genbb {
     mygsl::histogram_service _histos_service_;
     mygsl::histogram_pool * _histos_;
     std::string _title_prefix_;
+    std::string _name_suffix_;
 
   };
 
@@ -995,6 +999,11 @@ int main (int argc_, char ** argv_)
        "set a title prefix for exported histograms"
        )
 
+      ("name-suffix,S",
+       po::value<std::string>(&params.name_suffix),
+       "set a name suffix for exported histograms"
+       )
+
       ; // end of options description
 
     // Describe command line arguments :
@@ -1130,6 +1139,9 @@ namespace genbb {
     if (_title_prefix_.empty() && ! _params_.title_prefix.empty()) {
       _title_prefix_ = _params_.title_prefix;
     }
+    if (_name_suffix_.empty() && ! _params_.name_suffix.empty()) {
+      _name_suffix_ = _params_.name_suffix;
+    }
 
     // Event generator manager :
     _manager_.set_debug(_params_.debug);
@@ -1196,6 +1208,7 @@ namespace genbb {
     hs_config.store("pool.histo.setups", pool_histo_setups);
     hs_config.store_flag("root_export.stats");
     hs_config.store("root_export.title_prefix", _title_prefix_);
+    hs_config.store("root_export.name_suffix", _name_suffix_);
     hs_config.store("output_files", _params_.output_paths);
     std::vector<std::string> pool_export_prefixes;
     pool_export_prefixes.push_back("value.");
