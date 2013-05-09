@@ -884,9 +884,9 @@ namespace datatools {
     if (! has_class_library()) {
       std::ostringstream message;
       message << "datatools::object_configuration_description::_at_lock_: "
-              << "Missing library for class named '" << get_class_name() << "' !";
+              << "No library for class named '" << get_class_name() << "' !";
       //throw std::logic_error(message.str());
-      std::cerr << datatools::io::warning
+      std::cerr << datatools::io::notice
                 << message.str()
                 << std::endl;
     }
@@ -1086,14 +1086,14 @@ namespace datatools {
                                               const std::string & title_,
                                               const std::string & indent_) const
   {
-    if (! title_.empty())
-      {
+    if (! title_.empty()) {
         out_ << indent_ << title_ << '\n';
       }
-    out_ << indent_ << "|-- " << "Status : " << (is_locked()?"Locked":"Unlocked") << "'\n";
-    out_ << indent_ << "|-- " << "Class name : '" << _class_name_ << "'\n";
-    out_ << indent_ << "|-- " << "Class description : '" << _class_description_ << "'\n";
+    out_ << indent_ << "|-- " << "Status : " << (is_locked()?"locked":"unlocked") << "\n";
+    out_ << indent_ << "|-- " << "Class name          : " << _class_name_ << "\n";
+    out_ << indent_ << "|-- " << "Class description   : " << _class_description_ << "\n";
     out_ << indent_ << "|-- " << "Class documentation : " << _class_documentation_ << "\n";
+    out_ << indent_ << "|-- " << "Class library       : " << _class_library_ << "\n";
     out_ << indent_ << "|-- " << "Configuration properties : \n";
     for (int i = 0; i < _configuration_properties_infos_.size(); i++) {
       out_ << indent_ << "|   ";

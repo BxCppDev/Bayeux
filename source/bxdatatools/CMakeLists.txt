@@ -141,6 +141,25 @@ if(UNIX)
     )
 endif()
 
+#----------------------------------------------------------------
+# - Install public resources :
+
+# - Examples :
+set(_datatools_examples_FULL_LOCAL_PATH
+    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/examples"
+   )
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples
+        DESTINATION ${CMAKE_INSTALL_DATADIR}
+        FILE_PERMISSIONS OWNER_READ OWNER_WRITE
+                         GROUP_READ GROUP_WRITE
+                         WORLD_READ
+        DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                              GROUP_READ GROUP_WRITE GROUP_EXECUTE
+                              WORLD_READ WORLD_EXECUTE
+        PATTERN ".svn" EXCLUDE
+	PATTERN "*~" EXCLUDE
+       )
+
 #-----------------------------------------------------------------------
 # Package
 #
