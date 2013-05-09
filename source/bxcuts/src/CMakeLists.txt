@@ -153,34 +153,6 @@ if(NOT APPLE)
     )
 endif()
 
-configure_file(
-    ${PROJECT_SOURCE_DIR}/cmake/cuts-config.in
-    ${PROJECT_BINARY_DIR}/cmake/cuts-config
-    @ONLY
-    )
-
-install(FILES ${PROJECT_BINARY_DIR}/cmake/cuts-config
-    DESTINATION "${CMAKE_INSTALL_BINDIR}"
-    PERMISSIONS OWNER_READ OWNER_EXECUTE
-    		GROUP_READ GROUP_EXECUTE
-                WORLD_READ WORLD_EXECUTE
-    COMPONENT Development
-    )
-
-if ( CUTS_WITH_BASH_SETUP )
-  configure_file(
-    "${PROJECT_SOURCE_DIR}/cmake/cuts_setup.sh.in"
-    "${PROJECT_BINARY_DIR}/cmake/cuts_setup.sh"
-    @ONLY
-    )
-
-  install(FILES ${PROJECT_BINARY_DIR}/cmake/cuts_setup.sh
-    DESTINATION ${CMAKE_INSTALL_ETCDIR}
-    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-    COMPONENT Development
-  )
-endif ()
-
 #-----------------------------------------------------------------------
 # BUILD THE CUTS LIBRARY
 #

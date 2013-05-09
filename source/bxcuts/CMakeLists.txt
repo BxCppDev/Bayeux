@@ -27,7 +27,7 @@ project(cuts)
 # - Versioning
 set(cuts_VERSION_MAJOR 4)
 set(cuts_VERSION_MINOR 0)
-set(cuts_PATCH_VERSION 1)
+set(cuts_PATCH_VERSION 0)
 set(cuts_VERSION "${cuts_VERSION_MAJOR}.${cuts_VERSION_MINOR}.${cuts_PATCH_VERSION}")
 math(EXPR _cuts_VERSION_NUMERIC "${cuts_VERSION_MAJOR}*100000+${cuts_VERSION_MINOR}*100+${cuts_PATCH_VERSION}")
 
@@ -49,11 +49,8 @@ endif()
 # Build options
 #
 option(CUTS_WITH_DEBUG "Build debug stuff" OFF)
-#option(CUTS_WITH_BIO  "Build auxiliary Boost I/O library" ON)
-#option(CUTS_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" OFF)
-option(CUTS_WITH_DOC  "Build the cuts documentation" ON)
-option(CUTS_WITH_TEST "Build the cuts test suite"    ON)
-option(CUTS_WITH_BASH_SETUP "Build the cuts with Bash setup macro" ON)
+option(CUTS_WITH_DOC   "Build the cuts documentation" ON)
+option(CUTS_WITH_TEST  "Build the cuts test suite"    ON)
 
 # if (CUTS_WITH_DEBUG)
 #   set (CUTS_WITH_DEBUG 1)
@@ -102,29 +99,39 @@ else()
 endif()
 
 
-# ----------------------------------------------------------------------------
-# Install resources :
+#-----------------------------------------------------------------------
+# Build the support files
+#-----------------------------------------------------------------------
+# On UNIX platforms, configure and install the shell support scripts
 #
+if(UNIX)
 
-set ( _cuts_testing_FULL_LOCAL_PATH
-      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/testing"
+  configure_file(
+    ${PROJECT_SOURCE_DIR}/cmake/cuts-config.in
+    ${PROJECT_BINARY_DIR}/cmake/cuts-config
+    @ONLY
     )
-message ( STATUS "${PROJECT_NAME} : cuts testing full local path = '${_cuts_testing_FULL_LOCAL_PATH}' " )
 
-install ( DIRECTORY ${PROJECT_SOURCE_DIR}/testing
-          DESTINATION ${CMAKE_INSTALL_DATADIR}
-          FILE_PERMISSIONS OWNER_READ OWNER_WRITE
-                           GROUP_READ GROUP_WRITE
-                           WORLD_READ
-          DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
-                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE
-                                WORLD_READ WORLD_EXECUTE
-          PATTERN ".svn" EXCLUDE
-          PATTERN "*~" EXCLUDE
-          PATTERN CMakeLists.txt EXCLUDE
-          PATTERN testDriver.bash EXCLUDE
-	  PATTERN test_manager.sh EXCLUDE
-         )
+  install(FILES ${PROJECT_BINARY_DIR}/cmake/cuts-config
+    DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    PERMISSIONS OWNER_READ OWNER_EXECUTE
+    		GROUP_READ GROUP_EXECUTE
+                WORLD_READ WORLD_EXECUTE
+    COMPONENT Development
+    )
+
+  configure_file(
+    "${PROJECT_SOURCE_DIR}/cmake/cuts_setup.sh.in"
+    "${PROJECT_BINARY_DIR}/cmake/cuts_setup.sh"
+    @ONLY
+    )
+
+  install(FILES ${PROJECT_BINARY_DIR}/cmake/cuts_setup.sh
+    DESTINATION ${CMAKE_INSTALL_ETCDIR}
+    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+    COMPONENT Development
+  )
+endif ()
 
 #-----------------------------------------------------------------------
 # Package

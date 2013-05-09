@@ -14,8 +14,6 @@ function do_cuts_print_info ()
 	echo "${indent}CUTS_NAME                = '${CUTS_NAME}'" 1>&2
 	echo "${indent}CUTS_VERSION             = '${CUTS_VERSION}'" 1>&2
 	echo "${indent}CUTS_WITH_DEBUG          = ${CUTS_WITH_DEBUG}" 1>&2
-	echo "${indent}CUTS_WITH_BIO            = ${CUTS_WITH_BIO}" 1>&2
-	echo "${indent}CUTS_WITH_REFLECTION     = ${CUTS_WITH_REFLECTION}" 1>&2
 	echo "${indent}CUTS_BIN_DIR             = '${CUTS_BIN_DIR}'"
 	echo "${indent}CUTS_ETC_DIR             = '${CUTS_ETC_DIR}'"
 	echo "${indent}CUTS_LIB_DIR             = '${CUTS_LIB_DIR}'"
@@ -34,7 +32,7 @@ alias cuts_print_info='do_cuts_print_info'
 function do_cuts_setup ()
 {
     local verbose=0
-    
+
     while [ -n "$1" ]; do
 	if [ "$1" = "--verbose" -o "$1" = "-v" ]; then
 	  let verbose=verbose+1
@@ -49,19 +47,7 @@ function do_cuts_setup ()
     if [ "x${CUTS_ROOT}" != "x" ]; then
 	echo "WARNING: do_cuts_setup: cuts is already setup !" 1>&2
 	return 2
-    fi 
-
-    # if [ "x@CUTS_WITH_REFLECTION@" = "x1" ]; then
-    # 	which camp-config >/dev/null 2>&1
-    # 	if [ $? -ne 0 ]; then
-    # 	    echo "ERROR: do_cuts_setup: Cannot find CAMP setup ! Abort !" 1>&2
-    # 	    return 1
-    # 	else
-    # 	    if [ ${verbose} -ne 0 ]; then
-    # 		echo "VERBOSE: do_cuts_setup: Found CAMP." 1>&2
-    # 	    fi
-    # 	fi
-    # fi
+    fi
 
     which datatools-config >/dev/null 2>&1
     if [ $? -ne 0 ]; then
@@ -72,7 +58,7 @@ function do_cuts_setup ()
 	    echo "VERBOSE: do_cuts_setup: Found datatools." 1>&2
 	fi
     fi
-     
+
     export CUTS_ROOT="@CMAKE_INSTALL_PREFIX@"
     export CUTS_ROOT_DIR="@CMAKE_INSTALL_PREFIX@"
     export CUTS_NAME="@PROJECT_NAME@"
@@ -84,26 +70,24 @@ function do_cuts_setup ()
     export CUTS_INCLUDE_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_INCLUDEDIR@"
     export CUTS_DATA_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
     export CUTS_WITH_DEBUG=@CUTS_WITH_DEBUG@
-    export CUTS_WITH_BIO=@CUTS_WITH_BIO@
-    export CUTS_WITH_REFLECTION=@CUTS_WITH_REFLECTION@
     export CUTS_CMAKE_CONFIG_DIR="@CMAKE_INSTALL_PREFIX@/@_cuts_cmake_config_install_dir@"
 
     if [ -n "${PATH}" ]; then
 	export PATH="${CUTS_BIN_DIR}:${PATH}"
     else
 	export PATH="${CUTS_BIN_DIR}"
-    fi 
-   
+    fi
+
     if [ -n "${@_ld_library_path_env@}" ]; then
 	export @_ld_library_path_env@="${CUTS_LIB_DIR}:${@_ld_library_path_env@}"
     else
 	export @_ld_library_path_env@="${CUTS_LIB_DIR}"
-    fi 
+    fi
 
     if [ ${verbose} -gt 1 ]; then
 	do_cuts_print_info "VERBOSE: do_cuts_setup"
     fi
- 
+
     if [ ${verbose} -ne 0 ]; then
 	echo "NOTICE: do_cuts_setup: Setup cuts done." 1>&2
     fi

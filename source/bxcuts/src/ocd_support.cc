@@ -18,13 +18,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::accept_cut,ocd_)
                                 "A 'cuts::accept_cut' object can be setup with the following syntax\n"
                                 "in a 'datatools::multi_properties' configuration file :         \n"
                                 "Example :                                                       \n"
-                                "  |                                                                  \n"
-                                "  | #@key_label   \"name\"                                           \n"
-                                "  | #@meta_label  \"type\"                                           \n"
-                                "  |                                                                  \n"
+                                "  |                                                             \n"
+                                "  | #@key_label   \"name\"                                      \n"
+                                "  | #@meta_label  \"type\"                                      \n"
+                                "  |                                                             \n"
                                 "  | [name=\"yes\" type=\"cuts::accept_cut\"]                    \n"
                                 "  | #@config A cut that always accepts                          \n"
-                                "  |                                                                  \n"
+                                "  |                                                             \n"
                                 );
   ocd_.set_validation_support(true);
   ocd_.lock();
@@ -47,13 +47,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::reject_cut,ocd_)
                                 "A 'cuts::reject_cut' object can be setup with the following syntax\n"
                                 "in a 'datatools::multi_properties' configuration file :         \n"
                                 "Example :                                                       \n"
-                                "  |                                                                  \n"
-                                "  | #@key_label   \"name\"                                           \n"
-                                "  | #@meta_label  \"type\"                                           \n"
-                                "  |                                                                  \n"
+                                "  |                                                             \n"
+                                "  | #@key_label   \"name\"                                      \n"
+                                "  | #@meta_label  \"type\"                                      \n"
+                                "  |                                                             \n"
                                 "  | [name=\"no\" type=\"cuts::reject_cut\"]                     \n"
                                 "  | #@config A cut that always rejects                          \n"
-                                "  |                                                                  \n"
+                                "  |                                                             \n"
                                 );
   ocd_.set_validation_support(true);
   ocd_.lock();
@@ -102,7 +102,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::random_cut,ocd_)
       ;
   }
 
-  ocd_.set_configuration_hints ("A 'cuts::random_cut' object can be setup with the following syntax     \n"
+  ocd_.set_configuration_hints ("A 'cuts::random_cut' object can be setup with the following syntax   \n"
                                 "in a 'datatools::multi_properties' configuration file :              \n"
                                 "Example :                                                            \n"
                                 "  |                                                                  \n"
