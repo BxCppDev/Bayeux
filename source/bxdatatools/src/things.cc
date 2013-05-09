@@ -36,7 +36,7 @@ DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_IMPLEMENTATION(::datatools::things,
                                                       "datatools::things");
 
 // Support for old serialization tag :
-DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_IMPLEMENTATION(::datatools::things, 
+DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_IMPLEMENTATION(::datatools::things,
                                                                "datatools::utils::things");
 
 namespace datatools {
@@ -126,6 +126,10 @@ void things::entry_type::tree_dump(std::ostream& a_out,
   a_out << std::endl;
 }
 
+ const bool things::constant     = true;
+ const bool things::non_constant = !constant;
+ const bool things::copyable     = true;
+ const bool things::noncopyable  = !copyable;
 
 // ctor:
 things::things() : datatools::i_serializable() {}
@@ -196,7 +200,7 @@ void things::get_names(std::vector<std::string>& the_names) const {
   if (things_.size() > the_names.capacity()) {
     the_names.reserve(things_.size());
   }
-  for (dict_type::const_iterator i = things_.begin(); i != things_.end(); 
+  for (dict_type::const_iterator i = things_.begin(); i != things_.end();
        ++i) {
     the_names.push_back(i->first);
   }
@@ -214,7 +218,7 @@ bool things::has(const std::string& a_name) const {
 }
 
 
-bool things::has_serial_tag(const std::string& a_name, 
+bool things::has_serial_tag(const std::string& a_name,
                             const std::string& a_serial_tag) const {
   dict_type::const_iterator found = things_.find(a_name);
   if (found == things_.end()) {
@@ -291,12 +295,12 @@ const std::string& things::get_description(const std::string& a_name) const {
   return found->second.description;
 }
 
-void things::set_entry_description(const std::string& a_name, 
+void things::set_entry_description(const std::string& a_name,
                                    const std::string& a_desc) {
   set_description(a_name,a_desc);
 }
 
-void things::set_description(const std::string& a_name, 
+void things::set_description(const std::string& a_name,
                              const std::string& a_desc) {
   if (a_name.empty()) {
     std::ostringstream message;
@@ -345,7 +349,7 @@ void things::add_impl(const std::string& a_name,
   dict_type::const_iterator found = things_.find(a_name);
   if (found != things_.end()) {
     std::ostringstream message;
-    message << "datatools::things::add_impl: An object with name '" 
+    message << "datatools::things::add_impl: An object with name '"
             << a_name
             << "' is already stored in the dictionnary !";
     throw std::logic_error(message.str());
@@ -363,7 +367,7 @@ void things::remove(const std::string& a_name) {
   dict_type::iterator found = things_.find(a_name);
   if (found == things_.end()) {
     std::ostringstream message;
-    message << "datatools::things::remove: No object with name '" 
+    message << "datatools::things::remove: No object with name '"
             << a_name
             << "' is stored in the dictionnary !";
     throw std::logic_error(message.str());
@@ -403,20 +407,20 @@ void things::reset() {
   name_.clear();
 }
 
-std::string 
+std::string
 things::get_entry_introspection_id (const std::string& a_name) const
 {
   std::string iid;
   dict_type::const_iterator found = things_.find(a_name);
   if (found == things_.end()) {
     std::ostringstream message;
-    message << "datatools::utils::things::get_entry_introspection_id: No stored bank entry has name '" 
+    message << "datatools::utils::things::get_entry_introspection_id: No stored bank entry has name '"
             << a_name << "' !";
     throw std::domain_error(message.str());
   }
 #if DATATOOLS_WITH_REFLECTION == 1
   const datatools::i_serializable & the_entry = *found->second.handle;
-  try 
+  try
     {
       iid = camp::detail::staticTypeId (the_entry);
     }
@@ -428,13 +432,13 @@ things::get_entry_introspection_id (const std::string& a_name) const
   return iid;
 }
 
-std::string 
+std::string
 things::get_entry_serial_tag (const std::string& a_name) const
 {
   dict_type::const_iterator found = things_.find(a_name);
   if (found == things_.end()) {
     std::ostringstream message;
-    message << "datatools::utils::things::get_entry_serial_tag: No stored object has name '" 
+    message << "datatools::utils::things::get_entry_serial_tag: No stored object has name '"
         << a_name << "' !";
     throw std::domain_error(message.str());
   }
@@ -446,7 +450,7 @@ bool things::entry_is_introspectable (const std::string& a_name) const
   dict_type::const_iterator found = things_.find(a_name);
   if (found == things_.end()) {
     std::ostringstream message;
-    message << "datatools::utils::things::entry_is_introspectable: No stored object has name '" 
+    message << "datatools::utils::things::entry_is_introspectable: No stored object has name '"
             << a_name << "' !";
     throw std::domain_error(message.str());
   }
@@ -465,13 +469,13 @@ bool things::entry_is_introspectable (const std::string& a_name) const
 #endif // DATATOOLS_WITH_REFLECTION == 1
 }
 
-bool things::entry_is_a (const std::string& a_name, 
+bool things::entry_is_a (const std::string& a_name,
                          const std::string& a_serial_tag) const
 {
   dict_type::const_iterator found = things_.find(a_name);
   if (found == things_.end()) {
     std::ostringstream message;
-    message << "datatools::utils::things::entry_is_a: No stored object has name '" 
+    message << "datatools::utils::things::entry_is_a: No stored object has name '"
         << a_name << "' !";
     throw std::domain_error(message.str());
   }
@@ -484,7 +488,7 @@ things::get_entry (const std::string& a_name) const
   dict_type::const_iterator found = things_.find(a_name);
   if (found == things_.end()) {
     std::ostringstream message;
-    message << "datatools::utils::things::get_entry: No stored object has name '" 
+    message << "datatools::utils::things::get_entry: No stored object has name '"
         << a_name << "' !";
     throw std::domain_error(message.str());
   }
@@ -497,7 +501,7 @@ things::grab_entry (const std::string& a_name)
   dict_type::iterator found = things_.find(a_name);
   if (found == things_.end()) {
     std::ostringstream message;
-    message << "datatools::utils::things::grab_entry: No stored object has name '" 
+    message << "datatools::utils::things::grab_entry: No stored object has name '"
         << a_name << "' !";
     throw std::domain_error(message.str());
   }
@@ -505,8 +509,8 @@ things::grab_entry (const std::string& a_name)
 }
 
 datatools::i_serializable &
-things::add_entry (const std::string& a_name, 
-                   const std::string& a_serial_tag, 
+things::add_entry (const std::string& a_name,
+                   const std::string& a_serial_tag,
                    const std::string& a_description,
                    bool a_const)
 {
@@ -514,13 +518,13 @@ things::add_entry (const std::string& a_name,
 }
 
 datatools::i_serializable &
-things::add_entry_impl (const std::string& a_name, 
-                        const std::string& a_serial_tag, 
+things::add_entry_impl (const std::string& a_name,
+                        const std::string& a_serial_tag,
                         const std::string& a_description,
                         bool a_const)
 {
   datatools::i_serializable * new_serializable = 0;
-  
+
   typedef datatools::factory_register< ::datatools::i_serializable> fr_type;
   const fr_type & FR = DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(::datatools::i_serializable);
   /*
@@ -532,7 +536,7 @@ things::add_entry_impl (const std::string& a_name,
     {
       std::ostringstream message;
       message << "datatools::utils::things::add_entry_impl: "
-              << "No class with serial tag '" 
+              << "No class with serial tag '"
               << a_serial_tag << "' has been registered !";
       throw std::domain_error(message.str());
     }
@@ -543,7 +547,7 @@ things::add_entry_impl (const std::string& a_name,
   catch(std::exception & x)
     {
       std::ostringstream message;
-      message << "datatools::utils::things::add_entry_impl: Failed to create a serializable object with serial tag '" 
+      message << "datatools::utils::things::add_entry_impl: Failed to create a serializable object with serial tag '"
               << a_serial_tag << "' ! Reason : " << x.what ();
       throw std::logic_error(message.str());
     }
@@ -551,7 +555,7 @@ things::add_entry_impl (const std::string& a_name,
   return *new_serializable;
 }
 
- 
+
 const std::string&
 things::get_entry_name(int index_) const {
   if (index_ < 0 || index_ >= things_.size ())
@@ -605,7 +609,7 @@ void things::tree_dump(std::ostream& a_out, const std::string& a_title,
     a_out << indent << i_tree_dumpable::inherit_tag(a_inherit)
           << "<no property>" << std::endl;
   } else {
-    for (dict_type::const_iterator i = things_.begin(); 
+    for (dict_type::const_iterator i = things_.begin();
          i != things_.end();
          ++i) {
       const std::string& key = i->first;
@@ -629,19 +633,19 @@ void things::tree_dump(std::ostream& a_out, const std::string& a_title,
 }
 
 
-datatools::i_serializable & 
-things::grab(const std::string& a_name, 
+datatools::i_serializable &
+things::grab(const std::string& a_name,
              const std::string& a_serial_tag) {
   dict_type::iterator found = things_.find(a_name);
   if (found == things_.end()) {
     std::ostringstream message;
-    message << "datatools::things::grab: No stored object has name '" 
+    message << "datatools::things::grab: No stored object has name '"
         << a_name << "' !";
     throw std::logic_error(message.str());
   }
   if (found->second.is_const()) {
     std::ostringstream message;
-    message << "datatools::things::grab: Object named '" 
+    message << "datatools::things::grab: Object named '"
             << a_name << "' is constant !";
     throw std::logic_error(message.str());
   }
@@ -650,20 +654,20 @@ things::grab(const std::string& a_name,
       if (a_serial_tag != found->second.handle->get_serial_tag())
         {
           std::ostringstream message;
-          message << "datatools::things::grab: Object named '" 
+          message << "datatools::things::grab: Object named '"
                   << a_name << "' is not a '" << a_serial_tag << "' !";
         }
     }
   return *(found->second.handle);
 }
 
-const datatools::i_serializable & 
-things::get(const std::string& a_name, 
+const datatools::i_serializable &
+things::get(const std::string& a_name,
             const std::string& a_serial_tag) const {
   dict_type::const_iterator found = things_.find(a_name);
   if (found == things_.end()) {
     std::ostringstream message;
-    message << "datatools::things::get: No stored object has name '" 
+    message << "datatools::things::get: No stored object has name '"
             << a_name << "' !";
     throw std::logic_error(message.str());
   }
@@ -672,7 +676,7 @@ things::get(const std::string& a_name,
       if (a_serial_tag != found->second.handle->get_serial_tag())
         {
           std::ostringstream message;
-          message << "datatools::things::get: Object named '" 
+          message << "datatools::things::get: Object named '"
                   << a_name << "' is not a '" << a_serial_tag << "' !";
         }
     }

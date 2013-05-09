@@ -2,9 +2,9 @@
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-03-08
  * Last modified : 2013-02-18
- * 
+ *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -17,20 +17,20 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- * 
- * Description: 
+ *
+ * Description:
  *
  *   A serializable container for arbitrary serializable objects
- * 
+ *
  *   Storable objects must :
  *   - have a default constructor
  *   - inherit from the datatools::i_serializable interface
  *   - have a 'serialize' template method (ala Boost)
- *  
- * History: 
- * 
+ *
+ * History:
+ *
  */
 #ifndef DATATOOLS_THINGS_H_
 #define DATATOOLS_THINGS_H_
@@ -79,7 +79,7 @@ class bad_things_cast : public std::exception {
 /* class things */
 
 //! \brief A generic serializable and noncopyable container for arbitrary serializable objects.
-class things : 
+class things :
     DATATOOLS_SERIALIZABLE_CLASS,
     public datatools::i_tree_dumpable,
     public datatools::i_clear,
@@ -103,7 +103,7 @@ class things :
 
     bool has_description() const;
 
-    virtual void tree_dump(std::ostream& a_out = std::clog, 
+    virtual void tree_dump(std::ostream& a_out = std::clog,
                            const std::string& a_title  = "",
                            const std::string& a_indent = "",
                            bool a_inherit = false) const;
@@ -112,21 +112,21 @@ class things :
     std::string                 description;
     uint8_t                     flags;
     datatools::i_serializable * handle;
- 
+
     BOOST_SERIALIZATION_BASIC_DECLARATION ();
 
  };
 
   // Begin the things declarations...
  public:
-  static const bool constant     = true;
-  static const bool non_constant = !constant;
-  static const bool copyable     = true;
-  static const bool noncopyable  = !copyable;
+  static const bool constant; //     = true;
+  static const bool non_constant; // = !constant;
+  static const bool copyable; //     = true;
+  static const bool noncopyable; //  = !copyable;
 
   typedef std::map<std::string, entry_type> dict_type;
 
- public: 
+ public:
   /// Default constructor
   things();
 
@@ -168,7 +168,7 @@ class things :
 
   bool has(const std::string& a_name) const;
 
-  bool has_serial_tag(const std::string& a_name, 
+  bool has_serial_tag(const std::string& a_name,
                       const std::string& a_serial_tag) const;
 
   bool is_constant(const std::string& a_name) const;
@@ -195,7 +195,7 @@ class things :
   void erase(const std::string & a_name);
 
   template<class T>
-  T& add(const std::string& a_name, const std::string& a_desc = "", 
+  T& add(const std::string& a_name, const std::string& a_desc = "",
          bool a_const = false);
 
   template<class T>
@@ -217,17 +217,17 @@ class things :
   grab_entry (const std::string& a_name);
 
   datatools::i_serializable &
-  add_entry (const std::string& a_name, 
-	     const std::string& a_serial_tag, 
+  add_entry (const std::string& a_name,
+	     const std::string& a_serial_tag,
 	     const std::string& a_description = "",
 	     bool a_const = false);
- 
+
   datatools::i_serializable &
-  add_entry_impl (const std::string& a_name, 
-		  const std::string& a_serial_tag, 
+  add_entry_impl (const std::string& a_name,
+		  const std::string& a_serial_tag,
 		  const std::string& a_description,
 		  bool a_const);
- 
+
   bool entry_is_a (const std::string& a_name, const std::string&) const;
 
   bool entry_is_introspectable (const std::string& a_name) const;
@@ -236,7 +236,7 @@ class things :
 
   std::string get_entry_introspection_id (const std::string& a_name) const;
 
-  virtual void tree_dump(std::ostream& a_out = std::clog, 
+  virtual void tree_dump(std::ostream& a_out = std::clog,
                          const std::string& a_title  = "",
                          const std::string& a_indent = "",
                          bool a_inherit = false) const;
@@ -246,39 +246,39 @@ class things :
   void dump_stderr() const;
 
   void dump_stdout() const;
-  
-  datatools::i_serializable & 
+
+  datatools::i_serializable &
     grab(const std::string& a_name, const std::string& a_serial_tag= "");
-  
-  const datatools::i_serializable & 
+
+  const datatools::i_serializable &
     get(const std::string& a_name, const std::string& a_serial_tag= "") const;
 
  private:
-  
-  void add_impl(const std::string& a_name, 
+
+  void add_impl(const std::string& a_name,
 		datatools::i_serializable* a_obj,
 		const std::string& a_desc = "",
 		bool a_const = false);
 
  private:
-  // Attributes : 
+  // Attributes :
   std::string name_;        //!< The name of the container
   std::string description_; //!< The description of the container
   dict_type   things_;      //!< The internal dictionary of objects
 
-  //! Serialization interface 
+  //! Serialization interface
   DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(things);
   DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT();
 
 #if DATATOOLS_WITH_REFLECTION == 1
-  //! Reflection interface 
+  //! Reflection interface
   DR_CLASS_RTTI();
 #endif
 };
 
 }  // end of namespace datatools
 
-// Template methods 
+// Template methods
 #include <datatools/things-inl.h>
 
 // Support for serialization tag :

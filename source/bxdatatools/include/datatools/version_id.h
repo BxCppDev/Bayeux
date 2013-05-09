@@ -64,17 +64,17 @@ namespace datatools {
 class version_id {
  public:
   // TODO: could probably all be private or in an PImpl...
-  static const int32_t INVALID_NUMBER = -1;
-  static const char INVALID_SYMBOL = '?';
-  static const char NUMERIC_SEPARATOR = '.';
-  static const char TAG_SEPARATOR = '-';
+  static const int32_t INVALID_NUMBER; // = -1;
+  static const char INVALID_SYMBOL; // = '?';
+  static const char NUMERIC_SEPARATOR; // = '.';
+  static const char TAG_SEPARATOR; // = '-';
   static const std::string ALPHA_TAG;
   static const std::string BETA_TAG;
   static const std::string RELEASE_CANDIDATE_PREFIX_TAG;
-  static const int32_t MAX_RC_NUM   = 9999;
-  static const int32_t ALPHA_NUM    = -10003;
-  static const int32_t BETA_NUM     = -10002;
-  static const int32_t RC_BASE_NUM  = -10001;
+  static const int32_t MAX_RC_NUM; //   = 9999;
+  static const int32_t ALPHA_NUM; //    = -10003;
+  static const int32_t BETA_NUM; //    = -10002;
+  static const int32_t RC_BASE_NUM; //  = -10001;
 
  public:
   // Constructors/Destructors

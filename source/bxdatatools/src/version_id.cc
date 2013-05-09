@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
 // version_id.cc
-// Ourselves 
+// Ourselves
 #include <datatools/version_id.h>
 
 // Standard Library
@@ -14,6 +14,15 @@
 // This Project
 
 namespace datatools {
+
+const int32_t version_id::INVALID_NUMBER = -1;
+const char version_id::INVALID_SYMBOL = '?';
+const char version_id::NUMERIC_SEPARATOR = '.';
+const char version_id::TAG_SEPARATOR = '-';
+const int32_t version_id::MAX_RC_NUM   = 9999;
+const int32_t version_id::ALPHA_NUM    = -10003;
+const int32_t version_id::BETA_NUM     = -10002;
+const int32_t version_id::RC_BASE_NUM  = -10001;
 
 const std::string version_id::ALPHA_TAG = "alpha";
 const std::string version_id::BETA_TAG  = "beta";
@@ -37,7 +46,7 @@ version_id::version_id(const std::string& tag) {
 }
 
 
-version_id::version_id(int major, int minor, int revision, 
+version_id::version_id(int major, int minor, int revision,
                        const std::string& tag) {
   major_ = INVALID_NUMBER;
   minor_ = INVALID_NUMBER;
@@ -52,13 +61,13 @@ version_id::version_id(int major, int minor, int revision,
 
 bool version_id::is_valid() const {
   if (!this->has_major()) {
-    // no major implies a single valid tag : format = "tag" 
-    return this->has_tag(); 
+    // no major implies a single valid tag : format = "tag"
+    return this->has_tag();
   } else {
     if (this->has_revision() && !this->has_minor()) {
       return false;
     }
-    // format = "major.minor.revision-tag" 
+    // format = "major.minor.revision-tag"
     if (this->has_tag()) {
       return this->has_revision();
     }
@@ -78,10 +87,10 @@ bool version_id::has_major() const {
 
 
 bool version_id::has_major_only() const {
-  return this->has_major() 
-      && !this->has_minor() 
-      && !this->has_revision() 
-      && !this->has_tag(); 
+  return this->has_major()
+      && !this->has_minor()
+      && !this->has_revision()
+      && !this->has_tag();
 }
 
 
@@ -143,14 +152,14 @@ bool version_id::has_special_tag() const {
 
 bool version_id::has_numeric_tag() const {
   if (tag_.empty()) return false;
-  
+
   // Specific test :
   {
     std::istringstream dummy(tag_);
     int val;
     dummy >> val;
     if (!dummy) return false;
-    
+
     std::string word;
     dummy >> word;
     if (!word.empty()) return false;
@@ -185,13 +194,13 @@ void version_id::set_tag(const std::string& tag) {
   char first_char = trimed_tag[0];
   bool validate = false;
   if (isalnum(first_char)) validate = true;
-  
+
   if (!validate) {
     std::ostringstream message;
     message << "datatools::version_id::set_tag: "
-            << "Version ID's tag '" 
+            << "Version ID's tag '"
             << trimed_tag << "' is not allowed !";
-    throw std::logic_error(message.str());       
+    throw std::logic_error(message.str());
   }
   validate = true;
   for (int i = 0; i < trimed_tag.length(); i++) {
@@ -203,10 +212,10 @@ void version_id::set_tag(const std::string& tag) {
   if (!validate) {
     std::ostringstream message;
     message << "datatools::version_id::set_tag: "
-            << "Version ID's tag '" 
+            << "Version ID's tag '"
             << trimed_tag << "' is not allowed !";
-    throw std::logic_error(message.str());       
-  } 
+    throw std::logic_error(message.str());
+  }
   tag_ = trimed_tag;
   if (isdigit(tag_[0])) {
     // check numerical tags :
@@ -222,26 +231,26 @@ void version_id::set_tag(const std::string& tag) {
       tag_number_ = ALPHA_NUM;
     } else if (tag_ == BETA_TAG) {
       tag_number_ = BETA_NUM;
-    } else if (tag_.length() > 2 
+    } else if (tag_.length() > 2
                && tag_.substr(0,2) == RELEASE_CANDIDATE_PREFIX_TAG) {
       std::string rc_tag_tail = tag_.substr(2);
       if (!rc_tag_tail.empty()) {
         std::istringstream rc_tag_iss(rc_tag_tail);
         int rc_num;
         rc_tag_iss >> rc_num;
-        if (rc_tag_iss) { 
+        if (rc_tag_iss) {
           if (rc_num >= 0) {
             if (rc_num > MAX_RC_NUM) {
               std::ostringstream message;
               message << "datatools::version_id::set_tag: "
-                      << "Version ID's special RC tag '" 
-                      << trimed_tag 
+                      << "Version ID's special RC tag '"
+                      << trimed_tag
                       << "' is not allowed (RC number is too large) !";
-              throw std::logic_error(message.str());       
+              throw std::logic_error(message.str());
             }
             tag_number_ = RC_BASE_NUM + rc_num;
           }
-        } 
+        }
       }
     } // RC
   }
@@ -253,9 +262,9 @@ void version_id::dump(std::ostream& out, const std::string& title,
   const std::string tag = "|-- ";
   const std::string last_tag = "`-- ";
   if (!title.empty()) out << indent << title << std::endl;
-  
+
   out << indent << tag << "Has major    : " << this->has_major();
-  
+
   if (this->has_major()) {
     out << " => Major = " << major_;
   }
@@ -264,17 +273,17 @@ void version_id::dump(std::ostream& out, const std::string& title,
   out << indent << tag << "Has minor    : " << this->has_minor();
 
   if (this->has_minor()) out << " => Minor = " << minor_;
-  
+
   out << std::endl;
   out << indent << tag << "Has revision : " << this->has_revision();
-  
+
   if (this->has_revision()) out << " => Revision = " << revision_;
-  
+
   out << std::endl;
   out << indent << tag << "Has tag      : " << this->has_tag();
 
   if (this->has_tag()) out << " => Tag = '" << tag_ << "'";
-  
+
   if (this->has_tag_number()) {
     out << " with number='" << tag_number_ << "'";
     if (this->has_special_tag()) {
@@ -300,13 +309,13 @@ void version_id::reset() {
 bool version_id::equals(const version_id& vid, bool ignore_tag) const {
   bool res = false;
   if (vid.major_ == major_
-      && vid.minor_ == minor_ 
+      && vid.minor_ == minor_
       && vid.revision_ == revision_) {
     res = true;
   }
 
   if (res && ! ignore_tag) res = (vid.tag_ == tag_);
-  
+
   return res;
 }
 
@@ -374,8 +383,8 @@ bool version_id::from_string(const std::string& s) {
   }
 
   if (devel) {
-    std::cerr << std::endl 
-              << "DEVEL: version_id::from_string: string = '" 
+    std::cerr << std::endl
+              << "DEVEL: version_id::from_string: string = '"
               << s << "'" << std::endl;
   }
   // Check there is only a tag without leading "major[.minor[.revision[-tag]]]" :
@@ -388,11 +397,11 @@ bool version_id::from_string(const std::string& s) {
       // cannot parse an integer :
       try {
         // pure "tag" format :
-        this->set_tag(token);                
+        this->set_tag(token);
       }
       catch (std::exception& x) {
         this->reset();
-        return false;           
+        return false;
       }
 
       if (!this->is_valid()) {
@@ -418,7 +427,7 @@ bool version_id::from_string(const std::string& s) {
 
       if (!iss) {
         this->reset();
-        return false;                   
+        return false;
       } else if (val < 0) {
         this->reset();
         return false;
@@ -437,12 +446,12 @@ bool version_id::from_string(const std::string& s) {
       char sep = 0;
       iss.get(sep);
       if (devel) {
-        std::cerr << "DEVEL: version_id::from_string:   separator = '" 
+        std::cerr << "DEVEL: version_id::from_string:   separator = '"
                   << sep << "'" << std::endl;
       }
 
       if (!iss) return true;
-      
+
       if (sep == TAG_SEPARATOR) {
         if (i < 2) {
           this->reset();
@@ -453,7 +462,7 @@ bool version_id::from_string(const std::string& s) {
       }
 
       if ((i < 2) && (sep == NUMERIC_SEPARATOR)) continue;
-      
+
       this->reset();
       return false;
     }
@@ -463,13 +472,13 @@ bool version_id::from_string(const std::string& s) {
       std::string tag;
       iss >> tag;
       if (devel) {
-        std::cerr << "DEVEL: version_id::from_string:   tag = '" 
+        std::cerr << "DEVEL: version_id::from_string:   tag = '"
                   << tag << "'" << std::endl;
       }
 
       if (tag.empty()) {
         this->reset();
-        return false;           
+        return false;
       }
 
       try {
@@ -481,15 +490,15 @@ bool version_id::from_string(const std::string& s) {
                     << x.what() << "'" << std::endl;
         }
         this->reset();
-        return false;           
+        return false;
       }
       if (!this->is_valid()) {
         this->reset();
         if (devel) {
-          std::cerr << "DEVEL: version_id::from_string:   not valid!" 
+          std::cerr << "DEVEL: version_id::from_string:   not valid!"
                     << std::endl;
         }
-        return false;           
+        return false;
       }
     }
   }
@@ -509,7 +518,7 @@ std::istream& operator>>(std::istream& in, version_id& vid) {
 }
 
 
-bool version_id::matches(const std::string& version_rule, 
+bool version_id::matches(const std::string& version_rule,
                          bool major_only) const {
   std::istringstream vr_iss(version_rule);
   std::string word;
@@ -520,13 +529,13 @@ bool version_id::matches(const std::string& version_rule,
             << "Missing valid version rule !";
     throw std::logic_error(message.str());
   }
-  const int INVALID          = -1000; 
-  const int NOT_EQUAL        = -3; 
-  const int LESS_OR_EQUAL    = -2; 
-  const int LESS             = -1; 
-  const int EQUAL            =  0; 
-  const int GREATER          =  1; 
-  const int GREATER_OR_EQUAL =  2; 
+  const int INVALID          = -1000;
+  const int NOT_EQUAL        = -3;
+  const int LESS_OR_EQUAL    = -2;
+  const int LESS             = -1;
+  const int EQUAL            =  0;
+  const int GREATER          =  1;
+  const int GREATER_OR_EQUAL =  2;
   int match_mode = INVALID;
   std::string vid_word;
   /*
@@ -546,7 +555,7 @@ bool version_id::matches(const std::string& version_rule,
       match_mode = GREATER_OR_EQUAL;
     }
 
-    if (match_mode != INVALID) vid_word = word.substr(2); 
+    if (match_mode != INVALID) vid_word = word.substr(2);
   }
 
   if (match_mode == INVALID && word.length() >= 1) {
@@ -561,11 +570,11 @@ bool version_id::matches(const std::string& version_rule,
       match_mode = GREATER;
     }
 
-    if (match_mode != INVALID) vid_word = word.substr(1); 
+    if (match_mode != INVALID) vid_word = word.substr(1);
   }
 
   if (vid_word.empty()) vr_iss >> vid_word;
-  
+
   if (vid_word.empty()) {
     std::ostringstream message;
     message << "datatools::version_id::matches: "
@@ -605,8 +614,8 @@ bool version_id::matches(const std::string& version_rule,
     if (!are_orderable(*this, matcher_vid, major_only)) {
       std::ostringstream message;
       message << "datatools::version_id::matches: "
-              << "Version IDs " 
-              << *this << " and " << matcher_vid 
+              << "Version IDs "
+              << *this << " and " << matcher_vid
               << " are not orderable !";
       throw std::logic_error(message.str());
     }
@@ -635,8 +644,8 @@ bool version_id::matches(const std::string& version_rule,
 }
 
 
-// static 
-int version_id::compare(const version_id& vid0, 
+// static
+int version_id::compare(const version_id& vid0,
                         const version_id& vid1,
                         bool major_only) {
   bool devel = false;
@@ -688,12 +697,12 @@ int version_id::compare(const version_id& vid0,
     // maj_num_1 == maj_num_2
     if ((min_num_1 == INVALID_NUMBER) && (min_num_2 != INVALID_NUMBER)) {
       if (major_only) return 0;
-      return -1; 
-    } else if ((min_num_1 != INVALID_NUMBER) 
+      return -1;
+    } else if ((min_num_1 != INVALID_NUMBER)
                && (min_num_2 == INVALID_NUMBER)) {
       if (major_only) return 0;
-      return +1; 
-    } else if ((min_num_1 != INVALID_NUMBER) 
+      return +1;
+    } else if ((min_num_1 != INVALID_NUMBER)
                && (min_num_2 != INVALID_NUMBER)) {
       if (min_num_1 < min_num_2) {
         return -1;
@@ -701,13 +710,13 @@ int version_id::compare(const version_id& vid0,
         return +1;
       } else {
         // min_num_1 == min_num_2
-        if ((rev_num_1 == INVALID_NUMBER) 
+        if ((rev_num_1 == INVALID_NUMBER)
             && (rev_num_2 != INVALID_NUMBER)) {
-          return -1; 
-        } else if ((rev_num_1 != INVALID_NUMBER) 
+          return -1;
+        } else if ((rev_num_1 != INVALID_NUMBER)
                    && (rev_num_2 == INVALID_NUMBER)) {
-          return +1; 
-        } else if ((rev_num_1 != INVALID_NUMBER) 
+          return +1;
+        } else if ((rev_num_1 != INVALID_NUMBER)
                    && (rev_num_2 != INVALID_NUMBER)) {
           if (rev_num_1 < rev_num_2) {
             return -1;
@@ -729,36 +738,36 @@ int version_id::compare(const version_id& vid0,
               throw std::logic_error(message.str());
             }
 
-            if ((tag_num_1 == INVALID_NUMBER) 
+            if ((tag_num_1 == INVALID_NUMBER)
                 && (tag_num_2 != INVALID_NUMBER)) {
               if (devel) std::cerr << "DEVEL: datatools::version_id::compare: TEST 1\n";
 
               if (tag_num_2 < INVALID_NUMBER) {
                 if (devel) std::cerr << "DEVEL: datatools::version_id::compare: +1\n";
-                return +1; 
+                return +1;
               } else {
                 if (devel) std::cerr << "DEVEL: datatools::version_id::compare: -1\n";
                 return -1;
               }
-            } else if ((tag_num_1 != INVALID_NUMBER) 
+            } else if ((tag_num_1 != INVALID_NUMBER)
                        && (tag_num_2 == INVALID_NUMBER)) {
               if (devel) std::cerr << "DEVEL: datatools::version_id::compare: TEST 2\n";
               if (tag_num_1 < INVALID_NUMBER) {
-                return -1; 
+                return -1;
               } else {
                 return +1;
               }
-            } else if ((tag_num_1 != INVALID_NUMBER) 
+            } else if ((tag_num_1 != INVALID_NUMBER)
                        && (tag_num_2 != INVALID_NUMBER)) {
               if (devel) {
                 std::cerr << "DEVEL: datatools::version_id::compare: TEST 3\n";
               }
               if (devel) {
-                std::cerr << "DEVEL: datatools::version_id::compare:   tag_num_1 = " 
+                std::cerr << "DEVEL: datatools::version_id::compare:   tag_num_1 = "
                           << tag_num_1 << std::endl;
               }
               if (devel) {
-                std::cerr << "DEVEL: datatools::version_id::compare:   tag_num_2 = " 
+                std::cerr << "DEVEL: datatools::version_id::compare:   tag_num_2 = "
                           << tag_num_2 << std::endl;
               }
 
@@ -777,8 +786,8 @@ int version_id::compare(const version_id& vid0,
 }
 
 
-// static 
-bool version_id::are_orderable(const version_id& vid0, 
+// static
+bool version_id::are_orderable(const version_id& vid0,
                                const version_id& vid1,
                                bool major_only) {
   const version_id& v1 = vid0;
@@ -789,7 +798,7 @@ bool version_id::are_orderable(const version_id& vid0,
   // 2012-05-29 FM: not tested yet
   if ((v1.has_major_only () && v2.has_major ())
       ||(v1.has_major () && v2.has_major_only ())) {
-    // if one of both version IDs has only a major number 
+    // if one of both version IDs has only a major number
     if (major_only) {
       // we can always compare using the major number only :
       return true;

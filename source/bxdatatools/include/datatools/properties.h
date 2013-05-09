@@ -66,53 +66,53 @@ namespace datatools {
  *  as well as arrays (std::vector) of these build-in types.
  *
  */
-class properties : 
+class properties :
     DATATOOLS_SERIALIZABLE_CLASS,
     public datatools::i_tree_dumpable,
     public datatools::i_clear,
     public datatools::i_cloneable {
  public:
 //----------------------------------------------------------------------
-// 
+//
   //! \brief Internal data stored within the dictionary of the properties class.
   class data {
    public:
-    static const int  ERROR_SUCCESS = 0;
-    static const int  ERROR_FAILURE = 1;
-    static const int  ERROR_BADTYPE = 2;
-    static const int  ERROR_RANGE   = 3;
-    static const int  ERROR_LOCK    = 4;
+    static const int  ERROR_SUCCESS; // = 0;
+    static const int  ERROR_FAILURE; // = 1;
+    static const int  ERROR_BADTYPE; // = 2;
+    static const int  ERROR_RANGE; //   = 3;
+    static const int  ERROR_LOCK; //    = 4;
 
-    static const char MASK_TYPE    = 0x7;
-    static const char MASK_EXPLICIT_PATH = 0x10;
-    static const char MASK_EXPLICIT_UNIT = 0x20;
-    static const char MASK_LOCK    = 0x40;
-    static const char MASK_VECTOR  = 0x80;
+    static const char MASK_TYPE; //    = 0x7;
+    static const char MASK_EXPLICIT_PATH; // = 0x10;
+    static const char MASK_EXPLICIT_UNIT; // = 0x20;
+    static const char MASK_LOCK; //    = 0x40;
+    static const char MASK_VECTOR; //  = 0x80;
 
-    static const char TYPE_NONE    = 0x0;
-    static const char TYPE_BOOLEAN = 0x1;
-    static const char TYPE_INTEGER = 0x2;
-    static const char TYPE_REAL    = 0x3;
-    static const char TYPE_STRING  = 0x4;
+    static const char TYPE_NONE; //    = 0x0;
+    static const char TYPE_BOOLEAN; // = 0x1;
+    static const char TYPE_INTEGER; // = 0x2;
+    static const char TYPE_REAL; //    = 0x3;
+    static const char TYPE_STRING; //  = 0x4;
 
-    static const char TYPE_BOOLEAN_SYMBOL = 'B';
-    static const char TYPE_INTEGER_SYMBOL = 'I';
-    static const char TYPE_REAL_SYMBOL    = 'R';
-    static const char TYPE_STRING_SYMBOL  = 'S';
+    static const char TYPE_BOOLEAN_SYMBOL; // = 'B';
+    static const char TYPE_INTEGER_SYMBOL; // = 'I';
+    static const char TYPE_REAL_SYMBOL; //    = 'R';
+    static const char TYPE_STRING_SYMBOL; //  = 'S';
 
-    static const char STRING_FORBIDDEN_CHAR = '"';
+    static const char STRING_FORBIDDEN_CHAR; // = '"';
 
-    static const int  SCALAR_DEF  = -1;
-    static const int  SCALAR_SIZE =  1;
+    static const int  SCALAR_DEF; //  = -1;
+    static const int  SCALAR_SIZE; // =  1;
 
     static const bool        DEFAULT_VALUE_BOOLEAN;
     static const int         DEFAULT_VALUE_INTEGER;
     static const double      DEFAULT_VALUE_REAL;
     static const std::string DEFAULT_VALUE_STRING;
 
-    static const std::string NAN_REAL_REPR;
-    static const std::string PLUS_INF_REAL_REPR;
-    static const std::string MINUS_INF_REAL_REPR;
+    // static const std::string NAN_REAL_REPR;
+    // static const std::string PLUS_INF_REAL_REPR;
+    // static const std::string MINUS_INF_REAL_REPR;
 
    public:
     typedef std::vector<bool>        vbool;
@@ -123,7 +123,8 @@ class properties :
    public:
 
     /// Constructor
-    data(char a_type = TYPE_INTEGER_SYMBOL, int a_size = SCALAR_DEF);
+    data(char a_type = TYPE_INTEGER_SYMBOL,
+         int a_size = SCALAR_DEF);
 
     /// Constructor
     data(bool a_value, int a_size = SCALAR_DEF);
@@ -152,7 +153,7 @@ class properties :
     /// Check if the data type is valid
     bool has_type() const;
 
-    /// Return type 
+    /// Return type
     int get_type() const;
 
     /// Check if the data is a boolean value
@@ -209,7 +210,7 @@ class properties :
     /// Returns the size of the array of stored values (1 if scalar, >=0 if vector)
     int32_t get_size() const;
 
-    /// Returns the size of the array of stored values (1 if scalar, >=0 if vector) 
+    /// Returns the size of the array of stored values (1 if scalar, >=0 if vector)
     int32_t size() const;
 
     /// Check if the value array is empty
@@ -290,7 +291,7 @@ class properties :
    private:
     void clear_values_();
 
-    int init_values_(char a_type = TYPE_INTEGER_SYMBOL, 
+    int init_values_(char a_type = TYPE_INTEGER_SYMBOL,
                      int a_size = SCALAR_DEF);
 
     BOOST_SERIALIZATION_BASIC_DECLARATION();
@@ -317,7 +318,7 @@ class properties :
 //----------------------------------------------------------------------
 // Key validator inner classes
   //! \brief Pure abstract class for key validator.
-  struct basic_key_validator 
+  struct basic_key_validator
       : public std::unary_function<std::string,bool> {
     virtual ~basic_key_validator(){}
     virtual bool operator()(const std::string& a_key_arg) const = 0;
@@ -344,30 +345,29 @@ class properties :
   //! \brief Class for ASCII file I/O operations with properties objects.
   class config {
    public:
-    static const char DEFAULT_CONTINUATION_CHAR = '\\';
-    static const char DEFAULT_COMMENT_CHAR = '#';
-    static const char DEFAULT_ASSIGN_CHAR  = '=';
-    static const char DEFAULT_DESC_CHAR    = ':';
-    static const char OPEN_VECTOR          = '[';
-    static const char CLOSE_VECTOR         = ']';
+    static const char DEFAULT_CONTINUATION_CHAR; // = '\\';
+    static const char DEFAULT_COMMENT_CHAR; //  = '#';
+    static const char DEFAULT_ASSIGN_CHAR; //   = '=';
+    static const char DEFAULT_DESC_CHAR; //     = ':';
+    static const char OPEN_VECTOR ; //          = '[';
+    static const char CLOSE_VECTOR; //          = ']';
 
-    static const int MODE_BARE          = 0;
-    static const int MODE_HEADER_FOOTER = 1;
-    static const int MODE_DEFAULT       = MODE_HEADER_FOOTER;
-    static const int mode_header_footer = MODE_HEADER_FOOTER;
-    static const int mode_bare          = MODE_BARE;
+    static const int MODE_BARE; //           = 0;
+    static const int MODE_HEADER_FOOTER; //  = 1;
+    static const int MODE_DEFAULT; //       = MODE_HEADER_FOOTER;
+    static const int mode_header_footer; //  = MODE_HEADER_FOOTER;
+    static const int mode_bare; //           = MODE_BARE;
 
-    static const bool write_private_also = false;
-    static const bool write_public_only  = true;
-
-    static const bool without_smart_modulo = false;
-    static const bool with_smart_modulo  = true;
+    static const bool write_private_also; //  = false;
+    static const bool write_public_only; //   = true;
+    static const bool without_smart_modulo; //  = false;
+    static const bool with_smart_modulo; //   = true;
 
    public:
     // Constructor
-    config(bool a_use_smart_modulo = with_smart_modulo,
+    config(bool a_use_smart_modulo = false,
            int a_mode = MODE_DEFAULT,
-           bool a_write_public_only = write_public_only);
+           bool a_write_public_only = true);
 
     // Destructor
     virtual ~config();
@@ -389,9 +389,9 @@ class properties :
 
     /// Write a property data
     void write_data(std::ostream& a_out,
-                    const std::string & a_data_key, 
-                    const properties::data& a_prop_data, 
-                    const std::string & a_unit_symbol = "", 
+                    const std::string & a_data_key,
+                    const properties::data& a_prop_data,
+                    const std::string & a_unit_symbol = "",
                     const std::string & a_unit_label = "",
                     const std::string & a_comment = "");
 
@@ -497,7 +497,7 @@ class properties :
   //! Returns the list of keys stored in the map (read-only).
   vkeys keys() const;
 
-  //! Returns the ith key 
+  //! Returns the ith key
   const std::string & key (int) const;
 
   //! Set the list of keys.
@@ -581,16 +581,16 @@ class properties :
   //! Check if a property with given key/name exists
   bool has_key(const std::string& prop_key) const;
 
-  //! Lock a property with given key/name 
+  //! Lock a property with given key/name
   void key_lock (const std::string& prop_key);
 
-  //! Unlock a property with given key/name 
+  //! Unlock a property with given key/name
   void key_unlock (const std::string& prop_key);
 
-  //! Get the description string associated to a property with given key/name 
+  //! Get the description string associated to a property with given key/name
   const std::string & get_key_description (const std::string& prop_key) const;
 
-  //! Set the description string associated to a property with given key/name 
+  //! Set the description string associated to a property with given key/name
   void set_key_description (const std::string& prop_key, const std::string &desc_);
 
   // 2011-11-27 FM: could be useful
@@ -616,7 +616,7 @@ class properties :
   void export_starting_with(properties& a_props,
                             const std::string& prop_key_prefix) const;
 
-  //! Export all properties with key/name starting with a given prefix to another properties container but renaming the prefix on the fly 
+  //! Export all properties with key/name starting with a given prefix to another properties container but renaming the prefix on the fly
   void export_and_rename_starting_with(properties& a_props,
                                        const std::string& prop_key_prefix,
                                        const std::string& a_new_prefix) const;
@@ -631,7 +631,7 @@ class properties :
 
   //! Export all properties with key/name not fulfilling a given predicate
   template <class key_predicate>
-  void export_not_if(properties& props, 
+  void export_not_if(properties& props,
                      const key_predicate& predicate) const;
 
   //! Erase all properties with key/name ending with a given suffix
@@ -641,7 +641,7 @@ class properties :
   void erase_all_not_ending_with(const std::string& suffix);
 
   //! Export all properties with key/name ending with a given suffix to another properties container
-  void export_ending_with(properties& props, 
+  void export_ending_with(properties& props,
                           const std::string& suffix) const;
 
   //! Export all properties with key/name not ending with a given suffix to another properties container
@@ -720,7 +720,7 @@ class properties :
   void store_path(const std::string& prop_key, const std::string& a_path_value,
                   const std::string& a_desc = "", bool a_lock = false);
 
-  //! Store a string property with a given key/name and value (C style) 
+  //! Store a string property with a given key/name and value (C style)
   void store(const std::string& prop_key, const char* a_value,
              const std::string& a_desc = "", bool a_lock = false);
 
@@ -781,7 +781,7 @@ class properties :
   void change_real_vector(const std::string& key, double value, int index);
 
   //! Change the value of an existing string property with a given key/name and index
-  void change(const std::string& key, const std::string& value, 
+  void change(const std::string& key, const std::string& value,
               int index = 0);
 
   //! Change the value of an existing string property with a given key/name and index
@@ -865,7 +865,7 @@ class properties :
   void fetch(const std::string& key, double& value, int index = 0) const;
 
   //! Fetch the string value stored with a given key/name and index
-  void fetch(const std::string& key, std::string& value, 
+  void fetch(const std::string& key, std::string& value,
              int index = 0) const;
 
   //! Fetch the boolean vector value stored with a given key/name
@@ -951,10 +951,10 @@ class properties :
   //! Store the properties' container object in an ASCII text file
   void write_configuration (const std::string& filename,
                             bool a_use_smart_modulo = true,
-                            bool a_write_public_only = true) const; 
-  
+                            bool a_write_public_only = true) const;
+
   //! Load the properties' container object from an ASCII text file
-  void read_configuration (const std::string& filename); 
+  void read_configuration (const std::string& filename);
 
   //! Store the properties' container object in an ASCII text file
   static void write_config(const std::string& filename,
@@ -995,15 +995,15 @@ class properties :
   const basic_key_validator * _key_validator_; //! Reference to the embedded key validator
   bool                        _key_validator_deletion_; //! Ownership flag for the embedded key validator
 
-  //! Cloneable interface 
+  //! Cloneable interface
   DATATOOLS_CLONEABLE_DECLARATION(properties)
 
-  //! Serialization interface 
+  //! Serialization interface
   DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(properties);
-  DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT() 
+  DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT()
 
 #if DATATOOLS_WITH_REFLECTION == 1
-  //! Reflection interface 
+  //! Reflection interface
   DR_CLASS_RTTI();
 #endif
 
@@ -1014,7 +1014,7 @@ class properties :
 // properties class template method definitions
 //
 template <class key_predicate>
-void properties::export_if(properties& props, 
+void properties::export_if(properties& props,
                            const key_predicate& predicate) const {
   if (this == &props) {
     throw std::logic_error("properties::export_if: Self export is not allowed !");

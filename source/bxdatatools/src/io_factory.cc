@@ -109,7 +109,7 @@ bool io_factory::is_append() const {
 int io_factory::init_read_archive() {
   bool devel = g_debug;
   if (devel) {
-    std::clog << "DEBUG: io_factory::init_read_archive: Entering..." 
+    std::clog << "DEBUG: io_factory::init_read_archive: Entering..."
               << std::endl;
   }
 
@@ -147,7 +147,7 @@ int io_factory::init_read_archive() {
     ibar_ptr_ = new eos::portable_iarchive(*in_);
 
     if (devel) {
-      std::cerr << "DEBUG: io_factory::init_read_archive: " 
+      std::cerr << "DEBUG: io_factory::init_read_archive: "
                 << "'eos::portable_iarchive'library version = "
                 << ibar_ptr_->get_library_version()
                 << std::endl;
@@ -160,7 +160,7 @@ int io_factory::init_read_archive() {
 
   read_archive_is_initialized_ = true;
   if (devel) {
-    std::clog << "DEVEL: io_factory::_init_read_archive_: Exiting." 
+    std::clog << "DEVEL: io_factory::_init_read_archive_: Exiting."
               << std::endl;
   }
   return 0;
@@ -276,7 +276,7 @@ int io_factory::init_write_archive() {
                 << "with FPU: text archive..."
                 << std::endl;
     }
-    
+
     otar_ptr_ = new boost::archive::text_oarchive(
         *out_,boost::archive::no_codecvt);
 
@@ -294,7 +294,7 @@ int io_factory::init_write_archive() {
 
     oxar_ptr_ = new boost::archive::xml_oarchive(
         *out_, boost::archive::no_codecvt);
-    
+
     if (g_debug) {
       std::clog << "DEBUG: io_factory::init_write_archive: "
                 << "'boost::archive::xml_oarchive' library version "
@@ -487,7 +487,7 @@ void io_factory::start_archive() {
     }
 
     if (this->is_read()) this->init_read_archive();
-    if (this->is_write()) this->init_write_archive(); 
+    if (this->is_write()) this->init_write_archive();
   }
 }
 
@@ -497,7 +497,7 @@ void io_factory::stop_archive() {
     if (g_debug) {
       std::clog << "DEBUG: io_factory::stop_archive: multi..." << std::endl;
     }
-    
+
     if (this->is_read()) this->reset_read_archive();
     if (this->is_write()) this->reset_write_archive();
   }
@@ -773,7 +773,7 @@ int io_factory::guess_mode_from_filename(const std::string& a_filename,
 //----------------------------------------------------------------------
 // The io_reader class
 
-io_reader::io_reader(int mode) 
+io_reader::io_reader(int mode)
     : io_factory(io_factory::MODE_READ | mode) {
   if (!this->is_read()) {
     throw std::runtime_error("io_reader::io_reader: cannot force not-read mode!");
@@ -799,7 +799,7 @@ io_reader::~io_reader() {
 //----------------------------------------------------------------------
 // The io_writer_class
 
-io_writer::io_writer(int mode) 
+io_writer::io_writer(int mode)
     : io_factory(io_factory::MODE_WRITE | mode) {
   if (!this->is_write()) {
     throw std::runtime_error("io_writer::io_writer: cannot force write mode!");
@@ -856,39 +856,39 @@ data_reader::~data_reader() {
 
 void data_reader::dump(std::ostream& out) const {
   out << "data_reader::dump: " << std::endl;
-  out << " |-- " 
+  out << " |-- "
       << "Status   : " << (status_== 0 ? "Ok" : "Error") << std::endl;
-  out << " |   " 
-      << " |-- " 
+  out << " |   "
+      << " |-- "
       << "Initialized      : " << this->is_initialized() << std::endl;
-  out << " |   " 
-      << " |-- " 
+  out << " |   "
+      << " |-- "
       << "Multi archive    : " << this->is_multi_archives() << std::endl;
-  out << " |   " 
-      << " |-- " 
+  out << " |   "
+      << " |-- "
       << "Single archive   : " << this->is_single_archive() << std::endl;
-  out << " |   " 
-      << " |-- " 
+  out << " |   "
+      << " |-- "
       << "Compressed       : " << this->is_compressed() << std::endl;
-  out << " |   " 
-      << " |-- " 
+  out << " |   "
+      << " |-- "
       << "Gzipped          : " << this->is_gzip() << std::endl;
-  out << " |   " 
-      << " |-- " 
+  out << " |   "
+      << " |-- "
       << "Bzipped          : " << this->is_bzip2() << std::endl;
-  out << " |   " 
-      << " |-- " 
+  out << " |   "
+      << " |-- "
       << "Text archive     : " << this->is_text() << std::endl;
-  out << " |   " 
-      << " |-- " 
+  out << " |   "
+      << " |-- "
       << "XML archive      : " << this->is_xml() << std::endl;
-  out << " |   " 
-      << " `-- " 
+  out << " |   "
+      << " `-- "
       << "Bin archive(port): " << this->is_portable_binary() << std::endl;
-  out << " |-- " 
-      << "Reader   : " 
+  out << " |-- "
+      << "Reader   : "
       << (reader_ != 0 ? "Yes" : "No") << std::endl;
-  out << " `-- " 
+  out << " `-- "
       << "Next tag : '" << (next_tag_) << "'" << std::endl;
 }
 
@@ -896,8 +896,8 @@ void data_reader::dump(std::ostream& out) const {
 void data_reader::read_next_tag() {
   bool devel = false;
 
-  if (devel) { 
-    std::cerr << "DEVEL: data_reader::read_next_tag: Entering..." 
+  if (devel) {
+    std::cerr << "DEVEL: data_reader::read_next_tag: Entering..."
               << std::endl;
   }
 
@@ -914,13 +914,13 @@ void data_reader::read_next_tag() {
     std::cerr << "DEVEL: data_reader::read_next_tag: "
               << "Continue..." << std::endl;
   }
-  
+
   try {
     if (devel) {
       std::cerr << "DEVEL: data_reader::read_next_tag: "
                 << "try block starts..." << std::endl;
     }
-    
+
     if (reader_->is_multi_archives()) {
       if (devel) {
         std::cerr << "DEVEL: data_reader::read_next_tag: "

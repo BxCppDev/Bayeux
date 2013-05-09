@@ -48,12 +48,12 @@ class configuration_property_description
 {
 public:
 
-  static const bool SCALAR = false;
-  static const bool ARRAY  = true;
-  static const bool IMPLICIT_UNIT = false;
-  static const bool EXPLICIT_UNIT = true;
-  static const bool MUTABLE = false;
-  static const bool CONST = true;
+  static const bool SCALAR; // = false;
+  static const bool ARRAY; //  = true;
+  static const bool IMPLICIT_UNIT; // = false;
+  static const bool EXPLICIT_UNIT; // = true;
+  static const bool MUTABLE; // = false;
+  static const bool CONST; // = true;
 
   enum dependency_type {
     DEP_UNDEFINED = 0,

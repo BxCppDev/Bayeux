@@ -431,11 +431,11 @@ class io_writer : public io_factory {
 //----------------------------------------------------------------------
 // user friendly constants used in ctors
 // for data_reader/data_writer:
-static const bool using_multi_archives = true;
+static const bool using_multi_archives    = true;
 static const bool using_multiple_archives = using_multi_archives;
-static const bool using_single_archive = false;
-static const bool append_mode          = true;
-static const bool no_append_mode       = false;
+static const bool using_single_archive    = false;
+static const bool append_mode             = true;
+static const bool no_append_mode          = false;
 
 //----------------------------------------------------------------------
 // data_reader class
