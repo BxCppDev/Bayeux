@@ -475,7 +475,7 @@ int main (int argc_, char ** argv_)
                 << "                           [--no-title]               \\          " << std::endl
                 << "             | pandoc -T=\"datatools::service_manager\" \\        " << std::endl
                 << "                      -r rst -w html                  \\          " << std::endl
-                << "                      -o \"datatools::service_manager.html\"      " << std::endl;
+                << "                      -o \"datatools__service_manager.html\"      " << std::endl;
       std::cout << "                                                                  " << std::endl;
       std::cout << "  ocd_manual --class-id datatools::service_manager \\             " << std::endl
                 << "             --action skeleton                     \\             " << std::endl

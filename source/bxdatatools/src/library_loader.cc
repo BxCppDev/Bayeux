@@ -59,7 +59,7 @@ library_entry_type::~library_entry_type() {
       message << "library_entry_type::dtor: The '"
               << name << "' library was not closed ! "
               << BOOST_PP_STRINGIZE(DATATOOLS_SYS_NAMESPACE) << " says: '"
-              << datatools::detail::DynamicLoader::LastError() 
+              << datatools::detail::DynamicLoader::LastError()
               << "' !";
       std::cerr << "ERROR: " << message.str() << std::endl;
     }
@@ -162,7 +162,7 @@ library_loader::library_loader(uint32_t flags,
   if (g_devel) {
     std::clog << "DEVEL: datatools::library_loader::ctor: Entering...\n";
   }
-  
+
   flags_ = flags;
   if (library_loader::g_test) {
     flags_ |= test;
@@ -178,35 +178,35 @@ library_loader::library_loader(uint32_t flags,
 int library_loader::close_all() {
   while (!stacked_libraries_.empty()) {
     if (g_devel) {
-      std::clog << "DEVEL: " 
+      std::clog << "DEVEL: "
                 << "datatools::library_loader::close_all: "
-                << "library_loader::close_all: LOOP ****************" 
+                << "library_loader::close_all: LOOP ****************"
                 << std::endl;
     }
 
     handle_library_entry_type& hle = stacked_libraries_.front();
     if (!hle.has_data()) {
       if (g_devel) {
-        std::clog << "DEVEL: " 
+        std::clog << "DEVEL: "
                   << "datatools::library_loader::close_all: "
-                  << "library_loader::close_all: NO DATA ****************" 
+                  << "library_loader::close_all: NO DATA ****************"
                   << std::endl;
       }
       stacked_libraries_.pop_front(); // remove top element
     } else {
       if (g_devel) {
-        std::clog << "DEVEL: " 
+        std::clog << "DEVEL: "
                   << "datatools::library_loader::close_all: "
-                  << "library_loader::close_all: DATA *****************" 
+                  << "library_loader::close_all: DATA *****************"
                   << std::endl;
       }
 
       library_entry_type& le = hle.get();
       if (le.handle != 0) {
         if (this->is_debug()) {
-          std::clog << "DEBUG: " 
+          std::clog << "DEBUG: "
                     << "datatools::library_loader::close_all: "
-                    << "Closing library '" 
+                    << "Closing library '"
                     << le.name << "'..." << std::endl;
         }
 
@@ -214,11 +214,11 @@ int library_loader::close_all() {
         if (status != 1) {
           std::ostringstream message;
           message << "datatools::library_loader::close_all: The '"
-                  << le.name 
-                  << "' library was not closed ! " 
-                  << BOOST_PP_STRINGIZE(DATATOOLS_SYS_NAMESPACE) 
+                  << le.name
+                  << "' library was not closed ! "
+                  << BOOST_PP_STRINGIZE(DATATOOLS_SYS_NAMESPACE)
                   << " says: '"
-                  << datatools::detail::DynamicLoader::LastError() 
+                  << datatools::detail::DynamicLoader::LastError()
                   << "' !";
           std::cerr << "ERROR: " << message.str() << std::endl;
           //return;
@@ -236,16 +236,16 @@ int library_loader::close_all() {
         le.handle = 0;
         stacked_libraries_.pop_front (); // remove top element
         if (g_devel) {
-          std::clog << "DEVEL: " 
+          std::clog << "DEVEL: "
                     << "datatools::library_loader::close_all: "
-                    << "Stack size " 
+                    << "Stack size "
                     << stacked_libraries_.size() << std::endl;
         }
         // }
         if (g_devel) {
-          std::clog << "DEVEL: " 
+          std::clog << "DEVEL: "
                     << "datatools::library_loader::close_all: "
-                    << "Removing library stacked entry '" 
+                    << "Removing library stacked entry '"
                     << le.name << "'..."
                     << std::endl;
         }
@@ -263,16 +263,16 @@ library_loader::~library_loader() {
     this->print(std::cerr);
     std::clog << "DEVEL: datatools::library_loader::dtor: " << "close_all...\n";
   }
-  
+
   this->close_all();
-  
+
   if (g_devel) {
-    std::clog << "DEVEL: datatools::library_loader::dtor: " 
+    std::clog << "DEVEL: datatools::library_loader::dtor: "
               << "clear...\n";
   }
-  
+
   libraries_.clear();
-  
+
   if (g_devel) {
     std::clog << "DEVEL: datatools::library_loader::dtor: Exiting.\n";
   }
@@ -354,8 +354,8 @@ int library_loader::registration(const std::string& lib_name_,
     if (!boost::filesystem::exists(check)) {
       std::ostringstream message;
       message << "datatools::library_loader::registration: The shared library file '"
-              << le.name 
-              << "' has no valid file '" 
+              << le.name
+              << "' has no valid file '"
               << le.full_path << "' !";
       throw std::logic_error(message.str());
     }
@@ -377,7 +377,7 @@ int library_loader::load(const std::string& lib_name_,
       std::cerr << "ERROR: "
                 << "datatools::library_loader::load: "
                 << "Library '"
-                << lib_name_ 
+                << lib_name_
                 << "' is not registered !" << std::endl;
       return EXIT_FAILURE;
     } else {
@@ -390,7 +390,7 @@ int library_loader::load(const std::string& lib_name_,
       if (status != EXIT_SUCCESS) {
         std::ostringstream message;
         message << "datatools::library_loader::load: "
-                << "Cannot register library '" 
+                << "Cannot register library '"
                 << lib_name_ << "' !";
         std::cerr << "ERROR: " << message.str() << std::endl;
         return EXIT_FAILURE;
@@ -408,7 +408,7 @@ int library_loader::load(const std::string& lib_name_,
   } else {
     std::ostringstream message;
     message << "datatools::library_loader::load: "
-            << "The '" << lib_name_ << "' library was not loaded ! " 
+            << "The '" << lib_name_ << "' library was not loaded ! "
             << BOOST_PP_STRINGIZE(DATATOOLS_SYS_NAMESPACE) << " says: '"
             << datatools::detail::DynamicLoader::LastError() << "' !";
     std::cerr << "ERROR: " << message.str() << std::endl;
@@ -422,8 +422,8 @@ int library_loader::close(const std::string& lib_name_) {
   if (!this->is_loaded(lib_name_)) {
     std::cerr << "ERROR: "
               << "datatools::library_loader::close: "
-              << "No loaded library '" 
-              << lib_name_ 
+              << "No loaded library '"
+              << lib_name_
               << "' to be closed !" << std::endl;
     return EXIT_FAILURE;
   }
@@ -443,8 +443,8 @@ int library_loader::close(const std::string& lib_name_) {
   int status = datatools::detail::DynamicLoader::CloseLibrary(le.handle);
   if (status != 1) {
     std::ostringstream message;
-    message << "The '" << le.name << "' library was not closed ! " 
-            << BOOST_PP_STRINGIZE(DATATOOLS_SYS_NAMESPACE) 
+    message << "The '" << le.name << "' library was not closed ! "
+            << BOOST_PP_STRINGIZE(DATATOOLS_SYS_NAMESPACE)
             << " says: '"
             << datatools::detail::DynamicLoader::LastError() << "' !";
     std::clog << "ERROR: " << message.str() << std::endl;
@@ -489,7 +489,7 @@ void library_loader::init() {
 
   if (config_filename_.empty()) {
     /*
-    std::clog << "WARNING: " 
+    std::clog << "WARNING: "
               << "datatools::library_loader::_init: "
               << "No library loader config file is available !"
               << std::endl;
@@ -502,7 +502,7 @@ void library_loader::init() {
   du::multi_properties config("name", "filename");
   config.read(config_filename_);
 
-  BOOST_FOREACH(const multi_properties::entry* ptr, 
+  BOOST_FOREACH(const multi_properties::entry* ptr,
                 config.ordered_entries()) {
     const multi_properties::entry& e = *ptr;
     if (g_devel) {
@@ -542,7 +542,7 @@ void library_loader::init() {
     if (g_devel) {
       std::clog << "DEVEL: "
                 << "datatools::library_loader::_init: "
-                << "Registration of library='" << lib_name 
+                << "Registration of library='" << lib_name
                 << "'..." << std::endl;
     }
 
@@ -552,7 +552,7 @@ void library_loader::init() {
     if (status != EXIT_SUCCESS) {
       std::ostringstream message;
       message << "library_entry_type::load: "
-              << "Cannot register library '" 
+              << "Cannot register library '"
               << lib_name << "' !";
       throw std::logic_error(message.str());
     }
@@ -637,60 +637,61 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::library_loader,ocd_)
   ocd_.set_class_documentation ("A library loader object is responsible of the dynamic loading\n"
                                 "of shared libraries (DLL).                                   \n"
                                 );
- 
+
   ocd_.set_configuration_hints ("A library loader object may load directives from a file that  \n"
-                                "uses the format of the 'datatools::multi_properties' object.  \n"
+                                "uses the format of the ``datatools::multi_properties`` object.\n"
                                 "Each section corresponds to the loading rules of a specific   \n"
                                 "DLL.                                                          \n"
-                                "Example :                                                     \n"
-                                " |                                                            \n"
-                                " | #@key_label   \"name\"                                     \n"
-                                " | #@meta_label  \"filename\"                                 \n"
-                                " |                                                            \n"
-                                " | # A DLL with fully specified path :                        \n"
-                                " | [name=\"z\" filename=\"\"]                                 \n"
-                                " | #@config The zlib library                                  \n"
-                                " | #@description The full path of the shared library file     \n"
-                                " | full_path : string = \"/usr/lib/libz.so\"                  \n"
-                                " |                                                            \n"
-                                " |                                                            \n"
-                                " | # Another DLL with fully specified path :                  \n"
-                                " | [name=\"crypto\" filename=\"\"]                            \n"
-                                " | #@config The crypto library                                \n"
-                                " | #@description The full path of the shared library file     \n"
-                                " | full_path : string = \"/usr/lib/libcrypto.so\"             \n"
-                                " |                                                            \n"
-                                " |                                                            \n"
-                                " | # Yet another DLL with implicit path from LD_LIBRARY_PATH :\n"
-                                " | [name=\"ssl\" filename=\"\"]                               \n"
-                                " | #@config The libssl library                                \n"
-                                " |                                                            \n"
-                                " |                                                            \n"
-                                " | # A DLL with explicit directory and filename :             \n"
-                                " | [name=\"gsl\" filename=\"\"]                               \n"
-                                " | #@config The GSL library                                   \n"
-                                " | #@description The directory where the shared library file is stored \n"
-                                " | directory : string = \"/usr/lib\"                          \n"
-                                " |                                                            \n"
-                                " | #@description The shared library file                      \n"
-                                " | filename : string = \"libgsl.so\"                          \n"
-                                " |                                                            \n"
-                                " |                                                            \n"
-                                " | # A DLL with explicit filename and autoload at startup :   \n"
-                                " | [name=\"genvtx\" filename=\"libgenvtx.so\"]                \n"
-                                " | #@config The genvtx library                                \n"
-                                " | #@description Automatic loading at startup                 \n"
-                                " | autoload : boolean = 1                                     \n"
-                                " |                                                            \n"
-                                " |                                                            \n"
-                                " | # A DLL with implicit path :                               \n"
-                                " | [name=\"foo\" filename=\"\"]                               \n"
-                                " | #@config The foo library                                   \n"
-                                " |                                                            \n"
+                                "                                                              \n"
+                                "Example of configuration file::                               \n"
+                                "                                                              \n"
+                                "   #@key_label   \"name\"                                     \n"
+                                "   #@meta_label  \"filename\"                                 \n"
+                                "                                                              \n"
+                                "   # A DLL with fully specified path :                        \n"
+                                "   [name=\"z\" filename=\"\"]                                 \n"
+                                "   #@config The zlib library                                  \n"
+                                "   #@description The full path of the shared library file     \n"
+                                "   full_path : string = \"/usr/lib/libz.so\"                  \n"
+                                "                                                              \n"
+                                "                                                              \n"
+                                "   # Another DLL with fully specified path :                  \n"
+                                "   [name=\"crypto\" filename=\"\"]                            \n"
+                                "   #@config The crypto library                                \n"
+                                "   #@description The full path of the shared library file     \n"
+                                "   full_path : string = \"/usr/lib/libcrypto.so\"             \n"
+                                "                                                              \n"
+                                "                                                              \n"
+                                "   # Yet another DLL with implicit path from LD_LIBRARY_PATH :\n"
+                                "   [name=\"ssl\" filename=\"\"]                               \n"
+                                "   #@config The libssl library                                \n"
+                                "                                                              \n"
+                                "                                                              \n"
+                                "   # A DLL with explicit directory and filename :             \n"
+                                "   [name=\"gsl\" filename=\"\"]                               \n"
+                                "   #@config The GSL library                                   \n"
+                                "   #@description The directory where the shared library file is stored \n"
+                                "   directory : string = \"/usr/lib\"                          \n"
+                                "                                                              \n"
+                                "   #@description The shared library file                      \n"
+                                "   filename : string = \"libgsl.so\"                          \n"
+                                "                                                              \n"
+                                "                                                              \n"
+                                "   # A DLL with explicit filename and autoload at startup :   \n"
+                                "   [name=\"genvtx\" filename=\"libgenvtx.so\"]                \n"
+                                "   #@config The genvtx library                                \n"
+                                "   #@description Automatic loading at startup                 \n"
+                                "   autoload : boolean = 1                                     \n"
+                                "                                                              \n"
+                                "                                                              \n"
+                                "   # A DLL with implicit path :                               \n"
+                                "   [name=\"foo\" filename=\"\"]                               \n"
+                                "   #@config The foo library                                   \n"
+                                "                                                              \n"
                                 );
 
   ocd_.set_validation_support(false);
-  ocd_.lock(); 
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
