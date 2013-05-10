@@ -858,6 +858,23 @@ namespace datatools {
                                                const std::string & indent_,
                                                uint32_t po_flags_) const
   {
+
+    if (!(po_flags_ & po_no_title)) {
+      std::ostringstream title_oss;
+      title_oss << "Configuration of ``" << get_class_name () << "``";
+      size_t len = title_oss.str().size();
+      std::ostringstream title_bar;
+      for (int i = 0; i < len; i++) {
+        title_bar << '=';
+      }
+
+      out_ << indent_ << std::endl;
+      out_ << indent_ << title_bar.str() << std::endl;
+      out_ << indent_ << title_oss.str() << std::endl;
+      out_ << indent_ << title_bar.str() << std::endl;
+      out_ << indent_ << std::endl;
+    }
+
     out_ << indent_ << std::endl;
     out_ << indent_ << "Generalities" << std::endl;
     out_ << indent_ << "------------" << std::endl;

@@ -188,6 +188,7 @@ class object_configuration_description
     {
       po_none = 0,
       po_no_config = 0x1,
+      po_no_title = 0x2,
     };
 
   /// \brief Skeleton/sample generator option flags

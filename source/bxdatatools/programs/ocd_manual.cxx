@@ -239,6 +239,11 @@ int ocd_manual::_run_show(const std::string & class_id_)
                   "--no-configuration-infos") != _params_.action_options.end()) {
         po_flags |= datatools::object_configuration_description::po_no_config;
       }
+    if (std::find(_params_.action_options.begin(),
+                  _params_.action_options.end(),
+                  "--no-title") != _params_.action_options.end()) {
+        po_flags |= datatools::object_configuration_description::po_no_title;
+      }
     OCD.print(std::cout, "", po_flags);
   }
 
@@ -459,15 +464,17 @@ int main (int argc_, char ** argv_)
       std::cout << "                                                                  " << std::endl;
       std::cout << "  ocd_manual --load-dll genvtx --action list                      " << std::endl;
       std::cout << "                                                                  " << std::endl;
-      std::cout << "  ocd_manual --class-id datatools::service_manager \\             " << std::endl
+      std::cout << "  ocd_manual --class-id datatools::service_manager    \\          " << std::endl
                 << "             --action show [--no-configuration-infos] \\          " << std::endl
-                << "             | pandoc -r rst -w plain \\                          " << std::endl
+                << "                           [--no-title]               \\          " << std::endl
+                << "             | pandoc -r rst -w plain                 \\          " << std::endl
                 << "             | less                                               " << std::endl;
       std::cout << "                                                                  " << std::endl;
-      std::cout << "  ocd_manual --class-id datatools::service_manager \\             " << std::endl
+      std::cout << "  ocd_manual --class-id datatools::service_manager    \\          " << std::endl
                 << "             --action show [--no-configuration-infos] \\          " << std::endl
+                << "                           [--no-title]               \\          " << std::endl
                 << "             | pandoc -T=\"datatools::service_manager\" \\        " << std::endl
-                << "                      -r rst -w html \\                           " << std::endl
+                << "                      -r rst -w html                  \\          " << std::endl
                 << "                      -o \"datatools::service_manager.html\"      " << std::endl;
       std::cout << "                                                                  " << std::endl;
       std::cout << "  ocd_manual --class-id datatools::service_manager \\             " << std::endl
