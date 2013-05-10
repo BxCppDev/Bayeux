@@ -543,56 +543,109 @@ namespace datatools {
   void configuration_property_description::print(std::ostream &out_,
                                                  const std::string & indent_) const
   {
-    out_ << indent_ << get_name_pattern() << " ";
-    if (! has_type()) {
-      out_ << "(undefined type) : ";
+    out_ << indent_ << std::endl;
+    /*
+    out_ << indent_ << "* Property ``" << get_name_pattern() << "`` :"
+         << std::endl << std::endl;
+    */
+    out_ << indent_ << "* Property : ``" << get_name_pattern() << "``"
+         << std::endl << std::endl;
+    std::string indent = indent_ + "   ";
+
+    if (has_terse_description()) {
+      print_multi_lines(out_, _terse_description_, indent);
     }
-    else {
-      out_ << "("
-           << ::datatools::get_label_from_type(_type_);
+
+    out_ << std::endl << indent << "**General informations :** " << std::endl;
+
+    out_ << indent << std::endl;;
+    out_ << indent << "* Type: ";
+    if (! has_type()) {
+      out_ << "undefined : ";
+    } else {
+      out_ << "``";
+      out_ << ::datatools::get_label_from_type(_type_);
       if (is_array()) {
         out_ << '[';
-        if (is_fixed_sized_array())
+        if (is_fixed_sized_array()) {
           out_ << get_array_fixed_size();
-        else
-          out_ << '*';
+        } else {
+          out_ << "*";
+        }
         out_ << ']';
       }
       if (is_string() && is_path()) {
         out_ << " as path";
       }
       /*
-      if (is_real()) {
+        if (is_real()) {
         if (is_array()) {
-          ///out_ << " as <unit label>";
+        ///out_ << " as <unit label>";
         }
         else {
-          ///out_ << " in <unit symbol>";
+        ///out_ << " in <unit symbol>";
         }
-      }
+        }
       */
-      out_ << ") : ";
-      if (is_dynamic()) {
-        out_ << "[dynamic";
-        if (is_mandatory()) out_ << " mandatory";
-        out_ << " property depending on values of property ";
-        out_ << " '" << _dynamic_dependee_.name << "'";
-        out_ << "]";
-      }
-      else {
-        out_ << "[static";
-        if (is_mandatory()) out_ << " mandatory";
-        out_ << " property]";
-      }
+      //out_ << ") : ";
+      out_ << "``";
+      out_ << std::endl;
+    }
+
+    out_ << indent << "* Dynamic : ";
+    if (is_dynamic()) {
+      out_ << "yes";
+    } else {
+      out_ << "no (static)";
     }
     out_ << std::endl;
-    if (has_terse_description()) {
-      print_multi_lines(out_, _terse_description_, indent_+"  ");
+
+    out_ << indent << "* Mandatory : ";
+    if (is_mandatory()) {
+      out_ << "yes";
+    } else {
+      out_ << "no";
     }
+    out_ << std::endl;
+
+    out_ << indent << "* Dependency : ";
+    bool spe_dpcy = false;
+    if (has_complex_triggering_conditions()) {
+      out_ << std::endl << indent << "  " << " + "
+           << "has complex triggering conditions";
+      spe_dpcy = true;
+    }
+    else if (has_complex_dependencies()) {
+      out_ << std::endl << indent << "  " << " + "
+           << "has complex dependencies";
+      spe_dpcy = true;
+    }
+    if (is_dynamic()) {
+      out_ << std::endl << indent << "  " << " + "
+           << "Depends on property " << "``" << _dynamic_dependee_.name << "``";
+      spe_dpcy = true;
+    }
+    if (! spe_dpcy)  out_ << "none";
+    out_ << std::endl;
+
+    out_ << indent << "* Depender properties : ";
+    if (_dynamic_dependers_.size() == 0) {
+      out_ << "none";
+    } else {
+      for (int i = 0; i < _dynamic_dependers_.size(); i++) {
+        out_ << std::endl << indent << "  " << " + "
+             << "``" <<  _dynamic_dependers_[i].get_name() << "``";
+       }
+    }
+    out_ << std::endl;
+    out_ << indent << std::endl;;
+
     if (has_long_description()) {
-      out_ << indent_ << std::endl;
-      print_multi_lines(out_, _long_description_, indent_+"  ");
+      out_ << std::endl << indent << "**Detailed description :** " << std::endl;
+      out_ << indent << std::endl;
+      print_multi_lines(out_, _long_description_, indent);
     }
+
     return;
   }
 
@@ -601,10 +654,9 @@ namespace datatools {
                                                 const std::string & title_,
                                                 const std::string & indent_) const
   {
-    if (! title_.empty())
-      {
-        out_ << indent_ << title_ << '\n';
-      }
+    if (! title_.empty()) {
+      out_ << indent_ << title_ << '\n';
+    }
     out_ << indent_ << "|-- " << "Name pattern : '" << _name_pattern_ << "'\n";
     out_ << indent_ << "|   `-- " << "Static : " << is_static() << "\n";
     out_ << indent_ << "|-- " << "Status : '" << (is_valid()?"Valid":"Invalid") << "'\n";
@@ -640,8 +692,7 @@ namespace datatools {
     }
     if ( has_complex_dependencies()) {
       out_ << indent_ << "|-- " << "Complex dependencies : " << _complex_dependencies_ << "\n";
-    }
-    else {
+    } else {
       if (is_static() && _dynamic_dependers_.size()) {
         out_ << indent_ << "|-- " << "Dependers : " << _dynamic_dependers_.size() << "\n";
         for (int i = 0; i < _dynamic_dependers_.size(); i++) {
@@ -660,8 +711,7 @@ namespace datatools {
 
     if ( has_complex_triggering_conditions()) {
       out_ << indent_ << "|-- " << "Complex triggering conditions : " << _complex_triggering_conditions_ << "\n";
-    }
-    else if (_triggering_.size()) {
+    } else if (_triggering_.size()) {
       out_ << indent_ << "|-- " << "Triggering : " << _triggering_.size() << "\n";
       for (int i = 0; i < _triggering_.size(); i++) {
         out_ << indent_ << "|-- ";
@@ -808,32 +858,61 @@ namespace datatools {
                                                const std::string & indent_,
                                                uint32_t po_flags_) const
   {
-    out_ << indent_ << "Class name          : '" << get_class_name () << "'" << std::endl;
+    out_ << indent_ << std::endl;
+    out_ << indent_ << "Generalities" << std::endl;
+    out_ << indent_ << "------------" << std::endl;
+    out_ << indent_ << std::endl;
+
+    out_ << indent_ << "* Class name : ``" << get_class_name () << "``" << std::endl;
+
+    out_ << indent_ << "* Class description : ";
     if (has_class_description()) {
-      out_ << indent_ << "Class description   : '" << get_class_description () << "'" << std::endl;
+      out_ << get_class_description ();
+    } else {
+      out_ << "none";
     }
+    out_ << std::endl;
+
+    out_ << indent_ << "* Class library : ";
     if (has_class_library()) {
-      out_ << indent_ << "Class library       : '" << get_class_library () << "'" << std::endl;
+      out_ << "``" << get_class_library () << "``";
+    } else {
+      out_ << "undocumented";
     }
-    if (has_class_documentation()) {
-      out_ << indent_ << "Class documentation : " << std::endl;
+    out_ << std::endl;
+
+    out_ << indent_ << "* Class documentation : ";
+    if (! has_class_documentation()) {
+      out_ << "none" << std::endl;
+    } else {
+      out_ << std::endl << std::endl;
       print_multi_lines(out_, _class_documentation_, indent_ + "  ");
     }
+
+    out_ << indent_ << "* Validation support : " << (_validation_support_ ? "yes" : "no") << std::endl;
+    out_ << indent_ << std::endl;
+
     if (po_flags_ & po_no_config) return;
+
     if ( _configuration_properties_infos_.size() > 0) {
-      out_ << indent_ << "Description of configuration properties : " << std::endl;
+      out_ << indent_ << std::endl;
+      out_ << indent_ << "Description of configuration properties" << std::endl;
+      out_ << indent_ << "---------------------------------------" << std::endl;
       for (int i = 0; i < _configuration_properties_infos_.size(); i++) {
         out_ << indent_ << std::endl;
         const configuration_property_description & cpd = _configuration_properties_infos_[i];
-        cpd.print(out_, indent_ + "  ");
+        cpd.print(out_, indent_);
       }
+      out_ << indent_ << std::endl;
     }
+
     if (has_configuration_hints()) {
       out_ << indent_ << std::endl;
-      out_ << indent_ << "Configuration hints : " << std::endl;
-      print_multi_lines(out_, _configuration_hints_, indent_ + "  ");
+      out_ << indent_ << "Configuration hints" << std::endl;
+      out_ << indent_ << "-------------------" << std::endl;
+      print_multi_lines(out_, _configuration_hints_, indent_);
     }
-    out_ << indent_ << "Validation support : " << _validation_support_ << std::endl;
+
     return;
   }
 

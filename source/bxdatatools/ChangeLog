@@ -112,3 +112,5 @@ This is the datatools package ChangeLog
 	* fix error in reflection headers installation
 	* add some fetch_path_with_env_X function
 	* re-tag 5.0.0
+2013-05-10 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* OCD output format now uses ReStructuredText

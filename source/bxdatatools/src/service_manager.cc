@@ -93,7 +93,7 @@ void service_manager::load(const datatools::multi_properties& config) {
 
   if (this->is_initialized()) {
     std::ostringstream message;
-    message << "manager::load: " 
+    message << "manager::load: "
             << "Service manager is already initialized !";
     throw std::logic_error(message.str());
   }
@@ -108,9 +108,9 @@ void service_manager::load(const datatools::multi_properties& config) {
     if (debug) {
       std::clog << datatools::io::debug
                 << "datatools::service_manager::load: "
-                << "Configuration for service named '" 
+                << "Configuration for service named '"
                 << service_name << "' "
-                << " with ID '" 
+                << " with ID '"
                 << service_id << "'..."
                 << std::endl;
     }
@@ -204,7 +204,7 @@ void service_manager::reset() {
         if (this->is_debug()) {
           std::clog << datatools::io::debug
                     << "datatools::service_manager::reset: "
-                    << "Removing service '" 
+                    << "Removing service '"
                     << entry.get_service_name ()
                     << "'..."
                     << std::endl;
@@ -246,7 +246,7 @@ service_manager::service_manager(const std::string& name,
                                  const std::string& description,
                                  uint32_t flag)
     : factory_register_("datatools::base_service/service_factory",
-                        flag & VERBOSE ? 
+                        flag & VERBOSE ?
                         base_service::factory_register_type::verbose : 0) {
   initialized_ = false;
   this->set_name(name);
@@ -303,8 +303,8 @@ bool service_manager::can_drop(const std::string& name) {
   if (found == services_.end()) {
     std::ostringstream message;
     message << "datatools::service_manager::can_drop: "
-            << "Service '" 
-            << name 
+            << "Service '"
+            << name
             << "' does not exist !";
     throw std::logic_error(message.str());
   }
@@ -317,8 +317,8 @@ void service_manager::drop(const std::string& name) {
   if (found == services_.end()) {
     std::ostringstream message;
     message << "datatools::service_manager::drop_service: "
-            << "Service '" 
-            << name 
+            << "Service '"
+            << name
             << "' does not exist !";
     throw std::logic_error(message.str());
   }
@@ -327,7 +327,7 @@ void service_manager::drop(const std::string& name) {
   if (!found->second.can_be_dropped()) {
     std::ostringstream message;
     message << "datatools::service_manager::drop_service: "
-            << "Service '" 
+            << "Service '"
             << name
             << "' cannot be dropped because of existing dependent services !";
     throw std::logic_error(message.str());
@@ -336,8 +336,8 @@ void service_manager::drop(const std::string& name) {
   if (this->is_debug()) {
     std::clog << datatools::io::debug
               << "datatools::service_manager::drop: "
-              << "Reset & remove service '" 
-              << name 
+              << "Reset & remove service '"
+              << name
               << "' !"
               << std::endl;
   }
@@ -371,7 +371,7 @@ void service_manager::dump_services(std::ostream& out,
       }
       const std::string& service_name = it->first;
       const service_entry& service_record = it->second;
-      
+
       out << "Name : '" << service_name << "' "
           << "Type : '" << service_record.get_service_id () << "' ";
       out << '(';
@@ -416,27 +416,27 @@ void service_manager::tree_dump(std::ostream& out,
   if (!title.empty()) out << indent << title << std::endl;
 
   out << indent << i_tree_dumpable::tag
-      << "Name           : '" 
-      << name_ 
+      << "Name           : '"
+      << name_
       << "'" << std::endl;
 
   out << indent << i_tree_dumpable::tag
-      << "Description    : '" 
-      << description_ 
+      << "Description    : '"
+      << description_
       << "'" << std::endl;
 
   out << indent << i_tree_dumpable::tag
-      << "Debug          : " 
+      << "Debug          : "
       << debug_ << std::endl;
 
   out << indent << i_tree_dumpable::tag
-      << "Preload        : " 
-      << preload_ 
+      << "Preload        : "
+      << preload_
       << std::endl;
 
   out << indent << i_tree_dumpable::tag
-      << "Force initialization : " 
-      << force_initialization_at_load_ 
+      << "Force initialization : "
+      << force_initialization_at_load_
       << std::endl;
 
   out << indent << i_tree_dumpable::tag
@@ -481,8 +481,8 @@ void service_manager::tree_dump(std::ostream& out,
   }
 
   out << indent << i_tree_dumpable::inherit_tag(inherit)
-      << "Initialized    : " 
-      << this->is_initialized() 
+      << "Initialized    : "
+      << this->is_initialized()
       << std::endl;
 }
 
@@ -504,7 +504,7 @@ void service_manager::load_service(const std::string& name,
   if (this->has(name)) {
     std::ostringstream message;
     message << "datatools::service_manager::load_service: "
-            << "Service '" 
+            << "Service '"
             << name
             << "' already exists !";
     throw std::logic_error(message.str());
@@ -517,8 +517,8 @@ void service_manager::load_service(const std::string& name,
     if (debug) {
       std::clog << datatools::io::debug
                 << "datatools::service_manager::load_service: "
-                << "Add an entry for service '" 
-                << name 
+                << "Add an entry for service '"
+                << name
                 << "'..."
                 << std::endl;
     }
@@ -559,8 +559,8 @@ void service_manager::load_service(const std::string& name,
     if (debug) {
       std::clog << datatools::io::debug
                 << "datatools::service_manager::load_service: "
-                << "Master '" 
-                << master_service_name 
+                << "Master '"
+                << master_service_name
                 << "' "
                 << std::endl;
     }
@@ -648,14 +648,14 @@ void service_manager::create_service(service_entry& entry) {
       std::ostringstream message;
       message << "datatools::service_manager::_create_service: "
               << "Cannot find service factory with ID '"
-              << entry.get_service_id() 
+              << entry.get_service_id()
               << "' for service named '"
               << entry.get_service_name() << "' !";
       throw std::logic_error(message.str());
     }
 
     // You don't think this might be a *little* too deeply nested?
-    typedef 
+    typedef
         datatools::base_service::factory_register_type::factory_type       FactoryType;
 
     const FactoryType& the_factory = factory_register_.get(entry.get_service_id());
@@ -697,7 +697,7 @@ void service_manager::initialize_service(service_entry& entry) {
                 << "'..."
                 << std::endl;
     }
-    
+
     // 2012/04/14: XG since the service handle has been set by
     // the create_service method, one has to use it. THe
     // following commented lines create another pointer ! so
@@ -735,17 +735,17 @@ void service_manager::reset_service(service_entry& entry) {
          ++i) {
       const std::string& master_name = i->first;
       service_dict_type::iterator found = services_.find(master_name);
-      
+
       if (found != services_.end()) {
         service_entry& the_master_entry = found->second;
         the_master_entry.remove_slave(entry.get_service_name());
-        
+
         if (this->is_debug()) {
           std::clog << datatools::io::debug
                     << "datatools::service_manager::_create_service: "
                     << "Remove slave '"
                     << entry.get_service_name()
-                    << "' from master '" 
+                    << "' from master '"
                     << the_master_entry.get_service_name()
                     << "' !"
                     << std::endl;
@@ -781,24 +781,24 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
   ocd_.set_class_name ("datatools::service_manager");
   ocd_.set_class_description ("A generic manager for service objects");
   ocd_.set_class_library ("datatools");
-  ocd_.set_class_documentation ("A service manager is responsible of the instantiation,             \n"
-                                "initialization, management and destruction of various service      \n"
+  ocd_.set_class_documentation ("A *service manager* is responsible of the instantiation,           \n"
+                                "initialization, management and destruction of various *service*    \n"
                                 "objects.                                                           \n"
                                 "A service is a special object that fulfils the generic             \n"
-                                "'datatools::base_service' interface. A service is generally        \n"
+                                "``datatools::base_service`` interface. A service is generally      \n"
                                 "dedicated to some special task : description of the geometry,      \n"
                                 "runtime access to a database, management of a dynamic pool of      \n"
                                 "histograms for data analysis... Such service objects are hosted    \n"
-                                "by the service manager which provides a unique counter for         \n"
+                                "by the *service manager* which provides an unique counter for      \n"
                                 "end-users and client applications to configure, initialize and     \n"
-                                "access to the functionalities offered by the on-board services.    \n" 
-                                "A service manager can be configured 'manually' from plain C++ code.\n"
+                                "access to the functionalities offered by the on-board services.    \n"
+                                "A service manager can be configured *manually* from plain C++ code.\n"
                                 "Is is also possible to initialize it through a set of ASCII        \n"
                                 "configuration files, thus dynamically instantiating a list of      \n"
                                 "services with for various embeded functionalities.                 \n"
                                 )
     ;
-  
+
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("debug")
@@ -806,12 +806,17 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_long_description(
-                            "Superseded by a former call of :              \n"
-                            "  datatools::service_manager::set_debug(true) \n"
+                            "Superseded by the previous method call :                 \n"
+                            "  ``datatools::service_manager::set_debug(true)``        \n"
+                            "                                                         \n"
+                            "Example::                                                \n"
+                            "                                                         \n"
+                            "   debug : boolean = 0                                   \n"
+                            "                                                         \n"
                             )
-      ;    
+      ;
   }
-  
+
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("name")
@@ -819,12 +824,17 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(true)
       .set_long_description(
-                            "Superseded by a former call of :           \n"
-                            "  datatools::service_manager::set_name(...)\n"
-                            )
+                            "Superseded by the previous method call :                 \n"
+                            "  ``datatools::service_manager::set_name(...)``          \n"
+                            "                                                         \n"
+                            "Example::                                                \n"
+                            "                                                         \n"
+                            "   name : string = \"DASM\"                              \n"
+                            "                                                         \n"
+                           )
       ;
   }
-  
+
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("description")
@@ -832,17 +842,22 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
       .set_long_description(
-                            "Superseded by a former call of :                  \n"
-                            "  datatools::service_manager::set_description(...)\n"
+                            "Superseded by the previous method call :                 \n"
+                            "  ``datatools::service_manager::set_description(...)``   \n"
+                            "                                                         \n"
+                            "Example::                                                \n"
+                            "                                                         \n"
+                            "   description : string = \"The service manager for data analysis\" \n"
+                            "                                                         \n"
                             )
       ;
-  }  
-  
+  }
+
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("services.configuration_files")
       .set_terse_description("A list of configuration file names for embeded services")
-      .set_traits(datatools::TYPE_STRING, 
+      .set_traits(datatools::TYPE_STRING,
                   configuration_property_description::ARRAY)
       .set_mandatory(false)
       .set_path(true)
@@ -851,40 +866,42 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
                             "loads the directives to dynamically instantiate          \n"
                             "new embeded service objects. The filenames may contains  \n"
                             "some environment variables.                              \n"
-                            "Example:                                                 \n"
-                            " |                                                       \n"
-                            " | services.configuration_files : string[1] as path = \\ \n"
-                            " |   \"${CONFIG_REPOSITORY_DIR}/services.conf\"          \n"
-                            " |                                                       \n"
+                            "                                                         \n"
+                            "Example::                                                \n"
+                            "                                                         \n"
+                            "   services.configuration_files : string[1] as path = \\ \n"
+                            "     \"${CONFIG_REPOSITORY_DIR}/services.conf\"          \n"
+                            "                                                         \n"
                             "The target files must use the format of the              \n"
-                            "'datatools::multi_properties' class.                     \n"
+                            "``datatools::multi_properties`` class.                   \n"
                             "The loading order of the files is critical               \n"
                             "because some services may depend on other ones           \n"
-                            "which should thus be defined *before* their              \n"
+                            "which should thus be defined **before** their            \n"
                             "dependers.                                               \n"
+                            "                                                         \n"
                             "Extends the instantiation of services triggered by       \n"
-                            "former calls to :                                        \n"
-                            "  datatools::service_manager::load(...)                  \n"
+                            "previous method calls :                                  \n"
+                            "  ``datatools::service_manager::load(...)``              \n"
                             )
     ;
-  }  
-  
+  }
 
-  ocd_.set_configuration_hints ("Configuration example for a 'service_manager' object :        \n"
-                                " |                                                            \n"
-                                " | debug : boolean = 0                                        \n"
-                                " | name  : string = \"CoreServices\"                          \n"
-                                " | description  : string = \\                                 \n"
-                                " |   \"Core services manager for data processing\"            \n"
-                                " | services.configuration_files : string[3] as path = \\      \n"
-                                " |   \"${CONFIG_DIR}/database_services.conf\" \\              \n"
-                                " |   \"${CONFIG_DIR}/io_services.conf\" \\                    \n"
-                                " |   \"${CONFIG_DIR}/processing_services.conf\"               \n"
-                                " |                                                            \n"
+
+  ocd_.set_configuration_hints ("Configuration example for a ``datatools::service_manager`` object:: \n"
+                                "                                                              \n"
+                                "   debug : boolean = 0                                        \n"
+                                "   name  : string = \"CoreServices\"                          \n"
+                                "   description  : string = \\                                 \n"
+                                "     \"Core services manager for data processing\"            \n"
+                                "   services.configuration_files : string[3] as path = \\      \n"
+                                "     \"${CONFIG_DIR}/database_services.conf\" \\              \n"
+                                "     \"${CONFIG_DIR}/io_services.conf\" \\                    \n"
+                                "     \"${CONFIG_DIR}/processing_services.conf\"               \n"
+                                "                                                              \n"
                                 );
 
   ocd_.set_validation_support(true);
-  ocd_.lock(); 
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()

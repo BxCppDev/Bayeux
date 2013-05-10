@@ -148,7 +148,6 @@ public:
   unsigned int get_number_of_triggered_dependers() const;
   const dependency_entry & get_triggered_depender(int i_) const;
 
-
   void dump(std::ostream & out_ = std::clog,
             const std::string & title_ = "",
             const std::string & indent_ = "") const;
