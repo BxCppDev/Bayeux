@@ -22,11 +22,9 @@ endif()
 
 find_package(datatools 5.0.0 REQUIRED)
 
-message(STATUS "datatools_INCLUDE_DIRS=${datatools_INCLUDE_DIRS}" )
+include_directories(${PROJECT_SOURCE_DIR} ${datatools_INCLUDE_DIRS})
 
-include_directories(${datatools_INCLUDE_DIRS})
-
-add_executable(ex_OCD ex_OCD.cxx)
+add_executable(ex_OCD ex_OCD.cxx foo.cc)
 
 target_link_libraries(ex_OCD ${datatools_LIBRARY} )
 
