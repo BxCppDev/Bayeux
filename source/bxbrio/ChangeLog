@@ -29,4 +29,7 @@
 2013-04-22 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* change some cpp guards in header files
 	* make the hacked TArrayCMod::_Streamer_ method private
-	* tag version 4.0.0
+	* tag version 4.0.0 (alpha)
+2013-05-10 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* add examples/ex01 and examples/ex02
+	* do not install tests

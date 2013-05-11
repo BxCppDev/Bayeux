@@ -147,30 +147,25 @@ if(UNIX)
 
 endif()
 
-# ----------------------------------------------------------------------------
-# Install resources :
-#
+#----------------------------------------------------------------
+# - Install public resources :
 
-set ( _brio_testing_FULL_LOCAL_PATH
-      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/testing"
-    )
-message ( STATUS "${PROJECT_NAME} : brio testing full local path = '${_brio_testing_FULL_LOCAL_PATH}' " )
+# - Examples :
+set(_brio_examples_FULL_LOCAL_PATH
+    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/examples"
+   )
 
-install ( DIRECTORY ${PROJECT_SOURCE_DIR}/testing
-          DESTINATION ${CMAKE_INSTALL_DATADIR}
-          FILE_PERMISSIONS OWNER_READ OWNER_WRITE
-                           GROUP_READ GROUP_WRITE
-                           WORLD_READ
-          DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
-                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE
-                                WORLD_READ WORLD_EXECUTE
-          PATTERN ".svn" EXCLUDE
-          PATTERN "*~" EXCLUDE
-          PATTERN CMakeLists.txt EXCLUDE
-          PATTERN testDriver.bash EXCLUDE
-          PATTERN run_tests.bash EXCLUDE
-         )
-
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples
+        DESTINATION ${CMAKE_INSTALL_DATADIR}
+        FILE_PERMISSIONS OWNER_READ OWNER_WRITE
+                         GROUP_READ GROUP_WRITE
+                         WORLD_READ
+        DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                              GROUP_READ GROUP_WRITE GROUP_EXECUTE
+                              WORLD_READ WORLD_EXECUTE
+        PATTERN ".svn" EXCLUDE
+        PATTERN "*~" EXCLUDE
+       )
 
 #-----------------------------------------------------------------------
 # Package
