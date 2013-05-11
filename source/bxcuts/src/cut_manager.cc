@@ -822,7 +822,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_manager,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_long_description("This flag activates debug printing for the embeded  \n"
-                            "cut factory.                                        \n"
+                            "*cut factory*.                                      \n"
                             )
       ;
 
@@ -866,8 +866,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_manager,ocd_)
       .set_long_description("This property indicated the name of the configuration file   \n"
                             "for the service manager made accessible to the cuts objects. \n"
                             "It is only used if no external service manager has been      \n"
-                            "defined through the :                                        \n"
-                            "  cuts::cut_manager::set_service_manager(...) method.        \n"
+                            "defined through the                                          \n"
+                            "``cuts::cut_manager::set_service_manager(...)`` method.      \n"
                             );
    }
 
@@ -883,15 +883,34 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_manager,ocd_)
       .set_long_description("This property indicated the name of the configuration files       \n"
                             "that stored the rules to instantiate cuts objects.                \n"
                             "The filenames may contains some environment variables.            \n"
-                            "Each file must use the format of the 'datatools::multi_properties'\n"
+                            "Each file must use the format of the ``datatools::multi_properties``\n"
                             "class.                                                            \n"
-                            "Example :                                                         \n"
-                            "  | cuts.configuration_files : string[3] a path = \\              \n"
-                            "  |   \"${CUTS_CONFIG_DIR}/energy_cuts.conf\" \\                  \n"
-                            "  |   \"${CUTS_CONFIG_DIR}/track_cuts.conf\"  \\                  \n"
-                            "  |   \"${CUTS_CONFIG_DIR}/topologu_cuts.conf\"                   \n"
-                            );
+                            "                                                                  \n"
+                            "Example::                                                         \n"
+                            "                                                                  \n"
+                            "   cuts.configuration_files : string[3] a path = \\               \n"
+                            "     \"${CUTS_CONFIG_DIR}/energy_cuts.conf\" \\                   \n"
+                            "     \"${CUTS_CONFIG_DIR}/track_cuts.conf\"  \\                   \n"
+                            "     \"${CUTS_CONFIG_DIR}/topology_cuts.conf\"                    \n"
+                            "                                                                  \n"
+                           );
    }
+
+  ocd_.set_configuration_hints ("Configuration example::                                           \n"
+                                "                                                                  \n"
+                                "   debug : boolean = 0                                            \n"
+                                "   verbose : boolean = 0                                          \n"
+                                "   factory.debug : boolean = 0                                    \n"
+                                "   factory.no_preload : boolean = 0                               \n"
+                                "   factory.initialization_at_load : boolean = 0                   \n"
+                                "   service_manager.configuration : string as path = \\            \n"
+                                "     \"${CUTS_CONFIG_DIR}/srvcmgr.conf\"                          \n"
+                                "   cuts.configuration_files : string[3] a path = \\               \n"
+                                "     \"${CUTS_CONFIG_DIR}/energy_cuts.conf\" \\                   \n"
+                                "     \"${CUTS_CONFIG_DIR}/track_cuts.conf\"  \\                   \n"
+                                "     \"${CUTS_CONFIG_DIR}/topology_cuts.conf\"                    \n"
+                                "                                                                  \n"
+                               );
 
   ocd_.set_validation_support(true);
   ocd_.lock();
