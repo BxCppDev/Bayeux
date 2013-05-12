@@ -81,7 +81,7 @@ if(DOXYGEN_FOUND)
   if(APPLE)
     add_custom_command(
       OUTPUT  ${DOXYGEN_OUTPUT_DIR}/org.supernemo.datatools.docset
-      COMMAND make -C ${DOXYGEN_OUTPUT_DIR}/html docset
+      COMMAND make -C ${DOXYGEN_OUTPUT_DIR}/html docset > /dev/null 2>&1
       COMMAND rm -Rf ${DOXYGEN_OUTPUT_DIR}/org.supernemo.datatools.docset
       COMMAND mv -f  ${DOXYGEN_OUTPUT_DIR}/html/org.supernemo.datatools.docset ${DOXYGEN_OUTPUT_DIR}
       DEPENDS ${DOXYGEN_OUTPUT_DIR}/html/index.html
