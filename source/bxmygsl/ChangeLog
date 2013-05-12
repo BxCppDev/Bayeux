@@ -44,5 +44,8 @@ This is the mygsl package ChangeLog
 2013-05-09 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* add 'tracker' output stream in the rng class
 	* add options for ROOT export of histograms
-
+2013-05-12 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* remove tests installation
+	* OCD support uses RST outputs
+	* add empty examples subdir
 
