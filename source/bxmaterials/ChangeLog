@@ -30,5 +30,9 @@
 	  * option allowing alias overwriting from different setup files
 	- add OCD support
 2013-04-23 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
-	- tag version 4.0.0
+	- tag version 4.0.0 (alpha)
+2013-05-11 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	- add examples
+	- remove installation of tests
+	- OCD support with RST output
 

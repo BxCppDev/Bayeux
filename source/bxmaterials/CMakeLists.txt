@@ -108,9 +108,9 @@ else()
   set (MATERIALS_WITH_TEST 0)
 endif()
 
-# ----------------------------------------------------------------------------
-# Install resources :
-#
+#----------------------------------------------------------------
+# - Install public resources :
+
 set ( _materials_DATA_SCHEMA_FULL_LOCAL_PATH
       "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/resources/data"
     )
@@ -126,24 +126,22 @@ install ( DIRECTORY ${PROJECT_SOURCE_DIR}/resources/data
           PATTERN ".svn" EXCLUDE
          )
 
-set ( _materials_TESTING_FULL_LOCAL_PATH
-      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/testing"
-    )
-message ( STATUS "${PROJECT_NAME} : materials testing full local path = '${_materials_TESTING_FULL_LOCAL_PATH}' " )
+# - Examples :
+set(_datatools_examples_FULL_LOCAL_PATH
+    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/examples"
+   )
 
-install ( DIRECTORY ${PROJECT_SOURCE_DIR}/testing
-          DESTINATION ${CMAKE_INSTALL_DATADIR}
-          FILE_PERMISSIONS OWNER_READ OWNER_WRITE
-                           GROUP_READ GROUP_WRITE
-                           WORLD_READ
-          DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
-                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE
-                                WORLD_READ WORLD_EXECUTE
-          PATTERN 		".svn" EXCLUDE
-          PATTERN "*~" EXCLUDE
-          PATTERN "CMakeLists.txt" EXCLUDE
-          PATTERN "testDriver.bash" EXCLUDE
-         )
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples
+        DESTINATION ${CMAKE_INSTALL_DATADIR}
+        FILE_PERMISSIONS OWNER_READ OWNER_WRITE
+                         GROUP_READ GROUP_WRITE
+                         WORLD_READ
+        DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                              GROUP_READ GROUP_WRITE GROUP_EXECUTE
+                              WORLD_READ WORLD_EXECUTE
+        PATTERN ".svn" EXCLUDE
+	PATTERN "*~" EXCLUDE
+       )
 
 #-----------------------------------------------------------------------
 # Package

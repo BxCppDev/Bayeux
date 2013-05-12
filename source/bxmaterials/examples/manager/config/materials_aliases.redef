@@ -1,0 +1,13 @@
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::utils::multi_properties):
+
+#@description A sample list of aliases for materials
+#@key_label   "name"
+#@meta_label  "type"
+
+##################################
+[name="tracking_gas" type="alias"]
+#@config Change alias for tracking gas
+material : string = "air"
+
+# end
