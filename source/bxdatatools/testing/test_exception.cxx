@@ -20,6 +20,25 @@ void check_throws(int i) {
               "argument i[i = " << i << "] is negative");
 }
 
+
+//! Check that a class method under a namespace shows a fully qualified
+//  mehod name
+namespace datatools {
+namespace test_exception {
+struct foo {
+  void foo_method() {
+    DT_THROW_IF(true, std::runtime_error, "failed");
+  }
+
+  template <typename T>
+  void foo_t_method() {
+    DT_THROW_IF(true, std::runtime_error, "failed");
+  }
+};
+} // namespace test_exception
+} // namespace datatools
+
+
 int main(int argc, const char *argv[])
 {
   //TEST: Must throw
@@ -40,6 +59,32 @@ int main(int argc, const char *argv[])
   }
   catch (std::exception& e) {
     std::cerr << "check_throws(1) threw exception and should not have" << std::endl;
+    return 1;
+  }
+
+  // DEMO: that nested class includes fully resolved name
+  try {
+    datatools::test_exception::foo a;
+    a.foo_method();
+  }
+  catch (std::runtime_error& e) {
+    std::cout << e.what() << std::endl;
+  }
+  catch (std::exception& e) {
+    std::cerr << "foo::foo_method threw incorrect exception" << std::endl;
+    return 1;
+  }
+
+  // DEMO: that nested class template method includes fully resolved name
+  try {
+    datatools::test_exception::foo b;
+    b.foo_t_method<int>();
+  }
+  catch (std::runtime_error& e) {
+    std::cout << e.what() << std::endl;
+  }
+  catch (std::exception& e) {
+    std::cerr << "foo::foo_t_method threw incorrect exception" << std::endl;
     return 1;
   }
 
