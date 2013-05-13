@@ -4,11 +4,11 @@
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009
  * Last modified: 2011-03-09
- * 
- * License: 
- * 
+ *
+ * License:
+ *
  * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -21,15 +21,15 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- * 
- * Description: 
+ *
+ * Description:
  *
  *   A container of properties objects implemented as a dictionnary
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 #ifndef DATATOOLS_MULTI_PROPERTIES_H_
 #define DATATOOLS_MULTI_PROPERTIES_H_
@@ -61,7 +61,7 @@ namespace datatools {
  * int main ()
  * {
  *   {
- *     datatools::multi_properties multi_parameters ("name", "type", 
+ *     datatools::multi_properties multi_parameters ("name", "type",
  *                                                   "Setup parameters of a networked random numbers server");
  *
  *     // Add a section for parameters dedicated to the network interface :
@@ -81,9 +81,9 @@ namespace datatools {
  *   }
  *   {
  *      datatools::multi_properties multi_parameters;
- *      multi_parameters.read ("prng_server.conf"); 
+ *      multi_parameters.read ("prng_server.conf");
  *      multi_parameters.tree_dump (std::cout, "PRNG server configuration : ");
- *      // Check if a section with given name exists : 
+ *      // Check if a section with given name exists :
  *      if (multi_parameters.has_section ("server"))
  *        {
  *           const datatools::properties & server_section = multi_parameters.get_section ("server");
@@ -95,7 +95,7 @@ namespace datatools {
  * }
  * \endcode
  */
-class multi_properties :    
+class multi_properties :
     DATATOOLS_SERIALIZABLE_CLASS,
     public datatools::i_clear,
     public datatools::i_tree_dumpable,
@@ -113,13 +113,13 @@ class multi_properties :
   static const bool read_public_only;
   static const bool read_private_also;
 
-  static bool g_debug;
+  //static bool g_debug;
 
  public:
   //! \brief Internal data stored within the dictionary of the multi_properties class.
   class entry : public datatools::i_tree_dumpable {
    public:
-    entry(const std::string& a_key = "", 
+    entry(const std::string& a_key = "",
           const std::string& a_meta = "");
 
     virtual ~entry();
@@ -138,7 +138,7 @@ class multi_properties :
 
     bool has_meta() const;
 
-    virtual void tree_dump(std::ostream& a_out = std::clog, 
+    virtual void tree_dump(std::ostream& a_out = std::clog,
                            const std::string& a_title = "",
                            const std::string& a_oindent = "",
                            bool a_inherit = false) const;
@@ -147,9 +147,9 @@ class multi_properties :
     std::string key_;
     std::string meta_;
     properties properties_;
-  
+
     BOOST_SERIALIZATION_BASIC_DECLARATION();
- 
+
   }; // multi_properties::entry
 
 
@@ -159,21 +159,21 @@ class multi_properties :
 
 private:
 
-  void _init_ (const std::string& a_key_label, 
-               const std::string& a_meta_label, 
-               const std::string& a_description, 
+  void _init_ (const std::string& a_key_label,
+               const std::string& a_meta_label,
+               const std::string& a_description,
                bool a_debug);
 
  public:
 
   multi_properties();
 
-  multi_properties(const std::string& a_key_label, 
+  multi_properties(const std::string& a_key_label,
                    const std::string& a_meta_label);
 
-  multi_properties(const std::string& a_key_label, 
-                   const std::string& a_meta_label, 
-                   const std::string& a_description, 
+  multi_properties(const std::string& a_key_label,
+                   const std::string& a_meta_label,
+                   const std::string& a_description,
                    bool a_debug = false);
 
   virtual ~multi_properties();
@@ -212,10 +212,10 @@ private:
 
   bool has_key(const std::string& a_key) const;
 
-  //! Returns the ith key 
+  //! Returns the ith key
   const std::string & key (int) const;
 
-  //! Returns the ith ordered key 
+  //! Returns the ith ordered key
   const std::string & ordered_key (int) const;
 
   std::vector<std::string> keys () const;
@@ -236,17 +236,17 @@ private:
 
   properties& grab_section(const std::string& a_key);
 
-  void add(const std::string& a_key, 
+  void add(const std::string& a_key,
            const std::string& a_meta,
            const properties& a_props);
 
-  void add(const std::string& a_key, 
+  void add(const std::string& a_key,
            const properties& a_props);
 
-  void add(const std::string& a_key, 
+  void add(const std::string& a_key,
            const std::string& a_meta = "");
 
-  properties& add_section(const std::string& a_key, 
+  properties& add_section(const std::string& a_key,
                           const std::string& a_meta);
 
   void remove(const std::string& a_key);
@@ -264,7 +264,7 @@ private:
 
   void dump_stdout() const;
 
-  virtual void tree_dump(std::ostream& a_out         = std::clog, 
+  virtual void tree_dump(std::ostream& a_out         = std::clog,
                          const std::string& a_title  = "",
                          const std::string& a_indent = "",
                          bool a_inherit          = false) const;
@@ -272,12 +272,12 @@ private:
  private:
   void remove_impl(const std::string& a_key);
 
-  void add_impl(const std::string& a_key, 
+  void add_impl(const std::string& a_key,
                 const std::string& a_meta = "");
-  
-  properties& add_impl2(const std::string& a_key, 
+
+  properties& add_impl2(const std::string& a_key,
                         const std::string& a_meta = "");
-  
+
   void read_impl(std::istream& a_in, bool a_skip_private);
 
  private:
@@ -288,21 +288,21 @@ private:
   entries_col_type         entries_; /// List of stored properties objects (unordered)
   entries_ordered_col_type ordered_entries_; /// List of ordered properties objects
 
-  //! Cloneable interface 
+  //! Cloneable interface
   DATATOOLS_CLONEABLE_DECLARATION(multi_properties);
 
-  //! Serialization interface 
+  //! Serialization interface
   DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(multi_properties);
-  DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT(); 
+  DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT();
 
 #if DATATOOLS_WITH_REFLECTION == 1
-  //! Reflection interface 
+  //! Reflection interface
   DR_CLASS_RTTI();
 #endif
 
 };
 
-} // end of namespace datatools 
+} // end of namespace datatools
 
 // Support for serialization tag :
 DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_DECLARATION(::datatools::multi_properties);

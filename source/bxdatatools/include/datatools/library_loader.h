@@ -88,8 +88,6 @@ public:
 //! \brief A DLL loader class
 class library_loader : boost::noncopyable {
  public:
-  static bool g_devel;
-  static bool g_test;
 
   enum flag_type {
     debug              = bit_mask::bit00,

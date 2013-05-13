@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // temporary_files.h
 #ifndef DATATOOLS_TEMPORARY_FILES_H_
 #define DATATOOLS_TEMPORARY_FILES_H_
@@ -9,11 +9,10 @@
 
 namespace datatools {
 
-/*! \brief A class for the management of temporary unique file stored in a given directory 
+/*! \brief A class for the management of temporary unique file stored in a given directory
  */
 class temp_file {
  public:
-  static bool g_devel;
   static const std::string DEFAULT_PATTERN;
 
  public:
@@ -23,13 +22,13 @@ class temp_file {
 
   temp_file(std::string a_pattern, bool a_remove_at_destroy = true);
 
-  temp_file(const char* a_path_dir, const char* a_pattern, 
+  temp_file(const char* a_path_dir, const char* a_pattern,
             bool a_remove_at_destroy = true);
 
-  temp_file(std::string a_path_dir, const char* a_pattern, 
+  temp_file(std::string a_path_dir, const char* a_pattern,
             bool a_remove_at_destroy = true);
 
-  temp_file(std::string a_path_dir, std::string a_pattern, 
+  temp_file(std::string a_path_dir, std::string a_pattern,
             bool a_remove_at_destroy = true);
 
   ~temp_file();
@@ -72,7 +71,7 @@ class temp_file {
   std::ifstream in_;
 };
 
-} // namespace datatools 
+} // namespace datatools
 
 #endif // DATATOOLS_TEMPORARY_FILES_H_
 

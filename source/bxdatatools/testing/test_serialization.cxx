@@ -1,11 +1,11 @@
 /* test_serialization.cxx */
- 
+
 #include <cstdlib>
 #include <string>
 #include <iostream>
 #include <sstream>
-#include <stdexcept> 
- 
+#include <stdexcept>
+
 #include <boost/filesystem.hpp>
 
 #include <datatools/io_factory.h>
@@ -27,9 +27,9 @@ BOOST_CLASS_EXPORT_IMPLEMENT(datatools::test::more_data_t)
 
 using namespace std;
 
-int main (int argc_, char ** argv_) 
+int main (int argc_, char ** argv_)
 {
-  try 
+  try
     {
       bool debug = false;
       long seed  = 12345;
@@ -38,18 +38,18 @@ int main (int argc_, char ** argv_)
 
       enum format_t
         {
-          FORMAT_TXT = 0, 
-          FORMAT_XML = 1, 
+          FORMAT_TXT = 0,
+          FORMAT_XML = 1,
           FORMAT_BIN = 2
         };
       int fmt   = FORMAT_XML;
       bool test = false;
 
       int iarg = 1;
-      while (iarg < argc_) 
+      while (iarg < argc_)
         {
           string arg = argv_[iarg];
-          if (arg[0] == '-') 
+          if (arg[0] == '-')
             {
               if (arg == "-d") debug = true;
               if (arg == "-10") nrecords = 10;
@@ -59,22 +59,21 @@ int main (int argc_, char ** argv_)
               if (arg == "-txt") fmt = FORMAT_TXT;
               if (arg == "-bin") fmt = FORMAT_BIN;
               if (arg == "-test") test = true;
-              if (arg == "-w") datatools::io_factory::g_warning = true;
             }
-          else 
+          else
             {
-              if (filename.empty ()) 
+              if (filename.empty ())
                 {
                   filename = arg;
                 }
-              else 
+              else
                 {
                   istringstream iss (arg);
                   iss >> seed;
                   if (! iss)
                     {
                       ostringstream message;
-                      message << "format error for 'seed'!"; 
+                      message << "format error for 'seed'!";
                       throw runtime_error (message.str ());
                     }
                 }
@@ -82,39 +81,36 @@ int main (int argc_, char ** argv_)
           iarg++;
         }
 
-      if (filename.empty ()) 
+      if (filename.empty ())
         {
           if (fmt == FORMAT_XML) filename = "test_serialization.xml";
           if (fmt == FORMAT_TXT) filename = "test_serialization.txt";
           if (fmt == FORMAT_BIN) filename = "test_serialization.data";
-        } 
-
-      datatools::io_factory::g_debug = debug;
-      datatools::io_factory::io_factory::g_warning = debug;
+        }
 
       srand48 (seed);
       clog << "NOTICE: using filename '" << filename << "'" << endl;
 
       int mode_guess;
-      if (datatools::io_factory::guess_mode_from_filename (filename, mode_guess) 
-          != datatools::io_factory::SUCCESS) 
+      if (datatools::io_factory::guess_mode_from_filename (filename, mode_guess)
+          != datatools::io_factory::SUCCESS)
         {
           ostringstream message;
           message << "Cannot guess mode for file '" << filename << "'!";
           throw runtime_error (message.str ());
         }
-      if (debug) clog << "DEBUG: mode = " << hex 
+      if (debug) clog << "DEBUG: mode = " << hex
                       << mode_guess
                       << dec << endl;
-    
-      if (boost::filesystem::exists (filename)) 
+
+      if (boost::filesystem::exists (filename))
         {
           ostringstream message;
           message << "File '" << filename << "' already exists!";
-          clog << "WARNING: " << message.str () << " Remove it !" << endl; 
+          clog << "WARNING: " << message.str () << " Remove it !" << endl;
           unlink (filename.c_str ());
         }
-    
+
       {
         clog << "NOTICE: writing..." << endl;
         datatools::data_writer writer (filename);
@@ -123,18 +119,18 @@ int main (int argc_, char ** argv_)
         datatools::safe_serial<datatools::test::data_t>      ss_data;
         datatools::safe_serial<datatools::test::more_data_t> ss_more_data;
 
-        for (int i = 0; i < (int) nrecords; i++) 
+        for (int i = 0; i < (int) nrecords; i++)
           {
             if (debug) clog << "DEBUG: Counts = " << i << endl;
             double p = 0.25 + 0.5 * (i % 2);
-            if (p < 0.5) 
+            if (p < 0.5)
               {
                 ss_data.make ();
                 randomize_data (ss_data.get ());
                 ss_data.get ().tree_dump (clog, "data_t", "<< ");
                 writer.store (ss_data.get ());
               }
-            else 
+            else
               {
                 ss_more_data.make ();
                 randomize_more_data (ss_more_data.get ());
@@ -149,63 +145,63 @@ int main (int argc_, char ** argv_)
           }
         clog << "NOTICE: writing done." << endl << endl;
       }
-    
+
       {
         clog << endl << endl << "NOTICE: reading..." << endl;
- 
+
         datatools::safe_serial<datatools::test::data_t>      ss_data;
         datatools::safe_serial<datatools::test::more_data_t> ss_more_data;
- 
+
         size_t counts = 0;
         datatools::data_reader reader (filename);
         reader.dump (clog);
-        while (reader.has_record_tag ()) 
+        while (reader.has_record_tag ())
           {
             if (debug) clog << "DEBUG: read next record..." << endl;
-            if (reader.record_tag_is (datatools::test::data_t::SERIAL_TAG)) 
+            if (reader.record_tag_is (datatools::test::data_t::SERIAL_TAG))
               {
-                if (debug) clog << "DEBUG: reading..." 
+                if (debug) clog << "DEBUG: reading..."
                                 << datatools::test::data_t::SERIAL_TAG << endl;
-                if (debug) clog << "DEBUG: making a new safe record..." 
+                if (debug) clog << "DEBUG: making a new safe record..."
                                 << endl;
                 ss_data.make ();
-                if (debug) clog << "DEBUG: loading the new safe record..." 
+                if (debug) clog << "DEBUG: loading the new safe record..."
                                 << endl;
                 reader.load (ss_data.get ());
-                if (debug) clog << "DEBUG: loading done." 
+                if (debug) clog << "DEBUG: loading done."
                                 << endl;
                 ss_data.get ().tree_dump (clog, "data_t", ">> ");
               }
-            else if (reader.record_tag_is (datatools::test::more_data_t::SERIAL_TAG)) 
+            else if (reader.record_tag_is (datatools::test::more_data_t::SERIAL_TAG))
               {
-                if (debug)clog << "DEBUG: reading..." 
-                               << datatools::test::more_data_t::SERIAL_TAG 
+                if (debug)clog << "DEBUG: reading..."
+                               << datatools::test::more_data_t::SERIAL_TAG
                                << endl;
-                if (debug) clog << "DEBUG: making a new safe record..." 
+                if (debug) clog << "DEBUG: making a new safe record..."
                                 << endl;
                 ss_more_data.make ();
-                if (debug) clog << "DEBUG: loading the new safe record..." 
+                if (debug) clog << "DEBUG: loading the new safe record..."
                                 << endl;
                 reader.load (ss_more_data.get ());
-                if (debug) clog << "DEBUG: loading done." 
+                if (debug) clog << "DEBUG: loading done."
                                 << endl;
                 ss_more_data.get ().tree_dump (clog, "more_data_t", ">> ");
               }
-            else 
+            else
               {
                 string bad_tag = reader.get_record_tag ();
-                clog << "ERROR: unknown data tag '" 
-                     << bad_tag << "'!" << endl; 
+                clog << "ERROR: unknown data tag '"
+                     << bad_tag << "'!" << endl;
                 break;
               }
             counts++;
             if (debug) clog << "DEBUG: Counts = " << counts << endl;
           }
-        clog << "NOTICE: reading done." << endl << endl;   
-      } 
+        clog << "NOTICE: reading done." << endl << endl;
+      }
 
     }
-  catch (exception & x) 
+  catch (exception & x)
     {
       cerr << "test_serialization: ERROR: " << x.what () << endl;
       exit (EXIT_FAILURE);

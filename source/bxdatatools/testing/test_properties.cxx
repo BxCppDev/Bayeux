@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_properties.cxx
 
 #include <cstdlib>
@@ -18,16 +18,16 @@ using namespace std;
 int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
-  try 
+  try
     {
-      clog << "Test of the 'properties' class..." << endl; 
-  
+      clog << "Test of the 'properties' class..." << endl;
+
       bool debug = false;
       bool use_validator = true;
       long seed = 12345;
 
       int iarg = 1;
-      while (iarg < argc_) 
+      while (iarg < argc_)
         {
           string arg = argv_[iarg];
           if ( arg == "-d" || arg == "--debug" ) debug = true;
@@ -37,56 +37,54 @@ int main (int argc_, char ** argv_)
 
       srand48 (seed);
 
-      datatools::properties::g_debug = debug;
-
       clog << "========================================" << endl;
 
       datatools::properties::data a_data ('I', 3);
       a_data.dump (clog);
       clog << endl;
 
-      if (int error = a_data.set_value (666)) 
+      if (int error = a_data.set_value (666))
         {
-          clog << "1 - datatools::properties::data::set_value: " 
-               << datatools::properties::data::get_error_message (error) 
+          clog << "1 - datatools::properties::data::set_value: "
+               << datatools::properties::data::get_error_message (error)
                << "!" << endl;
         }
       a_data.lock ();
       a_data.dump (clog);
       clog << endl;
 
-      if (int error = a_data.set_value (666, 2)) 
+      if (int error = a_data.set_value (666, 2))
         {
-          clog << "2 - datatools::properties::data::set_value: " 
-               << datatools::properties::data::get_error_message (error) 
+          clog << "2 - datatools::properties::data::set_value: "
+               << datatools::properties::data::get_error_message (error)
                << "!" << endl;
         }
       a_data.unlock ();
       a_data.dump (clog);
       clog << endl;
 
-      if (int error = a_data.set_value (666, 2)) 
+      if (int error = a_data.set_value (666, 2))
         {
-          clog << "3 - datatools::properties::data::set_value: " 
+          clog << "3 - datatools::properties::data::set_value: "
                << datatools::properties::data::get_error_message (error)
                << "!" << endl;
         }
       a_data.dump (clog);
       clog << endl;
-    
-      if (int error = a_data.set_value (666, 8)) 
+
+      if (int error = a_data.set_value (666, 8))
         {
-          clog << "4 - datatools::properties::data::set_value: " 
-               << datatools::properties::data::get_error_message (error) 
+          clog << "4 - datatools::properties::data::set_value: "
+               << datatools::properties::data::get_error_message (error)
                << "!" << endl;
         }
       a_data.dump (clog);
       clog << endl;
-    
+
       if (int error = a_data.set_value ("bad value"))
         {
-          clog << "5 - datatools::properties::data::set_value: " 
-               << datatools::properties::data::get_error_message (error) 
+          clog << "5 - datatools::properties::data::set_value: "
+               << datatools::properties::data::get_error_message (error)
                << "!" << endl;
         }
       a_data.dump (clog);
@@ -95,7 +93,7 @@ int main (int argc_, char ** argv_)
       clog << "========================================" << endl;
 
       datatools::properties my_dict ("a list of user properties");
-      if (! use_validator) 
+      if (! use_validator)
         {
           my_dict.unset_key_validator ();
         }
@@ -111,43 +109,43 @@ int main (int argc_, char ** argv_)
       my_dict.store (datatools::properties::make_private_key ("private"),
                      "a private data", "Confidential stuff");
 
-      try 
+      try
         {
           my_dict.store ("#number", 666);
         }
-      catch (exception & x) 
+      catch (exception & x)
         {
           clog << "ERROR: " << x.what () << endl;
         }
       my_dict.store ("age", 24, "the age of the captain");
 
-      try 
+      try
         {
           my_dict.store ("007", "James Bond");
         }
-      catch (exception & x) 
-        {
-          clog << "ERROR: " << x.what () << endl;
-        }
-    
-      try 
-        {
-          my_dict.store ("", "Money Penny");
-        }
-      catch (exception & x) 
+      catch (exception & x)
         {
           clog << "ERROR: " << x.what () << endl;
         }
 
-      try 
+      try
         {
-          my_dict.store ("bad_token", "a bad \"char\"");
+          my_dict.store ("", "Money Penny");
         }
-      catch (exception & x) 
+      catch (exception & x)
         {
           clog << "ERROR: " << x.what () << endl;
         }
-    
+
+      try
+        {
+          my_dict.store ("bad_token", "a bad \"char\"");
+        }
+      catch (exception & x)
+        {
+          clog << "ERROR: " << x.what () << endl;
+        }
+
       my_dict.store ("weight", 23.4);
       my_dict.store ("male", true);
       vector<double> vals;
@@ -176,7 +174,7 @@ int main (int argc_, char ** argv_)
 
       vector<double> vals2;
       double s = 3.14159;
-      for (int i = 1; i < 13; i++) 
+      for (int i = 1; i < 13; i++)
         {
           s /= i;
           vals2.push_back (s);
@@ -192,7 +190,7 @@ int main (int argc_, char ** argv_)
       clog << endl;
 
       vector<string> tokens;
-      for (int i = 0; i < 12; i++) 
+      for (int i = 0; i < 12; i++)
         {
           ostringstream tok;
           tok << "token_" << i;
@@ -231,28 +229,28 @@ int main (int argc_, char ** argv_)
       my_dict.clear ();
       my_dict.tree_dump (clog,"Dict after clear:");
       clog << endl;
-    
-      clog << "serialize: reading from '" << filename << "'..." 
+
+      clog << "serialize: reading from '" << filename << "'..."
            << endl;
       {
         datatools::data_reader reader (filename);
-        if (reader.has_record_tag ()) 
+        if (reader.has_record_tag ())
           {
-            if (reader.get_record_tag () == datatools::properties::SERIAL_TAG) 
+            if (reader.get_record_tag () == datatools::properties::SERIAL_TAG)
               {
                 datatools::properties a_dict;
                 reader.load (a_dict);
                 my_dict = a_dict;
               }
-            else 
+            else
               {
                 clog << "Record tag : '"<< reader.get_record_tag () << "'" << endl;
               }
           }
       }
-    
+
       clog << "serialize: reading done." << endl;
-      clog << endl; 
+      clog << endl;
       my_dict.tree_dump (clog, "Dict after reading:");
 
       clog << "========================================" << endl;
@@ -274,7 +272,7 @@ int main (int argc_, char ** argv_)
 
       clog << "========================================" << endl;
 
-      clog << "Enter a list of double-quoted strings (ex: \"my\" \"favorite\" \"color\" \"is\" \"blue\"): " 
+      clog << "Enter a list of double-quoted strings (ex: \"my\" \"favorite\" \"color\" \"is\" \"blue\"): "
            << endl;
       string as;
       getline (cin, as);
@@ -282,7 +280,7 @@ int main (int argc_, char ** argv_)
       string s2;
       istringstream iss (as);
 
-      do 
+      do
         {
           iss >> ws;
           if (iss.eof ()) break;
@@ -291,50 +289,50 @@ int main (int argc_, char ** argv_)
             {
               clog << "String = '" << s2 << "'" << endl;
             }
-          else 
+          else
             {
-              clog << "Cannot parse quoted string from '" << as 
+              clog << "Cannot parse quoted string from '" << as
                    << "'!" << endl;
             }
         } while (iss);
-    
+
       clog << "========================================" << endl;
 
       clog << "Example of an invalid string: " << endl;
       string s3 = "aze\"rty";
       clog << "s3='" << s3 << "'" << endl;
-      if (datatools::properties::data::has_forbidden_char (s3)) 
+      if (datatools::properties::data::has_forbidden_char (s3))
         {
-          clog << "Oops! As expected, there are forbidden chars found in s3='" << s3 << "' !" 
+          clog << "Oops! As expected, there are forbidden chars found in s3='" << s3 << "' !"
                << endl;
         }
-      else 
+      else
         {
           clog << "'s3' is ok !" << endl;
         }
-    
+
       clog << "Example of a valid string: " << endl;
       string s4 = "azerty";
       clog << "s4='" << s4 << "'" << endl;
       if (datatools::properties::data::has_forbidden_char (s4))
         {
-          clog << "Oops! As expected, there are forbidden chars found in s4='" << s4 << "' !" 
+          clog << "Oops! As expected, there are forbidden chars found in s4='" << s4 << "' !"
                << endl;
         }
-      else 
+      else
         {
           clog << "'s4' is ok!" << endl;
         }
- 
+
     }
   catch (exception & x)
     {
-      clog << "error: " << x.what () << endl; 
+      clog << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return error_code;

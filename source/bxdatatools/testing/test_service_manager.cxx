@@ -200,7 +200,6 @@ int main (int argc_, char ** argv_)
           iarg++;
         }
 
-      datatools::base_service::g_debug = debug;
       DATATOOLS_FACTORY_GET_SYSTEM_REGISTER (datatools::base_service).print (clog);
 
       {

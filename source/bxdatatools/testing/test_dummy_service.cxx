@@ -67,7 +67,6 @@ int main (int argc_, char ** argv_)
           iarg++;
         }
 
-      datatools::base_service::g_debug = debug;
       {
         // Setup the configuration parameters of the service:
         datatools::properties DS_config;

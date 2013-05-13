@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_temp_file.cxx
 
 #include <cstdlib>
@@ -12,14 +12,14 @@ using namespace std;
 int main (int argc_ , char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
-  try 
+  try
     {
-      clog << "Test of the 'temp_file' class..." << endl; 
-  
+      clog << "Test of the 'temp_file' class..." << endl;
+
       bool debug = false;
       bool temp_file_delete = true;
       int iarg = 1;
-      while (iarg <  argc_) 
+      while (iarg <  argc_)
         {
           string arg = argv_[iarg];
 
@@ -29,15 +29,13 @@ int main (int argc_ , char ** argv_)
           iarg++;
         }
 
-      if (debug) datatools::temp_file::g_devel = true;
-    
       {
         datatools::temp_file ftmp;
         ftmp.set_remove_at_destroy (temp_file_delete);
 
         clog << "Create a temporary file: " << endl;
         ftmp.create ("/tmp", "temp_");
-        clog << "Temporary filename is '" 
+        clog << "Temporary filename is '"
              << ftmp.get_filename () << "' !" << endl;
 
         clog << "Write in the temporary file: " << endl;
@@ -65,26 +63,26 @@ int main (int argc_ , char ** argv_)
         datatools::temp_file ftmp ("__new/sub", "temp_", false);
         ftmp.out () << "test: " << ftmp.get_filename() << endl;
       }
-      try 
+      try
         {
           datatools::temp_file ftmp ("/__forbidden", "temp_", false);
           ftmp.out () << "test: " << ftmp.get_filename() << endl;
         }
       catch (exception & x)
         {
-          cerr << "WARNING: As expected, there was an error : " 
-               << x.what() << endl; 
+          cerr << "WARNING: As expected, there was an error : "
+               << x.what() << endl;
         }
 
     }
   catch (exception & x)
     {
-      cerr << "error: " << x.what() << endl; 
+      cerr << "error: " << x.what() << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return error_code;

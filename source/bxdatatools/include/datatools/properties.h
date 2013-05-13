@@ -423,7 +423,7 @@ class properties :
 //
  public:
   //! Global static debug variable
-  static bool g_debug;
+  //static bool g_debug;
 
   //! Prefix string used for the naming of private properties
   static const std::string PRIVATE_PROPERTY_PREFIX;

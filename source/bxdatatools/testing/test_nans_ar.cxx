@@ -47,17 +47,17 @@ string get_fp_classify_label (int fpc_)
   return "?";
 }
 
-class data_t : public datatools::i_serializable 
+class data_t : public datatools::i_serializable
 {
   double __v1, __v2;
-  
+
 public:
 
   //>>> from `i_serializable'
   static const std::string SERIAL_TAG;
 
   virtual const std::string & get_serial_tag () const;
-  //<<< 
+  //<<<
 
   bool values_are_ok () const
   {
@@ -143,7 +143,7 @@ const string data_t::SERIAL_TAG = "test_nans::data_t";
 const string & data_t::get_serial_tag () const
 {
   return data_t::SERIAL_TAG;
-} 
+}
 
 void test ()
 {
@@ -151,36 +151,36 @@ void test ()
   uint64_t ux = *((const uint64_t *) (&x));
   clog << "test: x = " << x << endl;
   clog << "test: ux = " << hex << ux << dec << endl;
-                
+
   return;
 }
 
-int main (int argc_ , char ** argv_) 
+int main (int argc_ , char ** argv_)
 {
-  try 
+  try
     {
       long seed = 314159;
       bool debug = false;
       bool do_test = false;
-      enum format_t  
+      enum format_t
         {
-          FORMAT_TXT = 0, 
-          FORMAT_XML = 1, 
+          FORMAT_TXT = 0,
+          FORMAT_XML = 1,
           FORMAT_BIN = 2
         };
       int fmt   = FORMAT_XML;
 
       int iarg = 1;
-      while (iarg < argc_) 
+      while (iarg < argc_)
         {
           string arg=argv_[iarg];
-          if (arg[0] == '-') 
+          if (arg[0] == '-')
             {
               if (arg == "-xml") fmt = FORMAT_XML;
               if (arg == "-txt") fmt = FORMAT_TXT;
               if (arg == "-bin") fmt = FORMAT_BIN;
             }
-          else if (arg == "-t") 
+          else if (arg == "-t")
             {
               do_test = true;
             }
@@ -201,24 +201,23 @@ int main (int argc_ , char ** argv_)
       //boost::math::detail::fp_traits<double>::type::coverage dc;
       //clog << "Coverage = " << dc << endl;
 
-      datatools::io_factory::g_debug = debug;
       srand48 (seed);
       clog << "NOTICE: using filename '" << filename << "'" << endl;
-   
-      if (boost::filesystem::exists (filename)) 
+
+      if (boost::filesystem::exists (filename))
         {
           ostringstream message;
           message << "File '" << filename << "' already exists!";
           clog << "warning: " << message.str () << endl;
         }
-    
+
       {
         clog << "NOTICE: writing..." << endl;
         datatools::safe_serial<data_t> ss_data;
         //datatools::data_writer writer (filename, datatools::using_multi_archives);
         datatools::data_writer writer (filename, datatools::using_single_archive);
         int counts = 10;
-        for (int i = 0; i < counts; i++) 
+        for (int i = 0; i < counts; i++)
           {
             ss_data.make ();
             if (drand48 () < 0.15) ss_data.get ().nan ();
@@ -230,43 +229,43 @@ int main (int argc_ , char ** argv_)
           }
         clog << "NOTICE: writing done." << endl << endl;
       }
-    
+
       {
         clog << "NOTICE: reading..." << endl;
         datatools::safe_serial<data_t> ss_data;
-        //datatools::data_reader reader (filename, datatools::using_multi_archives);    
-        datatools::data_reader reader (filename, datatools::using_single_archive);    
+        //datatools::data_reader reader (filename, datatools::using_multi_archives);
+        datatools::data_reader reader (filename, datatools::using_single_archive);
         int counts = 0;
-        while (reader.has_record_tag ()) 
+        while (reader.has_record_tag ())
           {
-            if (reader.record_tag_is (data_t::SERIAL_TAG)) 
+            if (reader.record_tag_is (data_t::SERIAL_TAG))
               {
-                if (debug) clog << "DEBUG: reading..." 
+                if (debug) clog << "DEBUG: reading..."
                                 << data_t::SERIAL_TAG << endl;
-                if (debug) clog << "DEBUG: making a new safe record..." 
+                if (debug) clog << "DEBUG: making a new safe record..."
                                 << endl;
                 ss_data.make ();
-                if (debug) clog << "DEBUG: loading the new safe record..." 
+                if (debug) clog << "DEBUG: loading the new safe record..."
                                 << endl;
                 reader.load (ss_data.get ());
                 clog << ss_data.get () << endl;
                 if (debug) clog << "DEBUG: loading done." << endl;
               }
-            else 
+            else
               {
                 string bad_tag = reader.get_record_tag ();
-                clog << "ERROR: unknown data tag '" 
-                     << bad_tag << "'!" << endl; 
+                clog << "ERROR: unknown data tag '"
+                     << bad_tag << "'!" << endl;
                 break;
               }
             counts++;
             if (debug) clog << "DEBUG: Counts = " << counts << endl;
           }
-        clog << "NOTICE: reading done." << endl << endl;   
-      } 
+        clog << "NOTICE: reading done." << endl << endl;
+      }
 
     }
-  catch (exception & x) 
+  catch (exception & x)
     {
       cerr << "test_nans_ar: ERROR: " << x.what () << endl;
       exit (EXIT_FAILURE);

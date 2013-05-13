@@ -34,7 +34,7 @@
 
 namespace datatools {
 
-bool base_service::g_debug = false;
+  //bool base_service::g_debug = false;
 
 DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(
     base_service,
@@ -116,19 +116,19 @@ void base_service::tree_dump(std::ostream& out,
   if (!title.empty()) out << indent << title << std::endl;
 
   out << indent << i_tree_dumpable::tag
-      << "Service name        : '" 
+      << "Service name        : '"
       << name_ << "'" << std::endl;
 
   out << indent << i_tree_dumpable::tag
-      << "Service description : '" 
+      << "Service description : '"
       << description_ << "'" << std::endl;
 
   out << indent << i_tree_dumpable::tag
-      << "Service version     : '" 
+      << "Service version     : '"
       << version_ << "'" << std::endl;
 
   out << indent << i_tree_dumpable::inherit_tag (a_inherit)
-      << "Service initialized : " 
+      << "Service initialized : "
       << this->is_initialized() << std::endl;
 }
 

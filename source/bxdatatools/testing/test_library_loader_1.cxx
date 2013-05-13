@@ -54,9 +54,6 @@ int main (int argc_ , char ** argv_)
           iarg++;
         }
 
-      datatools::library_loader::g_devel = debug;
-      datatools::library_loader::g_test  = test;
-
       if (libname.empty ())
         {
           libname = "crypto"; // or "curses" ...

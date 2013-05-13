@@ -55,7 +55,7 @@ class properties;
  */
 class base_service : public datatools::i_tree_dumpable {
  public:
-  static bool g_debug;
+  //static bool g_debug;
 
  public:
   /// Constructor

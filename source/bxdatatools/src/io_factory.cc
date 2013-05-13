@@ -24,8 +24,8 @@ const std::string io_factory::BIN_EXT   = "data";
 const std::string io_factory::GZ_EXT    = "gz";
 const std::string io_factory::BZIP2_EXT = "bz2";
 
-bool io_factory::g_debug = false;
-bool io_factory::g_warning = false;
+//bool io_factory::g_debug = false;
+//bool io_factory::g_warning = false;
 
 bool io_factory::eof() const {
   if (this->is_write()) return false;
@@ -107,51 +107,51 @@ bool io_factory::is_append() const {
 
 // return bool instead????
 int io_factory::init_read_archive() {
-  bool devel = g_debug;
-  if (devel) {
-    std::clog << "DEBUG: io_factory::init_read_archive: Entering..."
-              << std::endl;
-  }
+  // bool devel = g_debug;
+  // if (devel) {
+  //   std::clog << "DEBUG: io_factory::init_read_archive: Entering..."
+  //             << std::endl;
+  // }
 
   /*** text archive ***/
   if (this->is_text()) {
-    if (devel) {
-      std::clog << "DEBUG: io_factory::init_read_archive: "
-                << "text with FPU..."
-                << std::endl;
-    }
+    // if (devel) {
+    //   std::clog << "DEBUG: io_factory::init_read_archive: "
+    //             << "text with FPU..."
+    //             << std::endl;
+    // }
 
     itar_ptr_ = new boost::archive::text_iarchive(
         *in_, boost::archive::no_codecvt);
 
-    if (devel) {
-      std::clog << "DEBUG: io_factory::init_read_archive: "
-                << "'boost::archive::text_iarchive' library version "
-                << itar_ptr_->get_library_version() << std::endl;
-    }
+    // if (devel) {
+    //   std::clog << "DEBUG: io_factory::init_read_archive: "
+    //             << "'boost::archive::text_iarchive' library version "
+    //             << itar_ptr_->get_library_version() << std::endl;
+    // }
   }
 
   /*** XML archive ***/
   else if (this->is_xml()) {
     ixar_ptr_ = new boost::archive::xml_iarchive(
         *in_, boost::archive::no_codecvt);
-    if (devel) {
-      std::clog << "DEBUG: io_factory::init_read_archive: "
-                << "'boost::archive::xml_iarchive' library version "
-                << ixar_ptr_->get_library_version() << std::endl;
-    }
+    // if (devel) {
+    //   std::clog << "DEBUG: io_factory::init_read_archive: "
+    //             << "'boost::archive::xml_iarchive' library version "
+    //             << ixar_ptr_->get_library_version() << std::endl;
+    // }
   }
 
   /*** binary archive ***/
   else if (this->is_binary()) {
     ibar_ptr_ = new eos::portable_iarchive(*in_);
 
-    if (devel) {
-      std::cerr << "DEBUG: io_factory::init_read_archive: "
-                << "'eos::portable_iarchive'library version = "
-                << ibar_ptr_->get_library_version()
-                << std::endl;
-    }
+    // if (devel) {
+    //   std::cerr << "DEBUG: io_factory::init_read_archive: "
+    //             << "'eos::portable_iarchive'library version = "
+    //             << ibar_ptr_->get_library_version()
+    //             << std::endl;
+    // }
   }
 
   else {
@@ -159,10 +159,10 @@ int io_factory::init_read_archive() {
   }
 
   read_archive_is_initialized_ = true;
-  if (devel) {
-    std::clog << "DEVEL: io_factory::_init_read_archive_: Exiting."
-              << std::endl;
-  }
+  // if (devel) {
+  //   std::clog << "DEVEL: io_factory::_init_read_archive_: Exiting."
+  //             << std::endl;
+  // }
   return 0;
 }
 
@@ -203,15 +203,15 @@ int io_factory::init_read(const std::string& stream_name) {
   }
 
   if (stream_name.empty()) {
-    if (g_debug) {
-      std::clog << "DEBUG: io_factory::init_read: cin..." << std::endl;
-    }
+    // if (g_debug) {
+    //   std::clog << "DEBUG: io_factory::init_read: cin..." << std::endl;
+    // }
     in_fs_->push(std::cin);
   } else {
-    if (g_debug) {
-      std::clog << "DEBUG: io_factory::init_read: file='"
-                << stream_name << "'" << std::endl;
-    }
+    // if (g_debug) {
+    //   std::clog << "DEBUG: io_factory::init_read: file='"
+    //             << stream_name << "'" << std::endl;
+    // }
 
     if (this->is_compressed() || this->is_binary()) {
       fin_ = new std::ifstream(stream_name.c_str(),
@@ -230,11 +230,11 @@ int io_factory::init_read(const std::string& stream_name) {
 
   in_ = in_fs_;
   if (this->is_text() || this->is_xml()) {
-    if (g_debug) {
-      std::clog << "DEBUG: io_factory::_init_read_: "
-                << "FPU: stream.imbue..."
-                << std::endl;
-    }
+    // if (g_debug) {
+    //   std::clog << "DEBUG: io_factory::_init_read_: "
+    //             << "FPU: stream.imbue..."
+    //             << std::endl;
+    // }
     in_->imbue(*locale_);
   }
 
@@ -243,9 +243,9 @@ int io_factory::init_read(const std::string& stream_name) {
 
 
 int io_factory::reset_read() {
-  if (g_debug) {
-    std::clog << "DEBUG: io_factory::_reset_read_:..." << std::endl;
-  }
+  // if (g_debug) {
+  //   std::clog << "DEBUG: io_factory::_reset_read_:..." << std::endl;
+  // }
 
   if (in_ != 0) in_ = 0;
 
@@ -271,43 +271,43 @@ int io_factory::init_write_archive() {
   }
 
   if (this->is_text()) {
-    if (g_debug) {
-      std::clog << "DEBUG: io_factory::init_write_archive: "
-                << "with FPU: text archive..."
-                << std::endl;
-    }
+    // if (g_debug) {
+    //   std::clog << "DEBUG: io_factory::init_write_archive: "
+    //             << "with FPU: text archive..."
+    //             << std::endl;
+    // }
 
     otar_ptr_ = new boost::archive::text_oarchive(
         *out_,boost::archive::no_codecvt);
 
-    if (g_debug) {
-      std::clog << "DEBUG: io_factory::init_write_archive: "
-                << "'boost::archive::text_oarchive' library version "
-                << otar_ptr_->get_library_version() << std::endl;
-    }
+    // if (g_debug) {
+    //   std::clog << "DEBUG: io_factory::init_write_archive: "
+    //             << "'boost::archive::text_oarchive' library version "
+    //             << otar_ptr_->get_library_version() << std::endl;
+    // }
   } else if (this->is_xml()) {
-    if (g_debug) {
-      std::clog << "DEBUG: io_factory::init_write_archive: "
-                << "with FPU: XML archive..."
-                << std::endl;
-    }
+    // if (g_debug) {
+    //   std::clog << "DEBUG: io_factory::init_write_archive: "
+    //             << "with FPU: XML archive..."
+    //             << std::endl;
+    // }
 
     oxar_ptr_ = new boost::archive::xml_oarchive(
         *out_, boost::archive::no_codecvt);
 
-    if (g_debug) {
-      std::clog << "DEBUG: io_factory::init_write_archive: "
-                << "'boost::archive::xml_oarchive' library version "
-                << oxar_ptr_->get_library_version() << std::endl;
-    }
+    // if (g_debug) {
+    //   std::clog << "DEBUG: io_factory::init_write_archive: "
+    //             << "'boost::archive::xml_oarchive' library version "
+    //             << oxar_ptr_->get_library_version() << std::endl;
+    // }
   } else if (this->is_binary()) {
     obar_ptr_ = new eos::portable_oarchive(*out_);
 
-    if (g_debug) {
-      std::clog << "DEBUG: io_factory::init_write_archive: "
-                << "'eos::portable_oarchive' library version "
-                << obar_ptr_->get_library_version() << std::endl;
-    }
+    // if (g_debug) {
+    //   std::clog << "DEBUG: io_factory::init_write_archive: "
+    //             << "'eos::portable_oarchive' library version "
+    //             << obar_ptr_->get_library_version() << std::endl;
+    // }
   } else {
     throw std::runtime_error("io_factory::init_write_archive: format not supported!");
   }
@@ -329,17 +329,17 @@ int io_factory::init_write(const std::string& stream_name) {
   }
 
   if (stream_name.empty()) {
-    if (g_debug) {
-      std::clog << "DEBUG: io_factory::init_write: cout..." << std::endl;
-    }
+    // if (g_debug) {
+    //   std::clog << "DEBUG: io_factory::init_write: cout..." << std::endl;
+    // }
 
     out_fs_->push(std::cout);
     return 0;
   } else {
-    if (g_debug) {
-      std::clog << "DEBUG: io_factory::init_write: file='"
-                << stream_name << "'"<< std::endl;
-    }
+    // if (g_debug) {
+    //   std::clog << "DEBUG: io_factory::init_write: file='"
+    //             << stream_name << "'"<< std::endl;
+    // }
 
     std::ios_base::openmode open_mode = std::ios_base::out;
     if (this->is_compressed() || this->is_binary())
@@ -371,17 +371,17 @@ int io_factory::init_write(const std::string& stream_name) {
 
   out_ = out_fs_;
   if (this->is_text() || this->is_xml()) {
-    if (g_debug) {
-      std::clog << "DEBUG: io_factory::_init_write_: stream.imbue"
-                << std::endl;
-    }
+    // if (g_debug) {
+    //   std::clog << "DEBUG: io_factory::_init_write_: stream.imbue"
+    //             << std::endl;
+    // }
     out_->imbue(*locale_);
   }
 
-  if (g_debug) {
-    std::clog << "DEBUG: io_factory::_init_write_: mode='"
-              << std::hex << mode_ << std::dec << "'" << std::endl;
-  }
+  // if (g_debug) {
+  //   std::clog << "DEBUG: io_factory::_init_write_: mode='"
+  //             << std::hex << mode_ << std::dec << "'" << std::endl;
+  // }
 
   return 0;
 }
@@ -393,10 +393,10 @@ int io_factory::reset_write_archive() {
   }
 
   if (otar_ptr_ != 0) {
-    if (g_debug) {
-      std::clog << "DEBUG: io_factory::reset_write_archive: "
-                << "delete TXT archive!" << std::endl;
-    }
+    // if (g_debug) {
+    //   std::clog << "DEBUG: io_factory::reset_write_archive: "
+    //             << "delete TXT archive!" << std::endl;
+    // }
 
     delete otar_ptr_;
     otar_ptr_ = 0;
@@ -404,20 +404,20 @@ int io_factory::reset_write_archive() {
   }
 
   if (oxar_ptr_ != 0) {
-    if (g_debug) {
-      std::clog << "DEBUG: io_factory::reset_write_archive: "
-                << "delete XML archive!" << std::endl;
-    }
+    // if (g_debug) {
+    //   std::clog << "DEBUG: io_factory::reset_write_archive: "
+    //             << "delete XML archive!" << std::endl;
+    // }
 
     delete oxar_ptr_;
     oxar_ptr_ = 0;
   }
 
   if (obar_ptr_ != 0) {
-    if (g_debug) {
-      std::clog << "DEBUG: io_factory::reset_write_archive: "
-                << "delete binary archive!" << std::endl;
-    }
+    // if (g_debug) {
+    //   std::clog << "DEBUG: io_factory::reset_write_archive: "
+    //             << "delete binary archive!" << std::endl;
+    // }
 
     delete obar_ptr_;
     obar_ptr_ = 0;
@@ -429,9 +429,9 @@ int io_factory::reset_write_archive() {
 
 
 int io_factory::reset_write() {
-  if (g_debug) {
-    std::clog << "DEBUG: io_factory::reset_write:..." << std::endl;
-  }
+  // if (g_debug) {
+  //   std::clog << "DEBUG: io_factory::reset_write:..." << std::endl;
+  // }
 
   if (out_ != 0) {
     out_->flush();
@@ -459,17 +459,17 @@ int io_factory::init(const std::string& stream_name, int mode) {
   mode_ = mode;
 
   if (this->is_read()) {
-    if (g_debug) {
-      std::clog << "DEBUG: io_factory::init: read mode..."
-                << std::endl;
-    }
+    // if (g_debug) {
+    //   std::clog << "DEBUG: io_factory::init: read mode..."
+    //             << std::endl;
+    // }
 
     this->init_read(stream_name);
     if (this->is_single_archive()) this->init_read_archive();
   } else {
-    if (g_debug) {
-      std::clog << "DEBUG: io_factory::init: write mode..." << std::endl;
-    }
+    // if (g_debug) {
+    //   std::clog << "DEBUG: io_factory::init: write mode..." << std::endl;
+    // }
 
     this->init_write(stream_name);
 
@@ -482,9 +482,9 @@ int io_factory::init(const std::string& stream_name, int mode) {
 
 void io_factory::start_archive() {
   if (this->is_multi_archives()) {
-    if (g_debug) {
-      std::clog << "DEBUG: io_factory::start_archive: multi..." << std::endl;
-    }
+    // if (g_debug) {
+    //   std::clog << "DEBUG: io_factory::start_archive: multi..." << std::endl;
+    // }
 
     if (this->is_read()) this->init_read_archive();
     if (this->is_write()) this->init_write_archive();
@@ -494,9 +494,9 @@ void io_factory::start_archive() {
 
 void io_factory::stop_archive() {
   if (this->is_multi_archives()) {
-    if (g_debug) {
-      std::clog << "DEBUG: io_factory::stop_archive: multi..." << std::endl;
-    }
+    // if (g_debug) {
+    //   std::clog << "DEBUG: io_factory::stop_archive: multi..." << std::endl;
+    // }
 
     if (this->is_read()) this->reset_read_archive();
     if (this->is_write()) this->reset_write_archive();
@@ -536,7 +536,7 @@ int io_factory::reset() {
 
   this->ctor_defaults();
 
-  if (g_debug) std::clog << "DEBUG: io_factory::_reset_: Use FPU" << std::endl;
+  // if (g_debug) std::clog << "DEBUG: io_factory::_reset_: Use FPU" << std::endl;
 
   if (locale_) {
     delete locale_;
@@ -600,9 +600,9 @@ io_factory::io_factory(const std::string& stream_name, int mode) {
 // dtor
 io_factory::~io_factory() {
   this->reset();
-  if (io_factory::g_debug) {
-    std::clog << "DEBUG: io_factory::~io_factory." << std::endl;
-  }
+  // if (io_factory::g_debug) {
+  //   std::clog << "DEBUG: io_factory::~io_factory." << std::endl;
+  // }
 }
 
 
@@ -677,10 +677,10 @@ int io_factory::guess_mode_from_filename(const std::string& a_filename,
       ++i)
   {
     std::string token = *i;
-    if (io_factory::g_debug) {
-      std::clog << "DEBUG: io_factory::guess_mode_from_filename: token=<"
-                << token << ">" << std::endl;
-    }
+    // if (io_factory::g_debug) {
+    //   std::clog << "DEBUG: io_factory::guess_mode_from_filename: token=<"
+    //             << token << ">" << std::endl;
+    // }
     ltok.push_front(token);
   }
 
@@ -697,47 +697,47 @@ int io_factory::guess_mode_from_filename(const std::string& a_filename,
        i != ltok.end();
        ++i)
   {
-    if (io_factory::g_debug) {
-      std::clog << "DEBUG: io_factory::guess_mode_from_filename: ltok=<"
-                << *i << ">" << std::endl;
-    }
+    // if (io_factory::g_debug) {
+    //   std::clog << "DEBUG: io_factory::guess_mode_from_filename: ltok=<"
+    //             << *i << ">" << std::endl;
+    // }
 
     std::string ext = *i;
     if (!comp) {
       if (ext == GZ_EXT) {
         comp = gz = true;
-        if (io_factory::g_debug) {
-          std::clog << "DEBUG: io_factory::guess_mode_from_filename: "
-                    << "mode+=GZIP" << std::endl;
-        }
+        // if (io_factory::g_debug) {
+        //   std::clog << "DEBUG: io_factory::guess_mode_from_filename: "
+        //             << "mode+=GZIP" << std::endl;
+        // }
       } else if (ext == BZIP2_EXT) {
         comp = bz2 = true;
-        if (io_factory::g_debug) {
-          std::clog << "DEBUG: io_factory::guess_mode_from_filename: "
-                    << "mode+=BZIP2" << std::endl;
-        }
+        // if (io_factory::g_debug) {
+        //   std::clog << "DEBUG: io_factory::guess_mode_from_filename: "
+        //             << "mode+=BZIP2" << std::endl;
+        // }
       }
     }
 
     if (!format) {
       if (ext == TXT_EXT) {
         format = txt = true;
-        if (io_factory::g_debug) {
-          std::clog << "DEBUG: io_factory::guess_mode_from_filename: "
-                    << "mode+=TEXT" << std::endl;
-        }
+        // if (io_factory::g_debug) {
+        //   std::clog << "DEBUG: io_factory::guess_mode_from_filename: "
+        //             << "mode+=TEXT" << std::endl;
+        // }
       } else if (ext == BIN_EXT) {
         format = bin = true;
-        if (io_factory::g_debug) {
-          std::clog << "DEBUG: io_factory::guess_mode_from_filename: "
-                    << "mode+=BINARY" << std::endl;
-        }
+        // if (io_factory::g_debug) {
+        //   std::clog << "DEBUG: io_factory::guess_mode_from_filename: "
+        //             << "mode+=BINARY" << std::endl;
+        // }
       } else if (ext == XML_EXT) {
         format = xml = true;
-        if (io_factory::g_debug) {
-          std::clog << "DEBUG: io_factory::guess_mode_from_filename: "
-                    << "mode+=XML" << std::endl;
-        }
+        // if (io_factory::g_debug) {
+        //   std::clog << "DEBUG: io_factory::guess_mode_from_filename: "
+        //             << "mode+=XML" << std::endl;
+        // }
       }
     }
 
@@ -790,9 +790,9 @@ io_reader::io_reader(const std::string& stream_name, int mode)
 
 
 io_reader::~io_reader() {
-  if (g_debug) {
-    std::clog << "DEBUG: io_reader::~io_reader." << std::endl;
-  }
+  // if (g_debug) {
+  //   std::clog << "DEBUG: io_reader::~io_reader." << std::endl;
+  // }
 }
 
 
@@ -816,9 +816,9 @@ io_writer::io_writer(const std::string & stream_name, int mode)
 
 
 io_writer::~io_writer() {
-  if (g_debug) {
-    std::clog << "DEBUG: io_writer::~io_writer." << std::endl;
-  }
+  // if (g_debug) {
+  //   std::clog << "DEBUG: io_writer::~io_writer." << std::endl;
+  // }
 }
 
 
@@ -848,9 +848,9 @@ data_reader::data_reader(const std::string& filename, int mode) {
 // dtor
 data_reader::~data_reader() {
   this->reset();
-  if (io_factory::g_debug) {
-    std::clog << "DEBUG: data_reader::~data_reader: Done." << std::endl;
-  }
+  // if (io_factory::g_debug) {
+  //   std::clog << "DEBUG: data_reader::~data_reader: Done." << std::endl;
+  // }
 }
 
 
@@ -949,20 +949,20 @@ void data_reader::read_next_tag() {
     }
   }
   catch (std::runtime_error& x) {
-    bool warn = io_factory::g_warning;
+    bool warn = false; //io_factory::g_warning;
     //>>> 2008-11-13 FM: skip EOF message printing
     std::string msg = x.what();
     if (msg.find ("EOF") != msg.npos) {
       warn = false;
     }
-    if (warn) {
-      std::clog << "WARNING: data_reader::read_next_tag: runtime_error="
-                << x.what() << std::endl;
-      if (io_factory::g_warning) {
-        std::clog << "WARNING: data_reader::read_next_tag: runtime_error="
-                  << x.what() << std::endl;
-      }
-    }
+    // if (warn) {
+    //   std::clog << "WARNING: data_reader::read_next_tag: runtime_error="
+    //             << x.what() << std::endl;
+    //   if (io_factory::g_warning) {
+    //     std::clog << "WARNING: data_reader::read_next_tag: runtime_error="
+    //               << x.what() << std::endl;
+    //   }
+    // }
     //<<<
     status_   = STATUS_ERROR;
     next_tag_ = EMPTY_RECORD_TAG;
@@ -972,17 +972,17 @@ void data_reader::read_next_tag() {
     }
   }
   catch (std::exception& x) {
-    bool warn = io_factory::g_warning;
-    if (warn) {
-      std::clog << "WARNING: data_reader::read_next_tag: exception="
-                << x.what() << std::endl;
-    }
+    // bool warn = io_factory::g_warning;
+    // if (warn) {
+    //   std::clog << "WARNING: data_reader::read_next_tag: exception="
+    //             << x.what() << std::endl;
+    // }
     status_   = STATUS_ERROR;
     next_tag_ = EMPTY_RECORD_TAG;
   }
   catch (...) {
     std::clog << "WARNING: data_reader::read_next_tag: "
-              << "unexpected exception!" << std::endl;
+              << "Unexpected exception!" << std::endl;
     status_   = STATUS_ERROR;
     next_tag_ = EMPTY_RECORD_TAG;
   }
@@ -1178,9 +1178,9 @@ data_writer::data_writer (const std::string& filename, int mode) {
 // dtor
 data_writer::~data_writer() {
   this->reset();
-  if (io_factory::g_debug) {
-    std::clog << "DEBUG: data_writer::~data_writer." << std::endl;
-  }
+  // if (io_factory::g_debug) {
+  //   std::clog << "DEBUG: data_writer::~data_writer." << std::endl;
+  // }
 }
 
 

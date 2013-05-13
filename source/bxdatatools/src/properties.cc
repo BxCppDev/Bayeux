@@ -34,7 +34,7 @@ namespace datatools {
 
   DATATOOLS_SERIALIZATION_IMPLEMENTATION_ADVANCED(properties,"datatools::properties")
 
-  bool properties::g_debug = false;
+  //bool properties::g_debug = false;
 
   properties::default_key_validator properties::g_default_key_validator;
 
@@ -114,11 +114,11 @@ namespace datatools {
     }
 
     _flags_ &= ~MASK_TYPE;
-    if (properties::g_debug) {
-      std::cerr << "DEBUG: properties::data::init_values_: desc="
-                << std::hex << (int) _flags_
-                << std::dec << std::endl;
-    }
+    // if (properties::g_debug) {
+    //   std::cerr << "DEBUG: properties::data::init_values_: desc="
+    //             << std::hex << (int) _flags_
+    //             << std::dec << std::endl;
+    // }
 
     if (a_type == TYPE_BOOLEAN_SYMBOL) {
       // if (properties::g_debug) {
@@ -307,10 +307,10 @@ namespace datatools {
 
 
   properties::data::data(bool a_value, int a_size) {
-    if (properties::g_debug) {
-      std::cerr << "DEBUG: properties::data::ctor (...bool...): entering..."
-                << std::endl;
-    }
+    // if (properties::g_debug) {
+    //   std::cerr << "DEBUG: properties::data::ctor (...bool...): entering..."
+    //             << std::endl;
+    // }
     _flags_  = 0;
     this->init_values_(TYPE_BOOLEAN_SYMBOL, a_size);
     for (int i = 0; i < (int)this->size(); ++i) {
@@ -2589,7 +2589,7 @@ namespace datatools {
 
 
   void properties::config::read_(std::istream& a_in, properties& a_props) {
-    bool verbose_parsing  = _debug_ || properties::g_debug;
+    bool verbose_parsing  = _debug_; // || properties::g_debug;
 
     std::string line_in;
     std::string prop_config;

@@ -34,9 +34,6 @@
 namespace datatools {
 
 
-bool library_loader::g_devel = false;
-bool library_loader::g_test  = false;
-
 //----------------------------------------------------------------------
 // library_entry struct
 // ctor :
@@ -159,47 +156,40 @@ symbol_ptr library_loader::get_symbol_address(const std::string& lib_name_,
 // ctor :
 library_loader::library_loader(uint32_t flags,
                                const std::string& config_file) {
-  if (g_devel) {
-    std::clog << "DEVEL: datatools::library_loader::ctor: Entering...\n";
-  }
-
   flags_ = flags;
-  if (library_loader::g_test) {
-    flags_ |= test;
-  }
+  // if (library_loader::g_test) {
+  //   flags_ |= test;
+  // }
   config_filename_ = config_file;
   this->init();
-  if (g_devel) {
-    std::clog << "DEVEL: datatools::library_loader::ctor: Exiting.\n";
-  }
 }
 
 
 int library_loader::close_all() {
   while (!stacked_libraries_.empty()) {
-    if (g_devel) {
-      std::clog << "DEVEL: "
-                << "datatools::library_loader::close_all: "
-                << "library_loader::close_all: LOOP ****************"
-                << std::endl;
-    }
+    // if (g_devel) {
+    //   std::clog << "DEVEL: "
+    //             << "datatools::library_loader::close_all: "
+    //             << "library_loader::close_all: LOOP ****************"
+    //             << std::endl;
+    // }
 
     handle_library_entry_type& hle = stacked_libraries_.front();
     if (!hle) {
-      if (g_devel) {
-        std::clog << "DEVEL: "
-                  << "datatools::library_loader::close_all: "
-                  << "library_loader::close_all: NO DATA ****************"
-                  << std::endl;
-      }
+      // if (g_devel) {
+      //   std::clog << "DEVEL: "
+      //             << "datatools::library_loader::close_all: "
+      //             << "library_loader::close_all: NO DATA ****************"
+      //             << std::endl;
+      // }
       stacked_libraries_.pop_front(); // remove top element
     } else {
-      if (g_devel) {
-        std::clog << "DEVEL: "
-                  << "datatools::library_loader::close_all: "
-                  << "library_loader::close_all: DATA *****************"
-                  << std::endl;
-      }
+      // if (g_devel) {
+      //   std::clog << "DEVEL: "
+      //             << "datatools::library_loader::close_all: "
+      //             << "library_loader::close_all: DATA *****************"
+      //             << std::endl;
+      // }
 
       library_entry_type& le = hle.grab();
       if (le.handle != 0) {
@@ -235,20 +225,20 @@ int library_loader::close_all() {
         //   {
         le.handle = 0;
         stacked_libraries_.pop_front (); // remove top element
-        if (g_devel) {
-          std::clog << "DEVEL: "
-                    << "datatools::library_loader::close_all: "
-                    << "Stack size "
-                    << stacked_libraries_.size() << std::endl;
-        }
+        // if (g_devel) {
+        //   std::clog << "DEVEL: "
+        //             << "datatools::library_loader::close_all: "
+        //             << "Stack size "
+        //             << stacked_libraries_.size() << std::endl;
         // }
-        if (g_devel) {
-          std::clog << "DEVEL: "
-                    << "datatools::library_loader::close_all: "
-                    << "Removing library stacked entry '"
-                    << le.name << "'..."
-                    << std::endl;
-        }
+        //}
+        // if (g_devel) {
+        //   std::clog << "DEVEL: "
+        //             << "datatools::library_loader::close_all: "
+        //             << "Removing library stacked entry '"
+        //             << le.name << "'..."
+        //             << std::endl;
+        // }
       }
     }
   }
@@ -258,24 +248,24 @@ int library_loader::close_all() {
 
 // dtor :
 library_loader::~library_loader() {
-  if (g_devel) {
-    std::clog << "DEVEL: datatools::library_loader::dtor: Entering...\n";
-    this->print(std::cerr);
-    std::clog << "DEVEL: datatools::library_loader::dtor: " << "close_all...\n";
-  }
+  // if (g_devel) {
+  //   std::clog << "DEVEL: datatools::library_loader::dtor: Entering...\n";
+  //   this->print(std::cerr);
+  //   std::clog << "DEVEL: datatools::library_loader::dtor: " << "close_all...\n";
+  // }
 
   this->close_all();
 
-  if (g_devel) {
-    std::clog << "DEVEL: datatools::library_loader::dtor: "
-              << "clear...\n";
-  }
+  // if (g_devel) {
+  //   std::clog << "DEVEL: datatools::library_loader::dtor: "
+  //             << "clear...\n";
+  // }
 
   libraries_.clear();
 
-  if (g_devel) {
-    std::clog << "DEVEL: datatools::library_loader::dtor: Exiting.\n";
-  }
+  // if (g_devel) {
+  //   std::clog << "DEVEL: datatools::library_loader::dtor: Exiting.\n";
+  // }
 }
 
 
@@ -443,7 +433,8 @@ int library_loader::close(const std::string& lib_name_) {
   int status = datatools::detail::DynamicLoader::CloseLibrary(le.handle);
   if (status != 1) {
     std::ostringstream message;
-    message << "The '" << le.name << "' library was not closed ! "
+    message << "datatools::library_loader::close: "
+            << "The '" << le.name << "' library was not closed ! "
             << BOOST_PP_STRINGIZE(DATATOOLS_SYS_NAMESPACE)
             << " says: '"
             << datatools::detail::DynamicLoader::LastError() << "' !";
@@ -481,11 +472,11 @@ void library_loader::init() {
     }
   }
 
-  if (g_devel) {
-    std::clog << "DEVEL: " << "datatools::library_loader::_init: "
-              << "Using library loader config file = '"
-              << config_filename_<< "' !" << std::endl;
-  }
+  // if (g_devel) {
+  //   std::clog << "DEVEL: " << "datatools::library_loader::_init: "
+  //             << "Using library loader config file = '"
+  //             << config_filename_<< "' !" << std::endl;
+  // }
 
   if (config_filename_.empty()) {
     /*
@@ -505,12 +496,12 @@ void library_loader::init() {
   BOOST_FOREACH(const multi_properties::entry* ptr,
                 config.ordered_entries()) {
     const multi_properties::entry& e = *ptr;
-    if (g_devel) {
-      std::clog << "DEVEL: "
-                << "datatools::library_loader::_init: "
-                << "Settings for library '"
-                << e.get_key() << "'..." << std::endl;
-    }
+    // if (g_devel) {
+    //   std::clog << "DEVEL: "
+    //             << "datatools::library_loader::_init: "
+    //             << "Settings for library '"
+    //             << e.get_key() << "'..." << std::endl;
+    // }
 
     const properties& lib_properties = e.get_properties();
     std::string lib_name       = e.get_key ();
@@ -539,12 +530,12 @@ void library_loader::init() {
       lib_version = lib_properties.fetch_string("version");
     }
 
-    if (g_devel) {
-      std::clog << "DEVEL: "
-                << "datatools::library_loader::_init: "
-                << "Registration of library='" << lib_name
-                << "'..." << std::endl;
-    }
+    // if (g_devel) {
+    //   std::clog << "DEVEL: "
+    //             << "datatools::library_loader::_init: "
+    //             << "Registration of library='" << lib_name
+    //             << "'..." << std::endl;
+    // }
 
     int status = this->registration(lib_name, lib_directory,
                                     lib_filename, lib_full_path,

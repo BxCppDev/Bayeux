@@ -60,8 +60,8 @@ namespace datatools {
  */
 class io_factory : public datatools::i_tree_dumpable {
  public:
-  static bool g_debug;
-  static bool g_warning;
+  //static bool g_debug;
+  //static bool g_warning;
   static const int SUCCESS = 0;
   static const int ERROR   = 1;
 
@@ -255,21 +255,21 @@ class io_factory : public datatools::i_tree_dumpable {
     }
     // 2011-02-25 FM:
     catch (boost::archive::archive_exception& x) {
-      if (io_factory::g_warning) {
-        std::clog << "WARNING: datatools::io_factory::load: archive exception is: "
-                  << x.what()
-                  << std::endl;
-      }
+      // if (io_factory::g_warning) {
+      //   std::clog << "WARNING: datatools::io_factory::load: archive exception is: "
+      //             << x.what()
+      //             << std::endl;
+      // }
       throw x;
     }
     catch (std::exception& x) {
-      if (io_factory::g_warning) {
-        std::cerr << "WARNING: datatools::io_factory::load: "
-                  << "cannot load data from archive: "
-                  << x.what()
-                  << "!"
-                  << std::endl;
-      }
+      // if (io_factory::g_warning) {
+      //   std::cerr << "WARNING: datatools::io_factory::load: "
+      //             << "cannot load data from archive: "
+      //             << x.what()
+      //             << "!"
+      //             << std::endl;
+      // }
       throw x;
     }
     catch (...) {
@@ -620,15 +620,15 @@ class data_reader {
       reader_->load(data);
     }
     catch (std::exception& x) {
-      bool warn = io_factory::g_warning;
-
+      //bool warn = io_factory::g_warning;
+      bool warn = false;
       //>>> 2008-11-13 FM: skip EOF message printing
       std::string msg = x.what();
       if (msg.find("EOF") != msg.npos) {
         warn = false;
       }
       if (warn) {
-        std::cerr << "WARNING: datatools::data_reader::_basic_load(...): "
+        std::cerr << "ERROR: datatools::data_reader::_basic_load(...): "
                   << "cannot read data: exception="
                   << x.what() << " !"
                   << std::endl;
@@ -640,7 +640,7 @@ class data_reader {
       throw std::logic_error(x.what());
     }
     catch (...) {
-      std::cerr << "WARNING: datatools::data_reader::_basic_load(...): "
+      std::cerr << "ERROR: datatools::data_reader::_basic_load(...): "
                 << "cannot read data: "
                 << "unexpected exception" << '!'
                 << std::endl;
