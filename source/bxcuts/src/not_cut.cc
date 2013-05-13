@@ -52,7 +52,7 @@ namespace cuts {
 
   CUT_ACCEPT_IMPLEMENT_HEAD(not_cut)
   {
-    if (! _handle.has_data ())
+    if (! _handle)
       {
         throw std::runtime_error ("not_cut::_accept: Handle has no 'cut' !");
       }
@@ -93,7 +93,7 @@ namespace cuts {
         throw logic_error (message.str ());
       }
 
-    if (! _handle.has_data ())
+    if (! _handle)
       {
         string cut_name;
         if (a_configuration.has_key ("cut"))
