@@ -29,6 +29,7 @@ set(datatools_PUBLIC_HEADERS
   include/datatools/caster_utils.h
   include/datatools/clhep_units.h
   include/datatools/event_id.h
+  include/datatools/exception.h
   include/datatools/factory.h
   include/datatools/factory_macros.h
   include/datatools/handle.h
