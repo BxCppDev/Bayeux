@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_handle_3.cxx
 // Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
 
@@ -39,78 +39,69 @@ using namespace std;
 int main (int argc_ , char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
-  try 
-    {
-      clog << "Test of the 'handle<>' template class..." << endl; 
-      bool debug = false;
-      
-      int iarg =  1;
-      while (iarg < argc_) 
-        {
-          string arg = argv_[iarg];
-          if ((arg == "-d") || (arg == "--debug")) debug = true;
-          iarg++;
-        }
+  try {
+    clog << "Test of the 'handle<>' template class..." << endl;
+    bool debug = false;
 
-      using namespace datatools;
-
-      typedef handle<int>             int_handle_type;
-      typedef vector<int_handle_type> int_handle_collection_type;
-
-      int_handle_collection_type ints;
-      for (int i = 0; i < 5; i++)
-        {
-          ints.push_back (int_handle_type (new int (i)));
-        }
-
-      cout << "Print the list of ints : " << endl;
-      BOOST_FOREACH(const handle<int> & hi, ints)
-        {
-          if (! hi.has_data ()) continue;
-          const int & i = hi.get ();
-          {
-            cout << "i=" << i << endl;
-          }
-        }
-      cout << endl;
-
-      cout << "Print the list of ints : " << endl;
-      DATATOOLS_FOREACH_CONST_REF_HANDLE_BEGIN(int,i,ints)
-        {
-          cout << "i=" << i << endl;
-        }
-      DATATOOLS_FOREACH_REF_HANDLE_END
-      cout << endl;
-
-      cout << "Modify the ints in the list... " << endl;
-      DATATOOLS_FOREACH_MUTABLE_REF_HANDLE_BEGIN(int,i,ints)
-        {
-          i = 666;
-        }
-      DATATOOLS_FOREACH_REF_HANDLE_END
-      cout << endl;
-
-      cout << "Print the list of ints : " << endl;
-      DATATOOLS_FOREACH_CONST_REF_HANDLE_BEGIN(int,i,ints)
-        {
-          cout << "i=" << i << endl;
-        }
-      DATATOOLS_FOREACH_REF_HANDLE_END
-      cout << endl;
-
+    int iarg =  1;
+    while (iarg < argc_) {
+      string arg = argv_[iarg];
+      if ((arg == "-d") || (arg == "--debug")) debug = true;
+      iarg++;
     }
-  catch (exception & x)
-    { 
-      clog << "error: " << x.what () << endl; 
-      error_code =  EXIT_FAILURE;
+
+    using namespace datatools;
+
+    typedef handle<int>             int_handle_type;
+    typedef vector<int_handle_type> int_handle_collection_type;
+
+    int_handle_collection_type ints;
+    for (int i = 0; i < 5; i++){
+      ints.push_back (int_handle_type (new int (i)));
     }
-  catch (...) 
-    { 
-      clog << "error: " << "unexpected error!" << endl;  
-      error_code = EXIT_FAILURE; 
-    } 
+
+    cout << "Print the list of ints : " << endl;
+    BOOST_FOREACH(const handle<int> & hi, ints){
+      if (! hi.has_data ()) continue;
+      const int & i = hi.get ();
+      {
+        cout << "i=" << i << endl;
+      }
+    }
+    cout << endl;
+
+    cout << "Print the list of ints : " << endl;
+    DATATOOLS_FOREACH_CONST_REF_HANDLE_BEGIN(int,i,ints) {
+      cout << "i=" << i << endl;
+    }
+    DATATOOLS_FOREACH_REF_HANDLE_END
+      cout << endl;
+
+    cout << "Modify the ints in the list... " << endl;
+    DATATOOLS_FOREACH_MUTABLE_REF_HANDLE_BEGIN(int,i,ints) {
+      i = 666;
+    }
+    DATATOOLS_FOREACH_REF_HANDLE_END
+      cout << endl;
+
+    cout << "Print the list of ints : " << endl;
+    DATATOOLS_FOREACH_CONST_REF_HANDLE_BEGIN(int,i,ints) {
+      cout << "i=" << i << endl;
+    }
+    DATATOOLS_FOREACH_REF_HANDLE_END
+      cout << endl;
+
+  }
+  catch (exception & x) {
+    clog << "error: " << x.what () << endl;
+    error_code =  EXIT_FAILURE;
+  }
+  catch (...) {
+    clog << "error: " << "unexpected error!" << endl;
+    error_code = EXIT_FAILURE;
+  }
   return error_code;
-} 
- 
-// end of test_handle_3.cxx 
+}
+
+// end of test_handle_3.cxx
 

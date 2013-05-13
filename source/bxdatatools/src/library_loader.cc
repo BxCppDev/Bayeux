@@ -185,7 +185,7 @@ int library_loader::close_all() {
     }
 
     handle_library_entry_type& hle = stacked_libraries_.front();
-    if (!hle.has_data()) {
+    if (!hle) {
       if (g_devel) {
         std::clog << "DEVEL: "
                   << "datatools::library_loader::close_all: "
@@ -201,7 +201,7 @@ int library_loader::close_all() {
                   << std::endl;
       }
 
-      library_entry_type& le = hle.get();
+      library_entry_type& le = hle.grab();
       if (le.handle != 0) {
         if (this->is_debug()) {
           std::clog << "DEBUG: "
@@ -308,7 +308,7 @@ int library_loader::registration(const std::string& lib_name_,
 
   handle_library_entry_type le_handle(new library_entry_type);
   libraries_[lib_name_] = le_handle;
-  library_entry_type& le = libraries_[lib_name_].get();
+  library_entry_type& le = libraries_[lib_name_].grab();
   le.name         = lib_name_;
   le.filename     = lib_filename_;
   le.version      = lib_version_;
@@ -398,7 +398,7 @@ int library_loader::load(const std::string& lib_name_,
       found = libraries_.find(lib_name_);
     }
   }
-  library_entry_type& le = found->second.get();
+  library_entry_type& le = found->second.grab();
   std::string check = le.full_path;
   fetch_path_with_env(check);
   le.handle = datatools::detail::DynamicLoader::OpenLibrary(check.c_str());
@@ -438,7 +438,7 @@ int library_loader::close(const std::string& lib_name_) {
 
   handle_library_entry_dict_type::iterator found = libraries_.find(lib_name_);
   handle_library_entry_type& hle = found->second;
-  library_entry_type& le = hle.get();
+  library_entry_type& le = hle.grab();
 
   int status = datatools::detail::DynamicLoader::CloseLibrary(le.handle);
   if (status != 1) {
@@ -450,7 +450,7 @@ int library_loader::close(const std::string& lib_name_) {
     std::clog << "ERROR: " << message.str() << std::endl;
     return EXIT_FAILURE;
   } else {
-    stacked_libraries_.front ().get().handle = 0;
+    stacked_libraries_.front ().grab().handle = 0;
     stacked_libraries_.pop_front();
   }
   return EXIT_SUCCESS;

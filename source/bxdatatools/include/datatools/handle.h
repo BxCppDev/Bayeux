@@ -23,7 +23,7 @@
  * Description:
  *
  *  An serializable handle object referencing an object through
- *  a shared pointer.
+ *  a hiden shared pointer.
  *
  */
 #ifndef DATATOOLS_HANDLE_H_
@@ -86,10 +86,8 @@ template <typename T>
 class handle {
  public:
   typedef T value_type;
-  typedef value_type * reference_type;
+  typedef value_type & reference_type;
   typedef const reference_type const_reference_type;
-  typedef value_type * pointer_type;
-  typedef const pointer_type const_pointer_type;
 
  public:
   typedef handle_predicate<T> predicate_type;
@@ -129,84 +127,58 @@ class handle {
    */
   handle(T* held = 0) : sp_(held) {}
 
-
-  //! A constructor from a shared pointer of the same type.
-  /*!
-   * This constructor is given a shared pointer that hosts (or not)
-   * a dynamically allocated instance. This internal pointer will then
-   * been shared by both shared pointers.
-   */
-  handle(const boost::shared_ptr<T>& held) : sp_(held) {}
-
-
+  //! Destructor
   virtual ~handle() {
     sp_.reset();
   }
 
-
+  //! Check if the current handle holds an uniquely referenced object
   bool unique() const {
     return sp_.unique();
   }
 
-
-  size_t count() const {
-    if (sp_.get() == 0) return 0;
-    return sp_.use_count();
-  }
-
-  //! Return true if the internal shared pointer holds nothing.
-  bool is_null() const {
-    return sp_.get() == 0;
+  //! Return true if the internal shared pointer holds something.
+  // 2013-05-12 FM : Preserved until all client code use the corresponding 'operator bool'.
+  bool has_data() const {
+    return sp_.get() != 0;
   }
 
   //! Return true if the internal shared pointer holds something.
-  bool has_data() const {
-    return !this->is_null();
+  operator bool() const {
+    return sp_.get() != 0;
   }
-
 
   void swap(handle<T>& other) {
     sp_.swap(other.sp_);
   }
 
-
-  void swap(boost::shared_ptr<T>& other) {
-    sp_.swap(other);
-  }
-
   //! Return a const reference to the hosted instance.
   const T& get() const {
-    if (this->is_null()) {
-      throw std::logic_error("datatools::handle::get: Handle has no data !");
-    }
-    return *(sp_.get());
+    if (sp_) return *sp_;
+    throw std::logic_error("datatools::handle::get: Handle holds no data!");
   }
 
-  //! Return a non-const reference to the hosted instance.
-  T& get() {
-    if (this->is_null()) {
-      throw std::logic_error ("datatools::handle::get: Handle has no data !");
-    }
-    return *(sp_.get());
-  }
+  /* //! Return  a const reference to the hosted instance. */
+  /* const T& operator()() const { */
+  /*   if (sp_) return *sp_; */
+  /*   throw std::logic_error("datatools::handle::operator(): Handle holds no data!"); */
+  /* } */
 
   //! Return a non-const reference to the hosted instance.
-  // DUPLICATE OF handle::get functionality
   T& grab() {
-    if (this->is_null()) {
-      throw std::logic_error("datatools::handle::grab: Handle has no data !");
-    }
-    return *(sp_.get());
+    if (sp_) return *sp_;
+    throw std::logic_error("datatools::handle::grab: Handle holds no data!");
   }
+
+  /* //! Return a non-const reference to the hosted instance. */
+  /* T& operator()() { */
+  /*   if (sp_) return *sp_; */
+  /*   throw std::logic_error("datatools::handle::operator(): Handle holds no data!"); */
+  /* } */
 
   //! Reset the internal shared pointer with a new instance.
   void reset(T* elem = 0) {
     sp_.reset(elem);
-  }
-
-  //! Reset the internal shared pointer from another shared pointer.
-  void reset(const boost::shared_ptr<T>& sp) {
-    sp_ = sp;
   }
 
  private:
@@ -230,6 +202,7 @@ class handle {
  * \code
  * #include <iostream>
  * #include <vector>
+ * #include <cmath>
  * #include <algorithm>
  *
  * #include <datatools/i_predicate.h>
@@ -239,7 +212,7 @@ class handle {
  * {
  *   bool operator () (const double & a_number) const
  *   {
- *     return a_number = 3.1415926;
+ *     return a_number = M_PI;
  *   }
  * };
  *
@@ -250,7 +223,7 @@ class handle {
  *   handle_predicate<double> HP (DP);
  *   std::vector<handle_type> values;
  *   values.push_back (handle_type (new double (1.0)));
- *   values.push_back (handle_type (new double (3.1415926)));
+ *   values.push_back (handle_type (new double (M_PI)));
  *   values.push_back (handle_type (new double (10.0)));
  *   std::vector<handle_type>::const_iterator it =
  *     std::find_if (values.begin (), values.end (), HP);
@@ -272,7 +245,7 @@ struct handle_predicate : public i_predicate<handle<T> > {
 
   //! Call operator taking handle as input
   bool operator()(const handle<T>& handle) const {
-    if (handle.is_null()) {
+    if (! handle) {
       if (no_data_means_false_) return false;
 
       throw std::logic_error ("datatools::handle_predicate::operator (): Handle has no data !");

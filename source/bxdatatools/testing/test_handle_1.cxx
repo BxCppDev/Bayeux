@@ -40,7 +40,7 @@ private:
   friend class boost::serialization::access;
   BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
-public:
+  public:
   int32_t get_id () const
   {
     return id_;
@@ -110,12 +110,11 @@ int main (int argc_ , char ** argv_)
       bool debug = false;
 
       int iarg =  1;
-      while (iarg < argc_)
-        {
-          string arg = argv_[iarg];
-          if ((arg == "-d") || (arg == "--debug")) debug = true;
-          iarg++;
-        }
+      while (iarg < argc_) {
+        string arg = argv_[iarg];
+        if ((arg == "-d") || (arg == "--debug")) debug = true;
+        iarg++;
+      }
 
       hit::g_debug = debug;
 
@@ -124,11 +123,11 @@ int main (int argc_ , char ** argv_)
       using namespace datatools;
       {
         typedef handle<hit> hit_handle_t;
-        typedef vector<hit_handle_t> hit_handles_col_t;
+        typedef vector<hit_handle_t> hit_handles_col_type;
         clog << endl << "Test 1: " << endl;
 
         {
-          hit_handles_col_t hits;
+          hit_handles_col_type hits;
 
           hit_handle_t hh (new hit (0, 123));
           hits.push_back (hh);
@@ -156,33 +155,31 @@ int main (int argc_ , char ** argv_)
           hits[3].grab ().set_id (100).set_tdc (10000);
 
           clog << "Hits : " << endl;
-          for (hit_handles_col_t::const_iterator i = hits.begin ();
+          for (hit_handles_col_type::const_iterator i = hits.begin ();
                i != hits.end ();
-               i++)
-            {
-              if (i->has_data ()) i->get ().print ();
-            }
+               i++) {
+            if (i->has_data ()) i->get ().print ();
+          }
 
           hit_is_invalid_predicate IP;
           hit_handle_t::predicate_type HP (IP);
-          hit_handles_col_t::const_iterator found = find_if (hits.begin (), hits.end (), HP);
-          if (found != hits.end ())
-            {
-              clog << "Found an invalid hit !" << endl;
-              found->get().print ();
-            }
+          hit_handles_col_type::const_iterator found = find_if (hits.begin (), hits.end (), HP);
+          if (found != hits.end ()) {
+            clog << "Found an invalid hit !" << endl;
+            found->get().print ();
+          }
 
-          hit_handles_col_t hits2;
+          hit_handles_col_type hits2;
           hits2.push_back (hits[1]);
           hits2.push_back (hits[3]);
           hits2.push_back (hits[4]);
           clog << "Hits2 : " << endl;
-          for (hit_handles_col_t::const_iterator i = hits2.begin ();
+          for (hit_handles_col_type::const_iterator i = hits2.begin ();
                i != hits2.end ();
-               i++)
-            {
-              if (i->has_data ()) i->get ().print ();
-            }
+               i++) {
+            //if (*i->has_data ()) i->get ().print ();
+            if (*i) i->get ().print ();
+          }
 
           clog << "Erase +0 : " << endl;
           hits.erase (hits.begin ());
@@ -193,12 +190,11 @@ int main (int argc_ , char ** argv_)
           clog << "Add : " << endl;
           hits.push_back (hits2[0]);
           clog << "Hits(bis) : " << endl;
-          for (hit_handles_col_t::const_iterator i = hits.begin ();
+          for (hit_handles_col_type::const_iterator i = hits.begin ();
                i != hits.end ();
-               i++)
-            {
-              if (i->has_data ()) i->get ().print ();
-            }
+               i++) {
+            if (*i) i->get ().print ();
+          }
           clog << endl << "Serialize..." << endl;
           {
             ofstream foa ("test_handle_1.txt");
@@ -223,8 +219,8 @@ int main (int argc_ , char ** argv_)
         if (hit::g_debug) clog << "DEBUG: g_count=" << hit::g_count << endl;
 
         {
-          hit_handles_col_t hits;
-          hit_handles_col_t hits2;
+          hit_handles_col_type hits;
+          hit_handles_col_type hits2;
           if (hit::g_debug) clog << "DEBUG: g_count=" << hit::g_count << endl;
           {
             clog << endl << "Deserialize (from text archive)..." << endl;
@@ -233,19 +229,17 @@ int main (int argc_ , char ** argv_)
             ia >> hits >> hits2;
             clog << "Done." << endl;
             clog << "Hits (loaded) : " << endl;
-            for (hit_handles_col_t::const_iterator i = hits.begin ();
+            for (hit_handles_col_type::const_iterator i = hits.begin ();
                  i != hits.end ();
-                 i++)
-              {
-                if (i->has_data ()) i->get ().print ();
-              }
+                 i++) {
+              if (*i) i->get ().print ();
+            }
             clog << "Hits2 (loaded) : " << endl;
-            for (hit_handles_col_t::const_iterator i = hits2.begin ();
+            for (hit_handles_col_type::const_iterator i = hits2.begin ();
                  i != hits2.end ();
-                 i++)
-              {
-                if (i->has_data ()) i->get ().print ();
-              }
+                 i++) {
+              if (*i) i->get ().print ();
+            }
           }
 
         }

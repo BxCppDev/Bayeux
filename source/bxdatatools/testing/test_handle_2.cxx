@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_handle_2.cxx
 // Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
 
@@ -28,7 +28,7 @@
 /** Some test class representing a hit (serializable)
  *
  */
-class hit 
+class hit
 {
 public:
   static int g_count;
@@ -37,7 +37,7 @@ private:
   int32_t   id_;
   double    tdc_;
 private:
-  friend class boost::serialization::access; 
+  friend class boost::serialization::access;
   BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
 public:
@@ -68,7 +68,7 @@ public:
     g_count++;
     if (g_debug) std::clog << "DEBUG: hit::ctor: g_count=" << g_count << std::endl;
   }
-  ~hit () 
+  ~hit ()
   {
     if (g_debug) std::clog << "DEBUG: hit::dtor: Destruction @" << this << "." << std::endl;
     g_count--;
@@ -93,7 +93,7 @@ int  hit::g_count  = 0;
 bool hit::g_debug = false;
 
 template<class Archive>
-void hit::serialize (Archive & ar_, 
+void hit::serialize (Archive & ar_,
                      const unsigned int version_)
 {
   ar_ & boost::serialization::make_nvp ("id",  id_);
@@ -104,14 +104,13 @@ void hit::serialize (Archive & ar_,
 int main (int argc_ , char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
-  try 
+  try
     {
-      std::clog << "Test of the 'handle<>' template class..." << std::endl; 
+      std::clog << "Test of the 'handle<>' template class..." << std::endl;
       bool debug = false;
 
       int iarg =  1;
-      while (iarg < argc_) 
-        {
+      while (iarg < argc_) {
           std::string arg = argv_[iarg];
           if ((arg == "-d") || (arg == "--debug")) debug = true;
           iarg++;
@@ -120,7 +119,7 @@ int main (int argc_ , char ** argv_)
       typedef datatools::handle<hit> hit_handle_t;
       typedef std::vector<hit_handle_t> hit_handles_col_t;
       typedef std::vector<hit> hits_col_t;
- 
+
       {
         std::clog << std::endl << "Test 1: " << std::endl;
         {
@@ -131,12 +130,10 @@ int main (int argc_ , char ** argv_)
           datatools::computing_time CT2;
           std::ofstream foa ("test_handle_2a.txt");
           hits.reserve (nhits);
-          for (int i = 0; i < (int) nevents; i++)
-            {
+          for (int i = 0; i < (int) nevents; i++) {
               if ((i % 100) == 0) std::clog << "#i=" << i << std::endl;
               CT2.start ();
-              for (int j = 0; j < (int) nhits; j++)
-                {
+              for (int j = 0; j < (int) nhits; j++) {
                   hit_handle_t hh (new hit (j, j * 10. ));
                   hits.push_back (hh);
                 }
@@ -153,7 +150,7 @@ int main (int argc_ , char ** argv_)
           CT2.tree_dump (std::clog, "CT2 hit_handles_col_t"); //  1.36152
         }
       }
-     
+
       {
         std::clog << std::endl << "Test 2: " << std::endl;
         {
@@ -164,8 +161,7 @@ int main (int argc_ , char ** argv_)
           datatools::computing_time CT2;
           std::ofstream foa ("test_handle_2b.txt");
           hits.reserve (nhits);
-          for (int i = 0; i < (int) nevents; i++)
-            {
+          for (int i = 0; i < (int) nevents; i++) {
               if ((i % 100) == 0) std::clog << "#i=" << i << std::endl;
               CT2.start ();
               for (int j = 0; j < (int) nhits; j++)
@@ -201,8 +197,7 @@ int main (int argc_ , char ** argv_)
             {
               if ((i % 100) == 0) std::clog << "#i=" << i << std::endl;
               CT2.start ();
-              for (int j = 0; j < (int) nhits; j++)
-                {
+              for (int j = 0; j < (int) nhits; j++) {
                   hits.push_back (pool.create ());
                   hits.back ().grab ().set_id (j).set_tdc (j * 10.);
                 }
@@ -220,20 +215,20 @@ int main (int argc_ , char ** argv_)
           CT2.tree_dump (std::clog, "CT2 hit_handles_col_t (using pool)"); // 0.393747
         }
       }
-     
+
     }
   catch (std::exception & x)
-    { 
-      std::cerr << "error: " << x.what () << std::endl; 
+    {
+      std::cerr << "error: " << x.what () << std::endl;
       error_code =  EXIT_FAILURE;
     }
-  catch (...) 
-    { 
-      std::cerr << "error: " << "unexpected error!" << std::endl;  
-      error_code = EXIT_FAILURE; 
-    } 
+  catch (...)
+    {
+      std::cerr << "error: " << "unexpected error!" << std::endl;
+      error_code = EXIT_FAILURE;
+    }
   return error_code;
-} 
- 
-// end of test_handle_2.cxx 
+}
+
+// end of test_handle_2.cxx
 
