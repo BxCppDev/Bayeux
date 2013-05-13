@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* not_cut.cc
  */
 
@@ -12,13 +12,13 @@
 namespace cuts {
 
   using namespace std;
-  
+
   // Registration instantiation macro :
   CUT_REGISTRATION_IMPLEMENT(not_cut, "cuts::not_cut");
 
   void not_cut::set_cut (cut_handle_type & a_cut_handle)
   {
-    if (&a_cut_handle.get () == this)
+    if (&a_cut_handle.grab () == this)
       {
         ostringstream message;
         message << "cuts::not_cut::set_cut: "
@@ -28,13 +28,13 @@ namespace cuts {
     _handle = a_cut_handle;
     return;
   }
-    
+
   void not_cut::set_user_data (void * a_user_data)
   {
-    _handle.get ().set_user_data (a_user_data);
+    _handle.grab ().set_user_data (a_user_data);
     return;
   }
-  
+
   // ctor:
   CUT_CONSTRUCTOR_IMPLEMENT_HEAD (not_cut,
                                   a_debug_devel,
@@ -45,23 +45,23 @@ namespace cuts {
     return;
   }
 
-  
+
   // dtor:
   CUT_DEFAULT_DESTRUCTOR_IMPLEMENT (not_cut)
 
 
   CUT_ACCEPT_IMPLEMENT_HEAD(not_cut)
   {
-    if (! _handle.has_data ()) 
+    if (! _handle.has_data ())
       {
         throw std::runtime_error ("not_cut::_accept: Handle has no 'cut' !");
       }
-    int status = _handle.get ().process ();
-    if (status == REJECTED) 
+    int status = _handle.grab ().process ();
+    if (status == REJECTED)
       {
         return ACCEPTED;
       }
-    else  if (status == ACCEPTED) 
+    else  if (status == ACCEPTED)
       {
         return REJECTED;
       }
@@ -69,9 +69,9 @@ namespace cuts {
   }
 
 
-  CUT_RESET_IMPLEMENT_HEAD (not_cut) 
+  CUT_RESET_IMPLEMENT_HEAD (not_cut)
   {
-    
+
     _handle.reset ();
     this->i_cut::reset ();
     _set_initialized (false);
@@ -104,13 +104,13 @@ namespace cuts {
           {
             throw logic_error ("cuts::not_cut::initialize: Missing 'cut' name property !");
           }
-        
+
         cut_handle_dict_type::iterator found = a_cut_dict.find (cut_name);
         if (found == a_cut_dict.end ())
           {
             ostringstream message;
             message << "cuts::not_cut::initialize: "
-                    << "Can't find any cut named '" << cut_name 
+                    << "Can't find any cut named '" << cut_name
                     << "' from the external dictionnary ! ";
             throw logic_error (message.str ());
           }
@@ -118,7 +118,7 @@ namespace cuts {
       }
 
     _set_initialized (true);
-    return;     
+    return;
   }
 
 } // end of namespace cuts

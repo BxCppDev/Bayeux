@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* xor_cut.cc
  */
 
@@ -9,15 +9,15 @@
 
 #include <datatools/properties.h>
 
-namespace cuts { 
+namespace cuts {
 
   using namespace std;
-  
+
   // Registration instantiation macro :
   CUT_REGISTRATION_IMPLEMENT(xor_cut, "cuts::xor_cut");
-  
+
   // ctor:
-  xor_cut::xor_cut (int a_debug_level) 
+  xor_cut::xor_cut (int a_debug_level)
     : i_binary_cut ("cuts::xor_cut",
                     "Xor cut",
                     "1.0",
@@ -25,19 +25,19 @@ namespace cuts {
   {
     return;
   }
- 
+
   // dtor:
   CUT_DEFAULT_DESTRUCTOR_IMPLEMENT (xor_cut)
 
   CUT_ACCEPT_IMPLEMENT_HEAD(xor_cut)
   {
-    int status_1 = _handle_1.get ().process ();
-    int status_2 = _handle_2.get ().process ();
+    int status_1 = _handle_1.grab ().process ();
+    int status_2 = _handle_2.grab ().process ();
     if ((status_1 < 0) || (status_2 < 0))
       {
         return INAPPLICABLE;
       }
-    if ((status_1 + status_2) == 1) 
+    if ((status_1 + status_2) == 1)
       {
         return (ACCEPTED);
       }
@@ -61,9 +61,9 @@ namespace cuts {
     this->i_binary_cut::_install_cuts (a_configuration,a_cut_dict);
 
     _set_initialized (true);
-    return;      
+    return;
   }
-  
+
 } // end of namespace cuts
 
 // end of xor_cut.cc

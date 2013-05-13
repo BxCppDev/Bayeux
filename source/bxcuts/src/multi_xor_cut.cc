@@ -20,7 +20,7 @@ namespace cuts {
 
   void multi_xor_cut::add_cut (cut_handle_type & a_cut_handle)
   {
-    if (&a_cut_handle.get () == this)
+    if (&a_cut_handle.grab () == this)
       {
         ostringstream message;
         message << "cuts::multi_xor_cut::add_cut: "
@@ -32,7 +32,7 @@ namespace cuts {
          i++)
       {
         cut_handle_type & ch = *i;
-        if (&ch.get () == &a_cut_handle.get ())
+        if (&ch.grab () == &a_cut_handle.grab ())
           {
             ostringstream message;
             message << "cuts::multi_xor_cut::add_cut: "
@@ -56,7 +56,7 @@ namespace cuts {
          i++)
       {
         cut_handle_type & ch = *i;
-        ch.get ().set_user_data (user_data_);
+        ch.grab ().set_user_data (user_data_);
       }
     return;
   }
@@ -104,7 +104,7 @@ namespace cuts {
          i++)
       {
         cut_handle_type & ch = *i;
-        int status = ch.get ().process ();
+        int status = ch.grab ().process ();
         if (status == INAPPLICABLE)
           {
             return status;
