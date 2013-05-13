@@ -1,19 +1,24 @@
 /* test_utils.cxx */
-
+// Ourselves
 #include <datatools/utils.h>
 
+// Standard Library
 #include <cstdlib>
 #include <stdexcept>
 #include <iostream>
 #include <string>
 #include <wordexp.h>
+#include <bitset>
 
+// Third Party
+// - A
+
+// This Project
 #include <datatools/datatools_config.h>
 #include <datatools/ioutils.h>
 
-int main (void)
+int main(int /*argc*/, const char** /*argv*/)
 {
-  using namespace std;
   try {
 
     {

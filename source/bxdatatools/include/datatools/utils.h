@@ -7,13 +7,13 @@
 // Standard Library
 #include <cstdlib>
 #include <list>
-#include <stdexcept>
 #include <string>
 
 // Third Party
 // - A
 
 // This Project
+#include "datatools/exception.h"
 
 namespace datatools {
 
@@ -121,36 +121,37 @@ void split_string(const std::string& word, const std::string& separators,
 
 template<typename Integral>
 void set_bit(Integral& number, int pos) {
-  if (pos < 0 || pos >= sizeof(Integral) * 8) {
-    throw std::range_error("datatools::set_bit: Invalid bit position !");
-  }
+  DT_THROW_IF(pos < 0 || pos >= sizeof(Integral) * 8,
+              std::range_error,
+              "Invalid bit position [pos = " << pos << "]");
   number |= 1 << pos;
 }
 
 
 template<typename Integral>
 void unset_bit(Integral& number, int pos) {
-  if (pos < 0 || pos >= sizeof(Integral) * 8) {
-    throw std::range_error("datatools::unset_bit: Invalid bit position !");
-  }
+  DT_THROW_IF(pos < 0 || pos >= sizeof(Integral) * 8,
+              std::range_error,
+              "Invalid bit position [pos = " << pos << "]");
   number &= ~(1 << pos);
 }
 
 
 template<typename Integral>
 void toggle_bit(Integral& number, int pos) {
-  if (pos < 0 || pos >= sizeof(Integral) * 8) {
-    throw std::range_error("datatools::toggle_bit: Invalid bit position !");
-  }
+  DT_THROW_IF(pos < 0 || pos >= sizeof(Integral) * 8,
+              std::range_error,
+              "Invalid bit position [pos = " << pos << "]");
   number ^= 1 << pos;
 }
 
 
 template<typename Integral>
 bool check_bit(Integral& number, int pos) {
-  if (pos < 0 || pos >= sizeof(Integral) * 8) {
-    throw std::range_error("datatools::toggle_bit: Invalid bit position !");
-  }
+  DT_THROW_IF(pos < 0 || pos >= sizeof(Integral) * 8,
+              std::range_error,
+              "Invalid bit position [pos = " << pos << "]");
+
   if (number & (1 << pos)) return false;
   return true;
 }

@@ -190,26 +190,24 @@ bool fetch_path_processor::process(std::string& path) {
 bool fetch_path_processor::process_impl(std::string& path) {
   std::string::size_type dollar;
   std::string text = path;
-  if (path.find('?') != path.npos ||
-      path.find('*') != path.npos) {
-      std::ostringstream message;
-      message << "datatools::fetch_path_processor::process_impl: "
-              << "Wildcard characters are not supported in path='" << path << "' !";
-      throw std::logic_error(message.str());
-   }
+
+  DT_THROW_IF(path.find('?') != path.npos || path.find('*') != path.npos,
+              std::logic_error,
+              "Wildcard characters found in path = " << path);
+  
   {
     std::ostringstream s;
     wordexp_t p;
     int we_error = wordexp( text.c_str(), &p, WRDE_NOCMD|WRDE_SHOWERR|WRDE_UNDEF);
-    if (we_error != 0) {
-      std::ostringstream message;
-      message << "datatools::fetch_path_processor::process_impl: "
-              << "wordexp failed with code : " << we_error << "; broken path is='" << path << "' !";
-      throw std::logic_error(message.str());
-    }
+    
+    DT_THROW_IF(we_error != 0,
+                std::logic_error,
+                "wordexp error, code = " << we_error << ", input = " << path);
+
     if (p.we_wordc == 0) {
       return false;
     }
+
     char** w = p.we_wordv;
     //std::cerr << "************ WORDEXP=";
     if (p.we_wordc > 1) {
@@ -351,31 +349,26 @@ std::string expand_path(const std::string& path) {
       ":~./_-${}0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
   int found = path.find_first_not_of(allowed);
 
-  if (found > 0) {
-    throw std::runtime_error("expand_path: found a not allowed character!");
-  }
+  DT_THROW_IF(found > 0, std::runtime_error, "invalid character found");
 
   std::ostringstream sh_cmd;
   char dummy[256];
   sprintf(dummy, "tmp.XXXXXX");
+
   int tmpfile = mkstemp(dummy);
-  if (tmpfile == -1) {
-    throw std::runtime_error("expand_path: Cannot create temporary file!");
-  }
+  DT_THROW_IF(tmpfile == -1, std::runtime_error, "Failed to create tmp file");
+
   sh_cmd << "echo \"" << path << "\" > " << dummy;
+
   int ret = system(sh_cmd.str().c_str());
-  if (ret != 0) {
-    throw std::runtime_error("expand_path: Cannot execute shell command!");
-  }
+  DT_THROW_IF(ret != 0, std::runtime_error, "Shell command " << sh_cmd.str() << " failed");
+  
   std::ifstream input(dummy);
-  if (!input) {
-    throw std::runtime_error("expand_path: Cannot open temporary file!");
-  }
+  DT_THROW_IF(!input, std::runtime_error, "Cannot open file " << dummy);
+
   std::string line_get;
   std::getline(input, line_get);
-  if (!input) {
-    throw std::runtime_error("expand_path: Cannot read temporary file!");
-  }
+  DT_THROW_IF(!input, std::runtime_error, "Cannot read file " << dummy);
 
   input.close();
   close(tmpfile);
