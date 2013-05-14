@@ -8,8 +8,6 @@ namespace mygsl {
 
   using namespace std;
 
-  bool ode_system::g_debug = false;
-
   bool ode_system::has_jacobian () const
   {
     return false;
@@ -20,14 +18,14 @@ namespace mygsl {
                                     double *       f_,
                                     void   *       params_)
   {
-    if (ode_system::g_debug) {
-      std::cerr << "DEBUG: gsl_ode_function: "
-                << " entering..." << std::endl;
-    }
-    if (ode_system::g_debug) {
-      std::cerr << "DEBUG: ode_system::gsl_ode_function: test..."
-                << std::endl;
-    }
+    // if (ode_system::g_debug) {
+    //   std::cerr << "DEBUG: gsl_ode_function: "
+    //             << " entering..." << std::endl;
+    // }
+    // if (ode_system::g_debug) {
+    //   std::cerr << "DEBUG: ode_system::gsl_ode_function: test..."
+    //             << std::endl;
+    // }
     ode_system * sys = static_cast<ode_system *> (params_);
     if (sys == 0) {
       throw std::runtime_error ("mygsl::ode_system::gsl_ode_function: NULL!");
@@ -41,10 +39,10 @@ namespace mygsl {
                                     double *       dfdt_,
                                     void   *       params_)
   {
-    if (ode_system::g_debug) {
-      std::cerr << "DEBUG: gsl_ode_jacobian: "
-                << " entering..." << std::endl;
-    }
+    // if (ode_system::g_debug) {
+    //   std::cerr << "DEBUG: gsl_ode_jacobian: "
+    //             << " entering..." << std::endl;
+    // }
     ode_system * sys = static_cast<ode_system *> (params_);
     if (sys == 0) {
       throw std::runtime_error ("mygsl::ode_system::gsl_ode_function: NULL!");
@@ -63,8 +61,6 @@ namespace mygsl {
   /*********************************************************************/
 
   const std::string ode_driver::DEFAULT_TYPE = "rk8pd";
-
-  bool ode_driver::g_debug = false;
 
   ode_driver::default_step_action ode_driver::_default_step_action_;
 
@@ -149,10 +145,10 @@ namespace mygsl {
     if (! type_is_valid (type_)) {
       throw std::runtime_error ("mygsl::ode_driver::set_type: Invalid type!");
     }
-    if (ode_driver::g_debug) {
-      std::cerr << "DEBUG: ode_driver::set_type: type='"
-                << type_ << "'" << std::endl;
-    }
+    // if (ode_driver::g_debug) {
+    //   std::cerr << "DEBUG: ode_driver::set_type: type='"
+    //             << type_ << "'" << std::endl;
+    // }
     _type_ = type_;
     return;
   }
@@ -168,9 +164,6 @@ namespace mygsl {
                           double epsrel_,
                           bool   regular_)
   {
-    if (ode_driver::g_debug) {
-      std::cerr << "DEBUG: ctor: " << " entering..." << std::endl;
-    }
     _ode_sys_ = 0;
     if (sys_.get_dimension () < 1) {
       throw std::runtime_error ("mygsl::ode_driver::set_dimension: Invalid value!");
@@ -205,9 +198,6 @@ namespace mygsl {
     _h_ = 0.0;
 
     init ();
-    if (ode_driver::g_debug) {
-      std::cerr << "DEBUG: ctor: " << " exiting." << std::endl;
-    }
     return;
   }
 
@@ -279,52 +269,42 @@ namespace mygsl {
       throw std::runtime_error (message.str ());
     }
 
-    if (ode_driver::g_debug) {
-      std::cerr << "DEBUG: _init_step_: "
-                << "_step_type_=" << _step_type_ << std::endl;
-    }
+    // if (ode_driver::g_debug) {
+    //   std::cerr << "DEBUG: _init_step_: "
+    //             << "_step_type_=" << _step_type_ << std::endl;
+    // }
     return;
   }
 
   void ode_driver::init ()
   {
-    if (ode_driver::g_debug) {
-      std::cerr << "DEBUG: init: " << " entering..." << std::endl;
-    }
     _init_step_ ();
     _step_    = gsl_odeiv_step_alloc (_step_type_,_system_.dimension);
     _control_ = gsl_odeiv_control_y_new (_epsabs_,_epsrel_);
     _evolve_  = gsl_odeiv_evolve_alloc (_system_.dimension);
-    if (ode_driver::g_debug) {
-      std::cerr << "DEBUG: init: " << " exiting..." << std::endl;
-    }
     return;
   }
 
   int ode_driver::_inner_run_not_regular_ ()
   {
-    if (ode_driver::g_debug) {
-      std::cerr << "DEBUG: _inner_run_not_regular_: "
-                << "entering..." << std::endl;
-    }
     int ret = GSL_SUCCESS;
     while (_t_ < _t_end_) {
-      if (ode_driver::g_debug) {
-        std::cerr << "DEBUG: _inner_run_not_regular_: "
-                  << "_t_begin_=" << _t_begin_ << std::endl;
-        std::cerr << "DEBUG: _inner_run_not_regular_: "
-                  << "_t_=" << _t_ << std::endl;
-        std::cerr << "DEBUG: _inner_run_not_regular_: "
-                  << "_t_end_=" << _t_end_ << std::endl;
-        std::cerr << "DEBUG: _inner_run_not_regular_: "
-                  << "_evolve_=" << _evolve_ << std::endl;
-        std::cerr << "DEBUG: _inner_run_not_regular_: "
-                  << "_control_=" << _control_ << std::endl;
-        std::cerr << "DEBUG: _inner_run_not_regular_: "
-                  << "_step_=" << _step_ << std::endl;
-        std::cerr << "DEBUG: _inner_run_not_regular_: "
-                  << "_y_=" << _y_ << std::endl;
-      }
+      // if (ode_driver::g_debug) {
+      //   std::cerr << "DEBUG: _inner_run_not_regular_: "
+      //             << "_t_begin_=" << _t_begin_ << std::endl;
+      //   std::cerr << "DEBUG: _inner_run_not_regular_: "
+      //             << "_t_=" << _t_ << std::endl;
+      //   std::cerr << "DEBUG: _inner_run_not_regular_: "
+      //             << "_t_end_=" << _t_end_ << std::endl;
+      //   std::cerr << "DEBUG: _inner_run_not_regular_: "
+      //             << "_evolve_=" << _evolve_ << std::endl;
+      //   std::cerr << "DEBUG: _inner_run_not_regular_: "
+      //             << "_control_=" << _control_ << std::endl;
+      //   std::cerr << "DEBUG: _inner_run_not_regular_: "
+      //             << "_step_=" << _step_ << std::endl;
+      //   std::cerr << "DEBUG: _inner_run_not_regular_: "
+      //             << "_y_=" << _y_ << std::endl;
+      // }
 
       int status = gsl_odeiv_evolve_apply (
                                            _evolve_,
@@ -336,10 +316,10 @@ namespace mygsl {
                                            &_h_,
                                            _y_);
 
-      if (ode_driver::g_debug) {
-        std::cerr << "DEBUG: _inner_run_not_regular_: "
-                  << "status=" << status << std::endl;
-      }
+      // if (ode_driver::g_debug) {
+      //   std::cerr << "DEBUG: _inner_run_not_regular_: "
+      //             << "status=" << status << std::endl;
+      // }
 
       if (status != GSL_SUCCESS) {
         ret = status;
@@ -348,10 +328,6 @@ namespace mygsl {
 
       _at_step_hook ();
 
-    }
-    if (ode_driver::g_debug) {
-      std::cerr << "DEBUG: _inner_run_not_regular_: "
-                << "exiting." << std::endl;
     }
     return ret;
   }
@@ -418,9 +394,6 @@ namespace mygsl {
                        double t_end_,
                        double h_)
   {
-    if (ode_driver::g_debug) {
-      std::cerr << "DEBUG: run: " << " entering..." << std::endl;
-    }
     int ret   = GSL_SUCCESS;
     _t_begin_ = t_begin_;
     _t_end_   = t_end_;
@@ -428,33 +401,33 @@ namespace mygsl {
 
     _init_run_ ();
 
-    if (ode_driver::g_debug) {
-      std::cerr << "DEBUG: run: " << " _init_run_ done." << std::endl;
-    }
+    // if (ode_driver::g_debug) {
+    //   std::cerr << "DEBUG: run: " << " _init_run_ done." << std::endl;
+    // }
 
     // setup working array:
     _ode_sys_->to_double_star (_y_,_system_.dimension);
 
-    if (ode_driver::g_debug) {
-      std::cerr << "DEBUG: run: " << " to_double_star done." << std::endl;
-    }
+    // if (ode_driver::g_debug) {
+    //   std::cerr << "DEBUG: run: " << " to_double_star done." << std::endl;
+    // }
     _t_       = _t_begin_;
     if (_regular_) ret = _inner_run_regular_ ();
     else ret = _inner_run_not_regular_ ();
-    if (ode_driver::g_debug) {
-      std::cerr << "DEBUG: run: " << " _inner_run_*_regular_ done." << std::endl;
-    }
+    // if (ode_driver::g_debug) {
+    //   std::cerr << "DEBUG: run: " << " _inner_run_*_regular_ done." << std::endl;
+    // }
 
     // fetch system's data from working array:
     _ode_sys_->from_double_star (_y_,_system_.dimension);
 
-    if (ode_driver::g_debug) {
-      std::cerr << "DEBUG: run: " << " from_double_star done." << std::endl;
-    }
+    // if (ode_driver::g_debug) {
+    //   std::cerr << "DEBUG: run: " << " from_double_star done." << std::endl;
+    // }
     _done_run_ ();
-    if (ode_driver::g_debug) {
-      std::cerr << "DEBUG: run: " << " exiting." << std::endl;
-    }
+    // if (ode_driver::g_debug) {
+    //   std::cerr << "DEBUG: run: " << " exiting." << std::endl;
+    // }
     return ret;
   }
 

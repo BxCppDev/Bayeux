@@ -27,12 +27,11 @@ int main (int argc_, char ** argv_)
   try {
     string       rng_id = "mt19937";
     unsigned long int seed   = 12345;
-    
+
     mygsl::rng rand (rng_id, seed);
 
     my_func func;
 
-    mygsl::von_neumann_method::g_debug = true;
     mygsl::von_neumann_method VNM (0.0, M_PI, func);
     VNM.dump ();
 

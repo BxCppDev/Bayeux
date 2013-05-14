@@ -6,14 +6,12 @@
 #include <sstream>
 #include <stdexcept>
 #include <limits>
- 
+
 namespace mygsl {
 
   using namespace std;
 
-  bool von_neumann_method::g_debug = false;
-
-  const double  von_neumann_method::AUTO_FMAX = 0.0;
+  const double von_neumann_method::AUTO_FMAX = 0.0;
 
   bool von_neumann_method::is_initialized () const
   {
@@ -51,9 +49,9 @@ namespace mygsl {
     return;
   }
 
-  von_neumann_method::von_neumann_method (double xmin_, 
-                                          double xmax_, 
-                                          const i_unary_function & func_, 
+  von_neumann_method::von_neumann_method (double xmin_,
+                                          double xmax_,
+                                          const i_unary_function & func_,
                                           double fmax_,
                                           size_t nsamples_,
                                           size_t max_counts_)
@@ -73,7 +71,7 @@ namespace mygsl {
     out_ << "|-- x(min)      : " << _xmin_ << std::endl;
     out_ << "|-- x(max)      : " << _xmax_ << std::endl;
     out_ << "|-- f(max)      : " << _fmax_ << std::endl;
-    out_ << "|-- func        : " << std::hex << _func_ 
+    out_ << "|-- func        : " << std::hex << _func_
          << std::dec << std::endl;
     out_ << "`-- counts(max) : " << _max_counts_ << std::endl;
     return;
@@ -90,25 +88,20 @@ namespace mygsl {
     return;
   }
 
-  void von_neumann_method::init (double xmin_, 
-                                 double xmax_, 
-                                 const i_unary_function & func_, 
+  void von_neumann_method::init (double xmin_,
+                                 double xmax_,
+                                 const i_unary_function & func_,
                                  double fmax_,
                                  size_t nsamples_,
                                  size_t max_counts_)
   {
     using namespace std;
-    if (is_initialized ()) 
+    if (is_initialized ())
       {
         ostringstream message;
         message << "mygsl::von_neumann_method::init: "
                 << "Method is already initalized !";
         throw logic_error (message.str ());
-      }
-    if (g_debug)
-      {
-        clog << "DEBUG: mygsl::von_neumann_method::init: Entering..." 
-             << endl;
       }
     if (xmin_ > xmax_)
       {
@@ -127,13 +120,13 @@ namespace mygsl {
       {
         _fmax_ = fmax_;
       }
-    else 
+    else
       {
-        if (g_debug)
-          {
-            clog << "DEBUG: mygsl::von_neumann_method::init: searching for 'f(max)'..." 
-                 << endl;
-          }
+        // if (g_debug)
+        //   {
+        //     clog << "DEBUG: mygsl::von_neumann_method::init: searching for 'f(max)'..."
+        //          << endl;
+        //   }
         double fmax = -1.0;
         double f1 = -1.0;
         double f2 = -1.0;
@@ -152,7 +145,7 @@ namespace mygsl {
               {
                 f1 = f;
               }
-            else 
+            else
               {
                 f1 = f2;
               }
@@ -165,16 +158,11 @@ namespace mygsl {
               }
           }
         _fmax_ = fmax + dfmax * 2. * dx;
-        if (g_debug)
-          {
-            clog << "DEBUG: mygsl::von_neumann_method::init: found 'f(max)' = "
-                 << _fmax_ << endl;
-          }
-      }
-    if (g_debug)
-      {
-        clog << "DEBUG: mygsl::von_neumann_method::init: Exiting." 
-             << endl;
+        // if (g_debug)
+        //   {
+        //     clog << "DEBUG: mygsl::von_neumann_method::init: found 'f(max)' = "
+        //          << _fmax_ << endl;
+        //   }
       }
     return;
   }
@@ -194,12 +182,12 @@ namespace mygsl {
           {
             res = x;
             break;
-          } 
+          }
         if ((max_counts > 0) && (counts > max_counts))
           {
             throw domain_error ("mygsl::von_neumann_method::shoot: maximum number of tries has been reached!");
           }
-      } 
+      }
     return res;
   }
 

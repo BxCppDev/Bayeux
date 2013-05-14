@@ -4,7 +4,7 @@
  *
  * shell$ ./test_ode > a.data
  *
- * gnuplot> plot 'a.data' using 1:2  title "" with dots 
+ * gnuplot> plot 'a.data' using 1:2  title "" with dots
  *
  */
 
@@ -25,24 +25,24 @@ class test_ode_system : public mygsl::ode_system
 
 public:
 
-  virtual bool 
+  virtual bool
   has_jacobian() const
   {
     return __use_jacobian;
   }
-  
-  void 
-  set_omega_square(double o2_) 
+
+  void
+  set_omega_square(double o2_)
   {
-    if (o2_ <= 0.0) 
+    if (o2_ <= 0.0)
       {
-	throw std::runtime_error(
-				 "test_ode_system::set_omega_square: Invalid value!");
+        throw std::runtime_error(
+                                 "test_ode_system::set_omega_square: Invalid value!");
       }
     __omega_square = o2_;
   }
 
-  void 
+  void
   set_xvx(double x_ , double vx_)
   {
     __x  = x_;
@@ -57,16 +57,16 @@ public:
     set_xvx(1.0,0.0);
   }
 
-  virtual size_t 
+  virtual size_t
   get_dimension() const
   {
     return __dimension;
   }
-    
-  virtual int 
-  compute_derivatives(double         t_ , 
-		      const double * y_ ,
-		      double  *      f_)
+
+  virtual int
+  compute_derivatives(double         t_ ,
+                      const double * y_ ,
+                      double  *      f_)
   {
     double x  = y_[0];
     double vx = y_[1];
@@ -75,11 +75,11 @@ public:
     return 0;
   }
 
-  virtual int 
-  compute_jacobian(double t_ , 
-		   const double * y_ ,
-		   double  * dfdy_  ,
-		   double  * dfdt_)
+  virtual int
+  compute_jacobian(double t_ ,
+                   const double * y_ ,
+                   double  * dfdy_  ,
+                   double  * dfdt_)
   {
     double o2 = __omega_square;
     gsl_matrix_view dfdy_mat = gsl_matrix_view_array(dfdy_,2,2);
@@ -93,27 +93,27 @@ public:
     return 0;
   }
 
-  virtual void 
-  to_double_star(double * y_ , 
-		 size_t dimension_ ) const
+  virtual void
+  to_double_star(double * y_ ,
+                 size_t dimension_ ) const
   {
-    if (dimension_ != __dimension) 
+    if (dimension_ != __dimension)
       {
-	throw std::range_error(
-			       "test_ode_system::to_double_star: Invalid dimension!");
+        throw std::range_error(
+                               "test_ode_system::to_double_star: Invalid dimension!");
       }
     y_[0] = __x;
     y_[1] = __vx;
   }
-  
-  virtual void 
-  from_double_star(const double * y_ , 
-		   size_t dimension_) 
+
+  virtual void
+  from_double_star(const double * y_ ,
+                   size_t dimension_)
   {
-    if (dimension_ != __dimension) 
+    if (dimension_ != __dimension)
       {
-	throw std::range_error(
-			       "test_ode_system::from_double_star: Invalid dimension!");
+        throw std::range_error(
+                               "test_ode_system::from_double_star: Invalid dimension!");
       }
     __x  = y_[0];
     __vx = y_[1];
@@ -121,60 +121,57 @@ public:
 
 };
 
-int 
+int
 main (int argc_ , char ** argv_)
 {
-  try 
+  try
     {
-      mygsl::ode_driver::g_debug = false;
-      mygsl::ode_system::g_debug = false;
 
       std::string type     = "rk8pd"; // RK8 Prince-Dormand
-      std::string arg_type = ""; 
+      std::string arg_type = "";
 
       bool debug        = false;
       bool use_jacobian = false;
 
       int iarg=1;
-      while (iarg < argc_) 
-	{
+      while (iarg < argc_)
+        {
 
-	  std::string arg = argv_[iarg];
+          std::string arg = argv_[iarg];
 
-	  if (arg[0] == '-') 
-	    {
-	      if (arg == "-d" || arg == "--debug") 
-		{
-		  debug=true;
-		}
-	      if (arg == "-j" || arg == "--use-jacobian") 
-		{
-		  use_jacobian=true;
-		}
-	    }
-	  else 
-	    {
-	      if (arg_type.empty()) 
-		{
-		  arg_type=arg;
-		}
-	    }
+          if (arg[0] == '-')
+            {
+              if (arg == "-d" || arg == "--debug")
+                {
+                  debug=true;
+                }
+              if (arg == "-j" || arg == "--use-jacobian")
+                {
+                  use_jacobian=true;
+                }
+            }
+          else
+            {
+              if (arg_type.empty())
+                {
+                  arg_type=arg;
+                }
+            }
 
-	  iarg++;
-	}
+          iarg++;
+        }
 
-      if ( debug ) 
-	{
-	  mygsl::ode_driver::g_debug = true;
-	  std::cerr << "available ODE steppers:" << std::endl;
-	  mygsl::ode_driver::print_types(std::cerr);
-	  std::cerr << std::endl;
-	}
+      if ( debug )
+        {
+          std::cerr << "available ODE steppers:" << std::endl;
+          mygsl::ode_driver::print_types(std::cerr);
+          std::cerr << std::endl;
+        }
 
-      if (!arg_type.empty()) 
-	{
-	  type = arg_type;
-	} 
+      if (!arg_type.empty())
+        {
+          type = arg_type;
+        }
 
       double epsabs  = 1.e-6;   // step relative error
       double epsrel  = 1.e-6;   // step maximum error
@@ -191,14 +188,14 @@ main (int argc_ , char ** argv_)
       double t_max = 20.0;
       double h     =  0.02;
 
-      if (od.run(t_min,t_max,h) != GSL_SUCCESS) 
-	{
-	  throw std::runtime_error("ode_driver::run: failed!");
-	}
+      if (od.run(t_min,t_max,h) != GSL_SUCCESS)
+        {
+          throw std::runtime_error("ode_driver::run: failed!");
+        }
 
     }
-  catch (std::exception & x) 
-    { 
+  catch (std::exception & x)
+    {
       std::cerr << "ERROR: " << x.what() << std::endl;
       exit(EXIT_FAILURE);
     }

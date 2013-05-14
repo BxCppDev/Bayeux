@@ -16,7 +16,6 @@ namespace mygsl {
   struct ode_system
   {
   public:
-    static bool g_debug;
 
     virtual bool has_jacobian () const;
 
@@ -55,7 +54,6 @@ namespace mygsl {
   public:
 
     static const std::string DEFAULT_TYPE;
-    static bool g_debug;
 
     struct at_step_action
     {

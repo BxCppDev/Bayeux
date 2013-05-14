@@ -1,6 +1,6 @@
 // mygsl/error.h
 
-#ifndef MYGSL_ERROR_H_ 
+#ifndef MYGSL_ERROR_H_
 #define MYGSL_ERROR_H_ 1
 
 #include <string>
@@ -12,7 +12,7 @@ namespace mygsl {
   {
   public:
 
-    static void to_string (const int gsl_errno_ , 
+    static void to_string (const int gsl_errno_ ,
                            std::string & err_string_);
 
     static std::string to_string (const int gsl_errno_);
@@ -27,10 +27,10 @@ namespace mygsl {
 
     static void set_gsl_default ();
 
-    static void  default_handler(const char * reason_ ,
-                                 const char * file_ ,
-                                 int line_ ,
-                                 int gsl_errno_);
+    static void default_handler(const char * reason_ ,
+				const char * file_ ,
+				int line_ ,
+				int gsl_errno_);
   private:
 
     error ();
@@ -48,7 +48,7 @@ namespace mygsl {
   do {                                                          \
     gsl_error (reason_, __FILE__, __LINE__, gsl_errno_) ;       \
   } while (0)
- 
+
 }
 
 #endif // MYGSL_ERROR_H_

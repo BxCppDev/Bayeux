@@ -33,7 +33,6 @@ namespace mygsl {
   class linear_system_solver
   {
   public:
-    static bool g_debug;
 
     bool is_initialized () const;
 

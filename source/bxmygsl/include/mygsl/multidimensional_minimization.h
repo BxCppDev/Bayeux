@@ -15,7 +15,7 @@
 
 namespace mygsl {
 
-  class multidimensional_minimization_system : 
+  class multidimensional_minimization_system :
   public mygsl::multiparameter_system
     {
     public:
@@ -35,14 +35,14 @@ namespace mygsl {
 
       int eval_df (const double * x_ , double * gradient_);
 
-      int eval_fdf (const double * x_ , 
-                    double & f_ , 
+      int eval_fdf (const double * x_ ,
+                    double & f_ ,
                     double * gradient_);
 
-      void to_double_star (double * pars_ , 
+      void to_double_star (double * pars_ ,
                            size_t dimension_) const;
 
-      void from_double_star (const double * pars_ , 
+      void from_double_star (const double * pars_ ,
                              size_t dimension_);
 
       // ctor:
@@ -55,7 +55,7 @@ namespace mygsl {
       struct func_eval_f_param : public mygsl::i_unary_function
       {
       public:
-	func_eval_f_param(int free_param_index_, 
+	func_eval_f_param(int free_param_index_,
 			  multidimensional_minimization_system & sys_);
       protected:
 	virtual double _eval(double x_) const;
@@ -64,7 +64,7 @@ namespace mygsl {
 	int free_param_index;
 	multidimensional_minimization_system * sys;
       };
-      
+
       static double func_eval_f_MR(double x_, void * params_);
 
       void plot_f(const std::string & prefix_, int mode_ = 0) const;
@@ -99,11 +99,9 @@ namespace mygsl {
     static const bool   DEFAULT_VERBOSE;
     static const double DEFAULT_EPSABS;
 
-    static bool g_debug;
-
     static double f   (const gsl_vector * v_ , void * params_);
 
-    static void   df  (const gsl_vector * v_ , void * params_ , 
+    static void   df  (const gsl_vector * v_ , void * params_ ,
                        gsl_vector * gradient_);
 
     static void   fdf (const gsl_vector * v_ , void * params_ ,
@@ -116,7 +114,7 @@ namespace mygsl {
       MODE_FDF = 0,
       MODE_F   = 1
     };
-     
+
     enum stopping_t
     {
       STOPPING_GRADIENT = 0,
@@ -125,37 +123,37 @@ namespace mygsl {
 
     class at_step_action
     {
-          
+
     public:
 
       virtual void action (int status_ ,
-                           size_t iter_ , 
-                           double * x_ , 
+                           size_t iter_ ,
+                           double * x_ ,
                            size_t   dim_ ,
                            double f_) = 0;
 
       void operator () (int status_ ,
-                        size_t iter_ , 
-                        double * x_ , 
+                        size_t iter_ ,
+                        double * x_ ,
                         size_t   dim_ ,
                         double f_)
       {
         action (status_, iter_, x_, dim_, f_);
       }
-          
+
     };
-      
+
     struct default_step_action : public at_step_action
     {
       virtual void action (int status_ ,
-                           size_t iter_ , 
-                           double * x_ , 
-                           size_t   dim_ , 
+                           size_t iter_ ,
+                           double * x_ ,
+                           size_t   dim_ ,
                            double f_);
     };
-      
+
     static default_step_action __default_step_action;
-      
+
   private:
 
     bool _verbose_;
@@ -200,20 +198,20 @@ namespace mygsl {
     size_t get_modulo_iter () const;
 
     size_t get_max_iter () const;
-       
+
     double get_epsabs () const;
-      
+
     double get_fval () const;
-      
+
     void unset_step_action ();
-      
+
     void set_default_step_action ();
-      
+
     void set_step_action (at_step_action & asd_);
-      
+
     std::string get_name () const;
 
-    void init (const std::string & name_ , 
+    void init (const std::string & name_ ,
                multidimensional_minimization_system & ms_);
 
     void reset ();
@@ -225,9 +223,9 @@ namespace mygsl {
   protected:
 
     void _at_step_hook (int      status_ ,
-                        size_t   iter_ , 
-                        double * x_ , 
-                        size_t   dim_ , 
+                        size_t   iter_ ,
+                        double * x_ ,
+                        size_t   dim_ ,
                         double   f_);
 
   public:
@@ -235,9 +233,9 @@ namespace mygsl {
     int minimize (double epsabs_);
 
     void devel_dump_x () const;
-       
+
   };
-  
+
 } // namespace mygsl
 
 #endif // MYGSL_MULTIDIMENSIONAL_MINIMIZATION_H_

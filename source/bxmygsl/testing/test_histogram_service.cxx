@@ -1,7 +1,7 @@
 /* test_histogram_service.cxx
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2013-03-08
- * Last modified : 
+ * Last modified :
  *
  * Copyright (C) 2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -81,8 +81,7 @@ int main (int argc_, char ** argv_)
         }
 
       srand48(seed);
-      
-      datatools::base_service::g_debug = debug;
+
       DATATOOLS_FACTORY_GET_SYSTEM_REGISTER (datatools::base_service).print (clog);
 
       {
@@ -91,8 +90,8 @@ int main (int argc_, char ** argv_)
           {
             SM_flags |= datatools::service_manager::DEBUG;
           }
-        datatools::service_manager SM ("SM", 
-                                       "A service manager", 
+        datatools::service_manager SM ("SM",
+                                       "A service manager",
                                        SM_flags);
         SM.tree_dump (clog, "Service manager : ");
 
@@ -105,15 +104,15 @@ int main (int argc_, char ** argv_)
 
         if (SM.has ("Histos") && SM.is_a<mygsl::histogram_service> ("Histos"))
           {
-            // Access to the histogram service by reference 
+            // Access to the histogram service by reference
             // through its name and class :
-            mygsl::histogram_service & Histos 
+            mygsl::histogram_service & Histos
               = SM.grab<mygsl::histogram_service> ("Histos");
 
             Histos.tree_dump(std::clog, "Histos service : ");
 
             mygsl::histogram_pool & HP = Histos.grab_pool ();
- 
+
             mygsl::histogram_1d & hngg     = HP.grab_1d("MC::ngghits");
             mygsl::histogram_1d & hscin    = HP.grab_1d("MC::ncalohits");
             mygsl::histogram_2d & hnggscin = HP.grab_2d("SD::ngghits_vs_ncalohits");

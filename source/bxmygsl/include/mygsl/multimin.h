@@ -263,10 +263,8 @@ namespace mygsl {
   class multimin
   {
   public:
-    static size_t DEFAULT_MAX_ITER;
-    static bool   DEFAULT_VERBOSE;
-
-    static bool g_debug;
+    static const size_t DEFAULT_MAX_ITER;
+    static const bool   DEFAULT_VERBOSE;
 
     static double multimin_f    (const gsl_vector * v_ , void * params_);
 
@@ -278,7 +276,7 @@ namespace mygsl {
 
     static bool name_is_valid (const std::string & name_);
 
-    enum mode_t
+    enum mode_type
       {
         MODE_FDF = 0,
         MODE_F   = 1

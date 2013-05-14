@@ -36,8 +36,6 @@ namespace mygsl {
     static const std::string AKIMA_PERIODIC_INTERP_NAME;
     static const std::string DEFAULT_INTERP_NAME;
 
-    static bool g_debug;
-
   public:
 
     /// Check if the function has an explicit domain of definition (default: false)

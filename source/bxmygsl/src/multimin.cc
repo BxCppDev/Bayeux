@@ -1,4 +1,4 @@
-// mygsl::multimin.cc 
+// mygsl::multimin.cc
 
 #include <mygsl/multimin.h>
 
@@ -12,9 +12,8 @@ namespace mygsl {
 
   using namespace std;
 
-  size_t multimin::DEFAULT_MAX_ITER = 1000;
-  bool   multimin::DEFAULT_VERBOSE  = true;
-  bool   multimin::g_debug          = false;
+  const size_t multimin::DEFAULT_MAX_ITER = 1000;
+  const bool   multimin::DEFAULT_VERBOSE  = true;
 
   /**********************************************************/
 
@@ -131,7 +130,7 @@ namespace mygsl {
     return;
   }
 
-  multimin_system::param_entry 
+  multimin_system::param_entry
   multimin_system::param_entry::make_param_entry_auto(
     const std::string & name_ )
   {
@@ -143,7 +142,7 @@ namespace mygsl {
     return pe;
   }
 
-  multimin_system::param_entry 
+  multimin_system::param_entry
   multimin_system::param_entry::make_param_entry_fixed(
     const std::string & name_ ,
     double value_ )
@@ -156,7 +155,7 @@ namespace mygsl {
     return pe;
   }
 
-  multimin_system::param_entry 
+  multimin_system::param_entry
   multimin_system::param_entry::make_param_entry_ranged(
     const std::string & name_  ,
     double value_ ,
@@ -186,8 +185,8 @@ namespace mygsl {
   void multimin_system::print_params( std::ostream & out_ ) const
   {
     for ( int i=0; i<_params.size(); i++ ) {
-      
-      out_ << _params.at(i).name << ": " 
+
+      out_ << _params.at(i).name << ": "
            << _params.at(i).value << " ["
            << _params.at(i).min << ";"
            << _params.at(i).max << "] "
@@ -204,14 +203,14 @@ namespace mygsl {
     }
     return;
   }
- 
+
   void multimin_system::add_param( const param_entry & pe_ )
   {
     if ( is_lock_params() ) {
       std::ostringstream message;
       message << "multimin_system::add_param: ";
       message << "system is locked!";
-      throw std::runtime_error(message.str());            
+      throw std::runtime_error(message.str());
     }
 
     if (std::find_if (_params.begin(),
@@ -220,14 +219,14 @@ namespace mygsl {
       std::ostringstream message;
       message << "multimin_system::add_param: ";
       message << "parameter '" << pe_.name << "' already exist!";
-      throw std::runtime_error(message.str());       
+      throw std::runtime_error(message.str());
     }
     _params.push_back(pe_);
     _update_dimensions_();
     return;
   }
 
-  const multimin_system::param_entry & 
+  const multimin_system::param_entry &
   multimin_system::get_param( int i_ ) const
   {
     return _params.at(i_);
@@ -280,22 +279,22 @@ namespace mygsl {
     return get_param(i_).name;
   }
 
-  int multimin_system::eval_f( const double * x_ , 
+  int multimin_system::eval_f( const double * x_ ,
                                double & f_ )
   {
     from_double_star(x_,get_free_dimension());
     return _eval_f(f_);
   }
 
-  int multimin_system::eval_df( const double * x_ , 
+  int multimin_system::eval_df( const double * x_ ,
                                 double * gradient_ )
   {
     from_double_star(x_,get_free_dimension());
     return _eval_df(gradient_);
   }
 
-  int multimin_system::eval_fdf( const double * x_ , 
-                                 double & f_ , 
+  int multimin_system::eval_fdf( const double * x_ ,
+                                 double & f_ ,
                                  double * gradient_ )
   {
     int ret = eval_f(x_,f_);
@@ -307,14 +306,14 @@ namespace mygsl {
   {
     return _params.size();
   }
-  
+
   void multimin_system::_update_free_dimension_()
   {
     param_is_free pif;
     _free_dimension_=std::count_if(_params.begin(),_params.end(),pif);
     return;
   }
-  
+
   void multimin_system::_update_auto_dimension_()
   {
     param_is_auto pia;
@@ -328,12 +327,12 @@ namespace mygsl {
     _update_auto_dimension_();
     return;
   }
-  
+
   size_t multimin_system::get_free_dimension() const
   {
     return _free_dimension_;
   }
-  
+
   size_t multimin_system::get_auto_dimension() const
   {
     return _auto_dimension_;
@@ -349,7 +348,7 @@ namespace mygsl {
 
   int multimin_system::_auto_values()
   {
-    if ( get_auto_dimension() > 0 ) { 
+    if ( get_auto_dimension() > 0 ) {
       std::ostringstream message;
       message << "multimin_system::_auto_values: "
               << "There are AUTO paramaters! "
@@ -361,7 +360,7 @@ namespace mygsl {
 
   int multimin_system::auto_values()
   {
-    if ( get_auto_dimension() > 0 ) { 
+    if ( get_auto_dimension() > 0 ) {
       return _auto_values();
     }
     return 0;
@@ -373,8 +372,8 @@ namespace mygsl {
     if ( status != 0 ) return status ;
     return auto_values();
   }
-  
-  void multimin_system::to_double_star( double * pars_ , 
+
+  void multimin_system::to_double_star( double * pars_ ,
                                         size_t dimension_ ) const
   {
     size_t fd=get_free_dimension();
@@ -383,7 +382,7 @@ namespace mygsl {
         "multimin_system::to_double_star: Invalid dimension!");
     }
     int i_free=0;
-    for ( int i_par=0; i_par<get_dimension(); i_par++ ) { 
+    for ( int i_par=0; i_par<get_dimension(); i_par++ ) {
       if ( is_param_free(i_par) ) {
         pars_[i_free] = get_param_value(i_par);
         i_free++;
@@ -392,7 +391,7 @@ namespace mygsl {
     return;
   }
 
-  void multimin_system::from_double_star( const double * pars_ , 
+  void multimin_system::from_double_star( const double * pars_ ,
                                           size_t dimension_ )
   {
     if ( dimension_ != get_free_dimension() ) {
@@ -400,7 +399,7 @@ namespace mygsl {
         "multimin_system::from_double_star: Invalid dimension!");
     }
     int i_free=0;
-    for ( int i=0; i<get_dimension(); i++ ) { 
+    for ( int i=0; i<get_dimension(); i++ ) {
       if ( is_param_free(i) ) {
         _params.at(i).set_value_no_check(pars_[i_free]);
         i_free++;
@@ -429,10 +428,10 @@ namespace mygsl {
     }
     return;
   }
- 
+
   /**************************************************************************/
- 
-  double multimin::multimin_f( const gsl_vector * v_ , 
+
+  double multimin::multimin_f( const gsl_vector * v_ ,
                                void * params_ )
   {
     multimin_system * ms = static_cast<multimin_system*>(params_);
@@ -440,9 +439,9 @@ namespace mygsl {
     ms->eval_f(v_->data,f);
     return f;
   }
-  
-  void multimin::multimin_df( const gsl_vector * v_ , 
-                              void * params_ , 
+
+  void multimin::multimin_df( const gsl_vector * v_ ,
+                              void * params_ ,
                               gsl_vector * gradient_ )
   {
     multimin_system * ms = static_cast<multimin_system*>(params_);
@@ -450,9 +449,9 @@ namespace mygsl {
     return;
   }
 
-  void multimin::multimin_fdf( const gsl_vector * v_ , 
+  void multimin::multimin_fdf( const gsl_vector * v_ ,
                                void * params_ ,
-                               double * f_ , 
+                               double * f_ ,
                                gsl_vector * gradient_ )
   {
     multimin_system * ms = static_cast<multimin_system*>(params_);
@@ -481,10 +480,10 @@ namespace mygsl {
     _at_step_action_ = &asd_;
     return;
   }
-  
+
   void multimin::default_step_action::action( int status_ ,
-                                              size_t iter_ , 
-                                              double * x_ , 
+                                              size_t iter_ ,
+                                              double * x_ ,
                                               size_t   dim_ ,
                                               double   f_ )
   {
@@ -493,13 +492,13 @@ namespace mygsl {
     double * x    = x_;
     size_t dim    = dim_;
     double   f    = f_;
-    if ( multimin::g_debug ) std::cerr << "Iteration: " << iter << " (" 
-              << (status==GSL_SUCCESS?"minimum found":"continue") 
-              << ')' << std::endl;
+    // if ( multimin::g_debug ) std::cerr << "Iteration: " << iter << " ("
+    //           << (status==GSL_SUCCESS?"minimum found":"continue")
+    //           << ')' << std::endl;
     std::cout << iter << ' ' << dim << ' ';
     for ( int i=0; i<dim ; i++ ) {
       std::cout << x[i] << ' ';
-    } 
+    }
     std::cout << f << ' ' << status << ' ';
     std::cout << std::endl;
     return;
@@ -537,12 +536,12 @@ namespace mygsl {
     return "";
   }
 
-  void multimin::_init_algorithm_( const std::string & name_ ) 
+  void multimin::_init_algorithm_( const std::string & name_ )
   {
     if ( ! name_is_valid(name_) ) {
       std::ostringstream message;
       message << "multimin::_init_algorithm_: "
-              << "Invalid minimization algorithm '" 
+              << "Invalid minimization algorithm '"
               << name_ << "'!";
       throw std::runtime_error(message.str());
     }
@@ -551,22 +550,22 @@ namespace mygsl {
       _algo_fdf_ = gsl_multimin_fdfminimizer_conjugate_fr;
       _set_mode_(MODE_FDF);
     }
-    
+
     if ( name_ == "conjugate_pr" ) {
       _algo_fdf_ = gsl_multimin_fdfminimizer_conjugate_pr;
       _set_mode_(MODE_FDF);
     }
-    
+
     if ( name_ == "vector_bfgs" ) {
       _algo_fdf_ = gsl_multimin_fdfminimizer_vector_bfgs;
       _set_mode_(MODE_FDF);
     }
-    
+
     if ( name_ == "steepest_descent" ) {
       _algo_fdf_ = gsl_multimin_fdfminimizer_steepest_descent;
       _set_mode_(MODE_FDF);
     }
-    
+
     if ( name_ == "nmsimplex" ) {
       _algo_f_ = gsl_multimin_fminimizer_nmsimplex;
       _set_mode_(MODE_F);
@@ -589,37 +588,37 @@ namespace mygsl {
       std::cerr << "DEVEL: _x_==0" << std::endl;
       return;
     }
-    std::cerr << "DEVEL ================================= " << std::endl; 
-    std::cerr << "DEVEL: " 
+    std::cerr << "DEVEL ================================= " << std::endl;
+    std::cerr << "DEVEL: "
               << " _x_.size  = " << _x_->size
               << std::endl;
-    std::cerr << "DEVEL: " 
+    std::cerr << "DEVEL: "
               << " _x_.stride  = " << _x_->stride
               << std::endl;
-    std::cerr << "DEVEL: " 
+    std::cerr << "DEVEL: "
               << " _x_.data  = " << _x_->data
               << std::endl;
-    std::cerr << "DEVEL: " 
+    std::cerr << "DEVEL: "
               << " _x_.owner  = " << _x_->owner
               << std::endl;
     for ( int i=0; i< _x_->size; i++ ) {
-      std::cerr << "DEVEL: " 
+      std::cerr << "DEVEL: "
                 << " _x_.data["<< i<< "]  = " << _x_->data[i]
                 << std::endl;
     }
-    std::cerr << "DEVEL: " 
+    std::cerr << "DEVEL: "
               << " _x_.block.size  = " << _x_->block->size
               << std::endl;
     for ( int i=0; i< _x_->block->size; i++ ) {
-      std::cerr << "DEVEL: " 
+      std::cerr << "DEVEL: "
                   << " _x_.block["<< i<< "]  = " << _x_->block->data[i]
                 << std::endl;
     }
-    std::cerr << "DEVEL ================================= " << std::endl; 
+    std::cerr << "DEVEL ================================= " << std::endl;
     return;
   }
 
-  void multimin::init( const std::string & name_ , 
+  void multimin::init( const std::string & name_ ,
                        multimin_system & ms_ )
   {
     _sys_ = &ms_;
@@ -647,7 +646,7 @@ namespace mygsl {
       _fmin_     = gsl_multimin_fminimizer_alloc(_algo_f_,_f_.n);
     }
 
-    if ( multimin::g_debug ) std::clog << "DEBUG: multimin::init: allocating ' _x_'..." << std::endl;
+    // if ( multimin::g_debug ) std::clog << "DEBUG: multimin::init: allocating ' _x_'..." << std::endl;
     _x_  = gsl_vector_alloc(n);
     gsl_vector_set_zero(_x_);
     //std::cerr << "DEVEL: multimin::init: gsl_vector_set_zero(_x_)" << std::endl;
@@ -657,13 +656,13 @@ namespace mygsl {
     if ( ldebug ) { devel_dump_x(); }
     */
 
-    if ( multimin::g_debug ) std::clog << "DEBUG: multimin::init: set initial values..." << std::endl;
+    // if ( multimin::g_debug ) std::clog << "DEBUG: multimin::init: set initial values..." << std::endl;
 
     _sys_->to_double_star(_x_->data,n);
     /*
     int i_free=0;
     std::cerr << "DEVEL: multimin::init: gsl_vector_set(_x_...)" << std::endl;
-    for ( int i_par=0; i_par< _sys_->get_dimension(); i_par++ ) { 
+    for ( int i_par=0; i_par< _sys_->get_dimension(); i_par++ ) {
       if ( _sys_->is_param_free(i_par) ) {
         gsl_vector_set(_x_,i_free,_sys_->get_param_value(i_par));
         i_free++;
@@ -672,18 +671,18 @@ namespace mygsl {
     std::cerr << "DEVEL: multimin::init: gsl_vector_set(_x_...) done." << std::endl;
     */
 
-    if ( multimin::g_debug ) {
-      for ( int i=0; i<n; i++ ) {
-        double par=gsl_vector_get(_x_,i);
-        std::clog << "DEBUG: multimin::init: par=" << par << std::endl;
-      }
-    }
+    // if ( multimin::g_debug ) {
+    //   for ( int i=0; i<n; i++ ) {
+    //     double par=gsl_vector_get(_x_,i);
+    //     std::clog << "DEBUG: multimin::init: par=" << par << std::endl;
+    //   }
+    // }
 
     if ( _mode_ == MODE_FDF ) {
       _fdf_step_size_ = 0.01;
       _fdf_tol_       = 1.e-4;
       gsl_multimin_fdfminimizer_set(_fdfmin_,&_fdf_,_x_,
-                                    _fdf_step_size_,_fdf_tol_); 
+                                    _fdf_step_size_,_fdf_tol_);
     }
 
     if ( _mode_ == MODE_F ) {
@@ -696,7 +695,7 @@ namespace mygsl {
           i_free++;
         }
       }
-      gsl_multimin_fminimizer_set(_fmin_,&_f_,_x_,_ss_); 
+      gsl_multimin_fminimizer_set(_fmin_,&_f_,_x_,_ss_);
     }
 
     return;
@@ -716,7 +715,7 @@ namespace mygsl {
       //std::cerr << "multimin::reset: free _fmin_ done" << std::endl;
     }
     if ( _x_ != 0 ) {
-      //std::cerr << "multimin::reset: free _x_..." << std::endl; 
+      //std::cerr << "multimin::reset: free _x_..." << std::endl;
       //devel_dump_x();
       gsl_vector_free(_x_);
       //std::cerr << "multimin::reset: free _x_ done" << std::endl;
@@ -760,12 +759,12 @@ namespace mygsl {
   {
     return _n_iter_;
   }
-  
+
   double multimin::get_fval() const
   {
     return _fval_;
   }
-  
+
   multimin::multimin()
   {
     _algo_fdf_ = 0;
@@ -794,7 +793,7 @@ namespace mygsl {
     _at_step_action_ = 0;
 
     _n_iter_ = 0;
-          
+
     return;
   }
 
@@ -807,17 +806,17 @@ namespace mygsl {
   }
 
   void multimin::_at_step_hook( int status_ ,
-                                size_t iter_ , 
-                                double * x_ , 
-                                size_t   dim_ , 
+                                size_t iter_ ,
+                                double * x_ ,
+                                size_t   dim_ ,
                                 double f_ )
   {
-    if ( multimin::g_debug ) std::clog << "DEBUG: multimin::_at_step_hook: entering..." << std::endl;
+    // if ( multimin::g_debug ) std::clog << "DEBUG: multimin::_at_step_hook: entering..." << std::endl;
     if ( _at_step_action_ != 0 ) {
-      if ( multimin::g_debug ) std::clog << "DEBUG: multimin::_at_step_hook: _at_step_action_..." << std::endl;
+      // if ( multimin::g_debug ) std::clog << "DEBUG: multimin::_at_step_hook: _at_step_action_..." << std::endl;
       (*_at_step_action_)(status_,iter_,x_,dim_,f_);
     }
-    if ( multimin::g_debug ) std::clog << "DEBUG: multimin::_at_step_hook: exiting." << std::endl;
+    // if ( multimin::g_debug ) std::clog << "DEBUG: multimin::_at_step_hook: exiting." << std::endl;
   }
 
   int multimin::minimize( double epsabs_ )
@@ -830,12 +829,12 @@ namespace mygsl {
     double f;
 
     do {
-      if ( multimin::g_debug ) std::cerr << std::endl << "DEBUG: multimin::minimize: NEW ITERATTION" << std::endl;
+      // if ( multimin::g_debug ) std::cerr << std::endl << "DEBUG: multimin::minimize: NEW ITERATTION" << std::endl;
 
       iter++;
 
       if ( _mode_ ==  MODE_F ) {
-        if ( multimin::g_debug ) std::cerr << "DEBUG: multimin::minimize: MODE_F" << std::endl;
+        // if ( multimin::g_debug ) std::cerr << "DEBUG: multimin::minimize: MODE_F" << std::endl;
         //if ( _fmin_ != 0 ) {
         dim = _f_.n;
         status=gsl_multimin_fminimizer_iterate(_fmin_);
@@ -843,15 +842,15 @@ namespace mygsl {
           break;
         }
         double size = gsl_multimin_fminimizer_size(_fmin_);
-        if ( multimin::g_debug ) std::cerr << "DEBUG: multimin::minimize: MODE_F size=" << size 
-                  << " epsabs=" << _epsabs_ << std::endl;
+        // if ( multimin::g_debug ) std::cerr << "DEBUG: multimin::minimize: MODE_F size=" << size
+                  // << " epsabs=" << _epsabs_ << std::endl;
         status=gsl_multimin_test_size(size,_epsabs_);
-        x = _fmin_->x->data;      
+        x = _fmin_->x->data;
         f = _fmin_->fval;
       }
 
       if ( _mode_ ==  MODE_FDF ) {
-        if ( multimin::g_debug ) std::cerr << "DEBUG: multimin::minimize: MODE_FDF" << std::endl;
+        // if ( multimin::g_debug ) std::cerr << "DEBUG: multimin::minimize: MODE_FDF" << std::endl;
         //if ( _fdfmin_ != 0 ) {
         dim = _fdf_.n;
         status=gsl_multimin_fdfminimizer_iterate(_fdfmin_);
@@ -859,25 +858,25 @@ namespace mygsl {
           break;
         }
         status=gsl_multimin_test_gradient(_fdfmin_->gradient,_epsabs_);
-        x = _fdfmin_->x->data;    
+        x = _fdfmin_->x->data;
         f = _fdfmin_->f;
       }
 
       /*
       if ( _verbose_ ) {
-        std::clog << "multimin::minimize:iteration: " 
+        std::clog << "multimin::minimize:iteration: "
                   << iter << std::endl;
         if ( status == GSL_SUCCESS ) {
-          std::clog << "multimin::minimize: minimum found at: " 
+          std::clog << "multimin::minimize: minimum found at: "
                     << std::endl;
         }
         else {
-          std::clog << "multimin::minimize: current step at: " 
+          std::clog << "multimin::minimize: current step at: "
                     << std::endl;
         }
         for ( size_t i=0; i<dim ; i++ ) {
           //std::clog << "TEST 0 i=" << i << std::endl;
-          gsl_vector * tmp; 
+          gsl_vector * tmp;
           if ( _mode_ ==  MODE_F ) {
             tmp = _fmin_->x;
             //std::clog << "TEST 0a i=" << i << std::endl;
@@ -892,16 +891,16 @@ namespace mygsl {
       */
       _at_step_hook(status,iter,x,dim,f);
       _fval_=f;
-      
-    } while ( status == GSL_CONTINUE && iter < _max_iter_); 
+
+    } while ( status == GSL_CONTINUE && iter < _max_iter_);
 
     _n_iter_=iter;
     if ( status == GSL_SUCCESS ) {
-      if ( multimin::g_debug ) std::clog << "multimin::minimize: END" << std::endl;
+      // if ( multimin::g_debug ) std::clog << "multimin::minimize: END" << std::endl;
       _sys_->from_double_star(x,dim);
     }
-   
-    return status;     
+
+    return status;
   }
 
 }

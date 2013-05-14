@@ -23,8 +23,6 @@ namespace mygsl {
   const std::string tabulated_function::AKIMA_PERIODIC_INTERP_NAME = "akima_periodic";
   const std::string tabulated_function::DEFAULT_INTERP_NAME = tabulated_function::LINEAR_INTERP_NAME;
 
-  bool tabulated_function::g_debug = false;
-
   //----------------------------------------------------------------------
   // Internal implementation struct
   //
@@ -142,17 +140,17 @@ namespace mygsl {
     if (is_table_locked()) unlock_table();
 
     if (!interp_name_.empty()) {
-      if (g_debug) {
-        std::cerr << "DEBUG: tabulated_function::lock_table: interpolator name='"
-                  << interp_name_ << "'" << std::endl;
-      }
+      // if (g_debug) {
+      //   std::cerr << "DEBUG: mygsl::tabulated_function::lock_table: interpolator name='"
+      //             << interp_name_ << "'" << std::endl;
+      // }
       pImpl->_interpolator_name_ = interp_name_;
     }
     size_t npoints = pImpl->_points_.size();
-    if (g_debug) {
-      std::cerr << "DEBUG: tabulated_function::lock_table: npoints='"
-                << npoints << "'" << std::endl;
-    }
+    // if (g_debug) {
+    //   std::cerr << "DEBUG: mygsl::tabulated_function::lock_table: npoints='"
+    //             << npoints << "'" << std::endl;
+    // }
 
     if (npoints == 0) return;
 
@@ -161,16 +159,16 @@ namespace mygsl {
     const gsl_interp_type *git = 0;
     if (!interpolator_name_is_valid(pImpl->_interpolator_name_)) {
       std::ostringstream message;
-      message << "tabulated_function::lock_table: "
+      message << "mygsl::tabulated_function::lock_table: "
               << "Interpolator '"
               << pImpl->_interpolator_name_
               << "' is not supported!";
       throw std::logic_error(message.str());
     } else {
-      if (g_debug) {
-        std::cerr << "DEBUG: tabulated_function::lock_table: name='"
-                  << pImpl->_interpolator_name_ << "'" << std::endl;
-      }
+      // if (g_debug) {
+      //   std::cerr << "DEBUG: tabulated_function::lock_table: name='"
+      //             << pImpl->_interpolator_name_ << "'" << std::endl;
+      // }
       if (pImpl->_interpolator_name_ == LINEAR_INTERP_NAME) {
         git = gsl_interp_linear;
       }
@@ -196,18 +194,18 @@ namespace mygsl {
     size_t min_size  = gsl_spline_min_size(pImpl->_gs_);
     std::string name = gsl_spline_name(pImpl->_gs_);
 
-    if (g_debug) {
-      std::cerr << "DEBUG: tabulated_function::lock_table: #points="
-                << npoints << "" << std::endl;
-      std::cerr << "DEBUG: tabulated_function::lock_table: min_size="
-                << min_size << "" << std::endl;
-      std::cerr << "DEBUG: tabulated_function::lock_table: name='"
-                << name << "'" << std::endl;
-    }
+    // if (g_debug) {
+    //   std::cerr << "DEBUG: tabulated_function::lock_table: #points="
+    //             << npoints << "" << std::endl;
+    //   std::cerr << "DEBUG: tabulated_function::lock_table: min_size="
+    //             << min_size << "" << std::endl;
+    //   std::cerr << "DEBUG: tabulated_function::lock_table: name='"
+    //             << name << "'" << std::endl;
+    // }
 
     if (npoints < (int)min_size) {
       std::ostringstream message;
-      message << "tabulated_function::lock_table: "
+      message << "mygsl::tabulated_function::lock_table: "
               << "Not enough data points for '"
               << name
               << "' interpolator!";
@@ -218,7 +216,7 @@ namespace mygsl {
 
     if (polynomial_alert) {
       std::ostringstream message;
-      message << "tabulated_function::lock_table: "
+      message << "mygsl::tabulated_function::lock_table: "
               << "Polynomial interpolation scheme uses a too large data set with more than "
               << polynomial_alert_max_points
               << " points!";
@@ -274,7 +272,7 @@ namespace mygsl {
 
   void tabulated_function::relock_table(const std::string& interp_name_) {
     if (is_verbose()) {
-      std::clog << "WARNING: tabulated_function::relock_table:"
+      std::clog << "WARNING: mygsl::tabulated_function::relock_table:"
                 << "relock forced!" << std::endl;
     }
     this->unlock_table();
@@ -282,16 +280,16 @@ namespace mygsl {
   }
 
   void tabulated_function::add_point(double x_, double y_, bool lock_after_) {
-    bool local_debug = g_debug;
+    bool local_debug = false;
     if (local_debug) {
-      std::cerr << "DEBUG: tabulated_function::add_point: "
+      std::cerr << "DEBUG: mygsl::tabulated_function::add_point: "
                 << " (" << x_ << ", " << y_ << ")" << std::endl;
     }
     if (is_table_locked()) unlock_table();
     (pImpl->_points_)[x_] = y_;
     if (lock_after_) {
       if (local_debug) {
-        std::cerr << "DEBUG: tabulated_function::add_point: lock!"
+        std::cerr << "DEBUG: mygsl::tabulated_function::add_point: lock!"
                   << std::endl;
       }
       lock_table(pImpl->_interpolator_name_);
@@ -318,7 +316,7 @@ namespace mygsl {
 
   double tabulated_function::_eval(double x_) const {
     if (!is_table_locked()) {
-      throw std::logic_error("tabulated_function::_eval: Object not locked!");
+      throw std::logic_error("mygsl::tabulated_function::_eval: Object not locked!");
     }
     double y = gsl_spline_eval(pImpl->_gs_, x_, pImpl->_giacc_);
     return y;
@@ -329,7 +327,7 @@ namespace mygsl {
     in_ >> interpolator_name >> std::ws;
     if (!interpolator_name_is_valid(interpolator_name)) {
       std::ostringstream message;
-      message << "tabulated_function::tabfunc_load: "
+      message << "mygsl::tabulated_function::tabfunc_load: "
               << "Interpolator '"
               << pImpl->_interpolator_name_ << "' is not supported!";
       throw std::out_of_range(message.str());
@@ -340,7 +338,7 @@ namespace mygsl {
       double x, y;
       in_ >> x >> std::ws >> y >> std::ws;
       if (!in_) {
-        throw std::logic_error("tabulated_function::tabfunc_load: invalid format for (x, y) data point");
+        throw std::logic_error("mygsl::tabulated_function::tabfunc_load: invalid format for (x, y) data point");
       }
       add_point(x, y, false);
     }
