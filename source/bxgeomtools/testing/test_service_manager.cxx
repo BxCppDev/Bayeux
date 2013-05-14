@@ -85,7 +85,6 @@ int main (int argc_, char ** argv_)
           iarg++;
         }
 
-      datatools::base_service::g_debug = debug;
       DATATOOLS_FACTORY_GET_SYSTEM_REGISTER (datatools::base_service).print (clog);
 
       {
@@ -99,7 +98,7 @@ int main (int argc_, char ** argv_)
 
         datatools::properties SM_setup;
         string SM_setup_file = "${GEOMTOOLS_DATA_DIR}/testing/config/test_service_manager.conf";
-        if (debug) clog << datatools::io::debug << "Setup file = " 
+        if (debug) clog << datatools::io::debug << "Setup file = "
                         << SM_setup_file << endl;
         datatools::fetch_path_with_env (SM_setup_file);
         datatools::properties::read_config(SM_setup_file, SM_setup);
@@ -117,7 +116,7 @@ int main (int argc_, char ** argv_)
             const geomtools::manager & geom_mgr = Geo.get_geom_manager();
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
             if (visu)
-              { 
+              {
                 std::string visu_drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
                 bool visu_drawer_labels = true;
                 std::string visu_model_name = geom_mgr.get_world_name ();
@@ -127,9 +126,9 @@ int main (int argc_, char ** argv_)
                 GPD.set_mode (geomtools::gnuplot_drawer::MODE_WIRED);
                 GPD.set_view (visu_drawer_view);
                 GPD.set_labels (visu_drawer_labels);
-                GPD.draw (geom_mgr.get_factory(), 
-                          visu_model_name, 
-                          p,  
+                GPD.draw (geom_mgr.get_factory(),
+                          visu_model_name,
+                          p,
                           geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT);
               }
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY

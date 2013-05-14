@@ -1,32 +1,32 @@
-// -*- mode: c++ ; -*- 
-// test_manager.cxx 
-/* 
+// -*- mode: c++ ; -*-
+// test_manager.cxx
+/*
  * Copyright 2007-2013 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
  */
 
 #include <cstdlib>
-#include <iostream> 
+#include <iostream>
 #include <string>
 #include <exception>
 
 #include <boost/shared_ptr.hpp>
- 
+
 #include <datatools/properties.h>
 #include <datatools/utils.h>
 
@@ -46,7 +46,7 @@
 #include <geomtools/display_data.h>
 #include <geomtools/blur_spot.h>
 
-/* A plugin for the geometry manager which instantiate 
+/* A plugin for the geometry manager which instantiate
  * a 'mapping' object with its specific mapping rules.
  * It is a clone of the 'geomtools::mapping_plugin class'.
  */
@@ -60,22 +60,22 @@ public:
   virtual int initialize(const datatools::properties & config_,
                          const geomtools::manager::plugins_dict_type & plugins_,
                          const datatools::service_dict_type & services_);
-  
+
   /// Main reset method
   virtual int reset();
-  
+
   /// Check if plugin is initialized
   virtual bool is_initialized() const;
 
   const geomtools::mapping & get_mapping () const;
-  
+
 protected:
 
   void _build_mapping (const datatools::properties & mapping_config_);
 
 private:
   bool                _initialized_;
-  geomtools::mapping  _mapping_; 
+  geomtools::mapping  _mapping_;
 
   GEOMTOOLS_PLUGIN_REGISTRATION_INTERFACE(test_plugin);
 
@@ -103,7 +103,7 @@ test_plugin::~test_plugin()
   return;
 }
 
-bool test_plugin::is_initialized() const 
+bool test_plugin::is_initialized() const
 {
   return _initialized_;
 }
@@ -132,7 +132,7 @@ void test_plugin::_build_mapping (const datatools::properties & mapping_config_)
 {
   _mapping_.set_id_manager (get_geo_manager().get_id_mgr ());
   _mapping_.initialize (mapping_config_);
-  _mapping_.build_from (get_geo_manager().get_factory (), 
+  _mapping_.build_from (get_geo_manager().get_factory (),
                         get_geo_manager().get_world_name ());
   return;
 }
@@ -149,8 +149,8 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      std::clog << "Test program for class 'geomtools::manager' !" << std::endl; 
-  
+      std::clog << "Test program for class 'geomtools::manager' !" << std::endl;
+
       bool   debug = false;
       bool   devel = false;
       bool   du_debug = false;
@@ -177,56 +177,56 @@ int main (int argc_, char ** argv_)
           //std::cerr << "Token = " << token << '\n';
           if (token[0] == '-')
             {
-              std::string option = token; 
-              if ((option == "-d") || (option == "--debug")) 
+              std::string option = token;
+              if ((option == "-d") || (option == "--debug"))
                 {
                   debug = true;
                 }
-              else if (option == "--devel") 
+              else if (option == "--devel")
                 {
                   devel = true;
                 }
-              else if (option == "--du-debug") 
+              else if (option == "--du-debug")
                 {
                   du_debug = true;
                 }
-              else if ((option == "-V") || (option == "--verbose")) 
+              else if ((option == "-V") || (option == "--verbose"))
                 {
                   verbose = true;
                 }
-              else if ((option == "-v") || (option == "--visu")) 
+              else if ((option == "-v") || (option == "--visu"))
                 {
                   visu = true;
                 }
-              else if ((option == "-f") || (option == "--force-show")) 
+              else if ((option == "-f") || (option == "--force-show"))
                 {
                   force_show = true;
                 }
-              else if ((option == "-e") || (option == "--force-show-envelop")) 
+              else if ((option == "-e") || (option == "--force-show-envelop"))
                 {
                   force_show_envelop = true;
                 }
-              else if ((option == "-c") || (option == "--force-show-children")) 
+              else if ((option == "-c") || (option == "--force-show-children"))
                 {
                   force_show_children = true;
                 }
-              else if ((option == "-D") || (option == "--dump")) 
+              else if ((option == "-D") || (option == "--dump"))
                 {
                   dump = true;
                 }
-              else if ((option == "-p") || (option == "--plugins")) 
+              else if ((option == "-p") || (option == "--plugins"))
                 {
                   use_plugins = true;
                 }
-              else if ((option == "-g") || (option == "--gdml")) 
+              else if ((option == "-g") || (option == "--gdml"))
                 {
                   gdml = true;
                 }
-              else if ((option == "-R") || (option == "--replica")) 
+              else if ((option == "-R") || (option == "--replica"))
                 {
                   gdml_replica_support = true;
                 }
-              else if ((option == "-m") || (option == "--model")) 
+              else if ((option == "-m") || (option == "--model"))
                 {
                   std::string s = argv_[++iarg];
                   if (s.empty ())
@@ -235,7 +235,7 @@ int main (int argc_, char ** argv_)
                     }
                   visu_object_name = s;
                 }
-              else if ((option == "-D") || (option == "--visu-depth")) 
+              else if ((option == "-D") || (option == "--visu-depth"))
                 {
                   std::string s = argv_[++iarg];
                   if (s.empty ())
@@ -246,64 +246,59 @@ int main (int argc_, char ** argv_)
                   iss >> visu_depth;
                   if (! iss)
                     {
-                      std::cerr << "warning: invalid format for visualization depth !" << std::endl;                     
+                      std::cerr << "warning: invalid format for visualization depth !" << std::endl;
                     }
                   if (visu_depth < 0)
                     {
-                      std::cerr << "warning: invalid value for visualization depth !" << std::endl;                      
+                      std::cerr << "warning: invalid value for visualization depth !" << std::endl;
                       visu_depth = 0;
                     }
                 }
-              else if (option == "-xy") 
+              else if (option == "-xy")
                 {
                   drawer_view = geomtools::gnuplot_drawer::VIEW_2D_XY;
                 }
-              else if (option == "-xz") 
+              else if (option == "-xz")
                 {
                   drawer_view = geomtools::gnuplot_drawer::VIEW_2D_XZ;
                 }
-              else if (option == "-yz") 
+              else if (option == "-yz")
                 {
                   drawer_view = geomtools::gnuplot_drawer::VIEW_2D_YZ;
                 }
-              else if (option == "-3d") 
+              else if (option == "-3d")
                 {
                   drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
                 }
-              else if (option == "--add-display-data") 
-                {                 
+              else if (option == "--add-display-data")
+                {
                   add_dd = true;
                 }
-              else if (option == "--nb-display-data") 
-                {                 
+              else if (option == "--nb-display-data")
+                {
                   add_dd = true;
                   nb_dd = atoi(argv_[++iarg]);
                 }
-              else 
-                { 
-                  std::clog << "warning: ignoring option '" 
-                            << option << "'!" << std::endl; 
+              else
+                {
+                  std::clog << "warning: ignoring option '"
+                            << option << "'!" << std::endl;
                 }
             }
           else
             {
-              std::string argument = token; 
+              std::string argument = token;
               if (manager_config_file.empty ())
                 {
                   manager_config_file = argument;
                 }
-              else 
-                { 
-                  std::clog << "warning: ignoring argument '" 
-                            << argument << "'!" << std::endl; 
+              else
+                {
+                  std::clog << "warning: ignoring argument '"
+                            << argument << "'!" << std::endl;
                 }
             }
           iarg++;
-        }
-
-      if (du_debug)
-        {
-          datatools::properties::g_debug = du_debug;
         }
 
       if (manager_config_file.empty ())
@@ -311,12 +306,12 @@ int main (int argc_, char ** argv_)
           manager_config_file = "${GEOMTOOLS_DATA_DIR}/testing/config/test-1.0/test_manager.conf";
         }
       datatools::fetch_path_with_env (manager_config_file);
-      std::clog << "Manager config. file : '" << manager_config_file << "'" << std::endl; 
-    
+      std::clog << "Manager config. file : '" << manager_config_file << "'" << std::endl;
+
       // load properties from the configuration file:
       datatools::properties manager_config;
-      datatools::properties::read_config (manager_config_file, 
-                                          manager_config); 
+      datatools::properties::read_config (manager_config_file,
+                                          manager_config);
 
       DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(geomtools::manager::base_plugin).tree_dump (std::clog, "Geometry plugin system register: ", "INFO: ");
 
@@ -324,7 +319,7 @@ int main (int argc_, char ** argv_)
       geo_mgr.set_debug (debug);
       geo_mgr.set_verbose (verbose);
       geo_mgr.initialize (manager_config);
-      if (dump) 
+      if (dump)
         {
           geo_mgr.get_factory ().tree_dump (std::clog, "The embeded geometry model factory : ");
           geo_mgr.get_id_mgr ().tree_dump (std::clog, "The embeded GID manager : ");
@@ -341,10 +336,10 @@ int main (int argc_, char ** argv_)
 
           // Access to a given plugin by name and type :
           mapping_plugin_name = "mapping_depth_2";
-          if (geo_mgr.has_plugin (mapping_plugin_name) 
+          if (geo_mgr.has_plugin (mapping_plugin_name)
               && geo_mgr.is_plugin_a<test_plugin>(mapping_plugin_name))
             {
-              std::clog << "NOTICE: " << "Found plugin named '" << mapping_plugin_name 
+              std::clog << "NOTICE: " << "Found plugin named '" << mapping_plugin_name
                         << "'" << std::endl;
               const test_plugin & tp = geo_mgr.get_plugin<test_plugin>(mapping_plugin_name);
               const geomtools::mapping & tm = tp.get_mapping();
@@ -352,43 +347,43 @@ int main (int argc_, char ** argv_)
             }
 
           mapping_plugin_name = "mapping_only_scin";
-          if (geo_mgr.has_plugin (mapping_plugin_name) 
+          if (geo_mgr.has_plugin (mapping_plugin_name)
               && geo_mgr.is_plugin_a<test_plugin>(mapping_plugin_name))
             {
-              std::clog << "NOTICE: " << "Found plugin named '" << mapping_plugin_name 
+              std::clog << "NOTICE: " << "Found plugin named '" << mapping_plugin_name
                         << "'" << std::endl;
               const test_plugin & tp = geo_mgr.get_plugin<test_plugin>(mapping_plugin_name);
               const geomtools::mapping & tm = tp.get_mapping();
               tm.dump_dictionnary(std::clog);
             }
-          
+
           mapping_plugin_name = "mapping_only_sources";
-          if (geo_mgr.has_plugin (mapping_plugin_name) 
+          if (geo_mgr.has_plugin (mapping_plugin_name)
               && geo_mgr.is_plugin_a<test_plugin>(mapping_plugin_name))
             {
-              std::clog << "NOTICE: " << "Found plugin named '" << mapping_plugin_name 
+              std::clog << "NOTICE: " << "Found plugin named '" << mapping_plugin_name
                         << "'" << std::endl;
               const test_plugin & tp = geo_mgr.get_plugin<test_plugin>(mapping_plugin_name);
               const geomtools::mapping & tm = tp.get_mapping();
               tm.dump_dictionnary(std::clog);
             }
-          
+
           mapping_plugin_name = "mapping_no_electrodes";
-          if (geo_mgr.has_plugin (mapping_plugin_name) 
+          if (geo_mgr.has_plugin (mapping_plugin_name)
               && geo_mgr.is_plugin_a<test_plugin>(mapping_plugin_name))
             {
-              std::clog << "NOTICE: " << "Found plugin named '" << mapping_plugin_name 
+              std::clog << "NOTICE: " << "Found plugin named '" << mapping_plugin_name
                         << "'" << std::endl;
               const test_plugin & tp = geo_mgr.get_plugin<test_plugin>(mapping_plugin_name);
               const geomtools::mapping & tm = tp.get_mapping();
               tm.dump_dictionnary(std::clog);
             }
-         
+
           mapping_plugin_name = "mapping_only_shield";
-          if (geo_mgr.has_plugin (mapping_plugin_name) 
+          if (geo_mgr.has_plugin (mapping_plugin_name)
               && geo_mgr.is_plugin_a<test_plugin>(mapping_plugin_name))
             {
-              std::clog << "NOTICE: " << "Found plugin named '" << mapping_plugin_name 
+              std::clog << "NOTICE: " << "Found plugin named '" << mapping_plugin_name
                         << "'" << std::endl;
               const test_plugin & tp = geo_mgr.get_plugin<test_plugin>(mapping_plugin_name);
               const geomtools::mapping & tm = tp.get_mapping();
@@ -399,15 +394,15 @@ int main (int argc_, char ** argv_)
       else
         {
           std::clog << "NOTICE: " << "Don't use plugins..." << std::endl;
-        } 
- 
+        }
+
       if (visu)
         {
           while (true)
             {
               std::clog << "Models: " << std::endl;
               int count = 0;
-              for (geomtools::models_col_type::const_iterator i 
+              for (geomtools::models_col_type::const_iterator i
                      = geo_mgr.get_factory ().get_models ().begin ();
                    i != geo_mgr.get_factory ().get_models ().end ();
                    i++)
@@ -420,7 +415,7 @@ int main (int argc_, char ** argv_)
                     }
                   if (visible)
                     {
-                      std::clog << "  " << datatools::io::left 
+                      std::clog << "  " << datatools::io::left
                                 << datatools::io::width (35) << i->second->get_name ();
                       count++;
                       if ((count % 2) == 0) std::clog << std::endl;
@@ -447,33 +442,33 @@ int main (int argc_, char ** argv_)
                 }
               if (! option_view.empty ())
                 {
-                  if (option_view == "-xy") 
+                  if (option_view == "-xy")
                     {
                       drawer_view = geomtools::gnuplot_drawer::VIEW_2D_XY;
                     }
-                  else if (option_view == "-xz") 
+                  else if (option_view == "-xz")
                     {
                       drawer_view = geomtools::gnuplot_drawer::VIEW_2D_XZ;
                     }
-                  else if (option_view == "-yz") 
+                  else if (option_view == "-yz")
                     {
                       drawer_view = geomtools::gnuplot_drawer::VIEW_2D_YZ;
                     }
-                  else if (option_view == "-3d") 
+                  else if (option_view == "-3d")
                     {
                       drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
                     }
                 }
-      
+
               if (visu_object_name.empty ())
                 {
                   visu_object_name = "world";
                 }
-              if (debug) 
+              if (debug)
                 {
-                  std::clog << "DEBUG: " << "visu_object_name : '" << visu_object_name << "'" << std::endl; 
+                  std::clog << "DEBUG: " << "visu_object_name : '" << visu_object_name << "'" << std::endl;
                 }
-              
+
               std::vector<boost::shared_ptr<geomtools::display_data> > dd_ptrs;
 
               geomtools::id_mgr::g_devel = devel;
@@ -488,7 +483,7 @@ int main (int argc_, char ** argv_)
                   geomtools::placement dd_pl;
                   dd_pl.set_translation (0.0, 40.0*CLHEP::cm, 0.0);
 
- 
+
                   double x0, x1, y0, y1, z0, z1;
                   x0 = -40.0*CLHEP::cm;
                   x1 = +40.0*CLHEP::cm;
@@ -503,24 +498,24 @@ int main (int argc_, char ** argv_)
                   // y1 = -20.0*CLHEP::cm;
                   // z0 =   0.0*CLHEP::cm;
                   // z1 = +25.0*CLHEP::cm;
- 
+
                   {
                     boost::shared_ptr<geomtools::display_data> p;
                     dd_ptrs.push_back(p);
                     boost::shared_ptr<geomtools::display_data> & dd_ptr = dd_ptrs[0];
                     geomtools::box spot_box(x1-x0, y1-y0, z1-z0);
                     geomtools::display_data * dd = new geomtools::display_data;
-                    geomtools::display_data::display_item & spot_box_DI            
+                    geomtools::display_data::display_item & spot_box_DI
                       = dd->add_static_item ("spot_box",
                                              "group::vertex_box",
                                              "magenta");
                     geomtools::placement plcmt;
                     plcmt.set_translation(0.5*(x1+x0), 0.5*(y1+y0), 0.5*(z1+z0));
-                    spot_box.generate_wires (spot_box_DI.paths, plcmt);  
+                    spot_box.generate_wires (spot_box_DI.paths, plcmt);
                     dd_ptr.reset(dd);
                     GPD.add_display_data (*dd_ptr.get(), dd_pl);
                   }
-                  
+
                   int ndd = nb_dd;
                   for (int i = 0; i < ndd; i++) {
                     boost::shared_ptr<geomtools::display_data> p;
@@ -535,7 +530,7 @@ int main (int argc_, char ** argv_)
                       geomtools::display_data * dd = new geomtools::display_data;
                       std::ostringstream dd_name_oss;
                       dd_name_oss << "vertex_" << (i-1);
-                      geomtools::display_data::display_item & spot_DI            
+                      geomtools::display_data::display_item & spot_DI
                         = dd->add_static_item (dd_name_oss.str(),
                                                "group::vertices",
                                                (prng.uniform() < 0.5 ? "orange" : "blue"));
@@ -558,13 +553,13 @@ int main (int argc_, char ** argv_)
                                                  std::acos(prng.flat(-1.0, +1.0)),
                                                  0.0);
                         }
-                      bs.generate_wires (spot_DI.paths, plcmt);  
+                      bs.generate_wires (spot_DI.paths, plcmt);
                       dd_ptr.reset(dd);
                       {
                         GPD.add_display_data (*dd_ptr.get(), dd_pl);
                       }
-                      dd_ptr.get()->tree_dump (std::clog, 
-                                               dd_name_oss.str(), 
+                      dd_ptr.get()->tree_dump (std::clog,
+                                               dd_name_oss.str(),
                                                "Embebed display data : ");
                     }
                   std::clog << "Embeded display data : " << dd_ptrs.size() << std::endl;
@@ -583,12 +578,12 @@ int main (int argc_, char ** argv_)
                 }
               GPD.set_view (drawer_view);
               GPD.set_mode (geomtools::gnuplot_drawer::MODE_WIRED);
-              int view_code = GPD.draw (geo_mgr, 
-                                        visu_object_name, 
+              int view_code = GPD.draw (geo_mgr,
+                                        visu_object_name,
                                         visu_depth);
               if (view_code != 0)
                 {
-                  std::cerr << "ERROR: " << "Cannot display the object with label '" 
+                  std::cerr << "ERROR: " << "Cannot display the object with label '"
                             << visu_object_name << "' !" << std::endl;
                 }
               visu_object_name = "";
@@ -602,31 +597,31 @@ int main (int argc_, char ** argv_)
       if (gdml)
         {
           std::string world_model_name = geo_mgr.get_world_name ();
- 
+
           geomtools::gdml_export::g_devel = debug;
           geomtools::gdml_writer material_writer; // GDML writer for materials
           geomtools::gdml_export GDML;            // factory->GDML exporter
 
- 
+
           std::clog << "NOTICE: " << "Accessing the materials driver plugin..." << std::endl;
 
           const materials::manager * mat_mgr_ref = 0;
           // Access to a given plugin by name and type :
           std::string materials_plugin_name = "materials_driver";
-          if (geo_mgr.has_plugin (materials_plugin_name) 
+          if (geo_mgr.has_plugin (materials_plugin_name)
               && geo_mgr.is_plugin_a<geomtools::materials_plugin>(materials_plugin_name))
             {
-              std::clog << "NOTICE: " << "Found materials plugin named '" << materials_plugin_name 
+              std::clog << "NOTICE: " << "Found materials plugin named '" << materials_plugin_name
                         << "'" << std::endl;
-              const geomtools::materials_plugin & mgp 
+              const geomtools::materials_plugin & mgp
                 = geo_mgr.get_plugin<geomtools::materials_plugin>(materials_plugin_name);
               const materials::manager & mat_mgr = mgp.get_manager();
               mat_mgr_ref = &mat_mgr;
             }
- 
+
           if (mat_mgr_ref != 0)
-            {         
-              std::clog << "NOTICE: " 
+            {
+              std::clog << "NOTICE: "
                         << "Export GDML materials from the materials driver plugin: "<< std::endl;
               geomtools::export_gdml (*mat_mgr_ref, material_writer);
               GDML.attach_external_materials (material_writer.get_stream (geomtools::gdml_writer::MATERIALS_SECTION));
@@ -634,36 +629,36 @@ int main (int argc_, char ** argv_)
 
           GDML.add_auxiliary_support (false);
           GDML.add_replica_support (gdml_replica_support);
-          GDML.parameters ().store ("xml_version",  
+          GDML.parameters ().store ("xml_version",
                                     geomtools::gdml_writer::DEFAULT_XML_VERSION);
-          GDML.parameters ().store ("xml_encoding", 
+          GDML.parameters ().store ("xml_encoding",
                                     geomtools::gdml_writer::DEFAULT_XML_ENCODING);
-          GDML.parameters ().store ("gdml_schema",  
+          GDML.parameters ().store ("gdml_schema",
                                     geomtools::gdml_writer::DEFAULT_GDML_SCHEMA);
-          GDML.parameters ().store ("length_unit",  
+          GDML.parameters ().store ("length_unit",
                                     geomtools::gdml_export::DEFAULT_LENGTH_UNIT);
-          GDML.parameters ().store ("angle_unit",   
+          GDML.parameters ().store ("angle_unit",
                                     geomtools::gdml_export::DEFAULT_ANGLE_UNIT);
-          GDML.export_gdml ("${GEOMTOOLS_TMP_DIR}/test_manager.gdml", 
-                            geo_mgr.get_factory (), 
+          GDML.export_gdml ("${GEOMTOOLS_TMP_DIR}/test_manager.gdml",
+                            geo_mgr.get_factory (),
                             world_model_name);
           std::clog << "NOTICE: " << "GDML file '${GEOMTOOLS_TMP_DIR}/test_manager.gdml' has been generated." << std::endl;
         } // GDML
       else
         {
           std::clog << "NOTICE: " << "No GDML..." << std::endl;
-        } 
+        }
 
       std::clog << "NOTICE: " << "The end." << std::endl;
     }
   catch (std::exception & x)
     {
-      std::cerr << "ERROR: " << x.what () << std::endl; 
+      std::cerr << "ERROR: " << x.what () << std::endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      std::cerr << "ERROR: " << "Unexpected error!" << std::endl; 
+      std::cerr << "ERROR: " << "Unexpected error!" << std::endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);
