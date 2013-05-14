@@ -96,7 +96,7 @@ namespace genvtx {
     _external_random_ = &prng_;
     return;
   }
- 
+
   bool manager::has_random_seed () const
   {
     return _random_seed_ < mygsl::random_utils::SEED_INVALID;
@@ -668,7 +668,7 @@ namespace genvtx {
 
   bool manager::has_current_vg () const
   {
-    return _current_vg_.has_data ()
+    return _current_vg_
       && _current_vg_.get ().is_initialized ();
   }
 
@@ -694,7 +694,7 @@ namespace genvtx {
 
   void manager::desactivate_current_vg ()
   {
-    if (_current_vg_.has_data ())
+    if (_current_vg_)
       {
         _current_vg_.reset ();
       }
@@ -759,7 +759,7 @@ namespace genvtx {
 
     out_ << indent << du::i_tree_dumpable::tag
          << "Current vertex generator name : '" << _current_vg_name_ << "'" << std::endl;
- 
+
     out_ << indent << du::i_tree_dumpable::tag
          << "Can shoot vertex    : " << can_shoot_vertex () << "" << std::endl;
 
@@ -779,8 +779,7 @@ namespace genvtx {
   bool manager::can_shoot_vertex () const
   {
     return is_initialized ()
-      && _current_vg_.has_data ()
-      && _current_vg_.get ().is_initialized ()
+      && has_current_vg ()
       && _current_vg_.get ().has_next_vertex ();
   }
 
@@ -822,7 +821,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genvtx::manager,ocd_)
       .set_long_description("This flag activates debugging output.             \n"
                             "It is not recommended for a production run.       \n"
                             )
-      ;    
+      ;
   }
 
   {
@@ -835,7 +834,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genvtx::manager,ocd_)
                             "vertex generators.                                \n"
                             "It is not recommended for a production run.       \n"
                             )
-      ;    
+      ;
   }
 
   {
@@ -848,7 +847,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genvtx::manager,ocd_)
                             "the embeded vertex generators factory.            \n"
                             "It is not recommended for a production run.       \n"
                             )
-      ;    
+      ;
   }
 
   {
@@ -861,7 +860,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genvtx::manager,ocd_)
                             "generator factories at manager's initialization.       \n"
                             "It is not recommended for a normal usage.              \n"
                             )
-      ;    
+      ;
   }
 
   {
@@ -875,7 +874,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genvtx::manager,ocd_)
                             "is only used if no external PRNG is used by the manager. \n"
                             "The seed value must be a positive integer.               \n"
                             )
-      ;    
+      ;
   }
 
   {
@@ -890,7 +889,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genvtx::manager,ocd_)
                             "The type is chosen from the list of PRNG defined in GSL. \n"
                             "Default value is 'taus2'.                                \n"
                             )
-      ;    
+      ;
   }
 
   {
@@ -925,13 +924,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genvtx::manager,ocd_)
                             "  mode   : string  = \"surface\"                              \n"
                             "  mode.surface.top : boolean = 1                              \n"
                             )
-      ;    
+      ;
   }
- 
 
-  //ocd_.set_configuration_hints ("Nothing special."); 
+
+  //ocd_.set_configuration_hints ("Nothing special.");
   ocd_.set_validation_support(true);
-  ocd_.lock(); 
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()

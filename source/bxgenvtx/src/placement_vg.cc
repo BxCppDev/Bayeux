@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* placement_vg.cc
  */
 
@@ -11,19 +11,19 @@
 #include <datatools/units.h>
 
 namespace genvtx {
- 
+
   using namespace std;
-  
+
   const geomtools::placement & placement_vg::get_placement () const
   {
     return _placement_;
   }
-  
+
   geomtools::placement & placement_vg::get_placement ()
   {
     return _placement_;
   }
-  
+
   void placement_vg::set_placement (const geomtools::placement & new_value_)
   {
     _assert_lock ("genvtx::placement_vg::set_placement");
@@ -33,34 +33,34 @@ namespace genvtx {
 
   bool placement_vg::has_vg () const
   {
-    return _vg_ != 0 || _hvg_.has_data ();
+    return _vg_ != 0 || _hvg_;
   }
 
   bool placement_vg::is_owned () const
   {
     return _vg_ != 0 && _owned_;
   }
- 
+
   i_vertex_generator & placement_vg::grab_vg ()
   {
     if (_vg_ != 0)
       {
         return *_vg_;
       }
-    else if (! _hvg_.has_data ())
+    else if (! _hvg_)
       {
         throw logic_error ("genvtx::placement_vg::grab_vg: Missing vertex generator !");
       }
     return _hvg_.grab ();
   }
-  
+
   const i_vertex_generator & placement_vg::get_vg () const
   {
     if (_vg_ != 0)
       {
         return *_vg_;
       }
-    else if (! _hvg_.has_data ())
+    else if (! _hvg_)
       {
         throw logic_error ("genvtx::placement_vg::get_vg: Missing vertex generator !");
       }
@@ -89,7 +89,7 @@ namespace genvtx {
     _vg_ = &new_value_;
     return;
   }
-  
+
   void  placement_vg::set_vg (i_vertex_generator * new_value_)
   {
     _assert_lock ("genvtx::placement_vg::set_vg");
@@ -98,7 +98,7 @@ namespace genvtx {
     _vg_ = new_value_;
     return;
   }
-  
+
   void  placement_vg::set_vg (vg_handle_type & hvg_)
   {
     _assert_lock ("genvtx::placement_vg::set_vg");
@@ -142,12 +142,12 @@ namespace genvtx {
       {
         // parameters of the vertex generator :
         string vg_name;
-        
+
         if (configuration_.has_key ("vertex_generator.name"))
           {
             vg_name = configuration_.fetch_string ("vertex_generator.name");
             vg_dict_type::iterator vg_found = vgens_.find (vg_name);
-            
+
             if (vg_found == vgens_.end ())
               {
                 ostringstream message;
@@ -165,38 +165,38 @@ namespace genvtx {
           {
             x = configuration_.fetch_real ("placement.x");
           }
-        
+
         if (configuration_.has_key ("placement.y"))
           {
             y = configuration_.fetch_real ("placement.y");
           }
-        
+
         if (configuration_.has_key ("placement.z"))
           {
             z = configuration_.fetch_real ("placement.z");
           }
-        
+
         if (configuration_.has_key ("placement.phi"))
           {
             phi = configuration_.fetch_real ("placement.phi");
           }
-        
+
         if (configuration_.has_key ("placement.theta"))
           {
             theta = configuration_.fetch_real ("placement.theta");
           }
-        
+
         if (configuration_.has_key ("placement.delta"))
           {
             delta = configuration_.fetch_real ("placement.delta");
           }
- 
+
         if (configuration_.has_key ("length_unit"))
           {
             std::string lunit_str = configuration_.fetch_string ("length_unit");
             lunit = datatools::units::get_length_unit_from (lunit_str);
           }
- 
+
         x *= lunit;
         y *= lunit;
         z *= lunit;
@@ -206,11 +206,11 @@ namespace genvtx {
             std::string aunit_str = configuration_.fetch_string ("angle_unit");
             aunit = datatools::units::get_angle_unit_from (aunit_str);
           }
- 
+
         phi   *= aunit;
         theta *= aunit;
         delta *= aunit;
- 
+
         geomtools::placement pl (x, y, z, phi, theta, delta);
         set_placement (pl);
       }
@@ -224,7 +224,7 @@ namespace genvtx {
     _placement_.invalidate ();
     return;
   }
-  
+
   // Constructor :
   GENVTX_VG_CONSTRUCTOR_IMPLEMENT_HEAD(placement_vg)
   {
@@ -233,7 +233,7 @@ namespace genvtx {
     _vg_ = 0;
     return;
   }
-  
+
   // Destructor :
   GENVTX_VG_DEFAULT_DESTRUCTOR_IMPLEMENT(placement_vg)
 

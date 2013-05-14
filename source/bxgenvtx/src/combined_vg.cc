@@ -17,7 +17,7 @@
 namespace genvtx {
 
   GENVTX_VG_REGISTRATION_IMPLEMENT(combined_vg,"genvtx::combined_vg");
-        
+
   combined_vg::entry_type::entry_type ()
   {
     weight = 0.0;
@@ -101,7 +101,7 @@ namespace genvtx {
                 << "Cannot determine vertex location index !";
         throw std::logic_error (message.str ());
       }
-    genvtx::i_vertex_generator & a_vg = _entries_[index].vg_handle.get ();
+    genvtx::i_vertex_generator & a_vg = _entries_[index].vg_handle.grab ();
     if (! a_vg.has_next_vertex ())
       {
       }
@@ -114,7 +114,7 @@ namespace genvtx {
                                    const std::string & a_name,
                                    double a_weight)
   {
-    if (! a_vg.has_data ())
+    if (! a_vg)
       {
         std::ostringstream message;
         message << "genvtx::combined_vg::add_generator: "
@@ -144,10 +144,10 @@ namespace genvtx {
 
 
   void combined_vg::_init_ ()
-  {      
+  {
     bool devel = false;
     if (devel) std::cerr << "DEVEL: combined_vg::_init_: Entering..." << std::endl;
- 
+
     if (_entries_.size () == 0)
       {
         std::ostringstream message;
@@ -198,7 +198,7 @@ namespace genvtx {
   }
 
   GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(combined_vg,setup_,service_manager_,vgens_)
-  {      
+  {
     if (is_debug ()) std::cerr << "DEBUG: genvtx::combined_vg::initialize: Entering..." << std::endl;
     using namespace std;
     bool devel = false;
@@ -608,10 +608,10 @@ namespace genvtx {
     _initialized_ = true;
     return;
   }
-    
-  void combined_vg::tree_dump (std::ostream & out_, 
-                               const std::string & title_, 
-                               const std::string & indent_, 
+
+  void combined_vg::tree_dump (std::ostream & out_,
+                               const std::string & title_,
+                               const std::string & indent_,
                                bool inherit_) const
   {
     namespace du = datatools;
@@ -635,7 +635,7 @@ namespace genvtx {
           }
         const entry_type & e = _entries_[i];
         out_ << e.name << ": ";
-        out_ << " weight = " << e.weight << " (" << e.cumulated_weight << ")" 
+        out_ << " weight = " << e.weight << " (" << e.cumulated_weight << ")"
              << std::endl;
       }
     return;
