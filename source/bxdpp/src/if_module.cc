@@ -100,16 +100,16 @@ namespace dpp {
         std::ostringstream message;
         message << "dpp::if_module::set_then_status: "
                 << "invalid then status !";
-        throw std::logic_error (message.str ());           
+        throw std::logic_error (message.str ());
       }
     _then_status_ = status_;
-    if (! has_else_status () && ! _else_module_.handle.has_data ())
+    if (! has_else_status () && ! _else_module_.handle)
       {
         _else_status_ = PROCESS_STOP;
       }
     return;
   }
-      
+
   void if_module::set_else_status (int status_)
   {
     if (is_initialized ())
@@ -126,10 +126,10 @@ namespace dpp {
         std::ostringstream message;
         message << "dpp::if_module::set_else_status: "
                 << "invalid else status !";
-        throw std::logic_error (message.str ());           
+        throw std::logic_error (message.str ());
       }
     _else_status_ = status_;
-    if (! has_then_status () && ! _then_module_.handle.has_data ())
+    if (! has_then_status () && ! _then_module_.handle)
       {
         _then_status_ = PROCESS_STOP;
       }
@@ -138,12 +138,12 @@ namespace dpp {
 
   bool if_module::has_then_module () const
   {
-    return _then_module_.handle.has_data ();
+    return _then_module_.handle;
   }
 
   bool if_module::has_else_module () const
   {
-    return _else_module_.handle.has_data ();
+    return _else_module_.handle;
   }
 
   void if_module::set_then_module (const module_entry & then_module_)
@@ -240,7 +240,7 @@ namespace dpp {
           }
       }
 
-    if (! _condition_cut_.handle.has_data ())
+    if (! _condition_cut_.handle)
       {
 
         if (_cut_service_label_.empty ())
@@ -334,11 +334,11 @@ namespace dpp {
               }
           }
       }
- 
+
     // If no then_status is defined, try to associate a processing module :
     if (! has_then_status ())
       {
-        if (! _then_module_.handle.has_data ())
+        if (! _then_module_.handle)
           {
             if (config_.has_key ("then_module"))
               {
@@ -369,7 +369,7 @@ namespace dpp {
     // If no else_status is defined, try to associate a processing module :
     if (! has_else_status ())
       {
-        if (! _else_module_.handle.has_data ())
+        if (! _else_module_.handle)
           {
             if (config_.has_key ("else_module"))
               {
@@ -387,7 +387,7 @@ namespace dpp {
                 _else_module_.label = found->first;
                 _else_module_.handle = found->second.grab_initialized_module_handle ();
               }
-                
+
             if (is_debug ())
               {
                 std::ostringstream message;
@@ -395,7 +395,7 @@ namespace dpp {
                         << "Missing 'else_module' property ! ";
                 std::clog << datatools::io::debug << message.str () << std::endl;
               }
-                
+
           }
       }
 
@@ -438,7 +438,7 @@ namespace dpp {
 
     this->reset_last_error_message ();
 
-    cuts::i_cut & the_cut = _condition_cut_.handle.get ();
+    cuts::i_cut & the_cut = _condition_cut_.handle.grab ();
     // Prepare the user data to be checked by the active 'cut':
     the_cut.set_user_data (&data_record_);
     // Apply the cut algorithm:
@@ -487,7 +487,7 @@ namespace dpp {
           }
         else
           {
-            base_module & the_then_module = _then_module_.handle.get ();
+            base_module & the_then_module = _then_module_.handle.grab ();
             if (is_debug ())
               {
                 std::clog << datatools::io::debug
@@ -523,9 +523,9 @@ namespace dpp {
           }
         else
           {
-            if (_else_module_.handle.has_data ())
+            if (_else_module_.handle)
               {
-                base_module & the_else_module = _else_module_.handle.get ();
+                base_module & the_else_module = _else_module_.handle.grab ();
                 if (is_debug ())
                   {
                     std::clog << datatools::io::debug

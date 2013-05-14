@@ -1,7 +1,7 @@
-/* module_tools.cc 
- * 
+/* module_tools.cc
+ *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
  */
@@ -72,33 +72,33 @@ namespace dpp {
     _module_id_ = id_;
     return;
   }
- 
+
   void module_entry_type::set_blank ()
   {
     _module_status_ = 0;
     return;
   }
-      
+
   void module_entry_type::set_created ()
   {
     _module_status_ |= module_entry_type::STATUS_CREATED;
     return;
   }
-       
+
   void module_entry_type::set_initialized ()
   {
     _module_status_ |= module_entry_type::STATUS_INITIALIZED;
     return;
   }
-      
+
   void module_entry_type::set_uninitialized ()
   {
     _module_status_ ^= module_entry_type::STATUS_INITIALIZED;
     return;
   }
- 
+
   module_entry_type::module_entry_type ()
-  { 
+  {
     _manager_ = 0;
     _module_status_ = 0;
     return;
@@ -111,18 +111,18 @@ namespace dpp {
     _manager_ = 0;
     return;
   }
-        
+
   bool module_entry_type::has_manager () const
   {
     return _manager_ != 0;
   }
-      
+
   void module_entry_type::set_manager (module_manager & mgr_)
   {
     _manager_ = &mgr_;
     return;
   }
-      
+
   bool module_entry_type::is_created () const
   {
     return _module_status_ & STATUS_CREATED;
@@ -132,10 +132,10 @@ namespace dpp {
   {
     return _module_status_ & STATUS_INITIALIZED;
   }
-       
+
   bool module_entry_type::has_module () const
   {
-    return _module_handle_.has_data ();
+    return _module_handle_;
   }
 
   const base_module & module_entry_type::get_module () const
@@ -152,15 +152,15 @@ namespace dpp {
   {
     return _module_handle_;
   }
- 
+
   module_handle_type & module_entry_type::grab_module_handle ()
   {
     return _module_handle_;
   }
-     
+
   module_handle_type & module_entry_type::grab_initialized_module_handle ()
   {
-    if (! _module_handle_.has_data ())
+    if (! _module_handle_)
       {
         if (_manager_ == 0)
           {
@@ -169,11 +169,11 @@ namespace dpp {
                     << "No manager is available to create the module '" << this->_module_name_
                     << "' ! ";
             throw std::logic_error (message.str ());
-                
+
           }
         _manager_->create_module (*this);
       }
-    if (_module_handle_.has_data ())
+    if (_module_handle_)
       {
         if (_manager_ == 0)
           {
@@ -182,14 +182,14 @@ namespace dpp {
                     << "No manager is available to initialize the module '" << this->_module_name_
                     << "' ! ";
             throw std::logic_error (message.str ());
-                
+
           }
         _manager_->initialize_module (*this);
       }
     return _module_handle_;
   }
 
-  void module_entry_type::tree_dump (std::ostream & out_ , 
+  void module_entry_type::tree_dump (std::ostream & out_ ,
                                      const std::string & title_,
                                      const std::string & indent_,
                                      bool inherit_) const
@@ -200,18 +200,18 @@ namespace dpp {
       {
         indent = indent_;
       }
-    if ( ! title_.empty () ) 
+    if ( ! title_.empty () )
       {
         out_ << indent << title_ << std::endl;
-      }  
+      }
 
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << du::i_tree_dumpable::tag
          << "Module name     : '" << _module_name_ << "'" << std::endl;
 
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << du::i_tree_dumpable::tag
          << "Module ID       : '" << _module_id_ << "'" << std::endl;
 
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << du::i_tree_dumpable::tag
          << "Module status   : " << _module_status_;
     {
       size_t count = 0;
@@ -235,9 +235,9 @@ namespace dpp {
     }
     out_ << std::endl;
 
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << du::i_tree_dumpable::tag
          << "Module handle   : ";
-    if (_module_handle_.has_data ())
+    if (_module_handle_)
       {
         const base_module & bm = _module_handle_.get ();
         out_ << "'" << bm.get_name () << "'";
@@ -247,10 +247,10 @@ namespace dpp {
         out_ << "<null>";
       }
     out_ << std::endl;
-        
-    if (_module_handle_.has_data ())
+
+    if (_module_handle_)
       {
-        out_ << indent << du::i_tree_dumpable::tag 
+        out_ << indent << du::i_tree_dumpable::tag
              << "Module description : ";
         const base_module & bm = _module_handle_.get ();
         if (bm.has_description ())
@@ -263,10 +263,10 @@ namespace dpp {
           }
         out_ << std::endl;
       }
-       
-    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_) 
+
+    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
          << "Manager   : " << has_manager () << std::endl;
-       
+
     return;
   }
 

@@ -1,7 +1,7 @@
 /* skip_module.cc
- * 
+ *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -14,9 +14,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- * 
+ *
  */
 
 #include <stdexcept>
@@ -29,7 +29,7 @@
 #include <dpp/skip_module.h>
 
 namespace dpp {
- 
+
   // Registration instantiation macro :
   DPP_MODULE_REGISTRATION_IMPLEMENT(skip_module, "dpp::skip_module");
 
@@ -55,7 +55,7 @@ namespace dpp {
     _first_    = a_first;
     _last_     = a_last;
     _inverted_ = a_inverted;
-    return; 
+    return;
   }
 
   void skip_module::set_first_number (int a_first,
@@ -65,13 +65,13 @@ namespace dpp {
     _first_    = a_first;
     _last_     = _first_ + a_number - 1;
     _inverted_ = a_inverted;
-    return; 
+    return;
   }
- 
+
   void skip_module::_set_defaults ()
   {
     _first_   = -1;
-    _last_    = -1;       
+    _last_    = -1;
     _counter_ = 0;
     _inverted_ = false;
     return;
@@ -80,23 +80,23 @@ namespace dpp {
   /*** Implementation of the interface ***/
 
   // Constructor :
-  skip_module::skip_module (int a_debug_level)        
-    : base_module ("dpp::skip_module",         
-                   "An data record skip processor module",       
-                   "0.1",         
-                   a_debug_level) 
+  skip_module::skip_module (int a_debug_level)
+    : base_module ("dpp::skip_module",
+                   "An data record skip processor module",
+                   "0.1",
+                   a_debug_level)
   {
     _set_defaults ();
     return;
   }
-      
+
   // Destructor :
   skip_module::~skip_module ()
-  {         
-    // Make sure all internal resources are terminated 
-    // before destruction : 
+  {
+    // Make sure all internal resources are terminated
+    // before destruction :
     if (is_initialized ()) reset ();
-    return; 
+    return;
   }
 
   // Initialization :
@@ -120,10 +120,10 @@ namespace dpp {
       {
         if (a_config.has_flag ("debug"))
           {
-            set_debug (true); 
+            set_debug (true);
           }
       }
-        
+
     if (first < 0)
       {
         if (a_config.has_key ("first"))
@@ -146,7 +146,7 @@ namespace dpp {
               {
                 std::ostringstream message;
                 message << "dpp::skip_module::initialize: "
-                        << "Invalid 'last' index value in module named '" << get_name () 
+                        << "Invalid 'last' index value in module named '" << get_name ()
                         << " !";
                 throw std::logic_error (message.str ());
               }
@@ -162,7 +162,7 @@ namespace dpp {
               {
                 std::ostringstream message;
                 message << "dpp::skip_module::initialize: "
-                        << "Invalid 'number' value in module named '" << get_name () 
+                        << "Invalid 'number' value in module named '" << get_name ()
                         << " !";
                 throw std::logic_error (message.str ());
               }
@@ -174,18 +174,18 @@ namespace dpp {
         inverted = true;
       }
 
-    if (! _module_.handle.has_data ())
+    if (! _module_.handle)
       {
         if (a_config.has_key ("module"))
           {
             std::string module_name = a_config.fetch_string ("module");
-            module_handle_dict_type::iterator found 
+            module_handle_dict_type::iterator found
               = a_module_dict.find (module_name);
             if (found == a_module_dict.end ())
               {
                 std::ostringstream message;
                 message << "dpp::skip_module::initialize: "
-                        << "Can't find any module named '" << module_name 
+                        << "Can't find any module named '" << module_name
                         << "' from the external dictionnary ! ";
                 throw std::logic_error (message.str ());
               }
@@ -202,7 +202,7 @@ namespace dpp {
       }
 
     // Setup :
-    if (number < 0) 
+    if (number < 0)
       {
         set_first_last (first, last, inverted);
       }
@@ -236,7 +236,7 @@ namespace dpp {
   }
 
   // Processing :
-  int skip_module::process (datatools::things & the_data_record) 
+  int skip_module::process (datatools::things & the_data_record)
   {
     if (! is_initialized ())
       {
@@ -246,7 +246,7 @@ namespace dpp {
         throw std::logic_error (message.str ());
       }
 
-    bool process_module = false;        
+    bool process_module = false;
     if (_counter_ >= _first_)
       {
         process_module = true;
@@ -266,7 +266,7 @@ namespace dpp {
     int status = SUCCESS;
     if (process_module)
       {
-        base_module & a_module = _module_.handle.get ();
+        base_module & a_module = _module_.handle.grab ();
         try
           {
             status = a_module.process (the_data_record);

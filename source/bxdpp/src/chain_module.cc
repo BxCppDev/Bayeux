@@ -53,7 +53,7 @@ namespace dpp {
               << "Module '" << a_label << "' already exists !";
       throw std::logic_error (message.str ());
     }
-    if (! a_handle_module.has_data ()) {
+    if (! a_handle_module) {
       std::ostringstream message;
       message << "dpp::chain_module::add_module: "
               << "Invalid module handle for label '" << a_label << "' !";
@@ -119,9 +119,8 @@ namespace dpp {
                 << "' from the external dictionnary ! ";
         throw std::logic_error (message.str ());
       }
-      // XXX
       add_module (modules[i], found->second.grab_initialized_module_handle ());
-      std::clog << "WARNING: " << "dpp::chain_module::initialize: "
+      std::clog << "NOTICE: " << "dpp::chain_module::initialize: "
                 << "Chain module '" << get_name ()
                 << "' has added module '" << modules[i] << "'"
                 << std::endl;
@@ -185,7 +184,7 @@ namespace dpp {
                     << "Processing chained module '" << module_name << "'..." << std::endl;
         }
       module_handle_type & the_handle  = the_entry.handle;
-      if (! the_handle.has_data ())
+      if (! the_handle)
         {
           std::ostringstream message;
           message << "dpp::chain_module::process: "
@@ -193,7 +192,7 @@ namespace dpp {
                   << std::endl;
           throw std::logic_error (message.str ());
         }
-      base_module & a_module = the_handle.get ();
+      base_module & a_module = the_handle.grab ();
       a_module.reset_last_error_message ();
       try {
         int status = a_module.process (the_data_record);
@@ -257,7 +256,7 @@ namespace dpp {
       const module_entry & the_entry   = *i;
       const std::string & module_label = the_entry.label;
       module_handle_type the_handle  = the_entry.handle;
-      base_module & a_module         = the_handle.get ();
+      base_module & a_module         = the_handle.grab ();
       std::ostringstream indent_oss;
       indent_oss << a_indent << datatools::i_tree_dumpable::inherit_skip_tag (a_inherit);
       a_out << a_indent << datatools::i_tree_dumpable::inherit_skip_tag (a_inherit);

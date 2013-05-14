@@ -118,7 +118,7 @@ namespace dpp {
     if (! has_service_manager ()) {
       std::ostringstream message;
       message << "dpp::module_manager::get_service_manager: "
-              << "Module manager is no service manager !";
+              << "Module manager has no service manager !";
       throw std::logic_error (message.str ());
     }
     return *_service_manager_;
@@ -129,8 +129,8 @@ namespace dpp {
   {
     if (! has_service_manager ()) {
       std::ostringstream message;
-      message << "dpp::module_manager::get_service_manager: "
-              << "Module manager is no service manager !";
+      message << "dpp::module_manager::grab_service_manager: "
+              << "Module manager has no service manager !";
       throw std::logic_error (message.str ());
     }
     return *_service_manager_;
@@ -265,7 +265,7 @@ namespace dpp {
       std::clog << datatools::io::warning
                 << "dpp::module_manager::initialize: "
                 << "No service manager is available ! "
-                << "This could forbid the use of some modules !" << std::endl;
+                << "This forbids the use of some processing modules that depend on external services !" << std::endl;
     } else {
       std::clog << datatools::io::notice
                 << "dpp::module_manager::initialize: "
@@ -372,6 +372,7 @@ namespace dpp {
       }
       base_module & the_module = module_entry_.grab_module ();
       if (has_service_manager ()) {
+        std::cerr << "DEVEL: ********* Aaarrrghhhh !" << std::endl;
         the_module.initialize (module_entry_.get_module_config (),
                                grab_service_manager (),
                                _modules_);
@@ -575,23 +576,6 @@ namespace dpp {
   {
     module_manager * mutable_this = const_cast<module_manager*> (this);
     return const_cast<base_module &> (mutable_this->grab (module_name_));
-    /*
-      module_handle_dict_type::const_iterator found
-      = _modules_.find (module_name_);
-      if (found == _modules_.end ())
-      {
-      std::ostringstream message;
-      message << "dpp::module_manager::get: "
-      << "No module named '" << module_name_ << "' !";
-      throw std::logic_error (message.str ());
-      }
-      if (found->second.is_initialized ())
-      {
-      module_manager * mutable_this = const_cast<module_manager*> (this);
-      mutable_this->_initialize_module (found->second);
-      }
-      return found->second.get_module ();
-    */
   }
 
   module_handle_dict_type & module_manager::get_modules ()
@@ -625,7 +609,7 @@ namespace dpp {
          << "Flags             : " << _flags_ << std::endl;
 
     out_ << indent << du::i_tree_dumpable::tag
-         << "List of registered services : " << std::endl;
+         << "List of registered data processing module factories : " << std::endl;
     {
       std::ostringstream indent_oss;
       indent_oss << indent << du::i_tree_dumpable::skip_tag;
