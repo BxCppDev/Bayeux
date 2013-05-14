@@ -45,6 +45,7 @@ set(datatools_PUBLIC_HEADERS
   include/datatools/i_serializable.h
   include/datatools/i_tree_dump.h
   include/datatools/library_loader.h
+  include/datatools/logger.h
   include/datatools/memory_streambuf.h
   include/datatools/multi_properties.h
   include/datatools/properties.h
@@ -157,6 +158,7 @@ set(datatools_SOURCES
   io_factory.cc
   ioutils.cc
   library_loader.cc
+  logger.cc
   multi_properties.cc
   properties.cc
   real_range.cc
