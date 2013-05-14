@@ -227,11 +227,11 @@ void handle_pool<T>::dump(std::ostream& out, const std::string& title,
       out << "`-- ";
     }
     out << "index " << i << " : ";
-    if (!h.has_data()) {
+    if (!h) {
       out << "No element!" << std::endl;
     }
     else {
-      out << "@ " << &h.get() << " [" << h.count() << "]"<< std::endl;
+      out << "@ " << &h.get() << " [unique=" << h.unique() << "]"<< std::endl;
     }
   }
 }
