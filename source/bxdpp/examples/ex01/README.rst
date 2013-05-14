@@ -102,7 +102,7 @@ Quick start
      shell> ./test_dpp_ex01
      shell> less test_dpp_ex01.xml
 
-4. Run the example::
+5. Run the example::
 
      shell> LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH} \
               dpp_processing \
@@ -118,13 +118,13 @@ Quick start
 	        --output-file dpp_ex01_03.xml \
 	        --output-file dpp_ex01_04.xml
 
-5. Check the output files::
+6. Check the output files::
 
      shell> ls -l dpp_ex01_intermediate_0?.brio
      shell> ls -l dpp_ex01_0?.xml
      shell> less  dpp_ex01_01.xml
 
-6. Clean::
+7. Clean::
 
      shell> rm -f ./dpp_ex01_intermediate_*.brio
      shell> rm -f ./dpp_ex01_*.xml
