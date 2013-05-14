@@ -41,6 +41,9 @@ namespace dpp_ex01 {
       /// Returns the mutable collection of auxiliary properties
       datatools::properties & grab_auxiliaries();
 
+      /// Reset
+      void reset();
+
       /// Smart print
       void dump(std::ostream &, const std::string & title_) const;
 

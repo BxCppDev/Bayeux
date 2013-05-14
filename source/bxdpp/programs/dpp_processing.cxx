@@ -57,10 +57,10 @@ int main (int argc_, char ** argv_)
     std::vector<std::string> LL_dlls;
     std::vector<std::string> input_files;
     std::vector<std::string> output_files;
-    bool   no_max_events = false;
-    int    max_events = 0;
-    int    max_events_per_output_file = 0;
-    bool   save_stopped_event_records = false;
+    bool   no_max_records = false;
+    int    max_records = 0;
+    int    max_records_per_output_file = 0;
+    bool   save_stopped_data_records = false;
 
     // Shortcut for Boost/program_options namespace :
     // See: http://www.boost.org/doc/libs/1_46_1/doc/html/program_options.html
@@ -85,13 +85,13 @@ int main (int argc_, char ** argv_)
        "set the DLL loader configuration file.")
       ("modulo,%",
        po::value<int> (&print_modulo)->default_value (10),
-       "set the modulo event print period.")
-      ("max-events,M",
-       po::value<int> (&max_events)->default_value (0),
-       "set the maximum number of events to be processed.")
-      ("no-max-events,X",
-       po::value<bool>(&no_max_events)->zero_tokens()->default_value (false),
-       "Do not limit the maximum number of events to be processed.")
+       "set the modulo print period for data record.")
+      ("max-records,M",
+       po::value<int> (&max_records)->default_value (0),
+       "set the maximum number of data records to be processed.")
+      ("no-max-records,X",
+       po::value<bool>(&no_max_records)->zero_tokens()->default_value (false),
+       "Do not limit the maximum number of data records to be processed.")
       ("module,m",
        po::value<std::vector<std::string> > (),
        "add a module in the pipeline (optionnal).")
@@ -104,11 +104,11 @@ int main (int argc_, char ** argv_)
       ("output-file,o",
        po::value<std::vector<std::string> > (),
        "set the output file (optional).")
-      ("max-events-per-output-file,O",
-       po::value<int> (&max_events_per_output_file)->default_value (0),
-       "set the maximum number of event records per output file.")
-      // ("save-stopped-events,s",
-      //  po::value<bool>(&save_stopped_event_records)->zero_tokens()->default_value (false),
+      ("max-records-per-output-file,O",
+       po::value<int> (&max_records_per_output_file)->default_value (0),
+       "set the maximum number of data records per output file.")
+      // ("save-stopped-records,s",
+      //  po::value<bool>(&save_stopped_data_records)->zero_tokens()->default_value (false),
       //  "produce debug logging.")
       ;
 
@@ -212,38 +212,42 @@ int main (int argc_, char ** argv_)
     }
 
     if (input_files.size () > 0) {
-      std::clog << datatools::io::notice << APP_NAME_PREFIX << "Input data sources : "
-                << input_files.size () << std::endl;
-      for (std::vector<std::string>::const_iterator i = input_files.begin ();
-           i != input_files.end ();
-           i++) {
-        std::clog << datatools::io::notice << APP_NAME_PREFIX << " - source : '"
-                  << *i << "'" << std::endl;
+      if (verbose) {
+        std::clog << datatools::io::notice << APP_NAME_PREFIX << "Input data sources : "
+                  << input_files.size () << std::endl;
+        for (std::vector<std::string>::const_iterator i = input_files.begin ();
+             i != input_files.end ();
+             i++) {
+          std::clog << datatools::io::notice << APP_NAME_PREFIX << " - source : '"
+                    << *i << "'" << std::endl;
+        }
       }
     } else {
-      std::clog << datatools::io::notice << APP_NAME_PREFIX << "No input data source !" << std::endl;
-      if (max_events <= 0) {
+      if (verbose) std::clog << datatools::io::notice << APP_NAME_PREFIX << "No input data source !" << std::endl;
+      if (max_records <= 0) {
         // This is only an error if we decide to enforce the use of
-        // a limit on the maximum number of event records :
-        if (! no_max_events) {
+        // a limit on the maximum number of data records :
+        if (! no_max_records) {
           std::ostringstream message;
-          message << "Missing maximum number of events !";
+          message << "Missing maximum number of data records !";
           throw std::logic_error (message.str ());
         }
       }
     }
 
-    if (output_files.size () > 0) {
-      std::clog << datatools::io::notice << APP_NAME_PREFIX << "Output data sinks : "
-                << output_files.size () << std::endl;
-      for (std::vector<std::string>::const_iterator i = output_files.begin ();
-           i != output_files.end ();
-           i++) {
-        std::clog << datatools::io::notice << APP_NAME_PREFIX << " - sink : '"
-                  << *i << "'" << std::endl;
+    if (verbose) {
+      if (output_files.size () > 0) {
+        std::clog << datatools::io::notice << APP_NAME_PREFIX << "Output data sinks : "
+                  << output_files.size () << std::endl;
+        for (std::vector<std::string>::const_iterator i = output_files.begin ();
+             i != output_files.end ();
+             i++) {
+          std::clog << datatools::io::notice << APP_NAME_PREFIX << " - sink : '"
+                    << *i << "'" << std::endl;
+        }
+      } else {
+        std::clog << datatools::io::notice << APP_NAME_PREFIX << "No output data sink !" << std::endl;
       }
-    } else {
-      std::clog << datatools::io::notice << APP_NAME_PREFIX << "No output data sink !" << std::endl;
     }
 
     /*** end of opts/args parsing ***/
@@ -251,8 +255,8 @@ int main (int argc_, char ** argv_)
     uint32_t LL_flags = datatools::library_loader::allow_unregistered;
     datatools::library_loader LL (LL_flags, LL_config);
     BOOST_FOREACH (const std::string & dll_name, LL_dlls) {
-      std::clog << datatools::io::notice << APP_NAME_PREFIX << "Loading DLL '"
-                << dll_name << "'." << std::endl;
+      if (verbose) std::clog << datatools::io::notice << APP_NAME_PREFIX << "Loading DLL '"
+                             << dll_name << "'." << std::endl;
       if (LL.load (dll_name) != EXIT_SUCCESS) {
         std::ostringstream message;
         message << "Loading DLL '" << dll_name
@@ -298,7 +302,7 @@ int main (int argc_, char ** argv_)
       datatools::properties::read_config (MM_config_file,
                                           MM_config);
       MM.get ()->initialize (MM_config);
-      MM.get ()->tree_dump (std::clog, "Module manager (initialized) : ", "NOTICE: ");
+      if (verbose) MM.get ()->tree_dump (std::clog, "Module manager (initialized) : ", "NOTICE: ");
     }
 
     std::vector<dpp::base_module*> modules;
@@ -309,12 +313,12 @@ int main (int argc_, char ** argv_)
         message << "Manager has no module named '" << module_name << "' !";
         throw std::logic_error (message.str ());
       } else {
-        std::clog << datatools::io::notice
-                  << APP_NAME_PREFIX << "Found module named '" << module_name << "' !" << std::endl;
+        if (verbose)  std::clog << datatools::io::notice
+                                << APP_NAME_PREFIX << "Found module named '" << module_name << "' !" << std::endl;
       }
       dpp::base_module & the_module = MM.get ()->grab (module_name);
       modules.push_back(&the_module);
-      the_module.tree_dump (std::clog, "Added module : ", "NOTICE: " + APP_NAME_PREFIX);
+      if (verbose) the_module.tree_dump (std::clog, "Added module : ", "NOTICE: " + APP_NAME_PREFIX);
 
     }
 
@@ -326,8 +330,8 @@ int main (int argc_, char ** argv_)
       sink_config.store ("mode", "output");
       sink_config.store ("output.mode", "list");
       sink_config.store ("output.list.filenames", output_files);
-      if (max_events_per_output_file > 0) {
-        sink_config.store ("output.max_record_per_file", max_events_per_output_file);
+      if (max_records_per_output_file > 0) {
+        sink_config.store ("output.max_record_per_file", max_records_per_output_file);
       }
       if (MM.get ()->has_service_manager()) {
         sink->initialize_with_service (sink_config,
@@ -354,22 +358,22 @@ int main (int argc_, char ** argv_)
 
     }
 
-    // Loop on the event records from the data source file :
+    // Loop on the data records from the data source file :
     if (debug) std::clog << datatools::io::debug << APP_NAME_PREFIX
                          << "Entering data record loop..." << std::endl;
 
-    // Loop on the event records :
-    int event_counter = 0;
+    // Loop on the data records :
+    int record_counter = 0;
     int stored_counter = 0;
     while (true) {
-      bool do_break_event_loop = false;
+      bool do_break_record_loop = false;
       if (debug) std::clog << datatools::io::debug << APP_NAME_PREFIX
-                           << "Instantiating an event record object..." << std::endl;
+                           << "Instantiating an data record object..." << std::endl;
 
-      // Instantiate a blank event record object :
+      // Instantiate a blank data record object :
       datatools::things ER;
 
-      // Manage the source is any (fill the event record from it) :
+      // Manage the source is any (fill the data record from it) :
       if (source) {
         if (source->is_terminated ()) {
           break;
@@ -377,18 +381,18 @@ int main (int argc_, char ** argv_)
         int input_status = source->process (ER);
         if (input_status != dpp::io_module::OK) {
           std::clog << datatools::io::error
-                    << APP_NAME_PREFIX << "Source of event records had an error !" << std::endl;
+                    << APP_NAME_PREFIX << "Source of data records had an error !" << std::endl;
           break;
         }
       } // end of if (source)
 
-      if ((print_modulo > 0) &&  (event_counter % print_modulo == 0)) {
-        std::clog << datatools::io::notice << APP_NAME_PREFIX << "Event #" << event_counter << "\n";
+      if ((print_modulo > 0) &&  (record_counter % print_modulo == 0)) {
+        std::clog << datatools::io::notice << APP_NAME_PREFIX << "Data record #" << record_counter << "\n";
       }
 
-      // Process the event using the choosen processing module :
+      // Process the data record using the choosen processing module :
       if (debug) std::clog << datatools::io::debug << APP_NAME_PREFIX
-                           << "Processing the event record..." << std::endl;
+                           << "Processing the data record..." << std::endl;
       int processing_status = dpp::base_module::SUCCESS;
       try {
         BOOST_FOREACH (dpp::base_module * active_module_ptr, modules) {
@@ -399,25 +403,25 @@ int main (int argc_, char ** argv_)
           if (processing_status & dpp::base_module::FATAL) {
             // A fatal error has been met, we break the processing loop :
             std::clog << datatools::io::error << APP_NAME_PREFIX
-                      << "Processing of event record #" << event_counter << " met a fatal error. Break !" << std::endl;
-            do_break_event_loop = true;
+                      << "Processing of data record #" << record_counter << " met a fatal error. Break !" << std::endl;
+            do_break_record_loop = true;
             error_code = EXIT_FAILURE;
           } else if (processing_status & dpp::base_module::ERROR) {
             // A non-critical error has been met, we warn and
-            // skip to the next event record :
+            // skip to the next data record :
             std::clog << datatools::io::error << APP_NAME_PREFIX
-                      << "Processing of event record #" << event_counter << " failed." << std::endl;
+                      << "Processing of data record #" << record_counter << " failed." << std::endl;
             if (break_on_error_as_fatal) {
-              do_break_event_loop = true;
+              do_break_record_loop = true;
               error_code = EXIT_FAILURE;
             }
           } else if (processing_status & dpp::base_module::STOP) {
             if (verbose) {
               std::clog << datatools::io::warning << APP_NAME_PREFIX
-                        << "Processing of event record #" << event_counter << " stopped at some stage." << std::endl;
+                        << "Processing of data record #" << record_counter << " stopped at some stage." << std::endl;
             }
           }
-          if (do_break_event_loop) {
+          if (do_break_record_loop) {
             break;
           }
         } // BOOST_FOREACH
@@ -427,45 +431,45 @@ int main (int argc_, char ** argv_)
       }
 
       if (debug) {
-        ER.tree_dump (std::cout, "Event record :", "DEBUG: " + APP_NAME_PREFIX);
+        ER.tree_dump (std::cout, "Data record :", "DEBUG: " + APP_NAME_PREFIX);
       }
 
       // Manage the sink if any :
       if (sink && ! sink->is_terminated ()) {
         bool save_it = true;
         if (processing_status & dpp::base_module::STOP) {
-          save_it = save_stopped_event_records;
+          save_it = save_stopped_data_records;
         }
         if (save_it) {
-          // Save the processed event record in the sink :
+          // Save the processed data record in the sink :
           int output_status = sink->process (ER);
           if (output_status != dpp::io_module::OK) {
-            std::clog << datatools::io::error << APP_NAME_PREFIX << "Error while storing event #" << event_counter << " !" << std::endl;
+            std::clog << datatools::io::error << APP_NAME_PREFIX << "Error while storing data record #" << record_counter << " !" << std::endl;
           }
           stored_counter++;
         }
       }
 
-      event_counter++;
-      if ((max_events > 0) && (event_counter == max_events)) {
+      record_counter++;
+      if ((max_records > 0) && (record_counter == max_records)) {
         if (debug) std::clog << datatools::io::debug << APP_NAME_PREFIX
-                             << "max number of events reached !!!" << std::endl;
-        do_break_event_loop = true;
+                             << "max number of data record reached !!!" << std::endl;
+        do_break_record_loop = true;
       }
       // break check :
-      if (do_break_event_loop) {
+      if (do_break_record_loop) {
         if (debug) std::clog << datatools::io::debug << APP_NAME_PREFIX
-                             << "do_break_event_loop !!!" << std::endl;
+                             << "do_break_record_loop !!!" << std::endl;
         break;
       }
     }
 
     if (debug) std::clog << datatools::io::debug << APP_NAME_PREFIX
-                         << "Exiting event record loop." << std::endl;
+                         << "Exiting data record loop." << std::endl;
 
-    std::clog << datatools::io::notice << APP_NAME_PREFIX << "Number of processed events : " << event_counter << "\n";
+    std::clog << datatools::io::notice << APP_NAME_PREFIX << "Number of processed records : " << record_counter << "\n";
     if (sink) {
-      std::clog << datatools::io::notice << APP_NAME_PREFIX << "Number of saved events     : " << stored_counter << "\n";
+      std::clog << datatools::io::notice << APP_NAME_PREFIX << "Number of saved records     : " << stored_counter << "\n";
     }
 
     // Terminate the module manager :

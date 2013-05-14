@@ -11,7 +11,7 @@
 // Datatools
 #include <datatools/archives_instantiation.h>
 
-#include <the_serializable.ipp>
+#include <dpp_ex01/the_serializable.ipp>
 
 /// Serialization code instantiation for class hit
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(dpp_ex01::hit)

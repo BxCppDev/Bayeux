@@ -1,4 +1,4 @@
-#include <raw_generator_module.h>
+#include <dpp_ex01/raw_generator_module.h>
 
 #include <limits>
 #include <stdexcept>
@@ -8,7 +8,7 @@
 #include <datatools/units.h>
 #include <datatools/clhep_units.h>
 
-#include <raw_data.h>
+#include <dpp_ex01/raw_data.h>
 
 namespace dpp_ex01 {
 
@@ -94,7 +94,7 @@ namespace dpp_ex01 {
     if (! a_config.has_explicit_unit("mean_energy")) {
       mean_energy *= energy_unit;
     }
-    set_mean_energy(_mean_energy_);
+    set_mean_energy(mean_energy);
 
     // Mandatory ``sigma_energy`` property :
     DT_THROW_IF(! a_config.has_key("sigma_energy"),
@@ -104,7 +104,7 @@ namespace dpp_ex01 {
     if (! a_config.has_explicit_unit("sigma_energy")) {
       sigma_energy *= energy_unit;
     }
-    set_sigma_energy(_sigma_energy_);
+    set_sigma_energy(sigma_energy);
 
     // Initialization :
 
@@ -158,7 +158,7 @@ namespace dpp_ex01 {
       dpp_ex01::hit & h = RD->grab_hits().back();
       h.set_id(i);
       double energy = _prng_.gaussian(_mean_energy_, _sigma_energy_);
-      if (energy < 0.0) energy = 0.0;
+      if (energy < 0.0) energy = 1.0;
       h.set_energy(energy);
       energy_sum += energy;
       h.grab_auxiliaries().store_flag("raw");
@@ -169,6 +169,7 @@ namespace dpp_ex01 {
       RD->grab_auxiliaries().store_flag("high_energy");
     }
 
+    return SUCCESS;
   }
 
   void raw_generator_module::set_raw_data_bank_label(const std::string & rd_bank_label_)

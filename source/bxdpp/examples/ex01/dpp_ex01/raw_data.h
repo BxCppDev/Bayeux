@@ -11,7 +11,7 @@
 #include <datatools/i_serializable.h>
 #include <datatools/properties.h>
 
-#include <hit.h>
+#include <dpp_ex01/hit.h>
 
 namespace dpp_ex01 {
 

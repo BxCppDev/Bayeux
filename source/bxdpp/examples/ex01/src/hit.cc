@@ -1,9 +1,11 @@
-#include <hit.h>
+#include <dpp_ex01/hit.h>
 
 #include <limits>
 #include <stdexcept>
 
+#include <datatools/exception.h>
 #include <datatools/clhep_units.h>
+#include <datatools/utils.h>
 
 namespace dpp_ex01 {
 
@@ -13,7 +15,7 @@ namespace dpp_ex01 {
   hit::hit ()
   {
     _id_ = -1;
-    _energy_ = std::numeric_limits<double>::quiet_NaN();
+    datatools::invalidate(_energy_);
   }
 
   hit::~hit ()
@@ -37,9 +39,12 @@ namespace dpp_ex01 {
 
   void hit::set_energy(double e_)
   {
-    if (_energy_ < 0.0) {
-      throw std::domain_error("dpp_ex01::hit::set_energy: Invalid negative energy value !");
-    }
+    DT_THROW_IF(! datatools::is_valid(e_),
+                std::logic_error,
+                "Invalid (NaN) energy value !");
+    DT_THROW_IF(e_ < 0.0,
+                std::domain_error,
+                "Invalid negative energy value !");
     _energy_ = e_;
   }
 
@@ -51,6 +56,13 @@ namespace dpp_ex01 {
   datatools::properties & hit::grab_auxiliaries()
   {
     return _auxiliaries_;
+  }
+
+  void hit::reset()
+  {
+    _id_ = -1;
+    datatools::invalidate(_energy_);
+    _auxiliaries_.clear();
   }
 
   void hit::dump(std::ostream & out_, const std::string & title_) const

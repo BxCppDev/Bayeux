@@ -594,30 +594,28 @@ namespace dpp {
                                   bool inherit_) const
   {
     std::string indent;
-    if (! indent.empty ()) {
+    if (! indent_.empty ()) {
       indent = indent_;
     }
     if ( ! title_.empty ()) {
       out_ << indent << title_ << std::endl;
     }
 
-    namespace du = datatools;
-
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Initialized       : " << is_initialized () << std::endl;
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Flags             : " << _flags_ << std::endl;
 
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "List of registered data processing module factories : " << std::endl;
     {
       std::ostringstream indent_oss;
-      indent_oss << indent << du::i_tree_dumpable::skip_tag;
+      indent_oss << indent << datatools::i_tree_dumpable::skip_tag;
       _factory_register_.print (out_, indent_oss.str ());
     }
 
     {
-      out_ << indent << du::i_tree_dumpable::tag
+      out_ << indent << datatools::i_tree_dumpable::tag
            << "Modules : ";
       size_t sz = _modules_.size ();
       if (sz == 0) {
@@ -629,36 +627,36 @@ namespace dpp {
            i++) {
         const std::string & the_module_name = i->first;
         const module_entry_type & the_module_entry = i->second;
-        out_ << indent << du::i_tree_dumpable::skip_tag;
+        out_ << indent << datatools::i_tree_dumpable::skip_tag;
 
         std::ostringstream indent_oss;
-        indent_oss << indent << du::i_tree_dumpable::skip_tag;
+        indent_oss << indent << datatools::i_tree_dumpable::skip_tag;
         module_handle_dict_type::const_iterator j = i;
         j++;
         if (j == _modules_.end ()) {
-          out_ << du::i_tree_dumpable::last_tag;
-          indent_oss << du::i_tree_dumpable::last_skip_tag;
+          out_ << datatools::i_tree_dumpable::last_tag;
+          indent_oss << datatools::i_tree_dumpable::last_skip_tag;
         } else {
-          out_ << du::i_tree_dumpable::tag;
-          indent_oss << du::i_tree_dumpable::skip_tag;
+          out_ << datatools::i_tree_dumpable::tag;
+          indent_oss << datatools::i_tree_dumpable::skip_tag;
         }
         out_ << "Module : '" << the_module_name << "'" << std::endl;
         the_module_entry.tree_dump (out_, "", indent_oss.str ());
       }
     }
 
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Service manager   :" ;
     if (has_service_manager ()) {
       out_ << " @ " << _service_manager_ << std::endl;
       std::ostringstream indent_ss;
-      indent_ss << indent << du::i_tree_dumpable::skip_tag;
+      indent_ss << indent << datatools::i_tree_dumpable::skip_tag;
       _service_manager_->tree_dump (std::clog, "", indent_ss.str ());
     } else {
       out_ << " <none>" << std::endl;
     }
 
-    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
          << "Owns service manager  : " << _service_manager_owner_ << std::endl;
 
     return;

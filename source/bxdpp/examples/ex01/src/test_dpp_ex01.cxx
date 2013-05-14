@@ -4,10 +4,13 @@
 #include <datatools/clhep_units.h>
 #include <datatools/io_factory.h>
 
-#include <hit.h>
-#include <hit.ipp>
-#include <raw_data.h>
-#include <raw_data.ipp>
+#include <dpp_ex01/hit.h>
+#include <dpp_ex01/raw_data.h>
+
+// Explicit include the ``dpp_ex01`` serialization code:
+//   #include <dpp_ex01/hit.ipp>
+//   #include <dpp_ex01/raw_data.ipp>
+// or explicitely link with the ``dpp_ex01_bio`` DLL.
 
 int main() {
   try {
