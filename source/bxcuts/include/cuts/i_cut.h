@@ -165,11 +165,6 @@ namespace cuts {
 
     void print (std::ostream & a_out = std::clog) const;
 
-
-  public:
-
-    static bool g_devel;
-
   private:
 
     std::string _name;           //!< The name of the cut
