@@ -19,14 +19,15 @@
  *
  */
 
+#include <dpp/chain_module.h>
+
 #include <stdexcept>
 #include <sstream>
 
 #include <datatools/properties.h>
 #include <datatools/ioutils.h>
 #include <datatools/things.h>
-
-#include <dpp/chain_module.h>
+#include <datatools/exception.h>
 
 namespace dpp {
 
@@ -47,18 +48,14 @@ namespace dpp {
   void chain_module::add_module (const std::string & a_label,
                                  const module_handle_type & a_handle_module)
   {
-    if (has_module (a_label)) {
-      std::ostringstream message;
-      message << "dpp::chain_module::add_module: "
-              << "Module '" << a_label << "' already exists !";
-      throw std::logic_error (message.str ());
-    }
-    if (! a_handle_module) {
-      std::ostringstream message;
-      message << "dpp::chain_module::add_module: "
-              << "Invalid module handle for label '" << a_label << "' !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF(has_module (a_label),
+                std::logic_error,
+                "Module '" << _name << "' "
+                << "is already initialized ! "
+                << "Module '" << a_label << "' already exists !");
+    DT_THROW_IF(! a_handle_module,
+                std::logic_error,
+                "Invalid module handle for label '" << a_label << "' !");
     module_entry e;
     e.label = a_label;
     e.handle = a_handle_module;
@@ -92,12 +89,9 @@ namespace dpp {
                                  datatools::service_manager & a_service_manager,
                                  module_handle_dict_type & a_module_dict)
   {
-    if (is_initialized ()) {
-      std::ostringstream message;
-      message << "dpp::chain_module::initialize: "
-              << "Chain module '" << get_name () << "' is already initialized ! ";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF(is_initialized (),
+                std::logic_error,
+                "Chain module '" << get_name () << "' is already initialized ! ");
 
     if (! is_debug ()) {
       if (a_config.has_flag ("debug")) {
@@ -112,14 +106,12 @@ namespace dpp {
     for (int i = 0; i < modules.size (); i++) {
       module_handle_dict_type::iterator found
         = a_module_dict.find (modules[i]);
-      if (found == a_module_dict.end ()) {
-        std::ostringstream message;
-        message << "dpp::chain_module::initialize: "
-                << "Can't find any module named '" << modules[i]
-                << "' from the external dictionnary ! ";
-        throw std::logic_error (message.str ());
-      }
+      DT_THROW_IF(found == a_module_dict.end (),
+                  std::logic_error,
+                  "Can't find any module named '" << modules[i]
+                  << "' from the external dictionnary ! ");
       add_module (modules[i], found->second.grab_initialized_module_handle ());
+      // use logger here
       std::clog << "NOTICE: " << "dpp::chain_module::initialize: "
                 << "Chain module '" << get_name ()
                 << "' has added module '" << modules[i] << "'"
@@ -128,6 +120,7 @@ namespace dpp {
 
     // 2012-04-24 FM+XG : Now allow a chain module without modules :
     if (_modules_.size () > 0) {
+      // use logger here
       std::clog << "WARNING: " << "dpp::chain_module::initialize: "
                 << "Chain module '" << get_name () << "' has no embedded modules !"
                 << std::endl;
@@ -141,12 +134,9 @@ namespace dpp {
   // Reset :
   void chain_module::reset ()
   {
-    if (! is_initialized ()) {
-      std::ostringstream message;
-      message << "dpp::chain_module::initialize: "
-              << "Module '" << get_name () << "' is not initialized !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF(! is_initialized (),
+                std::logic_error,
+                "Chain module '" << get_name () << "' is not initialized !");
     _modules_.clear ();
     _set_initialized (false);
     return;
@@ -155,12 +145,9 @@ namespace dpp {
   // Processing :
   int chain_module::process (datatools::things & the_data_record)
   {
-    if (! is_initialized ()) {
-      std::ostringstream message;
-      message << "dpp::chain_module::process: "
-              << "Module '" << get_name () << "' is not initialized !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF(! is_initialized (),
+                std::logic_error,
+                "Chain module '" << get_name () << "' is not initialized !");
 
     this->reset_last_error_message ();
 
@@ -177,52 +164,41 @@ namespace dpp {
       module_entry & the_entry = *i;
       const std::string & module_name = the_entry.label;
 
-      if (is_debug ())
-        {
-          std::clog << datatools::io::debug
-                    << "dpp::chain_module::process: "
-                    << "Processing chained module '" << module_name << "'..." << std::endl;
-        }
+      if (is_debug ()) {
+        std::clog << datatools::io::debug
+                  << "dpp::chain_module::process: "
+                  << "Processing chained module '" << module_name << "'..." << std::endl;
+      }
       module_handle_type & the_handle  = the_entry.handle;
-      if (! the_handle)
-        {
-          std::ostringstream message;
-          message << "dpp::chain_module::process: "
-                  << "Handle has no module '" << module_name << "' !"
-                  << std::endl;
-          throw std::logic_error (message.str ());
-        }
+      DT_THROW_IF(! the_handle,
+                  std::logic_error,
+                  "Handle has no module '" << module_name << "' !");
       base_module & a_module = the_handle.grab ();
       a_module.reset_last_error_message ();
       try {
         int status = a_module.process (the_data_record);
-        if (is_debug ())
-          {
-            std::ostringstream message;
-            message << "dpp::chain_module::process: "
-                    << "module='" << module_name << "' "
-                    << "status=" << status;
-            std::clog << datatools::io::debug << message.str () << std::endl;
+        if (is_debug ()) {
+          std::ostringstream message;
+          message << "dpp::chain_module::process: "
+                  << "module='" << module_name << "' "
+                  << "status=" << status;
+          std::clog << datatools::io::debug << message.str () << std::endl;
+        }
+        if (status & FATAL || status & ERROR) {
+          // Ask for the abortion of the full event record processing session
+          // if the current chained module meets a fatal error  :
+          if (a_module.has_last_error_message ()) {
+            this->append_last_error_message (a_module.get_last_error_message ());
           }
-        if (status & FATAL || status & ERROR)
-          {
-            // Ask for the abortion of the full event record processing session
-            // if the current chained module meets a fatal error  :
-            if (a_module.has_last_error_message ())
-              {
-                this->append_last_error_message (a_module.get_last_error_message ());
-              }
-            a_module.reset_last_error_message ();
-            if (status & FATAL )
-              {
-                return FATAL;
-              }
+          a_module.reset_last_error_message ();
+          if (status & FATAL ) {
+            return FATAL;
           }
-        if (status & STOP)
-          {
-            // Stop the chain loop if the current chained module asks for stop :
-            return status;
-          }
+        }
+        if (status & STOP) {
+          // Stop the chain loop if the current chained module asks for stop :
+          return status;
+        }
         // Just pass the status from the current chained module :
         //return status;
       }

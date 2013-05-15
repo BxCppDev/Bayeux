@@ -42,6 +42,7 @@
 #include <datatools/bit_mask.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/factory_macros.h>
+#include <datatools/logger.h>
 /// \brief The datatools library's main namespace
 namespace datatools {
   // Forward declaration :
@@ -145,7 +146,7 @@ namespace dpp {
      */
     virtual int process (datatools::things & a_data_model) = 0;
 
-    /// The main termination method 
+    /// The main termination method
     virtual void reset () = 0;
 
   public:
@@ -177,6 +178,7 @@ namespace dpp {
     std::string _description;    //!< The description of the module
     std::string _version;        //!< The version of the module
     int         _debug_level;    //!< The debug level of the module
+    datatools::logger::priority _logging; //!< The logging threshold
 
     // Factory stuff :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_module);
