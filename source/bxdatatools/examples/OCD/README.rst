@@ -20,14 +20,14 @@ Introduction
      * ``foo.h`` : header file
      * ``foo.cc`` :  definition file
 
-   * ``ex_OCD.cxx`` : the example program source
+   * ``ex_OCD.cxx`` : the example main program source
 
  * Configuration file: ``config/ex_OCD.foo.candidate.conf``
 
  * Built objects :
 
-   * the ``datatools_ex_OCD`` DLL : the ``foo`` class
-   * the ``ex_OCD`` example executable link with the above DLL
+   * the ``datatools_ex_OCD`` : DLL linked with the ``datatools`` DLL
+   * the ``ex_OCD`` : executable linked with the ``datatools_ex_OCD`` DLL
 
  * Build method: CMake
 
