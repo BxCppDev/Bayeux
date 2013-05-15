@@ -26,6 +26,11 @@ Introduction
 
  * Build method : CMake
 
+ * Objects :
+
+  * ``ex_manager`` : the example executable linked to the ``materials`` DLL
+
+
 
 Quick start
 ===========
