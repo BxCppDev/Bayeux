@@ -23,7 +23,7 @@
 //!          @code
 //!          datatools::logger::priority prio_;
 //!          ...
-//!          datatools_information(prio_, "Information message");
+//!          DT_LOG_INFORMATION(prio_, "Information message");
 //!          @endcode
 //!
 //!          Provided the variable prio_ meets the minimum priority for
@@ -95,7 +95,92 @@ struct logger {
 };
 } // namespace datatools
 
+
 //! Log Message if Priority is greater or equal to PRIO_FATAL
+#define DT_LOG_FATAL(Priority, Message) \
+{ \
+  if (Priority >= datatools::logger::PRIO_FATAL) { \
+    std::cerr << "[fatal:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
+  }\
+}
+
+//! Log Message if Priority is greater or equal to PRIO_CRITICAL
+#define DT_LOG_CRITICAL(Priority, Message) \
+{ \
+  if (Priority >= datatools::logger::PRIO_CRITICAL) { \
+    std::cerr << "[critical:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
+  }\
+}
+
+//! Log Message if Priority is greater or equal to PRIO_ERROR
+#define DT_LOG_ERROR(Priority, Message) \
+{ \
+  if (Priority >= datatools::logger::PRIO_ERROR) { \
+    std::cerr << "[error:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
+  }\
+}
+
+//! Log Message if Priority is greater or equal to PRIO_WARNING
+#define DT_LOG_WARNING(Priority, Message) \
+{ \
+  if (Priority >= datatools::logger::PRIO_WARNING) { \
+    std::cerr << "[warning:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
+  }\
+}
+
+//! Log Message if Priority is greater or equal to PRIO_NOTICE
+#define DT_LOG_NOTICE(Priority, Message) \
+{ \
+  if (Priority >= datatools::logger::PRIO_NOTICE) { \
+    std::clog << "[notice:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
+  }\
+}
+
+//! Log Message if Priority is greater or equal to PRIO_INFORMATION
+#define DT_LOG_INFORMATION(Priority, Message) \
+{ \
+  if (Priority >= datatools::logger::PRIO_INFORMATION) { \
+    std::clog << "[information:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
+  }\
+}
+
+//! Log Message if Priority is greater or equal to PRIO_DEBUG
+#define DT_LOG_DEBUG(Priority, Message) \
+{ \
+  if (Priority >= datatools::logger::PRIO_DEBUG) { \
+    std::clog << "[debug:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
+  }\
+}
+
+//! Log Message if Priority is greater or equal to PRIO_TRACE
+#define DT_LOG_TRACE(Priority, Message) \
+{ \
+  if (Priority >= datatools::logger::PRIO_TRACE) { \
+    std::clog << "[trace:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
+  }\
+}
+
+//----------------------------------------------------------------------
+// OLD STYLE DEPRECATED MACROS.
+// To actually produce a compiler warning on clang or gcc:
+// Local deprecation namespace which we can use to store deprecated macros
+// This uses a pattern of a deprecated type tag
+//namespace datatools_deprecated {
+// For example, to deprecate datatools_fatal, define:
+//struct datatools_fatal {} __attribute__ ((deprecated)) ;
+// then define datatools_fatal(Priority,Message) as an instantiation
+// of datatools_fatal in a scope block:
+//#define datatools_fatal(Priority, Message) \
+//{ \
+//  datatools_deprecated::datatools_fatal a; \
+//}
+//Provided the compiler supports deprecation, this should emit a warning
+//that datatools_fatal is deprecated. The name may or may not change
+//depending on the compiler.
+//} // namespace
+
+//! Log Message if Priority is greater or equal to PRIO_FATAL
+//! @deprecated Use DT_LOG_FATAL macro.
 #define datatools_fatal(Priority, Message) \
 { \
   if (Priority >= datatools::logger::PRIO_FATAL) { \
@@ -104,6 +189,7 @@ struct logger {
 }
 
 //! Log Message if Priority is greater or equal to PRIO_CRITICAL
+//! @deprecated Use DT_LOG_CRITICAL macro.
 #define datatools_critical(Priority, Message) \
 { \
   if (Priority >= datatools::logger::PRIO_CRITICAL) { \
@@ -112,6 +198,7 @@ struct logger {
 }
 
 //! Log Message if Priority is greater or equal to PRIO_ERROR
+//! @deprecated Use DT_LOG_ERROR macro.
 #define datatools_error(Priority, Message) \
 { \
   if (Priority >= datatools::logger::PRIO_ERROR) { \
@@ -120,6 +207,7 @@ struct logger {
 }
 
 //! Log Message if Priority is greater or equal to PRIO_WARNING
+//! @deprecated Use DT_LOG_WARNING macro.
 #define datatools_warning(Priority, Message) \
 { \
   if (Priority >= datatools::logger::PRIO_WARNING) { \
@@ -128,6 +216,7 @@ struct logger {
 }
 
 //! Log Message if Priority is greater or equal to PRIO_NOTICE
+//! @deprecated Use DT_LOG_NOTICE macro.
 #define datatools_notice(Priority, Message) \
 { \
   if (Priority >= datatools::logger::PRIO_NOTICE) { \
@@ -136,14 +225,16 @@ struct logger {
 }
 
 //! Log Message if Priority is greater or equal to PRIO_INFORMATION
+//! @deprecated Use DT_LOG_INFORMATION macro.
 #define datatools_information(Priority, Message) \
 { \
   if (Priority >= datatools::logger::PRIO_INFORMATION) { \
-    std::clog << "[infomation:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
+    std::clog << "[information:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
   }\
 }
 
 //! Log Message if Priority is greater or equal to PRIO_DEBUG
+//! @deprecated Use DT_LOG_DEBUG macro.
 #define datatools_debug(Priority, Message) \
 { \
   if (Priority >= datatools::logger::PRIO_DEBUG) { \
@@ -152,6 +243,7 @@ struct logger {
 }
 
 //! Log Message if Priority is greater or equal to PRIO_TRACE
+//! @deprecated Use DT_LOG_TRACE macro.
 #define datatools_trace(Priority, Message) \
 { \
   if (Priority >= datatools::logger::PRIO_TRACE) { \

@@ -24,15 +24,15 @@ class foo_loggable {
   foo_loggable() : prio_(datatools::logger::PRIO_FATAL) {}
 
   void logged_method() const {
-    datatools_fatal(prio_, "fatal message");
-    datatools_critical(prio_, "critical message");
-    datatools_error(prio_, "error message");
-    datatools_warning(prio_, "warning message");
-    datatools_notice(prio_, "notice message");
-    datatools_information(prio_, "information message");
-    datatools_debug(prio_, "debug message");
-    datatools_trace(prio_, "trace message");
-    datatools_trace(prio_, "trace message at " << prio_);
+    DT_LOG_FATAL(prio_, "fatal message");
+    DT_LOG_CRITICAL(prio_, "critical message");
+    DT_LOG_ERROR(prio_, "error message");
+    DT_LOG_WARNING(prio_, "warning message");
+    DT_LOG_NOTICE(prio_, "notice message");
+    DT_LOG_INFORMATION(prio_, "information message");
+    DT_LOG_DEBUG(prio_, "debug message");
+    DT_LOG_TRACE(prio_, "trace message");
+    DT_LOG_TRACE(prio_, "trace message at " << prio_);
   }
 
   void set_priority(const datatools::logger::priority& p) {
