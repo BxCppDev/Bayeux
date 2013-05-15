@@ -26,16 +26,21 @@
 // Third Party
 // - Boost
 #include "boost/assign.hpp"
+#include "boost/algorithm/string.hpp"
 #include "boost/bimap.hpp"
+#include "boost/bimap/set_of.hpp"
 #include "boost/bimap/multiset_of.hpp"
+
 
 // This Project
 
 namespace {
 //! Hide awkward boost bimap declaration in a typedef
 struct PriorityLookup {
-  typedef boost::bimap<std::string, boost::bimaps::multiset_of<datatools::logger::priority> > LookupTable;
-
+  typedef boost::bimap<
+      boost::bimaps::set_of<std::string>, 
+      boost::bimaps::multiset_of<datatools::logger::priority> 
+      > LookupTable;
 };
 
 //! Construct the lookup table.
@@ -69,6 +74,12 @@ PriorityLookup::LookupTable ConstructLookupTable() {
 
   return a;
 }
+
+//! Return priority label stripped of "PRIO_" prefix and lowercased
+std::string GetCanonicalLabel(const std::string& raw) {
+  return boost::to_lower_copy(boost::ireplace_first_copy(raw, "PRIO_", ""));
+}
+
 } // namespace
 
 namespace datatools {
@@ -85,13 +96,8 @@ std::string logger::get_priority_label(logger::priority p)
   static PriorityLookup::LookupTable a;
   if (a.empty()) a = ConstructLookupTable();
 
-  // Find the first occurence with priority p
   PriorityLookup::LookupTable::right_const_iterator n = a.right.find(p);
-  if (n == a.right.end()) return "";
-  // Provide the lower case string without the PRIO_ prefix ("debug")
-  ++n;
-  ++n; // FM : this is rather tricky and depends on the map ordering
-  return n->second;
+  return n != a.right.end() ? GetCanonicalLabel(n->second) : "";
 }
 
 } // namespace datatools

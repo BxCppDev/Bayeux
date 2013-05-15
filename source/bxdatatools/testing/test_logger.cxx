@@ -107,19 +107,44 @@ void test_string_to_priority() {
     DT_THROW_IF(p != v.second, std::runtime_error, "get_priority(\"" << v.first << "\") != " << v.second);
   }
   datatools::logger::priority p = datatools::logger::get_priority("foo");
-  std::cout << "Checking " << "foo, got " << p << std::endl;
+  DT_THROW_IF(p != datatools::logger::PRIO_UNDEFINED,
+              std::runtime_error,
+              "get_priority did not return PRIO_UNDEFINED for bogus priority label");
 }
 
 //! Check that priorities are converted to valid strings
 void test_priority_to_string() {
-  for (int i = datatools::logger::PRIO_FATAL;
-       i <= datatools::logger::PRIO_TRACE + 2;
-       i++) {
-    datatools::logger::priority p = static_cast<datatools::logger::priority>(i);
-    std::clog << "Logging priority label is : '"
-              << datatools::logger::get_priority_label(p)
-              << "'" <<std::endl;
+  typedef std::map<datatools::logger::priority, std::string> TPSMap;
+  TPSMap mapValues;
+
+  boost::assign::insert(mapValues)
+      (datatools::logger::PRIO_FATAL,     "fatal")        
+      (datatools::logger::PRIO_CRITICAL,  "critical")    
+      (datatools::logger::PRIO_ERROR,     "error")       
+      (datatools::logger::PRIO_WARNING,   "warning")     
+      (datatools::logger::PRIO_NOTICE,    "notice")      
+      (datatools::logger::PRIO_INFORMATION, "information")
+      (datatools::logger::PRIO_DEBUG,     "debug")       
+      (datatools::logger::PRIO_TRACE,    "trace");
+
+  BOOST_FOREACH(TPSMap::value_type& v, mapValues) {
+    std::string label = datatools::logger::get_priority_label(v.first);
+    std::cout << "Checking " << v.first << "->" << v.second << ", got " << label << std::endl;
+    DT_THROW_IF(label != v.second, 
+                std::runtime_error, 
+                "get_priority_label(\"" << v.first << "\") != " << v.second);
   }
+
+  // Check for empty string if user does some out-of-bounds nastiness
+  std::string negOutOfBounds = datatools::logger::get_priority_label(static_cast<datatools::logger::priority>(-2));
+  DT_THROW_IF(negOutOfBounds != "",
+              std::runtime_error,
+              "get_priority_label does not return empty string on negative out of bounds argument");
+
+  std::string posOutOfBounds = datatools::logger::get_priority_label(static_cast<datatools::logger::priority>(84));
+  DT_THROW_IF(posOutOfBounds != "",
+              std::runtime_error,
+              "get_priority_label does not return empty string on positive out of bounds argument");
 }
 
 int main(int argc, const char *argv[])
@@ -127,13 +152,19 @@ int main(int argc, const char *argv[])
 
   test_logger_macros();
 
-  test_priority_to_string();
-
   try {
     test_string_to_priority();
   }
   catch (std::exception& e) {
     std::cerr << "test_string_to_priority failed : " << e.what() << std::endl;
+    return 1;
+  }
+  
+  try {
+    test_priority_to_string();
+  }
+  catch (std::exception& e) {
+    std::cerr << "test_priority_to_string failed : " << e.what() << std::endl;
     return 1;
   }
 
