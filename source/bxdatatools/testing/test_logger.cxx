@@ -1,6 +1,6 @@
 // test_logger.cxx - unit tests for datatools/logger.h
 //
-// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com> 
+// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com>
 // Copyright (c) 2013 by The University of Warwick
 
 // Ourselves
@@ -106,19 +106,36 @@ void test_string_to_priority() {
     std::cout << "Checking " << v.first << "->" << v.second << ", got " << p << std::endl;
     DT_THROW_IF(p != v.second, std::runtime_error, "get_priority(\"" << v.first << "\") != " << v.second);
   }
+  datatools::logger::priority p = datatools::logger::get_priority("foo");
+  std::cout << "Checking " << "foo, got " << p << std::endl;
+}
+
+//! Check that priorities are converted to valid strings
+void test_priority_to_string() {
+  for (int i = datatools::logger::PRIO_FATAL;
+       i <= datatools::logger::PRIO_TRACE + 2;
+       i++) {
+    datatools::logger::priority p = static_cast<datatools::logger::priority>(i);
+    std::clog << "Logging priority label is : '"
+              << datatools::logger::get_priority_label(p)
+              << "'" <<std::endl;
+  }
 }
 
 int main(int argc, const char *argv[])
 {
+
   test_logger_macros();
+
+  test_priority_to_string();
 
   try {
     test_string_to_priority();
   }
-  catch (std::exception& e) { 
+  catch (std::exception& e) {
     std::cerr << "test_string_to_priority failed : " << e.what() << std::endl;
     return 1;
   }
-  
+
   return 0;
 }

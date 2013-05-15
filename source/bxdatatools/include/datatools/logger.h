@@ -12,14 +12,14 @@
 //!          A minimum priority may be set, with only messages at that
 //!          priority or higher logged to the relevant iostream.
 //!
-//!          This minimum priority can be stored in a variable, allowing 
+//!          This minimum priority can be stored in a variable, allowing
 //!          logging priority to be adjusted on an instance-by-instance
 //!          basis as well as at global or class scope.
 //!
 //!          Helper macros are provided to provide logging at each
 //!          level if a provided priority meets the minimum level.
 //!          For example, to log an informational message, you could use:
-//! 
+//!
 //!          @code
 //!          datatools::logger::priority prio_;
 //!          ...
@@ -33,7 +33,7 @@
 //!          from any relevant source (global, function argument, class
 //!          variable, instance variable and so on).
 //
-// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com> 
+// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com>
 // Copyright (c) 2013 by The University of Warwick
 //
 // This file is part of datatools.
@@ -67,14 +67,15 @@ namespace datatools {
 struct logger {
   //! Priority levels for logging from most to least critical
   enum priority {
-    PRIO_FATAL = 1,   //!< A fatal error. The application will most likely terminate. This is the highest priority.
-    PRIO_CRITICAL,    //!< A critical error. The application might not be able to continue running successfully.
-    PRIO_ERROR,       //!< An error. An operation did not complete successfully, but the application as a whole is not affected.
-    PRIO_WARNING,     //!< A warning. An operation completed with an unexpected result.
-    PRIO_NOTICE,      //!< A notice, which is an information with just a higher priority.
-    PRIO_INFORMATION, //!< An informational message, usually denoting the successful completion of an operation.
-    PRIO_DEBUG,       //!< A debugging message.
-    PRIO_TRACE        //!< A tracing message. This is the lowest priority.
+    PRIO_UNDEFINED = 0,//!< Undefined/invalid priority
+    PRIO_FATAL,        //!< A fatal error. The application will most l    PRIO_FATAL = 1,   //!< A fatal error. The application will most likely terminate. This is the highest priority.
+    PRIO_CRITICAL,     //!< A critical error. The application might not be able to continue running successfully.
+    PRIO_ERROR,        //!< An error. An operation did not complete successfully, but the application as a whole is not affected.
+    PRIO_WARNING,      //!< A warning. An operation completed with an unexpected result.
+    PRIO_NOTICE,       //!< A notice, which is an information with just a higher priority.
+    PRIO_INFORMATION,  //!< An informational message, usually denoting the successful completion of an operation.
+    PRIO_DEBUG,        //!< A debugging message.
+    PRIO_TRACE         //!< A tracing message. This is the lowest priority.
   };
 
   //! return priority enumeration value from string
@@ -82,8 +83,15 @@ struct logger {
   //! priority would be returned from input strings "PRIO_FATAL", "FATAL"
   //! or "fatal".
   //! @param name priority name
-  //! @returns the matching priority enumeration
+  //! @returns the matching priority enumeration or the PRIO_UNDEFINED
+  //!          if the name is not valid
   static priority get_priority(const std::string& name);
+
+  //! return priority label from the priority enumeration value
+  //! @param p priority enumeration
+  //! @returns the matching priority label or the empty string if the priority
+  //!          is not valid
+  static std::string get_priority_label(priority p);
 };
 } // namespace datatools
 
@@ -93,7 +101,7 @@ struct logger {
   if (Priority >= datatools::logger::PRIO_FATAL) { \
     std::cerr << "[fatal:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
   }\
-}  
+}
 
 //! Log Message if Priority is greater or equal to PRIO_CRITICAL
 #define datatools_critical(Priority, Message) \
@@ -101,7 +109,7 @@ struct logger {
   if (Priority >= datatools::logger::PRIO_CRITICAL) { \
     std::cerr << "[critical:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
   }\
-}  
+}
 
 //! Log Message if Priority is greater or equal to PRIO_ERROR
 #define datatools_error(Priority, Message) \
@@ -109,7 +117,7 @@ struct logger {
   if (Priority >= datatools::logger::PRIO_ERROR) { \
     std::cerr << "[error:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
   }\
-}  
+}
 
 //! Log Message if Priority is greater or equal to PRIO_WARNING
 #define datatools_warning(Priority, Message) \
@@ -117,7 +125,7 @@ struct logger {
   if (Priority >= datatools::logger::PRIO_WARNING) { \
     std::cerr << "[warning:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
   }\
-}  
+}
 
 //! Log Message if Priority is greater or equal to PRIO_NOTICE
 #define datatools_notice(Priority, Message) \
@@ -125,7 +133,7 @@ struct logger {
   if (Priority >= datatools::logger::PRIO_NOTICE) { \
     std::clog << "[notice:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
   }\
-}  
+}
 
 //! Log Message if Priority is greater or equal to PRIO_INFORMATION
 #define datatools_information(Priority, Message) \
@@ -133,7 +141,7 @@ struct logger {
   if (Priority >= datatools::logger::PRIO_INFORMATION) { \
     std::clog << "[infomation:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
   }\
-}  
+}
 
 //! Log Message if Priority is greater or equal to PRIO_DEBUG
 #define datatools_debug(Priority, Message) \
@@ -141,7 +149,7 @@ struct logger {
   if (Priority >= datatools::logger::PRIO_DEBUG) { \
     std::clog << "[debug:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
   }\
-}  
+}
 
 //! Log Message if Priority is greater or equal to PRIO_TRACE
 #define datatools_trace(Priority, Message) \
@@ -149,7 +157,7 @@ struct logger {
   if (Priority >= datatools::logger::PRIO_TRACE) { \
     std::clog << "[trace:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
   }\
-}  
+}
 
 #endif // DATATOOLS_LOGGER_H
 

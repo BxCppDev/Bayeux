@@ -1,6 +1,6 @@
 // logger.cc - Implementation of datatools logger
 //
-// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com> 
+// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com>
 // Copyright (c) 2013 by The University of Warwick
 //
 // This file is part of datatools.
@@ -68,8 +68,8 @@ PriorityLookup::LookupTable ConstructLookupTable() {
       ("trace", datatools::logger::PRIO_TRACE);
 
   return a;
-} 
-} // namespace 
+}
+} // namespace
 
 namespace datatools {
 logger::priority logger::get_priority(const std::string& name) {
@@ -77,7 +77,22 @@ logger::priority logger::get_priority(const std::string& name) {
   if (a.empty()) a = ConstructLookupTable();
 
   PriorityLookup::LookupTable::left_const_iterator p = a.left.find(name);
-  return p != a.left.end() ? p->second : PRIO_TRACE;
+  return p != a.left.end() ? p->second : PRIO_UNDEFINED;
 }
+
+std::string logger::get_priority_label(logger::priority p)
+{
+  static PriorityLookup::LookupTable a;
+  if (a.empty()) a = ConstructLookupTable();
+
+  // Find the first occurence with priority p
+  PriorityLookup::LookupTable::right_const_iterator n = a.right.find(p);
+  if (n == a.right.end()) return "";
+  // Provide the lower case string without the PRIO_ prefix ("debug")
+  ++n;
+  ++n; // FM : this is rather tricky and depends on the map ordering
+  return n->second;
+}
+
 } // namespace datatools
 
