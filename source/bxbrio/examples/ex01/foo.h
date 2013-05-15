@@ -42,7 +42,7 @@ private:
 
   bool     _bval_; // A boolean
   int8_t   _cval_; /* A signed char (8 bits)
-                    * imples #include <boost/cstdint.hpp>
+                    * implies #include <boost/cstdint.hpp>
                     */
   int32_t  _ival_; // A 32 bits signed integral
   float    _fval_; // A 32 bits float

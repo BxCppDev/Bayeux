@@ -11,6 +11,7 @@
 int main(void)
 {
   try {
+
     {
       std::clog << "Serializing objects...\n";
       long seed = 12345;
