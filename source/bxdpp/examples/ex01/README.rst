@@ -13,9 +13,12 @@ Introduction
    program.
 
    It defines a simple and serializable data model representing a collection
-   of raw hits in a detector. It also define a special data processing module
+   of raw hits in a detector. It also defines a special data processing module
    for the generation of simulated raw hits and storage in the main
    data/event record (implemented with a ``datatools::things`` instance).
+
+   The example creates a core DLL, an associated DLL dedicated to
+   serialization, and provides a test executable.
 
  * Source files :
 

@@ -10,7 +10,8 @@
 // Explicit include the ``dpp_ex01`` serialization code:
 //   #include <dpp_ex01/hit.ipp>
 //   #include <dpp_ex01/raw_data.ipp>
-// or explicitely link with the ``dpp_ex01_bio`` DLL.
+// or explicitely link with the ``dpp_ex01_bio`` DLL which
+// instantiates the serialization object code.
 
 int main() {
   try {
@@ -29,7 +30,7 @@ int main() {
       RD.grab_hits().push_back(dummy_hit);
       dpp_ex01::hit & h = RD.grab_hits().back();
       h.set_id(i);
-      h.set_energy(i *50.0 * CLHEP::keV);
+      h.set_energy(i * 50.0 * CLHEP::keV);
       h.grab_auxiliaries().store_flag("fake");
     }
     RD.grab_auxiliaries().store_flag("test");
