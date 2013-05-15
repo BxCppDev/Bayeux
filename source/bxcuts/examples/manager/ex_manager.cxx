@@ -65,9 +65,7 @@ int main(int argc_, char ** argv_)
     // Declare a set of configuration parameters :
     datatools::properties cut_manager_config;
     if (config_filename.empty()) {
-      config_filename =
-        CUTS_DATA_INSTALL_DIR
-        "/examples/manager/config/manager.conf";
+      config_filename = "config/manager.conf";
     }
     datatools::fetch_path_with_env(config_filename);
     // Load configuration parameters from a file :

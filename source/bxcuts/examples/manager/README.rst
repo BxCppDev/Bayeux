@@ -24,8 +24,9 @@ Introduction
 
  * Configuration files :
 
-   * ``config/manager.conf`` :
-   * ``config/cuts.def`` :
+   * ``config/manager.conf`` : The cut manager main configuration file
+   * ``config/cuts.def`` : The definition and configuration parameters
+     of the cuts
 
  * Build method : CMake
 
@@ -56,16 +57,16 @@ Quick start
 
 5. Check the output file:
 
-     * ``ex_manager.orig.data`` : 10% of the original set of randomized
-       colored data points
-     * ``ex_manager.selected.data`` : Final set of selected colored
-       data points
+   * ``ex_manager.orig.data`` : 10% of the original set of randomized
+     colored data points
+   * ``ex_manager.selected.data`` : Final set of selected colored
+     data points
 
 6. Clean::
 
-      shell> rm -f ex_manager.orig.data
-      shell> rm -f ex_manager.selected.data
-      shell> rm -f ex_manager
-      shell> rm -fr __build
+     shell> rm -f ex_manager.orig.data
+     shell> rm -f ex_manager.selected.data
+     shell> rm -f ex_manager
+     shell> rm -fr __build
 
 
