@@ -9,15 +9,28 @@ Introduction
    This example illustrates the use of the Object Configuration
    Description mechanism (OCD) associated to an arbitrary user
    class and an official class from the datatools library.
+   The user class being part of a DLL, one show how to browse
+   the associated OCD material through the ``ocd_manual``
+   executable.
 
  * Source files :
 
-   * ``foo.h`` : the foo class header file
-   * ``foo.cc`` : the foo class definition file
-   * ``ex_OCD.cxx`` : the main program
+   * The ``foo`` class :
+
+     * ``foo.h`` : header file
+     * ``foo.cc`` :  definition file
+
+   * ``ex_OCD.cxx`` : the example program source
 
  * Configuration file: ``config/ex_OCD.foo.candidate.conf``
+
+ * Built objects :
+
+   * the ``datatools_ex_OCD`` DLL : the ``foo`` class
+   * the ``ex_OCD`` example executable link with the above DLL
+
  * Build method: CMake
+
 
 Quick start
 ===========
@@ -42,7 +55,13 @@ Quick start
 
 4. Run the example::
 
+      shell> ls -l ./lib/
+      shell> ls -l ./ex_OCD
       shell> ./ex_OCD
+      shell> LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH} \
+             ocd_manual --load-dll "datatools_ex_OCD" \
+                          --class-id "foo"            \
+                          --action show
 
 5. Check the output OCD and skeleton files:
 

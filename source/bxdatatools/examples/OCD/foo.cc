@@ -4,41 +4,52 @@
 
 #include <datatools/units.h>
 #include <datatools/clhep_units.h>
+#include <datatools/exception.h>
 
 foo::foo() {
   initialized = false;
-  debug = false;
-  debug_level = -1;
   name = "";
   what = "";
   datatools::invalidate(width);
   datatools::invalidate(weight);
   dummy = -1;
   tmpfile = "";
+  _logging_ = datatools::logger::PRIO_FATAL;
+}
+
+void foo::set_logging_priority(const datatools::logger::priority & p_) {
+  _logging_ = p_;
 }
 
 void foo::initialize(const datatools::properties & config_) {
+  datatools_trace(_logging_, "Entering initialization...");
 
-  double length_unit = CLHEP::cm;
+  double length_unit = CLHEP::cm; // implicit length unit
+  bool hello = false;
 
-  // Parse 'debug' :
-  const std::string debug_key = "debug";
-  if (config_.has_flag(debug_key)) {
-    debug = true;
-    const std::string debug_level_key = "debug.level";
-    if (! config_.has_key(debug_level_key)) {
-      throw std::logic_error("foo::initialize: Missing '"+debug_level_key+"' property!");
-    }
-    debug_level = config_.fetch_integer(debug_level_key);
+  datatools_notice(_logging_, "Parsing configuration parameters...");
+
+  // Parse 'logging' :
+  const std::string logging_key = "logging";
+  if (config_.has_flag(logging_key)) {
+    // Parse mandatory 'logging.level' :
+    const std::string logging_level_key = "logging.level";
+    DT_THROW_IF(! config_.has_key(logging_level_key),
+                std::logic_error,
+                "foo::initialize: Missing '" << logging_level_key << "' property!");
+    std::string logging_label = config_.fetch_string(logging_level_key);
+    _logging_ = datatools::logger::get_priority(logging_label);
+    DT_THROW_IF(_logging_ == datatools::logger::PRIO_UNDEFINED,
+                std::logic_error,
+                "foo::initialize: Undefined logging level '" << logging_label << "' !");
   }
 
   // Parse mandatory 'name' :
   const std::string name_key = "name";
-  if (config_.has_key(name_key)) {
-    name = config_.fetch_string(name_key);
-  } else {
-    throw std::logic_error("foo::initialize: Missing '"+name_key+"' property!");
-  }
+  DT_THROW_IF(! config_.has_key(name_key),
+              std::logic_error,
+              "foo::initialize: Missing '" << name_key << "' property!");
+  name = config_.fetch_string(name_key);
 
   // Parse 'what' :
   const std::string what_key = "what";
@@ -63,6 +74,10 @@ void foo::initialize(const datatools::properties & config_) {
   const std::string weight_key = "weight";
   if (config_.has_key(weight_key)) {
     weight = config_.fetch_real(weight_key);
+    DT_THROW_IF(! config_.has_explicit_unit(weight_key),
+                std::logic_error,
+                "foo::initialize: Missing explicit weight unit for the '"
+                << weight_key << "' property!");
   }
 
   // Parse 'labels' :
@@ -74,9 +89,9 @@ void foo::initialize(const datatools::properties & config_) {
     // Parse dependees of the 'labels' property :
     for (int i = 0; i < labels.size() ; i++) {
       std::string value_key = "objects." + labels[i] + ".value";
-      if (! config_.has_key(value_key)) {
-        throw std::logic_error("foo::initialize: Missing '"+value_key+"' property!");
-      }
+      DT_THROW_IF(! config_.has_key(value_key),
+                  std::logic_error,
+                  "foo::initialize: Missing '" << value_key << "' property!");
       std::pair<int,std::string> entry;
       entry.first = config_.fetch_integer(value_key);
       entry.second = "white";
@@ -91,9 +106,9 @@ void foo::initialize(const datatools::properties & config_) {
   // Rather complex triggering conditions for the 'dummy" property :
   if (! name.empty() && name[0] == '_' && dict.size() >= 2) {
     const std::string dummy_key = "dummy";
-    if (! config_.has_key(dummy_key)) {
-      throw std::logic_error("foo::initialize: Missing '"+dummy_key+"' property!");
-    }
+    DT_THROW_IF(! config_.has_key(dummy_key),
+                std::logic_error,
+                "foo::initialize: Missing '" << dummy_key << "' property!");
     dummy = config_.fetch_integer(dummy_key);
   }
 
@@ -103,18 +118,30 @@ void foo::initialize(const datatools::properties & config_) {
   if (config_.has_key(secret_key)) {
     secret = config_.fetch_integer(secret_key);
     if (secret > 3) {
-      std::cerr << "DEVEL: foo::initialize: "
-                << "You have found my secret !" << std::endl;
+      datatools_warning(_logging_,
+                        "Ha ! Ha ! "
+                        << "You have found how to use my secret property !");
+      hello = true;
     }
   }
 
+  // Initialization :
+  datatools_notice(_logging_, "Processing initialization operations...");
+  if (hello) {
+    std::clog << "                                       \n"
+              << "     Welcome to the OCD system !       \n"
+              << "                                       \n";
+  }
+
+  datatools_notice(_logging_, "Initialization is done.");
+
   initialized = true;
+  datatools_trace(_logging_, "Exiting initialization.");
 }
 
 void foo::reset() {
+  datatools_trace(_logging_, "Entering reset...");
   initialized = false;
-  debug = false;
-  debug_level = -1;
   name.clear();
   what.clear();
   dict.clear();
@@ -122,15 +149,16 @@ void foo::reset() {
   dummy = 0;
   datatools::invalidate(width);
   datatools::invalidate(weight);
+  datatools_trace(_logging_, "Exiting reset.");
+  _logging_ = datatools::logger::PRIO_FATAL;
 }
 
 void foo::dump(std::ostream & out_) const {
   out_ << "|-- Initialized : " << initialized << std::endl;
-  out_ << "|-- Debug : " << debug << std::endl;
-  out_ << "|-- Debug level : " << debug_level << std::endl;
-  out_ << "|-- Name : '" << name << "'" << std::endl;
-  out_ << "|-- What : '" << what << "'" << std::endl;
-  out_ << "|-- Tmpfile : '" << tmpfile << "'" << std::endl;
+  out_ << "|-- Logging threshold: \"" << datatools::logger::get_priority_label(_logging_) << '"' << std::endl;
+  out_ << "|-- Name : \"" << name << "\"" << std::endl;
+  out_ << "|-- What : \"" << what << "\"" << std::endl;
+  out_ << "|-- Tmpfile : \"" << tmpfile << "\"" << std::endl;
   out_ << "|-- Dict : " << std::endl;
   for (std::map<std::string, std::pair<int,std::string> >::const_iterator i
          = dict.begin();
@@ -142,7 +170,7 @@ void foo::dump(std::ostream & out_) const {
     if (j == dict.end()) out_ << "`-- ";
     else out_ << "|-- ";
     out_ << i->first << " : {" << i->second.first
-         << ";" << i->second.second << "}" << std::endl;
+         << " ; \"" << i->second.second << "\"}" << std::endl;
   }
   out_ << "|-- Dummy : " <<dummy << " " << std::endl;
   out_ << "|-- Width : " << width / CLHEP::mm << " mm" << std::endl;
@@ -174,20 +202,25 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
   ocd_.set_class_description ("A foo class");
 
   // The library the class belongs to :
-  //ocd_.set_class_library ("dummy");
+  ocd_.set_class_library ("datatools_ex_OCD");
 
   // The class detailed documentation :
-  ocd_.set_class_documentation ("A example class of configurable object");
+  ocd_.set_class_documentation ("A example class of configurable object with OCD support");
 
   {
-    // Description of the 'debug' configuration property :
+    // Description of the 'logging' configuration property :
     datatools::configuration_property_description & cpd
       = ocd_.add_property_info();
-    cpd.set_name_pattern("debug")
-      .set_terse_description("Flag to activate debugging output")
+    cpd.set_name_pattern("logging")
+      .set_terse_description("Flag to activate logging")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_long_description("The allowed values are 0 (false) or 1 (true). \n"
+                            "                                \n"
+                            "Example::                       \n"
+                            "                                \n"
+                            "  logging : boolean = 0         \n"
+                            "                                \n"
                             )
       ;
   }
@@ -196,15 +229,30 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
     // Description of the 'debug.level' configuration property :
     datatools::configuration_property_description & cpd
       = ocd_.add_property_info();
-    cpd.set_name_pattern("debug.level")
-      .set_terse_description("The debugging level")
-      .set_traits(datatools::TYPE_INTEGER)
-      .set_triggered_by_flag("debug")
+    cpd.set_name_pattern("logging.level")
+      .set_terse_description("The logging level")
+      .set_traits(datatools::TYPE_STRING)
+      .set_triggered_by_flag("logging")
       .set_mandatory(true)
-      .set_long_description("An integer from 0 (minimal debugging output)     \n"
-                            "to 10 (maximal debugging output).                \n"
-                            "It is mandatory if 'debug' flag property is set. \n"
-                            )
+      .set_long_description("A label taken from:             \n"
+                            "                                \n"
+                            "* ``fatal``                     \n"
+                            "* ``critical``                  \n"
+                            "* ``error``                     \n"
+                            "* ``warning``                   \n"
+                            "* ``notice``                    \n"
+                            "* ``information``               \n"
+                            "* ``debug``                     \n"
+                            "* ``trace``                     \n"
+                            "                                \n"
+                            "It is mandatory if the 'logging' flag property is set. \n"
+                            "                                      \n"
+                            "Example::                             \n"
+                            "                                      \n"
+                            "  logging : boolean = 1               \n"
+                            "  logging.level : string = \"notice\" \n"
+                            "                                      \n"
+                          )
       ;
   }
 
@@ -219,6 +267,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_const(true)
       .set_long_description("A character string that helps to identify the foo \n"
                             "instance within a program.                        \n"
+                            "                                                  \n"
+                            "Example::                                         \n"
+                            "                                                  \n"
+                            "  name : string = \"bar\"                         \n"
+                            "                                                  \n"
                             )
       ;
   }
@@ -234,6 +287,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_const(true)
       .set_long_description("An  user-friendly description character string \n"
                             "It may spread over several lines.              \n"
+                            "                                               \n"
+                            "Example::                                      \n"
+                            "                                               \n"
+                            "  what : string = \"the description of some resource\"\n"
+                            "                                               \n"
                             )
       ;
   }
@@ -249,6 +307,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_mandatory(true)
       .set_const(true)
       .set_long_description("A valid filesystem path to a file. \n"
+                            "instance within a program.                        \n"
+                            "                                                  \n"
+                            "Example::                                         \n"
+                            "                                                  \n"
+                            "  tmpfile : string as path = \"/tmp/foo.tmp\"     \n"
+                            "                                                  \n"
                             )
       ;
   }
@@ -260,8 +324,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_terse_description("The width of the foo object")
       .set_traits(datatools::TYPE_REAL)
       .set_mandatory(true)
-      .set_long_description("The width of the foo object is expressed in \n"
-                            "implicit length unit.                       \n"
+      .set_long_description("The width of the foo object is expressed in       \n"
+                            "implicit length unit (cm).                        \n"
+                            "                                                  \n"
+                            "Example::                                         \n"
+                            "                                                  \n"
+                            "  width : real = 1.3                              \n"
+                            "                                                  \n"
                             )
       ;
   }
@@ -273,11 +342,16 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_terse_description("The weight of the foo object")
       .set_traits(datatools::TYPE_REAL)
       .set_mandatory(true)
-      .set_long_description("The weight of the foo object is explicitely \n"
-                            "passed with its value.                      \n"
+      .set_long_description("The weight of the foo object is explicitely       \n"
+                            "passed with its units.                            \n"
+                            "                                                  \n"
+                            "Example::                                         \n"
+                            "                                                  \n"
+                            "  weight : real as mass = 34.1 kg                 \n"
+                            "                                                  \n"
                             )
       .set_explicit_unit(true)
-      .set_unit_label("length")
+      .set_unit_label("mass")
       ;
   }
 
@@ -291,6 +365,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_mandatory(false)
       .set_long_description("A list of string labels representing external objects      \n"
                             "addressed through their name from an external dictionnary. \n"
+                            "                                                           \n"
+                            "Example::                                                  \n"
+                            "                                                           \n"
+                            "  labels : string[2] = \"Obj1\" \"Obj2\"                   \n"
+                            "                                                           \n"
                             )
       ;
   }
@@ -304,6 +383,15 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_mandatory(true)
       .set_long_description("The label of the object is picked from the 'labels' \n"
                             "vector of properties.                               \n"
+                            "                                                           \n"
+                            "Example::                                                  \n"
+                            "                                                           \n"
+                            "  labels : string[2] = \"Obj1\" \"Obj2\"                   \n"
+                            "  objects.Obj1.value : integer = 3                         \n"
+                            "  objects.Obj2.value : integer = 5                         \n"
+                            "                                                           \n"
+                            "This property is mandatory if the ``labels`` has been      \n"
+                            "provided.                                                  \n"
                             )
       ;
   }
@@ -316,7 +404,15 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
       .set_long_description("The label of the object is picked from the 'labels' vector     \n"
-                            "of string properties. If unspecified, a default color is used. \n"
+                            "of string properties. If unspecified for a given label value,  \n"
+                            "a default color is used.                                       \n"
+                            "                                                           \n"
+                            "Example::                                                  \n"
+                            "                                                           \n"
+                            "  labels : string[2] = \"Obj1\" \"Obj2\"                   \n"
+                            "  # objects.Obj1.color : string = \"white\"                \n"
+                            "  objects.Obj2.color : string = \"red\"                    \n"
+                            "                                                           \n"
                             )
       ;
   }
@@ -330,6 +426,19 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_complex_triggering_conditions(true)
       .set_long_description("The 'dummy' property is only required under some \n"
                             "rather complex conditions (RTFM!).               \n"
+                            "It is mandatory if and only if the following     \n"
+                            "conditions are fulfilled:                        \n"
+                            "                                                 \n"
+                            "1. The ``name`` property is not empty            \n"
+                            "2. The ``labels`` property has at least 2 entries\n"
+                            "                                                 \n"
+                            "                                                 \n"
+                            "Example::                                        \n"
+                            "                                                 \n"
+                            "  name : string = \"bar\"                        \n"
+                            "  labels : string[2] = \"Obj1\" \"Obj2\"         \n"
+                            "  dummy : integer = 7                            \n"
+                            "                                                 \n"
                             )
       ;
   }
@@ -338,8 +447,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
     // Description of the 'secret' configuration property :
     datatools::configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("secret")
+      .set_traits(datatools::TYPE_INTEGER)
       .set_terse_description("A property known only by developpers")
-      .set_complex_triggering_conditions(true)
       .set_long_description("The 'secret' property is only used during the  \n"
                             "development cycle. It is thus undocumented.    \n"
                             "Use it at your own risk !                      \n"
@@ -348,25 +457,23 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
   }
 
   // Additionnal configuration hints :
-  ocd_.set_configuration_hints("Here is a full configuration example in the     \n"
-                               "``datatools::properties`` ASCII format::        \n"
-                               "                                                \n"
-                               " debug : boolean = 1                            \n"
-                               " debug.level : integer = 3                      \n"
-                               " name : string = \"_you\"                       \n"
-                               " what : string = \"Some text\"                  \n"
-                               " tmpfile : const string as path = \\            \n"
-                               "   \"/tmp/log.tmp\"                             \n"
-                               " width : real = 1.23                            \n"
-                               " weight : real as mass = 1.23 mg                \n"
-                               " labels : string[2] = \"obj0\" \"obj1\"         \n"
-                               " objects.obj0.value : integer = 67              \n"
-                               " objects.obj1.value : integer = 12              \n"
-                               " objects.obj0.value : integer = 67              \n"
-                               " objects.obj0.color : string = \"blue\"         \n"
-                               " dummy : integer = 666                          \n"
-                               " secret : integer = 5                           \n"
-                               "                                                \n"
+  ocd_.set_configuration_hints("Here is a full configuration example in the      \n"
+                               "``datatools::properties`` ASCII format::         \n"
+                               "                                                 \n"
+                               "  logging : boolean = 1                          \n"
+                               "  logging.level : string = \"debug\"             \n"
+                               "  name : string = \"_you\"                       \n"
+                               "  what : string = \"Some text\"                  \n"
+                               "  tmpfile : const string as path = \"/tmp/log.tmp\"\n"
+                               "  width : real = 1.23                            \n"
+                               "  weight : real as mass = 1.23 mg                \n"
+                               "  labels : string[2] = \"Obj0\" \"Obj1\"         \n"
+                               "  objects.Obj0.value : integer = 67              \n"
+                               "  objects.Obj1.value : integer = 12              \n"
+                               "  objects.Obj0.color : string = \"blue\"         \n"
+                               "  dummy : integer = 666                          \n"
+                               "  secret : integer = 1                           \n"
+                               "                                                 \n"
                                );
 
   /** Set the validation support flag :

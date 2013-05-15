@@ -24,9 +24,21 @@ find_package(datatools 5.0.0 REQUIRED)
 
 include_directories(${PROJECT_SOURCE_DIR} ${datatools_INCLUDE_DIRS})
 
-add_executable(ex_OCD ex_OCD.cxx foo.cc)
+add_library(datatools_ex_OCD SHARED foo.cc)
 
-target_link_libraries(ex_OCD ${datatools_LIBRARY} )
+target_link_libraries(datatools_ex_OCD ${datatools_LIBRARY} )
+
+install( FILES
+         ${PROJECT_BINARY_DIR}/libdatatools_ex_OCD${CMAKE_SHARED_LIBRARY_SUFFIX}
+         DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
+         PERMISSIONS OWNER_READ OWNER_EXECUTE
+         GROUP_READ GROUP_EXECUTE
+         WORLD_READ WORLD_EXECUTE
+       )
+
+add_executable(ex_OCD ex_OCD.cxx)
+
+target_link_libraries(ex_OCD datatools_ex_OCD )
 
 install ( FILES
     ${PROJECT_BINARY_DIR}/ex_OCD
