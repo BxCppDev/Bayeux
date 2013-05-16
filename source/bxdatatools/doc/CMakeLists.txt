@@ -35,9 +35,17 @@ if(DOXYGEN_FOUND)
 
   set(DOXYGEN_CONFIGURED_INPUT ${DOXYGEN_OUTPUT_DIR}datatoolsapi.doxy)
   set(DOXYGEN_TAGFILE ${DOXYGEN_OUTPUT_DIR}/datatools-${datatools_VERSION}.doxytag)
+  set(DOXYGEN_EXTRA_INPUT 
+    ${DOXYGEN_INPUT_DIR}/doc/user_guides/Version.markdown
+    )
 
   if(APPLE)
-    set(DOXYGEN_GENERATE_DOCSET YES)
+    option(DATATOOLS_WITH_DOCSET "Create Xcode Docset for datatools" OFF)
+    if(DATATOOLS_WITH_DOCSET)
+      set(DOXYGEN_GENERATE_DOCSET YES)
+    else()
+      set(DOXYGEN_GENERATE_DOCSET NO)
+    endif()
   else()
     set(DOXYGEN_GENERATE_DOCSET NO)
   endif()
@@ -72,13 +80,13 @@ if(DOXYGEN_FOUND)
     OUTPUT  ${DOXYGEN_OUTPUT_DIR}/html/index.html
     COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_CONFIGURED_INPUT}
     WORKING_DIRECTORY ${DOXYGEN_INPUT_DIR}
-    DEPENDS datatools ${DOXYGEN_CONFIGURED_INPUT}
+    DEPENDS datatools ${DOXYGEN_CONFIGURED_INPUT} ${DOXYGEN_EXTRA_INPUT}
     COMMENT "Doxygenating datatools"
     )
   set(DATATOOLS_DOC_DEPENDS ${DOXYGEN_OUTPUT_DIR}/html/index.html)
 
   # Build the docset on Apple
-  if(APPLE)
+  if(APPLE AND DATATOOLS_WITH_DOCSET)
     add_custom_command(
       OUTPUT  ${DOXYGEN_OUTPUT_DIR}/org.supernemo.datatools.docset
       COMMAND make -C ${DOXYGEN_OUTPUT_DIR}/html docset > /dev/null 2>&1

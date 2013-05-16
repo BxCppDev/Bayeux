@@ -574,7 +574,8 @@ WARN_LOGFILE           =
 
 INPUT                  = "@DOXYGEN_INPUT_DIR@/include/datatools" \
                          "@PROJECT_BINARY_DIR@/include/datatools" \
-                         "@DOXYGEN_INPUT_DIR@/doc/api/mainpage.hpp"
+                         "@DOXYGEN_INPUT_DIR@/doc/api/mainpage.hpp" \
+                         "@PROJECT_SOURCE_DIR@/doc/user_guides/Version.markdown"
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is
