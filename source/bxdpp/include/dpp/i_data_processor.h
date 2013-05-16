@@ -1,10 +1,10 @@
 /* i_data_processor.h
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-03-30
- * Last modified : 2013-02-15
- * 
+ * Last modified : 2013-05-15
+ *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -17,16 +17,16 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
 
- * 
- * Description: 
+ *
+ * Description:
  *
  *   A simple interface class for data processors
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
 #ifndef DPP_I_DATA_PROCESSOR_H_
@@ -44,8 +44,8 @@ namespace dpp {
   /// \brief Data record processor basic interface
   class i_data_processor
   {
-  public: 
-        
+  public:
+
     enum status_type
       {
         STATUS_OK = EXIT_SUCCESS,
@@ -70,7 +70,7 @@ namespace dpp {
 
 }  // end of namespace dpp
 
-#endif // DPP_I_DATA_PROCESSOR_H_ 
+#endif // DPP_I_DATA_PROCESSOR_H_
 
 // end of i_data_processor.h
 /*

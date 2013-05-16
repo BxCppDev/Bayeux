@@ -1,7 +1,7 @@
 
-dpp (Data Processing Pipeline) is a C++ program library that handles a
-data processing  pipeline model using the  datatools' things container
-as the main data model and facilities from the cuts library.
+dpp (Data Processing Pipeline) is a C++ program library that implements
+a data processing  pipeline model using the ``datatools::things`` generic
+container as the main data model and facilities from the ``cuts`` library.
 
 dpp  depends  on cuts,  brio,  mygsl  and  datatools from  the  Bayeux
 software collection and third party software from the Cadfael software

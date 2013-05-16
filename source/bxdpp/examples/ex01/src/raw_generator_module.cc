@@ -26,11 +26,8 @@ namespace dpp_ex01 {
     datatools::invalidate(_sigma_energy_);
   }
 
-  raw_generator_module::raw_generator_module(int a_debug_level)
-    : dpp::base_module("raw_generator_module",
-                       "A data processing module that generated raw data",
-                       "1.0",
-                       a_debug_level)
+  raw_generator_module::raw_generator_module(datatools::logger::priority logging_priority)
+    : dpp::base_module(logging_priority)
   {
     _set_defaults();
   }
@@ -47,7 +44,9 @@ namespace dpp_ex01 {
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
-                "Module ``" << get_name() << "`` is already initialized !");
+                "Raw generator module ``" << get_name() << "`` is already initialized !");
+
+    _common_initialize(a_config);
 
     int prng_seed = 0;
     double energy_unit = CLHEP::MeV;
@@ -107,7 +106,6 @@ namespace dpp_ex01 {
     set_sigma_energy(sigma_energy);
 
     // Initialization :
-
     if (_raw_data_bank_label_.empty()) {
       set_raw_data_bank_label(DEFAULT_RD_BANK_LABEL);
     }
@@ -121,7 +119,7 @@ namespace dpp_ex01 {
   {
     DT_THROW_IF(! is_initialized(),
                 std::logic_error,
-                "Module '" << get_name() << "' is not initialized !");
+                "Raw generator module '" << get_name() << "' is not initialized !");
     _set_initialized(false);
     _prng_.reset();
     _set_defaults();
@@ -131,7 +129,7 @@ namespace dpp_ex01 {
   {
     DT_THROW_IF(! is_initialized(),
                 std::logic_error,
-                "Module '" << get_name() << "' is not initialized !");
+                "Raw generator module '" << get_name() << "' is not initialized !");
 
     // Pointer to the embeded ``dpp_ex01::raw_data`` instance :
     raw_data * RD = 0;
@@ -169,7 +167,7 @@ namespace dpp_ex01 {
       RD->grab_auxiliaries().store_flag("high_energy");
     }
 
-    return SUCCESS;
+    return dpp::PROCESS_OK;
   }
 
   void raw_generator_module::set_raw_data_bank_label(const std::string & rd_bank_label_)
@@ -231,7 +229,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp_ex01::raw_generator_module,ocd_)
   ocd_.set_class_library ("dpp_ex01");
   ocd_.set_class_description ("A module to randomly generate a ``dpp_ex01::raw_data`` instance within each data/event record");
 
-
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("debug")
@@ -244,26 +241,135 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp_ex01::raw_generator_module,ocd_)
                             "                                               \n"
                             "Example::                                      \n"
                             "                                               \n"
-                            "    debug : boolean = 0                        \n"
+                            "  debug : boolean = 0                          \n"
                             "                                               \n"
                             )
       ;
   }
 
-  ocd_.set_configuration_hints ("A ``dpp_ex01::raw_generator_module`` object can be setup with the     \n"
-                                "following syntax in a ``datatools::multi_properties`` configuration   \n"
-                                "file, typically from a module manager object.                         \n"
-                                "                                                                      \n"
-                                "Example::                                                             \n"
-                                "                                                                      \n"
-                                "    #@key_label   \"name\"                                            \n"
-                                "    #@meta_label  \"type\"                                            \n"
-                                "                                                                      \n"
-                                "    [name=\"rgm\" type=\"dpp_ex01::raw_generator_module\"]            \n"
-                                "    #@config A raw data generator module                              \n"
-                                "    debug : boolean = 0                                               \n"
-                                "                                                                      \n"
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("rd_bank_label")
+      .set_terse_description("The name/label of the target raw data bank")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_long_description("Default value is : ``\"RD\"``.                 \n"
+                            "                                               \n"
+                            "Example::                                      \n"
+                            "                                               \n"
+                            "  rd_bank_label : string = \"RD2\"             \n"
+                            "                                               \n"
+                            )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("prng_seed")
+      .set_terse_description("The seed for the embeded random number generator")
+      .set_traits(datatools::TYPE_INTEGER)
+      .set_mandatory(false)
+      .set_long_description("Default value is : ``0``.                      \n"
+                            "                                               \n"
+                            "Example::                                      \n"
+                            "                                               \n"
+                            "  prng_seed : integer = 314159                 \n"
+                            "                                               \n"
+                            )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("mean_number_of_hits")
+      .set_terse_description("The mean number of raw hits to be generated")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(true)
+      .set_long_description("Example::                                      \n"
+                            "                                               \n"
+                            "  mean_number_of_hits : real = 3.45            \n"
+                            "                                               \n"
+                            )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("energy_unit")
+      .set_terse_description("The symbol of the implicit energy unit")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_long_description("Default value is : \"MeV\".                    \n"
+                            "                                               \n"
+                            "Example::                                      \n"
+                            "                                               \n"
+                            "  energy_unit : string = \"keV\"               \n"
+                            "                                               \n"
+                            )
+      ;
+  }
+
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("mean_energy")
+      .set_terse_description("The mean energy of raw hits to be generated")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(true)
+      .set_long_description("Example with explicit unit::                   \n"
+                            "                                               \n"
+                            "  mean_energy : real = 1.35 MeV                \n"
+                            "                                               \n"
+                            "or using implicit unit::                       \n"
+                            "                                               \n"
+                            "  energy_unit : string = \"keV\"               \n"
+                            "  mean_energy : real = 1350                    \n"
+                            "                                               \n"
+                            )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("sigma_energy")
+      .set_terse_description("The energy standard deviation of raw hits to be generated")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(true)
+      .set_long_description("Example with explicit unit::                   \n"
+                            "                                               \n"
+                            "  sigma_energy : real = 26.4 keV               \n"
+                            "                                               \n"
+                            "or using implicit unit::                       \n"
+                            "                                               \n"
+                            "  energy_unit : string = \"keV\"               \n"
+                            "  sigma_energy : real = 26.4                   \n"
+                            "                                               \n"
+                            )
+      ;
+  }
+
+  ocd_.set_configuration_hints ("A ``dpp_ex01::raw_generator_module`` object can be setup with the    \n"
+                                "following syntax in a ``datatools::multi_properties`` configuration  \n"
+                                "file, typically from a module manager object.                        \n"
+                                "                                                                     \n"
+                                "Example::                                                            \n"
+                                "                                                                     \n"
+                                "  #@description A module that generates raw data                     \n"
+                                "  #@key_label   \"name\"                                             \n"
+                                "  #@meta_label  \"type\"                                             \n"
+                                "                                                                     \n"
+                                "  [name=\"rgm\" type=\"dpp_ex01::raw_generator_module\"]             \n"
+                                "  #@config A raw data generator module                               \n"
+                                "  debug : boolean = 0                                                \n"
+                                "  prng_seed : integer = 314159                                       \n"
+                                "  rd_bank_label : string = \"RD\"                                    \n"
+                                "  mean_number_of_hits : real = 3.45                                  \n"
+                                "  energy_unit : string = \"keV\"                                     \n"
+                                "  mean_energy : real = 1350                                          \n"
+                                "  sigma_energy : real = 26.4                                         \n"
+                                "                                                                     \n"
                                 );
+
   ocd_.set_validation_support(true);
   ocd_.lock();
   return;

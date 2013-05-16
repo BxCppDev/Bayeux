@@ -39,18 +39,12 @@ namespace dpp {
   bool
   base_module::is_debug () const
   {
-    //return _debug_level > dpp::NO_DEBUG;
     return _logging >= datatools::logger::PRIO_DEBUG;
   }
 
   void
   base_module::set_debug (bool a_debug)
   {
-    if (a_debug) {
-      _debug_level = dpp::DEBUG_LVL1;
-    } else {
-      _debug_level = dpp::NO_DEBUG;
-    }
     _logging = datatools::logger::PRIO_DEBUG;
     return;
   }
@@ -82,25 +76,6 @@ namespace dpp {
               << "' is already initialized !";
     }
     throw std::logic_error (message.str ());
-    return;
-  }
-
-  int
-  base_module::get_debug_level () const
-  {
-    //return _debug_level;
-    return static_cast<int>(_logging);
-  }
-
-  void
-  base_module::set_debug_level (int a_new_value)
-  {
-    _logging = static_cast<datatools::logger::priority>(a_new_value);
-    if (a_new_value < dpp::NO_DEBUG) {
-      _debug_level = dpp::NO_DEBUG;
-    } else {
-      _debug_level = a_new_value;
-    }
     return;
   }
 
@@ -143,6 +118,11 @@ namespace dpp {
   {
     _description = a_description;
     return;
+  }
+
+  bool base_module::has_version () const
+  {
+    return ! _version.empty ();
   }
 
   const std::string & base_module::get_version () const
@@ -190,19 +170,10 @@ namespace dpp {
   }
 
   // ctor:
-  base_module::base_module (const std::string & a_process_name,
-                            const std::string & a_process_description,
-                            const std::string & a_process_version,
-                            int a_debug_level)
-    : _name (a_process_name),
-      _description (a_process_description),
-      _version (a_process_version)
+  base_module::base_module (datatools::logger::priority p)
   {
     _initialized = false;
-    _logging = datatools::logger::PRIO_FATAL;
-    if (a_debug_level > 0) {
-      _logging = datatools::logger::PRIO_DEBUG;
-    }
+    set_logging_priority(p);
     return;
   }
 
@@ -242,13 +213,50 @@ namespace dpp {
           << "Module description : '" << _description << "'" << std::endl;
     a_out << indent << datatools::i_tree_dumpable::tag
           << "Module version     : '" << _version << "'" << std::endl;
-    // a_out << indent << datatools::i_tree_dumpable::tag
-    //       << "Module debug level : " << _debug_level << std::endl;
     a_out << indent << datatools::i_tree_dumpable::tag
           << "Module logging threshold : "
           << datatools::logger::get_priority_label(_logging) << std::endl;
-    a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
+    a_out << indent << datatools::i_tree_dumpable::tag
           << "Module initialized : " << is_initialized () << std::endl;
+    a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
+          << "Last error message : '" << _last_error_message_ << "'" << std::endl;
+    return;
+  }
+
+  void base_module::set_logging_priority(datatools::logger::priority a_priority)
+  {
+    _logging = a_priority;
+    return;
+  }
+
+  datatools::logger::priority base_module::get_logging_priority() const
+  {
+    return _logging;
+  }
+
+  void base_module::_common_initialize (const datatools::properties & a_config)
+  {
+    if (a_config.has_key("logging.priority")) {
+      std::string prio_label = a_config.fetch_string("logging.priority");
+      datatools::logger::priority p = datatools::logger::get_priority(prio_label);
+      DT_THROW_IF(p == datatools::logger::PRIO_UNDEFINED,
+                  std::domain_error,
+                  "Unknow logging priority ``" << prio_label << "`` !");
+      set_logging_priority(p);
+    }
+
+    if (! has_description ()) {
+      if (a_config.has_key("description")) {
+        set_description(a_config.fetch_string("description"));
+      }
+    }
+
+    if (! has_version ()) {
+      if (a_config.has_key("version")) {
+        set_version(a_config.fetch_string("version"));
+      }
+    }
+
     return;
   }
 

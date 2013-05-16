@@ -29,6 +29,8 @@
 #include <datatools/utils.h>
 #include <datatools/library_loader.h>
 #include <datatools/bio_guard.h>
+#include <datatools/logger.h>
+#include <datatools/exception.h>
 
 #include <mygsl/bio_guard.h>
 
@@ -40,7 +42,7 @@
 int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
-
+  datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
   const std::string APP_NAME_PREFIX = "dpp_processing: ";
 
   try {
@@ -125,9 +127,9 @@ int main (int argc_, char ** argv_)
       po::notify (vm);
     }
     catch (std::exception & x) {
-      std::ostringstream message ;
-      message << "Command line parser error : " << x.what ();
-      throw std::logic_error (message.str ());
+      DT_THROW_IF(true,
+                  std::logic_error,
+                  "Command line parser error : " << x.what () << " !");
     }
 
     /*** begin of opts/args parsing ***/
@@ -192,15 +194,14 @@ int main (int argc_, char ** argv_)
 
     if (vm.count ("module-manager-config")) {
       module_manager_config_file = vm["module-manager-config"].as<std::string> ();
-    }
-    else {
-      std::clog << datatools::io::warning << APP_NAME_PREFIX << "No module manager configuration file !\n";
+    } else {
+      DT_LOG_WARNING(logging, APP_NAME_PREFIX << "No module manager configuration file !");
     }
 
     if (vm.count ("module")) {
       module_names = vm["module"].as< std::vector<std::string> > ();
     } else {
-      std::clog << datatools::io::warning << APP_NAME_PREFIX << "Missing processing module name !\n";
+      DT_LOG_WARNING(logging, APP_NAME_PREFIX << "Missing processing module name !");
     }
 
     if (vm.count ("input-file")) {
@@ -212,42 +213,32 @@ int main (int argc_, char ** argv_)
     }
 
     if (input_files.size () > 0) {
-      if (verbose) {
-        std::clog << datatools::io::notice << APP_NAME_PREFIX << "Input data sources : "
-                  << input_files.size () << std::endl;
-        for (std::vector<std::string>::const_iterator i = input_files.begin ();
-             i != input_files.end ();
-             i++) {
-          std::clog << datatools::io::notice << APP_NAME_PREFIX << " - source : '"
-                    << *i << "'" << std::endl;
-        }
+      DT_LOG_NOTICE(logging, APP_NAME_PREFIX << "Input data sources : " << input_files.size ());
+      for (std::vector<std::string>::const_iterator i = input_files.begin ();
+           i != input_files.end ();
+           i++) {
+        DT_LOG_NOTICE(logging, APP_NAME_PREFIX << " - source : '" << *i << "'");
       }
     } else {
-      if (verbose) std::clog << datatools::io::notice << APP_NAME_PREFIX << "No input data source !" << std::endl;
+      DT_LOG_NOTICE(logging, APP_NAME_PREFIX << "No input data source !");
       if (max_records <= 0) {
         // This is only an error if we decide to enforce the use of
         // a limit on the maximum number of data records :
-        if (! no_max_records) {
-          std::ostringstream message;
-          message << "Missing maximum number of data records !";
-          throw std::logic_error (message.str ());
-        }
+        DT_THROW_IF(! no_max_records,
+                    std::logic_error,
+                    "Missing maximum number of data records !");
       }
     }
 
-    if (verbose) {
-      if (output_files.size () > 0) {
-        std::clog << datatools::io::notice << APP_NAME_PREFIX << "Output data sinks : "
-                  << output_files.size () << std::endl;
-        for (std::vector<std::string>::const_iterator i = output_files.begin ();
-             i != output_files.end ();
-             i++) {
-          std::clog << datatools::io::notice << APP_NAME_PREFIX << " - sink : '"
-                    << *i << "'" << std::endl;
-        }
-      } else {
-        std::clog << datatools::io::notice << APP_NAME_PREFIX << "No output data sink !" << std::endl;
+    if (output_files.size () > 0) {
+      DT_LOG_NOTICE(logging, APP_NAME_PREFIX << "Output data sinks : " << output_files.size ());
+      for (std::vector<std::string>::const_iterator i = output_files.begin ();
+           i != output_files.end ();
+           i++) {
+        DT_LOG_NOTICE(logging, APP_NAME_PREFIX << " - sink : '" << *i << "'");
       }
+    } else {
+      DT_LOG_NOTICE(logging, APP_NAME_PREFIX << "No output data sink !");
     }
 
     /*** end of opts/args parsing ***/
@@ -255,19 +246,14 @@ int main (int argc_, char ** argv_)
     uint32_t LL_flags = datatools::library_loader::allow_unregistered;
     datatools::library_loader LL (LL_flags, LL_config);
     BOOST_FOREACH (const std::string & dll_name, LL_dlls) {
-      if (verbose) std::clog << datatools::io::notice << APP_NAME_PREFIX << "Loading DLL '"
-                             << dll_name << "'." << std::endl;
-      if (LL.load (dll_name) != EXIT_SUCCESS) {
-        std::ostringstream message;
-        message << "Loading DLL '" << dll_name
-                << "' fails !";
-        throw std::logic_error (message.str ());
-      }
+      DT_LOG_INFORMATION(logging, APP_NAME_PREFIX << "Loading DLL '" << dll_name << "'...");
+      DT_THROW_IF(LL.load (dll_name) != EXIT_SUCCESS,
+                  std::runtime_error,
+                  "Loading DLL '" << dll_name  << "' fails !");
     }
 
     BOOST_FOREACH (const std::string & module_name, module_names) {
-      std::clog << datatools::io::notice << APP_NAME_PREFIX << "Using data processing module '"
-                << module_name << "'." << std::endl;
+      DT_LOG_INFORMATION(logging, APP_NAME_PREFIX << "Using data processing module '" << module_name << "'.");
     }
 
     // Module manager :
@@ -279,15 +265,13 @@ int main (int argc_, char ** argv_)
     if (verbose) {
       flags |= dpp::module_manager::VERBOSE;
     }
-    if (module_manager_config_file.empty ()) {
-    }
+    // if (module_manager_config_file.empty ()) {
+    // }
 
     // Load properties from the configuration file:
-    if (module_names.empty () && module_manager_config_file.empty ()) {
-      std::ostringstream message;
-      message << "Missing module manager configuration file !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF(module_names.empty () && module_manager_config_file.empty (),
+                std::logic_error,
+                "Missing module manager configuration file !");
 
     boost::scoped_ptr<dpp::module_manager> MM;
     if ( ! module_manager_config_file.empty ()) {
@@ -295,31 +279,27 @@ int main (int argc_, char ** argv_)
       std::string MM_config_file = module_manager_config_file;
 
       datatools::fetch_path_with_env (MM_config_file);
-      std::clog << datatools::io::notice
-                << APP_NAME_PREFIX << "Manager config. file : '" << MM_config_file << "'" << std::endl;
+      DT_LOG_NOTICE(logging, APP_NAME_PREFIX << "Manager config. file : '" << MM_config_file << "'");
 
       datatools::properties MM_config;
       datatools::properties::read_config (MM_config_file,
                                           MM_config);
       MM.get ()->initialize (MM_config);
-      if (verbose) MM.get ()->tree_dump (std::clog, "Module manager (initialized) : ", "NOTICE: ");
+      DT_LOG_NOTICE(logging, APP_NAME_PREFIX << "Module manager (initialized) : ");
+      if (logging >= datatools::logger::PRIO_NOTICE) MM.get ()->tree_dump(std::clog, "", "NOTICE: ");
     }
 
     std::vector<dpp::base_module*> modules;
     for (int i = 0; i < module_names.size (); i++) {
       const std::string & module_name = module_names[i];
-      if (! MM.get ()->has (module_name)) {
-        std::ostringstream message;
-        message << "Manager has no module named '" << module_name << "' !";
-        throw std::logic_error (message.str ());
-      } else {
-        if (verbose)  std::clog << datatools::io::notice
-                                << APP_NAME_PREFIX << "Found module named '" << module_name << "' !" << std::endl;
-      }
+      DT_THROW_IF(! MM.get ()->has (module_name),
+                  std::logic_error,
+                  "Manager has no module named '" << module_name << "' !");
+      DT_LOG_NOTICE(logging, APP_NAME_PREFIX << "Found module named '" << module_name << "'");
       dpp::base_module & the_module = MM.get ()->grab (module_name);
       modules.push_back(&the_module);
-      if (verbose) the_module.tree_dump (std::clog, "Added module : ", "NOTICE: " + APP_NAME_PREFIX);
-
+      DT_LOG_NOTICE(logging, APP_NAME_PREFIX << "Added module : ");
+      if (logging >= datatools::logger::PRIO_NOTICE) the_module.tree_dump (std::clog, "", "NOTICE: ");
     }
 
     // Setup the data output sink :
@@ -359,19 +339,18 @@ int main (int argc_, char ** argv_)
     }
 
     // Loop on the data records from the data source file :
-    if (debug) std::clog << datatools::io::debug << APP_NAME_PREFIX
-                         << "Entering data record loop..." << std::endl;
+    DT_LOG_DEBUG(logging, APP_NAME_PREFIX << "Entering data record loop...");
+
+    // Instantiate the working data record object :
+    datatools::things ER;
 
     // Loop on the data records :
     int record_counter = 0;
     int stored_counter = 0;
     while (true) {
       bool do_break_record_loop = false;
-      if (debug) std::clog << datatools::io::debug << APP_NAME_PREFIX
-                           << "Instantiating an data record object..." << std::endl;
-
-      // Instantiate a blank data record object :
-      datatools::things ER;
+      DT_LOG_DEBUG(logging, APP_NAME_PREFIX << "Clear the working data record object...");
+      ER.clear();
 
       // Manage the source is any (fill the data record from it) :
       if (source) {
@@ -379,47 +358,39 @@ int main (int argc_, char ** argv_)
           break;
         }
         int input_status = source->process (ER);
-        if (input_status != dpp::io_module::OK) {
-          std::clog << datatools::io::error
-                    << APP_NAME_PREFIX << "Source of data records had an error !" << std::endl;
+        if (input_status != dpp::PROCESS_OK) {
+          DT_LOG_ERROR(logging, APP_NAME_PREFIX << "Source of data records had an error !");
           break;
         }
       } // end of if (source)
 
       if ((print_modulo > 0) &&  (record_counter % print_modulo == 0)) {
-        std::clog << datatools::io::notice << APP_NAME_PREFIX << "Data record #" << record_counter << "\n";
+        DT_LOG_NOTICE(logging, APP_NAME_PREFIX << "Data record #" << record_counter);
       }
 
       // Process the data record using the choosen processing module :
-      if (debug) std::clog << datatools::io::debug << APP_NAME_PREFIX
-                           << "Processing the data record..." << std::endl;
-      int processing_status = dpp::base_module::SUCCESS;
+      DT_LOG_DEBUG(logging, APP_NAME_PREFIX << "Processing the data record...");
+      int processing_status = dpp::PROCESS_OK;
       try {
         BOOST_FOREACH (dpp::base_module * active_module_ptr, modules) {
           dpp::base_module & the_active_module = *active_module_ptr;
           processing_status = the_active_module.process (ER);
-          if (debug) std::clog << datatools::io::debug << APP_NAME_PREFIX
-                               << "processing_status==" << processing_status << std::endl;
-          if (processing_status & dpp::base_module::FATAL) {
+          DT_LOG_DEBUG(logging, APP_NAME_PREFIX << "Processing status : " << processing_status);
+          if (processing_status & dpp::PROCESS_FATAL) {
             // A fatal error has been met, we break the processing loop :
-            std::clog << datatools::io::error << APP_NAME_PREFIX
-                      << "Processing of data record #" << record_counter << " met a fatal error. Break !" << std::endl;
+            DT_LOG_ERROR(logging, APP_NAME_PREFIX << "Processing of data record #" << record_counter << " met a fatal error. Break !");
             do_break_record_loop = true;
             error_code = EXIT_FAILURE;
-          } else if (processing_status & dpp::base_module::ERROR) {
+          } else if (processing_status & dpp::PROCESS_ERROR) {
             // A non-critical error has been met, we warn and
             // skip to the next data record :
-            std::clog << datatools::io::error << APP_NAME_PREFIX
-                      << "Processing of data record #" << record_counter << " failed." << std::endl;
+            DT_LOG_ERROR(logging, APP_NAME_PREFIX << "Processing of data record #" << record_counter << " failed.");
             if (break_on_error_as_fatal) {
               do_break_record_loop = true;
               error_code = EXIT_FAILURE;
             }
-          } else if (processing_status & dpp::base_module::STOP) {
-            if (verbose) {
-              std::clog << datatools::io::warning << APP_NAME_PREFIX
-                        << "Processing of data record #" << record_counter << " stopped at some stage." << std::endl;
-            }
+          } else if (processing_status & dpp::PROCESS_STOP) {
+            DT_LOG_WARNING(logging, APP_NAME_PREFIX << "Processing of data record #" << record_counter << " stopped at some stage.");
           }
           if (do_break_record_loop) {
             break;
@@ -430,6 +401,7 @@ int main (int argc_, char ** argv_)
         throw x;
       }
 
+      // XXX
       if (debug) {
         ER.tree_dump (std::cout, "Data record :", "DEBUG: " + APP_NAME_PREFIX);
       }
@@ -437,14 +409,14 @@ int main (int argc_, char ** argv_)
       // Manage the sink if any :
       if (sink && ! sink->is_terminated ()) {
         bool save_it = true;
-        if (processing_status & dpp::base_module::STOP) {
+        if (processing_status & dpp::PROCESS_STOP) {
           save_it = save_stopped_data_records;
         }
         if (save_it) {
           // Save the processed data record in the sink :
           int output_status = sink->process (ER);
-          if (output_status != dpp::io_module::OK) {
-            std::clog << datatools::io::error << APP_NAME_PREFIX << "Error while storing data record #" << record_counter << " !" << std::endl;
+          if (output_status != dpp::PROCESS_OK) {
+            DT_LOG_ERROR(logging, APP_NAME_PREFIX << "Error while storing data record #" << record_counter << " !");
           }
           stored_counter++;
         }
@@ -452,38 +424,34 @@ int main (int argc_, char ** argv_)
 
       record_counter++;
       if ((max_records > 0) && (record_counter == max_records)) {
-        if (debug) std::clog << datatools::io::debug << APP_NAME_PREFIX
-                             << "max number of data record reached !!!" << std::endl;
+        DT_LOG_DEBUG(logging, APP_NAME_PREFIX << "Max number of data record reached !");
         do_break_record_loop = true;
       }
       // break check :
       if (do_break_record_loop) {
-        if (debug) std::clog << datatools::io::debug << APP_NAME_PREFIX
-                             << "do_break_record_loop !!!" << std::endl;
+        DT_LOG_DEBUG(logging, APP_NAME_PREFIX << "Break the loop !");
         break;
       }
     }
 
-    if (debug) std::clog << datatools::io::debug << APP_NAME_PREFIX
-                         << "Exiting data record loop." << std::endl;
-
-    std::clog << datatools::io::notice << APP_NAME_PREFIX << "Number of processed records : " << record_counter << "\n";
+    DT_LOG_DEBUG(logging, APP_NAME_PREFIX << "Exit the data record loop.");
+    DT_LOG_NOTICE(logging, APP_NAME_PREFIX << "Number of processed records : " << record_counter);
     if (sink) {
-      std::clog << datatools::io::notice << APP_NAME_PREFIX << "Number of saved records     : " << stored_counter << "\n";
+      DT_LOG_NOTICE(logging, APP_NAME_PREFIX << "Number of saved records     : " << stored_counter);
     }
 
     // Terminate the module manager :
-    if (MM.get () != 0) {
-      MM.get ()->reset (); // Not mandatory (automatic at destruction)
+    if (MM.get() != 0) {
+      MM.get()->reset (); // Not mandatory (automatic at destruction)
     }
 
   }
   catch (std::exception & x) {
-    std::cerr << datatools::io::error << APP_NAME_PREFIX << x.what () << std::endl;
+    DT_LOG_FATAL(logging, APP_NAME_PREFIX << x.what ());
     error_code = EXIT_FAILURE;
   }
   catch (...) {
-    std::cerr << datatools::io::error << APP_NAME_PREFIX << "Unexpected error!" << std::endl;
+    DT_LOG_FATAL(logging, APP_NAME_PREFIX << "Unexpected error !");
     error_code = EXIT_FAILURE;
   }
   return (error_code);

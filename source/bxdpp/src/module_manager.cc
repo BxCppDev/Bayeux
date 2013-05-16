@@ -30,6 +30,7 @@
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
 #include <datatools/service_manager.h>
+#include <datatools/exception.h>
 
 namespace dpp {
 
@@ -115,35 +116,26 @@ namespace dpp {
   const datatools::service_manager &
   module_manager::get_service_manager () const
   {
-    if (! has_service_manager ()) {
-      std::ostringstream message;
-      message << "dpp::module_manager::get_service_manager: "
-              << "Module manager has no service manager !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF(! has_service_manager(),
+                std::logic_error,
+                "Module manager has no service manager !");
     return *_service_manager_;
   }
 
   datatools::service_manager &
   module_manager::grab_service_manager ()
   {
-    if (! has_service_manager ()) {
-      std::ostringstream message;
-      message << "dpp::module_manager::grab_service_manager: "
-              << "Module manager has no service manager !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF(! has_service_manager(),
+                std::logic_error,
+                "Module manager has no service manager !");
     return *_service_manager_;
   }
 
   void module_manager::set_service_manager (datatools::service_manager & service_manager_)
   {
-    if (is_initialized ()) {
-      std::ostringstream message;
-      message << "dpp::module_manager::set_service_manager: "
-              << "Module manager is already initialized !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF(is_initialized(),
+                std::logic_error,
+                "Module manager is already initialized !");
     _service_manager_owner_ = false;
     _service_manager_ = &service_manager_;
     return;
@@ -165,18 +157,12 @@ namespace dpp {
                 << "dpp::module_manager::install_service_manager: "
                 << "Entering..." << std::endl;
     }
-    if (is_initialized ()) {
-      std::ostringstream message;
-      message << "dpp::module_manager::install_service_manager: "
-              << "Module manager is already initialized !";
-      throw std::logic_error (message.str ());
-    }
-    if (has_service_manager ()) {
-      std::ostringstream message;
-      message << "dpp::module_manager::install_service_manager: "
-              << "Module manager has already an embedded service manager !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF(is_initialized(),
+                std::logic_error,
+                "Module manager is already initialized !");
+    DT_THROW_IF(has_service_manager(),
+                std::logic_error,
+                "Module manager already has an embedded service manager !");
     _service_manager_ = new datatools::service_manager;
     if (is_verbose ()) {
       std::clog << datatools::io::notice
@@ -200,12 +186,9 @@ namespace dpp {
 
   void module_manager::initialize (const datatools::properties & setup_)
   {
-    if (is_initialized ()) {
-      std::ostringstream message;
-      message << "dpp::module_manager::initialize: "
-              << "Module manager is already initialized !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF(is_initialized(),
+                std::logic_error,
+                "Module manager is already initialized !");
 
     if (setup_.has_flag ("debug")) {
       set_debug (true);
@@ -317,14 +300,11 @@ namespace dpp {
     }
 
     // search for the cut's label in the factory dictionary:
-    if (! _factory_register_.has (module_entry_.get_module_id ())) {
-      std::ostringstream message;
-      message << "dpp::module_manager::_create_module: "
-              << "Cannot find module factory with ID '"
-              << module_entry_.get_module_id () << "' for module named '"
-              << module_entry_.get_module_name () << "' !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF(! _factory_register_.has (module_entry_.get_module_id ()),
+                std::logic_error,
+                "Cannot find module factory with ID '"
+                << module_entry_.get_module_id () << "' for module named '"
+                << module_entry_.get_module_name () << "' !");
     const base_module::factory_register_type::factory_type & the_factory
       = _factory_register_.get (module_entry_.get_module_id ());
 
@@ -346,10 +326,9 @@ namespace dpp {
 
   void module_manager::initialize_module (module_entry_type & module_entry_)
   {
-    if (! module_entry_.is_initialized ())
-      {
-        _initialize_module (module_entry_);
-      }
+    if (! module_entry_.is_initialized ()) {
+      _initialize_module (module_entry_);
+    }
     return;
   }
 
@@ -372,7 +351,6 @@ namespace dpp {
       }
       base_module & the_module = module_entry_.grab_module ();
       if (has_service_manager ()) {
-        std::cerr << "DEVEL: ********* Aaarrrghhhh !" << std::endl;
         the_module.initialize (module_entry_.get_module_config (),
                                grab_service_manager (),
                                _modules_);
@@ -413,13 +391,9 @@ namespace dpp {
                 << std::endl;
     }
 
-    if (has (module_name_)) {
-      std::ostringstream message;
-      message << "dpp::module_manager::_load_module: "
-              << "Module '" << module_name_ << "' already exists !";
-      throw std::logic_error (message.str());
-    }
-
+    DT_THROW_IF(has(module_name_),
+                std::logic_error,
+                "Module '" << module_name_ << "' already exists !");
     {
       // Add a new entry :
       module_entry_type dummy_module_entry;
@@ -472,12 +446,9 @@ namespace dpp {
                                     const std::string & module_id_,
                                     const datatools::properties & module_config_)
   {
-    if (is_initialized ()) {
-      std::ostringstream message;
-      message << "dpp::module_manager::load_module: "
-              << "Module manager is already initialized !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF(is_initialized(),
+                std::logic_error,
+                "Module manager is already initialized !");
     _load_module (module_name_, module_id_, module_config_);
     return;
   }
@@ -497,8 +468,7 @@ namespace dpp {
     typedef multi_properties::entries_ordered_col_type col_type;
 #endif
     const col_type & oe = config_.ordered_entries ();
-    for (col_type::const_iterator i =
-           oe.begin ();
+    for (col_type::const_iterator i = oe.begin ();
          i != oe.end ();
          ++i) {
       const multi_properties::entry & the_entry = **i;
@@ -506,13 +476,10 @@ namespace dpp {
       std::clog << datatools::io::notice
                 << "dpp::module_manager::_load_modules: "
                 << "Loading modules '" << module_name << "'..." << std::endl;
-      if (has (module_name)) {
-        std::ostringstream message;
-        message << "dpp::module_manager::load_modules_: "
-                << "Module manager already has a module named '"
-                << module_name << "' !";
-        throw std::logic_error (message.str ());
-      }
+      DT_THROW_IF(has(module_name),
+                  std::logic_error,
+                  "Module manager already has a module named '"
+                  << module_name << "' !");
       const std::string & module_id = the_entry.get_meta ();
       const properties & module_config = the_entry.get_properties ();
       _load_module (module_name, module_id, module_config);
@@ -522,16 +489,11 @@ namespace dpp {
 
   void module_manager::reset ()
   {
-    if (! is_initialized ()) {
-      std::ostringstream message;
-      message << "dpp::module_manager::reset: "
-              << "Module manager is not initialized !";
-      throw std::logic_error (message.str ());
-    }
-
+    DT_THROW_IF(! is_initialized(),
+                std::logic_error,
+                "Module manager is not initialized !");
     _modules_.clear ();
     _factory_register_.reset ();
-
     if (_service_manager_owner_) {
       if (has_service_manager ()) {
         delete _service_manager_;
@@ -559,12 +521,9 @@ namespace dpp {
   module_manager::grab (const std::string & module_name_)
   {
     module_handle_dict_type::iterator found = _modules_.find (module_name_);
-    if (found == _modules_.end ()) {
-      std::ostringstream message;
-      message << "dpp::module_manager::grab: "
-              << "No module named '" << module_name_ << "' !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF(found == _modules_.end(),
+                std::logic_error,
+                "No module named '" << module_name_ << "' !");
     if (! found->second.is_initialized ()) {
       _initialize_module (found->second);
     }

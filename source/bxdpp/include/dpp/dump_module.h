@@ -1,7 +1,7 @@
 /* dump_module.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-19
- * Last modified : 2013-02-18
+ * Last modified : 2013-05-15
  *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -39,49 +39,29 @@
 namespace dpp {
 
   /// \brief A data processing module to dump data records
-  class dump_module : public base_module
-  // DPP_MODULE_CLASS_DECLARE(dump_module)
+  DPP_MODULE_CLASS_DECLARE(dump_module)
   {
   public:
 
     enum output_type
     {
       OUTPUT_INVALID = 0,
-      OUTPUT_COUT    = 1,
-      OUTPUT_CLOG    = 2,
-      OUTPUT_FILE    = 3,
+      OUTPUT_COUT,
+      OUTPUT_CLOG,
+      OUTPUT_FILE,
       OUTPUT_DEFAULT = OUTPUT_COUT
     };
 
   public:
 
-    void set_output (const std::string & a_output,
-                     const std::string & a_file = "");
+    void set_output(const std::string & a_output,
+                    const std::string & a_file = "");
 
     // Constructor :
-    dump_module (int a_debug_level = dpp::NO_DEBUG);
-
-    // Destructor :
-    virtual ~dump_module ();
-
-    /* The module interface can also be declared with the macro :
-     *   \code
-     *   DPP_MODULE_INTERFACE (dump_module);
-     *   \endcode
-     */
-    // Initialization method :
-    virtual void initialize (const datatools::properties &,
-                             datatools::service_manager &,
-                             module_handle_dict_type &);
-
-    /// Termination method :
-    virtual void reset ();
-
-    /// Event processing method :
-    virtual int process (datatools::things &);
+    DPP_MODULE_INTERFACE_CTOR_DTOR(dump_module);
 
     /// Smart print :
-    virtual void tree_dump (std::ostream & a_out         = std::clog, 
+    virtual void tree_dump (std::ostream & a_out         = std::clog,
                             const std::string & a_title  = "",
                             const std::string & a_indent = "",
                             bool a_inherit               = false) const;
@@ -101,7 +81,7 @@ namespace dpp {
     int            _output_;          //!< The output stream
     std::string    _output_filename_; //!< The name of the output file
     boost::scoped_ptr<std::ofstream > _fout_; //!< Scoped pointer for output file
-    std::ostream * _out_;             //<! Output stream handle 
+    std::ostream * _out_;             //<! Output stream handle
 
     // Macro to automate the registration of the module :
     DPP_MODULE_REGISTRATION_INTERFACE(dump_module);

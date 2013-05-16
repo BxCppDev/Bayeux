@@ -35,7 +35,6 @@
 #include <string>
 
 #include <dpp/dpp_config.h>
-#include <dpp/i_data_processor.h>
 #include <dpp/module_tools.h>
 #include <dpp/utils.h>
 
@@ -43,6 +42,8 @@
 #include <datatools/i_tree_dump.h>
 #include <datatools/factory_macros.h>
 #include <datatools/logger.h>
+#include <datatools/things.h>
+
 /// \brief The datatools library's main namespace
 namespace datatools {
   // Forward declaration :
@@ -57,32 +58,13 @@ namespace datatools {
 namespace dpp {
 
   /// \brief Base processing module (abstract interface)
-  class base_module : public i_data_processor,
-                      public datatools::i_tree_dumpable
+  class base_module : public datatools::i_tree_dumpable
   {
-  public:
-
-    /// Processing status through a pipeline
-    enum status_type
-      {
-        OK       = 0,   /// Module has processed normally and processing can go on
-        SUCCESS  = OK,  /// idem OK
-        CONTINUE = OK,  /// idem OK
-        ERROR    = datatools::bit_mask::bit00, /// Module has met an error (considered as non critical)
-        FAILURE  = ERROR,                   /// idem ERROR
-        STOP     = datatools::bit_mask::bit01, /// Module asks for the stop of the processing of the current data model in the current pipeline branch
-        FATAL    = datatools::bit_mask::bit02  /// Module has met an error and requests a total abortion of the processing session
-      };
-
   public:
 
     bool is_debug () const;
 
     void set_debug (bool);
-
-    int get_debug_level () const;
-
-    void set_debug_level (int);
 
     void set_name (const std::string &);
 
@@ -93,6 +75,8 @@ namespace dpp {
     const std::string & get_description () const;
 
     void set_description (const std::string & a_description);
+
+    bool has_version () const;
 
     const std::string & get_version () const;
 
@@ -109,16 +93,6 @@ namespace dpp {
     const std::string & get_last_error_message () const;
 
     bool is_initialized () const;
-
-  protected:
-
-    void _lock_guard (const std::string & where_, const std::string & what_ = "");
-
-    void _set_name (const std::string & a_name);
-
-    void _set_initialized (bool a_initialized);
-
-  public:
 
     virtual void initialize_simple ();
 
@@ -149,13 +123,8 @@ namespace dpp {
     /// The main termination method
     virtual void reset () = 0;
 
-  public:
-
-    /// Constructor :
-    base_module (const std::string & a_process_name = "",
-                 const std::string & a_process_description = "",
-                 const std::string & a_process_version = "",
-                 int                 a_debug_level = dpp::NO_DEBUG);
+    /// Default constructor :
+    base_module(datatools::logger::priority p = datatools::logger::PRIO_FATAL);
 
     /// Destructor :
     virtual ~base_module ();
@@ -170,15 +139,31 @@ namespace dpp {
     /// Default print
     void print (std::ostream & a_out = std::clog) const;
 
+    /// Set logging priority
+    void set_logging_priority(datatools::logger::priority p);
+
+    /// Returns logging priority
+    datatools::logger::priority get_logging_priority() const;
+
   protected:
 
-    bool        _initialized;    //!< The initialization flag
-    std::string _last_error_message_; //!< Last error message
+    void _lock_guard (const std::string & where_, const std::string & what_ = "");
+
+    void _set_name (const std::string & a_name);
+
+    void _set_initialized (bool a_initialized);
+
+    void _common_initialize (const datatools::properties & a_config);
+
+  protected:
+
     std::string _name;           //!< The name of the module
     std::string _description;    //!< The description of the module
     std::string _version;        //!< The version of the module
-    int         _debug_level;    //!< The debug level of the module
-    datatools::logger::priority _logging; //!< The logging threshold
+    datatools::logger::priority _logging; //!< The logging priority threshold
+
+    bool        _initialized;    //!< The initialization flag
+    std::string _last_error_message_; //!< Last error message
 
     // Factory stuff :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_module);

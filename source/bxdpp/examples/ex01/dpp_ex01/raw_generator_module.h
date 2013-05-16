@@ -23,7 +23,7 @@ namespace dpp_ex01 {
     static const std::string DEFAULT_RD_BANK_LABEL;
 
     /// Constructor
-    raw_generator_module(int a_debug_level = dpp::NO_DEBUG);
+    raw_generator_module(datatools::logger::priority logging_priority = datatools::logger::PRIO_FATAL);
 
     /// Destructor
     virtual ~raw_generator_module();
@@ -36,7 +36,7 @@ namespace dpp_ex01 {
     /// Termination method
     virtual void reset();
 
-    /// Event processing method
+    /// Main data record processing method
     virtual int process(datatools::things & a_data_record);
 
     void set_raw_data_bank_label(const std::string &);

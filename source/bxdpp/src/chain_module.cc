@@ -28,6 +28,7 @@
 #include <datatools/ioutils.h>
 #include <datatools/things.h>
 #include <datatools/exception.h>
+#include <datatools/logger.h>
 
 namespace dpp {
 
@@ -66,43 +67,30 @@ namespace dpp {
   /*** Implementation of the interface ***/
 
   // Constructor :
-  chain_module::chain_module (int a_debug_level)
-    : base_module ("dpp::chain_module",
-                   "An data record processor chain module",
-                   "0.1",
-                   a_debug_level)
+  DPP_MODULE_CONSTRUCTOR_IMPLEMENT_HEAD(chain_module,logging_priority_)
   {
     return;
   }
 
-  // Destructor :
-  chain_module::~chain_module ()
-  {
-    // Make sure all internal resources are
-    // terminated before destruction :
-    if (is_initialized ()) reset ();
-    return;
-  }
+  DPP_MODULE_DEFAULT_DESTRUCTOR_IMPLEMENT(chain_module)
 
-  // Initialization :
-  void chain_module::initialize (const datatools::properties & a_config,
-                                 datatools::service_manager & a_service_manager,
-                                 module_handle_dict_type & a_module_dict)
+
+  DPP_MODULE_INITIALIZE_IMPLEMENT_HEAD(chain_module,
+                                       a_config,
+                                       a_service_manager,
+                                       a_module_dict)
   {
     DT_THROW_IF(is_initialized (),
                 std::logic_error,
                 "Chain module '" << get_name () << "' is already initialized ! ");
 
-    if (! is_debug ()) {
-      if (a_config.has_flag ("debug")) {
-        set_debug (true);
-      }
-    }
+    _common_initialize(a_config);
 
     std::vector<std::string> modules;
     if (a_config.has_key ("modules")) {
       a_config.fetch ("modules", modules);
     }
+
     for (int i = 0; i < modules.size (); i++) {
       module_handle_dict_type::iterator found
         = a_module_dict.find (modules[i]);
@@ -111,19 +99,14 @@ namespace dpp {
                   "Can't find any module named '" << modules[i]
                   << "' from the external dictionnary ! ");
       add_module (modules[i], found->second.grab_initialized_module_handle ());
-      // use logger here
-      std::clog << "NOTICE: " << "dpp::chain_module::initialize: "
-                << "Chain module '" << get_name ()
-                << "' has added module '" << modules[i] << "'"
-                << std::endl;
+      DT_LOG_NOTICE(_logging,
+                    "Chain module '" << get_name () << "' has added module '" << modules[i] << "'");
     }
 
     // 2012-04-24 FM+XG : Now allow a chain module without modules :
     if (_modules_.size () > 0) {
-      // use logger here
-      std::clog << "WARNING: " << "dpp::chain_module::initialize: "
-                << "Chain module '" << get_name () << "' has no embedded modules !"
-                << std::endl;
+      DT_LOG_WARNING(_logging,
+                     "Chain module '" << get_name () << "' has no embedded modules !");
     }
 
     _set_initialized (true);
@@ -131,8 +114,7 @@ namespace dpp {
     return;
   }
 
-  // Reset :
-  void chain_module::reset ()
+  DPP_MODULE_RESET_IMPLEMENT_HEAD(chain_module)
   {
     DT_THROW_IF(! is_initialized (),
                 std::logic_error,
@@ -142,8 +124,7 @@ namespace dpp {
     return;
   }
 
-  // Processing :
-  int chain_module::process (datatools::things & the_data_record)
+  DPP_MODULE_PROCESS_IMPLEMENT_HEAD(chain_module,the_data_record)
   {
     DT_THROW_IF(! is_initialized (),
                 std::logic_error,
@@ -152,23 +133,14 @@ namespace dpp {
     this->reset_last_error_message ();
 
     // Loop on the chain of processing modules :
-    if (is_debug ()) {
-      std::ostringstream message;
-      message << "dpp::chain_module::process: "
-              << "number of chained modules=" << _modules_.size () << " ";
-      std::clog << datatools::io::debug << message.str () << std::endl;
-    }
+    DT_LOG_DEBUG(_logging,
+                 "Number of chained modules is " << _modules_.size());
     for (module_list_type::iterator i = _modules_.begin ();
          i != _modules_.end ();
          ++i) {
       module_entry & the_entry = *i;
       const std::string & module_name = the_entry.label;
-
-      if (is_debug ()) {
-        std::clog << datatools::io::debug
-                  << "dpp::chain_module::process: "
-                  << "Processing chained module '" << module_name << "'..." << std::endl;
-      }
+      DT_LOG_DEBUG(_logging,"Processing chained module '" << module_name << "'...");
       module_handle_type & the_handle  = the_entry.handle;
       DT_THROW_IF(! the_handle,
                   std::logic_error,
@@ -176,26 +148,20 @@ namespace dpp {
       base_module & a_module = the_handle.grab ();
       a_module.reset_last_error_message ();
       try {
-        int status = a_module.process (the_data_record);
-        if (is_debug ()) {
-          std::ostringstream message;
-          message << "dpp::chain_module::process: "
-                  << "module='" << module_name << "' "
-                  << "status=" << status;
-          std::clog << datatools::io::debug << message.str () << std::endl;
-        }
-        if (status & FATAL || status & ERROR) {
+        int status = a_module.process(the_data_record);
+        DT_LOG_DEBUG(_logging,"Module='" << module_name << "' " << "status=" << status);
+        if (status & PROCESS_FATAL || status & PROCESS_ERROR) {
           // Ask for the abortion of the full event record processing session
           // if the current chained module meets a fatal error  :
           if (a_module.has_last_error_message ()) {
             this->append_last_error_message (a_module.get_last_error_message ());
           }
           a_module.reset_last_error_message ();
-          if (status & FATAL ) {
-            return FATAL;
+          if (status & PROCESS_FATAL ) {
+            return PROCESS_FATAL;
           }
         }
-        if (status & STOP) {
+        if (status & PROCESS_STOP) {
           // Stop the chain loop if the current chained module asks for stop :
           return status;
         }
@@ -204,17 +170,14 @@ namespace dpp {
       }
       catch (std::exception & x) {
         std::ostringstream errmsg;
-        errmsg  << "dpp::chain_module::process: "
-                << "Module '" << module_name << "' failed to process event record; message is '"
-                << x.what () << "'";
-        append_last_error_message (errmsg.str ());
-        std::clog << datatools::io::error
-                  << "dpp::chain_module::process: "
-                  << errmsg.str () << std::endl;
-        return FATAL;
+        errmsg << "Module '" << module_name << "' failed to process event record; message is '"
+               << x.what () << "'";
+        append_last_error_message (errmsg.str());
+        DT_LOG_FATAL(_logging, errmsg.str());
+        return PROCESS_FATAL;
       }
     } // for loop on modules
-    return SUCCESS;
+    return PROCESS_SUCCESS;
   }
 
   void chain_module::tree_dump (std::ostream & a_out ,
@@ -223,7 +186,6 @@ namespace dpp {
                                 bool a_inherit) const
   {
     this->base_module::tree_dump (a_out, a_title, a_indent, true);
-
     a_out << a_indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
           << "Chained modules : " << std::endl;
     for (module_list_type::const_iterator i = _modules_.begin ();

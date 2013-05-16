@@ -1,7 +1,7 @@
 /* module_macros.h
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
- * Last modified : 2013-02-15
+ * Last modified : 2013-05-15
  *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -44,98 +44,87 @@
 
 #define DPP_MODULE_INITIALIZE_DECLARE()                       \
   public:                                                     \
-  virtual void initialize (const ::datatools::properties &,   \
-                           ::datatools::service_manager &,    \
-                           ::dpp::module_handle_dict_type &); \
+  virtual void initialize(const ::datatools::properties &,    \
+                          ::datatools::service_manager &,     \
+                          ::dpp::module_handle_dict_type &);  \
   /**/
 
-#define DPP_MODULE_INITIALIZE_IMPLEMENT_HEAD(T,CONF,SERVICE_MANAGER,DICT) \
-  void T::initialize (const ::datatools::properties & CONF,             \
-                      ::datatools::service_manager & SERVICE_MANAGER,   \
-                      ::dpp::module_handle_dict_type & DICT)            \
+#define DPP_MODULE_INITIALIZE_IMPLEMENT_HEAD(T,Setup,ServiceManager,ModuleDict) \
+  void T::initialize(const ::datatools::properties & Setup,             \
+                     ::datatools::service_manager & ServiceManager,     \
+                     ::dpp::module_handle_dict_type & ModuleDict)       \
   /**/
 
 #define DPP_MODULE_RESET_DECLARE()              \
   public:                                       \
-  virtual void reset ();                        \
+  virtual void reset();                         \
   /**/
 
 #define DPP_MODULE_RESET_IMPLEMENT_HEAD(T)      \
-  void T::reset ()                              \
+  void T::reset()                               \
   /**/
 
-#define DPP_MODULE_PROCESS_DECLARE()            \
-  public :                                      \
-  virtual int process (datatools::things &);    \
+#define DPP_MODULE_PROCESS_DECLARE()                                    \
+  public :                                                              \
+  virtual int process(::datatools::things &);                           \
   /**/
 
-#define DPP_MODULE_PROCESS_IMPLEMENT_HEAD(T,EventRecord)  \
-  int T::process (datatools::things & EventRecord)        \
+#define DPP_MODULE_PROCESS_IMPLEMENT_HEAD(T,DataRecord)     \
+  int T::process(::datatools::things & DataRecord)          \
   /**/
 
-#define DPP_MODULE_CONSTRUCTOR_DECLARE(T)       \
-  public:                                       \
-  T (int a_debug_level = ::dpp::NO_DEBUG);      \
+#define DPP_MODULE_CONSTRUCTOR_DECLARE(T)                             \
+  public:                                                             \
+  T(::datatools::logger::priority = ::datatools::logger::PRIO_FATAL); \
   /**/
 
-#define DPP_MODULE_CONSTRUCTOR_IMPLEMENT_HEAD(T,DebugLevel,Name,Description,Version) \
-  T::T (int DebugLevel)                                                 \
-    : base_module (Name,                                                \
-                   Description,                                         \
-                   Version,                                             \
-                   DebugLevel)                                          \
+#define DPP_MODULE_CONSTRUCTOR_IMPLEMENT_HEAD(T,LoggingPriority)  \
+  T::T(::datatools::logger::priority LoggingPriority)             \
+    : ::dpp::base_module::base_module(LoggingPriority)            \
       /**/
 
 #define DPP_MODULE_DESTRUCTOR_DECLARE(T)        \
   public:                                       \
-  virtual ~T ();                                \
+  virtual ~T();                                 \
   /**/
 
 #define DPP_MODULE_DESTRUCTOR_IMPLEMENT_HEAD(T) \
-  T::~T ()                                      \
+  T::~T()                                       \
   /**/
 
 #define DPP_MODULE_DEFAULT_DESTRUCTOR_IMPLEMENT(T)  \
-  DPP_MODULE_DESTRUCTOR_IMPLEMENT_HEAD (T)          \
+  DPP_MODULE_DESTRUCTOR_IMPLEMENT_HEAD(T)           \
   {                                                 \
-    if (is_initialized ()) T::reset ();             \
+    if (is_initialized()) T::reset();               \
     return;                                         \
   }                                                 \
   /**/
 
 /*** Macro for the declaration of the full module interface ***/
 #define DPP_MODULE_INTERFACE()                  \
-                                                \
   DPP_MODULE_INITIALIZE_DECLARE();              \
-                                                \
   DPP_MODULE_RESET_DECLARE();                   \
-                                                \
   DPP_MODULE_PROCESS_DECLARE();                 \
-                                                \
   /**/
 
 /*** Macro for the declaration of the full module interface ***/
-#define DPP_MODULE_INTERFACE_CTOR_DTOR(MODULE_CLASS_NAME) \
-                                                          \
-  DPP_MODULE_CONSTRUCTOR_DECLARE(MODULE_CLASS_NAME);      \
-                                                          \
-  DPP_MODULE_DESTRUCTOR_DECLARE(MODULE_CLASS_NAME);       \
-                                                          \
-  DPP_MODULE_INTERFACE ();                                \
-                                                          \
+#define DPP_MODULE_INTERFACE_CTOR_DTOR(T)       \
+  DPP_MODULE_CONSTRUCTOR_DECLARE(T);            \
+  DPP_MODULE_DESTRUCTOR_DECLARE(T);             \
+  DPP_MODULE_INTERFACE();                       \
   /**/
 
 /*** Macros for interface/implementation of static creator methods in module classes ***/
 
 /** Registration */
 
-#define DPP_MODULE_REGISTRATION_INTERFACE(MODULE_CLASS_NAME)            \
+#define DPP_MODULE_REGISTRATION_INTERFACE(T)                            \
   private:                                                              \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE (::dpp::base_module,MODULE_CLASS_NAME); \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::dpp::base_module,T); \
   /**/
 
-#define DPP_MODULE_REGISTRATION_IMPLEMENT(MODULE_CLASS_NAME,MODULE_ID)  \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (::dpp::base_module,MODULE_CLASS_NAME,MODULE_ID); \
+#define DPP_MODULE_REGISTRATION_IMPLEMENT(T,ModuleID)                   \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::dpp::base_module,T,ModuleID); \
   /**/
 
 #endif // DPP_MODULE_MACROS_H_

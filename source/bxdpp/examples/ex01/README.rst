@@ -47,7 +47,10 @@ Introduction
      * ``dpp_ex01/raw_generator_module.h``
      * ``src/raw_generator_module.cc``
 
-   * ``src/test_dpp_ex01.cxx`` : a test program
+   * Testing :
+
+     * ``testing/test_dpp_ex01.cxx`` : a test source program
+     * ``testing/rgm.conf`` : a test configuration file
 
  * Namespace : ``dpp_ex01``
 
@@ -100,10 +103,23 @@ Quick start
      shell> make install
      shell> cd ..
 
-4. Run the test program::
+4. Testing::
 
-     shell> ./test_dpp_ex01
-     shell> less test_dpp_ex01.xml
+     * List of registered class IDs in the ``dpp_ex01`` DLL::
+
+        shell> export LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH}
+        shell> ocd_manual --load-dll dpp_ex01 --action list | grep "dpp_ex01::" 2> /dev/null
+
+     * Generate the OCD documentation (ReST+HTML) for class ``dpp_ex01::raw_generator_module``::
+
+        shell> ocd_manual --load-dll dpp_ex01 --action show \
+                --class-id dpp_ex01::raw_generator_module > dpp_ex01_RGM.rst
+        shell> pandoc -r rst -w html dpp_ex01_RGM.rst > dpp_ex01_RGM.html
+
+     * Run the test program and check its output file::
+
+        shell> ./test_dpp_ex01
+        shell> less test_dpp_ex01.xml
 
 5. Run the example::
 

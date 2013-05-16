@@ -15,24 +15,20 @@ namespace dpp {
   // Registration instantiation macro :
   DPP_MODULE_REGISTRATION_IMPLEMENT(utils_module,"dpp::utils_module");
 
-  void utils_module::initialize (const datatools::properties & a_setup,
-                                 datatools::service_manager & a_service_manager,
-                                 module_handle_dict_type & a_module_dictionary)
+  // Initialization :
+  DPP_MODULE_INITIALIZE_IMPLEMENT_HEAD(utils_module,
+                                       a_setup,
+                                       a_service_manager,
+                                       a_module_dict)
   {
-    if (is_initialized ()) {
-      std::ostringstream message;
-      message << "utils_module::initialize: "
-              << "Module '" << get_name () << "' is already initialized ! ";
-      throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF(is_initialized (),
+                std::logic_error,
+                "Utils module '" << get_name () << "' is already initialized ! ");
 
-    if (! is_debug ()) {
-      if (a_setup.has_flag ("debug")) {
-        set_debug (true);
-      }
-    }
+    _common_initialize(a_setup);
 
     if (a_setup.has_key ("mode")){
+      _mode_ = MODE_INVALID;
       std::string mode_label = a_setup.fetch_string ("mode");
       if (mode_label == "clear") {
         _mode_ = MODE_CLEAR;
@@ -42,68 +38,49 @@ namespace dpp {
         _mode_ = MODE_REMOVE_BANKS;
       } else if (mode_label == "add_property") {
         _mode_ = MODE_ADD_PROPERTY;
-      } else {
-        std::ostringstream message;
-        message << "snemo::core::processing::utils_module::initialize: "
-                << "Module '" << get_name () << "' has no mode '" << mode_label << "' !";
-        throw std::logic_error (message.str ());
       }
+      DT_THROW_IF(_mode_ == MODE_INVALID,
+                  std::domain_error,
+                  "Module '" << get_name () << "' has no mode '" << mode_label << "' !");
     }
 
     if (_mode_ == MODE_REMOVE_ONE_TYPED_BANK) {
-      if (a_setup.has_key ("mode.remove_one_typed_bank.label")) {
-        _remove_one_typed_bank_label_ = a_setup.fetch_string ("mode.remove_one_typed_bank.label");
-      } else {
-        std::ostringstream message;
-        message << "dpp::utils_module::initialize: "
-                << "Missing bank label property for module '" << get_name () << "' using mode '" << _mode_ << "' !";
-        throw std::logic_error (message.str ());
-      }
+      DT_THROW_IF(! a_setup.has_key ("mode.remove_one_typed_bank.label"),
+                  std::logic_error,
+                  "Missing bank label property for module '" << get_name ()
+                  << "' using mode '" << _mode_ << "' !");
+      _remove_one_typed_bank_label_ = a_setup.fetch_string ("mode.remove_one_typed_bank.label");
       if (a_setup.has_key ("mode.remove_one_typed_bank.type")) {
         _remove_one_typed_bank_type_ = a_setup.fetch_string ("mode.remove_one_typed_bank.type");
       }
     }
 
     if (_mode_ == MODE_REMOVE_BANKS) {
-      if (a_setup.has_key ("mode.remove_banks.labels")) {
-        a_setup.fetch ("mode.remove_banks.labels", _remove_bank_labels_);
-      } else {
-        std::ostringstream message;
-        message << "dpp::utils_module::initialize: "
-                << "Missing banks' labels property for module '" << get_name () << "' using mode '" << _mode_ << "' !";
-        throw std::logic_error (message.str ());
-      }
-      if (_remove_bank_labels_.size() == 0) {
-        std::ostringstream message;
-        message << "dpp::utils_module::initialize: "
-                << "Missing banks' labels for module '" << get_name () << "' using mode '" << _mode_ << "' !";
-        throw std::logic_error (message.str ());
-      }
+      DT_THROW_IF(! a_setup.has_key ("mode.remove_banks.labels"),
+                  std::logic_error,
+                  "Missing bank label property for module '" << get_name ()
+                  << "' using mode '" << _mode_ << "' !");
+      a_setup.fetch ("mode.remove_banks.labels", _remove_bank_labels_);
+      DT_THROW_IF(_remove_bank_labels_.size() == 0,
+                  std::logic_error,
+                  "Missing banks' labels for module '" << get_name ()
+                  << "' using mode '" << _mode_ << "' !");
     }
 
     if (_mode_ == MODE_ADD_PROPERTY) {
-      if (a_setup.has_key ("mode.add_property.bank_label")) {
-        _add_property_bank_label_ = a_setup.fetch_string("mode.add_property.bank_label");
-      } else {
-        std::ostringstream message;
-        message << "dpp::utils_module::initialize: "
-                << "Missing 'mode.add_property.bank_label' property for module '" << get_name () << "' using mode '" << _mode_ << "' !";
-        throw std::logic_error (message.str ());
-      }
-
-      if (a_setup.has_key ("mode.add_property.key")) {
-        _add_property_key_ = a_setup.fetch_string("mode.add_property.key");
-      } else {
-        std::ostringstream message;
-        message << "dpp::utils_module::initialize: "
-                << "Missing 'mode.add_property.key' property for module '" << get_name () << "' using mode '" << _mode_ << "' !";
-        throw std::logic_error (message.str ());
-      }
-
+      DT_THROW_IF(! a_setup.has_key ("mode.add_property.bank_label"),
+                  std::logic_error,
+                  "Missing 'mode.add_property.bank_label' property for module '" << get_name ()
+                  << "' using mode '" << _mode_ << "' !");
+      _add_property_bank_label_ = a_setup.fetch_string("mode.add_property.bank_label");
+      DT_THROW_IF(! a_setup.has_key ("mode.add_property.key"),
+                  std::logic_error,
+                  "Missing 'mode.add_property.key' property for module '"
+                  << get_name () << "' using mode '" << _mode_ << "' !");
+      _add_property_key_ = a_setup.fetch_string("mode.add_property.key");
       if (a_setup.has_key ("mode.add_property.description")) {
         _add_property_description_ = a_setup.fetch_string("mode.add_property.description");
       }
-
       if (! _add_property_description_.empty()) {
         const datatools::properties::data & const_prop_data
           = a_setup.get("mode.add_property.value");
@@ -114,35 +91,28 @@ namespace dpp {
       a_setup.export_and_rename_starting_with(_add_property_value_,
                                               "mode.add_property.value",
                                               _add_property_key_);
-
       if (a_setup.has_flag ("mode.add_property.update")) {
         _add_property_update_ = true;
       }
-   }
+    }
 
     _set_initialized (true);
     return;
   }
 
-  void utils_module::reset ()
+  DPP_MODULE_RESET_IMPLEMENT_HEAD(utils_module)
   {
-    if (! is_initialized ()) {
-      std::ostringstream message;
-      message << "utils_module::reset: "
-              << "Module '" << get_name () << "' is not initialized !";
-      throw std::logic_error (message.str ());
-    }
-
-    _set_defaults ();
-
+    DT_THROW_IF(! is_initialized (),
+                std::logic_error,
+                "Utils module '" << get_name () << "' is not initialized !");
     _set_initialized (false);
+    _set_defaults ();
     return;
   }
 
   void utils_module::_set_defaults ()
   {
     _mode_ = MODE_INVALID;
-
     _remove_one_typed_bank_label_ = "";
     _remove_one_typed_bank_type_ = "";
     _remove_bank_labels_.clear ();
@@ -150,76 +120,56 @@ namespace dpp {
     _add_property_key_ = "";
     _add_property_value_.clear();
     _add_property_update_ = false;
-
     return;
   }
 
   // Constructor :
-  utils_module::utils_module (int a_debug_level)
-    : base_module ("dpp::utils_module",
-                   "An event record processor to apply some useful operations",
-                   "0.1",
-                   a_debug_level)
+  DPP_MODULE_CONSTRUCTOR_IMPLEMENT_HEAD(utils_module,logging_priority_)
   {
     _set_defaults ();
     return;
   }
 
-  // Destructor :
-  utils_module::~utils_module ()
+  DPP_MODULE_DEFAULT_DESTRUCTOR_IMPLEMENT(utils_module)
+
+  void utils_module::_process_clear (datatools::things & a_data_record)
   {
-    // Make sure all internal resources are terminated
-    // before destruction :
-    if (is_initialized ()) {
-      this->utils_module::reset ();
-    }
+    a_data_record.clear ();
     return;
   }
 
-  void utils_module::_process_clear (datatools::things & a_event_record)
-  {
-    a_event_record.clear ();
-    return;
-  }
-
-  void utils_module::_process_remove_one_typed_bank (datatools::things & a_event_record)
+  void utils_module::_process_remove_one_typed_bank (datatools::things & a_data_record)
   {
     const std::string & removable_bank_label = _remove_one_typed_bank_label_;
-    if (removable_bank_label.empty ()) {
-      std::ostringstream message;
-      message << "dpp::utils_module::_process_remove_bank: "
-              << "Missing bank label to be removed !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF(removable_bank_label.empty (),
+                std::logic_error,
+                "Missing bank label to be removed !");
     bool remove = false;
-    if (a_event_record.has (removable_bank_label)) {
+    if (a_data_record.has (removable_bank_label)) {
       bool remove = true;
       if (! _remove_one_typed_bank_type_.empty()) {
         remove = false;
-        if (a_event_record.has_serial_tag(removable_bank_label,
+        if (a_data_record.has_serial_tag(removable_bank_label,
                                           _remove_one_typed_bank_type_)) {
           remove = true;
         }
       }
     }
     if (remove) {
-      a_event_record.remove (removable_bank_label);
+      a_data_record.remove (removable_bank_label);
     }
     return;
   }
 
-  void utils_module::_process_remove_banks (datatools::things & a_event_record)
+  void utils_module::_process_remove_banks (datatools::things & a_data_record)
   {
     for (int i = 0; i < _remove_bank_labels_.size(); i++) {
       const std::string & removable_bank_label = _remove_bank_labels_[i];
-      if (removable_bank_label.empty ()) {
-        std::ostringstream message;
-        message << "dpp::utils_module::_process_remove_banks: "
-                << "Missing bank label to be removed !";
-        throw std::logic_error (message.str ());
-      }
-      if (a_event_record.has (removable_bank_label)) {
-            a_event_record.remove (removable_bank_label);
+      DT_THROW_IF(removable_bank_label.empty (),
+                  std::logic_error,
+                  "Missing bank label to be removed !");
+      if (a_data_record.has(removable_bank_label)) {
+        a_data_record.remove(removable_bank_label);
       }
     }
     return;
@@ -227,12 +177,9 @@ namespace dpp {
 
   void utils_module::_process_add_property (datatools::things & the_data_record)
   {
-    if (_add_property_bank_label_.empty ()) {
-      std::ostringstream message;
-      message << "dpp::utils_module::_process_add_property: "
-              << "Missing property bank label to be enriched !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF(_add_property_bank_label_.empty (),
+                std::logic_error,
+                "Missing property bank label to be enriched !");
 
     if (! the_data_record.has(_add_property_bank_label_)) {
       datatools::properties & the_gp_bank = the_data_record.add<datatools::properties> (_add_property_bank_label_);
@@ -243,64 +190,37 @@ namespace dpp {
         && the_data_record.is_a<datatools::properties> (_add_property_bank_label_)) {
       datatools::properties & the_gp_bank
         = the_data_record.grab<datatools::properties> (_add_property_bank_label_);
-
       if (the_gp_bank.has_key(_add_property_key_)) {
-        if (! _add_property_update_) {
-          std::ostringstream message;
-          message << "dpp::utils_module::_process_add_property: "
-                  << "Property with key '" << _add_property_key_ << "' cannot be overloaded !";
-          throw std::logic_error (message.str ());
-        }
+        DT_THROW_IF(! _add_property_update_,
+                    std::logic_error,
+                    "Property with key '" << _add_property_key_ << "' cannot be overloaded !");
         the_gp_bank.erase(_add_property_key_);
       }
-
       _add_property_value_.export_all(the_gp_bank);
-
     } else {
-      std::ostringstream message;
-      message << "dpp::utils_module::_process_add_property: "
-              << "No property bank label named '" << _add_property_bank_label_ << "' !";
-      throw std::logic_error (message.str ());
+      DT_THROW_IF(true,
+                  std::logic_error,
+                  "No property bank label named '" << _add_property_bank_label_ << "' !");
     }
-
     return;
   }
 
   // Processing :
-  int utils_module::process (datatools::things & a_event_record)
+  DPP_MODULE_PROCESS_IMPLEMENT_HEAD(utils_module,a_data_record)
   {
-    if (! is_initialized ())
-      {
-        std::ostringstream message;
-        message << "utils_module::process: "
-                << "Module '" << get_name () << "' is not initialized !";
-        throw std::logic_error (message.str ());
-      }
-
-    /********************
-     * Process the data *
-     ********************/
-
-    // Main processing method :
-    if (_mode_ == MODE_CLEAR)
-      {
-        _process_clear (a_event_record);
-      }
-    else if (_mode_ == MODE_REMOVE_ONE_TYPED_BANK)
-      {
-        _process_remove_one_typed_bank (a_event_record);
-      }
-    else if (_mode_ == MODE_REMOVE_BANKS)
-      {
-        _process_remove_banks (a_event_record);
-      }
-    else if (_mode_ == MODE_ADD_PROPERTY)
-      {
-        _process_add_property (a_event_record);
-      }
-
-
-    return SUCCESS;
+    DT_THROW_IF(! is_initialized (),
+                std::logic_error,
+                "Utils module '" << get_name () << "' is not initialized !");
+    if (_mode_ == MODE_CLEAR){
+      _process_clear (a_data_record);
+    } else if (_mode_ == MODE_REMOVE_ONE_TYPED_BANK) {
+      _process_remove_one_typed_bank (a_data_record);
+    } else if (_mode_ == MODE_REMOVE_BANKS) {
+      _process_remove_banks (a_data_record);
+    } else if (_mode_ == MODE_ADD_PROPERTY) {
+      _process_add_property (a_data_record);
+    }
+    return PROCESS_SUCCESS;
   }
 
 } // end of namespace dpp

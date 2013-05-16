@@ -1,7 +1,7 @@
 /* if_module.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-19
- * Last modified : 2013-02-15
+ * Last modified : 2013-05-15
  *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -41,15 +41,14 @@
 namespace dpp {
 
   /// \brief A data processing module to be apply only if some cut is fulfilled
-  class if_module : public base_module
-  // DPP_MODULE_CLASS_DECLARE(if_module)
+  DPP_MODULE_CLASS_DECLARE(if_module)
   {
   public:
 
     enum processing_status_type
     {
       PROCESS_INVALID  = -1,
-      PROCESS_CONTINUE =  0, 
+      PROCESS_CONTINUE =  0,
       PROCESS_STOP     =  1
     };
 
@@ -69,12 +68,6 @@ namespace dpp {
 
     static const std::string DEFAULT_CUT_SERVICE_LABEL;
 
-  protected:
-
-    void _set_defaults ();
-
-  public:
-
     void set_cut_service_label (const std::string & label_);
 
     const std::string & get_cut_service_label () const;
@@ -92,47 +85,32 @@ namespace dpp {
 
     bool has_then_status () const;
 
-    void set_then_status (int status_);
+    void set_then_status (processing_status_type status_);
 
     bool has_else_status () const;
 
-    void set_else_status (int status_);
+    void set_else_status (processing_status_type status_);
 
     // Constructor :
-    if_module (int debug_level_ = NO_DEBUG);
+    DPP_MODULE_INTERFACE_CTOR_DTOR(if_module);
 
-    // Destructor :
-    virtual ~if_module ();
-
-    DPP_MODULE_INTERFACE ();
-    /** The module interface can also be declared with the macro :
-     *
-     * // Initialization method :
-     * virtual void initialize (const datatools::properties  &,
-     *                          datatools::service_manager &,
-     *                          module_handle_dict_type             &);
-     *
-     * // Termination method :
-     * virtual void reset ();
-     *
-     * // Event processing method :
-     * virtual int process (snemo::core::model::event_record &);
-     *
-     */
-        
     virtual void tree_dump (std::ostream      & out_    = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
                             bool inherit_          = false) const;
-        
+
+  protected:
+
+    void _set_defaults ();
+
   private:
 
-    std::string           _cut_service_label_; /// Label/name of the cut service
-    cut_entry             _condition_cut_;     /// Condition cut entry
-    int                   _then_status_; /// Status of the 'then' action module
-    module_entry          _then_module_; /// 'then' action module entry
-    int                   _else_status_; /// Status of the 'else' action module
-    module_entry          _else_module_; /// 'else' action module entry
+    std::string  _cut_service_label_; /// Label/name of the cut service
+    cut_entry    _condition_cut_;     /// Condition cut entry
+    processing_status_type _then_status_; /// Status of the 'then' action module
+    module_entry _then_module_;       /// 'then' action module entry
+    processing_status_type _else_status_; /// Status of the 'else' action module
+    module_entry _else_module_;       /// 'else' action module entry
 
     // Macro to automate the registration of the module :
     DPP_MODULE_REGISTRATION_INTERFACE(if_module);

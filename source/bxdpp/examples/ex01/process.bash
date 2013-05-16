@@ -41,6 +41,19 @@ echo "" 1>&2
 echo "dpp_ex01_bio DLL linkage is :" 1>&2
 find ./lib -name "libdpp_ex01_bio.*" -exec ldd \{\} \; 1>&2
 
+export LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH}
+
+echo "" 1>&2
+echo "OCD support :" 1>&2
+echo "- List of registered class IDs in the dpp_ex01 DLL : " 1>&2
+ocd_manual --load-dll dpp_ex01 --action list | grep "dpp_ex01::" 2> /dev/null
+
+echo "- Generate the OCD documentation for class ``dpp_ex01::raw_generator_module`` : " 1>&2
+ocd_manual --load-dll dpp_ex01 --action show --class-id dpp_ex01::raw_generator_module > dpp_ex01_RGM.rst
+pandoc -r rst -w html dpp_ex01_RGM.rst > dpp_ex01_RGM.html
+
+echo "- Check and validate a sample testing configuration file for class ``dpp_ex01::raw_generator_module`` : " 1>&2
+ocd_manual --load-dll dpp_ex01 --class-id dpp_ex01::raw_generator_module --action validate --input-file testing/rgm.conf
 
 echo "" 1>&2
 echo "Run the ./test_dpp_ex01 executable :" 1>&2
@@ -50,7 +63,6 @@ ls -l ./test_dpp_ex01.xml
 echo "" 1>&2
 echo "Run the dpp_processing executable :" 1>&2
 
-export LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH}
 dpp_processing \
     --load-dll "dpp_ex01_bio" \
     --modulo 25 \
@@ -69,6 +81,8 @@ fi
 ls -l ./dpp_ex01_intermediate_*.brio
 ls -l ./dpp_ex01_0?.xml
 
+rm -f dpp_ex01_*.rst
+rm -f dpp_ex01_*.html
 rm -f test_dpp_ex01.xml
 rm -f test_dpp_ex01
 rm -f dpp_ex01_0?.xml

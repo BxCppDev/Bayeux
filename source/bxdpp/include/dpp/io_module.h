@@ -1,7 +1,7 @@
 /* io_module.h
  * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-09-10
- * Last modified : 2013-02-15
+ * Last modified : 2013-05-15
  *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -37,7 +37,7 @@
 #include <datatools/smart_filename.h>
 
 namespace dpp {
-  
+
   class i_data_sink;
   class i_data_source;
   class simple_data_sink;
@@ -46,20 +46,19 @@ namespace dpp {
   class simple_brio_data_source;
   class context_service;
 
-  // The declaration of the data processing module class
-  // can also be done through the following macro :
-  //   \code
-  //   DPP_MODULE_CLASS_DECLARE(io_module)
-  //   {
-  //   ...
-  //   };
-  //   \endcode
-  //
   /// \brief A data processing module for automated I/O operations
-  class io_module : public base_module
-  //DPP_MODULE_CLASS_DECLARE(io_module)
+  DPP_MODULE_CLASS_DECLARE(io_module)
   {
   public:
+
+    DPP_MODULE_INTERFACE_CTOR_DTOR(io_module);
+
+    enum rw_mode_type
+    {
+      RW_MODE_INVALID = -1,
+      RW_MODE_INPUT   =  0,
+      RW_MODE_OUTPUT  =  1
+    };
 
     bool is_terminated () const;
 
@@ -67,26 +66,9 @@ namespace dpp {
 
     bool is_output () const;
 
-    // Constructor :
-    io_module (int a_debug_level = dpp::NO_DEBUG);
-
-    // Destructor :
-    virtual ~io_module ();
-
-    DPP_MODULE_INTERFACE();
-
-  public:
-
-    enum rw_mode_t
-    {
-      RW_MODE_INVALID = -1,
-      RW_MODE_INPUT   =  0,
-      RW_MODE_OUTPUT  =  1
-    };
-
     void set_context_service (dpp::context_service & a_context_service,
                               const std::string & a_ctx_label = "Ctx");
-    void set_rw_mode (int a_rw_mode);
+    void set_rw_mode (rw_mode_type a_rw_mode);
     void set_preserve_existing_output (bool a_preserve_existing_output);
     void set_max_files (int a_max_files);
     void set_max_record_total (int a_max_record_total);

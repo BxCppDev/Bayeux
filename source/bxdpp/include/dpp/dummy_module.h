@@ -1,7 +1,7 @@
 /* dummy_module.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-19
- * Last modified : 2013-02-15
+ * Last modified : 2013-05-15
  *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -42,19 +42,8 @@ namespace dpp {
   /// \brief A dummy data processing module for tests
   /** The 'dummy_module' class inherits the interface of the
    * 'dpp::base_module' abstract class.
-   *
-   * Declaration of the 'dummy_module' class
-   * can also be done with the following macro :
-   *   \code
-   *   DPP_MODULE_CLASS_DECLARE(dummy_module)
-   *   {
-   *      // blah-blah...
-   *   };
-   *   \endcode
-   *
    */
   class dummy_module : public base_module
-  //DPP_MODULE_CLASS_DECLARE(dummy_module)
   {
   public:
 
@@ -62,33 +51,29 @@ namespace dpp {
     static const std::string DEFAULT_FLAG_NAME;
     static const std::string UNINITIALIZED_LABEL;
 
-  public:
-
     /// Set the flag name
-    void set_flag_name (const std::string & a_flag_name);
+    void set_flag_name(const std::string & a_flag_name);
 
     /// Get the flag name
-    const std::string & get_flag_name () const;
+    const std::string & get_flag_name() const;
 
     /// Set the "GP" bank label
-    void set_GP_label (const std::string & a_gp_label);
+    void set_GP_label(const std::string & a_gp_label);
 
     /// Get the "GP" bank label
-    const std::string & get_GP_label () const;
-
-  public:
+    const std::string & get_GP_label() const;
 
     /// Constructor
-    dummy_module (int a_debug_level = dpp::NO_DEBUG);
+    dummy_module(datatools::logger::priority = datatools::logger::PRIO_FATAL);
 
     /// Destructor
-    virtual ~dummy_module ();
+    virtual ~dummy_module();
 
     /** Initialization method :
      *
      * \param a_properties is a const reference to some container of
      * various property configuration parameters
-     * \param a_srv_mgr a reference to a service manager (provided by some
+     * \param a_srv_mgr a reference to a service manager(provided by some
      * external agent)
      * \param a_mod_dict a reference to a dictionnary of pre-existing modules
      * (provided by some external agent)
@@ -96,21 +81,21 @@ namespace dpp {
      * The module interface (initialize, reset and process methods)
      * can also be declared with the following macro :
      * \code
-     * DPP_MODULE_INTERFACE (dummy_module);
+     * DPP_MODULE_INTERFACE(dummy_module);
      * \endcode
      */
-    virtual void initialize (const datatools::properties & a_properties,
-                             datatools::service_manager & a_srv_mgr,
-                             module_handle_dict_type & a_mod_dict);
+    virtual void initialize(const datatools::properties & a_properties,
+                            datatools::service_manager & a_srv_mgr,
+                            module_handle_dict_type & a_mod_dict);
 
     /// Termination method
-    virtual void reset ();
+    virtual void reset();
 
     /** Event processing method :
-     *  \param a_event_record is a mutable reference to the event data model to be processed.
-     *  \return the error status of the event data processing
+     *  \param a_data_record is a mutable reference to the data model instance to be processed.
+     *  \return the error status of the data record processing
      */
-    virtual int process (datatools::things & a_data_record);
+    virtual int process(datatools::things & a_data_record);
 
   private:
 

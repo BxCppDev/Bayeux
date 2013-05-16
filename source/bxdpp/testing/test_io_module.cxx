@@ -190,13 +190,13 @@ int main (int argc_, char ** argv_)
                 std::clog << datatools::io::debug
                           << "test_io_module: Input module processing status = " << status << std::endl;
               }
-            if (status == dpp::io_module::FATAL)
+            if (status == dpp::PROCESS_FATAL)
               {
                 std::clog << datatools::io::error
                           << "test_io_module: Reader had a fatal error !" << std::endl;
                 break;
               }
-            else if (status == dpp::io_module::ERROR)
+            else if (status == dpp::PROCESS_ERROR)
               {
                 std::clog << datatools::io::error
                           << "test_io_module: Reader had an error !" << std::endl;
@@ -225,13 +225,13 @@ int main (int argc_, char ** argv_)
             if (! output.is_terminated())
               {
                 status = output.process (ER);
-                if (status == dpp::io_module::FATAL)
+                if (status == dpp::PROCESS_FATAL)
                   {
                     std::clog << datatools::io::error
                               << "test_io_module: Writer had a fatal error !" << std::endl;
                     break;
                   }
-                else if (status == dpp::io_module::ERROR)
+                else if (status == dpp::PROCESS_ERROR)
                   {
                     std::clog << datatools::io::error
                               << "test_io_module: Writer had an error !" << std::endl;

@@ -67,7 +67,7 @@ install( FILES
          WORLD_READ WORLD_EXECUTE
        )
 
-add_executable(test_dpp_ex01 src/test_dpp_ex01.cxx )
+add_executable(test_dpp_ex01 testing/test_dpp_ex01.cxx )
 
 target_link_libraries(test_dpp_ex01 dpp_ex01_bio)
 

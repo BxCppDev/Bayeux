@@ -123,7 +123,7 @@ int main (int argc_, char ** argv_)
               throw std::logic_error (message.str ());
             }
         }
- 
+
       if (module_name.empty ())
         {
           module_name = "chain1";
@@ -213,10 +213,10 @@ int main (int argc_, char ** argv_)
               if (debug) std::clog << datatools::io::debug
                                    << "Processing the event record..." << std::endl;
               int status = the_module.process (ER);
-              if (status & dpp::base_module::ERROR)
-                { 
+              if (status & dpp::PROCESS_ERROR)
+                {
                   std::cerr << datatools::io::error
-                            << "Error at processing event record #" 
+                            << "Error at processing event record #"
                             <<  counts << std::endl;
                 }
 

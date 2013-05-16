@@ -26,6 +26,7 @@
 #include <datatools/service_manager.h>
 #include <datatools/ioutils.h>
 #include <datatools/io_factory.h>
+#include <datatools/exception.h>
 
 #include <brio/utils.h>
 
@@ -45,13 +46,9 @@ namespace dpp {
 
   void io_module::set_context_service (dpp::context_service & a_context_service, const std::string & a_ctx_label)
   {
-    if (is_initialized ())
-      {
-        std::ostringstream message;
-        message << "dpp::io_module::set_context_service: "
-                << "Module '" << get_name () << "' is already initialized !";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF(is_initialized (),
+                std::logic_error,
+                "I/O module '" << get_name () << "' is already initialized !");
     _Ctx_label_ = a_ctx_label;
     _Ctx_service_ = &a_context_service;
     return;
@@ -59,119 +56,73 @@ namespace dpp {
 
   void io_module::set_preserve_existing_output (bool a_preserve_existing_output)
   {
-    if (is_initialized ())
-      {
-        std::ostringstream message;
-        message << "dpp::io_module::set_preserve_existing_output: "
-                << "Module '" << get_name () << "' is already initialized !";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF(is_initialized (),
+                std::logic_error,
+                "I/O module '" << get_name () << "' is already initialized !");
     _preserve_existing_output_ = a_preserve_existing_output;
     return;
   }
 
-  void io_module::set_rw_mode (int a_rw_mode)
+  void io_module::set_rw_mode (rw_mode_type a_rw_mode)
   {
-    if (is_initialized ())
-      {
-        std::ostringstream message;
-        message << "dpp::io_module::set_rw_mode: "
-                << "Module '" << get_name () << "' is already initialized !";
-        throw std::logic_error (message.str ());
-      }
-    if (a_rw_mode != RW_MODE_INPUT && a_rw_mode != RW_MODE_OUTPUT)
-      {
-        std::ostringstream message;
-        message << "dpp::io_module::set_rw_mode: "
-                << "Invalid 'rw_mode' !";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF(is_initialized (),
+                std::logic_error,
+                "I/O module '" << get_name () << "' is already initialized !");
+    DT_THROW_IF(a_rw_mode != RW_MODE_INPUT && a_rw_mode != RW_MODE_OUTPUT,
+                std::domain_error,
+                "Invalid R/W mode' !");
     _rw_mode_ = a_rw_mode;
     return;
   }
 
   void io_module::set_max_files (int a_max_files)
   {
-    if (is_initialized ())
-      {
-        std::ostringstream message;
-        message << "dpp::io_module::set_max_files: "
-                << "Module '" << get_name () << "' is already initialized !";
-        throw std::logic_error (message.str ());
-      }
-    if (a_max_files < 0)
-      {
-        std::ostringstream message;
-        message << "dpp::io_module::set_max_files: "
-                << "Invalid 'max_files' !";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF(is_initialized (),
+                std::logic_error,
+                "I/O module '" << get_name () << "' is already initialized !");
+    DT_THROW_IF(a_max_files < 0,
+                std::domain_error,
+                "Invalid 'max_files' !");
     _max_files_ = a_max_files;
     return;
   }
 
   void io_module::set_max_record_total (int a_max_record_total)
   {
-    if (is_initialized ())
-      {
-        std::ostringstream message;
-        message << "dpp::io_module::set_max_record_total: "
-                << "Module '" << get_name () << "' is already initialized !";
-        throw std::logic_error (message.str ());
-      }
-    if (a_max_record_total < 0)
-      {
-        std::ostringstream message;
-        message << "dpp::io_module::set_max_record_total: "
-                << "Invalid 'max_record_total' !";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF(is_initialized (),
+                std::logic_error,
+                "I/O module '" << get_name () << "' is already initialized !");
+    DT_THROW_IF(a_max_record_total < 0,
+                std::domain_error,
+                "Invalid 'max_record_total' !");
     _max_record_total_ = a_max_record_total;
     return;
   }
 
   void io_module::set_max_record_per_file (int a_max_record_per_file)
   {
-    if (is_initialized ())
-      {
-        std::ostringstream message;
-        message << "dpp::io_module::set_max_record_per_file: "
-                << "Module '" << get_name () << "' is already initialized !";
-        throw std::logic_error (message.str ());
-      }
-    if (a_max_record_per_file < 0)
-      {
-        std::ostringstream message;
-        message << "dpp::io_module::set_max_record_per_file: "
-                << "Invalid 'max_record_per_file' !";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF(is_initialized (),
+                std::logic_error,
+                "I/O module '" << get_name () << "' is already initialized !");
+    DT_THROW_IF(a_max_record_per_file < 0,
+                std::domain_error,
+                "Invalid 'max_record_per_file' !");
     _max_record_per_file_ = a_max_record_per_file;
     return;
   }
 
   void io_module::set_filenames (const datatools::properties & a_setup)
   {
-    if (is_initialized ())
-      {
-        std::ostringstream message;
-        message << "dpp::io_module::set_filenames: "
-                << "Module '" << get_name () << "' is already initialized !";
-        throw std::logic_error (message.str ());
-      }
-    if (_filenames_.is_valid ())
-      {
-        _filenames_.reset ();
-      }
+    DT_THROW_IF(is_initialized (),
+                std::logic_error,
+                "I/O module '" << get_name () << "' is already initialized !");
+    if (_filenames_.is_valid ()) {
+      _filenames_.reset ();
+    }
     _filenames_.initialize (a_setup);
-    if (! _filenames_.is_valid ())
-      {
-        std::ostringstream message;
-        message << "dpp::io_module::set_filenames: "
-                << "Module '" << get_name () << "' : invalid list of filenames !";
-        throw std::logic_error (message.str ());
-      }
-    //_filenames_.dump(std::cerr);
+    DT_THROW_IF(! _filenames_.is_valid (),
+                std::logic_error,
+                "Invalid list of filenames for I/O module '" << get_name () << "' !");
     return;
   }
 
@@ -197,249 +148,159 @@ namespace dpp {
     _max_record_total_ = 0;
     _max_files_ = -1;
     _preserve_existing_output_ = false;
-
     _Ctx_label_ = "";
     _Ctx_service_ = 0;
-
     _terminated_ = false;
     _file_record_counter_ = 0;
     _record_counter_ = 0;
     _file_index_ = -1;
-
     _source_ = 0;
     _sink_   = 0;
     _bio_source_ = 0;
     _bio_sink_   = 0;
     _brio_source_ = 0;
     _brio_sink_   = 0;
-
     return;
   }
 
   // Constructor :
-  io_module::io_module (int a_debug_level)
-    : base_module ("dpp::io_module",
-                   "An event record I/O module",
-                   "0.1",
-                   a_debug_level)
+  DPP_MODULE_CONSTRUCTOR_IMPLEMENT_HEAD(io_module,logging_priority_)
   {
     _set_defaults ();
     return;
   }
 
-  // Destructor :
-  io_module::~io_module ()
-  {
-    // Make sure all internal resources are terminated
-    // before destruction :
-    if (is_initialized ()) reset ();
-    return;
-  }
+
+  DPP_MODULE_DEFAULT_DESTRUCTOR_IMPLEMENT(io_module)
 
   // Initialization :
-  void io_module::initialize (const datatools::properties               & a_config,
-                              datatools::service_manager              & a_service_manager,
-                              module_handle_dict_type & a_module_dict)
+  DPP_MODULE_INITIALIZE_IMPLEMENT_HEAD(io_module,
+                                       a_config,
+                                       a_service_manager,
+                                       a_module_dict)
   {
-    if (is_initialized ())
-      {
-        std::ostringstream message;
-        message << "io_module::initialize: "
-                << "Module '" << get_name () << "' is already initialized ! ";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF(is_initialized (),
+                std::logic_error,
+                "I/O module '" << get_name () << "' is already initialized ! ");
+
+    _common_initialize(a_config);
 
     /**************************************************************
      *   fetch setup parameters from the configuration container  *
      **************************************************************/
 
-    if (! is_debug ())
-      {
-        if (a_config.has_flag ("debug"))
-          {
-            // std::cerr << "DEVEL **************** io_module::initialize: debug " << std::endl;
-            set_debug (true);
-          }
+    if (_rw_mode_ == RW_MODE_INVALID) {
+      if (a_config.has_key ("mode")) {
+        std::string mode = a_config.fetch_string ("mode");
+        if (mode == "output"){
+          _rw_mode_ = RW_MODE_OUTPUT;
+        } else if (mode == "input") {
+          _rw_mode_ = RW_MODE_INPUT;
+        }
+        DT_THROW_IF(_rw_mode_ == RW_MODE_INVALID,
+                    std::logic_error,
+                    "I/O module '" << get_name () << "'  : invalid mode '" << mode << "'! ");
+      }
+    }
+
+    if (_rw_mode_ == RW_MODE_OUTPUT) {
+      if (! _filenames_.is_valid ()) {
+        datatools::properties output_config;
+        a_config.export_and_rename_starting_with (output_config, "output.", "");
+        set_filenames (output_config);
+        if (is_debug ()) {
+          DT_LOG_DEBUG(_logging, "I/O module '" << get_name () << "'  : filenames: ");
+          _filenames_.dump (std::cerr);
+        }
+      }
+      if (a_config.has_flag ("output.preserve_existing")) {
+        set_preserve_existing_output (true);
       }
 
-    if (_rw_mode_ == RW_MODE_INVALID)
-      {
-        if (a_config.has_key ("mode"))
-          {
-            std::string mode = a_config.fetch_string ("mode");
-            if (mode == "output")
-              {
-                // std::cerr << "DEVEL **************** io_module::initialize: output " << std::endl;
-                _rw_mode_ = RW_MODE_OUTPUT;
-              }
-            else if (mode == "input")
-              {
-                // std::cerr << "DEVEL **************** io_module::initialize: input " << std::endl;
-                _rw_mode_ = RW_MODE_INPUT;
-              }
-            else
-              {
-                std::ostringstream message;
-                message << "io_module::initialize: "
-                        << "Module '" << get_name () << "' : invalid mode !";
-                throw std::logic_error (message.str ());
-              }
-          }
+      if (a_config.has_key ("output.max_files")) {
+        _max_files_ = a_config.fetch_integer ("output.max_files");
+        DT_THROW_IF(_max_files_ < 1,
+                    std::logic_error,
+                    "Module '" << get_name () << "' : invalid max number of files !");
       }
 
-    if (_rw_mode_ == RW_MODE_OUTPUT)
-      {
-        // std::cerr << "DEVEL **************** io_module::initialize: output specific... " << std::endl;
-        if (! _filenames_.is_valid ())
-          {
-            datatools::properties output_config;
-            a_config.export_and_rename_starting_with (output_config, "output.", "");
-            set_filenames (output_config);
-            if (is_debug ())
-              {
-                _filenames_.dump (std::cerr);
-              }
-          }
-        if (a_config.has_flag ("output.preserve_existing"))
-          {
-            set_preserve_existing_output (true);
-          }
-
-        if (a_config.has_key ("output.max_files"))
-          {
-            _max_files_ = a_config.fetch_integer ("output.max_files");
-            if (_max_files_ < 1)
-              {
-                std::ostringstream message;
-                message << "io_module::initialize: "
-                        << "Module '" << get_name () << "' : invalid max number of files !";
-                throw std::logic_error (message.str ());
-              }
-          }
-
-        if (a_config.has_key ("output.max_record_total"))
-          {
-            _max_record_total_ = a_config.fetch_integer ("output.max_record_total");
-            if (_max_record_total_ < 1)
-              {
-                std::ostringstream message;
-                message << "io_module::initialize: "
-                        << "Module '" << get_name () << "' : invalid max total number of event record !";
-                throw std::logic_error (message.str ());
-              }
-          }
-
-        if (a_config.has_key ("output.max_record_per_file"))
-          {
-            _max_record_per_file_ = a_config.fetch_integer ("output.max_record_per_file");
-            if (_max_record_per_file_ < 1)
-              {
-                std::ostringstream message;
-                message << "io_module::initialize: "
-                        << "Module '" << get_name () << "' : invalid max number of event record per file !";
-                throw std::logic_error (message.str ());
-              }
-          }
+      if (a_config.has_key ("output.max_record_total")) {
+        _max_record_total_ = a_config.fetch_integer ("output.max_record_total");
+        DT_THROW_IF(_max_record_total_ < 1,
+                    std::logic_error,
+                    "Module '" << get_name () << "' : invalid max total number of data records !");
       }
 
-    if (_rw_mode_ == RW_MODE_INPUT)
-      {
-        if (! _filenames_.is_valid ())
-          {
-            // std::cerr << "DEVEL **************** io_module::initialize: input specific... " << std::endl;
-            datatools::properties input_config;
-            a_config.export_and_rename_starting_with (input_config, "input.", "");
-            set_filenames (input_config);
-            if (is_debug ())
-              {
-                _filenames_.dump (std::cerr);
-              }
-          }
+      if (a_config.has_key ("output.max_record_per_file")) {
+        _max_record_per_file_ = a_config.fetch_integer ("output.max_record_per_file");
+        DT_THROW_IF(_max_record_per_file_ < 1,
+                    std::logic_error,
+                    "I/O module '" << get_name () << "' : invalid max number of data records per file !");
+      }
+    }
 
-        size_t nb_output_files = _filenames_.size ();
+    if (_rw_mode_ == RW_MODE_INPUT) {
+      if (! _filenames_.is_valid ()) {
+        datatools::properties input_config;
+        a_config.export_and_rename_starting_with (input_config, "input.", "");
+        set_filenames (input_config);
+        if (is_debug ()) {
+          DT_LOG_DEBUG(_logging, "I/O module '" << get_name () << "'  : filenames: ");
+          _filenames_.dump (std::cerr);
+        }
+      }
+      size_t nb_output_files = _filenames_.size ();
 
-        if (a_config.has_key ("input.max_files"))
-          {
-            int the_max_files = a_config.fetch_integer ("input.max_files");
-            if (the_max_files < 1)
-              {
-                std::ostringstream message;
-                message << "io_module::initialize: "
-                        << "Module '" << get_name () << "' : invalid max number of files !";
-                throw std::logic_error (message.str ());
-              }
-            set_max_files (the_max_files);
-          }
-
-        if (a_config.has_key ("input.max_record_total"))
-          {
-            int the_max_record_total = a_config.fetch_integer ("input.max_record_total");
-            if (the_max_record_total < 1)
-              {
-                std::ostringstream message;
-                message << "io_module::initialize: "
-                        << "Module '" << get_name () << "' : invalid max total number of event record !";
-                throw std::logic_error (message.str ());
-              }
-            set_max_record_total (the_max_record_total);
-          }
-
-        if (a_config.has_key ("input.max_record_per_file"))
-          {
-            int the_max_record_per_file = a_config.fetch_integer ("input.max_record_per_file");
-            if (the_max_record_per_file < 1)
-              {
-                std::ostringstream message;
-                message << "io_module::initialize: "
-                        << "Module '" << get_name () << "' : invalid max number of event record per file !";
-                throw std::logic_error (message.str ());
-              }
-            set_max_record_per_file (the_max_record_per_file);
-          }
+      if (a_config.has_key ("input.max_files")) {
+        int the_max_files = a_config.fetch_integer ("input.max_files");
+        DT_THROW_IF(the_max_files < 1,
+                    std::logic_error,
+                    "I/O module '" << get_name () << "' : invalid max number of files !");
+        set_max_files (the_max_files);
       }
 
-    if (_Ctx_service_ == 0)
-      {
-        if (a_config.has_key ("Ctx_label"))
-          {
-            _Ctx_label_ = a_config.fetch_string ("Ctx_label");
-          }
-
-        if (! _Ctx_label_.empty ())
-          {
-            if (a_service_manager.has (_Ctx_label_)
-                && a_service_manager.is_a<dpp::context_service> (_Ctx_label_))
-              {
-                dpp::context_service & Ctx
-                  = a_service_manager.get<dpp::context_service> (_Ctx_label_);
-                _Ctx_service_ = &Ctx;
-              }
-            else
-              {
-                std::ostringstream message;
-                message << "dpp::io_module::initialize: "
-                        << "Service manager has no 'context' service labelled with '" << _Ctx_label_ << "' !";
-                std::cerr << datatools::io::warning << message.str () << std::endl;
-                //throw std::logic_error (message.str ());
-              }
-          }
+      if (a_config.has_key ("input.max_record_total")) {
+        int the_max_record_total = a_config.fetch_integer ("input.max_record_total");
+        DT_THROW_IF(the_max_record_total < 1,
+                    std::logic_error,
+                    "I/O module '" << get_name () << "' : invalid max total number of data records !");
+        set_max_record_total (the_max_record_total);
       }
 
-    if (_Ctx_service_ == 0)
-      {
-        std::ostringstream message;
-        message << "dpp::io_module::initialize: "
-                << "Module '" << get_name ()
-                << "' has no access to any 'context' service !";
-        std::cerr << datatools::io::warning << message.str () << std::endl;
-        //throw std::logic_error (message.str ());
+      if (a_config.has_key ("input.max_record_per_file"))  {
+        int the_max_record_per_file = a_config.fetch_integer ("input.max_record_per_file");
+        DT_THROW_IF(the_max_record_per_file < 1,
+                    std::logic_error,
+                    "I/O module '" << get_name () << "' : invalid max number of data records per file !");
+        set_max_record_per_file (the_max_record_per_file);
       }
+    }
+
+    if (_Ctx_service_ == 0) {
+      if (a_config.has_key ("Ctx_label")) {
+        _Ctx_label_ = a_config.fetch_string ("Ctx_label");
+      }
+      if (! _Ctx_label_.empty ()) {
+
+        if (a_service_manager.has (_Ctx_label_)
+            && a_service_manager.is_a<dpp::context_service> (_Ctx_label_)) {
+          dpp::context_service & Ctx
+            = a_service_manager.get<dpp::context_service> (_Ctx_label_);
+          _Ctx_service_ = &Ctx;
+        } else {
+          DT_LOG_ERROR(_logging, "Service manager has no 'context' service labelled with '" << _Ctx_label_ << "' !");
+        }
+      }
+    }
+
+    if (_Ctx_service_ == 0) {
+      DT_LOG_WARNING(_logging, "Module '" << get_name ()
+                     << "' has no access to any 'context' service !");
+    }
 
     /*************************************
      *  end of the initialization step   *
      *************************************/
-
-    // std::cerr << "DEVEL **************** io_module::initialize: _terminated_==" << _terminated_ << std::endl;
 
     // Tag the module as initialized :
     _set_initialized (true);
@@ -447,49 +308,39 @@ namespace dpp {
   }
 
   // Reset :
-  void io_module::reset ()
+  DPP_MODULE_RESET_IMPLEMENT_HEAD(io_module)
   {
-    if (! is_initialized ())
-      {
-        std::ostringstream message;
-        message << "io_module::initialize: "
-                << "Module '" << get_name () << "' is not initialized !";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF(! is_initialized (),
+                std::logic_error,
+                "I/O module '" << get_name () << "' is not initialized !");
 
     /****************************
      *  revert to some defaults *
      ****************************/
 
-    if (is_input ())
-      {
-        if (_source_ != 0)
-          {
-            if (_source_->is_open ())
-              {
-                _source_->close ();
-              }
-            delete _source_;
-            _source_ = 0;
-            _bio_source_ = 0;
-            _brio_source_ = 0;
-          }
+    if (is_input ()) {
+      if (_source_ != 0) {
+        if (_source_->is_open ()) {
+          _source_->close ();
+        }
+        delete _source_;
+        _source_ = 0;
+        _bio_source_ = 0;
+        _brio_source_ = 0;
       }
+    }
 
-    if (is_output ())
-      {
-        if (_sink_ != 0)
-          {
-            if (_sink_->is_open ())
-              {
-                _sink_->close ();
-              }
-            delete _sink_;
-            _sink_ = 0;
-            _bio_sink_ = 0;
-            _brio_sink_ = 0;
-          }
+    if (is_output ()) {
+      if (_sink_ != 0) {
+        if (_sink_->is_open ()) {
+          _sink_->close ();
+        }
+        delete _sink_;
+        _sink_ = 0;
+        _bio_sink_ = 0;
+        _brio_sink_ = 0;
       }
+    }
 
     _filenames_.reset ();
     _set_defaults ();
@@ -504,408 +355,263 @@ namespace dpp {
   }
 
   // Processing :
-  int io_module::process (datatools::things & a_event_record)
+  DPP_MODULE_PROCESS_IMPLEMENT_HEAD(io_module, a_data_record)
   {
-    if (! is_initialized ())
-      {
-        std::ostringstream message;
-        message << "io_module::process: "
-                << "Module '" << get_name () << "' is not initialized !";
-        throw std::logic_error (message.str ());
+    DT_THROW_IF(! is_initialized(),
+                std::logic_error,
+                "I/O module '" << get_name() << "' is not initialized !");
+    if (_rw_mode_ == RW_MODE_INPUT) {
+      return _load(a_data_record);
+    }
+    if (_rw_mode_ == RW_MODE_OUTPUT) {
+      if (! _terminated_) {
+        return _store(a_data_record);
+      } else {
+        return PROCESS_OK;
       }
-
-    if (_rw_mode_ == RW_MODE_INPUT)
-      {
-        // std::cerr << "DEVEL **************** io_module::process: RW_MODE_INPUT " << std::endl;
-        // std::cerr << "DEVEL **************** io_module::process: _terminated_==" << _terminated_ << std::endl;
-        return _load (a_event_record);
-      }
-
-    if (_rw_mode_ == RW_MODE_OUTPUT)
-      {
-        // std::cerr << "DEVEL **************** io_module::process: RW_MODE_OUTPUT " << std::endl;
-        // std::cerr << "DEVEL **************** io_module::process: _terminated_==" << _terminated_ << std::endl;
-        if (! _terminated_)
-          {
-            // std::cerr << "DEVEL **************** io_module::process: invoking '_store' ..." << std::endl;
-            return _store (a_event_record);
-          }
-        else
-          {
-            return OK;
-          }
-      }
-
-    return ERROR;
+    }
+    return PROCESS_ERROR;
   }
 
   int io_module::_load (datatools::things & a_event_record)
   {
-    std::cerr << "DEVEL **************** io_module::_load: Entering..." << std::endl;
-    std::cerr << "DEVEL **************** io_module::_load: _filenames_.size () = " << _filenames_.size () << std::endl;
+    DT_LOG_TRACE(_logging, "Entering...");
+    DT_LOG_TRACE(_logging, "_filenames_.size () = " << _filenames_.size ());
     // attempt to open a source of event records :
     //while ((_bio_source_ == 0) && (_brio_source_ == 0))
-    int load_status = OK;
-    while (_source_ == 0)
-      {
-        _file_record_counter_ = 0;
-        _file_index_++;
-        std::cerr << "DEVEL **************** io_module::_load: _file_index_ = " << _file_index_ << std::endl;
-        if (_file_index_ >= _filenames_.size ())
-          {
-            std::ostringstream message;
-            message << "dpp::io_module::_load: "
-                    << "No more available input data file !";
-            //throw std::logic_error (message.str ());
-            std::cerr << datatools::io::error << message.str () << std::endl;
-            load_status = FATAL;
-            return load_status;
-          }
-        std::string source_label = _filenames_[_file_index_];
-        int mode_guess = 0;
-        bool brio_format = false;
-        namespace ds = datatools;
-        if (brio::store_info::guess_mode_from_filename (source_label, mode_guess)
-            == brio::store_info::SUCCESS)
-          {
-            brio_format = true;
-          }
-        else if (ds::io_factory::guess_mode_from_filename (source_label, mode_guess)
-                 == ds::io_factory::SUCCESS)
-          {
-            brio_format = false;
-          }
-        else
-          {
-            std::ostringstream message;
-            message << "dpp::io_module::_load: "
-                    << "Cannot guess mode for input data file '" << source_label << "'!";
-            //throw std::logic_error (message.str ());
-            std::cerr << datatools::io::error << message.str () << std::endl;
-            load_status = FATAL;
-            return load_status;
-          }
-        uint32_t input_flags = dpp::i_data_source::blank;
-        if (brio_format)
-          {
-            _brio_source_ = new dpp::simple_brio_data_source (source_label, input_flags);
-            _source_ = _brio_source_;
-          }
-        else
-          {
-            _bio_source_ = new dpp::simple_data_source (source_label, input_flags);
-            _source_ = _bio_source_;
-          }
-        if (! _source_->is_open ()) _source_->open ();
-        std::cerr << "DEVEL **************** io_module::_load: "
-                  << "Source is open." << std::endl;
-    // check if we have some records in it :
-        if (! _source_->has_next_record ())
-          {
-            std::cerr << "DEVEL **************** io_module::_load: "
-                      << "NO NEXT RECORD." << std::endl;
-            _source_->reset ();
-            delete _source_;
-            _source_ = 0;
-            _brio_source_ = 0;
-            _bio_source_ = 0;
-          }
+    int load_status = PROCESS_OK;
+    while (_source_ == 0) {
+      _file_record_counter_ = 0;
+      _file_index_++;
+      DT_LOG_TRACE(_logging, "_file_index_ = " << _file_index_);
+      if (_file_index_ >= _filenames_.size ()) {
+        std::ostringstream message;
+        message << "dpp::io_module::_load: "
+                << "No more available input data file !";
+        std::cerr << datatools::io::error << message.str () << std::endl;
+        load_status = PROCESS_FATAL;
+        return load_status;
       }
-
+      std::string source_label = _filenames_[_file_index_];
+      int mode_guess = 0;
+      bool brio_format = false;
+      namespace ds = datatools;
+      if (brio::store_info::guess_mode_from_filename (source_label, mode_guess)
+          == brio::store_info::SUCCESS) {
+        brio_format = true;
+      } else if (ds::io_factory::guess_mode_from_filename (source_label, mode_guess)
+                 == ds::io_factory::SUCCESS) {
+        brio_format = false;
+      } else {
+        std::ostringstream message;
+        message << "dpp::io_module::_load: "
+                << "Cannot guess mode for input data file '" << source_label << "'!";
+        std::cerr << datatools::io::error << message.str () << std::endl;
+        load_status = PROCESS_FATAL;
+        return load_status;
+      }
+      uint32_t input_flags = dpp::i_data_source::blank;
+      if (brio_format) {
+        _brio_source_ = new dpp::simple_brio_data_source (source_label, input_flags);
+        _source_ = _brio_source_;
+      } else {
+        _bio_source_ = new dpp::simple_data_source (source_label, input_flags);
+        _source_ = _bio_source_;
+      }
+      if (! _source_->is_open ()) _source_->open ();
+      DT_LOG_TRACE(_logging, "Source is open.");
+      // check if we have some records in it :
+      if (! _source_->has_next_record ()) {
+        DT_LOG_TRACE(_logging, "NO NEXT RECORD.");
+        _source_->reset ();
+        delete _source_;
+        _source_ = 0;
+        _brio_source_ = 0;
+        _bio_source_ = 0;
+      }
+    }
     // force loading of the current event record :
     bool load_it = true;
-
     // load action :
-    if (load_it)
-      {
-        // Check if
-        if ((a_event_record.size () > 0))
-          {
-            load_status = ERROR;
-            return load_status;
-          }
-        a_event_record.clear ();
-        if (_source_ != 0)
-          {
-            if (! _source_->has_next_record ())
-              {
-                std::ostringstream message;
-                message << "dpp::io_module::_load: "
-                        << "No more available event record ! This is a bug !";
-                throw std::logic_error (message.str ());
-                /*
-                  std::cerr << datatools::io::error << message.str () << std::endl;
-                  load_status = FATAL;
-                  return load_status;
-                */
-              }
-            _source_->load_next_record (a_event_record);
-            _file_record_counter_++;
-            _record_counter_++;
-          }
-        else
-          {
-            std::ostringstream message;
-            message << "dpp::io_module::_load: "
-                    << "No available data source ! This is a bug !";
-            throw std::logic_error (message.str ());
-            /*
-              load_status = FATAL;
-              return load_status;
-            */
-          }
+    if (load_it) {
+      // Check if
+      if ((a_event_record.size () > 0)) {
+        load_status = PROCESS_ERROR;
+        return load_status;
       }
-
+      a_event_record.clear ();
+      DT_THROW_IF(_source_ == 0,
+                  std::logic_error,
+                  "No available data source ! This is a bug !");
+      DT_THROW_IF(! _source_->has_next_record (),
+                  std::logic_error,
+                  "No more available event record ! This is a bug !");
+      _source_->load_next_record (a_event_record);
+      _file_record_counter_++;
+      _record_counter_++;
+    }
     bool stop_file   = false;
     bool stop_input = false;
-
-    if (_max_record_total_ > 0)
-      {
-        if (_record_counter_ >= _max_record_total_)
-          {
-            stop_input = true;
-            stop_file   = true;
-            std::ostringstream message;
-            message << "dpp::io_module::_load: "
-                    << "Module '" << get_name () << "' has reached the maximum number of records from the input data source (" << _max_record_total_ << ") !";
-            std::clog << datatools::io::notice << message.str () << std::endl;
-            //load_status = ERROR;
-          }
+    if (_max_record_total_ > 0) {
+      if (_record_counter_ >= _max_record_total_) {
+        stop_input = true;
+        stop_file   = true;
+        DT_LOG_NOTICE(_logging,
+                      "Module '" << get_name () << "' has reached the maximum number "
+                      << "of data records from the input data source (" << _max_record_total_ << ") !");
       }
-
-    if (_max_record_per_file_ > 0)
-      {
-        if (_file_record_counter_ >= _max_record_per_file_)
-          {
-            stop_file = true;
-            std::ostringstream message;
-            message << "dpp::io_module::_load: "
-                    << "Module '" << get_name () << "' has reached the maximum number of records from the current input file (" << _max_record_per_file_ << ") !";
-            std::clog << datatools::io::notice << message.str () << std::endl;
-          }
-      }
-
-    // check the end of the input file :
-    if ((_source_ != 0) && (! _source_->has_next_record ()))
-      {
+    }
+    if (_max_record_per_file_ > 0) {
+      if (_file_record_counter_ >= _max_record_per_file_) {
         stop_file = true;
+        std::ostringstream message;
+        DT_LOG_NOTICE(_logging,
+                      "Module '" << get_name () << "' has reached the maximum number "
+                      << "of records from the current input file (" << _max_record_per_file_ << ") !");
       }
-
+    }
+    // check the end of the input file :
+    if ((_source_ != 0) && (! _source_->has_next_record ())) {
+      stop_file = true;
+    }
     // manage the end of the input file :
-    if (stop_file)
-      {
-        if (_source_ != 0)
-          {
-            _source_->reset ();
-            delete _source_;
-            _source_ = 0;
-            _brio_source_ = 0;
-            _bio_source_ = 0;
-          }
-        _file_record_counter_ = 0;
-        int effective_max_files = _max_files_;
-        if (_max_files_ < 0)
-          {
-            if (_filenames_.is_ranged())
-              {
-                effective_max_files = _filenames_.size ();
-              }
-          }
-        if (effective_max_files > 0)
-          {
-            if ((_file_index_ + 1) >= effective_max_files)
-              {
-                stop_input = true;
-                std::ostringstream message;
-                message << "dpp::io_module::_load: "
-                        << "Module '" << get_name () 
-                        << "' has reached the requested maximum number of input file(s) ("
-                        << effective_max_files << ") !";
-                std::clog << datatools::io::notice << message.str () << std::endl;
-              }
-          }
-        if ((_file_index_ + 1) >= _filenames_.size ())
-          {
-            std::ostringstream message;
-            message << "dpp::io_module::_load: "
-                    << "Module '" << get_name () 
-                    << "' has loaded the last available input file (total is "
-                    << _filenames_.size () << " file" << (_filenames_.size ()>1?"":"s") << ")!";
-            std::clog << datatools::io::notice << message.str () << std::endl;
-            stop_input = true;
-          }
+    if (stop_file) {
+      if (_source_ != 0) {
+        _source_->reset ();
+        delete _source_;
+        _source_ = 0;
+        _brio_source_ = 0;
+        _bio_source_ = 0;
       }
-
-    if (stop_input)
-      {
-        _terminated_ = true;
+      _file_record_counter_ = 0;
+      int effective_max_files = _max_files_;
+      if (_max_files_ < 0) {
+        if (_filenames_.is_ranged()) {
+          effective_max_files = _filenames_.size ();
+        }
       }
-
-    // std::cerr << "DEVEL **************** io_module::_load: Exiting." << std::endl;
+      if (effective_max_files > 0) {
+        if ((_file_index_ + 1) >= effective_max_files) {
+          stop_input = true;
+          DT_LOG_NOTICE(_logging,
+                        "Module '" << get_name () << "' has reached the requested maximum number of input file(s) ("
+                        << effective_max_files << ") !");
+        }
+      }
+      if ((_file_index_ + 1) >= _filenames_.size ()) {
+        stop_input = true;
+        std::ostringstream message;
+        DT_LOG_NOTICE(_logging,
+                      "Module '" << get_name () << "' has loaded the last available input file (total is "
+                      << _filenames_.size () << " file" << (_filenames_.size ()>1?"":"s") << ")!");
+      }
+    }
+    if (stop_input) {
+      _terminated_ = true;
+    }
     return load_status;
   }
 
   int io_module::_store (const datatools::things & a_event_record)
   {
-    int store_status = OK;
-    // std::cerr << "DEVEL **************** io_module::_store: Entering..." << std::endl;
-    // std::cerr << "DEVEL **************** io_module::_store: _sink_ @ " << _sink_<< std::endl;
-    if (_sink_ == 0)
-      {
-        // std::cerr << "DEVEL **************** io_module::_store: No sink !!!" << std::endl;
-        _file_index_++;
-        // std::cerr << "DEVEL **************** io_module::_store: _file_index_=" << _file_index_ << std::endl;
-        // std::cerr << "DEVEL **************** io_module::_store: _filenames_.size=" << _filenames_.size () << std::endl;
-        if (_file_index_ >= _filenames_.size ())
-          {
-            store_status = FATAL;
-            return store_status;
-          }
-        std::string sink_label = _filenames_[_file_index_];
-        // std::cerr << "DEVEL **************** io_module::_store: sink_label=" << sink_label << std::endl;
-        int mode_guess;
-        bool brio_format = false;
-        namespace ds = datatools;
-        if (brio::store_info::guess_mode_from_filename (sink_label, mode_guess)
-            == brio::store_info::SUCCESS)
-          {
-            brio_format = true;
-          }
-        else if (ds::io_factory::guess_mode_from_filename (sink_label, mode_guess)
-                 == ds::io_factory::SUCCESS)
-          {
-            brio_format = false;
-          }
-        else
-          {
-            std::ostringstream message;
-            message << "dpp::io_module::_store: "
-                    << "Cannot guess mode for output data file '" << sink_label << "'!";
-            //throw std::logic_error (message.str ());
-            std::cerr << datatools::io::error << message.str () << std::endl;
-            store_status = FATAL;
-            return store_status;
-          }
-        uint32_t output_flags = dpp::i_data_sink::blank;
-        if (_preserve_existing_output_)
-          {
-            output_flags |= dpp::i_data_sink::preserve_existing_sink;
-          }
-        if (brio_format)
-          {
-            _brio_sink_ = new dpp::simple_brio_data_sink (sink_label, output_flags);
-            _sink_ = _brio_sink_;
-          }
-        else
-          {
-            _bio_sink_ = new dpp::simple_data_sink (sink_label, output_flags);
-            _sink_ = _bio_sink_;
-          }
-        if (! _sink_->is_open ()) _sink_->open ();
-        // std::cerr << "DEVEL **************** io_module::_store: new _sink_ @ " << _sink_<< std::endl;
-        _file_record_counter_ = 0;
+    int store_status = PROCESS_OK;
+    if (_sink_ == 0) {
+      _file_index_++;
+      if (_file_index_ >= _filenames_.size ()) {
+        store_status = PROCESS_FATAL;
+        return store_status;
       }
-
-    // force storage of the current event record :
+      std::string sink_label = _filenames_[_file_index_];
+      int mode_guess;
+      bool brio_format = false;
+      namespace ds = datatools;
+      if (brio::store_info::guess_mode_from_filename (sink_label, mode_guess)
+          == brio::store_info::SUCCESS) {
+        brio_format = true;
+      } else if (ds::io_factory::guess_mode_from_filename (sink_label, mode_guess)
+                 == ds::io_factory::SUCCESS) {
+        brio_format = false;
+      } else {
+        DT_LOG_FATAL(_logging, "Cannot guess mode for output data file '" << sink_label << "'!");
+        store_status = PROCESS_FATAL;
+        return store_status;
+      }
+      uint32_t output_flags = dpp::i_data_sink::blank;
+      if (_preserve_existing_output_) {
+        output_flags |= dpp::i_data_sink::preserve_existing_sink;
+      }
+      if (brio_format) {
+        _brio_sink_ = new dpp::simple_brio_data_sink (sink_label, output_flags);
+        _sink_ = _brio_sink_;
+      } else {
+        _bio_sink_ = new dpp::simple_data_sink (sink_label, output_flags);
+        _sink_ = _bio_sink_;
+      }
+      if (! _sink_->is_open ()) _sink_->open ();
+      _file_record_counter_ = 0;
+    }
+    // force storage of the current data record :
     bool store_it = true;
-
     // store action :
-    if (store_it)
-      {
-        // std::cerr << "DEVEL **************** io_module::_store: store_it " << std::endl;
-        if (_sink_ != 0)
-          {
-            // std::cerr << "DEVEL **************** io_module::_store: store_next_record " << std::endl;
-            bool ok = _sink_->store_next_record (a_event_record);
-            if (! ok)
-              {
-                std::ostringstream message;
-                message << "dpp::io_module::_store: "
-                        << "Cannot store the event record ! This is a bug !";
-                std::cerr << datatools::io::error << message.str () << std::endl;
-                store_status = FATAL;
-                return store_status;
-              }
-            _file_record_counter_++;
-            _record_counter_++;
-          }
-        else
-          {
-            std::ostringstream message;
-            message << "dpp::io_module::_store: "
-                    << "No available data sink ! This is a bug !";
-            std::cerr << datatools::io::error << message.str () << std::endl;
-            store_status = FATAL;
-            return store_status;
-          }
+    if (store_it) {
+      if (_sink_ != 0) {
+        bool ok = _sink_->store_next_record (a_event_record);
+        if (! ok) {
+          DT_LOG_ERROR(_logging, "Cannot store the data record ! This is a bug !");
+          store_status = PROCESS_FATAL;
+          return store_status;
+        }
+        _file_record_counter_++;
+        _record_counter_++;
+      } else {
+        DT_LOG_ERROR(_logging, "No available data sink ! This is a bug !");
+        store_status = PROCESS_FATAL;
+        return store_status;
       }
+    }
 
     bool stop_file   = false;
     bool stop_output = false;
-
-    if (_max_record_total_ > 0)
-      {
-        if (_record_counter_ >= _max_record_total_)
-          {
-            stop_output = true;
-            stop_file   = true;
-            std::ostringstream message;
-            message << "dpp::io_module::_store: "
-                    << "Module '" << get_name () << "' has reached the maximum number of records stored in the output data source (" << _max_record_total_ << ") !";
-            std::clog << datatools::io::notice << message.str () << std::endl;
-          }
+    if (_max_record_total_ > 0) {
+      if (_record_counter_ >= _max_record_total_) {
+        stop_output = true;
+        stop_file   = true;
+        DT_LOG_NOTICE(_logging, "Module '" << get_name () << "' has reached the maximum number "
+                      << "of records stored in the output data source (" << _max_record_total_ << ") !");
       }
-
-    if (_max_record_per_file_ > 0)
-      {
-        if (_file_record_counter_ >= _max_record_per_file_)
-          {
-            stop_file = true;
-            std::ostringstream message;
-            message << "dpp::io_module::_store: "
-                    << "Module '" << get_name () << "' has reached the maximum number of records to be stored in the current output file (" << _max_record_per_file_ << ") !";
-            std::clog << datatools::io::notice << message.str () << std::endl;
-          }
+    }
+    if (_max_record_per_file_ > 0) {
+      if (_file_record_counter_ >= _max_record_per_file_) {
+        stop_file = true;
+        DT_LOG_NOTICE(_logging, "Module '" << get_name () << "' has reached the maximum number "
+                      << "of records to be stored in the current output file (" << _max_record_per_file_ << ") !");
       }
-
-    if (stop_file)
-      {
-        if (_sink_ != 0)
-          {
-            _sink_->reset ();
-            delete _sink_;
-            _sink_ = 0;
-            _brio_sink_ = 0;
-            _bio_sink_ = 0;
-          }
-        _file_record_counter_ = 0;
-        if (_max_files_ > 0)
-          {
-            if ((_file_index_ + 1) >= _max_files_)
-              {
-                stop_output = true;
-                std::ostringstream message;
-                message << "dpp::io_module::_store: "
-                        << "Module '" << get_name () << "' has reached the requested maximum number of output files (" << _max_files_ << ") !";
-                std::clog << datatools::io::notice << message.str () << std::endl;
-              }
-          }
-        if ((_file_index_ + 1) >= _filenames_.size ())
-          {
-            stop_output = true;
-            std::ostringstream message;
-            message << "dpp::io_module::_store: "
-                    << "Module '" << get_name () << "' has filled the last requested output file (total is " << _filenames_.size () << " files)!";
-            std::clog << datatools::io::notice << message.str () << std::endl;
-          }
+    }
+    if (stop_file) {
+      if (_sink_ != 0) {
+        _sink_->reset ();
+        delete _sink_;
+        _sink_ = 0;
+        _brio_sink_ = 0;
+        _bio_sink_ = 0;
       }
-
-    if (stop_output)
-      {
-        _terminated_ = true;
+      _file_record_counter_ = 0;
+      if (_max_files_ > 0) {
+        if ((_file_index_ + 1) >= _max_files_) {
+          stop_output = true;
+          DT_LOG_NOTICE(_logging, "Module '" << get_name () << "' has reached the requested maximum number "
+                        << "of output files (" << _max_files_ << ") !");
+        }
       }
-
-    // std::cerr << "DEVEL **************** io_module::_store: Exiting." << std::endl;
+      if ((_file_index_ + 1) >= _filenames_.size ()) {
+        stop_output = true;
+        DT_LOG_NOTICE(_logging, "Module '" << get_name () << "' has filled the last requested "
+                      << "output file (total is " << _filenames_.size () << " files) !");
+      }
+    }
+    if (stop_output) {
+      _terminated_ = true;
+    }
     return store_status;
   }
 
@@ -914,65 +620,63 @@ namespace dpp {
                              const std::string & a_indent,
                              bool a_inherit) const
   {
-    namespace du = datatools;
     this->base_module::tree_dump (a_out, a_title, a_indent, is_initialized ());
-    if (! is_initialized ())
-      {
-        return;
-      }
+    if (! is_initialized ()) {
+      return;
+    }
     std::string indent;
     if (! a_indent.empty ())
       {
         indent = a_indent;
       }
-    a_out << indent << du::i_tree_dumpable::tag
+    a_out << indent << datatools::i_tree_dumpable::tag
           << "R/W mode              : " << _rw_mode_ << " ";
     if (is_input ()) a_out << "(input)";
     else if (is_output ()) a_out << "(output)";
     a_out << std::endl;
 
-    if (is_output ())
-      {
-        a_out << indent << du::i_tree_dumpable::tag
-              << "Preserve existing output : " << _preserve_existing_output_ << std::endl;
-      }
+    if (is_output ()) {
+      a_out << indent << datatools::i_tree_dumpable::tag
+            << "Preserve existing output : " << _preserve_existing_output_ << std::endl;
+    }
 
-    a_out << indent << du::i_tree_dumpable::tag
+    a_out << indent << datatools::i_tree_dumpable::tag
           << "Max record per file   : " << _max_record_per_file_ << std::endl;
 
-    a_out << indent << du::i_tree_dumpable::tag
+    a_out << indent << datatools::i_tree_dumpable::tag
           << "Max record total      : " << _max_record_total_ << std::endl;
 
-    a_out << indent << du::i_tree_dumpable::tag
+    a_out << indent << datatools::i_tree_dumpable::tag
           << "Max files             : " << _max_files_ << std::endl;
 
-    a_out << indent << du::i_tree_dumpable::tag
+    a_out << indent << datatools::i_tree_dumpable::tag
           << "Terminated            : " << _terminated_ << std::endl;
-    a_out << indent << du::i_tree_dumpable::tag
-          << "Current file record counter   : " << _file_record_counter_ << std::endl;
-    a_out << indent << du::i_tree_dumpable::tag
-          << "Current record counter        : " << _record_counter_ << std::endl;
-    a_out << indent << du::i_tree_dumpable::tag
-          << "Current file index            : " << _file_index_ << std::endl;
-    if (is_input ())
-      {
-        a_out << indent << du::i_tree_dumpable::tag
-              << "Source : " << _source_
-              << " (bio @ " << _bio_source_
-              << ", brio @ " << _brio_source_ << ')' << std::endl;
-      }
-    if (is_output ())
-      {
-        a_out << indent << du::i_tree_dumpable::tag
-              << "Sink : " << _sink_ << " (bio @ " << _bio_sink_ << ", brio @ " << _brio_sink_ << ')' << std::endl;
-      }
 
-    a_out << indent << du::i_tree_dumpable::tag
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Current file record counter   : " << _file_record_counter_ << std::endl;
+
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Current record counter        : " << _record_counter_ << std::endl;
+
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Current file index            : " << _file_index_ << std::endl;
+
+    if (is_input ()) {
+      a_out << indent << datatools::i_tree_dumpable::tag
+            << "Source : " << _source_
+            << " (bio @ " << _bio_source_
+            << ", brio @ " << _brio_source_ << ')' << std::endl;
+    }
+    if (is_output ()) {
+      a_out << indent << datatools::i_tree_dumpable::tag
+            << "Sink : " << _sink_ << " (bio @ " << _bio_sink_ << ", brio @ " << _brio_sink_ << ')' << std::endl;
+    }
+
+    a_out << indent << datatools::i_tree_dumpable::tag
           << "Context service label : '" << _Ctx_label_ << "'" << std::endl;
 
-    a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)
+    a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
           << "Context service @ " << _Ctx_service_ << std::endl;
-
 
     return;
   }

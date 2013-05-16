@@ -2,7 +2,7 @@
 /* utils_module.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2011-01-09
- * Last modified: 2013-02-18
+ * Last modified: 2013-05-15
  *
  * License:
  *
@@ -29,18 +29,19 @@
 namespace dpp {
 
   /// \brief A data processing module for automated utility operations (bank removal)
-  class utils_module : public base_module
-  //  DPP_MODULE_CLASS_DECLARE(utils_module)
+  DPP_MODULE_CLASS_DECLARE(utils_module)
   {
   public:
 
-    /// Constructor
-    utils_module (int a_debug_level = 0);
+    DPP_MODULE_INTERFACE_CTOR_DTOR(utils_module);
 
-    /// Destructor
-    virtual ~utils_module ();
-
-    DPP_MODULE_INTERFACE ();
+    enum mode_type {
+      MODE_INVALID         = 0, //!< Undefined mode
+      MODE_CLEAR           = 0x1, //!< Clear all banks mode
+      MODE_REMOVE_ONE_TYPED_BANK = 0x2, //!< Remove one single bank, optionaly with a given type (serial tag)
+      MODE_REMOVE_BANKS    = 0x4, //!< Remove several banks by label (name)
+      MODE_ADD_PROPERTY    = 0x8, //!< Add a property in a bank
+    };
 
   protected:
 
@@ -59,20 +60,9 @@ namespace dpp {
     /// Special method to add some property in a 'datatools::properties' bank
     void _process_add_property (datatools::things & a_event_record);
 
-
-  public:
-
-    enum mode_type {
-      MODE_INVALID         = 0, //!< Undefined mode
-      MODE_CLEAR           = 0x1, //!< Clear all banks mode
-      MODE_REMOVE_ONE_TYPED_BANK = 0x2, //!< Remove one single bank, optionaly with a given type (serial tag)
-      MODE_REMOVE_BANKS    = 0x4, //!< Remove several banks by label (name)
-      MODE_ADD_PROPERTY    = 0x8, //!< Add a property in a bank
-    };
-
   private:
 
-    uint32_t                 _mode_; //!< Processing mode
+    mode_type                _mode_; //!< Processing mode
     std::string              _remove_one_typed_bank_label_; //!< Labels of (optionnaly typed) bank to be removed
     std::string              _remove_one_typed_bank_type_;  //!< Type (serial tag) of the bank to be removed
     std::vector<std::string> _remove_bank_labels_; //!< Labels of the banks to be removed

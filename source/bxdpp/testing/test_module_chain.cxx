@@ -2,11 +2,11 @@
  * Author (s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-25
  * Last modified : 2013-02-15
- * 
+ *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
- * Description: 
- * 
+ *
+ * Description:
+ *
  *  A program that performs event record processing.
  *
  * Usage:
@@ -54,8 +54,8 @@ int main (int argc_, char ** argv_)
 
   try
     {
-      std::clog << "The event record processing test program." << std::endl; 
-  
+      std::clog << "The event record processing test program." << std::endl;
+
       bool   debug;
       bool   verbose;
       int    max_number_of_events;
@@ -70,45 +70,45 @@ int main (int argc_, char ** argv_)
       po::options_description opts ("Allowed options");
       opts.add_options ()
         ("help,h", "produce help message")
-        ("debug,d", 
-         po::value<bool> (&debug)->default_value (false), 
+        ("debug,d",
+         po::value<bool> (&debug)->default_value (false),
          "produce debug message")
-        ("verbose,v", 
-         po::value<bool> (&verbose)->default_value (false), 
+        ("verbose,v",
+         po::value<bool> (&verbose)->default_value (false),
          "produce verbose message")
-        ("modulo,m", 
-         po::value<int> (&print_modulo)->default_value (10), 
+        ("modulo,m",
+         po::value<int> (&print_modulo)->default_value (10),
          "set the modulo event print period")
-        ("max-number-of-events,n", 
-         po::value<int> (&max_number_of_events)->default_value (-1), 
+        ("max-number-of-events,n",
+         po::value<int> (&max_number_of_events)->default_value (-1),
          "maximum number of processed events")
-        ("module-name,m", 
-         po::value<std::string> (), 
+        ("module-name,m",
+         po::value<std::string> (),
          "set the name of the data processing module")
-        ("manager-config,c", 
-         po::value<std::string> (), 
+        ("manager-config,c",
+         po::value<std::string> (),
          "set the module manager configuration file")
-        ("input-file,i", 
-         po::value< std::vector<std::string> > (), 
+        ("input-file,i",
+         po::value< std::vector<std::string> > (),
          "set an input file")
-        ("output-file,o", 
-         po::value<std::string> (), 
+        ("output-file,o",
+         po::value<std::string> (),
          "set the output file")
         ("load-dll,l",
          po::value<std::vector<std::string> > (),
          "set a DLL to be loaded.")
         ;
-     
+
       po::positional_options_description args;
-      args.add ("input-file", -1);        
+      args.add ("input-file", -1);
 
       po::variables_map vm;
       po::store (po::command_line_parser (argc_, argv_)
                  .options (opts)
                  .positional (args)
-                 .run (), 
+                 .run (),
                  vm);
-      po::notify (vm);  
+      po::notify (vm);
 
       if (vm.count ("load-dll"))
         {
@@ -130,22 +130,22 @@ int main (int argc_, char ** argv_)
             }
         }
 
-      if (vm.count ("help")) 
+      if (vm.count ("help"))
         {
           std::cout << opts << "\n";
           return 1;
         }
 
-      if (vm.count ("max-events")) 
+      if (vm.count ("max-events"))
         {
           max_number_of_events = vm["max-events"].as<int> ();
-          std::clog << "Maximum number of processed events set to " 
+          std::clog << "Maximum number of processed events set to "
                     << max_number_of_events << ".\n";
-        } 
+        }
 
       if (vm.count ("input-file"))
-        {     
-          input_files = vm["input-file"].as< std::vector<std::string> > (); 
+        {
+          input_files = vm["input-file"].as< std::vector<std::string> > ();
           std::clog << "Input files are : \n";
           BOOST_FOREACH (const std::string & file_name, input_files)
             {
@@ -158,15 +158,15 @@ int main (int argc_, char ** argv_)
         }
 
       if (vm.count ("output-file"))
-        {     
-          output_file = vm["output-file"].as<std::string> (); 
+        {
+          output_file = vm["output-file"].as<std::string> ();
           std::clog << "Output file is : " << output_file << ".\n";
         }
 
       if (vm.count ("module-name"))
-        {     
-          module_name = vm["module-name"].as<std::string> (); 
-          std::clog << datatools::io::notice << "Using processor module '" 
+        {
+          module_name = vm["module-name"].as<std::string> ();
+          std::clog << datatools::io::notice << "Using processor module '"
                     << module_name << "'." << std::endl;
         }
       else
@@ -177,9 +177,9 @@ int main (int argc_, char ** argv_)
         }
 
       if (vm.count ("manager-config"))
-        {     
-          mgr_config = vm["manager-config"].as<std::string> (); 
-          std::clog << datatools::io::notice << "Using module manager configuration file '" 
+        {
+          mgr_config = vm["manager-config"].as<std::string> ();
+          std::clog << datatools::io::notice << "Using module manager configuration file '"
                     << mgr_config << "'." << std::endl;
         }
       else
@@ -188,7 +188,7 @@ int main (int argc_, char ** argv_)
           message << "Missing module manager configuration file !";
           throw std::logic_error (message.str ());
         }
-      
+
       if (print_modulo < 0)
         {
           print_modulo = 0;
@@ -197,34 +197,34 @@ int main (int argc_, char ** argv_)
       DATATOOLS_FACTORY_GET_SYSTEM_REGISTER (datatools::base_service).print (std::clog);
 
       // Module manager :
-      uint32_t flags = dpp::module_manager::BLANK;     
+      uint32_t flags = dpp::module_manager::BLANK;
       if (debug)
         {
-          flags |= dpp::module_manager::DEBUG;     
-          flags |= dpp::module_manager::FACTORY_DEBUG;     
+          flags |= dpp::module_manager::DEBUG;
+          flags |= dpp::module_manager::FACTORY_DEBUG;
         }
       if (verbose)
         {
-          flags |= dpp::module_manager::VERBOSE;     
+          flags |= dpp::module_manager::VERBOSE;
         }
       dpp::module_manager MM (flags);
 
       // Load properties from the configuration file:
       if (mgr_config.empty ())
-        { 
+        {
           std::ostringstream message;
           message << "Missing module manager configuration file !";
           throw std::logic_error (message.str ());
         }
-      std::string MM_config_file = mgr_config;   
+      std::string MM_config_file = mgr_config;
       datatools::fetch_path_with_env (MM_config_file);
-      std::clog << "Manager config. file : '" << MM_config_file << "'" << std::endl; 
+      std::clog << "Manager config. file : '" << MM_config_file << "'" << std::endl;
       datatools::properties MM_config;
-      datatools::properties::read_config (MM_config_file, MM_config);      
+      datatools::properties::read_config (MM_config_file, MM_config);
       MM.initialize (MM_config);
       if (debug) MM.tree_dump (std::clog, "Module manager (initialized) : ", "DEBUG: ");
 
-      std::clog << "Module to be used : '" << module_name << "'" << std::endl; 
+      std::clog << "Module to be used : '" << module_name << "'" << std::endl;
       if (! MM.has (module_name))
         {
           std::ostringstream message;
@@ -233,23 +233,23 @@ int main (int argc_, char ** argv_)
         }
       else
         {
-          std::clog << "Found module named '" << module_name << "' !" << std::endl; 
+          std::clog << "Found module named '" << module_name << "' !" << std::endl;
         }
       dpp::base_module & the_module = MM.grab (module_name);
       if (debug) the_module.tree_dump (std::clog, "The active module : ", "DEBUG: ");
 
-      // Setup the data output sink :   
+      // Setup the data output sink :
       boost::scoped_ptr<dpp::simple_data_sink> sink;
       if (! output_file.empty ())
         {
           sink.reset (new dpp::simple_data_sink (output_file));
         }
- 
+
       // Loop on the data source files :
       int data_counter = 0;
       BOOST_FOREACH (const std::string & source_label, input_files)
         {
-          if (debug) std::clog << datatools::io::notice 
+          if (debug) std::clog << datatools::io::notice
                                << "Using data source '" << source_label << "'..." << std::endl;
           uint32_t input_flags;
           if (debug)
@@ -259,21 +259,21 @@ int main (int argc_, char ** argv_)
           dpp::simple_data_source source (source_label, input_flags);
 
           // Loop on the event records from the data source file :
-          if (debug) std::clog << datatools::io::debug 
+          if (debug) std::clog << datatools::io::debug
                                << "Entering event record loop..." << std::endl;
           while (source.has_next_record ())
-            {             
+            {
               datatools::things DR;
-              if (debug) std::clog << datatools::io::debug 
+              if (debug) std::clog << datatools::io::debug
                                    << "Loading next event record..." << std::endl;
               source.load_next_record (DR);
-              if (debug) std::clog << datatools::io::debug 
+              if (debug) std::clog << datatools::io::debug
                                    << "Processing the event record..." << std::endl;
               int status = the_module.process (DR);
-              if (status & dpp::base_module::ERROR)
-                { 
+              if (status & dpp::PROCESS_ERROR)
+                {
                   std::cerr << datatools::io::error
-                            << "Error at processing event record #" 
+                            << "Error at processing event record #"
                             <<  data_counter << std::endl;
                 }
               if (debug) DR.tree_dump (std::clog, "Event record :", "DEBUG: ");
@@ -290,24 +290,24 @@ int main (int argc_, char ** argv_)
               if ( (max_number_of_events > 0) && (data_counter == max_number_of_events))
                 {
                   break;
-                } 
+                }
             }
-          if (debug) std::clog << datatools::io::debug 
+          if (debug) std::clog << datatools::io::debug
                                << "Exiting event record loop." << std::endl;
         } // BOOST_FOREACH
 
       // Terminate the module manager :
-      MM.reset ();    
+      MM.reset ();
 
     }
   catch (std::exception & x)
     {
-      std::cerr << "error: " << x.what () << std::endl; 
+      std::cerr << "error: " << x.what () << std::endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      std::cerr << "error: " << "unexpected error !" << std::endl; 
+      std::cerr << "error: " << "unexpected error !" << std::endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);

@@ -71,44 +71,27 @@ namespace dpp {
   /*** Implementation of the interface ***/
 
   // Constructor :
-  dummy_module::dummy_module (int a_debug_level)
-    : base_module ("dpp::dummy_module",
-                   "An data record processor dummy module",
-                   "0.1",
-                   a_debug_level)
+  DPP_MODULE_CONSTRUCTOR_IMPLEMENT_HEAD(dummy_module,logging_priority_)
   {
-    _flag_name_    = UNINITIALIZED_LABEL;
-    _GP_label_ = "GP"; // default value
+    _flag_name_ = UNINITIALIZED_LABEL;
+    _GP_label_  = DEFAULT_GP_LABEL;
     return;
   }
 
   // Destructor :
-  dummy_module::~dummy_module ()
-  {
-    // Make sure all internal resources are terminated
-    // before destruction :
-    if (is_initialized ()) reset ();
-    return;
-  }
+  DPP_MODULE_DEFAULT_DESTRUCTOR_IMPLEMENT(dummy_module)
 
   // Initialization :
-  void dummy_module::initialize (const datatools::properties & a_config,
-                                 datatools::service_manager & a_service_manager,
-                                 module_handle_dict_type & a_module_dict)
+  DPP_MODULE_INITIALIZE_IMPLEMENT_HEAD(dummy_module,
+                                       a_config,
+                                       a_service_manager,
+                                       a_module_dict)
   {
-    if (is_initialized ()) {
-      std::ostringstream message;
-      message << "dummy_module::initialize: "
-              << "Module '" << get_name () << "' is already initialized ! ";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF(is_initialized (),
+                std::logic_error,
+                "Module '" << get_name () << "' is already initialized ! ");
 
-    // Note: is_debug and set_debug are inherited from the base class.
-    if (! is_debug ()) {
-      if (a_config.has_flag ("debug")) {
-        set_debug (true);
-      }
-    }
+    _common_initialize(a_config);
 
     if (_flag_name_ == UNINITIALIZED_LABEL) {
       // If the label is no setup, pickup from the configuration list:
@@ -136,31 +119,23 @@ namespace dpp {
   }
 
   // Reset :
-  void dummy_module::reset ()
+  DPP_MODULE_RESET_IMPLEMENT_HEAD(dummy_module)
   {
-    if (! is_initialized ()) {
-      std::ostringstream message;
-      message << "dpp::dummy_module::reset: "
-              << "Module '" << get_name () << "' is not initialized !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF(! is_initialized (),
+                std::logic_error,
+                "Module '" << get_name () << "' is not initialized !");
     _set_initialized (false);
-
-    _flag_name_ = "";
+    _flag_name_.clear();
     _GP_label_ = DEFAULT_GP_LABEL;
-
     return;
   }
 
   // Processing :
-  int dummy_module::process (datatools::things & the_data_record)
+  DPP_MODULE_PROCESS_IMPLEMENT_HEAD(dummy_module,the_data_record)
   {
-    if (! is_initialized ()) {
-      std::ostringstream message;
-      message << "dpp::dummy_module::process: "
-              << "Module '" << get_name () << "' is not initialized !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF(! is_initialized (),
+                std::logic_error,
+                "Module '" << get_name () << "' is not initialized !");
 
     // If no GP bank is present, add one :
     if (! the_data_record.has (_GP_label_)) {
@@ -174,32 +149,17 @@ namespace dpp {
       // Find the GP bank :
       datatools::properties & the_gp_bank
         = the_data_record.grab<datatools::properties> (_GP_label_);
-      if (is_debug ()) {
-        std::clog << datatools::io::debug
-                  << "dpp::dummy_module::process: "
-                  << "Found the '" << _GP_label_ << "' bank !"
-                  << std::endl;
-      }
-      // Add a boolean property with value '_flag_name_' :
-      if (is_debug ()) {
-        std::clog << datatools::io::debug
-                  << "dpp::dummy_module::process: "
-                  << "Adding the '" << _flag_name_ << "' flag property..."
-                  << std::endl;
-      }
+      DT_LOG_DEBUG(_logging, "Found the '" << _GP_label_ << "' bank !");
+      DT_LOG_DEBUG(_logging, "Adding the '" << _flag_name_ << "' flag property...");
       std::string key = _flag_name_;
       int count = 0;
       the_gp_bank.update_flag (key);
+    } else {
+      DT_LOG_CRITICAL(_logging, "Could not find any GP bank !");
+      return PROCESS_ERROR; // Cannot find the event header
+
     }
-    else {
-      std::clog << datatools::io::error
-                << "dpp::dummy_module::process: "
-                << "Could not find any GP bank !"
-                << std::endl;
-      // Cannot find the event header :
-      return ERROR;
-    }
-    return SUCCESS;
+    return PROCESS_SUCCESS;
   }
 
 }  // end of namespace dpp

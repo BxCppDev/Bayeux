@@ -42,35 +42,8 @@
 namespace dpp {
 
   /// \brief A data processing module to chain children data processing modules
-  class chain_module : public base_module
-  //DPP_MODULE_CLASS_DECLARE(chain_module)
+  DPP_MODULE_CLASS_DECLARE(chain_module)
   {
-  public:
-
-    /// Add a module in the processing chain
-    void add_module (const std::string & label_,
-                     const module_handle_type & handle_module_);
-
-    /// Check if a module with a given name exists
-    bool has_module (const std::string & label_) const;
-
-  public:
-
-    /// Constructor
-    chain_module (int debug_level_ = dpp::NO_DEBUG);
-
-    /// Destructor
-    virtual ~chain_module ();
-
-    /// Macro to declare the interface
-    DPP_MODULE_INTERFACE ();
-
-    /// Smart print
-    virtual void tree_dump (std::ostream      & out_    = std::clog,
-                            const std::string & title_  = "",
-                            const std::string & indent_ = "",
-                            bool inherit_               = false) const;
-
   public:
 
     /// Record for a module using a specific label
@@ -80,7 +53,23 @@ namespace dpp {
       module_handle_type handle; //!< Handle of the module
     };
 
-    typedef std::list<module_entry>  module_list_type;
+    typedef std::list<module_entry> module_list_type;
+
+    /// Add a module in the processing chain
+    void add_module(const std::string & label_,
+                    const module_handle_type & handle_module_);
+
+    /// Check if a module with a given name exists
+    bool has_module(const std::string & label_) const;
+
+    /// Macro to declare the full module interface
+    DPP_MODULE_INTERFACE_CTOR_DTOR(chain_module);
+
+    /// Smart print
+    virtual void tree_dump(std::ostream      & out_    = std::clog,
+                           const std::string & title_  = "",
+                           const std::string & indent_ = "",
+                           bool inherit_               = false) const;
 
   protected:
 

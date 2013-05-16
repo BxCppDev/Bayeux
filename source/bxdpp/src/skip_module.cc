@@ -25,6 +25,8 @@
 #include <datatools/properties.h>
 #include <datatools/ioutils.h>
 #include <datatools/things.h>
+#include <datatools/exception.h>
+#include <datatools/logger.h>
 
 #include <dpp/skip_module.h>
 
@@ -80,220 +82,142 @@ namespace dpp {
   /*** Implementation of the interface ***/
 
   // Constructor :
-  skip_module::skip_module (int a_debug_level)
-    : base_module ("dpp::skip_module",
-                   "An data record skip processor module",
-                   "0.1",
-                   a_debug_level)
+  DPP_MODULE_CONSTRUCTOR_IMPLEMENT_HEAD(skip_module,logging_priority_)
   {
     _set_defaults ();
     return;
   }
 
   // Destructor :
-  skip_module::~skip_module ()
-  {
-    // Make sure all internal resources are terminated
-    // before destruction :
-    if (is_initialized ()) reset ();
-    return;
-  }
+  DPP_MODULE_DEFAULT_DESTRUCTOR_IMPLEMENT(skip_module)
 
   // Initialization :
-  void skip_module::initialize (const datatools::properties & a_config,
-                                datatools::service_manager & a_service_manager,
-                                module_handle_dict_type & a_module_dict)
+  DPP_MODULE_INITIALIZE_IMPLEMENT_HEAD(skip_module,
+                                       a_config,
+                                       a_service_manager,
+                                       a_module_dict)
   {
-    if (is_initialized ())
-      {
-        std::ostringstream message;
-        message << "dpp::skip_module::initialize: "
-                << "Module '" << get_name () << "' is already initialized ! ";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF(is_initialized (),
+                std::logic_error,
+                "Skip module '" << get_name () << "' is already initialized ! ");
+
+    _common_initialize(a_config);
+
     bool inverted = false;
     int first  = _first_;
     int last   = _last_;
     int number = -1;
 
-    if (! is_debug ())
-      {
-        if (a_config.has_flag ("debug"))
-          {
-            set_debug (true);
-          }
+    if (first < 0) {
+      if (a_config.has_key ("first")) {
+        first = a_config.fetch_integer ("first");
+      } else {
+        // Default :
+        first = 0;
       }
+    }
 
-    if (first < 0)
-      {
-        if (a_config.has_key ("first"))
-          {
-            first = a_config.fetch_integer ("first");
-          }
-        else
-          {
-            // Default :
-            first = 0;
-          }
+    if (last < 0) {
+      if (a_config.has_key ("last")) {
+        last = a_config.fetch_integer ("last");
+        DT_THROW_IF(last < 0,
+                    std::domain_error,
+                    "Invalid 'last' index value in module named '" << get_name ()  << " !");
       }
+    }
 
-    if (last < 0)
-      {
-        if (a_config.has_key ("last"))
-          {
-            last = a_config.fetch_integer ("last");
-            if (last < 0)
-              {
-                std::ostringstream message;
-                message << "dpp::skip_module::initialize: "
-                        << "Invalid 'last' index value in module named '" << get_name ()
-                        << " !";
-                throw std::logic_error (message.str ());
-              }
-          }
+    if (last < 0) {
+      if (a_config.has_key ("number")) {
+        number = a_config.fetch_integer ("number");
+        DT_THROW_IF(number <= 0,
+                    std::domain_error,
+                    "Invalid 'number' value in module named '" << get_name () << " !");
       }
+    }
 
-    if (last < 0)
-      {
-        if (a_config.has_key ("number"))
-          {
-            number = a_config.fetch_integer ("number");
-            if (number <= 0)
-              {
-                std::ostringstream message;
-                message << "dpp::skip_module::initialize: "
-                        << "Invalid 'number' value in module named '" << get_name ()
-                        << " !";
-                throw std::logic_error (message.str ());
-              }
-          }
-      }
+    if (a_config.has_flag ("inverted")) {
+      inverted = true;
+    }
 
-    if (a_config.has_flag ("inverted"))
-      {
-        inverted = true;
-      }
-
-    if (! _module_.handle)
-      {
-        if (a_config.has_key ("module"))
-          {
-            std::string module_name = a_config.fetch_string ("module");
-            module_handle_dict_type::iterator found
-              = a_module_dict.find (module_name);
-            if (found == a_module_dict.end ())
-              {
-                std::ostringstream message;
-                message << "dpp::skip_module::initialize: "
-                        << "Can't find any module named '" << module_name
-                        << "' from the external dictionnary ! ";
-                throw std::logic_error (message.str ());
-              }
-            _module_.label  = found->first;
-            _module_.handle = found->second.grab_initialized_module_handle ();
-          }
-        else
-          {
-            std::ostringstream message;
-            message << "dpp::skip_module::initialize: "
-                    << "Missing 'module' property ! ";
-            throw std::logic_error (message.str ());
-          }
-      }
+    if (! _module_.handle) {
+      DT_THROW_IF(! a_config.has_key ("module"),
+                  std::logic_error,
+                  "Missing 'module' property ! ");
+      std::string module_name = a_config.fetch_string ("module");
+      module_handle_dict_type::iterator found
+        = a_module_dict.find (module_name);
+      DT_THROW_IF(found == a_module_dict.end (),
+                  std::logic_error,
+                  "Can't find any module named '" << module_name
+                  << "' from the external dictionnary !");
+      _module_.label  = found->first;
+      _module_.handle = found->second.grab_initialized_module_handle ();
+    }
 
     // Setup :
-    if (number < 0)
-      {
-        set_first_last (first, last, inverted);
-      }
-    else
-      {
-        set_first_number (first, number, inverted);
-      }
-
+    if (number < 0) {
+      set_first_last (first, last, inverted);
+    } else {
+      set_first_number (first, number, inverted);
+    }
     _counter_ = 0;
-
     _set_initialized (true);
     return;
   }
 
   // Reset :
-  void skip_module::reset ()
+  DPP_MODULE_RESET_IMPLEMENT_HEAD(skip_module)
   {
-    if (! is_initialized ())
-      {
-        std::ostringstream message;
-        message << "dpp::skip_module::initialize: "
-                << "Module '" << get_name () << "' is not initialized !";
-        throw std::logic_error (message.str ());
-      }
-
+    DT_THROW_IF(! is_initialized (),
+                std::logic_error,
+                "Skip module '" << get_name () << "' is not initialized !");
     _module_.handle.reset ();
     _set_defaults ();
-
     _set_initialized (false);
     return;
   }
 
   // Processing :
-  int skip_module::process (datatools::things & the_data_record)
+  DPP_MODULE_PROCESS_IMPLEMENT_HEAD(skip_module,the_data_record)
   {
-    if (! is_initialized ())
-      {
-        std::ostringstream message;
-        message << "dpp::skip_module::process: "
-                << "Module '" << get_name () << "' is not initialized !";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF(! is_initialized (),
+                std::logic_error,
+                "Skip module '" << get_name () << "' is not initialized !");
 
     bool process_module = false;
-    if (_counter_ >= _first_)
-      {
-        process_module = true;
-        if (_last_ >= 0)
-          {
-            if (_counter_ > _last_)
-              {
-                process_module = false;
-              }
-          }
+    if (_counter_ >= _first_) {
+      process_module = true;
+      if (_last_ >= 0) {
+        if (_counter_ > _last_){
+          process_module = false;
+        }
       }
-    if (_inverted_)
-      {
-        process_module = ! process_module;
+    }
+    if (_inverted_) {
+      process_module = ! process_module;
+    }
+    int status = PROCESS_SUCCESS;
+    if (process_module) {
+      base_module & a_module = _module_.handle.grab ();
+      try {
+        status = a_module.process (the_data_record);
+        if (status & PROCESS_ERROR) {
+          // Stop the chain if some chained module failed :
+          return status;
+        } else if (status & PROCESS_STOP) {
+          // Stop the chain if some chained module ask for stop :
+          return status;
+        }
       }
-
-    int status = SUCCESS;
-    if (process_module)
-      {
-        base_module & a_module = _module_.handle.grab ();
-        try
-          {
-            status = a_module.process (the_data_record);
-            if (status & ERROR)
-              {
-                // Stop the chain if some chained module failed :
-                return status;
-              }
-            else if (status & STOP)
-              {
-                // Stop the chain if some chained module ask for stop :
-                return status;
-              }
-          }
-        catch (std::exception & x)
-          {
-            std::cerr << datatools::io::error
-                 << "dpp::skip_module::process: "
-                 << "Module '" << _module_.label << "' failed to process data record ! "
-                 << x.what ()
-                 << std::endl;
-            return ERROR;
-          }
+      catch (std::exception & x) {
+        DT_LOG_ERROR(_logging,
+                     "Module '" << _module_.label << "' failed to process data record ! "
+                     << x.what ());
+        return PROCESS_ERROR;
       }
+    }
     _counter_++;
-
-    return SUCCESS;
+    return PROCESS_SUCCESS;
   }
 
 }  // end of namespace dpp

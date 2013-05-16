@@ -28,6 +28,7 @@
 #include <datatools/properties.h>
 #include <datatools/things.h>
 #include <datatools/bio_guard.h>
+#include <datatools/exception.h>
 
 #include <dpp/base_module.h>
 #include <dpp/simple_data_source.h>
@@ -35,7 +36,7 @@
 
 /** An data record test processing module:
  *  it adds a simple text property (namely the 'label')
- *  in a "Header" data bank of any processed 
+ *  in a "Header" data bank of any processed
  *  data record. It also adds a new data bank named "Test"
  *  and store some properties in it.
  *
@@ -62,29 +63,29 @@ DPP_MODULE_CLASS_DECLARE(test_module)
   static const std::string DEFAULT_LABEL;
   static const std::string UNINITIALIZED_LABEL;
 
-  void set_label (const std::string & a_label);
+  void set_label(const std::string & a_label);
 
-  const std::string & get_label () const;
+  const std::string & get_label() const;
 
   // Constructor :
-  test_module (int a_debug_level = dpp::NO_DEBUG);
+  test_module(datatools::logger::priority p = datatools::logger::PRIO_FATAL);
 
   // Destructor :
-  virtual ~test_module ();
+  virtual ~test_module();
 
   // This macro setup the module standard interface (initialize/reset/process) :
-  DPP_MODULE_INTERFACE ();
+  DPP_MODULE_INTERFACE();
   /*
    * // Initialization method :
-   * virtual void initialize (const datatools::properties & a_config,
-   *                          datatools::service_manager & a_service_manager,
-   *                          module_handle_dict_type & a_module_dictionnary);
+   * virtual void initialize(const datatools::properties & a_config,
+   *                         datatools::service_manager & a_service_manager,
+   *                         module_handle_dict_type & a_module_dictionnary);
    *
    * // Termination method :
-   * virtual void reset ();
+   * virtual void reset();
    *
    * // Event processing method :
-   * virtual int process (datatools::things &);
+   * virtual int process(datatools::things & a_data_record);
    */
 
  private:
@@ -103,11 +104,7 @@ DPP_MODULE_CLASS_DECLARE(test_module)
  * DPP_MODULE_REGISTRATION_IMPLEMENT(test_module);
  *
  * // Helper macro for the constructor proposed by default :
- * DPP_MODULE_CONSTRUCTOR_IMPLEMENT_HEAD(test_module,   \
- *                                       a_debug_level, \
- *                                       "test_module", \
- *                                       "An event record processor test module", \
- *                                       "0.1")
+ * DPP_MODULE_CONSTRUCTOR_IMPLEMENT_HEAD(test_module,a_logging_priority)
  * {
  *   // specific code to construct internal resources of the module :
  *   ...
@@ -115,18 +112,17 @@ DPP_MODULE_CLASS_DECLARE(test_module)
  * }
  *
  * // Helper macro for a destructor proposed by default:
- * DPP_MODULE_DEFAULT_DESTRUCTOR_IMPLEMENT (test_module)
+ * DPP_MODULE_DEFAULT_DESTRUCTOR_IMPLEMENT(test_module)
  *
  * // Helper macro for the initialization method :
- * DPP_MODULE_INITIALIZE_IMPLEMENT_HEAD (test_module)
+ * DPP_MODULE_INITIALIZE_IMPLEMENT_HEAD(test_module)
  * {
- *   if (is_initialized ())
- *     {
- *       std::ostringstream message;
- *       message << "test_module::initialize: "
- *         << "Module '" << get_name () << "' is already initialized ! ";
- *       throw std::logic_error (message.str ());
- *     }
+ *   if (is_initialized()) {
+ *     std::ostringstream message;
+ *     message << "test_module::initialize: "
+ *             << "Module '" << get_name () << "' is already initialized ! ";
+ *     throw std::logic_error (message.str ());
+ *   }
  *
  *   // specific code to initialize internal resources of the module :
  *   ...
@@ -138,18 +134,16 @@ DPP_MODULE_CLASS_DECLARE(test_module)
  * // Helper macro for the termination method :
  * DPP_MODULE_RESET_IMPLEMENT_HEAD (test_module)
  * {
- *   if (! is_initialized ())
- *     {
- *       std::ostringstream message;
- *       message << "test_module::reset: "
- *         << "Module '" << get_name () << "' is not initialized ! ";
- *       throw std::logic_error (message.str ());
- *     }
+ *   if (! is_initialized ()) {
+ *     std::ostringstream message;
+ *     message << "test_module::reset: "
+ *             << "Module '" << get_name () << "' is not initialized ! ";
+ *     throw std::logic_error (message.str ());
+ *   }
+ *   _set_initialized (false);
  *
  *   // specific code to terminate internal resources of the module :
  *   ...
- *
- *   _set_initialized (false);
  *   return;
  * }
  *
@@ -159,13 +153,12 @@ DPP_MODULE_CLASS_DECLARE(test_module)
  *   // Where: 'the_data_record' is a non-const reference
  *   // to a 'dpp::things' instance.
  *
- *   if (! is_initialized ())
- *     {
- *       std::ostringstream message;
- *       message << "test_module::process: "
- *               << "Module '" << get_name () << "' is not initialized ! ";
- *       throw std::logic_error (message.str ());
- *     }
+ *   if (! is_initialized ()) {
+ *     std::ostringstream message;
+ *     message << "test_module::process: "
+ *             << "Module '" << get_name () << "' is not initialized ! ";
+ *     throw std::logic_error (message.str ());
+ *   }
  *
  *   // specific code to process the event record :
  *   ...
@@ -198,11 +191,8 @@ const std::string & test_module::get_label () const
 /*** Implementation of the interface ***/
 
 // Constructor :
-test_module::test_module (int a_debug_level)
-  : base_module ("test_module",
-                 "An event record processor test module",
-                 "0.1",
-                 a_debug_level)
+test_module::test_module(::datatools::logger::priority p)
+  : ::dpp::base_module(p)
 {
   _label_ = UNINITIALIZED_LABEL;
   return;
@@ -213,7 +203,7 @@ test_module::~test_module ()
 {
   // Make sure all internal resources are terminated
   // before destruction :
-  if (is_initialized ()) reset ();
+  if (is_initialized()) reset();
   return;
 }
 
@@ -222,56 +212,36 @@ void test_module::initialize (const datatools::properties & a_config,
                               datatools::service_manager & a_service_manager,
                               dpp::module_handle_dict_type & a_module_dictionnary)
 {
-  if (is_initialized ())
-    {
-      std::ostringstream message;
-      message << "test_module::initialize: "
-              << "Module '" << get_name () << "' is already initialized ! ";
-      throw std::logic_error (message.str ());
-    }
+  DT_THROW_IF(is_initialized (),
+              std::logic_error,
+              "Test module '" << get_name () << "' is already initialized ! ");
 
-  if (! is_debug ())
-    {
-      if (a_config.has_flag ("debug"))
-        {
-          set_debug (true);
-        }
-    }
+  _common_initialize(a_config);
 
-  if (_label_ == UNINITIALIZED_LABEL)
-    {
-      // If the label is no setup, pickup from the configuration list:
-      if (a_config.has_key ("label"))
-        {
-          std::string label = a_config.fetch_string ("label");
-          set_label (label);
-        }
+  if (_label_ == UNINITIALIZED_LABEL) {
+    // If the label is no setup, pickup from the configuration list:
+    if (a_config.has_key ("label")) {
+      std::string label = a_config.fetch_string ("label");
+      set_label (label);
     }
+  }
 
   // Default :
-  if (_label_ == UNINITIALIZED_LABEL)
-    {
-      _label_ = DEFAULT_LABEL;
-    }
+  if (_label_ == UNINITIALIZED_LABEL) {
+    _label_ = DEFAULT_LABEL;
+  }
 
   // Flag the initialization status :
-  if (_label_ != UNINITIALIZED_LABEL)
-    {
-      _set_initialized (true);
-    }
+  _set_initialized (true);
   return;
 }
 
 // Reset :
 void test_module::reset ()
 {
-  if (! is_initialized ())
-    {
-      std::ostringstream message;
-      message << "test_module::initialize: "
-              << "Module '" << get_name () << "' is not initialized !";
-      throw std::logic_error (message.str ());
-    }
+  DT_THROW_IF(! is_initialized (),
+              std::logic_error,
+              "Test module '" << get_name () << "' is not initialized !");
   _label_ = "";
   _set_initialized (false);
   return;
@@ -280,58 +250,48 @@ void test_module::reset ()
 // Processing :
 int test_module::process (datatools::things & the_data_record)
 {
-  if (! is_initialized ())
-    {
-      std::ostringstream message;
-      message << "test_module::process: "
-              << "Module '" << get_name () << "' is not initialized !";
-      throw std::logic_error (message.str ());
-    }
-  if (the_data_record.has ("Header")
-      && the_data_record.is_a<datatools::properties> ("Header"))
-    {
-      // Find the event header :
-      datatools::properties & the_properties
-        = the_data_record.grab<datatools::properties> ("Header");
-      if (is_debug ())
-        {
-          std::clog << datatools::io::debug
-                    << "test_module::at_process_: "
-                    << "Found the event header !"
-                    << std::endl;
-        }
-      // Add a string property in it with value '_label_' :
-      if (is_debug ())
-        {
-          std::clog << datatools::io::debug
-                    << "test_module::at_process_: "
-                    << "Adding the 'label' property..."
-                    << std::endl;
-        }
-      the_properties.store ("label", _label_);
-    }
-  else
-    {
-      std::clog << datatools::io::error
+  DT_THROW_IF(! is_initialized (),
+              std::logic_error,
+              "Test module '" << get_name () << "' is not initialized !");
+  if (the_data_record.has("Header")
+      && the_data_record.is_a<datatools::properties>("Header")) {
+    // Find the event header :
+    datatools::properties & the_properties
+      = the_data_record.grab<datatools::properties>("Header");
+    if (is_debug ()) {
+      std::clog << datatools::io::debug
                 << "test_module::at_process_: "
-                << "Could not find any event header !"
+                << "Found the event header !"
                 << std::endl;
-      // Cannot find the event header :
-      return dpp::base_module::ERROR;
     }
-
-  if (! the_data_record.has ("Test"))
-    {
-      // Add another data bank :
-      datatools::properties & test_properties
-        = the_data_record.add<datatools::properties> ("Test");
-      test_properties.store ("library", "dpp");
-      test_properties.store ("library.version", DPP_LIB_VERSION);
-      test_properties.store ("added_by", "test_module");
-      test_properties.store ("date", (int) time(0));
+    // Add a string property in it with value '_label_' :
+    if (is_debug ()) {
+      std::clog << datatools::io::debug
+                << "test_module::at_process_: "
+                << "Adding the 'label' property..."
+                << std::endl;
     }
+    the_properties.store ("label", _label_);
+  } else {
+    std::clog << datatools::io::error
+              << "test_module::at_process_: "
+              << "Could not find any event header !"
+              << std::endl;
+    // Cannot find the event header :
+    return dpp::PROCESS_ERROR;
+  }
 
-  return dpp::base_module::SUCCESS;
+  if (! the_data_record.has ("Test")) {
+    // Add another data bank :
+    datatools::properties & test_properties
+      = the_data_record.add<datatools::properties> ("Test");
+    test_properties.store ("library", "dpp");
+    test_properties.store ("library.version", DPP_LIB_VERSION);
+    test_properties.store ("added_by", "test_module");
+    test_properties.store ("date", (int) time(0));
+  }
+
+  return dpp::PROCESS_OK;
 }
 
 // Registration instantiation macro :
@@ -375,7 +335,7 @@ int main (int argc_, char ** argv_)
                 }
               else
                 {
-                  std::clog << datatools::io::warning 
+                  std::clog << datatools::io::warning
                             << "Ignoring option '" << option << "'!" << std::endl;
                 }
             }
@@ -392,21 +352,19 @@ int main (int argc_, char ** argv_)
                 }
               else
                 {
-                  std::clog << datatools::io::warning 
+                  std::clog << datatools::io::warning
                             << "Ignoring argument '" << argument << "'!" << std::endl;
                 }
-              }
+            }
           iarg++;
         }
 
-      if (input_file.empty ())
-        {
-          throw std::logic_error ("Missing input source !");
-        }
-      if (output_file.empty ())
-        {
-          throw std::logic_error ("Missing output sink !");
-        }
+      DT_THROW_IF(input_file.empty(),
+                  std::logic_error,
+                  "Missing input source !");
+      DT_THROW_IF(input_file.empty(),
+                  std::logic_error,
+                  "Missing output sink !");
 
       std::clog << datatools::io::notice << "Input data source : "
                 << "'" << input_file << "'" << std::endl;
@@ -438,48 +396,43 @@ int main (int argc_, char ** argv_)
 
       // Loop on the event records from the data source file :
       int counts = 0;
-      while (source.has_next_record ())
-        {
-          // Declare the data record :
-          datatools::things DR;
+      while (source.has_next_record ()) {
+        // Declare the data record :
+        datatools::things DR;
 
-          // Loading next event record :
-          source.load_next_record (DR);
+        // Loading next event record :
+        source.load_next_record (DR);
 
-          // Processing the event record :
-          int status = TM.process (DR);
-          if (status != test_module::OK)
-            {
-              std::clog << datatools::io::warning
-                        << "test_module: Processing has failed for this event record !" << std::endl;
-            }
-
-          // Dump the event record :
-          if (debug) DR.tree_dump (std::cout, "Event record :", "DEBUG: ");
-
-          // Storing the event record :
-          sink.store_next_record (DR);
-
-          counts++;
-          if ((max_events > 0) && (counts == max_events))
-            {
-              break;
-            }
+        // Processing the event record :
+        int status = TM.process (DR);
+        if (status != dpp::PROCESS_OK) {
+          std::clog << datatools::io::warning
+                    << "test_module: Processing has failed for this event record !" << std::endl;
         }
+
+        // Dump the event record :
+        if (debug) DR.tree_dump (std::cout, "Event record :", "DEBUG: ");
+
+        // Storing the event record :
+        sink.store_next_record (DR);
+
+        counts++;
+        if ((max_events > 0) && (counts == max_events)) {
+          break;
+        }
+      }
 
       // Terminate the event record processing module :
       TM.reset ();
     }
-  catch (std::exception & x)
-    {
-      std::cerr << "error: " << x.what () << std::endl;
-      error_code = EXIT_FAILURE;
-    }
-  catch (...)
-    {
-      std::cerr << "error: " << "Unexpected error!" << std::endl;
-      error_code = EXIT_FAILURE;
-    }
+  catch (std::exception & x) {
+    std::cerr << "error: " << x.what () << std::endl;
+    error_code = EXIT_FAILURE;
+  }
+  catch (...) {
+    std::cerr << "error: " << "Unexpected error!" << std::endl;
+    error_code = EXIT_FAILURE;
+  }
   return (error_code);
 }
 
