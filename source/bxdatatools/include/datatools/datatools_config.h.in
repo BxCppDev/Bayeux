@@ -6,39 +6,6 @@
 #ifndef DATATOOLS_DATATOOLS_CONFIG_H_
 #define DATATOOLS_DATATOOLS_CONFIG_H_ 1
 
-// - Compile Time API
-//! Major version number of datatools
-#define DATATOOLS_VERSION_MAJOR @datatools_VERSION_MAJOR@
-
-//! Minor version number of datatools
-#define DATATOOLS_VERSION_MINOR @datatools_VERSION_MINOR@
-
-//! Patch version number of datatools
-#define DATATOOLS_VERSION_PATCH @datatools_VERSION_PATCH@
-
-//! Encode datatools to ordered integer available at compile time
-#define DATATOOLS_ENCODE_VERSION(major, minor, patch) ( \
-        ((major) * 10000) \
-      + ((minor) *   100) \
-      + ((patch) *     1))
-
-//! Integer encoded datatools version available at compile time
-#define DATATOOLS_VERSION DATATOOLS_ENCODE_VERSION( \
-        DATATOOLS_VERSION_MAJOR, \
-        DATATOOLS_VERSION_MINOR, \
-        DATATOOLS_VERSION_PATCH)
-
-//! String encoded full version number, e.g. "1.2.3", available at compile time
-#define DATATOOLS_LIB_VERSION "@datatools_VERSION@"
-
-//! Check current version >= (major, minor, patch) at compile time
-#define DATATOOLS_IS_ATLEAST(major,minor,patch) ( \
-        DATATOOLS_VERSION >= \
-        DATATOOLS_ENCODE_VERSION(major,minor,patch))
-
-//! Evaluates to true if datatools was built with Boost I/O support
-// #cmakedefine01 DATATOOLS_WITH_DEBUG
-
 //! Evaluates to true if datatools was built with Boost I/O support
 #cmakedefine01 DATATOOLS_WITH_BIO
 

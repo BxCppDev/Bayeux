@@ -89,12 +89,20 @@ set(datatools_PUBLIC_HEADERS
   )
 list_prepend(datatools_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 
-# - Add config header
+# - Configure headers
 configure_file(
   ${PROJECT_SOURCE_DIR}/include/datatools/datatools_config.h.in
   ${PROJECT_BINARY_DIR}/include/datatools/datatools_config.h
   )
-list(APPEND datatools_PUBLIC_HEADERS ${PROJECT_BINARY_DIR}/include/datatools/datatools_config.h)
+configure_file(
+  ${PROJECT_SOURCE_DIR}/include/datatools/version.h.in
+  ${PROJECT_BINARY_DIR}/include/datatools/version.h
+  )
+
+list(APPEND datatools_PUBLIC_HEADERS 
+  ${PROJECT_BINARY_DIR}/include/datatools/datatools_config.h
+  ${PROJECT_BINARY_DIR}/include/datatools/version.h
+  )
 
 #-----------------------------------------------------------------------
 # PRIVATE HEADERS
@@ -170,6 +178,7 @@ set(datatools_SOURCES
   time_tools.cc
   units.cc
   utils.cc
+  version.cc
   version_check.cc
   version_id.cc
   base_service.cc # MUST go at the end....
