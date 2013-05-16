@@ -126,7 +126,8 @@ STRIP_FROM_PATH        = "@DOXYGEN_INPUT_DIR@/include" \
 # definition is used. Otherwise one should specify the include paths that
 # are normally passed to the compiler using the -I flag.
 
-STRIP_FROM_INC_PATH    = "@DOXYGEN_INPUT_DIR@/include"
+STRIP_FROM_INC_PATH    = "@DOXYGEN_INPUT_DIR@/include" \
+                         "@PROJECT_BINARY_DIR@/include"
 
 # If the SHORT_NAMES tag is set to YES, doxygen will generate much shorter
 # (but less readable) file names. This can be useful is your file systems
@@ -173,7 +174,7 @@ SEPARATE_MEMBER_PAGES  = NO
 # The TAB_SIZE tag can be used to set the number of spaces in a tab.
 # Doxygen uses this value to replace tabs by spaces in code fragments.
 
-TAB_SIZE               = 4
+TAB_SIZE               = 2
 
 # This tag can be used to specify a number of aliases that acts
 # as commands in the documentation. An alias has the form "name=value".
