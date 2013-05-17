@@ -1,7 +1,7 @@
 /* cut_macros.h
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
- * Last modified : 2013-04-22
+ * Last modified : 2013-05-16
  *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -37,117 +37,116 @@
   class T : public ::cuts::i_cut                \
   /**/
 
-#define CUT_INITIALIZE_DECLARE()                                  \
-  public:                                                         \
-  virtual void initialize (const datatools::properties &,  \
-                           datatools::service_manager &, \
-                           cuts::cut_handle_dict_type &);                \
+#define CUT_INITIALIZE_DECLARE()                          \
+  public:                                                 \
+  virtual void initialize(const datatools::properties &,  \
+                          datatools::service_manager &,   \
+                          cuts::cut_handle_dict_type &);  \
   /**/
 
-#define CUT_INITIALIZE_IMPLEMENT_HEAD(T,CONF,SERVICE_MANAGER,DICT)           \
-  void T::initialize (const datatools::properties & CONF,             \
-                      datatools::service_manager & SERVICE_MANAGER, \
-                      cuts::cut_handle_dict_type & DICT)                            \
+#define CUT_INITIALIZE_IMPLEMENT_HEAD(T,Config,ServiceManager,CutDict)  \
+  void T::initialize(const datatools::properties & Config,              \
+                     datatools::service_manager & ServiceManager,       \
+                     cuts::cut_handle_dict_type & CutDict)              \
   /**/
 
 #define CUT_RESET_DECLARE()                     \
   public:                                       \
-  virtual void reset ();                        \
+  virtual void reset();                         \
   /**/
 
 #define CUT_RESET_IMPLEMENT_HEAD(T)             \
-  void T::reset ()                              \
+  void T::reset()                               \
   /**/
 
-#define CUT_ACCEPT_DECLARE()                                   \
-  protected :                                                  \
-  virtual int _accept ();                                      \
+#define CUT_ACCEPT_DECLARE()                    \
+  protected :                                   \
+  virtual int _accept();                        \
   /**/
 
 #define CUT_ACCEPT_IMPLEMENT_HEAD(T)            \
-  int T::_accept ()                             \
+  int T::_accept()                              \
   /**/
 
-#define CUT_CONSTRUCTOR_DECLARE(T)                      \
-  public:                                               \
-  T (int a_debug_level = 0);                            \
+#define CUT_CONSTRUCTOR_DECLARE(T)                                    \
+  public:                                                             \
+  T(::datatools::logger::priority = ::datatools::logger::PRIO_FATAL); \
   /**/
 
-#define CUT_CONSTRUCTOR_IMPLEMENT_HEAD(T,DebugLevel,Name,Description,Version) \
-  T::T (int DebugLevel)                                                 \
-    : ::cuts::i_cut (Name,                                              \
-                     Description,                                       \
-                     Version,                                           \
-                     DebugLevel)                                        \
-  /**/
+#define CUT_CONSTRUCTOR_IMPLEMENT_HEAD(T,LoggingPriority) \
+  T::T(::datatools::logger::priority LoggingPriority)     \
+    : ::cuts::i_cut(LoggingPriority)                      \
+      /**/
 
 #define CUT_DESTRUCTOR_DECLARE(T)               \
   public:                                       \
-  virtual ~T ();                                \
+  virtual ~T();                                 \
   /**/
 
 #define CUT_DESTRUCTOR_IMPLEMENT_HEAD(T)        \
-  T::~T ()                                      \
+  T::~T()                                       \
   /**/
 
 #define CUT_RESET_IMPLEMENT_HEAD(T)             \
-  void T::reset ()                              \
+  void T::reset()                               \
   /**/
 
 #define CUT_DEFAULT_DESTRUCTOR_IMPLEMENT(T)     \
-  CUT_DESTRUCTOR_IMPLEMENT_HEAD (T)             \
+  CUT_DESTRUCTOR_IMPLEMENT_HEAD(T)              \
   {                                             \
-    if (is_initialized ()) this->T::reset ();   \
+    if (is_initialized()) this->T::reset();     \
     return;                                     \
   }                                             \
   /**/
 
 /*** Macro for the declaration of the full cut interface ***/
 #define CUT_INTERFACE()                         \
-                                                \
   CUT_INITIALIZE_DECLARE();                     \
-                                                \
   CUT_RESET_DECLARE();                          \
-                                                \
   CUT_ACCEPT_DECLARE();                         \
-                                                \
   /**/
 
 /*** Macro for the declaration of the full cut interface, including ctor/dtor ***/
-#define CUT_INTERFACE_CTOR_DTOR(CUT_CLASS_NAME) \
-                                                \
-  CUT_CONSTRUCTOR_DECLARE(CUT_CLASS_NAME);      \
-                                                \
-  CUT_DESTRUCTOR_DECLARE(CUT_CLASS_NAME);       \
-                                                \
-  CUT_INTERFACE ();                             \
-                                                \
+#define CUT_INTERFACE_CTOR_DTOR(T)              \
+  CUT_CONSTRUCTOR_DECLARE(T);                   \
+  CUT_DESTRUCTOR_DECLARE(T);                    \
+  CUT_INTERFACE();                              \
   /**/
 
 /*** Macro for the declaration of the full cut interface, including ctor/dtor, excluding reset ***/
-#define CUT_INTERFACE_NORESET_CTOR_DTOR(CUT_CLASS_NAME) \
-                                                \
-  CUT_CONSTRUCTOR_DECLARE(CUT_CLASS_NAME);      \
-                                                \
-  CUT_DESTRUCTOR_DECLARE(CUT_CLASS_NAME);       \
-                                                \
+#define CUT_INTERFACE_NORESET_CTOR_DTOR(T)      \
+  CUT_CONSTRUCTOR_DECLARE(T);                   \
+  CUT_DESTRUCTOR_DECLARE(T);                    \
   CUT_INITIALIZE_DECLARE();                     \
-                                                \
   CUT_ACCEPT_DECLARE();                         \
-                                                \
+  /**/
+
+/*** Macro for the declaration of the full cut interface, including ctor/dtor, excluding reset ***/
+#define CUT_INTERFACE_NOACCEPT_CTOR_DTOR(T)     \
+  CUT_CONSTRUCTOR_DECLARE(T);                   \
+  CUT_DESTRUCTOR_DECLARE(T);                    \
+  CUT_INITIALIZE_DECLARE();                     \
+  CUT_RESET_DECLARE();                          \
+  /**/
+
+/*** Macro for the declaration of the full cut interface, including ctor/dtor, excluding init and reset ***/
+#define CUT_INTERFACE_NOINIT_NORESET_CTOR_DTOR(T) \
+  CUT_CONSTRUCTOR_DECLARE(T);                     \
+  CUT_DESTRUCTOR_DECLARE(T);                      \
+  CUT_ACCEPT_DECLARE();                           \
   /**/
 
 /*** Macros for interface/implementation of static creator methods in cut classes ***/
 
 /** Registration */
 
-#define CUT_REGISTRATION_INTERFACE(CUT_CLASS_NAME)                              \
-  private:                                                                      \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE (::cuts::i_cut,CUT_CLASS_NAME); \
+#define CUT_REGISTRATION_INTERFACE(T)                                   \
+  private:                                                              \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::cuts::i_cut,T); \
   /**/
 
-#define CUT_REGISTRATION_IMPLEMENT(CUT_CLASS_NAME,CUT_ID)                                   \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (::cuts::i_cut,CUT_CLASS_NAME,CUT_ID); \
+#define CUT_REGISTRATION_IMPLEMENT(T,CutID)                             \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::cuts::i_cut,T,CutID); \
   /**/
 
 #endif // CUTS_CUT_MACROS_H_

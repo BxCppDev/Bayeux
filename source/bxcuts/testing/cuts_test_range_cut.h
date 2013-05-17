@@ -1,17 +1,17 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* cuts_test_range_cut_h
  * Author (s) : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-20
  * Last modified: 2010-09-20
- * 
- * License: 
+ *
+ * License:
  */
 
-/** 
- * Description: 
+/**
+ * Description:
  *   A cut to test the position of a 3D-point
  *   relatively to a range on X, Y or Z axis.
- * 
+ *
  */
 
 #ifndef __cuts__test__range_cut_h
@@ -43,11 +43,11 @@ namespace cuts {
         };
 
     public:
- 
+
       void set_mode (int a_mode);
- 
+
       void set_range (double a_min, double a_max);
- 
+
       void set_reversed (bool a_reversed);
 
       /* The CUT_INTERFACE_CTOR_DTOR macro can be used
@@ -56,46 +56,40 @@ namespace cuts {
        *  - constructor
        *  - destructor
        *  - initialize
-       *  - _accept
        *  - reset
+       *  - _accept
        *
        */
       // CUT_INTERFACE_CTOR_DTOR (range_cut)
-      
-      // ctor:
+
       // CUT_CONSTRUCTOR_DECLARE (range_cut)
-    public:
-      range_cut ();
+      range_cut (datatools::logger::priority a_logging_priority
+                 = datatools::logger::PRIO_FATAL);
 
-      // dtor:
       // CUT_DESTRUCTOR_DECLARE (range_cut)
-
-    public:
-
       virtual ~range_cut ();
 
       // CUT_INITIALIZE_DECLARE()
-      virtual void initialize (const datatools::properties &,  
-                               datatools::service_manager &, 
-                               cuts::cut_handle_dict_type &); 
-
-      // CUT_ACCEPT_DECLARE();  
-    protected :                                 
-      virtual int _accept ();
-
+      virtual void initialize (const datatools::properties &,
+                               datatools::service_manager &,
+                               cuts::cut_handle_dict_type &);
       // CUT_RESET_DECLARE();
-    public:
       virtual void reset ();
+
+    protected :
+      // CUT_ACCEPT_DECLARE();
+      virtual int _accept ();
 
     private:
 
       int    _mode_;
-      double _min_, _max_;
+      double _min_;
+      double _max_;
       bool   _reversed_;
 
       // Macro to automate the registration of the cut :
       CUT_REGISTRATION_INTERFACE(range_cut);
- 
+
     };
 
   } // end of namespace test

@@ -2,7 +2,7 @@
 /* color_cut_h
  * Author (s) : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-05-10
- * Last modified: 2013-05-10
+ * Last modified: 2013-05-17
  *
  * License:
  */
@@ -14,8 +14,6 @@
 
 #include <cuts/i_cut.h>
 #include <cuts/cut_macros.h>
-
-#include <data.h>
 
 /// \brief A cut on the color of object of class data
 CUT_CLASS_DECLARE(color_cut)
@@ -29,7 +27,7 @@ CUT_CLASS_DECLARE(color_cut)
 
  private:
 
-  int _color_; /// The color to be selected
+  int _color_; //!< The color to be selected
 
   // Macro to automate the registration of the cut
   CUT_REGISTRATION_INTERFACE(color_cut);

@@ -21,30 +21,30 @@
 
 namespace cuts {
 
-  //CUT_CLASS_DECLARE (not_cut)
   /// \brief The NOT cut
-  class not_cut : public i_cut
+  CUT_CLASS_DECLARE(not_cut)
   {
-
   public:
 
-    void set_cut (cut_handle_type &);
+    void set_cut(cut_handle_type &);
 
-    virtual void set_user_data (void *);
-
-  public:
-
-    // ctor:
+    // Cut interface macro
     CUT_INTERFACE_CTOR_DTOR (not_cut);
 
-  private:
+  protected:
 
-    // Macro to automate the registration of the cut :
-    CUT_REGISTRATION_INTERFACE(not_cut);
+    virtual void _at_set_user_data();
+
+    virtual void _at_reset_user_data();
 
   protected:
 
     cut_handle_type _handle; //!< The cut to be negated by the "NOT" cut class
+
+  private:
+
+    /// Macro to automate the registration of the cut
+    CUT_REGISTRATION_INTERFACE(not_cut);
 
   };
 

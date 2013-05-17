@@ -12,6 +12,8 @@
 
 #include <datatools/utils.h>
 #include <datatools/properties.h>
+#include <datatools/logger.h>
+#include <datatools/exception.h>
 
 #include <cuts/cuts_config.h>
 #include <cuts/cut_manager.h>
@@ -26,11 +28,9 @@
 
 int main(int argc_, char ** argv_)
 {
+  datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
   int error_code = EXIT_SUCCESS;
   try {
-    std::clog << "cuts example program : ex_manager" << std::endl;
-
-    bool debug = false;
     long seed = 314159;
     std::string config_filename = "";
     std::string cut_name = "";
@@ -41,10 +41,15 @@ int main(int argc_, char ** argv_)
       if (token[0] == '-') {
         std::string option = token;
         if ((option == "-d") || (option == "--debug")) {
-          debug = true;
+          logging = datatools::logger::PRIO_DEBUG;
+        } else if ((option == "-V") || (option == "--verbose")) {
+          logging = datatools::logger::PRIO_INFORMATION;
+        } else if ((option == "-w") || (option == "--warning")) {
+          logging = datatools::logger::PRIO_WARNING;
+        } else if ((option == "-T") || (option == "--trace")) {
+          logging = datatools::logger::PRIO_TRACE;
         } else {
-          std::clog << "warning: ignoring option '"
-                    << option << "'!" << std::endl;
+          DT_LOG_WARNING(logging, "Ignoring option '" << option << "' !");
         }
       } else {
         std::string argument = token;
@@ -53,12 +58,12 @@ int main(int argc_, char ** argv_)
         } else if (cut_name.empty()) {
           cut_name = argument;
         } else {
-          std::clog << "warning: ignoring argument '"
-                    << argument << "'!" << std::endl;
+          DT_LOG_WARNING(logging, "Ignoring argument '" << argument << "' !");
         }
       }
       iarg++;
     }
+    DT_LOG_INFORMATION(logging, "Welcome to the ``cuts`` example program : ``ex_manager`` !");
 
     srand48(seed);
 
@@ -74,7 +79,7 @@ int main(int argc_, char ** argv_)
 
     // Declare a cut manager :
     cuts::cut_manager my_cut_manager;
-    my_cut_manager.set_debug(debug);
+    my_cut_manager.set_logging_priority(logging);
 
     // Initialization from the set of parameters extracted from the configuration file :
     my_cut_manager.initialize(cut_manager_config);
@@ -84,12 +89,10 @@ int main(int argc_, char ** argv_)
     if (cut_name.empty()) {
       cut_name = "selector";
     }
-    std::clog << "NOTICE: Cut name is '" << cut_name << "'" << std::endl;
-    if (! my_cut_manager.has(cut_name)) {
-      std::ostringstream message;
-      message << "No cut with name '" << cut_name << "' !";
-      throw std::logic_error(message.str());
-    }
+    DT_LOG_INFORMATION(logging, "Cut name is '" << cut_name << "'");
+    DT_THROW_IF(! my_cut_manager.has(cut_name),
+                std::domain_error,
+                "No cut with name '" << cut_name << "' !");
     the_cut = &my_cut_manager.grab(cut_name);
 
     // Create a dictionnary of streams (colored outputs for Gnuplot) :
@@ -112,22 +115,22 @@ int main(int argc_, char ** argv_)
       d.color =(int)(3.5 * drand48());
       std::ostringstream * pss = 0;
       // Randomize the color of the point :
-      if (d.color == data::BLACK) {
+      if (d.color == data::COLOR_BLACK) {
         if (ss0.find("black") == ss0.end()) {
           ss0["black"] = new std::ostringstream();
         }
         pss = ss0["black"];
-      } else if (d.color == data::RED) {
+      } else if (d.color == data::COLOR_RED) {
         if (ss0.find("red") == ss0.end()) {
           ss0["red"] = new std::ostringstream();
         }
         pss = ss0["red"];
-      } else if (d.color == data::GREEN) {
+      } else if (d.color == data::COLOR_GREEN) {
         if (ss0.find("green") == ss0.end()) {
           ss0["green"] = new std::ostringstream();
         }
         pss = ss0["green"];
-      } else if (d.color == data::BLUE) {
+      } else if (d.color == data::COLOR_BLUE) {
         if (ss0.find("blue") == ss0.end()) {
           ss0["blue"] = new std::ostringstream();
         }
@@ -165,25 +168,26 @@ int main(int argc_, char ** argv_)
     bool has_red = false;
     bool has_green = false;
     bool has_blue = false;
-    std::clog << "NOTICE: Selection... " << std::endl;
+    DT_LOG_NOTICE(logging, "Selection loop... ");
     // For each data points :
     for (int i = 0; i < points.size(); i++) {
-      // Set the data to the active cut (cast to a 'void *' pointer):
-      the_cut->set_user_data(&points[i]);
-      // Invoke the selection method :
+      const data & a_data = points[i];
+      // Set the data to the active cut :
+      the_cut->set_user_data(a_data);
+      // Invoke the cut selection method :
       int status = the_cut->process();
-      if (status == cuts::i_cut::ACCEPTED) {
+      if (status == cuts::SELECTION_ACCEPTED) {
         std::ostringstream * pss = 0;
-        if (points[i].color == data::BLACK) {
+        if (points[i].color == data::COLOR_BLACK) {
           pss = ss["black"];
           has_black = true;
-        } else if (points[i].color == data::RED) {
+        } else if (points[i].color == data::COLOR_RED) {
           pss = ss["red"];
           has_red = true;
-        } else if (points[i].color == data::GREEN) {
+        } else if (points[i].color == data::COLOR_GREEN) {
           pss = ss["green"];
           has_green = true;
-        } else if (points[i].color == data::BLUE) {
+        } else if (points[i].color == data::COLOR_BLUE) {
           pss = ss["blue"];
           has_blue = true;
         }
@@ -221,12 +225,12 @@ int main(int argc_, char ** argv_)
     }
 
   }
-  catch(std::exception & x) {
-    std::cerr << "ERROR: " << x.what() << std::endl;
+  catch (std::exception & x) {
+    DT_LOG_FATAL(logging,x.what());
     error_code = EXIT_FAILURE;
   }
-  catch(...) {
-    std::cerr << "ERROR: " << "unexpected error!" << std::endl;
+  catch (...) {
+    DT_LOG_FATAL(logging,"Unexpected error !");
     error_code = EXIT_FAILURE;
   }
   return(error_code);

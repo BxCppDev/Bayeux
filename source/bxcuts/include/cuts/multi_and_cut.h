@@ -2,12 +2,12 @@
 /* multi_and_cut.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-18
- * Last modified: 2013-04-22
+ * Last modified: 2013-05-16
  *
  * License:
  *
  * Description:
- *   A abstract cut interface that combines two other cuts
+ *   AND cut that combines many cuts
  *
  * History:
  *
@@ -19,32 +19,20 @@
 #include <string>
 #include <list>
 
-#include <cuts/i_cut.h>
+#include <cuts/i_multi_cut.h>
 #include <cuts/cut_macros.h>
 
 namespace cuts {
 
-  //CUT_CLASS_DECLARE(multi_and_cut)
   /// \brief A multi AND cut
-  class multi_and_cut : public i_cut
+  class multi_and_cut : public i_multi_cut
   {
   public:
 
-    typedef std::list<cut_handle_type> cuts_col_type;
+    /// Cut interface macro
+    CUT_INTERFACE_NOINIT_NORESET_CTOR_DTOR(multi_and_cut);
 
-  public:
-
-    void add_cut (cut_handle_type &);
-
-    virtual void set_user_data (void *);
-
-  public:
-
-    CUT_INTERFACE_CTOR_DTOR (multi_and_cut);
-
-  protected:
-
-    cuts_col_type _cuts_;
+  private:
 
     // Macro to automate the registration of the cut :
     CUT_REGISTRATION_INTERFACE(multi_and_cut);

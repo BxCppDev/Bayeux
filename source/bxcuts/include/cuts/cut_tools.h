@@ -52,9 +52,15 @@ namespace datatools {
 
 namespace cuts {
 
+  enum selection_result_type {
+    SELECTION_INAPPLICABLE = -1, //!< Returned by the selection method when applying some criteria makes no sense in the current context
+    SELECTION_REJECTED     = 0, //!< Returned by the selection method when some criteria is not passed
+    SELECTION_ACCEPTED     = 1 //!< Returned by the selection method when some criteria is passed
+  };
+
   class i_cut;
 
-  typedef std::map<std::string, i_cut *> cut_dict_type;
+  //typedef std::map<std::string, i_cut *> cut_dict_type;
 
   typedef datatools::handle<i_cut> cut_handle_type;
 
@@ -69,18 +75,17 @@ namespace cuts {
   public:
 
     /// Status of the cut entry
-    enum status_type
-      {
-        STATUS_BLANK       = 0,
-        STATUS_CREATED     = datatools::bit_mask::bit00,
-        STATUS_INITIALIZED = datatools::bit_mask::bit01,
-      };
+    enum status_type {
+      STATUS_BLANK       = 0,
+      STATUS_CREATED     = datatools::bit_mask::bit00,
+      STATUS_INITIALIZED = datatools::bit_mask::bit01,
+    };
 
-    std::string                  cut_name;    //!< The name of the cut
-    std::string                  cut_id;      //!< The ID (type) of the cut
-    datatools::properties cut_config;  //!< The configuration of the cut
-    uint32_t                     cut_status;  //!< The status of the cut
-    cut_handle_type              cut_handle;  //!< The handle for the allocated cut
+    // std::string                  cut_name;    //!< The name of the cut
+    // std::string                  cut_id;      //!< The ID (type) of the cut
+    // datatools::properties        cut_config;  //!< The configuration of the cut
+    // uint32_t                     cut_status;  //!< The status of the cut
+    // cut_handle_type              cut_handle;  //!< The handle for the allocated cut
 
 
     const datatools::properties & get_cut_config () const;

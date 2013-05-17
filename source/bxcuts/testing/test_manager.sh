@@ -22,7 +22,7 @@ if [ ! -d ${CUTS_TESTING_CONFIG_DIR} ]; then
     export CUTS_TESTING_CONFIG_DIR=${CUTS_SRC_ROOT}/testing/config
 fi
 
-${CUTS_SRC_ROOT}/__build-${arch}/testing/test_manager ${CUTS_TESTING_CONFIG_DIR}/test_cut_manager.conf # "x1|y2"
+${CUTS_SRC_ROOT}/__build-${arch}/testing/test_manager -o -m -m -m -m -m -m ${CUTS_TESTING_CONFIG_DIR}/test_cut_manager.conf # "x1|y2"
 if [ $? -ne 0 ]; then
     echo "ERROR: Test executable failed ! Abort !" >&2
     exit 1

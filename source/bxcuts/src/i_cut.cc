@@ -1,7 +1,7 @@
 /* i_cut.cc
- * 
+ *
  * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -14,9 +14,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- * 
+ *
  */
 
 #include <stdexcept>
@@ -27,31 +27,27 @@
 #include <datatools/properties.h>
 #include <datatools/ioutils.h>
 #include <datatools/service_manager.h>
+#include <datatools/exception.h>
 
 namespace cuts {
 
-  using namespace std;
-
   DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION (i_cut, "cuts::i_cut/__system__");
 
-  bool 
+  bool
   i_cut::is_debug () const
   {
-    return _debug_level_ > 0;
+    return _logging >= datatools::logger::PRIO_DEBUG;
   }
-    
-  void 
-  i_cut::set_debug (bool a_debug)
+
+  void i_cut::set_logging_priority(datatools::logger::priority p)
   {
-    if (a_debug)
-      {
-        _debug_level_ = 1;
-      }
-    else
-      {
-        _debug_level_ = 0;
-      }
+    _logging = p;
     return;
+  }
+
+  datatools::logger::priority i_cut::get_logging_priority() const
+  {
+    return _logging;
   }
 
   bool i_cut::is_initialized () const
@@ -65,75 +61,31 @@ namespace cuts {
     return;
   }
 
-  void i_cut::_lock_guard (const std::string & where_, const std::string & what_) const
+  bool i_cut::has_name () const
   {
-    if (! is_initialized ()) return;
-    std::ostringstream message;
-    if (! where_.empty ())
-      {
-        message << where_ << " : ";
-      }
-    else
-      {
-        message << "cuts::i_cut::_lock_guard" << " : ";
-      }
-    if (! what_.empty ())
-      {
-        message << what_;
-      }
-    else
-      {
-        message << "Operation prohibited ! Cut '" << get_name () 
-                << "' is already initialized !";
-      }
-    throw std::logic_error (message.str ());
-    return;
+    return ! _name.empty ();
   }
-  
-  int
-  i_cut::get_debug_level () const
-  {
-    return _debug_level_;
-  }
-  
-  void
-  i_cut::set_debug_level (int a_new_value)
-  {
-    if (a_new_value < 0) 
-      {
-        _debug_level_ = 0;
-      }
-    else 
-      {
-        _debug_level_ = a_new_value;
-      }
-    return;
-  }
-  
-  const string &
+
+  const std::string &
   i_cut::get_name () const
   {
     return _name;
   }
-  
+
   void
-  i_cut::set_name (const string & a_new_value)
+  i_cut::set_name (const std::string & a_new_value)
   {
-    if (is_initialized ())
-      {
-        std::ostringstream message;
-        message << "cuts::i_cut::set_name: "
-                << "Cut '" << _name << "' " 
+    DT_THROW_IF(is_initialized(),
+                std::logic_error,
+                "Cut '" << _name << "' "
                 << "is already initialized ! "
-                << "Cannot change the name !";
-        throw logic_error (message.str ());
-      }
+                << "Cannot change the name !");
     _set_name (a_new_value);
     return;
   }
-  
+
   void
-  i_cut::_set_name (const string & a_new_value)
+  i_cut::_set_name (const std::string & a_new_value)
   {
     _name = a_new_value;
     return;
@@ -143,91 +95,125 @@ namespace cuts {
   {
     return ! _description.empty ();
   }
-    
-  const string & i_cut::get_description () const
+
+  const std::string & i_cut::get_description () const
   {
     return _description;
   }
-    
-  void i_cut::set_description (const string & a_description)
+
+  void i_cut::set_description (const std::string & a_description)
   {
     _description = a_description;
     return;
   }
 
-  const string & i_cut::get_version () const
+  bool i_cut::has_version () const
+  {
+    return ! _version.empty ();
+  }
+
+  const std::string & i_cut::get_version () const
   {
     return _version;
   }
-   
-  void i_cut::set_version (const string & a_version)
+
+  void i_cut::set_version (const std::string & a_version)
   {
     _version = a_version;
     return;
   }
 
   // ctor:
-  i_cut::i_cut (const string & a_cut_name, 
-                const string & a_cut_description, 
-                const string & a_cut_version, 
-                int a_debug_level)
-    : _name (a_cut_name),
-      _description (a_cut_description),
-      _version (a_cut_version)
+  i_cut::i_cut (datatools::logger::priority p)
   {
     _initialized_ = false;
-    _debug_level_ = a_debug_level;
-    _user_data_ = 0;
-    return;
-  }
-  
-  // dtor:
-  i_cut::~i_cut ()
-  {
-    _user_data_ = 0;
-    if (_initialized_)
-      {
-        ostringstream message;
-        message << "cuts::i_cut::~i_cut: "
-                << "Cut '" << _name << "' " 
-                << "still has its 'initialized' flag on ! "
-                << "Possible bug !";
-        throw logic_error (message.str ());
-      }
+    _logging = p;
     return;
   }
 
-  void i_cut::print (ostream & a_out) const
+  // dtor:
+  i_cut::~i_cut ()
+  {
+    DT_LOG_TRACE(_logging, "Destruction.");
+    _reset();
+    DT_THROW_IF(is_initialized(),
+                std::logic_error,
+                "Cut '" << _name << "' "
+                << "still has its 'initialized' flag on ! "
+                << "Possible bug !");
+    DT_LOG_TRACE(_logging, "Destruction done.");
+    return;
+  }
+
+  void i_cut::print (std::ostream & a_out) const
   {
     this->tree_dump (a_out, "Base cut :");
     return;
   }
 
-  void i_cut::tree_dump (ostream & a_out , 
-                         const string & a_title,
-                         const string & a_indent,
+  void i_cut::tree_dump (std::ostream & a_out ,
+                         const std::string & a_title,
+                         const std::string & a_indent,
                          bool a_inherit) const
   {
-    string indent;
-    if (! a_indent.empty ())
-      {
-        indent = a_indent;
-      }
-    if ( ! a_title.empty () ) 
-      {
-        a_out << indent << a_title << endl;
-      }  
-    a_out << indent << datatools::i_tree_dumpable::tag 
-          << "Cut name        : '" << _name << "'" << endl;
-    a_out << indent << datatools::i_tree_dumpable::tag 
-          << "Cut description : '" << _description << "'" << endl;
-    a_out << indent << datatools::i_tree_dumpable::tag 
-          << "Cut version     : '" << _version << "'" << endl;
-    a_out << indent << datatools::i_tree_dumpable::tag 
-          << "Cut debug level : " << _debug_level_ << endl;
+    std::string indent;
+    if (! a_indent.empty ()) {
+      indent = a_indent;
+    }
+    if ( ! a_title.empty () )  {
+      a_out << indent << a_title << std::endl;
+    }
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Cut name        : '" << _name << "'" << std::endl;
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Cut description : '" << _description << "'" << std::endl;
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Cut version     : '" << _version << "'" << std::endl;
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Cut logging priority : " << datatools::logger::get_priority_label(_logging) << std::endl;
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Cut initialized : " << is_initialized () << std::endl;
     a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
-          << "Cut initialized : " << is_initialized () << endl;      
+          << "User data : ";
+    if (_user_data_.get() != 0) {
+      a_out << "Yes (type=\"" << _user_data_.get()->get_typeinfo()->name() << "\")";
+    } else {
+      a_out << "No";
+    }
+    a_out << std::endl;
     return;
+  }
+
+  void i_cut::_common_initialize (const datatools::properties & a_config)
+  {
+    DT_LOG_TRACE(_logging, "Entering common initialization of the cut...");
+    if (a_config.has_key("logging.priority")) {
+      std::string prio_label = a_config.fetch_string("logging.priority");
+      datatools::logger::priority p = datatools::logger::get_priority(prio_label);
+      DT_THROW_IF(p == datatools::logger::PRIO_UNDEFINED,
+                  std::domain_error,
+                  "Unknow logging priority ``" << prio_label << "`` !");
+      set_logging_priority(p);
+    }
+
+    if (! has_name ()) {
+      if (a_config.has_key("cut.name")) {
+        set_name(a_config.fetch_string("cut.name"));
+      }
+    }
+
+    if (! has_description ()) {
+      if (a_config.has_key("cut.description")) {
+        set_description(a_config.fetch_string("cut.description"));
+      }
+    }
+
+    if (! has_version ()) {
+      if (a_config.has_key("cut.version")) {
+        set_version(a_config.fetch_string("cut.version"));
+      }
+    }
+    DT_LOG_TRACE(_logging, "Exiting common initialization of the cut.");
   }
 
   void i_cut::initialize_simple ()
@@ -237,8 +223,8 @@ namespace cuts {
     cut_handle_dict_type dummy_cut_dict;
     initialize (dummy_config, dummy_service_manager, dummy_cut_dict);
     return;
-      }
-    
+  }
+
   void i_cut::initialize_standalone (const datatools::properties & a_config)
   {
     datatools::service_manager dummy;
@@ -246,7 +232,7 @@ namespace cuts {
     initialize (a_config, dummy, dummy2);
     return;
   }
-   
+
   void i_cut::initialize_with_service_only (const datatools::properties & a_config,
                                             datatools::service_manager & a_service_manager)
   {
@@ -254,7 +240,7 @@ namespace cuts {
     initialize (a_config, a_service_manager, dummy);
     return;
   }
-   
+
   void i_cut::initialize_without_service (const datatools::properties & a_config,
                                           cut_handle_dict_type & a_cut_dictionnary)
   {
@@ -262,44 +248,87 @@ namespace cuts {
     initialize (a_config, dummy_service_manager, a_cut_dictionnary);
     return;
   }
-  
-  bool i_cut::has_user_data () const
-  {
-    return _user_data_ != 0;
-  }
 
-  void * i_cut::_get_user_data () const
+  bool i_cut::has_user_data () const
   {
     return _user_data_;
   }
 
-  void i_cut::set_user_data (void * a_user_data)
+  void i_cut::reset_user_data ()
   {
-    _user_data_ = a_user_data;
+    DT_LOG_TRACE(_logging, "Cut named '" << (has_name()? get_name() : "?") << "' resets user data.");
+    _user_data_.reset();
     return;
   }
 
-  void i_cut::unset_user_data ()
+  void i_cut::_set_user_data(const boost::shared_ptr<i_referenced_data> & rd_)
   {
-    _user_data_ = 0;
-    return;
+    DT_LOG_TRACE(_logging,
+                 "Cut named '" << (has_name()? get_name() : "?")
+                 << "' sets user data of type '" << rd_.get()->get_typeinfo()->name() << "'.");
+    _user_data_ = rd_;
+    _at_set_user_data();
+    DT_LOG_TRACE(_logging, "Exiting.");
+  }
+
+  void i_cut::_at_set_user_data()
+  {
+    DT_LOG_TRACE(_logging,
+                 "Cut named '" << (has_name()? get_name() : "?")
+                 << "' has user data of type '" << _user_data_.get()->get_typeinfo()->name() << "'.");
+  }
+
+  void i_cut::_at_reset_user_data()
+  {
+    DT_LOG_TRACE(_logging,
+                 "Cut named '" << (has_name()? get_name() : "?")
+                 << "' has no more referenced user data.");
+  }
+
+  void i_cut::_import_user_data_from(const i_cut & a_cut)
+  {
+    DT_LOG_TRACE(_logging,
+                 "Entering: cut named '" << (has_name()? get_name() : "?")
+                 << "' imports user data from cut named '"
+                 << (a_cut.has_name()? a_cut.get_name() : "?") << "'");
+    _set_user_data(a_cut._user_data_);
+    DT_LOG_TRACE(_logging, "Exiting.");
+  }
+
+  void i_cut::_export_user_data_to(i_cut & a_cut) const
+  {
+    DT_LOG_TRACE(_logging,
+                 "Entering: cut named '" << (has_name()? get_name() : "?")
+                 << "' exports user data to cut named '"
+                 << (a_cut.has_name()? a_cut.get_name() : "?") << "'");
+    a_cut._set_user_data(_user_data_);
+    DT_LOG_TRACE(_logging, "Exiting.");
   }
 
   void i_cut::_prepare_cut ()
   {
+    DT_LOG_TRACE(_logging, "Entering...");
+    DT_THROW_IF(! has_user_data(),
+                std::logic_error,
+                "Cut named '" << (has_name()? get_name() : "?") << "' references no user data !");
     return;
   }
 
-  void i_cut::_finish_cut ()
+  int i_cut::_finish_cut (int a_selection_status)
   {
-    return;
+    DT_LOG_TRACE(_logging, "Visiting with selection status = " << a_selection_status);
+    return a_selection_status;
   }
 
   int i_cut::process ()
   {
-    _prepare_cut ();
-    int status = _accept ();
-    _finish_cut ();
+    DT_LOG_TRACE(_logging,
+                 "Entering: processing of the cut named '" << (has_name()? get_name() : "?") << "'");
+    int status = SELECTION_INAPPLICABLE;
+    _prepare_cut();
+    status = _accept();
+    status = _finish_cut(status);
+    DT_LOG_TRACE(_logging, "Exiting with selection status = " << status);
     return status;
   }
 
@@ -308,9 +337,9 @@ namespace cuts {
     return this->process ();
   }
 
-  void i_cut::reset () 
+  void i_cut::_reset ()
   {
-    _user_data_ = 0;
+    reset_user_data();
     return;
   }
 

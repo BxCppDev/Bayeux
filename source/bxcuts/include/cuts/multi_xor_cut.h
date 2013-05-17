@@ -7,7 +7,7 @@
  * License:
  *
  * Description:
- *   A abstract cut interface that combines two other cuts
+ *   XOR cut that combines many cuts
  *
  * History:
  *
@@ -19,34 +19,22 @@
 #include <string>
 #include <list>
 
-#include <cuts/i_cut.h>
+#include <cuts/i_multi_cut.h>
 #include <cuts/cut_macros.h>
 
 namespace cuts {
 
-  //CUT_CLASS_DECLARE(multi_xor_cut)
   /// \brief A multi XOR cut
-  class multi_xor_cut : public i_cut
+  class multi_xor_cut : public i_multi_cut
   {
   public:
 
-    typedef std::list<cut_handle_type> cuts_col_type;
+    /// Cut interface macro
+    CUT_INTERFACE_NOINIT_NORESET_CTOR_DTOR(multi_xor_cut);
 
-  public:
+  private:
 
-    void add_cut (cut_handle_type &);
-
-    virtual void set_user_data (void *);
-
-  public:
-
-    CUT_INTERFACE_CTOR_DTOR (multi_xor_cut);
-
-  protected:
-
-    cuts_col_type _cuts_;
-
-    // Macro to automate the registration of the cut :
+    /// Macro to automate the registration of the cut
     CUT_REGISTRATION_INTERFACE(multi_xor_cut);
 
   };

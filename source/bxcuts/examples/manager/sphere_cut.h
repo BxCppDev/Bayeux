@@ -2,7 +2,7 @@
 /* sphere_cut.h
  * Author (s) : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-05-10
- * Last modified: 2013-05-10
+ * Last modified: 2013-05-17
  */
 
 /**
@@ -20,16 +20,12 @@
 #include <cuts/i_cut.h>
 #include <cuts/cut_macros.h>
 
-#include <data.h>
-
 /// \brief A cut to test the position of a 3D-point relatively to a sphere.
 CUT_CLASS_DECLARE(sphere_cut)
 {
  public:
 
   CUT_INTERFACE_CTOR_DTOR(sphere_cut);
-
- protected:
 
   void set_radius(double a_radius);
 
@@ -39,11 +35,11 @@ CUT_CLASS_DECLARE(sphere_cut)
 
  private:
 
-  double _x0_;
-  double _y0_;
-  double _z0_;
-  double _radius_;
-  bool   _reversed_;
+  double _x0_; //!< X coordinate of the center of the cut sphere
+  double _y0_; //!< Y coordinate of the center of the cut sphere
+  double _z0_; //!< Z coordinate of the center of the cut sphere
+  double _radius_; //!< Radius of the cut sphere
+  bool   _reversed_; //!< Cut reverse flag
 
   // Macro to automate the registration of the cut :
   CUT_REGISTRATION_INTERFACE(sphere_cut);

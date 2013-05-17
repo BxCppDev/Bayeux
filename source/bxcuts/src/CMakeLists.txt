@@ -21,25 +21,26 @@ endfunction()
 # use a simple listing and then prepend the actual source dir root
 
 set(cuts_PUBLIC_HEADERS
-include/cuts/accept_cut.h
-include/cuts/and_cut.h
 include/cuts/cut_macros.h
 include/cuts/cut_manager.h
 include/cuts/cut_service.h
 include/cuts/cut_tools.h
-include/cuts/i_binary_cut.h
 include/cuts/i_cut.h
-include/cuts/multi_and_cut.h
-include/cuts/multi_or_cut.h
-include/cuts/multi_xor_cut.h
+include/cuts/accept_cut.h
+include/cuts/reject_cut.h
+include/cuts/random_cut.h
+include/cuts/i_binary_cut.h
+include/cuts/and_cut.h
 include/cuts/nand_cut.h
 include/cuts/nor_cut.h
 include/cuts/not_cut.h
 include/cuts/or_cut.h
-include/cuts/reject_cut.h
 include/cuts/xnor_cut.h
 include/cuts/xor_cut.h
-include/cuts/random_cut.h
+include/cuts/i_multi_cut.h
+include/cuts/multi_and_cut.h
+include/cuts/multi_or_cut.h
+include/cuts/multi_xor_cut.h
 include/cuts/ocd_support.h
   )
 list_prepend(cuts_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
@@ -86,26 +87,27 @@ set_source_files_properties(${cuts_eos_HEADERS}
 # SOURCE FILES
 # Pretty basic!
 set(cuts_SOURCES
-accept_cut.cc
-and_cut.cc
-cut_manager.cc
-cuts_config.cc
-cut_service.cc
-cut_tools.cc
-i_binary_cut.cc
-i_cut.cc
-multi_and_cut.cc
-multi_or_cut.cc
-multi_xor_cut.cc
-nand_cut.cc
-nor_cut.cc
-not_cut.cc
-or_cut.cc
-reject_cut.cc
-xnor_cut.cc
-xor_cut.cc
-random_cut.cc
-ocd_support.cc
+    cut_manager.cc
+    cuts_config.cc
+    cut_service.cc
+    cut_tools.cc
+    i_cut.cc
+    accept_cut.cc
+    reject_cut.cc
+    random_cut.cc
+    i_binary_cut.cc
+    and_cut.cc
+    nand_cut.cc
+    nor_cut.cc
+    not_cut.cc
+    or_cut.cc
+    xnor_cut.cc
+    xor_cut.cc
+    i_multi_cut.cc
+    multi_and_cut.cc
+    multi_or_cut.cc
+    multi_xor_cut.cc
+    ocd_support.cc
   )
 
 #-----------------------------------------------------------------------

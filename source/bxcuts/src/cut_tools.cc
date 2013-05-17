@@ -1,6 +1,6 @@
 /* cut_tools.cc
  *
- * Copyright (C) 2012 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2012-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,8 @@
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
+
+#include <datatools/exception.h>
 
 #include <cuts/cut_tools.h>
 #include <cuts/i_cut.h>
@@ -152,49 +154,33 @@ namespace cuts {
 
   cut_handle_type & cut_entry_type::grab_initialized_cut_handle ()
   {
-    if (! _cut_handle_)
-      {
-        if (_manager_ == 0)
-          {
-            std::ostringstream message;
-            message << "snemo::core::processing::cut_entry_type::grab_initialized_cut_handle: "
-                    << "No manager is available to create the cut '" << this->_cut_name_
-                    << "' ! ";
-            throw std::logic_error (message.str ());
-
-          }
-        _manager_->create_cut (*this);
-      }
-    if (_cut_handle_)
-      {
-        if (_manager_ == 0)
-          {
-            std::ostringstream message;
-            message << "snemo::core::processing::cut_entry_type::grab_initialized_cut_handle: "
-                    << "No manager is available to initialize the cut '" << this->_cut_name_
-                    << "' ! ";
-            throw std::logic_error (message.str ());
-
-          }
-        _manager_->initialize_cut (*this);
-      }
+    if (! _cut_handle_) {
+      DT_THROW_IF(_manager_ == 0,
+                  std::logic_error,
+                  "No manager is available to create the cut '" << this->_cut_name_ << "' ! ");
+      _manager_->_create_cut(*this);
+    }
+    if (_cut_handle_) {
+      DT_THROW_IF(_manager_ == 0,
+                  std::logic_error,
+                  "No manager is available to initialize the cut '" << this->_cut_name_ << "' ! ");
+      _manager_->_initialize_cut(*this);
+    }
     return _cut_handle_;
   }
 
   void cut_entry_type::tree_dump (std::ostream & out_ ,
-                                     const std::string & title_,
-                                     const std::string & indent_,
-                                     bool inherit_) const
+                                  const std::string & title_,
+                                  const std::string & indent_,
+                                  bool inherit_) const
   {
     std::string indent;
-    if (! indent_.empty ())
-      {
-        indent = indent_;
-      }
-    if ( ! title_.empty () )
-      {
-        out_ << indent << title_ << std::endl;
-      }
+    if (! indent_.empty ()) {
+      indent = indent_;
+    }
+    if ( ! title_.empty () ) {
+      out_ << indent << title_ << std::endl;
+    }
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Cut name     : '" << _cut_name_ << "'" << std::endl;
@@ -207,53 +193,44 @@ namespace cuts {
     {
       size_t count = 0;
       std::ostringstream status_info;
-      if (is_created ())
-        {
-          if (count) status_info << ',';
-          status_info << "created";
-          count++;
-        }
-      if (is_initialized ())
-        {
-          if (count) status_info << ',';
-          status_info << "initialized";
-          count++;
-        }
-      if (count)
-        {
-          out_ << ' ' << '(' << status_info.str () << ')';
-        }
+      if (is_created ()) {
+        if (count) status_info << ',';
+        status_info << "created";
+        count++;
+      }
+      if (is_initialized ()) {
+        if (count) status_info << ',';
+        status_info << "initialized";
+        count++;
+      }
+      if (count) {
+        out_ << ' ' << '(' << status_info.str () << ')';
+      }
     }
     out_ << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Cut handle   : ";
-    if (_cut_handle_)
-      {
-        const i_cut & bm = _cut_handle_.get ();
-        out_ << "'" << bm.get_name () << "'";
-      }
-    else
-      {
-        out_ << "<null>";
-      }
+    if (_cut_handle_) {
+      const i_cut & bm = _cut_handle_.get ();
+      out_ << "'" << bm.get_name () << "'";
+    }
+    else {
+      out_ << "<null>";
+    }
     out_ << std::endl;
 
-    if (_cut_handle_)
-      {
-        out_ << indent << datatools::i_tree_dumpable::tag
-             << "Cut description : ";
-        const i_cut & bm = _cut_handle_.get ();
-        if (bm.has_description ())
-          {
-            out_ << "'" << bm.get_description () << "'";
-          }
-        else
-          {
-            out_ << "<none>";
-          }
-        out_ << std::endl;
+    if (_cut_handle_) {
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Cut description : ";
+      const i_cut & bm = _cut_handle_.get ();
+      if (bm.has_description ()) {
+        out_ << "'" << bm.get_description () << "'";
+      } else {
+        out_ << "<none>";
       }
+      out_ << std::endl;
+    }
 
     out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
          << "Manager   : " << has_manager () << std::endl;

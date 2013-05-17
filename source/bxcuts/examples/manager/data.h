@@ -10,17 +10,19 @@
 
 #include <iostream>
 
-/// \brief A simple data structure with (x,y,z) position in 3D-space and associated color.
+/// \brief A simple data structure with (x,y,z) position
+///        in 3D-space and associated color.
 class data
 {
 public:
 
   /// \brief Color types
   enum color_type {
-    BLACK = 0,
-    RED   = 1,
-    GREEN = 2,
-    BLUE  = 3
+    COLOR_INVALID = -1,
+    COLOR_BLACK   =  0,
+    COLOR_RED     =  1,
+    COLOR_GREEN   =  2,
+    COLOR_BLUE    =  3
   };
 
   /// Constructor
@@ -29,10 +31,13 @@ public:
   /// Smart print
   void print(std::ostream & out_) const;
 
+  /// Reset
+  void reset();
+
 public:
 
-  double x, y, z; /// Cartesian 3D-coordinates of the point
-  int    color; /// Color ID associated to the point
+  double x, y, z; //!< Cartesian 3D-coordinates of the point
+  int    color;   //!< Color ID associated to the point
 
 };
 

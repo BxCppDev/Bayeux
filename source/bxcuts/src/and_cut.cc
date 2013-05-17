@@ -8,6 +8,7 @@
 #include <sstream>
 
 #include <datatools/properties.h>
+#include <datatools/exception.h>
 
 namespace cuts {
 
@@ -16,49 +17,30 @@ namespace cuts {
   // Registration instantiation macro :
   CUT_REGISTRATION_IMPLEMENT(and_cut, "cuts::and_cut");
 
-  // ctor:
-  and_cut::and_cut (int a_debug_level)
-    : i_binary_cut ("cuts::and_cut",
-                    "And cut",
-                    "1.0",
-                    a_debug_level)
+  and_cut::and_cut(datatools::logger::priority logging_priority_)
+    : i_binary_cut(logging_priority_)
   {
     return;
   }
 
-  // dtor:
-  CUT_DEFAULT_DESTRUCTOR_IMPLEMENT (and_cut)
+  CUT_DEFAULT_DESTRUCTOR_IMPLEMENT(and_cut)
 
   CUT_ACCEPT_IMPLEMENT_HEAD(and_cut)
   {
+    int status = SELECTION_REJECTED;
+    DT_LOG_TRACE(_logging,"Entering: accept for AND cut named  '" << (has_name()? get_name() : "?") << "'");
     int status_1 = _handle_1.grab ().process ();
     int status_2 = _handle_2.grab ().process ();
     if ((status_1 < 0) || (status_2 < 0)) {
-        return INAPPLICABLE;
-      }
-    if ((status_1 + status_2) == 2 * ACCEPTED) {
-        return (ACCEPTED);
-      }
-    return (REJECTED);
-  }
-
-  CUT_INITIALIZE_IMPLEMENT_HEAD(and_cut,
-                                a_configuration,
-                                a_service_manager,
-                                a_cut_dict)
-  {
-    using namespace std;
-    if (is_initialized ()) {
-        ostringstream message;
-        message << "cuts::and_cut::initialize: "
-                << "Cut '" << get_name () << "' is already initialized ! ";
-        throw logic_error (message.str ());
-      }
-
-    this->i_binary_cut::_install_cuts (a_configuration,a_cut_dict);
-
-    _set_initialized (true);
-    return;
+      status = SELECTION_INAPPLICABLE;
+      DT_LOG_TRACE(_logging, "Exiting: AND cut is inapplicable");
+      return status;
+    }
+    if (status_1 == SELECTION_ACCEPTED && status_2 == SELECTION_ACCEPTED) {
+      status = SELECTION_ACCEPTED;
+    }
+    DT_LOG_TRACE(_logging, "Exiting.");
+    return status;
   }
 
 } // end of namespace cuts

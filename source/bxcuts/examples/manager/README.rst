@@ -14,11 +14,11 @@ Introduction
 
    * ``data.h`` and ``data.cc`` : sample user data class header file
    * ``color_cut.h`` and  ``color_cut.cc``: a cut class that selects
-     data object with a specific color
+     ``data`` object with a specific color
    * ``range_cut.h`` and ``range_cut.cc``: a cut class that selects
-     data object with a coordinate in a specific range
+     ``data`` object with a coordinate in a specific range
    * ``sphere_cut.h`` and ``sphere_cut.cc`` : a cut class that
-     selects data object with a position in the volume of a specific sphere
+     selects ``data`` object with a position in the volume of a specific sphere
    * ``ex_manager.cxx`` : the main program
    * ``ex_manager.gp`` : Gnuplot macro for plotting results
 
@@ -57,7 +57,7 @@ Quick start
 
 5. Check the output file:
 
-   * ``ex_manager.orig.data`` : 10% of the original set of randomized
+   * ``ex_manager.orig.data`` : 10 % of the original set of randomized
      colored data points
    * ``ex_manager.selected.data`` : Final set of selected colored
      data points

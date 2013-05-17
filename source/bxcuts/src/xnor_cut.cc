@@ -8,6 +8,7 @@
 #include <sstream>
 
 #include <datatools/properties.h>
+#include <datatools/exception.h>
 
 namespace cuts {
 
@@ -17,11 +18,8 @@ namespace cuts {
   CUT_REGISTRATION_IMPLEMENT(xnor_cut, "cuts::xnor_cut");
 
   // ctor:
-  xnor_cut::xnor_cut (int a_debug_level)
-    : i_binary_cut ("cuts::xnor_cut",
-                    "Xnor cut",
-                    "1.0",
-                    a_debug_level)
+  xnor_cut::xnor_cut (datatools::logger::priority logging_priority_)
+    : i_binary_cut(logging_priority_)
   {
     return;
   }
@@ -31,37 +29,15 @@ namespace cuts {
 
   CUT_ACCEPT_IMPLEMENT_HEAD(xnor_cut)
   {
-    int status_1 = _handle_1.grab ().process ();
-    int status_2 = _handle_2.grab ().process ();
-    if ((status_1 < 0) || (status_2 < 0))
-      {
-        return INAPPLICABLE;
-      }
-    if ((status_1 + status_2) == 1)
-      {
-        return (REJECTED);
-      }
-    return (ACCEPTED);
-  }
-
-  CUT_INITIALIZE_IMPLEMENT_HEAD(xnor_cut,
-                                a_configuration,
-                                a_service_manager,
-                                a_cut_dict)
-  {
-    using namespace std;
-    if (is_initialized ())
-      {
-        ostringstream message;
-        message << "cuts::xnor_cut::initialize: "
-                << "Cut '" << get_name () << "' is already initialized ! ";
-        throw logic_error (message.str ());
-      }
-
-    this->i_binary_cut::_install_cuts (a_configuration,a_cut_dict);
-
-    _set_initialized (true);
-    return;
+    int status_1 = _handle_1.grab ().process();
+    int status_2 = _handle_2.grab ().process();
+    if ((status_1 < 0) || (status_2 < 0)) {
+      return SELECTION_INAPPLICABLE;
+    }
+    if ((status_1 + status_2) == 1) {
+      return (SELECTION_REJECTED);
+    }
+    return (SELECTION_ACCEPTED);
   }
 
 } // end of namespace cuts

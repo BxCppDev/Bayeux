@@ -24,8 +24,10 @@
 #include <sstream>
 #include <stdexcept>
 
-#include <cuts/cut_manager.h>
 #include <datatools/utils.h>
+#include <datatools/exception.h>
+
+#include <cuts/cut_manager.h>
 
 namespace cuts {
 
@@ -52,44 +54,28 @@ namespace cuts {
 
   cut_manager & cut_service::grab_cut_manager ()
   {
-    if (_cut_manager_ == 0)
-      {
-        ostringstream message;
-        message << "cuts::cut_service::grab_cut_manager: "
-                << "No embedded cut manager is defined !"
-                << endl;
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF(_cut_manager_ == 0,
+                std::logic_error,
+                "No embedded cut manager is defined !");
     return *_cut_manager_;
   }
 
   const cut_manager & cut_service::get_cut_manager () const
   {
-    if (_cut_manager_ == 0)
-      {
-        ostringstream message;
-        message << "cuts::cut_service::get_cut_manager: "
-                << "No embedded cut manager is defined !"
-                << endl;
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF(_cut_manager_ == 0,
+                std::logic_error,
+                "No embedded cut manager is defined !");
     return *_cut_manager_;
   }
 
   void cut_service::set_cut_manager (const cut_manager & a_cut_manager)
   {
-    if (&a_cut_manager == _cut_manager_)
-      {
-        ostringstream message;
-        message << "cuts::cut_service::set_cut_manager: "
-                << "Self-referenced manager is not allowed !"
-                << endl;
-        throw logic_error (message.str ());
-      }
-    if (_cut_manager_ != 0 && _owns_manager_)
-      {
-        delete _cut_manager_;
-      }
+    DT_THROW_IF(&a_cut_manager == _cut_manager_,
+                std::logic_error,
+                "Self-referenced manager is not allowed !");
+    if (_cut_manager_ != 0 && _owns_manager_) {
+      delete _cut_manager_;
+    }
     _cut_manager_ = 0;
     _owns_manager_ = false;
     _cut_manager_ = const_cast<cut_manager*> (&a_cut_manager);
@@ -104,68 +90,52 @@ namespace cuts {
   int cut_service::initialize (const datatools::properties & a_config,
                                datatools::service_dict_type & a_service_dict)
   {
-    if (is_initialized ())
-      {
-        std::ostringstream message;
-        message << "cuts::cut_service::initialize: "
-                << "Service '" << get_name () << "' is already initialized ! ";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF(is_initialized (),
+                std::logic_error,
+                "Service '" << get_name () << "' is already initialized !");
 
-    if (a_config.has_flag ("debug"))
-      {
-        set_debug (true);
-      }
+    if (a_config.has_flag ("debug")) {
+      set_debug (true);
+    }
 
-    if (_cut_manager_ == 0)
-      {
-        if (a_config.has_key ("cut_manager.config"))
-          {
-            std::string config_filename = a_config.fetch_string ("cut_manager.config");
-            datatools::properties cut_manager_config;
-            datatools::fetch_path_with_env (config_filename);
+    if (_cut_manager_ == 0) {
+      DT_THROW_IF(! a_config.has_key("cut_manager.config"),
+                  std::logic_error,
+                  "Missing '" << "cut_manager.config"<< "' property !");
+      std::string config_filename = a_config.fetch_string ("cut_manager.config");
+      datatools::properties cut_manager_config;
+      datatools::fetch_path_with_env (config_filename);
 
-            datatools::properties::read_config (config_filename,
-                                                cut_manager_config);
-            _cut_manager_ = new cut_manager;
-            _owns_manager_ = true;
-            _cut_manager_->set_debug (is_debug ());
-            _cut_manager_->initialize (cut_manager_config);
-          }
-        else {
-         std:: ostringstream message;
-          message << "cuts::cut_service::initialize: "
-                  << "Missing '" << "cut_manager.config"<< "' property !";
-          throw std::logic_error (message.str ());
-        }
+      datatools::properties::read_config (config_filename,
+                                          cut_manager_config);
+      _cut_manager_ = new cut_manager;
+      _owns_manager_ = true;
+      if (is_debug()) {
+        _cut_manager_->set_logging_priority(datatools::logger::PRIO_DEBUG);
       }
+      _cut_manager_->initialize (cut_manager_config);
+    }
 
     return EXIT_SUCCESS;
   }
 
   int cut_service::reset ()
   {
-    if (! is_initialized ())
-      {
-        std::ostringstream message;
-        message << "cuts::cut_service::reset: "
-                << "Service '" << get_name () << "' is not initialized ! ";
-        throw std::logic_error (message.str ());
-      }
-    if (_owns_manager_ && _cut_manager_ != 0)
-      {
-        if (_cut_manager_->is_initialized ()) _cut_manager_->reset ();
-        delete _cut_manager_;
-        _cut_manager_ = 0;
-      }
+    DT_THROW_IF (! is_initialized (),
+                 std::logic_error,
+                 "Cut service '" << get_name () << "' is not initialized ! ");
+    if (_owns_manager_ && _cut_manager_ != 0) {
+      if (_cut_manager_->is_initialized ()) _cut_manager_->reset ();
+      delete _cut_manager_;
+      _cut_manager_ = 0;
+    }
     _owns_manager_ = false;
     return EXIT_SUCCESS;
   }
 
   // ctor:
-  cut_service::cut_service ()
-    : base_service ("cuts::cut_service",
-                    "A cut service")
+  cut_service::cut_service () : base_service ("cuts::cut_service",
+                                              "A cut service")
   {
     _debug_ = false;
     _owns_manager_ = false;
@@ -176,10 +146,9 @@ namespace cuts {
   // dtor:
   cut_service::~cut_service ()
   {
-    if (cut_service::is_initialized ())
-      {
-        this->cut_service::reset ();
-      }
+    if (cut_service::is_initialized ()) {
+      this->cut_service::reset ();
+    }
     return;
   }
 
@@ -193,7 +162,6 @@ namespace cuts {
           << "Owns manager : '" << _owns_manager_ << "'" << endl;
     a_out << a_indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
           << "Cut manager  :  " << _cut_manager_ << endl;
-
     return;
   }
 

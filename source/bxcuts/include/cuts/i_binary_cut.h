@@ -2,7 +2,7 @@
 /* i_binary_cut.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-18
- * Last modified: 2013-04-22
+ * Last modified: 2013-05-16
  *
  * License:
  *
@@ -17,45 +17,44 @@
 #define CUTS_I_BINARY_CUT_H_ 1
 
 #include <string>
+
+#include <datatools/properties.h>
+
 #include <cuts/i_cut.h>
 #include <cuts/cut_macros.h>
-#include <datatools/properties.h>
 
 namespace cuts {
 
-  //CUT_CLASS_DECLARE (i_binary_cut)
   /// \brief The abstract base class for binary cuts
-  class i_binary_cut : public i_cut
+  CUT_CLASS_DECLARE(i_binary_cut)
   {
-
   public:
 
-    void set_cut_1 (cut_handle_type &);
+    void set_cut_1(cut_handle_type &);
 
-    void set_cut_2 (cut_handle_type &);
+    void set_cut_2(cut_handle_type &);
 
-    void set_cuts (cut_handle_type &, cut_handle_type &);
+    void set_cuts(cut_handle_type &, cut_handle_type &);
 
-    virtual void set_user_data (void *);
+    /// Interface
+    CUT_INTERFACE_NOACCEPT_CTOR_DTOR(i_binary_cut);
 
-  public:
-
-    /// Constructor
-    i_binary_cut (const std::string & a_cut_name,
-                  const std::string & a_cut_description = "",
-                  const std::string & a_cut_version = "",
-                  int a_debug_level = 0);
-
-    /// Destructor
-    CUT_DESTRUCTOR_DECLARE (i_binary_cut);
-
-    /// Reset
-    CUT_RESET_DECLARE ();
+    /// Smart print
+    virtual void tree_dump (std::ostream & a_out         = std::clog,
+                            const std::string & a_title  = "",
+                            const std::string & a_indent = "",
+                            bool a_inherit               = false) const;
 
   protected:
 
-    void _install_cuts (const datatools::properties & a_configuration,
-                        cuts::cut_handle_dict_type & a_cut_dict);
+    void _install_cuts(const datatools::properties & a_configuration,
+                       cuts::cut_handle_dict_type & a_cut_dict);
+
+    virtual void _at_set_user_data();
+
+    virtual void _at_reset_user_data();
+
+    void _reset_cuts();
 
   protected:
 

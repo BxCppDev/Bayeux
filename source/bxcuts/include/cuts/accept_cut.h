@@ -21,19 +21,14 @@
 
 namespace cuts {
 
-  //CUT_CLASS_DECLARE (accept_cut)
   /// \brief A cut that always accepts
-  class accept_cut : public i_cut
+  CUT_CLASS_DECLARE (accept_cut)
   {
-
   public:
-
-    // ctor:
+    /// Constructor
     CUT_INTERFACE_CTOR_DTOR(accept_cut);
 
-  private:
-
-    // Macro to automate the registration of the cut :
+    /// Macro to automate the registration of the cut
     CUT_REGISTRATION_INTERFACE(accept_cut);
 
   };

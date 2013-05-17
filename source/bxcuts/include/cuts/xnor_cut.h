@@ -2,7 +2,7 @@
 /* xnor_cut.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-18
- * Last modified: 2013-04-éé
+ * Last modified: 2013-05-15
  *
  * License:
  *
@@ -23,12 +23,14 @@ namespace cuts {
   /// \brief The XNOR binary cut
   class xnor_cut : public i_binary_cut
   {
-
   public:
 
-    CUT_INTERFACE_NORESET_CTOR_DTOR (xnor_cut);
+    /// Cut interface macro
+    CUT_INTERFACE_NOINIT_NORESET_CTOR_DTOR (xnor_cut);
 
-    // Macro to automate the registration of the cut :
+  private:
+
+    /// Macro to automate the registration of the cut
     CUT_REGISTRATION_INTERFACE(xnor_cut);
 
   };

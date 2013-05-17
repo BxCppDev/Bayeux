@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* cuts_test_color_cut.cc
  */
 
@@ -12,53 +12,51 @@ namespace cuts {
   namespace test {
 
   using namespace std;
- 
+
     // Registration instantiation macro :
     CUT_REGISTRATION_IMPLEMENT(color_cut, "cuts::test::color_cut");
-  
+
     void color_cut::set_color (int color_)
     {
       _color_ = color_;
       return;
     }
-  
+
     // ctor:
-    CUT_CONSTRUCTOR_IMPLEMENT_HEAD (color_cut,
-                                    a_debug_devel,
-                                    "cuts::test::color_cut",
-                                    "A color cut",
-                                    "1.0")    
+    CUT_CONSTRUCTOR_IMPLEMENT_HEAD (color_cut,a_logging_priority)
     {
       _color_ = data::BLACK;
       return;
     }
-  
+
     // dtor:
-    CUT_DEFAULT_DESTRUCTOR_IMPLEMENT (color_cut)  
- 
-    CUT_RESET_IMPLEMENT_HEAD (color_cut)  
-    { 
-      _color_ = data::BLACK;   
-      this->i_cut::reset ();
+    CUT_DEFAULT_DESTRUCTOR_IMPLEMENT (color_cut)
+
+    CUT_RESET_IMPLEMENT_HEAD (color_cut)
+    {
       _set_initialized (false);
+      _color_ = data::BLACK;
+      this->i_cut::_reset ();
       return;
     }
 
     CUT_ACCEPT_IMPLEMENT_HEAD (color_cut)
     {
-      data * a_data = static_cast<data *> (_get_user_data ());
-      int color = a_data->color;
-      int result = i_cut::ACCEPTED;
-      if (color != _color_) 
+      int result = SELECTION_ACCEPTED;
+      DT_LOG_TRACE(_logging, "Entering...");
+      const data & a_data = get_user_data<data>();
+      int color = a_data.color;
+      if (color != _color_)
         {
-          result = i_cut::REJECTED;
+          result = SELECTION_REJECTED;
         }
+      DT_LOG_TRACE(_logging, "Exiting.");
       return result;
-    } 
+    }
 
     // static method used within a cut factory:
-    CUT_INITIALIZE_IMPLEMENT_HEAD (color_cut, 
-                                   a_configuration, 
+    CUT_INITIALIZE_IMPLEMENT_HEAD (color_cut,
+                                   a_configuration,
                                    a_service_manager,
                                    a_cut_dict)
     {
@@ -70,6 +68,7 @@ namespace cuts {
                   << "Cut '" << get_name () << "' is already initialized !";
           throw std::logic_error (message.str ());
         }
+      _common_initialize(a_configuration);
 
       int color = data::BLACK;
 
@@ -92,11 +91,11 @@ namespace cuts {
             {
               color = data::BLUE;
             }
-          else 
+          else
             {
               ostringstream message;
               message << "cuts::test::color_cut::initialize: "
-                      << "Invalid color label !" 
+                      << "Invalid color label !"
                       << endl;
               throw logic_error (message.str ());
             }
@@ -105,11 +104,11 @@ namespace cuts {
       this->set_color (color);
 
       _set_initialized (true);
-      return;   
+      return;
     }
-  
+
   } // end of namespace test
-  
+
 } // end of namespace cuts
 
 // end of cuts_test_color_cut.cc

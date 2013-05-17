@@ -2,7 +2,7 @@
 /* or_cut.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-18
- * Last modified: 2013-04-22
+ * Last modified: 2013-05-16
  *
  * License:
  *
@@ -23,15 +23,14 @@ namespace cuts {
   /// \brief The OR binary cut
   class or_cut : public i_binary_cut
   {
-
   public:
 
-    // ctor:
-    CUT_INTERFACE_NORESET_CTOR_DTOR (or_cut);
+    /// Cut interface macro
+    CUT_INTERFACE_NOINIT_NORESET_CTOR_DTOR (or_cut);
 
   private:
 
-    // Macro to automate the registration of the cut :
+    /// Macro to automate the registration of the cut
     CUT_REGISTRATION_INTERFACE(or_cut);
 
   };

@@ -34,6 +34,8 @@ int main (int argc_, char ** argv_)
       long seed = 314159;
       string config_filename = "";
       string cut_name = "";
+      bool do_ocd = false;
+      int npoints = 1;
 
       int iarg = 1;
       while (iarg < argc_)
@@ -46,6 +48,14 @@ int main (int argc_, char ** argv_)
               if ((option == "-d") || (option == "--debug"))
                 {
                   debug = true;
+                }
+              else if ((option == "-o") || (option == "--ocd"))
+                {
+                  do_ocd = true;
+                }
+              else if ((option == "-m") || (option == "--mult"))
+                {
+                  npoints *= 10;
                 }
               else
                 {
@@ -93,7 +103,7 @@ int main (int argc_, char ** argv_)
         }
       clog << "NOTICE: Cut name is '" << cut_name << "'" << endl;
 
-      my_cut_manager.set_debug (debug);
+      if (debug) my_cut_manager.set_logging_priority(datatools::logger::PRIO_DEBUG);
       my_cut_manager.initialize (cut_manager_config);
       cuts::i_cut * the_cut = 0;
       if (! my_cut_manager.has (cut_name))
@@ -103,11 +113,12 @@ int main (int argc_, char ** argv_)
           throw logic_error (message.str ());
         }
       the_cut = &my_cut_manager.grab (cut_name);
+      the_cut->tree_dump(std::clog, "The user cut:");
 
       // build a collection of points:
       list<cuts::test::data> points;
       map<string,ostringstream *> ss0;
-      for (int i = 0; i < 10000; i++)
+      for (int i = 0; i < npoints; i++)
         {
           cuts::test::data dummy;
           points.push_back (dummy);
@@ -181,13 +192,16 @@ int main (int argc_, char ** argv_)
       bool has_green = false;
       bool has_blue = false;
       clog << "NOTICE: Selection... " << endl;
-      for (list<cuts::test::data>::iterator i = points.begin ();
+      for (list<cuts::test::data>::const_iterator i = points.begin ();
            i != points.end ();
            i++)
         {
-          the_cut->set_user_data (&*i);
+          const cuts::test::data & a_data = *i;
+          //the_cut->set_logging_priority(datatools::logger::PRIO_TRACE);
+          the_cut->set_user_data(a_data);
           int status = the_cut->process ();
-          if (status == cuts::i_cut::ACCEPTED)
+          //std::cerr << "********* status=" << status << std::endl;
+          if (status == cuts::SELECTION_ACCEPTED)
             {
               ostringstream * pss = 0;
               if (i->color == cuts::test::data::BLACK)
@@ -265,7 +279,7 @@ int main (int argc_, char ** argv_)
           }
       }
 
-      {
+      if (do_ocd) {
         datatools::object_configuration_description OCD;
         if ( datatools::load_ocd<cuts::cut_manager>(OCD)) {
           OCD.print(std::clog, "*** ");

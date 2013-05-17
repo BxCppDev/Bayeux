@@ -24,11 +24,11 @@ find_package(cuts 4.0.0 REQUIRED)
 
 include_directories(${PROJECT_SOURCE_DIR} ${cuts_INCLUDE_DIRS})
 
-add_executable(ex_manager ex_manager.cxx
+add_executable(ex_manager data.cc
 			  sphere_cut.cc
 			  range_cut.cc
 			  color_cut.cc
-			  data.cc)
+			  ex_manager.cxx)
 
 target_link_libraries(ex_manager ${cuts_LIBRARY} )
 
