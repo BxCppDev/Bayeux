@@ -68,15 +68,15 @@ namespace dpp {
 
   bool if_module::has_then_status () const
   {
-    return _then_status_ != PROCESS_INVALID;
+    return ! (_then_status_ & PROCESS_INVALID);
   }
 
   bool if_module::has_else_status () const
   {
-    return _else_status_ != PROCESS_INVALID;
+    return ! (_else_status_ & PROCESS_INVALID);
   }
 
-  void if_module::set_then_status(processing_status_type status_)
+  void if_module::set_then_status(int status_)
   {
     DT_THROW_IF(is_initialized (),
                 std::logic_error,
@@ -85,7 +85,7 @@ namespace dpp {
                 && status_ != PROCESS_CONTINUE
                 && status_ != PROCESS_STOP,
                 std::logic_error,
-                "Invalid then status " << status_ << " for if module '" << get_name () << "' !");
+                "If module '" << get_name () << "' has invalid *then status* " << status_ << " !");
     _then_status_ = status_;
     if (! has_else_status () && ! _else_module_.handle) {
       _else_status_ = PROCESS_STOP;
@@ -93,7 +93,7 @@ namespace dpp {
     return;
   }
 
-  void if_module::set_else_status (processing_status_type status_)
+  void if_module::set_else_status (int status_)
   {
     DT_THROW_IF(is_initialized (),
                 std::logic_error,
@@ -102,7 +102,7 @@ namespace dpp {
                 && status_ != PROCESS_CONTINUE
                 && status_ != PROCESS_STOP,
                 std::logic_error,
-                "Invalid else status " << status_ << " for if module '" << get_name () << "' !");
+                "If module '" << get_name () << "' has invalid *else status* " << status_ << " !");
     _else_status_ = status_;
     if (! has_then_status () && ! _then_module_.handle) {
       _then_status_ = PROCESS_STOP;
@@ -161,7 +161,6 @@ namespace dpp {
     return;
   }
 
-
   DPP_MODULE_DEFAULT_DESTRUCTOR_IMPLEMENT(if_module)
 
   // Initialization :
@@ -173,7 +172,6 @@ namespace dpp {
     DT_THROW_IF(is_initialized (),
                 std::logic_error,
                 "If module '" << get_name () << "' is already initialized ! ");
-
     _common_initialize(a_config);
 
     if (_cut_service_label_.empty ()) {
@@ -197,7 +195,6 @@ namespace dpp {
       cuts::cut_service & the_cut_service
         = a_service_manager.grab<cuts::cut_service> (_cut_service_label_);
       cuts::cut_manager & the_cut_manager = the_cut_service.grab_cut_manager ();
-
       DT_THROW_IF(! a_config.has_key ("condition_cut"),
                   std::logic_error,
                   "Missing 'condition_cut' property ! ");
@@ -223,7 +220,8 @@ namespace dpp {
         }
         DT_THROW_IF(! has_then_status (),
                     std::logic_error,
-                    "Invalid value \'" << then_status << "' for the 'then_status' property ! ");
+                    "If module '" << get_name () << "' has invalid value \'"
+                    << then_status << "' for the 'then_status' property ! ");
       }
     }
 
@@ -237,7 +235,8 @@ namespace dpp {
         }
         DT_THROW_IF(! has_else_status (),
                     std::logic_error,
-                    "Invalid value \'" << else_status << "' for the 'else_status' property ! ");
+                    "If module '" << get_name () << "' has invalid value \'"
+                    << else_status << "' for the 'else_status' property ! ");
       }
     }
 
@@ -253,7 +252,7 @@ namespace dpp {
 
         DT_THROW_IF(found == a_module_dict.end (),
                     std::logic_error,
-                    "Can't find any module named '" << module_name
+                    "If module '" << get_name () << "' can't find any module named '" << module_name
                     << "' from the external dictionnary ! ");
         _then_module_.label = found->first;
         _then_module_.handle = found->second.grab_initialized_module_handle ();
@@ -272,7 +271,7 @@ namespace dpp {
 
         DT_THROW_IF(found == a_module_dict.end (),
                     std::logic_error,
-                    "Can't find any module named '" << module_name
+                    "If module '" << get_name () << "' can't find any module named '" << module_name
                     << "' from the external dictionnary ! ");
         _else_module_.label = found->first;
         _else_module_.handle = found->second.grab_initialized_module_handle ();
@@ -309,17 +308,17 @@ namespace dpp {
     int process_status = PROCESS_ERROR;
     cuts::i_cut & the_cut = _condition_cut_.handle.grab ();
     // Prepare the user data to be checked by the active 'cut':
-    the_cut.set_user_data (&the_data_record);
+    the_cut.set_user_data<datatools::things>(the_data_record);
     // Apply the cut algorithm:
     DT_LOG_DEBUG(_logging, "Checking cut '" << _condition_cut_.label << "'...");
     int cut_status = the_cut.process ();
     // Detach user data.
-    the_cut.unset_user_data ();
+    the_cut.reset_user_data ();
     // Check the cut's returned value:
-    if (cut_status == cuts::i_cut::INAPPLICABLE) {
+    if (cut_status == cuts::SELECTION_INAPPLICABLE) {
       DT_LOG_DEBUG(_logging, "Cut '" << _condition_cut_.label << "' was inapplicable.");
       process_status = PROCESS_STOP & PROCESS_ERROR;
-    } else if (cut_status == cuts::i_cut::ACCEPTED) {
+    } else if (cut_status == cuts::SELECTION_ACCEPTED) {
       DT_LOG_DEBUG(_logging, "Cut '" << _condition_cut_.label << "' has been checked.");
       process_status = PROCESS_SUCCESS;
       if (_then_status_ != PROCESS_INVALID) {

@@ -25,9 +25,10 @@ namespace dpp {
                                                     *  of the current data model in the current
                                                     *  pipeline branch
                                                     */
-    PROCESS_FATAL    = datatools::bit_mask::bit02  /** Module has met an error and requests a total
+    PROCESS_FATAL    = datatools::bit_mask::bit02, /** Module has met an error and requests a total
                                                     *  abortion of the processing session
                                                     */
+    PROCESS_INVALID  = datatools::bit_mask::bit31  /** Invalid process status */
   };
 
 

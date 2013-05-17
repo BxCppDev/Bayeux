@@ -36,7 +36,8 @@
 #include <string>
 #include <vector>
 
-#include <dpp/base_cut.h>
+#include <cuts/i_cut.h>
+#include <cuts/cut_macros.h>
 
 namespace datatools {
     class properties;
@@ -45,22 +46,21 @@ namespace datatools {
 
 namespace dpp {
 
-  class utils_cut : public base_cut
+  CUT_CLASS_DECLARE(utils_cut)
   {
-
   public:
 
-    enum mode_type
-      {
-        MODE_UNDEFINED = 0,
-        MODE_HAS_BANK  = 1,
-      };
+    enum mode_type {
+      MODE_UNDEFINED = -1,
+      MODE_HAS_BANK  =  1
+    };
 
     void set_mode (int mode_);
 
+    void reset_mode ();
+
     int get_mode () const;
 
-    // mode HAS_BANK:
     bool is_mode_has_bank () const;
 
     void set_has_bank_name (const std::string & bank_name_);
@@ -76,23 +76,14 @@ namespace dpp {
 
     CUT_INTERFACE_CTOR_DTOR (utils_cut);
 
-    // ctor:
-    utils_cut (const std::string & cut_name_,
-               const std::string & cut_description_ = "",
-               const std::string & cut_version_     = "",
-               int debug_level_ = 0);
-
-    /*
-      virtual void tree_dump (ostream & a_out         = clog,
-      const std::string & a_title  = "",
-      const std::string & a_indent = "",
-      bool a_inherit          = false) const;
-    */
+    virtual void tree_dump (std::ostream & a_out         = std::clog,
+                            const std::string & a_title  = "",
+                            const std::string & a_indent = "",
+                            bool a_inherit               = false) const;
 
   private:
 
     int _mode_;                            //!< Mode of the cut
-
     std::vector<std::string> _bank_names_; //!< Labels of the event record bank to be checked
     std::vector<std::string> _bank_types_; //!< Types of the event record bank to be checked (optionnal)
 

@@ -45,23 +45,14 @@ namespace dpp {
   {
   public:
 
-    enum processing_status_type
-    {
-      PROCESS_INVALID  = -1,
-      PROCESS_CONTINUE =  0,
-      PROCESS_STOP     =  1
-    };
-
     /// \brief Cut record entry
-    struct cut_entry
-    {
+    struct cut_entry {
       std::string           label;  //!< Cut label
       cuts::cut_handle_type handle; //!< Cut handle
     };
 
     /// \brief Internal module record entry
-    struct module_entry
-    {
+    struct module_entry {
       std::string        label;  //!< Module label
       module_handle_type handle; //!< Module handle
     };
@@ -85,11 +76,11 @@ namespace dpp {
 
     bool has_then_status () const;
 
-    void set_then_status (processing_status_type status_);
+    void set_then_status (int status_);
 
     bool has_else_status () const;
 
-    void set_else_status (processing_status_type status_);
+    void set_else_status (int status_);
 
     // Constructor :
     DPP_MODULE_INTERFACE_CTOR_DTOR(if_module);
@@ -107,9 +98,9 @@ namespace dpp {
 
     std::string  _cut_service_label_; /// Label/name of the cut service
     cut_entry    _condition_cut_;     /// Condition cut entry
-    processing_status_type _then_status_; /// Status of the 'then' action module
+    int          _then_status_;       /// Status of the 'then' action module
     module_entry _then_module_;       /// 'then' action module entry
-    processing_status_type _else_status_; /// Status of the 'else' action module
+    int          _else_status_;       /// Status of the 'else' action module
     module_entry _else_module_;       /// 'else' action module entry
 
     // Macro to automate the registration of the module :

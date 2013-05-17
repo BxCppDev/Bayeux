@@ -21,12 +21,12 @@ endfunction()
 # use a simple listing and then prepend the actual source dir root
 
 set(dpp_PUBLIC_HEADERS
+    include/dpp/utils.h
     include/dpp/base_module.h
     include/dpp/brio_common.h
     include/dpp/chain_module.h
     include/dpp/context_service.h
     include/dpp/dummy_module.h
-    include/dpp/i_data_processor.h
     include/dpp/i_data_sink.h
     include/dpp/i_data_source.h
     include/dpp/if_module.h
@@ -39,10 +39,8 @@ set(dpp_PUBLIC_HEADERS
     include/dpp/simple_data_sink.h
     include/dpp/simple_data_source.h
     include/dpp/skip_module.h
-    include/dpp/utils.h
     include/dpp/utils_module.h
     include/dpp/dump_module.h
-    include/dpp/base_cut.h
     include/dpp/utils_cut.h
     include/dpp/ocd_support.h
   )
@@ -85,7 +83,6 @@ list(APPEND dpp_PUBLIC_HEADERS ${PROJECT_BINARY_DIR}/include/dpp/dpp_config.h)
 # SOURCE FILES
 # Pretty basic!
 set(dpp_SOURCES
-    base_cut.cc
     utils_cut.cc
     base_module.cc
     brio_common.cc
