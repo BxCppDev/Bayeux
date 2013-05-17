@@ -37,6 +37,7 @@ if(DOXYGEN_FOUND)
   set(DOXYGEN_TAGFILE ${DOXYGEN_OUTPUT_DIR}/datatools-${datatools_VERSION}.doxytag)
   set(DOXYGEN_EXTRA_INPUT 
     ${DOXYGEN_INPUT_DIR}/doc/user_guides/Version.markdown
+    ${DOXYGEN_INPUT_DIR}/doc/api/HandlingApiChanges.markdown
     )
 
   if(APPLE)

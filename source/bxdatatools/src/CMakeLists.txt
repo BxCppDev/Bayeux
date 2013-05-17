@@ -127,6 +127,7 @@ set_source_files_properties(${datatools_eos_HEADERS}
 set(datatools_detail_HEADERS
   include/datatools/detail/Configure.h
   include/datatools/detail/DynamicLoader.h
+  include/datatools/detail/api.h
   include/datatools/detail/bio_link_guard.h
   include/datatools/detail/reflection_link_guard.h
   include/datatools/detail/reflection_export.h
