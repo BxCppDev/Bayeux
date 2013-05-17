@@ -156,7 +156,7 @@ struct logger {
 #define DT_LOG_TRACE(Priority, Message) \
 { \
   if (Priority >= datatools::logger::PRIO_TRACE) { \
-    std::clog << "[trace:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
+    std::cerr << "[trace:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
   }\
 }
 
