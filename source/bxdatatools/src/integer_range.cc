@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
 // integer_range.cc
-// Ourselves 
+// Ourselves
 #include <datatools/integer_range.h>
 
 // Standard Library
@@ -12,6 +12,7 @@
 // - A
 
 // This Project
+#include <datatools/exception.h>
 
 using namespace std;
 
@@ -24,14 +25,14 @@ integer_range::integer_range() {
 
 
 // Ctor:
-integer_range::integer_range(value_type from, value_type to, 
+integer_range::integer_range(value_type from, value_type to,
                               int from_policy, int to_policy) {
   this->set(from, to, from_policy, to_policy);
 }
 
 
 bool integer_range::is_valid() const {
-  return (lower_flag_ != range_bound_undefined) 
+  return (lower_flag_ != range_bound_undefined)
       && (upper_flag_ != range_bound_undefined);
 }
 
@@ -69,7 +70,7 @@ void integer_range::set_lower(value_type from, int policy) {
     lower_      = from;
     lower_flag_ = policy;
   } else {
-    throw std::logic_error("datatools::integer_range::set_lower: Invalid policy!");
+    DT_THROW_IF(true, std::logic_error, "Invalid policy !");
   }
 }
 
@@ -84,12 +85,12 @@ void integer_range::set_upper(value_type to, int policy) {
     upper_      = to;
     upper_flag_ = policy;
   } else {
-    throw std::logic_error("datatools::integer_range::set_upper: Invalid policy!");
+    DT_THROW_IF(true, std::logic_error, "Invalid policy !");
   }
 }
 
 
-void integer_range::set(value_type from, value_type to, 
+void integer_range::set(value_type from, value_type to,
                          int from_policy, int to_policy) {
   this->set_lower(from, from_policy);
   this->set_upper(to, to_policy);
@@ -112,49 +113,46 @@ bool integer_range::is_bounded() const {
 
 
 integer_range::value_type integer_range::get_lower_bound() const {
-  if (!this->is_lower_bounded()) {
-    throw std::logic_error("datatools::integer_range::get_lower_bound: No lower bound !");
-  }
+  DT_THROW_IF (!this->is_lower_bounded(),
+               std::logic_error,
+               "No lower bound !");
   return lower_;
 }
 
 
 integer_range::value_type integer_range::get_upper_bound() const {
-  if (!this->is_upper_bounded()) {
-    throw std::logic_error("datatools::integer_range::get_upper_bound: No upper bound !");
-  }
+  DT_THROW_IF (!this->is_upper_bounded(),
+               std::logic_error,
+               "No upper bound !");
   return upper_;
 }
 
 
 bool integer_range::is_lower_included() const {
-  if (!this->is_lower_bounded()) {
-    throw std::logic_error("datatools::integer_range::is_lower_included: No lower bound !");
-  }
+  DT_THROW_IF (!this->is_lower_bounded(),
+               std::logic_error,
+               "No lower bound !");
   return (lower_flag_ == range_bound_included);
 }
 
 
 bool integer_range::is_upper_included() const {
-  if (!this->is_upper_bounded()) {
-    throw std::logic_error("datatools::integer_range::is_upper_included: No upper bound !");
-  }
+  DT_THROW_IF (!this->is_upper_bounded(),
+               std::logic_error,
+               "No upper bound !");
   return (upper_flag_ == range_bound_included);
 }
 
 
 uint64_t integer_range::count() const {
-  if (!is_bounded()) {
-    throw std::logic_error("datatools::integer_range::count: (semi-)infinite range !");
-  }
-
+  DT_THROW_IF (!is_bounded(),
+               std::logic_error,
+               "(Semi-)infinite range !");
   int64_t cnt64 = upper_;
   cnt64 -= lower_;
   cnt64 += 1;
   if (!this->is_upper_included()) cnt64--;
-
   if (!this->is_lower_included()) cnt64--;
-  
   uint64_t ucnt64 = cnt64;
   return ucnt64;
 }
@@ -171,33 +169,33 @@ void integer_range::make_empty() {
 
 
 void integer_range::make_full() {
-  this->set(std::numeric_limits<value_type>::min(), 
-            std::numeric_limits<value_type>::max(), 
-            range_bound_included, 
+  this->set(std::numeric_limits<value_type>::min(),
+            std::numeric_limits<value_type>::max(),
+            range_bound_included,
             range_bound_included);
 }
 
 
 void integer_range::make_full_positive() {
-  this->set(0, 
-            std::numeric_limits<value_type>::max(), 
-            range_bound_included, 
+  this->set(0,
+            std::numeric_limits<value_type>::max(),
+            range_bound_included,
             range_bound_included);
 }
 
 
 void integer_range::make_full_negative() {
   this->set(std::numeric_limits<value_type>::min(),
-            0, 
-            range_bound_included, 
+            0,
+            range_bound_included,
             range_bound_included);
 }
 
 
 void integer_range::make_upper_unbounded(value_type from, bool inclusive) {
-  this->set(from, 
-            0, 
-            inclusive ? range_bound_included : range_bound_excluded , 
+  this->set(from,
+            0,
+            inclusive ? range_bound_included : range_bound_excluded ,
             range_bound_unbound);
 }
 
@@ -211,7 +209,7 @@ void integer_range::make_lower_unbounded(value_type to, bool inclusive) {
 
 
 void integer_range::make_bounded(value_type from, value_type to,
-                                 bool from_included, 
+                                 bool from_included,
                                  bool to_included) {
   this->set(from,
             to,
@@ -257,7 +255,7 @@ void integer_range::dump(std::ostream& out) const {
       out << "|-- " << "Upper included = " << this->is_upper_included() << std::endl;
       out << "|-- " << "Last           = " << this->last() << std::endl;
     }
-    
+
     out << "|-- " << "Bounded        = " << this->is_bounded() << std::endl;
 
     if (this->is_bounded()) {
@@ -269,14 +267,14 @@ void integer_range::dump(std::ostream& out) const {
   } else {
     out << "|-- " << "[invalid]" << std::endl;
   }
-  out << "`-- " << "Rendering      = '" << *this << "'" << std::endl; 
+  out << "`-- " << "Rendering      = '" << *this << "'" << std::endl;
 }
 
 
 integer_range::value_type integer_range::begin() const {
-  if (!this->is_bounded()) {
-    throw std::logic_error("datatools::integer_range::begin: Not bounded !");
-  }
+  DT_THROW_IF (!this->is_bounded(),
+               std::logic_error,
+               "Not bounded !");
   value_type the_beg = lower_;
   if (!this->is_lower_included()) {
     the_beg++;
@@ -286,10 +284,10 @@ integer_range::value_type integer_range::begin() const {
 
 
 integer_range::value_type integer_range::end() const {
-  if (!this->is_bounded()) {
-    throw std::logic_error("datatools::integer_range::end: Not bounded !");
-  }
-  value_type the_end = upper_; 
+  DT_THROW_IF (!this->is_bounded(),
+               std::logic_error,
+               "Not bounded !");
+  value_type the_end = upper_;
   // case : the_end != numeric_limits<value_type>::max () ???
   if (this->is_upper_included()) {
     the_end++;
@@ -299,9 +297,9 @@ integer_range::value_type integer_range::end() const {
 
 
 integer_range::value_type integer_range::first() const {
-  if (!this->is_lower_bounded()) {
-    throw std::logic_error("datatools::integer_range::first: Not lower bounded !");
-  }
+  DT_THROW_IF (!this->is_lower_bounded(),
+               std::logic_error,
+               "Not lower bounded !");
   value_type the_first = lower_;
   if (!this->is_lower_included()) {
     the_first++;
@@ -311,10 +309,10 @@ integer_range::value_type integer_range::first() const {
 
 
 integer_range::value_type integer_range::last() const {
-  if (!this->is_upper_bounded()) {
-    throw std::logic_error("datatools::integer_range::last: Not upper bounded !");
-  }
-  value_type the_last = upper_; 
+  DT_THROW_IF (!this->is_upper_bounded(),
+               std::logic_error,
+               "Not upper bounded !");
+  value_type the_last = upper_;
   if (!this->is_upper_included()) {
     the_last--;
   }
@@ -336,9 +334,7 @@ std::ostream& operator<<(std::ostream& out, const integer_range& a_range) {
     } else {
       out << range_tools::token_close;
     }
-
     out << ';';
-
     if (a_range.is_upper_bounded()) {
       out << a_range.get_upper_bound();
       if (a_range.is_upper_included()) {

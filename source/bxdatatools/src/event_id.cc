@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* event_id.cc
  */
 // Ourselves
@@ -11,6 +11,7 @@
 // Third Party
 
 // Datatools
+#include <datatools/exception.h>
 
 // Special backward compatibility support for serialization :
 DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_IMPLEMENTATION(datatools::event_id,"datatools::event_id")
@@ -20,12 +21,12 @@ namespace datatools {
 
 DATATOOLS_SERIALIZATION_IMPLEMENTATION_ADVANCED(event_id,"datatools::event_id")
 
-event_id::event_id() 
+event_id::event_id()
     : run_number_(INVALID_RUN_NUMBER),
       event_number_(INVALID_EVENT_NUMBER) {}
 
 
-event_id::event_id(int a_event_number) 
+event_id::event_id(int a_event_number)
     : run_number_(INVALID_RUN_NUMBER),
       event_number_(a_event_number) {}
 
@@ -105,10 +106,10 @@ bool event_id::operator<(const event_id& a_id) const {
   if (this->get_run_number() < a_id.get_run_number()) return true;
 
   if (run_number_ == a_id.run_number_) {
-    if (event_number_ < a_id.event_number_) return true;          
+    if (event_number_ < a_id.event_number_) return true;
   }
 
-  return false;      
+  return false;
 }
 
 
@@ -116,10 +117,10 @@ bool event_id::operator>(const event_id & a_id) const {
   if (run_number_ > a_id.run_number_) return true;
 
   if (run_number_ == a_id.run_number_) {
-    if (event_number_ > a_id.event_number_) return true;          
+    if (event_number_ > a_id.event_number_) return true;
   }
 
-  return false;      
+  return false;
 }
 
 
@@ -134,16 +135,14 @@ void event_id::from_string(const std::string & a_word) {
   event_id id;
   std::istringstream in(a_word);
   in >> id;
-  if (!in) {
-    throw std::runtime_error ("event_id::from_string: format error!");
-  }
+  DT_THROW_IF (!in,std::runtime_error,"Format error in '" << a_word << "' !");
   *this = id;
 }
 
 
 std::ostream& operator<<(std::ostream & a_out, const event_id & a_id) {
-  a_out << a_id.get_run_number() 
-        << event_id::IO_FORMAT_SEP 
+  a_out << a_id.get_run_number()
+        << event_id::IO_FORMAT_SEP
         << a_id.get_event_number();
   return a_out;
 }
@@ -155,11 +154,11 @@ std::istream& operator>>(std::istream& a_in, event_id & a_id) {
   a_in >> r;
 
   if (!a_in) return a_in;
-  
+
   a_in >> c;
-  
+
   if (!a_in) return a_in;
-  
+
   if (c != event_id::IO_FORMAT_SEP) {
     a_in.setstate (std::ios_base::failbit);
     return a_in;
@@ -169,12 +168,12 @@ std::istream& operator>>(std::istream& a_in, event_id & a_id) {
   if (a_in) {
     a_id.set (r, e);
   }
-  
+
   return a_in;
 }
 
 
-void event_id::tree_dump(std::ostream& a_out, 
+void event_id::tree_dump(std::ostream& a_out,
                          const std::string& a_title,
                          const std::string& a_indent,
                          bool a_inherit) const {
@@ -185,7 +184,7 @@ void event_id::tree_dump(std::ostream& a_out,
   if (!a_title.empty()) {
     a_out << indent << a_title << std::endl;
   }
-  a_out << indent << i_tree_dumpable::tag 
+  a_out << indent << i_tree_dumpable::tag
         << "Run number   : " << run_number_ << std::endl;
   a_out << indent << i_tree_dumpable::inherit_tag(a_inherit)
         << "Event number : " << event_number_ << std::endl;
@@ -193,7 +192,7 @@ void event_id::tree_dump(std::ostream& a_out,
 }
 
 
-void event_id::smart_print(std::ostream& out, 
+void event_id::smart_print(std::ostream& out,
                            const std::string& title,
                            const std::string& indent) const
 {
@@ -213,6 +212,6 @@ void event_id::dump() const {
   this->tree_dump(std::clog);
 }
 
-} // end of namespace datatools 
+} // end of namespace datatools
 
 // end of event_id.cc

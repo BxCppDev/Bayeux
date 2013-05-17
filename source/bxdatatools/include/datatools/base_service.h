@@ -43,6 +43,7 @@
 #include <datatools/i_tree_dump.h>
 #include <datatools/service_tools.h>
 #include <datatools/factory_macros.h>
+#include <datatools/logger_support.h>
 
 namespace datatools {
 
@@ -54,9 +55,6 @@ class properties;
  *  datatools-based service objects.
  */
 class base_service : public datatools::i_tree_dumpable {
- public:
-  //static bool g_debug;
-
  public:
   /// Constructor
   base_service(const std::string& name, const std::string& description = "",
@@ -103,6 +101,9 @@ class base_service : public datatools::i_tree_dumpable {
 
   /// Reset the service
   virtual int reset() = 0;
+
+  /// Default logger interface
+  DT_LOGGER_OBJECT_DEFAULT_INTERFACE();
 
  protected:
 

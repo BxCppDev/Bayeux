@@ -10,6 +10,8 @@
 #include <datatools/properties.h>
 #include <datatools/ioutils.h>
 #include <datatools/units.h>
+#include <datatools/exception.h>
+#include <datatools/logger.h>
 
 namespace datatools {
 
@@ -209,48 +211,26 @@ namespace datatools {
     _name_pattern_ = np_;
     std::vector<std::string> strs;
     boost::split(strs,np_,boost::is_any_of("."));
-    for (int i = 0; i < strs.size(); i++)
-      {
+    for (int i = 0; i < strs.size(); i++) {
         const std::string & str = strs[i];
-        if (str.empty()) {
-          std::ostringstream message;
-          message << "datatools::configuration_property_description::set_name_pattern: "
-                  << "Invalid property name pattern '" << np_ << "' !"
-            ;
-          throw std::logic_error(message.str());
-        }
+        DT_THROW_IF (str.empty(),
+                     std::logic_error,
+                     "Invalid property name pattern '" << np_ << "' !");
         if (str[0] == '$') {
           // Minimal token pattern is "${a}"
-          if (str.length() < 4) {
-            std::ostringstream message;
-            message << "datatools::configuration_property_description::set_name_pattern: "
-                    << "Invalid format for dynamic property name pattern '" << np_ << "' !"
-              ;
-            throw std::logic_error(message.str());
-          }
-          if (str[1] != '{') {
-            std::ostringstream message;
-            message << "datatools::configuration_property_description::set_name_pattern: "
-                    << "Invalid format for dynamic property name pattern '" << np_ << "' !"
-              ;
-            throw std::logic_error(message.str());
-          }
-          if (str[str.length()-1] != '}') {
-            std::ostringstream message;
-            message << "datatools::configuration_property_description::set_name_pattern: "
-                    << "Invalid format for dynamic property name pattern '" << np_ << "' !"
-              ;
-            throw std::logic_error(message.str());
-          }
-          if (_dynamic_dependee_.has_name())
-            {
-              std::ostringstream message;
-              message << "datatools::configuration_property_description::set_name_pattern: "
-                      << "Dependee '" << _dynamic_dependee_.name << "' has already been defined ! "
-                      << "Only one dependee is allowed for dynamic property name pattern '" << np_ << "' !"
-                ;
-              throw std::logic_error(message.str());
-            }
+          DT_THROW_IF (str.length() < 4,
+                       std::logic_error,
+                       "Invalid format for dynamic property name pattern '" << np_ << "' !");
+          DT_THROW_IF (str[1] != '{',
+                       std::logic_error,
+                       "Invalid format for dynamic property name pattern '" << np_ << "' !");
+          DT_THROW_IF (str[str.length()-1] != '}',
+                       std::logic_error,
+                       "Invalid format for dynamic property name pattern '" << np_ << "' !");
+          DT_THROW_IF (_dynamic_dependee_.has_name(),
+                       std::logic_error,
+                       "Dependee '" << _dynamic_dependee_.name << "' has already been defined ! "
+                       << "Only one dependee is allowed for dynamic property name pattern '" << np_ << "' !");
           std::string source_prop_name = str.substr(2,str.length()-3);
           _dynamic_dependee_.type = DEP_DYNAMIC;
           _dynamic_dependee_.name = source_prop_name;
@@ -305,14 +285,9 @@ namespace datatools {
   configuration_property_description &
   configuration_property_description::set_explicit_unit(bool xu_)
   {
-    if (!is_real() && xu_)
-      {
-        std::ostringstream message;
-        message << "datatools::configuration_property_description::set_name_pattern: "
-                << "Explicit unit is only supported by 'real' properties but the property with name pattern '" << _name_pattern_ << "' is not a 'real' !"
-          ;
-        throw std::logic_error(message.str());
-      }
+    DT_THROW_IF (!is_real() && xu_,
+                 std::logic_error,
+                 "Explicit unit is only supported by 'real' properties but the property with name pattern '" << _name_pattern_ << "' is not a 'real' !");
     _explicit_unit_ = xu_;
     return *this;
   }
@@ -327,13 +302,9 @@ namespace datatools {
   configuration_property_description &
   configuration_property_description::set_path(bool p_)
   {
-    if (! is_string()) {
-      std::ostringstream message;
-      message << "datatools::configuration_property_description::set_path: "
-              << "Explicit PATH is only supported by 'string' properties but the property with name pattern '" << _name_pattern_ << "' is not a string' !"
-        ;
-      throw std::logic_error(message.str());
-    }
+    DT_THROW_IF (! is_string(),
+                 std::logic_error,
+                 "Explicit PATH is only supported by 'string' properties but the property with name pattern '" << _name_pattern_ << "' is not a string' !");
     _path_ = p_;
     return *this;
   }
@@ -341,14 +312,9 @@ namespace datatools {
   configuration_property_description &
   configuration_property_description::set_unit_label(const std::string & ul_)
   {
-    if (!is_real() && !ul_.empty())
-      {
-        std::ostringstream message;
-        message << "datatools::configuration_property_description::set_unit_label: "
-                << "Unit label is only supported by 'real' properties but the property with name pattern '" << _name_pattern_ << "' is not a 'real' !"
-          ;
-        throw std::logic_error(message.str());
-      }
+    DT_THROW_IF (!is_real() && !ul_.empty(),
+                 std::logic_error,
+                 "Unit label is only supported by 'real' properties but the property with name pattern '" << _name_pattern_ << "' is not a 'real' !");
     _unit_label_ = ul_;
     if(! ul_.empty()) {
       set_explicit_unit(true);
@@ -372,14 +338,9 @@ namespace datatools {
   configuration_property_description &
   configuration_property_description::set_unit_symbol(const std::string & us_)
   {
-    if (!is_real() && !is_array() && !us_.empty())
-      {
-        std::ostringstream message;
-        message << "datatools::configuration_property_description::set_unit_symbol: "
-                << "Unit symbol is only supported by 'real' array properties but the property with name pattern '" << _name_pattern_ << "' is not a array of 'real' !"
-          ;
-        throw std::logic_error(message.str());
-      }
+    DT_THROW_IF (!is_real() && !is_array() && !us_.empty(),
+                 std::logic_error,
+                 "Unit symbol is only supported by 'real' array properties but the property with name pattern '" << _name_pattern_ << "' is not a array of 'real' !");
     _unit_symbol_ = us_;
     if(! us_.empty()) set_explicit_unit(true);
     return *this;
@@ -409,7 +370,6 @@ namespace datatools {
   {
     return _triggered_by_label_.by_label()
       && ! _triggered_by_label_.name.empty() ;
-    //&& _triggered_by_label_.triggering_labels.size() != 0;
   }
 
   bool configuration_property_description::has_single_type() const
@@ -426,25 +386,14 @@ namespace datatools {
                                                  bool array_,
                                                  int fixed_size_)
   {
-    if (type_ < TYPE_BOOLEAN
-        || type_ > TYPE_ANY)
-      {
-        std::ostringstream message;
-        message << "datatools::configuration_property_description::set_name_pattern: "
-                << "Invalid type for property with name pattern '" << _name_pattern_ << "' !"
-          ;
-        throw std::logic_error(message.str());
-      }
+    DT_THROW_IF (type_ < TYPE_BOOLEAN || type_ > TYPE_ANY,
+                 std::logic_error,
+                 "Invalid type for property with name pattern '" << _name_pattern_ << "' !");
     _type_ = type_;
     _array_ = array_;
-    if (fixed_size_ >= 0 && !_array_)
-      {
-        std::ostringstream message;
-        message << "datatools::configuration_property_description::set_name_pattern: "
-                << "Invalid array fixed size directive makes no sense for a scalar property !"
-          ;
-        throw std::logic_error(message.str());
-      }
+    DT_THROW_IF (fixed_size_ >= 0 && !_array_,
+                 std::logic_error,
+                 "Invalid array fixed size directive makes no sense for a scalar property !");
     _array_fixed_size_ = fixed_size_;
 
     return *this;
@@ -544,10 +493,6 @@ namespace datatools {
                                                  const std::string & indent_) const
   {
     out_ << indent_ << std::endl;
-    /*
-    out_ << indent_ << "* Property ``" << get_name_pattern() << "`` :"
-         << std::endl << std::endl;
-    */
     out_ << indent_ << "* Property : ``" << get_name_pattern() << "``"
          << std::endl << std::endl;
     std::string indent = indent_ + "   ";
@@ -978,13 +923,9 @@ namespace datatools {
   void object_configuration_description::_at_lock_()
   {
     if (! has_class_library()) {
-      std::ostringstream message;
-      message << "datatools::object_configuration_description::_at_lock_: "
-              << "No library for class named '" << get_class_name() << "' !";
-      //throw std::logic_error(message.str());
-      std::cerr << datatools::io::notice
-                << message.str()
-                << std::endl;
+      DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
+                    "datatools::object_configuration_description::_at_lock_: "
+                    << "No library for class named '" << get_class_name() << "' !");
     }
     // Establish interdependencies between dependees/dependers dynamic properties :
     for (int i = 0; i < _configuration_properties_infos_.size(); i++) {
@@ -1002,34 +943,24 @@ namespace datatools {
         //           << "versus checked name : '" << cpd2.get_name_pattern() << "' "
         //           << "\n";
         if (dde.name == cpd2.get_name_pattern()) {
-          if (cpd2.is_dynamic()) {
-            std::ostringstream message;
-            message << "datatools::object_configuration_description::_at_lock_: "
-                    << "Dynamic property with name pattern '" << cpd.get_name_pattern() << "' cannot depend on "
-                    << "the dynamic property '" << cpd2.get_name_pattern() << "' !";
-            throw std::logic_error(message.str());
-          }
-          if (! cpd2.is_string()) {
-            std::ostringstream message;
-            message << "datatools::object_configuration_description::_at_lock_: "
-                    << "Dynamic property with name pattern '" << cpd.get_name_pattern() << "' cannot depend on "
-                    << "the non-string property '" << cpd2.get_name_pattern() << "' !";
-            throw std::logic_error(message.str());
-          }
-          if (cpd2.is_path()) {
-            std::ostringstream message;
-            message << "datatools::object_configuration_description::_at_lock_: "
-                    << "Dynamic property with name pattern '" << cpd.get_name_pattern() << "' cannot depend on "
-                    << "the path string property '" << cpd2.get_name_pattern() << "' !";
-            throw std::logic_error(message.str());
-          }
-          if (! cpd2.is_array()) {
-            std::ostringstream message;
-            message << "datatools::object_configuration_description::_at_lock_: "
-                    << "Dynamic property with name pattern '" << cpd.get_name_pattern() << "' cannot depend on "
-                    << "the non-array property '" << cpd2.get_name_pattern() << "' !";
-            throw std::logic_error(message.str());
-          }
+          DT_THROW_IF (cpd2.is_dynamic(),
+                       std::logic_error,
+                       "Dynamic property with name pattern '"
+                       << cpd.get_name_pattern() << "' cannot depend on "
+                       << "the dynamic property '" << cpd2.get_name_pattern() << "' !");
+          DT_THROW_IF (! cpd2.is_string(),
+                       std::logic_error,
+                       "Dynamic property with name pattern '"
+                       << cpd.get_name_pattern() << "' cannot depend on "
+                       << "the non-string property '" << cpd2.get_name_pattern() << "' !");
+          DT_THROW_IF (cpd2.is_path(),
+                       std::logic_error,
+                       "Dynamic property with name pattern '" << cpd.get_name_pattern() << "' cannot depend on "
+                       << "the path string property '" << cpd2.get_name_pattern() << "' !");
+          DT_THROW_IF (! cpd2.is_array(),
+                       std::logic_error,
+                       "Dynamic property with name pattern '" << cpd.get_name_pattern() << "' cannot depend on "
+                       << "the non-array property '" << cpd2.get_name_pattern() << "' !");
           // Set the address of the dependee :
           dde.address = &cpd2;
           // Register the depender in the dependee :
@@ -1044,14 +975,11 @@ namespace datatools {
           break;
         }
       }
-      if (!dde.has_address()) {
-        std::ostringstream message;
-        message << "datatools::object_configuration_description::_at_lock_: "
-                << "Cannot find dependency '"
-                << dde.name
-                << "' for dynamic property with name pattern '" << cpd.get_name_pattern() << "' !";
-        throw std::logic_error(message.str());
-      }
+      DT_THROW_IF (!dde.has_address(),
+                   std::logic_error,
+                   "Cannot find dependency '"
+                   << dde.name
+                   << "' for dynamic property with name pattern '" << cpd.get_name_pattern() << "' !");
     }
 
     // Establish interdependencies between triggering/triggered properties (BY FLAG):
@@ -1070,21 +998,15 @@ namespace datatools {
         //           << "versus checked name : '" << cpd2.get_name_pattern() << "' "
         //           << "\n";
         if (trigger.name == cpd2.get_name_pattern()) {
-          if (cpd2.is_dynamic()) {
-            std::ostringstream message;
-            message << "datatools::object_configuration_description::_at_lock_: "
-                    << "Triggered property with name pattern '" << cpd.get_name_pattern() << "' cannot be triggered by "
-                    << "the dynamic property '" << cpd2.get_name_pattern() << "' !";
-            throw std::logic_error(message.str());
-          }
+          DT_THROW_IF (cpd2.is_dynamic(),
+                       std::logic_error,
+                       "Triggered property with name pattern '" << cpd.get_name_pattern() << "' cannot be triggered by "
+                       << "the dynamic property '" << cpd2.get_name_pattern() << "' !");
 
-          if (! cpd2.is_boolean()) {
-            std::ostringstream message;
-            message << "datatools::object_configuration_description::_at_lock_: "
-                    << "Triggered property with name pattern '" << cpd.get_name_pattern() << "' cannot depend on "
-                    << "the non-boolean property '" << cpd2.get_name_pattern() << "' !";
-            throw std::logic_error(message.str());
-          }
+          DT_THROW_IF (! cpd2.is_boolean(),
+                       std::logic_error,
+                       "Triggered property with name pattern '" << cpd.get_name_pattern() << "' cannot depend on "
+                       << "the non-boolean property '" << cpd2.get_name_pattern() << "' !");
 
           // Set the address of the trigger :
           trigger.address = &cpd2;
@@ -1101,14 +1023,11 @@ namespace datatools {
           break;
         }
       }
-      if (!trigger.has_address()) {
-        std::ostringstream message;
-        message << "datatools::object_configuration_description::_at_lock_: "
-                << "Cannot find trigger property '"
-                << trigger.name
-                << "' for property with name pattern '" << cpd.get_name_pattern() << "' !";
-        throw std::logic_error(message.str());
-      }
+      DT_THROW_IF (!trigger.has_address(),
+                   std::logic_error,
+                   "Cannot find trigger property '"
+                   << trigger.name
+                   << "' for property with name pattern '" << cpd.get_name_pattern() << "' !");
     }
 
     // Establish interdependencies between triggering/triggered properties (BY LABEL):
@@ -1127,30 +1046,21 @@ namespace datatools {
         //           << "versus checked name : '" << cpd2.get_name_pattern() << "' "
         //           << "\n";
         if (trigger.name == cpd2.get_name_pattern()) {
-          if (cpd2.is_dynamic()) {
-            std::ostringstream message;
-            message << "datatools::object_configuration_description::_at_lock_: "
-                    << "Triggered property with name pattern '" << cpd.get_name_pattern() << "' cannot be triggered by "
-                    << "the dynamic property '" << cpd2.get_name_pattern() << "' !";
-            throw std::logic_error(message.str());
-          }
-
-          if (! cpd2.is_string()) {
-            std::ostringstream message;
-            message << "datatools::object_configuration_description::_at_lock_: "
-                    << "Triggered property with name pattern '" << cpd.get_name_pattern() << "' cannot depend on "
-                    << "the non-string property '" << cpd2.get_name_pattern() << "' !";
-            throw std::logic_error(message.str());
-          }
-
-          if (cpd2.is_path()) {
-           std::ostringstream message;
-            message << "datatools::object_configuration_description::_at_lock_: "
-                    << "Triggered property with name pattern '" << cpd.get_name_pattern() << "' cannot depend on "
-                    << "the path string property '" << cpd2.get_name_pattern() << "' !";
-            throw std::logic_error(message.str());
-          }
-
+          DT_THROW_IF (cpd2.is_dynamic(),
+                       std::logic_error,
+                       "Triggered property with name pattern '"
+                       << cpd.get_name_pattern() << "' cannot be triggered by "
+                       << "the dynamic property '" << cpd2.get_name_pattern() << "' !");
+          DT_THROW_IF (! cpd2.is_string(),
+                       std::logic_error,
+                       "Triggered property with name pattern '"
+                       << cpd.get_name_pattern() << "' cannot depend on "
+                       << "the non-string property '" << cpd2.get_name_pattern() << "' !");
+          DT_THROW_IF (cpd2.is_path(),
+                       std::logic_error,
+                       "Triggered property with name pattern '"
+                       << cpd.get_name_pattern() << "' cannot depend on "
+                       << "the path string property '" << cpd2.get_name_pattern() << "' !");
           // Set the address of the trigger :
           trigger.address = &cpd2;
           // Register the depender in the dependee :
@@ -1166,14 +1076,11 @@ namespace datatools {
           break;
         }
       }
-      if (!trigger.has_address()) {
-        std::ostringstream message;
-        message << "datatools::object_configuration_description::_at_lock_: "
-                << "Cannot find trigger property '"
-                << trigger.name
-                << "' for property with name pattern '" << cpd.get_name_pattern() << "' !";
-        throw std::logic_error(message.str());
-      }
+      DT_THROW_IF (!trigger.has_address(),
+                   std::logic_error,
+                   "Cannot find trigger property '"
+                   << trigger.name
+                   << "' for property with name pattern '" << cpd.get_name_pattern() << "' !");
     }
     return;
   }
@@ -1319,12 +1226,12 @@ namespace datatools {
   bool object_configuration_description::validate(const datatools::properties & config_,
                                                   std::string & error_message_) const
   {
-    if (! is_locked()) {
-      throw std::logic_error("datatools::object_configuration_description::validate: OCD object is not locked ! Cannot perform validation !");
-    }
-    if (!has_validation_support()) {
-      throw std::logic_error("datatools::object_configuration_description::validate: OCD object has no validation support !");
-    }
+    DT_THROW_IF (! is_locked(),
+                 std::logic_error,
+                 "OCD object is not locked ! Cannot perform validation !");
+    DT_THROW_IF (!has_validation_support(),
+                 std::logic_error,
+                 "OCD object has no validation support !");
     // Loop on all documented properties :
     for (int i = 0; i < _configuration_properties_infos_.size(); i++) {
       const configuration_property_description & cpd = _configuration_properties_infos_[i];

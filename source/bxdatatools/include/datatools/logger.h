@@ -95,7 +95,6 @@ struct logger {
 };
 } // namespace datatools
 
-
 //! Log Message if Priority is greater or equal to PRIO_FATAL
 #define DT_LOG_FATAL(Priority, Message) \
 { \

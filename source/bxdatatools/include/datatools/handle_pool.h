@@ -165,9 +165,9 @@ void handle_pool<T>::reset() {
 
 template <typename T>
 void handle_pool<T>::resize(size_t size) {
-  if (number_of_used_item_ > 0) {
-    throw std::logic_error("datatools::handle_pool<T>::resize: Cannot resize pool with items in use");
-  }
+  DT_THROW_IF (number_of_used_item_ > 0,
+	       std::logic_error,
+	       "Cannot resize pool with items in use");
   this->resize_impl(size);
 }
 

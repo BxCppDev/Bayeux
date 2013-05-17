@@ -46,6 +46,7 @@ set(datatools_PUBLIC_HEADERS
   include/datatools/i_tree_dump.h
   include/datatools/library_loader.h
   include/datatools/logger.h
+  include/datatools/logger_support.h
   include/datatools/memory_streambuf.h
   include/datatools/multi_properties.h
   include/datatools/properties.h
@@ -99,7 +100,7 @@ configure_file(
   ${PROJECT_BINARY_DIR}/include/datatools/version.h
   )
 
-list(APPEND datatools_PUBLIC_HEADERS 
+list(APPEND datatools_PUBLIC_HEADERS
   ${PROJECT_BINARY_DIR}/include/datatools/datatools_config.h
   ${PROJECT_BINARY_DIR}/include/datatools/version.h
   )

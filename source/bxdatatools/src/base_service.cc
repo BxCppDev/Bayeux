@@ -31,23 +31,26 @@
 #include <datatools/service_tools.h>
 #include <datatools/properties.h>
 #include <datatools/ioutils.h>
+#include <datatools/exception.h>
 
 namespace datatools {
-
-  //bool base_service::g_debug = false;
 
 DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(
     base_service,
     "datatools::base_service/__system__");
 
+// Default logger interface
+DT_LOGGER_OBJECT_DEFAULT_IMPLEMENTATION(base_service)
 
-// ctor:
+// Constructor
 base_service::base_service(const std::string& name,
                            const std::string& description,
                            const std::string& version)
     : name_(name),
       description_(description),
-      version_(version) {}
+      version_(version) {
+  set_logging_priority(datatools::logger::PRIO_WARNING);
+}
 
 // Destructor :
 base_service::~base_service() {}

@@ -113,8 +113,6 @@ class multi_properties :
   static const bool read_public_only;
   static const bool read_private_also;
 
-  //static bool g_debug;
-
  public:
   //! \brief Internal data stored within the dictionary of the multi_properties class.
   class entry : public datatools::i_tree_dumpable {

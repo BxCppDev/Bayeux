@@ -41,6 +41,7 @@
 
 // This Project
 #include <datatools/i_predicate.h>
+#include <datatools/exception.h>
 
 //! \file datatools/handle.h
 
@@ -155,7 +156,7 @@ class handle {
   //! Return a const reference to the hosted instance.
   const T& get() const {
     if (sp_) return *sp_;
-    throw std::logic_error("datatools::handle::get: Handle holds no data!");
+    DT_THROW_IF(true, std::logic_error, "Handle holds no data!");
   }
 
   /* //! Return  a const reference to the hosted instance. */
@@ -167,7 +168,7 @@ class handle {
   //! Return a non-const reference to the hosted instance.
   T& grab() {
     if (sp_) return *sp_;
-    throw std::logic_error("datatools::handle::grab: Handle holds no data!");
+    DT_THROW_IF(true, std::logic_error, "Handle holds no data!");
   }
 
   /* //! Return a non-const reference to the hosted instance. */
@@ -247,8 +248,7 @@ struct handle_predicate : public i_predicate<handle<T> > {
   bool operator()(const handle<T>& handle) const {
     if (! handle) {
       if (no_data_means_false_) return false;
-
-      throw std::logic_error ("datatools::handle_predicate::operator (): Handle has no data !");
+      DT_THROW_IF(true,std::logic_error,"Handle has no data !");
     }
 
     return predicate_(handle.get());

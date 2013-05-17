@@ -51,27 +51,26 @@
 #include <datatools/archives_list.h>
 #include <datatools/i_serializable.h>
 #include <datatools/i_tree_dump.h>
+#include <datatools/logger.h>
+#include <datatools/exception.h>
+#include <datatools/logger_support.h>
 
 namespace datatools {
 
 /*! \brief A generic base reader/writer class based on Boost/Serialization
- *
- *
  */
 class io_factory : public datatools::i_tree_dumpable {
  public:
-  //static bool g_debug;
-  //static bool g_warning;
   static const int SUCCESS = 0;
   static const int ERROR   = 1;
 
-  static const int MASK_RW           = 0x1;
-  static const int MASK_FORMAT       = 0xE;
-  static const int MASK_COMPRESSION  = 0x30;
-  static const int MASK_MULTIARCHIVE = 0x80;
-  static const int MASK_APPEND       = 0x100;
+  static const unsigned int MASK_RW           = 0x1;
+  static const unsigned int MASK_FORMAT       = 0xE;
+  static const unsigned int MASK_COMPRESSION  = 0x30;
+  static const unsigned int MASK_MULTIARCHIVE = 0x80;
+  static const unsigned int MASK_APPEND       = 0x100;
 
-  enum mode {
+  enum mode_flag_type {
     MODE_READ        = 0x0,
     MODE_WRITE       = 0x1,
     read             = MODE_READ,
@@ -115,20 +114,17 @@ class io_factory : public datatools::i_tree_dumpable {
   static const std::string GZ_EXT;
   static const std::string BZIP2_EXT;
 
- public:
-
   static int guess_mode_from_filename(const std::string& a_filename,
                                       int& mode);
 
- public:
-
-  // ctor
+  /// Constructor
   io_factory(int mode = io_factory::MODE_DEFAULT);
 
+  /// Constructor
   io_factory(const std::string & a_stream_name,
              int mode = io_factory::MODE_DEFAULT);
 
-  // dtor
+  /// Destructor
   virtual ~io_factory();
 
   bool eof() const;
@@ -193,10 +189,9 @@ class io_factory : public datatools::i_tree_dumpable {
 
   template <typename Data>
   void store(const Data& data) {
-    if (!this->is_write()) {
-      throw std::logic_error("datatools::io_factory::store: Not a writer factory!");
-    }
-
+    DT_THROW_IF (!this->is_write(),
+                 std::logic_error,
+                 "Not a writer factory!");
     if (otar_ptr_ != 0) {
       this->store_text<Data>(*otar_ptr_, data);
     } else if (oxar_ptr_ != 0) {
@@ -208,13 +203,12 @@ class io_factory : public datatools::i_tree_dumpable {
 
   template <typename Data>
   void load(Data& data) {
-    if (!this->is_read()) {
-      throw std::logic_error("datatools::io_factory::load: not a reader factory!");
-    }
-
-    if (in_fs_ == 0) {
-      throw std::logic_error ("datatools::io_factory::load: no input stream!");
-    }
+    DT_THROW_IF (!this->is_read(),
+                 std::logic_error,
+                 "Not a reader factory!");
+    DT_THROW_IF (in_fs_ == 0,
+                 std::runtime_error,
+                 "No input stream!");
 
     // 2008-10-03 FM: add EOF check code
     if (*in_fs_) {
@@ -222,24 +216,21 @@ class io_factory : public datatools::i_tree_dumpable {
       // here for unzipped text and XML archives?
       char c = 0;
       in_fs_->get(c);
-
       if (in_fs_) {
         in_fs_->putback(c);
       }
     }
 
     if (! *in_fs_) {
-      if (in_fs_->eof()) {
-        throw std::logic_error("datatools::io_factory::load: input stream at EOF!");
-      }
-
-      if (in_fs_->fail()) {
-        throw std::logic_error("datatools::io_factory::load: input stream in fail status!");
-      }
-
-      if (in_fs_->bad()) {
-        throw std::logic_error("datatools::io_factory::load: input stream in bad status!");
-      }
+      DT_THROW_IF (in_fs_->eof(),
+                   std::runtime_error,
+                   "Input stream at EOF!");
+      DT_THROW_IF (in_fs_->fail(),
+                   std::runtime_error,
+                   "Input stream in fail status!");
+      DT_THROW_IF (in_fs_->bad(),
+                   std::runtime_error,
+                   "Input stream in bad status!");
     }
 
     try {
@@ -255,53 +246,33 @@ class io_factory : public datatools::i_tree_dumpable {
     }
     // 2011-02-25 FM:
     catch (boost::archive::archive_exception& x) {
-      // if (io_factory::g_warning) {
-      //   std::clog << "WARNING: datatools::io_factory::load: archive exception is: "
-      //             << x.what()
-      //             << std::endl;
-      // }
       throw x;
     }
     catch (std::exception& x) {
-      // if (io_factory::g_warning) {
-      //   std::cerr << "WARNING: datatools::io_factory::load: "
-      //             << "cannot load data from archive: "
-      //             << x.what()
-      //             << "!"
-      //             << std::endl;
-      // }
       throw x;
     }
     catch (...) {
-      std::cerr << "WARNING: datatools::io_factory::load: "
-                << "cannot load data from archive: "
-                << "unexpected exception" << "!"
-                << std::endl;
-      throw std::logic_error("datatools::io_factory::load: internal exception!");
+      DT_LOG_WARNING(get_logging_priority(),
+                     "Cannot load data from archive: "
+                     << "unexpected exception" << "!");
+      DT_THROW_IF(true,std::logic_error,"Internal exception!");
     }
 
     if (! *in_fs_) {
       if (in_fs_->fail()) {
-        std::cerr << "WARNING: datatools::io_factory::load: "
-                  << "input stream is now in fail status!"
-                  << std::endl;
+        DT_LOG_WARNING(get_logging_priority(),
+                       "Input stream is now in fail status!");
       }
-
       if (in_fs_->eof()) {
-        std::cerr << "WARNING: datatools::io_factory::load: "
-                  << "input stream is now in EOF status!"
-                  << std::endl;
+        DT_LOG_WARNING(get_logging_priority(),
+                       "Input stream is now in EOF status!");
       }
-
       if (in_fs_->bad()) {
-        std::cerr << "WARNING: datatools::io_factory::load: "
-                  << "input stream is now in bad status!"
-                  << std::endl;
+        DT_LOG_WARNING(get_logging_priority(),
+                       "Input stream is now in bad status!");
       }
     }
   }
-
- public:
 
   template <typename Data>
   friend io_factory& operator<<(io_factory& iof, const Data& data) {
@@ -315,7 +286,7 @@ class io_factory : public datatools::i_tree_dumpable {
     return iof;
   }
 
-  virtual void tree_dump(std::ostream& out = std::cerr,
+  virtual void tree_dump(std::ostream& out = std::clog,
                          const std::string& title = "",
                          const std::string& indent = "",
                          bool inherit = false) const;
@@ -366,6 +337,7 @@ class io_factory : public datatools::i_tree_dumpable {
   }
 
  private:
+
   int mode_;
 
   std::istream *in_;
@@ -391,6 +363,9 @@ class io_factory : public datatools::i_tree_dumpable {
 
   eos::portable_iarchive *ibar_ptr_;
   eos::portable_oarchive *obar_ptr_;
+
+  DT_LOGGER_OBJECT_DEFAULT_INTERFACE();
+
 }; // end of class io_factory ?
 
 
@@ -466,7 +441,9 @@ static const bool no_append_mode          = false;
  * \endcode
  */
 class data_reader {
+
  public:
+
   enum status_t {
     STATUS_OK    = 0,
     STATUS_ERROR = 1
@@ -474,19 +451,19 @@ class data_reader {
 
   static const std::string EMPTY_RECORD_TAG;
 
- public:
-  // ctor
+  /// Constructor
   data_reader();
 
+  /// Constructor
   data_reader(const std::string& filename,
               bool use_multiple_archives = using_single_archive);
 
+  /// Constructor
   data_reader(const std::string& filename, int mode);
 
-  // dtor
+  /// Destructor
   virtual ~data_reader();
 
- public:
   bool is_error() const;
 
   const std::string& get_record_tag() const;
@@ -534,59 +511,40 @@ class data_reader {
 
   void dump(std::ostream& out = std::clog) const;
 
- public:
   template <typename Data>
   void load(const std::string& tag, Data& data) {
-    if (!this->has_record_tag()) {
-      throw std::logic_error("datatools::data_reader::load(...): no more record tag!");
-    }
-
-    if (this->get_record_tag() != tag) {
-        std::ostringstream message;
-        message << "datatools::data_reader::load(...): unexpected tag ('"
-                << this->get_record_tag()
-                << " != " << tag << "')!" ;
-        throw std::logic_error(message.str());
-    }
-
+    DT_THROW_IF (!this->has_record_tag(),
+                 std::logic_error,
+                 "No more record tag!");
+    DT_THROW_IF(this->get_record_tag() != tag,
+                 std::logic_error,
+                "Unexpected tag ('" << this->get_record_tag()
+                << " != " << tag << "')!");
     this->basic_load(data);
-
     if (reader_->is_multi_archives()) reader_->stop_archive();
-
     this->read_next_tag();
   }
 
   template <typename Data>
   void load_alt(const std::string& tag, const std::string& alt_tag, Data& data) {
-    if (!this->has_record_tag()) {
-      throw std::logic_error("datatools::data_reader::load_alt(...): no more record tag!");
-    }
-
+    DT_THROW_IF (!this->has_record_tag(),
+                 std::logic_error,
+                 "No more record tag!");
     if (this->get_record_tag() != tag) {
-     if (this->get_record_tag() != alt_tag) {
-       std::ostringstream message;
-       message << "datatools::data_reader::load_alt(...): unexpected tag ('"
-               << this->get_record_tag()
-               << " != " << tag << "')!" ;
-       throw std::logic_error(message.str());
-     }
+      DT_THROW_IF (this->get_record_tag() != alt_tag,
+                   std::logic_error,
+                   "Unexpected tag ('"
+                   << this->get_record_tag()
+                   << " != " << tag << "')!");
     }
-
     this->basic_load(data);
-
     if (reader_->is_multi_archives()) reader_->stop_archive();
-
     this->read_next_tag();
   }
 
   template <typename Data>
   void load_serializable(Data& data,
     typename boost::disable_if< has_bsts<Data> >::type* dummy = 0) {
-    /*
-    std::cerr << "DEVEL: " << "load_serializable: Serializable '"
-              << typeid(Data).name ()
-              << "' has no BST support !" << '\n';
-    */
     this->load(data.get_serial_tag(), data);
   }
 
@@ -594,11 +552,6 @@ class data_reader {
   void load_serializable(
     Data& data,
     typename boost::enable_if< has_bsts<Data> >::type* dummy = 0) {
-    /*
-    std::cerr << "DEVEL: " << "load_serializable: Serializable '"
-              << typeid(Data).name ()
-              << "' has BST support !" << '\n';
-    */
     this->load_alt(data.get_serial_tag(),
                    ::datatools::backward_serial_tag<Data> (0),
                    data);
@@ -612,15 +565,13 @@ class data_reader {
  protected:
   template <typename Data>
   void basic_load(Data& data) {
-    if (reader_ == 0) {
-      throw std::logic_error("datatools::data_reader::_basic_load(...): not initialized!");
-    }
-
+    DT_THROW_IF (reader_ == 0,
+                 std::logic_error,
+                 "Not initialized!");
     try {
       reader_->load(data);
     }
     catch (std::exception& x) {
-      //bool warn = io_factory::g_warning;
       bool warn = false;
       //>>> 2008-11-13 FM: skip EOF message printing
       std::string msg = x.what();
@@ -628,26 +579,22 @@ class data_reader {
         warn = false;
       }
       if (warn) {
-        std::cerr << "ERROR: datatools::data_reader::_basic_load(...): "
-                  << "cannot read data: exception="
-                  << x.what() << " !"
-                  << std::endl;
+        DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                     "Cannot read data: exception="
+                     << x.what() << " !");
       }
       //<<<
-
       status_   = STATUS_ERROR;
       next_tag_ = EMPTY_RECORD_TAG;
-      throw std::logic_error(x.what());
+      DT_THROW_IF(true, std::logic_error, x.what());
     }
     catch (...) {
-      std::cerr << "ERROR: datatools::data_reader::_basic_load(...): "
-                << "cannot read data: "
-                << "unexpected exception" << '!'
-                << std::endl;
-
+      DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                   "Cannot read data: "
+                   << "Unexpected exception" << " !");
       status_   = STATUS_ERROR;
       next_tag_ = EMPTY_RECORD_TAG;
-      throw std::logic_error("datatools::data_reader::_basic_load: unexpected error!");
+      DT_THROW_IF(true, std::logic_error, "Unexpected error!");
     }
   }
 
@@ -663,6 +610,7 @@ class data_reader {
   int         status_;
   io_reader   *reader_;
   std::string next_tag_;
+
 };
 
 //----------------------------------------------------------------------
@@ -761,10 +709,9 @@ class data_writer {
  protected:
   template <typename Data>
   void basic_store(const Data& data) {
-    if (writer_ == 0) {
-      throw std::logic_error("datatools::data_writer::basic_store(...): not initialized!");
-    }
-
+    DT_THROW_IF (writer_ == 0,
+                 std::logic_error,
+                 "Not initialized!");
     writer_->store<Data>(data);
   }
 
