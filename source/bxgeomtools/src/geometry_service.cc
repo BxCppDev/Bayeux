@@ -21,152 +21,120 @@
 
 #include <geomtools/geometry_service.h>
 #include <datatools/properties.h>
+#include <datatools/exception.h>
 
 // Geometry manager :
 #include <geomtools/manager.h>
 
 namespace geomtools {
 
-      using namespace std;
+  /** Auto-registration of this service class in a central service Db */
+  DATATOOLS_SERVICE_REGISTRATION_IMPLEMENT(geometry_service, "geomtools::geometry_service")
 
-      /** Auto-registration of this service class in a central service Db */
-      DATATOOLS_SERVICE_REGISTRATION_IMPLEMENT(geometry_service, "geomtools::geometry_service")
+  const geomtools::manager & geometry_service::get_geom_manager () const
+  {
+    DT_THROW_IF (! is_initialized (),
+                 std::logic_error,
+                 "Service '" << get_name () << "' is not initialized ! ");
+    return *_geom_manager_;
+  }
 
-      const geomtools::manager & geometry_service::get_geom_manager () const
-      {
-        if (! is_initialized ())
-          {
-            ostringstream message;
-            message << "geomtools::geometry_service::get_geom_manager: "
-                    << "Service '" << get_name () << "' is not initialized ! ";
-            throw logic_error (message.str ());
-          }
-        return *_geom_manager_;
+  bool geometry_service::is_initialized () const
+  {
+    return _initialized_;
+  }
+
+  int geometry_service::initialize (const datatools::properties & a_config,
+                                    datatools::service_dict_type & a_service_dict)
+  {
+    DT_THROW_IF (is_initialized (),
+                 std::logic_error,
+                 "Service '" << get_name () << "' is already initialized ! ");
+    bool debug = false;
+    if (a_config.has_flag ("debug")) {
+      debug = true;
+    }
+
+    std::string geometry_manager_configuration_file;
+    if (a_config.has_key ("manager.configuration_file")) {
+      geometry_manager_configuration_file
+        = a_config.fetch_string ("manager.configuration_file");
+    } else {
+      DT_THROW_IF(true,
+                  std::logic_error,
+                  "Missing '" << "manager.configuration_file"
+                  << "' property for service '" << get_name () << "' !");
+    }
+
+    datatools::fetch_path_with_env (geometry_manager_configuration_file);
+    datatools::properties geometry_manager_config;
+    datatools::properties::read_config (geometry_manager_configuration_file,
+                                        geometry_manager_config);
+    bool manager_build_mapping = false;
+    if (a_config.has_flag ("manager.build_mapping")) {
+      manager_build_mapping = true;
+    }
+    if (manager_build_mapping) {
+      geometry_manager_config.update ("build_mapping", true);
+    }
+
+    bool manager_no_excluded_categories = false;
+    if (a_config.has_flag ("manager.no_excluded_categories")) {
+      manager_no_excluded_categories = true;
+    }
+    if (manager_no_excluded_categories) {
+      if (geometry_manager_config.has_key ("mapping.excluded_categories")) {
+        geometry_manager_config.erase ("mapping.excluded_categories");
       }
+    }
 
-      bool geometry_service::is_initialized () const
-      {
-        return _initialized_;
-      }
+    _geom_manager_ = new geomtools::manager;
+    _geom_manager_->initialize (geometry_manager_config);
 
-      int geometry_service::initialize (const datatools::properties & a_config,
-                                        datatools::service_dict_type & a_service_dict)
-      {
-        if (is_initialized ())
-          {
-            ostringstream message;
-            message << "geomtools::geometry_service::initialize: "
-                    << "Service '" << get_name () << "' is already initialized ! ";
-            throw logic_error (message.str ());
-          }
+    _initialized_ = true;
+    return EXIT_SUCCESS;
+  }
 
-        bool debug = false;
-        if (a_config.has_flag ("debug"))
-          {
-            debug = true;
-          }
+  int geometry_service::reset ()
+  {
+    DT_THROW_IF (! is_initialized (),
+                 std::logic_error,
+                 "Geometry service '" << get_name () << "' is not initialized ! ");
+    if (_geom_manager_ != 0) {
+      delete _geom_manager_;
+      _geom_manager_ = 0;
+    }
+    _initialized_ = false;
+    return EXIT_SUCCESS;
+  }
 
-        string geometry_manager_configuration_file;
-        if (a_config.has_key ("manager.configuration_file"))
-          {
-            geometry_manager_configuration_file
-              = a_config.fetch_string ("manager.configuration_file");
-          }
-        else
-          {
-            ostringstream message;
-            message << "geomtools::geometry_service::initialize: "
-                    << "Missing '" << "manager.configuration_file"
-                    << "' property for service '" << get_name () << "' ! ";
-            throw logic_error (message.str ());
-          }
+  geometry_service::geometry_service ()
+    : datatools::base_service ("geomtools::geometry_service")
+  {
+    _initialized_ = false;
+    _geom_manager_ = 0;
+    return;
+  }
 
-        datatools::fetch_path_with_env (geometry_manager_configuration_file);
-        datatools::properties geometry_manager_config;
-        datatools::properties::read_config (geometry_manager_configuration_file,
-                                                   geometry_manager_config);
-        bool manager_build_mapping = false;
-        if (a_config.has_flag ("manager.build_mapping"))
-          {
-            manager_build_mapping = true;
-          }
-        if (manager_build_mapping)
-          {
-            geometry_manager_config.update ("build_mapping", true);
-          }
+  // dtor:
+  geometry_service::~geometry_service ()
+  {
+    if (this->geometry_service::is_initialized ()) {
+      this->geometry_service::reset ();
+    }
+    return;
+  }
 
-        bool manager_no_excluded_categories = false;
-        if (a_config.has_flag ("manager.no_excluded_categories"))
-          {
-            manager_no_excluded_categories = true;
-          }
-        if (manager_no_excluded_categories)
-          {
-            if (geometry_manager_config.has_key ("mapping.excluded_categories"))
-              {
-                geometry_manager_config.erase ("mapping.excluded_categories");
-              }
-          }
-
-        _geom_manager_ = new geomtools::manager;
-        _geom_manager_->set_debug (debug);
-        _geom_manager_->initialize (geometry_manager_config);
-
-        _initialized_ = true;
-        return EXIT_SUCCESS;
-      }
-
-      int geometry_service::reset ()
-      {
-        if (! is_initialized ())
-          {
-            ostringstream message;
-            message << "geomtools::geometry_service::reset: "
-                    << "Service '" << get_name () << "' is not initialized ! ";
-            throw logic_error (message.str ());
-          }
-        if (_geom_manager_ != 0)
-          {
-            delete _geom_manager_;
-            _geom_manager_ = 0;
-          }
-        _initialized_ = false;
-        return EXIT_SUCCESS;
-      }
-
-      // ctor:
-      geometry_service::geometry_service ()
-        : datatools::base_service ("geomtools::geometry",
-                                   "Geometry service")
-      {
-        _initialized_ = false;
-        _geom_manager_ = 0;
-        return;
-      }
-
-      // dtor:
-      geometry_service::~geometry_service ()
-      {
-        if (this->geometry_service::is_initialized ())
-          {
-            this->geometry_service::reset ();
-          }
-        return;
-      }
-
-      void geometry_service::tree_dump (ostream & a_out ,
-                                        const string & a_title,
-                                        const string & a_indent,
-                                        bool a_inherit) const
-      {
-        namespace du = datatools;
-        this->base_service::tree_dump (a_out, a_title, a_indent, true);
-
-        a_out << a_indent << du::i_tree_dumpable::inherit_tag (a_inherit)
-              << "Geometry manager : " << _geom_manager_ << " " << endl;
-
-        return;
-      }
+  void geometry_service::tree_dump (std::ostream & a_out ,
+                                    const std::string & a_title,
+                                    const std::string & a_indent,
+                                    bool a_inherit) const
+  {
+    this->base_service::tree_dump (a_out, a_title, a_indent, true);
+    a_out << a_indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
+          << "Geometry manager : " << _geom_manager_ << " " << std::endl;
+    return;
+  }
 
 }  // end of namespace geomtools
 

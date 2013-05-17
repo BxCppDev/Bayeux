@@ -1,11 +1,13 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* i_model.cc
- */ 
+ */
 
 #include <geomtools/i_model.h>
 
 #include <stdexcept>
-#include <iostream> 
+#include <iostream>
+
+#include <datatools/exception.h>
 
 #include <geomtools/sensitive.h>
 #include <geomtools/material.h>
@@ -13,22 +15,21 @@
 #include <geomtools/mapping_utils.h>
 
 namespace geomtools {
-  
-  using namespace std;  
+
+  using namespace std;
 
   DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION (i_model, "geomtools::i_model/__system__");
-  
+
   bool i_model::g_devel = false;
 
-  // static 
-  const i_model::constants & 
+  // static
+  const i_model::constants &
   i_model::constants::instance ()
   {
     static boost::scoped_ptr<i_model::constants> g_global_constants (0);
-    if ( g_global_constants.get () == 0)
-      {
-        g_global_constants.reset (new i_model::constants);
-      }
+    if ( g_global_constants.get () == 0) {
+      g_global_constants.reset (new i_model::constants);
+    }
     return *g_global_constants.get ();
   }
 
@@ -41,44 +42,36 @@ namespace geomtools {
     return;
   }
 
-  void i_model::assert_constructed (const string & where_, 
+  void i_model::assert_constructed (const string & where_,
                                     const string & what_) const
   {
     if (is_constructed ()) return;
     ostringstream message;
-    if (! where_.empty ())
-      {
-        message << where_ << ": ";
-      }
-    if (! what_.empty ())
-      {
-        message << what_;
-      }
-    else
-      {
-        message << "Operation not allowed ! Model has not been constructed yet";
-      }
+    if (! where_.empty ()) {
+      message << where_ << ": ";
+    }
+    if (! what_.empty ()) {
+      message << what_;
+    } else {
+      message << "Operation not allowed ! Model has not been constructed yet";
+    }
     message << " !";
     throw logic_error (message.str ());
   }
 
-  void i_model::assert_unconstructed (const string & where_, 
+  void i_model::assert_unconstructed (const string & where_,
                                       const string & what_) const
   {
     if (! is_constructed ()) return;
     ostringstream message;
-    if (! where_.empty ())
-      {
-        message << where_ << ": ";
-      }
-    if (! what_.empty ())
-      {
-        message << what_;
-      }
-    else
-      {
-        message << "Operation not allowed ! Model has already been constructed";
-      }
+    if (! where_.empty ()) {
+      message << where_ << ": ";
+    }
+    if (! what_.empty ()) {
+      message << what_;
+    } else {
+      message << "Operation not allowed ! Model has already been constructed";
+    }
     message << " !";
     throw logic_error (message.str ());
   }
@@ -95,7 +88,7 @@ namespace geomtools {
     oss << basename_ << i_model::constants::instance().LOGICAL_SUFFIX;
     return oss.str ();
   }
-  
+
   string i_model::make_physical_volume_name (const string & basename_)
   {
     ostringstream oss;
@@ -160,23 +153,27 @@ namespace geomtools {
   {
     return _constructed_;
   }
- 
+
   bool i_model::is_debug () const
   {
-    return _debug_;
+    return _logging >= datatools::logger::PRIO_DEBUG;
   }
-  
+
   void i_model::set_debug (bool new_value_)
   {
-    _debug_ = new_value_;
+    if (new_value_) {
+      _logging = datatools::logger::PRIO_DEBUG;
+    } else {
+      _logging = datatools::logger::PRIO_WARNING;
+    }
     return;
   }
-   
+
   const string & i_model::get_name () const
   {
     return _name_;
   }
- 
+
   void i_model::set_name (const string & name_)
   {
     _name_ = name_;
@@ -193,14 +190,14 @@ namespace geomtools {
     _phantom_solid = ps_;
     return;
   }
-  
-  const datatools::properties & 
+
+  const datatools::properties &
   i_model::parameters () const
   {
     return _parameters_;
   }
 
-  datatools::properties & 
+  datatools::properties &
   i_model::parameters ()
   {
     return _parameters_;
@@ -210,7 +207,7 @@ namespace geomtools {
   i_model::i_model (const string & name_)
   {
     _constructed_ = false;
-    _debug_ = false;
+    _logging = datatools::logger::PRIO_WARNING;
     set_name (name_);
     _phantom_solid = false;
     return;
@@ -224,22 +221,22 @@ namespace geomtools {
     if (g_devel) clog << "DEVEL: i_model::~i_model: Exiting." << endl;
     return;
   }
- 
+
   const geomtools::logical_volume & i_model::get_logical () const
   {
     return _logical;
   }
- 
+
   geomtools::logical_volume & i_model::grab_logical ()
   {
     return _logical;
   }
- 
+
   geomtools::logical_volume & i_model::get_logical ()
   {
     return this->i_model::grab_logical ();
   }
- 
+
   void i_model::_at_construct (const string & name_,
                                const datatools::properties & setup_,
                                models_col_type * models_)
@@ -249,7 +246,7 @@ namespace geomtools {
     throw logic_error ("geomtools::i_model::_at_construct: This method MUST be overloaded !");
 
     if (g_devel) clog << "DEVEL: i_model::_at_construct: Exiting." << endl;
-    return;      
+    return;
   }
 
   void i_model::_pre_construct (datatools::properties & setup_)
@@ -295,45 +292,37 @@ namespace geomtools {
     _constructed_ = true;
     if (g_devel) clog << "DEVEL: geomtools::i_model::construct: Exiting." << endl;
     if (devel_track_name) clog << "DEVEL: geomtools::i_model::construct: Constructed name='" << name_ << "'." << endl;
-    return;      
+    return;
   }
 
-  void i_model::tree_dump (ostream & out_, 
-                           const string & title_, 
-                           const string & indent_, 
+  void i_model::tree_dump (ostream & out_,
+                           const string & title_,
+                           const string & indent_,
                            bool inherit_) const
   {
-    string indent;
+    std::string indent;
     if (! indent_.empty ()) indent = indent_;
-    if (! title_.empty ()) 
-      {
-        out_ << indent << title_ << endl;
+    if (! title_.empty ()) {
+        out_ << indent << title_ << std::endl;
       }
 
-    out_ << indent << datatools::i_tree_dumpable::tag 
-         << "Name        : \"" << _name_ << "\"" << endl;
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Name        : \"" << _name_ << "\"" << std::endl;
 
-    out_ << indent << datatools::i_tree_dumpable::tag 
-         << "Model ID    : \"" << get_model_id () << "\"" << endl;
- 
-    /*
-      out_ << indent << datatools::i_tree_dumpable::tag 
-      << "Debug       : " << _debug_ << endl;
-    */
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Model ID    : \"" << get_model_id () << "\"" << std::endl;
 
-    out_ << indent << datatools::i_tree_dumpable::tag 
-         << "Constructed : " << _constructed_ << endl;
-      
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Logging priority threshold       : \""
+         << datatools::logger::get_priority_label(_logging) << "\"" << std::endl;
+
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Constructed : " << _constructed_ << std::endl;
+
     {
-      out_ << indent << datatools::i_tree_dumpable::tag 
+      out_ << indent << datatools::i_tree_dumpable::tag
            << "Parameters  : ";
-      /*
-        if ( _parameters_.size () == 0) 
-        {
-        out_ << "<empty>"; 
-        }
-      */
-      out_ << endl; 
+      out_ << std::endl;
       {
         ostringstream indent_oss;
         indent_oss << indent;
@@ -341,10 +330,10 @@ namespace geomtools {
         _parameters_.tree_dump (out_,"",indent_oss.str ());
       }
     }
-      
+
     {
-      out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_) 
-           << "Logical  : " << endl;
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
+           << "Logical  : " << std::endl;
       ostringstream indent_oss;
       indent_oss << indent;
       indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);

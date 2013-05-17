@@ -44,9 +44,6 @@
 #include <datatools/properties.h>
 #include <geomtools/geom_id.h>
 
-// Misc :
-//#include <datatools/smart_ref.h>
-
 namespace geomtools {
 
   /// The base class for all hit objects
@@ -55,11 +52,18 @@ namespace geomtools {
     public datatools::i_tree_dumpable ,
     public datatools::i_clear
   {
+
   public:
+
+    /// Masks to automatically tag the attributes to be stored
+    enum store_mask_type {
+      STORE_NOTHING     = 0,
+      STORE_HIT_ID      = datatools::bit_mask::bit00,
+      STORE_GEOM_ID     = datatools::bit_mask::bit01,
+      STORE_AUXILIARIES = datatools::bit_mask::bit02,
+    };
 
     static const int32_t INVALID_HIT_ID = -1;
-
-  public:
 
     /// Check if the hit ID is valid
     bool has_hit_id () const;
@@ -100,12 +104,10 @@ namespace geomtools {
     /// Reset the mutable auxiliaries container
     void invalidate_auxiliaries ();
 
-  public:
-
-    // Default constructor
+    /// Default constructor
     base_hit ();
 
-    // Destructor:
+    /// Destructor
     virtual ~base_hit ();
 
     /// Check if the hit is valid
@@ -215,7 +217,7 @@ namespace geomtools {
         values_.push_back (a_value);
         return;
       }
-          
+
       /// Constructor
       explicit has_string_property_predicate (const std::string & a_key,
                                               const std::vector<std::string> & a_values)
@@ -231,9 +233,9 @@ namespace geomtools {
         if (! a_hit.get_auxiliaries ().has_key (key_)) return false;
         if (! a_hit.get_auxiliaries ().is_string (key_)) return false;
         const std::string & str = a_hit.get_auxiliaries ().fetch_string (key_);
-        return (std::find (values_.begin (), 
+        return (std::find (values_.begin (),
                            values_.end (),
-                           str) != values_.end ());                        
+                           str) != values_.end ());
       }
 
     };
@@ -241,8 +243,6 @@ namespace geomtools {
     /// Predicate that checks if the hit has some specific ID
     class has_hit_id_predicate : public datatools::i_predicate<base_hit>
     {
-      int hid_; /// The hit ID to be checked
-
     public:
 
       /// Constructor
@@ -258,14 +258,16 @@ namespace geomtools {
         return (a_hit.has_hit_id () && a_hit.get_hit_id () == hid_);
       }
 
+    private:
+
+      int hid_; /// The hit ID to be checked
+
     };
 
 
     /// Predicate that checks if the hit has some specific geometry ID
     class has_geom_id_predicate : public datatools::i_predicate<base_hit>
     {
-      geomtools::geom_id gid_; /// The geometry ID to be checked
-
     public:
 
       /// Constructor
@@ -281,15 +283,16 @@ namespace geomtools {
         return (a_hit.has_geom_id () && a_hit.get_geom_id () == gid_);
       }
 
+    private:
+
+      geomtools::geom_id gid_; /// The geometry ID to be checked
+
     };
 
 
     /// Predicate that negates another predicate
     class negates_predicate : public datatools::i_predicate<base_hit>
     {
-      const datatools::i_predicate<base_hit> * pred_;
-
-
     public:
 
       /// Constructor
@@ -304,27 +307,20 @@ namespace geomtools {
       {
         return (! (*pred_)(a_hit));
       }
-          
+
+    private:
+
+      const datatools::i_predicate<base_hit> * pred_;
+
     };
-
-  public:
-
-    /// Masks to automatically tag the attributes to be stored
-    enum store_mask_t
-      {
-        STORE_NOTHING     = 0,
-        STORE_HIT_ID      = datatools::bit_mask::bit00,
-        STORE_GEOM_ID     = datatools::bit_mask::bit01,
-        STORE_AUXILIARIES = datatools::bit_mask::bit02,
-      };
 
   protected:
 
-    /** The store field records the usage status of
+    /** The \a store field records the usage status of
      * the each data field members.
      * One bit is affected to each field:
-     *  0 : field member is not used
-     *  1 : field member is used
+     *  \a 0 : field member is not used
+     *  \a 1 : field member is used
      * This enables to serialize only the useful part of
      * the hit. It is made protected in order to allow
      * daughter classes to use it (32 bits are available)
@@ -333,9 +329,9 @@ namespace geomtools {
 
   private:
 
-    int32_t               _hit_id_;      //!< unique hit ID
-    geomtools::geom_id    _geom_id_;     //!< geometry ID
-    datatools::properties _auxiliaries_; //!< auxiliary properties
+    int32_t               _hit_id_;      //!< Unique hit ID
+    geomtools::geom_id    _geom_id_;     //!< Geometry ID
+    datatools::properties _auxiliaries_; //!< Auxiliary properties
 
     DATATOOLS_SERIALIZATION_DECLARATION();
 

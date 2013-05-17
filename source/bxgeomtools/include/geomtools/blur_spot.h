@@ -180,8 +180,8 @@ namespace geomtools {
     void set_z_error (double);
 
     /// Set all errors of the spot
-    void set_errors (double, 
-                     double = std::numeric_limits<double>::quiet_NaN(), 
+    void set_errors (double,
+                     double = std::numeric_limits<double>::quiet_NaN(),
                      double = std::numeric_limits<double>::quiet_NaN());
 
     /// Randomize point from the spot region
@@ -201,9 +201,15 @@ namespace geomtools {
                 double nsigma2_or_tolerance_ = DEFAULT_VALUE,
                 double nsigma3_or_tolerance_ = DEFAULT_VALUE) const;
 
-    virtual void generate_wires (std::list<polyline_3d> &, 
-                                 const placement &, 
+    virtual void generate_wires (std::list<polyline_3d> &,
+                                 const placement &,
                                  uint32_t options_ = 0) const;
+
+    /// Smart print
+    virtual void tree_dump (std::ostream & out_    = std::clog,
+                            const std::string & title_  = "",
+                            const std::string & indent_ = "",
+                            bool inherit_               = false) const;
 
   protected:
 
@@ -226,14 +232,6 @@ namespace geomtools {
                     double nsigma1_or_tolerance_ = DEFAULT_VALUE,
                     double nsigma2_or_tolerance_ = DEFAULT_VALUE,
                     double nsigma3_or_tolerance_ = DEFAULT_VALUE) const;
-
-  public :
-
-    /// Smart print
-    virtual void tree_dump (std::ostream & out_    = std::clog,
-                            const std::string & title_  = "",
-                            const std::string & indent_ = "",
-                            bool inherit_               = false) const;
 
   private:
 

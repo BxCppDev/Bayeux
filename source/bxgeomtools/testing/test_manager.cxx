@@ -316,8 +316,8 @@ int main (int argc_, char ** argv_)
       DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(geomtools::manager::base_plugin).tree_dump (std::clog, "Geometry plugin system register: ", "INFO: ");
 
       geomtools::manager geo_mgr;
-      geo_mgr.set_debug (debug);
-      geo_mgr.set_verbose (verbose);
+      if (verbose) geo_mgr.set_logging_priority (datatools::logger::PRIO_NOTICE);
+      if (debug) geo_mgr.set_logging_priority (datatools::logger::PRIO_DEBUG);
       geo_mgr.initialize (manager_config);
       if (dump)
         {

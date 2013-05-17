@@ -13,6 +13,8 @@
 
 #include <datatools/utils.h>
 #include <datatools/library_loader.h>
+#include <datatools/exception.h>
+#include <datatools/logger.h>
 
 #include <geomtools/geomtools_config.h>
 #include <geomtools/manager.h>
@@ -54,12 +56,10 @@ void print_list_of_gids (const geomtools::manager & mgr_,
 /************************************************************/
 int main (int argc_, char ** argv_)
 {
+  datatools::logger::priority logging = datatools::logger::PRIO_WARNING;
+
   int error_code = EXIT_SUCCESS;
   try {
-    std::clog << "Check geometry setup" << std::endl;
-
-    bool debug = false;
-    bool devel = false;
 
     std::vector<std::string> LL_dlls;
     std::string LL_config;
@@ -67,7 +67,7 @@ int main (int argc_, char ** argv_)
     std::string geo_mgr_config_file;
     std::vector<std::string> setup_filenames;
     bool dump_factory = false;
-
+    bool splash = true;
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
     bool visu = true;
     std::string visu_drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
@@ -93,16 +93,21 @@ int main (int argc_, char ** argv_)
     int iarg = 1;
     while (iarg < argc_) {
       std::string token = argv_[iarg];
-
       if (token[0] == '-' || token[0] == '+') {
         std::string option = token;
-        if ((option == "-d") || (option == "--debug")) {
-          debug = true;
+        if ((option == "-g") || (option == "--logging")) {
+          std::string logging_label = argv_[++iarg];
+          datatools::logger::priority lp = datatools::logger::get_priority(logging_label);
+          if (lp == datatools::logger::PRIO_UNDEFINED) {
+            DT_LOG_WARNING(logging, "Invalid logging priority '" << logging_label << "' ! Ignore !");
+          } else {
+            logging = lp;
+          }
         } else if ((option == "-h") || (option == "--help"))  {
           print_help ();
           return 0;
-        } else if (option == "--devel") {
-          devel = true;
+        } else if ((option == "-S") || (option == "--no-splash"))  {
+          splash = false;
         } else if (option == "-c" || option == "--manager-config")  {
           geo_mgr_config_file = argv_[++iarg];
         } else if (option == "-MP" || option == "--materials-plugin") {
@@ -166,7 +171,7 @@ int main (int argc_, char ** argv_)
           std::istringstream mmd_iss (argv_[++iarg]);
           mmd_iss >> mapping_max_depth;
           if (! mmd_iss) {
-            std::clog << "WARNING: invalid mapping max depth value '" << argv_[iarg] << "' !" << std::endl;
+            DT_LOG_WARNING (logging, "Invalid mapping max depth value '" << argv_[iarg] << "' ! Ignore !");
             mapping_max_depth = geomtools::mapping::NO_MAX_DEPTH;
           }
           if (mapping_max_depth < 1) {
@@ -182,7 +187,7 @@ int main (int argc_, char ** argv_)
         } else if (option == "-MT" || option == "--mapping-top-model") {
           top_mapping_model_name = argv_[++iarg];
         } else {
-          std::clog << "WARNING: ignoring option '" << option << "'!" << std::endl;
+          DT_LOG_WARNING (logging, "Ignoring option '" << option << "' !");
           print_help ();
         }
       } else {
@@ -192,19 +197,25 @@ int main (int argc_, char ** argv_)
       iarg++;
     }
 
-    /*************************************************************************************/
+    if (splash) {
+      std::clog << "                                           \n"
+                << "  G E O M T O O L S                        \n"
+                << "  Version " << GEOMTOOLS_LIB_VERSION << "  \n"
+                << "                                           \n"
+                << "  Copyright (C) 2009-2013                  \n"
+                << "  Francois Mauger, Université de Caen Basse-Normandie\n"
+                << "                                           \n";
+    }
 
-    geomtools::i_model::g_devel = devel;
+    /*************************************************************************************/
 
     uint32_t LL_flags = datatools::library_loader::allow_unregistered;
     datatools::library_loader LL (LL_flags, LL_config);
     BOOST_FOREACH (const std::string & dll_name, LL_dlls) {
       std::clog << "NOTICE: " << "Loading DLL '" << dll_name << "'." << std::endl;
-      if (LL.load (dll_name) != EXIT_SUCCESS) {
-        std::ostringstream message;
-        message << "Loading DLL '" << dll_name << "' fails !";
-        throw std::logic_error (message.str ());
-      }
+      DT_THROW_IF (LL.load (dll_name) != EXIT_SUCCESS,
+                   std::runtime_error,
+                   "Loading DLL '" << dll_name << "' failed !");
     }
 
     /*************************************************************************************/
@@ -216,7 +227,7 @@ int main (int argc_, char ** argv_)
     bool use_geo_mgr = false;
 
     if (!geo_mgr_config_file.empty()) {
-      geo_mgr.set_debug (debug);
+      geo_mgr.set_logging_priority (logging);
       datatools::properties geo_mgr_config;
       datatools::properties::read_config (geo_mgr_config_file,
                                           geo_mgr_config);
@@ -224,10 +235,10 @@ int main (int argc_, char ** argv_)
       geo_factory_ref = &geo_mgr.get_factory ();
       use_geo_mgr = true;
     } else {
-      geo_factory.set_debug (debug);
-      if (setup_filenames.size () == 0) {
-        throw std::logic_error ("Missing list of geometry models configuration files or geometry manager configuration file!");
-      }
+      geo_factory.set_debug (logging >= datatools::logger::PRIO_DEBUG);
+      DT_THROW_IF (setup_filenames.size () == 0,
+                   std::logic_error,
+                   "Missing list of geometry models configuration files or geometry manager configuration file!");
       for (int i = 0; i  < setup_filenames.size(); i++) {
         std::string geom_filename = setup_filenames[i];
         datatools::fetch_path_with_env (geom_filename);
@@ -313,8 +324,7 @@ int main (int argc_, char ** argv_)
               if (use_geo_mgr) {
                 print_list_of_gids(geo_mgr, std::clog);
               } else {
-                std::clog << "WARNING: Mapping is only supported through a geometry manager !"
-                          << std::endl;
+                DT_LOG_WARNING(logging, "Sorry ! Mapping is only supported by a geometry manager !");
               }
               token.clear();
               do_display = true;
@@ -347,12 +357,13 @@ int main (int argc_, char ** argv_)
               //geo_mgr.get_world_name ();
             }
           }
-          std::clog << "Display parameters : " << std::endl;
-          std::clog << "|-- Object name   : '" << visu_object_name  << "'" << std::endl;
-          std::clog << "|-- View          : '" << visu_drawer_view << "'" << std::endl;
-          std::clog << "`-- Show labels    : " << visu_drawer_labels << std::endl;
+          DT_LOG_NOTICE(logging, "Display parameters : ");
+          if (logging >= datatools::logger::PRIO_NOTICE) {
+            std::clog << "|-- Object name   : '" << visu_object_name  << "'" << std::endl;
+            std::clog << "|-- View          : '" << visu_drawer_view << "'" << std::endl;
+            std::clog << "`-- Show labels    : " << visu_drawer_labels << std::endl;
+          }
 
-          geomtools::gnuplot_drawer::g_devel = devel;
           geomtools::gnuplot_drawer GPD;
           GPD.set_mode (geomtools::gnuplot_drawer::MODE_WIRED);
           GPD.set_view (visu_drawer_view);
@@ -362,10 +373,8 @@ int main (int argc_, char ** argv_)
                                  visu_object_name,
                                  geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT);
             if (code != 0) {
-              std::cerr << "ERROR: geomtools_check_setup: "
-                        << "Cannot display the object with model name or GID : '"
-                        << visu_object_name << "' !" << std::endl;
-
+              DT_LOG_ERROR(logging, "Cannot display the object with model name or GID : '"
+                           << visu_object_name << "' !");
               last_visu_object_name.clear();
             } else {
               last_visu_object_name = visu_object_name;
@@ -442,7 +451,6 @@ int main (int argc_, char ** argv_)
       std::clog << "NOTICE: " << "GDML..." << std::endl;
       std::ostringstream ext_mat_oss;
 
-      geomtools::gdml_export::g_devel = devel;
       geomtools::gdml_export GDML;
 
       geomtools::gdml_writer material_writer; // GDML writer for materials
@@ -543,7 +551,6 @@ int main (int argc_, char ** argv_)
       GDML.export_gdml (fgdml, geometry_factory, top_mapping_model_name);
       std::clog << "NOTICE: geomtools_check_setup: GDML file '" << fgdml << "' has been generated !" << std::endl;
 #if GEOMTOOLS_WITH_ROOT_DISPLAY == 1
-      //std::clog << "DEVEL: geomtools_check_setup: GDML ROOT display : " << gdml_root_display << std::endl;
       if (gdml_root_display) {
         std::clog << "NOTICE: geomtools_check_setup: Importing GDML file '" << fgdml << "' from ROOT TGeoManager..." << std::endl;
         std::ostringstream setup_title_oss;
@@ -650,7 +657,7 @@ void print_help (std::ostream & out_)
 
   out_ << "Options: \n\n";
 
-  out_ << "   -d|--debug        : Activate debug mode\n";
+  out_ << "   -g|--logging LOGGING_PRIORITY : Set the logging priority threshold\n";
 
   out_ << "   -l|--load-dll DLL_NAME :\n";
   out_ << "                       Load a specific DLL\n";

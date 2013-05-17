@@ -1,14 +1,14 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* address_set.h
  * Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-08
  * Last modified: 2010-02-08
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *   Set of addresses from a geometry ID
- * 
+ *
  */
 
 #ifndef GEOMTOOLS_ADDRESS_SET_H
@@ -23,16 +23,16 @@ namespace geomtools {
 
   class address_set
   {
- 
+
   public:
-    
+
     enum mode_type
     {
       MODE_INVALID = -1,
-      MODE_NONE    = 0,
-      MODE_ALL     = 1,
-      MODE_RANGE   = 2,
-      MODE_LIST    = 3,
+      MODE_NONE    = 0, //!< No candidate value is valid
+      MODE_ALL     = 1, //!< All candidate value are valid
+      MODE_RANGE   = 2, //!< A candidate value is valid only if it lies in some specific range of values
+      MODE_LIST    = 3, //!< A candidate value is valid only if it belongs to a specific list of values
       MODE_DEFAULT = MODE_NONE
     };
 
@@ -56,11 +56,14 @@ namespace geomtools {
     void set_mode_range (uint32_t a_min, uint32_t a_max);
     void set_mode_list ();
     void add_to_list (uint32_t a_value);
+
+    /// Check if a value matches the collection of addresses
     bool match (uint32_t a_value) const;
 
+    /// Terminate
     void reset ();
 
-    // ctor:
+    /// Constructor
     address_set ();
 
     friend std::ostream & operator<< (std::ostream & a_out, const address_set & a_addset);
@@ -69,11 +72,11 @@ namespace geomtools {
 
   private:
 
-    bool          _reverse_;
-    int           _mode_;
-    uint32_t      _range_min_;
-    uint32_t      _range_max_;
-    std::set<uint32_t> _addresses_;
+    int           _mode_;         //!< The mode defining the collection of valid addresses
+    uint32_t      _range_min_;    //!< In ``range`` mode, the minimum bound of valid addresses
+    uint32_t      _range_max_;    //!< In ``range`` mode, the maximum bound of valid addresses
+    std::set<uint32_t> _addresses_; //!< In ``list``mode, the explicit list of valid addresses
+    bool          _reverse_; //!< In any mode, this flag reverse the matching of the candidate addresses
 
   };
 

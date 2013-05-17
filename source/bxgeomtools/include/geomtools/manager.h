@@ -43,6 +43,7 @@
 #include <datatools/service_tools.h>
 #include <datatools/factory_macros.h>
 #include <datatools/i_tree_dump.h>
+#include <datatools/logger.h>
 
 #include <geomtools/model_factory.h>
 #include <geomtools/id_mgr.h>
@@ -59,13 +60,11 @@ namespace geomtools {
 
   /// \brief Geometry manager for virtual geometry modelling.
   /// Main geometry manager for the modelisation of various
-  /// experimental setups in the framework of the nuclear and particle 
+  /// experimental setups in the framework of the nuclear and particle
   /// physics experiments.
-  class manager : public datatools::i_tree_dumpable 
+  class manager : public datatools::i_tree_dumpable
   {
   public:
-
-    static bool g_devel; //!< global debug flag (mostly for developers)
 
     class plugin_entry;
 
@@ -87,14 +86,14 @@ namespace geomtools {
 
       /// Get a non-mutable reference to the geometry manager
       const manager & get_geo_manager() const;
-     
+
       /// Initialize the plugin using only a list of properties without the needs of other resources
       virtual int initialize_standalone(const datatools::properties& config);
 
       /// Initialize the plugin using a list of properties and a list of other plugins
       virtual int initialize_simple(const datatools::properties & config_,
                                     const plugins_dict_type & plugins_);
- 
+
       /* abstract interface */
 
       /// Main initialization method from a list of properties, a list of other plugins and a list of services
@@ -120,11 +119,11 @@ namespace geomtools {
       // Factory stuff :
       DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_plugin);
     };
-    
+
     typedef datatools::handle<base_plugin> plugin_handle_type;
- 
+
     /// \brief Internal record plugin handling
-    class plugin_entry : public datatools::i_tree_dumpable  
+    class plugin_entry : public datatools::i_tree_dumpable
     {
     public:
       enum status_type {
@@ -141,20 +140,20 @@ namespace geomtools {
 
       /// Set the description of the plugin
       void set_description(const std::string&);
-      
+
       /// Check is the description is not empty
       bool has_description() const;
-      
+
       /// Get the description of the plugin
       const std::string& get_description() const;
-      
-      /// Set the configuration 
+
+      /// Set the configuration
       const datatools::properties & get_config () const;
-      
-      /// Get the configuration 
+
+      /// Get the configuration
       void set_config (const datatools::properties &);
 
-      /// Grab the configuration 
+      /// Grab the configuration
       datatools::properties & grab_config ();
 
       /// Check if plugin is created
@@ -173,8 +172,8 @@ namespace geomtools {
       base_plugin & grab ();
 
       const base_plugin & get () const;
- 
-      virtual void tree_dump(std::ostream &      out_ = std::clog, 
+
+      virtual void tree_dump(std::ostream &      out_ = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
                              bool                inherit_ = false) const;
@@ -188,7 +187,7 @@ namespace geomtools {
       std::string        _name_;        //!< Name of the plugin
       std::string        _id_;          //!< The ID (type) of the plugin
       std::string        _description_; //!< Description of the plugin
-      datatools::properties _config_;   //!< The configuration of the plugin 
+      datatools::properties _config_;   //!< The configuration of the plugin
       uint32_t           _status_;      //!< Status of the plugin
       plugin_handle_type _handle_;      //!< Handle to the plugin
 
@@ -197,11 +196,7 @@ namespace geomtools {
 
     bool is_debug () const;
 
-    void set_debug (bool);
-
     bool is_verbose () const;
-
-    void set_verbose (bool);
 
     bool is_initialized () const;
 
@@ -252,39 +247,39 @@ namespace geomtools {
     /* Plugins management */
 
     bool can_drop_plugin(const std::string& plugin_name_);
-    
+
     void drop_plugin(const std::string& plugin_name_);
-    
+
     void load_plugin(const std::string& plugin_name_,
                      const std::string& plugin_id_,
-                     const datatools::properties& plugin_config_, 
+                     const datatools::properties& plugin_config_,
                      bool only_lock_ = false);
-    
-    void load_plugins(const datatools::multi_properties& plugin_config_, 
+
+    void load_plugins(const datatools::multi_properties& plugin_config_,
                      bool only_lock_ = false);
 
     const plugins_dict_type & get_plugins () const;
 
     plugins_dict_type & grab_plugins ();
-      
+
     /**  @param a_plugin_name The name of the plugin to be checked
      *   @return true if the plugin is of the requested type
      */
     template<class T>
     bool is_plugin_a (const std::string & a_plugin_name) const;
-    
+
     /** @param a_plugin_name The name of the plugin to be grabbed
      *  @return a mutable reference to the plugin instance requested by name and type
      */
     template<class T>
     T& grab_plugin (const std::string & a_plugin_name);
-    
+
     /**  @param a_plugin_name The name of the plugin to be grabbed
      *   @return a non-mutable reference to the plugin instance requested by name and type
      */
     template<class T>
     const T& get_plugin (const std::string & a_plugin_name) const;
-    
+
     /**  @param a_plugin_name The name of the plugin to be checked
      *   @return true if the manager hosts the plugin requested by name
      */
@@ -297,10 +292,10 @@ namespace geomtools {
     void clear_plugins ();
 
     bool has_plugin_type(const std::string& plugin_id) const;
-    
+
     template <class PluginClass>
     void register_plugin_type(const std::string& plugin_id);
-    
+
     void unregister_plugin_type(const std::string& plugin_id);
 
     /// Default constructor
@@ -318,33 +313,37 @@ namespace geomtools {
     /// Reset the geometry manager
     void reset ();
 
-    virtual void tree_dump(std::ostream &      out_ = std::clog, 
+    virtual void tree_dump(std::ostream &      out_ = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
                            bool                inherit_ = false) const;
 
     const base_plugin::factory_register_type & get_plugins_factory_register();
-    
+
+    void set_logging_priority(datatools::logger::priority a_logging_priority);
+
+    datatools::logger::priority get_logging_priority() const;
+
   protected:
 
     virtual void _pre_init (const datatools::properties & config_);
 
     virtual void _post_init (const datatools::properties & config_);
-    
+
     void _load_plugin(const std::string& name,
                      const std::string& id,
                      const datatools::properties& config);
-    
+
     void _preload_plugins_global_dict();
-    
+
     void _create_plugin(plugin_entry& entry);
-    
+
     void _initialize_plugin(plugin_entry& entry);
-    
+
     void _reset_plugin(plugin_entry& entry);
 
   private:
-    
+
     //void _set_plugins_factory_preload_ (bool preload);
 
     /// Core initialization private method (wrapped by 'initialize')
@@ -352,12 +351,13 @@ namespace geomtools {
 
     /// Plugins initialization private method
     void _init_plugins_ (const datatools::properties & config_);
-      
+
+  protected:
+
+    datatools::logger::priority _logging;
 
   private:
 
-    bool                     _debug_;             //!< debug flag
-    bool                     _verbose_;           //!< verbosity flag
     bool                     _initialized_;       //!< initialization flag
     std::string              _setup_label_;       //!< the label associated to the geometry setup
     std::string              _setup_version_;     //!< the version tag of the geometry setup
@@ -373,7 +373,7 @@ namespace geomtools {
     //const materials::manager * _materials_manager_; //!< Material manager
 
     bool                                _plugins_factory_preload_;  //!< Flagfor preloading of plugins system factory
-    bool                                _plugins_force_initialization_at_load_;  //!< Flag to enforce initialization of plugins at load 
+    bool                                _plugins_force_initialization_at_load_;  //!< Flag to enforce initialization of plugins at load
     base_plugin::factory_register_type  _plugins_factory_register_; //!< Plugins registration
     plugins_dict_type                   _plugins_;                  //!< Plugins dictionary
 

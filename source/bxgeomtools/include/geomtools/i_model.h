@@ -1,17 +1,17 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* i_model.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-20
  * Last modified: 2012-04-09
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *
  *   Interface of a geometry model
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
 #ifndef GEOMTOOLS_I_MODEL_H_
@@ -24,76 +24,67 @@
 
 #include <datatools/i_tree_dump.h>
 #include <datatools/properties.h>
+#include <datatools/logger.h>
 
 #include <geomtools/logical_volume.h>
 #include <geomtools/detail/model_tools.h>
 #include <datatools/factory_macros.h>
 
 namespace geomtools {
-  
+
   class i_model : public datatools::i_tree_dumpable
   {
   public:
-    static bool g_devel;
-   
-    struct constants
-    {
+
+    static bool g_devel; // to be removed
+
+    struct constants {
+      constants ();
+      static const constants & instance ();
       std::string SOLID_SUFFIX;
       std::string LOGICAL_SUFFIX;
       std::string PHYSICAL_SUFFIX;
       std::string PHANTOM_SOLID_FLAG;
-      //std::string DEFAULT_WORLD_NAME;
- 
-      constants ();
-
-      static const constants & instance ();
-
     };
 
     typedef geomtools::models_col_type models_col_type;
-     
-  public: 
 
-    void assert_constructed (const std::string & where_, 
+    void assert_constructed (const std::string & where_,
                              const std::string & what_ = "") const;
 
-    void assert_unconstructed (const std::string & where_, 
+    void assert_unconstructed (const std::string & where_,
                                const std::string & what_ = "") const;
 
     bool is_constructed () const;
-    
+
     bool is_debug () const;
 
     bool is_phantom_solid () const;
-    
-    void set_name (const std::string & name_); 
-    
-    void set_debug (bool); 
-    
-    const std::string & get_name () const;
-    
-    const datatools::properties & parameters () const;
-    
-    datatools::properties & parameters ();
 
-  protected :
- 
-    void _set_phantom_solid (bool);
-   
-  public: 
+    void set_name (const std::string & name_);
+
+    void set_debug (bool);
+
+    const std::string & get_name () const;
+
+    /// Configuration parameters (should be get_)
+    const datatools::properties & parameters () const;
+
+    /// Configuration parameters (should be grab_)
+    datatools::properties & parameters ();
 
     /// Constructor
     i_model (const std::string & name_ = "");
-    
+
     /// Destructor
     virtual ~i_model ();
-    
+
     /// Smart print
-    virtual void tree_dump (std::ostream & out_         = std::clog, 
-                            const std::string & title_  = "", 
-                            const std::string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_         = std::clog,
+                            const std::string & title_  = "",
+                            const std::string & indent_ = "",
                             bool inherit_          = false) const;
-    
+
     /// Get a non mutable reference to the embedded logical volume
     const geomtools::logical_volume & get_logical () const;
 
@@ -102,36 +93,38 @@ namespace geomtools {
 
     /// Get a mutable reference to the embedded logical volume (deprecated : use i_model::grab_logical, still used in geomtools models...)
     geomtools::logical_volume & get_logical ();
-    
+
+    /// Main pure virtual method that constructs the geometry model
     virtual void construct (const std::string & name_,
                             const datatools::properties & setup_,
                             models_col_type * models_ = 0);
-     
+
+    virtual std::string get_model_id () const = 0;
+
   protected:
+
+    void _set_phantom_solid (bool);
 
     virtual void _pre_construct (datatools::properties & setup_);
 
     virtual void _post_construct (datatools::properties & setup_);
- 
+
     virtual void _at_construct (const std::string & name_,
                                 const datatools::properties & setup_,
                                 models_col_type * models_ = 0);
-      
-  private: 
 
-    bool _debug_;
+  protected:
+
+    bool                        _phantom_solid; //!< Special flag (not used yet)
+    geomtools::logical_volume   _logical; //!< Top logical volume attached to the model
+    datatools::logger::priority _logging; //!< Logginf priority threshold
+
+  private:
+
+    bool _debug_; // to be removed
     bool _constructed_;
     datatools::properties _parameters_;
     std::string _name_;
-    
-  protected:
-
-    bool                      _phantom_solid;
-    geomtools::logical_volume _logical;
-      
-  public:
-    
-    virtual std::string get_model_id () const = 0;
 
   public:
 
@@ -141,15 +134,15 @@ namespace geomtools {
 
     static std::string make_physical_volume_name (const std::string & basename_);
 
-    static std::string make_physical_volume_name_per_item (const std::string & basename_, 
+    static std::string make_physical_volume_name_per_item (const std::string & basename_,
                                                            int i_);
 
-    static std::string make_physical_volume_name_per_item (const std::string & basename_, 
+    static std::string make_physical_volume_name_per_item (const std::string & basename_,
                                                            int i_, int j_);
 
     static std::string make_physical_volume_name (const std::string & basename_,
                                                   int nitems_);
- 
+
     static std::string make_physical_volume_name (const std::string & basename_,
                                                   int ncols_,
                                                   int nrows_);
@@ -158,9 +151,9 @@ namespace geomtools {
 
     // Factory stuff :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_model);
- 
+
   }; // class i_model
-  
+
 } // end of namespace geomtools
 
 #include <geomtools/model_macros.h>
