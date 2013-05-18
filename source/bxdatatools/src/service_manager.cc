@@ -33,12 +33,17 @@
 #include <datatools/utils.h>
 #include <datatools/properties.h>
 #include <datatools/multi_properties.h>
+#include <datatools/exception.h>
+#include <datatools/logger.h>
 
 namespace datatools {
 
 //----------------------------------------------------------------------
 // Public Interface Definitions
 //
+
+// Default logger interface
+DT_LOGGER_OBJECT_DEFAULT_IMPLEMENTATION(service_manager)
 
 void service_manager::set_name(const std::string& name) {
   name_ = name;
@@ -61,12 +66,16 @@ const std::string& service_manager::get_description() const {
 
 
 bool service_manager::is_debug() const {
-  return debug_;
+  return get_logging_priority() >= datatools::logger::PRIO_DEBUG;
 }
 
 
 void service_manager::set_debug(bool debug) {
-  debug_ = debug;
+  if (debug) {
+    set_logging_priority(datatools::logger::PRIO_DEBUG);
+  } else {
+    set_logging_priority(datatools::logger::PRIO_WARNING);
+  }
 }
 
 
@@ -83,50 +92,23 @@ void service_manager::load(const std::string& name,
 
 
 void service_manager::load(const datatools::multi_properties& config) {
-  bool debug = this->is_debug();
-  if (debug) {
-    std::clog << datatools::io::debug
-              << "datatools::service_manager::load: "
-              << "Entering..."
-              << std::endl;
-  }
-
-  if (this->is_initialized()) {
-    std::ostringstream message;
-    message << "manager::load: "
-            << "Service manager is already initialized !";
-    throw std::logic_error(message.str());
-  }
-
-
+  DT_LOG_TRACE(get_logging_priority(), "Entering...");
+  DT_THROW_IF(this->is_initialized(), std::logic_error, "Service manager is already initialized !");
   for (multi_properties::entries_ordered_col_type::const_iterator i = config.ordered_entries().begin();
        i != config.ordered_entries().end();
        ++i) {
     multi_properties::entry* mpe = *i;
     const std::string& service_name = mpe->get_key();
     const std::string& service_id = mpe->get_meta();
-    if (debug) {
-      std::clog << datatools::io::debug
-                << "datatools::service_manager::load: "
-                << "Configuration for service named '"
-                << service_name << "' "
-                << " with ID '"
-                << service_id << "'..."
-                << std::endl;
-    }
+    DT_LOG_DEBUG (get_logging_priority(), "Configuration for service named '" << service_name << "' "
+                  << " with ID '" << service_id << "'...");
     this->load_service(service_name, service_id, mpe->get_properties());
   }
 }
 
 
 void service_manager::initialize(const datatools::properties& config) {
-  if (this->is_initialized()) {
-    std::ostringstream message;
-    message << "datatools::service_manager::initialize: "
-            << "Manager is already initialized !";
-    throw std::logic_error(message.str());
-  }
-
+  DT_THROW_IF(this->is_initialized(), std::logic_error, "Service manager is already initialized !");
   if (!this->is_debug()) {
     if (config.has_flag("debug")) {
       this->set_debug(true);
@@ -178,20 +160,8 @@ void service_manager::initialize() {
 
 
 void service_manager::reset() {
-  if (this->is_debug()) {
-    std::clog << datatools::io::debug
-              << "datatools::service_manager::reset: "
-              << "Entering..."
-              << std::endl;
-  }
-
-  if (!initialized_) {
-    std::ostringstream message;
-    message << "datatools::service_manager::reset: "
-            << "Manager is not initialized !";
-    throw std::logic_error(message.str());
-  }
-
+  DT_LOG_TRACE(get_logging_priority(),"Entering...");
+  DT_THROW_IF(!initialized_,std::logic_error,"Manager is not initialized !");
   size_t count = services_.size();
   size_t initial_size = services_.size();
   while (services_.size() > 0) {
@@ -201,14 +171,7 @@ void service_manager::reset() {
       service_entry& entry = it->second;
 
       if (entry.can_be_dropped()) {
-        if (this->is_debug()) {
-          std::clog << datatools::io::debug
-                    << "datatools::service_manager::reset: "
-                    << "Removing service '"
-                    << entry.get_service_name ()
-                    << "'..."
-                    << std::endl;
-        }
+        DT_LOG_DEBUG(get_logging_priority(),"Removing service '" << entry.get_service_name ()  << "'...");
         this->reset_service(entry);
         services_.erase(it);
         --count;
@@ -219,25 +182,15 @@ void service_manager::reset() {
       break;
     }
   }
-
   if (services_.size() > 0) {
-    std::clog << datatools::io::warning
-              << "datatools::service_manager::reset: "
-              << "There are some left services !"
-              << std::endl;
+    DT_LOG_WARNING(get_logging_priority(),"There are some left services !");
   }
   services_.clear();
   factory_register_.reset();
   force_initialization_at_load_ = false;
   preload_ = true;
-
   initialized_ = false;
-  if (this->is_debug()) {
-    std::clog << datatools::io::debug
-              << "datatools::service_manager::reset: "
-              << "Exiting."
-              << std::endl;
-  }
+  DT_LOG_TRACE(get_logging_priority(),"Exiting.");
 }
 
 
@@ -246,13 +199,13 @@ service_manager::service_manager(const std::string& name,
                                  const std::string& description,
                                  uint32_t flag)
     : factory_register_("datatools::base_service/service_factory",
-                        flag & VERBOSE ?
+                        flag & FACTORY_VERBOSE ?
                         base_service::factory_register_type::verbose : 0) {
   initialized_ = false;
   this->set_name(name);
   this->set_description(description);
 
-  this->set_debug(flag & DEBUG);
+  set_logging_priority(datatools::logger::PRIO_WARNING);
   force_initialization_at_load_ = false;
 
   if (flag & FORCE_INITIALIZATION_AT_LOAD) {
@@ -300,48 +253,23 @@ service_dict_type& service_manager::get_services() {
 
 bool service_manager::can_drop(const std::string& name) {
   service_dict_type::const_iterator found = services_.find(name);
-  if (found == services_.end()) {
-    std::ostringstream message;
-    message << "datatools::service_manager::can_drop: "
-            << "Service '"
-            << name
-            << "' does not exist !";
-    throw std::logic_error(message.str());
-  }
+  DT_THROW_IF (found == services_.end(),
+               std::logic_error,
+               "Service '" << name << "' does not exist !");
   return found->second.can_be_dropped();
 }
 
 
 void service_manager::drop(const std::string& name) {
   service_dict_type::iterator found = services_.find(name);
-  if (found == services_.end()) {
-    std::ostringstream message;
-    message << "datatools::service_manager::drop_service: "
-            << "Service '"
-            << name
-            << "' does not exist !";
-    throw std::logic_error(message.str());
-  }
-
+  DT_THROW_IF (found == services_.end(),
+               std::logic_error,
+               "Service '" << name << "' does not exist !");
   service_entry& entry = found->second;
-  if (!found->second.can_be_dropped()) {
-    std::ostringstream message;
-    message << "datatools::service_manager::drop_service: "
-            << "Service '"
-            << name
-            << "' cannot be dropped because of existing dependent services !";
-    throw std::logic_error(message.str());
-  }
-
-  if (this->is_debug()) {
-    std::clog << datatools::io::debug
-              << "datatools::service_manager::drop: "
-              << "Reset & remove service '"
-              << name
-              << "' !"
-              << std::endl;
-  }
-
+  DT_THROW_IF (!found->second.can_be_dropped(),
+               std::logic_error,
+               "Service '" << name << "' cannot be dropped because of existing dependent services !");
+  DT_LOG_DEBUG(get_logging_priority(), "Reset & remove service '" << name << "' !");
   this->reset_service(entry);
   services_.erase(found);
 }
@@ -393,9 +321,6 @@ void service_manager::dump_services(std::ostream& out,
 }
 
 
-
-
-
 bool service_manager::has_service_type(const std::string& id) const {
   return factory_register_.has(id);
 }
@@ -426,8 +351,8 @@ void service_manager::tree_dump(std::ostream& out,
       << "'" << std::endl;
 
   out << indent << i_tree_dumpable::tag
-      << "Debug          : "
-      << debug_ << std::endl;
+      << "Logging priority          : "
+      << get_logging_priority() << std::endl;
 
   out << indent << i_tree_dumpable::tag
       << "Preload        : "
@@ -494,34 +419,16 @@ void service_manager::tree_dump(std::ostream& out,
 void service_manager::load_service(const std::string& name,
                                    const std::string& id,
                                    const datatools::properties& config) {
-  bool debug = this->is_debug();
-  if (debug) {
-    std::clog << datatools::io::debug
-              << "datatools::service_manager::load_service: "
-              << "Entering..."
-              << std::endl;
-  }
-  if (this->has(name)) {
-    std::ostringstream message;
-    message << "datatools::service_manager::load_service: "
-            << "Service '"
-            << name
-            << "' already exists !";
-    throw std::logic_error(message.str());
-  }
-
+  DT_LOG_TRACE(get_logging_priority(), "Entering...");
+  DT_THROW_IF (this->has(name),
+               std::logic_error,
+               "Service '" << name << "' already exists !");
   {
     // Add a new entry :
     service_entry tmp_entry;
     tmp_entry.set_service_name(name);
-    if (debug) {
-      std::clog << datatools::io::debug
-                << "datatools::service_manager::load_service: "
-                << "Add an entry for service '"
-                << name
-                << "'..."
-                << std::endl;
-    }
+    DT_LOG_DEBUG(get_logging_priority(),
+                 "Add an entry for service '"<< name << "'...");
     services_[name] = tmp_entry;
   }
   // fetch a reference on it and update :
@@ -529,130 +436,53 @@ void service_manager::load_service(const std::string& name,
   new_entry.set_service_id(id);
   new_entry.set_service_config(config);
   //new_entry.service_status = service_entry::STATUS_BLANK;
-
-  if (debug) {
-    std::clog << datatools::io::debug
-              << "datatools::service_manager::load_service: "
-              << "Fetch..."
-              << std::endl;
-  }
-
+  DT_LOG_DEBUG(get_logging_priority(),"Fetch...");
   this->create_service(new_entry);
   std::vector<std::string> strict_dependencies;
-
   if (config.has_key("dependencies.strict")) {
     config.fetch("dependencies.strict", strict_dependencies);
   }
-
   for (size_t i = 0; i < strict_dependencies.size(); ++i) {
     // XXX the_service_entry.service_masters;
   }
 
   // XXX:
   //the_service_entry.get_service_handle().get ().fetch_dependencies (the_service_entry.service_masters);
-
   for (service_dependency_dict_type::const_iterator j
-       = new_entry.service_masters.begin();
+         = new_entry.service_masters.begin();
        j != new_entry.service_masters.end();
        ++j) {
     const std::string& master_service_name = j->first;
-    if (debug) {
-      std::clog << datatools::io::debug
-                << "datatools::service_manager::load_service: "
-                << "Master '"
-                << master_service_name
-                << "' "
-                << std::endl;
-    }
+    DT_LOG_DEBUG(get_logging_priority(),
+                 "Master '"<< master_service_name << "!");
     continue;
-    /*
-       const dependency_info_type & master_depinfo = j->second;
-    // search for missing strict dependencies from the current dictionnary of services:
-    service_dict_type::iterator found = _services_.find (master_service_name);
-    if (master_depinfo.level == STRICT_DEPENDENCY)
-    {
-    cerr << "DEVEL: "
-    << "datatools::service_manager::_load_service: "
-    << "Master '" << master_service_name << "' is a strict dependency !"
-    << endl;
-    if (found == _services_.end ())
-    {
-    ostringstream message;
-    message << "datatools::service_manager::_load_service: "
-    << "Could not find service named '" << master_service_name
-    << "' on which the new service '" << service_name_ << "' depends !";
-    if (is_abort_on_error ())
-    {
-    throw logic_error (message.str());
-    }
-    clog << "ERROR: " << message.str () << endl;
-    the_service_entry.service_status = service_entry::STATUS_BROKEN_DEPENDENCY;
-    return datatools::FAILURE;
-    }
-    else
-    {
-    dependency_info_type di;
-    di.name = service_name_;
-    di.level = STRICT_DEPENDENCY;
-    found->second.service_slaves[service_name_] = di;
-    }
-    }
-    else if (master_depinfo.level > NO_DEPENDENCY)
-    {
-    dependency_info_type di;
-    di.name = service_name_;
-    di.level = master_depinfo.level;
-    found->second.service_slaves[service_name_] = di;
-    }
-    */
   }
   if (force_initialization_at_load_) {
     this->initialize_service(new_entry);
   }
-
-  if(debug) {
-    std::clog << datatools::io::debug
-              << "datatools::service_manager::_load_service: "
-              << "Exiting."
-              << std::endl;
-  }
+  DT_LOG_TRACE(get_logging_priority(),"Exiting.");
 }
 
 
 void service_manager::preload_global_dict() {
-  bool devel = false;
-  if (devel) {
-    std::clog << datatools::io::devel
-              << "datatools::service_manager::preload_global_dict: "
-              << "Entering..."
-              << std::endl;
-  }
-
+  DT_LOG_TRACE(get_logging_priority(),"Entering !");
   factory_register_.import(DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(datatools::base_service));
+  DT_LOG_TRACE(get_logging_priority(),"Embeded.");
 }
 
 
 void service_manager::create_service(service_entry& entry) {
   if (!entry.is_created()) {
-    if (this->is_debug()) {
-      std::clog << datatools::io::debug
-                << "datatools::service_manager::_create_service: "
-                << "Creating service named '"
-                <<  entry.get_service_name()
-                << "'..."
-                << std::endl;
-    }
-
+    DT_LOG_DEBUG(get_logging_priority(),
+                 "Creating service named '" <<  entry.get_service_name()
+                 << "'...");
     // search for the service's label in the factory dictionary:
-    if (!factory_register_.has(entry.get_service_id())) {
-      std::ostringstream message;
-      message << "datatools::service_manager::_create_service: "
-              << "Cannot find service factory with ID '"
-              << entry.get_service_id()
-              << "' for service named '"
-              << entry.get_service_name() << "' !";
-      throw std::logic_error(message.str());
-    }
+    DT_THROW_IF (!factory_register_.has(entry.get_service_id()),
+                 std::logic_error,
+                 "Cannot find service factory with ID '"
+                 << entry.get_service_id()
+                 << "' for service named '"
+                 << entry.get_service_name() << "' !");
 
     // You don't think this might be a *little* too deeply nested?
     typedef
@@ -668,15 +498,8 @@ void service_manager::create_service(service_entry& entry) {
 
     entry.grab_service_handle().reset(ptr);
     entry.update_service_status(service_entry::STATUS_CREATED);
-
-    if (this->is_debug()) {
-      std::clog << datatools::io::debug
-                << "datatools::service_manager::_create_service: "
-                << "Service named '"
-                <<  entry.get_service_name()
-                << "' has been created !"
-                << std::endl;
-    }
+    DT_LOG_DEBUG(get_logging_priority(),
+                 "Service named '" <<  entry.get_service_name() << "' has been created !");
   }
 }
 
@@ -689,14 +512,10 @@ void service_manager::initialize_service(service_entry& entry) {
 
   // If not initialized, do it :
   if (!entry.is_initialized()) {
-    if (this->is_debug()) {
-      std::clog << datatools::io::debug
-                << "datatools::service_manager::initialize_service: "
-                << "Initializing service named '"
-                << entry.get_service_name()
-                << "'..."
-                << std::endl;
-    }
+    DT_LOG_DEBUG(get_logging_priority(),
+                 "Initializing service named '"
+                 << entry.get_service_name()
+                 << "'...");
 
     // 2012/04/14: XG since the service handle has been set by
     // the create_service method, one has to use it. THe
@@ -727,29 +546,21 @@ void service_manager::reset_service(service_entry& entry) {
   if (entry.is_initialized()) {
     base_service& the_service = entry.grab_service_handle().grab();
     the_service.reset();
-
     entry.reset_service_status(service_entry::STATUS_INITIALIZED);
-
     for (service_dependency_dict_type::iterator i = entry.service_masters.begin();
          i != entry.service_masters.end();
          ++i) {
       const std::string& master_name = i->first;
       service_dict_type::iterator found = services_.find(master_name);
-
       if (found != services_.end()) {
         service_entry& the_master_entry = found->second;
         the_master_entry.remove_slave(entry.get_service_name());
-
-        if (this->is_debug()) {
-          std::clog << datatools::io::debug
-                    << "datatools::service_manager::_create_service: "
-                    << "Remove slave '"
-                    << entry.get_service_name()
-                    << "' from master '"
-                    << the_master_entry.get_service_name()
-                    << "' !"
-                    << std::endl;
-        }
+        DT_LOG_DEBUG(get_logging_priority(),
+                     "Remove slave '"
+                     << entry.get_service_name()
+                     << "' from master '"
+                     << the_master_entry.get_service_name()
+                     << "' !");
       }
     }
   }

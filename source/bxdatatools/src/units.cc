@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* units.cc
  *
  * All units from "include/CLHEP/Units/SystemOfUnits.h"
@@ -27,8 +27,14 @@
 #include <datatools/utils.h>
 #include <datatools/clhep_units.h>
 
-
 namespace datatools {
+
+// void units::throw_bad_unit(const std::string& a_type,
+//                            const std::string& a_unit_str) {
+//   std::ostringstream message;
+//   message << "Invalid '" << a_type << "' unit for symbol '" << a_unit_str << "' !";
+//   throw std::logic_error(message.str());
+// }
 
 double units::get_length_unit_from(const std::string& word) {
   if ((word == "angstrom")) return CLHEP::angstrom;
@@ -41,8 +47,8 @@ double units::get_length_unit_from(const std::string& word) {
   if ((word == "km") || (word == "kilometer")) return CLHEP::kilometer;
   if ((word == "pc") || (word == "parsec")) return CLHEP::parsec;
   if ((word == "inch")) return 2.54 * CLHEP::centimeter;
-  throw_bad_unit("length", word);
-  return std::numeric_limits<double>::quiet_NaN();
+  DT_THROW_BAD_UNIT("length", word);
+  // return std::numeric_limits<double>::quiet_NaN();
 }
 
 
@@ -51,8 +57,8 @@ double units::get_surface_unit_from(const std::string& word) {
   if ((word == "cm2")) return CLHEP::centimeter2;
   if ((word == "mm2")) return CLHEP::millimeter2;
   if ((word == "km2")) return CLHEP::kilometer2;
-  throw_bad_unit("surface", word);
-  return std::numeric_limits<double>::quiet_NaN();
+  DT_THROW_BAD_UNIT("surface", word);
+  // return std::numeric_limits<double>::quiet_NaN();
 }
 
 
@@ -61,8 +67,8 @@ double units::get_volume_unit_from(const std::string& word) {
   if ((word == "cm3")) return CLHEP::centimeter3;
   if ((word == "mm3")) return CLHEP::millimeter3;
   if ((word == "km3")) return CLHEP::kilometer3;
-  throw_bad_unit("volume", word);
-  return std::numeric_limits<double>::quiet_NaN();
+  DT_THROW_BAD_UNIT("volume", word);
+  // return std::numeric_limits<double>::quiet_NaN();
 }
 
 
@@ -75,8 +81,8 @@ double units::get_time_unit_from(const std::string& word) {
   if ((word == "s") || (word == "second")) return CLHEP::second;
   if ((word == "minute")) return 60 * CLHEP::second;
   if ((word == "h") || (word == "hour")) return 3600 * CLHEP::second;
-  throw_bad_unit("time", word);
-  return std::numeric_limits<double>::quiet_NaN();
+  DT_THROW_BAD_UNIT("time", word);
+  //return std::numeric_limits<double>::quiet_NaN();
 }
 
 
@@ -84,15 +90,15 @@ double units::get_angle_unit_from(const std::string& word) {
   if ((word == "rad") || (word == "radian")) return CLHEP::radian;
   if ((word == "mrad") || (word == "milliradian")) return CLHEP::milliradian;
   if ((word == "deg") || (word == "degree")) return CLHEP::degree;
-  throw_bad_unit("angle", word);
-  return std::numeric_limits<double>::quiet_NaN();
+  DT_THROW_BAD_UNIT("angle", word);
+  // return std::numeric_limits<double>::quiet_NaN();
 }
 
 
 double units::get_solid_angle_unit_from(const std::string& word) {
   if ((word == "steradian")) return CLHEP::steradian;
-  throw_bad_unit("solid angle", word);
-  return std::numeric_limits<double>::quiet_NaN();
+  DT_THROW_BAD_UNIT("solid angle", word);
+  //return std::numeric_limits<double>::quiet_NaN();
 }
 
 
@@ -104,8 +110,8 @@ double units::get_energy_unit_from(const std::string& word) {
   if ((word == "TeV") || (word == "teraelectronvolt")) return CLHEP::teraelectronvolt;
   if ((word == "PeV") || (word == "petaelectronvolt")) return CLHEP::petaelectronvolt;
   if ((word == "J") || (word == "joule")) return CLHEP::joule;
-  throw_bad_unit("energy", word);
-  return std::numeric_limits<double>::quiet_NaN();
+  DT_THROW_BAD_UNIT("energy", word);
+  //return std::numeric_limits<double>::quiet_NaN();
 }
 
 
@@ -118,8 +124,8 @@ double units::get_mass_unit_from(const std::string& word) {
   if ((word == "mg") || (word == "milligram")) return CLHEP::milligram;
   if ((word == "ug") || (word == "microgram")) return 1.e-3 * CLHEP::milligram;
   if ((word == "t") || (word == "ton")) return 1000. * CLHEP::kilogram;
-  throw_bad_unit("mass", word);
-  return std::numeric_limits<double>::quiet_NaN();
+  DT_THROW_BAD_UNIT("mass", word);
+  //return std::numeric_limits<double>::quiet_NaN();
 }
 
 
@@ -128,7 +134,7 @@ double units::get_pressure_unit_from(const std::string& word) {
   if ((word == "bar")) return CLHEP::bar;
   if ((word == "atmosphere")) return CLHEP::atmosphere;
   if ((word == "Pa") || (word == "pascal")) return CLHEP::hep_pascal;
-  throw_bad_unit("pressure", word);
+  DT_THROW_BAD_UNIT("pressure", word);
   return std::numeric_limits<double>::quiet_NaN();
 }
 
@@ -137,8 +143,8 @@ double units::get_magnetic_field_unit_from(const std::string& word) {
   if ((word == "T") || (word == "tesla")) return CLHEP::tesla;
   if ((word == "G") || (word == "gauss")) return CLHEP::gauss;
   if ((word == "kG") || (word == "kilogauss")) return CLHEP::kilogauss;
-  throw_bad_unit("magnetic field", word);
-  return std::numeric_limits<double>::quiet_NaN();
+  DT_THROW_BAD_UNIT("magnetic field", word);
+  // return std::numeric_limits<double>::quiet_NaN();
 }
 
 
@@ -147,8 +153,8 @@ double units::get_electric_field_unit_from(const std::string& word) {
   if ((word == "V/m")) return CLHEP::volt / CLHEP::meter;
   if ((word == "kV/cm")) return CLHEP::kilovolt / CLHEP::centimeter;
   if ((word == "kV/m")) return CLHEP::kilovolt / CLHEP::meter;
-  throw_bad_unit("electric field", word);
-  return std::numeric_limits<double>::quiet_NaN();
+  DT_THROW_BAD_UNIT("electric field", word);
+  // return std::numeric_limits<double>::quiet_NaN();
 }
 
 
@@ -158,15 +164,15 @@ double units::get_electric_tension_unit_from(const std::string& word) {
   if ((word == "V")) return CLHEP::volt;
   if ((word == "kV")) return CLHEP::kilovolt;
   if ((word == "MV")) return CLHEP::megavolt;
-  throw_bad_unit("electric tension", word);
-  return std::numeric_limits<double>::quiet_NaN();
+  DT_THROW_BAD_UNIT("electric tension", word);
+  // return std::numeric_limits<double>::quiet_NaN();
 }
 
 
 double units::get_temperature_unit_from(const std::string& word) {
   if ((word == "kelvin")) return CLHEP::kelvin;
-  throw_bad_unit("temperature", word);
-  return std::numeric_limits<double>::quiet_NaN();
+  DT_THROW_BAD_UNIT("temperature", word);
+  // return std::numeric_limits<double>::quiet_NaN();
 }
 
 
@@ -174,8 +180,8 @@ double units::get_density_unit_from(const std::string& word) {
   if ((word == "mg/cm3")) return CLHEP::milligram / CLHEP::cm3;
   if ((word == "g/cm3")) return CLHEP::gram / CLHEP::cm3;
   if ((word == "kg/m3")) return CLHEP::kg / CLHEP::m3;
-  throw_bad_unit("density", word);
-  return std::numeric_limits<double>::quiet_NaN();
+  DT_THROW_BAD_UNIT("density", word);
+  // return std::numeric_limits<double>::quiet_NaN();
 }
 
 
@@ -185,8 +191,8 @@ double units::get_frequency_unit_from(const std::string& word) {
   if ((word == "kHz")) return CLHEP::kilohertz;
   if ((word == "MHz")) return CLHEP::megahertz;
   if ((word == "GHz")) return 1.e3 * CLHEP::megahertz;
-  throw_bad_unit("frequency", word);
-  return std::numeric_limits<double>::quiet_NaN();
+  DT_THROW_BAD_UNIT("frequency", word);
+  // return std::numeric_limits<double>::quiet_NaN();
 }
 
 
@@ -205,8 +211,8 @@ double units::get_activity_unit_from(const std::string& word) {
   if ((word == "nCi")) return 1.e-9  * CLHEP::curie;
   if ((word == "pCi")) return 1.e-12 * CLHEP::curie;
   if ((word == "dpm")) return CLHEP::becquerel / 60.0;
-  throw_bad_unit("activity", word);
-  return std::numeric_limits<double>::quiet_NaN();
+  DT_THROW_BAD_UNIT("activity", word);
+  // return std::numeric_limits<double>::quiet_NaN();
 }
 
 
@@ -219,8 +225,8 @@ double units::get_volume_activity_unit_from(const std::string& word) {
   if ((word == "MBq/m3")) return 1.e+6 * Bq_per_m3;
   if ((word == "GBq/m3")) return 1.e+9 * Bq_per_m3;
   if ((word == "dpm/m3")) return CLHEP::becquerel / 60.0 * Bq_per_m3;
-  throw_bad_unit("volume activity", word);
-  return std::numeric_limits<double>::quiet_NaN();
+  DT_THROW_BAD_UNIT("volume activity", word);
+  // return std::numeric_limits<double>::quiet_NaN();
 }
 
 
@@ -228,13 +234,13 @@ double units::get_surface_activity_unit_from(const std::string& word) {
   double Bq_per_m2 = 1. * CLHEP::becquerel / CLHEP::m2;
   if ((word == "Bq/m2"))  return 1.    * Bq_per_m2;
   if ((word == "mBq/m2")) return 1.e-3 * Bq_per_m2;
-  if ((word == "uBq/m2")) return 1.e-6 * Bq_per_m2; 
+  if ((word == "uBq/m2")) return 1.e-6 * Bq_per_m2;
   if ((word == "kBq/m2")) return 1.e+3 * Bq_per_m2;
   if ((word == "MBq/m2")) return 1.e+6 * Bq_per_m2;
   if ((word == "GBq/m2")) return 1.e+9 * Bq_per_m2;
   if ((word == "dpm/m2")) return CLHEP::becquerel / 60.0 * Bq_per_m2;
-  throw_bad_unit("surface activity", word);
-  return std::numeric_limits<double>::quiet_NaN();
+  DT_THROW_BAD_UNIT("surface activity", word);
+  // return std::numeric_limits<double>::quiet_NaN();
 }
 
 
@@ -242,8 +248,8 @@ double units::get_electric_charge_unit_from(const std::string& word) {
   if ((word == "C"))  return CLHEP::coulomb;
   if ((word == "nC")) return 1.e-9 * CLHEP::coulomb;
   if ((word == "pC")) return 1.e-12 * CLHEP::coulomb;
-  throw_bad_unit("electric charge", word);
-  return std::numeric_limits<double>::quiet_NaN();
+  DT_THROW_BAD_UNIT("electric charge", word);
+  // return std::numeric_limits<double>::quiet_NaN();
 }
 
 
@@ -252,8 +258,8 @@ double units::get_electric_current_unit_from(const std::string& word) {
   if ((word == "mA")) return CLHEP::milliampere;
   if ((word == "uA")) return CLHEP::microampere;
   if ((word == "nA")) return CLHEP::nanoampere;
-  throw_bad_unit("electric current", word);
-  return std::numeric_limits<double>::quiet_NaN();
+  DT_THROW_BAD_UNIT("electric current", word);
+  // return std::numeric_limits<double>::quiet_NaN();
 }
 
 
@@ -261,17 +267,17 @@ double units::get_mass_activity_unit_from(const std::string& word) {
   double Bq_per_kg = 1. * CLHEP::becquerel / CLHEP::kg;
   if ((word == "Bq/kg"))       return 1.    * Bq_per_kg;
   else if ((word == "mBq/kg")) return 1.e-3 * Bq_per_kg;
-  else if ((word == "uBq/kg")) return 1.e-6 * Bq_per_kg; 
+  else if ((word == "uBq/kg")) return 1.e-6 * Bq_per_kg;
   else if ((word == "kBq/kg")) return 1.e+3 * Bq_per_kg;
   else if ((word == "MBq/kg")) return 1.e+6 * Bq_per_kg;
   else if ((word == "GBq/kg")) return 1.e+9 * Bq_per_kg;
   if ((word == "dpm/kg")) return CLHEP::becquerel / 60.0 * Bq_per_kg;
-  else throw_bad_unit("mass activity", word);
-  return std::numeric_limits<double>::quiet_NaN();
+  DT_THROW_BAD_UNIT("mass activity", word);
+  // return std::numeric_limits<double>::quiet_NaN();
 }
 
 
-double units::get_unit_from(const std::string& unit_type, 
+double units::get_unit_from(const std::string& unit_type,
                             const std::string& unit_str) {
   if (unit_type == "length") {
     return get_length_unit_from(unit_str);
@@ -316,13 +322,8 @@ double units::get_unit_from(const std::string& unit_type,
   } else if (unit_type == "electric_current") {
     return get_electric_current_unit_from(unit_str);
   }
-  {
-    std::ostringstream message;
-    message << "datatools::units::get_unit_from: Invalid "
-            << unit_type << " of unit :'" << unit_str << "' !";
-    throw std::logic_error(message.str());
-  }
-  return std::numeric_limits<double>::quiet_NaN();
+  DT_THROW_BAD_UNIT(unit_type,unit_str);
+  //return std::numeric_limits<double>::quiet_NaN();
 }
 
 
@@ -378,12 +379,8 @@ std::string units::get_default_unit_symbol_from_label(const std::string & unit_t
   } else if (unit_type == "electric_current") {
     return "A";
   }
-  {
-    std::ostringstream message;
-    message << "datatools::units::get_default_unit_symbol_from_label: Invalid unit label " << unit_type << "' !";
-    throw std::logic_error(message.str());
-  }
-  return "";
+  DT_THROW_IF(true,std::logic_error,"Invalid unit label " << unit_type << "' !");
+  //return "";
 }
 
 const std::vector<std::string>& units::get_unit_labels_registry() {
@@ -410,7 +407,7 @@ const std::vector<std::string>& units::get_unit_labels_registry() {
     ulabels.push_back("surface_activity");
     ulabels.push_back("volume_activity");
     ulabels.push_back("mass_activity");
-    ulabels.push_back("frequency");          
+    ulabels.push_back("frequency");
     ulabels.push_back("electric_charge");
     ulabels.push_back("electric_current");
   }
@@ -418,7 +415,7 @@ const std::vector<std::string>& units::get_unit_labels_registry() {
 }
 
 
-bool units::find_unit(const std::string& unit_str, double& unit_value, 
+bool units::find_unit(const std::string& unit_str, double& unit_value,
                       std::string& unit_label) {
   unit_label = "";
   unit_value = std::numeric_limits<double>::quiet_NaN();
@@ -439,7 +436,7 @@ bool units::find_unit(const std::string& unit_str, double& unit_value,
       val = std::numeric_limits<double>::quiet_NaN();
     }
   }
- 
+
   if (!std::isnormal(val)) {
     unit_label = "";
     unit_value = val;
@@ -455,25 +452,23 @@ double units::get_unit(const std::string& unit_str) {
   double unit_val;
   std::string unit_label;
   bool res = find_unit(unit_str, unit_val, unit_label);
-
   if (!res) return std::numeric_limits<double>::quiet_NaN();
   return unit_val;
 }
 
 
-bool units::find_value_with_unit(const std::string& word, 
-                                 double& value, 
+bool units::find_value_with_unit(const std::string& word,
+                                 double& value,
                                  std::string& unit_label,
                                  double default_unit_) {
   value = std::numeric_limits<double>::quiet_NaN();
   unit_label = "";
-
   double val;
   std::istringstream iss(word);
   iss >> val;
   if (!iss) {
-    std::ostringstream message;
-    message << "datatools::units::find_value_with_unit: Format error while reading a double value !";
+    // std::ostringstream message;
+    // message << "datatools::units::find_value_with_unit: Format error while reading a double value !";
     return false;
   }
   bool use_default_unit = true;
@@ -481,23 +476,18 @@ bool units::find_value_with_unit(const std::string& word,
   if (!iss.eof()) {
     std::string ustr;
     iss >> ustr;
-
     if (ustr.empty()) return false;
-  
     double any_unit_value;
     std::string any_unit_label;
     bool res = find_unit(ustr, any_unit_value, any_unit_label);
-    
     if (!res) return false;
-    
     val *= any_unit_value;
     unit_label = any_unit_label;
     use_default_unit = false;
   }
-  if (datatools::is_valid(default_unit_) && use_default_unit)
-    {
-      val *= default_unit_;
-    }
+  if (datatools::is_valid(default_unit_) && use_default_unit) {
+    val *= default_unit_;
+  }
   value = val;
   return true;
 }
@@ -506,20 +496,10 @@ bool units::find_value_with_unit(const std::string& word,
 double units::get_value_with_unit(const std::string& word) {
   double unit_value = std::numeric_limits<double>::quiet_NaN();
   std::string unit_label;
-  if (!find_value_with_unit(word, unit_value, unit_label)) {
-    std::ostringstream message;
-    message << "datatools::units::get_value_with_unit: Cannot parse a value with its units !";
-    throw std::logic_error(message.str());
-  }
+  DT_THROW_IF (!find_value_with_unit(word, unit_value, unit_label),
+               std::logic_error,
+               "Cannot parse a value with its units from '" << word << "' !");
   return unit_value;
-}
-
-
-void units::throw_bad_unit(const std::string& a_type, 
-                           const std::string& a_unit_str) {
-  std::ostringstream message;
-  message << "Invalid " << a_type << " unit :'" << a_unit_str << "' !";
-  throw std::logic_error(message.str());
 }
 
 

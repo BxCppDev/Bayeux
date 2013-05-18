@@ -205,7 +205,7 @@ int main (int argc_, char ** argv_)
       {
         // Setup the configuration parameters of the service:
         datatools::properties TS_config;
-        if (debug) TS_config.store_flag ("debug");
+        if (debug) TS_config.store ("logging.priority","debug");
         TS_config.store ("label", "test_service::label");
 
         test_service TS;
@@ -231,7 +231,7 @@ int main (int argc_, char ** argv_)
         uint32_t SM_flags = datatools::service_manager::BLANK;
         if (debug)
           {
-            SM_flags |= datatools::service_manager::DEBUG;
+            SM_flags |= datatools::service_manager::FACTORY_VERBOSE;
           }
         datatools::service_manager SM ("SM", "A test service manager", SM_flags);
         SM.tree_dump (clog, "Service manager : ");

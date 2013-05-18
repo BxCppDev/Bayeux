@@ -39,6 +39,8 @@
 // This Project
 #include <datatools/ioutils.h>
 #include <datatools/utils.h>
+#include <datatools/exception.h>
+#include <datatools/logger.h>
 
 namespace datatools {
 
@@ -124,9 +126,9 @@ bool smart_filename::has_filename(const std::string& filename_,
 
 
 size_t smart_filename::size() const {
-  if (!this->is_ranged()) {
-    throw logic_error("datatools::smart_filename::size: List of filenames is not ranged ! Size is not known in advance !");
-  }
+  DT_THROW_IF (!this->is_ranged(),
+               std::logic_error,
+               "List of filenames is not ranged ! Size is not known in advance !");
   return list_.size();
 }
 
@@ -137,9 +139,9 @@ smart_filename::const_iterator smart_filename::begin() const {
 
 
 smart_filename::const_iterator smart_filename::end() const {
-  if (!ranged_) {
-    throw logic_error("datatools::smart_filename::end: List of filenames is not ranged (incremental mode with no stopping index) !");
-  }
+  DT_THROW_IF (!ranged_,
+               std::logic_error,
+               "List of filenames is not ranged (incremental mode with no stopping index) !");
   return list_.end();
 }
 
@@ -150,12 +152,8 @@ const std::string& smart_filename::operator[](int a_index) const {
 
 
 const std::string& smart_filename::get_filename(int a_index) const {
-  if (!this->is_valid()) {
-    throw logic_error("datatools::smart_filename::get_filename: Not valid !");
-  }
-  if (a_index < 0) {
-    throw range_error("datatools::smart_filename::get_filename: Index is not valid !");
-  }
+  DT_THROW_IF (!this->is_valid(), std::logic_error, "Not valid !");
+  DT_THROW_IF (a_index < 0, std::range_error, "Index " << a_index << " is not valid !");
   if (this->is_incremental()
       && ! this->is_ranged()
       && (a_index >= list_.size())) {
@@ -167,9 +165,9 @@ const std::string& smart_filename::get_filename(int a_index) const {
       mutable_this->add_list(filename);
     }
   } else {
-    if (a_index < 0 || a_index > list_.size()) {
-      throw range_error("datatools::smart_filename::get_filename: Index is not valid !");
-    }
+    DT_THROW_IF (a_index < 0 || a_index > list_.size(),
+                 std::range_error,
+                 "Index " << a_index<< " is not valid !");
   }
   return list_[a_index];
 }
@@ -193,9 +191,7 @@ void smart_filename::set_mode(int a_new_value) {
 
 
 void smart_filename::set(const string& a_new_value) {
-  if (!this->is_single()) {
-    throw logic_error("datatools::smart_filename::set: Not using 'single' mode !");
-  }
+  DT_THROW_IF (!this->is_single(),std::logic_error,"Not using 'single' mode !");
   list_.clear();
   this->add_list(a_new_value);
 }
@@ -229,36 +225,27 @@ void smart_filename::set_list_allow_duplication(bool a_new_value) {
 
 
 void smart_filename::add_list(const string& a_filename) {
-  if (a_filename.empty()) {
-    throw logic_error("datatools::smart_filename::_add_list: Missing filename !");
-  }
-  if (this->is_single() && (list_.size() > 0)) {
-    throw logic_error("datatools::smart_filename::_add_list: Cannot add a filename ('single' mode) !");
-  }
+  DT_THROW_IF (a_filename.empty(),logic_error,"Missing filename !");
+  DT_THROW_IF (this->is_single() && (list_.size() > 0),
+               logic_error,
+               "Cannot add a filename ('single' mode) !");
   string filename = a_filename;
   if (this->is_expand_path()) {
     datatools::fetch_path_with_env(filename);
   }
   if ((list_.size() > 0) && !list_allow_duplication_) {
-    if (std::find(list_.begin(), list_.end(), filename) != list_.end()) {
-      ostringstream message;
-      message << "datatools::smart_filename::_add_list: "
-              << "Duplication error: filename '"
-              << filename << "' is already in the list !";
-      throw logic_error(message.str());
-    }
+    DT_THROW_IF (std::find(list_.begin(), list_.end(), filename) != list_.end(),
+                 logic_error,
+                 "Duplication error: filename '" << filename << "' is already in the list !");
   }
   list_.push_back(filename);
 }
 
 
 void smart_filename::add(const string& a_filename) {
-  if (!this->is_list()) {
-    ostringstream message;
-    message << "datatools::smart_filename::add: "
-            << "Not using 'list' mode !";
-    throw logic_error(message.str());
-  }
+  DT_THROW_IF (!this->is_list(),
+               logic_error,
+               "Not using 'list' mode !");
   this->add_list(a_filename);
 }
 
@@ -315,25 +302,17 @@ void smart_filename::make_list(smart_filename& a_smart_filename,
   a_smart_filename.expand_path_ = a_expand_path;
   string list_filename = a_list_filename;
   datatools::fetch_path_with_env(list_filename);
-  if (!boost::filesystem::exists(list_filename)) {
-    ostringstream message;
-    message << "datatools::smart_filename::make_list: "
-            << "File '"
-            << a_list_filename << "' does not exists !";
-    throw logic_error(message.str());
-  }
-  if (boost::filesystem::is_directory(list_filename)) {
-    ostringstream message;
-    message << "datatools::smart_filename::make_list: "
-            << "Path '"
-            << list_filename << "' is a directory !";
-    throw logic_error(message.str());
-  }
+  DT_THROW_IF (!boost::filesystem::exists(list_filename),
+               logic_error,
+               "File '" << a_list_filename << "' does not exists !");
+  DT_THROW_IF (boost::filesystem::is_directory(list_filename),
+               logic_error,
+               "Path '" << list_filename << "' is a directory !");
   ostringstream message;
   message << "datatools::smart_filename::make_list: "
           << "Reading file '"
           << list_filename << "'...";
-  clog << datatools::io::notice << message.str() << endl;
+  DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,message.str());
   ifstream inlist(list_filename.c_str());
   while (inlist) {
     string line;
@@ -388,23 +367,15 @@ void smart_filename::make_incremental(smart_filename & a_smart_filename,
   a_smart_filename.set_mode(MODE_INCREMENTAL);
   a_smart_filename.ranged_ = false;
   a_smart_filename.expand_path_ = a_expand_path;
-  if (a_prefix.empty()) {
-    ostringstream message;
-    message << "datatools::smart_filename::make_incremental: "
-            << "Missing prefix !";
-    throw logic_error(message.str());
-  }
+  DT_THROW_IF (a_prefix.empty(),
+               logic_error,
+               "Missing prefix !");
   a_smart_filename.incremental_path_ = a_path;
   a_smart_filename.incremental_prefix_ = a_prefix;
   a_smart_filename.incremental_extension_ = a_extension;
   a_smart_filename.incremental_suffix_ = a_suffix;
   a_smart_filename.incremental_index_ndigit_ = a_incremental_index_ndigit;
-  if (a_increment_index == 0) {
-    ostringstream message;
-    message << "datatools::smart_filename::make_incremental: "
-            << "Invalid null increment !";
-    throw logic_error(message.str());
-  }
+  DT_THROW_IF (a_increment_index == 0,logic_error,"Invalid null increment !");
   string path;
   if (!a_path.empty()) {
     path = a_smart_filename.incremental_path_;
@@ -432,17 +403,14 @@ void smart_filename::make_incremental(smart_filename & a_smart_filename,
       > MODE_INCREMENTAL_UNRANGED) {
     if (a_smart_filename.incremental_stopping_index_
         < a_smart_filename.incremental_starting_index_) {
-      if (a_smart_filename.incremental_increment_ >= 0) {
-        ostringstream message;
-        message << "datatools::smart_filename::make_incremental: "
-                << "Invalid increment rule (start="
-                << a_smart_filename.incremental_starting_index_
-                << ",stop="
-                << a_smart_filename.incremental_stopping_index_
-                << ",increment="
-                << a_smart_filename.incremental_increment_ << ") !";
-        throw logic_error(message.str());
-      }
+      DT_THROW_IF (a_smart_filename.incremental_increment_ >= 0,
+                   logic_error,
+                   "Invalid increment rule (start="
+                   << a_smart_filename.incremental_starting_index_
+                   << ",stop="
+                   << a_smart_filename.incremental_stopping_index_
+                   << ",increment="
+                   << a_smart_filename.incremental_increment_ << ") !");
     }
   }
 
@@ -493,17 +461,7 @@ void smart_filename::build_incremental_filename(
 
 
 void smart_filename::print_list_of_filenames(std::ostream& a_out) const {
-  if (!this->is_initialized()) {
-    std::ostringstream message;
-    message << "datatools::smart_filename::print_list_of_filenames: "
-            << "Smart file is not initialized !";
-    throw std::logic_error(message.str());
-  }
-  for (std::vector<string>::const_iterator i = list_.begin();
-       i != list_.end();
-       ++i) {
-    a_out << *i << std::endl;
-  }
+  DT_THROW_IF (!this->is_initialized(),logic_error,"Smart file is not initialized !");
 }
 
 
@@ -517,12 +475,7 @@ void smart_filename::store_list_of_filenames(const string& a_list_filename,
   } else {
     fout.open(list_filename.c_str());
   }
-  if (!fout) {
-    std::ostringstream message;
-    message << "datatools::smart_filename::store_list_of_filenames: "
-            << "Cannot open file '" << list_filename << "' !";
-    throw std::logic_error(message.str());
-  }
+  DT_THROW_IF (!fout, runtime_error,"Cannot open file '" << list_filename << "' !");
   if (!a_append) {
     fout << "# a list of filenames : " << std::endl;
   }
@@ -574,16 +527,12 @@ void smart_filename::initialize(const properties& a_config) {
     expand_path = false;
   }
 
-  if (!a_config.has_key("mode")) {
-    throw std::logic_error("datatools::smart_filename::initialize: Missing 'mode' key !");
-  }
+  DT_THROW_IF (!a_config.has_key("mode"), std::logic_error, "Missing 'mode' key !");
 
   std::string mode_str = a_config.fetch_string("mode");
 
   if (mode_str == MODE_SINGLE_LABEL) {
-    if (!a_config.has_key("single.filename")) {
-      throw std::logic_error("datatools::smart_filename::initialize: Missing 'single.filename' key !");
-    }
+    DT_THROW_IF (!a_config.has_key("single.filename"),std::logic_error,"Missing 'single.filename' key !");
     std::string single_filename = a_config.fetch_string("single.filename");
     smart_filename::make_single(*this, single_filename, expand_path);
   } else if (mode_str == MODE_LIST_LABEL) {
@@ -596,9 +545,7 @@ void smart_filename::initialize(const properties& a_config) {
       smart_filename::make_list(*this, list_file, allow_duplicate, expand_path);
     } else {
       std::vector<string> list_vec;
-      if (!a_config.has_key("list.filenames")) {
-        throw std::logic_error("datatools::smart_filename::initialize: Missing 'list.filenames' key !");
-      }
+      DT_THROW_IF (!a_config.has_key("list.filenames"), std::logic_error, "Missing 'list.filenames' key !");
       smart_filename::make_list(*this, allow_duplicate, expand_path);
       a_config.fetch("list.filenames", list_vec);
       for (int i = 0; i < (int)list_vec.size(); ++i) {
@@ -614,10 +561,7 @@ void smart_filename::initialize(const properties& a_config) {
     int incremental_starting = MODE_INCREMENTAL_DEFAULT_START;
     int incremental_increment = MODE_INCREMENTAL_DEFAULT_INCREMENT;
     uint32_t incremental_index_ndigit = 0;
-
-    if (!a_config.has_key("incremental.prefix")) {
-      throw std::logic_error("datatools::smart_filename::initialize: Missing 'incremental.prefix' key !");
-    }
+    DT_THROW_IF (!a_config.has_key("incremental.prefix"),std::logic_error,"Missing 'incremental.prefix' key !");
     if (a_config.has_key("incremental.suffix")) {
       incremental_suffix = a_config.fetch_string("incremental.suffix");
     }
@@ -629,15 +573,11 @@ void smart_filename::initialize(const properties& a_config) {
     }
     if (a_config.has_key("incremental.increment")) {
       incremental_increment = a_config.fetch_integer("incremental.increment");
-      if (incremental_increment == 0) {
-        throw std::logic_error("datatools::smart_filename::initialize: Invalid null increment value !");
-      }
+      DT_THROW_IF (incremental_increment == 0,std::logic_error,"Invalid null increment value !");
     }
     if (a_config.has_key("incremental.stop")) {
       incremental_stopping = a_config.fetch_integer("incremental.stop");
-      if (incremental_stopping < -1) {
-        throw std::logic_error("datatools::smart_filename::initialize: Invalid negative stopping value !");
-      }
+      DT_THROW_IF (incremental_stopping < -1,std::logic_error,"Invalid negative stopping value !");
     } else {
       // 2012-05-02 FM : allow unranged list of incremented filenames.
       // if (incremental_increment > 0)
@@ -647,15 +587,10 @@ void smart_filename::initialize(const properties& a_config) {
     }
     if (a_config.has_key("incremental.start")) {
       incremental_starting = a_config.fetch_integer("incremental.start");
-      if (incremental_starting < 0) {
-        throw std::logic_error("datatools::smart_filename::initialize: Invalid negative starting value !");
-      }
+      DT_THROW_IF (incremental_starting < 0,std::logic_error,"Invalid negative starting value !");
     } else {
-      if (incremental_increment < 0) {
-        throw std::logic_error("datatools::smart_filename::initialize: Missing 'incremental.start' key !");
-      }
+      DT_THROW_IF (incremental_increment < 0,std::logic_error,"Missing 'incremental.start' key !");
     }
-
     smart_filename::make_incremental(*this, incremental_path,
                                       incremental_prefix,
                                       incremental_extension,
@@ -666,10 +601,7 @@ void smart_filename::initialize(const properties& a_config) {
                                       incremental_index_ndigit,
                                       expand_path);
   } else {
-    std::ostringstream message;
-    message << "datatools::smart_filename::initialize: "
-            << "Invalid 'mode' key ('" << mode_str << "') !";
-    throw std::logic_error(message.str());
+    DT_THROW_IF(true,std::logic_error,"Invalid 'mode' key ('" << mode_str << "') !");
   }
 }
 

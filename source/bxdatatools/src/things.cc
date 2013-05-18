@@ -208,11 +208,9 @@ void things::get_names(std::vector<std::string>& the_names) const {
 
 
 bool things::has(const std::string& a_name) const {
-  if (a_name.empty()) {
-    std::ostringstream message;
-    message << "datatools::things::has: Empty name !";
-    throw std::logic_error(message.str());
-  }
+  DT_THROW_IF (a_name.empty(),
+               std::logic_error,
+               "Empty bank name !");
   dict_type::const_iterator found = things_.find(a_name);
   return (found != things_.end());
 }
@@ -221,28 +219,23 @@ bool things::has(const std::string& a_name) const {
 bool things::has_serial_tag(const std::string& a_name,
                             const std::string& a_serial_tag) const {
   dict_type::const_iterator found = things_.find(a_name);
-  if (found == things_.end()) {
-    std::ostringstream message;
-    message << "datatools::things::has_serial_tag: No object named '"
-            << a_name << "' !";
-    throw std::logic_error(message.str());
-  }
+  DT_THROW_IF (found == things_.end(),
+               std::logic_error,
+               "No bank named '"
+               << a_name << "' !");
   return found->second.handle->get_serial_tag() == a_serial_tag;
 }
 
 
 bool things::is_constant(const std::string& a_name) const {
-  if (a_name.empty()) {
-    std::ostringstream message;
-    message << "datatools::things::is_constant: Empty name !";
-    throw std::logic_error(message.str());
-  }
+  DT_THROW_IF (a_name.empty(),
+               std::logic_error,
+               "Empty bankname !");
   dict_type::const_iterator found = things_.find(a_name);
-  if (found == things_.end()) {
-    std::ostringstream message;
-    message << "datatools::things::is_constant: No stored object has name '" << a_name << "' !";
-    throw std::logic_error(message.str());
-  }
+  DT_THROW_IF (found == things_.end(),
+               std::logic_error,
+               "No bank named '"
+               << a_name << "' !");
   return found->second.is_const();
 }
 
@@ -254,24 +247,16 @@ bool things::is_mutable(const std::string& a_name) const {
 
 void things::set_constant(const std::string& a_name, bool a_const) {
   bool not_implemented_yet = true;
-  if (not_implemented_yet) {
-    std::ostringstream message;
-    message << "datatools::things::set_constant: Not implemented !";
-    throw std::logic_error(message.str());
-  }
-
-  if (a_name.empty()) {
-    std::ostringstream message;
-    message << "datatools::things::set_constant: Empty name !";
-    throw std::logic_error(message.str());
-  }
-
+  DT_THROW_IF (not_implemented_yet,
+               std::logic_error,
+               "Not implemented !");
+  DT_THROW_IF (a_name.empty(),
+               std::logic_error,
+               "Empty bank name !");
   dict_type::iterator found = things_.find(a_name);
-  if (found == things_.end()) {
-    std::ostringstream message;
-    message << "datatools::things::set_constant: No stored object has name '" << a_name << "' !";
-    throw std::logic_error(message.str());
-  }
+  DT_THROW_IF (found == things_.end(),
+               std::logic_error,
+               "No bank named '" << a_name << "' !");
   found->second.set_const(a_const);
 }
 
@@ -280,18 +265,13 @@ const std::string& things::get_entry_description(const std::string& a_name) cons
 }
 
 const std::string& things::get_description(const std::string& a_name) const {
-  if (a_name.empty()) {
-    std::ostringstream message;
-    message << "datatools::things::get_description: Empty name !";
-    throw std::logic_error(message.str());
-  }
-
+  DT_THROW_IF (a_name.empty(),
+               std::logic_error,
+               "Empty bank name !");
   dict_type::const_iterator found = things_.find(a_name);
-  if (found == things_.end()) {
-    std::ostringstream message;
-    message << "datatools::things::get_description: No stored object has name '" << a_name << "' !";
-    throw std::logic_error(message.str());
-  }
+  DT_THROW_IF (found == things_.end(),
+               std::logic_error,
+               "No bank named '"  << a_name << "' !");
   return found->second.description;
 }
 
@@ -302,17 +282,13 @@ void things::set_entry_description(const std::string& a_name,
 
 void things::set_description(const std::string& a_name,
                              const std::string& a_desc) {
-  if (a_name.empty()) {
-    std::ostringstream message;
-    message << "datatools::things::set_description: Empty name !";
-    throw std::logic_error(message.str());
-  }
+  DT_THROW_IF (a_name.empty(),
+               std::logic_error,
+               "Empty bank name !");
   dict_type::iterator found = things_.find(a_name);
-  if (found == things_.end()) {
-    std::ostringstream message;
-    message << "datatools::things::set_description: No stored object has name '" << a_name << "' !";
-    throw std::logic_error(message.str());
-  }
+  DT_THROW_IF (found == things_.end(),
+               std::logic_error,
+               "No bank named '" << a_name << "' !");
   found->second.description = a_desc;
 }
 
@@ -331,29 +307,22 @@ void things::add_impl(const std::string& a_name,
                       datatools::i_serializable* a_obj,
                       const std::string & a_desc,
                       bool a_const) {
-  if (a_obj == 0) {
-    std::ostringstream message;
-    message << "datatools::things::add_impl: Cannot add a NULL pointed object !";
-    throw std::logic_error(message.str());
-  }
+  DT_THROW_IF (a_obj == 0,
+               std::logic_error,
+               "Cannot add a NULL pointed object !");
 
   if (a_name.empty()) {
-    std::ostringstream message;
-    message << "datatools::things::add_impl: Cannot add an object with an empty name !";
     if (a_obj != 0) {
       delete a_obj;
     }
-    throw std::logic_error(message.str());
+    DT_THROW_IF (true,
+                 std::logic_error,
+                 "Cannot add a bank with an empty name !");
   }
-
   dict_type::const_iterator found = things_.find(a_name);
-  if (found != things_.end()) {
-    std::ostringstream message;
-    message << "datatools::things::add_impl: An object with name '"
-            << a_name
-            << "' is already stored in the dictionnary !";
-    throw std::logic_error(message.str());
-  }
+  DT_THROW_IF (found != things_.end(),
+               std::logic_error,
+               "An bank with name '" << a_name << "' is already stored !");
   things_[a_name].set_description(a_desc);
   things_[a_name].set_const(a_const);
   things_[a_name].handle = a_obj;
@@ -365,14 +334,9 @@ void things::remove(const std::string& a_name) {
     return;
   }
   dict_type::iterator found = things_.find(a_name);
-  if (found == things_.end()) {
-    std::ostringstream message;
-    message << "datatools::things::remove: No object with name '"
-            << a_name
-            << "' is stored in the dictionnary !";
-    throw std::logic_error(message.str());
-  }
-
+  DT_THROW_IF (found == things_.end(),
+               std::logic_error,
+               "No bank named '" << a_name << "' !");
   if (found->second.handle != 0) {
     delete found->second.handle;
     found->second.handle = 0;
@@ -412,22 +376,17 @@ things::get_entry_introspection_id (const std::string& a_name) const
 {
   std::string iid;
   dict_type::const_iterator found = things_.find(a_name);
-  if (found == things_.end()) {
-    std::ostringstream message;
-    message << "datatools::utils::things::get_entry_introspection_id: No stored bank entry has name '"
-            << a_name << "' !";
-    throw std::domain_error(message.str());
-  }
+  DT_THROW_IF (found == things_.end(),
+               std::logic_error,
+               "No bank named '" << a_name << "' !");
 #if DATATOOLS_WITH_REFLECTION == 1
   const datatools::i_serializable & the_entry = *found->second.handle;
-  try
-    {
-      iid = camp::detail::staticTypeId (the_entry);
-    }
-  catch (std::exception & x)
-    {
-      iid.clear ();
-    }
+  try {
+    iid = camp::detail::staticTypeId (the_entry);
+  }
+  catch (std::exception & x)  {
+    iid.clear ();
+  }
 #endif // DATATOOLS_WITH_REFLECTION == 1
   return iid;
 }
@@ -436,31 +395,24 @@ std::string
 things::get_entry_serial_tag (const std::string& a_name) const
 {
   dict_type::const_iterator found = things_.find(a_name);
-  if (found == things_.end()) {
-    std::ostringstream message;
-    message << "datatools::utils::things::get_entry_serial_tag: No stored object has name '"
-        << a_name << "' !";
-    throw std::domain_error(message.str());
-  }
+  DT_THROW_IF (found == things_.end(),
+               std::logic_error,
+               "No bank named '" << a_name << "' !");
   return found->second.handle->get_serial_tag ();
 }
 
 bool things::entry_is_introspectable (const std::string& a_name) const
 {
   dict_type::const_iterator found = things_.find(a_name);
-  if (found == things_.end()) {
-    std::ostringstream message;
-    message << "datatools::utils::things::entry_is_introspectable: No stored object has name '"
-            << a_name << "' !";
-    throw std::domain_error(message.str());
-  }
+  DT_THROW_IF (found == things_.end(),
+               std::logic_error,
+               "No bank named '" << a_name << "' !");
 #if DATATOOLS_WITH_REFLECTION == 1
   const datatools::i_serializable & the_entry = *found->second.handle;
   try {
     camp::detail::staticTypeId (the_entry);
   }
-  catch (std::exception & x)
-    {
+  catch (std::exception & x) {
       return false;
     }
   return true;
@@ -473,12 +425,9 @@ bool things::entry_is_a (const std::string& a_name,
                          const std::string& a_serial_tag) const
 {
   dict_type::const_iterator found = things_.find(a_name);
-  if (found == things_.end()) {
-    std::ostringstream message;
-    message << "datatools::utils::things::entry_is_a: No stored object has name '"
-        << a_name << "' !";
-    throw std::domain_error(message.str());
-  }
+  DT_THROW_IF (found == things_.end(),
+               std::logic_error,
+               "No bank named '" << a_name << "' !");
   return found->second.handle->get_serial_tag () == a_serial_tag;
 }
 
@@ -486,12 +435,9 @@ const datatools::i_serializable &
 things::get_entry (const std::string& a_name) const
 {
   dict_type::const_iterator found = things_.find(a_name);
-  if (found == things_.end()) {
-    std::ostringstream message;
-    message << "datatools::utils::things::get_entry: No stored object has name '"
-        << a_name << "' !";
-    throw std::domain_error(message.str());
-  }
+  DT_THROW_IF (found == things_.end(),
+               std::logic_error,
+               "No bank named '" << a_name << "' !");
   return *found->second.handle;
 }
 
@@ -499,12 +445,9 @@ datatools::i_serializable &
 things::grab_entry (const std::string& a_name)
 {
   dict_type::iterator found = things_.find(a_name);
-  if (found == things_.end()) {
-    std::ostringstream message;
-    message << "datatools::utils::things::grab_entry: No stored object has name '"
-        << a_name << "' !";
-    throw std::domain_error(message.str());
-  }
+  DT_THROW_IF (found == things_.end(),
+               std::logic_error,
+               "No bank named '" << a_name << "' !");
   return *found->second.handle;
 }
 
@@ -527,30 +470,19 @@ things::add_entry_impl (const std::string& a_name,
 
   typedef datatools::factory_register< ::datatools::i_serializable> fr_type;
   const fr_type & FR = DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(::datatools::i_serializable);
-  /*
-  std::cerr << "DEVEL : a_name = " << a_name << std::endl;
-  std::cerr << "DEVEL : a_serial_tag = " << a_serial_tag << std::endl;
-  FR.print (std::cerr, "DEVEL : ");
-  */
-  if (! FR.has (a_serial_tag))
-    {
-      std::ostringstream message;
-      message << "datatools::utils::things::add_entry_impl: "
-              << "No class with serial tag '"
-              << a_serial_tag << "' has been registered !";
-      throw std::domain_error(message.str());
-    }
+  DT_THROW_IF (! FR.has (a_serial_tag),
+               std::logic_error,
+               "No class with serial tag '" << a_serial_tag << "' has been registered !");
   const fr_type::factory_type& F = FR.get(a_serial_tag);
   try {
     new_serializable = F();
   }
-  catch(std::exception & x)
-    {
-      std::ostringstream message;
-      message << "datatools::utils::things::add_entry_impl: Failed to create a serializable object with serial tag '"
-              << a_serial_tag << "' ! Reason : " << x.what ();
-      throw std::logic_error(message.str());
-    }
+  catch(std::exception & x) {
+    DT_THROW_IF(true,
+                std::logic_error,
+                "Failed to create a serializable object with serial tag '"
+                << a_serial_tag << "' ! Reason : " << x.what ());
+  }
   this->add_impl(a_name, new_serializable, a_description, a_const);
   return *new_serializable;
 }
@@ -558,20 +490,16 @@ things::add_entry_impl (const std::string& a_name,
 
 const std::string&
 things::get_entry_name(int index_) const {
-  if (index_ < 0 || index_ >= things_.size ())
-    {
-      std::ostringstream message;
-      message << "datatools::utils::things::get_entry_name: Invalid index '" << index_ << "' !";
-      throw std::range_error(message.str());
-    }
+  DT_THROW_IF (index_ < 0 || index_ >= things_.size (),
+               std::range_error,
+               "Invalid bank index '" << index_ << "' !");
   int count = 0;
   dict_type::const_iterator iter = things_.begin();
   for (; iter != things_.end(); ++iter, count++) {
     // datatools::i_serializable* s = i->second.handle;
-    if (count == index_)
-      {
-        break;
-      }
+    if (count == index_) {
+      break;
+    }
   }
   return iter->first;
 }
@@ -637,27 +565,17 @@ datatools::i_serializable &
 things::grab(const std::string& a_name,
              const std::string& a_serial_tag) {
   dict_type::iterator found = things_.find(a_name);
-  if (found == things_.end()) {
-    std::ostringstream message;
-    message << "datatools::things::grab: No stored object has name '"
-        << a_name << "' !";
-    throw std::logic_error(message.str());
+  DT_THROW_IF (found == things_.end(),
+               std::logic_error,
+               "No bank named '" << a_name << "' !");
+  DT_THROW_IF (found->second.is_const(),
+               std::logic_error,
+               "Bank named '" << a_name << "' is constant !");
+  if (! a_serial_tag.empty  ()) {
+    DT_THROW_IF (a_serial_tag != found->second.handle->get_serial_tag(),
+                 std::logic_error,
+                 "Bank named '" << a_name << "' is not a '" << a_serial_tag << "' !");
   }
-  if (found->second.is_const()) {
-    std::ostringstream message;
-    message << "datatools::things::grab: Object named '"
-            << a_name << "' is constant !";
-    throw std::logic_error(message.str());
-  }
-  if (! a_serial_tag.empty  ())
-    {
-      if (a_serial_tag != found->second.handle->get_serial_tag())
-        {
-          std::ostringstream message;
-          message << "datatools::things::grab: Object named '"
-                  << a_name << "' is not a '" << a_serial_tag << "' !";
-        }
-    }
   return *(found->second.handle);
 }
 
@@ -665,21 +583,14 @@ const datatools::i_serializable &
 things::get(const std::string& a_name,
             const std::string& a_serial_tag) const {
   dict_type::const_iterator found = things_.find(a_name);
-  if (found == things_.end()) {
-    std::ostringstream message;
-    message << "datatools::things::get: No stored object has name '"
-            << a_name << "' !";
-    throw std::logic_error(message.str());
+  DT_THROW_IF (found == things_.end(),
+               std::logic_error,
+               "No bank named '" << a_name << "' !");
+  if (! a_serial_tag.empty  ()) {
+    DT_THROW_IF (a_serial_tag != found->second.handle->get_serial_tag(),
+                 std::logic_error,
+                 "Bank named '" << a_name << "' is not a '" << a_serial_tag << "' !");
   }
-  if (! a_serial_tag.empty  ())
-    {
-      if (a_serial_tag != found->second.handle->get_serial_tag())
-        {
-          std::ostringstream message;
-          message << "datatools::things::get: Object named '"
-                  << a_name << "' is not a '" << a_serial_tag << "' !";
-        }
-    }
   return *(found->second.handle);
 }
 

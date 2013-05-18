@@ -52,6 +52,7 @@
 #include <datatools/i_clear.h>
 #include <datatools/i_cloneable.h>
 #include <datatools/bit_mask.h>
+#include <datatools/exception.h>
 
 #if DATATOOLS_WITH_REFLECTION == 1
 #include <datatools/reflection_macros.h>
@@ -1016,9 +1017,8 @@ class properties :
 template <class key_predicate>
 void properties::export_if(properties& props,
                            const key_predicate& predicate) const {
-  if (this == &props) {
-    throw std::logic_error("properties::export_if: Self export is not allowed !");
-  }
+  DT_THROW_IF (this == &props,
+               std::logic_error, "Self export is not allowed !");
   keys_col_type ks;
   for (pmap::const_iterator iter = _props_.begin(); iter != _props_.end();
        ++iter) {
@@ -1036,9 +1036,8 @@ void properties::export_if(properties& props,
 template <class key_predicate>
 void properties::export_not_if(properties& props,
                                const key_predicate& predicate) const {
-  if (this == &props) {
-    throw std::logic_error ("properties::export_not_if: Self export is not allowed !");
-  }
+  DT_THROW_IF (this == &props,
+               std::logic_error, "Self export is not allowed !");
   keys_col_type ks;
   for (pmap::const_iterator iter = _props_.begin(); iter != _props_.end();
        ++iter) {

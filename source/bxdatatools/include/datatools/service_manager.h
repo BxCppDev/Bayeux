@@ -1,7 +1,7 @@
 /* service_manager.h
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
- * Last modified : 2013-03-29
+ * Last modified : 2013-05-19
  *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Copyright (C) 2012 Ben Morgan <Ben.Morgan@warwick.ac.uk>
@@ -63,8 +63,7 @@ class service_manager : public datatools::i_tree_dumpable {
     BLANK              = 0,
     NO_PRELOAD         = datatools::bit_mask::bit00,
     FORCE_INITIALIZATION_AT_LOAD = datatools::bit_mask::bit01,
-    DEBUG              = datatools::bit_mask::bit02,
-    VERBOSE            = datatools::bit_mask::bit03,
+    FACTORY_VERBOSE    = datatools::bit_mask::bit02
   };
 
  public:
@@ -100,7 +99,7 @@ class service_manager : public datatools::i_tree_dumpable {
   /// Initialize the manager
   void initialize();
 
-  /// Initialize the manager from a container of properties 
+  /// Initialize the manager from a container of properties
   void initialize(const datatools::properties& config);
 
   /// Reset the manager
@@ -185,6 +184,8 @@ class service_manager : public datatools::i_tree_dumpable {
 
   void reset_service(service_entry& entry);
 
+  /// Default logger interface
+  DT_LOGGER_OBJECT_DEFAULT_INTERFACE();
 
  private:
   /// Set the factory preload flag
@@ -195,7 +196,6 @@ class service_manager : public datatools::i_tree_dumpable {
   bool         initialized_; /// Initialization flag
   std::string  name_; /// Manager's name
   std::string  description_; /// Manager's description
-  bool         debug_; /// Debug flag
   bool         preload_; /// Factory preload flag
   bool         force_initialization_at_load_; /// Flag for triggering service  initialization at load (rather than first use)
 

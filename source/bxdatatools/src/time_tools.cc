@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // time_tools.cc
 // Ourselves
 #include <datatools/time_tools.h>
@@ -23,13 +23,13 @@
 #include <datatools/clhep_units.h>
 #include <datatools/units.h>
 #include <datatools/utils.h>
+#include <datatools/exception.h>
 
 namespace datatools {
-double computing_time::g_system_dead_time = 
+double computing_time::g_system_dead_time =
     std::numeric_limits<double>::quiet_NaN();
 
-
-// ctor:
+// Constructor:
 computing_time::computing_time() {
   if (!datatools::is_valid(g_system_dead_time)) {
     g_compute_system_dead_time();
@@ -38,7 +38,7 @@ computing_time::computing_time() {
 }
 
 
-// dtor:
+// Destructor:
 computing_time::~computing_time() {}
 
 
@@ -117,16 +117,13 @@ void computing_time::stop() {
 
 
 void computing_time::pause() {
-  if((gettimeofday(&stop_, NULL)) == -1) {
-    std::ostringstream message;
-    message << "datatools::computing_time::start: "
-            << "gettimeofday failed !";
-    throw std::runtime_error(message.str());
-  }
+  DT_THROW_IF((gettimeofday(&stop_, NULL)) == -1,
+              std::runtime_error,
+              "gettimeofday failed !");
   double elapsed_time = 0.0;
   timeval diff;
   g_timeval_subtract(stop_, start_, diff);
-  elapsed_time = diff.tv_sec * CLHEP::second 
+  elapsed_time = diff.tv_sec * CLHEP::second
       + diff.tv_usec * CLHEP::microsecond;
   sum_time_ += elapsed_time;
   sum2_time_ += (elapsed_time * elapsed_time);
@@ -152,12 +149,9 @@ void computing_time::pause() {
 
 
 void computing_time::resume() {
-  if((gettimeofday(&start_, NULL)) == -1) {
-    std::ostringstream message;
-    message << "datatools::computing_time::resume: "
-            << "gettimeofday failed !";
-    throw std::runtime_error(message.str());
-  }
+  DT_THROW_IF((gettimeofday(&start_, NULL)) == -1,
+              std::runtime_error,
+              "gettimeofday failed !");
 }
 
 
@@ -175,7 +169,7 @@ void computing_time::reset() {
 }
 
 
-void computing_time::tree_dump(std::ostream& a_out, 
+void computing_time::tree_dump(std::ostream& a_out,
                                const std::string& a_title,
                                const std::string& a_indent,
                                bool a_inherit) const {
@@ -184,35 +178,35 @@ void computing_time::tree_dump(std::ostream& a_out,
   if (!a_title.empty()) a_out << indent << a_title << std::endl;
 
   a_out << indent << i_tree_dumpable::tag
-        << "System dead time   : " 
-        << g_system_dead_time / CLHEP::microsecond << " us" << std::endl;   
+        << "System dead time   : "
+        << g_system_dead_time / CLHEP::microsecond << " us" << std::endl;
 
   if (counts_ == 0) {
-    a_out << indent << i_tree_dumpable::inherit_tag(a_inherit)  
-          << "No statistics" << std::endl;   
+    a_out << indent << i_tree_dumpable::inherit_tag(a_inherit)
+          << "No statistics" << std::endl;
   } else {
-    a_out << indent << i_tree_dumpable::tag 
+    a_out << indent << i_tree_dumpable::tag
           << "Count(s)      : " << counts_ << std::endl;
-    a_out << indent << i_tree_dumpable::tag 
-          << "Sum time      : " 
+    a_out << indent << i_tree_dumpable::tag
+          << "Sum time      : "
           << sum_time_ / CLHEP::second << " s" << std::endl;
-    a_out << indent << i_tree_dumpable::tag 
-          << "Min time      : " 
+    a_out << indent << i_tree_dumpable::tag
+          << "Min time      : "
           << min_time_ / CLHEP::second << " s" << std::endl;
-    a_out << indent << i_tree_dumpable::tag 
-          << "Max time      : " 
+    a_out << indent << i_tree_dumpable::tag
+          << "Max time      : "
           << max_time_ / CLHEP::second << " s" << std::endl;
-    a_out << indent << i_tree_dumpable::tag 
-          << "Sum squ. time : " 
-          << sum2_time_ / (CLHEP::second * CLHEP::second) 
+    a_out << indent << i_tree_dumpable::tag
+          << "Sum squ. time : "
+          << sum2_time_ / (CLHEP::second * CLHEP::second)
           << " s²" << std::endl;
-    a_out << indent << i_tree_dumpable::tag 
-          << "Total time    : " 
+    a_out << indent << i_tree_dumpable::tag
+          << "Total time    : "
           << this->get_total_time() / CLHEP::second << " s" << std::endl;
-    a_out << indent << i_tree_dumpable::tag 
-          << "Mean time     : " 
+    a_out << indent << i_tree_dumpable::tag
+          << "Mean time     : "
           << this->get_mean_time() / CLHEP::second << " s" << std::endl;
-    a_out << indent <<  i_tree_dumpable::tag  
+    a_out << indent <<  i_tree_dumpable::tag
           << "Sigma time    : ";
     if (std::isnan(this->get_sigma_time())) {
       a_out << '-';
@@ -221,14 +215,14 @@ void computing_time::tree_dump(std::ostream& a_out,
     }
 
     a_out << std::endl;
-    a_out << indent <<  i_tree_dumpable::inherit_tag(a_inherit)  
-          << "Last elapsed time : " 
+    a_out << indent <<  i_tree_dumpable::inherit_tag(a_inherit)
+          << "Last elapsed time : "
           << last_elapsed_time_ / CLHEP::second << " s" << std::endl;
   }
 }
 
 
-bool computing_time::g_timeval_subtract(const timeval& a_start, 
+bool computing_time::g_timeval_subtract(const timeval& a_start,
                                         const timeval& a_stop,
                                         timeval& a_result) {
   timeval x = a_start;
@@ -266,22 +260,22 @@ void computing_time::g_compute_system_dead_time() {
   size_t n = 10;
 
   for (int i = 0; i < (n - 1); i++) {
-    gettimeofday(&stop, NULL);      
+    gettimeofday(&stop, NULL);
   }
 
   double elapsed_time = 0.0;
   timeval diff;
   g_timeval_subtract(stop, start, diff);
-  elapsed_time = diff.tv_sec * CLHEP::second 
+  elapsed_time = diff.tv_sec * CLHEP::second
       + diff.tv_usec * CLHEP::microsecond;
   g_system_dead_time = elapsed_time / n;
 
-  std::clog << "NOTICE: " 
+  std::clog << "NOTICE: "
             << "computing_time::g_compute_system_dead_time: "
-            << "System dead time = " 
+            << "System dead time = "
             << g_system_dead_time / CLHEP::second  << " s"
             << std::endl;
 }
 
-} // namespace datatools 
+} // namespace datatools
 

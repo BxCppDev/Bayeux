@@ -15,7 +15,7 @@
 
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/export.hpp>
- 
+
 // The serializable 'things' container :
 #include <datatools/things.h>
 // The serializable 'properties' container :
@@ -32,7 +32,7 @@ class A : public datatools::i_serializable
 {
 
 public:
-  
+
   void set_value (double v)
   {
     value_ = v;
@@ -48,7 +48,7 @@ public:
 
   A (double v_);
 
-  virtual ~A (); 
+  virtual ~A ();
 
   void dump (ostream & = clog) const;
 
@@ -67,14 +67,14 @@ private :
   double value_;
 
 };
-  
+
 const string A::SERIAL_TAG = "test_things::A";
 
 const string & A::get_serial_tag () const
 {
   return A::SERIAL_TAG;
 }
-  
+
 template<class Archive>
 void A::serialize (Archive & ar, const unsigned int file_version)
 {
@@ -89,12 +89,12 @@ void A::dump (ostream & out) const
   return;
 }
 
-A::A () : value_ (0.0) 
+A::A () : value_ (0.0)
 {
   return;
 }
- 
-A::A (double v) : value_ (v) 
+
+A::A (double v) : value_ (v)
 {
   return;
 }
@@ -108,7 +108,7 @@ A::~A ()
 class B : public datatools::i_serializable
 {
 public:
-  
+
   void set_index (int i)
   {
     index_ = i;
@@ -195,8 +195,8 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'datatools::things' !" << endl; 
-  
+      clog << "Test program for class 'datatools::things' !" << endl;
+
       bool debug = false;
       bool out   = true;
       bool in    = true;
@@ -208,48 +208,48 @@ int main (int argc_, char ** argv_)
           string token = argv_[iarg];
 
           if (token[0] == '-')
-            { 
-              string option = token; 
-              if ((option == "-d") || (option == "--debug")) 
+            {
+              string option = token;
+              if ((option == "-d") || (option == "--debug"))
                 {
                   debug = true;
                 }
-              else if ((option == "-O") || (option == "--no-out")) 
+              else if ((option == "-O") || (option == "--no-out"))
                 {
                   out = false;
                 }
-              else if ((option == "-I") || (option == "--no-in")) 
+              else if ((option == "-I") || (option == "--no-in"))
                 {
                   in = false;
                 }
-              else if ((option == "-x") || (option == "--xml")) 
+              else if ((option == "-x") || (option == "--xml"))
                 {
                   xml = true;
                 }
-              else if ((option == "-X") || (option == "--no-xml")) 
+              else if ((option == "-X") || (option == "--no-xml"))
                 {
                   xml = false;
                 }
-              else 
-                { 
-                  clog << "warning: ignoring option '" << option << "'!" << endl; 
+              else
+                {
+                  clog << "warning: ignoring option '" << option << "'!" << endl;
                 }
             }
           else
             {
-              string argument = token; 
-              { 
-                clog << "warning: ignoring argument '" << argument << "'!" << endl; 
+              string argument = token;
+              {
+                clog << "warning: ignoring argument '" << argument << "'!" << endl;
               }
             }
           iarg++;
         }
-    
+
       if (out)
       {
         // declare the 'bag' instance as a 'things' container:
-        datatools::things bag ("bag1", "A bag with things in it");  
-      
+        datatools::things bag ("bag1", "A bag with things in it");
+
         // add some objects of type 'A' and 'B' in it
         // perform some on-the-fly setter on some of them :
         bag.add<A> ("a1", "The a1 object").set_value (666.6666);
@@ -262,19 +262,19 @@ int main (int argc_, char ** argv_)
         bag.add<datatools::properties> ("p1", "A property store").set_description ("A list of properties");
         // basic dump :
         bag.dump (clog);
-        
-        // check if there is a stored object named 'a1', 
+
+        // check if there is a stored object named 'a1',
         // if yes check if the stored object 'a1' is an instance of 'A' :
         if (bag.has ("a1") && bag.is_a<A> ("a1"))
           {
             // if everything is ok, get a 'A' const reference to the 'a1' object :
-            const A & a1 = bag.get<A> ("a1"); 
+            const A & a1 = bag.get<A> ("a1");
             a1.dump (clog);
           }
         if (bag.is_a<A> ("a2"))
           {
             // get a 'A' const reference to the 'a2' object :
-            const A & a2 = bag.get<A> ("a2"); 
+            const A & a2 = bag.get<A> ("a2");
             a2.dump (clog);
           }
         if (bag.has_serial_tag ("a2", "test_things::A"))
@@ -292,16 +292,16 @@ int main (int argc_, char ** argv_)
         if (bag.is_a<B> ("b1"))
           {
             // get a 'B' const reference to the 'b1' object :
-            const B & b1 = bag.get<B> ("b1"); 
+            const B & b1 = bag.get<B> ("b1");
             b1.dump (clog);
           }
 
         if (bag.is_a<B> ("b2"))
           {
-            // grab a 'B' non-const reference to the 'b1' object :
+            // grab a 'B' non-const reference to the 'b2' object :
             try
               {
-                B & b2 = bag.grab<B> ("b2"); 
+                B & b2 = bag.grab<B> ("b2");
                 // modify the 'b2' object that is stored in 'bag' :
                 b2.set_index (999);
               }
@@ -311,9 +311,9 @@ int main (int argc_, char ** argv_)
                 clog << "As expected, the 'b2' object is a const instance of A !" << endl;
               }
           }
-        if (bag.is_a<B> ("b3") && ! bag.is_constant ("b2"))
+        if (bag.is_a<B> ("b3") && ! bag.is_constant ("b3"))
           {
-            B & b3 = bag.grab<B> ("b3"); 
+            B & b3 = bag.grab<B> ("b3");
             b3.set_index (-123);
           }
         try
@@ -321,13 +321,13 @@ int main (int argc_, char ** argv_)
             /* this will failed  and should have been first
              * checked with 'bag.is_a<A> ("b3")' :
              */
-            const A & tmp = bag.get<A> ("b3"); 
+            const A & tmp = bag.get<A> ("b3");
           }
         catch (datatools::bad_things_cast & x)
           {
             clog << "As expected, the 'b3' object cannot be fetch as an instance of A !" << endl;
           }
-        /* fetch the 'a3' object without any check : 
+        /* fetch the 'a3' object without any check :
          *   bag.has ("a3")
          *   bag.is_a<A> ("a3")
          */
@@ -335,8 +335,8 @@ int main (int argc_, char ** argv_)
 
         // add more empty objects and play with them :
         bag.add<A> ("a4", "another A instance");
-        bag.grab<B> ("b3").set_index (7777); 
-        bag.grab<A> ("a4").set_value (1.6e-19); 
+        bag.grab<B> ("b3").set_index (7777);
+        bag.grab<A> ("a4").set_value (1.6e-19);
         bag.add<B> ("b4", "a default B instance");
 
         // add some propeties in the 'p1' object :
@@ -349,14 +349,14 @@ int main (int argc_, char ** argv_)
 
         // dump again the bag :
         bag.dump (clog);
-        
+
         // now we store the 'bag' contents within a Boost archive :
         string filename = "test_things.txt";
         clog << "Store 'things'..." << endl;
         if (xml)
           {
             filename = "test_things.xml";
-          }       
+          }
         std::ofstream ofile (filename.c_str ());
         if (! xml)
           {
@@ -371,7 +371,7 @@ int main (int argc_, char ** argv_)
             oxa & boost::serialization::make_nvp ("bag", bag);
           }
         clog << "Done." << endl << endl << endl;
-      } 
+      }
 
       if (in)
       {
@@ -384,7 +384,7 @@ int main (int argc_, char ** argv_)
         if (xml)
           {
             filename = "test_things.xml";
-          }       
+          }
         std::ifstream ifile (filename.c_str ());
         if (! xml)
           {
@@ -408,11 +408,11 @@ int main (int argc_, char ** argv_)
         clog << "Play..." << endl;
         if (bag.has ("a1"))
           {
-            clog << "Object named 'a1' exists in the bag !" << endl;            
-          } 
+            clog << "Object named 'a1' exists in the bag !" << endl;
+          }
         else
-          { 
-            clog << "Object named 'a1' does not exist in the bag !" << endl;            
+          {
+            clog << "Object named 'a1' does not exist in the bag !" << endl;
           }
         if (bag.has ("a1") && bag.is_a<A> ("a1") )
           {
@@ -421,17 +421,17 @@ int main (int argc_, char ** argv_)
           }
         if (bag.has ("a2") && bag.is_a<A> ("a2"))
           {
-            const A & a2 = bag.get<A> ("a2"); 
+            const A & a2 = bag.get<A> ("a2");
             a2.dump (clog);
           }
         if (bag.has ("b1") && bag.is_a<B> ("b1"))
           {
-            const B & b1 = bag.get<B> ("b1"); 
+            const B & b1 = bag.get<B> ("b1");
             b1.dump (clog);
           }
         if (bag.has ("b2") && bag.is_a<B> ("b2"))
           {
-            const B & b2 = bag.get<B> ("b2"); 
+            const B & b2 = bag.get<B> ("b2");
             b2.dump (clog);
           }
         if (bag.has ("b3") && bag.is_a<B> ("b3"))
@@ -460,23 +460,23 @@ int main (int argc_, char ** argv_)
           } // a1 is delete here
 
         bag.dump (clog);
-        
+
       } // bag is destroyed here with all objects therein
 
     }
   catch (exception & x)
     {
-      cerr << "error: " << x.what () << endl; 
+      cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);
 }
- 
+
 // end of test_things.cxx
 /*
 ** Local Variables: --

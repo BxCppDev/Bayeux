@@ -1,18 +1,18 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 //! \file datatools/units.h
 /* units.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-03-18
  * Last modified: 2011-03-25
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *
  *   Utilities for units (CLHEP)
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 #ifndef DATATOOLS_UNITS_H_
 #define DATATOOLS_UNITS_H_
@@ -25,12 +25,13 @@
 // - A
 
 // This Project
+#include <datatools/exception.h>
 
 namespace datatools {
 
 /*! \brief Utilities for units (CLHEP).
  *
- *  The units class provides some static methods to manipulate 
+ *  The units class provides some static methods to manipulate
  *  units values through strings.
  *  It is based on the system of units in the CLHEP package.
  *
@@ -108,7 +109,7 @@ class units {
    *   double lu = datatools::units::get_unit_from("length", "cm");
    *   \endcode
    */
-  static double get_unit_from(const std::string& unit_type, 
+  static double get_unit_from(const std::string& unit_type,
                               const std::string& unit_str);
 
   //! Get the CLHEP unspecified unit from a string.
@@ -140,7 +141,7 @@ class units {
    *   \endcode
    */
   static bool is_unit_label_valid(const std::string & unit_label);
-  
+
   //! Return the symbol of the default unit associated to a unit label supported by the datatools::units class.
   static std::string get_default_unit_symbol_from_label(const std::string & unit_label);
 
@@ -157,7 +158,7 @@ class units {
    *   \endcode
    *
    */
-  static bool find_unit(const std::string& unit_str, 
+  static bool find_unit(const std::string& unit_str,
                         double& unit_value, std::string& unit_label);
 
   //! Get a value from a string taking into account the unit symbol.
@@ -180,18 +181,26 @@ class units {
    *   bool ok = datatools::units::find_value_with_unit("2.54 cm", value, unit_label);
    *   \endcode
    */
-  static bool find_value_with_unit(const std::string& word, 
-                                   double& value, 
+  static bool find_value_with_unit(const std::string& word,
+                                   double& value,
                                    std::string& unit_label,
                                    double default_unit_ = std::numeric_limits<double>::quiet_NaN());
 
- protected:
-  //! Exception thrown in case of unrecognized unit symbol.
-  static void throw_bad_unit(const std::string& type, 
-                             const std::string& unit_str);
+ // protected:
+ //  //! Exception thrown in case of unrecognized unit symbol.
+ //  static void throw_bad_unit(const std::string& type,
+ //                             const std::string& unit_str);
+
 };
 
 } // end of namespace datatools
+
+//! \def DT_THROW_BAD_UNIT(UnitType,UnitSymbol)
+//! \brief Throw a special exception when \c UnitSymbol does not match \c UnitType.
+#define DT_THROW_BAD_UNIT(UnitType,UnitSymbol) \
+  DT_THROW_IF(true,std::logic_error, \
+              "Invalid '" << UnitType << "' unit for symbol '" << UnitSymbol << "' !")
+/**/
 
 #endif // DATATOOLS_UNITS_H_
 

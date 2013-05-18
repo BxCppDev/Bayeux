@@ -194,12 +194,12 @@ bool fetch_path_processor::process_impl(std::string& path) {
   DT_THROW_IF(path.find('?') != path.npos || path.find('*') != path.npos,
               std::logic_error,
               "Wildcard characters found in path = " << path);
-  
+
   {
     std::ostringstream s;
     wordexp_t p;
     int we_error = wordexp( text.c_str(), &p, WRDE_NOCMD|WRDE_SHOWERR|WRDE_UNDEF);
-    
+
     DT_THROW_IF(we_error != 0,
                 std::logic_error,
                 "wordexp error, code = " << we_error << ", input = " << path);
@@ -218,7 +218,7 @@ bool fetch_path_processor::process_impl(std::string& path) {
         //std::cerr << w[i];
         message << " '" << w[i]<< "'";
       }
-      throw std::logic_error(message.str());
+      DT_THROW_IF(true, std::logic_error, message.str());
     }
     s << w[0];
     wordfree( &p );
@@ -362,7 +362,7 @@ std::string expand_path(const std::string& path) {
 
   int ret = system(sh_cmd.str().c_str());
   DT_THROW_IF(ret != 0, std::runtime_error, "Shell command " << sh_cmd.str() << " failed");
-  
+
   std::ifstream input(dummy);
   DT_THROW_IF(!input, std::runtime_error, "Cannot open file " << dummy);
 

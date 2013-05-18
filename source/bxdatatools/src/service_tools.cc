@@ -1,7 +1,7 @@
 /* service_tools.cc
- * 
+ *
  * Copyright (C) 2011-2012 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
  */
@@ -29,9 +29,10 @@
 
 // Datatools
 #include <datatools/base_service.h>
+#include <datatools/exception.h>
 
 namespace datatools {
- 
+
 dependency_info_type::dependency_info_type() {
   level = DEPENDENCY_STRICT;
 }
@@ -40,7 +41,7 @@ uint32_t service_entry::get_service_status() const
 {
   return service_status;
 }
- 
+
 void service_entry::update_service_status(uint32_t bits)
 {
   service_status |= bits;
@@ -60,28 +61,18 @@ const datatools::properties & service_entry::get_service_config () const
 
 datatools::properties & service_entry::grab_service_config ()
 {
-  if (service_status != STATUS_BLANK)
-    {
-      std::ostringstream message;
-      message << "datatools::service_entry::grab_service_config: "
-              << "Cannot modify the configuration of service named '" 
-              << get_service_name () << "' !";
-      throw std::logic_error(message.str());
-    }
+  DT_THROW_IF (service_status != STATUS_BLANK,
+               std::logic_error,
+               "Cannot modify the configuration of service named '" << get_service_name () << "' !");
   return service_config;
 }
-  
+
 void service_entry::set_service_config (const datatools::properties & sc_)
 {
-  if (service_status != STATUS_BLANK)
-    {
-      std::ostringstream message;
-      message << "datatools::service_entry::set_service_config: "
-              << "Cannot modify the configuration of service named '" 
-              << get_service_name () << "' !";
-      throw std::logic_error(message.str());
-    }
-  service_config = sc_; 
+  DT_THROW_IF (service_status != STATUS_BLANK,
+               std::logic_error,
+               "Cannot modify the configuration of service named '" << get_service_name () << "' !");
+  service_config = sc_;
   return;
 }
 
@@ -92,13 +83,7 @@ const std::string & service_entry::get_service_id () const
 
 void service_entry::set_service_id (const std::string & sid_)
 {
-  if (sid_.empty())
-    {
-      std::ostringstream message;
-      message << "datatools::service_entry::set_service_id: "
-              << "Empty service ID is not allowed !";
-      throw std::logic_error(message.str());
-    }  
+  DT_THROW_IF (sid_.empty(), std::logic_error,"Empty service ID is not allowed !");
   service_id = sid_;
 }
 
@@ -109,17 +94,11 @@ const std::string & service_entry::get_service_name () const
 
 void service_entry::set_service_name (const std::string & sn_)
 {
-  if (sn_.empty())
-    {
-      std::ostringstream message;
-      message << "datatools::service_entry::set_service_name: "
-              << "Empty service name is not allowed !";
-      throw std::logic_error(message.str());
-    }
+  DT_THROW_IF (sn_.empty(),std::logic_error, "Empty service name is not allowed !");
   service_name = sn_;
-  return; 
+  return;
 }
-  
+
 
 const service_handle_type & service_entry::get_service_handle() const
 {
@@ -158,7 +137,7 @@ bool service_entry::can_be_dropped() const {
     if (i->second == DEPENDENCY_STRICT) {
       return false;
     }
-  }      
+  }
   return true;
 }
 
@@ -173,7 +152,7 @@ bool service_entry::is_initialized() const
   return service_status & STATUS_INITIALIZED;
 }
 
-void service_entry::tree_dump(std::ostream& out, 
+void service_entry::tree_dump(std::ostream& out,
                               const std::string& title,
                               const std::string& a_indent,
                               bool a_inherit) const {
@@ -182,24 +161,24 @@ void service_entry::tree_dump(std::ostream& out,
 
   if (!title.empty()) out << indent << title << std::endl;
 
-  out << indent << i_tree_dumpable::tag 
-      << "Service name     : '" 
-      << service_name 
+  out << indent << i_tree_dumpable::tag
+      << "Service name     : '"
+      << service_name
       << "'" << std::endl;
 
-  out << indent << i_tree_dumpable::tag 
-      << "Service ID       : '" 
-      << service_id 
+  out << indent << i_tree_dumpable::tag
+      << "Service ID       : '"
+      << service_id
       << "'" << std::endl;
 
   {
-    out << indent << i_tree_dumpable::tag 
+    out << indent << i_tree_dumpable::tag
         << "Master services  : ";
     if (service_masters.size() == 0) {
       out << "<none>";
     }
     out << std::endl;
-    for (service_dependency_dict_type::const_iterator i = 
+    for (service_dependency_dict_type::const_iterator i =
          service_masters.begin();
          i != service_masters.end();
          ++i) {
@@ -209,7 +188,7 @@ void service_entry::tree_dump(std::ostream& out,
 
       std::ostringstream indent_oss;
       indent_oss << indent << i_tree_dumpable::skip_tag;
-      service_dependency_dict_type::const_iterator j = i; 
+      service_dependency_dict_type::const_iterator j = i;
       j++;
       if (j == service_masters.end()) {
         out << i_tree_dumpable::last_tag;
@@ -219,23 +198,23 @@ void service_entry::tree_dump(std::ostream& out,
         indent_oss << i_tree_dumpable::skip_tag;
       }
       out << "Master '" << master_service_name << "' ";
-      out << ": " 
+      out << ": "
           << ""
-          << "id='"      << di.id << "' " 
+          << "id='"      << di.id << "' "
           << "version='" << di.version << "' "
           << "meta='"    << di.meta << "' "
           << "level="    << di.level << ""
           << std::endl;
     }
-  } 
+  }
   {
-    out << indent << i_tree_dumpable::tag 
+    out << indent << i_tree_dumpable::tag
         << "Slave services   : ";
     if (service_slaves.size() == 0) {
       out << "<none>";
     }
-    out << std::endl; 
-    for (dependency_level_dict_type::const_iterator i = 
+    out << std::endl;
+    for (dependency_level_dict_type::const_iterator i =
          service_slaves.begin();
          i != service_slaves.end();
          ++i) {
@@ -245,7 +224,7 @@ void service_entry::tree_dump(std::ostream& out,
 
       std::ostringstream indent_oss;
       indent_oss << indent << i_tree_dumpable::skip_tag;
-      dependency_level_dict_type::const_iterator j = i; 
+      dependency_level_dict_type::const_iterator j = i;
       j++;
       if (j == service_slaves.end()) {
         out << i_tree_dumpable::last_tag;
@@ -255,18 +234,18 @@ void service_entry::tree_dump(std::ostream& out,
         indent_oss << i_tree_dumpable::skip_tag;
       }
       out << "Slave '" << slave_service_name << "' ";
-      out << ": " 
+      out << ": "
           << ""
           << "level="    << slave_level << ""
           << std::endl;
-    }       
+    }
   }
-  out << indent << i_tree_dumpable::tag 
-      << "Can be dropped   : " 
+  out << indent << i_tree_dumpable::tag
+      << "Can be dropped   : "
       << this->can_be_dropped() << std::endl;
 
-  out << indent << i_tree_dumpable::inherit_tag (a_inherit) 
-      << "Service status   : " 
+  out << indent << i_tree_dumpable::inherit_tag (a_inherit)
+      << "Service status   : "
       << service_status;
   {
     size_t count = 0;
@@ -282,8 +261,8 @@ void service_entry::tree_dump(std::ostream& out,
       count++;
     }
     if (count) {
-      out << ' ' << '(' 
-          << status_info.str() 
+      out << ' ' << '('
+          << status_info.str()
           << ')';
     }
   }
