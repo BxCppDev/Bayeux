@@ -7,6 +7,11 @@
 #include <fstream>
 #include <stdexcept>
 #include <sstream>
+
+#include <datatools/exception.h>
+#include <datatools/logger.h>
+
+#include <materials/materials_config.h>
 #include <materials/chemical_symbol.h>
 
 double endfline_to_double (const std::string & endfline_);
@@ -16,15 +21,15 @@ namespace materials {
 
   using namespace std;
 
-  
+
   datatools::properties & isotope::grab_properties ()
-  { 
-    return _properties_; 
+  {
+    return _properties_;
   }
 
-  const datatools::properties & isotope::get_properties () const 
+  const datatools::properties & isotope::get_properties () const
   {
-    return _properties_; 
+    return _properties_;
   }
 
   //________________________________________________________________________// ctor
@@ -136,30 +141,18 @@ namespace materials {
 
     //-----------------  Open an ifstream from file mass.mas03  ----------------------------
 
-    string tape_name;
-
-    if (getenv("MATERIALS_DATA_DIR")==NULL)
+    string tape_name = MATERIALS_DATA_INSTALL_DIR;;
+    if (getenv("MATERIALS_DATA_DIR")!=NULL)
       {
-        ostringstream message;
-        message << "materials::isotope::_check_za_ : env. variable 'MATERIALS_DATA_DIR'  not found !";
-        throw logic_error (message.str ());
+        tape_name = getenv("MATERIALS_DATA_DIR");
       }
-    else
-      {
-        tape_name.assign(getenv("MATERIALS_DATA_DIR"));
-        tape_name += "/resources/data/mass.mas03";
-      }
+    tape_name += "/resources/data/mass.mas03";
 
     ifstream ifstr_tape;
     ifstr_tape.open(tape_name.c_str ());
-    if(! ifstr_tape.is_open ())
-      {
-        ostringstream message;
-        message << "materials::isotope::_check_za_ : ifstream  '" << tape_name<< "'  not found !";
-        throw logic_error (message.str ());
-      }
-
-
+    DT_THROW_IF(! ifstr_tape.is_open (),
+                std::runtime_error,
+                "Cannot open '" << tape_name << "' !");
     //----------------------------  Read the ifstream  ----------------------------
 
     _is_known_  = false;
@@ -176,13 +169,9 @@ namespace materials {
           }
       }
 
-    if(!_is_known_)
-      {
-        ostringstream message;
-        message<< "materials::isotope::_check_za_: " << get_name ()<<endl;
-        message << "  -> (Z, A) values : (" << _z_<< ", "<< _a_<< ") not found in database ['" << tape_name<<"'] !"<<endl;
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF(!_is_known_,
+                std::logic_error,
+                "Isotope '" << get_name () << "' -> (Z, A) values : (" << _z_<< ", "<< _a_<< ") not found in database ['" << tape_name<<"'] !");
     return;
   }
 
@@ -238,30 +227,19 @@ namespace materials {
 
     //-----------------  Open an ifstream from file mass.mas03  ----------------------------
 
-    string tape_name;
-
-    if (getenv ("MATERIALS_DATA_DIR") == NULL)
+    string tape_name = MATERIALS_DATA_INSTALL_DIR;;
+    if (getenv ("MATERIALS_DATA_DIR") != NULL)
       {
-        ostringstream message;
-        message << "materials::isotope::find_mass : env. variable 'MATERIALS_DATA_DIR'  not found !";
-        throw logic_error (message.str ());
+        tape_name = getenv ("MATERIALS_DATA_DIR");
       }
-    else
-      {
-        tape_name.assign(getenv ("MATERIALS_DATA_DIR"));
-        tape_name += "/resources/data/";
-        tape_name += input_file_name_;
-      }
+    tape_name += "/resources/data/";
+    tape_name += input_file_name_;
 
     ifstream ifstr_tape;
     ifstr_tape.open (tape_name.c_str ());
-    if (! ifstr_tape.is_open ())
-      {
-        ostringstream message;
-        message << "materials::isotope::find_mass () : ifstream  '" << tape_name << "'  not found !";
-        throw logic_error (message.str ());
-      }
-
+    DT_THROW_IF (! ifstr_tape.is_open (),
+                 std::runtime_error,
+                 "Cannot open file '" << tape_name << "' !");
 
     //----------------------------  Read the ifstream  ----------------------------
 
@@ -297,18 +275,10 @@ namespace materials {
             _set_mass_ (mass + mass_default, error_mass);
           }
       }
-    //cerr << "DEVEL: find_mass: " << "ZA found: " << is_za_found << endl;
-
-    if (! is_za_found)
-      {
-        ostringstream message;
-        message << "materials::isotope::find_mass: Z A values : '" << _z_ << " " << _a_ << "' not found in '"
-                << tape_name << "' !";
-        throw logic_error (message.str ());
-        /*
-          cerr<<endl<< endl<< "!!! WARNING !!! isotope::find_mass (): Z A values : '" << _z_<< " "<< _a_<< "' not found in file mass.mas03 !"<< endl<< endl;
-        */
-      }
+    DT_THROW_IF (! is_za_found,
+                 std::logic_error,
+                 "Z A values : '" << _z_ << " " << _a_ << "' not found in '"
+                 << tape_name << "' !");
     return;
   }
 
@@ -380,10 +350,9 @@ namespace materials {
       }
     else
       {
-        ostringstream message;
-        message<< "materials::isotope::_set_z_ (): " << get_name ()<<endl;
-        message << "       -> invalid value : '" << _z_<< "' !"<<endl;
-        throw logic_error (message.str ());
+        DT_THROW_IF(true,
+                    std::logic_error,
+                    "Isotope '" << get_name () << "' -> invalid value : '" << _z_<< "' !");
       }
     return;
   }
@@ -400,9 +369,9 @@ namespace materials {
       }
     else
       {
-        ostringstream message;
-        message << "materials::isotope::_set_a_ () : Invalid A value : '" << A_ << "' !";
-        throw logic_error (message.str ());
+        DT_THROW_IF(true,
+                    std::logic_error,
+                    "Isotope '" << get_name () << "' -> invalid A value : '" << A_ << "' !");
       }
     return;
   }
@@ -419,9 +388,9 @@ namespace materials {
       }
     else
       {
-        ostringstream message;
-        message << "materials::isotope::_set_i_ () : Invalid I value : '" << I_ << "' !";
-        throw logic_error (message.str ());
+        DT_THROW_IF(true,
+                    std::logic_error,
+                    "Isotope '" << get_name () << "' -> invalid I value : '" << I_ << "' !");
       }
     return;
   }
@@ -439,36 +408,21 @@ namespace materials {
   //________________________________________________________________________
   void  isotope::_set_mass_(const double mass_, const double err_mass_)
   {
-    if ((mass_ < 0.) || (err_mass_ < 0.))
-      {
-        ostringstream message;
-        message << "materials::isotope:::_set_mass_ () : Invalid mass (+_ error) values : '" << mass_ << "' '" << err_mass_ << " '!";
-        throw logic_error (message.str ());
-      }
-    else
-      {
-        //cerr << "DEVEL: isotope::_set_mass_: mass=" << mass_ << endl;
-        //cerr << "DEVEL: isotope::_set_mass_: error mass=" << err_mass_ << endl;
-        _mass_ = mass_;
-        _err_mass_ = err_mass_;
-      }
+    DT_THROW_IF ((mass_ < 0.) || (err_mass_ < 0.),
+                 std::logic_error,
+                 "Invalid mass (+_ error) values : '" << mass_ << "' '" << err_mass_ << " '!");
+    _mass_ = mass_;
+    _err_mass_ = err_mass_;
     return;
   }
 
   //________________________________________________________________________
   void   isotope::_set_half_life_time_(const double half_life_time_ , const double err_half_life_time_)
   {
-    if(  half_life_time_ < 0. || err_half_life_time_ < 0. )
-      {
-        ostringstream message;
-        message << "materials::isotope:::_set_half_life_time_ () : Invalid half_life_time value : '"
-                << half_life_time_  << " +- '"
-                << err_half_life_time_<< "' !";
-        throw logic_error (message.str ());
-      }
-
-    else if ( half_life_time_ == 0. && err_half_life_time_ == 0. )
-
+    DT_THROW_IF(  half_life_time_ < 0. || err_half_life_time_ < 0. ,
+                  std::logic_error,
+                  "Invalid half_life_time value : '" << half_life_time_  << " +- '" << err_half_life_time_<< "' !");
+    if ( half_life_time_ == 0. && err_half_life_time_ == 0. )
       {
         _half_life_time_ = half_life_time_;
         _err_half_life_time_ = err_half_life_time_;
@@ -489,30 +443,19 @@ namespace materials {
     */
     //-----------------  Open an ifstream from file JEFF311RDD_ALL.OUT ----------------------------
 
-    string tape_name;
 
-    if (getenv("MATERIALS_DATA_DIR")==NULL)
+    string tape_name = MATERIALS_DATA_INSTALL_DIR;;
+    if (getenv("MATERIALS_DATA_DIR")!=NULL)
       {
-        ostringstream message;
-        message << "materials::isotope::find_decay : env. variable 'MATERIALS_DATA_DIR'  not found !";
-        throw logic_error (message.str ());
+        tape_name = getenv("MATERIALS_DATA_DIR");
       }
-    else
-      {
-        tape_name.assign(getenv("MATERIALS_DATA_DIR"));
-        tape_name +="/resources/data/";
-        tape_name +=input_file_name_;
-      }
+    tape_name +="/resources/data/";
+    tape_name +=input_file_name_;
     ifstream ifstr_tape;
     ifstr_tape.open(tape_name.c_str ());
-    if(!ifstr_tape.is_open ())
-      {
-        ostringstream message;
-        message << "materials::isotope::find_decay () : ifstream  '" << tape_name<< "'  not founded !";
-        throw logic_error (message.str ());
-      }
-
-
+    DT_THROW_IF(!ifstr_tape.is_open (),
+                std::runtime_error,
+                "Cannot open '" << tape_name << "' !");
     //----------------------------  Read the ifstream  ----------------------------
 
 
@@ -534,46 +477,31 @@ namespace materials {
               }
           }
       }
-    if(!is_zai_found)
+    DT_THROW_IF(!is_zai_found,
+                std::logic_error,
+                "Isotope  '" << get_name () << "' -> Z A I values : '" << _z_<< " "<< _a_<< " "<<  _i_<< "' not found in '" << tape_name<<"' !");
+    while( !is_data_found  && getline(ifstr_tape, endf6_line) )
       {
-        ostringstream message;
-        message<< "materials::isotope::find_decay: " << get_name ()<<endl;
-        message << "       -> Z A I values : '" << _z_<< " "<< _a_<< " "<<  _i_<< "' not found in '" << tape_name<<"' !"<<endl;
-        throw logic_error (message.str ());
+        if(endf6_line.find("457    1")!=string::npos)
+          {
+            DT_THROW_IF((endfline_to_double(endf6_line.substr(0, 11)))!=(1000.*get_z ()+get_a ()),
+                        std::logic_error,
+                        "ZAI not consistent !");
+            is_data_found  = true ;
+
+            getline(ifstr_tape, endf6_line);
+
+            _set_half_life_time_( endfline_to_double(endf6_line.substr(0, 11)) , endfline_to_double(endf6_line.substr(11, 11)));
+          }
       }
-    else
+
+    if (! is_data_found)
       {
-        while( !is_data_found  && getline(ifstr_tape, endf6_line) )
-          {
-            if(endf6_line.find("457    1")!=string::npos)
-              {
-                if((endfline_to_double(endf6_line.substr(0, 11)))!=(1000.*get_z ()+get_a ()))
-                  {
-                    ostringstream message;
-                    message << "materials::isotope::find_decay : zai not consistent !";
-                    throw logic_error (message.str ());
-                  }
-                else
-                  {
-                    is_data_found  = true ;
-
-                    getline(ifstr_tape, endf6_line);
-
-                    _set_half_life_time_( endfline_to_double(endf6_line.substr(0, 11)) , endfline_to_double(endf6_line.substr(11, 11)));
-                  }
-              }
-          }
-
-        if (! is_data_found)
-          {
-            /*  ostringstream message;
-                message << "materials::isotope::find_decay () : 457 data not found in jeff-3.1 for Z A I values : '" << _z_<< " "<< _a_<< " "<<  _i_<< "' !"<< endl;
-                throw logic_error (message.str ()); */
-            cerr << "ERROR: " << "materials::isotope::find_decay () : 457 data not found in jeff-3.1 for Z A I values : '" << _z_<< " "<< _a_<< " "<<  _i_<< "' !"<< endl;
-          }
-        else
-          {
-          }
+        /*  ostringstream message;
+            message << "materials::isotope::find_decay () : 457 data not found in jeff-3.1 for Z A I values : '" << _z_<< " "<< _a_<< " "<<  _i_<< "' !"<< endl;
+            throw logic_error (message.str ()); */
+        DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                     "457 data not found in jeff-3.1 for Z A I values : '" << _z_<< " "<< _a_<< " "<<  _i_<< "' !");
       }
     return;
   }
@@ -764,14 +692,9 @@ double endfline_to_double (const std::string & endf_line)
 
   double number;
   iss >> number;
-  if (! iss)
-    {
-      ostringstream message;
-      message << "endfline_to_double: Invalid format for real: '"
-              << s_number << "' !";
-      throw logic_error (message.str ());
-      //return 0;
-    }
+  DT_THROW_IF (! iss,
+               std::runtime_error,
+               "Invalid format for real: '" << s_number << "' !");
   return number;
 }
 
@@ -783,21 +706,16 @@ double ame3line_to_double(const std::string & ame3_line)
 
   if( (ame3_line.find("*")) !=string::npos)  s_number="0";
   else if( (ame3_line.find("#")) !=string::npos)  s_number=ame3_line.substr(0, ame3_line.find_first_of("#"));
-  else   s_number = ame3_line;
+  else s_number = ame3_line;
 
   std::istringstream iss(s_number);
   double number;
   iss >> number;
-  if (! iss)
-    {
-      ostringstream message;
-      message << "ame3line_to_double: Invalid format for real: '"
-              << s_number << "' !";
-      throw logic_error (message.str ());
-      //return 0;
-    }
+  DT_THROW_IF (! iss,
+               std::runtime_error,
+               "Invalid format for real: '" << s_number << "' !");
   //if (!(i >> number))   return 0;
-  else return number;
+  return number;
 }
 
 // end of isotope.cc

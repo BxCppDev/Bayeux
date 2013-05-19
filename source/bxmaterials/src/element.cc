@@ -8,6 +8,10 @@
 #include <sstream>
 #include <fstream>
 
+#include <datatools/exception.h>
+#include <datatools/logger.h>
+
+#include <materials/materials_config.h>
 #include <materials/isotope.h>
 #include <materials/chemical_symbol.h>
 
@@ -42,23 +46,6 @@ namespace materials {
   bool iso_entry::is_valid () const
   {
     return weight > 0.0;
-  }
-
-
-  //________________________________________________________________________//
-  void element::_lock_check (const string & where_) const
-  {
-    if (is_locked ())
-      {
-        ostringstream message;
-        if (! where_.empty ())
-          {
-            message << where_ << ": ";
-          }
-        message << "Operation not allowed ! Object is locked !";
-        throw logic_error (message.str ());
-      }
-    return;
   }
 
   bool element::is_built_by_isotopic_composition () const
@@ -120,6 +107,12 @@ namespace materials {
     return;
   }
 
+  //________________________________________________________________________//
+  const isotope_weight_map_type & element::get_composition () const
+  {
+    return _composition_;
+  }
+
 
   //________________________________________________________________________// /dtor
   element::~element ()
@@ -127,18 +120,6 @@ namespace materials {
     _composition_.clear ();
     return;
   }
-
-  //________________________________________________________________________
-  /*
-    void element::_init_()
-    {
-    _unlock_ ();
-
-    _composition_.clear ();
-
-    _molar_mass_ = -1.;
-    }
-  */
 
   //________________________________________________________________________
   void element::_lock_ ()
@@ -155,19 +136,9 @@ namespace materials {
   }
 
   //________________________________________________________________________
-  /*
-    void element::set_symbol (const string & symbol_)
-    {
-    _lock_check ("materials::element::set_symbol");
-    _symbol_ = symbol_;
-    return;
-    }
-  */
-
-  //________________________________________________________________________
   void element::set_name (const string & name_)
   {
-    _lock_check ("materials::element::set_name");
+    DT_THROW_IF(is_locked(),std::logic_error,"Operation not allowed ! Object is locked !");
     _name_ = name_;
     return;
   }
@@ -175,7 +146,7 @@ namespace materials {
   //________________________________________________________________________
   void element::set_z (const string & symbol_)
   {
-    _lock_check ("materials::element::set_z");
+    DT_THROW_IF(is_locked(),std::logic_error,"Operation not allowed ! Object is locked !");
 
     bool is_symbol_found = false;
     int i_Z = 0;
@@ -190,13 +161,9 @@ namespace materials {
         i_Z++;
       }
 
-    if(! is_symbol_found)
-      {
-        ostringstream message;
-        message << endl << "materials::element::set_symbol() ; symbol '"
-                << symbol_<< "' not found !" << endl;
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF(! is_symbol_found,
+                std::logic_error,
+                "Symbol '" << symbol_<< "' not found !");
     _symbol_ = symbol_;
     _z_ = i_Z;
     return;
@@ -204,7 +171,7 @@ namespace materials {
   //________________________________________________________________________
   void element::set_z (const int z_)
   {
-    _lock_check ("materials::element::set_z");
+    DT_THROW_IF(is_locked(),std::logic_error,"Operation not allowed ! Object is locked !");
 
     if ((z_ >= 0) && (z_ <= chemical_symbol::NB_CHEMICAL_SYMBOLS))
       {
@@ -213,9 +180,7 @@ namespace materials {
       }
     else
       {
-        ostringstream message;
-        message << "materials::element::__set_z () : Invalid Z value : '" << z_ << "' !";
-        throw logic_error (message.str () );
+        DT_THROW_IF(true,std::logic_error,"Invalid Z value : '" << z_ << "' !");
       }
     return;
   }
@@ -223,77 +188,50 @@ namespace materials {
   //________________________________________________________________________
   void element::add_isotope (const isotope & iso_ptr_,  double weight_,  bool owned_)
   {
-    _lock_check ("materials::element::add_isotope");
+    DT_THROW_IF(is_locked(),std::logic_error,"Operation not allowed ! Object is locked !");
 
     // 2010-10-11 by FM: not compatible with molar mass manual setting:
-    if ((_molar_mass_ > 0.0) && (_composition_.size () == 0))
-      {
-        ostringstream message;
-        message << "materials::element::add_isotope: Operation not allowed ! Molar mass is set by hand !";
-        throw logic_error (message.str () );
-      }
-
+    DT_THROW_IF ((_molar_mass_ > 0.0) && (_composition_.size () == 0),
+                 std::logic_error,
+                 "Operation not allowed ! Molar mass is set by hand !");
     // set Z and symbol when add a new isotope.
 
     if ( _composition_.size () == 0)
       {
         if (_z_ != Z_UNDEFINED)
           {
-            if (_z_ != iso_ptr_.get_z ())
-              {
-                ostringstream message;
-                message << "materials::element::add_isotope : Unmatching mother element/daughter isotope Z values !";
-                throw logic_error (message.str () );
-              }
+            DT_THROW_IF (_z_ != iso_ptr_.get_z (),
+                         std::logic_error,
+                         "Unmatching mother element/daughter isotope Z values !");
           }
         set_z (iso_ptr_.get_z ());
       }
 
     // check if the isotope is locked (which mean valid)
 
-    if (! iso_ptr_.is_locked ())
-      {
-        ostringstream message;
-        message << endl << "materials::element::add_isotope: Isotope '"
-                << iso_ptr_.get_name ();
-        message << "' is not locked !'";
-        throw logic_error (message.str ());
-      }
-
+    DT_THROW_IF (! iso_ptr_.is_locked (),
+                 std::logic_error,
+                 "Isotope '" << iso_ptr_.get_name () << "' is not locked !'");
     // check if Z value of isotope to be added is consistant with Z value of the element
 
-    if ( iso_ptr_.get_z () != _z_)
-      {
-        ostringstream message;
-        message << endl << "materials::element::add_isotope: the Z value '"
-                << iso_ptr_.get_z () <<"' of isotope '";
-        message << iso_ptr_.get_name ()
-                << "' to be added is not consistant with the Z value '"
-                << _z_ << "' of the element '";
-        message << get_name () << "' !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF ( iso_ptr_.get_z () != _z_,
+                  std::logic_error,
+                  "The Z value '" << iso_ptr_.get_z () <<"' of isotope '" << iso_ptr_.get_name ()
+                  << "' to be added is not consistant with the Z value '"
+                  << _z_ << "' of the element '" << get_name () << "' !");
 
     // check the positive value of weight
 
-    if ( weight_ <= 0.)
-      {
-        ostringstream message;
-        message << endl << "materials::element::add_isotope: weight value '" << weight_ ;
-        message << "' is not positive !" << endl ;
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF ( weight_ <= 0.,
+                  std::logic_error,
+                  "weight value '" << weight_ << "' is not positive !");
 
     // check if isotope is already in the composition of the element
 
-    if (_composition_.find (iso_ptr_.get_name ()) != _composition_.end ())
-      {
-        ostringstream message;
-        message << endl << "!! warning !! element::add_isotope() you add the isotope '" << iso_ptr_.get_name ();
-        message <<"' which is already in the composition of element '" << _name_ <<"' !" << endl;
-        clog << message.str ();
-      }
-
+    DT_THROW_IF (_composition_.find (iso_ptr_.get_name ()) != _composition_.end (),
+                 std::logic_error,
+                 "Adding the isotope '" << iso_ptr_.get_name ()
+                 << "' which is already in the composition of element '" << _name_ <<"' !");
 
     iso_entry entry;
     entry.owned = false;
@@ -329,7 +267,7 @@ namespace materials {
       }
     else
       {
-        throw logic_error ("materials::element::build: Missing isotope(s) in the current element ! Not implemented yet !");
+        DT_THROW_IF(true, std::logic_error, "Missing explicit isotope(s) in the current element ! Build from NIST database is not implemented yet !");
         //build_from_nist ();
       }
     _lock_ ();
@@ -342,29 +280,18 @@ namespace materials {
 
     //-----------------  Open an ifstream from file atomic_weight_nist.dat  ----------------------------
 
-    string tape_name;
+    string tape_name = MATERIALS_DATA_INSTALL_DIR;
 
-    if (getenv("MATERIALS_DATA_DIR")==NULL)
-      {
-        ostringstream message;
-        message << "materials::element::build_from_nist : env. variable 'MATERIALS_DATA_DIR'  not found !";
-        throw logic_error (message.str ());
-      }
-    else
+    if (getenv("MATERIALS_DATA_DIR") != NULL)
       {
         tape_name.assign (getenv ("MATERIALS_DATA_DIR"));
-        tape_name += "/resources/data/isotopic_compositions_nist.dat";
       }
-
+    tape_name += "/resources/data/isotopic_compositions_nist.dat";
     ifstream ifstr_tape;
     ifstr_tape.open (tape_name.c_str ());
-    if(! ifstr_tape.is_open ())
-      {
-        ostringstream message;
-        message << "materials::element::build_from_nist : ifstream  '"
-                << tape_name << "'  not open !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF(! ifstr_tape.is_open (),
+                  std::logic_error,
+                "Cannot open file '" << tape_name << "' !");
 
     //----------------------------  Read the ifstream  ----------------------------
 
@@ -401,13 +328,9 @@ namespace materials {
 
     if(! is_z_found)
       {
-        ostringstream message;
-        message << "!!! warning !! element::build_from_nist () : Z values  '"
-                << _z_
-                << "' not found in file isotopic_compositions_nist.dat !"
-                << endl;
+        DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
+                       "Z values  '" << _z_ << "' not found in file 'isotopic_compositions_nist.dat' !");
         // throw logic_error (message.str ());
-        clog << message << endl;
       }
     return;
   }
@@ -424,22 +347,11 @@ namespace materials {
         norm += e.weight;
       }
 
-    if(norm <= 0.)
-      {
-        ostringstream message;
-        message << endl << "materials::element::_norm_weights_::  sum of weights for isotope '";
-        message << get_name () <<"' is negative!'" <<endl ;
-        throw logic_error (message.str ());
-      }
-
+    DT_THROW_IF(norm <= 0.,
+                std::logic_error,
+                "Sum of weights for isotope '" << get_name () <<"' is negative !'");
     if(norm != 1.0)
       {
-        /*  ostringstream message;
-            message << endl << "warning !! element::_norm_weights_:: renormalize weights of element  '";
-            message << get_name () <<"'!'"<< endl;
-            clog << message.str ();
-        */
-
         for (isotope_weight_map_type::iterator i = _composition_.begin ();
              i !=  _composition_.end ();
              i++)
@@ -454,19 +366,12 @@ namespace materials {
   //________________________________________________________________________
   void element::set_molar_mass(double molar_mass_)
   {
-    if (_composition_.size () > 0)
-      {
-        ostringstream message;
-        message << "materials::element::set_molar_mass: Operation not allowed when build mode uses isotopic composition !";
-        throw logic_error (message.str ());
-      }
-    if (molar_mass_ < 0)
-      {
-        ostringstream message;
-        message << "materials::element::set_molar_mass: Invalid mass value : '"
-                << molar_mass_ << "' !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (_composition_.size () > 0,
+                 std::logic_error,
+                 "Operation not allowed when build mode uses isotopic composition !");
+    DT_THROW_IF (molar_mass_ < 0,
+                 std::logic_error,
+                 "Invalid mass value : '" << molar_mass_ << "' !");
     _molar_mass_ = molar_mass_;
     return;
   }
@@ -474,13 +379,9 @@ namespace materials {
   //________________________________________________________________________
   void element::_set_molar_mass_(const double molar_mass_)
   {
-    if (molar_mass_ < 0)
-      {
-        ostringstream message;
-        message << endl << "materials::element::_set_molar_mass_() : Invalid mass value : '"
-                << molar_mass_ << "' !" << endl;
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (molar_mass_ < 0,
+                 std::logic_error,
+                 "Invalid mass value : '" << molar_mass_ << "' !");
     _molar_mass_ = molar_mass_;
     return;
   }

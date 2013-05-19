@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 // test_factory.cxx
 
 #include <cstdlib>
@@ -20,8 +20,8 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'factory'!" << endl; 
-  
+      clog << "Test program for class 'factory'!" << endl;
+
       bool debug = false;
 
       int iarg = 1;
@@ -31,26 +31,26 @@ int main (int argc_, char ** argv_)
 
           if (token[0] == '-')
             {
-               string option = token; 
-               if ((option == "-d") || (option == "--debug")) 
+               string option = token;
+               if ((option == "-d") || (option == "--debug"))
                  {
                    debug = true;
                  }
-               else 
-                 { 
-                    clog << "warning: ignoring option '" << option << "'!" << endl; 
+               else
+                 {
+                    clog << "warning: ignoring option '" << option << "'!" << endl;
                  }
             }
           else
             {
-              string argument = token; 
-              { 
-                clog << "warning: ignoring argument '" << argument << "'!" << endl; 
+              string argument = token;
+              {
+                clog << "warning: ignoring argument '" << argument << "'!" << endl;
               }
             }
           iarg++;
       }
- 
+
       datatools::properties iso_0_conf;
       iso_0_conf.store ("z", 1);
       iso_0_conf.store ("a", 1);
@@ -89,7 +89,7 @@ int main (int argc_, char ** argv_)
       }
 
       materials::element_dict_type elements;
- 
+
       datatools::properties elmt_1_conf;
       elmt_1_conf.store ("z", 1);
       vector<string> iso_names;
@@ -101,7 +101,7 @@ int main (int argc_, char ** argv_)
       elmt_1_conf.store ("isotope.names", iso_names);
       elmt_1_conf.store ("isotope.weights", iso_weights);
       {
-        materials::element * elmt = my_factory.create_element ("elmt_1", 
+        materials::element * elmt = my_factory.create_element ("elmt_1",
                                                          elmt_1_conf,
                                                          isotopes);
         elmt->tree_dump (clog, "Element 1 from the factory: ");
@@ -122,7 +122,7 @@ int main (int argc_, char ** argv_)
       matl_1_conf.store ("composition.names", compounds_names);
       matl_1_conf.store ("composition.fraction_mass", compounds_masses);
       {
-        materials::material * matl = my_factory.create_material ("matl_1", 
+        materials::material * matl = my_factory.create_material ("matl_1",
                                                            matl_1_conf,
                                                            elements,
                                                            materials);
@@ -130,16 +130,16 @@ int main (int argc_, char ** argv_)
         materials[matl->get_name ()] = materials::smart_ref<materials::material> ();
         materials[matl->get_name ()].set_ref (matl);
       }
-      
-    } 
+
+    }
   catch (exception & x)
     {
-      cerr << "error: " << x.what () << endl; 
+      cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);

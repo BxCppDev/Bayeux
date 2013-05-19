@@ -8,6 +8,7 @@
 #include <datatools/multi_properties.h>
 #include <datatools/utils.h>
 
+#include <materials/materials_config.h>
 #include <materials/isotope.h>
 #include <materials/element.h>
 #include <materials/material.h>
@@ -23,14 +24,25 @@ namespace materials {
     return is_locked();
   }
 
+  void manager::set_logging_priority(datatools::logger::priority p)
+  {
+    _logging_priority_ = p;
+  }
+
+  datatools::logger::priority manager::get_logging_priority() const
+  {
+    return _logging_priority_;
+  }
+
   bool manager::is_debug () const
   {
-    return _debug_;
+    return _logging_priority_ >= datatools::logger::PRIO_DEBUG;
   }
 
   void manager::set_debug (bool new_value_)
   {
-    _debug_ = new_value_;
+    if (new_value_) set_logging_priority(datatools::logger::PRIO_DEBUG);
+    else set_logging_priority(datatools::logger::PRIO_WARNING);
     return;
   }
 
@@ -94,7 +106,7 @@ namespace materials {
   // ctor:
   manager::manager ()
   {
-    _debug_ = false;
+    _logging_priority_ = datatools::logger::PRIO_WARNING;
     _locked_ = false;
     _alias_allow_overload_= false;
     return;
@@ -124,9 +136,7 @@ namespace materials {
 
   void manager::initialize (const datatools::properties & setup_)
   {
-    if (is_locked ()) {
-      throw std::logic_error ("materials::manager::initialize: Manager is locked !");
-    }
+    DT_THROW_IF (is_locked (), std::logic_error, "Manager is locked !");
 
     if (setup_.has_flag("debug")) {
       set_debug(true);
@@ -155,9 +165,7 @@ namespace materials {
 
   void manager::load (const datatools::multi_properties & config_)
   {
-    if (is_locked ()) {
-      throw std::logic_error ("materials::manager::load: Manager is locked !");
-    }
+    DT_THROW_IF (is_locked (), std::logic_error, "Manager is locked !");
 
     for (multi_properties::entries_ordered_col_type::const_iterator i
            = config_.ordered_entries ().begin ();
@@ -168,57 +176,38 @@ namespace materials {
       const string & type = e->get_meta ();
       const datatools::properties & props = e->get_properties ();
 
-      if (_debug_) {
-        clog << "DEBUG: " << "materials::manager::load: " << "Name = '" << name << "'" << endl;
-        clog << "DEBUG: " << "materials::manager::load: " << "Type = '" << type << "'" << endl;
-      }
+      DT_LOG_DEBUG(_logging_priority_, "Load name = '" << name << "'");
+      DT_LOG_DEBUG(_logging_priority_, "Load type = '" << type << "'");
       if (type == "isotope") {
-        if (_isotopes_.find (name) != _isotopes_.end ()) {
-          std::ostringstream message;
-          message << "materials::manager::load: "
-                  << "Isotope with name '" << name << "' already exists !";
-          throw std::logic_error (message.str ());
-        }
+        DT_THROW_IF (_isotopes_.find (name) != _isotopes_.end (),
+                     std::logic_error,
+                     "Isotope with name '" << name << "' already exists !");
         isotope * iso = _creator_.create_isotope (name, props);
         _isotopes_[iso->get_name ()] = materials::smart_ref<isotope> ();
         _isotopes_[iso->get_name ()].set_ref (iso);
-        if (_debug_) clog << "DEBUG: " << "materials::manager::load: " << "Add new isotope = '" << iso->get_zai_name () << "'" << endl;
+        DT_LOG_DEBUG(_logging_priority_,"Add new isotope = '" << iso->get_zai_name () << "'");
       }
       else if (type == "element") {
-        if (_elements_.find (name) != _elements_.end ()) {
-          std::ostringstream message;
-          message << "materials::manager::load: "
-                  << "Element with name '" << name << "' already exists !";
-          throw std::logic_error (message.str ());
-        }
+        DT_THROW_IF (_elements_.find (name) != _elements_.end (),
+                     std::logic_error,
+                     "Element with name '" << name << "' already exists !");
         bool unique_element_material = false;
-        if (unique_element_material) {
-          if (_materials_.find (name) != _materials_.end ()) {
-            std::ostringstream message;
-            message << "materials::manager::load: "
-                    << "Material with name '" << name << "' already exists !";
-            throw std::logic_error (message.str ());
-          }
-        }
+        DT_THROW_IF (unique_element_material,
+                     std::logic_error,
+                     "Material with name '" << name << "' already exists !");
         element * elmt = _creator_.create_element (name, props, _isotopes_);
         _elements_[elmt->get_name ()] = materials::smart_ref<element> ();
         _elements_[elmt->get_name ()].set_ref (elmt);
-        if (_debug_) clog << "DEBUG: " << "materials::manager::load: " << "Add new element = '" << elmt->get_name () << "'" << endl;
+        DT_LOG_DEBUG(_logging_priority_,"Add new element = '" << elmt->get_name () << "'");
       } else if (type == "material") {
-        if (_materials_.find (name) != _materials_.end ()) {
-          std::ostringstream message;
-          message << "materials::manager::load: "
-                  << "Material with name '" << name << "' already exists !";
-          throw std::logic_error (message.str ());
-        }
+        DT_THROW_IF (_materials_.find (name) != _materials_.end (),
+                     std::logic_error,
+                     "Material with name '" << name << "' already exists !");
         bool unique_element_material = false;
         if (unique_element_material) {
-          if (_elements_.find (name) != _elements_.end ()) {
-            std::ostringstream message;
-            message << "materials::manager::load: "
-                    << "Elements with name '" << name << "' already exists !";
-            throw std::logic_error (message.str ());
-          }
+          DT_THROW_IF (_elements_.find (name) != _elements_.end (),
+                       std::logic_error,
+                       "Elements with name '" << name << "' already exists !");
         }
         material * matl = _creator_.create_material (name,
                                                      props,
@@ -226,60 +215,35 @@ namespace materials {
                                                      _materials_);
         _materials_[matl->get_name ()] = materials::smart_ref<material> ();
         _materials_[matl->get_name ()].set_ref (matl);
-        if (_debug_) clog << "DEBUG: " << "materials::manager::load: "
-                          << "Add new material = '"
-                          << matl->get_name () << "'" << endl;
+        DT_LOG_DEBUG(_logging_priority_,"Add new material = '" << matl->get_name () << "'");
         _ordered_materials_.push_back (matl->get_name ());
       }
       else if (type == "alias") {
         material_dict_type::const_iterator mat_found = _materials_.find (name);
         if (mat_found != _materials_.end ()) {
           const smart_ref<material> & sref = mat_found->second;
-          if (! sref.is_alias()) {
-            // Already existing plain material:
-            std::ostringstream message;
-            message << "materials::manager::load: "
-                    << "Material with name '" << name
-                    << "' already exists ! It cannot be overloaded !";
-            throw std::logic_error (message.str ());
-          } else {
-            // Already existing material alias:
-            if (! is_alias_allow_overload()) {
-              std::ostringstream message;
-              message << "materials::manager::load: "
-                      << "Alias with name '" << name
-                      << "' cannot be overloaded !";
-              throw std::logic_error (message.str ());
-            } else {
-              std::clog << "WARNING: "
-                        << "materials::manager::load: "
-                        << "Redefinition of alias '" << name << "' !"
-                        << std::endl;
-            }
-          }
+          DT_THROW_IF (! sref.is_alias(),
+                       std::logic_error,
+                       "Material with name '" << name
+                       << "' already exists ! It cannot be overloaded !");
+          // Already existing material alias:
+          DT_THROW_IF (! is_alias_allow_overload(),
+                       std::logic_error,
+                       "Alias with name '" << name << "' cannot be overloaded !");
+          DT_LOG_WARNING(_logging_priority_,"Redefinition of alias '" << name << "' !");
         }
-        if (! props.has_key ("material")) {
-          std::ostringstream message;
-          message << "materials::manager::load: "
-                  << "Missing property 'material' for a material alias !";
-          throw std::logic_error (message.str ());
-        }
+        DT_THROW_IF (! props.has_key ("material"),
+                     std::logic_error,
+                     "Missing property 'material' for a material alias !");
         std::string alias_material = props.fetch_string ("material");
         material_dict_type::iterator found = _materials_.find (alias_material);
-        if (found == _materials_.end ()) {
-          std::ostringstream message;
-          message << "materials::manager::load: "
-                  << "Aliased material named '" << alias_material << "' does not exist !";
-          throw std::logic_error (message.str ());
-        }
-        if (found->second.is_alias()) {
-          // An alias:
-          std::ostringstream message;
-          message << "materials::manager::load: "
-                  << "Material alias with name '" << name
-                  << "' cannot refer itself to another alias ('" << alias_material << "') !";
-          throw std::logic_error (message.str ());
-        }
+        DT_THROW_IF (found == _materials_.end (),
+                     std::logic_error,
+                     "Aliased material named '" << alias_material << "' does not exist !");
+        DT_THROW_IF (found->second.is_alias(),
+                     std::logic_error,
+                     "Material alias with name '" << name
+                     << "' cannot refer itself to another alias ('" << alias_material << "') !");
         _materials_[name] = materials::smart_ref<material> ();
         _materials_[name].set_ref (found->second.grab_ref ());
         _materials_[name].set_alias_of(alias_material);
@@ -288,7 +252,7 @@ namespace materials {
           _ordered_materials_.erase(ofound);
         }
         _ordered_materials_.push_back (name);
-        if (_debug_) clog << "DEBUG: " << "materials::manager::load: " << "Add new material alias = '" << name << "' for material '" << alias_material << "'" << endl;
+        DT_LOG_DEBUG(_logging_priority_, "Add new material alias = '" << name << "' for material '" << alias_material << "'");
       }
 
     } // for

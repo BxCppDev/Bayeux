@@ -20,6 +20,8 @@
 #include <string>
 #include <list>
 
+#include <datatools/logger.h>
+
 #include <materials/factory.h>
 #include <materials/isotope.h>
 #include <materials/element.h>
@@ -84,9 +86,13 @@ namespace materials {
                             const std::string & indent_ = "",
                             bool inherit_          = false) const;
 
+    void set_logging_priority(datatools::logger::priority);
+
+    datatools::logger::priority get_logging_priority() const;
+
   private:
 
-    bool                   _debug_; /// Debug flag
+    datatools::logger::priority _logging_priority_;
     bool                   _locked_; /// Lock flag
     bool                   _alias_allow_overload_; /// Flag to allow alias overloading
     factory                _creator_; /// Embeded factory

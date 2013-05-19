@@ -56,7 +56,7 @@ namespace materials {
     /*! KP_ATOM (number of atoms by molecule) or KP_MASS (% mass)
      */
 
- 
+
     enum proportion_unit_type
       {
         KP_UNDEFINED = -1,
@@ -80,7 +80,7 @@ namespace materials {
     material (const std::string & name_);
 
     /// Destructor
-    virtual ~material ();       
+    virtual ~material ();
 
     bool is_composed_by_mean_z_a () const;
 
@@ -115,7 +115,7 @@ namespace materials {
 
     void add_element_by_nb_of_atoms (const element * elt_ptr_ , int nb_of_atoms_   );
     //!<  Add an element in KP_ATOM proportion unit
-    
+
     void add_material_by_mass (const material & mat_ref_ , double weight_  , bool owned_ = false);
     //!<  Add an material with weight in KP_MASS proportion unit
 
@@ -123,23 +123,21 @@ namespace materials {
     //!<  Add an element with weight in KP_MASS proportion unit
 
     void build (); //!<  Build the material :  compute molar mass and lock (or not).
-    
+
     bool is_locked () const {return _locked_;} //!<  Return true if composition is valid, weights are normalized and molar mass is computed.
-    
+
     const datatools::properties & get_properties () const {return _properties_;} //!< Get reference of datatools::properties private attribute
-    
+
     datatools::properties & grab_properties () {return _properties_;} //!< Get reference of datatools::properties private attribute
-    
+
     virtual void tree_dump (std::ostream & out_  = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
                             bool inherit_ = false) const;  //!<  print info virtual method
- 
+
     bool is_alias() const;
 
   private :
-
-    void _lock_check_ (const std::string & where_) const;
 
     void _compute_molar_mass_ ();         //!<  Compute molar mass in[g/mol]
 
@@ -148,11 +146,11 @@ namespace materials {
     void _set_mean_z_ (double);
 
     void _set_mean_a_ (double);
-    
+
     void _normalize_weights_ ();
-    
+
   private:
-    
+
     std::string _name_;    //!< Name
     double      _density_; //!< Density
     double      _mean_z_;  //!< Mean atomic number

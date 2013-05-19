@@ -1,12 +1,15 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* factory.cc
  */
 #include <iostream>
 #include <stdexcept>
 #include <sstream>
+
 #include <datatools/clhep_units.h>
 #include <datatools/units.h>
 #include <datatools/properties.h>
+#include <datatools/logger.h>
+#include <datatools/exception.h>
 
 #include <materials/detail/tools.h>
 #include <materials/factory.h>
@@ -22,50 +25,40 @@ namespace materials {
   {
     return _debug_;
   }
-  
+
   void factory::set_debug (bool new_value_)
   {
     _debug_ = new_value_;
     return;
   }
-  
+
   // ctor:
   factory::factory ()
   {
     _debug_ = false;
     return;
   }
-  
+
   // dtor:
   factory::~factory ()
   {
     return;
   }
-  
-  isotope * factory::create_isotope (const string & name_, 
+
+  isotope * factory::create_isotope (const string & name_,
                                      const datatools::properties & config_) const
   {
     int z = 0;
     int a = 0;
     int i = isotope::GROUND_STATE;
 
-    if (config_.has_key ("z"))
-      {
-        z =  config_.fetch_integer ("z");
-      }
-    else
-      {
-        throw std::logic_error ("materials::factory::create_isotope: Missing 'z' property !");
-      }
-    
-    if (config_.has_key ("a"))
-      {
-        a =  config_.fetch_integer ("a");
-      }
-    else
-      {
-        throw std::logic_error ("materials::factory::create_isotope: Missing 'a' property !");
-      }
+    DT_THROW_IF(!config_.has_key ("z"),
+                std::logic_error, "Missing 'z' property for isotope '" << name_ << "' !");
+    z =  config_.fetch_integer ("z");
+
+    DT_THROW_IF(!config_.has_key ("a"),
+                std::logic_error, "Missing 'a' property for isotope '" << name_ << "' !");
+    a =  config_.fetch_integer ("a");
 
     if (config_.has_key ("I"))
       {
@@ -88,9 +81,8 @@ namespace materials {
           }
         else
           {
-            ostringstream message;
-            message << "materials::factory::create_isotope: Invalid 'I' property label: '" << i_str << "' !";
-            throw std::logic_error (message.str ());
+            DT_THROW_IF(true,
+                        std::logic_error, "Invalid 'I' property label: '" << i_str << "' for isotope '" << name_ << "' !");
           }
       }
     isotope * iso = new isotope (name_, z, a, i);
@@ -98,55 +90,37 @@ namespace materials {
     return iso;
   }
 
-  
+
   element * factory::create_element (const string & name_,
-                                     const datatools::properties & config_, 
+                                     const datatools::properties & config_,
                                      const isotope_dict_type & isotopes_) const
   {
     int z = 0;
-    double a = -1.0;     
+    double a = -1.0;
     vector<string> isotopes;
     vector<double> weights;
 
-    if (config_.has_key ("z"))
-      {
-        z = config_.fetch_integer ("z");
-      }
-    else
-      {
-        throw std::logic_error ("materials::factory::create_element: Missing 'z' property !");
-      }
+    DT_THROW_IF (!config_.has_key ("z"),
+                 std::logic_error ,
+                 "Missing 'z' property for element '" << name_ << "' !");
+    z = config_.fetch_integer ("z");
 
-    if (config_.has_key ("a"))
-      {
-        a = config_.fetch_real ("a");
-      }
-    else
-      {
-        if (! config_.has_key ("isotope.names"))
-          {
-            throw std::logic_error ("materials::factory::create_element: Missing 'isotope.names' property !");
-          }
-        else
-          {
-            config_.fetch ("isotope.names", isotopes);
-          }
-    
-        if (! config_.has_key ("isotope.weights"))
-          {
-            throw std::logic_error ("materials::factory::create_element: Missing 'isotope.weights' property !");
-          }
-        else
-          {
-            config_.fetch ("isotope.weights", weights);
-          }
-    
-        if (isotopes.size () != weights.size ())
-          {
-            throw std::logic_error ("materials::factory::create_element: Unmatching isotopes/weights vector size !");
-          }
-      }
-     
+    if (config_.has_key ("a")) {
+      a = config_.fetch_real ("a");
+    } else {
+      DT_THROW_IF (! config_.has_key ("isotope.names"),
+                   std::logic_error ,
+                   "Missing 'isotope.names' property for element '" << name_ << "' !");
+      config_.fetch ("isotope.names", isotopes);
+
+      DT_THROW_IF (! config_.has_key ("isotope.weights"),
+                   std::logic_error , "Missing 'isotope.weights' property for element '" << name_ << "' !");
+      config_.fetch ("isotope.weights", weights);
+
+      DT_THROW_IF (isotopes.size () != weights.size (),
+                   std::logic_error ,"Unmatching isotopes/weights vector size for element '" << name_ << "' !");
+    }
+
     element * elmt = new element (name_, z);
 
     if (a > 0.0)
@@ -157,15 +131,11 @@ namespace materials {
       {
         // add isotopes in element:
         for (int i = 0; i < isotopes.size (); i++)
-          { 
+          {
             isotope_dict_type::const_iterator found = isotopes_.find (isotopes[i]);
-            if (found == isotopes_.end ())
-              {
-                ostringstream message;
-                message << "materials::factory::create_element: Isotope '" << isotopes[i] 
-                        << "' not found in map of isotopes !";
-                throw std::logic_error (message.str ());
-              }
+            DT_THROW_IF (found == isotopes_.end (),
+                         std::logic_error,
+                         "Isotope '" << isotopes[i] << "' not found in map of isotopes for element '" << name_ << "' !");
             const isotope & iso = found->second.get_ref ();
             elmt->add_isotope (iso, weights[i]);
           }
@@ -173,10 +143,10 @@ namespace materials {
     elmt->build ();
     return elmt;
   }
-  
-  material * factory::create_material (const string & name_, 
-                                       const datatools::properties & config_, 
-                                       const element_dict_type & elements_, 
+
+  material * factory::create_material (const string & name_,
+                                       const datatools::properties & config_,
+                                       const element_dict_type & elements_,
                                        const material_dict_type & materials_) const
   {
     double density = 1.0;
@@ -190,25 +160,10 @@ namespace materials {
     double pressure_unit = CLHEP::bar;
     string state = "";
 
-    if (config_.has_key ("density"))
-      {
-        density = config_.fetch_real ("density");
-      }
-    else
-      {
-        throw std::logic_error ("materials::factory::create_material: Missing 'density' property !");
-      }
-
     if (config_.has_key ("density.unit"))
       {
         string density_unit_str =  config_.fetch_string ("density.unit");
         density_unit = datatools::units::get_density_unit_from (density_unit_str);
-      }
-
-    if (config_.has_key ("temperature"))
-      {
-        temperature = config_.fetch_real ("temperature");
-        temperature *= CLHEP::kelvin;
       }
 
     if (config_.has_key ("temperature.unit"))
@@ -217,21 +172,27 @@ namespace materials {
         temperature_unit = datatools::units::get_temperature_unit_from (temperature_unit_str);
       }
 
-    if (config_.has_key ("pressure"))
-      {
-        pressure = config_.fetch_real ("pressure");
-      }
-
     if (config_.has_key ("pressure.unit"))
       {
         string pressure_unit_str =  config_.fetch_string ("pressure.unit");
         pressure_unit = datatools::units::get_pressure_unit_from (pressure_unit_str);
       }
- 
-    // apply units:
-    density *= density_unit;
-    temperature *= temperature_unit;
-    pressure *= pressure_unit;
+
+    DT_THROW_IF (!config_.has_key ("density"), std::logic_error, "Missing 'density' property for material '" << name_ << "' !");
+    density = config_.fetch_real ("density");
+    if (! config_.has_explicit_unit("density")) density *= density_unit;
+
+    if (config_.has_key ("temperature"))
+      {
+        temperature = config_.fetch_real ("temperature");
+        if (! config_.has_explicit_unit("temperature")) temperature *= temperature_unit;
+      }
+
+    if (config_.has_key ("pressure"))
+      {
+        pressure = config_.fetch_real ("pressure");
+        if (! config_.has_explicit_unit("pressure")) pressure *= pressure_unit;
+      }
 
     if (config_.has_key ("formula"))
       {
@@ -251,14 +212,10 @@ namespace materials {
     double         mean_z = -1.0;
     double         mean_a = -1.0;
 
-    if (config_.has_key ("composition.mode"))
-      {
-        composition_mode_label =  config_.fetch_string ("composition.mode");
-      }
-    else
-      {
-        throw std::logic_error ("materials::factory::create_material: Missing 'composition.mode' property !");
-      }
+    DT_THROW_IF (! config_.has_key ("composition.mode"),
+                 std::logic_error,
+                 "Missing 'composition.mode' property for material '" << name_ << "' !");
+    composition_mode_label =  config_.fetch_string ("composition.mode");
 
     if (composition_mode_label == "number_of_atoms")
       {
@@ -274,90 +231,56 @@ namespace materials {
       }
     else
       {
-        ostringstream message;
-        message << "materials::factory::create_material: "
-                << "Invalid 'composition.mode' property ('" << composition_mode_label << "') !";
-        throw std::logic_error (message.str ());
+        DT_THROW_IF (true,std::logic_error,"Invalid 'composition.mode' property ('" << composition_mode_label << "') for material '" << name_ << "' !");
       }
 
     if (composition_mode == material::MEAN_ZA)
       {
-        if (config_.has_key ("mean_z"))
-          {
-            mean_z = config_.fetch_real ("mean_z");
-          }
-        else
-          {
-            throw std::logic_error ("materials::factory::create_material: Missing 'mean_z' property !");
-          }
-        if (config_.has_key ("mean_a"))
-          {
-            mean_a = config_.fetch_real ("mean_a");
-          }
-        else
-          {
-            throw std::logic_error ("materials::factory::create_material: Missing 'mean_a' property !");
-          }
+        DT_THROW_IF (! config_.has_key ("mean_z"),
+                     std::logic_error,
+                     "Missing 'mean_z' property !");
+        mean_z = config_.fetch_real ("mean_z");
+
+        DT_THROW_IF (! config_.has_key ("mean_a"),
+                     std::logic_error,
+                     "Missing 'mean_a' property !");
+        mean_a = config_.fetch_real ("mean_a");
       }
     else
       {
-        if (config_.has_key ("composition.names"))
-          {
-            config_.fetch ("composition.names", composition_names);
-            if (composition_names.size () == 0)
-              {
-                ostringstream message;
-                message << "materials::factory::create_material: Empty list of compounds for material '" << name_ << "' !";
-                throw std::logic_error (message.str ());
-              } 
-          }
-        else
-          {
-            ostringstream message;
-            message << "materials::factory::create_material: Missing 'composition.names' property for material '" << name_ << "' !";
-            throw std::logic_error (message.str ());
-          }
+        DT_THROW_IF (! config_.has_key ("composition.names"),
+                     std::logic_error,
+                     "Missing 'composition.names' property for material '" << name_ << "' !");
+        config_.fetch ("composition.names", composition_names);
+        DT_THROW_IF (composition_names.size () == 0,
+                     std::logic_error,
+                     "Empty list of compounds for material '" << name_ << "' !");
 
         if (composition_mode == material::NUMBER_OF_ATOMS)
           {
-            if (config_.has_key ("composition.number_of_atoms"))
-              {
-                config_.fetch ("composition.number_of_atoms", composition_nb_of_atoms);
-                if (composition_names.size () != composition_nb_of_atoms.size ())
-                  {
-                    throw std::logic_error ("materials::factory::create_material: Unmatching sizes of list of compounds/number of atoms !");
-                  }
-              }
-            else
-              {
-                ostringstream message;
-                message << "materials::factory::create_material: Missing 'composition.number_of_atoms' property for material '" << name_ << "' !";
-                throw std::logic_error (message.str ());
-              }
+            DT_THROW_IF (! config_.has_key ("composition.number_of_atoms"),
+                         std::logic_error,
+                         "Missing 'composition.number_of_atoms' property for material '" << name_ << "' !");
+            config_.fetch ("composition.number_of_atoms", composition_nb_of_atoms);
+            DT_THROW_IF (composition_names.size () != composition_nb_of_atoms.size (),
+                         std::logic_error,
+                         "Unmatching sizes of list of compounds/number of atoms !");
           }
-
 
         if (composition_mode == material::FRACTION_MASS)
           {
-            if (config_.has_key ("composition.fraction_mass"))
-              {
-                config_.fetch ("composition.fraction_mass", composition_fraction_mass);
-                if (composition_names.size () != composition_fraction_mass.size ())
-                  {
-                    throw std::logic_error ("materials::factory::create_material: Unmatching sizes of list of compounds/fraction mass !");
-                  }
-              }
-            else
-              {
-                ostringstream message;
-                message << "materials::factory::create_material: Missing 'composition.fraction_mass' property for element '" << name_ << "' !";
-                throw std::logic_error (message.str ());
-              }
+            DT_THROW_IF (! config_.has_key ("composition.fraction_mass"),
+                         std::logic_error,
+                         "Missing 'composition.fraction_mass' property for material '" << name_ << "' !");
+            config_.fetch ("composition.fraction_mass", composition_fraction_mass);
+            DT_THROW_IF (composition_names.size () != composition_fraction_mass.size (),
+                         std::logic_error,
+                         "Unmatching sizes of list of compounds/fraction mass for material '" << name_ << "' !");
           }
       }
-    
+
     material * matl = new material ();
-    try 
+    try
       {
         matl->set_name (name_);
         matl->set_density (density);
@@ -370,15 +293,11 @@ namespace materials {
         if (composition_mode == material::NUMBER_OF_ATOMS)
           {
             for (int i = 0; i < composition_names.size (); i++)
-              { 
+              {
                 element_dict_type::const_iterator found = elements_.find (composition_names[i]);
-                if (found ==  elements_.end ())
-                  {
-                    ostringstream message;
-                    message << "materials::factory::create_material: "
-                            << "Unknown element '" << composition_names[i] << "') !";
-                    throw std::logic_error (message.str ());       
-                  }
+                DT_THROW_IF (found ==  elements_.end (),
+                             std::logic_error,
+                             "Unknown element '" << composition_names[i] << "') !");
                 const element & elmt = found->second.get_ref ();
                 int nb_atoms = composition_nb_of_atoms[i];
                 matl->add_element_by_nb_of_atoms (elmt , nb_atoms);
@@ -388,17 +307,16 @@ namespace materials {
         if (composition_mode == material::FRACTION_MASS)
           {
             for (int i = 0; i < composition_names.size (); i++)
-              { 
+              {
                 const element * a_elmt = 0;
                 const material * a_matl = 0;
                 if (composition_names[i] == name_)
                   {
                     ostringstream message;
-                    message << "materials::factory::create_material: "
-                            << "Self-referenced material with name '" 
-                            << composition_names[i] << "' !";
+                    message << "Self-referenced material with name '"
+                            << composition_names[i] << "' for material '" << name_ << "' !";
                     delete matl;
-                    throw std::logic_error (message.str ());       
+                    DT_THROW_IF(true, std::logic_error, message.str ());
                   }
                 element_dict_type::const_iterator found = elements_.find (composition_names[i]);
                 if (found != elements_.end ())
@@ -410,26 +328,21 @@ namespace materials {
                     material_dict_type::const_iterator found2 = materials_.find (composition_names[i]);
                     if (found2 != materials_.end ())
                       {
-                        if (found2->second.is_alias())
-                          {
-                            ostringstream message;
-                            message << "materials::factory::create_material: "
-                                    << "Cannot use material alias '" << composition_names[i] 
-                                    << "' as a component for material '" << name_ << "' !";
-                            throw std::logic_error (message.str ());
-                          }
+                        DT_THROW_IF (found2->second.is_alias(),
+                                     std::logic_error,
+                                     "Cannot use material alias '" << composition_names[i]
+                                     << "' as a component for material '" << name_ << "' !");
                         a_matl = found2->second.get_ptr ();
                       }
                     else
                       {
                         ostringstream message;
                         message << "materials::factory::create_material: "
-                                << "Unknown element or material '" << composition_names[i] 
+                                << "Unknown element or material '" << composition_names[i]
                                 << "' for material '" << name_ << "' !";
-                        throw std::logic_error (message.str ());
-
-                        // delete matl;
-                        // throw std::logic_error (message.str ());   
+                        DT_THROW_IF(true, std::logic_error,
+                                    "Unknown element or material '" << composition_names[i]
+                                    << "' for material '" << name_ << "' !");
                       }
                   }
                 double f_mass = composition_fraction_mass[i];
@@ -465,29 +378,22 @@ namespace materials {
             matl->grab_properties ().store ("pressure", pressure);
           }
 
-        // 2012-11-03 FM : support for various "Material Properties Tables" 
+        // 2012-11-03 FM : support for various "Material Properties Tables"
         // ala Geant4 :
         config_.export_starting_with (matl->grab_properties (), "mpt.");
 
         matl->build ();
       }
-    catch (std::logic_error & x)
-      {
-        cerr << "materials::factory::create_material: " << "Exception : " << x.what () << endl;
-        delete matl;
-        matl = 0;
-        throw x;
-      }
     catch (exception & x)
       {
-        cerr << "materials::factory::create_material: " << "Exception : " << x.what () << endl;
+        //cerr << "materials::factory::create_material: " << "Exception : " << x.what () << endl;
         delete matl;
         matl = 0;
         throw x;
       }
     return matl;
   }
- 
+
 } // end of namespace materials
 
 // end of factory.cc
