@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 // test_data_io.cxx
 
 #include <cstdlib>
@@ -22,8 +22,8 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for serialization of the 'brio::test::data_t' sample class !" << endl; 
-  
+      clog << "Test program for serialization of the 'brio::test::data_t' sample class !" << endl;
+
       bool devel = false;
       bool debug = false;
       bool verbose = false;
@@ -34,77 +34,75 @@ int main (int argc_, char ** argv_)
         {
           string token = argv_[iarg];
 
-          if (token[0] == '-') 
+          if (token[0] == '-')
             {
-               string option = token; 
-               if ((option == "-d") || (option == "--debug")) 
+               string option = token;
+               if ((option == "-d") || (option == "--debug"))
                  {
                    debug = true;
                  }
-               else if ((option == "-v") || (option == "--verbose")) 
+               else if ((option == "-v") || (option == "--verbose"))
                  {
                    verbose = true;
                  }
-               else if ((option == "-m") || (option == "--many")) 
+               else if ((option == "-m") || (option == "--many"))
                  {
                    data_count = 1000;
                  }
-               else if ((option == "-M") || (option == "--manymany")) 
+               else if ((option == "-M") || (option == "--manymany"))
                  {
                    data_count = 100000;
                  }
-              else if ((option == "-V") || (option == "--devel")) 
+              else if ((option == "-V") || (option == "--devel"))
                  {
                    devel = true;
                  }
-              else if ((option == "-F") || (option == "--delete-file")) 
+              else if ((option == "-F") || (option == "--delete-file"))
                  {
                    delete_file = true;
                  }
-               else 
-                 { 
-                    clog << "warning: ignoring option '" << option << "'!" << endl; 
+               else
+                 {
+                    clog << "warning: ignoring option '" << option << "'!" << endl;
                  }
             }
           else
             {
-              string argument = token; 
-              { 
-                clog << "warning: ignoring argument '" << argument << "'!" << endl; 
+              string argument = token;
+              {
+                clog << "warning: ignoring argument '" << argument << "'!" << endl;
               }
-            } 
-          iarg++; 
-      }  
-
-      brio::detail::base_io::g_devel = devel;
+            }
+          iarg++;
+      }
 
       {
-        clog << "notice: Store data..." << endl;         
-        // Declare a brio writer:  
+        clog << "notice: Store data..." << endl;
+        // Declare a brio writer:
         brio::writer my_writer ("test_data_io.brio");
         // Store `data' objects within the *automatic* store;
-        for (int i = 0; i < data_count; i++) 
+        for (int i = 0; i < data_count; i++)
           {
             brio::test::data_t a_data;
             my_writer.store (a_data);
           }
         my_writer.close ();
-        clog << "notice: Done." << endl;         
+        clog << "notice: Done." << endl;
       }
 
       {
-        clog << "notice: Load data..." << endl;         
-        // Declare a brio reader:           
+        clog << "notice: Load data..." << endl;
+        // Declare a brio reader:
         brio::reader my_reader ("test_data_io.brio");
-        
+
         // Load `data' objects from the *automatic* store;
-        while (my_reader.has_next ()) 
+        while (my_reader.has_next ())
           {
             brio::test::data_t a_data;
             my_reader.load_next (a_data);
           }
         my_reader.close ();
-        clog << "notice: Done." << endl;         
+        clog << "notice: Done." << endl;
       }
 
       if (delete_file)
@@ -117,13 +115,13 @@ int main (int argc_, char ** argv_)
 
     }
   catch (exception & x)
-    { 
-      cerr << "error: " << x.what () << endl; 
+    {
+      cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);

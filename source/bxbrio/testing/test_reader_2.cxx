@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 // test_reader_2.cxx
 
 #include <cstdlib>
@@ -22,75 +22,74 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'brio::reader' !" << endl; 
-  
-      bool debug = false;
-      bool verbose = false;
+      clog << "Test program for class 'brio::reader' !" << endl;
+
+      datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
       bool dump = false;
       size_t data_count = 10;
       bool text = false;
-     
+
       int iarg = 1;
       while (iarg < argc_)
         {
           string token = argv_[iarg];
 
-          if (token[0] == '-') 
+          if (token[0] == '-')
             {
-              string option = token; 
-              if ((option == "-d") || (option == "--debug")) 
+              string option = token;
+              if ((option == "-d") || (option == "--debug"))
                 {
-                   debug = true;
-                 }
-               else if ((option == "-D") || (option == "--dump")) 
+                  logging = datatools::logger::PRIO_DEBUG;
+                }
+               else if ((option == "-D") || (option == "--dump"))
                 {
                   dump = true;
                 }
-               else if ((option == "-v") || (option == "--verbose")) 
+               else if ((option == "-v") || (option == "--verbose"))
                  {
-                   verbose = true;
+                   logging = datatools::logger::PRIO_NOTICE;
                  }
-               else if ((option == "-m") || (option == "--many")) 
+               else if ((option == "-m") || (option == "--many"))
                  {
                    data_count = 1000;
                  }
-               else if ((option == "-M") || (option == "--manymany")) 
+               else if ((option == "-M") || (option == "--manymany"))
                  {
                    data_count = 100000;
                  }
-               else if ((option == "-t")) 
+               else if ((option == "-t"))
                  {
-                  text = true; 
+                  text = true;
                  }
-               else 
-                 { 
-                    clog << "warning: ignoring option '" << option << "'!" << endl; 
+               else
+                 {
+                    clog << "warning: ignoring option '" << option << "'!" << endl;
                  }
             }
           else
             {
-              string argument = token; 
-              { 
-                clog << "warning: ignoring argument '" << argument << "'!" << endl; 
+              string argument = token;
+              {
+                clog << "warning: ignoring argument '" << argument << "'!" << endl;
               }
-            } 
-          iarg++; 
-      } 
+            }
+          iarg++;
+      }
 
-      // Setup a brio reader:           
+      // Setup a brio reader:
       string filename = "test_io_2.brio";
       if (text)
         {
           filename = "test_io_2.trio";
         }
-      brio::reader my_reader (filename, verbose, debug);
+      brio::reader my_reader (filename,logging);
 
       // Loop on serialized records in this store:
       while (my_reader.has_next ())
         {
           brio::test::data_t data;
           my_reader.load_next (data);
-          if (dump) 
+          if (dump)
             {
               data.dump (clog, "Data loaded from the *automatic* store: ");
             }
@@ -108,16 +107,16 @@ int main (int argc_, char ** argv_)
 
       // Close the file:
       my_reader.close ();
-  
+
     }
   catch (exception & x)
-    { 
-      cerr << "error: " << x.what () << endl; 
+    {
+      cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);

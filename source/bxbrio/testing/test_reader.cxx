@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 // test_reader.cxx
 
 #include <cstdlib>
@@ -11,7 +11,7 @@
 
 // Serialization implementation code :
 #include <datatools/properties.ipp>
-#include <brio_test_data.ipp> 
+#include <brio_test_data.ipp>
 
 #include <brio/reader.h>
 
@@ -22,8 +22,8 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'brio::reader'!" << endl; 
-  
+      clog << "Test program for class 'brio::reader'!" << endl;
+
       bool debug = false;
       bool verbose = false;
       size_t data_count = 10;
@@ -35,50 +35,50 @@ int main (int argc_, char ** argv_)
         {
           string token = argv_[iarg];
 
-          if (token[0] == '-') 
+          if (token[0] == '-')
             {
-               string option = token; 
-               if ((option == "-d") || (option == "--debug")) 
+               string option = token;
+               if ((option == "-d") || (option == "--debug"))
                  {
                    debug = true;
                  }
-               else if ((option == "-v") || (option == "--verbose")) 
+               else if ((option == "-v") || (option == "--verbose"))
                  {
                    verbose = true;
                  }
-               else if ((option == "-m") || (option == "--many")) 
+               else if ((option == "-m") || (option == "--many"))
                  {
                    data_count = 1000;
                  }
-               else if ((option == "-M") || (option == "--manymany")) 
+               else if ((option == "-M") || (option == "--manymany"))
                  {
                    data_count = 100000;
                  }
-               else if ((option == "-c")) 
+               else if ((option == "-c"))
                  {
                    check_tag = false;
                  }
-               else 
-                 { 
-                    clog << "warning: ignoring option '" << option << "'!" << endl; 
+               else
+                 {
+                    clog << "warning: ignoring option '" << option << "'!" << endl;
                  }
             }
           else
             {
-              string argument = token; 
-              { 
-                clog << "warning: ignoring argument '" << argument << "'!" << endl; 
+              string argument = token;
+              {
+                clog << "warning: ignoring argument '" << argument << "'!" << endl;
               }
-            } 
-          iarg++; 
-      } 
+            }
+          iarg++;
+      }
 
-      // Declare a brio reader:           
+      // Declare a brio reader:
       brio::reader my_reader;
 
       /* Some setup before opening the output file */
-      my_reader.set_debug (debug); 
       my_reader.set_verbose (verbose);
+      my_reader.set_debug (debug);
 
       // Set the flag to check serialization tags while loading archives:
       my_reader.set_check_serial_tag (check_tag);
@@ -89,17 +89,17 @@ int main (int argc_, char ** argv_)
         {
           filename = "test_io.trio";
         }
-      my_reader.open (filename); 
+      my_reader.open (filename);
 
-      // Print reader's status: 
+      // Print reader's status:
       my_reader.print_info (clog);
 
-      /* Select the 'header' store to be used for 
+      /* Select the 'header' store to be used for
        * current deserialization source:
        */
       my_reader.select_store ("header");
 
-      // Print reader's status: 
+      // Print reader's status:
       my_reader.print_info (clog);
 
       // Loop on serialized records in this store:
@@ -109,7 +109,7 @@ int main (int argc_, char ** argv_)
           my_reader.load_next (infos);
           infos.tree_dump (clog, "Properties loaded from the 'header' store: ");
         }
-  
+
       // Print reader's status:
       my_reader.print_info (clog);
 
@@ -128,7 +128,7 @@ int main (int argc_, char ** argv_)
       if (my_reader.has_automatic_store ())
         {
           clog << "Reader has found an automatic store to be selected !" << endl;
-          my_reader.select_automatic_store ();     
+          my_reader.select_automatic_store ();
           datatools::properties infos;
           my_reader.load_next (infos);
           infos.tree_dump (clog, "Properties loaded from the *automatic* store: ");
@@ -139,16 +139,16 @@ int main (int argc_, char ** argv_)
 
       // Close the file.
       my_reader.close ();
-  
+
     }
   catch (exception & x)
-    { 
-      cerr << "error: " << x.what () << endl; 
+    {
+      cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);

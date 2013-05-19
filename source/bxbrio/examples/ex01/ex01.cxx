@@ -2,22 +2,31 @@
 #include <exception>
 #include <iostream>
 
+#include <datatools/logger.h>
+
 #include <brio/writer.h>
 #include <brio/reader.h>
 
 #include <foo.h>  // a serializable sample class
 #include <foo.ipp> // Serialization code
 
-int main(void)
+int main(int argc_, char ** argv_)
 {
+  datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
   try {
 
+    if (argc_>1) {
+      std::string opt = argv_[1];
+      if (opt == "--debug") logging = datatools::logger::PRIO_DEBUG;
+      else if (opt == "--warning") logging = datatools::logger::PRIO_WARNING;
+    }
+
     {
-      std::clog << "Serializing objects...\n";
+      DT_LOG_NOTICE(logging,"Serializing objects...");
       long seed = 12345;
       srand48(seed);
       // Store foo objects in a BRIO file (using the default automatic store) :
-      brio::writer my_writer("ex01_data.brio");
+      brio::writer my_writer("ex01_data.brio", logging);
       for (int i = 0; i < 10; i++) {
         foo obj;
         obj.randomize();
@@ -32,13 +41,12 @@ int main(void)
     }
 
     {
-      std::clog << "\nDeserializing objects...\n";
+      DT_LOG_NOTICE(logging,"Deserializing objects...");
       /* Load foo objects sequentially from a BRIO file
        * (using the default automatic store) :
        */
-      brio::reader my_reader("ex01_data.brio");
-      std::clog << "Default store has " << my_reader.get_number_of_entries()
-                << " records." << std::endl;
+      brio::reader my_reader("ex01_data.brio", logging);
+      DT_LOG_NOTICE(logging, "Default store has " << my_reader.get_number_of_entries() << " records.");
       int counter =  0;
       while (my_reader.has_next()) {
         foo obj;
@@ -52,7 +60,7 @@ int main(void)
         obj.dump(std::clog, title.str());
         counter++;
       }
-      std::clog << counter << " objects have been loaded.\n";
+      DT_LOG_NOTICE(logging, counter << " objects have been loaded.");
       // Rewind the current (default) store :
       my_reader.rewind_store();
       // Explicitly load the 4th foo entry from the default automatic store :
@@ -67,10 +75,10 @@ int main(void)
     }
   }
   catch(std::exception & x) {
-    std::cerr << "error: " << x.what() << std::endl;
+    DT_LOG_FATAL(datatools::logger::PRIO_FATAL,x.what());
   }
   catch(...) {
-    std::cerr << "error: " << "Unexpected error !" << std::endl;
+    DT_LOG_FATAL(datatools::logger::PRIO_FATAL,"Unexpected error !");
   }
   return 0;
 }
