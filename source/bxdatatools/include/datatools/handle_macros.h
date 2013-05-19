@@ -33,27 +33,17 @@
   /**/
 
 #define DATATOOLS_HANDLE_GET_REF(RefVar,HandleVar,Type)			\
-  if (! HandleVar) {							\
-    std::ostringstream _datatools_handle_get_ref_message;		\
-    _datatools_handle_get_ref_message << "macro DATATOOLS_HANDLE" << "_GET_REF: "    \
-				      << "Handle '" << BOOST_PP_STRINGIZE(HandleVar) \
-				      << "' has no data !";		\
-    throw std::logic_error(_datatools_handle_get_ref_message.str());	\
-  }									\
-  const Type& RefVar = HandleVar.get();					\
-  									\
+  DT_THROW_IF (! HandleVar,						\
+	       std::logic_error,					\
+	       "Handle '" << BOOST_PP_STRINGIZE(HandleVar) << "' has no data !"); \
+  const Type& RefVar = HandleVar.get();
   /**/
 
 #define DATATOOLS_HANDLE_GRAB_REF(RefVar,HandleVar,Type)	\
-  if (! HandleVar) {							\
-    std::ostringstream _datatools_handle_grab_ref_message;		\
-    _datatools_handle_grab_ref_message << "macro DATATOOLS_HANDLE" << "_GRAB_REF: "   \
-				       << "Handle '" << BOOST_PP_STRINGIZE(HandleVar) \
-				       << "' has no data !";		\
-    throw std::logic_error (_datatools_handle_grab_ref_message.str());	\
-  }									\
-  Type& RefVar = HandleVar.grab();					\
-									\
+  DT_THROW_IF (! HandleVar,						\
+	       std::logic_error,					\
+	       "Handle '" << BOOST_PP_STRINGIZE(HandleVar) << "' has no data !"); \
+  Type& RefVar = HandleVar.grab();
   /**/
 
 #endif // DATATOOLS_HANDLE_MACROS_H_

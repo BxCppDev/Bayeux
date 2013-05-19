@@ -43,7 +43,7 @@
 #include <datatools/i_tree_dump.h>
 #include <datatools/service_tools.h>
 #include <datatools/factory_macros.h>
-#include <datatools/logger_support.h>
+#include <datatools/logger.h>
 
 namespace datatools {
 
@@ -102,8 +102,9 @@ class base_service : public datatools::i_tree_dumpable {
   /// Reset the service
   virtual int reset() = 0;
 
-  /// Default logger interface
-  DT_LOGGER_OBJECT_DEFAULT_INTERFACE();
+  void set_logging_priority(datatools::logger::priority);
+
+  datatools::logger::priority get_logging_priority() const;
 
  protected:
 
@@ -117,6 +118,8 @@ class base_service : public datatools::i_tree_dumpable {
                          bool inherit = false) const;
 
  protected:
+
+  datatools::logger::priority _logging_priority; /// Logging priority threshold
   std::string name_;         //!< The name of the service
   std::string description_;  //!< The description of the service
   std::string version_;      //!< The version of the service

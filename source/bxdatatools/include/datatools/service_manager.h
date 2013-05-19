@@ -184,8 +184,9 @@ class service_manager : public datatools::i_tree_dumpable {
 
   void reset_service(service_entry& entry);
 
-  /// Default logger interface
-  DT_LOGGER_OBJECT_DEFAULT_INTERFACE();
+  void set_logging_priority(datatools::logger::priority);
+
+  datatools::logger::priority get_logging_priority() const;
 
  private:
   /// Set the factory preload flag
@@ -193,6 +194,7 @@ class service_manager : public datatools::i_tree_dumpable {
 
  private:
 
+  datatools::logger::priority _logging_priority; /// Logging priority threshold
   bool         initialized_; /// Initialization flag
   std::string  name_; /// Manager's name
   std::string  description_; /// Manager's description

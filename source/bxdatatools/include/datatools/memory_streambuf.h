@@ -9,6 +9,8 @@
 #include <vector>
 #include <stdexcept>
 
+#include <datatools/exception.h>
+
 namespace datatools {
 //----------------------------------------------------------------------
 // input from a plain array of characters/bytes:
@@ -20,9 +22,7 @@ class array_input_buffer : public std::streambuf {
 
  public:
   array_input_buffer(const byte_t* array, size_t array_size) {
-    if (array == 0) {
-      throw std::runtime_error("array_input_buffer: Null array pointer !");
-    }
+    DT_THROW_IF (array == 0,std::runtime_error,"Null array pointer !");
     byte_t* base = const_cast<byte_t*>(array);
     byte_t* endp = base + array_size;
     this->setg(base, base, endp);
@@ -31,11 +31,11 @@ class array_input_buffer : public std::streambuf {
 
 
 //! \brief std::istream interface for a plain array of characters (char *)
-class iarraystream 
-    : private virtual array_input_buffer, 
+class iarraystream
+    : private virtual array_input_buffer,
       public std::istream {
  public:
-  iarraystream(const byte_t* array, size_t array_size) 
+  iarraystream(const byte_t* array, size_t array_size)
       : array_input_buffer(array, array_size),
         std::istream(this) {}
 };
@@ -56,11 +56,11 @@ class vector_input_buffer : public std::streambuf {
 
 
 //! \brief std::istream interface for a std::vector of characters (std::vector<char>)
-class ivectorstream 
-    : private virtual vector_input_buffer, 
+class ivectorstream
+    : private virtual vector_input_buffer,
       public std::istream {
  public:
-  ivectorstream(std::vector<char>& vec) 
+  ivectorstream(std::vector<char>& vec)
       : vector_input_buffer(vec),
         std::istream (this) {}
 };
@@ -112,7 +112,7 @@ class vector_output_buffer : public std::streambuf {
   }
 
 
-  void reset(size_t capacity = 1000, 
+  void reset(size_t capacity = 1000,
              size_t increment = 1000,
              size_t max_capacity = 0) {
     max_capacity_ = buffer_.max_size();
@@ -144,7 +144,7 @@ class vector_output_buffer : public std::streambuf {
     char* base = const_cast<char*>(&buffer_[0]);
     char* endp = base + buffer_.size();
     *base = '\0';
-    setp(base, endp); 
+    setp(base, endp);
   }
 
   void _set_increment(size_t increment) {
@@ -169,16 +169,16 @@ class vector_output_buffer : public std::streambuf {
       std::cerr << buffer_[i];
     }
     std::cerr << "'" << std::endl;
-    std::cerr << "|-- pptr ():         " 
-              << hex 
-              << reinterpret_cast<void*>(this->pptr()) 
-              << dec 
+    std::cerr << "|-- pptr ():         "
+              << hex
+              << reinterpret_cast<void*>(this->pptr())
+              << dec
               << std::endl;
 
-    std::cerr << "|-- epptr ():        " 
-              << hex 
-              << reinterpret_cast<void*>(this->epptr()) 
-              << dec 
+    std::cerr << "|-- epptr ():        "
+              << hex
+              << reinterpret_cast<void*>(this->epptr())
+              << dec
               << std::endl;
 
     std::cerr << "`-- " << "end" << std::endl;
@@ -195,7 +195,7 @@ class vector_output_buffer : public std::streambuf {
 
     const size_t capacity = buffer_.capacity();
     const bool testput = this->pptr() < this->epptr();
-    if (!testput) { 
+    if (!testput) {
       if (buffer_.size() == buffer_.capacity()) {
         if (capacity == max_capacity_) {
           return std::char_traits<char>::eof();
@@ -215,7 +215,7 @@ class vector_output_buffer : public std::streambuf {
       buffer_.push_back(conv);
       char* base = const_cast<char*>(&buffer_[0]);
       char* endp = base + buffer_.size();
-      setp(base + buffer_.size(), endp); 
+      setp(base + buffer_.size(), endp);
     } else {
       buffer_.push_back(conv);
       this->pbump(1);
@@ -233,13 +233,13 @@ class vector_output_buffer : public std::streambuf {
 };
 
 //! \brief std::ostream interface for a std::vector of characters (std::vector<char>)
-class ovectorstream 
+class ovectorstream
     : public vector_output_buffer,
       public std::ostream {
  public:
   ovectorstream(size_t capacity = DEFAULT_CAPACITY,
                 size_t increment = DEFAULT_INCREMENT,
-                size_t max_capacity = 0) 
+                size_t max_capacity = 0)
       : vector_output_buffer(capacity, increment, max_capacity),
         std::ostream(this) {}
 };

@@ -53,7 +53,7 @@
 #include <datatools/i_tree_dump.h>
 #include <datatools/logger.h>
 #include <datatools/exception.h>
-#include <datatools/logger_support.h>
+#include <datatools/logger.h>
 
 namespace datatools {
 
@@ -116,6 +116,10 @@ class io_factory : public datatools::i_tree_dumpable {
 
   static int guess_mode_from_filename(const std::string& a_filename,
                                       int& mode);
+
+  void set_logging_priority(datatools::logger::priority);
+
+  datatools::logger::priority get_logging_priority() const;
 
   /// Constructor
   io_factory(int mode = io_factory::MODE_DEFAULT);
@@ -246,10 +250,10 @@ class io_factory : public datatools::i_tree_dumpable {
     }
     // 2011-02-25 FM:
     catch (boost::archive::archive_exception& x) {
-      throw x;
+      throw;
     }
     catch (std::exception& x) {
-      throw x;
+      throw;
     }
     catch (...) {
       DT_LOG_WARNING(get_logging_priority(),
@@ -364,7 +368,7 @@ class io_factory : public datatools::i_tree_dumpable {
   eos::portable_iarchive *ibar_ptr_;
   eos::portable_oarchive *obar_ptr_;
 
-  DT_LOGGER_OBJECT_DEFAULT_INTERFACE();
+  datatools::logger::priority _logging_priority; /// Logging priority threshold
 
 }; // end of class io_factory ?
 

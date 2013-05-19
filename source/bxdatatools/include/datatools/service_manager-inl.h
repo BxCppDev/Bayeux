@@ -15,21 +15,16 @@ namespace datatools {
 template <class T>
 bool service_manager::is_a(const std::string& name) const {
   service_dict_type::const_iterator found = services_.find(name);
-  if (found == services_.end()) {
-    std::ostringstream message;
-    message << "datatools::service_manager::is_a: No service named '" << name << "' !";
-    throw std::logic_error(message.str());
-  }
+  DT_THROW_IF (found == services_.end(),
+	       std::logic_error,
+	       "No service named '" << name << "' !");
   const service_entry& entry = found->second;
   if (!entry.is_initialized()) {
-    std::clog << "NOTICE: " << "datatools::service_manager::is_a<>: "
-	      << "Forcing initialization of the service named '" <<name 
-	      << "'..." << std::endl;
+    DT_LOG_NOTICE(get_logging_priority(),"Forcing initialization of the service named '" <<name << "'...");
     service_manager * mutable_this = const_cast<service_manager *>(this);
     service_entry& mutable_entry = const_cast<service_entry &>(entry);
     mutable_this->initialize_service(mutable_entry);
   }
-
   const std::type_info& ti = typeid(T);
   const std::type_info& tf = typeid(found->second.get_service_handle().get());
   return (ti == tf);
@@ -39,14 +34,9 @@ bool service_manager::is_a(const std::string& name) const {
 template<class T>
 T& service_manager::grab(const std::string& name) {
   service_dict_type::iterator found = services_.find(name);
-  if (found == services_.end()) {
-    std::ostringstream message;
-    message << "datatools::service_manager::grab: "
-        << "No service named '" 
-        << name 
-        << "' !";
-    throw std::logic_error(message.str());
-  }
+  DT_THROW_IF (found == services_.end(),
+	       std::logic_error,
+	       "No service named '" << name << "' !");
   service_entry& entry = found->second;
   if (!entry.is_initialized()) {
     this->initialize_service(entry);

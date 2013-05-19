@@ -1,6 +1,6 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* safe_serial.h */
-/** 
+/**
  *
  * safe_serial is a template class useful to record
  * a list of instances of some type in a safe way
@@ -10,7 +10,7 @@
  *
  * \code
  * datatools::serialization::safe_serial<data_t> safe;
- * 
+ *
  * safe.make(); // create a new instance and make it the current one
  * safe.get();  // access to the current instance
  * \endcode
@@ -25,9 +25,10 @@
 // Third Party
 
 // Datatools
+#include <datatools/exception.h>
 
 namespace datatools {
-    
+
 //! \brief Template container wrapper class for safe storage of object with regards to Boost/Serilization memory tracking feature.
 template<class T>
 class safe_serial {
@@ -55,9 +56,9 @@ class safe_serial {
     return data_.size() == 0;
   }
 
-      
+
   data_type& get() {
-    if (this->empty()) throw std::logic_error("safe_serial::get: No data!");
+    DT_THROW_IF (this->empty(), std::logic_error, "No data!");
     return *(last_);
   }
 
@@ -67,8 +68,7 @@ class safe_serial {
       data_.push_back(data_type());
     }
     catch (...) {
-      throw std::logic_error("safe_serial::make: "
-                             "Cannot insert new data element!");
+      DT_THROW_IF(true, std::logic_error, "Cannot insert new data element!");
     }
     last_ = data_.rbegin();
   }
@@ -82,8 +82,8 @@ class safe_serial {
   typename std::list<T>                   data_;
   typename std::list<T>::reverse_iterator last_;
 };
-    
-} // end of namespace datatools 
+
+} // end of namespace datatools
 
 #endif // DATATOOLS_SAFE_SERIAL_H_
 

@@ -45,6 +45,7 @@
 #include <datatools/handle.h>
 #include <datatools/bit_mask.h>
 #include <datatools/detail/DynamicLoader.h>
+#include <datatools/exception.h>
 
 namespace datatools {
 
@@ -166,19 +167,15 @@ class library_loader : boost::noncopyable {
 
 } // end of namespace datatools
 
-#define DATATOOLS_DLL_FORCE_LOAD(DllName,FromWhere)			\
-  {									\
-    ::datatools::library_loader LL_(::datatools::library_loader::allow_unregistered); \
-    int load_status = LL_.load(DllName);				\
-    if (load_status != EXIT_SUCCESS) {					\
-      std::ostringstream message;					\
-      message << FromWhere << ": "					\
-	      << "Automatic loading of library '"			\
-	      << DllName << "' failed !";				\
-      throw std::logic_error(message.str());				\
-    }									\
-  }									\
-  /**/
+#define DATATOOLS_DLL_FORCE_LOAD(DllName,FromWhere)                     \
+  {                                                                     \
+    ::datatools::library_loader dt_ll_(::datatools::library_loader::allow_unregistered); \
+    int load_status = dt_ll_.load(DllName);                             \
+    DT_THROW_IF (load_status != EXIT_SUCCESS,                           \
+                 std::logic_error,                                      \
+                 "Automatic loading of library '" << DllName << "' failed !"); \
+  }
+/**/
 
 /***************
  * OCD support *

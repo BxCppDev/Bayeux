@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
 // real_range.cc
-// Ourselves 
+// Ourselves
 #include <datatools/real_range.h>
 
 // Standard Library
@@ -13,7 +13,7 @@
 // - A
 
 // This Project
-
+#include <datatools/exception.h>
 
 namespace datatools {
 
@@ -25,8 +25,9 @@ real_range::real_range() {
   this->reset();
 }
 
+
 // Ctor:
-real_range::real_range(value_type from, value_type to, 
+real_range::real_range(value_type from, value_type to,
                        int from_policy, int to_policy) {
   abs_epsilon_ = std::numeric_limits<value_type>::quiet_NaN();
   this->set(from, to, from_policy, to_policy);
@@ -73,7 +74,7 @@ void real_range::set_lower(value_type from, int policy) {
     lower_      = from;
     lower_flag_ = policy;
   } else {
-    throw std::logic_error("datatools::real_range::set_lower: Invalid lower bound policy !");
+    DT_THROW_IF(true, std::logic_error, "Invalid lower bound policy !");
   }
 }
 
@@ -88,12 +89,12 @@ void real_range::set_upper(value_type value, int policy) {
     upper_      = value;
     upper_flag_ = policy;
   } else {
-    throw std::logic_error("datatools::real_range::set_upper: Invalid upper bound policy !");
+    DT_THROW_IF(true, std::logic_error, "Invalid upper bound policy !");
   }
 }
 
 
-void real_range::set(value_type from, value_type to, int from_policy, 
+void real_range::set(value_type from, value_type to, int from_policy,
                      int to_policy) {
   this->set_lower(from, from_policy);
   this->set_upper(to, to_policy);
@@ -115,33 +116,25 @@ bool real_range::is_bounded() const {
 
 
 real_range::value_type real_range::get_lower_bound() const {
-  if (!this->is_lower_bounded()) {
-    throw std::logic_error("datatools::real_range::get_lower_bound: No lower bound !");
-  }
+  DT_THROW_IF (!this->is_lower_bounded(),std::logic_error,"No lower bound !");
   return lower_;
 }
 
 
 real_range::value_type real_range::get_upper_bound() const {
-  if (!this->is_upper_bounded()) {
-    throw std::logic_error("datatools::real_range::get_upper_bound: No upper bound !");
-  }
+  DT_THROW_IF (!this->is_upper_bounded(),std::logic_error,"No upper bound !");
   return upper_;
 }
 
 
 bool real_range::is_lower_included() const {
-  if (!this->is_lower_bounded()) {
-    throw std::logic_error("datatools::real_range::is_lower_included: No lower bound !");
-  }
+  DT_THROW_IF (!this->is_lower_bounded(),std::logic_error,"No lower bound !");
   return (lower_flag_ == range_bound_included);
 }
 
 
 bool real_range::is_upper_included() const {
-  if (!this->is_upper_bounded()) {
-    throw std::logic_error("datatools::real_range::is_upper_included: No upper bound !");
-  }
+  DT_THROW_IF (!this->is_upper_bounded(),std::logic_error,"No upper bound !");
   return (upper_flag_ == range_bound_included);
 }
 
@@ -152,33 +145,33 @@ void real_range::make_empty() {
 
 
 void real_range::make_full() {
-  this->set(-std::numeric_limits<value_type>::max(), 
-            std::numeric_limits<value_type>::max(), 
-            range_bound_included, 
+  this->set(-std::numeric_limits<value_type>::max(),
+            std::numeric_limits<value_type>::max(),
+            range_bound_included,
             range_bound_included);
 }
 
 
 void real_range::make_full_positive() {
-  this->set(0, 
-            std::numeric_limits<value_type>::max(), 
-            range_bound_included, 
+  this->set(0,
+            std::numeric_limits<value_type>::max(),
+            range_bound_included,
             range_bound_included);
 }
 
 
 void real_range::make_full_negative() {
-  this->set(-std::numeric_limits<value_type>::max(), 
-            0, 
-            range_bound_included, 
+  this->set(-std::numeric_limits<value_type>::max(),
+            0,
+            range_bound_included,
             range_bound_included);
 }
 
 
 void real_range::make_upper_unbounded(value_type from, bool inclusive) {
-  this->set(from, 
-            +std::numeric_limits<value_type>::infinity(), 
-            inclusive ? range_bound_included : range_bound_excluded , 
+  this->set(from,
+            +std::numeric_limits<value_type>::infinity(),
+            inclusive ? range_bound_included : range_bound_excluded ,
             range_bound_unbound);
 }
 
@@ -207,12 +200,12 @@ double real_range::compute_epsilon(double a_lower, double a_upper) {
   if (a_lower == a_lower) {
     double scale = std::abs(a_lower);
     l_eps = DEFAULT_EPSILON * scale;
-  } 
+  }
 
   if (a_upper == a_upper) {
     double scale = std::abs(a_upper);
     u_eps = DEFAULT_EPSILON * scale;
-  } 
+  }
 
   if ((l_eps == l_eps) && (u_eps == u_eps)) {
     eps = std::max(l_eps, u_eps);
@@ -220,30 +213,24 @@ double real_range::compute_epsilon(double a_lower, double a_upper) {
     eps = l_eps;
   } else {
     eps = u_eps;
-  }      
+  }
 
   return eps;
 }
 
 
 bool real_range::has(value_type value) const {
-  static bool ok = true;
   double eps = abs_epsilon_;
   if (eps != eps) {
-    eps = this->compute_epsilon((lower_ == lower_) ? 
-                                lower_ : 
+    eps = this->compute_epsilon((lower_ == lower_) ?
+                                lower_ :
                                 std::numeric_limits<double>::quiet_NaN(),
-                                (upper_ == upper_) ? 
-                                upper_ : 
+                                (upper_ == upper_) ?
+                                upper_ :
                                 std::numeric_limits<double>::quiet_NaN());
     {
       real_range& rr = const_cast<real_range&>(*this);
       rr.abs_epsilon_ = eps;
-    }
-    if (ok) {
-      std::clog << "real_range::has: abs_epsilon_ = " 
-                << abs_epsilon_ << std::endl;
-      ok = false;
     }
   }
 
@@ -283,7 +270,7 @@ void real_range::dump(std::ostream& a_out) const {
   } else {
     a_out << "|-- " << "[invalid]" << std::endl;
   }
-  a_out << "`-- " << "Rendering      = '" << *this << "'" << std::endl; 
+  a_out << "`-- " << "Rendering      = '" << *this << "'" << std::endl;
 }
 
 

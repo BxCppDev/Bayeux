@@ -186,11 +186,6 @@ class units {
                                    std::string& unit_label,
                                    double default_unit_ = std::numeric_limits<double>::quiet_NaN());
 
- // protected:
- //  //! Exception thrown in case of unrecognized unit symbol.
- //  static void throw_bad_unit(const std::string& type,
- //                             const std::string& unit_str);
-
 };
 
 } // end of namespace datatools

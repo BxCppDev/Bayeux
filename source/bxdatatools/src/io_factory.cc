@@ -25,7 +25,15 @@ const std::string io_factory::GZ_EXT    = "gz";
 const std::string io_factory::BZIP2_EXT = "bz2";
 
 // Logging features:
-DT_LOGGER_OBJECT_DEFAULT_IMPLEMENTATION(io_factory);
+void io_factory::set_logging_priority(::datatools::logger::priority p)
+{
+  _logging_priority = p;
+}
+
+datatools::logger::priority io_factory::get_logging_priority() const
+{
+  return _logging_priority;
+}
 
 bool io_factory::eof() const {
   if (this->is_write()) return false;

@@ -13,35 +13,31 @@
 // This Project
 #include <datatools/things.h>
 
-#define DATATOOLS_THINGS_ADD_BANK(ThingsVar,BankName,BankType,BankVar)	\
-  BankType& BankVar = ThingsVar.add<BankType>(BankName);		\
-  /**/
+#define DATATOOLS_THINGS_ADD_BANK(ThingsVar,BankName,BankType,BankVar)  \
+  BankType& BankVar = ThingsVar.add<BankType>(BankName);
+/**/
 
-#define DATATOOLS_THINGS_CHECK_BANK(ThingsVar,BankName,BankType)	\
-  (ThingsVar.has(BankName) && ThingsVar.is_a<BankType>(BankName))	\
-  /**/
+#define DATATOOLS_THINGS_CHECK_BANK(ThingsVar,BankName,BankType)        \
+  (ThingsVar.has(BankName) && ThingsVar.is_a<BankType>(BankName))
+/**/
 
 #define DATATOOLS_THINGS_CONST_BANK(ThingsVar,BankName,BankType,BankVar) \
-  {									\
-    if (!ThingsVar.is_a<BankType>(BankName)) {				\
-      std::ostringstream message;					\
-      message << "No bank named '" << BankName << "' in '" << "ThingsVar" << "' !"; \
-      throw std::logic_error(message.str());				\
-    }									\
-  }									\
-  const BankType& BankVar = ThingsVar.get<BankType>(BankName);	\
-  /**/
+  {                                                                     \
+    DT_THROW_IF (!ThingsVar.is_a<BankType>(BankName),                   \
+                 std::logic_error,                                      \
+                 "No bank named '" << BankName << "' in '" << BOOST_PP_STRINGIZE(HandleVar) << "' !"); \
+  }                                                             \
+  const BankType& BankVar = ThingsVar.get<BankType>(BankName);
+/**/
 
 #define DATATOOLS_THINGS_MUTABLE_BANK(ThingsVar,BankName,BankType,BankVar) \
-  {									\
-    if (!ThingsVar.is_a<BankType>(BankName)) {				\
-      std::ostringstream message;					\
-      message << "No bank named '" << BankName << "' in '" << "ThingsVar" << "' !"; \
-      throw std::logic_error(message.str());				\
-    }									\
-  }									\
-  BankType& BankVar = ThingsVar.grab<BankType>(BankName);		\
-  /**/
+  {                                                                     \
+    DT_THROW_IF (!ThingsVar.is_a<BankType>(BankName),                   \
+                 std::logic_error,                                      \
+                 "No bank named '" << BankName << "' in '" << BOOST_PP_STRINGIZE(HandleVar) << "' !"); \
+  }                                                                     \
+  BankType& BankVar = ThingsVar.grab<BankType>(BankName);
+/**/
 
 #endif // DATATOOLS_THINGS_MACROS_H_
 

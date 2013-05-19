@@ -19,17 +19,13 @@
 #include <boost/scoped_ptr.hpp>
 
 // This Project
-// #if DATATOOLS_WITH_EMBEDDED_KWSYS == 0
-// #include <kwsys/DynamicLoader.hxx>
-// #define KWSYS_NAMESPACE kwsys
-// #else
 #include <datatools/detail/DynamicLoader.h>
-//define KWSYS_NAMESPACE datatools_sys
-// #endif
 
 #include <datatools/utils.h>
 #include <datatools/handle.h>
 #include <datatools/multi_properties.h>
+#include <datatools/exception.h>
+#include <datatools/logger.h>
 
 namespace datatools {
 
@@ -58,7 +54,7 @@ library_entry_type::~library_entry_type() {
               << BOOST_PP_STRINGIZE(DATATOOLS_SYS_NAMESPACE) << " says: '"
               << datatools::detail::DynamicLoader::LastError()
               << "' !";
-      std::cerr << "ERROR: " << message.str() << std::endl;
+      DT_LOG_ERROR(datatools::logger::PRIO_ERROR,message.str());
     }
   }
   handle = 0;
@@ -133,22 +129,12 @@ symbol_ptr library_loader::get_symbol_address(const std::string& lib_name_,
                                               const std::string& symbol_) {
   // shorter typename?
   handle_library_entry_dict_type::const_iterator found = libraries_.find(lib_name_);
-  if (found == libraries_.end()) {
-    std::ostringstream message;
-    message << "datatools::library_loader::get_symbol_address: "
-            << "The shared library file '"
-            << lib_name_ << "' is not registered !";
-    throw std::logic_error(message.str());
-  }
-
-  if (found->second.get().handle == 0) {
-    std::ostringstream message;
-    message << "datatools::library_loader::get_symbol_address: "
-            << "The shared library file '"
-            << lib_name_ << "' is not loaded !";
-    throw std::logic_error(message.str());
-  }
-
+  DT_THROW_IF (found == libraries_.end(),
+               std::logic_error,
+               "The shared library file '" << lib_name_ << "' is not registered !");
+  DT_THROW_IF (found->second.get().handle == 0,
+                std::logic_error,
+               "The shared library file '" << lib_name_ << "' is not loaded !");
   return datatools::detail::DynamicLoader::GetSymbolAddress(found->second.get().handle, symbol_.c_str());
 }
 
@@ -157,9 +143,6 @@ symbol_ptr library_loader::get_symbol_address(const std::string& lib_name_,
 library_loader::library_loader(uint32_t flags,
                                const std::string& config_file) {
   flags_ = flags;
-  // if (library_loader::g_test) {
-  //   flags_ |= test;
-  // }
   config_filename_ = config_file;
   this->init();
 }
@@ -167,37 +150,14 @@ library_loader::library_loader(uint32_t flags,
 
 int library_loader::close_all() {
   while (!stacked_libraries_.empty()) {
-    // if (g_devel) {
-    //   std::clog << "DEVEL: "
-    //             << "datatools::library_loader::close_all: "
-    //             << "library_loader::close_all: LOOP ****************"
-    //             << std::endl;
-    // }
-
     handle_library_entry_type& hle = stacked_libraries_.front();
     if (!hle) {
-      // if (g_devel) {
-      //   std::clog << "DEVEL: "
-      //             << "datatools::library_loader::close_all: "
-      //             << "library_loader::close_all: NO DATA ****************"
-      //             << std::endl;
-      // }
       stacked_libraries_.pop_front(); // remove top element
     } else {
-      // if (g_devel) {
-      //   std::clog << "DEVEL: "
-      //             << "datatools::library_loader::close_all: "
-      //             << "library_loader::close_all: DATA *****************"
-      //             << std::endl;
-      // }
-
       library_entry_type& le = hle.grab();
       if (le.handle != 0) {
         if (this->is_debug()) {
-          std::clog << "DEBUG: "
-                    << "datatools::library_loader::close_all: "
-                    << "Closing library '"
-                    << le.name << "'..." << std::endl;
+          DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG,"Closing library '" << le.name << "'...");
         }
 
         int status = datatools::detail::DynamicLoader::CloseLibrary(le.handle);
@@ -210,7 +170,7 @@ int library_loader::close_all() {
                   << " says: '"
                   << datatools::detail::DynamicLoader::LastError()
                   << "' !";
-          std::cerr << "ERROR: " << message.str() << std::endl;
+          DT_LOG_ERROR(datatools::logger::PRIO_ERROR,message.str());
           //return;
         }
 
@@ -225,19 +185,6 @@ int library_loader::close_all() {
         //   {
         le.handle = 0;
         stacked_libraries_.pop_front (); // remove top element
-        // if (g_devel) {
-        //   std::clog << "DEVEL: "
-        //             << "datatools::library_loader::close_all: "
-        //             << "Stack size "
-        //             << stacked_libraries_.size() << std::endl;
-        // }
-        //}
-        // if (g_devel) {
-        //   std::clog << "DEVEL: "
-        //             << "datatools::library_loader::close_all: "
-        //             << "Removing library stacked entry '"
-        //             << le.name << "'..."
-        //             << std::endl;
         // }
       }
     }
@@ -248,24 +195,8 @@ int library_loader::close_all() {
 
 // dtor :
 library_loader::~library_loader() {
-  // if (g_devel) {
-  //   std::clog << "DEVEL: datatools::library_loader::dtor: Entering...\n";
-  //   this->print(std::cerr);
-  //   std::clog << "DEVEL: datatools::library_loader::dtor: " << "close_all...\n";
-  // }
-
   this->close_all();
-
-  // if (g_devel) {
-  //   std::clog << "DEVEL: datatools::library_loader::dtor: "
-  //             << "clear...\n";
-  // }
-
   libraries_.clear();
-
-  // if (g_devel) {
-  //   std::clog << "DEVEL: datatools::library_loader::dtor: Exiting.\n";
-  // }
 }
 
 
@@ -329,26 +260,18 @@ int library_loader::registration(const std::string& lib_name_,
     le.full_path = full_path_ss.str();
   }
 
-  if (le.full_path.empty()) {
-    std::ostringstream message;
-    message << "datatools::library_loader::registration: The shared library file '"
-            << le.name << "' has no valid path !";
-    throw std::logic_error(message.str());
-  }
+  DT_THROW_IF (le.full_path.empty(),
+               std::logic_error,
+               "The shared library file '" << le.name << "' has no valid path !");
 
   if (!le.directory.empty()) {
     // Only check the existence of the DLL file if a directory is
     // explicitely given :
     std::string check = le.full_path;
     fetch_path_with_env(check);
-    if (!boost::filesystem::exists(check)) {
-      std::ostringstream message;
-      message << "datatools::library_loader::registration: The shared library file '"
-              << le.name
-              << "' has no valid file '"
-              << le.full_path << "' !";
-      throw std::logic_error(message.str());
-    }
+    DT_THROW_IF (!boost::filesystem::exists(check),
+                 std::logic_error,
+                 "The shared library file '" << le.name << "' has no valid file '" << le.full_path << "' !");
   }
   le.handle = 0;
   le.autoload = autoload_;
@@ -364,11 +287,7 @@ int library_loader::load(const std::string& lib_name_,
   handle_library_entry_dict_type::iterator found = libraries_.find(lib_name_);
   if (found == libraries_.end()) {
     if (!this->allowing_unregistered()) {
-      std::cerr << "ERROR: "
-                << "datatools::library_loader::load: "
-                << "Library '"
-                << lib_name_
-                << "' is not registered !" << std::endl;
+      DT_LOG_ERROR(datatools::logger::PRIO_ERROR,"Library '" << lib_name_ << "' is not registered !");
       return EXIT_FAILURE;
     } else {
       int status = this->registration(lib_name_,
@@ -382,7 +301,7 @@ int library_loader::load(const std::string& lib_name_,
         message << "datatools::library_loader::load: "
                 << "Cannot register library '"
                 << lib_name_ << "' !";
-        std::cerr << "ERROR: " << message.str() << std::endl;
+        DT_LOG_ERROR(datatools::logger::PRIO_ERROR,message.str());
         return EXIT_FAILURE;
       }
       found = libraries_.find(lib_name_);
@@ -401,7 +320,7 @@ int library_loader::load(const std::string& lib_name_,
             << "The '" << lib_name_ << "' library was not loaded ! "
             << BOOST_PP_STRINGIZE(DATATOOLS_SYS_NAMESPACE) << " says: '"
             << datatools::detail::DynamicLoader::LastError() << "' !";
-    std::cerr << "ERROR: " << message.str() << std::endl;
+    DT_LOG_ERROR(datatools::logger::PRIO_ERROR,message.str());
     return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;
@@ -410,19 +329,12 @@ int library_loader::load(const std::string& lib_name_,
 
 int library_loader::close(const std::string& lib_name_) {
   if (!this->is_loaded(lib_name_)) {
-    std::cerr << "ERROR: "
-              << "datatools::library_loader::close: "
-              << "No loaded library '"
-              << lib_name_
-              << "' to be closed !" << std::endl;
+    DT_LOG_ERROR(datatools::logger::PRIO_ERROR,"No loaded library '" << lib_name_ << "' to be closed !");
     return EXIT_FAILURE;
   }
 
   if (stacked_libraries_.front().get().name != lib_name_) {
-    std::cerr << "ERROR: "
-              << "datatools::library_loader::close: "
-              << "Cannot close library '"
-              << lib_name_ << "' !" << std::endl;
+    DT_LOG_ERROR(datatools::logger::PRIO_ERROR,"Cannot close library '" << lib_name_ << "' !");
     return EXIT_FAILURE;
   }
 
@@ -438,7 +350,7 @@ int library_loader::close(const std::string& lib_name_) {
             << BOOST_PP_STRINGIZE(DATATOOLS_SYS_NAMESPACE)
             << " says: '"
             << datatools::detail::DynamicLoader::LastError() << "' !";
-    std::clog << "ERROR: " << message.str() << std::endl;
+    DT_LOG_ERROR(datatools::logger::PRIO_ERROR,message.str());
     return EXIT_FAILURE;
   } else {
     stacked_libraries_.front ().grab().handle = 0;
@@ -472,19 +384,8 @@ void library_loader::init() {
     }
   }
 
-  // if (g_devel) {
-  //   std::clog << "DEVEL: " << "datatools::library_loader::_init: "
-  //             << "Using library loader config file = '"
-  //             << config_filename_<< "' !" << std::endl;
-  // }
-
   if (config_filename_.empty()) {
-    /*
-    std::clog << "WARNING: "
-              << "datatools::library_loader::_init: "
-              << "No library loader config file is available !"
-              << std::endl;
-    */
+    //DT_LOG_WARNING(datatools::logger::PRIO_WARNING, "No library loader config file is available !");
     return;
   }
 
@@ -496,13 +397,6 @@ void library_loader::init() {
   BOOST_FOREACH(const multi_properties::entry* ptr,
                 config.ordered_entries()) {
     const multi_properties::entry& e = *ptr;
-    // if (g_devel) {
-    //   std::clog << "DEVEL: "
-    //             << "datatools::library_loader::_init: "
-    //             << "Settings for library '"
-    //             << e.get_key() << "'..." << std::endl;
-    // }
-
     const properties& lib_properties = e.get_properties();
     std::string lib_name       = e.get_key ();
     std::string lib_filename   = e.get_meta ();
@@ -530,37 +424,18 @@ void library_loader::init() {
       lib_version = lib_properties.fetch_string("version");
     }
 
-    // if (g_devel) {
-    //   std::clog << "DEVEL: "
-    //             << "datatools::library_loader::_init: "
-    //             << "Registration of library='" << lib_name
-    //             << "'..." << std::endl;
-    // }
-
     int status = this->registration(lib_name, lib_directory,
                                     lib_filename, lib_full_path,
                                     lib_version, lib_autoload);
-    if (status != EXIT_SUCCESS) {
-      std::ostringstream message;
-      message << "library_entry_type::load: "
-              << "Cannot register library '"
-              << lib_name << "' !";
-      throw std::logic_error(message.str());
-    }
-
+    DT_THROW_IF (status != EXIT_SUCCESS,
+                 std::logic_error,
+                 "Cannot register library '" << lib_name << "' !");
     if (lib_autoload) {
-      std::clog << "NOTICE: "
-                << "datatools::library_loader::_init: "
-                << "Automatic loading of library  '" << lib_name << "'..."
-                << std::endl;
+      DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,"Automatic loading of library  '" << lib_name << "'...");
       int load_status = this->load(lib_name);
-      if (load_status != EXIT_SUCCESS) {
-        std::ostringstream message;
-        message << "datatools::library_loader::_init: "
-                << "Automatic loading of library='"
-                << lib_name << "' failed !";
-        throw std::logic_error(message.str());
-      }
+      DT_THROW_IF (load_status != EXIT_SUCCESS,
+                   std::logic_error,
+                   "Automatic loading of library='" << lib_name << "' failed !");
     }
     continue;
   } // BOOST_FOREACH

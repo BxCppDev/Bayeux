@@ -102,65 +102,26 @@ namespace datatools {
     if (a_size < 0) {
       memsize = 1;
       _flags_ &= ~MASK_VECTOR; // force scalar
-      // if (properties::g_debug) {
-      //   std::cerr << "DEBUG: properties::data::init_values_: SCALAR... size="
-      //             << memsize << std::endl;
-      // }
     } else {
       _flags_ |= MASK_VECTOR; // force vector
-      // if (properties::g_debug) {
-      //   std::cerr << "DEBUG: properties::data::init_values_: VECTOR... size="
-      //             << memsize << std::endl;
-      // }
     }
-
     _flags_ &= ~MASK_TYPE;
-    // if (properties::g_debug) {
-    //   std::cerr << "DEBUG: properties::data::init_values_: desc="
-    //             << std::hex << (int) _flags_
-    //             << std::dec << std::endl;
-    // }
-
     if (a_type == TYPE_BOOLEAN_SYMBOL) {
-      // if (properties::g_debug) {
-      //   std::cerr << "DEBUG: properties::data::init_values_: BOOLEAN..."
-      //             << std::endl;
-      // }
       _flags_ |= TYPE_BOOLEAN;
       if (memsize > 0) _boolean_values_.assign(memsize, DEFAULT_VALUE_BOOLEAN);
     }
-
     if (a_type == TYPE_INTEGER_SYMBOL) {
-      // if (properties::g_debug) {
-      //   std::cerr << "DEBUG: properties::data::init_values_: INTEGER..."
-      //             << " TYPE_INTEGER=" << (int) TYPE_INTEGER << std::endl;
-      // }
       _flags_ |= TYPE_INTEGER;
       if (memsize > 0) _integer_values_.assign(memsize, DEFAULT_VALUE_INTEGER);
     }
-
     if (a_type == TYPE_REAL_SYMBOL) {
-      // if (properties::g_debug) {
-      //   std::cerr << "DEBUG: properties::data::init_values_: REAL..."
-      //             << std::endl;
-      // }
       _flags_ |= TYPE_REAL;
       if (memsize > 0) _real_values_.assign(memsize, DEFAULT_VALUE_REAL);
     }
-
     if (a_type == TYPE_STRING_SYMBOL) {
-      // if (properties::g_debug) {
-      //   std::cerr << "DEBUG: properties::data::init_values_: STRING..."
-      //             << std::endl;
-      // }
       _flags_ |= TYPE_STRING;
       if (memsize > 0) _string_values_.assign(memsize, DEFAULT_VALUE_STRING);
     }
-
-    // if (properties::g_debug) {
-    //   std::cerr << "DEBUG: properties::data::init_values_: exiting."
-    //             << std::endl;
-    // }
     return ERROR_SUCCESS;
   }
 
@@ -307,10 +268,6 @@ namespace datatools {
 
 
   properties::data::data(bool a_value, int a_size) {
-    // if (properties::g_debug) {
-    //   std::cerr << "DEBUG: properties::data::ctor (...bool...): entering..."
-    //             << std::endl;
-    // }
     _flags_  = 0;
     this->init_values_(TYPE_BOOLEAN_SYMBOL, a_size);
     for (int i = 0; i < (int)this->size(); ++i) {
@@ -320,10 +277,6 @@ namespace datatools {
 
 
   properties::data::data(int a_value, int a_size) {
-    // if (properties::g_debug) {
-    //   std::cerr << "DEBUG: properties::data::ctor (...int...): entering..."
-    //             << std::endl;
-    // }
     _flags_  = 0;
     this->init_values_(TYPE_INTEGER_SYMBOL, a_size);
     for (int i = 0; i < (int)this->size(); ++i) {
@@ -333,10 +286,6 @@ namespace datatools {
 
 
   properties::data::data(double a_value, int a_size) {
-    // if (properties::g_debug) {
-    //   std::cerr << "DEBUG: properties::data::ctor (...double...): entering..."
-    //             << std::endl;
-    // }
     _flags_  = 0;
     this->init_values_(TYPE_REAL_SYMBOL, a_size);
     for (int i = 0; i < (int)this->size(); ++i) {
@@ -657,8 +606,7 @@ namespace datatools {
 
   properties::default_key_validator::~default_key_validator() {}
 
-  bool properties::default_key_validator::operator()(
-                                                     const std::string& prop_key) const {
+  bool properties::default_key_validator::operator()(const std::string& prop_key) const {
     if (prop_key.empty()) return false;
     if (prop_key.find_first_not_of(ALLOWED_CHARS) != prop_key.npos) return false;
     if (prop_key.find_first_of("0123456789.") == 0) return false;
@@ -1064,8 +1012,7 @@ namespace datatools {
   }
 
 
-  properties::vkeys properties::keys_ending_with(
-                                                 const std::string& suffix) const {
+  properties::vkeys properties::keys_ending_with(const std::string& suffix) const {
     properties::vkeys lkeys;
     this->keys_ending_with(lkeys, suffix);
     return lkeys;
@@ -2203,10 +2150,6 @@ namespace datatools {
   // properties::config class implementation
   //
 
-  // 2013-03-23 FM : move const value settignbs in header file:
-  //const bool properties::config::write_public_only  = true;
-  //const bool properties::config::write_private_also = false;
-
   void properties::config::write_data(std::ostream& out,
                                       const std::string & a_prop_key,
                                       const properties::data& a_data,
@@ -2265,8 +2208,6 @@ namespace datatools {
     if (a_data.is_string() && a_data.is_explicit_path()) {
       out << " as " << "path" << ' ';
     }
-
-    //a_data.tree_dump(std::cerr, a_prop_key+ " : ", "DEVEL **** ");
     out << ' ';
     out << "=";
 
@@ -2981,8 +2922,8 @@ namespace datatools {
   }
 
 
-  void properties::export_to_string_based_dictionary(
-                                                     std::map<std::string, std::string>& dict, bool quoted_strings) const {
+  void properties::export_to_string_based_dictionary(std::map<std::string, std::string>& dict,
+                                                     bool quoted_strings) const {
     for (pmap::const_iterator i = _props_.begin();
          i != _props_.end();
          ++i) {

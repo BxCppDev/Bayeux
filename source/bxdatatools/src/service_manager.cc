@@ -43,7 +43,17 @@ namespace datatools {
 //
 
 // Default logger interface
-DT_LOGGER_OBJECT_DEFAULT_IMPLEMENTATION(service_manager)
+
+// Logging features:
+void service_manager::set_logging_priority(::datatools::logger::priority p)
+{
+  _logging_priority = p;
+}
+
+datatools::logger::priority service_manager::get_logging_priority() const
+{
+  return _logging_priority;
+}
 
 void service_manager::set_name(const std::string& name) {
   name_ = name;
@@ -489,13 +499,7 @@ void service_manager::create_service(service_entry& entry) {
         datatools::base_service::factory_register_type::factory_type       FactoryType;
 
     const FactoryType& the_factory = factory_register_.get(entry.get_service_id());
-
     base_service* ptr = the_factory();
-    // 2012/04/12: XG the initialization mechanism is done 'on
-    // the demand' i.e. when the service is requested
-    // ptr->initialize (service_entry_.service_config,
-    // _services_);
-
     entry.grab_service_handle().reset(ptr);
     entry.update_service_status(service_entry::STATUS_CREATED);
     DT_LOG_DEBUG(get_logging_priority(),
@@ -516,25 +520,6 @@ void service_manager::initialize_service(service_entry& entry) {
                  "Initializing service named '"
                  << entry.get_service_name()
                  << "'...");
-
-    // 2012/04/14: XG since the service handle has been set by
-    // the create_service method, one has to use it. THe
-    // following commented lines create another pointer ! so
-    // another service is initialized ! Maybe FM has to check
-    // what is going on...
-    // datatools::base_service::factory_register_type::factory_type
-    // & the_factory = _factory_register_.get
-    // (service_entry_.service_id);
-
-    // base_service * ptr = the_factory ();
-    // if (ptr == 0)
-    //   {
-    //     ostringstream message;
-    //     message << "datatools::service_manager::_initialize_service: "
-    //             << "Cannot initialize service named '"
-    //             << service_entry_.service_name << "' !";
-    //     throw logic_error (message.str ());
-    //   }
     base_service& the_service = entry.grab_service_handle().grab();
     the_service.initialize(entry.get_service_config(), services_);
     entry.update_service_status(service_entry::STATUS_INITIALIZED);

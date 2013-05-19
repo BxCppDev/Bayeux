@@ -159,23 +159,11 @@ class handle {
     DT_THROW_IF(true, std::logic_error, "Handle holds no data!");
   }
 
-  /* //! Return  a const reference to the hosted instance. */
-  /* const T& operator()() const { */
-  /*   if (sp_) return *sp_; */
-  /*   throw std::logic_error("datatools::handle::operator(): Handle holds no data!"); */
-  /* } */
-
   //! Return a non-const reference to the hosted instance.
   T& grab() {
     if (sp_) return *sp_;
     DT_THROW_IF(true, std::logic_error, "Handle holds no data!");
   }
-
-  /* //! Return a non-const reference to the hosted instance. */
-  /* T& operator()() { */
-  /*   if (sp_) return *sp_; */
-  /*   throw std::logic_error("datatools::handle::operator(): Handle holds no data!"); */
-  /* } */
 
   //! Reset the internal shared pointer with a new instance.
   void reset(T* elem = 0) {

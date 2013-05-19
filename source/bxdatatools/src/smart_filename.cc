@@ -580,10 +580,9 @@ void smart_filename::initialize(const properties& a_config) {
       DT_THROW_IF (incremental_stopping < -1,std::logic_error,"Invalid negative stopping value !");
     } else {
       // 2012-05-02 FM : allow unranged list of incremented filenames.
-      // if (incremental_increment > 0)
-      //   {
-      //     throw logic_error ("datatools::smart_filename::initialize: Missing 'incremental.stop' key !");
-      //   }
+      // DT_THROW_IF (incremental_increment > 0,
+      //              logic_error,
+      //              " Missing 'incremental.stop' key !");
     }
     if (a_config.has_key("incremental.start")) {
       incremental_starting = a_config.fetch_integer("incremental.start");

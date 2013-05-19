@@ -1,9 +1,11 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // ocd_utils.cc
 
 #include <datatools/detail/ocd_utils.h>
 
 #include <boost/scoped_ptr.hpp>
+
+#include <datatools/exception.h>
 
 namespace datatools {
 namespace detail {
@@ -23,7 +25,7 @@ namespace ocd {
     return;
   }
 
-  void ocd_registration::_preload_system_registration() 
+  void ocd_registration::_preload_system_registration()
   {
     _dict_ = get_system_registration()._dict_;
     return;
@@ -34,19 +36,16 @@ namespace ocd {
     return _dict_.find(class_id_) != _dict_.end();
   }
 
-  const object_configuration_description & 
+  const object_configuration_description &
   ocd_registration::get(const std::string & class_id_) const
   {
     ocd_dict_type::const_iterator found = _dict_.find(class_id_);
-    if (found == _dict_.end()) {
-      std::ostringstream message;
-      message << "datatools::detail::ocd::ocd_registration::get: "
-              << "No OCD for class with ID '" << class_id_ << "' !";
-      throw std::logic_error(message.str());
-    }
+    DT_THROW_IF (found == _dict_.end(),
+                 std::logic_error,
+                 "No OCD for class with ID '" << class_id_ << "' !");
     return *found->second.handle.get();
   }
-  
+
   void ocd_registration::compute_ids(std::vector<std::string> & list_) const
   {
     for (ocd_dict_type::const_iterator i = _dict_.begin();
@@ -56,7 +55,7 @@ namespace ocd {
     }
     return;
   }
- 
+
   void ocd_registration::smart_dump(std::ostream & out_,
                                     const std::string & title_,
                                     const std::string & indent_) const
@@ -64,8 +63,8 @@ namespace ocd {
     if (! title_.empty()) {
       out_ << indent_ << title_ << std::endl;
     }
-    
-    out_ << indent_ << "`-- " 
+
+    out_ << indent_ << "`-- "
          << "Classes with OCD support : " << '[' << _dict_.size() << ']' << std::endl;
     for (ocd_dict_type::const_iterator i = _dict_.begin();
          i != _dict_.end();
@@ -83,7 +82,7 @@ namespace ocd {
   }
 
 
-  // static 
+  // static
   ocd_registration & ocd_registration::grab_system_registration()
   {
     static boost::scoped_ptr<ocd_registration> _ocd_registration(0);
@@ -94,7 +93,7 @@ namespace ocd {
   }
 
 
-  // static 
+  // static
   const ocd_registration & ocd_registration::get_system_registration()
   {
     return const_cast<ocd_registration &>(grab_system_registration());

@@ -39,8 +39,15 @@ DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(
     base_service,
     "datatools::base_service/__system__");
 
-// Default logger interface
-DT_LOGGER_OBJECT_DEFAULT_IMPLEMENTATION(base_service)
+void base_service::set_logging_priority(::datatools::logger::priority p)
+{
+  _logging_priority = p;
+}
+
+datatools::logger::priority base_service::get_logging_priority() const
+{
+  return _logging_priority;
+}
 
 // Constructor
 base_service::base_service(const std::string& name,

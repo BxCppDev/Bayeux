@@ -29,13 +29,6 @@
 
 namespace datatools {
 
-// void units::throw_bad_unit(const std::string& a_type,
-//                            const std::string& a_unit_str) {
-//   std::ostringstream message;
-//   message << "Invalid '" << a_type << "' unit for symbol '" << a_unit_str << "' !";
-//   throw std::logic_error(message.str());
-// }
-
 double units::get_length_unit_from(const std::string& word) {
   if ((word == "angstrom")) return CLHEP::angstrom;
   if ((word == "fm") || (word == "fermi")) return CLHEP::fermi;
