@@ -6,8 +6,10 @@
 #include <stdexcept>
 #include <cmath>
 
+#include <datatools/exception.h>
+
 namespace mygsl {
-  
+
   using namespace std;
 
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(best_value,"mygsl::best_value")
@@ -25,20 +27,18 @@ namespace mygsl {
 
   void best_value::set_error_low (double error_low_)
   {
-    if (error_low_ < 0.0)
-      {
-        throw runtime_error ("mygsl::best_value::set_error_low: Invalid value for error low!");
-      }
+    DT_THROW_IF (error_low_ < 0.0,
+                 std::logic_error,
+                 "Invalid value for error low!");
     _error_low_ = error_low_;
     return;
   }
 
   void best_value::set_error_high (double error_high_)
   {
-    if (error_high_ < 0.0)
-      {
-        throw runtime_error ("mygsl::best_value::set_error_high: Invalid value for error high!");
-      }
+    DT_THROW_IF (error_high_ < 0.0,
+                 std::logic_error,
+                 "Invalid value for error high!");
     _error_high_ = error_high_;
     return;
   }
@@ -59,7 +59,7 @@ namespace mygsl {
   }
 
   bool best_value::has_value () const
-  { 
+  {
     //cerr << "TEST: best_value::has_value >>> value == " << _value_ << endl;
     return isnormal (_value_);
   }
@@ -78,19 +78,18 @@ namespace mygsl {
 
   void best_value::set_confidence_level (double confidence_level_)
   {
-    if ((confidence_level_ <= 0.0) || (confidence_level_ > 1.0))
-      {
-        throw domain_error ("mygsl::best_value::set_confidence_level: Invalid value for confidence level!");
-      }
+    DT_THROW_IF ((confidence_level_ <= 0.0) || (confidence_level_ > 1.0),
+                 std::domain_error,
+                 "Invalid value for confidence level!");
     _confidence_level_ = confidence_level_;
     return;
   }
-  
+
   double best_value::get_min_value () const
   {
     return _value_ - _error_low_;
   }
-  
+
   double best_value::get_max_value () const
   {
     return _value_ + _error_high_;
@@ -125,24 +124,24 @@ namespace mygsl {
   {
     return _confidence_level_;
   }
-  
+
   bool best_value::has_confidence_level () const
   {
     return isnormal (_confidence_level_);
   }
-  
+
   best_value::~best_value ()
   {
     reset ();
     return;
   }
-  
+
   best_value::best_value ()
   {
     reset ();
     return;
   }
-  
+
   best_value::best_value (double value_)
   {
     reset ();
@@ -152,8 +151,8 @@ namespace mygsl {
     unset_confidence_level ();
     return;
   }
-  
-  best_value::best_value (double value_, 
+
+  best_value::best_value (double value_,
                           double error_)
   {
     reset ();
@@ -163,9 +162,9 @@ namespace mygsl {
     unset_confidence_level ();
     return;
   }
-  
-  best_value::best_value (double value_, 
-                          double error_, 
+
+  best_value::best_value (double value_,
+                          double error_,
                           double CL_)
   {
     reset ();
@@ -175,9 +174,9 @@ namespace mygsl {
     set_confidence_level (CL_);
     return;
   }
-  
-  best_value::best_value (double value_, 
-                          double error_low_, 
+
+  best_value::best_value (double value_,
+                          double error_low_,
                           double error_high_,
                           double CL_)
   {
@@ -194,7 +193,7 @@ namespace mygsl {
     out_ << bv_.get_value ();
     if (bv_.has_errors ())
       {
-        if (bv_.is_symmetric_error ()) 
+        if (bv_.is_symmetric_error ())
           {
             out_ << " +/- " << bv_.get_error_low ();
           }

@@ -7,6 +7,8 @@
 #include <stdexcept>
 #include <limits>
 
+#include <datatools/exception.h>
+
 namespace mygsl {
 
   using namespace std;
@@ -96,23 +98,11 @@ namespace mygsl {
                                  size_t max_counts_)
   {
     using namespace std;
-    if (is_initialized ())
-      {
-        ostringstream message;
-        message << "mygsl::von_neumann_method::init: "
-                << "Method is already initalized !";
-        throw logic_error (message.str ());
-      }
-    if (xmin_ > xmax_)
-      {
-        throw domain_error ("mygsl::von_neumann_method::init: invalid range!");
-      }
+    DT_THROW_IF (is_initialized (), std::logic_error, "Method is already initalized !");
+    DT_THROW_IF (xmin_ > xmax_, std::domain_error, "Invalid range!");
     _xmin_ = xmin_;
     _xmax_ = xmax_;
-    if (max_counts_ < 10)
-      {
-        throw domain_error ("mygsl::von_neumann_method::init: invalid maximum number of tries!");
-      }
+    DT_THROW_IF (max_counts_ < 10, std::domain_error, "Invalid maximum number of tries!");
     _max_counts_ = max_counts_;
     _func_ = &func_;
 
@@ -122,19 +112,11 @@ namespace mygsl {
       }
     else
       {
-        // if (g_debug)
-        //   {
-        //     clog << "DEBUG: mygsl::von_neumann_method::init: searching for 'f(max)'..."
-        //          << endl;
-        //   }
         double fmax = -1.0;
         double f1 = -1.0;
         double f2 = -1.0;
         double dfmax = -1.0;
-        if (nsamples_ < 2)
-          {
-            throw domain_error ("mygsl::von_neumann_method::init: Invalid sampling!");
-          }
+        DT_THROW_IF (nsamples_ < 2, std::domain_error, "Invalid sampling  !");
         double dx = (_xmax_ - _xmin_) / nsamples_;
         for (double x = _xmin_;
              x <  (_xmax_ + 0.5 *dx);
@@ -158,11 +140,6 @@ namespace mygsl {
               }
           }
         _fmax_ = fmax + dfmax * 2. * dx;
-        // if (g_debug)
-        //   {
-        //     clog << "DEBUG: mygsl::von_neumann_method::init: found 'f(max)' = "
-        //          << _fmax_ << endl;
-        //   }
       }
     return;
   }
@@ -172,22 +149,18 @@ namespace mygsl {
     double res;
     size_t max_counts = _max_counts_;
     size_t counts = 0;
-    while (true)
-      {
-        double x = ran_.flat (_xmin_, _xmax_);
-        double y = ran_.flat (0.0, _fmax_);
-        counts++;
-        double f = (*_func_) (x);
-        if (y < f)
-          {
-            res = x;
-            break;
-          }
-        if ((max_counts > 0) && (counts > max_counts))
-          {
-            throw domain_error ("mygsl::von_neumann_method::shoot: maximum number of tries has been reached!");
-          }
+    while (true) {
+      double x = ran_.flat (_xmin_, _xmax_);
+      double y = ran_.flat (0.0, _fmax_);
+      counts++;
+      double f = (*_func_) (x);
+      if (y < f) {
+        res = x;
+        break;
       }
+      DT_THROW_IF ((max_counts > 0) && (counts > max_counts),
+                   std::domain_error, "Maximum number of tries has been reached!");
+    }
     return res;
   }
 

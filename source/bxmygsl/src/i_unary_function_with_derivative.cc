@@ -8,15 +8,16 @@
 #include <limits>
 
 #include <mygsl/numerical_differentiation.h>
+#include <datatools/exception.h>
 
 namespace mygsl {
-  
+
   i_unary_function_with_derivative::i_unary_function_with_derivative (double epsilon_)
     : i_unary_function (epsilon_)
   {
     return;
   }
-  
+
   i_unary_function_with_derivative::~i_unary_function_with_derivative ()
   {
     return;
@@ -39,7 +40,7 @@ namespace mygsl {
     return;
   }
 
-  double i_unary_function_with_derivative::_eval_df_numeric (double x_, 
+  double i_unary_function_with_derivative::_eval_df_numeric (double x_,
                                                              double h_) const
   {
     double df = std::numeric_limits<double>::quiet_NaN ();
@@ -57,12 +58,7 @@ namespace mygsl {
       bool xmin_ok = true;
       bool xmax_ok = true;
       if (has_explicit_domain_of_definition()) {
-        if (! is_in_domain_of_definition (x_)) {
-          std::ostringstream message;
-          message << "mygsl::i_unary_function_with_derivative::_eval_df_numeric: "
-                  << "value '" << x_ << "' is out of the domain of definition !";
-          throw std::domain_error (message.str ());
-        }
+        DT_THROW_IF (! is_in_domain_of_definition (x_), std::domain_error, "Value '" << x_ << "' is out of the domain of definition !");
         xmin_ok = is_in_domain_of_definition (xmin);
         xmax_ok = is_in_domain_of_definition (xmax);
       }
@@ -91,13 +87,13 @@ namespace mygsl {
   {
     _functor_ = &functor_;
     return;
-  } 
-  
+  }
+
   bool unary_function_promoted_with_numeric_derivative::is_in_domain_of_definition(double x_) const
   {
     return _functor_->is_in_domain_of_definition(x_);
   }
- 
+
   bool unary_function_promoted_with_numeric_derivative::has_explicit_domain_of_definition() const
   {
     return _functor_->has_explicit_domain_of_definition();
@@ -113,7 +109,7 @@ namespace mygsl {
     return _functor_->get_non_zero_domain_max();
   }
 
-  double unary_function_promoted_with_numeric_derivative::_eval (double x_) const 
+  double unary_function_promoted_with_numeric_derivative::_eval (double x_) const
   {
     return _functor_->eval(x_);
   }

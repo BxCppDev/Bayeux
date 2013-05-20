@@ -7,6 +7,9 @@
 #include <fstream>
 #include <limits>
 
+#include <datatools/exception.h>
+#include <datatools/logger.h>
+
 namespace mygsl {
 
   using namespace std;
@@ -64,10 +67,7 @@ namespace mygsl {
     sys->init_params_values ();
 
     double result = numeric_limits<double>::quiet_NaN ();
-    if (sys->_eval_f_MR_(result) != 0)
-      {
-        throw runtime_error ("mygsl::multidimensional_minimization_system::func_eval_f: Cannot evaluate function!");
-      }
+    DT_THROW_IF (sys->_eval_f_MR_(result) != 0, std::logic_error, "Cannot evaluate function!");
 
     // restore former 'x' value:
     sys->get_free_param (free_param_index).set_value_no_check (save_x);
@@ -98,7 +98,7 @@ namespace mygsl {
           {
             if (df != 0.0)
               {
-                clog << "DEVEL: multidimensional_minimization_system::_eval_f_MR_: out of limits == " << get_free_param (i).get_name () << " : Delta(f) == " << df << endl;
+                DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "out of limits == " << get_free_param (i).get_name () << " : Delta(f) == " << df);
                 dump = true; //print_status (clog);
               }
           }
@@ -116,7 +116,7 @@ namespace mygsl {
           {
             if (df != 0.0)
               {
-                clog << "DEVEL: multidimensional_minimization_system::_eval_f_MR_: out of limits == " << get_auto_param (i).get_name () << " : Delta(f) == " << df << endl;
+                DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "out of limits == " << get_auto_param (i).get_name () << " : Delta(f) == " << df);
                 dump = true; //print_status (clog);
               }
           }
@@ -158,7 +158,7 @@ namespace mygsl {
   {
     // clog << "DEVEL: MMS::_numerical_eval_df_MR_" << endl;
     bool local_devel = false;
-    if (local_devel) clog << "DEVEL: __numerical_eval_df: entering..." << endl;
+    //if (local_devel) clog << "DEVEL: __numerical_eval_df: entering..." << endl;
     for (int i = 0; i < get_number_of_free_params (); i++)
       {
         double save_value = get_free_param (i).get_value ();
@@ -173,17 +173,17 @@ namespace mygsl {
         func.function = multidimensional_minimization_system::func_eval_f_MR;
         if (get_free_param (i).is_in_safe_range ())
           {
-            if (local_devel) clog << "DEVEL: __numerical_eval_df: gsl_deriv_central... " << endl;
+            //if (local_devel) clog << "DEVEL: __numerical_eval_df: gsl_deriv_central... " << endl;
             res_deriv = gsl_deriv_central (&func, x, h, &df, &df_err);
           }
         else if (get_free_param (i).is_in_range_but_close_to_min ())
           {
-            if (local_devel) clog << "DEVEL: __numerical_eval_df: gsl_deriv_forward... " << endl;
+            //if (local_devel) clog << "DEVEL: __numerical_eval_df: gsl_deriv_forward... " << endl;
             res_deriv = gsl_deriv_forward (&func, x, h, &df, &df_err);
           }
         else if (get_free_param (i).is_in_range_but_close_to_max ())
           {
-            if (local_devel) clog << "DEVEL: __numerical_eval_df: gsl_deriv_backward... " << endl;
+            //if (local_devel) clog << "DEVEL: __numerical_eval_df: gsl_deriv_backward... " << endl;
             res_deriv = gsl_deriv_backward (&func, x, h, &df, &df_err);
           }
         else
@@ -192,18 +192,18 @@ namespace mygsl {
           }
         gradient_[i] = df;
       }
-    if (local_devel) clog << "DEVEL: __numerical_eval_df: exiting." << endl;
+    //if (local_devel) clog << "DEVEL: __numerical_eval_df: exiting." << endl;
     return 0;
   }
 
   int multidimensional_minimization_system::_eval_df (double * gradient_)
   {
-    cerr << "ERROR: The 'multidimensional_minimization_system::_eval_df' method " << endl;
-    cerr << "       must be overloaded for your own class!" << endl;
-    cerr << "       If not, you should consider to activate the " << endl;
-    cerr << "       'use_numeric_eval_df(true)' method in order to perform" << endl;
-    cerr << "       automatically the numerical estimation of the " << endl;
-    cerr << "       derivatives!" << endl;
+    datatools::logger::priority p= datatools::logger::PRIO_ERROR;
+    DT_LOG_ERROR(p, "The 'multidimensional_minimization_system::_eval_df' method ");
+    DT_LOG_ERROR(p, "must be overloaded for your own class !");
+    DT_LOG_ERROR(p, "If not, you should consider to activate the ");
+    DT_LOG_ERROR(p, "'use_numeric_eval_df(true)' method in order to perform");
+    DT_LOG_ERROR(p, "automatically the numerical estimation of the derivatives");
     return 1;
   }
 
@@ -263,10 +263,7 @@ namespace mygsl {
                                                              size_t dimension_) const
   {
     size_t fd = get_number_of_free_params ();
-    if (dimension_ != fd)
-      {
-        throw std::range_error ("mygsl::multidimensional_minimization_system::to_double_star: Invalid dimension!");
-      }
+    DT_THROW_IF (dimension_ != fd, std::range_error, "Invalid dimension!");
     int i_free = 0;
     for (int i = 0; i < fd; i++)
       {
@@ -278,10 +275,7 @@ namespace mygsl {
   void multidimensional_minimization_system::from_double_star (const double * pars_,
                                                                size_t dimension_)
   {
-    if (dimension_ != get_number_of_free_params ())
-      {
-        throw std::range_error ("mygsl::multidimensional_minimization_system::from_double_star: Invalid dimension!");
-      }
+    DT_THROW_IF (dimension_ != get_number_of_free_params (), std::range_error, "Invalid dimension!");
     for (int i = 0; i < get_number_of_free_params (); i++)
       {
         get_free_param (i).set_value_no_check (pars_[i]);
@@ -354,10 +348,10 @@ namespace mygsl {
          param_index++)
       {
         const mygsl::param_entry & param = get_free_param (param_index);
-        clog << "NOTICE: multidimensional_minimization_system::plot_f: "
-             << "Plot function to be minimized for parameter '"
-             << param.get_name ()
-             << "' in the current parameters' region: " << endl;
+        // clog << "NOTICE: multidimensional_minimization_system::plot_f: "
+        //      << "Plot function to be minimized for parameter '"
+        //      << param.get_name ()
+        //      << "' in the current parameters' region: " << endl;
         ostringstream fname;
         fname << prefix
               << param.get_name () << ext;
@@ -404,8 +398,8 @@ namespace mygsl {
             count++;
           }
         f_param.close ();
-        clog << "NOTICE: multidimensional_minimization_system::plot_f: "
-             << "done." << endl;
+        // clog << "NOTICE: multidimensional_minimization_system::plot_f: "
+        //      << "done." << endl;
       }
     return;
   }
@@ -530,14 +524,8 @@ namespace mygsl {
 
   void multidimensional_minimization::_init_algorithm_ (const std::string & name_)
   {
-    if (! name_is_valid (name_))
-      {
-        std::ostringstream message;
-        message << "multidimensional_minimization::_init_algorithm_: "
-                << "Invalid minimization algorithm '"
-                << name_ << "'!";
-        throw std::runtime_error (message.str ());
-      }
+    DT_THROW_IF (! name_is_valid (name_), std::logic_error, "Invalid minimization algorithm '"
+                 << name_ << "' !");
 
     if (name_ == "conjugate_fr")
       {
@@ -573,10 +561,7 @@ namespace mygsl {
 
   void multidimensional_minimization::_set_mode_ (int mode_)
   {
-    if (mode_ != MODE_F && mode_ != MODE_FDF)
-      {
-        throw std::runtime_error ("mygsl::multidimensional_minimization:_set_mode_: Invalid mode!");
-      }
+    DT_THROW_IF (mode_ != MODE_F && mode_ != MODE_FDF, std::logic_error, "Invalid mode !");
     _mode_ = mode_;
     return;
   }

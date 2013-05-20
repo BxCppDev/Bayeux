@@ -15,6 +15,8 @@
 #include <datatools/utils.h>
 #include <datatools/units.h>
 #include <datatools/ioutils.h>
+#include <datatools/exception.h>
+#include <datatools/logger.h>
 
 #include <TFile.h>
 #include <TH1D.h>
@@ -87,12 +89,7 @@ namespace mygsl {
   int histogram_service::initialize (const datatools::properties  & config_,
                                      datatools::service_dict_type & service_dict_)
   {
-    if (is_initialized ()) {
-      std::ostringstream message;
-      message << "mygsl::histogram_service::initialize: "
-              << "Service '" << get_name () << "' is already initialized ! ";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF (is_initialized (),std::logic_error,"Service '" << get_name () << "' is already initialized !");
 
     if (config_.has_key ("output_files")) {
       std::vector<std::string> output_files;
@@ -127,10 +124,6 @@ namespace mygsl {
       config_.export_and_rename_starting_with (pool_config, "pool.", "");
     }
     // Initialize the pool :
-    /*
-      pool_config.tree_dump(std::cerr, "pool_config: ",
-      "DEVEL: histogram_service: ");
-    */
     _pool_.initialize (pool_config);
 
     _initialized_ = true;
@@ -139,12 +132,7 @@ namespace mygsl {
 
   int histogram_service::reset ()
   {
-    if (! is_initialized ()) {
-      std::ostringstream message;
-      message << "mygsl::histogram_service::reset: "
-              << "Service '" << get_name () << "' is not initialized ! ";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF (! is_initialized (), std::logic_error, "Service '" << get_name () << "' is not initialized !");
 
     _at_reset ();
 
@@ -160,9 +148,7 @@ namespace mygsl {
 
   void histogram_service::store_as_boost_file (const std::string & filename_) const
   {
-    std::clog << datatools::io::notice
-              << "mygsl::histogram_service::store_as_boost_file: "
-              << "Exporting histograms to Boost file '" << filename_ << "'..." << std::endl;
+    DT_LOG_NOTICE(get_logging_priority(),"Exporting histograms to Boost file '" << filename_ << "'...");
     std::string fn = filename_;
     datatools::fetch_path_with_env (fn);
 
@@ -182,7 +168,6 @@ namespace mygsl {
                                           TH2D & rh2d_,
                                           bool stats_)
   {
-    //h2d_.tree_dump (std::clog, "export H2D... ", "===========> ");
     rh2d_.SetName (name_.c_str ());
 
     if (! title_.empty()) {
@@ -307,7 +292,6 @@ namespace mygsl {
                                           TH1D & rh1d_,
                                           bool stats_)
   {
-    //h1d_.tree_dump (std::clog, "export H1D... ", "===========> ");
     rh1d_.SetName (name_.c_str ());
 
     if (! title_.empty()) {
@@ -395,9 +379,7 @@ namespace mygsl {
 
   void histogram_service::store_as_root_file (const std::string & filename_) const
   {
-    std::clog << datatools::io::notice
-              << "mygsl::histogram_service::store_as_root_file: "
-              << "Exporting histograms to ROOT file '" << filename_ << "'..." << std::endl;
+    DT_LOG_NOTICE(get_logging_priority(),"Exporting histograms to ROOT file '" << filename_ << "'...");
     std::string fn = filename_;
     datatools::fetch_path_with_env (fn);
     TFile orf (fn.c_str (), "RECREATE");
@@ -406,9 +388,7 @@ namespace mygsl {
     _pool_.names (histo1d_names, "dim=1");
     _pool_.names (histo2d_names, "dim=2");
 
-    std::clog << datatools::io::notice
-              << "mygsl::histogram_service::store_as_root_file: "
-              << "Exporting 1D-histograms..." << std::endl;
+    DT_LOG_NOTICE(get_logging_priority(),"Exporting 1D-histograms...");
     for (int i = 0; i < histo1d_names.size (); i++) {
       const std::string & hname = histo1d_names[i];
       const mygsl::histogram_1d & h1d = _pool_.get_1d (hname);
@@ -434,9 +414,7 @@ namespace mygsl {
       rootH1d.SetDirectory(&orf);
       rootH1d.Write ();
     }
-    std::clog << datatools::io::notice
-              << "mygsl::histogram_service::store_as_root_file: "
-              << "Exporting 2D-histograms..." << std::endl;
+    DT_LOG_NOTICE(get_logging_priority(),"Exporting 2D-histograms...");
     for (int i = 0; i < histo2d_names.size (); i++) {
       const std::string & hname = histo2d_names[i];
       const mygsl::histogram_2d & h2d = _pool_.get_2d (hname);
@@ -476,10 +454,7 @@ namespace mygsl {
   void histogram_service::_at_reset ()
   {
     if (!has_output_files ()) {
-      std::clog << datatools::io::warning
-                << "mygsl::histogram_service::_at_reset: "
-                << "No output file given !"
-                << std::endl;
+      DT_LOG_NOTICE(get_logging_priority(),"No output file is requested !");
       return;
     }
 
@@ -491,13 +466,9 @@ namespace mygsl {
       if (pth.extension () == ".root") {
         store_as_root_file (fn);
       } else if (pth.extension () == ".brio") {
-        std::clog << datatools::io::warning
-                  << "mygsl::histogram_service::_at_reset: "
-                  << "BRIO format is not supported yet !" << std::endl;
+        DT_LOG_ERROR(get_logging_priority(),"BRIO format is not supported !");
       } else if (pth.extension () == ".trio") {
-        std::clog << datatools::io::warning
-                  << "mygsl::histogram_service::_at_reset: "
-                  << "TRIO format is not supported yet !" << std::endl;
+        DT_LOG_ERROR(get_logging_priority(),"TRIO format is not supported !");
       } else {
         int mode_guess;
         namespace ds = datatools;
@@ -505,10 +476,7 @@ namespace mygsl {
             == ds::io_factory::SUCCESS) {
           store_as_boost_file (fn);
         } else {
-          std::ostringstream message;
-          message << "mygsl::histogram_service::_at_reset: "
-                  << "Cannot guess mode for file '" << fn << "'!";
-          throw std::logic_error (message.str ());
+          DT_THROW_IF(true,std::logic_error,"Cannot guess mode for file '" << fn << "' !");
         }
       }
     }

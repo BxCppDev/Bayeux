@@ -15,6 +15,7 @@
 #include <datatools/properties.h>
 #include <datatools/multi_properties.h>
 #include <datatools/handle.h>
+#include <datatools/logger.h>
 
 #include <mygsl/histogram.h>
 #include <mygsl/histogram_2d.h>
@@ -147,10 +148,15 @@ namespace mygsl {
                             const std::string & indent = "",
                             bool inherit               = false) const;
 
+    void set_logging_priority(datatools::logger::priority);
+
+    datatools::logger::priority get_logging_priority() const ;
+
   private:
 
     static const std::string _INITIALIZED_FLAG_KEY_;
 
+    datatools::logger::priority _logging_priority_;
     std::string           _description_;
     dict_type             _dict_;
     datatools::properties _auxiliaries_;

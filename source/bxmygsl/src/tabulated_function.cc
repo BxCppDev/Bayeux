@@ -11,6 +11,9 @@
 #include <gsl/gsl_interp.h>
 #include <gsl/gsl_spline.h>
 
+#include <datatools/exception.h>
+#include <datatools/logger.h>
+
 namespace mygsl {
 
   using namespace std;
@@ -157,37 +160,32 @@ namespace mygsl {
     bool polynomial_alert = false;
     size_t polynomial_alert_max_points = 4;
     const gsl_interp_type *git = 0;
-    if (!interpolator_name_is_valid(pImpl->_interpolator_name_)) {
-      std::ostringstream message;
-      message << "mygsl::tabulated_function::lock_table: "
-              << "Interpolator '"
-              << pImpl->_interpolator_name_
-              << "' is not supported!";
-      throw std::logic_error(message.str());
-    } else {
-      // if (g_debug) {
-      //   std::cerr << "DEBUG: tabulated_function::lock_table: name='"
-      //             << pImpl->_interpolator_name_ << "'" << std::endl;
-      // }
-      if (pImpl->_interpolator_name_ == LINEAR_INTERP_NAME) {
-        git = gsl_interp_linear;
-      }
-      if (pImpl->_interpolator_name_ == POLYNOMIAL_INTERP_NAME) {
-        git = gsl_interp_polynomial;
-        if (npoints > polynomial_alert_max_points) polynomial_alert = true;
-      }
-      if (pImpl->_interpolator_name_ == CSPLINE_INTERP_NAME) {
-        git = gsl_interp_cspline;
-      }
-      if (pImpl->_interpolator_name_ == CSPLINE_PERIODIC_INTERP_NAME) {
-        git = gsl_interp_cspline_periodic;
-      }
-      if (pImpl->_interpolator_name_ == AKIMA_INTERP_NAME) {
-        git = gsl_interp_akima;
-      }
-      if (pImpl->_interpolator_name_ == AKIMA_PERIODIC_INTERP_NAME) {
-        git = gsl_interp_akima_periodic;
-      }
+    DT_THROW_IF (!interpolator_name_is_valid(pImpl->_interpolator_name_),
+                 std::logic_error, "Interpolator '"
+                 << pImpl->_interpolator_name_
+                 << "' is not supported !");
+    // if (g_debug) {
+    //   std::cerr << "DEBUG: tabulated_function::lock_table: name='"
+    //             << pImpl->_interpolator_name_ << "'" << std::endl;
+    // }
+    if (pImpl->_interpolator_name_ == LINEAR_INTERP_NAME) {
+      git = gsl_interp_linear;
+    }
+    if (pImpl->_interpolator_name_ == POLYNOMIAL_INTERP_NAME) {
+      git = gsl_interp_polynomial;
+      if (npoints > polynomial_alert_max_points) polynomial_alert = true;
+    }
+    if (pImpl->_interpolator_name_ == CSPLINE_INTERP_NAME) {
+      git = gsl_interp_cspline;
+    }
+    if (pImpl->_interpolator_name_ == CSPLINE_PERIODIC_INTERP_NAME) {
+      git = gsl_interp_cspline_periodic;
+    }
+    if (pImpl->_interpolator_name_ == AKIMA_INTERP_NAME) {
+      git = gsl_interp_akima;
+    }
+    if (pImpl->_interpolator_name_ == AKIMA_PERIODIC_INTERP_NAME) {
+      git = gsl_interp_akima_periodic;
     }
 
     pImpl->_gs_      = gsl_spline_alloc(git, npoints);
@@ -204,23 +202,17 @@ namespace mygsl {
     // }
 
     if (npoints < (int)min_size) {
-      std::ostringstream message;
-      message << "mygsl::tabulated_function::lock_table: "
-              << "Not enough data points for '"
-              << name
-              << "' interpolator!";
       if (pImpl->_gs_ != 0) gsl_spline_free(pImpl->_gs_);
       pImpl->_gs_ = 0;
-      throw std::logic_error(message.str());
+      DT_THROW_IF(true,std::logic_error,"Not enough data points for '"  << name << "' interpolator !");
     }
 
     if (polynomial_alert) {
-      std::ostringstream message;
-      message << "mygsl::tabulated_function::lock_table: "
-              << "Polynomial interpolation scheme uses a too large data set with more than "
-              << polynomial_alert_max_points
-              << " points!";
-      if (is_verbose()) std::clog << "WARNING: " << message.str() << endl;
+      if (is_verbose()) {
+        DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
+                      "Polynomial interpolation scheme uses a too large data set with more than "
+                      << polynomial_alert_max_points << " points !");
+      }
     }
 
     pImpl->_giacc_ = gsl_interp_accel_alloc();
@@ -315,9 +307,7 @@ namespace mygsl {
   }
 
   double tabulated_function::_eval(double x_) const {
-    if (!is_table_locked()) {
-      throw std::logic_error("mygsl::tabulated_function::_eval: Object not locked!");
-    }
+    DT_THROW_IF (!is_table_locked(), std::logic_error, "Object not locked !");
     double y = gsl_spline_eval(pImpl->_gs_, x_, pImpl->_giacc_);
     return y;
   }
@@ -325,21 +315,14 @@ namespace mygsl {
   void tabulated_function::tabfunc_load(std::istream& in_, void* context_) {
     std::string interpolator_name;
     in_ >> interpolator_name >> std::ws;
-    if (!interpolator_name_is_valid(interpolator_name)) {
-      std::ostringstream message;
-      message << "mygsl::tabulated_function::tabfunc_load: "
-              << "Interpolator '"
-              << pImpl->_interpolator_name_ << "' is not supported!";
-      throw std::out_of_range(message.str());
-    }
+    DT_THROW_IF (!interpolator_name_is_valid(interpolator_name),
+                 std::out_of_range, "Interpolator '" << pImpl->_interpolator_name_ << "' is not supported !");
     size_t n = 0;
     in_ >> n >> std::ws;
     for (int i = 0; i < n ; ++i) {
       double x, y;
       in_ >> x >> std::ws >> y >> std::ws;
-      if (!in_) {
-        throw std::logic_error("mygsl::tabulated_function::tabfunc_load: invalid format for (x, y) data point");
-      }
+      DT_THROW_IF (!in_, std::logic_error, "Invalid format for (x, y) data point");
       add_point(x, y, false);
     }
     lock_table(interpolator_name);

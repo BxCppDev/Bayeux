@@ -10,6 +10,8 @@
 #include <gsl/gsl_math.h>
 #include <boost/preprocessor/stringize.hpp>
 
+#include <datatools/exception.h>
+
 #include <mygsl/histogram_2d.h>
 
 namespace mygsl {
@@ -17,21 +19,6 @@ namespace mygsl {
   using namespace std;
 
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(histogram,"mygsl::histogram")
-
-#define HISTOGRAM_BASIC_NEEDS_INIT(Method,Histo)                    \
-  if (!(Histo).is_initialized ())                                   \
-    {                                                               \
-      std::ostringstream message;                                   \
-      message << "mygsl::histogram::" << BOOST_PP_STRINGIZE(Method) \
-              << ": Histogram 1D '" << BOOST_PP_STRINGIZE(Histo)    \
-              << "' is not initialized !";                          \
-      throw std::logic_error (message.str());                       \
-    }                                                               \
-  /**/
-
-#define HISTOGRAM_NEEDS_INIT(Method)       \
-  HISTOGRAM_BASIC_NEEDS_INIT(Method,*this) \
-  /**/
 
   const datatools::properties & histogram::get_auxiliaries () const
   {
@@ -65,19 +52,13 @@ namespace mygsl {
 
   double histogram::get_uniform_binning () const
   {
-    if (! is_uniform_binning ())
-      {
-        throw std::logic_error ("mygsl::histogram::get_uniform_binning: No uniform binning!");
-      }
+    DT_THROW_IF (! is_uniform_binning (), std::logic_error, "No uniform binning!");
     return _binning_info_;
   }
 
   double histogram::get_logarithmic_binning () const
   {
-    if (! is_logarithmic_binning ())
-      {
-        throw std::logic_error ("mygsl::histogram::get_logarithmic_binning: No logarithmic binning!");
-      }
+    DT_THROW_IF (! is_logarithmic_binning (), std::logic_error, "No logarithmic binning!");
     return -_binning_info_;
   }
 
@@ -97,10 +78,7 @@ namespace mygsl {
                               int bin_axis_,
                               const std::vector<std::string> & imported_aux_prefixes_)
   {
-    if (! h_.is_initialized ())
-      {
-        throw std::logic_error ("mygsl::histogram::initialize: Invalid 2D-histogram source !");
-      }
+    DT_THROW_IF (! h_.is_initialized (),std::logic_error,"Invalid 2D-histogram source !");
     // Reset internals :
     if (_h_ != 0) {
       gsl_histogram_free (_h_);
@@ -130,7 +108,7 @@ namespace mygsl {
      }
     else
       {
-        throw std::logic_error ("mygsl::histogram::initialize: Invalid bin axis value !");
+        DT_THROW_IF(true, std::logic_error, "Invalid bin axis value !");
       }
     aux.export_all (_auxiliaries_);
     for (int i = 0; i < imported_aux_prefixes_.size(); i++)
@@ -144,14 +122,8 @@ namespace mygsl {
   void histogram::initialize (const histogram & h_,
                               const std::vector<std::string> & imported_aux_prefixes_)
   {
-    if (&h_ == &(*this))
-      {
-        throw std::logic_error ("mygsl::histogram::initialize: Self-reference initialization is forbidden!");
-      }
-    if (! h_.is_initialized ())
-      {
-        throw std::logic_error ("mygsl::histogram::initialize: Invalid 1D-histogram source !");
-      }
+    DT_THROW_IF (&h_ == &(*this), std::logic_error, "Self-reference initialization is forbidden!");
+    DT_THROW_IF (! h_.is_initialized (), std::logic_error, "Invalid 1D-histogram source !");
     // Reset internals :
     if (_h_ != 0)
       {
@@ -179,12 +151,8 @@ namespace mygsl {
 
   void histogram::init (size_t n_, double min_, double max_, unsigned int mode_)
   {
-    if (n_ < 1) {
-      throw std::logic_error ("mygsl::histogram::init: Invalid size!");
-    }
-    if (min_ >= max_) {
-      throw std::logic_error ("mygsl::histogram::init: Invalid range!");
-    }
+    DT_THROW_IF (n_ < 1, std::logic_error, "Invalid size!");
+    DT_THROW_IF (min_ >= max_, std::logic_error, "Invalid range !");
     reset_counters ();
     if (_h_ != 0) {
       gsl_histogram_free (_h_);
@@ -198,10 +166,7 @@ namespace mygsl {
       }
     else
       {
-        if (min_ <= 0.0)
-          {
-            throw std::logic_error ("mygsl::histogram::init: Invalid logarithmic range!");
-          }
+        DT_THROW_IF (min_ <= 0.0, std::logic_error, "Invalid logarithmic range !");
         _h_ = gsl_histogram_alloc (n_);
         double log_factor = pow (max_/min_, 1./n_);
         std::vector<double> log_ranges;
@@ -228,10 +193,7 @@ namespace mygsl {
   void histogram::init (const std::vector<double> & ranges_)
   {
     size_t n = ranges_.size () - 1;
-    if (n < 1)
-      {
-        throw std::logic_error ("mygsl::histogram::init: Invalid size!");
-      }
+    DT_THROW_IF (n < 1, std::logic_error, "Invalid size!");
     reset_counters ();
     if (_h_ != 0)
       {
@@ -407,17 +369,16 @@ namespace mygsl {
 
   bool histogram::is_inside (double x_) const
   {
-    HISTOGRAM_NEEDS_INIT (is_inside);
+    DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
     return (x_ >= _h_->range[0]) && (x_ < _h_->range[_h_->n]);
   }
 
   void histogram::accumulate (double x_ , double weight_)
   {
-    HISTOGRAM_NEEDS_INIT (accumulate);
-    if (! is_inside (x_))
-      {
-        return;
-      }
+    DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
+    if (! is_inside (x_)) {
+      return;
+    }
     gsl_histogram_accumulate (_h_, x_, weight_);
     increment_counts ();
     return;
@@ -425,7 +386,7 @@ namespace mygsl {
 
   void histogram::fill (double x_ , double weight_)
   {
-    HISTOGRAM_NEEDS_INIT (fill);
+    DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
     if (x_ < _h_->range[0]) {
       increment_underflow (weight_);
       return;
@@ -441,10 +402,9 @@ namespace mygsl {
 
   void histogram::set (size_t i_, double value_)
   {
-    HISTOGRAM_NEEDS_INIT (set);
-    if (i_ < 0 ||  i_ >= _h_->n) {
-      throw std::logic_error("histogram::set: Invalid range!");
-    }
+    DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
+    DT_THROW_IF (i_ < 0 ||  i_ >= _h_->n,
+                 std::logic_error, "Invalid range !");
     invalidate_counters ();
     _h_->bin[i_] = value_;
     return;
@@ -452,16 +412,14 @@ namespace mygsl {
 
   double histogram::at (size_t i_) const
   {
-    HISTOGRAM_NEEDS_INIT (at);
-    if (i_ < 0 ||  i_ >= _h_->n) {
-      throw std::logic_error("histogram::at: Invalid range!");
-    }
+    DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
+    DT_THROW_IF (i_ < 0 ||  i_ >= _h_->n, std::logic_error, "Invalid range !");
     return gsl_histogram_get (_h_, i_);
   }
 
   double histogram::get (size_t i_) const
   {
-    HISTOGRAM_NEEDS_INIT (get);
+    DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
     if (i_ < 0) return _underflow_;
     if (i_ >= _h_->n) return _overflow_;
     return gsl_histogram_get (_h_,i_);
@@ -469,39 +427,38 @@ namespace mygsl {
 
   bool histogram::find (double x_ , size_t & i_) const
   {
-    HISTOGRAM_NEEDS_INIT (find);
+    DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
     return gsl_histogram_find (_h_, x_, &i_) == GSL_SUCCESS;
   }
 
   double histogram::min () const
   {
-    HISTOGRAM_NEEDS_INIT (min);
+    DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
     return gsl_histogram_min (_h_);
   }
 
   double histogram::max () const
   {
-    HISTOGRAM_NEEDS_INIT (max);
+    DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
     return gsl_histogram_max (_h_);
   }
 
   size_t histogram::bins () const
   {
-    HISTOGRAM_NEEDS_INIT (bins);
+    DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
     return gsl_histogram_bins (_h_);
   }
 
   void histogram::destroy ()
   {
-    if (is_initialized ())
-      {
-        invalidate_counters ();
-        reset ();
-        gsl_histogram_free (_h_);
-        _h_ = 0;
-        _auxiliaries_.clear ();
-        _binning_info_ = std::numeric_limits<double>::quiet_NaN ();
-      }
+    if (is_initialized ()) {
+      invalidate_counters ();
+      reset ();
+      gsl_histogram_free (_h_);
+      _h_ = 0;
+      _auxiliaries_.clear ();
+      _binning_info_ = std::numeric_limits<double>::quiet_NaN ();
+    }
     return;
   }
 
@@ -514,33 +471,24 @@ namespace mygsl {
 
   bool histogram::can_rebin (size_t new_bins_) const
   {
-    HISTOGRAM_NEEDS_INIT (can_rebin);
-    //std::cerr << "DEVEL: mygsl::histogram::can_rebin: _binning_info_ = " << _binning_info_ << std::endl;
-    if (! is_uniform_binning ())
-      {
-        return false;
-      }
+    DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
+    if (! is_uniform_binning ()) {
+      return false;
+    }
     size_t n = gsl_histogram_bins (_h_);
-    //std::cerr << "DEVEL: mygsl::histogram::can_rebin:        n = " << n << std::endl;
-    //std::cerr << "DEVEL: mygsl::histogram::can_rebin: new_bins = " << new_bins_ << std::endl;
-    if (n < new_bins_)
-      {
-        return false;
-      }
-    if ((n % new_bins_) != 0)
-      {
-        return false;
-      }
+    if (n < new_bins_) {
+      return false;
+    }
+    if ((n % new_bins_) != 0) {
+      return false;
+    }
     return true;
   }
 
   void histogram::rebin (size_t new_bins_)
   {
-    HISTOGRAM_NEEDS_INIT (rebin);
-    if (! can_rebin (new_bins_))
-      {
-        throw std::logic_error ("mygsl::histogram::rebin: New number of bins is invalid!");
-      }
+    DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
+    DT_THROW_IF (! can_rebin (new_bins_), std::logic_error, "New number of bins is invalid!");
     _binning_info_ = std::numeric_limits<double>::quiet_NaN ();
     size_t n  = gsl_histogram_bins (_h_);
     size_t f  = n / new_bins_;
@@ -575,54 +523,53 @@ namespace mygsl {
 
   double histogram::min_val () const
   {
-    HISTOGRAM_NEEDS_INIT (min_val);
+    DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
     return gsl_histogram_min_val (_h_);
   }
 
   size_t histogram::min_bin () const
   {
-    HISTOGRAM_NEEDS_INIT (min_bin);
+    DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
     return gsl_histogram_min_bin (_h_);
   }
 
   double histogram::max_val () const
   {
-    HISTOGRAM_NEEDS_INIT (max_val);
+    DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
     return gsl_histogram_max_val (_h_);
   }
 
   size_t histogram::max_bin () const
   {
-    HISTOGRAM_NEEDS_INIT (max_bin);
+    DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
     return gsl_histogram_max_bin (_h_);
   }
 
   double histogram::mean () const
   {
-    HISTOGRAM_NEEDS_INIT (mean);
+    DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
     return gsl_histogram_mean (_h_);
   }
 
   double histogram::sigma () const
   {
-    HISTOGRAM_NEEDS_INIT (sigma);
+    DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
     return gsl_histogram_sigma (_h_);
   }
 
   double histogram::sum () const
   {
-    HISTOGRAM_NEEDS_INIT (sum);
+    DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
     return gsl_histogram_sum (_h_);
   }
 
   double histogram::sum (size_t begin_, size_t end_) const
   {
-    HISTOGRAM_NEEDS_INIT (sum)
-      double s = 0.0;
-    for (size_t i = begin_; i < end_; i++)
-      {
-        s += gsl_histogram_get (_h_, i);
-      }
+    DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
+    double s = 0.0;
+    for (size_t i = begin_; i < end_; i++) {
+      s += gsl_histogram_get (_h_, i);
+    }
     return s;
   }
 
@@ -670,23 +617,17 @@ namespace mygsl {
       }
     else if (token != "1")
       {
-        throw std::logic_error ("mygsl::histogram::from_stream: Unrecognized histogram 1D validation token !");
+        DT_THROW_IF(true, std::logic_error, "Unrecognized histogram 1D validation token !");
       }
     unsigned int n;
     in_ >> n;
-    if (! in_) {
-      throw std::logic_error ("mygsl::histogram::from_stream: Cannot read histogram size from stream!");
-    }
-    if (n < 1) {
-      throw std::logic_error ("mygsl::histogram::from_stream: Invalid histogram size!");
-    }
+    DT_THROW_IF (! in_, std::logic_error, "Cannot read histogram size from stream!");
+    DT_THROW_IF (n < 1, std::logic_error, "Invalid histogram size!");
     initialize (n, 0.0, 1.0, BIN_MODE_LINEAR);
     for (size_t i = 0; i < n; i++) {
       double min, max, bin_counts;
       in_ >> min >> max >> bin_counts;
-      if (! in_) {
-        throw std::logic_error ("mygsl::histogram::from_stream: Cannot read histogram bin contents from stream!");
-      }
+      DT_THROW_IF (! in_, std::logic_error, "Cannot read histogram bin contents from stream!");
       if (i==0) _h_->range[i]=min;
       _h_->range[i+1]=max;
       _h_->bin[i]=bin_counts;
@@ -704,9 +645,7 @@ namespace mygsl {
       {
         invalidate_underflow_overflow ();
       }
-    if (! in_) {
-      throw std::logic_error ("mygsl::histogram::from_stream: Cannot read histogram underflow/overflow from stream!");
-    }
+    DT_THROW_IF (! in_, std::logic_error, "Cannot read histogram underflow/overflow from stream!");
     _binning_info_ = binning_info;
     _counts_       = counts;
     _underflow_    = underflow;
@@ -900,7 +839,7 @@ double histogram::operator[] (size_t i_) const
 
 std::pair<double,double> histogram::get_range (size_t i_) const
 {
-  HISTOGRAM_NEEDS_INIT (get_range);
+  DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
   std::pair<double,double> p;
   gsl_histogram_get_range (_h_,i_,&p.first,&p.second);
   return p;
@@ -908,20 +847,20 @@ std::pair<double,double> histogram::get_range (size_t i_) const
 
 bool histogram::has_size (size_t bins_) const
 {
-  HISTOGRAM_NEEDS_INIT (has_size);
+  DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
   return bins_ == bins ();
 }
 
 bool histogram::same (const histogram & h_) const
 {
-  HISTOGRAM_BASIC_NEEDS_INIT(same,h_);
-  HISTOGRAM_NEEDS_INIT (same);
+  DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
+  DT_THROW_IF(!h_.is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
   return gsl_histogram_equal_bins_p (_h_,h_._h_);
 }
 
 void histogram::shift (double s_)
 {
-  HISTOGRAM_NEEDS_INIT (scale);
+  DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
   gsl_histogram_shift (_h_,s_);
   invalidate_counters ();
   return;
@@ -929,7 +868,7 @@ void histogram::shift (double s_)
 
 void histogram::scale (double s_)
 {
-  HISTOGRAM_NEEDS_INIT (scale);
+  DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
   gsl_histogram_scale (_h_,s_);
   invalidate_counters ();
   return;
@@ -937,7 +876,7 @@ void histogram::scale (double s_)
 
 void histogram::negate ()
 {
-  HISTOGRAM_NEEDS_INIT (negate);
+  DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
   gsl_histogram_scale (_h_,-1.0);
   invalidate_counters ();
   return;
@@ -945,15 +884,15 @@ void histogram::negate ()
 
 void histogram::zero ()
 {
-  HISTOGRAM_NEEDS_INIT (zero);
+  DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
   reset ();
   return;
 }
 
 void histogram::add (const histogram & h_)
 {
-  HISTOGRAM_BASIC_NEEDS_INIT(add,h_);
-  HISTOGRAM_NEEDS_INIT (add);
+  DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
+  DT_THROW_IF(!h_.is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
   gsl_histogram_add (_h_,h_._h_);
   invalidate_counters ();
   return;
@@ -961,8 +900,8 @@ void histogram::add (const histogram & h_)
 
 void histogram::sub (const histogram & h_)
 {
-  HISTOGRAM_BASIC_NEEDS_INIT(sub,h_);
-  HISTOGRAM_NEEDS_INIT (sub);
+  DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
+  DT_THROW_IF(!h_.is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
   gsl_histogram_sub (_h_,h_._h_);
   invalidate_counters ();
   return;
@@ -970,8 +909,8 @@ void histogram::sub (const histogram & h_)
 
 void histogram::mul (const histogram & h_)
 {
-  HISTOGRAM_BASIC_NEEDS_INIT(mul,h_);
-  HISTOGRAM_NEEDS_INIT (mul);
+  DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
+  DT_THROW_IF(!h_.is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
   gsl_histogram_mul (_h_,h_._h_);
   invalidate_counters ();
   return;
@@ -979,8 +918,8 @@ void histogram::mul (const histogram & h_)
 
 void histogram::div (const histogram & h_)
 {
-  HISTOGRAM_BASIC_NEEDS_INIT(div,h_);
-  HISTOGRAM_NEEDS_INIT (div);
+  DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
+  DT_THROW_IF(!h_.is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
   gsl_histogram_div (_h_,h_._h_);
   invalidate_counters ();
   return;
@@ -1141,10 +1080,7 @@ void histogram::pdf::init (const histogram & h_)
       reset ();
     }
   _pdf_ = gsl_histogram_pdf_alloc (h_.bins ());
-  if  (_pdf_ == 0)
-    {
-      throw std::logic_error ("mygsl::histogram::pdf::init: Cannot allocate histogram's PDF !");
-    }
+  DT_THROW_IF (_pdf_ == 0, std::logic_error, "Cannot allocate histogram's PDF !");
   gsl_histogram_pdf_init (_pdf_, h_._h_);
   return;
 }

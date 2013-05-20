@@ -1,4 +1,4 @@
-// -*- mode:c++; -*- 
+// -*- mode:c++; -*-
 // i_unary_function.cc
 
 #include <mygsl/i_unary_function.h>
@@ -11,6 +11,7 @@
 
 #include <datatools/ioutils.h>
 #include <datatools/utils.h>
+#include <datatools/exception.h>
 
 namespace mygsl {
 
@@ -58,7 +59,7 @@ namespace mygsl {
     set_epsilon(epsilon_);
     return;
   }
-  
+
   i_unary_function::~i_unary_function ()
   {
     return;
@@ -93,7 +94,7 @@ namespace mygsl {
   {
     return get_non_zero_domain_max() != +std::numeric_limits<double>::infinity();
   }
-    
+
   /// Check if a value is in the non-zero domain
   bool i_unary_function::is_in_non_zero_domain(double x_) const
   {
@@ -101,25 +102,25 @@ namespace mygsl {
     if (x_ > get_non_zero_domain_max()) return false;
     return true;
   }
-    
+
   /// Check if a value is in the zero domain
   bool i_unary_function::is_in_zero_domain(double x_) const
   {
     return !is_in_non_zero_domain(x_);
   }
-    
+
   /// The function evaluation method
   double i_unary_function::eval_no_check(double x_) const
   {
     return _eval(x_);
   }
-   
+
   /// The function evaluation method
   double i_unary_function::evaluate(double x_) const
   {
     return this->eval(x_);
   }
-     
+
   /// The function evaluation method
   double i_unary_function::eval(double x_) const
   {
@@ -138,10 +139,10 @@ namespace mygsl {
   }
 
   /// Write the (x,y=f(x)) value pairs in an ASCII stream :
-  void i_unary_function::write_ascii(std::ostream & out_, 
-                               double min_, double max_, 
-                               unsigned int nsamples_, 
-                               int x_precision_, 
+  void i_unary_function::write_ascii(std::ostream & out_,
+                               double min_, double max_,
+                               unsigned int nsamples_,
+                               int x_precision_,
                                int fx_precision_,
                                uint32_t options_) const
   {
@@ -149,11 +150,7 @@ namespace mygsl {
     if (xprecision <= 0) xprecision=datatools::io::REAL_PRECISION;
     int fxprecision = fx_precision_;
     if (fxprecision <= 0) fxprecision=datatools::io::REAL_PRECISION;
-    if (! out_) {
-      std::ostringstream error_message;
-      error_message << "i_unary_function::write_ascii: Cannot write in the output stream !";
-      throw std::runtime_error(error_message.str());
-    }
+    DT_THROW_IF (! out_,  std::runtime_error, "Cannot write in the output stream !");
     double dx = (max_ - min_) / nsamples_;
     double x = min_;
     for (int i = 0; i < nsamples_; i++) {
@@ -187,9 +184,9 @@ namespace mygsl {
   }
 
   /// Write the (x,y=f(x)) ASCII :
-  void i_unary_function::write_ascii_file(const std::string & filename_, 
-                                    double min_, double max_, unsigned int  nsamples_, 
-                                    int x_precision_, 
+  void i_unary_function::write_ascii_file(const std::string & filename_,
+                                    double min_, double max_, unsigned int  nsamples_,
+                                    int x_precision_,
                                     int fx_precision_,
                                     uint32_t options_) const
   {
@@ -199,18 +196,13 @@ namespace mygsl {
     std::ios_base::openmode flags = std::ios_base::out;
     if (options_ & wo_append) flags |= std::ios::app;
     fout.open(filename.c_str(), flags);
-    if (! fout) {
-      std::ostringstream error_message;
-      error_message << "i_unary_function::write_ascii_file: Cannot open output file '"
-                    << filename << "' !";
-      throw std::runtime_error(error_message.str());
-    }
+    DT_THROW_IF (! fout,std::runtime_error, "Cannot open output file '" << filename << "' !");
     write_ascii(fout, min_, max_, nsamples_, x_precision_, fx_precision_, options_);
     fout.close();
     return;
   }
 
-  // static 
+  // static
   double i_unary_function::g_function(double x_, void * functor_)
   {
     const i_unary_function * f = static_cast<const i_unary_function *>(functor_);
@@ -224,13 +216,13 @@ namespace mygsl {
     _plain_function_ = &func_;
     return;
   }
-  
+
   plain_function_wrapper::plain_function_wrapper(const plain_function_type & func_)
   {
     set_plain_function(func_);
     return;
   }
-  
+
   plain_function_wrapper::~plain_function_wrapper()
   {
     _plain_function_ = 0;
@@ -244,7 +236,7 @@ namespace mygsl {
 
   /***********************************************************/
 
- 
+
   void function_with_domain::set_domain_of_definition(const interval & domain_)
   {
     _domain_of_definition_ = domain_;
@@ -256,7 +248,7 @@ namespace mygsl {
     return _domain_of_definition_;
   }
 
-  function_with_domain::function_with_domain(const i_unary_function & functor_, 
+  function_with_domain::function_with_domain(const i_unary_function & functor_,
                                              const interval & domain_)
   {
     _functor_ = &functor_;
@@ -280,7 +272,7 @@ namespace mygsl {
   {
     return ! _domain_of_definition_.is_no_limit();
   }
-  
+
   bool function_with_domain::is_in_domain_of_definition(double x_) const
   {
     return _domain_of_definition_.is_in (x_);

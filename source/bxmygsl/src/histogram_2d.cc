@@ -17,19 +17,6 @@ namespace mygsl {
 
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(histogram_2d,"mygsl::histogram_2d")
 
-#define HISTOGRAM2D_BASIC_NEEDS_INIT(Method,Histo)                      \
-  if (!(Histo).is_initialized ())                                       \
-    {                                                                   \
-      std::ostringstream message;                                       \
-      message << "mygsl::histogram_2d::" << BOOST_PP_STRINGIZE(Method) << ": Histogram 2D '"<<  BOOST_PP_STRINGIZE(Histo) <<"' is not initialized !"; \
-      throw std::logic_error (message.str());                           \
-    }                                                                   \
-  /**/
-
-#define HISTOGRAM2D_NEEDS_INIT(Method)          \
-  HISTOGRAM2D_BASIC_NEEDS_INIT(Method,*this)    \
-  /**/
-
   const datatools::properties & histogram_2d::get_auxiliaries () const
   {
     return _auxiliaries_;
@@ -92,37 +79,25 @@ namespace mygsl {
 
   double histogram_2d::get_uniform_x_binning () const
   {
-    if (! is_uniform_x_binning ())
-      {
-        throw std::logic_error ("mygsl::histogram_2d::get_uniform_x_binning: No uniform X binning!");
-      }
+    DT_THROW_IF (! is_uniform_x_binning (), std::logic_error, "No uniform X binning!");
     return _x_binning_info_;
   }
 
   double histogram_2d::get_logarithmic_x_binning () const
   {
-    if (! is_logarithmic_x_binning ())
-      {
-        throw std::logic_error ("mygsl::histogram_2d::get_logarithmic_x_binning: No log X binning!");
-      }
+    DT_THROW_IF (! is_logarithmic_x_binning (), std::logic_error, "No log X binning!");
     return -_x_binning_info_;
   }
 
   double histogram_2d::get_uniform_y_binning () const
   {
-    if (! is_uniform_y_binning ())
-      {
-        throw std::logic_error ("mygsl::histogram_2d::get_uniform_y_binning: No uniform Y binning!");
-      }
+    DT_THROW_IF (! is_uniform_y_binning (), std::logic_error, "No uniform Y binning!");
     return _y_binning_info_;
   }
 
   double histogram_2d::get_logarithmic_y_binning () const
   {
-    if (! is_logarithmic_y_binning ())
-      {
-        throw std::logic_error ("mygsl::histogram_2d::get_logarithmic_y_binning: No log Y binning!");
-      }
+    DT_THROW_IF (! is_logarithmic_y_binning (), std::logic_error, "No log Y binning!");
     return -_y_binning_info_;
   }
 
@@ -134,20 +109,13 @@ namespace mygsl {
   void histogram_2d::initialize (const histogram_2d & h_,
                                  const std::vector<std::string> & imported_aux_prefixes_)
   {
-    if (&h_ == &(*this))
-      {
-        throw std::logic_error ("mygsl::histogram_2d::initialize: Self-reference initialization is forbidden!");
-      }
-    if (! h_.is_initialized ())
-      {
-        throw std::logic_error ("mygsl::histogram_2d::initialize: Invalid 2D-histogram source !");
-      }
+    DT_THROW_IF (&h_ == &(*this), std::logic_error, "Self-reference initialization is forbidden!");
+    DT_THROW_IF (! h_.is_initialized (), std::logic_error, "Invalid 2D-histogram source !");
     // Reset internals :
-    if (_h_ != 0)
-      {
-        gsl_histogram2d_free (_h_);
-        _h_ = 0;
-      }
+    if (_h_ != 0) {
+      gsl_histogram2d_free (_h_);
+      _h_ = 0;
+    }
     reset_counters ();
     // Steal the internal structure of the source histogram :
     _x_binning_info_ = h_._x_binning_info_;
@@ -156,35 +124,26 @@ namespace mygsl {
     h_._auxiliaries_.export_starting_with(aux, "unit.");
     h_._auxiliaries_.export_starting_with(aux, "display.");
     aux.export_all (_auxiliaries_);
-    for (int i = 0; i < imported_aux_prefixes_.size(); i++)
-      {
-        h_._auxiliaries_.export_starting_with(_auxiliaries_,
-                                              imported_aux_prefixes_[i]);
-      }
-    if (h_._h_ != 0)
-      {
-        _h_ = gsl_histogram2d_clone (h_._h_);
-      }
+    for (int i = 0; i < imported_aux_prefixes_.size(); i++) {
+      h_._auxiliaries_.export_starting_with(_auxiliaries_,
+                                            imported_aux_prefixes_[i]);
+    }
+    if (h_._h_ != 0) {
+      _h_ = gsl_histogram2d_clone (h_._h_);
+    }
     return;
   }
 
   void histogram_2d::initialize (const histogram_1d & hx_, const histogram_1d & hy_,
                                  const std::vector<std::string> & imported_aux_prefixes_)
   {
-    if (! hx_.is_initialized ())
-      {
-        throw std::logic_error ("mygsl::histogram_2d::initialize: Invalid 1D-histogram source !");
-      }
-    if (! hy_.is_initialized ())
-      {
-        throw std::logic_error ("mygsl::histogram_2d::initialize: Invalid 1D-histogram source !");
-      }
+    DT_THROW_IF (! hx_.is_initialized (), std::logic_error, "Invalid 1D-histogram source !");
+    DT_THROW_IF (! hy_.is_initialized (), std::logic_error, "Invalid 1D-histogram source !");
     // Reset internals :
-    if (_h_ != 0)
-      {
-        gsl_histogram2d_free (_h_);
-        _h_ = 0;
-      }
+    if (_h_ != 0) {
+      gsl_histogram2d_free (_h_);
+      _h_ = 0;
+    }
     reset_counters ();
     // Steal the internal structure of the source histogram :
     _x_binning_info_ = hx_.get_binning_info ();
@@ -195,14 +154,12 @@ namespace mygsl {
     hy_.get_auxiliaries ().export_and_rename_starting_with(aux, "unit.", "y.unit.");
     hy_.get_auxiliaries ().export_and_rename_starting_with(aux, "display.xaxis.", "display.yaxis.");
     aux.export_all (_auxiliaries_);
-    for (int i = 0; i < imported_aux_prefixes_.size(); i++)
-      {
-        hx_.get_auxiliaries ().export_starting_with(_auxiliaries_,
-                                                    imported_aux_prefixes_[i]);
-        hy_.get_auxiliaries ().export_starting_with(_auxiliaries_,
-                                                    imported_aux_prefixes_[i]);
-      }
-
+    for (int i = 0; i < imported_aux_prefixes_.size(); i++) {
+      hx_.get_auxiliaries ().export_starting_with(_auxiliaries_,
+                                                  imported_aux_prefixes_[i]);
+      hy_.get_auxiliaries ().export_starting_with(_auxiliaries_,
+                                                  imported_aux_prefixes_[i]);
+    }
     initialize (hx_.bins (), hx_.min (), hx_.max (),
                 hy_.bins (), hy_.min (), hy_.max (),
                 hx_.is_logarithmic_binning () ? BIN_MODE_LOG : BIN_MODE_LINEAR,
@@ -231,118 +188,68 @@ namespace mygsl {
                            unsigned int xmode_,
                            unsigned int ymode_)
   {
-    if (nx_ < 1) {
-      throw std::logic_error ("mygsl::histogram_2d::init: Invalid X size !");
-    }
-    if (xmin_ >= xmax_) {
-      throw std::logic_error ("mygsl::histogram_2d::init: Invalid X range !");
-    }
-    if (ny_ < 1) {
-      throw std::logic_error ("mygsl::histogram_2d::init: Invalid Y size !");
-    }
-    if (ymin_ >= ymax_) {
-      throw std::logic_error ("mygsl::histogram_2d::init: Invalid Y range !");
-    }
+    DT_THROW_IF (nx_ < 1, std::logic_error, "Invalid X size !");
+    DT_THROW_IF (xmin_ >= xmax_, std::logic_error, "Invalid X range !");
+    DT_THROW_IF (ny_ < 1, std::logic_error, "Invalid Y size !");
+    DT_THROW_IF (ymin_ >= ymax_, std::logic_error, "Invalid Y range !");
     reset_counters ();
     if (_h_ != 0) {
       gsl_histogram2d_free (_h_);
       _h_ = 0;
     }
-    if (xmode_ == BIN_MODE_LINEAR)
-      {
-        _x_binning_info_ = (xmax_ -  xmin_) / nx_;
-      }
-    if (ymode_ == BIN_MODE_LINEAR)
-      {
-        _y_binning_info_ = (ymax_ -  ymin_) / ny_;
-      }
-    /*
-    std::cerr << "DEVEL: mygsl::histogram_2d::init: "
-              << "_x_binning_info_=" << _x_binning_info_ << '\n';
-    std::cerr << "DEVEL: mygsl::histogram_2d::init: "
-              << "_y_binning_info_=" << _y_binning_info_ << '\n';
-    */
-    if (xmode_ == BIN_MODE_LINEAR && ymode_ == BIN_MODE_LINEAR)
-      {
-        /*
-        std::cerr << "DEVEL: mygsl::histogram_2d::init: "
-                  << "X linear & Y linear" << '\n';
-        */
-        _h_ = gsl_histogram2d_alloc (nx_, ny_);
-        gsl_histogram2d_set_ranges_uniform (_h_, xmin_, xmax_, ymin_, ymax_);
-      }
-    else
-      {
-        std::vector<double> xranges;
-        xranges.reserve (nx_ + 1);
-        if (xmode_ == BIN_MODE_LINEAR)
+    if (xmode_ == BIN_MODE_LINEAR) {
+      _x_binning_info_ = (xmax_ -  xmin_) / nx_;
+    }
+    if (ymode_ == BIN_MODE_LINEAR) {
+      _y_binning_info_ = (ymax_ -  ymin_) / ny_;
+    }
+    if (xmode_ == BIN_MODE_LINEAR && ymode_ == BIN_MODE_LINEAR) {
+      _h_ = gsl_histogram2d_alloc (nx_, ny_);
+      gsl_histogram2d_set_ranges_uniform (_h_, xmin_, xmax_, ymin_, ymax_);
+    } else {
+      std::vector<double> xranges;
+      xranges.reserve (nx_ + 1);
+      if (xmode_ == BIN_MODE_LINEAR) {
+        for (int i = 0; i < (nx_ + 1); i++)
           {
-            /*
-            std::cerr << "DEVEL: mygsl::histogram_2d::init: "
-                      << "X linear" << '\n';
-            */
-            for (int i = 0; i < (nx_ + 1); i++)
-              {
-                xranges.push_back (xmin_ + i * _x_binning_info_);
-              }
+            xranges.push_back (xmin_ + i * _x_binning_info_);
           }
-        else
-          {
-            /*
-            std::cerr << "DEVEL: mygsl::histogram_2d::init: "
-                      << "X log" << '\n';
-            */
-            double xfactor = pow (xmax_/xmin_, 1./nx_);
-            for (int i = 0; i < (nx_ + 1); i++)
-              {
-                double xval = xmin_ * gsl_pow_int (xfactor, i);
-                xranges.push_back (xval);
-              }
-            _x_binning_info_ = -1.0 * xfactor;
-          }
+      }
+      else
+        {
+          double xfactor = pow (xmax_/xmin_, 1./nx_);
+          for (int i = 0; i < (nx_ + 1); i++)
+            {
+              double xval = xmin_ * gsl_pow_int (xfactor, i);
+              xranges.push_back (xval);
+            }
+          _x_binning_info_ = -1.0 * xfactor;
+        }
 
-        std::vector<double> yranges;
-        yranges.reserve (ny_ + 1);
-        if (ymode_ == BIN_MODE_LINEAR)
-          {
-            /*
-            std::cerr << "DEVEL: mygsl::histogram_2d::init: "
-                      << "Y linear" << '\n';
-            */
-            for (int i = 0; i < (ny_ + 1); i++)
-              {
-                yranges.push_back (ymin_ + i * _y_binning_info_);
-              }
-          }
-        else
-          {
-            /*
-            std::cerr << "DEVEL: mygsl::histogram_2d::init: "
-                      << "Y log" << '\n';
-            */
-            double yfactor = pow (ymax_/ymin_, 1./ny_);
-            for (int i = 0; i < (ny_ + 1); i++)
-              {
-                double yval = ymin_ * gsl_pow_int (yfactor, i);
-                yranges.push_back (yval);
-              }
-            _y_binning_info_ = -1.0 * yfactor;
-          }
-        /*
-        std::cerr << "DEVEL: mygsl::histogram_2d::init: "
-                  << "_x_binning_info_=" << _x_binning_info_ << '\n';
-        std::cerr << "DEVEL: mygsl::histogram_2d::init: "
-                  << "_y_binning_info_=" << _y_binning_info_ << '\n';
-        */
-        const double & ax = * (xranges.begin ());
-        const double & ay = * (yranges.begin ());
-        _h_ = gsl_histogram2d_alloc (nx_, ny_);
-        gsl_histogram2d_set_ranges (_h_, &ax, xranges.size (), &ay, yranges.size ());
-        /*
-        std::cerr << "DEVEL: mygsl::histogram_2d::init: "
-                  << "done." << '\n';
-        */
-      }
+      std::vector<double> yranges;
+      yranges.reserve (ny_ + 1);
+      if (ymode_ == BIN_MODE_LINEAR)
+        {
+          for (int i = 0; i < (ny_ + 1); i++)
+            {
+              yranges.push_back (ymin_ + i * _y_binning_info_);
+            }
+        }
+      else
+        {
+          double yfactor = pow (ymax_/ymin_, 1./ny_);
+          for (int i = 0; i < (ny_ + 1); i++)
+            {
+              double yval = ymin_ * gsl_pow_int (yfactor, i);
+              yranges.push_back (yval);
+            }
+          _y_binning_info_ = -1.0 * yfactor;
+        }
+      const double & ax = * (xranges.begin ());
+      const double & ay = * (yranges.begin ());
+      _h_ = gsl_histogram2d_alloc (nx_, ny_);
+      gsl_histogram2d_set_ranges (_h_, &ax, xranges.size (), &ay, yranges.size ());
+    }
     return;
   }
 
@@ -350,21 +257,14 @@ namespace mygsl {
                            const std::vector<double> & yranges_)
   {
     size_t nx = xranges_.size () - 1;
-    if (nx < 1)
-      {
-        throw std::logic_error ("mygsl::histogram_2d::init: Invalid X size!");
-      }
+    DT_THROW_IF (nx < 1, std::logic_error, "Invalid X size!");
     size_t ny = yranges_.size () - 1;
-    if (ny < 1)
-      {
-        throw std::logic_error ("mygsl::histogram_2d::init: Invalid Y size!");
-      }
+    DT_THROW_IF (ny < 1, std::logic_error, "Invalid Y size!");
     reset_counters ();
-    if (_h_ != 0)
-      {
-        gsl_histogram2d_free (_h_);
-        _h_ = 0;
-      }
+    if (_h_ != 0) {
+      gsl_histogram2d_free (_h_);
+      _h_ = 0;
+    }
     _h_ = gsl_histogram2d_alloc (nx, ny);
     const double & ax = * (xranges_.begin ());
     const double & ay = * (yranges_.begin ());
@@ -409,25 +309,23 @@ namespace mygsl {
 
   histogram_2d::~histogram_2d ()
   {
-    if (_h_ != 0)
-      {
-        destroy ();
-      }
+    if (_h_ != 0) {
+      destroy ();
+    }
     return;
   }
 
   void histogram_2d::destroy ()
   {
-    if (is_initialized ())
-      {
-        invalidate_counters ();
-        reset ();
-        gsl_histogram2d_free (_h_);
-        _h_ = 0;
-        _auxiliaries_.clear ();
-        _x_binning_info_ = std::numeric_limits<double>::quiet_NaN ();
-        _y_binning_info_ = std::numeric_limits<double>::quiet_NaN ();
-      }
+    if (is_initialized ()) {
+      invalidate_counters ();
+      reset ();
+      gsl_histogram2d_free (_h_);
+      _h_ = 0;
+      _auxiliaries_.clear ();
+      _x_binning_info_ = std::numeric_limits<double>::quiet_NaN ();
+      _y_binning_info_ = std::numeric_limits<double>::quiet_NaN ();
+    }
     return;
   }
 
@@ -438,10 +336,9 @@ namespace mygsl {
     _counts_         = h_._counts_;
     _auxiliaries_    = h_._auxiliaries_;
     _h_ = 0;
-    if (h_._h_ != 0)
-      {
-        _h_ = gsl_histogram2d_clone (h_._h_);
-      }
+    if (h_._h_ != 0) {
+      _h_ = gsl_histogram2d_clone (h_._h_);
+    }
     return;
   }
 
@@ -580,18 +477,17 @@ namespace mygsl {
 
   bool histogram_2d::is_inside (double x_, double y_) const
   {
-    HISTOGRAM2D_NEEDS_INIT (is_inside);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     return (x_ >= _h_->xrange[0]) && (x_ < _h_->xrange[_h_->nx])
       && (y_ >= _h_->yrange[0]) && (y_ < _h_->yrange[_h_->ny]);
   }
 
   void histogram_2d::accumulate (double x_, double y_, double weight_)
   {
-    HISTOGRAM2D_NEEDS_INIT (accumulate);
-    if (! is_inside (x_, y_))
-      {
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
+    if (! is_inside (x_, y_)) {
         return;
-      }
+    }
     gsl_histogram2d_accumulate (_h_,x_,y_,weight_);
     increment_counts ();
     return;
@@ -599,7 +495,7 @@ namespace mygsl {
 
   void histogram_2d::fill (double x_ , double y_ , double weight_)
   {
-    HISTOGRAM2D_NEEDS_INIT (fill);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     if (x_ < _h_->xrange[0]) {
       increment_x_underflow (weight_);
       return;
@@ -623,25 +519,17 @@ namespace mygsl {
 
   double histogram_2d::at (size_t ix_, size_t iy_) const
   {
-    HISTOGRAM2D_NEEDS_INIT (at);
-    if (ix_ < 0 || ix_ >= _h_->nx) {
-      throw std::logic_error("mygsl::histogram_2d::at: Invalid X range !");
-    }
-    if (iy_ < 0 || iy_ >= _h_->ny) {
-      throw std::logic_error("mygsl::histogram_2d::at: Invalid Y range !");
-    }
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
+    DT_THROW_IF (ix_ < 0 || ix_ >= _h_->nx, std::logic_error, "Invalid X range !");
+    DT_THROW_IF (iy_ < 0 || iy_ >= _h_->ny, std::logic_error, "Invalid Y range !");
     return gsl_histogram2d_get (_h_,ix_,iy_);
   }
 
   void histogram_2d::set (size_t ix_, size_t iy_, double value_)
   {
-    HISTOGRAM2D_NEEDS_INIT (set);
-    if (ix_ < 0 || ix_ >= _h_->nx) {
-      throw std::logic_error("histogram_2d::set: Invalid range for X index!");
-     }
-    if (iy_ < 0 || iy_ >= _h_->ny) {
-      throw std::logic_error("histogram_2d::set: Invalid range for Y index!");
-    }
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
+    DT_THROW_IF (ix_ < 0 || ix_ >= _h_->nx, std::logic_error, "Invalid range for X index!");
+    DT_THROW_IF (iy_ < 0 || iy_ >= _h_->ny, std::logic_error, "Invalid range for Y index!");
     invalidate_counters ();
     _h_->bin[ix_ * _h_->ny + iy_] = value_;
     return;
@@ -649,54 +537,53 @@ namespace mygsl {
 
   double histogram_2d::get (size_t ix_, size_t iy_) const
   {
-    HISTOGRAM2D_NEEDS_INIT (get);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     if (ix_ < 0)        return _x_underflow_;
     if (ix_ >= _h_->nx) return _x_overflow_;
     if (iy_ < 0)        return _y_underflow_;
     if (iy_ >= _h_->ny) return _y_overflow_;
-
     return gsl_histogram2d_get (_h_, ix_, iy_);
   }
 
   bool histogram_2d::find (double x_ , double y_ , size_t & i_, size_t & j_) const
   {
-    HISTOGRAM2D_NEEDS_INIT (find);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     return gsl_histogram2d_find (_h_, x_, y_, &i_, &j_) == GSL_SUCCESS;
   }
 
   double histogram_2d::xmin () const
   {
-    HISTOGRAM2D_NEEDS_INIT (xmin);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     return gsl_histogram2d_xmin (_h_);
   }
 
   double histogram_2d::xmax () const
   {
-    HISTOGRAM2D_NEEDS_INIT (xmax);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     return gsl_histogram2d_xmax (_h_);
   }
 
   double histogram_2d::ymin () const
   {
-    HISTOGRAM2D_NEEDS_INIT (ymin);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     return gsl_histogram2d_ymin (_h_);
   }
 
   double histogram_2d::ymax () const
   {
-    HISTOGRAM2D_NEEDS_INIT (ymax);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     return gsl_histogram2d_ymax (_h_);
   }
 
   size_t histogram_2d::xbins () const
   {
-    HISTOGRAM2D_NEEDS_INIT (xbins);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     return gsl_histogram2d_nx (_h_);
   }
 
   size_t histogram_2d::ybins () const
   {
-    HISTOGRAM2D_NEEDS_INIT (ybins);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     return gsl_histogram2d_ny (_h_);
   }
 
@@ -709,61 +596,61 @@ namespace mygsl {
 
   double histogram_2d::min_val () const
   {
-    HISTOGRAM2D_NEEDS_INIT (min_val);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     return gsl_histogram2d_min_val (_h_);
   }
 
   void histogram_2d::min_bin (size_t & i_, size_t & j_) const
   {
-    HISTOGRAM2D_NEEDS_INIT (min_bin);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     return gsl_histogram2d_min_bin (_h_, &i_, &j_);
   }
 
   double histogram_2d::max_val () const
   {
-    HISTOGRAM2D_NEEDS_INIT (max_val);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     return gsl_histogram2d_max_val (_h_);
   }
 
   void histogram_2d::max_bin (size_t & i_, size_t & j_) const
   {
-    HISTOGRAM2D_NEEDS_INIT (max_bin);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     return gsl_histogram2d_max_bin (_h_, &i_, &j_);
   }
 
   double histogram_2d::xmean () const
   {
-    HISTOGRAM2D_NEEDS_INIT (xmean);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     return gsl_histogram2d_xmean (_h_);
   }
 
   double histogram_2d::xsigma () const
   {
-    HISTOGRAM2D_NEEDS_INIT (xsigma);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     return gsl_histogram2d_xsigma (_h_);
   }
 
   double histogram_2d::ymean () const
   {
-    HISTOGRAM2D_NEEDS_INIT (ymean);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     return gsl_histogram2d_ymean (_h_);
   }
 
   double histogram_2d::ysigma () const
   {
-    HISTOGRAM2D_NEEDS_INIT (ysigma);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     return gsl_histogram2d_ysigma (_h_);
   }
 
   double histogram_2d::sum () const
   {
-    HISTOGRAM2D_NEEDS_INIT (sum);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     return gsl_histogram2d_sum (_h_);
   }
 
   double histogram_2d::cov () const
   {
-    HISTOGRAM2D_NEEDS_INIT (cov);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     return gsl_histogram2d_cov (_h_);
   }
 
@@ -809,47 +696,33 @@ namespace mygsl {
       }
     else if (token != "1")
       {
-        throw std::logic_error ("mygsl::histogram_2d::from_stream: Unrecognized histogram 1D validation token !");
+        DT_THROW_IF(true, std::logic_error, "Unrecognized histogram 1D validation token !");
       }
     size_t nx;
     in_ >> nx;
-    if (! in_) {
-      throw std::logic_error ("mygsl::histogram_2d::from_stream: Cannot read histogram_2d X size from stream!");
-    }
-    if (nx < 1) {
-      throw std::logic_error ("mygsl::histogram_2d::from_stream: Invalid histogram_2d X size!");
-    }
+    DT_THROW_IF (! in_, std::logic_error, "Cannot read histogram_2d X size from stream!");
+    DT_THROW_IF (nx < 1, std::logic_error, "Invalid histogram_2d X size!");
     size_t ny;
     in_ >> ny;
-    if (! in_) {
-      throw std::logic_error ("mygsl::histogram_2d::from_stream: Cannot read histogram_2d Y size from stream!");
-    }
-    if (ny < 1) {
-      throw std::logic_error ("mygsl::histogram_2d::from_stream: Invalid histogram_2d Y size!");
-    }
+    DT_THROW_IF (! in_, std::logic_error, "Cannot read histogram_2d Y size from stream!");
+    DT_THROW_IF (ny < 1, std::logic_error, "Invalid histogram_2d Y size!");
     init (nx, 0.0, 1.0, ny, 0.0, 1.0);
     for (size_t i = 0; i <= nx; i++) {
       double xr;
       in_ >> xr;
-      if (! in_) {
-        throw std::logic_error ("mygsl::histogram_2d::from_stream: Cannot read histogram_2d X range contents from stream !");
-      }
+      DT_THROW_IF (! in_, std::logic_error,"Cannot read histogram_2d X range contents from stream !");
       _h_->xrange[i]=xr;
     }
     for (size_t i = 0; i <= ny; i++) {
       double yr;
       in_ >> yr;
-      if (! in_) {
-        throw std::logic_error ("mygsl::histogram_2d::from_stream: Cannot read histogram_2d Y range contents from stream !");
-      }
+      DT_THROW_IF (! in_, std::logic_error, "Cannot read histogram_2d Y range contents from stream !");
       _h_->yrange[i]=yr;
     }
     for (size_t i = 0; i < nx*ny; i++) {
       double count;
       in_ >> count;
-      if (! in_) {
-        throw std::logic_error ("mygsl::histogram_2d::from_stream: Cannot read histogram_2d bin count contents from stream !");
-      }
+      DT_THROW_IF (! in_, std::logic_error, "Cannot read histogram_2d bin count contents from stream !");
       _h_->bin[i] = count;
     }
     int counts;
@@ -866,9 +739,7 @@ namespace mygsl {
       {
         invalidate_underflow_overflow ();
       }
-    if (! in_) {
-      throw std::logic_error ("mygsl::histogram_2d::from_stream: Cannot read X/Y binning info and counts from stream!");
-    }
+    DT_THROW_IF (! in_, std::logic_error, "Cannot read X/Y binning info and counts from stream!");
     _x_binning_info_ = x_binning_info;
     _y_binning_info_ = y_binning_info;
     _x_underflow_    = x_underflow;
@@ -940,7 +811,7 @@ namespace mygsl {
 
   std::pair<double,double> histogram_2d::get_xrange (size_t i_) const
   {
-    HISTOGRAM2D_NEEDS_INIT (get_xrange);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     std::pair<double,double> p;
     gsl_histogram2d_get_xrange (_h_,i_,&p.first,&p.second);
     return p;
@@ -948,7 +819,7 @@ namespace mygsl {
 
   std::pair<double,double> histogram_2d::get_yrange (size_t i_) const
   {
-    HISTOGRAM2D_NEEDS_INIT (get_yrange);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     std::pair<double,double> p;
     gsl_histogram2d_get_yrange (_h_,i_,&p.first,&p.second);
     return p;
@@ -956,32 +827,32 @@ namespace mygsl {
 
   bool histogram_2d::has_xsize (size_t xbins_) const
   {
-    HISTOGRAM2D_NEEDS_INIT (has_xsize);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     return xbins_ == xbins ();
   }
 
   bool histogram_2d::has_ysize (size_t ybins_) const
   {
-    HISTOGRAM2D_NEEDS_INIT (has_ysize);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     return ybins_ == ybins ();
   }
 
   bool histogram_2d::has_size (size_t xbins_, size_t ybins_) const
   {
-    HISTOGRAM2D_NEEDS_INIT (has_size);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     return has_xsize (xbins_) && has_ysize (ybins_);
   }
 
   bool histogram_2d::same (const histogram_2d & h_) const
   {
-    HISTOGRAM2D_BASIC_NEEDS_INIT(same,h_);
-    HISTOGRAM2D_NEEDS_INIT (same);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
+    DT_THROW_IF (!h_.is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     return gsl_histogram2d_equal_bins_p (_h_, h_._h_) == 1;
   }
 
   void histogram_2d::shift (double s_)
   {
-    HISTOGRAM2D_NEEDS_INIT (shift);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     gsl_histogram2d_shift (_h_,s_);
     invalidate_counters ();
     return;
@@ -989,7 +860,7 @@ namespace mygsl {
 
   void histogram_2d::scale (double s_)
   {
-    HISTOGRAM2D_NEEDS_INIT (scale);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     gsl_histogram2d_scale (_h_,s_);
     invalidate_counters ();
     return;
@@ -997,7 +868,7 @@ namespace mygsl {
 
   void histogram_2d::negate ()
   {
-    HISTOGRAM2D_NEEDS_INIT (negate);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     gsl_histogram2d_scale (_h_,-1.0);
     invalidate_counters ();
     return;
@@ -1005,15 +876,15 @@ namespace mygsl {
 
   void histogram_2d::zero ()
   {
-    HISTOGRAM2D_NEEDS_INIT (zero);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     reset ();
     return;
   }
 
   void histogram_2d::add (const histogram_2d & h_)
   {
-    HISTOGRAM2D_BASIC_NEEDS_INIT(add,h_);
-    HISTOGRAM2D_NEEDS_INIT (add);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
+    DT_THROW_IF (!h_.is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     gsl_histogram2d_add (_h_,h_._h_);
     invalidate_counters ();
     return;
@@ -1021,8 +892,8 @@ namespace mygsl {
 
   void histogram_2d::sub (const histogram_2d & h_)
   {
-    HISTOGRAM2D_BASIC_NEEDS_INIT(sub,h_);
-    HISTOGRAM2D_NEEDS_INIT (sub);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
+    DT_THROW_IF (!h_.is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     gsl_histogram2d_sub (_h_,h_._h_);
     invalidate_counters ();
     return;
@@ -1030,8 +901,8 @@ namespace mygsl {
 
   void histogram_2d::mul (const histogram_2d & h_)
   {
-    HISTOGRAM2D_BASIC_NEEDS_INIT(mul,h_);
-    HISTOGRAM2D_NEEDS_INIT (mul);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
+    DT_THROW_IF (!h_.is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     gsl_histogram2d_mul (_h_,h_._h_);
     invalidate_counters ();
     return;
@@ -1039,8 +910,8 @@ namespace mygsl {
 
   void histogram_2d::div (const histogram_2d & h_)
   {
-    HISTOGRAM2D_BASIC_NEEDS_INIT(div,h_);
-    HISTOGRAM2D_NEEDS_INIT (div);
+    DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
+    DT_THROW_IF (!h_.is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
     gsl_histogram2d_div (_h_,h_._h_);
     invalidate_counters ();
     return;
@@ -1205,10 +1076,7 @@ namespace mygsl {
     if (h_._h_ != 0)
       {
         _pdf_ = gsl_histogram2d_pdf_alloc (h_.xbins (), h_.ybins ());
-        if  (_pdf_ == 0)
-          {
-            throw std::logic_error ("mygsl::histogram_2d::pdf::init: Cannot allocate histogram_2d's PDF!");
-          }
+        DT_THROW_IF (_pdf_ == 0, std::logic_error, "Cannot allocate histogram_2d's PDF!");
         gsl_histogram2d_pdf_init (_pdf_, h_._h_);
       }
     return;

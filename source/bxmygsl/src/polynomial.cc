@@ -10,12 +10,14 @@
 #include <gsl/gsl_fit.h>
 #include <gsl/gsl_poly.h>
 
+#include <datatools/exception.h>
+
 namespace mygsl {
 
 using namespace std;
 
 DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(polynomial,"mygsl::polynomial")
-    
+
 bool polynomial::is_valid() const {
   return _c_.size() > 0;
 }
@@ -112,17 +114,17 @@ void polynomial::print(ostream & out_, int format_, bool eol_) const {
         out_ << (_c_[deg] > 0? " + ": " - ");
       } else {
         out_ << (_c_[deg] > 0? "": " - ");
-        first = false;      
+        first = false;
       }
       out_.unsetf(ios::showpos);
       // 2011-06-16 FM: add std::abs to remove template ambiguity for some compiler :
       out_ << std::abs(_c_[deg]);
       if (deg >= 1) {
         out_ << ' ' << prod_sym << ' ' << 'X';
-      } 
+      }
       if (deg >= 2) {
         out_ << exp_sym << deg;
-      } 
+      }
     }
   }
   if (eol_) out_ << endl;
@@ -145,32 +147,32 @@ bool polynomial::solve_linear(double p0_, double p1_, unsigned int& nsols_,
   return true;
 }
 
-bool polynomial::solve_quadratic(double p0_, double p1_, double p2_, 
+bool polynomial::solve_quadratic(double p0_, double p1_, double p2_,
                                  unsigned int& nsols_,
                                  double& x0_, double& x1_) {
   if (p2_ == 0) {
     x1_ = GSL_NAN;
-    return solve_linear(p0_, p1_, nsols_, x0_);    
+    return solve_linear(p0_, p1_, nsols_, x0_);
   }
   nsols_ = (unsigned int)gsl_poly_solve_quadratic(p2_, p1_, p0_, &x0_, &x1_);
   if (nsols_ < 1) x0_ = GSL_NAN;
-  
-  if (nsols_ < 2) x1_ = GSL_NAN;
-  
-  return nsols_ > 0;
-} 
 
-bool polynomial::solve_cubic(double p0_, double p1_, double p2_, 
+  if (nsols_ < 2) x1_ = GSL_NAN;
+
+  return nsols_ > 0;
+}
+
+bool polynomial::solve_cubic(double p0_, double p1_, double p2_,
                              unsigned int& nsols_,
                              double& x0_, double& x1_, double& x2_) {
   nsols_ = (unsigned int)gsl_poly_solve_cubic(p2_, p1_, p0_, &x0_, &x1_, &x2_);
-  
+
   if (nsols_ < 1) x0_ = GSL_NAN;
-  
+
   if (nsols_ < 2) x1_ = GSL_NAN;
-  
+
   if (nsols_ < 3) x2_ = GSL_NAN;
-  
+
   return nsols_ > 0;
 }
 
@@ -178,18 +180,18 @@ bool polynomial::solve_cubic(double p0_, double p1_, double p2_, double p3_,
                              unsigned int& nsols_,
                              double& x0_, double& x1_, double& x2_) {
   if (p3_ == 0) {
-    x2_ = GSL_NAN;  
+    x2_ = GSL_NAN;
     return solve_quadratic(p0_, p1_, p2_, nsols_, x0_, x1_);
   }
 
-  nsols_ = (unsigned int)solve_cubic(p2_/p3_, p1_/p3_, p0_/p3_, nsols_, 
+  nsols_ = (unsigned int)solve_cubic(p2_/p3_, p1_/p3_, p0_/p3_, nsols_,
                                x0_, x1_, x2_);
   if (nsols_ < 1) x0_ = GSL_NAN;
-  
+
   if (nsols_ < 2) x1_ = GSL_NAN;
-  
+
   if (nsols_ < 3) x2_ = GSL_NAN;
-  
+
   return nsols_ > 0;
 }
 
@@ -241,7 +243,7 @@ bool polynomial::solver::solve(const polynomial& p_) {
   unsigned int deg = p_.get_degree();
   _init_(deg + 1);
   {
-    throw logic_error("polynomial::solver::solve: Not implemented yet!");
+    DT_THROW_IF(true, std::logic_error, "Polynomial solver is not implemented yet !");
   }
   return pImpl->_status_ == GSL_SUCCESS;
 }

@@ -9,6 +9,7 @@
 
 #include <datatools/utils.h>
 #include <datatools/units.h>
+#include <datatools/exception.h>
 
 namespace mygsl {
 
@@ -91,6 +92,16 @@ namespace mygsl {
 
   /************************************************************************/
 
+  void histogram_pool::set_logging_priority(datatools::logger::priority p_)
+  {
+    _logging_priority_ = p_;
+  }
+
+  datatools::logger::priority histogram_pool::get_logging_priority() const
+  {
+    return _logging_priority_;
+  }
+
   bool histogram_pool::is_initialized () const
   {
     return _auxiliaries_.has_flag (_INITIALIZED_FLAG_KEY_);
@@ -117,25 +128,22 @@ namespace mygsl {
     return _auxiliaries_;
   }
 
-  // void histogram_pool::add_export_prefix(const std::string & prefix_)
-  // {
-  //   _export_prefixes_.push_back(prefix);
-  //   return;
-  // }
-
   histogram_pool::histogram_pool ()
   {
+    _logging_priority_ = datatools::logger::PRIO_WARNING;
     return;
   }
 
   histogram_pool::histogram_pool (const std::string & desc_)
   {
+    _logging_priority_ =  datatools::logger::PRIO_WARNING;
     set_description (desc_);
     return;
   }
 
   histogram_pool::~histogram_pool ()
   {
+    reset ();
     return;
   }
 
@@ -158,6 +166,9 @@ namespace mygsl {
       const datatools::multi_properties::entry & hentry = *(*iter);
       std::string histo_name = hentry.get_key();
       std::string histo_type = hentry.get_meta();
+      DT_LOG_NOTICE(get_logging_priority(), "Loading histogram '"
+                    << histo_name << "' of type '"
+                    << histo_type << "'");
       const datatools::properties& histo_params = hentry.get_properties();
       std::string histo_title;
       std::string histo_group;
@@ -180,10 +191,7 @@ namespace mygsl {
           h_2d.grab_auxiliaries ().update ("display.title", histo_title);
         }
       } else {
-        std::ostringstream message;
-        message << "mygsl::histogram_pool::load: "
-                << "Invalid histogram class name '" << histo_type << "' !";
-        throw std::logic_error (message.str ());
+        DT_THROW_IF(true, std::logic_error, "Invalid histogram class name '" << histo_type << "' !");
       }
       // Add traits :
       this->set_title (histo_name, histo_title);
@@ -200,31 +208,19 @@ namespace mygsl {
     if (h1_.is_initialized ()) {
       h1_.reset ();
     }
-    // h1_setup_.tree_dump(std::cerr, "H1 setup: ", "DEVEL: *******************");
     std::string mode;
     if (h1_setup_.has_key ("mode")) {
       mode = h1_setup_.fetch_string ("mode");
-      if (mode != "regular" && mode != "table" && mode != "mimic") {
-        std::ostringstream message;
-        message << "mygsl::histogram_pool::init_histo_1d: "
-                << "Invalid 1D-histogram build mode '" << mode << "' !";
-        throw std::logic_error (message.str ());
-      }
+      DT_THROW_IF (mode != "regular" && mode != "table" && mode != "mimic",
+                   std::logic_error,
+                   "Invalid 1D-histogram build mode '" << mode << "' !");
     } else {
-      std::ostringstream message;
-      message << "mygsl::histogram_pool::init_histo_1d: "
-              << "Missing 1D-histogram build mode property !";
-      throw std::logic_error (message.str ());
+      DT_THROW_IF (true, std::logic_error, "Missing 1D-histogram build mode property !");
     }
 
     std::string xunit_type;  // The physical dimension of the X axis binning
     std::string xunit_str;   // The unit symbol of the X axis
     double      xunit = 1.0; // The unit intrinsic value of the X axis
-
-    /*
-      histo_pool_->_auxiliaries_.tree_dump(std::cerr, "Pool's auxiliaries: ",
-      "DEVEL: mygsl::histogram_pool::init_histo_1d: ");
-    */
 
     // Store all display properties :
     h1_setup_.export_starting_with (h1_.grab_auxiliaries (), "display.");
@@ -234,48 +230,29 @@ namespace mygsl {
       histo_pool_->_auxiliaries_.fetch("histo.export_prefixes", export_prefixes);
       for (int i = 0; i < export_prefixes.size(); i++) {
         const std::string & aux_prefix = export_prefixes[i];
-        /*
-          std::cerr << "DEVEL: " << "mygsl::histogram_pool::init_histo_1d: "
-          << "Export '" << aux_prefix << "'..."
-          << std::endl;
-        */
         h1_setup_.export_starting_with (h1_.grab_auxiliaries (), aux_prefix);
       }
     }
-    /*
-      h1_.grab_auxiliaries ().tree_dump(std::cerr,
-      "****** H1's auxiliaries: ",
-      "DEVEL: mygsl::histogram_pool::init_histo_1d: ");
-    */
 
     // Extract the unit used for X axis bins :
     if (h1_setup_.has_key ("unit")) {
       xunit_str = h1_setup_.fetch_string ("unit");
-      if (! datatools::units::find_unit(xunit_str, xunit, xunit_type)) {
-        std::ostringstream message;
-        message << "mygsl::histogram_pool::init_histo_1d: "
-                << "Invalid X binning unit ('" << xunit_str << "') !";
-        throw std::logic_error (message.str ());
-      }
+      DT_THROW_IF ((! datatools::units::find_unit(xunit_str, xunit, xunit_type)),
+                   std::logic_error,
+                   "Invalid X binning unit ('" << xunit_str << "') !");
     }
 
     if (mode == "regular" || mode == "table") {
       // Extract the physical dimension for the X axis :
       if (h1_setup_.has_key ("unit.type")) {
         std::string xunit_type2 = h1_setup_.fetch_string ("unit.type");
-        if (! datatools::units::is_unit_label_valid (xunit_type2)) {
-          std::ostringstream message;
-          message << "mygsl::histogram_pool::init_histo_1d: "
-                  << "Invalid X binning unit type ('" << xunit_type << "') !";
-          throw std::logic_error (message.str ());
-        }
-        if (! xunit_type.empty () && xunit_type2 != xunit_type) {
-          std::ostringstream message;
-          message << "mygsl::histogram_pool::init_histo_1d: "
-                  << "Incompatible unit type ('" << xunit_type2
-                  << "') with bins unit ('" << xunit_type << "') !";
-          throw std::logic_error (message.str ());
-        }
+        DT_THROW_IF (! datatools::units::is_unit_label_valid (xunit_type2),
+                     std::logic_error,
+                     "Invalid X binning unit type ('" << xunit_type << "') !");
+        DT_THROW_IF (! xunit_type.empty () && xunit_type2 != xunit_type,
+                     std::logic_error,
+                     "Incompatible unit type ('" << xunit_type2
+                     << "') with bins unit ('" << xunit_type << "') !");
       }
 
       // Extract the optional display unit for X axis and check it :
@@ -287,12 +264,9 @@ namespace mygsl {
           if (xunit_type.empty ()) {
             xunit_type = display_xunit_type;
           } else {
-            if (display_xunit_type != xunit_type) {
-              std::ostringstream message;
-              message << "mygsl::histogram_pool::init_histo_1d: "
-                      << "X axis display unit type ('" << display_xunit_type << "') does not match the X axis unit !";
-              throw std::logic_error (message.str ());
-            }
+            DT_THROW_IF (display_xunit_type != xunit_type,
+                         std::logic_error,
+                         "X axis display unit type ('" << display_xunit_type << "') does not match the X axis unit !");
           }
         }
       } else {
@@ -338,10 +312,7 @@ namespace mygsl {
         if (xmax > 0.0) {
           xmin = 0.0;
         } else {
-          std::ostringstream message;
-          message << "mygsl::histogram_pool::init_histo_1d: "
-                  << "Invalid 1D-histogram X range [" << xmin << ":" << xmax << "[ !";
-          throw std::logic_error (message.str ());
+          DT_THROW_IF(true, std::logic_error, "Invalid 1D-histogram X range [" << xmin << ":" << xmax << "[ !");
         }
       }
 
@@ -349,10 +320,7 @@ namespace mygsl {
         if (xmin < 0.0) {
           xmax = 0.0;
         } else {
-          std::ostringstream message;
-          message << "mygsl::histogram_pool::init_histo_1d: "
-                  << "Invalid 1D-histogram X range [" << xmin << ":" << xmax << "[ !";
-          throw std::logic_error (message.str ());
+          DT_THROW_IF(true, std::logic_error, "Invalid 1D-histogram X range [" << xmin << ":" << xmax << "[ !");
         }
       }
       if (! h1_setup_.has_explicit_unit ("min")) {
@@ -365,19 +333,11 @@ namespace mygsl {
       if (h1_setup_.has_key ("number_of_bins")) {
         nxbins = h1_setup_.fetch_integer ("number_of_bins");
       } else {
-        std::ostringstream message;
-        message << "mygsl::histogram_pool::init_histo_1d: "
-                << "Missing number of bins in 1D-histogram !";
-        throw std::logic_error (message.str ());
+        DT_THROW_IF(true, std::logic_error, "Missing number of bins in 1D-histogram !");
       }
-      if (nxbins < 1) {
-        std::ostringstream message;
-        message << "mygsl::histogram_pool::init_histo_1d: "
-                << "Invalid number of bins ('" << nxbins << "') in 1D-histogram !";
-        throw std::logic_error (message.str ());
-      }
+      DT_THROW_IF (nxbins < 1, std::logic_error,"Invalid number of bins ('" << nxbins << "') in 1D-histogram !");
       h1_.initialize (nxbins, xmin, xmax, xbinmode);
-    }  else if (mode == "table") {
+    } else if (mode == "table") {
       std::vector<double> xranges;
       if (h1_setup_.has_key ("bounds")) {
         h1_setup_.fetch ("bounds", xranges);
@@ -386,85 +346,62 @@ namespace mygsl {
             xranges[i] *= xunit;
           }
         }
-      } else if (h1_setup_.has_key ("bounds.file"))
-        {
-          std::string bounds_file;
-          bounds_file = h1_setup_.fetch_string ("bounds.file");
+      } else if (h1_setup_.has_key ("bounds.file")) {
+        std::string bounds_file;
+        bounds_file = h1_setup_.fetch_string ("bounds.file");
 
-          std::string bounds_file2 = bounds_file;
-          datatools::fetch_path_with_env (bounds_file2);
-          std::ifstream bounds_ifs (bounds_file2.c_str ());
-          if (! bounds_ifs) {
-            std::ostringstream message;
-            message << "mygsl::histogram_pool::init_histo_1d: "
-                    << "Cannot open file '" << bounds_file2 << "' !";
-            throw std::logic_error (message.str ());
+        std::string bounds_file2 = bounds_file;
+        datatools::fetch_path_with_env (bounds_file2);
+        std::ifstream bounds_ifs (bounds_file2.c_str ());
+        DT_THROW_IF (! bounds_ifs,
+                     std::logic_error,
+                     "Cannot open file '" << bounds_file2 << "' !");
+        while (bounds_ifs) {
+          double bound;
+          bounds_ifs >> bound;
+          DT_THROW_IF (! bounds_ifs,
+                       std::logic_error,
+                       "Invalid format in file '" << bounds_file << "' !");
+          xranges.push_back (bound * xunit);
+          bounds_ifs >> std::ws;
+          if (bounds_ifs.eof ()) {
+            break;
           }
-          while (bounds_ifs) {
-            double bound;
-            bounds_ifs >> bound;
-            if (! bounds_ifs) {
-              std::ostringstream message;
-              message << "mygsl::histogram_pool::init_histo_1d: "
-                      << "Invalid format in file '" << bounds_file << "' !";
-              throw std::logic_error (message.str ());
-            }
-            xranges.push_back (bound * xunit);
-            bounds_ifs >> std::ws;
-            if (bounds_ifs.eof ()) {
-              break;
-            }
-          }
-        } else {
-        std::ostringstream message;
-        message << "mygsl::histogram_pool::init_histo_1d: "
-                << "No rule was given to setup the bins (bounds, bounds.file)!";
-        throw std::logic_error (message.str ());
+        }
+      } else {
+        DT_THROW_IF (true, std::logic_error,
+                     "No rule was given to setup the bins (bounds, bounds.file) !");
       }
-      if (xranges.size () < 2) {
-        std::ostringstream message;
-        message << "mygsl::histogram_pool::init_histo_1d: "
-                << "Invalid number of bins ('" << xranges.size () << "') in 1D-histogram !";
-        throw std::logic_error (message.str ());
-      }
+      DT_THROW_IF (xranges.size () < 2,
+                   std::logic_error,
+                   "Invalid number of bins ('" << xranges.size () << "') in 1D-histogram !");
       h1_.initialize (xranges);
     } else if (mode == "mimic") {
       // extract information about another histogram :
       // 1D clone
       // 2D use X or Y
-      if (histo_pool_ == 0) {
-        std::ostringstream message;
-        message << "mygsl::histogram_pool::init_histo_1d: "
-                << "Missing pool of histograms !";
-        throw std::logic_error (message.str ());
-      }
-
+      DT_THROW_IF (histo_pool_ == 0,
+                   std::logic_error,
+                   "Missing pool of histograms !");
       if (h1_setup_.has_key ("mimic.histogram_1d")) {
         // Copy the structure of another 1D histogram :
         std::string h1d_name = h1_setup_.fetch_string ("mimic.histogram_1d");
 
-        if (! histo_pool_->has (h1d_name, histogram_pool::HISTOGRAM_DIM_1D)) {
-          std::ostringstream message;
-          message << "mygsl::histogram_pool::init_histo_1d: "
-                  << "No 1D-histogram named '" << h1d_name << "' does exist !";
-          throw std::logic_error (message.str ());
-        }
+        DT_THROW_IF (! histo_pool_->has (h1d_name, histogram_pool::HISTOGRAM_DIM_1D),
+                     std::logic_error,
+                     "No 1D-histogram named '" << h1d_name << "' does exist !");
         const histogram & mimic_h1 = histo_pool_->get_1d (h1d_name);
         std::vector<std::string> import_prop_prefixes;
         if (h1_setup_.has_flag ("mimic.histogram_1d.import_aux")) {
           h1_setup_.fetch ("mimic.histogram_1d.import_aux", import_prop_prefixes);
         }
         h1_.initialize (mimic_h1, import_prop_prefixes);
-      }  else if (h1_setup_.has_key ("mimic.histogram_2d")) {
+      } else if (h1_setup_.has_key ("mimic.histogram_2d")) {
         // Copy the structure of one of the axis of a 2D histogram :
         std::string h2d_name = h1_setup_.fetch_string ("mimic.histogram_2d");
-
-        if (! histo_pool_->has (h2d_name, histogram_pool::HISTOGRAM_DIM_2D)) {
-          std::ostringstream message;
-          message << "mygsl::histogram_pool::init_histo_1d: "
-                  << "No 2D-histogram named '" << h2d_name << "' does exist !";
-          throw std::logic_error (message.str ());
-        }
+        DT_THROW_IF ((! histo_pool_->has (h2d_name, histogram_pool::HISTOGRAM_DIM_2D)),
+                     std::logic_error,
+                     "No 2D-histogram named '" << h2d_name << "' does exist !");
         const histogram_2d & mimic_h2 = histo_pool_->get_2d (h2d_name);
         int bin_axis = BIN_AXIS_INVALID;
         // Extract the axis of the 2D histogram to copy :
@@ -475,16 +412,10 @@ namespace mygsl {
           } else if (axis_label == "y") {
             bin_axis = BIN_AXIS_Y;
           } else {
-            std::ostringstream message;
-            message << "mygsl::histogram_pool::init_histo_1d: "
-                    << "Invalid bin axis label '" << axis_label << "' !";
-            throw std::logic_error (message.str ());
+            DT_THROW_IF(true, std::logic_error, "Invalid bin axis label '" << axis_label << "' !");
           }
         } else {
-          std::ostringstream message;
-          message << "mygsl::histogram_pool::init_histo_1d: "
-                  << "Missing bin axis property '" << "mimic.histogram_2d.axis" << "' !";
-          throw std::logic_error (message.str ());
+          DT_THROW_IF(true, std::logic_error, "Missing bin axis property '" << "mimic.histogram_2d.axis" << "' !");
         }
         std::vector<std::string> import_aux_prefixes;
         if (h1_setup_.has_flag ("mimic.histogram_2d.import_aux")) {
@@ -492,14 +423,9 @@ namespace mygsl {
         }
         h1_.initialize (mimic_h2, bin_axis, import_aux_prefixes);
       } else {
-        std::ostringstream message;
-        message << "mygsl::histogram_pool::init_histo_1d: "
-                << "Missing mimic mode !";
-        throw std::logic_error (message.str ());
+        DT_THROW_IF(true, std::logic_error, "Missing mimic mode !");
       }
     }
-    //h1_.grab_auxiliaries ().tree_dump (std::cerr, "H1D : ", "DEVEL: *********** ");
-
     return;
   }
 
@@ -515,17 +441,11 @@ namespace mygsl {
     std::string mode;
     if (h2_setup_.has_key ("mode")) {
       mode = h2_setup_.fetch_string ("mode");
-      if (mode != "regular" && mode != "table" && mode != "mimic") {
-        std::ostringstream message;
-        message << "mygsl::histogram_pool::init_histo_2d: "
-                << "Invalid 2D-histogram build mode '" << mode << "' !";
-        throw std::logic_error (message.str ());
-      }
+      DT_THROW_IF (mode != "regular" && mode != "table" && mode != "mimic",
+                   std::logic_error,
+                   "Invalid 2D-histogram build mode '" << mode << "' !");
     } else {
-      std::ostringstream message;
-      message << "mygsl::histogram_pool::init_histo_2d: "
-              << "Missing 2D-histogram build mode !";
-      throw std::logic_error (message.str ());
+      DT_THROW_IF (true, std::logic_error, "Missing 2D-histogram build mode !");
     }
 
     std::string xunit_type;  // The physical dimension of the X axis binning
@@ -551,59 +471,41 @@ namespace mygsl {
     // Extract the unit used for X axis bins :
     if (h2_setup_.has_key ("x.unit")) {
       xunit_str = h2_setup_.fetch_string ("x.unit");
-      if (! datatools::units::find_unit(xunit_str, xunit, xunit_type)) {
-        std::ostringstream message;
-        message << "mygsl::histogram_pool::init_histo_2d: "
-                << "Invalid X binning unit ('" << xunit_str << "') !";
-        throw std::logic_error (message.str ());
-      }
+      DT_THROW_IF ((! datatools::units::find_unit(xunit_str, xunit, xunit_type)),
+                   std::logic_error,
+                   "Invalid X binning unit ('" << xunit_str << "') !");
     }
     // Extract the unit used for Y axis bins :
     if (h2_setup_.has_key ("y.unit")) {
       yunit_str = h2_setup_.fetch_string ("y.unit");
-      if (! datatools::units::find_unit(yunit_str, yunit, yunit_type)) {
-        std::ostringstream message;
-        message << "mygsl::histogram_pool::init_histo_2d: "
-                << "Invalid Y binning unit ('" << yunit_str << "') !";
-        throw std::logic_error (message.str ());
-      }
+      DT_THROW_IF ((! datatools::units::find_unit(yunit_str, yunit, yunit_type)),
+                   std::logic_error,
+                   "Invalid Y binning unit ('" << yunit_str << "') !");
     }
 
     if (mode == "regular" || mode == "table") {
       // Extract the physical dimension for the X axis :
       if (h2_setup_.has_key ("x.unit.type")) {
         std::string xunit_type2 = h2_setup_.fetch_string ("x.unit.type");
-        if (! datatools::units::is_unit_label_valid (xunit_type2)) {
-          std::ostringstream message;
-          message << "mygsl::histogram_pool::init_histo_2d: "
-                  << "Invalid X binning unit type ('" << xunit_type << "') !";
-          throw std::logic_error (message.str ());
-        }
-        if (! xunit_type.empty () && xunit_type2 != xunit_type) {
-          std::ostringstream message;
-          message << "mygsl::histogram_pool::init_histo_1d: "
-                  << "Incompatible X unit type ('" << xunit_type2
-                  << "') with X bins unit ('" << xunit_type << "') !";
-          throw std::logic_error (message.str ());
-        }
+        DT_THROW_IF (! datatools::units::is_unit_label_valid (xunit_type2),
+                     std::logic_error,
+                     "Invalid X binning unit type ('" << xunit_type << "') !");
+        DT_THROW_IF (! xunit_type.empty () && xunit_type2 != xunit_type,
+                     std::logic_error,
+                     "Incompatible X unit type ('" << xunit_type2
+                     << "') with X bins unit ('" << xunit_type << "') !");
       }
 
       // Extract the physical dimension for the Y axis :
       if (h2_setup_.has_key ("y.unit.type")) {
         std::string yunit_type2 = h2_setup_.fetch_string ("y.unit.type");
-        if (! datatools::units::is_unit_label_valid (yunit_type2)) {
-          std::ostringstream message;
-          message << "mygsl::histogram_pool::init_histo_2d: "
-                  << "Invalid Y binning unit type ('" << yunit_type << "') !";
-          throw std::logic_error (message.str ());
-        }
-        if (! yunit_type.empty () && yunit_type2 != yunit_type) {
-          std::ostringstream message;
-          message << "mygsl::histogram_pool::init_histo_1d: "
-                  << "Incompatible Y unit type ('" << yunit_type2
-                  << "') with Y bins unit ('" << yunit_type << "') !";
-          throw std::logic_error (message.str ());
-        }
+        DT_THROW_IF (! datatools::units::is_unit_label_valid (yunit_type2),
+                     std::logic_error,
+                     "Invalid Y binning unit type ('" << yunit_type << "') !");
+        DT_THROW_IF (! yunit_type.empty () && yunit_type2 != yunit_type,
+                     std::logic_error,
+                     "Incompatible Y unit type ('" << yunit_type2
+                     << "') with Y bins unit ('" << yunit_type << "') !");
       }
 
       // Extract the optional display unit for X axis and check it :
@@ -615,12 +517,9 @@ namespace mygsl {
           if (xunit_type.empty ()) {
             xunit_type = display_xunit_type;
           } else {
-            if (display_xunit_type != xunit_type) {
-              std::ostringstream message;
-              message << "mygsl::histogram_pool::init_histo_1d: "
-                      << "X axis display unit type ('" << display_xunit_type << "') does not match the X axis unit !";
-              throw std::logic_error (message.str ());
-            }
+            DT_THROW_IF (display_xunit_type != xunit_type,
+                         std::logic_error,
+                         "X axis display unit type ('" << display_xunit_type << "') does not match the X axis unit !");
           }
         }
       } else {
@@ -639,12 +538,9 @@ namespace mygsl {
           if (yunit_type.empty ()) {
             yunit_type = display_yunit_type;
           } else {
-            if (display_yunit_type != yunit_type) {
-              std::ostringstream message;
-              message << "mygsl::histogram_pool::init_histo_1d: "
-                      << "Y axis display unit type ('" << display_yunit_type << "') does not match the Y axis unit !";
-              throw std::logic_error (message.str ());
-            }
+            DT_THROW_IF (display_yunit_type != yunit_type,
+                         std::logic_error,
+                         "Y axis display unit type ('" << display_yunit_type << "') does not match the Y axis unit !");
           }
         }
       } else {
@@ -707,10 +603,7 @@ namespace mygsl {
         if (xmax > 0.0) {
           xmin = 0.0;
         } else {
-          std::ostringstream message;
-          message << "mygsl::histogram_pool::init_histo_2d: "
-                  << "Invalid 2D-histogram X range [" << xmin << ":" << xmax << "[ !";
-          throw std::logic_error (message.str ());
+          DT_THROW_IF(true, std::logic_error, "Invalid 2D-histogram X range [" << xmin << ":" << xmax << "[ !");
         }
       }
 
@@ -718,10 +611,7 @@ namespace mygsl {
         if (xmin < 0.0) {
           xmax = 0.0;
         } else {
-          std::ostringstream message;
-          message << "mygsl::histogram_pool::init_histo_2d: "
-                  << "Invalid 2D-histogram X range [" << xmin << ":" << xmax << "[ !";
-          throw std::logic_error (message.str ());
+          DT_THROW_IF(true, std::logic_error, "Invalid 2D-histogram X range [" << xmin << ":" << xmax << "[ !");
         }
       }
 
@@ -737,10 +627,7 @@ namespace mygsl {
         if (ymax > 0.0) {
           ymin = 0.0;
         } else {
-          std::ostringstream message;
-          message << "mygsl::histogram_pool::init_histo_2d: "
-                  << "Invalid 2D-histogram Y range [" << ymin << ":" << ymax << "[ !";
-          throw std::logic_error (message.str ());
+          DT_THROW_IF(true, std::logic_error, "Invalid 2D-histogram Y range [" << ymin << ":" << ymax << "[ !");
         }
       }
 
@@ -748,10 +635,7 @@ namespace mygsl {
         if (ymin < 0.0) {
           ymax = 0.0;
         } else {
-          std::ostringstream message;
-          message << "mygsl::histogram_pool::init_histo_2d: "
-                  << "Invalid 2D-histogram Y range [" << ymin << ":" << ymax << "[ !";
-          throw std::logic_error (message.str ());
+          DT_THROW_IF(true, std::logic_error, "Invalid 2D-histogram Y range [" << ymin << ":" << ymax << "[ !");
         }
       }
 
@@ -771,33 +655,15 @@ namespace mygsl {
       if (h2_setup_.has_key ("x.number_of_bins")) {
         nxbins = h2_setup_.fetch_integer ("x.number_of_bins");
       } else {
-        std::ostringstream message;
-        message << "mygsl::histogram_pool::init_histo_2d: "
-                << "Missing number of X bins in 2D-histogram !";
-        throw std::logic_error (message.str ());
+        DT_THROW_IF(true, std::logic_error, "Missing number of X bins in 2D-histogram !");
       }
-      if (nxbins < 1) {
-        std::ostringstream message;
-        message << "mygsl::histogram_pool::init_histo_2d: "
-                << "Invalid number of X bins ('" << nxbins << "') in 2D-histogram !";
-        throw std::logic_error (message.str ());
-      }
-
+      DT_THROW_IF (nxbins < 1, std::logic_error, "Invalid number of X bins ('" << nxbins << "') in 2D-histogram !");
       if (h2_setup_.has_key ("y.number_of_bins")) {
         nybins = h2_setup_.fetch_integer ("y.number_of_bins");
       } else {
-        std::ostringstream message;
-        message << "mygsl::histogram_pool::init_histo_2d: "
-                << "Missing number of Y bins in 2D-histogram !";
-        throw std::logic_error (message.str ());
+        DT_THROW_IF(true, std::logic_error, "Missing number of Y bins in 2D-histogram !");
       }
-      if (nybins < 1) {
-        std::ostringstream message;
-        message << "mygsl::histogram_pool::init_histo_2d: "
-                << "Invalid number of Y bins ('" << nybins << "') in 2D-histogram !";
-        throw std::logic_error (message.str ());
-      }
-
+      DT_THROW_IF (nybins < 1, std::logic_error,"Invalid number of Y bins ('" << nybins << "') in 2D-histogram !)");
       h2_.initialize (nxbins, xmin, xmax,
                       nybins, ymin, ymax,
                       xbinmode, ybinmode);
@@ -830,12 +696,7 @@ namespace mygsl {
         while (xbounds_ifs) {
           double xbound;
           xbounds_ifs >> xbound;
-          if (! xbounds_ifs) {
-            std::ostringstream message;
-            message << "mygsl::histogram_pool::init_histo_2d: "
-                    << "Invalid format in file  '" << xbounds_file << "' !";
-            throw std::logic_error (message.str ());
-          }
+          DT_THROW_IF (! xbounds_ifs, std::logic_error, "Invalid format in file  '" << xbounds_file << "' !");
           xranges.push_back (xbound * xunit);
           xbounds_ifs >> std::ws;
           if (xbounds_ifs.eof ()) {
@@ -853,12 +714,7 @@ namespace mygsl {
         while (ybounds_ifs) {
           double ybound;
           ybounds_ifs >> ybound;
-          if (! ybounds_ifs) {
-            std::ostringstream message;
-            message << "mygsl::histogram_pool::init_histo_2d: "
-                    << "Invalid format in file  '" << ybounds_file << "' !";
-            throw std::logic_error (message.str ());
-          }
+          DT_THROW_IF (! ybounds_ifs, std::logic_error, "Invalid format in file  '" << ybounds_file << "' !");
           yranges.push_back (ybound * yunit);
           ybounds_ifs >> std::ws;
           if (ybounds_ifs.eof ()) {
@@ -866,60 +722,32 @@ namespace mygsl {
           }
         }
       }
-      if (xranges.size() == 0) {
-        std::ostringstream message;
-        message << "mygsl::histogram_pool::init_histo_2d: "
-                << "No rule was given to setup the X bins (xbounds, xbounds.file)!";
-        throw std::logic_error (message.str ());
-      }
-      if (yranges.size() == 0) {
-        std::ostringstream message;
-        message << "mygsl::histogram_pool::init_histo_2d: "
-                << "No rule was given to setup the Y bins (ybounds, ybounds.file)!";
-        throw std::logic_error (message.str ());
-      }
-      if (xranges.size () < 2) {
-        std::ostringstream message;
-        message << "mygsl::histogram_pool::init_histo_2d: "
-                << "Invalid number of X bins ('" << xranges.size () << "') in 2D-histogram !";
-        throw std::logic_error (message.str ());
-      }
-      if (yranges.size () < 2) {
-        std::ostringstream message;
-        message << "mygsl::histogram_pool::init_histo_2d: "
-                << "Invalid number of Y bins ('" << yranges.size () << "') in 2D-histogram !";
-        throw std::logic_error (message.str ());
-      }
+      DT_THROW_IF (xranges.size() == 0, std::logic_error,"No rule was given to setup the X bins (xbounds, xbounds.file) !");
+      DT_THROW_IF (yranges.size() == 0, std::logic_error,"No rule was given to setup the Y bins (ybounds, ybounds.file) !");
+      DT_THROW_IF (xranges.size () < 2, std::logic_error, "Invalid number of X bins ('" << xranges.size () << "') in 2D-histogram !");
+      DT_THROW_IF (yranges.size () < 2, std::logic_error, "Invalid number of Y bins ('" << yranges.size () << "') in 2D-histogram !");
       h2_.initialize (xranges, yranges);
     } else if (mode == "mimic") {
       // Extract information about other histograms :
       // 1D clone x 1D clone
       // 2D clone
-      if (histo_pool_ == 0) {
-        std::ostringstream message;
-        message << "mygsl::histogram_pool::init_histo_2d: "
-                << "Missing pool of histograms !";
-        throw std::logic_error (message.str ());
-      }
-
+      DT_THROW_IF (histo_pool_ == 0, std::logic_error, "Missing pool of histograms !");
       if (h2_setup_.has_key ("mimic.x.histogram_1d")
           && h2_setup_.has_key ("mimic.y.histogram_1d")) {
         // Copy the structure of another 1D histogram :
         std::string h2d_x_name = h2_setup_.fetch_string ("mimic.x.histogram_1d");
         std::string h2d_y_name = h2_setup_.fetch_string ("mimic.y.histogram_1d");
-
-        if (! histo_pool_->has (h2d_x_name, histogram_pool::HISTOGRAM_DIM_1D)) {
-          std::ostringstream message;
-          message << "mygsl::histogram_pool::init_histo_2d: "
-                  << "No 1D-histogram named '" << h2d_x_name << "' does exist !";
-          throw std::logic_error (message.str ());
+        {
+          bool check = ! histo_pool_->has (h2d_x_name, histogram_pool::HISTOGRAM_DIM_1D);
+          DT_THROW_IF (check,
+                       std::logic_error,
+                       "No 1D-histogram named '" << h2d_x_name << "' does exist !");
         }
-
-        if (! histo_pool_->has (h2d_y_name, histogram_pool::HISTOGRAM_DIM_1D)) {
-          std::ostringstream message;
-          message << "mygsl::histogram_pool::init_histo_2d: "
-                  << "No 1D-histogram named '" << h2d_y_name << "' does exist !";
-          throw std::logic_error (message.str ());
+        {
+          bool check = ! histo_pool_->has (h2d_x_name, histogram_pool::HISTOGRAM_DIM_1D);
+          DT_THROW_IF (check,
+                       std::logic_error,
+                       "No 1D-histogram named '" << h2d_y_name << "' does exist !");
         }
         const histogram & mimic_x_h1 = histo_pool_->get_1d (h2d_x_name);
         const histogram & mimic_y_h1 = histo_pool_->get_1d (h2d_y_name);
@@ -932,12 +760,9 @@ namespace mygsl {
         // Copy the structure of another 2D histogram :
         std::string h2d_name = h2_setup_.fetch_string ("mimic.histogram_2d");
 
-        if (! histo_pool_->has (h2d_name, histogram_pool::HISTOGRAM_DIM_2D)) {
-          std::ostringstream message;
-          message << "mygsl::histogram_pool::init_histo_2d: "
-                  << "No 2D-histogram named '" << h2d_name << "' does exist !";
-          throw std::logic_error (message.str ());
-        }
+        DT_THROW_IF ((! histo_pool_->has (h2d_name, histogram_pool::HISTOGRAM_DIM_2D)),
+                     std::logic_error,
+                     "No 2D-histogram named '" << h2d_name << "' does exist !");
         const histogram_2d & mimic_h2 = histo_pool_->get_2d (h2d_name);
         std::vector<std::string> import_prop_prefixes;
         if (h2_setup_.has_flag ("mimic.histogram_2d.import_aux")) {
@@ -945,10 +770,7 @@ namespace mygsl {
         }
         h2_.initialize (mimic_h2, import_prop_prefixes);
       } else {
-        std::ostringstream message;
-        message << "mygsl::histogram_pool::init_histo_2d: "
-                << "Missing mimic mode !";
-        throw std::logic_error (message.str ());
+        DT_THROW_IF(true, std::logic_error, "Missing mimic mode !");
       }
     }
 
@@ -957,22 +779,7 @@ namespace mygsl {
 
   void histogram_pool::initialize (const datatools::properties & setup_)
   {
-    /*
-    std::cerr << "DEVEL: "
-              << "mygsl::histogram_pool::initialize: "
-              << "Entering..."
-              << std::endl;
-
-    setup_.tree_dump(std::cerr,
-                     "********** setup_: ",
-                     "DEVEL: mygsl::histogram_pool::initialize: ");
-    */
-    if (is_initialized ()) {
-      std::ostringstream message;
-      message << "mygsl::histogram_pool::initialize: "
-              << "Pool is already initialized  !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF (is_initialized (), std::logic_error,"Pool is already initialized !");
 
     if (_description_.empty()) {
       if (setup_.has_key ("description")) {
@@ -998,9 +805,9 @@ namespace mygsl {
     _auxiliaries_.set_flag (_INITIALIZED_FLAG_KEY_);
 
     /*
-    _auxiliaries_.tree_dump(std::cerr,
-                            "********** _auxiliaries_: ",
-                            "DEVEL: histogram_pool:");
+      _auxiliaries_.tree_dump(std::cerr,
+      "********** _auxiliaries_: ",
+      "DEVEL: histogram_pool:");
     */
     return;
   }
@@ -1012,6 +819,7 @@ namespace mygsl {
       remove_all ();
       clear_auxiliaries ();
     }
+    _logging_priority_ = datatools::logger::PRIO_WARNING;
     return;
   }
 
@@ -1040,19 +848,13 @@ namespace mygsl {
   void histogram_pool::rename (const std::string & name_, const std::string & new_name_)
   {
     dict_type::iterator found = _dict_.find (name_);
-    if (found == _dict_.end ()) {
-      std::ostringstream message;
-      message << "mygsl::histogram_pool::rename: "
-              << "No histogram named '" << name_ << "' exists !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF (found == _dict_.end (),
+                 std::logic_error,
+                 "No histogram named '" << name_ << "' exists !");
     dict_type::iterator found2 = _dict_.find (new_name_);
-    if (found2 != _dict_.end ()) {
-      std::ostringstream message;
-      message << "mygsl::histogram_pool::rename: "
-              << "An histogram named '" << name_ << "' already exists !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF (found2 != _dict_.end (),
+                 std::logic_error,
+                 "An histogram named '" << name_ << "' already exists !");
     histogram_entry_type hentry = found->second;
     _dict_.erase (found);
     hentry.name = new_name_;
@@ -1064,12 +866,9 @@ namespace mygsl {
   histogram_pool::get_group (const std::string & name_) const
   {
     dict_type::const_iterator found = _dict_.find (name_);
-    if (found == _dict_.end ()) {
-      std::ostringstream message;
-      message << "mygsl::histogram_pool::get_group: "
-              << "No histogram named '" << name_ << "' exists !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF (found == _dict_.end (),
+                 std::logic_error,
+                 "No histogram named '" << name_ << "' exists !");
     return found->second.group;
   }
 
@@ -1077,24 +876,18 @@ namespace mygsl {
   histogram_pool::get_title (const std::string & name_) const
   {
     dict_type::const_iterator found = _dict_.find (name_);
-    if (found == _dict_.end ()) {
-      std::ostringstream message;
-      message << "mygsl::histogram_pool::get_title: "
-              << "No histogram named '" << name_ << "' exists !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF (found == _dict_.end (),
+                 std::logic_error,
+                 "No histogram named '" << name_ << "' exists !");
     return found->second.title;
   }
 
   void histogram_pool::set_title (const std::string & name_, const std::string & title_)
   {
     dict_type::iterator found = _dict_.find (name_);
-    if (found == _dict_.end ()) {
-      std::ostringstream message;
-      message << "mygsl::histogram_pool::set_title: "
-              << "No histogram named '" << name_ << "' exists !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF (found == _dict_.end (),
+                 std::logic_error,
+                 "No histogram named '" << name_ << "' exists !");
     found->second.title = title_;
     return;
   }
@@ -1102,12 +895,9 @@ namespace mygsl {
   void histogram_pool::set_group (const std::string & name_, const std::string & group_)
   {
     dict_type::iterator found = _dict_.find (name_);
-    if (found == _dict_.end ()) {
-      std::ostringstream message;
-      message << "mygsl::histogram_pool::set_group: "
-              << "No histogram named '" << name_ << "' exists !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF (found == _dict_.end (),
+                 std::logic_error,
+                 "No histogram named '" << name_ << "' exists !");
     found->second.group = group_;
     return;
   }
@@ -1141,38 +931,26 @@ namespace mygsl {
   histogram & histogram_pool::grab_1d (const std::string & name_)
   {
     dict_type::iterator found = _dict_.find (name_);
-    if (found == _dict_.end ()) {
-      std::ostringstream message;
-      message << "mygsl::histogram_pool::grab_1d: "
-              << "No histogram named '" << name_ << "' !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF (found == _dict_.end (),
+                 std::logic_error,
+                 "No histogram named '" << name_ << "' exists !");
     histogram_entry_type & hentry = found->second;
-    if (hentry.dimension != HISTOGRAM_DIM_1D) {
-      std::ostringstream message;
-      message << "mygsl::histogram_pool::grab_1d: "
-              << "Histogram '" << name_ << "' is not a 1D histogram !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF (hentry.dimension != HISTOGRAM_DIM_1D,
+                 std::logic_error,
+                 "Histogram '" << name_ << "' is not a 1D histogram !");
     return hentry.hh1d.grab ();
   }
 
   const histogram & histogram_pool::get_1d (const std::string & name_) const
   {
     dict_type::const_iterator found = _dict_.find (name_);
-    if (found == _dict_.end ()) {
-      std::ostringstream message;
-      message << "mygsl::histogram_pool::get_1d: "
-              << "No histogram named '" << name_ << "' !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF (found == _dict_.end (),
+                 std::logic_error,
+                 "No histogram named '" << name_ << "' exists !");
     const histogram_entry_type & hentry = found->second;
-    if (hentry.dimension != HISTOGRAM_DIM_1D) {
-      std::ostringstream message;
-      message << "mygsl::histogram_pool::get_1d: "
-              << "Histogram '" << name_ << "' is not a 1D histogram !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF (hentry.dimension != HISTOGRAM_DIM_1D,
+                 std::logic_error,
+                 "Histogram '" << name_ << "' is not a 1D histogram !");
     return hentry.hh1d.get ();
   }
 
@@ -1180,38 +958,26 @@ namespace mygsl {
   histogram_2d & histogram_pool::grab_2d (const std::string & name_)
   {
     dict_type::iterator found = _dict_.find (name_);
-    if (found == _dict_.end ()) {
-      std::ostringstream message;
-      message << "mygsl::histogram_pool::grab_2d: "
-              << "No histogram named '" << name_ << "' !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF (found == _dict_.end (),
+                 std::logic_error,
+                 "No histogram named '" << name_ << "' exists !");
     histogram_entry_type & hentry = found->second;
-    if (hentry.dimension != HISTOGRAM_DIM_2D) {
-      std::ostringstream message;
-      message << "mygsl::histogram_pool::grab_2d: "
-              << "Histogram '" << name_ << "' is not a 2D histogram !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF (hentry.dimension != HISTOGRAM_DIM_2D,
+                 std::logic_error,
+                 "Histogram '" << name_ << "' is not a 2D histogram !");
     return hentry.hh2d.grab ();
   }
 
   const histogram_2d & histogram_pool::get_2d (const std::string & name_) const
   {
     dict_type::const_iterator found = _dict_.find (name_);
-    if (found == _dict_.end ()) {
-      std::ostringstream message;
-      message << "mygsl::histogram_pool::get_2d: "
-              << "No histogram named '" << name_ << "' !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF (found == _dict_.end (),
+                 std::logic_error,
+                 "No histogram named '" << name_ << "' exists !");
     const histogram_entry_type & hentry = found->second;
-    if (hentry.dimension != HISTOGRAM_DIM_2D) {
-      std::ostringstream message;
-      message << "mygsl::histogram_pool::get_2d: "
-              << "Histogram '" << name_ << "' is not a 2D histogram !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF (hentry.dimension != HISTOGRAM_DIM_2D,
+                 std::logic_error,
+                 "Histogram '" << name_ << "' is not a 2D histogram !");
     return hentry.hh2d.get ();
   }
 
@@ -1220,12 +986,7 @@ namespace mygsl {
                                       const std::string & group_)
   {
     dict_type::const_iterator found = _dict_.find (name_);
-    if (found != _dict_.end ()) {
-      std::ostringstream message;
-      message << "mygsl::histogram_pool::add_1d: "
-              << "Histogram named '" << name_ << "' already exists !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF (found != _dict_.end (), std::logic_error, "Histogram named '" << name_ << "' already exists !");
     {
       histogram_entry_type dummy;
       _dict_[name_] = dummy;
@@ -1244,12 +1005,7 @@ namespace mygsl {
                                          const std::string & group_)
   {
     dict_type::const_iterator found = _dict_.find (name_);
-    if (found != _dict_.end ()) {
-      std::ostringstream message;
-      message << "mygsl::histogram_pool::add_2d: "
-              << "Histogram named '" << name_ << "' already exists !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF (found != _dict_.end (), std::logic_error, "Histogram named '" << name_ << "' already exists !");
     histogram_entry_type & he = _dict_[name_];
     he.name = name_;
     he.title = title_;
@@ -1384,9 +1140,9 @@ namespace mygsl {
 
 } // end of namespace mygsl
 
-/***************
- * OCD support *
- ***************/
+  /***************
+   * OCD support *
+   ***************/
 
 #include <datatools/ocd_macros.h>
 
@@ -1690,7 +1446,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram,ocd_)
       .set_long_description(
                             "The ``logarithmic`` property sets the logarithmic regular binning  \n"
                             " of the histogram.                                                 \n"
-                           "                                                                    \n"
+                            "                                                                    \n"
                             "Example::                                                        \n"
                             "                                                                 \n"
                             "    mode : string = \"regular\"                                  \n"
@@ -2041,7 +1797,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_2d,ocd_)
                             "    mode : string = \"regular\"                \n"
                             "                                               \n"
                             )
-       ;
+      ;
   }
 
 

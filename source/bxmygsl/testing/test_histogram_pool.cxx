@@ -49,10 +49,10 @@ void test_1 ()
   h6.grab_auxiliaries ().set_flag ("foo");
 
   HP.tree_dump (std::clog, "HP: ", "INFO: ");
-      
+
   h1.initialize (20, 0.0, 10.0);
   h2.initialize (10, 1.e-5, 1.e5, mygsl::BIN_MODE_LOG);
-  h3.initialize (20, 0.0, 10.0, 10, 1.e-5, 1.e5, 
+  h3.initialize (20, 0.0, 10.0, 10, 1.e-5, 1.e5,
                  mygsl::BIN_MODE_LINEAR,
                  mygsl::BIN_MODE_LOG);
   h4.initialize (20, 0.0, 10.0, 100, 0, 1.e5);
@@ -61,18 +61,18 @@ void test_1 ()
   std::string   random_id = mygsl::rng::DEFAULT_RNG_TYPE;
   unsigned long random_seed = 12345;
   mygsl::rng    random (random_id, random_seed);
-      
+
   unsigned int nshoots = 100000;
-  for (int i= 0; i < nshoots; i++) 
+  for (int i= 0; i < nshoots; i++)
     {
       double x1 = random.exponential (3.3);
       h1.fill(x1);
       double x2 = std::exp (std::log (10.) * random.flat (-2.5, 2.5));
       h2.fill(x2);
-      h3.fill(x1, x2);        
-      h4.fill(x1, x2);        
-      h5.fill(x1*x1);        
-      h6.fill(std::sqrt(x1));        
+      h3.fill(x1, x2);
+      h4.fill(x1, x2);
+      h5.fill(x1*x1);
+      h6.fill(std::sqrt(x1));
     }
   h1.tree_dump (std::clog, "Histogram 'h1'");
   h2.tree_dump (std::clog, "Histogram 'h2'");
@@ -80,7 +80,7 @@ void test_1 ()
   h4.tree_dump (std::clog, "Histogram 'h4'");
   h5.tree_dump (std::clog, "Histogram 'h5'");
   h6.tree_dump (std::clog, "Histogram 'h6'");
-      
+
   h1.print (std::cout, 15);
   h2.print (std::cout, 15);
 
@@ -101,7 +101,7 @@ void test_1 ()
       std::clog << histo_names[i] << ' ';
     }
   std::clog << std::endl << std::endl;
- 
+
   histo_names.clear ();
   HP.names (histo_names, "flag=F1");
   std::clog << "\nHistos with flag 'F1' are: \n";
@@ -137,52 +137,52 @@ void test_1 ()
       std::clog << histo_names[i] << ' ';
     }
   std::clog << std::endl << std::endl;
-      
+
 
   std::clog << "Histogram h1 :" << std::endl;
-  h1.print_ascii (std::clog); 
+  h1.print_ascii (std::clog);
   std::clog << "Histogram h2 :" << std::endl;
   h2.print_ascii (std::clog);
 
   {
-    std::clog << "INFO: " 
-              << "Test serialization..." 
+    std::clog << "INFO: "
+              << "Test serialization..."
               << std::endl;
     std::string filename = "test_histogram_pool.xml";
     {
-      std::clog << "INFO: " 
-                << "Test serialization: writer..." 
+      std::clog << "INFO: "
+                << "Test serialization: writer..."
                 << std::endl;
       datatools::data_writer writer (filename);
-      writer.store (HP);     
+      writer.store (HP);
     }
-          
+
     {
-      std::clog << "INFO: " 
-                << "Test serialization: reader..." 
+      std::clog << "INFO: "
+                << "Test serialization: reader..."
                 << std::endl;
       mygsl::histogram_pool HP2;
       datatools::data_reader reader (filename);
       if (reader.has_record_tag ())
-        { 
-          if (reader.record_tag_is (mygsl::histogram_pool::SERIAL_TAG)) 
+        {
+          if (reader.record_tag_is (mygsl::histogram_pool::SERIAL_TAG))
             {
               reader.load (HP2);
               HP2.tree_dump (std::clog, "HP2 : ", "INFO: ");
             }
           else
             {
-              std::cerr << "ERROR: " 
-                        << "Cannot load an histogram pool object !" 
+              std::cerr << "ERROR: "
+                        << "Cannot load an histogram pool object !"
                         << std::endl;
             }
         }
       else
         {
-          std::cerr << "ERROR: " 
-                    << "No object in the Boost archive !" 
+          std::cerr << "ERROR: "
+                    << "No object in the Boost archive !"
                     << std::endl;
-        }     
+        }
     }
   }
   return;
@@ -192,6 +192,7 @@ void test_2 ()
 {
   std::clog << "==============> test_2" << std::endl;
   mygsl::histogram_pool HP ("A set of histograms");
+  HP.set_logging_priority(datatools::logger::PRIO_NOTICE);
 
   HP.load ("${MYGSL_DATA_DIR}/testing/config/test_histogram_pool.conf");
 
@@ -217,7 +218,7 @@ void test_2 ()
   if (HP.has_1d ("h2"))
     {
       mygsl::histogram & h2 = HP.grab_1d ("h2");
-      
+
       for (int i = 0; i < 1000; i++)
         {
           double r = -50 * std::log (drand48 ());
@@ -255,14 +256,14 @@ void test_3 ()
   datatools::object_configuration_description OCD;
   if ( !datatools::load_ocd<mygsl::histogram_pool>(OCD)) {
     std::clog << "Cannot find OCD support for the 'mygsl::histogram_pool' class."
-              << std::endl;       
+              << std::endl;
     return;
-  } 
+  }
   OCD.print(std::clog, "*** ");
   OCD.dump(std::clog, "OCD: ");
   std::ofstream fscf ("test_OCD_histogram_pool.sample.conf");
   OCD.generate_sample_configuration(fscf, "the configuration of a 'mygsl::histogram_pool' object");
-    
+
   return;
 }
 
@@ -274,14 +275,14 @@ void test_4 ()
   datatools::object_configuration_description OCD;
   if ( !datatools::load_ocd<mygsl::histogram_1d>(OCD)) {
     std::clog << "Cannot find OCD support for the 'mygsl::histogram_1d' class."
-              << std::endl;       
+              << std::endl;
     return;
-  } 
+  }
   OCD.print(std::clog, "*** ");
   OCD.dump(std::clog, "OCD: ");
   std::ofstream fscf ("test_OCD_histogram_1d.sample.conf");
   OCD.generate_sample_configuration(fscf, "the configuration of a 'mygsl::histogram_1d' object");
-    
+
   return;
 }
 
@@ -293,14 +294,14 @@ void test_5 ()
   datatools::object_configuration_description OCD;
   if ( !datatools::load_ocd<mygsl::histogram_2d>(OCD)) {
     std::clog << "Cannot find OCD support for the 'mygsl::histogram_2d' class."
-              << std::endl;       
+              << std::endl;
     return;
-  } 
+  }
   OCD.print(std::clog, "*** ");
   OCD.dump(std::clog, "OCD: ");
   std::ofstream fscf ("test_OCD_histogram_2d.sample.conf");
   OCD.generate_sample_configuration(fscf, "the configuration of a 'mygsl::histogram_2d' object");
-    
+
   return;
 }
 
@@ -312,24 +313,24 @@ int main (int argc_, char ** argv_)
   srand48 (seed48);
 
   try {
-      std::clog << "NOTICE: test program for class 'histogram_pool'..." 
+      std::clog << "NOTICE: test program for class 'histogram_pool'..."
                 << std::endl;
 
       std::clog << "NOTICE: Running test #1..." << std::endl;
       test_1 ();
-      
+
       std::clog << "NOTICE: Running test #2..." << std::endl;
       test_2 ();
-      
+
       std::clog << "NOTICE: Running test #3..." << std::endl;
       test_3 ();
-      
+
       std::clog << "NOTICE: Running test #4..." << std::endl;
       test_4 ();
-      
+
       std::clog << "NOTICE: Running test #5..." << std::endl;
       test_5 ();
-     
+
       std::clog << "NOTICE: The end." << std::endl;
 
     }

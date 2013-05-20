@@ -6,6 +6,8 @@
 #include <sstream>
 #include <stdexcept>
 
+#include <datatools/exception.h>
+
 namespace mygsl {
 
   using namespace std;
@@ -71,7 +73,7 @@ namespace mygsl {
           {
             message << ": " << error::to_string (gsl_errno_);
           }
-        throw std::runtime_error (message.str ());
+        DT_THROW_IF(true, std::logic_error, message.str ());
       }
     return;
   }

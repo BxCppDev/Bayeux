@@ -86,13 +86,10 @@ int main (int argc_, char ** argv_)
 
       {
         uint32_t SM_flags = datatools::service_manager::BLANK;
-        if (debug)
-          {
-            SM_flags |= datatools::service_manager::DEBUG;
-          }
         datatools::service_manager SM ("SM",
                                        "A service manager",
                                        SM_flags);
+        if (debug) SM.set_logging_priority(datatools::logger::PRIO_DEBUG);
         SM.tree_dump (clog, "Service manager : ");
 
         // Load another multi_property container stored in a file :

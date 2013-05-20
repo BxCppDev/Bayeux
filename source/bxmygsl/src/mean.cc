@@ -9,10 +9,12 @@
 #include <limits>
 #include <cmath>
 
+#include <datatools/exception.h>
+
 namespace mygsl {
- 
+
   using namespace std;
- 
+
   size_t arithmetic_mean::get_n () const
   {
     return _n_;
@@ -35,19 +37,13 @@ namespace mygsl {
 
   double arithmetic_mean::get_mean () const
   {
-    if (_n_ == 0)
-      {
-        throw logic_error ("arithmetic_mean::get_mean: Not enough value !");
-      }
+    DT_THROW_IF (_n_ == 0, std::logic_error, "Not enough value !");
     return _sum_ / _n_;
   }
 
   double arithmetic_mean::get_mean_of_squared () const
   {
-    if (_n_ == 0)
-      {
-        throw logic_error ("arithmetic_mean::get_mean_of_squared: Not enough value !");
-      }
+    DT_THROW_IF (_n_ == 0, std::logic_error, "Not enough value !");
     return _sum_of_squared_ / _n_;
   }
 
@@ -55,20 +51,16 @@ namespace mygsl {
   {
     double v = 1.0;
     size_t nlim = 1;
-    if (bessel_correction_)
-      {
-        nlim = 2;
-        v *= (_n_ / (_n_ - 1));
-      }
-    if (_n_ < nlim)
-      {
-        throw logic_error ("arithmetic_mean::get_variance: Not enough value !");
-      }
+    if (bessel_correction_) {
+      nlim = 2;
+      v *= (_n_ / (_n_ - 1));
+    }
+    DT_THROW_IF (_n_ < nlim, std::logic_error, "Not enough value !");
     double m = get_mean ();
     v *= (get_mean_of_squared () - m * m);
     return v;
   }
-  
+
   arithmetic_mean::arithmetic_mean ()
   {
     reset ();
@@ -93,16 +85,13 @@ namespace mygsl {
 
   void arithmetic_mean::remove (double value_)
   {
-    if (_n_ == 0)
-      {
-        throw logic_error ("arithmetic_mean::remove: Cannot remove any values !");
-      }
+    DT_THROW_IF (_n_ == 0, std::logic_error, "Cannot remove any values !");
     _n_--;
     _sum_ -= value_;
     _sum_of_squared_ -= (value_ * value_);
     return;
   }
-  
+
   /***************************************/
 
   double weighted_mean::get_weight () const
@@ -124,7 +113,7 @@ namespace mygsl {
   {
     return _weighted_sum_ / _weight_;
   }
-  
+
   weighted_mean::weighted_mean ()
   {
     reset ();

@@ -5,6 +5,9 @@
 #include <cmath>
 #include <stdexcept>
 
+#include <datatools/exception.h>
+#include <datatools/logger.h>
+
 namespace mygsl {
 
   using namespace std;
@@ -43,11 +46,7 @@ namespace mygsl {
 
   void linear_system_solver::_init_ (size_t dimension_)
   {
-    if (dimension_ < 1)
-      {
-        throw domain_error ("linear_system_solver::_init_: Invalid dimension");
-        return;
-      }
+    DT_THROW_IF (dimension_ < 1, std::domain_error, "Invalid dimension");
     _dimension_ = dimension_;
     //_va_.assign (_dimension_ * _dimension_, 0.0);
     //_vb_.assign (_dimension_, 0.0);
@@ -74,17 +73,17 @@ namespace mygsl {
                                    const vector<double> & b_,
                                    vector<double> & x_)
   {
-    bool debug = false;
+    datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
     // checks:
     size_t dim = b_.size ();
     if (a_.size () != (dim * dim))
       {
-        std::cerr << "ERROR: linear_system_solver::solve: Invalid system dimensions!" << endl;
+        DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Invalid system dimensions !");
         return EXIT_FAILURE;
       }
     if (dim != _vvb_->size)
       {
-        std::clog << "WARNING: linear_system_solver::solve: Redimensioning system!" << endl;
+        DT_LOG_WARNING(datatools::logger::PRIO_WARNING, "Redimensioning system !");
         _reset_ ();
         _init_ (dim);
       }
@@ -101,35 +100,29 @@ namespace mygsl {
     int s;
     if (gsl_linalg_LU_decomp (&_m_.matrix, _p_, &s))
       {
-        std::cerr << "ERROR: linear_system_solver::solve: Cannot do LU decomposition!" << endl;
+        DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Cannot do LU decomposition !");
         return EXIT_FAILURE;
       }
     if (gsl_linalg_LU_solve (&_m_.matrix, _p_, &_b_.vector, _x_))
       {
-        std::cerr << "ERROR: linear_system_solver::solve: Cannot do LU solving!" << endl;
+        DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Cannot do LU solving !");
         return EXIT_FAILURE;
       }
-    if (debug)
-      {
-        clog << "DEBUG: linear_system_solver::solve: x = (";
-        for (int i = 0; i < _dimension_; i++)
-          {
-            clog << ' ' << gsl_vector_get (_x_, i);
-          }
-        clog << ')' << endl;
-      }
+    {
+      std::ostringstream message;
+      for (int i = 0; i < _dimension_; i++) message << ' ' << gsl_vector_get (_x_, i);
+      DT_LOG_DEBUG(logging,"x = (" << message.str() << ')');
+    }
     // output values:
     x_.reserve (_dimension_);
     double check = 0.0;
-    for (int i = 0; i < _dimension_; i++)
-      {
-        x_[i] = gsl_vector_get (_x_, i);
-        check += x_[i];
-      }
-    if (! isnormal (check))
-      {
-        return EXIT_FAILURE;
-      }
+    for (int i = 0; i < _dimension_; i++) {
+      x_[i] = gsl_vector_get (_x_, i);
+      check += x_[i];
+    }
+    if (! isnormal (check)) {
+      return EXIT_FAILURE;
+    }
     return EXIT_SUCCESS;
   }
 
