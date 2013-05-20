@@ -8,6 +8,8 @@
 
 #include <gsl/gsl_permutation.h>
 
+#include <datatools/exception.h>
+
 namespace mygsl {
 using namespace std;
 
@@ -25,21 +27,9 @@ bool permutation::_check_() const {
   return true;
 }
 
-void permutation::_check_throw_(size_t i_, const string& where_) const {
-  if (!_check_()) {
-    ostringstream message;
-    message << "permutation::" << where_ << ": "
-            << "Permutation is not initialized!";
-    throw runtime_error(message.str());
-  }
-  if (i_ >= size()) {
-    ostringstream message;
-    message << "permutation::" << where_ << ": "
-            << "Invalid permutation index " << i_ 
-            << "!";
-    throw runtime_error(message.str());
-  }
-}
+// void permutation::_check_throw_(size_t i_, const string& where_) const {
+//   DT_THROW_IF (i_ >= size(), std::range_error, "Invalid permutation index " << i_ << "!");
+// }
 
 bool permutation::is_initialized() const {
   return size() > 0;
@@ -51,28 +41,33 @@ const size_t* permutation::data() const {
 }
 
 size_t permutation::inversions() const {
-  _check_throw_(0, "inversions");
+  DT_THROW_IF (!_check_(),std::logic_error,"Permutation is not initialized !");
+  //_check_throw_(0, "inversions");
   return gsl_permutation_inversions(pImpl->_perm_);
 }
 
 size_t permutation::linear_cycles() const {
-  _check_throw_(0, "linear_cycles");
+  DT_THROW_IF (!_check_(),std::logic_error,"Permutation is not initialized !");
+  // _check_throw_(0, "linear_cycles");
   return gsl_permutation_linear_cycles(pImpl->_perm_);
 }
 
 size_t permutation::canonical_cycles() const {
-  _check_throw_(0, "canonical_cycles");
+  DT_THROW_IF (!_check_(),std::logic_error,"Permutation is not initialized !");
+  //_check_throw_(0, "canonical_cycles");
   return gsl_permutation_canonical_cycles(pImpl->_perm_);
 }
 
 size_t permutation::get(size_t i_) const {
-  _check_throw_(i_, "get");
+  DT_THROW_IF (!_check_(),std::logic_error,"Permutation is not initialized !");
+  DT_THROW_IF (i_ >= size(), std::range_error, "Invalid permutation index " << i_ << "!");
   return gsl_permutation_get(pImpl->_perm_, i_);
 }
 
 void permutation::swap(size_t i_, size_t j_) {
-  _check_throw_(i_, "swap");
-  _check_throw_(j_, "swap");
+  DT_THROW_IF (!_check_(),std::logic_error,"Permutation is not initialized !");
+  DT_THROW_IF (i_ >= size(), std::range_error, "Invalid permutation index " << i_ << "!");
+  DT_THROW_IF (j_ >= size(), std::range_error, "Invalid permutation index " << j_ << "!");
   if (i_ == j_) return;
   gsl_permutation_swap(pImpl->_perm_, i_, j_);
 }
@@ -119,9 +114,7 @@ permutation & permutation::operator=(const permutation& p_) {
   if (this == &p_) return *this;
   size_t sz = p_.size();
   if (size() != sz) reset();
-  
   if (sz > 0) gsl_permutation_memcpy(pImpl->_perm_, p_.pImpl->_perm_);
-
   return *this;
 }
 
@@ -137,48 +130,48 @@ void permutation::reset() {
 void permutation::init(size_t sz_) {
   if (!pImpl) pImpl = new permutation_impl();
   if (pImpl->_perm_ != 0) reset();
-  
   if (sz_ > 0) pImpl->_perm_ = gsl_permutation_calloc(sz_);
-  
-  if (pImpl->_perm_ == 0) {
-    ostringstream message;
-    message << "permutation::init: "
-            << "Cannot allocate permutation with size " 
-            << sz_ << "!";
-    throw runtime_error(message.str());
-  }
+  DT_THROW_IF (pImpl->_perm_ == 0,
+               std::logic_error,
+               "Cannot allocate permutation with size " << sz_ << " !");
 }
 
 void permutation::reverse() {
-  _check_throw_(0, "reverse");
+  DT_THROW_IF (!_check_(),std::logic_error,"Permutation is not initialized !");
+  //_check_throw_(0, "reverse");
   gsl_permutation_reverse(pImpl->_perm_);
 }
 
 bool permutation::inverse(permutation& p_) {
-  _check_throw_(0, "inverse");
+  DT_THROW_IF (!_check_(),std::logic_error,"Permutation is not initialized !");
+  //_check_throw_(0, "inverse");
   p_.init(this->size());
   return gsl_permutation_inverse(p_.pImpl->_perm_, this->pImpl->_perm_) == GSL_SUCCESS;
 }
 
 bool permutation::canonical_to_linear(permutation& p_) {
-  _check_throw_(0, "canonical_to_linear");
+  DT_THROW_IF (!_check_(),std::logic_error,"Permutation is not initialized !");
+  //_check_throw_(0, "canonical_to_linear");
   p_.init(this->size());
   return gsl_permutation_canonical_to_linear(p_.pImpl->_perm_, this->pImpl->_perm_) == GSL_SUCCESS;
 }
 
 bool permutation::linear_to_canonical(permutation& p_) {
-  _check_throw_(0, "linear_to_canonical");
+  DT_THROW_IF (!_check_(),std::logic_error,"Permutation is not initialized !");
+  //_check_throw_(0, "linear_to_canonical");
   p_.init(this->size());
   return gsl_permutation_linear_to_canonical(p_.pImpl->_perm_, this->pImpl->_perm_) == GSL_SUCCESS;
 }
 
 bool permutation::next() {
-  _check_throw_(0, "next");
+  DT_THROW_IF (!_check_(),std::logic_error,"Permutation is not initialized !");
+  //_check_throw_(0, "next");
   return gsl_permutation_next(pImpl->_perm_) == GSL_SUCCESS;
 }
 
 bool permutation::previous() {
-  _check_throw_(0, "previous");
+  DT_THROW_IF (!_check_(),std::logic_error,"Permutation is not initialized !");
+  //_check_throw_(0, "previous");
   return gsl_permutation_prev(pImpl->_perm_) == GSL_SUCCESS;
 }
 
@@ -258,7 +251,7 @@ istream& operator>>(istream& in_, permutation& p_) {
     if ((c != ',' ) && (c != ')')) {
       in_.putback(c);
       in_.setstate(ios::failbit);
-      return in_;     
+      return in_;
     }
     if (c == ')') {
       break;

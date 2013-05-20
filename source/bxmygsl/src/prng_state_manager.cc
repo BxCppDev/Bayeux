@@ -27,6 +27,8 @@
 
 #include <datatools/ioutils.h>
 #include <datatools/utils.h>
+#include <datatools/exception.h>
+#include <datatools/logger.h>
 
 #include <mygsl/prng_state_manager.h>
 
@@ -164,45 +166,25 @@ namespace mygsl {
   const prng_state_manager::record & prng_state_manager::get_state (const string & label_) const
   {
     dict_type::const_iterator found = _dict_.find (label_);
-    if (found == _dict_.end ())
-      {
-        ostringstream message;
-        message << "mygsl::prng_state_manager::get_state: "
-                << "No PRNG's state record with label '" << label_ << "' is defined !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (found == _dict_.end (),
+                 logic_error,
+                 "No PRNG's state record with label '" << label_ << "' is defined !");
     return found->second;
   }
 
   prng_state_manager::record & prng_state_manager::get_state (const string & label_)
   {
     dict_type::iterator found = _dict_.find (label_);
-    if (found == _dict_.end ())
-      {
-        ostringstream message;
-        message << "mygsl::prng_state_manager::get_state: "
-                << "No PRNG state record with label '" << label_ << "' is defined !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (found == _dict_.end (),
+                 logic_error,
+                 "No PRNG's state record with label '" << label_ << "' is defined !");
     return found->second;
   }
 
   void prng_state_manager::add_state (const string & label_, size_t sz_)
   {
-    if (label_.empty ())
-      {
-        ostringstream message;
-        message << "mygsl::prng_state_manager::add_state: "
-                << "Label '" << label_ << "' is empty !";
-        throw logic_error (message.str ());
-      }
-    if (_dict_.find (label_) != _dict_.end ())
-      {
-        ostringstream message;
-        message << "mygsl::prng_state_manager::add_state: "
-                << "Label '" << label_ << "' is already used !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (label_.empty (),logic_error,"Label '" << label_ << "' is empty !");
+    DT_THROW_IF (_dict_.find (label_) != _dict_.end (),logic_error, "Label '" << label_ << "' is already used !");
     record rec;
     _dict_[label_] = rec;
     _dict_[label_].state_buffer.reserve (sz_);
@@ -227,15 +209,11 @@ namespace mygsl {
   // dtor:
   prng_state_manager::~prng_state_manager ()
   {
-    if (has_filename ())
-      {
-        ostringstream message;
-        message << "mygsl::prng_state_manager::dtor: "
-                << "Automated storage of the PRNG state records in file '"
-                << _filename_ << "' !";
-        clog << datatools::io::notice << message.str () << endl;
-        store ();
-      }
+    if (has_filename ()) {
+      DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,"Automated storage of the PRNG state records in file '"
+                    << _filename_ << "' !");
+      store ();
+    }
     return;
   }
 
@@ -250,124 +228,70 @@ namespace mygsl {
       }
     else
       {
-        if (_filename_.empty ())
-          {
-            ostringstream message;
-            message << "mygsl::prng_state_manager::load: "
-                    << "No file was specified to load the PRNG state records !";
-            throw logic_error (message.str ());
-          }
+        DT_THROW_IF (_filename_.empty (),logic_error,"No file was specified to load the PRNG state records !");
         fn = _filename_;
       }
     datatools::fetch_path_with_env (fn);
-    if (! boost::filesystem::exists (fn))
-      {
-        ostringstream message;
-        message << "mygsl::prng_state_manager::load: "
-                << "File '" << fn << "' does not exist !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (! boost::filesystem::exists (fn),runtime_error,"File '" << fn << "' does not exist !");
     ifstream ifs (fn.c_str ());
-    if (! ifs)
-      {
-        ostringstream message;
-        message << "mygsl::prng_state_manager::load: "
-                << "Cannot open file '" << fn << "' to load the PRNG state records !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (! ifs,runtime_error,"Cannot open file '" << fn << "' to load the PRNG state records !");
     this->reset ();
     int counter;
     ifs >> counter;
-    if (devel)
-      {
-        clog << datatools::io::devel
-             << "mygsl::prng_state_manager::load: "
-             << "counter= " << counter << endl;
-      }
-    if (! ifs)
-      {
-        ostringstream message;
-        message << "mygsl::prng_state_manager::load: "
-                << "Cannot read the 'counter' value from the '" << fn << "' file !";
-        throw logic_error (message.str ());
-      }
+    // if (devel)
+    //   {
+    //     clog << datatools::io::devel
+    //          << "mygsl::prng_state_manager::load: "
+    //          << "counter= " << counter << endl;
+    //   }
+    DT_THROW_IF (! ifs,runtime_error,"Cannot read the 'counter' value from the '" << fn << "' file !");
     set_counter (counter);
     size_t dict_sz;
     ifs >> dict_sz;
-    if (devel)
-      {
-        clog << datatools::io::devel
-             << "mygsl::prng_state_manager::load: "
-             << "dict_sz= " << dict_sz << endl;
-      }
-    if (! ifs)
-      {
-        ostringstream message;
-        message << "mygsl::prng_state_manager::load: "
-                << "Cannot read the dictionary size from the '" << fn << "' file !";
-        throw logic_error (message.str ());
-      }
+    // if (devel)
+    //   {
+    //     clog << datatools::io::devel
+    //          << "mygsl::prng_state_manager::load: "
+    //          << "dict_sz= " << dict_sz << endl;
+    //   }
+    DT_THROW_IF (! ifs,runtime_error,"Cannot read the dictionary size from the '" << fn << "' file !");
     ifs >> ws;
     for (int i = 0; i < dict_sz; i++)
       {
         string line;
         getline (ifs, line);
-        if (devel)
-          {
-            clog << datatools::io::devel
-                 << "mygsl::prng_state_manager::load: "
-                 << "line= '" << line << "'" << endl;
-          }
-        if (! ifs)
-          {
-            ostringstream message;
-            message << "mygsl::prng_state_manager::load: "
-                    << "Cannot read a new PRNG state record from the '" << fn << "' file !";
-            throw logic_error (message.str ());
-          }
+        // if (devel)
+        //   {
+        //     clog << datatools::io::devel
+        //          << "mygsl::prng_state_manager::load: "
+        //          << "line= '" << line << "'" << endl;
+        //   }
+        DT_THROW_IF (! ifs,runtime_error,"Cannot read a new PRNG state record from the '" << fn << "' file !");
         istringstream iss (line);
         string label;
         iss >> label;
-        if (devel)
-          {
-            clog << datatools::io::devel
-                 << "mygsl::prng_state_manager::load: "
-                 << "label= " << label << endl;
-          }
-        if (! iss)
-          {
-            ostringstream message;
-            message << "mygsl::prng_state_manager::load: "
-                    << "Cannot read the PRNG's label from file '" << fn << "' file !";
-            throw logic_error (message.str ());
-          }
+        // if (devel)
+        //   {
+        //     clog << datatools::io::devel
+        //          << "mygsl::prng_state_manager::load: "
+        //          << "label= " << label << endl;
+        //   }
+        DT_THROW_IF (! iss,runtime_error,"Cannot read the PRNG's label from file '" << fn << "' file !");
         size_t state_sz;
         iss >> state_sz;
-        if (devel)
-          {
-            clog << datatools::io::devel
-                 << "mygsl::prng_state_manager::load: "
-                 << "state_sz= " << state_sz << endl;
-          }
-        if (! iss)
-          {
-            ostringstream message;
-            message << "mygsl::prng_state_manager::load: "
-                    << "Cannot read the size of the PRNG internal state from file '" << fn << "' file !";
-            throw logic_error (message.str ());
-          }
+        // if (devel)
+        //   {
+        //     clog << datatools::io::devel
+        //          << "mygsl::prng_state_manager::load: "
+        //          << "state_sz= " << state_sz << endl;
+        //   }
+        DT_THROW_IF (! iss,runtime_error,"Cannot read the size of the PRNG internal state from file '" << fn << "' file !");
         add_state (label, state_sz);
         for (int i = 0; i < state_sz; i++)
           {
             unsigned int val;
             iss >> val;
-            if (! iss)
-              {
-                ostringstream message;
-                message << "mygsl::prng_state_manager::load: "
-                        << "Cannot read the PRNG internal state byte from file '" << fn << "' file !";
-                throw logic_error (message.str ());
-              }
+            DT_THROW_IF (! iss,runtime_error,"Cannot read the PRNG internal state byte from file '" << fn << "' file !");
             unsigned char c = static_cast<unsigned char> (val);
             get_state (label).state_buffer.push_back (c);
           }
@@ -387,12 +311,9 @@ namespace mygsl {
         if (_filename_.empty ())
           {
             fn = "/tmp/prng_states.save";
-            ostringstream message;
-            message << "mygsl::prng_state_manager::store: "
-                    << "No file was specified to store the PRNG state records !";
-            clog << datatools::io::warning
-                 << message.str () << " "
-                 << "PRNG state saved in " << fn << endl;
+            DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
+                           "No file was specified to store the PRNG state records ! "
+                           << "PRNG state saved in '" << fn << "' !");
             // throw logic_error (message.str ());
           }
         else
@@ -411,14 +332,7 @@ namespace mygsl {
         boost::filesystem::rename (fn, backup_fn);
       }
     ofstream ofs (fn.c_str ());
-    if (! ofs)
-      {
-        ostringstream message;
-        message << "mygsl::prng_state_manager::store: "
-                << "Cannot open file '" << fn << "' to store the PRNG state records !";
-        throw logic_error (message.str ());
-      }
-
+    DT_THROW_IF (! ofs, runtime_error,"Cannot open file '" << fn << "' to store the PRNG state records !");
     ofs << get_counter () << endl;
     ofs << _dict_.size () << endl;
     for (dict_type::const_iterator i = _dict_.begin ();

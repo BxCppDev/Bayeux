@@ -77,7 +77,7 @@ class permutation {
 
  private:
   bool _check_() const;
-  void _check_throw_(size_t i_, const std::string& where_) const;
+  //void _check_throw_(size_t i_, const std::string& where_) const;
 
  private:
   struct permutation_impl;
