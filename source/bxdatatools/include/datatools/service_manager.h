@@ -171,6 +171,11 @@ class service_manager : public datatools::i_tree_dumpable {
                          const std::string& title  = "",
                          const std::string& indent = "",
                          bool inherit              = false) const;
+
+  void set_logging_priority(datatools::logger::priority);
+
+  datatools::logger::priority get_logging_priority() const;
+
  protected:
   void load_service(const std::string& name,
                     const std::string& id,
@@ -183,10 +188,6 @@ class service_manager : public datatools::i_tree_dumpable {
   void initialize_service(service_entry& entry);
 
   void reset_service(service_entry& entry);
-
-  void set_logging_priority(datatools::logger::priority);
-
-  datatools::logger::priority get_logging_priority() const;
 
  private:
   /// Set the factory preload flag
