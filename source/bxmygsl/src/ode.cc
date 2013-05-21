@@ -4,6 +4,8 @@
 
 #include <gsl/gsl_errno.h>
 
+#include <datatools/exception.h>
+
 namespace mygsl {
 
   using namespace std;
@@ -27,9 +29,7 @@ namespace mygsl {
     //             << std::endl;
     // }
     ode_system * sys = static_cast<ode_system *> (params_);
-    if (sys == 0) {
-      throw std::runtime_error ("mygsl::ode_system::gsl_ode_function: NULL!");
-    }
+    DT_THROW_IF (sys == 0, std::runtime_error, "Null ODE system pointer !");
     return sys->compute_derivatives (t_,y_,f_);
   }
 
@@ -44,9 +44,7 @@ namespace mygsl {
     //             << " entering..." << std::endl;
     // }
     ode_system * sys = static_cast<ode_system *> (params_);
-    if (sys == 0) {
-      throw std::runtime_error ("mygsl::ode_system::gsl_ode_function: NULL!");
-    }
+    DT_THROW_IF (sys == 0, std::runtime_error, "Null ODE system pointer !");
     return sys->compute_jacobian (t_,y_,dfdy_,dfdt_);
   }
 
@@ -142,13 +140,7 @@ namespace mygsl {
 
   void ode_driver::set_type (const std::string & type_)
   {
-    if (! type_is_valid (type_)) {
-      throw std::runtime_error ("mygsl::ode_driver::set_type: Invalid type!");
-    }
-    // if (ode_driver::g_debug) {
-    //   std::cerr << "DEBUG: ode_driver::set_type: type='"
-    //             << type_ << "'" << std::endl;
-    // }
+    DT_THROW_IF (! type_is_valid (type_), std::logic_error, "Invalid type!");
     _type_ = type_;
     return;
   }
@@ -165,9 +157,9 @@ namespace mygsl {
                           bool   regular_)
   {
     _ode_sys_ = 0;
-    if (sys_.get_dimension () < 1) {
-      throw std::runtime_error ("mygsl::ode_driver::set_dimension: Invalid value!");
-    }
+    DT_THROW_IF (sys_.get_dimension () < 1,
+                 std::logic_error,
+                 "Invalid value !");
     _ode_sys_ = &sys_;
 
     _regular_ = regular_;
@@ -261,18 +253,10 @@ namespace mygsl {
       _step_type_ = gsl_odeiv_step_gear2;
     }
 
-    if (type_requires_jacobian (_type_) &&  ! _has_jacobian_) {
-      std::ostringstream message;
-      message << "ode_driver::_init_step_: "
-              << "ODE stepper '" << _type_
-              << "' requires Jacobian but ODE system does not provide one!";
-      throw std::runtime_error (message.str ());
-    }
-
-    // if (ode_driver::g_debug) {
-    //   std::cerr << "DEBUG: _init_step_: "
-    //             << "_step_type_=" << _step_type_ << std::endl;
-    // }
+    DT_THROW_IF (type_requires_jacobian (_type_) &&  ! _has_jacobian_,
+                 std::logic_error,
+                 "ODE stepper '" << _type_
+                 << "' requires Jacobian but ODE system does not provide one !");
     return;
   }
 

@@ -38,19 +38,19 @@ namespace mygsl {
 
       const param_entry & get_param_by_name (const std::string & name_) const;
 
-      param_entry & get_param_by_name (const std::string & name_);
+      param_entry & grab_param_by_name (const std::string & name_);
 
       const param_entry & get_param (int i_) const;
 
-      param_entry & get_param (int i_);
+      param_entry & grab_param (int i_);
 
       const param_entry & get_free_param (int i_) const;
 
-      param_entry & get_free_param (int i_);
+      param_entry & grab_free_param (int i_);
 
       const param_entry & get_auto_param (int i_) const;
 
-      param_entry & get_auto_param (int i_);
+      param_entry & grab_auto_param (int i_);
 
       void add_param (const param_entry & pe_, const std::string & comment_ = "");
 
@@ -121,8 +121,8 @@ namespace mygsl {
     {
       for (int i = 0; i < get_number_of_auto_params (); i++)
 	{
-	  get_auto_param (i).set_value_no_check (666.);
-	  get_auto_param (i).set_auto_computed (true);
+	  grab_auto_param (i).set_value_no_check (666.);
+	  grab_auto_param (i).set_auto_computed (true);
 	}
       return;
     }

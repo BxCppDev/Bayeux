@@ -8,6 +8,8 @@
 #include <cmath>
 #include <limits>
 
+#include <datatools/exception.h>
+
 namespace mygsl {
 
   using namespace std;
@@ -108,7 +110,7 @@ namespace mygsl {
       message << "param_entry::set_best_value: "
       << "Cannot force best value for 'const' parameter '"
       << get_name () << "'!";
-      throw logic_error (message.str ());
+      th row logic_error (message.str ());
       }
     */
     _best_value_ = best_value_;
@@ -322,10 +324,7 @@ namespace mygsl {
 
   void param_entry::set_value_no_check (double value_)
   {
-    if (is_const ())
-      {
-        throw logic_error ("mygsl::param_entry::set_value_no_check: Cannot change value for this parameter is 'const'!");
-      }
+    DT_THROW_IF (is_const (), logic_error, "Cannot change value for this parameter is 'const'!");
     _value_ = value_;
     if (is_auto ())
       {
@@ -357,15 +356,10 @@ namespace mygsl {
 
   void param_entry::set_min_max (double min_, double max_)
   {
-    if (min_ >= max_)
-      {
-        ostringstream message;
-        message << "mygsl::param_entry::set_min_max: "
-                << "Invalid min/max range"
-                << " [" << min_ << ":" << max_ << "] "
-                << "for parameter '" << get_name () << "'!";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (min_ >= max_,logic_error,
+                 "Invalid min/max range"
+                 << " [" << min_ << ":" << max_ << "] "
+                 << "for parameter '" << get_name () << "' !");
     _limit_ |= param_entry::LIMIT_MIN;
     _min_ = min_;
     _limit_ |= param_entry::LIMIT_MAX;
@@ -397,13 +391,8 @@ namespace mygsl {
       {
         if (has_min () && has_max ())
           {
-            if (step_ > (_max_ - _min_))
-              {
-                std::ostringstream message;
-                message << "param_entry::set_step: ";
-                message << "step to large for parameter '" << get_name () << "'!";
-                throw std::logic_error (message.str ());
-              }
+            DT_THROW_IF (step_ > (_max_ - _min_),std::logic_error,
+                         "Step to large for parameter '" << get_name () << "' !");
           }
         _step_ = step_;
       }
@@ -422,10 +411,8 @@ namespace mygsl {
     if (! is_in_range ())
       {
         _value_ = old_val;
-        std::ostringstream message;
-        message << "mygsl::param_entry::set_value: ";
-        message << "value " << value_ << " outside of allowed range '" << _min_ << ':' << _max_ << "' for parameter '" << get_name () << "'!";
-        throw std::logic_error (message.str ());
+        DT_THROW_IF(true, std::logic_error,
+                    "Value " << value_ << " outside of allowed range '" << _min_ << ':' << _max_ << "' for parameter '" << get_name () << "' !");
       }
     return;
   }

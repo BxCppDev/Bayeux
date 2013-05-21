@@ -8,6 +8,8 @@
 #include <string>
 #include <cmath>
 
+#include <datatools/exception.h>
+
 namespace mygsl {
 
   using namespace std;
@@ -92,10 +94,7 @@ namespace mygsl {
     value=value_;
     if ( ! is_in_range() ) {
       value=old_val;
-      std::ostringstream message;
-      message << "multimin_system::param_entry::set_value: ";
-      message << "value < min for parameter '" << name << "'!";
-      throw std::runtime_error(message.str());
+      DT_THROW_IF(true,std::range_error,"Value < min for parameter '" << name << "' !");
     }
   }
 
@@ -172,12 +171,9 @@ namespace mygsl {
     pe.min  = min_;
     pe.max  = max_;
     pe.set_value(value_);
-    if ( step_ > (max_-min_) ) {
-      std::ostringstream message;
-      message << "multimin_system::param_entry::make_param_entry_ranged: ";
-      message << "step to large for parameter '" << name_ << "'!";
-      throw std::runtime_error(message.str());
-    }
+    DT_THROW_IF ( step_ > (max_-min_),
+                  std::logic_error,
+                  "Step to large for parameter '" << name_ << "' !");
     pe.step  = step_;
     return pe;
   }
@@ -206,21 +202,13 @@ namespace mygsl {
 
   void multimin_system::add_param( const param_entry & pe_ )
   {
-    if ( is_lock_params() ) {
-      std::ostringstream message;
-      message << "multimin_system::add_param: ";
-      message << "system is locked!";
-      throw std::runtime_error(message.str());
-    }
-
-    if (std::find_if (_params.begin(),
-                 _params.end(),
-                 multimin_system::param_has_name(pe_.name) ) != _params.end() ) {
-      std::ostringstream message;
-      message << "multimin_system::add_param: ";
-      message << "parameter '" << pe_.name << "' already exist!";
-      throw std::runtime_error(message.str());
-    }
+    DT_THROW_IF ( is_lock_params(), std::logic_error,
+                  "System is locked !");
+    DT_THROW_IF ((std::find_if (_params.begin(),
+                                _params.end(),
+                                multimin_system::param_has_name(pe_.name) ) != _params.end() ),
+                 std::logic_error,
+                 "Parameter '" << pe_.name << "' already exist !");
     _params.push_back(pe_);
     _update_dimensions_();
     return;
@@ -340,21 +328,17 @@ namespace mygsl {
 
   int multimin_system::_prepare_values()
   {
-    std::ostringstream message;
-    message << "multimin_system::_prepare_values: "
-            << "You should provide an inherited '_prepare_values' method in your 'multimin_system' class!";
-    throw std::runtime_error(message.str());
+    DT_THROW_IF(true,
+                std::runtime_error,
+                "You should provide an inherited '_prepare_values' method in your 'multimin_system' class !");
   }
 
   int multimin_system::_auto_values()
   {
-    if ( get_auto_dimension() > 0 ) {
-      std::ostringstream message;
-      message << "multimin_system::_auto_values: "
-              << "There are AUTO paramaters! "
-              << "You should provide an inherited '_auto_values' method in your 'multimin_system' class!";
-      throw std::runtime_error(message.str());
-    }
+    DT_THROW_IF ( get_auto_dimension() > 0 ,
+                  std::runtime_error,
+                  "There are AUTO paramaters! "
+                  << "You should provide an inherited '_auto_values' method in your 'multimin_system' class !");
     return 0;
   }
 
@@ -377,10 +361,7 @@ namespace mygsl {
                                         size_t dimension_ ) const
   {
     size_t fd=get_free_dimension();
-    if ( dimension_ != fd ) {
-      throw std::range_error(
-        "multimin_system::to_double_star: Invalid dimension!");
-    }
+    DT_THROW_IF ( dimension_ != fd, std::range_error, "Invalid dimension !");
     int i_free=0;
     for ( int i_par=0; i_par<get_dimension(); i_par++ ) {
       if ( is_param_free(i_par) ) {
@@ -394,10 +375,8 @@ namespace mygsl {
   void multimin_system::from_double_star( const double * pars_ ,
                                           size_t dimension_ )
   {
-    if ( dimension_ != get_free_dimension() ) {
-      throw std::range_error(
-        "multimin_system::from_double_star: Invalid dimension!");
-    }
+    DT_THROW_IF ( dimension_ != get_free_dimension(), std::range_error,
+                  "Invalid dimension !");
     int i_free=0;
     for ( int i=0; i<get_dimension(); i++ ) {
       if ( is_param_free(i) ) {
@@ -538,13 +517,8 @@ namespace mygsl {
 
   void multimin::_init_algorithm_( const std::string & name_ )
   {
-    if ( ! name_is_valid(name_) ) {
-      std::ostringstream message;
-      message << "multimin::_init_algorithm_: "
-              << "Invalid minimization algorithm '"
-              << name_ << "'!";
-      throw std::runtime_error(message.str());
-    }
+    DT_THROW_IF ( ! name_is_valid(name_), std::logic_error,
+                  "Invalid minimization algorithm '" << name_ << "' !");
 
     if ( name_ == "conjugate_fr" ) {
       _algo_fdf_ = gsl_multimin_fdfminimizer_conjugate_fr;
@@ -575,9 +549,8 @@ namespace mygsl {
 
   void multimin::_set_mode_( int mode_ )
   {
-    if ( mode_ != MODE_F && mode_ != MODE_FDF ) {
-      throw std::runtime_error("multimin:_set_mode_: Invalid mode!");
-    }
+    DT_THROW_IF ( mode_ != MODE_F && mode_ != MODE_FDF ,
+                  std::logic_error, "Invalid mode !");
     _mode_ = mode_;
     return;
   }

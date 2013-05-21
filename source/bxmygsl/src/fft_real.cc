@@ -282,7 +282,7 @@ namespace mygsl {
       std::istringstream iss (arg);
       iss >> max_freq_cut;
       if (!iss) {
-      throw std::runtime_error ("fft_real::main: Format error!");
+      th row std::runtime_error ("fft_real::main: Format error!");
       }
       }
     */

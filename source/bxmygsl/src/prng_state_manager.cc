@@ -314,7 +314,7 @@ namespace mygsl {
             DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
                            "No file was specified to store the PRNG state records ! "
                            << "PRNG state saved in '" << fn << "' !");
-            // throw logic_error (message.str ());
+            // th row logic_error (message.str ());
           }
         else
           {

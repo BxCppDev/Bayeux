@@ -15,25 +15,25 @@ class my_system : public mygsl::multiparameter_system
 public:
   void compute_automatic_params ()
   {
-    // compute the value of parameter 'Pi-A*lambda' from the current 
+    // compute the value of parameter 'Pi-A*lambda' from the current
     // values of the 'Pi', 'A' and 'lambda' parameters:
     double A = get_param_by_name ("A").get_value ();
     double lambda = get_param_by_name ("lambda").get_value ();
     double Pi = get_param_by_name ("Pi").get_value ();
-    double autoval = Pi - A * lambda; 
-    get_param_by_name ("Pi-A*lambda").set_value (autoval);
+    double autoval = Pi - A * lambda;
+    grab_param_by_name ("Pi-A*lambda").set_value (autoval);
 
     /* here we deliberately forgot to compute the 'forgotten-auto'
      * parameter; this will trigger exception at 'init'.
      */
-    get_param_by_name ("forgotten-auto").set_value (0.0);
-    get_param_by_name ("forgotten-auto").set_auto_computed (true);
+    grab_param_by_name ("forgotten-auto").set_value (0.0);
+    grab_param_by_name ("forgotten-auto").set_auto_computed (true);
   }
 };
 
 int main(int argc_ , char ** argv_)
 {
-  try 
+  try
     {
       // a multi-parameter system:
       my_system MS;
@@ -61,8 +61,8 @@ int main(int argc_ , char ** argv_)
       MS.print (clog, "Multi-parameter system after locking", "");
       clog << endl;
 
-      MS.get_param_by_name ("A").set_value (1.2345);
-      MS.get_param_by_name ("b").set_no_min ();
+      MS.grab_param_by_name ("A").set_value (1.2345);
+      MS.grab_param_by_name ("b").set_no_min ();
       MS.compute_automatic_params ();
       MS.print (clog, "Multi-parameter system after change in A", "");
       clog << endl;
@@ -71,7 +71,7 @@ int main(int argc_ , char ** argv_)
       clog << ">>> " << "A (best value) = " << A_bv << endl;
 
       // set the best value for parameter 'A':
-      MS.get_param_by_name ("A").set_best_value (A_bv);
+      MS.grab_param_by_name ("A").set_best_value (A_bv);
       clog << endl;
 
       MS.print (clog, "Multi-parameter system after setting A best value", "");
@@ -82,7 +82,7 @@ int main(int argc_ , char ** argv_)
       MS.init ();
 
     }
-  catch (exception & x) 
+  catch (exception & x)
     {
       cerr << "ERROR: " << x.what () << endl;
       return (EXIT_FAILURE);

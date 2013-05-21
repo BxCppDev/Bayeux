@@ -182,18 +182,19 @@ namespace mygsl {
   void rng::print_dict (std::ostream & out_)
   {
     bool devel = false;
+    /*
     if (devel)
       {
         std::clog << "Available GSL random number generators: "
                   << std::endl;
       }
+    */
     std::map<std::string,const gsl_rng_type *>::const_iterator i;
     for (i = rng_initializer::instance().dict.begin ();
          i != rng_initializer::instance().dict.end ();
-         i++)
-      {
-        out_ << i->first << std::endl;
-      }
+         i++) {
+      out_ << i->first << std::endl;
+    }
     return;
   }
 
@@ -580,9 +581,7 @@ namespace mygsl {
       _initialize_();
       void * state = gsl_rng_state (_r_);
       size_t n2 = gsl_rng_size (_r_);
-      if (n != n2) {
-        throw std::logic_error ("mygsl::rng::from_stream: Unmatching size of the PRNG's internal state !");
-      }
+      DT_THROW_IF (n != n2, std::logic_error, "Unmatching size of the PRNG's internal state !");
       unsigned char * ps = (unsigned char *) state;
       for (int i = 0; i < (int) n; i++) {
         unsigned int c;

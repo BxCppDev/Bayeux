@@ -264,8 +264,7 @@ namespace mygsl {
 
   void tabulated_function::relock_table(const std::string& interp_name_) {
     if (is_verbose()) {
-      std::clog << "WARNING: mygsl::tabulated_function::relock_table:"
-                << "relock forced!" << std::endl;
+      DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,"Relock forced !");
     }
     this->unlock_table();
     this->lock_table(interp_name_);
@@ -273,17 +272,21 @@ namespace mygsl {
 
   void tabulated_function::add_point(double x_, double y_, bool lock_after_) {
     bool local_debug = false;
+    /*
     if (local_debug) {
       std::cerr << "DEBUG: mygsl::tabulated_function::add_point: "
                 << " (" << x_ << ", " << y_ << ")" << std::endl;
     }
+    */
     if (is_table_locked()) unlock_table();
     (pImpl->_points_)[x_] = y_;
     if (lock_after_) {
+      /*
       if (local_debug) {
         std::cerr << "DEBUG: mygsl::tabulated_function::add_point: lock!"
                   << std::endl;
       }
+      */
       lock_table(pImpl->_interpolator_name_);
     }
   }

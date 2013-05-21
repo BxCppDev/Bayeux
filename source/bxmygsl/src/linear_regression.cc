@@ -275,7 +275,7 @@ namespace mygsl {
       for (int i = 0; i < n; i++) {
         _w_[i] = w_[i];
         if (isnan (_w_[i])) {
-          clog << "WARNING: linear_regression::init: Datapoint #" << count << " is not weighted!" << endl;
+          DT_LOG_WARNING(datatools::logger::PRIO_WARNING, "Datapoint #" << count << " is not weighted !");
           _can_weighted_ = false;
         }
       }

@@ -1,4 +1,4 @@
-// one_dimensional_root_finding.cc 
+// one_dimensional_root_finding.cc
 
 #include <mygsl/one_dimensional_root_finding.h>
 
@@ -13,10 +13,13 @@
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_math.h>
 
+#include <datatools/exception.h>
+
+
 namespace mygsl {
 
   using namespace std;
-  
+
   const string one_dimensional_root_solver::BISECTION_METHOD_LABEL  = "bisection";
   const string one_dimensional_root_solver::FALSEPOS_METHOD_LABEL   = "falsepos";
   const string one_dimensional_root_solver::BRENT_METHOD_LABEL      = "brent";
@@ -30,8 +33,8 @@ namespace mygsl {
   /**********************************************************/
 
   void one_dimensional_root_solver::at_step_action::operator () (int status_,
-                                                                 size_t iter_, 
-                                                                 double a_, 
+                                                                 size_t iter_,
+                                                                 double a_,
                                                                  double b_,
                                                                  double c_)
   {
@@ -80,22 +83,22 @@ namespace mygsl {
     _debug_ = debug_;
     return;
   }
-      
+
   bool one_dimensional_root_solver::is_debug () const
   {
     return _debug_;
   }
-   
+
   size_t one_dimensional_root_solver::get_iter () const
   {
     return _iter_;
   }
-   
+
   size_t one_dimensional_root_solver::get_max_iter () const
   {
     return _max_iter_;
   }
-   
+
   double one_dimensional_root_solver::get_epsabs () const
   {
     return _epsabs_;
@@ -123,10 +126,10 @@ namespace mygsl {
     _at_step_action_ = &asd_;
     return;
   }
-  
+
   void one_dimensional_root_solver::default_step_action::action (int status_,
-                                                                 size_t iter_, 
-                                                                 double a_, 
+                                                                 size_t iter_,
+                                                                 double a_,
                                                                  double b_,
                                                                  double c_)
   {
@@ -136,10 +139,10 @@ namespace mygsl {
     double a = a_;
     double b = b_;
     double c = c_;
-    if (local_debug) 
+    if (local_debug)
       {
-        std::cerr << "DEBUG: Iteration: " << iter << " (" 
-                  << ((status == GSL_SUCCESS)? "minimum found": "continue") 
+        std::cerr << "DEBUG: Iteration: " << iter << " ("
+                  << ((status == GSL_SUCCESS)? "minimum found": "continue")
                   << ')' << std::endl;
       }
     std::cout << iter << ' ';
@@ -173,7 +176,7 @@ namespace mygsl {
     _at_step_action_ = 0;
     return;
   }
-  
+
   // dtor:
   one_dimensional_root_solver::~one_dimensional_root_solver ()
   {
@@ -182,25 +185,25 @@ namespace mygsl {
   }
 
   void one_dimensional_root_solver::_at_step_hook (int status_,
-                                                   size_t iter_, 
-                                                   double a_, 
+                                                   size_t iter_,
+                                                   double a_,
                                                    double b_,
                                                    double c_)
   {
-    if (_debug_) std::clog << "DEBUG: one_dimensional_root_solver::_at_step_hook: entering..." << std::endl;
-    if (_at_step_action_ != 0) 
+    //if (_debug_) std::clog << "DEBUG: one_dimensional_root_solver::_at_step_hook: entering..." << std::endl;
+    if (_at_step_action_ != 0)
       {
-        if (_debug_) std::clog << "DEBUG: one_dimensional_root_solver::_at_step_hook: _at_step_action_..." << std::endl;
+        //if (_debug_) std::clog << "DEBUG: one_dimensional_root_solver::_at_step_hook: _at_step_action_..." << std::endl;
         (*_at_step_action_) (status_, iter_, a_, b_, c_);
       }
-    if (_debug_) std::clog << "DEBUG: one_dimensional_root_solver::_at_step_hook: exiting." << std::endl;
+    //if (_debug_) std::clog << "DEBUG: one_dimensional_root_solver::_at_step_hook: exiting." << std::endl;
     return;
   }
 
-  void one_dimensional_root_solver::init (const i_unary_function & functor_f_, const string & method_) 
+  void one_dimensional_root_solver::init (const i_unary_function & functor_f_, const string & method_)
   {
     if (_debug_) {
-      clog << "DEBUG: one_dimensional_root_solver::init(1): entering..." << endl;
+      //clog << "DEBUG: one_dimensional_root_solver::init(1): entering..." << endl;
     }
     if (is_initialized ()) {
       reset ();
@@ -209,7 +212,7 @@ namespace mygsl {
     init (*_functor_numeric_fdf_, method_);
 
     if (_debug_) {
-      clog << "one_dimensional_root_solver::init(1): exiting." << endl;
+      //clog << "one_dimensional_root_solver::init(1): exiting." << endl;
     }
     return;
   }
@@ -220,7 +223,7 @@ namespace mygsl {
       reset ();
     }
     if (_debug_) {
-      clog << "DEBUG: one_dimensional_root_solver::init(2): entering..." << endl;
+      //clog << "DEBUG: one_dimensional_root_solver::init(2): entering..." << endl;
     }
 
     if (method_ == BISECTION_METHOD_LABEL) {
@@ -242,15 +245,14 @@ namespace mygsl {
       _mode_ = MODE_FDF;
       _fdfsolver_type_ = gsl_root_fdfsolver_steffenson;
     } else {
-      ostringstream message;
-      message << "one_dimensional_root_solver::init(2): "
-              << "method '" << method_ << "' is not valid!";
-      throw runtime_error (message.str ());
+      DT_THROW_IF(true,
+                  logic_error,
+                  "Method '" << method_ << "' is not valid !");
     }
 
     if (_debug_) {
-      clog << "one_dimensional_root_solver::init(2): method is '"
-           << method_ << "'" << endl;
+      //clog << "one_dimensional_root_solver::init(2): method is '"
+      //           << method_ << "'" << endl;
     }
 
     _functor_fdf_ = &functor_fdf_;
@@ -269,15 +271,15 @@ namespace mygsl {
     }
 
     if (_debug_) {
-      clog << "one_dimensional_root_solver::init(2): exiting." << endl;
+      //clog << "one_dimensional_root_solver::init(2): exiting." << endl;
     }
     return;
   }
-  
+
   void one_dimensional_root_solver::reset ()
   {
     if (_debug_) {
-      clog << "one_dimensional_root_solver::reset: entering..." << endl;
+      //clog << "one_dimensional_root_solver::reset: entering..." << endl;
     }
     if (_fsolver_ != 0) {
       gsl_root_fsolver_free (_fsolver_);
@@ -302,18 +304,18 @@ namespace mygsl {
     _converged_ = false;
     _root_.reset ();
     if (_debug_) {
-      clog << "one_dimensional_root_solver::reset: exiting." << endl;
+      //clog << "one_dimensional_root_solver::reset: exiting." << endl;
     }
     return;
 
   }
-  
-  int one_dimensional_root_solver::solve (double epsabs_, 
+
+  int one_dimensional_root_solver::solve (double epsabs_,
                                           double a_,
                                           double b_)
   {
     if (_debug_) {
-      clog << "one_dimensional_root_solver::solve: entering..." << endl;
+      //clog << "one_dimensional_root_solver::solve: entering..." << endl;
     }
     int status = 0;
     int iter   = 0;
@@ -323,14 +325,10 @@ namespace mygsl {
     _epsabs_ = epsabs_;
     double epsrel = 0.0;
     if (_debug_) {
-      clog << "one_dimensional_root_solver::solve: setting function and starting values..." << endl;
+      //clog << "one_dimensional_root_solver::solve: setting function and starting values..." << endl;
     }
-    if ((a_ != a_) || (b_ != b_)) {
-      throw runtime_error ("one_dimensional_root_solver::solve: Invalid starting interval!");
-    }
-    if (a_ >= b_) {
-      throw runtime_error ("one_dimensional_root_solver::solve: Invalid starting interval!");
-    }
+    DT_THROW_IF ((a_ != a_) || (b_ != b_), runtime_error, "Invalid starting interval!");
+    DT_THROW_IF (a_ >= b_, runtime_error, "Invalid starting interval!");
     double x_min = a_;
     double x_max = b_;
     //clog << "DEVEL: a = " << x_min << endl;
@@ -339,16 +337,16 @@ namespace mygsl {
     if (_mode_ == MODE_F) {
       x_lo = x_min;
       x_hi = x_max;
-      gsl_root_fsolver_set (_fsolver_, 
+      gsl_root_fsolver_set (_fsolver_,
                             &_function_,
                             x_lo,
                             x_hi);
     } else {
       x = 0.5 * (x_min + x_max);
-      gsl_root_fdfsolver_set (_fdfsolver_, 
+      gsl_root_fdfsolver_set (_fdfsolver_,
                               &_fdfunction_,
                               x);
-    }  
+    }
 
     double factor = 1.0;
     do {
@@ -398,11 +396,11 @@ namespace mygsl {
     _status_ = status;
 
     if (_debug_) {
-      clog << "one_dimensional_root_solver::solve: exiting." << endl;
+      //clog << "one_dimensional_root_solver::solve: exiting." << endl;
     }
     return _status_;
   }
-  
+
   double one_dimensional_root_solver::g_function (double x_, void * params_)
   {
     const i_unary_function_with_derivative * functor_fdf = static_cast<const i_unary_function_with_derivative *>(params_);
@@ -424,9 +422,9 @@ namespace mygsl {
   }
 
   // static:
-  best_value one_dimensional_root_solver::solve (const i_unary_function & func_, 
-                                                 double epsabs_, 
-                                                 double a_, 
+  best_value one_dimensional_root_solver::solve (const i_unary_function & func_,
+                                                 double epsabs_,
+                                                 double a_,
                                                  double b_,
                                                  const string & method_name_)
   {
@@ -441,10 +439,10 @@ namespace mygsl {
   }
 
   // static:
-  best_value one_dimensional_root_solver::solve (const i_unary_function_with_derivative & dfunc_, 
-                                                 double epsabs_, 
-                                                 double a_, 
-                                                 double b_, 
+  best_value one_dimensional_root_solver::solve (const i_unary_function_with_derivative & dfunc_,
+                                                 double epsabs_,
+                                                 double a_,
+                                                 double b_,
                                                  const string & method_name_)
   {
     mygsl::one_dimensional_root_solver solver;
@@ -456,7 +454,7 @@ namespace mygsl {
     no_root.reset ();
     return no_root;
   }
-  
+
 } // namespace mygsl
 
 // end of one_dimensional_root_finding.cc

@@ -63,14 +63,14 @@ namespace mygsl {
     double save_x = sys->get_free_param (free_param_index).get_value ();
 
     // enforce 'x' value:
-    sys->get_free_param (free_param_index).set_value_no_check (x_);
+    sys->grab_free_param (free_param_index).set_value_no_check (x_);
     sys->init_params_values ();
 
     double result = numeric_limits<double>::quiet_NaN ();
     DT_THROW_IF (sys->_eval_f_MR_(result) != 0, std::logic_error, "Cannot evaluate function!");
 
     // restore former 'x' value:
-    sys->get_free_param (free_param_index).set_value_no_check (save_x);
+    sys->grab_free_param (free_param_index).set_value_no_check (save_x);
     sys->init_params_values ();
     //if (local_devel) clog << "DEVEL: func_eval_f: exiting." << endl;
     return result;
@@ -278,7 +278,7 @@ namespace mygsl {
     DT_THROW_IF (dimension_ != get_number_of_free_params (), std::range_error, "Invalid dimension!");
     for (int i = 0; i < get_number_of_free_params (); i++)
       {
-        get_free_param (i).set_value_no_check (pars_[i]);
+        grab_free_param (i).set_value_no_check (pars_[i]);
       }
     init_params_values ();
     return;
