@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* geom_id.cc
  */
 
@@ -7,10 +7,12 @@
 #include <stdexcept>
 #include <sstream>
 
+#include <datatools/exception.h>
+
 namespace geomtools {
 
-  using namespace std;  
- 
+  using namespace std;
+
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (geom_id,"geomtools::geom_id")
 
   const uint32_t geom_id::INVALID_TYPE          = 0xFFFFFFFF;
@@ -19,7 +21,7 @@ namespace geomtools {
   const size_t   geom_id::DEFAULT_ADDRESS_DEPTH = 10;
   const uint32_t geom_id::UNIVERSE_TYPE         = 0;
   const uint32_t geom_id::WORLD_TYPE            = geom_id::UNIVERSE_TYPE;
-  
+
   const char geom_id::IO_ID_OPEN           = '[';
   const char geom_id::IO_TYPE_INVALID      = '?';
   const char geom_id::IO_ID_SEPARATOR      = ':';
@@ -61,26 +63,23 @@ namespace geomtools {
 
   void geom_id::reset_address ()
   {
-    for (int i = 0; i < _addresses_.size (); i++) {  
+    for (int i = 0; i < _addresses_.size (); i++) {
       _addresses_.at (i) = geom_id::INVALID_ADDRESS;
     }
     return;
   }
-  
+
   void geom_id::set (int i_, uint32_t val_)
   {
-    if (i_ < 0) {
-      throw logic_error ("geomtools::geom_id::set: Invalid sub-address index !");
+    DT_THROW_IF (i_ < 0, logic_error, "Invalid sub-address index !");
+    if (i_ < _addresses_.size ()) {
+      _addresses_[i_] = val_;
     } else {
-      if (i_ < _addresses_.size ()) {
-        _addresses_[i_] = val_;
-      } else {
-        for (int j = _addresses_.size (); j <= i_; j++) {  
-          uint32_t v = geom_id::INVALID_ADDRESS;
-          _addresses_.push_back (v);
-        }
-        _addresses_[i_] = val_;
+      for (int j = _addresses_.size (); j <= i_; j++) {
+        uint32_t v = geom_id::INVALID_ADDRESS;
+        _addresses_.push_back (v);
       }
+      _addresses_[i_] = val_;
     }
     return;
   }
@@ -106,27 +105,27 @@ namespace geomtools {
   {
     return get (i_) == ANY_ADDRESS;
   }
-   
+
   uint32_t geom_id::get_type () const
   {
     return _type_;
   }
-  
+
   void geom_id::set_type (uint32_t new_value_)
   {
     _type_ = new_value_;
     return;
   }
 
-  void geom_id::set_address (uint32_t si0_, 
-                             uint32_t si1_, 
-                             uint32_t si2_, 
-                             uint32_t si3_, 
-                             uint32_t si4_, 
-                             uint32_t si5_, 
-                             uint32_t si6_, 
-                             uint32_t si7_, 
-                             uint32_t si8_, 
+  void geom_id::set_address (uint32_t si0_,
+                             uint32_t si1_,
+                             uint32_t si2_,
+                             uint32_t si3_,
+                             uint32_t si4_,
+                             uint32_t si5_,
+                             uint32_t si6_,
+                             uint32_t si7_,
+                             uint32_t si8_,
                              uint32_t si9_)
   {
     //if (si0_ == INVALID_ADDRESS) return;
@@ -151,7 +150,7 @@ namespace geomtools {
     set (9, si9_);
     return;
   }
-  
+
   // ctor:
   geom_id::geom_id ()
   {
@@ -160,46 +159,46 @@ namespace geomtools {
     return;
   }
 
-  geom_id::geom_id (uint32_t type_, 
-                    uint32_t si0_, 
-                    uint32_t si1_, 
-                    uint32_t si2_, 
-                    uint32_t si3_, 
-                    uint32_t si4_, 
-                    uint32_t si5_, 
-                    uint32_t si6_, 
-                    uint32_t si7_, 
-                    uint32_t si8_, 
+  geom_id::geom_id (uint32_t type_,
+                    uint32_t si0_,
+                    uint32_t si1_,
+                    uint32_t si2_,
+                    uint32_t si3_,
+                    uint32_t si4_,
+                    uint32_t si5_,
+                    uint32_t si6_,
+                    uint32_t si7_,
+                    uint32_t si8_,
                     uint32_t si9_)
-  {  
+  {
     _type_ = geom_id::INVALID_TYPE;
     set_type (type_);
     _addresses_.reserve (geom_id::DEFAULT_ADDRESS_DEPTH);
-    set_address (si0_, 
-                 si1_, 
-                 si2_, 
-                 si3_, 
-                 si4_, 
-                 si5_, 
-                 si6_, 
-                 si7_, 
-                 si8_, 
+    set_address (si0_,
+                 si1_,
+                 si2_,
+                 si3_,
+                 si4_,
+                 si5_,
+                 si6_,
+                 si7_,
+                 si8_,
                  si9_);
     return;
   }
-  
+
   // dtor:
   geom_id::~geom_id ()
   {
     _addresses_.clear ();
     return;
   }
-  
+
   void geom_id::reset ()
   {
     _type_ = INVALID_TYPE;
     _addresses_.clear ();
-    _addresses_.reserve (DEFAULT_ADDRESS_DEPTH);   
+    _addresses_.reserve (DEFAULT_ADDRESS_DEPTH);
     return;
   }
 
@@ -211,7 +210,7 @@ namespace geomtools {
     }
     return;
   }
-    
+
   bool geom_id::is_valid () const
   {
     if (_type_ == INVALID_TYPE) {
@@ -227,7 +226,7 @@ namespace geomtools {
     }
     return true;
   }
-    
+
   bool geom_id::is_complete () const
   {
     if (_type_ == INVALID_TYPE) {
@@ -249,9 +248,8 @@ namespace geomtools {
 
   void geom_id::inherits_from (const geom_id & source_)
   {
-    if (this->_addresses_.size () < source_._addresses_.size ()) {
-      throw logic_error ("geomtools::geom_id::inherits_from: Incompatible address depth !");
-    }
+    DT_THROW_IF (this->_addresses_.size () < source_._addresses_.size (),
+                 logic_error, "Incompatible address depth !");
     for (int i = 0; i < source_._addresses_.size (); i++) {
       set (i, source_._addresses_[i]);
     }
@@ -260,14 +258,11 @@ namespace geomtools {
 
   void geom_id::extract_to (geom_id & target_) const
   {
-    if (this->_addresses_.size () < target_._addresses_.size ())
-      {
-        throw logic_error ("geomtools::geom_id::extract: Incompatible address depth !");
-      }
-    for (int i = 0; i < target_._addresses_.size (); i++) 
-      {
-        target_.set (i, this->_addresses_[i]);
-      }
+    DT_THROW_IF (this->_addresses_.size () < target_._addresses_.size (),
+                 logic_error, "Incompatible address depth !");
+    for (int i = 0; i < target_._addresses_.size (); i++) {
+      target_.set (i, this->_addresses_[i]);
+    }
     return;
   }
 
@@ -291,7 +286,7 @@ namespace geomtools {
     for (int i = 0; i < id_._addresses_.size (); i++) {
       if (id_._addresses_[i] == geom_id::INVALID_ADDRESS) {
         out_ << geom_id::IO_ADDRESS_INVALID;
-      } else if (id_._addresses_[i] == geom_id::ANY_ADDRESS) 
+      } else if (id_._addresses_[i] == geom_id::ANY_ADDRESS)
         {
           out_ << geom_id::IO_ADDRESS_ANY;
         } else {
@@ -322,7 +317,7 @@ namespace geomtools {
     if (in_.eof ()){
       in_.setstate (ios::failbit);
       return in_;
-    } 
+    }
     if (check != geom_id::IO_TYPE_INVALID) {
       in_ >> id_._type_;
       if (! in_) {
@@ -357,7 +352,7 @@ namespace geomtools {
         if (in_.eof ())
           {
             return in_;
-          } 
+          }
         uint32_t val;
         if (check == geom_id::IO_ADDRESS_INVALID)
           {
@@ -375,7 +370,7 @@ namespace geomtools {
             if (! in_)
               {
                 return in_;
-              } 
+              }
             id_.set (count, val);
           }
 
@@ -411,8 +406,8 @@ namespace geomtools {
   }
 
   bool geom_id::sub_id_comp (uint32_t si1_, uint32_t si2_)
-  { 
-    return si1_ < si2_; 
+  {
+    return si1_ < si2_;
   }
 
   bool geom_id::match (const geom_id & id_, bool exact_) const
@@ -426,13 +421,13 @@ namespace geomtools {
       {
         return id1_ == id2_;
       }
-    if (id1_._type_ != id2_._type_) 
+    if (id1_._type_ != id2_._type_)
       {
         return false;
       }
     if (id1_._addresses_.size () != id2_._addresses_.size ())
       {
-        return false;   
+        return false;
       }
     for (int i = 0; i < id1_._addresses_.size (); i++)
       {
@@ -440,7 +435,7 @@ namespace geomtools {
         uint32_t addr2 = id2_._addresses_[i];
         if (addr1 == INVALID_ADDRESS) return false;
         if (addr2 == INVALID_ADDRESS) return false;
-        if (addr1 != addr2) 
+        if (addr1 != addr2)
           {
             if (exact_)
               {
@@ -525,7 +520,7 @@ namespace geomtools {
     reset ();
     set_type (type_);
     set_depth (depth_);
-    set_address (INVALID_ADDRESS);     
+    set_address (INVALID_ADDRESS);
     return;
   }
 
@@ -534,7 +529,7 @@ namespace geomtools {
     id_.make (type_, depth_);
     return;
   }
-   
+
 } // end of namespace geomtools
 
 // end of geom_id.cc

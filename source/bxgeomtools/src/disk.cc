@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* disk.cc
  */
 
@@ -24,17 +24,17 @@ namespace geomtools {
   {
     return DISK_LABEL;
   }
-  
+
   double disk::get_r () const
   {
     return _radius_;
   }
-  
+
   double disk::get_radius () const
   {
     return get_r ();
   }
- 
+
   void disk::set_diameter (double new_value_)
   {
     set_r (new_value_ * 0.5);
@@ -44,19 +44,16 @@ namespace geomtools {
   {
     return (_radius_ + _radius_);
   }
-  
+
   void disk::set_r (double new_value_)
   {
-    if (new_value_ < 0.0 )
-      {
-        ostringstream message;
-        message << "disk::set_r: Invalid '" << new_value_ << "' R value!";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (new_value_ < 0.0,
+                 logic_error,
+                 "Invalid '" << new_value_ << "' R value !");
     _radius_ = new_value_;
   }
-  
-   
+
+
   double disk::get_surface () const
   {
     return M_PI * _radius_ * _radius_;
@@ -71,19 +68,19 @@ namespace geomtools {
   {
     return (_radius_ > 0.0);
   }
-  
+
   // ctor:
   disk::disk ()
   {
     _radius_ = -1.0;
   }
-  
+
   // ctor:
   disk::disk (double r_)
   {
     set_r (r_);
   }
-  
+
   // dtor:
   disk::~disk ()
   {
@@ -101,7 +98,7 @@ namespace geomtools {
     double y = position_.y ();
     double r2 = (_radius_ + 0.5 * tolerance) * (_radius_ + 0.5 * tolerance);
     double rho2 = x * x + y * y;
-    if (rho2 > r2) 
+    if (rho2 > r2)
       {
         return false;
       }
@@ -121,7 +118,7 @@ namespace geomtools {
     return normal;
   }
 
-  bool disk::find_intercept (const vector_3d & from_, 
+  bool disk::find_intercept (const vector_3d & from_,
                              const vector_3d & direction_,
                              intercept_t & intercept_,
                              double tolerance_) const
@@ -137,7 +134,7 @@ namespace geomtools {
         intercept_.reset ();
         if (zf != 0.0)
           {
-            return intercept_.is_ok ();     
+            return intercept_.is_ok ();
           }
         double p0;
         double p1;
@@ -152,7 +149,7 @@ namespace geomtools {
         nsol = gsl_poly_solve_quadratic (p2, p1, p0, &lambda1, &lambda2);
         if (nsol == 1)
           {
-            double xi = xf + lambda1 * ux; 
+            double xi = xf + lambda1 * ux;
             double yi = yf + lambda1 * uy;
             double zi = zf;
             intercept_.set (0, 0, vector_3d (xi, yi, zi));
@@ -168,12 +165,12 @@ namespace geomtools {
               {
                 lambda = lambda2;
               }
-            double xi = xf + lambda * ux; 
+            double xi = xf + lambda * ux;
             double yi = yf + lambda * uy;
             double zi = zf;
             intercept_.set (0, 0, vector_3d (xi, yi, zi));
           }
-        return intercept_.is_ok ();                 
+        return intercept_.is_ok ();
       }
 
     intercept_.reset ();
@@ -203,22 +200,22 @@ namespace geomtools {
     return intercept_.is_ok ();
   }
 
-  void disk::tree_dump (ostream & out_, 
-                        const string & title_, 
-                        const string & indent_, 
+  void disk::tree_dump (ostream & out_,
+                        const string & title_,
+                        const string & indent_,
                         bool inherit_) const
   {
     string indent;
     if (! indent_.empty ()) indent = indent_;
     i_object_3d::tree_dump (out_, title_, indent_, true);
 
-    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)  
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
          << "R : " << get_r () / CLHEP::mm << " mm" << endl;
     return;
   }
 
-  void disk::generate_wires (std::list<polyline_3d> & lpl_, 
-                             const placement & p_, 
+  void disk::generate_wires (std::list<polyline_3d> & lpl_,
+                             const placement & p_,
                              uint32_t options_) const
   {
     const int nsamples = 36;
@@ -268,7 +265,7 @@ namespace geomtools {
 
     return;
   }
-   
+
 } // end of namespace geomtools
 
 // end of disk.cc

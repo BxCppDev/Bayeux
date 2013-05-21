@@ -47,11 +47,15 @@ std::string get_drawer_view (const std::string & option_);
 
 void print_help (std::ostream & out_ = std::clog);
 
-void print_list_of_modules (const geomtools::model_factory &,
+void print_list_of_models (const geomtools::model_factory &,
                             std::ostream & out_ = std::clog);
 
 void print_list_of_gids (const geomtools::manager & mgr_,
                          std::ostream & out_ = std::clog);
+
+void print_model (const geomtools::model_factory &,
+                  const std::string & model_name_,
+                  std::ostream & out_ = std::clog);
 
 /************************************************************/
 int main (int argc_, char ** argv_)
@@ -277,7 +281,7 @@ int main (int argc_, char ** argv_)
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
     if (visu) {
       //std::clog << "Current drawer view : '" << visu_drawer_view << "'" << std::endl;
-      print_list_of_modules(geometry_factory, std::clog);
+      print_list_of_models(geometry_factory, std::clog);
       bool go_on = true;
       std::string last_visu_object_name;
       /// Browser main loop :
@@ -314,11 +318,17 @@ int main (int argc_, char ** argv_)
               go_on = false;
               break;
             }
-            if (token == ".m") {
-              print_list_of_modules(geometry_factory, std::clog);
-              token.clear();
+            if (token == ".M") {
+              token.clear ();
+              std::string model_name;
+              token_iss >> model_name >> std::ws;
+              print_model(geometry_factory, model_name, std::clog);
+              model_name.clear();
               do_display = true;
               break;
+            }
+            if (token == ".m") {
+              print_list_of_models(geometry_factory,std::clog);
             }
             if (token == ".g") {
               if (use_geo_mgr) {
@@ -790,7 +800,25 @@ void print_list_of_gids (const geomtools::manager & mgr_, std::ostream & out_)
   return;
 }
 
-void print_list_of_modules (const geomtools::model_factory & mf_, std::ostream & out_)
+void print_model (const geomtools::model_factory & mf_,
+                  const std::string & model_name_,
+                  std::ostream & out_)
+{
+  out_ << std::endl
+       << "Geometry model '" << model_name_ << "' : " << std::endl;
+  geomtools::models_col_type::const_iterator found
+    = mf_.get_models ().find(model_name_);
+  if (found ==  mf_.get_models ().end ()) {
+    std::cerr << "ERROR: Geometry model '" << model_name_ << "' does not exist !"
+              << std::endl;
+    return;
+  }
+  const geomtools::i_model & a_model = *found->second;
+  a_model.tree_dump(out_, "");
+  return;
+}
+
+void print_list_of_models (const geomtools::model_factory & mf_, std::ostream & out_)
 {
   out_ << std::endl
        << "List of available geometry models : " << std::endl;

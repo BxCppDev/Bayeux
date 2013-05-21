@@ -7,6 +7,7 @@
 #include <mygsl/min_max.h>
 
 #include <datatools/units.h>
+#include <datatools/exception.h>
 
 #include <geomtools/i_boxed_model.h>
 #include <geomtools/physical_volume.h>
@@ -28,13 +29,9 @@ namespace geomtools {
   {
     assert_unconstructed("geomtools::cylindric_extrusion_boxed_model::set_extrusion_radius");
 
-    if (r_ <= 0.0 * CLHEP::mm)
-      {
-        ostringstream message;
-        message << "geomtools::cylindric_extrusion_boxed_model::set_extrusion_radius: "
-                << "Invalid R " << r_ / CLHEP::mm << " mm !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (r_ <= 0.0 * CLHEP::mm,
+                 logic_error,
+                 "Invalid R " << r_ / CLHEP::mm << " mm !");
     _extrusion_radius_ = r_;
     return;
   }
@@ -43,13 +40,9 @@ namespace geomtools {
   {
     assert_unconstructed("geomtools::cylindric_extrusion_boxed_model::set_mother_x");
 
-    if (x_ <= 0.0 * CLHEP::mm)
-      {
-        ostringstream message;
-        message << "geomtools::cylindric_extrusion_boxed_model::set_mother_x: "
-                << "Invalid X " << x_ / CLHEP::mm << " mm !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (x_ <= 0.0 * CLHEP::mm,
+                 logic_error,
+                 "Invalid X " << x_ / CLHEP::mm << " mm !");
     _mother_x_ = x_;
     return;
   }
@@ -58,13 +51,9 @@ namespace geomtools {
   {
     assert_unconstructed("geomtools::cylindric_extrusion_boxed_model::set_mother_y");
 
-    if (y_ <= 0.0 * CLHEP::mm)
-      {
-        ostringstream message;
-        message << "geomtools::cylindric_extrusion_boxed_model::set_mother_y: "
-                << "Invalid Y " << y_ / CLHEP::mm << " mm !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (y_ <= 0.0 * CLHEP::mm,
+                 logic_error,
+                 "Invalid Y " << y_ / CLHEP::mm << " mm !");
     _mother_y_ = y_;
     return;
   }
@@ -73,13 +62,9 @@ namespace geomtools {
   {
     assert_unconstructed("geomtools::cylindric_extrusion_boxed_model::set_mother_z");
 
-    if (z_ <= 0.0 * CLHEP::mm)
-      {
-        ostringstream message;
-        message << "geomtools::cylindric_extrusion_boxed_model::set_mother_z: "
-                << "Invalid Z " << z_ / CLHEP::mm << " mm !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (z_ <= 0.0 * CLHEP::mm,
+                 logic_error,
+                 "Invalid Z " << z_ / CLHEP::mm << " mm !");
     _mother_z_ = z_;
     return;
   }
@@ -165,10 +150,7 @@ namespace geomtools {
       }
     else
       {
-        ostringstream message;
-        message << "geomtools::cylindric_extrusion_boxed_model::_at_construct: "
-                << "Missing 'x' property !";
-        throw logic_error (message.str ());
+         DT_THROW_IF(true, logic_error,"Missing 'x' property !");
       }
 
     if (config_.has_key ("y"))
@@ -178,10 +160,7 @@ namespace geomtools {
       }
     else
       {
-        ostringstream message;
-        message << "geomtools::cylindric_extrusion_boxed_model::_at_construct: "
-                << "Missing 'y' property !";
-        throw logic_error (message.str ());
+        DT_THROW_IF(true, logic_error,"Missing 'y' property !");
       }
 
     if (config_.has_key ("z"))
@@ -191,10 +170,7 @@ namespace geomtools {
       }
     else
       {
-        ostringstream message;
-        message << "geomtools::cylindric_extrusion_boxed_model::_at_construct: "
-                << "Missing 'z' property !";
-        throw logic_error (message.str ());
+        DT_THROW_IF(true, logic_error,"Missing 'z' property !");
       }
 
     if (config_.has_key ("extrusion_radius"))
@@ -206,10 +182,7 @@ namespace geomtools {
       }
     else
       {
-        ostringstream message;
-        message << "geomtools::cylindric_extrusion_boxed_model::_at_construct: "
-                << "Missing 'extrusion_radius' property !";
-        throw logic_error (message.str ());
+        DT_THROW_IF(true, logic_error, "Missing 'extrusion_radius' property !");
       }
 
     if (config_.has_key ("material.ref"))
@@ -218,28 +191,13 @@ namespace geomtools {
       }
     else
       {
-        ostringstream message;
-        message << "geomtools::cylindric_extrusion_boxed_model::_at_construct: "
-                << "Missing 'material.ref' property !";
-        throw logic_error (message.str ());
+        DT_THROW_IF(true, logic_error, "Missing 'material.ref' property !");
       }
 
-    if (extrusion_radius >= 0.5 * mother_x)
-      {
-        ostringstream message;
-        message << "geomtools::cylindric_extrusion_boxed_model::_at_construct: "
-                << "extrusion radius ("
-                << extrusion_radius / CLHEP::mm << " mm) is too large (X-axis)!";
-        throw logic_error (message.str ());
-      }
-    if (extrusion_radius >= 0.5 * mother_y)
-      {
-        ostringstream message;
-        message << "geomtools::cylindric_extrusion_boxed_model::_at_construct: "
-                << "extrusion radius ("
-                << extrusion_radius / CLHEP::mm << " mm) is too large (Y-axis) !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (extrusion_radius >= 0.5 * mother_x, logic_error,
+                 "Extrusion radius (" << extrusion_radius / CLHEP::mm << " mm) is too large (X-axis) !");
+    DT_THROW_IF (extrusion_radius >= 0.5 * mother_y, logic_error,
+                 "Extrusion radius (" << extrusion_radius / CLHEP::mm << " mm) is too large (Y-axis) !");
 
     set_material_name (material_name);
     set_mother_x (mother_x);
@@ -251,10 +209,8 @@ namespace geomtools {
     _mother_box_.set_x (get_mother_x ());
     _mother_box_.set_y (get_mother_y ());
     _mother_box_.set_z (get_mother_z ());
-    if (! _mother_box_.is_valid ())
-      {
-        throw logic_error ("geomtools::cylindric_extrusion_boxed_model::_at_construct: Invalid box dimensions !");
-      }
+    DT_THROW_IF (! _mother_box_.is_valid (), logic_error,
+                 "Invalid box dimensions !");
 
     _extrusion_cylinder_.set_diameter (2 * get_extrusion_radius ());
     double eps = 1.0e-5 * CLHEP::mm;
@@ -264,10 +220,10 @@ namespace geomtools {
     placement p2 (vector_3d (0, 0, 0), 0, 0, 0);
     _extruded_solid_.set_shape1 (_mother_box_, p1);
     _extruded_solid_.set_shape2 (_extrusion_cylinder_, p2);
-    if (devel)
-      {
-        _extruded_solid_.dump (std::clog);
-      }
+    // if (devel)
+    //   {
+    //     _extruded_solid_.dump (std::clog);
+    //   }
 
     _extruded_log_.set_name (i_model::make_logical_volume_name ("extruded_box"));
     _extruded_log_.set_shape (_extruded_solid_);
@@ -288,13 +244,13 @@ namespace geomtools {
       sd_ptr->zmin = -0.5 * _mother_z_;
       sd_ptr->zmax = +0.5 * _mother_z_;
       _extruded_solid_.set_stackable_data (sd_ptr);
-      if (devel)
-        {
-          clog << "DEVEL: cylindric_extrusion_boxed_model::_at_construct: Entering..." << endl;
-          sd_ptr->tree_dump (cerr,
-                             "geomtools::cylindric_extrusion_boxed_model::_at_construct: Stackable data: ",
-                             "DEVEL: ");
-        }
+      // if (devel)
+      //   {
+      //     clog << "DEVEL: cylindric_extrusion_boxed_model::_at_construct: Entering..." << endl;
+      //     sd_ptr->tree_dump (cerr,
+      //                        "geomtools::cylindric_extrusion_boxed_model::_at_construct: Stackable data: ",
+      //                        "DEVEL: ");
+      //   }
     }
     _extruded_solid_.set_user_draw ((void *) &cylindric_extrusion_boxed_model::gnuplot_draw_user_function);
     _solid_ = &_extruded_solid_;
@@ -303,7 +259,7 @@ namespace geomtools {
     get_logical ().set_shape (_extruded_solid_);
     get_logical ().set_material_ref (material_name);
 
-    if (devel) clog << "DEVEL: cylindric_extrusion_boxed_model::_at_construct: Exiting." << endl;
+    // if (devel) clog << "DEVEL: cylindric_extrusion_boxed_model::_at_construct: Exiting." << endl;
     return;
   }
 
@@ -354,13 +310,10 @@ namespace geomtools {
                                                                     void *)
   {
     const subtraction_3d * solid = dynamic_cast<const subtraction_3d *>(&obj_);
-    if (solid == 0)
-      {
-        ostringstream message;
-        message << "geomtools::cylindric_extrusion_boxed_model::gnuplot_draw_user_function: "
-                << "3D-object of '" << obj_.get_shape_name () << "' shape type has not the right type !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (solid == 0,
+                 logic_error,
+                 "3D-object of '" << obj_.get_shape_name ()
+                 << "' shape type has not the right type !");
     const i_composite_shape_3d::shape_type & s1 = solid->get_shape1 ();
     const i_composite_shape_3d::shape_type & s2 = solid->get_shape2 ();
     const i_shape_3d & sh1 = s1.get_shape ();
@@ -407,7 +360,7 @@ namespace geomtools {
     return;
   }
 
-  // registration :   
+  // registration :
   GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(cylindric_extrusion_boxed_model,"geomtools::cylindric_extrusion_boxed_model");
 
 } // end of namespace geomtools

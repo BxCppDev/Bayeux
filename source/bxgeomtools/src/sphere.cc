@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* sphere.cc
  */
 
@@ -8,79 +8,77 @@
 #include <stdexcept>
 #include <sstream>
 
+#include <datatools/exception.h>
+
 namespace geomtools {
 
-  using namespace std;  
+  using namespace std;
 
   const std::string sphere::SPHERE_LABEL = "sphere";
-    
+
     double sphere::get_xmin () const
     {
       return -_r_;
     }
-    
+
     double sphere::get_xmax () const
     {
       return +_r_;
     }
-    
+
     double sphere::get_ymin () const
     {
       return -_r_;
     }
-    
+
     double sphere::get_ymax () const
     {
       return +_r_;
     }
-    
+
     double sphere::get_zmin () const
     {
       return -_r_;
     }
-    
+
     double sphere::get_zmax () const
     {
       return +_r_;
     }
-  
-  double 
+
+  double
   sphere::get_r () const
   {
     return _r_;
   }
-  
-  double 
+
+  double
   sphere::get_radius () const
   {
     return get_r ();
   }
-  
-  void 
+
+  void
   sphere::set_r (double new_value_)
   {
-    if  (new_value_ < 0.0) 
-      {
-        std::ostringstream message;
-        message << "sphere::set_r: Invalid '" 
-                << new_value_ << "' R value!";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF  (new_value_ < 0.0,std::logic_error,
+                  "geomtools::sphere::set_r: Invalid '"
+                  << new_value_ << "' R value !");
     _r_ =new_value_;
   }
 
-  void 
+  void
   sphere::set_radius (double new_value_)
   {
     set_r (new_value_);
   }
-  
-  void 
+
+  void
   sphere::set (double r_)
   {
     set_r (r_);
   }
-  
+
   // ctor/dtor:
   sphere::sphere ()
   {
@@ -91,47 +89,47 @@ namespace geomtools {
   {
     set (r_);
   }
-    
+
   sphere::~sphere ()
   {
   }
 
-  double 
+  double
   sphere::get_surface (int mask_) const
   {
     double s = 0.0;
-    if  (mask_ & FACE_SIDE) 
+    if  (mask_ & FACE_SIDE)
       {
         s += 4.0 * M_PI * _r_ * _r_;
       }
     return s;
   }
 
-  double 
-  sphere::get_volume () const 
+  double
+  sphere::get_volume () const
   {
     return 4.0 * M_PI * _r_ * _r_ * _r_ / 3.0;
   }
 
-  bool 
+  bool
   sphere::is_valid () const
   {
     return  (_r_ > 0.0);
   }
 
-  void 
+  void
   sphere::reset ()
   {
     _r_ = -1.0;
   }
 
-  std::string 
+  std::string
   sphere::get_shape_name () const
   {
     return SPHERE_LABEL;
   }
 
-  bool 
+  bool
   sphere::is_inside (const vector_3d & point_, double skin_) const
   {
     double skin = get_skin ();
@@ -142,7 +140,7 @@ namespace geomtools {
     return true;
   }
 
-  double 
+  double
   sphere::get_parameter (const std::string & flag_) const
   {
     if  (flag_ == "r") return get_r ();
@@ -155,12 +153,12 @@ namespace geomtools {
     throw std::logic_error ("geomtools::sphere::get_parameter: Unknown flag!");
   }
 
-  vector_3d 
+  vector_3d
   sphere::get_normal_on_surface (const vector_3d & position_) const
   {
     vector_3d normal;
     invalidate (normal);
-    if (is_on_surface (position_, FACE_SIDE)) 
+    if (is_on_surface (position_, FACE_SIDE))
       {
         normal = position_;
         normal.unit ();
@@ -168,9 +166,9 @@ namespace geomtools {
     return (normal);
   }
 
-  bool 
-  sphere::is_on_surface (const vector_3d & point_, 
-                         int mask_    , 
+  bool
+  sphere::is_on_surface (const vector_3d & point_,
+                         int mask_    ,
                          double skin_) const
   {
     bool debug = false;
@@ -195,15 +193,15 @@ namespace geomtools {
                   << hskin
                   << std::endl;
       }
-    if (mask & FACE_SIDE) 
+    if (mask & FACE_SIDE)
       {
         if (std::abs (r - _r_) < hskin) return true;
       }
     return false;
   }
-  
-  bool 
-  sphere::find_intercept (const vector_3d & from_, 
+
+  bool
+  sphere::find_intercept (const vector_3d & from_,
                           const vector_3d & direction_,
                           intercept_t & intercept_,
                           double skin_) const
@@ -268,20 +266,20 @@ namespace geomtools {
         double tsi = ts[i];
         if (std::isnormal (tsi) && (tsi > 0.0))
           {
-            if (t[SPH_SIDE] < 0) 
+            if (t[SPH_SIDE] < 0)
               {
                 t[SPH_SIDE] = tsi;
               }
-            else 
+            else
               {
-                if (tsi < t[SPH_SIDE]) 
+                if (tsi < t[SPH_SIDE])
                   {
                     t[SPH_SIDE] = tsi;
                   }
               }
           }
       }
-    
+
     double t_min = -1.0;
     int face_min = 0;
     for (int i = 0; i < (int) NFACES; i++)
@@ -290,8 +288,8 @@ namespace geomtools {
         if (debug)
           {
             std::clog << "DEVEL: sphere::find_intercept: t[" << i << "]= "
-                      << ti << " t_min=" << t_min 
-                      << " face_min=" << face_min 
+                      << ti << " t_min=" << t_min
+                      << " face_min=" << face_min
                       << std::endl;
           }
         if (std::isnormal (ti) && (ti > 0.0))
@@ -309,64 +307,64 @@ namespace geomtools {
           }
         if (debug)
           {
-            std::clog << "DEVEL: sphere::find_intercept: t_min=" << t_min 
-                      << " face_min=" << face_min 
+            std::clog << "DEVEL: sphere::find_intercept: t_min=" << t_min
+                      << " face_min=" << face_min
                       << std::endl;
           }
       }
     intercept_.reset ();
-    if (face_min > 0) 
+    if (face_min > 0)
       {
         intercept_.set (0, face_min, from_ + direction_ * t_min);
       }
     return intercept_.is_ok ();
   }
 
-  std::ostream & 
+  std::ostream &
   operator<< (std::ostream & out_, const sphere & s_)
   {
-    out_ << '{' << sphere::SPHERE_LABEL << ' ' 
-         << s_._r_ << '}'; 
+    out_ << '{' << sphere::SPHERE_LABEL << ' '
+         << s_._r_ << '}';
     return out_;
   }
 
-  std::istream & 
+  std::istream &
   operator>> (std::istream & in_, sphere & s_)
   {
     s_.reset ();
     char c = 0;
     in_.get (c);
-    if (c != '{') 
+    if (c != '{')
       {
         in_.clear (std::ios_base::failbit);
         return in_;
-      } 
+      }
     std::string name;
     in_ >> name;
-    if (name != sphere::SPHERE_LABEL) 
+    if (name != sphere::SPHERE_LABEL)
       {
         in_.clear (std::ios_base::failbit);
         return in_;
-      } 
+      }
     double r;
     in_ >> r;
-    if (! in_) 
+    if (! in_)
       {
         in_.clear (std::ios_base::failbit);
         return in_;
-      } 
+      }
     c = 0;
     in_.get (c);
-    if (c != '}') 
+    if (c != '}')
       {
         in_.clear (std::ios_base::failbit);
         return in_;
-      } 
-    try 
+      }
+    try
       {
         s_.set (r);
       }
-    catch (...) 
+    catch (...)
       {
         s_.reset ();
         in_.clear (std::ios_base::failbit);
@@ -374,21 +372,21 @@ namespace geomtools {
     return in_;
   }
 
-  void sphere::tree_dump (ostream & out_, 
-                          const string & title_, 
-                          const string & indent_, 
+  void sphere::tree_dump (ostream & out_,
+                          const string & title_,
+                          const string & indent_,
                           bool inherit_) const
   {
     string indent;
     if (! indent_.empty ()) indent = indent_;
     i_object_3d::tree_dump (out_, title_, indent_, true);
 
-    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)  
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
          << "R : " << get_r () / CLHEP::mm << " mm" << endl;
     return;
   }
 
-  
+
 } // end of namespace geomtools
 
 // end of sphere.cc

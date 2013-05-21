@@ -120,17 +120,8 @@ namespace geomtools {
     double length_unit = CLHEP::mm;
 
     /*** material ***/
-    if (config_.has_key ("material.ref"))
-      {
-        material_name = config_.fetch_string ("material.ref");
-      }
-    else
-      {
-        ostringstream message;
-        message << "geomtools::stacked_model::_at_construct: "
-                << "Missing 'material.ref' property !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (! config_.has_key ("material.ref"), logic_error, "Missing 'material.ref' property !");
+    material_name = config_.fetch_string ("material.ref");
 
     if (config_.has_flag ("grid.force_stackable"))
       {
@@ -138,13 +129,8 @@ namespace geomtools {
         config_.export_and_rename_starting_with(stackable_config,
                                                 "grid.force_stackable.",
                                                 stackable::STACKABLE_PREFIX);
-        if (! _sd_.initialize(stackable_config))
-          {
-            ostringstream message;
-            message << "geomtools::grid_model::_at_construct: "
-                    << "Cannot build the stackable data !";
-            throw logic_error (message.str ());
-          }
+        DT_THROW_IF (! _sd_.initialize(stackable_config), logic_error,
+                     "Cannot build the stackable data !");
       }
 
     if (config_.has_key ("length_unit"))
@@ -158,200 +144,91 @@ namespace geomtools {
         grid_daughter_label = config_.fetch_string ("grid.daughter_label");
       }
 
-    if (config_.has_key ("grid.plane"))
-      {
-        grid_plane_label = config_.fetch_string ("grid.plane");
-      }
-    else
-      {
-        std::ostringstream message;
-        message << "geomtools::grid_model::_at_construct: "
-                << "Missing 'grid.plane' property !";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF (! config_.has_key ("grid.plane"),std::logic_error,
+                 "Missing 'grid.plane' property !");
+    grid_plane_label = config_.fetch_string ("grid.plane");
 
+    // XXX
     if (grid_plane_label == "xy") {
 
       // Numbers of steps :
-      if (config_.has_key ("grid.x.number_of_items")) {
-        number_of_items[0] = config_.fetch_integer ("grid.x.number_of_items");
-      }
-      else {
-        ostringstream message;
-        message << "geomtools::grid_model::_at_construct: "
-                << "Missing 'grid.x.number_of_items' property !";
-        throw logic_error (message.str ());
-      }
-      if (config_.has_key ("grid.y.number_of_items")) {
-        number_of_items[1] = config_.fetch_integer ("grid.y.number_of_items");
-      }
-      else {
-        ostringstream message;
-        message << "geomtools::grid_model::_at_construct: "
-                << "Missing 'grid.y.number_of_items' property !";
-        throw logic_error (message.str ());
-      }
+      DT_THROW_IF (! config_.has_key ("grid.x.number_of_items"),logic_error,
+                   "Missing 'grid.x.number_of_items' property !");
+      number_of_items[0] = config_.fetch_integer ("grid.x.number_of_items");
+
+      DT_THROW_IF (! config_.has_key ("grid.y.number_of_items"),logic_error,
+                   "Missing 'grid.y.number_of_items' property !");
+      number_of_items[1] = config_.fetch_integer ("grid.y.number_of_items");
 
       // Steps :
       if (config_.has_key ("grid.x.step")) {
         step[0] = config_.fetch_real ("grid.x.step");
-        if (step[0] <= 0.0 ) {
-          ostringstream message;
-          message << "geomtools::grid_model::_at_construct: "
-                  << "Invalid value for 'grid.x.step' property !";
-          throw logic_error (message.str ());
-        }
+        DT_THROW_IF (step[0] <= 0.0 , logic_error,
+                     "Invalid value for 'grid.x.step' property !");
         if (! config_.has_explicit_unit ("grid.x.step")) step[0] *= length_unit;
       }
       else {
-        ostringstream message;
-        message << "geomtools::grid_model::_at_construct: "
-                << "Missing 'grid.x.step' property !";
-        throw logic_error (message.str ());
+        DT_THROW_IF(true, logic_error, "Missing 'grid.x.step' property !");
       }
       if (config_.has_key ("grid.y.step")) {
         step[1] = config_.fetch_real ("grid.y.step");
-        if (step[1] <= 0.0 ) {
-          ostringstream message;
-          message << "geomtools::grid_model::_at_construct: "
-                  << "Invalid value for 'grid.y.step' property !";
-          throw logic_error (message.str ());
-        }
+        DT_THROW_IF (step[1] <= 0.0, logic_error,
+                     "Invalid value for 'grid.y.step' property !");
         if (! config_.has_explicit_unit ("grid.y.step")) step[1] *= length_unit;
       }
       else {
-        ostringstream message;
-        message << "geomtools::grid_model::_at_construct: "
-                << "Missing 'grid.z.step' property !";
-        throw logic_error (message.str ());
+        DT_THROW_IF(true, logic_error, "Missing 'grid.z.step' property !");
       }
 
     }
     else if (grid_plane_label == "xz") {
 
       // Numbers of steps :
-      if (config_.has_key ("grid.x.number_of_items")) {
-        number_of_items[0] = config_.fetch_integer ("grid.x.number_of_items");
-      }
-      else {
-        ostringstream message;
-        message << "geomtools::grid_model::_at_construct: "
-                << "Missing 'grid.x.number_of_items' property !";
-        throw logic_error (message.str ());
-      }
-      if (config_.has_key ("grid.z.number_of_items")) {
-        number_of_items[1] = config_.fetch_integer ("grid.z.number_of_items");
-      }
-      else {
-        ostringstream message;
-        message << "geomtools::grid_model::_at_construct: "
-                << "Missing 'grid.z.number_of_items' property !";
-        throw logic_error (message.str ());
-      }
+      DT_THROW_IF (!config_.has_key ("grid.x.number_of_items"),logic_error,
+                   "Missing 'grid.x.number_of_items' property !");
+      number_of_items[0] = config_.fetch_integer ("grid.x.number_of_items");
+
+      DT_THROW_IF (!config_.has_key ("grid.z.number_of_items"),logic_error,
+                   "Missing 'grid.z.number_of_items' property !");
+      number_of_items[1] = config_.fetch_integer ("grid.z.number_of_items");
 
       // Steps :
       if (config_.has_key ("grid.x.step"))
         {
           step[0] = config_.fetch_real ("grid.x.step");
-          if (step[0] <= 0.0 ) {
-            ostringstream message;
-            message << "geomtools::grid_model::_at_construct: "
-                    << "Invalid value for 'grid.x.step' property !";
-            throw logic_error (message.str ());
-          }
+          DT_THROW_IF (step[0] <= 0.0 , logic_error, "Invalid value for 'grid.x.step' property !");
           if (! config_.has_explicit_unit ("grid.x.step")) step[0] *= length_unit;
         }
       else {
-        ostringstream message;
-        message << "geomtools::grid_model::_at_construct: "
-                << "Missing 'grid.x.step' property !";
-        throw logic_error (message.str ());
-      }
-     if (config_.has_key ("grid.z.step"))
-        {
-          step[1] = config_.fetch_real ("grid.z.step");
-          if (step[1] <= 0.0 ) {
-            ostringstream message;
-            message << "geomtools::grid_model::_at_construct: "
-                    << "Invalid value for 'grid.z.step' property !";
-            throw logic_error (message.str ());
-          }
-          if (! config_.has_explicit_unit ("grid.z.step")) step[1] *= length_unit;
-        }
-      else {
-        ostringstream message;
-        message << "geomtools::grid_model::_at_construct: "
-                << "Missing 'grid.z.step' property !";
-        throw logic_error (message.str ());
+        DT_THROW_IF(true, logic_error, "Missing 'grid.x.step' property !");
       }
 
+      DT_THROW_IF (! config_.has_key ("grid.z.step"), logic_error, "Missing 'grid.z.step' property !");
+      step[1] = config_.fetch_real ("grid.z.step");
+      DT_THROW_IF (step[1] <= 0.0 ,logic_error,
+                   "Invalid value for 'grid.z.step' property !");
+      if (! config_.has_explicit_unit ("grid.z.step")) step[1] *= length_unit;
     }
     else if (grid_plane_label == "yz") {
-
       // Numbers of steps :
-      if (config_.has_key ("grid.y.number_of_items")) {
-        number_of_items[0] = config_.fetch_integer ("grid.y.number_of_items");
-      }
-      else {
-        ostringstream message;
-        message << "geomtools::grid_model::_at_construct: "
-                << "Missing 'grid.y.number_of_items' property !";
-        throw logic_error (message.str ());
-      }
-      if (config_.has_key ("grid.z.number_of_items")) {
-        number_of_items[1] = config_.fetch_integer ("grid.z.number_of_items");
-      }
-      else {
-        ostringstream message;
-        message << "geomtools::grid_model::_at_construct: "
-                << "Missing 'grid.z.number_of_items' property !";
-        throw logic_error (message.str ());
-      }
-
+      DT_THROW_IF (!config_.has_key ("grid.y.number_of_items"), logic_error,
+                   "Missing 'grid.y.number_of_items' property !");
+      number_of_items[0] = config_.fetch_integer ("grid.y.number_of_items");
+      DT_THROW_IF (!config_.has_key ("grid.z.number_of_items"), logic_error,
+                   "Missing 'grid.z.number_of_items' property !");
+      number_of_items[1] = config_.fetch_integer ("grid.z.number_of_items");
       // Steps :
-      if (config_.has_key ("grid.y.step"))
-        {
-          step[0] = config_.fetch_real ("grid.y.step");
-          if (step[0] <= 0.0 ) {
-            ostringstream message;
-            message << "geomtools::grid_model::_at_construct: "
-                    << "Invalid value for 'grid.y.step' property !";
-            throw logic_error (message.str ());
-          }
-          if (! config_.has_explicit_unit ("grid.y.step")) step[0] *= length_unit;
-        }
-      else {
-        ostringstream message;
-        message << "geomtools::grid_model::_at_construct: "
-                << "Missing 'grid.y.step' property !";
-        throw logic_error (message.str ());
-      }
-     if (config_.has_key ("grid.z.step"))
-        {
-          step[1] = config_.fetch_real ("grid.z.step");
-          if (step[1] <= 0.0 ) {
-            ostringstream message;
-            message << "geomtools::grid_model::_at_construct: "
-                    << "Invalid value for 'grid.z.step' property !";
-            throw logic_error (message.str ());
-          }
-          if (! config_.has_explicit_unit ("grid.z.step")) step[1] *= length_unit;
-        }
-      else {
-        ostringstream message;
-        message << "geomtools::grid_model::_at_construct: "
-                << "Missing 'grid.z.step' property !";
-        throw logic_error (message.str ());
-      }
-
+      DT_THROW_IF (!config_.has_key ("grid.y.step"), logic_error, "Missing 'grid.y.step' property !");
+      step[0] = config_.fetch_real ("grid.y.step");
+      DT_THROW_IF (step[0] <= 0.0 , logic_error, "Invalid value for 'grid.y.step' property !");
+      if (! config_.has_explicit_unit ("grid.y.step")) step[0] *= length_unit;
+      DT_THROW_IF (! config_.has_key ("grid.z.step"), logic_error,"Missing 'grid.z.step' property !");
+      step[1] = config_.fetch_real ("grid.z.step");
+      DT_THROW_IF (step[1] <= 0.0 , logic_error, "Invalid value for 'grid.z.step' property !");
+      if (! config_.has_explicit_unit ("grid.z.step")) step[1] *= length_unit;
+    } else {
+      DT_THROW_IF(true,logic_error,"Invalid grid plane label '" << grid_plane_label << "' property !");
     }
-    else
-      {
-        ostringstream message;
-        message << "geomtools::grid_model::_at_construct: "
-                << "Invalid grid plane label '" << grid_plane_label << "' property !";
-        throw logic_error (message.str ());
-      }
 
     if (config_.has_key ("grid.model"))
       {

@@ -7,6 +7,7 @@
 #include <boost/algorithm/string.hpp>
 
 #include <datatools/units.h>
+#include <datatools/exception.h>
 
 #include <geomtools/geomtools_config.h>
 #include <geomtools/gdml_writer.h>
@@ -78,28 +79,16 @@ namespace geomtools {
   const ostringstream & gdml_writer::_get_stream (const string & section_) const
   {
     streams_col_type::const_iterator i = _streams_.find (section_);
-    if (i == _streams_.end ())
-      {
-        ostringstream message;
-        message << "gdml_writer::_get_stream: "
-                << "Invalid section '" << section_
-                << "' !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (i == _streams_.end (),
+                 logic_error, "Invalid section '" << section_ << "' !");
     return *(i->second);
   }
 
   ostringstream & gdml_writer::_get_stream (const string & section_)
   {
     streams_col_type::iterator i = _streams_.find (section_);
-    if (i == _streams_.end ())
-      {
-        ostringstream message;
-        message << "gdml_writer::_get_stream: "
-                << "Invalid section '" << section_
-                << "' !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (i == _streams_.end (),
+                 logic_error, "Invalid section '" << section_ << "' !");
     return *(i->second);
   }
 
@@ -273,14 +262,9 @@ namespace geomtools {
                                   const string & unit_str_)
   {
     double angle_unit = datatools::units::get_angle_unit_from (unit_str_);
-    if ((axis_ != "x") && (axis_ != "y") && (axis_ != "z"))
-      {
-        ostringstream message;
-        message << "gdml_writer::add_rotation: "
-                << "Invalid rotation axis '" << axis_
-                << "' for rotation '" << name_ << "' !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF ((axis_ != "x") && (axis_ != "y") && (axis_ != "z"),
+                 logic_error,
+                 "Invalid rotation axis '" << axis_ << "' for rotation '" << name_ << "' !");
     _get_stream (DEFINE_SECTION) << "<rotation"
                                  << " name=" << '"' << to_html (name_) << '"'
                                  << " " << axis_ << "=" << '"';
@@ -369,37 +353,22 @@ namespace geomtools {
     double s = 0.0;
     for (map<string, double>::const_iterator i = fractions_.begin ();
          i != fractions_.end ();
-         i++)
-      {
+         i++) {
         string ref = i->first;
         double n = i->second;
-        if (n < 0.0 || n > 1.0)
-          {
-            ostringstream message;
-            message << "gdml_writer::add_element: "
-                    << "Invalid fraction value '" << n
-                    << "' for referenced '" << ref << "' in element '"
-                    << name_ << "' !";
-            throw logic_error (message.str ());
-          }
+        DT_THROW_IF (n < 0.0 || n > 1.0, logic_error,
+                     "Invalid fraction value '" << n << "' for referenced '" << ref << "' in element '"
+                     << name_ << "' !");
         s += n;
-
         materials_stream << "  <fraction"
                          << " ref=" << '"' << to_html (ref) << '"'
                          << " n=" << '"';
         materials_stream.precision (15);
         materials_stream << n << '"' << " />" << endl;
       }
-    if (s > 1.000000000001)
-      {    ostringstream message;
-        message << "gdml_writer::add_element: "
-                << "Invalid fraction sum in element '"
-                << name_ << "' !";
-        throw logic_error (message.str ());
-      }
-
+    DT_THROW_IF (s > 1.000000000001, logic_error,
+                 "Invalid fraction sum in element '" << name_ << "' !");
     materials_stream << "</element>" << endl;
-
     _get_stream (MATERIALS_SECTION) << materials_stream.str ();
     _get_stream (MATERIALS_SECTION) << endl;
   }
@@ -518,15 +487,10 @@ namespace geomtools {
       {
         string ref = i->first;
         double n = i->second;
-        if (n < 0.0 || n > 1.0)
-          {
-            ostringstream message;
-            message << "gdml_writer::add_material: "
-                    << "Invalid fraction value '" << n
-                    << "' for referenced '" << ref << "' in element '"
-                    << name_ << "' !";
-            throw logic_error (message.str ());
-          }
+        DT_THROW_IF (n < 0.0 || n > 1.0, logic_error,
+                     "Invalid fraction value '" << n
+                     << "' for referenced '" << ref << "' in element '"
+                     << name_ << "' !");
         s += n;
 
         materials_stream << "  <fraction"
@@ -535,16 +499,9 @@ namespace geomtools {
         materials_stream.precision (15);
         materials_stream << n << '"' << " />" << endl;
       }
-    if (s > 1.000000000001)
-      {    ostringstream message;
-        message << "gdml_writer::add_material: "
-                << "Invalid fraction sum in material '"
-                << name_ << "' !";
-        throw logic_error (message.str ());
-      }
-
+    DT_THROW_IF (s > 1.000000000001, logic_error,
+                 "Invalid fraction sum in material '" << name_ << "' !");
     materials_stream << "</material>" << endl;
-
     _get_stream (MATERIALS_SECTION) << materials_stream.str ();
     _get_stream (MATERIALS_SECTION) << endl;
   }
@@ -575,15 +532,10 @@ namespace geomtools {
       {
         string ref = i->first;
         size_t n = i->second;
-        if (n == 0)
-          {
-            ostringstream message;
-            message << "gdml_writer::add_material: "
-                    << "Invalid composite value '" << n
-                    << "' for referenced '" << ref << "' in element '"
-                    << name_ << "' !";
-            throw logic_error (message.str ());
-          }
+        DT_THROW_IF (n == 0, logic_error,
+                    "Invalid composite value '" << n
+                     << "' for referenced '" << ref << "' in element '"
+                     << name_ << "' !");
         materials_stream << "  <composite"
                          << " ref=" << '"' << to_html (ref) << '"'
                          << " n=" << '"' << n << '"' << " />" << endl;;
@@ -1074,15 +1026,11 @@ namespace geomtools {
                                       const string & position_ref_,
                                       const string & rotation_ref_)
   {
-    if ((boolean_type_ != "union")
-        && (boolean_type_ != "subtraction") && (boolean_type_ != "intersection"))
-      {
-        ostringstream message;
-        message << "gdml_writer::add_gdml_boolean: "
-                << "Invalid boolean solid type '" << boolean_type_
-                << "' for solid '" << name_ << "' !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF ((boolean_type_ != "union")
+                 && (boolean_type_ != "subtraction") && (boolean_type_ != "intersection"),
+                 logic_error,
+                 "Invalid boolean solid type '" << boolean_type_
+                 << "' for solid '" << name_ << "' !");
     ostringstream solids_stream;
     solids_stream << "<" <<  boolean_type_
                   << " name=" << '"' << to_html (name_) << '"'
@@ -1452,10 +1400,7 @@ namespace geomtools {
                                 const string & schema_,
                                 const string & xsi_)
   {
-    if (! out_)
-      {
-        throw logic_error ("gdml_writer::full_write: Output stream is invalid !");
-      }
+    DT_THROW_IF (! out_, logic_error, "Output stream is invalid !");
     bool standalone = false;
     xml_header (out_, version_, encoding_, standalone);
     gdml_begin (out_, schema_, xsi_);
@@ -1512,15 +1457,8 @@ namespace geomtools {
     string filename = filename_;
     datatools::fetch_path_with_env (filename);
     fout.open (filename.c_str ());
-    if (! fout)
-      {
-        ostringstream message;
-        message << "gdml_writer::save_file: "
-                << "Cannot open GDML file '"
-                << filename
-                << "' !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (! fout, runtime_error,
+                 "Cannot open GDML file '" << filename << "' !");
     full_write (fout, version_, encoding_, schema_, xsi_);
     return;
   }

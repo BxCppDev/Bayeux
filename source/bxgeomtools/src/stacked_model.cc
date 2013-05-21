@@ -10,9 +10,10 @@
 #include <mygsl/min_max.h>
 
 #include <datatools/units.h>
+#include <datatools/exception.h>
+#include <datatools/logger.h>
 
 #include <geomtools/i_stackable.h>
-//#include <geomtools/regular_linear_placement.h>
 #include <geomtools/visibility.h>
 
 namespace geomtools {
@@ -87,10 +88,8 @@ namespace geomtools {
   {
     assert_unconstructed ("geomtools::stacked_model::set_stacking_axis");
 
-    if ((a_ < STACKING_ALONG_X) || (a_ > STACKING_ALONG_Z))
-      {
-        throw logic_error ("geomtools::stacked_model::set_staking_axis: Invalid stacking axis !");
-      }
+    DT_THROW_IF ((a_ < STACKING_ALONG_X) || (a_ > STACKING_ALONG_Z),
+                 logic_error, "Invalid stacking axis !");
     _stacking_axis_ = a_;
   }
 

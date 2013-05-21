@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* circle.cc
  */
 
@@ -11,6 +11,8 @@
 
 #include <gsl/gsl_poly.h>
 
+#include <datatools/exception.h>
+
 namespace geomtools {
 
   using namespace std;
@@ -21,17 +23,17 @@ namespace geomtools {
   {
     return CIRCLE_LABEL;
   }
-  
+
   double circle::get_r () const
   {
     return _radius_;
   }
-  
+
   double circle::get_radius () const
   {
     return get_r ();
   }
- 
+
   void circle::set_diameter (double a_diameter)
   {
     set_r (a_diameter * 0.5);
@@ -42,19 +44,15 @@ namespace geomtools {
   {
     return (_radius_ + _radius_);
   }
-  
+
   void circle::set_r (double a_radius)
   {
-    if (a_radius < 0.0 )
-      {
-        ostringstream message;
-        message << "circle::set_r: Invalid '" << a_radius << "' R value!";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (a_radius < 0.0,logic_error,
+                 "Invalid '" << a_radius << "' R value !");
     _radius_ = a_radius;
     return;
   }
-   
+
   double circle::get_surface () const
   {
     return M_PI * _radius_ * _radius_;
@@ -64,12 +62,12 @@ namespace geomtools {
   {
     return 2 * M_PI * _radius_;
   }
-  
+
   bool circle::is_valid () const
   {
     return (_radius_ > 0.0);
   }
-  
+
   // ctor:
   circle::circle ()
   {
@@ -83,32 +81,32 @@ namespace geomtools {
     set_r (a_radius);
     return;
   }
-  
+
   // dtor:
   circle::~circle ()
   {
     return;
   }
 
-  void circle::tree_dump (ostream & a_out, 
-                          const string & a_title, 
-                          const string & a_indent, 
+  void circle::tree_dump (ostream & a_out,
+                          const string & a_title,
+                          const string & a_indent,
                           bool a_inherit) const
   {
     string indent;
     if (! a_indent.empty ()) indent = a_indent;
     i_object_3d::tree_dump (a_out, a_title, indent, true);
 
-    a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)  
+    a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
          << "Radius : " << get_r () / CLHEP::mm << " mm" << endl;
     return;
   }
 
-  bool circle::is_on_curve (const vector_3d &, 
+  bool circle::is_on_curve (const vector_3d &,
                             double a_tolerance) const
   {
     bool on_curve = false;
-    throw runtime_error ("circle::is_on_curve: Not implemented yet !");
+    DT_THROW_IF(true, runtime_error,"Not implemented yet !");
     return on_curve;
   }
 
@@ -116,12 +114,12 @@ namespace geomtools {
   {
     vector_3d dir;
     invalidate (dir);
-    throw runtime_error ("circle::get_direction_on_curve: Not implemented yet !");
+    DT_THROW_IF(true, runtime_error,"Not implemented yet !");
     return dir;
   }
 
-  void circle::generate_wires (std::list<polyline_3d> & lpl_, 
-                               const placement & p_, 
+  void circle::generate_wires (std::list<polyline_3d> & lpl_,
+                               const placement & p_,
                                uint32_t options_) const
   {
     const int nsamples = 36;
@@ -147,7 +145,7 @@ namespace geomtools {
       }
     return;
   }
-  
+
 } // end of namespace geomtools
 
 // end of circle.cc

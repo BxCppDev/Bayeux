@@ -1,54 +1,44 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* geom_map.cc
  */
 
 #include <geomtools/geom_map.h>
 
+#include <datatools/exception.h>
+
 #include <geomtools/id_mgr.h>
 
 namespace geomtools {
 
-  using namespace std;  
+  using namespace std;
 
   const geom_info_dict_type & geom_map::_get_geom_infos () const
   {
     return _geom_infos_;
   }
-    
+
   const geom_info_dict_type & geom_map::get_geom_infos () const
   {
     return _geom_infos_;
   }
-  
+
   geom_info_dict_type & geom_map::_get_geom_infos ()
   {
     return _geom_infos_;
   }
-    
+
   const id_mgr & geom_map::get_id_manager () const
   {
-    if (_id_manager_ == 0)
-      {
-        ostringstream message;
-        message << "geomtools::geom_map::get_id_manager: "
-                << "No manager !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (_id_manager_ == 0,logic_error, "No geometry ID manager !");
     return *_id_manager_;
   }
-     
+
   const id_mgr & geom_map::_get_id_manager () const
   {
-    if (_id_manager_ == 0)
-      {
-        ostringstream message;
-        message << "geomtools::geom_map::_get_id_manager: "
-                << "No manager !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (_id_manager_ == 0, logic_error, "No geometry ID manager !");
     return *_id_manager_;
   }
- 
+
   geom_map::geom_map ()
   {
     _invalid_geom_id_.invalidate ();
@@ -61,7 +51,7 @@ namespace geomtools {
     _geom_infos_.clear ();
     return;
   }
-  
+
   bool geom_map::has_id_manager () const
   {
     return _id_manager_ != 0;
@@ -82,21 +72,15 @@ namespace geomtools {
   {
     return _geom_infos_.find (id_) != _geom_infos_.end ();
   }
-  
+
   const geom_info & geom_map::get_geom_info (const geom_id & id_) const
   {
     geom_info_dict_type::const_iterator found = _geom_infos_.find (id_);
-    if (found == _geom_infos_.end ())
-      {
-        ostringstream message;
-        message << "geomtools::geom_map::get_geom_info: "
-                << "No '" << id_ << "' ID !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (found == _geom_infos_.end (), logic_error,  "No '" << id_ << "' geometry ID !");
     return found->second;
   }
 
-  void geom_map::compute_matching_geom_id (const geom_id & gid_pattern_, 
+  void geom_map::compute_matching_geom_id (const geom_id & gid_pattern_,
                                            std::vector<geom_id> & gids_,
                                            bool append_) const
   {
@@ -106,13 +90,13 @@ namespace geomtools {
         gids_.clear ();
       }
     // Return if no valid pattern :
-    if (! gid_pattern_.is_valid ()) 
+    if (! gid_pattern_.is_valid ())
       {
         return;
       }
     // Short cut if the GID pattern is complete (no 'ANY' addresses) :
-    if (gid_pattern_.is_complete ()) 
-      { 
+    if (gid_pattern_.is_complete ())
+      {
         geom_info_dict_type::const_iterator found = _geom_infos_.find (gid_pattern_);
         if (found != _geom_infos_.end ())
           {
@@ -145,8 +129,8 @@ namespace geomtools {
   {
     return _invalid_geom_id_;
   }
-  
-  void geom_map::get_geom_id (const vector_3d & world_position_, 
+
+  void geom_map::get_geom_id (const vector_3d & world_position_,
                               int type_,
                               geom_id & gid_,
                               double tolerance_) const
@@ -155,8 +139,8 @@ namespace geomtools {
     gid_ = geom_map::get_geom_id (world_position_, type_, tolerance_);
     return;
   }
- 
-  void geom_map::get_geom_id (const vector_3d & world_position_, 
+
+  void geom_map::get_geom_id (const vector_3d & world_position_,
                               const string & category_,
                               geom_id & gid_,
                               double tolerance_) const
@@ -165,7 +149,7 @@ namespace geomtools {
     gid_ = geom_map::get_geom_id (world_position_, category_, tolerance_);
     return;
   }
- 
+
   bool geom_map::check_inside (const geom_info & ginfo_,
                                const vector_3d & world_position_,
                                double tolerance_)
@@ -183,8 +167,8 @@ namespace geomtools {
     return false;
   }
 
-  const geom_id & geom_map::get_geom_id (const vector_3d & world_position_, 
-                                         int type_, 
+  const geom_id & geom_map::get_geom_id (const vector_3d & world_position_,
+                                         int type_,
                                          double tolerance_) const
   {
     int requested_type = type_;
@@ -215,20 +199,16 @@ namespace geomtools {
       }
     return _invalid_geom_id_;
   }
-   
-  const geom_id & geom_map::get_geom_id (const vector_3d & world_position_, 
-                                         const string & category_, 
+
+  const geom_id & geom_map::get_geom_id (const vector_3d & world_position_,
+                                         const string & category_,
                                          double tolerance_) const
   {
     geom_info_dict_type::const_iterator found = _geom_infos_.end ();
-    if (! _id_manager_->has_category_info (category_))
-      {
-        ostringstream message;
-        message << "geomtools::geom_map::get_geom_id: "
-                << "No category named '" << category_ << "' !";
-        throw logic_error (message.str ());
-      }
-    const id_mgr::category_info & ci 
+    DT_THROW_IF (! _id_manager_->has_category_info (category_),
+                 logic_error,
+                 "No geometry category named '" << category_ << "' !");
+    const id_mgr::category_info & ci
       = _id_manager_->get_category_info (category_);
     int requested_type = ci.get_type ();
     return get_geom_id (world_position_, requested_type, tolerance_);
@@ -237,16 +217,16 @@ namespace geomtools {
   void geom_map::build_from (const model_factory & factory_,
                              const string & mother_)
   {
-    throw logic_error ("geomtools::geom_map::build_from: Not implemented !");
+    DT_THROW_IF(true, runtime_error, "Not implemented !");
   }
 
-  const geom_map::ginfo_ptr_collection_type & 
+  const geom_map::ginfo_ptr_collection_type &
   geom_map::get_ginfo_collection_with_type (uint32_t type_) const
   {
     geom_map * mutable_this = const_cast<geom_map *>(this);
     return mutable_this->_compute_ginfo_collection_with_type_ (type_);
   }
- 
+
 
   bool geom_map::has_ginfo_collection_with_type (uint32_t type_) const
   {
@@ -254,7 +234,7 @@ namespace geomtools {
     return col.size () > 0;
   }
 
-  const geom_map::ginfo_ptr_collection_type & 
+  const geom_map::ginfo_ptr_collection_type &
   geom_map::_compute_ginfo_collection_with_type_ (uint32_t type_)
   {
     ginfo_collections_with_type_dict_type::iterator found = _geom_infos_with_type_map_.find (type_);
@@ -279,12 +259,12 @@ namespace geomtools {
         if (pred (ginfo))
           {
             the_collection.push_back (&ginfo);
-          }     
+          }
       }
     return the_collection;
   }
 
-  const geom_map::ginfo_collections_with_type_dict_type & 
+  const geom_map::ginfo_collections_with_type_dict_type &
   geom_map::get_geom_infos_with_type_map () const
   {
     return _geom_infos_with_type_map_;

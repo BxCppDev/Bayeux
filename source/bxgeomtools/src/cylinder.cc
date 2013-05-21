@@ -1,108 +1,102 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* cylinder.cc
  */
 
 #include <geomtools/cylinder.h>
+
+#include <datatools/exception.h>
 
 namespace geomtools {
 
   using namespace std;
 
   const string cylinder::CYLINDER_LABEL = "cylinder";
-    
+
   double cylinder::get_xmin () const
   {
     return -_radius_;
   }
-      
+
   double cylinder::get_xmax () const
   {
     return +_radius_;
   }
-      
+
   double cylinder::get_ymin () const
   {
     return -_radius_;
   }
-      
+
   double cylinder::get_ymax () const
   {
     return +_radius_;
   }
-      
+
   double cylinder::get_zmin () const
   {
     return -0.5*_z_;
   }
-      
+
   double cylinder::get_zmax () const
   {
     return +0.5*_z_;
   }
 
-  double 
+  double
   cylinder::get_r () const
   {
     return _radius_;
   }
-  
-  void 
+
+  void
   cylinder::set_r (double a_radius)
   {
-    if (a_radius < 0.0 )
-      {
-        ostringstream message;
-        message << "cylinder::set_r: Invalid '" << a_radius << "' R value!";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (a_radius < 0.0,logic_error,
+                 "Invalid '" << a_radius << "' R value !");
     _radius_ = a_radius;
     return;
   }
-  
-  double 
+
+  double
   cylinder::get_radius () const
   {
     return get_r ();
   }
 
-  double 
+  double
   cylinder::get_diameter () const
   {
     return (_radius_ + _radius_);
   }
-  
-  void 
+
+  void
   cylinder::set_diameter (double a_diameter)
   {
     set_r (a_diameter * 0.5);
     return;
   }
 
-  double 
+  double
   cylinder::get_z () const
   {
     return _z_;
   }
-  
-  void 
+
+  void
   cylinder::set_z (double a_z)
   {
-    if (a_z < 0.0) 
-      {
-        ostringstream message;
-        message << "cylinder::set_z: Invalid '" << a_z << "' Z value!";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (a_z < 0.0, logic_error,
+                 "Invalid '" << a_z << "' Z value !");
     _z_ = a_z;
     return;
   }
-  
-  double 
+
+  double
   cylinder::get_half_z () const
   {
     return _z_ * 0.5;
   }
-  
+
   void
   cylinder::set_half_z (double a_half_z)
   {
@@ -110,15 +104,15 @@ namespace geomtools {
     return;
   }
 
-  void 
+  void
   cylinder::set (double a_radius, double a_z)
   {
     set_r (a_radius);
     set_z (a_z);
     return;
   }
-  
-  void 
+
+  void
   cylinder::set_alternative (double a_diameter, double a_half_z)
   {
     set_diameter (a_diameter);
@@ -138,47 +132,47 @@ namespace geomtools {
     set (a_radius, a_z);
     return;
   }
-  
+
   cylinder::~cylinder ()
   {
     return;
   }
 
-  string 
+  string
   cylinder::get_shape_name () const
   {
     return CYLINDER_LABEL;
   }
- 
-  double 
+
+  double
   cylinder::get_surface (int a_mask) const
   {
     double s = 0.0;
     int mask = a_mask;
     if (a_mask == (int) ALL_SURFACES) mask = FACE_ALL;
 
-    if (mask & FACE_SIDE) 
+    if (mask & FACE_SIDE)
       {
         s += 2 * M_PI * _radius_ * _z_;
       }
-    if (mask & FACE_BOTTOM) 
+    if (mask & FACE_BOTTOM)
       {
         s += M_PI * _radius_ * _radius_;
       }
-    if (mask & FACE_TOP) 
+    if (mask & FACE_TOP)
       {
         s += M_PI * _radius_ * _radius_;
       }
     return s;
   }
 
-  double 
-  cylinder::get_volume () const 
+  double
+  cylinder::get_volume () const
   {
     return M_PI * _radius_ * _radius_ * _z_;
   }
 
-  double 
+  double
   cylinder::get_parameter ( const string & flag_ ) const
   {
     if ( flag_ == "r" ) return get_r ();
@@ -191,24 +185,24 @@ namespace geomtools {
     if ( flag_ == "surface.side" ) return get_surface (FACE_SIDE);
     if ( flag_ == "surface" ) return get_surface (FACE_ALL);
 
-    throw runtime_error ("cylinder::get_parameter: Unknown flag!");
+    DT_THROW_IF(true, logic_error, "Unknown flag '" << flag_ << "' !");
   }
 
 
-  bool 
+  bool
   cylinder::is_valid () const
   {
     return (_radius_ > 0.0 && _z_ > 0.0);
   }
 
 
-  void 
+  void
   cylinder::init ()
   {
     return;
   }
 
-  void 
+  void
   cylinder::reset ()
   {
     _radius_ = -1.0;
@@ -216,7 +210,7 @@ namespace geomtools {
     return;
   }
 
-  bool 
+  bool
   cylinder::is_inside (const vector_3d & a_position, double a_skin) const
   {
     double skin = get_skin ();
@@ -228,23 +222,23 @@ namespace geomtools {
     return true;
   }
 
-  vector_3d 
+  vector_3d
   cylinder::get_normal_on_surface (const vector_3d & a_position) const
   {
     vector_3d normal;
     invalidate (normal);
-    if (is_on_surface (a_position, FACE_SIDE)) 
+    if (is_on_surface (a_position, FACE_SIDE))
       {
         double phi = a_position.phi ();
         normal.set (cos (phi), sin (phi), 0.0);
       }
     else if (is_on_surface (a_position, FACE_BOTTOM)) normal.set (0.0, 0.0, -1.0);
-    else if (is_on_surface (a_position, FACE_TOP)) normal.set (0.0, 0.0, +1.0); 
+    else if (is_on_surface (a_position, FACE_TOP)) normal.set (0.0, 0.0, +1.0);
     return (normal);
   }
 
-  bool 
-  cylinder::is_on_surface (const vector_3d & a_position , 
+  bool
+  cylinder::is_on_surface (const vector_3d & a_position ,
                            int    a_mask ,
                            double a_skin) const
   {
@@ -256,26 +250,26 @@ namespace geomtools {
 
     double hskin = 0.5 * skin;
     double r = hypot (a_position.x (), a_position.y ());
-    if (mask & FACE_BOTTOM) 
+    if (mask & FACE_BOTTOM)
       {
-        if ((abs (a_position.z () + 0.5 * _z_) < hskin) 
-            && (r < (_radius_ + hskin))) return true;
-      } 
-    if (mask & FACE_TOP) 
-      {
-        if ((abs (a_position.z () - 0.5 * _z_) < hskin) 
+        if ((abs (a_position.z () + 0.5 * _z_) < hskin)
             && (r < (_radius_ + hskin))) return true;
       }
-    if (mask & FACE_SIDE) 
+    if (mask & FACE_TOP)
       {
-        if ((abs (a_position.z ()) < (0.5 * _z_ + hskin))   
+        if ((abs (a_position.z () - 0.5 * _z_) < hskin)
+            && (r < (_radius_ + hskin))) return true;
+      }
+    if (mask & FACE_SIDE)
+      {
+        if ((abs (a_position.z ()) < (0.5 * _z_ + hskin))
             && (abs (r - _radius_) < hskin)) return true;
       }
     return false;
   }
-  
-  bool 
-  cylinder::find_intercept (const vector_3d & a_from, 
+
+  bool
+  cylinder::find_intercept (const vector_3d & a_from,
                             const vector_3d & a_direction,
                             intercept_t & a_intercept,
                             double a_skin) const
@@ -342,20 +336,20 @@ namespace geomtools {
         double tsi = ts[i];
         if (isnormal (tsi) && (tsi > 0.0))
           {
-            if (t[CYL_SIDE] < 0) 
+            if (t[CYL_SIDE] < 0)
               {
                 t[CYL_SIDE] = tsi;
               }
-            else 
+            else
               {
-                if (tsi < t[CYL_SIDE]) 
+                if (tsi < t[CYL_SIDE])
                   {
                     t[CYL_SIDE] = tsi;
                   }
               }
           }
       }
-    
+
     double z0 = a_from.z ();
     double dz = a_direction.z ();
     t[CYL_BOTTOM] = (-0.5 * _z_ - z0) / dz;
@@ -369,8 +363,8 @@ namespace geomtools {
         if (debug)
           {
             clog << "DEVEL: cylinder::find_intercept: t[" << i << "]= "
-                 << ti << " t_min=" << t_min 
-                 << " face_min=" << face_min 
+                 << ti << " t_min=" << t_min
+                 << " face_min=" << face_min
                  << endl;
           }
         if (isnormal (ti) && (ti > 0.0))
@@ -388,7 +382,7 @@ namespace geomtools {
           }
       }
     a_intercept.reset ();
-    if (face_min > 0) 
+    if (face_min > 0)
       {
         a_intercept.set (0, face_min, a_from + a_direction * t_min);
       }
@@ -397,8 +391,8 @@ namespace geomtools {
 
   ostream & operator<< (ostream & a_out, const cylinder & a_cylinder)
   {
-    a_out << '{' << cylinder::CYLINDER_LABEL << ' ' 
-          << a_cylinder._radius_ << ' ' 
+    a_out << '{' << cylinder::CYLINDER_LABEL << ' '
+          << a_cylinder._radius_ << ' '
           << a_cylinder._z_ << '}';
     return a_out;
   }
@@ -408,33 +402,33 @@ namespace geomtools {
     a_cylinder.reset ();
     char c = 0;
     a_in.get (c);
-    if (c != '{') 
+    if (c != '{')
       {
         a_in.clear (ios_base::failbit);
         return a_in;
-      } 
+      }
     string name;
     a_in >> name;
-    if (name != cylinder::CYLINDER_LABEL) 
+    if (name != cylinder::CYLINDER_LABEL)
       {
         a_in.clear (ios_base::failbit);
         return a_in;
-      } 
+      }
     double r, z;
     a_in >> r >> z;
-    if (! a_in) 
+    if (! a_in)
       {
         a_in.clear (ios_base::failbit);
         return a_in;
-      } 
+      }
     c = 0;
     a_in.get (c);
-    if (c != '}') 
+    if (c != '}')
       {
         a_in.clear (ios_base::failbit);
         return a_in;
-      } 
-    try 
+      }
+    try
       {
         a_cylinder.set (r,z);
       }
@@ -446,30 +440,30 @@ namespace geomtools {
     return a_in;
   }
 
-  void cylinder::tree_dump (ostream & a_out, 
-                            const string & a_title, 
-                            const string & a_indent, 
+  void cylinder::tree_dump (ostream & a_out,
+                            const string & a_title,
+                            const string & a_indent,
                             bool a_inherit) const
   {
     string indent;
     if (! a_indent.empty ()) indent = a_indent;
     i_object_3d::tree_dump (a_out, a_title, a_indent, true);
 
-    a_out << indent << datatools::i_tree_dumpable::tag 
+    a_out << indent << datatools::i_tree_dumpable::tag
           << "Radius : " << get_r () / CLHEP::mm << " mm" << endl;
-    a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)  
+    a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
           << "Z : " << get_z () / CLHEP::mm << " mm" << endl;
     return;
   }
 
-  void cylinder::generate_wires (std::list<polyline_3d> & lpl_, 
-                                 const placement & p_, 
+  void cylinder::generate_wires (std::list<polyline_3d> & lpl_,
+                                 const placement & p_,
                                  uint32_t options_) const
   {
     const int nsamples = 36;
     for (int j = 0; j < 2; j++)
       {
-        double z = -0.5 * get_z () + j * get_z (); 
+        double z = -0.5 * get_z () + j * get_z ();
         for (int jj = 0; jj < 3; jj++)
           {
             double r = get_r ();
@@ -559,7 +553,7 @@ namespace geomtools {
       }
     return;
   }
- 
+
 } // end of namespace geomtools
 
 // end of cylinder.cc

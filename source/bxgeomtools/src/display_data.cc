@@ -1,22 +1,24 @@
-// -*- mode: c++ ; -*- 
-/* display_data.cc  
+// -*- mode: c++ ; -*-
+/* display_data.cc
  */
 
 #include <geomtools/display_data.h>
 
+#include <datatools/exception.h>
+
 namespace geomtools {
-  
+
   using namespace std;
 
-  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(display_data::display_item, 
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(display_data::display_item,
                                                     "geomtools::display_data::display_item")
 
   display_data::display_item::display_item ()
   {
-    
+
     return;
   }
-      
+
   void display_data::display_item::reset ()
   {
     frame_info.clear ();
@@ -37,13 +39,13 @@ namespace geomtools {
   {
     return entry_type == DISPLAY_FRAMED;
   }
-     
+
   display_data::display_entry::display_entry ()
   {
     entry_type  = -1;
     return;
   }
-      
+
   void display_data::display_entry::reset ()
   {
     entry_type  = -1;
@@ -53,13 +55,13 @@ namespace geomtools {
     return;
   }
 
-  std::map<int32_t, display_data::display_item> & 
+  std::map<int32_t, display_data::display_item> &
   display_data::display_entry::grab_items ()
   {
     return items;
   }
-  
-  const std::map<int32_t, display_data::display_item> & 
+
+  const std::map<int32_t, display_data::display_item> &
   display_data::display_entry::get_items () const
   {
     return items;
@@ -68,14 +70,8 @@ namespace geomtools {
   const display_data::display_item &
   display_data::display_entry::get_static_item () const
   {
-    if (! is_static ())
-      {
-        throw std::logic_error ("geomtools::display_data::display_entry::get_static_item: Not a static entry !");
-      }
-    if (items.size () < 1)
-      {
-        throw std::logic_error ("geomtools::display_data::display_entry::get_static_item: No available item is this entry !");
-      }
+    DT_THROW_IF (! is_static (), std::logic_error, "Not a static entry !");
+    DT_THROW_IF (items.size () < 1, std::logic_error, "No available item is this entry !");
     return items.begin ()->second;
   }
 
@@ -83,7 +79,7 @@ namespace geomtools {
   display_data::display_entry::has_framed_item (int frame_index_) const
   {
     if (! is_framed ()) return false;
-    std::map<int32_t, display_item>::const_iterator found 
+    std::map<int32_t, display_item>::const_iterator found
       = items.find (frame_index_);
     return found != items.end ();
   }
@@ -91,23 +87,13 @@ namespace geomtools {
   const display_data::display_item &
   display_data::display_entry::get_framed_item (int frame_index_) const
   {
-    if (! is_framed ())
-      {
-        throw std::logic_error ("geomtools::display_data::display_entry::get_framed_item: Not a framed entry !");
-      }
-    if (items.size () < 1)
-      {
-        throw std::logic_error ("geomtools::display_data::display_entry::get_framed_item: No available item is this entry !");
-      }
-    std::map<int32_t, display_item>::const_iterator found 
+    DT_THROW_IF (! is_framed (), std::logic_error, "Not a framed entry !");
+    DT_THROW_IF (items.size () < 1, std::logic_error, "No available item is this entry !");
+    std::map<int32_t, display_item>::const_iterator found
       = items.find (frame_index_);
-    if (found == items.end ())
-      {
-        std::ostringstream message;
-        message << "geomtools::display_data::display_entry::get_framed_item: "
-                << "No framed item with frame index " << frame_index_ << " is this entry !";
-        throw std::logic_error (message.str ());              
-      }
+    DT_THROW_IF (found == items.end (),
+                 std::logic_error,
+                 "No framed item with frame index " << frame_index_ << " is this entry !");
     return found->second;
   }
 
@@ -186,31 +172,31 @@ namespace geomtools {
     return;
   }
 
-  const std::map<std::string, display_data::display_entry> & 
+  const std::map<std::string, display_data::display_entry> &
   display_data::get_entries () const
   {
     return _entries_;
   }
 
-  std::map<std::string, display_data::display_entry> & 
+  std::map<std::string, display_data::display_entry> &
   display_data::grab_entries ()
   {
     return _entries_;
   }
 
-  const datatools::properties & 
+  const datatools::properties &
   display_data::get_auxiliaries () const
   {
     return _auxiliaries_;
   }
 
-  datatools::properties & 
+  datatools::properties &
   display_data::grab_auxiliaries ()
   {
     return _auxiliaries_;
   }
 
-  display_data::display_item & 
+  display_data::display_item &
   display_data::_add_item (const std::string & name_,
                            int entry_type_,
                            int frame_,
@@ -243,27 +229,15 @@ namespace geomtools {
     else
       {
         the_entry = &found->second;
-        if (the_entry->entry_type != entry_type_)
-          {
-            std::ostringstream message;
-            message << "geomtools::display_data::_add_item: "
-                    << "Entry type mismatch for entry '" << name_ << "' !";
-            throw std::logic_error (message.str ());              
-          }
+        DT_THROW_IF (the_entry->entry_type != entry_type_,
+                     std::logic_error,
+                     "Entry type mismatch for entry '" << name_ << "' !");
       }
     if (the_entry->entry_type == DISPLAY_STATIC)
       {
-        if (frame_ != -1)
-          {
-            throw std::logic_error ("geomtools::display_data::_add_item: Static item should have frame number -1 !");
-          }
-        if (the_entry->items.size () > 0)
-          {
-            std::ostringstream message;
-            message << "geomtools::display_data::_add_item: "
-                    << "Static entry '" << name_ << "' already has an item !";
-            throw std::logic_error (message.str ());              
-          }
+        DT_THROW_IF (frame_ != -1, std::logic_error, "Static item should have frame number -1 !");
+        DT_THROW_IF (the_entry->items.size () > 0,  std::logic_error,
+                     "Static entry '" << name_ << "' already has an item !");
         // add a new display item with frame number -1 :
         {
           display_item di;
@@ -284,19 +258,12 @@ namespace geomtools {
       }
     else
       {
-        if (frame_ < 0)
-          {
-            throw std::logic_error ("geomtools::display_data::_add_item: Algo step item should have frame number >= 0 !");
-          }
+        DT_THROW_IF (frame_ < 0, std::logic_error, "Algo step item should have frame number >= 0 !");
         std::map<int32_t, display_item>::iterator found
           = the_entry->items.find (frame_);
-        if (found != the_entry->items.end ())
-          {
-            std::ostringstream message;
-            message << "geomtools::display_data::_add_item: "
-                    << "Algo step item in entry '" << name_ << "' with frame number '" << frame_ << "' already exists !";
-            throw std::logic_error (message.str ());              
-          }
+        DT_THROW_IF (found != the_entry->items.end (),
+                     std::logic_error,
+                     "Algo step item in entry '" << name_ << "' with frame number '" << frame_ << "' already exists !");
         // add a new display item with requested frame number :
         {
           display_item di;
@@ -319,12 +286,12 @@ namespace geomtools {
           {
             _frames_[frame_] = std::string("");
           }
-        return di; 
+        return di;
       }
   }
 
   void display_data::process()
-  {          
+  {
     for (entries_dict_type::const_iterator i
            = get_entries ().begin ();
          i != get_entries ().end ();
@@ -354,15 +321,15 @@ namespace geomtools {
     return;
   }
 
-  display_data::display_item & 
-  display_data::add_framed_item (const std::string & name_, 
+  display_data::display_item &
+  display_data::add_framed_item (const std::string & name_,
                                  int frame_,
                                  const std::string & group_,
                                  const std::string & color_,
                                  const std::string & frame_info_)
   {
     return _add_item (name_,
-                      DISPLAY_FRAMED, 
+                      DISPLAY_FRAMED,
                       frame_,
                       group_,
                       color_);
@@ -372,13 +339,13 @@ namespace geomtools {
       }
   }
 
-  display_data::display_item & 
-  display_data::add_static_item (const std::string & name_, 
+  display_data::display_item &
+  display_data::add_static_item (const std::string & name_,
                                  const std::string & group_,
                                  const std::string & color_)
   {
     return _add_item (name_,
-                      DISPLAY_STATIC, 
+                      DISPLAY_STATIC,
                       -1,
                       group_,
                       color_);
@@ -395,10 +362,10 @@ namespace geomtools {
       {
         indent = a_indent;
       }
-    if (! a_title.empty ()) 
+    if (! a_title.empty ())
       {
         a_out << indent << a_title << endl;
-      }  
+      }
 
     // Display groups:
     a_out << indent << datatools::i_tree_dumpable::tag;
@@ -447,8 +414,8 @@ namespace geomtools {
     // Display entries:
     a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit);
     a_out << "Display entries: " << _entries_.size () << std::endl;
-    for (std::map<std::string, display_entry>::const_iterator i = _entries_.begin (); 
-         i != _entries_.end (); 
+    for (std::map<std::string, display_entry>::const_iterator i = _entries_.begin ();
+         i != _entries_.end ();
          i++)
       {
         a_out << indent << datatools::i_tree_dumpable::inherit_skip_tag (a_inherit);
@@ -467,7 +434,7 @@ namespace geomtools {
         if (de.is_static ())
           {
             a_out << "(static) ";
-          } 
+          }
         else
           {
             a_out << "(framed with " << de.items.size () << " steps) ";
@@ -477,7 +444,7 @@ namespace geomtools {
             a_out << "in group '" << de.group << "' ";
           }
         a_out << std::endl;
-        for (std::map<int32_t, display_item>::const_iterator di 
+        for (std::map<int32_t, display_item>::const_iterator di
                =  de.items.begin ();
              di != de.items.end ();
              di++)
@@ -522,7 +489,7 @@ namespace geomtools {
 
           }
       }
-        
+
     return;
   }
 

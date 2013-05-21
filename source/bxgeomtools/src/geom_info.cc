@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* geom_info.cc
  */
 
@@ -10,48 +10,48 @@ namespace geomtools {
 
   using namespace std;
 
-  const datatools::properties & 
+  const datatools::properties &
   geom_info::get_properties () const
   {
     return _properties_;
   }
 
-  datatools::properties & 
+  datatools::properties &
   geom_info::get_properties ()
   {
     return _properties_;
   }
-  
+
   const placement & geom_info::get_world_placement () const
   {
     return _world_placement_;
   }
-  
+
   const logical_volume & geom_info::get_logical () const
   {
     return *_logical_;
   }
-  
+
   const geom_id & geom_info::get_id () const
   {
     return _gid_;
   }
- 
+
   const geom_id & geom_info::get_gid () const
   {
     return _gid_;
   }
- 
+
   const geom_id & geom_info::get_geom_id () const
   {
     return _gid_;
   }
-  
+
   bool geom_info::has_logical () const
   {
     return _logical_ != 0;
   }
-     
+
   geom_info::geom_info ()
   {
     _gid_.invalidate ();
@@ -59,7 +59,7 @@ namespace geomtools {
     _logical_ = 0;
     return;
   }
-   
+
   geom_info::geom_info (const geom_id & a_id)
   {
     _gid_ = a_id;
@@ -67,8 +67,8 @@ namespace geomtools {
     _logical_ = 0;
     return;
   }
-    
-  geom_info::geom_info (const geom_id & a_id, 
+
+  geom_info::geom_info (const geom_id & a_id,
                         const placement & a_world_placement,
                         const logical_volume & a_logical_volume)
   {
