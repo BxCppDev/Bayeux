@@ -23,6 +23,7 @@
 
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
+#include <datatools/exception.h>
 
 #include <dpp/i_data_source.h>
 
@@ -70,14 +71,10 @@ namespace dpp {
 
   void i_data_source::set (const std::string & a_source_label)
   {
-    if (! _source_record.label.empty ())
-      {
-        std::ostringstream message;
-        message << "dpp::i_data_source::set:"
-                << "A source labelled '" << _source_record.label
-                << "' is already in use !";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF (! _source_record.label.empty (),
+                 std::logic_error,
+                 "A source labelled '" << _source_record.label
+                 << "' is already in use !");
     _source_record.label           = a_source_label;
     std::string effective_label         = a_source_label;
     datatools::fetch_path_with_env (effective_label);
@@ -87,14 +84,11 @@ namespace dpp {
     return;
   }
 
-  bool i_data_source::_load_record (datatools::things & a_event_record, 
+  bool i_data_source::_load_record (datatools::things & a_event_record,
                                     int64_t a_entry)
   {
-    std::ostringstream message;
-    message << "dpp::i_data_source::_load_record: "
-            << "Load by entry number is not supported !";
-    std::cerr << datatools::io::error
-              << message.str () << std::endl;
+    DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                 "Load by entry number is not supported !");
     return false;
   }
 
@@ -111,70 +105,46 @@ namespace dpp {
   int64_t i_data_source::get_number_of_entries () const
   {
     int noe = _get_number_of_entries ();
-    if (noe <= UNKNOWN_NUMBER_OF_ENTRIES)
-      {
-        std::ostringstream message;
-        message << "dpp::i_data_source::get_number_of_entries: "
-                << "Cannot determine the number of entries !";
-        std::cerr << datatools::io::error
-                  << message.str () << std::endl;
-      }
+    if (noe <= UNKNOWN_NUMBER_OF_ENTRIES) {
+      DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                   "Cannot determine the number of entries !");
+    }
     return noe;
   }
 
   bool i_data_source::can_load_record (int64_t a_entry)
   {
-    if (! is_open ())
-      {
-        return false;
-      }
-    if (! is_random ())
-      {
-        return false;
-      }
-    if (! has_number_of_entries ())
-      {
-        return false;
-      }
+    if (! is_open ()) {
+      return false;
+    }
+    if (! is_random ()) {
+      return false;
+    }
+    if (! has_number_of_entries ()) {
+      return false;
+    }
     if (a_entry < 0) return false;
     if (a_entry >= get_number_of_entries ()) return false;
     return true;
   }
 
-  bool i_data_source::load_record (datatools::things & a_event_record, 
+  bool i_data_source::load_record (datatools::things & a_event_record,
                                    int64_t a_entry)
   {
-    if (! can_load_record (a_entry))
-      {
-        std::cerr << datatools::io::error
-                  << "dpp::i_data_source::load_record: "
-                  << "Cannot access a random entry #" << a_entry << " !" 
-                  << std::endl;           
-        return false;
-      }
+    if (! can_load_record (a_entry)) {
+      DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                   "Cannot access a random entry #" << a_entry << " !");
+      return false;
+    }
     return _load_record (a_event_record, a_entry);
   }
 
   void i_data_source::_set_defaults (uint32_t a_flags)
   {
-    bool local_devel = false;
-    if (local_devel)
-      {
-        std::cerr << "DEVEL: "
-                  << "dpp::i_data_source::_set_defaults: "
-                  << "a_flags == " << a_flags << std::endl;
-      }
     _debug_level = 0;
-    if (a_flags & debug)
-      {
-        _debug_level = 1;
-        if (local_devel)
-          {
-            std::cerr << "DEVEL: debug "
-                      << "dpp::i_data_source::_set_defaults: "
-                      << "a_flags == " << a_flags << std::endl;
-          }
-      }
+    if (a_flags & debug) {
+      _debug_level = 1;
+    }
     _has_next_record = false;
     return;
   }

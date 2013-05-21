@@ -23,6 +23,8 @@
 #include <iostream>
 #include <sstream>
 
+#include <datatools/exception.h>
+
 #include <dpp/module_tools.h>
 #include <dpp/base_module.h>
 #include <dpp/module_manager.h>
@@ -160,32 +162,18 @@ namespace dpp {
 
   module_handle_type & module_entry_type::grab_initialized_module_handle ()
   {
-    if (! _module_handle_)
-      {
-        if (_manager_ == 0)
-          {
-            std::ostringstream message;
-            message << "dpp::module_entry_type::grab_initialized_module_handle: "
-                    << "No manager is available to create the module '" << this->_module_name_
-                    << "' ! ";
-            throw std::logic_error (message.str ());
-
-          }
-        _manager_->create_module (*this);
-      }
-    if (_module_handle_)
-      {
-        if (_manager_ == 0)
-          {
-            std::ostringstream message;
-            message << "dpp::module_entry_type::grab_initialized_module_handle: "
-                    << "No manager is available to initialize the module '" << this->_module_name_
-                    << "' ! ";
-            throw std::logic_error (message.str ());
-
-          }
-        _manager_->initialize_module (*this);
-      }
+    if (! _module_handle_) {
+      DT_THROW_IF (_manager_ == 0,
+                   std::logic_error,
+                   "No manager is available to create the module '" << this->_module_name_ << "' ! ");
+      _manager_->create_module (*this);
+    }
+    if (_module_handle_) {
+      DT_THROW_IF (_manager_ == 0,
+                   std::logic_error,
+                   "No manager is available to initialize the module '" << this->_module_name_ << "' ! ");
+      _manager_->initialize_module (*this);
+    }
     return _module_handle_;
   }
 
@@ -196,14 +184,12 @@ namespace dpp {
   {
     namespace du = datatools;
     std::string indent;
-    if (! indent_.empty ())
-      {
-        indent = indent_;
-      }
-    if ( ! title_.empty () )
-      {
-        out_ << indent << title_ << std::endl;
-      }
+    if (! indent_.empty ()) {
+      indent = indent_;
+    }
+    if ( ! title_.empty () ) {
+      out_ << indent << title_ << std::endl;
+    }
 
     out_ << indent << du::i_tree_dumpable::tag
          << "Module name     : '" << _module_name_ << "'" << std::endl;
@@ -216,57 +202,45 @@ namespace dpp {
     {
       size_t count = 0;
       std::ostringstream status_info;
-      if (is_created ())
-        {
-          if (count) status_info << ',';
-          status_info << "created";
-          count++;
-        }
-      if (is_initialized ())
-        {
-          if (count) status_info << ',';
-          status_info << "initialized";
-          count++;
-        }
-      if (count)
-        {
-          out_ << ' ' << '(' << status_info.str () << ')';
-        }
+      if (is_created ()) {
+        if (count) status_info << ',';
+        status_info << "created";
+        count++;
+      }
+      if (is_initialized ()) {
+        if (count) status_info << ',';
+        status_info << "initialized";
+        count++;
+      }
+      if (count) {
+        out_ << ' ' << '(' << status_info.str () << ')';
+      }
     }
     out_ << std::endl;
 
     out_ << indent << du::i_tree_dumpable::tag
          << "Module handle   : ";
-    if (_module_handle_)
-      {
-        const base_module & bm = _module_handle_.get ();
-        out_ << "'" << bm.get_name () << "'";
-      }
-    else
-      {
-        out_ << "<null>";
-      }
+    if (_module_handle_) {
+      const base_module & bm = _module_handle_.get ();
+      out_ << "'" << bm.get_name () << "'";
+    } else {
+      out_ << "<null>";
+    }
     out_ << std::endl;
 
-    if (_module_handle_)
-      {
-        out_ << indent << du::i_tree_dumpable::tag
-             << "Module description : ";
-        const base_module & bm = _module_handle_.get ();
-        if (bm.has_description ())
-          {
-            out_ << "'" << bm.get_description () << "'";
-          }
-        else
-          {
-            out_ << "<none>";
-          }
-        out_ << std::endl;
+    if (_module_handle_) {
+      out_ << indent << du::i_tree_dumpable::tag
+           << "Module description : ";
+      const base_module & bm = _module_handle_.get ();
+      if (bm.has_description ()) {
+        out_ << "'" << bm.get_description () << "'";
+      } else {
+        out_ << "<none>";
       }
-
+      out_ << std::endl;
+    }
     out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
          << "Manager   : " << has_manager () << std::endl;
-
     return;
   }
 

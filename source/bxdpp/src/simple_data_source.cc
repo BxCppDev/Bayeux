@@ -26,6 +26,7 @@
 #include <datatools/ioutils.h>
 #include <datatools/things.h>
 #include <datatools/io_factory.h>
+#include <datatools/exception.h>
 
 #if DATATOOLS_WITH_BIO == 0
 #include <datatools/archives_instantiation.h>
@@ -106,11 +107,9 @@ namespace dpp {
           }
         else
           {
-            std::ostringstream message;
-            message << "dpp::simple_data_source::set:"
-                    << "Source labelled '" << _source_record.effective_label
-                    << "' needs an unknown protocol !";
-            throw std::logic_error (message.str ());
+            DT_THROW_IF(true,std::logic_error,
+                        "Source labelled '" << _source_record.effective_label
+                        << "' needs an unknown protocol !");
           }
       }
     else
@@ -120,14 +119,8 @@ namespace dpp {
         file_name = _source_record.effective_label;
       }
 
-    if (download_mode)
-      {
-        std::ostringstream message;
-        message << "dpp::simple_data_source::set:"
-                << "Source file download mode is not implemented yet !";
-        throw std::logic_error (message.str ());
-      }
-
+    DT_THROW_IF (download_mode,std::logic_error,
+                 "Source file download mode is not implemented yet !");
     if (file_mode)
       {
         // std::cerr << "DEVEL: dpp::simple_data_source::set: TEST 3: invoke open_file_mode_" << std::endl;
@@ -158,25 +151,17 @@ namespace dpp {
   {
     namespace ds = datatools;
     //cerr << "DEVEL: dpp::simple_data_source::_open_file_source: Entering..." << std::endl;
-    if (! boost::filesystem::exists (_source_record.effective_label))
-      {
-        std::ostringstream message;
-        message << "dpp::simple_data_source::_open_file_source: "
-                << "File '" << _source_record.effective_label << "' does not exist !";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF (! boost::filesystem::exists (_source_record.effective_label),
+                 std::runtime_error,
+                 "File '" << _source_record.effective_label << "' does not exist !");
 
     int mode = 0;
     int status =
       ds::io_factory::guess_mode_from_filename (_source_record.effective_label, mode);
-    if (status == ds::io_factory::ERROR)
-      {
-        std::ostringstream message;
-        message << "dpp::simple_data_source::_open_file_source: "
-                << "File format not recognized for '"
-                << _source_record.effective_label << "' !";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF (status == ds::io_factory::ERROR,
+                 std::logic_error,
+                  "File format not recognized for '"
+                 << _source_record.effective_label << "' !");
 
     if (_boost_io_file_reader_ == 0)
       {
@@ -212,13 +197,9 @@ namespace dpp {
 
   bool simple_data_source::has_next_record ()
   {
-    if (_source_record.label.empty ())
-      {
-        std::ostringstream message;
-        message << "dpp::simple_data_source::has_next_record:"
-                << "No source label is available !";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF (_source_record.label.empty (),
+                 std::logic_error,
+                 "No source label is available !");
     if (_source_record.status == source_record::STATUS_CLOSED)
       {
         std::clog << datatools::io::notice

@@ -147,7 +147,7 @@ namespace dpp {
 
   protected:
 
-    void _lock_guard (const std::string & where_, const std::string & what_ = "");
+    //void _lock_guard (const std::string & where_, const std::string & what_ = "");
 
     void _set_name (const std::string & a_name);
 

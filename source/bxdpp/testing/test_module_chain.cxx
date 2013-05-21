@@ -198,16 +198,14 @@ int main (int argc_, char ** argv_)
 
       // Module manager :
       uint32_t flags = dpp::module_manager::BLANK;
-      if (debug)
-        {
-          flags |= dpp::module_manager::DEBUG;
-          flags |= dpp::module_manager::FACTORY_DEBUG;
-        }
-      if (verbose)
-        {
-          flags |= dpp::module_manager::VERBOSE;
-        }
+      if (debug) flags |= dpp::module_manager::FACTORY_DEBUG;
       dpp::module_manager MM (flags);
+      if (verbose) {
+        MM.set_logging_priority(datatools::logger::PRIO_NOTICE);
+      }
+      if (debug) {
+        MM.set_logging_priority(datatools::logger::PRIO_DEBUG);
+      }
 
       // Load properties from the configuration file:
       if (mgr_config.empty ())

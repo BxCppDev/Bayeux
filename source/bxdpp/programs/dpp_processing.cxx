@@ -42,20 +42,20 @@
 int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
-  datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
+  datatools::logger::priority logging = datatools::logger::PRIO_WARNING;
   const std::string APP_NAME_PREFIX = "dpp_processing: ";
 
   try {
     // The dpp_processing data record processing program.
-    bool   debug = false;
-    bool   verbose = false;
-    bool   break_on_error_as_fatal = false;
-    int    print_modulo = 10;
-    //bool   simulated_input = false;
-    std::string module_manager_config_file;
-    std::string module_name;
+    bool                     debug = false;
+    bool                     verbose = false;
+    std::string              logging_label = "warning";
+    bool                     break_on_error_as_fatal = false;
+    int                      print_modulo = 10;
+    std::string              module_manager_config_file;
+    std::string              module_name;
     std::vector<std::string> module_names;
-    std::string LL_config;
+    std::string              LL_config;
     std::vector<std::string> LL_dlls;
     std::vector<std::string> input_files;
     std::vector<std::string> output_files;
@@ -79,6 +79,9 @@ int main (int argc_, char ** argv_)
       ("verbose,v",
        po::value<bool>(&verbose)->zero_tokens()->default_value (false),
        "produce verbose logging.")
+      ("logging-priority,P",
+       po::value<std::string>(&logging_label)->default_value ("warning"),
+       "set the logging priority.")
       ("load-dll,l",
        po::value<std::vector<std::string> > (),
        "set a DLL to be loaded.")
@@ -111,7 +114,7 @@ int main (int argc_, char ** argv_)
        "set the maximum number of data records per output file.")
       // ("save-stopped-records,s",
       //  po::value<bool>(&save_stopped_data_records)->zero_tokens()->default_value (false),
-      //  "produce debug logging.")
+      //  "Blablabla.")
       ;
 
     // Describe command line arguments :
@@ -130,6 +133,14 @@ int main (int argc_, char ** argv_)
       DT_THROW_IF(true,
                   std::logic_error,
                   "Command line parser error : " << x.what () << " !");
+    }
+
+    if (vm.count ("logging-priority")) {
+      logging_label = vm["logging-priority"].as<std::string> ();
+      logging = datatools::logger::get_priority(logging_label);
+      DT_THROW_IF(logging == datatools::logger::PRIO_UNDEFINED,
+                  std::logic_error,
+                  "Invalid logging priority '" << logging_label << "' !");
     }
 
     /*** begin of opts/args parsing ***/
@@ -256,24 +267,20 @@ int main (int argc_, char ** argv_)
       DT_LOG_INFORMATION(logging, APP_NAME_PREFIX << "Using data processing module '" << module_name << "'.");
     }
 
-    // Module manager :
+    // Module manager constructor flags:
     uint32_t flags = dpp::module_manager::BLANK;
     if (debug) {
-      flags |= dpp::module_manager::DEBUG;
       flags |= dpp::module_manager::FACTORY_DEBUG;
     }
-    if (verbose) {
-      flags |= dpp::module_manager::VERBOSE;
-    }
-    // if (module_manager_config_file.empty ()) {
-    // }
 
     // Load properties from the configuration file:
     DT_THROW_IF(module_names.empty () && module_manager_config_file.empty (),
                 std::logic_error,
                 "Missing module manager configuration file !");
 
+    // Module manager :
     boost::scoped_ptr<dpp::module_manager> MM;
+
     if ( ! module_manager_config_file.empty ()) {
       MM.reset (new dpp::module_manager (flags));
       std::string MM_config_file = module_manager_config_file;
@@ -282,11 +289,13 @@ int main (int argc_, char ** argv_)
       DT_LOG_NOTICE(logging, APP_NAME_PREFIX << "Manager config. file : '" << MM_config_file << "'");
 
       datatools::properties MM_config;
-      datatools::properties::read_config (MM_config_file,
-                                          MM_config);
-      MM.get ()->initialize (MM_config);
+      datatools::properties::read_config(MM_config_file, MM_config);
+      MM.get()->set_logging_priority(logging);
+      MM.get()->initialize(MM_config);
       DT_LOG_NOTICE(logging, APP_NAME_PREFIX << "Module manager (initialized) : ");
-      if (logging >= datatools::logger::PRIO_NOTICE) MM.get ()->tree_dump(std::clog, "", "NOTICE: ");
+      if (logging >= datatools::logger::PRIO_NOTICE) {
+        MM.get()->tree_dump(std::clog);
+      }
     }
 
     std::vector<dpp::base_module*> modules;
@@ -299,7 +308,9 @@ int main (int argc_, char ** argv_)
       dpp::base_module & the_module = MM.get ()->grab (module_name);
       modules.push_back(&the_module);
       DT_LOG_NOTICE(logging, APP_NAME_PREFIX << "Added module : ");
-      if (logging >= datatools::logger::PRIO_NOTICE) the_module.tree_dump (std::clog, "", "NOTICE: ");
+      if (logging >= datatools::logger::PRIO_NOTICE) {
+        the_module.tree_dump (std::clog);
+      }
     }
 
     // Setup the data output sink :

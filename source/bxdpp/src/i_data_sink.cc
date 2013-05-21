@@ -25,6 +25,7 @@
 
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
+#include <datatools/exception.h>
 
 #include <dpp/dpp_config.h>
 #include <dpp/i_data_sink.h>
@@ -83,14 +84,9 @@ namespace dpp {
 
   void i_data_sink::set (const std::string & a_sink_label)
   {
-    if (! _sink_record.label.empty ())
-      {
-        std::ostringstream message;
-        message << "dpp::i_data_sink::set:"
-                << "A sink labelled '" << _sink_record.label
-                << "' is already in use !";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF (! _sink_record.label.empty (),
+                 std::logic_error,
+                 "A sink labelled '" << _sink_record.label << "' is already in use !");
     _sink_record.label           = a_sink_label;
     std::string effective_label  = a_sink_label;
     datatools::fetch_path_with_env (effective_label);
@@ -101,29 +97,14 @@ namespace dpp {
 
   void i_data_sink::set_defaults_ (uint32_t a_flags)
   {
-    bool local_devel = false;
-    if (local_devel)
-      {
-        std::cerr << "DEVEL: "
-             << "dpp::i_data_sink::set_defaults_: "
-             << "a_flags == " << a_flags << std::endl;
-      }
     _debug_level = 0;
-    if (a_flags & debug)
-      {
-        _debug_level = 1;
-        if (local_devel)
-          {
-            std::cerr << "DEVEL: "
-                 << "dpp::i_data_sink::set_defaults_: "
-                 << "a_flags == " << a_flags << std::endl;
-          }
-      }
+    if (a_flags & debug) {
+      _debug_level = 1;
+    }
     _preserve_existing_sink = false;
-    if (a_flags & preserve_existing_sink)
-      {
-        _preserve_existing_sink = true;
-      }
+    if (a_flags & preserve_existing_sink) {
+      _preserve_existing_sink = true;
+    }
     return;
   }
 

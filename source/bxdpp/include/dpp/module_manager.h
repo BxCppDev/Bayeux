@@ -35,6 +35,8 @@
 
 #include <boost/cstdint.hpp>
 
+#include <datatools/logger.h>
+
 #include <dpp/base_module.h>
 #include <dpp/module_tools.h>
 
@@ -48,12 +50,10 @@ namespace dpp {
     enum ctor_flag_type
       {
         BLANK             = 0,
-        DEBUG             = datatools::bit_mask::bit00,
-        FACTORY_DEBUG     = datatools::bit_mask::bit01,
-        FACTORY_NOPRELOAD = datatools::bit_mask::bit02,
-        FACTORY_INITIALIZATION_AT_LOAD = datatools::bit_mask::bit03,
-        VERBOSE           = datatools::bit_mask::bit04
-      };
+        FACTORY_DEBUG     = datatools::bit_mask::bit00,
+        FACTORY_NOPRELOAD = datatools::bit_mask::bit01,
+        FACTORY_INITIALIZATION_AT_LOAD = datatools::bit_mask::bit02,
+     };
 
     bool is_debug () const;
 
@@ -114,6 +114,10 @@ namespace dpp {
 
     void load_modules (const datatools::multi_properties & modules_config_);
 
+    datatools::logger::priority get_logging_priority() const;
+
+    void set_logging_priority(datatools::logger::priority);
+
   protected:
 
     void _load_module (const std::string & module_name_,
@@ -145,6 +149,7 @@ namespace dpp {
 
   private:
 
+    datatools::logger::priority        _logging_priority_;
     bool                               _initialized_;           //!< Initialization status
     uint32_t                           _flags_;                 //!< Some flags
     base_module::factory_register_type _factory_register_;      //!< Factory register

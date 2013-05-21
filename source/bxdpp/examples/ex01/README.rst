@@ -20,6 +20,9 @@ Introduction
    The example creates a core DLL, an associated DLL dedicated to
    serialization, and provides a test executable.
 
+   Finally, it shows how to use the ``dpp_processing`` executable to
+   run a data processing pipeline.
+
  * Source files :
 
    * The ``dpp_ex01::hit`` class:

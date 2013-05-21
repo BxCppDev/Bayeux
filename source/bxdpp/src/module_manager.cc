@@ -34,15 +34,26 @@
 
 namespace dpp {
 
+  datatools::logger::priority
+  module_manager::get_logging_priority() const
+  {
+    return _logging_priority_;
+  }
+
+  void module_manager::set_logging_priority(datatools::logger::priority p_)
+  {
+    _logging_priority_ = p_;
+  }
+
   bool module_manager::is_debug () const
   {
-    return _flags_ & DEBUG;
+    return _logging_priority_ >= datatools::logger::PRIO_DEBUG;
   }
 
   bool module_manager::is_verbose () const
   {
-    return _flags_ & VERBOSE;
-  }
+    return _logging_priority_ >= datatools::logger::PRIO_NOTICE;
+   }
 
   bool module_manager::is_no_preload () const
   {
@@ -81,19 +92,19 @@ namespace dpp {
   void module_manager::set_debug (bool debug_)
   {
     if (debug_) {
-      _flags_ |= DEBUG;
+      set_logging_priority(datatools::logger::PRIO_DEBUG);
     } else {
-      _flags_ &= DEBUG;
+      set_logging_priority(datatools::logger::PRIO_WARNING);
     }
     return;
   }
 
   void module_manager::set_verbose (bool verbose_)
   {
-    if (verbose_) {
-      _flags_ |= VERBOSE;
+   if (verbose_) {
+      set_logging_priority(datatools::logger::PRIO_NOTICE);
     } else {
-      _flags_ &= VERBOSE;
+      set_logging_priority(datatools::logger::PRIO_WARNING);
     }
     return;
   }
@@ -101,6 +112,7 @@ namespace dpp {
   // ctor:
   module_manager::module_manager (uint32_t flags_)
   {
+    _logging_priority_      = datatools::logger::PRIO_WARNING;
     _initialized_           = false;
     _flags_                 = flags_;
     _service_manager_owner_ = false;
@@ -152,11 +164,7 @@ namespace dpp {
 
   void module_manager::install_service_manager (const datatools::properties & service_manager_configuration_)
   {
-    if (is_debug ()) {
-      std::clog << datatools::io::debug
-                << "dpp::module_manager::install_service_manager: "
-                << "Entering..." << std::endl;
-    }
+    DT_LOG_TRACE(get_logging_priority(),"Entering...");
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
                 "Module manager is already initialized !");
@@ -164,18 +172,10 @@ namespace dpp {
                 std::logic_error,
                 "Module manager already has an embedded service manager !");
     _service_manager_ = new datatools::service_manager;
-    if (is_verbose ()) {
-      std::clog << datatools::io::notice
-                << "dpp::module_manager::install_service_manager: "
-                << "Initializing the embedded service manager..." << std::endl;
-    }
+    DT_LOG_NOTICE(get_logging_priority(),"Initializing the embedded service manager...");
     _service_manager_->initialize (service_manager_configuration_);
     _service_manager_owner_ = true;
-    if (is_debug ()) {
-      std::clog << datatools::io::debug
-                << "dpp::module_manager::install_service_manager: "
-                << "Exiting." << std::endl;
-    }
+    DT_LOG_TRACE(get_logging_priority(),"Exiting.");
     return;
   }
 
@@ -198,6 +198,15 @@ namespace dpp {
       set_verbose (true);
     }
 
+    if (setup_.has_key ("logging.priority")) {
+      std::string pl = setup_.fetch_string ("logging_priority");
+      datatools::logger::priority p = datatools::logger::get_priority(pl);
+      DT_THROW_IF(p == datatools::logger::PRIO_UNDEFINED,
+                  std::logic_error,
+                  "Invalid logging priority '" << pl << "' !");
+      set_logging_priority (p);
+    }
+
     if (setup_.has_flag ("factory.debug")) {
       _flags_ |= FACTORY_DEBUG;
     }
@@ -216,21 +225,17 @@ namespace dpp {
       if (setup_.has_key ("service_manager.configuration")) {
         service_manager_configuration_file
           = setup_.fetch_string ("service_manager.configuration");
-        if (is_verbose ()) {
-          std::clog << datatools::io::notice
-                    << "dpp::module_manager::initialize: "
-                    << "Embeds a service manager setup from file '"
-                    << service_manager_configuration_file << "' !" << std::endl;
-        }
+        DT_LOG_NOTICE (get_logging_priority(),
+                       "Embeds a service manager setup from file '"
+                       << service_manager_configuration_file << "' !" << std::endl);
         datatools::fetch_path_with_env (service_manager_configuration_file);
         datatools::properties service_manager_configuration;
         datatools::properties::read_config (service_manager_configuration_file,
                                             service_manager_configuration);
         install_service_manager (service_manager_configuration);
       } else {
-        std::clog << datatools::io::warning
-                  << "dpp::module_manager::initialize: "
-                  << "No service manager configuration property !" << std::endl;
+        DT_LOG_WARNING (get_logging_priority(),
+                        "No service manager configuration property !");
       }
     }
 
@@ -245,14 +250,12 @@ namespace dpp {
 
     // Check if some service manager is available :
     if (! has_service_manager ()) {
-      std::clog << datatools::io::warning
-                << "dpp::module_manager::initialize: "
-                << "No service manager is available ! "
-                << "This forbids the use of some processing modules that depend on external services !" << std::endl;
+        DT_LOG_WARNING (get_logging_priority(),
+                        "No service manager is available ! "
+                        << "This forbids the use of some processing modules that depend on external services !");
     } else {
-      std::clog << datatools::io::notice
-                << "dpp::module_manager::initialize: "
-                << "We now have a service manager available !" << std::endl;
+      DT_LOG_NOTICE (get_logging_priority(),
+                     "We now have a service manager available !");
     }
 
     // Load and create the data processing modules :
@@ -264,10 +267,9 @@ namespace dpp {
       std::string filename = modules_configurations[i];
       datatools::fetch_path_with_env (filename);
       datatools::multi_properties configs;
-      std::clog << datatools::io::notice
-                << "dpp::module_manager::initialize: "
-                << "Loading modules from file '"
-                << filename << "'..." << std::endl;
+      DT_LOG_NOTICE (get_logging_priority(),
+                     "Loading modules from file '"
+                     << filename << "'...");
       configs.read (filename);
       _load_modules (configs);
     }
@@ -289,16 +291,10 @@ namespace dpp {
     if (module_entry_.is_created ()) {
       return;
     }
-
-    if (is_debug ()) {
-      std::clog << datatools::io::debug
-                << "dpp::module_manager::_create_module: "
-                << "Creating module named '"
-                <<  module_entry_.get_module_name ()
-                << "'..."
-                << std::endl;
-    }
-
+    DT_LOG_DEBUG (get_logging_priority(),
+                  "Creating module named '"
+                  <<  module_entry_.get_module_name ()
+                  << "'...");
     // search for the cut's label in the factory dictionary:
     DT_THROW_IF(! _factory_register_.has (module_entry_.get_module_id ()),
                 std::logic_error,
@@ -311,16 +307,10 @@ namespace dpp {
     base_module * ptr = the_factory ();
     module_entry_.set_ptr (ptr);
     module_entry_.set_created ();
-
-    if (is_debug ()) {
-      std::clog << datatools::io::debug
-                << "dpp::module_manager::_create_module: "
-                << "Module named '"
-                <<  module_entry_.get_module_name ()
-                << "' has been created !"
-                << std::endl;
-    }
-
+    DT_LOG_DEBUG (get_logging_priority(),
+                  "Module named '"
+                  <<  module_entry_.get_module_name ()
+                  << "' has been created !");
     return;
   }
 
@@ -341,26 +331,20 @@ namespace dpp {
 
     // If not initialized, do it :
     if (! module_entry_.is_initialized ()) {
-      if (is_debug ()) {
-        std::clog << datatools::io::debug
-                  << "dpp::module_manager::_initialize_module: "
-                  << "Initializing module named '"
-                  <<  module_entry_.get_module_name ()
-                  << "'..."
-                  << std::endl;
-      }
+      DT_LOG_DEBUG (get_logging_priority(),
+                    "Initializing module named '"
+                    <<  module_entry_.get_module_name ()
+                    << "'...");
       base_module & the_module = module_entry_.grab_module ();
       if (has_service_manager ()) {
         the_module.initialize (module_entry_.get_module_config (),
                                grab_service_manager (),
                                _modules_);
       } else {
-        std::clog << datatools::io::notice
-                  << "dpp::module_manager::_initialize_module: "
-                  << "Attempt to initializing module named '"
-                  <<  module_entry_.get_module_name ()
-                  << "' without service support..."
-                  << std::endl;
+        DT_LOG_DEBUG (get_logging_priority(),
+                      "Attempt to initializing module named '"
+                      <<  module_entry_.get_module_name ()
+                      << "' without service support...");
         the_module.initialize_without_service (module_entry_.get_module_config (),
                                                _modules_);
       }
@@ -384,28 +368,16 @@ namespace dpp {
                                      const datatools::properties & module_config_)
   {
     bool debug = is_debug ();
-    if (debug) {
-      std::clog << datatools::io::debug
-                << "dpp::module_manager::_load_module: "
-                << "Entering..."
-                << std::endl;
-    }
-
+    DT_LOG_TRACE (get_logging_priority(), "Entering...");
     DT_THROW_IF(has(module_name_),
                 std::logic_error,
                 "Module '" << module_name_ << "' already exists !");
     {
       // Add a new entry :
       module_entry_type dummy_module_entry;
-      //dummy_module_entry.set_module_name (module_name_);
-      if (debug) {
-        std::clog << datatools::io::debug
-                  << "dpp::module_manager::_load_module: "
-                  << "Add an entry for module '" << module_name_ << "'..."
-                  << std::endl;
-      }
+      DT_LOG_DEBUG (get_logging_priority(),
+                    "Add an entry for module '" << module_name_ << "'...");
       _modules_[module_name_] = dummy_module_entry;
-      //_modules_[module_name_] = dummy_module_entry.module_handle;
     }
 
     // fetch a reference on it and update its internal values :
@@ -415,13 +387,8 @@ namespace dpp {
     the_module_entry.set_module_id (module_id_);
     the_module_entry.set_module_config (module_config_);
     the_module_entry.set_blank ();
-    if (debug) {
-      std::clog << datatools::io::debug
-                << "dpp::module_manager::_load_module: "
-                << "Fetch..."
-                << std::endl;
-    }
-    //_create_module (the_module_entry);
+
+    DT_LOG_DEBUG (get_logging_priority(), "Fetch module properties...");
 
     bool force_initialization_at_load = false;
 
@@ -433,12 +400,7 @@ namespace dpp {
       _initialize_module (the_module_entry);
     }
 
-    if (debug) {
-      std::clog << datatools::io::debug
-                << "dpp::module_manager::_load_module: "
-                << "Exiting."
-                << std::endl;
-    }
+    DT_LOG_TRACE (get_logging_priority(), "Exiting.");
     return;
   }
 
@@ -457,11 +419,7 @@ namespace dpp {
   void module_manager::_load_modules (const datatools::multi_properties & config_)
   {
     using namespace datatools;
-    if (is_debug()) {
-      config_.tree_dump (std::clog,
-                         "dpp::module_manager::_load_modules: ",
-                         "DEBUG: ");
-    }
+    DT_LOG_TRACE (get_logging_priority(), "Loading modules...");
 #if DPP_DATATOOLS_LEGACY == 1
     typedef multi_properties::entries_ordered_col_t col_type;
 #else
@@ -473,9 +431,7 @@ namespace dpp {
          ++i) {
       const multi_properties::entry & the_entry = **i;
       const std::string & module_name = the_entry.get_key ();
-      std::clog << datatools::io::notice
-                << "dpp::module_manager::_load_modules: "
-                << "Loading modules '" << module_name << "'..." << std::endl;
+      DT_LOG_NOTICE (get_logging_priority(), "Loading module '" << module_name << "'...");
       DT_THROW_IF(has(module_name),
                   std::logic_error,
                   "Module manager already has a module named '"
@@ -610,7 +566,7 @@ namespace dpp {
       out_ << " @ " << _service_manager_ << std::endl;
       std::ostringstream indent_ss;
       indent_ss << indent << datatools::i_tree_dumpable::skip_tag;
-      _service_manager_->tree_dump (std::clog, "", indent_ss.str ());
+      _service_manager_->tree_dump (out_, "", indent_ss.str ());
     } else {
       out_ << " <none>" << std::endl;
     }

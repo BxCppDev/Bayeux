@@ -24,13 +24,15 @@
 #include <sstream>
 
 #include <dpp/base_module.h>
-#include <dpp/module_manager.h>
 
 #include <datatools/properties.h>
 #include <datatools/ioutils.h>
 #include <datatools/utils.h>
 #include <datatools/service_manager.h>
 #include <datatools/exception.h>
+#include <datatools/logger.h>
+
+#include <dpp/module_manager.h>
 
 namespace dpp {
 
@@ -60,24 +62,24 @@ namespace dpp {
     return;
   }
 
-  void base_module::_lock_guard (const std::string & where_, const std::string & what_)
-  {
-    if (!is_initialized ()) return;
-    std::ostringstream message;
-    if (! where_.empty ()) {
-      message << where_ << " : ";
-    } else {
-      message << "dpp::base_module::_lock_guard" << " : ";
-    }
-    if (! what_.empty ()) {
-      message << what_;
-    } else {
-      message << "Operation prohibited ! Module '" << get_name ()
-              << "' is already initialized !";
-    }
-    throw std::logic_error (message.str ());
-    return;
-  }
+  // void base_module::_lock_guard (const std::string & where_, const std::string & what_)
+  // {
+  //   if (!is_initialized ()) return;
+  //   std::ostringstream message;
+  //   if (! where_.empty ()) {
+  //     message << where_ << " : ";
+  //   } else {
+  //     message << "dpp::base_module::_lock_guard" << " : ";
+  //   }
+  //   if (! what_.empty ()) {
+  //     message << what_;
+  //   } else {
+  //     message << "Operation prohibited ! Module '" << get_name ()
+  //             << "' is already initialized !";
+  //   }
+  //   throw std::logic_error (message.str ());
+  //   return;
+  // }
 
   void
   base_module::set_name (const std::string & a_new_value)

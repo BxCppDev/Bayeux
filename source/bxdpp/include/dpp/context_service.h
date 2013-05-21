@@ -2,9 +2,9 @@
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
  * Last modified : 2013-02-16
- * 
+ *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -17,17 +17,17 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
- * Description: 
+ * Description:
  *
  *  Context service. A service that provides a general purpose container
- *  as the repository for transcient and sharable data during the   
+ *  as the repository for transcient and sharable data during the
  *  lifetime of a data processing chain.
  *
- * History: 
- * 
+ * History:
+ *
  */
 
 #ifndef DPP_CONTEXT_SERVICE_H_
@@ -50,23 +50,23 @@ namespace datatools {
 namespace dpp {
 
   /// \brief A service that handles a context object store implemented as a datatools' multi_properties container
-  class context_service : 
+  class context_service :
     public datatools::base_service
   {
   public:
-    
+
     const datatools::multi_properties & get_store () const;
 
-    datatools::multi_properties & get_store ();
+    datatools::multi_properties & grab_store ();
 
-    const datatools::multi_properties & operator () () const;      
+    const datatools::multi_properties & operator () () const;
 
-    datatools::multi_properties & operator () ();      
-  
+    datatools::multi_properties & operator () ();
+
     bool is_debug () const;
 
     void set_debug (bool);
- 
+
     bool is_verbose () const;
 
     void set_verbose (bool);
@@ -77,16 +77,16 @@ namespace dpp {
                             datatools::service_dict_type & a_service_dict);
 
     virtual int reset ();
-    
-  public: 
+
+  public:
 
     // ctor:
     context_service ();
- 
+
     // dtor:
     virtual ~context_service ();
- 
-    virtual void tree_dump (std::ostream & a_out         = std::clog, 
+
+    virtual void tree_dump (std::ostream & a_out         = std::clog,
                             const std::string & a_title  = "",
                             const std::string & a_indent = "",
                             bool a_inherit               = false) const;
@@ -96,7 +96,7 @@ namespace dpp {
     bool initialized_;
     bool debug_;
     bool verbose_;
-        
+
     datatools::multi_properties * store_;
 
     std::string load_filename_;
@@ -105,7 +105,7 @@ namespace dpp {
 
     // Registration :
     DATATOOLS_SERVICE_REGISTRATION_INTERFACE (context_service);
-   
+
   };
 
 }  // end of namespace dpp

@@ -26,6 +26,8 @@
 #include <datatools/ioutils.h>
 #include <datatools/things.h>
 #include <datatools/io_factory.h>
+#include <datatools/exception.h>
+#include <datatools/logger.h>
 
 #include <brio/writer.h>
 
@@ -49,8 +51,7 @@ namespace dpp {
 
   void simple_brio_data_sink::reset ()
   {
-    if (is_open ())
-      {
+    if (is_open ()) {
         this->simple_brio_data_sink::close ();
       }
     _sink_record.reset ();
@@ -59,13 +60,10 @@ namespace dpp {
 
   void simple_brio_data_sink::close ()
   {
-    // std::cerr << "DEVEL: dpp::simple_brio_data_sink::close: Entering..." << std::endl;
-    if (_sink_record.status == sink_record::STATUS_CLOSED)
-      {
+    if (_sink_record.status == sink_record::STATUS_CLOSED) {
         return;
       }
-    if (_brio_file_writer_ != 0)
-      {
+    if (_brio_file_writer_ != 0)  {
         this->simple_brio_data_sink::_close_file_sink ();
       }
     return;
@@ -73,76 +71,52 @@ namespace dpp {
 
   void simple_brio_data_sink::open ()
   {
-    // std::cerr << "DEVEL: dpp::simple_brio_data_sink::open: Entering..." << std::endl;
-    if (_sink_record.status == sink_record::STATUS_OPENED)
-      {
+    if (_sink_record.status == sink_record::STATUS_OPENED) {
         return;
       }
     std::string label = _sink_record.effective_label;
     std::string file_name;
     bool   file_mode = false;
     bool   upload_mode = false;
-    if (boost::find_first (label, "://"))
-      {
-        if (boost::starts_with (label, "file://"))
-          {
+    if (boost::find_first (label, "://")) {
+        if (boost::starts_with (label, "file://")) {
             file_mode = true;
             file_name = label;
             boost::replace_first (file_name, "file://", "");
-          }
-        else if (boost::starts_with (label, "http://"))
-          {
+          } else if (boost::starts_with (label, "http://")) {
             upload_mode = true;
 #if BOOST_FILESYSTEM_VERSION == 3
             file_name = boost::filesystem::path (label).filename ().string ();
 #else
             file_name = boost::filesystem::path (label).filename ();
 #endif
-          }
-        else if (boost::starts_with (label, "https://"))
-          {
+          } else if (boost::starts_with (label, "https://")) {
             upload_mode = true;
 #if BOOST_FILESYSTEM_VERSION == 3
             file_name = boost::filesystem::path (label).filename ().string ();
 #else
             file_name = boost::filesystem::path (label).filename ();
 #endif
-          }
-        else if (boost::starts_with (label, "ftp://"))
-          {
+          } else if (boost::starts_with (label, "ftp://")) {
             upload_mode = true;
 #if BOOST_FILESYSTEM_VERSION == 3
             file_name = boost::filesystem::path (label).filename ().string ();
 #else
             file_name = boost::filesystem::path (label).filename ();
 #endif
+          } else {
+          DT_THROW_IF(true,std::logic_error,
+                      "Sink labelled '" << _sink_record.effective_label << "' needs an unknown protocol !");
           }
-        else
-          {
-            std::ostringstream message;
-            message << "dpp::simple_brio_data_sink::_open_file_sink:"
-                    << "Sink labelled '" << _sink_record.effective_label << "' needs an unknown protocol !";
-            throw std::logic_error (message.str ());
-          }
-      }
-    else
-      {
-        // std::cerr << "DEVEL: simple_brio_data_sink::_open_file_sink: TEST 2: file_mode" << std::endl;
+      } else {
         file_mode = true;
         file_name = _sink_record.effective_label;
       }
 
-    if (upload_mode)
-      {
-        std::ostringstream message;
-        message << "dpp::simple_brio_data_sink::_open_file_sink:"
-                << "Sink file upload mode is not implemented yet !";
-        throw std::logic_error (message.str ());
-      }
-
+    DT_THROW_IF (upload_mode,  std::runtime_error,
+                 "Sink file upload mode is not implemented yet !");
     if (file_mode)
       {
-        // std::cerr << "DEVEL: simple_brio_data_sink::_open_file_sink: TEST 3: invoke open_file_mode_" << std::endl;
         this->simple_brio_data_sink::_open_file_sink ();
       }
 
@@ -151,9 +125,7 @@ namespace dpp {
 
   void simple_brio_data_sink::_close_file_sink ()
   {
-    // std::cerr << "DEVEL: simple_brio_data_sink::_close_file_sink: TEST" << std::endl;
-    if (_brio_file_writer_ != 0)
-      {
+    if (_brio_file_writer_ != 0) {
         _brio_file_writer_->close ();
         delete _brio_file_writer_;
         _brio_file_writer_ = 0;
@@ -165,36 +137,22 @@ namespace dpp {
 
   void simple_brio_data_sink::_open_file_sink ()
   {
-    // std::cerr << "DEVEL: simple_brio_data_sink::_open_file_sink: TEST" << std::endl;
     namespace ds = datatools;
-    if (boost::filesystem::exists (_sink_record.effective_label))
-      {
-        std::ostringstream message;
-        message << "dpp::simple_brio_data_sink::_open_file_sink: "
-                << "File '" << _sink_record.effective_label << "' already exists !";
-        // std::cerr << "DEVEL: " << "preserve_existing_sink="<<preserve_existing_sink_<< std::endl;
-        if (is_preserve_existing_sink ())
-          {
-            throw std::logic_error (message.str ());
-          }
-        else
-          {
-            std::clog << datatools::io::warning << message.str () << std::endl;
-          }
+    if (boost::filesystem::exists (_sink_record.effective_label)) {
+        DT_THROW_IF (is_preserve_existing_sink (),
+                     std::logic_error,
+                     "File '" << _sink_record.effective_label << "' already exists !");
+        DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
+                       "File '" << _sink_record.effective_label << "' already exists !");
       }
     int mode = 0;
     int status =
       brio::store_info::guess_mode_from_filename (_sink_record.effective_label, mode);
-    if (status == ds::io_factory::ERROR)
-      {
-        std::ostringstream message;
-        message << "dpp::simple_brio_data_sink::_open_file_sink: "
-                << "File format not recognized for '" << _sink_record.effective_label << "' !";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF (status == ds::io_factory::ERROR,
+                 std::logic_error,
+                 "File format not recognized for '" << _sink_record.effective_label << "' !");
 
-    if (_brio_file_writer_ == 0)
-      {
+    if (_brio_file_writer_ == 0) {
         _brio_file_writer_ = new brio::writer;
         _brio_file_writer_->open (_sink_record.effective_label);
         _brio_file_writer_->add_store (brio_common::GENERAL_INFO_STORE_LABEL,
@@ -213,18 +171,13 @@ namespace dpp {
   bool simple_brio_data_sink::store_next_record (const datatools::things & a_event_record)
   {
     bool done = false;
-    if (_brio_file_writer_ != 0)
-      {
-        _brio_file_writer_->store (a_event_record);
-        done = true;
-      }
-    else
-      {
-        std::ostringstream message;
-        message << "dpp::simple_brio_data_sink::store_next_record: "
-                << "Cannot store the event record ! This is a bug !";
-        std::cerr << datatools::io::error << message.str () << std::endl;
-      }
+    if (_brio_file_writer_ != 0) {
+      _brio_file_writer_->store (a_event_record);
+      done = true;
+    } else {
+      DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                   "Cannot store the event record ! This is a bug !");
+    }
     return done;
   }
 

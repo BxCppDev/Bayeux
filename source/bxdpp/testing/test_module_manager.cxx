@@ -146,12 +146,7 @@ int main (int argc_, char ** argv_)
       uint32_t flags = dpp::module_manager::BLANK;
       if (debug)
         {
-          flags |= dpp::module_manager::DEBUG;
           flags |= dpp::module_manager::FACTORY_DEBUG;
-        }
-      if (verbose)
-        {
-          flags |= dpp::module_manager::VERBOSE;
         }
       dpp::module_manager MM (flags);
 
@@ -166,8 +161,9 @@ int main (int argc_, char ** argv_)
       std::clog << "Manager config. file : '" << MM_config_file << "'" << std::endl;
 
       datatools::properties MM_config;
-      datatools::properties::read_config (MM_config_file,
-                                       MM_config);
+      datatools::properties::read_config (MM_config_file, MM_config);
+      MM.set_debug(debug);
+      MM.set_verbose(verbose);
       MM.initialize (MM_config);
       MM.tree_dump (std::clog, "Module manager (initialized) : ");
 
