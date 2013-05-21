@@ -377,7 +377,7 @@ namespace cuts {
   void cut_manager::_load_cuts (const datatools::multi_properties & config_)
   {
     using namespace datatools;
-    DT_LOG_DEBUG(_logging_, "Cut manager configuration parameterss : ");
+    DT_LOG_DEBUG(_logging_, "Cut manager configuration parameters : ");
     if (is_debug()) {
       config_.tree_dump (std::clog, "");
     }
