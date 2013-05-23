@@ -22,6 +22,8 @@
 #include <map>
 
 #include <datatools/utils.h>
+#include <datatools/logger.h>
+
 #include <datatools/multi_properties.h>
 #include <geomtools/geom_id.h>
 
@@ -40,8 +42,6 @@ namespace geomtools {
     static const std::string TYPE_META_LABEL;
     static const std::string DEFAULT_WORLD_CATEGORY;
     static const int         WORD_TYPE;
-
-    static bool g_devel; /// Global debug flag (for experts only)
 
     /** A class that documents the hierarchical relationship
      *  of a geometry category :
@@ -250,9 +250,13 @@ namespace geomtools {
                               uint32_t nitem1_ = geom_id::INVALID_ADDRESS,
                               uint32_t nitem2_ = geom_id::INVALID_ADDRESS) const;
 
+    datatools::logger::priority get_logging_priority () const;
+
+    void set_logging_priority (datatools::logger::priority);
+
   private:
 
-    bool _debug_; /// Debug flag
+    datatools::logger::priority _logging_priority_;
     categories_by_name_col_type _categories_by_name_; /// Dictionnary of categories keyed by name
     categories_by_type_col_type _categories_by_type_; /// Dictionnary of categories keyed by type
 

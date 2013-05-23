@@ -25,7 +25,7 @@ by       : string[1] = "part"
 
 # This geometry category addresses the internal volume of a the vacuum chamber :
 [category="vessel_vacuum.gc" type="220"]
-inherits : string[1] = "vessel.gc"
+inherits : string = "vessel.gc"
 
 # This geometry category addresses a calibration source object :
 [category="source.gc" type="1000"]
@@ -33,7 +33,7 @@ addresses : string[1] = "position"
 
 # This geometry category addresses the support film of a calibration source :
 [category="source_film.gc" type="1010"]
-inherits : string[1] = "source.gc"
+inherits : string = "source.gc"
 
 # This geometry category addresses a vertical column of optical module :
 [category="detector_column.gc" type="2010"]
@@ -46,7 +46,7 @@ by       : string[1] = "row"
 
 #  This geometry category addresses the scintillator block of an optical module :
 [category="scin_block.gc" type="2030"]
-inherits : string[1] = "detector.gc"
+inherits : string = "detector.gc"
 
 #  This geometry category addresses a dynode inside a PMT :
 [category="pmt_dynode.gc" type="2040"]

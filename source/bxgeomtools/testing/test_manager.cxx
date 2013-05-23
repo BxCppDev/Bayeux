@@ -471,8 +471,6 @@ int main (int argc_, char ** argv_)
 
               std::vector<boost::shared_ptr<geomtools::display_data> > dd_ptrs;
 
-              geomtools::id_mgr::g_devel = devel;
-              geomtools::gnuplot_drawer::g_devel = devel;
               geomtools::gnuplot_drawer GPD;
               GPD.grab_properties().store(geomtools::gnuplot_drawer::WORLD_NAME_KEY,
                                           geo_mgr.get_world_name ());

@@ -15,12 +15,10 @@ namespace geomtools {
 
   using namespace std;
 
-  bool mapping::g_devel = false;
-
   /*** Properties manipulation ***/
 
-  // static 
-  const mapping::constants & 
+  // static
+  const mapping::constants &
   mapping::constants::instance ()
   {
     static boost::scoped_ptr<mapping::constants> g_global_constants (0);
@@ -33,7 +31,7 @@ namespace geomtools {
 
   mapping::constants::constants ()
   {
-    
+
     MAPPING_PREFIX = "mapping.";
     MAPPING_DAUGHTER_ID_PREFIX = "daughter_id.";
     return;
@@ -166,7 +164,7 @@ namespace geomtools {
       }
 
     /*
-      config_.tree_dump(std::cerr, "Mapping configuration : ", 
+      config_.tree_dump(std::cerr, "Mapping configuration : ",
       "DEBUG: geomtools::mapping::initialize: ");
     */
 
@@ -178,7 +176,7 @@ namespace geomtools {
 
     if (config_.has_flag ("mapping.no_world_mapping"))
       {
-        _world_mapping_ = false; 
+        _world_mapping_ = false;
       }
 
     set_build_mode(BUILD_MODE_STRICT_MOTHERSHIP);
@@ -195,7 +193,7 @@ namespace geomtools {
           set_build_mode(BUILD_MODE_LAZY_MOTHERSHIP);
           }
         */
-        else 
+        else
           {
             std::ostringstream message;
             message << "geomtools::mapping::initialize: Invalid build mode property value '"
@@ -240,7 +238,7 @@ namespace geomtools {
       }
 
     /*
-      std::cerr << "DEVEL: " 
+      std::cerr << "DEVEL: "
       << "geomtools::mapping::initialize: "
       << "****** DONE ******" << std::endl;
     */
@@ -287,7 +285,7 @@ namespace geomtools {
 
   void mapping::build_from (const model_factory & factory_, const string & mother_)
   {
-    bool devel = g_devel;
+    bool devel = false;
     //devel = true;
     if (devel)
       {
@@ -299,7 +297,7 @@ namespace geomtools {
         _initialized_ = true;
         //throw logic_error ("geomtools::mapping::build_from: Not initialized !");
       }
-    
+
     if (! factory_.is_locked ())
       {
         throw logic_error ("geomtools::mapping::build_from: Factory is not locked !");
@@ -355,7 +353,7 @@ namespace geomtools {
     return;
   }
 
-  void mapping::smart_print (std::ostream & out_, 
+  void mapping::smart_print (std::ostream & out_,
                              const std::string & indent_,
                              uint32_t flags_) const
   {
@@ -371,7 +369,7 @@ namespace geomtools {
 
     out_ << indent_ << "Number of entries : "
          << _get_geom_infos ().size () << std::endl;
-    
+
     int counter = 0;
 
     out_ << indent_ << "Dictionary of geometry informations : " << std::endl;
@@ -382,18 +380,18 @@ namespace geomtools {
       {
         geom_info_dict_type::const_iterator j = i;
         out_ << indent_;
-        string tag1 ="|-- "; 
-        string tag2 ="|   "; 
+        string tag1 ="|-- ";
+        string tag2 ="|   ";
         if (++j == _get_geom_infos().end ())
           {
-            tag1 ="`-- "; 
-            tag2 ="|   "; 
+            tag1 ="`-- ";
+            tag2 ="|   ";
           }
         out_ << tag1;
         out_ << "GID = " << i->first;
         const geom_info & ginfo = i->second;
         // To be done :
-        //out_ << " within category '" << "?" << "'"; 
+        //out_ << " within category '" << "?" << "'";
         if (! ginfo.has_logical ())
           {
             out_ << " (no logical!!!)";
@@ -409,19 +407,19 @@ namespace geomtools {
         out_ << indent_ << tag2 << "|-- " << "Material  : '"
              << ginfo.get_logical ().get_material_ref ()<< "'" << std::endl;
         out_ << indent_ << tag2 << "|-- "<< "Shape     : '"
-             << ginfo.get_logical ().get_shape ().get_shape_name () 
+             << ginfo.get_logical ().get_shape ().get_shape_name ()
              << "'" << std::endl;
         out_ << indent_ << tag2 << "|-- " << "World placement : ["
              << ginfo.get_world_placement () << "]" << std::endl;
         out_ << indent_ << tag2 << "`-- " << "Physicals : "
              << ginfo.get_logical ().get_physicals ().size () << std::endl;
 
-        counter++;       
+        counter++;
         if (counter % 5 == 0)
           {
             if (print_pager)
               {
-                std::clog << std::endl 
+                std::clog << std::endl
                           << "Hit ENTER to display the next page or type '.q' to quit : ";
                 std::string user;
                 std::getline (std::cin, user);
@@ -437,7 +435,7 @@ namespace geomtools {
               }
           }
       }
-    
+
     out_ << indent_ << "Collections of geometry informations by type : " << std::endl;
     for (ginfo_collections_with_type_dict_type::const_iterator i
            = get_geom_infos_with_type_map().begin ();
@@ -456,7 +454,7 @@ namespace geomtools {
           {
             out_ << "|-- ";
           }
-        out_ << "Type = " << type << " : " << col.size () << " items" << std::endl;  
+        out_ << "Type = " << type << " : " << col.size () << " items" << std::endl;
       }
 
     return;
@@ -464,7 +462,7 @@ namespace geomtools {
 
   void mapping::_build_ ()
   {
-    bool devel = g_devel;
+    bool devel = false;
 
     if (devel) {
       clog << datatools::io::devel
@@ -525,7 +523,7 @@ namespace geomtools {
                                           const placement & mother_world_placement_,
                                           const geom_id & mother_id_)
   {
-    bool devel = g_devel;
+    bool devel = false;
     if (is_debug())
       {
         devel = true;
@@ -729,15 +727,15 @@ namespace geomtools {
                                             const placement & mother_world_placement_,
                                             const std::vector<geom_id> & mother_ids_)
   {
-    bool devel = g_devel;
+    bool devel = false;
     if (is_debug())
       {
         devel = true;
       }
     _indenter_ (++_depth_);
-    
+
     if (devel) clog << datatools::io::devel << _indenter_ << "geomtools::mapping::_build_logical_children_2_: Entering..." << endl;
-    
+
     const logical_volume & log = log_;
     if (devel) clog << datatools::io::devel << _indenter_ << "geomtools::mapping::_build_logical_children_2_: Log = `" << log.get_name () << "'" << endl;
     if (log.get_physicals ().size () == 0)
@@ -849,11 +847,11 @@ if (devel) clog << datatools::io::devel << _indenter_
                   {
                     // For this level of mother volume :
                     const geom_id & mother_id = propagated_world_ids[imother];
-                    
+
                     // compute the vector of sub-addresses:
                     vector<uint32_t> items_index;
                     phys_placement.compute_index_map (items_index, item);
-                    try 
+                    try
                       {
                         _get_id_manager ().compute_id_from_info (item_id,
                                                                  mother_id,
@@ -863,8 +861,8 @@ if (devel) clog << datatools::io::devel << _indenter_
                       }
                     catch(std::exception & x)
                       {
-                        std::cerr <<  datatools::io::warning 
-                                  << "geomtools::mapping::_build_logical_children_2_: " 
+                        std::cerr <<  datatools::io::warning
+                                  << "geomtools::mapping::_build_logical_children_2_: "
                                   << "Cannot match a GID scheme for mother with GID=" << mother_id
                                   << " !"
                                   << endl;
@@ -926,8 +924,8 @@ if (devel) clog << datatools::io::devel << _indenter_
                     if (expect_mother)
                       {
                         std::ostringstream message;
-                        message <<  datatools::io::warning 
-                                << "geomtools::mapping::_build_logical_children_2_: " 
+                        message <<  datatools::io::warning
+                                << "geomtools::mapping::_build_logical_children_2_: "
                                 << "Cannot build any GID scheme from all levels of mothership from GIDs={";
                         for (int i = 0; i < propagated_world_ids.size(); i++)
                           {
@@ -969,7 +967,7 @@ if (devel) clog << datatools::io::devel << _indenter_
               }
           }
       }
-    
+
     if (devel)
       {
         clog << datatools::io::devel

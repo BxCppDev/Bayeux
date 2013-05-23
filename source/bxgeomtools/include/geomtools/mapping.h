@@ -1,18 +1,18 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* mapping.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-21
  * Last modified: 2010-23-20
- * 
- * License: 
- * 
- * Description: 
- *   Default geometry mapping: given a model factory (class model_factory) 
- *   and a ID manager (class id_mgr), this geometry mapping dictionnary 
+ *
+ * License:
+ *
+ * Description:
+ *   Default geometry mapping: given a model factory (class model_factory)
+ *   and a ID manager (class id_mgr), this geometry mapping dictionnary
  *   is auto generated.
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
 #ifndef __geomtools__mapping_h
@@ -34,23 +34,19 @@ namespace geomtools {
   class logical_volume;
   class geom_id;
 
+  /// \brief The geometry ID mapping
   class mapping : public geom_map
   {
   public:
 
-    static bool g_devel;
     static const size_t NO_MAX_DEPTH = 0;
-  
-    struct constants
-    {
+
+    struct constants {
       std::string MAPPING_PREFIX;
       std::string MAPPING_DAUGHTER_ID_PREFIX;
-      
       constants ();
-      
       static const constants & instance ();
-
-     };
+    };
 
     enum build_mode_type
       {
@@ -79,7 +75,7 @@ namespace geomtools {
 
     static bool has_key (const datatools::properties & config_,
                          const std::string & key_);
- 
+
     bool is_initialized () const;
     bool is_debug () const;
     void set_debug(bool);
@@ -103,7 +99,7 @@ namespace geomtools {
     virtual ~mapping ();
 
     void initialize (const datatools::properties & config_);
-    
+
     virtual void build_from (const model_factory & factory_,
                              const std::string & mother_ = "world");
 
@@ -115,19 +111,19 @@ namespace geomtools {
         PRINT_PAGER = datatools::bit_mask::bit01,
       };
 
-    void smart_print (std::ostream & out_ = std::clog, 
-                      const std::string & indent_ = "", 
+    void smart_print (std::ostream & out_ = std::clog,
+                      const std::string & indent_ = "",
                       uint32_t flags_ = 0) const;
 
   private:
 
     void _build_ ();
 
-    void _build_logical_children_ (const logical_volume & log_, 
+    void _build_logical_children_ (const logical_volume & log_,
                                    const placement & mother_world_placement_,
                                    const geom_id & mother_id_);
 
-    void _build_logical_children_2_ (const logical_volume & log_, 
+    void _build_logical_children_2_ (const logical_volume & log_,
                                      const placement & mother_world_placement_,
                                      const std::vector<geom_id> & mother_ids_);
 
@@ -144,7 +140,7 @@ namespace geomtools {
     int                            _build_mode_;
     int                            _mode_;
     std::list<std::string>         _only_excluded_list_;
-    
+
     // debug display utility:
     datatools::io::indenter _indenter_;
 
