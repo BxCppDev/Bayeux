@@ -13,6 +13,7 @@
 
 #include <datatools/ioutils.h>
 #include <datatools/units.h>
+#include <datatools/exception.h>
 
 //#include <geomtools/regular_linear_placement.h>
 #include <geomtools/visibility.h>
@@ -100,14 +101,10 @@ namespace geomtools {
     assert_unconstructed("surrounded_boxed_model::add_surrounding_model");
 
     surrounding_dict_type::const_iterator found = _surrounding_items_.find (i_);
-    if (found != _surrounding_items_.end ())
-      {
-        ostringstream message;
-        message << "surrounded_boxed_model::add_surrounding_model: "
-                << "Dictionary already has a model at position "
-                << " '" << i_ << "' !";
-        throw runtime_error (message.str ());
-      }
+    DT_THROW_IF (found != _surrounding_items_.end (),
+                 logic_error,
+                 "Dictionary already has a model at position "
+                 << " '" << i_ << "' !");
     surrounding_item si;
     _surrounding_items_[i_] = si;
     _surrounding_items_[i_].model = &model_;
@@ -123,13 +120,9 @@ namespace geomtools {
       }
     else
       {
-        if (_surrounding_labels_.find (label) != _surrounding_labels_.end ())
-          {
-            ostringstream message;
-            message << "surrounded_boxed_model::add_surrounding_model: "
-                    << "Label '" << label << "' is already used !";
-            throw runtime_error (message.str ());
-          }
+        DT_THROW_IF (_surrounding_labels_.find (label) != _surrounding_labels_.end (),
+                     logic_error,
+                     "Label '" << label << "' is already used !");
       }
     _surrounding_items_[i_].label = label;
     _surrounding_labels_[label] = i_;
@@ -150,14 +143,10 @@ namespace geomtools {
   surrounded_boxed_model::get_surrounding_item (const string & label_) const
   {
     labels_dict_type::const_iterator found = _surrounding_labels_.find (label_);
-    if (found == _surrounding_labels_.end ())
-      {
-        ostringstream message;
-        message << "surrounded_boxed_model::get_surrounding_item: "
-                << "Dictionary has no surrounding model with "
-                << "label '" << label_ << "' !";
-        throw runtime_error (message.str ());
-      }
+    DT_THROW_IF (found == _surrounding_labels_.end (),
+                 logic_error,
+                 "Dictionary has no surrounding model with "
+                 << "label '" << label_ << "' !");
     return (this->get_surrounding_item (found->second));
   }
 
@@ -165,42 +154,30 @@ namespace geomtools {
   surrounded_boxed_model::get_surrounding_item (int i_) const
   {
     surrounding_dict_type::const_iterator found = _surrounding_items_.find (i_);
-    if (found == _surrounding_items_.end ())
-      {
-        ostringstream message;
-        message << "surrounded_boxed_model::get_surrounding_item: "
-                << "Dictionary has no surrounding model item with "
-                << "index '" << i_ << "' !";
-        throw runtime_error (message.str ());
-      }
+    DT_THROW_IF (found == _surrounding_items_.end (),
+                 logic_error,
+                 "Dictionary has no surrounding model item with "
+                 << "index '" << i_ << "' !");
     return found->second;
   }
 
   const i_model & surrounded_boxed_model::get_surrounding_model (const string & label_) const
   {
     labels_dict_type::const_iterator found = _surrounding_labels_.find (label_);
-    if (found == _surrounding_labels_.end ())
-      {
-        ostringstream message;
-        message << "surrounded_boxed_model::get_boxed_model: "
-                << "Dictionary has no surrounding model with "
-                << "label '" << label_ << "' !";
-        throw runtime_error (message.str ());
-      }
+    DT_THROW_IF (found == _surrounding_labels_.end (),
+                 logic_error,
+                 "Dictionary has no surrounding model with "
+                 << "label '" << label_ << "' !");
     return this->get_surrounding_model (found->second);
   }
 
   const i_model & surrounded_boxed_model::get_surrounding_model (int i_) const
   {
     surrounding_dict_type::const_iterator found = _surrounding_items_.find (i_);
-    if (found == _surrounding_items_.end ())
-      {
-        ostringstream message;
-        message << "surrounded_boxed_model::get_boxed_model: "
-                << "Dictionary has no surrounding model with "
-                << "index '" << i_ << "' !";
-        throw runtime_error (message.str ());
-      }
+    DT_THROW_IF (found == _surrounding_items_.end (),
+                 logic_error,
+                 "Dictionary has no surrounding model with "
+                 << "index '" << i_ << "' !");
     return *(found->second.model);
   }
 
@@ -253,7 +230,7 @@ namespace geomtools {
                                               const datatools::properties & config_,
                                               models_col_type * models_)
   {
-    bool devel = i_model::g_devel;
+    bool devel = false;
     if (config_.has_flag ("devel"))
       {
         devel = true;
@@ -278,132 +255,66 @@ namespace geomtools {
       }
 
     /*** material ***/
-    if (config_.has_key ("material.ref"))
-      {
-        material_name = config_.fetch_string ("material.ref");
-      }
-    else
-      {
-        ostringstream message;
-        message << "surrounded_boxed_model::_at_construct: "
-                << "Missing 'material.ref' property !";
-        throw runtime_error (message.str ());
-      }
+    DT_THROW_IF (! config_.has_key ("material.ref"),
+                 std::runtime_error,
+                 "Missing 'material.ref' property !");
+    material_name = config_.fetch_string ("material.ref");
+
     set_material_name (material_name);
 
     /*** length unit ***/
-    if (config_.has_key ("length_unit"))
-      {
-        string length_unit_str = config_.fetch_string ("length_unit");
-        lunit = datatools::units::get_length_unit_from (length_unit_str);
-      }
+    if (config_.has_key ("length_unit")) {
+      string length_unit_str = config_.fetch_string ("length_unit");
+      lunit = datatools::units::get_length_unit_from (length_unit_str);
+    }
 
     /*** Surrounded model ***/
-    if (config_.has_key ("surrounded.model"))
-      {
-        surrounded_model_name = config_.fetch_string ("surrounded.model");
-      }
-    /*
-      else if (config_.has_key ("surrounded_model")) // obsolete
-      {
-      surrounded_model_name = config_.fetch_string ("surrounded_model");
-      }
-    */
-    else
-      {
-        ostringstream message;
-        message << "surrounded_boxed_model::_at_construct: "
-                << "Missing 'surrounded.model' property !";
-        throw runtime_error (message.str ());
-      }
+    DT_THROW_IF (! config_.has_key ("surrounded.model"),
+                 std::runtime_error,
+                 "Missing 'surrounded.model' property !");
+    surrounded_model_name = config_.fetch_string ("surrounded.model");
 
     /*** Surrounded label ***/
     _surrounded_label_ = SURROUNDED_LABEL;
-    if (config_.has_key ("surrounded.label"))
-      {
-        set_surrounded_label (config_.fetch_string ("surrounded.label"));
-      }
-    /*
-      else if (config_.has_key ("surrounded_label")) // obsolete
-      {
-      set_surrounded_label (config_.fetch_string ("surrounded_label"));
-      }
-    */
+    if (config_.has_key ("surrounded.label")) {
+      set_surrounded_label (config_.fetch_string ("surrounded.label"));
+    }
 
     /*** Centering of the surrounded item ***/
-    if (config_.has_flag ("surrounded.centered_x"))
-      {
-        if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: X-centered" << endl;
-        _centered_x_ = true;
-      }
-    /*
-      else if (config_.has_flag ("centered.x")) // obsolete
-      {
+    if (config_.has_flag ("surrounded.centered_x")) {
       if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: X-centered" << endl;
       _centered_x_ = true;
       }
-    */
 
-    if (config_.has_flag ("surrounded.centered_y"))
-      {
-        if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: Y-centered" << endl;
-        _centered_y_ = true;
-      }
-    /*
-      else if (config_.has_flag ("centered.y")) // obsolete
-      {
+    if (config_.has_flag ("surrounded.centered_y")) {
       if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: Y-centered" << endl;
       _centered_y_ = true;
-      }
-    */
+    }
 
-    if (config_.has_flag ("surrounded.centered_z"))
-      {
-        if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: Z-centered" << endl;
-        _centered_z_ = true;
-      }
-    /*
-      else if (config_.has_flag ("centered.z")) // obsolete
-      {
+    if (config_.has_flag ("surrounded.centered_z")) {
       if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: Z-centered" << endl;
       _centered_z_ = true;
-      }
-    */
+    }
 
     /*** check models ***/
-    if (! models_)
-      {
-        ostringstream message;
-        message << "surrounded_boxed_model::_at_construct: "
-                << "Missing logicals dictionary !";
-        throw runtime_error (message.str ());
-      }
+    DT_THROW_IF (! models_,
+                 logic_error,
+                 "Missing logicals dictionary !");
 
     /*** check if surrounded model exists ***/
     {
       models_col_type::const_iterator found =
         models_->find (surrounded_model_name);
-      if (found != models_->end ())
-        {
-          // check if the model is stackable:
-          if (! i_shape_3d::is_stackable (found->second->get_logical ().get_shape ()))
-            {
-              ostringstream message;
-              message << "stacked_boxed_model::_at_construct: "
-                      << "The surrounded model '" << found->second->get_name ()
-                      << "' is not stackable !";
-              throw runtime_error (message.str ());
-            }
-          set_surrounded_model (*(found->second));
-        }
-      else
-        {
-          ostringstream message;
-          message << "surrounded_boxed_model::_at_construct: "
-                  << "Cannot find surrounded model with name '"
-                  << surrounded_model_name << "' !";
-          throw runtime_error (message.str ());
-        }
+      DT_THROW_IF (found == models_->end (),
+                   logic_error,
+                   "Cannot find surrounded model with name '"
+                   << surrounded_model_name << "' !");
+      // check if the model is stackable:
+      DT_THROW_IF (! i_shape_3d::is_stackable (found->second->get_logical ().get_shape ()),
+                   logic_error,
+                   "The surrounded model '" << found->second->get_name ()
+                   << "' is not stackable !");
+      set_surrounded_model (*(found->second));
     }
 
     /*** loop over surrounding models ***/
@@ -411,61 +322,47 @@ namespace geomtools {
       int ipos = BACK;
       for (vector<string>::const_iterator ilabel = _position_labels_.begin ();
            ilabel != _position_labels_.end ();
-           ilabel++, ipos++)
-        {
+           ilabel++, ipos++){
           string surrounding_model_name;
           string label_name;
           ostringstream surrounding_item_prop;
           surrounding_item_prop << "surrounded." <<  *ilabel << "_" << MODEL_PROPERTY_PREFIX;
-          if (config_.has_key (surrounding_item_prop.str ()))
-            {
+          if (config_.has_key (surrounding_item_prop.str ())) {
               surrounding_model_name = config_.fetch_string (surrounding_item_prop.str ());
-            }
-          else
-            {
-              if (devel)
-                {
-                  ostringstream message;
-                  message << "surrounded_boxed_model::_at_construct: "
-                          << "No '" << surrounding_item_prop.str () << "' property !";
-                  clog << datatools::io::devel << message.str () << endl;
-                }
+            } else {
+              // if (devel)
+              //   {
+              //     ostringstream message;
+              //     message << "surrounded_boxed_model::_at_construct: "
+              //             << "No '" << surrounding_item_prop.str () << "' property !";
+              //     clog << datatools::io::devel << message.str () << endl;
+              //   }
               continue;
             }
           // attempt to extract a user defined label:
           ostringstream label_item_prop;
           label_item_prop << "surrounded." <<  *ilabel << "_" << LABEL_PROPERTY_PREFIX;
-          if (config_.has_key (label_item_prop.str ()))
-            {
+          if (config_.has_key (label_item_prop.str ())) {
               label_name = config_.fetch_string (label_item_prop.str ());
             }
 
           models_col_type::const_iterator found =
             models_->find (surrounding_model_name);
-          if (found != models_->end ())
-            {
-              // check if the model is stackable:
-              if (! i_shape_3d::is_stackable (found->second->get_logical ().get_shape ()))
-                {
-                  ostringstream message;
-                  message << "surrounded_boxed_model::_at_construct: "
-                          << "The " << *ilabel << " surrounding model '"
-                          << found->second->get_name ()
-                          << "' is not stackable !";
-                  throw runtime_error (message.str ());
-                }
-              add_surrounding_model (ipos, *(found->second), label_name);
-            }
-          else
-            {
-              ostringstream message;
-              message << "surrounded_boxed_model::_at_construct: "
-                      << "Cannot find surrounding model with name '"
-                      << surrounding_model_name << "' !";
-              throw runtime_error (message.str ());
-            }
-        }
+          DT_THROW_IF (found == models_->end (),
+                       logic_error,
+                       "Cannot find surrounding model with name '"
+                       << surrounding_model_name << "' !");
+
+          // check if the model is stackable:
+          DT_THROW_IF (! i_shape_3d::is_stackable (found->second->get_logical ().get_shape ()),
+                        logic_error,
+                       "The " << *ilabel << " surrounding model '"
+                       << found->second->get_name ()
+                       << "' is not stackable !");
+          add_surrounding_model (ipos, *(found->second), label_name);
+      } // end of for
     }
+    /*** end of loop over surrounding models ***/
 
     /*** compute main box dimensions ***/
     mygsl::min_max mmx0;
@@ -478,14 +375,10 @@ namespace geomtools {
 
     // try to get a stackable data from the shape:
     stackable_data the_SD;
-    if (! i_shape_3d::pickup_stackable (the_shape, the_SD))
-      {
-        ostringstream message;
-        message << "surrounded_boxed_model::_at_construct: "
-                << "Cannot surround/stack the '"
-                << the_shape.get_shape_name () << "' shape !";
-        throw runtime_error (message.str ());
-      }
+    DT_THROW_IF ((! i_shape_3d::pickup_stackable (the_shape, the_SD)),
+                 logic_error,
+                 "Cannot surround/stack the '"
+                 << the_shape.get_shape_name () << "' shape !");
     double gxmin = the_SD.get_xmin ();
     double gxmax = the_SD.get_xmax ();
     double gymin = the_SD.get_ymin ();
@@ -509,8 +402,7 @@ namespace geomtools {
     double dz1 = 0.0;
     for (surrounding_dict_type::const_iterator i = _surrounding_items_.begin ();
          i != _surrounding_items_.end ();
-         i++)
-      {
+         i++) {
         int position = i->first;
         const surrounding_item & si = i->second;
         const i_model * model = si.model;
@@ -518,14 +410,10 @@ namespace geomtools {
 
         // try to get a stackable data from the shape:
         stackable_data the_SD2;
-        if (! i_shape_3d::pickup_stackable (the_surrounding_shape, the_SD2))
-          {
-            ostringstream message;
-            message << "surrounded_boxed_model::_at_construct: "
-                    << "Cannot surround/stack the '"
-                    << the_surrounding_shape.get_shape_name () << "' surrounding shape !";
-            throw runtime_error (message.str ());
-          }
+        DT_THROW_IF ((! i_shape_3d::pickup_stackable (the_surrounding_shape, the_SD2)),
+                     logic_error,
+                     "Cannot surround/stack the '"
+                     << the_surrounding_shape.get_shape_name () << "' surrounding shape !");
         double g2xmin = the_SD2.get_xmin ();
         double g2xmax = the_SD2.get_xmax ();
         double g2ymin = the_SD2.get_ymin ();
@@ -636,14 +524,10 @@ namespace geomtools {
       {
         x = config_.fetch_real ("x");
         if (! config_.has_explicit_unit ("x")) x *= lunit;
-        if (x < dim_x)
-          {
-            ostringstream message;
-            message << "surrounded_boxed_model::_at_construct: "
-                    << "Enforced X dimension '" << x / CLHEP::mm
-                    << "' mm (<" << dim_x / CLHEP::mm << ") is too small for surrounded components to fit !";
-            throw runtime_error (message.str ());
-          }
+        DT_THROW_IF (x < dim_x,
+                     logic_error,
+                     "Enforced X dimension '" << x / CLHEP::mm
+                     << "' mm (<" << dim_x / CLHEP::mm << ") is too small for surrounded components to fit !");
         dim_x = x;
       }
 
@@ -651,14 +535,10 @@ namespace geomtools {
       {
         y = config_.fetch_real ("y");
         if (! config_.has_explicit_unit ("y")) y *= lunit;
-        if (y < dim_y)
-          {
-            ostringstream message;
-            message << "surrounded_boxed_model::_at_construct: "
-                    << "Enforced Y dimension '" << y / CLHEP::mm
-                    << "' mm (<" << dim_y / CLHEP::mm << ") is too small for surrounded components to fit !";
-            throw runtime_error (message.str ());
-          }
+        DT_THROW_IF (y < dim_y,
+                     logic_error,
+                     "Enforced Y dimension '" << y / CLHEP::mm
+                     << "' mm (<" << dim_y / CLHEP::mm << ") is too small for surrounded components to fit !");
         dim_y = y;
       }
 
@@ -666,14 +546,10 @@ namespace geomtools {
       {
         z = config_.fetch_real ("z");
         if (! config_.has_explicit_unit ("z")) z *= lunit;
-        if (z < dim_z)
-          {
-            ostringstream message;
-            message << "surrounded_boxed_model::_at_construct: "
-                    << "Enforced Z dimension '" << z / CLHEP::mm
-                    << "' mm (<" << dim_z / CLHEP::mm << ") is too small for surrounded components to fit !";
-            throw runtime_error (message.str ());
-          }
+        DT_THROW_IF (z < dim_z,
+                     logic_error,
+                     "Enforced Z dimension '" << z / CLHEP::mm
+                     << "' mm (<" << dim_z / CLHEP::mm << ") is too small for surrounded components to fit !");
         dim_z = z;
       }
 
@@ -682,14 +558,13 @@ namespace geomtools {
     _solid_.set_x (dim_x);
     _solid_.set_y (dim_y);
     _solid_.set_z (dim_z);
-    if (! _solid_.is_valid ())
-      {
-        throw runtime_error ("surrounded_boxed_model::_at_construct: Invalid solid !");
-      }
-    if (devel)
-      {
-        _solid_.tree_dump (cerr, "surrounded_boxed_model::_at_construct: Solid: ", "DEVEL: ");
-      }
+    DT_THROW_IF (! _solid_.is_valid (),
+                  logic_error,
+                 "Invalid solid !");
+    // if (devel)
+    //   {
+    //     _solid_.tree_dump (cerr, "surrounded_boxed_model::_at_construct: Solid: ", "DEVEL: ");
+    //   }
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (_solid_);
     get_logical ().set_material_ref (__get_material_name ());
@@ -705,8 +580,7 @@ namespace geomtools {
     // placement of the surrounding solids:
     for (surrounding_dict_type::iterator i = _surrounding_items_.begin ();
          i != _surrounding_items_.end ();
-         i++)
-      {
+         i++) {
         int position = i->first;
         surrounding_item & si = i->second;
         const i_model * model = si.model;
@@ -725,33 +599,27 @@ namespace geomtools {
         double g2ymax = the_SD2.get_ymax ();
         double g2zmin = the_SD2.get_zmin ();
         double g2zmax = the_SD2.get_zmax ();
-        if (position == BACK)
-          {
+        if (position == BACK) {
             xi += the_SD.get_xmin ();
             xi -= g2xmax;
           }
-        if (position == FRONT)
-          {
+        if (position == FRONT) {
             xi += the_SD.get_xmax ();
             xi -= g2xmin;
           }
-        if (position == LEFT)
-          {
+        if (position == LEFT) {
             yi += the_SD.get_ymin ();
             yi -= g2ymax;
           }
-        if (position == RIGHT)
-          {
+        if (position == RIGHT) {
             yi += the_SD.get_ymax ();
             yi -= g2ymin;
           }
-        if (position == BOTTOM)
-          {
+        if (position == BOTTOM) {
             zi += the_SD.get_zmin ();
             zi -= g2zmax;
           }
-        if (position == TOP)
-          {
+        if (position == TOP) {
             zi += the_SD.get_zmax ();
             zi -= g2zmin;
           }
@@ -763,20 +631,19 @@ namespace geomtools {
       }
 
     // 2011-12-05 FM : add support for additional internal objects :
-    if (_internals_.get_number_of_items () == 0)
-      {
-        if (devel) cerr << endl << endl
-             << "DEVEL ****************************"
-             << "DEVEL: surrounded_boxed_model::_at_construct: process MWIM"
-             << endl
-             << endl;
+    if (_internals_.get_number_of_items () == 0) {
+        // if (devel) cerr << endl << endl
+        //      << "DEVEL ****************************"
+        //      << "DEVEL: surrounded_boxed_model::_at_construct: process MWIM"
+        //      << endl
+        //      << endl;
        _internals_.plug_internal_models (config_,
                                          get_logical (),
                                          models_);
       }
 
-    if (devel) clog << datatools::io::devel
-                    << "surrounded_boxed_model::_at_construct: Exiting." << endl;
+    // if (devel) clog << datatools::io::devel
+    //                 << "surrounded_boxed_model::_at_construct: Exiting." << endl;
     return;
   }
 

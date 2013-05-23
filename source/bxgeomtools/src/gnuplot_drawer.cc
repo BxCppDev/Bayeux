@@ -891,7 +891,7 @@ namespace geomtools {
       }
     else
       {
-        DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,"Label '" << what << "' is not a GID !");
+        //DT_LOG_DEBUG(datatools::logger::PRIO_NOTICE,"Label '" << what << "' is not a GID !");
         geomtools::placement visu_placement;
         const std::string & visu_model_name = what;
         models_col_type::const_iterator found = geo_mgr_.get_factory ().get_models ().find (visu_model_name);

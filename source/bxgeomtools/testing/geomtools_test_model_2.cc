@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* geomtools_test_model_2.cc
  */
 
@@ -7,20 +7,20 @@
 namespace geomtools {
 
   using namespace std;
-  
-  // registration :   
+
+  // registration :
   GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(test_model_2,"geomtools::test::test_model_2");
-  
+
   const geomtools::box & test_model_2::get_solid () const
   {
     return __solid;
   }
-  
+
   string test_model_2::get_model_id () const
   {
     return "geomtools::test::test_model_2";
   }
-  
+
     // ctor:
   test_model_2::test_model_2 () : geomtools::i_model ()
   {
@@ -28,17 +28,17 @@ namespace geomtools {
     __sub2_model = 0;
     return;
   }
-  
+
   test_model_2::~test_model_2 ()
   {
     return;
   }
-  
+
   void test_model_2::_at_construct (const string & name_,
                                     const datatools::properties & config_,
                                     models_col_type * models_)
   {
-    bool devel = i_model::g_devel;
+    bool devel = false;
     if (devel) clog << "DEVEL: test_model_2::_at_construct: Entering..." << endl;
     set_name (name_);
     double gas_pressure = 1. * CLHEP::atmosphere;
@@ -55,21 +55,21 @@ namespace geomtools {
         if (devel) clog << "DEVEL: test_model_2::_at_construct: key= 'gas_pressure'..." << endl;
         gas_pressure = config_.fetch_real ("gas_pressure");
         gas_pressure *= CLHEP::atmosphere;
-      }  
+      }
 
     if (config_.has_key ("gas_temperature"))
       {
         if (devel) clog << "DEVEL: test_model_2::_at_construct: key= 'gas_temperature'..." << endl;
         gas_temperature = config_.fetch_real ("gas_temperature");
         gas_temperature *= CLHEP::kelvin;
-      }  
+      }
 
     if (config_.has_key ("distance"))
       {
         if (devel) clog << "DEVEL: test_model_2::_at_construct: key= 'distance'..." << endl;
         distance = config_.fetch_real ("distance");
         distance *= CLHEP::mm;
-      }  
+      }
 
     if (config_.has_key ("theta"))
       {
@@ -99,8 +99,8 @@ namespace geomtools {
       {
         ostringstream message;
         message << "test_model_2::_at_construct: "
-                << "Missing 'sub1_model' property !"; 
-        throw runtime_error (message.str ());   
+                << "Missing 'sub1_model' property !";
+        throw runtime_error (message.str ());
       }
 
     if (config_.has_key ("sub2_model"))
@@ -111,15 +111,15 @@ namespace geomtools {
       {
         ostringstream message;
         message << "test_model_2::_at_construct: "
-                << "Missing 'sub2_model' property !"; 
-        throw runtime_error (message.str ());   
+                << "Missing 'sub2_model' property !";
+        throw runtime_error (message.str ());
       }
-      
+
     if (! models_)
       {
         ostringstream message;
         message << "test_model_2::_at_construct: "
-                << "Missing logicals dictionary !"; 
+                << "Missing logicals dictionary !";
         throw runtime_error (message.str ());
       }
 
@@ -134,7 +134,7 @@ namespace geomtools {
         {
           ostringstream message;
           message << "test_model_2::_at_construct: "
-                  << "Cannot find model with name '" 
+                  << "Cannot find model with name '"
                   << sub1_model_name << "' !";
           throw runtime_error (message.str ());
         }
@@ -151,7 +151,7 @@ namespace geomtools {
         {
           ostringstream message;
           message << "test_model_2::_at_construct: "
-                  << "Cannot find model with name '" 
+                  << "Cannot find model with name '"
                   << sub2_model_name << "' !";
           throw runtime_error (message.str ());
         }
@@ -174,8 +174,8 @@ namespace geomtools {
     __sub2_placement.set_orientation (phi, theta, 0.0);
 
     __solid.reset ();
-    double size = 
-      distance 
+    double size =
+      distance
       + 2 * __sub1_model->get_solid ().get_x ()
       + 2 * __sub2_model->get_solid ().get_x ();
     __solid.set_x (size);
@@ -185,7 +185,7 @@ namespace geomtools {
       {
         throw runtime_error ("test_model_2::_at_construct: Invalid solid !");
       }
-    
+
     // initialize the 'logical_volume' of this model:
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (__solid);
@@ -202,37 +202,37 @@ namespace geomtools {
     __sub2_phys.set_logical (__sub2_model->get_logical ());
     __sub2_phys.set_mother (_logical);
     if (devel) clog << "DEVEL: test_model_2::_at_construct: Physicals are installed. " << endl;
-    
+
     if (devel) clog << "DEVEL: test_model_2::_at_construct: Exiting." << endl;
     return;
   }
 
-  void test_model_2::tree_dump (ostream & out_, 
-                                const string & title_ , 
-                                const string & indent_, 
+  void test_model_2::tree_dump (ostream & out_,
+                                const string & title_ ,
+                                const string & indent_,
                                 bool inherit_) const
   {
      string indent;
      if (! indent_.empty ()) indent = indent_;
      i_model::tree_dump (out_, title_, indent, true);
 
-     
+
       {
         // Sub-model #1:
         if (__sub1_model)
           {
-            out_ << indent << datatools::i_tree_dumpable::tag 
+            out_ << indent << datatools::i_tree_dumpable::tag
                  << "Sub model 1 : " << endl;
             {
               ostringstream indent_oss;
               indent_oss << indent;
               indent_oss << datatools::i_tree_dumpable::skip_tag;
               __sub1_model->tree_dump (out_, "", indent_oss.str ());
-            }   
+            }
           }
         else
           {
-            out_ << indent << datatools::i_tree_dumpable::tag 
+            out_ << indent << datatools::i_tree_dumpable::tag
                  << "Sub model 1 : " << "<missing>" << endl;
           }
       }
@@ -241,81 +241,81 @@ namespace geomtools {
         // Sub-model #2:
         if (__sub2_model)
           {
-            out_ << indent << datatools::i_tree_dumpable::tag 
+            out_ << indent << datatools::i_tree_dumpable::tag
                  << "Sub model 2 : " << endl;
             {
               ostringstream indent_oss;
               indent_oss << indent;
               indent_oss << datatools::i_tree_dumpable::skip_tag;
               __sub2_model->tree_dump (out_, "", indent_oss.str ());
-            }   
+            }
           }
         else
           {
-            out_ << indent << datatools::i_tree_dumpable::tag 
+            out_ << indent << datatools::i_tree_dumpable::tag
                  << "Sub model 2 : " << "<missing>" << endl;
           }
       }
 
       {
-        out_ << indent << datatools::i_tree_dumpable::tag 
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Placement 1 : " << endl;
         {
           ostringstream indent_oss;
           indent_oss << indent;
           indent_oss << datatools::i_tree_dumpable::skip_tag;
           __sub1_placement.tree_dump (out_, "", indent_oss.str ());
-        }   
+        }
       }
 
       {
-        out_ << indent << datatools::i_tree_dumpable::tag 
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Placement 2 : " << endl;
         {
           ostringstream indent_oss;
           indent_oss << indent;
           indent_oss << datatools::i_tree_dumpable::skip_tag;
           __sub2_placement.tree_dump (out_, "", indent_oss.str ());
-        }   
+        }
       }
 
       {
-        out_ << indent << datatools::i_tree_dumpable::tag 
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Sub physical 1 : " << endl;
         {
           ostringstream indent_oss;
           indent_oss << indent;
           indent_oss << datatools::i_tree_dumpable::skip_tag;
           __sub1_phys.tree_dump (out_, "", indent_oss.str ());
-        }   
+        }
       }
 
       {
-        out_ << indent << datatools::i_tree_dumpable::tag 
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Sub physical 2 : " << endl;
         {
           ostringstream indent_oss;
           indent_oss << indent;
           indent_oss << datatools::i_tree_dumpable::skip_tag;
           __sub2_phys.tree_dump (out_, "", indent_oss.str ());
-        }   
+        }
       }
 
       {
-        out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_) 
+        out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
              << "Solid : " << endl;
         {
           ostringstream indent_oss;
           indent_oss << indent;
           indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
           __solid.tree_dump (out_, "", indent_oss.str ());
-        }   
+        }
       }
 
 
      return;
   }
-       
+
 } // end of namespace geomtools
 
 // end of geomtools_test_model_2.cc

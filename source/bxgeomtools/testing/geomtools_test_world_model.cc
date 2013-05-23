@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* geomtools_test_world_model.cc
  */
 
@@ -7,35 +7,35 @@
 namespace geomtools {
 
   using namespace std;
- 
-  // registration :   
+
+  // registration :
   GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(test_world_model,"geomtools::test::test_world_model");
-  
+
   const geomtools::box & test_world_model::get_solid () const
   {
     return __solid;
   }
-  
+
   string test_world_model::get_model_id () const
   {
     return "geomtools::test::test_world_model";
   }
-  
+
     // ctor:
   test_world_model::test_world_model () : geomtools::i_model ()
   {
     __setup_model = 0;
   }
-  
+
   test_world_model::~test_world_model ()
   {
   }
-  
+
   void test_world_model::_at_construct (const string & name_,
                                         const datatools::properties & config_,
                                         models_col_type * models_)
   {
-    bool devel = i_model::g_devel;
+    bool devel = false;
     if (devel) clog << "DEVEL: test_world_model::_at_construct: Entering..." << endl;
     set_name (name_);
     string material = "vacuum";
@@ -54,7 +54,7 @@ namespace geomtools {
       {
          if (devel) clog << "DEVEL: test_world_model::_at_construct: key= 'phi'..." << endl;
         phi = config_.fetch_real ("phi");
-        phi *= CLHEP::degree; 
+        phi *= CLHEP::degree;
       }
 
     if (material::has_key (config_, material::make_key (material::constants::instance ().MATERIAL_REF_PROPERTY)))
@@ -71,15 +71,15 @@ namespace geomtools {
       {
         ostringstream message;
         message << "test_world_model::_at_construct: "
-                << "Missing 'setup_model' property !"; 
-        throw runtime_error (message.str ());   
+                << "Missing 'setup_model' property !";
+        throw runtime_error (message.str ());
       }
-     
+
     if (! models_)
       {
         ostringstream message;
         message << "test_world_model::_at_construct: "
-                << "Missing logicals dictionary !"; 
+                << "Missing logicals dictionary !";
         throw runtime_error (message.str ());
       }
 
@@ -95,7 +95,7 @@ namespace geomtools {
         {
           ostringstream message;
           message << "test_world_model::_at_construct: "
-                  << "Cannot find model with name '" 
+                  << "Cannot find model with name '"
                   << setup_model_name << "' !";
           throw runtime_error (message.str ());
         }
@@ -119,7 +119,7 @@ namespace geomtools {
         setup_y = b->get_y ();
         setup_z = b->get_z ();
       }
-    
+
     double size = setup_x;
     if (setup_y > size) size = setup_y;
     if (setup_z > size) size = setup_z;
@@ -131,7 +131,7 @@ namespace geomtools {
       {
         throw runtime_error ("test_world_model::_at_construct: Invalid solid !");
       }
-    
+
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (__solid);
     get_logical ().set_material_ref (material);
@@ -142,14 +142,14 @@ namespace geomtools {
     __setup_phys.set_logical (__setup_model->get_logical ());
     __setup_phys.set_mother (_logical);
     if (devel) clog << "DEVEL: test_world_model::_at_construct: Physicals are installed. " << endl;
-    
+
     if (devel) clog << "DEVEL: test_world_model::_at_construct: Exiting." << endl;
     return;
   }
 
-  void test_world_model::tree_dump (ostream & out_, 
-                                const string & title_ , 
-                                const string & indent_, 
+  void test_world_model::tree_dump (ostream & out_,
+                                const string & title_ ,
+                                const string & indent_,
                                 bool inherit_) const
   {
      string indent;
@@ -160,58 +160,58 @@ namespace geomtools {
        // Setup model:
         if (__setup_model)
           {
-            out_ << indent << datatools::i_tree_dumpable::tag 
+            out_ << indent << datatools::i_tree_dumpable::tag
                  << "Setup model : " << endl;
             {
               ostringstream indent_oss;
               indent_oss << indent;
               indent_oss << datatools::i_tree_dumpable::skip_tag;
               __setup_model->tree_dump (out_, "", indent_oss.str ());
-            }   
+            }
           }
         else
           {
-            out_ << indent << datatools::i_tree_dumpable::tag 
+            out_ << indent << datatools::i_tree_dumpable::tag
                  << "Setup model : " << "<missing>" << endl;
           }
       }
 
       {
-        out_ << indent << datatools::i_tree_dumpable::tag 
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Setup placement: " << endl;
         {
           ostringstream indent_oss;
           indent_oss << indent;
           indent_oss << datatools::i_tree_dumpable::skip_tag;
           __setup_placement.tree_dump (out_, "", indent_oss.str ());
-        }   
+        }
       }
 
       {
-        out_ << indent << datatools::i_tree_dumpable::tag 
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Setup physical : " << endl;
         {
           ostringstream indent_oss;
           indent_oss << indent;
           indent_oss << datatools::i_tree_dumpable::skip_tag;
           __setup_phys.tree_dump (out_, "", indent_oss.str ());
-        }   
+        }
       }
 
       {
-        out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_) 
+        out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
              << "Solid : " << endl;
         {
           ostringstream indent_oss;
           indent_oss << indent;
           indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
           __solid.tree_dump (out_, "", indent_oss.str ());
-        }   
+        }
       }
 
      return;
   }
-       
+
 } // end of namespace geomtools
 
 // end of geomtools_test_world_model.cc

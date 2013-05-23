@@ -1,7 +1,7 @@
-// -*- mode: c++ ; -*- 
-// test_model_factory.cxx  
-   
-#include <cstdlib> 
+// -*- mode: c++ ; -*-
+// test_model_factory.cxx
+
+#include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
@@ -28,8 +28,8 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'model_factory'!" << endl; 
-  
+      clog << "Test program for class 'model_factory'!" << endl;
+
       bool debug = false;
       bool devel = false;
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
@@ -39,7 +39,7 @@ int main (int argc_, char ** argv_)
       bool gdml = true;
       bool dump = true;
       string setup_filename;
-      string model_name; 
+      string model_name;
 
       int iarg = 1;
       while (iarg < argc_)
@@ -48,78 +48,76 @@ int main (int argc_, char ** argv_)
 
           if (token[0] == '-')
             {
-               string option = token; 
-               if ((option == "-d") || (option == "--debug")) 
+               string option = token;
+               if ((option == "-d") || (option == "--debug"))
                  {
                    debug = true;
                  }
-               else if (option == "--devel") 
+               else if (option == "--devel")
                  {
                    devel = true;
                  }
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
-               else if (option == "-D" || option == "--no-draw") 
+               else if (option == "-D" || option == "--no-draw")
                  {
                    draw = false;
                  }
-               else if (option == "-G") 
+               else if (option == "-G")
                  {
                    gdml = false;
                  }
-               else if (option == "-T") 
+               else if (option == "-T")
                  {
                    dump = false;
                  }
-               else if (option == "-xy") 
+               else if (option == "-xy")
                  {
                    drawer_view = geomtools::gnuplot_drawer::VIEW_2D_XY;
                  }
-               else if (option == "-xz") 
+               else if (option == "-xz")
                  {
                    drawer_view = geomtools::gnuplot_drawer::VIEW_2D_XZ;
                  }
-               else if (option == "-yz") 
-                 { 
+               else if (option == "-yz")
+                 {
                    drawer_view = geomtools::gnuplot_drawer::VIEW_2D_YZ;
                  }
-               else if (option == "-3d") 
+               else if (option == "-3d")
                  {
                    drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
                  }
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
-               else if (option == "-m") 
+               else if (option == "-m")
                  {
                    model_name = argv_[++iarg];
                  }
-               else 
-                 { 
-                    clog << "warning: ignoring option '" << option << "'!" << endl; 
+               else
+                 {
+                    clog << "warning: ignoring option '" << option << "'!" << endl;
                  }
             }
           else
             {
-              string argument = token; 
+              string argument = token;
               if (setup_filename.empty ())
                 {
                   setup_filename = argument;
                 }
               else
-                { 
-                  clog << "warning: ignoring argument '" << argument << "'!" << endl; 
+                {
+                  clog << "warning: ignoring argument '" << argument << "'!" << endl;
                 }
             }
           iarg++;
-      }  
-    
-      geomtools::i_model::g_devel = devel;
- 
+      }
+
       geomtools::model_factory factory;
       factory.set_debug (debug);
 
       if (setup_filename.empty ())
         {
           setup_filename = "${GEOMTOOLS_DATA_DIR}/testing/config/test_geometry_models.conf";
-        } 
+        }
       datatools::fetch_path_with_env (setup_filename);
       factory.load (setup_filename);
       factory.lock ();
@@ -128,10 +126,10 @@ int main (int argc_, char ** argv_)
       geomtools::placement p;
       p.set (0, 0, 0, 0 * CLHEP::degree, 0 * CLHEP::degree, 0);
       if (dump) p.tree_dump (clog, "Placement");
- 
+
       clog << "Models: " << endl;
       int count = 0;
-      for (geomtools::models_col_type::const_iterator i 
+      for (geomtools::models_col_type::const_iterator i
              = factory.get_models ().begin ();
            i != factory.get_models ().end ();
            i++)
@@ -155,14 +153,14 @@ int main (int argc_, char ** argv_)
 
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
       if (draw)
-        {   
+        {
           geomtools::gnuplot_drawer::g_devel = devel;
           geomtools::gnuplot_drawer GPD;
           GPD.set_view (drawer_view);
           GPD.set_mode (geomtools::gnuplot_drawer::MODE_WIRED);
-          GPD.draw (factory, 
-                    model_name, 
-                    p,  
+          GPD.draw (factory,
+                    model_name,
+                    p,
                     geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT);
         }
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
@@ -176,19 +174,19 @@ int main (int argc_, char ** argv_)
         writer.add_element ("Nitrogen", 7, "N", 14);
         writer.add_element ("Lead", 82, "Pb", 1);
 
-        writer.add_material ("Al", 
+        writer.add_material ("Al",
                              13.0,
                              2.70 * CLHEP::g / CLHEP::cm3,
                              26.98);
-        
-        map<string, double> Air_map; 
+
+        map<string, double> Air_map;
         Air_map["Oxygen"] = 0.3;
         Air_map["Nitrogen"] = 0.7;
         writer.add_material ("Air",
                              "air",
                              1.29 * CLHEP::mg / CLHEP::cm3,
                              Air_map);
-        
+
         map<string, size_t> H2O_map;
         H2O_map["Oxygen"] = 1;
         H2O_map["Hydrogen"] = 2;
@@ -204,27 +202,27 @@ int main (int argc_, char ** argv_)
         geomtools::gdml_export GDML;
         GDML.add_replica_support (true);
         GDML.attach_external_materials (writer.get_stream (geomtools::gdml_writer::MATERIALS_SECTION));
-        GDML.parameters ().store ("xml_version",  
+        GDML.parameters ().store ("xml_version",
                                   geomtools::gdml_writer::DEFAULT_XML_VERSION);
-        GDML.parameters ().store ("xml_encoding", 
+        GDML.parameters ().store ("xml_encoding",
                                   geomtools::gdml_writer::DEFAULT_XML_ENCODING);
-        GDML.parameters ().store ("gdml_schema",  
+        GDML.parameters ().store ("gdml_schema",
                                   geomtools::gdml_writer::DEFAULT_GDML_SCHEMA);
-        GDML.parameters ().store ("length_unit",  
+        GDML.parameters ().store ("length_unit",
                                   geomtools::gdml_export::DEFAULT_LENGTH_UNIT);
-        GDML.parameters ().store ("angle_unit",   
+        GDML.parameters ().store ("angle_unit",
                                   geomtools::gdml_export::DEFAULT_ANGLE_UNIT);
         GDML.export_gdml ("test_model_factory.gdml", factory, model_name);
       }
     }
   catch (exception & x)
     {
-      cerr << "error: " << x.what () << endl; 
+      cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);

@@ -1,16 +1,16 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* gnuplot_drawer.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-20
  * Last modified: 2010-02-20
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *  Algorithm to recursively draw the geometry using gnuplot.
  *
- * History: 
- * 
+ * History:
+ *
  */
 
 #ifndef GEOMTOOLS_GNUPLOT_DRAWER_H_
@@ -25,7 +25,7 @@
 #include <geomtools/placement.h>
 
 namespace geomtools {
-  
+
   class model_factory;
   class logical_volume;
   class display_data;
@@ -33,7 +33,7 @@ namespace geomtools {
   class mapping;
   class manager;
 
-  class gnuplot_drawer 
+  class gnuplot_drawer
   {
   public:
 
@@ -46,7 +46,7 @@ namespace geomtools {
     static const std::string DEFAULT_VIEW;
 
     static const int    DISPLAY_LEVEL_NO_LIMIT;
-  
+
     static const std::string MODE_WIRED;
     static const std::string MODE_SOLID;
     static const std::string DEFAULT_MODE;
@@ -62,7 +62,7 @@ namespace geomtools {
     {
       std::string label;
       std::string filename;
-      std::ostringstream * oss; 
+      std::ostringstream * oss;
       int color;
 
       cstream ();
@@ -84,7 +84,7 @@ namespace geomtools {
       const display_data * _dd_address_;
     };
 
-    class has_dd_addr 
+    class has_dd_addr
     {
     public:
       has_dd_addr(const display_data &);
@@ -140,13 +140,13 @@ namespace geomtools {
     void reset_cstreams ();
 
     void dump ();
- 
+
   private:
-    
+
     void _draw_ (const logical_volume & log_,
                  const placement & p_,
                  int max_display_level_ = 0);
-    
+
   public:
 
     /// Main display method
@@ -179,7 +179,7 @@ namespace geomtools {
 
     /// Add a display data object in the scene to be drawn with a dedicated placement
     void add_display_data(const display_data & dd_, const placement & pl_);
-    
+
     /// Remove all display data formerly added to the scene
     void reset_display_data();
 
@@ -212,11 +212,10 @@ namespace geomtools {
     range _xrange_;
     range _yrange_;
     range _zrange_;
-    //std::vector<const display_data *> _display_data_;
     dd_col_type _display_data_;
 
   }; // class gnuplot_drawer
-  
+
 } // end of namespace snemo
 
 #endif // GEOMTOOLS_GNUPLOT_DRAWER_H_

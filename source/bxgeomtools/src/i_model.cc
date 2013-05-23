@@ -20,7 +20,6 @@ namespace geomtools {
 
   DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION (i_model, "geomtools::i_model/__system__");
 
-  bool i_model::g_devel = false;
 
   // static
   const i_model::constants &
@@ -42,6 +41,17 @@ namespace geomtools {
     return;
   }
 
+  datatools::logger::priority i_model::get_logging_priority() const
+  {
+    return _logging_priority;
+  }
+
+  void i_model::set_logging_priority(datatools::logger::priority p_)
+  {
+    _logging_priority = p_;
+  }
+
+
   void i_model::assert_constructed (const string & where_,
                                     const string & what_) const
   {
@@ -56,7 +66,7 @@ namespace geomtools {
       message << "Operation not allowed ! Model has not been constructed yet";
     }
     message << " !";
-    throw logic_error (message.str ());
+    DT_THROW_IF(true, logic_error, message.str ());
   }
 
   void i_model::assert_unconstructed (const string & where_,
@@ -73,7 +83,7 @@ namespace geomtools {
       message << "Operation not allowed ! Model has already been constructed";
     }
     message << " !";
-    throw logic_error (message.str ());
+    DT_THROW_IF(true, logic_error, message.str ());
   }
 
   string i_model::make_solid_name (const string & basename_)
@@ -138,14 +148,10 @@ namespace geomtools {
   string i_model::extract_label_from_physical_volume_name (const string & physical_volume_name_)
   {
     size_t pos = physical_volume_name_.rfind (i_model::constants::instance().PHYSICAL_SUFFIX);
-    if (pos == physical_volume_name_.npos)
-      {
-        ostringstream message;
-        message << "geomtools::i_model::extract_label_from_physical_volume_name: "
-                << "Do not recognize a physical volume name from '"
-                << physical_volume_name_ << "' !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF(pos == physical_volume_name_.npos,
+                logic_error,
+                "Do not recognize a physical volume name from '"
+                << physical_volume_name_ << "' !");
     return physical_volume_name_.substr (0, pos);
   }
 
@@ -156,15 +162,15 @@ namespace geomtools {
 
   bool i_model::is_debug () const
   {
-    return _logging >= datatools::logger::PRIO_DEBUG;
+    return _logging_priority >= datatools::logger::PRIO_DEBUG;
   }
 
   void i_model::set_debug (bool new_value_)
   {
     if (new_value_) {
-      _logging = datatools::logger::PRIO_DEBUG;
+      _logging_priority = datatools::logger::PRIO_DEBUG;
     } else {
-      _logging = datatools::logger::PRIO_WARNING;
+      _logging_priority = datatools::logger::PRIO_WARNING;
     }
     return;
   }
@@ -207,7 +213,7 @@ namespace geomtools {
   i_model::i_model (const string & name_)
   {
     _constructed_ = false;
-    _logging = datatools::logger::PRIO_WARNING;
+    _logging_priority = datatools::logger::PRIO_WARNING;
     set_name (name_);
     _phantom_solid = false;
     return;
@@ -216,9 +222,7 @@ namespace geomtools {
   // dtor:
   i_model::~i_model ()
   {
-    if (g_devel) clog << "DEVEL: i_model::~i_model: Entering..." << endl;
     _parameters_.clear ();
-    if (g_devel) clog << "DEVEL: i_model::~i_model: Exiting." << endl;
     return;
   }
 
@@ -241,20 +245,25 @@ namespace geomtools {
                                const datatools::properties & setup_,
                                models_col_type * models_)
   {
-    if (g_devel) clog << "DEVEL: i_model::_at_construct: Entering..." << endl;
-
-    throw logic_error ("geomtools::i_model::_at_construct: This method MUST be overloaded !");
-
-    if (g_devel) clog << "DEVEL: i_model::_at_construct: Exiting." << endl;
+    DT_THROW_IF(true,runtime_error, "This method MUST be overloaded !");
     return;
   }
 
   void i_model::_pre_construct (datatools::properties & setup_)
   {
-    if (setup_.has_flag (i_model::constants::instance().PHANTOM_SOLID_FLAG))
-      {
-        _set_phantom_solid (true);
-      }
+    if (setup_.has_key("logging.priority")) {
+      std::string lp_label = setup_.fetch_string("logging.priority");
+      datatools::logger::priority lp = datatools::logger::get_priority(lp_label);
+      DT_THROW_IF(lp ==  datatools::logger::PRIO_UNDEFINED,
+                  std::logic_error,
+                  "Invalid logging priority '" << lp_label << "' !");
+      set_logging_priority(lp);
+    }
+
+    if (setup_.has_flag (i_model::constants::instance().PHANTOM_SOLID_FLAG)) {
+      _set_phantom_solid (true);
+    }
+
     return;
   }
 
@@ -273,25 +282,16 @@ namespace geomtools {
                            const datatools::properties & setup_,
                            models_col_type * models_)
   {
-    if (g_devel) clog << "DEVEL: i_model::construct: Entering..." << endl;
     bool devel_track_name = false;
 
-    if (setup_.has_flag ("geomtools::i_model::devel_track_name"))
-      {
-        devel_track_name = true;
-      }
-    if (devel_track_name) clog << "DEVEL: i_model::construct: Constructing name='" << name_ << "'..." << endl;
-    if (_constructed_)
-      {
-        throw logic_error ("geomtools::i_model::construct: Already constructed !");
-      }
+    DT_THROW_IF (_constructed_,
+                 logic_error,
+                 "Model '" << name_ << "' has been already constructed !");
     datatools::properties & setup = const_cast<datatools::properties &> (setup_);
     _pre_construct (setup);
     _at_construct (name_, setup_, models_);
     _post_construct (setup);
     _constructed_ = true;
-    if (g_devel) clog << "DEVEL: geomtools::i_model::construct: Exiting." << endl;
-    if (devel_track_name) clog << "DEVEL: geomtools::i_model::construct: Constructed name='" << name_ << "'." << endl;
     return;
   }
 
@@ -303,8 +303,8 @@ namespace geomtools {
     std::string indent;
     if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ()) {
-        out_ << indent << title_ << std::endl;
-      }
+      out_ << indent << title_ << std::endl;
+    }
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Name        : \"" << _name_ << "\"" << std::endl;
@@ -314,7 +314,7 @@ namespace geomtools {
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Logging priority threshold       : \""
-         << datatools::logger::get_priority_label(_logging) << "\"" << std::endl;
+         << datatools::logger::get_priority_label(_logging_priority) << "\"" << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Constructed : " << _constructed_ << std::endl;

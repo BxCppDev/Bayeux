@@ -120,7 +120,7 @@ namespace geomtools {
                                           const datatools::properties & config_,
                                           models_col_type * models_)
   {
-    bool devel = i_model::g_devel;
+    bool devel = false;
     if (devel) clog << "DEVEL: simple_boxed_model::_at_construct: Entering..." << endl;
     set_name (name_);
     double x;

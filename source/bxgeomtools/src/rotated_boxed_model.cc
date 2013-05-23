@@ -1,11 +1,11 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* rotated_boxed_model.cc
  */
 
 #include <geomtools/rotated_boxed_model.h>
 
 #include <exception>
-#include <limits> 
+#include <limits>
 
 #include <datatools/units.h>
 
@@ -13,12 +13,12 @@
 namespace geomtools {
 
   using namespace std;
-  
+
   const geomtools::box & rotated_boxed_model::get_box () const
   {
     return _solid_;
   }
-  
+
   const geomtools::box & rotated_boxed_model::get_solid () const
   {
     return _solid_;
@@ -47,26 +47,26 @@ namespace geomtools {
   {
     return *_boxed_model_;
   }
- 
+
   string rotated_boxed_model::get_model_id () const
   {
     return "geomtools::rotated_boxed_model";
   }
-  
+
   rotated_boxed_model::rotated_boxed_model () : i_boxed_model ()
   {
     _boxed_model_ = 0;
   }
-  
+
   rotated_boxed_model::~rotated_boxed_model ()
   {
   }
-  
+
   void rotated_boxed_model::_at_construct (const string & name_,
                                            const datatools::properties & config_,
                                            models_col_type * models_)
   {
-    bool devel = i_model::g_devel;
+    bool devel = false;
     if (devel)
       {
         clog << "DEVEL: rotated_boxed_model::_at_construct: Entering..." << endl;
@@ -89,45 +89,45 @@ namespace geomtools {
     datatools::invalidate (x);
     datatools::invalidate (y);
     datatools::invalidate (z);
-    
+
     /*** length unit ***/
     if (config_.has_key ("length_unit"))
       {
         string length_unit_str = config_.fetch_string ("length_unit");
         lunit = datatools::units::get_length_unit_from (length_unit_str);
-      }  
+      }
 
     /*** angle unit ***/
     if (config_.has_key ("angle_unit"))
       {
         string angle_unit_str = config_.fetch_string ("angle_unit");
         aunit = datatools::units::get_angle_unit_from (angle_unit_str);
-      }  
+      }
 
     // fetch the label of the rotated boxed model:
     if (config_.has_key ("rotated.label"))
       {
         rotated_label = config_.fetch_string ("rotated.label");
-      }  
+      }
 
     // fetch the rotation axis:
     if (config_.has_key ("rotated.axis"))
       {
         rotation_axis_label = config_.fetch_string ("rotated.axis");
-      }  
+      }
     else
       {
         ostringstream message;
         message << "rotated_boxed_model::_at_construct: "
-                << "Missing 'rotated.axis' property for model '" << name_ << "' !"; 
-        throw std::logic_error (message.str ());           
+                << "Missing 'rotated.axis' property for model '" << name_ << "' !";
+        throw std::logic_error (message.str ());
       }
 
     if (config_.has_key ("rotated.special_angle"))
       {
         special_rotation_angle_label = config_.fetch_string ("rotated.special_angle");
         use_special_angle = true;
-      }  
+      }
     else if (config_.has_key ("rotated.angle"))
       {
         rotation_angle = config_.fetch_real ("rotated.angle");
@@ -135,25 +135,25 @@ namespace geomtools {
           rotation_angle *= aunit;
         }
         use_special_angle = false;
-      }  
-    else 
-      {
-        ostringstream message;
-        message << "rotated_boxed_model::_at_construct: "
-                << "Missing 'rotated.special_angle' or 'rotation.angle' property for model '" << name_ << "' !"; 
-        throw std::logic_error (message.str ());           
       }
-     
-    if (config_.has_key ("rotated.model"))
-      {
-        boxed_model_name = config_.fetch_string ("rotated.model");
-      }  
     else
       {
         ostringstream message;
         message << "rotated_boxed_model::_at_construct: "
-                << "Missing 'boxed_model' property for model '" << name_ << "' !"; 
-        throw std::logic_error (message.str ());   
+                << "Missing 'rotated.special_angle' or 'rotation.angle' property for model '" << name_ << "' !";
+        throw std::logic_error (message.str ());
+      }
+
+    if (config_.has_key ("rotated.model"))
+      {
+        boxed_model_name = config_.fetch_string ("rotated.model");
+      }
+    else
+      {
+        ostringstream message;
+        message << "rotated_boxed_model::_at_construct: "
+                << "Missing 'boxed_model' property for model '" << name_ << "' !";
+        throw std::logic_error (message.str ());
       }
 
     rotation_axis = get_rotation_axis_from_label (rotation_axis_label);
@@ -161,23 +161,23 @@ namespace geomtools {
       {
         ostringstream message;
         message << "rotated_boxed_model::_at_construct: "
-                << "Invalid rotation axis for model '" << name_ << "' !"; 
-        throw logic_error (message.str ());   
+                << "Invalid rotation axis for model '" << name_ << "' !";
+        throw logic_error (message.str ());
       }
-    
+
     // XXXX
     // special angles: 0, 90, 180, 270 degrees
     if (use_special_angle)
       {
-        special_rotation_angle = 
+        special_rotation_angle =
           get_special_rotation_angle_from_label (special_rotation_angle_label);
         if (! check_special_rotation_angle (special_rotation_angle))
           {
             ostringstream message;
             message << "rotated_boxed_model::_at_construct: "
-                    << "Invalid rotation angle (" 
-                    << special_rotation_angle_label << ") for model '" << name_ << "'!"; 
-            throw logic_error (message.str ());       
+                    << "Invalid rotation angle ("
+                    << special_rotation_angle_label << ") for model '" << name_ << "'!";
+            throw logic_error (message.str ());
           }
       }
     // arbitrary angles:
@@ -192,13 +192,13 @@ namespace geomtools {
           }
         else
           {
-            if ((rotation_axis == ROTATION_AXIS_Y) 
-                || (rotation_axis == ROTATION_AXIS_Z)) 
+            if ((rotation_axis == ROTATION_AXIS_Y)
+                || (rotation_axis == ROTATION_AXIS_Z))
               {
                 ostringstream message;
                 message << "rotated_boxed_model::_at_construct: "
                         << "Missing 'x' property !";
-                throw std::logic_error (message.str ());    
+                throw std::logic_error (message.str ());
               }
           }
 
@@ -211,16 +211,16 @@ namespace geomtools {
           }
         else
           {
-            if ((rotation_axis == ROTATION_AXIS_X) 
-                || (rotation_axis == ROTATION_AXIS_Z)) 
+            if ((rotation_axis == ROTATION_AXIS_X)
+                || (rotation_axis == ROTATION_AXIS_Z))
               {
                 ostringstream message;
                 message << "rotated_boxed_model::_at_construct: "
                         << "Missing 'y' property !";
-                throw std::logic_error (message.str ());    
+                throw std::logic_error (message.str ());
               }
           }
-        
+
         if (config_.has_key ("z"))
           {
             z = config_.fetch_real ("z");
@@ -230,13 +230,13 @@ namespace geomtools {
           }
         else
           {
-            if ((rotation_axis == ROTATION_AXIS_X) 
-                || (rotation_axis == ROTATION_AXIS_Y)) 
+            if ((rotation_axis == ROTATION_AXIS_X)
+                || (rotation_axis == ROTATION_AXIS_Y))
               {
                 ostringstream message;
                 message << "rotated_boxed_model::_at_construct: "
                         << "Missing 'z' property !";
-                throw std::logic_error (message.str ());    
+                throw std::logic_error (message.str ());
               }
           }
 
@@ -246,13 +246,13 @@ namespace geomtools {
       {
         ostringstream message;
         message << "rotated_boxed_model::_at_construct: "
-                << "Missing logicals dictionary !"; 
+                << "Missing logicals dictionary !";
         throw std::logic_error (message.str ());
       }
-    
+
     // Boxed model:
     {
-      models_col_type::const_iterator found = 
+      models_col_type::const_iterator found =
         models_->find (boxed_model_name);
       i_model * the_model = 0;
       if (found != models_->end ())
@@ -263,9 +263,9 @@ namespace geomtools {
             {
               ostringstream message;
               message << "stacked_boxed_model::_at_construct: "
-                      << "The rotating model '" 
-                      << the_model->get_name () 
-                      << "' is not stackable !"; 
+                      << "The rotating model '"
+                      << the_model->get_name ()
+                      << "' is not stackable !";
               throw std::logic_error (message.str ());
             }
           set_boxed_model (*the_model);
@@ -274,12 +274,12 @@ namespace geomtools {
         {
           ostringstream message;
           message << "rotated_boxed_model::_at_construct: "
-                  << "Cannot find model with name '" 
+                  << "Cannot find model with name '"
                   << boxed_model_name << "' !";
           throw std::logic_error (message.str ());
         }
     }
- 
+
     const i_shape_3d & the_shape = _boxed_model_->get_logical ().get_shape ();
 
     // try to get a stackable data from the shape:
@@ -288,7 +288,7 @@ namespace geomtools {
       {
         ostringstream message;
         message << "rotated_boxed_model::_at_construct: "
-                << "Cannot stack '" 
+                << "Cannot stack '"
                 << the_shape.get_shape_name () << "' shape !";
         throw std::logic_error (message.str ());
       }
@@ -307,14 +307,14 @@ namespace geomtools {
       {
         rotation_angle = get_special_rotation_angle (special_rotation_angle);
         // compute the new stackable data attached to the rotated solid:
-        stackable_data the_new_SD;    
+        stackable_data the_new_SD;
         the_new_SD.xmin = gxmin;
         the_new_SD.xmax = gxmax;
         the_new_SD.ymin = gymin;
         the_new_SD.ymax = gymax;
         the_new_SD.zmin = gzmin;
         the_new_SD.zmax = gzmax;
-        if (rotation_axis == ROTATION_AXIS_X) 
+        if (rotation_axis == ROTATION_AXIS_X)
           {
             if (special_rotation_angle ==  ROTATION_ANGLE_90)
               {
@@ -322,24 +322,24 @@ namespace geomtools {
                 the_new_SD.zmax =  gymax;
                 the_new_SD.ymin = -gzmax;
                 the_new_SD.zmin =  gymin;
-              } 
+              }
             if (special_rotation_angle ==  ROTATION_ANGLE_180)
               {
                 the_new_SD.ymax = -gymin;
                 the_new_SD.zmax = -gzmin;
                 the_new_SD.ymin = -gymax;
                 the_new_SD.zmin = -gzmax;
-              } 
+              }
             if (special_rotation_angle ==  ROTATION_ANGLE_270)
               {
                 the_new_SD.ymax =  gzmax;
                 the_new_SD.zmax = -gymin;
                 the_new_SD.ymin =  gzmin;
                 the_new_SD.zmin = -gymax;
-              } 
+              }
           }
 
-        if (rotation_axis == ROTATION_AXIS_Y) 
+        if (rotation_axis == ROTATION_AXIS_Y)
           {
             if (special_rotation_angle ==  ROTATION_ANGLE_90)
               {
@@ -347,24 +347,24 @@ namespace geomtools {
                 the_new_SD.xmax =  gzmax;
                 the_new_SD.zmin = -gxmax;
                 the_new_SD.xmin =  gzmin;
-              } 
+              }
             if (special_rotation_angle ==  ROTATION_ANGLE_180)
               {
                 the_new_SD.zmax = -gzmin;
                 the_new_SD.xmax = -gxmin;
                 the_new_SD.zmin = -gzmax;
                 the_new_SD.xmin = -gxmax;
-              } 
+              }
             if (special_rotation_angle ==  ROTATION_ANGLE_270)
               {
                 the_new_SD.zmax =  gxmax;
                 the_new_SD.xmax = -gzmin;
                 the_new_SD.zmin =  gxmin;
                 the_new_SD.xmin = -gzmax;
-              } 
+              }
           }
 
-        if (rotation_axis == ROTATION_AXIS_Z) 
+        if (rotation_axis == ROTATION_AXIS_Z)
           {
             if (special_rotation_angle ==  ROTATION_ANGLE_90)
               {
@@ -372,26 +372,26 @@ namespace geomtools {
                 the_new_SD.ymax =  gxmax;
                 the_new_SD.xmin = -gymax;
                 the_new_SD.ymin =  gxmin;
-              } 
+              }
             if (special_rotation_angle ==  ROTATION_ANGLE_180)
               {
                 the_new_SD.xmax = -gxmin;
                 the_new_SD.ymax = -gymin;
                 the_new_SD.xmin = -gxmax;
                 the_new_SD.ymin = -gymax;
-              } 
+              }
             if (special_rotation_angle ==  ROTATION_ANGLE_270)
               {
                 the_new_SD.xmax =  gymax;
                 the_new_SD.ymax = -gxmin;
                 the_new_SD.xmin =  gymin;
                 the_new_SD.ymin = -gxmax;
-              } 
+              }
           }
         if (devel)
           {
-            the_new_SD.tree_dump (cerr, 
-                                  "rotated_boxed_model::_at_construct: New SD:", 
+            the_new_SD.tree_dump (cerr,
+                                  "rotated_boxed_model::_at_construct: New SD:",
                                   "DEVEL: ");
           }
         x = (the_new_SD.xmax - the_new_SD.xmin);
@@ -400,15 +400,15 @@ namespace geomtools {
       }
     else // use an arbitrary angle:
       {
-        if (rotation_axis == ROTATION_AXIS_X) 
+        if (rotation_axis == ROTATION_AXIS_X)
           {
             x = gxmax - gxmin;
           }
-        if (rotation_axis == ROTATION_AXIS_Y) 
+        if (rotation_axis == ROTATION_AXIS_Y)
           {
             y = gymax - gymin;
           }
-        if (rotation_axis == ROTATION_AXIS_Z) 
+        if (rotation_axis == ROTATION_AXIS_Z)
           {
             z = gzmax - gzmin;
           }
@@ -439,9 +439,9 @@ namespace geomtools {
     return;
   }
 
-  void rotated_boxed_model::tree_dump (ostream & out_, 
-                                       const string & title_ , 
-                                       const string & indent_, 
+  void rotated_boxed_model::tree_dump (ostream & out_,
+                                       const string & title_ ,
+                                       const string & indent_,
                                        bool inherit_) const
   {
     using namespace datatools;
@@ -450,33 +450,33 @@ namespace geomtools {
     i_model::tree_dump (out_, title_, indent, true);
 
     {
-      out_ << indent << i_tree_dumpable::tag 
+      out_ << indent << i_tree_dumpable::tag
            << "Rotated placement (box) : " << endl;
       {
         ostringstream indent_oss;
         indent_oss << indent;
         indent_oss << skip_tag;
         _boxed_placement_.tree_dump (out_, "", indent_oss.str ());
-      }   
+      }
     }
-     
+
     {
-      out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
+      out_ << indent << i_tree_dumpable::inherit_tag (inherit_)
            << "Solid : " << endl;
       {
         ostringstream indent_oss;
         indent_oss << indent;
         indent_oss << i_tree_dumpable::inherit_skip_tag (inherit_);
         _solid_.tree_dump (out_, "", indent_oss.str ());
-      }   
+      }
     }
 
     return;
   }
 
-  // registration :   
+  // registration :
   GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(rotated_boxed_model,"geomtools::rotated_boxed_model");
-       
+
 } // end of namespace geomtools
 
 // end of rotated_boxed_model.cc

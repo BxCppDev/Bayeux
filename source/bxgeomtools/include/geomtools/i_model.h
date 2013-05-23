@@ -36,8 +36,6 @@ namespace geomtools {
   {
   public:
 
-    static bool g_devel; // to be removed
-
     struct constants {
       constants ();
       static const constants & instance ();
@@ -101,6 +99,10 @@ namespace geomtools {
 
     virtual std::string get_model_id () const = 0;
 
+    datatools::logger::priority get_logging_priority() const;
+
+    void set_logging_priority(datatools::logger::priority);
+
   protected:
 
     void _set_phantom_solid (bool);
@@ -117,11 +119,10 @@ namespace geomtools {
 
     bool                        _phantom_solid; //!< Special flag (not used yet)
     geomtools::logical_volume   _logical; //!< Top logical volume attached to the model
-    datatools::logger::priority _logging; //!< Logginf priority threshold
+    datatools::logger::priority _logging_priority; //!< Logging priority threshold
 
   private:
 
-    bool _debug_; // to be removed
     bool _constructed_;
     datatools::properties _parameters_;
     std::string _name_;

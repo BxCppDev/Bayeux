@@ -704,8 +704,7 @@ namespace geomtools {
     DT_LOG_NOTICE(_logging, "Initialization of the geometry mapping...");
     // Setup mapping:
     if (is_mapping_requested ()) {
-      std::clog << datatools::io::notice << "geomtools::manager::_at_init_: "
-                << "The building of the general mapping has been requested..." << std::endl;
+      DT_LOG_NOTICE(_logging, "The building of the general mapping has been requested...");
       datatools::properties mapping_config;
       geomtools::mapping::extract (config_, mapping_config);
       build_mapping (mapping_config);

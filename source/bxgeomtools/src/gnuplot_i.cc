@@ -1,14 +1,15 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* gnuplot_i.cc
  */
 
 #include <geomtools/gnuplot_i.h>
 #include <geomtools/geomtools_config.h>
 
+#include <datatools/exception.h>
 
-using namespace std;  
-  
-GnuplotException::GnuplotException(const std::string &msg) 
+using namespace std;
+
+GnuplotException::GnuplotException(const std::string &msg)
   : std::runtime_error  (msg)
 {
 }
@@ -46,7 +47,7 @@ Gnuplot::Gnuplot(const std::string &style)
   init();
   set_style(style);
 }
-  
+
 //------------------------------------------------------------------------------
 //
 // constructor: open a new session, plot a signal (x)
@@ -151,10 +152,7 @@ bool Gnuplot::set_gnuplot_path(const std::string &path)
 void Gnuplot::set_terminal_std(const std::string &type)
 {
 #if defined(unix) || defined(__unix) || defined(__unix__) || defined(__APPLE__)
-  if (type.find("x11") != std::string::npos && getenv("DISPLAY") == NULL)
-    {
-      throw GnuplotException("Can't find DISPLAY variable");
-    }
+  DT_THROW_IF (type.find("x11") != std::string::npos && getenv("DISPLAY") == NULL, GnuplotException, "Can't find DISPLAY variable");
 #endif
 
 
@@ -218,7 +216,7 @@ Gnuplot::~Gnuplot()
 #elif defined(unix) || defined(__unix) || defined(__unix__) || defined(__APPLE__)
     if (pclose(_gnucmd_) == -1)
 #endif
-      throw GnuplotException("Problem closing communication to gnuplot");
+      DT_THROW_IF(true, GnuplotException, "Problem closing communication to gnuplot");
 }
 
 
@@ -768,7 +766,7 @@ Gnuplot& Gnuplot::plotfile_xy(const std::string &filename,
 Gnuplot& Gnuplot::plotfile_xy(const std::string &filename,
                               const unsigned int column_x,
                               const unsigned int column_y,
-                              const std::string &title, 
+                              const std::string &title,
                               const std::string & file_options_,
                               const std::string & plot_options_)
 {
@@ -843,8 +841,8 @@ Gnuplot& Gnuplot::plotfile_xy_err(const std::string &filename,
   else
     cmdstr << "plot ";
 
-  cmdstr << "\"" << filename << "\" using " 
-         << column_x << ":" << column_y << ":" << column_dy 
+  cmdstr << "\"" << filename << "\" using "
+         << column_x << ":" << column_y << ":" << column_dy
          << " with errorbars ";
 
   if (title == "")
@@ -886,7 +884,7 @@ Gnuplot& Gnuplot::plotfile_xyz_with_colored_wires (const std::string &filename,
   else
     cmdstr << "splot ";
 
-  cmdstr << "\"" << filename << "\" using " << column_x << ":" << column_y 
+  cmdstr << "\"" << filename << "\" using " << column_x << ":" << column_y
          << ":" << column_z;
 
   std::ostringstream wired_colored_pstyle;
@@ -928,7 +926,7 @@ Gnuplot& Gnuplot::plotfile_xyz(const std::string &filename,
   else
     cmdstr << "splot ";
 
-  cmdstr << "\"" << filename << "\" using " << column_x << ":" << column_y 
+  cmdstr << "\"" << filename << "\" using " << column_x << ":" << column_y
          << ":" << column_z;
 
   if (title == "")
@@ -970,7 +968,7 @@ Gnuplot& Gnuplot::plotfile_xyzo(const std::string &filename,
   else
     cmdstr << "splot ";
 
-  cmdstr << "\"" << filename << "\" using " << column_x << ":" << column_y 
+  cmdstr << "\"" << filename << "\" using " << column_x << ":" << column_y
          << ":" << column_z << ":" << column_o;
 
   if (title == "")
@@ -1010,7 +1008,7 @@ Gnuplot& Gnuplot::plot_image(const unsigned char * ucPicBuf,
     {
       for(int iColumn = 0; iColumn < iWidth; iColumn++)
         {
-          tmp << iColumn << " " << iRow  << " " 
+          tmp << iColumn << " " << iRow  << " "
               << static_cast<float>(ucPicBuf[iIndex++]) << std::endl;
         }
     }
@@ -1057,15 +1055,15 @@ Gnuplot& Gnuplot::cmd(const std::string &cmdstr)
 
   // int fputs ( const char * str, FILE * stream );
   // writes the string str to the stream.
-  // The function begins copying from the address specified (str) until it 
-  // reaches the terminating null character ('\0'). This final 
+  // The function begins copying from the address specified (str) until it
+  // reaches the terminating null character ('\0'). This final
   // null-character is not copied to the stream.
   fputs( (cmdstr+"\n").c_str(), _gnucmd_ );
 
   // int fflush ( FILE * stream );
-  // If the given stream was open for writing and the last i/o operation was 
-  // an output operation, any unwritten data in the output buffer is written 
-  // to the file.  If the argument is a null pointer, all open files are 
+  // If the given stream was open for writing and the last i/o operation was
+  // an output operation, any unwritten data in the output buffer is written
+  // to the file.  If the argument is a null pointer, all open files are
   // flushed.  The stream remains open after this call.
   fflush(_gnucmd_);
 
@@ -1097,14 +1095,14 @@ Gnuplot& Gnuplot::cmd(const std::string &cmdstr)
 void Gnuplot::init()
 {
   // char * getenv ( const char * name );  get value of environment variable
-  // Retrieves a C string containing the value of the environment variable 
-  // whose name is specified as argument.  If the requested variable is not 
+  // Retrieves a C string containing the value of the environment variable
+  // whose name is specified as argument.  If the requested variable is not
   // part of the environment list, the function returns a NULL pointer.
 #if ( defined(unix) || defined(__unix) || defined(__unix__) ) && !defined(__APPLE__)
   if (getenv("DISPLAY") == NULL)
     {
       _valid_ = false;
-      throw GnuplotException("Can't find DISPLAY variable");
+      DT_THROW_IF(true, GnuplotException,"Can't find DISPLAY variable");
     }
 #endif
 
@@ -1113,19 +1111,19 @@ void Gnuplot::init()
   if (!Gnuplot::get_program_path())
     {
       _valid_ = false;
-      throw GnuplotException("Can't find gnuplot");
+      DT_THROW_IF(true, GnuplotException, "Can't find gnuplot");
     }
 
 
   //
   // open pipe
   //
-  std::string tmp = Gnuplot::_g_gnuplot_path + "/" + 
+  std::string tmp = Gnuplot::_g_gnuplot_path + "/" +
     Gnuplot::_g_gnuplot_filename_;
 
   // FILE *popen(const char *command, const char *mode);
-  // The popen() function shall execute the command specified by the string 
-  // command, create a pipe between the calling program and the executed 
+  // The popen() function shall execute the command specified by the string
+  // command, create a pipe between the calling program and the executed
   // command, and return a pointer to a stream that can be used to either read
   // from or write to the pipe.
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__TOS_WIN__)
@@ -1135,12 +1133,12 @@ void Gnuplot::init()
 #endif
 
   // popen() shall return a pointer to an open stream that can be used to read
-  // or write to the pipe.  Otherwise, it shall return a null pointer and may 
+  // or write to the pipe.  Otherwise, it shall return a null pointer and may
   // set errno to indicate the error.
   if (!_gnucmd_)
     {
       _valid_ = false;
-      throw GnuplotException("Couldn't open connection to gnuplot");
+      DT_THROW_IF(true, GnuplotException, "Couldn't open connection to gnuplot");
     }
 
   _nplots_ = 0;
@@ -1163,7 +1161,7 @@ bool Gnuplot::get_program_path()
   //
   // first look in _g_gnuplot_path for Gnuplot
   //
-  std::string tmp = Gnuplot::_g_gnuplot_path + "/" + 
+  std::string tmp = Gnuplot::_g_gnuplot_path + "/" +
     Gnuplot::_g_gnuplot_filename_;
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__TOS_WIN__)
@@ -1186,7 +1184,7 @@ bool Gnuplot::get_program_path()
 
   if (path == NULL)
     {
-      throw GnuplotException("Path is not set");
+      DT_THROW_IF(true, GnuplotException,"Path is not set");
       return false;
     }
   else
@@ -1201,7 +1199,7 @@ bool Gnuplot::get_program_path()
 #endif
 
       // scan list for Gnuplot program files
-      for (std::list<std::string>::const_iterator i = ls.begin(); 
+      for (std::list<std::string>::const_iterator i = ls.begin();
            i != ls.end(); ++i)
         {
           tmp = (*i) + "/" + Gnuplot::_g_gnuplot_filename_;
@@ -1216,9 +1214,9 @@ bool Gnuplot::get_program_path()
               }
         }
 
-      tmp = "Can't find gnuplot neither in PATH nor in \"" + 
+      tmp = "Can't find gnuplot neither in PATH nor in \"" +
         Gnuplot::_g_gnuplot_path + "\"";
-      throw GnuplotException(tmp);
+      DT_THROW_IF(true, GnuplotException, tmp);
 
       Gnuplot::_g_gnuplot_path = "";
       return false;
@@ -1233,16 +1231,14 @@ bool Gnuplot::get_program_path()
 //
 bool Gnuplot::file_exists(const std::string &filename, int mode)
 {
-  if ( mode < 0 || mode > 7)
-    {
-      throw std::runtime_error("In function \"Gnuplot::file_exists\": mode\
+  DT_THROW_IF ( mode < 0 || mode > 7,
+                std::domain_error,
+                "In function \"Gnuplot::file_exists\": mode\
                 has to be an integer between 0 and 7");
-      return false;
-    }
 
   // int _access(const char *path, int mode);
   //  returns 0 if the file has the given mode,
-  //  it returns -1 if the named file does not exist or is not accessible in 
+  //  it returns -1 if the named file does not exist or is not accessible in
   //  the given mode
   // mode = 0 (F_OK) (default): checks file for existence only
   // mode = 1 (X_OK): execution permission
@@ -1266,18 +1262,17 @@ bool Gnuplot::file_exists(const std::string &filename, int mode)
 }
 
 bool Gnuplot::file_available(const std::string &filename){
-  std::ostringstream except;
   if( Gnuplot::file_exists(filename,0) ) // check existence
     {
       if( !(Gnuplot::file_exists(filename,4)) ){// check read permission
-        except << "No read permission for File \"" << filename << "\"";
-        throw GnuplotException( except.str() );
+        DT_THROW_IF(true, GnuplotException,
+                    "No read permission for File \"" << filename << "\" !");
         return false;
       }
     }
   else{
-    except << "File \"" << filename << "\" does not exist";
-    throw GnuplotException( except.str() );
+    DT_THROW_IF(true, GnuplotException,
+                "File \"" << filename << "\" does not exist !");
     return false;
   }
 }
@@ -1300,24 +1295,20 @@ std::string Gnuplot::create_tmpfile(std::ofstream &tmp)
   //
   // check if maximum number of temporary files reached
   //
-  if (Gnuplot::_g_tmpfile_num_ == GP_MAX_TMP_FILES - 1)
-    {
-      std::ostringstream except;
-      except << "Maximum number of temporary files reached (" 
-             << GP_MAX_TMP_FILES << "): cannot open more files" << std::endl;
+  DT_THROW_IF (Gnuplot::_g_tmpfile_num_ == GP_MAX_TMP_FILES - 1,
+               GnuplotException,
+               "Maximum number of temporary files reached ("
+               << GP_MAX_TMP_FILES << "): cannot open more files !");
 
-      throw GnuplotException( except.str() );
-      return "";
-    }
 
   // int mkstemp(char *name);
   // shall replace the contents of the string pointed to by "name" by a unique
-  // filename, and return a file descriptor for the file open for reading and 
-  // writing.  Otherwise, -1 shall be returned if no suitable file could be 
-  // created.  The string in template should look like a filename with six 
-  // trailing 'X' s; mkstemp() replaces each 'X' with a character from the 
+  // filename, and return a file descriptor for the file open for reading and
+  // writing.  Otherwise, -1 shall be returned if no suitable file could be
+  // created.  The string in template should look like a filename with six
+  // trailing 'X' s; mkstemp() replaces each 'X' with a character from the
   // portable filename character set.  The characters are chosen such that the
-  // resulting name does not duplicate the name of an existing file at the 
+  // resulting name does not duplicate the name of an existing file at the
   // time of a call to mkstemp()
 
 
@@ -1330,21 +1321,14 @@ std::string Gnuplot::create_tmpfile(std::ofstream &tmp)
     if (mkstemp(name) == -1)
 #endif
       {
-        std::ostringstream except;
-        except << "Cannot create temporary file \"" << name << "\"";
-        throw GnuplotException(except.str());
-        return "";
+        DT_THROW_IF(true,GnuplotException,
+                    "Cannot create temporary file \"" << name << "\" !");
       }
 
   tmp.open(name);
-  if (tmp.bad())
-    {
-      std::ostringstream except;
-      except << "Cannot create temporary file \"" << name << "\"";
-      throw GnuplotException(except.str());
-      return "";
-    }
-
+  DT_THROW_IF (tmp.bad(),
+               GnuplotException,
+               "Cannot create temporary file \"" << name << "\" !");
   //
   // Save the temporary filename
   //

@@ -7,7 +7,7 @@
 #include <iostream>
 #include <exception>
 #include <sstream>
-#include <limits> 
+#include <limits>
 
 #include <datatools/utils.h>
 #include <datatools/units.h>
@@ -150,7 +150,7 @@ namespace geomtools {
                                            const datatools::properties & config_,
                                            models_col_type * models_)
   {
-    bool devel = i_model::g_devel;
+    bool devel = false;
     if (config_.has_key ("devel"))
       {
         devel = true;
@@ -738,7 +738,7 @@ namespace geomtools {
                                                  const datatools::properties & config_,
                                                  models_col_type* models_)
   {
-    bool devel = i_model::g_devel;
+    bool devel = false;
     if (config_.has_key ("devel"))
       {
         devel = true;
@@ -935,7 +935,7 @@ namespace geomtools {
                                                   const datatools::properties & config_,
                                                   models_col_type* models_)
   {
-    bool devel = i_model::g_devel;
+    bool devel = false;
     if (config_.has_key ("devel"))
       {
         devel = true;
@@ -1116,7 +1116,7 @@ namespace geomtools {
 
   void simple_shaped_model::_post_construct (datatools::properties & setup_)
   {
-    bool devel = i_model::g_devel;
+    bool devel = false;
     if (devel)
       {
         cerr << "DEVEL: " << "simple_shaped_model::_post_construct: "
@@ -1223,7 +1223,7 @@ namespace geomtools {
     return;
   }
 
-  // registration :   
+  // registration :
   GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(simple_shaped_model,"geomtools::simple_shaped_model");
 
 } // end of namespace geomtools

@@ -1,5 +1,5 @@
-// -*- mode: c++; -*- 
-/* address_set.cc 
+// -*- mode: c++; -*-
+/* address_set.cc
  */
 
 #include <geomtools/address_set.h>
@@ -11,7 +11,7 @@
 
 namespace geomtools {
 
-  using namespace std;  
+  using namespace std;
 
   bool address_set::is_valid () const
   {
@@ -37,38 +37,38 @@ namespace geomtools {
     _range_max_ = 0;
     return;
   }
-  
+
   bool address_set::is_reverse () const
   {
     return _reverse_;
   }
- 
+
   void address_set::set_reverse (bool a_reverse)
   {
     _reverse_ = a_reverse;
     return;
   }
- 
+
   bool address_set::is_mode_none () const
   {
     return _mode_ == MODE_NONE;
   }
-  
+
   bool address_set::is_mode_all () const
   {
     return _mode_ == MODE_ALL;
   }
-  
+
   bool address_set::is_mode_range () const
   {
     return _mode_ == MODE_RANGE;
   }
-  
+
   bool address_set::is_mode_list () const
   {
     return _mode_ == MODE_LIST;
   }
-  
+
   void address_set::set_mode_none ()
   {
     _reset_range_ ();
@@ -76,7 +76,7 @@ namespace geomtools {
     _mode_ = MODE_NONE;
     return;
   }
-  
+
   void address_set::set_mode_all ()
   {
     _reset_range_ ();
@@ -84,7 +84,7 @@ namespace geomtools {
     _mode_ = MODE_ALL;
     return;
   }
-  
+
   void address_set::set_mode_range ()
   {
     _reset_list_ ();
@@ -92,13 +92,13 @@ namespace geomtools {
     _mode_ = MODE_RANGE;
     return;
   }
-  
+
   void address_set::set_range (uint32_t a_min, uint32_t a_max)
   {
     if (! is_mode_range ())
       {
         set_mode_range ();
-        //throw runtime_error ("address_set::set_range: Range mode is not active !");
+        //th row runtime_error ("address_set::set_range: Range mode is not active !");
       }
     if (a_min >  a_max)
       {
@@ -107,11 +107,11 @@ namespace geomtools {
     else
      {
        _range_min_ = a_min;
-       _range_max_ = a_max;     
+       _range_max_ = a_max;
      }
     return;
   }
-  
+
   void address_set::set_mode_range (uint32_t a_min, uint32_t a_max)
   {
     _mode_ = MODE_RANGE;
@@ -168,7 +168,7 @@ namespace geomtools {
 
   void address_set::reset ()
   {
-    _reverse_ = false; 
+    _reverse_ = false;
     _mode_ = MODE_DEFAULT;
     _reset_range_ ();
     _reset_list_ ();
@@ -291,18 +291,18 @@ namespace geomtools {
                 //if (devel) cerr << "mode==LIST v=" << v << endl;
                 a_addset.add_to_list (v);
                 c = a_in.peek ();
-                if (c == '}') 
+                if (c == '}')
                   {
-                    a_in.get ();        
+                    a_in.get ();
                     break;
                   }
-                if (c != ';') 
+                if (c != ';')
                   {
                     a_addset.invalidate ();
                     a_in.setstate (ios::failbit);
                     return a_in;
                   }
-                a_in.get ();    
+                a_in.get ();
                 //if (devel) cerr << "mode==LIST loop a new value" << endl;
               }
           }

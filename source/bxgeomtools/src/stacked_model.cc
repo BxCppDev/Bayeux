@@ -269,7 +269,7 @@ namespace geomtools {
                                      const datatools::properties & config_,
                                      models_col_type * models_)
   {
-    bool devel = i_model::g_devel;
+    bool devel = false;
     if (config_.has_flag ("devel"))
       {
         devel = true;

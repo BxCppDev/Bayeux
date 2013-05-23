@@ -1,20 +1,23 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* line_3d.cc
  */
- 
+
 #include <geomtools/line_3d.h>
 
 #include <cmath>
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
+
+#include <datatools/exception.h>
+
 #include <geomtools/polyline_3d.h>
 #include <geomtools/placement.h>
 
 namespace geomtools {
 
   using namespace std;
- 
+
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (line_3d,"geomtools::line_3d")
 
   const string line_3d::LINE_3D_LABEL = "line_3d";
@@ -34,52 +37,52 @@ namespace geomtools {
     return line_3d::LINE_3D_LABEL;
   }
 
-  bool 
+  bool
   line_3d::is_valid () const
   {
     return (geomtools::is_valid (_first_) && geomtools::is_valid (_last_));
   }
-  
-  void 
+
+  void
   line_3d::invalidate ()
   {
     geomtools::invalidate (_first_);
     geomtools::invalidate (_last_);
     return;
   }
-  
-  const vector_3d & 
+
+  const vector_3d &
   line_3d::get_first () const
   {
     return _first_;
   }
-  
-  void 
+
+  void
   line_3d::set_first (const vector_3d & a_first)
   {
     _first_ = a_first;
     return;
   }
-  
-  const vector_3d & 
+
+  const vector_3d &
   line_3d::get_last () const
   {
     return _last_;
   }
-  
-  void 
+
+  void
   line_3d::set_last (const vector_3d & a_last)
   {
     _last_ = a_last;
     return;
   }
-  
+
   double line_3d::get_length () const
   {
     double l = (_last_ - _first_).mag ();
     return l;
   }
-  
+
   // ctor/dtor:
   line_3d::line_3d () : i_shape_1d ()
   {
@@ -94,20 +97,20 @@ namespace geomtools {
     set_last (a_last);
     return;
   }
-  
+
   line_3d::~line_3d ()
   {
     return;
   }
 
-  vector_3d 
+  vector_3d
   line_3d::get_point (double a_t) const
   {
     vector_3d p = _first_ + (_last_ - _first_) * a_t;
     return vector_3d (p);
   }
 
-  void 
+  void
   line_3d::make_vertex_collection (basic_polyline_3d & a_bpl) const
   {
     a_bpl.clear ();
@@ -116,7 +119,7 @@ namespace geomtools {
     return;
   }
 
-  basic_polyline_3d 
+  basic_polyline_3d
   line_3d::make_vertex_collection () const
   {
     basic_polyline_3d bpl;
@@ -129,8 +132,8 @@ namespace geomtools {
     tree_dump (clog);
     return;
   }
-  
-  void line_3d::tree_dump (ostream &      out_, 
+
+  void line_3d::tree_dump (ostream &      out_,
                            const string & title_,
                            const string & indent_,
                            bool           inherit_) const
@@ -141,23 +144,23 @@ namespace geomtools {
         indent = indent_;
       }
     i_object_3d::tree_dump (out_, title_, indent_, true);
-    out_ << indent << datatools::i_tree_dumpable::tag 
-         << "First : " 
-         << _first_ 
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "First : "
+         << _first_
          << endl;
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "Last : " 
+         << "Last : "
          << _last_
          << endl;
-    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_) 
-         << "Length : " 
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
+         << "Length : "
          << get_length() /* / CLHEP::mm << " mm"*/
          << endl;
     return;
   }
 
 
-  void line_3d::print_xyz (ostream & out_, 
+  void line_3d::print_xyz (ostream & out_,
                            const line_3d & a_line)
   {
     vector_3d first = a_line.get_first();
@@ -172,12 +175,12 @@ namespace geomtools {
   {
     vector_3d A = position_ - _last_;
     vector_3d B = position_ - _first_;
-    
+
     vector_3d u = _last_ - _first_;
     vector_3d d = A.cross( position_ );
-    
+
     double dist = d.mag() / u.mag();
-    
+
     if ( dist < A.mag() && dist < B.mag() )
       return dist;
     else if ( A.mag() < dist && A.mag() < B.mag() )
@@ -185,8 +188,8 @@ namespace geomtools {
     else
       return B.mag();
   }
- 
-  bool line_3d::is_on_curve ( const vector_3d & position_, 
+
+  bool line_3d::is_on_curve ( const vector_3d & position_,
                               double tolerance_ ) const
   {
     return get_distance_to_line ( position_ ) <= tolerance_;
@@ -195,11 +198,11 @@ namespace geomtools {
   vector_3d line_3d::get_direction_on_curve (const vector_3d & position_) const
   {
     vector_3d dir;
-    throw logic_error ("line_3d::get_direction_on_curve: Not implemented yet !");
+    DT_THROW_IF(true, runtime_error, "Not implemented yet !");
     return dir;
   }
 
-  void line_3d::generate_wires (std::list<polyline_3d> & lpl_, 
+  void line_3d::generate_wires (std::list<polyline_3d> & lpl_,
                                 const placement & p_) const
   {
     {
@@ -217,8 +220,8 @@ namespace geomtools {
   }
 
   /*
-    void 
-    line_3d::print_xyz (ostream & out_, 
+    void
+    line_3d::print_xyz (ostream & out_,
     const line_3d & a_line,
     double step_)
     {
@@ -234,7 +237,7 @@ namespace geomtools {
     out_ << endl << endl;
     }
   */
-  
+
 } // end of namespace geomtools
 
 // end of line_3d.cc

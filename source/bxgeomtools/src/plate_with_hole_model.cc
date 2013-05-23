@@ -10,12 +10,13 @@
 
 #include <datatools/utils.h>
 #include <datatools/units.h>
+#include <datatools/exception.h>
 
 namespace geomtools {
 
   using namespace std;
 
-  // registration :   
+  // registration :
   GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(plate_with_hole_model,"geomtools::plate_with_hole_model");
 
   string plate_with_hole_model::get_model_id () const
@@ -60,12 +61,12 @@ namespace geomtools {
                                              const datatools::properties & config_,
                                              geomtools::models_col_type * models_)
   {
-    bool devel = g_devel;
-    if (config_.has_flag ("devel"))
-      {
-        devel = true;
-      }
-    if (devel) std::clog << "DEVEL: plate_with_hole_model::_at_construct: Entering..." << std::endl;
+    bool devel = false;
+    // if (config_.has_flag ("devel"))
+    //   {
+    //     devel = true;
+    //   }
+    // if (devel) std::clog << "DEVEL: plate_with_hole_model::_at_construct: Entering..." << std::endl;
 
     set_name (name_);
 
@@ -92,62 +93,34 @@ namespace geomtools {
         lunit = datatools::units::get_length_unit_from (lunit_str);
       }
 
-    if (config_.has_key ("material.ref"))
-      {
-        _material_ = config_.fetch_string ("material.ref");
-      }
-    else
-      {
-        std::ostringstream message;
-        message << "geomtools::plate_with_hole_model::_at_construct: "
-                << "Missing 'material.ref' property !";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF (!config_.has_key ("material.ref"),
+                 std::logic_error,
+                 "Missing 'material.ref' property !");
+    _material_ = config_.fetch_string ("material.ref");
 
-    if (config_.has_key ("x"))
-      {
-        x = config_.fetch_real ("x");
-        if (! config_.has_explicit_unit ("x")) {
-          x *= lunit;
-        }
-      }
-    else
-      {
-        std::ostringstream message;
-        message << "geomtools::plate_with_hole_model::_at_construct: "
-                << "Missing 'x' property !";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF (! config_.has_key ("x"),
+                 std::logic_error,
+                 "Missing 'x' property !");
+    x = config_.fetch_real ("x");
+    if (! config_.has_explicit_unit ("x")) {
+      x *= lunit;
+    }
 
-    if (config_.has_key ("y"))
-      {
-        y = config_.fetch_real ("y");
-        if (! config_.has_explicit_unit ("y")) {
-          y *= lunit;
-        }
-      }
-    else
-      {
-        std::ostringstream message;
-        message << "geomtools::plate_with_hole_model::_at_construct: "
-                << "Missing 'y' property !";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF (! config_.has_key ("y"),
+                 std::logic_error,
+                 "Missing 'y' property !");
+    y = config_.fetch_real ("y");
+    if (! config_.has_explicit_unit ("y")) {
+      y *= lunit;
+    }
 
-    if (config_.has_key ("z"))
-      {
-        z = config_.fetch_real ("z");
-        if (! config_.has_explicit_unit ("z")) {
-          z *= lunit;
-        }
-      }
-    else
-      {
-        std::ostringstream message;
-        message << "geomtools::plate_with_hole_model::_at_construct: "
-                << "Missing 'z' property !";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF (! config_.has_key ("z"),
+                 std::logic_error,
+                 "Missing 'z' property !");
+    z = config_.fetch_real ("z");
+    if (! config_.has_explicit_unit ("z")) {
+      z *= lunit;
+    }
 
     if (config_.has_key ("r_hole"))
       {
@@ -156,65 +129,40 @@ namespace geomtools {
           r_hole  *= lunit;
         }
       }
-    // else
-    //   {
-    //     std::ostringstream message;
-    //     message << "geomtools::plate_with_hole_model::_at_construct: "
-    //             << "Missing 'r_hole' property !";
-    //     throw std::logic_error (message.str ());
-    //   }
 
-    if (! datatools::is_valid (r_hole))
-      {
-        if (config_.has_key ("x_hole"))
-          {
-            x_hole = config_.fetch_real ("x_hole");
-            if (! config_.has_explicit_unit ("x_hole")) {
-              x_hole  *= lunit;
-            }
-          }
-        else
-          {
-            std::ostringstream message;
-            message << "geomtools::plate_with_hole_model::_at_construct: "
-                    << "Missing 'x_hole' property !";
-            throw std::logic_error (message.str ());
-          }
-        
-        if (config_.has_key ("y_hole"))
-          {
-            y_hole = config_.fetch_real ("y_hole");
-            if (! config_.has_explicit_unit ("y_hole")) {
-              y_hole  *= lunit;
-            }
-           }
-        else
-          {
-            std::ostringstream message;
-            message << "geomtools::plate_with_hole_model::_at_construct: "
-                    << "Missing 'y_hole' property !";
-            throw std::logic_error (message.str ());
-          }
+    if (! datatools::is_valid (r_hole)) {
+      DT_THROW_IF (! config_.has_key ("x_hole"),
+                   std::logic_error,
+                   "Missing 'x_hole' property !");
+      x_hole = config_.fetch_real ("x_hole");
+      if (! config_.has_explicit_unit ("x_hole")) {
+        x_hole  *= lunit;
       }
-    
-    if (config_.has_key ("x_pos_hole"))
-      {
-        x_pos_hole = config_.fetch_real ("x_pos_hole");
-        if (! config_.has_explicit_unit ("x_pos_hole")) {
-          x_pos_hole  *= lunit;
-        }
+      DT_THROW_IF (! config_.has_key ("y_hole"),
+                   std::logic_error,
+                   "Missing 'y_hole' property !");
+      y_hole = config_.fetch_real ("y_hole");
+      if (! config_.has_explicit_unit ("y_hole")) {
+        y_hole  *= lunit;
       }
-    
-    if (config_.has_key ("y_pos_hole"))
-      {
-        y_pos_hole = config_.fetch_real ("y_pos_hole");
-        if (! config_.has_explicit_unit ("y_pos_hole")) {
-          y_pos_hole  *= lunit;
-        }
+    }
+
+    if (config_.has_key ("x_pos_hole")) {
+      x_pos_hole = config_.fetch_real ("x_pos_hole");
+      if (! config_.has_explicit_unit ("x_pos_hole")) {
+        x_pos_hole  *= lunit;
       }
-    
-    if (devel) std::clog << "DEVEL: geomtools::plate_with_hole_model::_at_construct: Properties are parsed !" << std::endl;
-    
+    }
+
+    if (config_.has_key ("y_pos_hole")) {
+      y_pos_hole = config_.fetch_real ("y_pos_hole");
+      if (! config_.has_explicit_unit ("y_pos_hole")) {
+        y_pos_hole  *= lunit;
+      }
+    }
+
+    // if (devel) std::clog << "DEVEL: geomtools::plate_with_hole_model::_at_construct: Properties are parsed !" << std::endl;
+
     _x_ = x;
     _y_ = y;
     _z_ = z;
@@ -224,88 +172,65 @@ namespace geomtools {
     _z_hole_ = _z_ + CLHEP::micrometer;
     _x_pos_hole_ = x_pos_hole;
     _y_pos_hole_ = y_pos_hole;
- 
+
     std::vector<double> xy_pos_hole;
     xy_pos_hole.push_back (_x_pos_hole_);
     xy_pos_hole.push_back (_y_pos_hole_);
-    if (_x_pos_hole_ * _y_pos_hole_ != 0)
-      {
-        _solid_.properties ().store ("xy_pos_hole", xy_pos_hole);
-        //_solid_.properties ().tree_dump (cerr, "Solid: ", "DEVEL: ");
-      }
+    if (_x_pos_hole_ * _y_pos_hole_ != 0) {
+      _solid_.properties ().store ("xy_pos_hole", xy_pos_hole);
+      //_solid_.properties ().tree_dump (cerr, "Solid: ", "DEVEL: ");
+    }
     // Checks :
     double hole_x_min = x_pos_hole;
     double hole_x_max = x_pos_hole;
     double hole_y_min = y_pos_hole;
     double hole_y_max = y_pos_hole;
-    if (datatools::is_valid (_r_hole_))
-      {
+    if (datatools::is_valid (_r_hole_)) {
         hole_x_min -= _r_hole_;
         hole_x_max += _r_hole_;
         hole_y_min -= _r_hole_;
         hole_y_max += _r_hole_;
-      }
-    else
-      {
+      } else {
         hole_x_min -= 0.5 * _x_hole_;
         hole_x_max += 0.5 * _x_hole_;
         hole_y_min -= 0.5 * _y_hole_;
         hole_y_max += 0.5 * _y_hole_;
       }
-    
-    if ((hole_x_min < -0.5 * _x_) || (hole_x_max > 0.5 * _x_))
-      {
-        std::ostringstream message;
-        message << "geomtools::plate_with_hole_model::_at_construct: "
-                << "Hole size is too large for mother box dimension !";
-        throw std::logic_error (message.str ());
-      }
-    
-    if ((hole_y_min < -0.5 * _y_) || (hole_y_max > 0.5 * _y_))
-      {
-        std::ostringstream message;
-        message << "geomtools::plate_with_hole_model::_at_construct: "
-                << "Hole size is too large for mother box dimension !";
-        throw std::logic_error (message.str ());
-      }
-    
+
+    DT_THROW_IF ((hole_x_min < -0.5 * _x_) || (hole_x_max > 0.5 * _x_),
+                 std::logic_error,
+                 "Hole size is too large for mother box dimension !");
+
+    DT_THROW_IF ((hole_y_min < -0.5 * _y_) || (hole_y_max > 0.5 * _y_),
+                  std::logic_error,
+                 "Hole size is too large for mother box dimension !");
+
     _mother_.set_x (_x_);
     _mother_.set_y (_y_);
     _mother_.set_z (_z_);
-    if (! _mother_.is_valid ())
-      {
-        ostringstream message;
-        message << "geomtools::plate_with_hole_model::_at_construct: "
-                << "Invalid dimension(s) for the mother box !";
-        throw logic_error (message.str ());
-      }
-           
-    geomtools::placement hole_placement (_x_pos_hole_, _y_pos_hole_, 0.0, 
+    DT_THROW_IF (! _mother_.is_valid (),
+                 std::logic_error,
+                 "Invalid dimension(s) for the mother box !");
+
+    geomtools::placement hole_placement (_x_pos_hole_, _y_pos_hole_, 0.0,
                                          0, 0, 0);
-    if (datatools::is_valid (_r_hole_))
-      {
+    if (datatools::is_valid (_r_hole_)) {
         _cyl_hole_.set_r (_r_hole_);
         _cyl_hole_.set_z (_z_hole_);
-        _solid_.set_shapes (_mother_, 
-                            _cyl_hole_, 
+        _solid_.set_shapes (_mother_,
+                            _cyl_hole_,
                             hole_placement);
-      }
-    else if (datatools::is_valid (_x_hole_) && datatools::is_valid (_y_hole_))
+      } else if (datatools::is_valid (_x_hole_) && datatools::is_valid (_y_hole_))
       {
         _box_hole_.set_x (_x_hole_);
         _box_hole_.set_y (_y_hole_);
         _box_hole_.set_z (_z_hole_);
-        _solid_.set_shapes (_mother_, 
-                            _box_hole_, 
+        _solid_.set_shapes (_mother_,
+                            _box_hole_,
                             hole_placement);
-      }
-    else
-      {
-        ostringstream message;
-        message << "geomtools::plate_with_hole_model::_at_construct: "
-                << "No defined shape for hole !";
-        throw logic_error (message.str ());
-      }
+      } else {
+      DT_THROW_IF(true,logic_error, "No defined shape for hole !");
+    }
 
     // Install proposed 'stackable data' pointer in the shape:
     {
@@ -322,11 +247,11 @@ namespace geomtools {
       //     sd_ptr->zmin = 0.0;
       //   }
       _solid_.set_stackable_data (sd_ptr);
-      if (devel)
-        {
-          clog << "DEVEL: plate_with_hole_model::_at_construct: Entering..." << endl;
-          sd_ptr->tree_dump (cerr, "plate_with_hole_model::_at_construct: Stackable data: ", "DEVEL: ");
-        }
+      // if (devel)
+      //   {
+      //     clog << "DEVEL: plate_with_hole_model::_at_construct: Entering..." << endl;
+      //     sd_ptr->tree_dump (cerr, "plate_with_hole_model::_at_construct: Stackable data: ", "DEVEL: ");
+      //   }
     }
 
     _solid_.set_user_draw ((void *) &plate_with_hole_model::gnuplot_draw_user_function);
@@ -335,11 +260,11 @@ namespace geomtools {
     get_logical ().set_shape (_solid_);
     get_logical ().set_material_ref (_material_);
 
-    if (devel)
-      {
-        this->tree_dump (clog, "plate_with_hole_model::_at_construct: ", "DEVEL: ");
-      }
-    if (devel) clog << "DEVEL: plate_with_hole_model::_at_construct: Exiting." << endl;
+    // if (devel)
+    //   {
+    //     this->tree_dump (clog, "plate_with_hole_model::_at_construct: ", "DEVEL: ");
+    //   }
+    // if (devel) clog << "DEVEL: plate_with_hole_model::_at_construct: Exiting." << endl;
     return;
   }
 
@@ -368,7 +293,7 @@ namespace geomtools {
         _mother_.tree_dump (out_,"",indent_oss.str ());
       }
     }
-    
+
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Hole X-position : " << _x_pos_hole_ / CLHEP::mm << " mm" << std::endl;
     out_ << indent << datatools::i_tree_dumpable::tag
@@ -378,14 +303,14 @@ namespace geomtools {
       // Hole:
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Hole : " << std::endl;
-      if (_box_hole_.is_valid ()) 
+      if (_box_hole_.is_valid ())
         {
           std::ostringstream indent_oss;
           indent_oss << indent;
           indent_oss << datatools::i_tree_dumpable::skip_tag;
           _box_hole_.tree_dump (out_,"",indent_oss.str ());
         }
-      if (_cyl_hole_.is_valid ()) 
+      if (_cyl_hole_.is_valid ())
         {
           std::ostringstream indent_oss;
           indent_oss << indent;
@@ -417,13 +342,9 @@ namespace geomtools {
   {
     //using namespace geomtools;
     const subtraction_3d * solid = dynamic_cast<const geomtools::subtraction_3d *>(&obj_);
-    if (solid == 0)
-      {
-        std::ostringstream message;
-        message << "geomtools::plate_with_hole_model::gnuplot_draw_user_function: "
-                << "3D-object of '" << obj_.get_shape_name () << "' shape type has not the right type !";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF (solid == 0,
+                 std::logic_error,
+                 "3D-object of '" << obj_.get_shape_name () << "' shape type has not the right type !");
     const i_composite_shape_3d::shape_type & s1 = solid->get_shape1 ();
     const i_composite_shape_3d::shape_type & s2 = solid->get_shape2 ();
     const i_shape_3d & sh1 = s1.get_shape ();
@@ -480,7 +401,7 @@ namespace geomtools {
           const rotation_3d & sh2_rot = world_item_placement.get_rotation ();
           if (sh2.get_shape_name () == "box")
             {
-              const geomtools::box & hole_box 
+              const geomtools::box & hole_box
                 = dynamic_cast<const geomtools::box &> (sh2);
               gnuplot_draw::draw_box (out_,
                                       sh2_pos,
@@ -492,7 +413,7 @@ namespace geomtools {
             }
           if (sh2.get_shape_name () == "cylinder")
             {
-              const geomtools::cylinder & hole_cylinder 
+              const geomtools::cylinder & hole_cylinder
                 = dynamic_cast<const geomtools::cylinder &> (sh2);
               gnuplot_draw::draw_cylinder (out_,
                                            sh2_pos,
