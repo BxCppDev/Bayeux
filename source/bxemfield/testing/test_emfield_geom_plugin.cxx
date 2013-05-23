@@ -80,7 +80,7 @@ int main (int argc_, char ** argv_)
     // This is the geometry manager :
     geomtools::manager geo_manager;
     geo_manager.tree_dump(std::clog, "The geometry manager (uninitialized) : ");
-    geo_manager.set_debug (debug);
+    if (debug) geo_manager.set_logging_priority (datatools::logger::PRIO_DEBUG);
 
     std::string mag_field_plugin_file="${EMFIELD_DATA_DIR}/testing/config/test_emfield_geom_plugin.conf";
     datatools::fetch_path_with_env(mag_field_plugin_file);
