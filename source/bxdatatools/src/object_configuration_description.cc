@@ -924,8 +924,7 @@ namespace datatools {
   {
     if (! has_class_library()) {
       DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
-                    "datatools::object_configuration_description::_at_lock_: "
-                    << "No library for class named '" << get_class_name() << "' !");
+                    "No library for class named '" << get_class_name() << "' !");
     }
     // Establish interdependencies between dependees/dependers dynamic properties :
     for (int i = 0; i < _configuration_properties_infos_.size(); i++) {
