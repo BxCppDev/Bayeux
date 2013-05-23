@@ -147,31 +147,14 @@ namespace genvtx {
 
   vg_handle_type & vg_entry_type::grab_initialized_vg_handle ()
   {
-    if (! has_vg ())
-      {
-        if (_manager_ == 0)
-          {
-            std::ostringstream message;
-            message << "genvtx::vg_entry_type::grab_initialized_vg_handle: "
-                    << "No manager is available to create the vg '" << this->_vg_name_
-                    << "' ! ";
-            throw std::logic_error (message.str ());
-          }
-        _manager_->create_vg (*this);
-      }
-    else
-      {
-        if (_manager_ == 0)
-          {
-            std::ostringstream message;
-            message << "genvtx::vg_entry_type::vg_entry_type::grab_initialized_vg_handle: "
-                    << "No manager is available to initialize the vg '" << this->_vg_name_
-                    << "' ! ";
-            throw std::logic_error (message.str ());
-
-          }
-        _manager_->initialize_vg (*this);
-      }
+    if (! has_vg ()) {
+      DT_THROW_IF (_manager_ == 0,std::logic_error,
+                   "No manager is available to create the vg '" << this->_vg_name_ << "' ! ");
+      _manager_->create_vg (*this);
+    }
+    DT_THROW_IF (_manager_ == 0,std::logic_error,
+                 "No manager is available to initialize the vg '" << this->_vg_name_ << "' !");
+    _manager_->initialize_vg (*this);
     return _vg_handle_;
   }
 

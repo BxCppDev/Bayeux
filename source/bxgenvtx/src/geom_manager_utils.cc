@@ -1,17 +1,20 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* geom_materials_access.cc
  */
+
+#include <genvtx/detail/geom_manager_utils.h>
 
 #include <string>
 #include <stdexcept>
 
+#include <datatools/exception.h>
+
 #include <materials/manager.h>
+
 #include <geomtools/materials_plugin.h>
 #include <geomtools/mapping_plugin.h>
 #include <geomtools/mapping.h>
 #include <geomtools/manager.h>
-
-#include <genvtx/detail/geom_manager_utils.h>
 
 namespace genvtx {
   namespace detail {
@@ -19,7 +22,7 @@ namespace genvtx {
     const geomtools::mapping *
     access_geometry_mapping(const geomtools::manager & geo_mgr_,
                             const std::string & mapping_plugin_name_)
-    { 
+    {
       const geomtools::mapping * mapping_ptr = 0;
       if (mapping_plugin_name_.empty())
         {
@@ -33,25 +36,18 @@ namespace genvtx {
           if (geo_mgr_.has_plugin(mapping_plugin_name_)
               && geo_mgr_.is_plugin_a<geomtools::mapping_plugin>(mapping_plugin_name_))
             {
-              const geomtools::mapping_plugin & MP = 
+              const geomtools::mapping_plugin & MP =
                 geo_mgr_.get_plugin<geomtools::mapping_plugin>(mapping_plugin_name_);
-              if (! MP.is_initialized())
-                {
-                  std::ostringstream message;
-                  message << "genvtx::detail::access_geometry_mapping: "
-                          << "Geometry mapping plugin named '" << mapping_plugin_name_  
-                          << "' is not initialized !";
-                  throw std::logic_error (message.str ());                
-                }
+              DT_THROW_IF (! MP.is_initialized(), std::logic_error,
+                           "Geometry mapping plugin named '" << mapping_plugin_name_
+                           << "' is not initialized !");
               mapping_ptr = &(MP.get_mapping ());
             }
           else
             {
-              std::ostringstream message;
-              message << "genvtx::detail::access_geometry_mapping: "
-                      << "No geometry mapping plugin named '" << mapping_plugin_name_  
-                      << "' available from the geometry manager !";
-              throw std::logic_error (message.str ());
+              DT_THROW_IF(true, std::logic_error,
+                          "No geometry mapping plugin named '" << mapping_plugin_name_
+                          << "' available from the geometry manager !");
             }
         }
       return mapping_ptr;
@@ -64,16 +60,11 @@ namespace genvtx {
       if (geo_mgr_.has_plugin(materials_plugin_name_)
           && geo_mgr_.is_plugin_a<geomtools::materials_plugin>(materials_plugin_name_))
         {
-          const geomtools::materials_plugin & MGP = 
+          const geomtools::materials_plugin & MGP =
             geo_mgr_.get_plugin<geomtools::materials_plugin>(materials_plugin_name_);
-          if (! MGP.is_initialized())
-            {
-              std::ostringstream message;
-              message << "genvtx::detail::access_materials_manager: "
-                      << "Geometry materials plugin named '" << materials_plugin_name_  
-                      << "' is not initialized !";
-              throw std::logic_error (message.str ());                
-            }
+          DT_THROW_IF (! MGP.is_initialized(), std::logic_error,
+                       "Geometry materials plugin named '" << materials_plugin_name_
+                       << "' is not initialized !");
           return &(MGP.get_manager ());
         }
       return 0;

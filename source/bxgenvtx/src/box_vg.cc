@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* box_vg.cc
  */
 
@@ -10,6 +10,8 @@
 #include <vector>
 
 #include <datatools/units.h>
+#include <datatools/exception.h>
+
 #include <mygsl/rng.h>
 
 namespace genvtx {
@@ -25,46 +27,43 @@ namespace genvtx {
 
   void box_vg::set_mode (int mode_)
   {
-    if ((mode_ !=  MODE_BULK) && (mode_ !=  MODE_SURFACE))
-      {
-        throw logic_error ("genvtx::box_vg::set_mode: Invalid mode !");
-      }
+    DT_THROW_IF ((mode_ !=  MODE_BULK) && (mode_ !=  MODE_SURFACE),
+                 logic_error, "Invalid mode !");
     _mode_ = mode_;
-    //cerr << "DEVEL ************* mode = " <<  _mode_ << "\n";
     return;
   }
 
   void box_vg::set_surface_mask (int surface_mask_)
   {
-    _assert_lock ("genvtx::box_vg::set_surface_mask");
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
     _surface_mask_ = surface_mask_;
     return;
   }
 
   void box_vg::set_skin_skip (double skin_skip_)
   {
-    _assert_lock ("genvtx::box_vg::set_surface_mask");
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
     _skin_skip_ = skin_skip_;
     return;
   }
 
   void box_vg::set_skin_thickness (double skin_thickness_)
   {
-    _assert_lock ("genvtx::box_vg::set_skin_thickness");
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
     _skin_thickness_ = skin_thickness_;
     return;
   }
 
   void box_vg::set_bulk (double skin_thickness_)
   {
-    _assert_lock ("genvtx::box_vg::set_bulk");
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
     _mode_ = MODE_BULK;
     return;
   }
 
   void box_vg::set_surface (int surface_mask_)
   {
-    _assert_lock ("genvtx::box_vg::set_surface");
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
     _mode_ = MODE_SURFACE;
     set_surface_mask (surface_mask_);
     return;
@@ -77,28 +76,22 @@ namespace genvtx {
 
   void box_vg::set_box_ref (const geomtools::box & box_)
   {
-    _assert_lock ("genvtx::box_vg::set_box_ref");
-    if (! box_.is_valid ())
-      {
-        throw logic_error ("genvtx::box_vg::set_box_ref: Invalid box !");
-      }
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
+    DT_THROW_IF (! box_.is_valid (), std::logic_error, "Invalid box !");
     _box_ref_ = &box_;
     return;
   }
 
   void box_vg::set_box (const geomtools::box & box_)
   {
-    _assert_lock ("genvtx::box_vg::set_box");
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
     _box_ = box_;
     return;
   }
 
   const geomtools::box & box_vg::get_box_ref () const
   {
-    if (_box_ref_ == 0)
-      {
-        throw logic_error ("genvtx::box_vg::get_box_ref: No box ref !");
-       }
+    DT_THROW_IF (_box_ref_ == 0, std::logic_error, "No box ref !");
     return *_box_ref_;
   }
 
@@ -122,7 +115,7 @@ namespace genvtx {
       }
     return get_box ();
   }
-  
+
   GENVTX_VG_IS_INITIALIZED_IMPLEMENT_HEAD(box_vg)
   {
     return _initialized_;
@@ -137,19 +130,15 @@ namespace genvtx {
     _set_defaults_ ();
     return;
   }
-  
+
   // Destructor :
   GENVTX_VG_DEFAULT_DESTRUCTOR_IMPLEMENT(box_vg)
 
   GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(box_vg,setup_,service_manager_,vgens_)
   {
-    if (is_debug ()) std::cerr << "DEBUG: genvtx::box_vg::initialize: Entering..." << std::endl;
     using namespace std;
     bool devel = false;
-    if (is_initialized ())
-      {
-        throw logic_error ("genvtx::box_vg::initialize: Already initialized !");
-      }
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
 
     // parameters of the box vertex generator:
     int    mode = MODE_INVALID;
@@ -163,63 +152,46 @@ namespace genvtx {
     bool treat_skin_skip      = false;
     bool treat_skin_thickness = false;
 
-    if (_mode_ == MODE_INVALID)
-      {
-        if (setup_.has_key ("mode"))
-          {
-            string mode_str = setup_.fetch_string ("mode");
-            if (mode_str == "surface")
-              {
-                mode = MODE_SURFACE;
-              }
-            else if (mode_str == "bulk")
-              {
-                mode = MODE_BULK;
-              }
-            else
-              {
-                ostringstream message;
-                message << "genvtx::box_vg::create: Invalid mode '"
-                        << mode_str << "' !";
-                throw logic_error (message.str ());
-              }
-            treat_mode = true;
-          }
-      }
+    if (_mode_ == MODE_INVALID) {
+      if (setup_.has_key ("mode")) {
+          string mode_str = setup_.fetch_string ("mode");
+          if (mode_str == "surface") {
+              mode = MODE_SURFACE;
+            } else if (mode_str == "bulk") {
+              mode = MODE_BULK;
+            } else {
+              DT_THROW_IF(true, logic_error, "Invalid mode '" << mode_str << "' !");
+            }
+          treat_mode = true;
+        }
+    }
 
-    if (setup_.has_key ("length_unit"))
-      {
+    if (setup_.has_key ("length_unit")) {
         lunit_str = setup_.fetch_string ("length_unit");
         lunit = datatools::units::get_length_unit_from (lunit_str);
       }
-    
-    if (setup_.has_key ("skin_skip"))
-      {
+
+    if (setup_.has_key ("skin_skip")) {
         skin_skip = setup_.fetch_real ("skin_skip");
-        skin_skip *= lunit;
+        if (! setup_.has_explicit_unit ("skin_skip")) skin_skip *= lunit;
         treat_skin_skip = true;
       }
 
-    if (setup_.has_key ("skin_thickness"))
-      {
+    if (setup_.has_key ("skin_thickness")) {
         skin_thickness = setup_.fetch_real ("skin_thickness");
-        skin_thickness *= lunit;
+        if (! setup_.has_explicit_unit ("skin_thickness")) skin_thickness *= lunit;
         treat_skin_thickness = true;
       }
 
-    if (mode == MODE_SURFACE)
-      {
+    if (mode == MODE_SURFACE) {
         std::vector<std::string> surfaces;
-        if (setup_.has_key ("surfaces"))
-          {
+        if (setup_.has_key ("surfaces")) {
             setup_.fetch ("surfaces", surfaces);
             treat_surface_mask = true;
           }
 
-        for (int i = 0; i < surfaces.size (); i++)
-          {
-            if (surfaces[i] == "all")
-              {
+        for (int i = 0; i < surfaces.size (); i++) {
+            if (surfaces[i] == "all") {
                 surface_mask = geomtools::box::FACE_ALL;
                 break;
               }
@@ -248,7 +220,7 @@ namespace genvtx {
                 surface_mask |= geomtools::box::FACE_TOP;
               }
           }
-        
+
       }
 
     if (treat_mode) set_mode (mode);
@@ -264,37 +236,26 @@ namespace genvtx {
         datatools::invalidate (box_z);
         string box_user_ref = vg_tools::SHAPE_REF_NONE;
         string box_user_ref_name;
-        double length_unit = CLHEP::millimeter;
-        
-        if (setup_.has_key ("length_unit"))
-          {
-            std::string length_unit_str = setup_.fetch_string ("length_unit");
-            length_unit = datatools::units::get_length_unit_from (length_unit_str);
-          }
-        
-        if (setup_.has_key ("box.x"))
-          {
-            box_x = setup_.fetch_real ("box.x");
-          }
-        
-        if (setup_.has_key ("box.y"))
-          {
-            box_y = setup_.fetch_real ("box.y");
-          }
-        
-        if (setup_.has_key ("box.z"))
-          {
-            box_z = setup_.fetch_real ("box.z");
-          }     
-        {
-          box_x *= lunit;
-          box_y *= lunit;
-          box_z *= lunit;
+
+        if (setup_.has_key ("box.x")) {
+          box_x = setup_.fetch_real ("box.x");
+          if (! setup_.has_explicit_unit ("box.x")) box_x *= lunit;
         }
+
+        if (setup_.has_key ("box.y")) {
+          box_y = setup_.fetch_real ("box.y");
+          if (! setup_.has_explicit_unit ("box.y")) box_y *= lunit;
+        }
+
+        if (setup_.has_key ("box.z")) {
+          box_z = setup_.fetch_real ("box.z");
+          if (! setup_.has_explicit_unit ("box.z")) box_z *= lunit;
+        }
+
         geomtools::box box (box_x, box_y, box_z);
         set_box (box);
       }
- 
+
     _init_ ();
     _initialized_ = true;
     return;
@@ -302,10 +263,7 @@ namespace genvtx {
 
   GENVTX_VG_RESET_IMPLEMENT_HEAD(box_vg)
   {
-    if (! is_initialized ())
-      {
-        throw logic_error ("genvtx::box_vg::reset: Not initialized !");
-      }
+    DT_THROW_IF (! is_initialized(), std::logic_error, "Not initialized !");
     _reset_ ();
     _initialized_ = false;
     return;
@@ -313,29 +271,24 @@ namespace genvtx {
 
   void box_vg::_init_ ()
   {
-    if (_mode_ == MODE_SURFACE) 
+    if (_mode_ == MODE_SURFACE)
       {
-        if (_surface_mask_ == 0)
-          {
-            throw logic_error ("genvtx::box_vg::_init_: Surface mask is null !");
-          }
+        DT_THROW_IF (_surface_mask_ == 0, logic_error, "Surface mask is zero !");
         double s = _box_.get_surface (_surface_mask_);
-        if (is_debug()) clog << "DEBUG: genvtx::box_vg::_init_: Total surface = " << s << endl;
+        // if (is_debug()) clog << "DEBUG: genvtx::box_vg::_init_: Total surface = " << s << endl;
         _sum_weight_[0] = _box_.get_surface (_surface_mask_ & geomtools::box::FACE_BACK);
         _sum_weight_[1] = _box_.get_surface (_surface_mask_ & geomtools::box::FACE_FRONT);
         _sum_weight_[2] = _box_.get_surface (_surface_mask_ & geomtools::box::FACE_LEFT);
         _sum_weight_[3] = _box_.get_surface (_surface_mask_ & geomtools::box::FACE_RIGHT);
         _sum_weight_[4] = _box_.get_surface (_surface_mask_ & geomtools::box::FACE_BOTTOM);
         _sum_weight_[5] = _box_.get_surface (_surface_mask_ & geomtools::box::FACE_TOP);
-        for (int i = 0; i < 6; i++) 
-          {
-            _sum_weight_[i] /= s;
-            if (i > 0) 
-              {
-                _sum_weight_[i] += _sum_weight_[i - 1];
-              }
-            if (is_debug()) clog << "DEBUG: genvtx::box_vg::_init_: Surface weight [" << i << "] = " << _sum_weight_[i] << endl;
+        for (int i = 0; i < 6; i++) {
+          _sum_weight_[i] /= s;
+          if (i > 0) {
+            _sum_weight_[i] += _sum_weight_[i - 1];
           }
+          //if (is_debug()) clog << "DEBUG: genvtx::box_vg::_init_: Surface weight [" << i << "] = " << _sum_weight_[i] << endl;
+        }
       }
     return;
   }
@@ -354,16 +307,15 @@ namespace genvtx {
     _surface_mask_ = geomtools::box::FACE_ALL;
     _skin_skip_ = 0.0;
     _skin_thickness_ = 0.0;
-    for (int i = 0; i < 6; i++)
-      {
-        _sum_weight_[i] = 0.0;
-      }
+    for (int i = 0; i < 6; i++) {
+      _sum_weight_[i] = 0.0;
+    }
     return;
   }
 
-  void box_vg::tree_dump (std::ostream & out_, 
-                          const std::string & title_, 
-                          const std::string & indent_, 
+  void box_vg::tree_dump (std::ostream & out_,
+                          const std::string & title_,
+                          const std::string & indent_,
                           bool inherit_) const
   {
     namespace du = datatools;
@@ -371,199 +323,88 @@ namespace genvtx {
     if (! indent_.empty ()) indent = indent_;
     i_vertex_generator::tree_dump (out_, title_, indent_, true);
     out_ << indent << du::i_tree_dumpable::tag;
-    if (has_box_ref ())
-      {
-        out_ << "External box : " << *_box_ref_ << " [" << _box_ref_ << ']';
-      }
-    else
-      {
-        out_ << "Embedded box : " << _box_;
-      }
+    if (has_box_ref ()) {
+      out_ << "External box : " << *_box_ref_ << " [" << _box_ref_ << ']';
+    } else {
+      out_ << "Embedded box : " << _box_;
+    }
     out_ << std::endl;
     out_ << indent << du::i_tree_dumpable::tag << "Mode :        " << _mode_ << endl;
     out_ << indent << du::i_tree_dumpable::tag << "Surface mask: " << _surface_mask_ << endl;
     out_ << indent << du::i_tree_dumpable::tag << "Skin skip:    " << _skin_skip_ << endl;
-    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_) 
+    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
          << "Skin thickness: " << _skin_thickness_ << endl;
     return;
   }
-  
+
   GENVTX_VG_SHOOT_VERTEX_IMPLEMENT_HEAD(box_vg,random_,vertex_)
   {
     bool devel = false;
-    if (! is_initialized ())
-      {
-        throw logic_error ("genvtx::box_vg::_shoot_vertex: Not initialized !"); 
-      }
+    DT_THROW_IF (! is_initialized (), logic_error, "Not initialized !");
     geomtools::invalidate (vertex_);
     double x, y, z;
     const geomtools::box * the_box = &_box_;
-    if (has_box_ref ())
-      {
-        the_box = _box_ref_;
+    if (has_box_ref ()) {
+      the_box = _box_ref_;
+    }
+
+    if (_mode_ == MODE_BULK) {
+      // if (devel)
+      //   {
+      //     clog << "DEVEL: genvtx::box_vg::_shoot_vertex: "
+      //          << "Bulk mode..." << endl;
+      //   }
+      x = (random_.uniform () - 0.5) * (the_box->get_x () - _skin_thickness_);
+      y = (random_.uniform () - 0.5) * (the_box->get_y () - _skin_thickness_);
+      z = (random_.uniform () - 0.5) * (the_box->get_z () - _skin_thickness_);
+    }
+
+    if (_mode_ == MODE_SURFACE) {
+      // if (devel)
+      //   {
+      //     clog << "DEVEL: genvtx::box_vg::_shoot_vertex: "
+      //          << "Surface mode..." << endl;
+      //   }
+      double r0 = random_.uniform ();
+      double r1 = random_.uniform ();
+      double r2 = random_.uniform ();
+      double r3 = 0.0;
+      double delta_thick = 0.0;
+      if (_skin_thickness_ > 0.0) {
+        r3 = random_.uniform ();
+        delta_thick = (r3 - 0.5) * _skin_thickness_;
       }
 
-    if (_mode_ == MODE_BULK) 
-      {
-        if (devel) 
-          {
-            clog << "DEVEL: genvtx::box_vg::_shoot_vertex: "
-                 << "Bulk mode..." << endl;
-          }
-        x = (random_.uniform () - 0.5) * (the_box->get_x () - _skin_thickness_);
-        y = (random_.uniform () - 0.5) * (the_box->get_y () - _skin_thickness_);
-        z = (random_.uniform () - 0.5) * (the_box->get_z () - _skin_thickness_);
+      if (r0 < _sum_weight_[0]) {
+        y = (r1 - 0.5) * the_box->get_y ();
+        z = (r2 - 0.5) * the_box->get_z ();
+        x = -(the_box->get_half_x () + _skin_skip_ + delta_thick);
+      } else if (r0 < _sum_weight_[1]) {
+        y = (r1 - 0.5) * the_box->get_y ();
+        z = (r2 - 0.5) * the_box->get_z ();
+        x = +(the_box->get_half_x () + _skin_skip_ + delta_thick);
+      } else if (r0 < _sum_weight_[2]) {
+        x = (r1 - 0.5) * the_box->get_x ();
+        z = (r2 - 0.5) * the_box->get_z ();
+        y = -(the_box->get_half_y () + _skin_skip_ + delta_thick);
+      } else if (r0 < _sum_weight_[3]) {
+        x = (r1 - 0.5) * the_box->get_x ();
+        z = (r2 - 0.5) * the_box->get_z ();
+        y = +(the_box->get_half_y () + _skin_skip_ + delta_thick);
+      } else if (r0 < _sum_weight_[4]) {
+        x = (r1 - 0.5) * the_box->get_x ();
+        y = (r2 - 0.5) * the_box->get_y ();
+        z = -(the_box->get_half_z () + _skin_skip_ + delta_thick);
+      } else {
+        x = (r1 - 0.5) * the_box->get_x ();
+        y = (r2 - 0.5) * the_box->get_y ();
+        z = +(the_box->get_half_z () + _skin_skip_ + delta_thick);
       }
-
-    if (_mode_ == MODE_SURFACE) 
-      {
-        if (devel) 
-          {
-            clog << "DEVEL: genvtx::box_vg::_shoot_vertex: "
-                 << "Surface mode..." << endl;
-          }
-        double r0 = random_.uniform ();
-        double r1 = random_.uniform ();
-        double r2 = random_.uniform ();
-        double r3 = 0.0;
-        double delta_thick = 0.0;
-        if (_skin_thickness_ > 0.0) 
-          {
-            r3 = random_.uniform ();
-            delta_thick = (r3 - 0.5) * _skin_thickness_;
-          }
-        
-        if (r0 < _sum_weight_[0]) 
-          {
-            y = (r1 - 0.5) * the_box->get_y ();
-            z = (r2 - 0.5) * the_box->get_z ();
-            x = -(the_box->get_half_x () + _skin_skip_ + delta_thick);
-          }
-        else if (r0 < _sum_weight_[1]) 
-          {
-            y = (r1 - 0.5) * the_box->get_y ();
-            z = (r2 - 0.5) * the_box->get_z ();
-            x = +(the_box->get_half_x () + _skin_skip_ + delta_thick);
-          }
-        else if (r0 < _sum_weight_[2]) 
-          {
-            x = (r1 - 0.5) * the_box->get_x ();
-            z = (r2 - 0.5) * the_box->get_z ();
-            y = -(the_box->get_half_y () + _skin_skip_ + delta_thick);
-          }
-        else if (r0 < _sum_weight_[3]) 
-          {
-            x = (r1 - 0.5) * the_box->get_x ();
-            z = (r2 - 0.5) * the_box->get_z ();
-            y = +(the_box->get_half_y () + _skin_skip_ + delta_thick);
-          }     
-        else if (r0 < _sum_weight_[4]) 
-          {
-            x = (r1 - 0.5) * the_box->get_x ();
-            y = (r2 - 0.5) * the_box->get_y ();
-            z = -(the_box->get_half_z () + _skin_skip_ + delta_thick);
-          }
-        else 
-          {
-            x = (r1 - 0.5) * the_box->get_x ();
-            y = (r2 - 0.5) * the_box->get_y ();
-            z = +(the_box->get_half_z () + _skin_skip_ + delta_thick);
-          }     
-      }
+    }
     vertex_.set (x, y, z);
     return;
   }
 
-  /*
-    // create a new parameterized 'box_vg' instance:
-    box_vg * ptr = new box_vg;
-    ptr->set_mode (mode);
-    ptr->set_skin_skip (skin_skip);
-    ptr->set_skin_thickness (skin_thickness);
-    ptr->set_surface_mask (surface_mask);
-
-    // use an embedded box:
-    if (box_user_ref == vg_tools::SHAPE_REF_NONE)
-      {
-        box_x *= lunit;
-        box_y *= lunit;
-        box_z *= lunit;
-        geomtools::box box (box_x, box_y, box_z);
-        ptr->set_box (box);
-      }
-    else
-      // use a referenced external box extracted from:
-      {
-        if (user_ == 0)
-          {
-            throw logic_error ("genvtx::box_vg::create: No user data is provided !");
-          }
-
-        const geomtools::box * ext_box_ref = 0;
-            
-        if (box_user_ref == vg_tools::SHAPE_REF_PLAIN)
-          {
-            try
-              {
-                ext_box_ref = static_cast<const geomtools::box *> (user_);
-              }
-            catch (...)
-              {
-                throw logic_error ("genvtx::box_vg::create: Cannot reference a 'geomtools::box' from 'user' pointer !");
-              }
-          }
-        else if (box_user_ref == vg_tools::SHAPE_REF_GETTER)
-          {
-            geomtools::i_object_3d::i_getter * getter = 0;
-            try
-              {
-                getter = static_cast<geomtools::i_object_3d::i_getter *> (user_);
-              }
-            catch (...)
-              {
-                throw logic_error ("genvtx::box_vg::create: Cannot reference a 'i_object_3d::i_getter' from 'user' pointer !");
-              }
-
-            const geomtools::i_object_3d * o3d = 0;
-            try
-              {
-                o3d = getter->get (box_user_ref_name, setup_);
-              }
-            catch (...)
-              {
-                throw logic_error ("genvtx::box_vg::create: Cannot reference a 'i_object_3d' object from the 'getter' instance !");
-              }
-
-            if (o3d->get_shape_name () != "box")
-              {
-                throw logic_error ("genvtx::box_vg::create: Reference 3D object is not a 'box' shape !");
-              }
-
-            try
-              {
-                ext_box_ref = dynamic_cast <const geomtools::box *> (o3d);
-              }
-            catch (...)
-              {
-                throw logic_error ("genvtx::box_vg::create: Cannot reference a 'geomtools::box' from the generic 3D shape !");
-              }
-          }
-        else 
-          {
-            throw logic_error ("genvtx::box_vg::create: Unknown mode for external shape referencing !");            
-          }
-
-        if (ext_box_ref == 0)
-          {
-            throw logic_error ("genvtx::box_vg::create: Cannot reference a box from 'user' pointer !");
-          }
-        ptr->set_box_ref (*ext_box_ref);
-      }
-
-    return ptr; 
-  }
-  */
-  
 } // end of namespace genvtx
 
 // end of box_vg.cc

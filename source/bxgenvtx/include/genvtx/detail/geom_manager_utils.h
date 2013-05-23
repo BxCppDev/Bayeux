@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* geom_manager_utils.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-03-11
@@ -7,6 +7,8 @@
 
 #ifndef GENVTX_DETAIL_GEOM_MANAGER_UTILS_H_
 #define GENVTX_DETAIL_GEOM_MANAGER_UTILS_H_ 1
+
+#include <string>
 
 namespace materials {
   class manager;

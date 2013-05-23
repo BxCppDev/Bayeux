@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* spot_vertex_generator.cc
  */
 
@@ -11,8 +11,10 @@
 #include <datatools/units.h>
 #include <geomtools/utils.h>
 
+#include <datatools/exception.h>
+
 namespace genvtx {
- 
+
   using namespace std;
 
   GENVTX_VG_REGISTRATION_IMPLEMENT(spot_vertex_generator,"genvtx::spot_vertex_generator");
@@ -21,17 +23,17 @@ namespace genvtx {
   {
     return _spot_;
   }
-  
+
   void spot_vertex_generator::set_spot (const geomtools::vector_3d & new_value_)
   {
-    _assert_lock ("genvtx::spot_vertex_generator::set_spot");
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
     _spot_ = new_value_;
     return;
   }
-  
+
   void spot_vertex_generator::set_spot (double x_, double y_, double z_)
   {
-    _assert_lock ("genvtx::spot_vertex_generator::set_spot");
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
     _spot_.set (x_, y_, z_);
     return;
   }
@@ -46,7 +48,7 @@ namespace genvtx {
                                       service_manager_,
                                       vgens_)
   {
-    _assert_lock ("genvtx::spot_vertex_generator::initialize");
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
 
    // parameters of the spot vertex generator:
     double x, y, z;
@@ -93,13 +95,13 @@ namespace genvtx {
 
     return;
   }
- 
+
   GENVTX_VG_RESET_IMPLEMENT_HEAD(spot_vertex_generator)
   {
     geomtools::invalidate (_spot_);
     return;
   }
-  
+
   // Constructor:
   GENVTX_VG_CONSTRUCTOR_IMPLEMENT_HEAD(spot_vertex_generator)
   {
@@ -109,17 +111,14 @@ namespace genvtx {
 
   // Destructor :
   GENVTX_VG_DEFAULT_DESTRUCTOR_IMPLEMENT(spot_vertex_generator)
- 
+
   GENVTX_VG_SHOOT_VERTEX_IMPLEMENT_HEAD(spot_vertex_generator,random_,vertex_)
   {
-    if (! is_initialized ())
-      {
-        throw logic_error ("genvtx::spot_vertex_generator::_shoot_vertex: Not initialized !"); 
-      }
+    DT_THROW_IF (! is_initialized(), std::logic_error, "Not initialized !");
     vertex_ = _spot_;
     return;
   }
- 
+
   // Useful constructors :
 
   spot_vertex_generator::spot_vertex_generator (double x_, double y_, double z_)

@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* i_vertex_generator.cc
  */
 
@@ -13,6 +13,8 @@
 #include <datatools/version_id.h>
 #include <datatools/version_check.h>
 #include <datatools/utils.h>
+#include <datatools/logger.h>
+#include <datatools/exception.h>
 
 #include <mygsl/rng.h>
 
@@ -28,41 +30,30 @@ namespace genvtx {
   // Factory stuff :
   DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(i_vertex_generator,"genvtx::i_vertex_generator/_system_");
 
+  datatools::logger::priority
+  i_vertex_generator::get_logging_priority() const
+  {
+    return _logging_priority;
+  }
+
+  void i_vertex_generator::set_logging_priority(datatools::logger::priority p_)
+  {
+    _logging_priority = p_;
+  }
+
+
   bool i_vertex_generator::is_debug () const
   {
-    return _debug_;
+    return _logging_priority >= datatools::logger::PRIO_DEBUG;
   }
 
   void i_vertex_generator::set_debug (bool debug_)
   {
-    _debug_ = debug_;
-    return;
-  }
-
-  void i_vertex_generator::_assert_lock (const std::string & where_, 
-                                         const std::string & what_) const
-  {
-    if (is_initialized ())
-      {
-        std::ostringstream message;
-        if (where_.empty ())
-          {
-            message << "genvtx::box_vg::_assert_lock: ";
-          }
-        else
-          {
-            message << where_ << ": ";
-          }
-        if (what_.empty ())
-          {
-            message << "Object is initialized/locked !";
-          }
-        else 
-          {
-            message << what_;
-          }
-        throw logic_error (message.str());
-      }
+    if (debug_) {
+      _logging_priority = datatools::logger::PRIO_DEBUG;
+    } else {
+      _logging_priority = datatools::logger::PRIO_WARNING;
+    }
     return;
   }
 
@@ -70,19 +61,21 @@ namespace genvtx {
   {
     return ! _geom_setup_requirement_.empty ();
   }
-    
+
   void i_vertex_generator::set_geom_setup_requirement (const std::string & geom_setup_requirement_)
   {
-    _assert_lock ("snemo::genvertex::i_vertex_generator::set_geom_setup_requirement");
+    DT_THROW_IF(is_initialized(),
+                std::logic_error,
+                "Object is initialized/locked !");
     _geom_setup_requirement_ = geom_setup_requirement_;
     return;
   }
-    
+
   std::string i_vertex_generator::get_geom_setup_requirement () const
   {
     return _geom_setup_requirement_;
   }
-  
+
   bool i_vertex_generator::has_geo_label () const
   {
     return ! _geo_label_.empty ();
@@ -119,12 +112,12 @@ namespace genvtx {
   {
     return _total_weight_;
   }
- 
+
   bool i_vertex_generator::has_geom_manager () const
   {
     return _geom_manager_ != 0;
   }
- 
+
   void i_vertex_generator::check_geom_setup_requirement (const geomtools::manager * gmgr_) const
   {
     // Default check the embedded geometry manager if any :
@@ -145,36 +138,33 @@ namespace genvtx {
           std::istringstream iss (geom_mgr_setup_version);
           iss >> geom_mgr_setup_vid;
         }
-        if (! datatools::validate_version (geom_mgr_setup_label, 
-                                           geom_mgr_setup_vid, 
-                                           get_geom_setup_requirement ()))
-          {
-            std::ostringstream message;
-            message << "genvtx::i_vertex_generator::check_geom_setup_requirement: "
-                    << "Geometry manager setup label '" << gmgr->get_setup_label ()  << "' with version '" << geom_mgr_setup_vid << "' does not match the requested setup requirement '" << get_geom_setup_requirement () << "' !";
-            throw std::logic_error (message.str ());
-          }
-        else
-          {
-            std::clog << "NOTICE: " << "genvtx::i_vertex_generator::check_geom_setup_requirement: "  
-                      << "Geometry manager setup label '" << gmgr->get_setup_label ()  
-                      << "' with version '" << geom_mgr_setup_vid 
-                      << "' matches the requested setup requirement '" 
-                      << get_geom_setup_requirement () << "'."
-                      << std::endl;
-          }
-      }      
+        DT_THROW_IF ((! datatools::validate_version (geom_mgr_setup_label,
+                                                     geom_mgr_setup_vid,
+                                                     get_geom_setup_requirement ())),
+                     std::logic_error,
+                     "Geometry manager setup label '" << gmgr->get_setup_label ()
+                     << "' with version '" << geom_mgr_setup_vid
+                     << "' does not match the requested setup requirement '"
+                     << get_geom_setup_requirement () << "' !");
+        DT_LOG_NOTICE(get_logging_priority(),
+                      "Geometry manager setup label '" << gmgr->get_setup_label ()
+                      << "' with version '" << geom_mgr_setup_vid
+                      << "' matches the requested setup requirement '"
+                      << get_geom_setup_requirement () << "'.");
+      }
     return;
   }
 
   void i_vertex_generator::set_geom_manager (const geomtools::manager & gmgr_)
   {
-    _assert_lock ("genvtx::i_vertex_generator::set_manager");
+    DT_THROW_IF(is_initialized(),
+                std::logic_error,
+                "Object is initialized/locked !");
     check_geom_setup_requirement (&gmgr_);
     _geom_manager_ = &gmgr_;
     return;
   }
-  
+
   const geomtools::manager & i_vertex_generator::get_geom_manager () const
   {
     return *_geom_manager_;
@@ -198,16 +188,14 @@ namespace genvtx {
 
   mygsl::rng & i_vertex_generator::grab_prng()
   {
-    if (! has_external_prng())
-      {
-        throw std::logic_error ("mygsl::i_vertex_generator::shoot_vertex: No available PRNG !");
-     }
+    DT_THROW_IF (! has_external_prng(), std::logic_error,
+                 "No available PRNG !");
     return *_external_prng_;
   }
 
   i_vertex_generator::i_vertex_generator ()
   {
-    _debug_ = false;
+    _logging_priority = datatools::logger::PRIO_WARNING;
     _geom_manager_ = 0;
     _total_weight_.invalidate ();
     _external_prng_ = 0;
@@ -226,15 +214,13 @@ namespace genvtx {
 
   void i_vertex_generator::shoot_vertex (geomtools::vector_3d & vertex_)
   {
-    if (_external_prng_ == 0)
-      {
-        throw std::logic_error ("mygsl::i_vertex_generator::shoot_vertex: Missing external PRNG handle !");
-      }
+    DT_THROW_IF (_external_prng_ == 0, std::logic_error,
+                 "Missing external PRNG handle !");
     shoot_vertex (*_external_prng_, vertex_);
     return;
   }
 
-  void i_vertex_generator::shoot_vertex (mygsl::rng & random_, 
+  void i_vertex_generator::shoot_vertex (mygsl::rng & random_,
                                          geomtools::vector_3d & vertex_)
   {
     _shoot_vertex (random_, vertex_);
@@ -252,27 +238,47 @@ namespace genvtx {
                                                datatools::service_manager & service_manager_)
   {
     // Fetch configuration parameters :
-    if (setup_.has_flag ("debug"))
-      {
-        set_debug (true);
-      }
+    if (setup_.has_key("logging.priority")) {
+      std::string lp_label = setup_.fetch_string("logging.priority");
+      datatools::logger::priority lp = datatools::logger::get_priority(lp_label);
+      DT_THROW_IF(lp ==  datatools::logger::PRIO_UNDEFINED,
+                  std::logic_error,
+                  "Invalid logging priority '" << lp_label << "' !");
+      set_logging_priority(lp);
+    }
+
+
+    if (setup_.has_flag ("verbose")) {
+      set_logging_priority (datatools::logger::PRIO_NOTICE);
+    }
+
+    if (setup_.has_flag ("debug")) {
+      set_debug (true);
+    }
+
+    if (setup_.has_key("logging.priority")) {
+      std::string lp_label = setup_.fetch_string("logging.priority");
+      datatools::logger::priority lp = datatools::logger::get_priority(lp_label);
+      DT_THROW_IF(lp == datatools::logger::PRIO_UNDEFINED,
+                  std::logic_error,
+                  "Invalid logging priority '" << lp_label << "' !");
+      set_logging_priority(lp);
+    }
 
     // Required geometry setup label :
-    if (setup_.has_key ("geometry.setup_requirement"))
-      {
-        std::clog << "NOTICE: " << "genvtx::i_vertex_generator::_initialize_basics: "
-                  << "Loading 'geometry.setup_requirement' rules..." << std::endl;
-        string geom_setup_requirement = setup_.fetch_string ("geometry.setup_requirement");
-        set_geom_setup_requirement (geom_setup_requirement);
-      }
+    if (setup_.has_key ("geometry.setup_requirement")) {
+      DT_LOG_NOTICE(get_logging_priority(),
+                    "Loading 'geometry.setup_requirement' rules...");
+      std::string geom_setup_requirement = setup_.fetch_string ("geometry.setup_requirement");
+      set_geom_setup_requirement (geom_setup_requirement);
+    }
 
     // Do we need support for embeded PRNG ???
-
     check_geom_setup_requirement (0);
-      
+
     return;
   }
-  
+
   void i_vertex_generator::_initialize_geo_manager (const datatools::properties & setup_,
                                                     datatools::service_manager & service_manager_)
   {
@@ -283,49 +289,29 @@ namespace genvtx {
         if (_geo_label_.empty ())
           {
             // Service labels :
-            if (setup_.has_key ("Geo_label"))
-              {
-                _geo_label_ = setup_.fetch_string ("Geo_label");
-              }
-            else
-              { 
-                std::ostringstream message;
-                message << "genvtx::i_vertex_generator::_initialize_geo_manager: "
-                        << "Missing  '" << "Geo_label" << "' property !";
-                throw std::logic_error (message.str ());
-              }
+            DT_THROW_IF (!setup_.has_key ("Geo_label"),
+                         std::logic_error,
+                         "Missing  '" << "Geo_label" << "' property !");
+            _geo_label_ = setup_.fetch_string ("Geo_label");
           }
 
-        if (_geo_label_.empty ())
-          {
-            std::ostringstream message;
-            message << "genvtx::i_vertex_generator::_initialize_geo_manager: "
-                    << "Invalid '" << "Geo_label" << "' property !";
-            throw std::logic_error (message.str ());
-          }
-
-        if (service_manager_.has (_geo_label_)
-            && service_manager_.is_a<geomtools::geometry_service> (_geo_label_))
-          {
-            geomtools::geometry_service & Geo
-              = service_manager_.get<geomtools::geometry_service> (_geo_label_);
-            set_geom_manager (Geo.get_geom_manager ());
-          }
-        else
-          {
-            std::ostringstream message;
-            message << "genvtx::i_vertex_generator::_initialize_geo_manager: "
-                    << "Cannot find '" << _geo_label_ << "' service !";
-            throw std::logic_error (message.str ());
-          }
+        DT_THROW_IF (_geo_label_.empty (),
+                     std::logic_error,
+                     "Invalid '" << "Geo_label" << "' property !");
+        DT_THROW_IF (! service_manager_.has (_geo_label_)
+                     && service_manager_.is_a<geomtools::geometry_service> (_geo_label_),
+                     std::logic_error,
+                     "Cannot find '" << _geo_label_ << "' service !");
+        geomtools::geometry_service & Geo
+          = service_manager_.get<geomtools::geometry_service> (_geo_label_);
+        set_geom_manager (Geo.get_geom_manager ());
       }
-        
+
     return;
   }
 
   void i_vertex_generator::initialize_simple ()
   {
-    if (is_debug ()) std::cerr << "DEBUG: genvtx::i_vertex_generator::initialize_simple: Entering..." << std::endl;
     datatools::properties dummy_setup;
     initialize_standalone (dummy_setup);
     return;
@@ -333,17 +319,15 @@ namespace genvtx {
 
   void i_vertex_generator::initialize_standalone (const datatools::properties & setup_)
   {
-    if (is_debug ()) std::cerr << "DEBUG: genvtx::i_vertex_generator::initialize_standalone: Entering..." << std::endl;
     datatools::service_manager dummy_srvcmgr;
     vg_dict_type dummy_dict;
     initialize (setup_, dummy_srvcmgr, dummy_dict);
     return;
   }
-   
+
   void i_vertex_generator::initialize_with_dictionary_only (const datatools::properties & setup_,
                                                             vg_dict_type & dictionary_)
   {
-    if (is_debug ()) std::cerr << "DEBUG: genvtx::i_vertex_generator::initialize_with_dictionary_only: Entering..." << std::endl;
     datatools::service_manager dummy_srvcmgr;
     initialize (setup_, dummy_srvcmgr, dictionary_);
     return;
@@ -352,39 +336,38 @@ namespace genvtx {
   void i_vertex_generator::initialize_with_service_only (const datatools::properties & setup_,
                                                          datatools::service_manager & service_manager_)
   {
-    if (is_debug ()) std::cerr << "DEBUG: genvtx::i_vertex_generator::initialize_with_service_only: Entering..." << std::endl;
     vg_dict_type dummy_dict;
     initialize (setup_, service_manager_, dummy_dict);
     return;
   }
-  
-  
+
+
   void i_vertex_generator::_reset ()
   {
     _geo_label_.clear ();
     _geom_setup_requirement_.clear ();
     _geom_manager_ = 0;
     _total_weight_.invalidate ();
+    _logging_priority = datatools::logger::PRIO_WARNING;
     return;
   }
 
-  void i_vertex_generator::tree_dump (std::ostream & out_, 
-                                      const std::string & title_, 
-                                      const std::string & indent_, 
+  void i_vertex_generator::tree_dump (std::ostream & out_,
+                                      const std::string & title_,
+                                      const std::string & indent_,
                                       bool inherit_) const
   {
     namespace du = datatools;
     std::string indent;
     if (! indent_.empty ()) indent = indent_;
-    if (! title_.empty ()) 
-      {
-        out_ << indent << title_ << endl;
-      }
+    if (! title_.empty ()) {
+      out_ << indent << title_ << endl;
+    }
 
-    out_ << indent << du::i_tree_dumpable::tag  
+    out_ << indent << du::i_tree_dumpable::tag
          << "Initialized : " << (is_initialized() ? "Yes": "No") << endl;
 
-    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)  
+    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
          << "Debug : " << (is_debug() ? "Yes": "No") << endl;
 
     out_ << indent << du::i_tree_dumpable::tag
@@ -398,10 +381,10 @@ namespace genvtx {
 
     out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
          << "Weight info " << std::endl;
- 
+
     return;
   }
- 
+
 } // end of namespace genvtx
 
 // end of i_vertex_generator.cc

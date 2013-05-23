@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* from_file_vg.cc
  */
 
@@ -15,6 +15,7 @@
 
 #include <datatools/utils.h>
 #include <datatools/units.h>
+#include <datatools/exception.h>
 
 namespace genvtx {
 
@@ -33,47 +34,27 @@ namespace genvtx {
   {
     return _filename_;
   }
-  
+
   void from_file_vg::set_filename (const string & filename_)
   {
-    _assert_lock ("genvtx::from_file_vg::set_filename",
-                  "Cannot change the vertex source file name for a source file is already opened !");
-   if (_open_)
-      {
-        throw logic_error ("genvtx::from_file_vg::set_filename: Cannot change source file name as source file is already opened !");
-      }
+    DT_THROW_IF (is_initialized(), logic_error, "Already initialized !");
+    DT_THROW_IF (_open_, logic_error, "Cannot change source file name as source file is already opened !");
     _filename_ = filename_;
     return;
   }
 
   void from_file_vg::_open_source ()
   {
-    if (_open_)
-      {
-        throw logic_error ("genvtx::from_file_vg::_open_source: Source file is already opened !");
-      }
-    if (_filename_.empty ())
-      {
-        throw logic_error ("genvtx::from_file_vg::_open_source: Missing source file name !");
-      } 
+    DT_THROW_IF (_open_, logic_error, "Source file is already opened !");
+    DT_THROW_IF (_filename_.empty (), logic_error, "Missing source file name !");
 
     datatools::fetch_path_with_env (_filename_);
 
-    if (! boost::filesystem::exists (_filename_)) 
-      {
-        ostringstream message;
-        message << "genvtx::from_file_vg::_open_source: " 
-                << "Source file '" << _filename_ << "' does not exist !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (! boost::filesystem::exists (_filename_),
+                 runtime_error,"Source file '" << _filename_ << "' does not exist !");
     _source_.open (_filename_.c_str ());
-    if (! _source_)
-      {
-        ostringstream message;
-        message << "genvtx::from_file_vg::_open_source: " 
-                << "Cannot open source file '" << _filename_ << "' !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (! _source_,logic_error,
+                 "Cannot open source file '" << _filename_ << "' !");
     _open_ = true;
     _read_next ();
     return;
@@ -81,10 +62,7 @@ namespace genvtx {
 
   void from_file_vg::_close_source ()
   {
-    if (! _open_)
-      {
-        throw logic_error ("genvtx::from_file_vg::_close_source: Source file is not opened !");
-      }
+    DT_THROW_IF (! _open_, logic_error, "Source file is not opened !");
     _source_.close ();
     _filename_ = "";
     geomtools::invalidate (_next_);
@@ -94,15 +72,12 @@ namespace genvtx {
 
   void from_file_vg::set_length_unit (double lu_)
   {
-    _assert_lock ("genvtx::from_file_vg::set_length_unit"); 
-    if (_length_unit_ <= 0.0)
-      {
-        throw logic_error ("genvtx::from_file_vg::set_length_unit: Invalid length unit !");   
-      }
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
+    DT_THROW_IF (_length_unit_ <= 0.0, std::logic_error, "Invalid length unit !");
     _length_unit_ = lu_;
     return;
   }
-  
+
   double from_file_vg::get_length_unit () const
   {
     return _length_unit_;
@@ -118,7 +93,7 @@ namespace genvtx {
                                       service_manager_,
                                       vgens_)
   {
-    _assert_lock ("genvtx::from_file_vg::initialize");
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
     using namespace std;
     bool devel = false;
     double lunit = LENGTH_UNIT;
@@ -127,22 +102,16 @@ namespace genvtx {
     // parameters of the cut:
     string filename;
 
-    if (_filename_.empty ())
-      {
-        if (configuration_.has_key ("filename"))
-          {
-            filename = configuration_.fetch_string ("filename");
-          }
-        
-        if (configuration_.has_key ("length_unit"))
-          {
-            lunit_str = configuration_.fetch_string ("length_unit");
-            lunit = datatools::units::get_length_unit_from (lunit_str);
-          }
-        
-        set_length_unit (lunit);
+    if (_filename_.empty ()) {
+      if (configuration_.has_key ("filename")) {
+        filename = configuration_.fetch_string ("filename");
       }
-
+      if (configuration_.has_key ("length_unit")) {
+        lunit_str = configuration_.fetch_string ("length_unit");
+        lunit = datatools::units::get_length_unit_from (lunit_str);
+      }
+      set_length_unit (lunit);
+    }
     _open_source ();
     return;
   }
@@ -152,7 +121,7 @@ namespace genvtx {
     if (_open_)
       {
         _close_source ();
-      }    
+      }
     return;
   }
 
@@ -165,7 +134,7 @@ namespace genvtx {
     _length_unit_ = LENGTH_UNIT;
     return;
   }
-  
+
   // Destructor :
   GENVTX_VG_DEFAULT_DESTRUCTOR_IMPLEMENT(from_file_vg)
 
@@ -184,11 +153,7 @@ namespace genvtx {
 
   void from_file_vg::_read_next ()
   {
-    if (! _open_)
-      {
-        throw logic_error ("genvtx::from_file_vg::_read_next: Source file is not opened !");
-        //_open_source ();
-      }
+    DT_THROW_IF (! _open_, logic_error, "Source file is not opened !");
     double x, y, z;
     geomtools::invalidate (_next_);
 
@@ -215,17 +180,12 @@ namespace genvtx {
               continue;
             }
         }
-        if (! goon) 
+        if (! goon)
           {
             istringstream iss (line);
             iss >> x >> y >> z >> ws;
-            if (! iss)
-              {
-                ostringstream message;
-                message << "genvtx::from_file_vg::_read_next: " 
-                        << "'x y z' format error at invalid line '" << line << "' !";
-                throw logic_error (message.str ());
-              }
+            DT_THROW_IF (! iss, logic_error,
+                         "'x y z' format error at invalid line '" << line << "' !");
             _next_.set (x, y, z);
             break;
           }
@@ -246,13 +206,10 @@ namespace genvtx {
   {
     return const_cast<from_file_vg*>(this)->_has_next ();
   }
- 
+
   GENVTX_VG_SHOOT_VERTEX_IMPLEMENT_HEAD(from_file_vg,random_,vertex_)
   {
-    if (! is_initialized ())
-      {
-        throw logic_error ("genvtx::from_file_vg::_shoot_vertex: Not initialized !"); 
-      }
+    DT_THROW_IF (! is_initialized (), logic_error, "Not initialized !");
     // here apply the length unit:
     vertex_ = _next_ * _length_unit_;
     _read_next ();

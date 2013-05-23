@@ -8,7 +8,9 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+
 #include <datatools/units.h>
+#include <datatools/exception.h>
 
 namespace genvtx {
 
@@ -26,7 +28,7 @@ namespace genvtx {
 
   void placement_vg::set_placement (const geomtools::placement & new_value_)
   {
-    _assert_lock ("genvtx::placement_vg::set_placement");
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
     _placement_ = new_value_;
     return;
   }
@@ -49,7 +51,7 @@ namespace genvtx {
       }
     else if (! _hvg_)
       {
-        throw logic_error ("genvtx::placement_vg::grab_vg: Missing vertex generator !");
+        DT_THROW_IF (true, logic_error,"Missing vertex generator !");
       }
     return _hvg_.grab ();
   }
@@ -62,7 +64,7 @@ namespace genvtx {
       }
     else if (! _hvg_)
       {
-        throw logic_error ("genvtx::placement_vg::get_vg: Missing vertex generator !");
+        DT_THROW_IF (true, logic_error,"Missing vertex generator !");
       }
     return _hvg_.get ();
   }
@@ -83,7 +85,7 @@ namespace genvtx {
 
   void placement_vg::set_vg (i_vertex_generator & new_value_)
   {
-    _assert_lock ("genvtx::placement_vg::set_vg");
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
     _clear_vg_ ();
     _owned_ = false;
     _vg_ = &new_value_;
@@ -92,7 +94,7 @@ namespace genvtx {
 
   void  placement_vg::set_vg (i_vertex_generator * new_value_)
   {
-    _assert_lock ("genvtx::placement_vg::set_vg");
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
     _clear_vg_ ();
     _owned_ = true;
     _vg_ = new_value_;
@@ -101,7 +103,7 @@ namespace genvtx {
 
   void  placement_vg::set_vg (vg_handle_type & hvg_)
   {
-    _assert_lock ("genvtx::placement_vg::set_vg");
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
     _clear_vg_ ();
     _owned_ = false;
     _hvg_ = hvg_;
@@ -110,10 +112,9 @@ namespace genvtx {
 
   GENVTX_VG_HAS_NEXT_VERTEX_IMPLEMENT_HEAD(placement_vg)
   {
-    if (! has_vg ())
-      {
-        return false;
-      }
+    if (! has_vg ()) {
+      return false;
+    }
     return get_vg ().has_next_vertex ();
   }
 
@@ -127,7 +128,7 @@ namespace genvtx {
                                       service_manager_,
                                       vgens_)
   {
-    _assert_lock ("genvtx::from_file_vg::initialize");
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
     using namespace std;
     bool devel = false;
     double x, y, z;
@@ -138,78 +139,67 @@ namespace genvtx {
     double lunit = 1. * CLHEP::millimeter;
     double aunit = 1. * CLHEP::degree;
 
-    if (! has_vg ())
-      {
+    if (! has_vg ()) {
         // parameters of the vertex generator :
         string vg_name;
 
-        if (configuration_.has_key ("vertex_generator.name"))
-          {
-            vg_name = configuration_.fetch_string ("vertex_generator.name");
-            vg_dict_type::iterator vg_found = vgens_.find (vg_name);
+        if (configuration_.has_key ("vertex_generator.name")) {
+          vg_name = configuration_.fetch_string ("vertex_generator.name");
+          vg_dict_type::iterator vg_found = vgens_.find (vg_name);
+          DT_THROW_IF (vg_found == vgens_.end (),std::logic_error,
+                       "Cannot find a vertex generator with name '"
+                       <<  vg_name << "' !");
+          set_vg (vg_found->second.grab_initialized_vg_handle ());
+        }
+    }
 
-            if (vg_found == vgens_.end ())
-              {
-                ostringstream message;
-                message << "genvtx::placement_vg::initialize: Cannot find a vertex generator with name '"
-                        <<  vg_name << "' !";
-                throw logic_error (message.str ());
-              }
-            set_vg (vg_found->second.grab_initialized_vg_handle ());
-          }
-      }
+    if (configuration_.has_key ("length_unit")) {
+      std::string lunit_str = configuration_.fetch_string ("length_unit");
+      lunit = datatools::units::get_length_unit_from (lunit_str);
+    }
+
+    if (configuration_.has_key ("angle_unit")) {
+      std::string aunit_str = configuration_.fetch_string ("angle_unit");
+      aunit = datatools::units::get_angle_unit_from (aunit_str);
+    }
 
     if (! get_placement ().is_valid ())
       {
         if (configuration_.has_key ("placement.x"))
           {
             x = configuration_.fetch_real ("placement.x");
+            if (! configuration_.has_explicit_unit ("placement.x")) x *= lunit;
           }
 
         if (configuration_.has_key ("placement.y"))
           {
             y = configuration_.fetch_real ("placement.y");
+            if (! configuration_.has_explicit_unit ("placement.y")) y *= lunit;
           }
 
         if (configuration_.has_key ("placement.z"))
           {
             z = configuration_.fetch_real ("placement.z");
+            if (! configuration_.has_explicit_unit ("placement.z")) z *= lunit;
           }
 
         if (configuration_.has_key ("placement.phi"))
           {
             phi = configuration_.fetch_real ("placement.phi");
+            if (! configuration_.has_explicit_unit ("placement.phi")) phi *= aunit;
           }
 
         if (configuration_.has_key ("placement.theta"))
           {
             theta = configuration_.fetch_real ("placement.theta");
+            if (! configuration_.has_explicit_unit ("placement.theta")) theta *= aunit;
           }
 
         if (configuration_.has_key ("placement.delta"))
           {
             delta = configuration_.fetch_real ("placement.delta");
+            if (! configuration_.has_explicit_unit ("placement.delta")) delta *= aunit;
           }
-
-        if (configuration_.has_key ("length_unit"))
-          {
-            std::string lunit_str = configuration_.fetch_string ("length_unit");
-            lunit = datatools::units::get_length_unit_from (lunit_str);
-          }
-
-        x *= lunit;
-        y *= lunit;
-        z *= lunit;
-
-        if (configuration_.has_key ("angle_unit"))
-          {
-            std::string aunit_str = configuration_.fetch_string ("angle_unit");
-            aunit = datatools::units::get_angle_unit_from (aunit_str);
-          }
-
-        phi   *= aunit;
-        theta *= aunit;
-        delta *= aunit;
 
         geomtools::placement pl (x, y, z, phi, theta, delta);
         set_placement (pl);
@@ -239,18 +229,14 @@ namespace genvtx {
 
   GENVTX_VG_SHOOT_VERTEX_IMPLEMENT_HEAD(placement_vg,random_,vertex_)
   {
-    if (! is_initialized ())
-      {
-        throw logic_error ("genvtx::placement_vg::_shoot_vertex: Not initialized !");
-      }
+    DT_THROW_IF (! is_initialized(), std::logic_error, "Not initialized !");
     geomtools::invalidate (vertex_);
     geomtools::vector_3d vertex;
     geomtools::invalidate (vertex);
     grab_vg ().shoot_vertex (random_, vertex);
-    if (geomtools::is_valid (vertex))
-      {
-        _placement_.child_to_mother (vertex, vertex_);
-      }
+    if (geomtools::is_valid (vertex)) {
+      _placement_.child_to_mother (vertex, vertex_);
+    }
     return;
   }
 

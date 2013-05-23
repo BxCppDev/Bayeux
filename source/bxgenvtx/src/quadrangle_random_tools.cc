@@ -1,19 +1,20 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* quadrangle_random_tools.cc
  */
 
 #include <genvtx/quadrangle_random_tools.h>
 #include <genvtx/triangle_random_tools.h>
+
 #include <datatools/utils.h>
 
 namespace genvtx {
 
-  geomtools::vector_3d 
+  geomtools::vector_3d
   quadrangle_random_surface (const geomtools::vector_3d & vtx0_,
                              const geomtools::vector_3d & vtx1_,
-                             const geomtools::vector_3d & vtx2_, 
-                             const geomtools::vector_3d & vtx3_, 
-                             mygsl::rng & random_, 
+                             const geomtools::vector_3d & vtx2_,
+                             const geomtools::vector_3d & vtx3_,
+                             mygsl::rng & random_,
                              double & area012_, double & area230_)
   {
     //geomtools::vector_3d bidon;
@@ -34,8 +35,8 @@ namespace genvtx {
       }
     return ::genvtx::triangle_random_surface (vtx2_, vtx3_, vtx0_, random_);
   }
-  
-  
+
+
 } // end of namespace genvtx
 
 // end of triangle_random_tools.cc
