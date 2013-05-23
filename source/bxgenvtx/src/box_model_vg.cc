@@ -273,6 +273,7 @@ namespace genvtx {
     DT_THROW_IF (mapping_ptr == 0, std::logic_error,
                  "No available geometry mapping was found !");
 
+    //DT_LOG_FATAL(get_logging_priority(), "*** Origin rules : " << _origin_rules_);
     _src_selector_.set_id_mgr (get_geom_manager ().get_id_mgr ());
     _src_selector_.initialize (_origin_rules_);
     //_src_selector_.dump (clog, "genvtx::box_model_vg::initialize: ID selector:");
