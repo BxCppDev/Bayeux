@@ -249,9 +249,8 @@ namespace genvtx {
         break;
       }
     }
-    DT_THROW_IF (index < 0,
-                 std::logic_error,
-                 "Cannot determine the volume location index !");
+    DT_THROW_IF (index < 0, std::logic_error,
+                 "Cannot determine the vertex location index !");
     geomtools::vector_3d src_vtx;
     _box_vg_.shoot_vertex (random_, src_vtx);
 
@@ -264,9 +263,7 @@ namespace genvtx {
   void box_model_vg::_init_ ()
   {
     DT_THROW_IF (! is_mode_valid (), std::logic_error, "Invalid mode !");
-
-    DT_THROW_IF (! has_geom_manager (), std::logic_error,
-                 "Missing geometry manager !");
+    DT_THROW_IF (! has_geom_manager (), std::logic_error, "Missing geometry manager !");
 
     const geomtools::mapping * mapping_ptr
       = detail::access_geometry_mapping(get_geom_manager (), _mapping_plugin_name_);
@@ -279,7 +276,8 @@ namespace genvtx {
     //_src_selector_.dump (clog, "genvtx::box_model_vg::initialize: ID selector:");
 
     const geomtools::mapping & the_mapping = *mapping_ptr;
-    const geomtools::geom_info_dict_type & geom_infos = the_mapping.get_geom_infos ();
+    const geomtools::geom_info_dict_type & geom_infos
+      = the_mapping.get_geom_infos ();
     std::list<weight_entry_type> entries;
     for (geomtools::geom_info_dict_type::const_iterator i
            = geom_infos.begin ();
@@ -295,7 +293,7 @@ namespace genvtx {
         entries.push_back (e);
       }
     }
-    DT_THROW_IF (entries.size () == 0,std::logic_error,
+    DT_THROW_IF (entries.size () == 0, std::logic_error,
                  "Cannot compute any source of vertex !");
 
     weight_entry_type dummy;
@@ -317,9 +315,13 @@ namespace genvtx {
 
     // Attempt to extract material info :
     double density = -1.0;
+    // std::cerr << "********** TEST 1 " << '\n';
+    // std::cerr << "**********   is_mode_bulk              = " << is_mode_bulk ()<< '\n';
+    // std::cerr << "**********   src_log->has_material_ref = " << src_log->has_material_ref ()<< '\n';
+    // std::cerr << "**********   has_materials_plugin_name = " << has_materials_plugin_name()<< '\n';
     if (is_mode_bulk ()
-        && src_log->has_material_ref ()
-        && has_materials_plugin_name()) {
+        && src_log->has_material_ref ()) {
+      //        && has_materials_plugin_name()) {
       std::string material_name = src_log->get_material_ref ();
       const materials::manager * mat_mgr_ptr
         = detail::access_materials_manager(get_geom_manager (),
@@ -330,6 +332,7 @@ namespace genvtx {
       const materials::manager & mat_mgr = *mat_mgr_ptr;
       materials::material_dict_type::const_iterator found =
         mat_mgr.get_materials ().find (material_name);
+      //std::cerr << "********** material_name=" <<material_name<< '\n';
       if (found != mat_mgr.get_materials ().end ()) {
         if (found->second.has_ref ()) {
           const materials::material & the_material = found->second.get_ref ();
@@ -341,7 +344,7 @@ namespace genvtx {
         }
       }
     }
-
+    //std::cerr << "********** TEST 2 " << '\n';
     int surface_mask = 0;
     if (is_mode_surface ()) {
       _box_vg_.set_mode (utils::MODE_SURFACE);
@@ -389,13 +392,12 @@ namespace genvtx {
 
     // compute weight:
     _entries_[0].cumulated_weight = _entries_[0].weight;
-    for (int i = 0; i < _entries_.size (); i++)
-      {
-        _entries_[i].weight = weight;
-        double cumul = 0.0;
-        if (i > 0) cumul = _entries_[i - 1].cumulated_weight;
-        _entries_[i].cumulated_weight = cumul + _entries_[i].weight;
-      }
+    for (int i = 0; i < _entries_.size (); i++) {
+      _entries_[i].weight = weight;
+      double cumul = 0.0;
+      if (i > 0) cumul = _entries_[i - 1].cumulated_weight;
+      _entries_[i].cumulated_weight = cumul + _entries_[i].weight;
+    }
 
     // store the total weight before normalization for alternative use :
     double the_weight_value = _entries_.back ().cumulated_weight;
@@ -406,9 +408,11 @@ namespace genvtx {
     weight_info the_weight_info;
     the_weight_info.type = the_weight_type;
     the_weight_info.value = the_weight_value;
+    //std::cerr << "********* DEVEL: density = " << density << '\n';
     if (the_weight_type == weight_info::WEIGHTING_VOLUME && density > 0) {
       // total mass computed for homogeneous density and
       the_weight_info.mass = the_weight_value * density;
+      //std::cerr << "********* DEVEL: mass = " << the_weight_info.mass << '\n';
     }
     _set_total_weight (the_weight_info);
 

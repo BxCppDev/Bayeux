@@ -41,7 +41,7 @@ genvtx_production \
                --shoot \
 	       --number-of-vertices 10000 \
 	       --prng-seed 314159 \
-	       --vertex-generator "all_mezzanine_pcb_bulk.vg" \
+	       --vertex-generator "from_every_pcb_bulk.vg" \
                --output-file "genvtx_ex01_vertices.txt" \
 	       --visu --tiny --tiny
 

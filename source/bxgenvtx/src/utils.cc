@@ -1,14 +1,16 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* utils.cc
  */
 
 #include <genvtx/utils.h>
 
 #include <datatools/utils.h>
+#include <datatools/clhep_units.h>
+
 #include <geomtools/geom_info.h>
 
 namespace genvtx {
-      
+
   void utils::origin_invalidate (std::string & origin_)
   {
     origin_.clear ();
@@ -30,8 +32,8 @@ namespace genvtx {
 
   bool weight_entry_type::is_valid () const
   {
-    return weight >= 0.0 
-      && cumulated_weight >= 0.0 
+    return weight >= 0.0
+      && cumulated_weight >= 0.0
       && ginfo != 0;
   }
 
@@ -49,7 +51,7 @@ namespace genvtx {
     cumulated_weight = -1.0;
     ginfo = 0;
   }
-  
+
   void weight_info::invalidate ()
   {
     value = -1.0;
@@ -82,17 +84,17 @@ namespace genvtx {
   {
     return type != WEIGHTING_NONE;
   }
-      
+
   double weight_info::get_surface () const
   {
     return weight_info::value;
   }
-       
+
   double weight_info::get_volume () const
   {
     return weight_info::value;
   }
-     
+
   double weight_info::get_mass () const
   {
     return mass;
@@ -104,6 +106,14 @@ namespace genvtx {
     value = -1.0;
     mass = -1.0;
     return;
+  }
+
+  void weight_info::dump(std::ostream & out_) const
+  {
+    out_ << "genvtx::weight_info::dump: \n";
+    out_ << "|-- " << "Type  = " << type << '\n';
+    out_ << "|-- " << "Value  = " << value << '\n';
+    out_ << "`-- " << "Mass  = " << mass/ CLHEP::gram << " g" << '\n';
   }
 
 } // end of namespace genvtx

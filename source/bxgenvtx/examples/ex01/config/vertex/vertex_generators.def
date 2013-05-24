@@ -57,6 +57,9 @@ origin : string  = " category='board_pcb.gc' board={6} "
 #@description The mode used for vertex generator from the underlying box model associated to the target logical volume ("surface" or "bulk")
 mode   : string  = "bulk"
 
+#@description The name of the materials plugin to extract material density value
+materials.plugin_name : string = "materials_driver"
+
 
 ##############################################################
 # Generate vertex from some mezzanine's PCB bulk:
@@ -74,6 +77,9 @@ origin : string  = "category='mezzanine_pcb.gc' board={*} daughter={*}"
 #@description The mode used for vertex generator from the underlying box model associated to the target logical volume ("surface" or "bulk")
 mode   : string  = "bulk"
 
+#@description The name of the materials plugin to extract material density value
+materials.plugin_name : string = "materials_driver"
+
 
 ###############################################################
 # Generate vertex from some mezzanine's PCB bulk:
@@ -90,6 +96,9 @@ origin : string  = "category='mezzanine_pcb.gc' board={*} daughter={1;2}"
 
 #@description The mode used for vertex generator from the underlying box model associated to the target logical volume ("surface" or "bulk")
 mode   : string  = "bulk"
+
+#@description The name of the materials plugin to extract material density value
+materials.plugin_name : string = "materials_driver"
 
 
 ################################################################
@@ -110,6 +119,24 @@ mode   : string  = "surface"
 
 #@description Surface mode cylinder side face activation
 mode.surface.side  : boolean = 1
+
+
+##########################################################
+# Generate vertex from all PCB bulks:
+##########################################################
+[name="from_every_pcb_bulk.vg" type="genvtx::combined_vg"]
+
+#@config Vertex generation from the bulk of all PCB of all mezzanine and all boards
+
+#@description The names of the vertex generators to be combined
+generators : string[2] = \
+  "all_mezzanine_pcb_bulk.vg" "board_pcb_bulk.vg"
+
+#@description The mass activity associated to the first generator
+generators.all_mezzanine_pcb_bulk.vg.activity : string = "1.0 mBq/kg"
+
+#@description The mass activity associated to the second generator
+generators.board_pcb_bulk.vg.activity         : string = "0.25 mBq/kg"
 
 
 # End of list of multi-properties.

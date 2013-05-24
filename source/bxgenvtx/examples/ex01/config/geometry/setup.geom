@@ -1,7 +1,7 @@
 # -*- mode: conf-unix; -*-
 # List of multi-properties (datatools::multi_properties):
 
-#@description The geometry model of the world (mother-of-all) volume 
+#@description The geometry model of the world (mother-of-all) volume
 
 #@key_label  "name"
 #@meta_label "type"
@@ -151,7 +151,7 @@ material.ref : string = "air"
 visibility.hidden : boolean = 0
 
 #@description The recommended color for the display
-visibility.color  : string  = "cyan"
+visibility.color  : string  = "transparent"
 
 #@description The list of daughter volumes by labels
 internal_item.labels : string[6] = \
@@ -241,7 +241,7 @@ material.ref : string = "air"
 visibility.hidden : boolean = 0
 
 #@description The recommended color for the display
-visibility.color  : string  = "cyan"
+visibility.color  : string  = "transparent"
 
 
 #@description The list of daughter volumes by labels
@@ -250,7 +250,7 @@ internal_item.labels : string[5] = \
   "daughter_board_a" \
   "daughter_board_b" \
   "daughter_board_c" \
-  "daughter_board_d" 
+  "daughter_board_d"
 
 internal_item.model.pcb              : string = "board_pcb.model"
 internal_item.model.daughter_board_a : string = "mezzanine.model"
@@ -280,7 +280,7 @@ mapping.daughter_id.daughter_board_d : string = "[mezzanine.gc:daughter=10]"
 material.ref    : string = "vacuum"
 
 #@description The name of the model that represents the experimental setup
-setup.model     : string = "board.model" 
+setup.model     : string = "board.model"
 
 #@description The angular unit for the experimental setup placement
 angle_unit      : string = "degree"

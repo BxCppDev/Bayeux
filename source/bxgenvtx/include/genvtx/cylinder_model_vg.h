@@ -7,7 +7,7 @@
  * License:
  *
  * Description:
- * 
+ *
  *   Vertex generator from a cylinder model addressed through some
  *   collection of geometry IDs extracted from a mapping object.
  *
@@ -31,9 +31,9 @@ namespace genvtx {
   GENVTX_VG_CLASS_DECLARE(cylinder_model_vg)
   {
   public:
-      
+
     bool is_mode_valid () const;
-      
+
     bool is_mode_bulk () const;
 
     bool is_mode_surface () const;
@@ -70,11 +70,11 @@ namespace genvtx {
 
     void set_mode (int);
 
-    virtual void tree_dump (std::ostream & out_ = std::clog, 
-                            const std::string & title_ = "", 
-                            const std::string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_ = std::clog,
+                            const std::string & title_ = "",
+                            const std::string & indent_ = "",
                             bool inherit_ = false) const;
- 
+
     GENVTX_VG_INTERFACE_CTOR_DTOR (cylinder_model_vg);
 
   private:
@@ -89,7 +89,7 @@ namespace genvtx {
 
     void _shoot_vertex_cylinders (mygsl::rng & random_,
                                   geomtools::vector_3d & vertex_);
- 
+
   private:
 
     bool                    _initialized_;
@@ -100,10 +100,10 @@ namespace genvtx {
     genvtx::cylinder_vg     _cylinder_vg_;
     std::string             _origin_rules_;
     std::string             _mapping_plugin_name_;
-    std::string             _materials_plugin_name_; // XXX
+    std::string             _materials_plugin_name_;
     geomtools::id_selector  _src_selector_;
     std::vector<weight_entry_type> _entries_;
-        
+
     GENVTX_VG_REGISTRATION_INTERFACE(cylinder_model_vg);
 
   };

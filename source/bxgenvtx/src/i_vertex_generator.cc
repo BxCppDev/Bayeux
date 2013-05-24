@@ -122,13 +122,11 @@ namespace genvtx {
   {
     // Default check the embedded geometry manager if any :
     const geomtools::manager * gmgr = _geom_manager_;
-    if (gmgr_ != 0)
-      {
+    if (gmgr_ != 0) {
         // Or check the argument geometry manager:
         gmgr = gmgr_;
       }
-    if (gmgr != 0 && has_geom_setup_requirement ())
-      {
+    if (gmgr != 0 && has_geom_setup_requirement ()) {
         // Example : "snemo"
         const string & geom_mgr_setup_label = gmgr->get_setup_label ();
         // Example : "2.0"
@@ -283,11 +281,9 @@ namespace genvtx {
                                                     datatools::service_manager & service_manager_)
   {
     // Geometry manager :
-    if (_geom_manager_ == 0)
-      {
+    if (_geom_manager_ == 0) {
         // Only if geometry manager is not already set :
-        if (_geo_label_.empty ())
-          {
+        if (_geo_label_.empty ()) {
             // Service labels :
             DT_THROW_IF (!setup_.has_key ("Geo_label"),
                          std::logic_error,

@@ -78,14 +78,12 @@ namespace genvtx {
     bool devel = false;
     double ran_w = random_.uniform ();
     int index = -1;
-    for (int i = 0; i < _entries_.size (); i++)
-      {
-        if (ran_w <= _entries_[i].cumulated_weight)
-          {
-            index = i;
-            break;
-          }
+    for (int i = 0; i < _entries_.size (); i++) {
+      if (ran_w <= _entries_[i].cumulated_weight) {
+        index = i;
+        break;
       }
+    }
     DT_THROW_IF (index < 0,std::logic_error,
                  "Cannot determine vertex location index !");
     genvtx::i_vertex_generator & a_vg = _entries_[index].vg_handle.grab ();
@@ -221,260 +219,250 @@ namespace genvtx {
       }
 
       // If one doesn't use 'activity' mode, try to fetch  'weighting infos' :
-      if (! activity_mode )
+      if (! activity_mode ) {
+
+        // relative weight :
         {
-
-          // relative weight :
-          {
-            std::ostringstream key_oss;
-            key_oss << "generators." << vg_name << ".relative_weight";
-            if (setup_.has_key (key_oss.str ()))
-              {
-                DT_THROW_IF (activity_mode,
-                             std::logic_error,
-                             "Incompatible activity/relative_weight directive !");
-                relative_weight = setup_.fetch_real (key_oss.str ());
-                DT_THROW_IF (relative_weight < 0.0,
-                             std::logic_error,
-                             "Invalid negative relative weight directive !");
-              }
+          std::ostringstream key_oss;
+          key_oss << "generators." << vg_name << ".relative_weight";
+          if (setup_.has_key (key_oss.str ())) {
+            DT_THROW_IF (activity_mode,
+                         std::logic_error,
+                         "Incompatible activity/relative_weight directive !");
+            relative_weight = setup_.fetch_real (key_oss.str ());
+            DT_THROW_IF (relative_weight < 0.0,
+                         std::logic_error,
+                         "Invalid negative relative weight directive !");
           }
-
-          // absolute weight :
-          if (relative_weight < 0.0)
-            {
-              std::ostringstream key_oss;
-              key_oss << "generators." << vg_name << ".absolute_weight";
-              if (setup_.has_key (key_oss.str ()))
-                {
-                  DT_THROW_IF (activity_mode, std::logic_error,
-                               "Incompatible activity/absolute_weight directive !");
-                  DT_THROW_IF (relative_weight >= 0.0, std::logic_error,
-                               "Incompatible relative/absolute weight directives !");
-                  absolute_weight = setup_.fetch_real (key_oss.str ());
-                  DT_THROW_IF (absolute_weight < 0.0, std::logic_error,
-                               "Invalid negative absolute weight directive !");
-                }
-            }
-          generator_relative_weights.push_back (relative_weight);
-          generator_absolute_weights.push_back (absolute_weight);
         }
+
+        // absolute weight :
+        if (relative_weight < 0.0) {
+          std::ostringstream key_oss;
+          key_oss << "generators." << vg_name << ".absolute_weight";
+          if (setup_.has_key (key_oss.str ())) {
+            DT_THROW_IF (activity_mode, std::logic_error,
+                         "Incompatible activity/absolute_weight directive !");
+            DT_THROW_IF (relative_weight >= 0.0, std::logic_error,
+                         "Incompatible relative/absolute weight directives !");
+            absolute_weight = setup_.fetch_real (key_oss.str ());
+            DT_THROW_IF (absolute_weight < 0.0, std::logic_error,
+                         "Invalid negative absolute weight directive !");
+          }
+        }
+        generator_relative_weights.push_back (relative_weight);
+        generator_absolute_weights.push_back (absolute_weight);
+      }
     }
     // End of parsing configuration parameters.
 
     int no_activity_type = weight_info::WEIGHTING_NONE;
-    for (int i = 0; i < generator_names.size (); i++)
-      {
-        const std::string & the_vg_name = generator_names[i];
+    for (int i = 0; i < generator_names.size (); i++) {
+      const std::string & the_vg_name = generator_names[i];
+      // if (devel)
+      //   {
+      //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
+      //          << "i = " << i << " VG name = '" << the_vg_name << "'"
+      //          << std::endl;
+      //   }
+      genvtx::vg_dict_type::iterator found = vgens_.find (the_vg_name);
+      DT_THROW_IF (found == vgens_.end (), std::logic_error,
+                   "No vertex generator named '" << the_vg_name << "' !");
+      double the_vg_weight = -1.0;
+      genvtx::vg_handle_type vgh = found->second.grab_initialized_vg_handle ();
+
+      // Activity mode :
+      if (activity_mode) {
         // if (devel)
         //   {
         //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
-        //          << "i = " << i << " VG name = '" << the_vg_name << "'"
+        //          << "Using 'activity' mode..."
         //          << std::endl;
         //   }
-        genvtx::vg_dict_type::iterator found = vgens_.find (the_vg_name);
-        DT_THROW_IF (found == vgens_.end (), std::logic_error,
-                     "No vertex generator named '" << the_vg_name << "' !");
-        double the_vg_weight = -1.0;
-        genvtx::vg_handle_type vgh = found->second.grab_initialized_vg_handle ();
+        double the_vg_activity_value         = generator_activity_value[i];
+        const std::string & the_vg_activity_label = generator_activity_label[i];
+        if (the_vg_activity_label == "activity") {
+          // This is the absolute activity mode :
+          the_vg_weight = the_vg_activity_value;
+          // if (devel)
+          //   {
+          //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
+          //          << "Using 'absolute activity' mode..."
+          //          << std::endl;
+          //   }
+        } else {
+          i_vertex_generator & test_vg = vgh.grab();
+          // Other activity modes are only supported by generators inherited
+          // from the 'base_vg' mother class, so here we first check covariance :
+          // base_vg * test_vg = dynamic_cast<base_vg *> (& vgh.get());
+          // if (test_vg == 0)
+          //   {
+          //     std::ostringstream message;
+          //     message << "genvtx::combined_vg::initialize: "
+          //             << "No support for '" << the_vg_activity_label
+          //             << "' mode for generator '" << the_vg_name << "' !";
+          //     th row std::logic_error (message.str ());
+          //   }
+          // if (devel)
+          //   {
+          //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
+          //          << "Generator '" << the_vg_name << "' is a 'base_vg'! "
+          //          << std::endl;
+          //   }
+          const weight_info & the_vg_weight_info = test_vg.get_total_weight ();
 
-        // Activity mode :
-        if (activity_mode)
-          {
+          //the_vg_weight_info.dump(std::cerr);
+
+          if (the_vg_activity_label == "volume_activity") {
+            // This is the volume activity mode :
             // if (devel)
             //   {
             //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
-            //          << "Using 'activity' mode..."
+            //          << "Using 'volume activity' mode..."
             //          << std::endl;
             //   }
-            double the_vg_activity_value         = generator_activity_value[i];
-            const std::string & the_vg_activity_label = generator_activity_label[i];
-            if (the_vg_activity_label == "activity")
-              {
-                // This is the absolute activity mode :
-                the_vg_weight = the_vg_activity_value;
-                // if (devel)
-                //   {
-                //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
-                //          << "Using 'absolute activity' mode..."
-                //          << std::endl;
-                //   }
-              }
-            else
-              {
-                i_vertex_generator & test_vg = vgh.grab();
-                // Other activity modes are only supported by generators inherited
-                // from the 'base_vg' mother class, so here we first check covariance :
-                // base_vg * test_vg = dynamic_cast<base_vg *> (& vgh.get());
-                // if (test_vg == 0)
-                //   {
-                //     std::ostringstream message;
-                //     message << "genvtx::combined_vg::initialize: "
-                //             << "No support for '" << the_vg_activity_label
-                //             << "' mode for generator '" << the_vg_name << "' !";
-                //     th row std::logic_error (message.str ());
-                //   }
-                // if (devel)
-                //   {
-                //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
-                //          << "Generator '" << the_vg_name << "' is a 'base_vg'! "
-                //          << std::endl;
-                //   }
-                const weight_info & the_vg_weight_info = test_vg.get_total_weight ();
-                if (the_vg_activity_label == "volume_activity")
-                  {
-                    // This is the volume activity mode :
-                    // if (devel)
-                    //   {
-                    //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
-                    //          << "Using 'volume activity' mode..."
-                    //          << std::endl;
-                    //   }
-                    DT_THROW_IF (! the_vg_weight_info.has_volume (), std::logic_error,
-                                 "Generator '" << the_vg_name << "' does not support 'volume_activity' mode !");
-                    // if (devel)
-                    //   {
-                    //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
-                    //          << "Volume is " <<  the_vg_weight_info.get_volume () / CLHEP::cm3
-                    //          << " cm3" << std::endl;
-                    //   }
-                    the_vg_weight = the_vg_activity_value * the_vg_weight_info.get_volume ();
-                    double Bq_unit = 1. / CLHEP::second;
-                    // if (devel)
-                    //   {
-                    //     std::cerr << "DEVEL: "
-                    //          << "genvtx::combined_vg::initialize: "
-                    //          << "Generator '" <<  the_vg_name << "' total activity is : "
-                    //          << the_vg_weight / Bq_unit << " Bq (in volume)" << std::endl;
-                    //   }
-                  }
-                else if (the_vg_activity_label == "surface_activity")
-                  {
-                    // This is the surface activity mode :
-                    // if (devel)
-                    //   {
-                    //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
-                    //          << "Using 'surface activity' mode..."
-                    //          << std::endl;
-                    //   }
-                    DT_THROW_IF (! the_vg_weight_info.has_surface (),std::logic_error,
-                                 "Generator '" << the_vg_name << "' does not support 'surface_activity' mode !");
-                    // if (devel)
-                    //   {
-                    //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
-                    //          << "Surface is " <<  the_vg_weight_info.get_surface () / CLHEP::m2
-                    //          << " m2" << std::endl;
-                    //   }
-                    the_vg_weight = the_vg_activity_value * the_vg_weight_info.get_surface ();
-                    double Bq_unit = 1. / CLHEP::second;
-                    // if (devel)
-                    //   {
-                    //     std::clog << "DEVEL: "
-                    //          << "genvtx::combined_vg::initialize: "
-                    //          << "Generator '" <<  the_vg_name << "' total activity is : "
-                    //          << the_vg_weight / Bq_unit << " Bq (in surface)" << std::endl;
-                    //   }
-                  } else if (the_vg_activity_label == "mass_activity") {
-                  // This is the mass activity mode :
-                  // if (devel)
-                  //   {
-                  //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
-                  //          << "Using 'mass activity' mode..."
-                  //          << std::endl;
-                  //   }
-                  DT_THROW_IF (! the_vg_weight_info.has_mass (), std::logic_error,
-                               "Generator '" << the_vg_name << "' does not support 'mass_activity' mode !");
-                  // if (devel)
-                  //   {
-                  //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
-                  //          << "Mass is " <<  the_vg_weight_info.get_mass () / CLHEP::kg << " kg" << std::endl;
-                  //   }
-                  the_vg_weight = the_vg_activity_value * the_vg_weight_info.get_mass ();
-                  double Bq_unit = 1. / CLHEP::second;
-                  // if (devel)
-                  //   {
-                  //     std::cerr << "DEVEL: "
-                  //          << "genvtx::combined_vg::initialize: "
-                  //          << "Generator '" <<  the_vg_name << "' total activity is : "
-                  //          << the_vg_weight / Bq_unit << " Bq (in mass)" << std::endl;
-                  //   }
-                }else {
-                  DT_THROW_IF(true,  std::logic_error,
-                              "Invalid activity label '" << the_vg_activity_label
-                              << "' for generator '" << the_vg_name << "' !");
-                }
-              }
-          }
-        // Plain mode :
-        else {
-          // if (devel)
-          //   {
-          //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
-          //          << "Using 'plain' mode..."
-          //          << std::endl;
-          //   }
-          double the_vg_absolute_weight = generator_absolute_weights[i];
-          double the_vg_relative_weight = generator_relative_weights[i];
-          // if (devel)
-          //   {
-          //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
-          //          << "absolute_weight = " << the_vg_absolute_weight
-          //          << std::endl;
-          //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
-          //          << "relative_weight = " << the_vg_relative_weight
-          //          << std::endl;
-          //   }
-          if (the_vg_absolute_weight > 0.0) {
+            DT_THROW_IF (! the_vg_weight_info.has_volume (), std::logic_error,
+                         "Generator '" << the_vg_name << "' does not support 'volume_activity' mode !");
             // if (devel)
             //   {
             //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
-            //          << "Using 'absolute weight' mode..."
+            //          << "Volume is " <<  the_vg_weight_info.get_volume () / CLHEP::cm3
+            //          << " cm3" << std::endl;
+            //   }
+            the_vg_weight = the_vg_activity_value * the_vg_weight_info.get_volume ();
+            double Bq_unit = 1. / CLHEP::second;
+            // if (devel)
+            //   {
+            //     std::cerr << "DEVEL: "
+            //          << "genvtx::combined_vg::initialize: "
+            //          << "Generator '" <<  the_vg_name << "' total activity is : "
+            //          << the_vg_weight / Bq_unit << " Bq (in volume)" << std::endl;
+            //   }
+          } else if (the_vg_activity_label == "surface_activity") {
+            // This is the surface activity mode :
+            // if (devel)
+            //   {
+            //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
+            //          << "Using 'surface activity' mode..."
             //          << std::endl;
             //   }
-            the_vg_weight = the_vg_absolute_weight;
-          } else if (the_vg_relative_weight > 0.0) {
+            DT_THROW_IF (! the_vg_weight_info.has_surface (),std::logic_error,
+                         "Generator '" << the_vg_name << "' does not support 'surface_activity' mode !");
             // if (devel)
             //   {
             //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
-            //               << "Using 'relative weight' mode..."
-            //               << std::endl;
+            //          << "Surface is " <<  the_vg_weight_info.get_surface () / CLHEP::m2
+            //          << " m2" << std::endl;
             //   }
-            i_vertex_generator & test_vg = vgh.grab();
-            /*
-              base_vg * test_vg = dynamic_cast<base_vg *> (& vgh.get());
-              if (test_vg == 0)
-              {
-              std::ostringstream message;
-              message << "genvtx::combined_vg::initialize: "
-              << "No support for '" << "relative_weight"
-              << "' mode for generator '" << the_vg_name << "' !";
-              th row std::logic_error (message.str ());
-              }
-            */
-            const weight_info & the_vg_weight_info = test_vg.get_total_weight ();
-            DT_THROW_IF (the_vg_weight_info.type == weight_info::WEIGHTING_NONE,
-                         std::logic_error,
-                         "Cannot support the '" << "relative_weight"
-                         << "' mode for generator '" << the_vg_name
-                         << "' for it has no valid weight info type !");
-            if (no_activity_type == weight_info::WEIGHTING_NONE) {
-              no_activity_type = the_vg_weight_info.type;
-            } else {
-              DT_THROW_IF (the_vg_weight_info.type != no_activity_type,
-                           std::logic_error,
-                           "Cannot use the '" << "relative_weight"
-                           << "' mode for generator '" << the_vg_name
-                           << "' which is not compatible with the current mode !");
-            }
-            the_vg_weight = the_vg_relative_weight * the_vg_weight_info.value;
+            the_vg_weight = the_vg_activity_value * the_vg_weight_info.get_surface ();
+            double Bq_unit = 1. / CLHEP::second;
+            // if (devel)
+            //   {
+            //     std::clog << "DEVEL: "
+            //          << "genvtx::combined_vg::initialize: "
+            //          << "Generator '" <<  the_vg_name << "' total activity is : "
+            //          << the_vg_weight / Bq_unit << " Bq (in surface)" << std::endl;
+            //   }
+          } else if (the_vg_activity_label == "mass_activity") {
+            // This is the mass activity mode :
+            // if (devel)
+            //   {
+            //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
+            //          << "Using 'mass activity' mode..."
+            //          << std::endl;
+            //   }
+            DT_THROW_IF (! the_vg_weight_info.has_mass (), std::logic_error,
+                         "Generator '" << the_vg_name << "' does not support 'mass_activity' mode ! Please check the access to some valid materials geometry plugin !");
+            // if (devel)
+            //   {
+            //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
+            //          << "Mass is " <<  the_vg_weight_info.get_mass () / CLHEP::kg << " kg" << std::endl;
+            //   }
+            the_vg_weight = the_vg_activity_value * the_vg_weight_info.get_mass ();
+            double Bq_unit = 1. / CLHEP::second;
+            // if (devel)
+            //   {
+            //     std::cerr << "DEVEL: "
+            //          << "genvtx::combined_vg::initialize: "
+            //          << "Generator '" <<  the_vg_name << "' total activity is : "
+            //          << the_vg_weight / Bq_unit << " Bq (in mass)" << std::endl;
+            //   }
           } else {
             DT_THROW_IF(true,  std::logic_error,
-                        "Generator '" << the_vg_name << "' has no weight information !");
+                        "Invalid activity label '" << the_vg_activity_label
+                        << "' for generator '" << the_vg_name << "' !");
           }
         }
-
-        add_generator (vgh, the_vg_name, the_vg_weight);
+      } else {
+        // Plain mode :
+        // if (devel)
+        //   {
+        //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
+        //          << "Using 'plain' mode..."
+        //          << std::endl;
+        //   }
+        double the_vg_absolute_weight = generator_absolute_weights[i];
+        double the_vg_relative_weight = generator_relative_weights[i];
+        // if (devel)
+        //   {
+        //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
+        //          << "absolute_weight = " << the_vg_absolute_weight
+        //          << std::endl;
+        //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
+        //          << "relative_weight = " << the_vg_relative_weight
+        //          << std::endl;
+        //   }
+        if (the_vg_absolute_weight > 0.0) {
+          // if (devel)
+          //   {
+          //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
+          //          << "Using 'absolute weight' mode..."
+          //          << std::endl;
+          //   }
+          the_vg_weight = the_vg_absolute_weight;
+        } else if (the_vg_relative_weight > 0.0) {
+          // if (devel)
+          //   {
+          //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
+          //               << "Using 'relative weight' mode..."
+          //               << std::endl;
+          //   }
+          i_vertex_generator & test_vg = vgh.grab();
+          /*
+            base_vg * test_vg = dynamic_cast<base_vg *> (& vgh.get());
+            if (test_vg == 0)
+            {
+            std::ostringstream message;
+            message << "genvtx::combined_vg::initialize: "
+            << "No support for '" << "relative_weight"
+            << "' mode for generator '" << the_vg_name << "' !";
+            th row std::logic_error (message.str ());
+            }
+          */
+          const weight_info & the_vg_weight_info = test_vg.get_total_weight ();
+          DT_THROW_IF (the_vg_weight_info.type == weight_info::WEIGHTING_NONE,
+                       std::logic_error,
+                       "Cannot support the '" << "relative_weight"
+                       << "' mode for generator '" << the_vg_name
+                       << "' for it has no valid weight info type !");
+          if (no_activity_type == weight_info::WEIGHTING_NONE) {
+            no_activity_type = the_vg_weight_info.type;
+          } else {
+            DT_THROW_IF (the_vg_weight_info.type != no_activity_type,
+                         std::logic_error,
+                         "Cannot use the '" << "relative_weight"
+                         << "' mode for generator '" << the_vg_name
+                         << "' which is not compatible with the current mode !");
+          }
+          the_vg_weight = the_vg_relative_weight * the_vg_weight_info.value;
+        } else {
+          DT_THROW_IF(true,  std::logic_error,
+                      "Generator '" << the_vg_name << "' has no weight information !");
+        }
       }
+
+      add_generator (vgh, the_vg_name, the_vg_weight);
+    }
     _init_ ();
     _initialized_ = true;
     return;
@@ -493,22 +481,18 @@ namespace genvtx {
     out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
          << "Entries        : " << _entries_.size () << std::endl;
 
-    for (int i = 0; i < _entries_.size (); i++)
-      {
-        out_ << indent << du::i_tree_dumpable::inherit_skip_tag (inherit_);
-        if (i == _entries_.size () - 1)
-          {
-            out_ << du::i_tree_dumpable::last_tag;
-          }
-        else
-          {
-            out_ << du::i_tree_dumpable::tag;
-          }
-        const entry_type & e = _entries_[i];
-        out_ << e.name << ": ";
-        out_ << " weight = " << e.weight << " (" << e.cumulated_weight << ")"
-             << std::endl;
+    for (int i = 0; i < _entries_.size (); i++) {
+      out_ << indent << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+      if (i == _entries_.size () - 1) {
+        out_ << du::i_tree_dumpable::last_tag;
+      } else {
+        out_ << du::i_tree_dumpable::tag;
       }
+      const entry_type & e = _entries_[i];
+      out_ << e.name << ": ";
+      out_ << " weight = " << e.weight << " (" << e.cumulated_weight << ")"
+           << std::endl;
+    }
     return;
   }
 

@@ -261,31 +261,27 @@ namespace genvtx {
     std::copy (entries.begin (), entries.end (), _entries_.begin ());
 
     const geomtools::logical_volume * src_log = 0;
-    for (int i = 0; i < _entries_.size (); i++)
-      {
-        // if (is_debug ())
-        //   {
-        //     std::clog << "genvtx::cylinder_model_vg::initialize: "
-        //               << "ID #" << i << " = " << _entries_[i].ginfo->get_id ()
-        //               << std::endl;
-        //   }
-        if (src_log == 0)
-          {
-            src_log = &_entries_[i].ginfo->get_logical ();
-          }
-        else
-          {
-            DT_THROW_IF (src_log != &_entries_[i].ginfo->get_logical (),
-                         std::logic_error,
-                         "Vertex location with different logical geometry volume are not supported  (different shapes or materials) !");
-          }
+    for (int i = 0; i < _entries_.size (); i++) {
+      // if (is_debug ())
+      //   {
+      //     std::clog << "genvtx::cylinder_model_vg::initialize: "
+      //               << "ID #" << i << " = " << _entries_[i].ginfo->get_id ()
+      //               << std::endl;
+      //   }
+      if (src_log == 0) {
+        src_log = &_entries_[i].ginfo->get_logical ();
+      } else {
+        DT_THROW_IF (src_log != &_entries_[i].ginfo->get_logical (),
+                     std::logic_error,
+                     "Vertex location with different logical geometry volume are not supported  (different shapes or materials) !");
       }
+    }
 
     // Attempt to extract material info :
     double density = -1.0;
     if (is_mode_bulk ()
-        && src_log->has_material_ref ()
-        && has_materials_plugin_name()) {
+        && src_log->has_material_ref ()) {
+      //       && has_materials_plugin_name()) {
       std::string material_name = src_log->get_material_ref ();
       const materials::manager * mat_mgr_ptr
         = detail::access_materials_manager(get_geom_manager (),
@@ -309,16 +305,13 @@ namespace genvtx {
     }
 
     int surface_mask = 0;
-    if (is_mode_surface ())
-      {
+    if (is_mode_surface ()) {
         _cylinder_vg_.set_mode (utils::MODE_SURFACE);
         if (_surface_side_) surface_mask |= geomtools::cylinder::FACE_SIDE;
         if (_surface_bottom_) surface_mask |= geomtools::cylinder::FACE_BOTTOM;
         if (_surface_top_) surface_mask |= geomtools::cylinder::FACE_TOP;
         _cylinder_vg_.set_surface_mask (surface_mask);
-      }
-    else
-      {
+      } else {
         _cylinder_vg_.set_mode (utils::MODE_BULK);
       }
     DT_THROW_IF (! src_log->has_shape (), std::logic_error,
