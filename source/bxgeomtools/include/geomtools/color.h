@@ -1,22 +1,22 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* color.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-03-23
  * Last modified: 2010-03-24
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *  Utilities for color manipulation:
  *
  *
  *
- * History: 
- * 
+ * History:
+ *
  */
 
-#ifndef __geomtools__color_h
-#define __geomtools__color_h 1
+#ifndef GEOMTOOLS_COLOR_H_
+#define GEOMTOOLS_COLOR_H_ 1
 
 #include <iostream>
 #include <string>
@@ -29,7 +29,7 @@ namespace geomtools {
   class color
   {
   public:
-   
+
     struct constants
     {
       std::string white;
@@ -43,6 +43,7 @@ namespace geomtools {
       std::string orange;
       std::string grey;
       std::string default_color;
+      std::string transparent;
 
       constants ();
 
@@ -53,6 +54,7 @@ namespace geomtools {
     int    code;
     std::string name;
     int    red_amount, green_amount, blue_amount;
+    int    alpha_amount;
 
   public:
     // ctor:
@@ -67,29 +69,29 @@ namespace geomtools {
     class color_db
     {
     public:
-      
+
       color_db ();
-      
+
       virtual ~color_db ();
 
       //bool has_color (const string & id_) const;
-      
+
       int get_color (const std::string & a_color_id) const;
-      
+
       //void register_color (color, const string & id_);
-      
+
       //void dump_colors (ostream & out_ = clog);
 
     private:
 
       color_map_type map_of_colors_;
-     
+
     };
-    
+
     typedef boost::scoped_ptr<color_db> scoped_color_db_type;
-    
+
   public:
-    
+
     static const color_db & get_color_db ();
 
     static int get_color (const std::string & a_name);
@@ -98,6 +100,6 @@ namespace geomtools {
 
 }  // end of namespace geomtools
 
-#endif // __geomtools__color_h
+#endif // GEOMTOOLS_COLOR_H_
 
 // end of color.h

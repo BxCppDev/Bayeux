@@ -84,5 +84,8 @@ grid.daughter_label : string = "bricks"
 #@description The mapping directives for the "endcap0" daughter volume
 mapping.daughter_id.bricks : string  = "[shield_brick.gc:column+0,row+0]"
 
+#@description The recommended color for the display
+visibility.color           : string  = "transparent"
+
 
 # End of list of multi-properties.

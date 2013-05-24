@@ -1,7 +1,7 @@
 # -*- mode: conf-unix; -*-
 # List of multi-properties (datatools::multi_properties):
 
-#@description The geometry models that compose the source 
+#@description The geometry models that compose the source
 
 #@key_label   "name"
 #@meta_label  "type"
@@ -111,5 +111,8 @@ replicated.step            : real = 10
 
 #@description The mapping directives for the "sources" daughter volumes
 mapping.daughter_id.sources : string  = "[source.gc:position+0]"
+
+#@description The recommended color for the display of the ring
+visibility.color            : string  = "transparent"
 
 # End of list of multi-properties.

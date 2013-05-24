@@ -27,7 +27,7 @@ project(geomtools)
 # - Versioning
 set(geomtools_VERSION_MAJOR 4)
 set(geomtools_VERSION_MINOR 0)
-set(geomtools_PATCH_VERSION 1)
+set(geomtools_PATCH_VERSION 0)
 set(geomtools_VERSION "${geomtools_VERSION_MAJOR}.${geomtools_VERSION_MINOR}.${geomtools_PATCH_VERSION}")
 math(EXPR _geomtools_VERSION_NUMERIC "${geomtools_VERSION_MAJOR}*100000+${geomtools_VERSION_MINOR}*100+${geomtools_PATCH_VERSION}")
 

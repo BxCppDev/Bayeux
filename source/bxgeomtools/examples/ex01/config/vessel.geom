@@ -1,7 +1,7 @@
 # -*- mode: conf-unix; -*-
 # List of multi-properties (datatools::multi_properties):
 
-#@description The geometry models that compose the vessel 
+#@description The geometry models that compose the vessel
 
 #@key_label   "name"
 #@meta_label  "type"
@@ -163,7 +163,7 @@ stacked.label_3   : string  = "endcap1"
 material.ref : string = "air"
 
 #@description The recommended color for the display of the vessel area
-visibility.color            : string  = "grey"
+visibility.color            : string  = "transparent"
 
 #@description The visibility hidden flag for the display of the vessel
 visibility.hidden           : boolean = 0
