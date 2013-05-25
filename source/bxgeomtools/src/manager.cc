@@ -903,7 +903,7 @@ namespace geomtools {
     if (_plugins_force_initialization_at_load_) {
       this->_initialize_plugin(new_entry);
     }
-    DT_LOG_TRACE(_logging, "Exiting...");
+    DT_LOG_TRACE(_logging, "Exiting.");
     return;
   }
 
