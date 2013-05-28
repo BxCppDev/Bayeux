@@ -86,11 +86,23 @@ namespace mygsl {
 
     void set_id (const std::string & id_ = "");
 
+    void set_trunc(int);
+
     bool has_tracker() const;
 
     void set_tracker (const std::string & filename_);
 
     void reset_tracker ();
+
+    template<class Type>
+    void tracker_tag(const std::string & tag_) {
+      *_tracker_.get() << '#' << ' ' << tag_ << std::endl;
+    }
+
+    template<class Type>
+    void tracker_tag(const std::string & tag_, const Type & value_) {
+      *_tracker_.get() << '#' << ' ' << tag_ << " = " << value_ << std::endl;
+    }
 
     rng ();
 
@@ -175,8 +187,10 @@ namespace mygsl {
     std::string  _id_;   /// The ID(type) of GSL random number generator algorithm
     int32_t      _seed_; /// The initial seed set before initialization
     gsl_rng *    _r_;    /// The internal GSL random number generator
-    boost::scoped_ptr<std::ofstream> _tracker_;
-    int _tracker_counter_;
+    int          _trunc_;                       /// Precision truncation index (debug)
+    unsigned long int _trunc_norm_;             /// Precision truncation denominator (debug)
+    boost::scoped_ptr<std::ofstream> _tracker_; /// Embeded tracker (debug)
+    int _tracker_counter_;                      /// Embeded counter (debug)
 
   };
 

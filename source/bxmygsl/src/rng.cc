@@ -331,6 +331,7 @@ namespace mygsl {
     _id_   = DEFAULT_RNG_ID;
     _seed_ = random_utils::SEED_INVALID;
     _tracker_counter_ = 0;
+    _trunc_ = false;
     return;
   }
 
@@ -679,9 +680,24 @@ namespace mygsl {
     return val;
   }
 
+  void rng::set_trunc(int t_)
+  {
+    if (t_ <= 0) _trunc_ = 0;
+    else if (t_ >= 9) _trunc_ = 0;
+    else _trunc_ = t_;
+    if (t_ > 0) {
+      _trunc_norm_ = 1;
+      for (int i = 0; i < _trunc_; ++i) _trunc_norm_*=10;
+    }
+  }
+
   double rng::operator () (void)
   {
-    return this->uniform ();
+    if (_trunc_ == 0) return this->uniform ();
+    // XXX
+    unsigned long int u = uniform_int(_trunc_norm_);
+    float f = (u + 0.25F) / _trunc_norm_;
+    return (double) f;
   }
 
 }
