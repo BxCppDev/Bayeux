@@ -2,7 +2,7 @@
 /* i_locator.h
  * Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-09
- * Last modified: 2011-04-13
+ * Last modified: 2013-05-29
  *
  * License:
  *
@@ -17,8 +17,8 @@
 #define GEOMTOOLS_I_LOCATOR_H_ 1
 
 #include <geomtools/geomtools_config.h>
-#include <geomtools/i_object_3d.h>
 #include <geomtools/geom_id.h>
+#include <geomtools/clhep.h>
 
 namespace geomtools {
 
