@@ -9,19 +9,19 @@ namespace geomtools {
 
   using namespace std;
 
-  const double i_shape_3d::DEFAULT_SKIN      = i_object_3d::get_default_tolerance ();
-  const double i_shape_3d::USING_PROPER_SKIN = i_object_3d::get_proper_tolerance ();
+  const double i_shape_3d::DEFAULT_SKIN      = GEOMTOOLS_DEFAULT_TOLERANCE;
+  const double i_shape_3d::USING_PROPER_SKIN = GEOMTOOLS_PROPER_TOLERANCE;
 
   // static
   double i_shape_3d::get_default_skin ()
   {
-    return i_object_3d::get_default_tolerance ();;
+    return GEOMTOOLS_DEFAULT_TOLERANCE;
   }
 
   // static
   double i_shape_3d::get_proper_skin ()
   {
-    return i_object_3d::get_proper_tolerance ();
+    return GEOMTOOLS_PROPER_TOLERANCE;
   }
 
   bool i_shape_3d::is_composite () const

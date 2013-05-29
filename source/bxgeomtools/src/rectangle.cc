@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* rectangle.cc
  */
 
@@ -10,6 +10,8 @@
 #include <sstream>
 
 #include <gsl/gsl_poly.h>
+
+#include <geomtools/geomtools_config.h>
 #include <geomtools/placement.h>
 
 namespace geomtools {
@@ -22,17 +24,17 @@ namespace geomtools {
   {
     return RECTANGLE_LABEL;
   }
-  
+
   double rectangle::get_x () const
   {
     return _x_;
   }
-  
+
   double rectangle::get_y () const
   {
     return _y_;
   }
-  
+
   void rectangle::set_x (double new_value_)
   {
     if (new_value_ < 0.0 )
@@ -43,7 +45,7 @@ namespace geomtools {
       }
     _x_ = new_value_;
   }
-  
+
   void rectangle::set_y (double new_value_)
   {
     if (new_value_ < 0.0 )
@@ -54,12 +56,12 @@ namespace geomtools {
       }
     _y_ = new_value_;
   }
-  
+
   double rectangle::get_diagonal () const
   {
     return  hypot (_x_, _y_);
   }
-   
+
   double rectangle::get_surface () const
   {
     return  _x_ * _y_;
@@ -74,7 +76,7 @@ namespace geomtools {
   {
     return (_x_ > 0.0) && (_y_ > 0.0);
   }
-  
+
   // ctor:
   rectangle::rectangle ()
   {
@@ -88,7 +90,7 @@ namespace geomtools {
     set_x (x_);
     set_y (y_);
   }
-  
+
   // dtor:
   rectangle::~rectangle ()
   {
@@ -98,7 +100,7 @@ namespace geomtools {
                                  double tolerance_) const
   {
     double tolerance = get_tolerance ();
-    if (tolerance_ > USING_PROPER_TOLERANCE) tolerance = tolerance_;
+    if (tolerance_ > GEOMTOOLS_PROPER_TOLERANCE) tolerance = tolerance_;
     double z = position_.z ();
     if (std::abs (z) > (0.5 * tolerance))
       {
@@ -130,7 +132,7 @@ namespace geomtools {
     return normal;
   }
 
-  bool rectangle::find_intercept (const vector_3d & from_, 
+  bool rectangle::find_intercept (const vector_3d & from_,
                                   const vector_3d & direction_,
                                   intercept_t & intercept_,
                                   double tolerance_) const
@@ -146,7 +148,7 @@ namespace geomtools {
         intercept_.reset ();
         if (zf != 0.0)
           {
-            return intercept_.is_ok ();     
+            return intercept_.is_ok ();
           }
         /*
         double p0;
@@ -162,7 +164,7 @@ namespace geomtools {
         nsol = gsl_poly_solve_quadratic (p2, p1, p0, &lambda1, &lambda2);
         if (nsol == 1)
           {
-            double xi = xf + lambda1 * ux; 
+            double xi = xf + lambda1 * ux;
             double yi = yf + lambda1 * uy;
             double zi = zf;
             intercept_.set (0, 0, vector_3d (xi, yi, zi));
@@ -178,13 +180,13 @@ namespace geomtools {
               {
                 lambda = lambda2;
               }
-            double xi = xf + lambda * ux; 
+            double xi = xf + lambda * ux;
             double yi = yf + lambda * uy;
             double zi = zf;
             intercept_.set (0, 0, vector_3d (xi, yi, zi));
           }
         */
-        return intercept_.is_ok ();                 
+        return intercept_.is_ok ();
       }
 
     intercept_.reset ();
@@ -214,9 +216,9 @@ namespace geomtools {
     return intercept_.is_ok ();
   }
 
-  void rectangle::tree_dump (ostream & out_, 
-                        const string & title_, 
-                        const string & indent_, 
+  void rectangle::tree_dump (ostream & out_,
+                        const string & title_,
+                        const string & indent_,
                         bool inherit_) const
   {
     string indent;
@@ -224,13 +226,13 @@ namespace geomtools {
     i_object_3d::tree_dump (out_, title_, indent_, true);
     out_ << indent << datatools::i_tree_dumpable::tag
          << "X : " << get_x () / CLHEP::mm << " mm" << endl;
-    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)  
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
          << "Y : " << get_y () / CLHEP::mm << " mm" << endl;
     return;
   }
 
-  void rectangle::generate_wires (std::list<polyline_3d> & lpl_, 
-                                  const placement & p_, 
+  void rectangle::generate_wires (std::list<polyline_3d> & lpl_,
+                                  const placement & p_,
                                   uint32_t options_) const
   {
     vector_3d vertex[4];
@@ -252,7 +254,7 @@ namespace geomtools {
       }
     return;
   }
-  
+
 } // end of namespace geomtools
 
 // end of rectangle.cc

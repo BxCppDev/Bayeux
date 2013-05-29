@@ -16,6 +16,7 @@
 #ifndef GEOMTOOLS_I_LOCATOR_H_
 #define GEOMTOOLS_I_LOCATOR_H_ 1
 
+#include <geomtools/geomtools_config.h>
 #include <geomtools/i_object_3d.h>
 #include <geomtools/geom_id.h>
 
@@ -31,7 +32,7 @@ namespace geomtools {
     virtual bool find_geom_id (const vector_3d & a_position,
                                int a_type,
                                geom_id & a_gid,
-                               double a_tolerance = i_object_3d::USING_PROPER_TOLERANCE) const = 0;
+                               double a_tolerance = GEOMTOOLS_PROPER_TOLERANCE) const = 0;
 
   };
 
@@ -57,7 +58,7 @@ namespace geomtools {
      */
     virtual const geom_id & get_geom_id (const vector_3d & a_position,
                                          int a_type = geom_id::INVALID_TYPE,
-                                         double a_tolerance = i_object_3d::USING_PROPER_TOLERANCE) const = 0;
+                                         double a_tolerance = GEOMTOOLS_PROPER_TOLERANCE) const = 0;
 
   };
 

@@ -1,21 +1,21 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* smart_id_locator.h
  * Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-05-30
  * Last modified: 2010-05-30
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *   A smart geometry locator based on a geom_map and optimized
  *     for fast search
  *
- * History: 
- * 
+ * History:
+ *
  */
 
-#ifndef __geomtools__smart_id_locator_h
-#define __geomtools__smart_id_locator_h 1
+#ifndef GEOMTOOLS_SMART_ID_LOCATOR_H_
+#define GEOMTOOLS_SMART_ID_LOCATOR_H_ 1
 
 #include <iostream>
 #include <string>
@@ -37,7 +37,7 @@ namespace geomtools {
     enum mode_t
       {
         MODE_INVALID = 0,
-        MODE_LAST    = 1, 
+        MODE_LAST    = 1,
         MODE_DEFAULT = MODE_LAST
       };
 
@@ -54,12 +54,12 @@ namespace geomtools {
     smart_id_locator ();
 
     smart_id_locator (const geom_map & gmap_);
-    
-    smart_id_locator (const geom_map & gmap_, 
+
+    smart_id_locator (const geom_map & gmap_,
                       uint32_t type_,
                       int mode_ = MODE_DEFAULT);
-    
-    smart_id_locator (const geom_map & gmap_, 
+
+    smart_id_locator (const geom_map & gmap_,
                       const std::string & rules_,
                       int mode_ = MODE_DEFAULT);
 
@@ -83,9 +83,9 @@ namespace geomtools {
 
     virtual const geom_info & get_geom_info (const geom_id & id_) const;
 
-    virtual const geom_id & get_geom_id (const vector_3d & world_position_, 
-                                         int type_ = geom_id::INVALID_TYPE, 
-                                         double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const;
+    virtual const geom_id & get_geom_id (const vector_3d & world_position_,
+                                         int type_ = geom_id::INVALID_TYPE,
+                                         double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
 
     void dump (std::ostream & out_ = std::clog) const;
@@ -96,7 +96,7 @@ namespace geomtools {
     bool              _initialized_; /// Initialization flag
     int               _mode_; /// Running mode
     uint32_t          _type_; /// Geometry type associated to a given category
-    id_selector       _idsel_; /// Geometry ID selector 
+    id_selector       _idsel_; /// Geometry ID selector
     const geom_map *  _gmap_; /// Geometry map handle
 
     // Optimization data
@@ -107,6 +107,6 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // __geomtools__smart_id_locator_h
+#endif // GEOMTOOLS_SMART_ID_LOCATOR_H_
 
 // end of smart_id_locator.h

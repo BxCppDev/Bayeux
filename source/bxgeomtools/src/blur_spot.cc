@@ -74,7 +74,7 @@ namespace geomtools {
       }
     else
       {
-        _tolerance_ = i_object_3d::DEFAULT_TOLERANCE;
+        _tolerance_ = constants::DEFAULT_TOLERANCE;
       }
     return;
   }
@@ -126,7 +126,7 @@ namespace geomtools {
   blur_spot::blur_spot ()
   {
     _blur_dimension_ = DIMENSION_INVALID;
-    _tolerance_ = i_object_3d::DEFAULT_TOLERANCE;
+    _tolerance_ = constants::DEFAULT_TOLERANCE;
     datatools::invalidate (_x_error_);
     datatools::invalidate (_y_error_);
     datatools::invalidate (_z_error_);
@@ -142,7 +142,7 @@ namespace geomtools {
       {
         set_blur_dimension (blur_dimension_);
       }
-    _tolerance_ = i_object_3d::DEFAULT_TOLERANCE;
+    _tolerance_ = constants::DEFAULT_TOLERANCE;
     set_tolerance (tolerance_);
     datatools::invalidate (_x_error_);
     datatools::invalidate (_y_error_);

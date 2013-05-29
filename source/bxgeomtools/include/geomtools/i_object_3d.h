@@ -1,17 +1,17 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* i_object_3d.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
  * Last modified: 2012-04-10
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *  Interface for object than can be described in a 3D reference frame
  *  and possibly drawn with some graphics renderer.
  *
- * History: 
- * 
+ * History:
+ *
  */
 
 #ifndef GEOMTOOLS_I_OBJECT_3D_H_
@@ -46,12 +46,6 @@ namespace geomtools {
 
     static const uint32_t ALL_SURFACES;
     static const uint32_t NO_SURFACES;
-    static const double DEFAULT_TOLERANCE;
-    static const double USING_PROPER_TOLERANCE;
-
-    static double get_default_tolerance ();
-
-    static double get_proper_tolerance ();
 
   public:
 
@@ -88,9 +82,9 @@ namespace geomtools {
 
     virtual void reset ();
 
-    virtual void tree_dump (std::ostream & out_         = std::clog, 
-                            const std::string & title_  = "", 
-                            const std::string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_         = std::clog,
+                            const std::string & title_  = "",
+                            const std::string & indent_ = "",
                             bool inherit_          = false) const;
 
   private:
@@ -105,16 +99,16 @@ namespace geomtools {
     class i_getter
     {
     public:
-        
-      virtual const i_object_3d * get (const std::string & name_, 
+
+      virtual const i_object_3d * get (const std::string & name_,
                                        const datatools::properties & params_) = 0;
-        
+
       const i_object_3d * get (const std::string & name_);
-        
+
     };
-      
+
   };
-    
+
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_I_OBJECT_3D_H_

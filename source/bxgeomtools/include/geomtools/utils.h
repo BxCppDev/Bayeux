@@ -1,16 +1,16 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* utils.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
  * Last modified: 2010-10-28
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *  Utilities.
  *
- * History: 
- * 
+ * History:
+ *
  */
 
 #ifndef GEOMTOOLS_UTILS_H_
@@ -21,8 +21,8 @@
 #include <list>
 #include <vector>
 
-#include <geomtools/clhep.h>
 #include <geomtools/geomtools_config.h>
+#include <geomtools/clhep.h>
 
 namespace geomtools {
 
@@ -30,7 +30,7 @@ namespace geomtools {
 
   typedef std::list<vector_3d> basic_polyline_3d;
 
-  void print_xy (std::ostream & out_, 
+  void print_xy (std::ostream & out_,
                  const vector_2d & p_,
                  bool endl_ = true);
 
@@ -44,7 +44,7 @@ namespace geomtools {
 
   /******/
 
-  void print_xyz (std::ostream & out_, 
+  void print_xyz (std::ostream & out_,
                   const vector_3d & p_,
                   bool endl_ = true);
 
@@ -60,7 +60,7 @@ namespace geomtools {
 
   /******/
 
-  void print_xy (std::ostream & out_, 
+  void print_xy (std::ostream & out_,
                  const basic_polyline_2d & p_,
                  bool endl_ = true);
 
@@ -74,7 +74,7 @@ namespace geomtools {
 
   /******/
 
-  void print_xyz (std::ostream & out_, 
+  void print_xyz (std::ostream & out_,
                   const basic_polyline_3d & p_,
                   bool endl_ = true);
 
@@ -111,8 +111,8 @@ namespace geomtools {
       FACE_NONE_BIT = 0x0,
       FACE_ALL_BITS = 0xFFFFFFFF
     };
-  
-  
+
+
   //! Some constants
   struct constants
   {
@@ -140,8 +140,8 @@ namespace geomtools {
     static const std::string FILLED_BY_EXTRUSION_LABEL;
 
   };
-  
-  /* Initialize a rotation matrix for 
+
+  /* Initialize a rotation matrix for
    * "World coordinates system->Local coordinates system":
    */
 
@@ -168,13 +168,13 @@ namespace geomtools {
                    double phi_,
                    double theta_,
                    double psi_);
-   
+
   //! Create a rotation (default is using ZYZ Euler angles)
   void create_rotation_3d (rotation_3d & rot_,
                            double phi_,
                            double theta_,
                            double delta_);
-  
+
   //! Create a rotation (default is using ZYZ Euler angles)
   void create_rotation_from_zyz_euler_angles (rotation_3d & rot_,
                                               double phi_,
@@ -208,7 +208,7 @@ namespace geomtools {
   // struct extract_euler_angle
   // {
   //   int i, neg, alt, rev;
-  //   extract_euler_angle ()  {}  
+  //   extract_euler_angle ()  {}
   // };
 
   /********************/
@@ -267,27 +267,27 @@ namespace geomtools {
   void create_rotation (rotation_3d & rot_,
                         int axis_,
                         int special_angle_);
-  
+
   void create_rotation_from (rotation_3d & rot_,
                              const std::string &);
-  
+
   void reset (rotation_3d & rot_);
-  
+
   void reset_rotation_3d (rotation_3d & rot_);
-  
+
   void tree_dump (const rotation_3d & rot_,
-                  std::ostream & out_, 
-                  const std::string & title_ = "", 
+                  std::ostream & out_,
+                  const std::string & title_ = "",
                   const std::string & indent_ = "");
 
   void invalidate (rotation_3d & rot_);
 
   void rectify (rotation_3d & rot_);
-  
+
   void invalidate_rotation_3d (rotation_3d & rot_);
 
   bool is_valid (const rotation_3d & rot_);
-  
+
   bool is_valid_rotation_3d (const rotation_3d & rot_);
 
   /******/
@@ -318,18 +318,18 @@ namespace geomtools {
   void set_rho_phi_z (vector_3d & vec_, double rho_, double phi_, double z_);
 
   void invalidate (vector_3d & vec_);
-  
+
   void invalidate_vector_3d (vector_3d & vec_);
 
   bool is_valid (const vector_3d & vec_);
-  
+
   bool is_valid_vector_3d (const vector_3d & vec_);
 
-  bool are_near (const vector_3d & vec1_, 
+  bool are_near (const vector_3d & vec1_,
                  const vector_3d & vec2_,
                  double tolerance_ = constants::DEFAULT_TOLERANCE);
 
-  bool are_near_vector_3d (const vector_3d & vec1_, 
+  bool are_near_vector_3d (const vector_3d & vec1_,
                            const vector_3d & vec2_,
                            double tolerance_);
 
@@ -340,7 +340,7 @@ namespace geomtools {
   void set_r_phi (vector_2d & vec_, double r_, double phi_);
 
   void invalidate (vector_2d & vec_);
-  
+
   void invalidate_vector_2d (vector_2d & vec_);
 
   bool is_valid (const vector_2d & vec_);
@@ -389,12 +389,12 @@ namespace geomtools {
    *
    *   double operator() (double);
    *
-   * This operator must returns a uniform deviated pseudo-random number 
+   * This operator must returns a uniform deviated pseudo-random number
    * in the [0,1) range like 'drand48' does.
    */
   template <class ran_func>
-  void randomize_orthogonal_direction (ran_func & ran_, 
-                                       const vector_3d & dir_, 
+  void randomize_orthogonal_direction (ran_func & ran_,
+                                       const vector_3d & dir_,
                                        vector_3d & ran_dir_)
   {
     double theta = 2. * M_PI * ran_ ();
@@ -403,22 +403,22 @@ namespace geomtools {
     double dz = 0.0;
     double dir_theta = dir_.theta ();
     double dir_phi = dir_.phi ();
-    // std::clog << "theta (dir) = " 
+    // std::clog << "theta (dir) = "
     //      << 180.* dir_theta / M_PI << "°" << std::endl;
-    // std::clog << "phi (dir) = " 
+    // std::clog << "phi (dir) = "
     //      << 180.* dir_phi / M_PI << "°"  << std::endl;
     rotation_3d dir_rot;
     create_rotation_3d (dir_rot, dir_phi, dir_theta, 0.0);
     rotation_3d dir_inverse_rot;
     dir_inverse_rot = dir_rot.inverse ();
     vector_3d v (dx, dy, dz);
-    ran_dir_ = v.transform (dir_inverse_rot); 
+    ran_dir_ = v.transform (dir_inverse_rot);
     return;
   }
-    
+
 
   template <class ran_func>
-  vector_3d randomize_orthogonal_direction (ran_func & ran_, 
+  vector_3d randomize_orthogonal_direction (ran_func & ran_,
                                             const vector_3d & ref_dir_)
   {
     vector_3d dir;
@@ -435,26 +435,26 @@ namespace geomtools {
   void compute_weighted_barycenter (const std::vector<vector_3d> & points_,
                                     const std::vector<double> & weights_,
                                     vector_3d & weighted_barycenter_);
-  
+
   vector_3d compute_weighted_barycenter (const std::vector<vector_3d> & points_,
                                          const std::vector<double> & weights_);
-  
-  
+
+
   /** Wrapper for rotation object
    */
   class rotation_wrapper_t : public rotation_3d
   {
   public:
-    rotation_wrapper_t (double mxx_, double mxy_, double mxz_, 
+    rotation_wrapper_t (double mxx_, double mxy_, double mxz_,
                         double myx_, double myy_, double myz_,
-                        double mzx_, double mzy_, double mzz_) 
-      : rotation_3d (mxx_, mxy_, mxz_, 
+                        double mzx_, double mzy_, double mzz_)
+      : rotation_3d (mxx_, mxy_, mxz_,
                      myx_, myy_, myz_,
                      mzx_, mzy_, mzz_) {}
   };
 
-  /** Class intercept_t hosts the paramater of the intercept 
-   *  of a curve on a surfaceof a shape. 
+  /** Class intercept_t hosts the paramater of the intercept
+   *  of a curve on a surfaceof a shape.
    */
   class intercept_t
   {
@@ -553,14 +553,14 @@ namespace geomtools {
 namespace boost {
 
   namespace serialization {
-    
+
     template<class Archive>
-    void save (Archive & a_ar , 
+    void save (Archive & a_ar ,
                const geomtools::vector_3d & v_,
                const unsigned int a_version);
 
     template<class Archive>
-    void load (Archive & a_ar , 
+    void load (Archive & a_ar ,
                geomtools::vector_3d & v_,
                const unsigned int a_version);
 
@@ -568,7 +568,7 @@ namespace boost {
     void serialize (Archive & a_ar,
                     geomtools::vector_3d  & v_,
                     const unsigned int a_version);
-    
+
   } // namespace serialization
 
 } // namespace boost
@@ -577,22 +577,22 @@ namespace boost {
 namespace boost {
 
   namespace serialization {
-    
+
     template<class Archive>
-    void save (Archive & a_ar , 
+    void save (Archive & a_ar ,
                const geomtools::vector_2d & v_,
                const unsigned int a_version);
 
     template<class Archive>
-    void load (Archive & a_ar , 
+    void load (Archive & a_ar ,
                geomtools::vector_2d & v_,
                const unsigned int a_version);
-    
+
     template<class Archive>
     void serialize (Archive & a_ar,
                     geomtools::vector_2d  & v_,
                     const unsigned int a_version);
-    
+
   } // namespace serialization
 
 } // namespace boost
@@ -602,14 +602,14 @@ namespace boost {
 namespace boost {
 
   namespace serialization {
-    
+
     template<class Archive>
-    void save (Archive & a_ar , 
+    void save (Archive & a_ar ,
                const geomtools::rotation_3d & r_,
                const unsigned int a_version);
 
     template<class Archive>
-    void load (Archive & a_ar , 
+    void load (Archive & a_ar ,
                geomtools::rotation_3d & a_rotation,
                const unsigned int a_version);
 
@@ -617,7 +617,7 @@ namespace boost {
     void serialize (Archive & a_ar,
                     geomtools::rotation_3d  & a_rotation,
                     const unsigned int a_version);
-    
+
   } // namespace serialization
 
 } // namespace boost

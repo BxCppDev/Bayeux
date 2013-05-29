@@ -13,6 +13,7 @@
 
 #include <gsl/gsl_poly.h>
 
+#include <geomtools/geomtools_config.h>
 
 namespace geomtools {
 
@@ -90,7 +91,7 @@ namespace geomtools {
                             double tolerance_) const
   {
     double tolerance = get_tolerance ();
-    if (tolerance_ > USING_PROPER_TOLERANCE) tolerance = tolerance_;
+    if (tolerance_ > GEOMTOOLS_PROPER_TOLERANCE) tolerance = tolerance_;
     double z = position_.z ();
     if (std::abs (z) > 0.5 * tolerance) return false;
 

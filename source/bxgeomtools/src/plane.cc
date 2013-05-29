@@ -1,12 +1,14 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // plane.cc
+
+#include <geomtools/plane.h>
 
 #include <sstream>
 #include <stdexcept>
 
 #include <datatools/utils.h>
 
-#include <geomtools/plane.h>
+#include <geomtools/geomtools_config.h>
 
 namespace geomtools {
 
@@ -26,17 +28,17 @@ namespace geomtools {
   {
     return _a_;
   }
-  
+
   double plane::b () const
   {
     return _b_;
   }
-  
+
   double plane::c () const
   {
     return _c_;
   }
-  
+
   double plane::d () const
   {
     return _d_;
@@ -100,23 +102,23 @@ namespace geomtools {
 
 
 
-  plane::plane (const geomtools::vector_3d & ref_, 
+  plane::plane (const geomtools::vector_3d & ref_,
                 const geomtools::vector_3d & n_)
   {
     set (ref_, n_);
     return;
   }
 
-  void plane::set (const geomtools::vector_3d & point_, 
+  void plane::set (const geomtools::vector_3d & point_,
                    const geomtools::vector_3d & n_)
   {
     if (n_.mag2 () < 1.0e-15)
       {
-        throw std::logic_error ("geomtools::plane::set: Invalid normal vector !");    
+        throw std::logic_error ("geomtools::plane::set: Invalid normal vector !");
       }
     if (! geomtools::is_valid (point_))
       {
-        throw std::logic_error ("geomtools::plane::set: Invalid reference point !");    
+        throw std::logic_error ("geomtools::plane::set: Invalid reference point !");
       }
     _a_ = n_.x ();
     _b_ = n_.y ();
@@ -125,30 +127,30 @@ namespace geomtools {
     return;
   }
 
-  plane::plane (const geomtools::vector_3d & point_, 
-                const geomtools::vector_3d & u1_, 
+  plane::plane (const geomtools::vector_3d & point_,
+                const geomtools::vector_3d & u1_,
                 const geomtools::vector_3d & u2_)
   {
     set (point_,u1_,u2_);
     return;
   }
-  
-  void plane::set (const geomtools::vector_3d & point_, 
-            const geomtools::vector_3d & u1_, 
+
+  void plane::set (const geomtools::vector_3d & point_,
+            const geomtools::vector_3d & u1_,
             const geomtools::vector_3d & u2_)
   {
-    
+
     if (! geomtools::is_valid (point_))
       {
-        throw std::logic_error ("geomtools::plane::set: Invalid reference point !");    
+        throw std::logic_error ("geomtools::plane::set: Invalid reference point !");
       }
     if (u1_.mag2 () < 1.0e-15)
       {
-        throw std::logic_error ("geomtools::plane::set: Invalid 'u1' vector !");    
+        throw std::logic_error ("geomtools::plane::set: Invalid 'u1' vector !");
       }
     if (u2_.mag2 () < 1.0e-15)
       {
-        throw std::logic_error ("geomtools::plane::set: Invalid 'u2' vector !");    
+        throw std::logic_error ("geomtools::plane::set: Invalid 'u2' vector !");
       }
     const geomtools::vector_3d normal = u1_.cross (u2_);
     if (normal.mag2() == 0.0)
@@ -165,34 +167,34 @@ namespace geomtools {
   double plane::distance (const geomtools::vector_3d & position_) const
   {
     double d;
-    d = _a_ * position_.x () 
+    d = _a_ * position_.x ()
       + _b_ * position_.y ()
-      + _c_ * position_.z () 
+      + _c_ * position_.z ()
       + _d_;
     d /= std::sqrt (_a_ * _a_ + _b_ * _b_ + _c_ * _c_);
     d = fabs(d);
     return d;
   }
 
-  geomtools::vector_3d 
+  geomtools::vector_3d
   plane::orthogonal_projection (const geomtools::vector_3d & position_) const
   {
     if (! geomtools::is_valid (position_))
       {
         throw std::logic_error ("geomtools::plane::orthogonal_projection: Invalid projection initial position !");
       }
-    double t = - ( + _a_ * position_.x () 
+    double t = - ( + _a_ * position_.x ()
                    + _b_ * position_.y ()
-                   + _c_ * position_.z () 
-                   + _d_ ) / 
+                   + _c_ * position_.z ()
+                   + _d_ ) /
       (_a_ * _a_ + _b_ * _b_ + _c_ * _c_ );
     return geomtools::vector_3d (position_.x () + _a_ * t,
                                  position_.y () + _b_ * t,
                                  position_.z () + _c_ * t);
   }
 
-  geomtools::vector_3d 
-  plane::projection (const geomtools::vector_3d & position_, 
+  geomtools::vector_3d
+  plane::projection (const geomtools::vector_3d & position_,
                      const geomtools::vector_3d & direction_) const
   {
     if (! geomtools::is_valid (position_))
@@ -204,11 +206,11 @@ namespace geomtools {
         throw std::logic_error ("geomtools::plane::projection: Invalid projection direction !");
       }
     geomtools::vector_3d proj;
-    double term = _a_ * position_.x () 
+    double term = _a_ * position_.x ()
       + _b_ * position_.y ()
-      + _c_ * position_.z () 
+      + _c_ * position_.z ()
       + _d_;
-    if (term == 0.0) 
+    if (term == 0.0)
       {
         proj = position_;
       }
@@ -222,25 +224,25 @@ namespace geomtools {
                       position_.y () + direction_.y () * t,
                       position_.z () + direction_.z () * t);
           }
-        else 
+        else
           {
-            geomtools::invalidate (proj);   
+            geomtools::invalidate (proj);
           }
       }
     return proj;
   }
-  
-  bool plane::is_on_surface (const geomtools::vector_3d & position_, 
+
+  bool plane::is_on_surface (const geomtools::vector_3d & position_,
                              double skin_) const
   {
     double d = plane::distance (position_);
     double skin = get_tolerance ();
-    if (skin_ > USING_PROPER_TOLERANCE) skin = skin_;
+    if (skin_ > GEOMTOOLS_PROPER_TOLERANCE) skin = skin_;
     if (std::abs (d) > 0.5 * skin) return false;
     return true;
   }
-     
-  geomtools::vector_3d 
+
+  geomtools::vector_3d
   plane::get_normal_on_surface (const geomtools::vector_3d & position_,
                                 bool up_) const
   {
@@ -250,7 +252,7 @@ namespace geomtools {
     return normal ();
   }
 
-  bool plane::find_intercept (const vector_3d & from_, 
+  bool plane::find_intercept (const vector_3d & from_,
                               const vector_3d & direction_,
                               intercept_t & intercept_,
                               double tolerance_) const
@@ -274,10 +276,10 @@ namespace geomtools {
     else
       {
       }
-    return intercept_.is_ok ();     
+    return intercept_.is_ok ();
   }
-  
-  void plane::print_grid (std::ostream & out_, double padding_, 
+
+  void plane::print_grid (std::ostream & out_, double padding_,
                           int n1_, int n2_) const
   {
     int n1 = n1_;
@@ -330,7 +332,7 @@ namespace geomtools {
     out_ << std::endl;
     return;
   }
-  
+
 } // end of namespace geomtools
 
 // end of plane.cc
