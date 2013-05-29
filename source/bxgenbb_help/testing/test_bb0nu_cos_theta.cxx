@@ -65,10 +65,10 @@ int main (int argc_, char ** argv_)
                       << me / CLHEP::MeV
                       << " MeV" << endl;
       if (pe.get_particles ().size ()== 2) {
-        genbb::primary_particle pp1 = pe.get_particles ().front ();
-        pe.get_particles ().pop_front ();
-        genbb::primary_particle pp2 = pe.get_particles ().front ();
-        pe.get_particles ().pop_front ();
+        genbb::primary_particle pp1 = pe.grab_particles ().front ();
+        pe.grab_particles ().pop_front ();
+        genbb::primary_particle pp2 = pe.grab_particles ().front ();
+        pe.grab_particles ().pop_front ();
         if (! pp1.is_electron () && ! pp2.is_electron ()) {
           continue;
         }

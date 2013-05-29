@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-g++ $(root-config --cflags) run.cxx -o run_test $(root-config --libs) -Wl,--no-as-needed -lHist -lCore -lMathCore
+g++ $(boost-config --cflags)  $(root-config --cflags) $(datatools-config --cflags) validate.cxx -o validate $(datatools-config --ldflags) $(root-config --libs) -Wl,--no-as-needed -lHist -lCore -lMathCore

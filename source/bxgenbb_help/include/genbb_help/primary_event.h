@@ -1,36 +1,36 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* primary_event.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-11
  * Last modified: 2013-02-25
- * 
- * License: 
+ *
+ * License:
  * Copyright 2007-2013 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- * 
- * Description: 
+ *
+ * Description:
  *
  *   Primary event from the GENBB generator.
  *
- * 
- * History: 
  *
- * 2012-06-21 FM : 
- *  - support 'weighted' MC event in case 
+ * History:
+ *
+ * 2012-06-21 FM :
+ *  - support 'weighted' MC event in case
  *    of user energy range for DBD events
  *  - serialization version 2 supports new 'weight' attributes
  *
@@ -57,7 +57,7 @@ namespace genbb {
     : DATATOOLS_SERIALIZABLE_CLASS,
       public datatools::i_tree_dumpable
   {
-    
+
   public:
     typedef std::list<primary_particle> particles_col_type;
     typedef particles_col_type particles_col_t; // Backward comp.
@@ -81,8 +81,6 @@ namespace genbb {
     const particles_col_type & get_particles () const;
 
     particles_col_type & grab_particles ();
-
-    particles_col_type & get_particles ();
 
     void add_particle (const primary_particle &);
 
@@ -108,9 +106,11 @@ namespace genbb {
 
     datatools::properties & grab_auxiliaries ();
 
-    /// Constructor 
+    void shift_particle_time_from(double delta_time_, int from_);
+
+    /// Constructor
     primary_event ();
-    
+
     /// Destructor
     virtual ~primary_event ();
 
@@ -119,14 +119,14 @@ namespace genbb {
                const std::string & title_  = "",
                const std::string & indent_ = "",
                bool inherit_               = false) const;
-    
+
     void dump (std::ostream & a_out = std::clog,
                const std::string & a_indent = "") const;
 
     void dump (std::ostream & a_out,
                const std::string & a_title,
                const std::string & a_indent) const;
-    
+
   private:
 
     std::string           _label_;

@@ -112,6 +112,13 @@ namespace genbb {
     return;
   }
 
+  void  primary_particle::shift_time (double delta_time_)
+  {
+    _time_ += delta_time_;
+    return;
+  }
+
+
   void primary_particle::set_momentum (const geomtools::vector_3d & v_)
   {
     _momentum_ = v_;

@@ -30,6 +30,7 @@
 
 #include <datatools/utils.h>
 #include <datatools/units.h>
+#include <datatools/exception.h>
 
 #include <genbb_help/genbb_utils.h>
 #include <genbb_help/primary_event.h>
@@ -151,6 +152,7 @@ namespace genbb {
     if (_initialized_) {
       throw std::logic_error ("genbb::wdecay0::initialize: Already initialized !");
     }
+    _initialize_base(config_);
 
     std::string decay_isotope;
     double energy_unit = CLHEP::MeV;

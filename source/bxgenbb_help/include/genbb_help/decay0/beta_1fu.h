@@ -1,22 +1,28 @@
 #ifndef GENBB_DECAY0_BETA_1FU_H_
 #define GENBB_DECAY0_BETA_1FU_H_ 1
 
+namespace mygsl {
+
+  class rng;
+
+}
+
 namespace genbb {
 
   class primary_event;
 
   namespace decay0 {
-    
-    /// \brief Subroutine beta_1fu simulates the angles and energy of beta particles emitted in beta decay of nucleus. 
+
+    /// \brief Subroutine beta_1fu simulates the angles and energy of beta particles emitted in beta decay of nucleus.
     // The decay is considered as 1st-forbidden
-    // unique. Its shape is product of theoretical spectrum shape for allowed 
+    // unique. Its shape is product of theoretical spectrum shape for allowed
     // decay and two correction factors:
-    // 1. theoretical of BJ'1969 
+    // 1. theoretical of BJ'1969
     //       cf1(e)=pnu**2+lambda2*pel**2,
     //       where lambda2 is the Coulomb function calculated in BJ'1969,
     //       and pel and pnu are impulses of electron and neutrino:
     //       pel=sqrt(w**2-1), pnu=(Qbeta-e)/emass , w=e/emass+1;
-    // 2. empirical correction 
+    // 2. empirical correction
     //       cf2(e)=(1+c1/w+c2*w+c3*w**2+c4*w**3).
     // Input : Qbeta       - beta energy endpoint (MeV; Qbeta>50 eV);
     //         Zdtr        - atomic number of daughter nucleus (Zdtr>0 for e- and
@@ -24,7 +30,7 @@ namespace genbb {
     //         tcnuc       - time of creation of nucleus (sec);
     //         thnuc       - nucleus halflife (sec);
     //         c1,c2,c3,c4 - coefficients in correction factor to the spectrum
-    //                       shape cf2(e)=(1+c1/w+c2*w+c3*w**2+c4*w**3), 
+    //                       shape cf2(e)=(1+c1/w+c2*w+c3*w**2+c4*w**3),
     //                       where w=e/emass+1, e - kinetic energy of electron.
     // Output: tdnuc       - time of decay of nucleus (sec);
     // VIT, 24.10.2006.
@@ -34,14 +40,14 @@ namespace genbb {
                          double c1_, double c2_, double c3_, double c4_);
 
     void decay0_beta_1fu(mygsl::rng & prng_, primary_event& event_,
-                         double tcnuc_,double thnuc_, double & tdnuc_, 
+                         double tcnuc_,double thnuc_, double & tdnuc_,
                          void * params_);
-    
-  } // end of namespace decay0 
-} // end of namespace genbb 
+
+  } // end of namespace decay0
+} // end of namespace genbb
 
 #endif // GENBB_DECAY0_BETA_1FU_H_
-// 
+//
 // Local Variables: --
 // mode: c++ --
 // End: --

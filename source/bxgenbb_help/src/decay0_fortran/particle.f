@@ -1,4 +1,4 @@
-c particle.f 
+c particle.f
 c
 c This file was extracted from the 'decay0' program by V.I. Tretyak
 c
@@ -8,16 +8,16 @@ c This program is free software; you can redistribute it and/or modify
 c it under the terms of the GNU General Public License as published by
 c the Free Software Foundation; either version 3 of the License, or (at
 c your option) any later version.
-c 
+c
 c This program is distributed in the hope that it will be useful, but
 c WITHOUT ANY WARRANTY; without even the implied warranty of
 c MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 c General Public License for more details.
-c 
+c
 c You should have received a copy of the GNU General Public License
 c along with this program; if not, write to the Free Software
 c Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-c 
+c
 c
 	subroutine particle(np,E1,E2,teta1,teta2,phi1,phi2,tclev,
      +                      thlev,tdlev)
@@ -73,6 +73,9 @@ c    1     'PARTICLE: unknown particle number ',np
 	stet=sqrt(1.-ctet*ctet)
 	E=E1
 	if(E1.ne.E2) E=E1+(E2-E1)*rnd1(d)
+c --- randomly blur the particle energy
+c$$$	dE=0.000025
+c$$$	E=E+dE*(-1+2*rnd1(d))
 	p=sqrt(E*(E+2.*pmass))
 	pmoment(1,npfull)=p*stet*cos(phi)
 	pmoment(2,npfull)=p*stet*sin(phi)

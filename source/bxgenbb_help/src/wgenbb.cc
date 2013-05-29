@@ -30,6 +30,7 @@
 
 #include <datatools/utils.h>
 #include <datatools/units.h>
+#include <datatools/exception.h>
 
 #include <genbb_help/genbb_utils.h>
 #include <genbb_help/primary_event.h>
@@ -91,9 +92,7 @@ namespace genbb {
   // ctor:
   wgenbb::wgenbb () : i_genbb ()
   {
-    if (wgenbb::_g_counter_ > 0) {
-      throw logic_error ("genbb::wgenbb::wgenbb: Only one instance of wgenbb is allowed !");
-    }
+    DT_THROW_IF (wgenbb::_g_counter_ > 0, logic_error, "Only one instance of wgenbb is allowed !");
     wgenbb::_g_counter_++;
     _debug_ = false;
     _initialized_ = false;
@@ -195,9 +194,7 @@ namespace genbb {
 
   void wgenbb::set_use_local_prng (bool u_)
   {
-    if (_initialized_) {
-      throw logic_error ("genbb::wgenbb::set_use_local_prng: Already initialized !");
-    }
+    DT_THROW_IF (_initialized_, logic_error, "Already initialized !");
     _use_local_prng_ = u_;
     return;
   }
@@ -206,9 +203,8 @@ namespace genbb {
                            datatools::service_manager & service_manager_,
                            detail::pg_dict_type & dictionary_)
   {
-    if (_initialized_) {
-      throw logic_error ("genbb::wgenbb::initialize: Already initialized !");
-    }
+    DT_THROW_IF (_initialized_, logic_error, "Already initialized !");
+    _initialize_base(config_);
 
     string decay_isotope;
     double energy_unit = CLHEP::MeV;
@@ -228,56 +224,45 @@ namespace genbb {
 
       if (config_.has_key ("seed")) {
         long seed = config_.fetch_integer ("seed");
-        if (seed < 0) {
-          throw logic_error ("genbb::wgenbb::initialize: Invalid seed value (>=0) !");
-        }
+        DT_THROW_IF (seed < 0, logic_error, "Invalid seed value (>=0) !");
         _seed_ = seed;
       }
     }
 
-    if (! config_.has_key ("decay_type")) {
+    DT_THROW_IF (! config_.has_key ("decay_type"), logic_error,
+                 "Missing 'decay_type' property !");
+    string tmp = config_.fetch_string ("decay_type");
+    if ((tmp != "DBD") && (tmp != "background")) {
       ostringstream message;
-      message << "genbb::wgenbb::initialize: Missing 'decay_type' property !";
+      message << "genbb::wgenbb::initialize: Invalid decay type '"
+              << tmp << "' !";
       throw logic_error (message.str());
-    } else {
-      string tmp = config_.fetch_string ("decay_type");
-      if ((tmp != "DBD") && (tmp != "background")) {
+    }
+    if (tmp == "background") {
+      _decay_type_ = DECAY_TYPE_BACKGROUND;
+    }
+
+    if (tmp == "DBD") {
+      _decay_type_ = DECAY_TYPE_DBD;
+
+      if (! config_.has_key ("decay_dbd_level")) {
         ostringstream message;
-        message << "genbb::wgenbb::initialize: Invalid decay type '"
-                << tmp << "' !";
+        message << "genbb::wgenbb::initialize: Missing DBD decay level !";
         throw logic_error (message.str());
       }
-      if (tmp == "background") {
-        _decay_type_ = DECAY_TYPE_BACKGROUND;
+      _decay_dbd_level_ = config_.fetch_integer ("decay_dbd_level");
+
+      if (! config_.has_key ("decay_dbd_mode")) {
+        ostringstream message;
+        message << "genbb::wgenbb::initialize: Missing DBD decay mode !";
+        throw logic_error (message.str());
       }
-
-      if (tmp == "DBD") {
-        _decay_type_ = DECAY_TYPE_DBD;
-
-        if (! config_.has_key ("decay_dbd_level")) {
-          ostringstream message;
-          message << "genbb::wgenbb::initialize: Missing DBD decay level !";
-          throw logic_error (message.str());
-        }
-        _decay_dbd_level_ = config_.fetch_integer ("decay_dbd_level");
-
-        if (! config_.has_key ("decay_dbd_mode")) {
-          ostringstream message;
-          message << "genbb::wgenbb::initialize: Missing DBD decay mode !";
-          throw logic_error (message.str());
-        }
-        _decay_dbd_mode_ = config_.fetch_integer ("decay_dbd_mode");
-      }
-
+      _decay_dbd_mode_ = config_.fetch_integer ("decay_dbd_mode");
     }
 
-    if (! config_.has_key ("decay_isotope")) {
-      ostringstream message;
-      message << "genbb::wgenbb::initialize: Missing 'decay_isotope' property !";
-      throw logic_error (message.str());
-    } else {
-      decay_isotope = config_.fetch_string ("decay_isotope");
-    }
+    DT_THROW_IF (! config_.has_key ("decay_isotope"),logic_error,
+                 "Missing 'decay_isotope' property !");
+    decay_isotope = config_.fetch_string ("decay_isotope");
 
     _set_decay_isotope_ (decay_isotope);
 
@@ -292,19 +277,14 @@ namespace genbb {
 
         if (config_.has_key ("energy_max")) {
           emax = config_.fetch_real ("energy_max");
-          if (emax < 0.0)
-            {
-              throw logic_error ("genbb::wgenbb::initialize: Invalid maximum value !");
-            }
+          DT_THROW_IF (emax < 0.0, logic_error, "Invalid maximum value !");
           emax *= energy_unit;
           _energy_max_ = emax;
         }
 
         if (config_.has_key ("energy_min")) {
           emin = config_.fetch_real ("energy_min");
-          if (emin < 0.0) {
-            throw logic_error ("genbb::wgenbb::initialize: Invalid minimum value !");
-          }
+          DT_THROW_IF (emin < 0.0, logic_error, "Invalid minimum value !");
           emin *= energy_unit;
           _energy_min_ = emin;
         }
@@ -322,22 +302,16 @@ namespace genbb {
         _energy_min_ = utils::DEFAULT_ENERGY_RANGE_MIN;
       }
     }
-    if (_energy_min_ >= _energy_max_) {
-      ostringstream message;
-      message << "genbb::wgenbb::initialize: Invalid energy range !";
-      throw logic_error (message.str());
-    }
+    DT_THROW_IF (_energy_min_ >= _energy_max_, logic_error, "Invalid energy range !");
 
     if (has_external_random ()) {
-      clog << "NOTICE: " << "genbb::wgenbb::initialize: "
-           << "Installing the external PRNG as the global PRNG for the fortran interface..." << endl;
+      DT_LOG_NOTICE(get_logging_priority(),
+                    "Installing the external PRNG as the global PRNG for the fortran interface...");
       genbb::rng::set_genbb_external_prng (grab_external_random ());
     } else if (use_local_prng ()) {
-      clog << "NOTICE: " << "genbb::wgenbb::initialize: "
-           << "Initializing the local PRNG..." << endl;
+      DT_LOG_NOTICE(get_logging_priority(),"Initializing the local PRNG...");
       _random_.init ("taus2", _seed_);
-      clog << "NOTICE: " << "genbb::wgenbb::initialize: "
-           << "Installing the local PRNG as the global PRNG for the fortran interface..." << endl;
+      DT_LOG_NOTICE(get_logging_priority(),"Installing the local PRNG as the global PRNG for the fortran interface...");
       genbb::rng::set_genbb_external_prng (_random_);
     }
 
@@ -356,9 +330,7 @@ namespace genbb {
   {
     _decay_isotope_ = di_;
     size_t sz = di_.length ();
-    if (sz >= 15) {
-      throw logic_error ("genbb::wgenbb::_set_decay_isotope_: Decay isotope string too long !");
-    }
+    DT_THROW_IF (sz >= 15, logic_error, "Decay isotope string too long !");
     for (int i = 0; i < sz; i++) {
       _c_decay_isotope_[i] = di_[i];
     }
@@ -368,14 +340,8 @@ namespace genbb {
   void wgenbb::_load_next (primary_event & event_,
                            bool compute_classification_)
   {
-    if (_debug_) {
-      clog << "debug: " << "genbb::wgenbb::_load_next: "
-           << "Entering..."
-           << endl;
-    }
-    if (! _initialized_) {
-      throw logic_error ("genbb::wgenbb::_load_next: Not initialized !");
-    }
+    DT_LOG_TRACE (get_logging_priority(),"Entering...");
+    DT_THROW_IF (! _initialized_, logic_error, "Not initialized !");
     event_.reset ();
 
     int error;
@@ -390,9 +356,7 @@ namespace genbb {
               &_decay_dbd_mode_,
               &start,
               &error);
-    if (error != 0) {
-      throw logic_error ("genbb::wgenbb::_load_next: genbbsub failed !");
-    }
+    DT_THROW_IF (error != 0, logic_error, "genbbsub failed !");
 
     int    evnum;
     double time;
@@ -444,22 +408,14 @@ namespace genbb {
     }
 
     event_.set_genbb_weight (1.0);
-    if (_debug_) {
-      clog << "debug: " << "genbb::wgenbb::_load_next: "
-           << "GENBB weight = " << get_to_all_events ()
-           << endl;
-    }
+    DT_LOG_DEBUG(get_logging_priority(), "GENBB weight = " << get_to_all_events ());
     if (get_to_all_events () > 1.0) {
       event_.set_genbb_weight (1.0 / get_to_all_events ());
     }
 
     //event_.dump (clog , "GENBB event: ", "DEVEL: ");
     _event_count_++;
-    if (_debug_) {
-      clog << "debug: " << "genbb::wgenbb::_load_next: "
-           << "Exiting."
-           << endl;
-    }
+    DT_LOG_TRACE(get_logging_priority(), "Exiting.");
     return;
   }
 
@@ -475,44 +431,32 @@ namespace genbb {
 
   void wgenbb::_init_ ()
   {
-    if (_debug_) {
-      clog << "DEBUG: " << "genbb::wgenbb::_init_: "
-           << "Entering..."
-           << endl;
-    }
+    DT_LOG_TRACE(get_logging_priority(), "Entering...");
 
-    if (_decay_type_ == DECAY_TYPE_UNDEFINED) {
-      throw logic_error ("genbb::wgenbb::_init_: Decay type is not defined !");
-    }
-    if (_decay_type_ == DECAY_TYPE_DBD && _decay_dbd_mode_ == DBD_MODE_INVALID) {
-      throw logic_error ("genbb::wgenbb::_init_: Invalid DBD mode !");
-    }
+    DT_THROW_IF (_decay_type_ == DECAY_TYPE_UNDEFINED,
+                 logic_error, "Decay type is not defined !");
+    DT_THROW_IF (_decay_type_ == DECAY_TYPE_DBD && _decay_dbd_mode_ == DBD_MODE_INVALID,
+                 logic_error, "Invalid DBD mode !");
 
     enrange_.reset ();
     const std::vector<int> & dbdmwer
       = utils::get_dbd_modes_with_energy_range ();
-    if (_debug_) clog << "DEBUG: genbb::wgenbb::_init_: Decay DBD mode : "
-                      << _decay_dbd_mode_ << endl;
+    DT_LOG_DEBUG(get_logging_priority(), "Decay DBD mode : " << _decay_dbd_mode_);
     if (std::find (dbdmwer.begin (), dbdmwer.end (),_decay_dbd_mode_) != dbdmwer.end ()) {
       if (datatools::is_valid (_energy_min_)) {
-        clog << "NOTICE: genbb::wgenbb::_init_: Setting energy min to "
-             << _energy_min_ / CLHEP::MeV << " MeV" << endl;
+        DT_LOG_NOTICE(get_logging_priority(), "Setting energy min to "
+                      << _energy_min_ / CLHEP::MeV << " MeV");
         enrange_.ebb1 = (float) (_energy_min_ / CLHEP::MeV);
       }
       if (datatools::is_valid (_energy_max_)) {
-        clog << "NOTICE: genbb::wgenbb::_init_: Setting energy max to "
-             << _energy_max_ / CLHEP::MeV << " MeV" << endl;
+        DT_LOG_NOTICE(get_logging_priority(), "Setting energy max to "
+                      << _energy_max_ / CLHEP::MeV << " MeV");
         enrange_.ebb2 = (float) (_energy_max_ / CLHEP::MeV);
       }
-      if (enrange_.ebb1 >= enrange_.ebb2) {
-        ostringstream message;
-        message << "genbb::wgenbb::_init_: "
-                << "Invalid energy range !";
-        throw logic_error (message.str ());
-      }
+      DT_THROW_IF (enrange_.ebb1 >= enrange_.ebb2,logic_error,
+                   "Invalid energy range !");
     } else {
-      if (_debug_)  clog << "DEBUG: genbb::wgenbb::_init_: Not a DBD energy range mode."
-                         << endl;
+      DT_LOG_DEBUG(get_logging_priority(),"Not a DBD energy range mode.");
     }
 
     if (! _use_local_prng_) {
@@ -527,15 +471,8 @@ namespace genbb {
               &_decay_dbd_mode_,
               &start,
               &error);
-    if (error != 0) {
-      throw logic_error ("genbb::wgenbb::_init_: genbbsub failed !");
-    }
-
-    if (_debug_) {
-      clog << "DEBUG: " << "genbb::wgenbb::_init_: "
-           << "Exiting."
-           << endl;
-    }
+    DT_THROW_IF (error != 0, logic_error, "genbbsub failed !");
+    DT_LOG_TRACE(get_logging_priority(), "Exiting.");
     return;
   }
 

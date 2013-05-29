@@ -1,4 +1,4 @@
-c beta.f 
+c beta.f
 c
 c This file was extracted from the 'decay0' program by V.I. Tretyak
 c
@@ -8,16 +8,16 @@ c This program is free software; you can redistribute it and/or modify
 c it under the terms of the GNU General Public License as published by
 c the Free Software Foundation; either version 3 of the License, or (at
 c your option) any later version.
-c 
+c
 c This program is distributed in the hope that it will be useful, but
 c WITHOUT ANY WARRANTY; without even the implied warranty of
 c MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 c General Public License for more details.
-c 
+c
 c You should have received a copy of the GNU General Public License
 c along with this program; if not, write to the Free Software
 c Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-c 
+c
 c
 	subroutine beta(Qbeta,Zdtr,tcnuc,thnuc,tdnuc)
 c Subroutine beta simulates the angles and energy of beta particles
@@ -46,6 +46,11 @@ c VIT, 30.07.1992; 15.10.1995.
 	z=Zdtr
 	q=Qbeta
 	call tgold(50.e-6,Qbeta,funbeta,0.001*Qbeta,2,em,fm)
+	call genbb_trace_tag(10002,'em'//CHAR(0),em)
+	call genbb_trace_tag(10002,'fm'//CHAR(0),fm)
+c
+c
+c
 1	E=50.e-6+(Qbeta-50.e-6)*rnd1(d)
 	fe=funbeta(E)
 	f=fm*rnd1(d)

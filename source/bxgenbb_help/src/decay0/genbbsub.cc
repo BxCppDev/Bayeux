@@ -602,6 +602,7 @@ namespace genbb {
 
       double tdnuc;
       double tdnuc1;
+      int    npfull0;
 
       static const double emass = decay0_emass();
       if (modebb_ != bb_params_.modebb) {
@@ -1448,6 +1449,13 @@ namespace genbb {
           } else if (boost::algorithm::starts_with(chnuclide_,"Zn65")) {
           } else if (boost::algorithm::starts_with(chnuclide_,"Zr96")) {
           }
+
+          /* No C++ support for the following cases :
+           * - Artificial
+           * - Compton
+           * - Moller
+           * - Pair
+           */
             /*
               } else if (boost::algorithm::starts_with(chnuclide_,"Artificial") {
               nartparts=min0(10, nartparts);
@@ -1509,199 +1517,7 @@ namespace genbb {
           }
         }
 
-        // Output ASCII file
-        // //if (bb_params_.ievstart <= 0) bb_params_.ievstart=1;
-        // //if (bb_params_.ievstart == 1) irndmst=0;
-        // //if (bb_params_.ievstart != 1) idummy=0  ;// call rdmin(irndmst)
-        // if (bb_params_.iwrfile == 0) bb_params_.chfile.clear();
-        // if (! bb_params_.chfile.empty()) {
-        //   fout.open(bb_params_.chfile.c_str());
-        //   if (!fout) {
-        //     std::cerr << "ERROR: " << "genbb::decay0::genbbsub: "
-        //               << "Cannot open file '"
-        //               << bb_params_.chfile << "' !\n";
-        //     ier_=1;
-        //     return;
-        //   }
-        // call datime(id, it)
-        //open(unit=77, file=chfile, status="new");
-        //   write(77, 8) chfile;
-        // label_8  :
-        //   format(" DECAY0 generated file: ", a);
-        //   write(77, 9) isl(3), isl(2), isl(1), isl(4), isl(5), isl(6);
-        // label_9  :
-        /*        format(/" date and hour : ",
-                  2x, i2, ".", i2, ".", i4, 4x, i2, ":", i2, ":", i2);
-                  write(77, *) " initial random number : ",
-                  irndmst;
-        */
-        //write(77, *) " ";
-        // write(77, *) "#@seed=", irndmst
-        // write(77, *) "#@nevents=", nevents
-        // write(77, *) "#@type=", i2bbs_
-        // write(77, *) "#@nuclide=", chnuclide_
-
-        //if (i2bbs_ == GENBBSUB_I2BBS_DBD) {
-        //   write(77, 10) chnuclide_;
-        // label_10  :
-        //   format(" event type: ", a);
-        //   write(77, *) " ", modebb_label;
-        //   // write(77, *) "#@modebb=", modebb
-        //   if (bb_params_.modebb == 18) {
-        //     write(77, *) " NMEs: ",
-        //       "GTw, Fw, ""GT, ""F, ""T, ""P, ""R =";
-        //     write(77, *) chi_GTw, chi_Fw, chip_GT, chip_F,
-        //       chip_T, chip_P, chip_R;
-        //   }
-        //   write(77, 11) bb_params_.chdspin, bb_params_.levelE/1000.;
-        // label_11  :
-        // int allevents=(int) bb_params_.nevents * bb_params_.toallevents;
-        // format(14x, "level, Elevel (MeV) = ", a, " ", g13.5, " MeV");
-        // if (bb_params_.toallevents > 1.) {
-        // write(77, *) " ";
-        // write(77, *) "range for sum of energies of emitted ",
-        //   "e-/e+ (MeV) : ", bb_params_.ebb1, bb_params_.ebb2;
-        // write(77, *) "#@energy_min=", bb_params_.ebb1;
-        // write(77, *) "#@energy_max=", bb_params_.ebb2;
-        // write(77, *) "#@toallevents=", bb_params_.toallevents;
-        // write(77, *) "corresponding number of events in full ",
-        //   "energy range: ", allevents;
-        //}
-        //}
-
-        //if (i2bbs_ == GENBBSUB_I2BBS_BACKGROUND) {
-        //write(77, 10) chnuclide_;
-
-        /*
-          if (boost::algorithm::starts_with(chnuclide_,"Artificial") {
-          //write(77, *) " number of parts in artificial event", " = ", nartparts;
-          for (int i=1; i<=nartparts; i++) {
-          if (chart(i) == "GP") {
-          if (nartnpg(i) ==  1) chn="Gamma ";
-          if (nartnpg(i) ==  2) chn="Positron ";
-          if (nartnpg(i) ==  3) chn="Electron ";
-          if (nartnpg(i) ==  4) chn="Neutrino ";
-          if (nartnpg(i) ==  5) chn="Muon+ ";
-          if (nartnpg(i) ==  6) chn="Muon- ";
-          if (nartnpg(i) ==  7) chn="Pion0 ";
-          if (nartnpg(i) ==  8) chn="Pion+ ";
-          if (nartnpg(i) ==  9) chn="Pion- ";
-          if (nartnpg(i) == 10) chn="Kaon0 long ";
-          if (nartnpg(i) == 11) chn="Kaon+ ";
-          if (nartnpg(i) == 12) chn="Kaon- ";
-          if (nartnpg(i) == 13) chn="Neutron ";
-          if (nartnpg(i) == 14) chn="Proton ";
-          if (nartnpg(i) == 15) chn="Antiproton ";
-          if (nartnpg(i) == 16) chn="Kaon0 short ";
-          if (nartnpg(i) == 17) chn="Eta ";
-          if (nartnpg(i) == 18) chn="Lambda ";
-          if (nartnpg(i) == 19) chn="Sigma+ ";
-          if (nartnpg(i) == 20) chn="Sigma0 ";
-          if (nartnpg(i) == 21) chn="Sigma- ";
-          if (nartnpg(i) == 22) chn="Xi0 ";
-          if (nartnpg(i) == 23) chn="Xi- ";
-          if (nartnpg(i) == 24) chn="Omega ";
-          if (nartnpg(i) == 25) chn="Antineutron ";
-          if (nartnpg(i) == 26) chn="Antilambda ";
-          if (nartnpg(i) == 27) chn="Antisigma- ";
-          if (nartnpg(i) == 28) chn="Antisigma0 ";
-          if (nartnpg(i) == 29) chn="Antisigma+ ";
-          if (nartnpg(i) == 30) chn="Antixi0 ";
-          if (nartnpg(i) == 31) chn="Antixi+ ";
-          if (nartnpg(i) == 32) chn="Antiomega+ ";
-          if (nartnpg(i) == 45) chn="Deuteron ";
-          if (nartnpg(i) == 46) chn="Tritium ";
-          if (nartnpg(i) == 47) chn="Alpha ";
-          if (nartnpg(i) == 48) chn="Geantino ";
-          if (nartnpg(i) == 49) chn="He3 ";
-          if (nartnpg(i) == 50) chn="Cerenkov ";
-          }
-          if (chart(i) == "Be") chn="Beta ";
-          if (chart(i) == "Pi") chn="E+E- internal";
-          //write(77, 12) i, chn, artemin(i), artemax(i);
-          label_12  :
-          format(2x, i2, 1x, a13, 1x, "min and max E", 18x, "= ",
-          2g16.7);
-          if (chart(i) == "Be") write(77, 13) artZd(i);
-          label_13  :
-          format(19x, "Z of daughter nucleus = ",
-          g16.7);
-          write(77, 14) arttmin(i), arttmax(i), artfmin(i),
-          artfmax(i);
-          label_14  :
-          format(19x, "min and max teta and phi [rad] = ",
-          4g16.7);
-          write(77, 15) arttdelay(i), artthalf(i);
-          label_15  :
-          format(19x, "time of delay and halflife = ",
-          2g16.7);
-          }
-          }
-        */
-
-        // if (boost::algorithm::starts_with(chnuclide_,"Compton") {
-        //   write(77, 16) artemin(1), artemax(1);
-        // label_16  :
-        //   format(4x, "initial gamma: min and max E", 18x, "= ",
-        //          2g16.7);
-        //   write(77, 17) arttmin(1), arttmax(1), artfmin(1),
-        //     artfmax(1);
-        // label_17  :
-        //   format(19x, "min and max teta and phi [rad] = ",
-        //          4g16.7);
-        // }
-
-        // if (boost::algorithm::starts_with(chnuclide_,"Moller") {
-        //   write(77, 18) artemin(1), artemax(1);
-        // label_18  :
-        //   format(4x, "initial e-: min and max E", 18x, "= ",
-        //          2g16.7);
-        //   write(77, 19) arttmin(1), arttmax(1), artfmin(1),
-        //     artfmax(1);
-        // label_19  :
-        //   format(16x, "min and max teta and phi [rad] = ",
-        //          4g16.7);
-        //   write(77, 20) artQb(1);
-        // label_20  :
-        //   format(16x, "energy threshold for delta ray =";
-        //          , g16.7);
-        // }
-
-        // if (boost::algorithm::starts_with(chnuclide_,"E+E- external") {
-        //   write(77, 21) artemin(1), artemax(1);
-        // label_21  :
-        //   format(4x, "initial gamma: min and max E", 18x, "= ",
-        //          2g16.7);
-        //   write(77, 22) arttmin(1), arttmax(1), artfmin(1),
-        //     artfmax(1);
-        // label_22  :
-        //   format(19x, "min and max teta and phi [rad] = ",
-        //          4g16.7);
-        //   write(77, 23) artZd(1);
-        // label_23  :
-        //   format(19x, "atomic number of target =";
-        //          , g16.7);
-        // }
-
-        // }
-        // write(77, *) " ";
-        // write(77, *) "Format of data:";
-        // write(77, *) " for each event - event""s number, ";
-        // write(77, *) " time of event""s start, ";
-        // write(77, *) " number of emitted",
-        //   " particles;";
-        // write(77, *) " for each particle - GEANT number of particle, ";
-        // write(77, *) " ",
-        //   "x, y, z components of momentum, ";
-        // write(77, *) " ",
-        //   "time shift from previous time";
-        // write(77, *) " ";
-        // write(77, *) "Time - in sec, momentum - in MeV/c";
-        // write(77, *) " ";
-        // write(77, *) "First event and full number of events:";
-        // write(77, *) bb_params_.ievstart, bb_params_.nevents;
-        // write(77, *) " ";
-        //   }
+        /* The code for output ASCII file has not been ported in C++ */
 
         bb_params_.istartbb = 0;
         if (istart_ == GENBBSUB_ISTART_INIT) {
@@ -1760,36 +1576,36 @@ namespace genbb {
         if (boost::algorithm::starts_with(chnuclide_,"Pt198")) Hg198low(prng_, event_, bb_params_.levelE);
         if (boost::algorithm::starts_with(chnuclide_,"Bi214")) {
           At214low(prng_, event_, 0);
+          npfull0 = event_.get_particles().size();
           At214(prng_, event_, 0., tdnuc1);
-          event_.get_particles ().back().grab_time() += tdnuc1 * CLHEP::second;
-          //XXX ptime(npfull0+1)=ptime(npfull0+1)+tdnuc1;
+          event_.shift_particle_time_from(tdnuc1 * CLHEP::second, npfull0);
         }
         if (boost::algorithm::starts_with(chnuclide_,"Pb214")) {
           Po214low(prng_, event_, 0);
+          npfull0 = event_.get_particles().size();
           Po214(prng_, event_, 0., tdnuc1);
-          event_.get_particles ().back().grab_time() += tdnuc1 * CLHEP::second;
-          //XXX ptime(npfull0+1)=ptime(npfull0+1)+tdnuc1;
+          event_.shift_particle_time_from(tdnuc1 * CLHEP::second, npfull0);
         }
         if (boost::algorithm::starts_with(chnuclide_,"Po218")) {
           Rn218low(prng_, event_, 0);
+          npfull0 = event_.get_particles().size();
           Rn218(prng_, event_, 0., tdnuc1);
-          event_.get_particles ().back().grab_time() += tdnuc1 * CLHEP::second;
-          //XXX ptime(npfull0+1)=ptime(npfull0+1)+tdnuc1;
+          event_.shift_particle_time_from(tdnuc1 * CLHEP::second, npfull0);
+          npfull0 = event_.get_particles().size();
           Po214(prng_, event_, 0., tdnuc1);
-          event_.get_particles ().back().grab_time() += tdnuc1 * CLHEP::second;
-          //XXX ptime(npfull0+1)=ptime(npfull0+1)+tdnuc1;
+          event_.shift_particle_time_from(tdnuc1 * CLHEP::second, npfull0);
         }
         if (boost::algorithm::starts_with(chnuclide_,"Rn222")) {
           Ra222low(prng_, event_, 0);
+          npfull0 = event_.get_particles().size();
           Ra222(prng_, event_, 0., tdnuc1);
-          event_.get_particles ().back().grab_time() += tdnuc1 * CLHEP::second;
-          //XXX ptime(npfull0+1)=ptime(npfull0+1)+tdnuc1;
+          event_.shift_particle_time_from(tdnuc1 * CLHEP::second, npfull0);
+          npfull0 = event_.get_particles().size();
           Rn218(prng_, event_, 0., tdnuc1);
-          event_.get_particles ().back().grab_time() += tdnuc1 * CLHEP::second;
-          //XXX ptime(npfull0+1)=ptime(npfull0+1)+tdnuc1;
+          event_.shift_particle_time_from(tdnuc1 * CLHEP::second, npfull0);
+          npfull0 = event_.get_particles().size();
           Po214(prng_, event_, 0., tdnuc1);
-          event_.get_particles ().back().grab_time() += tdnuc1 * CLHEP::second;
-          //XXX ptime(npfull0+1)=ptime(npfull0+1)+tdnuc1;
+          event_.shift_particle_time_from(tdnuc1 * CLHEP::second, npfull0);
         }
       }
 
@@ -1807,26 +1623,25 @@ namespace genbb {
         if (boost::algorithm::starts_with(chnuclide_,"Bi210")) Bi210(prng_, event_, 0., tdnuc);
         if (boost::algorithm::starts_with(chnuclide_,"Bi212")) {
           Bi212(prng_, event_, 0., tdnuc);
-          // XXX
-          if (! event_.get_particles ().back().is_alpha()) {
+          npfull0 = event_.get_particles().size();
+          if (! event_.get_particles ().front().is_alpha()) {
             Po212(prng_, event_, 0., tdnuc1);
-            event_.get_particles ().back().grab_time() += tdnuc1 * CLHEP::second;
-            //XXX ptime(npfull0+1)=ptime(npfull0+1)+tdnuc1;
+            event_.shift_particle_time_from(tdnuc1 * CLHEP::second, npfull0);
           }
         }
         if (boost::algorithm::starts_with(chnuclide_,"Bi214")) {
           Bi214(prng_, event_, 0., tdnuc);
-          if (! event_.get_particles ().back().is_alpha()) {
+          npfull0 = event_.get_particles().size();
+          if (! event_.get_particles ().front().is_alpha()) {
             Po214(prng_, event_, 0., tdnuc1);
-            event_.get_particles ().back().grab_time() += tdnuc1 * CLHEP::second;
-            //XXX ptime(npfull0+1)=ptime(npfull0+1)+tdnuc1;
+            event_.shift_particle_time_from(tdnuc1 * CLHEP::second, npfull0);
           }
         }
         if (boost::algorithm::starts_with(chnuclide_,"Ca48")) {
           Ca48(prng_, event_, 0., tdnuc);
+          npfull0 = event_.get_particles().size();
           Sc48(prng_, event_, 0., tdnuc1);
-          event_.get_particles ().back().grab_time() += tdnuc1 * CLHEP::second;
-          //XXX ptime(npfull0+1)=ptime(npfull0+1)+tdnuc1;
+          event_.shift_particle_time_from(tdnuc1 * CLHEP::second, npfull0);
         }
         if (boost::algorithm::starts_with(chnuclide_,"C14")) C14(prng_, event_, 0., tdnuc);
         if (boost::algorithm::starts_with(chnuclide_,"Cd113")) Cd113(prng_, event_, 0., tdnuc);
@@ -1877,12 +1692,20 @@ namespace genbb {
         if (boost::algorithm::starts_with(chnuclide_,"Zn65")) Zn65(prng_, event_, 0., tdnuc);
         if (boost::algorithm::starts_with(chnuclide_,"Zr96")) {
           Zr96(prng_, event_, 0., tdnuc);
+          npfull0 = event_.get_particles().size();
           Nb96(prng_, event_, 0., tdnuc1);
-          event_.get_particles ().back().grab_time() += tdnuc1 * CLHEP::second;
-          // XXXX //XXX ptime(npfull0+1)=ptime(npfull0+1)+tdnuc1;
+          event_.shift_particle_time_from(tdnuc1 * CLHEP::second, npfull0);
         }
         //tevst=tdnuc;
         event_.set_time(tdnuc * CLHEP::second);
+
+        /* The following cases have not been ported in C++ (will they ever be ?)
+         * - Artificial
+         * - Compton
+         * - Moller
+         * - E+E- external
+         */
+
         /*
           if (boost::algorithm::starts_with(chnuclide_,"Artificial")) {
           tevst=0.;
@@ -1917,19 +1740,6 @@ namespace genbb {
           }
         */
       }
-
-      /*
-        if (chfile != "no file") {
-        write(77, 6) icurrent, tevst, npfull;
-        label_6  :
-        format(i8, g13.6, i4);
-        do { ;// j=1, npfull
-        write(77, 7) npgeant(j), (pmoment(k, j), k=1, 3), ptime(j);
-        label_7  :
-        format(i3, 3g14.6, g13.6);
-        }
-        }
-      */
 
       //if (bb_params_.icurrent != bb_params_.nevents) return;
       return;

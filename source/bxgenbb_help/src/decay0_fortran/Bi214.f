@@ -1,4 +1,4 @@
-c Bi214.f 
+c Bi214.f
 c
 c This file was extracted from the 'decay0' program by V.I. Tretyak
 c
@@ -8,16 +8,16 @@ c This program is free software; you can redistribute it and/or modify
 c it under the terms of the GNU General Public License as published by
 c the Free Software Foundation; either version 3 of the License, or (at
 c your option) any later version.
-c 
+c
 c This program is distributed in the hope that it will be useful, but
 c WITHOUT ANY WARRANTY; without even the implied warranty of
 c MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 c General Public License for more details.
-c 
+c
 c You should have received a copy of the GNU General Public License
 c along with this program; if not, write to the Free Software
 c Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-c 
+c
 c
 	subroutine Bi214(tcnuc,tdnuc)
 c Scheme of Bi214 decay ("Table of Isotopes", 7th ed., 1978).
@@ -28,7 +28,7 @@ c Input : tcnuc - time of creation of nucleus (sec);
 c Output: tdnuc - time of decay of nucleus (sec);
 c         common/genevent/tevst,npfull,npgeant(100),pmoment(3,100),ptime(100).
 c VIT, 13.08.1992, 22.10.1995.
-c VIT, 31.05.2005, updated to NDS 99(2003)649. Not well known alpha decays to 
+c VIT, 31.05.2005, updated to NDS 99(2003)649. Not well known alpha decays to
 c 210Tl levels with E>253 keV are omitted.
 	thnuc=1194.
 	tdnuc=tcnuc-thnuc/alog(2.)*alog(rnd1(d))
@@ -816,7 +816,7 @@ c-----------------------------------------------------------------------
 	               go to 20175   !  0.25%
 20171	p=100.*rnd1(d)
 	if(p.le.95.08) then                       ! electron conversion
-	   call electron(1.923,tclev,thlev,tdlev)          
+	   call electron(1.923,tclev,thlev,tdlev)
 	   call gamma(0.093,0.,0.,tdlev)
 	else                                      ! pair conversion
 	   call pair(0.995,tclev,thlev,tdlev)
@@ -1003,7 +1003,7 @@ c-----------------------------------------------------------------------
 	               go to 14152   ! 71.95%
 14151	p=100.*rnd1(d)
 	if(p.le.99.63) then                       ! electron conversion
-	   call electron(1.322,tclev,thlev,tdlev)          
+	   call electron(1.322,tclev,thlev,tdlev)
 	   call gamma(0.093,0.,0.,tdlev)
 	else                                      ! pair conversion
 	   call pair(0.393,tclev,thlev,tdlev)

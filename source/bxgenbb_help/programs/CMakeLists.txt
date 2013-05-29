@@ -110,9 +110,6 @@ foreach ( pro_program ${genbb_help_programs_list_CPP} )
   # our executable needs,
   set ( _pro_libraries
     genbb_help
-    # ${_genbb_fortran_libs}
-    # genbb_help_decay0_cpp
-    # ${geomtools_LIBRARIES}
     )
 
   if ( ${pro_program} STREQUAL "genbb_inspector.cxx" )

@@ -60,6 +60,7 @@ namespace genbb {
   {
   public:
 
+    /// \brief Particle code from GEANT3
     enum particle_type
     {
       // Using GEANT3 definition from:
@@ -97,10 +98,12 @@ namespace genbb {
 
     const std::string & get_particle_label () const;
 
-    // Only if particle type == UNDEF:
+    // Only if particle type == PARTICLE_UNDEFINED:
     void set_particle_label (const std::string &);
 
     void set_time (double time_);
+
+    void shift_time (double delta_time_);
 
     bool is_valid () const;
 

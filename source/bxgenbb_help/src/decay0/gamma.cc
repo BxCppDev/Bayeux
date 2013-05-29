@@ -10,14 +10,17 @@
 
 namespace genbb {
   namespace decay0 {
-  
+
     void decay0_gamma(mygsl::rng & prng, primary_event & event,
                       double E, double tclev,double thlev,
                       double &tdlev)
     {
-      decay0_particle(prng,event,GAMMA,E,E,0.,M_PI,0.,2.*M_PI,tclev,thlev,tdlev);
+      double Eeff = E;
+      /* Workaround roundoff error */
+      //double Eeff = E+0.000001;
+      decay0_particle(prng,event,GAMMA,Eeff,Eeff,0.,M_PI,0.,2.*M_PI,tclev,thlev,tdlev);
       return;
     }
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
+  } // end of namespace decay0
+} // end of namespace genbb

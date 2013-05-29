@@ -247,13 +247,11 @@ if [ "x${option}" = "x--libs" ]; then
 	echo -n "${reflection_ldflags_abs} "
 	echo -n "${bio_ldflags_abs} "
 	echo -n "${genbb_help_lib_dir}/libgenbb_help@CMAKE_SHARED_LIBRARY_SUFFIX@ "
-	echo -n "${genbb_help_lib_dir}/libgenbb_help_decay0_cpp@CMAKE_SHARED_LIBRARY_SUFFIX@ "
     else
 	echo -n "-L${genbb_help_lib_dir} "
 	echo -n "${reflection_ldflags} "
 	echo -n "${bio_ldflags} "
 	echo -n "-lgenbb_help "
-	echo -n "-lgenbb_help_decay0_cpp "
     fi
     echo
     my_exit 0
@@ -265,13 +263,11 @@ if [ "x${option}" = "x--ldflags" ]; then
 	    echo -n "${reflection_ldflags_abs} "
 	    echo -n "${bio_ldflags_abs} "
 	    echo -n "${genbb_help_lib_dir}/libgenbb_help@CMAKE_SHARED_LIBRARY_SUFFIX@ "
-	    echo -n "${genbb_help_lib_dir}/libgenbb_help_decay0_cpp@CMAKE_SHARED_LIBRARY_SUFFIX@ "
 	else
 	    echo -n "-L${genbb_help_lib_dir} "
 	    echo -n "${reflection_ldflags} "
 	    echo -n "${bio_ldflags} "
 	    echo -n "-lgenbb_help "
-	    echo -n "-lgenbb_help_decay0_cpp "
 	fi
         echo -n "`geomtools-config --ldflags ${ldflags_abs_path_option}` "
 	if [ ${with_reflection} -eq 1 ]; then

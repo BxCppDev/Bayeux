@@ -8,6 +8,7 @@
 
 #include <genbb_help/decay0/Ru100low.h>
 #include <genbb_help/primary_event.h>
+#include <genbb_help/primary_particle.h>
 #include <genbb_help/decay0/alpha.h>
 #include <genbb_help/decay0/gamma.h>
 #include <genbb_help/decay0/electron.h>
@@ -24,23 +25,23 @@ namespace genbb
 {
   namespace decay0
   {
-    // Ru100low.f 
+    // Ru100low.f
     // This file was extracted from the 'decay0' program by V.I. Tretyak
     // Copyright 1995-2011 V.I. Tretyak
     // This program is free software
     // it under the terms of the GNU General Public License as published by
     // the Free Software Foundation
     // your option) any later version.
-    // 
+    //
     // This program is distributed in the hope that it will be useful, but
     // WITHOUT ANY WARRANTY
     // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
     // General Public License for more details.
-    // 
+    //
     // You should have received a copy of the GNU General Public License
     // along with this program
     // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-    // 
+    //
     void Ru100low (mygsl::rng & prng_, genbb::primary_event & event_,
                    int levelkev)
     {
@@ -56,8 +57,8 @@ namespace genbb
       double p;
       double tclev;
       double thlev;
-      primary_event::particles_col_type::reverse_iterator ipg540 = event_.grab_particles().rend();
-      primary_event::particles_col_type::reverse_iterator ipg591 = event_.grab_particles().rend();
+      primary_particle * ipg540 = 0;
+      primary_particle * ipg591 = 0;
       // Subroutine describes the deexcitation process in Ru100 nucleus
       // after 2b-decay of Mo100 to ground and excited 0+ and 2+ levels
       // of Ru100 ("Table of Isotopes", 7th ed., 1978).
@@ -144,7 +145,7 @@ namespace genbb
       if (p <= cg)
         {
           decay0_gamma (prng_, event_, Egamma, tclev, thlev, tdlev);
-          ipg591 = event_.grab_particles().rbegin();
+          ipg591 = &event_.grab_particles().back();
         }
       else
         {
@@ -164,7 +165,7 @@ namespace genbb
       if (p <= cg)
         {
           decay0_gamma (prng_, event_, Egamma, tclev, thlev, tdlev);
-          ipg540 = event_.grab_particles().rbegin();
+          ipg540 = &event_.grab_particles().back();
         }
       else
         {
@@ -173,8 +174,7 @@ namespace genbb
           decay0_gamma (prng_, event_, EbindK, 0., 0., tdlev);
         }
       // Angular correlation between gammas 591 and 540 keV
-      if (ipg591 != event_.grab_particles().rend() 
-          && ipg540 != event_.grab_particles().rend()) {
+      if (ipg591 != 0 && ipg540 != 0) {
         double p591 = ipg591->get_momentum().mag();
         double p540 = ipg540->get_momentum().mag();
         // std::sqrt (pmoment (1, npg591) ** 2 + pmoment (2, npg591) ** 2 +;
@@ -185,34 +185,34 @@ namespace genbb
         // Coefficients in formula 1+a2*ctet**2+a4*ctet**4 are from:
         // R.D.Evans, "The Atomic Nucleus", Krieger Publ. Comp., 1985, p. 240,
         // 0(2)2(2)0 cascade.
-        double a2 = -3.0; 
-        double a4 = 4.0; 
+        double a2 = -3.0;
+        double a4 = 4.0;
         // Rejection method :
         double phi1, ctet1, stet1;
         double phi2, ctet2, stet2;
         double ctet;
       label_1:
-        phi1 = twopi * prng_ (); 
-        ctet1 = 1. - 2. * prng_ (); 
-        stet1 = std::sqrt (1. - ctet1 * ctet1); 
-        phi2 = twopi * prng_ (); 
-        ctet2 = 1. - 2. * prng_ (); 
-        stet2 = std::sqrt (1. - ctet2 * ctet2); 
-        ctet = ctet1 * ctet2 + stet1 * stet2 * cos (phi1 - phi2); 
-        if (prng_ () * (1. + abs (a2) + abs (a4)) > 
-            1. + a2 * gsl_pow_2(ctet) + a4 *  gsl_pow_4(ctet)) { 
-          goto label_1; 
+        phi1 = twopi * prng_ ();
+        ctet1 = 1. - 2. * prng_ ();
+        stet1 = std::sqrt (1. - ctet1 * ctet1);
+        phi2 = twopi * prng_ ();
+        ctet2 = 1. - 2. * prng_ ();
+        stet2 = std::sqrt (1. - ctet2 * ctet2);
+        ctet = ctet1 * ctet2 + stet1 * stet2 * cos (phi1 - phi2);
+        if (prng_ () * (1. + abs (a2) + abs (a4)) >
+            1. + a2 * gsl_pow_2(ctet) + a4 *  gsl_pow_4(ctet)) {
+          goto label_1;
         }
-        ipg591->grab_momentum().set (p591 * stet1 * cos (phi1), 
+        ipg591->grab_momentum().set (p591 * stet1 * cos (phi1),
                                      p591 * stet1 * sin (phi1),
-                                     p591 * ctet1); 
+                                     p591 * ctet1);
         ipg540->grab_momentum().set (p540 * stet2 * cos (phi2),
                                      p540 * stet2 * sin (phi2),
                                      p540 * ctet2);
       }
-      return; 
+      return;
     label_10000:
-      return; 
+      return;
     label_20000:
       {
         std::ostringstream message;
@@ -222,9 +222,9 @@ namespace genbb
       }
       return;
     }
-    
-  } // end of namespace decay0 
-} // end of namespace genbb 
+
+  } // end of namespace decay0
+} // end of namespace genbb
 // end of Ru100low.cc
 // Local Variables: --
 // mode: c++ --

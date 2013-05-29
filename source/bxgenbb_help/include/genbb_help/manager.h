@@ -46,6 +46,7 @@
 // Datatools
 #include <datatools/i_tree_dump.h>
 #include <datatools/bit_mask.h>
+#include <datatools/logger.h>
 
 // Mygsl
 #include <mygsl/rng.h> // Pseudo random number generator
@@ -72,8 +73,6 @@ namespace genbb {
       BLANK              = 0,
       NO_PRELOAD         = datatools::bit_mask::bit00,
       FORCE_INITIALIZATION_AT_LOAD = datatools::bit_mask::bit01,
-      DEBUG              = datatools::bit_mask::bit02,
-      VERBOSE            = datatools::bit_mask::bit03,
     };
 
   public:
@@ -85,7 +84,7 @@ namespace genbb {
     void reset_service ();
 
     /// Constructor
-    manager(uint32_t flag = BLANK);
+    manager(datatools::logger::priority p_ = datatools::logger::PRIO_WARNING, int flags_ = 0);
 
     /// Destructor
     ~manager();
@@ -203,6 +202,10 @@ namespace genbb {
 
     datatools::factory_register<i_genbb> & grab_factory_register();
 
+    datatools::logger::priority get_logging_priority() const;
+
+    void set_logging_priority(datatools::logger::priority p);
+
   protected:
 
     void _load_pg(const std::string& name,
@@ -227,7 +230,7 @@ namespace genbb {
     datatools::service_manager * _service_mgr_;
 
     bool         _initialized_; /// Initialization flag
-    bool         _debug_;       /// Debug flag
+    datatools::logger::priority _logging_priority_; /// Logging priority threshold
     bool         _preload_;     /// Factory preload flag
     bool         _force_initialization_at_load_; /// Flag for triggering PG initialization at load (rather than first use)
 

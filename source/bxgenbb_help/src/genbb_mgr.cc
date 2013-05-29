@@ -448,6 +448,7 @@ namespace genbb {
       {
         throw logic_error ("genbb::genbb_mgr::initialize: Already initialized !");
       }
+    _initialize_base(config_);
 
     if (config_.has_flag ("debug"))
       {

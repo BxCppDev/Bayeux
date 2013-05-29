@@ -138,9 +138,9 @@ extern "C"
                 << "External PRNG is not initialized !";
         throw std::logic_error(message.str());
       }
-      return (float) genbb::rng::g_ran_ptr->uniform();
+      return (float) genbb::rng::g_ran_ptr->operator()();
     }
-    return (float) genbb::rng::grab_genbb_external_prng().uniform();
+    return (float) genbb::rng::grab_genbb_external_prng().operator()();
   }
 }
 

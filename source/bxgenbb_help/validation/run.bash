@@ -25,17 +25,39 @@ bb0nu_Nd150 \
 bb2nu_Nd150 \
 bb2nu_Nd150_HE \
 "
-
-only="$1"
+nevents=10000
+seed=314159
+prng_trunc_index=0
+ofext=.xml
 
 pgs_fortran=$(grep -n "^\[name=\"" ${GENBB_HELP_ROOT_DIR}/share/genbb_help/resources/manager/config/pro-1.0-fortran/*.conf | cut -d= -f2 | cut -d' ' -f1 | tr -d "\"")
 
-echo "Generators: ${pgs}"
-###pgs="Bi214_Po214"
+only=
+while [ -n "$1" ]; do
+    token="$1"
+    if [ "x${token:0:1}" = "x-" ]; then
+	option=${token}
+	if [ "${option}" = "--only" ]; then
+	    shift 1
+	    only="$1"
+	elif [ "${option}" = "--nevents" ]; then
+	    shift 1
+	    nevents="$1"
+	elif [ "${option}" = "--prng-seed" ]; then
+	    shift 1
+	    seed="$1"
+	elif [ "${option}" = "--prng-trunc" ]; then
+	    shift 1
+	    prng_trunc_index="$1"
+	fi
+    else
+	argument=${token}
+    fi
+    #only="$1"
+    shift 1
+done
 
-nevents=50000
-seed=314159
-ofext=.xml
+echo "Generators: ${pgs}"
 
 work_dir="/transcend/work/tmp"
 if [ ! -d ${work_dir} ]; then
@@ -75,11 +97,17 @@ for pg in ${pgs}; do
     title_prefix_cpp="${pg} (decay0 C++ port)"
     title_prefix_fortran="${pg} (decay0 fortran version)"
     #fi
+
+    rm -f tracer_10001.log
+    rm -f tracer_10002.log
+
     genbb_inspector \
 	--configuration "${GENBB_HELP_ROOT_DIR}/share/genbb_help/resources/manager/config/pro-1.0/manager.conf" \
 	--generator "${pg}" \
 	--prng-seed ${seed} \
+	--prng-trunc ${prng_trunc_index} \
 	--prng-tracker "${work_dir}/prng-cpp.trk" \
+	--trace-index 10001 \
 	--number-of-events ${nevents} \
 	--histo-def "./config/inspector_histos_prompt.conf" \
 	${delayed_histos_opt} \
@@ -103,7 +131,9 @@ for pg in ${pgs}; do
 	--configuration "${GENBB_HELP_ROOT_DIR}/share/genbb_help/resources/manager/config/pro-1.0-fortran/manager.conf" \
 	--generator "${pg}" \
 	--prng-seed ${seed} \
+	--prng-trunc ${prng_trunc_index} \
 	--prng-tracker "${work_dir}/prng-fortran.trk" \
+	--trace-index 10002 \
 	--number-of-events ${nevents} \
 	--histo-def "./config/inspector_histos_prompt.conf" \
 	${delayed_histos_opt} \

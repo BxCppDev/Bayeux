@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // i_genbb.cc
 /*
  * Copyright 2007-2011 F. Mauger
@@ -7,15 +7,15 @@
  * it under the terms of the GNU General Publi * License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Publi * License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Publi * License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
  */
@@ -23,8 +23,10 @@
 #include <sstream>
 #include <stdexcept>
 
-#include <mygsl/rng.h>
 #include <datatools/service_manager.h>
+#include <datatools/exception.h>
+
+#include <mygsl/rng.h>
 
 #include <genbb_help/i_genbb.h>
 #include <genbb_help/primary_event.h>
@@ -33,24 +35,35 @@ namespace genbb {
 
   // Factory stuff :
   DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(i_genbb,"genbb::i_genbb/__system__");
- 
+
+
+  datatools::logger::priority i_genbb::get_logging_priority() const
+  {
+    return _logging_priority;
+  }
+
+  void i_genbb::set_logging_priority(datatools::logger::priority p)
+  {
+    _logging_priority = p;
+  }
 
   // Constructor
   i_genbb::i_genbb ()
   {
+    _logging_priority = datatools::logger::PRIO_FATAL;
     _external_random_ = 0;
     return;
   }
-  
+
     /// Destructor
   i_genbb::~i_genbb ()
   {
     return;
   }
 
-  void i_genbb::load_next (primary_event & event_, 
+  void i_genbb::load_next (primary_event & event_,
                            bool compute_classification_)
-  { 
+  {
     _load_next (event_, compute_classification_);
     return;
   }
@@ -73,37 +86,23 @@ namespace genbb {
 
   void i_genbb::set_external_random (mygsl::rng & r_)
   {
-    if (! can_external_random ())
-      {
-        throw std::logic_error ("genbb::i_genbb::set_external_random: This event generator does not accept external PRNG !");
-      }
-    if (! r_.is_initialized ())
-      {
-        std::ostringstream message;
-        message << "genbb::i_genbb::set_external_random: External PRNG is not initialized !";
-        throw std::logic_error (message.str());      
-      }
+    DT_THROW_IF (! can_external_random (), std::logic_error, "This event generator does not accept external PRNG !");
+    DT_THROW_IF (! r_.is_initialized (), std::logic_error, "External PRNG is not initialized !");
     _external_random_ = &r_;
     return;
   }
-  
+
 
   mygsl::rng & i_genbb::grab_external_random ()
   {
-    if (! has_external_random ())
-      {
-        throw std::logic_error ("genbb::i_genbb::grab_external_random: No available external PRNG !");
-      }
+    DT_THROW_IF (! has_external_random (), std::logic_error, "No available external PRNG !");
     return *_external_random_;
   }
 
 
   const mygsl::rng & i_genbb::get_external_random () const
   {
-    if (! has_external_random ())
-      {
-        throw std::logic_error ("genbb::i_genbb::get_external_random: No available external PRNG !");
-      }
+    DT_THROW_IF (! has_external_random (), std::logic_error, "No available external PRNG !");
     return *_external_random_;
   }
 
@@ -121,7 +120,7 @@ namespace genbb {
     initialize (setup_, dummy_srvcmgr, dummy_dict);
     return;
   }
-   
+
   void i_genbb::initialize_with_dictionary_only (const datatools::properties & setup_,
                                                  detail::pg_dict_type & dictionary_)
   {
@@ -135,6 +134,21 @@ namespace genbb {
   {
     detail::pg_dict_type dummy_dict;
     initialize (setup_, service_manager_, dummy_dict);
+    return;
+  }
+
+  void i_genbb::_initialize_base(const datatools::properties & config_)
+  {
+
+    if (config_.has_key("logging.priority")) {
+      std::string prio_label = config_.fetch_string("logging.priority");
+      datatools::logger::priority p = datatools::logger::get_priority(prio_label);
+      DT_THROW_IF(p == datatools::logger::PRIO_UNDEFINED,
+                  std::domain_error,
+                  "Unknow logging priority ``" << prio_label << "`` !");
+      set_logging_priority(p);
+    }
+
     return;
   }
 

@@ -4,6 +4,7 @@
 #include <gsl/gsl_math.h>
 #include <mygsl/rng.h>
 #include <genbb_help/primary_event.h>
+#include <genbb_help/primary_particle.h>
 #include <genbb_help/decay0/alpha.h>
 #include <genbb_help/decay0/gamma.h>
 #include <genbb_help/decay0/electron.h>
@@ -23,25 +24,25 @@ namespace genbb
 {
   namespace decay0
   {
-    
-    // Se76low.f 
+
+    // Se76low.f
     // This file was extracted from the 'decay0' program by V.I. Tretyak
     // Copyright 1995-2011 V.I. Tretyak
     // This program is free software
     // it under the terms of the GNU General Public License as published by
     // the Free Software Foundation
     // your option) any later version.
-    // 
+    //
     // This program is distributed in the hope that it will be useful, but
     // WITHOUT ANY WARRANTY
     // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
     // General Public License for more details.
-    // 
+    //
     // You should have received a copy of the GNU General Public License
     // along with this program
     // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-    // 
-    
+    //
+
     void Se76low (mygsl::rng & prng_, genbb::primary_event & event_,
                   int levelkev)
     {
@@ -57,8 +58,8 @@ namespace genbb
       double p;
       double tclev;
       double thlev;
-      primary_event::particles_col_type::reverse_iterator ipg563 = event_.grab_particles().rend();
-      primary_event::particles_col_type::reverse_iterator ipg559 = event_.grab_particles().rend();
+      primary_particle * ipg563 = 0;
+      primary_particle * ipg559 = 0;
       // Subroutine describes the deexcitation process in Se76 nucleus
       // after 2b-decay of Ge76 to ground and excited 0+ and 2+ levels
       // of Se76 ("Table of Isotopes", 7th ed., 1978).
@@ -106,9 +107,9 @@ namespace genbb
       cK = 2.0e-3;
       p = prng_ () * (cg + cK);
       if (p <= cg)
-        { /* CARE */ 
+        { /* CARE */
           decay0_gamma (prng_, event_, Egamma, tclev, thlev, tdlev);
-          ipg563 = event_.grab_particles().rbegin();
+          ipg563 = &event_.grab_particles().back();
           /* CARE */
         }
       else {
@@ -126,26 +127,25 @@ namespace genbb
       cK = 2.0e-3;
       p = prng_ () * (cg + cK);
       if (p <= cg)
-        { 
+        {
           decay0_gamma (prng_, event_, Egamma, tclev, thlev, tdlev);
-          ipg559 = event_.grab_particles().rbegin();
+          ipg559 = &event_.grab_particles().back();
         }
       else {
         decay0_electron (prng_, event_, Egamma - EbindK, tclev, thlev,
                          tdlev);
         decay0_gamma (prng_, event_, EbindK, 0., 0., tdlev);
-      } /* CARE */ 
+      } /* CARE */
       // Angular correlation between gammas 559 and 563 keV, L.Pandola + VIT
-      if (ipg559 != event_.grab_particles().rend() 
-          && ipg563 != event_.grab_particles().rend())
+      if (ipg559 != 0 && ipg563 != 0)
         {
           double p559 = ipg559->get_momentum().mag();
           double p563 = ipg563->get_momentum().mag();
           // Coefficients in formula 1+a2*ctet**2+a4*ctet**4 are from:
           // R.D.Evans, "The Atomic Nucleus", Krieger Publ. Comp., 1985, p. 240,
           // 0(2)2(2)0 cascade.
-          double a2 = -3.0; 
-          double a4 = 4.0; 
+          double a2 = -3.0;
+          double a4 = 4.0;
           // Rejection method :
           double phi1, ctet1, stet1;
           double phi2, ctet2, stet2;
@@ -162,16 +162,16 @@ namespace genbb
               1. + a2 * gsl_pow_2(ctet) + a4 * gsl_pow_4(ctet)) {
             goto label_1;
           }
-          ipg559->grab_momentum().set (p559 * stet1 * cos (phi1), 
+          ipg559->grab_momentum().set (p559 * stet1 * cos (phi1),
                                        p559 * stet1 * sin (phi1),
-                                       p559 * ctet1); 
+                                       p559 * ctet1);
           ipg563->grab_momentum().set (p563 * stet2 * cos (phi2),
                                        p563 * stet2 * sin (phi2),
                                        p563 * ctet2);
         }
-      return; 
+      return;
     label_10000:
-      return; 
+      return;
     label_20000:
       {
         std::ostringstream message;
@@ -181,9 +181,9 @@ namespace genbb
       }
       return;
     }
-    
-  } // end of namespace decay0 
-} // end of namespace genbb 
+
+  } // end of namespace decay0
+} // end of namespace genbb
 // end of Se76low.cc
 // Local Variables: --
 // mode: c++ --

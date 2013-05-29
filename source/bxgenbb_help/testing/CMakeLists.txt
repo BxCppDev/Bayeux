@@ -38,7 +38,20 @@ set ( genbb_help_tests_programs_list_CPP
       test_single_particle_generator.cxx
       test_wdecay0.cxx
       test_manager.cxx
+      decay0/test_decay0_alpha.cxx
+      decay0/test_decay0_bb.cxx
+      decay0/test_decay0_beta1.cxx
+      decay0/test_decay0_beta_1fu.cxx
+      decay0/test_decay0_beta2.cxx
+      decay0/test_decay0_beta.cxx
+      decay0/test_decay0_electron.cxx
+      decay0/test_decay0_fermi.cxx
+      decay0/test_decay0_gamma.cxx
+      decay0/test_decay0_gfang.cxx
+      decay0/test_decay0_plog69.cxx
+      decay0/test_decay0_tgold.cxx
     )
+
 
 if (GENBB_HELP_WITH_FORTRAN)
   list (APPEND genbb_help_tests_programs_list_CPP
@@ -101,7 +114,7 @@ foreach ( test_program ${genbb_help_tests_programs_list_CPP} )
 
     # last thing we have to do is to tell CMake what libraries
     # our executable needs,
-    set ( _test_libraries genbb_help genbb_help_decay0_cpp)
+    set ( _test_libraries genbb_help ) #genbb_help_decay0_cpp)
 
     # BIO plugin DLLs :
     if ( GENBB_HELP_WITH_BIO )

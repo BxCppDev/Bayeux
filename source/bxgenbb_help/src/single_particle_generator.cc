@@ -403,6 +403,12 @@ namespace genbb {
                                               datatools::service_manager & service_manager_,
                                               detail::pg_dict_type & dictionary_)
   {
+    if (_initialized_) {
+      throw logic_error ("genbb::genbb::initialize: Object is already initialized !");
+    }
+
+    _initialize_base(config_);
+
     if (config_.has_flag ("debug")) {
       set_debug (true);
     }

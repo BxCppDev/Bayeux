@@ -24,7 +24,7 @@ if (GENBB_HELP_WITH_FORTRAN)
   message ( STATUS "${PROJECT_NAME}: Preparing special mangling name for the Fortran/C interface..." )
   FortranCInterface_HEADER (${PROJECT_BINARY_DIR}/include/genbb_help/decay0_fortran/__genbb_help_FC.h
     MACRO_NAMESPACE GENBB_HELP_FortranCInterface_
-     SYMBOLS fermi_wrap rng_shoot_reset rng_shoot_flat)
+     SYMBOLS fermi_wrap rng_shoot_reset rng_shoot_flat tracer_trace tracer_trace_msg tracer_trace_tag)
 
   install ( FILES ${PROJECT_BINARY_DIR}/include/genbb_help/decay0_fortran/__genbb_help_FC.h
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genbb_help/decay0_fortran
@@ -47,12 +47,14 @@ if (GENBB_HELP_WITH_FORTRAN)
     ${PROJECT_SOURCE_DIR}/include/genbb_help/decay0_fortran/genbb_commons.h
     ${PROJECT_SOURCE_DIR}/include/genbb_help/decay0_fortran/fermi.h
     ${PROJECT_SOURCE_DIR}/include/genbb_help/decay0_fortran/rng.h
+    ${PROJECT_SOURCE_DIR}/include/genbb_help/decay0_fortran/tracer.h
   )
 
   file ( GLOB genbb_help_decay0_fortran_SOURCES
     ${genbb_help_decay0_fortran_HEADERS}
     ${PROJECT_SOURCE_DIR}/src/decay0_fortran/fermi.cc
     ${PROJECT_SOURCE_DIR}/src/decay0_fortran/rng.cc
+    ${PROJECT_SOURCE_DIR}/src/decay0_fortran/tracer.cc
     ${PROJECT_SOURCE_DIR}/src/decay0_fortran/genbb_commons.cc
     ${PROJECT_SOURCE_DIR}/src/decay0_fortran/*.f
   )
@@ -240,33 +242,14 @@ if (GENBB_HELP_WITH_FORTRAN)
 endif()
 
 # ----------------------------------------------------------------------------
-# Build the C++ decay0 port library :
-
-add_library(genbb_help_decay0_cpp SHARED
-  ${genbb_help_decay0_PUBLIC_HEADERS}
-  ${genbb_help_decay0_SOURCES}
-  )
-
-set_target_properties(genbb_help_decay0_cpp
-    PROPERTIES
-    FRAMEWORK                             ON
-    MACOSX_FRAMEWORK_IDENTIFIER           org.supernemo.genbb_help
-    MACOSX_FRAMEWORK_BUNDLE_VERSION       ${genbb_help_VERSION}
-    MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${genbb_help_VERSION}
-    VERSION                               ${genbb_help_VERSION}
-    SOVERSION                             ${genbb_help_VERSION_MAJOR}
-    PUBLIC_HEADER                         "${genbb_help_decay0_PUBLIC_HEADERS}"
-)
-
-target_link_libraries(genbb_help_decay0_cpp ${geomtools_LIBRARIES} ${CMAKE_DL_LIBS})
-
-# ----------------------------------------------------------------------------
 # Build the C++ part of the library :
 
 add_library(genbb_help SHARED
+  ${genbb_help_decay0_PUBLIC_HEADERS}
   ${genbb_help_PUBLIC_HEADERS}
   ${genbb_help_detail_HEADERS}
   ${genbb_help_SOURCES}
+  ${genbb_help_decay0_SOURCES}
   ${genbb_help_RESOURCES_OUTPUTS}
   )
 
@@ -281,13 +264,13 @@ set_target_properties(genbb_help
     PUBLIC_HEADER                         "${genbb_help_PUBLIC_HEADERS}"
   )
 
-if(GENBB_HELP_WITH_REFLECTION)
-  target_link_libraries(genbb_help genbb_help_decay0_cpp ${_fortran_libs} ${CAMP_LIBRARIES} ${CMAKE_DL_LIBS})
-else()
-  target_link_libraries(genbb_help genbb_help_decay0_cpp ${_fortran_libs} ${CMAKE_DL_LIBS})
-endif()
 
-set(GENBB_HELP_TARGETS genbb_help genbb_help_decay0_cpp ${_fortran_libs})
+if(GENBB_HELP_WITH_REFLECTION)
+  target_link_libraries(genbb_help ${_fortran_libs} ${CAMP_LIBRARIES} ${CMAKE_DL_LIBS})
+else()
+  target_link_libraries(genbb_help ${_fortran_libs} ${CMAKE_DL_LIBS})
+endif()
+set(GENBB_HELP_TARGETS genbb_help ${_fortran_libs})
 
 #-----------------------------------------------------------------------
 # BUILD THE GENBB_HELP BOOST I/O COMPONENT

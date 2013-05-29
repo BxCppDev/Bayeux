@@ -8,6 +8,7 @@
 
 #include <genbb_help/decay0/Bi207.h>
 #include <genbb_help/primary_event.h>
+#include <genbb_help/primary_particle.h>
 #include <genbb_help/decay0/alpha.h>
 #include <genbb_help/decay0/gamma.h>
 #include <genbb_help/decay0/electron.h>
@@ -27,23 +28,23 @@
 namespace genbb {
   namespace decay0 {
 
-    // Bi207.f 
+    // Bi207.f
     // This file was extracted from the 'decay0' program by V.I. Tretyak
     // Copyright 1995-2011 V.I. Tretyak
     // This program is free software
     // it under the terms of the GNU General Public License as published by
     // the Free Software Foundation
     // your option) any later version.
-    // 
+    //
     // This program is distributed in the hope that it will be useful, but
     // WITHOUT ANY WARRANTY
     // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
     // General Public License for more details.
-    // 
+    //
     // You should have received a copy of the GNU General Public License
     // along with this program
     // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-    // 
+    //
 
     void Bi207(mygsl::rng & prng_, genbb::primary_event & event_, double tcnuc, double & tdnuc)
     {
@@ -65,12 +66,12 @@ namespace genbb {
       double EbindL;
       double EbindM;
       double Egamma;
-      primary_event::particles_col_type::reverse_iterator ip1064 = event_.grab_particles().rend();
-      primary_event::particles_col_type::reverse_iterator ip570 = event_.grab_particles().rend();
-      primary_event::particles_col_type::reverse_iterator ipg1064 = event_.grab_particles().rend();
-      primary_event::particles_col_type::reverse_iterator ipg570 = event_.grab_particles().rend();
-      primary_event::particles_col_type::reverse_iterator ipe1064 = event_.grab_particles().rend();
-      primary_event::particles_col_type::reverse_iterator ipe570 = event_.grab_particles().rend();
+      primary_particle * ip1064 = 0;
+      primary_particle * ip570 = 0;
+      primary_particle * ipg1064 = 0;
+      primary_particle * ipg570 = 0;
+      primary_particle * ipe1064 = 0;
+      primary_particle * ipe570 = 0;
       double p;
       double p1064;
       double p2;
@@ -199,20 +200,20 @@ namespace genbb {
       p=prng_()*(cg+cK+cL+cM);
       if (p <= cg) {
         decay0_gamma(prng_, event_, Egamma,tclev,thlev,tdlev);
-        ipg1064 = event_.grab_particles().rbegin();
+        ipg1064 = &event_.grab_particles().back();
       }
       else if (p <= cg+cK) {
         decay0_electron(prng_, event_, Egamma-EbindK,tclev,thlev,tdlev);
-        ipe1064 = event_.grab_particles().rbegin();
+        ipe1064 = &event_.grab_particles().back();
         PbAtShell(prng_, event_, 88,0.,0.,tdlev);
       }
       else if (p <= cg+cK+cL) {
         decay0_electron(prng_, event_, Egamma-EbindL,tclev,thlev,tdlev);
-        ipe1064 = event_.grab_particles().rbegin();
+        ipe1064 = &event_.grab_particles().back();
         PbAtShell(prng_, event_, 15,0.,0.,tdlev);
       } else {
         decay0_electron(prng_, event_, Egamma-EbindM,tclev,thlev,tdlev);
-        ipe1064 = event_.grab_particles().rbegin();
+        ipe1064 = &event_.grab_particles().back();
         PbAtShell(prng_, event_, 3,0.,0.,tdlev);
       };
       goto label_57000;
@@ -277,21 +278,21 @@ namespace genbb {
       p=prng_()*(cg+cK+cL+cM);
       if (p <= cg) {
         decay0_gamma(prng_, event_, Egamma,tclev,thlev,tdlev);
-        ipg570 = event_.grab_particles().rbegin();
+        ipg570 = &event_.grab_particles().back();
       }
       else if (p <= cg+cK) {
         decay0_electron(prng_, event_, Egamma-EbindK,tclev,thlev,tdlev);
-        ipe570 = event_.grab_particles().rbegin();
+        ipe570 = &event_.grab_particles().back();
         PbAtShell(prng_, event_, 88,0.,0.,tdlev);
       }
       else if (p <= cg+cK+cL) {
         decay0_electron(prng_, event_, Egamma-EbindL,tclev,thlev,tdlev);
-        ipe570 = event_.grab_particles().rbegin();
+        ipe570 = &event_.grab_particles().back();
         PbAtShell(prng_, event_, 15,0.,0.,tdlev);
-      } 
+      }
       else {
         decay0_electron(prng_, event_, Egamma-EbindM,tclev,thlev,tdlev);
-        ipe570 = event_.grab_particles().rbegin();
+        ipe570 = &event_.grab_particles().back();
         PbAtShell(prng_, event_, 3,0.,0.,tdlev);
       }
       // Angular correlation between gammas and conversion electrons of 1064 and
@@ -300,29 +301,25 @@ namespace genbb {
       // coefficients are used.
       // Thanks to V.Vasilyev for correcting formula in previous DECAY0 version
       // for case of two conversion electrons emitted.
-      if (ipg1064 != event_.grab_particles().rend()
-          &&  ip570 != event_.grab_particles().rend()) {
+      if (ipg1064 != 0 && ip570 != 0) {
         a2=0.231;
         a4=-0.023;
         ip1064=ipg1064;
         ip570=ipg570;
       }
-      else if (ipe1064 != event_.grab_particles().rend() 
-               &&  ipg570 != event_.grab_particles().rend()) {
+      else if (ipe1064 != 0 && ipg570 != 0) {
         a2=0.223;
         a4=-0.020;
         ip1064=ipe1064;
         ip570=ipe570;
       }
-      else if (ipg1064 != event_.grab_particles().rend()
-               &&  ipe570 != event_.grab_particles().rend()) {
+      else if (ipg1064 != 0 && ipe570 != 0) {
         a2=0.275;
         a4=-0.012;
         ip1064=ipg1064;
         ip570=ipe570;
       }
-      else if (ipe1064 != event_.grab_particles().rend()
-               &&  ipe570 != event_.grab_particles().rend()) {
+      else if (ipe1064 != 0 && ipe570 != 0) {
         a2=0.271;
         a4=-0.010;
         ip1064=ipe1064;
@@ -346,21 +343,21 @@ namespace genbb {
       if (prng_()*(1.+abs(a2)+abs(a4)) > 1.+a2*p2+a4*p4) {
         goto label_3;
       }
-      ip1064->grab_momentum().set (p1064 * stet1 * cos (phi1), 
+      ip1064->grab_momentum().set (p1064 * stet1 * cos (phi1),
                                    p1064 * stet1 * sin (phi1),
-                                   p1064 * ctet1); 
-      ip570->grab_momentum().set (p570 * stet2 * cos (phi2), 
+                                   p1064 * ctet1);
+      ip570->grab_momentum().set (p570 * stet2 * cos (phi2),
                                   p570 * stet2 * sin (phi2),
-                                  p570 * ctet2); 
+                                  p570 * ctet2);
       return;
     }
     // end of Bi207.f
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
-                
+  } // end of namespace decay0
+} // end of namespace genbb
+
 // end of Bi207.cc
 // Local Variables: --
 // mode: c++ --
 // End: --
-                
+

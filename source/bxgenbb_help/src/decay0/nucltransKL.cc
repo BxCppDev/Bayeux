@@ -1,4 +1,4 @@
-// nucltransKL.cc 
+// nucltransKL.cc
 
 #include <cmath>
 
@@ -24,27 +24,23 @@ namespace genbb {
       double p=(1.+conveK+conveL+convp)*prng();
       if(p <= 1.) {
         decay0_gamma(prng,event,Egamma,tclev,thlev,tdlev);
-      }
-      else if(p <= 1.+conveK) {
+      } else if(p <= 1.+conveK) {
         decay0_electron(prng,event,Egamma-EbindeK,tclev,thlev,tdlev);
-        //      decay0_gamma(prng,event,EbindeK,tdlev,0.,tdlev);                // for real time
-        decay0_gamma(prng,event,EbindeK,0.,0.,tdlev);                   // for time shift
-      }
-      else if(p <= 1.+conveK+conveL) {
-
+        // decay0_gamma(prng,event,EbindeK,tdlev,0.,tdlev); // for real time
+        decay0_gamma(prng,event,EbindeK,0.,0.,tdlev); // for time shift
+      } else if(p <= 1.+conveK+conveL) {
         decay0_electron(prng,event,Egamma-EbindeL,tclev,thlev,tdlev);
-        //     decay0_gamma(prng,event,EbindeL,tdlev,0.,tdlev);                // for real time
-        decay0_gamma(prng,event,EbindeL,0.,0.,tdlev);                   // for time shift
-      }
-      else {
+        //decay0_gamma(prng,event,EbindeL,tdlev,0.,tdlev); // for real time
+        decay0_gamma(prng,event,EbindeL,0.,0.,tdlev); // for time shift
+      } else {
         decay0_pair(prng,event,Egamma-2.*emass,tclev,thlev,tdlev);
       }
       return;
     }
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
-// 
+  } // end of namespace decay0
+} // end of namespace genbb
+//
 // end of nucltransKL.cc
 //
 // Local Variables: --

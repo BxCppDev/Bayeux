@@ -116,7 +116,7 @@ namespace genbb {
 
   private:
     bool   _initialized_;
-    bool   _debug_;
+    bool   _debug_; //!< Obsolete debug flag
     size_t _buffer_size_;
     size_t _buffer_item_;
     size_t _event_count_;

@@ -28,6 +28,7 @@
 #else
 #error No reflection support in datatools
 #endif
+#include <datatools/tracer.h>
 
 #include <mygsl/histogram_service.h>
 #include <mygsl/histogram_pool.h>
@@ -52,6 +53,7 @@ namespace genbb {
     void reset();
     void dump(std::ostream & = std::clog) const;
     bool debug; /// Debug flag
+    int trace_index;
     bool interactive; /// Interactive flag
     std::vector<std::string> unrecognized_options; /// Unrecognized options
     std::string configuration; /// Particle generator manager configuration file
@@ -59,6 +61,7 @@ namespace genbb {
     std::vector<std::string> output_paths;
     int number_of_events; /// Number of generated events
     int prng_seed; /// PRNG seed
+    int prng_trunc; /// PRNG hack
     std::string prng_tracker; /// PRNG tracker output file
     double prompt_time_limit; // Prompt time limit (in ns)
     std::vector<std::string> histos_definitions; /// Histograms' definition files
@@ -72,6 +75,7 @@ namespace genbb {
   {
     out_ << "inspector_params::dump: " << std::endl;
     out_ << "|-- debug       = " << debug << std::endl;
+    out_ << "|-- trace_index = " << trace_index << std::endl;
     out_ << "|-- interactive = " << interactive << std::endl;
     out_ << "|-- unrecognized_options = " << unrecognized_options.size()
          << std::endl;
@@ -80,6 +84,7 @@ namespace genbb {
     out_ << "|-- output_paths       = " << output_paths.size() << std::endl;
     out_ << "|-- number_of_events   = " << number_of_events << std::endl;
     out_ << "|-- prng_seed          = " << prng_seed << std::endl;
+    out_ << "|-- prng_trunc         = " << prng_trunc << std::endl;
     out_ << "|-- prng_tracker       = " << prng_tracker << std::endl;
     out_ << "|-- prompt_time_limit  = " << prompt_time_limit << std::endl;
     out_ << "|-- histos_definitions = " << histos_definitions.size() << std::endl;
@@ -93,11 +98,13 @@ namespace genbb {
   void inspector_params::reset()
   {
     debug = false;
+    trace_index = 0;
     interactive = false;
     unrecognized_options.clear();
     output_paths.clear();
     number_of_events = -1;
     prng_seed = 0;
+    prng_trunc = 0;
     prng_tracker.clear();
     prompt_time_limit = 1.0;
     histos_definitions.clear();
@@ -936,10 +943,26 @@ int main (int argc_, char ** argv_)
        " --number-of-events 10000             "
        )
 
+      ("trace-index,x",
+       po::value<int>(&params.trace_index)
+       ->default_value (0),
+       "set the trace index. \n"
+       "Example :                           \n"
+       " --trace-index 10000                  "
+       )
+
+      ("prng-trunc,u",
+       po::value<int>(&params.prng_trunc)
+       ->default_value (0),
+       "set the trunc index of the random number generator (PRNG). \n"
+       "Example :                           \n"
+       " --prng-trunc 7                     "
+       )
+
       ("prng-seed,s",
        po::value<int>(&params.prng_seed)
        ->default_value (0),
-       "set the seed of random number generator (PRNG). \n"
+       "set the seed of the random number generator (PRNG). \n"
        "Example :                                       \n"
        " --prng-seed 314159                               "
        )
@@ -1136,6 +1159,9 @@ namespace genbb {
     if (! _params_.prng_tracker.empty()) {
       _prng_.set_tracker(_params_.prng_tracker);
     }
+    if (_params_.prng_trunc > 0) {
+      _prng_.set_trunc(_params_.prng_trunc);
+    }
     if (_title_prefix_.empty() && ! _params_.title_prefix.empty()) {
       _title_prefix_ = _params_.title_prefix;
     }
@@ -1241,8 +1267,7 @@ namespace genbb {
 
     if (_params_.interactive) {
       _run_interactive();
-    }
-    else {
+    } else {
       if (_params_.debug) {
         std::clog << datatools::io::debug
                   << "genbb::inspector::reset: "
@@ -1267,6 +1292,11 @@ namespace genbb {
       max_count = DEFAULT_MAX_NUMBER_OF_EVENTS;
     }
     while (_generator_->has_next()) {
+      if (_params_.trace_index > 0) {
+        DT_TRACER_MESSAGE(_params_.trace_index,
+                          "***************************************** Event " << count);
+      }
+      _prng_.tracker_tag("Event", count);
       genbb::primary_event decay_event;
       _generator_->load_next(decay_event, false);
       if (_params_.debug) decay_event.tree_dump(std::clog, "Decay event: ", "DEBUG: ");
@@ -1275,6 +1305,7 @@ namespace genbb {
       if ((count == 1) || (count % 5000) == 0 || count == max_count) {
         std::clog << "genbb::inspector::_run_batch: Generated event #" << count << '\n';
       }
+
       if (count >= max_count) break;
     }
 

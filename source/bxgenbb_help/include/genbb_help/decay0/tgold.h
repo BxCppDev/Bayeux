@@ -6,7 +6,7 @@
 
 namespace genbb {
   namespace decay0 {
-    
+
     /// \brief Subroutine decay0_tgold determines maximum or minimum of the function f(x) in the interval [a,b] by the Gold section method.
     // Input:  a,c    - beginning and the end of the interval [a,c];
     //         b      - some point in the middle of the interval
@@ -20,13 +20,19 @@ namespace genbb {
     // Output: xextr  - x-point of extremum;
     //         fextr  - f(xextr).
     // V.Tretyak, 25.09.1985.
-    void decay0_tgold(double a, double b, double c, func_type f, 
+    void decay0_tgold(double a, double b, double c, func_type f,
 		      double eps, int minmax,
 		      double & xextr, double & fextr,
 		      void * params = 0);
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
+    void decay0_tgold_o(double a, double b, double c, func_type f,
+                        double eps, int minmax,
+                        double & xextr, double &fextr,
+		        void * params = 0);
+
+
+  } // end of namespace decay0
+} // end of namespace genbb
 
 #endif // GENBB_DECAY0_TGOLD_H_
 

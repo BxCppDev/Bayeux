@@ -115,7 +115,7 @@ namespace genbb {
     {
       double last_time = 0.0 * CLHEP::second;
       if (event_.get_particles ().size() > 0) {
-        primary_particle & last_part = event_.get_particles ().back();
+        const primary_particle & last_part = event_.get_particles ().back();
         last_time = last_part.get_time();
       }
 
@@ -136,6 +136,9 @@ namespace genbb {
       double stet=std::sqrt(1.-ctet*ctet);
       double E=E1;
       if (E1 != E2) E=E1+(E2-E1)*prng_();
+      // --- randomly blur the particle energy
+      // double dE=0.000025;
+      // E=E+dE*(-1+2*prng_());
       double p=std::sqrt(E*(E+2.*pmass));
       geomtools::vector_3d momentum(p*stet*std::cos(phi),
                                     p*stet*std::sin(phi),
