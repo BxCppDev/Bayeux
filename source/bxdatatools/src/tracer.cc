@@ -25,6 +25,7 @@ namespace datatools {
   {
     _id_ = -1;
     _counter_ = 0;
+    _preserved_file_ = false;
   }
 
   tracer::tracer(int id_,
@@ -33,6 +34,7 @@ namespace datatools {
   {
     _id_ = -1;
     _counter_ = 0;
+    _preserved_file_ = false;
     set_id(id_);
     set_filename(filename_);
     set_label(label_);
@@ -77,6 +79,16 @@ namespace datatools {
     return _filename_;
   }
 
+  void tracer::set_preserved_file(bool pf_)
+  {
+    _preserved_file_ = pf_;
+  }
+
+  bool tracer::is_preserved_file() const
+  {
+    return _preserved_file_;
+  }
+
   bool tracer::is_initialized() const
   {
     return _fout_.get() != 0;
@@ -102,6 +114,15 @@ namespace datatools {
     initialize();
   }
 
+  void tracer::initialize(int id_, const std::string & filename_, bool preserved_file_)
+  {
+    DT_THROW_IF (is_initialized(), std::logic_error, "Tracer is already initialized !");
+    set_id(id_);
+    set_filename(filename_);
+    set_preserved_file(preserved_file_);
+    initialize();
+  }
+
 
   void tracer::initialize()
   {
@@ -110,8 +131,10 @@ namespace datatools {
     DT_LOG_NOTICE(logging, "Initializing tracer ID=" << _id_ << " with file '" << _filename_<< "'...");
     std::string fn = _filename_;
     datatools::fetch_path_with_env(fn);
-    DT_THROW_IF (boost::filesystem::exists(fn), std::runtime_error,
-                 "Tracker file '" << fn << "' already exists !");
+    if (is_preserved_file()) {
+      DT_THROW_IF (boost::filesystem::exists(fn), std::runtime_error,
+                   "Tracker file '" << fn << "' already exists !");
+    }
     _fout_.reset(new std::ofstream(fn.c_str()));
     std::ofstream & fout = *_fout_.get();
     DT_THROW_IF (! fout, std::runtime_error, "Cannot open tracer file '" << fn << "' !");

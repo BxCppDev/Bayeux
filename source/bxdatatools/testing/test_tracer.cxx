@@ -23,6 +23,7 @@ void test_tracer_1() {
   srand48(seed48);
   boost::filesystem::remove("test_tracer.log");
   datatools::tracer t(1, "test_tracer.log");
+  //t.set_preserved_file(true);
   for (int i = 0; i < 20; ++i) {
     t.trace(drand48());
   }
@@ -56,6 +57,15 @@ void test_tracer_3() {
   }
 }
 
+void test_tracer_4() {
+  boost::filesystem::remove("tracer_4000.log");
+  for (int i = 0; i < 20; ++i) {
+    DT_TRACER_TRACE(4000, drand48());
+  }
+  DT_TRACER_RESET(4000);
+  DT_TRACER_MESSAGE(4000, "overwrite");
+}
+
 int main(int argc, const char *argv[])
 {
   datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
@@ -68,6 +78,9 @@ int main(int argc, const char *argv[])
 
     DT_LOG_NOTICE(logging, "Running test_tracer_3...");
     test_tracer_3();
+
+    DT_LOG_NOTICE(logging, "Running test_tracer_4...");
+    test_tracer_4();
   }
   catch (std::exception& e) {
     std::cerr << "test_tracer failed : " << e.what() << std::endl;

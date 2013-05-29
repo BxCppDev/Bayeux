@@ -62,6 +62,10 @@ namespace datatools {
 
     const std::string & get_filename() const;
 
+    void set_preserved_file(bool pf_);
+
+    bool is_preserved_file() const;
+
     bool is_initialized() const;
 
     void initialize();
@@ -69,6 +73,9 @@ namespace datatools {
     void initialize(int id_);
 
     void initialize(int id_, const std::string & filename_);
+
+    void initialize(int id_, const std::string & filename_,
+		    bool preserved_file_);
 
     void reset();
 
@@ -88,6 +95,7 @@ namespace datatools {
     int _id_;
     std::string _label_;
     std::string _filename_;
+    bool _preserved_file_;
     boost::scoped_ptr<std::ofstream> _fout_;
     int _counter_;
 
