@@ -114,7 +114,7 @@ foreach ( test_program ${genbb_help_tests_programs_list_CPP} )
 
     # last thing we have to do is to tell CMake what libraries
     # our executable needs,
-    set ( _test_libraries genbb_help ) #genbb_help_decay0_cpp)
+    set ( _test_libraries genbb_help )
 
     # BIO plugin DLLs :
     if ( GENBB_HELP_WITH_BIO )
@@ -122,6 +122,9 @@ foreach ( test_program ${genbb_help_tests_programs_list_CPP} )
     endif ()
     if ( geomtools_WITH_BIO )
       list (APPEND  _test_libraries ${geomtools_BIO_LIBRARY} )
+    endif ()
+    if ( mygsl_WITH_BIO )
+      list (APPEND  _test_libraries ${mygsl_BIO_LIBRARY} )
     endif ()
     if ( datatools_WITH_BIO )
       list (APPEND  _test_libraries ${datatools_BIO_LIBRARY} )

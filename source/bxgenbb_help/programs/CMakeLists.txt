@@ -108,9 +108,7 @@ foreach ( pro_program ${genbb_help_programs_list_CPP} )
 
   # last thing we have to do is to tell CMake what libraries
   # our executable needs,
-  set ( _pro_libraries
-    genbb_help
-    )
+  set ( _pro_libraries genbb_help ) #${mygsl_LIBRARIES} )
 
   if ( ${pro_program} STREQUAL "genbb_inspector.cxx" )
     message (STATUS "${PROJECT_NAME}: programs: CAMP_LIBRARIES=${CAMP_LIBRARIES}")
@@ -122,6 +120,9 @@ foreach ( pro_program ${genbb_help_programs_list_CPP} )
 
   if ( datatools_WITH_BIO )
     list ( INSERT _pro_libraries 0 ${datatools_BIO_LIBRARY} )
+  endif ()
+  if ( mygsl_WITH_BIO )
+    list ( INSERT _pro_libraries 0 ${mygsl_BIO_LIBRARY} )
   endif ()
   if ( geomtools_WITH_BIO )
     list ( INSERT _pro_libraries 0 ${geomtools_BIO_LIBRARY} )

@@ -266,9 +266,9 @@ set_target_properties(genbb_help
 
 
 if(GENBB_HELP_WITH_REFLECTION)
-  target_link_libraries(genbb_help ${_fortran_libs} ${CAMP_LIBRARIES} ${CMAKE_DL_LIBS})
+  target_link_libraries(genbb_help ${geomtools_LIBRARIES} ${_fortran_libs} ${CAMP_LIBRARIES} ${CMAKE_DL_LIBS})
 else()
-  target_link_libraries(genbb_help ${_fortran_libs} ${CMAKE_DL_LIBS})
+  target_link_libraries(genbb_help ${geomtools_LIBRARIES} ${_fortran_libs} ${CMAKE_DL_LIBS})
 endif()
 set(GENBB_HELP_TARGETS genbb_help ${_fortran_libs})
 
