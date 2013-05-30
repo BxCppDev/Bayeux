@@ -9,12 +9,12 @@
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation, either version 3 of the License, or
 ## (at your option) any later version.
-## 
+##
 ## geomtools is distributed in the hope that it will be useful,
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
-## 
+##
 ## You should have received a copy of the GNU General Public License
 ## along with geomtools.  If not, see <http://www.gnu.org/licenses/>.
 ##
@@ -23,9 +23,9 @@
 
 ###file(GLOB geomtools_tests_programs test_*.cxx)
 set ( geomtools_tests_programs
-  test_geomtools.cxx 
-  test_base_hit.cxx 
-  test_blur_spot.cxx 
+  test_geomtools.cxx
+  test_base_hit.cxx
+  test_blur_spot.cxx
   test_address_set.cxx
   test_box.cxx
   test_circle.cxx
@@ -76,17 +76,13 @@ set ( geomtools_tests_programs
   test_service_manager.cxx
 )
 
-# set ( geomtools_tests_programs
-#   test_manager.cxx
-# )
-
 ###message (STATUS "geomtools_tests_programs=${geomtools_tests_programs}" )
-list(REMOVE_ITEM geomtools_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
+# list(REMOVE_ITEM geomtools_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
 if(GEOMTOOLS_WITH_REFLECTION)
   list(APPEND geomtools_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
-endif() 
+endif()
 
-set(geomtools_tests_programs_list "${geomtools_tests_programs}") 
+set(geomtools_tests_programs_list "${geomtools_tests_programs}")
 list(SORT geomtools_tests_programs_list)
 
 # include files search paths
@@ -120,45 +116,45 @@ foreach(test_program ${geomtools_tests_programs_list})
     set_target_properties(${test_executable} PROPERTIES DEBUG_POSTFIX d)
   endif()
 
-  set(_test_libraries geomtools) 
+  set(_test_libraries geomtools)
 
   # Special bio DLL plugins :
   if(datatools_WITH_BIO)
     list(INSERT _test_libraries 0 datatools_bio)
-  endif() 
+  endif()
   if(mygsl_WITH_BIO)
     list(INSERT _test_libraries 0 mygsl_bio )
-  endif() 
+  endif()
   if(GEOMTOOLS_WITH_BIO)
     list(INSERT _test_libraries 0 geomtools_bio )
-  endif() 
+  endif()
 
   # Special reflection DLL plugins :
   if(datatools_WITH_REFLECTION)
     list(INSERT _test_libraries 0 datatools_reflection)
-  endif() 
+  endif()
   if(GEOMTOOLS_WITH_REFLECTION)
     list(INSERT _test_libraries 0 geomtools_reflection )
-  endif() 
+  endif()
 
   target_link_libraries(${test_executable} ${_test_libraries})
 
   add_test(NAME ${test_executable}.run
-    COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
+    COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash
     --tmp-dir ${_test_tmp_dir}
-    --data-dir ${PROJECT_SOURCE_DIR} 
-    --prefix ${PROJECT_SOURCE_DIR} 
+    --data-dir ${PROJECT_SOURCE_DIR}
+    --prefix ${PROJECT_SOURCE_DIR}
     --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
      ${_geomtools_test_additional_options}
     run
-    )	 
+    )
 
   unset(_test_libraries)
 endforeach ()
 
 add_custom_target(clean_test
-  COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
-  --prefix ${PROJECT_SOURCE_DIR} 
+  COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash
+  --prefix ${PROJECT_SOURCE_DIR}
   --tmp-dir ${_test_tmp_dir}
   clean
   )

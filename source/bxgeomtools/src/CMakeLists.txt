@@ -26,106 +26,109 @@ endfunction()
 #   )
 
 set(geomtools_PUBLIC_HEADERS
-include/geomtools/address_set.h
-include/geomtools/base_hit.h
-include/geomtools/bio_guard.h
-include/geomtools/blur_spot.h
-include/geomtools/box.h
-include/geomtools/circle.h
-include/geomtools/clhep.h
-include/geomtools/color.h
-include/geomtools/cylinder.h
-include/geomtools/cylindric_extrusion_boxed_model.h
-include/geomtools/disk.h
-include/geomtools/display_data.h
-include/geomtools/gdml_export.h
-include/geomtools/gdml_writer.h
-include/geomtools/geom_id.h
-include/geomtools/geom_info.h
-include/geomtools/geom_map.h
-include/geomtools/geomtools.h
-include/geomtools/gnuplot_drawer.h
-include/geomtools/gnuplot_draw.h
-include/geomtools/gnuplot_i.h
-include/geomtools/helix_3d.h
-include/geomtools/hexagon_box.h
-include/geomtools/i_boxed_model.h
-include/geomtools/i_composite_shape_3d.h
-include/geomtools/id_mgr.h
-include/geomtools/id_selector.h
-include/geomtools/i_locator.h
-include/geomtools/i_model.h
-include/geomtools/intersection_3d.h
-include/geomtools/intersection.h
-include/geomtools/i_object_3d.h
-include/geomtools/i_placement.h
-include/geomtools/i_shape_1d.h
-include/geomtools/i_shape_2d.h
-include/geomtools/i_shape_3d.h
-include/geomtools/i_stackable.h
-include/geomtools/i_wires_3d_rendering.h
-include/geomtools/line_3d.h
-include/geomtools/logical_volume.h
-include/geomtools/mapping.h
-include/geomtools/mapping_plugin.h
-include/geomtools/mapping_utils.h
-include/geomtools/material.h
-include/geomtools/model_factory.h
-include/geomtools/model_macros.h
-include/geomtools/model_with_internal_items_tools.h
-include/geomtools/multiple_items_model.h
-include/geomtools/multiple_placement.h
-include/geomtools/physical_volume.h
-include/geomtools/placement.h
-include/geomtools/plane.h
-include/geomtools/plate_with_hole_model.h
-include/geomtools/polycone.h
-include/geomtools/polyhedra.h
-include/geomtools/polyline_3d.h
-include/geomtools/rectangle.h
-include/geomtools/regular_grid_placement.h
-include/geomtools/regular_linear_placement.h
-include/geomtools/regular_polygon.h
-include/geomtools/replicated_boxed_model.h
-include/geomtools/replicated_model.h
-include/geomtools/grid_model.h
-include/geomtools/rotated_boxed_model.h
-include/geomtools/sensitive.h
-include/geomtools/simple_boxed_model.h
-include/geomtools/simple_shaped_model.h
-include/geomtools/simple_world_model.h
-include/geomtools/smart_id_locator.h
-include/geomtools/sphere.h
-include/geomtools/spherical_extrusion_box_model.h
-include/geomtools/spherical_extrusion_cylinder_model.h
-include/geomtools/stacked_model.h
-include/geomtools/stl_tools.h
-include/geomtools/subtraction_3d.h
-include/geomtools/surrounded_boxed_model.h
-include/geomtools/tessellation.h
-include/geomtools/the_serializable.h
-include/geomtools/tube.h
-include/geomtools/union_3d.h
-include/geomtools/units.h
-include/geomtools/utils.h
-include/geomtools/visibility.h
-include/geomtools/manager.h
-include/geomtools/manager_macros.h
-include/geomtools/geometry_service.h
-include/geomtools/materials_plugin.h
-include/geomtools/materials_utils.h
-include/geomtools/ocd_support.h
-include/geomtools/base_hit.ipp
-include/geomtools/blur_spot.ipp
-include/geomtools/display_data.ipp
-include/geomtools/geom_id.ipp
-include/geomtools/helix_3d.ipp
-include/geomtools/i_placement.ipp
-include/geomtools/line_3d.ipp
-include/geomtools/placement.ipp
-include/geomtools/polyline_3d.ipp
-include/geomtools/the_serializable.ipp
-include/geomtools/utils.ipp
+  include/geomtools/address_set.h
+  include/geomtools/base_hit.h
+  include/geomtools/bio_guard.h
+  include/geomtools/blur_spot.h
+  include/geomtools/box.h
+  include/geomtools/circle.h
+  include/geomtools/clhep.h
+  include/geomtools/color.h
+  include/geomtools/cylinder.h
+  include/geomtools/cylindric_extrusion_boxed_model.h
+  include/geomtools/disk.h
+  include/geomtools/display_data.h
+  include/geomtools/gdml_export.h
+  include/geomtools/gdml_writer.h
+  include/geomtools/geom_id.h
+  include/geomtools/geom_info.h
+  include/geomtools/geom_map.h
+  include/geomtools/geomtools.h
+  include/geomtools/gnuplot_drawer.h
+  include/geomtools/gnuplot_draw.h
+  include/geomtools/gnuplot_i.h
+  include/geomtools/helix_3d.h
+  include/geomtools/hexagon_box.h
+  include/geomtools/i_boxed_model.h
+  include/geomtools/i_composite_shape_3d.h
+  include/geomtools/id_mgr.h
+  include/geomtools/id_selector.h
+  include/geomtools/i_locator.h
+  include/geomtools/i_model.h
+  include/geomtools/intersection_3d.h
+  include/geomtools/intersection.h
+  include/geomtools/i_object_3d.h
+  include/geomtools/i_placement.h
+  include/geomtools/i_shape_1d.h
+  include/geomtools/i_shape_2d.h
+  include/geomtools/i_shape_3d.h
+  include/geomtools/i_stackable.h
+  include/geomtools/i_wires_3d_rendering.h
+  include/geomtools/line_3d.h
+  include/geomtools/logical_volume.h
+  include/geomtools/mapping.h
+  include/geomtools/mapping_plugin.h
+  include/geomtools/mapping_utils.h
+  include/geomtools/material.h
+  include/geomtools/model_factory.h
+  include/geomtools/model_macros.h
+  include/geomtools/model_with_internal_items_tools.h
+  include/geomtools/multiple_items_model.h
+  include/geomtools/multiple_placement.h
+  include/geomtools/physical_volume.h
+  include/geomtools/placement.h
+  include/geomtools/plane.h
+  include/geomtools/plate_with_hole_model.h
+  include/geomtools/polycone.h
+  include/geomtools/polyhedra.h
+  include/geomtools/polyline_3d.h
+  include/geomtools/rectangle.h
+  include/geomtools/regular_grid_placement.h
+  include/geomtools/regular_linear_placement.h
+  include/geomtools/regular_polygon.h
+  include/geomtools/replicated_boxed_model.h
+  include/geomtools/replicated_model.h
+  include/geomtools/grid_model.h
+  include/geomtools/rotated_boxed_model.h
+  include/geomtools/sensitive.h
+  include/geomtools/simple_boxed_model.h
+  include/geomtools/simple_shaped_model.h
+  include/geomtools/simple_world_model.h
+  include/geomtools/smart_id_locator.h
+  include/geomtools/sphere.h
+  include/geomtools/spherical_extrusion_box_model.h
+  include/geomtools/spherical_extrusion_cylinder_model.h
+  include/geomtools/stacked_model.h
+  include/geomtools/stl_tools.h
+  include/geomtools/subtraction_3d.h
+  include/geomtools/surrounded_boxed_model.h
+  include/geomtools/tessellation.h
+  include/geomtools/tube.h
+  include/geomtools/union_3d.h
+  include/geomtools/units.h
+  include/geomtools/utils.h
+  include/geomtools/visibility.h
+  include/geomtools/manager.h
+  include/geomtools/manager_macros.h
+  include/geomtools/geometry_service.h
+  include/geomtools/materials_plugin.h
+  include/geomtools/materials_utils.h
+  include/geomtools/ocd_support.h
+  include/geomtools/base_hit.ipp
+  include/geomtools/blur_spot.ipp
+  include/geomtools/display_data.ipp
+  include/geomtools/geom_id.ipp
+  include/geomtools/helix_3d.ipp
+  include/geomtools/i_placement.ipp
+  include/geomtools/line_3d.ipp
+  include/geomtools/placement.ipp
+  include/geomtools/polyline_3d.ipp
+  include/geomtools/the_serializable.ipp
+  include/geomtools/the_serializable.h
+  include/geomtools/utils.ipp
+  include/geomtools/utils-reflect.h
+  include/geomtools/geom_id-reflect.h
+  include/geomtools/the_introspectable.h
   )
 list_prepend(geomtools_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 
@@ -145,6 +148,7 @@ set(geomtools_detail_HEADERS
   include/geomtools/detail/bio_link_guard.h
   include/geomtools/detail/model_tools.h
   include/geomtools/detail/manager-inl.h
+  include/geomtools/detail/reflection_link_guard.h
   )
 list_prepend(geomtools_detail_HEADERS "${PROJECT_SOURCE_DIR}/")
 
@@ -344,9 +348,7 @@ include_directories(
   )
 
 if ( GEOMTOOLS_WITH_REFLECTION )
-  include_directories(
-    ${CAMP_INCLUDE_DIR}
-    )
+  include_directories( ${CAMP_INCLUDE_DIR} )
 endif ()
 
 add_library(geomtools SHARED
@@ -418,12 +420,14 @@ endif()
 #
 if(GEOMTOOLS_WITH_REFLECTION)
   set(geomtools_reflection_SOURCES
-    #include/geomtools/*-reflect.h
-    #include/geomtools/the_introspectable.h
-    #src/the_introspectable.cc
+    include/geomtools/utils-reflect.h
+    include/geomtools/geom_id-reflect.h
+    include/geomtools/the_introspectable.h
+    src/the_introspectable.cc
     )
   list_prepend(geomtools_reflection_SOURCES "${PROJECT_SOURCE_DIR}/")
 
+  message (STATUS "Build geomtools reflection DLL...")
   add_library(geomtools_reflection SHARED ${geomtools_reflection_SOURCES})
 
   if(APPLE)

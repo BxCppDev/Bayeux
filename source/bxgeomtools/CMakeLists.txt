@@ -50,7 +50,7 @@ endif()
 #
 option(GEOMTOOLS_WITH_DEBUG "Build debug stuff" OFF)
 option(GEOMTOOLS_WITH_BIO  "Build auxiliary Boost I/O library" ON)
-option(GEOMTOOLS_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" OFF)
+option(GEOMTOOLS_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" ON)
 option(GEOMTOOLS_WITH_DOC  "Build the geomtools documentation" ON)
 option(GEOMTOOLS_WITH_TEST "Build the geomtools test suite"    ON)
 option(GEOMTOOLS_WITH_BASH_SETUP "Build the geomtools with Bash setup macro" ON)

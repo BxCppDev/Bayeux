@@ -15,6 +15,8 @@
 
 #include <CLHEP/Random/RandFlat.h>
 
+#include <geomtools/geomtools_config.h>
+
 namespace geomtools {
 
   typedef CLHEP::Hep2Vector  vector_2d;
@@ -23,6 +25,13 @@ namespace geomtools {
   typedef rotation_3d        rotation;
 
 }
+
+#if GEOMTOOLS_WITH_REFLECTION == 1
+// Activate reflection layer for some classes :
+#include <datatools/reflection_macros.h>
+DR_CLASS_INIT(::geomtools::vector_2d);
+DR_CLASS_INIT(::geomtools::vector_3d);
+#endif // GEOMTOOLS_WITH_REFLECTION
 
 namespace geomtools {
 

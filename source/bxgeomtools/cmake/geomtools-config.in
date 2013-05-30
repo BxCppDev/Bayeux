@@ -84,23 +84,21 @@ Known values for OPTION are:
   --cflags              print include path pre-processor flags with dependencies
   --libs    [option]    print library linking information, without dependencies
   --ldflags [option]
-    Options: 
+    Options:
     --relative-path     use relative DLL path (default)
     --absolute-path     use absolute DLL path
     --with-bio          with linkage against the 'libgeomtools_bio@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL (default)
     --without-bio       without linkage against the 'libgeomtools_bio@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL
+    --with-reflection    with linkage against the 'libgeomtools_reflection@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL (default)
+    --without-reflection without linkage against the 'libgeomtools_reflection@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL
   --with-bio            print if Boost/Serialization binary code is pre-built
+                        in an auxiliary shared library
+  --with-reflection     print if CAMP/Reflection binary code is built
                         in an auxiliary shared library
   --with-debug          print if geomtools has been compiled in 'debug' mode
   --cmake-config-dir    print the installation directory for the 'geomtools-config.cmake' file
 
 EOF
-
-  #   --with-reflection    with linkage against the 'libgeomtools_reflection@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL (default)
-  #   --without-reflection without linkage against the 'libgeomtools_reflection@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL
-  #   return 0
-  # --with-reflection     print if CAMP-based reflection binary code is pre-built
-  #                       in an auxiliary shared library
     return 0
 }
 
@@ -197,7 +195,7 @@ fi
 ldflags_abs_path=0
 if [ "x${GEOMTOOLS_LDFLAGS_ABSOLUTE_PATH}" = "x1" ]; then
     ldflags_abs_path=1
-fi 
+fi
 if [ "x${option}" = "x--libs" -o "x${option}" = "x--ldflags" ]; then
     while [ -n "$1" ]; do
 	lib_option="$1"

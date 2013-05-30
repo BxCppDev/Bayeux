@@ -18,7 +18,7 @@ namespace geomtools {
   const uint32_t geom_id::INVALID_TYPE          = 0xFFFFFFFF;
   const uint32_t geom_id::INVALID_ADDRESS       = 0xFFFFFFFF;
   const uint32_t geom_id::ANY_ADDRESS           = 0xFFFFFFFE;
-  const size_t   geom_id::DEFAULT_ADDRESS_DEPTH = 10;
+  const uint32_t   geom_id::DEFAULT_ADDRESS_DEPTH = 10;
   const uint32_t geom_id::UNIVERSE_TYPE         = 0;
   const uint32_t geom_id::WORLD_TYPE            = geom_id::UNIVERSE_TYPE;
 
@@ -35,9 +35,9 @@ namespace geomtools {
     return _type_ == type_;
   }
 
-  void geom_id::set_depth (size_t depth_)
+  void geom_id::set_depth (uint32_t depth_)
   {
-    size_t sz = _addresses_.size ();
+    uint32_t sz = _addresses_.size ();
     if (depth_ > sz) {
       for (int i = sz; i < depth_; i++) {
         _addresses_.push_back (INVALID_ADDRESS);
@@ -51,7 +51,7 @@ namespace geomtools {
     return;
   }
 
-  size_t geom_id::get_depth () const
+  uint32_t geom_id::get_depth () const
   {
     return _addresses_.size ();
   }
@@ -151,7 +151,7 @@ namespace geomtools {
     return;
   }
 
-  // ctor:
+  // Constructor :
   geom_id::geom_id ()
   {
     _type_ = geom_id::INVALID_TYPE;
@@ -159,6 +159,63 @@ namespace geomtools {
     return;
   }
 
+    /// Constructor
+  geom_id::geom_id (uint32_t type_,
+                    uint32_t si0_)
+  {
+    _type_ = geom_id::INVALID_TYPE;
+    set_type (type_);
+    _addresses_.reserve (geom_id::DEFAULT_ADDRESS_DEPTH);
+    set_address (si0_);
+    return;
+  }
+
+  /// Constructor
+  geom_id::geom_id (uint32_t type_,
+                    uint32_t si0_,
+                    uint32_t si1_)
+  {
+    _type_ = geom_id::INVALID_TYPE;
+    set_type (type_);
+    _addresses_.reserve (geom_id::DEFAULT_ADDRESS_DEPTH);
+    set_address (si0_,
+                 si1_);
+    return;
+  }
+
+  /// Constructor
+  geom_id::geom_id (uint32_t type_,
+                    uint32_t si0_,
+                    uint32_t si1_,
+                    uint32_t si2_)
+  {
+    _type_ = geom_id::INVALID_TYPE;
+    set_type (type_);
+    _addresses_.reserve (geom_id::DEFAULT_ADDRESS_DEPTH);
+    set_address (si0_,
+                 si1_,
+                 si2_);
+    return;
+  }
+
+  /// Constructor
+  geom_id::geom_id (uint32_t type_,
+                    uint32_t si0_,
+                    uint32_t si1_,
+                    uint32_t si2_,
+                    uint32_t si3_)
+  {
+    _type_ = geom_id::INVALID_TYPE;
+    set_type (type_);
+    _addresses_.reserve (geom_id::DEFAULT_ADDRESS_DEPTH);
+    set_address (si0_,
+                 si1_,
+                 si2_,
+                 si3_);
+    return;
+  }
+
+  // Constructor :
   geom_id::geom_id (uint32_t type_,
                     uint32_t si0_,
                     uint32_t si1_,
@@ -410,9 +467,14 @@ namespace geomtools {
     return si1_ < si2_;
   }
 
-  bool geom_id::match (const geom_id & id_, bool exact_) const
+  bool geom_id::match_impl (const geom_id & id_, bool exact_) const
   {
     return match (*this, id_, exact_);
+  }
+
+  bool geom_id::match (const geom_id & id_, bool exact_) const
+  {
+    return match_impl (id_, exact_);
   }
 
   bool geom_id::match (const geom_id & id1_, const geom_id & id2_, bool exact_)
@@ -524,6 +586,7 @@ namespace geomtools {
     return;
   }
 
+  // static
   void geom_id::make (geom_id & id_, int type_, int depth_)
   {
     id_.make (type_, depth_);
