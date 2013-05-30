@@ -44,13 +44,13 @@
 #include <datatools/detail/reflection_version.h>
 
 // Inform Camp that class Type exists :
-#define DR_CLASS_REGISTER(Type)                 \
-  CAMP_TYPE(Type)                               \
+#define DR_CLASS_REGISTER(Type)                   \
+  CAMP_TYPE( Type )                               \
   /**/
 
 // Inform Camp that non copyable class Type exists :
-#define DR_CLASS_NONCOPYABLE_REGISTER(Type)     \
-  CAMP_TYPE_NONCOPYABLE(Type)                   \
+#define DR_CLASS_NONCOPYABLE_REGISTER(Type)       \
+  CAMP_TYPE_NONCOPYABLE( Type )                   \
   /**/
 
 // Declare Camp RTTI within class declaration :

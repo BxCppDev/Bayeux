@@ -918,7 +918,7 @@ namespace datatools {
   }
 
 
-  void properties::keys_not_starting_with(properties::vkeys& keys,
+  void properties::keys_not_starting_with(std::vector<std::string>& keys,
                                           const std::string& prefix) const {
     DT_THROW_IF (prefix.empty(),
                  std::logic_error,
@@ -934,15 +934,15 @@ namespace datatools {
   }
 
 
-  properties::vkeys properties::keys_not_starting_with(
+  std::vector<std::string> properties::keys_not_starting_with(
                                                        const std::string& prefix) const {
-    properties::vkeys lkeys;
+    std::vector<std::string> lkeys;
     this->keys_not_starting_with(lkeys, prefix);
     return lkeys;
   }
 
 
-  void properties::keys_starting_with(properties::vkeys& keys,
+  void properties::keys_starting_with(std::vector<std::string>& keys,
                                       const std::string& prefix) const {
     DT_THROW_IF (prefix.empty(),
                  std::logic_error,
@@ -959,15 +959,15 @@ namespace datatools {
   }
 
 
-  properties::vkeys properties::keys_starting_with(
+  std::vector<std::string> properties::keys_starting_with(
                                                    const std::string& prefix) const {
-    properties::vkeys lkeys;
+    std::vector<std::string> lkeys;
     this->keys_starting_with(lkeys, prefix);
     return lkeys;
   }
 
 
-  void properties::keys_not_ending_with(properties::vkeys& prop_keys,
+  void properties::keys_not_ending_with(std::vector<std::string>& prop_keys,
                                         const std::string& suffix) const {
     DT_THROW_IF (suffix.empty(),
                  std::logic_error,
@@ -986,15 +986,15 @@ namespace datatools {
   }
 
 
-  properties::vkeys properties::keys_not_ending_with(
+  std::vector<std::string> properties::keys_not_ending_with(
                                                      const std::string& suffix) const {
-    properties::vkeys lkeys;
+    std::vector<std::string> lkeys;
     this->keys_not_ending_with(lkeys, suffix);
     return lkeys;
   }
 
 
-  void properties::keys_ending_with(properties::vkeys& prop_keys,
+  void properties::keys_ending_with(std::vector<std::string>& prop_keys,
                                     const std::string& suffix) const {
     DT_THROW_IF (suffix.empty(),
                  std::logic_error,
@@ -1012,21 +1012,21 @@ namespace datatools {
   }
 
 
-  properties::vkeys properties::keys_ending_with(const std::string& suffix) const {
-    properties::vkeys lkeys;
+  std::vector<std::string> properties::keys_ending_with(const std::string& suffix) const {
+    std::vector<std::string> lkeys;
     this->keys_ending_with(lkeys, suffix);
     return lkeys;
   }
 
 
-  properties::vkeys properties::keys() const {
-    properties::vkeys lkeys;
+  std::vector<std::string> properties::keys() const {
+    std::vector<std::string> lkeys;
     this->keys(lkeys);
     return lkeys;
   }
 
 
-  void properties::keys(properties::vkeys& keys) const {
+  void properties::keys(std::vector<std::string>& keys) const {
     for (pmap::const_iterator iter = _props_.begin();
          iter != _props_.end();
          ++iter) {

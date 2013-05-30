@@ -429,11 +429,11 @@ class properties :
   //! Prefix string used for the naming of private properties
   static const std::string PRIVATE_PROPERTY_PREFIX;
 
- public:
-  // typedefs declarations:
-  typedef std::list<std::string>      vkeys;
+  // Typedefs declarations:
+ protected:
   typedef std::map<std::string, data> pmap;
-  typedef vkeys keys_col_type;
+ public:
+  typedef std::vector<std::string>    keys_col_type;
 
  public:
   /// Default constructor
@@ -496,40 +496,40 @@ class properties :
                          bool a_deletion_on_destroy = true);
 
   //! Returns the list of keys stored in the map (read-only).
-  vkeys keys() const;
+  std::vector<std::string> keys() const;
 
   //! Returns the ith key
   const std::string & key (int) const;
 
   //! Set the list of keys.
-  void keys(vkeys&) const;
+  void keys(std::vector<std::string>&) const;
 
   //! Access to a non-mutable reference to a property data object
   const data & get(const std::string& prop_key) const;
 
   //! builds the list of keys (by reference) stored in the map that start with prefix.
-  void keys_not_starting_with(vkeys&, const std::string& prefix) const;
+  void keys_not_starting_with(std::vector<std::string>&, const std::string& prefix) const;
 
   //! returns the list of keys stored in the map that start with prefix.
-  vkeys keys_not_starting_with(const std::string& prefix) const;
+  std::vector<std::string> keys_not_starting_with(const std::string& prefix) const;
 
   //! builds the list of keys (by reference) stored in the map that start with prefix.
-  void keys_starting_with(vkeys&, const std::string& prefix) const;
+  void keys_starting_with(std::vector<std::string>&, const std::string& prefix) const;
 
   //! returns the list of keys stored in the map that start with prefix.
-  vkeys keys_starting_with(const std::string& prefix) const;
+  std::vector<std::string> keys_starting_with(const std::string& prefix) const;
 
   //! builds the list of keys (by reference) stored in the map that end with suffix.
-  void keys_not_ending_with(vkeys&, const std::string& suffix) const;
+  void keys_not_ending_with(std::vector<std::string>&, const std::string& suffix) const;
 
   //! returns the list of keys stored in the map that end with suffix.
-  vkeys keys_not_ending_with(const std::string& suffix) const;
+  std::vector<std::string> keys_not_ending_with(const std::string& suffix) const;
 
   //! builds the list of keys (by reference) stored in the map that end with suffix.
-  void keys_ending_with(vkeys&, const std::string& suffix) const;
+  void keys_ending_with(std::vector<std::string>&, const std::string& suffix) const;
 
   //! returns the list of keys stored in the map that end with suffix.
-  vkeys keys_ending_with(const std::string& suffix) const;
+  std::vector<std::string> keys_ending_with(const std::string& suffix) const;
 
   //! Lock the properties dictionary.
   void lock(const std::string& prop_key);
@@ -905,7 +905,7 @@ class properties :
   //! Fetch the real scalar value stored with a given key/name
   double fetch_real_scalar(const std::string& name) const;
 
-  //! Fetch the real vector value stored with a given key/name
+  //! Fetch the real vector value stored with a given key/name and index
   double fetch_real_vector(const std::string& name, int index) const;
 
   //! Fetch the string value stored with a given key/name and index
@@ -914,7 +914,7 @@ class properties :
   //! Fetch the string scalar value stored with a given key/name
   std::string fetch_string_scalar(const std::string& name) const;
 
-  //! Fetch the string vector value stored with a given key/name
+  //! Fetch the string vector value stored with a given key/name and index
   std::string fetch_string_vector(const std::string& name, int index) const;
 
   //! Fetch a file path from a string value stored with a given key/name and index
@@ -990,11 +990,11 @@ class properties :
 
   // non static fields declarations:
  private:
-  bool                        _debug_; //! Debug flag
-  std::string                 _description_; //! Description string
-  pmap                        _props_; //! Internal list of properties
-  const basic_key_validator * _key_validator_; //! Reference to the embedded key validator
-  bool                        _key_validator_deletion_; //! Ownership flag for the embedded key validator
+  bool                        _debug_;                  //!< Debug flag
+  std::string                 _description_;            //!< Description string
+  pmap                        _props_;                  //!< Internal list of properties
+  const basic_key_validator * _key_validator_;          //!< Reference to the embedded key validator
+  bool                        _key_validator_deletion_; //!< Ownership flag for the embedded key validator
 
   //! Cloneable interface
   DATATOOLS_CLONEABLE_DECLARATION(properties)
