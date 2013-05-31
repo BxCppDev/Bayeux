@@ -143,14 +143,29 @@
   property(PropertyName, &PropertyGetterId)                     \
   /**/
 
+// Declare metadata read-only property for a class :
+#define DR_CLASS_PROPERTY_REFGETTER(PropertyName,RefPropertyGetterId) \
+  property(PropertyName, RefPropertyGetterId)                         \
+  /**/
+
 // Declare metadata read-write property for a class :
 #define DR_CLASS_PROPERTY_GETTER_SETTER(PropertyName,PropertyGetterId,PropertySetterId) \
   property(PropertyName, &PropertyGetterId, &PropertySetterId)          \
   /**/
 
 // Declare metadata read-write property for a class :
+#define DR_CLASS_PROPERTY_REFGETTER_REFSETTER(PropertyName,RefPropertyGetterId,RefPropertySetterId) \
+  property(PropertyName, RefPropertyGetterId, RefPropertySetterId)          \
+  /**/
+
+// Declare metadata read-write property for a class :
 #define DR_CLASS_PROPERTY_GETTER_SETTER_GETTER(PropertyName,PropertyGetterId,PropertySetterId,PropertyGetterId2) \
   property(PropertyName, &PropertyGetterId, &PropertySetterId, &PropertyGetterId2) \
+  /**/
+
+// Declare metadata read-write property for a class :
+#define DR_CLASS_PROPERTY_REFGETTER_REFSETTER_REFGETTER(PropertyName,RefPropertyGetterId,RefPropertySetterId,RefPropertyGetterId2) \
+  property(PropertyName, RefPropertyGetterId, RefPropertySetterId, RefPropertyGetterId2) \
   /**/
 
 /***************************************
@@ -165,8 +180,20 @@
   /**/
 
 // Declare metadata property for a class method :
+#define DR_CLASS_REFMETHOD(MethodName,TypeId,RefMethodId,ReturnType)    \
+  function(MethodName,                                                  \
+           boost::function< ReturnType ( TypeId & )>                    \
+           (boost::bind(RefMethodId , _1)))                             \
+  /**/
+
+// Declare metadata property for a class method :
 #define DR_CLASS_VOID_METHOD(MethodName,TypeId,MethodId)        \
   DR_CLASS_METHOD(MethodName,TypeId,MethodId,void)              \
+  /**/
+
+// Declare metadata property for a class method :
+#define DR_CLASS_VOID_REFMETHOD(MethodName,TypeId,RefMethodId)        \
+  DR_CLASS_REFMETHOD(MethodName,TypeId,RefMethodId,void)              \
   /**/
 
 // Declare metadata property for a class method (const) :
@@ -177,9 +204,22 @@
   /**/
 
 // Declare metadata property for a class method (const) :
+#define DR_CLASS_REFMETHOD_CONST(MethodName,TypeId,RefMethodId,ReturnType) \
+  function(MethodName,                                                  \
+           boost::function< ReturnType ( const TypeId & )>              \
+           (boost::bind(RefMethodId , _1 )))                            \
+  /**/
+
+// Declare metadata property for a class method (const) :
 #define DR_CLASS_VOID_METHOD_CONST(MethodName,TypeId,MethodId)  \
   DR_CLASS_METHOD_CONST(MethodName,TypeId,MethodId,void)        \
   /**/
+
+// Declare metadata property for a class method (const) :
+#define DR_CLASS_VOID_REFMETHOD_CONST(MethodName,TypeId,RefMethodId)    \
+  DR_CLASS_REFMETHOD_CONST(MethodName,TypeId,MethodId,void)             \
+  /**/
+
 
 
 /**************************************
@@ -208,6 +248,30 @@
 // Declare metadata property for a class method (const) :
 #define DR_CLASS_VOID_METHOD1_CONST(MethodName,TypeId,MethodId,Arg0Type) \
   DR_CLASS_METHOD1_CONST(MethodName,TypeId,MethodId,void,Arg0Type)      \
+  /**/
+
+// Declare metadata property for a class method :
+#define DR_CLASS_REFMETHOD1(MethodName,TypeId,RefMethodId,ReturnType,Arg0Type) \
+  function(MethodName,                                                  \
+           boost::function< ReturnType ( TypeId & , Arg0Type )>         \
+           (boost::bind(RefMethodId , _1, _2)))                         \
+  /**/
+
+// Declare metadata property for a class method :
+#define DR_CLASS_VOID_REFMETHOD1(MethodName,TypeId,RefMethodId,Arg0Type) \
+  DR_CLASS_REFMETHOD1(MethodName,TypeId,RefMethodId,void,Arg0Type)      \
+  /**/
+
+// Declare metadata property for a class method (const) :
+#define DR_CLASS_REFMETHOD1_CONST(MethodName,TypeId,RefMethodId,ReturnType,Arg0Type) \
+  function(MethodName,                                                  \
+           boost::function< ReturnType ( const TypeId & , Arg0Type )>   \
+           (boost::bind(RefMethodId , _1, _2 )))                        \
+  /**/
+
+// Declare metadata property for a class method (const) :
+#define DR_CLASS_VOID_REFMETHOD1_CONST(MethodName,TypeId,RefMethodId,Arg0Type) \
+  DR_CLASS_REFMETHOD1_CONST(MethodName,TypeId,RefMethodId,void,Arg0Type) \
   /**/
 
 
@@ -239,6 +303,30 @@
   DR_CLASS_METHOD2_CONST(MethodName,TypeId,MethodId,void,Arg0Type,Arg1Type) \
   /**/
 
+// Declare metadata property for a class method :
+#define DR_CLASS_REFMETHOD2(MethodName,TypeId,RefMethodId,ReturnType,Arg0Type,Arg1Type) \
+  function(MethodName,                                                  \
+           boost::function< ReturnType ( TypeId & , Arg0Type , Arg1Type )> \
+           (boost::bind(RefMethodId , _1, _2, _3)))                      \
+  /**/
+
+// Declare metadata property for a class method :
+#define DR_CLASS_VOID_REFMETHOD2(MethodName,TypeId,RefMethodId,Arg0Type,Arg1Type) \
+  DR_CLASS_REFMETHOD2(MethodName,TypeId,RefMethodId,void,Arg0Type,Arg1Type)   \
+  /**/
+
+// Declare metadata property for a class method (const) :
+#define DR_CLASS_REFMETHOD2_CONST(MethodName,TypeId,RefMethodId,ReturnType,Arg0Type,Arg1Type) \
+  function(MethodName,                                                  \
+           boost::function< ReturnType ( const TypeId & , Arg0Type , Arg1Type )> \
+           (boost::bind(RefMethodId , _1, _2, _3 )))                     \
+  /**/
+
+// Declare metadata property for a class method (const) :
+#define DR_CLASS_VOID_REFMETHOD2_CONST(MethodName,TypeId,RefMethodId,Arg0Type,Arg1Type) \
+  DR_CLASS_REFMETHOD2_CONST(MethodName,TypeId,RefMethodId,void,Arg0Type,Arg1Type) \
+  /**/
+
 
 /***************************************
  * Macros for methods with 3 arguments *
@@ -264,8 +352,32 @@
   /**/
 
 // Declare metadata property for a class method (const) :
-#define DR_CLASS_VOID_METHOD3_CONST(MethodName,TypeId,MethodId,Arg0Type,Arg1Type,Arg2Type) \
-  DR_CLASS_METHOD3_CONST(MethodName,TypeId,MethodId,void,Arg0Type,Arg1Type,Arg2Type) \
+#define DR_CLASS_VOID_METHOD3_CONST(MethodName,TypeId,RefMethodId,Arg0Type,Arg1Type,Arg2Type) \
+  DR_CLASS_METHOD3_CONST(MethodName,TypeId,RefMethodId,void,Arg0Type,Arg1Type,Arg2Type) \
+  /**/
+
+// Declare metadata property for a class method :
+#define DR_CLASS_REFMETHOD3(MethodName,TypeId,RefMethodId,ReturnType,Arg0Type,Arg1Type,Arg2Type) \
+  function(MethodName,                                                  \
+           boost::function< ReturnType ( TypeId & , Arg0Type , Arg1Type , Arg2Type )> \
+           (boost::bind(RefMethodId , _1, _2, _3, _4)))                  \
+  /**/
+
+// Declare metadata property for a class method :
+#define DR_CLASS_VOID_REFMETHOD3(MethodName,TypeId,RefMethodId,Arg0Type,Arg1Type,Arg2Type) \
+  DR_CLASS_REFMETHOD3(MethodName,TypeId,RefMethodId,void,Arg0Type,Arg1Type,Arg2Type) \
+  /**/
+
+// Declare metadata property for a class method (const) :
+#define DR_CLASS_REFMETHOD3_CONST(MethodName,TypeId,RefMethodId,ReturnType,Arg0Type,Arg1Type,Arg2Type) \
+  function(MethodName,                                                  \
+           boost::function< ReturnType ( const TypeId & , Arg0Type , Arg1Type , Arg2Type )> \
+           (boost::bind(RefMethodId , _1, _2, _3, _4 )))                 \
+  /**/
+
+// Declare metadata property for a class method (const) :
+#define DR_CLASS_VOID_REFMETHOD3_CONST(MethodName,TypeId,RefMethodId,Arg0Type,Arg1Type,Arg2Type) \
+  DR_CLASS_REFMETHOD3_CONST(MethodName,TypeId,RefMethodId,void,Arg0Type,Arg1Type,Arg2Type) \
   /**/
 
 
@@ -296,6 +408,33 @@
 #define DR_CLASS_VOID_METHOD4_CONST(MethodName,TypeId,MethodId,Arg0Type,Arg1Type,Arg2Type,Arg3Type) \
   DR_CLASS_METHOD4_CONST(MethodName,TypeId,MethodId,void,Arg0Type,Arg1Type,Arg2Type,Arg3Type) \
   /**/
+
+// Declare metadata property for a class method :
+#define DR_CLASS_REFMETHOD4(MethodName,TypeId,RefMethodId,ReturnType,Arg0Type,Arg1Type,Arg2Type,Arg3Type) \
+  function(MethodName,                                                  \
+           boost::function< ReturnType ( TypeId & , Arg0Type , Arg1Type , Arg2Type , Arg3Type )> \
+           (boost::bind(RefMethodId , _1, _2, _3, _4, _5)))              \
+  /**/
+
+// Declare metadata property for a class method :
+#define DR_CLASS_VOID_REFMETHOD4(MethodName,TypeId,RefMethodId,Arg0Type,Arg1Type,Arg2Type,Arg3Type) \
+  DR_CLASS_REFMETHOD4(MethodName,TypeId,RefMethodId,void,Arg0Type,Arg1Type,Arg2Type,Arg3Type) \
+  /**/
+
+// Declare metadata property for a class method (const) :
+#define DR_CLASS_REFMETHOD4_CONST(MethodName,TypeId,RefMethodId,ReturnType,Arg0Type,Arg1Type,Arg2Type,Arg3Type) \
+  function(MethodName,                                                  \
+           boost::function< ReturnType ( const TypeId & , Arg0Type , Arg1Type , Arg2Type , Arg3Type )> \
+           (boost::bind(RefMethodId , _1, _2, _3, _4, _5 )))             \
+  /**/
+
+// Declare metadata property for a class method (const) :
+#define DR_CLASS_VOID_REFMETHOD4_CONST(MethodName,TypeId,RefMethodId,Arg0Type,Arg1Type,Arg2Type,Arg3Type) \
+  DR_CLASS_REFMETHOD4_CONST(MethodName,TypeId,RefMethodId,void,Arg0Type,Arg1Type,Arg2Type,Arg3Type) \
+  /**/
+
+
+/************************************************************************/
 
 #define DR_CLASS         camp::Class
 #define DR_CLASS_BY_NAME camp::classByName
