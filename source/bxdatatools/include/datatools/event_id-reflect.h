@@ -23,6 +23,7 @@ namespace datatools {
       // Declare and populate the reflection metaclass for the 'datatools::event_id' class:
       DR_CLASS_DECLARE (::datatools::event_id)
         .DR_CLASS_BASE(::datatools::i_serializable)
+        .DR_CLASS_BASE(::datatools::i_tree_dumpable)
         .DR_CLASS_CONSTRUCTOR()
         .DR_CLASS_CONSTRUCTOR1(int)
         .DR_CLASS_CONSTRUCTOR2(int,int)
@@ -66,9 +67,6 @@ namespace datatools {
                                      ::datatools::event_id,
                                      ::datatools::event_id::to_smart_string,
                                      const std::string &, const std::string&)
-        .DR_CLASS_VOID_METHOD_CONST("dump",
-                                    ::datatools::event_id,
-                                    ::datatools::event_id::dump)
         ;
       return;
     }

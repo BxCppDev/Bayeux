@@ -1667,16 +1667,6 @@ namespace datatools {
   }
 
 
-  void properties::dump_stderr() const {
-    this->dump(std::cerr);
-  }
-
-
-  void properties::dump_stdout() const {
-    this->dump(std::cout);
-  }
-
-
   void properties::update_string(const std::string& prop_key,
                                  const std::string& value) {
     this->update(prop_key, value);

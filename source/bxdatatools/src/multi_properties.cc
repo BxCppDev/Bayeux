@@ -716,16 +716,6 @@ void multi_properties::dump(std::ostream& a_out) const {
   this->tree_dump(a_out, "datatools::multi_properties:");
 }
 
-void multi_properties::dump_stderr() const
-{
-  dump(std::cerr);
-}
-
-void multi_properties::dump_stdout() const
-{
-  dump(std::cout);
-}
-
 void multi_properties::tree_dump(std::ostream& a_out,
                                  const std::string& a_title,
                                  const std::string& a_indent,

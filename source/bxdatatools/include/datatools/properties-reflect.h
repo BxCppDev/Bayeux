@@ -24,6 +24,7 @@ namespace datatools {
       // Declare and populate the introspection metaclass for the 'datatools::properties' class:
       DR_CLASS_DECLARE (::datatools::properties)
         .DR_CLASS_BASE(::datatools::i_serializable)
+        .DR_CLASS_BASE(::datatools::i_tree_dumpable)
         .DR_CLASS_CONSTRUCTOR()
         .DR_CLASS_CONSTRUCTOR1(std::string)
         .DR_CLASS_METHOD_CONST("is_debug",
@@ -331,12 +332,6 @@ namespace datatools {
                                 ::datatools::properties,
                                 ::datatools::properties::fetch_string_vector,
                                 std::string,std::string,int)
-        .DR_CLASS_VOID_METHOD_CONST("print_stderr",
-                                    ::datatools::properties,
-                                    ::datatools::properties::dump_stderr)
-        .DR_CLASS_VOID_METHOD_CONST("print_stdout",
-                                    ::datatools::properties,
-                                    ::datatools::properties::dump_stdout)
         .DR_CLASS_VOID_METHOD3_CONST("write_configuration",
                                      ::datatools::properties,
                                      ::datatools::properties::write_configuration,

@@ -22,6 +22,7 @@ namespace datatools {
         // the 'datatools::multi_properties' class :
         DR_CLASS_DECLARE(::datatools::multi_properties)
           .DR_CLASS_BASE(::datatools::i_serializable)
+          .DR_CLASS_BASE(::datatools::i_tree_dumpable)
           .DR_CLASS_CONSTRUCTOR()
           .DR_CLASS_CONSTRUCTOR2(std::string, std::string)
           .DR_CLASS_CONSTRUCTOR4(std::string, std::string, std::string, bool)
@@ -129,12 +130,6 @@ namespace datatools {
                                  ::datatools::multi_properties,
                                  ::datatools::multi_properties::read,
                                  const std::string &, bool)
-          .DR_CLASS_VOID_METHOD_CONST("print_stderr",
-                                      ::datatools::multi_properties,
-                                      ::datatools::multi_properties::dump_stderr)
-          .DR_CLASS_VOID_METHOD_CONST("print_stdout",
-                                      ::datatools::multi_properties,
-                                      ::datatools::multi_properties::dump_stdout)
           ;
         return;
       }

@@ -243,10 +243,6 @@ class things :
 
   void dump(std::ostream& a_out = std::clog) const;
 
-  void dump_stderr() const;
-
-  void dump_stdout() const;
-
   datatools::i_serializable &
     grab(const std::string& a_name, const std::string& a_serial_tag= "");
 

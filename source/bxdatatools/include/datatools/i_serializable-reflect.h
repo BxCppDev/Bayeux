@@ -20,6 +20,12 @@ namespace datatools {
       DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::i_serializable, tag_)
       {
         DR_CLASS_DECLARE (::datatools::i_serializable)
+          /*
+          .DR_CLASS_METHOD_CONST("get_serial_tag",
+                                 ::datatools::i_serializable,
+                                 ::datatools::i_serializable::get_serial_tag,
+                                 const std::string &)
+          */
           ;
         return;
       }

@@ -929,12 +929,6 @@ class properties :
   //! Basic print
   void dump(std::ostream& out = std::clog) const;
 
-  //! Basic print in std::cerr
-  void dump_stderr() const;
-
-  //! Basic print in std::cout
-  void dump_stdout() const;
-
   //! Smart print
   virtual void tree_dump(std::ostream& a_out = std::clog,
                          const std::string& a_title  = "",

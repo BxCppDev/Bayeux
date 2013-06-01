@@ -23,6 +23,7 @@ namespace datatools {
       // Declare and populate the introspection metaclass for the 'datatools::things' class:
       DR_CLASS_DECLARE (::datatools::things)
         .DR_CLASS_BASE(::datatools::i_serializable)
+        .DR_CLASS_BASE(::datatools::i_tree_dumpable)
         .DR_CLASS_CONSTRUCTOR()
         .DR_CLASS_CONSTRUCTOR2(std::string, std::string)
         .DR_CLASS_PROPERTY_GETTER_SETTER ("name",
@@ -126,12 +127,6 @@ namespace datatools {
                           datatools::i_serializable &,
                           const std::string &, const std::string &,
                           const std::string &, bool)
-        .DR_CLASS_VOID_METHOD_CONST("print_stderr",
-                                    ::datatools::things,
-                                    ::datatools::things::dump_stderr)
-        .DR_CLASS_VOID_METHOD_CONST("print_stdout",
-                                    ::datatools::things,
-                                    ::datatools::things::dump_stdout)
         /*
          */
         ;

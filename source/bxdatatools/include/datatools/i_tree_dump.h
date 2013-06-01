@@ -1,9 +1,18 @@
 /* i_tree_dump.h */
 #ifndef DATATOOLS_I_TREE_DUMP_H_
 #define DATATOOLS_I_TREE_DUMP_H_
+
 // Standard Library
 #include <iostream>
 #include <string>
+
+// Datatools
+#include <datatools/datatools_config.h>
+
+// Datatools reflection utilities :
+#if DATATOOLS_WITH_REFLECTION == 1
+#include <datatools/reflection_macros.h>
+#endif
 
 namespace datatools {
 
@@ -17,7 +26,14 @@ class i_tree_dumpable {
   static const std::string SKIP_TAG;
   static const std::string LAST_SKIP_TAG;
 
+  enum ostream_type {
+    OSTREAM_COUT=1,
+    OSTREAM_CERR=2,
+    OSTREAM_CLOG=3
+  };
+
  public:
+
   static std::ostream& last_skip_tag(std::ostream& out);
 
   static std::ostream& skip_tag(std::ostream& out);
@@ -27,37 +43,58 @@ class i_tree_dumpable {
   static std::ostream& tag(std::ostream& out);
 
   /// Main interface method for smart dump
-  virtual void tree_dump (std::ostream& out = std::clog, 
+  virtual void tree_dump (std::ostream& out = std::clog,
                           const std::string& title  = "",
                           const std::string& indent = "",
                           bool inherit = false) const = 0;
 
-  /// Output stream manipulator 
+  void tree_dump (int out_type = OSTREAM_CLOG,
+		  const std::string& title  = "",
+		  const std::string& indent = "",
+		  bool inherit = false) const;
+
+  void tree_print (int out_type = OSTREAM_CLOG,
+		   const std::string& title= "") const;
+
+  void smart_print (int out_type = OSTREAM_CLOG,
+		    const std::string& title = "",
+		    const std::string& indent = "") const;
+
+  /// Output stream manipulator
   class inherit_tag {
    public:
-    inherit_tag(bool inherit); 
+    inherit_tag(bool inherit);
 
-    friend std::ostream & operator<<(std::ostream& out, 
+    friend std::ostream & operator<<(std::ostream& out,
                                      const inherit_tag& last_tag);
 
    private:
      bool inherit_;
   };
 
-  /// Output stream manipulator 
+  /// Output stream manipulator
   class inherit_skip_tag {
    public:
-    inherit_skip_tag(bool inherit); 
+    inherit_skip_tag(bool inherit);
 
-    friend std::ostream& operator<<(std::ostream& out, 
+    friend std::ostream& operator<<(std::ostream& out,
                                     const inherit_skip_tag& last_tag);
    private:
     bool inherit_;
   };
 
+#if DATATOOLS_WITH_REFLECTION == 1
+    DR_CLASS_RTTI();
+#endif
+
 };
 
-} // end of namespace datatools 
+} // end of namespace datatools
+
+#if DATATOOLS_WITH_REFLECTION == 1
+// Activate reflection layer for the 'datatools::i_tree_dumpable' class:
+DR_CLASS_INIT(::datatools::i_tree_dumpable);
+#endif // DATATOOLS_WITH_REFLECTION
 
 #endif // DATATOOLS_I_TREE_DUMP_H_
 

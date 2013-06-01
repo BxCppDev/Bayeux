@@ -258,10 +258,6 @@ private:
 
   void dump(std::ostream& a_out = std::clog) const;
 
-  void dump_stderr() const;
-
-  void dump_stdout() const;
-
   virtual void tree_dump(std::ostream& a_out         = std::clog,
                          const std::string& a_title  = "",
                          const std::string& a_indent = "",

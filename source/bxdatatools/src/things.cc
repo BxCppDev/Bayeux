@@ -355,16 +355,6 @@ void things::dump(std::ostream& a_out) const {
 }
 
 
-void things::dump_stdout() const {
-  this->dump(std::cout);
-}
-
-
-void things::dump_stderr() const {
-  this->dump(std::cerr);
-}
-
-
 void things::reset() {
   this->clear();
   description_.clear();

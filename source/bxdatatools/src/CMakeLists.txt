@@ -63,8 +63,6 @@ set(datatools_PUBLIC_HEADERS
   include/datatools/smart_filename.h
   include/datatools/smart_ref.h
   include/datatools/temporary_files.h
-  include/datatools/the_introspectable.h
-  include/datatools/the_serializable.h
   include/datatools/things.h
   include/datatools/things-inl.h
   include/datatools/things_macros.h
@@ -73,20 +71,27 @@ set(datatools_PUBLIC_HEADERS
   include/datatools/utils.h
   include/datatools/version_check.h
   include/datatools/version_id.h
+
   include/datatools/i_serializable.ipp
   include/datatools/event_id.ipp
   include/datatools/properties.ipp
   include/datatools/multi_properties.ipp
   include/datatools/things.ipp
   include/datatools/the_serializable.ipp
+  include/datatools/the_serializable.h
+
   include/datatools/object_configuration_description.h
   include/datatools/ocd_macros.h
   include/datatools/types.h
-  include/datatools/event_id-reflect.h
+
   include/datatools/i_serializable-reflect.h
+  include/datatools/i_tree_dump-reflect.h
+  include/datatools/event_id-reflect.h
   include/datatools/multi_properties-reflect.h
   include/datatools/properties-reflect.h
   include/datatools/things-reflect.h
+  include/datatools/the_introspectable.h
+
   )
 list_prepend(datatools_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 
@@ -309,11 +314,14 @@ endif()
 #
 if(DATATOOLS_WITH_REFLECTION)
   set(datatools_reflection_SOURCES
+
     include/datatools/i_serializable-reflect.h
+    include/datatools/i_tree_dump-reflect.h
     include/datatools/event_id-reflect.h
     include/datatools/properties-reflect.h
     include/datatools/multi_properties-reflect.h
     include/datatools/things-reflect.h
+
     include/datatools/the_introspectable.h
     src/the_introspectable.cc
     )
