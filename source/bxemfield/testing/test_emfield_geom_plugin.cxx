@@ -88,7 +88,7 @@ int main (int argc_, char ** argv_)
     mag_field_plugins_setup.read(mag_field_plugin_file);
 
     datatools::properties gm_setup;
-    std::string gm_filename = "${GEOMTOOLS_DATA_DIR}/testing/config/test-1.0/test_manager.conf";
+    std::string gm_filename = "${EMFIELD_DATA_DIR}/testing/config/geometry/test_manager.conf";
     datatools::fetch_path_with_env(gm_filename);
     datatools::properties::read_config(gm_filename, gm_setup);
     geo_manager.initialize (gm_setup);
