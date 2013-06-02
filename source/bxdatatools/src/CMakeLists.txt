@@ -21,6 +21,7 @@ endfunction()
 # use a simple listing and then prepend the actual source dir root
 
 set(datatools_PUBLIC_HEADERS
+  include/datatools/types.h
   include/datatools/archives_instantiation.h
   include/datatools/archives_list.h
   include/datatools/base_service.h
@@ -52,8 +53,6 @@ set(datatools_PUBLIC_HEADERS
   include/datatools/properties.h
   include/datatools/range_tools.h
   include/datatools/real_range.h
-  include/datatools/reflection_guard.h
-  include/datatools/reflection_macros.h
   include/datatools/safe_serial.h
   include/datatools/serialization_macros.h
   include/datatools/service_macros.h
@@ -72,6 +71,9 @@ set(datatools_PUBLIC_HEADERS
   include/datatools/version_check.h
   include/datatools/version_id.h
 
+  include/datatools/object_configuration_description.h
+  include/datatools/ocd_macros.h
+
   include/datatools/i_serializable.ipp
   include/datatools/event_id.ipp
   include/datatools/properties.ipp
@@ -80,10 +82,8 @@ set(datatools_PUBLIC_HEADERS
   include/datatools/the_serializable.ipp
   include/datatools/the_serializable.h
 
-  include/datatools/object_configuration_description.h
-  include/datatools/ocd_macros.h
-  include/datatools/types.h
-
+  include/datatools/reflection_guard.h
+  include/datatools/reflection_macros.h
   include/datatools/i_serializable-reflect.h
   include/datatools/i_tree_dump-reflect.h
   include/datatools/event_id-reflect.h
