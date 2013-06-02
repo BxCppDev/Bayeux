@@ -20,8 +20,6 @@
 ##
 ###############################################################################
 
-
-###file(GLOB geomtools_tests_programs test_*.cxx)
 set ( geomtools_tests_programs
   test_geomtools.cxx
   test_base_hit.cxx
