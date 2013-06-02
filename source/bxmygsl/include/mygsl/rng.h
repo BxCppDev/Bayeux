@@ -32,6 +32,9 @@
 #include <boost/scoped_ptr.hpp>
 
 #include <gsl/gsl_rng.h>
+
+#include <datatools/exception.h>
+
 #include <mygsl/random_utils.h>
 
 namespace datatools {
@@ -96,11 +99,13 @@ namespace mygsl {
 
     template<class Type>
     void tracker_tag(const std::string & tag_) {
+      DT_THROW_IF(_tracker_, std::logic_error, "Not tracker is defined !");
       *_tracker_.get() << '#' << ' ' << tag_ << std::endl;
     }
 
     template<class Type>
     void tracker_tag(const std::string & tag_, const Type & value_) {
+      DT_THROW_IF(_tracker_, std::logic_error, "Not tracker is defined !");
       *_tracker_.get() << '#' << ' ' << tag_ << " = " << value_ << std::endl;
     }
 
