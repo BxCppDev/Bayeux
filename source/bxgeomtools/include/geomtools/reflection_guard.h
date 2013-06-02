@@ -48,7 +48,7 @@
 namespace geomtools {
 
 /** \brief Data structure that ensures the invocation of some explicit code
- *         for datatools_reflection DLL liking.
+ *         for geomtools_reflection DLL liking.
  */
 struct reflection_guard {
   reflection_guard() {
