@@ -1,53 +1,61 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* i_placement.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
  * Last modified: 2008-05-23
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *  Utilities.
  *
- * History: 
- * 
+ * History:
+ *
  */
 
-#ifndef __geomtools__i_placement_h
-#define __geomtools__i_placement_h 1
+#ifndef GEOMTOOLS_I_PLACEMENT_H_
+#define GEOMTOOLS_I_PLACEMENT_H_ 1
 
 #include <iostream>
 #include <string>
 #include <vector>
 
 #include <boost/cstdint.hpp>
-
-#include <datatools/i_tree_dump.h>
 #include <boost/serialization/access.hpp>
-#include <datatools/i_serializable.h>
 
+#include <datatools/i_serializable.h>
+#include <datatools/i_tree_dump.h>
+
+#include <geomtools/geomtools_config.h>
 #include <geomtools/utils.h>
 
+#if GEOMTOOLS_WITH_REFLECTION == 1
+#include <datatools/reflection_macros.h>
+#endif // GEOMTOOLS_WITH_REFLECTION
+
 namespace geomtools {
-  
+
   class placement;
-  
-  class i_placement 
-    : DATATOOLS_SERIALIZABLE_CLASS , 
+
+  class i_placement
+    : DATATOOLS_SERIALIZABLE_CLASS ,
       public datatools::i_tree_dumpable
   {
-  public: 
+  public:
 
-    // ctor:
+    /// Constructor
     i_placement ();
 
-    // dtor:
+    /// Destructor
     virtual ~i_placement ();
 
     bool is_multiple () const;
-    
+
     placement get_placement (int item_) const;
- 
+
+    /// Same as get_placement(int) but workaround method overloading for CAMP
+    placement get_placement_by_index (int item_) const;
+
     virtual bool has_only_one_rotation () const;
 
     virtual size_t get_dimension () const = 0;
@@ -57,20 +65,33 @@ namespace geomtools {
     virtual size_t compute_index_map (std::vector<uint32_t> & map_, int item_) const = 0;
 
     virtual bool is_replica () const = 0;
-    
+
     virtual void get_placement (int item_, placement & p_) const = 0;
-    
-    virtual void tree_dump (std::ostream & out_         = std::clog, 
-                            const std::string & title_  = "", 
-                            const std::string & indent_ = "", 
+
+    void compute_placement (int item_, placement & p_) const;
+
+    virtual void tree_dump (std::ostream & out_         = std::clog,
+                            const std::string & title_  = "",
+                            const std::string & indent_ = "",
                             bool inherit_          = false) const;
-    
+
     DATATOOLS_SERIALIZATION_DECLARATION();
-    
+
+
+#if GEOMTOOLS_WITH_REFLECTION == 1
+    //! Reflection interface
+    DR_CLASS_RTTI();
+#endif
   };
 
 } // end of namespace geomtools
 
-#endif // __geomtools__i_placement_h
+#if GEOMTOOLS_WITH_REFLECTION == 1
+// Activate reflection layer for the geomtools::i_placement class :
+#include <datatools/reflection_macros.h>
+DR_CLASS_INIT(::geomtools::i_placement);
+#endif // GEOMTOOLS_WITH_REFLECTION
+
+#endif // GEOMTOOLS_I_PLACEMENT_H_
 
 // end of i_placement.h

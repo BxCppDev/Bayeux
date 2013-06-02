@@ -96,6 +96,12 @@ namespace geomtools {
 
   /*** AUXILIARIES ***/
 
+  /// Check if there are stored auxiliary properties
+  bool base_hit::has_auxiliaries () const
+  {
+    return (_store & STORE_AUXILIARIES) && ! _auxiliaries_.empty();
+  }
+
   const datatools::properties &
   base_hit::get_auxiliaries () const
   {
@@ -107,6 +113,11 @@ namespace geomtools {
   {
     _store |= STORE_AUXILIARIES;
     return _auxiliaries_;
+  }
+
+  void base_hit::set_auxiliaries (const datatools::properties & a_)
+  {
+    _auxiliaries_ = a_;
   }
 
   void base_hit::invalidate_auxiliaries ()

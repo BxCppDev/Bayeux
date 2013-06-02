@@ -161,6 +161,11 @@ namespace geomtools {
     return;
   }
 
+  void blur_spot::set_placement (const placement & placement_)
+  {
+    _placement_ = placement_;
+  }
+
   placement & blur_spot::grab_placement ()
   {
     return _placement_;
@@ -184,6 +189,11 @@ namespace geomtools {
   const rotation_3d & blur_spot::get_inverse_rotation () const
   {
     return _placement_.get_inverse_rotation ();
+  }
+
+  void blur_spot::set_auxiliaries (const datatools::properties & aux_)
+  {
+    _auxiliaries_ = aux_;
   }
 
   datatools::properties & blur_spot::grab_auxiliaries ()
@@ -591,6 +601,11 @@ namespace geomtools {
       }
     _placement_.child_to_mother (local_pos, random_point_);
     return;
+  }
+
+  void blur_spot::print() const
+  {
+    tree_dump(std::clog,"Blur spot:", "");
   }
 
   void blur_spot::tree_dump (ostream & out_,

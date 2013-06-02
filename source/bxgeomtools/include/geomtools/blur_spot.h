@@ -30,6 +30,7 @@
 
 #include <mygsl/rng.h>
 
+#include <geomtools/geomtools_config.h>
 #include <geomtools/utils.h>
 #include <geomtools/placement.h>
 #include <geomtools/i_object_3d.h>
@@ -134,6 +135,9 @@ namespace geomtools {
     /// Return the no mutable placement of the object
     const placement & get_placement () const;
 
+    /// Set the placement of the object
+    void set_placement (const placement & placement_);
+
     /// Return the position of the object
     const vector_3d & get_position () const;
 
@@ -148,6 +152,9 @@ namespace geomtools {
 
     /// Return a non-mutable reference to the  container of auxiliary properties
     const datatools::properties & get_auxiliaries () const;
+
+    /// Set  auxiliary properties
+    void set_auxiliaries (const datatools::properties &);
 
     /// Destructor
     virtual ~blur_spot ();
@@ -210,6 +217,9 @@ namespace geomtools {
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
                             bool inherit_               = false) const;
+
+    /// Smart print shortcut
+    void print() const;
 
   protected:
 
@@ -305,6 +315,11 @@ namespace geomtools {
   }
 
 } // end of namespace geomtools
+
+#if GEOMTOOLS_WITH_REFLECTION == 1
+// Activate reflection layer for the blur_spot class :
+DR_CLASS_INIT(::geomtools::blur_spot);
+#endif // GEOMTOOLS_WITH_REFLECTION
 
 #endif // GEOMTOOLS_BLUR_SPOT_H_
 

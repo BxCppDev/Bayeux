@@ -198,8 +198,8 @@ namespace geomtools {
     DATATOOLS_SERIALIZATION_DECLARATION();
 
 #if GEOMTOOLS_WITH_REFLECTION == 1
-  //! Reflection interface
-  DR_CLASS_RTTI();
+    //! Reflection interface
+    DR_CLASS_RTTI();
 #endif
 
   };

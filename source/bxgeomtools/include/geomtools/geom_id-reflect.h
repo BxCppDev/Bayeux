@@ -11,7 +11,7 @@
 // Geomtools
 #include <geomtools/geom_id.h>
 
-// Export the introspection code for the 'geomtools:geom_id' class:
+// Export the introspection code for the 'geomtools::geom_id' class:
 DR_CLASS_EXPORT (::geomtools::geom_id, "geomtools::geom_id")
 
 // Mandatory namespace is datatools::detail::reflection :
@@ -22,7 +22,7 @@ namespace datatools {
       DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::geom_id, tag_)
       {
         DR_CLASS_DECLARE (::geomtools::geom_id)
-          //.DR_CLASS_BASE(::datatools::i_serializable)
+          .DR_CLASS_BASE(::datatools::i_serializable)
           .DR_CLASS_CONSTRUCTOR()
           .DR_CLASS_CONSTRUCTOR2(uint32_t,uint32_t)
           .DR_CLASS_CONSTRUCTOR3(uint32_t,uint32_t,uint32_t)

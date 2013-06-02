@@ -54,15 +54,9 @@ namespace geomtools {
   }
 
   vector_3d &
-  helix_3d::get_center ()
+  helix_3d::grab_center ()
   {
     return _center_;
-  }
-
-  const vector_3d &
-  helix_3d::get_center_const () const
-  {
-    return get_center ();
   }
 
   void

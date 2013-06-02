@@ -1,18 +1,18 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* helix_3d.h
  * Author(s): Francois Mauger <mauger@lpccaen.in2p3.fr>
  *            Arnaud Chapon   <chapon@lpccaen.in2p3.fr>
  * Creation date: 2008-12-18
  * Last modified: 2010-04-15
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *
  *   Helix 3D model (along Z axis)
  *
- * History: 
- * 
+ * History:
+ *
  */
 
 #ifndef GEOMTOOLS_HELIX_3D_H_
@@ -30,14 +30,14 @@
 
 namespace geomtools {
 
-  class helix_3d : 
+  class helix_3d :
     public i_shape_1d,
     DATATOOLS_SERIALIZABLE_CLASS
   {
-  public: 
+  public:
     static const std::string HELIX_3D_LABEL;
 
-  public: 
+  public:
 
     bool is_normal();
 
@@ -49,9 +49,7 @@ namespace geomtools {
 
     const vector_3d & get_center () const;
 
-    const vector_3d & get_center_const () const;
-
-    vector_3d & get_center ();
+    vector_3d & grab_center ();
 
     void   set_center (const vector_3d &);
 
@@ -106,8 +104,8 @@ namespace geomtools {
     vector_3d get_first () const;
 
     vector_3d get_last () const;
-  
-  public: 
+
+  public:
 
     // ctor/dtor:
     helix_3d ();
@@ -115,7 +113,7 @@ namespace geomtools {
     virtual ~helix_3d ();
 
     /* interface i_tree_dumpable */
-    virtual void tree_dump (std::ostream & out_         = std::clog, 
+    virtual void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
                             bool inherit_               = false) const;
@@ -123,7 +121,7 @@ namespace geomtools {
     void dump () const;
 
     void make_vertex_collection (basic_polyline_3d &, double angular_step_ = 0.0) const;
-    
+
     basic_polyline_3d make_vertex_collection () const;
 
   public:
@@ -133,7 +131,7 @@ namespace geomtools {
 
     // convert angle in radian to parametric:
     static double angle_to_t (double angle_);
-    
+
     enum print_flags_type
       {
         PRINT_XYZ_EXPAND1 = datatools::bit_mask::bit00,
@@ -141,19 +139,19 @@ namespace geomtools {
         PRINT_XYZ_CENTER = datatools::bit_mask::bit02
       };
 
-    static void print_xyz (std::ostream & out_, 
-                           const helix_3d & helix_, 
+    static void print_xyz (std::ostream & out_,
+                           const helix_3d & helix_,
                            double step_angle_ = 0.0,
                            unsigned int flags_ = 0);
 
   public:
 
-    virtual bool is_on_curve (const vector_3d & position_, 
+    virtual bool is_on_curve (const vector_3d & position_,
                               double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     virtual vector_3d get_direction_on_curve (const vector_3d & position_) const;
 
-  private: 
+  private:
 
     double    _radius_;
     vector_3d _center_;

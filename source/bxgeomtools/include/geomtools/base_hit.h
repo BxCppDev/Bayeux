@@ -29,18 +29,17 @@
 
 // Boost  serialization hook :
 #include <boost/serialization/access.hpp>
+#include <boost/cstdint.hpp>
 
 // Interfaces :
 #include <datatools/i_serializable.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/i_clear.h>
 #include <datatools/i_predicate.h>
-
-#include <boost/cstdint.hpp>
 #include <datatools/bit_mask.h>
 
 // Attributes :
-#include <boost/cstdint.hpp>
+#include <geomtools/geomtools_config.h>
 #include <datatools/properties.h>
 #include <geomtools/geom_id.h>
 
@@ -52,7 +51,6 @@ namespace geomtools {
     public datatools::i_tree_dumpable ,
     public datatools::i_clear
   {
-
   public:
 
     /// Masks to automatically tag the attributes to be stored
@@ -100,6 +98,9 @@ namespace geomtools {
 
     /// Get a  mutable reference on the auxiliaries container
     datatools::properties & grab_auxiliaries ();
+
+    /// Set the auxiliaries container
+    void set_auxiliaries (const datatools::properties &);
 
     /// Reset the mutable auxiliaries container
     void invalidate_auxiliaries ();
@@ -335,9 +336,19 @@ namespace geomtools {
 
     DATATOOLS_SERIALIZATION_DECLARATION();
 
+#if GEOMTOOLS_WITH_REFLECTION == 1
+    //! Reflection interface
+    DR_CLASS_RTTI();
+#endif
+
   };
 
 } // end of namespace geomtools
+
+#if GEOMTOOLS_WITH_REFLECTION == 1
+// Activate reflection layer for the geomtools::base_hit class :
+DR_CLASS_INIT(::geomtools::base_hit);
+#endif // GEOMTOOLS_WITH_REFLECTION
 
 #endif // GEOMTOOLS_BASE_HIT_H_
 

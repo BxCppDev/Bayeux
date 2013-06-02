@@ -95,6 +95,7 @@ namespace geomtools {
       HORIZONTAL = 1
     };
 
+
   //! Direction constants
   enum direction_type
     {
@@ -128,7 +129,7 @@ namespace geomtools {
   {
   public:
 
-    enum filled_t
+    enum filled_type
       {
         FILLED_NONE         = 0,
         FILLED_BY_ENVELOPE  = 1,
@@ -232,7 +233,7 @@ namespace geomtools {
   std::string get_special_rotation_angle_label (int);
 
   /********************/
-  enum axis_t
+  enum axis_type
     {
       AXIS_INVALID = -1,
       AXIS_X = 0,
@@ -240,7 +241,7 @@ namespace geomtools {
       AXIS_Z = 2
     };
 
-  enum rotation_axis_t
+  enum rotation_axis_type
     {
       ROTATION_AXIS_INVALID = -1,
       ROTATION_AXIS_X = AXIS_X,
@@ -622,6 +623,12 @@ namespace boost {
 
 } // namespace boost
 
+#if GEOMTOOLS_WITH_REFLECTION == 1
+CAMP_TYPE(geomtools::orientation_type);
+CAMP_TYPE(geomtools::direction_type);
+CAMP_TYPE(geomtools::axis_type);
+CAMP_TYPE(geomtools::rotation_axis_type);
+#endif // GEOMTOOLS_WITH_REFLECTION
 
 #endif // GEOMTOOLS_UTILS_H_
 

@@ -1,5 +1,5 @@
-// -*- mode: c++; -*- 
-/* i_placement.cc 
+// -*- mode: c++; -*-
+/* i_placement.cc
  */
 
 #include <geomtools/i_placement.h>
@@ -7,7 +7,7 @@
 
 namespace geomtools {
 
-  using namespace std;  
+  using namespace std;
 
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(i_placement, "geomtools::i_placement")
 
@@ -22,7 +22,7 @@ namespace geomtools {
   {
     return;
   }
- 
+
   bool i_placement::has_only_one_rotation () const
   {
     return false;
@@ -32,7 +32,7 @@ namespace geomtools {
   {
     return get_number_of_items () > 0;
   }
-    
+
   placement i_placement::get_placement (int item_) const
   {
     placement p;
@@ -40,22 +40,33 @@ namespace geomtools {
     return p;
   }
 
-  void i_placement::tree_dump (ostream & out_, 
-                               const string & title_, 
-                               const string & indent_, 
+  placement i_placement::get_placement_by_index (int item_) const
+  {
+    placement p;
+    get_placement (item_, p);
+    return p;
+  }
+
+  void i_placement::compute_placement (int item_, placement & p_) const
+  {
+    this->get_placement(item_,p_);
+  }
+
+  void i_placement::tree_dump (ostream & out_,
+                               const string & title_,
+                               const string & indent_,
                                bool inherit_) const
   {
     string indent;
     if (! indent_.empty ()) indent = indent_;
-    if (! title_.empty ()) 
-      {
-        out_ << indent << title_ << std::endl;
-      }
-    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)  
+    if (! title_.empty ()) {
+      out_ << indent << title_ << std::endl;
+    }
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
          << "Number of items  = " << get_number_of_items () << std::endl;
     return;
   }
- 
+
 } // end of namespace geomtools
 
 // end of i_placement.cc

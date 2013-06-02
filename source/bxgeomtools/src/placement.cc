@@ -66,7 +66,19 @@ namespace geomtools {
   }
 
   void
+  placement::set_translation_xyz (double x_, double y_, double z_)
+  {
+    set_translation (vector_3d (x_, y_, z_));
+  }
+
+  void
   placement::set_translation (const vector_3d & new_value_)
+  {
+    _translation_ = new_value_;
+  }
+
+  void
+  placement::set_translation_v (const vector_3d & new_value_)
   {
     _translation_ = new_value_;
   }
@@ -205,6 +217,11 @@ namespace geomtools {
     return;
   }
 
+  void placement::set_orientation_axis_angle (int axis_, double angle_)
+  {
+    set_orientation(axis_,angle_);
+  }
+
   void placement::set_orientation (int axis_, double angle_)
   {
     if (! check_rotation_axis (axis_))
@@ -229,6 +246,11 @@ namespace geomtools {
     _delta_ = delta_;
     _compute_orientation_ ();
     return;
+  }
+
+  void placement::set_orientation_zyz (double phi_, double theta_, double delta_)
+  {
+    set_orientation(phi_, theta_, delta_);
   }
 
   // Not recommended at all:
@@ -570,25 +592,6 @@ namespace geomtools {
                    const string & indent_) const
   {
     tree_dump (out_, title_, indent_);
-    /*
-      using namespace std;
-      string indent = indent_;
-      string title = title_;
-      if ( title.empty () ) title = title_;
-      out_ << title << endl;
-      string tag       = "|-- ";
-      string tagc      = "|   ";
-      string last_tag  = "`-- ";
-      string last_tagc = "    ";
-
-      out_ << indent << tag << "Translation : "
-      << _translation_  << endl;
-    */
-    /*
-      tree_dump (_rotation_, out_, tag + "Rotation :", indent + tagc);
-      tree_dump (_inverse_rotation_, out_,
-      last_tag + "Inverse rotation :", indent + last_tagc);
-    */
   }
 
   void placement::to_string (string & str_, const placement & pl_)

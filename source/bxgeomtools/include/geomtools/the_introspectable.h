@@ -30,8 +30,11 @@
 
 #include <geomtools/geomtools_config.h>
 
-#include <geomtools/utils-reflect.h>
+#include <geomtools/clhep-reflect.h>
 #include <geomtools/geom_id-reflect.h>
+#include <geomtools/base_hit-reflect.h>
+#include <geomtools/i_placement-reflect.h>
+#include <geomtools/placement-reflect.h>
 
 #endif // GEOMTOOLS_THE_INTROSPECTABLE_H_
 

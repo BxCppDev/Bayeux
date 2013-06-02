@@ -126,8 +126,13 @@ set(geomtools_PUBLIC_HEADERS
   include/geomtools/the_serializable.ipp
   include/geomtools/the_serializable.h
   include/geomtools/utils.ipp
+  include/geomtools/clhep-reflect.h
   include/geomtools/utils-reflect.h
   include/geomtools/geom_id-reflect.h
+  include/geomtools/i_placement-reflect.h
+  include/geomtools/placement-reflect.h
+  include/geomtools/base_hit-reflect.h
+  include/geomtools/blur_spot-reflect.h
   include/geomtools/the_introspectable.h
   )
 list_prepend(geomtools_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
@@ -420,8 +425,13 @@ endif()
 #
 if(GEOMTOOLS_WITH_REFLECTION)
   set(geomtools_reflection_SOURCES
+    include/geomtools/clhep-reflect.h
     include/geomtools/utils-reflect.h
     include/geomtools/geom_id-reflect.h
+    include/geomtools/base_hit-reflect.h
+    include/geomtools/i_placement-reflect.h
+    include/geomtools/placement-reflect.h
+    include/geomtools/blur_spot-reflect.h
     include/geomtools/the_introspectable.h
     src/the_introspectable.cc
     )
