@@ -113,7 +113,9 @@ set(geomtools_PUBLIC_HEADERS
   include/geomtools/geometry_service.h
   include/geomtools/materials_plugin.h
   include/geomtools/materials_utils.h
+
   include/geomtools/ocd_support.h
+
   include/geomtools/base_hit.ipp
   include/geomtools/blur_spot.ipp
   include/geomtools/display_data.ipp
@@ -123,9 +125,10 @@ set(geomtools_PUBLIC_HEADERS
   include/geomtools/line_3d.ipp
   include/geomtools/placement.ipp
   include/geomtools/polyline_3d.ipp
+  include/geomtools/utils.ipp
   include/geomtools/the_serializable.ipp
   include/geomtools/the_serializable.h
-  include/geomtools/utils.ipp
+
   include/geomtools/clhep-reflect.h
   include/geomtools/utils-reflect.h
   include/geomtools/geom_id-reflect.h
@@ -134,6 +137,8 @@ set(geomtools_PUBLIC_HEADERS
   include/geomtools/base_hit-reflect.h
   include/geomtools/blur_spot-reflect.h
   include/geomtools/the_introspectable.h
+  include/geomtools/reflection_guard.h
+
   )
 list_prepend(geomtools_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 
