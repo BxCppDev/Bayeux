@@ -27,10 +27,10 @@
 #cmakedefine01 GENBB_HELP_WITH_DEBUG
 
 /***  genbb_help embedded Boost/Serialization based I/O ***/
-//#cmakedefine01 GENBB_HELP_WITH_BIO
+#cmakedefine01 GENBB_HELP_WITH_BIO
 
 /***  genbb_help embedded CAMP-based reflection ***/
-//#cmakedefine01 GENBB_HELP_WITH_REFLECTION
+#cmakedefine01 GENBB_HELP_WITH_REFLECTION
 
 /***  genbb_help with Fortran ***/
 #cmakedefine01 GENBB_HELP_WITH_FORTRAN

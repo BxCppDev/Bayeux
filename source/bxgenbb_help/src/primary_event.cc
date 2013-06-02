@@ -133,6 +133,49 @@ namespace genbb {
     return;
   }
 
+  unsigned int primary_event::get_number_of_particles() const
+  {
+    return _particles_.size();
+  }
+
+  const primary_particle & primary_event::get_particle(int index_) const
+  {
+    DT_THROW_IF(index_ < 0,
+                std::range_error,
+                "Invalid particle index '" << index_ << "' !");
+    DT_THROW_IF(index_ >= _particles_.size(),
+                std::range_error,
+                "Invalid particle index '" << index_ << "' !");
+    int count = 0;
+    particles_col_type::const_iterator i = _particles_.begin();
+    for (; i != _particles_.end(); i++) {
+      if (count == index_) {
+        break;
+      }
+      count++;
+    }
+    return *i;
+ }
+
+  primary_particle & primary_event::grab_particle(int index_)
+  {
+    DT_THROW_IF(index_ < 0,
+                std::range_error,
+                "Invalid particle index '" << index_ << "' !");
+    DT_THROW_IF(index_ >= _particles_.size(),
+                std::range_error,
+                "Invalid particle index '" << index_ << "' !");
+    int count = 0;
+    particles_col_type::iterator i = _particles_.begin();
+    for (; i != _particles_.end(); i++) {
+      if (count == index_) {
+        break;
+      }
+      count++;
+    }
+    return *i;
+  }
+
   const std::string & primary_event::get_label () const
   {
     return _label_;
@@ -286,8 +329,13 @@ namespace genbb {
     return _auxiliaries_;
   }
 
-  void primary_event::shift_particle_time_from(double delta_time_,
-                                               int from_)
+  void primary_event::set_auxiliaries(const datatools::properties & aux_)
+  {
+    _auxiliaries_ = aux_;
+  }
+
+  void primary_event::shift_particles_time(double delta_time_,
+                                           int from_)
   {
     int count = 0;
     for (particles_col_type::iterator i = _particles_.begin ();

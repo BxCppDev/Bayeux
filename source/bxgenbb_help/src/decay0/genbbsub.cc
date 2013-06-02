@@ -1578,34 +1578,34 @@ namespace genbb {
           At214low(prng_, event_, 0);
           npfull0 = event_.get_particles().size();
           At214(prng_, event_, 0., tdnuc1);
-          event_.shift_particle_time_from(tdnuc1 * CLHEP::second, npfull0);
+          event_.shift_particles_time(tdnuc1 * CLHEP::second, npfull0);
         }
         if (boost::algorithm::starts_with(chnuclide_,"Pb214")) {
           Po214low(prng_, event_, 0);
           npfull0 = event_.get_particles().size();
           Po214(prng_, event_, 0., tdnuc1);
-          event_.shift_particle_time_from(tdnuc1 * CLHEP::second, npfull0);
+          event_.shift_particles_time(tdnuc1 * CLHEP::second, npfull0);
         }
         if (boost::algorithm::starts_with(chnuclide_,"Po218")) {
           Rn218low(prng_, event_, 0);
           npfull0 = event_.get_particles().size();
           Rn218(prng_, event_, 0., tdnuc1);
-          event_.shift_particle_time_from(tdnuc1 * CLHEP::second, npfull0);
+          event_.shift_particles_time(tdnuc1 * CLHEP::second, npfull0);
           npfull0 = event_.get_particles().size();
           Po214(prng_, event_, 0., tdnuc1);
-          event_.shift_particle_time_from(tdnuc1 * CLHEP::second, npfull0);
+          event_.shift_particles_time(tdnuc1 * CLHEP::second, npfull0);
         }
         if (boost::algorithm::starts_with(chnuclide_,"Rn222")) {
           Ra222low(prng_, event_, 0);
           npfull0 = event_.get_particles().size();
           Ra222(prng_, event_, 0., tdnuc1);
-          event_.shift_particle_time_from(tdnuc1 * CLHEP::second, npfull0);
+          event_.shift_particles_time(tdnuc1 * CLHEP::second, npfull0);
           npfull0 = event_.get_particles().size();
           Rn218(prng_, event_, 0., tdnuc1);
-          event_.shift_particle_time_from(tdnuc1 * CLHEP::second, npfull0);
+          event_.shift_particles_time(tdnuc1 * CLHEP::second, npfull0);
           npfull0 = event_.get_particles().size();
           Po214(prng_, event_, 0., tdnuc1);
-          event_.shift_particle_time_from(tdnuc1 * CLHEP::second, npfull0);
+          event_.shift_particles_time(tdnuc1 * CLHEP::second, npfull0);
         }
       }
 
@@ -1626,7 +1626,7 @@ namespace genbb {
           npfull0 = event_.get_particles().size();
           if (! event_.get_particles ().front().is_alpha()) {
             Po212(prng_, event_, 0., tdnuc1);
-            event_.shift_particle_time_from(tdnuc1 * CLHEP::second, npfull0);
+            event_.shift_particles_time(tdnuc1 * CLHEP::second, npfull0);
           }
         }
         if (boost::algorithm::starts_with(chnuclide_,"Bi214")) {
@@ -1634,14 +1634,14 @@ namespace genbb {
           npfull0 = event_.get_particles().size();
           if (! event_.get_particles ().front().is_alpha()) {
             Po214(prng_, event_, 0., tdnuc1);
-            event_.shift_particle_time_from(tdnuc1 * CLHEP::second, npfull0);
+            event_.shift_particles_time(tdnuc1 * CLHEP::second, npfull0);
           }
         }
         if (boost::algorithm::starts_with(chnuclide_,"Ca48")) {
           Ca48(prng_, event_, 0., tdnuc);
           npfull0 = event_.get_particles().size();
           Sc48(prng_, event_, 0., tdnuc1);
-          event_.shift_particle_time_from(tdnuc1 * CLHEP::second, npfull0);
+          event_.shift_particles_time(tdnuc1 * CLHEP::second, npfull0);
         }
         if (boost::algorithm::starts_with(chnuclide_,"C14")) C14(prng_, event_, 0., tdnuc);
         if (boost::algorithm::starts_with(chnuclide_,"Cd113")) Cd113(prng_, event_, 0., tdnuc);
@@ -1694,7 +1694,7 @@ namespace genbb {
           Zr96(prng_, event_, 0., tdnuc);
           npfull0 = event_.get_particles().size();
           Nb96(prng_, event_, 0., tdnuc1);
-          event_.shift_particle_time_from(tdnuc1 * CLHEP::second, npfull0);
+          event_.shift_particles_time(tdnuc1 * CLHEP::second, npfull0);
         }
         //tevst=tdnuc;
         event_.set_time(tdnuc * CLHEP::second);

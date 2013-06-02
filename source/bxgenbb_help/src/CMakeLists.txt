@@ -83,11 +83,15 @@ file ( GLOB genbb_help_PUBLIC_HEADERS
   ${PROJECT_SOURCE_DIR}/include/genbb_help/primary_event.h
   ${PROJECT_SOURCE_DIR}/include/genbb_help/primary_particle.h
   ${PROJECT_SOURCE_DIR}/include/genbb_help/single_particle_generator.h
-  ${PROJECT_SOURCE_DIR}/include/genbb_help/the_serializable.h
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/wdecay0.h
   ${PROJECT_SOURCE_DIR}/include/genbb_help/primary_event.ipp
   ${PROJECT_SOURCE_DIR}/include/genbb_help/primary_particle.ipp
   ${PROJECT_SOURCE_DIR}/include/genbb_help/the_serializable.ipp
-  ${PROJECT_SOURCE_DIR}/include/genbb_help/wdecay0.h
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/the_serializable.h
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/primary_particle-reflect.h
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/primary_event-reflect.h
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/the_introspectable.h
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/reflection_guard.h
   )
 
 if (GENBB_HELP_WITH_FORTRAN)
@@ -115,7 +119,8 @@ list(APPEND genbb_help_PUBLIC_HEADERS
 set(genbb_help_detail_HEADERS
   include/genbb_help/detail/bio_link_guard.h
   include/genbb_help/detail/pg_tools.h
-   )
+  include/genbb_help/detail/reflection_link_guard.h
+  )
 list_prepend(genbb_help_detail_HEADERS "${PROJECT_SOURCE_DIR}/")
 
 set_source_files_properties(${genbb_help_detail_HEADERS}
@@ -211,9 +216,9 @@ include_directories(
   ${geomtools_INCLUDE_DIRS}
   )
 
-#if(GENBB_HELP_WITH_REFLECTION)
-#  include_directories(${CAMP_INCLUDE_DIR})
-#endif()
+if(GENBB_HELP_WITH_REFLECTION)
+ include_directories(${CAMP_INCLUDE_DIR})
+endif()
 
 # ----------------------------------------------------------------------------
 # Build the Fortran part of the library :
@@ -266,10 +271,18 @@ set_target_properties(genbb_help
 
 
 if(GENBB_HELP_WITH_REFLECTION)
-  target_link_libraries(genbb_help ${geomtools_LIBRARIES} ${_fortran_libs} ${CAMP_LIBRARIES} ${CMAKE_DL_LIBS})
+  target_link_libraries(genbb_help
+     ${geomtools_LIBRARIES}
+     ${_fortran_libs}
+     ${CAMP_LIBRARIES}
+     ${CMAKE_DL_LIBS})
 else()
-  target_link_libraries(genbb_help ${geomtools_LIBRARIES} ${_fortran_libs} ${CMAKE_DL_LIBS})
+  target_link_libraries(genbb_help
+     ${geomtools_LIBRARIES}
+     ${_fortran_libs}
+     ${CMAKE_DL_LIBS})
 endif()
+
 set(GENBB_HELP_TARGETS genbb_help ${_fortran_libs})
 
 #-----------------------------------------------------------------------
@@ -297,6 +310,33 @@ if(GENBB_HELP_WITH_BIO)
   list(APPEND GENBB_HELP_TARGETS genbb_help_bio)
 endif()
 
+
+#-----------------------------------------------------------------------
+# BUILD THE GENBB_HELP REFLECTION COMPONENT
+# We build this as a shared library as we can then link to it directly
+# On Mac, we use dynamic_lookup for undefined symbols because we want
+# the lib to act as a plugin.
+#
+if(GENBB_HELP_WITH_REFLECTION)
+  set(genbb_help_reflection_SOURCES
+    include/genbb_help/primary_particle-reflect.h
+    include/genbb_help/primary_event-reflect.h
+    include/genbb_help/the_introspectable.h
+    src/the_introspectable.cc
+    )
+  list_prepend(genbb_help_reflection_SOURCES "${PROJECT_SOURCE_DIR}/")
+
+  message (STATUS "Build genbb_help reflection DLL...")
+  add_library(genbb_help_reflection SHARED ${genbb_help_reflection_SOURCES})
+
+  if(APPLE)
+    set_property(TARGET genbb_help_reflection APPEND
+      PROPERTY LINK_FLAGS "-undefined dynamic_lookup"
+      )
+  endif()
+
+  list(APPEND GENBB_HELP_TARGETS genbb_help_reflection)
+endif()
 
 #-----------------------------------------------------------------------
 # EXPORT AND INSTALL LIBRARY TARGETS

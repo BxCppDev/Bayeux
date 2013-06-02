@@ -707,7 +707,14 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::manager,ocd_)
   ocd_.set_class_name ("genbb::manager");
   ocd_.set_class_description ("A generic manager for event generators");
   ocd_.set_class_library("genbb_help");
-  //ocd_.set_class_documentation("blah-blah...");
+  ocd_.set_class_documentation("The ``genbb::manager`` class is responsible of the     \n"
+                               "instantiation, configuration and memory management of  \n"
+                               "a collection of event generators requested by the user,\n"
+                               "typically from a set of ASCII configuration files.     \n"
+                               "The manager can provide its own pseudo random number   \n"
+                               "generator (PRNG) or accept an external PRNG provided by\n"
+                               "the user.                                              \n"
+                              );
 
   {
     configuration_property_description & cpd = ocd_.add_property_info();
@@ -800,7 +807,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::manager,ocd_)
                                 "  logging.priority: string = \"notice\"                     \n"
                                 "  seed: integer = 314159                                    \n"
                                 "  generators.configuration_files : string[1] as path = \\   \n"
-                                "     \"${CONFIG_REPOSITORY_DIR}/eg.conf\"                   \n"
+                                "     \"${CONFIG_REPOSITORY_DIR}/event_generators.conf\"     \n"
                                 "                                                            \n"
                                 );
   ocd_.set_validation_support(true);

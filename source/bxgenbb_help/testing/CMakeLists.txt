@@ -53,6 +53,10 @@ set ( genbb_help_tests_programs_list_CPP
     )
 
 
+if(GENBB_HELP_WITH_REFLECTION)
+  list(APPEND genbb_help_tests_programs_list_CPP ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
+endif()
+
 if (GENBB_HELP_WITH_FORTRAN)
   list (APPEND genbb_help_tests_programs_list_CPP
         test_genbb.cxx)
@@ -129,6 +133,17 @@ foreach ( test_program ${genbb_help_tests_programs_list_CPP} )
     if ( datatools_WITH_BIO )
       list (APPEND  _test_libraries ${datatools_BIO_LIBRARY} )
     endif ()
+
+    # Special reflection DLL plugins :
+    if(datatools_WITH_REFLECTION)
+      list(INSERT _test_libraries 0 datatools_reflection)
+    endif()
+    if(geomtools_WITH_REFLECTION)
+      list(INSERT _test_libraries 0 geomtools_reflection )
+    endif()
+    if(GENBB_HELP_WITH_REFLECTION)
+      list(INSERT _test_libraries 0 genbb_help_reflection )
+    endif()
 
     message ( STATUS "testing: Libraries = '${_test_libraries}'" )
 

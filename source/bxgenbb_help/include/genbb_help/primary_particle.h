@@ -51,6 +51,7 @@
 #include <datatools/i_serializable.h>
 
 #include <geomtools/utils.h>
+#include <genbb_help/genbb_help_config.h>
 
 namespace genbb {
 
@@ -190,11 +191,22 @@ namespace genbb {
     //! Support for backward compatibility serialization tag
     DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT()
 
+#if GENBB_HELP_WITH_REFLECTION == 1
+    //! Reflection interface
+    DR_CLASS_RTTI();
+#endif
+
   };
 
 } // end of namespace genbb
 
 DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::genbb::primary_particle)
+
+#if GENBB_HELP_WITH_REFLECTION == 1
+// Activate reflection layer for the genbb::primary_particle class :
+DR_CLASS_INIT(::genbb::primary_particle);
+#endif // GENBB_HELP_WITH_REFLECTION
+
 
 #endif // GENBB_HELP_PRIMARY_PARTICLE_H_
 

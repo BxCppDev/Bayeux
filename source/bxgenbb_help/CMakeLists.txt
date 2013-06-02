@@ -70,7 +70,7 @@ endif()
 option(GENBB_HELP_WITH_DEBUG "Build debug stuff" OFF)
 set ( GENBB_HELP_WITH_BIO_SUPPORT 1 )
 option(GENBB_HELP_WITH_BIO  "Build auxiliary Boost I/O library" ON)
-# option(GENBB_HELP_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" OFF)
+option(GENBB_HELP_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" ON)
 option(GENBB_HELP_WITH_DOC  "Build the genbb_help documentation" ON)
 option(GENBB_HELP_WITH_TEST "Build the genbb_help test suite"    ON)
 
@@ -142,7 +142,7 @@ install ( FILES ${PROJECT_SOURCE_DIR}/scripts/genbb
 #
 if(UNIX)
   # - Normalize exported boolean variables
-  foreach(_ebv BIO)
+  foreach(_ebv BIO REFLECTION)
     if(GENBB_HELP_WITH_${_ebv})
       set(GENBB_HELP_WITH_${_ebv} 1)
     else()

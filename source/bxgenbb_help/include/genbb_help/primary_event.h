@@ -84,6 +84,12 @@ namespace genbb {
 
     void add_particle (const primary_particle &);
 
+    unsigned int get_number_of_particles() const;
+
+    const primary_particle & get_particle(int) const;
+
+    primary_particle & grab_particle(int);
+
     const std::string & get_label () const;
 
     void set_label (const std::string & l_);
@@ -106,7 +112,9 @@ namespace genbb {
 
     datatools::properties & grab_auxiliaries ();
 
-    void shift_particle_time_from(double delta_time_, int from_);
+    void set_auxiliaries(const datatools::properties &);
+
+    void shift_particles_time(double delta_time_, int from_ = 0);
 
     /// Constructor
     primary_event ();
@@ -142,6 +150,11 @@ namespace genbb {
   //! Support for backward compatibility serialization tag
   DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT()
 
+#if GENBB_HELP_WITH_REFLECTION == 1
+    //! Reflection interface
+    DR_CLASS_RTTI();
+#endif
+
   };
 
 } // end of namespace genbb
@@ -150,6 +163,11 @@ namespace genbb {
 BOOST_CLASS_EXPORT_KEY2(genbb::primary_event, "genbb::primary_event")
 
 DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::genbb::primary_event)
+
+#if GENBB_HELP_WITH_REFLECTION == 1
+// Activate reflection layer for the genbb::primary_event class :
+DR_CLASS_INIT(::genbb::primary_event);
+#endif // GENBB_HELP_WITH_REFLECTION
 
 #endif // GENBB_HELP_PRIMARY_EVENT_H_
 
