@@ -76,8 +76,6 @@ set ( geomtools_tests_programs
   test_service_manager.cxx
 )
 
-###message (STATUS "geomtools_tests_programs=${geomtools_tests_programs}" )
-# list(REMOVE_ITEM geomtools_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
 if(GEOMTOOLS_WITH_REFLECTION)
   list(APPEND geomtools_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
 endif()
