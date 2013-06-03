@@ -1,6 +1,6 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* uniform_magnetic_field.cc
- */ 
+ */
 
 #include <emfield/uniform_magnetic_field.h>
 #include <datatools/properties.h>
@@ -12,9 +12,9 @@ namespace emfield {
 
   // Registration instantiation macro :
   EMFIELD_REGISTRATION_IMPLEMENT(uniform_magnetic_field, "emfield::uniform_magnetic_field");
-  
+
   // Constructor :
-  EMFIELD_CONSTRUCTOR_IMPLEMENT_HEAD(uniform_magnetic_field,flags_)     
+  EMFIELD_CONSTRUCTOR_IMPLEMENT_HEAD(uniform_magnetic_field,flags_)
   {
     _set_electric_field (false);
     _set_electric_field_can_be_combined (false);
@@ -22,60 +22,48 @@ namespace emfield {
     _set_magnetic_field_can_be_combined (false);
     geomtools::invalidate(_uniform_magnetic_field_);
     return;
-  }  
-  
+  }
+
   // Destructor :
   EMFIELD_DEFAULT_DESTRUCTOR_IMPLEMENT(uniform_magnetic_field);
-  
+
   // Getter :
   const geomtools::vector_3d & uniform_magnetic_field::get_uniform_magnetic_field () const
   {
     return _uniform_magnetic_field_;
   }
-  
+
   // Setter :
   void uniform_magnetic_field::set_uniform_magnetic_field (const geomtools::vector_3d & b_)
   {
-    if (is_initialized ())
-      {
-        std::ostringstream message;
-        message << "emfield::uniform_magnetic_field::set_uniform_magnetic_field: "
-                << "Cannot change the magnetic field value !";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF (is_initialized (), std::logic_error, "Cannot change the magnetic field value !");
     _uniform_magnetic_field_ = b_;
     return;
   }
-  
+
   EMFIELD_COMPUTE_EFIELD_IMPLEMENT_HEAD(uniform_magnetic_field,
-                                        position_, 
-                                        time_, 
+                                        position_,
+                                        time_,
                                         electric_field_)
   {
     geomtools::invalidate (electric_field_);
     return STATUS_ERROR;
-  } 
+  }
 
   EMFIELD_COMPUTE_BFIELD_IMPLEMENT_HEAD(uniform_magnetic_field,
-                                        position_, 
-                                        time_, 
+                                        position_,
+                                        time_,
                                         magnetic_field_)
   {
     magnetic_field_ = _uniform_magnetic_field_;
     return STATUS_SUCCESS;
-  } 
+  }
 
   EMFIELD_RESET_IMPLEMENT_HEAD(uniform_magnetic_field)
   {
-    if (! is_initialized ())
-      {
-        std::ostringstream message;
-        message << "emfield::uniform_magnetic_field::reset: "
-                << "Cannot reset the magnetic field !";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF (! is_initialized (), std::logic_error, "Cannot reset the magnetic field !");
 
-     geomtools::invalidate(_uniform_magnetic_field_);
+     geomtools::invalidate (_uniform_magnetic_field_);
 
     _set_initialized (false);
     return;
@@ -83,21 +71,14 @@ namespace emfield {
 
   EMFIELD_INITIALIZE_IMPLEMENT_HEAD(uniform_magnetic_field,setup_,service_manager_,fields_)
   {
-    if (is_initialized ())
-      {
-        std::ostringstream message;
-        message << "emfield::uniform_magnetic_field::initialized: "
-                << "Field is already initialized !";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF (is_initialized (), std::logic_error, "Field is already initialized !");
 
     base_electromagnetic_field::_parse_basic_parameters (setup_, service_manager_, fields_);
 
     double b_unit = CLHEP::gauss;
-
     if (setup_.has_key ("magnetic_field.unit"))
       {
-        std::string b_unit_str = setup_.fetch_string ("magnetic_field.unit");
+        const std::string b_unit_str = setup_.fetch_string ("magnetic_field.unit");
         b_unit = datatools::units::get_magnetic_field_unit_from (b_unit_str);
       }
 
@@ -112,15 +93,9 @@ namespace emfield {
           {
             std::vector<double> magfield_coord;
             setup_.fetch ("magnetic_field.coordinates", magfield_coord);
-            if (magfield_coord.size () != 3)
-              {
-                std::ostringstream message;
-                message << "emfield::uniform_magnetic_field::initialized: "
-                        << "Invalid magnetic field vector 'magnetic_field' !";
-                throw std::logic_error (message.str ());
-              }
-            _uniform_magnetic_field_.set (magfield_coord[0], 
-                                          magfield_coord[1], 
+            DT_THROW_IF (magfield_coord.size () != 3, std::logic_error, "Invalid magnetic field vector 'magnetic_field' !");
+            _uniform_magnetic_field_.set (magfield_coord[0],
+                                          magfield_coord[1],
                                           magfield_coord[2]);
           }
       }
@@ -129,26 +104,19 @@ namespace emfield {
       {
         double magfield_amp;
         datatools::invalidate (magfield_amp);
-        int magfield_axis = geomtools::ROTATION_AXIS_INVALID;
-
         if (setup_.has_key ("magnetic_field.magnitude"))
           {
-            magfield_amp = setup_.fetch_real ("magnetic_field.magnitude"); 
+            magfield_amp = setup_.fetch_real ("magnetic_field.magnitude");
           }
 
-        if (setup_.has_key ("magnetic_field.axis"))
+         int magfield_axis = geomtools::ROTATION_AXIS_INVALID;
+         if (setup_.has_key ("magnetic_field.axis"))
           {
-            std::string axis_str = setup_.fetch_string ("magnetic_field.axis");
+            const std::string axis_str = setup_.fetch_string ("magnetic_field.axis");
             magfield_axis = geomtools::get_rotation_axis_from_label (axis_str);
-            if (magfield_axis == geomtools::ROTATION_AXIS_INVALID)
-              {
-                std::ostringstream message;
-                message << "emfield::uniform_magnetic_field::initialized: "
-                        << "Invalid 'magnetic_field.axis' !";
-                throw std::logic_error (message.str ());
-              }
+            DT_THROW_IF (magfield_axis == geomtools::ROTATION_AXIS_INVALID, std::logic_error, "Invalid 'magnetic_field.axis' !");
           }
-        
+
         geomtools::vector_3d magfield_direction (0., 0., 0.);
         if (magfield_axis == geomtools::ROTATION_AXIS_X)
           {
@@ -166,12 +134,12 @@ namespace emfield {
         _uniform_magnetic_field_ = magfield_amp * magfield_direction;
       }
 
-    _uniform_magnetic_field_ *= b_unit; 
+    _uniform_magnetic_field_ *= b_unit;
 
     _set_initialized (true);
     return;
-  } 
-   
+  }
+
 } // end of namespace emfield
 
 // end of uniform_magnetic_field.cc

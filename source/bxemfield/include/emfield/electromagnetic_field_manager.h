@@ -1,17 +1,17 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* electromagnetic_field_manager.h
  * Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-04-24
  * Last modified: 2013-02-24
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *
  *   Manager for a collection of electro-magnetic fields
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
 #include <iostream>
@@ -46,10 +46,10 @@ namespace emfield {
   {
 
   public:
- 
+
     /*
     /// \brief Internal record emfield handling
-    class emfield_entry : public datatools::i_tree_dumpable  
+    class emfield_entry : public datatools::i_tree_dumpable
     {
     public:
       enum status_type {
@@ -66,20 +66,20 @@ namespace emfield {
 
       /// Set the description of the emfield
       void set_description(const std::string&);
-      
+
       /// Check is the description is not empty
       bool has_description() const;
-      
+
       /// Get the description of the emfield
       const std::string& get_description() const;
-      
-      /// Set the configuration 
+
+      /// Set the configuration
       const datatools::properties & get_config () const;
-      
-      /// Get the configuration 
+
+      /// Get the configuration
       void set_config (const datatools::properties &);
 
-      /// Grab the configuration 
+      /// Grab the configuration
       datatools::properties & grab_config ();
 
       /// Check if emfield is created
@@ -98,8 +98,8 @@ namespace emfield {
       base_emfield & grab ();
 
       const base_emfield & get () const;
- 
-      virtual void tree_dump(std::ostream &      out_ = std::clog, 
+
+      virtual void tree_dump(std::ostream &      out_ = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
                              bool                inherit_ = false) const;
@@ -113,7 +113,7 @@ namespace emfield {
       std::string           _name_;        //!< Name of the emfield
       std::string           _id_;          //!< The ID (type) of the emfield
       std::string           _description_; //!< Description of the emfield
-      datatools::properties _config_;      //!< The configuration of the emfield 
+      datatools::properties _config_;      //!< The configuration of the emfield
       uint32_t              _status_;      //!< Status of the emfield
       emfield_handle_type   _handle_;      //!< Handle to the emfield
 
@@ -122,6 +122,10 @@ namespace emfield {
     };
 
     */
+
+    void set_logging_priority (datatools::logger::priority priority_);
+
+    datatools::logger::priority get_logging_priority () const;
 
     bool is_initialized () const;
 
@@ -146,7 +150,7 @@ namespace emfield {
     electromagnetic_field_manager (uint32_t flags_ = 0);
 
     virtual ~electromagnetic_field_manager ();
-  
+
     /*** Minimal interface ***/
 
     void initialize (const datatools::properties & setup_);
@@ -154,14 +158,14 @@ namespace emfield {
     void reset ();
 
     void load (const std::string & rules_filename_);
-   
+
     /// Smart print
-    virtual void tree_dump (std::ostream & out_         = std::clog, 
+    virtual void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
                             bool inherit_               = false) const;
 
- 
+
     const base_electromagnetic_field::field_dict_type & get_fields () const;
 
     bool has_field (const std::string & field_name_) const;
@@ -186,13 +190,13 @@ namespace emfield {
 
   private:
 
-    bool _factory_preload_; /// Flag to preload the system factory
+    datatools::logger::priority _logging_priority_; /// Logging priority threshold
+    bool _initialized_;                             /// Initialization flag
+    bool _factory_preload_;                         /// Flag to preload the system factory
     base_electromagnetic_field::factory_register_type _factory_register_; /// The factory register for EM field types
-    bool     _initialized_;    /// Initialization flag
-    bool     _debug_;          /// Debug flag
     datatools::service_manager * _service_manager_; /// Service manager
-    const geomtools::manager *   _geom_manager_; /// Geometry manager
-    datatools::multi_properties  _rules_;     /// Build rules for fields 
+    const geomtools::manager *   _geom_manager_;    /// Geometry manager
+    datatools::multi_properties  _rules_;           /// Build rules for fields
     base_electromagnetic_field::field_dict_type _fields_; /// Dictionnary of fields
     boost::scoped_ptr<geom_map> _geom_map_; /// Geometry/EM field associations map (what field and where ?)
 

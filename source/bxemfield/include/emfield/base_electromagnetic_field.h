@@ -1,17 +1,17 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* base_electromagnetic_field.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-04-24
  * Last modified: 2012-05-22
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *
  *   Base class for all electro-magnetic fields
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
 #include <iostream>
@@ -56,7 +56,7 @@ namespace emfield {
         ELECTRIC_FIELD_IS_TIME_DEPENDENT = datatools::bit_mask::bit06,
         MAGNETIC_FIELD_IS_TIME_DEPENDENT = datatools::bit_mask::bit07
      };
-    
+
     enum status_type
       {
         STATUS_SUCCESS          = 0,
@@ -69,6 +69,10 @@ namespace emfield {
 
     static const char ELECTRIC_FIELD_LABEL = 'E';
     static const char MAGNETIC_FIELD_LABEL = 'B';
+
+    void set_logging_priority (datatools::logger::priority priority_);
+
+    datatools::logger::priority get_logging_priority () const;
 
     bool is_initialized () const;
 
@@ -96,14 +100,14 @@ namespace emfield {
 
     virtual int compute_electromagnetic_field (const geomtools::vector_3d & position_,
                                                double time_,
-                                               geomtools::vector_3d & electric_field_, 
+                                               geomtools::vector_3d & electric_field_,
                                                geomtools::vector_3d & magnetic_field_) const;
 
-    virtual int compute_field (char what_, 
+    virtual int compute_field (char what_,
                                const geomtools::vector_3d & position_,
                                double time_,
                                geomtools::vector_3d & field_) const;
-    
+
     virtual void initialize_standalone (const datatools::properties & setup_);
 
     virtual void initialize_with_service_only (const datatools::properties & setup_,
@@ -111,28 +115,28 @@ namespace emfield {
 
     virtual void initialize_with_dictionary_only (const datatools::properties & setup_,
                                                   field_dict_type & dictionary_);
-   
+
     /*** Minimal interface ***/
 
-    virtual void initialize (const datatools::properties & setup_, 
+    virtual void initialize (const datatools::properties & setup_,
                              datatools::service_manager & service_manager_,
                              field_dict_type & dictionary_) = 0;
 
     virtual void reset () = 0;
 
-    virtual bool position_and_time_are_valid (const geomtools::vector_3d & position_, 
+    virtual bool position_and_time_are_valid (const geomtools::vector_3d & position_,
                                               double time_) const;
 
-    virtual int compute_electric_field (const geomtools::vector_3d & position_, 
-                                        double time_, 
+    virtual int compute_electric_field (const geomtools::vector_3d & position_,
+                                        double time_,
                                         geomtools::vector_3d & electric_field_) const;
 
-    virtual int compute_magnetic_field (const geomtools::vector_3d & position_, 
-                                        double time_, 
+    virtual int compute_magnetic_field (const geomtools::vector_3d & position_,
+                                        double time_,
                                         geomtools::vector_3d & magnetic_field_) const;
-   
+
     /// Smart print
-    virtual void tree_dump (std::ostream & out_         = std::clog, 
+    virtual void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
                             bool inherit_               = false) const;
@@ -167,8 +171,9 @@ namespace emfield {
 
   private:
 
+    datatools::logger::priority _logging_priority_; /// Logging priority threshold
+
     bool     _initialized_;    /// Initialization flag
-    bool     _debug_;          /// Debug flag
     bool     _error_;          /// Error flag
     bool     _electric_field_; /// Field can provide a value for the electric field
     bool     _magnetic_field_; /// Field can provide a value for the magnetic field

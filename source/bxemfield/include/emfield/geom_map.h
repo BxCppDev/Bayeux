@@ -1,17 +1,17 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* geom_map.h
  * Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-03-18
  * Last modified: 2013-03-18
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *
  *   Associative map of electro-magnetic fields and logical volumes
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
 #include <iostream>
@@ -46,7 +46,7 @@ namespace emfield {
   {
 
   public:
- 
+
     struct association_entry
     {
     public:
@@ -70,53 +70,57 @@ namespace emfield {
     };
 
     typedef std::map<std::string,association_entry> association_dict_type;
-     
+
     geom_map();
 
     virtual ~geom_map();
 
-    const association_dict_type & get_associations() const;
+    const association_dict_type & get_associations () const;
 
-    association_dict_type & grab_associations();
+    association_dict_type & grab_associations ();
 
-    bool is_initialized() const;
+    void set_logging_priority (datatools::logger::priority priority_);
 
-    void initialize(const datatools::properties& config_);
+    datatools::logger::priority get_logging_priority () const;
 
-    void reset();
+    bool is_initialized () const;
 
-    bool is_debug() const;
-    
-    void set_debug(bool d_);
+    void initialize (const datatools::properties& config_);
 
-    bool has_geometry_manager() const;
+    void reset ();
 
-    void set_geometry_manager(const geomtools::manager & gmgr_);
+    bool is_debug () const;
 
-    const geomtools::manager & get_geometry_manager() const;
+    void set_debug (bool d_);
 
-    bool has_fields_manager() const;
+    bool has_geometry_manager () const;
 
-    void set_fields_manager(const electromagnetic_field_manager & emfmgr_);
+    void set_geometry_manager (const geomtools::manager & gmgr_);
 
-    const electromagnetic_field_manager & get_fields_manager() const;
+    const geomtools::manager & get_geometry_manager () const;
 
-    virtual void tree_dump(std::ostream & out_ = std::clog,
-                           const std::string & title = "",
-                           const std::string & indent_= "",
-                           bool inherit_ = false) const;
+    bool has_fields_manager () const;
+
+    void set_fields_manager (const electromagnetic_field_manager & emfmgr_);
+
+    const electromagnetic_field_manager & get_fields_manager () const;
+
+    virtual void tree_dump (std::ostream & out_ = std::clog,
+                            const std::string & title = "",
+                            const std::string & indent_= "",
+                            bool inherit_ = false) const;
 
   protected :
 
-    void _construct(const datatools::properties& config_);
+    void _construct (const datatools::properties& config_);
 
   private:
 
-    bool _initialized_; /// Initialization flag
-    bool _debug_; /// Debug flag
-    const geomtools::manager * _geom_manager_; /// The geometry manager
+    datatools::logger::priority _logging_priority_;         /// Logging priority threshold
+    bool _initialized_;                                     /// Initialization flag
+    const geomtools::manager * _geom_manager_;              /// The geometry manager
     const electromagnetic_field_manager * _fields_manager_; /// The EM fields manager
-    association_dict_type _associations_map_; /// Dictionnary of "geometry/EM field" associations
+    association_dict_type _associations_map_;               /// Dictionnary of "geometry/EM field" associations
 
   };
 

@@ -17,38 +17,31 @@ namespace emfield {
     return _manager_;
   }
 
-  emfield_geom_plugin::emfield_geom_plugin()
+  emfield_geom_plugin::emfield_geom_plugin ()
   {
     _initialized_ = false;
     return;
   }
 
-  emfield_geom_plugin::~emfield_geom_plugin()
+  emfield_geom_plugin::~emfield_geom_plugin ()
   {
-    if (is_initialized())
+    if (is_initialized ())
       {
         reset ();
       }
     return;
   }
 
-  bool emfield_geom_plugin::is_initialized() const 
+  bool emfield_geom_plugin::is_initialized () const
   {
     return _initialized_;
   }
 
-  int emfield_geom_plugin::initialize(const datatools::properties & config_,
-                                        const geomtools::manager::plugins_dict_type & plugins_,
-                                        const datatools::service_dict_type & services_)
+  int emfield_geom_plugin::initialize (const datatools::properties & config_,
+                                       const geomtools::manager::plugins_dict_type & plugins_,
+                                       const datatools::service_dict_type & services_)
   {
-    if (is_initialized())
-      {
-        std::ostringstream message;
-        message << "emfield_geom_plugin::initialize: "
-                << "Plugin is already initialized !"
-                << std::endl;
-        throw std::logic_error(message.str());
-      }
+    DT_THROW_IF (is_initialized (), std::logic_error, "Plugin is already initialized !");
 
     if (config_.has_key("manager_config")) {
       std::string mgr_config_file = config_.fetch_string("manager_config");
@@ -60,9 +53,9 @@ namespace emfield {
     else {
       datatools::properties mgr_config;
       config_.export_and_rename_starting_with(mgr_config, "manager.", "");
-      std::clog << "NOTICE: " 
-                << "emfield::emfield_geom_plugin::initialize: "
-                << "Building the embeded EM field manager..." << std::endl;
+      // std::clog << "NOTICE: "
+      //           << "emfield::emfield_geom_plugin::initialize: "
+      //           << "Building the embeded EM field manager..." << std::endl;
       _build_manager(mgr_config);
     }
 
@@ -72,14 +65,8 @@ namespace emfield {
 
   void emfield_geom_plugin::_build_manager (const datatools::properties & manager_config_)
   {
-    bool devel = false;
-    //devel = true;
-    if (devel)
-      {
-        std::clog << "DEVEL: " 
-                  << "emfield::emfield_geom_plugin::_build_manager: "
-                  << "Entering..." << std::endl;
-      }
+    datatools::logger::priority local_priority = datatools::logger::PRIO_FATAL;
+    DT_LOG_TRACE (local_priority, "Entering...");
 
     // std::vector<std::string> input_files;
     // if (manager_config_.has_key ("emfield.files"))
@@ -93,7 +80,7 @@ namespace emfield {
     //     std::string filename = *i;
     //     datatools::fetch_path_with_env (filename);
     //     std::clog << "NOTICE: "
-    //               << "emfield::emfield_geom_plugin::_build_manager: " 
+    //               << "emfield::emfield_geom_plugin::_build_manager: "
     //               << "Loading EM fields file '" << filename << "'..." << std::endl;
     //     _manager_.load (filename);
     //   }
@@ -101,13 +88,7 @@ namespace emfield {
     _manager_.set_geometry_manager(get_geo_manager());
     _manager_.initialize (manager_config_);
 
-    if (devel)
-      {
-        std::clog << "DEVEL: " 
-                  << "emfield::emfield_geom_plugin::_build_manager: "
-                  << "Exiting." << std::endl;
-      }
-
+    DT_LOG_TRACE (local_priority, "Exiting.");
     return;
   }
 
@@ -118,6 +99,6 @@ namespace emfield {
     return 0;
   }
 
-} // end of namespace emfield 
+} // end of namespace emfield
 
 // end of emfield.h
