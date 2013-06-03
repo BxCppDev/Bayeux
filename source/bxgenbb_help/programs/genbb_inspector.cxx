@@ -29,6 +29,8 @@
 #error No reflection support in datatools
 #endif
 #include <datatools/tracer.h>
+#include <datatools/exception.h>
+#include <datatools/logger.h>
 
 #include <mygsl/histogram_service.h>
 #include <mygsl/histogram_pool.h>
@@ -57,6 +59,7 @@ namespace genbb {
     bool interactive; /// Interactive flag
     std::vector<std::string> unrecognized_options; /// Unrecognized options
     std::string configuration; /// Particle generator manager configuration file
+    std::string action;
     std::string generator; /// Particle generator name
     std::vector<std::string> output_paths;
     int number_of_events; /// Number of generated events
@@ -80,6 +83,7 @@ namespace genbb {
     out_ << "|-- unrecognized_options = " << unrecognized_options.size()
          << std::endl;
     out_ << "|-- configuration      = " << configuration << std::endl;
+    out_ << "|-- action             = " << action << std::endl;
     out_ << "|-- generator          = " << generator << std::endl;
     out_ << "|-- output_paths       = " << output_paths.size() << std::endl;
     out_ << "|-- number_of_events   = " << number_of_events << std::endl;
@@ -100,6 +104,7 @@ namespace genbb {
     debug = false;
     trace_index = 0;
     interactive = false;
+    action.clear();
     unrecognized_options.clear();
     output_paths.clear();
     number_of_events = -1;
@@ -227,48 +232,48 @@ namespace genbb {
 
   void inspector_data::reset()
   {
-     number_of_particles = 0;
-     number_of_charged_particles = 0;
-     number_of_electrons = 0;
-     number_of_positrons = 0;
-     number_of_gammas = 0;
-     number_of_alphas = 0;
-     number_of_neutrons = 0;
-     number_of_other_neutral_particles = 0;
-     number_of_other_positive_particles = 0;
-     number_of_other_negative_particles = 0;
+    number_of_particles = 0;
+    number_of_charged_particles = 0;
+    number_of_electrons = 0;
+    number_of_positrons = 0;
+    number_of_gammas = 0;
+    number_of_alphas = 0;
+    number_of_neutrons = 0;
+    number_of_other_neutral_particles = 0;
+    number_of_other_positive_particles = 0;
+    number_of_other_negative_particles = 0;
 
-     energy_sum = 0.0;
-     charged_particles_energy_sum = 0.0;
+    energy_sum = 0.0;
+    charged_particles_energy_sum = 0.0;
 
-     electrons_energies.clear();
-     positrons_energies.clear();
-     gammas_energies.clear();
-     alphas_energies.clear();
-     neutrons_energies.clear();
-     other_neutral_particles_energies.clear();
-     other_positive_particles_energies.clear();
-     other_negative_particles_energies.clear();
+    electrons_energies.clear();
+    positrons_energies.clear();
+    gammas_energies.clear();
+    alphas_energies.clear();
+    neutrons_energies.clear();
+    other_neutral_particles_energies.clear();
+    other_positive_particles_energies.clear();
+    other_negative_particles_energies.clear();
 
-     electrons_times.clear();
-     positrons_times.clear();
-     gammas_times.clear();
-     alphas_times.clear();
-     neutrons_times.clear();
-     other_neutral_particles_times.clear();
-     other_positive_particles_times.clear();
-     other_negative_particles_times.clear();
+    electrons_times.clear();
+    positrons_times.clear();
+    gammas_times.clear();
+    alphas_times.clear();
+    neutrons_times.clear();
+    other_neutral_particles_times.clear();
+    other_positive_particles_times.clear();
+    other_negative_particles_times.clear();
 
-     electrons_momenta.clear();
-     positrons_momenta.clear();
-     gammas_momenta.clear();
-     alphas_momenta.clear();
-     neutrons_momenta.clear();
-     other_neutral_particles_momenta.clear();
-     other_positive_particles_momenta.clear();
-     other_negative_particles_momenta.clear();
+    electrons_momenta.clear();
+    positrons_momenta.clear();
+    gammas_momenta.clear();
+    alphas_momenta.clear();
+    neutrons_momenta.clear();
+    other_neutral_particles_momenta.clear();
+    other_positive_particles_momenta.clear();
+    other_negative_particles_momenta.clear();
 
-     return;
+    return;
   }
 
   inspector_data::inspector_data()
@@ -911,11 +916,11 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   genbb::inspector_params params;
   namespace po = boost::program_options;
-  po::options_description opts ("Allowed options ");
+  po::options_description opts("Allowed options ");
   po::positional_options_description args;
   try {
 
-    opts.add_options ()
+    opts.add_options()
 
       ("help,h",
        "produce help message"
@@ -979,6 +984,14 @@ int main (int argc_, char ** argv_)
        "set the genbb manager configuration file. \n"
        "Example :                                 \n"
        " --configuration \"genbb.conf\"             "
+       )
+
+      ("action,a",
+       po::value<std::string> (&params.action),
+       "set the action.         \n"
+       "Examples :              \n"
+       " --action \"list\"      \n"
+       " --action \"shoot\"     "
        )
 
       ("generator,g",
@@ -1068,15 +1081,12 @@ int main (int argc_, char ** argv_)
 
   }
   catch (std::exception & x) {
-    std::cerr << datatools::io::error << "genbb_inspector: "
-              << x.what () << std::endl;
+    DT_LOG_FATAL(datatools::logger::PRIO_FATAL, x.what ());
     usage (opts, std::cerr);
     error_code = EXIT_FAILURE;
   }
   catch (...) {
-    std::cerr << datatools::io::error
-              << "genbb_inspector: "
-              << "Unexpected error !" << std::endl;
+    DT_LOG_FATAL(datatools::logger::PRIO_FATAL, "Unexpected error !");
     usage (opts,std::cerr);
     error_code = EXIT_FAILURE;
   }
@@ -1101,6 +1111,14 @@ void usage (const boost::program_options::options_description & options_,
        << GENBB_HELP_DATA_INSTALL_DIR
        << "/resources/manager/config/pro-1.0/manager.conf"
        << "\" \\\n";
+  out_ << "    --action \"list\"  \\\n";
+  out_ << "" << std::endl;
+  out_ << "  genbb_inspector \\\n";
+  out_ << "    --configuration \""
+       << GENBB_HELP_DATA_INSTALL_DIR
+       << "/resources/manager/config/pro-1.0/manager.conf"
+       << "\" \\\n";
+  out_ << "    --action \"shoot\"  \\\n";
   out_ << "    --generator \"Bi214_Po214\" \\\n";
   out_ << "    --prng-seed 314159 \\\n";
   out_ << "    --prng-tracker \"genbb_inspector_prng.trk\" \\\n";
@@ -1146,9 +1164,7 @@ namespace genbb {
 
   void inspector::initialize(const genbb::inspector_params & params_)
   {
-    if (_initialized_) {
-      throw std::logic_error("genbb::inspector::initialize: Already initialized !");
-    }
+    DT_THROW_IF (_initialized_, std::logic_error, "Already initialized !");
     _params_ = params_;
 
     // PRNG :
@@ -1169,6 +1185,10 @@ namespace genbb {
       _name_suffix_ = _params_.name_suffix;
     }
 
+    DT_THROW_IF(_params_.action != "list" && _params_.action != "shoot",
+                std::logic_error,
+                "Invalid action '" << _params_.action << "' !");
+
     // Event generator manager :
     _manager_.set_debug(_params_.debug);
     _manager_.set_external_prng(_prng_);
@@ -1177,109 +1197,97 @@ namespace genbb {
     datatools::fetch_path_with_env(config_filename);
     datatools::properties::read_config(config_filename, config);
     _manager_.initialize(config);
-    if (_params_.debug) {
-      _manager_.dump_particle_generators(std::clog,
-                                         "List of particle generators: ",
-                                         "DEBUG: ");
-    }
-    if (_params_.generator.empty()) {
-      throw std::logic_error("genbb::inspector::initialize: Missing generator name !");
-    }
-    if (! _manager_.has(_params_.generator)) {
-      std::ostringstream message;
-      message << "genbb::inspector::initialize: Generator named '"
-              << _params_.generator << "' does not exist !";
-      throw std::logic_error(message.str());
-    }
-    _generator_ = &_manager_.grab(_params_.generator);
 
-    // Histograms :
-    std::vector<std::string> pool_histo_setups;
-    if (_params_.histos_definitions.size() == 0) {
-      if (_params_.prompt) {
-        std::ostringstream filename;
-        filename << GENBB_HELP_DATA_INSTALL_DIR << '/'
-                 << "resources/inspector/config/le_nuphy-1.0/inspector_histos_prompt.conf";
-        _params_.histos_definitions.push_back(filename.str());
-        std::clog << datatools::io::notice
-                  << "genbb::inspector::initialize: "
-                  << "Using default definition file for histograms : '"
-                  << filename.str() << "'" << std::endl;
+    if (_params_.action == "list") {
+    }
+
+    if (_params_.action == "shoot") {
+      DT_THROW_IF (_params_.generator.empty(), std::logic_error,
+                   "Missing generator name !");
+      DT_THROW_IF (! _manager_.has(_params_.generator), std::logic_error,
+                   "Generator named '"
+                   << _params_.generator << "' does not exist !");
+      _generator_ = &_manager_.grab(_params_.generator);
+
+      // Histograms :
+      std::vector<std::string> pool_histo_setups;
+      if (_params_.histos_definitions.size() == 0) {
+        if (_params_.prompt) {
+          std::ostringstream filename;
+          filename << GENBB_HELP_DATA_INSTALL_DIR << '/'
+                   << "resources/inspector/config/le_nuphy-1.0/inspector_histos_prompt.conf";
+          _params_.histos_definitions.push_back(filename.str());
+          DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
+                        "Using default definition file for histograms : '" << filename.str() << "'");
+        }
+        if (_params_.delayed) {
+          std::ostringstream filename;
+          filename << GENBB_HELP_DATA_INSTALL_DIR << '/'
+                   << "resources/inspector/config/le_nuphy-1.0/inspector_histos_delayed.conf";
+          _params_.histos_definitions.push_back(filename.str());
+          DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
+                        "Using default definition file for histograms : '" << filename.str() << "'");
+        }
       }
-      if (_params_.delayed) {
-        std::ostringstream filename;
-        filename << GENBB_HELP_DATA_INSTALL_DIR << '/'
-                 << "resources/inspector/config/le_nuphy-1.0/inspector_histos_delayed.conf";
-        _params_.histos_definitions.push_back(filename.str());
-        std::clog << datatools::io::notice
-                  << "genbb::inspector::initialize: "
-                  << "Using default definition file for histograms : '"
-                  << filename.str() << "'" << std::endl;
+      for (int i = 0; i < _params_.histos_definitions.size(); i++) {
+        std::string hconfig = _params_.histos_definitions[i];
+        datatools::fetch_path_with_env(hconfig);
+        pool_histo_setups.push_back(hconfig);
       }
-    }
-    for (int i = 0; i < _params_.histos_definitions.size(); i++) {
-      std::string hconfig = _params_.histos_definitions[i];
-      datatools::fetch_path_with_env(hconfig);
-      pool_histo_setups.push_back(hconfig);
-    }
+      if (pool_histo_setups.size()) {
+        datatools::properties hs_config;
+        if (_params_.debug) {
+          hs_config.store_string("logging.priority", "debug");
+        }
+        std::ostringstream hpdesc_oss;
+        hpdesc_oss << "GENBB inspector histograms";
+        if (!_params_.title_prefix.empty()) {
+          hpdesc_oss << " -- " << _params_.title_prefix;
+        }
+        hs_config.store_string("pool.description", hpdesc_oss.str());
+        hs_config.store("pool.histo.setups", pool_histo_setups);
+        hs_config.store_flag("root_export.stats");
+        hs_config.store("root_export.title_prefix", _title_prefix_);
+        hs_config.store("root_export.name_suffix", _name_suffix_);
+        hs_config.store("output_files", _params_.output_paths);
+        std::vector<std::string> pool_export_prefixes;
+        pool_export_prefixes.push_back("value.");
+        hs_config.store("pool.histo.export_prefixes", pool_export_prefixes);
+        //std::cerr << "DEVEL: initializing HS...\n";
+        //hs_config.tree_dump(std::cerr, "Histogram service config : ", "DEVEL: ");
+         _histos_service_.tree_dump(std::cerr, "Histogram service: ", "DEVEL: ");
+        for (int i = 0; i < 10000; i++) std::cerr << std::flush;
+        _histos_service_.initialize_standalone(hs_config);
+        _histos_ = &_histos_service_.grab_pool();
+      }
 
-    datatools::properties hs_config;
-    hs_config.store_boolean("debug", _params_.debug);
-    std::ostringstream hpdesc_oss;
-    hpdesc_oss << "GENBB inspector histograms";
-    if (!_params_.title_prefix.empty()) {
-      hpdesc_oss << " -- " << _params_.title_prefix;
     }
-    hs_config.store_string("pool.description", hpdesc_oss.str());
-    hs_config.store("pool.histo.setups", pool_histo_setups);
-    hs_config.store_flag("root_export.stats");
-    hs_config.store("root_export.title_prefix", _title_prefix_);
-    hs_config.store("root_export.name_suffix", _name_suffix_);
-    hs_config.store("output_files", _params_.output_paths);
-    std::vector<std::string> pool_export_prefixes;
-    pool_export_prefixes.push_back("value.");
-    hs_config.store("pool.histo.export_prefixes", pool_export_prefixes);
-    //std::cerr << "DEVEL: initializing HS...\n";
-    //hs_config.tree_dump(std::cerr, "Histogram service config : ", "DEVEL: ");
-    _histos_service_.initialize_standalone(hs_config);
-    _histos_ = &_histos_service_.grab_pool();
-
     _initialized_  = true;
     return;
   }
 
   void inspector::reset()
   {
-    if (!_initialized_) {
-      throw std::logic_error("genbb::inspector::reset: Not initialized !");
-    }
+    DT_THROW_IF (!_initialized_, std::logic_error, "Not initialized !");
     _initialized_  = false;
+    _histos_ = 0;
+    if (_histos_service_.is_initialized()) _histos_service_.reset();
+    _generator_ = 0;
+    if (_manager_.is_initialized()) _manager_.reset();
     _params_.reset();
-
     return;
   }
 
   void inspector::run()
   {
-    if (!_initialized_) {
-      throw std::logic_error("genbb::inspector::reset: Not initialized !");
-    }
-
+    DT_THROW_IF (!_initialized_, std::logic_error, "Not initialized !");
     if (_params_.interactive) {
       _run_interactive();
     } else {
       if (_params_.debug) {
-        std::clog << datatools::io::debug
-                  << "genbb::inspector::reset: "
-                  << "Running in batch mode..." << std::endl;
+        DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "Running in batch mode...");
       }
       _run_batch();
-    }
-
-    if (_params_.debug) {
-      std::clog << datatools::io::debug
-                << "genbb::inspector::reset: "
-                  << "End." << std::endl;
     }
     return;
   }
@@ -1291,33 +1299,37 @@ namespace genbb {
     if (max_count <= 0) {
       max_count = DEFAULT_MAX_NUMBER_OF_EVENTS;
     }
-    while (_generator_->has_next()) {
-      if (_params_.trace_index > 0) {
-        DT_TRACER_MESSAGE(_params_.trace_index,
-                          "***************************************** Event " << count);
-      }
-      _prng_.tracker_tag("Event", count);
-      genbb::primary_event decay_event;
-      _generator_->load_next(decay_event, false);
-      if (_params_.debug) decay_event.tree_dump(std::clog, "Decay event: ", "DEBUG: ");
-      _inspect(decay_event);
-      count++;
-      if ((count == 1) || (count % 5000) == 0 || count == max_count) {
-        std::clog << "genbb::inspector::_run_batch: Generated event #" << count << '\n';
-      }
 
-      if (count >= max_count) break;
+    if (_params_.action == "list") {
+      _manager_.dump_particle_generators(std::cout,"List of particle generators: ","");
     }
 
+    if (_params_.action == "shoot") {
+      DT_THROW_IF(_generator_ == 0, std::logic_error, "Missing generator...");
+      while (_generator_->has_next()) {
+       if (_params_.trace_index > 0) {
+          DT_TRACER_MESSAGE(_params_.trace_index,
+                            "***************************************** Event " << count);
+        }
+        if (_prng_.has_tracker()) {
+          _prng_.tracker_tag("Event", count);
+        }
+        genbb::primary_event decay_event;
+        _generator_->load_next(decay_event, false);
+        if (_params_.debug) decay_event.tree_dump(std::clog, "Decay event: ", "DEBUG: ");
+        _inspect(decay_event);
+        count++;
+        if ((count == 1) || (count % 5000) == 0 || count == max_count) {
+          DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "Generated event #" << count);
+        }
+        if (count >= max_count) break;
+      }
+    }
     return;
   }
 
   void inspector::_inspect(const genbb::primary_event & event_)
   {
-    /*
-    std::cerr << "DEVEL: " << "genbb::inspector::_inspect: "
-              << "Entering..." << std::endl;
-    */
     static const std::string time_range_label[2] = { "prompt", "delayed" };
     inspector_data timing_data[2];
 
@@ -1357,10 +1369,6 @@ namespace genbb {
         // Analyze the particles :
         idata.number_of_particles = event_.get_particles().size();
         double ke = pp.get_kinetic_energy ();
-        /*
-        std::cerr << "DEVEL: " << "genbb::inspector::_inspect: "
-                  << "ke=" << ke << std::endl;
-        */
         idata.energy_sum += ke;
         if (std::abs(pp.get_charge()) > 0.9) {
           idata.number_of_charged_particles++;
@@ -1419,10 +1427,10 @@ namespace genbb {
       for (int ihn = 0; ihn < histo_names.size(); ihn++) {
         const std::string & hn = histo_names[ihn];
         /*
-        std::cerr << "DEVEL: " << "genbb::inspector::_inspect: "
-                  << "Histogram's name = '" << hn << "' "
-                  << "and TRM='" << time_range_label[timing] << "'"
-                  << std::endl;
+          std::cerr << "DEVEL: " << "genbb::inspector::_inspect: "
+          << "Histogram's name = '" << hn << "' "
+          << "and TRM='" << time_range_label[timing] << "'"
+          << std::endl;
         */
         if (_histos_->get_group(hn) != time_range_label[timing]) continue;
 
@@ -1479,41 +1487,33 @@ namespace genbb {
                                                 //  End grammar
                                                 boost::spirit::ascii::space
                                                 );
-            if (!result || first != last) {
-              // fail if we did not get a full match
-              std::ostringstream message;
-              message << "genbb::inspector::_inspect: "
-                      << "Parsing failed for '" << value_rule << "'!";
-              throw std::logic_error(message.str());
-            }
+            DT_THROW_IF (!result || first != last,
+                         std::logic_error,
+                         "Parsing failed for '" << value_rule << "' !");
             std::string value_accessor(value_accessor_array.begin(),
                                        value_accessor_array.end());
             // value_accessor  = boost::fusion::at_c<0>(fv);
             // value_index = boost::fusion::at_c<1>(fv);
             /*
-            std::cerr << "DEVEL: " << "genbb::inspector::_inspect: "
-                      << "Histogram's value='" << value_accessor << "'"
-                      << " @ " << "index=" << value_index
-                      << std::endl;
+              std::cerr << "DEVEL: " << "genbb::inspector::_inspect: "
+              << "Histogram's value='" << value_accessor << "'"
+              << " @ " << "index=" << value_index
+              << std::endl;
             */
             DR_VALUE val;
             if (value_index < 0) {
               if (metaClass.hasProperty(value_accessor)) {
                 val = idObj.DR_GET(value_accessor);
               } else {
-                std::ostringstream message;
-                message << "genbb::inspector::_inspect: "
-                        << "Cannot find property named '" << value_accessor << "' in meta class !";
-                throw std::logic_error(message.str());
+                DT_THROW_IF (true, std::logic_error,
+                             "Cannot find property named '" << value_accessor << "' in meta class !");
               }
             } else if (value_index2 < 0) {
               if (metaClass.hasFunction(value_accessor)) {
                 val = idObj.DR_CALL(value_accessor, DR_ARGS (value_index));
               } else {
-                std::ostringstream message;
-                message << "genbb::inspector::_inspect: "
-                        << "Cannot find function named '" << value_accessor << "' in meta class !";
-                throw std::logic_error(message.str());
+                DT_THROW_IF (true, std::logic_error,
+                             "Cannot find function named '" << value_accessor << "' in meta class !");
               }
             } else {
               if (metaClass.hasFunction(value_accessor)) {
@@ -1525,10 +1525,8 @@ namespace genbb {
                                                              particle_type2, value_index2));
                 //std::cerr << "DEVEL: **************** val=" << val << std::endl;
               } else {
-                std::ostringstream message;
-                message << "genbb::inspector::_inspect: "
-                        << "Cannot find function named '" << value_accessor << "' in meta class !";
-                throw std::logic_error(message.str());
+                DT_THROW_IF (true, std::logic_error,
+                             "Cannot find function named '" << value_accessor << "' in meta class !");
               }
             }
             double value;
@@ -1540,9 +1538,9 @@ namespace genbb {
               value = ival * 1.0;
             }
             /*
-            std::cerr << "DEVEL: " << "genbb::inspector::_inspect: "
-                      << "Value = " << value
-                      << std::endl;
+              std::cerr << "DEVEL: " << "genbb::inspector::_inspect: "
+              << "Value = " << value
+              << std::endl;
             */
             if (datatools::is_valid(value)) {
               h1.fill(value);
@@ -1557,9 +1555,8 @@ namespace genbb {
           std::vector<std::string> value_rules;
           if (h2_aux.has_key("value.2d.accessors")) {
             h2_aux.fetch("value.2d.accessors", value_rules);
-            if (value_rules.size() != 2) {
-              throw std::logic_error("genbb::inspector::_inspect: Invalid 'value.2d.names' parameter !");
-            }
+            DT_THROW_IF (value_rules.size() != 2, std::logic_error,
+                         "Invalid 'value.2d.names' parameter !");
             std::vector<char> x_value_accessor_array;
             std::vector<char> y_value_accessor_array;
             int x_value_index = -1;
@@ -1587,13 +1584,9 @@ namespace genbb {
                                                 //  End grammar
                                                 boost::spirit::ascii::space
                                                 );
-            if (!x_result || x_first != x_last) {
-              // fail if we did not get a full match
-              std::ostringstream message;
-              message << "genbb::inspector::_inspect: "
-                      << "Parsing failed for '" << x_value_rule << "'!";
-              throw std::logic_error(message.str());
-            }
+            DT_THROW_IF (! x_result || x_first != x_last,
+                         std::logic_error,
+                         "Parsing failed for '" << x_value_rule << "' !");
             std::string x_value_accessor(x_value_accessor_array.begin(),
                                          x_value_accessor_array.end());
 
@@ -1617,13 +1610,9 @@ namespace genbb {
                                                 //  End grammar
                                                 boost::spirit::ascii::space
                                                 );
-            if (!y_result || y_first != y_last) {
-              // fail if we did not get a full match
-              std::ostringstream message;
-              message << "genbb::inspector::_inspect: "
-                      << "Parsing failed for '" << y_value_rule << "'!";
-              throw std::logic_error(message.str());
-            }
+            DT_THROW_IF (! y_result || y_first != y_last,
+                         std::logic_error,
+                         "Parsing failed for '" << y_value_rule << "' !");
             std::string y_value_accessor(y_value_accessor_array.begin(),
                                          y_value_accessor_array.end());
             // Extract X and Y values :
@@ -1635,19 +1624,15 @@ namespace genbb {
               if (metaClass.hasProperty(x_value_accessor)) {
                 x_val = idObj.DR_GET(x_value_accessor);
               } else {
-                std::ostringstream message;
-                message << "genbb::inspector::_inspect: "
-                        << "Cannot find property named '" << x_value_accessor << "' in meta class !";
-                throw std::logic_error(message.str());
+                DT_THROW_IF (true, std::logic_error,
+                             "Cannot find property named '" << x_value_accessor << "' in meta class !");
               }
             } else {
               if (metaClass.hasFunction(x_value_accessor)) {
                 x_val = idObj.DR_CALL (x_value_accessor, DR_ARGS (x_value_index));
               } else {
-                std::ostringstream message;
-                message << "genbb::inspector::_inspect: "
-                        << "Cannot find function named '" << x_value_accessor << "' in meta class !";
-                throw std::logic_error(message.str());
+                DT_THROW_IF (true, std::logic_error,
+                             "Cannot find function named '" << x_value_accessor << "' in meta class !");
               }
             }
             if (x_val.type() == DR_REAL) {
@@ -1661,19 +1646,15 @@ namespace genbb {
               if (metaClass.hasProperty(y_value_accessor)) {
                 y_val = idObj.DR_GET(y_value_accessor);
               } else {
-                std::ostringstream message;
-                message << "genbb::inspector::_inspect: "
-                        << "Cannot find property named '" << y_value_accessor << "' in meta class !";
-                throw std::logic_error(message.str());
+                DT_THROW_IF (true, std::logic_error,
+                             "Cannot find property named '" << y_value_accessor << "' in meta class !");
               }
             } else {
               if (metaClass.hasFunction(y_value_accessor)) {
                 y_val = idObj.DR_CALL (y_value_accessor, DR_ARGS (y_value_index));
               } else {
-                std::ostringstream message;
-                message << "genbb::inspector::_inspect: "
-                        << "Cannot find property named '" << y_value_accessor << "' in meta class !";
-                throw std::logic_error(message.str());
+                DT_THROW_IF (true, std::logic_error,
+                             "Cannot find property named '" << y_value_accessor << "' in meta class !");
               }
             }
             if (y_val.type() == DR_REAL) {
@@ -1683,8 +1664,7 @@ namespace genbb {
               y_value = ival * 1.0;
             }
 
-            if (datatools::is_valid(x_value)
-                && datatools::is_valid(y_value)) {
+            if (datatools::is_valid(x_value) && datatools::is_valid(y_value)) {
               h2.fill(x_value, y_value);
             }
           }

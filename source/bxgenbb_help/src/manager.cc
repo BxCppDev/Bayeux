@@ -429,9 +429,7 @@ namespace genbb {
                                          const std::string& an_indent) const {
     std::string indent;
     if (!an_indent.empty()) indent = an_indent;
-
     if (!title.empty()) out << title << ":" << std::endl;
-
     // Particle generators:
     {
       size_t sz = _particle_generators_.size();
@@ -448,14 +446,15 @@ namespace genbb {
         }
         const std::string& pg_name = it->first;
         const detail::pg_entry_type& pg_record = it->second;
-
-        out << "Name : '" << pg_name << "' "
-            << "Type : '" << pg_record.get_id () << "' ";
+        out.setf(std::ios::left, std::ios::adjustfield);
+        out.width(30);
+        out << pg_name << " : " << pg_record.get_id () << " ";
         out << '(';
         int count = 0;
         if (pg_record.is_initialized()) {
           out << "initialized";
-          count++;
+        } else {
+          out << "not initialized";
         }
         out << ')';
         out << std::endl;
