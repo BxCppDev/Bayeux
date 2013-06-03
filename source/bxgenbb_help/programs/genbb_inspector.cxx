@@ -1,5 +1,26 @@
 // -*- mode: c++; -*-
-// genbb_inspector.cxx
+/* \file genbb_inspector.cxx
+ * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Creation date : 2013-04-20
+ * Last modified : 2013-06-03
+ *
+ * Copyright (C) 2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
 
 #include <cstdlib>
 #include <iostream>
@@ -28,6 +49,7 @@
 #else
 #error No reflection support in datatools
 #endif
+#include <datatools/library_loader.h>
 #include <datatools/tracer.h>
 #include <datatools/exception.h>
 #include <datatools/logger.h>
@@ -919,9 +941,10 @@ int main (int argc_, char ** argv_)
   po::options_description opts("Allowed options ");
   po::positional_options_description args;
   try {
+    std::vector<std::string> LL_dlls;
+    std::string LL_config;
 
     opts.add_options()
-
       ("help,h",
        "produce help message"
        )
@@ -931,6 +954,11 @@ int main (int argc_, char ** argv_)
        ->zero_tokens()
        ->default_value (false),
        "produce debug logging"
+       )
+
+      ("load-dll,l",
+       po::value<std::vector<std::string> > (),
+       "load a DLL"
        )
 
       ("interactive,I",
@@ -1061,6 +1089,19 @@ int main (int argc_, char ** argv_)
     if (vm.count ("help")) {
       usage(opts, std::cout);
       return error_code;
+    }
+
+    if (vm.count ("load-dll")) {
+      LL_dlls = vm["load-dll"].as<std::vector<std::string> > ();
+    }
+
+    uint32_t LL_flags = datatools::library_loader::allow_unregistered;
+    datatools::library_loader LL (LL_flags, LL_config);
+    BOOST_FOREACH (const std::string & dll_name, LL_dlls) {
+      DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "Loading DLL '" << dll_name << "'...");
+      DT_THROW_IF (LL.load (dll_name) != EXIT_SUCCESS,
+                   std::runtime_error,
+                   "Loading DLL '" << dll_name << "' failed !");
     }
 
     if (vm.count ("output-file")) {
@@ -1255,7 +1296,7 @@ namespace genbb {
         hs_config.store("pool.histo.export_prefixes", pool_export_prefixes);
         //std::cerr << "DEVEL: initializing HS...\n";
         //hs_config.tree_dump(std::cerr, "Histogram service config : ", "DEVEL: ");
-         _histos_service_.tree_dump(std::cerr, "Histogram service: ", "DEVEL: ");
+        _histos_service_.tree_dump(std::cerr, "Histogram service: ", "DEVEL: ");
         for (int i = 0; i < 10000; i++) std::cerr << std::flush;
         _histos_service_.initialize_standalone(hs_config);
         _histos_ = &_histos_service_.grab_pool();
@@ -1307,7 +1348,7 @@ namespace genbb {
     if (_params_.action == "shoot") {
       DT_THROW_IF(_generator_ == 0, std::logic_error, "Missing generator...");
       while (_generator_->has_next()) {
-       if (_params_.trace_index > 0) {
+        if (_params_.trace_index > 0) {
           DT_TRACER_MESSAGE(_params_.trace_index,
                             "***************************************** Event " << count);
         }
@@ -1548,7 +1589,7 @@ namespace genbb {
           }
         } // Histo 1D
 
-        // 2D-histogram :
+          // 2D-histogram :
         if (_histos_->has_2d(hn)) {
           mygsl::histogram_2d & h2 = _histos_->grab_2d(hn);
           const datatools::properties & h2_aux = h2.get_auxiliaries();
