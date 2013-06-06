@@ -222,7 +222,7 @@ namespace brio {
                                    const string & serial_tag_,
                                    size_t buffer_size_)
   {
-    DT_THROW_IF (! is_opened (), std::logic_error, "Operation prohibited; file is not opened !");
+    DT_THROW_IF (! is_opened (), std::logic_error, "Operation prohibited; file for store label '" << label_ << "' is not opened !");
     DT_THROW_IF (is_locked (), std::logic_error, "Operation prohibited; writer is locked !");
     DT_THROW_IF (label_.empty (), std::logic_error, "Empty label !");
     DT_THROW_IF (! _allow_automatic_store_
