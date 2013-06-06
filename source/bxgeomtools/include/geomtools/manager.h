@@ -107,10 +107,21 @@ namespace geomtools {
       /// Check if plugin is initialized
       virtual bool is_initialized() const = 0;
 
+      /// Get the logging priority threshold
+      datatools::logger::priority get_logging_priority() const;
+
+      /// Set the logging priority threshold
+      void set_logging_priority( datatools::logger::priority);
+
+
     protected:
+
+      void _basic_initialize(const datatools::properties & config_);
 
       /// Get a mutable reference to the geometry manager
       manager & _grab_geo_manager();
+
+      datatools::logger::priority _logging; /// The logging priority threshold
 
     private:
 

@@ -48,8 +48,20 @@ namespace geomtools {
   DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(manager::base_plugin,
                                                    "geomtools::manager::base_plugin/__system__");
 
+  datatools::logger::priority
+  manager::base_plugin::get_logging_priority() const
+  {
+    return _logging;
+  }
+
+  void manager::base_plugin::set_logging_priority(datatools::logger::priority lp_)
+  {
+    _logging = lp_;
+  }
+
   manager::base_plugin::base_plugin()
   {
+    _logging = datatools::logger::PRIO_WARNING;
     _geo_mgr_ = 0;
     return;
   }
@@ -90,6 +102,11 @@ namespace geomtools {
   {
     datatools::service_dict_type dummy;
     return initialize(config_, plugins_, dummy);
+  }
+
+  void manager::base_plugin::_basic_initialize(const datatools::properties & config_)
+  {
+    set_logging_priority(datatools::logger::extract_logging_configuration(config_,datatools::logger::PRIO_WARNING));
   }
 
   /************************************************/
@@ -696,9 +713,9 @@ namespace geomtools {
       _id_manager_.load (categories_list);
     }
     if (id_mgr_debug) {
-      _id_manager_.tree_dump (std::clog,
-                              "Geometry manager's ID manager:",
-                              "DEBUG: geomtools::manager::_at_init_: ");
+      DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG,
+                   "Geometry manager's ID manager:");
+     _id_manager_.tree_dump (std::clog);
     }
 
     DT_LOG_NOTICE(_logging, "Initialization of the geometry mapping...");
