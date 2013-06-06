@@ -2,7 +2,7 @@
 /* physics_list.h
  * Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-10
- * Last modified: 2010-04-10
+ * Last modified: 2013-06-03
  *
  * License:
  *
@@ -25,6 +25,8 @@
 #include "G4VUserPhysicsList.hh"
 //#include "globals.hh"
 
+#include <mctools/g4/loggable_support.h>
+
 namespace datatools {
   class properties;
 }
@@ -34,10 +36,11 @@ namespace mctools {
   namespace g4 {
 
     class physics_list : public G4VUserPhysicsList,
-                         public datatools::i_tree_dumpable
+                         public datatools::i_tree_dumpable,
+                         public loggable_support
     {
     public:
-      enum g4_verbosity_t
+      enum g4_verbosity_type
         {
           VERBOSITY_SILENT  = 0,
           VERBOSITY_WARNING = 1,
@@ -50,17 +53,16 @@ namespace mctools {
 
     public:
 
-      bool is_debug () const;
-
       bool is_em_standard () const;
+
       bool is_em_low_energy () const;
+
       bool is_em_penelope () const;
+
       const std::string & get_em_model () const;
 
-      // ctor:
       physics_list (bool logging_ = false);
 
-      // dtor:
       ~physics_list ();
 
       void initialize (const datatools::properties & config_);
@@ -94,7 +96,6 @@ namespace mctools {
 
     private:
 
-      bool _debug_;
       bool _initialized_;
       bool _logging_;
       bool _g4_verbosity_;

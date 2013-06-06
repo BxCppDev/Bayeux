@@ -1,7 +1,7 @@
 /* simulation_ctrl.h
  * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-07-04
- * Last modified : 2013-03-09
+ * Last modified : 2013-06-03
  *
  * Description:
  *
@@ -17,6 +17,8 @@
 #include <boost/thread/condition.hpp>
 #include <boost/cstdint.hpp>
 
+#include <mctools/g4/loggable_support.h>
+
 namespace mctools {
 
   namespace g4 {
@@ -28,11 +30,10 @@ namespace mctools {
     /** Object that hosts control parameters and data structures (thread/mutex/condition)
      * for a multi-threaded running of the G4 simulation manager (simulation module)
      */
-    class simulation_ctrl
+    class simulation_ctrl :
+      public loggable_support
     {
     public :
-
-      static bool g_devel;
 
       enum event_availability_status_type
         {
@@ -40,15 +41,6 @@ namespace mctools {
           AVAILABLE_FOR_G4     = 1,
           ABORT                = 2
         };
-
-      manager          * simulation_manager;
-      boost::thread    * simulation_thread;
-      boost::mutex     * event_mutex;
-      boost::condition * event_available_condition;
-      int                event_availability_status;
-      bool               stop_requested;
-      uint32_t           counts;
-      uint32_t           max_counts;
 
     public :
 
@@ -58,15 +50,26 @@ namespace mctools {
 
       void set_simulation_manager (manager & simulation_manager_);
 
-      // ctor:
+      /// Constructor
       simulation_ctrl (manager & simulation_manager_, uint32_t max_counts_ = 0);
 
-      // dtor:
+      /// Destructor
       ~simulation_ctrl ();
 
       void start ();
 
       void start_simulation_run ();
+
+    public:
+
+      manager          * simulation_manager;
+      boost::thread    * simulation_thread;
+      boost::mutex     * event_mutex;
+      boost::condition * event_available_condition;
+      int                event_availability_status;
+      bool               stop_requested;
+      uint32_t           counts;
+      uint32_t           max_counts;
 
     };
 

@@ -124,6 +124,9 @@ namespace mctools {
     /// Get a reference to the mutable collection of auxiliary properties
     datatools::properties & grab_properties ();
 
+    // Set the collection of auxiliary properties
+    void set_properties(const datatools::properties &);
+
     /// Get a reference to the mutable collection of MC hits handles
     step_hits_dict_type & grab_step_hits_dict ();
 
@@ -212,12 +215,22 @@ namespace mctools {
     /*** datatools/Boost/brio serialization ***/
     DATATOOLS_SERIALIZATION_DECLARATION();
 
+#if MCTOOLS_WITH_REFLECTION == 1
+    //! Reflection interface
+    DR_CLASS_RTTI();
+#endif
+
   };
 
 } // end of namespace mctools
 
 #include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT_KEY2(mctools::simulated_data, "mctools::simulated_data")
+
+#if GEOMTOOLS_WITH_REFLECTION == 1
+// Activate reflection layer for the mctools::simulated_data class :
+DR_CLASS_INIT(::mctools::simulated_data);
+#endif // GEOMTOOLS_WITH_REFLECTION
 
 #endif // MCTOOLS_SIMULATED_DATA_H_
 

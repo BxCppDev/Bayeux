@@ -26,7 +26,7 @@ namespace geomtools {
 }
 
 namespace mctools {
-  
+
   // Forward declaration :
   class simulated_data;
 
@@ -35,6 +35,7 @@ namespace mctools {
     class manager;
     class simulation_ctrl;
 
+    /// \brief The Geant4 simulation module
     DPP_MODULE_CLASS_DECLARE(simulation_module)
     {
 
@@ -42,10 +43,10 @@ namespace mctools {
 
       void set_geometry_manager (const geomtools::manager & geometry_manager_);
 
-      // Constructor :
-      simulation_module (int debug_level_ = 0);
+      /// Constructor
+      simulation_module (datatools::logger::priority logging_priority = datatools::logger::PRIO_FATAL);
 
-      // Destructor :
+      /// Destructor
       virtual ~simulation_module ();
 
       // This macro setup the module standard interface (initialize/reset/process) :
@@ -81,6 +82,10 @@ namespace mctools {
   }  // end of namespace g4
 
 }  // end of namespace mctools
+
+// Object configuration description (OCD) support :
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(mctools::g4::simulation_module)
 
 #endif // MCTOOLS_G4_SIMULATION_MODULE_H_
 

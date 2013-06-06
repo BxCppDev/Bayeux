@@ -26,6 +26,7 @@
 #include <datatools/handle_pool.h>
 #include <datatools/factory_macros.h>
 #include <datatools/i_tree_dump.h>
+#include <datatools/logger.h>
 
 #include <mygsl/rng.h>
 
@@ -102,7 +103,7 @@ namespace mctools {
     virtual void initialize (const datatools::properties & a_config);
 
     /// Main setup routine:
-    virtual void initialize (const datatools::properties & a_config, 
+    virtual void initialize (const datatools::properties & a_config,
                              datatools::service_manager & a_service_mgr);
 
     /** High level routine:
@@ -131,17 +132,22 @@ namespace mctools {
                             const std::string & indent_ = "",
                             bool inherit_               = false) const;
 
+    datatools::logger::priority get_logging_priority() const;
+
+    void set_logging_priority(datatools::logger::priority);
+
   protected:
-    
+
     /*
     /// Main hidden algorithm
     virtual void _process(const i_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
                           simulated_data::hit_handle_collection_type * the_gg_hits,
                           simulated_data::hit_collection_type * the_plain_gg_hits);
     */
- 
+
   protected:
 
+    datatools::logger::priority      _logging_priority; /// Logging priority threshold
     bool                             _debug; /// Debug flag
     std::string                      _name;  /// Name of the step hit processor
     std::string                      _hit_category; /** The name of the category

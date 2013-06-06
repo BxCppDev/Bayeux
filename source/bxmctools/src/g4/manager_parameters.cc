@@ -8,8 +8,12 @@
 #include <boost/filesystem.hpp>
 
 #include <mctools/utils.h>
+
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
+#include <datatools/exception.h>
+#include <datatools/logger.h>
+
 #include <mygsl/random_utils.h>
 
 namespace mctools {
@@ -33,8 +37,7 @@ namespace mctools {
 
     void manager_parameters::set_defaults ()
     {
-      this->debug                   = false;
-      this->verbose                 = false;
+      this->logging                 = "warning";
       this->manager_config_filename = "";
       this->g4_macro                = "";
       this->g4_visu                 = false;
@@ -100,7 +103,6 @@ namespace mctools {
       a_out << "         --output-data-file mc_g4_sample_0.xml \\" << endl;
       a_out << "         > mc_g4_production.log 2>&1" << endl;
       a_out << endl;
-      a_out << " See README for other running examples" << endl;
       a_out << endl;
 
       return;
@@ -111,39 +113,40 @@ namespace mctools {
     {
       /*** Setup ***/
 
-      if (! mygsl::seed_manager::seed_is_valid (a_params.vg_seed)) {
-        throw logic_error ("mctools::g4::manager_parameters::setup: Invalid vertex generator seed value !");
-      }
+      DT_THROW_IF (! mygsl::seed_manager::seed_is_valid (a_params.vg_seed),
+                   logic_error,
+                   "Invalid vertex generator seed value !");
+      DT_THROW_IF (! mygsl::seed_manager::seed_is_valid (a_params.eg_seed),
+                   logic_error,
+                   "Invalid event generator seed value !");
+      DT_THROW_IF (! mygsl::seed_manager::seed_is_valid (a_params.mgr_seed),
+                   logic_error,
+                   "Invalid G4 generator seed value !");
+      DT_THROW_IF (! mygsl::seed_manager::seed_is_valid (a_params.shpf_seed),
+                   logic_error,
+                   "Invalid SHPF generator seed value !");
 
-      if (! mygsl::seed_manager::seed_is_valid (a_params.eg_seed)) {
-        throw logic_error ("mctools::g4::manager_parameters::setup: Invalid event generator seed value !");
-      }
-
-      if (! mygsl::seed_manager::seed_is_valid (a_params.mgr_seed)) {
-        throw logic_error ("mctools::g4::manager_parameters::setup: Invalid G4 generator seed value !");
-      }
-      if (! mygsl::seed_manager::seed_is_valid (a_params.shpf_seed)) {
-        throw logic_error ("mctools::g4::manager_parameters::setup: Invalid SHPF generator seed value !");
-      }
-
-      a_manager.set_debug (a_params.debug);
-      a_manager.set_verbose (a_params.verbose);
+      datatools::logger::priority mlogprio = datatools::logger::PRIO_WARNING;
+      mlogprio = datatools::logger::get_priority(a_params.logging);
+      DT_THROW_IF (mlogprio == datatools::logger::PRIO_UNDEFINED,
+                   std::logic_error,
+                   "Invalid logging priority label '"
+                   << a_params.logging << "' !");
+      a_manager.set_logging_priority (mlogprio);
       a_manager.set_using_time_stat (a_params.using_time_stat);
       if (a_params.prng_states_save_modulo > 0) {
         a_manager.set_prng_state_save_modulo (a_params.prng_states_save_modulo);
       }
       if (! a_params.g4_macro.empty ()) {
-        clog << datatools::io::notice
-             << "g4_production: "
-             << "Using G4 macro '"
-             << a_params.g4_macro << "'..." << endl;
+        DT_LOG_NOTICE(a_manager.get_logging_priority (),
+                      "Using G4 macro '"
+                      << a_params.g4_macro << "'...");
         a_manager.set_g4_macro (a_params.g4_macro);
       }
       // PRNG seeding :
-      if (a_params.mgr_seed != mygsl::random_utils::SEED_INVALID)
-        {
-          // register the G4 manager seed :
-          a_manager.grab_seed_manager ().update_seed (mctools::g4::manager::constants::instance ().G4_MANAGER_LABEL, a_params.mgr_seed);
+      if (a_params.mgr_seed != mygsl::random_utils::SEED_INVALID) {
+        // register the G4 manager seed :
+        a_manager.grab_seed_manager ().update_seed (mctools::g4::manager::constants::instance ().G4_MANAGER_LABEL, a_params.mgr_seed);
         }
       if (a_params.vg_seed != mygsl::random_utils::SEED_INVALID) {
         // register the vertex generator's seed :
@@ -196,44 +199,31 @@ namespace mctools {
       a_manager.set_interactive (a_params.interactive);
       a_manager.set_g4_visualization (a_params.g4_visu);
 
-      if (a_params.debug) a_manager.dump_base (clog, "mctools::g4::manager: ", "DEBUG: ");
+      //if (a_params.debug) a_manager.dump_base (clog, "mctools::g4::manager: ", "DEBUG: ");
 
       /*** Configuration file ***/
 
-      if (a_params.manager_config_filename.empty ()) {
-        throw logic_error ("mctools::g4::manager_parameters::setup: Missing configuration filename for the simulation manager !");
-      }
+      DT_THROW_IF (a_params.manager_config_filename.empty (),
+                   std::logic_error,
+                   "Missing configuration filename for the simulation manager !");
       string manager_config_filename = a_params.manager_config_filename;
       datatools::fetch_path_with_env (manager_config_filename);
-      if (! boost::filesystem::exists (manager_config_filename)) {
-        ostringstream message;
-        message << "mctools::g4::manager_parameters::setup: "
-                << "Simulation manager configuration filename '"
-                << manager_config_filename << "' does not exist ! ";
-        throw logic_error (message.str ());
-        //clog << datatools::io::warning << message.str () << endl;
-      }
-      datatools::multi_properties
-        the_configuration ("name",
-                           "",
-                           "Configuration for the 'g4' simulation manager");
+      DT_THROW_IF (! boost::filesystem::exists (manager_config_filename),
+                   std::runtime_error,
+                   "Simulation manager configuration filename '"
+                   << manager_config_filename << "' does not exist ! ");
+      datatools::multi_properties the_configuration ("name",
+                                                     "",
+                                                     "Configuration for the 'g4' simulation manager");
       the_configuration.read (manager_config_filename);
-
-      if (a_params.debug) {
-        the_configuration.tree_dump (clog,
-                                     "mctools::g4::manager_parameters::setup: ",
-                                     "DEBUG: ");
-      }
 
       /*** Initialization ***/
 
-      clog << datatools::io::notice
-           << "mctools::g4::manager_parameters::setup: "
-           << "Initializing the simulation manager..." << endl;
+      DT_LOG_NOTICE(a_manager.get_logging_priority (),
+                    "Initializing the simulation manager...");
       a_manager.initialize (the_configuration);
-
-      if (a_params.debug) a_manager.dump_base (clog, "mctools::g4::manager: ", "DEBUG: ");
-
+      DT_LOG_NOTICE(a_manager.get_logging_priority (),
+                    "Simulation manager has been configured and inltialized.");
       return;
     }
 

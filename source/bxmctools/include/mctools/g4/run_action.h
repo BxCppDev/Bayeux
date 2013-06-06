@@ -31,25 +31,23 @@
 // G4 stuff :
 #include <G4UserRunAction.hh>
 
+#include <mctools/g4/loggable_support.h>
+
 namespace mctools {
 
   namespace g4 {
 
     class manager;
 
-    class run_action : public G4UserRunAction
+    class run_action : public G4UserRunAction,
+                       public loggable_support
     {
     public:
 
       static const int NUMBER_EVENTS_MODULO_NONE    = 0;
- 
       static const int NUMBER_EVENTS_MODULO_DEFAULT = 100;
 
       bool is_initialized () const;
-
-      bool is_debug () const;
-
-      void set_debug (bool);
 
       bool using_run_header_footer () const;
 
@@ -89,17 +87,18 @@ namespace mctools {
 
       const manager & get_manager () const;
 
-    public:
-
-      // ctor:
       run_action (manager & a_mgr);
 
-      // dtor:
       virtual ~run_action ();
 
       void initialize (const datatools::properties & config_);
 
       void dump (std::ostream & out_ = std::clog) const;
+
+      // Geant4 interface:
+      void BeginOfRunAction (const G4Run *);
+
+      void EndOfRunAction (const G4Run *);
 
     protected:
 
@@ -107,16 +106,9 @@ namespace mctools {
 
       virtual void _build_run_footer ();
 
-    public:
-
-      void BeginOfRunAction (const G4Run *);
-
-      void EndOfRunAction (const G4Run *);
-
     private:
 
       bool _initialized_;
-      bool _debug_;
       bool _use_run_header_footer_;
       int  _number_events_modulo_;
       int32_t   _number_of_processed_events_;
@@ -127,6 +119,7 @@ namespace mctools {
 
       // I/O :
       bool        _save_data_;
+      bool        _output_file_preserve_;
       std::string _output_file_dir_;
       std::string _output_file_prefix_;
       std::string _output_file_format_;

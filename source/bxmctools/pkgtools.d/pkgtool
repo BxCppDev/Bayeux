@@ -13,6 +13,7 @@ function my_exit ()
 }
 
 bio_support=1
+reflection_support=1
 
 appname=${APPNAME}
 appversion=0.1
@@ -115,6 +116,12 @@ EOF
 	cat <<EOF
       --with-bio                 : generate the Boost I/O DLL (default)
       --without-bio              : do not generate the Boost I/O DLL
+EOF
+    fi
+    if [ ${reflection_support} -eq 1 ]; then
+	cat <<EOF
+      --with-reflection          : generate the reflection DLL (default)
+      --without-reflection       : do not generate the reflection DLL
 EOF
     fi
  #    cat <<EOF
@@ -332,10 +339,14 @@ function do_configure ()
     local with_dependency_check=0
     local with_g4=1
     local with_g4_visualization=1
- 
+
     local with_bio=0
     if [ ${bio_support} -eq 1 ]; then
 	with_bio=1 # default
+    fi
+    local with_reflection=0
+    if [ ${reflection_support} -eq 1 ]; then
+	with_reflection=1 # default
     fi
 
     #local with_gnuplot_display=1
@@ -416,6 +427,11 @@ function do_configure ()
     if [ ${bio_support} -eq 1 ]; then
 	pkgtools__msg_notice "With Boost I/O DLL    : '${with_bio}'"
     fi
+    if [ ${reflection_support} -eq 1 ]; then
+	pkgtools__msg_notice "With reflection DLL   : '${with_reflection}'"
+    fi
+    pkgtools__msg_notice "With G4 DLL           : '${with_g4}'"
+    pkgtools__msg_notice "\`-- With G4 visualisation : '${with_g4_visualization}'"
     pkgtools__msg_notice "With dependency check : '${with_dependency_check}'"
 
     if [ ${with_dependency_check} -eq 1 ]; then
@@ -438,6 +454,7 @@ function do_configure ()
 	# -DCMAKE_MODULE_PATH="${CADFAEL_SHARE_DIR}/cmake/Modules;${CMAKE_MODULE_PATH}" \
 #	${additional_options} \
 
+      #  -Dmaterials_DIR=${MATERIALS_CMAKE_CONFIG_DIR}
 
     cd ${the_build_dir}
     pwd
@@ -447,11 +464,11 @@ function do_configure ()
         -Ddpp_DIR=${DPP_CMAKE_CONFIG_DIR} \
         -Dgenbb_help_DIR=${GENBB_HELP_CMAKE_CONFIG_DIR} \
         -Dgenvtx_DIR=${GENVTX_CMAKE_CONFIG_DIR} \
-        -Dmaterials_DIR=${MATERIALS_CMAKE_CONFIG_DIR} \
         -Demfield_DIR=${EMFIELD_CMAKE_CONFIG_DIR} \
 	-DCMAKE_MODULE_PATH:PATH="${CADFAEL_SHARE_DIR}/cmake/Modules;${CMAKE_MODULE_PATH}" \
  	-DMCTOOLS_WITH_DEBUG=${with_debug} \
 	-DMCTOOLS_WITH_BIO=${with_bio} \
+	-DMCTOOLS_WITH_REFLECTION=${with_reflection} \
 	-DMCTOOLS_WITH_DOC=${with_doc} \
 	-DMCTOOLS_WITH_TEST=${with_test} \
 	-DMCTOOLS_WITH_G4=${with_g4} \

@@ -44,12 +44,10 @@ int main (int argc_, char ** argv_)
         string option = token;
         if ((option == "-d") || (option == "--debug")) {
           debug = true;
-        }
-        else {
+        } else {
           clog << "warning: ignoring option '" << option << "'!" << endl;
         }
-      }
-      else {
+      } else {
         string argument = token;
         {
           clog << "warning: ignoring argument '" << argument << "'!" << endl;
@@ -60,15 +58,16 @@ int main (int argc_, char ** argv_)
 
     // Geometry manager :
     geomtools::manager geo_manager;
-    geo_manager.set_debug (debug);
+    if (debug) geo_manager.set_logging_priority (datatools::logger::PRIO_DEBUG);
     datatools::properties gm_setup;
-    std::string gm_filename = "${GEOMTOOLS_DATA_DIR}/testing/config/test-1.0/test_manager.conf";
+    //std::string gm_filename = "${MCTOOLS_DATA_DIR}/testing/config/geometry/test_manager.conf";
+    std::string gm_filename = "${MCTOOLS_DATA_DIR}/testing/config/g4/test-1.0/geometry/manager.conf";
     datatools::fetch_path_with_env(gm_filename);
     datatools::properties::read_config(gm_filename, gm_setup);
     geo_manager.initialize (gm_setup);
 
     // Additional plugins :
-    std::string mag_field_plugin_file="${EMFIELD_DATA_DIR}/testing/config/test_emfield_geom_plugin.conf";
+    std::string mag_field_plugin_file="${MCTOOLS_DATA_DIR}/testing/config/fields/test_emfield_geom_plugin.conf";
     datatools::fetch_path_with_env(mag_field_plugin_file);
     datatools::multi_properties mag_field_plugin_config;
     mag_field_plugin_config.read(mag_field_plugin_file);
@@ -79,8 +78,6 @@ int main (int argc_, char ** argv_)
     mctools::g4::detector_construction my_detector_construction (my_g4_manager);
     my_detector_construction.set_geometry_manager(geo_manager);
     datatools::properties dc_setup;
-    dc_setup.store("debug", debug);
-    dc_setup.store("verbose", false);
     dc_setup.store("gdml.tmp_dir", ".");
     dc_setup.store("gdml.no_validation", false);
     dc_setup.store("gdml.schema_location", "local");

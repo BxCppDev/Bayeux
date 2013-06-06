@@ -7,23 +7,39 @@
 
 #include <datatools/ioutils.h>
 #include <datatools/service_manager.h>
+#include <datatools/exception.h>
+
 
 #include <geomtools/geometry_service.h>
 
 namespace mctools {
 
   using namespace std;
- 
+
   DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(base_step_hit_processor, "mctools::base_step_hit_processor/__system__");
+
+  datatools::logger::priority base_step_hit_processor::get_logging_priority() const
+  {
+    return _logging_priority;
+  }
+
+  void base_step_hit_processor::set_logging_priority(datatools::logger::priority p)
+  {
+    _logging_priority = p;
+  }
 
   bool base_step_hit_processor::is_debug() const
   {
-    return _debug;
+    return _logging_priority >= datatools::logger::PRIO_DEBUG;
   }
 
   void base_step_hit_processor::set_debug(bool d_)
   {
-    _debug = d_;
+    if (d_) {
+       _logging_priority = datatools::logger::PRIO_DEBUG;
+    } else {
+       _logging_priority = datatools::logger::PRIO_NOTICE;
+    }
     return;
   }
 
@@ -44,7 +60,7 @@ namespace mctools {
     return _auxiliaries;
   }
 
-  datatools::properties &  
+  datatools::properties &
   base_step_hit_processor::grab_auxiliaries()
   {
     return _auxiliaries;
@@ -57,41 +73,29 @@ namespace mctools {
 
   void base_step_hit_processor::set_external_rng(mygsl::rng & rng_)
   {
-    ostringstream message;
-    message << "mctools::base_step_hit_processor::set_external_rng: "
-            << "Processor '" << get_name() << "' does not use any external PRNG. "
-            << "Ignoring this request !";
-    clog << datatools::io::warning << message.str() << endl;
+    DT_LOG_WARNING(_logging_priority,
+                   "Processor '" << get_name() << "' does not use any external PRNG. "
+                   << "Ignoring this request !");
     return;
   }
 
   void base_step_hit_processor::setup_private_pool(size_t capacity_)
   {
-    if (_private_pool != 0)
-      {
-        if (_private_pool->get_number_of_used_item() > 0)
-          {
-            ostringstream message;
-            message << "mctools::base_step_hit_processor::setup_private_pool: "
-                    << "Cannot resize private pool for processor '" << get_name() << "' !";
-            throw logic_error(message.str());
-          }
-        if (capacity_ < _private_pool->get_capacity())
-          {
-            return;
-          }
-        else
-          {
-            _private_pool->resize(capacity_);
-          }
+    if (_private_pool != 0) {
+      DT_THROW_IF (_private_pool->get_number_of_used_item() > 0,
+                   logic_error,
+                   "Cannot resize private pool for processor '" << get_name() << "' !");
+      if (capacity_ < _private_pool->get_capacity()) {
+        return;
+      } else {
+        _private_pool->resize(capacity_);
       }
+    }
     else
       {
-        ostringstream message;
-        message << "mctools::base_step_hit_processor::setup_private_pool: "
-                << "Setup a private pool of hits for processor '" << get_name()
-                << "' with capacity = " << capacity_;
-        clog << datatools::io::notice << message.str() << endl;
+        DT_LOG_WARNING(_logging_priority,
+                       "Setup a private pool of hits for processor '" << get_name()
+                       << "' with capacity = " << capacity_);
         _private_pool = new pool_type(capacity_);
         _pool_owner = false;
       }
@@ -107,13 +111,9 @@ namespace mctools {
 
   base_step_hit_processor::pool_type & base_step_hit_processor::get_pool() const
   {
-    if (_pool == 0)
-      {
-        ostringstream message;
-        message << "mctools::base_step_hit_processor::get_pool: "
-                << "Processor '" << get_name() << "' does not use any pool of hits !";
-        throw logic_error(message.str());
-      }
+    DT_THROW_IF (_pool == 0,
+                 logic_error,
+                 "Processor '" << get_name() << "' does not use any pool of hits !");
     return *_pool;
   }
 
@@ -127,6 +127,8 @@ namespace mctools {
     if (has_pool())
       {
         the_hits.push_back(_pool->create());
+        /*
+       //////////// 2013-05-13 FM : remove this test for now, may be unuseful...
         // There is 2 references here:
         // - one from the pool itself
         // - the other fresh one from this collection of hits
@@ -135,8 +137,9 @@ namespace mctools {
             ostringstream message;
             message << "mctools::base_step_hit_processor::add_new_hit: "
                     << "This hit is already referenced by another handle !";
-            throw logic_error(message.str());
+            th row logic_error(message.str());
           }
+        */
       }
     else
       {
@@ -152,7 +155,7 @@ namespace mctools {
 
   base_step_hit_processor::base_step_hit_processor()
   {
-    _debug = false;
+    _logging_priority = datatools::logger::PRIO_NOTICE;
     _geom_manager = 0;
     _private_pool = 0;
     _pool_owner = false;
@@ -162,10 +165,9 @@ namespace mctools {
 
   base_step_hit_processor::~base_step_hit_processor()
   {
-    if (_private_pool != 0)
-      {
-        delete _private_pool;
-      }
+    if (_private_pool != 0) {
+      delete _private_pool;
+    }
     return;
   }
 
@@ -207,56 +209,58 @@ namespace mctools {
     _geom_manager = &gmgr_;
     return;
   }
-  
+
   void base_step_hit_processor::initialize(const datatools::properties & config_)
   {
     datatools::service_manager dummy_service_mgr;
     initialize(config_,dummy_service_mgr);
     return;
   }
-   
-  void base_step_hit_processor::initialize(const datatools::properties & config_, 
+
+  void base_step_hit_processor::initialize(const datatools::properties & config_,
                                            datatools::service_manager & service_mgr_)
   {
-    if (config_.has_flag("debug"))
-      {
-        set_debug(true);
-      }
+    if (config_.has_flag ("verbose"))  {
+      set_logging_priority(datatools::logger::PRIO_NOTICE);
+    }
 
-    if (! has_geom_manager())
-      {
-        if (config_.has_key("geometry_service.name"))
-          {
+    if (config_.has_flag ("debug")) {
+      set_logging_priority(datatools::logger::PRIO_DEBUG);
+    }
+
+    if (config_.has_key("logging.priority")) {
+      std::string prio_label = config_.fetch_string("logging.priority");
+      datatools::logger::priority p = datatools::logger::get_priority(prio_label);
+      DT_THROW_IF(p == datatools::logger::PRIO_UNDEFINED,
+                  std::domain_error,
+                  "Unknow logging priority ``" << prio_label << "`` !");
+      set_logging_priority(p);
+    }
+
+
+    if (! has_geom_manager())  {
+        if (config_.has_key("geometry_service.name")) {
             std::string geo_service_name = config_.fetch_string("geometry_service.name");
-            if (! service_mgr_.has(geo_service_name))
-              {
-                ostringstream message;
-                message << "mctools::base_step_hit_processor::initialize: "
-                        << "No service named '" << geo_service_name << "' found in the service manager !";
-                throw logic_error(message.str());
-              }
-            if (! service_mgr_.is_a<geomtools::geometry_service>(geo_service_name))
-              {
-                ostringstream message;
-                message << "mctools::base_step_hit_processor::initialize: "
-                        << "Service named '" << geo_service_name << "' is not a geometry service !";
-                throw logic_error(message.str());
-              }
+            DT_THROW_IF (! service_mgr_.has(geo_service_name),
+                         logic_error,
+                         "No service named '" << geo_service_name << "' found in the service manager !");
+            DT_THROW_IF (! service_mgr_.is_a<geomtools::geometry_service>(geo_service_name),
+                         logic_error,
+                         "Service named '" << geo_service_name << "' is not a geometry service !");
             const geomtools::geometry_service & geo_srv = service_mgr_.get<geomtools::geometry_service>(geo_service_name);
-            std::clog << datatools::io::notice
-                      << "Set the geometry manager for '" << geo_service_name << "' service in the '" <<  get_name() << "' step hit processor." << std::endl;
+            DT_LOG_NOTICE(_logging_priority,
+                          "Set the geometry manager for '" << geo_service_name
+                          << "' service in the '" <<  get_name() << "' step hit processor.");
             set_geom_manager(geo_srv.get_geom_manager());
           }
       }
 
-    if (config_.has_key("hit.category"))
-      {
+    if (config_.has_key("hit.category")) {
         string hit_cat = config_.fetch_string("hit.category");
         set_hit_category(hit_cat);
       }
 
-    if (config_.has_key("sensitive.category"))
-      {
+    if (config_.has_key("sensitive.category")) {
         string sens_cat = config_.fetch_string("sensitive.category");
         set_sensitive_category(sens_cat);
       }
@@ -291,45 +295,27 @@ namespace mctools {
     */
 
     // Check:
-    if (_hit_category.empty())
-      {
-        ostringstream message;
-        message << "base_step_hit_processor::initialize: "
-                << "Missing hit category !";
-        throw logic_error(message.str());
-      }
+    DT_THROW_IF (_hit_category.empty(),
+                 logic_error,
+                 "Missing hit category !");
     // Check:
-    if (_sensitive_category.empty())
-      {
-        ostringstream message;
-        message << "base_step_hit_processor::initialize: "
-                << "Missing sensitive category !";
-        throw logic_error(message.str());
-      }
+    DT_THROW_IF (_sensitive_category.empty(),
+                 logic_error,
+                 "Missing sensitive category !");
 
     // Check if we should install a private hit pool in this processor :
-    if (! has_pool())
-      {
-        if (config_.has_flag("use_private_pool"))
-          {
+    if (! has_pool()) {
+        if (config_.has_flag("use_private_pool")) {
             size_t capacity = DEFAULT_POOL_CAPACITY;
 
             // Use a dedicated capacity for the private pool :
-            if (config_.has_key("private_pool_capacity"))
-              {
+            if (config_.has_key("private_pool_capacity")) {
                 int cap = config_.fetch_integer("private_pool_capacity");
-                if (cap < 1)
-                  {
-                    ostringstream message;
-                    message << "mctools::processing::base_step_hit_processor::initialize: "
-                            << "Invalid hit pool capacity(" << cap << ") !";
-                    throw logic_error(message.str());
-                  }
+                DT_THROW_IF (cap < 1,logic_error,"Invalid hit pool capacity(" << cap << ") !");
                 capacity =(size_t) cap;
               }
             setup_private_pool(capacity);
-            if (is_debug()) _private_pool->dump(clog,
-"DEBUG: mctools::processing::base_step_hit_processor::initialize: Private hit pool: ");
+            if (is_debug()) _private_pool->dump(clog, "Private hit pool: ");
           }
       }
 
@@ -347,22 +333,15 @@ namespace mctools {
         // within the requested hit category:
         simulated_data::step_hits_dict_type::iterator found
           = a_sim_data.grab_step_hits_dict().find(_hit_category);
-        if (found == a_sim_data.grab_step_hits_dict().end())
+        if (found == a_sim_data.grab_step_hits_dict().end()) {
+          DT_LOG_TRACE(_logging_priority, "Add the category '" << _hit_category
+                       << "' list of hits in the current event...");
           {
-            if (devel)
-              {
-                clog << datatools::io::devel
-                     << "calorimeter_step_hit_processor::process: "
-                     << "Add the category '" << _hit_category
-                     << "' list of hits in the current event..."
-                     << endl;
-              }
-            {
-              simulated_data::hit_handle_collection_type dummy;
-              a_sim_data.grab_step_hits_dict()[_hit_category] = dummy;
-            }
-            found = a_sim_data.grab_step_hits_dict().find(_hit_category);
+            simulated_data::hit_handle_collection_type dummy;
+            a_sim_data.grab_step_hits_dict()[_hit_category] = dummy;
           }
+          found = a_sim_data.grab_step_hits_dict().find(_hit_category);
+        }
 
         // Pickup a reference to the proper list of handles of hits:
         simulated_data::hit_handle_collection_type & hits = found->second;
@@ -371,26 +350,18 @@ namespace mctools {
         process(the_base_step_hits, hits);
       }
 
-    if (a_sim_data.use_plain_hit_collection())
-      {
+    if (a_sim_data.use_plain_hit_collection()) {
         // Check if the event has a collection of plain hits
         // within the requested hit category:
         simulated_data::plain_step_hits_dict_type::iterator found
           = a_sim_data.grab_plain_step_hits_dict().find(_hit_category);
-        if (found == a_sim_data.grab_plain_step_hits_dict().end())
-          {
-            if (devel)
-              {
-                clog << datatools::io::devel
-                     << "calorimeter_step_hit_processor::process: "
-                     << "Add the category '" << _hit_category
-                     << "' list of hits in the current event..."
-                     << endl;
-              }
-            simulated_data::hit_collection_type dummy;
-            a_sim_data.grab_plain_step_hits_dict()[_hit_category] = dummy;
-            found = a_sim_data.grab_plain_step_hits_dict().find(_hit_category);
-          }
+        if (found == a_sim_data.grab_plain_step_hits_dict().end()) {
+          DT_LOG_TRACE(_logging_priority,"Add the category '" << _hit_category
+                       << "' list of hits in the current event...");
+          simulated_data::hit_collection_type dummy;
+          a_sim_data.grab_plain_step_hits_dict()[_hit_category] = dummy;
+          found = a_sim_data.grab_plain_step_hits_dict().find(_hit_category);
+        }
 
         // Pickup a reference to the proper list of hits:
         simulated_data::hit_collection_type & hits = found->second;
@@ -406,7 +377,7 @@ namespace mctools {
   void base_step_hit_processor::process(const base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
                                         simulated_data::hit_collection_type & the_plain_hits)
   {
-    throw logic_error("mctools::processing::base_step_hit_processor::process: Not implemented !");
+    DT_THROW_IF(true, runtime_error, "Not implemented !");
     return;
   }
 
@@ -426,7 +397,7 @@ namespace mctools {
     namespace du = datatools;
 
     a_out << indent << du::i_tree_dumpable::tag
-          << "Debug              : " << _debug << endl;
+          << "Logging priority   : " << datatools::logger::get_priority_label(_logging_priority) << endl;
     a_out << indent << du::i_tree_dumpable::tag
           << "Name               : '" << _name << "'" << endl;
     a_out << indent << du::i_tree_dumpable::tag
@@ -470,7 +441,7 @@ namespace mctools {
     _record_mc_step_hit_processor_ = r_;
     return;
   }
-      
+
   bool push_all_step_hit_processor::is_record_mc_step_hit_processor() const
   {
     return _record_mc_step_hit_processor_;
@@ -495,7 +466,7 @@ namespace mctools {
   {
     this->base_step_hit_processor::initialize(config_,
                                               service_mgr_);
-    
+
     if (config_.has_flag("visu.highlighted_hits")) {
       set_visu_highlighted_hits(true);
     }
@@ -527,14 +498,14 @@ namespace mctools {
       // pickup a hit from the pool and add it at the end of the collection of hits(handles) :
       this->add_new_hit(the_hits);
       // get a reference to the last inserted MC base step hit :
-      base_step_hit & the_step_hit = the_hits.back().get();
+      base_step_hit & the_step_hit = the_hits.back().grab();
       the_step_hit = *the_sim_step_hit; // copy the hit in the one stored through the current handle
       the_step_hit.set_hit_id(count); // attribute an unique ID to the hit
       if (are_visu_highlighted_hits()) {
         the_step_hit.grab_auxiliaries().update_flag(mctools::hit_utils::HIT_VISU_HIGHLIGHTED_KEY);
       }
       if (is_record_mc_step_hit_processor()) {
-        the_step_hit.grab_auxiliaries().update(mctools::hit_utils::HIT_MC_STEP_PROCESSOR_KEY, 
+        the_step_hit.grab_auxiliaries().update(mctools::hit_utils::HIT_MC_STEP_PROCESSOR_KEY,
                                                get_name());
       }
       count++; // increment the hit counter
@@ -568,7 +539,7 @@ namespace mctools {
     return;
   }
 
-  MCTOOLS_STEP_HIT_PROCESSOR_REGISTRATION_IMPLEMENT(push_all_step_hit_processor, 
+  MCTOOLS_STEP_HIT_PROCESSOR_REGISTRATION_IMPLEMENT(push_all_step_hit_processor,
                                                     "mctools::push_all_step_hit_processor");
 
   /****************************************************/
@@ -609,7 +580,7 @@ namespace mctools {
     return;
   }
 
-  MCTOOLS_STEP_HIT_PROCESSOR_REGISTRATION_IMPLEMENT(kill_all_step_hit_processor, 
+  MCTOOLS_STEP_HIT_PROCESSOR_REGISTRATION_IMPLEMENT(kill_all_step_hit_processor,
                                                     "mctools::kill_all_step_hit_processor");
 
 } // end of namespace mctools

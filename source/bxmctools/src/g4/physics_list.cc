@@ -156,21 +156,11 @@ namespace mctools {
       return _em_model_ == EM_MODEL_PENELOPE;
     }
 
-    bool physics_list::is_debug () const
-    {
-      return _debug_;
-    }
-
     // ctor:
     physics_list::physics_list (bool logging_) : G4VUserPhysicsList ()
     {
-      // clog << datatools::io::devel
-      //      << "physics_list::physics_list: Entering...." << endl;
-      _debug_       = false;
       _initialized_ = false;
-
       _logging_ = logging_;
-
       this->_set_defaults ();
       return;
     }
@@ -188,154 +178,89 @@ namespace mctools {
       // clog << datatools::io::devel
       //      << "mctools::g4::physics_list::initialize: Entering..." << endl;
 
-      if (_initialized_)
-        {
-          throw logic_error ("mctools::g4::physics_list::initialize: Already initialized !");
-        }
-
-      // Parse debug:
-      if (config_.has_flag ("debug"))
-        {
-          _debug_ = true;
-        }
+      DT_THROW_IF (_initialized_, logic_error, "Already initialized !");
 
       // Processes activation:
-      if (config_.has_key ("em.model"))
-        {
+      if (config_.has_key ("em.model")) {
           _em_model_
             = config_.fetch_string ("em.model");
         }
-      if (is_debug ())
-        {
-          clog << datatools::io::debug
-               << "mctools::g4::physics_list::initialize: "
-               << "Electro-Magnetic model set to: '" << _em_model_ << "'" << endl;
-        }
 
-      if (config_.has_key ("electron.energy_loss"))
-        {
-          _electron_energy_loss_
-            = config_.fetch_boolean ("electron.energy_loss");
-        }
-      if (is_debug ())
-        {
-          clog << datatools::io::debug
-               << "mctools::g4::physics_list::initialize: "
-               << "Electrons Energy Loss set to: "
-               <<  _electron_energy_loss_ << endl;
-        }
+      DT_LOG_DEBUG(_logprio(),"Electro-Magnetic model set to: '" << _em_model_ << "'");
 
-      if (config_.has_key ("electron.multiple_scattering"))
-        {
-          _electron_multiple_scattering_
-            = config_.fetch_boolean ("electron.multiple_scattering");
-        }
-      if (is_debug ())
-        {
-          clog << datatools::io::debug
-               << "mctools::g4::physics_list::initialize: "
-               << "Electrons Multiple Scatering set to: "
-               << _electron_multiple_scattering_ << endl;
-        }
+      if (config_.has_key ("electron.energy_loss")) {
+        _electron_energy_loss_
+          = config_.fetch_boolean ("electron.energy_loss");
+      }
+      DT_LOG_DEBUG(_logprio(), "Electrons energy Loss set to: "
+                   <<  _electron_energy_loss_);
 
-      if (config_.has_key ("bremsstrahlung"))
-        {
-          _bremsstrahlung_
-            = config_.fetch_boolean ("bremsstrahlung");
-        }
-      if (is_debug ())
-        {
-          clog << datatools::io::debug
-               << "mctools::g4::physics_list::initialize: "
-               << "Bremsstrahlung set to: " <<  _bremsstrahlung_ << endl;
-        }
+      if (config_.has_key ("electron.multiple_scattering")) {
+        _electron_multiple_scattering_
+          = config_.fetch_boolean ("electron.multiple_scattering");
+      }
+      DT_LOG_DEBUG(_logprio(),"Electrons multiple Scatering set to: "
+                   << _electron_multiple_scattering_);
 
-      if (config_.has_key ("use_he_leptons"))
-        {
-          _use_he_leptons_ = config_.fetch_boolean ("use_he_leptons");
-        }
-      if (is_debug ())
-        {
-          clog << datatools::io::debug
-               << "mctools::g4::physics_list::initialize: "
-               << "Use HE leptons set to: " << _use_he_leptons_ << endl;
-        }
+      if (config_.has_key ("bremsstrahlung")) {
+        _bremsstrahlung_
+          = config_.fetch_boolean ("bremsstrahlung");
+      }
+      DT_LOG_DEBUG(_logprio(),"Bremsstrahlung set to: " <<  _bremsstrahlung_);
 
-      if (config_.has_key ("use_mesons"))
-        {
-          _use_mesons_ = config_.fetch_boolean ("use_mesons");
-        }
-      if (is_debug ())
-        {
-          clog << datatools::io::debug
-               << "mctools::g4::physics_list::initialize: "
-               << "Use mesons set to: " << _use_mesons_ << endl;
-        }
+      if (config_.has_key ("use_he_leptons")) {
+        _use_he_leptons_ = config_.fetch_boolean ("use_he_leptons");
+      }
+      DT_LOG_DEBUG(_logprio(),"Use HE leptons set to: " << _use_he_leptons_);
 
-      if (config_.has_key ("use_neutrons"))
-        {
-          _use_neutrons_ = config_.fetch_boolean ("use_neutrons");
-        }
-      if (is_debug ())
-        {
-          clog << datatools::io::debug
-               << "mctools::g4::physics_list::initialize: "
-               << "Use neutrons set to: " << _use_neutrons_ << endl;
-        }
+      if (config_.has_key ("use_mesons")) {
+        _use_mesons_ = config_.fetch_boolean ("use_mesons");
+      }
+      DT_LOG_DEBUG(_logprio(),"Use mesons set to: " << _use_mesons_);
+
+      if (config_.has_key ("use_neutrons")) {
+        _use_neutrons_ = config_.fetch_boolean ("use_neutrons");
+      }
+      DT_LOG_DEBUG(_logprio(),"Use neutrons set to: " << _use_neutrons_);
 
       // Cuts:
-      if (config_.has_flag ("using_cuts"))
-        {
-          _using_cuts_ = true;
+      if (config_.has_flag ("using_cuts")) {
+        _using_cuts_ = true;
+      }
+      DT_LOG_DEBUG(_logprio(),"Use cuts set to: " << _using_cuts_);
+
+      if (_using_cuts_) {
+        // Production cuts:
+        vector<string> regions;
+        double lunit = CLHEP::mm;
+        if (config_.has_key ("production_cuts.regions")) {
+          config_.fetch ("production_cuts.regions", regions);
+
+          if (config_.has_key ("production_cuts.length_unit")) {
+            string lunit_str = config_.fetch_string ("production_cuts.length_unit");
+            lunit = datatools::units::get_length_unit_from (lunit_str);
+          }
+
+          for (int i = 0; i < (int) regions.size (); i++) {
+            const string & region_label = regions[i];
+            ostringstream key;
+            key << "production_cuts." << region_label;
+            DT_THROW_IF (! config_.has_key (key.str()),
+                         logic_error,
+                         "Missing production cuts for '"
+                         << key.str () << "' !");
+            double production_cut = config_.fetch_real (key.str ());
+            production_cut *= lunit;
+            _region_cuts_[region_label] = production_cut;
+          }
         }
-      if (is_debug ())
-        {
-          clog << datatools::io::debug
-               << "mctools::g4::physics_list::initialize: "
-               << "Use cuts set to: " << _using_cuts_ << endl;
-        }
 
-      if (_using_cuts_)
-        {
-          // Production cuts:
-          vector<string> regions;
-          double lunit = CLHEP::mm;
-          if (config_.has_key ("production_cuts.regions"))
-            {
-              config_.fetch ("production_cuts.regions", regions);
+        DT_LOG_NOTICE(_logprio(),
+                      "Production cuts for regions : ");
 
-              if (config_.has_key ("production_cuts.length_unit"))
-                {
-                  string lunit_str = config_.fetch_string ("production_cuts.length_unit");
-                  lunit = datatools::units::get_length_unit_from (lunit_str);
-                }
-
-              for (int i = 0; i < (int) regions.size (); i++)
-                {
-                  const string & region_label = regions[i];
-                  ostringstream key;
-                  key << "production_cuts." << region_label;
-                  if (! config_.has_key (key.str ()))
-                    {
-                      ostringstream message;
-                      message << "mctools::g4:physics_list::initialize: "
-                              << "Missing production cuts for '"
-                              << key.str () << "' !";
-                      throw logic_error (message.str ());
-                    }
-                  double production_cut = config_.fetch_real (key.str ());
-                  production_cut *= lunit;
-                  _region_cuts_[region_label] = production_cut;
-                }
-            }
-
-          clog << datatools::io::notice
-               << "mctools::g4:physics_list::initialize: "
-               << "Production cuts for regions : " << endl;
-
-          for (map<string, double>::const_iterator i = _region_cuts_.begin ();
-               i != _region_cuts_.end ();
-               i++)
+        for (map<string, double>::const_iterator i = _region_cuts_.begin ();
+             i != _region_cuts_.end ();
+             i++)
             {
               map<string, double>::const_iterator j = i;
               j++;
@@ -1183,10 +1108,11 @@ PHYSICS source_cut D .05
         }
 
       out_ << indent << du::i_tree_dumpable::tag
-           << "Initialized                  : " <<  (_initialized_ ? "Yes": "No") << endl;
+           << "Initialized                  : " << (_initialized_ ? "Yes": "No") << endl;
 
       out_ << indent << du::i_tree_dumpable::tag
-           << "Debug                        : " <<  (_debug_ ? "Yes": "No") << endl;
+           << "Logging priority             : "
+           << datatools::logger::get_priority_label(_logprio()) << endl;
 
       out_ << indent << du::i_tree_dumpable::tag
            << "G4 verbosity                 : " << (_g4_verbosity_ ? "Yes" : "No") << endl;

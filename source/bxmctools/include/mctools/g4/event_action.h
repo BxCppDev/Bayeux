@@ -20,6 +20,8 @@
 #include <mctools/simulated_data.h>
 #include <mctools/base_step_hit_processor.h>
 
+#include <mctools/g4/loggable_support.h>
+
 // G4 stuff:
 #include <G4UserEventAction.hh>
 
@@ -34,19 +36,14 @@ namespace mctools {
     class run_action;
     class detector_construction;
 
-    class event_action : public G4UserEventAction
+    class event_action : public G4UserEventAction,
+                         public loggable_support
     {
     public:
 
       typedef ::mctools::simulated_data sim_data_type;
 
-    public:
-
       bool is_initialized () const;
-
-      bool is_debug () const;
-
-      void set_debug (bool);
 
       bool is_aborted_event () const;
 
@@ -62,14 +59,6 @@ namespace mctools {
 
       run_action & grab_run_action ();
 
-    private:
-
-      void _at_init_ ();
-
-      void _at_reset_ ();
-
-    public:
-
       /// Constructor
       event_action (run_action & a_run_action, const detector_construction & a_dctor);
 
@@ -80,14 +69,21 @@ namespace mctools {
 
       void reset ();
 
+      // Geant4 interface :
+
       void BeginOfEventAction (const G4Event*);
 
       void EndOfEventAction (const G4Event*);
 
     private:
 
+      void _at_init_ ();
+
+      void _at_reset_ ();
+
+    private:
+
       bool                          _initialized_;
-      bool                          _debug_;
       const detector_construction * _detector_construction_;
       run_action *                  _run_action_;
       sim_data_type                 _event_data_;

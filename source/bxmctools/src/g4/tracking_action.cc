@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* tracking_action.cc
  */
 
@@ -21,36 +21,25 @@
 namespace mctools {
 
   namespace g4 {
-  
+
     using namespace std;
 
-    bool tracking_action::is_debug () const
-    {
-      return _debug_;
-    }
-  
-    void tracking_action::set_debug (bool new_value_)
-    {
-      _debug_ = new_value_;
-     return;
-    }
-  
     // ctor:
     tracking_action::tracking_action ()
     {
-      _debug_ = false;
       return;
     }
-  
+
     // dtor:
     tracking_action::~tracking_action ()
     {
       return;
     }
-      
+
     void tracking_action::initialize (const datatools::properties & config_)
     {
       // parsing configuration properties...
+      _initialize_logging_support(config_);
       return;
     }
 
@@ -64,7 +53,7 @@ namespace mctools {
       CLHEP::Hep3Vector position = track_->GetPosition ();
       */
 
-      return;      
+      return;
     }
 
     void tracking_action::PostUserTrackingAction(const G4Track* track_)

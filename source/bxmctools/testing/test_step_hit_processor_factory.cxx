@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 // test_step_hit_processor_factory.cxx
 
 #include <cstdlib>
@@ -25,8 +25,8 @@ int main (int argc_, char ** argv_)
   using namespace std;
   int error_code = EXIT_SUCCESS;
   try {
-    std::clog << "Test program for class 'step_hit_processor_factory'!" << std::endl; 
-  
+    std::clog << "Test program for class 'step_hit_processor_factory'!" << std::endl;
+
     bool debug = false;
     std::string gmgr_config_file;
     std::string mconfig_filename;
@@ -35,18 +35,18 @@ int main (int argc_, char ** argv_)
     while (iarg < argc_) {
       std::string token = argv_[iarg];
       if (token[0] == '-') {
-        std::string option = token; 
+        std::string option = token;
         if ((option == "-d") || (option == "--debug"))  {
           debug = true;
         }
-        else { 
-          std::clog << "warning: ignoring option '" << option << "'!" << std::endl; 
+        else {
+          std::clog << "warning: ignoring option '" << option << "'!" << std::endl;
         }
       }
       else {
-        std::string argument = token; 
-        { 
-          std::clog << "warning: ignoring argument '" << argument << "'!" << std::endl; 
+        std::string argument = token;
+        {
+          std::clog << "warning: ignoring argument '" << argument << "'!" << std::endl;
         }
       }
       iarg++;
@@ -54,15 +54,14 @@ int main (int argc_, char ** argv_)
 
     // Setup the geometry manager:
     if (gmgr_config_file.empty ()) {
-      gmgr_config_file = "${GEOMTOOLS_DATA_DIR}/testing/config/test-1.0/test_manager.conf";
+      gmgr_config_file = "${MCTOOLS_DATA_DIR}/testing/config/g4/test-1.0/geometry/manager.conf";
     }
     datatools::fetch_path_with_env (gmgr_config_file);
     datatools::properties gmgr_config;
-    datatools::properties::read_config (gmgr_config_file, 
-                                        gmgr_config); 
+    datatools::properties::read_config (gmgr_config_file,
+                                        gmgr_config);
     geomtools::manager gmgr;
-    gmgr.set_debug (debug);
-    gmgr.set_verbose (debug);
+    if (debug) gmgr.set_logging_priority(datatools::logger::PRIO_DEBUG);
     gmgr.set_mapping_requested (true);
     gmgr.initialize (gmgr_config);
 
@@ -72,7 +71,7 @@ int main (int argc_, char ** argv_)
 
     // Setup the step hit processor factory:
     if (mconfig_filename.empty ()) {
-      mconfig_filename = "${MCTOOLS_DATA_DIR}/testing/config/test_step_hit_processor_factory.conf";
+      mconfig_filename = "${MCTOOLS_DATA_DIR}/testing/config/g4/test-1.0/step_hit_processor_factory.conf";
     }
     datatools::fetch_path_with_env (mconfig_filename);
 
@@ -97,14 +96,14 @@ int main (int argc_, char ** argv_)
       std::clog << "DEBUG: Configuration is setup." << std::endl;
     }
     SHPF.tree_dump (clog, "Step hit processor factory : ");
-      
+
   }
   catch (std::exception & x) {
-    std::cerr << "error: " << x.what () << std::endl; 
+    std::cerr << "error: " << x.what () << std::endl;
     error_code = EXIT_FAILURE;
   }
   catch (...) {
-    std::cerr << "error: " << "unexpected error!" << std::endl; 
+    std::cerr << "error: " << "unexpected error!" << std::endl;
     error_code = EXIT_FAILURE;
   }
   return (error_code);

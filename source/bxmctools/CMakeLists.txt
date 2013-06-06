@@ -48,15 +48,15 @@ endif()
 #-----------------------------------------------------------------------
 # Build options
 #
-option(MCTOOLS_WITH_DEBUG "Build debug stuff" OFF) 
-option(MCTOOLS_WITH_BIO  "Build auxiliary Boost I/O library" ON) 
-option(MCTOOLS_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" OFF) 
+option(MCTOOLS_WITH_DEBUG "Build debug stuff" OFF)
+option(MCTOOLS_WITH_BIO  "Build auxiliary Boost I/O library" ON)
+option(MCTOOLS_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" ON)
 option(MCTOOLS_WITH_DOC  "Build the mctools documentation" ON)
-option(MCTOOLS_WITH_TEST "Build the mctools test suite"    ON) 
+option(MCTOOLS_WITH_TEST "Build the mctools test suite"    ON)
 #option(MCTOOLS_WITH_GNUPLOT_DISPLAY  "Build the Gnuplot-based display tools" ON )
-option(MCTOOLS_WITH_G4   "Build the Geant4 interface"     ON) 
-option(MCTOOLS_WITH_G4VIS_USE  "Build the Geant4 visualization interface" ON) 
- 
+option(MCTOOLS_WITH_G4   "Build the Geant4 interface"     ON)
+option(MCTOOLS_WITH_G4VIS_USE  "Build the Geant4 visualization interface" ON)
+
 if (MCTOOLS_WITH_DEBUG)
   set (MCTOOLS_WITH_DEBUG 1)
 else()
@@ -78,7 +78,7 @@ find_package(Boost 1.47 QUIET COMPONENTS ${Boost_COMPONENTS} NO_MODULE)
 find_package(Boost 1.47 REQUIRED ${Boost_COMPONENTS})
 
 # - dpp
-find_package(dpp 0.1.0 REQUIRED)
+find_package(dpp 1.0.0 REQUIRED)
 
 # - genbb_help
 find_package(genbb_help 5.0.0 REQUIRED)
@@ -86,23 +86,22 @@ find_package(genbb_help 5.0.0 REQUIRED)
 # - genvtx
 find_package(genvtx 4.0.0 REQUIRED)
 
-# - materials
-find_package(materials 4.0.0 REQUIRED)
-
 # - emfield
-find_package(emfield 0.1.0 REQUIRED)
+find_package(emfield 1.0.0 REQUIRED)
 
+# - materials
+#find_package(materials 4.0.0 REQUIRED)
 # - datatools
-find_package(datatools 5.0.0 REQUIRED)
+#find_package(datatools 5.0.0 REQUIRED)
 
 if(MCTOOLS_WITH_G4)
-if ( NOT DEFINED Geant4_DIR )  
+if ( NOT DEFINED Geant4_DIR )
 set ( Geant4_DIR $ENV{GEANT4_ROOT_DIR} )
 endif()
 find_package(Geant4 REQUIRED NO_MODULE
              PATHS ${Geant4_DIR} PATH_SUFFIXES lib64 lib)
 message( STATUS "${PROJECT_NAME}: Found Geant4 :" )
-message( STATUS "${PROJECT_NAME}:  o Geant4_VERSION       : ${Geant4_VERSION}" )	
+message( STATUS "${PROJECT_NAME}:  o Geant4_VERSION       : ${Geant4_VERSION}" )
 message( STATUS "${PROJECT_NAME}:  o Geant4_INCLUDE_DIRS  : ${Geant4_INCLUDE_DIRS}" )
 message( STATUS "${PROJECT_NAME}:  o Geant4_USE_FILE      : ${Geant4_USE_FILE}" )
 message( STATUS "${PROJECT_NAME}:  o Geant4_gdml_FOUND    : ${Geant4_gdml_FOUND}" )
@@ -133,7 +132,7 @@ endif(MCTOOLS_WITH_G4)
 
 #-----------------------------------------------------------------------
 # On Apple, we fixup the install prefix to handle installing documentation,
-# support files and so on under the framework's "Resources" directory. 
+# support files and so on under the framework's "Resources" directory.
 # This follows the pattern used in CMake to fixup their app bundle
 # NB: THIS REQUIRES SOME FIXES IN CPACKAGING (see CMake's Qt dialog
 # packaging).
@@ -147,10 +146,10 @@ endif()
 #-----------------------------------------------------------------------
 # Build the submodules as required
 #
-add_subdirectory(src)   
+add_subdirectory(src)
 
 if(MCTOOLS_WITH_G4)
-add_subdirectory(programs/g4)   
+add_subdirectory(programs/g4)
 endif()
 
 if(MCTOOLS_WITH_DOC)
@@ -162,7 +161,7 @@ endif()
 
 if(MCTOOLS_WITH_TEST)
   set (MCTOOLS_WITH_TEST 1)
-  enable_testing() 
+  enable_testing()
   add_subdirectory(testing)
 else()
   set (MCTOOLS_WITH_TEST 0)
@@ -189,17 +188,17 @@ if(UNIX)
   endif()
 
   configure_file(
-    ${PROJECT_SOURCE_DIR}/cmake/mctools-config.in 
+    ${PROJECT_SOURCE_DIR}/cmake/mctools-config.in
     ${PROJECT_BINARY_DIR}/cmake/mctools-config
     @ONLY
     )
 
   install(FILES ${PROJECT_BINARY_DIR}/cmake/mctools-config
     DESTINATION "${CMAKE_INSTALL_BINDIR}"
-    PERMISSIONS 
-      OWNER_READ OWNER_EXECUTE 
-    	GROUP_READ GROUP_EXECUTE 
-      WORLD_READ WORLD_EXECUTE    
+    PERMISSIONS
+      OWNER_READ OWNER_EXECUTE
+    	GROUP_READ GROUP_EXECUTE
+      WORLD_READ WORLD_EXECUTE
     COMPONENT Development
     )
 
@@ -216,28 +215,25 @@ if(UNIX)
     )
 endif()
 
-# ----------------------------------------------------------------------------
-# Install resources :
+#----------------------------------------------------------------
+# - Install public resources :
 #
-
-set ( _mctools_TESTING_FULL_LOCAL_PATH 
-      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/testing" 
-    ) 
-message ( STATUS "${PROJECT_NAME} : mctools testing full local path = '${_mctools_TESTING_FULL_LOCAL_PATH}' " )
-
-install ( DIRECTORY ${PROJECT_SOURCE_DIR}/testing
-          DESTINATION ${CMAKE_INSTALL_DATADIR}
-          FILE_PERMISSIONS OWNER_READ OWNER_WRITE
-                           GROUP_READ GROUP_WRITE
-                           WORLD_READ
-          DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE 
-                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE 
-                                WORLD_READ WORLD_EXECUTE
-          PATTERN 		".svn" EXCLUDE
-          PATTERN "*~" EXCLUDE
-          PATTERN "CMakeLists.txt" EXCLUDE
-          PATTERN "testDriver.bash" EXCLUDE
-         )
+# - Examples :
+# set(_geomtools_examples_FULL_LOCAL_PATH
+#     "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/examples"
+#    )
+#
+# install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples
+#         DESTINATION ${CMAKE_INSTALL_DATADIR}
+#         FILE_PERMISSIONS OWNER_READ OWNER_WRITE
+#                          GROUP_READ GROUP_WRITE
+#                          WORLD_READ
+#         DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+#                               GROUP_READ GROUP_WRITE GROUP_EXECUTE
+#                               WORLD_READ WORLD_EXECUTE
+#         PATTERN ".svn" EXCLUDE
+# 	PATTERN "*~" EXCLUDE
+#        )
 
 #-----------------------------------------------------------------------
 # Package

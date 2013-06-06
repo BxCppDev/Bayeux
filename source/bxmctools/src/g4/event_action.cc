@@ -48,17 +48,6 @@ namespace mctools {
       return *_run_action_;
     }
 
-    bool event_action::is_debug () const
-    {
-      return _debug_;
-    }
-
-    void event_action::set_debug (bool new_value_)
-    {
-      _debug_ = new_value_;
-      return;
-    }
-
     const event_action::sim_data_type & event_action::get_event_data () const
     {
       if (_external_event_data_ != 0) return *_external_event_data_;
@@ -86,11 +75,6 @@ namespace mctools {
     event_action::event_action (run_action & run_action_,
                                 const detector_construction & dctor_)
     {
-      _debug_                 = false;
-      if ( getenv ("MCTOOLS_G4_EVENT_ACTION_DEVEL") != NULL )
-        {
-          _debug_ = true;
-        }
       _initialized_           = false;
       _run_action_            = &run_action_;
       _detector_construction_ = &dctor_;
@@ -102,29 +86,17 @@ namespace mctools {
     // dtor:
     event_action::~event_action ()
     {
-      if (is_initialized ())
-        {
-          reset ();
-        }
-      if (_debug_)
-        {
-          clog << "DEBUG: event_action::dtor: Done." << endl;
-        }
+      if (is_initialized ()) {
+        reset ();
+      }
+      DT_LOG_TRACE(_logprio(), "Done.");
       return;
     }
 
     void event_action::reset ()
     {
-      if (! is_initialized ())
-        {
-          ostringstream message;
-          message << "mctools::g4::event_action::reset: "
-                  << "Not initialized !";
-          throw logic_error (message.str ());
-        }
-
+      DT_THROW_IF(! is_initialized (), logic_error, "Not initialized !");
       _at_reset_ ();
-
       _initialized_ = false;
       return;
     }
@@ -141,43 +113,23 @@ namespace mctools {
 
     void event_action::initialize (const datatools::properties & config_)
     {
-      if (is_initialized ())
-        {
-          ostringstream message;
-          message << "mctools::g4::event_action::initialize: "
-                  << "Already initialized !";
-          throw logic_error (message.str ());
-        }
+      DT_THROW_IF (is_initialized (), logic_error, "Already initialized !");
 
-      if (config_.has_flag ("debug"))
-        // fetch parameters...
-        {
-          set_debug (true);
-        }
+      loggable_support::_initialize_logging_support(config_);
 
-      if (config_.has_key ("event_model.hit_collection_type"))
-        {
-          string event_model_collection_type
-            = config_.fetch_string ("event_model.hit_collection_type");
-          event_action::sim_data_type & event_data = this->grab_event_data ();
-          event_data.reset_collection_type ();
-          if (event_model_collection_type == "plain")
-            {
-              event_data.set_collection_type (sim_data_type::PLAIN_HIT_COLLECTION_TYPE);
-            }
-          else if (event_model_collection_type == "handle")
-            {
-              event_data.set_collection_type (sim_data_type::HANDLE_HIT_COLLECTION_TYPE);
-            }
-          else
-            {
-              ostringstream message;
-              message << "mctools::g4::event_action::initialize: "
-                      << "Invalid hit collection type '" << event_model_collection_type << "' !";
-              throw logic_error (message.str ());
-            }
+      if (config_.has_key ("event_model.hit_collection_type")) {
+        string event_model_collection_type
+          = config_.fetch_string ("event_model.hit_collection_type");
+        event_action::sim_data_type & event_data = this->grab_event_data ();
+        event_data.reset_collection_type ();
+        if (event_model_collection_type == "plain") {
+          event_data.set_collection_type (sim_data_type::PLAIN_HIT_COLLECTION_TYPE);
+        } else if (event_model_collection_type == "handle") {
+          event_data.set_collection_type (sim_data_type::HANDLE_HIT_COLLECTION_TYPE);
+        } else {
+          DT_THROW_IF(true, logic_error, "Invalid hit collection type '" << event_model_collection_type << "' !");
         }
-
+      }
       // end of fetching.
 
       _at_init_ ();
@@ -199,45 +151,19 @@ namespace mctools {
 
     void event_action::BeginOfEventAction (const G4Event * event_)
     {
-      //clog << "DEVEL: event_action::BeginOfEventAction: Entering..." << endl;
-      bool devel = false;
-      bool debug = is_debug ();
-      //devel = true;
-      if (devel) debug = devel;
-      if (devel)
-        {
-          clog << datatools::io::devel
-               << "mctools::g4::event_action::BeginOfEventAction: "
-               << "Entering..." << endl;
-        }
+      DT_LOG_TRACE(_logprio(), "Entering...");
       G4int event_id = event_->GetEventID ();
-
-      if (debug)
-        {
-          clog << datatools::io::debug
-               << "mctools::g4::event_action::BeginOfEventAction: "
-               << "# Event " << event_id << " starts." << endl;
+      DT_LOG_DEBUG(_logprio(), "Event #" << event_id << " starts.");
+      if (_run_action_->has_number_events_modulo ()) {
+        if ((event_id % _run_action_->get_number_events_modulo ()) == 0) {
+          DT_LOG_NOTICE(_logprio(), "Event #" << event_id);
         }
-
-      if (_run_action_->has_number_events_modulo ())
-        {
-          if ((event_id % _run_action_->get_number_events_modulo ()) == 0)
-            {
-              clog << datatools::io::notice
-                   << "mctools::g4::event_action::BeginOfEventAction: "
-                   << "Event #" << event_id
-                   << endl;
-            }
-        }
-
-      if (is_aborted_event ())
-        {
-          G4RunManager::GetRunManager ()->AbortEvent ();
-          clog << datatools::io::warning
-               << "mctools::g4::event_action::BeginOfEventAction: "
-               << "Event #" << event_id << " is aborted. Exiting." << endl;
-          return;
-        }
+      }
+      if (is_aborted_event ()) {
+        G4RunManager::GetRunManager ()->AbortEvent ();
+        DT_LOG_WARNING(_logprio(), "Event #" << event_id << " is aborted. Exiting.");
+        return;
+      }
 
       /*
         if (G4RunManager::GetRunManager ()->runAborted)
@@ -247,153 +173,73 @@ namespace mctools {
       */
 
       bool record_prng_states = true;
-      if (record_prng_states)
-        {
-          const manager & const_mgr = _run_action_->get_manager ();
-          if (const_mgr.has_prng_state_save_modulo ())
-            {
-              if (debug)
-                {
-                  clog << datatools::io::debug
-                       << "mctools::g4::event_action::BeginOfEventAction: "
-                       << "Record PRNG states for event #" << event_id << endl;
-                }
-              if ((event_id % const_mgr.get_prng_state_save_modulo ()) == 0)
-                {
-                  manager * mgr = const_cast<manager *> (&const_mgr);
-                  mgr->record_current_prng_states ();
-                }
-            }
+      if (record_prng_states) {
+        const manager & const_mgr = _run_action_->get_manager ();
+        if (const_mgr.has_prng_state_save_modulo ()) {
+          DT_LOG_DEBUG(_logprio(), "Record PRNG states for event #" << event_id);
+          if ((event_id % const_mgr.get_prng_state_save_modulo ()) == 0) {
+            manager * mgr = const_cast<manager *> (&const_mgr);
+            mgr->record_current_prng_states ();
+          }
         }
-
-      if (_run_action_->get_manager ().using_time_stat ())
-        {
-          _run_action_->grab_manager ().grab_CT_map ()["EA"].start ();
-        }
-
-      /*
-      // Clear event data:
-      if (devel)
-      {
-      clog << "DEVEL: snemo::g4::event_action::BeginOfEventAction: " << "Clear event data..." << endl;
       }
-      // 2011-05-10 FM: moved these bits to 'event_action::BeginOfEventAction' :
-      //get_event_data ().clear ();
-      */
 
-      if (devel)
-        {
-          clog << datatools::io::devel
-               << "mctools::g4::event_action::BeginOfEventAction: "
-               << "Exiting." << endl;
-        }
+      if (_run_action_->get_manager ().using_time_stat ()) {
+        _run_action_->grab_manager ().grab_CT_map ()["EA"].start ();
+      }
+
+      DT_LOG_TRACE(_logprio(), "Exiting.");
       return;
     }
 
     void event_action::EndOfEventAction (const G4Event * event_)
     {
-      bool devel = false;
-      bool debug = is_debug ();
-      // XXX
-      //devel = true;
+      DT_LOG_TRACE(_logprio(), "Entering...");
 
-      if (devel) debug = devel;
-      if (devel)
-        {
-          clog << datatools::io::devel
-               << "mctools::g4::event_action::EndOfEventAction: "
-               << "Entering..." << endl;
-          debug = true;
-        }
-
-      if (_run_action_->get_manager ().using_time_stat ())
-        {
-          _run_action_->grab_manager ().grab_CT_map ()["EA"].stop ();
-        }
+      if (_run_action_->get_manager ().using_time_stat ()) {
+        _run_action_->grab_manager ().grab_CT_map ()["EA"].stop ();
+      }
 
       G4int event_id = event_->GetEventID ();
 
-      // if (_run_action->has_number_events_modulo ())
-      //        {
-      //          if ((event_id % _run_action->get_number_events_modulo ()) == 0)
-      //            {
-      //              clog << datatools::io::notice
-      //                   << "mctools::g4::event_action::EndOfEventAction: "
-      //                   << "Event #" << event_id
-      //                   << endl;
-      //            }
-      //        }
-
-      if (is_aborted_event ())
-        {
-          clog << datatools::io::warning
-               << "mctools::g4::event_action::EndOfEventAction: "
-               << "Event is aborted. Exiting." << endl;
-          return;
-        }
-      if (debug)
-        {
-          clog << datatools::io::debug
-               << "mctools::g4::event_action::EndOfEventAction: "
-               << "# Event " << event_id << endl;
-        }
-
+      if (is_aborted_event ()) {
+        DT_LOG_WARNING(_logprio(),  "Event is aborted. Exiting...");
+        return;
+      }
+      DT_LOG_DEBUG(_logprio(),  "# Event " << event_id);
       bool draw_trajectory = _run_action_->get_manager ().is_interactive ();
-      if (draw_trajectory)
-        {
-          // get number of stored trajectories:
-          G4TrajectoryContainer * trajectory_col
-            = event_->GetTrajectoryContainer ();
-          int n_trajectories = 0;
-          if (trajectory_col) n_trajectories = trajectory_col->entries ();
+      if (draw_trajectory) {
+        // get number of stored trajectories:
+        G4TrajectoryContainer * trajectory_col
+          = event_->GetTrajectoryContainer ();
+        int n_trajectories = 0;
+        if (trajectory_col) n_trajectories = trajectory_col->entries ();
 
-          // extract the trajectories and draw them:
-          if (G4VVisManager::GetConcreteInstance ())
-            {
-              for (int i = 0; i < n_trajectories; i++)
-                {
-                  G4Trajectory* trj
-                    = (G4Trajectory*) ((*(event_->GetTrajectoryContainer ()))[i]);
-                  trj->DrawTrajectory ();
-                }
-            }
+        // extract the trajectories and draw them:
+        if (G4VVisManager::GetConcreteInstance ()) {
+          for (int i = 0; i < n_trajectories; i++) {
+            G4Trajectory* trj
+              = (G4Trajectory*) ((*(event_->GetTrajectoryContainer ()))[i]);
+            trj->DrawTrajectory ();
+          }
         }
+      }
 
-      if (_run_action_->get_manager ().using_time_stat ())
-        {
-          _run_action_->grab_manager ().grab_CT_map ()["HP"].start ();
-        }
+      if (_run_action_->get_manager ().using_time_stat ()) {
+        _run_action_->grab_manager ().grab_CT_map ()["HP"].start ();
+      }
 
       // Process the list of sensitive hits:
       G4HCofThisEvent * HCE = event_->GetHCofThisEvent ();
 
-      if (devel)
-        {
-          clog << datatools::io::devel
-               << "mctools::g4::event_action::EndOfEventAction: "
-               << "List of sensitive hit collections:";
-          for (int i = 0; i < (int) HCE->GetCapacity (); i++ )
-            {
-              clog << " " << HCE->GetHC (i);
-            }
-          clog << endl;
+      DT_LOG_DEBUG(_logprio(), "List of sensitive hit collections : ");
+      for (int i = 0; i < (int) HCE->GetCapacity (); i++ ) {
+        G4VHitsCollection * hc = HCE->GetHC (i);
+        if (hc != 0) {
+          DT_LOG_DEBUG(_logprio(), "Hit collection '" << hc->GetName()
+                       << "' for sensitive detector '" << hc->GetSDname()<< "' @ " << hc);
         }
-
-      // 2011/06/09 XG: comment this part and use different way to
-      // save or not event
-      // // If asked, don't save the without sensitive hit event:
-      // if (_run_action->get_manager ().dont_save_no_sensitive_hit_events ())
-      //   {
-      //     if (HCE->GetNumberOfCollections () == 0)
-      //       {
-      //         if (devel){
-      //        clog << datatools::io::devel
-      //             << "mctools::g4::event_action::EndOfEventAction: "
-      //             << "Event without sensitive hits will not be saved!" << endl;
-      //         }
-      //         save_this_event = false;
-      //       }
-      //   }
+      }
 
       // Flag to discard events without sensitive hits:
       bool save_this_event = ! _run_action_->get_manager ().dont_save_no_sensitive_hit_events ();
@@ -402,154 +248,115 @@ namespace mctools {
       for (detector_construction::sensitive_detector_dict_type::const_iterator iSD
              = _detector_construction_->get_sensitive_detectors ().begin ();
            iSD != _detector_construction_->get_sensitive_detectors ().end ();
-           iSD++)
-        {
-          const string & sensitive_category = iSD->first;
-          sensitive_detector & the_detector = *iSD->second;
+           iSD++) {
+        const string & sensitive_category = iSD->first;
+        sensitive_detector & the_detector = *iSD->second;
 
-          if (devel)
-            {
-              clog << datatools::io::devel
-                   << "mctools::g4::event_action::EndOfEventAction: "
-                   << "process hits from sensitive detector '"
-                   << sensitive_category << "'..." << endl;
-            }
-          // sensitive_detector::make_hit_collection_name (sensitive_category)
-          G4VHitsCollection * the_hits_collection = HCE->GetHC (the_detector.get_HCID ());
-          if (the_hits_collection == 0)
-            {
-              if (devel)
-                {
-                  clog << datatools::io::devel
-                       << "mctools::g4::event_action::EndOfEventAction: "
-                       << "No hit to process from sensitive detector '"
-                       << sensitive_category << "'..." << endl;
-                }
-              continue;
-            }
-
-          /** Note:
-           * MC hit categories with a name starting with '_' (double underscore)
-           * are conventionnaly considered as 'private' hit categories, added by the user
-           * for special purpose (debug, visualization...).
-           * 'official' MC hit categories should never starts with '_' and should
-           * be associated to some sensitive detector.
-           */
-          const bool is_private_category = boost::starts_with (sensitive_category, "__");
-          if (! is_private_category)
-            {
-              // keep event with 'physical' sensitive hits (not visual
-              // ones)
-              if (devel)
-                {
-                  clog << datatools::io::devel
-                       << "mctools::g4::event_action::EndOfEventAction: "
-                       << "Saving current event with 'physical' sensitive hits"
-                       << endl;
-                }
-              save_this_event = true;
-            }
-
-          sensitive_hit_collection * SHC
-            = dynamic_cast<sensitive_hit_collection *> (the_hits_collection);
-          if (devel)
-            {
-              clog << datatools::io::devel
-                   << "mctools::g4::event_action::EndOfEventAction: "
-                   << "Collection has "
-                   << SHC->GetSize () << " hits." << endl;
-            }
-
-          /** Search for some step hit processors attached to the
-           * sensitive detector: one can have several step hit
-           * processors associated to a single sensitive detector.
-           */
-          //_phits_.clear ();
-          if (the_detector.get_hit_processors ().size () > 0)
-            {
-              // Collect a 'phits' vector of pointers on 'base step hits':
-              ::mctools::base_step_hit_processor::step_hit_ptr_collection_type phits;
-              // 2011-04-05 FM : this should accelerate the process a few :
-              phits.reserve (SHC->get_hits ().size ());
-              for (size_t ihit = 0; ihit < SHC->get_hits ().size (); ihit++)
-                {
-                  phits.push_back (&(SHC->grab_hits ().at (ihit)->grab_hit_data ()));
-                }
-
-              // 'phits' is used as the input of the 'process' method
-              // from each processor attached to the sensitive
-              // category/detector:
-              for (sensitive_detector::hit_processor_dict_type::iterator iproc
-                     = the_detector.grab_hit_processors ().begin ();
-                   iproc != the_detector.grab_hit_processors ().end ();
-                   iproc++)
-                {
-                  /*
-                    const string & hit_proc_name = iproc->first;
-                    cerr << "DEVEL: " << "mctools::g4::event_action::EndOfEventAction: "
-                    << "hit_proc_name = `" << hit_proc_name << "'" << endl;
-                  */
-                  ::mctools::base_step_hit_processor * hit_proc
-                    = iproc->second;
-                  hit_proc->process (phits, grab_event_data ());
-                }
-            }
-          else
-            {
-              // No hit processor for this sensitive
-              // category/detector: step hits are dropped.
-            }
-        }
-      if (_run_action_->get_manager ().using_time_stat ())
-        {
-          _run_action_->grab_manager ().grab_CT_map ()["HP"].stop ();
+        DT_LOG_DEBUG(_logprio(), "Processing hits from sensitive detector '"
+                     << sensitive_category << "'...");
+        // sensitive_detector::make_hit_collection_name (sensitive_category)
+        G4VHitsCollection * the_hits_collection = HCE->GetHC (the_detector.get_HCID ());
+        if (the_hits_collection == 0) {
+          DT_LOG_DEBUG(_logprio(),
+                       "No hit to process from sensitive detector '"
+                       << sensitive_category << "'...");
+          continue;
         }
 
-      if (devel)
-        {
-          clog << datatools::io::devel
-               << "mctools::g4::event_action::EndOfEventAction: " << endl;
-          get_event_data ().tree_dump (clog, "mctools::g4::event_action::EndOfEventAction: Event data: ", "DEVEL: ");
-          get_event_data ().get_primary_event ().dump (clog, "mctools::g4::event_action::EndOfEventAction: Primary event (genbb format): ", "DEVEL: ");
+        /** Note:
+         * MC hit categories with a name starting with '_' (double underscore)
+         * are conventionnaly considered as 'private' hit categories, added by the user
+         * for special purpose (debug, visualization...).
+         * 'official' MC hit categories should never starts with '_' and should
+         * be associated to some sensitive detector.
+         */
+        const bool is_private_category = boost::starts_with (sensitive_category, "__");
+        if (! is_private_category) {
+          // keep event with 'physical' sensitive hits (not visual
+          // ones)
+          DT_LOG_DEBUG(_logprio(), "Saving current event with 'physical' sensitive hits");
+          save_this_event = true;
         }
+
+        sensitive_hit_collection * SHC
+          = dynamic_cast<sensitive_hit_collection *> (the_hits_collection);
+        DT_LOG_DEBUG(_logprio(), "Collection has " << SHC->GetSize () << " hits.");
+
+        /** Search for some step hit processors attached to the
+         * sensitive detector: one can have several step hit
+         * processors associated to a single sensitive detector.
+         */
+        //_phits_.clear ();
+        if (the_detector.get_hit_processors ().size () > 0) {
+          // Collect a 'phits' vector of pointers on 'base step hits':
+          ::mctools::base_step_hit_processor::step_hit_ptr_collection_type phits;
+          // 2011-04-05 FM : this should accelerate the process a few :
+          phits.reserve (SHC->get_hits ().size ());
+          for (size_t ihit = 0; ihit < SHC->get_hits ().size (); ihit++) {
+            phits.push_back (&(SHC->grab_hits ().at (ihit)->grab_hit_data ()));
+          }
+
+          // 'phits' is used as the input of the 'process' method
+          // from each processor attached to the sensitive
+          // category/detector:
+          for (sensitive_detector::hit_processor_dict_type::iterator iproc
+                 = the_detector.grab_hit_processors ().begin ();
+               iproc != the_detector.grab_hit_processors ().end ();
+               iproc++) {
+            /*
+              const string & hit_proc_name = iproc->first;
+              cerr << "DEVEL: " << "mctools::g4::event_action::EndOfEventAction: "
+              << "hit_proc_name = `" << hit_proc_name << "'" << endl;
+            */
+            ::mctools::base_step_hit_processor * hit_proc
+              = iproc->second;
+            hit_proc->process (phits, grab_event_data ());
+          }
+        } else {
+          // No hit processor for this sensitive
+          // category/detector: step hits are dropped.
+        }
+      }
+      if (_run_action_->get_manager ().using_time_stat ())  {
+        _run_action_->grab_manager ().grab_CT_map ()["HP"].stop ();
+      }
+
+      DT_LOG_DEBUG(_logprio(), "Event data: ");
+      if (is_debug()) {
+        get_event_data ().tree_dump (clog);
+        //get_event_data ().get_primary_event ().dump (clog, "Primary event (genbb format): ");
+      }
 
       _run_action_->increment_number_of_processed_events ();
-      if (_run_action_->save_data () && save_this_event)
-        {
-          if (_run_action_->get_manager ().using_time_stat ())
-            {
-              _run_action_->grab_manager ().grab_CT_map ()["IO"].start ();
-            }
-          // Store the event if run_action has an initialized writer:
-          if (_run_action_->get_brio_writer ().is_opened ())
-            {
-              // first check 'brio::writer' :
-              _run_action_->grab_brio_writer ().store (get_event_data ());
-            }
-          else if (_run_action_->get_writer ().is_initialized ())
-            {
-              // then check 'datatools::serialization::data_writer' :
-              _run_action_->grab_writer ().store (get_event_data ());
-            }
-          if (_run_action_->get_manager ().using_time_stat ())
-            {
-              _run_action_->grab_manager ().grab_CT_map ()["IO"].stop ();
-            }
-          _run_action_->increment_number_of_saved_events ();
+      if (_run_action_->save_data () && save_this_event) {
+        if (_run_action_->get_manager ().using_time_stat ()) {
+          _run_action_->grab_manager ().grab_CT_map ()["IO"].start ();
         }
+        // Store the event if run_action has an initialized writer:
+        if (_run_action_->get_brio_writer ().is_opened ()) {
+          // first check 'brio::writer' :
+          _run_action_->grab_brio_writer ().store (get_event_data ());
+        } else if (_run_action_->get_writer ().is_initialized ()) {
+          // then check 'datatools::serialization::data_writer' :
+          _run_action_->grab_writer ().store (get_event_data ());
+        }
+        if (_run_action_->get_manager ().using_time_stat ()) {
+          _run_action_->grab_manager ().grab_CT_map ()["IO"].stop ();
+        }
+        _run_action_->increment_number_of_saved_events ();
+      }
 
       // Detach the hits collections from this event :
       for (int i = 0; i < (int) HCE->GetCapacity (); i++ )
         {
           G4VHitsCollection * hcol = HCE->GetHC (i);
-          if (hcol != 0)
-            {
-              // clog << datatools::io::devel
-              //           << "event_action::EndOfEventAction: Detach '"
-              //           << hcol->GetName () << "' hits collection"
-              //           << endl;
-              HCE->AddHitsCollection (i, 0);
-            }
+          if (hcol != 0) {
+            // clog << datatools::io::devel
+            //           << "event_action::EndOfEventAction: Detach '"
+            //           << hcol->GetName () << "' hits collection"
+            //           << endl;
+            HCE->AddHitsCollection (i, 0);
+          }
         }
 
       // clog << datatools::io::devel << "event_action::EndOfEventAction: "
@@ -560,13 +367,7 @@ namespace mctools {
       //        }
       // clog << endl;
 
-      if (debug)
-        {
-          clog << datatools::io::debug
-               << "mctools::g4::event_action::EndOfEventAction: "
-               << "Check point for Event #" << event_id << endl;
-        }
-
+      DT_LOG_DEBUG(_logprio(), "Check point for Event #" << event_id);
 
       // Debugging...
       bool must_abort_run = false;
@@ -575,96 +376,61 @@ namespace mctools {
       // External threaded run control :
       if (_run_action_->get_manager ().has_simulation_ctrl ())
         {
-          if (simulation_ctrl::g_devel)
-            cerr << "DEVEL: " << "mctools::g4::event_action::EndOfEventAction: "
-                 << "Using external run control..." << endl;
-          simulation_ctrl & SimCtrl
-            = _run_action_->grab_manager ().grab_simulation_ctrl ();
+          DT_LOG_TRACE(_logprio(), "Using external run control...");
+          simulation_ctrl & SimCtrl = _run_action_->grab_manager ().grab_simulation_ctrl ();
           {
-            if (simulation_ctrl::g_devel)
-              cerr << "DEVEL: " << "mctools::g4::event_action::EndOfEventAction: "
-                   << "Acquire the event control lock..." << endl;
+            DT_LOG_TRACE(_logprio(), "Acquire the event control lock...");
             boost::mutex::scoped_lock lock (*SimCtrl.event_mutex);
-            if (simulation_ctrl::g_devel)
-              cerr << "DEVEL: " << "mctools::g4::event_action::EndOfEventAction: "
-                   << "Wait for event control to be available again..." << endl;
-            while (SimCtrl.event_availability_status != simulation_ctrl::AVAILABLE_FOR_G4)
-              {
-                if (simulation_ctrl::g_devel)
-                  cerr << "DEVEL: " << "mctools::g4::event_action::EndOfEventAction: "
-                       << "Not yet..." << endl;
-                SimCtrl.event_available_condition->wait (*SimCtrl.event_mutex);
-              }
-            if (simulation_ctrl::g_devel)
-              cerr << "DEVEL: " << "mctools::g4::event_action::EndOfEventAction: "
-                   << "Ok let's go on..." << endl;
+            DT_LOG_TRACE(_logprio(), "Wait for event control to be available again...");
+            while (SimCtrl.event_availability_status != simulation_ctrl::AVAILABLE_FOR_G4) {
+              DT_LOG_TRACE(_logprio(), "Not yet...");
+              SimCtrl.event_available_condition->wait (*SimCtrl.event_mutex);
+            }
+            DT_LOG_TRACE(_logprio(), "Ok let's go on...");
             if (SimCtrl.event_availability_status == simulation_ctrl::ABORT)
               {
                 must_abort_run = true;
               }
             SimCtrl.event_availability_status = simulation_ctrl::NOT_AVAILABLE_FOR_G4;
             SimCtrl.counts++;
-            if (simulation_ctrl::g_devel)
-              cerr << "DEVEL: " << "mctools::g4::event_action::EndOfEventAction: "
-                   << "Notify the external simulation run manager..." << endl;
+            DT_LOG_TRACE(_logprio(), "Notify the external simulation run manager...");
             SimCtrl.event_available_condition->notify_one ();
           }
 
           // Wait for the release of the event control by the external process :
           {
-            if (simulation_ctrl::g_devel)
-              cerr << "DEVEL: " << "mctools::g4::event_action::EndOfEventAction: "
-                   << "Wait for the release of the event control by the external process..." << endl;
+            DT_LOG_TRACE(_logprio(), "Wait for the release of the event control by the external process...");
             boost::mutex::scoped_lock lock (*SimCtrl.event_mutex);
-            while (SimCtrl.event_availability_status == simulation_ctrl::NOT_AVAILABLE_FOR_G4)
-              {
-                if (simulation_ctrl::g_devel)
-                  cerr << "DEVEL: " << "mctools::g4::event_action::EndOfEventAction: "
-                       << "Not yet..." << endl;
-                SimCtrl.event_available_condition->wait (*SimCtrl.event_mutex);
-              }
-            if (simulation_ctrl::g_devel)
-              cerr << "DEVEL: " << "mctools::g4::event_action::EndOfEventAction: "
-                   << "Ok ! The event control is released by the external process..." << endl;
-            if (SimCtrl.event_availability_status == simulation_ctrl::ABORT)
-              {
-                clog << "WARNING: " << "mctools::g4::event_action::EndOfEventAction: "
-                     << "Detected an 'Abort' request from the external process..." << endl;
-                must_abort_run = true;
-              }
+            while (SimCtrl.event_availability_status == simulation_ctrl::NOT_AVAILABLE_FOR_G4) {
+              DT_LOG_TRACE(_logprio(), "Not yet...");
+              SimCtrl.event_available_condition->wait (*SimCtrl.event_mutex);
+            }
+            DT_LOG_TRACE(_logprio(), "Ok ! The event control is released by the external process...");
+            if (SimCtrl.event_availability_status == simulation_ctrl::ABORT) {
+              DT_LOG_WARNING(_logprio(),
+                             "Detected an 'Abort' request from the external process...");
+              must_abort_run = true;
+            }
           }
 
-          if (SimCtrl.is_stop_requested ())
-            {
-              if (simulation_ctrl::g_devel)
-                cerr << "DEVEL: " << "mctools::g4::event_action::EndOfEventAction: "
-                     << "is_stop_requested..." << endl;
-              must_abort_run = true;
-            }
+          if (SimCtrl.is_stop_requested ()) {
+            DT_LOG_TRACE(_logprio(), "is_stop_requested..." );
+            must_abort_run = true;
+          }
 
-          if (SimCtrl.max_counts > 0 && (SimCtrl.counts > SimCtrl.max_counts))
-            {
-              if (simulation_ctrl::g_devel)
-                cerr << "DEVEL: " << "mctools::g4::event_action::EndOfEventAction: "
-                     << "max_counts..." << endl;
-              must_abort_run = true;
-            }
+          if (SimCtrl.max_counts > 0 && (SimCtrl.counts > SimCtrl.max_counts)) {
+            DT_LOG_TRACE(_logprio(), "Max counts was reached.");
+            must_abort_run = true;
+          }
         }
       /*************************************************************/
 
       // Abort run condition :
-      if (must_abort_run)
-        {
-          G4RunManager::GetRunManager ()->AbortRun ();
-        }
+      if (must_abort_run) {
+        G4RunManager::GetRunManager ()->AbortRun ();
+      }
 
-      if (devel)
-        {
-          clog << datatools::io::devel
-               << "mctools::g4::event_action::EndOfEventAction: "
-               << "Exiting." << endl;
-        }
-
+      DT_LOG_TRACE(_logprio(), "Exiting.");
       return;
     } // EndOfEventAction
 
@@ -672,4 +438,4 @@ namespace mctools {
 
 } // end of namespace mctools
 
-// end of event_action.cc
+  // end of event_action.cc

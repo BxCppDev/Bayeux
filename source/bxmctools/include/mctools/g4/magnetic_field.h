@@ -26,6 +26,8 @@
 // G4 stuff:
 #include <G4MagneticField.hh>
 
+#include <mctools/g4/loggable_support.h>
+
 namespace datatools {
   class properties;
 }
@@ -43,7 +45,8 @@ namespace mctools {
 
   namespace g4 {
 
-    class magnetic_field : public G4MagneticField
+    class magnetic_field : public G4MagneticField,
+                           public loggable_support
     {
     public:
 
@@ -62,14 +65,6 @@ namespace mctools {
       void set_mag_field_check_pos_time(bool);
 
       bool is_mag_field_check_pos_time() const;
-
-      //bool has_geometry_manager () const;
-
-      //void set_geometry_manager (const geomtools::manager &);
-
-      //bool has_mag_field_manager () const;
-
-      //void set_mag_field_manager (const emfield::electromagnetic_field_manager &);
 
       bool has_mag_field() const;
 
@@ -95,8 +90,6 @@ namespace mctools {
 
       bool                                           _initialized_;
       std::string                                    _name_;
-      //const geomtools::manager *                     _geom_manager_;
-      //const emfield::electromagnetic_field_manager * _mag_field_manager_;
       const emfield::base_electromagnetic_field    * _mag_field_;
       bool                                           _mag_field_check_pos_time_;
       geomtools::vector_3d                           _standalone_constant_mag_field_;

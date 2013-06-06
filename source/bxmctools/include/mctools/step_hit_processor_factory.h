@@ -61,7 +61,7 @@ namespace mctools {
     /// Set the debug flag
     void set_debug (bool);
 
-    /// Returns the description 
+    /// Returns the description
     const std::string & get_description () const;
 
     /// Set the description
@@ -72,19 +72,19 @@ namespace mctools {
 
     /// Set the geometry manager
     void set_geometry_manager (const geomtools::manager & gmgr_);
- 
+
     /// Return a non mutable reference to the geometry manager
     const geomtools::manager & get_geometry_manager () const;
- 
+
     /// Check for an existing service manager
     bool has_service_manager () const;
- 
+
     /// Set the service manager
     void set_service_manager (datatools::service_manager & smgr_);
 
     /// Return a mutable reference to the service manager
     datatools::service_manager & grab_service_manager ();
- 
+
     /// Return a non mutable reference to the service manager
     const datatools::service_manager & get_service_manager () const;
 
@@ -133,7 +133,7 @@ namespace mctools {
     void dump (std::ostream & out_) const;
 
     /// Smart print
-    virtual void tree_dump (std::ostream & out_         = std::clog, 
+    virtual void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
                             bool inherit_               = false) const;
@@ -141,11 +141,16 @@ namespace mctools {
     /// Load a configuration object
     void load (const datatools::multi_properties & mprop_);
 
+    datatools::logger::priority  get_logging_priority() const;
+
+    void set_logging_priority(datatools::logger::priority);
+
   private:
 
     base_step_hit_processor::factory_register_type _factory_register_; /// The factory register for 'Step Hit Processor' classes
- 
+
     bool                         _initialized_;     /// Initialized flag
+    datatools::logger::priority  _logging_priority_;/// Logging priority threshold
     bool                         _debug_;           /// Debug flag
     std::string                  _description_;     /// Description
     datatools::service_manager * _service_manager_; /// Service manager

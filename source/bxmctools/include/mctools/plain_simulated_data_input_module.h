@@ -1,7 +1,7 @@
 /* plain_simulated_data_input_module.h
  * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-07-04
- * Last modified : 2012-04-10
+ * Last modified : 2013-06-02
  *
  * Description:
  *
@@ -45,7 +45,7 @@ namespace mctools {
       void set_filenames (const datatools::properties & a_setup);
 
       // Constructor :
-      plain_simulated_data_input_module(bool debug_ = false);
+      plain_simulated_data_input_module(datatools::logger::priority logging_priority = datatools::logger::PRIO_FATAL);
 
       // Destructor :
       virtual ~plain_simulated_data_input_module ();
@@ -54,7 +54,7 @@ namespace mctools {
       DPP_MODULE_INTERFACE ();
 
     protected:
-      
+
       int _load (datatools::things & a_event_record);
 
       void _set_defaults ();
@@ -64,9 +64,9 @@ namespace mctools {
       int _max_record_per_file_;       //!< Maximum number of event records per file
       int _max_record_total_;          //!< Maximum number of event records to be processed
       int _max_files_;                 //!< Maximum number of data files to be processed
-      
+
       datatools::smart_filename _filenames_; //!< Smart list of data filenames
-      
+
       /* Running/dynamic attributes: */
       bool _terminated_;            //!< Termination flag
       int _file_record_counter_;    //!< Event record counter in the current file
@@ -76,13 +76,17 @@ namespace mctools {
       // Readers:
       boost::scoped_ptr<datatools::data_reader> _bio_source_;
       boost::scoped_ptr<brio::reader>           _brio_source_;
-      
+
       // Macro to automate the registration of the module :
       DPP_MODULE_REGISTRATION_INTERFACE(plain_simulated_data_input_module);
 
     };
 
 }  // end of namespace mctools
+
+// Object configuration description (OCD) support :
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(mctools::plain_simulated_data_input_module)
 
 #endif // MCTOOLS_PLAIN_SIMULATED_DATA_INPUT_MODULE_H_
 

@@ -10,13 +10,15 @@
 #include <boost/algorithm/string.hpp>
 
 #include <datatools/ioutils.h>
+#include <datatools/exception.h>
+
 #include <mctools/utils.h>
 
 namespace mctools {
 
   using namespace std;
 
-  MCTOOLS_STEP_HIT_PROCESSOR_REGISTRATION_IMPLEMENT (calorimeter_step_hit_processor, 
+  MCTOOLS_STEP_HIT_PROCESSOR_REGISTRATION_IMPLEMENT (calorimeter_step_hit_processor,
                                                      "mctools::calorimeter_step_hit_processor");
 
   void calorimeter_step_hit_processor::set_mapping_category (const std::string & sc_)
@@ -43,7 +45,7 @@ namespace mctools {
     _calo_block_type_ = geomtools::geom_id::INVALID_TYPE;
     return;
   }
- 
+
   calorimeter_step_hit_processor::~calorimeter_step_hit_processor ()
   {
     return;
@@ -53,22 +55,17 @@ namespace mctools {
                                                        config_,
                                                        service_mgr_)
   {
-    if (is_debug ()) {
-      clog << datatools::io::debug << "mctools::calorimeter_step_hit_processor::initialize: "
-           << "Entering..." << endl;
-    }
-    
+    // if (is_debug ()) {
+    //   clog << datatools::io::debug << "mctools::calorimeter_step_hit_processor::initialize: "
+    //        << "Entering..." << endl;
+    // }
+
     this->base_step_hit_processor::initialize(config_,
                                               service_mgr_);
-    
+
     // The geometry manager is mandatory for this processor:
-    if (! has_geom_manager ()) {
-      std::ostringstream message;
-      message << "mctools::calorimeter_step_hit_processor::initialize: "
-              << "Missing geometry manager for processor '" << get_name () << "' !"
-              << endl;
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF (! has_geom_manager (), std::logic_error,
+                 "Missing geometry manager for processor '" << get_name () << "' !");
 
     if (config_.has_key ("mapping.category")) {
       std::string geom_cat = config_.fetch_string ("mapping.category");
@@ -82,17 +79,13 @@ namespace mctools {
 
     // A sensitive category is mandatory for this processor,
     // i.e. the one defined for the target scintillator blocks:
-    if (_mapping_category_.empty ()) {
-      std::ostringstream message;
-      message << "mctools::calorimeter_step_hit_processor::initialize: "
-              << "Missing 'mapping_category' string property for processor '" << get_name () << "' !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF (_mapping_category_.empty (), std::logic_error,
+                 "Missing 'mapping_category' string property for processor '" << get_name () << "' !");
 
-    if (is_debug ()) {
-      std::clog << datatools::io::debug << "mctools::calorimeter_step_hit_processor::initialize: "
-                << "Parse setup properties for processor '" << get_name () << "' ..." << std::endl;
-    }
+    // if (is_debug ()) {
+    //   std::clog << datatools::io::debug << "mctools::calorimeter_step_hit_processor::initialize: "
+    //             << "Parse setup properties for processor '" << get_name () << "' ..." << std::endl;
+    // }
 
     // set the verbosity flag:
     if (config_.has_flag ("verbose")) {
@@ -106,7 +99,7 @@ namespace mctools {
         _scintillation_cluster_time_range_ *= CLHEP::ns;
       }
     }
-        
+
     // set the space tolerance for hit clusterization:
     if (config_.has_key ("cluster.space_range")) {
       _scintillation_cluster_space_range_ = config_.fetch_real ("cluster.space_range");
@@ -122,14 +115,10 @@ namespace mctools {
     _categories_ = &(_geom_manager->get_id_mgr ().categories_by_name ());
     geomtools::id_mgr::categories_by_name_col_type::const_iterator icat
       = _categories_->find (_mapping_category_);
-    if (icat == _categories_->end ())
-      {
-        std::ostringstream message;
-        message << "mctools::calorimeter_step_hit_processor::initialize: "
-                << "Cannot find geometry ID category '"
-                << _mapping_category_ << "' string property for processor '" << get_name () << "'  !";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF (icat == _categories_->end (), std::logic_error,
+                 "Cannot find geometry ID category '"
+                 << _mapping_category_ << "' string property for processor '"
+                 << get_name () << "' !");
 
     const geomtools::id_mgr::category_info & mapping_cat_info = icat->second;
 
@@ -142,44 +131,35 @@ namespace mctools {
     for (int i = 0; i < any_addresses_labels.size (); i++) {
       std::vector<std::string> strs;
       boost::split (strs, any_addresses_labels[i], boost::is_any_of("@"));
-      if (strs.size () > 2) {
-        std::ostringstream message;
-        message << "mctools::calorimeter_step_hit_processor::initialize: "
-                << "Invalid format for 'mapping.category.any_addresses' property ' from "
-                << any_addresses_labels[i] << "' !";
-        throw std::logic_error (message.str ());
-      }
+      DT_THROW_IF (strs.size () > 2, std::logic_error,
+                   "Invalid format for 'mapping.category.any_addresses' property ' from "
+                   << any_addresses_labels[i] << "' !");
       const std::string & label = strs[0];
       int label_count = 1;
       if (strs.size () == 2) {
-        const string & count_str = strs[1]; 
+        const string & count_str = strs[1];
         istringstream iss (count_str);
         iss >> label_count;
-        if (! iss) {
-          std::ostringstream message;
-          message << "mctools::calorimeter_step_hit_processor::initialize: "
-                  << "Invalid format for 'mapping.category.any_addresses', cannot parse subaddress label count from "
-                  << count_str << "' !";
-          throw std::logic_error (message.str ());
-        }
+        DT_THROW_IF (! iss, std::logic_error,
+                     "Invalid format for 'mapping.category.any_addresses' ! "
+                     << "Cannot parse subaddress label count from "
+                     << count_str << "' !");
       }
-      if (! mapping_cat_info.has_subaddress (label, label_count)) {
-        std::ostringstream message;
-        message << "mctools::calorimeter_step_hit_processor::initialize: "
-                << "Category '" << mapping_cat_info.get_category () << "' has no subaddress labelled '" << label << "' !";
-        throw std::logic_error (message.str ());
-      }
+      DT_THROW_IF ((! mapping_cat_info.has_subaddress (label, label_count)),
+                   std::logic_error,
+                   "Category '" << mapping_cat_info.get_category ()
+                   << "' has no subaddress labelled '" << label << "' !");
       _mapping_category_any_addresses_.push_back (mapping_cat_info.get_subaddress_index (label, label_count));
     }
     if (_mapping_category_any_addresses_.size ()) {
-      std::sort (_mapping_category_any_addresses_.begin (), 
+      std::sort (_mapping_category_any_addresses_.begin (),
                  _mapping_category_any_addresses_.end ());
     }
 
-    if (is_debug ()) {
-      clog << datatools::io::debug << "calorimeter_step_hit_processor::initialize: "
-           << "Exiting." << endl;
-    }
+    // if (is_debug ()) {
+    //   clog << datatools::io::debug << "calorimeter_step_hit_processor::initialize: "
+    //        << "Exiting." << endl;
+    // }
     return;
   }
 
@@ -215,14 +195,14 @@ namespace mctools {
       gid1.set_any (_mapping_category_any_addresses[i]);
       gid2.set_any (_mapping_category_any_addresses[i]);
       }
-      if (! geomtools::geom_id::match (gid1, gid2, false)) 
+      if (! geomtools::geom_id::match (gid1, gid2, false))
       {
       return false;
       }
       }
       else
       {
-      if (! geomtools::geom_id::match (scintillation_hit_.get_geom_id (), step_hit_.get_geom_id (), true)) 
+      if (! geomtools::geom_id::match (scintillation_hit_.get_geom_id (), step_hit_.get_geom_id (), true))
       {
       return false;
       }
@@ -256,8 +236,7 @@ namespace mctools {
            */
           track_match = true;
         }
-      }
-      else if (hit_pname == "alpha") {
+      } else if (hit_pname == "alpha") {
         track_match = true;
         /** pile-up of different alpha particles within the same scintillator
          *  volume is not supported, despite it should lead to
@@ -387,7 +366,7 @@ namespace mctools {
     _process(the_base_step_hits, (simulated_data::hit_handle_collection_type *) 0, &a_plain_gg_hits);
     return;
   }
-      
+
   MCTOOLS_STEP_HIT_PROCESSOR_PROCESS_HANDLE_IMPLEMENT_HEAD(calorimeter_step_hit_processor,
                                                            the_base_step_hits,
                                                            the_calo_hits)
@@ -406,10 +385,9 @@ namespace mctools {
     // Check the type of output collection (handles or plain hits) :
     bool use_handles = false;
     if (the_scintillation_hits != 0) {
-      use_handles = true; 
-    }
-    else if (the_plain_scintillation_hits == 0) {
-      throw std::logic_error ("mctools::calorimeter_step_hit_processor::_process: Missing hit collection type (NULL pointer) !");
+      use_handles = true;
+    } else if (the_plain_scintillation_hits == 0) {
+      DT_THROW_IF(true, std::logic_error, "Missing hit collection type (NULL pointer) !");
     }
     base_step_hit * current_scintillation_cluster = 0;
     uint32_t scintillation_hit_count = 0;
@@ -439,7 +417,7 @@ namespace mctools {
       if (hit_energy_deposit < 1.e-10 * CLHEP::keV) continue;
 
       // locate the hit using the mean position through the smart locator:
-      geomtools::geom_id gid = _calo_block_locator_.get_geom_id (hit_position_mean, 
+      geomtools::geom_id gid = _calo_block_locator_.get_geom_id (hit_position_mean,
                                                                  _calo_block_type_);
       if (! gid.is_valid ()) {
         // we do not process such a hit:
@@ -455,7 +433,7 @@ namespace mctools {
         }
         continue;
       }
-            
+
       // Set 'any' for some GID subaddresses :
       for (int i = 0; i < _mapping_category_any_addresses_.size (); i++) {
         gid.set_any (_mapping_category_any_addresses_[i]);
@@ -472,21 +450,20 @@ namespace mctools {
       // else: scan the whole list of clusters :
       if (matching_scintillation_cluster == 0) {
         if (use_handles) {
-          for (simulated_data::hit_handle_collection_type::iterator icluster 
+          for (simulated_data::hit_handle_collection_type::iterator icluster
                  = the_scintillation_hits->begin ();
                icluster != the_scintillation_hits->end ();
                icluster++) {
             if (! icluster->has_data ()) continue;
-            base_step_hit & matching_hit = icluster->get ();
+            base_step_hit & matching_hit = icluster->grab ();
             if (match_scintillation_hit (matching_hit, the_step_hit)) {
               // pick up the first matching cluster :
               matching_scintillation_cluster = &matching_hit;
               break;
             }
           }
-        }
-        else {
-          for (simulated_data::hit_collection_type::iterator icluster 
+        } else {
+          for (simulated_data::hit_collection_type::iterator icluster
                  = the_plain_scintillation_hits->begin ();
                icluster != the_plain_scintillation_hits->end ();
                icluster++) {
@@ -506,9 +483,8 @@ namespace mctools {
           // insert a new clusterized hit:
           add_new_hit (*the_scintillation_hits);
           // optimization using a reference to this last inserted hit :
-          current_scintillation_cluster = &(the_scintillation_hits->back ().get ());
-        }
-        else  {
+          current_scintillation_cluster = &(the_scintillation_hits->back ().grab ());
+        } else {
           // add a new hit in the plain collection :
           base_step_hit dummy;
           the_plain_scintillation_hits->push_back (dummy);
@@ -531,8 +507,7 @@ namespace mctools {
           // for gamma, only interaction point makes sense (ie. photoelectric effect)
           current_scintillation_cluster->set_time_start (hit_time_stop);
           current_scintillation_cluster->set_time_stop (hit_time_stop);
-        }
-        else {
+        } else {
           current_scintillation_cluster->set_time_start (hit_time_start);
           current_scintillation_cluster->set_time_stop (hit_time_stop);
         }
@@ -550,8 +525,7 @@ namespace mctools {
           xmax = the_step_hit.get_position_stop ().x ();
           ymax = the_step_hit.get_position_stop ().y ();
           zmax = the_step_hit.get_position_stop ().z ();
-        }
-        else {
+        } else {
           // compute the bounds of the step hit:
           xmin = min (the_step_hit.get_position_start ().x (), the_step_hit.get_position_stop ().x ());
           ymin = min (the_step_hit.get_position_start ().y (), the_step_hit.get_position_stop ().y ());
@@ -567,8 +541,7 @@ namespace mctools {
 
         //increment the cluster id:
         scintillation_hit_count++;
-      }
-      else {
+      } else {
         // add the step hit informations in the current cluster:
         current_scintillation_cluster = matching_scintillation_cluster;
 
@@ -583,8 +556,7 @@ namespace mctools {
           if (hit_time_stop > current_scintillation_cluster->get_time_stop ()) {
             current_scintillation_cluster->set_time_stop (hit_time_stop);
           }
-        }
-        else {
+        } else {
           if (hit_time_start < current_scintillation_cluster->get_time_start ()) {
             current_scintillation_cluster->set_time_start (hit_time_start);
           }
@@ -628,8 +600,8 @@ namespace mctools {
 
     return;
   }
- 
-  void calorimeter_step_hit_processor::tree_dump (std::ostream & a_out, 
+
+  void calorimeter_step_hit_processor::tree_dump (std::ostream & a_out,
                                                   const std::string & a_title,
                                                   const std::string & a_indent,
                                                   bool a_inherit) const
@@ -640,18 +612,18 @@ namespace mctools {
       indent = a_indent;
     }
     base_step_hit_processor::tree_dump (a_out, a_title, indent, true);
-    a_out << indent << du::i_tree_dumpable::tag 
+    a_out << indent << du::i_tree_dumpable::tag
           << "Verbose : " << _verbose_ << std::endl;
-    a_out << indent << du::i_tree_dumpable::tag 
+    a_out << indent << du::i_tree_dumpable::tag
           << "Time range : " << _scintillation_cluster_time_range_ / CLHEP::ns << " (ns)" << std::endl;
-    a_out << indent << du::i_tree_dumpable::tag 
+    a_out << indent << du::i_tree_dumpable::tag
           << "Space range : " << _scintillation_cluster_space_range_ / CLHEP::mm << " (mm)" << std::endl;
-    a_out << indent << du::i_tree_dumpable::tag 
+    a_out << indent << du::i_tree_dumpable::tag
           << "Mapping category : '" <<_mapping_category_ << "'" << std::endl;
-    a_out << indent << du::i_tree_dumpable::tag 
+    a_out << indent << du::i_tree_dumpable::tag
           << "Mapping    : " << _mapping_ << std::endl;
     {
-      a_out << indent << du::i_tree_dumpable::tag 
+      a_out << indent << du::i_tree_dumpable::tag
             << "Categories : " << _categories_ << " ";
       if (_categories_ != 0) {
         a_out << '[' << _categories_->size () << ']';
@@ -677,9 +649,9 @@ namespace mctools {
       }
       a_out << std::endl;
     }
-    a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit) 
+    a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)
           << "Calorimeter block type : " << _calo_block_type_ << std::endl;
-        
+
     return;
   }
 

@@ -2,7 +2,7 @@
 /* manager_parameters.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-16
- * Last modified: 2010-02-16
+ * Last modified: 2013-06-03
  *
  * License:
  *
@@ -27,8 +27,7 @@ namespace mctools {
 
     struct manager_parameters
     {
-      bool        debug;
-      bool        verbose;
+      std::string logging;
       std::string manager_config_filename;
       std::string g4_macro;
       bool        g4_visu;

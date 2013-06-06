@@ -22,6 +22,8 @@
 // G4 stuff:
 #include <G4UserStackingAction.hh>
 
+#include <mctools/g4/loggable_support.h>
+
 class G4Track;
 class G4LogicalVolume;
 class G4Navigator;
@@ -35,19 +37,13 @@ namespace mctools {
 
   namespace g4 {
 
-    class stacking_action : public G4UserStackingAction
+    class stacking_action : public G4UserStackingAction,
+                            public loggable_support
     {
-
     public:
 
-      bool is_debug () const;
-
-      void set_debug (bool);
-
-      // ctor:
       stacking_action ();
 
-      // dtor:
       virtual ~stacking_action ();
 
       void initialize (const datatools::properties & config_);
@@ -61,7 +57,6 @@ namespace mctools {
 
     private:
 
-      bool                           _debug_;
       G4Navigator *                  _g4_navigator_;
       bool                           _kill_secondary_particles_;
       std::vector<std::string>       _killer_volume_names_;

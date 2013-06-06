@@ -9,24 +9,23 @@
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation, either version 3 of the License, or
 ## (at your option) any later version.
-## 
+##
 ## mctools is distributed in the hope that it will be useful,
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
-## 
+##
 ## You should have received a copy of the GNU General Public License
 ## along with mctools.  If not, see <http://www.gnu.org/licenses/>.
 ##
 ###############################################################################
 
 
-###file(GLOB mctools_tests_programs test_*.cxx)
 set ( mctools_tests_programs
-     test_base_step_hit.cxx 
-     test_simulated_data_1.cxx 
-     test_step_hit_processor_factory.cxx 
-)    
+     test_base_step_hit.cxx
+     test_simulated_data_1.cxx
+     test_step_hit_processor_factory.cxx
+)
 if (MCTOOLS_WITH_G4)
    list(APPEND mctools_tests_programs
      test_g4_prng.cxx
@@ -39,9 +38,9 @@ endif()
 # list(REMOVE_ITEM mctools_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
 # if(MCTOOLS_WITH_REFLECTION)
 #   list(APPEND mctools_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
-# endif() 
+# endif()
 
-set(mctools_tests_programs_list "${mctools_tests_programs}") 
+set(mctools_tests_programs_list "${mctools_tests_programs}")
 list(SORT mctools_tests_programs_list)
 
 # include files search paths
@@ -111,32 +110,35 @@ foreach(test_program ${mctools_tests_programs_list})
     set_target_properties(${test_executable} PROPERTIES DEBUG_POSTFIX d)
   endif()
 
-  set(_test_libraries mctools) 
+  set(_test_libraries mctools)
 
   # Special bio DLL plugins :
   if(datatools_WITH_BIO)
     list(INSERT _test_libraries 0 datatools_bio)
-  endif() 
+  endif()
   if(mygsl_WITH_BIO)
     list(INSERT _test_libraries 0 mygsl_bio )
-  endif() 
+  endif()
   if(geomtools_WITH_BIO)
     list(INSERT _test_libraries 0 geomtools_bio )
-  endif() 
+  endif()
   if(genbb_help_WITH_BIO)
     list(INSERT _test_libraries 0 genbb_help_bio )
-  endif() 
+  endif()
   if(MCTOOLS_WITH_BIO)
     list(INSERT _test_libraries 0 mctools_bio )
-  endif() 
+  endif()
 
-  # # Special reflection DLL plugins :
-  # if(datatools_WITH_REFLECTION)
-  #   list(INSERT _test_libraries 0 datatools_reflection)
-  # endif() 
-  # if(MCTOOLS_WITH_REFLECTION)
-  #   list(INSERT _test_libraries 0 mctools_reflection )
-  # endif() 
+  # Special reflection DLL plugins :
+  if(datatools_WITH_REFLECTION)
+    list(INSERT _test_libraries 0 datatools_reflection)
+  endif()
+  if(geomtools_WITH_REFLECTION)
+    list(INSERT _test_libraries 0 geomtools_reflection)
+  endif()
+  if(MCTOOLS_WITH_REFLECTION)
+    list(INSERT _test_libraries 0 mctools_reflection )
+  endif()
 
   if (MCTOOLS_WITH_G4)
     list(APPEND _test_libraries mctools_g4 )
@@ -146,21 +148,21 @@ foreach(test_program ${mctools_tests_programs_list})
   target_link_libraries(${test_executable} ${_test_libraries})
 
   add_test(NAME ${test_executable}.run
-    COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
+    COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash
     --tmp-dir ${_test_tmp_dir}
-    --data-dir ${PROJECT_SOURCE_DIR} 
-    --prefix ${PROJECT_SOURCE_DIR} 
+    --data-dir ${PROJECT_SOURCE_DIR}
+    --prefix ${PROJECT_SOURCE_DIR}
     --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
     ${_mctools_test_additional_options}
     run
-    )	 
+    )
 
   unset(_test_libraries)
 endforeach ()
 
 add_custom_target(clean_test
-  COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
-  --prefix ${PROJECT_SOURCE_DIR} 
+  COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash
+  --prefix ${PROJECT_SOURCE_DIR}
   --tmp-dir ${_test_tmp_dir}
   clean
   )

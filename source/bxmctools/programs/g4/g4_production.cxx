@@ -39,6 +39,8 @@
 #include <datatools/ioutils.h>
 #include <datatools/multi_properties.h>
 #include <datatools/library_loader.h>
+#include <datatools/logger.h>
+#include <datatools/exception.h>
 
 #include <mygsl/random_utils.h>
 
@@ -58,14 +60,22 @@
 int main(int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
-
-  std::vector<std::string> dlls; /// List of DLLs to be loaded 
+  datatools::logger::priority logging = datatools::logger::PRIO_WARNING;
+  std::vector<std::string> dlls; /// List of DLLs to be loaded
   std::string dll_loader_config; /// Configuration file of the DLL loader
 
   try {
-    std::clog << datatools::io::notice
-              << "g4_production: "
-              << "mctools Geant4 program for simulation production." << std::endl;
+    std::clog << "\n"
+              << "     M C T O O L S - G 4\n"
+              << "     Version 1.0.0\n"
+              << "     g4_production\n"
+              << "\n"
+              << "     Copyright (C) 2013\n"
+              << "     Francois Mauger, Xavier Garrido\n"
+              << "\n";
+
+
+    //DT_LOG_NOTICE(logging, "mctools Geant4 program for simulation production.");
 
     // 2011-07-22 XG: most of these parameters can be overwritten by
     // the default_value method of options_description.
@@ -82,17 +92,10 @@ int main(int argc_, char ** argv_)
     opts.add_options()
       ("help,h", "produce help message")
 
-      ("debug,d",
-       po::value<bool>(&params.debug)
-       ->zero_tokens()
-       ->default_value(false),
-       "produce debug logging")
-
-      ("verbose,v",
-       po::value<bool>(&params.verbose)
-       ->zero_tokens()
-       ->default_value(false),
-       "produce verbose logging")
+      ("logging-priority,g",
+       po::value<std::string>(&params.logging)
+       ->default_value("warning"),
+       "set the logging priority threshold")
 
       ("number-of-events,n",
        po::value<uint32_t>(&params.noevents)
@@ -107,7 +110,7 @@ int main(int argc_, char ** argv_)
       ("interactive,i",
        po::value<bool>(&params.interactive)
        ->zero_tokens()
-       ->default_value(false),   
+       ->default_value(false),
        "run simulation in interactive mode")
 
       ("batch,b",
@@ -214,7 +217,7 @@ int main(int argc_, char ** argv_)
        "Example :                                   \n"
        " --dlls-config dlls.conf                    "
        )
-      
+
       ("load-dll,l",
        po::value<std::vector<std::string> >(&dlls),
        "set a DLL to be loaded.                     \n"
@@ -257,7 +260,6 @@ int main(int argc_, char ** argv_)
 
     if (vm.count("batch")) {
       if (vm["batch"].as<bool>()) {
-        //std::cerr << std::endl << "********* DEVEL: BATCH !" << std::endl << std::endl;
         params.interactive = false;
       }
     }
@@ -323,60 +325,50 @@ int main(int argc_, char ** argv_)
 
     /*** end of opts/args parsing ***/
 
-    datatools::library_loader dll_loader(datatools::library_loader::allow_unregistered, 
+    datatools::library_loader dll_loader(datatools::library_loader::allow_unregistered,
                                          dll_loader_config);
     if (params.g4_visu) {
       std::string g4_vis_dll = "G4visXXX";
       if (std::find(dlls.begin(), dlls.end(), g4_vis_dll) == dlls.end()) {
-        std::clog << "NOTICE: " << "Force the loading of the DLL '" << g4_vis_dll << "' DLL..." << std::endl;
+        DT_LOG_NOTICE(logging, "Force the loading of the DLL '" << g4_vis_dll << "' DLL...");
         dlls.push_back(g4_vis_dll);
       }
       std::string g4_opengl_dll = "G4OpenGL";
       if (std::find(dlls.begin(), dlls.end(), g4_opengl_dll) == dlls.end()) {
-        std::clog << "NOTICE: " << "Force the loading of the DLL '" << g4_opengl_dll << "' DLL..." << std::endl;
+        DT_LOG_NOTICE(logging, "Force the loading of the DLL '" << g4_opengl_dll << "' DLL...");
         dlls.push_back(g4_opengl_dll);
       }
     }
     BOOST_FOREACH (const std::string & dll_name, dlls) {
-      std::clog << "NOTICE: " << "Loading DLL '" << dll_name << "'..." << std::endl;
-      if (dll_loader.load (dll_name) != EXIT_SUCCESS) {
-        std::ostringstream message;
-        message << "g4_production: Loading DLL '" << dll_name << "' failed !";
-        throw std::logic_error (message.str ());
-      }
+      DT_LOG_NOTICE(logging, "Loading DLL '" << dll_name << "'...");
+      DT_THROW_IF (dll_loader.load (dll_name) != EXIT_SUCCESS,
+                   std::logic_error,
+                   "Loading DLL '" << dll_name << "' failed !");
     }
 
     // Declare the simulation manager:
     mctools::g4::manager sim_manager;
 
-    std::clog << datatools::io::notice
-              << "g4_production: " << "Setup the simulation manager..." << std::endl;
+    DT_LOG_NOTICE(logging, "Setup the simulation manager...");
 
     mctools::g4::manager_parameters::setup(params, sim_manager);
 
-    std::clog << datatools::io::notice
-              << "g4_production: " << "Simulation session starts..." << std::endl;
+    DT_LOG_NOTICE(logging, "Simulation session starts...");
 
     // Run the simulation session :
     sim_manager.run_simulation();
 
-    std::clog << datatools::io::notice
-              << "g4_production: " << "Simulation session is stopped." << std::endl;
+    DT_LOG_NOTICE(logging, "Simulation session is stopped.");
   }
   catch (std::exception & x) {
-    std::cerr << datatools::io::error
-              << "g4_production: "
-              << x.what() << std::endl;
+    DT_LOG_FATAL(logging, x.what());
     error_code = EXIT_FAILURE;
   }
   catch (...) {
-    std::cerr << datatools::io::error
-              << "g4_production: "
-              << "Unexpected error !" << std::endl;
-    error_code = EXIT_FAILURE;
+   DT_LOG_FATAL(logging, "Unexpected error !");
+   error_code = EXIT_FAILURE;
   }
-  std::clog << datatools::io::notice
-            << "g4_production: g4_production ends here." << std::endl;
+  DT_LOG_TRACE(logging, "g4_production ends here.");
   return(error_code);
 }
 

@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* base_step_hit.cc
  */
 
@@ -10,12 +10,14 @@
 
 // misc :
 #include <datatools/utils.h>
+#include <datatools/exception.h>
+
 #include <mctools/utils.h>
 
 namespace mctools {
 
   using namespace std;
-  
+
   // serial tag for datatools::serialization::i_serializable interface :
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(base_step_hit, "mctools::base_step_hit")
 
@@ -24,7 +26,7 @@ namespace mctools {
   {
     return get_auxiliaries ().has_flag (mctools::track_utils::PRIMARY_PARTICLE_FLAG);
   }
- 
+
   bool base_step_hit::has_track_id () const
   {
     return get_auxiliaries ().has_key (mctools::track_utils::TRACK_ID_KEY);
@@ -54,13 +56,13 @@ namespace mctools {
       }
     return parent_track_id;
   }
-   
+
   const geomtools::vector_3d &
   base_step_hit::get_position_start () const
   {
     return _position_start_;
   }
-  
+
   void
   base_step_hit::set_position_start (const geomtools::vector_3d & new_value)
   {
@@ -75,13 +77,13 @@ namespace mctools {
     _store &= ~STORE_POSITION_START;
     return;
   }
-  
+
   const geomtools::vector_3d &
   base_step_hit::get_position_stop () const
   {
     return _position_stop_;
   }
-  
+
   void
   base_step_hit::set_position_stop (const geomtools::vector_3d & new_value)
   {
@@ -96,13 +98,13 @@ namespace mctools {
     _store &= ~STORE_POSITION_STOP;
     return;
   }
-  
+
   double
   base_step_hit::get_time_start () const
   {
     return _time_start_;
   }
-  
+
   void
   base_step_hit::set_time_start (double new_value)
   {
@@ -117,13 +119,13 @@ namespace mctools {
     _store &= ~STORE_TIME_START;
     return;
   }
-  
+
   double
   base_step_hit::get_time_stop () const
   {
     return _time_stop_;
   }
-  
+
   void
   base_step_hit::set_time_stop (double new_value)
   {
@@ -131,7 +133,7 @@ namespace mctools {
     _time_stop_ = new_value;
     return;
   }
- 
+
 
   void base_step_hit::invalidate_time_stop ()
   {
@@ -139,13 +141,13 @@ namespace mctools {
     _store &= ~STORE_TIME_STOP;
     return;
   }
-  
+
   const geomtools::vector_3d &
   base_step_hit::get_momentum_start () const
   {
     return _momentum_start_;
   }
-  
+
   void
   base_step_hit::set_momentum_start (const geomtools::vector_3d & new_value)
   {
@@ -160,13 +162,13 @@ namespace mctools {
     _store &= ~STORE_MOMENTUM_START;
     return;
   }
-  
+
   const geomtools::vector_3d &
   base_step_hit::get_momentum_stop () const
   {
     return _momentum_stop_;
   }
-  
+
   void
   base_step_hit::set_momentum_stop (const geomtools::vector_3d & new_value)
   {
@@ -181,13 +183,13 @@ namespace mctools {
     _store &= ~STORE_MOMENTUM_STOP;
     return;
   }
- 
+
   double
   base_step_hit::get_energy_deposit () const
   {
     return _energy_deposit_;
   }
-  
+
   void
   base_step_hit::set_energy_deposit (double new_value)
   {
@@ -202,21 +204,21 @@ namespace mctools {
     _store &= ~STORE_ENERGY_DEPOSIT;
     return;
   }
-  
+
   // ctor:
-  base_step_hit::base_step_hit () : geomtools::base_hit () 
+  base_step_hit::base_step_hit () : geomtools::base_hit ()
   {
     base_step_hit::reset ();
     return;
   }
-  
+
   // dtor:
   base_step_hit::~base_step_hit ()
   {
     base_step_hit::reset ();
     return;
   }
-      
+
   bool base_step_hit::is_valid () const
   {
     if (! geomtools::base_hit::is_valid ()) return false;
@@ -245,7 +247,7 @@ namespace mctools {
     _store &= ~STORE_PARTICLE_NAME;
     return;
   }
-  
+
   void base_step_hit::reset ()
   {
     invalidate_position_start ();
@@ -259,7 +261,7 @@ namespace mctools {
     geomtools::base_hit::reset ();
     return;
   }
-    
+
   void base_step_hit::clear ()
   {
     base_step_hit::reset ();
@@ -271,8 +273,8 @@ namespace mctools {
     base_step_hit::reset ();
     return;
   }
-  
-  void base_step_hit::tree_dump (ostream & a_out , 
+
+  void base_step_hit::tree_dump (ostream & a_out ,
                                  const string & a_title,
                                  const string & a_indent,
                                  bool a_inherit) const
@@ -285,26 +287,26 @@ namespace mctools {
       }
     geomtools::base_hit::tree_dump (a_out, a_title, indent, true);
 
-    a_out << indent << du::i_tree_dumpable::tag 
+    a_out << indent << du::i_tree_dumpable::tag
           << "Position start : " << _position_start_ / CLHEP::mm  << " mm" << endl;
-    a_out << indent << du::i_tree_dumpable::tag 
+    a_out << indent << du::i_tree_dumpable::tag
           << "Position stop  : " << _position_stop_ / CLHEP::mm << " mm" << endl;
-    a_out << indent << du::i_tree_dumpable::tag 
+    a_out << indent << du::i_tree_dumpable::tag
           << "Time start     : " << _time_start_ / CLHEP::ns << " ns" << endl;
-    a_out << indent << du::i_tree_dumpable::tag 
+    a_out << indent << du::i_tree_dumpable::tag
           << "Time stop      : " << _time_stop_ / CLHEP::ns << " ns" << endl;
-    a_out << indent << du::i_tree_dumpable::tag 
+    a_out << indent << du::i_tree_dumpable::tag
           << "Momentum start : " << _momentum_start_ / CLHEP::keV << " keV" << endl;
-    a_out << indent << du::i_tree_dumpable::tag 
+    a_out << indent << du::i_tree_dumpable::tag
           << "Momentum stop  : " << _momentum_stop_ / CLHEP::keV << " keV" << endl;
-    a_out << indent << du::i_tree_dumpable::tag 
+    a_out << indent << du::i_tree_dumpable::tag
           << "Energy deposit : " << _energy_deposit_ / CLHEP::keV << " keV" << endl;
-    a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit) 
+    a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)
           << "Particle name  : `" << _particle_name_ << "'" << endl;
-       
+
     return;
   }
-   
+
   void base_step_hit::dump () const
   {
     tree_dump (clog);

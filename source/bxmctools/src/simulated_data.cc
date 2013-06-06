@@ -5,6 +5,9 @@
 #include <mctools/simulated_data.h>
 
 #include <boost/algorithm/string.hpp>
+
+#include <datatools/exception.h>
+
 #include <geomtools/utils.h>
 
 namespace mctools {
@@ -16,47 +19,35 @@ namespace mctools {
 
   void simulated_data::reset_collection_type ()
   {
-    if (_step_hits_dict_.size () > 0 || _plain_step_hits_dict_.size () > 0) {
-      std::ostringstream message;
-      message << "mctools::simulated_data::reset_collection_type: "
-              << "Cannot reset the collection type "
-              << "for the dictionary of hit collections is not empty !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF (_step_hits_dict_.size () > 0 || _plain_step_hits_dict_.size () > 0,
+                 std::logic_error,
+                 "Cannot reset the collection type "
+                 << "for the dictionary of hit collections is not empty !");
     _collection_type_ = INVALID_HIT_COLLECTION_TYPE;
     return;
   }
 
   void simulated_data::set_collection_type (int a_collection_type)
   {
-    if (_step_hits_dict_.size () > 0 || _plain_step_hits_dict_.size () > 0) {
-      std::ostringstream message;
-      message << "mctools::simulated_data::set_collection_type: "
-              << "Cannot set the collection type "
-              << "for the dictionary of hit collections is not empty !";
-      throw std::logic_error (message.str ());
-    }
-    if (_collection_type_ != INVALID_HIT_COLLECTION_TYPE) {
-      std::ostringstream message;
-      message << "mctools::simulated_data::set_collection_type: "
-              << "Cannot change the collection type !";
-      throw std::logic_error (message.str ());
-    }
-    if ((a_collection_type != PLAIN_HIT_COLLECTION_TYPE)
-        && (a_collection_type != HANDLE_HIT_COLLECTION_TYPE)) {
-      std::ostringstream message;
-      message << "mctools::simulated_data::set_collection_type: "
-              << "Invalid collection type !";
-      throw std::logic_error (message.str ());
-    }
+    DT_THROW_IF (_step_hits_dict_.size () > 0 || _plain_step_hits_dict_.size () > 0,
+                 std::logic_error,
+                 "Cannot set the collection type "
+                 << "for the dictionary of hit collections is not empty !");
+    DT_THROW_IF (_collection_type_ != INVALID_HIT_COLLECTION_TYPE,
+                 std::logic_error,
+                 "Cannot change the collection type !");
+    DT_THROW_IF ((a_collection_type != PLAIN_HIT_COLLECTION_TYPE)
+                 && (a_collection_type != HANDLE_HIT_COLLECTION_TYPE),
+                 std::logic_error,
+                 "Invalid collection type '" << a_collection_type << "' !");
     /*
       if (a_collection_type == PLAIN_HIT_COLLECTION_TYPE)
       {
       ostringstream message;
       message << "mctools::simulated_data::set_collection_type: "
       << "Collection type '" << "plain" << "' is not supported anymore !";
-      throw logic_error (message.str ());
-        
+      th row logic_error (message.str ());
+
       }
     */
     _collection_type_ = a_collection_type;
@@ -113,6 +104,11 @@ namespace mctools {
   {
     _primary_event_ = a_pe;
     return;
+  }
+
+  void simulated_data::set_properties(const datatools::properties & p)
+  {
+    _properties_ = p;
   }
 
   const datatools::properties & simulated_data::get_properties () const
@@ -251,10 +247,7 @@ namespace mctools {
       }
     }
     else {
-      ostringstream message;
-      message << "mctools::simulated_data::get_step_hits_categories: "
-              << "Invalid mode !";
-      throw logic_error (message.str ());
+      DT_THROW_IF(true, std::logic_error, "Invalid mode !");
     }
     return;
   }
@@ -309,24 +302,18 @@ namespace mctools {
     if (use_handle_hit_collection ()) {
       step_hits_dict_type::iterator found
         = _step_hits_dict_.find (a_category);
-      if (found == _step_hits_dict_.end ()) {
-        ostringstream message;
-        message << "mctools::simulated_data::add_step_hit: "
-                << "No collection of hits with category '" << a_category << "' !";
-        throw logic_error (message.str ());
-      }
+      DT_THROW_IF (found == _step_hits_dict_.end (),
+                   std::logic_error,
+                   "No collection of hits with category '" << a_category << "' !");
       found->second.push_back (hit_handle_type (new base_step_hit));
-      return found->second.back ().get ();
+      return found->second.back ().grab ();
     }
     if (use_plain_hit_collection ()) {
       plain_step_hits_dict_type::iterator found
         = _plain_step_hits_dict_.find (a_category);
-      if (found == _plain_step_hits_dict_.end ()) {
-        ostringstream message;
-        message << "mctools::simulated_data::add_step_hit: "
-                << "No collection of hits with category '" << a_category << "' !";
-        throw logic_error (message.str ());
-      }
+      DT_THROW_IF (found == _plain_step_hits_dict_.end (),
+                   std::logic_error,
+                   "No collection of hits with category '" << a_category << "' !");
       base_step_hit dummy;
       found->second.push_back (dummy);
       return found->second.back ();
@@ -338,23 +325,17 @@ namespace mctools {
     if (use_handle_hit_collection ()) {
       step_hits_dict_type::const_iterator found
         = _step_hits_dict_.find (a_category);
-      if (found == _step_hits_dict_.end ()) {
-        ostringstream message;
-        message << "mctools::simulated_data::get_number_of_step_hits: "
-                << "No collection of hits with category '" << a_category << "' !";
-        throw logic_error (message.str ());
-      }
+      DT_THROW_IF (found == _step_hits_dict_.end (),
+                   std::logic_error,
+                   "No collection of hits with category '" << a_category << "' !");
       return found->second.size ();
     }
     if (use_plain_hit_collection ()) {
       plain_step_hits_dict_type::const_iterator found
         = _plain_step_hits_dict_.find (a_category);
-      if (found == _plain_step_hits_dict_.end ()) {
-        ostringstream message;
-        message << "mctools::simulated_data::get_number_of_step_hits: "
-                << "No collection of hits with category '" << a_category << "' !";
-        throw logic_error (message.str ());
-      }
+      DT_THROW_IF (found == _plain_step_hits_dict_.end (),
+                   std::logic_error,
+                   "No collection of hits with category '" << a_category << "' !");
       return found->second.size ();
     }
   }
@@ -365,42 +346,26 @@ namespace mctools {
     if (use_handle_hit_collection ()) {
       step_hits_dict_type::const_iterator found
         = _step_hits_dict_.find (a_category);
-      if (found == _step_hits_dict_.end ()) {
-        ostringstream message;
-        message << "mctools::simulated_data::get_step_hit: "
-                << "No collection of handles of hits with category '" << a_category << "' !";
-        throw logic_error (message.str ());
-      }
-      if (a_hit_index < 0 || a_hit_index >= found->second.size ()) {
-        ostringstream message;
-        message << "mctools::simulated_data::get_step_hit: "
-                << "Invalid hit index in category '" << a_category << "' !";
-        throw range_error (message.str ());
-      }
-      if (! found->second[a_hit_index].has_data ()) {
-        ostringstream message;
-        message << "mctools::simulated_data::get_step_hit: "
-                << "NULL handle at index " << a_hit_index
-                << " in category '" << a_category << "' !";
-        throw logic_error (message.str ());
-      }
+      DT_THROW_IF (found == _step_hits_dict_.end (),
+                   std::logic_error,
+                   "No collection of handles of hits with category '" << a_category << "' !");
+      DT_THROW_IF (a_hit_index < 0 || a_hit_index >= found->second.size (),
+                   std::logic_error,
+                   "Invalid hit index in category '" << a_category << "' !");
+      DT_THROW_IF (! found->second[a_hit_index].has_data (),
+                   std::logic_error,
+                   "null handle at index " << a_hit_index << " in category '" << a_category << "' !");
       return found->second[a_hit_index].get ();
     }
     if (use_plain_hit_collection ()) {
       plain_step_hits_dict_type::const_iterator found
         = _plain_step_hits_dict_.find (a_category);
-      if (found == _plain_step_hits_dict_.end ()) {
-        ostringstream message;
-        message << "mctools::simulated_data::get_step_hit: "
-                << "No collection of plain hits with category '" << a_category << "' !";
-        throw logic_error (message.str ());
-      }
-      if (a_hit_index < 0 || a_hit_index >= found->second.size ()) {
-        ostringstream message;
-        message << "mctools::simulated_data::get_step_hit: "
-                << "Invalid hit index in category '" << a_category << "' !";
-        throw range_error (message.str ());
-      }
+      DT_THROW_IF (found == _plain_step_hits_dict_.end (),
+                   std::logic_error,
+                   "No collection of plain hits with category '" << a_category << "' !");
+      DT_THROW_IF (a_hit_index < 0 || a_hit_index >= found->second.size (),
+                   std::logic_error,
+                   "Invalid hit index in category '" << a_category << "' !");
       return found->second[a_hit_index];
     }
   }
@@ -411,42 +376,26 @@ namespace mctools {
     if (use_handle_hit_collection ()) {
       step_hits_dict_type::iterator found
         = _step_hits_dict_.find (a_category);
-      if (found == _step_hits_dict_.end ()) {
-        ostringstream message;
-        message << "mctools::simulated_data::grab_step_hit: "
-                << "No collection of handles of hits with category '" << a_category << "' !";
-        throw logic_error (message.str ());
-      }
-      if (a_hit_index < 0 || a_hit_index >= found->second.size ()) {
-        ostringstream message;
-        message << "mctools::simulated_data::grab_step_hit: "
-                << "Invalid hit index in category '" << a_category << "' !";
-        throw range_error (message.str ());
-      }
-      if (! found->second[a_hit_index].has_data ()) {
-        ostringstream message;
-        message << "mctools::simulated_data::grab_step_hit: "
-                << "NULL handle at index " << a_hit_index
-                << " in category '" << a_category << "' !";
-        throw logic_error (message.str ());
-      }
-      return found->second[a_hit_index].get ();
+      DT_THROW_IF (found == _step_hits_dict_.end (),
+                   std::logic_error,
+                   "No collection of handles of hits with category '" << a_category << "' !");
+      DT_THROW_IF (a_hit_index < 0 || a_hit_index >= found->second.size (),
+                   std::logic_error,
+                   "Invalid hit index in category '" << a_category << "' !");
+      DT_THROW_IF (! found->second[a_hit_index].has_data (),
+                   std::logic_error,
+                   "Null handle at index " << a_hit_index << " in category '" << a_category << "' !");
+      return found->second[a_hit_index].grab ();
     }
     if (use_plain_hit_collection ()) {
       plain_step_hits_dict_type::iterator found
         = _plain_step_hits_dict_.find (a_category);
-      if (found == _plain_step_hits_dict_.end ()) {
-        ostringstream message;
-        message << "mctools::simulated_data::grab_step_hit: "
-                << "No collection of plain hits with category '" << a_category << "' !";
-        throw logic_error (message.str ());
-      }
-      if (a_hit_index < 0 || a_hit_index >= found->second.size ()) {
-        ostringstream message;
-        message << "mctools::simulated_data::grab_step_hit: "
-                << "Invalid hit index in category '" << a_category << "' !";
-        throw range_error (message.str ());
-      }
+      DT_THROW_IF (found == _plain_step_hits_dict_.end (),
+                   std::logic_error,
+                   "No collection of plain hits with category '" << a_category << "' !");
+      DT_THROW_IF (a_hit_index < 0 || a_hit_index >= found->second.size (),
+                   std::logic_error,
+                   "Invalid hit index in category '" << a_category << "' !");
       return found->second[a_hit_index];
     }
   }
@@ -465,38 +414,26 @@ namespace mctools {
   simulated_data::hit_handle_collection_type &
   simulated_data::grab_step_hits (const string & a_category)
   {
-    if (! use_handle_hit_collection ()) {
-      ostringstream message;
-      message << "mctools::simulated_data::get_step_hits: "
-              << "Invalid mode !";
-      throw logic_error (message.str ());
-    }
+    DT_THROW_IF (! use_handle_hit_collection (),
+                 std::logic_error,
+                 "Invalid mode !");
     step_hits_dict_type::iterator found = _step_hits_dict_.find (a_category);
-    if (found == _step_hits_dict_.end ()) {
-      ostringstream message;
-      message << "mctools::simulated_data::get_step_hits: "
-              << "No collection of hits with category '" << a_category << "' !";
-      throw logic_error (message.str ());
-    }
+    DT_THROW_IF (found == _step_hits_dict_.end (),
+                 std::logic_error,
+                 "No collection of hits with category '" << a_category << "' !");
     return found->second;
   }
 
   const simulated_data::hit_handle_collection_type &
   simulated_data::get_step_hits (const string & a_category) const
   {
-    if (! use_handle_hit_collection ()) {
-      ostringstream message;
-      message << "mctools::simulated_data::get_step_hits: "
-              << "Invalid mode !";
-      throw logic_error (message.str ());
-    }
+    DT_THROW_IF (! use_handle_hit_collection (),
+                 std::logic_error,
+                 "Invalid mode !");
     step_hits_dict_type::const_iterator found = _step_hits_dict_.find (a_category);
-    if (found == _step_hits_dict_.end ()) {
-      ostringstream message;
-      message << "mctools::simulated_data::get_step_hits: "
-              << "No collection of hits with category '" << a_category << "' !";
-      throw logic_error (message.str ());
-    }
+    DT_THROW_IF (found == _step_hits_dict_.end (),
+                 std::logic_error,
+                 "No collection of hits with category '" << a_category << "' !");
     return found->second;
   }
 
@@ -504,38 +441,26 @@ namespace mctools {
   simulated_data::hit_collection_type &
   simulated_data::grab_plain_step_hits (const string & a_category)
   {
-    if (! use_plain_hit_collection ()) {
-      ostringstream message;
-      message << "mctools::simulated_data::get_plain_step_hits: "
-              << "Invalid mode !";
-      throw logic_error (message.str ());
-    }
+    DT_THROW_IF (! use_plain_hit_collection (),
+                 std::logic_error,
+                 "Invalid mode !");
     plain_step_hits_dict_type::iterator found = _plain_step_hits_dict_.find (a_category);
-    if (found == _plain_step_hits_dict_.end ()) {
-      ostringstream message;
-      message << "mctools::simulated_data::get_plain_step_hits: "
-              << "No collection of plain hits with category '" << a_category << "' !";
-      throw logic_error (message.str ());
-    }
+    DT_THROW_IF (found == _plain_step_hits_dict_.end (),
+                 std::logic_error,
+                 "No collection of plain hits with category '" << a_category << "' !");
     return found->second;
   }
 
   const simulated_data::hit_collection_type &
   simulated_data::get_plain_step_hits (const string & a_category) const
   {
-    if (! use_plain_hit_collection ()) {
-      ostringstream message;
-      message << "mctools::simulated_data::get_plain_step_hits: "
-              << "Invalid mode !";
-      throw logic_error (message.str ());
-    }
+    DT_THROW_IF (! use_plain_hit_collection (),
+                 std::logic_error,
+                 "Invalid mode !");
     plain_step_hits_dict_type::const_iterator found = _plain_step_hits_dict_.find (a_category);
-    if (found == _plain_step_hits_dict_.end ()) {
-      ostringstream message;
-      message << "mctools::simulated_data::get_plain_step_hits: "
-              << "No collection of plain hits with category '" << a_category << "' !";
-      throw logic_error (message.str ());
-    }
+    DT_THROW_IF (found == _plain_step_hits_dict_.end (),
+                 std::logic_error,
+                 "No collection of plain hits with category '" << a_category << "' !");
     return found->second;
   }
 

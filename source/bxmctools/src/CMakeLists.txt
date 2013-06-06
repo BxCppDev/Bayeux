@@ -21,6 +21,7 @@ endfunction()
 # use a simple listing and then prepend the actual source dir root
 
 set(mctools_PUBLIC_HEADERS
+
     include/mctools/base_step_hit.h
     include/mctools/simulated_data.h
     include/mctools/utils.h
@@ -30,7 +31,17 @@ set(mctools_PUBLIC_HEADERS
     include/mctools/base_step_hit_processor.h
     include/mctools/step_hit_processor_factory.h
     include/mctools/calorimeter_step_hit_processor.h
-   )
+
+    include/mctools/base_step_hit.ipp
+    include/mctools/simulated_data.ipp
+    include/mctools/the_serializable.ipp
+    include/mctools/the_serializable.h
+
+    include/mctools/base_step_hit-reflect.h
+    include/mctools/simulated_data-reflect.h
+    include/mctools/the_introspectable.h
+
+    )
 list_prepend(mctools_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 
 # - Add config header
@@ -56,7 +67,7 @@ set_source_files_properties(${mctools_detail_HEADERS}
     MACOSX_PACKAGE_LOCATION Headers/detail
   )
 
-# We have to install the detail header modules separately if mctools 
+# We have to install the detail header modules separately if mctools
 # isn't built as a Framework.
 if(NOT APPLE)
   foreach(_module detail)
@@ -87,14 +98,14 @@ set(mctools_SOURCES
 # resources on Mac. This allows them to be easily imported into the
 # Framework with minimal platform specific commands by adding them
 # as sources of the framework/library.
-# We have to deal with the library depends part of this later because 
+# We have to deal with the library depends part of this later because
 # their generation require the targets to be present...
 #
 if(APPLE)
   set(TO_MCTOOLS_INCLUDEDIR "../..")
 else()
-  file(RELATIVE_PATH TO_MCTOOLS_INCLUDEDIR 
-    "${CMAKE_INSTALL_FULL_LIBDIR}/cmake/mctools-${mctools_VERSION}" 
+  file(RELATIVE_PATH TO_MCTOOLS_INCLUDEDIR
+    "${CMAKE_INSTALL_FULL_LIBDIR}/cmake/mctools-${mctools_VERSION}"
     "${CMAKE_INSTALL_FULL_INCLUDEDIR}"
     )
 endif()
@@ -106,7 +117,7 @@ set(mctools_RESOURCES
 
 foreach(_dtresource ${mctools_RESOURCES})
   configure_file(
-    ${PROJECT_SOURCE_DIR}/${_dtresource}.in 
+    ${PROJECT_SOURCE_DIR}/${_dtresource}.in
     ${PROJECT_BINARY_DIR}/${_dtresource}
     @ONLY
     )
@@ -131,7 +142,7 @@ endif()
 #
 include_directories(
   ${PROJECT_BINARY_DIR}/include
-  ${PROJECT_SOURCE_DIR}/include	
+  ${PROJECT_SOURCE_DIR}/include
   ${genvtx_INCLUDE_DIRS}
   ${genbb_help_INCLUDE_DIRS}
   ${materials_INCLUDE_DIRS}
@@ -146,15 +157,15 @@ if ( MCTOOLS_WITH_REFLECTION )
     )
 endif ()
 
-add_library(mctools SHARED  
-  ${mctools_PUBLIC_HEADERS} 
+add_library(mctools SHARED
+  ${mctools_PUBLIC_HEADERS}
   ${mctools_detail_HEADERS}
   ${mctools_SOURCES}
   ${mctools_RESOURCES_OUTPUTS}
   )
 
 set_target_properties(mctools
-  PROPERTIES 
+  PROPERTIES
     FRAMEWORK                             ON
     MACOSX_FRAMEWORK_IDENTIFIER           org.supernemo.mctools
     MACOSX_FRAMEWORK_BUNDLE_VERSION       ${mctools_VERSION}
@@ -165,23 +176,23 @@ set_target_properties(mctools
   )
 
 if ( MCTOOLS_WITH_REFLECTION )
-  target_link_libraries(mctools 
-                        ${genvtx_LIBRARIES} 
-                        ${genbb_help_LIBRARIES} 
-                        ${materials_LIBRARIES} 
-                        ${emfield_LIBRARIES} 
+  target_link_libraries(mctools
+                        ${genvtx_LIBRARIES}
+                        ${genbb_help_LIBRARIES}
+                        ${materials_LIBRARIES}
+                        ${emfield_LIBRARIES}
                         ${dpp_LIBRARIES}
-                        ${CAMP_LIBRARIES} 
-			${Boost_LIBRARIES}  
-                        ${CMAKE_DL_LIBS})	 
+                        ${CAMP_LIBRARIES}
+			${Boost_LIBRARIES}
+                        ${CMAKE_DL_LIBS})
 else ()
-  target_link_libraries(mctools 
-                        ${genvtx_LIBRARIES} 
-                        ${genbb_help_LIBRARIES} 
-                        ${materials_LIBRARIES} 
-                        ${emfield_LIBRARIES} 
-                        ${dpp_LIBRARIES} 
-			${Boost_LIBRARIES}  
+  target_link_libraries(mctools
+                        ${genvtx_LIBRARIES}
+                        ${genbb_help_LIBRARIES}
+                        ${materials_LIBRARIES}
+                        ${emfield_LIBRARIES}
+                        ${dpp_LIBRARIES}
+			${Boost_LIBRARIES}
                         ${CMAKE_DL_LIBS})
 endif ()
 
@@ -200,7 +211,7 @@ if(MCTOOLS_WITH_BIO)
     src/the_serializable.cc
     )
   list_prepend(mctools_bio_SOURCES "${PROJECT_SOURCE_DIR}/")
-  
+
   add_library(mctools_bio SHARED ${mctools_bio_SOURCES})
 
   if(APPLE)
@@ -222,7 +233,8 @@ if(MCTOOLS_WITH_G4)
 
  include_directories(${Geant4_INCLUDE_DIRS})
 
- set(mctools_g4_PUBLIC_HEADERS	
+ set(mctools_g4_PUBLIC_HEADERS
+    include/mctools/g4/loggable_support.h
     include/mctools/g4/tracking_action.h
     include/mctools/g4/track_history.h
     include/mctools/g4/stepping_verbose.h
@@ -245,39 +257,40 @@ if(MCTOOLS_WITH_G4)
 
   set(mctools_g4_SOURCES
     ${mctools_g4_PUBLIC_HEADERS}
-src/g4/detector_construction.cc
-src/g4/event_action.cc
-src/g4/g4_prng.cc
-src/g4/magnetic_field.cc
-src/g4/manager.cc
-src/g4/manager_parameters.cc
-src/g4/physics_list.cc
-src/g4/primary_generator.cc
-src/g4/run_action.cc
-src/g4/sensitive_detector.cc
-src/g4/sensitive_hit.cc
-src/g4/sensitive_hit_collection.cc
-src/g4/simulation_ctrl.cc
-src/g4/simulation_module.cc
-src/g4/stacking_action.cc
-src/g4/stepping_action.cc
-src/g4/stepping_verbose.cc
-src/g4/track_history.cc
-src/g4/tracking_action.cc
+    src/g4/loggable_support.cc
+    src/g4/detector_construction.cc
+    src/g4/event_action.cc
+    src/g4/g4_prng.cc
+    src/g4/magnetic_field.cc
+    src/g4/manager.cc
+    src/g4/manager_parameters.cc
+    src/g4/physics_list.cc
+    src/g4/primary_generator.cc
+    src/g4/run_action.cc
+    src/g4/sensitive_detector.cc
+    src/g4/sensitive_hit.cc
+    src/g4/sensitive_hit_collection.cc
+    src/g4/simulation_ctrl.cc
+    src/g4/simulation_module.cc
+    src/g4/stacking_action.cc
+    src/g4/stepping_action.cc
+    src/g4/stepping_verbose.cc
+    src/g4/track_history.cc
+    src/g4/tracking_action.cc
     )
   list_prepend(mctools_g4_SOURCES "${PROJECT_SOURCE_DIR}/")
-  
+
   add_library(mctools_g4 SHARED ${mctools_g4_SOURCES})
 
   set(_mctools_g4_additional_libs)
   if (MCTOOLS_WITH_G4_G4VIS_USE)
-     list(APPEND _mctools_g4_additional_libs G4OpenGL)	  
+     list(APPEND _mctools_g4_additional_libs G4OpenGL)
   endif()
   target_link_libraries(mctools_g4
                         mctools
-                        ${Geant4_LIBRARIES} 
+                        ${Geant4_LIBRARIES}
 			${_mctools_g4_additional_libs}
-  ) 
+  )
   ### gcc only : -Wl,--no-as-needed G4OpenGL G4visXXX)
 
   if(APPLE)
@@ -297,12 +310,13 @@ endif()
 #
 if(MCTOOLS_WITH_REFLECTION)
   set(mctools_reflection_SOURCES
-    #include/mctools/*-reflect.h
-    #include/mctools/the_introspectable.h
-    #the_introspectable.cc
+    include/mctools/base_step_hit-reflect.h
+    include/mctools/simulated_data-reflect.h
+    include/mctools/the_introspectable.h
+    src/the_introspectable.cc
     )
   list_prepend(mctools_reflection_SOURCES "${PROJECT_SOURCE_DIR}/")
-  
+
   add_library(mctools_reflection SHARED ${mctools_reflection_SOURCES})
 
   if(APPLE)
@@ -316,18 +330,18 @@ endif()
 
 #-----------------------------------------------------------------------
 # EXPORT AND INSTALL LIBRARY TARGETS
-# We make use of the full signature 
+# We make use of the full signature
 install(TARGETS ${MCTOOLS_TARGETS}
   EXPORT        mctools-libraries
-  RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR} 
+  RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
                 COMPONENT Runtime
-  LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR} 
+  LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
                 COMPONENT Runtime
-  FRAMEWORK     DESTINATION ${MCTOOLS_FRAMEWORK_LOCATION} 
+  FRAMEWORK     DESTINATION ${MCTOOLS_FRAMEWORK_LOCATION}
                 COMPONENT Runtime
-  ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} 
+  ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
                 COMPONENT Development
-  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mctools 
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mctools
                 COMPONENT Development
   )
 
@@ -335,11 +349,11 @@ install(TARGETS ${MCTOOLS_TARGETS}
 # We also need to generate a file for the build tree, but at present
 # we leave this out for simplicity.
 if(APPLE)
-  install(EXPORT mctools-libraries 
+  install(EXPORT mctools-libraries
     DESTINATION CMake COMPONENT Development
     )
 else()
-  install(EXPORT mctools-libraries 
+  install(EXPORT mctools-libraries
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/mctools-${mctools_VERSION}    COMPONENT Development
     )
 endif()

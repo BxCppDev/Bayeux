@@ -34,6 +34,8 @@
 // G4 stuff:
 #include <G4VSensitiveDetector.hh>
 
+#include <mctools/g4/loggable_support.h>
+
 class G4Step;
 
 namespace mctools {
@@ -42,7 +44,8 @@ namespace mctools {
 
     class manager;
 
-    class sensitive_detector : public G4VSensitiveDetector
+    class sensitive_detector : public G4VSensitiveDetector,
+                               public loggable_support
     {
     public:
 
@@ -52,8 +55,6 @@ namespace mctools {
 
     public:
 
-      bool is_debug () const;
-      void set_debug (bool);
       bool has_manager () const;
       void set_manager (manager & mgr_);
 
@@ -131,7 +132,6 @@ namespace mctools {
 
     private:
 
-      bool                   _debug_;
       std::string            _sensitive_category_;
       std::list<std::string> _attached_logical_volumes_;
       bool                   _store_g4_volume_properties_;

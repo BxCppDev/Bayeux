@@ -24,8 +24,12 @@
 
 #include <datatools/properties.h>
 #include <datatools/multi_properties.h>
+
 #include <mygsl/rng.h>
+
 #include <mctools/step_hit_processor_factory.h>
+
+#include <mctools/g4/loggable_support.h>
 
 // G4 stuff:
 #include <G4VUserDetectorConstruction.hh>
@@ -52,8 +56,9 @@ namespace mctools {
     class sensitive_detector;
     class magnetic_field;
 
-    /// \brief The detector construction Geant4 interface class 
-    class detector_construction : public G4VUserDetectorConstruction
+    /// \brief The detector construction Geant4 interface class
+    class detector_construction : public G4VUserDetectorConstruction,
+                                  public loggable_support
     {
     public:
 
@@ -61,13 +66,13 @@ namespace mctools {
       typedef std::map<std::string, std::vector<std::string> > region_infos_dict_type;
       typedef mctools::step_hit_processor_factory              SHPF_type;
 
-      /// Default control distance for particle tracking in magnetic field 
+      /// Default control distance for particle tracking in magnetic field
       static const double DEFAULT_MISS_DISTANCE;
 
       /// Constructor
       detector_construction (manager & mgr_);
 
-      /// Destructor 
+      /// Destructor
       virtual ~detector_construction ();
 
       /// Check initialization flag
@@ -109,13 +114,13 @@ namespace mctools {
       /// Return a non-mutable reference to the magnetic field manager
       const emfield::electromagnetic_field_manager & get_mag_field_manager () const;
 
-      /// Main initialization method 
+      /// Main initialization method
       void initialize (const datatools::properties & config_);
 
       /// Return a non-mutable reference to the collection of embeded sensitive detectors
       const sensitive_detector_dict_type & get_sensitive_detectors () const;
 
-      /// Return a mutable reference to the embeded step hit processor factory 
+      /// Return a mutable reference to the embeded step hit processor factory
       SHPF_type & grab_step_hit_processor_factory ();
 
       void set_materials_geom_plugin_name (const std::string & mpn_);
@@ -171,18 +176,18 @@ namespace mctools {
       bool _debug_; /// Debug flag
       bool _verbose_; /// Verbose flag
       bool _abort_on_error_; /// Flag to force abortion on error while building the geometry setup
-      
+
       //! Main Geant4 manager:
       manager * _g4_manager_;
 
       //! Geometry manager:
       const geomtools::manager * _geom_manager_; /// Reference to the geometry manager
- 
+
       //! Magnetic field manager:
-      bool   _using_mag_field_; /// Flag to use the Geant4 magnetic field system 
+      bool   _using_mag_field_; /// Flag to use the Geant4 magnetic field system
       std::string _emfield_geom_plugin_name_; /// The name of the EM field manager geometry plugin
       const emfield::electromagnetic_field_manager * _mag_field_manager_; /// Reference to the EM field manager
-      double _miss_distance_unit_; /// Default miss distance length unit 
+      double _miss_distance_unit_; /// Default miss distance length unit
       double _general_miss_distance_; /// Default general miss distance
       datatools::properties _mag_field_aux_; /// Auxiliary properties related to magnetic field
 

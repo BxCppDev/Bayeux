@@ -1,7 +1,7 @@
 /* simulated_data_cut.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-09-18
- * Last modified : 2013-03-09
+ * Last modified : 2013-06-03
  *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *

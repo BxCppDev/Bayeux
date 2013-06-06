@@ -1,19 +1,21 @@
 /* simulation_ctrl.cc */
 
 // http://drdobbs.com/cpp/184401518
-
 #include <mctools/g4/simulation_ctrl.h>
-#include <mctools/g4/manager.h>
-#include <boost/bind.hpp>
+
 #include <cstdlib>
+
+#include <boost/bind.hpp>
+
+#include <datatools/exception.h>
+
+#include <mctools/g4/manager.h>
 
 namespace mctools {
 
   namespace g4 {
 
     using namespace std;
-
-    bool simulation_ctrl::g_devel = false;
 
     void simulation_ctrl::set_simulation_manager (manager & a_simulation_manager)
     {
@@ -24,20 +26,7 @@ namespace mctools {
     simulation_ctrl::simulation_ctrl (manager & a_simulation_manager,
                                       uint32_t a_max_counts)
     {
-      if ( getenv ("MCTOOLS_G4_SIMULATION_CTRL_DEVEL") != NULL )
-        {
-          simulation_ctrl::g_devel = true;
-          cerr << datatools::io::warning
-               << "mctools::g4::simulation_ctrl::CTOR: "
-               << "Found 'MCTOOLS_G4_SIMULATION_CTRL_DEVEL' environ !"
-               << endl;
-        }
-
-      if (g_devel)
-        clog << datatools::io::devel
-             << "mctools::g4::simulation_ctrl::CTOR: "
-             << "Entering..."
-             << endl;
+      DT_LOG_TRACE(_logprio(), "Entering...");
       simulation_manager = 0;
       simulation_thread = 0;
       event_mutex = 0;
@@ -49,104 +38,62 @@ namespace mctools {
       set_simulation_manager(a_simulation_manager);
       event_mutex = new boost::mutex;
       event_available_condition = new boost::condition;
-      if (g_devel)
-        clog << datatools::io::devel
-             << "mctools::g4::simulation_ctrl::CTOR: Exiting."
-             << endl;
+      DT_LOG_TRACE(_logprio(), "Exiting.");
       return;
     }
 
     simulation_ctrl::~simulation_ctrl ()
     {
-      if (g_devel)
-        clog << datatools::io::devel
-             << "mctools::g4::simulation_ctrl::DTOR: Entering..."
-             << endl;
+      DT_LOG_TRACE(_logprio(), "Entering...");
       stop_requested = true;
-      if (event_mutex != 0)
-        {
-          if (g_devel)
-            clog << datatools::io::devel
-                 << "mctools::g4::simulation_ctrl::DTOR: "
-                 << "Acquire the event control lock..."
-                 << endl;
-          boost::mutex::scoped_lock lock (*event_mutex);
-          stop_requested = true;
-          event_availability_status = simulation_ctrl::ABORT;
-          event_available_condition->notify_one ();
-        }
-      if (simulation_thread != 0)
-        {
-          simulation_thread->join ();
-        }
-
-      if (event_available_condition != 0)
-        {
-          delete event_available_condition;
-          event_available_condition = 0;
-        }
-      if (event_mutex != 0)
-        {
-          delete event_mutex;
-          event_mutex = 0;
-        }
-
-      if (simulation_thread)
-        {
-          delete simulation_thread;
-          simulation_thread = 0;
-        }
+      if (event_mutex != 0) {
+        DT_LOG_TRACE(_logprio(), "Acquire the event control lock...");
+        boost::mutex::scoped_lock lock (*event_mutex);
+        stop_requested = true;
+        event_availability_status = simulation_ctrl::ABORT;
+        event_available_condition->notify_one ();
+      }
+      if (simulation_thread != 0) {
+        simulation_thread->join ();
+      }
+      if (event_available_condition != 0) {
+        delete event_available_condition;
+        event_available_condition = 0;
+      }
+      if (event_mutex != 0) {
+        delete event_mutex;
+        event_mutex = 0;
+      }
+      if (simulation_thread) {
+        delete simulation_thread;
+        simulation_thread = 0;
+      }
       simulation_manager = 0;
-      if (g_devel)
-        clog << datatools::io::devel
-             << "mctools::g4::simulation_ctrl::DTOR: Exiting."
-             << endl;
-     return;
+      DT_LOG_TRACE(_logprio(), "Exiting.");
+      return;
     }
 
     void simulation_ctrl::start ()
     {
-      if (g_devel)
-        clog << datatools::io::devel
-             << "mctools::g4::simulation_ctrl::start: Entering..."
-             << endl;
-      if (g_devel)
-        clog << datatools::io::devel
-             << "mctools::g4::simulation_ctrl::start: "
-             << "Allocating the simulation thread..."
-             << endl;
-
+      DT_LOG_TRACE(_logprio(), "Entering...");
+      DT_LOG_TRACE(_logprio(), "Allocating the simulation thread...");
       simulation_thread = new boost::thread (boost::bind (&simulation_ctrl::start_simulation_run, this));
-      if (g_devel)
-        clog << datatools::io::devel
-             << "mctools::g4::simulation_ctrl::start: "
-             << "Simulation thread is allocated..."
-             << endl;
-      if (g_devel)
-        clog << datatools::io::devel
-             << "mctools::g4::simulation_ctrl::start: Exiting."
-             << endl;
+      DT_LOG_TRACE(_logprio(), "Simulation thread is allocated...");
+      DT_LOG_TRACE(_logprio(), "Exiting.");
       return;
     }
 
     void simulation_ctrl::start_simulation_run ()
     {
-      if (g_devel)
-        clog << datatools::io::devel
-             << "mctools::g4::simulation_ctrl::start_simulation_run: Entering..."
-             << endl;
+      DT_LOG_TRACE(_logprio(), "Entering...");
       {
         boost::mutex::scoped_lock lock (*event_mutex);
-        while (event_availability_status == simulation_ctrl::NOT_AVAILABLE_FOR_G4)
-          {
-            event_available_condition->wait (*event_mutex);
-          }
+        while (event_availability_status == simulation_ctrl::NOT_AVAILABLE_FOR_G4) {
+          event_available_condition->wait (*event_mutex);
+        }
       }
       simulation_manager->run_simulation ();
-      if (g_devel)
-        clog << datatools::io::devel
-             << "mctools::g4::simulation_ctrl::start_simulation_run: Exiting."
-             << endl;
+      DT_LOG_TRACE(_logprio(), "Exiting.");
       return;
     }
 

@@ -2,7 +2,7 @@
 /* manager.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-05-04
- * Last modified: 2013-03-15
+ * Last modified: 2013-06-04
  *
  * License:
  *
@@ -39,6 +39,7 @@
 #include <boost/cstdint.hpp>
 
 #include <datatools/time_tools.h>
+#include <datatools/logger.h>
 
 #include <mygsl/rng.h>
 #include <mygsl/seed_manager.h>
@@ -47,6 +48,8 @@
 #include <geomtools/manager.h>
 #include <genvtx/manager.h>
 #include <genbb_help/manager.h>
+
+#include <mctools/g4/loggable_support.h>
 
 namespace genvtx {
   class manager;
@@ -70,8 +73,8 @@ class G4RunManager;
 class G4UImanager;
 
 namespace datatools {
-    class multi_properties;
-    class service_manager;
+  class multi_properties;
+  class service_manager;
 }
 
 namespace mctools {
@@ -89,7 +92,7 @@ namespace mctools {
     class simulation_ctrl;
 
     /// \brief The Geant4 simulation manager
-    class manager
+    class manager : public loggable_support
     {
     public:
 
@@ -97,7 +100,8 @@ namespace mctools {
       // http://hypernews.slac.stanford.edu/HyperNews/geant4/get/particles/528/1.html
       static const uint32_t NUMBER_OF_EVENTS_UPPER_LIMIT = 1000000000; /// Maximum number of events to be processed
       static const uint32_t NUMBER_OF_EVENTS_LOWER_LIMIT = 1; /// Minimum number of events to be processed
-      static const std::string DEFAULT_PRNG_ID; /// Default safe PRNG identifier (see mygsl::rng class) 
+      static const uint32_t NUMBER_OF_EVENTS_WARNING_LIMIT = 1000000; /// Number of events that triggers an alarm
+      static const std::string DEFAULT_PRNG_ID; /// Default safe PRNG identifier (see mygsl::rng class)
 
       /// \brief A set of constants used by the Geant4 manager
       struct constants
@@ -118,12 +122,10 @@ namespace mctools {
       typedef datatools::computing_time      CT_type;
       typedef std::map<std::string, CT_type> CT_map;
 
-    public:
-
-      /// Check if an external thread simulation control is plugged 
+      /// Check if an external thread simulation control is plugged
       bool has_simulation_ctrl () const;
 
-      /// Plug an external thread simulation control 
+      /// Plug an external thread simulation control
       void set_simulation_ctrl (simulation_ctrl & a_simulation_ctrl);
 
       /// Return a non-mutable thread simulation control reference
@@ -132,7 +134,7 @@ namespace mctools {
       /// Return a mutable thread simulation control reference
       simulation_ctrl & grab_simulation_ctrl ();
 
-      /// Check is an external service manager plugged 
+      /// Check is an external service manager plugged
       bool has_service_manager () const;
 
       /// Return a mutable service manager reference
@@ -141,13 +143,13 @@ namespace mctools {
       /// Return a non-mutable service manager reference
       const datatools::service_manager & get_service_manager() const;
 
-      /// Plug an external service manager 
+      /// Plug an external service manager
       void set_service_manager (datatools::service_manager & smgr_);
 
-      /// Check if an external service manager is plugged 
+      /// Check if an external service manager is plugged
       bool has_external_geom_manager () const;
 
-      /// Plug an external geometry manager 
+      /// Plug an external geometry manager
       void set_external_geom_manager (const geomtools::manager & a_geometry_manager);
 
       /// Return a mutable event_action reference
@@ -194,14 +196,6 @@ namespace mctools {
       bool is_batch () const;
 
       void set_interactive (bool);
-
-      bool is_debug () const;
-
-      void set_debug (bool);
-
-      bool is_verbose () const;
-
-      void set_verbose (bool);
 
       bool using_event_number_as_seed () const;
 
@@ -331,28 +325,28 @@ namespace mctools {
       const geomtools::manager & get_geom_manager () const;
 
       /*** Vertex/Event generation ***/
- 
+
       /// Get a non-mutable reference to the vertex generator manager
       const genvtx::manager & get_vg_manager () const;
 
       /// Get a mutable reference to the vertex generator manager
       genvtx::manager & grab_vg_manager ();
-  
+
       /// Check if a vertex generator is available
       bool has_vertex_generator () const;
- 
+
       /// Return a non-mutable reference to a embeded vertex generator
       const genvtx::i_vertex_generator & get_vertex_generator () const;
 
       /// Get a non-mutable reference to the embeded event generator
       const genbb::manager & get_eg_manager () const;
-  
+
       /// Get a mutable reference to the embeded event generator
       genbb::manager & grab_eg_manager ();
-  
+
       /// Check if an event generator is available
       bool has_event_generator () const;
- 
+
       /// Return a non-mutable reference to a embeded event generator
       const genbb::i_genbb & get_event_generator () const;
 
@@ -381,8 +375,6 @@ namespace mctools {
 
     protected:
 
-      void _assert_unlock (const std::string & where_);
-
       void _init_defaults ();
 
       virtual void _init_manager_config ();
@@ -405,14 +397,12 @@ namespace mctools {
 
       // Controls:
       bool _initialized_; /// Initializion flag
-      bool _debug_;       /// Debug flag
-      bool _verbose_;     /// Verbose flag
 
       // Configuration:
-      const datatools::multi_properties * _multi_config_; /// Setup parameters
+      const datatools::multi_properties * _multi_config_;   /// Setup parameters
 
       // User interface mode:
-      int  _user_mode_; /// User mode 
+      int  _user_mode_; /// User mode
       bool _interactive_; /// Flag for interactive session
       bool _g4_visualization_; /// Flag to activate Geant4 visualization
       bool _use_event_number_as_seed_; // not used
@@ -428,11 +418,11 @@ namespace mctools {
       geomtools::manager          _geom_manager_; /// Embeded geometry manager
 
       // Vertex generation manager :
-      int                          _vg_prng_seed_; /// Seed for the embeded PRNG for vertex generation 
+      int                          _vg_prng_seed_; /// Seed for the embeded PRNG for vertex generation
       mygsl::rng                   _vg_prng_; /// Embeded PRNG for vertex generation
       genvtx::manager              _vg_manager_; /// Vertex generator manager
       std::string                  _vg_name_; /// Name of the active vertex generator
-      genvtx::i_vertex_generator * _vertex_generator_; /// Active vertex generator 
+      genvtx::i_vertex_generator * _vertex_generator_; /// Active vertex generator
 
       // Event generation manager :
       int              _eg_prng_seed_; /// Seed for the embeded PRNG for event generation
@@ -479,7 +469,7 @@ namespace mctools {
       int                       _prng_state_save_modulo_; /// Event number modulo to backup PRNGs' internal states
 
       // Track historical infos :
-      bool          _use_track_history_; /// Flag to activate track history 
+      bool          _use_track_history_; /// Flag to activate track history
       track_history _track_history_; /// Track history data structure
 
       // User:
