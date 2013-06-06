@@ -97,7 +97,7 @@ namespace brio {
       template <class T>
       bool has_store_with_matching_serial_tag (const std::string & label_) const
       {
-        store_info_dict_t::const_iterator found = _store_infos.find (label_);
+        store_info_dict_type::const_iterator found = _store_infos.find (label_);
         if (found == _store_infos.end ()) return false;
         const store_info & the_si = found->second;
         if (the_si.has_dedicated_serialization_tag ()) {
@@ -137,6 +137,8 @@ namespace brio {
       //! File close
       virtual void close ();
 
+      void reset();
+
       void set_logging_priority(datatools::logger::priority);
 
       datatools::logger::priority get_logging_priority() const;
@@ -162,7 +164,7 @@ namespace brio {
 
       std::string       _filename;       /// Name of the current I/O file (extensions are \b .brio or \b .trio)
       TFile *           _file;           /// Handle to the current embedded ROOT file
-      store_info_dict_t _store_infos;    /// Dictionnary of \e stores
+      store_info_dict_type _store_infos; /// Dictionnary of \e stores
       store_info *      _current_store;  /// Handle to the current active \e store (if any)
       int               _rw;             /// Read/write mode tag
       std::locale    *  _default_locale; /// Default I/O locale (for portable streams)

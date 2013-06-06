@@ -74,7 +74,7 @@ namespace brio {
     std::string       serialization_tag; /// the serialization tag associated to the object stored in the \e store
     size_t       bufsize; /// the size of the output buffer (used only by the writer)
     TTree *      tree; /// the embedded ROOT tree
-    brio_record  record; /// the current brio record ro be (de)serialized
+    brio_record  record; /// the current brio record to be (de)serialized
     brio_record * p_record;
     std::vector<char> buffer; /// the input buffer (used only by the writer)
     int64_t      number_of_entries; /// the number of entries in the \e store
@@ -82,7 +82,7 @@ namespace brio {
 
   };
 
-  typedef std::map<std::string, store_info> store_info_dict_t;
+  typedef std::map<std::string, store_info> store_info_dict_type;
 
 } // end of namespace brio
 

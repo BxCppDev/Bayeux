@@ -179,13 +179,13 @@ namespace brio {
         if (_current_store->label == label_) return true;
       }
       // else search the dictionnary:
-      store_info_dict_t::const_iterator found = _store_infos.find (label_);
+      store_info_dict_type::const_iterator found = _store_infos.find (label_);
       return found != _store_infos.end ();
     }
 
     bool base_io::has_store_with_serial_tag (const string & label_, const string & serial_tag_) const
     {
-      store_info_dict_t::const_iterator found = _store_infos.find (label_);
+      store_info_dict_type::const_iterator found = _store_infos.find (label_);
       if (found == _store_infos.end ()) return false;
       const store_info & the_si = found->second;
       if (the_si.has_dedicated_serialization_tag ()) {
@@ -196,7 +196,7 @@ namespace brio {
 
     bool base_io::has_mixed_store (const string & label_) const
     {
-      store_info_dict_t::const_iterator found = _store_infos.find (label_);
+      store_info_dict_type::const_iterator found = _store_infos.find (label_);
       if (found == _store_infos.end ()) return false;
       const store_info & the_si = found->second;
       if (! the_si.has_dedicated_serialization_tag ()) {
@@ -294,6 +294,12 @@ namespace brio {
     // dtor:
     base_io::~base_io ()
     {
+      reset();
+      return;
+    }
+
+    void base_io::reset()
+    {
       if (_locale != 0) {
         delete _locale;
         _locale = 0;
@@ -303,7 +309,6 @@ namespace brio {
         _default_locale = 0;
       }
       base_io::_reset ();
-      return;
     }
 
     void base_io::_reset ()
@@ -311,7 +316,7 @@ namespace brio {
       if (_file != 0) {
         if (_file->IsOpen ()) {
           // 2012-12-19, FM: explicit write
-          _file->Write ();
+          if (is_writing ()) _file->Write ();
           _file->Close ();
         }
         // 2012-12-19, FM: explicit delete the TFile
@@ -321,6 +326,7 @@ namespace brio {
       if (! _filename.empty ()) {
         _filename.clear ();
       }
+      _store_infos.clear();
       base_io::_set_default ();
       return;
     }
@@ -329,7 +335,7 @@ namespace brio {
     void base_io::get_list_of_stores (list<string> & list_) const
     {
       list_.clear ();
-      for (store_info_dict_t::const_iterator i = _store_infos.begin ();
+      for (store_info_dict_type::const_iterator i = _store_infos.begin ();
            i != _store_infos.end ();
            i++) {
         list_.push_back (i->first);
@@ -350,7 +356,7 @@ namespace brio {
           return _current_store;
         }
         // then we search from the stores' dictionnary :
-        store_info_dict_t::iterator found = _store_infos.find (label_);
+        store_info_dict_type::iterator found = _store_infos.find (label_);
         if (found != _store_infos.end ()) {
           return &(found->second);
         }
@@ -404,12 +410,12 @@ namespace brio {
         out_ << "<none>";
       }
       out_ << endl;
-      for (store_info_dict_t::const_iterator i = _store_infos.begin ();
+      for (store_info_dict_type::const_iterator i = _store_infos.begin ();
            i != _store_infos.end ();
            i++) {
         const string & label = i->first;
         const store_info & si = i->second;
-        store_info_dict_t::const_iterator j = i;
+        store_info_dict_type::const_iterator j = i;
         j++;
         string tag = "|-- ";
         string skip_tag = "|   ";
