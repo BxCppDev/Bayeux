@@ -17,6 +17,7 @@
 
 // This Project
 #include "datatools/exception.h"
+#include "datatools/properties.h"
 
 //! Test class with logging priority
 class foo_loggable {
@@ -38,6 +39,17 @@ class foo_loggable {
   void set_priority(const datatools::logger::priority& p) {
     prio_ = p;
   }
+
+  void initialize(const datatools::properties & config) {
+    set_priority(datatools::logger::extract_logging_configuration(config,
+                                                                  datatools::logger::PRIO_WARNING));
+  }
+
+  void print(std::ostream & out = std::clog) const {
+    out << "foo_loggable: logging priority = \""
+        << datatools::logger::get_priority_label(prio_) << '"' << std::endl;
+  }
+
  private:
   datatools::logger::priority prio_;
 };
@@ -118,20 +130,20 @@ void test_priority_to_string() {
   TPSMap mapValues;
 
   boost::assign::insert(mapValues)
-      (datatools::logger::PRIO_FATAL,     "fatal")        
-      (datatools::logger::PRIO_CRITICAL,  "critical")    
-      (datatools::logger::PRIO_ERROR,     "error")       
-      (datatools::logger::PRIO_WARNING,   "warning")     
-      (datatools::logger::PRIO_NOTICE,    "notice")      
+      (datatools::logger::PRIO_FATAL,     "fatal")
+      (datatools::logger::PRIO_CRITICAL,  "critical")
+      (datatools::logger::PRIO_ERROR,     "error")
+      (datatools::logger::PRIO_WARNING,   "warning")
+      (datatools::logger::PRIO_NOTICE,    "notice")
       (datatools::logger::PRIO_INFORMATION, "information")
-      (datatools::logger::PRIO_DEBUG,     "debug")       
+      (datatools::logger::PRIO_DEBUG,     "debug")
       (datatools::logger::PRIO_TRACE,    "trace");
 
   BOOST_FOREACH(TPSMap::value_type& v, mapValues) {
     std::string label = datatools::logger::get_priority_label(v.first);
     std::cout << "Checking " << v.first << "->" << v.second << ", got " << label << std::endl;
-    DT_THROW_IF(label != v.second, 
-                std::runtime_error, 
+    DT_THROW_IF(label != v.second,
+                std::runtime_error,
                 "get_priority_label(\"" << v.first << "\") != " << v.second);
   }
 
@@ -147,6 +159,21 @@ void test_priority_to_string() {
               "get_priority_label does not return empty string on positive out of bounds argument");
 }
 
+//! Check that logging priority of an object can be setup through a properties object
+void test_priority_initialize() {
+
+  datatools::properties config;
+  config.store("logging.priority", "warning");
+  config.store_flag("logging.verbose"); /** this is not taken into account for
+                                         *  the "logging.priority" property has precedence.
+                                         */
+
+  foo_loggable f;
+  f.initialize(config);
+  f.print(std::clog);
+
+}
+
 int main(int argc, const char *argv[])
 {
 
@@ -159,12 +186,20 @@ int main(int argc, const char *argv[])
     std::cerr << "test_string_to_priority failed : " << e.what() << std::endl;
     return 1;
   }
-  
+
   try {
     test_priority_to_string();
   }
   catch (std::exception& e) {
     std::cerr << "test_priority_to_string failed : " << e.what() << std::endl;
+    return 1;
+  }
+
+  try {
+    test_priority_initialize();
+  }
+  catch (std::exception& e) {
+    std::cerr << "test_priority_initialize failed : " << e.what() << std::endl;
     return 1;
   }
 

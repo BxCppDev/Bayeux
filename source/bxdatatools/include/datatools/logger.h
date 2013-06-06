@@ -63,6 +63,10 @@
 // This Project
 
 namespace datatools {
+
+// Forward declaration:
+class properties;
+
 //! Organise logging functionality under one roof
 struct logger {
   //! Priority levels for logging from most to least critical
@@ -92,6 +96,33 @@ struct logger {
   //! @returns the matching priority label or the empty string if the priority
   //!          is not valid
   static std::string get_priority_label(priority p);
+
+  //! return the priority level from a collection of properties
+  //! The following properties are recognized:
+  //!   logging.priority : string = "fatal" # or "trace", "debug",
+  //!                                       # "information", "notice",
+  //!                                       # "warning", "error", "critical"
+  //!
+  //! Shortcuts to activate some specific priorities:
+  //! a)   logging.debug   : boolean = 1
+  //!      debug           : boolean = 1
+  //!   is equivalent to :
+  //!      logging.priority : string = "debug"
+  //!
+  //! b)   logging.verbose : boolean = 1
+  //!      verbose         : boolean = 1
+  //!   is equivalent to :
+  //!      logging.priority : string = "notice"
+  //!
+  //! Note that the "logging.priority" property has precedence on
+  //! "logging.debug" (or "debug") and "logging.verbose" or ("verbose").
+  //! @param config         a collection of properties to be searched
+  //! @param default_prio   the default logging priority threshold
+  //! @param throw_on_error is true, an invalid logging priority label
+  //!        triggers an exception
+  //! @returns the priority as configured from the properties
+  static priority extract_logging_configuration(const datatools::properties & config, priority default_prio = datatools::logger::PRIO_FATAL, bool throw_on_error = true);
+
 };
 } // namespace datatools
 

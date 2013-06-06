@@ -31,15 +31,16 @@
 #include "boost/bimap/set_of.hpp"
 #include "boost/bimap/multiset_of.hpp"
 
-
 // This Project
+#include "datatools/properties.h"
+#include "datatools/exception.h"
 
 namespace {
 //! Hide awkward boost bimap declaration in a typedef
 struct PriorityLookup {
   typedef boost::bimap<
-      boost::bimaps::set_of<std::string>, 
-      boost::bimaps::multiset_of<datatools::logger::priority> 
+      boost::bimaps::set_of<std::string>,
+      boost::bimaps::multiset_of<datatools::logger::priority>
       > LookupTable;
 };
 
@@ -98,6 +99,26 @@ std::string logger::get_priority_label(logger::priority p)
 
   PriorityLookup::LookupTable::right_const_iterator n = a.right.find(p);
   return n != a.right.end() ? GetCanonicalLabel(n->second) : "";
+}
+
+logger::priority logger::extract_logging_configuration(
+  const datatools::properties & config,
+  logger::priority default_prio,
+  bool throw_on_error)
+{
+  datatools::logger::priority p = default_prio;
+  if (config.has_key("logging.priority")) {
+    std::string ps = config.fetch_string("logging.priority");
+    p = datatools::logger::get_priority(ps);
+    DT_THROW_IF(p == datatools::logger::PRIO_UNDEFINED && throw_on_error,
+                std::logic_error,
+                "Invalid logging priority label '" << ps << "' !");
+  } else if (config.has_flag("debug") || config.has_flag("logging.debug")) {
+    p = datatools::logger::PRIO_DEBUG;
+  } else if (config.has_flag("verbose") || config.has_flag("logging.verbose")) {
+    p = datatools::logger::PRIO_NOTICE;
+  }
+  return p;
 }
 
 } // namespace datatools
