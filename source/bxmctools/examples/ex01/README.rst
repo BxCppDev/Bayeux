@@ -95,7 +95,8 @@ Introduction
 
  * Built object(s) : none
 
- * Build method: CMake.
+ * Build method: none.
+
 
 Quick start
 ===========
@@ -174,16 +175,16 @@ Quick start
 
 6. Geant4 simulation:
 
-   a. Run the simulation::
+   a. Run the simulation through an interactive Geant4 session with visualization::
 
        shell> g4_production \
-                --logging-priority "debug" \
+                --logging-priority "warning" \
 		--number-of-events 1000 \
             	--number-of-events-modulo 100 \
             	--interactive \
 		--g4-visu \
             	--config "config/manager.conf" \
-		--vertex-generator-name "vessel_inner_surface.vg" \
+		--vertex-generator-name "source_0_bulk.vg" \
 		--vertex-generator-seed 0 \
 		--event-generator-name "Co60" \
 		--event-generator-seed 0 \
@@ -191,9 +192,39 @@ Quick start
 		--g4-manager-seed 0 \
                 --output-prng-seeds-file "prng_seeds.save" \
                 --output-prng-states-file "prng_states.save" \
-                --output-data-file "mctools_ex01_Co60_inner_vessel.brio"
+                --output-data-file "mctools_ex01_Co60_inner_vessel.brio" \
+                --g4-macro "config/g4vis.mac"
+       Idle> /vis/viewer/set/viewpointThetaPhi -60 45
+       Idle> /run/beamOn 10
+       Idle> exit
 
+       shell> ls -l mctools_ex01_Co60_inner_vessel.brio
 
+   b. Run the simulation in non-interactive mode::
+
+       shell> g4_production \
+                --logging-priority "warning" \
+		--number-of-events 10 \
+            	--number-of-events-modulo 1 \
+            	--batch \
+            	--config "config/manager.conf" \
+		--vertex-generator-name "source_0_bulk.vg" \
+		--vertex-generator-seed 0 \
+		--event-generator-name "Co60" \
+		--event-generator-seed 0 \
+		--shpf-seed 0 \
+		--g4-manager-seed 0 \
+                --output-prng-seeds-file "prng_seeds.save" \
+                --output-prng-states-file "prng_states.save" \
+                --output-data-file "mctools_ex01_Co60_inner_vessel.xml"
+
+      shell> ls -l mctools_ex01_Co60_inner_vessel.xml
+      shell> less mctools_ex01_Co60_inner_vessel.xml
+      q
+
+   c. Run the geant4 simulation through the data processing pipeline::
+
+      not available yet.
 
 8. Clean::
 

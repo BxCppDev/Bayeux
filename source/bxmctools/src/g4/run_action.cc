@@ -422,15 +422,23 @@ namespace mctools {
 
         if (using_brio) {
           DT_LOG_NOTICE(_logprio(), "Opening brio output data file '" << output_file_name << "'...");
+          DT_LOG_NOTICE(_logprio(), "Brio writer is opened: '" << _brio_writer_.is_opened() << "'...");
+          if (_brio_writer_.is_locked()) _brio_writer_.unlock();
           _brio_writer_.set_existing_file_protected (_output_file_preserve_);
           _brio_writer_.open (output_file_name);
+          DT_LOG_NOTICE(_logprio(), "Output data file '" << output_file_name << "' is open.");
           if (using_run_header_footer ()) {
+            DT_LOG_NOTICE(_logprio(), "Brio writer has store '" << _brio_general_info_store_label_
+                          << "' : " << _brio_writer_.has_store(_brio_general_info_store_label_));
+
             _brio_writer_.add_store (_brio_general_info_store_label_,
                                      datatools::properties::SERIAL_TAG);
             _brio_writer_.select_store (_brio_general_info_store_label_);
             _brio_writer_.store (_run_header_);
           }
           const std::string & store = _brio_plain_simulated_data_store_label_;
+          DT_LOG_NOTICE(_logprio(), "Brio writer has store '" << store
+                        << "' : " << _brio_writer_.has_store(store));
           _brio_writer_.add_store (store, mctools::simulated_data::SERIAL_TAG);
           _brio_writer_.lock ();
           _brio_writer_.select_store (store);
@@ -479,7 +487,8 @@ namespace mctools {
             _brio_writer_.select_store (_brio_general_info_store_label_);
             _brio_writer_.store (_run_footer_);
           }
-          _brio_writer_.close ();
+          if (_brio_writer_.is_opened()) _brio_writer_.close ();
+          _brio_writer_.unlock ();
         } else {
           if (_use_run_header_footer_) {
             _writer_.store (_run_footer_);
