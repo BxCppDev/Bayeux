@@ -1,16 +1,16 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* i_composite_shape_3d.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
  * Last modified: 2008-05-23
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *  Basic interface for composite 3D shapes (union, intersection, difference)
  *
- * History: 
- * 
+ * History:
+ *
  */
 
 #ifndef __geomtools__i_composite_shape_3d_h
@@ -25,7 +25,7 @@ namespace geomtools {
 
   class i_composite_shape_3d : public i_shape_3d
   {
-      
+
   public:
 
     class shape_type : public datatools::i_tree_dumpable
@@ -33,7 +33,7 @@ namespace geomtools {
       bool         _delete_;
       i_shape_3d * _shape_;
       placement    _placement_;
-          
+
     private:
 
       // forbid implementation of:
@@ -55,27 +55,27 @@ namespace geomtools {
 
       bool is_delete () const;
 
-      const i_shape_3d & get_shape () const; 
+      const i_shape_3d & get_shape () const;
 
-      i_shape_3d & get_shape (); 
+      i_shape_3d & get_shape ();
 
-      const placement & get_placement () const; 
+      const placement & get_placement () const;
 
-      placement & get_placement (); 
+      placement & get_placement ();
 
       // factory methods:
-      static void make_shape (i_shape_3d &, 
-                              const placement &, 
+      static void make_shape (i_shape_3d &,
+                              const placement &,
                               shape_type &);
 
-      static void make_shape (i_shape_3d *, 
-                              const placement &, 
+      static void make_shape (i_shape_3d *,
+                              const placement &,
                               shape_type &);
 
 
-      virtual void tree_dump (std::ostream & out_         = std::clog, 
-                              const std::string & title_  = "", 
-                              const std::string & indent_ = "", 
+      virtual void tree_dump (std::ostream & out_         = std::clog,
+                              const std::string & title_  = "",
+                              const std::string & indent_ = "",
                               bool inherit_          = false) const;
 
       void dump (std::ostream & out_ = std::clog) const;
@@ -109,18 +109,18 @@ namespace geomtools {
 
     void dump (std::ostream & out_ = std::clog) const;
 
-    virtual void tree_dump (std::ostream & out_         = std::clog, 
-                            const std::string & title_  = "", 
-                            const std::string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_         = std::clog,
+                            const std::string & title_  = "",
+                            const std::string & indent_ = "",
                             bool inherit_          = false) const;
-       
+
   private:
 
     shape_type _shape1_;
     shape_type _shape2_;
-      
+
   };
-    
+
 } // end of namespace geomtools
 
 #endif // __geomtools__i_composite_shape_3d_h

@@ -215,7 +215,7 @@ namespace geomtools {
   /********************/
 
   //! Special rotation angle values
-  enum special_rotation_angle_t
+  enum special_rotation_angle_type
     {
       ROTATION_ANGLE_INVALID = -1,
       ROTATION_ANGLE_0   = 0,

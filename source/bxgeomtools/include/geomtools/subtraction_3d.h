@@ -23,9 +23,8 @@ namespace geomtools {
   class subtraction_3d : public i_composite_shape_3d
   {
   public:
-    static const std::string SUBTRACTION_3D_LABEL;
 
-  public:
+    static const std::string SUBTRACTION_3D_LABEL;
 
     std::string get_shape_name () const;
 
