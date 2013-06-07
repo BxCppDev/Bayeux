@@ -134,7 +134,7 @@ int io_factory::init_read_archive() {
 
   else {
     DT_THROW_IF(true,
-                std::runtime_error,
+                std::logic_error,
                 "Format not supported!");
   }
 
@@ -238,7 +238,7 @@ int io_factory::init_write_archive() {
     obar_ptr_ = new eos::portable_oarchive(*out_);
   } else {
     DT_THROW_IF(true,
-                std::runtime_error,
+                std::logic_error,
                 "Format not supported !");
   }
 
@@ -608,7 +608,7 @@ int io_factory::guess_mode_from_filename(const std::string& a_filename,
 io_reader::io_reader(int mode)
     : io_factory(io_factory::MODE_READ | mode) {
   DT_THROW_IF (!this->is_read(),
-               std::runtime_error,
+               std::logic_error,
                "Cannot force non-read mode!");
 }
 
@@ -616,7 +616,7 @@ io_reader::io_reader(int mode)
 io_reader::io_reader(const std::string& stream_name, int mode)
     : io_factory(stream_name, io_factory::MODE_READ | mode) {
   DT_THROW_IF (!this->is_read(),
-               std::runtime_error,
+               std::logic_error,
                "Cannot force non-read mode!");
 }
 
@@ -740,31 +740,14 @@ void data_reader::read_next_tag() {
     DT_LOG_TRACE(reader_->get_logging_priority(),"next_tag_ '= " << next_tag_ << "'");
   }
   catch (std::runtime_error& x) {
-    bool warn = false;
-    //>>> 2008-11-13 FM: skip EOF message printing
     std::string msg = x.what();
     if (msg.find ("EOF") != msg.npos) {
-      warn = false;
     }
-    // if (warn) {
-    //   std::clog << "WARNING: data_reader::read_next_tag: runtime_error="
-    //             << x.what() << std::endl;
-    //   if (io_factory::g_warning) {
-    //     std::clog << "WARNING: data_reader::read_next_tag: runtime_error="
-    //               << x.what() << std::endl;
-    //   }
-    // }
-    //<<<
     status_   = STATUS_ERROR;
     next_tag_ = EMPTY_RECORD_TAG;
-    DT_LOG_TRACE(reader_->get_logging_priority(),"Booom !");
+    DT_LOG_TRACE(reader_->get_logging_priority(), x.what());
   }
   catch (std::exception& x) {
-    // bool warn = io_factory::g_warning;
-    // if (warn) {
-    //   std::clog << "WARNING: data_reader::read_next_tag: exception="
-    //             << x.what() << std::endl;
-    // }
     status_   = STATUS_ERROR;
     next_tag_ = EMPTY_RECORD_TAG;
   }
@@ -959,7 +942,7 @@ bool data_writer::is_uncompressed() const {
 
 bool data_writer::is_compressed() const {
   DT_THROW_IF (!this->is_initialized(),
-               std::runtime_error,
+               std::logic_error,
                "Writer is not initialized!");
   return writer_->is_compressed();
 }
@@ -967,7 +950,7 @@ bool data_writer::is_compressed() const {
 
 bool data_writer::is_gzip() const {
   DT_THROW_IF (!this->is_initialized(),
-               std::runtime_error,
+               std::logic_error,
                "Writer is not initialized!");
   return writer_->is_gzip();
 }
@@ -975,7 +958,7 @@ bool data_writer::is_gzip() const {
 
 bool data_writer::is_text() const {
   DT_THROW_IF (!this->is_initialized(),
-               std::runtime_error,
+               std::logic_error,
                "Writer is not initialized!");
   return writer_->is_text();
 }
@@ -983,7 +966,7 @@ bool data_writer::is_text() const {
 
 bool data_writer::is_binary() const {
   DT_THROW_IF (!this->is_initialized(),
-               std::runtime_error,
+               std::logic_error,
                "Writer is not initialized!");
   return writer_->is_binary();
 }
@@ -991,7 +974,7 @@ bool data_writer::is_binary() const {
 
 bool data_writer::is_portable_binary() const {
   DT_THROW_IF (!this->is_initialized(),
-               std::runtime_error,
+               std::logic_error,
                "Writer is not initialized!");
   return writer_->is_portable_binary();
 }
@@ -999,7 +982,7 @@ bool data_writer::is_portable_binary() const {
 
 bool data_writer::is_xml() const {
   DT_THROW_IF (!this->is_initialized(),
-               std::runtime_error,
+               std::logic_error,
                "Writer is not initialized!");
   return writer_->is_xml();
 }
@@ -1007,7 +990,7 @@ bool data_writer::is_xml() const {
 
 bool data_writer::is_bzip2() const {
   DT_THROW_IF (!this->is_initialized(),
-               std::runtime_error,
+               std::logic_error,
                "Writer is not initialized!");
   return writer_->is_bzip2();
 }
@@ -1015,7 +998,7 @@ bool data_writer::is_bzip2() const {
 
 bool data_writer::is_single_archive() const {
   DT_THROW_IF (!this->is_initialized(),
-               std::runtime_error,
+               std::logic_error,
                "Writer is not initialized!");
   return !this->is_multi_archives();
 }
@@ -1054,7 +1037,7 @@ void data_writer::init(const std::string& filename,
   int mode_guess;
   DT_THROW_IF (io_factory::guess_mode_from_filename(filename, mode_guess)
                != io_factory::SUCCESS,
-               std::runtime_error,
+               std::logic_error,
                "Cannot guess mode for file '" << filename << "' !");
   int mode = mode_guess;
   if (use_multiple_archives) mode |= io_factory::multi_archives;
