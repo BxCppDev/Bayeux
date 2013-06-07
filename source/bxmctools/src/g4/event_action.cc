@@ -156,7 +156,8 @@ namespace mctools {
       DT_LOG_DEBUG(_logprio(), "Event #" << event_id << " starts.");
       if (_run_action_->has_number_events_modulo ()) {
         if ((event_id % _run_action_->get_number_events_modulo ()) == 0) {
-          DT_LOG_NOTICE(_logprio(), "Event #" << event_id);
+          // Trace explicitely the event number :
+          DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "Event #" << event_id);
         }
       }
       if (is_aborted_event ()) {

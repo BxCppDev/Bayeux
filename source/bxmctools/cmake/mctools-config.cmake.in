@@ -32,7 +32,7 @@ set(mctools_GENVTX_DIR       @genvtx_DIR@)
 set(mctools_GENBB_HELP_DIR   @genbb_help_DIR@)
 set(mctools_EMFIELD_DIR      @emfield_DIR@)
 set(mctools_MATERIALS_DIR    @materials_DIR@)
-set(mctools_DPP_DIR          @dpp_help_DIR@)
+set(mctools_DPP_DIR          @dpp_DIR@)
 if (MCTOOLS_WITH_G4)
 set(mctools_GEANT4_DIR       @Geant4_DIR@)
 endif()
@@ -49,15 +49,15 @@ get_filename_component(_mctools_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
 # Protect it with an in-memory variable so that we don't include
 # it twice should multiple calls to find_package be made
 if(NOT mctools_LIBDEPS_LOADED)
-  find_package(genvtx     REQUIRED CONFIG 
+  find_package(genvtx     REQUIRED CONFIG
                PATHS ${mctools_GENVTX_DIR} NO_DEFAULT_PATH)
-  find_package(genbb_help REQUIRED CONFIG 
+  find_package(genbb_help REQUIRED CONFIG
                PATHS ${mctools_GENBB_HELP_DIR} NO_DEFAULT_PATH)
-  find_package(emfield    REQUIRED CONFIG 
+  find_package(emfield    REQUIRED CONFIG
                PATHS ${mctools_EMFIELD_DIR} NO_DEFAULT_PATH)
-  find_package(materials  REQUIRED CONFIG 
+  find_package(materials  REQUIRED CONFIG
                PATHS ${mctools_MATERIALS_DIR} NO_DEFAULT_PATH)
-  find_package(dpp        REQUIRED CONFIG 
+  find_package(dpp        REQUIRED CONFIG
                PATHS ${mctools_DPP_DIR} NO_DEFAULT_PATH)
   include("${_mctools_thisdir}/mctools-libraries.cmake")
   set(mctools_LIBDEPS_LOADED 1)
@@ -119,7 +119,7 @@ endif()
 if(mctools_WITH_REFLECTION)
   set(mctools_REFLECTION_LIBRARY mctools_reflection)
 endif()
-  
+
 set(mctools_LIBRARIES ${mctools_LIBRARY})
 
 unset(_mctools_inc)

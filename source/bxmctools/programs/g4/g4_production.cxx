@@ -105,7 +105,7 @@ int main(int argc_, char ** argv_)
       ("number-of-events-modulo,m",
        po::value<uint32_t>(&params.noevents_modulo)
        ->default_value(0),
-       "set the event print period(0 means no print)")
+       "set the event print period (0 means no print)")
 
       ("interactive,i",
        po::value<bool>(&params.interactive)

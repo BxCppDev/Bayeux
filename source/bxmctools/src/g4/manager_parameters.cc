@@ -186,9 +186,11 @@ namespace mctools {
       if (a_params.noevents <= mctools::g4::manager::constants::instance ().NO_LIMIT) {
         a_manager.set_number_of_events (a_params.noevents);
       }
-      if (a_params.noevents_modulo > 0) {
-        a_manager.set_number_events_modulo (a_params.noevents_modulo);
-      }
+
+      //if (a_params.noevents_modulo >= NUMBER_EVENTS_MODULO_NONE) {
+      a_manager.set_number_events_modulo (a_params.noevents_modulo);
+      //}
+
       if (a_params.forbid_private_hits) {
         a_manager.set_forbid_private_hits (true);
       }
