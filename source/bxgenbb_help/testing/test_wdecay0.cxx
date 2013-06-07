@@ -31,8 +31,7 @@ int main (int argc_, char ** argv_)
     }
 
     datatools::properties config;
-    if (debug) config.store_flag ("debug");
-    config.store_flag ("local_prng");
+    if (debug) config.store_flag ("logging.debug");
     config.store ("seed", 314159);
     config.store ("decay_type", "DBD");
     config.store ("decay_isotope", "Se82");
@@ -44,7 +43,7 @@ int main (int argc_, char ** argv_)
     if (debug) config.tree_dump (clog, "Configuration: ", "debug: ");
 
     genbb::wdecay0 WD0;
-    WD0.set_debug (debug);
+    if (debug)  WD0.set_logging_priority(datatools::logger::PRIO_DEBUG);
     WD0.initialize_standalone (config);
 
     // working primary event:

@@ -44,7 +44,7 @@ int main (int argc_, char ** argv_)
     if (debug) config.tree_dump (clog, "Configuration: ", "debug: ");
 
     genbb::wgenbb WGBB;
-    WGBB.set_debug (debug);
+    if (debug) WGBB.set_logging_priority (datatools::logger::PRIO_DEBUG);
     WGBB.initialize_standalone (config);
 
     // working primary event:

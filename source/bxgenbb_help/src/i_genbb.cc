@@ -37,6 +37,11 @@ namespace genbb {
   DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(i_genbb,"genbb::i_genbb/__system__");
 
 
+  bool i_genbb::is_debug () const
+  {
+    return _logging_priority >= datatools::logger::PRIO_DEBUG;
+  }
+
   datatools::logger::priority i_genbb::get_logging_priority() const
   {
     return _logging_priority;
@@ -139,17 +144,35 @@ namespace genbb {
 
   void i_genbb::_initialize_base(const datatools::properties & config_)
   {
-
-    if (config_.has_key("logging.priority")) {
-      std::string prio_label = config_.fetch_string("logging.priority");
-      datatools::logger::priority p = datatools::logger::get_priority(prio_label);
-      DT_THROW_IF(p == datatools::logger::PRIO_UNDEFINED,
-                  std::domain_error,
-                  "Unknow logging priority ``" << prio_label << "`` !");
-      set_logging_priority(p);
-    }
+    // Logging priority :
+    datatools::logger::priority p = datatools::logger::extract_logging_configuration(config_, datatools::logger::PRIO_FATAL);
+    DT_THROW_IF(p == datatools::logger::PRIO_UNDEFINED,
+                std::domain_error,
+                "Unknown logging priority configuration rule !");
+    set_logging_priority(p);
 
     return;
+  }
+
+  void i_genbb::tree_dump (std::ostream& a_out,
+                           const std::string& a_title,
+                           const std::string& a_indent,
+                           bool a_inherit) const
+  {
+   std::string indent;
+   if (! a_indent.empty()) indent = a_indent;
+   if (! a_title.empty()) a_out << indent << a_title << std::endl;
+
+   a_out << indent << i_tree_dumpable::tag
+         << "Logging priority  : \""
+         << datatools::logger::get_priority_label(_logging_priority) << "\"" << std::endl;
+   a_out << indent << i_tree_dumpable::tag
+         << "Can use external PRNG : " << can_external_random ()  << std::endl;
+
+   a_out << indent << i_tree_dumpable::inherit_tag(a_inherit)
+         << "Has external PRNG : " << has_external_random ()  << std::endl;
+
+
   }
 
 } // end of namespace genbb

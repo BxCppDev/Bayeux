@@ -36,6 +36,7 @@
 
 #include <datatools/factory_macros.h>
 #include <datatools/logger.h>
+#include <datatools/i_tree_dump.h>
 
 namespace datatools {
   class properties;
@@ -51,7 +52,8 @@ namespace genbb {
   class primary_event;
 
   /// \brief GENBB particle generator abstract base class
-  class i_genbb
+  class i_genbb :
+    public datatools::i_tree_dumpable
   {
   public:
 
@@ -114,6 +116,13 @@ namespace genbb {
     datatools::logger::priority get_logging_priority() const;
 
     void set_logging_priority(datatools::logger::priority p);
+
+    bool is_debug () const;
+
+    virtual void tree_dump (std::ostream& out = std::clog,
+                            const std::string& title  = "",
+                            const std::string& indent = "",
+                            bool inherit = false) const;
 
   protected:
 

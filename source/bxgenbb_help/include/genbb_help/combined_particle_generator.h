@@ -77,11 +77,11 @@ namespace genbb {
     bool is_mode_activity () const;
 
     virtual bool can_external_random () const;
-    
+
     const mygsl::rng & get_random () const;
 
     mygsl::rng & grab_random ();
-   
+
     /// Constructor
     combined_particle_generator ();
 
@@ -96,15 +96,13 @@ namespace genbb {
     virtual void reset ();
 
     virtual bool has_next ();
-    
+
     /// Check initialization status
     virtual bool is_initialized () const;
 
     void dump(std::ostream & out_, const std::string & title_, const std::string & indent_ = "") const;
 
   protected:
-
-    void _check_locked (const std::string & where_) const;
 
     virtual void _load_next (primary_event & event_,
                              bool compute_classification_ = true);
@@ -124,7 +122,7 @@ namespace genbb {
     mygsl::rng    _random_; //!< Local PRNG
     pg_col_type   _generators_info_;
     GENBB_PG_REGISTRATION_INTERFACE(combined_particle_generator);
- 
+
   };
 
 } // end of namespace genbb

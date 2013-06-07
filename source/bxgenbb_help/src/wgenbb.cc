@@ -78,23 +78,11 @@ namespace genbb {
     return _initialized_;
   }
 
-  bool wgenbb::is_debug () const
-  {
-    return _debug_;
-  }
-
-  void wgenbb::set_debug (bool d_)
-  {
-    _debug_ = d_;
-    return;
-  }
-
   // ctor:
   wgenbb::wgenbb () : i_genbb ()
   {
     DT_THROW_IF (wgenbb::_g_counter_ > 0, logic_error, "Only one instance of wgenbb is allowed !");
     wgenbb::_g_counter_++;
-    _debug_ = false;
     _initialized_ = false;
     _event_count_ = 0;
     _decay_type_ = DECAY_TYPE_UNDEFINED;
@@ -212,10 +200,6 @@ namespace genbb {
     double emax = -1.0;
     datatools::invalidate (emin);
     datatools::invalidate (emax);
-
-    if (config_.has_flag ("debug")) {
-      _debug_ = true;
-    }
 
     if (! has_external_random ()) {
       if (config_.has_key ("local_prng")) {
@@ -481,7 +465,6 @@ namespace genbb {
     const string tag = "|-- ";
     const string last_tag = "`-- ";
     out_ << "C++ GENBB wrapper: " << endl;
-    out_ << tag << "debug            : " << _debug_ << endl;
     out_ << tag << "decay_type       : " << _decay_type_ << endl;
     out_ << tag << "decay_isotope    : '" << _decay_isotope_ << "'" << endl;
     out_ << tag << "decay_dbd_level  : " << _decay_dbd_level_ << endl;

@@ -62,10 +62,6 @@ namespace genbb {
 
   public:
 
-    bool is_debug () const;
-
-    void set_debug (bool d_);
-
     virtual bool can_external_random () const;
 
     const mygsl::rng & get_random () const;
@@ -79,6 +75,11 @@ namespace genbb {
     wdecay0 ();
 
     virtual ~wdecay0 ();
+
+    virtual void tree_dump (std::ostream& out = std::clog,
+                            const std::string& title  = "",
+                            const std::string& indent = "",
+                            bool inherit = false) const;
 
     void dump (std::ostream & = std::clog) const;
 
@@ -109,7 +110,6 @@ namespace genbb {
 
   private:
 
-    bool   _debug_;
     bool   _initialized_;
 
     int    _decay_type_;

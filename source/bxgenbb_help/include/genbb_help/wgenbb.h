@@ -65,8 +65,6 @@ namespace genbb {
 
     bool is_debug () const;
 
-    void set_debug (bool);
-
     bool use_local_prng () const;
 
     virtual bool can_external_random () const;
@@ -116,7 +114,6 @@ namespace genbb {
 
     static int _g_counter_; /// Counter for manual singletonization
 
-    bool   _debug_;
     bool   _initialized_;
 
     int    _decay_type_;

@@ -51,21 +51,9 @@ namespace genbb {
     return _initialized_;
   }
 
-  bool wdecay0::is_debug () const
-  {
-    return _debug_;
-  }
-
-  void wdecay0::set_debug (bool d_)
-  {
-    _debug_ = d_;
-    return;
-  }
-
   // ctor:
   wdecay0::wdecay0 () : i_genbb ()
   {
-    _debug_ = false;
     _initialized_ = false;
     _event_count_ = 0;
     _decay_type_ = DECAY_TYPE_UNDEFINED;
@@ -149,9 +137,7 @@ namespace genbb {
                             datatools::service_manager & service_manager_,
                             detail::pg_dict_type & dictionary_)
   {
-    if (_initialized_) {
-      throw std::logic_error ("genbb::wdecay0::initialize: Already initialized !");
-    }
+    DT_THROW_IF (_initialized_, std::logic_error, "Already initialized !");
     _initialize_base(config_);
 
     std::string decay_isotope;
@@ -161,66 +147,44 @@ namespace genbb {
     datatools::invalidate (emin);
     datatools::invalidate (emax);
 
-    if (config_.has_flag ("debug")) {
-      _debug_ = true;
-    }
-
     if (! has_external_random ()) {
-
       if (config_.has_key ("seed")) {
         long seed = config_.fetch_integer ("seed");
-        if (seed < 0) {
-          throw std::logic_error ("genbb::wdecay0::initialize: Invalid seed value (>=0) !");
-        }
+        DT_THROW_IF (seed < 0, std::logic_error, "Invalid seed value (>=0) !");
         _seed_ = seed;
       } else {
-          throw std::logic_error ("genbb::wdecay0::initialize: Missing 'seed' property !");
+        DT_THROW_IF(true, std::logic_error, "Missing 'seed' property !");
       }
     }
 
-    if (! config_.has_key ("decay_type")) {
-      std::ostringstream message;
-      message << "genbb::wdecay0::initialize: Missing 'decay_type' property !";
-      throw std::logic_error (message.str());
-    } else {
-      std::string tmp = config_.fetch_string ("decay_type");
-      if ((tmp != "DBD") && (tmp != "background")) {
-        std::ostringstream message;
-        message << "genbb::wdecay0::initialize: Invalid decay type '"
-                << tmp << "' !";
-        throw std::logic_error (message.str());
-      }
-      if (tmp == "background") {
-        _decay_type_ = DECAY_TYPE_BACKGROUND;
-      }
-
-      if (tmp == "DBD") {
-        _decay_type_ = DECAY_TYPE_DBD;
-
-        if (! config_.has_key ("decay_dbd_level")) {
-          std::ostringstream message;
-          message << "genbb::wdecay0::initialize: Missing DBD decay level !";
-          throw std::logic_error (message.str());
-        }
-        _decay_dbd_level_ = config_.fetch_integer ("decay_dbd_level");
-
-        if (! config_.has_key ("decay_dbd_mode")) {
-          std::ostringstream message;
-          message << "genbb::wdecay0::initialize: Missing DBD decay mode !";
-          throw std::logic_error (message.str());
-        }
-        _decay_dbd_mode_ = config_.fetch_integer ("decay_dbd_mode");
-      }
-
+    DT_THROW_IF (! config_.has_key ("decay_type"),
+                 std::logic_error,
+                 "Missing 'decay_type' property !");
+    std::string tmp = config_.fetch_string ("decay_type");
+    DT_THROW_IF ((tmp != "DBD") && (tmp != "background"),
+                 std::logic_error,
+                 "Invalid decay type '" << tmp << "' !");
+    if (tmp == "background") {
+      _decay_type_ = DECAY_TYPE_BACKGROUND;
     }
 
-    if (! config_.has_key ("decay_isotope")) {
-      std::ostringstream message;
-      message << "genbb::wdecay0::initialize: Missing 'decay_isotope' property !";
-      throw std::logic_error (message.str());
-    } else {
-      decay_isotope = config_.fetch_string ("decay_isotope");
+    if (tmp == "DBD") {
+      _decay_type_ = DECAY_TYPE_DBD;
+      DT_THROW_IF (! config_.has_key ("decay_dbd_level"),
+                   std::logic_error,
+                   "Missing DBD decay level !");
+      _decay_dbd_level_ = config_.fetch_integer ("decay_dbd_level");
+
+      DT_THROW_IF (! config_.has_key ("decay_dbd_mode"),
+                   std::logic_error,
+                   "Missing DBD decay mode !");
+      _decay_dbd_mode_ = config_.fetch_integer ("decay_dbd_mode");
     }
+
+    DT_THROW_IF (! config_.has_key ("decay_isotope"),
+                 std::logic_error,
+                 "Missing 'decay_isotope' property !");
+    decay_isotope = config_.fetch_string ("decay_isotope");
 
     _set_decay_isotope_ (decay_isotope);
 
@@ -235,18 +199,14 @@ namespace genbb {
 
         if (config_.has_key ("energy_max")) {
           emax = config_.fetch_real ("energy_max");
-          if (emax < 0.0) {
-            throw std::logic_error ("genbb::wdecay0::initialize: Invalid maximum value !");
-          }
+          DT_THROW_IF (emax < 0.0, std::logic_error, "Invalid maximum value !");
           if (! config_.has_explicit_unit("energy_max")) emax *= energy_unit;
           _energy_max_ = emax;
         }
 
         if (config_.has_key ("energy_min")) {
           emin = config_.fetch_real ("energy_min");
-          if (emin < 0.0) {
-            throw std::logic_error ("genbb::wdecay0::initialize: Invalid minimum value !");
-          }
+          DT_THROW_IF (emin < 0.0, std::logic_error, "Invalid minimum value !");
           if (! config_.has_explicit_unit("energy_min")) emin *= energy_unit;
           _energy_min_ = emin;
         }
@@ -264,15 +224,10 @@ namespace genbb {
         _energy_min_ = utils::DEFAULT_ENERGY_RANGE_MIN;
       }
     }
-    if (_energy_min_ >= _energy_max_) {
-      std::ostringstream message;
-      message << "genbb::wdecay0::initialize: Invalid energy range !";
-      throw std::logic_error (message.str());
-    }
+    DT_THROW_IF (_energy_min_ >= _energy_max_, std::logic_error, "Invalid energy range !");
 
     if (! has_external_random ()) {
-      std::clog << "NOTICE: " << "genbb::wdecay0::initialize: "
-                << "Initializing the local PRNG..." << std::endl;
+      DT_LOG_NOTICE(get_logging_priority(),"Initializing the local PRNG...");
       _random_.init ("taus2", _seed_);
     }
 
@@ -296,15 +251,8 @@ namespace genbb {
   void wdecay0::_load_next (primary_event & event_,
                             bool compute_classification_)
   {
-    if (_debug_) {
-      std::clog << "debug: " << "genbb::wdecay0::_load_next: "
-                << "Entering..."
-                << std::endl;
-    }
-    if (! _initialized_) {
-      throw std::logic_error ("genbb::wdecay0::_load_next: Not initialized !");
-    }
-
+    DT_LOG_TRACE(get_logging_priority(),"Entering...");
+    DT_THROW_IF  (! _initialized_, std::logic_error, "Not initialized !");
     // reset:
     event_.reset ();
 
@@ -319,9 +267,7 @@ namespace genbb {
                         decay0::GENBBSUB_ISTART_GENERATE,
                         error,
                         bb_params());
-      if (error != 0) {
-        throw std::logic_error ("genbb::wdecay0::_load_next: genbbsub DBD generation failed !");
-      }
+      DT_THROW_IF (error != 0, std::logic_error, "genbbsub DBD generation failed !");
     } else if (_decay_type_ == DECAY_TYPE_BACKGROUND) {
       decay0::genbbsub(grab_random(),
                        event_,
@@ -332,32 +278,18 @@ namespace genbb {
                        decay0::GENBBSUB_ISTART_GENERATE,
                        error,
                        bb_params());
-      if (error != 0) {
-        throw std::logic_error ("genbb::wdecay0::_init_: genbbsub background generation failed !");
-      }
+      DT_THROW_IF (error != 0, std::logic_error, "genbbsub background generation failed !");
     }
-
     if (compute_classification_) {
       event_.compute_classification ();
     }
-
     event_.set_genbb_weight (1.0);
-    if (_debug_) {
-      std::clog << "debug: " << "genbb::wdecay0::_load_next: "
-                << "GENBB weight = " << get_to_all_events ()
-                << std::endl;
-    }
-
+    DT_LOG_DEBUG(get_logging_priority(), "GENBB weight = " << get_to_all_events ());
     if (get_to_all_events () > 1.0) {
       event_.set_genbb_weight (1.0 / get_to_all_events ());
     }
-
     _event_count_++;
-    if (_debug_) {
-      std::clog << "debug: " << "genbb::wdecay0::_load_next: "
-                << "Exiting."
-                << std::endl;
-    }
+    DT_LOG_TRACE(get_logging_priority(),"Exiting.");
     return;
   }
 
@@ -373,27 +305,16 @@ namespace genbb {
 
   void wdecay0::_init_ ()
   {
-    if (_debug_) {
-      std::clog << "DEBUG: " << "genbb::wdecay0::_init_: "
-                << "Entering..."
-                << std::endl;
-    }
-
-    if (_decay_type_ == DECAY_TYPE_UNDEFINED) {
-      throw std::logic_error ("genbb::wdecay0::_init_: Decay type is not defined !");
-    }
-
-    if (_decay_isotope_.empty()) {
-      throw std::logic_error ("genbb::wdecay0::_init_: Missing isotope !");
-    }
-
+    DT_LOG_TRACE(get_logging_priority(),"Entering...");
+    DT_THROW_IF (_decay_type_ == DECAY_TYPE_UNDEFINED, std::logic_error,
+                 "Decay type is not defined !");
+    DT_THROW_IF (_decay_isotope_.empty(), std::logic_error,
+                 "Missing isotope !");
     if (_decay_type_ == DECAY_TYPE_DBD) {
-      if (_decay_dbd_level_ < 0) {
-        throw std::logic_error ("genbb::wdecay0::_init_: Invalid DBD level !");
-      }
-      if (_decay_dbd_mode_ == DBD_MODE_INVALID) {
-        throw std::logic_error ("genbb::wdecay0::_init_: Invalid DBD mode !");
-      }
+      DT_THROW_IF (_decay_dbd_level_ < 0, std::logic_error,
+                   "Invalid DBD level !");
+      DT_THROW_IF (_decay_dbd_mode_ == DBD_MODE_INVALID, std::logic_error,
+                   "Invalid DBD mode !");
     }
 
     _bb_params_.reset(new genbb::decay0::bbpars);
@@ -405,28 +326,23 @@ namespace genbb {
 
       const std::vector<int> & dbdmwer
         = utils::get_dbd_modes_with_energy_range ();
-      if (_debug_) std::clog << "DEBUG: genbb::wdecay0::_init_: Decay DBD mode : "
-                        << _decay_dbd_mode_ << std::endl;
+      DT_LOG_DEBUG(get_logging_priority(), "Decay DBD mode : " << _decay_dbd_mode_);
       if (std::find (dbdmwer.begin (), dbdmwer.end (), _decay_dbd_mode_) != dbdmwer.end ()) {
         if (datatools::is_valid (_energy_min_)) {
-          std::clog << "NOTICE: genbb::wdecay0::_init_: Setting DBD energy min to "
-                    << _energy_min_ / CLHEP::MeV << " MeV" << std::endl;
+          DT_LOG_NOTICE(get_logging_priority(), "Setting DBD energy min to "
+                        << _energy_min_ / CLHEP::MeV << " MeV");
           bb_params().ebb1 = (float) (_energy_min_ / CLHEP::MeV);
         }
         if (datatools::is_valid (_energy_max_)) {
-          std::clog << "NOTICE: genbb::wdecay0::_init_: Setting DBD energy max to "
-                    << _energy_max_ / CLHEP::MeV << " MeV" << std::endl;
+          DT_LOG_NOTICE(get_logging_priority(), "Setting DBD energy max to "
+                        << _energy_max_ / CLHEP::MeV << " MeV");
           bb_params().ebb2 = (float) (_energy_max_ / CLHEP::MeV);
         }
-        if (bb_params().ebb1 >= bb_params().ebb2) {
-          std::ostringstream message;
-          message << "genbb::wdecay0::_init_: "
-                  << "Invalid DBD energy range (Emin="<< bb_params().ebb1 << " >= Emax=" << bb_params().ebb2 << ") (MeV) !";
-          throw std::logic_error (message.str ());
-        }
+        DT_THROW_IF (bb_params().ebb1 >= bb_params().ebb2,
+                     std::logic_error,
+                     "Invalid DBD energy range (Emin="<< bb_params().ebb1 << " >= Emax=" << bb_params().ebb2 << ") (MeV) !");
       } else {
-        if (_debug_) std::clog << "DEBUG: genbb::wdecay0::_init_: Not a DBD energy range mode."
-                               << std::endl;
+        DT_LOG_DEBUG(get_logging_priority(),"Not a DBD energy range mode.");
       }
     }
 
@@ -442,9 +358,7 @@ namespace genbb {
                        decay0::GENBBSUB_ISTART_INIT, // initialization without event generation
                        error,
                        bb_params());
-      if (error != 0) {
-        throw std::logic_error ("genbb::wdecay0::_init_: genbbsub DBD initialization failed !");
-      }
+      DT_THROW_IF (error != 0, std::logic_error, "genbbsub DBD initialization failed !");
     } else if (_decay_type_ == DECAY_TYPE_BACKGROUND) {
       primary_event dummy_event;
       decay0::genbbsub(grab_random(),
@@ -456,37 +370,48 @@ namespace genbb {
                        decay0::GENBBSUB_ISTART_INIT, // initialization without event generation
                        error,
                        bb_params());
-      if (error != 0) {
-        throw std::logic_error ("genbb::wdecay0::_init_: genbbsub background initialization failed !");
-      }
+      DT_THROW_IF (error != 0, std::logic_error, "genbbsub background initialization failed !");
     }
 
-    if (_debug_) {
-      std::clog << "DEBUG: " << "genbb::wdecay0::_init_: "
-           << "Exiting."
-           << std::endl;
+    DT_LOG_TRACE(get_logging_priority(),"Exiting.");
+    return;
+  }
+
+  void wdecay0::tree_dump (std::ostream& a_out,
+                           const std::string& a_title,
+                           const std::string& a_indent,
+                           bool a_inherit) const
+  {
+    this->i_genbb::tree_dump(a_out, a_title, a_indent, true);
+    const std::string & indent = a_indent;
+    a_out << indent << i_tree_dumpable::tag
+          << "Decay type       : " << _decay_type_ << std::endl;
+    a_out << indent << i_tree_dumpable::tag
+          << "Decay isotope    : '" << _decay_isotope_ << "'" << std::endl;
+    a_out << indent << i_tree_dumpable::tag
+          << "Decay DBD level  : " << _decay_dbd_level_ << std::endl;
+    a_out << indent << i_tree_dumpable::tag
+          << "Decay DBD mode   : " << _decay_dbd_mode_ << std::endl;
+    a_out << indent << i_tree_dumpable::tag
+          << "Event count      : " << _event_count_ << std::endl;
+    if (datatools::is_valid (_energy_min_)) {
+      a_out << indent << i_tree_dumpable::tag
+            << "Energy min       : " << _energy_min_ / CLHEP::keV << " keV" << std::endl;
     }
+    if (datatools::is_valid (_energy_max_)) {
+      a_out << indent << i_tree_dumpable::tag
+            << "Energy max       : " << _energy_max_ / CLHEP::keV << " keV" << std::endl;
+    }
+    a_out << indent << i_tree_dumpable::tag
+          << "Local PRNG : " << _random_.is_initialized() << std::endl;
+    a_out << indent << i_tree_dumpable::inherit_tag(a_inherit)
+          << "Local PRNG seed             : " << _seed_ << std::endl;
     return;
   }
 
   void wdecay0::dump (std::ostream & out_) const
   {
-    const std::string tag = "|-- ";
-    const std::string last_tag = "`-- ";
-    out_ << "C++ GENBB wrapper: " << std::endl;
-    out_ << tag << "debug            : " << _debug_ << std::endl;
-    out_ << tag << "decay_type       : " << _decay_type_ << std::endl;
-    out_ << tag << "decay_isotope    : '" << _decay_isotope_ << "'" << std::endl;
-    out_ << tag << "decay_dbd_level  : " << _decay_dbd_level_ << std::endl;
-    out_ << tag << "decay_dbd_mode   : " << _decay_dbd_mode_ << std::endl;
-    out_ << tag << "event_count      : " << _event_count_ << std::endl;
-    if (datatools::is_valid (_energy_min_)) {
-      out_ << tag << "energy_min       : " << _energy_min_ / CLHEP::keV << " keV" << std::endl;
-    }
-    if (datatools::is_valid (_energy_max_)) {
-      out_ << tag << "energy_max       : " << _energy_max_ / CLHEP::keV << " keV" << std::endl;
-    }
-    out_ << last_tag << "seed             : " << _seed_ << std::endl;
+    tree_dump(out_, "C++ GENBB wrapper: ", "");
     return;
   }
 
