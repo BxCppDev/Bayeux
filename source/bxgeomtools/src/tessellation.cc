@@ -100,9 +100,6 @@ namespace geomtools {
 
   /*** facet34 ***/
 
-  const unsigned int facet34::MAX_CATEGORY = 30;
-  const int facet34::INVALID_CATEGORY      = -1;
-
   uint32_t facet34::get_number_of_vertices () const
   {
     return _number_of_vertices_;
@@ -1263,33 +1260,33 @@ namespace geomtools {
     ivtx[2] = ivtx2_;
     ivtx[3] = ivtx3_;
     vertices_col_type::iterator vtx_it[4];
-    for (unsigned int i = 0; i < dim; i++) {
-        vtx_it[i] = _vertices_.find (ivtx[i]);
-        DT_THROW_IF (vtx_it[i] == _vertices_.end (),
-                     std::logic_error,
-                     "Invalid vertex index " << ivtx[i] << " !");
-      }
+    for (int i = 0; i < dim; i++) {
+      vtx_it[i] = _vertices_.find (ivtx[i]);
+      DT_THROW_IF (vtx_it[i] == _vertices_.end (),
+                   std::logic_error,
+                   "Invalid vertex index " << ivtx[i] << " !");
+    }
     //i_facet * fct = 0;
     facet34 fct;
     if (dim == 3) {
-        vtx_it[0]->second.add_ref_facet (facet_key_, 0);
-        vtx_it[1]->second.add_ref_facet (facet_key_, 1);
-        vtx_it[2]->second.add_ref_facet (facet_key_, 2);
-        fct = facet34 ((vtx_it[0]->second),
-                       (vtx_it[1]->second),
-                       (vtx_it[2]->second),
-                       ivtx[0],ivtx[1],ivtx[2]);
-      } else {
-        vtx_it[0]->second.add_ref_facet (facet_key_, 0);
-        vtx_it[1]->second.add_ref_facet (facet_key_, 1);
-        vtx_it[2]->second.add_ref_facet (facet_key_, 2);
-        vtx_it[3]->second.add_ref_facet (facet_key_, 3);
-        fct = facet34 ((vtx_it[0]->second),
-                       (vtx_it[1]->second),
-                       (vtx_it[2]->second),
-                       (vtx_it[3]->second),
-                       ivtx[0],ivtx[1],ivtx[2],ivtx[3]);
-      }
+      vtx_it[0]->second.add_ref_facet (facet_key_, 0);
+      vtx_it[1]->second.add_ref_facet (facet_key_, 1);
+      vtx_it[2]->second.add_ref_facet (facet_key_, 2);
+      fct = facet34 ((vtx_it[0]->second),
+                     (vtx_it[1]->second),
+                     (vtx_it[2]->second),
+                     ivtx[0],ivtx[1],ivtx[2]);
+    } else {
+      vtx_it[0]->second.add_ref_facet (facet_key_, 0);
+      vtx_it[1]->second.add_ref_facet (facet_key_, 1);
+      vtx_it[2]->second.add_ref_facet (facet_key_, 2);
+      vtx_it[3]->second.add_ref_facet (facet_key_, 3);
+      fct = facet34 ((vtx_it[0]->second),
+                     (vtx_it[1]->second),
+                     (vtx_it[2]->second),
+                     (vtx_it[3]->second),
+                     ivtx[0],ivtx[1],ivtx[2],ivtx[3]);
+    }
     _facets_[facet_key_] = fct;
     return;
   }

@@ -68,8 +68,8 @@ namespace geomtools {
   public:
 
     /// The maximum index of the category the facet belongs to
-    static const unsigned int MAX_CATEGORY;
-    static const int INVALID_CATEGORY;
+    static const unsigned int MAX_CATEGORY = 30;
+    static const int INVALID_CATEGORY = -1;
 
     bool has_category () const;
 
@@ -210,9 +210,9 @@ namespace geomtools {
   public:
 
     static const int32_t FACE_ALL   = 0xFFFFFFFF;
-    static const int32_t MAX_VERTEX = 0xFFFFFFFF;
     static const std::string TESSELLATED_LABEL;
     static const int INVALID_VERTEX = -1;
+    static const int MAX_VERTEX = 0x0FFFFFFF;
 
     typedef std::map<unsigned int, facet_vertex> vertices_col_type;
     typedef std::map<unsigned int, facet34> facets_col_type;
