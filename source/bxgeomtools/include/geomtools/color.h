@@ -51,10 +51,10 @@ namespace geomtools {
     };
 
   public:
-    int    code;
+    int         code;
     std::string name;
-    int    red_amount, green_amount, blue_amount;
-    int    alpha_amount;
+    int         red_amount, green_amount, blue_amount;
+    int         alpha_amount;
 
   public:
     // ctor:

@@ -3,19 +3,16 @@
  */
 
 #include <geomtools/color.h>
+
+#include <datatools/logger.h>
+
 #include <iomanip>
-
 #include <stdexcept>
-
-//#include <datatools/properties.h>
 
 namespace geomtools {
 
-  using namespace std;
-
   // static
-  const color::constants &
-  color::constants::instance ()
+  const color::constants & color::constants::instance ()
   {
     static boost::scoped_ptr<color::constants> g_global_constants (0);
     if ( g_global_constants.get () == 0) {
@@ -51,28 +48,25 @@ namespace geomtools {
     return *(g_color_db.get ());
   }
 
-  int color::get_color (const string & a_name)
+  int color::get_color (const std::string & name_)
   {
-    return color::get_color_db ().get_color (a_name);
+    return color::get_color_db ().get_color (name_);
   }
 
-  int color::color_db::get_color (const string & a_name) const
+  int color::color_db::get_color (const std::string & name_) const
   {
-    int acolor = (map_of_colors_.find (color::constants::instance().default_color))->second;
-    color_map_type::const_iterator i = map_of_colors_.find (a_name);
+    int a_color = (map_of_colors_.find (color::constants::instance().default_color))->second;
+    color_map_type::const_iterator i = map_of_colors_.find (name_);
     if (i != map_of_colors_.end ()) {
-      acolor = i->second;
+      a_color = i->second;
     }
-    return acolor;
+    return a_color;
   }
 
   color::color_db::color_db ()
   {
-    bool devel = false;
-    //devel = true;
-    // if (devel) {
-    //     clog << "DEVEL: color::color_db::color_db: Entering..." << endl;
-    //   }
+    datatools::logger::priority local_priority = datatools::logger::PRIO_FATAL;
+    DT_LOG_TRACE (local_priority, "Entering...");
     map_of_colors_[color::constants::instance ().white]   = -2;
     map_of_colors_[color::constants::instance ().black]   = -1;
     map_of_colors_[color::constants::instance ().grey]    = 0;
@@ -83,31 +77,17 @@ namespace geomtools {
     map_of_colors_[color::constants::instance ().cyan]    = 5;
     map_of_colors_[color::constants::instance ().yellow]  = 6;
     map_of_colors_[color::constants::instance ().orange]  = 8;
-
-    // if (devel)
-    //   {
-    //     clog << "DEVEL: color::color_db::color_db: Exiting. " << endl;
-    //   }
+    DT_LOG_TRACE (local_priority, "Exiting.");
     return;
   }
 
   color::color_db::~color_db ()
   {
-    bool devel = false;
-    //devel = true;
-    // if (devel)
-    //   {
-    //     clog << "DEVEL: color::color_db::~color_db: Entering..."
-    //          << endl;
-    //     clog << "DEVEL: color::color_db::~color_db: Clearing the dictionary of colors..."
-    //          << endl;
-    //   }
+    datatools::logger::priority local_priority = datatools::logger::PRIO_FATAL;
+    DT_LOG_TRACE (local_priority, "Entering...");
+    DT_LOG_TRACE (local_priority, "Clearing the dictionary of colors...");
     map_of_colors_.clear ();
-    // if (devel)
-    //   {
-    //     clog << "DEVEL: color::color_db::~color_db: Exiting."
-    //          << endl;
-    //   }
+    DT_LOG_TRACE (local_priority, "Exiting.");
     return;
   }
 
@@ -115,26 +95,24 @@ namespace geomtools {
 
   color::color ()
   {
-    //clog << "NOTICE: color::color: Entering..." << endl;
-    code = 0;
-    name = constants::instance().default_color;
-    red_amount = 0;
+    code         = 0;
+    name         = constants::instance().default_color;
+    red_amount   = 0;
     green_amount = 0;
-    blue_amount = 0;
+    blue_amount  = 0;
     alpha_amount = 1;
     return;
   }
 
-  color::color (int a_code, const string & a_name, int a_red, int a_green, int a_blue)
+  color::color (int code_, const std::string & name_, int red_, int green_, int blue_)
   {
-    code = a_code;
-    name = a_name;
-    red_amount = a_red;
-    green_amount = a_green;
-    blue_amount = a_blue;
+    code         = code_;
+    name         = name_;
+    red_amount   = red_;
+    green_amount = green_;
+    blue_amount  = blue_;
     return;
   }
-
 
 } // end of namespace geomtools
 
