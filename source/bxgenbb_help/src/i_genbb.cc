@@ -60,7 +60,7 @@ namespace genbb {
     return;
   }
 
-    /// Destructor
+  /// Destructor
   i_genbb::~i_genbb ()
   {
     return;
@@ -159,20 +159,20 @@ namespace genbb {
                            const std::string& a_indent,
                            bool a_inherit) const
   {
-   std::string indent;
-   if (! a_indent.empty()) indent = a_indent;
-   if (! a_title.empty()) a_out << indent << a_title << std::endl;
+    std::string indent;
+    if (! a_indent.empty()) indent = a_indent;
+    if (! a_title.empty()) a_out << indent << a_title << std::endl;
 
-   a_out << indent << i_tree_dumpable::tag
-         << "Logging priority  : \""
-         << datatools::logger::get_priority_label(_logging_priority) << "\"" << std::endl;
-   a_out << indent << i_tree_dumpable::tag
-         << "Can use external PRNG : " << can_external_random ()  << std::endl;
+    a_out << indent << i_tree_dumpable::tag
+          << "Logging priority  : \""
+          << datatools::logger::get_priority_label(_logging_priority) << "\"" << std::endl;
+    a_out << indent << i_tree_dumpable::tag
+          << "Can use external PRNG : " << can_external_random ()  << std::endl;
 
-   a_out << indent << i_tree_dumpable::inherit_tag(a_inherit)
-         << "Has external PRNG : " << has_external_random ()  << std::endl;
+    a_out << indent << i_tree_dumpable::inherit_tag(a_inherit)
+          << "Has external PRNG : " << has_external_random ()  << std::endl;
 
-
+    return;
   }
 
 } // end of namespace genbb

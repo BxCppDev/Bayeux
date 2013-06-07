@@ -11,7 +11,6 @@
 namespace genbb {
   namespace detail {
 
-
     bool pg_entry_type::has_manager () const
     {
       return _manager_ != 0;
@@ -243,27 +242,26 @@ namespace genbb {
     {
       if (entry_.is_initialized()) return;
       if (!entry_.is_created()) {
-          create(entry_,factory_,external_random_);
-        }
-        DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
-                      "Initializing the particle generator entry with name '"
-                      <<  entry_.get_name()
-                      << "'...");
+        create(entry_,factory_,external_random_);
+      }
+      DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
+                    "Initializing the particle generator entry with name '"
+                    <<  entry_.get_name()
+                    << "'...");
       i_genbb& the_pg = entry_.grab();
       if (service_manager_ != 0 && dictionary_ != 0) {
-          the_pg.initialize(entry_.get_config(),
-                            *service_manager_,
-                            *dictionary_);
-        }
+        the_pg.initialize(entry_.get_config(),
+                          *service_manager_,
+                          *dictionary_);
+      }
       if (service_manager_ == 0 && dictionary_ != 0) {
-          the_pg.initialize_with_dictionary_only(entry_.get_config(),
-                                                 *dictionary_);
-        }
+        the_pg.initialize_with_dictionary_only(entry_.get_config(),
+                                               *dictionary_);
+      }
       if (service_manager_ == 0 && dictionary_ == 0) {
-          the_pg.initialize_standalone(entry_.get_config());
-        }
+        the_pg.initialize_standalone(entry_.get_config());
+      }
       entry_.update_status(detail::pg_entry_type::STATUS_INITIALIZED);
-
       return;
     }
 
@@ -276,7 +274,6 @@ namespace genbb {
       }
       return;
     }
-
 
   }  // end of namespace detail
 }  // end of namespace genbb

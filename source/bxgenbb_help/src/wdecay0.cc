@@ -129,7 +129,7 @@ namespace genbb {
     }
     _initialized_ = false;
     _reset_ ();
-   return;
+    return;
   }
 
 
