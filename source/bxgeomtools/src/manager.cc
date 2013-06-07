@@ -534,13 +534,10 @@ namespace geomtools {
     std::string categories_list;
 
     if (setup_label.empty()) {
-      if (config_.has_key ("setup_label")) {
-        setup_label = config_.fetch_string ("setup_label");
-      } else {
-        DT_THROW_IF (true,
-                     std::logic_error,
-                     "Missing 'setup_label' property !");
-      }
+      DT_THROW_IF (! config_.has_key ("setup_label"),
+                   std::logic_error,
+                   "Missing 'setup_label' property !");
+      setup_label = config_.fetch_string ("setup_label");
     }
 
     if (setup_version.empty()) {
@@ -563,14 +560,8 @@ namespace geomtools {
       set_logging_priority(datatools::logger::PRIO_DEBUG);
     }
 
-    if (config_.has_key("logging.priority")) {
-      std::string prio_label = config_.fetch_string("logging.priority");
-      datatools::logger::priority p = datatools::logger::get_priority(prio_label);
-      DT_THROW_IF(p == datatools::logger::PRIO_UNDEFINED,
-                  std::domain_error,
-                  "Unknow logging priority ``" << prio_label << "`` !");
-      set_logging_priority(p);
-    }
+    // Use new logging extraction
+    set_logging_priority (datatools::logger::extract_logging_configuration (config_));
 
     if (config_.has_flag ("plugins.factory_no_preload")) {
       _plugins_factory_preload_ = false;
@@ -624,7 +615,7 @@ namespace geomtools {
       set_mapping_requested (true);
     }
 
-    DT_LOG_DEBUG(_logging,"Properties are parsed...");
+    DT_LOG_DEBUG(_logging, "Properties are parsed...");
 
     // initializations:
     set_setup_label (setup_label);
@@ -639,7 +630,7 @@ namespace geomtools {
     /************************************************
      * Initialization of the geometry model factory *
      ************************************************/
-    DT_LOG_NOTICE(_logging," Initialization of the geometry  model factory...");
+    DT_LOG_NOTICE(_logging, "Initialization of the geometry  model factory...");
 
     _factory_.set_debug(factory_debug);
 
