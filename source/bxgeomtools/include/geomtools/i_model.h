@@ -117,8 +117,8 @@ namespace geomtools {
 
   protected:
 
-    bool                        _phantom_solid; //!< Special flag (not used yet)
-    geomtools::logical_volume   _logical; //!< Top logical volume attached to the model
+    bool                        _phantom_solid;    //!< Special flag (not used yet)
+    geomtools::logical_volume   _logical;          //!< Top logical volume attached to the model
     datatools::logger::priority _logging_priority; //!< Logging priority threshold
 
   private:

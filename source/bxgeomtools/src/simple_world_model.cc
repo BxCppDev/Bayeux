@@ -10,16 +10,14 @@
 
 namespace geomtools {
 
-  using namespace std;
-
-  const string simple_world_model::SETUP_LABEL = "setup";
+  const std::string simple_world_model::SETUP_LABEL = "setup";
 
   const geomtools::box & simple_world_model::get_solid () const
   {
     return _solid_;
   }
 
-  string simple_world_model::get_model_id () const
+  std::string simple_world_model::get_model_id () const
   {
     return "geomtools::simple_world_model";
   }
@@ -28,139 +26,114 @@ namespace geomtools {
   simple_world_model::simple_world_model () : geomtools::i_model ()
   {
     _setup_model_ = 0;
+    return;
   }
 
   simple_world_model::~simple_world_model ()
   {
+    return;
   }
 
-  void simple_world_model::_at_construct (const string & name_,
+  void simple_world_model::_at_construct (const std::string & name_,
                                           const datatools::properties & config_,
                                           models_col_type * models_)
   {
-    bool devel = false;
-    if (devel) clog << "DEVEL: simple_world_model::_at_construct: Entering..." << endl;
+    DT_LOG_TRACE (get_logging_priority (), "Entering...");
     set_name (name_);
-    string material = "vacuum";
-    string setup_model_name;
-    double setup_phi   = 0.;
-    double setup_theta = 0.;
-    double setup_x     = 0.;
-    double setup_y     = 0.;
-    double setup_z     = 0.;
-    double world_x, world_y, world_z;
-    datatools::invalidate (world_x);
-    datatools::invalidate (world_y);
-    datatools::invalidate (world_z);
+
     double length_unit = CLHEP::mm;
-    double angle_unit = CLHEP::degree;
-
-    if (config_.has_key ("material.ref")) {
-      material = config_.fetch_string ("material.ref");
-    }
-
     if (config_.has_key ("length_unit")) {
-      string length_unit_str = config_.fetch_string ("length_unit");
+      const std::string length_unit_str = config_.fetch_string ("length_unit");
       length_unit = datatools::units::get_length_unit_from (length_unit_str);
     }
 
+    double angle_unit = CLHEP::degree;
     if (config_.has_key ("angle_unit")) {
-      string angle_unit_str = config_.fetch_string ("angle_unit");
+      const std::string angle_unit_str = config_.fetch_string ("angle_unit");
       angle_unit = datatools::units::get_angle_unit_from (angle_unit_str);
     }
 
+    double world_x;
+    datatools::invalidate (world_x);
     if (config_.has_key ("world.x")) {
       world_x = config_.fetch_real ("world.x");
       if (! config_.has_explicit_unit ("world.x")) world_x *= length_unit;
     }
 
+    double world_y;
+    datatools::invalidate (world_y);
     if (config_.has_key ("world.y")) {
       world_y = config_.fetch_real ("world.y");
       if (! config_.has_explicit_unit ("world.y")) world_y *= length_unit;
     }
 
+    double world_z;
+    datatools::invalidate (world_z);
     if (config_.has_key ("world.z")) {
       world_z = config_.fetch_real ("world.z");
       if (! config_.has_explicit_unit ("world.z")) world_z *= length_unit;
     }
 
+    double setup_x = 0.;
     if (config_.has_key ("setup.x")) {
       setup_x = config_.fetch_real ("setup.x");
       if (! config_.has_explicit_unit ("setup.x")) setup_x *= length_unit;
     }
 
+    double setup_y = 0.;
     if (config_.has_key ("setup.y")) {
       setup_y = config_.fetch_real ("setup.y");
       if (! config_.has_explicit_unit ("setup.z")) setup_y *= length_unit;
     }
 
+    double setup_z = 0.;
     if (config_.has_key ("setup.z")) {
       setup_z = config_.fetch_real ("setup.z");
       if (! config_.has_explicit_unit ("setup.z")) setup_z *= length_unit;
     }
 
+    double setup_theta = 0.;
     if (config_.has_key ("setup.theta")) {
       setup_theta = config_.fetch_real ("setup.theta");
       if (! config_.has_explicit_unit ("setup.theta")) setup_theta *= angle_unit;
     }
 
+    double setup_phi   = 0.;
     if (config_.has_key ("setup.phi")) {
       setup_phi = config_.fetch_real ("setup.phi");
       if (! config_.has_explicit_unit ("setup.phi")) setup_phi *= angle_unit;
     }
 
+    std::string material = "vacuum";
     if (material::has_key (config_, material::make_key (material::constants::instance ().MATERIAL_REF_PROPERTY))) {
-      if (devel) clog << "DEVEL: simple_world_model::_at_construct: key= 'material'..." << endl;
       material = config_.fetch_string (material::make_key (material::constants::instance ().MATERIAL_REF_PROPERTY));
+      DT_LOG_TRACE (get_logging_priority (), "key= 'material' = " << material);
     }
 
-    if (config_.has_key ("setup.model")) {
-      setup_model_name = config_.fetch_string ("setup.model");
-    } else {
-      ostringstream message;
-      message << "simple_world_model::_at_construct: "
-              << "Missing 'setup_model' property !";
-      throw logic_error (message.str ());
-    }
+    DT_THROW_IF (! config_.has_key ("setup.model"), std::logic_error, "Missing 'setup_model' property !");
+    const std::string setup_model_name = config_.fetch_string ("setup.model");
 
-    if (! models_) {
-      ostringstream message;
-      message << "simple_world_model::_at_construct: "
-              << "Missing logicals dictionary !";
-      throw logic_error (message.str ());
-    }
+    DT_THROW_IF (! models_, std::logic_error, "Missing logicals dictionary !");
 
     // Setup model:
     {
       models_col_type::const_iterator found = models_->find (setup_model_name);
-      if (found != models_->end ())
-        {
-          //_setup_model_ = (dynamic_cast<const test_model_2 *> (found->second));
-          _setup_model_ = found->second;
-        }
-      else
-        {
-          ostringstream message;
-          message << "simple_world_model::_at_construct: "
-                  << "Cannot find model with name '"
-                  << setup_model_name << "' !";
-          throw logic_error (message.str ());
-        }
+      DT_THROW_IF (found == models_->end (), std::logic_error, "Cannot find model with name '"<< setup_model_name << "' !");
+      //_setup_model_ = (dynamic_cast<const test_model_2 *> (found->second));
+      _setup_model_ = found->second;
     }
 
-    vector_3d setup_pos (setup_x, setup_y, setup_z);
+    const vector_3d setup_pos (setup_x, setup_y, setup_z);
     //create_xyz (setup_pos, 0.0, 0.0, 0.0);
     _setup_placement_.set_translation (setup_pos);
     _setup_placement_.set_orientation (setup_phi, setup_theta, 0.0);
-
-    _solid_.reset ();
 
     double setup_sx = 0.;
     double setup_sy = 0.;
     double setup_sz = 0.;
     if (_setup_model_->get_logical ().get_shape ().get_shape_name () == "box") {
-      const geomtools::box * b = 0;
-      b = dynamic_cast<const geomtools::box *> (&(_setup_model_->get_logical ()).get_shape ());
+      const geomtools::box * b
+        = dynamic_cast<const geomtools::box *> (&(_setup_model_->get_logical ()).get_shape ());
       setup_sx = b->get_x ();
       setup_sy = b->get_y ();
       setup_sz = b->get_z ();
@@ -184,35 +157,34 @@ namespace geomtools {
       _world_z_ = world_z;
     }
 
+    _solid_.reset ();
     _solid_.set_x (_world_x_);
     _solid_.set_y (_world_y_);
     _solid_.set_z (_world_z_);
-    if (!_solid_.is_valid ()) {
-      throw logic_error ("simple_world_model::_at_construct: Invalid solid !");
-    }
+    DT_THROW_IF (!_solid_.is_valid (), std::logic_error, "Invalid solid !");
+
     _material_ = material;
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (_solid_);
     get_logical ().set_material_ref (_material_);
 
-    if (devel) clog << "DEVEL: simple_world_model::_at_construct: Install physicals..." << endl;
+    DT_LOG_TRACE (get_logging_priority (), "Install physicals...");
     _setup_phys_.set_name (i_model::make_physical_volume_name (SETUP_LABEL));
     _setup_phys_.set_placement (_setup_placement_);
     _setup_phys_.set_logical (_setup_model_->get_logical ());
     _setup_phys_.set_mother (_logical);
-    if (devel) clog << "DEVEL: simple_world_model::_at_construct: Physicals are installed. " << endl;
+    DT_LOG_TRACE (get_logging_priority (), "Physicals are installed.");
 
-    if (devel) clog << "DEVEL: simple_world_model::_at_construct: Exiting." << endl;
+    DT_LOG_TRACE (get_logging_priority (), "Exiting.")
     return;
   }
 
-  void simple_world_model::tree_dump (ostream & out_,
-                                      const string & title_ ,
-                                      const string & indent_,
+  void simple_world_model::tree_dump (std::ostream & out_,
+                                      const std::string & title_ ,
+                                      const std::string & indent_,
                                       bool inherit_) const
   {
-    using namespace datatools;
-    string indent;
+    std::string indent;
     if (! indent_.empty ()) indent = indent_;
     i_model::tree_dump (out_, title_, indent, true);
 
@@ -220,49 +192,49 @@ namespace geomtools {
     {
       // Setup model:
       if (_setup_model_) {
-        out_ << indent << i_tree_dumpable::tag
-             << "Setup model : " << endl;
+        out_ << indent << datatools::i_tree_dumpable::tag
+             << "Setup model : " << std::endl;
         {
-          ostringstream indent_oss;
+          std::ostringstream indent_oss;
           indent_oss << indent;
-          indent_oss << i_tree_dumpable::skip_tag;
+          indent_oss << datatools::i_tree_dumpable::skip_tag;
           _setup_model_->tree_dump (out_, "", indent_oss.str ());
         }
       } else {
-        out_ << indent << i_tree_dumpable::tag
-             << "Setup model : " << "<missing>" << endl;
+        out_ << indent << datatools::i_tree_dumpable::tag
+             << "Setup model : " << "<missing>" << std::endl;
       }
     }
 
     {
-      out_ << indent << i_tree_dumpable::tag
-           << "Setup placement: " << endl;
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Setup placement: " << std::endl;
       {
-        ostringstream indent_oss;
+        std::ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << i_tree_dumpable::skip_tag;
+        indent_oss << datatools::i_tree_dumpable::skip_tag;
         _setup_placement_.tree_dump (out_, "", indent_oss.str ());
       }
     }
 
     {
-      out_ << indent << i_tree_dumpable::tag
-           << "Setup physical : " << endl;
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Setup physical : " << std::endl;
       {
-        ostringstream indent_oss;
+        std::ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << i_tree_dumpable::skip_tag;
+        indent_oss << datatools::i_tree_dumpable::skip_tag;
         _setup_phys_.tree_dump (out_, "", indent_oss.str ());
       }
     }
 
     {
-      out_ << indent << i_tree_dumpable::inherit_tag (inherit_)
-           << "Solid : " << endl;
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
+           << "Solid : " << std::endl;
       {
-        ostringstream indent_oss;
+        std::ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << i_tree_dumpable::inherit_skip_tag (inherit_);
+        indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
         _solid_.tree_dump (out_, "", indent_oss.str ());
       }
     }
