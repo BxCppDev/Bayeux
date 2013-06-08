@@ -62,11 +62,11 @@ set(mygsl_THIRD_PARTY_INCLUDE_DIRS
   @GSL_INCLUDE_DIRS@
   )
 
-if(mygsl_WITH_REFLECTION)
-  list(INSERT mygsl_THIRD_PARTY_INCLUDE_DIRS 0
-     @CAMP_INCLUDE_DIR@
-  )
-endif()
+# if(mygsl_WITH_REFLECTION)
+#   list(INSERT mygsl_THIRD_PARTY_INCLUDE_DIRS 0
+#      @CAMP_INCLUDE_DIR@
+#   )
+# endif()
 
 #-----------------------------------------------------------------------
 # Set mygsl definitions, include paths and library variables
@@ -91,9 +91,9 @@ endif()
 if(mygsl_WITH_REFLECTION)
   set(mygsl_REFLECTION_LIBRARY mygsl_reflection)
 endif()
-  
+
 set(mygsl_LIBRARIES ${mygsl_LIBRARY})
- 
+
 #message(STATUS "mygsl-config.cmake: XXXXX mygsl_LIBRARIES=${mygsl_LIBRARIES}")
 #message(STATUS "mygsl-config.cmake: XXXXX datatools_LIBRARIES=@datatools_LIBRARIES@")
 #message(STATUS "mygsl-config.cmake: XXXXX mygsl_INCLUDE_DIRS=${mygsl_INCLUDE_DIRS}")

@@ -67,6 +67,12 @@ else()
   set (MYGSL_WITH_BIO 0)
 endif ()
 
+if (MYGSL_WITH_REFLECTION)
+  set (MYGSL_WITH_REFLECTION 1)
+else()
+  set (MYGSL_WITH_REFLECTION 0)
+endif ()
+
 #-----------------------------------------------------------------------
 # Find external packages needed to build
 #
@@ -80,13 +86,7 @@ find_package(GSL 1.14 REQUIRED)
 find_package(ROOT 5.26.00 REQUIRED)
 
 # - CAMP
-if (MYGSL_WITH_REFLECTION)
-  set (MYGSL_WITH_REFLECTION 1)
-  find_package(CAMP 0.7.1 REQUIRED)
-else()
-  set (MYGSL_WITH_REFLECTION 0)
-endif ()
-
+#find_package(CAMP 0.7.1 REQUIRED)
 
 #-----------------------------------------------------------------------
 # On Apple, we fixup the install prefix to handle installing documentation,

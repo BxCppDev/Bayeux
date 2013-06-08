@@ -84,7 +84,7 @@ Known values for OPTION are:
   --cflags              print include path pre-processor flags with dependencies
   --libs    [option]    print library linking information, without dependencies
   --ldflags [option]
-    Options: 
+    Options:
     --relative-path     use relative DLL path (default)
     --absolute-path     use absolute DLL path
     --with-bio          with linkage against the 'libmygsl_bio@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL (default)
@@ -160,9 +160,6 @@ if [ "x${option}" = "x--cflags" ]; then
 	echo -n "-I${mygsl_include_dir} "
         echo -n "`datatools-config --cflags` "
 	echo -n "`gsl-config --cflags` "
-	if [ ${with_reflection} -eq 1 ]; then
- 	    echo -n "`camp-config --cflags` "
-	fi
 	echo ""
     ) ###| python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py
     my_exit 0
@@ -196,7 +193,7 @@ fi
 ldflags_abs_path=0
 if [ "x${MYGSL_LDFLAGS_ABSOLUTE_PATH}" = "x1" ]; then
     ldflags_abs_path=1
-fi 
+fi
 if [ "x${option}" = "x--libs" -o "x${option}" = "x--ldflags" ]; then
     while [ -n "$1" ]; do
 	lib_option="$1"
@@ -254,9 +251,6 @@ if [ "x${option}" = "x--ldflags" ]; then
 	fi
         echo -n "`datatools-config --ldflags ${ldflags_abs_path_option}` "
 	echo -n "`gsl-config --libs` "
-	if [ ${with_reflection} -eq 1 ]; then
- 	    echo -n "`camp-config --ldflags` "
-	fi
 	echo -n "-ldl "
 	echo ""
     ) ###| python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py -r

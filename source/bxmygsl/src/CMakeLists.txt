@@ -92,7 +92,7 @@ set_source_files_properties(${mygsl_detail_HEADERS}
     MACOSX_PACKAGE_LOCATION Headers/detail
   )
 
-# We have to install the detail header modules separately if mygsl 
+# We have to install the detail header modules separately if mygsl
 # isn't built as a Framework.
 if(NOT APPLE)
   foreach(_module detail)
@@ -132,7 +132,7 @@ set(mygsl_SOURCES
   one_dimensional_minimization.cc
   one_dimensional_root_finding.cc
   param_entry.cc
-  permutation.cc  
+  permutation.cc
   polynomial.cc
   prng_state_manager.cc
   random_utils.cc
@@ -150,14 +150,14 @@ set(mygsl_SOURCES
 # resources on Mac. This allows them to be easily imported into the
 # Framework with minimal platform specific commands by adding them
 # as sources of the framework/library.
-# We have to deal with the library depends part of this later because 
+# We have to deal with the library depends part of this later because
 # their generation require the targets to be present...
 #
 if(APPLE)
   set(TO_MYGSL_INCLUDEDIR "../..")
 else()
-  file(RELATIVE_PATH TO_MYGSL_INCLUDEDIR 
-    "${CMAKE_INSTALL_FULL_LIBDIR}/cmake/mygsl-${mygsl_VERSION}" 
+  file(RELATIVE_PATH TO_MYGSL_INCLUDEDIR
+    "${CMAKE_INSTALL_FULL_LIBDIR}/cmake/mygsl-${mygsl_VERSION}"
     "${CMAKE_INSTALL_FULL_INCLUDEDIR}"
     )
 endif()
@@ -169,7 +169,7 @@ set(mygsl_RESOURCES
 
 foreach(_dtresource ${mygsl_RESOURCES})
   configure_file(
-    ${PROJECT_SOURCE_DIR}/${_dtresource}.in 
+    ${PROJECT_SOURCE_DIR}/${_dtresource}.in
     ${PROJECT_BINARY_DIR}/${_dtresource}
     @ONLY
     )
@@ -190,16 +190,16 @@ if(NOT APPLE)
 endif()
 
 configure_file(
-    ${PROJECT_SOURCE_DIR}/cmake/mygsl-config.in 
+    ${PROJECT_SOURCE_DIR}/cmake/mygsl-config.in
     ${PROJECT_BINARY_DIR}/cmake/mygsl-config
     @ONLY
     )
 
 install(FILES ${PROJECT_BINARY_DIR}/cmake/mygsl-config
     DESTINATION "${CMAKE_INSTALL_BINDIR}"
-    PERMISSIONS OWNER_READ OWNER_EXECUTE 
-    		GROUP_READ GROUP_EXECUTE 
-                WORLD_READ WORLD_EXECUTE    
+    PERMISSIONS OWNER_READ OWNER_EXECUTE
+    		GROUP_READ GROUP_EXECUTE
+                WORLD_READ WORLD_EXECUTE
     COMPONENT Development
     )
 
@@ -222,27 +222,21 @@ endif ()
 #
 include_directories(
   ${PROJECT_BINARY_DIR}/include
-  ${PROJECT_SOURCE_DIR}/include	
+  ${PROJECT_SOURCE_DIR}/include
   ${datatools_INCLUDE_DIRS}
   ${GSL_INCLUDE_DIR}
   ${ROOT_INCLUDE_DIR}
  )
 
-if ( MYGSL_WITH_REFLECTION )
-  include_directories(
-    ${CAMP_INCLUDE_DIR}
-    )
-endif ()
-
-add_library(mygsl SHARED  
-  ${mygsl_PUBLIC_HEADERS} 
+add_library(mygsl SHARED
+  ${mygsl_PUBLIC_HEADERS}
   ${mygsl_detail_HEADERS}
   ${mygsl_SOURCES}
   ${mygsl_RESOURCES_OUTPUTS}
   )
 
 set_target_properties(mygsl
-  PROPERTIES 
+  PROPERTIES
     FRAMEWORK                             ON
     MACOSX_FRAMEWORK_IDENTIFIER           org.supernemo.mygsl
     MACOSX_FRAMEWORK_BUNDLE_VERSION       ${mygsl_VERSION}
@@ -252,20 +246,12 @@ set_target_properties(mygsl
     PUBLIC_HEADER                         "${mygsl_PUBLIC_HEADERS}"
   )
 
-if ( MYGSL_WITH_REFLECTION )
-  target_link_libraries(mygsl 
-    ${datatools_LIBRARIES} 
-    ${GSL_LIBRARIES} 
+target_link_libraries(mygsl
+    ${datatools_LIBRARIES}
+    ${GSL_LIBRARIES}
     ${ROOT_LIBRARIES}
-    ${CAMP_LIBRARIES} 
-    ${CMAKE_DL_LIBS})
-else ()
-  target_link_libraries(mygsl 
-    ${datatools_LIBRARIES} 
-    ${GSL_LIBRARIES} 
-    ${ROOT_LIBRARIES}
-    ${CMAKE_DL_LIBS})
-endif ()
+    ${CMAKE_DL_LIBS}
+   )
 
 set(MYGSL_TARGETS mygsl)
 
@@ -282,7 +268,7 @@ if(MYGSL_WITH_BIO)
     src/the_serializable.cc
     )
   list_prepend(mygsl_bio_SOURCES "${PROJECT_SOURCE_DIR}/")
-  
+
   add_library(mygsl_bio SHARED ${mygsl_bio_SOURCES})
 
   if(APPLE)
@@ -307,7 +293,7 @@ if(MYGSL_WITH_REFLECTION)
     #src/the_introspectable.cc
     )
   list_prepend(mygsl_reflection_SOURCES "${PROJECT_SOURCE_DIR}/")
-  
+
   add_library(mygsl_reflection SHARED ${mygsl_reflection_SOURCES})
 
   if(APPLE)
@@ -321,18 +307,18 @@ endif()
 
 #-----------------------------------------------------------------------
 # EXPORT AND INSTALL LIBRARY TARGETS
-# We make use of the full signature 
+# We make use of the full signature
 install(TARGETS ${MYGSL_TARGETS}
   EXPORT        mygsl-libraries
-  RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR} 
+  RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
                 COMPONENT Runtime
-  LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR} 
+  LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
                 COMPONENT Runtime
-  FRAMEWORK     DESTINATION ${MYGSL_FRAMEWORK_LOCATION} 
+  FRAMEWORK     DESTINATION ${MYGSL_FRAMEWORK_LOCATION}
                 COMPONENT Runtime
-  ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} 
+  ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
                 COMPONENT Development
-  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mygsl 
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mygsl
                 COMPONENT Development
   )
 
@@ -340,11 +326,11 @@ install(TARGETS ${MYGSL_TARGETS}
 # We also need to generate a file for the build tree, but at present
 # we leave this out for simplicity.
 if(APPLE)
-  install(EXPORT mygsl-libraries 
+  install(EXPORT mygsl-libraries
     DESTINATION CMake COMPONENT Development
     )
 else()
-  install(EXPORT mygsl-libraries 
+  install(EXPORT mygsl-libraries
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/mygsl-${mygsl_VERSION}    COMPONENT Development
     )
 endif()
