@@ -41,15 +41,15 @@ if [ "x@EMFIELD_WITH_DEBUG@" == "x1" -o "x@EMFIELD_WITH_DEBUG@" == "xON" ]; then
     with_debug=1
 fi
 
-with_bio=0
-if [ "x@EMFIELD_WITH_BIO@" == "x1" -o "x@EMFIELD_WITH_BIO@" == "xON" ]; then
-    with_bio=1
-fi
+# with_bio=0
+# if [ "x@EMFIELD_WITH_BIO@" == "x1" -o "x@EMFIELD_WITH_BIO@" == "xON" ]; then
+#     with_bio=1
+# fi
 
-with_reflection=0
-if [ "x@EMFIELD_WITH_REFLECTION@" == "x1" -o "x@EMFIELD_WITH_REFLECTION@" == "xON" ]; then
-    with_reflection=1
-fi
+# with_reflection=0
+# if [ "x@EMFIELD_WITH_REFLECTION@" == "x1" -o "x@EMFIELD_WITH_REFLECTION@" == "xON" ]; then
+#     with_reflection=1
+# fi
 
 option="$1"
 shift 1
@@ -84,18 +84,18 @@ Known values for OPTION are:
   --cflags              print include path pre-processor flags with dependencies
   --libs    [option]    print library linking information, without dependencies
   --ldflags [option]
-    Options: 
+    Options:
     --relative-path     use relative DLL path (default)
     --absolute-path     use absolute DLL path
-    --with-bio          with linkage against the 'libemfield_bio@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL (default)
-    --without-bio       without linkage against the 'libemfield_bio@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL
-  --with-bio            print if Boost/Serialization binary code is pre-built
-                        in an auxiliary shared library
   --with-debug          print if emfield has been compiled in 'debug' mode
   --cmake-config-dir    print the installation directory for the 'emfield-config.cmake' file
 
 EOF
 
+  #   --with-bio          with linkage against the 'libemfield_bio@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL (default)
+  #   --without-bio       without linkage against the 'libemfield_bio@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL
+  # --with-bio            print if Boost/Serialization binary code is pre-built
+  #                       in an auxiliary shared library
   #   --with-reflection    with linkage against the 'libemfield_reflection@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL (default)
   #   --without-reflection without linkage against the 'libemfield_reflection@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL
   #   return 0
@@ -159,9 +159,6 @@ if [ "x${option}" = "x--cflags" ]; then
 	echo -n "-fPIC "
 	echo -n "-I${emfield_include_dir} "
         echo -n "`geomtools-config --cflags` "
-	if [ ${with_reflection} -eq 1 ]; then
- 	    echo -n "`camp-config --cflags` "
-	fi
 	echo ""
     ) ###| python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py
     my_exit 0
@@ -178,40 +175,41 @@ if [ "x${option}" = "x--bindir" ]; then
 fi
 
 # compute default linkage :
-bio_ldflags=
-bio_ldflags_abs=
-if [ ${with_bio} -eq 1 ]; then
-    bio_ldflags=-lemfield_bio
-    bio_ldflags_abs=${emfield_lib_dir}/libemfield_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
-fi
+# bio_ldflags=
+# bio_ldflags_abs=
+# if [ ${with_bio} -eq 1 ]; then
+#     bio_ldflags=-lemfield_bio
+#     bio_ldflags_abs=${emfield_lib_dir}/libemfield_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
+# fi
 
-reflection_ldflags=
-reflection_ldflags_abs=
-if [ ${with_reflection} -eq 1 ]; then
-    reflection_ldflags=-lemfield_reflection
-    reflection_ldflags_abs=${emfield_lib_dir}/libemfield_reflection@CMAKE_SHARED_LIBRARY_SUFFIX@
-fi
+# reflection_ldflags=
+# reflection_ldflags_abs=
+# if [ ${with_reflection} -eq 1 ]; then
+#     reflection_ldflags=-lemfield_reflection
+#     reflection_ldflags_abs=${emfield_lib_dir}/libemfield_reflection@CMAKE_SHARED_LIBRARY_SUFFIX@
+# fi
 
 ldflags_abs_path=0
 if [ "x${EMFIELD_LDFLAGS_ABSOLUTE_PATH}" = "x1" ]; then
     ldflags_abs_path=1
-fi 
+fi
 if [ "x${option}" = "x--libs" -o "x${option}" = "x--ldflags" ]; then
     while [ -n "$1" ]; do
 	lib_option="$1"
-	if [ "x${lib_option}" = "x--without-bio" ]; then
-	    bio_ldflags=
-	    bio_ldflags_abs=
-	elif [ "x${lib_option}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
-	    bio_ldflags=-lemfield_bio
-	    bio_ldflags_abs=${emfield_lib_dir}/libemfield_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
-	elif [ "x${lib_option}" = "x--without-reflection" ]; then
-	    reflection_ldflags=
-	    reflection_ldflags_abs=
-	elif [ "x${lib_option}" = "x--with-reflection" -a ${with_reflection} -eq 1 ]; then
-	    reflection_ldflags=-lemfield_reflection
-	    reflection_ldflags_abs=${emfield_lib_dir}/libemfield_reflection@CMAKE_SHARED_LIBRARY_SUFFIX@
-	elif [ "x${lib_option}" = "x--absolute-path" ]; then
+	# if [ "x${lib_option}" = "x--without-bio" ]; then
+	#     bio_ldflags=
+	#     bio_ldflags_abs=
+	# elif [ "x${lib_option}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
+	#     bio_ldflags=-lemfield_bio
+	#     bio_ldflags_abs=${emfield_lib_dir}/libemfield_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
+	# elif [ "x${lib_option}" = "x--without-reflection" ]; then
+	#     reflection_ldflags=
+	#     reflection_ldflags_abs=
+	# elif [ "x${lib_option}" = "x--with-reflection" -a ${with_reflection} -eq 1 ]; then
+	#     reflection_ldflags=-lemfield_reflection
+	#     reflection_ldflags_abs=${emfield_lib_dir}/libemfield_reflection@CMAKE_SHARED_LIBRARY_SUFFIX@
+	#elif
+	if [ "x${lib_option}" = "x--absolute-path" ]; then
 	    ldflags_abs_path=1
 	elif [ "x${lib_option}" = "x--relative-path" ]; then
 	    ldflags_abs_path=0
@@ -226,13 +224,13 @@ fi
 
 if [ "x${option}" = "x--libs" ]; then
     if [ ${ldflags_abs_path} -eq 1 ]; then
-	echo -n "${reflection_ldflags_abs} "
-	echo -n "${bio_ldflags_abs} "
+	#echo -n "${reflection_ldflags_abs} "
+	#echo -n "${bio_ldflags_abs} "
 	echo -n "${emfield_lib_dir}/libemfield@CMAKE_SHARED_LIBRARY_SUFFIX@ "
     else
 	echo -n "-L${emfield_lib_dir} "
-	echo -n "${reflection_ldflags} "
-	echo -n "${bio_ldflags} "
+	#echo -n "${reflection_ldflags} "
+	#echo -n "${bio_ldflags} "
 	echo -n "-lemfield "
     fi
     echo
@@ -242,19 +240,16 @@ fi
 if [ "x${option}" = "x--ldflags" ]; then
     (
 	if [ ${ldflags_abs_path} -eq 1 ]; then
-	    echo -n "${reflection_ldflags_abs} "
-	    echo -n "${bio_ldflags_abs} "
+	    #echo -n "${reflection_ldflags_abs} "
+	    #echo -n "${bio_ldflags_abs} "
 	    echo -n "${emfield_lib_dir}/libemfield@CMAKE_SHARED_LIBRARY_SUFFIX@ "
 	else
 	    echo -n "-L${emfield_lib_dir} "
-	    echo -n "${reflection_ldflags} "
-	    echo -n "${bio_ldflags} "
+	    #echo -n "${reflection_ldflags} "
+	    #echo -n "${bio_ldflags} "
 	    echo -n "-lemfield "
 	fi
         echo -n "`geomtools-config --ldflags ${ldflags_abs_path_option}` "
-	if [ ${with_reflection} -eq 1 ]; then
- 	    echo -n "`camp-config --ldflags` "
-	fi
 	echo -n "-ldl "
 	echo ""
     ) ###| python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py -r

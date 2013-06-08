@@ -55,7 +55,7 @@ set_source_files_properties(${emfield_detail_HEADERS}
     MACOSX_PACKAGE_LOCATION Headers/detail
   )
 
-# We have to install the detail header modules separately if emfield 
+# We have to install the detail header modules separately if emfield
 # isn't built as a Framework.
 if(NOT APPLE)
   foreach(_module detail)
@@ -81,22 +81,20 @@ set(emfield_SOURCES
     geom_map.cc
   )
 
-# message(STATUS "********** emfield_SOURCES=${emfield_SOURCES}")
-
 #-----------------------------------------------------------------------
 # CMAKE RESOURCE FILES
 # We do this here because it allows us to to add the config files as
 # resources on Mac. This allows them to be easily imported into the
 # Framework with minimal platform specific commands by adding them
 # as sources of the framework/library.
-# We have to deal with the library depends part of this later because 
+# We have to deal with the library depends part of this later because
 # their generation require the targets to be present...
 #
 if(APPLE)
   set(TO_EMFIELD_INCLUDEDIR "../..")
 else()
-  file(RELATIVE_PATH TO_EMFIELD_INCLUDEDIR 
-    "${CMAKE_INSTALL_FULL_LIBDIR}/cmake/emfield-${emfield_VERSION}" 
+  file(RELATIVE_PATH TO_EMFIELD_INCLUDEDIR
+    "${CMAKE_INSTALL_FULL_LIBDIR}/cmake/emfield-${emfield_VERSION}"
     "${CMAKE_INSTALL_FULL_INCLUDEDIR}"
     )
 endif()
@@ -108,7 +106,7 @@ set(emfield_RESOURCES
 
 foreach(_dtresource ${emfield_RESOURCES})
   configure_file(
-    ${PROJECT_SOURCE_DIR}/${_dtresource}.in 
+    ${PROJECT_SOURCE_DIR}/${_dtresource}.in
     ${PROJECT_BINARY_DIR}/${_dtresource}
     @ONLY
     )
@@ -129,20 +127,20 @@ if(NOT APPLE)
 endif()
 
 configure_file(
-    ${PROJECT_SOURCE_DIR}/cmake/emfield-config.in 
+    ${PROJECT_SOURCE_DIR}/cmake/emfield-config.in
     ${PROJECT_BINARY_DIR}/cmake/emfield-config
     @ONLY
     )
 
 install(FILES ${PROJECT_BINARY_DIR}/cmake/emfield-config
     DESTINATION "${CMAKE_INSTALL_BINDIR}"
-    PERMISSIONS OWNER_READ OWNER_EXECUTE 
-    		GROUP_READ GROUP_EXECUTE 
-                WORLD_READ WORLD_EXECUTE    
+    PERMISSIONS OWNER_READ OWNER_EXECUTE
+    		GROUP_READ GROUP_EXECUTE
+                WORLD_READ WORLD_EXECUTE
     COMPONENT Development
     )
 
-if ( EMFIELD_WITH_BASH_SETUP )
+if ( UNIX )
   configure_file(
     "${PROJECT_SOURCE_DIR}/cmake/emfield_setup.sh.in"
     "${PROJECT_BINARY_DIR}/cmake/emfield_setup.sh"
@@ -159,28 +157,21 @@ endif ()
 #-----------------------------------------------------------------------
 # BUILD THE EMFIELD LIBRARY
 #
-#message(STATUS "XXXXXXXXXXXXXXXXXx mygsl_INCLUDE_DIRS=${mygsl_INCLUDE_DIRS}")
 include_directories(
   ${PROJECT_BINARY_DIR}/include
-  ${PROJECT_SOURCE_DIR}/include	
+  ${PROJECT_SOURCE_DIR}/include
   ${geomtools_INCLUDE_DIRS}
   )
 
-if ( EMFIELD_WITH_REFLECTION )
-  include_directories(
-    ${CAMP_INCLUDE_DIR}
-    )
-endif ()
-
-add_library(emfield SHARED  
-  ${emfield_PUBLIC_HEADERS} 
+add_library(emfield SHARED
+  ${emfield_PUBLIC_HEADERS}
   ${emfield_detail_HEADERS}
   ${emfield_SOURCES}
   ${emfield_RESOURCES_OUTPUTS}
   )
 
 set_target_properties(emfield
-  PROPERTIES 
+  PROPERTIES
     FRAMEWORK                             ON
     MACOSX_FRAMEWORK_IDENTIFIER           org.supernemo.emfield
     MACOSX_FRAMEWORK_BUNDLE_VERSION       ${emfield_VERSION}
@@ -190,11 +181,7 @@ set_target_properties(emfield
     PUBLIC_HEADER                         "${emfield_PUBLIC_HEADERS}"
   )
 
-if ( EMFIELD_WITH_REFLECTION )
-  target_link_libraries(emfield ${geomtools_LIBRARIES} ${CAMP_LIBRARIES} ${CMAKE_DL_LIBS})
-else ()
-  target_link_libraries(emfield ${geomtools_LIBRARIES} ${CMAKE_DL_LIBS})
-endif ()
+target_link_libraries(emfield ${geomtools_LIBRARIES} ${CMAKE_DL_LIBS})
 
 set(EMFIELD_TARGETS emfield)
 
@@ -211,15 +198,15 @@ set(EMFIELD_TARGETS emfield)
 #     the_serializable.cc
 #     )
 #   list_prepend(emfield_bio_SOURCES "${PROJECT_SOURCE_DIR}/")
-  
+#
 #   add_library(emfield_bio SHARED ${emfield_bio_SOURCES})
-
+#
 #   if(APPLE)
 #     set_property(TARGET emfield_bio APPEND
 #       PROPERTY LINK_FLAGS "-undefined dynamic_lookup"
 #       )
 #   endif()
-
+#
 #   list(APPEND EMFIELD_TARGETS emfield_bio)
 # endif()
 
@@ -229,39 +216,39 @@ set(EMFIELD_TARGETS emfield)
 # On Mac, we use dynamic_lookup for undefined symbols because we want
 # the lib to act as a plugin.
 #
-if(EMFIELD_WITH_REFLECTION)
-  set(emfield_reflection_SOURCES
-    #include/emfield/*-reflect.h
-    #include/emfield/the_introspectable.h
-    #the_introspectable.cc
-    )
-  list_prepend(emfield_reflection_SOURCES "${PROJECT_SOURCE_DIR}/")
-  
-  add_library(emfield_reflection SHARED ${emfield_reflection_SOURCES})
-
-  if(APPLE)
-    set_property(TARGET emfield_reflection APPEND
-      PROPERTY LINK_FLAGS "-undefined dynamic_lookup"
-      )
-  endif()
-
-  list(APPEND EMFIELD_TARGETS emfield_reflection)
-endif()
+# if(EMFIELD_WITH_REFLECTION)
+#   set(emfield_reflection_SOURCES
+#     #include/emfield/*-reflect.h
+#     #include/emfield/the_introspectable.h
+#     #the_introspectable.cc
+#     )
+#   list_prepend(emfield_reflection_SOURCES "${PROJECT_SOURCE_DIR}/")
+#
+#   add_library(emfield_reflection SHARED ${emfield_reflection_SOURCES})
+#
+#   if(APPLE)
+#     set_property(TARGET emfield_reflection APPEND
+#       PROPERTY LINK_FLAGS "-undefined dynamic_lookup"
+#       )
+#   endif()
+#
+#   list(APPEND EMFIELD_TARGETS emfield_reflection)
+# endif()
 
 #-----------------------------------------------------------------------
 # EXPORT AND INSTALL LIBRARY TARGETS
-# We make use of the full signature 
+# We make use of the full signature
 install(TARGETS ${EMFIELD_TARGETS}
   EXPORT        emfield-libraries
-  RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR} 
+  RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
                 COMPONENT Runtime
-  LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR} 
+  LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
                 COMPONENT Runtime
-  FRAMEWORK     DESTINATION ${EMFIELD_FRAMEWORK_LOCATION} 
+  FRAMEWORK     DESTINATION ${EMFIELD_FRAMEWORK_LOCATION}
                 COMPONENT Runtime
-  ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} 
+  ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
                 COMPONENT Development
-  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/emfield 
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/emfield
                 COMPONENT Development
   )
 
@@ -269,11 +256,11 @@ install(TARGETS ${EMFIELD_TARGETS}
 # We also need to generate a file for the build tree, but at present
 # we leave this out for simplicity.
 if(APPLE)
-  install(EXPORT emfield-libraries 
+  install(EXPORT emfield-libraries
     DESTINATION CMake COMPONENT Development
     )
 else()
-  install(EXPORT emfield-libraries 
+  install(EXPORT emfield-libraries
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/emfield-${emfield_VERSION}    COMPONENT Development
     )
 endif()

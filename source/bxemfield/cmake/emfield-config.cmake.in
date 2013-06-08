@@ -2,9 +2,11 @@
 # It defines the following variables
 #  emfield_INCLUDE_DIRS - include directories for emfield
 #  emfield_LIBRARY      - libraries to link against
+#  emfield_LIBRARIES    - libraries to link against
+
+# No support:
 #  emfield_BIO_LIBRARY  - library targets to link against (Boost I/O library)
 #  emfield_REFLECTION_LIBRARY - library targets to link against (reflection library)
-#  emfield_LIBRARIES    - libraries to link against
 #  emfield_WITH_BIO     - flag for Boost/Serialization I/O DLL (a.k.a. 'bio')
 #  emfield_WITH_REFLECTION  - flag for reflection DLL
 
@@ -61,12 +63,6 @@ set(emfield_THIRD_PARTY_INCLUDE_DIRS
   @geomtools_INCLUDE_DIRS@
   )
 
-# if(emfield_WITH_REFLECTION)
-#   list(INSERT emfield_THIRD_PARTY_INCLUDE_DIRS 0
-#      @CAMP_INCLUDE_DIR@
-#   )
-# endif()
-
 #-----------------------------------------------------------------------
 # Set emfield definitions, include paths and library variables
 #
@@ -90,7 +86,7 @@ set(emfield_LIBRARY emfield CACHE PATH "Path to emfield library")
 # if(emfield_WITH_REFLECTION)
 #   set(emfield_REFLECTION_LIBRARY emfield_reflection)
 # endif()
-  
+
 set(emfield_LIBRARIES ${emfield_LIBRARY})
 
 unset(_emfield_inc)
