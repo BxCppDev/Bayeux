@@ -61,9 +61,7 @@ find_package(Boost 1.47 REQUIRED ${Boost_COMPONENTS})
 find_package(CLHEP 2.1.0.1 REQUIRED)
 
 # - CAMP
-if(DATATOOLS_WITH_REFLECTION)
-  find_package(CAMP 0.7.1 REQUIRED)
-endif()
+find_package(CAMP 0.7.1 REQUIRED)
 
 #-----------------------------------------------------------------------
 # On Apple, we fixup the install prefix to handle installing documentation,
