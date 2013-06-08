@@ -52,7 +52,6 @@ set ( genbb_help_tests_programs_list_CPP
       decay0/test_decay0_tgold.cxx
     )
 
-
 if(GENBB_HELP_WITH_REFLECTION)
   list(APPEND genbb_help_tests_programs_list_CPP ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
 endif()
@@ -70,10 +69,6 @@ if (GENBB_HELP_WITH_FORTRAN)
       test_rnd.F
       )
 endif (GENBB_HELP_WITH_FORTRAN)
-
-# message ( STATUS "testing: datatools_INCLUDE_DIRS : ${datatools_INCLUDE_DIRS}" )
-# message ( STATUS "testing:     mygsl_INCLUDE_DIRS : ${mygsl_INCLUDE_DIRS}" )
-# message ( STATUS "testing: geomtools_INCLUDE_DIRS : ${geomtools_INCLUDE_DIRS}" )
 
 # include files search paths
 include_directories ( ${PROJECT_SOURCE_DIR}/include

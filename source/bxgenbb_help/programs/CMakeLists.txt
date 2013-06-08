@@ -34,9 +34,7 @@ set ( genbb_help_programs_list_CPP
   genbbmgr.cxx
 )
 
-find_package(datatools 5.0.0 REQUIRED)
-if(datatools_WITH_REFLECTION)
-  find_package(CAMP 0.7.1 REQUIRED)
+if(GENBB_HELP_WITH_REFLECTION)
   message ( STATUS "${PROJECT_NAME}: programs: Support the 'genbb_inspector' utility" )
   list (INSERT genbb_help_programs_list_CPP 0 genbb_inspector.cxx)
 endif()
@@ -113,7 +111,6 @@ foreach ( pro_program ${genbb_help_programs_list_CPP} )
   if ( ${pro_program} STREQUAL "genbb_inspector.cxx" )
     message (STATUS "${PROJECT_NAME}: programs: CAMP_LIBRARIES=${CAMP_LIBRARIES}")
     message (STATUS "${PROJECT_NAME}: programs: datatools_REFLECTION_LIBRARY=${datatools_REFLECTION_LIBRARY}")
-    include_directories(${CAMP_INCLUDE_DIR})
     list ( INSERT _pro_libraries 0 ${CAMP_LIBRARIES} )
     list ( INSERT _pro_libraries 0 ${datatools_REFLECTION_LIBRARY} )
   endif()

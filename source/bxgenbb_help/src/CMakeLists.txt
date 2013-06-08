@@ -216,10 +216,6 @@ include_directories(
   ${geomtools_INCLUDE_DIRS}
   )
 
-if(GENBB_HELP_WITH_REFLECTION)
- include_directories(${CAMP_INCLUDE_DIR})
-endif()
-
 # ----------------------------------------------------------------------------
 # Build the Fortran part of the library :
 set (_fortran_libs "")
@@ -270,18 +266,11 @@ set_target_properties(genbb_help
   )
 
 
-if(GENBB_HELP_WITH_REFLECTION)
-  target_link_libraries(genbb_help
+target_link_libraries(genbb_help
      ${geomtools_LIBRARIES}
      ${_fortran_libs}
-     ${CAMP_LIBRARIES}
-     ${CMAKE_DL_LIBS})
-else()
-  target_link_libraries(genbb_help
-     ${geomtools_LIBRARIES}
-     ${_fortran_libs}
-     ${CMAKE_DL_LIBS})
-endif()
+     ${CMAKE_DL_LIBS}
+  )
 
 set(GENBB_HELP_TARGETS genbb_help ${_fortran_libs})
 

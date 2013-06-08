@@ -80,10 +80,16 @@ else()
   set (GENBB_HELP_WITH_DEBUG 0)
 endif ()
 
-if(GENBB_HELP_WITH_BIO_SUPPORT AND GENBB_HELP_WITH_BIO)
+if(GENBB_HELP_WITH_BIO)
   set (GENBB_HELP_WITH_BIO 1)
 else()
   set (GENBB_HELP_WITH_BIO 0)
+endif ()
+
+if(GENBB_HELP_WITH_REFLECTION)
+  set (GENBB_HELP_WITH_REFLECTION 1)
+else()
+  set (GENBB_HELP_WITH_REFLECTION 0)
 endif ()
 
 #-----------------------------------------------------------------------
@@ -204,26 +210,23 @@ install ( DIRECTORY ${PROJECT_SOURCE_DIR}/resources
           PATTERN "*~" EXCLUDE
          )
 
-#-----------------------------------------------------------------------
+# - Examples :
 
-# set ( _genbb_help_TESTING_FULL_LOCAL_PATH
-#       "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/testing"
-#     )
-# message ( STATUS "${PROJECT_NAME} : genbb_help testing full local path = '${_genbb_help_TESTING_FULL_LOCAL_PATH}' " )
+set(_genbb_help_examples_FULL_LOCAL_PATH
+    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/examples"
+   )
 
-# install ( DIRECTORY ${PROJECT_SOURCE_DIR}/testing
-#           DESTINATION ${CMAKE_INSTALL_DATADIR}
-#           FILE_PERMISSIONS OWNER_READ OWNER_WRITE
-#                            GROUP_READ GROUP_WRITE
-#                            WORLD_READ
-#           DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
-#                                 GROUP_READ GROUP_WRITE  GROUP_EXECUTE
-#                                 WORLD_READ WORLD_EXECUTE
-#           PATTERN 		".svn" EXCLUDE
-#           PATTERN "*~" EXCLUDE
-#           PATTERN "CMakeLists.txt" EXCLUDE
-#           PATTERN "testDriver.bash" EXCLUDE
-#          )
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples
+        DESTINATION ${CMAKE_INSTALL_DATADIR}
+        FILE_PERMISSIONS OWNER_READ OWNER_WRITE
+                         GROUP_READ GROUP_WRITE
+                         WORLD_READ
+        DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                              GROUP_READ GROUP_WRITE GROUP_EXECUTE
+                              WORLD_READ WORLD_EXECUTE
+        PATTERN ".svn" EXCLUDE
+	PATTERN "*~" EXCLUDE
+       )
 
 #-----------------------------------------------------------------------
 # Package

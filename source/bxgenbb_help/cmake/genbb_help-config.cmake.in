@@ -4,6 +4,7 @@
 #  genbb_help_LIBRARY      - libraries to link against
 #  genbb_help_BIO_LIBRARY  - library targets to link against (Boost I/O library)
 #  genbb_help_REFLECTION_LIBRARY - library targets to link against (reflection library)
+#  genbb_help_DECAY0_FORTRAN_LIBRARY - library targets to link against (decay0/Fortran library)
 #  genbb_help_LIBRARIES    - libraries to link against
 #  genbb_help_WITH_BIO     - flag for Boost/Serialization I/O DLL (a.k.a. 'bio')
 #  genbb_help_WITH_REFLECTION  - flag for reflection DLL
@@ -63,12 +64,6 @@ set(genbb_help_THIRD_PARTY_INCLUDE_DIRS
   @geomtools_INCLUDE_DIRS@
   )
 
-# if(genbb_help_WITH_REFLECTION)
-#   list(INSERT genbb_help_THIRD_PARTY_INCLUDE_DIRS 0
-#      @CAMP_INCLUDE_DIR@
-#   )
-# endif()
-
 #-----------------------------------------------------------------------
 # Set genbb_help definitions, include paths and library variables
 #
@@ -85,13 +80,17 @@ set(genbb_help_INCLUDE_DIRS
 # Set genbb_help_LIBRARIES variable
 set(genbb_help_LIBRARY genbb_help CACHE PATH "Path to genbb_help library")
 
-# if(genbb_help_WITH_BIO)
-#   set(genbb_help_BIO_LIBRARY genbb_help_bio)
-# endif()
+if(genbb_help_WITH_BIO)
+  set(genbb_help_BIO_LIBRARY genbb_help_bio)
+endif()
 
-# if(genbb_help_WITH_REFLECTION)
-#   set(genbb_help_REFLECTION_LIBRARY genbb_help_reflection)
-# endif()
+if(genbb_help_WITH_REFLECTION)
+  set(genbb_help_REFLECTION_LIBRARY genbb_help_reflection)
+endif()
+
+if(genbb_help_WITH_FORTRAN)
+  set(genbb_help_DECAY0_FORTRAN_LIBRARY genbb_help_decay0_fortran)
+endif()
 
 set(genbb_help_LIBRARIES ${genbb_help_LIBRARY})
 
