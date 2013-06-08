@@ -164,12 +164,6 @@ include_directories(
   ${datatools_INCLUDE_DIRS}
   )
 
-if ( CUTS_WITH_REFLECTION )
-  include_directories(
-    ${CAMP_INCLUDE_DIR}
-    )
-endif ()
-
 add_library(cuts SHARED
   ${cuts_PUBLIC_HEADERS}
   ${cuts_SOURCES}
@@ -189,11 +183,7 @@ set_target_properties(cuts
     PUBLIC_HEADER                         "${cuts_PUBLIC_HEADERS}"
   )
 
-if ( CUTS_WITH_REFLECTION )
-  target_link_libraries(cuts ${datatools_LIBRARIES} ${CAMP_LIBRARIES} ${CMAKE_DL_LIBS})
-else ()
-  target_link_libraries(cuts ${datatools_LIBRARIES} ${CMAKE_DL_LIBS})
-endif ()
+target_link_libraries(cuts ${datatools_LIBRARIES} ${CMAKE_DL_LIBS})
 
 set(CUTS_TARGETS cuts)
 
@@ -210,15 +200,15 @@ set(CUTS_TARGETS cuts)
 #     src/the_serializable.cc
 #     )
 #   list_prepend(cuts_bio_SOURCES "${PROJECT_SOURCE_DIR}/")
-
+#
 #   add_library(cuts_bio SHARED ${cuts_bio_SOURCES})
-
+#
 #   if(APPLE)
 #     set_property(TARGET cuts_bio APPEND
 #       PROPERTY LINK_FLAGS "-undefined dynamic_lookup"
 #       )
 #   endif()
-
+#
 #   list(APPEND CUTS_TARGETS cuts_bio)
 # endif()
 
@@ -235,15 +225,15 @@ set(CUTS_TARGETS cuts)
 #     #src/the_introspectable.cc
 #     )
 #   list_prepend(cuts_reflection_SOURCES "${PROJECT_SOURCE_DIR}/")
-
+#
 #   add_library(cuts_reflection SHARED ${cuts_reflection_SOURCES})
-
+#
 #   if(APPLE)
 #     set_property(TARGET cuts_reflection APPEND
 #       PROPERTY LINK_FLAGS "-undefined dynamic_lookup"
 #       )
 #   endif()
-
+#
 #   list(APPEND CUTS_TARGETS cuts_reflection)
 # endif()
 
