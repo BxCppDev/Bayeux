@@ -95,7 +95,7 @@ EOF
   #   --with-bio          with linkage against the 'libmaterials_bio@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL (default)
   #   --without-bio       without linkage against the 'libmaterials_bio@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL
   # --with-bio            print if Boost/Serialization binary code is pre-built
-                        in an auxiliary shared library
+  #                      in an auxiliary shared library
   #   --with-reflection    with linkage against the 'libmaterials_reflection@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL (default)
   #   --without-reflection without linkage against the 'libmaterials_reflection@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL
   #   return 0
