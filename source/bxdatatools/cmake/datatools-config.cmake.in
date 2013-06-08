@@ -57,15 +57,10 @@ endif()
 #  find_package(Boost NO_DEFAULT_PATH)
 #
 set(datatools_THIRD_PARTY_INCLUDE_DIRS
+  @CAMP_INCLUDE_DIR@
   @CLHEP_INCLUDE_DIRS@
   @Boost_INCLUDE_DIRS@
   )
-
-if(datatools_WITH_REFLECTION)
-  list(INSERT datatools_THIRD_PARTY_INCLUDE_DIRS 0
-     @CAMP_INCLUDE_DIR@
-  )
-endif()
 
 #-----------------------------------------------------------------------
 # Set datatools definitions, include paths and library variables
@@ -90,7 +85,7 @@ endif()
 if(datatools_WITH_REFLECTION)
   set(datatools_REFLECTION_LIBRARY datatools_reflection)
 endif()
-  
+
 set(datatools_LIBRARIES ${datatools_LIBRARY})
 
 unset(_datatools_inc)

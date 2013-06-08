@@ -246,13 +246,10 @@ endif()
 include_directories(
   ${PROJECT_BINARY_DIR}/include
   ${PROJECT_SOURCE_DIR}/include
+  ${CAMP_INCLUDE_DIR}
   ${CLHEP_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIRS}
   )
-
-if(DATATOOLS_WITH_REFLECTION)
-  include_directories(${CAMP_INCLUDE_DIR})
-endif()
 
 add_library(datatools SHARED
   ${datatools_PUBLIC_HEADERS}
@@ -273,11 +270,7 @@ set_target_properties(datatools
     PUBLIC_HEADER                         "${datatools_PUBLIC_HEADERS}"
   )
 
-if(DATATOOLS_WITH_REFLECTION)
-  target_link_libraries(datatools ${Boost_LIBRARIES} ${CAMP_LIBRARIES} ${CMAKE_DL_LIBS})
-else()
-  target_link_libraries(datatools ${Boost_LIBRARIES} ${CMAKE_DL_LIBS})
-endif()
+target_link_libraries(datatools ${Boost_LIBRARIES} ${CAMP_LIBRARIES} ${CMAKE_DL_LIBS})
 
 set(DATATOOLS_TARGETS datatools)
 

@@ -79,7 +79,7 @@ Known values for OPTION are:
   --cflags              print include path pre-processor flags with dependencies
   --libs    [option]    print library linking information, without dependencies
   --ldflags [option]
-    Options: 
+    Options:
     --relative-path     use relative DLL path (default)
     --absolute-path     use absolute DLL path
     --with-bio          with linkage against the 'libdatatools_bio@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL (default)
@@ -151,9 +151,7 @@ if [ "x${option}" = "x--cflags" ]; then
   (
   echo -n "-fPIC "
   echo -n "-I${datatools_include_dir} "
-  if [ ${with_reflection} -eq 1 ]; then
-    echo -n "`camp-config --cflags` "
-  fi
+  echo -n "`camp-config --cflags` "
   echo -n "`boost-config --cflags serialization iostreams filesystem system program_options` "
   echo -n "`clhep-config --include` "
   echo ""
@@ -247,9 +245,7 @@ if [ "x${option}" = "x--ldflags" ]; then
     echo -n "${bio_ldflags} "
     echo -n "-ldatatools "
   fi
-  if [ ${with_reflection} -eq 1 ]; then
-    echo -n "`camp-config --ldflags` "
-  fi
+  echo -n "`camp-config --ldflags` "
   echo -n "`boost-config --ldflags serialization iostreams filesystem system program_options` "
   echo -n "`clhep-config --libs` -lm "
   echo -n "-ldl "
