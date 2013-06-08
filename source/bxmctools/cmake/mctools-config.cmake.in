@@ -3,6 +3,7 @@
 #  mctools_INCLUDE_DIRS - include directories for mctools
 #  mctools_LIBRARY      - libraries to link against
 #  mctools_BIO_LIBRARY  - library targets to link against (Boost I/O library)
+#  mctools_G4_LIBRARY   - library targets to link against (Geant4 library)
 #  mctools_REFLECTION_LIBRARY - library targets to link against (reflection library)
 #  mctools_LIBRARIES    - libraries to link against
 #  mctools_WITH_BIO     - flag for Boost/Serialization I/O DLL (a.k.a. 'bio')
@@ -33,8 +34,9 @@ set(mctools_GENBB_HELP_DIR   @genbb_help_DIR@)
 set(mctools_EMFIELD_DIR      @emfield_DIR@)
 set(mctools_MATERIALS_DIR    @materials_DIR@)
 set(mctools_DPP_DIR          @dpp_DIR@)
-if (MCTOOLS_WITH_G4)
-set(mctools_GEANT4_DIR       @Geant4_DIR@)
+if (mctools_WITH_G4)
+  set(mctools_GEANT4_DIR       @Geant4_DIR@)
+  set(mctools_GEANT4_G4VIS_USE @MCTOOLS_WITH_G4_G4VIS_USE@)
 endif()
 
 #-----------------------------------------------------------------------
@@ -81,20 +83,13 @@ set(mctools_THIRD_PARTY_INCLUDE_DIRS
   @emfield_INCLUDE_DIRS@
   @materials_INCLUDE_DIRS@
   @dpp_INCLUDE_DIRS@
-  @Geant4_INCLUDE_DIRS@
   )
 
-if (MCTOOLS_WITH_G4)
+if (mctools_WITH_G4)
    list(INSERT mctools_THIRD_PARTY_INCLUDE_DIRS 0
       @Geant4_INCLUDE_DIRS@
    )
 endif()
-
-# if(mctools_WITH_REFLECTION)
-#   list(INSERT mctools_THIRD_PARTY_INCLUDE_DIRS 0
-#      @CAMP_INCLUDE_DIR@
-#   )
-# endif()
 
 #-----------------------------------------------------------------------
 # Set mctools definitions, include paths and library variables
@@ -118,6 +113,10 @@ endif()
 
 if(mctools_WITH_REFLECTION)
   set(mctools_REFLECTION_LIBRARY mctools_reflection)
+endif()
+
+if(mctools_WITH_G4)
+  set(mctools_G4_LIBRARY mctools_g4)
 endif()
 
 set(mctools_LIBRARIES ${mctools_LIBRARY})

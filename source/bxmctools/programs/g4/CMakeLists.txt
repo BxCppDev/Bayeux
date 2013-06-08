@@ -22,7 +22,7 @@
 ###############################################################################
 
 set (_mctools_g4_programs_list
-    ${PROJECT_SOURCE_DIR}/programs/g4/g4_production.cxx 
+    ${PROJECT_SOURCE_DIR}/programs/g4/g4_production.cxx
     )
 
 # linker search paths :
@@ -62,7 +62,7 @@ foreach ( _mctools_g4_pro_program ${_mctools_g4_programs_list} )
   set ( _mctools_g4_link_libraries mctools )
 
   # Apply external dependencies :
-  list ( APPEND _mctools_g4_link_libraries 
+  list ( APPEND _mctools_g4_link_libraries
 	 mctools_g4
        )
 
@@ -83,7 +83,21 @@ foreach ( _mctools_g4_pro_program ${_mctools_g4_programs_list} )
     list ( APPEND _mctools_g4_link_libraries datatools_bio )
   endif ()
 
-  # -Wl,--no-as-needed 
+  # Special reflection DLL plugins :
+  if(datatools_WITH_REFLECTION)
+    list(INSERT mctools_g4_link_libraries 0 datatools_reflection)
+  endif()
+  if(geomtools_WITH_REFLECTION)
+    list(INSERT mctools_g4_link_libraries 0 geomtools_reflection)
+  endif()
+  if(genbb_help_WITH_REFLECTION)
+    list(INSERT mctools_g4_link_libraries 0 genbb_help_reflection)
+  endif()
+  if(MCTOOLS_WITH_REFLECTION)
+    list(INSERT mctools_g4_link_libraries 0 mctools_reflection )
+  endif()
+
+  # -Wl,--no-as-needed
   target_link_libraries ( ${_mctools_g4_pro_executable}
     ${_mctools_g4_link_libraries}
     )

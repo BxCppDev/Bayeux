@@ -50,6 +50,7 @@ with_reflection=0
 if [ "x@MCTOOLS_WITH_REFLECTION@" == "x1" ]; then
     with_reflection=1
 fi
+
 with_g4=0
 if [ "x@MCTOOLS_WITH_G4@" == "x1" ]; then
     with_g4=1
@@ -95,6 +96,10 @@ Known values for OPTION are:
     --without-bio       without linkage against the 'libmctools_bio@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL
     --with-reflection     with linkage against the 'libmctools_reflection@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL (default)
     --without-reflection  without linkage against the 'libmctools_reflection@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL
+    --with-g4           with linkage against the 'libmctools_g4@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL (default)
+    --without-g4        without linkage against the 'libmctools_g4@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL
+  --with-g4             print if the Geant4 binary code is pre-built
+                        in an auxiliary shared library
   --with-bio            print if Boost/Serialization binary code is pre-built
                         in an auxiliary shared library
   --with-reflection     print if reflection binary code is pre-built
@@ -169,9 +174,6 @@ if [ "x${option}" = "x--cflags" ]; then
 	if [ ${with_g4} -eq 1 ]; then
             echo -n "`geant4-config --cflags` "
 	fi
-	if [ ${with_reflection} -eq 1 ]; then
- 	    echo -n "`camp-config --cflags` "
-	fi
 	echo ""
     ) ###| python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py
     my_exit 0
@@ -202,6 +204,13 @@ if [ ${with_reflection} -eq 1 ]; then
     reflection_ldflags_abs=${mctools_lib_dir}/libmctools_reflection@CMAKE_SHARED_LIBRARY_SUFFIX@
 fi
 
+g4_ldflags=
+g4_ldflags_abs=
+if [ ${with_g4} -eq 1 ]; then
+    g4_ldflags=-lmctools_g4
+    g4_ldflags_abs=${mctools_lib_dir}/libmctools_g4@CMAKE_SHARED_LIBRARY_SUFFIX@
+fi
+
 ldflags_abs_path=0
 if [ "x${MCTOOLS_LDFLAGS_ABSOLUTE_PATH}" = "x1" ]; then
     ldflags_abs_path=1
@@ -215,6 +224,12 @@ if [ "x${option}" = "x--libs" -o "x${option}" = "x--ldflags" ]; then
 	elif [ "x${lib_option}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
 	    bio_ldflags=-lmctools_bio
 	    bio_ldflags_abs=${mctools_lib_dir}/libmctools_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
+	elif [ "x${lib_option}" = "x--without-g4" ]; then
+	    g4_ldflags=
+	    g4_ldflags_abs=
+	elif [ "x${lib_option}" = "x--with-g4" -a ${with_g4} -eq 1 ]; then
+	    g4_ldflags=-lmctools_g4
+	    g4_ldflags_abs=${mctools_lib_dir}/libmctools_g4@CMAKE_SHARED_LIBRARY_SUFFIX@
 	elif [ "x${lib_option}" = "x--without-reflection" ]; then
 	    reflection_ldflags=
 	    reflection_ldflags_abs=
@@ -236,11 +251,13 @@ fi
 
 if [ "x${option}" = "x--libs" ]; then
     if [ ${ldflags_abs_path} -eq 1 ]; then
+	echo -n "${g4_ldflags_abs} "
 	echo -n "${reflection_ldflags_abs} "
 	echo -n "${bio_ldflags_abs} "
 	echo -n "${mctools_lib_dir}/libmctools@CMAKE_SHARED_LIBRARY_SUFFIX@ "
     else
 	echo -n "-L${mctools_lib_dir} "
+	echo -n "${g4_ldflags} "
 	echo -n "${reflection_ldflags} "
 	echo -n "${bio_ldflags} "
 	echo -n "-lmctools "
@@ -252,11 +269,13 @@ fi
 if [ "x${option}" = "x--ldflags" ]; then
     (
 	if [ ${ldflags_abs_path} -eq 1 ]; then
+	    echo -n "${g4_ldflags_abs} "
 	    echo -n "${reflection_ldflags_abs} "
 	    echo -n "${bio_ldflags_abs} "
 	    echo -n "${mctools_lib_dir}/libmctools@CMAKE_SHARED_LIBRARY_SUFFIX@ "
 	else
 	    echo -n "-L${mctools_lib_dir} "
+	    echo -n "${g4_ldflags} "
 	    echo -n "${reflection_ldflags} "
 	    echo -n "${bio_ldflags} "
 	    echo -n "-lmctools "
@@ -268,9 +287,6 @@ if [ "x${option}" = "x--ldflags" ]; then
         echo -n "`dpp-config        --ldflags ${ldflags_abs_path_option}` "
 	if [ ${with_g4} -eq 1 ]; then
             echo -n "`geant4-config     --libs` "
-	fi
-	if [ ${with_reflection} -eq 1 ]; then
- 	    echo -n "`camp-config --ldflags` "
 	fi
 	echo -n "-ldl "
 	echo ""
@@ -296,14 +312,23 @@ if [ "x${option}" = "x--with-bio" ]; then
     fi
 fi
 
-# if [ "x${option}" = "x--with-reflection" ]; then
-#     echo "${with_reflection}"
-#     if [ "${with_reflection}" = "1" ]; then
-# 	my_exit 0
-#     else
-# 	my_exit 1
-#     fi
-# fi
+if [ "x${option}" = "x--with-reflection" ]; then
+    echo "${with_reflection}"
+    if [ "${with_reflection}" = "1" ]; then
+	my_exit 0
+    else
+	my_exit 1
+    fi
+fi
+
+if [ "x${option}" = "x--with-g4" ]; then
+    echo "${with_g4}"
+    if [ "${with_g4}" = "1" ]; then
+	my_exit 0
+    else
+	my_exit 1
+    fi
+fi
 
 echo "ERROR: ${script_name}: Unknown option !" 1>&2
 print_help

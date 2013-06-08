@@ -1,5 +1,6 @@
 // ex01_read_plain_simdata.cxx
 /* Copyright (C) 2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -14,6 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
+ *
  */
 
 #include <cstdlib>

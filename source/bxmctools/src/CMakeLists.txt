@@ -151,12 +151,6 @@ include_directories(
   ${Boost_INCLUDE_DIRS}
   )
 
-if ( MCTOOLS_WITH_REFLECTION )
-  include_directories(
-    ${CAMP_INCLUDE_DIR}
-    )
-endif ()
-
 add_library(mctools SHARED
   ${mctools_PUBLIC_HEADERS}
   ${mctools_detail_HEADERS}
@@ -175,26 +169,15 @@ set_target_properties(mctools
     PUBLIC_HEADER                         "${mctools_PUBLIC_HEADERS}"
   )
 
-if ( MCTOOLS_WITH_REFLECTION )
-  target_link_libraries(mctools
-                        ${genvtx_LIBRARIES}
-                        ${genbb_help_LIBRARIES}
-                        ${materials_LIBRARIES}
-                        ${emfield_LIBRARIES}
-                        ${dpp_LIBRARIES}
-                        ${CAMP_LIBRARIES}
-			${Boost_LIBRARIES}
-                        ${CMAKE_DL_LIBS})
-else ()
-  target_link_libraries(mctools
+target_link_libraries(mctools
                         ${genvtx_LIBRARIES}
                         ${genbb_help_LIBRARIES}
                         ${materials_LIBRARIES}
                         ${emfield_LIBRARIES}
                         ${dpp_LIBRARIES}
 			${Boost_LIBRARIES}
-                        ${CMAKE_DL_LIBS})
-endif ()
+                        ${CMAKE_DL_LIBS}
+  )
 
 set(MCTOOLS_TARGETS mctools)
 

@@ -25,8 +25,8 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(mctools)
 
 # - Versioning
-set(mctools_VERSION_MAJOR 0)
-set(mctools_VERSION_MINOR 1)
+set(mctools_VERSION_MAJOR 1)
+set(mctools_VERSION_MINOR 0)
 set(mctools_PATCH_VERSION 0)
 set(mctools_VERSION "${mctools_VERSION_MAJOR}.${mctools_VERSION_MINOR}.${mctools_PATCH_VERSION}")
 math(EXPR _mctools_VERSION_NUMERIC "${mctools_VERSION_MAJOR}*100000+${mctools_VERSION_MINOR}*100+${mctools_PATCH_VERSION}")
@@ -53,7 +53,6 @@ option(MCTOOLS_WITH_BIO  "Build auxiliary Boost I/O library" ON)
 option(MCTOOLS_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" ON)
 option(MCTOOLS_WITH_DOC  "Build the mctools documentation" ON)
 option(MCTOOLS_WITH_TEST "Build the mctools test suite"    ON)
-#option(MCTOOLS_WITH_GNUPLOT_DISPLAY  "Build the Gnuplot-based display tools" ON )
 option(MCTOOLS_WITH_G4   "Build the Geant4 interface"     ON)
 option(MCTOOLS_WITH_G4VIS_USE  "Build the Geant4 visualization interface" ON)
 
@@ -61,12 +60,6 @@ if (MCTOOLS_WITH_DEBUG)
   set (MCTOOLS_WITH_DEBUG 1)
 else()
   set (MCTOOLS_WITH_DEBUG 0)
-endif ()
-
-if(MCTOOLS_WITH_G4)
-  set (MCTOOLS_WITH_G4 1)
-else()
-  set (MCTOOLS_WITH_G4 0)
 endif ()
 
 #-----------------------------------------------------------------------
@@ -88,11 +81,6 @@ find_package(genvtx 4.0.0 REQUIRED)
 
 # - emfield
 find_package(emfield 1.0.0 REQUIRED)
-
-# - materials
-#find_package(materials 4.0.0 REQUIRED)
-# - datatools
-#find_package(datatools 5.0.0 REQUIRED)
 
 if(MCTOOLS_WITH_G4)
 if ( NOT DEFINED Geant4_DIR )
@@ -174,7 +162,7 @@ endif()
 #
 if(UNIX)
   # - Normalize exported boolean variables
-  foreach(_ebv BIO REFLECTION)
+  foreach(_ebv BIO REFLECTION G4)
     if(MCTOOLS_WITH_${_ebv})
       set(MCTOOLS_WITH_${_ebv} 1)
     else()
@@ -217,23 +205,23 @@ endif()
 
 #----------------------------------------------------------------
 # - Install public resources :
-#
+
 # - Examples :
-# set(_geomtools_examples_FULL_LOCAL_PATH
-#     "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/examples"
-#    )
-#
-# install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples
-#         DESTINATION ${CMAKE_INSTALL_DATADIR}
-#         FILE_PERMISSIONS OWNER_READ OWNER_WRITE
-#                          GROUP_READ GROUP_WRITE
-#                          WORLD_READ
-#         DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
-#                               GROUP_READ GROUP_WRITE GROUP_EXECUTE
-#                               WORLD_READ WORLD_EXECUTE
-#         PATTERN ".svn" EXCLUDE
-# 	PATTERN "*~" EXCLUDE
-#        )
+set(_geomtools_examples_FULL_LOCAL_PATH
+    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/examples"
+   )
+
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples
+        DESTINATION ${CMAKE_INSTALL_DATADIR}
+        FILE_PERMISSIONS OWNER_READ OWNER_WRITE
+                         GROUP_READ GROUP_WRITE
+                         WORLD_READ
+        DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                              GROUP_READ GROUP_WRITE GROUP_EXECUTE
+                              WORLD_READ WORLD_EXECUTE
+        PATTERN ".svn" EXCLUDE
+	PATTERN "*~" EXCLUDE
+       )
 
 #-----------------------------------------------------------------------
 # Package

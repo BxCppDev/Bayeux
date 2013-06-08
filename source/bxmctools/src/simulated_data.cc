@@ -550,7 +550,7 @@ namespace mctools {
     // Step hits collections (handle type):
     if (use_handle_hit_collection ()) {
       a_out << indent << du::i_tree_dumpable::tag
-            << "Handle step hit collections : ";
+            << "Collections of step hit handles : ";
       if (_step_hits_dict_.size () == 0) {
         a_out << "None";
       }
@@ -565,8 +565,7 @@ namespace mctools {
         a_out << indent << du::i_tree_dumpable::skip_tag;
         if (j == _step_hits_dict_.end ()) {
           a_out << du::i_tree_dumpable::last_tag;
-        }
-        else {
+        } else {
           a_out << du::i_tree_dumpable::tag;
         }
         a_out << "Category '" << category << "' has "
@@ -576,10 +575,9 @@ namespace mctools {
     }
 
     // Step hits collections (plain type):
-    if (use_plain_hit_collection ())
-      {
+    if (use_plain_hit_collection ()) {
         a_out << indent << du::i_tree_dumpable::tag
-              << "Plain step hit collections : ";
+              << "Collections of plain step hits : ";
         if (_plain_step_hits_dict_.size () == 0) {
           a_out << "None";
         }

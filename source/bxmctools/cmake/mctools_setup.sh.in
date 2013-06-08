@@ -35,7 +35,7 @@ alias mctools_print_info='do_mctools_print_info'
 function do_mctools_setup ()
 {
     local verbose=0
-    
+
     while [ -n "$1" ]; do
 	if [ "$1" = "--verbose" -o "$1" = "-v" ]; then
 	  let verbose=verbose+1
@@ -50,18 +50,6 @@ function do_mctools_setup ()
     if [ "x${MCTOOLS_ROOT}" != "x" ]; then
 	echo "WARNING: do_mctools_setup: mctools is already setup !" 1>&2
 	return 2
-    fi 
-
-    if [ "x@MCTOOLS_WITH_REFLECTION@" = "x1" ]; then
-	which camp-config >/dev/null 2>&1
-	if [ $? -ne 0 ]; then
-	    echo "ERROR: do_mctools_setup: Cannot find CAMP setup ! Abort !" 1>&2
-	    return 1
-	else
-	    if [ ${verbose} -ne 0 ]; then
-		echo "VERBOSE: do_mctools_setup: Found CAMP." 1>&2
-	    fi
-	fi
     fi
 
     which dpp-config >/dev/null 2>&1
@@ -94,16 +82,6 @@ function do_mctools_setup ()
 	fi
     fi
 
-    which materials-config >/dev/null 2>&1
-    if [ $? -ne 0 ]; then
-	echo "ERROR: do_mctools_setup: Cannot find materials setup ! Abort !" 1>&2
-	return 1
-    else
-	if [ ${verbose} -ne 0 ]; then
-	    echo "VERBOSE: do_mctools_setup: Found materials." 1>&2
-	fi
-    fi
-
     which emfield-config >/dev/null 2>&1
     if [ $? -ne 0 ]; then
 	echo "ERROR: do_mctools_setup: Cannot find emfield setup ! Abort !" 1>&2
@@ -114,16 +92,6 @@ function do_mctools_setup ()
 	fi
     fi
 
-    which boost-config >/dev/null 2>&1
-    if [ $? -ne 0 ]; then
-	echo "ERROR: do_mctools_setup: Cannot find Boost setup ! Abort !" 1>&2
-	return 1
-    else
-	if [ ${verbose} -ne 0 ]; then
-	    echo "VERBOSE: do_mctools_setup: Found Boost." 1>&2
-	fi
-    fi
-     
     export MCTOOLS_ROOT="@CMAKE_INSTALL_PREFIX@"
     export MCTOOLS_ROOT_DIR="@CMAKE_INSTALL_PREFIX@"
     export MCTOOLS_NAME="@PROJECT_NAME@"
@@ -144,18 +112,18 @@ function do_mctools_setup ()
 	export PATH="${MCTOOLS_BIN_DIR}:${PATH}"
     else
 	export PATH="${MCTOOLS_BIN_DIR}"
-    fi 
-   
+    fi
+
     if [ -n "${@_ld_library_path_env@}" ]; then
 	export @_ld_library_path_env@="${MCTOOLS_LIB_DIR}:${@_ld_library_path_env@}"
     else
 	export @_ld_library_path_env@="${MCTOOLS_LIB_DIR}"
-    fi 
+    fi
 
     if [ ${verbose} -gt 1 ]; then
 	do_mctools_print_info "VERBOSE: do_mctools_setup"
     fi
- 
+
     if [ ${verbose} -ne 0 ]; then
 	echo "NOTICE: do_mctools_setup: Setup mctools done." 1>&2
     fi

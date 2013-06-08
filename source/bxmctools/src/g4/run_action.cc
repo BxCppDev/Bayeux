@@ -280,7 +280,7 @@ namespace mctools {
 
     void run_action::_build_run_header ()
     {
-      _run_header_.set_description ("mc_g4_production run header");
+      _run_header_.set_description ("mctools::g4_production run header");
 
       // _run_header_.store ("sngeometry_version",  SNGEOMETRY_LIB_VERSION);
       // _run_header_.store ("sncore_version",      SNCORE_LIB_VERSION);
@@ -311,7 +311,7 @@ namespace mctools {
 
     void run_action::_build_run_footer ()
     {
-      _run_footer_.set_description ("sng4_production run footer");
+      _run_footer_.set_description ("mctools::g4_production run footer");
 
       _run_footer_.store ("number_of_processed_events", _number_of_processed_events_);
       _run_footer_.store ("number_of_saved_events", _number_of_saved_events_);
