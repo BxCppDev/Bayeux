@@ -275,14 +275,14 @@ if [ "x${option}" = "x--with-bio" ]; then
     fi
 fi
 
-# if [ "x${option}" = "x--with-reflection" ]; then
-#     echo "${with_reflection}"
-#     if [ "${with_reflection}" = "1" ]; then
-# 	my_exit 0
-#     else
-# 	my_exit 1
-#     fi
-# fi
+if [ "x${option}" = "x--with-reflection" ]; then
+    echo "${with_reflection}"
+    if [ "${with_reflection}" = "1" ]; then
+	my_exit 0
+    else
+	my_exit 1
+    fi
+fi
 
 echo "ERROR: ${script_name}: Unknown option !" 1>&2
 print_help

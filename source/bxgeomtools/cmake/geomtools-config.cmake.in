@@ -8,6 +8,7 @@
 #  geomtools_WITH_BIO     - flag for Boost/Serialization I/O DLL (a.k.a. 'bio')
 #  geomtools_WITH_REFLECTION  - flag for reflection DLL
 #  geomtools_WITH_GNUPLOT_DISPLAY - flag for Gnuplot display support
+#  geomtools_WITH_ROOT_DISPLAY - flag for ROOT display support
 
 #-----------------------------------------------------------------------
 # This program is free software: you can redistribute it and/or modify
@@ -90,9 +91,9 @@ if(geomtools_WITH_REFLECTION)
   set(geomtools_REFLECTION_LIBRARY geomtools_reflection)
 endif()
 
-set(geomtools_LIBRARIES ${geomtools_LIBRARY})
-set(geomtools_WITH_GNUPLOT_DISPLAY @GEOMTOOLS_WITH_GNUPLOT_DISPLAY@)
-#set(geomtools_WITH_ROOT_DISPLAY @GEOMTOOLS_WITH_ROOT_DISPLAY@)
+set(geomtools_LIBRARIES ${geomtools_LIBRARY} )
+set(geomtools_WITH_GNUPLOT_DISPLAY @GEOMTOOLS_WITH_GNUPLOT_DISPLAY@ )
+set(geomtools_WITH_ROOT_DISPLAY    @GEOMTOOLS_WITH_ROOT_DISPLAY@ )
 
 unset(_geomtools_inc)
 # end
