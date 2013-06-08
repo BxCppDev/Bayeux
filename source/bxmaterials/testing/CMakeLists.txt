@@ -34,10 +34,10 @@ set ( materials_tests_programs
 )
 
 ###message (STATUS "materials_tests_programs=${materials_tests_programs}" )
-list(REMOVE_ITEM materials_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
-if(MATERIALS_WITH_REFLECTION)
-  list(APPEND materials_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
-endif()
+# list(REMOVE_ITEM materials_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
+# if(MATERIALS_WITH_REFLECTION)
+#   list(APPEND materials_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
+# endif()
 
 set(materials_tests_programs_list "${materials_tests_programs}")
 list(SORT materials_tests_programs_list)

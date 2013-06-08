@@ -49,8 +49,8 @@ endif()
 # Build options
 #
 option(MATERIALS_WITH_DEBUG "Build debug stuff" OFF)
-option(MATERIALS_WITH_BIO  "Build auxiliary Boost I/O library" OFF)
-option(MATERIALS_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" OFF)
+# option(MATERIALS_WITH_BIO  "Build auxiliary Boost I/O library" OFF)
+# option(MATERIALS_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" OFF)
 option(MATERIALS_WITH_DOC  "Build the materials documentation" ON)
 option(MATERIALS_WITH_TEST "Build the materials test suite"    ON)
 option(MATERIALS_WITH_BASH_SETUP "Build the materials with Bash setup macro" ON)
@@ -63,11 +63,11 @@ else()
   set (MATERIALS_WITH_DEBUG 0)
 endif ()
 
-if(MATERIALS_WITH_BIO)
-  set (MATERIALS_WITH_BIO 1)
-else()
-  set (MATERIALS_WITH_BIO 0)
-endif ()
+# if(MATERIALS_WITH_BIO)
+#   set (MATERIALS_WITH_BIO 1)
+# else()
+#   set (MATERIALS_WITH_BIO 0)
+# endif ()
 
 #-----------------------------------------------------------------------
 # Find external packages needed to build

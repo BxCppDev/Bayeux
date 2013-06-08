@@ -2,11 +2,13 @@
 # It defines the following variables
 #  materials_INCLUDE_DIRS - include directories for materials
 #  materials_LIBRARY      - libraries to link against
-#  materials_BIO_LIBRARY  - library targets to link against (Boost I/O library)
-#  materials_REFLECTION_LIBRARY - library targets to link against (reflection library)
 #  materials_LIBRARIES    - libraries to link against
+
+# No supprt:
 #  materials_WITH_BIO     - flag for Boost/Serialization I/O DLL (a.k.a. 'bio')
 #  materials_WITH_REFLECTION  - flag for reflection DLL
+#  materials_BIO_LIBRARY  - library targets to link against (Boost I/O library)
+#  materials_REFLECTION_LIBRARY - library targets to link against (reflection library)
 
 #-----------------------------------------------------------------------
 # This program is free software: you can redistribute it and/or modify
@@ -23,8 +25,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-----------------------------------------------------------------------
 
-set(materials_WITH_BIO        @MATERIALS_WITH_BIO@)
-set(materials_WITH_REFLECTION @MATERIALS_WITH_REFLECTION@)
+#set(materials_WITH_BIO        @MATERIALS_WITH_BIO@)
+#set(materials_WITH_REFLECTION @MATERIALS_WITH_REFLECTION@)
+
 set(materials_DATATOOLS_DIR   @datatools_DIR@)
 set(materials_DATA_DIR        @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@)
 
@@ -61,12 +64,6 @@ set(materials_THIRD_PARTY_INCLUDE_DIRS
   @datatools_INCLUDE_DIRS@
   )
 
-# if(materials_WITH_REFLECTION)
-#   list(INSERT materials_THIRD_PARTY_INCLUDE_DIRS 0
-#      @CAMP_INCLUDE_DIR@
-#   )
-# endif()
-
 #-----------------------------------------------------------------------
 # Set materials definitions, include paths and library variables
 #
@@ -83,13 +80,13 @@ set(materials_INCLUDE_DIRS
 # Set materials_LIBRARIES variable
 set(materials_LIBRARY materials CACHE PATH "Path to materials library")
 
-if(materials_WITH_BIO)
-  set(materials_BIO_LIBRARY materials_bio)
-endif()
+# if(materials_WITH_BIO)
+#   set(materials_BIO_LIBRARY materials_bio)
+# endif()
 
-if(materials_WITH_REFLECTION)
-  set(materials_REFLECTION_LIBRARY materials_reflection)
-endif()
+# if(materials_WITH_REFLECTION)
+#   set(materials_REFLECTION_LIBRARY materials_reflection)
+# endif()
 
 set(materials_LIBRARIES ${materials_LIBRARY})
 
