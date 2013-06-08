@@ -159,9 +159,6 @@ if [ "x${option}" = "x--cflags" ]; then
         echo -n "`mygsl-config --cflags` "
         echo -n "`materials-config --cflags` "
 	echo -n "`clhep-config --include` "
-	if [ ${with_reflection} -eq 1 ]; then
- 	    echo -n "`camp-config --cflags` "
-	fi
 	echo ""
     ) ###| python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py
     my_exit 0
@@ -254,9 +251,6 @@ if [ "x${option}" = "x--ldflags" ]; then
         echo -n "`mygsl-config --ldflags ${ldflags_abs_path_option}` "
 	echo -n "`materials-config --ldflags ${ldflags_abs_path_option}` "
 	echo -n "`clhep-config --libs` "
-	if [ ${with_reflection} -eq 1 ]; then
- 	    echo -n "`camp-config --ldflags` "
-	fi
 	echo -n "-ldl "
 	echo ""
     ) ###| python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py -r

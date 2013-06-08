@@ -357,10 +357,6 @@ include_directories(
   ${CLHEP_INCLUDE_DIR}
   )
 
-if ( GEOMTOOLS_WITH_REFLECTION )
-  include_directories( ${CAMP_INCLUDE_DIR} )
-endif ()
-
 add_library(geomtools SHARED
   ${geomtools_PUBLIC_HEADERS}
   ${geomtools_detail_HEADERS}
@@ -380,20 +376,12 @@ set_target_properties(geomtools
   )
 
 
-if ( GEOMTOOLS_WITH_REFLECTION )
-  target_link_libraries(geomtools
+target_link_libraries(geomtools
      ${mygsl_LIBRARIES}
      ${materials_LIBRARIES}
      ${CLHEP_LIBRARIES}
-     ${CAMP_LIBRARIES}
-     ${CMAKE_DL_LIBS})
-else ()
-  target_link_libraries(geomtools
-     ${mygsl_LIBRARIES}
-     ${materials_LIBRARIES}
-     ${CLHEP_LIBRARIES}
-     ${CMAKE_DL_LIBS})
-endif ()
+     ${CMAKE_DL_LIBS}
+  )
 
 set(GEOMTOOLS_TARGETS geomtools)
 

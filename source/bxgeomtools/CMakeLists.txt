@@ -78,15 +78,12 @@ find_package(mygsl 4.0.0 REQUIRED)
 # - materials
 find_package(materials 4.0.0 REQUIRED)
 
-###message ( STATUS "********** CMAKE_MODULE_PATH='${CMAKE_MODULE_PATH}' ")
-
 # - CLHEP
 find_package(CLHEP 2.1.0.1 REQUIRED NOMODULE)
 
 # - CAMP
 if (GEOMTOOLS_WITH_REFLECTION)
   set (GEOMTOOLS_WITH_REFLECTION 1)
-  find_package(CAMP 0.7.1 REQUIRED)
 else()
   set (GEOMTOOLS_WITH_REFLECTION 0)
 endif ()
