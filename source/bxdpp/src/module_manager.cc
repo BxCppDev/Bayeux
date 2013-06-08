@@ -190,22 +190,22 @@ namespace dpp {
                 std::logic_error,
                 "Module manager is already initialized !");
 
-    if (setup_.has_flag ("debug")) {
-      set_debug (true);
-    }
+    datatools::logger::priority p
+      = datatools::logger::extract_logging_configuration(setup_,
+                                                         datatools::logger::PRIO_WARNING);
+    DT_THROW_IF(p == datatools::logger::PRIO_UNDEFINED,
+                std::logic_error,
+                "Invalid logging priority !");
+    set_logging_priority(p);
 
-    if (setup_.has_flag ("verbose")) {
-      set_verbose (true);
-    }
-
-    if (setup_.has_key ("logging.priority")) {
-      std::string pl = setup_.fetch_string ("logging_priority");
-      datatools::logger::priority p = datatools::logger::get_priority(pl);
-      DT_THROW_IF(p == datatools::logger::PRIO_UNDEFINED,
-                  std::logic_error,
-                  "Invalid logging priority '" << pl << "' !");
-      set_logging_priority (p);
-    }
+    // if (setup_.has_key ("logging.priority")) {
+    //   std::string pl = setup_.fetch_string ("logging.priority");
+    //   datatools::logger::priority p = datatools::logger::get_priority(pl);
+    //   DT_THROW_IF(p == datatools::logger::PRIO_UNDEFINED,
+    //               std::logic_error,
+    //               "Invalid logging priority '" << pl << "' !");
+    //   set_logging_priority (p);
+    // }
 
     if (setup_.has_flag ("factory.debug")) {
       _flags_ |= FACTORY_DEBUG;

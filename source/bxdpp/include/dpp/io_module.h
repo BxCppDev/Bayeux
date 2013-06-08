@@ -118,12 +118,12 @@ namespace dpp {
     simple_brio_data_sink   * _brio_sink_;   //!< Boost/ROOT (brio) data writer
 
     // Services:
-    std::string                             _Ctx_label_;      //!< The label of the context service
+    std::string            _Ctx_label_;      //!< The label of the context service
     dpp::context_service * _Ctx_service_;    //!< The context service
 
     /*
     // Future ?
-    string                                  _IO_label_;      //!< The label of the I/O service
+    string                      _IO_label_;      //!< The label of the I/O service
     dpp::io_service           * _IO_service_;    //!< The I/O service
 
     */
