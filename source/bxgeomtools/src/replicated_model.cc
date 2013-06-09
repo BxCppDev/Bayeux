@@ -58,16 +58,6 @@ namespace geomtools {
   void replicated_model::set_model (const i_model & model_)
   {
     DT_THROW_IF (is_constructed (), std::logic_error, "Operation not allowed ! Model has already been constructed");
-
-    // check if model has a logical volume with a stackable shape:
-    const i_shape_3d & shape = model_.get_logical ().get_shape ();
-    // if (! i_shape_3d::is_stackable (model_.get_logical ().get_shape ()))
-    //   {
-    //     ostringstream message;
-    //     message << "geomtools::replicated_model::set_model: "
-    //             << "Model '" << model_.get_name () << "' is not stackable ! "
-    //     throw logic_error (message.str ());
-    //   }
     _model_ = &model_;
     return;
   }
