@@ -13,8 +13,6 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   const geomtools::box & grid_model::get_box () const
   {
     return _solid_;
@@ -57,17 +55,7 @@ namespace geomtools {
 
   void grid_model::set_model (const i_model & model_)
   {
-    assert_unconstructed ("geomtools::grid_model::set_model");
-
-    // check if model has a logical volume with a stackable shape:
-    const i_shape_3d & shape = model_.get_logical ().get_shape ();
-    // if (! i_shape_3d::is_stackable (model_.get_logical ().get_shape ()))
-    //   {
-    //     ostringstream message;
-    //     message << "geomtools::grid_model::set_model: "
-    //             << "Model '" << model_.get_name () << "' is not stackable ! "
-    //     throw logic_error (message.str ());
-    //   }
+    DT_THROW_IF (is_constructed (), std::logic_error, "Operation not allowed ! Model has already been constructed yet");
     _model_ = &model_;
     return;
   }
@@ -77,7 +65,7 @@ namespace geomtools {
     return *_model_;
   }
 
-  string grid_model::get_model_id () const
+  std::string grid_model::get_model_id () const
   {
     return "geomtools::grid_model";
   }
@@ -85,13 +73,13 @@ namespace geomtools {
   grid_model::grid_model () : i_boxed_model ()
   {
     _model_ = 0;
-    _x_ = numeric_limits<double>::quiet_NaN ();
-    _y_ = numeric_limits<double>::quiet_NaN ();
-    _z_ = numeric_limits<double>::quiet_NaN ();
+    _x_ = std::numeric_limits<double>::quiet_NaN ();
+    _y_ = std::numeric_limits<double>::quiet_NaN ();
+    _z_ = std::numeric_limits<double>::quiet_NaN ();
     _number_of_items_[0] = 0;
     _number_of_items_[1] = 0;
-    _step_[0] = numeric_limits<double>::quiet_NaN ();
-    _step_[1] = numeric_limits<double>::quiet_NaN ();
+    _step_[0] = std::numeric_limits<double>::quiet_NaN ();
+    _step_[1] = std::numeric_limits<double>::quiet_NaN ();
     return;
   }
 
@@ -100,28 +88,16 @@ namespace geomtools {
     return;
   }
 
-  void grid_model::_at_construct (const string & name_,
-                                              const datatools::properties & config_,
-                                              models_col_type * models_)
+  void grid_model::_at_construct (const std::string & name_,
+                                  const datatools::properties & config_,
+                                  models_col_type * models_)
   {
-    bool devel = false;
-    if (devel) clog << "DEVEL: grid_model::_at_construct: Entering..." << endl;
+    DT_LOG_TRACE (get_logging_priority (), "Entering...");
     set_name (name_);
-    double x;
-    double y;
-    double z;
-    string material_name; // = material::constants::instance ().MATERIAL_REF_DEFAULT;
-    string model_name;
-    size_t number_of_items[2];
-    number_of_items[0] = number_of_items[1] = 0;
-    double step[2];
-    string grid_daughter_label;
-    string grid_plane_label = "";
-    double length_unit = CLHEP::mm;
 
     /*** material ***/
-    DT_THROW_IF (! config_.has_key ("material.ref"), logic_error, "Missing 'material.ref' property !");
-    material_name = config_.fetch_string ("material.ref");
+    DT_THROW_IF (! config_.has_key ("material.ref"), std::logic_error, "Missing 'material.ref' property !");
+    std::string material_name = config_.fetch_string ("material.ref");
 
     if (config_.has_flag ("grid.force_stackable"))
       {
@@ -129,178 +105,125 @@ namespace geomtools {
         config_.export_and_rename_starting_with(stackable_config,
                                                 "grid.force_stackable.",
                                                 stackable::STACKABLE_PREFIX);
-        DT_THROW_IF (! _sd_.initialize(stackable_config), logic_error,
+        DT_THROW_IF (! _sd_.initialize(stackable_config), std::logic_error,
                      "Cannot build the stackable data !");
       }
 
+    double length_unit = CLHEP::mm;
     if (config_.has_key ("length_unit"))
       {
-        string lunit_str = config_.fetch_string ("length_unit");
+        const std::string lunit_str = config_.fetch_string ("length_unit");
         length_unit = datatools::units::get_length_unit_from (lunit_str);
       }
 
+    std::string grid_daughter_label;
     if (config_.has_key ("grid.daughter_label"))
       {
         grid_daughter_label = config_.fetch_string ("grid.daughter_label");
       }
 
-    DT_THROW_IF (! config_.has_key ("grid.plane"),std::logic_error,
-                 "Missing 'grid.plane' property !");
-    grid_plane_label = config_.fetch_string ("grid.plane");
+    DT_THROW_IF (! config_.has_key ("grid.plane"), std::logic_error, "Missing 'grid.plane' property !");
+    const std::string grid_plane_label = config_.fetch_string ("grid.plane");
 
+    size_t number_of_items[2];
+    number_of_items[0] = number_of_items[1] = 0;
+    double step[2];
     // XXX
     if (grid_plane_label == "xy") {
-
       // Numbers of steps :
-      DT_THROW_IF (! config_.has_key ("grid.x.number_of_items"),logic_error,
+      DT_THROW_IF (! config_.has_key ("grid.x.number_of_items"),
+                   std::logic_error,
                    "Missing 'grid.x.number_of_items' property !");
       number_of_items[0] = config_.fetch_integer ("grid.x.number_of_items");
 
-      DT_THROW_IF (! config_.has_key ("grid.y.number_of_items"),logic_error,
+      DT_THROW_IF (! config_.has_key ("grid.y.number_of_items"),
+                   std::logic_error,
                    "Missing 'grid.y.number_of_items' property !");
       number_of_items[1] = config_.fetch_integer ("grid.y.number_of_items");
 
       // Steps :
-      if (config_.has_key ("grid.x.step")) {
-        step[0] = config_.fetch_real ("grid.x.step");
-        DT_THROW_IF (step[0] <= 0.0 , logic_error,
-                     "Invalid value for 'grid.x.step' property !");
-        if (! config_.has_explicit_unit ("grid.x.step")) step[0] *= length_unit;
-      }
-      else {
-        DT_THROW_IF(true, logic_error, "Missing 'grid.x.step' property !");
-      }
-      if (config_.has_key ("grid.y.step")) {
-        step[1] = config_.fetch_real ("grid.y.step");
-        DT_THROW_IF (step[1] <= 0.0, logic_error,
-                     "Invalid value for 'grid.y.step' property !");
-        if (! config_.has_explicit_unit ("grid.y.step")) step[1] *= length_unit;
-      }
-      else {
-        DT_THROW_IF(true, logic_error, "Missing 'grid.z.step' property !");
-      }
+      DT_THROW_IF (! config_.has_key ("grid.x.step"), std::logic_error, "Missing 'grid.x.step' property !");
+      step[0] = config_.fetch_real ("grid.x.step");
+      DT_THROW_IF (step[0] <= 0.0, std::logic_error, "Invalid value for 'grid.x.step' property !");
+      if (! config_.has_explicit_unit ("grid.x.step")) step[0] *= length_unit;
 
+      DT_THROW_IF (! config_.has_key ("grid.y.step"), std::logic_error, "Missing 'grid.y.step' property !");
+      step[1] = config_.fetch_real ("grid.y.step");
+      DT_THROW_IF (step[1] <= 0.0, std::logic_error, "Invalid value for 'grid.y.step' property !");
+      if (! config_.has_explicit_unit ("grid.y.step")) step[1] *= length_unit;
     }
     else if (grid_plane_label == "xz") {
-
       // Numbers of steps :
-      DT_THROW_IF (!config_.has_key ("grid.x.number_of_items"),logic_error,
+      DT_THROW_IF (! config_.has_key ("grid.x.number_of_items"),
+                   std::logic_error,
                    "Missing 'grid.x.number_of_items' property !");
       number_of_items[0] = config_.fetch_integer ("grid.x.number_of_items");
 
-      DT_THROW_IF (!config_.has_key ("grid.z.number_of_items"),logic_error,
+      DT_THROW_IF (! config_.has_key ("grid.z.number_of_items"),
+                   std::logic_error,
                    "Missing 'grid.z.number_of_items' property !");
       number_of_items[1] = config_.fetch_integer ("grid.z.number_of_items");
 
       // Steps :
-      if (config_.has_key ("grid.x.step"))
-        {
-          step[0] = config_.fetch_real ("grid.x.step");
-          DT_THROW_IF (step[0] <= 0.0 , logic_error, "Invalid value for 'grid.x.step' property !");
-          if (! config_.has_explicit_unit ("grid.x.step")) step[0] *= length_unit;
-        }
-      else {
-        DT_THROW_IF(true, logic_error, "Missing 'grid.x.step' property !");
-      }
+      DT_THROW_IF (! config_.has_key ("grid.x.step"), std::logic_error, "Missing 'grid.x.step' property !");
+      step[0] = config_.fetch_real ("grid.x.step");
+      DT_THROW_IF (step[0] <= 0.0, std::logic_error, "Invalid value for 'grid.x.step' property !");
+      if (! config_.has_explicit_unit ("grid.x.step")) step[0] *= length_unit;
 
-      DT_THROW_IF (! config_.has_key ("grid.z.step"), logic_error, "Missing 'grid.z.step' property !");
+      DT_THROW_IF (! config_.has_key ("grid.z.step"), std::logic_error, "Missing 'grid.z.step' property !");
       step[1] = config_.fetch_real ("grid.z.step");
-      DT_THROW_IF (step[1] <= 0.0 ,logic_error,
-                   "Invalid value for 'grid.z.step' property !");
+      DT_THROW_IF (step[1] <= 0.0, std::logic_error, "Invalid value for 'grid.z.step' property !");
       if (! config_.has_explicit_unit ("grid.z.step")) step[1] *= length_unit;
     }
     else if (grid_plane_label == "yz") {
       // Numbers of steps :
-      DT_THROW_IF (!config_.has_key ("grid.y.number_of_items"), logic_error,
+      DT_THROW_IF (! config_.has_key ("grid.y.number_of_items"),
+                   std::logic_error,
                    "Missing 'grid.y.number_of_items' property !");
       number_of_items[0] = config_.fetch_integer ("grid.y.number_of_items");
-      DT_THROW_IF (!config_.has_key ("grid.z.number_of_items"), logic_error,
+      DT_THROW_IF (! config_.has_key ("grid.z.number_of_items"),
+                   std::logic_error,
                    "Missing 'grid.z.number_of_items' property !");
       number_of_items[1] = config_.fetch_integer ("grid.z.number_of_items");
       // Steps :
-      DT_THROW_IF (!config_.has_key ("grid.y.step"), logic_error, "Missing 'grid.y.step' property !");
+      DT_THROW_IF (! config_.has_key ("grid.y.step"), std::logic_error, "Missing 'grid.y.step' property !");
       step[0] = config_.fetch_real ("grid.y.step");
-      DT_THROW_IF (step[0] <= 0.0 , logic_error, "Invalid value for 'grid.y.step' property !");
+      DT_THROW_IF (step[0] <= 0.0, std::logic_error, "Invalid value for 'grid.y.step' property !");
       if (! config_.has_explicit_unit ("grid.y.step")) step[0] *= length_unit;
-      DT_THROW_IF (! config_.has_key ("grid.z.step"), logic_error,"Missing 'grid.z.step' property !");
+      DT_THROW_IF (! config_.has_key ("grid.z.step"), std::logic_error, "Missing 'grid.z.step' property !");
       step[1] = config_.fetch_real ("grid.z.step");
-      DT_THROW_IF (step[1] <= 0.0 , logic_error, "Invalid value for 'grid.z.step' property !");
+      DT_THROW_IF (step[1] <= 0.0 , std::logic_error, "Invalid value for 'grid.z.step' property !");
       if (! config_.has_explicit_unit ("grid.z.step")) step[1] *= length_unit;
     } else {
-      DT_THROW_IF(true,logic_error,"Invalid grid plane label '" << grid_plane_label << "' property !");
+      DT_THROW_IF (true, std::logic_error, "Invalid grid plane label '" << grid_plane_label << "' property !");
     }
-
-    if (config_.has_key ("grid.model"))
-      {
-        model_name = config_.fetch_string ("grid.model");
-      }
-    else
-      {
-        ostringstream message;
-        message << "geomtools::grid_model::_at_construct: "
-                << "Missing 'grid.model' property !";
-        throw logic_error (message.str ());
-      }
-
     _grid_plane_label_ = grid_plane_label;
 
-    if (number_of_items[0] == 0)
-      {
-        ostringstream message;
-        message << "geomtools::grid_model::_at_construct: "
-                << "Number of items on first axis is zero !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (! config_.has_key ("grid.model"), std::logic_error, "Missing 'grid.model' property !");
+    const std::string model_name = config_.fetch_string ("grid.model");
 
-    if (number_of_items[1] == 0)
-      {
-        ostringstream message;
-        message << "geomtools::grid_model::_at_construct: "
-                << "Number of items on second axis is zero !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (number_of_items[0] == 0, std::logic_error, "Number of items on first axis is zero !");
+    DT_THROW_IF (number_of_items[1] == 0, std::logic_error, "Number of items on second axis is zero !");
 
     _number_of_items_[0] = number_of_items[0];
     _number_of_items_[1] = number_of_items[1];
     _step_[0] = step[0];
     _step_[1] = step[1];
 
-    if (! models_)
-      {
-        ostringstream message;
-        message << "geomtools::grid_model::_at_construct: "
-                << "Missing logicals dictionary !";
-        throw logic_error (message.str ());
-      }
-
+    DT_THROW_IF (! models_, std::logic_error, "Missing logicals dictionary !");
     // Stackable model:
     {
-      models_col_type::const_iterator found =
-        models_->find (model_name);
-      if (found != models_->end ())
-        {
-          set_model (dynamic_cast<const i_model &>(*(found->second)));
-        }
-      else
-        {
-          ostringstream message;
-          message << "geomtools::grid_model::_at_construct: "
-                  << "Cannot find model with name '"
-                  << model_name << "' !";
-          throw logic_error (message.str ());
-        }
+      models_col_type::const_iterator found = models_->find (model_name);
+      DT_THROW_IF (found == models_->end (), std::logic_error, "Cannot find model with name '" << model_name << "' !");
+      set_model (dynamic_cast<const i_model &>(*(found->second)));
     }
 
-    double dx, dy, dz;
-    datatools::invalidate(dx);
-    datatools::invalidate(dy);
-    datatools::invalidate(dz);
     const i_shape_3d & shape = _model_->get_logical ().get_shape ();
     stackable_data sd;
     i_shape_3d::pickup_stackable (shape, sd);
-    dx = sd.get_xmax () - sd.get_xmin ();
-    dy = sd.get_ymax () - sd.get_ymin ();
-    dz = sd.get_zmax () - sd.get_zmin ();
+    double dx = sd.get_xmax () - sd.get_xmin ();
+    double dy = sd.get_ymax () - sd.get_ymin ();
+    double dz = sd.get_zmax () - sd.get_zmin ();
     if (_sd_.is_valid_weak())
       {
         if (_grid_plane_label_ == "xy")
@@ -398,12 +321,7 @@ namespace geomtools {
       {
         double x = config_.fetch_real ("x");
         if (! config_.has_explicit_unit ("x")) x *= length_unit;
-        if (x < _x_ ) {
-          std::ostringstream message;
-          message << "geomtools::grid_model::_at_construct: "
-                  << "Value for 'x' property is too small (<" << _x_ / CLHEP::mm << " mm) !";
-          throw logic_error (message.str ());
-        }
+        DT_THROW_IF (x < _x_, std::logic_error, "Value for 'x' property is too small (<" << _x_ / CLHEP::mm << " mm) !");
         _x_ = x;
       }
 
@@ -411,12 +329,7 @@ namespace geomtools {
       {
         double y = config_.fetch_real ("y");
         if (! config_.has_explicit_unit ("y")) y *= length_unit;
-        if (y < _y_ ) {
-          std::ostringstream message;
-          message << "geomtools::grid_model::_at_construct: "
-                  << "Value for 'y' property is too small (<" << _y_ / CLHEP::mm << " mm) !";
-          throw logic_error (message.str ());
-        }
+        DT_THROW_IF (y < _y_, std::logic_error, "Value for 'y' property is too small (<" << _y_ / CLHEP::mm << " mm) !");
         _y_ = y;
       }
 
@@ -424,12 +337,7 @@ namespace geomtools {
       {
         double z = config_.fetch_real ("z");
         if (! config_.has_explicit_unit ("z")) z *= length_unit;
-        if (z < _z_ ) {
-          std::ostringstream message;
-          message << "geomtools::grid_model::_at_construct: "
-                  << "Value for 'z' property is too small (<" << _z_ / CLHEP::mm << " mm) !";
-          throw logic_error (message.str ());
-        }
+        DT_THROW_IF (z < _z_, std::logic_error, "Value for 'z' property is too small (<" << _z_ / CLHEP::mm << " mm) !");
         _z_ = z;
       }
 
@@ -437,10 +345,8 @@ namespace geomtools {
     _solid_.set_x (_x_);
     _solid_.set_y (_y_);
     _solid_.set_z (_z_);
-    if (! _solid_.is_valid ())
-      {
-        throw logic_error ("geomtools::grid_model::_at_construct: Invalid solid !");
-      }
+    DT_THROW_IF (! _solid_.is_valid (), std::logic_error, "Invalid solid !");
+
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (_solid_);
     if (material_name.empty() && _model_->get_logical ().has_material_ref ())
@@ -464,39 +370,39 @@ namespace geomtools {
     _phys_.set_logical (_model_->get_logical ());
     _phys_.set_mother (_logical);
 
-    if (devel) clog << "DEVEL: grid_model::_at_construct: Exiting." << endl;
+    DT_LOG_TRACE (get_logging_priority (), "Exiting.");
     return;
   }
 
-  void grid_model::tree_dump (ostream & out_,
-                                          const string & title_ ,
-                                          const string & indent_,
-                                          bool inherit_) const
+  void grid_model::tree_dump (std::ostream & out_,
+                              const std::string & title_ ,
+                              const std::string & indent_,
+                              bool inherit_) const
   {
-    string indent;
+    std::string indent;
     if (! indent_.empty ()) indent = indent_;
     i_model::tree_dump (out_, title_, indent, true);
 
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "X : " << get_x () / CLHEP::mm << " mm" << endl;
+         << "X : " << get_x () / CLHEP::mm << " mm" << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "Y : " << get_y () / CLHEP::mm << " mm" << endl;
+         << "Y : " << get_y () / CLHEP::mm << " mm" << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "Z : " << get_z () / CLHEP::mm << " mm" << endl;
+         << "Z : " << get_z () / CLHEP::mm << " mm" << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "Grid label      : '" << _grid_plane_label_ << "'" << endl;
+         << "Grid label      : '" << _grid_plane_label_ << "'" << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "Grid dimensions : " << _number_of_items_[0] << 'x'  << _number_of_items_[1] << endl;
+         << "Grid dimensions : " << _number_of_items_[0] << 'x'  << _number_of_items_[1] << std::endl;
 
     {
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Grid placement (box) : " << endl;
+           << "Grid placement (box) : " << std::endl;
       {
-        ostringstream indent_oss;
+        std::ostringstream indent_oss;
         indent_oss << indent;
         indent_oss << datatools::i_tree_dumpable::skip_tag;
         _grid_placement_.tree_dump (out_, "", indent_oss.str ());
@@ -505,9 +411,9 @@ namespace geomtools {
 
     {
       out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
-           << "Solid : " << endl;
+           << "Solid : " << std::endl;
       {
-        ostringstream indent_oss;
+        std::ostringstream indent_oss;
         indent_oss << indent;
         indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
         _solid_.tree_dump (out_, "", indent_oss.str ());

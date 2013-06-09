@@ -272,13 +272,7 @@ namespace geomtools {
         if (config_.has_key (surrounding_item_prop.str ())) {
           surrounding_model_name = config_.fetch_string (surrounding_item_prop.str ());
         } else {
-          // if (devel)
-          //   {
-          //     ostringstream message;
-          //     message << "surrounded_boxed_model::_at_construct: "
-          //             << "No '" << surrounding_item_prop.str () << "' property !";
-          //     clog << datatools::io::devel << message.str () << endl;
-          //   }
+          DT_LOG_TRACE (get_logging_priority (), "No '" << surrounding_item_prop.str () << "' property !");
           continue;
         }
         // attempt to extract a user defined label:
