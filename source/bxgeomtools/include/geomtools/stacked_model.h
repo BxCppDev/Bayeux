@@ -1,23 +1,23 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* stacked_model.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-02
  * Last modified: 2010-10-16
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *
  *   Geometry model with multiple stacked boxes.
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
 #ifndef GEOMTOOLS_STACKED_MODEL_H_
 #define GEOMTOOLS_STACKED_MODEL_H_ 1
 
-#include <string> 
+#include <string>
 #include <iostream>
 #include <map>
 
@@ -31,7 +31,7 @@ namespace geomtools {
 
   // define a geometry model with some stacked boxed models along
   // a specific axis (X, Y or Z)
-  GEOMTOOLS_BOXED_MODEL_CLASS_DECLARE(stacked_model) 
+  GEOMTOOLS_BOXED_MODEL_CLASS_DECLARE(stacked_model)
   {
   public:
 
@@ -52,7 +52,7 @@ namespace geomtools {
 
     struct stacked_item
     {
-      std::string           label;
+      std::string      label;
       const i_model *  model;
       placement        placmt;
       physical_volume  phys;
@@ -71,75 +71,73 @@ namespace geomtools {
 
       double get_limit_max () const;
 
-      const std::string & get_label () const
-      {
-        return label;
-      }
-      const i_model & get_model () const
-      {
-        return *model;
-      }
-      const placement & get_placement () const
-      {
-        return placmt;
-      }
-      const physical_volume & get_physical_volume () const
-      {
-        return phys;
-      }
+      const std::string & get_label () const;
+
+      const i_model & get_model () const;
+
+      const placement & get_placement () const;
+
+      const physical_volume & get_physical_volume () const;
     };
 
     typedef std::map<int, stacked_item> stacked_dict_type;
     typedef std::map<std::string, int> labels_dict_type;
 
-  private:
+  public:
 
-    int _get_stacking_axis_ () const;
-    const std::string & _get_material_name_ () const;
-
-  public: 
     const std::string & get_material_name () const;
+
     void set_material_name (const std::string &);
+
     void set_stacking_axis (int a_);
+
     int get_stacking_axis () const;
+
     bool is_stacking_along_x () const;
+
     bool is_stacking_along_y () const;
+
     bool is_stacking_along_z () const;
 
     virtual const geomtools::box & get_box () const;
+
     const geomtools::box & get_solid () const;
 
     size_t get_number_of_stacked_models () const;
+
     void add_stacked_model (int i_, const i_model &, const std::string & label_ = "");
+
     bool has_stacked_model (const std::string & label_) const;
+
     const i_model & get_stacked_model (int i_) const;
+
     const stacked_item & get_stacked_item (int i_) const;
+
     const i_model & get_stacked_model (const std::string & label_) const;
+
     const stacked_item & get_stacked_item (const std::string & label_) const;
+
     const labels_dict_type & get_labels () const;
+
     const stacked_dict_type & get_models () const;
-
-  public:
-  
-    stacked_model ();
-  
-    virtual ~stacked_model ();
-
-  public:
 
     virtual std::string get_model_id () const;
 
+    stacked_model ();
+
+    virtual ~stacked_model ();
+
   protected:
-  
+
     virtual void _at_construct (const std::string & name_,
                                 const datatools::properties & config_,
                                 models_col_type * models_ = 0);
-      
-  public: 
 
-    virtual void tree_dump (std::ostream & out_         = std::clog, 
-                            const std::string & title_  = "", 
-                            const std::string & indent_ = "", 
+  public:
+
+    virtual void tree_dump (std::ostream & out_         = std::clog,
+                            const std::string & title_  = "",
+                            const std::string & indent_ = "",
                             bool inherit_          = false) const;
 
   private:
@@ -154,11 +152,11 @@ namespace geomtools {
 
     // 2011-12-05 FM : add support for additional internal objects :
     // internal items :
-    MWIM                    _internals_;
+    MWIM              _internals_;
 
     // registration interface :
     GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(stacked_model);
-  
+
   };
 
 } // end of namespace geomtools

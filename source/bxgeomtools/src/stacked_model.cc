@@ -18,14 +18,12 @@
 
 namespace geomtools {
 
-  using namespace std;
-
-  const string stacked_model::STACKED_PROPERTY_PREFIX = "stacked.";
-  const string stacked_model::STACKED_MODEL_PROPERTY_PREFIX = "stacked.model_";
-  const string stacked_model::STACKED_LABEL_PROPERTY_PREFIX = "stacked.label_";
-  const string stacked_model::DEFAULT_STACKED_LABEL_PREFIX  = "stacked";
+  const std::string stacked_model::STACKED_PROPERTY_PREFIX       = "stacked.";
+  const std::string stacked_model::STACKED_MODEL_PROPERTY_PREFIX = "stacked.model_";
+  const std::string stacked_model::STACKED_LABEL_PROPERTY_PREFIX = "stacked.label_";
+  const std::string stacked_model::DEFAULT_STACKED_LABEL_PREFIX  = "stacked";
   const double stacked_model::DEFAULT_MECHANICS_PLAY = 0.0 * CLHEP::mm;
-  const double stacked_model::DEFAULT_NUMERICS_PLAY = 0.0 * CLHEP::mm;
+  const double stacked_model::DEFAULT_NUMERICS_PLAY  = 0.0 * CLHEP::mm;
 
 
   /****************************************************************/
@@ -58,112 +56,110 @@ namespace geomtools {
     return datatools::is_valid (limit_max);
   }
 
+  const std::string & stacked_model::stacked_item::get_label () const
+  {
+    return label;
+  }
+  const i_model & stacked_model::stacked_item::get_model () const
+  {
+    return *model;
+  }
+  const placement & stacked_model::stacked_item::get_placement () const
+  {
+    return placmt;
+  }
+  const physical_volume & stacked_model::stacked_item::get_physical_volume () const
+  {
+    return phys;
+  }
+
   /****************************************************************/
 
   // registration ID:
-  string stacked_model::get_model_id () const
+  std::string stacked_model::get_model_id () const
   {
     return "geomtools::stacked_model";
   }
 
-  const string & stacked_model::get_material_name () const
+  const std::string & stacked_model::get_material_name () const
   {
-    assert_constructed ("geomtools::stacked_model::get_material_name");
-    return _get_material_name_ ();
-  }
-
-  const string & stacked_model::_get_material_name_ () const
-  {
+    DT_THROW_IF (! is_constructed (), std::logic_error, "Operation not allowed ! Model has not been constructed yet");
     return _material_name_;
   }
 
-  void stacked_model::set_material_name (const string & mn_)
+  void stacked_model::set_material_name (const std::string & mn_)
   {
-    assert_unconstructed("geomtools::stacked_model::set_material_name");
-
+    DT_THROW_IF (is_constructed (), std::logic_error, "Operation not allowed ! Model has already been constructed yet");
     _material_name_ = mn_;
+    return;
   }
 
   void stacked_model::set_stacking_axis (int a_)
   {
-    assert_unconstructed ("geomtools::stacked_model::set_stacking_axis");
-
+    DT_THROW_IF (is_constructed (), std::logic_error, "Operation not allowed ! Model has already been constructed yet");
     DT_THROW_IF ((a_ < STACKING_ALONG_X) || (a_ > STACKING_ALONG_Z),
-                 logic_error, "Invalid stacking axis !");
+                 std::range_error, "Invalid stacking axis !");
     _stacking_axis_ = a_;
+    return;
   }
 
   int stacked_model::get_stacking_axis () const
   {
-    assert_constructed ("geomtools::stacked_model::get_stacking_axis");
-    return _get_stacking_axis_ ();
-  }
-
-  int stacked_model::_get_stacking_axis_ () const
-  {
+    DT_THROW_IF (! is_constructed (), std::logic_error, "Operation not allowed ! Model has not been constructed yet");
     return _stacking_axis_;
   }
 
   bool stacked_model::is_stacking_along_x () const
   {
-    return _get_stacking_axis_ () == STACKING_ALONG_X;
+    return _stacking_axis_ == STACKING_ALONG_X;
   }
 
   bool stacked_model::is_stacking_along_y () const
   {
-    return _get_stacking_axis_ () == STACKING_ALONG_Y;
+    return _stacking_axis_ == STACKING_ALONG_Y;
   }
 
   bool stacked_model::is_stacking_along_z () const
   {
-    return _get_stacking_axis_ () == STACKING_ALONG_Z;
+    return _stacking_axis_ == STACKING_ALONG_Z;
   }
 
   const geomtools::box & stacked_model::get_box () const
   {
-    assert_constructed ("geomtools::stacked_model::get_box");
+    DT_THROW_IF (! is_constructed (), std::logic_error, "Operation not allowed ! Model has not been constructed yet");
     return _solid_;
   }
 
   const geomtools::box & stacked_model::get_solid () const
   {
-    assert_constructed ("geomtools::stacked_model::get_solid");
+    DT_THROW_IF (! is_constructed (), std::logic_error, "Operation not allowed ! Model has not been constructed yet");
     return _solid_;
   }
 
-  void stacked_model::add_stacked_model (int i_, const i_model & model_, const string & label_)
+  void stacked_model::add_stacked_model (int i_, const i_model & model_, const std::string & label_)
   {
-    assert_unconstructed ("geomtools::stacked_model::add_stacked_model");
+    DT_THROW_IF (is_constructed (), std::logic_error, "Operation not allowed ! Model has not been constructed yet");
 
     stacked_dict_type::const_iterator found = _stacked_models_.find (i_);
-    if (found != _stacked_models_.end ())
-      {
-        ostringstream message;
-        message << "geomtools::stacked_model::add_stacked_model: "
-                << "Dictionary already has a model with "
-                << "index '" << i_ << "' !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (found != _stacked_models_.end (),
+                 std::logic_error,
+                 "Dictionary already has a model with " << "index '" << i_ << "' !");
     stacked_item bi;
     _stacked_models_[i_] = bi;
     _stacked_models_[i_].model = &model_;
     _stacked_models_[i_].placmt.invalidate ();
-    string label = label_;
+    std::string label = label_;
     if (label.empty ())
       {
-        ostringstream label_oss;
+        std::ostringstream label_oss;
         label_oss << DEFAULT_STACKED_LABEL_PREFIX << "__" << i_ << "__";
         label = label_oss.str ();
       }
     else
       {
-        if (_labels_.find (label) != _labels_.end ())
-          {
-            ostringstream message;
-            message << "geomtools::stacked_model::add_stacked_model: "
-                    << "Label '" << label << "' is already used !";
-            throw logic_error (message.str ());
-          }
+        DT_THROW_IF (_labels_.find (label) != _labels_.end (),
+                     std::logic_error,
+                     "Label '" << label << "' is already used !");
       }
     _stacked_models_[i_].label = label;
     _labels_[label] = i_;
@@ -185,77 +181,55 @@ namespace geomtools {
     return _stacked_models_.size ();
   }
 
-  bool stacked_model::has_stacked_model (const string & label_) const
+  bool stacked_model::has_stacked_model (const std::string & label_) const
   {
     labels_dict_type::const_iterator found = _labels_.find (label_);
     return found != _labels_.end ();
   }
 
-  const stacked_model::stacked_item &
-  stacked_model::get_stacked_item (const string & label_) const
+  const stacked_model::stacked_item & stacked_model::get_stacked_item (const std::string & label_) const
   {
     labels_dict_type::const_iterator found = _labels_.find (label_);
-    if (found == _labels_.end ())
-      {
-        ostringstream message;
-        message << "geomtools::stacked_model::get_stacked_item: "
-                << "Dictionary has no model with "
-                << "label '" << label_ << "' !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (found == _labels_.end (),
+                 std::logic_error,
+                 "Dictionary has no model with label '" << label_ << "' !");
     return (this->get_stacked_item (found->second));
   }
 
-  const stacked_model::stacked_item &
-  stacked_model::get_stacked_item (int i_) const
+  const stacked_model::stacked_item & stacked_model::get_stacked_item (int i_) const
   {
     stacked_dict_type::const_iterator found = _stacked_models_.find (i_);
-    if (found == _stacked_models_.end ())
-      {
-        ostringstream message;
-        message << "geomtools::stacked_model::get_stacked_item: "
-                << "Dictionary has no model item with "
-                << "index '" << i_ << "' !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (found == _stacked_models_.end (),
+                 std::logic_error,
+                 "Dictionary has no model item with index '" << i_ << "' !");
     return found->second;
   }
 
-  const i_model & stacked_model::get_stacked_model (const string & label_) const
+  const i_model & stacked_model::get_stacked_model (const std::string & label_) const
   {
     labels_dict_type::const_iterator found = _labels_.find (label_);
-    if (found == _labels_.end ())
-      {
-        ostringstream message;
-        message << "geomtools::stacked_model::get_stacked_model: "
-                << "Dictionary has no model with "
-                << "label '" << label_ << "' !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (found == _labels_.end (),
+                 std::logic_error,
+                 "Dictionary has no model with label '" << label_ << "' !");
     return this->get_stacked_model (found->second);
   }
 
   const i_model & stacked_model::get_stacked_model (int i_) const
   {
     stacked_dict_type::const_iterator found = _stacked_models_.find (i_);
-    if (found == _stacked_models_.end ())
-      {
-        ostringstream message;
-        message << "geomtools::stacked_model::get_stacked_model: "
-                << "Dictionary has no model with "
-                << "index '" << i_ << "' !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (found == _stacked_models_.end (),
+                 std::logic_error,
+                 "Dictionary has no model with index '" << i_ << "' !");
     return *(found->second.model);
   }
 
   // ctor:
   stacked_model::stacked_model () : i_boxed_model ()
   {
-    _material_name_ = "";
-    _stacking_axis_ = STACKING_ALONG_INVALID;
+    _material_name_  = "";
+    _stacking_axis_  = STACKING_ALONG_INVALID;
     _mechanics_play_ = DEFAULT_MECHANICS_PLAY;
-    _numerics_play_ = DEFAULT_NUMERICS_PLAY;
+    _numerics_play_  = DEFAULT_NUMERICS_PLAY;
     return;
   }
 
@@ -265,52 +239,25 @@ namespace geomtools {
     return;
   }
 
-  void stacked_model::_at_construct (const string & name_,
+  void stacked_model::_at_construct (const std::string & name_,
                                      const datatools::properties & config_,
                                      models_col_type * models_)
   {
-    bool devel = false;
-    if (config_.has_flag ("devel"))
-      {
-        devel = true;
-      }
-    if (devel)
-      {
-        clog << "DEVEL: stacked_model::_at_construct: Entering..." << endl;
-      }
+    DT_LOG_TRACE (get_logging_priority (),  "Entering...");
     set_name (name_);
-    size_t number_of_items;
-    string stacked_model_name;
-    string label_name;
-    string stacking_axis_label = "";
-    int    stacking_axis;
-    string material_name;
-    double x, y, z;
-    double lunit = CLHEP::mm;
-
-    if (config_.has_flag ("debug"))
-      {
-        set_debug (true);
-      }
 
     /*** material ***/
-    if (config_.has_key ("material.ref"))
-      {
-        material_name = config_.fetch_string ("material.ref");
-      }
-    else
-      {
-        ostringstream message;
-        message << "geomtools::stacked_model::_at_construct: "
-                << "Missing 'material.ref' property !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (! config_.has_key ("material.ref"),
+                 std::logic_error,
+                 "Missing 'material.ref' property !");
+    const std::string material_name = config_.fetch_string ("material.ref");
     set_material_name (material_name);
 
     /*** Length unit ***/
+    double lunit = CLHEP::mm;
     if (config_.has_key ("length_unit"))
       {
-        string length_unit_str = config_.fetch_string ("length_unit");
+        const std::string length_unit_str = config_.fetch_string ("length_unit");
         lunit = datatools::units::get_length_unit_from (length_unit_str);
       }
 
@@ -319,13 +266,9 @@ namespace geomtools {
       {
         double mechanics_play = config_.fetch_real ("mechanics_play");
         if (! config_.has_explicit_unit ("mechanics_play")) mechanics_play *= lunit;
-        if (mechanics_play < 0.0)
-          {
-            ostringstream message;
-            message << "geomtools::stacked_model::_at_construct: "
-                    << "Mechanics play '" <<  mechanics_play / CLHEP::mm << "' mm cannnot be negative !";
-            throw logic_error (message.str ());
-          }
+        DT_THROW_IF (mechanics_play < 0.0,
+                     std::logic_error,
+                     "Mechanics play '" <<  mechanics_play / CLHEP::mm << "' mm cannnot be negative !");
         _mechanics_play_ = mechanics_play;
       }
 
@@ -333,28 +276,16 @@ namespace geomtools {
       {
         double numerics_play = config_.fetch_real ("numerics_play");
         if (! config_.has_explicit_unit ("numerics_play")) numerics_play *= lunit;
-        if (numerics_play < 0.0)
-          {
-            ostringstream message;
-            message << "geomtools::stacked_model::_at_construct: "
-                    << "Numerics play '" <<  numerics_play / CLHEP::mm << "' mm cannnot be negative !";
-            throw logic_error (message.str ());
-          }
+        DT_THROW_IF (numerics_play < 0.0,
+                     std::logic_error,
+                     "Numerics play '" <<  numerics_play / CLHEP::mm << "' mm cannnot be negative !");
         _numerics_play_ = numerics_play;
       }
 
     /*** Stacking axis ***/
-    if (config_.has_key ("stacked.axis"))
-      {
-        stacking_axis_label = config_.fetch_string ("stacked.axis");
-      }
-    else
-      {
-        ostringstream message;
-        message << "geomtools::stacked_model::_at_construct: "
-                << "Missing 'stacked.axis' property !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (!config_.has_key ("stacked.axis"), std::logic_error, "Missing 'stacked.axis' property !");
+    const std::string stacking_axis_label = config_.fetch_string ("stacked.axis");
+    int stacking_axis;
     if (stacking_axis_label == "x")
       {
         stacking_axis = STACKING_ALONG_X;
@@ -367,86 +298,50 @@ namespace geomtools {
       {
         stacking_axis = STACKING_ALONG_Z;
       }
+    else
+      {
+        DT_THROW_IF (true, std::logic_error, "Unkown axis label '" << stacking_axis_label << "'");
+      }
     set_stacking_axis (stacking_axis);
 
     /*** number of stacked stacked models ***/
-    if (config_.has_key ("stacked.number_of_items"))
-      {
-        number_of_items = config_.fetch_integer ("stacked.number_of_items");
-      }
-    else
-      {
-        ostringstream message;
-        message << "geomtools::stacked_model::_at_construct: "
-                << "Missing 'stacked.number_of_items' property !";
-        throw logic_error (message.str ());
-      }
-
-    if (devel) cerr << "DEVEL: stacked_model::_at_construct: " << "step 1" << endl;
+    DT_THROW_IF (! config_.has_key ("stacked.number_of_items"),
+                 std::logic_error,
+                 "Missing 'stacked.number_of_items' property !");
+    const size_t number_of_items = config_.fetch_integer ("stacked.number_of_items");
 
     /*** check models ***/
-    if (! models_)
-      {
-        ostringstream message;
-        message << "geomtools::stacked_model::_at_construct: "
-                << "Missing logicals dictionary !";
-        throw logic_error (message.str ());
-      }
-
-    if (devel) cerr << "DEVEL: stacked_model::_at_construct: " << "step 2" << endl;
+    DT_THROW_IF (! models_, std::logic_error, "Missing logicals dictionary !");
 
     /*** loop over models to be stacked ***/
-    for (int i = 0; i < number_of_items; i++)
+    for (size_t i = 0; i < number_of_items; i++)
       {
-        string stacked_model_name;
-        string label_name;
-        ostringstream stacked_item_prop;
+        std::ostringstream stacked_item_prop;
         stacked_item_prop << STACKED_MODEL_PROPERTY_PREFIX << i;
-        if (config_.has_key (stacked_item_prop.str ()))
-          {
-            stacked_model_name = config_.fetch_string (stacked_item_prop.str ());
-          }
-        else
-          {
-            ostringstream message;
-            message << "geomtools::stacked_model::_at_construct: "
-                    << "Missing '" << stacked_item_prop.str () << "' property !";
-            throw logic_error (message.str ());
-          }
+        DT_THROW_IF (! config_.has_key (stacked_item_prop.str ()),
+                     std::logic_error,
+                     "Missing '" << stacked_item_prop.str () << "' property !");
+        const std::string stacked_model_name = config_.fetch_string (stacked_item_prop.str ());
+
         // attempt to extract a user defined label:
-        ostringstream label_item_prop;
+        std::ostringstream label_item_prop;
         label_item_prop << STACKED_LABEL_PROPERTY_PREFIX  << i;
+        std::string label_name;
         if (config_.has_key (label_item_prop.str ()))
           {
             label_name = config_.fetch_string (label_item_prop.str ());
           }
 
-        models_col_type::const_iterator found =
-          models_->find (stacked_model_name);
-        if (found != models_->end ())
-          {
-            // check if the model is stackable:
-            if (! i_shape_3d::is_stackable (found->second->get_logical ().get_shape ()))
-              {
-                ostringstream message;
-                message << "geomtools::stacked_model::_at_construct: "
-                        << "The embedded model '" << found->second->get_name ()
-                        << "' is not stackable !";
-                throw logic_error (message.str ());
-              }
-            add_stacked_model (i, *(found->second), label_name);
-          }
-        else
-          {
-            ostringstream message;
-            message << "geomtools::stacked_model::_at_construct: "
-                    << "Cannot find model with name '"
-                    << stacked_model_name << "' !";
-            throw logic_error (message.str ());
-          }
+        models_col_type::const_iterator found = models_->find (stacked_model_name);
+        DT_THROW_IF (found == models_->end (),
+                     std::logic_error,
+                     "Cannot find model with name '" << stacked_model_name << "' !");
+        // check if the model is stackable:
+        DT_THROW_IF (! i_shape_3d::is_stackable (found->second->get_logical ().get_shape ()),
+                     std::logic_error,
+                     "The embedded model '" << found->second->get_name () << "' is not stackable !");
+        add_stacked_model (i, *(found->second), label_name);
       }
-
-    if (devel) cerr << "DEVEL: stacked_model::_at_construct: " << "step 3" << endl;
 
     /*** compute main box dimensions ***/
     mygsl::min_max mmx;
@@ -459,7 +354,7 @@ namespace geomtools {
          i != _stacked_models_.end ();
          i++)
       {
-        int index = i->first;
+        const int index = i->first;
         const stacked_item & bi = i->second;
         const i_model * stacked_model = bi.model;
 
@@ -467,38 +362,26 @@ namespace geomtools {
 
         // try to get a stackable data from the shape:
         stackable_data the_SD;
-        if (! i_shape_3d::pickup_stackable (the_shape, the_SD))
+        DT_THROW_IF (! i_shape_3d::pickup_stackable (the_shape, the_SD),
+                     std::logic_error,
+                     "Cannot stack model '" << name_ << "' ('" << the_shape.get_shape_name () << "' solid shape) !");
+
+        DT_LOG_TRACE (get_logging_priority (),
+                      "Dump stackable data for '" << stacked_model->get_name () <<
+                      "' from '" << name_ << "'...");
+        if (get_logging_priority () >= datatools::logger::PRIO_TRACE)
           {
-            ostringstream message;
-            message << "geomtools::stacked_model::_at_construct: "
-                    << "Cannot stack model '" << name_ << "' ('"
-                    << the_shape.get_shape_name () << "' solid shape) !";
-            throw logic_error (message.str ());
+            the_SD.tree_dump (std::cerr);
           }
-
-        if (devel)
-          {
-            cerr << "DEVEL: stacked_model::_at_construct: " << "step 3d: dump stackable data for '" << stacked_model->get_name () << "' from '" << name_ << "'..." << endl;
-
-            the_SD.tree_dump (cerr, "geomtools::stacked_model::_at_construct: Stackable data:", "DEVEL: ");
-          }
-        if (devel) cerr << "DEVEL: stacked_model::_at_construct: " << "step 3e: gets..." << endl;
-
-        double gxmin = the_SD.get_xmin ();
-        double gymin = the_SD.get_ymin ();
-        double gzmin = the_SD.get_zmin ();
-        double gxmax = the_SD.get_xmax ();
-        double gymax = the_SD.get_ymax ();
-        double gzmax = the_SD.get_zmax ();
 
         // Parse special stacking position directives:
         double gmin, gmax;
         datatools::invalidate (gmin);
         datatools::invalidate (gmax);
         {
-          string stacked_model_name;
-          string label_name;
-          ostringstream stacked_min_prop;
+          std::string stacked_model_name;
+          std::string label_name;
+          std::ostringstream stacked_min_prop;
           stacked_min_prop << "stacked.limit_min_" << index;
           if (config_.has_key (stacked_min_prop.str ()))
             {
@@ -509,9 +392,9 @@ namespace geomtools {
             }
         }
         {
-          string stacked_model_name;
-          string label_name;
-          ostringstream stacked_max_prop;
+          std::string stacked_model_name;
+          std::string label_name;
+          std::ostringstream stacked_max_prop;
           stacked_max_prop << "stacked.limit_max_" << index;
           if (config_.has_key (stacked_max_prop.str ()))
             {
@@ -522,6 +405,12 @@ namespace geomtools {
             }
         }
 
+        double gxmin = the_SD.get_xmin ();
+        double gymin = the_SD.get_ymin ();
+        double gzmin = the_SD.get_zmin ();
+        double gxmax = the_SD.get_xmax ();
+        double gymax = the_SD.get_ymax ();
+        double gzmax = the_SD.get_zmax ();
         if (bi.has_limit_min ())
           {
             if (is_stacking_along_x ())
@@ -554,16 +443,15 @@ namespace geomtools {
           }
 
         // Compute the effective dimensions of the stacked item within the stack:
-        double full_x = gxmax - gxmin;
-        double full_y = gymax - gymin;
-        double full_z = gzmax - gzmin;
+        const double full_x = gxmax - gxmin;
+        const double full_y = gymax - gymin;
+        const double full_z = gzmax - gzmin;
 
         // Not sure of that:
         mmx.add (full_x);
         mmy.add (full_y);
         mmz.add (full_z);
 
-        if (devel) cerr << "DEVEL: stacked_model::_at_construct: " << "step 3f: mmx... add" << endl;
         if (is_stacking_along_x ())
           {
             stacked_x += full_x;
@@ -578,9 +466,6 @@ namespace geomtools {
           }
       }
 
-    if (devel) cerr << "DEVEL: stacked_model::_at_construct: " << "step 4" << endl;
-
-    double max = -1.0;
     if (is_stacking_along_x ())
       {
         stacked_y = mmy.get_max ();
@@ -603,52 +488,39 @@ namespace geomtools {
 
     if (config_.has_key ("x"))
       {
-        x = config_.fetch_real ("x");
+        double x = config_.fetch_real ("x");
         if (! config_.has_explicit_unit ("x")) x *= lunit;
-        if (x < stacked_x)
-          {
-            ostringstream message;
-            message << "geomtools::stacked_model::_at_construct: "
-                    << "Model '" << get_name () << "' : "
-                    << "Enforced X dimension '" << x / CLHEP::mm << "' mm (<" << stacked_x / CLHEP::mm << ") is too small for stacked components to fit !";
-            throw logic_error (message.str ());
-          }
+        DT_THROW_IF (x < stacked_x,
+                     std::logic_error,
+                     "Model '" << get_name () << "' : " <<
+                     "Enforced X dimension '" << x / CLHEP::mm << "' mm (<" << stacked_x / CLHEP::mm << ") " <<
+                     "is too small for stacked components to fit !");
         dim_x = x;
       }
 
     if (config_.has_key ("y"))
       {
-        y = config_.fetch_real ("y");
+        double y = config_.fetch_real ("y");
         if (! config_.has_explicit_unit ("y")) y *= lunit;
-        if (y < stacked_y)
-          {
-            ostringstream message;
-            message << "geomtools::stacked_model::_at_construct: "
-                    << "Model '" << get_name () << "' : "
-                    << "Enforced Y dimension '" << y / CLHEP::mm << "' mm (<" << stacked_y / CLHEP::mm << ") is too small for stacked components to fit !";
-            throw logic_error (message.str ());
-          }
+        DT_THROW_IF (y < stacked_y,
+                     std::logic_error,
+                     "Model '" << get_name () << "' : " <<
+                     "Enforced Y dimension '" << y / CLHEP::mm << "' mm (<" << stacked_y / CLHEP::mm << ") " <<
+                     "is too small for stacked components to fit !");
         dim_y = y;
       }
 
     if (config_.has_key ("z"))
       {
-        z = config_.fetch_real ("z");
+        double z = config_.fetch_real ("z");
         if (! config_.has_explicit_unit ("z")) z *= lunit;
-        if (z < stacked_z)
-          {
-            ostringstream message;
-            message << "geomtools::stacked_model::_at_construct: "
-                    << "Model '" << get_name () << "' : "
-                    << "Enforced Z dimension '" << z / CLHEP::mm << "' mm (<" << stacked_z / CLHEP::mm << ") is too small for stacked components to fit !";
-            throw logic_error (message.str ());
-          }
+        DT_THROW_IF (z < stacked_z,
+                     std::logic_error,
+                     "Model '" << get_name () << "' : " <<
+                     "Enforced Z dimension '" << z / CLHEP::mm << "' mm (<" << stacked_z / CLHEP::mm << ") " <<
+                     "is too small for stacked components to fit !");
         dim_z = z;
       }
-
-    if (devel) cerr << "DEVEL: stacked_model::_at_construct: " << "step 5" << endl;
-
-    _solid_.reset ();
 
     if (_mechanics_play_ > 0.0)
       {
@@ -662,17 +534,15 @@ namespace geomtools {
         dim_y += _numerics_play_;
         dim_z += _numerics_play_;
       }
+    _solid_.reset ();
     _solid_.set_x (dim_x);
     _solid_.set_y (dim_y);
     _solid_.set_z (dim_z);
-    if (! _solid_.is_valid ())
-      {
-        throw logic_error ("geomtools::stacked_model::_at_construct: Invalid solid !");
-      }
+    DT_THROW_IF (! _solid_.is_valid (), std::logic_error, "Invalid solid !");
 
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (_solid_);
-    get_logical ().set_material_ref (_get_material_name_ ());
+    get_logical ().set_material_ref (material_name);
 
     // starting position:
     double pos;
@@ -689,9 +559,6 @@ namespace geomtools {
         pos = -0.5 * stacked_z;
       }
 
-    if (devel) cerr << "DEVEL: stacked_model::_at_construct: " << "step 6" << endl;
-
-    int j = 0;
     for (stacked_dict_type::iterator i = _stacked_models_.begin ();
          i != _stacked_models_.end ();
          i++)
@@ -703,18 +570,10 @@ namespace geomtools {
 
         const i_shape_3d & the_shape = stacked_model->get_logical ().get_shape ();
         stackable_data the_SD;
-        if (! i_shape_3d::pickup_stackable (the_shape, the_SD))
-          {
-            ostringstream message;
-            message << "geomtools::stacked_model::_at_construct: "
-                    << "Model '" << get_name () << "' : "
-                    << "Cannot stack '"
-                    << the_shape.get_shape_name () << "' shape !";
-            throw logic_error (message.str ());
-          }
-        double x0 = 0.0;
-        double y0 = 0.0;
-        double z0 = 0.0;
+        DT_THROW_IF (! i_shape_3d::pickup_stackable (the_shape, the_SD),
+                     std::logic_error,
+                     "Model '" << get_name () << "' : Cannot stack '"
+                     << the_shape.get_shape_name () << "' shape !");
 
         double gxmin = the_SD.get_xmin ();
         double gymin = the_SD.get_ymin ();
@@ -776,46 +635,38 @@ namespace geomtools {
         bi.phys.set_placement (bi.placmt);
         bi.phys.set_logical (bi.model->get_logical ());
         bi.phys.set_mother (_logical);
-        j++;
       } // for
-
-    if (devel) cerr << "DEVEL: stacked_model::_at_construct: " << "step 7" << endl;
 
     // 2011-12-05 FM : add support for additional internal objects :
     if (_internals_.get_number_of_items () == 0)
       {
-        if (devel) cerr << endl << endl
-             << "DEVEL ****************************"
-             << "DEVEL: stacked_model::_at_construct: process MWIM"
-             << endl
-             << endl;
-       _internals_.plug_internal_models (config_,
-                                         get_logical (),
-                                         models_);
+        DT_LOG_TRACE (get_logging_priority (), "Process MWIM");
+        _internals_.plug_internal_models (config_,
+                                          get_logical (),
+                                          models_);
       }
 
-    if (devel) clog << "DEVEL: stacked_model::_at_construct: Exiting." << endl;
+    DT_LOG_TRACE (get_logging_priority (), "Exiting.");
     return;
   }
 
-  void stacked_model::tree_dump (ostream & out_,
-                                 const string & title_ ,
-                                 const string & indent_,
+  void stacked_model::tree_dump (std::ostream & out_,
+                                 const std::string & title_ ,
+                                 const std::string & indent_,
                                  bool inherit_) const
   {
-    using namespace  datatools;
-    string indent;
+    std::string indent;
     if (! indent_.empty ()) indent = indent_;
     i_model::tree_dump (out_, title_, indent, true);
 
     {
-      out_ << indent << i_tree_dumpable::tag
-           << "Material : " << get_material_name () << endl;
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Material : " << get_material_name () << std::endl;
     }
 
     {
-      out_ << indent << i_tree_dumpable::tag
-           << "Stacking axis : " << get_stacking_axis () << endl;
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Stacking axis : " << get_stacking_axis () << std::endl;
     }
 
     {
@@ -823,18 +674,18 @@ namespace geomtools {
            i != _labels_.end ();
            i++)
         {
-          out_ << indent << i_tree_dumpable::tag
-               << "Stacked model : " << "'" << i->first << "'" << " [rank==" << i->second << "]" << endl;
+          out_ << indent << datatools::i_tree_dumpable::tag
+               << "Stacked model : " << "'" << i->first << "'" << " [rank==" << i->second << "]" << std::endl;
         }
     }
 
     {
-      out_ << indent << i_tree_dumpable::inherit_tag (inherit_)
-           << "Solid : " << endl;
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
+           << "Solid : " << std::endl;
       {
-        ostringstream indent_oss;
+        std::ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << i_tree_dumpable::inherit_skip_tag (inherit_);
+        indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
         _solid_.tree_dump (out_, "", indent_oss.str ());
       }
     }
