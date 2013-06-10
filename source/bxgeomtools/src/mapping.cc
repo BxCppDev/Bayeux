@@ -468,7 +468,7 @@ namespace geomtools {
         mapping_utils::fetch_daughter_id (log.parameters (),
                                           daughter_label,
                                           daughter_category_info);
-        DT_LOG_DEBUG(_logging, "Found daughter ID info for physical '"
+        DT_LOG_DEBUG(_logging, _indenter_ << "Found daughter ID info for physical '"
                      << phys_name << "' ");
       } else {
         DT_LOG_DEBUG(_logging, _indenter_
