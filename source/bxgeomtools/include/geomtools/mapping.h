@@ -15,8 +15,8 @@
  *
  */
 
-#ifndef __geomtools__mapping_h
-#define __geomtools__mapping_h 1
+#ifndef GEOMTOOLS_MAPPING_H_
+#define GEOMTOOLS_MAPPING_H_ 1
 
 #include <string>
 #include <list>
@@ -48,19 +48,17 @@ namespace geomtools {
       static const constants & instance ();
     };
 
-    enum build_mode_type
-      {
-        BUILD_MODE_STRICT_MOTHERSHIP = 0,
-        BUILD_MODE_LAZY_MOTHERSHIP   = 1,
-        BUILD_MODE_DEFAULT           = BUILD_MODE_STRICT_MOTHERSHIP
-      };
+    enum build_mode_type {
+      BUILD_MODE_STRICT_MOTHERSHIP = 0,
+      BUILD_MODE_LAZY_MOTHERSHIP   = 1,
+      BUILD_MODE_DEFAULT           = BUILD_MODE_STRICT_MOTHERSHIP
+    };
 
-    enum mode_type
-      {
-        MODE_NONE     = 0,
-        MODE_ONLY     = 1,
-        MODE_EXCLUDED = 2
-      };
+    enum mode_type {
+      MODE_NONE     = 0,
+      MODE_ONLY     = 1,
+      MODE_EXCLUDED = 2
+    };
 
   public:
 
@@ -77,8 +75,6 @@ namespace geomtools {
                          const std::string & key_);
 
     bool is_initialized () const;
-    bool is_debug () const;
-    void set_debug(bool);
     bool is_mode_none () const;
     bool is_mode_only () const;
     bool is_mode_excluded () const;
@@ -105,11 +101,10 @@ namespace geomtools {
 
     void dump_dictionnary (std::ostream & out_ = std::clog) const;
 
-    enum smart_print_flags_type
-      {
-        PRINT_TITLE = datatools::bit_mask::bit00,
-        PRINT_PAGER = datatools::bit_mask::bit01,
-      };
+    enum smart_print_flags_type {
+      PRINT_TITLE = datatools::bit_mask::bit00,
+      PRINT_PAGER = datatools::bit_mask::bit01,
+    };
 
     void smart_print (std::ostream & out_ = std::clog,
                       const std::string & indent_ = "",
@@ -130,12 +125,10 @@ namespace geomtools {
   private:
 
     bool                           _initialized_;
-    bool                           _debug_;
     const model_factory  *         _factory_;
     const logical_volume *         _top_logical_;
     bool                           _world_mapping_;
     size_t                         _depth_; //!< Running depth at build
-
     size_t                         _max_depth_;
     int                            _build_mode_;
     int                            _mode_;
@@ -148,6 +141,6 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // __geomtools__mapping_h
+#endif // GEOMTOOLS_MAPPING_H_
 
 // end of mapping.h

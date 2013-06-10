@@ -12,6 +12,30 @@ namespace geomtools {
 
   using namespace std;
 
+  datatools::logger::priority geom_map::get_logging_priority() const
+  {
+    return _logging;
+  }
+
+  void geom_map::set_logging_priority(datatools::logger::priority p)
+  {
+    _logging = p;
+  }
+
+  bool geom_map::is_debug() const
+  {
+    return _logging >= datatools::logger::PRIO_DEBUG;
+  }
+
+  void geom_map::set_debug(bool d_)
+  {
+    if (d_ && _logging < datatools::logger::PRIO_DEBUG) {
+      _logging = datatools::logger::PRIO_DEBUG;
+    } else {
+      _logging = datatools::logger::PRIO_WARNING;
+    }
+  }
+
   const geom_info_dict_type & geom_map::_get_geom_infos () const
   {
     return _geom_infos_;
@@ -41,6 +65,7 @@ namespace geomtools {
 
   geom_map::geom_map ()
   {
+    _logging = datatools::logger::PRIO_WARNING;
     _invalid_geom_id_.invalidate ();
     _id_manager_ = 0;
     return;
@@ -85,36 +110,30 @@ namespace geomtools {
                                            bool append_) const
   {
     // If not using 'append' mode, we clear the vector :
-    if (! append_)
-      {
-        gids_.clear ();
-      }
+    if (! append_) {
+      gids_.clear ();
+    }
     // Return if no valid pattern :
-    if (! gid_pattern_.is_valid ())
-      {
-        return;
-      }
+    if (! gid_pattern_.is_valid ()) {
+      return;
+    }
     // Short cut if the GID pattern is complete (no 'ANY' addresses) :
-    if (gid_pattern_.is_complete ())
-      {
-        geom_info_dict_type::const_iterator found = _geom_infos_.find (gid_pattern_);
-        if (found != _geom_infos_.end ())
-          {
-            gids_.push_back (found->first);
-          }
-        return;
+    if (gid_pattern_.is_complete ()) {
+      geom_info_dict_type::const_iterator found = _geom_infos_.find (gid_pattern_);
+      if (found != _geom_infos_.end ()) {
+        gids_.push_back (found->first);
       }
+      return;
+    }
     // Else traverse the full map of ginfos :
     for (geom_info_dict_type::const_iterator it = _geom_infos_.begin ();
          it != _geom_infos_.end ();
-         it++)
-      {
-        const geom_id & gid = it->first;
-        if (geom_id::match (gid_pattern_, gid, false))
-          {
-            gids_.push_back (gid);
-          }
+         it++) {
+      const geom_id & gid = it->first;
+      if (geom_id::match (gid_pattern_, gid, false)) {
+        gids_.push_back (gid);
       }
+    }
     return;
   }
 
@@ -160,10 +179,9 @@ namespace geomtools {
     pl.mother_to_child (world_position_, local_position);
     const logical_volume & log = ginfo.get_logical ();
     const i_shape_3d & shape = log.get_shape ();
-    if (shape.is_inside (local_position, tolerance_))
-      {
-        return true;
-      }
+    if (shape.is_inside (local_position, tolerance_)) {
+      return true;
+    }
     return false;
   }
 
@@ -174,29 +192,27 @@ namespace geomtools {
     int requested_type = type_;
     for (geom_info_dict_type::const_iterator i = _geom_infos_.begin ();
          i != _geom_infos_.end ();
-         i++)
-      {
-        const geom_info & ginfo = i->second;
-        const geom_id & gid = ginfo.get_id ();
-        if (gid.get_type () != requested_type) continue;
+         i++) {
+      const geom_info & ginfo = i->second;
+      const geom_id & gid = ginfo.get_id ();
+      if (gid.get_type () != requested_type) continue;
 
-        if (geom_map::check_inside (ginfo, world_position_, tolerance_))
-          {
-            return gid;
-          }
-
-        /*
-          vector_3d local_position;
-          const placement & pl = ginfo.get_world_placement ();
-          pl.mother_to_child (world_position_, local_position);
-          const logical_volume & log = ginfo.get_logical ();
-          const i_shape_3d & shape = log.get_shape ();
-          if (shape.is_inside (local_position, tolerance_))
-          {
-          return gid;
-          }
-        */
+      if (geom_map::check_inside (ginfo, world_position_, tolerance_)) {
+        return gid;
       }
+
+      /*
+        vector_3d local_position;
+        const placement & pl = ginfo.get_world_placement ();
+        pl.mother_to_child (world_position_, local_position);
+        const logical_volume & log = ginfo.get_logical ();
+        const i_shape_3d & shape = log.get_shape ();
+        if (shape.is_inside (local_position, tolerance_))
+        {
+        return gid;
+        }
+      */
+    }
     return _invalid_geom_id_;
   }
 
@@ -238,10 +254,9 @@ namespace geomtools {
   geom_map::_compute_ginfo_collection_with_type_ (uint32_t type_)
   {
     ginfo_collections_with_type_dict_type::iterator found = _geom_infos_with_type_map_.find (type_);
-    if (found != _geom_infos_with_type_map_.end ())
-      {
-        return (found->second);
-      }
+    if (found != _geom_infos_with_type_map_.end ()) {
+      return (found->second);
+    }
     {
       // add a new collection for the requested type :
       ginfo_ptr_collection_type empty_collection;
@@ -252,15 +267,13 @@ namespace geomtools {
     ginfo_ptr_collection_type & the_collection = _geom_infos_with_type_map_[type_];
     for (geom_info_dict_type::const_iterator i = _geom_infos_.begin ();
          i != _geom_infos_.end ();
-         i++)
-      {
-        const geom_info & ginfo = i->second;
-        has_geom_type_predicate pred (type_);
-        if (pred (ginfo))
-          {
-            the_collection.push_back (&ginfo);
-          }
+         i++) {
+      const geom_info & ginfo = i->second;
+      has_geom_type_predicate pred (type_);
+      if (pred (ginfo)) {
+        the_collection.push_back (&ginfo);
       }
+    }
     return the_collection;
   }
 

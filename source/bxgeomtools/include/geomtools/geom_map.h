@@ -28,9 +28,11 @@
 #include <list>
 #include <algorithm>
 
-#include <geomtools/utils.h>
 #include <boost/cstdint.hpp>
 
+#include <datatools/logger.h>
+
+#include <geomtools/utils.h>
 #include <geomtools/i_locator.h>
 #include <geomtools/geom_id.h>
 #include <geomtools/geom_info.h>
@@ -56,6 +58,14 @@ namespace geomtools {
     geom_info_dict_type & _get_geom_infos ();
 
   public:
+
+    datatools::logger::priority get_logging_priority() const;
+
+    void set_logging_priority(datatools::logger::priority);
+
+    bool is_debug() const;
+
+    void set_debug(bool);
 
     const id_mgr & get_id_manager () const;
 
@@ -84,7 +94,7 @@ namespace geomtools {
     virtual bool has_geom_info (const geom_id &) const;
 
     /// Compute the list of GIDs matching a given GID pattern (including 'ANY' addresses)
-    void compute_matching_geom_id (const geom_id & gid_pattern_, 
+    void compute_matching_geom_id (const geom_id & gid_pattern_,
                                    std::vector<geom_id> & gids_,
                                    bool append_ = false) const;
 
@@ -124,10 +134,12 @@ namespace geomtools {
     /// Used by the 'get_typed_ginfo_collection' public interface
     // Note: instantiate at first use technique
     const ginfo_ptr_collection_type & _compute_ginfo_collection_with_type_ (uint32_t type_);
-                                                                                       
+
   protected:
 
     const ginfo_collections_with_type_dict_type & get_geom_infos_with_type_map () const;
+
+    datatools::logger::priority _logging;
 
   private:
 
