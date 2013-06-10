@@ -80,10 +80,10 @@ temp_file::temp_file(std::string path_dir, std::string pattern,
 // dtor:
 temp_file::~temp_file() {
   if (remove_at_destroy_) {
-    std::clog << "NOTICE: datatools::temp_file::dtor: "
-              << "Deleting the temporary file with name '"
-              << filename_
-              << "'" << std::endl;
+    DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
+                  "Deleting the temporary file with name '"
+                  << filename_
+                  << "'");
     this->remove();
   }
   if (template_ != 0) {
