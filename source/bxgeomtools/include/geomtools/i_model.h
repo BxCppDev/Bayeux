@@ -113,7 +113,7 @@ namespace geomtools {
 
     virtual void _at_construct (const std::string & name_,
                                 const datatools::properties & setup_,
-                                models_col_type * models_ = 0);
+                                models_col_type * models_ = 0) = 0;
 
   protected:
 

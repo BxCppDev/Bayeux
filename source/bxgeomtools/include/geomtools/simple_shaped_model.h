@@ -39,10 +39,10 @@ namespace geomtools {
   // define a geometry model made of a unique simple 3D shape:
   GEOMTOOLS_MODEL_CLASS_DECLARE(simple_shaped_model)
   {
-
   public:
 
     MWIM & get_internals ();
+
     const MWIM & get_internals () const;
 
     const std::string & get_material_name () const;

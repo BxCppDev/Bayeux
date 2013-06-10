@@ -482,7 +482,7 @@ namespace geomtools {
 
     // build the tube:
     _tube_ = new tube (inner_r, outer_r, z);
-    DT_THROW_IF (! _tube_->is_valid (), std::logic_error, "Invalid  tube dimensions !");
+    DT_THROW_IF (! _tube_->is_valid (), std::logic_error, "Invalid tube dimensions !");
 
     // use the plain tube as solid envelope of the model:
     if (_filled_mode_ == filled_utils::FILLED_NONE)

@@ -552,16 +552,16 @@ namespace geomtools {
       }
     }
 
-    if (config_.has_flag ("verbose"))  {
-      set_logging_priority(datatools::logger::PRIO_NOTICE);
+    {
+      // Logging priority:
+      datatools::logger::priority lp
+        = datatools::logger::extract_logging_configuration (config_,
+                                                            datatools::logger::PRIO_WARNING);
+      DT_THROW_IF(lp == datatools::logger::PRIO_UNDEFINED,
+                  std::logic_error,
+                  "Invalid logging priority level for geometry manager !");
+      set_logging_priority (lp);
     }
-
-    if (config_.has_flag ("debug")) {
-      set_logging_priority(datatools::logger::PRIO_DEBUG);
-    }
-
-    // Use new logging extraction
-    set_logging_priority (datatools::logger::extract_logging_configuration (config_));
 
     if (config_.has_flag ("plugins.factory_no_preload")) {
       _plugins_factory_preload_ = false;
@@ -632,7 +632,9 @@ namespace geomtools {
      ************************************************/
     DT_LOG_NOTICE(_logging, "Initialization of the geometry  model factory...");
 
-    _factory_.set_debug(factory_debug);
+    if (factory_debug) {
+      _factory_.set_debug(true);
+    }
 
     /* Property prefixes to be preserved in logical volumes */
     std::vector<std::string> default_factory_preserved_property_prefixes;

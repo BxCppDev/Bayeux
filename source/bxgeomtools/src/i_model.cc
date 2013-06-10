@@ -231,17 +231,26 @@ namespace geomtools {
     return this->i_model::grab_logical ();
   }
 
-  void i_model::_at_construct (const std::string & name_,
-                               const datatools::properties & setup_,
-                               models_col_type * models_)
-  {
-    DT_THROW_IF (true, std::logic_error, "This method MUST be overloaded !");
-    return;
-  }
+  // void i_model::_at_construct (const std::string & name_,
+  //                              const datatools::properties & setup_,
+  //                              models_col_type * models_)
+  // {
+  //   DT_THROW_IF (true, std::logic_error, "This method MUST be overloaded !");
+  //   return;
+  // }
 
   void i_model::_pre_construct (datatools::properties & setup_)
   {
-    set_logging_priority (datatools::logger::extract_logging_configuration (setup_));
+    {
+      // Logging priority:
+      datatools::logger::priority lp
+        = datatools::logger::extract_logging_configuration (setup_,
+                                                            datatools::logger::PRIO_WARNING);
+      DT_THROW_IF(lp == datatools::logger::PRIO_UNDEFINED,
+                  std::logic_error,
+                  "Invalid logging priority level for geometry model '" << _name_ << "' !");
+      set_logging_priority (lp);
+    }
 
     if (setup_.has_flag (i_model::constants::instance().PHANTOM_SOLID_FLAG)) {
       _set_phantom_solid (true);
@@ -252,12 +261,6 @@ namespace geomtools {
 
   void i_model::_post_construct (datatools::properties & setup_)
   {
-    /*
-    visibility::extract (setup_, get_logical ().parameters ());
-    material::extract (setup_, get_logical ().parameters ());
-    sensitive::extract (setup_, get_logical ().parameters ());
-    mapping_utils::extract (setup_, get_logical ().parameters ());
-    */
     return;
   }
 
@@ -266,11 +269,12 @@ namespace geomtools {
                            models_col_type * models_)
   {
     bool devel_track_name = false;
-
     DT_THROW_IF (is_constructed (),
                  std::logic_error,
                  "Model '" << name_ << "' has been already constructed !");
     datatools::properties & setup = const_cast<datatools::properties &> (setup_);
+    // Set the name of the model as soon as possible:
+    if (_name_.empty() && ! name_.empty()) set_name(name_);
     _pre_construct (setup);
     _at_construct (name_, setup_, models_);
     _post_construct (setup);

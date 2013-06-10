@@ -246,7 +246,7 @@ namespace geomtools {
     const i_model & top_model = *(found->second);
     _top_logical_ = &(top_model.get_logical ());
     _build_ ();
-    if ( is_debug()) {
+    if (is_debug()) {
       dump_dictionnary (clog);
     }
     DT_LOG_TRACE(_logging, "Exiting.");
@@ -280,10 +280,9 @@ namespace geomtools {
   {
     bool print_title = flags_ & PRINT_TITLE;
     bool print_pager = flags_ & PRINT_PAGER;
-    if (print_title)
-      {
-        out_ << indent_ << "Geometry mapping dictionary : " << std::endl;
-      }
+    if (print_title) {
+      out_ << indent_ << "Geometry mapping dictionary : " << std::endl;
+    }
 
     out_ << indent_ << "Maximum depth     : "
          << _max_depth_ << std::endl;
@@ -334,7 +333,7 @@ namespace geomtools {
       counter++;
       if (counter % 5 == 0) {
         if (print_pager) {
-          std::clog << std::endl
+          std::cerr << std::endl
                     << "Hit ENTER to display the next page or type '.q' to quit : ";
           std::string user;
           std::getline (std::cin, user);
@@ -342,10 +341,9 @@ namespace geomtools {
             std::string token;
             std::istringstream token_iss (user);
             token_iss >> token >> ws;
-            if (token == ".q" || token == ".quit")
-              {
-                break;
-              }
+            if (token == ".q" || token == ".quit") {
+              break;
+            }
           }
         }
       }
@@ -382,20 +380,17 @@ namespace geomtools {
       const id_mgr::category_info & world_cat_info
         = _get_id_manager ().get_category_info (world_cat_name);
       DT_LOG_TRACE(_logging,"Category info: ");
-      if (_logging >= datatools::logger::PRIO_TRACE) world_cat_info.tree_dump (clog, "");
+      if (_logging >= datatools::logger::PRIO_TRACE) world_cat_info.tree_dump (cerr, "");
       geom_id world_id;
       world_cat_info.create (world_id);
       world_id.set_address (0);
       DT_LOG_TRACE (_logging, "World ID = " << world_id << ' '
                     << (world_id.is_valid () ? "[Valid]": "[Invalid]"));
-
       placement top_placement (vector_3d (0.0, 0.0, 0.0),
                                0,
                                0.0);
-
       //        const logical_volume * world_log
       //  = _factory_->get_logicals ().find ()->second;
-
       geom_info world_gi (world_id,
                           top_placement,
                           *_top_logical_);
@@ -425,12 +420,12 @@ namespace geomtools {
     bool devel = is_debug();
     _indenter_ (++_depth_);
 
-    if (devel) clog << datatools::io::devel << _indenter_ << "geomtools::mapping::_build_logical_children_: Entering..." << endl;
+    DT_LOG_DEBUG(_logging, _indenter_ << "geomtools::mapping::_build_logical_children_: Entering...");
 
     const logical_volume & log = log_;
-    if (devel) clog << datatools::io::devel << _indenter_ << "geomtools::mapping::_build_logical_children_: Log = `" << log.get_name () << "'" << endl;
+    DT_LOG_DEBUG(_logging, _indenter_ << "geomtools::mapping::_build_logical_children_: Log = `" << log.get_name () << "'");
     if (log.get_physicals ().size () == 0) {
-      if (devel) clog << datatools::io::devel << _indenter_ << "geomtools::mapping::_build_logical_children_: Exiting." << endl;
+      DT_LOG_DEBUG(_logging, _indenter_ << "geomtools::mapping::_build_logical_children_: Exiting.");
       _indenter_ (--_depth_);
       return;
     }
@@ -450,8 +445,8 @@ namespace geomtools {
          i++) {
       const string & phys_name = i->first;
       const physical_volume & phys_vol = *(i->second);
-      if (devel) clog << datatools::io::devel << _indenter_ << "Physical '" << phys_name << "' : "
-                      << "'" << phys_vol.get_name () << "' " << endl;
+      DT_LOG_DEBUG(_logging, _indenter_ << "Physical '" << phys_name << "' : "
+                   << "'" << phys_vol.get_name () << "'");
 
       const logical_volume & phys_logical = phys_vol.get_logical ();
 
@@ -464,35 +459,31 @@ namespace geomtools {
 
       string daughter_label
         = i_model::extract_label_from_physical_volume_name (phys_vol.get_name ());
-      if (devel) clog << datatools::io::devel << _indenter_
-                      << "Daughter label = '"
-                      << daughter_label << "' " << endl;
+      DT_LOG_DEBUG(_logging, _indenter_
+                   << "Daughter label = '"
+                   << daughter_label << "' ");
       string daughter_category_info;
       if (mapping_utils::has_daughter_id (log.parameters (),
                                           daughter_label)) {
         mapping_utils::fetch_daughter_id (log.parameters (),
                                           daughter_label,
                                           daughter_category_info);
-        if (devel)  {
-          clog << datatools::io::devel << _indenter_
-               << "Found daughter ID info for physical '"
-               << phys_name << "' " << endl;
-        }
+        DT_LOG_DEBUG(_logging, "Found daughter ID info for physical '"
+                     << phys_name << "' ");
       } else {
-        if (devel) {
-          clog << datatools::io::devel << _indenter_
-               << "No daughter ID info for physical '"
-               << phys_name << "' " << endl;
-        }
+        DT_LOG_DEBUG(_logging, _indenter_
+                     << "No daughter ID info for physical '"
+                     << phys_name << "' ");
+        //log.parameters ().tree_dump(std::cerr, "", "DEVEL: ");
       }
 
       const i_placement & phys_placement = phys_vol.get_placement ();
-      if (devel) clog << datatools::io::devel << _indenter_ << "-> Number of items: " << phys_placement.get_number_of_items () << endl;
+      DT_LOG_DEBUG(_logging, _indenter_ << "-> Number of items: " << phys_placement.get_number_of_items ());
       // Loop on replicated children physical volumes:
       for (int item = 0;
            item < phys_placement.get_number_of_items ();
            item++) {
-        if (devel) clog << datatools::io::devel << _indenter_ << "-> item #" << item << ": " << endl;
+        DT_LOG_DEBUG(_logging, _indenter_ << "-> item #" << item << ": ");
 
         // get the current item placement
         // in the mother coordinates system:
@@ -501,7 +492,7 @@ namespace geomtools {
         {
           string tmp;
           placement::to_string (tmp, item_placement);
-          if (devel) clog << datatools::io::devel << _indenter_ << "-> child placement " << tmp << " " << endl;
+          DT_LOG_DEBUG(_logging, _indenter_ << "-> child placement " << tmp << " ");
         }
 
         // compute the current item placement
@@ -512,7 +503,7 @@ namespace geomtools {
         {
           string tmp;
           placement::to_string (tmp, world_item_placement);
-          if (devel) clog << datatools::io::devel << _indenter_ << "-> world placement " << tmp << " " << endl;
+          DT_LOG_DEBUG(_logging, _indenter_ << "-> world placement " << tmp << " ");
         }
         int address = item;
         geom_id propagated_world_id = mother_id_;
@@ -528,7 +519,7 @@ namespace geomtools {
                                                    items_index);
 
           if (_get_id_manager ().validate_id (item_id)) {
-            if (devel) clog << datatools::io::devel << _indenter_ << "-> Item ID " << item_id << " is added to the map: " << endl;
+            DT_LOG_DEBUG(_logging, _indenter_ << "-> Item ID " << item_id << " is added to the map: ");
             geom_info item_gi (item_id,
                                world_item_placement,
                                phys_logical);
@@ -537,9 +528,8 @@ namespace geomtools {
               // get the category associated to the item ID:
               const string & category
                 = _get_id_manager ().get_category_info (item_id.get_type ()).get_category ();
-              if (devel) clog << datatools::io::devel << _indenter_ << "geomtools::mapping::_build_logical_children_: "
-                              << "Category = '" << category << "' (from ID=" << item_id << ")"
-                              << endl;
+              DT_LOG_DEBUG(_logging, _indenter_ << "geomtools::mapping::_build_logical_children_: "
+                           << "Category = '" << category << "' (from ID=" << item_id << ")");
               if (is_mode_only ()) {
                 // the list contains only the categories to be registered:
                 list<string>::const_iterator found = find (_only_excluded_list_.begin (),
@@ -553,10 +543,9 @@ namespace geomtools {
                 list<string>::const_iterator found = find (_only_excluded_list_.begin (),
                                                            _only_excluded_list_.end (),
                                                            category);
-                if (found != _only_excluded_list_.end ())
-                  {
-                    add_it = false;
-                  }
+                if (found != _only_excluded_list_.end ()) {
+                  add_it = false;
+                }
               }
             }
             if (add_it) {
@@ -578,19 +567,12 @@ namespace geomtools {
                                     world_item_placement,
                                     propagated_world_id);
         } else {
-          if (devel) {
-            clog << datatools::io::devel << _indenter_ << "-> DO NOT TRAVERSE THE GEOMETRY TREE FURTHER."
-                 << endl;
-          }
+          DT_LOG_DEBUG(_logging, _indenter_ << "-> DO NOT TRAVERSE THE GEOMETRY TREE FURTHER.");
         }
       }
     }
 
-    if (devel) {
-      clog << datatools::io::devel
-           << _indenter_ << "geomtools::mapping::_build_logical_children_: Exiting."
-           << endl;
-    }
+    DT_LOG_DEBUG(_logging, _indenter_ << "geomtools::mapping::_build_logical_children_: Exiting.");
     _indenter_ (--_depth_);
     return;
   }
@@ -602,12 +584,12 @@ namespace geomtools {
     bool devel = is_debug();
     _indenter_ (++_depth_);
 
-    if (devel) clog << datatools::io::devel << _indenter_ << "geomtools::mapping::_build_logical_children_2_: Entering..." << endl;
+    DT_LOG_DEBUG(_logging,  _indenter_ << "geomtools::mapping::_build_logical_children_2_: Entering...");
 
     const logical_volume & log = log_;
-    if (devel) clog << datatools::io::devel << _indenter_ << "geomtools::mapping::_build_logical_children_2_: Log = `" << log.get_name () << "'" << endl;
+    DT_LOG_DEBUG(_logging, _indenter_ << "geomtools::mapping::_build_logical_children_2_: Log = `" << log.get_name () << "'");
     if (log.get_physicals ().size () == 0) {
-      if (devel) clog << datatools::io::devel << _indenter_ << "geomtools::mapping::_build_logical_children_2_: Exiting." << endl;
+      DT_LOG_DEBUG(_logging, _indenter_ << "geomtools::mapping::_build_logical_children_2_: Exiting.");
       _indenter_ (--_depth_);
       return;
     }
@@ -625,8 +607,8 @@ namespace geomtools {
          i++) {
       const string & phys_name = i->first;
       const physical_volume & phys_vol = *(i->second);
-      if (devel) clog << datatools::io::devel << _indenter_ << "Physical '" << phys_name << "' : "
-                      << "'" << phys_vol.get_name () << "' " << endl;
+      DT_LOG_DEBUG(_logging, _indenter_ << "Physical '" << phys_name << "' : "
+                   << "'" << phys_vol.get_name () << "' ");
 
       const logical_volume & phys_logical = phys_vol.get_logical ();
 
@@ -639,33 +621,28 @@ namespace geomtools {
 
       string daughter_label
         = i_model::extract_label_from_physical_volume_name (phys_vol.get_name ());
-      if (devel) clog << datatools::io::devel << _indenter_
-                      << "Daughter label = '"
-                      << daughter_label << "' " << endl;
+      DT_LOG_DEBUG(_logging, _indenter_
+                   << "Daughter label = '"
+                   << daughter_label << "' ");
       string daughter_category_info;
       if (mapping_utils::has_daughter_id (log.parameters (),
                                           daughter_label)) {
         mapping_utils::fetch_daughter_id (log.parameters (),
                                           daughter_label,
                                           daughter_category_info);
-        if (devel) {
-          clog << datatools::io::devel << _indenter_
-               << "Found daughter ID info for physical '"
-               << phys_name << "' " << endl;
-        }
+        DT_LOG_DEBUG(_logging, _indenter_
+                     << "Found daughter ID info for physical '"
+                     << phys_name << "' ");
       } else {
-        if (devel) {
-          clog << datatools::io::devel << _indenter_
-               << "No daughter ID info for physical '"
-               << phys_name << "' " << endl;
-        }
+        DT_LOG_DEBUG(_logging, _indenter_ << "No daughter ID info for physical '"
+                     << phys_name << "' ");
       }
-      if (devel) clog << datatools::io::devel << _indenter_
-                      << "Daughter category info = '"
-                      << daughter_category_info << "' " << endl;
+      DT_LOG_DEBUG(_logging, _indenter_
+                   << "Daughter category info = '"
+                   << daughter_category_info << "' ");
 
       const i_placement & phys_placement = phys_vol.get_placement ();
-      if (devel) clog << datatools::io::devel << _indenter_ << "-> Number of items: " << phys_placement.get_number_of_items () << endl;
+      DT_LOG_DEBUG(_logging, _indenter_ << "-> Number of items: " << phys_placement.get_number_of_items ());
 
       //////////////////////////////////////////////////
       // Loop on replicated children physical volumes //
@@ -673,7 +650,7 @@ namespace geomtools {
       for (int item = 0;
            item < phys_placement.get_number_of_items ();
            item++) {
-        if (devel) clog << datatools::io::devel << _indenter_ << "-> item #" << item << ": " << endl;
+        DT_LOG_DEBUG(_logging, _indenter_ << "-> item #" << item << ": ");
 
         // get the current item placement
         // in the mother coordinates system:
@@ -682,7 +659,7 @@ namespace geomtools {
         {
           string tmp;
           placement::to_string (tmp, item_placement);
-          if (devel) clog << datatools::io::devel << _indenter_ << "-> child placement " << tmp << " " << endl;
+          DT_LOG_DEBUG(_logging, _indenter_ << "-> child placement " << tmp << " ");
         }
 
         // compute the current item placement
@@ -693,7 +670,7 @@ namespace geomtools {
         {
           string tmp;
           placement::to_string (tmp, world_item_placement);
-          if (devel) clog << datatools::io::devel << _indenter_ << "-> world placement " << tmp << " " << endl;
+          DT_LOG_DEBUG(_logging, _indenter_ << "-> world placement " << tmp << " ");
         }
         int address = item;
         std::vector<geom_id> propagated_world_ids = mother_ids_;
@@ -717,17 +694,15 @@ namespace geomtools {
               match = true;
             }
             catch(std::exception & x) {
-              std::cerr <<  datatools::io::warning
-                        << "geomtools::mapping::_build_logical_children_2_: "
-                        << "Cannot match a GID scheme for mother with GID=" << mother_id
-                        << " !"
-                        << endl;
+              DT_LOG_WARNING(_logging,
+                             "Cannot match a GID scheme for mother with GID=" << mother_id
+                             << " !");
               imother++;
               continue;
             }
             // In case of success :
             if (_get_id_manager ().validate_id (item_id)) {
-              if (devel) clog << datatools::io::devel << _indenter_ << "-> Item ID " << item_id << " is added to the map: " << endl;
+              DT_LOG_DEBUG(_logging, _indenter_ << "-> Item ID " << item_id << " is added to the map: ");
               geom_info item_gi (item_id,
                                  world_item_placement,
                                  phys_logical);
@@ -736,9 +711,8 @@ namespace geomtools {
                 // get the category associated to the item ID:
                 const string & category
                   = _get_id_manager ().get_category_info (item_id.get_type ()).get_category ();
-                if (devel) clog << datatools::io::devel << _indenter_ << "geomtools::mapping::_build_logical_children_2_: "
-                                << "Category = '" << category << "' (from ID=" << item_id << ")"
-                                << endl;
+                DT_LOG_DEBUG(_logging, _indenter_ << "geomtools::mapping::_build_logical_children_2_: "
+                             << "Category = '" << category << "' (from ID=" << item_id << ")");
                 if (is_mode_only ()) {
                   // the list contains only the categories to be registered:
                   list<string>::const_iterator found = find (_only_excluded_list_.begin (),
@@ -797,19 +771,11 @@ namespace geomtools {
                                       world_item_placement,
                                       propagated_world_ids);
         } else {
-          if (devel) {
-            clog << datatools::io::devel << _indenter_ << "-> DO NOT TRAVERSE THE GEOMETRY TREE FURTHER."
-                 << endl;
-          }
+          DT_LOG_DEBUG(_logging,_indenter_ << "-> DO NOT TRAVERSE THE GEOMETRY TREE FURTHER.");
         }
       }
     }
-
-    if (devel) {
-      clog << datatools::io::devel
-           << _indenter_ << "geomtools::mapping::_build_logical_children_2_: Exiting."
-           << endl;
-    }
+    DT_LOG_DEBUG(_logging, _indenter_ << "geomtools::mapping::_build_logical_children_2_: Exiting.");
     _indenter_ (--_depth_);
     return;
   }
