@@ -57,6 +57,12 @@ namespace genvtx {
     /// Set the debug flag
     void set_debug (bool debug_);
 
+    bool has_name() const;
+
+    const std::string & get_name() const;
+
+    void set_name(const std::string &);
+
     bool has_geo_label () const;
 
     void set_geo_label (const std::string & geo_label_);
@@ -173,6 +179,7 @@ namespace genvtx {
     datatools::logger::priority  _logging_priority;
 
   private:
+    std::string                  _name_; /// The name of the vertex generator
     std::string                  _geo_label_;    /// The label of the Geometry Service
     std::string                  _geom_setup_requirement_; /// The requirement ont the requested geometry setup (label and version)
     const ::geomtools::manager * _geom_manager_; /// Handle to the geometry manager

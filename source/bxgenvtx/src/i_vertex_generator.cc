@@ -30,6 +30,24 @@ namespace genvtx {
   // Factory stuff :
   DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(i_vertex_generator,"genvtx::i_vertex_generator/_system_");
 
+  const std::string & i_vertex_generator::get_name() const
+  {
+    return _name_;
+  }
+
+  bool i_vertex_generator::has_name() const
+  {
+    return ! _name_.empty();
+  }
+
+  void i_vertex_generator::set_name(const std::string & name_)
+  {
+    DT_THROW_IF(is_initialized(),
+                std::logic_error,
+                "Vertex generator '" << get_name() << "' is initialized/locked !");
+    _name_ = name_;
+  }
+
   datatools::logger::priority
   i_vertex_generator::get_logging_priority() const
   {
@@ -66,7 +84,7 @@ namespace genvtx {
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
-                "Object is initialized/locked !");
+                "Vertex generator '" << get_name() << "' is initialized/locked !");
     _geom_setup_requirement_ = geom_setup_requirement_;
     return;
   }
@@ -157,7 +175,7 @@ namespace genvtx {
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
-                "Object is initialized/locked !");
+                "Vertex generator '" << get_name() << "' is initialized/locked !");
     check_geom_setup_requirement (&gmgr_);
     _geom_manager_ = &gmgr_;
     return;
@@ -187,7 +205,7 @@ namespace genvtx {
   mygsl::rng & i_vertex_generator::grab_prng()
   {
     DT_THROW_IF (! has_external_prng(), std::logic_error,
-                 "No available PRNG !");
+                 "No available PRNG in vertex generator '" << get_name() << "' !");
     return *_external_prng_;
   }
 
@@ -213,7 +231,7 @@ namespace genvtx {
   void i_vertex_generator::shoot_vertex (geomtools::vector_3d & vertex_)
   {
     DT_THROW_IF (_external_prng_ == 0, std::logic_error,
-                 "Missing external PRNG handle !");
+                 "Missing external PRNG handle in vertex generator '" << get_name() << "' !");
     shoot_vertex (*_external_prng_, vertex_);
     return;
   }
@@ -236,31 +254,21 @@ namespace genvtx {
                                                datatools::service_manager & service_manager_)
   {
     // Fetch configuration parameters :
-    if (setup_.has_key("logging.priority")) {
-      std::string lp_label = setup_.fetch_string("logging.priority");
-      datatools::logger::priority lp = datatools::logger::get_priority(lp_label);
-      DT_THROW_IF(lp ==  datatools::logger::PRIO_UNDEFINED,
-                  std::logic_error,
-                  "Invalid logging priority '" << lp_label << "' !");
-      set_logging_priority(lp);
-    }
 
+    // Logging priority:
+    datatools::logger::priority lp
+      = datatools::logger::extract_logging_configuration(setup_,
+                                                         datatools::logger::PRIO_WARNING);
+    DT_THROW_IF(lp ==  datatools::logger::PRIO_UNDEFINED,
+                std::logic_error,
+                "Invalid logging priority !");
+    set_logging_priority(lp);
 
-    if (setup_.has_flag ("verbose")) {
-      set_logging_priority (datatools::logger::PRIO_NOTICE);
-    }
-
-    if (setup_.has_flag ("debug")) {
-      set_debug (true);
-    }
-
-    if (setup_.has_key("logging.priority")) {
-      std::string lp_label = setup_.fetch_string("logging.priority");
-      datatools::logger::priority lp = datatools::logger::get_priority(lp_label);
-      DT_THROW_IF(lp == datatools::logger::PRIO_UNDEFINED,
-                  std::logic_error,
-                  "Invalid logging priority '" << lp_label << "' !");
-      set_logging_priority(lp);
+    // Name of the generator (only if not already set) :
+    if (_name_.empty()) {
+      if (setup_.has_key ("name")) {
+        set_name(setup_.fetch_string("name"));
+      }
     }
 
     // Required geometry setup label :
@@ -287,17 +295,17 @@ namespace genvtx {
             // Service labels :
             DT_THROW_IF (!setup_.has_key ("Geo_label"),
                          std::logic_error,
-                         "Missing  '" << "Geo_label" << "' property !");
+                         "Missing  '" << "Geo_label" << "' property in vertex generator '" << get_name() << "' !");
             _geo_label_ = setup_.fetch_string ("Geo_label");
           }
 
         DT_THROW_IF (_geo_label_.empty (),
                      std::logic_error,
-                     "Invalid '" << "Geo_label" << "' property !");
+                     "Invalid '" << "Geo_label" << "' property in vertex generator '" << get_name() << "' !");
         DT_THROW_IF (! service_manager_.has (_geo_label_)
                      && service_manager_.is_a<geomtools::geometry_service> (_geo_label_),
                      std::logic_error,
-                     "Cannot find '" << _geo_label_ << "' service !");
+                     "Cannot find '" << _geo_label_ << "' service for vertex generator '" << get_name() << "' !");
         geomtools::geometry_service & Geo
           = service_manager_.get<geomtools::geometry_service> (_geo_label_);
         set_geom_manager (Geo.get_geom_manager ());
@@ -340,6 +348,7 @@ namespace genvtx {
 
   void i_vertex_generator::_reset ()
   {
+    _name_.clear ();
     _geo_label_.clear ();
     _geom_setup_requirement_.clear ();
     _geom_manager_ = 0;
@@ -359,6 +368,9 @@ namespace genvtx {
     if (! title_.empty ()) {
       out_ << indent << title_ << endl;
     }
+
+    out_ << indent << du::i_tree_dumpable::tag
+         << "Name        : '" << _name_ << "'" << std::endl;
 
     out_ << indent << du::i_tree_dumpable::tag
          << "Initialized : " << (is_initialized() ? "Yes": "No") << endl;

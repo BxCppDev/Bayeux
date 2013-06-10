@@ -49,11 +49,9 @@ endif()
 # Build options
 #
 option(GENVTX_WITH_DEBUG "Build debug stuff" OFF)
-option(GENVTX_WITH_BIO  "Build auxiliary Boost I/O library" OFF)
-option(GENVTX_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" OFF)
+#option(GENVTX_WITH_BIO  "Build auxiliary Boost I/O library" OFF)
 option(GENVTX_WITH_DOC  "Build the genvtx documentation" ON)
 option(GENVTX_WITH_TEST "Build the genvtx test suite"    ON)
-option(GENVTX_WITH_BASH_SETUP "Build the genvtx with Bash setup macro" ON)
 option(GENVTX_WITH_GNUPLOT_DISPLAY  "Build the Gnuplot-based display tools" ON )
 
 
@@ -63,11 +61,11 @@ else()
   set (GENVTX_WITH_DEBUG 0)
 endif ()
 
-if(GENVTX_WITH_BIO)
-  set (GENVTX_WITH_BIO 1)
-else()
-  set (GENVTX_WITH_BIO 0)
-endif ()
+# if(GENVTX_WITH_BIO)
+#   set (GENVTX_WITH_BIO 1)
+# else()
+#   set (GENVTX_WITH_BIO 0)
+# endif ()
 
 #-----------------------------------------------------------------------
 # Find external packages needed to build

@@ -62,7 +62,7 @@ set_source_files_properties(${genvtx_detail_HEADERS}
     MACOSX_PACKAGE_LOCATION Headers/detail
   )
 
-# We have to install the detail header modules separately if genvtx 
+# We have to install the detail header modules separately if genvtx
 # isn't built as a Framework.
 if(NOT APPLE)
   foreach(_module detail)
@@ -101,14 +101,14 @@ set(genvtx_SOURCES
 # resources on Mac. This allows them to be easily imported into the
 # Framework with minimal platform specific commands by adding them
 # as sources of the framework/library.
-# We have to deal with the library depends part of this later because 
+# We have to deal with the library depends part of this later because
 # their generation require the targets to be present...
 #
 if(APPLE)
   set(TO_GENVTX_INCLUDEDIR "../..")
 else()
-  file(RELATIVE_PATH TO_GENVTX_INCLUDEDIR 
-    "${CMAKE_INSTALL_FULL_LIBDIR}/cmake/genvtx-${genvtx_VERSION}" 
+  file(RELATIVE_PATH TO_GENVTX_INCLUDEDIR
+    "${CMAKE_INSTALL_FULL_LIBDIR}/cmake/genvtx-${genvtx_VERSION}"
     "${CMAKE_INSTALL_FULL_INCLUDEDIR}"
     )
 endif()
@@ -120,7 +120,7 @@ set(genvtx_RESOURCES
 
 foreach(_dtresource ${genvtx_RESOURCES})
   configure_file(
-    ${PROJECT_SOURCE_DIR}/${_dtresource}.in 
+    ${PROJECT_SOURCE_DIR}/${_dtresource}.in
     ${PROJECT_BINARY_DIR}/${_dtresource}
     @ONLY
     )
@@ -141,20 +141,20 @@ if(NOT APPLE)
 endif()
 
 configure_file(
-    ${PROJECT_SOURCE_DIR}/cmake/genvtx-config.in 
+    ${PROJECT_SOURCE_DIR}/cmake/genvtx-config.in
     ${PROJECT_BINARY_DIR}/cmake/genvtx-config
     @ONLY
     )
 
 install(FILES ${PROJECT_BINARY_DIR}/cmake/genvtx-config
     DESTINATION "${CMAKE_INSTALL_BINDIR}"
-    PERMISSIONS OWNER_READ OWNER_EXECUTE 
-    		GROUP_READ GROUP_EXECUTE 
-                WORLD_READ WORLD_EXECUTE    
+    PERMISSIONS OWNER_READ OWNER_EXECUTE
+    		GROUP_READ GROUP_EXECUTE
+                WORLD_READ WORLD_EXECUTE
     COMPONENT Development
     )
 
-if ( GENVTX_WITH_BASH_SETUP )
+if ( UNIX )
   configure_file(
     "${PROJECT_SOURCE_DIR}/cmake/genvtx_setup.sh.in"
     "${PROJECT_BINARY_DIR}/cmake/genvtx_setup.sh"
@@ -174,25 +174,19 @@ endif ()
 
 include_directories(
   ${PROJECT_BINARY_DIR}/include
-  ${PROJECT_SOURCE_DIR}/include	
+  ${PROJECT_SOURCE_DIR}/include
   ${geomtools_INCLUDE_DIRS}
   )
 
-if ( GENVTX_WITH_REFLECTION )
-  include_directories(
-    ${CAMP_INCLUDE_DIR}
-    )
-endif ()
-
-add_library(genvtx SHARED  
-  ${genvtx_PUBLIC_HEADERS} 
+add_library(genvtx SHARED
+  ${genvtx_PUBLIC_HEADERS}
   ${genvtx_detail_HEADERS}
   ${genvtx_SOURCES}
   ${genvtx_RESOURCES_OUTPUTS}
   )
 
 set_target_properties(genvtx
-  PROPERTIES 
+  PROPERTIES
     FRAMEWORK                             ON
     MACOSX_FRAMEWORK_IDENTIFIER           org.supernemo.genvtx
     MACOSX_FRAMEWORK_BUNDLE_VERSION       ${genvtx_VERSION}
@@ -202,16 +196,10 @@ set_target_properties(genvtx
     PUBLIC_HEADER                         "${genvtx_PUBLIC_HEADERS}"
   )
 
-if ( GENVTX_WITH_REFLECTION )
-  target_link_libraries(genvtx 
-    ${geomtools_LIBRARIES} 
-    ${CAMP_LIBRARIES} 
-    ${CMAKE_DL_LIBS})
-else ()
-  target_link_libraries(genvtx 
-    ${geomtools_LIBRARIES} 
-    ${CMAKE_DL_LIBS})
-endif ()
+target_link_libraries(genvtx
+    ${geomtools_LIBRARIES}
+    ${CMAKE_DL_LIBS}
+)
 
 set(GENVTX_TARGETS genvtx)
 
@@ -228,15 +216,15 @@ set(GENVTX_TARGETS genvtx)
 #     the_serializable.cc
 #     )
 #   list_prepend(genvtx_bio_SOURCES "${PROJECT_SOURCE_DIR}/")
-  
+#
 #   add_library(genvtx_bio SHARED ${genvtx_bio_SOURCES})
-
+#
 #   if(APPLE)
 #     set_property(TARGET genvtx_bio APPEND
 #       PROPERTY LINK_FLAGS "-undefined dynamic_lookup"
 #       )
 #   endif()
-
+#
 #   list(APPEND GENVTX_TARGETS genvtx_bio)
 # endif()
 
@@ -246,39 +234,39 @@ set(GENVTX_TARGETS genvtx)
 # On Mac, we use dynamic_lookup for undefined symbols because we want
 # the lib to act as a plugin.
 #
-if(GENVTX_WITH_REFLECTION)
-  set(genvtx_reflection_SOURCES
-    #include/genvtx/*-reflect.h
-    #include/genvtx/the_introspectable.h
-    #the_introspectable.cc
-    )
-  list_prepend(genvtx_reflection_SOURCES "${PROJECT_SOURCE_DIR}/")
-  
-  add_library(genvtx_reflection SHARED ${genvtx_reflection_SOURCES})
-
-  if(APPLE)
-    set_property(TARGET genvtx_reflection APPEND
-      PROPERTY LINK_FLAGS "-undefined dynamic_lookup"
-      )
-  endif()
-
-  list(APPEND GENVTX_TARGETS genvtx_reflection)
-endif()
+# if(GENVTX_WITH_REFLECTION)
+#   set(genvtx_reflection_SOURCES
+#     #include/genvtx/*-reflect.h
+#     #include/genvtx/the_introspectable.h
+#     #the_introspectable.cc
+#     )
+#   list_prepend(genvtx_reflection_SOURCES "${PROJECT_SOURCE_DIR}/")
+#
+#   add_library(genvtx_reflection SHARED ${genvtx_reflection_SOURCES})
+#
+#   if(APPLE)
+#     set_property(TARGET genvtx_reflection APPEND
+#       PROPERTY LINK_FLAGS "-undefined dynamic_lookup"
+#       )
+#   endif()
+#
+#   list(APPEND GENVTX_TARGETS genvtx_reflection)
+# endif()
 
 #-----------------------------------------------------------------------
 # EXPORT AND INSTALL LIBRARY TARGETS
-# We make use of the full signature 
+# We make use of the full signature
 install(TARGETS ${GENVTX_TARGETS}
   EXPORT        genvtx-libraries
-  RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR} 
+  RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
                 COMPONENT Runtime
-  LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR} 
+  LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
                 COMPONENT Runtime
-  FRAMEWORK     DESTINATION ${GENVTX_FRAMEWORK_LOCATION} 
+  FRAMEWORK     DESTINATION ${GENVTX_FRAMEWORK_LOCATION}
                 COMPONENT Runtime
-  ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} 
+  ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
                 COMPONENT Development
-  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genvtx 
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genvtx
                 COMPONENT Development
   )
 
@@ -286,11 +274,11 @@ install(TARGETS ${GENVTX_TARGETS}
 # We also need to generate a file for the build tree, but at present
 # we leave this out for simplicity.
 if(APPLE)
-  install(EXPORT genvtx-libraries 
+  install(EXPORT genvtx-libraries
     DESTINATION CMake COMPONENT Development
     )
 else()
-  install(EXPORT genvtx-libraries 
+  install(EXPORT genvtx-libraries
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/genvtx-${genvtx_VERSION}    COMPONENT Development
     )
 endif()

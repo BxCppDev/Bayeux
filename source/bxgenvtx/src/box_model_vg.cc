@@ -77,42 +77,42 @@ namespace genvtx {
 
   void box_model_vg::set_surface_back (bool s_)
   {
-    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
+    DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
     _surface_back_ = s_;
     return;
   }
 
   void box_model_vg::set_surface_front (bool s_)
   {
-    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
+    DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
     _surface_front_ = s_;
     return;
   }
 
   void box_model_vg::set_surface_bottom (bool s_)
   {
-    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
+    DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
     _surface_bottom_ = s_;
     return;
   }
 
   void box_model_vg::set_surface_top (bool s_)
   {
-    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
+    DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
     _surface_top_ = s_;
     return;
   }
 
   void box_model_vg::set_surface_left (bool s_)
   {
-    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
+    DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
     _surface_left_ = s_;
     return;
   }
 
   void box_model_vg::set_surface_right (bool s_)
   {
-    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
+    DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
     _surface_right_ = s_;
     return;
   }
@@ -124,7 +124,7 @@ namespace genvtx {
 
   void box_model_vg::set_origin_rules (const std::string & origin_rules_)
   {
-    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
+    DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
     _origin_rules_ = origin_rules_;
     return;
   }
@@ -141,7 +141,7 @@ namespace genvtx {
 
   void box_model_vg::set_mapping_plugin_name(const std::string & mpn_)
   {
-    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
+    DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
     _mapping_plugin_name_ = mpn_;
     return;
   }
@@ -158,7 +158,7 @@ namespace genvtx {
 
   void box_model_vg::set_materials_plugin_name(const std::string & mpn_)
   {
-    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
+    DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
     _materials_plugin_name_ = mpn_;
     return;
   }
@@ -170,7 +170,7 @@ namespace genvtx {
 
   void box_model_vg::set_mode (int mode_)
   {
-    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
+    DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
     if ((mode_ == utils::MODE_BULK) || (mode_ == utils::MODE_SURFACE)) {
       _mode_ = mode_;
     } else {
@@ -224,7 +224,7 @@ namespace genvtx {
 
   GENVTX_VG_RESET_IMPLEMENT_HEAD(box_model_vg)
   {
-    DT_THROW_IF (! is_initialized (), std::logic_error, "Generator is not initialized !");
+    DT_THROW_IF (! is_initialized (), std::logic_error, "Vertex generator '" << get_name() << "' is not initialized !");
     _reset_ ();
     _initialized_ = false;
     return;
@@ -232,7 +232,7 @@ namespace genvtx {
 
   GENVTX_VG_SHOOT_VERTEX_IMPLEMENT_HEAD(box_model_vg,random_,vertex_)
   {
-    DT_THROW_IF (! is_initialized (), std::logic_error, "Generator is not initialized !");
+    DT_THROW_IF (! is_initialized (), std::logic_error, "Vertex generator '" << get_name() << "' is not initialized !");
     geomtools::invalidate (vertex_);
     this->_shoot_vertex_boxes (random_, vertex_);
     return;
@@ -250,7 +250,7 @@ namespace genvtx {
       }
     }
     DT_THROW_IF (index < 0, std::logic_error,
-                 "Cannot determine the vertex location index !");
+                 "Cannot determine the vertex location index in vertex generator '" << get_name() << "' !");
     geomtools::vector_3d src_vtx;
     _box_vg_.shoot_vertex (random_, src_vtx);
 
@@ -262,13 +262,13 @@ namespace genvtx {
 
   void box_model_vg::_init_ ()
   {
-    DT_THROW_IF (! is_mode_valid (), std::logic_error, "Invalid mode !");
-    DT_THROW_IF (! has_geom_manager (), std::logic_error, "Missing geometry manager !");
+    DT_THROW_IF (! is_mode_valid (), std::logic_error, "Invalid mode in vertex generator '" << get_name() << "' !");
+    DT_THROW_IF (! has_geom_manager (), std::logic_error, "Missing geometry manager in vertex generator '" << get_name() << "' !");
 
     const geomtools::mapping * mapping_ptr
       = detail::access_geometry_mapping(get_geom_manager (), _mapping_plugin_name_);
     DT_THROW_IF (mapping_ptr == 0, std::logic_error,
-                 "No available geometry mapping was found !");
+                 "No available geometry mapping was found in vertex generator '" << get_name() << "' !");
 
     //DT_LOG_FATAL(get_logging_priority(), "*** Origin rules : " << _origin_rules_);
     _src_selector_.set_id_mgr (get_geom_manager ().get_id_mgr ());
@@ -294,7 +294,7 @@ namespace genvtx {
       }
     }
     DT_THROW_IF (entries.size () == 0, std::logic_error,
-                 "Cannot compute any source of vertex !");
+                 "Cannot compute any source of vertex in vertex generator '" << get_name() << "' !");
 
     weight_entry_type dummy;
     _entries_.assign (entries.size (), dummy);
@@ -309,7 +309,7 @@ namespace genvtx {
       } else {
         DT_THROW_IF (src_log != &_entries_[i].ginfo->get_logical (),
                      std::logic_error,
-                     "Vertex location with different logical geometry volume are not supported  (different shapes or materials) !");
+                     "Vertex location with different logical geometry volume are not supported  (different shapes or materials) in vertex generator '" << get_name() << "' !");
       }
     }
 
@@ -328,7 +328,7 @@ namespace genvtx {
                                            _materials_plugin_name_);
       DT_THROW_IF (mat_mgr_ptr == 0, std::logic_error,
                    "No geometry materials plugin named '" << _materials_plugin_name_
-                   << "' available from the geometry manager !");
+                   << "' available from the geometry manager in vertex generator '" << get_name() << "' !");
       const materials::manager & mat_mgr = *mat_mgr_ptr;
       materials::material_dict_type::const_iterator found =
         mat_mgr.get_materials ().find (material_name);
@@ -363,7 +363,7 @@ namespace genvtx {
     const geomtools::i_shape_3d & src_shape = src_log->get_shape ();
     DT_THROW_IF (src_shape.get_shape_name () != "box", std::logic_error,
                  "Shape is '" << src_shape.get_shape_name () << "' but "
-                 << "only box shape is supported !");
+                 << "only box shape is supported in vertex generator '" << get_name() << "' !");
     const geomtools::box * box_shape
       = dynamic_cast<const geomtools::box *> (&src_shape);
     // if (is_debug ())
@@ -433,7 +433,7 @@ namespace genvtx {
   GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(box_model_vg,setup_,service_manager_,vgens_)
   {
     using namespace std;
-    DT_THROW_IF (is_initialized (), std::logic_error, "Already initialized !");
+    DT_THROW_IF (is_initialized (), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
 
     GENVTX_VG_INITIALIZE_BASICS_INVOKE(setup_,service_manager_);
     GENVTX_VG_INITIALIZE_GEO_MANAGER_INVOKE(setup_,service_manager_);
@@ -451,7 +451,7 @@ namespace genvtx {
 
     DT_THROW_IF (!setup_.has_key ("origin"),
                  std::logic_error,
-                 "Missing 'origin_rules' property !");
+                 "Missing 'origin_rules' property in vertex generator '" << get_name() << "' !");
     origin_rules = setup_.fetch_string ("origin");
 
     if (setup_.has_key ("materials.plugin_name")) {
@@ -462,7 +462,7 @@ namespace genvtx {
 
     DT_THROW_IF (! setup_.has_key ("mode"),
                  std::logic_error,
-                 "Missing 'mode' property !");
+                 "Missing 'mode' property in vertex generator '" << get_name() << "' !");
     mode_str = setup_.fetch_string ("mode");
 
     if (mode_str == "bulk") mode = utils::MODE_BULK;
@@ -498,7 +498,7 @@ namespace genvtx {
         surface_bottom || surface_top ||
         surface_left || surface_right;
       DT_THROW_IF (! surface_all,std::logic_error,
-                   "Missing some activated surface(s) property !");
+                   "Missing some activated surface(s) property in vertex generator '" << get_name() << "' !");
     }
 
     set_origin_rules (origin_rules);

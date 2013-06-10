@@ -2,9 +2,11 @@
 # It defines the following variables
 #  genvtx_INCLUDE_DIRS - include directories for genvtx
 #  genvtx_LIBRARY      - libraries to link against
+#  genvtx_LIBRARIES    - libraries to link against
+
+### No support:
 #  genvtx_BIO_LIBRARY  - library targets to link against (Boost I/O library)
 #  genvtx_REFLECTION_LIBRARY - library targets to link against (reflection library)
-#  genvtx_LIBRARIES    - libraries to link against
 #  genvtx_WITH_BIO     - flag for Boost/Serialization I/O DLL (a.k.a. 'bio')
 #  genvtx_WITH_REFLECTION  - flag for reflection DLL
 
@@ -23,8 +25,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-----------------------------------------------------------------------
 
-set(genvtx_WITH_BIO        @GENVTX_WITH_BIO@)
-set(genvtx_WITH_REFLECTION @GENVTX_WITH_REFLECTION@)
+#set(genvtx_WITH_BIO        @GENVTX_WITH_BIO@)
+#set(genvtx_WITH_REFLECTION @GENVTX_WITH_REFLECTION@)
 set(genvtx_GEOMTOOLS_DIR   @geomtools_DIR@)
 set(genvtx_DATA_DIR        @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@)
 
@@ -61,12 +63,6 @@ set(genvtx_THIRD_PARTY_INCLUDE_DIRS
   @geomtools_INCLUDE_DIRS@
   )
 
-# if(genvtx_WITH_REFLECTION)
-#   list(INSERT genvtx_THIRD_PARTY_INCLUDE_DIRS 0
-#      @CAMP_INCLUDE_DIR@
-#   )
-# endif()
-
 #-----------------------------------------------------------------------
 # Set genvtx definitions, include paths and library variables
 #
@@ -83,14 +79,14 @@ set(genvtx_INCLUDE_DIRS
 # Set genvtx_LIBRARIES variable
 set(genvtx_LIBRARY genvtx CACHE PATH "Path to genvtx library")
 
-if(genvtx_WITH_BIO)
-  set(genvtx_BIO_LIBRARY genvtx_bio)
-endif()
+# if(genvtx_WITH_BIO)
+#   set(genvtx_BIO_LIBRARY genvtx_bio)
+# endif()
 
-if(genvtx_WITH_REFLECTION)
-  set(genvtx_REFLECTION_LIBRARY genvtx_reflection)
-endif()
-  
+# if(genvtx_WITH_REFLECTION)
+#   set(genvtx_REFLECTION_LIBRARY genvtx_reflection)
+# endif()
+
 set(genvtx_LIBRARIES ${genvtx_LIBRARY})
 
 unset(_genvtx_inc)

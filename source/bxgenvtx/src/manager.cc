@@ -389,6 +389,8 @@ namespace genvtx {
                  << vg_entry_.get_vg_id () << "' failed !");
     vg_entry_.set_ptr (vg_ptr);
     vg_entry_.set_created ();
+    // Force the embedded vertex generatorname :
+    vg_ptr->set_name(vg_entry_.get_vg_name ());
 
     DT_LOG_NOTICE(get_logging_priority(),"Vertex generator named '"
                   <<  vg_entry_.get_vg_name ()

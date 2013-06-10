@@ -58,7 +58,7 @@ namespace genvtx {
 
   GENVTX_VG_RESET_IMPLEMENT_HEAD(combined_vg)
   {
-    DT_THROW_IF (! is_initialized (), std::logic_error, "Generator is not initialized !");
+    DT_THROW_IF (! is_initialized (), std::logic_error, "Vertex generator '" << get_name() << "' is not initialized !");
     _reset_ ();
     _initialized_ = false;
     return;
@@ -66,7 +66,7 @@ namespace genvtx {
 
   GENVTX_VG_SHOOT_VERTEX_IMPLEMENT_HEAD(combined_vg,random_,vertex_)
   {
-    DT_THROW_IF (! is_initialized (), std::logic_error, "Generator is not initialized !");
+    DT_THROW_IF (! is_initialized (), std::logic_error, "Vertex generator '" << get_name() << "' is not initialized !");
     geomtools::invalidate (vertex_);
     this->_shoot_vertex_combined (random_, vertex_);
     return;
@@ -85,7 +85,7 @@ namespace genvtx {
       }
     }
     DT_THROW_IF (index < 0,std::logic_error,
-                 "Cannot determine vertex location index !");
+                 "Cannot determine vertex location index in combined vertex generator '" << get_name() << "' !");
     genvtx::i_vertex_generator & a_vg = _entries_[index].vg_handle.grab ();
     // if (! a_vg.has_next_vertex ()) {
     //   // What to do here
@@ -100,12 +100,12 @@ namespace genvtx {
                                    double a_weight)
   {
     DT_THROW_IF (! a_vg,std::logic_error,
-                 "Cannot add a NULL vertex generator handle !");
+                 "Cannot add a NULL vertex generator handle in combined vertex generator '" << get_name() << "' !");
     for (int i = 0; i < _entries_.size (); ++i) {
       const entry_type & a_entry = _entries_[i];
       DT_THROW_IF (&a_entry.vg_handle.get () == &a_vg.get (),
                    std::logic_error,
-                   "Cannot add twice a generator !");
+                   "Cannot add twice a generator in combined vertex generator '" << get_name() << "' !");
     }
     entry_type dummy;
     _entries_.push_back (dummy);
@@ -122,7 +122,7 @@ namespace genvtx {
   {
     DT_THROW_IF (_entries_.size () == 0,
                  std::logic_error,
-                 "Missing weighted vertex generators !");
+                 "Missing weighted vertex generators in combined vertex generator '" << get_name() << "' !");
 
     // compute cumulated weights :
     for (int i = 0; i < _entries_.size (); i++) {
@@ -171,7 +171,7 @@ namespace genvtx {
     // Parsing configuration parameters :
     DT_THROW_IF (! setup_.has_key ("generators"),
                  std::logic_error,
-                 "Missing the 'generators' directive !");
+                 "Missing the 'generators' directive in combined vertex generator '" << get_name() << "' !");
     // extract information for combined generators :
     vector<string> generator_names;
     vector<double> generator_relative_weights;
@@ -205,13 +205,13 @@ namespace genvtx {
                                                                   activity_value,
                                                                   activity_unit_label)),
                        std::logic_error,
-                       "Cannot parse a value/unit directive from '" << activity_str << "' !");
+                       "Cannot parse a value/unit directive from '" << activity_str << "' in combined vertex generator '" << get_name() << "' !");
           DT_THROW_IF ((activity_unit_label != "activity")
                        && (activity_unit_label != "volume_activity")
                        && (activity_unit_label != "surface_activity")
                        && (activity_unit_label != "mass_activity"),
                        std::logic_error,
-                       "Invalid activity directive '" << activity_unit_label << "' !");
+                       "Invalid activity directive '" << activity_unit_label << "' in combined vertex generator '" << get_name() << "' !");
           activity_mode = true;
           generator_activity_value.push_back (activity_value);
           generator_activity_label.push_back (activity_unit_label);
@@ -228,11 +228,11 @@ namespace genvtx {
           if (setup_.has_key (key_oss.str ())) {
             DT_THROW_IF (activity_mode,
                          std::logic_error,
-                         "Incompatible activity/relative_weight directive !");
+                         "Incompatible activity/relative_weight directive in combined vertex generator '" << get_name() << "' !");
             relative_weight = setup_.fetch_real (key_oss.str ());
             DT_THROW_IF (relative_weight < 0.0,
                          std::logic_error,
-                         "Invalid negative relative weight directive !");
+                         "Invalid negative relative weight directive in combined vertex generator '" << get_name() << "' !");
           }
         }
 
@@ -242,12 +242,12 @@ namespace genvtx {
           key_oss << "generators." << vg_name << ".absolute_weight";
           if (setup_.has_key (key_oss.str ())) {
             DT_THROW_IF (activity_mode, std::logic_error,
-                         "Incompatible activity/absolute_weight directive !");
+                         "Incompatible activity/absolute_weight directive in combined vertex generator '" << get_name() << "' !");
             DT_THROW_IF (relative_weight >= 0.0, std::logic_error,
-                         "Incompatible relative/absolute weight directives !");
+                         "Incompatible relative/absolute weight directives in combined vertex generator '" << get_name() << "' !");
             absolute_weight = setup_.fetch_real (key_oss.str ());
             DT_THROW_IF (absolute_weight < 0.0, std::logic_error,
-                         "Invalid negative absolute weight directive !");
+                         "Invalid negative absolute weight directive in combined vertex generator '" << get_name() << "' !");
           }
         }
         generator_relative_weights.push_back (relative_weight);
@@ -267,7 +267,7 @@ namespace genvtx {
       //   }
       genvtx::vg_dict_type::iterator found = vgens_.find (the_vg_name);
       DT_THROW_IF (found == vgens_.end (), std::logic_error,
-                   "No vertex generator named '" << the_vg_name << "' !");
+                   "No vertex generator named '" << the_vg_name << "' in combined vertex generator '" << get_name() << "' !");
       double the_vg_weight = -1.0;
       genvtx::vg_handle_type vgh = found->second.grab_initialized_vg_handle ();
 
@@ -322,7 +322,7 @@ namespace genvtx {
             //          << std::endl;
             //   }
             DT_THROW_IF (! the_vg_weight_info.has_volume (), std::logic_error,
-                         "Generator '" << the_vg_name << "' does not support 'volume_activity' mode !");
+                         "Vertex generator '" << the_vg_name << "' does not support 'volume_activity' mode in combined vertex generator '" << get_name() << "' !");
             // if (devel)
             //   {
             //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
@@ -347,7 +347,7 @@ namespace genvtx {
             //          << std::endl;
             //   }
             DT_THROW_IF (! the_vg_weight_info.has_surface (),std::logic_error,
-                         "Generator '" << the_vg_name << "' does not support 'surface_activity' mode !");
+                         "Vertex generator '" << the_vg_name << "' does not support 'surface_activity' mode in combined vertex generator '" << get_name() << "' !");
             // if (devel)
             //   {
             //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
@@ -372,7 +372,7 @@ namespace genvtx {
             //          << std::endl;
             //   }
             DT_THROW_IF (! the_vg_weight_info.has_mass (), std::logic_error,
-                         "Generator '" << the_vg_name << "' does not support 'mass_activity' mode ! Please check the access to some valid materials geometry plugin !");
+                         "Vertex generator '" << the_vg_name << "' does not support 'mass_activity' mode ! Please check the access to some valid materials geometry plugin in combined vertex generator '" << get_name() << "' !");
             // if (devel)
             //   {
             //     std::cerr << "DEVEL: " << "genvtx::combined_vg::initialize: "
@@ -390,7 +390,7 @@ namespace genvtx {
           } else {
             DT_THROW_IF(true,  std::logic_error,
                         "Invalid activity label '" << the_vg_activity_label
-                        << "' for generator '" << the_vg_name << "' !");
+                        << "' for generator '" << the_vg_name << "' in combined vertex generator '" << get_name() << "' !");
           }
         }
       } else {
@@ -443,21 +443,21 @@ namespace genvtx {
           DT_THROW_IF (the_vg_weight_info.type == weight_info::WEIGHTING_NONE,
                        std::logic_error,
                        "Cannot support the '" << "relative_weight"
-                       << "' mode for generator '" << the_vg_name
-                       << "' for it has no valid weight info type !");
+                       << "' mode for vertex generator '" << the_vg_name
+                       << "' for it has no valid weight info type in combined vertex generator '" << get_name() << "' !");
           if (no_activity_type == weight_info::WEIGHTING_NONE) {
             no_activity_type = the_vg_weight_info.type;
           } else {
             DT_THROW_IF (the_vg_weight_info.type != no_activity_type,
                          std::logic_error,
                          "Cannot use the '" << "relative_weight"
-                         << "' mode for generator '" << the_vg_name
-                         << "' which is not compatible with the current mode !");
+                         << "' mode for vertex generator '" << the_vg_name
+                         << "' which is not compatible with the current mode in combined vertex generator '" << get_name() << "' !");
           }
           the_vg_weight = the_vg_relative_weight * the_vg_weight_info.value;
         } else {
           DT_THROW_IF(true,  std::logic_error,
-                      "Generator '" << the_vg_name << "' has no weight information !");
+                      "Vertex generator '" << the_vg_name << "' has no weight information in combined vertex generator '" << get_name() << "' !");
         }
       }
 
