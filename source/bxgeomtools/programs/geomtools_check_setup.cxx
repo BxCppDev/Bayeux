@@ -208,6 +208,8 @@ int main (int argc_, char ** argv_)
                 << "                                           \n"
                 << "  Copyright (C) 2009-2013                  \n"
                 << "  Francois Mauger, Université de Caen Basse-Normandie\n"
+                << "  Xavier Garrido, Université Paris-Sud     \n"
+                << "  Ben Morgan, University of Warwick        \n"
                 << "                                           \n";
     }
 

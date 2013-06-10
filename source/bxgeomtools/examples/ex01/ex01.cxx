@@ -18,7 +18,7 @@ int main(int argc_, char ** argv_)
       else if (opt == "--warning") logging = datatools::logger::PRIO_WARNING;
     }
 
-    // Declare a geoemtry manager :
+    // Declare a geometry manager :
     geomtools::manager GM;
     GM.set_logging_priority(logging);
 
@@ -32,7 +32,7 @@ int main(int argc_, char ** argv_)
 
     if (logging >= datatools::logger::PRIO_NOTICE) {
       // Smart print :
-      GM.tree_dump(std::clog, "The geoemtry manager: ");
+      GM.tree_dump(std::clog, "The geometry manager: ");
     }
 
     // A Gnuplot based 3D-renderer :

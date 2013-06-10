@@ -5,6 +5,8 @@ opwd=$(pwd)
 build_dir=$(pwd)/__build
 test -d ${build_dir} && rm -fr ${build_dir}
 
+pandoc -r rst -w html README.rst -o geomtools_ex01_README.html
+
 mkdir ${build_dir}
 cd ${build_dir}
 
@@ -18,8 +20,10 @@ make install
 cd ..
 ls -l
 
+echo "Run the 'ex01' program..." 1>&2
 ./ex01
 
+echo "Browse the geometry setup via the 'geomtools_check_setup' program..." 1>&2
 geomtools_check_setup \
    --manager-config config/manager.conf \
    --with-gdml \
@@ -27,7 +31,10 @@ geomtools_check_setup \
 
 rm -f ./ex01
 rm -f ./geomtools-ex01.gdml
+rm -f ./geomtools_ex01_README.html
 rm -fr ${build_dir}
+find . -name "*~" -exec rm -f \{\} \;
+
 
 cd ${opwd}
 

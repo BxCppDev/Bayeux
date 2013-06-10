@@ -12,7 +12,7 @@ Introduction
    library.
    Also it is shown how to use the ``geomtools_check_setup`` utility
    to visualize the setup and generate a GDML file usable by Geant4
-   and browsable by ROOT.
+   and/or browsable by ROOT.
 
  * Source files :
 
@@ -92,6 +92,21 @@ Quick start
                --with-gdml \
                --with-visu --visu-view-3d
 
+   It displays views of the setup using the ``geomtools`` Gnuplot viewer.
+
+      .. image:: images/geomtools_ex01_setup_3d.jpg
+         :width: 200
+         :scale: 25 %
+         :alt: The 3D view of the setup (file ``images/geomtools_ex01_setup_3d.jpg``)
+         :align: center
+
+      .. image:: images/geomtools_ex01_om_3d.jpg
+         :width: 200
+         :scale: 25 %
+         :alt: The 3D view of the optical module (file ``images/geomtools_ex01_om_3d.jpg``)
+         :align: center
+
+
 
 6. Check the output ``geomtools`` data file:
 
@@ -104,6 +119,14 @@ Quick start
          root [3] g2->SetVisLevel(100);
          root [4] g2->GetMasterVolume()->Draw("");
 	 root [5] .q
+
+      It displays views of the setup using the ROOT viewer.
+
+      .. image:: images/geomtools_ex01_setup_root_3d.jpg
+         :width: 200
+         :scale: 25 %
+         :alt: The 3D view of the setup (file ``images/geomtools_ex01_setup_root_3d.jpg``)
+         :align: center
 
 8. Clean::
 
