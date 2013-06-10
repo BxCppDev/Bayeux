@@ -1,7 +1,7 @@
 # -*- mode: conf-unix; -*-
 # List of multi-properties (datatools::multi_properties):
 
-#@description The geometry models that compose the source
+#@description The geometry models that compose the shielding
 
 #@key_label   "name"
 #@meta_label  "type"
@@ -10,7 +10,7 @@
 ##########################################################
 [name="brick.model" type="geomtools::simple_shaped_model"]
 
-#@config The list of properties to describe the source film
+#@config The list of properties to describe a shielding brick
 
 #@description The name of the 3D shape of the source film
 shape_type  : string = "box"

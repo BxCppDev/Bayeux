@@ -131,6 +131,7 @@ int main (int argc_, char ** argv_)
       params.manager_config_filename = manager_config_filename;
       params.noevents = noevents;
       params.vg_name = "all_source_bulk.vg";
+      //params.vg_name = "vessel_inner_surface.vg";
       params.eg_name = "bkg_K40";
 
       // Declare the simulation manager:

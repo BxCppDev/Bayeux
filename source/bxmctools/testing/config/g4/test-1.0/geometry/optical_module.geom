@@ -1,7 +1,7 @@
 # -*- mode: conf-unix; -*-
 # List of multi-properties (datatools::multi_properties):
 
-#@description List of geometry models
+#@description List of geometry models that describe an optical module
 #
 # This geometry sample setup describes an optical module
 # based on the coupling of a PMT and a scintillator block

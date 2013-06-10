@@ -1,7 +1,7 @@
 # -*- mode: conf-unix; -*-
 # List of multi-properties (datatools::multi_properties):
 
-#@description The geometry models that compose the source 
+#@description The geometry models that compose the source
 
 #@key_label   "name"
 #@meta_label  "type"
@@ -103,11 +103,11 @@ replicated.model           : string = "source_support.model"
 #@description The label associated to the replicated volumes
 replicated.label           : string = "sources"
 
-#@description The length unit
-length_unit                : string = "cm"
+#@description The default length unit
+#length_unit                : string = "cm"
 
 #@description The step between replicated volumes
-replicated.step            : real = 10
+replicated.step            : real as length = 10 cm
 
 #@description The mapping directives for the "sources" daughter volumes
 mapping.daughter_id.sources : string  = "[source.gc:position+0]"

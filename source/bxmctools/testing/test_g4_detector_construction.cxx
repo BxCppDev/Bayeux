@@ -33,7 +33,7 @@ int main (int argc_, char ** argv_)
   using namespace std;
   int error_code = EXIT_SUCCESS;
   try {
-    clog << "Test program for class 'mctols::g4::detector_construction'!" << endl;
+    clog << "Test program for class 'mctools::g4::detector_construction'!" << endl;
 
     bool debug = false;
 
@@ -60,7 +60,6 @@ int main (int argc_, char ** argv_)
     geomtools::manager geo_manager;
     if (debug) geo_manager.set_logging_priority (datatools::logger::PRIO_DEBUG);
     datatools::properties gm_setup;
-    //std::string gm_filename = "${MCTOOLS_DATA_DIR}/testing/config/geometry/test_manager.conf";
     std::string gm_filename = "${MCTOOLS_DATA_DIR}/testing/config/g4/test-1.0/geometry/manager.conf";
     datatools::fetch_path_with_env(gm_filename);
     datatools::properties::read_config(gm_filename, gm_setup);
