@@ -14,17 +14,15 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   // registration :
   GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(plate_with_hole_model,"geomtools::plate_with_hole_model");
 
-  string plate_with_hole_model::get_model_id () const
+  std::string plate_with_hole_model::get_model_id () const
   {
     return "geomtools::plate_with_hole_model";
   }
 
-  const string & plate_with_hole_model::get_material () const
+  const std::string & plate_with_hole_model::get_material () const
   {
     return _material_;
   }
@@ -61,107 +59,80 @@ namespace geomtools {
                                              const datatools::properties & config_,
                                              geomtools::models_col_type * models_)
   {
-    bool devel = false;
-    // if (config_.has_flag ("devel"))
-    //   {
-    //     devel = true;
-    //   }
-    // if (devel) std::clog << "DEVEL: plate_with_hole_model::_at_construct: Entering..." << std::endl;
-
     set_name (name_);
-
-    double lunit = CLHEP::mm;
-    double x;
-    double y;
-    double z;
-    double r_hole;
-    double x_hole;
-    double y_hole;
-
-    datatools::invalidate (r_hole);
-    datatools::invalidate (x_hole);
-    datatools::invalidate (y_hole);
-
-    double x_pos_hole = 0.0;
-    double y_pos_hole = 0.0;
 
     /*** parse properties ***/
 
+    double lunit = CLHEP::mm;
     if (config_.has_key ("length_unit"))
       {
-        std::string lunit_str = config_.fetch_string ("length_unit");
+        const std::string lunit_str = config_.fetch_string ("length_unit");
         lunit = datatools::units::get_length_unit_from (lunit_str);
       }
 
-    DT_THROW_IF (!config_.has_key ("material.ref"),
-                 std::logic_error,
-                 "Missing 'material.ref' property !");
+    DT_THROW_IF (!config_.has_key ("material.ref"), std::logic_error, "Missing 'material.ref' property !");
     _material_ = config_.fetch_string ("material.ref");
 
-    DT_THROW_IF (! config_.has_key ("x"),
-                 std::logic_error,
-                 "Missing 'x' property !");
-    x = config_.fetch_real ("x");
+    DT_THROW_IF (! config_.has_key ("x"), std::logic_error, "Missing 'x' property !");
+    double x = config_.fetch_real ("x");
     if (! config_.has_explicit_unit ("x")) {
       x *= lunit;
     }
 
-    DT_THROW_IF (! config_.has_key ("y"),
-                 std::logic_error,
-                 "Missing 'y' property !");
-    y = config_.fetch_real ("y");
+    DT_THROW_IF (! config_.has_key ("y"), std::logic_error, "Missing 'y' property !");
+    double y = config_.fetch_real ("y");
     if (! config_.has_explicit_unit ("y")) {
       y *= lunit;
     }
 
-    DT_THROW_IF (! config_.has_key ("z"),
-                 std::logic_error,
-                 "Missing 'z' property !");
-    z = config_.fetch_real ("z");
+    DT_THROW_IF (! config_.has_key ("z"), std::logic_error, "Missing 'z' property !");
+    double z = config_.fetch_real ("z");
     if (! config_.has_explicit_unit ("z")) {
       z *= lunit;
     }
 
+    double r_hole;
+    datatools::invalidate (r_hole);
     if (config_.has_key ("r_hole"))
       {
         r_hole = config_.fetch_real ("r_hole");
         if (! config_.has_explicit_unit ("r_hole")) {
-          r_hole  *= lunit;
+          r_hole *= lunit;
         }
       }
 
+    double x_hole;
+    double y_hole;
+    datatools::invalidate (x_hole);
+    datatools::invalidate (y_hole);
     if (! datatools::is_valid (r_hole)) {
-      DT_THROW_IF (! config_.has_key ("x_hole"),
-                   std::logic_error,
-                   "Missing 'x_hole' property !");
+      DT_THROW_IF (! config_.has_key ("x_hole"), std::logic_error, "Missing 'x_hole' property !");
       x_hole = config_.fetch_real ("x_hole");
       if (! config_.has_explicit_unit ("x_hole")) {
-        x_hole  *= lunit;
+        x_hole *= lunit;
       }
-      DT_THROW_IF (! config_.has_key ("y_hole"),
-                   std::logic_error,
-                   "Missing 'y_hole' property !");
+      DT_THROW_IF (! config_.has_key ("y_hole"), std::logic_error, "Missing 'y_hole' property !");
       y_hole = config_.fetch_real ("y_hole");
       if (! config_.has_explicit_unit ("y_hole")) {
-        y_hole  *= lunit;
+        y_hole *= lunit;
       }
     }
 
+    double x_pos_hole = 0.0;
     if (config_.has_key ("x_pos_hole")) {
       x_pos_hole = config_.fetch_real ("x_pos_hole");
       if (! config_.has_explicit_unit ("x_pos_hole")) {
-        x_pos_hole  *= lunit;
+        x_pos_hole *= lunit;
       }
     }
 
+    double y_pos_hole = 0.0;
     if (config_.has_key ("y_pos_hole")) {
       y_pos_hole = config_.fetch_real ("y_pos_hole");
       if (! config_.has_explicit_unit ("y_pos_hole")) {
-        y_pos_hole  *= lunit;
+        y_pos_hole *= lunit;
       }
     }
-
-    // if (devel) std::clog << "DEVEL: geomtools::plate_with_hole_model::_at_construct: Properties are parsed !" << std::endl;
 
     _x_ = x;
     _y_ = y;
@@ -178,7 +149,6 @@ namespace geomtools {
     xy_pos_hole.push_back (_y_pos_hole_);
     if (_x_pos_hole_ * _y_pos_hole_ != 0) {
       _solid_.properties ().store ("xy_pos_hole", xy_pos_hole);
-      //_solid_.properties ().tree_dump (cerr, "Solid: ", "DEVEL: ");
     }
     // Checks :
     double hole_x_min = x_pos_hole;
@@ -212,8 +182,7 @@ namespace geomtools {
                  std::logic_error,
                  "Invalid dimension(s) for the mother box !");
 
-    geomtools::placement hole_placement (_x_pos_hole_, _y_pos_hole_, 0.0,
-                                         0, 0, 0);
+    geomtools::placement hole_placement (_x_pos_hole_, _y_pos_hole_, 0.0, 0, 0, 0);
     if (datatools::is_valid (_r_hole_)) {
         _cyl_hole_.set_r (_r_hole_);
         _cyl_hole_.set_z (_z_hole_);
@@ -229,7 +198,7 @@ namespace geomtools {
                             _box_hole_,
                             hole_placement);
       } else {
-      DT_THROW_IF(true,logic_error, "No defined shape for hole !");
+      DT_THROW_IF (true, std::logic_error, "No defined shape for hole !");
     }
 
     // Install proposed 'stackable data' pointer in the shape:
@@ -241,17 +210,7 @@ namespace geomtools {
       sd_ptr->ymax = +0.5*_y_;
       sd_ptr->zmin = -0.5*_z_;
       sd_ptr->zmax = +0.5*_z_;
-      // if ((_x_pos_hole_ * _y_pos_hole_) == 0.0)
-      //   {
-      //     sd_ptr->zmax = 0.0;
-      //     sd_ptr->zmin = 0.0;
-      //   }
       _solid_.set_stackable_data (sd_ptr);
-      // if (devel)
-      //   {
-      //     clog << "DEVEL: plate_with_hole_model::_at_construct: Entering..." << endl;
-      //     sd_ptr->tree_dump (cerr, "plate_with_hole_model::_at_construct: Stackable data: ", "DEVEL: ");
-      //   }
     }
 
     _solid_.set_user_draw ((void *) &plate_with_hole_model::gnuplot_draw_user_function);
@@ -260,11 +219,6 @@ namespace geomtools {
     get_logical ().set_shape (_solid_);
     get_logical ().set_material_ref (_material_);
 
-    // if (devel)
-    //   {
-    //     this->tree_dump (clog, "plate_with_hole_model::_at_construct: ", "DEVEL: ");
-    //   }
-    // if (devel) clog << "DEVEL: plate_with_hole_model::_at_construct: Exiting." << endl;
     return;
   }
 
@@ -341,35 +295,35 @@ namespace geomtools {
                                                           void *)
   {
     //using namespace geomtools;
-    const subtraction_3d * solid = dynamic_cast<const geomtools::subtraction_3d *>(&obj_);
+    const geomtools::subtraction_3d * solid = dynamic_cast<const geomtools::subtraction_3d *>(&obj_);
     DT_THROW_IF (solid == 0,
                  std::logic_error,
                  "3D-object of '" << obj_.get_shape_name () << "' shape type has not the right type !");
-    const i_composite_shape_3d::shape_type & s1 = solid->get_shape1 ();
-    const i_composite_shape_3d::shape_type & s2 = solid->get_shape2 ();
-    const i_shape_3d & sh1 = s1.get_shape ();
-    const i_shape_3d & sh2 = s2.get_shape ();
+    const geomtools::i_composite_shape_3d::shape_type & s1 = solid->get_shape1 ();
+    const geomtools::i_composite_shape_3d::shape_type & s2 = solid->get_shape2 ();
+    const geomtools::i_shape_3d & sh1 = s1.get_shape ();
+    const geomtools::i_shape_3d & sh2 = s2.get_shape ();
 
     // extract useful stuff (shapes and properties):
     const geomtools::box & mother_box = dynamic_cast<const geomtools::box &> (sh1);
 
-    bool draw_mother = true;
+    const bool draw_mother = true;
     if (draw_mother)
       {
         // draw first shape:
-        placement mother_world_placement;
+        geomtools::placement mother_world_placement;
         mother_world_placement.set_translation (position_);
         mother_world_placement.set_orientation (rotation_);
 
-        placement world_item_placement;
+        geomtools::placement world_item_placement;
         mother_world_placement.child_to_mother (s1.get_placement (),
                                                 world_item_placement);
-        const vector_3d   & sh1_pos = world_item_placement.get_translation ();
-        const rotation_3d & sh1_rot = world_item_placement.get_rotation ();
-        gnuplot_draw::draw_box (out_,
-                                sh1_pos,
-                                sh1_rot,
-                                mother_box);
+        const geomtools::vector_3d   & sh1_pos = world_item_placement.get_translation ();
+        const geomtools::rotation_3d & sh1_rot = world_item_placement.get_rotation ();
+        geomtools::gnuplot_draw::draw_box (out_,
+                                           sh1_pos,
+                                           sh1_rot,
+                                           mother_box);
       }
 
     double hole_x_pos = 0.0;
@@ -383,43 +337,41 @@ namespace geomtools {
         hole_y_pos = xy_pos_hole.at(1);
       }
 
-    bool draw_hole = true;
+    const bool draw_hole = true;
     if (draw_hole)
       {
         // draw hole contour :
-        placement mother_world_placement;
+        geomtools::placement mother_world_placement;
         mother_world_placement.set_translation (position_);
         mother_world_placement.set_orientation (rotation_);
 
         {
-          placement c1_plcmt;
+          geomtools::placement c1_plcmt;
           c1_plcmt.set (hole_x_pos, hole_y_pos, hole_z_pos, 0., 0. , 0.);
-          placement world_item_placement;
+          geomtools::placement world_item_placement;
           mother_world_placement.child_to_mother (c1_plcmt,
                                                   world_item_placement);
-          const vector_3d   & sh2_pos = world_item_placement.get_translation ();
-          const rotation_3d & sh2_rot = world_item_placement.get_rotation ();
+          const geomtools::vector_3d   & sh2_pos = world_item_placement.get_translation ();
+          const geomtools::rotation_3d & sh2_rot = world_item_placement.get_rotation ();
           if (sh2.get_shape_name () == "box")
             {
-              const geomtools::box & hole_box
-                = dynamic_cast<const geomtools::box &> (sh2);
-              gnuplot_draw::draw_box (out_,
-                                      sh2_pos,
-                                      sh2_rot,
-                                      hole_box.get_x (),
-                                      hole_box.get_y (),
-                                      mother_box.get_z (),
-                                      AXIS_Z, 8);
+              const geomtools::box & hole_box = dynamic_cast<const geomtools::box &> (sh2);
+              geomtools::gnuplot_draw::draw_box (out_,
+                                                 sh2_pos,
+                                                 sh2_rot,
+                                                 hole_box.get_x (),
+                                                 hole_box.get_y (),
+                                                 mother_box.get_z (),
+                                                 AXIS_Z, 8);
             }
           if (sh2.get_shape_name () == "cylinder")
             {
-              const geomtools::cylinder & hole_cylinder
-                = dynamic_cast<const geomtools::cylinder &> (sh2);
-              gnuplot_draw::draw_cylinder (out_,
-                                           sh2_pos,
-                                           sh2_rot,
-                                           hole_cylinder.get_r (),
-                                           mother_box.get_z ());
+              const geomtools::cylinder & hole_cylinder = dynamic_cast<const geomtools::cylinder &> (sh2);
+              geomtools::gnuplot_draw::draw_cylinder (out_,
+                                                      sh2_pos,
+                                                      sh2_rot,
+                                                      hole_cylinder.get_r (),
+                                                      mother_box.get_z ());
             }
          }
 

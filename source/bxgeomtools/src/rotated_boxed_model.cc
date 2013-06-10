@@ -12,8 +12,6 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   const geomtools::box & rotated_boxed_model::get_box () const
   {
     return _solid_;
@@ -26,20 +24,7 @@ namespace geomtools {
 
   void rotated_boxed_model::set_boxed_model (const i_model & model_)
   {
-    assert_unconstructed("rotated_boxed_model::set_boxed_model");
-
-    // check if model has a logical volume with a box shape:
-    const i_shape_3d & shape = model_.get_logical ().get_shape ();
-    /*
-      if (shape.get_shape_name () != box::BOX_LABEL)
-      {
-      ostringstream message;
-      message << "rotated_boxed_model::set_boxed_model: "
-      << "Model has no 'box' shape ! "
-      << "Found '" << shape.get_shape_name () << "' !";
-      throw std::logic_error (message.str ());
-      }
-    */
+    DT_THROW_IF (is_constructed (), std::logic_error, "Operation not allowed ! Model has already been constructed");
     _boxed_model_ = &model_;
   }
 
@@ -48,7 +33,7 @@ namespace geomtools {
     return *_boxed_model_;
   }
 
-  string rotated_boxed_model::get_model_id () const
+  std::string rotated_boxed_model::get_model_id () const
   {
     return "geomtools::rotated_boxed_model";
   }
@@ -56,73 +41,53 @@ namespace geomtools {
   rotated_boxed_model::rotated_boxed_model () : i_boxed_model ()
   {
     _boxed_model_ = 0;
+    return;
   }
 
   rotated_boxed_model::~rotated_boxed_model ()
   {
+    return;
   }
 
-  void rotated_boxed_model::_at_construct (const string & name_,
+  void rotated_boxed_model::_at_construct (const std::string & name_,
                                            const datatools::properties & config_,
                                            models_col_type * models_)
   {
-    bool devel = false;
-    if (devel)
-      {
-        clog << "DEVEL: rotated_boxed_model::_at_construct: Entering..." << endl;
-      }
+    DT_LOG_TRACE (get_logging_priority (), "Entering...");
     set_name (name_);
-    string boxed_model_name;
-    string rotation_axis_label = "";
-    string special_rotation_angle_label = "";
-    string rotated_label = "rotated";
-    int    special_rotation_angle = ROTATION_ANGLE_INVALID;
-    double rotation_angle;
-    datatools::invalidate (rotation_angle);
-    int rotation_axis = ROTATION_AXIS_INVALID;
-    bool use_special_angle = false;
-    double lunit = CLHEP::mm;
-    double aunit = CLHEP::degree;
-
-    // dimension of the mother box:
-    double x, y, z;
-    datatools::invalidate (x);
-    datatools::invalidate (y);
-    datatools::invalidate (z);
 
     /*** length unit ***/
+    double lunit = CLHEP::mm;
     if (config_.has_key ("length_unit"))
       {
-        string length_unit_str = config_.fetch_string ("length_unit");
+        const std::string length_unit_str = config_.fetch_string ("length_unit");
         lunit = datatools::units::get_length_unit_from (length_unit_str);
       }
 
+    double aunit = CLHEP::degree;
     /*** angle unit ***/
     if (config_.has_key ("angle_unit"))
       {
-        string angle_unit_str = config_.fetch_string ("angle_unit");
+        const std::string angle_unit_str = config_.fetch_string ("angle_unit");
         aunit = datatools::units::get_angle_unit_from (angle_unit_str);
       }
 
     // fetch the label of the rotated boxed model:
+    std::string rotated_label = "rotated";
     if (config_.has_key ("rotated.label"))
       {
         rotated_label = config_.fetch_string ("rotated.label");
       }
 
     // fetch the rotation axis:
-    if (config_.has_key ("rotated.axis"))
-      {
-        rotation_axis_label = config_.fetch_string ("rotated.axis");
-      }
-    else
-      {
-        ostringstream message;
-        message << "rotated_boxed_model::_at_construct: "
-                << "Missing 'rotated.axis' property for model '" << name_ << "' !";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF (! config_.has_key ("rotated.axis"), std::logic_error,
+                 "Missing 'rotated.axis' property for model '" << name_ << "' !");
+    const std::string rotation_axis_label = config_.fetch_string ("rotated.axis");
 
+    bool use_special_angle = false;
+    std::string special_rotation_angle_label;
+    double rotation_angle;
+    datatools::invalidate (rotation_angle);
     if (config_.has_key ("rotated.special_angle"))
       {
         special_rotation_angle_label = config_.fetch_string ("rotated.special_angle");
@@ -138,47 +103,36 @@ namespace geomtools {
       }
     else
       {
-        ostringstream message;
-        message << "rotated_boxed_model::_at_construct: "
-                << "Missing 'rotated.special_angle' or 'rotation.angle' property for model '" << name_ << "' !";
-        throw std::logic_error (message.str ());
+        DT_THROW_IF (true,
+                     std::logic_error,
+                     "Missing 'rotated.special_angle' or 'rotation.angle' property for model '" << name_ << "' !");
       }
 
-    if (config_.has_key ("rotated.model"))
-      {
-        boxed_model_name = config_.fetch_string ("rotated.model");
-      }
-    else
-      {
-        ostringstream message;
-        message << "rotated_boxed_model::_at_construct: "
-                << "Missing 'boxed_model' property for model '" << name_ << "' !";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF (! config_.has_key ("rotated.model"),
+                 std::logic_error,
+                 "Missing 'boxed_model' property for model '" << name_ << "' !");
+    const std::string boxed_model_name = config_.fetch_string ("rotated.model");
 
-    rotation_axis = get_rotation_axis_from_label (rotation_axis_label);
-    if (! check_rotation_axis (rotation_axis))
-      {
-        ostringstream message;
-        message << "rotated_boxed_model::_at_construct: "
-                << "Invalid rotation axis for model '" << name_ << "' !";
-        throw logic_error (message.str ());
-      }
+    const int rotation_axis = get_rotation_axis_from_label (rotation_axis_label);
+    DT_THROW_IF (! check_rotation_axis (rotation_axis),
+                 std::logic_error,
+                 "Invalid rotation axis for model '" << name_ << "' !");
 
     // XXXX
+    // dimension of the mother box:
+    double x, y, z;
+    datatools::invalidate (x);
+    datatools::invalidate (y);
+    datatools::invalidate (z);
     // special angles: 0, 90, 180, 270 degrees
+    int special_rotation_angle = ROTATION_ANGLE_INVALID;
     if (use_special_angle)
       {
         special_rotation_angle =
           get_special_rotation_angle_from_label (special_rotation_angle_label);
-        if (! check_special_rotation_angle (special_rotation_angle))
-          {
-            ostringstream message;
-            message << "rotated_boxed_model::_at_construct: "
-                    << "Invalid rotation angle ("
-                    << special_rotation_angle_label << ") for model '" << name_ << "'!";
-            throw logic_error (message.str ());
-          }
+        DT_THROW_IF (! check_special_rotation_angle (special_rotation_angle),
+                     std::logic_error,
+                     "Invalid rotation angle (" << special_rotation_angle_label << ") for model '" << name_ << "'!");
       }
     // arbitrary angles:
     else
@@ -192,14 +146,9 @@ namespace geomtools {
           }
         else
           {
-            if ((rotation_axis == ROTATION_AXIS_Y)
-                || (rotation_axis == ROTATION_AXIS_Z))
-              {
-                ostringstream message;
-                message << "rotated_boxed_model::_at_construct: "
-                        << "Missing 'x' property !";
-                throw std::logic_error (message.str ());
-              }
+            DT_THROW_IF ((rotation_axis == ROTATION_AXIS_Y) || (rotation_axis == ROTATION_AXIS_Z),
+                         std::logic_error,
+                         "Missing 'x' property !");
           }
 
         if (config_.has_key ("y"))
@@ -211,14 +160,9 @@ namespace geomtools {
           }
         else
           {
-            if ((rotation_axis == ROTATION_AXIS_X)
-                || (rotation_axis == ROTATION_AXIS_Z))
-              {
-                ostringstream message;
-                message << "rotated_boxed_model::_at_construct: "
-                        << "Missing 'y' property !";
-                throw std::logic_error (message.str ());
-              }
+            DT_THROW_IF ((rotation_axis == ROTATION_AXIS_X) || (rotation_axis == ROTATION_AXIS_Z),
+                         std::logic_error,
+                         "Missing 'y' property !");
           }
 
         if (config_.has_key ("z"))
@@ -230,74 +174,41 @@ namespace geomtools {
           }
         else
           {
-            if ((rotation_axis == ROTATION_AXIS_X)
-                || (rotation_axis == ROTATION_AXIS_Y))
-              {
-                ostringstream message;
-                message << "rotated_boxed_model::_at_construct: "
-                        << "Missing 'z' property !";
-                throw std::logic_error (message.str ());
-              }
+            DT_THROW_IF ((rotation_axis == ROTATION_AXIS_X) || (rotation_axis == ROTATION_AXIS_Y),
+                         std::logic_error,
+                         "Missing 'z' property !");
           }
 
       }
 
-    if (! models_)
-      {
-        ostringstream message;
-        message << "rotated_boxed_model::_at_construct: "
-                << "Missing logicals dictionary !";
-        throw std::logic_error (message.str ());
-      }
-
+    DT_THROW_IF (! models_, std::logic_error, "Missing logicals dictionary !");
     // Boxed model:
     {
-      models_col_type::const_iterator found =
-        models_->find (boxed_model_name);
+      models_col_type::const_iterator found = models_->find (boxed_model_name);
       i_model * the_model = 0;
-      if (found != models_->end ())
-        {
-          the_model =found->second;
-          // check if the model is stackable:
-          if (! i_shape_3d::is_stackable (the_model->get_logical ().get_shape ()))
-            {
-              ostringstream message;
-              message << "stacked_boxed_model::_at_construct: "
-                      << "The rotating model '"
-                      << the_model->get_name ()
-                      << "' is not stackable !";
-              throw std::logic_error (message.str ());
-            }
-          set_boxed_model (*the_model);
-        }
-      else
-        {
-          ostringstream message;
-          message << "rotated_boxed_model::_at_construct: "
-                  << "Cannot find model with name '"
-                  << boxed_model_name << "' !";
-          throw std::logic_error (message.str ());
-        }
+      DT_THROW_IF (found == models_->end (), std::logic_error,
+                   "The rotating model '" << the_model->get_name () << "' is not stackable !");
+      the_model = found->second;
+      // check if the model is stackable:
+      DT_THROW_IF (! i_shape_3d::is_stackable (the_model->get_logical ().get_shape ()),
+                   std::logic_error,
+                   "The rotating model '" << the_model->get_name () << "' is not stackable !");
+      set_boxed_model (*the_model);
     }
 
     const i_shape_3d & the_shape = _boxed_model_->get_logical ().get_shape ();
 
     // try to get a stackable data from the shape:
     stackable_data the_SD;
-    if (! i_shape_3d::pickup_stackable (the_shape, the_SD))
-      {
-        ostringstream message;
-        message << "rotated_boxed_model::_at_construct: "
-                << "Cannot stack '"
-                << the_shape.get_shape_name () << "' shape !";
-        throw std::logic_error (message.str ());
-      }
-    double gxmin = the_SD.get_xmin ();
-    double gxmax = the_SD.get_xmax ();
-    double gymin = the_SD.get_ymin ();
-    double gymax = the_SD.get_ymax ();
-    double gzmin = the_SD.get_zmin ();
-    double gzmax = the_SD.get_zmax ();
+    DT_THROW_IF (! i_shape_3d::pickup_stackable (the_shape, the_SD),
+                 std::logic_error,
+                 "Cannot stack '" << the_shape.get_shape_name () << "' shape !");
+    const double gxmin = the_SD.get_xmin ();
+    const double gxmax = the_SD.get_xmax ();
+    const double gymin = the_SD.get_ymin ();
+    const double gymax = the_SD.get_ymax ();
+    const double gzmin = the_SD.get_zmin ();
+    const double gzmax = the_SD.get_zmax ();
     double x0, y0, z0;
     x0 = y0 = z0 = 0.0;
     _boxed_placement_.set_translation (x0, y0, z0);
@@ -388,11 +299,10 @@ namespace geomtools {
                 the_new_SD.ymin = -gxmax;
               }
           }
-        if (devel)
+        DT_LOG_TRACE (get_logging_priority (), "New SD:");
+        if (get_logging_priority () >= datatools::logger::PRIO_TRACE)
           {
-            the_new_SD.tree_dump (cerr,
-                                  "rotated_boxed_model::_at_construct: New SD:",
-                                  "DEVEL: ");
+            the_new_SD.tree_dump (std::cerr);
           }
         x = (the_new_SD.xmax - the_new_SD.xmin);
         y = (the_new_SD.ymax - the_new_SD.ymin);
@@ -417,14 +327,11 @@ namespace geomtools {
     _solid_.set_x (x);
     _solid_.set_y (y);
     _solid_.set_z (z);
-    if (! _solid_.is_valid ())
-      {
-        throw std::logic_error ("rotated_boxed_model::_at_construct: Invalid solid !");
-      }
+    DT_THROW_IF (! _solid_.is_valid (), std::logic_error, "Invalid solid !");
 
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (_solid_);
-    string material_name = material::constants::instance ().MATERIAL_REF_DEFAULT;
+    std::string material_name = material::constants::instance ().MATERIAL_REF_DEFAULT;
     if (_boxed_model_->get_logical ().has_material_ref ())
       {
         material_name = _boxed_model_->get_logical ().get_material_ref ();
@@ -435,25 +342,24 @@ namespace geomtools {
     _boxed_phys_.set_logical (_boxed_model_->get_logical ());
     _boxed_phys_.set_mother (_logical);
 
-    if (devel) clog << "DEVEL: rotated_boxed_model::_at_construct: Exiting." << endl;
+    DT_LOG_TRACE (get_logging_priority (), "Exiting.");
     return;
   }
 
-  void rotated_boxed_model::tree_dump (ostream & out_,
-                                       const string & title_ ,
-                                       const string & indent_,
+  void rotated_boxed_model::tree_dump (std::ostream & out_,
+                                       const std::string & title_ ,
+                                       const std::string & indent_,
                                        bool inherit_) const
   {
-    using namespace datatools;
-    string indent;
+    std::string indent;
     if (! indent_.empty ()) indent = indent_;
     i_model::tree_dump (out_, title_, indent, true);
 
     {
-      out_ << indent << i_tree_dumpable::tag
-           << "Rotated placement (box) : " << endl;
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Rotated placement (box) : " << std::endl;
       {
-        ostringstream indent_oss;
+        std::ostringstream indent_oss;
         indent_oss << indent;
         indent_oss << skip_tag;
         _boxed_placement_.tree_dump (out_, "", indent_oss.str ());
@@ -461,12 +367,12 @@ namespace geomtools {
     }
 
     {
-      out_ << indent << i_tree_dumpable::inherit_tag (inherit_)
-           << "Solid : " << endl;
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
+           << "Solid : " << std::endl;
       {
-        ostringstream indent_oss;
+        std::ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << i_tree_dumpable::inherit_skip_tag (inherit_);
+        indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
         _solid_.tree_dump (out_, "", indent_oss.str ());
       }
     }

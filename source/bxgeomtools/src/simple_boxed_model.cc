@@ -13,8 +13,6 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   const geomtools::box & simple_boxed_model::get_box () const
   {
     return _solid_;
@@ -27,45 +25,24 @@ namespace geomtools {
 
   void simple_boxed_model::set_x (double x_)
   {
-    assert_unconstructed("simple_boxed_model::set_x");
-
-    if (x_ <= 0.0 * CLHEP::mm)
-      {
-        ostringstream message;
-        message << "simple_boxed_model::set_x: "
-                << "Invalid X " << x_ / CLHEP::mm << " mm !";
-        throw domain_error (message.str ());
-      }
+    DT_THROW_IF (is_constructed (), std::logic_error, "Operation not allowed ! Model has already been constructed");
+    DT_THROW_IF (x_ <= 0.0 * CLHEP::mm, std::domain_error, "Invalid X " << x_ / CLHEP::mm << " mm !");
     _x_ = x_;
     return;
   }
 
   void simple_boxed_model::set_y (double y_)
   {
-    assert_unconstructed("simple_boxed_model::set_y");
-
-    if (y_ <= 0.0 * CLHEP::mm)
-      {
-        ostringstream message;
-        message << "simple_boxed_model::set_y: "
-                << "Invalid Y " << y_ / CLHEP::mm << " mm !";
-        throw domain_error (message.str ());
-      }
+    DT_THROW_IF (is_constructed (), std::logic_error, "Operation not allowed ! Model has already been constructed");
+    DT_THROW_IF (y_ <= 0.0 * CLHEP::mm, std::domain_error, "Invalid Y " << y_ / CLHEP::mm << " mm !");
     _y_ = y_;
     return;
   }
 
   void simple_boxed_model::set_z (double z_)
   {
-    assert_unconstructed("simple_boxed_model::set_z");
-
-    if (z_ <= 0.0 * CLHEP::mm)
-      {
-        ostringstream message;
-        message << "simple_boxed_model::set_z: "
-                << "Invalid Z " << z_ / CLHEP::mm << " mm !";
-        throw domain_error (message.str ());
-      }
+    DT_THROW_IF (is_constructed (), std::logic_error, "Operation not allowed ! Model has already been constructed");
+    DT_THROW_IF (z_ <= 0.0 * CLHEP::mm, std::domain_error, "Invalid Z " << z_ / CLHEP::mm << " mm !");
     _z_ = z_;
     return;
   }
@@ -85,19 +62,19 @@ namespace geomtools {
     return _z_;
   }
 
-  void simple_boxed_model::set_material_name (const string & mn_)
+  void simple_boxed_model::set_material_name (const std::string & mn_)
   {
-    assert_unconstructed("simple_boxed_model::set_material_name");
-
+    DT_THROW_IF (is_constructed (), std::logic_error, "Operation not allowed ! Model has already been constructed");
     _material_name_ = mn_;
+    return;
   }
 
-  const string & simple_boxed_model::get_material_name () const
+  const std::string & simple_boxed_model::get_material_name () const
   {
     return _material_name_;
   }
 
-  string simple_boxed_model::get_model_id () const
+  std::string simple_boxed_model::get_model_id () const
   {
     return "geomtools::simple_boxed_model";
   }
@@ -105,9 +82,9 @@ namespace geomtools {
   simple_boxed_model::simple_boxed_model () : i_boxed_model ()
   {
     _material_name_ = "";
-    _x_ = numeric_limits<double>::quiet_NaN ();
-    _y_ = numeric_limits<double>::quiet_NaN ();
-    _z_ = numeric_limits<double>::quiet_NaN ();
+    _x_ = std::numeric_limits<double>::quiet_NaN ();
+    _y_ = std::numeric_limits<double>::quiet_NaN ();
+    _z_ = std::numeric_limits<double>::quiet_NaN ();
     return;
   }
 
@@ -116,84 +93,41 @@ namespace geomtools {
     return;
   }
 
-  void simple_boxed_model::_at_construct (const string & name_,
+  void simple_boxed_model::_at_construct (const std::string & name_,
                                           const datatools::properties & config_,
                                           models_col_type * models_)
   {
-    bool devel = false;
-    if (devel) clog << "DEVEL: simple_boxed_model::_at_construct: Entering..." << endl;
     set_name (name_);
-    double x;
-    double y;
-    double z;
-    string material_name = material::constants::instance ().MATERIAL_REF_UNKNOWN;
-    string lunit_str = "mm"; // default unit
-    double lunit = CLHEP::mm;
 
+    double lunit = CLHEP::mm;
     if (config_.has_key ("length_unit"))
       {
-        lunit_str = config_.fetch_string ("length_unit");
+        const std::string lunit_str = config_.fetch_string ("length_unit");
         lunit = datatools::units::get_length_unit_from (lunit_str);
       }
 
-    if (config_.has_key ("x"))
-      {
-        x = config_.fetch_real ("x");
-        if (! config_.has_explicit_unit ("x")) {
-          x *= lunit;
-        }
-      }
-    else
-      {
-        ostringstream message;
-        message << "simple_boxed_model::_at_construct: "
-                << "Missing 'x' property !";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (! config_.has_key ("x"), std::logic_error, "Missing 'x' property !");
+    double x = config_.fetch_real ("x");
+    if (! config_.has_explicit_unit ("x")) {
+      x *= lunit;
+    }
+    DT_THROW_IF (! config_.has_key ("y"), std::logic_error, "Missing 'y' property !");
+    double y = config_.fetch_real ("y");
+    if (! config_.has_explicit_unit ("y")) {
+      y *= lunit;
+    }
+    DT_THROW_IF (! config_.has_key ("z"), std::logic_error, "Missing 'z' property !");
+    double z = config_.fetch_real ("z");
+    if (! config_.has_explicit_unit ("z")) {
+      z *= lunit;
+    }
 
-    if (config_.has_key ("y"))
-      {
-        y = config_.fetch_real ("y");
-        if (! config_.has_explicit_unit ("y")) {
-          y *= lunit;
-        }
-      }
-    else
-      {
-        ostringstream message;
-        message << "simple_boxed_model::_at_construct: "
-                << "Missing 'y' property !";
-        throw logic_error (message.str ());
-      }
-
-    if (config_.has_key ("z"))
-      {
-        z = config_.fetch_real ("z");
-        if (! config_.has_explicit_unit ("z")) {
-          z *= lunit;
-        }
-      }
-    else
-      {
-        ostringstream message;
-        message << "simple_boxed_model::_at_construct: "
-                << "Missing 'z' property !";
-        throw logic_error (message.str ());
-      }
-
-    if (config_.has_key ("material.ref"))
-      {
-        material_name = config_.fetch_string ("material.ref");
-      }
-    else
-      {
-        ostringstream message;
-        message << "simple_boxed_model::_at_construct: "
-                << "Missing 'material.ref' property !";
-        throw logic_error (message.str ());
-      }
-
+    DT_THROW_IF (! config_.has_key ("material.ref"),
+                 std::logic_error,
+                 "Missing 'material.ref' property !");
+    const std::string material_name = config_.fetch_string ("material.ref");
     set_material_name (material_name);
+
     set_x (x);
     set_y (y);
     set_z (z);
@@ -202,47 +136,43 @@ namespace geomtools {
     _solid_.set_x (get_x ());
     _solid_.set_y (get_y ());
     _solid_.set_z (get_z ());
-    if (! _solid_.is_valid ())
-      {
-        throw domain_error ("simple_boxed_model::_at_construct: Invalid box dimensions !");
-      }
+    DT_THROW_IF (! _solid_.is_valid (), std::logic_error, "Invalid box dimensions !");
+
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (_solid_);
     get_logical ().set_material_ref (material_name);
 
-    if (devel) clog << "DEVEL: simple_boxed_model::_at_construct: Exiting." << endl;
     return;
   }
 
-  void simple_boxed_model::tree_dump (ostream & out_,
-                                      const string & title_ ,
-                                      const string & indent_,
+  void simple_boxed_model::tree_dump (std::ostream & out_,
+                                      const std::string & title_ ,
+                                      const std::string & indent_,
                                       bool inherit_) const
   {
-    using namespace datatools;
-    string indent;
+    std::string indent;
     if (! indent_.empty ()) indent = indent_;
     i_model::tree_dump (out_, title_, indent, true);
 
-    out_ << indent << i_tree_dumpable::tag
-         << "Material name : '" << get_material_name () << "'" << endl;
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Material name : '" << get_material_name () << "'" << std::endl;
 
-    out_ << indent << i_tree_dumpable::tag
-         << "X : " << get_x () / CLHEP::mm << " mm" << endl;
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "X : " << get_x () / CLHEP::mm << " mm" << std::endl;
 
-    out_ << indent << i_tree_dumpable::tag
-         << "Y : " << get_y () / CLHEP::mm << " mm" << endl;
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Y : " << get_y () / CLHEP::mm << " mm" << std::endl;
 
-    out_ << indent << i_tree_dumpable::tag
-         << "Z : " << get_z () / CLHEP::mm << " mm" << endl;
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Z : " << get_z () / CLHEP::mm << " mm" << std::endl;
 
     {
-      out_ << indent << i_tree_dumpable::inherit_tag (inherit_)
-           << "Solid : " << endl;
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
+           << "Solid : " << std::endl;
       {
-        ostringstream indent_oss;
+        std::ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << i_tree_dumpable::inherit_skip_tag (inherit_);
+        indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
         _solid_.tree_dump (out_, "", indent_oss.str ());
       }
     }

@@ -18,8 +18,6 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   const geomtools::i_shape_3d & cylindric_extrusion_boxed_model::get_solid () const
   {
     return *_solid_;
@@ -27,44 +25,32 @@ namespace geomtools {
 
   void cylindric_extrusion_boxed_model::set_extrusion_radius (double r_)
   {
-    assert_unconstructed("geomtools::cylindric_extrusion_boxed_model::set_extrusion_radius");
-
-    DT_THROW_IF (r_ <= 0.0 * CLHEP::mm,
-                 logic_error,
-                 "Invalid R " << r_ / CLHEP::mm << " mm !");
+    DT_THROW_IF (is_constructed (), std::logic_error, "Operation not allowed ! Model has already been constructed");
+    DT_THROW_IF (r_ <= 0.0 * CLHEP::mm, std::domain_error, "Invalid R " << r_ / CLHEP::mm << " mm !");
     _extrusion_radius_ = r_;
     return;
   }
 
   void cylindric_extrusion_boxed_model::set_mother_x (double x_)
   {
-    assert_unconstructed("geomtools::cylindric_extrusion_boxed_model::set_mother_x");
-
-    DT_THROW_IF (x_ <= 0.0 * CLHEP::mm,
-                 logic_error,
-                 "Invalid X " << x_ / CLHEP::mm << " mm !");
+    DT_THROW_IF (is_constructed (), std::logic_error, "Operation not allowed ! Model has already been constructed");
+    DT_THROW_IF (x_ <= 0.0 * CLHEP::mm, std::domain_error, "Invalid X " << x_ / CLHEP::mm << " mm !");
     _mother_x_ = x_;
     return;
   }
 
   void cylindric_extrusion_boxed_model::set_mother_y (double y_)
   {
-    assert_unconstructed("geomtools::cylindric_extrusion_boxed_model::set_mother_y");
-
-    DT_THROW_IF (y_ <= 0.0 * CLHEP::mm,
-                 logic_error,
-                 "Invalid Y " << y_ / CLHEP::mm << " mm !");
+    DT_THROW_IF (is_constructed (), std::logic_error, "Operation not allowed ! Model has already been constructed");
+    DT_THROW_IF (y_ <= 0.0 * CLHEP::mm, std::domain_error, "Invalid Y " << y_ / CLHEP::mm << " mm !");
     _mother_y_ = y_;
     return;
   }
 
   void cylindric_extrusion_boxed_model::set_mother_z (double z_)
   {
-    assert_unconstructed("geomtools::cylindric_extrusion_boxed_model::set_mother_z");
-
-    DT_THROW_IF (z_ <= 0.0 * CLHEP::mm,
-                 logic_error,
-                 "Invalid Z " << z_ / CLHEP::mm << " mm !");
+    DT_THROW_IF (is_constructed (), std::logic_error, "Operation not allowed ! Model has already been constructed");
+    DT_THROW_IF (z_ <= 0.0 * CLHEP::mm, std::domain_error, "Invalid Z " << z_ / CLHEP::mm << " mm !");
     _mother_z_ = z_;
     return;
   }
@@ -89,19 +75,19 @@ namespace geomtools {
     return _mother_z_;
   }
 
-  void cylindric_extrusion_boxed_model::set_material_name (const string & mn_)
+  void cylindric_extrusion_boxed_model::set_material_name (const std::string & mn_)
   {
-    assert_unconstructed("geomtools::cylindric_extrusion_boxed_model::set_material_name");
-
+    DT_THROW_IF (is_constructed (), std::logic_error, "Operation not allowed ! Model has already been constructed");
     _material_name_ = mn_;
+    return;
   }
 
-  const string & cylindric_extrusion_boxed_model::get_material_name () const
+  const std::string & cylindric_extrusion_boxed_model::get_material_name () const
   {
     return _material_name_;
   }
 
-  string cylindric_extrusion_boxed_model::get_model_id () const
+  std::string cylindric_extrusion_boxed_model::get_model_id () const
   {
     return "geomtools::cylindric_extrusion_boxed_model";
   }
@@ -110,10 +96,10 @@ namespace geomtools {
     : i_model ("geomtools::cylindric_extrusion_boxed_model")
   {
     _material_name_ = "";
-    _mother_x_ = numeric_limits<double>::quiet_NaN ();
-    _mother_y_ = numeric_limits<double>::quiet_NaN ();
-    _mother_z_ = numeric_limits<double>::quiet_NaN ();
-    _extrusion_radius_ = numeric_limits<double>::quiet_NaN ();
+    _mother_x_ = std::numeric_limits<double>::quiet_NaN ();
+    _mother_y_ = std::numeric_limits<double>::quiet_NaN ();
+    _mother_z_ = std::numeric_limits<double>::quiet_NaN ();
+    _extrusion_radius_ = std::numeric_limits<double>::quiet_NaN ();
     return;
   }
 
@@ -122,81 +108,42 @@ namespace geomtools {
     return;
   }
 
-  void cylindric_extrusion_boxed_model::_at_construct (const string & name_,
+  void cylindric_extrusion_boxed_model::_at_construct (const std::string & name_,
                                                        const datatools::properties & config_,
                                                        models_col_type * models_)
   {
-    bool devel = false;
-    if (devel) clog << "DEVEL: cylindric_extrusion_boxed_model::_at_construct: Entering..." << endl;
+    DT_LOG_TRACE (get_logging_priority (), "Entering...");
     set_name (name_);
-    double mother_x;
-    double mother_y;
-    double mother_z;
-    double extrusion_radius;
-    string material_name = material::constants::instance ().MATERIAL_REF_UNKNOWN;
-    double lunit = CLHEP::mm;
-    string lunit_str = "mm"; // default unit
 
+    double lunit = CLHEP::mm;
     if (config_.has_key ("length_unit"))
       {
-        lunit_str = config_.fetch_string ("length_unit");
-      }
-    lunit = datatools::units::get_length_unit_from (lunit_str);
-
-    if (config_.has_key ("x"))
-      {
-        mother_x = config_.fetch_real ("x");
-        if (! config_.has_explicit_unit ("x")) mother_x *= lunit;
-      }
-    else
-      {
-         DT_THROW_IF(true, logic_error,"Missing 'x' property !");
+        const std::string lunit_str = config_.fetch_string ("length_unit");
+        lunit = datatools::units::get_length_unit_from (lunit_str);
       }
 
-    if (config_.has_key ("y"))
-      {
-        mother_y = config_.fetch_real ("y");
-        if (! config_.has_explicit_unit ("y")) mother_y *= lunit;
-      }
-    else
-      {
-        DT_THROW_IF(true, logic_error,"Missing 'y' property !");
-      }
+    DT_THROW_IF (! config_.has_key ("x"), std::logic_error, "Missing 'x' property !");
+    double mother_x = config_.fetch_real ("x");
+    if (! config_.has_explicit_unit ("x")) mother_x *= lunit;
 
-    if (config_.has_key ("z"))
-      {
-        mother_z = config_.fetch_real ("z");
-        if (! config_.has_explicit_unit ("z")) mother_z *= lunit;
-      }
-    else
-      {
-        DT_THROW_IF(true, logic_error,"Missing 'z' property !");
-      }
+    DT_THROW_IF (! config_.has_key ("y"), std::logic_error, "Missing 'y' property !");
+    double mother_y = config_.fetch_real ("y");
+    if (! config_.has_explicit_unit ("y")) mother_y *= lunit;
 
-    if (config_.has_key ("extrusion_radius"))
-      {
-        extrusion_radius = config_.fetch_real ("extrusion_radius");
-        if (! config_.has_explicit_unit ("extrusion_radius")) {
-          extrusion_radius *= lunit;
-        }
-      }
-    else
-      {
-        DT_THROW_IF(true, logic_error, "Missing 'extrusion_radius' property !");
-      }
+    DT_THROW_IF (! config_.has_key ("z"), std::logic_error, "Missing 'z' property !");
+    double mother_z = config_.fetch_real ("z");
+    if (! config_.has_explicit_unit ("z")) mother_z *= lunit;
 
-    if (config_.has_key ("material.ref"))
-      {
-        material_name = config_.fetch_string ("material.ref");
-      }
-    else
-      {
-        DT_THROW_IF(true, logic_error, "Missing 'material.ref' property !");
-      }
+    DT_THROW_IF (! config_.has_key ("extrusion_radius"), std::logic_error, "Missing 'extrusion_radius' property !");
+    double extrusion_radius = config_.fetch_real ("extrusion_radius");
+    if (! config_.has_explicit_unit ("extrusion_radius")) extrusion_radius *= lunit;
 
-    DT_THROW_IF (extrusion_radius >= 0.5 * mother_x, logic_error,
+    DT_THROW_IF (! config_.has_key ("material.ref"), std::logic_error, "Missing 'material.ref' property !");
+    const std::string material_name = config_.fetch_string ("material.ref");
+
+    DT_THROW_IF (extrusion_radius >= 0.5 * mother_x, std::logic_error,
                  "Extrusion radius (" << extrusion_radius / CLHEP::mm << " mm) is too large (X-axis) !");
-    DT_THROW_IF (extrusion_radius >= 0.5 * mother_y, logic_error,
+    DT_THROW_IF (extrusion_radius >= 0.5 * mother_y, std::logic_error,
                  "Extrusion radius (" << extrusion_radius / CLHEP::mm << " mm) is too large (Y-axis) !");
 
     set_material_name (material_name);
@@ -209,21 +156,21 @@ namespace geomtools {
     _mother_box_.set_x (get_mother_x ());
     _mother_box_.set_y (get_mother_y ());
     _mother_box_.set_z (get_mother_z ());
-    DT_THROW_IF (! _mother_box_.is_valid (), logic_error,
-                 "Invalid box dimensions !");
+    DT_THROW_IF (! _mother_box_.is_valid (), std::logic_error, "Invalid box dimensions !");
 
     _extrusion_cylinder_.set_diameter (2 * get_extrusion_radius ());
-    double eps = 1.0e-5 * CLHEP::mm;
+    const double eps = 1.0e-5 * CLHEP::mm;
     _extrusion_cylinder_.set_z (get_mother_z () + eps);
 
-    placement p1 (vector_3d (0, 0, 0), 0, 0, 0);
-    placement p2 (vector_3d (0, 0, 0), 0, 0, 0);
+    const placement p1 (vector_3d (0, 0, 0), 0, 0, 0);
+    const placement p2 (vector_3d (0, 0, 0), 0, 0, 0);
     _extruded_solid_.set_shape1 (_mother_box_, p1);
     _extruded_solid_.set_shape2 (_extrusion_cylinder_, p2);
-    // if (devel)
-    //   {
-    //     _extruded_solid_.dump (std::clog);
-    //   }
+    DT_LOG_TRACE (get_logging_priority (), "Extruded solid:");
+    if (get_logging_priority () >= datatools::logger::PRIO_TRACE)
+      {
+        _extruded_solid_.dump (std::cerr);
+      }
 
     _extruded_log_.set_name (i_model::make_logical_volume_name ("extruded_box"));
     _extruded_log_.set_shape (_extruded_solid_);
@@ -244,13 +191,11 @@ namespace geomtools {
       sd_ptr->zmin = -0.5 * _mother_z_;
       sd_ptr->zmax = +0.5 * _mother_z_;
       _extruded_solid_.set_stackable_data (sd_ptr);
-      // if (devel)
-      //   {
-      //     clog << "DEVEL: cylindric_extrusion_boxed_model::_at_construct: Entering..." << endl;
-      //     sd_ptr->tree_dump (cerr,
-      //                        "geomtools::cylindric_extrusion_boxed_model::_at_construct: Stackable data: ",
-      //                        "DEVEL: ");
-      //   }
+      DT_LOG_TRACE (get_logging_priority (), "Stackable data:");
+      if (get_logging_priority () >= datatools::logger::PRIO_TRACE)
+        {
+          sd_ptr->tree_dump (std::cerr);
+        }
     }
     _extruded_solid_.set_user_draw ((void *) &cylindric_extrusion_boxed_model::gnuplot_draw_user_function);
     _solid_ = &_extruded_solid_;
@@ -259,41 +204,39 @@ namespace geomtools {
     get_logical ().set_shape (_extruded_solid_);
     get_logical ().set_material_ref (material_name);
 
-    // if (devel) clog << "DEVEL: cylindric_extrusion_boxed_model::_at_construct: Exiting." << endl;
+    DT_LOG_TRACE (get_logging_priority (), "Exiting.");
     return;
   }
 
-  void cylindric_extrusion_boxed_model::tree_dump (ostream & out_,
-                                                   const string & title_ ,
-                                                   const string & indent_,
+  void cylindric_extrusion_boxed_model::tree_dump (std::ostream & out_,
+                                                   const std::string & title_ ,
+                                                   const std::string & indent_,
                                                    bool inherit_) const
   {
-    bool devel = false;
-    string indent;
+    std::string indent;
     if (! indent_.empty ()) indent = indent_;
     i_model::tree_dump (out_, title_, indent, true);
 
-    out_ << indent << i_tree_dumpable::tag
-         << "Material name : '" << get_material_name () << "'" << endl;
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Material name : '" << get_material_name () << "'" << std::endl;
 
-    out_ << indent << i_tree_dumpable::tag
-         << "Mother X : " << get_mother_x () / CLHEP::mm << " mm" << endl;
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Mother X : " << get_mother_x () / CLHEP::mm << " mm" << std::endl;
 
-    out_ << indent << i_tree_dumpable::tag
-         << "Mother Y : " << get_mother_y () / CLHEP::mm << " mm" << endl;
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Mother Y : " << get_mother_y () / CLHEP::mm << " mm" << std::endl;
 
-    out_ << indent << i_tree_dumpable::tag
-         << "Mother Z : " << get_mother_z () / CLHEP::mm << " mm" << endl;
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Mother Z : " << get_mother_z () / CLHEP::mm << " mm" << std::endl;
 
-    out_ << indent << i_tree_dumpable::tag
-         << "Extrusion radius : " << get_extrusion_radius () / CLHEP::mm << " mm" << endl;
-
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Extrusion radius : " << get_extrusion_radius () / CLHEP::mm << " mm" << std::endl;
 
     {
-      out_ << indent << i_tree_dumpable::inherit_tag (inherit_)
-           << "Solid : " << endl;
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
+           << "Solid : " << std::endl;
       {
-        ostringstream indent_oss;
+        std::ostringstream indent_oss;
         indent_oss << indent;
         indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
         _extruded_solid_.tree_dump (out_, "", indent_oss.str ());
@@ -309,15 +252,15 @@ namespace geomtools {
                                                                     const geomtools::i_object_3d & obj_,
                                                                     void *)
   {
-    const subtraction_3d * solid = dynamic_cast<const subtraction_3d *>(&obj_);
+    const geomtools::subtraction_3d * solid = dynamic_cast<const geomtools::subtraction_3d *>(&obj_);
     DT_THROW_IF (solid == 0,
-                 logic_error,
+                 std::logic_error,
                  "3D-object of '" << obj_.get_shape_name ()
                  << "' shape type has not the right type !");
-    const i_composite_shape_3d::shape_type & s1 = solid->get_shape1 ();
-    const i_composite_shape_3d::shape_type & s2 = solid->get_shape2 ();
-    const i_shape_3d & sh1 = s1.get_shape ();
-    const i_shape_3d & sh2 = s2.get_shape ();
+    const geomtools::i_composite_shape_3d::shape_type & s1 = solid->get_shape1 ();
+    const geomtools::i_composite_shape_3d::shape_type & s2 = solid->get_shape2 ();
+    const geomtools::i_shape_3d & sh1 = s1.get_shape ();
+    const geomtools::i_shape_3d & sh2 = s2.get_shape ();
 
     // extract useful stuff (shapes and properties):
     const geomtools::box & mother_box = dynamic_cast<const geomtools::box &> (sh1);
@@ -325,37 +268,37 @@ namespace geomtools {
 
     // draw first shape:
     {
-      placement mother_world_placement;
+      geomtools::placement mother_world_placement;
       mother_world_placement.set_translation (position_);
       mother_world_placement.set_orientation (rotation_);
 
-      placement world_item_placement;
+      geomtools::placement world_item_placement;
       mother_world_placement.child_to_mother (s1.get_placement (),
                                               world_item_placement);
-      const vector_3d   & sh1_pos = world_item_placement.get_translation ();
-      const rotation_3d & sh1_rot = world_item_placement.get_rotation ();
-      gnuplot_draw::draw_box (out_,
-                              sh1_pos,
-                              sh1_rot,
-                              mother_box);
+      const geomtools::vector_3d   & sh1_pos = world_item_placement.get_translation ();
+      const geomtools::rotation_3d & sh1_rot = world_item_placement.get_rotation ();
+      geomtools::gnuplot_draw::draw_box (out_,
+                                         sh1_pos,
+                                         sh1_rot,
+                                         mother_box);
     }
 
     // draw second:
     {
-      cylinder cyl (extrusion_cylinder.get_radius (), mother_box.get_z ());
-      placement mother_world_placement;
+      const geomtools::cylinder cyl (extrusion_cylinder.get_radius (), mother_box.get_z ());
+      geomtools::placement mother_world_placement;
       mother_world_placement.set_translation (position_);
       mother_world_placement.set_orientation (rotation_);
 
-      placement world_item_placement;
+      geomtools::placement world_item_placement;
       mother_world_placement.child_to_mother (s1.get_placement (),
                                               world_item_placement);
-      const vector_3d   & sh1_pos = world_item_placement.get_translation ();
-      const rotation_3d & sh1_rot = world_item_placement.get_rotation ();
-      gnuplot_draw::draw_cylinder (out_,
-                                   sh1_pos,
-                                   sh1_rot,
-                                   cyl);
+      const geomtools::vector_3d   & sh1_pos = world_item_placement.get_translation ();
+      const geomtools::rotation_3d & sh1_rot = world_item_placement.get_rotation ();
+      geomtools::gnuplot_draw::draw_cylinder (out_,
+                                              sh1_pos,
+                                              sh1_rot,
+                                              cyl);
     }
     return;
   }
