@@ -1,17 +1,17 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* spherical_extrusion_cylinder_model.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-04-04
  * Last modified: 2012-04-04
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *
  *   A cylinder extruded by a spherical volumes on top or bottom face.
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
 #ifndef GEOMTOOLS_SPHERICAL_EXTRUSION_CYLINDER_MODEL_H_
@@ -36,11 +36,11 @@
 #include <geomtools/gnuplot_draw.h>
 
 namespace geomtools {
- 
-  GEOMTOOLS_MODEL_CLASS_DECLARE(spherical_extrusion_cylinder_model) 
+
+  GEOMTOOLS_MODEL_CLASS_DECLARE(spherical_extrusion_cylinder_model)
   {
 
-  public: 
+  public:
 
     const std::string & get_material () const;
 
@@ -53,23 +53,23 @@ namespace geomtools {
 
     // dtor:
     virtual ~spherical_extrusion_cylinder_model ();
-      
-    virtual void tree_dump (std::ostream & out_         = std::clog, 
-                            const std::string & title_  = "", 
-                            const std::string & indent_ = "", 
+
+    virtual void tree_dump (std::ostream & out_         = std::clog,
+                            const std::string & title_  = "",
+                            const std::string & indent_ = "",
                             bool inherit_          = false) const;
-      
-    static void gnuplot_draw_user_function (std::ostream &, 
-                                            const geomtools::vector_3d &, 
+
+    static void gnuplot_draw_user_function (std::ostream &,
+                                            const geomtools::vector_3d &,
                                             const geomtools::rotation_3d &,
-                                            const geomtools::i_object_3d &, 
+                                            const geomtools::i_object_3d &,
                                             void * = 0);
   protected:
 
     virtual void _at_construct (const std::string & name_,
                                 const datatools::properties & setup_,
                                 geomtools::models_col_type * models_ = 0);
-  private: 
+  private:
 
     std::string               _material_;
     geomtools::sphere         _extrusion_;
