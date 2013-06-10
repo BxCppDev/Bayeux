@@ -239,15 +239,13 @@ namespace genvtx {
         _sum_weight_[0] = _cylinder_.get_surface (_surface_mask_ & geomtools::cylinder::FACE_SIDE);
         _sum_weight_[1] = _cylinder_.get_surface (_surface_mask_ & geomtools::cylinder::FACE_BOTTOM);
         _sum_weight_[2] = _cylinder_.get_surface (_surface_mask_ & geomtools::cylinder::FACE_TOP);
-        for (int i = 0; i < 3; i++)
-          {
-            _sum_weight_[i] /= s;
-            if (i > 0)
-              {
-                _sum_weight_[i] += _sum_weight_[i - 1];
-              }
-            //if (is_debug()) clog << "DEBUG: genvtx::cylinder_vg::_init_: Surface weight [" << i << "] = " << _sum_weight_[i] << endl;
+        for (int i = 0; i < 3; i++) {
+          _sum_weight_[i] /= s;
+          if (i > 0) {
+            _sum_weight_[i] += _sum_weight_[i - 1];
           }
+          //if (is_debug()) clog << "DEBUG: genvtx::cylinder_vg::_init_: Surface weight [" << i << "] = " << _sum_weight_[i] << endl;
+        }
       }
     return;
   }
@@ -265,10 +263,9 @@ namespace genvtx {
     _surface_mask_ = geomtools::cylinder::FACE_ALL;
     _skin_skip_ = 0.0;
     _skin_thickness_ = 0.0;
-    for (int i = 0; i < 3; i++)
-      {
-        _sum_weight_[i] = 0.0;
-      }
+    for (int i = 0; i < 3; i++) {
+      _sum_weight_[i] = 0.0;
+    }
     return;
   }
 

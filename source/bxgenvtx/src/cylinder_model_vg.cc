@@ -245,7 +245,9 @@ namespace genvtx {
          i != geom_infos.end ();
          i++) {
       const geomtools::geom_id & gid = i->first;
+      //std::cerr << "DEVEL: " << "GID=" << gid << '\n';
       if (_src_selector_.match (gid)) {
+        //std::cerr << "DEVEL: " << "  MATCH !!!" << '\n';
         const geomtools::geom_info * ginfo = &(i->second);
         weight_entry_type e;
         e.weight = 0.0;
