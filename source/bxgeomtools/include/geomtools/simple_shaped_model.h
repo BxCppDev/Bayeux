@@ -84,7 +84,7 @@ namespace geomtools {
 
   protected:
 
-    virtual void _post_construct (const datatools::properties & setup_);
+    virtual void _post_construct (datatools::properties & setup_);
 
     virtual void _at_construct (const std::string & name_,
                                 const datatools::properties & config_,

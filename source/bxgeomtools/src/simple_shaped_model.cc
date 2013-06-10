@@ -851,7 +851,7 @@ namespace geomtools {
 
   /*******************************************/
 
-  void simple_shaped_model::_post_construct (const datatools::properties & setup_)
+  void simple_shaped_model::_post_construct (datatools::properties & setup_)
   {
     //material::extract (setup_, get_logical ().parameters ());
     sensitive::extract (setup_, get_logical ().parameters ());
