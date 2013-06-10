@@ -15,7 +15,6 @@
 #include <datatools/units.h>
 #include <datatools/exception.h>
 
-//#include <geomtools/regular_linear_placement.h>
 #include <geomtools/visibility.h>
 
 namespace geomtools {
@@ -486,7 +485,7 @@ namespace geomtools {
 
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (_solid_);
-    get_logical ().set_material_ref (get_material_name ());
+    get_logical ().set_material_ref (_material_name_);
 
     // placement of the surrounded solid:
     _surrounded_placmt_.set (surrounded_x, surrounded_y, surrounded_z, 0.0, 0.0, 0.0);
