@@ -30,8 +30,7 @@ namespace geomtools {
 
   class box;
 
-  class i_object_3d :
-    public datatools::i_tree_dumpable
+  class i_object_3d : public datatools::i_tree_dumpable
   {
   public:
     enum dimensional_type
@@ -42,12 +41,8 @@ namespace geomtools {
         DIMENSIONAL_3 = 3
       };
 
-  public:
-
     static const uint32_t ALL_SURFACES;
     static const uint32_t NO_SURFACES;
-
-  public:
 
     bool has_user_draw () const;
 
@@ -71,8 +66,6 @@ namespace geomtools {
     virtual bool is_composite () const;
 
     virtual void compute_bounding_box (box & bb_);
-
-  public:
 
     i_object_3d ();
 

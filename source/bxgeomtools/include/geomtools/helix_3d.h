@@ -37,8 +37,6 @@ namespace geomtools {
   public:
     static const std::string HELIX_3D_LABEL;
 
-  public:
-
     bool is_normal();
 
     virtual std::string get_shape_name () const;
