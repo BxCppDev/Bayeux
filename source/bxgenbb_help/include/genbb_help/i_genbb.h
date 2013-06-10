@@ -57,6 +57,18 @@ namespace genbb {
   {
   public:
 
+    /// Check for a non-empty name
+    bool has_name() const;
+
+    /// Return the name of the event generator
+    const std::string & get_name() const;
+
+    /// Set the name of the event generator
+    void set_name(const std::string &);
+
+    /// Reset the name of the event generator
+    void reset_name();
+
     /// Constructor
     i_genbb ();
 
@@ -138,6 +150,7 @@ namespace genbb {
 
   private:
 
+    std::string  _name_; /// The name of the event generator
     mygsl::rng * _external_random_; /// Handle to an external PRNG
 
     // Factory stuff :

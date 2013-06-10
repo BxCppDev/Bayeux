@@ -37,6 +37,29 @@ namespace genbb {
   DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(i_genbb,"genbb::i_genbb/__system__");
 
 
+  const std::string & i_genbb::get_name() const
+  {
+    return _name_;
+  }
+
+  bool i_genbb::has_name() const
+  {
+    return ! _name_.empty();
+  }
+
+  void i_genbb::set_name(const std::string & name_)
+  {
+    DT_THROW_IF(is_initialized(),
+                std::logic_error,
+                "Event generator '" << get_name() << "' is initialized/locked !");
+    _name_ = name_;
+  }
+
+  void i_genbb::reset_name ()
+  {
+    _name_.clear();
+  }
+
   bool i_genbb::is_debug () const
   {
     return _logging_priority >= datatools::logger::PRIO_DEBUG;
@@ -142,14 +165,23 @@ namespace genbb {
     return;
   }
 
-  void i_genbb::_initialize_base(const datatools::properties & config_)
+  void i_genbb::_initialize_base(const datatools::properties & setup_)
   {
     // Logging priority :
-    datatools::logger::priority p = datatools::logger::extract_logging_configuration(config_, datatools::logger::PRIO_FATAL);
+    datatools::logger::priority p
+      = datatools::logger::extract_logging_configuration(setup_,
+                                                         datatools::logger::PRIO_FATAL);
     DT_THROW_IF(p == datatools::logger::PRIO_UNDEFINED,
                 std::domain_error,
                 "Unknown logging priority configuration rule !");
     set_logging_priority(p);
+
+    // Name of the generator (only if not already set) :
+    if (_name_.empty()) {
+      if (setup_.has_key ("name")) {
+        set_name(setup_.fetch_string("name"));
+      }
+    }
 
     return;
   }
@@ -163,14 +195,19 @@ namespace genbb {
     if (! a_indent.empty()) indent = a_indent;
     if (! a_title.empty()) a_out << indent << a_title << std::endl;
 
-    a_out << indent << i_tree_dumpable::tag
-          << "Logging priority  : \""
-          << datatools::logger::get_priority_label(_logging_priority) << "\"" << std::endl;
-    a_out << indent << i_tree_dumpable::tag
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Name                  : '" << _name_ << "'" << std::endl;
+
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Logging priority      : '"
+          << datatools::logger::get_priority_label(_logging_priority) << "'"
+          << std::endl;
+
+    a_out << indent << datatools::i_tree_dumpable::tag
           << "Can use external PRNG : " << can_external_random ()  << std::endl;
 
-    a_out << indent << i_tree_dumpable::inherit_tag(a_inherit)
-          << "Has external PRNG : " << has_external_random ()  << std::endl;
+    a_out << indent << datatools::i_tree_dumpable::inherit_tag(a_inherit)
+          << "Has external PRNG     : " << has_external_random ()  << std::endl;
 
     return;
   }

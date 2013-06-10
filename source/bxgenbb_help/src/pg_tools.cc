@@ -208,9 +208,6 @@ namespace genbb {
       if (fact_reg == 0) {
         fact_reg = &DATATOOLS_FACTORY_GRAB_SYSTEM_REGISTER(genbb::i_genbb);
       }
-      // if (entry_.get_config ().has_flag("debug")) {
-      //   fact_reg->tree_dump(std::clog, "The current i_genbb factory : ", "DEBUG: genbb::detail::create: ");
-      // }
       // Search for the PG's label in the factory dictionary:
       DT_THROW_IF (!fact_reg->has(entry_.get_id()),
                    std::logic_error,
@@ -223,6 +220,8 @@ namespace genbb {
       i_genbb* ptr = the_factory();
       entry_.grab_handle().reset(ptr);
       entry_.update_status(detail::pg_entry_type::STATUS_CREATED);
+
+      ptr->set_name(entry_.get_name());
 
       if (external_random_ != 0 && ptr->can_external_random()) {
         DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
