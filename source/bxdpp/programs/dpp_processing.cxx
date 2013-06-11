@@ -274,14 +274,14 @@ int main (int argc_, char ** argv_)
     }
 
     // Load properties from the configuration file:
-    DT_THROW_IF(module_names.empty () && module_manager_config_file.empty (),
-                std::logic_error,
-                "Missing module manager configuration file !");
+    // DT_THROW_IF(module_names.empty () && module_manager_config_file.empty (),
+    //             std::logic_error,
+    //             "Missing module manager configuration file !");
 
     // Module manager :
     boost::scoped_ptr<dpp::module_manager> MM;
 
-    if ( ! module_manager_config_file.empty ()) {
+    if (! module_manager_config_file.empty ()) {
       MM.reset (new dpp::module_manager (flags));
       std::string MM_config_file = module_manager_config_file;
 
@@ -298,7 +298,11 @@ int main (int argc_, char ** argv_)
       }
     }
 
+    // The sequence of active modules (may be empty):
     std::vector<dpp::base_module*> modules;
+    DT_THROW_IF(module_names.size () && ! MM, std::logic_error,
+                "No module manager is available to queue "
+                << module_names.size () << " requested modules !");
     for (int i = 0; i < module_names.size (); i++) {
       const std::string & module_name = module_names[i];
       DT_THROW_IF(! MM.get ()->has (module_name),
@@ -324,7 +328,7 @@ int main (int argc_, char ** argv_)
       if (max_records_per_output_file > 0) {
         sink_config.store ("output.max_record_per_file", max_records_per_output_file);
       }
-      if (MM.get ()->has_service_manager()) {
+      if (MM && MM.get ()->has_service_manager()) {
         sink->initialize_with_service (sink_config,
                                        MM.get ()->grab_service_manager ());
       } else {
@@ -340,7 +344,7 @@ int main (int argc_, char ** argv_)
       source_config.store ("mode", "input");
       source_config.store ("input.mode", "list");
       source_config.store ("input.list.filenames", input_files);
-      if (MM.get ()->has_service_manager()) {
+      if (MM && MM.get ()->has_service_manager()) {
         source->initialize_with_service (source_config,
                                          MM.get ()->grab_service_manager ());
       } else {
@@ -353,7 +357,7 @@ int main (int argc_, char ** argv_)
     DT_LOG_DEBUG(logging, APP_NAME_PREFIX << "Entering data record loop...");
 
     // Instantiate the working data record object :
-    datatools::things ER;
+    datatools::things DR;
 
     // Loop on the data records :
     int record_counter = 0;
@@ -361,14 +365,14 @@ int main (int argc_, char ** argv_)
     while (true) {
       bool do_break_record_loop = false;
       DT_LOG_DEBUG(logging, APP_NAME_PREFIX << "Clear the working data record object...");
-      ER.clear();
+      DR.clear();
 
       // Manage the source is any (fill the data record from it) :
       if (source) {
         if (source->is_terminated ()) {
           break;
         }
-        int input_status = source->process (ER);
+        int input_status = source->process (DR);
         if (input_status != dpp::PROCESS_OK) {
           DT_LOG_ERROR(logging, APP_NAME_PREFIX << "Source of data records had an error !");
           break;
@@ -385,7 +389,7 @@ int main (int argc_, char ** argv_)
       try {
         BOOST_FOREACH (dpp::base_module * active_module_ptr, modules) {
           dpp::base_module & the_active_module = *active_module_ptr;
-          processing_status = the_active_module.process (ER);
+          processing_status = the_active_module.process (DR);
           DT_LOG_DEBUG(logging, APP_NAME_PREFIX << "Processing status : " << processing_status);
           if (processing_status & dpp::PROCESS_FATAL) {
             // A fatal error has been met, we break the processing loop :
@@ -412,10 +416,10 @@ int main (int argc_, char ** argv_)
         throw x;
       }
 
-      // XXX
-      if (debug) {
-        ER.tree_dump (std::cout, "Data record :", "DEBUG: " + APP_NAME_PREFIX);
-      }
+      //
+      // if (debug) {
+      //   DR.tree_dump (std::cout, "Data record :", "DEBUG: " + APP_NAME_PREFIX);
+      // }
 
       // Manage the sink if any :
       if (sink && ! sink->is_terminated ()) {
@@ -425,7 +429,7 @@ int main (int argc_, char ** argv_)
         }
         if (save_it) {
           // Save the processed data record in the sink :
-          int output_status = sink->process (ER);
+          int output_status = sink->process (DR);
           if (output_status != dpp::PROCESS_OK) {
             DT_LOG_ERROR(logging, APP_NAME_PREFIX << "Error while storing data record #" << record_counter << " !");
           }
