@@ -596,10 +596,9 @@ int main (int argc_, char ** argv_)
         {
           std::string world_model_name = geo_mgr.get_world_name ();
 
-          geomtools::gdml_export::g_devel = debug;
           geomtools::gdml_writer material_writer; // GDML writer for materials
           geomtools::gdml_export GDML;            // factory->GDML exporter
-
+          if (debug) GDML.set_logging_priority (datatools::logger::PRIO_DEBUG);
 
           std::clog << "NOTICE: " << "Accessing the materials driver plugin..." << std::endl;
 

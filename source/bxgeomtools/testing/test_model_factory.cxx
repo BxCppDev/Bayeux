@@ -154,7 +154,6 @@ int main (int argc_, char ** argv_)
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
       if (draw)
         {
-          geomtools::gnuplot_drawer::g_devel = devel;
           geomtools::gnuplot_drawer GPD;
           GPD.set_view (drawer_view);
           GPD.set_mode (geomtools::gnuplot_drawer::MODE_WIRED);
@@ -198,8 +197,8 @@ int main (int argc_, char ** argv_)
 
       if (gdml)
       {
-        geomtools::gdml_export::g_devel = devel;
         geomtools::gdml_export GDML;
+        if (devel) GDML.set_logging_priority (datatools::logger::PRIO_TRACE);
         GDML.add_replica_support (true);
         GDML.attach_external_materials (writer.get_stream (geomtools::gdml_writer::MATERIALS_SECTION));
         GDML.parameters ().store ("xml_version",

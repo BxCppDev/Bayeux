@@ -26,30 +26,31 @@
 
 namespace geomtools {
 
-  using namespace std;
+  const std::string gnuplot_drawer::VIEW_KEY   = "view";
+  const std::string gnuplot_drawer::VIEW_2D_XY = "xy";
+  const std::string gnuplot_drawer::VIEW_2D_XZ = "xz";
+  const std::string gnuplot_drawer::VIEW_2D_YZ = "yz";
+  const std::string gnuplot_drawer::VIEW_3D    = "xyz";
+  const std::string gnuplot_drawer::VIEW_3D_FREE_SCALE = "xyz_free";
+  const std::string gnuplot_drawer::DEFAULT_VIEW = gnuplot_drawer::VIEW_3D;
 
-  const string gnuplot_drawer::VIEW_KEY   = "view";
-  const string gnuplot_drawer::VIEW_2D_XY = "xy";
-  const string gnuplot_drawer::VIEW_2D_XZ = "xz";
-  const string gnuplot_drawer::VIEW_2D_YZ = "yz";
-  const string gnuplot_drawer::VIEW_3D    = "xyz";
-  const string gnuplot_drawer::VIEW_3D_FREE_SCALE = "xyz_free";
-  const string gnuplot_drawer::DEFAULT_VIEW = gnuplot_drawer::VIEW_3D;
+  const int         gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT = 1000;
 
-  const int    gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT = 1000;
+  const std::string gnuplot_drawer::MODE_WIRED = "wired";
+  const std::string gnuplot_drawer::MODE_SOLID = "solid";
+  const std::string gnuplot_drawer::DEFAULT_MODE = MODE_WIRED;
 
-  const string gnuplot_drawer::MODE_WIRED = "wired";
-  const string gnuplot_drawer::MODE_SOLID = "solid";
-  const string gnuplot_drawer::DEFAULT_MODE = MODE_WIRED;
-
-  const string gnuplot_drawer::FORCE_SHOW_PROPERTY_NAME          = "visibility.force_show";
-  const string gnuplot_drawer::FORCE_SHOW_ENVELOP_PROPERTY_NAME  = "visibility.force_show_envelop";
-  const string gnuplot_drawer::FORCE_SHOW_CHILDREN_PROPERTY_NAME = "visibility.force_show_children";
+  const std::string gnuplot_drawer::FORCE_SHOW_PROPERTY_NAME          = "visibility.force_show";
+  const std::string gnuplot_drawer::FORCE_SHOW_ENVELOP_PROPERTY_NAME  = "visibility.force_show_envelop";
+  const std::string gnuplot_drawer::FORCE_SHOW_CHILDREN_PROPERTY_NAME = "visibility.force_show_children";
 
   const std::string gnuplot_drawer::WORLD_NAME_KEY = "world_name";
 
+<<<<<<< HEAD
   bool gnuplot_drawer::g_devel = false;
 
+=======
+>>>>>>> [geomtools/trunk] remove static variables, use datatools logger
   gnuplot_drawer::cstream::cstream ()
   {
     oss = 0;
@@ -142,38 +143,30 @@ namespace geomtools {
 
   void gnuplot_drawer::wait_for_key ()
   {
-    /*
-      #if defined(unix) || defined(__unix) || defined(__unix__) || defined(__APPLE__)
-      clog << endl << "Press ENTER to continue..." << endl;
-      cin.clear ();
-      cin.ignore (cin.rdbuf ()->in_avail ());
-      cin.get ();
-      #endif
-    */
-    clog << endl << "Press [Enter] to continue..." << endl;
+    std::clog << std::endl << "Press [Enter] to continue..." << std::endl;
     std::string s;
     std::getline (std::cin, s);
     return;
   }
 
-  void gnuplot_drawer::set_view (const string & view_)
+  void gnuplot_drawer::set_view (const std::string & view_)
   {
     _view_ = view_;
     return;
   }
 
-  const string & gnuplot_drawer::get_view () const
+  const std::string & gnuplot_drawer::get_view () const
   {
     return _view_;
   }
 
-  void gnuplot_drawer::set_mode (const string & mode_)
+  void gnuplot_drawer::set_mode (const std::string & mode_)
   {
     _mode_ = mode_;
     return;
   }
 
-  const string & gnuplot_drawer::get_mode () const
+  const std::string & gnuplot_drawer::get_mode () const
   {
     return _mode_;
   }
@@ -208,16 +201,15 @@ namespace geomtools {
     return _mode_ == MODE_WIRED;
   }
 
-  ostringstream & gnuplot_drawer::_get_stream (const string & section_)
+  std::ostringstream & gnuplot_drawer::_get_stream (const std::string & section_)
   {
-    bool devel = g_devel;
     cstreams_col_type::iterator i = _cstreams_.find (section_);
     if (i == _cstreams_.end ())
       {
         cstream new_cs;
         new_cs.label = section_;
         new_cs.filename = "";
-        new_cs.oss = new ostringstream;
+        new_cs.oss = new std::ostringstream;
         new_cs.color = color::get_color (section_);
         _cstreams_[section_] = new_cs;
         return *(new_cs.oss);
@@ -245,11 +237,6 @@ namespace geomtools {
 
   void gnuplot_drawer::add_display_data(const display_data & dd_, const placement & pl_)
   {
-    // gnuplot_drawer::has_dd_addr dd_addr_predicate (dd_);
-    // if (std::find_if(_display_data_.begin(),
-    //               _display_data_.end(),
-    //               dd_addr_predicate) == _display_data_.end())
-    //   {
     {
       dd_entry dummy;
       _display_data_.push_back(dummy);
@@ -257,7 +244,6 @@ namespace geomtools {
     dd_entry & dde = _display_data_.back();
     dde.set_placement(pl_);
     dde.set_display_data(dd_);
-    // }
     return;
   }
 
@@ -288,24 +274,19 @@ namespace geomtools {
 
   void gnuplot_drawer::reset_cstreams ()
   {
-    //clog << "DEVEL: gnuplot_drawer::reset_cstreams: Entering..." << endl;
     if (_cstreams_.size () > 0) {
-        for (cstreams_col_type::iterator i = _cstreams_.begin ();
-             i != _cstreams_.end ();
-             i++) {
-            //clog << "DEVEL: gnuplot_drawer::reset_cstreams: Label == " << i->first << endl;
-            cstream & cs = i->second;
-            if (cs.oss != 0) {
-                cs.oss->flush ();
-                //clog << "DEVEL: gnuplot_drawer::reset_cstreams: oss to be deleted..." << cs.oss << endl;
-                delete cs.oss;
-                cs.oss = 0;
-                //clog << "DEVEL: gnuplot_drawer::reset_cstreams: done." << endl;
-              }
-          }
-        _cstreams_.clear ();
+      for (cstreams_col_type::iterator i = _cstreams_.begin ();
+           i != _cstreams_.end ();
+           i++) {
+        cstream & cs = i->second;
+        if (cs.oss != 0) {
+          cs.oss->flush ();
+          delete cs.oss;
+          cs.oss = 0;
+        }
       }
-    //clog << "DEVEL: gnuplot_drawer::reset_cstreams: Exiting." << endl;
+      _cstreams_.clear ();
+    }
     return;
   }
 
@@ -325,7 +306,7 @@ namespace geomtools {
                                const placement & p_,
                                int max_display_level_)
   {
-    bool devel = g_devel;
+    const datatools::logger::priority local_priority = datatools::logger::PRIO_FATAL;
     int max_display_level = max_display_level_;
     if (max_display_level_ < 0) {
       max_display_level = 0;
@@ -337,12 +318,11 @@ namespace geomtools {
       datatools::properties log_visu_config;
       visibility::extract (log.parameters (), log_visu_config);
 
-      // if (devel)
-      //   {
-      //     ostringstream toss;
-      //     toss << "Logical '" << log.get_name () << "' visibility properties:";
-      //     log_visu_config.tree_dump (cerr, toss.str (), " DEVEL: ");
-      //   }
+      DT_LOG_TRACE (local_priority, "Logical '" << log.get_name () << "' visibility properties:");
+      if (local_priority >= datatools::logger::PRIO_TRACE)
+        {
+          log_visu_config.tree_dump (std::cerr);
+        }
 
       bool shown = true;
       bool shown_envelop = true;
@@ -357,15 +337,11 @@ namespace geomtools {
         shown = get_properties ().fetch_boolean (FORCE_SHOW_PROPERTY_NAME);
       }
 
-
       if (visibility::is_hidden_envelop (log_visu_config)) {
         shown_envelop = false;
       }
-      // if (devel)
-      //   {
-      //     cerr << "DEVEL: gnuplot_drawer::_draw_: Show         = " << shown << endl;
-      //     cerr << "DEVEL: gnuplot_drawer::_draw_: Show envelop = " << shown_envelop << endl;
-      //   }
+      DT_LOG_TRACE (local_priority, "Show         = " << shown);
+      DT_LOG_TRACE (local_priority, "Show envelop = " << shown_envelop);
 
       if (get_properties ().has_key (FORCE_SHOW_ENVELOP_PROPERTY_NAME))  {
         shown_envelop = get_properties ().fetch_boolean (FORCE_SHOW_ENVELOP_PROPERTY_NAME);
@@ -373,44 +349,15 @@ namespace geomtools {
 
       if (shown && shown_envelop){
         if (is_wired ()) {
-          string color_label = color::constants::instance ().default_color;
+          std::string color_label = color::constants::instance ().default_color;
           if (visibility::has_color (log_visu_config)) {
             color_label = visibility::get_color (log_visu_config);
-            // if (devel)
-            //   {
-            //     cerr << "DEVEL: gnuplot_drawer::_draw_: Found color '" << color_label
-            //          << "' for logical '" << log.get_name () << "'..." << endl;
-            //   }
+            DT_LOG_TRACE (local_priority, "Found color '" << color_label
+                          << "' for logical '" << log.get_name () << "'...");
           }
-          // else
-          //   {
-          //     // if (devel)
-          //     //   {
-          //     //     cerr << "DEVEL: gnuplot_drawer::_draw_: No color specification for logical '" << log.get_name () << "' !" << endl;
-          //     //   }
-          //   }
-          // if (devel)
-          //   {
-          //     cerr << "DEVEL: gnuplot_drawer::_draw_: color_label  = '" << color_label << "'" << endl;
-          //   }
 
           if (color_label != color::constants::instance ().transparent) {
-            ostringstream & colored_oss = _get_stream (color_label);
-            // if (devel)
-            //   {
-            //     cerr << "DEVEL: gnuplot_drawer::_draw_: "
-            //          << "gnuplot_draw::draw: &colored_oss = " << &colored_oss << endl;
-            //     cerr << "DEVEL: gnuplot_drawer::_draw_: gnuplot_draw::draw..." << endl;
-            //     /*
-            //     // test:
-            //     colored_oss << "0 0 0" << endl;
-            //     colored_oss << "1 0 0" << endl << endl;
-            //     colored_oss << "0 0 0" << endl;
-            //     colored_oss << "0 1 0" << endl << endl;
-            //     colored_oss << "0 0 0" << endl;
-            //     colored_oss << "0 0 1" << endl << endl;
-            //     */
-            //   }
+            std::ostringstream & colored_oss = _get_stream (color_label);
             unsigned long mode = gnuplot_draw::MODE_NULL;
             if (visibility::is_wired_cylinder (log_visu_config)) {
               mode |= gnuplot_draw::MODE_WIRED_CYLINDER;
@@ -422,15 +369,6 @@ namespace geomtools {
           }
 
         }
-        // else
-        //   {
-        //     // if (devel)
-        //     //   {
-        //     //     cerr << "WARNING: gnuplot_drawer::_draw_: "
-        //     //          << "Display mode '" << _mode_ << "'is not implemented !"
-        //     //          << endl;
-        //     //   }
-        //   }
       }
 
       // draw children:
@@ -456,12 +394,7 @@ namespace geomtools {
         draw_children = get_properties ().fetch_boolean (FORCE_SHOW_CHILDREN_PROPERTY_NAME);
       }
 
-      // if (devel)
-      //   {
-      //     cerr << "DEVEL: gnuplot_drawer::_draw_: "
-      //          << "Drawing children..."
-      //          << endl;
-      //   }
+      DT_LOG_TRACE (local_priority, "Drawing children...");
       display_level++;
       for (geomtools::logical_volume::physicals_col_type::const_iterator i
              = log.get_physicals ().begin ();
@@ -505,16 +438,13 @@ namespace geomtools {
     catch (GnuplotException ge) {
       DT_LOG_ERROR(datatools::logger::PRIO_ERROR, ge.what ());
     }
-    catch (exception & x) {
+    catch (std::exception & x) {
       DT_LOG_ERROR(datatools::logger::PRIO_ERROR, x.what ());
     }
     catch (...) {
       DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Unexpected error !");
     }
-    // if (devel)
-    //   {
-    //     cerr << "DEVEL: gnuplot_drawer::_draw_: Exiting." << endl;
-    //   }
+    DT_LOG_TRACE (local_priority, "Exiting.");
     return;
   }
 
@@ -523,10 +453,9 @@ namespace geomtools {
   void gnuplot_drawer::draw (const logical_volume & log_,
                              const placement & p_,
                              int max_display_level_,
-                             const string & name_)
+                             const std::string & name_)
   {
-    bool devel = g_devel;
-    //devel = true;
+    const datatools::logger::priority local_priority = datatools::logger::PRIO_FATAL;
     int max_display_level = max_display_level_;
     if (max_display_level_ < 0) {
       max_display_level = 0;
@@ -552,12 +481,8 @@ namespace geomtools {
     int former_color = color::get_color (color::constants::instance().default_color);
     if (visibility::has_color (visu_config)) {
       color = color::get_color (visibility::get_color (visu_config));
-      // if (devel)
-      //   {
-      //     cerr << "DEVEL: **** Found color '"
-      //          << visibility::get_color (visu_config)
-      //          << "' color is : " << color << endl;
-      //   }
+      DT_LOG_TRACE (local_priority, "Found color '" << visibility::get_color (visu_config)
+                    << "' color is : " << color);
     }
 
     gnuplot_draw::g_current_color = color;
@@ -591,33 +516,25 @@ namespace geomtools {
     _zrange_.min = xyzr->z_range.get_median () - 0.5 * amax;
     _zrange_.max = xyzr->z_range.get_median () + 0.5 * amax;
 
-    //std::clog << "X-range = ";
-    //_xrange_.print (std::clog);
-    //std::clog << "\nY-range = ";
-    //_yrange_.print (std::clog);
-    //std::clog << "\nZ-range = ";
-    //_zrange_.print (std::clog);
-    //    std::clog << "\nMax width = " << amax << std::endl;
-
     // Clear the XYZ range computer :
     gnuplot_draw::xyz_range::instance ('c');
 
     for (cstreams_col_type::iterator i = _cstreams_.begin ();
          i != _cstreams_.end ();
          i++) {
-      const string & label = i->first;
+      const std::string & label = i->first;
       cstream & cs = i->second;
       char tmp[256];
-      ostringstream oss;
+      std::ostringstream oss;
       oss << ".tmp_gnuplot_drawer_" << label <<"_XXXXXX";
       sprintf (tmp, "%s", oss.str ().c_str ());
       char * c = mktemp (tmp);
-      string tmp_filename = tmp;
+      std::string tmp_filename = tmp;
       cs.filename = tmp;
-      ofstream tmp_file (cs.filename.c_str ());
-      tmp_file << "# label='" << label << "'" << endl;
+      std::ofstream tmp_file (cs.filename.c_str ());
+      tmp_file << "# label='" << label << "'" << std::endl;
       tmp_file << cs.oss->str ();
-      tmp_file << "# end of label='" << label << "'" << endl;
+      tmp_file << "# end of label='" << label << "'" << std::endl;
       tmp_file.flush ();
       tmp_file.close ();
     }
@@ -628,7 +545,7 @@ namespace geomtools {
     Gnuplot g1 ("lines");
     g1.cmd ("set terminal x11 persist size 500,500");
     g1.cmd ("set size ratio -1");
-  std:ostringstream title_oss;
+    std::ostringstream title_oss;
     title_oss << "Logical '" << name_ << "'";
     g1.set_title (title_oss.str ());
 
@@ -753,11 +670,7 @@ namespace geomtools {
         }
       }
     }
-    // if (devel)
-    //   {
-    //     cerr << "DEVEL: gnuplot_drawer::draw: GNUPLOT command is :" << endl
-    //          << cmdstr.str () << endl;
-    //   }
+    DT_LOG_TRACE (local_priority, "GNUPLOT command is :" << cmdstr.str ());
     if (! cmdstr.str ().empty ()) {
       g1.cmd (cmdstr.str ());
       g1.showonscreen (); // window output
@@ -774,11 +687,7 @@ namespace geomtools {
       cstream & cs = i->second;
       unlink (cs.filename.c_str ());
     }
-    // if (devel)
-    //   {
-    //     cerr << "DEVEL: gnuplot_drawer::draw: "
-    //          << "reset_cstreams..." << endl;
-    //   }
+    DT_LOG_TRACE (local_priority, "reset_cstreams...");
     reset_cstreams ();
     return;
   }
@@ -786,14 +695,14 @@ namespace geomtools {
   /****************************************************/
 
   void gnuplot_drawer::draw_logical (const model_factory & mf_,
-                                     const string & logical_name_,
+                                     const std::string & logical_name_,
                                      const placement & p_,
                                      int max_display_level_)
   {
     geomtools::logical_volume::dict_type::const_iterator found;
     found = mf_.get_logicals ().find (logical_name_);
     DT_THROW_IF (found ==  mf_.get_logicals ().end (),
-                 logic_error,
+                 std::logic_error,
                  "Cannot find logical volume with name '" << logical_name_ << "' !");
     const geomtools::logical_volume & log = *(found->second);
     draw (log, p_, max_display_level_, log.get_name ());
@@ -815,7 +724,7 @@ namespace geomtools {
     visu_gid_iss >> visu_gid;
     if (visu_gid_iss) {
       if (! geo_mgr_.get_mapping().validate_id(visu_gid)) {
-        ostringstream message;
+        std::ostringstream message;
         message << "geomtools::gnuplot_drawer::draw: "
                 << "Cannot find geometry volume with GID='" << visu_gid << "' in mapping dictionnary !";
         DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
@@ -851,7 +760,7 @@ namespace geomtools {
                                       int max_display_level_)
   {
     DT_THROW_IF (! mapping_.validate_id(gid_),
-                 logic_error,
+                 std::logic_error,
                  "Cannot find object with GID='" << gid_ << "' in the mapping dictionnary !");
     const geom_info & ginfo = mapping_.get_geom_info (gid_);
     const placement & wpl = ginfo.get_world_placement ();
@@ -871,11 +780,9 @@ namespace geomtools {
                              const placement & p_,
                              int max_display_level_)
   {
-    bool devel = g_devel;
-    //devel = true;
     models_col_type::const_iterator found = mf_.get_models ().find (name_);
     DT_THROW_IF (found ==  mf_.get_models ().end (),
-                 logic_error,
+                 std::logic_error,
                  "Cannot find geometry model with name '" << name_ << "' !");
     const i_model & model = *(found->second);
     const geomtools::logical_volume & log = model.get_logical ();
@@ -901,11 +808,8 @@ namespace geomtools {
   void gnuplot_drawer::_draw_display_data (const model_factory & mf_,
                                            const placement & p_)
   {
-    /*
-      std::cerr << "DEVEL: " << "geomtools::gnuplot_drawer::_draw_display_data: "
-      << "Entering..."
-      << std::endl;
-    */
+    const datatools::logger::priority local_priority = datatools::logger::PRIO_FATAL;
+    DT_LOG_TRACE (local_priority, "Entering...");
     bool draw_static = true;
     int draw_frame_index = -1;
     std::string draw_group;
@@ -914,14 +818,11 @@ namespace geomtools {
       const display_data & dd = _display_data_[idd].get_display_data();
       const placement & dd_pl = _display_data_[idd].get_placement();
 
-      //dd.tree_dump(std::cerr, "Display data: ", "DEVEL: ");
+      DT_LOG_TRACE (local_priority, "Display data:");
+      if (local_priority >= datatools::logger::PRIO_TRACE) dd.tree_dump(std::cerr);
       for (int icolor = 0; icolor < dd.get_colors().size(); icolor++) {
         const std::string & draw_color = dd.get_colors()[icolor];
-        /*
-          std::cerr << "DEVEL: " << "geomtools::gnuplot_drawer::_draw_display_data: "
-          << "Color = " << draw_color
-          << std::endl;
-        */
+        DT_LOG_TRACE (local_priority, "Color = " << draw_color);
         std::ostringstream & colored_out = _get_stream(draw_color);
         geomtools::gnuplot_draw::draw_display_data(colored_out,
                                                    dd_pl.get_translation(),
@@ -934,6 +835,7 @@ namespace geomtools {
                                                    draw_name);
       }
     }
+    DT_LOG_TRACE (local_priority, "Exiting.");
     return;
   }
 

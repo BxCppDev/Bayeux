@@ -1,3 +1,4 @@
+
 // -*- mode: c++ ; -*-
 /* gdml_export.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
@@ -33,16 +34,15 @@ namespace geomtools {
   class gdml_export
   {
   public:
-    static bool g_devel;
     static const std::string DEFAULT_LENGTH_UNIT;
     static const std::string DEFAULT_ANGLE_UNIT;
     static const std::string DEFAULT_DENSITY_UNIT;
 
   public:
 
-    bool is_debug () const;
+    datatools::logger::priority get_logging_priority () const;
 
-    void set_debug (bool d_);
+    void set_logging_priority (datatools::logger::priority);
 
     bool is_auxiliary_supported () const;
 
@@ -70,6 +70,8 @@ namespace geomtools {
                               const model_factory & factory_,
                               const std::string & model_name_ = model_factory::DEFAULT_WORLD_LABEL);
 
+    void attach_external_materials (const std::ostringstream & oss_);
+
   protected:
 
     // export solid
@@ -84,13 +86,10 @@ namespace geomtools {
                                const model_factory & factory_,
                                const std::string & model_name_);
 
-  public:
-
-    void attach_external_materials (const std::ostringstream & oss_);
-
   private:
 
-    bool _debug_;
+    datatools::logger::priority _logging_priority_;
+
     datatools::properties _parameters_;
     gdml_writer           _writer_;
     const model_factory * _factory_;

@@ -200,6 +200,7 @@ namespace geomtools {
   void id_mgr::set_logging_priority (datatools::logger::priority p)
   {
     _logging_priority_ = p;
+    return;
   }
 
   bool id_mgr::is_debug () const
