@@ -38,7 +38,7 @@ Quick start
 1. Build, install and setup the datatools library
 2. Make a copy of the example directory::
 
-      shell> cp -a [datatools install base directory]/share/datatools/examples/OCD /tmp/datatools_ex_OCD
+      shell> cp -a <datatools installation base directory>/share/datatools/examples/OCD /tmp/datatools_ex_OCD
       shell> cd /tmp/datatools_ex_OCD
 
 3. Build and install the example::
@@ -47,7 +47,7 @@ Quick start
       shell> cd __build
       shell> cmake \
         -DCMAKE_INSTALL_PREFIX=.. \
-        -Ddatatools_DIR=$(datatools-config --prefix) \
+        -Ddatatools_DIR=<datatools installation base directory> \
         ..
       shell> make
       shell> make install

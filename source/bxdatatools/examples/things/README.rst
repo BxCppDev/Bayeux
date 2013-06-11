@@ -25,7 +25,7 @@ Quick start
 1. Build, install and setup the datatools library
 2. Make a copy of the example directory::
 
-      shell> cp -a [datatools install base directory]/share/datatools/examples/things /tmp/datatools_ex_things
+      shell> cp -a <datatools installation base directory>/share/datatools/examples/things /tmp/datatools_ex_things
       shell> cd /tmp/datatools_ex_things
 
 3. Build and install the example::
@@ -34,7 +34,7 @@ Quick start
       shell> cd __build
       shell> cmake \
         -DCMAKE_INSTALL_PREFIX=.. \
-        -Ddatatools_DIR=$(datatools-config --prefix) \
+        -Ddatatools_DIR=<datatools installation base directory> \
         ..
       shell> make
       shell> make install
@@ -46,7 +46,7 @@ Quick start
 
 5. Clean::
 
-      shell> rm ex_things
+      shell> rm ex_things_1
       shell> rm -fr __build
 
 
