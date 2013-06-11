@@ -229,7 +229,6 @@ namespace geomtools {
 
   std::istream & operator>> (std::istream & a_in, address_set & a_addset)
   {
-    //bool devel = true;
     a_addset.invalidate ();
     bool reverse = false;
     char c = a_in.peek ();
