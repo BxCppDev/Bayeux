@@ -13,12 +13,12 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # datatools is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with datatools.  If not, see <http://www.gnu.org/licenses/>.
 #
@@ -33,12 +33,12 @@ foreach(_vtag VERSION VERSION_MAJOR VERSION_MINOR VERSION_PATCH)
   set(CPACK_PACKAGE_${_vtag} "${${PROJECT_NAME}_${_vtag}}")
 endforeach()
 
-set(CPACK_PACKAGE_DESCRIPTION_FILE ${PROJECT_SOURCE_DIR}/README.txt)
+set(CPACK_PACKAGE_DESCRIPTION_FILE ${PROJECT_SOURCE_DIR}/README.rst)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "datatools is a multi-purpose C++ library for data storage and manipulation")
 
-set(CPACK_RESOURCE_FILE_LICENSE ${PROJECT_SOURCE_DIR}/COPYING.txt)
-set(CPACK_RESOURCE_FILE_README  ${PROJECT_SOURCE_DIR}/README.txt)
-set(CPACK_RESOURCE_FILE_WELCOME ${PROJECT_SOURCE_DIR}/README.txt)
+set(CPACK_RESOURCE_FILE_LICENSE ${PROJECT_SOURCE_DIR}/COPYING.rst)
+set(CPACK_RESOURCE_FILE_README  ${PROJECT_SOURCE_DIR}/README.rst)
+set(CPACK_RESOURCE_FILE_WELCOME ${PROJECT_SOURCE_DIR}/README.rst)
 
 #-----------------------------------------------------------------------
 # Source Package Configuration
