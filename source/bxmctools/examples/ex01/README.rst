@@ -341,9 +341,13 @@ Quick start
       shell> rm mctools_ex01-1.0.gdml
       shell> rm mctools_ex01_vertices.txt
       shell> rm geomtools_check_setup.C
+      shell> rm mctools_ex01_Co60_source_0_bulk.xml
+      shell> rm mctools_ex01_Co60_source_0_bulk.data.gz
+      shell> rm mctools_ex01_Co60_source_0_bulk.dpp.xml
       shell> rm histos_Co60.root
       shell> rm prng_seeds.save
       shell> rm prng_seeds.save.~backup~
-
+      shell> rm ex01_read_plain_simdata
+      shell> rm -fr __build
 
 
