@@ -35,6 +35,7 @@
 #include <datatools/properties.h>
 
 #include <geomtools/polyline_3d.h>
+#include <geomtools/placement.h>
 
 namespace geomtools {
 
@@ -58,6 +59,11 @@ namespace geomtools {
         DISPLAY_STYLE_WIRES  = 0,
       };
 
+    struct label_item
+    {
+      geomtools::placement posrot; //!< Placement of the text
+      std::string          text;   //!< Text of the label
+    };
 
     struct display_item
     {
@@ -67,7 +73,7 @@ namespace geomtools {
       std::list<geomtools::polyline_3d> paths;
       //std::list<geomtools::facet_3d>  facets;  //!< Future?
       //std::list<geomtools::vector_3d> markers; //!< Future?
-      //std::map<geomtools::placement_3d,std::string> labels; //!< Future?
+      //std::map<int,label_item>        labels;  //!< Future?
     public:
       display_item ();
       void reset ();

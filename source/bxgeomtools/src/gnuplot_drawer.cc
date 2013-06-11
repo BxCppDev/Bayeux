@@ -48,7 +48,6 @@ namespace geomtools {
 
   const std::string gnuplot_drawer::WORLD_NAME_KEY = "world_name";
 
-
   bool gnuplot_drawer::g_devel = false;
 
   gnuplot_drawer::cstream::cstream ()
