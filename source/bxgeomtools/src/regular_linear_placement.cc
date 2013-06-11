@@ -219,7 +219,7 @@ namespace geomtools {
     if (replicant_axis_ == REPLICANT_AXIS_X) set_replicant_step_x (step_);
     else if (replicant_axis_ == REPLICANT_AXIS_Y) set_replicant_step_y (step_);
     else if (replicant_axis_ == REPLICANT_AXIS_Z) set_replicant_step_z (step_);
-    else throw std::logic_error ("regular_linear_placement::init: Invalid replicant axis !");
+    else DT_THROW_IF (true, std::logic_error, "Invalid replicant axis !");
     return;
   }
 

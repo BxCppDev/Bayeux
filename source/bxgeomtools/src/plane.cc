@@ -76,26 +76,14 @@ namespace geomtools {
   }
 
   void plane::set(double a_, double b_, double c_, double d_)
-    {
-    if (!datatools::is_normal (a_))
-      {
-        throw std::logic_error ("geomtools::plane::set: Invalid 'a' value !");
-      }
+  {
+    DT_THROW_IF (!datatools::is_normal (a_), std::logic_error, "Invalid 'a' value !");
     _a_ = a_;
-    if (!datatools::is_normal (b_))
-      {
-        throw std::logic_error ("geomtools::plane::set: Invalid 'b' value !");
-      }
+    DT_THROW_IF (!datatools::is_normal (b_), std::logic_error, "Invalid 'b' value !");
     _b_ = b_;
-    if (!datatools::is_normal (c_))
-      {
-        throw std::logic_error ("geomtools::plane::set: Invalid 'c' value !");
-      }
+    DT_THROW_IF (!datatools::is_normal (c_), std::logic_error, "Invalid 'c' value !");
     _c_ = c_;
-    if (! datatools::is_normal (d_))
-      {
-        throw std::logic_error ("geomtools::plane::set: Invalid 'd' value !");
-      }
+    DT_THROW_IF (!datatools::is_normal (d_), std::logic_error, "Invalid 'd' value !");
     _d_ = d_;
     return;
   }
@@ -112,14 +100,8 @@ namespace geomtools {
   void plane::set (const geomtools::vector_3d & point_,
                    const geomtools::vector_3d & n_)
   {
-    if (n_.mag2 () < 1.0e-15)
-      {
-        throw std::logic_error ("geomtools::plane::set: Invalid normal vector !");
-      }
-    if (! geomtools::is_valid (point_))
-      {
-        throw std::logic_error ("geomtools::plane::set: Invalid reference point !");
-      }
+    DT_THROW_IF (n_.mag2 () < 1.0e-15, std::logic_error, "Invalid normal vector !");
+    DT_THROW_IF (! geomtools::is_valid (point_), std::logic_error, "Invalid reference point !");
     _a_ = n_.x ();
     _b_ = n_.y ();
     _c_ = n_.z ();
@@ -140,23 +122,11 @@ namespace geomtools {
             const geomtools::vector_3d & u2_)
   {
 
-    if (! geomtools::is_valid (point_))
-      {
-        throw std::logic_error ("geomtools::plane::set: Invalid reference point !");
-      }
-    if (u1_.mag2 () < 1.0e-15)
-      {
-        throw std::logic_error ("geomtools::plane::set: Invalid 'u1' vector !");
-      }
-    if (u2_.mag2 () < 1.0e-15)
-      {
-        throw std::logic_error ("geomtools::plane::set: Invalid 'u2' vector !");
-      }
+    DT_THROW_IF (! geomtools::is_valid (point_), std::logic_error, "Invalid reference point !");
+    DT_THROW_IF (u1_.mag2 () < 1.0e-15, std::logic_error, "Invalid 'u1' vector !");
+    DT_THROW_IF (u2_.mag2 () < 1.0e-15, std::logic_error, "Invalid 'u2' vector !");
     const geomtools::vector_3d normal = u1_.cross (u2_);
-    if (normal.mag2() == 0.0)
-      {
-        throw std::logic_error ("geomtools::plane::set: Vectors are colinear !");
-      }
+    DT_THROW_IF (normal.mag2() == 0.0, std::logic_error, "Vectors are colinear !");
     _a_ = normal.x ();
     _b_ = normal.y ();
     _c_ = normal.z ();
@@ -179,10 +149,7 @@ namespace geomtools {
   geomtools::vector_3d
   plane::orthogonal_projection (const geomtools::vector_3d & position_) const
   {
-    if (! geomtools::is_valid (position_))
-      {
-        throw std::logic_error ("geomtools::plane::orthogonal_projection: Invalid projection initial position !");
-      }
+    DT_THROW_IF (! geomtools::is_valid (position_), std::logic_error, "Invalid projection initial position !");
     double t = - ( + _a_ * position_.x ()
                    + _b_ * position_.y ()
                    + _c_ * position_.z ()
@@ -197,14 +164,8 @@ namespace geomtools {
   plane::projection (const geomtools::vector_3d & position_,
                      const geomtools::vector_3d & direction_) const
   {
-    if (! geomtools::is_valid (position_))
-      {
-        throw std::logic_error ("geomtools::plane::projection: Invalid projection initial position !");
-      }
-    if (! geomtools::is_valid (direction_))
-      {
-        throw std::logic_error ("geomtools::plane::projection: Invalid projection direction !");
-      }
+    DT_THROW_IF (! geomtools::is_valid (position_), std::logic_error, "Invalid projection initial position !");
+    DT_THROW_IF (! geomtools::is_valid (direction_), std::logic_error, "Invalid projection direction !");
     geomtools::vector_3d proj;
     double term = _a_ * position_.x ()
       + _b_ * position_.y ()

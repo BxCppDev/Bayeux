@@ -275,12 +275,8 @@ namespace geomtools {
     if (config_.has_key (stackable_limits_key)) {
       vector<double> limits;
       config_.fetch (stackable_limits_key, limits);
-      if (limits.size () != 6) {
-        ostringstream message;
-        message << "geomtools::stackable_data::initialize: "
-                << "Stacking limits vector should provide 6 dimensions !";
-        throw logic_error (message.str ());
-      }
+      DT_THROW_IF (limits.size () != 6, std::logic_error,
+                   "Stacking limits vector should provide 6 dimensions !");
       if (! config_.has_explicit_unit (stackable_limits_key)) {
         limits[0] *= lunit;
         limits[2] *= lunit;

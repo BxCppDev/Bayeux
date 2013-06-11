@@ -27,7 +27,7 @@ namespace geomtools {
     return;
   }
 
-  bool mapping_plugin::is_initialized() const 
+  bool mapping_plugin::is_initialized() const
   {
     return _initialized_;
   }
@@ -36,18 +36,8 @@ namespace geomtools {
                                  const geomtools::manager::plugins_dict_type & plugins_,
                                  const datatools::service_dict_type & services_)
   {
-    if (is_initialized())
-      {
-        std::ostringstream message;
-        message << "mapping_plugin::initialize: "
-                << "Plugin is already initialized !"
-                << std::endl;
-        throw std::logic_error(message.str());
-      }
-
-    {
-      _build_mapping(config_);
-    }
+    DT_THROW_IF (is_initialized(), std::logic_error, "Plugin is already initialized !");
+    _build_mapping(config_);
     _initialized_ = true;
     return 0;
   }
@@ -56,7 +46,7 @@ namespace geomtools {
   {
     _mapping_.set_id_manager (get_geo_manager().get_id_mgr ());
     _mapping_.initialize (mapping_config_);
-    _mapping_.build_from (get_geo_manager().get_factory (), 
+    _mapping_.build_from (get_geo_manager().get_factory (),
                           get_geo_manager().get_world_name ());
     return;
   }

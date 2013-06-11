@@ -24,13 +24,7 @@ namespace geomtools {
 
   void i_object_3d::set_tolerance (double tolerance_)
   {
-    if (tolerance_ <= 0.0)
-      {
-        ostringstream message;
-        message << "i_object_3d::set_tolerance: tolerance value '"
-                << tolerance_ << "' must be positive !";
-        throw domain_error (message.str ());
-      }
+    DT_THROW_IF (tolerance_ <= 0.0, std::logic_error, "Tolerance value '" << tolerance_ << "' must be positive !");
     _tolerance_ = tolerance_;
     return;
   }

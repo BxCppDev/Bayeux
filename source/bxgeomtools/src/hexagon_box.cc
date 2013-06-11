@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* hexagon_box.cc
  */
 
@@ -6,71 +6,61 @@
 
 namespace geomtools {
 
-  using namespace std;  
+  using namespace std;
 
   const std::string hexagon_box::HEXAGON_BOX_LABEL = "hexagon_box";
 
-  double 
+  double
   hexagon_box::get_radius () const
   {
     return _radius_;
   }
 
-  double 
+  double
   hexagon_box::get_diameter () const
   {
     return 2. * get_radius ();
   }
 
-  double 
+  double
   hexagon_box::get_side () const
   {
     return get_radius ();
   }
-  
-  void 
+
+  void
   hexagon_box::set_radius (double new_value_)
   {
-    if (new_value_ < 0.0 )
-      {
-        std::ostringstream message;
-        message << "hexagon_box::set_radius: Invalid '" << new_value_ << "' radius value!";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF (new_value_ < 0.0, std::logic_error, "Invalid '" << new_value_ << "' radius value!");
     _radius_ = new_value_;
   }
-  
-  double 
+
+  double
   hexagon_box::get_z () const
   {
     return _z_;
   }
-  
-  void 
+
+  void
   hexagon_box::set_z (double new_value_)
   {
-    if (new_value_ < 0.0) 
-      {
-        std::ostringstream message;
-        message << "hexagon_box::set_z: Invalid '" << new_value_ << "' Z value!";
-        throw std::logic_error (message.str ());
-      }
+    DT_THROW_IF (new_value_ < 0.0, std::logic_error, "Invalid '" << new_value_ << "' Z value!");
     _z_ = new_value_;
   }
-  
-  double 
+
+  double
   hexagon_box::get_half_z () const
   {
     return _z_ * 0.5;
   }
-  
+
   void
   hexagon_box::set_half_z (double new_value_)
   {
     set_z (new_value_ + new_value_);
   }
 
-  void 
+  void
   hexagon_box::set (double radius_, double z_)
   {
     set_radius (radius_);
@@ -88,18 +78,18 @@ namespace geomtools {
     set_radius (radius_);
     set_z (z_);
   }
-  
+
   hexagon_box::~hexagon_box ()
   {
   }
 
-  std::string 
+  std::string
   hexagon_box::get_shape_name () const
   {
     return HEXAGON_BOX_LABEL;
   }
- 
-  double 
+
+  double
   hexagon_box::get_surface (int mask_) const
   {
     double s = 0.0;
@@ -108,15 +98,15 @@ namespace geomtools {
 
     double side_surf = get_side () * _z_;
     double top_bottom_surf = 1.5 * std::sqrt(3.) * get_side () * get_side ();
-    if (mask & FACE_BACK) 
+    if (mask & FACE_BACK)
       {
         s += side_surf;
       }
-    if (mask & FACE_FRONT) 
+    if (mask & FACE_FRONT)
       {
         s += side_surf;
       }
-    if (mask & FACE_BACK_LEFT) 
+    if (mask & FACE_BACK_LEFT)
       {
         s += side_surf;
       }
@@ -128,22 +118,22 @@ namespace geomtools {
       {
         s += side_surf;
       }
-    if (mask & FACE_FRONT_LEFT) 
+    if (mask & FACE_FRONT_LEFT)
       {
         s += side_surf;
       }
-    if (mask & FACE_BOTTOM) 
+    if (mask & FACE_BOTTOM)
       {
         s += top_bottom_surf;
       }
-    if (mask & FACE_TOP) 
+    if (mask & FACE_TOP)
       {
         s += top_bottom_surf;
       }
     return s;
   }
 
-  double 
+  double
   hexagon_box::get_parameter (const std::string & flag_) const
   {
     if (flag_ == "radius") return get_radius ();
@@ -160,35 +150,35 @@ namespace geomtools {
     if (flag_ == "surface.front_left")  return get_surface (FACE_FRONT_LEFT);
     if (flag_ == "surface.front_right") return get_surface (FACE_FRONT_RIGHT);
     if (flag_ == "surface")             return get_surface (FACE_ALL);
-    
-    throw std::runtime_error ("hexagon_box::get_parameter: Unknown flag!");
+
+    DT_THROW_IF (true, std::logic_error, "Unknown '" << flag_ << "' flag!");
   }
 
-  double 
-  hexagon_box::get_volume () const 
+  double
+  hexagon_box::get_volume () const
   {
     return hexagon_box::get_surface (FACE_BOTTOM) * _z_;
   }
 
-  bool 
+  bool
   hexagon_box::is_valid () const
   {
     return (_radius_ > 0.0 && _z_ > 0.0);
   }
 
-  void 
+  void
   hexagon_box::init ()
   {
   }
 
-  void 
+  void
   hexagon_box::reset ()
   {
     _radius_ = -1.0;
     _z_ = -1.0;
   }
 
-  bool 
+  bool
   hexagon_box::xy_is_in_hexagon (double r_, double x_, double y_, double skin_)
   {
     double x = std::abs (x_);
@@ -200,35 +190,34 @@ namespace geomtools {
     return true;
   }
 
-  bool 
+  bool
   hexagon_box::xy_is_out_hexagon (double r_, double x_, double y_, double skin_)
   {
     return ! xy_is_in_hexagon (r_ + 0.5 * skin_, x_, y_, 0.0);
   }
 
-  bool 
+  bool
   hexagon_box::xy_is_on_hexagon (double r_, double x_, double y_, double skin_)
   {
-    return ! xy_is_in_hexagon (r_, x_, y_, skin_) 
+    return ! xy_is_in_hexagon (r_, x_, y_, skin_)
       && ! xy_is_out_hexagon (r_, x_, y_, skin_);
   }
 
-  bool 
+  bool
   hexagon_box::is_inside (const vector_3d & point_, double skin_) const
   {
     double skin = get_skin ();
     if (skin_ > USING_PROPER_SKIN) skin = skin_;
     if (std::abs (point_.z ()) > (0.5 * _z_ - 0.5 * skin)) return false;
 
-    if (! xy_is_in_hexagon (_radius_ - 0.5 * skin, 
-                            point_.x (), 
-                            point_.y (), 
+    if (! xy_is_in_hexagon (_radius_ - 0.5 * skin,
+                            point_.x (),
+                            point_.y (),
                             0.0)) return false;
-    std::clog << "hexagon_box::is_inside: ok " << std::endl;
     return true;
   }
 
-  vector_3d 
+  vector_3d
   hexagon_box::get_normal_on_surface (const vector_3d & position_) const
   {
     vector_3d normal;
@@ -240,12 +229,12 @@ namespace geomtools {
     else if (is_on_surface (position_, FACE_FRONT_LEFT))  normal.set (+0.5, -0.5 * std::sqrt(3.), 0.0);
     else if (is_on_surface (position_, FACE_FRONT_RIGHT)) normal.set (+0.5, +0.5 * std::sqrt(3.), 0.0);
     else if (is_on_surface (position_, FACE_BOTTOM))      normal.set ( 0.0,  0.0, -1.0);
-    else if (is_on_surface (position_, FACE_TOP))         normal.set ( 0.0,  0.0, +1.0); 
+    else if (is_on_surface (position_, FACE_TOP))         normal.set ( 0.0,  0.0, +1.0);
     return (normal);
   }
 
-  bool 
-  hexagon_box::is_on_surface (const vector_3d & point_ , 
+  bool
+  hexagon_box::is_on_surface (const vector_3d & point_ ,
                               int    mask_ ,
                               double skin_) const
   {
@@ -258,25 +247,25 @@ namespace geomtools {
       if (mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
 
       double hskin = 0.5 * skin;
-      if (mask & FACE_BACK) 
+      if (mask & FACE_BACK)
       {
-      if ((std::abs (point_.x () + 0.5 * __x) < hskin) 
+      if ((std::abs (point_.x () + 0.5 * __x) < hskin)
       && (std::abs (point_.y ()) < 0.5 * __y)
       && (std::abs (point_.z ()) < 0.5 * _z_)) return true;
       }
-      if (mask & FACE_FRONT) 
+      if (mask & FACE_FRONT)
       {
       if ((std::abs (point_.x () - 0.5 * __x) < hskin)
       && (std::abs (point_.y ()) < 0.5 * __y)
       && (std::abs (point_.z ()) < 0.5 * _z_)) return true;
       }
-      if (mask & FACE_LEFT) 
+      if (mask & FACE_LEFT)
       {
-      if ((std::abs (point_.y () + 0.5 * __y) < hskin) 
+      if ((std::abs (point_.y () + 0.5 * __y) < hskin)
       && (std::abs (point_.x ()) < 0.5 * __x)
       && (std::abs (point_.z ()) < 0.5 * _z_)) return true;
       }
-      if (mask & FACE_RIGHT) 
+      if (mask & FACE_RIGHT)
       {
       if (debug)
       {
@@ -286,19 +275,19 @@ namespace geomtools {
       std::clog << "DEVEL: hexagon_box::is_on_surface: dim radius=" << _radius_ << std::endl;
       std::clog << "DEVEL: hexagon_box::is_on_surface: dim z=" << _z_ << std::endl;
       }
-      if ((std::abs (point_.y () - 0.5 * __y) < hskin) 
+      if ((std::abs (point_.y () - 0.5 * __y) < hskin)
       && (std::abs (point_.x ()) < 0.5 * __x)
       && (std::abs (point_.z ()) < 0.5 * _z_)) return true;
       }
-      if (mask & FACE_BOTTOM) 
+      if (mask & FACE_BOTTOM)
       {
-      if ((std::abs (point_.z () + 0.5 * _z_) < hskin) 
+      if ((std::abs (point_.z () + 0.5 * _z_) < hskin)
       && (std::abs (point_.x ()) < 0.5 * __x)
       && (std::abs (point_.y ()) < 0.5 * __y)) return true;
       }
-      if (mask & FACE_TOP) 
+      if (mask & FACE_TOP)
       {
-      if ((std::abs (point_.z () - 0.5 * _z_) < hskin) 
+      if ((std::abs (point_.z () - 0.5 * _z_) < hskin)
       && (std::abs (point_.x ()) < 0.5 * __x)
       && (std::abs (point_.y ()) < 0.5 * __y)) return true;
       }
@@ -306,8 +295,8 @@ namespace geomtools {
     return false;
   }
 
-  bool 
-  hexagon_box::find_intercept (const vector_3d & from_, 
+  bool
+  hexagon_box::find_intercept (const vector_3d & from_,
                                const vector_3d & direction_,
                                intercept_t & intercept_,
                                double skin_) const
@@ -316,15 +305,15 @@ namespace geomtools {
       bool debug = false;
       const unsigned int NFACES = 6;
       double t[NFACES];
-      t[BACK]   = -(get_half_x () + from_[vector_3d::X]) 
+      t[BACK]   = -(get_half_x () + from_[vector_3d::X])
       / direction_[vector_3d::X];
-      t[FRONT]  = +(get_half_x () - from_[vector_3d::X]) 
+      t[FRONT]  = +(get_half_x () - from_[vector_3d::X])
       / direction_[vector_3d::X];
-      t[LEFT]   = -(get_half_y () + from_[vector_3d::Y]) 
+      t[LEFT]   = -(get_half_y () + from_[vector_3d::Y])
       / direction_[vector_3d::Y];
-      t[RIGHT]  = +(get_half_y () - from_[vector_3d::Y]) 
+      t[RIGHT]  = +(get_half_y () - from_[vector_3d::Y])
       / direction_[vector_3d::Y];
-      t[BOTTOM] = -(get_half_z () + from_[vector_3d::Z]) 
+      t[BOTTOM] = -(get_half_z () + from_[vector_3d::Z])
       / direction_[vector_3d::Z];
       t[TOP]    = +(get_half_z () - from_[vector_3d::Z])
       / direction_[vector_3d::Z];
@@ -337,8 +326,8 @@ namespace geomtools {
       if (debug)
       {
       std::clog << "DEVEL: hexagon_box::find_intercept: t[" << i << "]= "
-      << ti << " t_min=" << t_min 
-      << " face_min=" << face_min 
+      << ti << " t_min=" << t_min
+      << " face_min=" << face_min
       << std::endl;
       }
       if (std::isnormal (ti) && (ti > 0.0))
@@ -358,7 +347,7 @@ namespace geomtools {
     */
     intercept_.reset ();
     /*
-      if (face_min > 0) 
+      if (face_min > 0)
       {
       intercept_.set (0, face_min, from_ + direction_ * t_min);
       }
@@ -366,48 +355,48 @@ namespace geomtools {
     return intercept_.is_ok ();
   }
 
-  std::ostream & 
+  std::ostream &
   operator<< (std::ostream & out_, const hexagon_box & b_)
   {
-    out_ << '{' << hexagon_box::HEXAGON_BOX_LABEL << ' ' 
-         << b_._radius_ << ' ' 
+    out_ << '{' << hexagon_box::HEXAGON_BOX_LABEL << ' '
+         << b_._radius_ << ' '
          << b_._z_ << '}';
     return out_;
   }
 
-  std::istream & 
+  std::istream &
   operator>> (std::istream & in_, hexagon_box & b_)
   {
     b_.reset ();
     char c = 0;
     in_.get (c);
-    if (c != '{') 
+    if (c != '{')
       {
         in_.clear (std::ios_base::failbit);
         return in_;
-      } 
+      }
     std::string name;
     in_ >> name;
-    if (name != hexagon_box::HEXAGON_BOX_LABEL) 
+    if (name != hexagon_box::HEXAGON_BOX_LABEL)
       {
         in_.clear (std::ios_base::failbit);
         return in_;
-      } 
+      }
     double r, z;
     in_ >> r >> z;
-    if (! in_) 
+    if (! in_)
       {
         in_.clear (std::ios_base::failbit);
         return in_;
-      } 
+      }
     c = 0;
     in_.get (c);
-    if (c != '}') 
+    if (c != '}')
       {
         in_.clear (std::ios_base::failbit);
         return in_;
-      } 
-    try 
+      }
+    try
       {
         b_.set (r,z);
       }

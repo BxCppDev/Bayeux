@@ -34,10 +34,7 @@ namespace geomtools {
 
   void regular_polygon::set_n_sides (uint32_t ns_)
   {
-    if (ns_ < 3)
-      {
-        throw runtime_error ("regular_polygon::set_n_sides: Invalid number of sides !");
-      }
+    DT_THROW_IF (ns_ < 3, std::logic_error, "Invalid number of sides !");
     _n_sides_ = ns_;
     return;
   }
@@ -65,12 +62,7 @@ namespace geomtools {
 
   void regular_polygon::set_r (double new_value_)
   {
-    if (new_value_ < 0.0 )
-      {
-        ostringstream message;
-        message << "regular_polygon::set_r: Invalid '" << new_value_ << "' R value!";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (new_value_ < 0.0, std::logic_error, "Invalid '" << new_value_ << "' R value!");
     _r_ = new_value_;
     return;
   }
@@ -156,7 +148,7 @@ namespace geomtools {
   bool regular_polygon::is_on_surface (const vector_3d & position_,
                                        double tolerance_) const
   {
-    throw runtime_error ("regular_polygon::find_intercept: Not implemented yet !");
+    DT_THROW_IF (true, std::logic_error, "Not implemented yet !");
     /*
       double tolerance = get_tolerance ();
       if (tolerance_ > GEOMTOOLS_PROPER_TOLERANCE) tolerance = tolerance_;
@@ -193,7 +185,7 @@ namespace geomtools {
                                         double tolerance_) const
   {
     intercept_.reset ();
-    throw runtime_error ("regular_polygon::find_intercept: Not implemented yet !");
+    DT_THROW_IF (true, std::logic_error, "Not implemented yet !");
     /*
       double ux = direction_.x ();
       double uy = direction_.y ();

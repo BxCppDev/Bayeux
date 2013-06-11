@@ -1,5 +1,5 @@
-// -*- mode: c++; -*- 
-/* regular_grid_placement.cc  
+// -*- mode: c++; -*-
+/* regular_grid_placement.cc
  */
 
 #include <geomtools/regular_grid_placement.h>
@@ -16,7 +16,7 @@ namespace geomtools {
   {
     return 2;
   }
-  
+
   bool regular_grid_placement::has_only_one_rotation () const
   {
     return true;
@@ -26,11 +26,11 @@ namespace geomtools {
   {
     return false;
   }
- 
+
   bool regular_grid_placement::is_valid () const
   {
     return (_number_of_columns_ > 0)
-      && (_number_of_rows_ > 0) 
+      && (_number_of_rows_ > 0)
       && _basic_placement_.is_valid ()
       && isnormal (_column_step_)
       && isnormal (_row_step_);
@@ -112,12 +112,12 @@ namespace geomtools {
   {
     _basic_placement_ = bp_;
   }
-  
+
   const placement & regular_grid_placement::get_basic_placement () const
   {
     return _basic_placement_;
   }
-  
+
   placement & regular_grid_placement::get_basic_placement ()
   {
     return _basic_placement_;
@@ -134,32 +134,27 @@ namespace geomtools {
     _number_of_rows_ = nr_;
     return;
   }
-  
+
   size_t regular_grid_placement::get_number_of_rows () const
   {
     return _number_of_rows_;
   }
-  
+
   size_t regular_grid_placement::get_number_of_columns () const
   {
     return _number_of_columns_;
   }
-  
+
   size_t regular_grid_placement::get_number_of_items () const
   {
     return _number_of_columns_ * _number_of_rows_;
   }
 
-  size_t regular_grid_placement::compute_index_map (vector<uint32_t> & map_, 
+  size_t regular_grid_placement::compute_index_map (vector<uint32_t> & map_,
                                                     int item_) const
   {
-    if ((item_ < 0) || (item_ >= get_number_of_items ()))
-      {
-        ostringstream message;
-        message << "regular_grid_placement::compute_index_map: " 
-                << "Invalid item index '" << item_ << "' !" << endl;
-        throw std::range_error (message.str ());
-      }
+    DT_THROW_IF ((item_ < 0) || (item_ >= get_number_of_items ()), std::domain_error,
+                 "Invalid item index '" << item_ << "' !");
     uint32_t nitem = (uint32_t) item_;
     uint32_t icol = nitem % _number_of_columns_;
     uint32_t irow = nitem / _number_of_columns_;
@@ -182,7 +177,7 @@ namespace geomtools {
     get_placement (col_, row_, p);
     return p;
   }
-  
+
   void regular_grid_placement::get_placement (int item_, placement & p_) const
   {
     p_ = _basic_placement_;
@@ -238,7 +233,7 @@ namespace geomtools {
   {
     return _mode_ == MODE_YZ;
   }
-  
+
   bool regular_grid_placement::is_mode_xz () const
   {
     return _mode_ == MODE_XZ;
@@ -251,23 +246,20 @@ namespace geomtools {
 
   void regular_grid_placement::set_mode (int mode_)
   {
-    if ((mode_ < MODE_XY) || (mode_ > MODE_XZ))
-      {
-        throw std::logic_error ("regular_grid_placement: Invalid mode !");
-      }
+    DT_THROW_IF ((mode_ < MODE_XY) || (mode_ > MODE_XZ), std::logic_error, "Invalid mode !");
     _mode_ = mode_;
     return;
   }
- 
+
   // ctor:
   regular_grid_placement::regular_grid_placement () : i_placement ()
   {
     reset ();
     return;
   }
-                
+
   // ctor:
-  regular_grid_placement::regular_grid_placement (const placement & basic_placement_, 
+  regular_grid_placement::regular_grid_placement (const placement & basic_placement_,
                                                   double column_step_,
                                                   double row_step_,
                                                   size_t number_of_columns_,
@@ -290,8 +282,8 @@ namespace geomtools {
   {
     return;
   }
- 
-  void regular_grid_placement::init (const placement & basic_placement_, 
+
+  void regular_grid_placement::init (const placement & basic_placement_,
                                      double column_step_,
                                      double row_step_,
                                      size_t number_of_columns_,
@@ -307,7 +299,7 @@ namespace geomtools {
     set_centered (centered_);
     return;
   }
-  
+
   void regular_grid_placement::reset ()
   {
     _basic_placement_.invalidate ();
@@ -319,10 +311,10 @@ namespace geomtools {
     _centered_ = true;
     return;
   }
-    
-  void regular_grid_placement::tree_dump (ostream & out_, 
-                                          const string & title_, 
-                                          const string & indent_, 
+
+  void regular_grid_placement::tree_dump (ostream & out_,
+                                          const string & title_,
+                                          const string & indent_,
                                           bool inherit_) const
   {
     string indent;
@@ -334,27 +326,27 @@ namespace geomtools {
       oss_title << indent << datatools::i_tree_dumpable::tag << "Basic placement :";
       ostringstream oss_indent;
       oss_indent << indent << datatools::i_tree_dumpable::skip_tag;
-      _basic_placement_.tree_dump (out_, 
-                                   oss_title.str (), 
+      _basic_placement_.tree_dump (out_,
+                                   oss_title.str (),
                                    oss_indent.str ());
     }
 
-    out_ << indent << datatools::i_tree_dumpable::tag << "Mode : " 
+    out_ << indent << datatools::i_tree_dumpable::tag << "Mode : "
          << _mode_  << endl;
 
-    out_ << indent << datatools::i_tree_dumpable::tag << "Column step : " 
+    out_ << indent << datatools::i_tree_dumpable::tag << "Column step : "
          << _column_step_  << endl;
 
-    out_ << indent << datatools::i_tree_dumpable::tag << "Row step : " 
+    out_ << indent << datatools::i_tree_dumpable::tag << "Row step : "
          << _row_step_  << endl;
 
-    out_ << indent << datatools::i_tree_dumpable::tag << "Number of columns : " 
+    out_ << indent << datatools::i_tree_dumpable::tag << "Number of columns : "
          << _number_of_columns_  << endl;
 
-    out_ << indent << datatools::i_tree_dumpable::tag << "Number of rows : " 
+    out_ << indent << datatools::i_tree_dumpable::tag << "Number of rows : "
          << _number_of_rows_  << endl;
 
-    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)  
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
          << "Centered :" << is_centered () << endl;
 
     return;
@@ -364,4 +356,3 @@ namespace geomtools {
 } // end of namespace geomtools
 
 // end of regular_grid_placement.cc
-

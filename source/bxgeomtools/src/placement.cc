@@ -224,10 +224,7 @@ namespace geomtools {
 
   void placement::set_orientation (int axis_, double angle_)
   {
-    if (! check_rotation_axis (axis_))
-      {
-        throw logic_error ("placement::set_orientation: Invalid rotation axis !");
-      }
+    DT_THROW_IF (! check_rotation_axis (axis_), std::logic_error, "Invalid rotation axis !");
     _rotation_axis_ = axis_;
     _rotation_angle_ = angle_;
     _phi_ = std::numeric_limits<double>::quiet_NaN ();
@@ -301,13 +298,8 @@ namespace geomtools {
   size_t placement::compute_index_map (vector<uint32_t> & map_,
                                        int item_) const
   {
-    if ((item_ < 0) || (item_ >= get_number_of_items ()))
-      {
-        ostringstream message;
-        message << "placement::get_index_map: "
-                << "Invalid item index '" << item_ << "' !" << endl;
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF ((item_ < 0) || (item_ >= get_number_of_items ()), std::domain_error,
+                 "Invalid item index '" << item_ << "' !");
     map_.clear ();
     map_.push_back (item_);
     return map_.size ();
@@ -315,12 +307,7 @@ namespace geomtools {
 
   void placement::get_placement (int item_, placement & p_) const
   {
-    if (item_ != 0)
-      {
-        ostringstream message;
-        message << "placement::get_placement: Invalid item index '" << item_ << "' !" << endl;
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (item_ != 0, std::logic_error, "Invalid item index '" << item_ << "' !");
     p_ = *this;
   }
 

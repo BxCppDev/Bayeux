@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* physical_volume.cc
  */
 
@@ -11,7 +11,7 @@
 
 namespace geomtools {
 
-  using namespace std;  
+  using namespace std;
 
   bool physical_volume::is_locked () const
   {
@@ -29,23 +29,23 @@ namespace geomtools {
     _locked_ = false;
     return;
   }
- 
+
   const string & physical_volume::get_name () const
   {
     return _name_;
   }
-  
+
   void physical_volume::set_name (const string & name_)
   {
     _name_ = name_;
     return;
   }
-  
+
   const datatools::properties & physical_volume::parameters () const
   {
     return _parameters_;
   }
-  
+
   datatools::properties & physical_volume::parameters ()
   {
     return _parameters_;
@@ -74,13 +74,10 @@ namespace geomtools {
     _placement_ = &p_;
     return;
   }
-  
+
   const i_placement & physical_volume::get_placement () const
   {
-    if (! _placement_)
-      {
-        throw logic_error ("physical_volume::get_placement: Missing placement !");
-      }
+    DT_THROW_IF (! _placement_, std::logic_error, "Missing placement !");
     return *_placement_;
   }
 
@@ -102,7 +99,7 @@ namespace geomtools {
       }
     return;
   }
- 
+
   void physical_volume::_clear_logical_ ()
   {
     if (_logical_ != 0)
@@ -116,7 +113,7 @@ namespace geomtools {
       }
     return;
   }
-    
+
   void physical_volume::set_logical (const logical_volume & logical_)
   {
     _clear_logical_ ();
@@ -138,10 +135,7 @@ namespace geomtools {
 
   const logical_volume & physical_volume::get_logical () const
   {
-    if (! _logical_)
-      {
-        throw logic_error ("physical_volume::get_logical: Missing logical !");
-      }
+    DT_THROW_IF (! _logical_, std::logic_error, "Missing logical !");
     return *_logical_;
   }
 
@@ -172,7 +166,7 @@ namespace geomtools {
   {
     return _mother_ != 0;
   }
-    
+
   void physical_volume::set_mother (const logical_volume & mother_)
   {
     _mother_ = &mother_;
@@ -192,13 +186,13 @@ namespace geomtools {
     _real_mother_ = 0;
     return;
  }
-  
+
   physical_volume::physical_volume ()
   {
     _init_defaults_ ();
     return;
   }
-  
+
   physical_volume::physical_volume (const string & name_)
   {
     _init_defaults_ ();
@@ -206,46 +200,46 @@ namespace geomtools {
      return;
   }
 
-  physical_volume::physical_volume (const string & name_, 
+  physical_volume::physical_volume (const string & name_,
                                     const logical_volume & logical_,
                                     const logical_volume & mother_,
                                     const i_placement    & placement_)
   {
     _init_defaults_ ();
     set_name (name_);
-    set_logical (logical_);    
-    set_mother (mother_);    
-    set_placement (placement_);    
+    set_logical (logical_);
+    set_mother (mother_);
+    set_placement (placement_);
     return;
   }
-  
-  physical_volume::physical_volume (const string & name_, 
+
+  physical_volume::physical_volume (const string & name_,
                                     const logical_volume * logical_,
                                     const logical_volume & mother_,
                                     const i_placement    & placement_)
   {
     _init_defaults_ ();
     set_name (name_);
-    set_logical (logical_);    
-    set_mother (mother_);    
-    set_placement (placement_);    
+    set_logical (logical_);
+    set_mother (mother_);
+    set_placement (placement_);
     return;
   }
 
-  physical_volume::physical_volume (const string & name_, 
+  physical_volume::physical_volume (const string & name_,
                                     const logical_volume & logical_,
                                     const logical_volume & mother_,
                                     const i_placement    * placement_)
   {
     _init_defaults_ ();
     set_name (name_);
-    set_logical (logical_);    
-    set_mother (mother_);    
-    set_placement (placement_);    
+    set_logical (logical_);
+    set_mother (mother_);
+    set_placement (placement_);
     return;
   }
-  
-  physical_volume::physical_volume (const string & name_, 
+
+  physical_volume::physical_volume (const string & name_,
                                     const logical_volume * logical_,
                                     const logical_volume & mother_,
                                     const i_placement    * placement_)
@@ -254,12 +248,12 @@ namespace geomtools {
     _own_logical_ = false;
     _logical_ = 0;
     set_name (name_);
-    set_logical (logical_);    
-    set_mother (mother_);    
-    set_placement (placement_);    
+    set_logical (logical_);
+    set_mother (mother_);
+    set_placement (placement_);
     return;
   }
- 
+
   physical_volume::~physical_volume ()
   {
     _locked_ = false;
@@ -268,31 +262,31 @@ namespace geomtools {
     return;
   }
 
-  void physical_volume::tree_dump (ostream & out_, 
-                                   const string & title_, 
-                                   const string & indent_, 
+  void physical_volume::tree_dump (ostream & out_,
+                                   const string & title_,
+                                   const string & indent_,
                                    bool inherit_) const
   {
     string indent;
     if (! indent_.empty ()) indent = indent_;
-    if (! title_.empty ()) 
+    if (! title_.empty ())
       {
         out_ << indent << title_ << std::endl;
       }
 
-    out_ << indent << datatools::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Name      : \"" << _name_ << "\"" << std::endl;
 
-    out_ << indent << datatools::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Locked    : " << (_locked_? "Yes": "No") << std::endl;
 
     {
       // parameters:
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Parameters : ";
-      if ( _parameters_.size () == 0) 
+      if ( _parameters_.size () == 0)
         {
-          out_ << "<empty>"; 
+          out_ << "<empty>";
         }
       out_ << std::endl;
       {
@@ -300,39 +294,39 @@ namespace geomtools {
         indent_oss << indent;
         indent_oss << datatools::i_tree_dumpable::skip_tag;
         _parameters_.tree_dump (out_,"",indent_oss.str ());
-      }      
+      }
     }
 
     {
       // Logical:
-      out_ << indent << datatools::i_tree_dumpable::tag 
+      out_ << indent << datatools::i_tree_dumpable::tag
            << "Logical : ";
       if (has_logical ())
         {
-          out_ << "\"" << _logical_->get_name () << "\" " 
+          out_ << "\"" << _logical_->get_name () << "\" "
                << (_own_logical_? "(owned)": "(not owned)");
         }
       else
         {
           out_ << "<no logical>";
         }
-      out_ << std::endl; 
+      out_ << std::endl;
     }
 
     {
-      out_ << indent << datatools::i_tree_dumpable::tag 
+      out_ << indent << datatools::i_tree_dumpable::tag
            << "Placement : " << endl;
       ostringstream oss_indent;
       oss_indent << indent << datatools::i_tree_dumpable::skip_tag;
-      _placement_->tree_dump (out_, 
-                              "", 
-                              oss_indent.str (), 
+      _placement_->tree_dump (out_,
+                              "",
+                              oss_indent.str (),
                               false);
     }
 
     {
       // Mother:
-      out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_) 
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
            << "Mother = ";
       if (has_mother ())
         {
@@ -342,7 +336,7 @@ namespace geomtools {
         {
           out_ << "<no mother>";
         }
-      out_ << std::endl; 
+      out_ << std::endl;
     }
     return;
   }
