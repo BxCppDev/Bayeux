@@ -46,11 +46,6 @@ namespace geomtools {
 
   const std::string gnuplot_drawer::WORLD_NAME_KEY = "world_name";
 
-<<<<<<< HEAD
-  bool gnuplot_drawer::g_devel = false;
-
-=======
->>>>>>> [geomtools/trunk] remove static variables, use datatools logger
   gnuplot_drawer::cstream::cstream ()
   {
     oss = 0;
