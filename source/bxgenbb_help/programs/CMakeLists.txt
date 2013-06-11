@@ -106,12 +106,10 @@ foreach ( pro_program ${genbb_help_programs_list_CPP} )
 
   # last thing we have to do is to tell CMake what libraries
   # our executable needs,
-  set ( _pro_libraries genbb_help ) #${mygsl_LIBRARIES} )
+  set ( _pro_libraries genbb_help )
 
   if ( ${pro_program} STREQUAL "genbb_inspector.cxx" )
-    message (STATUS "${PROJECT_NAME}: programs: CAMP_LIBRARIES=${CAMP_LIBRARIES}")
     message (STATUS "${PROJECT_NAME}: programs: datatools_REFLECTION_LIBRARY=${datatools_REFLECTION_LIBRARY}")
-    list ( INSERT _pro_libraries 0 ${CAMP_LIBRARIES} )
     list ( INSERT _pro_libraries 0 ${datatools_REFLECTION_LIBRARY} )
   endif()
 
