@@ -11,8 +11,6 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   bool address_set::is_valid () const
   {
     return _mode_ != MODE_INVALID;
@@ -98,7 +96,6 @@ namespace geomtools {
     if (! is_mode_range ())
       {
         set_mode_range ();
-        //th row runtime_error ("address_set::set_range: Range mode is not active !");
       }
     if (a_min >  a_max)
       {
@@ -182,7 +179,7 @@ namespace geomtools {
     return;
   }
 
-  ostream & operator<< (ostream & a_out, const address_set & a_addset)
+  std::ostream & operator<< (std::ostream & a_out, const address_set & a_addset)
   {
     if (! a_addset.is_valid ())
       {
@@ -212,11 +209,11 @@ namespace geomtools {
     else
       {
         a_out << '{';
-        for (set<uint32_t>::const_iterator i = a_addset._addresses_.begin ();
+        for (std::set<uint32_t>::const_iterator i = a_addset._addresses_.begin ();
               i != a_addset._addresses_.end ();
              i++)
           {
-            set<uint32_t>::const_iterator j = i;
+            std::set<uint32_t>::const_iterator j = i;
             j++;
             a_out << *i;
             if (j != a_addset._addresses_.end ())
@@ -230,15 +227,11 @@ namespace geomtools {
     return a_out;
   }
 
-  istream & operator>> (istream & a_in, address_set & a_addset)
+  std::istream & operator>> (std::istream & a_in, address_set & a_addset)
   {
     //bool devel = true;
     a_addset.invalidate ();
     bool reverse = false;
-    bool mode_none = false;
-    bool mode_all = false;
-    bool mode_range = false;
-    bool mode_list = false;
     char c = a_in.peek ();
     if (c == '!')
       {
@@ -257,7 +250,7 @@ namespace geomtools {
             if (c != '}')
               {
                 a_addset.invalidate ();
-                a_in.setstate (ios::failbit);
+                a_in.setstate (std::ios::failbit);
                 return a_in;
               }
             a_in.get ();
@@ -270,7 +263,7 @@ namespace geomtools {
             if (c != '}')
               {
                 a_addset.invalidate ();
-                a_in.setstate (ios::failbit);
+                a_in.setstate (std::ios::failbit);
                 return a_in;
               }
             a_in.get ();
@@ -278,17 +271,15 @@ namespace geomtools {
           }
         else
           {
-            //if (devel) cerr << "mode==LIST" << endl;
             // mode list:
             while (true)
               {
                 uint32_t v;
-                a_in >> v >> ws;
+                a_in >> v >> std::ws;
                 if (! a_in)
                   {
                     return a_in;
                   }
-                //if (devel) cerr << "mode==LIST v=" << v << endl;
                 a_addset.add_to_list (v);
                 c = a_in.peek ();
                 if (c == '}')
@@ -299,11 +290,10 @@ namespace geomtools {
                 if (c != ';')
                   {
                     a_addset.invalidate ();
-                    a_in.setstate (ios::failbit);
+                    a_in.setstate (std::ios::failbit);
                     return a_in;
                   }
                 a_in.get ();
-                //if (devel) cerr << "mode==LIST loop a new value" << endl;
               }
           }
       }
@@ -316,14 +306,14 @@ namespace geomtools {
         if (! a_in)
           {
             a_addset.invalidate ();
-            a_in.setstate (ios::failbit);
+            a_in.setstate (std::ios::failbit);
             return a_in;
           }
         c = a_in.peek ();
         if (c != ';')
           {
             a_addset.invalidate ();
-            a_in.setstate (ios::failbit);
+            a_in.setstate (std::ios::failbit);
             return a_in;
           }
         a_in.get ();
@@ -331,14 +321,14 @@ namespace geomtools {
         if (! a_in)
           {
             a_addset.invalidate ();
-            a_in.setstate (ios::failbit);
+            a_in.setstate (std::ios::failbit);
             return a_in;
           }
         c = a_in.peek ();
         if (c != ']')
           {
             a_addset.invalidate ();
-            a_in.setstate (ios::failbit);
+            a_in.setstate (std::ios::failbit);
             return a_in;
           }
         a_in.get ();
@@ -347,7 +337,7 @@ namespace geomtools {
     else
       {
         a_addset.invalidate ();
-        a_in.setstate (ios::failbit);
+        a_in.setstate (std::ios::failbit);
         return a_in;
       }
     a_addset.set_reverse (reverse);
