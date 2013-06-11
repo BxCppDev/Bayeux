@@ -26,6 +26,7 @@ namespace mctools {
   void base_step_hit_processor::set_logging_priority(datatools::logger::priority p)
   {
     _logging_priority = p;
+    return;
   }
 
   bool base_step_hit_processor::is_debug() const
@@ -54,14 +55,12 @@ namespace mctools {
     return;
   }
 
-  const datatools::properties &
-  base_step_hit_processor::get_auxiliaries() const
+  const datatools::properties & base_step_hit_processor::get_auxiliaries() const
   {
     return _auxiliaries;
   }
 
-  datatools::properties &
-  base_step_hit_processor::grab_auxiliaries()
+  datatools::properties & base_step_hit_processor::grab_auxiliaries()
   {
     return _auxiliaries;
   }
