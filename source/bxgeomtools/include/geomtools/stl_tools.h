@@ -1,26 +1,26 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* stl_tools.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-09-23
- * Last modified: 2012-09-24
- * 
- * License: 
- * 
- * Description: 
+ * Last modified: 2013-06-11
  *
- *  STL tools for STL ASCII formatted file import. 
+ * License:
+ *
+ * Description:
+ *
+ *  STL (STereoLithography) tools for STL ASCII formatted file import.
  *
  * Based on :
  *
  *    http://en.wikipedia.org/wiki/STL_%28file_format%29
  *    http://www.ennex.com/~fabbers/StL.asp
  *
- * History: 
- * 
+ * History:
+ *
  */
 
-#ifndef __geomtools__stl_tools_h
-#define __geomtools__stl_tools_h 1
+#ifndef GEOMTOOLS_STL_TOOLS_H_
+#define GEOMTOOLS_STL_TOOLS_H_ 1
 
 #include <iostream>
 #include <vector>
@@ -38,43 +38,44 @@
 namespace geomtools {
 
   namespace stl {
-  
 
     /*******************
      *   STL vertex    *
      *******************/
 
-    struct vertex_t
+    /// \brief A STL vertex
+    struct vertex
     {
       double x, y, z;
 
-      vertex_t ();
+      vertex ();
 
-      friend std::ostream & operator<<(std::ostream & out_, 
-                                       const vertex_t & vtx_);
-      
-      friend bool operator== (const vertex_t & vtx1_,
-                              const vertex_t & vtx2_);
-      
-      friend bool operator< (const vertex_t & vtx1_, 
-                             const vertex_t & vtx2_);
-      
+      friend std::ostream & operator<<(std::ostream & out_,
+                                       const vertex & vtx_);
+
+      friend bool operator== (const vertex & vtx1_,
+                              const vertex & vtx2_);
+
+      friend bool operator< (const vertex & vtx1_,
+                             const vertex & vtx2_);
+
     };
 
-    
+
     /*******************
      *   STL facet     *
      *******************/
 
-    struct facet_t
+    /// \brief A STL facet
+    struct facet
     {
       double nx, ny, nz;
-      std::vector<vertex_t> vertices;
-      
-      facet_t ();
-      
-      friend std::ostream & operator<<(std::ostream & out_, 
-                                       const facet_t & fct_);
+      std::vector<vertex> vertices;
+
+      facet ();
+
+      friend std::ostream & operator<<(std::ostream & out_,
+                                       const facet & fct_);
 
     };
 
@@ -83,14 +84,15 @@ namespace geomtools {
      *   STL solid     *
      *******************/
 
-    struct solid_t
+    /// \brief A STL solid
+    struct solid
     {
       std::string name;
-      std::vector<facet_t> facets;
+      std::vector<facet> facets;
       std::string dummy_name;
 
-      solid_t ();
-      friend std::ostream & operator<<( std::ostream & out_, const solid_t & sld_);
+      solid ();
+      friend std::ostream & operator<<( std::ostream & out_, const solid & sld_);
 
     };
 
@@ -103,22 +105,22 @@ namespace geomtools {
  *  Boost/Fusion interface  *
  ****************************/
 
-BOOST_FUSION_ADAPT_STRUCT(geomtools::stl::vertex_t,
+BOOST_FUSION_ADAPT_STRUCT(geomtools::stl::vertex,
                           (double, x)
                           (double, y)
                           (double, z)
                           )
 
-BOOST_FUSION_ADAPT_STRUCT(geomtools::stl::facet_t,
+BOOST_FUSION_ADAPT_STRUCT(geomtools::stl::facet,
                           (double, nx)
                           (double, ny)
                           (double, nz)
-                          (std::vector<geomtools::stl::vertex_t>,vertices)
+                          (std::vector<geomtools::stl::vertex>,vertices)
                           )
 
-BOOST_FUSION_ADAPT_STRUCT(geomtools::stl::solid_t,
+BOOST_FUSION_ADAPT_STRUCT(geomtools::stl::solid,
                           (std::string, name)
-                          (std::vector<geomtools::stl::facet_t>,facets)
+                          (std::vector<geomtools::stl::facet>,facets)
                           (std::string, dummy_name)
                           )
 
@@ -130,64 +132,64 @@ namespace geomtools {
     /****************************
      *   Boost/Spirit parsers   *
      ****************************/
-    
+
     template <typename Iterator>
-    struct vertex_parser : 
-      boost::spirit::qi::grammar<Iterator, 
-                                 vertex_t(), 
+    struct vertex_parser :
+      boost::spirit::qi::grammar<Iterator,
+                                 vertex(),
                                  boost::spirit::qi::ascii::space_type>
     {
       vertex_parser () : vertex_parser::base_type(start)
       {
         start %=
           boost::spirit::qi::lit("vertex")
-          > boost::spirit::qi::double_ 
-          > boost::spirit::qi::double_ 
-          > boost::spirit::qi::double_ 
+          > boost::spirit::qi::double_
+          > boost::spirit::qi::double_
+          > boost::spirit::qi::double_
           ;
         return;
       }
-      
-      // Attributes: 
-      boost::spirit::qi::rule<Iterator, 
-                              vertex_t(), 
+
+      // Attributes:
+      boost::spirit::qi::rule<Iterator,
+                              vertex(),
                               boost::spirit::qi::ascii::space_type> start;
-  
+
     };
-    
+
     template <typename Iterator>
-    struct facet_parser : boost::spirit::qi::grammar<Iterator, 
-                                                     facet_t(), 
-                                                     boost::spirit::qi::locals<std::string>,           
+    struct facet_parser : boost::spirit::qi::grammar<Iterator,
+                                                     facet(),
+                                                     boost::spirit::qi::locals<std::string>,
                                                      boost::spirit::qi::ascii::space_type>
     {
       facet_parser () : facet_parser::base_type(facet_grammar, "geomtools::stl::facet_grammar")
       {
-        
+
         facet_grammar %=
           boost::spirit::qi::lit("facet")
           > boost::spirit::qi::lit("normal")
-          > boost::spirit::qi::double_ 
-          > boost::spirit::qi::double_ 
+          > boost::spirit::qi::double_
+          > boost::spirit::qi::double_
           > boost::spirit::qi::double_
           > boost::spirit::qi::no_skip[boost::spirit::qi::omit[*boost::spirit::qi::blank] > boost::spirit::qi::eol]
           > boost::spirit::qi::lit("outer")
           > boost::spirit::qi::lit("loop")
           > boost::spirit::qi::no_skip[boost::spirit::qi::omit[*boost::spirit::qi::blank] > boost::spirit::qi::eol]
 
-          
-          > boost::spirit::qi::repeat(3)[vertex_grammar 
-                                         > boost::spirit::qi::no_skip[boost::spirit::qi::omit[*boost::spirit::qi::blank] 
+
+          > boost::spirit::qi::repeat(3)[vertex_grammar
+                                         > boost::spirit::qi::no_skip[boost::spirit::qi::omit[*boost::spirit::qi::blank]
                                                                       > boost::spirit::qi::eol]
                                          ]
-          
+
           > boost::spirit::qi::lit("endloop")
           > boost::spirit::qi::no_skip[boost::spirit::qi::omit[*boost::spirit::qi::blank] > boost::spirit::qi::eol]
           > boost::spirit::qi::lit("endfacet")
           > boost::spirit::qi::no_skip[boost::spirit::qi::omit[*boost::spirit::qi::blank] > boost::spirit::qi::eol]
           ;
-       
-        facet_grammar.name("geomtools::stl::facet_grammar"); 
+
+        facet_grammar.name("geomtools::stl::facet_grammar");
         vertex_grammar.name("geomtools::stl::vertex_grammar");
 
         boost::spirit::qi::on_error<boost::spirit::qi::fail>
@@ -195,55 +197,55 @@ namespace geomtools {
            facet_grammar
            , std::cerr
            << boost::phoenix::val("Error! Expecting ")
-           << boost::spirit::qi::_4 
+           << boost::spirit::qi::_4
            << boost::phoenix::val(" here: \"")
-           << boost::phoenix::construct<std::string>(boost::spirit::qi::_3, 
-                                                     boost::spirit::qi::_2) 
+           << boost::phoenix::construct<std::string>(boost::spirit::qi::_3,
+                                                     boost::spirit::qi::_2)
            << boost::phoenix::val("\"")
            << std::endl
            );
-                
+
         return;
       }
-      
-      // Attributes: 
-      geomtools::stl::vertex_parser<Iterator> vertex_grammar; 
+
+      // Attributes:
+      geomtools::stl::vertex_parser<Iterator> vertex_grammar;
       boost::spirit::qi::rule<Iterator,
-                              facet_t(), 
-                              boost::spirit::qi::locals<std::string>, 
+                              facet(),
+                              boost::spirit::qi::locals<std::string>,
                               boost::spirit::qi::ascii::space_type> facet_grammar;
-      
+
     };
-    
-    
-    
+
+
+
     template <typename Iterator>
-    struct solid_parser : boost::spirit::qi::grammar<Iterator, 
-                                                     solid_t(), 
-                                                     boost::spirit::qi::locals<std::string>,           
+    struct solid_parser : boost::spirit::qi::grammar<Iterator,
+                                                     solid(),
+                                                     boost::spirit::qi::locals<std::string>,
                                                      boost::spirit::qi::ascii::space_type>
     {
       solid_parser () : solid_parser::base_type(solid_grammar, "geomtools::stl:solid_grammar")
       {
-        
-        name_grammar %= 
+
+        name_grammar %=
           boost::spirit::qi::lexeme[ boost::spirit::qi::alpha >> *boost::spirit::qi::alnum]
           ;
-              
+
         solid_grammar %=
           boost::spirit::qi::lit("solid")
-          > name_grammar 
+          > name_grammar
           > boost::spirit::qi::omit[ boost::spirit::qi::lexeme[ *(boost::spirit::qi::char_ - boost::spirit::qi::eol) ]]
-          
+
           > boost::spirit::qi::no_skip[boost::spirit::qi::omit[*boost::spirit::qi::blank] > boost::spirit::qi::eol]
           > boost::spirit::qi::repeat(4, boost::spirit::qi::inf)[facet_grammar]
           > boost::spirit::qi::lit("endsolid")
-          > name_grammar 
+          > name_grammar
           > boost::spirit::qi::omit[boost::spirit::qi::lexeme[ *(boost::spirit::qi::char_ - boost::spirit::qi::eol) ]]
           > boost::spirit::qi::no_skip[boost::spirit::qi::omit[*boost::spirit::qi::blank] > boost::spirit::qi::eol]
           ;
-        
-        solid_grammar.name("geomtools::stl::solid_grammar"); 
+
+        solid_grammar.name("geomtools::stl::solid_grammar");
         facet_grammar.name("geomtools::stl::solid::facet_grammar");
         name_grammar.name("geomtools::stl::solid::name_grammar");
 
@@ -252,22 +254,22 @@ namespace geomtools {
            solid_grammar
            , std::cerr
            << boost::phoenix::val("Error! Expecting ")
-           << boost::spirit::qi::_4  
+           << boost::spirit::qi::_4
            << boost::phoenix::val(" here: \"")
-           << boost::phoenix::construct<std::string>(boost::spirit::qi::_3, boost::spirit::qi::_2) 
+           << boost::phoenix::construct<std::string>(boost::spirit::qi::_3, boost::spirit::qi::_2)
            << boost::phoenix::val("\"")
            << std::endl
            );
-                
+
         return;
       }
-      
+
       // Attributes:
       boost::spirit:: qi::rule<Iterator, std::string(), boost::spirit::qi::ascii::space_type> name_grammar;
-      geomtools::stl::facet_parser<Iterator> facet_grammar; 
+      geomtools::stl::facet_parser<Iterator> facet_grammar;
       boost::spirit::qi::rule<Iterator,
-                              solid_t(), 
-                              boost::spirit::qi::locals<std::string>, 
+                              solid(),
+                              boost::spirit::qi::locals<std::string>,
                               boost::spirit::qi::ascii::space_type> solid_grammar;
 
     };
@@ -280,7 +282,7 @@ namespace geomtools {
 namespace geomtools {
 
   class tessellated_solid;
-  
+
   namespace stl {
 
 
@@ -294,15 +296,15 @@ namespace geomtools {
     class stl_to_geomtools_converter
     {
     public:
-      
+
       bool is_debug () const;
 
       void set_debug (bool);
-   
+
       bool is_check_normal () const;
 
       void set_check_normal (bool);
-   
+
       bool is_fix_attempt () const;
 
       void set_fix_attempt (bool);
@@ -317,12 +319,12 @@ namespace geomtools {
 
       stl_to_geomtools_converter ();
 
-      int convert (const solid_t & solid_, tessellated_solid & ts_);
+      int convert (const solid & solid_, tessellated_solid & ts_);
 
       static void fix_broken_facets (tessellated_solid & ts_, bool verbose_ = true);
 
     private:
-      
+
       bool _debug_;  /// Debug flag
       bool _check_normal_; /// Flag to check to facet normal relative to the 3 vertices
       bool _fix_attempt_; /// Flag to fix possible broken vertices and facets
@@ -336,6 +338,6 @@ namespace geomtools {
 } // end of namespace geomtools
 
 
-#endif // __geomtools__stl_tools_h
+#endif // GEOMTOOLS_STL_TOOLS_H_
 
 // end of stl_tools.h

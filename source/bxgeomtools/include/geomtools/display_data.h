@@ -8,7 +8,7 @@
  *
  * Description:
  *
- *   Generic display data for 3D wired rendering 
+ *   Generic display data for 3D wired rendering
  *
  *
  * History:
@@ -51,7 +51,7 @@ namespace geomtools {
         DISPLAY_FRAMED = 1,
       };
 
-   
+
     enum display_style_type
       {
         DISPLAY_STYLE_UNDEFINED = -1,
@@ -65,12 +65,15 @@ namespace geomtools {
       std::string                       style;
       std::string                       color;
       std::list<geomtools::polyline_3d> paths;
+      //std::list<geomtools::facet_3d>  facets;  //!< Future?
+      //std::list<geomtools::vector_3d> markers; //!< Future?
+      //std::map<geomtools::placement_3d,std::string> labels; //!< Future?
     public:
       display_item ();
       void reset ();
       DATATOOLS_SERIALIZATION_DECLARATION();
     };
- 
+
     typedef std::map<int32_t, display_item> items_dict_type;
 
     struct display_entry
@@ -135,11 +138,11 @@ namespace geomtools {
                             const std::string & a_indent = "",
                             bool a_inherit          = false) const;
 
-    display_item & add_static_item (const std::string & name_, 
+    display_item & add_static_item (const std::string & name_,
                                     const std::string & group_ = "",
                                     const std::string & color_ = "");
 
-    display_item & add_framed_item (const std::string & name_, 
+    display_item & add_framed_item (const std::string & name_,
                                     int frame_,
                                     const std::string & group_ = "",
                                     const std::string & color_ = "",
@@ -148,7 +151,7 @@ namespace geomtools {
     void process();
 
   protected:
-        
+
     display_item & _add_item (const std::string & name_,
                               int entry_type_,
                               int frame_,
@@ -157,11 +160,11 @@ namespace geomtools {
 
   private:
 
-    std::vector<std::string>             _colors_;
-    std::vector<std::string>             _groups_;
-    std::map<int32_t,std::string>        _frames_;
-    std::map<std::string, display_entry> _entries_;
-    datatools::properties                _auxiliaries_;
+    std::vector<std::string>             _colors_;  //!< Collection of used colors
+    std::vector<std::string>             _groups_;  //!< Collection of 'display' groups
+    std::map<int32_t,std::string>        _frames_;  //!< Collection of frames and associated titles
+    std::map<std::string, display_entry> _entries_; //!< Collection of display entities
+    datatools::properties                _auxiliaries_; //!< Auxiliary properties
 
     DATATOOLS_SERIALIZATION_DECLARATION();
 

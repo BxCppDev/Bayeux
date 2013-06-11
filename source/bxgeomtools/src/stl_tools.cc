@@ -22,7 +22,7 @@ namespace geomtools {
 
     // Vertex :
 
-    vertex_t::vertex_t ()
+    vertex::vertex ()
     {
       x = std::numeric_limits<double>::quiet_NaN ();
       y = std::numeric_limits<double>::quiet_NaN ();
@@ -30,19 +30,19 @@ namespace geomtools {
       return;
     }
 
-    std::ostream & operator<<( std::ostream & out_, const vertex_t & vtx_)
+    std::ostream & operator<<( std::ostream & out_, const vertex & vtx_)
     {
       out_ << "geomtools::stl::vertex{"
            << vtx_.x << ';'  << vtx_.y << ';'  << vtx_.z << '}' ;
       return out_;
     }
 
-    bool operator== (const vertex_t & vtx1_, const vertex_t & vtx2_)
+    bool operator== (const vertex & vtx1_, const vertex & vtx2_)
     {
       return vtx1_.x == vtx2_.x && vtx1_.y == vtx2_.y && vtx1_.z == vtx2_.z;
     }
 
-    bool operator< (const vertex_t & vtx1_, const vertex_t & vtx2_)
+    bool operator< (const vertex & vtx1_, const vertex & vtx2_)
     {
       if (vtx1_.z < vtx2_.z) return true;
       else if (vtx1_.z > vtx2_.z) return false;
@@ -54,7 +54,7 @@ namespace geomtools {
 
     // Facet :
 
-    facet_t::facet_t ()
+    facet::facet ()
     {
       nx = std::numeric_limits<double>::quiet_NaN ();
       ny = std::numeric_limits<double>::quiet_NaN ();
@@ -63,7 +63,7 @@ namespace geomtools {
       return;
     }
 
-    std::ostream & operator<<( std::ostream & out_, const facet_t & fct_)
+    std::ostream & operator<<( std::ostream & out_, const facet & fct_)
     {
       out_ << "geomtools::stl::facet{normal={"
            << fct_.nx << ';'  << fct_.ny << ';' << fct_.nz
@@ -76,13 +76,13 @@ namespace geomtools {
 
     // Solid :
 
-    solid_t::solid_t ()
+    solid::solid ()
     {
-      facets.reserve (1000);
+      facets.reserve (100);
       return;
     }
 
-    std::ostream & operator<<(std::ostream & out_, const solid_t & sld_)
+    std::ostream & operator<<(std::ostream & out_, const solid & sld_)
     {
       out_ << "geomtools::stl::solid{name='" << sld_.name << "'"
            << ";#facets="  << sld_.facets.size()
@@ -232,21 +232,20 @@ namespace geomtools {
       return;
     }
 
-    int stl_to_geomtools_converter::convert (const solid_t & solid_,
+    int stl_to_geomtools_converter::convert (const solid & solid_,
                                              tessellated_solid & ts_)
     {
-      typedef std::map<vertex_t,int> vtx_dict_t;
+      typedef std::map<vertex,int> vtx_dict_t;
       vtx_dict_t vertices;
 
       // if (is_debug()) std::clog << "DEBUG: geomtools::stl::stl_to_geomtools_converter::convert: "
       //                                << "Number of facets = " << solid_.facets.size()
       //                                << std::endl;
-      for (int ifacet = 0; ifacet < solid_.facets.size(); ifacet++)
-        {
+      for (int ifacet = 0; ifacet < solid_.facets.size(); ifacet++) {
           // if (is_debug()) std::clog << "DEBUG: geomtools::stl::stl_to_geomtools_converter::convert: "
           //                        << "Processing facets #" << ifacet << " ..."
           //                        << std::endl;
-          const facet_t & a_facet = solid_.facets[ifacet];
+          const facet & a_facet = solid_.facets[ifacet];
           int ivertices[3];
           // if (is_debug()) std::clog << "DEBUG: geomtools::stl::stl_to_geomtools_converter::convert: "
           //                        << "  Facets #" << ifacet << " has "
@@ -260,7 +259,7 @@ namespace geomtools {
                        std::logic_error,
                        "Invalid number of vertices (" << a_facet.vertices.size () << ") for facet #" << ifacet << " !");
           for (int ivtx = 0; ivtx < a_facet.vertices.size (); ivtx++) {
-            const vertex_t & a_vertex = a_facet.vertices[ivtx];
+            const vertex & a_vertex = a_facet.vertices[ivtx];
             double x, y, z;
             x = a_vertex.x;
             y = a_vertex.y;

@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_stl_tools.cxx
 
 #include <streambuf>
@@ -22,20 +22,20 @@ void test_vertex ()
   std::clog << "*** Parsing a STL vertex : " << std::endl;
   using boost::spirit::ascii::space;
   typedef std::string::const_iterator iterator_type;
-  typedef geomtools::stl::vertex_parser<iterator_type> vertex_parser_t;
-  
+  typedef geomtools::stl::vertex_parser<iterator_type> vertex_parser_type;
+
   std::string vertex_token = " vertex  1.900000e+001 -2.000000e+001  1.000000e+001 ";
-  vertex_parser_t          vtx_grammar;
-  geomtools::stl::vertex_t vtx;
+  vertex_parser_type          vtx_grammar;
+  geomtools::stl::vertex vtx;
   iterator_type iter = vertex_token.begin();
   iterator_type end = vertex_token.end();
-  bool r = boost::spirit::qi::phrase_parse(iter, end, vtx_grammar, boost::spirit::ascii::space, vtx); 
+  bool r = boost::spirit::qi::phrase_parse(iter, end, vtx_grammar, boost::spirit::ascii::space, vtx);
   if (r && iter == end)
     {
       std::cout << boost::fusion::tuple_open('[');
       std::cout << boost::fusion::tuple_close(']');
       std::cout << boost::fusion::tuple_delimiter(", ");
-      
+
       std::cout << "-------------------------\n";
       std::cout << "Parsing succeeded\n";
       std::cout << "got: " << boost::fusion::as_vector(vtx) << std::endl;
@@ -47,7 +47,7 @@ void test_vertex ()
       std::cout << "Parsing failed\n";
       std::cout << "-------------------------\n";
     }
-  
+
   return;
 }
 
@@ -58,7 +58,7 @@ void test_facet ()
   using boost::spirit::ascii::space;
   //typedef boost::spirit::istream_iterator iterator_type;
   typedef std::string::const_iterator iterator_type;
-  typedef geomtools::stl::facet_parser<iterator_type> facet_parser_t;
+  typedef geomtools::stl::facet_parser<iterator_type> facet_parser_type;
 
   std::string stl_file_path = "${GEOMTOOLS_DATA_DIR}/testing/data/test_stl_one_facet.stl";
   datatools::fetch_path_with_env (stl_file_path);
@@ -82,7 +82,7 @@ void test_facet ()
     fin.seekg(0,std::ios::beg);
     std::cerr << "length : " << length << '\n';
     facet_token.reserve(length);
-    fin.seekg(0, std::ios::beg);    
+    fin.seekg(0, std::ios::beg);
     facet_token.assign((std::istreambuf_iterator<char>(fin)),
                        (std::istreambuf_iterator<char>()));
   }
@@ -91,24 +91,24 @@ void test_facet ()
 
   iterator_type facet_iter = facet_token.begin();
   iterator_type facet_end = facet_token.end();
-    
-  facet_parser_t          fct_grammar;
-  geomtools::stl::facet_t fct;
-    
-  bool r = boost::spirit::qi::phrase_parse(facet_iter, 
-                                           facet_end, 
-                                           fct_grammar, 
-                                           boost::spirit::ascii::space, 
-                                           fct); 
+
+  facet_parser_type     fct_grammar;
+  geomtools::stl::facet fct;
+
+  bool r = boost::spirit::qi::phrase_parse(facet_iter,
+                                           facet_end,
+                                           fct_grammar,
+                                           boost::spirit::ascii::space,
+                                           fct);
   if (r && facet_iter == facet_end)
     {
       std::cout << boost::fusion::tuple_open('[');
       std::cout << boost::fusion::tuple_close(']');
       std::cout << boost::fusion::tuple_delimiter(", ");
-        
+
       std::cout << "-------------------------\n";
       std::cout << "Parsing succeeded\n";
-      std::cout << "got: " << std::endl; 
+      std::cout << "got: " << std::endl;
       std::cout << "     " << fct << '\n';
       std::cout << "\n-------------------------\n";
     }
@@ -130,7 +130,7 @@ void test_solid (bool draw_, std::string stlfp_)
 
   using boost::spirit::ascii::space;
   typedef std::string::const_iterator iterator_type;
-  typedef geomtools::stl::solid_parser<iterator_type> solid_parser_t;
+  typedef geomtools::stl::solid_parser<iterator_type> solid_parser_type;
 
   std::string stl_file_path = "${GEOMTOOLS_DATA_DIR}/testing/data/test_stl_import.stl";
   if (! stlfp_.empty ())
@@ -158,7 +158,7 @@ void test_solid (bool draw_, std::string stlfp_)
     fin.seekg(0,std::ios::beg);
     std::cerr << "length : " << length << '\n';
     solid_token.reserve(length);
-    fin.seekg(0, std::ios::beg);    
+    fin.seekg(0, std::ios::beg);
     solid_token.assign((std::istreambuf_iterator<char>(fin)),
                        (std::istreambuf_iterator<char>()));
   }
@@ -167,21 +167,21 @@ void test_solid (bool draw_, std::string stlfp_)
 
   iterator_type solid_iter = solid_token.begin();
   iterator_type solid_end = solid_token.end();
-    
-  solid_parser_t          sld_grammar;
-  geomtools::stl::solid_t sld;
-    
-  bool r = boost::spirit::qi::phrase_parse(solid_iter, 
-                                           solid_end, 
-                                           sld_grammar, 
-                                           boost::spirit::ascii::space, 
-                                           sld); 
+
+  solid_parser_type     sld_grammar;
+  geomtools::stl::solid sld;
+
+  bool r = boost::spirit::qi::phrase_parse(solid_iter,
+                                           solid_end,
+                                           sld_grammar,
+                                           boost::spirit::ascii::space,
+                                           sld);
   if (r && solid_iter == solid_end)
     {
       std::cout << boost::fusion::tuple_open('[');
       std::cout << boost::fusion::tuple_close(']');
       std::cout << boost::fusion::tuple_delimiter(", ");
-        
+
       std::cout << "-------------------------\n";
       std::cout << "Parsing succeeded\n";
       std::cout << "got: " << std::endl;
@@ -207,17 +207,17 @@ void test_solid (bool draw_, std::string stlfp_)
           datatools::temp_file tmp_file_s;
           tmp_file_s.set_remove_at_destroy (true);
           tmp_file_s.create ("/tmp", "test_stl_import_s");
- 
+
           geomtools::vector_3d pos;
           pos.set (0., 0., 0.);
           std::clog << "Vector: " << pos << std::endl;
-            
+
           geomtools::rotation rot;
           int rotation_axis = geomtools::ROTATION_AXIS_Z;
           double rotation_angle = 0 * CLHEP::degree;
           geomtools::create_rotation (rot, rotation_axis, rotation_angle);
           geomtools::tree_dump (rot, std::clog, "Rotation matrix:");
-            
+
           geomtools::gnuplot_draw::draw_tessellated (tmp_file.out (), pos, rot, gtts);
           tmp_file.close ();
           usleep (200);
@@ -225,10 +225,10 @@ void test_solid (bool draw_, std::string stlfp_)
           gtts.print_xyz (tmp_file_s.out ());
           tmp_file_s.close ();
           usleep (200);
-            
+
           {
-            Gnuplot g1 ("lines"); 
-            { 
+            Gnuplot g1 ("lines");
+            {
               std::ostringstream title;
               title << "set title '";
               title << "Tessellated solid from CATIA/STL export";
@@ -251,8 +251,8 @@ void test_solid (bool draw_, std::string stlfp_)
 
 
           {
-            Gnuplot g1 ("pm3d"); 
-            { 
+            Gnuplot g1 ("pm3d");
+            {
               std::ostringstream title;
               title << "set title '";
               title << "Tessellated solid from CATIA/STL export";
@@ -276,7 +276,7 @@ void test_solid (bool draw_, std::string stlfp_)
  0 \"yellow\"   ,                           \
  15 \"red\" )");
             g1.cmd ("show palette");
-            
+
             g1.plotfile_xyzo (tmp_file_s.get_filename (), 1, 2, 3, 4, "3D view");
             g1.showonscreen (); // window output
             geomtools::gnuplot_drawer::wait_for_key ();
@@ -311,29 +311,29 @@ int main(int argc_, char **argv_)
   while (iarg < argc_)
     {
       std::string arg = argv_[iarg];
-      
-      if (arg == "-d" || arg == "--debug") 
+
+      if (arg == "-d" || arg == "--debug")
         {
           debug = true;
         }
-      else if (arg == "-D" || arg == "--draw") 
+      else if (arg == "-D" || arg == "--draw")
         {
           draw = true;
         }
-      else if (arg == "-f" || arg == "--filename") 
+      else if (arg == "-f" || arg == "--filename")
         {
           fn = argv_[++iarg];
         }
-      
+
       iarg++;
     }
- 
-  try 
-    {      
+
+  try
+    {
       test_vertex ();
-      
+
       test_facet ();
- 
+
       //if (argc_ > 1) fn = argv_[1];
       std::clog << "NOTICE: fn = '" << fn << "'\n";
       test_solid (draw, fn);
