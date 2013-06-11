@@ -324,8 +324,6 @@ Quick start
 
     c. Run the geant4 simulation through the data processing pipeline::
 
-         !!! NOT TESTED YET !!!
-
          shell> dpp_processing \
           --logging-priority "debug" \
           --dlls-config "config/dlls.conf" \
