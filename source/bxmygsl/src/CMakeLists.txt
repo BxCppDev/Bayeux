@@ -271,6 +271,8 @@ if(MYGSL_WITH_BIO)
 
   add_library(mygsl_bio SHARED ${mygsl_bio_SOURCES})
 
+  target_link_libraries(mygsl_bio mygsl)
+
   if(APPLE)
     set_property(TARGET mygsl_bio APPEND
       PROPERTY LINK_FLAGS "-undefined dynamic_lookup"
@@ -295,6 +297,8 @@ if(MYGSL_WITH_REFLECTION)
   list_prepend(mygsl_reflection_SOURCES "${PROJECT_SOURCE_DIR}/")
 
   add_library(mygsl_reflection SHARED ${mygsl_reflection_SOURCES})
+
+  target_link_libraries(mygsl_reflection mygsl)
 
   if(APPLE)
     set_property(TARGET mygsl_reflection APPEND

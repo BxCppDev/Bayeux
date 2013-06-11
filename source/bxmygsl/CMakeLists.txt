@@ -85,9 +85,6 @@ find_package(GSL 1.14 REQUIRED)
 # - ROOT
 find_package(ROOT 5.26.00 REQUIRED)
 
-# - CAMP
-#find_package(CAMP 0.7.1 REQUIRED)
-
 #-----------------------------------------------------------------------
 # On Apple, we fixup the install prefix to handle installing documentation,
 # support files and so on under the framework's "Resources" directory.
