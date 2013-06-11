@@ -19,5 +19,5 @@ Please read the `COPYING.rst`_ file for licensing terms.
 .. _Xavier Garrido: mailto:garrido@lal.in2p3.fr
 .. _Ben Morgan: mailto:Ben.Morgan@warwick.ac.uk
 
-.. _INSTALL.txt: https://nemo.lpc-caen.in2p3.fr/browser/datatools/trunk/INSTALL.rst
-.. _COPYING.txt: https://nemo.lpc-caen.in2p3.fr/browser/datatools/trunk/COPYING.rst
+.. _INSTALL.rst: https://nemo.lpc-caen.in2p3.fr/browser/datatools/trunk/INSTALL.rst
+.. _COPYING.rst: https://nemo.lpc-caen.in2p3.fr/browser/datatools/trunk/COPYING.rst
