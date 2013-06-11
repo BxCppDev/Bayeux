@@ -401,6 +401,8 @@ if(GEOMTOOLS_WITH_BIO)
 
   add_library(geomtools_bio SHARED ${geomtools_bio_SOURCES})
 
+  target_link_libraries(geomtools_bio geomtools)
+
   if(APPLE)
     set_property(TARGET geomtools_bio APPEND
       PROPERTY LINK_FLAGS "-undefined dynamic_lookup"
@@ -431,7 +433,10 @@ if(GEOMTOOLS_WITH_REFLECTION)
   list_prepend(geomtools_reflection_SOURCES "${PROJECT_SOURCE_DIR}/")
 
   message (STATUS "Build geomtools reflection DLL...")
+
   add_library(geomtools_reflection SHARED ${geomtools_reflection_SOURCES})
+
+  target_link_libraries(geomtools_reflection geomtools)
 
   if(APPLE)
     set_property(TARGET geomtools_reflection APPEND

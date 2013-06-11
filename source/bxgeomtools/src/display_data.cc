@@ -15,7 +15,11 @@ namespace geomtools {
 
   display_data::display_item::display_item ()
   {
+    return;
+  }
 
+  display_data::display_item::~display_item ()
+  {
     return;
   }
 
@@ -28,7 +32,8 @@ namespace geomtools {
     return;
   }
 
-  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(display_data::display_entry, "geomtools::display_data::display_entry")
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(display_data::display_entry,
+                                                    "geomtools::display_data::display_entry")
 
   bool display_data::display_entry::is_static () const
   {
@@ -44,6 +49,10 @@ namespace geomtools {
   {
     entry_type  = -1;
     return;
+  }
+
+  display_data::display_entry::~display_entry ()
+  {
   }
 
   void display_data::display_entry::reset ()
