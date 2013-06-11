@@ -290,6 +290,8 @@ if(DATATOOLS_WITH_BIO)
 
   add_library(datatools_bio SHARED ${datatools_bio_SOURCES})
 
+  target_link_libraries(datatools_bio datatools)
+
   if(APPLE)
     set_property(TARGET datatools_bio APPEND
       PROPERTY LINK_FLAGS "-undefined dynamic_lookup"
@@ -321,6 +323,8 @@ if(DATATOOLS_WITH_REFLECTION)
   list_prepend(datatools_reflection_SOURCES "${PROJECT_SOURCE_DIR}/")
 
   add_library(datatools_reflection SHARED ${datatools_reflection_SOURCES})
+
+  target_link_libraries(datatools_reflection datatools)
 
   if(APPLE)
     set_property(TARGET datatools_reflection APPEND

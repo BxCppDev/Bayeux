@@ -67,6 +67,15 @@ int main (int argc_ , char ** argv_)
       clog << " Loading 'ssl'..." << endl;
       LL.load ("ssl");
 
+      clog << " Loading 'datatools_reflection'..." << endl;
+      LL.load ("datatools_reflection");
+
+      clog << " Loading 'datatools_bio'..." << endl;
+      LL.load ("datatools_bio");
+
+      // clog << " Loading 'mygsl_bio'..." << endl;
+      // LL.load ("mygsl_bio");
+
       // clog << "Loading 'mygsl'..." << endl;
       // LL.load ("mygsl");
 
