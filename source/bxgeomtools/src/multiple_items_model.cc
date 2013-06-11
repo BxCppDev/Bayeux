@@ -22,8 +22,6 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   MWIM & multiple_items_model::get_internals ()
   {
     return _internals_;
@@ -34,7 +32,7 @@ namespace geomtools {
     return _internals_;
   }
 
-  string multiple_items_model::get_model_id () const
+  std::string multiple_items_model::get_model_id () const
   {
     return "geomtools::multiple_items_model";
   }
@@ -49,99 +47,18 @@ namespace geomtools {
     return _solid_;
   }
 
-  void multiple_items_model::set_material_name (const string & m_)
+  void multiple_items_model::set_material_name (const std::string & m_)
   {
-    assert_unconstructed ("multiple_items_model::set_material_name");
+    DT_THROW_IF (is_constructed (), std::logic_error, "Operation not allowed ! Model has already been constructed");
     _material_name_ = m_;
     return;
   }
 
-  const string & multiple_items_model::get_material_name () const
+  const std::string & multiple_items_model::get_material_name () const
   {
-    assert_constructed ("multiple_items_model::get_material_name");
-    return _get_material_name_ ();
+    DT_THROW_IF (! is_constructed (), std::logic_error, "Operation not allowed ! Model has not been constructed yet");
+     return _material_name_;
   }
-
-  const string & multiple_items_model::_get_material_name_ () const
-  {
-    return _material_name_;
-  }
-
-  /*
-    bool multiple_items_model::has_item (const string & label_) const
-    {
-    return __items.find (label_) != __items.end ();
-    }
-
-    const multiple_items_model::item &
-    multiple_items_model::get_item (const string & label_) const
-    {
-    item_dict_t::const_iterator found = __items.find (label_);
-    if (found == __items.end ())
-    {
-    ostringstream message;
-    message << "multiple_items_model::get_item: "
-    << "No item with label '" << label_ << "'"
-    << endl;
-    th row runtime_error (message.str ());
-    }
-    return found->second;
-    }
-
-    multiple_items_model::item &
-    multiple_items_model::get_item (const string & label_)
-    {
-    item_dict_t::iterator found = __items.find (label_);
-    if (found == __items.end ())
-    {
-    ostringstream message;
-    message << "multiple_items_model::get_item: "
-    << "No item with label '" << label_ << "' !"
-    << endl;
-    th row runtime_error (message.str ());
-    }
-    return found->second;
-    }
-
-    void multiple_items_model::add_item (const string & label_,
-    const i_model & model_,
-    const placement & placement_)
-    {
-    assert_unconstructed ("multiple_items_model::add_item");
-    if (has_item (label_))
-    {
-    ostringstream message;
-    message << "multiple_items_model::add_item: "
-    << "There is already an item with label '" << label_ << "' !"
-    << endl;
-    th row runtime_error (message.str ());
-    }
-
-    __items[label_] = item ();
-    item & the_item = __items[label_];
-    the_item.set_label (label_);
-    the_item.set_model (model_);
-    the_item.set_placement (placement_);
-    }
-
-    size_t multiple_items_model::get_number_of_items () const
-    {
-    return __items.size ();
-    }
-
-    const multiple_items_model::item_dict_t &
-    multiple_items_model::get_items () const
-    {
-    return __items;
-    }
-
-    multiple_items_model::item_dict_t & multiple_items_model::get_items ()
-    {
-    return __items;
-    }
-
-  */
-
 
   // ctor:
   multiple_items_model::multiple_items_model ()
@@ -157,23 +74,22 @@ namespace geomtools {
     return;
   }
 
-  void multiple_items_model::_at_construct (const string & name_,
+  void multiple_items_model::_at_construct (const std::string & name_,
                                             const datatools::properties & config_,
                                             models_col_type * models_)
   {
     set_name (name_);
 
     /*** box dimensions ***/
-    double x, y, z;
-    string length_unit = "mm";
     double lunit = CLHEP::mm;
-
     if (config_.has_key ("length_unit"))
       {
-        string length_unit_str = config_.fetch_string ("length_unit");
+        const std::string length_unit_str = config_.fetch_string ("length_unit");
         lunit = datatools::units::get_length_unit_from (length_unit_str);
       }
 
+    double x;
+    datatools::invalidate (x);
     if (config_.has_key ("x"))
       {
         x = config_.fetch_real ("x");
@@ -182,6 +98,8 @@ namespace geomtools {
         }
       }
 
+    double y;
+    datatools::invalidate (y);
     if (config_.has_key ("y"))
       {
         y = config_.fetch_real ("y");
@@ -190,6 +108,8 @@ namespace geomtools {
         }
       }
 
+    double z;
+    datatools::invalidate (z);
     if (config_.has_key ("z"))
       {
         z = config_.fetch_real ("z");
@@ -199,135 +119,41 @@ namespace geomtools {
       }
 
     /*** material ***/
-    {
-      string material;
-      DT_THROW_IF (! config_.has_key ("material.ref"),
-                   logic_error,
-                   "Missing 'material.ref' property !");
-      material = config_.fetch_string ("material.ref");
-      set_material_name (material);
-    }
+    DT_THROW_IF (! config_.has_key ("material.ref"),
+                 std::logic_error,
+                 "Missing 'material.ref' property !");
+    const std::string material_name = config_.fetch_string ("material.ref");
+    set_material_name (material_name);
 
     _solid_.reset ();
     _solid_.set_x (x);
     _solid_.set_y (y);
     _solid_.set_z (z);
-    DT_THROW_IF (!_solid_.is_valid (), logic_error, "Invalid solid !");
+    DT_THROW_IF (!_solid_.is_valid (), std::logic_error, "Invalid solid !");
 
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (_solid_);
-    get_logical ().set_material_ref (_get_material_name_ ());
+    get_logical ().set_material_ref (_material_name_);
 
     _internals_.plug_internal_models (config_, get_logical (), models_);
-
-    /*
-      for (vector<string>::const_iterator i = labels.begin ();
-      i != labels.end ();
-      i++)
-      {
-      string item_label = *i;
-      string item_model_name;
-      const i_model * item_model = 0;
-      placement item_placement;
-      // extract placement:
-      {
-      string item_placement_str;
-      ostringstream item_placement_oss;
-      item_placement_oss << "placement." << item_label;
-      if (config_.has_key (item_placement_oss.str ()))
-      {
-      item_placement_str = config_.fetch_string (item_placement_oss.str ());
-      }
-      else
-      {
-      ostringstream message;
-      message << "multiple_items_model::_at_construct: "
-      << "Missing '" << item_placement_oss.str () << "' property !";
-      th row runtime_error (message.str ());
-      }
-      // parse placement:
-      bool res_parsing = true;
-      try
-      {
-      res_parsing = placement::from_string (item_placement_str, item_placement);
-      }
-      catch (...)
-      {
-      res_parsing = false;
-      }
-      if (! res_parsing)
-      {
-      ostringstream message;
-      message << "multiple_items_model::_at_construct: "
-      << "Item's placement parsing failed !";
-      th row runtime_error (message.str ());
-      }
-      }
-
-      // extract model:
-      {
-      ostringstream item_model_key_oss;
-      item_model_key_oss << "model." << item_label;
-      if (config_.has_key (item_model_key_oss.str ()))
-      {
-      item_model_name = config_.fetch_string (item_model_key_oss.str ());
-      }
-      else
-      {
-      ostringstream message;
-      message << "multiple_items_model::_at_construct: "
-      << "Missing 'item_model_key_oss.str ()' property !";
-      th row runtime_error (message.str ());
-      }
-      {
-      models_col_t::const_iterator found =
-      models_->find (item_model_name);
-      if (found != models_->end ())
-      {
-      item_model = found->second;
-      }
-      else
-      {
-      ostringstream message;
-      message << "multiple_items_model::_at_construct: "
-      << "Cannot find model with name '"
-      << item_model_name << "' !";
-      th row runtime_error (message.str ());
-      }
-      }
-      }
-
-
-      add_item (item_label, *item_model, item_placement);
-      physical_volume & item_phys = get_item (item_label).get_physical_volume ();
-      const placement & item_plcmt = get_item (item_label).get_placement ();
-      item_phys.set_name (i_model::make_physical_volume_name (item_label));
-      item_phys.set_placement (item_plcmt);
-      item_phys.set_logical (item_model->get_logical ());
-      item_phys.set_mother (get_logical ());
-      //item_phys.tree_dump (clog, "Item phys: ", "DEVEL: ");
-
-      //clog << "******* DEVEL: Item '" << item_label << "' is done..." << endl;
-      }
-    */
 
     return;
   }
 
 
-  void multiple_items_model::tree_dump (ostream & out_,
-                                        const string & title_,
-                                        const string & indent_,
+  void multiple_items_model::tree_dump (std::ostream & out_,
+                                        const std::string & title_,
+                                        const std::string & indent_,
                                         bool inherit_) const
   {
-    string indent;
+    std::string indent;
     if (! indent_.empty()) indent = indent_;
     i_model::tree_dump (out_, title_, indent, true);
 
     {
       // Material:
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Material : " << _get_material_name_ () << std::endl;
+           << "Material : " << get_material_name () << std::endl;
     }
 
     {

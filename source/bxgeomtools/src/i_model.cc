@@ -48,41 +48,6 @@ namespace geomtools {
     return;
   }
 
-
-  void i_model::assert_constructed (const std::string & where_,
-                                    const std::string & what_) const
-  {
-    if (is_constructed ()) return;
-    std::ostringstream message;
-    if (! where_.empty ()) {
-      message << where_ << ": ";
-    }
-    if (! what_.empty ()) {
-      message << what_;
-    } else {
-      message << "Operation not allowed ! Model has not been constructed yet";
-    }
-    message << " !";
-    DT_THROW_IF(true, std::logic_error, message.str ());
-  }
-
-  void i_model::assert_unconstructed (const std::string & where_,
-                                      const std::string & what_) const
-  {
-    if (! is_constructed ()) return;
-    std::ostringstream message;
-    if (! where_.empty ()) {
-      message << where_ << ": ";
-    }
-    if (! what_.empty ()) {
-      message << what_;
-    } else {
-      message << "Operation not allowed ! Model has already been constructed";
-    }
-    message << " !";
-    DT_THROW_IF(true, std::logic_error, message.str ());
-  }
-
   std::string i_model::make_solid_name (const std::string & basename_)
   {
     return basename_ + i_model::constants::instance().SOLID_SUFFIX;

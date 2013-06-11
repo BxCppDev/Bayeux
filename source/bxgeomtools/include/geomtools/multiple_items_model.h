@@ -1,16 +1,16 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* multiple_items_model.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-20
  * Last modified: 2010-02-20
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *   A model that hosts several objects (items) in a box mother shape
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
 #ifndef GEOMTOOLS_MULTIPLE_ITEMS_MODEL_H_
@@ -25,28 +25,24 @@
 #include <geomtools/box.h>
 
 namespace geomtools {
- 
+
   GEOMTOOLS_BOXED_MODEL_CLASS_DECLARE(multiple_items_model)
   {
-
-  private:
-
-    const std::string & _get_material_name_ () const;
-
-  public: 
+  public:
 
     MWIM & get_internals ();
+
     const MWIM & get_internals () const;
 
     virtual const geomtools::box & get_box () const;
+
     const box & get_solid () const;
 
     const std::string & get_material_name () const;
-    void set_material_name (const std::string &);
-     
-    virtual std::string get_model_id () const;
 
-  public: 
+    void set_material_name (const std::string &);
+
+    virtual std::string get_model_id () const;
 
     // ctor:
     multiple_items_model ();
@@ -54,10 +50,9 @@ namespace geomtools {
     // dtor:
     virtual ~multiple_items_model ();
 
-  public: 
-    virtual void tree_dump (std::ostream & out_         = std::clog, 
-                            const std::string & title_  = "", 
-                            const std::string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_         = std::clog,
+                            const std::string & title_  = "",
+                            const std::string & indent_ = "",
                             bool inherit_          = false) const;
 
   protected:

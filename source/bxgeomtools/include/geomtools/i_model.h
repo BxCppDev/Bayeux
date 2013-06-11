@@ -47,12 +47,6 @@ namespace geomtools {
 
     typedef geomtools::models_col_type models_col_type;
 
-    void assert_constructed (const std::string & where_,
-                             const std::string & what_ = "") const;
-
-    void assert_unconstructed (const std::string & where_,
-                               const std::string & what_ = "") const;
-
     bool is_constructed () const;
 
     bool is_debug () const;
