@@ -2,7 +2,9 @@
 datatools
 =========
 
-datatools is a multi-purpose C++ library for data storage and manipulation.
+datatools_ is a multi-purpose C++ library for data storage and manipulation.
+
+.. _datatools: https://nemo.lpc-caen.in2p3.fr/wiki/Software/Bayeux/datatools
 
 datatools  is   developped  by   `François  Mauger`_  at   `LPC  Caen`
 (CNRS/IN2P3) and Université de  Caen Basse-Normandie. There are other

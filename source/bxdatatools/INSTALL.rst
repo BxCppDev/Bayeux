@@ -5,10 +5,9 @@ datatools installation instructions
 Dependencies
 ============
 
-The datatools_ C++ library package uses the CMake build system.
-  .. _datatools: https://nemo.lpc-caen.in2p3.fr/wiki/Software/Bayeux/datatools
+The datatools_ C++ library uses the following tools :
 
-It uses the following tools :
+.. _datatools: https://nemo.lpc-caen.in2p3.fr/wiki/Software/Bayeux/datatools
 
   - CMake_ >= 2.8
 
