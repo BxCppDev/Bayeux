@@ -44,8 +44,7 @@ namespace mctools {
   /** Base step hit processor. The 'process' pure abstract method must be
    *  implemented.
    */
-  class base_step_hit_processor
-    : public datatools::i_tree_dumpable
+  class base_step_hit_processor : public datatools::i_tree_dumpable
   {
   public:
 

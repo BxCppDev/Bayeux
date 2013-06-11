@@ -95,7 +95,6 @@ namespace mctools {
 
   private:
 
-    bool   _verbose_; /// Verbosity flag
     double _scintillation_cluster_time_range_;  /** the time range for step hit
                                                  * clusterization:
                                                  * typical value is 1 ns

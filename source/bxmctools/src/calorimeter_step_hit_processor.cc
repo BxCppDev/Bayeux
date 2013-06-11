@@ -16,8 +16,6 @@
 
 namespace mctools {
 
-  using namespace std;
-
   MCTOOLS_STEP_HIT_PROCESSOR_REGISTRATION_IMPLEMENT (calorimeter_step_hit_processor,
                                                      "mctools::calorimeter_step_hit_processor");
 
@@ -36,7 +34,6 @@ namespace mctools {
   calorimeter_step_hit_processor::calorimeter_step_hit_processor ()
     : base_step_hit_processor ()
   {
-    _verbose_ = false;
     _scintillation_cluster_time_range_  = 1.0 * CLHEP::ns;
     _scintillation_cluster_space_range_ = 1.0 * CLHEP::cm;
 
@@ -51,15 +48,10 @@ namespace mctools {
     return;
   }
 
-  MCTOOLS_STEP_HIT_PROCESSOR_INITIALIZE_IMPLEMENT_HEAD(calorimeter_step_hit_processor,
-                                                       config_,
-                                                       service_mgr_)
+  MCTOOLS_STEP_HIT_PROCESSOR_INITIALIZE_IMPLEMENT_HEAD (calorimeter_step_hit_processor,
+                                                        config_,
+                                                        service_mgr_)
   {
-    // if (is_debug ()) {
-    //   clog << datatools::io::debug << "mctools::calorimeter_step_hit_processor::initialize: "
-    //        << "Entering..." << endl;
-    // }
-
     this->base_step_hit_processor::initialize(config_,
                                               service_mgr_);
 
@@ -82,16 +74,6 @@ namespace mctools {
     DT_THROW_IF (_mapping_category_.empty (), std::logic_error,
                  "Missing 'mapping_category' string property for processor '" << get_name () << "' !");
 
-    // if (is_debug ()) {
-    //   std::clog << datatools::io::debug << "mctools::calorimeter_step_hit_processor::initialize: "
-    //             << "Parse setup properties for processor '" << get_name () << "' ..." << std::endl;
-    // }
-
-    // set the verbosity flag:
-    if (config_.has_flag ("verbose")) {
-      _verbose_ = true;
-    }
-
     // set the time tolerance for hit clusterization:
     if (config_.has_key ("cluster.time_range")) {
       _scintillation_cluster_time_range_ = config_.fetch_real ("cluster.time_range");
@@ -107,6 +89,8 @@ namespace mctools {
         _scintillation_cluster_space_range_ *= CLHEP::mm;
       }
     }
+
+    DT_LOG_DEBUG (get_logging_priority (), "Parse setup properties for processor '" << get_name () << "' ...");
 
     // pickup the ID mapping from the geometry manager:
     _mapping_ = &_geom_manager->get_mapping ();
@@ -137,8 +121,8 @@ namespace mctools {
       const std::string & label = strs[0];
       int label_count = 1;
       if (strs.size () == 2) {
-        const string & count_str = strs[1];
-        istringstream iss (count_str);
+        const std::string & count_str = strs[1];
+        std::istringstream iss (count_str);
         iss >> label_count;
         DT_THROW_IF (! iss, std::logic_error,
                      "Invalid format for 'mapping.category.any_addresses' ! "
@@ -156,10 +140,6 @@ namespace mctools {
                  _mapping_category_any_addresses_.end ());
     }
 
-    // if (is_debug ()) {
-    //   clog << datatools::io::debug << "calorimeter_step_hit_processor::initialize: "
-    //        << "Exiting." << endl;
-    // }
     return;
   }
 
@@ -213,14 +193,15 @@ namespace mctools {
     }
 
     // check the case of alpha particle:
-    const string & hit_pname = step_hit_.get_particle_name ();
+    const std::string & hit_pname = step_hit_.get_particle_name ();
 
     bool track_match = false;
     // check the special case of an alpha scintillation hit:
     if (scintillation_hit_.get_particle_name () == "alpha") {
       if (hit_pname == "e-") {
         // search for delta rays originated from an alpha track:
-        bool is_delta_ray_from_alpha = step_hit_.get_auxiliaries ().has_flag(mctools::track_utils::DELTA_RAY_FROM_ALPHA_FLAG);
+        const bool is_delta_ray_from_alpha
+          = step_hit_.get_auxiliaries ().has_flag(mctools::track_utils::DELTA_RAY_FROM_ALPHA_FLAG);
         if (is_delta_ray_from_alpha) {
           /*  delta ray production along the alpha track:
            *
@@ -269,7 +250,8 @@ namespace mctools {
       if (hit_pname == "e-") {
         // reject delta rays originated from an alpha track for they should be clusterized
         // within the scintillation cluister of an alpha particle:
-        bool is_delta_ray_from_alpha = step_hit_.get_auxiliaries ().has_flag (mctools::track_utils::DELTA_RAY_FROM_ALPHA_FLAG);
+        const bool is_delta_ray_from_alpha
+          = step_hit_.get_auxiliaries ().has_flag (mctools::track_utils::DELTA_RAY_FROM_ALPHA_FLAG);
         if (is_delta_ray_from_alpha) {
           track_match = false;
         }
@@ -297,13 +279,13 @@ namespace mctools {
      *
      *   for gamma
      */
-    double t1 = scintillation_hit_.get_time_start () - _scintillation_cluster_time_range_;
-    double t2 = scintillation_hit_.get_time_stop () + _scintillation_cluster_time_range_;
+    const double t1 = scintillation_hit_.get_time_start () - _scintillation_cluster_time_range_;
+    const double t2 = scintillation_hit_.get_time_stop () + _scintillation_cluster_time_range_;
     double ta = step_hit_.get_time_start ();
     if (hit_pname == "gamma") {
       ta = step_hit_.get_time_stop ();
     }
-    double tb = step_hit_.get_time_stop ();
+    const double tb = step_hit_.get_time_stop ();
     bool time_match = false;
     if ((ta > t1) && (ta < t2)) time_match = true;
     else if ((tb > t1) && (tb < t2)) time_match = true;
@@ -317,10 +299,10 @@ namespace mctools {
      *  a matching step hit has to be located in a fiducial sphere
      *  that wraps the scintillation cluster hit.
      */
-    double cluster_dx = abs (scintillation_hit_.get_position_stop ().x () - scintillation_hit_.get_position_start ().x ());
-    double cluster_dy = abs (scintillation_hit_.get_position_stop ().y () - scintillation_hit_.get_position_start ().y ());
-    double cluster_dz = abs (scintillation_hit_.get_position_stop ().z () - scintillation_hit_.get_position_start ().z ());
-    double cluster_radius = 0.5 * sqrt (cluster_dx * cluster_dx + cluster_dy * cluster_dy + cluster_dz * cluster_dz);
+    const double cluster_dx = abs (scintillation_hit_.get_position_stop ().x () - scintillation_hit_.get_position_start ().x ());
+    const double cluster_dy = abs (scintillation_hit_.get_position_stop ().y () - scintillation_hit_.get_position_start ().y ());
+    const double cluster_dz = abs (scintillation_hit_.get_position_stop ().z () - scintillation_hit_.get_position_start ().z ());
+    const double cluster_radius = 0.5 * sqrt (cluster_dx * cluster_dx + cluster_dy * cluster_dy + cluster_dz * cluster_dz);
 
     // define the cluster fiducial spherical region:
     geomtools::sphere cluster_sphere;
@@ -330,9 +312,9 @@ namespace mctools {
     }
     cluster_sphere.set_radius (cluster_radius + factor * _scintillation_cluster_space_range_);
 
-    double cluster_x = 0.5 * (scintillation_hit_.get_position_stop ().x () + scintillation_hit_.get_position_start ().x ());
-    double cluster_y = 0.5 * (scintillation_hit_.get_position_stop ().y () + scintillation_hit_.get_position_start ().y ());
-    double cluster_z = 0.5 * (scintillation_hit_.get_position_stop ().z () + scintillation_hit_.get_position_start ().z ());
+    const double cluster_x = 0.5 * (scintillation_hit_.get_position_stop ().x () + scintillation_hit_.get_position_start ().x ());
+    const double cluster_y = 0.5 * (scintillation_hit_.get_position_stop ().y () + scintillation_hit_.get_position_start ().y ());
+    const double cluster_z = 0.5 * (scintillation_hit_.get_position_stop ().z () + scintillation_hit_.get_position_start ().z ());
     geomtools::vector_3d cluster_center;
     cluster_center.set (cluster_x, cluster_y, cluster_z);
 
@@ -379,9 +361,6 @@ namespace mctools {
                                                 simulated_data::hit_handle_collection_type * the_scintillation_hits,
                                                 simulated_data::hit_collection_type        * the_plain_scintillation_hits)
   {
-    bool devel = false;
-    //devel = true;
-
     // Check the type of output collection (handles or plain hits) :
     bool use_handles = false;
     if (the_scintillation_hits != 0) {
@@ -421,21 +400,18 @@ namespace mctools {
                                                                  _calo_block_type_);
       if (! gid.is_valid ()) {
         // we do not process such a hit:
-        if (_verbose_) {
-          std::clog << datatools::io::warning << "mctools::calorimeter_step_hit_processor::process: "
-                    << "We skip this hit for one cannot locate it through the locator attached to the '"
-                    << get_mapping_category() << "' ! "
-                    << " This is probably due to another mapping category registered in the current '"
-                    << get_hit_category() << "' hit category "
-                    << "that may generate its own step hits ! Consider to write your own hit processor able "
-                    << "to handle several mapping categories (using several suitable locators) !"
-                    << std::endl;
-        }
+        DT_LOG_WARNING (get_logging_priority (),
+                        "We skip this hit for one cannot locate it through the locator attached to the '"
+                        << get_mapping_category() << "' ! "
+                        << " This is probably due to another mapping category registered in the current '"
+                        << get_hit_category() << "' hit category "
+                        << "that may generate its own step hits ! Consider to write your own hit processor able "
+                        << "to handle several mapping categories (using several suitable locators) !");
         continue;
       }
 
       // Set 'any' for some GID subaddresses :
-      for (int i = 0; i < _mapping_category_any_addresses_.size (); i++) {
+      for (size_t i = 0; i < _mapping_category_any_addresses_.size (); i++) {
         gid.set_any (_mapping_category_any_addresses_[i]);
       }
       the_step_hit.set_geom_id (gid);
@@ -527,12 +503,12 @@ namespace mctools {
           zmax = the_step_hit.get_position_stop ().z ();
         } else {
           // compute the bounds of the step hit:
-          xmin = min (the_step_hit.get_position_start ().x (), the_step_hit.get_position_stop ().x ());
-          ymin = min (the_step_hit.get_position_start ().y (), the_step_hit.get_position_stop ().y ());
-          zmin = min (the_step_hit.get_position_start ().z (), the_step_hit.get_position_stop ().z ());
-          xmax = max (the_step_hit.get_position_start ().x (), the_step_hit.get_position_stop ().x ());
-          ymax = max (the_step_hit.get_position_start ().y (), the_step_hit.get_position_stop ().y ());
-          zmax = max (the_step_hit.get_position_start ().z (), the_step_hit.get_position_stop ().z ());
+          xmin = std::min (the_step_hit.get_position_start ().x (), the_step_hit.get_position_stop ().x ());
+          ymin = std::min (the_step_hit.get_position_start ().y (), the_step_hit.get_position_stop ().y ());
+          zmin = std::min (the_step_hit.get_position_start ().z (), the_step_hit.get_position_stop ().z ());
+          xmax = std::max (the_step_hit.get_position_start ().x (), the_step_hit.get_position_stop ().x ());
+          ymax = std::max (the_step_hit.get_position_start ().y (), the_step_hit.get_position_stop ().y ());
+          zmax = std::max (the_step_hit.get_position_start ().z (), the_step_hit.get_position_stop ().z ());
         }
         geomtools::vector_3d min_pos (xmin, ymin, zmin);
         current_scintillation_cluster->set_position_start (min_pos);
@@ -546,7 +522,7 @@ namespace mctools {
         current_scintillation_cluster = matching_scintillation_cluster;
 
         // increment energy deposit:
-        double cluster_energy_deposit = current_scintillation_cluster->get_energy_deposit ()
+        const double cluster_energy_deposit = current_scintillation_cluster->get_energy_deposit ()
           + hit_energy_deposit;
         current_scintillation_cluster->set_energy_deposit (cluster_energy_deposit);
         if (hit_particle_name == "gamma") {
@@ -606,24 +582,21 @@ namespace mctools {
                                                   const std::string & a_indent,
                                                   bool a_inherit) const
   {
-    namespace du = datatools;
     std::string indent;
     if (! a_indent.empty ()) {
       indent = a_indent;
     }
     base_step_hit_processor::tree_dump (a_out, a_title, indent, true);
-    a_out << indent << du::i_tree_dumpable::tag
-          << "Verbose : " << _verbose_ << std::endl;
-    a_out << indent << du::i_tree_dumpable::tag
+    a_out << indent << datatools::i_tree_dumpable::tag
           << "Time range : " << _scintillation_cluster_time_range_ / CLHEP::ns << " (ns)" << std::endl;
-    a_out << indent << du::i_tree_dumpable::tag
+    a_out << indent << datatools::i_tree_dumpable::tag
           << "Space range : " << _scintillation_cluster_space_range_ / CLHEP::mm << " (mm)" << std::endl;
-    a_out << indent << du::i_tree_dumpable::tag
+    a_out << indent << datatools::i_tree_dumpable::tag
           << "Mapping category : '" <<_mapping_category_ << "'" << std::endl;
-    a_out << indent << du::i_tree_dumpable::tag
+    a_out << indent << datatools::i_tree_dumpable::tag
           << "Mapping    : " << _mapping_ << std::endl;
     {
-      a_out << indent << du::i_tree_dumpable::tag
+      a_out << indent << datatools::i_tree_dumpable::tag
             << "Categories : " << _categories_ << " ";
       if (_categories_ != 0) {
         a_out << '[' << _categories_->size () << ']';
@@ -634,14 +607,14 @@ namespace mctools {
           {
           geomtools::id_mgr::categories_by_name_col_t::const_iterator j = i;
           j++;
-          a_out << indent << du::i_tree_dumpable::skip_tag;
+          a_out << indent << datatools::i_tree_dumpable::skip_tag;
           if (j == _categories_->end ())
           {
-          a_out << du::i_tree_dumpable::last_tag;
+          a_out << datatools::i_tree_dumpable::last_tag;
           }
           else
           {
-          a_out << du::i_tree_dumpable::tag;
+          a_out << datatools::i_tree_dumpable::tag;
           }
           a_out << "Category '" << i->first << "'" << std::endl;
           }
@@ -649,7 +622,7 @@ namespace mctools {
       }
       a_out << std::endl;
     }
-    a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)
+    a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
           << "Calorimeter block type : " << _calo_block_type_ << std::endl;
 
     return;

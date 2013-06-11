@@ -184,12 +184,12 @@ namespace mctools {
 
     geomtools::vector_3d         _position_start_; /// Start position : beginning of the tiny track segment (step)
     geomtools::vector_3d         _position_stop_;  /// Stop position : end of the tiny track segment (step)
-    double                       _time_start_; /// Start time
-    double                       _time_stop_; /// Stop time
+    double                       _time_start_;     /// Start time
+    double                       _time_stop_;      /// Stop time
     geomtools::vector_3d         _momentum_start_; /// Momentum at start position
-    geomtools::vector_3d         _momentum_stop_; /// Momentum at stop position
+    geomtools::vector_3d         _momentum_stop_;  /// Momentum at stop position
     double                       _energy_deposit_; /// Energy deposit along the track segment (step)
-    std::string                  _particle_name_; /// Name of the particle associated to the hit
+    std::string                  _particle_name_;  /// Name of the particle associated to the hit
 
     DATATOOLS_SERIALIZATION_DECLARATION();
 
