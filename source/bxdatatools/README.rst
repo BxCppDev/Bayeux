@@ -11,8 +11,8 @@ contributors to the library :
  - `Xavier Garrido`_ (Université Paris-Sud)
  - `Ben Morgan`_ (University of Warwick)
 
-Please read the `INSTALL.txt`_ file for installation instructions.
-Please read the `COPYING.txt`_ file for licensing terms.
+Please read the `INSTALL.rst`_ file for installation instructions.
+Please read the `COPYING.rst`_ file for licensing terms.
 
 .. _François Mauger: mailto:mauger@lpccaen.in2p3.fr
 .. _LPC Caen: http://lpccaen.in2p3.fr/..
