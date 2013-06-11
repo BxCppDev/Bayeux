@@ -37,23 +37,13 @@ namespace geomtools {
 
   void rectangle::set_x (double new_value_)
   {
-    if (new_value_ < 0.0 )
-      {
-        ostringstream message;
-        message << "rectangle::set_x: Invalid '" << new_value_ << "' X value!";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (new_value_ < 0.0, std::domain_error, "Invalid '" << new_value_ << "' X value!");
     _x_ = new_value_;
   }
 
   void rectangle::set_y (double new_value_)
   {
-    if (new_value_ < 0.0 )
-      {
-        ostringstream message;
-        message << "rectangle::set_y: Invalid '" << new_value_ << "' Y value!";
-        throw logic_error (message.str ());
-      }
+    DT_THROW_IF (new_value_ < 0.0, std::domain_error, "Invalid '" << new_value_ << "' Y value!");
     _y_ = new_value_;
   }
 

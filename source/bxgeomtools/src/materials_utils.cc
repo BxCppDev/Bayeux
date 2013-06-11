@@ -64,13 +64,9 @@ namespace geomtools {
         const std::string & material_name = *i;
         materials::material_dict_type::const_iterator found
           = mat_mgr_.get_materials().find (material_name);
-        if (found == mat_mgr_.get_materials().end ())
-          {
-            std::ostringstream message;
-            message << "manager::export_gdml: "
-                    << "Missing property 'material' for a material alias !";
-            throw std::logic_error (message.str ());
-          }
+        DT_THROW_IF (found == mat_mgr_.get_materials().end (),
+                     std::logic_error,
+                     "Missing property 'material' for a material alias !");
         const materials::material & a_mat = found->second.get_ref ();
 
         // composite by mean Z and A:
@@ -146,7 +142,7 @@ namespace geomtools {
     return;
   }
 
- 
+
 } // end of namespace geomtools
 
 // end of materials_utils.cc

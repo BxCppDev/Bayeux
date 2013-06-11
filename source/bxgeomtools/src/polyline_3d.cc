@@ -1,5 +1,5 @@
-// -*- mode: c++; -*- 
-/* polyline_3d.cc 
+// -*- mode: c++; -*-
+/* polyline_3d.cc
  */
 
 #include <geomtools/polyline_3d.h>
@@ -7,7 +7,7 @@
 namespace geomtools {
 
   using namespace std;
- 
+
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (polyline_3d,"geomtools::polyline_3d")
 
   const string polyline_3d::POLYLINE_3D_LABEL = "polyline_3d";
@@ -17,13 +17,13 @@ namespace geomtools {
     return polyline_3d::POLYLINE_3D_LABEL;
   }
 
-  bool  
+  bool
   polyline_3d::is_closed () const
   {
     return _closed_;
   }
-  
-  void 
+
+  void
   polyline_3d::set_closed (bool closed_)
   {
     _closed_ = closed_;
@@ -48,83 +48,72 @@ namespace geomtools {
     return;
   }
 
-  void 
+  void
   polyline_3d::clear ()
   {
     _closed_ = DEFAULT_CLOSED;
-    _points_.clear ();    
+    _points_.clear ();
     return;
   }
-      
-  void 
+
+  void
   polyline_3d::add (const vector_3d & p_)
   {
     _points_.push_back (p_);
     return;
   }
 
-  bool 
+  bool
   polyline_3d::is_empty () const
   {
     return _points_.size () == 0;
   }
 
-  int 
+  int
   polyline_3d::get_number_of_points () const
   {
     return _points_.size ();
   }
-      
-  const vector_3d & 
+
+  const vector_3d &
   polyline_3d::get_point (int i_) const
   {
-    if (is_empty ())
-      {
-        throw logic_error ("polyline_3d::get_point: Empty point collection!");
-      }
-    if ((i_ < 0) || (i_ >= (int) _points_.size ()))
-      {
-        throw logic_error ("polyline_3d::get_point: Invalid point index!");
-      }
+    DT_THROW_IF (is_empty (), std::logic_error, "Empty point collection!");
+    DT_THROW_IF ((i_ < 0) || (i_ >= (int) _points_.size ()), std::domain_error, "Invalid point index!");
     int i = 0;
     point_col::const_iterator it = _points_.begin ();
     while (i < i_)
       {
         it++;
         i++;
-      } 
+      }
     return *it;
   }
 
-  int 
+  int
   polyline_3d::get_number_of_vertex () const
   {
     int n = _points_.size ();
     if ((is_closed ()) && (n > 0)) n++;
     return n;
   }
- 
-  const vector_3d & 
+
+  const vector_3d &
   polyline_3d::get_vertex (int i_) const
   {
-    if (is_empty ())
-      {
-        throw logic_error ("polyline_3d::get_vertex: Empty vertex collection!");
-      }
+    DT_THROW_IF (is_empty (), std::logic_error, "Empty vertex collection!");
 
     if (! is_closed ())
       {
         return get_point (i_);
       }
-    
-    if ((i_ < 0) || (i_ >= get_number_of_vertex ()))
-      {
-        throw logic_error ("polyline_3d::get_vertex: Invalid vertex index!");
-      }
+
+    DT_THROW_IF ((i_ < 0) || (i_ >= get_number_of_vertex ()), std::domain_error,
+                 "Invalid vertex index!");
     return get_point (i_ % get_number_of_points ());
   }
 
-  void 
+  void
   polyline_3d::make_vertex_collection (basic_polyline_3d & bpl_) const
   {
     bpl_.clear ();
@@ -135,7 +124,7 @@ namespace geomtools {
     return;
   }
 
-  basic_polyline_3d 
+  basic_polyline_3d
   polyline_3d::make_vertex_collection () const
   {
     basic_polyline_3d bpl;
@@ -143,18 +132,18 @@ namespace geomtools {
     return bpl;
   }
 
-  bool polyline_3d::is_on_curve (const vector_3d & position_, 
+  bool polyline_3d::is_on_curve (const vector_3d & position_,
                                  double tolerance_) const
   {
     bool on_curve = false;
-    throw logic_error ("polyline_3d::is_on_curve: Not implemented yet !");
+    DT_THROW_IF (true, std::logic_error, "Not implemented yet !");
     return on_curve;
   }
 
   vector_3d polyline_3d::get_direction_on_curve (const vector_3d & position_) const
   {
     vector_3d dir;
-    throw logic_error ("polyline_3d::get_direction_on_curve: Not implemented yet !");
+    DT_THROW_IF (true, std::logic_error, "Not implemented yet !");
     return dir;
   }
 

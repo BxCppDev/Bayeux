@@ -1,5 +1,5 @@
-// -*- mode: c++; -*- 
-/* regular_linear_placement.cc 
+// -*- mode: c++; -*-
+/* regular_linear_placement.cc
  */
 
 #include <geomtools/regular_linear_placement.h>
@@ -15,7 +15,7 @@ namespace geomtools {
   {
     return 1;
   }
-  
+
   bool regular_linear_placement::has_only_one_rotation () const
   {
     return true;
@@ -23,7 +23,7 @@ namespace geomtools {
 
   bool regular_linear_placement::is_valid () const
   {
-    return _number_of_items_ > 0 
+    return _number_of_items_ > 0
       && geomtools::is_valid (_step_)
       && _basic_placement_.is_valid ();
   }
@@ -36,7 +36,7 @@ namespace geomtools {
     _replicant_axis_ = REPLICANT_AXIS_NONE;
     return;
   }
-     
+
   void regular_linear_placement::set_replicant_axis (int axis_)
   {
     if ((axis_ < REPLICANT_AXIS_X) || (axis_ > REPLICANT_AXIS_Z))
@@ -47,7 +47,7 @@ namespace geomtools {
     _replicant_axis_ = axis_;
     return;
   }
- 
+
   void regular_linear_placement::set_step (double x_, double y_, double z_)
   {
     _step_.set (x_, y_, z_);
@@ -61,7 +61,7 @@ namespace geomtools {
     set_replicant_axis (REPLICANT_AXIS_NONE);
     return;
   }
- 
+
   int regular_linear_placement::get_replicant_axis () const
   {
     return _replicant_axis_;
@@ -112,12 +112,12 @@ namespace geomtools {
     _basic_placement_ = bp_;
     return;
   }
-  
+
   const placement & regular_linear_placement::get_basic_placement () const
   {
     return _basic_placement_;
   }
-  
+
   placement & regular_linear_placement::get_basic_placement ()
   {
     return _basic_placement_;
@@ -127,27 +127,23 @@ namespace geomtools {
   {
     _number_of_items_ = n_;
   }
-  
+
   size_t regular_linear_placement::get_number_of_items () const
   {
     return _number_of_items_;
   }
 
-  size_t regular_linear_placement::compute_index_map (vector<uint32_t> & map_, 
+  size_t regular_linear_placement::compute_index_map (vector<uint32_t> & map_,
                                                       int item_) const
   {
-    if ((item_ < 0) || (item_ >= get_number_of_items ()))
-      {
-        ostringstream message;
-        message << "regular_linear_placement::compute_index_map: " 
-                << "Invalid item index '" << item_ << "' !" << endl;
-        throw std::range_error (message.str ());
-      }
+    DT_THROW_IF ((item_ < 0) || (item_ >= get_number_of_items ()),
+                 std::domain_error,
+                 "Invalid item index '" << item_ << "' !");
     map_.clear ();
     map_.push_back (item_);
     return map_.size ();
   }
-  
+
   void regular_linear_placement::get_placement (int item_, placement & p_) const
   {
     p_ = _basic_placement_;
@@ -162,7 +158,7 @@ namespace geomtools {
     return _replicant_axis_ != REPLICANT_AXIS_NONE
       && (!geomtools::is_valid(_step_) || _step_.mag() == 0.0);
   }
- 
+
   // ctor:
   regular_linear_placement::regular_linear_placement () : i_placement ()
   {
@@ -172,9 +168,9 @@ namespace geomtools {
     _replicant_axis_ = REPLICANT_AXIS_NONE;
     return;
   }
-                
+
   // ctor:
-  regular_linear_placement::regular_linear_placement (const placement & basic_placement_, 
+  regular_linear_placement::regular_linear_placement (const placement & basic_placement_,
                                                       const vector_3d & step_,
                                                       size_t number_of_items_) : i_placement ()
   {
@@ -185,7 +181,7 @@ namespace geomtools {
   }
 
   // ctor:
-  regular_linear_placement::regular_linear_placement (const placement & basic_placement_, 
+  regular_linear_placement::regular_linear_placement (const placement & basic_placement_,
                                                       double step_,
                                                       size_t number_of_items_,
                                                       int replicant_axis_)
@@ -202,8 +198,8 @@ namespace geomtools {
   {
     return;
   }
- 
-  void regular_linear_placement::init (const placement & basic_placement_, 
+
+  void regular_linear_placement::init (const placement & basic_placement_,
                                        const vector_3d & step_,
                                        size_t number_of_items_)
   {
@@ -213,7 +209,7 @@ namespace geomtools {
     return;
   }
 
-  void regular_linear_placement::init (const placement & basic_placement_, 
+  void regular_linear_placement::init (const placement & basic_placement_,
                                        double step_,
                                        size_t number_of_items_,
                                        int replicant_axis_)
@@ -226,7 +222,7 @@ namespace geomtools {
     else throw std::logic_error ("regular_linear_placement::init: Invalid replicant axis !");
     return;
   }
-   
+
   void regular_linear_placement::reset ()
   {
     _basic_placement_.invalidate ();
@@ -235,10 +231,10 @@ namespace geomtools {
     _replicant_axis_ = REPLICANT_AXIS_NONE;
     return;
   }
-    
-  void regular_linear_placement::tree_dump (ostream & out_, 
-                                            const string & title_, 
-                                            const string & indent_, 
+
+  void regular_linear_placement::tree_dump (ostream & out_,
+                                            const string & title_,
+                                            const string & indent_,
                                             bool inherit_) const
   {
     string indent;
@@ -250,18 +246,18 @@ namespace geomtools {
       oss_title << indent << datatools::i_tree_dumpable::tag << "Basic placement :";
       ostringstream oss_indent;
       oss_indent << indent << datatools::i_tree_dumpable::skip_tag;
-      _basic_placement_.tree_dump (out_, 
-                                   oss_title.str (), 
+      _basic_placement_.tree_dump (out_,
+                                   oss_title.str (),
                                    oss_indent.str ());
     }
 
-    out_ << indent << datatools::i_tree_dumpable::tag << "Step : " 
+    out_ << indent << datatools::i_tree_dumpable::tag << "Step : "
          << _step_  << endl;
 
-    out_ << indent << datatools::i_tree_dumpable::tag << "Number of items : " 
+    out_ << indent << datatools::i_tree_dumpable::tag << "Number of items : "
          << _number_of_items_  << endl;
 
-    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_) 
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
          << "Replica :" << is_replica ();
     if (is_replicant_x_axis ())
       {
@@ -284,4 +280,3 @@ namespace geomtools {
 } // end of namespace geomtools
 
 // end of regular_linear_placement.cc
-

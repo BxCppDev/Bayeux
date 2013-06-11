@@ -581,13 +581,6 @@ namespace geomtools {
     if (config_.has_key ("id_mgr.categories_list")) {
       categories_list = config_.fetch_string ("id_mgr.categories_list");
     }
-    // else
-    //   {
-    //     std::ostringstream message;
-    //     message << "geomtools::manager::_at_init_: "
-    //             << "Missing 'id_mgr.categories_list' property !";
-    //     throw std::logic_error (message.str ());
-    //   }
 
     if (config_.has_key ("factory.geom_list")) {
       factory_geom_list = config_.fetch_string ("factory.geom_list");

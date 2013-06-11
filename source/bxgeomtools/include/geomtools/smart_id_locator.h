@@ -43,9 +43,9 @@ namespace geomtools {
 
   public:
 
-    void set_debug (bool);
+    datatools::logger::priority get_logging_priority () const;
 
-    bool is_debug () const;
+    void set_logging_priority (datatools::logger::priority);
 
     bool is_initialized () const;
 
@@ -92,7 +92,8 @@ namespace geomtools {
 
   private:
 
-    bool              _debug_; /// Debug flag
+    datatools::logger::priority _logging_priority_;
+
     bool              _initialized_; /// Initialization flag
     int               _mode_; /// Running mode
     uint32_t          _type_; /// Geometry type associated to a given category
