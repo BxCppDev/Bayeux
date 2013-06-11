@@ -174,7 +174,7 @@ Quick start
       .. image:: images/ex01_geometry_3.jpg
          :width: 200
          :scale: 25 %
-         :alt: The 3D view of the setup from ROOT (file ``images/ex01_geometry_3.jpg``)
+         :alt: The OpenGL 3D view of the setup from ROOT (file ``images/ex01_geometry_3.jpg``)
          :align: center
 
 5. Standalone event generation:
@@ -202,6 +202,26 @@ Quick start
          root [2] .q
 
 
+       It displays some histograms related to the kinematics of the ^60^Co decay.
+
+       .. image:: images/ex01_genbb_Co60_prompt_beta_energy_1.jpg
+          :width: 200
+          :scale: 25 %
+          :alt: The first prompt electron energy spectrum in the ^60^Co decay (file ``images/ex01_genbb_Co60_prompt_beta_energy_1.jpg``)
+          :align: center
+
+       .. image:: images/ex01_genbb_Co60_prompt_gamma_energy_0.jpg
+          :width: 200
+          :scale: 25 %
+          :alt: The first prompt gamma energy spectrum in the ^60^Co decay (file ``images/ex01_genbb_Co60_prompt_gamma_energy_0.jpg``)
+          :align: center
+
+       .. image:: images/ex01_genbb_Co60_prompt_gamma_energy_1.jpg
+          :width: 200
+          :scale: 25 %
+          :alt: The second prompt gamma energy spectrum in the ^60^Co decay (file ``images/ex01_genbb_Co60_prompt_gamma_energy_1.jpg``)
+          :align: center
+
 6. Standalone vertex generation:
 
     a. Show the list of available generators::
@@ -224,12 +244,13 @@ Quick start
                  --output-file "mctools_ex01_vertices.txt" \
                  --visu --tiny
 
-      It displays views of the setup with the positions of the generated vertexes.
+      It displays a 3D view of the setup with the positions of the generated vertexes
+      on the inner surface of the vacuum vessel.
 
       .. image:: images/ex01_vertex_generator_vessel_inner_surface.jpg
          :width: 200
          :scale: 25 %
-         :alt: The generated vertex in the virtual geometry setup (file ``images/ex01_vertex_generator_vessel_inner_surface.jpg``)
+         :alt: The generated vertexes in the virtual geometry setup (file ``images/ex01_vertex_generator_vessel_inner_surface.jpg``)
          :align: center
 
 7. Geant4 simulation:

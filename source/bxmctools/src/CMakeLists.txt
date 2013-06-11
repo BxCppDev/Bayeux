@@ -197,6 +197,8 @@ if(MCTOOLS_WITH_BIO)
 
   add_library(mctools_bio SHARED ${mctools_bio_SOURCES})
 
+  target_link_libraries(mctools_bio mctools )
+
   if(APPLE)
     set_property(TARGET mctools_bio APPEND
       PROPERTY LINK_FLAGS "-undefined dynamic_lookup"
@@ -301,6 +303,8 @@ if(MCTOOLS_WITH_REFLECTION)
   list_prepend(mctools_reflection_SOURCES "${PROJECT_SOURCE_DIR}/")
 
   add_library(mctools_reflection SHARED ${mctools_reflection_SOURCES})
+
+  target_link_libraries(mctools_reflection mctools )
 
   if(APPLE)
     set_property(TARGET mctools_reflection APPEND

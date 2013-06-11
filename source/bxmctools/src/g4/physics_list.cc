@@ -243,14 +243,17 @@ namespace mctools {
 
           for (int i = 0; i < (int) regions.size (); i++) {
             const string & region_label = regions[i];
-            ostringstream key;
-            key << "production_cuts." << region_label;
-            DT_THROW_IF (! config_.has_key (key.str()),
+            ostringstream key_ss;
+            key_ss << "production_cuts." << region_label;
+            std::string key = key_ss.str();
+            DT_THROW_IF (! config_.has_key(key),
                          logic_error,
                          "Missing production cuts for '"
-                         << key.str () << "' !");
-            double production_cut = config_.fetch_real (key.str ());
-            production_cut *= lunit;
+                         << key << "' !");
+            double production_cut = config_.fetch_real (key);
+            if (! config_.has_explicit_unit (key)) {
+              production_cut *= lunit;
+            }
             _region_cuts_[region_label] = production_cut;
           }
         }
