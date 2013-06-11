@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* base_step_hit.ipp */
 
 #ifndef MCTOOLS_BASE_STEP_HIT_IPP_
@@ -14,18 +14,16 @@
 #include <boost/serialization/string.hpp>
 
 namespace mctools {
- 
-  using namespace std;
 
   template<class Archive>
-  void base_step_hit::serialize (Archive            & ar, 
+  void base_step_hit::serialize (Archive            & ar,
                                  const unsigned int   version)
   {
     // inherit from the 'base_hit' mother class:
-    ar & boost::serialization::make_nvp("geomtools__base_hit", 
+    ar & boost::serialization::make_nvp("geomtools__base_hit",
                                         boost::serialization::base_object<geomtools::base_hit>(*this));
 
-    // the '_store' field member from the 'base_hit' mother class 
+    // the '_store' field member from the 'base_hit' mother class
     // knows about the field to be stored/loaded
     // from the archive.
     if (_store & STORE_POSITION_START)

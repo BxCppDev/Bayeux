@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* simulated_data.ipp */
 
 #ifndef MCTOOLS_SIMULATED_DATA_IPP_
@@ -20,9 +20,8 @@
 
 namespace mctools {
 
-  using namespace std;
   template<class Archive>
-  void simulated_data::serialize (Archive & ar, const unsigned int version) 
+  void simulated_data::serialize (Archive & ar, const unsigned int version)
   {
     if (version > 0)
       {
@@ -49,7 +48,7 @@ namespace mctools {
       }
     return;
   }
- 
+
 } // end of namespace mctools
 
 #include <boost/serialization/version.hpp>

@@ -1,31 +1,31 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* calorimeter_step_hit_processor.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-05-26
  * Last modified: 2013-03-30
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *
  *  A basic processor of simulated step hits in some plastic scintillator
  *  volume.
  *
- *  This algorithm clusterizes step calorimeter hits (from a 
- *  simulation program) and build new hits that cumulate the 
- *  physics of original MC step hits (particle type, geometry ID, 
+ *  This algorithm clusterizes step calorimeter hits (from a
+ *  simulation program) and build new hits that cumulate the
+ *  physics of original MC step hits (particle type, geometry ID,
  *  energy deposit, timing...)
  *
  *  CAUTION: this processor can manage only one geometry mapping category
  *  so care should be taken to attach only one geometry model (with the proper
  *  mapping category) to this processor.
  *
- *  QUESTION: 
+ *  QUESTION:
  *  Should delta rays energy deposit along the track of an alpha particle
  *  be clusterized within the parent alpha clusterized hit (quenching effect) ?
  *
- * History: 
- * 
+ * History:
+ *
  */
 
 #ifndef MCTOOLS_CALORIMETER_STEP_HIT_PROCESSOR_H_
@@ -47,8 +47,6 @@
 
 namespace mctools {
 
-  using namespace std;
-
   MCTOOLS_STEP_HIT_PROCESSOR_CLASS_DECLARE(calorimeter_step_hit_processor)
   {
   public:
@@ -66,10 +64,10 @@ namespace mctools {
 
     //! Main setup routine
     MCTOOLS_STEP_HIT_PROCESSOR_INITIALIZE_DECLARE();
-        
+
     //! Main processing routine :
     MCTOOLS_STEP_HIT_PROCESSOR_PROCESS_HANDLE_DECLARE();
-        
+
     //! Main processing routine :
     MCTOOLS_STEP_HIT_PROCESSOR_PROCESS_PLAIN_DECLARE();
 
@@ -83,7 +81,7 @@ namespace mctools {
     void merge_scintillation_hits(simulated_data::hit_handle_collection_type & scintillation_hits_);
 
     /// Smart print
-    void tree_dump(std::ostream & a_out = std::clog, 
+    void tree_dump(std::ostream & a_out = std::clog,
                    const std::string & a_title = "" ,
                    const std::string & a_indent = "",
                    bool a_inherit = false) const;
@@ -98,7 +96,7 @@ namespace mctools {
   private:
 
     bool   _verbose_; /// Verbosity flag
-    double _scintillation_cluster_time_range_;  /** the time range for step hit 
+    double _scintillation_cluster_time_range_;  /** the time range for step hit
                                                  * clusterization:
                                                  * typical value is 1 ns
                                                  */
@@ -107,31 +105,31 @@ namespace mctools {
                                                  * typical value is 1 cm
                                                  */
 
-    std::string _mapping_category_; /** the name of the mapping 
+    std::string _mapping_category_; /** the name of the mapping
                                      * category of volumes
                                      * that should be considered
                                      * as a sensitive volume
                                      */
 
     std::vector<int> _mapping_category_any_addresses_; /** List of subaddress
-                                                        * of the geometry category marked 
+                                                        * of the geometry category marked
                                                         * as 'any' for matching and saving MC hits;
-                                                        * Used in case of partioned sensitive 
+                                                        * Used in case of partioned sensitive
                                                         * scintillator volumes.
                                                         */
     // internals:
-    const geomtools::mapping * _mapping_; /** The reference  
+    const geomtools::mapping * _mapping_; /** The reference
                                            * geometry ID mapping
                                            */
 
     const geomtools::id_mgr::categories_by_name_col_type * _categories_; /// Handle to a dictionary of categories keyed by name
-    
+
     uint32_t _calo_block_type_; /// the unique ID of the geometry category
-    
+
     geomtools::smart_id_locator _calo_block_locator_; /** a locator to
                                                        * compute the geometry
-                                                       * ID of the detector 
-                                                       * block some hit 
+                                                       * ID of the detector
+                                                       * block some hit
                                                        * lies in.
                                                        */
     // Registration macro :
