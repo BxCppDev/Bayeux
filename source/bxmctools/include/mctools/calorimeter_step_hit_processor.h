@@ -81,17 +81,17 @@ namespace mctools {
     void merge_scintillation_hits(simulated_data::hit_handle_collection_type & scintillation_hits_);
 
     /// Smart print
-    void tree_dump(std::ostream & a_out = std::clog,
-                   const std::string & a_title = "" ,
-                   const std::string & a_indent = "",
-                   bool a_inherit = false) const;
+    void tree_dump(std::ostream & out_ = std::clog,
+                   const std::string & title_ = "" ,
+                   const std::string & indent_ = "",
+                   bool inherit_ = false) const;
 
   protected:
 
     /// Main hidden algorithm
-    void _process(const base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
-                  simulated_data::hit_handle_collection_type * the_calo_hits,
-                  simulated_data::hit_collection_type * the_plain_calo_hits);
+    void _process(const base_step_hit_processor::step_hit_ptr_collection_type & base_step_hits_,
+                  simulated_data::hit_handle_collection_type * calo_hits_,
+                  simulated_data::hit_collection_type * plain_calo_hits_);
 
   private:
 

@@ -357,15 +357,15 @@ namespace mctools {
     return;
   }
 
-  void calorimeter_step_hit_processor::_process(const base_step_hit_processor::step_hit_ptr_collection_type & a_shpc,
-                                                simulated_data::hit_handle_collection_type * the_scintillation_hits,
-                                                simulated_data::hit_collection_type        * the_plain_scintillation_hits)
+  void calorimeter_step_hit_processor::_process(const base_step_hit_processor::step_hit_ptr_collection_type & shpc_,
+                                                simulated_data::hit_handle_collection_type * scintillation_hits_,
+                                                simulated_data::hit_collection_type        * plain_scintillation_hits_)
   {
     // Check the type of output collection (handles or plain hits) :
     bool use_handles = false;
-    if (the_scintillation_hits != 0) {
+    if (scintillation_hits_ != 0) {
       use_handles = true;
-    } else if (the_plain_scintillation_hits == 0) {
+    } else if (plain_scintillation_hits_ == 0) {
       DT_THROW_IF(true, std::logic_error, "Missing hit collection type (NULL pointer) !");
     }
     base_step_hit * current_scintillation_cluster = 0;
@@ -373,13 +373,13 @@ namespace mctools {
 
     // Prereservation :
     if (use_handles) {
-      the_scintillation_hits->reserve (20);
+      scintillation_hits_->reserve (20);
     }
     else {
-      the_plain_scintillation_hits->reserve (20);
+      plain_scintillation_hits_->reserve (20);
     }
-    for (base_step_hit_processor::step_hit_ptr_collection_type::const_iterator ihit = a_shpc.begin ();
-         ihit != a_shpc.end ();
+    for (base_step_hit_processor::step_hit_ptr_collection_type::const_iterator ihit = shpc_.begin ();
+         ihit != shpc_.end ();
          ihit++) {
       //const base_step_hit & the_step_hit = *(*ihit);
       base_step_hit & the_step_hit = const_cast<base_step_hit &> (*(*ihit));
@@ -419,16 +419,16 @@ namespace mctools {
       // first search match with the current cluster (if any):
       base_step_hit * matching_scintillation_cluster = 0;
       if (current_scintillation_cluster != 0) {
-          if (match_scintillation_hit (*current_scintillation_cluster, the_step_hit)) {
-            matching_scintillation_cluster = current_scintillation_cluster;
-          }
+        if (match_scintillation_hit (*current_scintillation_cluster, the_step_hit)) {
+          matching_scintillation_cluster = current_scintillation_cluster;
         }
+      }
       // else: scan the whole list of clusters :
       if (matching_scintillation_cluster == 0) {
         if (use_handles) {
           for (simulated_data::hit_handle_collection_type::iterator icluster
-                 = the_scintillation_hits->begin ();
-               icluster != the_scintillation_hits->end ();
+                 = scintillation_hits_->begin ();
+               icluster != scintillation_hits_->end ();
                icluster++) {
             if (! icluster->has_data ()) continue;
             base_step_hit & matching_hit = icluster->grab ();
@@ -440,8 +440,8 @@ namespace mctools {
           }
         } else {
           for (simulated_data::hit_collection_type::iterator icluster
-                 = the_plain_scintillation_hits->begin ();
-               icluster != the_plain_scintillation_hits->end ();
+                 = plain_scintillation_hits_->begin ();
+               icluster != plain_scintillation_hits_->end ();
                icluster++) {
             base_step_hit & matching_hit = *icluster;
             if (match_scintillation_hit (matching_hit, the_step_hit)) {
@@ -457,15 +457,15 @@ namespace mctools {
       if (matching_scintillation_cluster == 0) {
         if (use_handles) {
           // insert a new clusterized hit:
-          add_new_hit (*the_scintillation_hits);
+          add_new_hit (*scintillation_hits_);
           // optimization using a reference to this last inserted hit :
-          current_scintillation_cluster = &(the_scintillation_hits->back ().grab ());
+          current_scintillation_cluster = &(scintillation_hits_->back ().grab ());
         } else {
           // add a new hit in the plain collection :
           base_step_hit dummy;
-          the_plain_scintillation_hits->push_back (dummy);
+          plain_scintillation_hits_->push_back (dummy);
           // get a reference to the last inserted scintillation cluster :
-          current_scintillation_cluster = &(the_plain_scintillation_hits->back ());
+          current_scintillation_cluster = &(plain_scintillation_hits_->back ());
         }
 
         // update the attributes of the cluster :
@@ -577,29 +577,29 @@ namespace mctools {
     return;
   }
 
-  void calorimeter_step_hit_processor::tree_dump (std::ostream & a_out,
-                                                  const std::string & a_title,
-                                                  const std::string & a_indent,
-                                                  bool a_inherit) const
+  void calorimeter_step_hit_processor::tree_dump (std::ostream & out_,
+                                                  const std::string & title_,
+                                                  const std::string & indent_,
+                                                  bool inherit_) const
   {
     std::string indent;
-    if (! a_indent.empty ()) {
-      indent = a_indent;
+    if (! indent_.empty ()) {
+      indent = indent_;
     }
-    base_step_hit_processor::tree_dump (a_out, a_title, indent, true);
-    a_out << indent << datatools::i_tree_dumpable::tag
-          << "Time range : " << _scintillation_cluster_time_range_ / CLHEP::ns << " (ns)" << std::endl;
-    a_out << indent << datatools::i_tree_dumpable::tag
-          << "Space range : " << _scintillation_cluster_space_range_ / CLHEP::mm << " (mm)" << std::endl;
-    a_out << indent << datatools::i_tree_dumpable::tag
-          << "Mapping category : '" <<_mapping_category_ << "'" << std::endl;
-    a_out << indent << datatools::i_tree_dumpable::tag
-          << "Mapping    : " << _mapping_ << std::endl;
+    base_step_hit_processor::tree_dump (out_, title_, indent, true);
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Time range : " << _scintillation_cluster_time_range_ / CLHEP::ns << " (ns)" << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Space range : " << _scintillation_cluster_space_range_ / CLHEP::mm << " (mm)" << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Mapping category : '" <<_mapping_category_ << "'" << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Mapping    : " << _mapping_ << std::endl;
     {
-      a_out << indent << datatools::i_tree_dumpable::tag
-            << "Categories : " << _categories_ << " ";
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Categories : " << _categories_ << " ";
       if (_categories_ != 0) {
-        a_out << '[' << _categories_->size () << ']';
+        out_ << '[' << _categories_->size () << ']';
         /*
           for (geomtools::id_mgr::categories_by_name_col_t::const_iterator i = _categories_->begin ();
           i != _categories_->end ();
@@ -607,23 +607,23 @@ namespace mctools {
           {
           geomtools::id_mgr::categories_by_name_col_t::const_iterator j = i;
           j++;
-          a_out << indent << datatools::i_tree_dumpable::skip_tag;
+          out_ << indent << datatools::i_tree_dumpable::skip_tag;
           if (j == _categories_->end ())
           {
-          a_out << datatools::i_tree_dumpable::last_tag;
+          out_ << datatools::i_tree_dumpable::last_tag;
           }
           else
           {
-          a_out << datatools::i_tree_dumpable::tag;
+          out_ << datatools::i_tree_dumpable::tag;
           }
-          a_out << "Category '" << i->first << "'" << std::endl;
+          out_ << "Category '" << i->first << "'" << std::endl;
           }
         */
       }
-      a_out << std::endl;
+      out_ << std::endl;
     }
-    a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
-          << "Calorimeter block type : " << _calo_block_type_ << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
+         << "Calorimeter block type : " << _calo_block_type_ << std::endl;
 
     return;
   }
