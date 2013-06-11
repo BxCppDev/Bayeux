@@ -91,7 +91,7 @@ Installation through CMake
 
      shell> make test
 
-7. Installation (here in the ``<datatools installation base directory>`` directory)::
+7. Installation (in the ``<datatools installation base directory>`` directory)::
 
      shell> make install
 
