@@ -81,7 +81,8 @@ int main (int argc_, char ** argv_)
     foo_config.store("number_of_users", 666);  // Undocumented property : the number of users
 
     // Set the real (double precision) property ``width`` to some value :
-    foo_config.store("width", 2.541 * CLHEP::cm, "The width of my thumb");
+    double wthumb = 2.541 * CLHEP::cm;
+    foo_config.store("width", wthumb / CLHEP::mm, "The width of my thumb (mm)");
 
     // Set the string property ``colour`` to some value :
     foo_config.store("colour", "red", "My favorite colour");
@@ -91,7 +92,7 @@ int main (int argc_, char ** argv_)
     point.push_back(22.3 * CLHEP::cm);
     point.push_back(1.7 * CLHEP::m);
     point.push_back(8.5 * CLHEP::mm);
-    foo_config.store("point", point, "A position in 3D-space");
+    foo_config.store("point", point, "A position in 3D-space (implicit lenght unit)");
 
     // Set a vector of bool property :
     std::vector<bool> flags;

@@ -6,18 +6,18 @@ Introduction
 ============
 
  * Description:
-   This example illustrates how to use some of the functionnalities
+   this example illustrates how to use some of the functionnalities
    of the ``datatools::properties`` class.
 
  * Source files :
 
-   * ``ex_properties.cxx`` : the example main program source
+   * ``ex_properties.cxx`` : the example main program source.
 
- * Configuration file: none yet
+ * Configuration file: none
  * Build method: CMake
  * Built object :
 
-   * ``ex_properties`` : executable linked with the ``datatools`` DLL
+   * ``ex_properties`` : executable linked with the ``datatools`` shared library.
 
 Quick start
 ===========
@@ -25,7 +25,7 @@ Quick start
 1. Build, install and setup the datatools library
 2. Make a copy of the example directory::
 
-      shell> cp -a [datatools install base directory]/share/datatools/examples/properties /tmp/datatools_ex_properties
+      shell> cp -a <datatools installation base directory>/share/datatools/examples/properties /tmp/datatools_ex_properties
       shell> cd /tmp/datatools_ex_properties
 
 3. Build and install the example::
@@ -34,7 +34,7 @@ Quick start
       shell> cd __build
       shell> cmake \
         -DCMAKE_INSTALL_PREFIX=.. \
-        -Ddatatools_DIR=$(datatools-config --prefix) \
+        -Ddatatools_DIR=<datatools installation base directory> \
         ..
       shell> make
       shell> make install
@@ -46,8 +46,8 @@ Quick start
 
 5. Check the output backup file:
 
-     * ``foo.conf`` : the ASCII file that containes the description of the
-       ``datatools::properties`` container in human readable format.
+     * ``foo.conf`` : the ASCII file that contains the description of the
+       ``datatools::properties`` container in a human readable format.
 
 6. Clean::
 
