@@ -290,6 +290,8 @@ if(GENBB_HELP_WITH_BIO)
 
   add_library(genbb_help_bio SHARED ${genbb_help_bio_SOURCES})
 
+  target_link_libraries(genbb_help_bio genbb_help)
+
   if(APPLE)
     set_property(TARGET genbb_help_bio APPEND
       PROPERTY LINK_FLAGS "-undefined dynamic_lookup"
@@ -317,6 +319,8 @@ if(GENBB_HELP_WITH_REFLECTION)
 
   message (STATUS "Build genbb_help reflection DLL...")
   add_library(genbb_help_reflection SHARED ${genbb_help_reflection_SOURCES})
+
+  target_link_libraries(genbb_help_reflection genbb_help)
 
   if(APPLE)
     set_property(TARGET genbb_help_reflection APPEND

@@ -15,6 +15,9 @@
 #include <genbb_help/primary_particle.h>
 #include <genbb_help/primary_event.h>
 
+// Some pre-processor guard about Bio usage and linkage :
+#include <datatools/bio_guard.h>
+
 // Some pre-processor guard about CAMP reflection usage and linkage :
 #include <datatools/reflection_guard.h>
 #include <geomtools/reflection_guard.h>
