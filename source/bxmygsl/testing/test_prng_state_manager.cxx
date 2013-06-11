@@ -16,8 +16,8 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'mygsl::prng_state_manager'!" << endl; 
-  
+      clog << "Test program for class 'mygsl::prng_state_manager'!" << endl;
+
       bool debug = false;
 
       int iarg = 1;
@@ -27,32 +27,32 @@ int main (int argc_, char ** argv_)
 
           if (token[0] == '-')
             {
-               string option = token; 
-               if ((option == "-d") || (option == "--debug")) 
-                 {
-                   debug = true;
-                 }
-               else 
-                 { 
-                    clog << "warning: ignoring option '" << option << "'!" << endl; 
-                 }
+              string option = token;
+              if ((option == "-d") || (option == "--debug"))
+                {
+                  debug = true;
+                }
+              else
+                {
+                  clog << "warning: ignoring option '" << option << "'!" << endl;
+                }
             }
           else
             {
-              string argument = token; 
-              { 
-                clog << "warning: ignoring argument '" << argument << "'!" << endl; 
+              string argument = token;
+              {
+                clog << "warning: ignoring argument '" << argument << "'!" << endl;
               }
             }
           iarg++;
-      }
-    
+        }
+
       mygsl::rng r1("taus2", 123456);
       mygsl::rng r2("taus2", 314159);
       mygsl::rng r3("taus2", (unsigned long int) time (0));
 
       mygsl::prng_state_manager PSM;
-      PSM.set_filename ("test_prng_state_manager.data");
+      PSM.set_filename ("/tmp/${USER}/mygsl_tests/test_prng_state_manager.data");
       PSM.add_state ("r1", r1.get_internal_state_size ( ));
       PSM.add_state ("r2", r2.get_internal_state_size ( ));
       PSM.add_state ("r3", r3.get_internal_state_size ( ));
@@ -65,7 +65,7 @@ int main (int argc_, char ** argv_)
       //r2.to_buffer (PSM.get_state ("r2").state_buffer);
       //PSM.dump (clog);
 
-      clog << "Storing the dictionary content in file '" 
+      clog << "Storing the dictionary content in file '"
            << PSM.get_filename () << "'..." << endl;
       PSM.store ();
 
@@ -78,15 +78,14 @@ int main (int argc_, char ** argv_)
       cout << "r2" << ' ';
       cout.width (12);
       cout << "r3" << endl;
-      for (int i = 0; i < n1; i++)
-        {
-          cout.width (12);
-          cout << r1 () << ' ';
-          cout.width (12);
-          cout << r2 () << ' ';
-          cout.width (12);
-          cout << r3 () << endl;
-        }
+      for (int i = 0; i < n1; i++) {
+        cout.width (12);
+        cout << r1 () << ' ';
+        cout.width (12);
+        cout << r2 () << ' ';
+        cout.width (12);
+        cout << r3 () << endl;
+      }
       clog << "Record the PRNG states in the dictionary : " << endl;
       r1.to_buffer (PSM.get_state ("r1").state_buffer);
       r2.to_buffer (PSM.get_state ("r2").state_buffer);
@@ -108,7 +107,7 @@ int main (int argc_, char ** argv_)
           cout.width (12);
           cout << r3 () << endl;
         }
-      clog << "Reload the previous dictionary content in file '" 
+      clog << "Reload the previous dictionary content in file '"
            << PSM.get_filename () << "'..." << endl;
       PSM.load ();
       PSM.dump (clog);
@@ -138,12 +137,12 @@ int main (int argc_, char ** argv_)
     }
   catch (exception & x)
     {
-      cerr << "error: " << x.what () << endl; 
+      cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);

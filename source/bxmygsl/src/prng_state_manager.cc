@@ -1,6 +1,6 @@
 /* prng_state_manager.cc
  *
- * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,10 +67,9 @@ namespace mygsl {
   void prng_state_manager::set_counter (int c_)
   {
     _counter_ = c_;
-    if (_counter_ < INVALID_COUNTER_VALUE)
-      {
-        _counter_ = INVALID_COUNTER_VALUE;
-      }
+    if (_counter_ < INVALID_COUNTER_VALUE) {
+      _counter_ = INVALID_COUNTER_VALUE;
+    }
     return;
   }
 
@@ -82,14 +81,11 @@ namespace mygsl {
 
   void prng_state_manager::increment_counter (unsigned int a_increment)
   {
-    if (_counter_ == INVALID_COUNTER_VALUE)
-      {
-        _counter_ = 0;
-      }
-    else
-      {
-        _counter_ += a_increment;
-      }
+    if (_counter_ == INVALID_COUNTER_VALUE) {
+      _counter_ = 0;
+    } else {
+      _counter_ += a_increment;
+    }
     return;
   }
 
@@ -109,6 +105,12 @@ namespace mygsl {
     return;
   }
 
+  void prng_state_manager::reset_filename()
+  {
+    _filename_.clear ();
+    return;
+  }
+
   void prng_state_manager::clear ()
   {
     _dict_.clear ();
@@ -119,7 +121,14 @@ namespace mygsl {
   {
     clear ();
     _counter_ = INVALID_COUNTER_VALUE;
-    _filename_ = "";
+    reset_filename();
+    reset_error();
+    return;
+  }
+
+  void prng_state_manager::reset_error()
+  {
+    _error_code_ = 0;
     return;
   }
 
@@ -137,11 +146,10 @@ namespace mygsl {
   {
     for (dict_type::iterator i = _dict_.begin ();
          i != _dict_.end ();
-         i++)
-      {
-        record & rec = i->second;
-        rec.state_buffer.clear ();
-      }
+         i++) {
+      record & rec = i->second;
+      rec.state_buffer.clear ();
+    }
     return;
   }
 
@@ -151,10 +159,9 @@ namespace mygsl {
     labels_.reserve (_dict_.size ());
     for (dict_type::const_iterator i = _dict_.begin ();
          i != _dict_.end ();
-         i++)
-      {
-        labels_.push_back (i->first);
-      }
+         i++) {
+      labels_.push_back (i->first);
+    }
     return;
   }
 
@@ -191,9 +198,22 @@ namespace mygsl {
     return;
   }
 
+  bool prng_state_manager::error() const
+  {
+    return _error_code_ != 0;
+  }
+
+  void prng_state_manager::_force_error(int e) const
+  {
+    prng_state_manager * mutable_this = const_cast<prng_state_manager*>(this);
+    mutable_this->_error_code_ = e;
+    return;
+  }
+
   // ctor:
   prng_state_manager::prng_state_manager ()
   {
+    _error_code_ = 0;
     _counter_ = INVALID_COUNTER_VALUE;
     return;
   }
@@ -201,6 +221,7 @@ namespace mygsl {
   // ctor:
   prng_state_manager::prng_state_manager (const string & fn_)
   {
+    _error_code_ = 0;
     _counter_ = INVALID_COUNTER_VALUE;
     set_filename (fn_);
     return;
@@ -210,9 +231,13 @@ namespace mygsl {
   prng_state_manager::~prng_state_manager ()
   {
     if (has_filename ()) {
-      DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,"Automated storage of the PRNG state records in file '"
-                    << _filename_ << "' !");
-      store ();
+      if (! error()) {
+        DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,"Attempt to store the PRNG state records in file '"
+                      << _filename_ << "' !");
+        store ();
+        DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,"Automated storage of the PRNG state records in file '"
+                      << _filename_ << "' !");
+      }
     }
     return;
   }
@@ -222,15 +247,12 @@ namespace mygsl {
     bool devel = false;
     //devel = true;
     string fn;
-    if (! filename_.empty ())
-      {
-        fn = filename_;
-      }
-    else
-      {
-        DT_THROW_IF (_filename_.empty (),logic_error,"No file was specified to load the PRNG state records !");
-        fn = _filename_;
-      }
+    if (! filename_.empty ()) {
+      fn = filename_;
+    } else {
+      DT_THROW_IF (_filename_.empty (),logic_error,"No file was specified to load the PRNG state records !");
+      fn = _filename_;
+    }
     datatools::fetch_path_with_env (fn);
     DT_THROW_IF (! boost::filesystem::exists (fn),runtime_error,"File '" << fn << "' does not exist !");
     ifstream ifs (fn.c_str ());
@@ -256,99 +278,125 @@ namespace mygsl {
     //   }
     DT_THROW_IF (! ifs,runtime_error,"Cannot read the dictionary size from the '" << fn << "' file !");
     ifs >> ws;
-    for (int i = 0; i < dict_sz; i++)
-      {
-        string line;
-        getline (ifs, line);
-        // if (devel)
-        //   {
-        //     clog << datatools::io::devel
-        //          << "mygsl::prng_state_manager::load: "
-        //          << "line= '" << line << "'" << endl;
-        //   }
-        DT_THROW_IF (! ifs,runtime_error,"Cannot read a new PRNG state record from the '" << fn << "' file !");
-        istringstream iss (line);
-        string label;
-        iss >> label;
-        // if (devel)
-        //   {
-        //     clog << datatools::io::devel
-        //          << "mygsl::prng_state_manager::load: "
-        //          << "label= " << label << endl;
-        //   }
-        DT_THROW_IF (! iss,runtime_error,"Cannot read the PRNG's label from file '" << fn << "' file !");
-        size_t state_sz;
-        iss >> state_sz;
-        // if (devel)
-        //   {
-        //     clog << datatools::io::devel
-        //          << "mygsl::prng_state_manager::load: "
-        //          << "state_sz= " << state_sz << endl;
-        //   }
-        DT_THROW_IF (! iss,runtime_error,"Cannot read the size of the PRNG internal state from file '" << fn << "' file !");
-        add_state (label, state_sz);
-        for (int i = 0; i < state_sz; i++)
-          {
-            unsigned int val;
-            iss >> val;
-            DT_THROW_IF (! iss,runtime_error,"Cannot read the PRNG internal state byte from file '" << fn << "' file !");
-            unsigned char c = static_cast<unsigned char> (val);
-            get_state (label).state_buffer.push_back (c);
-          }
+    for (int i = 0; i < dict_sz; i++) {
+      string line;
+      getline (ifs, line);
+      // if (devel)
+      //   {
+      //     clog << datatools::io::devel
+      //          << "mygsl::prng_state_manager::load: "
+      //          << "line= '" << line << "'" << endl;
+      //   }
+      DT_THROW_IF (! ifs,runtime_error,"Cannot read a new PRNG state record from the '" << fn << "' file !");
+      istringstream iss (line);
+      string label;
+      iss >> label;
+      // if (devel)
+      //   {
+      //     clog << datatools::io::devel
+      //          << "mygsl::prng_state_manager::load: "
+      //          << "label= " << label << endl;
+      //   }
+      DT_THROW_IF (! iss,runtime_error,"Cannot read the PRNG's label from file '" << fn << "' file !");
+      size_t state_sz;
+      iss >> state_sz;
+      // if (devel)
+      //   {
+      //     clog << datatools::io::devel
+      //          << "mygsl::prng_state_manager::load: "
+      //          << "state_sz= " << state_sz << endl;
+      //   }
+      DT_THROW_IF (! iss,runtime_error,"Cannot read the size of the PRNG internal state from file '" << fn << "' file !");
+      add_state (label, state_sz);
+      for (int i = 0; i < state_sz; i++) {
+        unsigned int val;
+        iss >> val;
+        DT_THROW_IF (! iss,runtime_error,"Cannot read the PRNG internal state byte from file '" << fn << "' file !");
+        unsigned char c = static_cast<unsigned char> (val);
+        get_state (label).state_buffer.push_back (c);
       }
+    }
     return;
   }
 
   void prng_state_manager::store (const string & filename_) const
   {
+    DT_THROW_IF (error(), std::logic_error, "PRNg state manager has error !");
     string fn;
-    if (! filename_.empty ())
-      {
-        fn = filename_;
-      }
-    else
-      {
-        if (_filename_.empty ())
-          {
-            fn = "/tmp/prng_states.save";
-            DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
-                           "No file was specified to store the PRNG state records ! "
-                           << "PRNG state saved in '" << fn << "' !");
-            // th row logic_error (message.str ());
-          }
-        else
-          {
-            fn = _filename_;
-          }
-      }
+    if (! filename_.empty ()) {
+      fn = filename_;
+    } else {
+      // if (_filename_.empty ()) {
+      //   fn = "/tmp/prng_states.save";
+      //   DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
+      //                  "No file was specified to store the PRNG state records ! "
+      //                  << "PRNG state saved in '" << fn << "' !");
+      //   // th row logic_error (message.str ());
+      // } else {
+      fn = _filename_;
+      // }
+    }
+    if (fn.empty ()) return;
+
     datatools::fetch_path_with_env (fn);
-    if (boost::filesystem::exists (fn))
-      {
-        string backup_fn = fn + ".~backup~";
-        if (boost::filesystem::exists (backup_fn))
-          {
-            boost::filesystem::remove (backup_fn);
-          }
-        boost::filesystem::rename (fn, backup_fn);
+    DT_THROW_IF(fn.empty (), std::runtime_error, "Missing filename !");
+
+    if (boost::filesystem::exists (fn)) {
+      string backup_fn = fn + ".~backup~";
+      if (boost::filesystem::exists (backup_fn)) {
+        boost::filesystem::remove (backup_fn);
       }
+      boost::filesystem::rename (fn, backup_fn);
+    }
+
+    {
+      // Ensure the base directory exists:
+      boost::filesystem::path fn_path(fn);
+      //std::cerr << "DEVEL : fn_path = " << fn_path << std::endl;
+      boost::filesystem::path fn_dir = fn_path.parent_path();
+      //std::cerr << "DEVEL : fn_dir = " << fn_dir << std::endl;
+      if (! fn_dir.empty()) {
+        if (! boost::filesystem::exists(fn_dir)) {
+          bool mkdir_success = false;
+          std::string errormsg;
+          try {
+            mkdir_success = boost::filesystem::create_directories(fn_dir);
+          }
+          catch(exception & x) {
+            mkdir_success = false;
+            errormsg = x.what();
+          }
+          if (! mkdir_success) {
+            _force_error(1);
+            DT_THROW_IF(true, std::runtime_error,
+                        "Cannot create directory " << fn_dir << " ! "
+                        << errormsg);
+          }
+          DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
+                        "Directory " << fn_dir  << " has been created.");
+        }
+      }
+    }
+
     ofstream ofs (fn.c_str ());
-    DT_THROW_IF (! ofs, runtime_error,"Cannot open file '" << fn << "' to store the PRNG state records !");
+    if (! ofs) {
+      _force_error(1);
+      DT_THROW_IF (true, std::runtime_error,"Cannot open file '" << fn << "' to store the PRNG state records !");
+    }
     ofs << get_counter () << endl;
     ofs << _dict_.size () << endl;
     for (dict_type::const_iterator i = _dict_.begin ();
          i != _dict_.end ();
-         i++)
-      {
-        const record & rec = i->second;
-        ofs << i->first << " ";
-        ofs << rec.state_buffer.size ();
-        for (int i = 0; i < rec.state_buffer.size (); i++)
-          {
-            unsigned int b = static_cast<unsigned int> (rec.state_buffer[i]);
-            ofs << ' ' << b;
-          }
-        ofs << endl;
+         i++) {
+      const record & rec = i->second;
+      ofs << i->first << ' ';
+      ofs << rec.state_buffer.size ();
+      for (int i = 0; i < rec.state_buffer.size (); i++) {
+        unsigned int b = static_cast<unsigned int> (rec.state_buffer[i]);
+        ofs << ' ' << b;
       }
+      ofs << endl;
+    }
     return;
   }
 
@@ -358,24 +406,20 @@ namespace mygsl {
     out_ << "|-- " << "Counter : " << _counter_ << endl;
     for (dict_type::const_iterator i = _dict_.begin ();
          i != _dict_.end ();
-         i++)
-      {
-        out_ << "|-- ";
-        out_ << "Generator ";
-        out_.width (15) ;
-        out_ << i->first << " : ";
-        out_.width (10);
-        const record & rec = i->second;
-        if (rec.state_buffer.size () == 0)
-          {
-            out_ << "[no stored internal state]";
-          }
-        else
-          {
-            out_ << "internal state has " << rec.state_buffer.size () << " bytes";
-          }
-        out_ << endl;
+         i++) {
+      out_ << "|-- ";
+      out_ << "Generator ";
+      out_.width (15) ;
+      out_ << i->first << " : ";
+      out_.width (10);
+      const record & rec = i->second;
+      if (rec.state_buffer.size () == 0) {
+        out_ << "[no stored internal state]";
+      } else {
+        out_ << "internal state has " << rec.state_buffer.size () << " bytes";
       }
+      out_ << endl;
+    }
     out_ << "`-- " << "End" << endl;
 
     return;

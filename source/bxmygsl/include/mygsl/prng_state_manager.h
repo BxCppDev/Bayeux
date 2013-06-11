@@ -87,6 +87,9 @@ namespace mygsl {
     /// Set the backup filename associated to the manager
     void set_filename (const std::string & = DEFAULT_FILENAME);
 
+    /// Reset the backup filename associated to the manager
+    void reset_filename();
+
     /// Check if the manager has a running counter value
     bool has_counter () const;
 
@@ -152,8 +155,16 @@ namespace mygsl {
     /// Basic print
     void dump (std::ostream & out_ = std::clog) const;
 
+    bool error() const;
+
+    void reset_error();
+
   private:
 
+    void _force_error(int e) const;
+
+  private:
+    int          _error_code_;
     std::string  _filename_; //!< The name of the file to store the PRNG internal states
     int32_t      _counter_;  //!< A user counter
     dict_type    _dict_;     //!< The dictionary of PRNG internal states
