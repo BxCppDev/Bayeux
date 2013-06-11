@@ -48,8 +48,7 @@ namespace geomtools {
   DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(manager::base_plugin,
                                                    "geomtools::manager::base_plugin/__system__");
 
-  datatools::logger::priority
-  manager::base_plugin::get_logging_priority() const
+  datatools::logger::priority manager::base_plugin::get_logging_priority() const
   {
     return _logging;
   }
@@ -57,6 +56,7 @@ namespace geomtools {
   void manager::base_plugin::set_logging_priority(datatools::logger::priority lp_)
   {
     _logging = lp_;
+    return;
   }
 
   manager::base_plugin::base_plugin()
@@ -214,37 +214,37 @@ namespace geomtools {
     return _handle_.get();
   }
 
-  void manager::plugin_entry::tree_dump(std::ostream& out,
-                                        const std::string& title,
-                                        const std::string& a_indent,
-                                        bool a_inherit) const
+  void manager::plugin_entry::tree_dump(std::ostream& out_,
+                                        const std::string& title_,
+                                        const std::string& indent_,
+                                        bool inherit_) const
   {
 
     std::string indent;
-    if (!a_indent.empty()) indent = a_indent;
+    if (!indent_.empty()) indent = indent_;
 
-    if (!title.empty()) out << indent << title << std::endl;
+    if (!title_.empty()) out_ << indent << title_ << std::endl;
 
-    out << indent << datatools::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
         << "Plugin name     : '"
         << _name_
         << "'" << std::endl;
 
-    out << indent << datatools::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
         << "Plugin ID       : '"
         << _id_
         << "'" << std::endl;
 
-    out << indent << datatools::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
         << "Plugin description : '"
         << _description_
         << "'" << std::endl;
 
-    out << indent << datatools::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
         << "Can be dropped   : "
         << can_be_dropped() << std::endl;
 
-    out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
         << "Plugin status   : "
         << _status_;
     {
@@ -261,19 +261,20 @@ namespace geomtools {
         count++;
       }
       if (count) {
-        out << ' ' << '('
+        out_ << ' ' << '('
             << status_info.str()
             << ')';
       }
     }
-    out << std::endl;
+    out_ << std::endl;
   }
 
   /*****************************************************/
 
-  void manager::set_logging_priority(datatools::logger::priority a_logging_priority)
+  void manager::set_logging_priority(datatools::logger::priority logging_priority_)
   {
-    _logging = a_logging_priority;
+    _logging = logging_priority_;
+    return;
   }
 
   datatools::logger::priority manager::get_logging_priority() const
@@ -377,19 +378,20 @@ namespace geomtools {
     return _plugins_;
   }
 
-  bool manager::has_plugin (const std::string & a_plugin_name) const
+  bool manager::has_plugin (const std::string & plugin_name_) const
   {
-    return _plugins_.find (a_plugin_name) != _plugins_.end ();
+    return _plugins_.find (plugin_name_) != _plugins_.end ();
   }
 
-  bool manager::has_plugin_type(const std::string& plugin_id) const
+  bool manager::has_plugin_type(const std::string& plugin_id_) const
   {
-    return _plugins_factory_register_.has(plugin_id);
+    return _plugins_factory_register_.has(plugin_id_);
   }
 
-  void manager::unregister_plugin_type(const std::string& plugin_id)
+  void manager::unregister_plugin_type(const std::string& plugin_id_)
   {
-    _plugins_factory_register_.unregistration(plugin_id);
+    _plugins_factory_register_.unregistration(plugin_id_);
+    return;
   }
 
   const geomtools::mapping & manager::get_mapping () const
@@ -720,17 +722,17 @@ namespace geomtools {
     return;
   }
 
-  const std::string &  manager::get_world_name () const
+  const std::string & manager::get_world_name () const
   {
     return _world_name_;
   }
 
-  void manager::set_world_name (const std::string & a_world_name)
+  void manager::set_world_name (const std::string & world_name_)
   {
     DT_THROW_IF(this->is_initialized(),
                 std::logic_error,
                 "Geometry manager is already initialized !");
-    _world_name_ = a_world_name;
+    _world_name_ = world_name_;
     return;
   }
 
@@ -775,14 +777,14 @@ namespace geomtools {
     _plugins_.erase(found);
   }
 
-  void manager::print_plugins(std::ostream& out,
-                              const std::string& title,
-                              const std::string& an_indent) const
+  void manager::print_plugins(std::ostream& out_,
+                              const std::string& title_,
+                              const std::string& indent_) const
   {
     std::string indent;
-    if (!an_indent.empty()) indent = an_indent;
+    if (!indent_.empty()) indent = indent_;
 
-    if (!title.empty()) out << title << ":" << std::endl;
+    if (!title_.empty()) out_ << title_ << ":" << std::endl;
 
     // Plugins:
     {
@@ -792,25 +794,25 @@ namespace geomtools {
            it != _plugins_.end();
            ++it) {
         count++;
-        out << indent;
+        out_ << indent;
         if (count == sz) {
-          out << "`-- ";
+          out_ << "`-- ";
         } else {
-          out << "|-- ";
+          out_ << "|-- ";
         }
         const std::string& plugin_name = it->first;
         const plugin_entry& plugin_record = it->second;
 
-        out << "Name : '" << plugin_name << "' "
+        out_ << "Name : '" << plugin_name << "' "
             << "Type : '" << plugin_record._id_ << "' ";
-        out << '(';
+        out_ << '(';
         int count = 0;
         if (plugin_record._status_ & plugin_entry::STATUS_INITIALIZED) {
-          out << "initialized";
+          out_ << "initialized";
           count++;
         }
-        out << ')';
-        out << std::endl;
+        out_ << ')';
+        out_ << std::endl;
       }
     }
     return;
@@ -874,26 +876,26 @@ namespace geomtools {
   }
 
 
-  void manager::_load_plugin(const std::string& name,
-                             const std::string& id,
-                             const datatools::properties& config)
+  void manager::_load_plugin(const std::string& name_,
+                             const std::string& id_,
+                             const datatools::properties& config_)
   {
     DT_LOG_TRACE(_logging, "Entering...");
-    DT_THROW_IF (this->has_plugin(name),
+    DT_THROW_IF (this->has_plugin(name_),
                  std::logic_error,
-                 "Plugin '" << name << "' already exists !");
+                 "Plugin '" << name_ << "' already exists !");
 
     {
       // Add a new entry :
       plugin_entry tmp_entry;
-      tmp_entry._name_ = name;
-      DT_LOG_DEBUG(_logging, "Add an entry for plugin '" << name << "'...");
-      _plugins_[name] = tmp_entry;
+      tmp_entry._name_ = name_;
+      DT_LOG_DEBUG(_logging, "Add an entry for plugin '" << name_ << "'...");
+      _plugins_[name_] = tmp_entry;
     }
     // fetch a reference on it and update :
-    plugin_entry& new_entry = _plugins_.find(name)->second;
-    new_entry._id_     = id;
-    new_entry._config_ = config;
+    plugin_entry& new_entry = _plugins_.find(name_)->second;
+    new_entry._id_     = id_;
+    new_entry._config_ = config_;
     new_entry._status_ = plugin_entry::STATUS_BLANK;
     //DT_LOG_DEBUG(_logging, "Fetch...");
     this->_create_plugin(new_entry);
@@ -906,146 +908,147 @@ namespace geomtools {
   }
 
 
-  void manager::_create_plugin(plugin_entry& entry) {
-    if (!(entry._status_ & plugin_entry::STATUS_CREATED)) {
-      DT_LOG_DEBUG(_logging, "Creating plugin named '" <<  entry._name_ << "'...");
+  void manager::_create_plugin(plugin_entry& entry_)
+  {
+    if (!(entry_._status_ & plugin_entry::STATUS_CREATED)) {
+      DT_LOG_DEBUG(_logging, "Creating plugin named '" <<  entry_._name_ << "'...");
       // search for the plugin's label in the factory dictionary:
-      DT_THROW_IF(!_plugins_factory_register_.has(entry._id_),
+      DT_THROW_IF(!_plugins_factory_register_.has(entry_._id_),
                   std::logic_error,
-                  "Cannot find plugin factory with ID '" << entry._id_
+                  "Cannot find plugin factory with ID '" << entry_._id_
                   << "' for plugin named '"
-                  << entry._name_ << "' !");
+                  << entry_._name_ << "' !");
       typedef geomtools::manager::base_plugin::factory_register_type::factory_type FactoryType;
-      const FactoryType& the_factory = _plugins_factory_register_.get(entry._id_);
+      const FactoryType& the_factory = _plugins_factory_register_.get(entry_._id_);
       base_plugin* ptr = the_factory();
-      entry._handle_.reset(ptr);
-      entry._status_ |= plugin_entry::STATUS_CREATED;
+      entry_._handle_.reset(ptr);
+      entry_._status_ |= plugin_entry::STATUS_CREATED;
       DT_LOG_DEBUG(_logging,
                    "Plugin named '"
-                   <<  entry._name_
+                   <<  entry_._name_
                    << "' has been created !");
     }
     return;
   }
 
 
-  void manager::_initialize_plugin(plugin_entry& entry)
+  void manager::_initialize_plugin(plugin_entry& entry_)
   {
     // If not created, first do it :
-    if (!(entry._status_ & plugin_entry::STATUS_CREATED)) {
-      this->_create_plugin(entry);
+    if (!(entry_._status_ & plugin_entry::STATUS_CREATED)) {
+      this->_create_plugin(entry_);
     }
 
     // If not initialized, do it :
-    if (!(entry._status_ & plugin_entry::STATUS_INITIALIZED)) {
+    if (!(entry_._status_ & plugin_entry::STATUS_INITIALIZED)) {
       DT_LOG_DEBUG(_logging,
                    "Initializing plugin named '"
-                   << entry._name_
+                   << entry_._name_
                    << "'...");
-      base_plugin& the_plugin = entry._handle_.grab();
+      base_plugin& the_plugin = entry_._handle_.grab();
       the_plugin.set_geo_manager(*this);
       if (_services_ == 0) {
-        the_plugin.initialize_simple (entry._config_, _plugins_);
+        the_plugin.initialize_simple (entry_._config_, _plugins_);
       } else {
-        the_plugin.initialize (entry._config_, _plugins_, *_services_);
+        the_plugin.initialize (entry_._config_, _plugins_, *_services_);
       }
-      entry._status_ |= plugin_entry::STATUS_INITIALIZED;
+      entry_._status_ |= plugin_entry::STATUS_INITIALIZED;
       DT_LOG_NOTICE(_logging,
                     "Plugin named '"
-                    << entry._name_
+                    << entry_._name_
                     << "' has been initialized.");
     }
     return;
   }
 
 
-  void manager::_reset_plugin(plugin_entry& entry)
+  void manager::_reset_plugin(plugin_entry& entry_)
   {
-    if (entry._status_ & plugin_entry::STATUS_INITIALIZED) {
-      base_plugin& the_plugin = entry._handle_.grab();
+    if (entry_._status_ & plugin_entry::STATUS_INITIALIZED) {
+      base_plugin& the_plugin = entry_._handle_.grab();
       the_plugin.reset();
-      entry._status_ ^= plugin_entry::STATUS_INITIALIZED;
+      entry_._status_ ^= plugin_entry::STATUS_INITIALIZED;
     }
     return;
   }
 
-  void manager::tree_dump(std::ostream& out,
-                          const std::string& title,
-                          const std::string& a_indent,
-                          bool a_inherit) const
+  void manager::tree_dump(std::ostream& out_,
+                          const std::string& title_,
+                          const std::string& indent_,
+                          bool inherit_) const
   {
 
     std::string indent;
-    if (!a_indent.empty()) indent = a_indent;
+    if (!indent_.empty()) indent = indent_;
 
-    if (!title.empty()) out << indent << title << std::endl;
+    if (!title_.empty()) out_ << indent << title_ << std::endl;
 
-    out << indent << datatools::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
         << "Logging priority : \""
         << datatools::logger::get_priority_label(_logging) << "\""
         << std::endl;
 
-    out << indent << datatools::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
         << "Initialized     : "
         << _initialized_
         << "" << std::endl;
 
-    out << indent << datatools::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
         << "Setup label : '"
         << _setup_label_
         << "'" << std::endl;
 
-    out << indent << datatools::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
         << "Setup version : '"
         << _setup_version_
         << "'" << std::endl;
 
-    out << indent << datatools::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
         << "Setup description : '"
         << _setup_description_
         << "'" << std::endl;
 
-    out << indent << datatools::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
         << "Services dictionnary : "
         << _services_
         << " " << std::endl;
 
-    out << indent << datatools::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
         << "Model factory size : "
         << _factory_.get_models().size()
         << " " << std::endl;
 
-    out << indent << datatools::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
         << "Mapping requested : "
         << _mapping_requested_
         << " " << std::endl;
 
-    out << indent << datatools::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
         << "Mapping size : "
         << _mapping_.get_geom_infos ().size()
         << " " << std::endl;
 
-    out << indent << datatools::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
         << "World name : "
         << _world_name_
         << " " << std::endl;
 
-    out << indent << datatools::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
         << "Plugins factory preload : "
         << _plugins_factory_preload_
         << " " << std::endl;
 
-    out << indent << datatools::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
         << "Plugins force initialization at load : "
         << _plugins_force_initialization_at_load_
         << " " << std::endl;
 
-    // out << indent << datatools::i_tree_dumpable::tag
+    // out_ << indent << datatools::i_tree_dumpable::tag
     //     << "Plugins facorty : "
     //     << _plugins_factory_register_.size()
     //     << " " << std::endl;
 
-    out << indent << datatools::i_tree_dumpable::inherit_tag(a_inherit)
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
         << "Plugins : "
         << _plugins_.size()
         << " " << std::endl;
@@ -1053,8 +1056,7 @@ namespace geomtools {
     return;
   }
 
-  const manager::base_plugin::factory_register_type &
-  manager::get_plugins_factory_register()
+  const manager::base_plugin::factory_register_type & manager::get_plugins_factory_register()
   {
     return _plugins_factory_register_;
   }
