@@ -17,18 +17,10 @@
 #ifndef GEOMTOOLS_BASE_HIT_H_
 #define GEOMTOOLS_BASE_HIT_H_ 1
 
-#include <cstdlib>
-#include <stdexcept>
-#include <iostream>
-#include <iomanip>
-#include <sstream>
-#include <string>
-#include <limits>
-#include <vector>
-#include <algorithm>
-
 // Boost  serialization hook :
 #include <boost/serialization/access.hpp>
+
+// Portable integral types (mandatory):
 #include <boost/cstdint.hpp>
 
 // Interfaces :
