@@ -1523,6 +1523,9 @@ namespace geomtools {
                                         const std::string & group_,
                                         const std::string & name_)
   {
+    //std::cerr << "DEVEL ************ geomtools::gnuplot_draw::draw_display_data: Entering...\n";
+    int last_np = -1;
+    bool safe = false;
     for (geomtools::display_data::entries_dict_type::const_iterator i
            = dd_.get_entries ().begin ();
          i != dd_.get_entries ().end ();
@@ -1537,7 +1540,27 @@ namespace geomtools {
           for (std::list<geomtools::polyline_3d>::const_iterator ip = di.paths.begin ();
                ip != di.paths.end ();
                ip++) {
-            const geomtools::polyline_3d & wires = *ip;
+            //const geomtools::polyline_3d & wires = *ip;
+            geomtools::polyline_3d wires = *ip;
+            int np = wires.get_number_of_points ();
+            // std::cerr << "DEVEL ************ geomtools::gnuplot_draw::draw_display_data: Processing polyline np="
+            //           << np << " with color '" << color_ << "'\n";
+            if (! safe && np > 1) {
+              if (last_np < 0) {
+                last_np = np;
+                // std::cerr << "DEVEL ************ geomtools::gnuplot_draw::draw_display_data: record last_np="
+                //           << last_np << "\n";
+              } else {
+                if (last_np == np) {
+                  // std::cerr << "DEVEL ************ force duplicate the last vertex: np=" << np << "\n";
+                  // force duplicate the last vertex :
+                  wires.add(wires.get_vertex(np-1));
+                  safe = true;
+                } else {
+                  safe = true;
+                }
+              }
+            }
             geomtools::gnuplot_draw::draw_polyline (out_,
                                                     position_,
                                                     rotation_,
@@ -1551,7 +1574,27 @@ namespace geomtools {
           for (std::list<geomtools::polyline_3d>::const_iterator ip = di.paths.begin ();
                ip != di.paths.end ();
                ip++) {
-            const geomtools::polyline_3d & wires = *ip;
+            //const geomtools::polyline_3d & wires = *ip;
+            geomtools::polyline_3d wires = *ip;
+            int np = wires.get_number_of_points ();
+            // std::cerr << "DEVEL ************ geomtools::gnuplot_draw::draw_display_data: Processing polyline np="
+            //           << np << " with color '" << color_ << "'\n";
+            if (! safe && np > 1) {
+              if (last_np < 0) {
+                last_np = np;
+                // std::cerr << "DEVEL ************ geomtools::gnuplot_draw::draw_display_data: record last_np="
+                //           << last_np << "\n";
+              } else {
+                if (last_np == np) {
+                  // std::cerr << "DEVEL ************ force duplicate the last vertex: np=" << np << "\n";
+                  // force duplicate the last vertex :
+                  wires.add(wires.get_vertex(np-1));
+                  safe = true;
+                } else {
+                  safe = true;
+                }
+              }
+            }
             geomtools::gnuplot_draw::draw_polyline (out_,
                                                     position_,
                                                     rotation_,

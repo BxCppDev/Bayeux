@@ -1077,8 +1077,7 @@ namespace geomtools {
     const geomtools::geom_info_dict_type & ginfo_dict = the_mapping.get_geom_infos ();
     for (geomtools::geom_info_dict_type::const_iterator i = ginfo_dict.begin();
          i != ginfo_dict.end();
-         i++)
-      {
+         i++) {
         bool long_name = false;
         size_t max_width = 36;
         const geomtools::geom_info & ginfo = i->second;
