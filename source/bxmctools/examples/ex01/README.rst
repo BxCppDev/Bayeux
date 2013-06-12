@@ -331,16 +331,23 @@ Quick start
     c. Run the geant4 simulation through the data processing pipeline::
 
          shell> dpp_processing \
-          --logging-priority "debug" \
+          --logging-priority "notice" \
           --dlls-config "config/pipeline/dlls.conf" \
           --module-manager-config "config/pipeline/module_manager.conf" \
-          --max-records 100 \
-          --modulo 5 \
+          --max-records 1000 \
+          --modulo 100 \
           --module "Co60@source_0_bulk" \
           --output-file "mctools_ex01_Co60_source_0_bulk.dpp.xml"
+
+       The output data file use the Boost XML archive format and stores the
+       simulated data within ``datatools::things`` object records::
+
          shell> ls -l mctools_ex01_Co60_source_0_bulk.dpp.xml
          shell> less mctools_ex01_Co60_source_0_bulk.dpp.xml
          q
+
+       There is no browser program available for now for this mode.
+
 
 8. Clean::
 

@@ -18,6 +18,7 @@ cmake \
 make
 make install
 
+#exit 0
 cd ..
 ls -l
 
@@ -77,9 +78,11 @@ echo -e "/run/beamOn 5\nexit" | \
     --g4-macro "config/g4vis.mac"
 
 echo -e "\nBrowse the output plain simulated data file..." 1>&2
-./ex01_read_plain_simdata --interactive  \
-   --logging-priority "notice" \
-   --input-file "mctools_ex01_Co60_source_0_bulk.xml"
+./ex01_read_plain_simdata \
+    --interactive  \
+    --with-visualization \
+    --logging-priority "notice" \
+    --input-file "mctools_ex01_Co60_source_0_bulk.xml"
 
 echo -e "\nRun the Geant4 simulation non-interactively..." 1>&2
 g4_production \
@@ -99,9 +102,11 @@ g4_production \
                 --output-data-file "mctools_ex01_Co60_source_0_bulk.data.gz"
 
 echo -e "\nBrowse the output plain simulated data file..." 1>&2
-./ex01_read_plain_simdata --interactive \
-   --logging-priority "notice" \
-   --input-file "mctools_ex01_Co60_source_0_bulk.data.gz"
+./ex01_read_plain_simdata \
+    --interactive \
+    --with-visualization \
+    --logging-priority "notice" \
+    --input-file "mctools_ex01_Co60_source_0_bulk.data.gz"
 
 echo -e "\nRun the Geant4 simulation through a non-interactive data processing pipeline..." 1>&2
 

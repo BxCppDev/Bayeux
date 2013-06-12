@@ -1,7 +1,7 @@
 # -*- mode: conf-unix; -*-
 # List of multi-properties (datatools::multi_properties):
 
-#@description The geometry models that compose the source 
+#@description The geometry models that compose the source
 
 #@key_label   "name"
 #@meta_label  "type"
@@ -22,7 +22,7 @@ length_unit : string = "mm"
 r           : real = 9.5
 
 #@description The Z dimension (thickness) of the cylinder source film
-z           : real = 0.05
+z           : real = 0.025
 
 #@description The name of the material of the source film
 material.ref : string = "mylar"
