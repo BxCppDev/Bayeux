@@ -51,31 +51,31 @@ namespace mctools {
 
       typedef std::map<std::string, mctools::base_step_hit_processor *> hit_processor_dict_type;
 
-      static const size_t DEFAULT_HIT_BUFFER_CAPACITY;
+      static const size_t DEFAULT_HIT_BUFFER_CAPACITY = 1000;
+      static const double DEFAULT_MAJOR_TRACK_MINIMUM_ENERGY;
 
     public:
 
       bool has_manager () const;
       void set_manager (manager & mgr_);
 
-      void set_flag_delta_ray_from_alpha (bool);
+      void set_delta_ray_from_alpha      (bool);
       void set_record_primary_particle   (bool);
       void set_record_track_id           (bool);
-      void set_record_major_track        (bool);
       void set_record_creator_process    (bool);
       void set_record_creator_category   (bool);
       void set_record_momentum           (bool);
       void set_record_kinetic_energy     (bool);
       void set_record_material           (bool);
       void set_record_sensitive_category (bool);
-
+      void set_record_major_track        (bool);
       void set_major_track_minimum_energy (double);
+      void set_track_gamma   (bool);
+      void set_track_neutron (bool);
 
       size_t get_hits_buffer_capacity () const;
       void set_hits_buffer_capacity (size_t);
 
-      void set_track_gamma   (bool);
-      void set_track_neutron (bool);
 
       const datatools::properties & get_auxiliaries () const;
       datatools::properties & grab_auxiliaries ();
@@ -132,13 +132,12 @@ namespace mctools {
 
     private:
 
-      std::string            _sensitive_category_;
-      std::list<std::string> _attached_logical_volumes_;
+      std::string            _sensitive_category_; //!< The name of the sensitive hit catagory
+      std::list<std::string> _attached_logical_volumes_; //! The list of geometry logical volumes attached to the sensitive category
       bool                   _store_g4_volume_properties_;
       bool                   _drop_zero_energy_deposit_steps_;
       bool                   _record_momentum_;
       bool                   _record_kinetic_energy_;
-
       bool                   _record_primary_particle_;
       bool                   _record_track_id_;
       bool                   _record_major_track_;
@@ -149,7 +148,7 @@ namespace mctools {
       double                 _major_track_minimum_energy_;
       bool                   _track_gamma_;
       bool                   _track_neutron_;
-      bool                   _flag_delta_ray_from_alpha_;
+      bool                   _delta_ray_from_alpha_;
       size_t                 _hits_buffer_capacity_;
 
       const track_history::track_info * _track_info_ptr_;

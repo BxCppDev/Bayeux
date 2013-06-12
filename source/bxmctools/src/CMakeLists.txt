@@ -25,9 +25,6 @@ set(mctools_PUBLIC_HEADERS
     include/mctools/base_step_hit.h
     include/mctools/simulated_data.h
     include/mctools/utils.h
-    include/mctools/base_step_hit.ipp
-    include/mctools/simulated_data.ipp
-    include/mctools/bio_guard.h
     include/mctools/base_step_hit_processor.h
     include/mctools/step_hit_processor_factory.h
     include/mctools/calorimeter_step_hit_processor.h
@@ -36,10 +33,12 @@ set(mctools_PUBLIC_HEADERS
     include/mctools/simulated_data.ipp
     include/mctools/the_serializable.ipp
     include/mctools/the_serializable.h
+    include/mctools/bio_guard.h
 
     include/mctools/base_step_hit-reflect.h
     include/mctools/simulated_data-reflect.h
     include/mctools/the_introspectable.h
+    include/mctools/reflection_guard.h
 
     )
 list_prepend(mctools_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
@@ -58,6 +57,7 @@ list(APPEND mctools_PUBLIC_HEADERS ${PROJECT_BINARY_DIR}/include/mctools/mctools
 # package location because they are nested...
 set(mctools_detail_HEADERS
   include/mctools/detail/bio_link_guard.h
+  include/mctools/detail/reflection_link_guard.h
   include/mctools/detail/step_hit_processor_macros.h
   )
 list_prepend(mctools_detail_HEADERS "${PROJECT_SOURCE_DIR}/")
@@ -145,10 +145,8 @@ include_directories(
   ${PROJECT_SOURCE_DIR}/include
   ${genvtx_INCLUDE_DIRS}
   ${genbb_help_INCLUDE_DIRS}
-  ${materials_INCLUDE_DIRS}
   ${emfield_INCLUDE_DIRS}
   ${dpp_INCLUDE_DIRS}
-  ${Boost_INCLUDE_DIRS}
   )
 
 add_library(mctools SHARED
@@ -172,10 +170,8 @@ set_target_properties(mctools
 target_link_libraries(mctools
                         ${genvtx_LIBRARIES}
                         ${genbb_help_LIBRARIES}
-                        ${materials_LIBRARIES}
                         ${emfield_LIBRARIES}
                         ${dpp_LIBRARIES}
-			${Boost_LIBRARIES}
                         ${CMAKE_DL_LIBS}
   )
 
@@ -274,6 +270,7 @@ if(MCTOOLS_WITH_G4)
   target_link_libraries(mctools_g4
                         mctools
                         ${Geant4_LIBRARIES}
+			${Boost_LIBRARIES}
 			${_mctools_g4_additional_libs}
   )
   ### gcc only : -Wl,--no-as-needed G4OpenGL G4visXXX)

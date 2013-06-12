@@ -7,8 +7,8 @@ Introduction
 
  * Description:
 
-   This  example illustrates  how to  use the mctools Geant4 engine to simulate
-   radioactive decays from a given location in a virtual geometry and track the
+   This  example illustrates  how to  use the mctools Geant4 engine (from the ``mctools_g4`` library)
+   to simulate Co-60 radioactive decays from a given location in a virtual geometry and track the
    Monte-Carlo particles.
 
    It is first shown how to use the ``geomtools_check_setup`` utility
@@ -20,7 +20,11 @@ Introduction
    respectively.
 
    The ``g4_production`` program is used to run a Geant4 based
-   Monte-Carlo simulation and produce an output simulated data file.
+   Monte-Carlo simulation and produce an output simulated data file both in interactive mode
+   with Geant4 visualization and non-interactive mode.
+
+   A sample program is provided to browse (ASCII mode) the output simulated data files
+   which contains plain object records of the ``mctools::simulated_data`` class.
 
    Finally the ``dpp_processing`` program is used to run the Geant4 simulation
    through a data processing pipeline, using the dedicated data processing
@@ -35,38 +39,38 @@ Introduction
 
    * Geometry :
 
-     * ``config/manager.conf`` : the main configuration file of the geometry
+     * ``config/geometry/manager.conf`` : the main configuration file of the geometry
        manager.
      * Geometry models files:
 
-       * ``config/world.geom`` : the geometry model that represents
+       * ``config/geometry/world.geom`` : the geometry model that represents
          the top volume (*world*).
-       * ``config/lab.geom`` : the geometry model that represents the
+       * ``config/geometry/lab.geom`` : the geometry model that represents the
          experimental area where the setup is installed.
-       * ``config/vessel.geom`` : the geometry models that represent the
+       * ``config/geometry/vessel.geom`` : the geometry models that represent the
          vacuum chamber wherin the detectors and calibration sources are
          installed.
-       * ``config/optical_module.geom``: the geometry models that represent
+       * ``config/geometry/optical_module.geom``: the geometry models that represent
          the detection module.
-       * ``config/shielding.geom`` : the geometry models that represent
+       * ``config/geometry/shielding.geom`` : the geometry models that represent
          passive shielding walls on both side of the vessel.
-       * ``config/source.geom`` : the geometry models that represent
+       * ``config/geometry/source.geom`` : the geometry models that represent
          the calibration source.
-       * ``config/pmt_hamamatsu_R5912MOD_polycone.data`` : the dimensions
+       * ``config/geometry/pmt_hamamatsu_R5912MOD_polycone.data`` : the dimensions
          and shape of the photomultiplier tube used by the optical module.
 
-     * ``config/categories.lis`` : the file that defines the
+     * ``config/geometry/categories.lis`` : the file that defines the
        list of *geometry categories* used to assign *geometry IDs* to the
        volumes in the hierarchy.
      * Geometry plugins:
 
-       * ``config/materials_plugin.conf`` : the file that defines the
+       * ``config/geometry/materials_plugin.conf`` : the file that defines the
          *materials* plugin. At least one material plugin must be provided
          to export the geometry hierarchy in a GDML file.
-       * ``config/mapping_plugins.conf`` : the file that defines some
+       * ``config/geometry/mapping_plugins.conf`` : the file that defines some
          *geometry ID mapping* plugins. Mapping plugins are optional.
          A default *mapping* object is built from the rules exposed in the
-         ``config/categories.lis`` file. Additionnal (and specialized)
+         ``config/geometry/categories.lis`` file. Additionnal (and specialized)
          *mapping* objects may be optionaly provided within plugins.
 
    * Event generation:
@@ -86,30 +90,32 @@ Introduction
 
    * Geant4 simulation:
 
-     * ``config/manager.conf`` : The main configuration file for the Geant4 simulation engine.
-     * ``config/dlls.conf`` : The configuration file for the dynamic library loader.
-     * ``config/service_manager.conf`` : The configuration file for the service manager.
-     * ``config/services.conf`` : The configuration definitions of some services.
-     * ``config/module_manager.conf`` : The configuration file for the module manager.
-     * ``config/modules.conf`` : The configuration definitions of some modules.
-     * ``config/step_hit_processor_factory.conf`` : The definitions of the *step MC hit processors*
-       associated to the sensitive detectors in the geometry.
-     * ``config/g4vis.mac`` : A Geant4 visualization macro.
+     * Plain simulation (``g4_processing``):
 
-   * Data processing pipeline (``dpp_processing``):
+       * ``config/g4_manager.conf`` : The main configuration file for the Geant4 simulation engine.
+       * ``config/step_hit_processor_factory.conf`` : The definitions of the *step MC hit processors*
+         associated to the sensitive detectors in the geometry.
+       * ``config/g4vis.mac`` : A Geant4 visualization macro (for interactive mode only).
 
-     * ``config/dlls.conf`` : the list of shared libraries to be dynamically loaded.
-     * ``config/module_manager.conf`` : the main configuration file of the data processing
-       module manager embeded in the ``dpp_processing`` program.
-     * ``config/modules.conf`` : the definitions of the *data processing modules* used aloing the pipeline
-       (here we use only one *Geant4 based simulation* module).
-     * ``config/service_manager.conf`` : the main configuration of the service manager embeded in the
-       ``dpp_processing``program.
-     * ``config/services.conf`` :  the definitions of the *services* used by the data processing modules.
+     * Simulation through the data processing pipeline (``dpp_processing``):
+
+       * ``config/pipeline/dlls.conf`` : the list of shared libraries to be dynamically loaded.
+       * ``config/pipeline/module_manager.conf`` : the main configuration file of the *data processing
+         module manager* embeded in the ``dpp_processing`` program.
+       * ``config/pipeline/service_manager.conf`` : the main configuration of the *service manager* embeded in the
+         ``dpp_processing``program and used by the *module manager*.
+       * ``config/pipeline/services.conf`` :  the definitions of the *services* used by the *data processing modules*.
+         Here we define the *Geometry service* which wraps the *geometry manager*
+         initialized from the ``config/geometry/manager.conf`` file (see above).
+       * ``config/pipeline/modules.conf`` : the definitions of the *data processing modules* used along the pipeline
+         Here we use only one *simulation module* which wraps the *Geant4 simulation manager* initialized
+         from the ``config/pipeline/g4_manager.conf`` file (see below).
+       * ``config/pipeline/g4_manager.conf`` : The main configuration file for the *Geant4 simulation manager*
+         used through the pipeline.
 
  * Built object(s) :
 
-     * ``ex01_read_plain_simdata`` : the executable linked against the ``mctools`` library
+     * ``ex01_read_plain_simdata`` : the executable linked against the ``mctools_g4`` library
        and other Boost I/O libraries (``datatools_bio``, ``geomtools_bio`` and ``mctools_bio``).
 
  * Build method: CMake.
@@ -262,7 +268,7 @@ Quick start
                 --number-of-events-modulo 1 \
                 --interactive \
                 --g4-visu \
-                --config "config/manager.conf" \
+                --config "config/g4_manager.conf" \
                 --vertex-generator-name "source_0_bulk.vg" \
                 --vertex-generator-seed 0 \
                 --event-generator-name "Co60" \
@@ -303,7 +309,7 @@ Quick start
                 --number-of-events 100 \
                 --number-of-events-modulo 0 \
                 --batch \
-                --config "config/manager.conf" \
+                --config "config/g4_manager.conf" \
                 --vertex-generator-name "source_0_bulk.vg" \
                 --vertex-generator-seed 0 \
                 --event-generator-name "Co60" \
@@ -326,8 +332,8 @@ Quick start
 
          shell> dpp_processing \
           --logging-priority "debug" \
-          --dlls-config "config/dlls.conf" \
-          --module-manager-config "config/module_manager.conf" \
+          --dlls-config "config/pipeline/dlls.conf" \
+          --module-manager-config "config/pipeline/module_manager.conf" \
           --max-records 100 \
           --modulo 5 \
           --module "Co60@source_0_bulk" \
