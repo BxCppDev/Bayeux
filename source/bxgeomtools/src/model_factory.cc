@@ -355,6 +355,43 @@ namespace geomtools {
     return;
   }
 
+  bool model_factory::print_list_of_models(const geomtools::model_factory & mf_,
+                                           std::ostream & out_,
+                                           uint32_t options_)
+  {
+
+    out_ << std::endl
+         << "List of available geometry models : " << std::endl;
+    int count = 0;
+    for (geomtools::models_col_type::const_iterator i
+           = mf_.get_models ().begin ();
+         i != mf_.get_models ().end ();
+         i++) {
+      bool long_name = false;
+      size_t max_width = 32;
+      if (i->second->get_name ().size () > max_width) {
+        long_name = true;
+      }
+      if ((count % 2) == 0) {
+        out_ << std::endl;
+      }
+      out_  << "  " << std::setw (max_width)
+            << std::setiosflags(std::ios::left)
+            << std::resetiosflags(std::ios::right)
+            << i->second->get_name () << "  ";
+      if (long_name) {
+        out_ << std::endl;
+        count = 0;
+      }
+      count++;
+    }
+    if ((count % 2) == 1)  {
+      out_ << std::endl;
+    }
+    out_ << std::endl;
+    return true;
+  }
+
 } // end of namespace geomtools
 
 

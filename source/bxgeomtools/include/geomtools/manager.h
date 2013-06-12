@@ -335,6 +335,10 @@ namespace geomtools {
 
     datatools::logger::priority get_logging_priority() const;
 
+    static bool print_list_of_gids(const geomtools::manager & mgr_,
+                                   std::ostream & out_ = std::clog,
+                                   uint32_t options_ = 0);
+
   protected:
 
     virtual void _pre_init (const datatools::properties & config_);

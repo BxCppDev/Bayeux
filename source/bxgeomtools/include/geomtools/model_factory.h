@@ -91,6 +91,10 @@ namespace geomtools {
                             const std::string & indent_ = "",
                             bool inherit_               = false) const;
 
+    static bool print_list_of_models(const geomtools::model_factory & mf_,
+                                     std::ostream & out_ = std::clog,
+                                     uint32_t options_ = 0);
+
   private:
 
     /// Basic construction of the model factory

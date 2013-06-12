@@ -47,12 +47,6 @@ std::string get_drawer_view (const std::string & option_);
 
 void print_help (std::ostream & out_ = std::clog);
 
-void print_list_of_models (const geomtools::model_factory &,
-                            std::ostream & out_ = std::clog);
-
-void print_list_of_gids (const geomtools::manager & mgr_,
-                         std::ostream & out_ = std::clog);
-
 void print_model (const geomtools::model_factory &,
                   const std::string & model_name_,
                   std::ostream & out_ = std::clog);
@@ -283,7 +277,7 @@ int main (int argc_, char ** argv_)
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
     if (visu) {
       //std::clog << "Current drawer view : '" << visu_drawer_view << "'" << std::endl;
-      print_list_of_models(geometry_factory, std::clog);
+      geomtools::model_factory::print_list_of_models(geometry_factory,std::clog,0);
       bool go_on = true;
       std::string last_visu_object_name;
       /// Browser main loop :
@@ -330,11 +324,11 @@ int main (int argc_, char ** argv_)
               break;
             }
             if (token == ".m") {
-              print_list_of_models(geometry_factory,std::clog);
+              geomtools::model_factory::print_list_of_models(geometry_factory,std::clog, 0);
             }
             if (token == ".g") {
               if (use_geo_mgr) {
-                print_list_of_gids(geo_mgr, std::clog);
+                geomtools::manager::print_list_of_gids(geo_mgr, std::clog, 0);
               } else {
                 DT_LOG_WARNING(logging, "Sorry ! Mapping is only supported by a geometry manager !");
               }
@@ -750,58 +744,6 @@ void print_help (std::ostream & out_)
   return;
 }
 
-void print_list_of_gids (const geomtools::manager & mgr_, std::ostream & out_)
-{
-  if (!mgr_.is_mapping_available())
-    {
-      std::clog << "WARNING: " << "print_list_of_gids: "
-                << "Sorry! No mapping information is available from the geometry manager!"
-                << std::endl;
-      return;
-    }
-  out_ << std::endl
-       << "List of available GIDs : " << std::endl;
-  int count = 0;
-  const geomtools::mapping & the_mapping = mgr_.get_mapping();
-  const geomtools::geom_info_dict_type & ginfo_dict = the_mapping.get_geom_infos ();
-  for (geomtools::geom_info_dict_type::const_iterator i = ginfo_dict.begin();
-       i != ginfo_dict.end();
-       i++)
-    {
-      bool long_name = false;
-      size_t max_width = 36;
-      const geomtools::geom_info & ginfo = i->second;
-      const geomtools::geom_id & gid = ginfo.get_gid ();
-
-      const geomtools::id_mgr::categories_by_type_col_type & cats
-        = the_mapping.get_id_manager ().categories_by_type ();
-      const geomtools::id_mgr::category_info * cat_info = cats.find(gid.get_type())->second;
-      const std::string & category = cat_info->get_category ();
-      std::ostringstream oss;
-      oss << gid << " in '" << category << "'";
-      if (oss.str().size () > max_width) {
-        long_name = true;
-      }
-      if ((count % 2) == 0) {
-        out_ << std::endl;
-      }
-      out_  << "  " << std::setw (max_width)
-            << std::setiosflags(std::ios::left)
-            << std::resetiosflags(std::ios::right)
-            << oss.str() << "  ";
-      if (long_name) {
-        out_ << std::endl;
-        count = 0;
-      }
-      count++;
-    }
-  if ((count % 2) == 1) {
-    out_ << std::endl;
-  }
-  out_ << std::endl;
-  return;
-}
-
 void print_model (const geomtools::model_factory & mf_,
                   const std::string & model_name_,
                   std::ostream & out_)
@@ -811,46 +753,12 @@ void print_model (const geomtools::model_factory & mf_,
   geomtools::models_col_type::const_iterator found
     = mf_.get_models ().find(model_name_);
   if (found ==  mf_.get_models ().end ()) {
-    std::cerr << "ERROR: Geometry model '" << model_name_ << "' does not exist !"
-              << std::endl;
+    DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                 "Geometry model '" << model_name_ << "' does not exist !");
     return;
   }
   const geomtools::i_model & a_model = *found->second;
   a_model.tree_dump(out_, "");
-  return;
-}
-
-void print_list_of_models (const geomtools::model_factory & mf_, std::ostream & out_)
-{
-  out_ << std::endl
-       << "List of available geometry models : " << std::endl;
-  int count = 0;
-  for (geomtools::models_col_type::const_iterator i
-         = mf_.get_models ().begin ();
-       i != mf_.get_models ().end ();
-       i++) {
-    bool long_name = false;
-    size_t max_width = 32;
-    if (i->second->get_name ().size () > max_width) {
-      long_name = true;
-    }
-    if ((count % 2) == 0) {
-      out_ << std::endl;
-    }
-    out_  << "  " << std::setw (max_width)
-          << std::setiosflags(std::ios::left)
-          << std::resetiosflags(std::ios::right)
-          << i->second->get_name () << "  ";
-    if (long_name) {
-      out_ << std::endl;
-      count = 0;
-    }
-    count++;
-  }
-  if ((count % 2) == 1)  {
-    out_ << std::endl;
-  }
-  out_ << std::endl;
   return;
 }
 

@@ -1061,6 +1061,58 @@ namespace geomtools {
     return _plugins_factory_register_;
   }
 
+  bool manager::print_list_of_gids(const geomtools::manager & mgr_,
+                                   std::ostream & out_,
+                                   uint32_t options_)
+  {
+    if (! mgr_.is_mapping_available()) {
+      DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                   "No mapping information is available from the geometry manager!");
+      return false;
+    }
+    out_ << std::endl
+         << "List of available GIDs : " << std::endl;
+    int count = 0;
+    const geomtools::mapping & the_mapping = mgr_.get_mapping();
+    const geomtools::geom_info_dict_type & ginfo_dict = the_mapping.get_geom_infos ();
+    for (geomtools::geom_info_dict_type::const_iterator i = ginfo_dict.begin();
+         i != ginfo_dict.end();
+         i++)
+      {
+        bool long_name = false;
+        size_t max_width = 36;
+        const geomtools::geom_info & ginfo = i->second;
+        const geomtools::geom_id & gid = ginfo.get_gid ();
+
+        const geomtools::id_mgr::categories_by_type_col_type & cats
+          = the_mapping.get_id_manager ().categories_by_type ();
+        const geomtools::id_mgr::category_info * cat_info = cats.find(gid.get_type())->second;
+        const std::string & category = cat_info->get_category ();
+        std::ostringstream oss;
+        oss << gid << " in '" << category << "'";
+        if (oss.str().size () > max_width) {
+          long_name = true;
+        }
+        if ((count % 2) == 0) {
+          out_ << std::endl;
+        }
+        out_  << "  " << std::setw (max_width)
+              << std::setiosflags(std::ios::left)
+              << std::resetiosflags(std::ios::right)
+              << oss.str() << "  ";
+        if (long_name) {
+          out_ << std::endl;
+          count = 0;
+        }
+        count++;
+      }
+    if ((count % 2) == 1) {
+      out_ << std::endl;
+    }
+    out_ << std::endl;
+    return true;
+  }
+
   //----------------------------------------------------------------------
   // Private Interface Definitions
 
