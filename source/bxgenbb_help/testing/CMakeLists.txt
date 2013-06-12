@@ -140,7 +140,7 @@ foreach ( test_program ${genbb_help_tests_programs_list_CPP} )
       list(INSERT _test_libraries 0 genbb_help_reflection )
     endif()
 
-    message ( STATUS "testing: Libraries = '${_test_libraries}'" )
+    #message ( STATUS "testing: Libraries = '${_test_libraries}'" )
 
     target_link_libraries ( ${test_executable} ${_test_libraries} )
 
