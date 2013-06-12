@@ -69,9 +69,16 @@ visibility.hidden : boolean = 0
 #@description The recommended color for the display
 visibility.color  : string  = "cyan"
 
-#@description The 'sensitive' category attached to this detection volume
+#@description The 'sensitive' category attached to this detector volume
 sensitive.category  : string  = "scin.sd"
-
+#
+# We recommend that you name any sensitive category with the
+# ".sd" suffix. This is to ease the reading of other configuration
+# files at the simulation level (step hit processors). Also note
+# that if you prefix the sensitive category name with two underscores
+# (example: "__test.sd"), then the sensitive category is considered as
+# "private" (non official) and may be processed in some special way by
+# the simulation engine.
 
 ################################################################
 [name="light_guide.model" type="geomtools::simple_shaped_model"]
@@ -414,6 +421,8 @@ visibility.color  : string   = "grey"
 
 #@description The mapping directives for the "detectors" daughter volumes
 mapping.daughter_id.scintillator_block : string  = "[scin_block.gc]"
+mapping.daughter_id.diaphragm          : string  = "[diaphragm.gc]"
+mapping.daughter_id.light_guide        : string  = "[light_guide.gc]"
 
 
 ###################################################################

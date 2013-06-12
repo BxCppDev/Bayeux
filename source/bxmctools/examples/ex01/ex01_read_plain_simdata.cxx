@@ -245,7 +245,7 @@ bool simulated_data_inspector::inspect(const mctools::simulated_data & sd_)
     if (_with_visualization_) {
       display(sd_);
     }
-    std::clog << "Hit `[Enter]' to continue or `quit [Enter]' : ";
+    std::clog << "Hit `[Enter]' to go to the next event or `quit [Enter]' : ";
     std::string line;
     std::getline(std::cin, line);
     std::istringstream line_iss(line);
@@ -263,8 +263,8 @@ void simulated_data_inspector::display(const mctools::simulated_data & sd_)
 
   if (sd_.has_vertex()) {
     // Build the display informations about the vertex (if any) :
-    double vertex_dim = 2.5 * CLHEP::mm;
-    geomtools::blur_spot vertex_spot(3, 1 * CLHEP::mm);
+    double vertex_dim = 1.0 * CLHEP::mm;
+    geomtools::blur_spot vertex_spot(3, 0.25 * CLHEP::mm);
     vertex_spot.set_errors(vertex_dim,vertex_dim,vertex_dim);
     std::ostringstream vertex_name_oss;
     vertex_name_oss << "vertex";

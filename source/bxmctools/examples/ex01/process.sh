@@ -57,6 +57,8 @@ genvtx_production \
     --vertex-generator "vessel_inner_surface.vg" \
     --output-file "mctools_ex01_vertices.txt"
 
+vg_name="source_0_bulk.vg"
+vg_name="col1_row0_scin_surface.vg"
 
 echo -e "\nRun the Geant4 simulation interactively..." 1>&2
 echo -e "/run/beamOn 5\nexit" | \
@@ -66,7 +68,7 @@ echo -e "/run/beamOn 5\nexit" | \
     --interactive \
     --g4-visu \
     --config "config/g4_manager.conf" \
-    --vertex-generator-name "source_0_bulk.vg" \
+    --vertex-generator-name ${vg_name} \
     --vertex-generator-seed 0 \
     --event-generator-name "Co60" \
     --event-generator-seed 0 \
@@ -123,13 +125,13 @@ rm -f ex01_read_plain_simdata
 rm -f histos_Co60.root
 rm -f mctools_ex01-1.0.gdml
 rm -f geomtools_check_setup.C
-rm -f mctools_ex01_Co60_source_0_bulk.xml
+#rm -f mctools_ex01_Co60_source_0_bulk.xml
 rm -f mctools_ex01_vertices.txt
 rm -f prng_seeds.save
 rm -f prng_seeds.save.~backup~
 rm -f prng_states.save
 rm -f prng_states.save.~backup~
-rm -f mctools_ex01_Co60_source_0_bulk.data.gz
+#rm -f mctools_ex01_Co60_source_0_bulk.data.gz
 
 rm -fr ${build_dir}
 find . -name "*~" -exec rm -f \{\} \;

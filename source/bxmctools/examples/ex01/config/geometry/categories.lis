@@ -41,6 +41,12 @@ by       : string[1] = "row"
 [category="scin_block.gc" type="2030"]
 inherits : string[1] = "detector.gc"
 
+[category="diaphragm.gc" type="2031"]
+inherits : string[1] = "detector.gc"
+
+[category="light_guide.gc" type="2032"]
+inherits : string[1] = "detector.gc"
+
 [category="pmt_dynode.gc" type="2040"]
 extends  : string = "detector.gc"
 by       : string[1] = "dynode"

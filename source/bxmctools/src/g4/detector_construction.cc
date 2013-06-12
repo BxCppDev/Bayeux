@@ -819,16 +819,32 @@ namespace mctools {
             // Extract the models this sensitive detector is attached to:
             std::vector<std::string> models;
 
+            bool all_models = false;
+            if (iSHP->second->get_auxiliaries().has_flag("geometry.models.all")) {
+              all_models = true;
+            }
+            if (all_models) {
+              for (geomtools::models_col_type::const_iterator imodel
+                     = _geom_manager_->get_factory().get_models().begin();
+                   imodel != _geom_manager_->get_factory().get_models().end();
+                   ++imodel) {
+                const std::string & model_name = imodel->first;
+                models.push_back(model_name);
+              }
+            }
+
             // First fetch the list of geometry models associated to this 'sensitive category' :
-            if (iSHP->second->get_auxiliaries().has_key("geometry.models")) {
-              // Models are given by name :
-              iSHP->second->get_auxiliaries().fetch("geometry.models", models);
+
+            if (! all_models) {
+              if (iSHP->second->get_auxiliaries().has_key("geometry.models")) {
+                // Models are given by name :
+                iSHP->second->get_auxiliaries().fetch("geometry.models", models);
+              }
             }
 
             // Also fetch the list of geometry models associated to this 'sensitive category'
             // and *with* a given list of materials :
-            if (iSHP->second->get_auxiliaries().has_key("geometry.models.with_materials"))
-              {
+            if (iSHP->second->get_auxiliaries().has_key("geometry.models.with_materials")) {
                 // Models are given by material(s) :
                 std::vector<std::string> materials;
                 iSHP->second->get_auxiliaries().fetch("geometry.models.with_materials", materials);
@@ -836,11 +852,10 @@ namespace mctools {
                 ostringstream message;
                 message << "mctools::g4::detector_construction::_construct_sensitive_detectors: "
                         << "Searching for geometry models with material in(";
-                for (int j = 0; j < materials.size(); j++)
-                  {
-                    if (j != 0) message << ',';
-                    message << ' ' << '"' << materials[j] << '"';
-                  }
+                for (int j = 0; j < materials.size(); j++) {
+                  if (j != 0) message << ',';
+                  message << ' ' << '"' << materials[j] << '"';
+                }
                 message << ") to be associated to the new sensitive detector from SHPF with category '"
                         << from_processor_sensitive_category << "'";
                 DT_LOG_NOTICE(_logprio(), message.str());

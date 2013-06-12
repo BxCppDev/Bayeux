@@ -15,14 +15,14 @@
 #@description The name of the 3D shape of the source film
 shape_type  : string = "cylinder"
 
-#@description The length unit
+#@description The default length unit
 length_unit : string = "mm"
 
 #@description The R dimension (radius) of the cylinder source film
 r           : real = 9.5
 
 #@description The Z dimension (thickness) of the cylinder source film
-z           : real = 0.025
+z           : real as length = 25 um
 
 #@description The name of the material of the source film
 material.ref : string = "mylar"
