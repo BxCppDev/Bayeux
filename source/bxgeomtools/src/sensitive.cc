@@ -23,11 +23,8 @@ namespace geomtools {
 
   sensitive::constants::constants ()
   {
-    SENSITIVE_PREFIX                       = "sensitive.";
-    SENSITIVE_CATEGORY_PROPERTY            = "category";
-    // SENSITIVE_RECORD_ALPHA_QUENCHING_FLAG  = "record_alpha_quenching";
-    // SENSITIVE_RECORD_TRACK_ID_FLAG         = "record_track_id";
-    // SENSITIVE_RECORD_PRIMARY_PARTICLE_FLAG = "record_primary_particle";
+    SENSITIVE_PREFIX            = "sensitive.";
+    SENSITIVE_CATEGORY_PROPERTY = "category";
     return;
   }
 
@@ -73,22 +70,6 @@ namespace geomtools {
     config_.update (make_key (sensitive::constants::instance().SENSITIVE_CATEGORY_PROPERTY), cat_name_);
     return;
   }
-  /*
-  bool sensitive::recording_alpha_quenching (const datatools::properties & config_)
-  {
-    return sensitive::has_flag (config_, sensitive::constants::instance().SENSITIVE_RECORD_ALPHA_QUENCHING_FLAG);
-  }
-
-  bool sensitive::recording_track_id (const datatools::properties & config_)
-  {
-    return sensitive::has_flag (config_, sensitive::constants::instance().SENSITIVE_RECORD_TRACK_ID_FLAG);
-  }
-
-  bool sensitive::recording_primary_particle (const datatools::properties & config_)
-  {
-    return sensitive::has_flag (config_, sensitive::constants::instance().SENSITIVE_RECORD_PRIMARY_PARTICLE_FLAG);
-  }
-  */
 
 } // end of namespace geomtools
 
