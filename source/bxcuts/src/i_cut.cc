@@ -187,14 +187,15 @@ namespace cuts {
   void i_cut::_common_initialize (const datatools::properties & a_config)
   {
     DT_LOG_TRACE(_logging, "Entering common initialization of the cut...");
-    if (a_config.has_key("logging.priority")) {
-      std::string prio_label = a_config.fetch_string("logging.priority");
-      datatools::logger::priority p = datatools::logger::get_priority(prio_label);
-      DT_THROW_IF(p == datatools::logger::PRIO_UNDEFINED,
-                  std::domain_error,
-                  "Unknow logging priority ``" << prio_label << "`` !");
-      set_logging_priority(p);
-    }
+
+    // Logging priority:
+    datatools::logger::priority lp
+      = datatools::logger::extract_logging_configuration(a_config,
+                                                         datatools::logger::PRIO_WARNING);
+    DT_THROW_IF(lp ==  datatools::logger::PRIO_UNDEFINED,
+                std::logic_error,
+                "Invalid logging priority !");
+    set_logging_priority(lp);
 
     if (! has_name ()) {
       if (a_config.has_key("cut.name")) {
