@@ -26,17 +26,17 @@ namespace geomtools {
   class sensitive
   {
   public:
-  
+
     struct constants
     {
       std::string SENSITIVE_PREFIX;
       std::string SENSITIVE_CATEGORY_PROPERTY;
-      std::string SENSITIVE_RECORD_ALPHA_QUENCHING_FLAG;
-      std::string SENSITIVE_RECORD_TRACK_ID_FLAG;
-      std::string SENSITIVE_RECORD_PRIMARY_PARTICLE_FLAG;
-      
+      // std::string SENSITIVE_RECORD_ALPHA_QUENCHING_FLAG;
+      // std::string SENSITIVE_RECORD_TRACK_ID_FLAG;
+      // std::string SENSITIVE_RECORD_PRIMARY_PARTICLE_FLAG;
+
       constants ();
-      
+
       static const constants & instance ();
 
     };
@@ -59,11 +59,13 @@ namespace geomtools {
     static void set_sensitive_category (datatools::properties & config_,
                                         const std::string & cat_name_);
 
+    /*
     static bool recording_alpha_quenching (const datatools::properties & config_);
 
     static bool recording_track_id (const datatools::properties & config_);
 
     static bool recording_primary_particle (const datatools::properties & config_);
+    */
 
   };
 
