@@ -46,15 +46,25 @@ namespace geomtools {
     return;
   }
 
-  const datatools::properties & logical_volume::parameters () const
+  const datatools::properties & logical_volume::get_parameters () const
   {
     return _parameters_;
   }
 
-  datatools::properties & logical_volume::parameters ()
+  // const datatools::properties & logical_volume::parameters () const
+  // {
+  //   return _parameters_;
+  // }
+
+  datatools::properties & logical_volume::grab_parameters ()
   {
     return _parameters_;
   }
+
+  // datatools::properties & logical_volume::parameters ()
+  // {
+  //   return _parameters_;
+  // }
 
   bool logical_volume::has_shape () const
   {
@@ -63,15 +73,13 @@ namespace geomtools {
 
   void logical_volume::_clear_shape_ ()
   {
-    if (_shape_ != 0)
-      {
-        if (_own_shape_)
-          {
-            delete _shape_;
-          }
-        _shape_ = 0;
-        _own_shape_ = false;
+    if (_shape_ != 0) {
+      if (_own_shape_) {
+        delete _shape_;
       }
+      _shape_ = 0;
+      _own_shape_ = false;
+    }
     return;
   }
 
@@ -86,11 +94,10 @@ namespace geomtools {
   void logical_volume::set_shape (const i_shape_3d * shape_)
   {
     _clear_shape_ ();
-    if (shape_ != 0)
-      {
-        _own_shape_ = true;
-        _shape_ = shape_;
-      }
+    if (shape_ != 0) {
+      _own_shape_ = true;
+      _shape_ = shape_;
+    }
     return;
   }
 
@@ -102,30 +109,36 @@ namespace geomtools {
 
   bool logical_volume::has_material_ref () const
   {
-    if (material::has_key (_parameters_, material::constants::instance ().MATERIAL_REF_PROPERTY))
-      {
-        return (_parameters_.is_string  (material::make_key (material::constants::instance ().MATERIAL_REF_PROPERTY)));
-      }
+    return ! _material_ref_.empty();
+    /*
+    if (material::has_key (_parameters_, material::constants::instance ().MATERIAL_REF_PROPERTY)) {
+      return (_parameters_.is_string  (material::make_key (material::constants::instance ().MATERIAL_REF_PROPERTY)));
+    }
     return false;
+    */
   }
 
   string logical_volume::get_material_ref () const
   {
-    if (has_material_ref ())
-      {
-        return (_parameters_.fetch_string  (material::make_key (material::constants::instance ().MATERIAL_REF_PROPERTY)));
-      }
+    return _material_ref_;
+    /*
+    if (has_material_ref ()) {
+      return (_parameters_.fetch_string  (material::make_key (material::constants::instance ().MATERIAL_REF_PROPERTY)));
+    }
     return material::constants::instance ().MATERIAL_REF_UNKNOWN;
+    */
   }
 
   void logical_volume::set_material_ref (const string & material_ref_)
   {
+    _material_ref_ = material_ref_;
+    /*
     string mr = material_ref_;
-    if (mr.empty ())
-      {
-        mr = material::constants::instance ().MATERIAL_REF_DEFAULT;
-      }
+    if (mr.empty ()) {
+      mr = material::constants::instance ().MATERIAL_REF_DEFAULT;
+    }
     _parameters_.update (material::make_key (material::constants::instance ().MATERIAL_REF_PROPERTY), material_ref_);
+    */
     return;
   }
 
@@ -207,24 +220,19 @@ namespace geomtools {
                  std::logic_error,
                  "Name '" << name_ << "' is already used !");
     string name;
-    if (name_.empty ())
-      {
-        name = phys_.get_name ();
-      }
-    else
-      {
-        name = name_;
-      }
+    if (name_.empty ()) {
+      name = phys_.get_name ();
+    } else {
+      name = name_;
+    }
     DT_THROW_IF (name.empty (), std::logic_error,  "Missing physical's name !");
     DT_THROW_IF (_parameters_.has_flag (HAS_REPLICA_FLAG), std::logic_error,
                  "Cannot add more physical volume for a 'replica' already exists !");
-    if (phys_.get_placement ().is_replica ())
-      {
-        DT_THROW_IF (_physicals_.size () > 0, std::logic_error,
-                     "Cannot add a 'replica' physical volume for other physicals already exist !");
-        _parameters_.store_flag (HAS_REPLICA_FLAG);
-      }
-
+    if (phys_.get_placement ().is_replica ()) {
+      DT_THROW_IF (_physicals_.size () > 0, std::logic_error,
+                   "Cannot add a 'replica' physical volume for other physicals already exist !");
+      _parameters_.store_flag (HAS_REPLICA_FLAG);
+    }
     _physicals_[name] = &phys_;
     return;
   }
@@ -252,19 +260,17 @@ namespace geomtools {
 
   void logical_volume::_at_lock_ ()
   {
-    if (! has_material_ref ())
-      {
-        _abstract_ = true;
-      }
+    if (! has_material_ref ()) {
+      _abstract_ = true;
+    }
     _compute_real_physicals_ ();
-
     return;
   }
 
-    void logical_volume::_compute_real_physicals_ ()
-    {
-
-    }
+  void logical_volume::_compute_real_physicals_ ()
+  {
+    // Not implemented
+  }
 
   void logical_volume::tree_dump (ostream & out_,
                                   const string & title_,
@@ -273,10 +279,9 @@ namespace geomtools {
   {
     string indent;
     if (! indent_.empty ()) indent = indent_;
-    if (! title_.empty ())
-      {
-        out_ << indent << title_ << endl;
-      }
+    if (! title_.empty ()) {
+      out_ << indent << title_ << endl;
+    }
     out_ << indent <<  datatools::i_tree_dumpable::tag
          << "Name       : \"" << _name_ << "\"" << endl;
 
@@ -289,10 +294,9 @@ namespace geomtools {
     {
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Parameters : ";
-      if ( _parameters_.size () == 0)
-        {
-          out_ << "<empty>";
-        }
+      if (_parameters_.size () == 0) {
+        out_ << "<empty>";
+      }
       out_ << endl;
       {
         ostringstream indent_oss;
@@ -305,15 +309,12 @@ namespace geomtools {
     {
       out_ << indent <<  datatools::i_tree_dumpable::tag
            << "Shape : ";
-      if (has_shape ())
-        {
-          out_ << "'" << _shape_->get_shape_name () << "' "
-               << (_own_shape_? "(owned)": "(not owned)");
-        }
-      else
-        {
-          out_ << "<no shape>";
-        }
+      if (has_shape ()) {
+        out_ << "'" << _shape_->get_shape_name () << "' "
+             << (_own_shape_? "(owned)": "(not owned)");
+      } else {
+        out_ << "<no shape>";
+      }
       out_ << endl;
       {
         ostringstream indent_oss;
@@ -326,20 +327,25 @@ namespace geomtools {
     {
       out_ << indent <<  datatools::i_tree_dumpable::inherit_tag (inherit_)
            << "Physicals : ";
-      if (_physicals_.size ())
-        {
-          for (physicals_col_type::const_iterator i = _physicals_.begin ();
-               i != _physicals_.end ();
-               i++)
-            {
-              out_ << i->first << ' ';
-            }
-          out_ << endl;
+      if (_physicals_.size()) {
+        out_ << _physicals_.size();
+      }
+      out_ << endl;
+      if (_physicals_.size ()) {
+        for (physicals_col_type::const_iterator i = _physicals_.begin ();
+             i != _physicals_.end ();
+             i++) {
+          physicals_col_type::const_iterator j = i;
+          j++;
+          out_ << indent << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
+          if (j == _physicals_.end ()) {
+            out_ << datatools::i_tree_dumpable::last_tag;
+          } else {
+            out_ << datatools::i_tree_dumpable::tag;
+          }
+          out_ << '"' << i->first << '"' << std::endl;
         }
-      else
-        {
-          out_ << "<none>" << endl;
-        }
+      }
     }
 
     return;

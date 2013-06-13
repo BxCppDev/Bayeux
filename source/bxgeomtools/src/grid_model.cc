@@ -99,28 +99,25 @@ namespace geomtools {
     DT_THROW_IF (! config_.has_key ("material.ref"), std::logic_error, "Missing 'material.ref' property in grid model '" << name_ << "' !");
     std::string material_name = config_.fetch_string ("material.ref");
 
-    if (config_.has_flag ("grid.force_stackable"))
-      {
-        datatools::properties stackable_config;
-        config_.export_and_rename_starting_with(stackable_config,
-                                                "grid.force_stackable.",
-                                                stackable::STACKABLE_PREFIX);
-        DT_THROW_IF (! _sd_.initialize(stackable_config), std::logic_error,
-                     "Cannot build the stackable data in grid model '" << name_ << "' !");
-      }
+    if (config_.has_flag ("grid.force_stackable")) {
+      datatools::properties stackable_config;
+      config_.export_and_rename_starting_with(stackable_config,
+                                              "grid.force_stackable.",
+                                              stackable::STACKABLE_PREFIX);
+      DT_THROW_IF (! _sd_.initialize(stackable_config), std::logic_error,
+                   "Cannot build the stackable data in grid model '" << name_ << "' !");
+    }
 
     double length_unit = CLHEP::mm;
-    if (config_.has_key ("length_unit"))
-      {
-        const std::string lunit_str = config_.fetch_string ("length_unit");
-        length_unit = datatools::units::get_length_unit_from (lunit_str);
-      }
+    if (config_.has_key ("length_unit")) {
+      const std::string lunit_str = config_.fetch_string ("length_unit");
+      length_unit = datatools::units::get_length_unit_from (lunit_str);
+    }
 
     std::string grid_daughter_label;
-    if (config_.has_key ("grid.daughter_label"))
-      {
-        grid_daughter_label = config_.fetch_string ("grid.daughter_label");
-      }
+    if (config_.has_key ("grid.daughter_label")) {
+      grid_daughter_label = config_.fetch_string ("grid.daughter_label");
+    }
 
     DT_THROW_IF (! config_.has_key ("grid.plane"), std::logic_error, "Missing 'grid.plane' property in grid model '" << name_ << "' !");
     const std::string grid_plane_label = config_.fetch_string ("grid.plane");
@@ -151,8 +148,7 @@ namespace geomtools {
       step[1] = config_.fetch_real ("grid.y.step");
       DT_THROW_IF (step[1] <= 0.0, std::logic_error, "Invalid value for 'grid.y.step' property in grid model '" << name_ << "' !");
       if (! config_.has_explicit_unit ("grid.y.step")) step[1] *= length_unit;
-    }
-    else if (grid_plane_label == "xz") {
+    } else if (grid_plane_label == "xz") {
       // Numbers of steps :
       DT_THROW_IF (! config_.has_key ("grid.x.number_of_items"),
                    std::logic_error,
@@ -174,8 +170,7 @@ namespace geomtools {
       step[1] = config_.fetch_real ("grid.z.step");
       DT_THROW_IF (step[1] <= 0.0, std::logic_error, "Invalid value for 'grid.z.step' property in grid model '" << name_ << "' !");
       if (! config_.has_explicit_unit ("grid.z.step")) step[1] *= length_unit;
-    }
-    else if (grid_plane_label == "yz") {
+    } else if (grid_plane_label == "yz") {
       // Numbers of steps :
       DT_THROW_IF (! config_.has_key ("grid.y.number_of_items"),
                    std::logic_error,
@@ -224,122 +219,103 @@ namespace geomtools {
     double dx = sd.get_xmax () - sd.get_xmin ();
     double dy = sd.get_ymax () - sd.get_ymin ();
     double dz = sd.get_zmax () - sd.get_zmin ();
-    if (_sd_.is_valid_weak())
-      {
-        if (_grid_plane_label_ == "xy")
-          {
-            if (_sd_.is_valid_x())
-              {
-                dx = _sd_.get_xmax () - _sd_.get_xmin ();
-              }
-            if (_sd_.is_valid_y())
-              {
-                dy = _sd_.get_ymax () - _sd_.get_ymin ();
-              }
-          }
-        if (_grid_plane_label_ == "xz")
-          {
-            if (_sd_.is_valid_x())
-              {
-                dx = _sd_.get_xmax () - _sd_.get_xmin ();
-              }
-            if (_sd_.is_valid_z())
-              {
-                dz = _sd_.get_zmax () - _sd_.get_zmin ();
-              }
-          }
-        if (_grid_plane_label_ == "yz")
-          {
-            if (_sd_.is_valid_y())
-              {
-                dy = _sd_.get_ymax () - _sd_.get_ymin ();
-              }
-            if (_sd_.is_valid_z())
-              {
-                dz = _sd_.get_zmax () - _sd_.get_zmin ();
-              }
-          }
+    if (_sd_.is_valid_weak()) {
+      if (_grid_plane_label_ == "xy") {
+        if (_sd_.is_valid_x()) {
+          dx = _sd_.get_xmax () - _sd_.get_xmin ();
+        }
+        if (_sd_.is_valid_y()) {
+          dy = _sd_.get_ymax () - _sd_.get_ymin ();
+        }
       }
+      if (_grid_plane_label_ == "xz") {
+        if (_sd_.is_valid_x()) {
+          dx = _sd_.get_xmax () - _sd_.get_xmin ();
+        }
+        if (_sd_.is_valid_z()) {
+          dz = _sd_.get_zmax () - _sd_.get_zmin ();
+        }
+      }
+      if (_grid_plane_label_ == "yz") {
+        if (_sd_.is_valid_y()) {
+          dy = _sd_.get_ymax () - _sd_.get_ymin ();
+        }
+        if (_sd_.is_valid_z()) {
+          dz = _sd_.get_zmax () - _sd_.get_zmin ();
+        }
+      }
+    }
     _x_ = dx;
     _y_ = dy;
     _z_ = dz;
     double x0, y0, z0;
     x0 = y0 = z0 = 0.0;
     _grid_placement_.set_centered (false);
-    if (_grid_plane_label_ == "xy")
-      {
-        _grid_placement_.set_mode (regular_grid_placement::MODE_XY);
-        double step_x = dx;
-        double step_y = dy;
-        if (datatools::is_valid(_step_[0]) && datatools::is_valid(_step_[1]))
-          {
-            step_x = _step_[0];
-            step_y = _step_[1];
-          }
-        _grid_placement_.set_steps (step_x, step_y);
-        _x_ = dx + step_x * (get_number_of_items (0) - 1);
-        x0 = -0.5 * _x_ + 0.5 * dx;
-        _y_ = dy + step_y * (get_number_of_items (1) - 1);
-        y0 = -0.5 * _y_ + 0.5 * dy;
+    if (_grid_plane_label_ == "xy") {
+      _grid_placement_.set_mode (regular_grid_placement::MODE_XY);
+      double step_x = dx;
+      double step_y = dy;
+      if (datatools::is_valid(_step_[0]) && datatools::is_valid(_step_[1])) {
+        step_x = _step_[0];
+        step_y = _step_[1];
       }
-    if (_grid_plane_label_ == "xz")
-      {
-        _grid_placement_.set_mode (regular_grid_placement::MODE_XZ);
-        double step_x = dx;
-        double step_z = dz;
-        if (datatools::is_valid(_step_[0]) && datatools::is_valid(_step_[1]))
-          {
-            step_x = _step_[0];
-            step_z = _step_[1];
-          }
-        _grid_placement_.set_steps (step_x, step_z);
-        _x_ = dx + step_x * (get_number_of_items (0) - 1);
-        x0 = -0.5 * _x_ + 0.5 * dx;
-        _z_ = dz + step_z * (get_number_of_items (1) - 1);
-        z0 = -0.5 * _z_ + 0.5 * dz;
+      _grid_placement_.set_steps (step_x, step_y);
+      _x_ = dx + step_x * (get_number_of_items (0) - 1);
+      x0 = -0.5 * _x_ + 0.5 * dx;
+      _y_ = dy + step_y * (get_number_of_items (1) - 1);
+      y0 = -0.5 * _y_ + 0.5 * dy;
+    }
+    if (_grid_plane_label_ == "xz") {
+      _grid_placement_.set_mode (regular_grid_placement::MODE_XZ);
+      double step_x = dx;
+      double step_z = dz;
+      if (datatools::is_valid(_step_[0]) && datatools::is_valid(_step_[1])) {
+        step_x = _step_[0];
+        step_z = _step_[1];
       }
-    if (_grid_plane_label_ == "yz")
-      {
-        _grid_placement_.set_mode (regular_grid_placement::MODE_YZ);
-        double step_y = dy;
-        double step_z = dz;
-        if (datatools::is_valid(_step_[0]) && datatools::is_valid(_step_[1]))
-          {
-            step_y = _step_[0];
-            step_z = _step_[1];
-          }
-        _grid_placement_.set_steps (step_y, step_z);
-        _y_ = dy + step_y * (get_number_of_items (0) - 1);
-        y0 = -0.5 * _y_ + 0.5 * dy;
-        _z_ = dz + step_z * (get_number_of_items (1) - 1);
-        z0 = -0.5 * _z_ + 0.5 * dz;
+      _grid_placement_.set_steps (step_x, step_z);
+      _x_ = dx + step_x * (get_number_of_items (0) - 1);
+      x0 = -0.5 * _x_ + 0.5 * dx;
+      _z_ = dz + step_z * (get_number_of_items (1) - 1);
+      z0 = -0.5 * _z_ + 0.5 * dz;
+    }
+    if (_grid_plane_label_ == "yz") {
+      _grid_placement_.set_mode (regular_grid_placement::MODE_YZ);
+      double step_y = dy;
+      double step_z = dz;
+      if (datatools::is_valid(_step_[0]) && datatools::is_valid(_step_[1])) {
+        step_y = _step_[0];
+        step_z = _step_[1];
       }
+      _grid_placement_.set_steps (step_y, step_z);
+      _y_ = dy + step_y * (get_number_of_items (0) - 1);
+      y0 = -0.5 * _y_ + 0.5 * dy;
+      _z_ = dz + step_z * (get_number_of_items (1) - 1);
+      z0 = -0.5 * _z_ + 0.5 * dz;
+    }
     _grid_placement_.set_number_of_columns (get_number_of_items (0));
     _grid_placement_.set_number_of_rows (get_number_of_items (1));
 
-    if (config_.has_key ("x"))
-      {
-        double x = config_.fetch_real ("x");
-        if (! config_.has_explicit_unit ("x")) x *= length_unit;
-        DT_THROW_IF (x < _x_, std::logic_error, "Value for 'x' property is too small (<" << _x_ / CLHEP::mm << " mm) in grid model '" << name_ << "' !");
-        _x_ = x;
-      }
+    if (config_.has_key ("x")) {
+      double x = config_.fetch_real ("x");
+      if (! config_.has_explicit_unit ("x")) x *= length_unit;
+      DT_THROW_IF (x < _x_, std::logic_error, "Value for 'x' property is too small (<" << _x_ / CLHEP::mm << " mm) in grid model '" << name_ << "' !");
+      _x_ = x;
+    }
 
-    if (config_.has_key ("y"))
-      {
-        double y = config_.fetch_real ("y");
-        if (! config_.has_explicit_unit ("y")) y *= length_unit;
-        DT_THROW_IF (y < _y_, std::logic_error, "Value for 'y' property is too small (<" << _y_ / CLHEP::mm << " mm) in grid model '" << name_ << "' !");
-        _y_ = y;
-      }
+    if (config_.has_key ("y")) {
+      double y = config_.fetch_real ("y");
+      if (! config_.has_explicit_unit ("y")) y *= length_unit;
+      DT_THROW_IF (y < _y_, std::logic_error, "Value for 'y' property is too small (<" << _y_ / CLHEP::mm << " mm) in grid model '" << name_ << "' !");
+      _y_ = y;
+    }
 
-    if (config_.has_key ("z"))
-      {
-        double z = config_.fetch_real ("z");
-        if (! config_.has_explicit_unit ("z")) z *= length_unit;
-        DT_THROW_IF (z < _z_, std::logic_error, "Value for 'z' property is too small (<" << _z_ / CLHEP::mm << " mm) in grid model '" << name_ << "' !");
-        _z_ = z;
-      }
+    if (config_.has_key ("z")) {
+      double z = config_.fetch_real ("z");
+      if (! config_.has_explicit_unit ("z")) z *= length_unit;
+      DT_THROW_IF (z < _z_, std::logic_error, "Value for 'z' property is too small (<" << _z_ / CLHEP::mm << " mm) in grid model '" << name_ << "' !");
+      _z_ = z;
+    }
 
     _solid_.reset ();
     _solid_.set_x (_x_);
@@ -347,18 +323,13 @@ namespace geomtools {
     _solid_.set_z (_z_);
     DT_THROW_IF (! _solid_.is_valid (), std::logic_error, "Invalid solid in grid model '" << name_ << "' !");
 
-    get_logical ().set_name (i_model::make_logical_volume_name (name_));
-    get_logical ().set_shape (_solid_);
-    if (material_name.empty() && _model_->get_logical ().has_material_ref ())
-      {
-        material_name = _model_->get_logical ().get_material_ref ();
-      }
-    get_logical ().set_material_ref (material_name);
+    grab_logical ().set_name (i_model::make_logical_volume_name (name_));
+    grab_logical ().set_shape (_solid_);
+    grab_logical ().set_material_ref (material_name);
     _grid_daughter_label_ = grid_daughter_label;
-    if (_grid_daughter_label_.empty())
-      {
-        _grid_daughter_label_ = "grid";
-      }
+    if (_grid_daughter_label_.empty()) {
+      _grid_daughter_label_ = "grid";
+    }
 
     placement basic_p;
     basic_p.set (x0, y0, z0, 0, 0, 0);

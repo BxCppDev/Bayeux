@@ -200,9 +200,9 @@ namespace geomtools {
     _extruded_solid_.set_user_draw ((void *) &cylindric_extrusion_boxed_model::gnuplot_draw_user_function);
     _solid_ = &_extruded_solid_;
 
-    get_logical ().set_name (i_model::make_logical_volume_name (name_));
-    get_logical ().set_shape (_extruded_solid_);
-    get_logical ().set_material_ref (material_name);
+    grab_logical ().set_name (i_model::make_logical_volume_name (name_));
+    grab_logical ().set_shape (_extruded_solid_);
+    grab_logical ().set_material_ref (material_name);
 
     DT_LOG_TRACE (get_logging_priority (), "Exiting.");
     return;

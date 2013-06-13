@@ -334,16 +334,9 @@ namespace geomtools {
     _solid_.set_z (z);
     DT_THROW_IF (! _solid_.is_valid (), std::logic_error, "Invalid solid !");
 
-    get_logical ().set_name (i_model::make_logical_volume_name (name_));
-    get_logical ().set_shape (_solid_);
-    // 2013-06-13 FM : we cannot use the boxed model material here
-    // There is no garantee it is the proper one to be used for the envelope solid.
-    // std::string material_name = material::constants::instance ().MATERIAL_REF_DEFAULT;
-    // if (_boxed_model_->get_logical ().has_material_ref ())
-    //   {
-    //     material_name = _boxed_model_->get_logical ().get_material_ref ();
-    //   }
-    get_logical ().set_material_ref (material_name);
+    grab_logical ().set_name (i_model::make_logical_volume_name (name_));
+    grab_logical ().set_shape (_solid_);
+    grab_logical ().set_material_ref (material_name);
     _boxed_phys_.set_name (i_model::make_physical_volume_name (rotated_label));
     _boxed_phys_.set_placement (_boxed_placement_);
     _boxed_phys_.set_logical (_boxed_model_->get_logical ());

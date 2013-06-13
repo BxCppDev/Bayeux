@@ -647,8 +647,7 @@ namespace geomtools {
       }
       if (std::find(effective_factory_preserved_property_prefixes.begin(),
                     effective_factory_preserved_property_prefixes.end(),
-                    prefix)
-          != effective_factory_preserved_property_prefixes.end()) {
+                    prefix) != effective_factory_preserved_property_prefixes.end()) {
         effective_factory_preserved_property_prefixes.push_back(prefix);
       }
     }

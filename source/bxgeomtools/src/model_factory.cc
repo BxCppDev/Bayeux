@@ -245,21 +245,26 @@ namespace geomtools {
                    << "\" with name \"" << model_name << "\"...");
       i_model * model = the_factory ();
       model->construct (model_name, e.get_properties (), &_models_);
-      /*
-        e.get_properties ().export_starting_with (model->get_logical ().parameters (),
-        visibility::constants::instance().VISIBILITY_PREFIX);
-      */
       for (std::map<std::string,int>::const_iterator i = _property_prefixes_.begin ();
            i != _property_prefixes_.end ();
            i++) {
-        e.get_properties ().export_starting_with (model->get_logical ().parameters (),
-                                                  i->first);
+        if (model->has_effective_logical()) {
+          e.get_properties ().export_starting_with (model->grab_effective_logical ().grab_parameters (),
+                                                    i->first);
+        } else {
+          e.get_properties ().export_starting_with (model->grab_logical ().grab_parameters (),
+                                                    i->first);
+        }
       }
 
       _models_[model_name] = model;
       DT_LOG_DEBUG(_logging_priority_,"Adding model '" << model_name << "'...");
       string log_name = model->get_logical ().get_name ();
       _logicals_[log_name] = &(model->get_logical ());
+      if (model->has_effective_logical()) {
+        string eff_log_name = model->get_effective_logical ().get_name ();
+        _logicals_[eff_log_name] = &(model->get_effective_logical ());
+      }
       DT_LOG_DEBUG(_logging_priority_,"New model is:");
       if (is_debug ()) model->tree_dump (clog,"");
     }
@@ -359,7 +364,6 @@ namespace geomtools {
                                            std::ostream & out_,
                                            uint32_t options_)
   {
-
     out_ << std::endl
          << "List of available geometry models : " << std::endl;
     int count = 0;

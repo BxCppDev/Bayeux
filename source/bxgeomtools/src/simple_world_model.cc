@@ -164,9 +164,9 @@ namespace geomtools {
     DT_THROW_IF (!_solid_.is_valid (), std::logic_error, "Invalid solid !");
 
     _material_ = material;
-    get_logical ().set_name (i_model::make_logical_volume_name (name_));
-    get_logical ().set_shape (_solid_);
-    get_logical ().set_material_ref (_material_);
+    grab_logical ().set_name (i_model::make_logical_volume_name (name_));
+    grab_logical ().set_shape (_solid_);
+    grab_logical ().set_material_ref (_material_);
 
     DT_LOG_TRACE (get_logging_priority (), "Install physicals...");
     _setup_phys_.set_name (i_model::make_physical_volume_name (SETUP_LABEL));

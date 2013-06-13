@@ -170,8 +170,8 @@ namespace geomtools {
     _solid_.set_z (_z_);
     DT_THROW_IF (! _solid_.is_valid (), std::logic_error, "Invalid solid in replicated boxed model '" << name_ << "' !");
 
-    get_logical ().set_name (i_model::make_logical_volume_name (name_));
-    get_logical ().set_shape (_solid_);
+    grab_logical ().set_name (i_model::make_logical_volume_name (name_));
+    grab_logical ().set_shape (_solid_);
     // 2013-06-13 FM : we cannot use the boxed model material here
     // There is no garantee it is the proper one to be used for the envelope solid.
     // std::string material_name = material::constants::instance ().MATERIAL_REF_DEFAULT;
@@ -179,7 +179,7 @@ namespace geomtools {
     //   {
     //     material_name = _boxed_model_->get_logical ().get_material_ref ();
     //   }
-    get_logical ().set_material_ref (material_name);
+    grab_logical ().set_material_ref (material_name);
 
     placement basic_p;
     basic_p.set (x0, y0, z0, 0, 0, 0);

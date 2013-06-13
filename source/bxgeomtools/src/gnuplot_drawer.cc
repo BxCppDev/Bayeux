@@ -311,7 +311,7 @@ namespace geomtools {
       int display_level = 0;
 
       datatools::properties log_visu_config;
-      visibility::extract (log.parameters (), log_visu_config);
+      visibility::extract (log.get_parameters (), log_visu_config);
 
       DT_LOG_TRACE (local_priority, "Logical '" << log.get_name () << "' visibility properties:");
       if (local_priority >= datatools::logger::PRIO_TRACE)
@@ -400,10 +400,10 @@ namespace geomtools {
         if (! draw_children) {
           draw_it = false;
         }
-        if (log_child.parameters ().has_flag ("visibility.shown")) {
+        if (log_child.get_parameters ().has_flag ("visibility.shown")) {
           draw_it = true;
         }
-        if (log_child.parameters ().has_flag ("visibility.hidden")) {
+        if (log_child.get_parameters ().has_flag ("visibility.hidden")) {
           draw_it = false;
         }
         if (! draw_it) {
@@ -458,7 +458,7 @@ namespace geomtools {
     const geomtools::logical_volume & log = log_;
 
     datatools::properties visu_config;
-    visibility::extract (log_.parameters (), visu_config);
+    visibility::extract (log_.get_parameters (), visu_config);
 
     bool shown = true;
     bool shown_envelop = true;

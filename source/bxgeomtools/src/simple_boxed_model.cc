@@ -138,9 +138,9 @@ namespace geomtools {
     _solid_.set_z (get_z ());
     DT_THROW_IF (! _solid_.is_valid (), std::logic_error, "Invalid box dimensions in simple boxed model '" << name_ << "' !");
 
-    get_logical ().set_name (i_model::make_logical_volume_name (name_));
-    get_logical ().set_shape (_solid_);
-    get_logical ().set_material_ref (material_name);
+    grab_logical ().set_name (i_model::make_logical_volume_name (name_));
+    grab_logical ().set_shape (_solid_);
+    grab_logical ().set_material_ref (material_name);
 
     return;
   }

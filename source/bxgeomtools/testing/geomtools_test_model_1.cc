@@ -75,9 +75,9 @@ namespace geomtools {
       }
 
     // initialize the 'logical_volume' of this model:
-    get_logical ().set_name (i_model::make_logical_volume_name (name_));
-    get_logical ().set_shape (__solid);
-    get_logical ().set_material_ref (material);
+    grab_logical ().set_name (i_model::make_logical_volume_name (name_));
+    grab_logical ().set_shape (__solid);
+    grab_logical ().set_material_ref (material);
 
     if (devel) clog << "DEVEL: test_model_1::_at_construct: Exiting." << endl;
     return;

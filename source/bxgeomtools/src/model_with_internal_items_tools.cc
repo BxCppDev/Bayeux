@@ -65,7 +65,7 @@ namespace geomtools {
     return _phys_;
   }
 
-  physical_volume & model_with_internal_items_tools::item_type::get_physical_volume ()
+  physical_volume & model_with_internal_items_tools::item_type::grab_physical_volume ()
   {
     return _phys_;
   }
@@ -87,7 +87,7 @@ namespace geomtools {
   }
 
   model_with_internal_items_tools::item_type &
-  model_with_internal_items_tools::get_item (const std::string & label_)
+  model_with_internal_items_tools::grab_item (const std::string & label_)
   {
     item_dict_type::iterator found = _items_.find (label_);
     DT_THROW_IF (found == _items_.end (), std::logic_error, "No item with label '" << label_ << "'");
@@ -122,7 +122,8 @@ namespace geomtools {
     return _items_;
   }
 
-  model_with_internal_items_tools::item_dict_type & model_with_internal_items_tools::get_items ()
+  model_with_internal_items_tools::item_dict_type &
+  model_with_internal_items_tools::grab_items ()
   {
     return _items_;
   }
@@ -145,23 +146,20 @@ namespace geomtools {
                                                               models_col_type * models_)
   {
     std::vector<std::string> labels;
-    if (config_.has_key ("internal_item.labels"))
-      {
-        config_.fetch ("internal_item.labels", labels);
-      }
+    if (config_.has_key ("internal_item.labels")) {
+      config_.fetch ("internal_item.labels", labels);
+    }
 
-    if (labels.size () == 0)
-      {
-        // no internal item within the 'logical_volume' mother envelope:
-        return;
-      }
+    if (labels.size () == 0) {
+      // no internal item within the 'logical_volume' mother envelope:
+      return;
+    }
 
     DT_THROW_IF (! models_, std::logic_error, "Missing dictionary of models !");
 
     for (std::vector<std::string>::const_iterator i = labels.begin ();
          i != labels.end ();
-         i++)
-      {
+         i++) {
         const std::string item_label = *i;
         placement item_placement;
         // extract placement:
@@ -174,12 +172,10 @@ namespace geomtools {
           const std::string item_placement_str = config_.fetch_string (item_placement_oss.str ());
           // parse placement:
           bool res_parsing = true;
-          try
-            {
+          try {
               res_parsing = placement::from_string (item_placement_str, item_placement);
             }
-          catch (...)
-            {
+          catch (...) {
               res_parsing = false;
             }
           DT_THROW_IF (! res_parsing, std::logic_error, "Item's placement parsing failed !");
@@ -202,7 +198,7 @@ namespace geomtools {
         }
 
         add_item (item_label, *item_model, item_placement);
-        physical_volume & item_phys = get_item (item_label).get_physical_volume ();
+        physical_volume & item_phys = grab_item (item_label).grab_physical_volume ();
         const placement & item_plcmt = get_item (item_label).get_placement ();
         item_phys.set_name (i_model::make_physical_volume_name (item_label));
         item_phys.set_placement (item_plcmt);

@@ -60,11 +60,10 @@ namespace geomtools {
     /*** parse properties ***/
 
     double lunit = CLHEP::mm;
-    if (config_.has_key ("length_unit"))
-      {
-        const std::string lunit_str = config_.fetch_string ("length_unit");
-        lunit = datatools::units::get_length_unit_from (lunit_str);
-      }
+    if (config_.has_key ("length_unit")) {
+      const std::string lunit_str = config_.fetch_string ("length_unit");
+      lunit = datatools::units::get_length_unit_from (lunit_str);
+    }
 
     DT_THROW_IF (! config_.has_key ("material.ref"), std::logic_error, "Missing 'material.ref' property in spherical extrusion box model '" << name_ << "' !");
     _material_ = config_.fetch_string ("material.ref");
@@ -96,10 +95,9 @@ namespace geomtools {
     _z_ = z;
     _r_extrusion_ = re;
     _r_sphere_    = rs;
-    if (config_.has_flag ("bottom"))
-      {
-        _bottom_ = true;
-      }
+    if (config_.has_flag ("bottom")) {
+      _bottom_ = true;
+    }
 
     DT_THROW_IF (_r_extrusion_ > _x_ || _r_extrusion_ > _y_,
                  std::logic_error,
@@ -134,10 +132,9 @@ namespace geomtools {
     const geomtools::placement sphere_extrusion_placement (0, 0, zsphere, 0, 0, 0);
     _solid_.set_shapes (_mother_, _extrusion_, sphere_extrusion_placement);
     _solid_.properties ().store ("h", h);
-    if (_bottom_)
-      {
-        _solid_.properties ().store_flag ("bottom");
-      }
+    if (_bottom_) {
+      _solid_.properties ().store_flag ("bottom");
+    }
     // Install proposed 'stackable data' pointer in the shape:
     {
       geomtools::stackable_data * sd_ptr = new geomtools::stackable_data;
@@ -145,29 +142,25 @@ namespace geomtools {
       sd_ptr->xmax = +0.5*_x_;
       sd_ptr->ymin = -0.5*_y_;
       sd_ptr->ymax = +0.5*_y_;
-      if (! _bottom_)
-        {
-          sd_ptr->zmax = +0.5 * z - c;
-          sd_ptr->zmin = -0.5 * z;
-        }
-      else
-        {
-          sd_ptr->zmin = -0.5 * z + c;
-          sd_ptr->zmax = +0.5 * z;
-        }
+      if (! _bottom_) {
+        sd_ptr->zmax = +0.5 * z - c;
+        sd_ptr->zmin = -0.5 * z;
+      } else {
+        sd_ptr->zmin = -0.5 * z + c;
+        sd_ptr->zmax = +0.5 * z;
+      }
       _solid_.set_stackable_data (sd_ptr);
       DT_LOG_TRACE (get_logging_priority (), "Stackabel data:");
-      if (get_logging_priority () >= datatools::logger::PRIO_TRACE)
-        {
-          sd_ptr->tree_dump (std::cerr);
-        }
+      if (get_logging_priority () >= datatools::logger::PRIO_TRACE) {
+        sd_ptr->tree_dump (std::cerr);
+      }
     }
 
     _solid_.set_user_draw ((void *) &spherical_extrusion_box_model::gnuplot_draw_user_function);
 
-    get_logical ().set_name (i_model::make_logical_volume_name (name_));
-    get_logical ().set_shape (_solid_);
-    get_logical ().set_material_ref (_material_);
+    grab_logical ().set_name (i_model::make_logical_volume_name (name_));
+    grab_logical ().set_shape (_solid_);
+    grab_logical ().set_material_ref (_material_);
 
     DT_LOG_TRACE (get_logging_priority (), "Exiting.");
     return;
@@ -369,8 +362,6 @@ namespace geomtools {
       }
     return;
   }
-
-
 
 } // end of namespace geomtools
 

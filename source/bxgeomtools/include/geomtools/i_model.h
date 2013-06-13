@@ -36,6 +36,7 @@ namespace geomtools {
   {
   public:
 
+    /// \brief Constants parameters used by geometry models
     struct constants {
       constants ();
       static const constants & instance ();
@@ -47,16 +48,16 @@ namespace geomtools {
 
     typedef geomtools::models_col_type models_col_type;
 
+    /// Check if the construction of geometry model is completed
     bool is_constructed () const;
 
-    bool is_debug () const;
-
+    /// Check if the geometry model is "phantom"
     bool is_phantom_solid () const;
 
+    /// Set the name of the geometry model
     void set_name (const std::string & name_);
 
-    void set_debug (bool);
-
+    /// Get the name of the geometry model
     const std::string & get_name () const;
 
     /// Configuration parameters (should be get_)
@@ -80,46 +81,72 @@ namespace geomtools {
     /// Get a non mutable reference to the embedded logical volume
     const geomtools::logical_volume & get_logical () const;
 
+    /// Check if there is an effective logical volume
+    bool has_effective_logical() const;
+
+    /// Get a non mutable reference to the effective logical volume
+    const geomtools::logical_volume & get_effective_logical () const;
+
+    /// Get a mutable reference to the effective logical volume
+    geomtools::logical_volume & grab_effective_logical ();
+
     /// Get a mutable reference to the embedded logical volume
     geomtools::logical_volume & grab_logical ();
 
-    /// Get a mutable reference to the embedded logical volume (deprecated : use i_model::grab_logical, still used in geomtools models...)
-    geomtools::logical_volume & get_logical ();
+    // /// Get a mutable reference to the embedded logical volume (deprecated : use i_model::grab_logical, still used in geomtools models...)
+    // geomtools::logical_volume & get_logical ();
 
     /// Main pure virtual method that constructs the geometry model
     virtual void construct (const std::string & name_,
                             const datatools::properties & setup_,
                             models_col_type * models_ = 0);
 
+    /// Get the model ID
     virtual std::string get_model_id () const = 0;
 
+    /// Get the logging priority threshold
     datatools::logger::priority get_logging_priority() const;
 
+    /// Set the logging priority threshold
     void set_logging_priority(datatools::logger::priority);
+
+    /// Check for debug logging priority threshold
+    bool is_debug () const;
+
+    /// Force the debug logging priority threshold
+    void set_debug (bool);
 
   protected:
 
+    /// Set the non mutable reference to the effective logical volume
+    void _set_effective_logical (geomtools::logical_volume &);
+
+    /// Set the phantom solid flag
     void _set_phantom_solid (bool);
 
+    /// Pre-construction method
     virtual void _pre_construct (datatools::properties & setup_);
 
+    /// Post-construction method
     virtual void _post_construct (datatools::properties & setup_);
 
+    /// The main construction method (abstract)
     virtual void _at_construct (const std::string & name_,
                                 const datatools::properties & setup_,
                                 models_col_type * models_ = 0) = 0;
 
   protected:
 
-    bool                        _phantom_solid;    //!< Special flag (not used yet)
-    geomtools::logical_volume   _logical;          //!< Top logical volume attached to the model
-    datatools::logger::priority _logging_priority; //!< Logging priority threshold
+    bool                        _phantom_solid;     //!< Special flag (not used yet)
+    geomtools::logical_volume   _logical;           //!< Top logical volume attached to the model
+    geomtools::logical_volume * _effective_logical; //!< Optional effective logical volume attached to the model
+    datatools::logger::priority _logging_priority;  //!< Logging priority threshold
 
   private:
 
-    bool _constructed_;
-    datatools::properties _parameters_;
-    std::string _name_;
+    bool                  _constructed_; //!< Completed construction flag
+    datatools::properties _parameters_;  //!< Definition parameters
+    std::string           _name_;        //!< Name of the geometry model
 
   public:
 

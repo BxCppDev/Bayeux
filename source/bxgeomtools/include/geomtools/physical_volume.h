@@ -1,16 +1,16 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* physical_volume.h
  * Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-08
  * Last modified: 2010-02-08
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *   Geometry ID
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
 #ifndef GEOMTOOLS_PHYSICAL_VOLUME_H_
@@ -24,7 +24,7 @@
 #include <datatools/i_tree_dump.h>
 
 namespace geomtools {
- 
+
   class i_placement;
   class logical_volume;
 
@@ -33,11 +33,11 @@ namespace geomtools {
   {
 
   private:
-    
+
     void _clear_logical_ ();
-    
+
     void _clear_placement_ ();
-    
+
   public:
 
     bool is_locked () const;
@@ -50,9 +50,9 @@ namespace geomtools {
 
     void set_name (const std::string &);
 
-    const datatools::properties & parameters () const;
+    const datatools::properties & get_parameters () const;
 
-    datatools::properties & parameters ();
+    datatools::properties & grab_parameters ();
 
     bool has_placement () const;
 
@@ -86,31 +86,31 @@ namespace geomtools {
 
     physical_volume (const std::string & name_);
 
-    physical_volume (const std::string & name_, 
+    physical_volume (const std::string & name_,
                      const logical_volume & logical_,
                      const logical_volume & mother_,
                      const i_placement    & placement_);
 
-    physical_volume (const std::string & name_, 
+    physical_volume (const std::string & name_,
                      const logical_volume * logical_,
                      const logical_volume & mother_,
                      const i_placement    & placement_);
-    
-    physical_volume (const std::string & name_,   
+
+    physical_volume (const std::string & name_,
                      const logical_volume & logical_,
                      const logical_volume & mother_,
                      const i_placement    * placement_);
-    
-    physical_volume (const std::string & name_,  
+
+    physical_volume (const std::string & name_,
                      const logical_volume * logical_,
                      const logical_volume & mother_,
                      const i_placement    * placement_);
 
     virtual ~physical_volume ();
 
-    virtual void tree_dump (std::ostream & out_         = std::clog, 
-                            const std::string & title_  = "", 
-                            const std::string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_         = std::clog,
+                            const std::string & title_  = "",
+                            const std::string & indent_ = "",
                             bool inherit_               = false) const;
   private:
 
@@ -131,7 +131,7 @@ namespace geomtools {
   public:
 
     typedef std::map<std::string, const physical_volume *> dict_type;
-      
+
   };
 
 } // end of namespace geomtools

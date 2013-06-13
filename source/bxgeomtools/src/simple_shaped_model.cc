@@ -160,10 +160,10 @@ namespace geomtools {
     _material_name_ = config_.fetch_string ("material.ref");
 
     // Makes the embedded logical volume the default mother of daughter physical volumes:
-    _daughter_owner_logical_ = &get_logical ();
+    _daughter_owner_logical_ = &grab_logical ();
 
     // Set the logical name:
-    get_logical ().set_name (i_model::make_logical_volume_name (name_));
+    grab_logical ().set_name (i_model::make_logical_volume_name (name_));
 
     if (get_shape_name () == "box") {
       // Box case:
@@ -188,7 +188,7 @@ namespace geomtools {
     }
 
     // Set the envelope solid shape:
-    get_logical ().set_shape (*_solid_);
+    grab_logical ().set_shape (*_solid_);
 
     // Search for internal items to be installed within the model envelope :
     // 2011-11-21 FM : try this to forbid a second plug attempt...
@@ -200,9 +200,8 @@ namespace geomtools {
       }
     } else {
       DT_LOG_WARNING(get_logging_priority (),
-                     "Shape is not extruded ! No daughter physical volumes can be placed in its nonexistent inner volume in simple (" << get_shape_name () << ") shaped model '" << name_ << "' !")
-
-        }
+                     "Shape is not extruded ! No daughter physical volumes can be placed in its nonexistent inner volume in simple (" << get_shape_name () << ") shaped model '" << name_ << "' !");
+    }
 
     DT_LOG_TRACE (get_logging_priority (), "Exiting.");
     return;
@@ -240,10 +239,10 @@ namespace geomtools {
     _box_ = new box (x, y, z);
     DT_THROW_IF (! _box_->is_valid (), std::logic_error, "Invalid box dimensions in simple shaped (box) model '" << name_ << "' !");
     _solid_ = _box_;
-    get_logical ().set_material_ref (_material_name_);
+    grab_logical ().set_material_ref (_material_name_);
 
     // search for internal item to install within the model envelope:
-    _internals_.plug_internal_models (config_, get_logical (), models_);
+    _internals_.plug_internal_models (config_, grab_logical (), models_);
 
     return;
   }
@@ -296,10 +295,10 @@ namespace geomtools {
     _cylinder_ = new cylinder (r, z);
     DT_THROW_IF (! _cylinder_->is_valid (), std::logic_error, "Invalid cylinder dimensions in simple shaped (cylinder) model '" << name_ << "'");
     _solid_ = _cylinder_;
-    get_logical ().set_material_ref (_material_name_);
+    grab_logical ().set_material_ref (_material_name_);
 
     // search for internal item to install within the model envelope:
-    _internals_.plug_internal_models (config_, get_logical (), models_);
+    _internals_.plug_internal_models (config_, grab_logical (), models_);
 
     return;
   }
@@ -334,10 +333,10 @@ namespace geomtools {
     DT_THROW_IF (! _sphere_->is_valid (), std::logic_error,
                  "Invalid sphere dimension in simple shaped (sphere) model '" << name_ << "' !");
     _solid_ = _sphere_;
-    get_logical ().set_material_ref (_material_name_);
+    grab_logical ().set_material_ref (_material_name_);
 
     // search for internal item to install within the model envelope:
-    _internals_.plug_internal_models (config_, get_logical (), models_);
+    _internals_.plug_internal_models (config_, grab_logical (), models_);
 
     return;
   }
@@ -446,7 +445,7 @@ namespace geomtools {
     // Use the plain tube as solid envelope of the model:
     if (_filled_mode_ == filled_utils::FILLED_NONE) {
       _solid_ = _tube_;
-      get_logical ().set_material_ref (_material_name_);
+      grab_logical ().set_material_ref (_material_name_);
     }
 
     // Build the tube model by cylindric extrusion of a mother cylinder:
@@ -463,7 +462,7 @@ namespace geomtools {
       _tube_->compute_outer_cylinder (*_cylinder_);
       DT_THROW_IF (! _cylinder_->is_valid (), std::logic_error, "Invalid 'outer' cylinder dimensions in simple shaped (tube) model '" << name_ << "' !");
       _solid_ = _cylinder_;
-      get_logical ().set_material_ref (_material_name_);
+      grab_logical ().set_material_ref (_material_name_);
       if (! _tube_->is_extruded ()) {
         // If the tube is not extruded, no daughter physical volumes can be placed
         // within the 'outer' envelope cylinder:
@@ -502,7 +501,7 @@ namespace geomtools {
       DT_THROW_IF (! _cylinder_->is_valid (), std::logic_error,
                    "Invalid 'outer' cylinder dimensions in simple shaped (tube) model '" << name_ << "' !");
       _solid_ = _cylinder_;
-      get_logical ().set_material_ref (_filled_material_name_);
+      grab_logical ().set_material_ref (_filled_material_name_);
       if (! _tube_->is_extruded ()) {
         // If the tube is not extruded, no daughter physical volumes can be placed
         // within the 'outer' envelope cylinder:
@@ -515,13 +514,14 @@ namespace geomtools {
         _inner_logical_.set_material_ref (_material_name_);
         _inner_logical_.set_shape (*_tube_);
         if (visibility::has_color (config_)) {
-          visibility::set_color (_inner_logical_.parameters (),
+          visibility::set_color (_inner_logical_.grab_parameters (),
                                  visibility::get_color (config_));
         }
         _inner_phys_.set_name (i_model::make_physical_volume_name (inner_name));
         _inner_phys_.set_placement (_inner_placement_);
         _inner_phys_.set_logical (_inner_logical_);
         _inner_phys_.set_mother (this->get_logical ());
+        _set_effective_logical (_inner_logical_);
       }
     }
 
@@ -572,7 +572,7 @@ namespace geomtools {
 
     if (_filled_mode_ == filled_utils::FILLED_NONE) {
       _solid_ = _polycone_;
-      get_logical ().set_material_ref (_material_name_);
+      grab_logical ().set_material_ref (_material_name_);
     }
 
     // Build the polycone model by extrusion of a mother polycone:
@@ -584,7 +584,7 @@ namespace geomtools {
                    "Invalid envelope polycone in simple shaped (polycone) model '" << name_ << "' !");
       _outer_shape_ = envelope_polycone;
       _solid_ = _outer_shape_;
-      get_logical ().set_material_ref (_material_name_);
+      grab_logical ().set_material_ref (_material_name_);
       // If the polycone is extruded, add an extruded 'inner' polycone within the 'outer' polycone:
       if (! _polycone_->is_extruded ()) {
         // If the polycone is not extruded, no daughter physical volumes can be placed
@@ -623,7 +623,7 @@ namespace geomtools {
       DT_THROW_IF (! outer_polycone->is_valid (), std::logic_error, "Invalid 'outer' cylinder dimensions in simple shaped (polycone) model '" << name_ << "' !");
       _outer_shape_ = outer_polycone;
       _solid_ = _outer_shape_;
-      get_logical ().set_material_ref (_filled_material_name_);
+      grab_logical ().set_material_ref (_filled_material_name_);
       if (! _polycone_->is_extruded ()) {
         // If the polycon is not extruded, no daughter physical volumes can be placed
         // within the 'outer' envelope polycone:
@@ -637,13 +637,14 @@ namespace geomtools {
         _inner_logical_.set_material_ref (_material_name_);
         _inner_logical_.set_shape (*_polycone_);
         if (visibility::has_color (config_)) {
-          visibility::set_color (_inner_logical_.parameters (),
+          visibility::set_color (_inner_logical_.grab_parameters (),
                                  visibility::get_color (config_));
         }
         _inner_phys_.set_name (i_model::make_physical_volume_name (inner_name));
         _inner_phys_.set_placement (_inner_placement_);
         _inner_phys_.set_logical (_inner_logical_);
         _inner_phys_.set_mother (this->get_logical ());
+        _set_effective_logical (_inner_logical_);
       }
     }
 
@@ -693,7 +694,7 @@ namespace geomtools {
 
     if (_filled_mode_ == filled_utils::FILLED_NONE) {
       _solid_ = _polyhedra_;
-      get_logical ().set_material_ref (_material_name_);
+      grab_logical ().set_material_ref (_material_name_);
     }
 
     // build the polyhedra by extrusion of a mother polyhedra:
@@ -704,7 +705,7 @@ namespace geomtools {
       DT_THROW_IF (! envelope_polyhedra->is_valid (), std::logic_error, "Invalid envelope polyhedra in simple shaped (polyhedra) model '" << name_ << "' !");
       _outer_shape_ = envelope_polyhedra;
       _solid_ = _outer_shape_;
-      get_logical ().set_material_ref (_material_name_);
+      grab_logical ().set_material_ref (_material_name_);
       // if the polyhedra is extruded, add an extruded 'inner' polyhedra
       // within the 'outer' polyhedra:
       if (! _polyhedra_->is_extruded ()) {
@@ -743,7 +744,7 @@ namespace geomtools {
       DT_THROW_IF (! outer_polyhedra->is_valid (), std::logic_error, "Invalid 'outer' cylinder dimensions in simple shaped (polyhedra) model '" << name_ << "' !");
       _outer_shape_ = outer_polyhedra;
       _solid_ = _outer_shape_;
-      get_logical ().set_material_ref (_filled_material_name_);
+      grab_logical ().set_material_ref (_filled_material_name_);
       if (! _polyhedra_->is_extruded ()) {
         // if the polyhedra is not extruded, no daughter physical volumes can be placed
         // within the 'outer' envelope polyhedra:
@@ -757,13 +758,14 @@ namespace geomtools {
         _inner_logical_.set_material_ref (_material_name_);
         _inner_logical_.set_shape (*_polyhedra_);
         if (visibility::has_color (config_)) {
-          visibility::set_color (_inner_logical_.parameters (),
+          visibility::set_color (_inner_logical_.grab_parameters (),
                                  visibility::get_color (config_));
         }
         _inner_phys_.set_name (i_model::make_physical_volume_name (inner_name));
         _inner_phys_.set_placement (_inner_placement_);
         _inner_phys_.set_logical (_inner_logical_);
         _inner_phys_.set_mother (this->get_logical ());
+        _set_effective_logical (_inner_logical_);
       }
     }
 
@@ -774,13 +776,13 @@ namespace geomtools {
 
   void simple_shaped_model::_post_construct (datatools::properties & setup_)
   {
-    sensitive::extract (setup_, get_logical ().parameters ());
-    visibility::extract (setup_, get_logical ().parameters ());
+    sensitive::extract (setup_, grab_logical ().grab_parameters ());
+    visibility::extract (setup_, grab_logical ().grab_parameters ());
     if (_solid_) {
       stackable::extract (setup_, _solid_->properties ());
     }
     if (_daughter_owner_logical_ != 0) {
-      mapping_utils::extract (setup_, _daughter_owner_logical_->parameters ());
+      mapping_utils::extract (setup_, _daughter_owner_logical_->grab_parameters ());
     }
     return;
   }
@@ -831,15 +833,9 @@ namespace geomtools {
     }
 
     if (_daughter_owner_logical_ != 0) {
-      out_ << indent << datatools::i_tree_dumpable::tag
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
            << "Daughter owner logical : '" << _daughter_owner_logical_->get_name() << "'" << std::endl;
 
-    }
-
-    // material name:
-    {
-      out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
-           << "Material name : '" << get_material_name () << "'" << std::endl;
     }
 
     return;

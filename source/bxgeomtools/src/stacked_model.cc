@@ -553,9 +553,9 @@ namespace geomtools {
     _solid_.set_z (dim_z);
     DT_THROW_IF (! _solid_.is_valid (), std::logic_error, "Invalid solid in stacked model '" << name_ << "' !");
 
-    get_logical ().set_name (i_model::make_logical_volume_name (name_));
-    get_logical ().set_shape (_solid_);
-    get_logical ().set_material_ref (material_name);
+    grab_logical ().set_name (i_model::make_logical_volume_name (name_));
+    grab_logical ().set_shape (_solid_);
+    grab_logical ().set_material_ref (material_name);
 
     // starting position:
     double pos;
@@ -655,7 +655,7 @@ namespace geomtools {
       {
         DT_LOG_TRACE (get_logging_priority (), "Process MWIM");
         _internals_.plug_internal_models (config_,
-                                          get_logical (),
+                                          grab_logical (),
                                           models_);
       }
 

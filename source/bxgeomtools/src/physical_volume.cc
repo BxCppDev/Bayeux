@@ -41,12 +41,12 @@ namespace geomtools {
     return;
   }
 
-  const datatools::properties & physical_volume::parameters () const
+  const datatools::properties & physical_volume::get_parameters () const
   {
     return _parameters_;
   }
 
-  datatools::properties & physical_volume::parameters ()
+  datatools::properties & physical_volume::grab_parameters ()
   {
     return _parameters_;
   }

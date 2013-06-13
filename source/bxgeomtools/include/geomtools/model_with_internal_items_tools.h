@@ -1,17 +1,17 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* model_with_internal_items_tools.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-10-16
  * Last modified: 2010-10-16
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *   Some tools to make a model owning internal items
  *   within its mother shape
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
 #ifndef GEOMTOOLS_MODEL_WITH_INTERNAL_ITEMS_TOOLS_H_
@@ -48,7 +48,7 @@ namespace geomtools {
       void set_placement (const placement &);
       const placement & get_placement () const;
       const physical_volume & get_physical_volume () const;
-      physical_volume & get_physical_volume ();
+      physical_volume & grab_physical_volume ();
     };
 
     typedef std::map<std::string, item_type> item_dict_type;
@@ -60,14 +60,14 @@ namespace geomtools {
     ~model_with_internal_items_tools ();
 
     const item_type & get_item (const std::string &) const;
-    item_type & get_item (const std::string &);
-    void add_item (const std::string & label_, 
+    item_type & grab_item (const std::string &);
+    void add_item (const std::string & label_,
                    const i_model & model_,
                    const placement & placement_);
     bool has_item (const std::string &) const;
     size_t get_number_of_items () const;
     const item_dict_type & get_items () const;
-    item_dict_type & get_items ();
+    item_dict_type & grab_items ();
 
     void plug_internal_models (const datatools::properties & setup_,
                                logical_volume & log_,
@@ -75,7 +75,7 @@ namespace geomtools {
 
   private:
 
-    item_dict_type      _items_;
+    item_dict_type _items_; //!< Collection of internal items
 
   };
 

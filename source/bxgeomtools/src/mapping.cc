@@ -439,9 +439,9 @@ namespace geomtools {
       DT_LOG_TRACE (get_logging_priority (), _indenter_ <<
                     "Daughter label = '" << daughter_label << "' ");
       std::string daughter_category_info;
-      if (mapping_utils::has_daughter_id (log.parameters (),
+      if (mapping_utils::has_daughter_id (log.get_parameters (),
                                           daughter_label)) {
-        mapping_utils::fetch_daughter_id (log.parameters (),
+        mapping_utils::fetch_daughter_id (log.get_parameters (),
                                           daughter_label,
                                           daughter_category_info);
         DT_LOG_TRACE (get_logging_priority (), _indenter_ <<
@@ -581,9 +581,9 @@ namespace geomtools {
       DT_LOG_TRACE (get_logging_priority (), _indenter_ <<
                     "Daughter label = '" << daughter_label << "' ");
       std::string daughter_category_info;
-      if (mapping_utils::has_daughter_id (log.parameters (),
+      if (mapping_utils::has_daughter_id (log.get_parameters (),
                                           daughter_label)) {
-        mapping_utils::fetch_daughter_id (log.parameters (),
+        mapping_utils::fetch_daughter_id (log.get_parameters (),
                                           daughter_label,
                                           daughter_category_info);
         DT_LOG_TRACE (get_logging_priority (), _indenter_ <<

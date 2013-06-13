@@ -483,9 +483,9 @@ namespace geomtools {
     _solid_.set_z (dim_z);
     DT_THROW_IF (! _solid_.is_valid (), std::logic_error, "Invalid solid in surrounded boxed model '" << name_ << "' !");
 
-    get_logical ().set_name (i_model::make_logical_volume_name (name_));
-    get_logical ().set_shape (_solid_);
-    get_logical ().set_material_ref (_material_name_);
+    grab_logical ().set_name (i_model::make_logical_volume_name (name_));
+    grab_logical ().set_shape (_solid_);
+    grab_logical ().set_material_ref (_material_name_);
 
     // placement of the surrounded solid:
     _surrounded_placmt_.set (surrounded_x, surrounded_y, surrounded_z, 0.0, 0.0, 0.0);
@@ -549,7 +549,7 @@ namespace geomtools {
     // 2011-12-05 FM : add support for additional internal objects :
     if (_internals_.get_number_of_items () == 0) {
        _internals_.plug_internal_models (config_,
-                                         get_logical (),
+                                         grab_logical (),
                                          models_);
     }
 

@@ -1,16 +1,16 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* logical_volume.h
  * Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-08
  * Last modified: 2010-02-08
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *   Logical volume.
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
 #ifndef GEOMTOOLS_LOGICAL_VOLUME_H_
@@ -48,9 +48,15 @@ namespace geomtools {
 
     void set_name (const std::string &);
 
-    const datatools::properties & parameters () const;
+    // /// Obsolete
+    // const datatools::properties & parameters () const;
 
-    datatools::properties & parameters ();
+    // /// Obsolete
+    // datatools::properties & parameters ();
+
+    const datatools::properties & get_parameters () const;
+
+    datatools::properties & grab_parameters ();
 
     bool has_shape () const;
 
@@ -74,9 +80,9 @@ namespace geomtools {
 
     virtual ~logical_volume ();
 
-    virtual void tree_dump (std::ostream & out_         = std::clog, 
-                            const std::string & title_  = "", 
-                            const std::string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_         = std::clog,
+                            const std::string & title_  = "",
+                            const std::string & indent_ = "",
                             bool inherit_          = false) const;
 
     bool has_physical (const std::string & name_) const;
@@ -88,7 +94,7 @@ namespace geomtools {
     void set_material_ref (const std::string & = "");
 
     const physical_volume & get_physical (const std::string & name_) const;
-      
+
     void add_physical (const physical_volume & phys_, const std::string & name_ = "");
 
     bool is_replica () const;
@@ -98,25 +104,26 @@ namespace geomtools {
     void set_abstract (bool a_);
 
   private:
-    
+
     void _clear_shape_ ();
-   
+
     void _init_defaults_ ();
-   
+
     void _at_lock_ ();
 
     void _compute_real_physicals_ ();
 
   private:
 
-    std::string           _name_;
-    bool                  _locked_;
-    datatools::properties _parameters_;
-    bool                  _own_shape_;
-    const i_shape_3d *    _shape_;
-    physicals_col_type    _physicals_;
-    bool                  _abstract_;
-    physicals_col_type    _real_physicals_;
+    std::string           _name_;         //!< The name of the volume
+    std::string           _material_ref_; //!< The name of the material
+    bool                  _locked_;       //!< The lock flag
+    datatools::properties _parameters_;   //!< The collection of auxiliary parameters
+    bool                  _own_shape_;    //!< Shape owner flag
+    const i_shape_3d *    _shape_;        //!< Shape handle
+    physicals_col_type    _physicals_;    //!< Dictionnary of daughter volumes
+    bool                  _abstract_;     //!< Abstract flag
+    physicals_col_type    _real_physicals_; //!< Unused
 
   public:
 

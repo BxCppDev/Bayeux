@@ -408,7 +408,7 @@ int main (int argc_, char ** argv_)
                    i++)
                 {
                   bool visible = true;
-                  visible = geomtools::visibility::is_shown (i->second->get_logical ().parameters ());
+                  visible = geomtools::visibility::is_shown (i->second->get_logical ().get_parameters ());
                   if (force_show)
                     {
                       visible = true;

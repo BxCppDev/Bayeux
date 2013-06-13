@@ -214,9 +214,10 @@ visibility.color  : string  = "red"
 ########################################################
 [name="PMT.model" type="geomtools::simple_shaped_model"]
 
+#@config Parameters for the PM tube geoemtry model
 shape_type  : string = "polycone"
 
-#filled_mode : string = "by_extrusion"
+#@description The filled mode of the polycone model (none|by_extrusion|by_envelope)
 filled_mode : string = "by_envelope"
 
 #@description The length unit

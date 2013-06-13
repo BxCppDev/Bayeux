@@ -215,9 +215,9 @@ namespace geomtools {
 
     _solid_.set_user_draw ((void *) &plate_with_hole_model::gnuplot_draw_user_function);
 
-    get_logical ().set_name (i_model::make_logical_volume_name (name_));
-    get_logical ().set_shape (_solid_);
-    get_logical ().set_material_ref (_material_);
+    grab_logical ().set_name (i_model::make_logical_volume_name (name_));
+    grab_logical ().set_shape (_solid_);
+    grab_logical ().set_material_ref (_material_);
 
     return;
   }
