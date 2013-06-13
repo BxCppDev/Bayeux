@@ -95,7 +95,9 @@ namespace geomtools {
   {
     string indent;
     if (! indent_.empty ()) indent = indent_;
-    this->i_placement::tree_dump (out_, title_, indent, true);
+
+    const string indent2 = indent; // + "|-- ";
+    this->i_placement::tree_dump (out_, title_, indent2, true);
 
 
     out_ << indent << datatools::i_tree_dumpable::tag

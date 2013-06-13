@@ -242,12 +242,14 @@ namespace geomtools {
     this->i_placement::tree_dump (out_, title_, indent, true);
 
     {
-      ostringstream oss_title;
-      oss_title << indent << datatools::i_tree_dumpable::tag << "Basic placement :";
+      out_ << indent << datatools::i_tree_dumpable::tag << "Basic placement : "
+           << endl;
+      // ostringstream oss_title;
+      // oss_title << indent << datatools::i_tree_dumpable::tag << "Basic placement :";
       ostringstream oss_indent;
       oss_indent << indent << datatools::i_tree_dumpable::skip_tag;
       _basic_placement_.tree_dump (out_,
-                                   oss_title.str (),
+                                   "",
                                    oss_indent.str ());
     }
 
@@ -258,17 +260,14 @@ namespace geomtools {
          << _number_of_items_  << endl;
 
     out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
-         << "Replica :" << is_replica ();
-    if (is_replicant_x_axis ())
-      {
+         << "Replica : " << is_replica ();
+    if (is_replicant_x_axis ()) {
         out_ << " [X]";
       }
-    if (is_replicant_y_axis ())
-      {
+    if (is_replicant_y_axis ()) {
         out_ << " [Y]";
       }
-    if (is_replicant_z_axis ())
-      {
+    if (is_replicant_z_axis ()) {
         out_ << " [Z]";
       }
     out_ << endl;

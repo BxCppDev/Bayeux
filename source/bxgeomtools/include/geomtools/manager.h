@@ -149,6 +149,9 @@ namespace geomtools {
       /// Get the name of the plugin
       const std::string& get_name() const;
 
+      /// Get the ID of the plugin
+      const std::string& get_id() const;
+
       /// Set the description of the plugin
       void set_description(const std::string&);
 

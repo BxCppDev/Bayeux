@@ -137,6 +137,11 @@ namespace geomtools {
     return _name_;
   }
 
+  const std::string & manager::plugin_entry::get_id() const
+  {
+    return _id_;
+  }
+
   void manager::plugin_entry::set_description(const std::string& description_)
   {
     DT_THROW_IF (is_created(),
@@ -804,7 +809,7 @@ namespace geomtools {
         const plugin_entry& plugin_record = it->second;
 
         out_ << "Name : '" << plugin_name << "' "
-            << "Type : '" << plugin_record._id_ << "' ";
+             << "Type : '" << plugin_record._id_ << "' ";
         out_ << '(';
         int count = 0;
         if (plugin_record._status_ & plugin_entry::STATUS_INITIALIZED) {
@@ -984,27 +989,27 @@ namespace geomtools {
     if (!title_.empty()) out_ << indent << title_ << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-        << "Logging priority : \""
-        << datatools::logger::get_priority_label(_logging) << "\""
+        << "Logging              : '"
+        << datatools::logger::get_priority_label(_logging) << "'"
         << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-        << "Initialized     : "
+        << "Initialized          : "
         << _initialized_
         << "" << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-        << "Setup label : '"
+        << "Setup label          : '"
         << _setup_label_
         << "'" << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-        << "Setup version : '"
+        << "Setup version        : '"
         << _setup_version_
         << "'" << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-        << "Setup description : '"
+        << "Setup description    : '"
         << _setup_description_
         << "'" << std::endl;
 
@@ -1014,44 +1019,85 @@ namespace geomtools {
         << " " << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-        << "Model factory size : "
+        << "Model factory size   : "
         << _factory_.get_models().size()
         << " " << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-        << "Mapping requested : "
-        << _mapping_requested_
-        << " " << std::endl;
+         << "Mapping requested    : "
+         << _mapping_requested_
+         << " " << std::endl;
+    if (_mapping_requested_) {
+      out_ << indent << datatools::i_tree_dumpable::skip_tag
+           << datatools::i_tree_dumpable::last_tag << "Mapping size     : "
+           << _mapping_.get_geom_infos ().size()
+           << " " << std::endl;
+    }
 
     out_ << indent << datatools::i_tree_dumpable::tag
-        << "Mapping size : "
-        << _mapping_.get_geom_infos ().size()
-        << " " << std::endl;
+         << "World name           : '" << _world_name_ << "'"
+         << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-        << "World name : "
-        << _world_name_
-        << " " << std::endl;
+         << "Plugins factory preload              : "
+         << _plugins_factory_preload_
+         << " " << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-        << "Plugins factory preload : "
-        << _plugins_factory_preload_
-        << " " << std::endl;
+         << "Plugins force initialization at load : "
+         << _plugins_force_initialization_at_load_
+         << " " << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-        << "Plugins force initialization at load : "
-        << _plugins_force_initialization_at_load_
-        << " " << std::endl;
-
-    // out_ << indent << datatools::i_tree_dumpable::tag
-    //     << "Plugins facorty : "
-    //     << _plugins_factory_register_.size()
-    //     << " " << std::endl;
+         << "Plugins factories                    : "
+         << std::endl;
+    {
+      std::ostringstream indent2;
+      indent2 << indent <<  datatools::i_tree_dumpable::skip_tag;
+      std::vector<std::string> plugin_factory_names;
+      _plugins_factory_register_.tree_dump(out_,"",indent2.str());
+      /*
+      std::vector<std::string> plugin_factory_names;
+      _plugins_factory_register_.list_of_factories(plugin_factory_names);
+      for (int i = 0; i < plugin_factory_names.size(); i++)  {
+        int j = i;
+        j++;
+        out_ << indent;
+        out_ << datatools::i_tree_dumpable::skip_tag;
+        if (j == plugin_factory_names.size()) {
+          out_ << datatools::i_tree_dumpable::last_tag;
+        } else {
+          out_ << datatools::i_tree_dumpable::tag;
+        }
+        out_ << plugin_factory_names[i] << std::endl;
+      }
+      */
+    }
 
     out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
-        << "Plugins : "
+        << "Plugins                              : "
         << _plugins_.size()
         << " " << std::endl;
+    for (plugins_dict_type::const_iterator i = _plugins_.begin();
+         i != _plugins_.end();
+         i++) {
+      plugins_dict_type::const_iterator j = i;
+      j++;
+      out_ << indent;
+      out_ << datatools::i_tree_dumpable::inherit_skip_tag(inherit_);
+      if (j == _plugins_.end()) {
+        out_ << datatools::i_tree_dumpable::last_tag;
+      } else {
+        out_ << datatools::i_tree_dumpable::tag;
+      }
+      out_ << i->first << " as a '" << i->second.get_id() << "'";
+      if (i->second.is_created()) {
+        out_ << " (created)";
+      } else if  (i->second.is_initialized()) {
+        out_ << " (initialized)";
+      }
+      out_ << std::endl;
+    }
 
     return;
   }

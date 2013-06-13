@@ -269,7 +269,7 @@ namespace geomtools {
 
     {
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Replicated placement (box) : " << std::endl;
+           << "Replicated placement : " << std::endl;
       {
         std::ostringstream indent_oss;
         indent_oss << indent;

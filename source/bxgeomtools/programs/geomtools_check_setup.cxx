@@ -288,6 +288,7 @@ int main (int argc_, char ** argv_)
         std::clog << std::endl
                   << "Enter the name of a geometry model (ex: 'world', type '.m' to print the list)" <<  "\n"
                   << "   or the GID of a volume (ex: '[1234:0.1.2]', type '.g' to print the list) " << "\n"
+                  << "   or print the description of a geometry model (ex: type '.M world') " << "\n"
                   << "   or type '.q' to quit ";
         if (! visu_object_name.empty ()) {
           std::clog << " (default : '" << visu_object_name << "')";

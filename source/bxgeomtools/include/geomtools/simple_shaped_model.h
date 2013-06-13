@@ -117,8 +117,8 @@ namespace geomtools {
   private:
 
     std::string _shape_name_;
-    int         _filled_mode_;
     std::string _material_name_;
+    int         _filled_mode_;
     std::string _filled_material_name_;
 
     geomtools::box *       _box_;

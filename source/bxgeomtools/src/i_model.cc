@@ -257,7 +257,7 @@ namespace geomtools {
          << "Model ID    : \"" << get_model_id () << "\"" << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "Logging priority threshold       : \""
+         << "Logging     : \""
          << datatools::logger::get_priority_label(_logging_priority) << "\"" << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
@@ -277,7 +277,7 @@ namespace geomtools {
 
     {
       out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
-           << "Logical  : " << std::endl;
+           << "Logical     : " << std::endl;
       std::ostringstream indent_oss;
       indent_oss << indent;
       indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
