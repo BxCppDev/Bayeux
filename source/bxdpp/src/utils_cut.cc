@@ -91,6 +91,8 @@ namespace dpp {
                 "Utils cut named '" << (has_name()?get_name():"?" )
                 << "' is already initialized !");
 
+    this->i_cut::_common_initialize (configuration_);
+
     if (_mode_ == MODE_UNDEFINED)
       {
         DT_THROW_IF(! configuration_.has_key ("mode"),

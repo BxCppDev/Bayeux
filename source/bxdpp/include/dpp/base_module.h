@@ -49,8 +49,6 @@ namespace datatools {
   // Forward declaration :
   class properties;
   class multi_properties;
-}
-namespace datatools {
   class service_manager;
 }
 
