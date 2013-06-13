@@ -1,7 +1,7 @@
 # -*- mode: conf-unix; -*-
 # List of multi-properties (datatools::multi_properties):
 
-#@description List of geometry models 
+#@description List of geometry models
 #
 # This geometry sample setup describes an optical module
 # based on the coupling of a PMT and a scintillator block
@@ -114,6 +114,9 @@ visibility.color           : string  = "cyan"
 
 #@config The list of properties to describe the rotated light guide
 
+#@description The name of the material
+material.ref  : string  = "vacuum"
+
 #@description The rotation axis
 rotated.axis  : string = "z"
 
@@ -144,14 +147,14 @@ visibility.hidden          : boolean = 0
 #@description The recommended color for the display
 visibility.color           : string  = "grey"
 
-#@description The visibility hidden flag for the envelope 
+#@description The visibility hidden flag for the envelope
 visibility.hidden_envelope  : boolean = 0
 
 
 #######################################################################
 [name="focusing_electrode.model" type="geomtools::simple_shaped_model"]
 
-#@config The list of properties to describe the rotated light guide
+#@config The list of properties to describe the focusing electrode
 
 #@description The shape
 shape_type   : string =  "tube"
@@ -214,7 +217,7 @@ visibility.color  : string  = "red"
 shape_type  : string = "polycone"
 
 #filled_mode : string = "by_extrusion"
-filled_mode : string = "by_envelope" 
+filled_mode : string = "by_envelope"
 
 #@description The length unit
 length_unit : string = "mm"
@@ -256,7 +259,7 @@ internal_item.labels 	    : string[12] = \
 				"dynode_7" \
 				"dynode_8" \
 				"dynode_9" \
-				"anode" 
+				"anode"
 
 #@description The placement of the "focusing_electrode" daughter volume
 internal_item.placement.focusing_electrode : string  = "0 0 +20 (mm)"
@@ -377,7 +380,7 @@ visibility.color  : string  = "red"
 [name="optical_module.model" type="geomtools::stacked_model"]
 
 #@description The name of the material
-material.ref      : string    = "copper"
+material.ref      : string    = "vacuum"
 
 #@description The stacking axis
 stacked.axis            : string = "z"
@@ -419,6 +422,9 @@ mapping.daughter_id.scintillator_block : string  = "[scin_block.gc]"
 ###################################################################
 [name="detector_column.model" type="geomtools::replicated_model"]
 
+#@description The name of the material
+material.ref      : string    = "vacuum"
+
 #@description The replication axis
 replicated.axis            : string = "y"
 
@@ -443,6 +449,9 @@ mapping.daughter_id.optical_modules : string  = "[detector.gc:row+0]"
 
 ###################################################################
 [name="detector_array.model" type="geomtools::replicated_model"]
+
+#@description The name of the material
+material.ref      : string    = "vacuum"
 
 #@description The replication axis
 replicated.axis            : string = "x"

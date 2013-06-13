@@ -45,6 +45,9 @@ visibility.daughters.hidden : boolean = 0
 
 #@config The list of properties to describe the lead shield array
 
+#@description The name of the material
+material.ref : string = "vacuum"
+
 #@description The direction of the grid
 grid.plane : string = "xz"
 
@@ -74,9 +77,6 @@ z : real = 130 cm
 
 #@description The name of the geometry model
 grid.model : string = "brick.model"
-
-#@description The name of the material
-material.ref : string = "vacuum"
 
 #@description The name of the geometry model
 grid.daughter_label : string = "bricks"

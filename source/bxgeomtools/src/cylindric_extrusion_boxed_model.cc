@@ -113,7 +113,7 @@ namespace geomtools {
                                                        models_col_type * models_)
   {
     DT_LOG_TRACE (get_logging_priority (), "Entering...");
-    set_name (name_);
+    //set_name (name_);
 
     double lunit = CLHEP::mm;
     if (config_.has_key ("length_unit"))
@@ -122,29 +122,29 @@ namespace geomtools {
         lunit = datatools::units::get_length_unit_from (lunit_str);
       }
 
-    DT_THROW_IF (! config_.has_key ("x"), std::logic_error, "Missing 'x' property !");
+    DT_THROW_IF (! config_.has_key ("x"), std::logic_error, "Missing 'x' property in cylindric extrusion boxed model '" << name_ << "' !");
     double mother_x = config_.fetch_real ("x");
     if (! config_.has_explicit_unit ("x")) mother_x *= lunit;
 
-    DT_THROW_IF (! config_.has_key ("y"), std::logic_error, "Missing 'y' property !");
+    DT_THROW_IF (! config_.has_key ("y"), std::logic_error, "Missing 'y' property in cylindric extrusion boxed model '" << name_ << "' !");
     double mother_y = config_.fetch_real ("y");
     if (! config_.has_explicit_unit ("y")) mother_y *= lunit;
 
-    DT_THROW_IF (! config_.has_key ("z"), std::logic_error, "Missing 'z' property !");
+    DT_THROW_IF (! config_.has_key ("z"), std::logic_error, "Missing 'z' property in cylindric extrusion boxed model '" << name_ << "' !");
     double mother_z = config_.fetch_real ("z");
     if (! config_.has_explicit_unit ("z")) mother_z *= lunit;
 
-    DT_THROW_IF (! config_.has_key ("extrusion_radius"), std::logic_error, "Missing 'extrusion_radius' property !");
+    DT_THROW_IF (! config_.has_key ("extrusion_radius"), std::logic_error, "Missing 'extrusion_radius' property in cylindric extrusion boxed model '" << name_ << "' !");
     double extrusion_radius = config_.fetch_real ("extrusion_radius");
     if (! config_.has_explicit_unit ("extrusion_radius")) extrusion_radius *= lunit;
 
-    DT_THROW_IF (! config_.has_key ("material.ref"), std::logic_error, "Missing 'material.ref' property !");
+    DT_THROW_IF (! config_.has_key ("material.ref"), std::logic_error, "Missing 'material.ref' property in cylindric extrusion boxed model '" << name_ << "' !");
     const std::string material_name = config_.fetch_string ("material.ref");
 
     DT_THROW_IF (extrusion_radius >= 0.5 * mother_x, std::logic_error,
-                 "Extrusion radius (" << extrusion_radius / CLHEP::mm << " mm) is too large (X-axis) !");
+                 "Extrusion radius (" << extrusion_radius / CLHEP::mm << " mm) is too large (X-axis) in cylindric extrusion boxed model '" << name_ << "' !");
     DT_THROW_IF (extrusion_radius >= 0.5 * mother_y, std::logic_error,
-                 "Extrusion radius (" << extrusion_radius / CLHEP::mm << " mm) is too large (Y-axis) !");
+                 "Extrusion radius (" << extrusion_radius / CLHEP::mm << " mm) is too large (Y-axis) in cylindric extrusion boxed model '" << name_ << "' !");
 
     set_material_name (material_name);
     set_mother_x (mother_x);
@@ -156,7 +156,7 @@ namespace geomtools {
     _mother_box_.set_x (get_mother_x ());
     _mother_box_.set_y (get_mother_y ());
     _mother_box_.set_z (get_mother_z ());
-    DT_THROW_IF (! _mother_box_.is_valid (), std::logic_error, "Invalid box dimensions !");
+    DT_THROW_IF (! _mother_box_.is_valid (), std::logic_error, "Invalid box dimensions in cylindric extrusion boxed model '" << name_ << "' !");
 
     _extrusion_cylinder_.set_diameter (2 * get_extrusion_radius ());
     const double eps = 1.0e-5 * CLHEP::mm;

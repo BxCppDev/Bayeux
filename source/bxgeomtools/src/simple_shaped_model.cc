@@ -148,16 +148,16 @@ namespace geomtools {
                                            models_col_type * models_)
   {
     DT_LOG_TRACE (get_logging_priority (), "Entering...");
-    set_name (name_);
+    // set_name (name_);
 
     // Initialization:
     _filled_material_name_ = material::constants::instance ().MATERIAL_REF_UNKNOWN;
 
     // parsing shape:
-    DT_THROW_IF (! config_.has_key ("shape_type"), std::logic_error, "Missing 'shape_type' property !");
+    DT_THROW_IF (! config_.has_key ("shape_type"), std::logic_error, "Missing 'shape_type' property in simple shaped model '" << name_ << "' !");
     _shape_name_ = config_.fetch_string ("shape_type");
 
-    DT_THROW_IF (! config_.has_key ("material.ref"), std::logic_error, "Missing 'material.ref' property !");
+    DT_THROW_IF (! config_.has_key ("material.ref"), std::logic_error, "Missing 'material.ref' property in simple shaped model '" << name_ << "' !");
     _material_name_ = config_.fetch_string ("material.ref");
 
     // makes the embeded logical volume the default
@@ -199,7 +199,7 @@ namespace geomtools {
       }
     else
       {
-        DT_THROW_IF (true, std::logic_error, "Shape '" << get_shape_name () << "' is not supported !");
+        DT_THROW_IF (true, std::logic_error, "Shape '" << get_shape_name () << "' is not supported in simple shaped model '" << name_ << "' !");
       }
 
     // set the envelope solid shape:
@@ -235,17 +235,17 @@ namespace geomtools {
         lunit = datatools::units::get_length_unit_from (lunit_str);
       }
 
-    DT_THROW_IF (! config_.has_key ("x"), std::logic_error, "Missing box 'x' property !");
+    DT_THROW_IF (! config_.has_key ("x"), std::logic_error, "Missing box 'x' property in simple shaped (box) model '" << name_ << "' !");
     double x = config_.fetch_real ("x");
     if (! config_.has_explicit_unit ("x")) {
       x *= lunit;
     }
-    DT_THROW_IF (! config_.has_key ("y"), std::logic_error, "Missing box 'y' property !");
+    DT_THROW_IF (! config_.has_key ("y"), std::logic_error, "Missing box 'y' property in simple shaped (box) model '" << name_ << "' !");
     double y = config_.fetch_real ("y");
     if (! config_.has_explicit_unit ("y")) {
       y *= lunit;
     }
-    DT_THROW_IF (! config_.has_key ("z"), std::logic_error, "Missing box 'z' property !");
+    DT_THROW_IF (! config_.has_key ("z"), std::logic_error, "Missing box 'z' property in simple shaped (box) model '" << name_ << "' !");
     double z = config_.fetch_real ("z");
     if (! config_.has_explicit_unit ("z")) {
       z *= lunit;
@@ -253,7 +253,7 @@ namespace geomtools {
 
     // build the box:
     _box_ = new box (x, y, z);
-    DT_THROW_IF (! _box_->is_valid (), std::logic_error, "Invalid box dimensions !");
+    DT_THROW_IF (! _box_->is_valid (), std::logic_error, "Invalid box dimensions in simple shaped (box) model '" << name_ << "' !");
     _solid_ = _box_;
     get_logical ().set_material_ref (_material_name_);
 
@@ -306,9 +306,9 @@ namespace geomtools {
           r *= lunit;
         }
       }
-    DT_THROW_IF (! datatools::is_valid (r), std::logic_error, "Missing cylinder 'r' or 'diameter' property !");
+    DT_THROW_IF (! datatools::is_valid (r), std::logic_error, "Missing cylinder 'r' or 'diameter' property in simple shaped (cylinder) model '" << name_ << "' !");
 
-    DT_THROW_IF (! config_.has_key ("z"), std::logic_error, "Missing cylinder 'z' property !");
+    DT_THROW_IF (! config_.has_key ("z"), std::logic_error, "Missing cylinder 'z' property in simple shaped (cylinder) model '" << name_ << "' !");
     double z = config_.fetch_real ("z");
     if (! config_.has_explicit_unit ("z")) {
       z *= lunit;
@@ -316,7 +316,7 @@ namespace geomtools {
 
     // build the cylinder:
     _cylinder_ = new cylinder (r, z);
-    DT_THROW_IF (! _cylinder_->is_valid (), std::logic_error, "Invalid cylinder dimensions");
+    DT_THROW_IF (! _cylinder_->is_valid (), std::logic_error, "Invalid cylinder dimensions in simple shaped (cylinder) model '" << name_ << "'");
     _solid_ = _cylinder_;
     get_logical ().set_material_ref (_material_name_);
 
@@ -346,7 +346,7 @@ namespace geomtools {
         aunit = datatools::units::get_angle_unit_from (aunit_str);
       }
 
-    DT_THROW_IF (! config_.has_key ("r"), std::logic_error, "Missing sphere 'r' property !");
+    DT_THROW_IF (! config_.has_key ("r"), std::logic_error, "Missing sphere 'r' property in simple shaped (sphere) model '" << name_ << "' !");
     double r = config_.fetch_real ("r");
     if (! config_.has_explicit_unit ("r")) {
       r *= lunit;
@@ -354,7 +354,7 @@ namespace geomtools {
 
     // build the sphere:
     _sphere_ = new sphere (r);
-    DT_THROW_IF (! _sphere_->is_valid (), std::logic_error, "Invalid sphere dimension !");
+    DT_THROW_IF (! _sphere_->is_valid (), std::logic_error, "Invalid sphere dimension in simple shaped (sphere) model '" << name_ << "' !");
     _solid_ = _sphere_;
     get_logical ().set_material_ref (_material_name_);
 
@@ -409,7 +409,7 @@ namespace geomtools {
       }
     if (! datatools::is_valid (inner_r))
       {
-        DT_LOG_WARNING (get_logging_priority (), "Missing tube 'inner_r' property ! Using 0-default inner radius !");
+        DT_LOG_WARNING (get_logging_priority (), "Missing tube 'inner_r' property ! Using 0-default inner radius in simple shaped (tube) model '" << name_ << "' !");
         inner_r = 0.0;
       }
 
@@ -436,9 +436,9 @@ namespace geomtools {
           outer_r *= lunit;
         }
       }
-    DT_THROW_IF (! datatools::is_valid (outer_r), std::logic_error, "Missing tube 'outer_r' property !");
+    DT_THROW_IF (! datatools::is_valid (outer_r), std::logic_error, "Missing tube 'outer_r' property in simple shaped (tube) model '" << name_ << "' !");
 
-    DT_THROW_IF (! config_.has_key ("z"), std::logic_error, "Missing tube 'z' property !");
+    DT_THROW_IF (! config_.has_key ("z"), std::logic_error, "Missing tube 'z' property in simple shaped (tube) model '" << name_ << "' !");
     double z = config_.fetch_real ("z");
     if (! config_.has_explicit_unit ("z")) {
       z *= lunit;
@@ -462,7 +462,7 @@ namespace geomtools {
           }
         else
           {
-            DT_THROW_IF (true, std::logic_error, "Invalid mode '" << filled_mode_label << "' property !");
+            DT_THROW_IF (true, std::logic_error, "Invalid mode '" << filled_mode_label << "' property in simple shaped (tube) model '" << name_ << "' !");
           }
       }
     else
@@ -476,13 +476,13 @@ namespace geomtools {
         // parsing material:
         DT_THROW_IF (! config_.has_key ("material.filled.ref"),
                      std::logic_error,
-                     "Missing 'material.filled.ref' property !");
+                     "Missing 'material.filled.ref' property in simple shaped (tube) model '" << name_ << "' !");
         _material_name_ = config_.fetch_string ("material.filled.ref");
       }
 
     // build the tube:
     _tube_ = new tube (inner_r, outer_r, z);
-    DT_THROW_IF (! _tube_->is_valid (), std::logic_error, "Invalid tube dimensions !");
+    DT_THROW_IF (! _tube_->is_valid (), std::logic_error, "Invalid tube dimensions in simple shaped (tube) model '" << name_ << "' !");
 
     // use the plain tube as solid envelope of the model:
     if (_filled_mode_ == filled_utils::FILLED_NONE)
@@ -504,7 +504,7 @@ namespace geomtools {
         // make the envelope a cylinder:
         _cylinder_ = new cylinder;
         _tube_->compute_outer_cylinder (*_cylinder_);
-        DT_THROW_IF (! _cylinder_->is_valid (), std::logic_error, "Invalid 'outer' cylinder dimensions !");
+        DT_THROW_IF (! _cylinder_->is_valid (), std::logic_error, "Invalid 'outer' cylinder dimensions in simple shaped (tube) model '" << name_ << "' !");
         _solid_ = _cylinder_;
         get_logical ().set_material_ref (_material_name_);
         // if the tube is extruded, add an extrusion 'inner' cylinder
@@ -516,7 +516,7 @@ namespace geomtools {
             if (! inner_cyl->is_valid ())
               {
                 delete inner_cyl;
-                DT_THROW_IF (true, std::logic_error, "Invalid 'inner' cylinder dimensions !");
+                DT_THROW_IF (true, std::logic_error, "Invalid 'inner' cylinder dimensions in simple shaped (tube) model '" << name_ << "' !");
               }
             _inner_shape_ = inner_cyl;
             // inner placement for the extrusion:
@@ -541,7 +541,7 @@ namespace geomtools {
         // make the envelope a cylinder:
         _cylinder_ = new cylinder;
         _tube_->compute_outer_cylinder (*_cylinder_);
-        DT_THROW_IF (! _cylinder_->is_valid (), std::logic_error, "Invalid 'outer' cylinder dimensions !");
+        DT_THROW_IF (! _cylinder_->is_valid (), std::logic_error, "Invalid 'outer' cylinder dimensions in simple shaped (tube) model '" << name_ << "' !");
         _solid_ = _cylinder_;
         get_logical ().set_material_ref (_filled_material_name_);
         if (! _tube_->is_extruded ())
@@ -600,7 +600,7 @@ namespace geomtools {
           }
         else
           {
-            DT_THROW_IF (true, std::logic_error, "Invalid mode '" << filled_mode_label << "' property !");
+            DT_THROW_IF (true, std::logic_error, "Invalid mode '" << filled_mode_label << "' property in simple shaped (polycone) model '" << name_ << "' !");
           }
       }
     else
@@ -614,13 +614,13 @@ namespace geomtools {
         // parsing material:
         DT_THROW_IF (! config_.has_key ("material.filled.ref"),
                      std::logic_error,
-                     "Missing 'material.filled.ref' property !");
+                     "Missing 'material.filled.ref' property in simple shaped (polycone) model '" << name_ << "' !");
         _material_name_ = config_.fetch_string ("material.filled.ref");
       }
 
     _polycone_ = new polycone ();
     _polycone_->initialize (config_);
-    DT_THROW_IF (! _polycone_->is_valid (), std::logic_error, "Invalid polycone build parameters !");
+    DT_THROW_IF (! _polycone_->is_valid (), std::logic_error, "Invalid polycone build parameters in simple shaped (polycone) model '" << name_ << "' !");
 
     DT_LOG_TRACE (get_logging_priority (), "Polycone:");
     if (get_logging_priority () >= datatools::logger::PRIO_TRACE)
@@ -640,7 +640,7 @@ namespace geomtools {
         // make the envelope a polycone:
         polycone * envelope_polycone = new polycone;
         _polycone_->compute_outer_polycone (*envelope_polycone);
-        DT_THROW_IF (! envelope_polycone->is_valid (), std::logic_error, "Invalid envelope polycone !");
+        DT_THROW_IF (! envelope_polycone->is_valid (), std::logic_error, "Invalid envelope polycone in simple shaped (polycone) model '" << name_ << "' !");
         _outer_shape_ = envelope_polycone;
         _solid_ = _outer_shape_;
         get_logical ().set_material_ref (_material_name_);
@@ -653,7 +653,7 @@ namespace geomtools {
             if (! inner_pol->is_valid ())
               {
                 delete inner_pol;
-                DT_THROW_IF (true, std::logic_error, "Invalid 'inner' polycone dimensions !");
+                DT_THROW_IF (true, std::logic_error, "Invalid 'inner' polycone dimensions in simple shaped (polycone) model '" << name_ << "' !");
               }
             _inner_shape_ = inner_pol;
             // inner placement for the extrusion:
@@ -678,7 +678,7 @@ namespace geomtools {
         // make the envelope a cylinder:
         polycone * outer_polycone = new polycone;
         _polycone_->compute_outer_polycone (*outer_polycone);
-        DT_THROW_IF (! outer_polycone->is_valid (), std::logic_error, "Invalid 'outer' cylinder dimensions !");
+        DT_THROW_IF (! outer_polycone->is_valid (), std::logic_error, "Invalid 'outer' cylinder dimensions in simple shaped (polycone) model '" << name_ << "' !");
         _outer_shape_ = outer_polycone;
         _solid_ = _outer_shape_;
         get_logical ().set_material_ref (_filled_material_name_);
@@ -737,7 +737,7 @@ namespace geomtools {
           }
         else
           {
-            DT_THROW_IF (true, std::logic_error, "Invalid mode '" << filled_mode_label << "' property !");
+            DT_THROW_IF (true, std::logic_error, "Invalid mode '" << filled_mode_label << "' property in simple shaped (polyhedra) model '" << name_ << "' !");
           }
       }
     else
@@ -751,13 +751,13 @@ namespace geomtools {
         // parsing material:
         DT_THROW_IF (! config_.has_key ("material.filled.ref"),
                      std::logic_error,
-                     "Missing 'material.filled.ref' property !");
+                     "Missing 'material.filled.ref' property in simple shaped (polyhedra) model '" << name_ << "' !");
         _material_name_ = config_.fetch_string ("material.filled.ref");
       }
 
     _polyhedra_ = new polyhedra ();
     _polyhedra_->initialize (config_);
-    DT_THROW_IF (! _polyhedra_->is_valid (), std::logic_error, "Invalid polyhedra build parameters !");
+    DT_THROW_IF (! _polyhedra_->is_valid (), std::logic_error, "Invalid polyhedra build parameters in simple shaped (polyhedra) model '" << name_ << "' !");
 
     DT_LOG_TRACE (get_logging_priority (), "Polyhedra:");
     if (get_logging_priority () >= datatools::logger::PRIO_TRACE)
@@ -777,7 +777,7 @@ namespace geomtools {
         // make the envelope a polyhedra:
         polyhedra * envelope_polyhedra = new polyhedra;
         _polyhedra_->compute_outer_polyhedra (*envelope_polyhedra);
-        DT_THROW_IF (! envelope_polyhedra->is_valid (), std::logic_error, "Invalid envelope polyhedra !");
+        DT_THROW_IF (! envelope_polyhedra->is_valid (), std::logic_error, "Invalid envelope polyhedra in simple shaped (polyhedra) model '" << name_ << "' !");
         _outer_shape_ = envelope_polyhedra;
         _solid_ = _outer_shape_;
         get_logical ().set_material_ref (_material_name_);
@@ -790,7 +790,7 @@ namespace geomtools {
             if (! inner_pol->is_valid ())
               {
                 delete inner_pol;
-                DT_THROW_IF (true, std::logic_error, "Invalid 'inner' polyhedra dimensions !");
+                DT_THROW_IF (true, std::logic_error, "Invalid 'inner' polyhedra dimensions in simple shaped (polyhedra) model '" << name_ << "' !");
               }
             _inner_shape_ = inner_pol;
             // inner placement for the extrusion:
@@ -815,7 +815,7 @@ namespace geomtools {
         // make the envelope a cylinder:
         polyhedra * outer_polyhedra = new polyhedra;
         _polyhedra_->compute_outer_polyhedra (*outer_polyhedra);
-        DT_THROW_IF (! outer_polyhedra->is_valid (), std::logic_error, "Invalid 'outer' cylinder dimensions !");
+        DT_THROW_IF (! outer_polyhedra->is_valid (), std::logic_error, "Invalid 'outer' cylinder dimensions in simple shaped (polyhedra) model '" << name_ << "' !");
         _outer_shape_ = outer_polyhedra;
         _solid_ = _outer_shape_;
         get_logical ().set_material_ref (_filled_material_name_);

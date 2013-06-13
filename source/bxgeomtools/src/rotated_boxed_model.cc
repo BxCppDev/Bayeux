@@ -54,7 +54,12 @@ namespace geomtools {
                                            models_col_type * models_)
   {
     DT_LOG_TRACE (get_logging_priority (), "Entering...");
-    set_name (name_);
+    //set_name (name_);
+
+    DT_THROW_IF (! config_.has_key ("material.ref"),
+                 std::logic_error,
+                 "Missing 'material.ref' property in rotated boxed model '" << name_ << "' !");
+    const std::string material_name = config_.fetch_string ("material.ref");
 
     /*** length unit ***/
     double lunit = CLHEP::mm;
@@ -331,11 +336,13 @@ namespace geomtools {
 
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (_solid_);
-    std::string material_name = material::constants::instance ().MATERIAL_REF_DEFAULT;
-    if (_boxed_model_->get_logical ().has_material_ref ())
-      {
-        material_name = _boxed_model_->get_logical ().get_material_ref ();
-      }
+    // 2013-06-13 FM : we cannot use the boxed model material here
+    // There is no garantee it is the proper one to be used for the envelope solid.
+    // std::string material_name = material::constants::instance ().MATERIAL_REF_DEFAULT;
+    // if (_boxed_model_->get_logical ().has_material_ref ())
+    //   {
+    //     material_name = _boxed_model_->get_logical ().get_material_ref ();
+    //   }
     get_logical ().set_material_ref (material_name);
     _boxed_phys_.set_name (i_model::make_physical_volume_name (rotated_label));
     _boxed_phys_.set_placement (_boxed_placement_);

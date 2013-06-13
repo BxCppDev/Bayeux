@@ -199,12 +199,12 @@ namespace geomtools {
                                               models_col_type * models_)
   {
     DT_LOG_TRACE (get_logging_priority (),  "Entering...");
-    set_name (name_);
+    //set_name (name_);
 
     /*** material ***/
     DT_THROW_IF (! config_.has_key ("material.ref"),
                  std::logic_error,
-                 "Missing 'material.ref' property !");
+                 "Missing 'material.ref' property in surrounded boxed model '" << name_ << "' !");
     const std::string material_name = config_.fetch_string ("material.ref");
     set_material_name (material_name);
 
@@ -218,7 +218,7 @@ namespace geomtools {
     /*** Surrounded model ***/
     DT_THROW_IF (! config_.has_key ("surrounded.model"),
                  std::logic_error,
-                 "Missing 'surrounded.model' property !");
+                 "Missing 'surrounded.model' property in surrounded boxed model '" << name_ << "' !");
     const std::string surrounded_model_name = config_.fetch_string ("surrounded.model");
 
     /*** Surrounded label ***/
@@ -244,18 +244,18 @@ namespace geomtools {
     }
 
     /*** check models ***/
-    DT_THROW_IF (! models_, std::logic_error, "Missing logicals dictionary !");
+    DT_THROW_IF (! models_, std::logic_error, "Missing logicals dictionary in surrounded boxed model '" << name_ << "' !");
 
     /*** check if surrounded model exists ***/
     {
       models_col_type::const_iterator found = models_->find (surrounded_model_name);
       DT_THROW_IF (found == models_->end (),
                    std::logic_error,
-                   "Cannot find surrounded model with name '" << surrounded_model_name << "' !");
+                   "Cannot find surrounded model with name '" << surrounded_model_name << "' in surrounded boxed model '" << name_ << "' !");
       // check if the model is stackable:
       DT_THROW_IF (! i_shape_3d::is_stackable (found->second->get_logical ().get_shape ()),
                    std::logic_error,
-                   "The surrounded model '" << found->second->get_name () << "' is not stackable !");
+                   "The surrounded model '" << found->second->get_name () << "' is not stackable in surrounded boxed model '" << name_ << "' !");
       set_surrounded_model (*(found->second));
     }
 
@@ -285,13 +285,13 @@ namespace geomtools {
         models_col_type::const_iterator found = models_->find (surrounding_model_name);
         DT_THROW_IF (found == models_->end (),
                      std::logic_error,
-                     "Cannot find surrounding model with name '"<< surrounding_model_name << "' !");
+                     "Cannot find surrounding model with name '"<< surrounding_model_name << "' in surrounded boxed model '" << name_ << "' !");
 
         // check if the model is stackable:
         DT_THROW_IF (! i_shape_3d::is_stackable (found->second->get_logical ().get_shape ()),
                      std::logic_error,
                      "The " << *ilabel << " surrounding model '" << found->second->get_name ()
-                     << "' is not stackable !");
+                     << "' is not stackable in surrounded boxed model '" << name_ << "' !");
         add_surrounding_model (ipos, *(found->second), label_name);
       } // end of for
     }
@@ -310,7 +310,7 @@ namespace geomtools {
     stackable_data the_SD;
     DT_THROW_IF ((! i_shape_3d::pickup_stackable (the_shape, the_SD)),
                  std::logic_error,
-                 "Cannot surround/stack the '" << the_shape.get_shape_name () << "' shape !");
+                 "Cannot surround/stack the '" << the_shape.get_shape_name () << "' shape in surrounded boxed model '" << name_ << "' !");
     const double gxmin = the_SD.get_xmin ();
     const double gxmax = the_SD.get_xmax ();
     const double gymin = the_SD.get_ymin ();
@@ -345,7 +345,7 @@ namespace geomtools {
       DT_THROW_IF ((! i_shape_3d::pickup_stackable (the_surrounding_shape, the_SD2)),
                    std::logic_error,
                    "Cannot surround/stack the '"
-                   << the_surrounding_shape.get_shape_name () << "' surrounding shape !");
+                   << the_surrounding_shape.get_shape_name () << "' surrounding shape in surrounded boxed model '" << name_ << "' !");
       const double g2xmin = the_SD2.get_xmin ();
       const double g2xmax = the_SD2.get_xmax ();
       const double g2ymin = the_SD2.get_ymin ();
@@ -448,7 +448,7 @@ namespace geomtools {
         DT_THROW_IF (x < dim_x,
                      std::logic_error,
                      "Enforced X dimension '" << x / CLHEP::mm
-                     << "' mm (<" << dim_x / CLHEP::mm << ") is too small for surrounded components to fit !");
+                     << "' mm (<" << dim_x / CLHEP::mm << ") is too small for surrounded components to fit in surrounded boxed model '" << name_ << "' !");
         dim_x = x;
       }
 
@@ -472,7 +472,7 @@ namespace geomtools {
         DT_THROW_IF (z < dim_z,
                      std::logic_error,
                      "Enforced Z dimension '" << z / CLHEP::mm
-                     << "' mm (<" << dim_z / CLHEP::mm << ") is too small for surrounded components to fit !");
+                     << "' mm (<" << dim_z / CLHEP::mm << ") is too small for surrounded components to fit in surrounded boxed model '" << name_ << "' !");
         dim_z = z;
       }
 
@@ -481,7 +481,7 @@ namespace geomtools {
     _solid_.set_x (dim_x);
     _solid_.set_y (dim_y);
     _solid_.set_z (dim_z);
-    DT_THROW_IF (! _solid_.is_valid (), std::logic_error, "Invalid solid !");
+    DT_THROW_IF (! _solid_.is_valid (), std::logic_error, "Invalid solid in surrounded boxed model '" << name_ << "' !");
 
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (_solid_);

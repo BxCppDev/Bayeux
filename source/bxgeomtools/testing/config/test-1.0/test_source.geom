@@ -1,7 +1,7 @@
 # -*- mode: conf-unix; -*-
 # List of multi-properties (datatools::multi_properties):
 
-#@description The geometry models that compose the source 
+#@description The geometry models that compose the source
 
 #@key_label   "name"
 #@meta_label  "type"
@@ -90,6 +90,9 @@ mapping.daughter_id.film : string  = "[source_film.gc]"
 
 ###################################################################
 [name="source_chain.model" type="geomtools::replicated_model"]
+
+#@description The name of the material
+material.ref : string = "vacuum"
 
 #@description The replication axis
 replicated.axis            : string = "x"

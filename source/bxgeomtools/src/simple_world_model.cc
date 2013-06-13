@@ -39,7 +39,7 @@ namespace geomtools {
                                           models_col_type * models_)
   {
     DT_LOG_TRACE (get_logging_priority (), "Entering...");
-    set_name (name_);
+    //set_name (name_);
 
     double length_unit = CLHEP::mm;
     if (config_.has_key ("length_unit")) {
@@ -110,15 +110,15 @@ namespace geomtools {
       DT_LOG_TRACE (get_logging_priority (), "key= 'material' = " << material);
     }
 
-    DT_THROW_IF (! config_.has_key ("setup.model"), std::logic_error, "Missing 'setup_model' property !");
+    DT_THROW_IF (! config_.has_key ("setup.model"), std::logic_error, "Missing 'setup_model' property in simple world model '" << name_ << "' !");
     const std::string setup_model_name = config_.fetch_string ("setup.model");
 
-    DT_THROW_IF (! models_, std::logic_error, "Missing logicals dictionary !");
+    DT_THROW_IF (! models_, std::logic_error, "Missing logicals dictionary in simple world model '" << name_ << "' !");
 
     // Setup model:
     {
       models_col_type::const_iterator found = models_->find (setup_model_name);
-      DT_THROW_IF (found == models_->end (), std::logic_error, "Cannot find model with name '"<< setup_model_name << "' !");
+      DT_THROW_IF (found == models_->end (), std::logic_error, "Cannot find setup model with name '"<< setup_model_name << "' in simple world model '" << name_ << "' !");
       //_setup_model_ = (dynamic_cast<const test_model_2 *> (found->second));
       _setup_model_ = found->second;
     }

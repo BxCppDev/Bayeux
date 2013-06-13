@@ -78,7 +78,7 @@ namespace geomtools {
                                             const datatools::properties & config_,
                                             models_col_type * models_)
   {
-    set_name (name_);
+    //set_name (name_);
 
     /*** box dimensions ***/
     double lunit = CLHEP::mm;
@@ -90,38 +90,35 @@ namespace geomtools {
 
     double x;
     datatools::invalidate (x);
-    if (config_.has_key ("x"))
-      {
-        x = config_.fetch_real ("x");
-        if (! config_.has_explicit_unit ("x")) {
-          x *= lunit;
-        }
-      }
+    DT_THROW_IF (! config_.has_key ("x"), std::logic_error,
+                 "Missing 'x' property  in multiple items model '" << name_ << "' !");
+    x = config_.fetch_real ("x");
+    if (! config_.has_explicit_unit ("x")) {
+      x *= lunit;
+    }
 
     double y;
     datatools::invalidate (y);
-    if (config_.has_key ("y"))
-      {
-        y = config_.fetch_real ("y");
-        if (! config_.has_explicit_unit ("y")) {
-          y *= lunit;
-        }
-      }
+    DT_THROW_IF (! config_.has_key ("y"), std::logic_error,
+                 "Missing 'y' property  in multiple items model '" << name_ << "' !");
+    y = config_.fetch_real ("y");
+    if (! config_.has_explicit_unit ("y")) {
+      y *= lunit;
+    }
 
     double z;
     datatools::invalidate (z);
-    if (config_.has_key ("z"))
-      {
-        z = config_.fetch_real ("z");
-        if (! config_.has_explicit_unit ("z")) {
-          z *= lunit;
-        }
-      }
+    DT_THROW_IF (! config_.has_key ("z"), std::logic_error,
+                 "Missing 'z' property  in multiple items model '" << name_ << "' !");
+    z = config_.fetch_real ("z");
+    if (! config_.has_explicit_unit ("z")) {
+      z *= lunit;
+    }
 
     /*** material ***/
     DT_THROW_IF (! config_.has_key ("material.ref"),
                  std::logic_error,
-                 "Missing 'material.ref' property !");
+                 "Missing 'material.ref' property in multiple items model '" << name_ << "' !");
     const std::string material_name = config_.fetch_string ("material.ref");
     set_material_name (material_name);
 
@@ -129,7 +126,7 @@ namespace geomtools {
     _solid_.set_x (x);
     _solid_.set_y (y);
     _solid_.set_z (z);
-    DT_THROW_IF (!_solid_.is_valid (), std::logic_error, "Invalid solid !");
+    DT_THROW_IF (!_solid_.is_valid (), std::logic_error, "Invalid solid in multiple items model '" << name_ << "' !");
 
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (_solid_);

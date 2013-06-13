@@ -25,6 +25,7 @@
 #include <geomtools/physical_volume.h>
 #include <geomtools/placement.h>
 #include <geomtools/box.h>
+//#include <geomtools/cylinder.h>
 #include <geomtools/model_with_internal_items_tools.h>
 
 namespace geomtools {
@@ -84,6 +85,10 @@ namespace geomtools {
     typedef std::map<std::string, int> labels_dict_type;
 
   public:
+
+    bool is_box_solid() const;
+
+    bool is_cylinder_solid() const;
 
     const std::string & get_material_name () const;
 
@@ -147,6 +152,7 @@ namespace geomtools {
     stacked_dict_type _stacked_models_;
     labels_dict_type  _labels_;
     geomtools::box    _solid_;
+    //geomtools::cylinder _cyl_solid_;
     double            _numerics_play_;
     double            _mechanics_play_;
 

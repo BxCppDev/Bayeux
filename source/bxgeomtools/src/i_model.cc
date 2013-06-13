@@ -196,14 +196,6 @@ namespace geomtools {
     return this->i_model::grab_logical ();
   }
 
-  // void i_model::_at_construct (const std::string & name_,
-  //                              const datatools::properties & setup_,
-  //                              models_col_type * models_)
-  // {
-  //   DT_THROW_IF (true, std::logic_error, "This method MUST be overloaded !");
-  //   return;
-  // }
-
   void i_model::_pre_construct (datatools::properties & setup_)
   {
     {

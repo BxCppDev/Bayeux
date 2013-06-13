@@ -97,7 +97,7 @@ namespace geomtools {
                                           const datatools::properties & config_,
                                           models_col_type * models_)
   {
-    set_name (name_);
+    //set_name (name_);
 
     double lunit = CLHEP::mm;
     if (config_.has_key ("length_unit"))
@@ -106,17 +106,17 @@ namespace geomtools {
         lunit = datatools::units::get_length_unit_from (lunit_str);
       }
 
-    DT_THROW_IF (! config_.has_key ("x"), std::logic_error, "Missing 'x' property !");
+    DT_THROW_IF (! config_.has_key ("x"), std::logic_error, "Missing 'x' property in simple boxed model '" << name_ << "' !");
     double x = config_.fetch_real ("x");
     if (! config_.has_explicit_unit ("x")) {
       x *= lunit;
     }
-    DT_THROW_IF (! config_.has_key ("y"), std::logic_error, "Missing 'y' property !");
+    DT_THROW_IF (! config_.has_key ("y"), std::logic_error, "Missing 'y' property in simple boxed model '" << name_ << "' !");
     double y = config_.fetch_real ("y");
     if (! config_.has_explicit_unit ("y")) {
       y *= lunit;
     }
-    DT_THROW_IF (! config_.has_key ("z"), std::logic_error, "Missing 'z' property !");
+    DT_THROW_IF (! config_.has_key ("z"), std::logic_error, "Missing 'z' property in simple boxed model '" << name_ << "' !");
     double z = config_.fetch_real ("z");
     if (! config_.has_explicit_unit ("z")) {
       z *= lunit;
@@ -124,7 +124,7 @@ namespace geomtools {
 
     DT_THROW_IF (! config_.has_key ("material.ref"),
                  std::logic_error,
-                 "Missing 'material.ref' property !");
+                 "Missing 'material.ref' property in simple boxed model '" << name_ << "' !");
     const std::string material_name = config_.fetch_string ("material.ref");
     set_material_name (material_name);
 
@@ -136,7 +136,7 @@ namespace geomtools {
     _solid_.set_x (get_x ());
     _solid_.set_y (get_y ());
     _solid_.set_z (get_z ());
-    DT_THROW_IF (! _solid_.is_valid (), std::logic_error, "Invalid box dimensions !");
+    DT_THROW_IF (! _solid_.is_valid (), std::logic_error, "Invalid box dimensions in simple boxed model '" << name_ << "' !");
 
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (_solid_);

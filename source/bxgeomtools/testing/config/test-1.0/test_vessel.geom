@@ -1,7 +1,7 @@
 # -*- mode: conf-unix; -*-
 # List of multi-properties (datatools::multi_properties):
 
-#@description The geometry models that compose the vessel 
+#@description The geometry models that compose the vessel
 
 #@key_label   "name"
 #@meta_label  "type"
@@ -123,6 +123,9 @@ visibility.daughters.hidden : boolean = 0
 
 #@config The list of properties to configure the vacuum chamber
 
+#@description The name of the material that fills the lab atmosphere
+material.ref : string = "air"
+
 #@description The label of the stacking axis
 stacked.axis : string = "z"
 
@@ -158,9 +161,6 @@ stacked.model_3  : string  = "vessel_endcap.model"
 
 #@description The label of the fourth stacked volume
 stacked.label_3   : string  = "endcap1"
-
-#@description The name of the material that fills the lab atmosphere
-material.ref : string = "air"
 
 #@description The recommended color for the display of the vessel area
 visibility.color            : string  = "grey"

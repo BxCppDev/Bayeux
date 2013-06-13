@@ -93,7 +93,13 @@ namespace geomtools {
                                         models_col_type * models_)
   {
     DT_LOG_TRACE (get_logging_priority (), "Entering...");
-    set_name (name_);
+    //set_name (name_);
+
+    /*** material ***/
+    DT_THROW_IF (! config_.has_key ("material.ref"),
+                 std::logic_error,
+                 "Missing 'material.ref' property in replicated model '" << name_ << "' !");
+    const std::string material_name = config_.fetch_string ("material.ref");
 
     if (config_.has_flag ("replicated.force_stackable"))
       {
@@ -103,7 +109,7 @@ namespace geomtools {
                                                  stackable::STACKABLE_PREFIX);
         DT_THROW_IF (! _sd_.initialize (stackable_config),
                      std::logic_error,
-                     "Cannot build the stackable data !");
+                     "Cannot build the stackable data in replicated model '" << name_ << "' !");
       }
 
     std::string replicated_label = "replicated";
@@ -112,13 +118,13 @@ namespace geomtools {
         replicated_label = config_.fetch_string ("replicated.label");
       }
 
-    DT_THROW_IF (! config_.has_key ("replicated.axis"), std::logic_error, "Missing 'replicated.axis' property !");
+    DT_THROW_IF (! config_.has_key ("replicated.axis"), std::logic_error, "Missing 'replicated.axis' property in replicated model '" << name_ << "' !");
     const std::string replicant_axis_label = config_.fetch_string ("replicated.axis");
 
-    DT_THROW_IF (! config_.has_key ("replicated.number_of_items"), std::logic_error, "Missing 'replicated.number_of_items' property !");
+    DT_THROW_IF (! config_.has_key ("replicated.number_of_items"), std::logic_error, "Missing 'replicated.number_of_items' property in replicated model '" << name_ << "' !");
     const size_t number_of_items = config_.fetch_integer ("replicated.number_of_items");
 
-    DT_THROW_IF (! config_.has_key ("replicated.model"), std::logic_error, "Missing 'replicated.model' property !");
+    DT_THROW_IF (! config_.has_key ("replicated.model"), std::logic_error, "Missing 'replicated.model' property in replicated model '" << name_ << "' !");
     const std::string model_name = config_.fetch_string ("replicated.model");
 
     double length_unit = CLHEP::mm;
@@ -131,22 +137,22 @@ namespace geomtools {
     if (config_.has_key ("replicated.step"))
       {
         _step_ = config_.fetch_real ("replicated.step");
-        DT_THROW_IF (_step_ <= 0.0, std::logic_error, "Invalid value for 'replicated.step' property !");
+        DT_THROW_IF (_step_ <= 0.0, std::logic_error, "Invalid value for 'replicated.step' property in replicated model '" << name_ << "' !");
         if (! config_.has_explicit_unit ("replicated.step")) {
           _step_ *= length_unit;
         }
       }
 
-    DT_THROW_IF (number_of_items == 0, std::logic_error, "Number of items is zero !");
+    DT_THROW_IF (number_of_items == 0, std::logic_error, "Number of items is zero in replicated model '" << name_ << "' !");
     set_number_of_items (number_of_items);
 
     bool axis_ok = false;
     if (replicant_axis_label == "x") axis_ok = true;
     else if (replicant_axis_label == "y") axis_ok = true;
     else if (replicant_axis_label == "z") axis_ok = true;
-    DT_THROW_IF (! axis_ok, std::logic_error, "Invalid replicant axis !");
+    DT_THROW_IF (! axis_ok, std::logic_error, "Invalid replicant axis in replicated model '" << name_ << "' !");
 
-    DT_THROW_IF (! models_, std::logic_error, "Missing logicals dictionary !");
+    DT_THROW_IF (! models_, std::logic_error, "Missing logicals dictionary in replicated model '" << name_ << "' !");
 
     // Stackable model:
     {
@@ -211,16 +217,21 @@ namespace geomtools {
     _solid_.set_x (_x_);
     _solid_.set_y (_y_);
     _solid_.set_z (_z_);
-    DT_THROW_IF (! _solid_.is_valid (), std::logic_error, "Invalid solid !");
+    DT_THROW_IF (! _solid_.is_valid (), std::logic_error, "Invalid solid in replicated model '" << name_ << "' !");
 
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (_solid_);
-    std::string material_name = material::constants::instance ().MATERIAL_REF_DEFAULT;
-    if (_model_->get_logical ().has_material_ref ())
-      {
-        material_name = _model_->get_logical ().get_material_ref ();
-      }
+    // 2013-06-13 FM : we cannot use the boxed model material here
+    // There is no garantee it is the proper one to be used for the envelope solid.
+    // std::string material_name = material::constants::instance ().MATERIAL_REF_DEFAULT;
+    // if (_boxed_model_->get_logical ().has_material_ref ())
+    //   {
+    //     material_name = _boxed_model_->get_logical ().get_material_ref ();
+    //   }
     get_logical ().set_material_ref (material_name);
+    // DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+    //              "******** Replicated model '" << get_name() << "' has material '"
+    //              << material_name << "'.");
 
     placement basic_p;
     basic_p.set (x0, y0, z0, 0, 0, 0);

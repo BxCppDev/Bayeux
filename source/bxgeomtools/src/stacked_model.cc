@@ -28,6 +28,16 @@ namespace geomtools {
 
   /****************************************************************/
 
+  bool stacked_model::is_box_solid() const
+  {
+    return true;
+  }
+
+  bool stacked_model::is_cylinder_solid() const
+  {
+    return false;
+  }
+
   stacked_model::stacked_item::stacked_item ()
   {
     model = 0;
@@ -133,6 +143,12 @@ namespace geomtools {
   const geomtools::box & stacked_model::get_solid () const
   {
     DT_THROW_IF (! is_constructed (), std::logic_error, "Operation not allowed ! Model has not been constructed yet");
+    // if (is_box_solid()) {
+    //   return _solid_;
+    // }
+    // if (is_cylinder_solid()) {
+    //   return _cyl_solid_;
+    // }
     return _solid_;
   }
 
@@ -244,12 +260,12 @@ namespace geomtools {
                                      models_col_type * models_)
   {
     DT_LOG_TRACE (get_logging_priority (),  "Entering...");
-    set_name (name_);
+    // set_name (name_);
 
     /*** material ***/
     DT_THROW_IF (! config_.has_key ("material.ref"),
                  std::logic_error,
-                 "Missing 'material.ref' property !");
+                 "Missing 'material.ref' property in stacked model '" << name_ << "' !");
     const std::string material_name = config_.fetch_string ("material.ref");
     set_material_name (material_name);
 
@@ -268,7 +284,7 @@ namespace geomtools {
         if (! config_.has_explicit_unit ("mechanics_play")) mechanics_play *= lunit;
         DT_THROW_IF (mechanics_play < 0.0,
                      std::logic_error,
-                     "Mechanics play '" <<  mechanics_play / CLHEP::mm << "' mm cannnot be negative !");
+                     "Mechanics play '" <<  mechanics_play / CLHEP::mm << "' mm cannot be negative !");
         _mechanics_play_ = mechanics_play;
       }
 
@@ -278,12 +294,12 @@ namespace geomtools {
         if (! config_.has_explicit_unit ("numerics_play")) numerics_play *= lunit;
         DT_THROW_IF (numerics_play < 0.0,
                      std::logic_error,
-                     "Numerics play '" <<  numerics_play / CLHEP::mm << "' mm cannnot be negative !");
+                     "Numerics play '" <<  numerics_play / CLHEP::mm << "' mm cannot be negative in stacked model '" << name_ << "' !");
         _numerics_play_ = numerics_play;
       }
 
     /*** Stacking axis ***/
-    DT_THROW_IF (!config_.has_key ("stacked.axis"), std::logic_error, "Missing 'stacked.axis' property !");
+    DT_THROW_IF (!config_.has_key ("stacked.axis"), std::logic_error, "Missing 'stacked.axis' property in stacked model '" << name_ << "' !");
     const std::string stacking_axis_label = config_.fetch_string ("stacked.axis");
     int stacking_axis;
     if (stacking_axis_label == "x")
@@ -300,18 +316,18 @@ namespace geomtools {
       }
     else
       {
-        DT_THROW_IF (true, std::logic_error, "Unkown axis label '" << stacking_axis_label << "'");
+        DT_THROW_IF (true, std::logic_error, "Unknown axis label '" << stacking_axis_label << "' in stacked model '" << name_ << "' !");
       }
     set_stacking_axis (stacking_axis);
 
     /*** number of stacked stacked models ***/
     DT_THROW_IF (! config_.has_key ("stacked.number_of_items"),
                  std::logic_error,
-                 "Missing 'stacked.number_of_items' property !");
+                 "Missing 'stacked.number_of_items' property in stacked model '" << name_ << "' !");
     const size_t number_of_items = config_.fetch_integer ("stacked.number_of_items");
 
     /*** check models ***/
-    DT_THROW_IF (! models_, std::logic_error, "Missing logicals dictionary !");
+    DT_THROW_IF (! models_, std::logic_error, "Missing logicals dictionary in stacked model '" << name_ << "' !");
 
     /*** loop over models to be stacked ***/
     for (size_t i = 0; i < number_of_items; i++)
@@ -320,7 +336,7 @@ namespace geomtools {
         stacked_item_prop << STACKED_MODEL_PROPERTY_PREFIX << i;
         DT_THROW_IF (! config_.has_key (stacked_item_prop.str ()),
                      std::logic_error,
-                     "Missing '" << stacked_item_prop.str () << "' property !");
+                     "Missing '" << stacked_item_prop.str () << "' property in stacked model '" << name_ << "' !");
         const std::string stacked_model_name = config_.fetch_string (stacked_item_prop.str ());
 
         // attempt to extract a user defined label:
@@ -335,11 +351,11 @@ namespace geomtools {
         models_col_type::const_iterator found = models_->find (stacked_model_name);
         DT_THROW_IF (found == models_->end (),
                      std::logic_error,
-                     "Cannot find model with name '" << stacked_model_name << "' !");
+                     "Cannot find model with name '" << stacked_model_name << "' in stacked model '" << name_ << "' !");
         // check if the model is stackable:
         DT_THROW_IF (! i_shape_3d::is_stackable (found->second->get_logical ().get_shape ()),
                      std::logic_error,
-                     "The embedded model '" << found->second->get_name () << "' is not stackable !");
+                     "The embedded model '" << found->second->get_name () << "' is not stackable in stacked model '" << name_ << "' !");
         add_stacked_model (i, *(found->second), label_name);
       }
 
@@ -364,7 +380,7 @@ namespace geomtools {
         stackable_data the_SD;
         DT_THROW_IF (! i_shape_3d::pickup_stackable (the_shape, the_SD),
                      std::logic_error,
-                     "Cannot stack model '" << name_ << "' ('" << the_shape.get_shape_name () << "' solid shape) !");
+                     "Cannot stack non-stackable model of shape '" << the_shape.get_shape_name () << "' in stacked model '" << name_ << "' !");
 
         DT_LOG_TRACE (get_logging_priority (),
                       "Dump stackable data for '" << stacked_model->get_name () <<
@@ -492,9 +508,8 @@ namespace geomtools {
         if (! config_.has_explicit_unit ("x")) x *= lunit;
         DT_THROW_IF (x < stacked_x,
                      std::logic_error,
-                     "Model '" << get_name () << "' : " <<
                      "Enforced X dimension '" << x / CLHEP::mm << "' mm (<" << stacked_x / CLHEP::mm << ") " <<
-                     "is too small for stacked components to fit !");
+                     "is too small for stacked components to fit in stacked model '" << name_ << "' !");
         dim_x = x;
       }
 
@@ -504,9 +519,8 @@ namespace geomtools {
         if (! config_.has_explicit_unit ("y")) y *= lunit;
         DT_THROW_IF (y < stacked_y,
                      std::logic_error,
-                     "Model '" << get_name () << "' : " <<
                      "Enforced Y dimension '" << y / CLHEP::mm << "' mm (<" << stacked_y / CLHEP::mm << ") " <<
-                     "is too small for stacked components to fit !");
+                     "is too small for stacked components to fit in stacked model '" << name_ << "' !");
         dim_y = y;
       }
 
@@ -516,9 +530,8 @@ namespace geomtools {
         if (! config_.has_explicit_unit ("z")) z *= lunit;
         DT_THROW_IF (z < stacked_z,
                      std::logic_error,
-                     "Model '" << get_name () << "' : " <<
                      "Enforced Z dimension '" << z / CLHEP::mm << "' mm (<" << stacked_z / CLHEP::mm << ") " <<
-                     "is too small for stacked components to fit !");
+                     "is too small for stacked components to fit in stacked model '" << name_ << "' !");
         dim_z = z;
       }
 
@@ -538,7 +551,7 @@ namespace geomtools {
     _solid_.set_x (dim_x);
     _solid_.set_y (dim_y);
     _solid_.set_z (dim_z);
-    DT_THROW_IF (! _solid_.is_valid (), std::logic_error, "Invalid solid !");
+    DT_THROW_IF (! _solid_.is_valid (), std::logic_error, "Invalid solid in stacked model '" << name_ << "' !");
 
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (_solid_);
@@ -572,8 +585,8 @@ namespace geomtools {
         stackable_data the_SD;
         DT_THROW_IF (! i_shape_3d::pickup_stackable (the_shape, the_SD),
                      std::logic_error,
-                     "Model '" << get_name () << "' : Cannot stack '"
-                     << the_shape.get_shape_name () << "' shape !");
+                     "Cannot stack '"
+                     << the_shape.get_shape_name () << "' shape in stacked model '" << name_ << "' !");
 
         double gxmin = the_SD.get_xmin ();
         double gymin = the_SD.get_ymin ();

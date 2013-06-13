@@ -93,10 +93,10 @@ namespace geomtools {
                                   models_col_type * models_)
   {
     DT_LOG_TRACE (get_logging_priority (), "Entering...");
-    set_name (name_);
+    //set_name (name_);
 
     /*** material ***/
-    DT_THROW_IF (! config_.has_key ("material.ref"), std::logic_error, "Missing 'material.ref' property !");
+    DT_THROW_IF (! config_.has_key ("material.ref"), std::logic_error, "Missing 'material.ref' property in grid model '" << name_ << "' !");
     std::string material_name = config_.fetch_string ("material.ref");
 
     if (config_.has_flag ("grid.force_stackable"))
@@ -106,7 +106,7 @@ namespace geomtools {
                                                 "grid.force_stackable.",
                                                 stackable::STACKABLE_PREFIX);
         DT_THROW_IF (! _sd_.initialize(stackable_config), std::logic_error,
-                     "Cannot build the stackable data !");
+                     "Cannot build the stackable data in grid model '" << name_ << "' !");
       }
 
     double length_unit = CLHEP::mm;
@@ -122,7 +122,7 @@ namespace geomtools {
         grid_daughter_label = config_.fetch_string ("grid.daughter_label");
       }
 
-    DT_THROW_IF (! config_.has_key ("grid.plane"), std::logic_error, "Missing 'grid.plane' property !");
+    DT_THROW_IF (! config_.has_key ("grid.plane"), std::logic_error, "Missing 'grid.plane' property in grid model '" << name_ << "' !");
     const std::string grid_plane_label = config_.fetch_string ("grid.plane");
 
     size_t number_of_items[2];
@@ -133,88 +133,88 @@ namespace geomtools {
       // Numbers of steps :
       DT_THROW_IF (! config_.has_key ("grid.x.number_of_items"),
                    std::logic_error,
-                   "Missing 'grid.x.number_of_items' property !");
+                   "Missing 'grid.x.number_of_items' property in grid model '" << name_ << "' !");
       number_of_items[0] = config_.fetch_integer ("grid.x.number_of_items");
 
       DT_THROW_IF (! config_.has_key ("grid.y.number_of_items"),
                    std::logic_error,
-                   "Missing 'grid.y.number_of_items' property !");
+                   "Missing 'grid.y.number_of_items' property in grid model '" << name_ << "' !");
       number_of_items[1] = config_.fetch_integer ("grid.y.number_of_items");
 
       // Steps :
-      DT_THROW_IF (! config_.has_key ("grid.x.step"), std::logic_error, "Missing 'grid.x.step' property !");
+      DT_THROW_IF (! config_.has_key ("grid.x.step"), std::logic_error, "Missing 'grid.x.step' property in grid model '" << name_ << "' !");
       step[0] = config_.fetch_real ("grid.x.step");
       DT_THROW_IF (step[0] <= 0.0, std::logic_error, "Invalid value for 'grid.x.step' property !");
       if (! config_.has_explicit_unit ("grid.x.step")) step[0] *= length_unit;
 
-      DT_THROW_IF (! config_.has_key ("grid.y.step"), std::logic_error, "Missing 'grid.y.step' property !");
+      DT_THROW_IF (! config_.has_key ("grid.y.step"), std::logic_error, "Missing 'grid.y.step' property in grid model '" << name_ << "' !");
       step[1] = config_.fetch_real ("grid.y.step");
-      DT_THROW_IF (step[1] <= 0.0, std::logic_error, "Invalid value for 'grid.y.step' property !");
+      DT_THROW_IF (step[1] <= 0.0, std::logic_error, "Invalid value for 'grid.y.step' property in grid model '" << name_ << "' !");
       if (! config_.has_explicit_unit ("grid.y.step")) step[1] *= length_unit;
     }
     else if (grid_plane_label == "xz") {
       // Numbers of steps :
       DT_THROW_IF (! config_.has_key ("grid.x.number_of_items"),
                    std::logic_error,
-                   "Missing 'grid.x.number_of_items' property !");
+                   "Missing 'grid.x.number_of_items' property in grid model '" << name_ << "' !");
       number_of_items[0] = config_.fetch_integer ("grid.x.number_of_items");
 
       DT_THROW_IF (! config_.has_key ("grid.z.number_of_items"),
                    std::logic_error,
-                   "Missing 'grid.z.number_of_items' property !");
+                   "Missing 'grid.z.number_of_items' property in grid model '" << name_ << "' !");
       number_of_items[1] = config_.fetch_integer ("grid.z.number_of_items");
 
       // Steps :
-      DT_THROW_IF (! config_.has_key ("grid.x.step"), std::logic_error, "Missing 'grid.x.step' property !");
+      DT_THROW_IF (! config_.has_key ("grid.x.step"), std::logic_error, "Missing 'grid.x.step' property in grid model '" << name_ << "' !");
       step[0] = config_.fetch_real ("grid.x.step");
-      DT_THROW_IF (step[0] <= 0.0, std::logic_error, "Invalid value for 'grid.x.step' property !");
+      DT_THROW_IF (step[0] <= 0.0, std::logic_error, "Invalid value for 'grid.x.step' property in grid model '" << name_ << "' !");
       if (! config_.has_explicit_unit ("grid.x.step")) step[0] *= length_unit;
 
-      DT_THROW_IF (! config_.has_key ("grid.z.step"), std::logic_error, "Missing 'grid.z.step' property !");
+      DT_THROW_IF (! config_.has_key ("grid.z.step"), std::logic_error, "Missing 'grid.z.step' property in grid model '" << name_ << "' !");
       step[1] = config_.fetch_real ("grid.z.step");
-      DT_THROW_IF (step[1] <= 0.0, std::logic_error, "Invalid value for 'grid.z.step' property !");
+      DT_THROW_IF (step[1] <= 0.0, std::logic_error, "Invalid value for 'grid.z.step' property in grid model '" << name_ << "' !");
       if (! config_.has_explicit_unit ("grid.z.step")) step[1] *= length_unit;
     }
     else if (grid_plane_label == "yz") {
       // Numbers of steps :
       DT_THROW_IF (! config_.has_key ("grid.y.number_of_items"),
                    std::logic_error,
-                   "Missing 'grid.y.number_of_items' property !");
+                   "Missing 'grid.y.number_of_items' property in grid model '" << name_ << "' !");
       number_of_items[0] = config_.fetch_integer ("grid.y.number_of_items");
       DT_THROW_IF (! config_.has_key ("grid.z.number_of_items"),
                    std::logic_error,
-                   "Missing 'grid.z.number_of_items' property !");
+                   "Missing 'grid.z.number_of_items' property in grid model '" << name_ << "' !");
       number_of_items[1] = config_.fetch_integer ("grid.z.number_of_items");
       // Steps :
-      DT_THROW_IF (! config_.has_key ("grid.y.step"), std::logic_error, "Missing 'grid.y.step' property !");
+      DT_THROW_IF (! config_.has_key ("grid.y.step"), std::logic_error, "Missing 'grid.y.step' property in grid model '" << name_ << "' !");
       step[0] = config_.fetch_real ("grid.y.step");
-      DT_THROW_IF (step[0] <= 0.0, std::logic_error, "Invalid value for 'grid.y.step' property !");
+      DT_THROW_IF (step[0] <= 0.0, std::logic_error, "Invalid value for 'grid.y.step' property in grid model '" << name_ << "' !");
       if (! config_.has_explicit_unit ("grid.y.step")) step[0] *= length_unit;
-      DT_THROW_IF (! config_.has_key ("grid.z.step"), std::logic_error, "Missing 'grid.z.step' property !");
+      DT_THROW_IF (! config_.has_key ("grid.z.step"), std::logic_error, "Missing 'grid.z.step' property in grid model '" << name_ << "' !");
       step[1] = config_.fetch_real ("grid.z.step");
-      DT_THROW_IF (step[1] <= 0.0 , std::logic_error, "Invalid value for 'grid.z.step' property !");
+      DT_THROW_IF (step[1] <= 0.0 , std::logic_error, "Invalid value for 'grid.z.step' property in grid model '" << name_ << "' !");
       if (! config_.has_explicit_unit ("grid.z.step")) step[1] *= length_unit;
     } else {
-      DT_THROW_IF (true, std::logic_error, "Invalid grid plane label '" << grid_plane_label << "' property !");
+      DT_THROW_IF (true, std::logic_error, "Invalid grid plane label '" << grid_plane_label << "' property in grid model '" << name_ << "' !");
     }
     _grid_plane_label_ = grid_plane_label;
 
-    DT_THROW_IF (! config_.has_key ("grid.model"), std::logic_error, "Missing 'grid.model' property !");
+    DT_THROW_IF (! config_.has_key ("grid.model"), std::logic_error, "Missing 'grid.model' property in grid model '" << name_ << "' !");
     const std::string model_name = config_.fetch_string ("grid.model");
 
-    DT_THROW_IF (number_of_items[0] == 0, std::logic_error, "Number of items on first axis is zero !");
-    DT_THROW_IF (number_of_items[1] == 0, std::logic_error, "Number of items on second axis is zero !");
+    DT_THROW_IF (number_of_items[0] == 0, std::logic_error, "Number of items on first axis is zero in grid model '" << name_ << "' !");
+    DT_THROW_IF (number_of_items[1] == 0, std::logic_error, "Number of items on second axis is zero in grid model '" << name_ << "' !");
 
     _number_of_items_[0] = number_of_items[0];
     _number_of_items_[1] = number_of_items[1];
     _step_[0] = step[0];
     _step_[1] = step[1];
 
-    DT_THROW_IF (! models_, std::logic_error, "Missing logicals dictionary !");
+    DT_THROW_IF (! models_, std::logic_error, "Missing logicals dictionary in grid model '" << name_ << "' !");
     // Stackable model:
     {
       models_col_type::const_iterator found = models_->find (model_name);
-      DT_THROW_IF (found == models_->end (), std::logic_error, "Cannot find model with name '" << model_name << "' !");
+      DT_THROW_IF (found == models_->end (), std::logic_error, "Cannot find model with name '" << model_name << "' in grid model '" << name_ << "' !");
       set_model (dynamic_cast<const i_model &>(*(found->second)));
     }
 
@@ -321,7 +321,7 @@ namespace geomtools {
       {
         double x = config_.fetch_real ("x");
         if (! config_.has_explicit_unit ("x")) x *= length_unit;
-        DT_THROW_IF (x < _x_, std::logic_error, "Value for 'x' property is too small (<" << _x_ / CLHEP::mm << " mm) !");
+        DT_THROW_IF (x < _x_, std::logic_error, "Value for 'x' property is too small (<" << _x_ / CLHEP::mm << " mm) in grid model '" << name_ << "' !");
         _x_ = x;
       }
 
@@ -329,7 +329,7 @@ namespace geomtools {
       {
         double y = config_.fetch_real ("y");
         if (! config_.has_explicit_unit ("y")) y *= length_unit;
-        DT_THROW_IF (y < _y_, std::logic_error, "Value for 'y' property is too small (<" << _y_ / CLHEP::mm << " mm) !");
+        DT_THROW_IF (y < _y_, std::logic_error, "Value for 'y' property is too small (<" << _y_ / CLHEP::mm << " mm) in grid model '" << name_ << "' !");
         _y_ = y;
       }
 
@@ -337,7 +337,7 @@ namespace geomtools {
       {
         double z = config_.fetch_real ("z");
         if (! config_.has_explicit_unit ("z")) z *= length_unit;
-        DT_THROW_IF (z < _z_, std::logic_error, "Value for 'z' property is too small (<" << _z_ / CLHEP::mm << " mm) !");
+        DT_THROW_IF (z < _z_, std::logic_error, "Value for 'z' property is too small (<" << _z_ / CLHEP::mm << " mm) in grid model '" << name_ << "' !");
         _z_ = z;
       }
 
@@ -345,7 +345,7 @@ namespace geomtools {
     _solid_.set_x (_x_);
     _solid_.set_y (_y_);
     _solid_.set_z (_z_);
-    DT_THROW_IF (! _solid_.is_valid (), std::logic_error, "Invalid solid !");
+    DT_THROW_IF (! _solid_.is_valid (), std::logic_error, "Invalid solid in grid model '" << name_ << "' !");
 
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (_solid_);

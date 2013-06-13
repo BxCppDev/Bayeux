@@ -55,7 +55,7 @@ namespace geomtools {
   {
     DT_LOG_TRACE (get_logging_priority (), "Entering...");
 
-    set_name (name_);
+    //set_name (name_);
 
     /*** parse properties ***/
 
@@ -66,22 +66,22 @@ namespace geomtools {
         lunit = datatools::units::get_length_unit_from (lunit_str);
       }
 
-    DT_THROW_IF (!config_.has_key ("material.ref"), std::logic_error, "Missing 'material.ref' property !");
+    DT_THROW_IF (!config_.has_key ("material.ref"), std::logic_error, "Missing 'material.ref' property in spherical extrusion cylinder model '" << name_ << "' !");
     _material_ = config_.fetch_string ("material.ref");
 
-    DT_THROW_IF (! config_.has_key ("z"), std::logic_error, "Missing 'z' property !");
+    DT_THROW_IF (! config_.has_key ("z"), std::logic_error, "Missing 'z' property in spherical extrusion cylinder model '" << name_ << "' !");
     double z = config_.fetch_real ("z");
     if (! config_.has_explicit_unit ("z")) z *= lunit;
 
-    DT_THROW_IF (! config_.has_key ("r"), std::logic_error, "Missing 'r' property !");
+    DT_THROW_IF (! config_.has_key ("r"), std::logic_error, "Missing 'r' property in spherical extrusion cylinder model '" << name_ << "' !");
     double r = config_.fetch_real ("r");
     if (! config_.has_explicit_unit ("r")) r *= lunit;
 
-    DT_THROW_IF (! config_.has_key ("r_extrusion"), std::logic_error, "Missing 'r_extrusion' property !");
+    DT_THROW_IF (! config_.has_key ("r_extrusion"), std::logic_error, "Missing 'r_extrusion' property in spherical extrusion cylinder model '" << name_ << "' !");
     double re = config_.fetch_real ("r_extrusion");
     if (! config_.has_explicit_unit ("r_extrusion")) re *= lunit;
 
-    DT_THROW_IF (! config_.has_key ("r_sphere"), std::logic_error, "Missing 'r_sphere' property !");
+    DT_THROW_IF (! config_.has_key ("r_sphere"), std::logic_error, "Missing 'r_sphere' property in spherical extrusion cylinder model '" << name_ << "' !");
     double rs = config_.fetch_real ("r_sphere");
     if (! config_.has_explicit_unit ("r_sphere")) rs *= lunit;
 
@@ -97,19 +97,19 @@ namespace geomtools {
     _r_extrusion_ = re;
     _r_sphere_    = rs;
 
-    DT_THROW_IF (_r_extrusion_ > _r_, std::logic_error, "Extrusion radius is larger than mother cylinder radius !");
-    DT_THROW_IF (_r_extrusion_ > _r_sphere_, std::logic_error, "Extrusion radius is larger than the spherical radius !");
+    DT_THROW_IF (_r_extrusion_ > _r_, std::logic_error, "Extrusion radius is larger than mother cylinder radius in spherical extrusion cylinder model '" << name_ << "' !");
+    DT_THROW_IF (_r_extrusion_ > _r_sphere_, std::logic_error, "Extrusion radius is larger than the spherical radius in spherical extrusion cylinder model '" << name_ << "' !");
 
     _mother_.set_r (_r_);
     _mother_.set_z (_z_);
-    DT_THROW_IF (! _mother_.is_valid (), std::logic_error,  "Invalid dimension(s) for the mother cylinder !");
+    DT_THROW_IF (! _mother_.is_valid (), std::logic_error,  "Invalid dimension(s) for the mother cylinder in spherical extrusion cylinder model '" << name_ << "' !");
 
     _extrusion_.set (_r_sphere_);
 
     const double a = std::sqrt (_r_sphere_ * _r_sphere_
                                 - _r_extrusion_ * _r_extrusion_);
     const double c = _r_sphere_ - a;
-    DT_THROW_IF (c > _z_, std::logic_error, "Mother cylinder is not long enough (Z ) to host the extrusion !");
+    DT_THROW_IF (c > _z_, std::logic_error, "Mother cylinder is not long enough (Z ) to host the extrusion in spherical extrusion cylinder model '" << name_ << "' !");
     const double h = _z_ - c;
     double zsphere = 0.5 * _z_ + a;
     if (_bottom_) zsphere *= -1;
