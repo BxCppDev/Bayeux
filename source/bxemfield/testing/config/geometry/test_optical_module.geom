@@ -114,6 +114,9 @@ visibility.color           : string  = "cyan"
 
 #@config The list of properties to describe the rotated light guide
 
+#@description The name of the material
+material.ref      : string = "vacuum"
+
 #@description The rotation axis
 rotated.axis  : string = "z"
 
@@ -377,7 +380,7 @@ visibility.color  : string  = "red"
 [name="optical_module.model" type="geomtools::stacked_model"]
 
 #@description The name of the material
-material.ref      : string    = "copper"
+material.ref      : string    = "vacuum"
 
 #@description The stacking axis
 stacked.axis            : string = "z"
@@ -419,6 +422,9 @@ mapping.daughter_id.scintillator_block : string  = "[scin_block.gc]"
 ###################################################################
 [name="detector_column.model" type="geomtools::replicated_model"]
 
+#@description The name of the material
+material.ref      : string = "vacuum"
+
 #@description The replication axis
 replicated.axis            : string = "y"
 
@@ -443,6 +449,9 @@ mapping.daughter_id.optical_modules : string  = "[detector.gc:row+0]"
 
 ###################################################################
 [name="detector_array.model" type="geomtools::replicated_model"]
+
+#@description The name of the material
+material.ref      : string = "vacuum"
 
 #@description The replication axis
 replicated.axis            : string = "x"
