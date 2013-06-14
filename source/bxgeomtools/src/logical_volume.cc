@@ -36,6 +36,11 @@ namespace geomtools {
     return;
   }
 
+  bool logical_volume::has_name() const
+  {
+    return ! _name_.empty();
+  }
+
   const string & logical_volume::get_name () const
   {
     return _name_;
@@ -52,20 +57,10 @@ namespace geomtools {
     return _parameters_;
   }
 
-  // const datatools::properties & logical_volume::parameters () const
-  // {
-  //   return _parameters_;
-  // }
-
   datatools::properties & logical_volume::grab_parameters ()
   {
     return _parameters_;
   }
-
-  // datatools::properties & logical_volume::parameters ()
-  // {
-  //   return _parameters_;
-  // }
 
   bool logical_volume::has_shape () const
   {

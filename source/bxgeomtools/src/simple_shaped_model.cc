@@ -435,6 +435,9 @@ namespace geomtools {
                    std::logic_error,
                    "Missing 'material.filled.ref' property in simple shaped (tube) model '" << name_ << "' !");
       _filled_material_name_ = config_.fetch_string ("material.filled.ref");
+      DT_LOG_WARNING(get_logging_priority (),
+                     "Filled mode '" << _filled_mode_
+                     << "'is not recommended unless you know what you do!");
     }
 
     // Build the tube:
@@ -558,12 +561,15 @@ namespace geomtools {
 
     // Filling material:
     if (_filled_mode_ != filled_utils::FILLED_NONE) {
-        // Parsing material:
-        DT_THROW_IF (! config_.has_key ("material.filled.ref"),
-                     std::logic_error,
-                     "Missing 'material.filled.ref' property in simple shaped (polycone) model '" << name_ << "' !");
-        _filled_material_name_ = config_.fetch_string ("material.filled.ref");
-      }
+      // Parsing material:
+      DT_THROW_IF (! config_.has_key ("material.filled.ref"),
+                   std::logic_error,
+                   "Missing 'material.filled.ref' property in simple shaped (polycone) model '" << name_ << "' !");
+      _filled_material_name_ = config_.fetch_string ("material.filled.ref");
+      DT_LOG_WARNING(get_logging_priority (),
+                     "Filled mode '" << _filled_mode_
+                     << "' is not recommended unless you know what you do!");
+    }
 
     // Build the polycone:
     _polycone_ = new polycone ();
@@ -691,6 +697,9 @@ namespace geomtools {
                    std::logic_error,
                    "Missing 'material.filled.ref' property in simple shaped (polyhedra) model '" << name_ << "' !");
       _filled_material_name_ = config_.fetch_string ("material.filled.ref");
+      DT_LOG_WARNING(get_logging_priority (),
+                     "Filled mode '" << _filled_mode_
+                     << "' is not recommended unless you know what you do!");
     }
 
     _polyhedra_ = new polyhedra ();
@@ -790,7 +799,14 @@ namespace geomtools {
 
   void simple_shaped_model::_post_construct (datatools::properties & setup_)
   {
-    sensitive::extract (setup_, grab_logical ().grab_parameters ());
+    if (! is_filled ()) {
+      sensitive::extract (setup_, grab_logical ().grab_parameters ());
+    } else {
+      if (_inner_logical_.has_name()) {
+        sensitive::extract (setup_, _inner_logical_.grab_parameters ());
+        grab_logical ().grab_parameters ().erase_all_starting_with("sensitive.");
+      }
+    }
     visibility::extract (setup_, grab_logical ().grab_parameters ());
     if (_solid_) {
       stackable::extract (setup_, _solid_->properties ());
@@ -846,6 +862,7 @@ namespace geomtools {
         out_ << indent << datatools::i_tree_dumpable::tag
              << "Filled material name : '" << get_filled_material_name () << "'" << std::endl;
       }
+      // XXX  _inner_logical_.tree_dump(out)
     }
 
     if (_daughter_owner_logical_ != 0) {

@@ -45,15 +45,11 @@ namespace geomtools {
 
     void unlock ();
 
+    bool has_name() const;
+
     const std::string & get_name () const;
 
     void set_name (const std::string &);
-
-    // /// Obsolete
-    // const datatools::properties & parameters () const;
-
-    // /// Obsolete
-    // datatools::properties & parameters ();
 
     const datatools::properties & get_parameters () const;
 
