@@ -72,4 +72,11 @@ extends  : string = "mezzanine.gc"
 by       : string[1] = "position"
 
 
+# The coil on a mezzanine board inherits the mezzanine address
+# (composed by the "board" number and the "daughter" numbers)
+[category="coil.gc" type="2030"]
+inherits : string = "mezzanine.gc"
+
+
+
 # end

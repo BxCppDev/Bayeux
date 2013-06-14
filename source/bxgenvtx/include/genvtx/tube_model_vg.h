@@ -1,34 +1,34 @@
 // -*- mode: c++; -*-
-/* cylinder_model_vg.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
- * Creation date: 2010-04-13
- * Last modified: 2013-03-10
+/* tube_model_vg.h
+ * Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Creation date: 2013-06-14
+ * Last modified: 2013-06-14
  *
  * License:
  *
  * Description:
  *
- *   Vertex generator from a cylinder model addressed through some
+ *   Vertex generator from a tube model addressed through some
  *   collection of geometry IDs extracted from a mapping object.
  *
  * History:
  *
  */
 
-#ifndef GENVTX_CYLINDER_MODEL_VG_H_
-#define GENVTX_CYLINDER_MODEL_VG_H_ 1
+#ifndef GENVTX_TUBE_MODEL_VG_H_
+#define GENVTX_TUBE_MODEL_VG_H_ 1
 
 #include <string>
 
 #include <geomtools/id_selector.h>
 
-#include <genvtx/cylinder_vg.h>
+#include <genvtx/tube_vg.h>
 #include <genvtx/vg_macros.h>
 #include <genvtx/utils.h>
 
 namespace genvtx {
 
-  GENVTX_VG_CLASS_DECLARE(cylinder_model_vg)
+  GENVTX_VG_CLASS_DECLARE(tube_model_vg)
   {
   public:
 
@@ -38,13 +38,17 @@ namespace genvtx {
 
     bool is_mode_surface () const;
 
-    bool is_surface_side () const;
+    bool is_surface_inner_side () const;
+
+    bool is_surface_outer_side () const;
 
     bool is_surface_bottom () const;
 
     bool is_surface_top () const;
 
-    void set_surface_side (bool);
+    void set_surface_inner_side (bool);
+
+    void set_surface_outer_side (bool);
 
     void set_surface_bottom (bool);
 
@@ -75,7 +79,7 @@ namespace genvtx {
                             const std::string & indent_ = "",
                             bool inherit_ = false) const;
 
-    GENVTX_VG_INTERFACE_CTOR_DTOR (cylinder_model_vg);
+    GENVTX_VG_INTERFACE_CTOR_DTOR (tube_model_vg);
 
   private:
 
@@ -87,29 +91,30 @@ namespace genvtx {
 
   protected:
 
-    void _shoot_vertex_cylinders (mygsl::rng & random_,
-                                  geomtools::vector_3d & vertex_);
+    void _shoot_vertex_tubes (mygsl::rng & random_,
+                              geomtools::vector_3d & vertex_);
 
   private:
 
     bool                    _initialized_;           //!< Initialization flag
     int                     _mode_;                  //!< Mode : "bulk" of "surface"
-    bool                    _surface_side_;          //!< Flag for side surface generation mode
+    bool                    _surface_inner_side_;    //!< Flag for inner side surface generation mode
+    bool                    _surface_outer_side_;    //!< Flag for outer side surface generation mode
     bool                    _surface_bottom_;        //!< Flag for bottom surface generation mode
     bool                    _surface_top_;           //!< Flag for top surface generation mode
-    genvtx::cylinder_vg     _cylinder_vg_;           //!< Embeded vertex generator from a cylinder
+    genvtx::tube_vg         _tube_vg_;               //!< Embeded vertex generator from a tube
     std::string             _origin_rules_;          //!< Rules to select the physical volumes from where to generate vertexes
     std::string             _mapping_plugin_name_;   //!< The name of the geometry 'mapping' plugin
     std::string             _materials_plugin_name_; //!< The name of the geometry 'materials' plugin
     geomtools::id_selector  _src_selector_;          //!< A selector of GIDs
     std::vector<weight_entry_type> _entries_;        //!< Information about the weights
 
-    GENVTX_VG_REGISTRATION_INTERFACE(cylinder_model_vg);
+    GENVTX_VG_REGISTRATION_INTERFACE(tube_model_vg);
 
   };
 
 } // end of namespace genvtx
 
-#endif // GENVTX_CYLINDER_MODEL_VG_H_
+#endif // GENVTX_TUBE_MODEL_VG_H_
 
-// end of cylinder_model_vg.h
+// end of tube_model_vg.h

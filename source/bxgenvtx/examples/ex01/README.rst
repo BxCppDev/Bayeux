@@ -66,9 +66,16 @@ Quick start
 
       shell> ./ex01
 
+5. Run the ``geomtools_check_setup`` to check the virtual geometry::
+
+         shell> geomtools_check_setup \
+                  --manager-config config/geometry/manager.conf \
+                  --with-visu --visu-view-3d \
+                  --with-gdml --gdml-to-root-display
+
 5. Run the ``genvtx_production``:
 
-   * List the available vertex generators ::
+   * List the available vertex generators::
 
       shell> genvtx_production \
                --geometry-manager config/geometry/manager.conf \
@@ -76,7 +83,7 @@ Quick start
                --list
 
 
-   * Generate vertices ::
+   * Generate vertices::
 
       shell> genvtx_production \
                --geometry-manager config/geometry/manager.conf \

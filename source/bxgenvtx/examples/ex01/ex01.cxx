@@ -68,6 +68,7 @@ int main(int argc_, char ** argv_)
     // Set the name of the vertex generator to be activated :
     DT_LOG_DEBUG(logging, "Choosing the vertex generator...");
     std::string vg_name = "all_mezzanine_pcb_bulk.vg";
+    //vg_name = "all_coil_bulk.vg";
     if (! vg_name.empty()) {
       VGMgr.activate_current_vg(vg_name);
     }

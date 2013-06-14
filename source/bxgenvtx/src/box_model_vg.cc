@@ -179,7 +179,7 @@ namespace genvtx {
     return;
   }
 
-  // ctor:
+  // Constructor:
   GENVTX_VG_CONSTRUCTOR_IMPLEMENT_HEAD(box_model_vg)
   {
     _initialized_ = false;
@@ -197,7 +197,7 @@ namespace genvtx {
 
   void box_model_vg::_set_defaults_ ()
   {
-    // internal reset:
+    // Internal reset:
     utils::origin_invalidate (_origin_rules_);
     _mode_           = utils::MODE_INVALID;
     _surface_back_   = false;
@@ -315,13 +315,8 @@ namespace genvtx {
 
     // Attempt to extract material info :
     double density = -1.0;
-    // std::cerr << "********** TEST 1 " << '\n';
-    // std::cerr << "**********   is_mode_bulk              = " << is_mode_bulk ()<< '\n';
-    // std::cerr << "**********   src_log->has_material_ref = " << src_log->has_material_ref ()<< '\n';
-    // std::cerr << "**********   has_materials_plugin_name = " << has_materials_plugin_name()<< '\n';
     if (is_mode_bulk ()
         && src_log->has_material_ref ()) {
-      //        && has_materials_plugin_name()) {
       std::string material_name = src_log->get_material_ref ();
       const materials::manager * mat_mgr_ptr
         = detail::access_materials_manager(get_geom_manager (),
@@ -332,19 +327,13 @@ namespace genvtx {
       const materials::manager & mat_mgr = *mat_mgr_ptr;
       materials::material_dict_type::const_iterator found =
         mat_mgr.get_materials ().find (material_name);
-      //std::cerr << "********** material_name=" <<material_name<< '\n';
       if (found != mat_mgr.get_materials ().end ()) {
         if (found->second.has_ref ()) {
           const materials::material & the_material = found->second.get_ref ();
-          // if (is_debug ())
-          //   {
-          //     the_material.tree_dump (std::clog, "genvtx::box_model_vg::initialize: Material : ", "DEBUG: ");
-          //   }
           density = the_material.get_density ();
         }
       }
     }
-    //std::cerr << "********** TEST 2 " << '\n';
     int surface_mask = 0;
     if (is_mode_surface ()) {
       _box_vg_.set_mode (utils::MODE_SURFACE);
@@ -366,16 +355,8 @@ namespace genvtx {
                  << "only box shape is supported in vertex generator '" << get_name() << "' !");
     const geomtools::box * box_shape
       = dynamic_cast<const geomtools::box *> (&src_shape);
-    // if (is_debug ())
-    //   {
-    //     box_shape->tree_dump (std::clog, "Box model VG: box_shape == ", "DEBUG: ");
-    //   }
     _box_vg_.set_box_ref (*box_shape);
     _box_vg_.initialize_simple ();
-    // if (is_debug ())
-    //   {
-    //     _box_vg_.get_box_safe ().tree_dump (std::clog, "Box model VG box: ", "DEBUG: ");
-    //   }
     double weight = 0.0;
     if (is_mode_surface ()) {
       weight = box_shape->get_surface (surface_mask);
@@ -383,14 +364,7 @@ namespace genvtx {
       weight = box_shape->get_volume ();
     }
 
-    // if (is_debug ())
-    //   {
-    //     std::clog << datatools::io::debug
-    //               << "genvtx::box_model_vg::initialize: "
-    //               << "Weight = " << weight << std::endl;
-    //   }
-
-    // compute weight:
+    // Compute weight:
     _entries_[0].cumulated_weight = _entries_[0].weight;
     for (int i = 0; i < _entries_.size (); i++) {
       _entries_[i].weight = weight;
@@ -399,7 +373,7 @@ namespace genvtx {
       _entries_[i].cumulated_weight = cumul + _entries_[i].weight;
     }
 
-    // store the total weight before normalization for alternative use :
+    // Store the total weight before normalization for alternative use :
     double the_weight_value = _entries_.back ().cumulated_weight;
     int the_weight_type = weight_info::WEIGHTING_VOLUME;
     if (is_mode_surface ())  {
@@ -408,24 +382,15 @@ namespace genvtx {
     weight_info the_weight_info;
     the_weight_info.type = the_weight_type;
     the_weight_info.value = the_weight_value;
-    //std::cerr << "********* DEVEL: density = " << density << '\n';
     if (the_weight_type == weight_info::WEIGHTING_VOLUME && density > 0) {
-      // total mass computed for homogeneous density and
+      // Total mass computed for homogeneous density:
       the_weight_info.mass = the_weight_value * density;
-      //std::cerr << "********* DEVEL: mass = " << the_weight_info.mass << '\n';
     }
     _set_total_weight (the_weight_info);
 
-    // normalize weight:
+    // Normalize weight:
     for (int i = 0; i < _entries_.size (); i++) {
       _entries_[i].cumulated_weight /= _entries_.back ().cumulated_weight;
-      // if (is_debug ())
-      //        {
-      //          std::clog << datatools::io::debug
-      //                    << "genvtx::box_model_vg::initialize: "
-      //                    << "Cumulated weight for ID " << _entries_[i].ginfo->get_id ()
-      //                    << " = " << _entries_[i].cumulated_weight << std::endl;
-      //        }
     }
     return;
   }

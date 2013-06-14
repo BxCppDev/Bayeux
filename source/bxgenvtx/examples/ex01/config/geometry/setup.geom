@@ -8,6 +8,36 @@
 
 
 ##############################################################
+[name="coil.model" type="geomtools::simple_shaped_model"]
+
+#@config The list of properties to configure the capacitor logical volume
+
+#@description The name of the 3D shape
+shape_type   : string =  "tube"
+
+#@description The length unit
+length_unit       : string  = "mm"
+
+#@description The inner R dimension
+inner_r      : real   = 3.0
+
+#@description The outer R dimension
+outer_r      : real   = 6.0
+
+#@description The Z dimension
+z            : real   = 6.0
+
+#@description The name of the material
+material.ref : string = "iron"
+
+#@description The visibility hidden flag for the display
+visibility.hidden : boolean = 0
+
+#@description The recommended color for the display
+visibility.color  : string  = "red"
+
+
+##############################################################
 [name="capacitor.model" type="geomtools::simple_shaped_model"]
 
 #@config The list of properties to configure the capacitor logical volume
@@ -154,13 +184,14 @@ visibility.hidden : boolean = 0
 visibility.color  : string  = "transparent"
 
 #@description The list of daughter volumes by labels
-internal_item.labels : string[6] = \
+internal_item.labels : string[7] = \
   "pcb"  \
   "fpga" \
   "chip_a" \
   "chip_b" \
   "capacitor_a" \
-  "capacitor_b"
+  "capacitor_b" \
+  "coil"
 
 internal_item.model.pcb             : string = "mezzanine_pcb.model"
 internal_item.model.fpga            : string = "fpga.model"
@@ -168,6 +199,7 @@ internal_item.model.capacitor_a     : string = "capacitor.model"
 internal_item.model.capacitor_b     : string = "capacitor.model"
 internal_item.model.chip_a          : string = "chip.model"
 internal_item.model.chip_b          : string = "chip.model"
+internal_item.model.coil            : string = "coil.model"
 
 internal_item.placement.pcb         : string = "  0   0  -4 (mm)"
 internal_item.placement.fpga        : string = "+10   0  -2 (mm)"
@@ -175,6 +207,7 @@ internal_item.placement.capacitor_a : string = "+32  10  +1 (mm)"
 internal_item.placement.capacitor_b : string = "+33 -10  +1 (mm)"
 internal_item.placement.chip_a      : string = "-20  10  -2.5 (mm) / z 90 (degree)"
 internal_item.placement.chip_b      : string = "-20 -10  -2.5 (mm) / z 90 (degree)"
+internal_item.placement.coil        : string = " -5 -17   1.5 (mm)"
 
 mapping.daughter_id.pcb             : string = "[mezzanine_pcb.gc]"
 mapping.daughter_id.fpga            : string = "[fpga.gc]"
@@ -182,6 +215,7 @@ mapping.daughter_id.capacitor_a     : string = "[capacitor.gc:position=0]"
 mapping.daughter_id.capacitor_b     : string = "[capacitor.gc:position=1]"
 mapping.daughter_id.chip_a          : string = "[chip.gc:slot=0]"
 mapping.daughter_id.chip_b          : string = "[chip.gc:slot=1]"
+mapping.daughter_id.coil            : string = "[coil.gc]"
 
 
 ##############################################################

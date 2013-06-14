@@ -170,11 +170,14 @@ int main (int argc_, char ** argv_)
       std::vector<std::string> vg_descriptions;
       std::string vg_current;
       VGMgr.vg_names(vg_names, vg_descriptions, vg_current);
-      std::clog << "List of vertex generators : " << std::endl;
+      std::cerr << "List of vertex generators : " << std::endl;
       for (int i = 0; i < vg_names.size(); i++) {
         const std::string & vg_name = vg_names[i];
-        std::cout << vg_name << ' ';
-        if (vg_name == vg_current) std::cout << " (*)";
+        if (i < vg_names.size() - 1 ) std::cerr << "|-- ";
+        else std::cerr << "`-- ";
+        std::cerr << std::flush;
+        std::cout << std::flush << vg_name << ' ';
+        if (vg_name == vg_current) std::cout << "(current)";
         if (! vg_descriptions[i].empty()) {
           std::cout << " : " << vg_descriptions[i];
         } else {

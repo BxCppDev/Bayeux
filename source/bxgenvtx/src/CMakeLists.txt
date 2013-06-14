@@ -36,6 +36,7 @@ set(genvtx_PUBLIC_HEADERS
   include/genvtx/combined_vg.h
   include/genvtx/box_model_vg.h
   include/genvtx/cylinder_model_vg.h
+  include/genvtx/tube_model_vg.h
   )
 list_prepend(genvtx_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 
@@ -92,6 +93,7 @@ set(genvtx_SOURCES
    combined_vg.cc
    box_model_vg.cc
    cylinder_model_vg.cc
+   tube_model_vg.cc
    geom_manager_utils.cc
   )
 

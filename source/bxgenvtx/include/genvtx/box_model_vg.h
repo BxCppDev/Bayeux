@@ -82,11 +82,11 @@ namespace genvtx {
 
     void set_mode (int);
 
-    virtual void tree_dump (std::ostream & out_ = std::clog, 
-                            const std::string & title_ = "", 
-                            const std::string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_ = std::clog,
+                            const std::string & title_ = "",
+                            const std::string & indent_ = "",
                             bool inherit_ = false) const;
-        
+
     GENVTX_VG_INTERFACE_CTOR_DTOR (box_model_vg);
 
   private:
@@ -101,26 +101,26 @@ namespace genvtx {
 
     void _shoot_vertex_boxes (mygsl::rng & random_,
                               geomtools::vector_3d & vertex_);
- 
+
   private:
 
-    bool                    _initialized_;
-    int                     _mode_;
-    bool                    _surface_back_;
-    bool                    _surface_front_;
-    bool                    _surface_bottom_;
-    bool                    _surface_top_;
-    bool                    _surface_left_;
-    bool                    _surface_right_;
-    genvtx::box_vg          _box_vg_;
-    std::string             _origin_rules_;
-    std::string             _mapping_plugin_name_;
-    std::string             _materials_plugin_name_; 
-    geomtools::id_selector  _src_selector_;
-    std::vector<weight_entry_type> _entries_;
-       
+    bool                    _initialized_;    //!< Initialization flag
+    int                     _mode_;           //!< Mode : "bulk" of "surface"
+    bool                    _surface_back_;   //!< Flag for back surface generation mode
+    bool                    _surface_front_;  //!< Flag for front surface generation mode
+    bool                    _surface_bottom_; //!< Flag for bottom surface generation mode
+    bool                    _surface_top_;    //!< Flag for top surface generation mode
+    bool                    _surface_left_;   //!< Flag for left surface generation mode
+    bool                    _surface_right_;  //!< Flag for right surface generation mode
+    genvtx::box_vg          _box_vg_;         //!< Embeded vertex generator from a box
+    std::string             _origin_rules_;   //!< Rules to select the physical volumes from where to generate vertexes
+    std::string             _mapping_plugin_name_;   //!< The name of the geometry 'mapping' plugin
+    std::string             _materials_plugin_name_; //!< The name of the geometry 'materials' plugin
+    geomtools::id_selector  _src_selector_;   //!< A selector of GIDs
+    std::vector<weight_entry_type> _entries_; //!< Information about the weights
+
     GENVTX_VG_REGISTRATION_INTERFACE(box_model_vg);
-        
+
   };
 
 } // end of namespace genvtx

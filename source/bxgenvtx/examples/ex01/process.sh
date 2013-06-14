@@ -31,25 +31,37 @@ gnuplot ./ex01.gp
 
 echo "Run the genvtx_production program : " 1>&2
 genvtx_production \
-               --geometry-manager config/geometry/manager.conf \
-               --vertex-generator-manager config/vertex/manager.conf \
-               --list
+    --geometry-manager config/geometry/manager.conf \
+    --vertex-generator-manager config/vertex/manager.conf \
+    --list
 
- genvtx_production \
-               --geometry-manager config/geometry/manager.conf \
-               --vertex-generator-manager config/vertex/manager.conf \
-               --shoot \
-	       --number-of-vertices 10000 \
-	       --prng-seed 314159 \
-	       --vertex-generator "from_every_pcb_bulk.vg" \
-               --output-file "genvtx_ex01_vertices.txt" \
-	       --visu --tiny --tiny
+genvtx_production \
+    --geometry-manager config/geometry/manager.conf \
+    --vertex-generator-manager config/vertex/manager.conf \
+    --shoot \
+    --number-of-vertices 10000 \
+    --prng-seed 314159 \
+    --vertex-generator "from_every_pcb_bulk.vg" \
+    --output-file "genvtx_ex01_vertices.txt" \
+    --visu --tiny --tiny
+
+genvtx_production \
+    --geometry-manager config/geometry/manager.conf \
+    --vertex-generator-manager config/vertex/manager.conf \
+    --shoot \
+    --number-of-vertices 10000 \
+    --prng-seed 314159 \
+    --vertex-generator "all_coil_bulk.vg" \
+    --output-file "genvtx_ex01_vertices_2.txt" \
+    --visu --tiny --tiny
 
 
 rm -f ./ex01
 rm -f ./ex01_vertices.data
 rm -f ./genvtx_ex01_vertices.txt
+rm -f ./genvtx_ex01_vertices_2.txt
 rm -f ./genvtx-example-ex01.gdml
+rm -f ./geomtools_check_setup.C
 rm -fr ${build_dir}
 find . -name "*~" -exec rm -f \{\} \;
 

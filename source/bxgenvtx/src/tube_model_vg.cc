@@ -1,5 +1,5 @@
 // -*- mode: c++ ; -*-
-/* cylinder_model_vg.cc
+/* tube_model_vg.cc
  */
 
 #include <iostream>
@@ -18,123 +18,135 @@
 #include <geomtools/geom_info.h>
 #include <geomtools/logical_volume.h>
 #include <geomtools/i_shape_3d.h>
-#include <geomtools/cylinder.h>
+#include <geomtools/tube.h>
 #include <geomtools/manager.h>
 #include <geomtools/mapping.h>
 #include <geomtools/mapping_plugin.h>
 #include <geomtools/materials_plugin.h>
 
 #include <genvtx/utils.h>
-#include <genvtx/cylinder_model_vg.h>
+#include <genvtx/tube_model_vg.h>
 #include <genvtx/detail/geom_manager_utils.h>
 
 namespace genvtx {
 
-  GENVTX_VG_REGISTRATION_IMPLEMENT(cylinder_model_vg,"genvtx::cylinder_model_vg");
+  GENVTX_VG_REGISTRATION_IMPLEMENT(tube_model_vg,"genvtx::tube_model_vg");
 
-  bool cylinder_model_vg::is_mode_valid () const
+  bool tube_model_vg::is_mode_valid () const
   {
     return is_mode_bulk () || is_mode_surface ();
   }
 
-  bool cylinder_model_vg::is_mode_bulk () const
+  bool tube_model_vg::is_mode_bulk () const
   {
     return get_mode () == utils::MODE_BULK;
   }
 
-  bool cylinder_model_vg::is_mode_surface () const
+  bool tube_model_vg::is_mode_surface () const
   {
     return get_mode () == utils::MODE_SURFACE;
   }
 
-  bool cylinder_model_vg::is_surface_side () const
+  bool tube_model_vg::is_surface_inner_side () const
   {
-    return _surface_side_;
+    return _surface_inner_side_;
   }
 
-  bool cylinder_model_vg::is_surface_bottom () const
+  bool tube_model_vg::is_surface_outer_side () const
+  {
+    return _surface_outer_side_;
+  }
+
+  bool tube_model_vg::is_surface_bottom () const
   {
     return _surface_bottom_;
   }
 
-  bool cylinder_model_vg::is_surface_top () const
+  bool tube_model_vg::is_surface_top () const
   {
     return _surface_top_;
   }
 
-  void cylinder_model_vg::set_surface_side (bool s_)
+  void tube_model_vg::set_surface_inner_side (bool s_)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
-    _surface_side_ = s_;
+    _surface_inner_side_ = s_;
     return;
   }
 
-  void cylinder_model_vg::set_surface_top (bool s_)
+  void tube_model_vg::set_surface_outer_side (bool s_)
+  {
+    DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
+    _surface_outer_side_ = s_;
+    return;
+  }
+
+  void tube_model_vg::set_surface_top (bool s_)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
     _surface_top_ = s_;
     return;
   }
 
-  void cylinder_model_vg::set_surface_bottom (bool s_)
+  void tube_model_vg::set_surface_bottom (bool s_)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
     _surface_bottom_ = s_;
     return;
   }
 
-  const std::string & cylinder_model_vg::get_origin_rules () const
+  const std::string & tube_model_vg::get_origin_rules () const
   {
     return _origin_rules_;
   }
 
-  void cylinder_model_vg::set_origin_rules (const std::string & origin_rules_)
+  void tube_model_vg::set_origin_rules (const std::string & origin_rules_)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
     _origin_rules_ = origin_rules_;
     return;
   }
 
-  bool cylinder_model_vg::has_mapping_plugin_name() const
+  bool tube_model_vg::has_mapping_plugin_name() const
   {
     return ! _mapping_plugin_name_.empty();
   }
 
-  const std::string & cylinder_model_vg::get_mapping_plugin_name() const
+  const std::string & tube_model_vg::get_mapping_plugin_name() const
   {
     return _mapping_plugin_name_;
   }
 
-  void cylinder_model_vg::set_mapping_plugin_name(const std::string & mpn_)
+  void tube_model_vg::set_mapping_plugin_name(const std::string & mpn_)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
     _mapping_plugin_name_ = mpn_;
     return;
   }
 
-  bool cylinder_model_vg::has_materials_plugin_name() const
+  bool tube_model_vg::has_materials_plugin_name() const
   {
     return ! _materials_plugin_name_.empty();
   }
 
-  const std::string & cylinder_model_vg::get_materials_plugin_name() const
+  const std::string & tube_model_vg::get_materials_plugin_name() const
   {
     return _materials_plugin_name_;
   }
 
-  void cylinder_model_vg::set_materials_plugin_name(const std::string & mpn_)
+  void tube_model_vg::set_materials_plugin_name(const std::string & mpn_)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
     _materials_plugin_name_ = mpn_;
     return;
   }
 
-  int cylinder_model_vg::get_mode () const
+  int tube_model_vg::get_mode () const
   {
     return _mode_;
   }
 
-  void cylinder_model_vg::set_mode (int mode_)
+  void tube_model_vg::set_mode (int mode_)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
     if ((mode_ == utils::MODE_BULK) || (mode_ == utils::MODE_SURFACE)) {
@@ -146,30 +158,31 @@ namespace genvtx {
   }
 
   // Constructor:
-  GENVTX_VG_CONSTRUCTOR_IMPLEMENT_HEAD(cylinder_model_vg)
+  GENVTX_VG_CONSTRUCTOR_IMPLEMENT_HEAD(tube_model_vg)
   {
     _initialized_ = false;
     _set_defaults_ ();
     return;
   }
 
-  GENVTX_VG_IS_INITIALIZED_IMPLEMENT_HEAD(cylinder_model_vg)
+  GENVTX_VG_IS_INITIALIZED_IMPLEMENT_HEAD(tube_model_vg)
   {
     return _initialized_;
   }
 
   // Destructor :
-  GENVTX_VG_DEFAULT_DESTRUCTOR_IMPLEMENT(cylinder_model_vg)
+  GENVTX_VG_DEFAULT_DESTRUCTOR_IMPLEMENT(tube_model_vg)
 
-  void cylinder_model_vg::_set_defaults_ ()
+  void tube_model_vg::_set_defaults_ ()
   {
     // Internal reset:
     utils::origin_invalidate (_origin_rules_);
     _mode_ = utils::MODE_INVALID;
-    _surface_side_ = false;
+    _surface_inner_side_ = false;
+    _surface_outer_side_ = false;
     _surface_bottom_ = false;
     _surface_top_ = false;
-    if (_cylinder_vg_.is_initialized()) _cylinder_vg_.reset ();
+    if (_tube_vg_.is_initialized()) _tube_vg_.reset ();
     _origin_rules_.clear();
     _mapping_plugin_name_.clear();
     _materials_plugin_name_.clear();
@@ -179,13 +192,13 @@ namespace genvtx {
     return;
   }
 
-  void cylinder_model_vg::_reset_ ()
+  void tube_model_vg::_reset_ ()
   {
     _set_defaults_ ();
     return;
   }
 
-  GENVTX_VG_RESET_IMPLEMENT_HEAD(cylinder_model_vg)
+  GENVTX_VG_RESET_IMPLEMENT_HEAD(tube_model_vg)
   {
     DT_THROW_IF (! is_initialized (), std::logic_error, "Vertex generator '" << get_name() << "' is not initialized !");
     _reset_ ();
@@ -193,15 +206,15 @@ namespace genvtx {
     return;
   }
 
-  GENVTX_VG_SHOOT_VERTEX_IMPLEMENT_HEAD(cylinder_model_vg,random_,vertex_)
+  GENVTX_VG_SHOOT_VERTEX_IMPLEMENT_HEAD(tube_model_vg,random_,vertex_)
   {
     DT_THROW_IF (! is_initialized (), std::logic_error, "Vertex generator '" << get_name() << "' is not initialized !");
     geomtools::invalidate (vertex_);
-    this->_shoot_vertex_cylinders (random_, vertex_);
+    this->_shoot_vertex_tubes (random_, vertex_);
     return;
   }
 
-  void cylinder_model_vg::_shoot_vertex_cylinders (mygsl::rng & random_,
+  void tube_model_vg::_shoot_vertex_tubes (mygsl::rng & random_,
                                                    geomtools::vector_3d & vertex_)
   {
     double ran_w = random_.uniform ();
@@ -215,7 +228,7 @@ namespace genvtx {
     DT_THROW_IF (index < 0, std::logic_error,
                  "Cannot determine vertex location index for vertex generator '" << get_name() << "' !");
     geomtools::vector_3d src_vtx;
-    _cylinder_vg_.shoot_vertex (random_, src_vtx);
+    _tube_vg_.shoot_vertex (random_, src_vtx);
 
     const geomtools::placement & world_plct
       = _entries_[index].ginfo->get_world_placement ();
@@ -224,7 +237,7 @@ namespace genvtx {
   }
 
 
-  void cylinder_model_vg::_init_ ()
+  void tube_model_vg::_init_ ()
   {
     DT_THROW_IF (! is_mode_valid (), std::logic_error, "Invalid mode for vertex generator '" << get_name() << "' !");
     DT_THROW_IF (! has_geom_manager (),  std::logic_error,"Missing geometry manager for vertex generator '" << get_name() << "' !");
@@ -294,30 +307,31 @@ namespace genvtx {
 
     int surface_mask = 0;
     if (is_mode_surface ()) {
-        _cylinder_vg_.set_mode (utils::MODE_SURFACE);
-        if (_surface_side_) surface_mask |= geomtools::cylinder::FACE_SIDE;
-        if (_surface_bottom_) surface_mask |= geomtools::cylinder::FACE_BOTTOM;
-        if (_surface_top_) surface_mask |= geomtools::cylinder::FACE_TOP;
-        _cylinder_vg_.set_surface_mask (surface_mask);
+        _tube_vg_.set_mode (utils::MODE_SURFACE);
+        if (_surface_inner_side_) surface_mask |= geomtools::tube::FACE_INNER_SIDE;
+        if (_surface_outer_side_) surface_mask |= geomtools::tube::FACE_OUTER_SIDE;
+        if (_surface_bottom_)     surface_mask |= geomtools::tube::FACE_BOTTOM;
+        if (_surface_top_)        surface_mask |= geomtools::tube::FACE_TOP;
+        _tube_vg_.set_surface_mask (surface_mask);
       } else {
-        _cylinder_vg_.set_mode (utils::MODE_BULK);
+        _tube_vg_.set_mode (utils::MODE_BULK);
       }
     DT_THROW_IF (! src_log->has_shape (), std::logic_error,
                  "Logical '" << src_log->get_name () << "' has " << "no shape !");
     const geomtools::i_shape_3d & src_shape = src_log->get_shape ();
-    DT_THROW_IF (src_shape.get_shape_name () != "cylinder",
+    DT_THROW_IF (src_shape.get_shape_name () != "tube",
                  std::logic_error,
                  "Shape is '" << src_shape.get_shape_name () << "' but "
-                 << "only cylinder shape is supported in vertex generator '" << get_name() << "' !");
-    const geomtools::cylinder * cylinder_shape
-      = dynamic_cast<const geomtools::cylinder *> (&src_shape);
-    _cylinder_vg_.set_cylinder (*cylinder_shape);
-    _cylinder_vg_.initialize_simple ();
+                 << "only tube shape is supported in vertex generator '" << get_name() << "' !");
+    const geomtools::tube * tube_shape
+      = dynamic_cast<const geomtools::tube *> (&src_shape);
+    _tube_vg_.set_tube (*tube_shape);
+    _tube_vg_.initialize_simple ();
     double weight = 0.0;
     if (is_mode_surface ()) {
-      weight = cylinder_shape->get_surface (surface_mask);
+      weight = tube_shape->get_surface (surface_mask);
     } else {
-      weight = cylinder_shape->get_volume ();
+      weight = tube_shape->get_volume ();
     }
     // Compute weight:
     _entries_[0].cumulated_weight = _entries_[0].weight;
@@ -350,7 +364,7 @@ namespace genvtx {
     return;
   }
 
-  GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(cylinder_model_vg,setup_,service_manager_,vgens_)
+  GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(tube_model_vg,setup_,service_manager_,vgens_)
   {
     using namespace std;
     bool devel = false;
@@ -363,7 +377,8 @@ namespace genvtx {
     std::string origin_rules;
     utils::origin_invalidate (origin_rules);
     std::string mode_str;
-    bool surface_side   = false;
+    bool surface_inner_side   = false;
+    bool surface_outer_side   = false;
     bool surface_bottom = false;
     bool surface_top    = false;
 
@@ -384,8 +399,11 @@ namespace genvtx {
     if (mode_str == "surface") mode = utils::MODE_SURFACE;
 
     if (mode == utils::MODE_SURFACE) {
-      if (setup_.has_key ("mode.surface.side")) {
-        surface_side = setup_.fetch_boolean ("mode.surface.side");
+      if (setup_.has_key ("mode.surface.inner_side")) {
+        surface_inner_side = setup_.fetch_boolean ("mode.surface.inner_side");
+      }
+      if (setup_.has_key ("mode.surface.outer_side")) {
+        surface_outer_side = setup_.fetch_boolean ("mode.surface.outer_side");
       }
       if (setup_.has_key ("mode.surface.bottom")) {
         surface_bottom = setup_.fetch_boolean ("mode.surface.bottom");
@@ -394,7 +412,7 @@ namespace genvtx {
         surface_top = setup_.fetch_boolean ("mode.surface.top");
       }
       bool surface_all =
-        surface_side ||
+        surface_inner_side || surface_outer_side ||
         surface_bottom || surface_top;
       DT_THROW_IF (! surface_all, std::logic_error,
                    "Missing some activated surface(s) property in vertex generator '" << get_name() << "' !");
@@ -403,7 +421,8 @@ namespace genvtx {
     set_origin_rules (origin_rules);
     set_mode (mode);
     if (is_mode_surface ()) {
-      set_surface_side (surface_side);
+      set_surface_inner_side (surface_inner_side);
+      set_surface_outer_side (surface_outer_side);
       set_surface_bottom (surface_bottom);
       set_surface_top (surface_top);
     }
@@ -413,7 +432,7 @@ namespace genvtx {
     return;
   }
 
-  void cylinder_model_vg::tree_dump (std::ostream & out_,
+  void tube_model_vg::tree_dump (std::ostream & out_,
                                      const std::string & title_,
                                      const std::string & indent_,
                                      bool inherit_) const
@@ -426,7 +445,9 @@ namespace genvtx {
          << "Mode           : '" << _mode_ << "'" << std::endl;
     if (is_mode_surface ()) {
       out_ << indent << du::i_tree_dumpable::tag
-           << "Surface side   : " << _surface_side_ << std::endl;
+           << "Surface inner side   : " << _surface_inner_side_ << std::endl;
+      out_ << indent << du::i_tree_dumpable::tag
+           << "Surface outer side   : " << _surface_outer_side_ << std::endl;
       out_ << indent << du::i_tree_dumpable::tag
            << "Surface bottom : " << _surface_bottom_ << std::endl;
       out_ << indent << du::i_tree_dumpable::tag
@@ -443,4 +464,4 @@ namespace genvtx {
 
 } // end of namespace genvtx
 
-// end of cylinder_model_vg.cc
+// end of tube_model_vg.cc
