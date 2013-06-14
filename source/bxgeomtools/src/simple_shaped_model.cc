@@ -839,11 +839,13 @@ namespace geomtools {
     }
 
     // Filled material name:
-    if (! _filled_material_name_.empty ()) {
-      out_ << indent << datatools::i_tree_dumpable::tag
-           << "Filled material name : '" << get_filled_material_name () << "'" << std::endl;
+    if ( _filled_mode_ != filled_utils::FILLED_NONE ) {
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Filled mode : '" << _filled_mode_ << "'" << std::endl;
+      if (! _filled_material_name_.empty ()) {
+        out_ << indent << datatools::i_tree_dumpable::tag
+             << "Filled material name : '" << get_filled_material_name () << "'" << std::endl;
+      }
     }
 
     if (_daughter_owner_logical_ != 0) {
