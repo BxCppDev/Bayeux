@@ -661,14 +661,14 @@ namespace mctools {
         const geomtools::logical_volume & log = model.get_logical();
 
         // Check if it is tagged as a 'sensitive' detector :
-        if (! geomtools::sensitive::is_sensitive(log.parameters())) {
+        if (! geomtools::sensitive::is_sensitive(log.get_parameters())) {
           DT_LOG_DEBUG(_logprio(),"Logical volume '" << log.get_name() << "' is not sensitive !");
           continue;
         }
 
         // Get the 'sensitive category' for this detector :
         string sensitive_category
-          = geomtools::sensitive::get_sensitive_category(log.parameters());
+          = geomtools::sensitive::get_sensitive_category(log.get_parameters());
         if (sensitive_category.empty()) {
           DT_LOG_WARNING(_logprio(),"Empty sensitive category name ! Ignore !");
           continue;
@@ -936,11 +936,11 @@ namespace mctools {
               const geomtools::logical_volume & log = model.get_logical();
 
               // check sensitivity of the model's log(ical volume):
-              if (geomtools::sensitive::is_sensitive(log.parameters())) {
+              if (geomtools::sensitive::is_sensitive(log.get_parameters())) {
                 DT_LOG_WARNING(_logprio(),
                                "Geometry model '"
                                << model_name  << "' is already associated to sensitive category '"
-                               << geomtools::sensitive::get_sensitive_category(log.parameters())
+                               << geomtools::sensitive::get_sensitive_category(log.get_parameters())
                                << "' !");
                 continue;
               }
@@ -962,7 +962,7 @@ namespace mctools {
                 // of the log(ical) after building the model factory in our geometry model:
                 geomtools::logical_volume * mod_log
                   = const_cast<geomtools::logical_volume *>(&log);
-                geomtools::sensitive::set_sensitive_category(mod_log->parameters(),
+                geomtools::sensitive::set_sensitive_category(mod_log->grab_parameters(),
                                                              from_processor_sensitive_category);
               }
 
@@ -1219,24 +1219,24 @@ namespace mctools {
         string display_color;
         bool   force_wire_frame = true;
         bool   force_solid = false;
-        if (geomtools::visibility::is_hidden(log.parameters())) {
+        if (geomtools::visibility::is_hidden(log.get_parameters())) {
           visible = false;
           daughters_visible = false;
         } else {
-          if (geomtools::visibility::is_hidden_envelop(log.parameters())) {
+          if (geomtools::visibility::is_hidden_envelop(log.get_parameters())) {
             visible = false;
           }
-          if (geomtools::visibility::is_daughters_hidden(log.parameters())) {
+          if (geomtools::visibility::is_daughters_hidden(log.get_parameters())) {
             daughters_visible = false;
           }
-          if (geomtools::visibility::has_color(log.parameters())) {
-            display_color = geomtools::visibility::get_color(log.parameters());
+          if (geomtools::visibility::has_color(log.get_parameters())) {
+            display_color = geomtools::visibility::get_color(log.get_parameters());
           }
           /*
-            if (geomtools::visibility::has_key(log.parameters(), "opacity"))
+            if (geomtools::visibility::has_key(log.get_parameters(), "opacity"))
             {
             // Not supported.
-            //display_opacity = geomtools::visibility::get_color(log.parameters());
+            //display_opacity = geomtools::visibility::get_color(log.get_parameters());
             }
           */
         }
