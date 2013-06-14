@@ -15,6 +15,9 @@
 #@description The name of the 3D shape
 shape_type   : string =  "tube"
 
+#@description The filled mode of the tube model
+filled_mode   : string =  "by_envelope"
+
 #@description The length unit
 length_unit       : string  = "mm"
 
@@ -30,11 +33,26 @@ z            : real   = 6.0
 #@description The name of the material
 material.ref : string = "iron"
 
+#@description The name of the material
+material.filled.ref : string = "air"
+
 #@description The visibility hidden flag for the display
 visibility.hidden : boolean = 0
 
 #@description The recommended color for the display
-visibility.color  : string  = "red"
+visibility.color  : string  = "blue"
+
+#@description The visibility hidden flag for the envelope
+visibility.hidden_envelope  : boolean = 0
+
+#@description The recommended color for the display
+visibility.envelope_color  : string  = "grey"
+
+#@description The visibility hidden flag for the daughters volumes
+visibility.daughters.hidden : boolean = 1
+
+#@description The sensitive category
+sensitive.category : string = "coil.sd"
 
 
 ##############################################################

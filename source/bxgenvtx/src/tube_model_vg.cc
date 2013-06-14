@@ -277,30 +277,38 @@ namespace genvtx {
       if (src_log == 0) {
         src_log = &_entries_[i].ginfo->get_logical ();
       } else {
-        DT_THROW_IF (src_log != &_entries_[i].ginfo->get_logical (),
+        const geomtools::logical_volume * check_src_log = 0;
+        check_src_log = &_entries_[i].ginfo->get_logical ();
+        DT_THROW_IF (src_log != check_src_log,
                      std::logic_error,
-                     "Vertex location with different logical geometry volume are not supported  (different shapes or materials) in vertex generator '" << get_name() << "' !");
+                     "Vertex location with different logical geometry volumes are not supported  (different shapes or materials) in vertex generator '" << get_name() << "' !");
       }
     }
 
     // Attempt to extract material info :
     double density = -1.0;
-    if (is_mode_bulk ()
-        && src_log->has_material_ref ()) {
-      std::string material_name = src_log->get_material_ref ();
-      const materials::manager * mat_mgr_ptr
-        = detail::access_materials_manager(get_geom_manager (),
-                                           _materials_plugin_name_);
-      DT_THROW_IF (mat_mgr_ptr == 0, std::logic_error,
-                   "No geometry materials plugin named '" << _materials_plugin_name_
-                   << "' available from the geometry manager for vertex generator '" << get_name() << "' !");
-      const materials::manager & mat_mgr = *mat_mgr_ptr;
-      materials::material_dict_type::const_iterator found =
-        mat_mgr.get_materials ().find (material_name);
-      if (found != mat_mgr.get_materials ().end ()) {
-        if (found->second.has_ref ()) {
-          const materials::material & the_material = found->second.get_ref ();
-          density = the_material.get_density ();
+    if (is_mode_bulk ()) {
+      std::string material_name;
+      if (src_log->has_effective_material_ref ()) {
+        material_name = src_log->get_effective_material_ref ();
+      } else if (src_log->has_material_ref ()) {
+        material_name = src_log->get_material_ref ();
+      }
+      if (! material_name.empty()){
+        const materials::manager * mat_mgr_ptr
+          = detail::access_materials_manager(get_geom_manager (),
+                                             _materials_plugin_name_);
+        DT_THROW_IF (mat_mgr_ptr == 0, std::logic_error,
+                     "No geometry materials plugin named '" << _materials_plugin_name_
+                     << "' available from the geometry manager for vertex generator '" << get_name() << "' !");
+        const materials::manager & mat_mgr = *mat_mgr_ptr;
+        materials::material_dict_type::const_iterator found =
+          mat_mgr.get_materials ().find (material_name);
+        if (found != mat_mgr.get_materials ().end ()) {
+          if (found->second.has_ref ()) {
+            const materials::material & the_material = found->second.get_ref ();
+            density = the_material.get_density ();
+          }
         }
       }
     }
@@ -316,15 +324,20 @@ namespace genvtx {
       } else {
         _tube_vg_.set_mode (utils::MODE_BULK);
       }
-    DT_THROW_IF (! src_log->has_shape (), std::logic_error,
-                 "Logical '" << src_log->get_name () << "' has " << "no shape !");
-    const geomtools::i_shape_3d & src_shape = src_log->get_shape ();
-    DT_THROW_IF (src_shape.get_shape_name () != "tube",
+    const geomtools::i_shape_3d * src_shape = 0;
+    if (! src_shape && src_log->has_effective_shape ()) {
+      src_shape = &src_log->get_effective_shape ();
+    }
+    if (! src_shape && src_log->has_shape ()) {
+      src_shape = &src_log->get_shape ();
+    }
+    DT_THROW_IF (! src_shape, std::logic_error,
+                 "Logical '" << src_log->get_name () << "' has no shape !");
+    DT_THROW_IF (src_shape->get_shape_name () != "tube",
                  std::logic_error,
-                 "Shape is '" << src_shape.get_shape_name () << "' but "
+                 "Shape is '" << src_shape->get_shape_name () << "' but "
                  << "only tube shape is supported in vertex generator '" << get_name() << "' !");
-    const geomtools::tube * tube_shape
-      = dynamic_cast<const geomtools::tube *> (&src_shape);
+    const geomtools::tube * tube_shape = dynamic_cast<const geomtools::tube *>(src_shape);
     _tube_vg_.set_tube (*tube_shape);
     _tube_vg_.initialize_simple ();
     double weight = 0.0;
