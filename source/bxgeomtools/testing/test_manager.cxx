@@ -165,7 +165,7 @@ int main (int argc_, char ** argv_)
       bool   gdml_replica_support = false;
       bool   use_plugins = false;
       bool   force_show = false;
-      bool   force_show_envelop = false;
+      bool   force_show_envelope = false;
       bool   force_show_children = false;
       bool   add_dd = false;
       int    nb_dd = 1;
@@ -202,9 +202,9 @@ int main (int argc_, char ** argv_)
                 {
                   force_show = true;
                 }
-              else if ((option == "-e") || (option == "--force-show-envelop"))
+              else if ((option == "-e") || (option == "--force-show-envelope"))
                 {
-                  force_show_envelop = true;
+                  force_show_envelope = true;
                 }
               else if ((option == "-c") || (option == "--force-show-children"))
                 {
@@ -566,9 +566,9 @@ int main (int argc_, char ** argv_)
                 {
                   GPD.grab_properties ().store (geomtools::gnuplot_drawer::FORCE_SHOW_PROPERTY_NAME, true);
                 }
-              if (force_show_envelop)
+              if (force_show_envelope)
                 {
-                  GPD.grab_properties ().store (geomtools::gnuplot_drawer::FORCE_SHOW_ENVELOP_PROPERTY_NAME, true);
+                  GPD.grab_properties ().store (geomtools::gnuplot_drawer::FORCE_SHOW_ENVELOPE_PROPERTY_NAME, true);
                 }
               if (force_show_children)
                 {

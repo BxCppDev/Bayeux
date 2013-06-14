@@ -52,7 +52,7 @@ namespace geomtools {
     static const std::string DEFAULT_MODE;
 
     static const std::string FORCE_SHOW_PROPERTY_NAME;
-    static const std::string FORCE_SHOW_ENVELOP_PROPERTY_NAME;
+    static const std::string FORCE_SHOW_ENVELOPE_PROPERTY_NAME;
     static const std::string FORCE_SHOW_CHILDREN_PROPERTY_NAME;
     static const std::string WORLD_NAME_KEY;
 

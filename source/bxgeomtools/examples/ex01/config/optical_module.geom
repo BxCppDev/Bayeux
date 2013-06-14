@@ -352,7 +352,7 @@ visibility.color  : string  = "orange"
 
 #@config The list of properties to describe the diaphragm
 
-#@description The length unit
+#@description The default implicit length unit
 length_unit       : string  = "mm"
 
 #@description The extrusion radius dimension

@@ -10,6 +10,7 @@
 
 #include <geomtools/i_placement.h>
 #include <geomtools/physical_volume.h>
+#include <geomtools/i_model.h>
 
 namespace geomtools {
 
@@ -107,6 +108,38 @@ namespace geomtools {
     return *_shape_;
   }
 
+  bool logical_volume::has_effective_shape() const
+  {
+    return _effective_shape_ != 0;
+  }
+
+  void logical_volume::set_effective_shape (const i_shape_3d & shape_)
+  {
+    _effective_shape_ = &shape_;
+  }
+
+  const i_shape_3d & logical_volume::get_effective_shape () const
+  {
+    DT_THROW_IF (! _effective_shape_, std::logic_error, "Missing effective shape for logical '" << get_name () << "' !");
+    return *_effective_shape_;
+  }
+
+  bool logical_volume::has_geometry_model() const
+  {
+    return _geo_model_ != 0;
+  }
+
+  void logical_volume::set_geometry_model (const i_model & model_)
+  {
+    _geo_model_ = &model_;
+  }
+
+  const i_model & logical_volume::get_geometry_model () const
+  {
+    DT_THROW_IF (! _geo_model_, std::logic_error, "Missing geometry model for logical '" << get_name () << "' !");
+    return *_geo_model_;
+  }
+
   bool logical_volume::has_material_ref () const
   {
     return ! _material_ref_.empty();
@@ -142,11 +175,29 @@ namespace geomtools {
     return;
   }
 
+  bool logical_volume::has_effective_material_ref () const
+  {
+    return ! _effective_material_ref_.empty();
+  }
+
+  string logical_volume::get_effective_material_ref () const
+  {
+    return _effective_material_ref_;
+  }
+
+  void logical_volume::set_effective_material_ref (const string & effective_material_ref_)
+  {
+    _effective_material_ref_ = effective_material_ref_;
+    return;
+  }
+
   void logical_volume::_init_defaults_ ()
   {
     _locked_ = false;
     _own_shape_ = false;
     _shape_ = 0;
+    _geo_model_ = 0;
+    _effective_shape_ = 0;
     _abstract_ = false;
     return;
   }
@@ -322,6 +373,31 @@ namespace geomtools {
         indent_oss << datatools::i_tree_dumpable::skip_tag;
         _shape_->tree_dump (out_,"",indent_oss.str ());
       }
+    }
+
+    if (has_effective_shape()) {
+      out_ << indent <<  datatools::i_tree_dumpable::tag
+           << "Effective shape : '"
+           << get_effective_shape().get_shape_name () << "'"
+           << endl;
+      std::ostringstream indent_oss;
+      indent_oss << indent;
+      indent_oss << datatools::i_tree_dumpable::skip_tag;
+      get_effective_shape().tree_dump (out_,"",indent_oss.str ());
+    }
+
+    if (has_effective_material_ref()) {
+      out_ << indent <<  datatools::i_tree_dumpable::tag
+           << "Effective material : '"
+           << get_effective_material_ref() << "'"
+           << endl;
+    }
+
+    if (has_geometry_model()) {
+      out_ << indent <<  datatools::i_tree_dumpable::tag
+           << "Geometry model : '"
+           << _geo_model_->get_name ()  << "'"
+           << endl;
     }
 
     {

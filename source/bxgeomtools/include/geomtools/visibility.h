@@ -1,19 +1,19 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* visibility.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
  * Last modified: 2009-03-31
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *  Utilities for visualization tools:
  *
  *  Some visibility properties are defined:
  *
  *
- * History: 
- * 
+ * History:
+ *
  */
 
 #ifndef GEOMTOOLS_VISIBILITY_H_
@@ -31,19 +31,19 @@ namespace geomtools {
   class visibility
   {
   public:
- 
+
     struct constants
     {
       std::string VISIBILITY_PREFIX;
       std::string VISIBILITY_HIDDEN_FLAG;
-      std::string VISIBILITY_HIDDEN_ENVELOP_FLAG;
       std::string VISIBILITY_HIDDEN_ENVELOPE_FLAG;
       std::string VISIBILITY_DAUGHTERS_HIDDEN_FLAG;
       std::string VISIBILITY_COLOR_PROPERTY;
+      std::string VISIBILITY_ENVELOPE_COLOR_PROPERTY;
       std::string VISIBILITY_WIRED_CYLINDER_FLAG;
-      
+
       constants ();
-      
+
       static const constants & instance ();
 
      };
@@ -65,8 +65,6 @@ namespace geomtools {
 
     static bool is_hidden (const datatools::properties & config_);
 
-    static bool is_hidden_envelop (const datatools::properties & config_);
-
     static bool is_hidden_envelope (const datatools::properties & config_);
 
     static bool is_daughters_shown (const datatools::properties & config_);
@@ -74,11 +72,18 @@ namespace geomtools {
     static bool is_daughters_hidden (const datatools::properties & config_);
 
     static bool has_color (const datatools::properties & config_);
- 
+
     static std::string get_color (const datatools::properties & config_);
-    
-    static void set_color (datatools::properties & config_, 
+
+    static void set_color (datatools::properties & config_,
                            const std::string & color_);
+
+    static bool has_envelope_color (const datatools::properties & config_);
+
+    static std::string get_envelope_color (const datatools::properties & config_);
+
+    static void set_envelope_color (datatools::properties & config_,
+                                     const std::string & color_);
 
     static bool is_wired_cylinder (const datatools::properties & config_);
 

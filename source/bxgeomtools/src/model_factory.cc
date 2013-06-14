@@ -197,7 +197,7 @@ namespace geomtools {
     // Memory leak to be fixed:
     for (models_col_type::iterator i = _models_.begin ();
          i != _models_.end();
-         i++)  {
+         i++) {
       const string & model_name = i->first;
       i_model * model_ptr = i->second;
       if (model_ptr != 0) {
@@ -248,23 +248,23 @@ namespace geomtools {
       for (std::map<std::string,int>::const_iterator i = _property_prefixes_.begin ();
            i != _property_prefixes_.end ();
            i++) {
-        if (model->has_effective_logical()) {
-          e.get_properties ().export_starting_with (model->grab_effective_logical ().grab_parameters (),
-                                                    i->first);
-        } else {
-          e.get_properties ().export_starting_with (model->grab_logical ().grab_parameters (),
-                                                    i->first);
-        }
+        // if (model->has_effective_logical()) {
+        //   e.get_properties ().export_starting_with (model->grab_effective_logical ().grab_parameters (),
+        //                                             i->first);
+        // } else {
+        e.get_properties ().export_starting_with (model->grab_logical ().grab_parameters (),
+                                                  i->first);
+        //        }
       }
 
       _models_[model_name] = model;
       DT_LOG_DEBUG(_logging_priority_,"Adding model '" << model_name << "'...");
       string log_name = model->get_logical ().get_name ();
       _logicals_[log_name] = &(model->get_logical ());
-      if (model->has_effective_logical()) {
-        string eff_log_name = model->get_effective_logical ().get_name ();
-        _logicals_[eff_log_name] = &(model->get_effective_logical ());
-      }
+      // if (model->has_effective_logical()) {
+      //   string eff_log_name = model->get_effective_logical ().get_name ();
+      //   _logicals_[eff_log_name] = &(model->get_effective_logical ());
+      // }
       DT_LOG_DEBUG(_logging_priority_,"New model is:");
       if (is_debug ()) model->tree_dump (clog,"");
     }

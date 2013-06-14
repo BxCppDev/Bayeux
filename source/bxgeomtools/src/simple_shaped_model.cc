@@ -463,6 +463,7 @@ namespace geomtools {
       DT_THROW_IF (! _cylinder_->is_valid (), std::logic_error, "Invalid 'outer' cylinder dimensions in simple shaped (tube) model '" << name_ << "' !");
       _solid_ = _cylinder_;
       grab_logical ().set_material_ref (_material_name_);
+      grab_logical ().set_effective_shape (*_tube_);
       if (! _tube_->is_extruded ()) {
         // If the tube is not extruded, no daughter physical volumes can be placed
         // within the 'outer' envelope cylinder:
@@ -483,10 +484,12 @@ namespace geomtools {
         _inner_logical_.set_name (i_model::make_logical_volume_name (inner_name));
         _inner_logical_.set_material_ref (_filled_material_name_);
         _inner_logical_.set_shape (*_inner_shape_); // pass a reference -> logical has not the shape ownership
+        _inner_logical_.set_geometry_model(*this);
         _inner_phys_.set_name (i_model::make_physical_volume_name (inner_name));
         _inner_phys_.set_placement (_inner_placement_);
         _inner_phys_.set_logical (_inner_logical_);
         _inner_phys_.set_mother (this->get_logical ());
+
 
         // Makes the child extrusion the mother of daughter physical volumes:
         _daughter_owner_logical_ = &_inner_logical_;
@@ -502,12 +505,14 @@ namespace geomtools {
                    "Invalid 'outer' cylinder dimensions in simple shaped (tube) model '" << name_ << "' !");
       _solid_ = _cylinder_;
       grab_logical ().set_material_ref (_filled_material_name_);
+      grab_logical ().set_effective_shape (*_tube_);
+      grab_logical ().set_effective_material_ref (_material_name_);
       if (! _tube_->is_extruded ()) {
         // If the tube is not extruded, no daughter physical volumes can be placed
         // within the 'outer' envelope cylinder:
         _daughter_owner_logical_ = 0;
       } else {
-        // If the tube is extruded, add the 'inner' tube within the 'outer' envelope cylinder:
+        // If the tube is extruded, add the tube within the 'outer' envelope cylinder:
         _inner_placement_.set (0, 0, 0, 0, 0, 0);
         const std::string inner_name = "__" + get_logical ().get_name () + ".tube_by_envelope";
         _inner_logical_.set_name (i_model::make_logical_volume_name (inner_name));
@@ -517,11 +522,12 @@ namespace geomtools {
           visibility::set_color (_inner_logical_.grab_parameters (),
                                  visibility::get_color (config_));
         }
+        //_inner_logical_.get_parameters ().tree_dump(std::cerr, "********* Tube ", "DEVEL: ");
+        _inner_logical_.set_geometry_model(*this);
         _inner_phys_.set_name (i_model::make_physical_volume_name (inner_name));
         _inner_phys_.set_placement (_inner_placement_);
         _inner_phys_.set_logical (_inner_logical_);
         _inner_phys_.set_mother (this->get_logical ());
-        _set_effective_logical (_inner_logical_);
       }
     }
 
@@ -585,6 +591,7 @@ namespace geomtools {
       _outer_shape_ = envelope_polycone;
       _solid_ = _outer_shape_;
       grab_logical ().set_material_ref (_material_name_);
+      grab_logical ().set_effective_shape (*_polycone_);
       // If the polycone is extruded, add an extruded 'inner' polycone within the 'outer' polycone:
       if (! _polycone_->is_extruded ()) {
         // If the polycone is not extruded, no daughter physical volumes can be placed
@@ -605,6 +612,7 @@ namespace geomtools {
         _inner_logical_.set_name (i_model::make_logical_volume_name (inner_name));
         _inner_logical_.set_material_ref (_filled_material_name_);
         _inner_logical_.set_shape (*_inner_shape_); // pass a reference -> logical has not the shape ownership
+        _inner_logical_.set_geometry_model(*this);
         _inner_phys_.set_name (i_model::make_physical_volume_name (inner_name));
         _inner_phys_.set_placement (_inner_placement_);
         _inner_phys_.set_logical (_inner_logical_);
@@ -624,6 +632,8 @@ namespace geomtools {
       _outer_shape_ = outer_polycone;
       _solid_ = _outer_shape_;
       grab_logical ().set_material_ref (_filled_material_name_);
+      grab_logical ().set_effective_shape (*_polycone_);
+      grab_logical ().set_effective_material_ref (_material_name_);
       if (! _polycone_->is_extruded ()) {
         // If the polycon is not extruded, no daughter physical volumes can be placed
         // within the 'outer' envelope polycone:
@@ -640,11 +650,11 @@ namespace geomtools {
           visibility::set_color (_inner_logical_.grab_parameters (),
                                  visibility::get_color (config_));
         }
+        _inner_logical_.set_geometry_model(*this);
         _inner_phys_.set_name (i_model::make_physical_volume_name (inner_name));
         _inner_phys_.set_placement (_inner_placement_);
         _inner_phys_.set_logical (_inner_logical_);
         _inner_phys_.set_mother (this->get_logical ());
-        _set_effective_logical (_inner_logical_);
       }
     }
 
@@ -706,6 +716,7 @@ namespace geomtools {
       _outer_shape_ = envelope_polyhedra;
       _solid_ = _outer_shape_;
       grab_logical ().set_material_ref (_material_name_);
+      grab_logical ().set_effective_shape (*_polyhedra_);
       // if the polyhedra is extruded, add an extruded 'inner' polyhedra
       // within the 'outer' polyhedra:
       if (! _polyhedra_->is_extruded ()) {
@@ -726,6 +737,7 @@ namespace geomtools {
         _inner_logical_.set_name (i_model::make_logical_volume_name (inner_name));
         _inner_logical_.set_material_ref (_filled_material_name_);
         _inner_logical_.set_shape (*_inner_shape_); // pass a reference -> logical has not the shape ownership
+        _inner_logical_.set_geometry_model(*this);
         _inner_phys_.set_name (i_model::make_physical_volume_name (inner_name));
         _inner_phys_.set_placement (_inner_placement_);
         _inner_phys_.set_logical (_inner_logical_);
@@ -745,6 +757,8 @@ namespace geomtools {
       _outer_shape_ = outer_polyhedra;
       _solid_ = _outer_shape_;
       grab_logical ().set_material_ref (_filled_material_name_);
+      grab_logical ().set_effective_shape (*_polyhedra_);
+      grab_logical ().set_effective_material_ref (_material_name_);
       if (! _polyhedra_->is_extruded ()) {
         // if the polyhedra is not extruded, no daughter physical volumes can be placed
         // within the 'outer' envelope polyhedra:
@@ -761,11 +775,11 @@ namespace geomtools {
           visibility::set_color (_inner_logical_.grab_parameters (),
                                  visibility::get_color (config_));
         }
+        _inner_logical_.set_geometry_model(*this);
         _inner_phys_.set_name (i_model::make_physical_volume_name (inner_name));
         _inner_phys_.set_placement (_inner_placement_);
         _inner_phys_.set_logical (_inner_logical_);
         _inner_phys_.set_mother (this->get_logical ());
-        _set_effective_logical (_inner_logical_);
       }
     }
 

@@ -41,7 +41,7 @@ namespace geomtools {
   const std::string gnuplot_drawer::DEFAULT_MODE = MODE_WIRED;
 
   const std::string gnuplot_drawer::FORCE_SHOW_PROPERTY_NAME          = "visibility.force_show";
-  const std::string gnuplot_drawer::FORCE_SHOW_ENVELOP_PROPERTY_NAME  = "visibility.force_show_envelop";
+  const std::string gnuplot_drawer::FORCE_SHOW_ENVELOPE_PROPERTY_NAME = "visibility.force_show_envelope";
   const std::string gnuplot_drawer::FORCE_SHOW_CHILDREN_PROPERTY_NAME = "visibility.force_show_children";
 
   const std::string gnuplot_drawer::WORLD_NAME_KEY = "world_name";
@@ -314,13 +314,12 @@ namespace geomtools {
       visibility::extract (log.get_parameters (), log_visu_config);
 
       DT_LOG_TRACE (local_priority, "Logical '" << log.get_name () << "' visibility properties:");
-      if (local_priority >= datatools::logger::PRIO_TRACE)
-        {
-          log_visu_config.tree_dump (std::cerr);
-        }
+      if (local_priority >= datatools::logger::PRIO_TRACE) {
+        log_visu_config.tree_dump (std::cerr);
+      }
 
       bool shown = true;
-      bool shown_envelop = true;
+      bool shown_envelope = true;
       if (visibility::is_shown (log_visu_config)) {
         shown = true;
       }
@@ -332,20 +331,25 @@ namespace geomtools {
         shown = get_properties ().fetch_boolean (FORCE_SHOW_PROPERTY_NAME);
       }
 
-      if (visibility::is_hidden_envelop (log_visu_config)) {
-        shown_envelop = false;
+      if (visibility::is_hidden_envelope (log_visu_config)) {
+        shown_envelope = false;
       }
       DT_LOG_TRACE (local_priority, "Show         = " << shown);
-      DT_LOG_TRACE (local_priority, "Show envelop = " << shown_envelop);
+      DT_LOG_TRACE (local_priority, "Show envelope = " << shown_envelope);
 
-      if (get_properties ().has_key (FORCE_SHOW_ENVELOP_PROPERTY_NAME))  {
-        shown_envelop = get_properties ().fetch_boolean (FORCE_SHOW_ENVELOP_PROPERTY_NAME);
+      if (get_properties ().has_key (FORCE_SHOW_ENVELOPE_PROPERTY_NAME))  {
+        shown_envelope = get_properties ().fetch_boolean (FORCE_SHOW_ENVELOPE_PROPERTY_NAME);
       }
 
-      if (shown && shown_envelop){
+      // Draw the envelope volume :
+      if (shown && shown_envelope){
         if (is_wired ()) {
           std::string color_label = color::constants::instance ().default_color;
-          if (visibility::has_color (log_visu_config)) {
+          if (visibility::has_envelope_color (log_visu_config)) {
+            // First search for a forced envelope color :
+            color_label = visibility::get_envelope_color (log_visu_config);
+          } else if (visibility::has_color (log_visu_config)) {
+            // Then search for color :
             color_label = visibility::get_color (log_visu_config);
             DT_LOG_TRACE (local_priority, "Found color '" << color_label
                           << "' for logical '" << log.get_name () << "'...");
@@ -362,11 +366,10 @@ namespace geomtools {
                                 log.get_shape (),
                                 mode);
           }
-
         }
       }
 
-      // draw children:
+      // Draw the children volume :
       bool draw_children = true;
 
       // check the display level of the geometry tree:
@@ -461,15 +464,15 @@ namespace geomtools {
     visibility::extract (log_.get_parameters (), visu_config);
 
     bool shown = true;
-    bool shown_envelop = true;
+    bool shown_envelope = true;
     if (visibility::is_hidden (visu_config)) {
       shown = false;
     }
     if (visibility::is_shown (visu_config)) {
       shown = true;
     }
-    if (visibility::is_hidden_envelop (visu_config)) {
-      shown_envelop = false;
+    if (visibility::is_hidden_envelope (visu_config)) {
+      shown_envelope = false;
     }
 
     int color = 1;

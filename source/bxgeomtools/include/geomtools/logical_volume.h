@@ -29,6 +29,7 @@
 namespace geomtools {
 
   class physical_volume;
+  class i_model;
 
   class logical_volume
     : public datatools::i_tree_dumpable
@@ -103,6 +104,24 @@ namespace geomtools {
 
     void set_abstract (bool a_);
 
+    bool has_effective_shape() const;
+
+    void set_effective_shape (const i_shape_3d &);
+
+    const i_shape_3d & get_effective_shape () const;
+
+    bool has_geometry_model() const;
+
+    void set_geometry_model (const i_model &);
+
+    const i_model & get_geometry_model () const;
+
+    bool has_effective_material_ref () const;
+
+    std::string get_effective_material_ref () const;
+
+    void set_effective_material_ref (const std::string & = "");
+
   private:
 
     void _clear_shape_ ();
@@ -123,6 +142,12 @@ namespace geomtools {
     const i_shape_3d *    _shape_;        //!< Shape handle
     physicals_col_type    _physicals_;    //!< Dictionnary of daughter volumes
     bool                  _abstract_;     //!< Abstract flag
+
+    // Experimental:
+    const i_model    *    _geo_model_;       //!< The geometry model
+    const i_shape_3d *    _effective_shape_; //!< The effective shape to be taken into account for shape extraction
+    std::string           _effective_material_ref_; //!< The name of the effective material
+
     physicals_col_type    _real_physicals_; //!< Unused
 
   public:

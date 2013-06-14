@@ -170,7 +170,6 @@ namespace geomtools {
     _constructed_     = false;
     _logging_priority = datatools::logger::PRIO_WARNING;
     _phantom_solid    = false;
-    _effective_logical = 0;
     set_name (name_);
     return;
   }
@@ -190,35 +189,6 @@ namespace geomtools {
   geomtools::logical_volume & i_model::grab_logical ()
   {
     return _logical;
-  }
-
-  // geomtools::logical_volume & i_model::get_logical ()
-  // {
-  //   return this->i_model::grab_logical ();
-  // }
-
-  bool i_model::has_effective_logical() const
-  {
-    return _effective_logical != 0;
-  }
-
-  const geomtools::logical_volume & i_model::get_effective_logical () const
-  {
-    DT_THROW_IF(_effective_logical == 0, std::logic_error,
-                "No effective logical in model '" << get_name() << "' !");
-    return *_effective_logical;
-  }
-
-  geomtools::logical_volume & i_model::grab_effective_logical ()
-  {
-    DT_THROW_IF(_effective_logical == 0, std::logic_error,
-                "No effective logical in model '" << get_name() << "' !");
-    return *_effective_logical;
-  }
-
-  void i_model::_set_effective_logical (geomtools::logical_volume & lv_)
-  {
-    _effective_logical = &lv_;
   }
 
   void i_model::_pre_construct (datatools::properties & setup_)
@@ -260,6 +230,7 @@ namespace geomtools {
     _pre_construct (setup);
     _at_construct (name_, setup_, models_);
     _post_construct (setup);
+    _logical.set_geometry_model(*this);
     _constructed_ = true;
     return;
   }
@@ -298,13 +269,6 @@ namespace geomtools {
         indent_oss << datatools::i_tree_dumpable::skip_tag;
         _parameters_.tree_dump (out_,"",indent_oss.str ());
       }
-    }
-
-    if (has_effective_logical()) {
-      out_ << indent << datatools::i_tree_dumpable::tag
-           << "Effective logical: '" << _effective_logical->get_name() << "'"
-           << std::endl;
-        ;
     }
 
     {

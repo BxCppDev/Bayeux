@@ -66,8 +66,14 @@ material.ref : string = "aluminium"
 #@description The name of the material that fills the void volume within the ring
 material.filled.ref : string = "vacuum"
 
-#@description The recommended color for the display of the ring
-visibility.color            : string  = "blue"
+#@description The recommended color for the display of the volume of interest
+visibility.color           : string  = "blue"
+
+#@description The explicit color for the display of the envelope volume
+visibility.envelope_color  : string  = "grey"
+
+#@description The visibility hidden flag for the display of the envelope volume
+visibility.hidden_envelope  : boolean = 0
 
 #@description The visibility hidden flag for the display of ring
 visibility.hidden           : boolean = 0
@@ -116,6 +122,7 @@ replicated.step            : real = 10
 mapping.daughter_id.sources : string  = "[source.gc:position+0]"
 
 #@description The recommended color for the display of the ring
-visibility.color            : string  = "transparent"
+#visibility.color            : string  = "transparent"
+visibility.color            : string  = "grey"
 
 # End of list of multi-properties.

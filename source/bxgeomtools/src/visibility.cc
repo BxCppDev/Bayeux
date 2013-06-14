@@ -12,8 +12,8 @@ namespace geomtools {
 
   using namespace std;
 
-  // static 
-  const visibility::constants & 
+  // static
+  const visibility::constants &
   visibility::constants::instance ()
   {
     static boost::scoped_ptr<visibility::constants> g_global_constants (0);
@@ -26,16 +26,16 @@ namespace geomtools {
 
   visibility::constants::constants ()
   {
-    
+
     VISIBILITY_PREFIX = "visibility.";
-    
+
     VISIBILITY_HIDDEN_FLAG           = "hidden";
-    VISIBILITY_HIDDEN_ENVELOP_FLAG   = "hidden_envelop";
     VISIBILITY_HIDDEN_ENVELOPE_FLAG  = "hidden_envelope";
     VISIBILITY_DAUGHTERS_HIDDEN_FLAG = "daughters.hidden";
     VISIBILITY_COLOR_PROPERTY        = "color";
+    VISIBILITY_ENVELOPE_COLOR_PROPERTY = "envelope_color";
     VISIBILITY_WIRED_CYLINDER_FLAG   = "wired_cylinder";
-    
+
     // VISIBILITY_FORCE_SHOWN_FLAG      = "daughters.invisible";
     // VISIBILITY_FORCE_HIDDEN_FLAG     = "daughters.visible";
     return;
@@ -82,11 +82,6 @@ namespace geomtools {
     return ! visibility::is_shown (config_);
   }
 
-  bool visibility::is_hidden_envelop (const datatools::properties & config_)
-  {
-    return visibility::has_flag (config_, visibility::constants::instance().VISIBILITY_HIDDEN_ENVELOP_FLAG);
-  }
-
   bool visibility::is_hidden_envelope (const datatools::properties & config_)
   {
     return visibility::has_flag (config_, visibility::constants::instance().VISIBILITY_HIDDEN_ENVELOPE_FLAG);
@@ -117,6 +112,24 @@ namespace geomtools {
                               const string & color_)
   {
     config_.update (visibility::make_key (visibility::constants::instance().VISIBILITY_COLOR_PROPERTY), color_);
+    return;
+  }
+
+  bool visibility::has_envelope_color (const datatools::properties & config_)
+  {
+    return visibility::has_key (config_, visibility::constants::instance().VISIBILITY_ENVELOPE_COLOR_PROPERTY);
+  }
+
+  string visibility::get_envelope_color (const datatools::properties & config_)
+  {
+    if (! has_envelope_color (config_)) return "";
+    return config_.fetch_string (visibility::make_key (visibility::constants::instance().VISIBILITY_ENVELOPE_COLOR_PROPERTY));
+  }
+
+  void visibility::set_envelope_color (datatools::properties & config_,
+                                       const string & envelope_color_)
+  {
+    config_.update (visibility::make_key (visibility::constants::instance().VISIBILITY_ENVELOPE_COLOR_PROPERTY), envelope_color_);
     return;
   }
 

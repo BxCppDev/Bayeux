@@ -40,15 +40,15 @@ namespace geomtools {
     struct constants {
       constants ();
       static const constants & instance ();
-      std::string SOLID_SUFFIX;
-      std::string LOGICAL_SUFFIX;
-      std::string PHYSICAL_SUFFIX;
-      std::string PHANTOM_SOLID_FLAG;
+      std::string SOLID_SUFFIX; //!< Special suffix for solid naming
+      std::string LOGICAL_SUFFIX; //!< Special suffix for logical volume naming
+      std::string PHYSICAL_SUFFIX; //!< Special suffix for physical volume naming
+      std::string PHANTOM_SOLID_FLAG; //!< Special flag for phantom envelope solid
     };
 
     typedef geomtools::models_col_type models_col_type;
 
-    /// Check if the construction of geometry model is completed
+    /// Check if the construction of the geometry model is completed
     bool is_constructed () const;
 
     /// Check if the geometry model is "phantom"
@@ -81,20 +81,8 @@ namespace geomtools {
     /// Get a non mutable reference to the embedded logical volume
     const geomtools::logical_volume & get_logical () const;
 
-    /// Check if there is an effective logical volume
-    bool has_effective_logical() const;
-
-    /// Get a non mutable reference to the effective logical volume
-    const geomtools::logical_volume & get_effective_logical () const;
-
-    /// Get a mutable reference to the effective logical volume
-    geomtools::logical_volume & grab_effective_logical ();
-
     /// Get a mutable reference to the embedded logical volume
     geomtools::logical_volume & grab_logical ();
-
-    // /// Get a mutable reference to the embedded logical volume (deprecated : use i_model::grab_logical, still used in geomtools models...)
-    // geomtools::logical_volume & get_logical ();
 
     /// Main pure virtual method that constructs the geometry model
     virtual void construct (const std::string & name_,
@@ -118,9 +106,6 @@ namespace geomtools {
 
   protected:
 
-    /// Set the non mutable reference to the effective logical volume
-    void _set_effective_logical (geomtools::logical_volume &);
-
     /// Set the phantom solid flag
     void _set_phantom_solid (bool);
 
@@ -139,7 +124,6 @@ namespace geomtools {
 
     bool                        _phantom_solid;     //!< Special flag (not used yet)
     geomtools::logical_volume   _logical;           //!< Top logical volume attached to the model
-    geomtools::logical_volume * _effective_logical; //!< Optional effective logical volume attached to the model
     datatools::logger::priority _logging_priority;  //!< Logging priority threshold
 
   private:
