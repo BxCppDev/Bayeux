@@ -211,12 +211,17 @@ namespace geomtools {
   }
 
   /// Add a property prefix to be preserved in logicals
-  void model_factory::add_property_prefix(const std::string & prefix_, int level_)
+  void model_factory::add_property_prefix(const std::string & prefix_)
   {
-    DT_THROW_IF (_property_prefixes_.find (prefix_) != _property_prefixes_.end(),
-                 std::logic_error,
-                 "Property prefix to be preserved '" << prefix_<< "' already exists !");
-    _property_prefixes_[prefix_] = level_;
+    DT_THROW_IF(prefix_.empty(),
+                std::logic_error,
+                "Property prefix to be preserved cannot be empty !");
+    DT_THROW_IF((std::find(_property_prefixes_.begin (),
+                           _property_prefixes_.end (),
+                           prefix_) != _property_prefixes_.end()),
+                std::logic_error,
+                "Property prefix to be preserved '" << prefix_<< "' already exists !");
+    _property_prefixes_.push_back(prefix_);
     return;
   }
 
@@ -231,7 +236,6 @@ namespace geomtools {
       const datatools::multi_properties::entry & e = *ptr_entry;
       string model_name = e.get_key ();
       string model_type = e.get_meta ();
-
       if (! _factory_register_.has (model_type)) {
         DT_LOG_TRACE(_logging_priority_,
                      "No registered class with ID '"
@@ -244,27 +248,11 @@ namespace geomtools {
                    "About to create a new model of type \"" << model_type
                    << "\" with name \"" << model_name << "\"...");
       i_model * model = the_factory ();
-      model->construct (model_name, e.get_properties (), &_models_);
-      for (std::map<std::string,int>::const_iterator i = _property_prefixes_.begin ();
-           i != _property_prefixes_.end ();
-           i++) {
-        // if (model->has_effective_logical()) {
-        //   e.get_properties ().export_starting_with (model->grab_effective_logical ().grab_parameters (),
-        //                                             i->first);
-        // } else {
-        e.get_properties ().export_starting_with (model->grab_logical ().grab_parameters (),
-                                                  i->first);
-        //        }
-      }
-
+      model->construct (model_name, e.get_properties (), _property_prefixes_, &_models_);
       _models_[model_name] = model;
       DT_LOG_DEBUG(_logging_priority_,"Adding model '" << model_name << "'...");
       string log_name = model->get_logical ().get_name ();
       _logicals_[log_name] = &(model->get_logical ());
-      // if (model->has_effective_logical()) {
-      //   string eff_log_name = model->get_effective_logical ().get_name ();
-      //   _logicals_[eff_log_name] = &(model->get_effective_logical ());
-      // }
       DT_LOG_DEBUG(_logging_priority_,"New model is:");
       if (is_debug ()) model->tree_dump (clog,"");
     }
@@ -282,7 +270,6 @@ namespace geomtools {
     if (! title_.empty ()) {
       out_ << indent << title_ << endl;
     }
-
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Logging priority threshold       : \""

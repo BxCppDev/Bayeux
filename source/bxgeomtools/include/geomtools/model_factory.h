@@ -18,7 +18,7 @@
 
 #include <iostream>
 #include <string>
-#include <map>
+#include <vector>
 
 #include <datatools/multi_properties.h>
 #include <datatools/i_tree_dump.h>
@@ -40,16 +40,19 @@ namespace geomtools {
     /// Check if the factory is locked
     bool is_locked () const;
 
+    /// Get the logging priority
     datatools::logger::priority get_logging_priority() const;
 
+    /// Set the logging priority
     void set_logging_priority(datatools::logger::priority);
 
-    /// Check the debug flag
+    /// Check the logging debug flag
     bool is_debug () const;
 
+    /// Check the logging trace flag
     bool is_trace () const;
 
-    /// Set the debug flag
+    /// Set the logging debug flag
     void set_debug (bool);
 
     /// Get a non-mutable collection of geometry models
@@ -68,9 +71,10 @@ namespace geomtools {
     /// Destructor
     virtual ~model_factory ();
 
+    /// Load a geometry models definition file
     void load (const std::string & mprop_file_);
 
-    // 2012-05-25 FM : add support for loading a file that contains a list of geometry filenames :
+    /// Loading a file that contains a list of geometry models definition filenames :
     void load_geom_list (const std::string & geom_list_file_);
 
     /// Lock the geometry model factory
@@ -83,7 +87,7 @@ namespace geomtools {
     void reset ();
 
     /// Add a property prefix to be preserved in logicals
-    void add_property_prefix(const std::string & prefix_, int = 1);
+    void add_property_prefix(const std::string & prefix_);
 
     /// Smart print
     virtual void tree_dump (std::ostream & out_         = std::clog,
@@ -118,7 +122,7 @@ namespace geomtools {
     datatools::multi_properties _mp_;
     models_col_type             _models_;
     logical_volume::dict_type   _logicals_;
-    std::map<std::string,int>   _property_prefixes_;
+    std::vector<std::string>    _property_prefixes_;
 
   };
 

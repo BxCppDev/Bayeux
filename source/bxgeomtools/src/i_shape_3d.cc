@@ -50,42 +50,42 @@ namespace geomtools {
   bool i_shape_3d::is_xmin_stackable (const i_shape_3d & a_shape)
   {
     if (is_stackable (a_shape)) return true;
-    if (stackable::has_xmin (a_shape.properties ())) return true;
+    if (stackable::has_xmin (a_shape.get_properties ())) return true;
     return false;
   }
 
   bool i_shape_3d::is_xmax_stackable (const i_shape_3d & a_shape)
   {
     if (is_stackable (a_shape)) return true;
-    if (stackable::has_xmax (a_shape.properties ())) return true;
+    if (stackable::has_xmax (a_shape.get_properties ())) return true;
     return false;
   }
 
   bool i_shape_3d::is_ymin_stackable (const i_shape_3d & a_shape)
   {
     if (is_stackable (a_shape)) return true;
-    if (stackable::has_ymin (a_shape.properties ())) return true;
+    if (stackable::has_ymin (a_shape.get_properties ())) return true;
     return false;
   }
 
   bool i_shape_3d::is_ymax_stackable (const i_shape_3d & a_shape)
   {
     if (is_stackable (a_shape)) return true;
-    if (stackable::has_ymax (a_shape.properties ())) return true;
+    if (stackable::has_ymax (a_shape.get_properties ())) return true;
     return false;
   }
 
   bool i_shape_3d::is_zmin_stackable (const i_shape_3d & a_shape)
   {
     if (is_stackable (a_shape)) return true;
-    if (stackable::has_zmin (a_shape.properties ())) return true;
+    if (stackable::has_zmin (a_shape.get_properties ())) return true;
     return false;
   }
 
   bool i_shape_3d::is_zmax_stackable (const i_shape_3d & a_shape)
   {
     if (is_stackable (a_shape)) return true;
-    if (stackable::has_zmax (a_shape.properties ())) return true;
+    if (stackable::has_zmax (a_shape.get_properties ())) return true;
     return false;
   }
 
@@ -96,29 +96,29 @@ namespace geomtools {
     ok = i_shape_3d::pickup_stackable (a_shape, a_stackable_data);
     if (ok)
       {
-        if (stackable::has_xmin (a_shape.properties ()))
+        if (stackable::has_xmin (a_shape.get_properties ()))
           {
-            a_stackable_data.xmin = stackable::get_xmin (a_shape.properties (), -1.0);
+            a_stackable_data.xmin = stackable::get_xmin (a_shape.get_properties (), -1.0);
           }
-        if (stackable::has_xmax (a_shape.properties ()))
+        if (stackable::has_xmax (a_shape.get_properties ()))
           {
-            a_stackable_data.xmax = stackable::get_xmax (a_shape.properties (), -1.0);
+            a_stackable_data.xmax = stackable::get_xmax (a_shape.get_properties (), -1.0);
           }
-        if (stackable::has_ymin (a_shape.properties ()))
+        if (stackable::has_ymin (a_shape.get_properties ()))
           {
-            a_stackable_data.ymin = stackable::get_ymin (a_shape.properties (), -1.0);
+            a_stackable_data.ymin = stackable::get_ymin (a_shape.get_properties (), -1.0);
           }
-        if (stackable::has_ymax (a_shape.properties ()))
+        if (stackable::has_ymax (a_shape.get_properties ()))
           {
-            a_stackable_data.ymax = stackable::get_ymax (a_shape.properties (), -1.0);
+            a_stackable_data.ymax = stackable::get_ymax (a_shape.get_properties (), -1.0);
           }
-        if (stackable::has_zmin (a_shape.properties ()))
+        if (stackable::has_zmin (a_shape.get_properties ()))
           {
-            a_stackable_data.zmin = stackable::get_zmin (a_shape.properties (), -1.0);
+            a_stackable_data.zmin = stackable::get_zmin (a_shape.get_properties (), -1.0);
           }
-        if (stackable::has_zmax (a_shape.properties ()))
+        if (stackable::has_zmax (a_shape.get_properties ()))
           {
-            a_stackable_data.zmax = stackable::get_zmax (a_shape.properties (), -1.0);
+            a_stackable_data.zmax = stackable::get_zmax (a_shape.get_properties (), -1.0);
           }
       }
     return ok;

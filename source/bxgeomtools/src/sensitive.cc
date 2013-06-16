@@ -71,6 +71,7 @@ namespace geomtools {
     return;
   }
 
+
 } // end of namespace geomtools
 
 // end of sensitive.cc

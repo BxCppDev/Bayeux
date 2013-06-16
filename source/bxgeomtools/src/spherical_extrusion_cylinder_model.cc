@@ -124,9 +124,9 @@ namespace geomtools {
     _solid_.set_shapes (_mother_,
                         _extrusion_,
                         sphere_extrusion_placement);
-    _solid_.properties ().store ("h", h);
+    _solid_.grab_properties ().store ("h", h);
     if (_bottom_) {
-      _solid_.properties ().store_flag ("bottom");
+      _solid_.grab_properties ().store_flag ("bottom");
     }
     // Install proposed 'stackable data' pointer in the shape:
     {
@@ -238,12 +238,12 @@ namespace geomtools {
     const geomtools::cylinder & mother_cylinder = dynamic_cast<const geomtools::cylinder &> (sh1);
     const geomtools::sphere & extrusion_sphere = dynamic_cast<const geomtools::sphere &> (sh2);
     bool bottom = false;
-    if (solid->properties ().has_flag ("bottom")) {
+    if (solid->get_properties ().has_flag ("bottom")) {
       bottom = true;
     }
 
-    DT_THROW_IF (! solid->properties ().has_key ("h"), std::logic_error, "Missing 'h' property in the shape !");
-    const double h = solid->properties ().fetch_real ("h");
+    DT_THROW_IF (! solid->get_properties ().has_key ("h"), std::logic_error, "Missing 'h' property in the shape !");
+    const double h = solid->get_properties ().fetch_real ("h");
 
     const bool draw_mother = true;
     if (draw_mother) {

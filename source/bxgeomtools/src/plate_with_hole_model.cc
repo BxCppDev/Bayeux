@@ -148,7 +148,7 @@ namespace geomtools {
     xy_pos_hole.push_back (_x_pos_hole_);
     xy_pos_hole.push_back (_y_pos_hole_);
     if (_x_pos_hole_ * _y_pos_hole_ != 0) {
-      _solid_.properties ().store ("xy_pos_hole", xy_pos_hole);
+      _solid_.grab_properties ().store ("xy_pos_hole", xy_pos_hole);
     }
     // Checks :
     double hole_x_min = x_pos_hole;
@@ -329,10 +329,10 @@ namespace geomtools {
     double hole_x_pos = 0.0;
     double hole_y_pos = 0.0;
     double hole_z_pos = 0.0; // Always ZERO
-    if (solid->properties ().has_key ("xy_pos_hole"))
+    if (solid->get_properties ().has_key ("xy_pos_hole"))
       {
         std::vector<double> xy_pos_hole;
-        solid->properties ().fetch ("xy_pos_hole", xy_pos_hole);
+        solid->get_properties ().fetch ("xy_pos_hole", xy_pos_hole);
         hole_x_pos = xy_pos_hole.at(0);
         hole_y_pos = xy_pos_hole.at(1);
       }

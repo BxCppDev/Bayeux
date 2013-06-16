@@ -5,64 +5,186 @@
 #@key_label   "category"
 #@meta_label  "type"
 
+
+##################################################################
 # This is the mandatory top-level geometry category.
 # One should always provide it :
 [category="world" type="0"]
+
+#@config The geometry category of the top-level world volume
+
+#@description The world's GID address is characterized by its 'world' number
 addresses : string[1] = "world"
 
+
+##################################################################
 # This geometry category addresses an experimental area volume :
 [category="lab.gc"  type="100"]
+
+#@config The geometry category of the experimental area volume (lab)
+
+#@description A lab's GID address is charaterized by its 'area' number
 addresses : string[1] = "area"
 
+
+##################################################################
 # This geometry category addresses a vacuum chamber :
 [category="vessel.gc" type="200"]
+
+#@config The geometry category of the vacuum chamber
+
+#@description A vacuum chamber's GID address is charaterized by its 'chamber' number
 addresses : string[1] = "chamber"
 
+
+##################################################################
 # This geometry category addresses a part of the vacuum chamber :
 [category="vessel_part.gc" type="210"]
+
+#@config The geometry category of a part of the vacuum chamber
+
+#@description A vacuum chamber part's GID address extends the vacuum chamber GID address
 extends  : string = "vessel.gc"
+
+#@description The vacuum chamber 'part' number extending the mother vacuum chamber GID address
 by       : string[1] = "part"
 
+
+##################################################################
 # This geometry category addresses the internal volume of a the vacuum chamber :
 [category="vessel_vacuum.gc" type="220"]
+
+#@config The geometry category of a the inner volume within the vacuum chamber
+
+#@description The GID address of the inner volume of a vacuum chamber inherits the GID address of the vacuum chamber
 inherits : string = "vessel.gc"
 
+
+##################################################################
 # This geometry category addresses a calibration source object :
 [category="source.gc" type="1000"]
+
+#@config The geometry category of a calibration source
+
+#@description The GID address of a source is defined by its 'position' number
 addresses : string[1] = "position"
 
-# This geometry category addresses the support film of a calibration source :
-[category="source_film.gc" type="1010"]
+
+##################################################################
+# This geometry category addresses the support frame of a calibration source :
+[category="source_support.gc" type="1010"]
+
+#@config The geometry category of a calibration source support
+
+#@description The GID address of a source support inherits the GID address of the source
 inherits : string = "source.gc"
 
+
+##################################################################
+# This geometry category addresses the support frame of a calibration source :
+[category="source_support_hole.gc" type="1012"]
+
+#@config The geometry category of a calibration source support
+
+#@description A source support hole's GID address extends the source support GID address
+extends  : string = "source_support.gc"
+
+#@description The 'hole' number extending the mother source support GID address
+by       : string[1] = "hole"
+
+
+##################################################################
+# This geometry category addresses the film of a calibration source :
+[category="source_film.gc" type="1020"]
+
+#@config The geometry category of a calibration source film
+
+#@description The GID address of a source film inherits the GID address of the source
+inherits : string = "source.gc"
+
+
+##################################################################
 # This geometry category addresses a vertical column of optical module :
-[category="detector_column.gc" type="2010"]
+[category="optical_module_column.gc" type="2010"]
+
+#@config The geometry category of a calibration source film
+
 addresses : string[1] = "column"
 
+
+##################################################################
 # This geometry category addresses an optical module within a column :
-[category="detector.gc" type="2020"]
-extends  : string = "detector_column.gc"
+[category="optical_module.gc" type="2020"]
+
+#@config The geometry category of an optical module
+
+extends  : string = "optical_module_column.gc"
 by       : string[1] = "row"
 
+
+##################################################################
 #  This geometry category addresses the scintillator block of an optical module :
 [category="scin_block.gc" type="2030"]
-inherits : string = "detector.gc"
 
+#@config The geometry category of the scintillator block of an optical module
+
+#@description The GID address of a scin block inherits the GID address of the optical module
+inherits : string = "optical_module.gc"
+
+
+##################################################################
+#  This geometry category of a PMT :
+[category="pmt.gc" type="2040"]
+
+#@config The geometry category of the PMT of an optical module
+
+#@description The GID address of a PMT inherits the GID address of the optical module
+inherits  : string = "optical_module.gc"
+
+
+##################################################################
+#  This geometry category of a PMT bulb :
+[category="pmt_bulb.gc" type="2042"]
+
+#@config The geometry category of the PMT's bulb
+
+#@description The GID address of a PMT bulb inherits the GID address of the optical module
+inherits  : string = "pmt.gc"
+
+##################################################################
 #  This geometry category addresses a dynode inside a PMT :
-[category="pmt_dynode.gc" type="2040"]
-extends  : string = "detector.gc"
+[category="pmt_dynode.gc" type="2043"]
+
+#@config The geometry category of a PMT's dynode
+
+extends  : string = "pmt.gc"
 by       : string[1] = "dynode"
 
-#  This geometry category addresses the focus electrode inside a PMT :
-[category="pmt_focus_electrode.gc" type="2050"]
-inherits : string[1] = "detector.gc"
 
+##################################################################
+#  This geometry category addresses the focus electrode inside a PMT :
+[category="pmt_focus_electrode.gc" type="2044"]
+
+#@config The geometry category of the PMT's focus electrode
+
+inherits : string[1] = "pmt.gc"
+
+
+##################################################################
 #  This geometry category addresses a shield wall around the vessel :
 [category="shield_wall.gc" type="2060"]
+
+#@config The geometry category of a shield wall
+
 addresses : string[1] = "wall"
 
+
+##################################################################
 #  This geometry category addresses a single brick as part of a shield wall :
 [category="shield_brick.gc" type="2070"]
+
+#@config The geometry category of a brick within a shield wall
+
 extends  : string = "shield_wall.gc"
 by       : string[2] = "column" "row"
 

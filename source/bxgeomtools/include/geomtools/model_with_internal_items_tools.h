@@ -31,6 +31,11 @@ namespace geomtools {
   {
   public:
 
+    static const std::string INTERNAL_ITEM_PREFIX;           // "internal_item."
+    static const std::string INTERNAL_ITEM_LABELS_KEY;       // "internal_item.labels"
+    static const std::string INTERNAL_ITEM_MODEL_PREFIX;     // "internal_item.model."
+    static const std::string INTERNAL_ITEM_PLACEMENT_PREFIX; // "internal_item.placement."
+
     struct item_type
     {
     public:

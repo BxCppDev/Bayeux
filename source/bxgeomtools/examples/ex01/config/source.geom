@@ -37,16 +37,43 @@ visibility.hidden           : boolean = 0
 visibility.daughters.hidden : boolean = 0
 
 
-###################################################################
-[name="source_support.model" type="geomtools::simple_shaped_model"]
+########################################################################
+[name="source_support_hole.model" type="geomtools::simple_shaped_model"]
 
-#@config The list of properties to describe the source support ring
+#@config The list of properties to describe the small hole in the source support ring
+
+
+#@description The name of the 3D shape of the source support ring
+shape_type  : string = "cylinder"
+
+#@description The default implicit length unit
+length_unit : string = "mm"
+
+#@description The inner R dimension of the source support ring hole
+r           : real = 0.5
+
+#@description The Z dimension (thickness) of the source support ring
+z           : real = 5.0
+
+#@description The name of the material of the hole
+material.ref : string = "vacuum"
+
+#@description The recommended color for the display of the source film
+visibility.color            : string  = "blue"
+
+#@description The visibility hidden flag for the display of the source film
+visibility.hidden           : boolean = 0
+
+
+###########################################################
+[name="source.model" type="geomtools::simple_shaped_model"]
+
+#@config The list of properties to describe the source
+
+######### Shape description #########
 
 #@description The name of the 3D shape of the source support ring
 shape_type  : string = "tube"
-
-#@description The build mode for the central of the source support ring
-filled_mode : string = "by_envelope"
 
 #@description The length unit
 length_unit : string = "mm"
@@ -60,17 +87,61 @@ outer_r     : real = 12.0
 #@description The Z dimension (thickness) of the source support ring
 z           : real = 5.0
 
+#@description The build mode for the cavity volume of the tube
+filled_mode : string = "by_envelope"
+
+#@description The name of the source support tube for mapping
+filled_label : string = "support"
+
+######### Special properties attached to materials #########
+
 #@description The name of the material of the source support ring
 material.ref : string = "aluminium"
 
-#@description The name of the material that fills the void volume within the ring
+#@description Some property attached to the material of the source support ring
+material.radioactivity.Bi214.activity : real as mass_activity = 35.4 uBq/kg
+
+#@description Some property attached to the material of the source support ring
+material.radioactivity.Tl208.activity : real as mass_activity = 12.5 uBq/kg
+
+#@description Some property attached to the material of the tube cavity
+material.group : string = "absorption.roi"
+
+#@description The name of the material that fills the cavity volume of the tube
 material.filled.ref : string = "vacuum"
+
+#@description Some property attached to the material of the tube cavity
+material.filled.group : string = "transport.roi"
+
+
+######### Special properties attached to sensitive volumes #########
+
+#@description The sensitive category (tube volume)
+sensitive.category : string = "__source_support.sd"
+
+#@description Some sensitive property attached to the model (tube volume)
+sensitive.hit.category : string = "__in_source_support.hc"
+
+#@description Some sensitive property attached to the model (tube volume)
+sensitive.hit.color : string = "red"
+
+#@description Some sensitive property attached to the model (tube volume)
+sensitive.debug    : boolean = 1
+
+#@description The sensitive category attached to the model (tube cavity)
+sensitive.filled.category : string = "__source_vacuum.sd"
+
+#@description Some sensitive property attached to the model (tube cavity)
+sensitive.filled.hit.category : string = "__in_source_vacuum.hc"
+
+#@description Some sensitive property attached to the model (tube cavity)
+sensitive.filled.hit.color : string = "green"
+
+
+######### Visibility parameters attached to volumes #########
 
 #@description The recommended color for the display of the volume of interest
 visibility.color           : string  = "blue"
-
-#@description The explicit color for the display of the envelope volume
-visibility.envelope_color  : string  = "grey"
 
 #@description The visibility hidden flag for the display of the envelope volume
 visibility.hidden_envelope  : boolean = 0
@@ -81,17 +152,44 @@ visibility.hidden           : boolean = 0
 #@description The daughters' visibility hidden flag for the display of ring
 visibility.daughters.hidden : boolean = 0
 
+
+######### items placed within the tube cavity #########
+
 #@description The list of daughter volumes by label
-internal_item.labels 	    : string[1] = "film"
+internal_item.labels 	    : string[2] = "hole0" "hole1"
+
+#@description The model of the "hole0" daughter volume
+internal_item.model.hole0     : string  = "source_support_hole.model"
+
+#@description The placement of the "hole0" daughter volume
+internal_item.placement.hole0 : string  = "11 0 0 (mm)"
+
+#@description The model of the "hole1" daughter volume
+internal_item.model.hole1     : string  = "source_support_hole.model"
+
+#@description The placement of the "hole1" daughter volume
+internal_item.placement.hole1 : string  = "0 11 0 (mm)"
+
+#@description The list of daughter volumes by label
+internal_item.filled.labels 	    : string[1] = "film"
 
 #@description The model of the "film" daughter volume
-internal_item.model.film     : string  = "source_film.model"
+internal_item.filled.model.film     : string  = "source_film.model"
 
 #@description The placement of the "film" daughter volume
-internal_item.placement.film : string  = "0 0 0 (mm)"
+internal_item.filled.placement.film : string  = "0 0 0 (mm)"
+
+
+######### rules for GID computing #########
+
+#@description The mapping directives for the "hole" daughter volumes
+mapping.daughter_id.hole : string  = "[source_support_hole.gc]"
+
+#@description The mapping directives for the "ring" daughter volumes
+mapping.filled.daughter_id.support : string  = "[source_support.gc]"
 
 #@description The mapping directives for the "film" daughter volumes
-mapping.daughter_id.film : string  = "[source_film.gc]"
+mapping.filled.daughter_id.film : string  = "[source_film.gc]"
 
 
 ###################################################################
@@ -107,7 +205,7 @@ replicated.axis            : string = "x"
 replicated.number_of_items : integer = 3
 
 #@description The model of the replicated volumes
-replicated.model           : string = "source_support.model"
+replicated.model           : string = "source.model"
 
 #@description The label associated to the replicated volumes
 replicated.label           : string = "sources"

@@ -425,6 +425,7 @@ namespace geomtools {
     }
 
     // Loop on children physical volumes:
+    //std::cerr << "DEVEL: mapping: ************ Logical = '" << log.get_name() << "' \n";
     for (logical_volume::physicals_col_type::const_iterator i
            = log.get_physicals ().begin ();
          i != log.get_physicals ().end ();
@@ -434,10 +435,13 @@ namespace geomtools {
       DT_LOG_TRACE (get_logging_priority (), _indenter_ <<
                     "Physical '" << phys_name << "' : " << "'" << phys_vol.get_name () << "'");
 
+      //std::cerr << "DEVEL: mapping: ************ -> physical = '" << phys_vol.get_name () << "' \n";
+
       const std::string daughter_label
         = i_model::extract_label_from_physical_volume_name (phys_vol.get_name ());
       DT_LOG_TRACE (get_logging_priority (), _indenter_ <<
                     "Daughter label = '" << daughter_label << "' ");
+      //std::cerr << "DEVEL: mapping: ************   -> daughter_label = '" << daughter_label << "' \n";
       std::string daughter_category_info;
       if (mapping_utils::has_daughter_id (log.get_parameters (),
                                           daughter_label)) {
@@ -479,7 +483,10 @@ namespace geomtools {
           DT_LOG_TRACE (get_logging_priority (), _indenter_ << "-> world placement " << tmp);
         }
         geom_id propagated_world_id = mother_id_;
-        if (! daughter_category_info.empty ()) {
+        if (daughter_category_info.empty ()) {
+          DT_LOG_WARNING(get_logging_priority (), "No daughter category information for daughter volume with label '"
+                         << daughter_label << "'.");
+        } else {
           geom_id item_id;
 
           // compute the vector of sub-addresses:

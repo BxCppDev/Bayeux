@@ -38,15 +38,12 @@ visibility.daughters.hidden : boolean = 0
 
 
 ###################################################################
-[name="source_support.model" type="geomtools::simple_shaped_model"]
+[name="source.model" type="geomtools::simple_shaped_model"]
 
 #@config The list of properties to describe the source support ring
 
 #@description The name of the 3D shape of the source support ring
 shape_type  : string = "tube"
-
-#@description The build mode for the central of the source support ring
-filled_mode : string = "by_envelope"
 
 #@description The length unit
 length_unit : string = "mm"
@@ -62,6 +59,12 @@ z           : real = 5.0
 
 #@description The name of the material of the source support ring
 material.ref : string = "aluminium"
+
+#@description The build mode for the central of the source support ring
+filled_mode : string = "by_envelope"
+
+#@description The label of the source support tube (by_envelope)
+filled_label : string = "support"
 
 #@description The name of the material that fills the void volume within the ring
 material.filled.ref : string = "vacuum"
@@ -87,6 +90,10 @@ internal_item.placement.film : string  = "0 0 0 (mm)"
 #@description The mapping directives for the "film" daughter volumes
 mapping.daughter_id.film : string  = "[source_film.gc]"
 
+#@description The mapping directives for the "film" daughter volumes
+mapping.daughter_id.support : string  = "[source_support.gc]"
+
+
 
 ###################################################################
 [name="source_chain.model" type="geomtools::replicated_model"]
@@ -101,7 +108,7 @@ replicated.axis            : string = "x"
 replicated.number_of_items : integer = 3
 
 #@description The model of the replicated volumes
-replicated.model           : string = "source_support.model"
+replicated.model           : string = "source.model"
 
 #@description The label associated to the replicated volumes
 replicated.label           : string = "sources"

@@ -653,7 +653,6 @@ namespace geomtools {
     }
 
     for (int i = 0; i < effective_factory_preserved_property_prefixes.size (); i++) {
-      int level = 1;
       const std::string & prefix = effective_factory_preserved_property_prefixes[i];
       DT_THROW_IF(prefix.empty(),
                   std::logic_error,
@@ -662,7 +661,9 @@ namespace geomtools {
                   std::logic_error,
                   "Property prefix to be preserved in logical must end with a dot '.' ("
                   << prefix << " ) !");
-      _factory_.add_property_prefix(prefix, level);
+      DT_LOG_NOTICE(_logging,
+                   "Property prefix '" << prefix << "' will be exported by the model factory");
+      _factory_.add_property_prefix(prefix);
     }
 
     if (! factory_geom_list.empty ()) {

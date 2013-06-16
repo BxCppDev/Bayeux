@@ -1,16 +1,16 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* polycone.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-03-14
  * Last modified: 2010-03-14
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *   Polycone 3D shape
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
 #ifndef GEOMTOOLS_POLYCONE_H_
@@ -40,9 +40,15 @@ namespace geomtools {
         FACE_TOP    = 0x8,
         FACE_ALL    = (FACE_INNER_SIDE
                        | FACE_OUTER_SIDE
-                       | FACE_BOTTOM 
+                       | FACE_BOTTOM
                        | FACE_TOP)
-      };  
+      };
+
+    enum datafile_column_mode {
+      RMIN_RMAX = 0,
+      IGNORE_RMIN = 1,
+      RMIN_AS_RMAX = 2
+    };
 
     struct r_min_max
     {
@@ -50,23 +56,23 @@ namespace geomtools {
     };
 
     typedef std::map<double, r_min_max> rz_col_type;
-  
+
   public:
 
     bool is_extruded () const;
-    
+
     double get_xmin () const;
-    
+
     double get_xmax () const;
-    
+
     double get_ymin () const;
-    
+
     double get_ymax () const;
-    
+
     double get_zmin () const;
-    
+
     double get_zmax () const;
-    
+
     double get_z () const;
 
   private:
@@ -78,19 +84,17 @@ namespace geomtools {
     void _compute_limits_ ();
 
     void _compute_all_ ();
-    
-  public: 
+
+  public:
 
     const rz_col_type & points () const;
 
-    // ctor:
+    /// Constructor
     polycone ();
 
-    // dtor:
+    // Destructor
     virtual ~polycone ();
-  
-    // methods:
-      
+
     virtual std::string get_shape_name () const;
 
     bool is_valid () const;
@@ -103,20 +107,18 @@ namespace geomtools {
 
     void initialize ();
 
-
     void initialize (const std::string & filename_);
 
-    /*
-     * Initialize the polycone from data in a file.
+    /** Initialize the polycone from data in a file.
      * Format (ASCII) consists in lines with the
      * (Z,Rmax) format or the (Z,Rmin,Rmax) format.
      * Special comments may be inserted at the beginning
      * of the file:
      *
-     * All data are given with the following lenght unit:
+     * All data are given with the following length unit:
      *    #@length_unit mm
      *
-     * Data (Rmin) in the second out of three columns are ignored:
+     * Data (Rmin) in the second column out of three columns are ignored:
      *    #@ignore_rmin
      *
      * The thickness of the polycone:
@@ -135,17 +137,19 @@ namespace geomtools {
      *  <<<
      *
      */
-    void initialize (const std::string & filename_, 
+    void initialize (const std::string & filename_,
                      double zmin_ = std::numeric_limits<double>::quiet_NaN (),
-                     double zmax_ = std::numeric_limits<double>::quiet_NaN ());
+                     double zmax_ = std::numeric_limits<double>::quiet_NaN (),
+                     int mode_ = RMIN_RMAX);
 
-    void initialize (const datatools::properties & setup_); 
+    /// Main initilalization method from a container of configuration parameters
+    void initialize (const datatools::properties & setup_);
 
   private:
 
     // interpolation:
-    void _build_from_envelope_and_skin_ (double thickness_, 
-                                         double step_, 
+    void _build_from_envelope_and_skin_ (double thickness_,
+                                         double step_,
                                          double zmin_,
                                          double zmax_);
 
@@ -169,12 +173,12 @@ namespace geomtools {
 
     double get_parameter ( const std::string & flag_ ) const;
 
-    virtual bool is_inside (const vector_3d &, 
+    virtual bool is_inside (const vector_3d &,
                             double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     // if 'skin' < 0 no skin is taken into account:
-    virtual bool is_on_surface (const vector_3d & , 
-                                int mask_    = FACE_ALL , 
+    virtual bool is_on_surface (const vector_3d & ,
+                                int mask_    = FACE_ALL ,
                                 double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     virtual vector_3d get_normal_on_surface (const vector_3d & position_) const;
@@ -182,15 +186,15 @@ namespace geomtools {
     friend std::ostream & operator<< (std::ostream &, const polycone &);
 
     friend std::istream & operator>> (std::istream &, polycone &);
-      
-    virtual bool find_intercept (const vector_3d & from_, 
+
+    virtual bool find_intercept (const vector_3d & from_,
                                  const vector_3d & direction_,
                                  intercept_t & intercept_,
                                  double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
-    virtual void tree_dump (std::ostream & out_         = std::clog, 
-                            const std::string & title_  = "", 
-                            const std::string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_         = std::clog,
+                            const std::string & title_  = "",
+                            const std::string & indent_ = "",
                             bool inherit_          = false) const;
 
   private:

@@ -113,6 +113,10 @@ int main (int argc_, char ** argv_)
 
       geomtools::model_factory factory;
       factory.set_debug (debug);
+      factory.add_property_prefix ("visibility.");
+      factory.add_property_prefix ("mapping.");
+      factory.add_property_prefix ("material.");
+      factory.add_property_prefix ("sensitive.");
 
       if (setup_filename.empty ())
         {

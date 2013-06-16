@@ -23,6 +23,7 @@
 
 #include <geomtools/geomtools_config.h>
 #include <geomtools/clhep.h>
+#include <geomtools/utils.h>
 
 namespace geomtools {
 
@@ -131,14 +132,19 @@ namespace geomtools {
 
     enum filled_type
       {
-        FILLED_NONE         = 0,
-        FILLED_BY_ENVELOPE  = 1,
-        FILLED_BY_EXTRUSION = 2
+        FILLED_UNDEFINED    = -1,
+        FILLED_NONE         =  0,
+        FILLED_BY_ENVELOPE  =  1,
+        FILLED_BY_EXTRUSION =  2
       };
 
     static const std::string FILLED_NONE_LABEL;
     static const std::string FILLED_BY_ENVELOPE_LABEL;
     static const std::string FILLED_BY_EXTRUSION_LABEL;
+
+    static std::string get_filled_mode_label(filled_utils::filled_type);
+
+    static filled_type get_filled_mode(const std::string & filled_label);
 
   };
 

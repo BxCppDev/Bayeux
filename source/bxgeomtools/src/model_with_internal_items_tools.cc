@@ -20,6 +20,11 @@
 
 namespace geomtools {
 
+  const std::string model_with_internal_items_tools::INTERNAL_ITEM_PREFIX = "internal_item.";
+  const std::string model_with_internal_items_tools::INTERNAL_ITEM_LABELS_KEY =  "internal_item.labels";
+  const std::string model_with_internal_items_tools::INTERNAL_ITEM_MODEL_PREFIX =  "internal_item.model.";
+  const std::string model_with_internal_items_tools::INTERNAL_ITEM_PLACEMENT_PREFIX = "internal_item.placement.";
+
   model_with_internal_items_tools::item_type::item_type ()
   {
     _model_ = 0;
@@ -146,8 +151,8 @@ namespace geomtools {
                                                               models_col_type * models_)
   {
     std::vector<std::string> labels;
-    if (config_.has_key ("internal_item.labels")) {
-      config_.fetch ("internal_item.labels", labels);
+    if (config_.has_key (INTERNAL_ITEM_LABELS_KEY)) {
+      config_.fetch (INTERNAL_ITEM_LABELS_KEY, labels);
     }
 
     if (labels.size () == 0) {
@@ -157,6 +162,7 @@ namespace geomtools {
 
     DT_THROW_IF (! models_, std::logic_error, "Missing dictionary of models !");
 
+    //std::cerr << "DEVEL: MWIIT: ************ Logical = '" << log_.get_name() << "' \n";
     for (std::vector<std::string>::const_iterator i = labels.begin ();
          i != labels.end ();
          i++) {
@@ -165,7 +171,7 @@ namespace geomtools {
         // extract placement:
         {
           std::ostringstream item_placement_oss;
-          item_placement_oss << "internal_item.placement." << item_label;
+          item_placement_oss << INTERNAL_ITEM_PLACEMENT_PREFIX << item_label;
           DT_THROW_IF (! config_.has_key (item_placement_oss.str ()),
                        std::logic_error,
                        "Missing '" << item_placement_oss.str () << "' property !");
@@ -173,11 +179,11 @@ namespace geomtools {
           // parse placement:
           bool res_parsing = true;
           try {
-              res_parsing = placement::from_string (item_placement_str, item_placement);
-            }
+            res_parsing = placement::from_string (item_placement_str, item_placement);
+          }
           catch (...) {
-              res_parsing = false;
-            }
+            res_parsing = false;
+          }
           DT_THROW_IF (! res_parsing, std::logic_error, "Item's placement parsing failed !");
         }
 
@@ -185,7 +191,7 @@ namespace geomtools {
         const i_model * item_model = 0;
         {
           std::ostringstream item_model_key_oss;
-          item_model_key_oss << "internal_item.model." << item_label;
+          item_model_key_oss << INTERNAL_ITEM_MODEL_PREFIX << item_label;
           DT_THROW_IF (! config_.has_key (item_model_key_oss.str ()),
                        std::logic_error,
                        "Missing '" << item_model_key_oss.str () << "' property !");
@@ -196,7 +202,7 @@ namespace geomtools {
                        "Cannot find model with name '" << item_model_name << "' !");
           item_model = found->second;
         }
-
+        //std::cerr << "DEVEL: MWIIT: ************ -> item_label = '" << item_label << "' \n";
         add_item (item_label, *item_model, item_placement);
         physical_volume & item_phys = grab_item (item_label).grab_physical_volume ();
         const placement & item_plcmt = get_item (item_label).get_placement ();

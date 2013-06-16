@@ -34,6 +34,7 @@ namespace geomtools {
     LOGICAL_SUFFIX     = ".log";
     PHYSICAL_SUFFIX    = ".phys";
     PHANTOM_SOLID_FLAG = "phantom_solid";
+    EXPORTED_PROPERTIES_PREFIXES_KEY = "__geomtools__i_model__exported_properties_prefixes";
     return;
   }
 
@@ -191,7 +192,7 @@ namespace geomtools {
     return _logical;
   }
 
-  void i_model::_pre_construct (datatools::properties & setup_)
+  void i_model::_common_construct (datatools::properties & setup_)
   {
     {
       // Logging priority:
@@ -203,7 +204,10 @@ namespace geomtools {
                   "Invalid logging priority level for geometry model '" << _name_ << "' !");
       set_logging_priority (lp);
     }
+  }
 
+  void i_model::_pre_construct (datatools::properties & setup_, models_col_type * models_)
+  {
     if (setup_.has_flag (i_model::constants::instance().PHANTOM_SOLID_FLAG)) {
       _set_phantom_solid (true);
     }
@@ -211,8 +215,26 @@ namespace geomtools {
     return;
   }
 
-  void i_model::_post_construct (datatools::properties & setup_)
+  void i_model::_post_construct (datatools::properties & setup_, models_col_type * models_)
   {
+    std::vector<std::string> exported_properties_prefixes;
+    if (setup_.has_key(i_model::constants::instance ().EXPORTED_PROPERTIES_PREFIXES_KEY)) {
+      setup_.fetch(i_model::constants::instance ().EXPORTED_PROPERTIES_PREFIXES_KEY,
+                   exported_properties_prefixes);
+    }
+    // Push some of the model's setup properties into the logical for further usage:
+    DT_LOG_DEBUG(get_logging_priority(),
+                 "Number of exported properties prefixes is "
+                 << exported_properties_prefixes.size() << " in geometry model '" << get_name() << "'...");
+    for (int i = 0; i < exported_properties_prefixes.size(); i++) {
+      const std::string & prefix = exported_properties_prefixes[i];
+      DT_LOG_DEBUG(get_logging_priority(), "Export properties starting with '"
+                   << prefix << "' to the top logical in geometry model '" << get_name() << "'...");
+      DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "Export properties starting with '"
+                   << prefix << "' to the top logical in geometry model '" << get_name() << "'...");
+      setup_.export_starting_with (_logical.grab_parameters (), prefix);
+    }
+
     return;
   }
 
@@ -220,17 +242,42 @@ namespace geomtools {
                            const datatools::properties & setup_,
                            models_col_type * models_)
   {
-    bool devel_track_name = false;
+    std::vector<std::string> dummy;
+    construct(name_, setup_, dummy, models_);
+    return;
+  }
+
+  void i_model::construct (const std::string & name_,
+                           const datatools::properties & setup_,
+                           const std::vector<std::string> & properties_prefixes_,
+                           models_col_type * models_)
+  {
     DT_THROW_IF (is_constructed (),
                  std::logic_error,
                  "Model '" << name_ << "' has been already constructed !");
     datatools::properties & setup = const_cast<datatools::properties &> (setup_);
     // Set the name of the model as soon as possible:
-    if (_name_.empty() && ! name_.empty()) set_name(name_);
-    _pre_construct (setup);
+    if (_name_.empty() && ! name_.empty()) {
+      set_name(name_);
+    }
+    {
+      // Set description for logical parameters :
+      std::ostringstream log_params_desc;
+      log_params_desc << "Auxiliary properties for top logical volume in model '"
+                      << name_ << "'";
+      _logical.grab_parameters ().set_description(log_params_desc.str());
+    }
+    setup.store(i_model::constants::instance ().EXPORTED_PROPERTIES_PREFIXES_KEY,
+                properties_prefixes_);
+    _common_construct (setup);
+    _pre_construct (setup, models_);
     _at_construct (name_, setup_, models_);
-    _post_construct (setup);
+    _post_construct (setup, models_);
     _logical.set_geometry_model(*this);
+    if (setup.has_key(i_model::constants::instance ().EXPORTED_PROPERTIES_PREFIXES_KEY)) {
+      setup.erase(i_model::constants::instance ().EXPORTED_PROPERTIES_PREFIXES_KEY);
+    }
+    _logical.lock();
     _constructed_ = true;
     return;
   }

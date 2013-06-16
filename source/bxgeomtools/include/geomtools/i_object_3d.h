@@ -57,9 +57,9 @@ namespace geomtools {
 
     void set_tolerance (double tolerance_);
 
-    datatools::properties & properties ();
+    datatools::properties & grab_properties ();
 
-    const datatools::properties & properties () const;
+    const datatools::properties & get_properties () const;
 
     virtual std::string get_shape_name () const = 0;
 

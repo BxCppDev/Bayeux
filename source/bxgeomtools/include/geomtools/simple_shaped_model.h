@@ -41,7 +41,7 @@ namespace geomtools {
   {
   public:
 
-    MWIM & get_internals ();
+    MWIM & grab_internals ();
 
     const MWIM & get_internals () const;
 
@@ -84,7 +84,11 @@ namespace geomtools {
 
   protected:
 
-    virtual void _post_construct (datatools::properties & setup_);
+    virtual void _pre_construct (datatools::properties & setup_,
+                                 models_col_type * models_);
+
+    virtual void _post_construct (datatools::properties & setup_,
+                                  models_col_type * models_);
 
     virtual void _at_construct (const std::string & name_,
                                 const datatools::properties & config_,
@@ -116,11 +120,13 @@ namespace geomtools {
 
   private:
 
-    std::string _shape_name_;
-    std::string _material_name_;
-    int         _filled_mode_;
-    std::string _filled_material_name_;
+    std::string _shape_name_;                //!< The name of the shape
+    std::string _material_name_;             //!< The name of the material the shape is made of
+    filled_utils::filled_type _filled_mode_; //!< The filled mode (for tube, polycone or polyhedra)
+    std::string _filled_material_name_;      //!< The name of the material of the shape cavity (for tube, polycone or polyhedra)
+    std::string _filled_label_;              //!< The label of the shape in enveloppe filled mode
 
+    // Effective solids:
     geomtools::box *       _box_;
     geomtools::cylinder *  _cylinder_;
     geomtools::tube *      _tube_;
@@ -128,19 +134,18 @@ namespace geomtools {
     geomtools::polycone *  _polycone_;
     geomtools::polyhedra * _polyhedra_;
 
-    geomtools::i_shape_3d * _solid_;
-    geomtools::i_shape_3d * _inner_shape_; //!< for filled tube or polycone or polyhedra
-    geomtools::i_shape_3d * _outer_shape_; //!< for mother polycone or polyhedra
+    geomtools::i_shape_3d * _solid_;       //!< Solid handle
+    geomtools::i_shape_3d * _inner_shape_; //!< For filled tube or polycone or polyhedra
+    geomtools::i_shape_3d * _outer_shape_; //!< For mother polycone or polyhedra
 
     placement               _inner_placement_;
     logical_volume          _inner_logical_;
     physical_volume         _inner_phys_;
 
-    logical_volume        * _daughter_owner_logical_;
-    logical_volume        * _visibility_logical_;
+    //logical_volume        * _daughter_owner_logical_; //!< The logical volume that is the top level mother of all daughter volumes implied by this model
 
-    // internal items :
-    MWIM                    _internals_;
+    MWIM                    _internals_;        //!< internal items within the shape
+    MWIM                    _filled_internals_; //!< internal items within the cavity (type, polycone, polyhedra)
 
     // registration interface :
     GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(simple_shaped_model);

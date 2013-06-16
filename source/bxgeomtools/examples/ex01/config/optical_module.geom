@@ -215,25 +215,33 @@ visibility.color  : string  = "red"
 [name="PMT.model" type="geomtools::simple_shaped_model"]
 
 #@config Parameters for the PM tube geoemtry model
+
+#@description The solid shape of the model
 shape_type  : string = "polycone"
 
-#@description The filled mode of the polycone model (none|by_extrusion|by_envelope)
-filled_mode : string = "by_envelope"
-
-#@description The length unit
+#@description The default implicit length unit
 length_unit : string = "mm"
-
-#@description The material name
-material.ref        : string = "glass"
-
-#@description The inner material name
-material.filled.ref : string = "vacuum"
 
 #@description The polycone build mode
 build_mode  : string = "datafile"
 
-#@description The polycone coordinates filename
+#@description The file that contains the coordinates of the polycone
 datafile    : string = "config/pmt_hamamatsu_R5912MOD_polycone.data"
+
+#@description The rule to read the file that contains the coordinates of the polycone (default: 'rmin_rmax')
+#datafile.columns  : string = "rmin_rmax"
+
+#@description The filled mode of the polycone model (none|by_envelope)
+filled_mode : string = "by_envelope"
+
+#@description The label of the filled the polycone shape (for filled_mode='by_envelope' only)
+filled_label : string = "bulb"
+
+#@description The material name
+material.ref        : string = "glass"
+
+#@description The inner material name (for filled_mode='by_envelope' only)
+material.filled.ref : string = "vacuum"
 
 #@description The visibility hidden flag for the display
 visibility.hidden           : boolean = 0
@@ -247,8 +255,20 @@ visibility.color            : string  = "magenta"
 #@description The visibility hidden flag for the daughters volumes
 visibility.daughters.hidden : boolean = 0
 
+#@description The visibility hidden flag for the display (for filled_mode='by_envelope' only)
+visibility.filled.hidden           : boolean = 0
+
+#@description The visibility hidden flag for the envelope (for filled_mode='by_envelope' only)
+visibility.filled.hidden_envelop   : boolean = 1
+
+#@description The recommended color for the display (for filled_mode='by_envelope' only)
+visibility.filled.color            : string  = "grey"
+
+#@description The visibility hidden flag for the daughters volumes (for filled_mode='by_envelope' only)
+visibility.filled.daughters.hidden : boolean = 0
+
 #@description The list of daughter volumes by labels
-internal_item.labels 	    : string[12] = \
+internal_item.filled.labels 	    : string[12] = \
 				"focusing_electrode" \
 				"dynode_0" \
 				"dynode_1" \
@@ -263,58 +283,59 @@ internal_item.labels 	    : string[12] = \
 				"anode"
 
 #@description The placement of the "focusing_electrode" daughter volume
-internal_item.placement.focusing_electrode : string  = "0 0 +20 (mm)"
+internal_item.filled.placement.focusing_electrode : string  = "0 0 +20 (mm)"
 
 #@description The model of the "focusing_electrode" daughter volume
-internal_item.model.focusing_electrode     : string  = "focusing_electrode.model"
+internal_item.filled.model.focusing_electrode     : string  = "focusing_electrode.model"
 
-internal_item.model.dynode_0     : string  = "dynode.model"
-internal_item.placement.dynode_0 : string  = "0 -15 +0 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_0     : string  = "dynode.model"
+internal_item.filled.placement.dynode_0 : string  = "0 -15 +0 (mm) / x +45 (degree)"
 
-internal_item.model.dynode_1     : string  = "dynode.model"
-internal_item.placement.dynode_1 : string  = "0 +15 +0 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_1     : string  = "dynode.model"
+internal_item.filled.placement.dynode_1 : string  = "0 +15 +0 (mm) / x +45 (degree)"
 
-internal_item.model.dynode_2     : string  = "dynode.model"
-internal_item.placement.dynode_2 : string  = "0 -15 -20 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_2     : string  = "dynode.model"
+internal_item.filled.placement.dynode_2 : string  = "0 -15 -20 (mm) / x +45 (degree)"
 
-internal_item.model.dynode_3     : string  = "dynode.model"
-internal_item.placement.dynode_3 : string  = "0 +15 -20 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_3     : string  = "dynode.model"
+internal_item.filled.placement.dynode_3 : string  = "0 +15 -20 (mm) / x +45 (degree)"
 
-internal_item.model.dynode_4     : string  = "dynode.model"
-internal_item.placement.dynode_4 : string  = "0 -15 -40 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_4     : string  = "dynode.model"
+internal_item.filled.placement.dynode_4 : string  = "0 -15 -40 (mm) / x +45 (degree)"
 
-internal_item.model.dynode_5     : string  = "dynode.model"
-internal_item.placement.dynode_5 : string  = "0 +15 -40 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_5     : string  = "dynode.model"
+internal_item.filled.placement.dynode_5 : string  = "0 +15 -40 (mm) / x +45 (degree)"
 
-internal_item.model.dynode_6     : string  = "dynode.model"
-internal_item.placement.dynode_6 : string  = "0 -15 -60 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_6     : string  = "dynode.model"
+internal_item.filled.placement.dynode_6 : string  = "0 -15 -60 (mm) / x +45 (degree)"
 
-internal_item.model.dynode_7     : string  = "dynode.model"
-internal_item.placement.dynode_7 : string  = "0 +15 -60 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_7     : string  = "dynode.model"
+internal_item.filled.placement.dynode_7 : string  = "0 +15 -60 (mm) / x +45 (degree)"
 
-internal_item.model.dynode_8     : string  = "dynode.model"
-internal_item.placement.dynode_8 : string  = "0 -15 -80 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_8     : string  = "dynode.model"
+internal_item.filled.placement.dynode_8 : string  = "0 -15 -80 (mm) / x +45 (degree)"
 
-internal_item.model.dynode_9     : string  = "dynode.model"
-internal_item.placement.dynode_9 : string  = "0 +15 -80 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_9     : string  = "dynode.model"
+internal_item.filled.placement.dynode_9 : string  = "0 +15 -80 (mm) / x +45 (degree)"
 
-internal_item.placement.anode : string  = "0 0 -95 (mm) / x +20 (degree)"
-internal_item.model.anode     : string  = "dynode.model"
+internal_item.filled.placement.anode : string  = "0 0 -95 (mm) / x +20 (degree)"
+internal_item.filled.model.anode     : string  = "dynode.model"
 
 # The mapping directives for all "electrodes/dynodes" daughter volumes
 
-mapping.daughter_id.dynode_0 : string  = "[pmt_dynode.gc:dynode=0]"
-mapping.daughter_id.dynode_1 : string  = "[pmt_dynode.gc:dynode=1]"
-mapping.daughter_id.dynode_2 : string  = "[pmt_dynode.gc:dynode=2]"
-mapping.daughter_id.dynode_3 : string  = "[pmt_dynode.gc:dynode=3]"
-mapping.daughter_id.dynode_4 : string  = "[pmt_dynode.gc:dynode=4]"
-mapping.daughter_id.dynode_5 : string  = "[pmt_dynode.gc:dynode=5]"
-mapping.daughter_id.dynode_6 : string  = "[pmt_dynode.gc:dynode=6]"
-mapping.daughter_id.dynode_7 : string  = "[pmt_dynode.gc:dynode=7]"
-mapping.daughter_id.dynode_8 : string  = "[pmt_dynode.gc:dynode=8]"
-mapping.daughter_id.dynode_9 : string  = "[pmt_dynode.gc:dynode=9]"
-mapping.daughter_id.anode    : string  = "[pmt_dynode.gc:dynode=10]"
-mapping.daughter_id.focusing_electrode : string = "[pmt_focus_electrode.gc]"
+mapping.filled.daughter_id.dynode_0 : string  = "[pmt_dynode.gc:dynode=0]"
+mapping.filled.daughter_id.dynode_1 : string  = "[pmt_dynode.gc:dynode=1]"
+mapping.filled.daughter_id.dynode_2 : string  = "[pmt_dynode.gc:dynode=2]"
+mapping.filled.daughter_id.dynode_3 : string  = "[pmt_dynode.gc:dynode=3]"
+mapping.filled.daughter_id.dynode_4 : string  = "[pmt_dynode.gc:dynode=4]"
+mapping.filled.daughter_id.dynode_5 : string  = "[pmt_dynode.gc:dynode=5]"
+mapping.filled.daughter_id.dynode_6 : string  = "[pmt_dynode.gc:dynode=6]"
+mapping.filled.daughter_id.dynode_7 : string  = "[pmt_dynode.gc:dynode=7]"
+mapping.filled.daughter_id.dynode_8 : string  = "[pmt_dynode.gc:dynode=8]"
+mapping.filled.daughter_id.dynode_9 : string  = "[pmt_dynode.gc:dynode=9]"
+mapping.filled.daughter_id.anode    : string  = "[pmt_dynode.gc:dynode=10]"
+mapping.filled.daughter_id.focusing_electrode : string = "[pmt_focus_electrode.gc]"
+mapping.filled.daughter_id.bulb     : string  = "[pmt_bulb.gc]"
 
 
 #############################################################
@@ -359,16 +380,16 @@ length_unit       : string  = "mm"
 extrusion_radius : real   =  40.0
 
 #@description The X dimension
-x                : real   = 320.0
+x                : real   = 300.0
 
 #@description The Y dimension
-y                : real   = 320.0
+y                : real   = 300.0
 
 #@description The Z dimension
 z                : real   =   1.0
 
 #@description The name of the material
-material.ref : string = "copper"
+material.ref : string = "aluminium"
 
 #@description The visibility hidden flag for the display
 visibility.hidden : boolean = 0
@@ -418,6 +439,7 @@ visibility.color  : string   = "grey"
 
 #@description The mapping directives for the "detectors" daughter volumes
 mapping.daughter_id.scintillator_block : string  = "[scin_block.gc]"
+mapping.daughter_id.PMT                : string  = "[pmt.gc]"
 
 
 ###################################################################
@@ -445,7 +467,7 @@ length_unit                : string = "cm"
 replicated.step            : real = 30
 
 #@description The mapping directives for the "detectors" daughter volumes
-mapping.daughter_id.optical_modules : string  = "[detector.gc:row+0]"
+mapping.daughter_id.optical_modules : string  = "[optical_module.gc:row+0]"
 
 
 ###################################################################
@@ -473,7 +495,7 @@ length_unit                : string = "cm"
 replicated.step            : real = 30
 
 #@description The mapping directives for the "detectors" daughter volumes
-mapping.daughter_id.detectors : string  = "[detector_column.gc:column+0]"
+mapping.daughter_id.detectors : string  = "[optical_module_column.gc:column+0]"
 
 
 # End of list of multi-properties.

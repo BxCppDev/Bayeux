@@ -329,7 +329,10 @@ namespace geomtools {
       out_ << indent << title_ << endl;
     }
     out_ << indent <<  datatools::i_tree_dumpable::tag
-         << "Name       : \"" << _name_ << "\"" << endl;
+         << "Name       : '" << _name_ << "'" << endl;
+
+    out_ << indent <<  datatools::i_tree_dumpable::tag
+         << "Material   : '" << _material_ref_ << "'" << endl;
 
     out_ << indent <<  datatools::i_tree_dumpable::tag
          << "Locked     : " << (_locked_? "Yes": "No") << endl;
@@ -400,6 +403,8 @@ namespace geomtools {
            << "Physicals : ";
       if (_physicals_.size()) {
         out_ << _physicals_.size();
+      } else {
+        out_ << "none";
       }
       out_ << endl;
       if (_physicals_.size ()) {

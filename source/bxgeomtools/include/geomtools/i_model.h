@@ -44,6 +44,7 @@ namespace geomtools {
       std::string LOGICAL_SUFFIX; //!< Special suffix for logical volume naming
       std::string PHYSICAL_SUFFIX; //!< Special suffix for physical volume naming
       std::string PHANTOM_SOLID_FLAG; //!< Special flag for phantom envelope solid
+      std::string EXPORTED_PROPERTIES_PREFIXES_KEY; //!< Special key for exporting prefixed properties in logical volumes
     };
 
     typedef geomtools::models_col_type models_col_type;
@@ -84,10 +85,16 @@ namespace geomtools {
     /// Get a mutable reference to the embedded logical volume
     geomtools::logical_volume & grab_logical ();
 
-    /// Main pure virtual method that constructs the geometry model
+    /// Method that constructs the geometry model
     virtual void construct (const std::string & name_,
                             const datatools::properties & setup_,
                             models_col_type * models_ = 0);
+
+    /// Main virtual method that constructs the geometry model
+    virtual void construct (const std::string & name_,
+                            const datatools::properties & setup_,
+                            const std::vector<std::string> & properties_prefixes_,
+                            models_col_type * models_);
 
     /// Get the model ID
     virtual std::string get_model_id () const = 0;
@@ -109,11 +116,14 @@ namespace geomtools {
     /// Set the phantom solid flag
     void _set_phantom_solid (bool);
 
+    /// Common construction method
+    void _common_construct (datatools::properties & setup_);
+
     /// Pre-construction method
-    virtual void _pre_construct (datatools::properties & setup_);
+    virtual void _pre_construct (datatools::properties & setup_, models_col_type * models_);
 
     /// Post-construction method
-    virtual void _post_construct (datatools::properties & setup_);
+    virtual void _post_construct (datatools::properties & setup_, models_col_type * models_);
 
     /// The main construction method (abstract)
     virtual void _at_construct (const std::string & name_,

@@ -37,8 +37,6 @@ namespace geomtools {
   const string io::POSITION_SUFFIX = ".pos";
   const string io::ROTATION_SUFFIX = ".rot";
 
-  /*******/
-
   string to_xy (const vector_2d & p_)
   {
     ostringstream out;
@@ -101,7 +99,6 @@ namespace geomtools {
 
   bool is_valid (const vector_2d & vec_)
   {
-    //double qnan = numeric_limits<double>::quiet_NaN();
     return ((vec_.x () == vec_.x ()) && (vec_.y () == vec_.y ()));
   }
 
@@ -131,8 +128,6 @@ namespace geomtools {
     vec_.set (x, y, z);
     return;
   }
-
-  /******/
 
   string to_xyz (const vector_3d & p_)
   {
@@ -253,7 +248,6 @@ namespace geomtools {
 
   bool is_valid (const vector_3d & vec_)
   {
-    //double qnan = numeric_limits<double>::quiet_NaN();
     return (vec_.x () == vec_.x ()) && (vec_.y () == vec_.y () ) && (vec_.z () == vec_.z ());
   }
 
@@ -276,18 +270,15 @@ namespace geomtools {
     return are_near (vec1_, vec2_, tolerance_);
   }
 
-  /******/
-
   void print_xy (ostream & out_,
                  const basic_polyline_2d & p_,
                  bool endl_)
   {
     for (basic_polyline_2d::const_iterator i = p_.begin ();
          i != p_.end ();
-         i++)
-      {
-        print_xy (out_, *i, true);
-      }
+         i++) {
+      print_xy (out_, *i, true);
+    }
     if (endl_) out_ << endl;
     return;
   }
@@ -318,18 +309,15 @@ namespace geomtools {
     return;
   }
 
-  /******/
-
   void print_xyz (ostream & out_,
                   const basic_polyline_3d & p_,
                   bool endl_)
   {
     for (basic_polyline_3d::const_iterator i = p_.begin ();
          i != p_.end ();
-         i++)
-      {
-        print_xyz (out_, *i, true);
-      }
+         i++) {
+      print_xyz (out_, *i, true);
+    }
     if (endl_) out_ << endl;
     return;
   }
@@ -360,18 +348,15 @@ namespace geomtools {
     return;
   }
 
-  /******/
-
   void invalidate (rotation_3d & rot_)
   {
     rot_ = geomtools::rotation_3d ();
     double qnan = numeric_limits<double>::quiet_NaN();
     double * xx_addr = static_cast<double *>(static_cast<void *> (&rot_));
     double * last_addr = xx_addr + 9;
-    for (double * p = xx_addr; p < last_addr; p++)
-      {
-        *p = 0.0;
-      }
+    for (double * p = xx_addr; p < last_addr; p++) {
+      *p = 0.0;
+    }
     *xx_addr = qnan;
     xx_addr += 4;
     *xx_addr = qnan;
@@ -382,21 +367,15 @@ namespace geomtools {
 
   void rectify (rotation_3d & rot_)
   {
-    //cerr << "DEVEL: geomtools::rectify (rotation_3d &): Entering...\n";
     if (! is_valid (rot_)) return;
     double * xx_addr = static_cast<double *>(static_cast<void *> (&rot_));
     double * last_addr = xx_addr + 9;
     double epsilon = 16 * numeric_limits<double>::epsilon ();
-    //cerr << "DEVEL: geomtools::rectify (rotation_3d &): epsilon=" << epsilon <<" \n";
-    for (double * p = xx_addr; p < last_addr; p++)
-      {
-        //cerr << "DEVEL: geomtools::rectify (rotation_3d &): *p=" << *p <<" \n";
-        if (std::abs (*p) < epsilon)
-          {
-            *p = 0.0;
-          }
+    for (double * p = xx_addr; p < last_addr; p++) {
+      if (std::abs (*p) < epsilon) {
+        *p = 0.0;
       }
-    //cerr << "DEVEL: geomtools::rectify (rotation_3d &): Exiting.\n";
+    }
     return;
   }
 
@@ -499,13 +478,12 @@ namespace geomtools {
 
   double get_special_rotation_angle (int flag_angle_)
   {
-    switch (flag_angle_)
-      {
-      case ROTATION_ANGLE_0: return 0.0 * CLHEP::degree;
-      case ROTATION_ANGLE_90: return 90.0 * CLHEP::degree;
-      case ROTATION_ANGLE_180: return 180.0 * CLHEP::degree;
-      case ROTATION_ANGLE_270: return 270.0 * CLHEP::degree;
-      }
+    switch (flag_angle_) {
+    case ROTATION_ANGLE_0: return 0.0 * CLHEP::degree;
+    case ROTATION_ANGLE_90: return 90.0 * CLHEP::degree;
+    case ROTATION_ANGLE_180: return 180.0 * CLHEP::degree;
+    case ROTATION_ANGLE_270: return 270.0 * CLHEP::degree;
+    }
     return numeric_limits<double>::quiet_NaN();
   }
 
@@ -525,13 +503,12 @@ namespace geomtools {
 
   string get_special_rotation_angle_label (int flag_angle_)
   {
-    switch (flag_angle_)
-      {
-      case ROTATION_ANGLE_0: return "0";
-      case ROTATION_ANGLE_90: return "90";
-      case ROTATION_ANGLE_180: return "180";
-      case ROTATION_ANGLE_270: return "270";
-      }
+    switch (flag_angle_) {
+    case ROTATION_ANGLE_0: return "0";
+    case ROTATION_ANGLE_90: return "90";
+    case ROTATION_ANGLE_180: return "180";
+    case ROTATION_ANGLE_270: return "270";
+    }
     return "";
   }
 
@@ -550,12 +527,11 @@ namespace geomtools {
 
   string get_rotation_label (int axis_)
   {
-    switch (axis_)
-      {
-      case ROTATION_AXIS_X: return "x";
-      case ROTATION_AXIS_Y: return "y";
-      case ROTATION_AXIS_Z: return "z";
-      }
+    switch (axis_) {
+    case ROTATION_AXIS_X: return "x";
+    case ROTATION_AXIS_Y: return "y";
+    case ROTATION_AXIS_Z: return "z";
+    }
     return "";
   }
 
@@ -570,14 +546,14 @@ namespace geomtools {
     DT_THROW_IF (! check_rotation_axis (axis_), logic_error, "Invalid rotation axis !");
     rotation_3d r;
     if (axis_ == ROTATION_AXIS_X) {
-        r.rotateX (-angle_);
-      }
+      r.rotateX (-angle_);
+    }
     if (axis_ == ROTATION_AXIS_Y) {
-        r.rotateY (-angle_);
-      }
+      r.rotateY (-angle_);
+    }
     if (axis_ == ROTATION_AXIS_Z) {
-        r.rotateZ (-angle_);
-      }
+      r.rotateZ (-angle_);
+    }
     rot_ = r;
     return;
   }
@@ -984,8 +960,7 @@ namespace geomtools {
     out_ << title << endl;
     string last_tag  = "`-- ";
     string last_tagc = "    ";
-    if (is_valid (rot_))
-      {
+    if (is_valid (rot_)) {
         out_ << indent << last_tag << "[ ( " <<
           setw (11) << setprecision (6) << rot_.xx () << "   " <<
           setw (11) << setprecision (6) << rot_.xy () << "   " <<
@@ -998,9 +973,7 @@ namespace geomtools {
           setw (11) << setprecision (6) << rot_.zx () << "   " <<
           setw (11) << setprecision (6) << rot_.zy () << "   " <<
           setw (11) << setprecision (6) << rot_.zz () << ") ]" << endl;
-      }
-    else
-      {
+      } else {
         out_ << indent << last_tag << "[" << "invalid" << "]" << endl;
       }
     return;
@@ -1010,23 +983,37 @@ namespace geomtools {
   const string filled_utils::FILLED_BY_ENVELOPE_LABEL  = "by_envelope";
   const string filled_utils::FILLED_BY_EXTRUSION_LABEL = "by_extrusion";
 
+  string filled_utils::get_filled_mode_label(filled_utils::filled_type t)
+  {
+    if (t == FILLED_NONE) return FILLED_NONE_LABEL;
+    if (t == FILLED_BY_ENVELOPE) return FILLED_BY_ENVELOPE_LABEL;
+    if (t == FILLED_BY_EXTRUSION) return FILLED_BY_EXTRUSION_LABEL;
+    return "";
+  }
+
+  filled_utils::filled_type filled_utils::get_filled_mode(const std::string & filled_label)
+  {
+    if ( filled_label == FILLED_NONE_LABEL) return FILLED_NONE;
+    if ( filled_label == FILLED_BY_ENVELOPE_LABEL) return FILLED_BY_ENVELOPE;
+    if ( filled_label == FILLED_BY_EXTRUSION_LABEL) return FILLED_BY_EXTRUSION;
+    return FILLED_UNDEFINED;
+  }
+
   // Function to compute geometric barycenter :
 
   void compute_barycenter (const std::vector<vector_3d> & points_,
                            vector_3d & barycenter_)
   {
-    if (points_.size () == 0)
-      {
-        invalidate (barycenter_);
-        return;
-      }
+    if (points_.size () == 0) {
+      invalidate (barycenter_);
+      return;
+    }
     barycenter_.set (0.0, 0.0, 0.0);
     for (std::vector<vector_3d>::const_iterator i = points_.begin ();
          i != points_.end ();
-         i++)
-      {
-        barycenter_ += *i;
-      }
+         i++) {
+      barycenter_ += *i;
+    }
     barycenter_ /= points_.size ();
     return;
   }
@@ -1043,25 +1030,22 @@ namespace geomtools {
                                     const std::vector<double> & weights_,
                                     vector_3d & weighted_barycenter_)
   {
-    if (points_.size () != weights_.size ())
-      {
-        invalidate (weighted_barycenter_);
-        DT_THROW_IF(true, std::logic_error, "Unmatching vectors of points vs weights !");
-        return;
-      }
-    if (points_.size () == 0)
-      {
-        invalidate (weighted_barycenter_);
-        return;
-      }
+    if (points_.size () != weights_.size ()) {
+      invalidate (weighted_barycenter_);
+      DT_THROW_IF(true, std::logic_error, "Unmatching vectors of points vs weights !");
+      return;
+    }
+    if (points_.size () == 0) {
+      invalidate (weighted_barycenter_);
+      return;
+    }
     double wsum = 0.0;
     weighted_barycenter_.set (0.0, 0.0, 0.0);
-    for (int i = 0; i < points_.size (); i++)
-      {
-        double wi = weights_[i];
-        wsum += wi;
-        weighted_barycenter_ += (points_[i] * wi);
-      }
+    for (int i = 0; i < points_.size (); i++) {
+      double wi = weights_[i];
+      wsum += wi;
+      weighted_barycenter_ += (points_[i] * wi);
+    }
     DT_THROW_IF (wsum == 0.0, std::logic_error, "Invalid (zero) sum of weights !");
     weighted_barycenter_ /= wsum;
     return;

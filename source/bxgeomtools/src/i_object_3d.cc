@@ -29,12 +29,12 @@ namespace geomtools {
     return;
   }
 
-  datatools::properties & i_object_3d::properties ()
+  datatools::properties & i_object_3d::grab_properties ()
   {
     return _properties_;
   }
 
-  const datatools::properties & i_object_3d::properties () const
+  const datatools::properties & i_object_3d::get_properties () const
   {
     return _properties_;
   }

@@ -56,7 +56,6 @@ namespace geomtools {
     static void set_sensitive_category (datatools::properties & config_,
                                         const std::string & cat_name_);
 
-
   };
 
 }  // end of namespace geomtools
