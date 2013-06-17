@@ -153,7 +153,7 @@ visibility.hidden           : boolean = 0
 visibility.daughters.hidden : boolean = 0
 
 
-######### items placed within the tube cavity #########
+######### Items placed within the tube cavity #########
 
 #@description The list of daughter volumes by label
 internal_item.labels 	    : string[2] = "hole0" "hole1"
@@ -180,10 +180,13 @@ internal_item.filled.model.film     : string  = "source_film.model"
 internal_item.filled.placement.film : string  = "0 0 0 (mm)"
 
 
-######### rules for GID computing #########
+######### Rules for GID computing #########
 
-#@description The mapping directives for the "hole" daughter volumes
-mapping.daughter_id.hole : string  = "[source_support_hole.gc]"
+#@description The mapping directives for the "hole0" daughter volumes
+mapping.daughter_id.hole0 : string  = "[source_support_hole.gc:hole=0]"
+
+#@description The mapping directives for the "hole1" daughter volumes
+mapping.daughter_id.hole1 : string  = "[source_support_hole.gc:hole=1]"
 
 #@description The mapping directives for the "ring" daughter volumes
 mapping.filled.daughter_id.support : string  = "[source_support.gc]"

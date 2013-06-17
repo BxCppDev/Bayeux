@@ -55,6 +55,9 @@ namespace geomtools {
     /// Check if the geometry model is "phantom"
     bool is_phantom_solid () const;
 
+    /// Check if the name of the geometry model exists
+    bool has_name() const;
+
     /// Set the name of the geometry model
     void set_name (const std::string & name_);
 
@@ -68,7 +71,7 @@ namespace geomtools {
     datatools::properties & parameters ();
 
     /// Constructor
-    i_model (const std::string & name_ = "");
+    i_model (const std::string & dummy_ = "");
 
     /// Destructor
     virtual ~i_model ();

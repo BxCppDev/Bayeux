@@ -96,9 +96,9 @@ namespace geomtools {
                             bool inherit_               = false) const;
 
     /// Print the list of geometry models
-    static bool print_list_of_models(const geomtools::model_factory & mf_,
-                                     std::ostream & out_ = std::clog,
-                                     uint32_t options_ = 0);
+    static int print_list_of_models(const geomtools::model_factory & mf_,
+                                    std::ostream & out_ = std::clog,
+                                    const std::string & options_ = "");
 
   private:
 

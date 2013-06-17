@@ -484,9 +484,11 @@ namespace geomtools {
         }
         geom_id propagated_world_id = mother_id_;
         if (daughter_category_info.empty ()) {
-          DT_LOG_WARNING(get_logging_priority (), "No daughter category information for daughter volume with label '"
+          DT_LOG_NOTICE(get_logging_priority (), "No daughter category information for daughter volume with label '"
                          << daughter_label << "'.");
         } else {
+          DT_LOG_NOTICE(get_logging_priority (), "Found daughter category information for daughter volume with label '"
+                         << daughter_label << "'.");
           geom_id item_id;
 
           // compute the vector of sub-addresses:

@@ -33,7 +33,7 @@ namespace geomtools {
   }
 
   // ctor:
-  plate_with_hole_model::plate_with_hole_model () : i_model ("plate_with_hole_model")
+  plate_with_hole_model::plate_with_hole_model () : i_model ()
   {
     _material_ = "";
     _box_hole_.reset ();
@@ -189,15 +189,14 @@ namespace geomtools {
       _solid_.set_shapes (_mother_,
                           _cyl_hole_,
                           hole_placement);
-    } else if (datatools::is_valid (_x_hole_) && datatools::is_valid (_y_hole_))
-      {
-        _box_hole_.set_x (_x_hole_);
-        _box_hole_.set_y (_y_hole_);
-        _box_hole_.set_z (_z_hole_);
-        _solid_.set_shapes (_mother_,
-                            _box_hole_,
-                            hole_placement);
-      } else {
+    } else if (datatools::is_valid (_x_hole_) && datatools::is_valid (_y_hole_)) {
+      _box_hole_.set_x (_x_hole_);
+      _box_hole_.set_y (_y_hole_);
+      _box_hole_.set_z (_z_hole_);
+      _solid_.set_shapes (_mother_,
+                          _box_hole_,
+                          hole_placement);
+    } else {
       DT_THROW_IF (true, std::logic_error, "No defined shape for hole in plate with hole model '" << name_ << "' !");
     }
 

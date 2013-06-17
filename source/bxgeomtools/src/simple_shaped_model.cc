@@ -733,7 +733,8 @@ namespace geomtools {
   void simple_shaped_model::_post_construct (datatools::properties & setup_,
                                              models_col_type * models_)
   {
-    datatools::logger::priority log_level = datatools::logger::PRIO_DEBUG;
+    datatools::logger::priority log_level = get_logging_priority ();
+    //log_level = datatools::logger::PRIO_DEBUG;
     DT_LOG_NOTICE(get_logging_priority (),
                   "Post-construction processing for model '" << get_name() << "' ...");
 
@@ -808,7 +809,9 @@ namespace geomtools {
       DT_LOG_DEBUG (log_level, "Processing internal items in shape...");
       DT_LOG_DEBUG (log_level, "Logical parameters for model '"
                     << get_name() << "' : ");
-      get_logical().get_parameters().tree_dump(std::cerr, "");
+      if (log_level >= datatools::logger::PRIO_DEBUG) {
+        get_logical().get_parameters().tree_dump(std::cerr, "");
+      }
       _internals_.plug_internal_models (get_logical().get_parameters(),
                                         grab_logical(),
                                         models_);

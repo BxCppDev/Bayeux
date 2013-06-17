@@ -122,7 +122,7 @@ namespace geomtools {
   }
 
   cylindric_extrusion_boxed_model::cylindric_extrusion_boxed_model ()
-    : i_model ("geomtools::cylindric_extrusion_boxed_model")
+    : i_model ()
   {
     _material_name_ = "";
     _mother_x_ = std::numeric_limits<double>::quiet_NaN ();
@@ -218,14 +218,16 @@ namespace geomtools {
       _extruded_solid_.dump (std::cerr);
     }
 
-    _extruded_log_.set_name (i_model::make_logical_volume_name ("extruded_box"));
+    const std::string extruded_label = "extruded_box";
+    const std::string inner_name = "__" + get_logical ().get_name () + "." + extruded_label;
+    _extruded_log_.set_name (i_model::make_logical_volume_name (inner_name));
     _extruded_log_.set_shape (_extruded_solid_);
     _extruded_log_.set_material_ref (_material_name_);
     _extruded_log_.set_geometry_model(*this);
 
     _extruded_placement_.set (vector_3d (0, 0, 0), 0, 0, 0);
 
-    _extruded_phys_.set_name (i_model::make_physical_volume_name ("extruded_box"));
+    _extruded_phys_.set_name (i_model::make_physical_volume_name (extruded_label));
     _extruded_phys_.set_placement (_extruded_placement_);
     _extruded_phys_.set_logical (_extruded_log_);
     _extruded_phys_.set_mother (get_logical ());

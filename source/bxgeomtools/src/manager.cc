@@ -1107,34 +1107,135 @@ namespace geomtools {
     return _plugins_factory_register_;
   }
 
-  bool manager::print_list_of_gids(const geomtools::manager & mgr_,
-                                   std::ostream & out_,
-                                   uint32_t options_)
+  int manager::print_list_of_gids(const geomtools::manager & mgr_,
+                                  std::ostream & out_,
+                                  const std::string & rules_)
   {
-    if (! mgr_.is_mapping_available()) {
-      DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
-                   "No mapping information is available from the geometry manager!");
-      return false;
+    std::vector<std::string> requested_categories;
+    std::vector<int> requested_types;
+
+    bool with_title = true;
+    bool with_multicolumn = true;
+    std::string mapping_plugin;
+
+    // Parse rules :
+    std::istringstream rules_iss(rules_);
+    while (rules_iss) {
+      std::string rule;
+      rules_iss >> rule >> std::ws;
+
+      if (rule=="--help") {
+        out_ << "  --with-title              Print a title line\n"
+             << "  --without-title           Do not print a title line\n"
+             << "  --multicolumn             Print in multicolumn mode\n"
+             << "  --onecolumn               Print in one column mode\n"
+             << "  --with-category CATEGORY  Print GIDs with category name CATEGORY\n"
+             << "  --with-type     TYPE      Print GIDs with category type TYPE\n"
+             << std::endl;
+        return -1;
+      }
+      else if (rule=="--with-title") with_title = true;
+      else if (rule=="--without-title") with_title = false;
+      else if (rule=="--multicolumn") with_multicolumn = true;
+      else if (rule=="--onecolumn") with_multicolumn = false;
+      else if (rule=="--with-category") {
+        std::string category;
+        rules_iss >> category;
+        if (category.empty()) {
+          DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                       "Missing geometry category name (please use: '--with-category CATEGORY' ) !");
+          return 1;
+        }
+        requested_categories.push_back(category);
+      }
+      else if (rule=="--with-type") {
+        int type = -1;
+        rules_iss >> type;
+        if (!rules_iss) return 1;
+        if (type < 0) {
+          DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                       "Missing geometry category type (please use: '--with-type TYPE') !");
+          return 1;
+        }
+        requested_types.push_back(type);
+      }
+      // else if (rule=="--with-mapping-plugin") {
+      //   std::string plugin;
+      //   rules_iss >> plugin;
+      //   if (plugin.empty()) {
+      //     DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+      //                  "Missing mapping plugin name (please use: '--with-mapping-plugin PLUGIN' ) !");
+      //     return 1;
+      //   }
+      //   mapping_plugin = plugin;
+      // }
+
+      if (rules_iss.eof()) break;
     }
-    out_ << std::endl
-         << "List of available GIDs : " << std::endl;
-    int count = 0;
+
+    if (mapping_plugin.empty() && ! mgr_.is_mapping_available()) {
+      DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                   "No mapping information is available from the geometry manager !");
+      return 1;
+    }
     const geomtools::mapping & the_mapping = mgr_.get_mapping();
     const geomtools::geom_info_dict_type & ginfo_dict = the_mapping.get_geom_infos ();
+    std::vector<const geom_info*> selected_ginfos;
+    selected_ginfos.reserve(ginfo_dict.size()/2+1);
+
     for (geomtools::geom_info_dict_type::const_iterator i = ginfo_dict.begin();
          i != ginfo_dict.end();
          i++) {
-        bool long_name = false;
-        size_t max_width = 36;
-        const geomtools::geom_info & ginfo = i->second;
-        const geomtools::geom_id & gid = ginfo.get_gid ();
+      const geomtools::geom_info & ginfo = i->second;
+      const geomtools::geom_id & gid = ginfo.get_gid ();
 
-        const geomtools::id_mgr::categories_by_type_col_type & cats
-          = the_mapping.get_id_manager ().categories_by_type ();
-        const geomtools::id_mgr::category_info * cat_info = cats.find(gid.get_type())->second;
-        const std::string & category = cat_info->get_category ();
+      const geomtools::id_mgr::categories_by_type_col_type & cats
+        = the_mapping.get_id_manager ().categories_by_type ();
+      const geomtools::id_mgr::category_info * cat_info = cats.find(gid.get_type())->second;
+      const std::string & category = cat_info->get_category ();
+      bool selected = true;
+      if (requested_categories.size() ||  requested_types.size()) {
+        selected = false;
+      }
+      if (! selected && requested_categories.size()) {
+        if (std::find(requested_categories.begin(),
+                      requested_categories.end(),
+                      category) != requested_categories.end()) {
+           selected = true;
+        }
+      }
+      if (! selected && requested_types.size()) {
+        if (std::find(requested_types.begin(),
+                      requested_types.end(),
+                      gid.get_type()) != requested_types.end()) {
+          selected = true;
+        }
+      }
+      if (selected) {
+        selected_ginfos.push_back(&ginfo);
+      }
+    }
+
+    if (with_title) {
+      out_ << std::flush << "List of available GIDs : " << std::endl;
+    }
+    int count = 0;
+    size_t max_width = 36;
+    for (std::vector<const geom_info*>::const_iterator i = selected_ginfos.begin();
+         i != selected_ginfos.end();
+         i++) {
+      const geomtools::geom_info & ginfo =**i;
+      const geomtools::geom_id & gid = ginfo.get_gid ();
+
+      const geomtools::id_mgr::categories_by_type_col_type & cats
+        = the_mapping.get_id_manager ().categories_by_type ();
+      const geomtools::id_mgr::category_info * cat_info = cats.find(gid.get_type())->second;
+      const std::string & category = cat_info->get_category ();
+
+      if (with_multicolumn) {
+        bool long_name = false;
         std::ostringstream oss;
-        oss << gid << " in '" << category << "'";
+        oss << gid << " as '" << category << "'";
         if (oss.str().size () > max_width) {
           long_name = true;
         }
@@ -1150,12 +1251,22 @@ namespace geomtools {
           count = 0;
         }
         count++;
+      } else {
+        out_ << gid << " as '" << category << "' with addresses: ";
+        for (int j = 0; j < cat_info->get_depth(); j++) {
+          out_ << ' ' << cat_info->addresses[j];
+          if (j < cat_info->get_depth()-1) out_ << ',';
+        }
+        out_ << std::endl;
       }
-    if ((count % 2) == 1) {
+    }
+    if (with_multicolumn) {
+      if ((count % 2) == 1) {
+        out_ << std::endl;
+      }
       out_ << std::endl;
     }
-    out_ << std::endl;
-    return true;
+    return 0;
   }
 
   //----------------------------------------------------------------------

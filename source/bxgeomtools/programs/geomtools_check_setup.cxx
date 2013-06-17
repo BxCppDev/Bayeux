@@ -277,7 +277,7 @@ int main (int argc_, char ** argv_)
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
     if (visu) {
       //std::clog << "Current drawer view : '" << visu_drawer_view << "'" << std::endl;
-      geomtools::model_factory::print_list_of_models(geometry_factory,std::clog,0);
+      geomtools::model_factory::print_list_of_models(geometry_factory,std::clog,"");
       bool go_on = true;
       std::string last_visu_object_name;
       /// Browser main loop :
@@ -316,7 +316,6 @@ int main (int argc_, char ** argv_)
               break;
             }
             if (token == ".M") {
-              token.clear ();
               std::string model_name;
               token_iss >> model_name >> std::ws;
               print_model(geometry_factory, model_name, std::clog);
@@ -325,11 +324,24 @@ int main (int argc_, char ** argv_)
               break;
             }
             if (token == ".m") {
-              geomtools::model_factory::print_list_of_models(geometry_factory,std::clog, 0);
+              std::string print_models_options;
+              std::getline(token_iss, print_models_options);
+              int error = geomtools::model_factory::print_list_of_models(geometry_factory,std::clog, print_models_options);
+              if (error > 0) {
+                DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                             "Invalid options '" << print_models_options << "' !");
+              }
+              break;
             }
             if (token == ".g") {
+              std::string print_gids_options;
+              std::getline(token_iss, print_gids_options);
               if (use_geo_mgr) {
-                geomtools::manager::print_list_of_gids(geo_mgr, std::clog, 0);
+                int error = geomtools::manager::print_list_of_gids(geo_mgr, std::clog, print_gids_options);
+                if (error > 0) {
+                  DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                               "Invalid options '" << print_gids_options << "' !");
+                }
               } else {
                 DT_LOG_WARNING(logging, "Sorry ! Mapping is only supported by a geometry manager !");
               }

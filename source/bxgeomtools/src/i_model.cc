@@ -133,6 +133,11 @@ namespace geomtools {
     return;
   }
 
+  bool i_model::has_name() const
+  {
+    return ! _name_.empty();
+  }
+
   const std::string & i_model::get_name () const
   {
     return _name_;
@@ -166,12 +171,11 @@ namespace geomtools {
   }
 
   // ctor:
-  i_model::i_model (const std::string & name_)
+  i_model::i_model (const std::string & dummy_)
   {
     _constructed_     = false;
     _logging_priority = datatools::logger::PRIO_WARNING;
     _phantom_solid    = false;
-    set_name (name_);
     return;
   }
 
@@ -229,8 +233,6 @@ namespace geomtools {
     for (int i = 0; i < exported_properties_prefixes.size(); i++) {
       const std::string & prefix = exported_properties_prefixes[i];
       DT_LOG_DEBUG(get_logging_priority(), "Export properties starting with '"
-                   << prefix << "' to the top logical in geometry model '" << get_name() << "'...");
-      DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "Export properties starting with '"
                    << prefix << "' to the top logical in geometry model '" << get_name() << "'...");
       setup_.export_starting_with (_logical.grab_parameters (), prefix);
     }

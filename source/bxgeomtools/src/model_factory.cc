@@ -347,40 +347,109 @@ namespace geomtools {
     return;
   }
 
-  bool model_factory::print_list_of_models(const geomtools::model_factory & mf_,
-                                           std::ostream & out_,
-                                           uint32_t options_)
+  int model_factory::print_list_of_models(const geomtools::model_factory & mf_,
+                                          std::ostream & out_,
+                                          const std::string & rules_)
   {
-    out_ << std::endl
-         << "List of available geometry models : " << std::endl;
-    int count = 0;
+    std::vector<std::string> requested_patterns;
+
+    bool with_title = true;
+    bool with_multicolumn = true;
+
+    // Parse rules :
+    std::istringstream rules_iss(rules_);
+    while (rules_iss) {
+      std::string rule;
+      rules_iss >> rule >> std::ws;
+
+      if (rule=="--help") {
+        out_ << "  --with-title              Print a title line\n"
+             << "  --without-title           Do not print a title line\n"
+             << "  --multicolumn             Print in multicolumn mode\n"
+             << "  --onecolumn               Print in one column mode\n"
+          //   << "  --with-pattern PATTERN    Print the geometry models named with PATTERN\n"
+             << std::endl;
+        return -1;
+      }
+      else if (rule=="--with-title") with_title = true;
+      else if (rule=="--without-title") with_title = false;
+      else if (rule=="--multicolumn") with_multicolumn = true;
+      else if (rule=="--onecolumn") with_multicolumn = false;
+      // else if (rule=="--with-pattern") {
+      //   std::string pattern;
+      //   rules_iss >> pattern;
+      //   if (pattern.empty()) {
+      //     DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+      //                  "Missing model name pattern (please use: '--with-pattern PATTERN' ) !");
+      //     return 1;
+      //   }
+      //   requested_patterns.push_back(category);
+      // }
+
+      if (rules_iss.eof()) break;
+    }
+
+    std::vector<const std::string*> selected_models;
     for (geomtools::models_col_type::const_iterator i
            = mf_.get_models ().begin ();
          i != mf_.get_models ().end ();
          i++) {
-      bool long_name = false;
-      size_t max_width = 32;
-      if (i->second->get_name ().size () > max_width) {
-        long_name = true;
+      const std::string & model_name = i->second->get_name ();
+      bool selected = true;
+      // if (requested_patterns.size()) {
+      //   selected = false;
+      // }
+      // if (! selected && requested_patterns.size()) {
+      //   if (std::find(requested_patterns.begin(),
+      //                 requested_patterns.end(),
+      //                 category) != requested_patterns.end()) {
+      //      selected = true;
+      //   }
+      // }
+      if (selected) {
+        selected_models.push_back(&model_name);
       }
-      if ((count % 2) == 0) {
-        out_ << std::endl;
-      }
-      out_  << "  " << std::setw (max_width)
-            << std::setiosflags(std::ios::left)
-            << std::resetiosflags(std::ios::right)
-            << i->second->get_name () << "  ";
-      if (long_name) {
-        out_ << std::endl;
-        count = 0;
-      }
-      count++;
     }
-    if ((count % 2) == 1)  {
+
+    if (with_title) {
+      out_ << std::flush << "List of available geometry models : " << std::endl;
+    }
+    size_t max_width = 32;
+    int count = 0;
+    for (std::vector<const std::string*>::const_iterator i
+           = selected_models.begin ();
+         i != selected_models.end ();
+         i++) {
+      const std::string & model_name = **i;
+      if (with_multicolumn) {
+        bool long_name = false;
+        if (model_name.size () > max_width) {
+          long_name = true;
+        }
+        if ((count % 2) == 0) {
+          out_ << std::endl;
+        }
+        out_  << "  " << std::setw (max_width)
+              << std::setiosflags(std::ios::left)
+              << std::resetiosflags(std::ios::right)
+              << model_name << "  ";
+        if (long_name) {
+          out_ << std::endl;
+          count = 0;
+        }
+        count++;
+      } else {
+        out_ << model_name;
+        out_ << std::endl;
+      }
+    }
+    if (with_multicolumn) {
+      if ((count % 2) == 1)  {
+        out_ << std::endl;
+      }
       out_ << std::endl;
     }
-    out_ << std::endl;
-    return true;
+    return 0;
   }
 
 } // end of namespace geomtools
