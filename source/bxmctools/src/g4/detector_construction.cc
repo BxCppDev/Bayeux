@@ -1223,7 +1223,7 @@ namespace mctools {
           visible = false;
           daughters_visible = false;
         } else {
-          if (geomtools::visibility::is_hidden_envelop(log.get_parameters())) {
+          if (geomtools::visibility::is_hidden_envelope(log.get_parameters())) {
             visible = false;
           }
           if (geomtools::visibility::is_daughters_hidden(log.get_parameters())) {
