@@ -108,11 +108,10 @@ namespace geomtools {
     geomtools::cylinder       _extrusion_cylinder_;
     geomtools::subtraction_3d _extruded_solid_;
 
-    logical_volume            _extruded_log_;
-    placement                 _extruded_placement_;
-    physical_volume           _extruded_phys_;
-
-    geomtools::i_shape_3d * _solid_;
+    //logical_volume            _extruded_log_;
+    //placement                 _extruded_placement_;
+    //physical_volume           _extruded_phys_;
+    //geomtools::i_shape_3d * _solid_;
 
     // registration interface :
     GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(cylindric_extrusion_boxed_model);

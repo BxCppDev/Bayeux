@@ -1019,9 +1019,35 @@ namespace geomtools {
         << " " << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-        << "Model factory size   : "
-        << _factory_.get_models().size()
-        << " " << std::endl;
+          << "Model factory : "
+         << " " << std::endl;
+
+    out_ << indent << datatools::i_tree_dumpable::skip_tag
+         << datatools::i_tree_dumpable::tag
+         << "Number of geometry models  : "
+         << _factory_.get_models().size()
+         << " " << std::endl;
+
+   out_ << indent << datatools::i_tree_dumpable::skip_tag
+         << datatools::i_tree_dumpable::tag
+         << "Number of logical volumes  : "
+         << _factory_.get_logicals().size()
+         << " " << std::endl;
+
+   out_ << indent << datatools::i_tree_dumpable::skip_tag
+         << datatools::i_tree_dumpable::last_tag
+         << "Exported property prefixes : "
+         << " " << std::endl;
+   for (int i = 0; i < _factory_.get_property_prefixes().size(); i++) {
+     out_ << indent << datatools::i_tree_dumpable::skip_tag
+          << datatools::i_tree_dumpable::last_skip_tag;
+     if (i != _factory_.get_property_prefixes().size() - 1) {
+       out_ << datatools::i_tree_dumpable::tag;
+     } else {
+       out_ << datatools::i_tree_dumpable::last_tag;
+     }
+     out_ << "'" << _factory_.get_property_prefixes()[i] << "'" << std::endl;
+   }
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Mapping requested    : "
@@ -1090,7 +1116,7 @@ namespace geomtools {
       } else {
         out_ << datatools::i_tree_dumpable::tag;
       }
-      out_ << i->first << " as a '" << i->second.get_id() << "'";
+      out_ << "'" << i->first << "' as a '" << i->second.get_id() << "'";
       if (i->second.is_created()) {
         out_ << " (created)";
       } else if  (i->second.is_initialized()) {

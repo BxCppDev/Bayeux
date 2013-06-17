@@ -140,7 +140,7 @@ namespace geomtools {
                  "Cannot find model '" << model_name_ << "' !");
     const i_model & top_model = *(found->second);
     if (_external_materials_stream_ != 0) {
-      DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
+      DT_LOG_NOTICE(_logging_priority_,
                     "Attach a stream with materials external definitions.");
       _writer_.attach_external_materials (*_external_materials_stream_);
     }

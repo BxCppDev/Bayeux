@@ -280,6 +280,11 @@ namespace geomtools {
     return;
   }
 
+  const std::vector<std::string> & model_factory::get_property_prefixes() const
+  {
+    return _property_prefixes_;
+  }
+
   void model_factory::tree_dump (ostream & out_,
                                  const string & title_,
                                  const string & indent_,

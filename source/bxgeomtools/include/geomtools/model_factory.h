@@ -89,6 +89,9 @@ namespace geomtools {
     /// Add a property prefix to be preserved in logicals
     void add_property_prefix(const std::string & prefix_);
 
+    /// Return the array of exported property prefixes
+    const std::vector<std::string> & get_property_prefixes() const;
+
     /// Smart print
     virtual void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
@@ -122,7 +125,7 @@ namespace geomtools {
   private:
 
     i_model::factory_register_type _factory_register_;
-    bool _locked_;
+    bool                        _locked_;
     datatools::logger::priority _logging_priority_; //!< Logging priority threshold
     datatools::multi_properties _mp_;
     models_col_type             _models_;

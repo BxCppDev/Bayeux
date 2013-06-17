@@ -162,11 +162,11 @@ namespace geomtools {
       DT_THROW_IF (_filled_mode_ == filled_utils::FILLED_UNDEFINED,
                    std::logic_error,
                    "Invalid filled mode '" << filled_mode_label << "' property in simple shaped (tube) model '" << name_ << "' !");
-      if (is_filled()) {
-        DT_LOG_WARNING(get_logging_priority (),
-                       "Filled mode '" << filled_utils::get_filled_mode_label(_filled_mode_)
-                       << "' is not recommended unless you know what you do !");
-      }
+      // if (is_filled()) {
+      //   DT_LOG_WARNING(get_logging_priority (),
+      //                  "Filled mode '" << filled_utils::get_filled_mode_label(_filled_mode_)
+      //                  << "' is not recommended unless you know what you do !");
+      // }
     }
 
     // Label of the shape in 'filled envelope' mode:
@@ -491,11 +491,12 @@ namespace geomtools {
                    "Invalid 'outer' cylinder dimensions in simple shaped (tube) model '" << name_ << "' !");
       _solid_ = _cylinder_;
       grab_logical ().set_material_ref (_filled_material_name_);
-      grab_logical ().set_effective_shape (*_tube_);
-      grab_logical ().set_effective_material_ref (_material_name_);
+      //grab_logical ().set_effective_shape (*_tube_);
+      //grab_logical ().set_effective_material_ref (_material_name_);
       // If the tube is extruded, add the tube within the 'outer' envelope cylinder:
       _inner_placement_.set (0, 0, 0, 0, 0, 0);
-      const std::string inner_name = "__" + get_logical ().get_name () + "." + _filled_label_;
+      //const std::string inner_name = "__" + get_logical ().get_name () + "." + _filled_label_;
+      const std::string inner_name = "__" + get_name () + "." + _filled_label_;
       _inner_logical_.set_name (i_model::make_logical_volume_name (inner_name));
       _inner_logical_.set_material_ref (_material_name_);
       _inner_logical_.set_shape (*_tube_);
@@ -585,17 +586,17 @@ namespace geomtools {
       _outer_shape_ = outer_polycone;
       _solid_ = _outer_shape_;
       grab_logical ().set_material_ref (_filled_material_name_);
-      grab_logical ().set_effective_shape (*_polycone_);
-      grab_logical ().set_effective_material_ref (_material_name_);
+      //grab_logical ().set_effective_shape (*_polycone_);
+      //grab_logical ().set_effective_material_ref (_material_name_);
       // If the polycone is extruded, add the 'inner' polycone
       // within the 'outer' envelope polycone:
       _inner_placement_.set (0, 0, 0, 0, 0, 0);
-      const std::string inner_name = "__" + get_logical ().get_name () + "." + _filled_label_;
+      const std::string inner_name = "__" + get_name () + "." + _filled_label_;
       _inner_logical_.set_name (i_model::make_logical_volume_name (inner_name));
       _inner_logical_.set_material_ref (_material_name_);
       _inner_logical_.set_shape (*_polycone_);
       _inner_logical_.set_geometry_model(*this);
-      _inner_phys_.set_name (i_model::make_physical_volume_name (inner_name));
+      _inner_phys_.set_name (i_model::make_physical_volume_name (_filled_label_));
       _inner_phys_.set_placement (_inner_placement_);
       _inner_phys_.set_logical (_inner_logical_);
       _inner_phys_.set_mother (this->get_logical ());
@@ -678,17 +679,17 @@ namespace geomtools {
       _outer_shape_ = outer_polyhedra;
       _solid_ = _outer_shape_;
       grab_logical ().set_material_ref (_filled_material_name_);
-      grab_logical ().set_effective_shape (*_polyhedra_);
-      grab_logical ().set_effective_material_ref (_material_name_);
+      //grab_logical ().set_effective_shape (*_polyhedra_);
+      //grab_logical ().set_effective_material_ref (_material_name_);
       // if the polyhedra is extruded, add the polyhedra
       // within the 'outer' envelope polyhedra:
       _inner_placement_.set (0, 0, 0, 0, 0, 0);
-      const std::string inner_name = "__" + get_logical ().get_name () + ".polyhedra_by_envelope";
+      const std::string inner_name = "__" + get_name () + _filled_label_;
       _inner_logical_.set_name (i_model::make_logical_volume_name (inner_name));
       _inner_logical_.set_material_ref (_material_name_);
       _inner_logical_.set_shape (*_polyhedra_);
       _inner_logical_.set_geometry_model(*this);
-      _inner_phys_.set_name (i_model::make_physical_volume_name (inner_name));
+      _inner_phys_.set_name (i_model::make_physical_volume_name (_filled_label_));
       _inner_phys_.set_placement (_inner_placement_);
       _inner_phys_.set_logical (_inner_logical_);
       _inner_phys_.set_mother (this->get_logical ());
@@ -782,6 +783,7 @@ namespace geomtools {
     if (_solid_) {
       stackable::extract (setup_, _solid_->grab_properties ());
     }
+    grab_logical ().set_geometry_model(*this);
 
     // Search for internal items to be installed within the logicals :
     if (is_filled()) {

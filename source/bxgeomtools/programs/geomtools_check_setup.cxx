@@ -47,6 +47,8 @@ std::string get_drawer_view (const std::string & option_);
 
 void print_help (std::ostream & out_ = std::clog);
 
+void print_shell_help (std::ostream & out_ = std::clog);
+
 int print_model (const geomtools::model_factory &,
                  const std::string & model_name_,
                  std::ostream & out_ = std::clog);
@@ -70,6 +72,7 @@ int main (int argc_, char ** argv_)
     std::vector<std::string> setup_filenames;
     bool dump_factory = false;
     bool splash = true;
+    bool interactive = true;
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
     bool visu = true;
     std::string visu_drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
@@ -108,6 +111,10 @@ int main (int argc_, char ** argv_)
         } else if ((option == "-h") || (option == "--help"))  {
           print_help ();
           return 0;
+        } else if ((option == "-B") || (option == "--batch"))  {
+          interactive = false;
+        } else if ((option == "-I") || (option == "--interactive"))  {
+          interactive = true;
         } else if ((option == "-S") || (option == "--no-splash"))  {
           splash = false;
         } else if (option == "-c" || option == "--manager-config")  {
@@ -208,6 +215,9 @@ int main (int argc_, char ** argv_)
                 << "  Francois Mauger, Université de Caen Basse-Normandie\n"
                 << "  Xavier Garrido, Université Paris-Sud     \n"
                 << "  Ben Morgan, University of Warwick        \n"
+                << "                                           \n"
+                << "  immediate help: type \"help\"            \n"
+                << "  quit:           type \"quit\"            \n"
                 << "                                           \n";
     }
 
@@ -278,84 +288,83 @@ int main (int argc_, char ** argv_)
 
     /*************************************************************************************/
 
-#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
-    if (visu) {
+    if (interactive) {
       //std::clog << "Current drawer view : '" << visu_drawer_view << "'" << std::endl;
-      geomtools::model_factory::print_list_of_models(geometry_factory,std::clog,"");
+      std::cerr << "Available geometry models : " << std::endl;
+      geomtools::model_factory::print_list_of_models(geometry_factory, std::cerr);
       bool go_on = true;
       std::string last_visu_object_name;
       /// Browser main loop :
       do {
+        std::cerr << "geomtools> ";
         if (! last_visu_object_name.empty ()) {
           visu_object_name = last_visu_object_name;
         }
-        std::clog << std::endl
-                  << "Enter the name of a geometry model (ex: 'world', type '.m' to print the list)" <<  "\n"
-                  << "   or the GID of a volume (ex: '[1234:0.1.2]', type '.g' to print the list) " << "\n"
-                  << "   or print the description of a geometry model (ex: type '.M world') " << "\n"
-                  << "   or type '.q' to quit ";
-        if (! visu_object_name.empty ()) {
-          std::clog << " (default : '" << visu_object_name << "')";
-        }
-        std::clog << " : ";
-
         std::string line;
         std::getline (std::cin, line);
-        bool do_display;
-        //<<<
         {
-          do_display = false;
-          // parse the line :
-          std::string token;
+          // Skip blank line and lines starting with '#' :
+          std::istringstream dummy(line);
+          std::string word;
+          dummy >> word;
+          if (word.empty()) continue;
+          if (word[0] == '#') continue;
+        }
+        // Manage continuation marks :
+        while (line[line.length()-1] == '\\') {
+          std::string more;
+          std::getline (std::cin, more);
+          line += more;
+        }
+        {
+          // Parse the line :
           std::istringstream token_iss (line);
           while (token_iss){
-            token.clear ();
+            std::string token;
             token_iss >> token >> std::ws;
-            if (token[0] == '#') {
-              do_display = true;
+            if (token == "h" || token == "help") {
+              print_shell_help(std::cerr);
               break;
             }
-            if (token == ".q" || token == ".quit") {
+            if (token == "q" || token == "quit") {
               go_on = false;
               break;
             }
-            if (token == ".M") {
+            if (token == "M" || token == "model") {
               std::string model_name;
               token_iss >> model_name >> std::ws;
-              print_model(geometry_factory, model_name, std::clog);
+              print_model(geometry_factory, model_name, std::cout);
               model_name.clear();
-              do_display = true;
               break;
             }
-            if (token == ".L") {
+            if (token == "L" || token == "logical") {
               std::string logical_name;
               token_iss >> logical_name >> std::ws;
-              print_logical(geometry_factory, logical_name, std::clog);
+              print_logical(geometry_factory, logical_name, std::cout);
               logical_name.clear();
-              do_display = true;
               break;
             }
-            if (token == ".m") {
+            if (token == "m" || token == "list_of_models") {
               std::string print_models_options;
               std::getline(token_iss, print_models_options);
-              int error = geomtools::model_factory::print_list_of_models(geometry_factory,std::clog, print_models_options);
+              int error = geomtools::model_factory::print_list_of_models(geometry_factory, std::cout, print_models_options);
               if (error > 0) {
                 DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
                              "Invalid options '" << print_models_options << "' !");
               }
               break;
             }
-            if (token == ".l") {
+            if (token == "l" || token == "list_of_logicals") {
               std::string print_logical_options;
               std::getline(token_iss, print_logical_options);
-              int error = geomtools::model_factory::print_list_of_logicals(geometry_factory,std::clog, print_logical_options);
+              int error = geomtools::model_factory::print_list_of_logicals(geometry_factory, std::cout, print_logical_options);
               if (error > 0) {
                 DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
                              "Invalid options '" << print_logical_options << "' !");
               }
               break;
             }
-            if (token == ".g") {
+            if (token == "g" || token == "list_of_gids") {
               std::string print_gids_options;
               std::getline(token_iss, print_gids_options);
               if (use_geo_mgr) {
@@ -368,73 +377,75 @@ int main (int argc_, char ** argv_)
                 DT_LOG_WARNING(logging, "Sorry ! Mapping is only supported by a geometry manager !");
               }
               token.clear();
-              do_display = true;
               break;
             }
-            if (! token.empty ()) {
-              if (token[0] != '-') {
-                visu_object_name = token;
-              } else {
-                if (token == "--labels") {
-                  visu_drawer_labels = true;
-                } else if (token == "--no-labels") {
-                  visu_drawer_labels = false;
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
+            if (token == "display") {
+              // Parse options and arguments:
+              while (token_iss) {
+                token_iss >> token >> std::ws;
+                if (token.empty()) break;
+                if (token[0] == '-') {
+                  std::string option = token;
+                  if (token  == "--labels") {
+                    visu_drawer_labels = true;
+                  } else if (token == "--no-labels") {
+                    visu_drawer_labels = false;
+                  } else {
+                    visu_drawer_view = get_drawer_view (token);
+                  }
                 } else {
-                  visu_drawer_view = get_drawer_view (token);
+                  std::string argument = token;
+                  visu_object_name = token;
                 }
+                if (token_iss.eof()) break;
+              } // end of parsing
+              if (visu_object_name.empty ()) {
+                if (! last_visu_object_name.empty()) {
+                  visu_object_name = last_visu_object_name;
+                } else if (has_world) {
+                  visu_object_name = geomtools::model_factory::DEFAULT_WORLD_LABEL;
+                }
+              }
+              DT_LOG_NOTICE(logging, "Display parameters : ");
+              if (logging >= datatools::logger::PRIO_NOTICE) {
+                std::clog << "|-- Object name   : '" << visu_object_name  << "'" << std::endl;
+                std::clog << "|-- View          : '" << visu_drawer_view << "'" << std::endl;
+                std::clog << "`-- Show labels    : " << visu_drawer_labels << std::endl;
+              }
+              geomtools::gnuplot_drawer GPD;
+              GPD.set_mode (geomtools::gnuplot_drawer::MODE_WIRED);
+              GPD.set_view (visu_drawer_view);
+              GPD.set_labels (visu_drawer_labels);
+              if (use_geo_mgr) {
+                int code = GPD.draw (geo_mgr,
+                                     visu_object_name,
+                                     geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT);
+                if (code != 0) {
+                  DT_LOG_ERROR(logging, "Cannot display the object with model name or GID : '"
+                               << visu_object_name << "' !");
+                  last_visu_object_name.clear();
+                } else {
+                  last_visu_object_name = visu_object_name;
+                }
+              } else {
+                geomtools::placement root_plcmt;
+                root_plcmt.set (0, 0, 0, 0 * CLHEP::degree, 0 * CLHEP::degree, 0);
+                GPD.draw (geometry_factory,
+                          visu_object_name,
+                          root_plcmt,
+                          geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT);
+                last_visu_object_name = visu_object_name;
               }
             }
           }
+#endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
           if (! go_on) break;
           if (visu_object_name.empty ()) continue;
-        }
-        if (! do_display) {
-          //>>>
-          if (visu_object_name.empty ()) {
-            if (! last_visu_object_name.empty()) {
-              visu_object_name = last_visu_object_name;
-            } else if (has_world) {
-              visu_object_name = geomtools::model_factory::DEFAULT_WORLD_LABEL;
-              //geo_mgr.get_world_name ();
-            }
-          }
-          DT_LOG_NOTICE(logging, "Display parameters : ");
-          if (logging >= datatools::logger::PRIO_NOTICE) {
-            std::clog << "|-- Object name   : '" << visu_object_name  << "'" << std::endl;
-            std::clog << "|-- View          : '" << visu_drawer_view << "'" << std::endl;
-            std::clog << "`-- Show labels    : " << visu_drawer_labels << std::endl;
-          }
-
-          geomtools::gnuplot_drawer GPD;
-          GPD.set_mode (geomtools::gnuplot_drawer::MODE_WIRED);
-          GPD.set_view (visu_drawer_view);
-          GPD.set_labels (visu_drawer_labels);
-          if (use_geo_mgr) {
-            int code = GPD.draw (geo_mgr,
-                                 visu_object_name,
-                                 geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT);
-            if (code != 0) {
-              DT_LOG_ERROR(logging, "Cannot display the object with model name or GID : '"
-                           << visu_object_name << "' !");
-              last_visu_object_name.clear();
-            } else {
-              last_visu_object_name = visu_object_name;
-            }
-          } else {
-            geomtools::placement root_plcmt;
-            root_plcmt.set (0, 0, 0, 0 * CLHEP::degree, 0 * CLHEP::degree, 0);
-            GPD.draw (geometry_factory,
-                      visu_object_name,
-                      root_plcmt,
-                      geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT);
-            last_visu_object_name = visu_object_name;
-          }
-          //continue;
         }
         visu_object_name.clear();
       } while (go_on); /// End of browser main loop.
     }
-#endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
     /*************************************************************************************/
 
@@ -813,6 +824,34 @@ int print_logical (const geomtools::model_factory & mf_,
   const geomtools::logical_volume & a_logical = *found->second;
   a_logical.tree_dump(out_, "");
   return 0;
+}
+
+void print_shell_help (std::ostream & out_)
+{
+  out_ <<  "h | help    Print this help                                  \n";
+  out_ <<  "m | list_of_models                                           \n";
+  out_ <<  "            Print the list of geometry models                \n";
+  out_ <<  "l | list_of_logicals                                         \n";
+  out_ <<  "            Print the list of logical volumes                \n";
+  out_ <<  "g | list_of_gids                                             \n";
+  out_ <<  "            Print the list of geometry identifiers (GID)     \n";
+  out_ <<  "M | model MODEL_NAME                                         \n";
+  out_ <<  "            Print the geometry model named 'MODEL_NAME'      \n";
+  out_ <<  "L | logical LOGICAL_NAME                                     \n";
+  out_ <<  "            Print the logical volume named 'LOGICAL_NAME'    \n";
+  out_ <<  "G | gid GID                                                  \n";
+  out_ <<  "            Print the volume with geometry identifier 'GID'  \n";
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
+  out_ <<  "d | display [-3d|-xy|-yz|xz] NAME                            \n";
+  out_ <<  "            Display the object named 'NAME'                  \n";
+#endif // GEOMTOOLS_WITH_ROOT_DISPLAY
+  out_ <<  "q | quit    Quit                                             \n";
+  //           << "Enter the name of a geometry model (ex: 'world', type '.m' to print the list)" <<  "\n"
+        //           << "   or the GID of a volume (ex: '[1234:0.1.2]', type '.g' to print the list) " << "\n"
+        //           << "   or print the description of a geometry model (ex: type '.M world') " << "\n"
+        //           << "   or type '.q' to quit ";
+
+  return;
 }
 
 // end of geomtools_check_setup.cxx

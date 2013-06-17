@@ -20,7 +20,7 @@ namespace geomtools {
 
   const geomtools::i_shape_3d & cylindric_extrusion_boxed_model::get_solid () const
   {
-    return *_solid_;
+    return _extruded_solid_;
   }
 
   void cylindric_extrusion_boxed_model::set_extrusion_x_position (double x_)
@@ -188,9 +188,13 @@ namespace geomtools {
     const std::string material_name = config_.fetch_string ("material.ref");
 
     DT_THROW_IF (extrusion_radius >= 0.5 * mother_x, std::logic_error,
-                 "Extrusion radius (" << extrusion_radius / CLHEP::mm << " mm) is too large (X-axis) in cylindric extrusion boxed model '" << name_ << "' !");
+                 "Extrusion radius (" << extrusion_radius / CLHEP::mm
+                 << " mm) is too large (X-axis) in cylindric extrusion boxed model '"
+                 << name_ << "' !");
     DT_THROW_IF (extrusion_radius >= 0.5 * mother_y, std::logic_error,
-                 "Extrusion radius (" << extrusion_radius / CLHEP::mm << " mm) is too large (Y-axis) in cylindric extrusion boxed model '" << name_ << "' !");
+                 "Extrusion radius (" << extrusion_radius / CLHEP::mm
+                 << " mm) is too large (Y-axis) in cylindric extrusion boxed model '"
+                 << name_ << "' !");
 
     set_material_name (material_name);
     set_mother_x (mother_x);
@@ -218,19 +222,21 @@ namespace geomtools {
       _extruded_solid_.dump (std::cerr);
     }
 
+    /*
     const std::string extruded_label = "extruded_box";
-    const std::string inner_name = "__" + get_logical ().get_name () + "." + extruded_label;
+    const std::string inner_name = "__" + get_name () + "." + extruded_label;
     _extruded_log_.set_name (i_model::make_logical_volume_name (inner_name));
     _extruded_log_.set_shape (_extruded_solid_);
     _extruded_log_.set_material_ref (_material_name_);
     _extruded_log_.set_geometry_model(*this);
-
     _extruded_placement_.set (vector_3d (0, 0, 0), 0, 0, 0);
 
     _extruded_phys_.set_name (i_model::make_physical_volume_name (extruded_label));
     _extruded_phys_.set_placement (_extruded_placement_);
     _extruded_phys_.set_logical (_extruded_log_);
     _extruded_phys_.set_mother (get_logical ());
+    */
+
     // Install default 'stackable data' pointer in the shape:
     {
       geomtools::stackable_data * sd_ptr = new geomtools::stackable_data;
@@ -247,11 +253,12 @@ namespace geomtools {
       }
     }
     _extruded_solid_.set_user_draw ((void *) &cylindric_extrusion_boxed_model::gnuplot_draw_user_function);
-    _solid_ = &_extruded_solid_;
+    //    _solid_ = &_extruded_solid_;
 
     grab_logical ().set_name (i_model::make_logical_volume_name (name_));
     grab_logical ().set_shape (_extruded_solid_);
     grab_logical ().set_material_ref (material_name);
+    grab_logical ().set_geometry_model (*this);
 
     DT_LOG_TRACE (get_logging_priority (), "Exiting.");
     return;
@@ -266,8 +273,8 @@ namespace geomtools {
     if (! indent_.empty ()) indent = indent_;
     i_model::tree_dump (out_, title_, indent, true);
 
-    out_ << indent << datatools::i_tree_dumpable::tag
-         << "Material name : '" << get_material_name () << "'" << std::endl;
+    // out_ << indent << datatools::i_tree_dumpable::tag
+    //      << "Material name : '" << get_material_name () << "'" << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Mother X : " << get_mother_x () / CLHEP::mm << " mm" << std::endl;
@@ -321,7 +328,7 @@ namespace geomtools {
     const geomtools::box & mother_box = dynamic_cast<const geomtools::box &> (sh1);
     const geomtools::cylinder & extrusion_cylinder = dynamic_cast<const geomtools::cylinder &> (sh2);
 
-    // Draw first shape:
+    // Draw first shape (extruded mother):
     {
       geomtools::placement mother_world_placement;
       mother_world_placement.set_translation (position_);
@@ -338,7 +345,7 @@ namespace geomtools {
                                          mother_box);
     }
 
-    // Draw second:
+    // Draw second shape (extrusion):
     {
       const geomtools::cylinder cyl (extrusion_cylinder.get_radius (), mother_box.get_z ());
       geomtools::placement mother_world_placement;

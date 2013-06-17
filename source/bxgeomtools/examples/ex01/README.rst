@@ -10,7 +10,7 @@ Introduction
    This  example illustrates  how to  use the geometry manager to
    design a virtual geometry hierarchy based on the ``geomtools``
    library.
-   Also it is shown how to use the ``geomtools_check_setup`` utility
+   Also it is shown how to use the ``geomtools_inspector`` utility
    to visualize the setup and generate a GDML file usable by Geant4
    and/or browsable by ROOT.
 
@@ -85,9 +85,9 @@ Quick start
 
       shell> ./ex01
 
-5. Run the ``geomtools_check_setup`` ::
+5. Run the ``geomtools_inspector`` ::
 
-      shell> geomtools_check_setup \
+      shell> geomtools_inspector \
                --manager-config config/manager.conf \
                --with-gdml \
                --with-visu --visu-view-3d

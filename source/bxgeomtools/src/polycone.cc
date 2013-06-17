@@ -427,7 +427,7 @@ namespace geomtools {
   }
 
   void polycone::initialize (const std::string & filename_,
-                             double zmin_, double zmax_, int mode_)
+                             double zmin_, double zmax_, int dc_mode_)
   {
     const std::string filename = filename_;
     std::ifstream ifs;
@@ -443,9 +443,9 @@ namespace geomtools {
     double skin_step;
     datatools::invalidate (skin_step);
     bool ignore_rmin = false;
-    if (mode_ == IGNORE_RMIN) ignore_rmin = true;
+    if (dc_mode_ == IGNORE_RMIN) ignore_rmin = true;
     bool rmin_as_rmax = false;
-    if (mode_ == RMIN_AS_RMAX) rmin_as_rmax = true;
+    if (dc_mode_ == RMIN_AS_RMAX) rmin_as_rmax = true;
 
     while (! ifs.eof ()) {
       std::string line;
