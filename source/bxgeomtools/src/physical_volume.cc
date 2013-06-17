@@ -59,16 +59,16 @@ namespace geomtools {
   void physical_volume::set_placement (const i_placement * p_)
   {
     _clear_placement_ ();
-    if (p_ != 0)
-      {
-        _own_placement_ = true;
-        _placement_ = p_;
-      }
+    if (p_ != 0) {
+      _own_placement_ = true;
+      _placement_ = p_;
+    }
     return;
   }
 
   void physical_volume::set_placement (const i_placement & p_)
   {
+
     _clear_placement_ ();
     _own_placement_ = false;
     _placement_ = &p_;
@@ -77,7 +77,7 @@ namespace geomtools {
 
   const i_placement & physical_volume::get_placement () const
   {
-    DT_THROW_IF (! _placement_, std::logic_error, "Missing placement !");
+    DT_THROW_IF (! _placement_, std::logic_error, "Missing placement in physical volume '" << get_name() << "' !");
     return *_placement_;
   }
 
@@ -88,29 +88,25 @@ namespace geomtools {
 
   void physical_volume::_clear_placement_ ()
   {
-    if (_placement_ != 0)
-      {
-        if (_own_placement_)
-          {
-            delete _placement_;
-          }
-        _placement_ = 0;
-        _own_placement_ = false;
+    if (_placement_ != 0) {
+      if (_own_placement_) {
+        delete _placement_;
       }
+      _placement_ = 0;
+      _own_placement_ = false;
+    }
     return;
   }
 
   void physical_volume::_clear_logical_ ()
   {
-    if (_logical_ != 0)
-      {
-        if (_own_logical_)
-          {
-            delete _logical_;
-          }
-        _logical_ = 0;
-        _own_logical_ = false;
+    if (_logical_ != 0) {
+      if (_own_logical_) {
+        delete _logical_;
       }
+      _logical_ = 0;
+      _own_logical_ = false;
+    }
     return;
   }
 
@@ -125,17 +121,16 @@ namespace geomtools {
   void physical_volume::set_logical (const logical_volume * logical_)
   {
     _clear_logical_ ();
-    if (logical_ != 0)
-      {
-        _own_logical_ = true;
-        _logical_ = logical_;
-      }
+    if (logical_ != 0) {
+      _own_logical_ = true;
+      _logical_ = logical_;
+    }
     return;
   }
 
   const logical_volume & physical_volume::get_logical () const
   {
-    DT_THROW_IF (! _logical_, std::logic_error, "Missing logical !");
+    DT_THROW_IF (! _logical_, std::logic_error, "Missing logical volume in physical volume '" << get_name() << "'  !");
     return *_logical_;
   }
 
@@ -167,16 +162,39 @@ namespace geomtools {
     return _mother_ != 0;
   }
 
-  void physical_volume::set_mother (const logical_volume & mother_)
+  void physical_volume::set_mother (const logical_volume & mother_, const std::string & name_)
   {
+    DT_THROW_IF(has_mother(),
+                std::logic_error,
+                "Physical volume '" << get_name()
+                << "' already has a mother logical volume named  '"
+                << _mother_->get_name() << "' ! Cannot associate mother logical volume '"
+                << mother_.get_name() << "' !");
+    DT_THROW_IF(! has_placement(),
+                std::logic_error,
+                "Physical volume '" << get_name()
+                << "' has not placement yet to be associated to mother logical volume '"
+                << mother_.get_name() << "' !");
     _mother_ = &mother_;
     logical_volume & the_mother = const_cast<logical_volume &> (mother_);
-    the_mother.add_physical (*this, this->get_name ());
+    the_mother.add_physical (*this, (name_.empty() ? this->get_name (): name_));
     return;
+  }
+
+  void physical_volume::set_logging_priority(datatools::logger::priority p)
+  {
+    _logging_priority_ = p;
+  }
+
+  datatools::logger::priority physical_volume::get_logging_priority() const
+  {
+    return _logging_priority_;
   }
 
   void physical_volume::_init_defaults_ ()
   {
+    _logging_priority_ = datatools::logger::PRIO_FATAL;
+    _name_.clear();
     _locked_ = false;
     _own_placement_ = false;
     _placement_ = 0;
@@ -185,68 +203,76 @@ namespace geomtools {
     _mother_ = 0;
     _real_mother_ = 0;
     return;
- }
+  }
 
-  physical_volume::physical_volume ()
+  physical_volume::physical_volume (datatools::logger::priority p)
   {
     _init_defaults_ ();
+    set_logging_priority(p);
     return;
   }
 
-  physical_volume::physical_volume (const string & name_)
+  physical_volume::physical_volume (const string & name_, datatools::logger::priority p)
   {
     _init_defaults_ ();
-     set_name (name_);
-     return;
-  }
-
-  physical_volume::physical_volume (const string & name_,
-                                    const logical_volume & logical_,
-                                    const logical_volume & mother_,
-                                    const i_placement    & placement_)
-  {
-    _init_defaults_ ();
+    set_logging_priority(p);
     set_name (name_);
-    set_logical (logical_);
-    set_mother (mother_);
-    set_placement (placement_);
-    return;
-  }
-
-  physical_volume::physical_volume (const string & name_,
-                                    const logical_volume * logical_,
-                                    const logical_volume & mother_,
-                                    const i_placement    & placement_)
-  {
-    _init_defaults_ ();
-    set_name (name_);
-    set_logical (logical_);
-    set_mother (mother_);
-    set_placement (placement_);
     return;
   }
 
   physical_volume::physical_volume (const string & name_,
                                     const logical_volume & logical_,
                                     const logical_volume & mother_,
-                                    const i_placement    * placement_)
+                                    const i_placement    & placement_,
+                                    datatools::logger::priority p)
   {
     _init_defaults_ ();
+    set_logging_priority(p);
     set_name (name_);
     set_logical (logical_);
-    set_mother (mother_);
     set_placement (placement_);
+    set_mother (mother_);
     return;
   }
 
   physical_volume::physical_volume (const string & name_,
                                     const logical_volume * logical_,
                                     const logical_volume & mother_,
-                                    const i_placement    * placement_)
+                                    const i_placement    & placement_,
+                                    datatools::logger::priority p)
   {
-    _locked_ = false;
-    _own_logical_ = false;
-    _logical_ = 0;
+    _init_defaults_ ();
+    set_logging_priority(p);
+    set_name (name_);
+    set_logical (logical_);
+    set_placement (placement_);
+    set_mother (mother_);
+    return;
+  }
+
+  physical_volume::physical_volume (const string & name_,
+                                    const logical_volume & logical_,
+                                    const logical_volume & mother_,
+                                    const i_placement    * placement_,
+                                    datatools::logger::priority p)
+  {
+    _init_defaults_ ();
+    set_logging_priority(p);
+    set_name (name_);
+    set_logical (logical_);
+    set_placement (placement_);
+    set_mother (mother_);
+    return;
+  }
+
+  physical_volume::physical_volume (const string & name_,
+                                    const logical_volume * logical_,
+                                    const logical_volume & mother_,
+                                    const i_placement    * placement_,
+                                    datatools::logger::priority p)
+  {
+    _init_defaults_ ();
+    set_logging_priority(p);
     set_name (name_);
     set_logical (logical_);
     set_mother (mother_);
@@ -269,13 +295,15 @@ namespace geomtools {
   {
     string indent;
     if (! indent_.empty ()) indent = indent_;
-    if (! title_.empty ())
-      {
-        out_ << indent << title_ << std::endl;
-      }
+    if (! title_.empty ()) {
+      out_ << indent << title_ << std::endl;
+    }
 
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "Name      : \"" << _name_ << "\"" << std::endl;
+         << "Name      : '" << _name_ << "'" << std::endl;
+
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Logging priority  : '" << datatools::logger::get_priority_label(_logging_priority_) << "'" << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Locked    : " << (_locked_? "Yes": "No") << std::endl;
@@ -284,10 +312,9 @@ namespace geomtools {
       // parameters:
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Parameters : ";
-      if ( _parameters_.size () == 0)
-        {
-          out_ << "<empty>";
-        }
+      if ( _parameters_.size () == 0) {
+        out_ << "<empty>";
+      }
       out_ << std::endl;
       {
         std::ostringstream indent_oss;
@@ -301,41 +328,38 @@ namespace geomtools {
       // Logical:
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Logical : ";
-      if (has_logical ())
-        {
-          out_ << "\"" << _logical_->get_name () << "\" "
-               << (_own_logical_? "(owned)": "(not owned)");
-        }
-      else
-        {
-          out_ << "<no logical>";
-        }
+      if (has_logical ()) {
+        out_ << "'" << _logical_->get_name () << "' "
+             << (_own_logical_? "(owned)": "(not owned)");
+      } else {
+        out_ << "<no logical>";
+      }
       out_ << std::endl;
     }
 
-    {
-      out_ << indent << datatools::i_tree_dumpable::tag
-           << "Placement : " << endl;
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Placement ";
+    if (has_placement ()) {
+      out_ << (_own_placement_? "(owned)": "(not owned)") << " : " << endl;
       ostringstream oss_indent;
       oss_indent << indent << datatools::i_tree_dumpable::skip_tag;
       _placement_->tree_dump (out_,
                               "",
                               oss_indent.str (),
                               false);
+    } else {
+      out_ << "<no placement>" << endl;
     }
 
     {
       // Mother:
       out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
            << "Mother = ";
-      if (has_mother ())
-        {
-          out_ << "\"" << _mother_->get_name () << "\"";
-        }
-      else
-        {
-          out_ << "<no mother>";
-        }
+      if (has_mother ()) {
+        out_ << "\"" << _mother_->get_name () << "\"";
+      } else {
+        out_ << "<no mother>";
+      }
       out_ << std::endl;
     }
     return;

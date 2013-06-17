@@ -100,6 +100,11 @@ namespace geomtools {
                                     std::ostream & out_ = std::clog,
                                     const std::string & options_ = "");
 
+    /// Print the list of geometry logical volumes
+    static int print_list_of_logicals(const geomtools::model_factory & mf_,
+                                      std::ostream & out_ = std::clog,
+                                      const std::string & options_ = "");
+
   private:
 
     /// Basic construction of the model factory

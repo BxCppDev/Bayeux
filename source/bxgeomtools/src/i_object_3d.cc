@@ -8,9 +8,6 @@ namespace geomtools {
 
   using namespace std;
 
-  const uint32_t i_object_3d::ALL_SURFACES = 0xFFFFFFFF;
-  const uint32_t i_object_3d::NO_SURFACES  = 0;
-
   void i_object_3d::compute_bounding_box (box & bb_)
   {
     bb_.reset ();

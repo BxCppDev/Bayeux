@@ -47,9 +47,13 @@ std::string get_drawer_view (const std::string & option_);
 
 void print_help (std::ostream & out_ = std::clog);
 
-void print_model (const geomtools::model_factory &,
-                  const std::string & model_name_,
-                  std::ostream & out_ = std::clog);
+int print_model (const geomtools::model_factory &,
+                 const std::string & model_name_,
+                 std::ostream & out_ = std::clog);
+
+int print_logical (const geomtools::model_factory &,
+                   const std::string & logical_name_,
+                   std::ostream & out_ = std::clog);
 
 /************************************************************/
 int main (int argc_, char ** argv_)
@@ -323,6 +327,14 @@ int main (int argc_, char ** argv_)
               do_display = true;
               break;
             }
+            if (token == ".L") {
+              std::string logical_name;
+              token_iss >> logical_name >> std::ws;
+              print_logical(geometry_factory, logical_name, std::clog);
+              logical_name.clear();
+              do_display = true;
+              break;
+            }
             if (token == ".m") {
               std::string print_models_options;
               std::getline(token_iss, print_models_options);
@@ -330,6 +342,16 @@ int main (int argc_, char ** argv_)
               if (error > 0) {
                 DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
                              "Invalid options '" << print_models_options << "' !");
+              }
+              break;
+            }
+            if (token == ".l") {
+              std::string print_logical_options;
+              std::getline(token_iss, print_logical_options);
+              int error = geomtools::model_factory::print_list_of_logicals(geometry_factory,std::clog, print_logical_options);
+              if (error > 0) {
+                DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                             "Invalid options '" << print_logical_options << "' !");
               }
               break;
             }
@@ -757,9 +779,9 @@ void print_help (std::ostream & out_)
   return;
 }
 
-void print_model (const geomtools::model_factory & mf_,
-                  const std::string & model_name_,
-                  std::ostream & out_)
+int print_model (const geomtools::model_factory & mf_,
+                 const std::string & model_name_,
+                 std::ostream & out_)
 {
   out_ << std::endl
        << "Geometry model '" << model_name_ << "' : " << std::endl;
@@ -768,11 +790,29 @@ void print_model (const geomtools::model_factory & mf_,
   if (found ==  mf_.get_models ().end ()) {
     DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
                  "Geometry model '" << model_name_ << "' does not exist !");
-    return;
+    return 1;
   }
   const geomtools::i_model & a_model = *found->second;
   a_model.tree_dump(out_, "");
-  return;
+  return 0;
+}
+
+int print_logical (const geomtools::model_factory & mf_,
+                   const std::string & logical_name_,
+                   std::ostream & out_)
+{
+  out_ << std::endl
+       << "Logical volume '" << logical_name_ << "' : " << std::endl;
+  geomtools::logical_volume::dict_type::const_iterator found
+    = mf_.get_logicals ().find(logical_name_);
+  if (found ==  mf_.get_logicals ().end ()) {
+    DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                 "Logical volume '" << logical_name_ << "' does not exist !");
+    return 1;
+  }
+  const geomtools::logical_volume & a_logical = *found->second;
+  a_logical.tree_dump(out_, "");
+  return 0;
 }
 
 // end of geomtools_check_setup.cxx

@@ -90,7 +90,7 @@ namespace geomtools {
   }
 
   double
-  hexagon_box::get_surface (int mask_) const
+  hexagon_box::get_surface (uint32_t mask_) const
   {
     double s = 0.0;
     int mask = mask_;
@@ -155,7 +155,7 @@ namespace geomtools {
   }
 
   double
-  hexagon_box::get_volume () const
+  hexagon_box::get_volume (uint32_t flags) const
   {
     return hexagon_box::get_surface (FACE_BOTTOM) * _z_;
   }

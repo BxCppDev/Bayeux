@@ -21,6 +21,8 @@
 #include <list>
 #include <vector>
 
+#include <datatools/bit_mask.h>
+
 #include <geomtools/geomtools_config.h>
 #include <geomtools/clhep.h>
 #include <geomtools/utils.h>
@@ -97,7 +99,18 @@ namespace geomtools {
     };
 
 
-  //! Direction constants
+  //! Direction flags
+  enum direction_flags_type
+    {
+      DIRECTION_NONE   = 0x0,
+      DIRECTION_BACK   = datatools::bit_mask::bit00, // -x
+      DIRECTION_FRONT  = datatools::bit_mask::bit01, // +x
+      DIRECTION_LEFT   = datatools::bit_mask::bit02, // -y
+      DIRECTION_RIGHT  = datatools::bit_mask::bit03, // +y
+      DIRECTION_BOTTOM = datatools::bit_mask::bit04, // -z
+      DIRECTION_TOP    = datatools::bit_mask::bit05  // +z
+    };
+
   enum direction_type
     {
       BACK   = 0, // -x
@@ -108,10 +121,39 @@ namespace geomtools {
       TOP    = 5  // +z
     };
 
+  enum vertex_1d
+    {
+      VERTEX_NONE = 0x0,
+      VERTEX_ALL_BITS = 0xFFFFFFFF
+    };
+
+  enum path_1d
+    {
+      PATH_NONE = 0x0,
+      PATH_ALL_BITS = 0xFFFFFFFF
+    };
+
+  enum side_2d
+    {
+      SIDE_NONE = 0x0,
+      SIDE_ALL_BITS = 0xFFFFFFFF
+    };
+
   enum face_3d
     {
-      FACE_NONE_BIT = 0x0,
+      FACE_NONE = 0x0,
+      //FACE_NONE_BIT = 0x0, // Obsolete
       FACE_ALL_BITS = 0xFFFFFFFF
+    };
+
+  enum shape_domain_flags_type
+    {
+      SHAPE_DOMAIN_NONE                = 0x0,
+      SHAPE_DOMAIN_INSIDE              = datatools::bit_mask::bit00,
+      SHAPE_DOMAIN_OUTSIDE             = datatools::bit_mask::bit01,
+      SHAPE_DOMAIN_ON_SURFACE          = datatools::bit_mask::bit02,
+      SHAPE_DOMAIN_INSIDE_DAUGHTER     = datatools::bit_mask::bit03,
+      SHAPE_DOMAIN_ON_DAUGHTER_SURFACE = datatools::bit_mask::bit04
     };
 
 
@@ -469,29 +511,29 @@ namespace geomtools {
 
     int get_shape_index () const
     {
-      return __shape_index;
+      return _shape_index_;
     }
 
     void set_shape_index (int si_)
     {
-      __shape_index = si_;
+      _shape_index_ = si_;
       return;
     }
 
     int get_face () const
     {
-      return __face;
+      return _face_;
     }
 
     void set_face (int face_)
     {
-      __face = face_;
+      _face_ = face_;
       return;
     }
 
     void set_impact (const vector_3d & point_)
     {
-      __impact = point_;
+      _impact_ = point_;
       return;
     }
 
@@ -505,28 +547,28 @@ namespace geomtools {
 
     const vector_3d & get_impact () const
     {
-      return __impact;
+      return _impact_;
     }
 
     void reset ()
     {
-      __shape_index = -1;
-      __face = FACE_NONE_BIT;
-      invalidate (__impact);
+      _shape_index_ = -1;
+      _face_ = FACE_NONE;
+      invalidate (_impact_);
       return;
     }
 
     intercept_t ()
     {
-      __shape_index = -1;
-      __face = FACE_NONE_BIT;
-      invalidate (__impact);
+      _shape_index_ = -1;
+      _face_ = FACE_NONE;
+      invalidate (_impact_);
       return;
     }
 
     bool is_valid () const
     {
-      return __shape_index >= 0 && __face != FACE_NONE_BIT;
+      return _shape_index_ >= 0 && _face_ != FACE_NONE;
     }
 
     bool is_ok () const
@@ -536,12 +578,12 @@ namespace geomtools {
 
   private:
 
-    int32_t   __shape_index; /** The index of the sub-shape
+    int32_t   _shape_index_; /** The index of the sub-shape
                               *  for composite shapes only.
                               *  Default is 0.
                               */
-    int32_t   __face;   //! The index of the impact face on the shape
-    vector_3d __impact; //! The impact point on the surface
+    int32_t   _face_;   //! The index of the impact face on the shape
+    vector_3d _impact_; //! The impact point on the surface
 
   };
 

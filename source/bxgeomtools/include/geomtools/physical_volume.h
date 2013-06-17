@@ -22,6 +22,7 @@
 
 #include <datatools/properties.h>
 #include <datatools/i_tree_dump.h>
+#include <datatools/logger.h>
 
 namespace geomtools {
 
@@ -72,7 +73,7 @@ namespace geomtools {
 
     bool has_mother () const;
 
-    void set_mother (const logical_volume &);
+    void set_mother (const logical_volume &, const std::string & name_ = "");
 
     const logical_volume & get_mother () const;
 
@@ -82,31 +83,40 @@ namespace geomtools {
 
     const logical_volume & get_real_mother () const;
 
-    physical_volume ();
+    physical_volume (datatools::logger::priority = datatools::logger::PRIO_FATAL);
 
-    physical_volume (const std::string & name_);
+    physical_volume (const std::string & name_,
+                     datatools::logger::priority = datatools::logger::PRIO_FATAL);
 
     physical_volume (const std::string & name_,
                      const logical_volume & logical_,
                      const logical_volume & mother_,
-                     const i_placement    & placement_);
+                     const i_placement    & placement_,
+                     datatools::logger::priority = datatools::logger::PRIO_FATAL);
 
     physical_volume (const std::string & name_,
                      const logical_volume * logical_,
                      const logical_volume & mother_,
-                     const i_placement    & placement_);
+                     const i_placement    & placement_,
+                     datatools::logger::priority = datatools::logger::PRIO_FATAL);
 
     physical_volume (const std::string & name_,
                      const logical_volume & logical_,
                      const logical_volume & mother_,
-                     const i_placement    * placement_);
+                     const i_placement    * placement_,
+                     datatools::logger::priority = datatools::logger::PRIO_FATAL);
 
     physical_volume (const std::string & name_,
                      const logical_volume * logical_,
                      const logical_volume & mother_,
-                     const i_placement    * placement_);
+                     const i_placement    * placement_,
+                     datatools::logger::priority = datatools::logger::PRIO_FATAL);
 
     virtual ~physical_volume ();
+
+    void set_logging_priority(datatools::logger::priority);
+
+    datatools::logger::priority get_logging_priority() const;
 
     virtual void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
@@ -119,6 +129,7 @@ namespace geomtools {
   private:
 
     std::string            _name_;
+    datatools::logger::priority _logging_priority_;
     bool                   _locked_;
     datatools::properties  _parameters_;
     bool                   _own_placement_;

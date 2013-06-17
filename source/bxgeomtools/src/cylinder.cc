@@ -145,7 +145,7 @@ namespace geomtools {
   }
 
   double
-  cylinder::get_surface (int a_mask) const
+  cylinder::get_surface (uint32_t a_mask) const
   {
     double s = 0.0;
     int mask = a_mask;
@@ -167,7 +167,7 @@ namespace geomtools {
   }
 
   double
-  cylinder::get_volume () const
+  cylinder::get_volume (uint32_t flags) const
   {
     return M_PI * _radius_ * _radius_ * _z_;
   }

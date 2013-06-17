@@ -35,14 +35,16 @@ namespace geomtools {
   public:
     enum dimensional_type
       {
-        DIMENSIONAL_0 = 0,
-        DIMENSIONAL_1 = 1,
-        DIMENSIONAL_2 = 2,
-        DIMENSIONAL_3 = 3
+        DIMENSIONAL_0 = 0, // No dimension object (example: a vertex)
+        DIMENSIONAL_1 = 1, // One dimension object (example: a segment)
+        DIMENSIONAL_2 = 2, // Two dimension object (example: a rectangle)
+        DIMENSIONAL_3 = 3  // Three dimension object (example: a box)
       };
 
-    static const uint32_t ALL_SURFACES;
-    static const uint32_t NO_SURFACES;
+    enum surface_bits {
+      ALL_SURFACES = 0x0,
+      NO_SURFACES  = FACE_ALL_BITS
+    };
 
     bool has_user_draw () const;
 

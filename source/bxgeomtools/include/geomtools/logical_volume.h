@@ -2,7 +2,7 @@
 /* logical_volume.h
  * Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-08
- * Last modified: 2010-02-08
+ * Last modified: 2013-06-17
  *
  * License:
  *
@@ -22,6 +22,7 @@
 
 #include <datatools/properties.h>
 #include <datatools/i_tree_dump.h>
+#include <datatools/logger.h>
 
 #include <geomtools/i_shape_3d.h>
 #include <geomtools/material.h>
@@ -36,6 +37,17 @@ namespace geomtools {
   {
   public:
     typedef std::map<std::string, const physical_volume *> physicals_col_type;
+
+    struct locate_result {
+      locate_result();
+      void reset();
+      void dump(std::ostream & out_ = std::clog, const std::string & indent_ = "") const;
+    public: // preliminary non private
+      uint32_t shape_domain_flags;
+      std::string daughter_name;
+      const physical_volume * daughter_physical;
+      int daughter_placement_index;
+    };
 
     static const std::string HAS_REPLICA_FLAG;
 
@@ -118,6 +130,11 @@ namespace geomtools {
 
     void set_effective_material_ref (const std::string & = "");
 
+    uint32_t locate(const vector_3d & local_position_,
+                    bool ignore_daugthers_ = false,
+                    double tolerance_ = 0.0, double daughter_tolerance_ = 0.0,
+                    locate_result * = 0) const;
+
   private:
 
     void _clear_shape_ ();
@@ -128,9 +145,14 @@ namespace geomtools {
 
     void _compute_real_physicals_ ();
 
+    void set_logging_priority(datatools::logger::priority);
+
+    datatools::logger::priority get_logging_priority() const;
+
   private:
 
     std::string           _name_;         //!< The name of the volume
+    datatools::logger::priority _logging_priority_;
     std::string           _material_ref_; //!< The name of the material
     bool                  _locked_;       //!< The lock flag
     datatools::properties _parameters_;   //!< The collection of auxiliary parameters

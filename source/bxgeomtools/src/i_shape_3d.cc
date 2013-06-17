@@ -3,6 +3,8 @@
  */
 
 #include <geomtools/i_shape_3d.h>
+
+#include <datatools/utils.h>
 #include <geomtools/utils.h>
 
 namespace geomtools {
@@ -11,6 +13,36 @@ namespace geomtools {
 
   const double i_shape_3d::DEFAULT_SKIN      = GEOMTOOLS_DEFAULT_TOLERANCE;
   const double i_shape_3d::USING_PROPER_SKIN = GEOMTOOLS_PROPER_TOLERANCE;
+
+  bool i_shape_3d::has_number_of_faces() const
+  {
+    return get_number_of_faces() > 0;
+  }
+
+  unsigned int i_shape_3d::get_number_of_faces() const
+  {
+    return 0;
+  }
+
+  bool i_shape_3d::has_volume(uint32_t flags_) const
+  {
+    return datatools::is_valid(get_volume(flags_));
+  }
+
+  double i_shape_3d::get_volume(uint32_t flags_) const
+  {
+    return std::numeric_limits<double>::quiet_NaN();
+  }
+
+  bool i_shape_3d::has_surface(uint32_t flags_) const
+  {
+    return datatools::is_valid(get_surface(flags_));
+  }
+
+  double i_shape_3d::get_surface(uint32_t flags_) const
+  {
+    return std::numeric_limits<double>::quiet_NaN();
+  }
 
   // static
   double i_shape_3d::get_default_skin ()

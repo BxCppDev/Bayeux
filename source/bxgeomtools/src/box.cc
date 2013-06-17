@@ -174,7 +174,7 @@ namespace geomtools {
   }
 
   double
-  box::get_surface (int a_mask) const
+  box::get_surface (uint32_t a_mask) const
   {
     double s = 0.0;
     int mask = a_mask;
@@ -226,7 +226,7 @@ namespace geomtools {
   }
 
   double
-  box::get_volume () const
+  box::get_volume (uint32_t flags) const
   {
     return _x_ * _y_ * _z_;
   }

@@ -1,16 +1,16 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* hexagon_box.h
  * Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
  * Last modified: 2008-05-23
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *  Interface:
  *
- * History: 
- * 
+ * History:
+ *
  */
 
 #ifndef GEOMTOOLS_HEXAGON_BOX_H_
@@ -23,7 +23,7 @@
 
 namespace geomtools {
 
-  class hexagon_box : public i_shape_3d 
+  class hexagon_box : public i_shape_3d
   {
 
   public:
@@ -44,32 +44,32 @@ namespace geomtools {
      *            front
      *              |
      *            x |
-     *    
-     */ 
+     *
+     */
 
     enum faces_mask_type
       {
-        FACE_NONE   = FACE_NONE_BIT,
-        FACE_BACK         = 0x1,
-        FACE_FRONT        = 0x2,
-        FACE_FRONT_LEFT   = 0x4,
-        FACE_FRONT_RIGHT  = 0x8,
-        FACE_BACK_LEFT    = 0x10,
-        FACE_BACK_RIGHT   = 0x20,
-        FACE_BOTTOM       = 0x40,
-        FACE_TOP          = 0x80,
+        FACE_NONE         = geomtools::FACE_NONE,
+        FACE_BACK         = datatools::bit_mask::bit00,
+        FACE_FRONT        = datatools::bit_mask::bit01,
+        FACE_FRONT_LEFT   = datatools::bit_mask::bit02,
+        FACE_FRONT_RIGHT  = datatools::bit_mask::bit03,
+        FACE_BACK_LEFT    = datatools::bit_mask::bit04,
+        FACE_BACK_RIGHT   = datatools::bit_mask::bit05,
+        FACE_BOTTOM       = datatools::bit_mask::bit06,
+        FACE_TOP          = datatools::bit_mask::bit07,
         FACE_ALL    = (FACE_BACK
-                       | FACE_FRONT 
-                       | FACE_BACK_LEFT  
-                       | FACE_BACK_RIGHT 
-                       | FACE_FRONT_LEFT 
-                       | FACE_FRONT_RIGHT 
-                       | FACE_BOTTOM 
+                       | FACE_FRONT
+                       | FACE_BACK_LEFT
+                       | FACE_BACK_RIGHT
+                       | FACE_FRONT_LEFT
+                       | FACE_FRONT_RIGHT
+                       | FACE_BOTTOM
                        | FACE_TOP)
       };
 
- 
-  public: 
+
+  public:
 
     double get_radius () const;
 
@@ -88,17 +88,17 @@ namespace geomtools {
     void set_half_z (double);
 
     void set (double radius_, double z_);
-  
+
     // ctor/dtor:
-  public: 
+  public:
     hexagon_box ();
 
     hexagon_box (double, double);
 
     virtual ~hexagon_box ();
-    
+
     // methods:
-      
+
     virtual std::string get_shape_name () const;
 
     double get_parameter (const std::string &) const;
@@ -109,16 +109,16 @@ namespace geomtools {
 
     void reset ();
 
-    double get_surface (int mask_ = FACE_ALL) const;
+    virtual double get_surface (uint32_t mask_ = FACE_ALL) const;
 
-    double get_volume () const;
+    virtual double get_volume (uint32_t flags = 0) const;
 
-    virtual bool is_inside (const vector_3d &, 
+    virtual bool is_inside (const vector_3d &,
                             double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     // if 'skin' < 0 no skin is taken into account:
-    virtual bool is_on_surface (const vector_3d & , 
-                                int mask_    = FACE_ALL , 
+    virtual bool is_on_surface (const vector_3d & ,
+                                int mask_    = FACE_ALL ,
                                 double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     virtual vector_3d get_normal_on_surface (const vector_3d & position_) const;
@@ -126,25 +126,25 @@ namespace geomtools {
     friend std::ostream & operator<< (std::ostream & , const hexagon_box &);
 
     friend std::istream & operator>> (std::istream & , hexagon_box &);
-      
-    virtual bool find_intercept (const vector_3d & from_, 
+
+    virtual bool find_intercept (const vector_3d & from_,
                                  const vector_3d & direction_,
                                  intercept_t & intercept_,
                                  double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
-       
+
     static bool xy_is_in_hexagon (double r_, double x_, double y_, double skin_);
 
     static bool xy_is_out_hexagon (double r_, double x_, double y_, double skin_);
 
     static bool xy_is_on_hexagon (double r_, double x_, double y_, double skin_);
 
-  private: 
+  private:
 
     double _radius_;
     double _z_;
 
   };
-    
+
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_HEXAGON_BOX_H_

@@ -9,6 +9,7 @@
 #include <sstream>
 
 #include <geomtools/i_placement.h>
+#include <geomtools/placement.h>
 #include <geomtools/physical_volume.h>
 #include <geomtools/i_model.h>
 
@@ -50,6 +51,16 @@ namespace geomtools {
   {
     _name_ = name_;
     return;
+  }
+
+  void logical_volume::set_logging_priority(datatools::logger::priority p)
+  {
+    _logging_priority_ = p;
+  }
+
+  datatools::logger::priority logical_volume::get_logging_priority() const
+  {
+    return _logging_priority_;
   }
 
   const datatools::properties & logical_volume::get_parameters () const
@@ -99,7 +110,7 @@ namespace geomtools {
 
   const i_shape_3d & logical_volume::get_shape () const
   {
-    DT_THROW_IF (! _shape_, std::logic_error, "Missing shape for logical '" << get_name () << "' !");
+    DT_THROW_IF (! _shape_, std::logic_error, "Missing shape for logical volume '" << get_name () << "' !");
     return *_shape_;
   }
 
@@ -115,7 +126,7 @@ namespace geomtools {
 
   const i_shape_3d & logical_volume::get_effective_shape () const
   {
-    DT_THROW_IF (! _effective_shape_, std::logic_error, "Missing effective shape for logical '" << get_name () << "' !");
+    DT_THROW_IF (! _effective_shape_, std::logic_error, "Missing effective shape for logical volume '" << get_name () << "' !");
     return *_effective_shape_;
   }
 
@@ -139,10 +150,10 @@ namespace geomtools {
   {
     return ! _material_ref_.empty();
     /*
-    if (material::has_key (_parameters_, material::constants::instance ().MATERIAL_REF_PROPERTY)) {
+      if (material::has_key (_parameters_, material::constants::instance ().MATERIAL_REF_PROPERTY)) {
       return (_parameters_.is_string  (material::make_key (material::constants::instance ().MATERIAL_REF_PROPERTY)));
-    }
-    return false;
+      }
+      return false;
     */
   }
 
@@ -150,10 +161,10 @@ namespace geomtools {
   {
     return _material_ref_;
     /*
-    if (has_material_ref ()) {
+      if (has_material_ref ()) {
       return (_parameters_.fetch_string  (material::make_key (material::constants::instance ().MATERIAL_REF_PROPERTY)));
-    }
-    return material::constants::instance ().MATERIAL_REF_UNKNOWN;
+      }
+      return material::constants::instance ().MATERIAL_REF_UNKNOWN;
     */
   }
 
@@ -161,11 +172,11 @@ namespace geomtools {
   {
     _material_ref_ = material_ref_;
     /*
-    string mr = material_ref_;
-    if (mr.empty ()) {
+      string mr = material_ref_;
+      if (mr.empty ()) {
       mr = material::constants::instance ().MATERIAL_REF_DEFAULT;
-    }
-    _parameters_.update (material::make_key (material::constants::instance ().MATERIAL_REF_PROPERTY), material_ref_);
+      }
+      _parameters_.update (material::make_key (material::constants::instance ().MATERIAL_REF_PROPERTY), material_ref_);
     */
     return;
   }
@@ -188,6 +199,8 @@ namespace geomtools {
 
   void logical_volume::_init_defaults_ ()
   {
+    _logging_priority_ = datatools::logger::PRIO_FATAL;
+    _name_.clear();
     _locked_ = false;
     _own_shape_ = false;
     _shape_ = 0;
@@ -262,21 +275,25 @@ namespace geomtools {
   void logical_volume::add_physical (const physical_volume & phys_,
                                      const string & name_)
   {
+    // 2013-06-17 FM : the following test should be considered in the future : inhibited for now
+    // DT_THROW_IF (is_locked (),
+    //              std::logic_error,
+    //              "Logical volume '" << get_name() << "' is locked ! Cannot add daughter physical volume with name '" << name_ << "' !");
     DT_THROW_IF (_physicals_.find (name_) != _physicals_.end (),
                  std::logic_error,
-                 "Name '" << name_ << "' is already used !");
+                 "Name '" << name_ << "' is already used in logical volume '" <<  get_name()  << "' !");
     string name;
     if (name_.empty ()) {
       name = phys_.get_name ();
     } else {
       name = name_;
     }
-    DT_THROW_IF (name.empty (), std::logic_error,  "Missing physical's name !");
+    DT_THROW_IF (name.empty (), std::logic_error,  "Missing physical's name in logical volume '" <<  get_name()  << "' !");
     DT_THROW_IF (_parameters_.has_flag (HAS_REPLICA_FLAG), std::logic_error,
-                 "Cannot add more physical volume for a 'replica' already exists !");
+                 "Cannot add more physical volume for a 'replica' already exists in logical volume '" <<  get_name()  << "' !");
     if (phys_.get_placement ().is_replica ()) {
       DT_THROW_IF (_physicals_.size () > 0, std::logic_error,
-                   "Cannot add a 'replica' physical volume for other physicals already exist !");
+                   "Cannot add a 'replica' physical volume for other physicals already exist in logical volume '" <<  get_name()  << "' !");
       _parameters_.store_flag (HAS_REPLICA_FLAG);
     }
     _physicals_[name] = &phys_;
@@ -318,6 +335,132 @@ namespace geomtools {
     // Not implemented
   }
 
+  logical_volume::locate_result::locate_result()
+  {
+    reset();
+  }
+
+  void logical_volume::locate_result::reset()
+  {
+    shape_domain_flags = SHAPE_DOMAIN_NONE;
+    daughter_name.clear();
+    daughter_physical = 0;
+    daughter_placement_index = -1;
+  }
+
+  void logical_volume::locate_result::dump(std::ostream & out_, const std::string & indent_) const
+  {
+    out_ << indent_ << "|-- " << "Shape domain flags : " << shape_domain_flags << std::endl;
+    out_ << indent_ << "|-- " << "Daughter name      : '" << daughter_name << "'" << std::endl;
+    out_ << indent_ << "|-- " << "Daughter physical  : '"
+         << (daughter_physical ? daughter_physical->get_name() : "<none>") << "'" << std::endl;
+    out_ << indent_ << "`-- " << "Daughter placement index : " << daughter_placement_index << std::endl;
+  }
+
+  uint32_t logical_volume::locate(const vector_3d & local_position_,
+                                  bool ignore_daugthers_,
+                                  double tolerance_, double daughter_tolerance_,
+                                  locate_result * locate_res_) const
+  {
+    datatools::logger::priority logging = get_logging_priority();
+    //logging = datatools::logger::PRIO_DEBUG;
+
+    uint32_t bits = SHAPE_DOMAIN_NONE;
+    bool outside_main_shape = false;
+    bool on_main_shape_surface = false;
+    DT_THROW_IF(!has_shape(),
+                std::logic_error,
+                "No shape in logical volume '" << get_name() << "' !");
+    outside_main_shape = _shape_->is_outside(local_position_, tolerance_);
+    if (outside_main_shape) {
+      bits |= SHAPE_DOMAIN_OUTSIDE;
+      DT_LOG_TRACE(logging, "SHAPE_DOMAIN_OUTSIDE: bits =" << bits);
+    } else {
+      // Case: !outside_main_shape
+      on_main_shape_surface = _shape_->is_on_surface(local_position_,
+                                                     i_object_3d::ALL_SURFACES,
+                                                     tolerance_);
+      if (on_main_shape_surface) {
+        bits |= SHAPE_DOMAIN_ON_SURFACE;
+        DT_LOG_TRACE(logging, "SHAPE_DOMAIN_ON_SURFACE: bits =" << bits);
+      } else {
+        // Case: ! on_main_shape_surface
+        bits |= SHAPE_DOMAIN_INSIDE;
+        if ( ! ignore_daugthers_) {
+          // Loop on daughter volumes:
+          for (physicals_col_type::const_iterator i = _physicals_.begin();
+               i != _physicals_.end();
+               i++) {
+            const std::string & daughter_label = i->first;
+            const physical_volume & daughter_phys = *(i->second);
+            DT_LOG_DEBUG(logging, "Checking daughter volume '" << daughter_label
+                         << "' in logical volume '" << get_name() << "'...");
+            const i_placement & daughter_placement = daughter_phys.get_placement();
+            DT_LOG_DEBUG(logging, "Placement has " << daughter_placement.get_number_of_items ()
+                         << " items.");
+             // Loop on all placements :
+            for(int item = 0; item < daughter_placement.get_number_of_items (); item++) {
+              vector_3d daughter_item_position;
+              placement daughter_item_placement;
+              daughter_placement.get_placement (item, daughter_item_placement);
+              // Change from mother to child reference frame:
+              daughter_item_placement.mother_to_child(local_position_, daughter_item_position);
+              DT_THROW_IF(!daughter_phys.has_logical(),
+                          std::logic_error,
+                          "Daughter physical volume '" << daughter_label
+                          << "' has no associated logical in logical volume '" << get_name() << "' !");
+              DT_THROW_IF(!daughter_phys.get_logical ().has_shape(),
+                          std::logic_error,
+                          "Daughter logical volume '" << daughter_label
+                          << "' has no associated shape in logical volume '" << get_name() << "' !");
+              const i_shape_3d & daughter_shape = daughter_phys.get_logical ().get_shape ();
+              bool daughter_outside_main_shape
+                = daughter_shape.is_outside(daughter_item_position, daughter_tolerance_);
+              if (! daughter_outside_main_shape) {
+                bool on_daughter_shape_surface
+                  = daughter_shape.is_on_surface(daughter_item_position,
+                                                 i_object_3d::ALL_SURFACES,
+                                                 daughter_tolerance_);
+                if (on_daughter_shape_surface) {
+                  bits |= SHAPE_DOMAIN_ON_DAUGHTER_SURFACE;
+                  DT_LOG_TRACE(logging, "SHAPE_DOMAIN_ON_DAUGHTER_SURFACE: bits =" << bits);
+                  if (locate_res_) {
+                    locate_res_->daughter_name = daughter_label;
+                    locate_res_->daughter_physical = &daughter_phys;
+                    locate_res_->daughter_placement_index = item;
+                  }
+
+                  break;
+                } else {
+                  bits |= SHAPE_DOMAIN_INSIDE_DAUGHTER;
+                  DT_LOG_TRACE(logging, "SHAPE_DOMAIN_INSIDE_DAUGHTER: bits =" << bits);
+                  if (locate_res_) {
+                    locate_res_->daughter_name = daughter_label;
+                    locate_res_->daughter_physical = &daughter_phys;
+                    locate_res_->daughter_placement_index = item;
+                  }
+                  break;
+                }
+              } // ! daughter_outside_main_shape
+            } // end of loop on all placement
+            // If some 'daughter' bit is alreeady activated, there is
+            // no need to continue to traverse the daughter volumes:
+            if ((bits & SHAPE_DOMAIN_ON_DAUGHTER_SURFACE)
+                || (bits & SHAPE_DOMAIN_INSIDE_DAUGHTER)) {
+              break;
+            }
+          } // end of loop on daughter volumes.
+        }
+      } // end of !on_main_shape_surface
+    }// end of !outside_main_shape
+
+    if (locate_res_) {
+      locate_res_->shape_domain_flags = bits;
+    }
+    DT_LOG_TRACE(logging, "Exiting: with bits =" << bits);
+    return bits;
+  }
+
   void logical_volume::tree_dump (ostream & out_,
                                   const string & title_,
                                   const string & indent_,
@@ -331,11 +474,14 @@ namespace geomtools {
     out_ << indent <<  datatools::i_tree_dumpable::tag
          << "Name       : '" << _name_ << "'" << endl;
 
-    out_ << indent <<  datatools::i_tree_dumpable::tag
-         << "Material   : '" << _material_ref_ << "'" << endl;
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Logging priority  : '" << datatools::logger::get_priority_label(_logging_priority_) << "'" << std::endl;
+
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Locked     : " << (_locked_? "Yes": "No") << std::endl;
 
     out_ << indent <<  datatools::i_tree_dumpable::tag
-         << "Locked     : " << (_locked_? "Yes": "No") << endl;
+         << "Material   : '" << _material_ref_ << "'" << endl;
 
     out_ << indent <<  datatools::i_tree_dumpable::tag
          << "Abstract   : " << (_abstract_? "Yes": "No") << endl;

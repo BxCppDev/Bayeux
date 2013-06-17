@@ -313,7 +313,7 @@ namespace geomtools {
       datatools::properties log_visu_config;
       visibility::extract (log.get_parameters (), log_visu_config);
 
-      DT_LOG_TRACE (local_priority, "Logical '" << log.get_name () << "' visibility properties:");
+      DT_LOG_TRACE (local_priority, "Logical volume '" << log.get_name () << "' visibility properties:");
       if (local_priority >= datatools::logger::PRIO_TRACE) {
         log_visu_config.tree_dump (std::cerr);
       }
@@ -451,7 +451,7 @@ namespace geomtools {
   void gnuplot_drawer::draw (const logical_volume & log_,
                              const placement & p_,
                              int max_display_level_,
-                             const std::string & name_)
+                             const std::string & title_)
   {
     const datatools::logger::priority local_priority = datatools::logger::PRIO_FATAL;
     int max_display_level = max_display_level_;
@@ -544,9 +544,14 @@ namespace geomtools {
     g1.cmd ("set terminal x11 persist size 500,500");
     g1.cmd ("set size ratio -1");
     std::ostringstream title_oss;
-    title_oss << "Logical '" << name_ << "'";
-    g1.set_title (title_oss.str ());
-
+    if (! title_.empty()) {
+      title_oss << title_;
+    } else {
+      title_oss << "Instance of logical volume '" << log_.get_name() << "'";
+    }
+    if (!title_oss.str ().empty()) {
+      g1.set_title(title_oss.str ());
+    }
     std::ostringstream cmdstr;
 
     int col1 = 1;
@@ -703,7 +708,9 @@ namespace geomtools {
                  std::logic_error,
                  "Cannot find logical volume with name '" << logical_name_ << "' !");
     const geomtools::logical_volume & log = *(found->second);
-    draw (log, p_, max_display_level_, log.get_name ());
+    std::ostringstream title_oss;
+    title_oss << "Logical volume '" << log.get_name () << "'";
+    draw (log, p_, max_display_level_, title_oss.str());
     return;
   }
 
@@ -768,8 +775,10 @@ namespace geomtools {
     if (draw_dd) {
       _draw_display_data(mf_, wpl);
     }
-
-    draw (log, wpl, max_display_level_, log.get_name ());
+    std::ostringstream title_oss;
+    title_oss << "Volume " << gid_ << " (instance of logical volume '"
+              << log.get_name () << "')";
+    draw (log, wpl, max_display_level_, title_oss.str());
     return;
   }
 

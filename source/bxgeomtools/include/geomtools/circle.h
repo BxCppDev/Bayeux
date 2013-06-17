@@ -1,20 +1,20 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* circle.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-14
  * Last modified: 2010-02-14
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *   A circle in x-y plane
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
-#ifndef __geomtools__circle_h
-#define __geomtools__circle_h 1
+#ifndef GEOMTOOLS_CIRCLE_H_
+#define GEOMTOOLS_CIRCLE_H_ 1
 
 #include <iostream>
 #include <string>
@@ -27,11 +27,11 @@ namespace geomtools {
   class circle : public i_shape_1d,
                  public i_wires_3d_rendering
   {
-    
+
   public:
     static const std::string CIRCLE_LABEL;
 
-  public: 
+  public:
 
     bool is_valid () const;
 
@@ -42,14 +42,18 @@ namespace geomtools {
     void set_r (double a_radius);
 
     void set_diameter (double a_diameter);
- 
+
     double get_diameter () const;
- 
+
     double get_surface () const;
 
     double get_circumference () const;
 
-  public: 
+    virtual unsigned int get_number_of_path() const;
+
+    virtual double get_length(uint32_t flags_ = PATH_ALL_BITS) const;
+
+  public:
     // ctor:
     circle ();
 
@@ -57,32 +61,32 @@ namespace geomtools {
 
     // dtor:
     virtual ~circle ();
-  
+
     // methods:
     virtual std::string get_shape_name () const;
 
-    virtual void tree_dump (std::ostream & a_out = std::clog, 
-                            const std::string & a_title = "", 
-                            const std::string & a_indent = "", 
+    virtual void tree_dump (std::ostream & a_out = std::clog,
+                            const std::string & a_title = "",
+                            const std::string & a_indent = "",
                             bool a_inherit= false) const;
 
-    virtual bool is_on_curve (const vector_3d &, 
+    virtual bool is_on_curve (const vector_3d &,
                               double a_tolerance = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     virtual vector_3d get_direction_on_curve (const vector_3d & a_tposition) const;
- 
-    virtual void generate_wires (std::list<polyline_3d> &, 
-                                 const placement & , 
+
+    virtual void generate_wires (std::list<polyline_3d> &,
+                                 const placement & ,
                                  uint32_t options_ = 0) const;
-   
-  private: 
+
+  private:
 
     double _radius_; //!< The radius of the circle (in arbitrary units).
-  
+
   };
 
 } // end of namespace geomtools
 
-#endif // __geomtools__circle_h
+#endif // GEOMTOOLS_CIRCLE_H_
 
 // end of circle.h

@@ -209,10 +209,10 @@ namespace geomtools {
   {
   public:
 
-    static const int32_t FACE_ALL   = 0xFFFFFFFF;
+    static const uint32_t FACE_ALL   = FACE_ALL_BITS;
+    static const int INVALID_VERTEX  = -1;
+    static const int MAX_VERTEX      = 0x0FFFFFFF;
     static const std::string TESSELLATED_LABEL;
-    static const int INVALID_VERTEX = -1;
-    static const int MAX_VERTEX = 0x0FFFFFFF;
 
     typedef std::map<unsigned int, facet_vertex> vertices_col_type;
     typedef std::map<unsigned int, facet34> facets_col_type;
@@ -275,8 +275,6 @@ namespace geomtools {
     void print_xyz (std::ostream & out_) const;
 
     void dump (std::ostream & out_ = std::clog) const;
-
-    //void initialize (const string & filename_);
 
     virtual bool is_inside (const vector_3d &,
                             double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;

@@ -16,6 +16,7 @@
 #include <geomtools/detail/model_tools.h>
 #include <geomtools/i_model.h>
 #include <geomtools/logical_volume.h>
+#include <geomtools/physical_volume.h>
 #include <geomtools/visibility.h>
 
 namespace geomtools {
@@ -252,7 +253,26 @@ namespace geomtools {
       _models_[model_name] = model;
       DT_LOG_DEBUG(_logging_priority_,"Adding model '" << model_name << "'...");
       string log_name = model->get_logical ().get_name ();
-      _logicals_[log_name] = &(model->get_logical ());
+      if (_logicals_.find(log_name) == _logicals_.end()) {
+        _logicals_[log_name] = &(model->get_logical ());
+      } else {
+        DT_THROW_IF(true, std::runtime_error,
+                    "Logical volume '" << log_name << "' is already referenced in the model factory !");
+        //DT_LOG_WARNING
+      }
+      for (logical_volume::physicals_col_type::const_iterator iphys = model->get_logical ().get_physicals ().begin();
+           iphys != model->get_logical ().get_physicals ().end();
+           iphys++) {
+        const std::string & phys_name = iphys->first;
+        const physical_volume & phys_vol = *iphys->second;
+        if (phys_vol.has_logical()) {
+          const logical_volume & phys_log = phys_vol.get_logical();
+          if (_logicals_.find(phys_log.get_name()) == _logicals_.end()) {
+            _logicals_[phys_log.get_name()] = &phys_log;
+          }
+        }
+      }
+
       DT_LOG_DEBUG(_logging_priority_,"New model is:");
       if (is_debug ()) model->tree_dump (clog,"");
     }
@@ -440,6 +460,111 @@ namespace geomtools {
         count++;
       } else {
         out_ << model_name;
+        out_ << std::endl;
+      }
+    }
+    if (with_multicolumn) {
+      if ((count % 2) == 1)  {
+        out_ << std::endl;
+      }
+      out_ << std::endl;
+    }
+    return 0;
+  }
+
+  int model_factory::print_list_of_logicals(const geomtools::model_factory & mf_,
+                                            std::ostream & out_,
+                                            const std::string & rules_)
+  {
+    std::vector<std::string> requested_patterns;
+
+    bool with_title = true;
+    bool with_multicolumn = true;
+
+    // Parse rules :
+    std::istringstream rules_iss(rules_);
+    while (rules_iss) {
+      std::string rule;
+      rules_iss >> rule >> std::ws;
+
+      if (rule=="--help") {
+        out_ << "  --with-title              Print a title line\n"
+             << "  --without-title           Do not print a title line\n"
+             << "  --multicolumn             Print in multicolumn mode\n"
+             << "  --onecolumn               Print in one column mode\n"
+          //   << "  --with-pattern PATTERN    Print the logical volumes named with PATTERN\n"
+             << std::endl;
+        return -1;
+      }
+      else if (rule=="--with-title") with_title = true;
+      else if (rule=="--without-title") with_title = false;
+      else if (rule=="--multicolumn") with_multicolumn = true;
+      else if (rule=="--onecolumn") with_multicolumn = false;
+      // else if (rule=="--with-pattern") {
+      //   std::string pattern;
+      //   rules_iss >> pattern;
+      //   if (pattern.empty()) {
+      //     DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+      //                  "Missing logical volume pattern (please use: '--with-pattern PATTERN' ) !");
+      //     return 1;
+      //   }
+      //   requested_patterns.push_back(category);
+      // }
+
+      if (rules_iss.eof()) break;
+    }
+
+    std::vector<const std::string*> selected_logicals;
+    for (logical_volume::dict_type::const_iterator i
+           = mf_.get_logicals ().begin ();
+         i != mf_.get_logicals ().end ();
+         i++) {
+      const std::string & logical_name = i->second->get_name ();
+      bool selected = true;
+      // if (requested_patterns.size()) {
+      //   selected = false;
+      // }
+      // if (! selected && requested_patterns.size()) {
+      //   if (std::find(requested_patterns.begin(),
+      //                 requested_patterns.end(),
+      //                 category) != requested_patterns.end()) {
+      //      selected = true;
+      //   }
+      // }
+      if (selected) {
+        selected_logicals.push_back(&logical_name);
+      }
+    }
+
+    if (with_title) {
+      out_ << std::flush << "List of available logical volumes : " << std::endl;
+    }
+    size_t max_width = 32;
+    int count = 0;
+    for (std::vector<const std::string*>::const_iterator i
+           = selected_logicals.begin ();
+         i != selected_logicals.end ();
+         i++) {
+      const std::string & logical_name = **i;
+      if (with_multicolumn) {
+        bool long_name = false;
+        if (logical_name.size () > max_width) {
+          long_name = true;
+        }
+        if ((count % 2) == 0) {
+          out_ << std::endl;
+        }
+        out_  << "  " << std::setw (max_width)
+              << std::setiosflags(std::ios::left)
+              << std::resetiosflags(std::ios::right)
+              << logical_name << "  ";
+        if (long_name) {
+          out_ << std::endl;
+          count = 0;
+        }
+        count++;
+      } else {
+        out_ << logical_name;
         out_ << std::endl;
       }
     }

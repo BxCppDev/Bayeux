@@ -13,8 +13,8 @@
  *
  */
 
-#ifndef __geomtools__intersection_3d_h
-#define __geomtools__intersection_3d_h 1
+#ifndef GEOMTOOLS_INTERSECTION_3D_H_
+#define GEOMTOOLS_INTERSECTION_3D_H_ 1
 
 #include <geomtools/i_composite_shape_3d.h>
 
@@ -36,7 +36,7 @@ namespace geomtools {
                             double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     virtual bool is_on_surface (const vector_3d & position_,
-                                int mask_    = ALL_SURFACES,
+                                int mask_    = FACE_ALL_BITS,
                                 double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     virtual vector_3d get_normal_on_surface (const vector_3d & position_) const;
@@ -50,6 +50,6 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // __geomtools__intersection_3d_h
+#endif // GEOMTOOLS_INTERSECTION_3D_H_
 
 // end of intersection_3d.h

@@ -135,7 +135,7 @@ namespace geomtools {
     return;
   }
 
-  double tube::get_surface ( int mask_ ) const
+  double tube::get_surface (uint32_t mask_) const
   {
     double s = 0.0;
     if (mask_ & FACE_INNER_SIDE)
@@ -157,7 +157,7 @@ namespace geomtools {
     return s;
   }
 
-  double tube::get_volume () const
+  double tube::get_volume (uint32_t flags) const
   {
     return M_PI * (_outer_r_ * _outer_r_ - _inner_r_ * _inner_r_ ) * _z_;
   }

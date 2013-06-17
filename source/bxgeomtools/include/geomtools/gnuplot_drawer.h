@@ -157,7 +157,7 @@ namespace geomtools {
     void draw (const logical_volume & log_,
                const placement & p_,
                int max_display_level_,
-               const std::string & name_);
+               const std::string & title_);
 
     void draw (const model_factory & mf_,
                const std::string & model_name_,

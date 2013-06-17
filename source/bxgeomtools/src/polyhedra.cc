@@ -115,89 +115,72 @@ namespace geomtools {
   void polyhedra::initialize (const datatools::properties & setup_)
   {
     double lunit = CLHEP::mm;
-    if (setup_.has_key ("length_unit"))
-      {
-        const std::string lunit_str = setup_.fetch_string ("length_unit");
-        lunit = datatools::units::get_length_unit_from (lunit_str);
-      }
+    if (setup_.has_key ("length_unit")) {
+      const std::string lunit_str = setup_.fetch_string ("length_unit");
+      lunit = datatools::units::get_length_unit_from (lunit_str);
+    }
 
     std::string build_mode_label;
-    if (setup_.has_key ("build_mode"))
-      {
-        build_mode_label = setup_.fetch_string ("build_mode");
+    if (setup_.has_key ("build_mode")) {
+      build_mode_label = setup_.fetch_string ("build_mode");
+    }
+
+    if (build_mode_label == "points") {
+      size_t n_sides = 0;
+      if (setup_.has_key ("sides")) {
+        const int ns = setup_.fetch_integer ("sides");
+        DT_THROW_IF (ns < MIN_NUMBER_OF_SIDES, std::domain_error, "'sides' is not large enough !");
+        n_sides = ns;
+      }
+      this->set_n_sides (n_sides);
+
+      DT_THROW_IF (!setup_.has_key ("list_of_z"), std::logic_error, "Missing 'list_of_z' property !");
+      std::vector<double> zs;
+      setup_.fetch ("list_of_z", zs);
+      DT_THROW_IF (zs.size () < 2, std::domain_error, "'list_of_z' has not enough points !");
+
+      DT_THROW_IF (! setup_.has_key ("list_of_rmax"), std::logic_error, "Missing 'list_of_rmax' property !");
+      std::vector<double> rmaxs;
+      setup_.fetch ("list_of_rmax", rmaxs);
+      DT_THROW_IF (rmaxs.size () != zs.size (), std::logic_error,
+                   "'list_of_z' and 'list_of_rmax' have not the same size !");
+
+      std::vector<double> rmins;
+      double rmin;
+      datatools::invalidate (rmin);
+      if (setup_.has_key ("list_of_rmin")) {
+        setup_.fetch ("list_of_rmin", rmins);
+        DT_THROW_IF (rmins.size () != zs.size (), std::logic_error,
+                     "'list_of_rmin' and 'list_of_rmax' have not the same size !");
+      } else if (setup_.has_key ("rmin")) {
+        rmin = setup_.fetch_real ("rmin");
+        if (! setup_.has_explicit_unit ("rmin")) {
+          rmin *= lunit;
+        }
+      } else {
+        rmin = 0.0 * lunit;
       }
 
-    if (build_mode_label == "points")
-      {
-        size_t n_sides = 0;
-        if (setup_.has_key ("sides"))
-          {
-            const int ns = setup_.fetch_integer ("sides");
-            DT_THROW_IF (ns < MIN_NUMBER_OF_SIDES, std::domain_error, "'sides' is not large enough !");
-            n_sides = ns;
-          }
-        this->set_n_sides (n_sides);
-
-        DT_THROW_IF (!setup_.has_key ("list_of_z"), std::logic_error, "Missing 'list_of_z' property !");
-        std::vector<double> zs;
-        setup_.fetch ("list_of_z", zs);
-        DT_THROW_IF (zs.size () < 2, std::domain_error, "'list_of_z' has not enough points !");
-
-        DT_THROW_IF (! setup_.has_key ("list_of_rmax"), std::logic_error, "Missing 'list_of_rmax' property !");
-        std::vector<double> rmaxs;
-        setup_.fetch ("list_of_rmax", rmaxs);
-        DT_THROW_IF (rmaxs.size () != zs.size (), std::logic_error,
-                     "'list_of_z' and 'list_of_rmax' have not the same size !");
-
-        std::vector<double> rmins;
-        double rmin;
-        datatools::invalidate (rmin);
-        if (setup_.has_key ("list_of_rmin"))
-          {
-            setup_.fetch ("list_of_rmin", rmins);
-            DT_THROW_IF (rmins.size () != zs.size (), std::logic_error,
-                         "'list_of_rmin' and 'list_of_rmax' have not the same size !");
-          }
-        else if (setup_.has_key ("rmin"))
-          {
-            rmin = setup_.fetch_real ("rmin");
-            if (! setup_.has_explicit_unit ("rmin")) {
-              rmin *= lunit;
-            }
-          }
-        else
-          {
-            rmin = 0.0 * lunit;
-          }
-
-        for (size_t i = 0; i < zs.size (); i++)
-          {
-            const double a_z = zs[i];
-            double a_rmin;
-            if (datatools::is_valid (rmin))
-              {
-                a_rmin = rmin;
-              }
-            else
-              {
-                a_rmin = rmins[i];
-              }
-            double a_rmax = rmaxs[i];
-            this->add (a_z, a_rmin, a_rmax, false);
-          }
-        this->_compute_all_ ();
+      for (size_t i = 0; i < zs.size (); i++) {
+        const double a_z = zs[i];
+        double a_rmin;
+        if (datatools::is_valid (rmin)) {
+          a_rmin = rmin;
+        } else {
+          a_rmin = rmins[i];
+        }
+        double a_rmax = rmaxs[i];
+        this->add (a_z, a_rmin, a_rmax, false);
       }
-    else if (build_mode_label == "datafile")
-      {
-        DT_THROW_IF (! setup_.has_key ("datafile"), std::logic_error, "Missing 'datafile' property !");
-        std::string datafile = setup_.fetch_string ("datafile");
-        datatools::fetch_path_with_env (datafile);
-        this->initialize (datafile);
-      }
-    else
-      {
-        DT_THROW_IF (true, std::logic_error, "Invalid build mode '" << build_mode_label << "' !");
-      }
+      this->_compute_all_ ();
+    } else if (build_mode_label == "datafile") {
+      DT_THROW_IF (! setup_.has_key ("datafile"), std::logic_error, "Missing 'datafile' property !");
+      std::string datafile = setup_.fetch_string ("datafile");
+      datatools::fetch_path_with_env (datafile);
+      this->initialize (datafile);
+    } else {
+      DT_THROW_IF (true, std::logic_error, "Invalid build mode '" << build_mode_label << "' !");
+    }
 
     return;
   }
@@ -216,124 +199,102 @@ namespace geomtools {
     double r_factor = 1.0;
     bool   ignore_rmin = false;
 
-    while (! ifs.eof ())
+    while (! ifs.eof ()) {
+      std::string line;
+      getline (ifs, line);
+      count++;
       {
-        std::string line;
-        getline (ifs, line);
-        count++;
-        {
-          std::istringstream iss (line);
-          std::string word;
-          iss >> word;
-          if (word.empty ()) continue;
-          if (word[0] == '#')
-            {
-              if (word.size () >= 2)
-                {
-                  if (word == "#@sides")
-                    {
-                      int ns;
-                      iss >> ns;
-                      DT_THROW_IF (! iss, std::logic_error,
-                                   "Invalid format for the number of sides directive in data file '"
-                                   << filename << "' at line " << count << " !");
-                      DT_THROW_IF (ns < MIN_NUMBER_OF_SIDES, std::domain_error,
-                                   "Number of sides is not large enough in data file '"
-                                   << filename << "' at line " << count << " !");
-                      const size_t nsides = (size_t) ns;
-                      set_n_sides (nsides);
-                    }
-                  else if (word == "#@length_unit")
-                    {
-                      std::string unit_str;
-                      iss >> unit_str;
-                      DT_THROW_IF (! iss, std::logic_error,
-                                   "Invalid format for the length unit directive in data file '"
-                                   << filename << "' at line " << count << " !");
-                      length_unit = datatools::units::get_length_unit_from (unit_str);
-                    }
-                  else if (word == "#@ignore_rmin")
-                    {
-                      ignore_rmin = true;
-                    }
-                  else if (word == "#@z_factor")
-                    {
-                      iss >> z_factor;
-                      DT_THROW_IF (! iss, std::logic_error,
-                                   "Invalid format for the Z-factor directive in data file '"
-                                   << filename << "' at line " << count << " !");
-                    }
-                  else if (word == "#@r_factor")
-                    {
-                      iss >> r_factor;
-                      DT_THROW_IF (! iss, std::logic_error,
-                                   "Invalid format for the R-factor directive in data file '"
-                                   << filename << "' at line " << count << " !");
-                    }
-                }
-              continue;
+        std::istringstream iss (line);
+        std::string word;
+        iss >> word;
+        if (word.empty ()) continue;
+        if (word[0] == '#') {
+          if (word.size () >= 2) {
+            if (word == "#@sides") {
+              int ns;
+              iss >> ns;
+              DT_THROW_IF (! iss, std::logic_error,
+                           "Invalid format for the number of sides directive in data file '"
+                           << filename << "' at line " << count << " !");
+              DT_THROW_IF (ns < MIN_NUMBER_OF_SIDES, std::domain_error,
+                           "Number of sides is not large enough in data file '"
+                           << filename << "' at line " << count << " !");
+              const size_t nsides = (size_t) ns;
+              set_n_sides (nsides);
+            } else if (word == "#@length_unit") {
+              std::string unit_str;
+              iss >> unit_str;
+              DT_THROW_IF (! iss, std::logic_error,
+                           "Invalid format for the length unit directive in data file '"
+                           << filename << "' at line " << count << " !");
+              length_unit = datatools::units::get_length_unit_from (unit_str);
+            } else if (word == "#@ignore_rmin") {
+              ignore_rmin = true;
+            } else if (word == "#@z_factor") {
+              iss >> z_factor;
+              DT_THROW_IF (! iss, std::logic_error,
+                           "Invalid format for the Z-factor directive in data file '"
+                           << filename << "' at line " << count << " !");
+            } else if (word == "#@r_factor") {
+              iss >> r_factor;
+              DT_THROW_IF (! iss, std::logic_error,
+                           "Invalid format for the R-factor directive in data file '"
+                           << filename << "' at line " << count << " !");
             }
-        }
-        // parse (z,r1) or (z,r1,r2) formated lines:
-        {
-          std::istringstream iss (line);
-          double z, r1, r2;
-          datatools::invalidate (z);
-          datatools::invalidate (r1);
-          datatools::invalidate (r2);
-          iss >> z;
-          DT_THROW_IF (! iss, std::logic_error,
-                       "Format error for 'z' in data file '" << filename << "' at line " << count << " !");
-          iss >> r1;
-          DT_THROW_IF (! iss, std::logic_error,
-                       "Format error for 'r1' in data file '" << filename << "' at line " << count << " !");
-          // try to read a third column:
-          std::string token;
-          iss >> token;
-          if (token.length () == 0)
-            {
-              // two columns format:
-              r2 = r1;
-              datatools::invalidate (r1);
-            }
-          else
-            {
-              if (token[0] == '#')
-                {
-                  // if line ends with a comment: this is two columns format !
-                  r2 = r1;
-                  datatools::invalidate (r1);
-                }
-              else
-                {
-                  // try three columns format (z, r1, r2):
-                  std::istringstream iss2 (token);
-                  iss2 >> r2;
-                  DT_THROW_IF (! iss2, std::logic_error,
-                               "Format error for 'r2' in data file '"
-                               << filename << "' at line " << count << " !");
-                  if (ignore_rmin)
-                    {
-                      datatools::invalidate (r1);
-                    }
-                }
-            }
-          DT_THROW_IF (datatools::is_valid (r2) && (r2 < 0.0), std::logic_error,
-                       "Invalid value '" << r2 << "' for '2' in data file '"
-                       << filename << "' at line " << count << " !");
-          const double tz  = z  * z_factor * length_unit;
-          const double tr1 = r1 * r_factor * length_unit;
-          const double tr2 = r2 * r_factor * length_unit;
-          if (datatools::is_valid (r1))
-            {
-              this->add (tz, tr1, tr2, false);
-            }
-          else
-            {
-              this->add (tz, tr2, false);
-            }
+          }
+          continue;
         }
       }
+      // parse (z,r1) or (z,r1,r2) formated lines:
+      {
+        std::istringstream iss (line);
+        double z, r1, r2;
+        datatools::invalidate (z);
+        datatools::invalidate (r1);
+        datatools::invalidate (r2);
+        iss >> z;
+        DT_THROW_IF (! iss, std::logic_error,
+                     "Format error for 'z' in data file '" << filename << "' at line " << count << " !");
+        iss >> r1;
+        DT_THROW_IF (! iss, std::logic_error,
+                     "Format error for 'r1' in data file '" << filename << "' at line " << count << " !");
+        // try to read a third column:
+        std::string token;
+        iss >> token;
+        if (token.length () == 0) {
+          // two columns format:
+          r2 = r1;
+          datatools::invalidate (r1);
+        } else {
+          if (token[0] == '#') {
+            // if line ends with a comment: this is two columns format !
+            r2 = r1;
+            datatools::invalidate (r1);
+          } else {
+            // try three columns format (z, r1, r2):
+            std::istringstream iss2 (token);
+            iss2 >> r2;
+            DT_THROW_IF (! iss2, std::logic_error,
+                         "Format error for 'r2' in data file '"
+                         << filename << "' at line " << count << " !");
+            if (ignore_rmin) {
+              datatools::invalidate (r1);
+            }
+          }
+        }
+        DT_THROW_IF (datatools::is_valid (r2) && (r2 < 0.0), std::logic_error,
+                     "Invalid value '" << r2 << "' for '2' in data file '"
+                     << filename << "' at line " << count << " !");
+        const double tz  = z  * z_factor * length_unit;
+        const double tr1 = r1 * r_factor * length_unit;
+        const double tr2 = r2 * r_factor * length_unit;
+        if (datatools::is_valid (r1)) {
+          this->add (tz, tr1, tr2, false);
+        } else {
+          this->add (tz, tr2, false);
+        }
+      }
+    }
     this->_compute_all_ ();
     return;
   }
@@ -353,10 +314,9 @@ namespace geomtools {
     RMM.rmin = 0.0;
     RMM.rmax = rmax_;
     _points_[z_] = RMM;
-    if (_points_.size () > 1)
-      {
-        if (compute_) _compute_all_ ();
-      }
+    if (_points_.size () > 1) {
+      if (compute_) _compute_all_ ();
+    }
     return;
   }
 
@@ -369,10 +329,9 @@ namespace geomtools {
     RMM.rmin = rmin_;
     RMM.rmax = rmax_;
     _points_[z_] = RMM;
-    if (_points_.size () > 1)
-      {
-        if (compute_) _compute_all_ ();
-      }
+    if (_points_.size () > 1) {
+      if (compute_) _compute_all_ ();
+    }
     return;
   }
 
@@ -404,58 +363,44 @@ namespace geomtools {
     double max_radius = std::numeric_limits<double>::quiet_NaN ();
     for (rz_col_type::const_iterator i = _points_.begin ();
          i != _points_.end ();
-         i++)
-      {
-        const double z    = i->first;
-        const double rmax = i->second.rmax;
-        if (! datatools::is_valid (_z_min_))
-          {
-            _z_min_ = z;
-          }
-        else if (z < _z_min_)
-          {
-            _z_min_ = z;
-          }
-        if (! datatools::is_valid (_z_max_))
-          {
-            _z_max_ = z;
-          }
-        else if (z > _z_max_)
-          {
-            _z_max_ = z;
-          }
-        if (! datatools::is_valid (max_radius))
-          {
-            max_radius = rmax;
-          }
-        else if (rmax > max_radius)
-          {
-            max_radius = rmax;
-          }
+         i++) {
+      const double z    = i->first;
+      const double rmax = i->second.rmax;
+      if (! datatools::is_valid (_z_min_)) {
+        _z_min_ = z;
+      } else if (z < _z_min_) {
+        _z_min_ = z;
       }
+      if (! datatools::is_valid (_z_max_)) {
+        _z_max_ = z;
+      } else if (z > _z_max_) {
+        _z_max_ = z;
+      }
+      if (! datatools::is_valid (max_radius)) {
+        max_radius = rmax;
+      } else if (rmax > max_radius) {
+        max_radius = rmax;
+      }
+    }
     _r_max_ = max_radius;
     // compute the XY-bounding box:
     const double alpha = 2.0 * M_PI / _n_sides_;
-    for (int i = 0; i < _n_sides_; i++)
-      {
-        const double theta = alpha * i;
-        const double xs  = _r_max_ * cos (theta);
-        const double ys  = _r_max_ * sin (theta);
-        const double axs = abs (xs);
-        const double ays = abs (ys);
-        if (! datatools::is_valid (_xy_max_))
-          {
-            _xy_max_ = axs;
-          }
-        if (axs > _xy_max_)
-          {
-            _xy_max_ = axs;
-          }
-        if (ays > _xy_max_)
-          {
-            _xy_max_ = ays;
-          }
+    for (int i = 0; i < _n_sides_; i++) {
+      const double theta = alpha * i;
+      const double xs  = _r_max_ * cos (theta);
+      const double ys  = _r_max_ * sin (theta);
+      const double axs = abs (xs);
+      const double ays = abs (ys);
+      if (! datatools::is_valid (_xy_max_)) {
+        _xy_max_ = axs;
       }
+      if (axs > _xy_max_) {
+        _xy_max_ = axs;
+      }
+      if (ays > _xy_max_) {
+        _xy_max_ = ays;
+      }
+    }
     return;
   }
 
@@ -473,14 +418,12 @@ namespace geomtools {
                  "Invalid corner index (" << corner_index_ << ") !");
     size_t zcount = 0;
     rz_col_type::const_iterator i = _points_.begin ();
-    for (; i != _points_.end (); i++)
-      {
-        if (zcount == zplane_index_)
-          {
-            break;
-          }
-        zcount++;
+    for (; i != _points_.end (); i++) {
+      if (zcount == zplane_index_) {
+        break;
       }
+      zcount++;
+    }
     const double z = i->first;
     const double rmin = i->second.rmin;
     const double rmax = i->second.rmax;
@@ -519,33 +462,32 @@ namespace geomtools {
       double s = 0.0;
       rz_col_type::const_iterator j = _points_.begin ();
       j++;
-      while (j != _points_.end ())
-        {
-          const double z1 = j->first;
-          const double rmin1 = j->second.rmin;
-          const double rmax1 = j->second.rmax;
-          // See: http://en.wikipedia.org/wiki/Frustum#Surface_Area
-          const size_t n = _n_sides_;
-          const double angle = M_PI / n;
-          const double a1 = 2 * rmax0 * sin (angle);
-          const double a2 = 2 * rmax1 * sin (angle);
-          const double a1_2 = a1 * a1;
-          const double a2_2 = a2 * a2;
-          const double h = abs (z1 - z0);
-          const double A = 0.25
-            * M_PI
-            * (
-               (a1_2 + a2_2) / tan (angle)
-               +
-               sqrt ((a1_2 - a2_2) * (a1_2 - a2_2) / (cos (angle) * cos (angle))
-                     + 4 * h * h * (a1_2 + a2_2) * (a1_2 + a2_2)));
-          s += A;
-          // increment:
-          j++;
-          z0 = z1;
-          rmin0 = rmin1;
-          rmax0 = rmax1;
-        }
+      while (j != _points_.end ()) {
+        const double z1 = j->first;
+        const double rmin1 = j->second.rmin;
+        const double rmax1 = j->second.rmax;
+        // See: http://en.wikipedia.org/wiki/Frustum#Surface_Area
+        const size_t n = _n_sides_;
+        const double angle = M_PI / n;
+        const double a1 = 2 * rmax0 * sin (angle);
+        const double a2 = 2 * rmax1 * sin (angle);
+        const double a1_2 = a1 * a1;
+        const double a2_2 = a2 * a2;
+        const double h = abs (z1 - z0);
+        const double A = 0.25
+          * M_PI
+          * (
+             (a1_2 + a2_2) / tan (angle)
+             +
+             sqrt ((a1_2 - a2_2) * (a1_2 - a2_2) / (cos (angle) * cos (angle))
+                   + 4 * h * h * (a1_2 + a2_2) * (a1_2 + a2_2)));
+        s += A;
+        // increment:
+        j++;
+        z0 = z1;
+        rmin0 = rmin1;
+        rmax0 = rmax1;
+      }
       _outer_side_surface_ = s;
 
       // top surface:
@@ -564,33 +506,32 @@ namespace geomtools {
       double s = 0.0;
       rz_col_type::const_iterator j = i;
       j++;
-      while (j != _points_.end ())
-        {
-          const double z1 = j->first;
-          const double rmin1 = j->second.rmin;
-          const double rmax1 = j->second.rmax;
-          // See: http://en.wikipedia.org/wiki/Frustum#Surface_Area
-          const size_t n = _n_sides_;
-          const double angle = M_PI / n;
-          const double a1 = 2 * rmin0 * sin (angle);
-          const double a2 = 2 * rmin1 * sin (angle);
-          const double a1_2 = a1 * a1;
-          const double a2_2 = a2 * a2;
-          const double h = abs (z1 - z0);
-          const double A = 0.25
-            * M_PI
-            * (
-               (a1_2 + a2_2) / tan (angle)
-               +
-               sqrt ((a1_2 - a2_2) * (a1_2 - a2_2) / (cos (angle) * cos (angle))
-                     + 4 * h * h * (a1_2 + a2_2) * (a1_2 + a2_2)));
-          s += A;
-          // increment:
-          j++;
-          z0 = z1;
-          rmin0 = rmin1;
-          rmax0 = rmax1;
-        }
+      while (j != _points_.end ()) {
+        const double z1 = j->first;
+        const double rmin1 = j->second.rmin;
+        const double rmax1 = j->second.rmax;
+        // See: http://en.wikipedia.org/wiki/Frustum#Surface_Area
+        const size_t n = _n_sides_;
+        const double angle = M_PI / n;
+        const double a1 = 2 * rmin0 * sin (angle);
+        const double a2 = 2 * rmin1 * sin (angle);
+        const double a1_2 = a1 * a1;
+        const double a2_2 = a2 * a2;
+        const double h = abs (z1 - z0);
+        const double A = 0.25
+          * M_PI
+          * (
+             (a1_2 + a2_2) / tan (angle)
+             +
+             sqrt ((a1_2 - a2_2) * (a1_2 - a2_2) / (cos (angle) * cos (angle))
+                   + 4 * h * h * (a1_2 + a2_2) * (a1_2 + a2_2)));
+        s += A;
+        // increment:
+        j++;
+        z0 = z1;
+        rmin0 = rmin1;
+        rmax0 = rmax1;
+      }
       _inner_side_surface_ = s;
     }
 
@@ -609,23 +550,22 @@ namespace geomtools {
       double rmax0 = i->second.rmax;
       rz_col_type::const_iterator j = i;
       j++;
-      while (j != _points_.end ())
-        {
-          const double z1 = j->first;
-          const double rmax1 = j->second.rmax;
-          // See: http://en.wikipedia.org/wiki/Frustum# Volume
-          const size_t n = _n_sides_;
-          const double angle = M_PI / n;
-          const double a1 = 2 * rmax0 * sin (angle);
-          const double a2 = 2 * rmax1 * sin (angle);
-          const double h = abs (z1 - z0);
-          const double V = n * h * (a1 * a1 + a2 * a2 + a1 * a2) / tan (angle) / 12;
-          vext += V;
-          // increment:
-          j++;
-          z0 = z1;
-          rmax0 = rmax1;
-        }
+      while (j != _points_.end ()) {
+        const double z1 = j->first;
+        const double rmax1 = j->second.rmax;
+        // See: http://en.wikipedia.org/wiki/Frustum# Volume
+        const size_t n = _n_sides_;
+        const double angle = M_PI / n;
+        const double a1 = 2 * rmax0 * sin (angle);
+        const double a2 = 2 * rmax1 * sin (angle);
+        const double h = abs (z1 - z0);
+        const double V = n * h * (a1 * a1 + a2 * a2 + a1 * a2) / tan (angle) / 12;
+        vext += V;
+        // increment:
+        j++;
+        z0 = z1;
+        rmax0 = rmax1;
+      }
     }
 
     // Inner envelope:
@@ -635,23 +575,22 @@ namespace geomtools {
       double rmin0 = i->second.rmin;
       rz_col_type::const_iterator j = i;
       j++;
-      while (j != _points_.end ())
-        {
-          const double z1 = j->first;
-          const double rmin1 = j->second.rmin;
-          // See: http://en.wikipedia.org/wiki/Frustum# Volume
-          const size_t n = _n_sides_;
-          const double angle = M_PI / n;
-          const double a1 = 2 * rmin0 * sin (angle);
-          const double a2 = 2 * rmin1 * sin (angle);
-          const double h = abs (z1 - z0);
-          const double V = n * h * (a1 * a1 + a2 * a2 + a1 * a2) / tan (angle) / 12;
-          vint += V;
-          // increment:
-          j++;
-          z0 = z1;
-          rmin0 = rmin1;
-        }
+      while (j != _points_.end ()) {
+        const double z1 = j->first;
+        const double rmin1 = j->second.rmin;
+        // See: http://en.wikipedia.org/wiki/Frustum# Volume
+        const size_t n = _n_sides_;
+        const double angle = M_PI / n;
+        const double a1 = 2 * rmin0 * sin (angle);
+        const double a2 = 2 * rmin1 * sin (angle);
+        const double h = abs (z1 - z0);
+        const double V = n * h * (a1 * a1 + a2 * a2 + a1 * a2) / tan (angle) / 12;
+        vint += V;
+        // increment:
+        j++;
+        z0 = z1;
+        rmin0 = rmin1;
+      }
     }
 
     _outer_volume_ = vext;
@@ -666,16 +605,14 @@ namespace geomtools {
     ip_.set_n_sides (this->get_n_sides ());
     for (polyhedra::rz_col_type::const_iterator i = _points_.begin ();
          i != _points_.end ();
-         i++)
-      {
-        const double z = i->first;
-        const double rmax = i->second.rmin;
-        const bool add_it = true;
-        if (add_it)
-          {
-            ip_.add (z, rmax, false);
-          }
+         i++) {
+      const double z = i->first;
+      const double rmax = i->second.rmin;
+      const bool add_it = true;
+      if (add_it) {
+        ip_.add (z, rmax, false);
       }
+    }
     ip_._compute_all_ ();
     return;
   }
@@ -686,42 +623,37 @@ namespace geomtools {
     op_.set_n_sides (this->get_n_sides ());
     for (polyhedra::rz_col_type::const_iterator i = _points_.begin ();
          i != _points_.end ();
-         i++)
-      {
-        const double z = i->first;
-        const double rmax = i->second.rmax;
-        op_.add (z, 0.0, rmax, false);
-      }
+         i++) {
+      const double z = i->first;
+      const double rmax = i->second.rmax;
+      op_.add (z, 0.0, rmax, false);
+    }
     op_._compute_all_ ();
     return;
   }
 
 
-  double polyhedra::get_surface (int mask_) const
+  double polyhedra::get_surface (uint32_t mask_) const
   {
     double s = 0.0;
     int mask = mask_;
     if (mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
-    if (mask & FACE_INNER_SIDE)
-      {
-        s += _inner_side_surface_;
-      }
-    if (mask & FACE_OUTER_SIDE)
-      {
-        s += _outer_side_surface_;
-      }
-    if (mask & FACE_BOTTOM)
-      {
-        s += _bottom_surface_;
-      }
-    if (mask & FACE_TOP)
-      {
-        s += _top_surface_;
-      }
+    if (mask & FACE_INNER_SIDE) {
+      s += _inner_side_surface_;
+    }
+    if (mask & FACE_OUTER_SIDE) {
+      s += _outer_side_surface_;
+    }
+    if (mask & FACE_BOTTOM) {
+      s += _bottom_surface_;
+    }
+    if (mask & FACE_TOP) {
+      s += _top_surface_;
+    }
     return s;
   }
 
-  double polyhedra::get_volume () const
+  double polyhedra::get_volume (uint32_t flags) const
   {
     return _volume_;
   }
@@ -908,13 +840,12 @@ namespace geomtools {
     out_ << ' ' << p_._points_.size ();
     for (polyhedra::rz_col_type::const_iterator i = p_._points_.begin ();
          i != p_._points_.end ();
-         i++)
-      {
-        const double z = i->first;
-        const double rmin = i->second.rmin;
-        const double rmax = i->second.rmax;
-        out_ << ' ' << z << ' ' << rmin << ' ' << rmax;
-      }
+         i++) {
+      const double z = i->first;
+      const double rmin = i->second.rmin;
+      const double rmax = i->second.rmax;
+      out_ << ' ' << z << ' ' << rmin << ' ' << rmax;
+    }
     out_ << '}';
     return out_;
   }
@@ -924,49 +855,42 @@ namespace geomtools {
     p_.reset ();
     char c = 0;
     in_.get (c);
-    if (c != '{')
-      {
-        in_.clear (std::ios_base::failbit);
-        return in_;
-      }
+    if (c != '{') {
+      in_.clear (std::ios_base::failbit);
+      return in_;
+    }
     std::string name;
     in_ >> name;
-    if (name != polyhedra::POLYHEDRA_LABEL)
-      {
-        in_.clear (std::ios_base::failbit);
-        return in_;
-      }
+    if (name != polyhedra::POLYHEDRA_LABEL) {
+      in_.clear (std::ios_base::failbit);
+      return in_;
+    }
     size_t n_sides;
     in_ >> n_sides;
     p_.set_n_sides (n_sides);
     size_t n;
     in_ >> n;
-    for (int i = 0; i < n; i++)
-      {
-        double rmin, rmax, z;
-        in_ >> z >> rmin >> rmax;
-        if (! in_)
-          {
-            in_.clear (std::ios_base::failbit);
-            return in_;
-          }
-        try
-          {
-            p_.add (z, rmin, rmax);
-          }
-        catch (...)
-          {
-            p_.reset ();
-            in_.clear (std::ios_base::failbit);
-          }
-      }
-    c = 0;
-    in_.get (c);
-    if (c != '}')
-      {
+    for (int i = 0; i < n; i++) {
+      double rmin, rmax, z;
+      in_ >> z >> rmin >> rmax;
+      if (! in_) {
         in_.clear (std::ios_base::failbit);
         return in_;
       }
+      try {
+        p_.add (z, rmin, rmax);
+      }
+      catch (...) {
+        p_.reset ();
+        in_.clear (std::ios_base::failbit);
+      }
+    }
+    c = 0;
+    in_.get (c);
+    if (c != '}') {
+      in_.clear (std::ios_base::failbit);
+      return in_;
+    }
     return in_;
   }
 

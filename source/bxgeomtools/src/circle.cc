@@ -24,6 +24,17 @@ namespace geomtools {
     return CIRCLE_LABEL;
   }
 
+  unsigned int circle::get_number_of_path() const
+  {
+    return 1;
+  }
+
+  double circle::get_length(uint32_t flags_) const
+  {
+    if (flags_ == PATH_NONE) return 0.0;
+    return get_circumference();
+  }
+
   double circle::get_r () const
   {
     return _radius_;

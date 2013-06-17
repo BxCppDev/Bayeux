@@ -809,7 +809,7 @@ namespace geomtools {
     return;
   }
 
-  double polycone::get_surface (int mask_) const
+  double polycone::get_surface (uint32_t mask_) const
   {
     double s = 0.0;
     int mask = mask_;
@@ -829,7 +829,7 @@ namespace geomtools {
     return s;
   }
 
-  double polycone::get_volume () const
+  double polycone::get_volume (uint32_t flags) const
   {
     return _volume_;
   }

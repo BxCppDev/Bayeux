@@ -94,7 +94,7 @@ namespace geomtools {
   }
 
   double
-  sphere::get_surface (int mask_) const
+  sphere::get_surface (uint32_t mask_) const
   {
     double s = 0.0;
     if  (mask_ & FACE_SIDE) {
@@ -104,7 +104,7 @@ namespace geomtools {
   }
 
   double
-  sphere::get_volume () const
+  sphere::get_volume (uint32_t flags) const
   {
     return 4.0 * M_PI * _r_ * _r_ * _r_ / 3.0;
   }

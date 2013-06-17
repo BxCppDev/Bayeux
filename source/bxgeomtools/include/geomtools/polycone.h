@@ -33,11 +33,11 @@ namespace geomtools {
 
     enum faces_mask_type
       {
-        FACE_NONE   = FACE_NONE_BIT,
-        FACE_INNER_SIDE   = 0x1,
-        FACE_OUTER_SIDE   = 0x2,
-        FACE_BOTTOM = 0x4,
-        FACE_TOP    = 0x8,
+        FACE_NONE         = geomtools::FACE_NONE,
+        FACE_INNER_SIDE   = datatools::bit_mask::bit00,
+        FACE_OUTER_SIDE   = datatools::bit_mask::bit01,
+        FACE_BOTTOM       = datatools::bit_mask::bit02,
+        FACE_TOP          = datatools::bit_mask::bit03,
         FACE_ALL    = (FACE_INNER_SIDE
                        | FACE_OUTER_SIDE
                        | FACE_BOTTOM
@@ -112,29 +112,37 @@ namespace geomtools {
     /** Initialize the polycone from data in a file.
      * Format (ASCII) consists in lines with the
      * (Z,Rmax) format or the (Z,Rmin,Rmax) format.
-     * Special comments may be inserted at the beginning
+     * Special metadata may be specified at the beginning
      * of the file:
      *
      * All data are given with the following length unit:
-     *    #@length_unit mm
+     * \code
+     * #@length_unit mm
+     * \endcode
      *
      * Data (Rmin) in the second column out of three columns are ignored:
-     *    #@ignore_rmin
+     * \code
+     * #@ignore_rmin
+     * \endcode
      *
      * The thickness of the polycone:
-     *    #@skin_thickness 1
+     * \code
+     * #@skin_thickness 0.001
+     * \endcode
      *
      * The step of the polycone:
-     *    #@skin_step 5.0
+     * \code
+     * #@skin_step 5.0
+     * \endcode
      *
      * Example:
-     *  >>>
+     * \code
      *  #@length_unit mm
      *  z1 rmin1 rmax1
      *  z2 rmin2 rmax2
      *  z3       rmax3
      *  z4 rmin4 rmax4
-     *  <<<
+     * \endcode
      *
      */
     void initialize (const std::string & filename_,
@@ -161,9 +169,9 @@ namespace geomtools {
 
     void compute_outer_polycone (polycone & op_);
 
-    double get_volume () const;
+    virtual double get_volume (uint32_t flags_ = 0) const;
 
-    double get_surface (int mask_ = FACE_ALL) const;
+    virtual double get_surface (uint32_t mask_ = FACE_ALL_BITS) const;
 
     double get_z_min () const;
 

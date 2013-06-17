@@ -132,7 +132,7 @@ namespace geomtools {
         DT_LOG_TRACE (local_priority, "ishape #" << ishape);
         invalidate (intercepts[ishape]);
         intercept_ok[ishape] = false;
-        intercept_faces[ishape] = FACE_NONE_BIT;
+        intercept_faces[ishape] = geomtools::FACE_NONE;
         const placement * pi = placements[ishape];
         const placement * pj = placements[(ishape + 1) % 2];
         const i_shape_3d * shi = shapes[ishape];
@@ -223,7 +223,7 @@ namespace geomtools {
                     DT_LOG_TRACE (local_priority, "ishape #" << ishape  << " new from_i=" << from_i);
                     invalidate (intercepts[ishape]);
                     intercept_ok[ishape] = false;
-                    intercept_faces[ishape] = FACE_NONE_BIT;
+                    intercept_faces[ishape] = geomtools::FACE_NONE;
                   }
               }
             counter++;

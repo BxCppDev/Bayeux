@@ -1,16 +1,16 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* i_shape_1d.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
  * Last modified: 2012-04-10
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *  Interface for 1D shaped volumes (lines)
  *
- * History: 
- * 
+ * History:
+ *
  */
 
 #ifndef GEOMTOOLS_I_SHAPE_1D_H_
@@ -29,17 +29,25 @@ namespace geomtools {
 
     virtual int get_dimensional () const;
 
+    virtual bool has_number_of_paths() const;
+
+    virtual unsigned int get_number_of_paths() const;
+
+    virtual bool has_length(uint32_t flags_ = PATH_ALL_BITS) const;
+
+    virtual double get_length(uint32_t flags_ = PATH_ALL_BITS) const;
+
     i_shape_1d (double tolerance_ = GEOMTOOLS_DEFAULT_TOLERANCE);
 
     virtual ~i_shape_1d ();
 
-    virtual bool is_on_curve (const vector_3d &, 
+    virtual bool is_on_curve (const vector_3d &,
                               double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const = 0;
 
     virtual vector_3d get_direction_on_curve (const vector_3d & position_) const = 0;
- 
+
   };
-    
+
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_I_SHAPE_1D_H_
