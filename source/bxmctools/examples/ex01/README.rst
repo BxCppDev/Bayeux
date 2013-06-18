@@ -127,7 +127,7 @@ Quick start
 1. Build, install and setup the ``mctools`` library.
 2. Make a copy of the example directory::
 
-      shell> cp -a [geomtools install base directory]/share/geomtools/examples/ex01 /tmp/ex01
+      shell> cp -a [mctools install base directory]/share/mctools/examples/ex01 /tmp/ex01
       shell> cd /tmp/ex01
 
 3. Build and install the example program::
@@ -362,5 +362,3 @@ Quick start
       shell> rm prng_seeds.save.~backup~
       shell> rm ex01_read_plain_simdata
       shell> rm -fr __build
-
-

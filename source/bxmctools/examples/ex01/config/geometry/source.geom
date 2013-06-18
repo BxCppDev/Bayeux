@@ -91,6 +91,9 @@ mapping.daughter_id.film : string  = "[source_film.gc]"
 ###################################################################
 [name="source_chain.model" type="geomtools::replicated_model"]
 
+#@description The name of the material
+material.ref               : string = "vacuum"
+
 #@description The replication axis
 replicated.axis            : string = "x"
 
