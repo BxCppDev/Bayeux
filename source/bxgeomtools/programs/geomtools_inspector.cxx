@@ -637,8 +637,7 @@ void print_help (std::ostream & out_)
   //      << "                       Identify the top-level model for mapping\n";
 
   out_ << "Examples:\n\n";
-  out_ << "\tgeomtools_inspector --manager-config ${GEOMTOOLS_DATA_DIR}/testing/config/test-1.0/test_manager.conf \n\n";
-  //out_ << "  geomtools_inspector --mapping-categories setup_categories.lis --mapping-max-depth 3 setup.geom \n\n";
+  out_ << "\tgeomtools_inspector --manager-config config/geometry/setup-1.0/manager.conf \n\n";
   return;
 }
 
