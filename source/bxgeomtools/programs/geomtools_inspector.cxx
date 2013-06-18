@@ -64,6 +64,8 @@ int export_gdml(const geomtools::manager & geo_mgr_,
                 bool root_display_ = false,
                 datatools::logger::priority logging_ = datatools::logger::PRIO_WARNING);
 
+int print_status(const geomtools::manager & geo_mgr_, std::ostream & out_ = std::clog);
+
 /************************************************************/
 int main (int argc_, char ** argv_)
 {
@@ -88,7 +90,6 @@ int main (int argc_, char ** argv_)
     std::string visu_object_name;
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
-    bool gdml = false;
 #if GEOMTOOLS_WITH_ROOT_DISPLAY == 1
     bool gdml_root_display = false;
 #endif // GEOMTOOLS_WITH_ROOT_DISPLAY
@@ -126,17 +127,19 @@ int main (int argc_, char ** argv_)
         } else if ((option == "-S") || (option == "--no-splash"))  {
           splash = false;
         } else if (option == "-c" || option == "--manager-config")  {
+          DT_THROW_IF (setup_filenames.size() > 0, std::logic_error,
+                       "Option '--manager-config' is not compatible with option '--geometry-file' !");
           geo_mgr_config_file = argv_[++iarg];
         } else if (option == "-MP" || option == "--materials-plugin") {
           materials_plugin_name = argv_[++iarg];
-        } else if (option == "+G" || option == "--with-gdml") {
-          gdml = true;
-        } else if (option == "-G" || option == "--without-gdml") {
-          gdml = false;
+        } else if (option == "-g" || option == "--geometry-file") {
+          DT_THROW_IF (! geo_mgr_config_file.empty(), std::logic_error,
+                       "Option '--geometry-file' is not compatible with option '--manager-config' !");
+          std::string geom_file = argv_[++iarg];
+          setup_filenames.push_back(geom_file);
         }
 #if GEOMTOOLS_WITH_ROOT_DISPLAY == 1
         else if (option == "-GRD" || option == "--gdml-to-root-display") {
-          gdml = true;
           gdml_root_display = true;
         }
 #endif // GEOMTOOLS_WITH_ROOT_DISPLAY
@@ -209,7 +212,9 @@ int main (int argc_, char ** argv_)
         }
       } else {
         std::string argument = token;
-        setup_filenames.push_back (argument);
+        if (geo_mgr_config_file.empty()) {
+          geo_mgr_config_file = argument;
+        }
       }
       iarg++;
     }
@@ -345,6 +350,8 @@ int main (int argc_, char ** argv_)
             print_shell_help(std::cerr);
           } else if (command == "q" || command == "quit") {
             go_on = false;
+          } else if (command == "s" || command == "status") {
+            print_status(geo_mgr, std::cerr);
           } else if (command == "m" || command == "model") {
             std::string model_name;
             command_iss >> model_name >> std::ws;
@@ -406,7 +413,7 @@ int main (int argc_, char ** argv_)
                 }
                 if (command_iss.eof()) break;
               } // end of parsing
-              if (! visu && root_display) {
+              if (! interactive && root_display) {
                 std::cerr << "error: " << "'" << command << "'" << " : Root visualization is inhibited !" << std::endl;
                 root_display = false;
               }
@@ -450,7 +457,7 @@ int main (int argc_, char ** argv_)
 
             if (visu) {
               DT_LOG_DEBUG(logging, "Display parameters : ");
-              if (logging >= datatools::logger::PRIO_NOTICE) {
+              if (logging >= datatools::logger::PRIO_DEBUG) {
                 std::clog << "|-- Object name   : '" << visu_object_name  << "'" << std::endl;
                 std::clog << "|-- View          : '" << visu_drawer_view << "'" << std::endl;
                 std::clog << "`-- Show labels    : " << visu_drawer_labels << std::endl;
@@ -497,217 +504,6 @@ int main (int argc_, char ** argv_)
         } // End of interpreter block.
       } while (go_on); /// End of browser main loop.
     } // end of interactive
-
-      /*************************************************************************************/
-
-      // The manager for GID :
-      /*
-        if (use_geo_mgr) {
-        if (mapping_requested) {
-      geo_mgr.get_mapping ().smart_print (std::cout,
-      "",
-      geomtools::mapping::PRINT_TITLE |
-      geomtools::mapping::PRINT_PAGER);
-      }
-      } else {
-      geomtools::id_mgr gid_manager;
-      if (! categories_filename.empty ()) {
-      std::string categories_lis = categories_filename;
-      datatools::fetch_path_with_env (categories_lis);
-      gid_manager.load (categories_lis);
-      }
-      if (mapping_requested) {
-      // The mapping manager :
-      geomtools::mapping mapping_manager;
-      mapping_manager.set_id_manager (gid_manager);
-      datatools::properties mapping_config;
-      mapping_config.store ("mapping.max_depth", mapping_max_depth);
-      bool can_exclude_categories = true;
-      if (mapping_only_categories.size ()) {
-      mapping_config.store ("mapping.only_categories", mapping_only_categories);
-      can_exclude_categories = false;
-      }
-      if (can_exclude_categories && mapping_excluded_categories.size ()) {
-      mapping_config.store ("mapping.excluded_categories", mapping_excluded_categories);
-      }
-      mapping_manager.initialize (mapping_config);
-      if (top_mapping_model_name.empty ()) {
-      top_mapping_model_name = geomtools::model_factory::DEFAULT_WORLD_LABEL;
-      }
-      if (geometry_factory.get_models ().find (top_mapping_model_name)
-      != geometry_factory.get_models ().end ()) {
-      mapping_manager.build_from (geometry_factory, top_mapping_model_name);
-      } else {
-      DT_LOG_WARNING(logging, "Cannot find model named '" << top_mapping_model_name << "'");
-      }
-      mapping_manager.smart_print (std::cout,
-      "",
-      geomtools::mapping::PRINT_TITLE |
-      geomtools::mapping::PRINT_PAGER);
-      }
-      }
-    */
-
-    /*************************************************************************************/
-
-
-    // if (gdml) {
-    //   DT_LOG_NOTICE(logging,"Exporting GDML...");
-    //   std::ostringstream ext_mat_oss;
-
-    //   geomtools::gdml_export GDML;
-
-    //   geomtools::gdml_writer material_writer; // GDML writer for materials
-    //   DT_LOG_NOTICE(logging,"Accessing the materials driver plugin...");
-    //   const materials::manager * mat_mgr_ref = 0;
-    //   if (use_geo_mgr) {
-    //     if (materials_plugin_name.empty()) {
-    //       // We try to find a material plugin associated to the manager :
-    //       typedef geomtools::manager::plugins_dict_type dict_type;
-    //       const dict_type & plugins = geo_mgr.get_plugins ();
-    //       for (dict_type::const_iterator ip = plugins.begin();
-    //            ip != plugins.end();
-    //            ip++) {
-    //         const std::string & plugin_name = ip->first;
-    //         if (geo_mgr.is_plugin_a<geomtools::materials_plugin>(plugin_name)) {
-    //           materials_plugin_name = plugin_name;
-    //           break;
-    //         }
-    //       }
-    //     }
-    //     // Access to a given plugin by name and type :
-    //     if (geo_mgr.has_plugin (materials_plugin_name)
-    //         && geo_mgr.is_plugin_a<geomtools::materials_plugin>(materials_plugin_name)) {
-    //       DT_LOG_NOTICE(logging,"Found materials plugin named '" << materials_plugin_name << "'");
-    //       const geomtools::materials_plugin & mgp
-    //         = geo_mgr.get_plugin<geomtools::materials_plugin>(materials_plugin_name);
-    //       const materials::manager & mat_mgr = mgp.get_manager();
-    //       mat_mgr_ref = &mat_mgr;
-    //     }
-    //   }
-    //   if (mat_mgr_ref != 0) {
-    //     DT_LOG_NOTICE(logging,"Exporting GDML materials from the materials driver plugin... ");
-    //     geomtools::export_gdml (*mat_mgr_ref, material_writer);
-    //     GDML.attach_external_materials (material_writer.get_stream (geomtools::gdml_writer::MATERIALS_SECTION));
-    //   } else {
-    //     DT_LOG_WARNING(logging,"No material definitions have been attached to the GDML export !");
-    //   }
-
-    //   /*
-    //     geomtools::gdml_writer writer;
-    //     {
-    //     writer.add_element ("Hydrogen", 1, "H", 1);
-    //     writer.add_element ("Oxygen", 8, "O", 16);
-    //     writer.add_element ("Carbon", 6, "C", 12);
-    //     writer.add_element ("Nitrogen", 7, "N", 14);
-    //     writer.add_element ("Lead", 82, "Pb", 1);
-
-    //     writer.add_material ("Al",
-    //     13.0,
-    //     2.70 * CLHEP::g / CLHEP::cm3,
-    //     26.98);
-
-    //     std::map<std::string, double> Air_map;
-    //     Air_map["Oxygen"] = 0.3;
-    //     Air_map["Nitrogen"] = 0.7;
-    //     writer.add_material ("Air",
-    //     "air",
-    //     1.29 * CLHEP::mg / CLHEP::cm3,
-    //     Air_map);
-
-    //     std::map<std::string, size_t> H2O_map;
-    //     H2O_map["Oxygen"] = 1;
-    //     H2O_map["Hydrogen"] = 2;
-    //     writer.add_material ("Water",
-    //     "H2O",
-    //     1.0 * CLHEP::g / CLHEP::cm3,
-    //     H2O_map);
-    //     }
-    //   */
-
-    //   GDML.add_auxiliary_support (false);
-    //   GDML.add_replica_support (true);
-    //   GDML.parameters ().store ("xml_version",
-    //                             geomtools::gdml_writer::DEFAULT_XML_VERSION);
-    //   GDML.parameters ().store ("xml_encoding",
-    //                             geomtools::gdml_writer::DEFAULT_XML_ENCODING);
-    //   GDML.parameters ().store ("gdml_schema",
-    //                             geomtools::gdml_writer::DEFAULT_GDML_SCHEMA);
-    //   GDML.parameters ().store ("length_unit",
-    //                             geomtools::gdml_export::DEFAULT_LENGTH_UNIT);
-    //   GDML.parameters ().store ("angle_unit",
-    //                             geomtools::gdml_export::DEFAULT_ANGLE_UNIT);
-    //   std::ostringstream fgdml_oss;
-    //   if (use_geo_mgr) {
-    //     fgdml_oss << geo_mgr.get_setup_label () << '-' << geo_mgr.get_setup_version () << ".gdml";
-    //   } else {
-    //     fgdml_oss << "geomtools_inspector.gdml";
-    //   }
-    //   std::string fgdml = fgdml_oss.str();
-
-    //   if (top_mapping_model_name.empty ()) {
-    //     top_mapping_model_name = geomtools::model_factory::DEFAULT_WORLD_LABEL;
-    //   }
-    //   GDML.export_gdml (fgdml, geometry_factory, top_mapping_model_name);
-    //   DT_LOG_NOTICE(logging, "GDML file '" << fgdml << "' has been generated !");
-
-    /*
-#if GEOMTOOLS_WITH_ROOT_DISPLAY == 1
-      if (gdml_root_display) {
-        DT_LOG_NOTICE(logging, "Importing GDML file '" << fgdml << "' from ROOT TGeoManager...");
-        std::ostringstream setup_title_oss;
-        setup_title_oss << "Virtual geometry setup '";
-        if (use_geo_mgr) {
-          setup_title_oss << geo_mgr.get_setup_label () << '-' << geo_mgr.get_setup_version ();
-        } else {
-          setup_title_oss << "geomtools_inspector";
-        }
-        setup_title_oss << "'";
-        {
-          // ROOT visualization macro file :
-          std::string rvm_name = "geomtools_inspector.C";
-          std::ofstream rvm(rvm_name.c_str());
-          rvm << "#include <iostream>" << std::endl;
-          rvm << "void geomtools_inspector() {" << std::endl;
-          rvm << "TGeoManager * geo = new TGeoManager(\"geo\",\""
-              << setup_title_oss.str().c_str() << "\");" << std::endl;
-          rvm << "TGeoManager * g2 = geo->Import(\"" << fgdml.c_str() << "\");" << std::endl;
-          rvm << "g2->SetVisOption(0);" << std::endl;
-          rvm << "g2->SetVisLevel(100);" << std::endl;
-          rvm << "g2->GetMasterVolume()->Draw("");" << std::endl;
-          rvm << "std::cout << \"Enter '.q' to quit...\n\";" << std::endl;
-          rvm << "}" << std::endl;
-          rvm.close();
-
-          int errcode = 0;
-
-          std::ostringstream cat_com;
-          cat_com << "cat " << rvm_name << std::ends;
-          errcode = system(cat_com.str().c_str());
-
-          std::ostringstream rvm_com;
-          rvm_com << "root -l " << rvm_name << std::ends;
-          errcode = system(rvm_com.str().c_str());
-          if (errcode != 0) {
-            DT_LOG_ERROR(logging, "Cannot run the ROOT visualization macro '" << rvm_name << "' !");
-          }
-          DT_LOG_NOTICE(logging, "ROOT visualization macro '" << rvm_name << "' has been generated.");
-        }
-
-
-        // // This does not work from within plain C++ :
-        // TGeoManager * geo = new TGeoManager("geo", setup_title_oss.str().c_str());
-        // TGeoManager * g2 = geo->Import(fgdml.c_str());
-        // g2->SetVisOption(0);
-        // g2->SetVisLevel(100);
-        // g2->GetMasterVolume()->Draw("");
-        // geomtools::gnuplot_drawer::wait_for_key ();
-
-      }
-#endif // GEOMTOOLS_WITH_ROOT_DISPLAY
-      //   }
-*/
-
   }
   catch (std::exception & x) {
     DT_LOG_FATAL(datatools::logger::PRIO_FATAL, "geomtools_inspector: " << x.what ());
@@ -751,15 +547,18 @@ std::string get_drawer_view (const std::string & option_)
 
 void print_help (std::ostream & out_)
 {
-  out_ << "geomtools_inspector -- Check and display geometry models" << std::endl;
+  out_ << "geomtools_inspector -- Inspect and display a virtual geometry" << std::endl;
   out_ << "\n";
   out_ << "Usage: \n\n";
 
-  out_ << "  geomtools_inspector [OPTIONS] GEOMFILE [GEOMFILE [...]] \n\n";
+  out_ << "  geomtools_inspector [OPTIONS] [CONFIG_FILE]\n\n";
+  out_ << "    CONFIG_FILE:       The main configuration file of a geomtools \n";
+  out_ << "                       geometry manager\n";
 
   out_ << "Options: \n\n";
 
-  out_ << "   -g|--logging LOGGING_PRIORITY : Set the logging priority threshold\n";
+  out_ << "   -g|--logging LOGGING_PRIORITY : \n";
+  out_ << "                       Set the logging priority threshold\n";
 
   out_ << "   -l|--load-dll DLL_NAME :\n";
   out_ << "                       Load a specific DLL\n";
@@ -767,9 +566,12 @@ void print_help (std::ostream & out_)
   out_ << "   -c|--manager-config CONFIG_FILENAME: \n"
        << "                       Use configuration file for the geometry manager\n";
 
-  out_ << "   +F                : Detailed print of the factory contents\n";
+  out_ << "   -g|--geometry-file GEOM_FILENAME: \n"
+       << "                       Load a geometry file (incompatible with '--manager-config')\n";
 
-  out_ << "   -F                : No detailed print of the factory contents\n";
+  // out_ << "   +F                : Detailed print of the factory contents\n";
+
+  // out_ << "   -F                : No detailed print of the factory contents\n";
 
   out_ << "   -MP|--materials-plugin PLUGIN_NAME:\n";
   out_ << "                       Load a specific materials plugin (default: autodetected)\n";
@@ -840,6 +642,19 @@ void print_help (std::ostream & out_)
   return;
 }
 
+int print_status(const geomtools::manager & geo_mgr_, std::ostream & out_)
+{
+  if (geo_mgr_.is_initialized()) {
+    out_ << "Geometry setup:             " << geo_mgr_.get_setup_label()  << std::endl;
+    out_ << "Geometry setup version:     " << geo_mgr_.get_setup_version() << std::endl;
+    if (! geo_mgr_.get_setup_description().empty()) {
+      out_ << "Geometry setup description: " << geo_mgr_.get_setup_description() << std::endl;
+    }
+  } else {
+    out_ << "No geometry setup is loaded." << std::endl;
+  }
+}
+
 int print_model (const geomtools::model_factory & mf_,
                  const std::string & model_name_,
                  std::ostream & out_)
@@ -878,26 +693,27 @@ int print_logical (const geomtools::model_factory & mf_,
 
 void print_shell_help (std::ostream & out_)
 {
-  out_ <<  "\th | help                       : Print this help                                  \n";
-  out_ <<  "\tM | list_of_models [OPTIONS]   : Print the list of geometry models                \n";
-  out_ <<  "\tL | list_of_logicals [OPTIONS] : Print the list of logical volumes                \n";
-  out_ <<  "\tG | list_of_gids  [OPTIONS]    : Print the list of geometry identifiers (GID)     \n";
-  out_ <<  "\tm | model MODEL_NAME           : Print the geometry model named 'MODEL_NAME'      \n";
-  out_ <<  "\tl | logical LOGICAL_NAME       : Print the logical volume named 'LOGICAL_NAME'    \n";
+  out_ <<  "  h | help                       : Print this help                                  \n";
+  out_ <<  "  s | status                     : Print the geometry setup status                  \n";
+  out_ <<  "  M | list_of_models [OPTIONS]   : Print the list of geometry models                \n";
+  out_ <<  "  L | list_of_logicals [OPTIONS] : Print the list of logical volumes                \n";
+  out_ <<  "  G | list_of_gids  [OPTIONS]    : Print the list of geometry identifiers (GID)     \n";
+  out_ <<  "  m | model MODEL_NAME           : Print the geometry model named 'MODEL_NAME'      \n";
+  out_ <<  "  l | logical LOGICAL_NAME       : Print the logical volume named 'LOGICAL_NAME'    \n";
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
-  out_ <<  "\td | display [-3d|-xy|-yz|xz] NAME :                                               \n";
-  out_ <<  "\t                                 Display the object named 'NAME' where            \n";
-  out_ <<  "\t                                 'NAME' can be:                                   \n";
-  out_ <<  "\t                                  - the name of a geometry model,                 \n";
-  out_ <<  "\t                                  - the name of a logical volume,                 \n";
-  out_ <<  "\t                                  - the GID associated to a volume                \n";
-  out_ <<  "\t                                    by the active mapping.                        \n";
+  out_ <<  "  d | display [-3d|-xy|-yz|xz] NAME :                                               \n";
+  out_ <<  "                                   Display the object named 'NAME' where            \n";
+  out_ <<  "                                   'NAME' can be:                                   \n";
+  out_ <<  "                                    - the name of a geometry model,                 \n";
+  out_ <<  "                                    - the name of a logical volume,                 \n";
+  out_ <<  "                                    - the GID associated to a volume                \n";
+  out_ <<  "                                      by the active mapping.                        \n";
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
-  out_ <<  "\tx | export_gdml [--root-display] GDML_FILENAME  :                                 \n";
-  out_ <<  "\t                                 Generate the GDML file 'GDML_FILENAME'.          \n";
-  out_ <<  "\t                                 The '--root-display' option triggers a           \n";
-  out_ <<  "\t                                 Root interactive visualization session.          \n";
-  out_ <<  "\tq | quit                       : Quit                                             \n";
+  out_ <<  "  x | export_gdml [--root-display] GDML_FILENAME  :                                 \n";
+  out_ <<  "                                   Generate the GDML file 'GDML_FILENAME'.          \n";
+  out_ <<  "                                   The '--root-display' option triggers a           \n";
+  out_ <<  "                                   Root interactive visualization session.          \n";
+  out_ <<  "  q | quit                       : Quit                                             \n";
   return;
 }
 
