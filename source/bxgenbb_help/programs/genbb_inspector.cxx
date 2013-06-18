@@ -1296,7 +1296,7 @@ namespace genbb {
         hs_config.store("pool.histo.export_prefixes", pool_export_prefixes);
         //std::cerr << "DEVEL: initializing HS...\n";
         //hs_config.tree_dump(std::cerr, "Histogram service config : ", "DEVEL: ");
-        _histos_service_.tree_dump(std::cerr, "Histogram service: ", "DEVEL: ");
+        //_histos_service_.tree_dump(std::cerr, "Histogram service: ", "DEVEL: ");
         for (int i = 0; i < 10000; i++) std::cerr << std::flush;
         _histos_service_.initialize_standalone(hs_config);
         _histos_ = &_histos_service_.grab_pool();
