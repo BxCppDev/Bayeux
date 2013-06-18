@@ -79,4 +79,10 @@ inherits : string = "mezzanine.gc"
 
 
 
+# The coil on a mezzanine board inherits the mezzanine address
+# (composed by the "board" number and the "daughter" numbers)
+[category="coil_body.gc" type="2031"]
+inherits : string = "coil.gc"
+
+
 # end

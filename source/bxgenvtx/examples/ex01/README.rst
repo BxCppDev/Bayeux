@@ -66,12 +66,12 @@ Quick start
 
       shell> ./ex01
 
-5. Run the ``geomtools_check_setup`` to check the virtual geometry::
+5. Run the ``geomtools_inspector`` to check the virtual geometry::
 
-         shell> geomtools_check_setup \
+         shell> geomtools_inspector \
                   --manager-config config/geometry/manager.conf \
-                  --with-visu --visu-view-3d \
-                  --with-gdml --gdml-to-root-display
+                  --with-visu --visu-view-3d
+
 
 5. Run the ``genvtx_production``:
 

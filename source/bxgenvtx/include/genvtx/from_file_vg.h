@@ -1,16 +1,16 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* from_file_vg.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-13
  * Last modified: 2012-04-27
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *   Generate vertex from a file
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
 #ifndef GENVTX_FROM_FILE_VG_H_
@@ -27,7 +27,7 @@ namespace genvtx {
   {
   public:
 
-    static const double LENGTH_UNIT;
+    static const double DEFAULT_LENGTH_UNIT;
 
   protected:
 
@@ -39,7 +39,7 @@ namespace genvtx {
 
     bool _has_next ();
 
-  public: 
+  public:
 
     bool is_open () const;
 
@@ -50,21 +50,21 @@ namespace genvtx {
     void set_length_unit (double lu_);
 
     double get_length_unit () const;
-  
-  public: 
+
+  public:
 
     GENVTX_VG_INTERFACE_CTOR_DTOR (from_file_vg)
 
     GENVTX_VG_HAS_NEXT_VERTEX_DECLARE();
 
-  private: 
+  private:
 
     std::string          _filename_;
     bool                 _open_;
     std::ifstream        _source_;
     geomtools::vector_3d _next_;
-    double               _length_unit_; // length unit (default == 1); 
- 
+    double               _length_unit_; // default length unit (default == 1);
+
   private:
 
     GENVTX_VG_REGISTRATION_INTERFACE(from_file_vg);

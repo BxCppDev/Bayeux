@@ -176,8 +176,8 @@ int main (int argc_, char ** argv_)
         if (i < vg_names.size() - 1 ) std::cerr << "|-- ";
         else std::cerr << "`-- ";
         std::cerr << std::flush;
-        std::cout << std::flush << vg_name << ' ';
-        if (vg_name == vg_current) std::cout << "(current)";
+        std::cout << std::flush << vg_name << ' ' << std::flush;
+        if (vg_name == vg_current) std::cout << "(current)" << std::flush;
         if (! vg_descriptions[i].empty()) {
           std::cout << " : " << vg_descriptions[i];
         } else {

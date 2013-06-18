@@ -121,11 +121,10 @@ mode   : string  = "surface"
 mode.surface.side  : boolean = 1
 
 
-
 ################################################################
 # Generate vertex from the coil's bulk:
 ################################################################
-[name="all_coil_bulk.vg" type="genvtx::tube_model_vg"]
+[name="all_coil_body_bulk.vg" type="genvtx::tube_model_vg"]
 
 #@config Vertex generation from the bulk surface of all coils
 
@@ -133,7 +132,7 @@ mode.surface.side  : boolean = 1
 debug  : boolean = 1
 
 #@description The rule that describe the geometry origin of vertex in term of geometry category and addresses (geom ID)
-origin : string  = "category='coil.gc' board={*} daughter={*}"
+origin : string  = "category='coil_body.gc' board={*} daughter={*}"
 
 #@description The mode used for vertex generator from the underlying tube model associated to the target logical volume ("surface" or "bulk")
 mode   : string  = "bulk"

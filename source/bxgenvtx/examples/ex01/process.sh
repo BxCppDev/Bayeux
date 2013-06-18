@@ -5,6 +5,8 @@ opwd=$(pwd)
 build_dir=$(pwd)/__build
 test -d ${build_dir} && rm -fr ${build_dir}
 
+pandoc -r rst -w html README.rst -o genvtx-ex01_README.html
+
 mkdir ${build_dir}
 cd ${build_dir}
 
@@ -19,9 +21,8 @@ cd ..
 ls -l
 
 echo "Check the  geometry setup : " 1>&2
-geomtools_check_setup \
+geomtools_inspector \
    --manager-config config/geometry/manager.conf \
-   --with-gdml \
    --with-visu --visu-view-3d
 
 
@@ -61,7 +62,6 @@ rm -f ./ex01_vertices.data
 rm -f ./genvtx_ex01_vertices.txt
 rm -f ./genvtx_ex01_vertices_2.txt
 rm -f ./genvtx-example-ex01.gdml
-rm -f ./geomtools_check_setup.C
 rm -fr ${build_dir}
 find . -name "*~" -exec rm -f \{\} \;
 

@@ -23,7 +23,7 @@ namespace genvtx {
 
   GENVTX_VG_REGISTRATION_IMPLEMENT(from_file_vg,"genvtx::from_file_vg");
 
-  const double from_file_vg::LENGTH_UNIT = 1.0;
+  const double from_file_vg::DEFAULT_LENGTH_UNIT = 1.0;
 
   bool from_file_vg::is_open  () const
   {
@@ -72,7 +72,7 @@ namespace genvtx {
 
   void from_file_vg::set_length_unit (double lu_)
   {
-    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
+    //DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
     DT_THROW_IF (_length_unit_ <= 0.0, std::logic_error, "Invalid length unit !");
     _length_unit_ = lu_;
     return;
@@ -96,7 +96,7 @@ namespace genvtx {
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
     using namespace std;
     bool devel = false;
-    double lunit = LENGTH_UNIT;
+    double lunit = DEFAULT_LENGTH_UNIT;
     string lunit_str;
 
     // parameters of the cut:
@@ -112,16 +112,19 @@ namespace genvtx {
       }
       set_length_unit (lunit);
     }
+    if (! datatools::is_valid(_length_unit_)) {
+      set_length_unit(DEFAULT_LENGTH_UNIT);
+    }
+
     _open_source ();
     return;
   }
 
   GENVTX_VG_RESET_IMPLEMENT_HEAD(from_file_vg)
   {
-    if (_open_)
-      {
-        _close_source ();
-      }
+    if (_open_) {
+      _close_source ();
+    }
     return;
   }
 
@@ -131,7 +134,7 @@ namespace genvtx {
     _filename_ = "";
     _open_ = false;
     geomtools::invalidate (_next_);
-    _length_unit_ = LENGTH_UNIT;
+    datatools::invalidate (_length_unit_);
     return;
   }
 
@@ -139,8 +142,8 @@ namespace genvtx {
   GENVTX_VG_DEFAULT_DESTRUCTOR_IMPLEMENT(from_file_vg)
 
   /*
-  from_file_vg::from_file_vg (const std::string & filename_)
-  {
+    from_file_vg::from_file_vg (const std::string & filename_)
+    {
     _filename_ = "";
     _open_ = false;
     geomtools::invalidate (_next_);
@@ -148,7 +151,7 @@ namespace genvtx {
     set_filename (filename_);
     _open_source ();
     return;
-  }
+    }
   */
 
   void from_file_vg::_read_next ()
@@ -158,42 +161,46 @@ namespace genvtx {
     geomtools::invalidate (_next_);
 
     bool goon = true;
-    while (goon)
+    while (goon) {
+      goon = false;
+      string line;
+      std::getline (_source_, line);
+      // detect special cases:
       {
-        goon = false;
-        string line;
-        std::getline (_source_, line);
-        // detect special cases:
-        {
-          istringstream iss (line);
-          string word;
-          iss >> word;
-          // Skip blank lines:
-          if (word.empty ())
-            {
-              goon = true;
-            }
-          // Skip commented line:
-          else if (word[0] == '#')
-            {
-              goon = true;
-              continue;
-            }
+        istringstream iss (line);
+        string word;
+        iss >> word;
+        // Skip blank lines:
+        if (word.empty ()) {
+          goon = true;
         }
-        if (! goon)
-          {
-            istringstream iss (line);
-            iss >> x >> y >> z >> ws;
-            DT_THROW_IF (! iss, logic_error,
-                         "'x y z' format error at invalid line '" << line << "' !");
-            _next_.set (x, y, z);
-            break;
+        // Skip commented line:
+        else if (word[0] == '#') {
+          if (word.substr(0, 14) == "#@length_unit=") {
+            std::istringstream lunit_iss(word.substr(14));
+            std::cerr << "DEVEL: word.substr(14)='" << word.substr(14) << "'\n";
+            std::string lunit_str;
+            lunit_iss >> lunit_str >> std::ws;
+            double length_unit =
+              datatools::units::get_length_unit_from(lunit_str);
+            set_length_unit(length_unit);
           }
-        if (_source_.eof ())
-          {
-            break;
-          }
+          goon = true;
+          continue;
+        }
       }
+      if (! goon) {
+        istringstream iss (line);
+        iss >> x >> y >> z >> ws;
+        DT_THROW_IF (! iss, logic_error,
+                     "'x y z' format error at invalid line '" << line << "' !");
+        _next_.set (x, y, z);
+        break;
+      }
+      if (_source_.eof ()) {
+        break;
+      }
+    }
     return;
   }
 

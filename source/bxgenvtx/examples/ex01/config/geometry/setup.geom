@@ -10,16 +10,13 @@
 ##############################################################
 [name="coil.model" type="geomtools::simple_shaped_model"]
 
-#@config The list of properties to configure the capacitor logical volume
+#@config Configuration of the coil made of an iron tube with an air cavity
 
 #@description The name of the 3D shape
 shape_type   : string =  "tube"
 
-#@description The filled mode of the tube model
-filled_mode   : string =  "by_envelope"
-
-#@description The length unit
-length_unit       : string  = "mm"
+#@description The default implicit length unit
+length_unit  : string  = "mm"
 
 #@description The inner R dimension
 inner_r      : real   = 3.0
@@ -33,9 +30,6 @@ z            : real   = 6.0
 #@description The name of the material
 material.ref : string = "iron"
 
-#@description The name of the material
-material.filled.ref : string = "air"
-
 #@description The visibility hidden flag for the display
 visibility.hidden : boolean = 0
 
@@ -45,14 +39,38 @@ visibility.color  : string  = "blue"
 #@description The visibility hidden flag for the envelope
 visibility.hidden_envelope  : boolean = 0
 
-#@description The recommended color for the display
-visibility.envelope_color  : string  = "grey"
-
 #@description The visibility hidden flag for the daughters volumes
-visibility.daughters.hidden : boolean = 1
+visibility.daughters.hidden : boolean = 0
 
-#@description The sensitive category
+#@description The sensitive category of the coil tore
 sensitive.category : string = "coil.sd"
+
+
+######### The mode for building the filled cavity ########
+
+#@description The filled mode of the tube model
+filled_mode   : string =  "by_envelope"
+
+#@description The label used for the tube
+filled_label  : string =  "coil"
+
+# Specific properties about the cavity considered as the main envelope
+# of this geometry model with the coil tube being its daughter:
+
+#@description The name of the material
+material.filled.ref : string = "air"
+
+#@description The recommended color for the display of the cavity
+visibility.filled.color  : string  = "invisible"
+
+#@description The visibility hidden flag for the envelope of the cavity
+visibility.filled.hidden_envelope  : boolean = 0
+
+#@description The visibility hidden flag for the daughters volumes in the cavity
+visibility.filled.daughters.hidden : boolean = 0
+
+#@description The sensitive category associated to the coil tube volume
+mapping.filled.daughter_id.coil : string = "[coil_body.gc]"
 
 
 ##############################################################
@@ -63,7 +81,7 @@ sensitive.category : string = "coil.sd"
 #@description The name of the 3D shape
 shape_type   : string =  "cylinder"
 
-#@description The length unit
+#@description The default implicit length unit
 length_unit       : string  = "mm"
 
 #@description The R dimension
@@ -90,7 +108,7 @@ visibility.color  : string  = "orange"
 #@description The name of the 3D shape
 shape_type   : string =  "box"
 
-#@description The length unit
+#@description The default implicit length unit
 length_unit       : string  = "mm"
 
 #@description The X dimension
@@ -120,7 +138,7 @@ visibility.color  : string  = "blue"
 #@description The name of the 3D shape
 shape_type   : string =  "box"
 
-#@description The length unit
+#@description The default implicit length unit
 length_unit       : string  = "mm"
 
 #@description The X dimension
@@ -150,7 +168,7 @@ visibility.color  : string  = "red"
 #@description The name of the 3D shape
 shape_type   : string =  "box"
 
-#@description The length unit
+#@description The default implicit length unit
 length_unit  : string  = "mm"
 
 #@description The X dimension
@@ -180,7 +198,7 @@ visibility.color  : string  = "green"
 #@description The name of the 3D shape
 shape_type   : string =  "box"
 
-#@description The length unit
+#@description The default implicit length unit
 length_unit  : string  = "mm"
 
 #@description The X dimension
@@ -244,7 +262,7 @@ mapping.daughter_id.coil            : string = "[coil.gc]"
 #@description The name of the 3D shape
 shape_type   : string =  "box"
 
-#@description The length unit
+#@description The default implicit length unit
 length_unit  : string  = "mm"
 
 #@description The X dimension
@@ -274,7 +292,7 @@ visibility.color  : string  = "green"
 #@description The name of the 3D shape
 shape_type   : string =  "box"
 
-#@description The length unit
+#@description The default implicit length unit
 length_unit  : string  = "mm"
 
 #@description The X dimension
@@ -343,7 +361,7 @@ setup.phi       : real   = 0.0
 #@description The setup placement theta angle
 setup.theta     : real   = 0.0
 
-#@description The length unit for the experimental setup placement
+#@description The default implicit length unit
 length_unit     : string = "mm"
 
 #@description The setup placement X coordinate
