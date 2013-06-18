@@ -1265,7 +1265,7 @@ namespace geomtools {
         if (oss.str().size () > max_width) {
           long_name = true;
         }
-        if ((count % 2) == 0) {
+        if (count != 0 && (count % 2) == 0) {
           out_ << std::endl;
         }
         out_  << "  " << std::setw (max_width)

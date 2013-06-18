@@ -696,8 +696,11 @@ void print_shell_help (std::ostream & out_)
   out_ <<  "  h | help                       : Print this help                                  \n";
   out_ <<  "  s | status                     : Print the geometry setup status                  \n";
   out_ <<  "  M | list_of_models [OPTIONS]   : Print the list of geometry models                \n";
+  out_ <<  "                                   use '--help' for the list of options             \n";
   out_ <<  "  L | list_of_logicals [OPTIONS] : Print the list of logical volumes                \n";
+  out_ <<  "                                   use '--help' for the list of options             \n";
   out_ <<  "  G | list_of_gids  [OPTIONS]    : Print the list of geometry identifiers (GID)     \n";
+  out_ <<  "                                   use '--help' for the list of options             \n";
   out_ <<  "  m | model MODEL_NAME           : Print the geometry model named 'MODEL_NAME'      \n";
   out_ <<  "  l | logical LOGICAL_NAME       : Print the logical volume named 'LOGICAL_NAME'    \n";
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
