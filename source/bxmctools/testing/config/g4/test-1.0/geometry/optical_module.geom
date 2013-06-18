@@ -115,7 +115,7 @@ visibility.color           : string  = "cyan"
 #@config The list of properties to describe the rotated light guide
 
 #@description The name of the material
-material.ref  : string = "vacuum"
+material.ref  : string  = "vacuum"
 
 #@description The rotation axis
 rotated.axis  : string = "z"
@@ -214,10 +214,14 @@ visibility.color  : string  = "red"
 ########################################################
 [name="PMT.model" type="geomtools::simple_shaped_model"]
 
+#@description The shape of the PMT bulb
 shape_type  : string = "polycone"
 
-#filled_mode : string = "by_extrusion"
+#@description The way the model is constructed from the PMT bulb shape
 filled_mode : string = "by_envelope"
+
+#@description The label associated for the PMT bulb (default 'polycone_by_envelope')
+filled_label : string = "bulb"
 
 #@description The length unit
 length_unit : string = "mm"
@@ -246,8 +250,21 @@ visibility.color            : string  = "magenta"
 #@description The visibility hidden flag for the daughters volumes
 visibility.daughters.hidden : boolean = 0
 
+#@description The visibility hidden flag for the display
+visibility.filled.hidden           : boolean = 0
+
+#@description The visibility hidden flag for the envelope
+visibility.filled.hidden_envelope   : boolean = 0
+
+#@description The recommended color for the display
+visibility.filled.color            : string  = "grey"
+
+#@description The visibility hidden flag for the daughters volumes
+visibility.filled.daughters.hidden : boolean = 0
+
+
 #@description The list of daughter volumes by labels
-internal_item.labels 	    : string[12] = \
+internal_item.filled.labels 	   : string[12] = \
 				"focusing_electrode" \
 				"dynode_0" \
 				"dynode_1" \
@@ -262,58 +279,59 @@ internal_item.labels 	    : string[12] = \
 				"anode"
 
 #@description The placement of the "focusing_electrode" daughter volume
-internal_item.placement.focusing_electrode : string  = "0 0 +20 (mm)"
+internal_item.filled.placement.focusing_electrode : string  = "0 0 +20 (mm)"
 
 #@description The model of the "focusing_electrode" daughter volume
-internal_item.model.focusing_electrode     : string  = "focusing_electrode.model"
+internal_item.filled.model.focusing_electrode     : string  = "focusing_electrode.model"
 
-internal_item.model.dynode_0     : string  = "dynode.model"
-internal_item.placement.dynode_0 : string  = "0 -15 +0 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_0     : string  = "dynode.model"
+internal_item.filled.placement.dynode_0 : string  = "0 -15 +0 (mm) / x +45 (degree)"
 
-internal_item.model.dynode_1     : string  = "dynode.model"
-internal_item.placement.dynode_1 : string  = "0 +15 +0 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_1     : string  = "dynode.model"
+internal_item.filled.placement.dynode_1 : string  = "0 +15 +0 (mm) / x +45 (degree)"
 
-internal_item.model.dynode_2     : string  = "dynode.model"
-internal_item.placement.dynode_2 : string  = "0 -15 -20 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_2     : string  = "dynode.model"
+internal_item.filled.placement.dynode_2 : string  = "0 -15 -20 (mm) / x +45 (degree)"
 
-internal_item.model.dynode_3     : string  = "dynode.model"
-internal_item.placement.dynode_3 : string  = "0 +15 -20 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_3     : string  = "dynode.model"
+internal_item.filled.placement.dynode_3 : string  = "0 +15 -20 (mm) / x +45 (degree)"
 
-internal_item.model.dynode_4     : string  = "dynode.model"
-internal_item.placement.dynode_4 : string  = "0 -15 -40 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_4     : string  = "dynode.model"
+internal_item.filled.placement.dynode_4 : string  = "0 -15 -40 (mm) / x +45 (degree)"
 
-internal_item.model.dynode_5     : string  = "dynode.model"
-internal_item.placement.dynode_5 : string  = "0 +15 -40 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_5     : string  = "dynode.model"
+internal_item.filled.placement.dynode_5 : string  = "0 +15 -40 (mm) / x +45 (degree)"
 
-internal_item.model.dynode_6     : string  = "dynode.model"
-internal_item.placement.dynode_6 : string  = "0 -15 -60 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_6     : string  = "dynode.model"
+internal_item.filled.placement.dynode_6 : string  = "0 -15 -60 (mm) / x +45 (degree)"
 
-internal_item.model.dynode_7     : string  = "dynode.model"
-internal_item.placement.dynode_7 : string  = "0 +15 -60 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_7     : string  = "dynode.model"
+internal_item.filled.placement.dynode_7 : string  = "0 +15 -60 (mm) / x +45 (degree)"
 
-internal_item.model.dynode_8     : string  = "dynode.model"
-internal_item.placement.dynode_8 : string  = "0 -15 -80 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_8     : string  = "dynode.model"
+internal_item.filled.placement.dynode_8 : string  = "0 -15 -80 (mm) / x +45 (degree)"
 
-internal_item.model.dynode_9     : string  = "dynode.model"
-internal_item.placement.dynode_9 : string  = "0 +15 -80 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_9     : string  = "dynode.model"
+internal_item.filled.placement.dynode_9 : string  = "0 +15 -80 (mm) / x +45 (degree)"
 
-internal_item.placement.anode : string  = "0 0 -95 (mm) / x +20 (degree)"
-internal_item.model.anode     : string  = "dynode.model"
+internal_item.filled.placement.anode : string  = "0 0 -95 (mm) / x +20 (degree)"
+internal_item.filled.model.anode     : string  = "dynode.model"
 
 # The mapping directives for all "electrodes/dynodes" daughter volumes
 
-mapping.daughter_id.dynode_0 : string  = "[pmt_dynode.gc:dynode=0]"
-mapping.daughter_id.dynode_1 : string  = "[pmt_dynode.gc:dynode=1]"
-mapping.daughter_id.dynode_2 : string  = "[pmt_dynode.gc:dynode=2]"
-mapping.daughter_id.dynode_3 : string  = "[pmt_dynode.gc:dynode=3]"
-mapping.daughter_id.dynode_4 : string  = "[pmt_dynode.gc:dynode=4]"
-mapping.daughter_id.dynode_5 : string  = "[pmt_dynode.gc:dynode=5]"
-mapping.daughter_id.dynode_6 : string  = "[pmt_dynode.gc:dynode=6]"
-mapping.daughter_id.dynode_7 : string  = "[pmt_dynode.gc:dynode=7]"
-mapping.daughter_id.dynode_8 : string  = "[pmt_dynode.gc:dynode=8]"
-mapping.daughter_id.dynode_9 : string  = "[pmt_dynode.gc:dynode=9]"
-mapping.daughter_id.anode    : string  = "[pmt_dynode.gc:dynode=10]"
-mapping.daughter_id.focusing_electrode : string = "[pmt_focus_electrode.gc]"
+mapping.filled.daughter_id.dynode_0 : string  = "[pmt_dynode.gc:dynode=0]"
+mapping.filled.daughter_id.dynode_1 : string  = "[pmt_dynode.gc:dynode=1]"
+mapping.filled.daughter_id.dynode_2 : string  = "[pmt_dynode.gc:dynode=2]"
+mapping.filled.daughter_id.dynode_3 : string  = "[pmt_dynode.gc:dynode=3]"
+mapping.filled.daughter_id.dynode_4 : string  = "[pmt_dynode.gc:dynode=4]"
+mapping.filled.daughter_id.dynode_5 : string  = "[pmt_dynode.gc:dynode=5]"
+mapping.filled.daughter_id.dynode_6 : string  = "[pmt_dynode.gc:dynode=6]"
+mapping.filled.daughter_id.dynode_7 : string  = "[pmt_dynode.gc:dynode=7]"
+mapping.filled.daughter_id.dynode_8 : string  = "[pmt_dynode.gc:dynode=8]"
+mapping.filled.daughter_id.dynode_9 : string  = "[pmt_dynode.gc:dynode=9]"
+mapping.filled.daughter_id.anode    : string  = "[pmt_dynode.gc:dynode=10]"
+mapping.filled.daughter_id.focusing_electrode : string = "[pmt_focus_electrode.gc]"
+mapping.filled.daughter_id.bulb     : string = "[pmt_bulb.gc]"
 
 
 #############################################################
@@ -342,9 +360,6 @@ visibility.hidden : boolean = 0
 #@description The recommended color for the display
 visibility.color  : string  = "orange"
 
-#@description The mapping directives for the "detectors" daughter volumes
-#mapping.daughter_id.scintillator_block : string  = "[scin_block.gc]"
-
 
 ##########################################################################
 [name="diaphragm.model" type="geomtools::cylindric_extrusion_boxed_model"]
@@ -358,10 +373,10 @@ length_unit       : string  = "mm"
 extrusion_radius : real   =  40.0
 
 #@description The X dimension
-x                : real   = 320.0
+x                : real   = 300.0
 
 #@description The Y dimension
-y                : real   = 320.0
+y                : real   = 300.0
 
 #@description The Z dimension
 z                : real   =   1.0
@@ -380,7 +395,7 @@ visibility.color  : string  = "red"
 [name="optical_module.model" type="geomtools::stacked_model"]
 
 #@description The name of the material
-material.ref      : string    = "copper"
+material.ref      : string    = "vacuum"
 
 #@description The stacking axis
 stacked.axis            : string = "z"

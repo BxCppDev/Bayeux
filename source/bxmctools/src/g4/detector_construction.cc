@@ -763,8 +763,7 @@ namespace mctools {
       for (SHPF_type::processor_dict_type::const_iterator iSHP
              = _SHPF_.get_processors().begin();
            iSHP != _SHPF_.get_processors().end();
-           ++iSHP)
-        {
+           ++iSHP) {
           const string & hit_category = iSHP->second->get_hit_category();
           if (_g4_manager_->forbids_private_hits()) {
             if (boost::starts_with(hit_category, "_")) {
@@ -960,9 +959,9 @@ namespace mctools {
               {
                 // Makes the logical sensitive(using a trick because of the const-ness
                 // of the log(ical) after building the model factory in our geometry model:
-                geomtools::logical_volume * mod_log
+                geomtools::logical_volume * mutable_log
                   = const_cast<geomtools::logical_volume *>(&log);
-                geomtools::sensitive::set_sensitive_category(mod_log->grab_parameters(),
+                geomtools::sensitive::set_sensitive_category(mutable_log->grab_parameters(),
                                                              from_processor_sensitive_category);
               }
 

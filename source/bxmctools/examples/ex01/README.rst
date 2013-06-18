@@ -11,7 +11,7 @@ Introduction
    to simulate Co-60 radioactive decays from a given location in a virtual geometry and track the
    Monte-Carlo particles.
 
-   It is first shown how to use the ``geomtools_check_setup`` utility
+   It is first shown how to use the ``geomtools_inspector`` utility
    to visualize the setup and generate a GDML file usable by Geant4
    and browsable by ROOT.
 
@@ -51,7 +51,9 @@ Introduction
          vacuum chamber wherin the detectors and calibration sources are
          installed.
        * ``config/geometry/optical_module.geom``: the geometry models that represent
-         the detection module.
+         the detection module (sensitive volume).
+       * ``config/geometry/probe.geom``: the geometry model that represents
+         a detection probe (sensitive volume).
        * ``config/geometry/shielding.geom`` : the geometry models that represent
          passive shielding walls on both side of the vessel.
        * ``config/geometry/source.geom`` : the geometry models that represent
@@ -259,6 +261,19 @@ Quick start
          :alt: The generated vertexes in the virtual geometry setup (file ``images/ex01_vertex_generator_vessel_inner_surface.jpg``)
          :align: center
 
+
+    c. Another random vertex generators::
+
+         shell> genvtx_production \
+                 --geometry-manager "config/geometry/manager.conf" \
+                 --vertex-generator-manager "config/vertex_generator/manager.conf" \
+                 --shoot \
+                 --number-of-vertices 10000 \
+                 --prng-seed 314159 \
+                 --vertex-generator "all_probe_rings_inner_surface.vg" \
+                 --output-file "mctools_ex01_vertices.txt" \
+                 --visu --tiny
+
 7. Geant4 simulation:
 
     a. Run the simulation through a Geant4 interactive session with visualization::
@@ -291,7 +306,7 @@ Quick start
       .. image:: images/ex01_g4_production_0.jpg
          :width: 200
          :scale: 25 %
-         :alt: The Geant4 visualization of a ^60^Co decay with two gamma rays emitted from a source film (file ``images/ex01_g4_production_0.jpg``)
+         :alt: The Geant4 visualization of a ^60^Co decay with two gamma rays and an electron emitted from a source film (file ``images/ex01_g4_production_0.jpg``)
          :align: center
 
       Then browse the output plain simulated data file ::
@@ -302,7 +317,7 @@ Quick start
            --interactive \
            --input-file "mctools_ex01_Co60_source_0_bulk.xml"
 
-    b. Run the simulation in non-interactive mode ::
+    b. Run the simulation in non-interactive mode::
 
          shell> g4_production \
                 --logging-priority "warning" \
@@ -353,7 +368,7 @@ Quick start
 
       shell> rm mctools_ex01-1.0.gdml
       shell> rm mctools_ex01_vertices.txt
-      shell> rm geomtools_check_setup.C
+      shell> rm geomtools_inspector.C
       shell> rm mctools_ex01_Co60_source_0_bulk.xml
       shell> rm mctools_ex01_Co60_source_0_bulk.data.gz
       shell> rm mctools_ex01_Co60_source_0_bulk.dpp.xml

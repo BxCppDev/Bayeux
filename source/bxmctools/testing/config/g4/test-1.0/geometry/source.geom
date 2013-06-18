@@ -48,6 +48,12 @@ shape_type  : string = "tube"
 #@description The build mode for the central of the source support ring
 filled_mode : string = "by_envelope"
 
+#@description The name of the material of the source support ring
+material.ref : string = "aluminium"
+
+#@description The name of the material that fills the void volume within the ring
+material.filled.ref : string = "vacuum"
+
 #@description The length unit
 length_unit : string = "mm"
 
@@ -59,12 +65,6 @@ outer_r     : real = 12.0
 
 #@description The Z dimension (thickness) of the source support ring
 z           : real = 5.0
-
-#@description The name of the material of the source support ring
-material.ref : string = "aluminium"
-
-#@description The name of the material that fills the void volume within the ring
-material.filled.ref : string = "vacuum"
 
 #@description The recommended color for the display of the ring
 visibility.color            : string  = "blue"

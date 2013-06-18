@@ -28,6 +28,9 @@ inherits : string[1] = "vessel.gc"
 [category="source.gc" type="1000"]
 addresses : string[1] = "position"
 
+[category="source_support.gc" type="1005"]
+inherits : string[1] = "source.gc"
+
 [category="source_film.gc" type="1010"]
 inherits : string[1] = "source.gc"
 
@@ -38,22 +41,27 @@ addresses : string[1] = "column"
 extends  : string = "detector_column.gc"
 by       : string[1] = "row"
 
-[category="scin_block.gc" type="2030"]
+[category="scin_block.gc" type="2025"]
 inherits : string[1] = "detector.gc"
 
-[category="pmt_dynode.gc" type="2040"]
-extends  : string = "detector.gc"
+[category="pmt.gc" type="2030"]
+inherits : string[1] = "detector.gc"
+
+[category="pmt_bulb.gc" type="2031"]
+inherits : string[1] = "pmt.gc"
+
+[category="pmt_dynode.gc" type="2032"]
+extends  : string    = "pmt.gc"
 by       : string[1] = "dynode"
 
-[category="pmt_focus_electrode.gc" type="2050"]
-inherits : string[1] = "detector.gc"
+[category="pmt_focus_electrode.gc" type="2033"]
+inherits : string[1] = "pmt.gc"
 
 [category="shield_wall.gc" type="2060"]
 addresses : string[1] = "wall"
 
 [category="shield_brick.gc" type="2070"]
-extends  : string = "shield_wall.gc"
+extends  : string    = "shield_wall.gc"
 by       : string[2] = "column" "row"
-
 
 # end

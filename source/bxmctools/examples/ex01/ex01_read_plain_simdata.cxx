@@ -301,7 +301,38 @@ void simulated_data_inspector::display(const mctools::simulated_data & sd_)
 
       geomtools::display_data::display_item & visu_step_DI
         = dd.add_static_item (visu_step_name_oss.str(),
-                              "group::mc::step_hit",
+                              "group::mc::visu_step_hit",
+                              step_color);
+
+      geomtools::placement visu_step_plcmt;
+      visu_step_segment.generate_wires (visu_step_DI.paths, visu_step_plcmt);
+    }
+  }
+
+  if (sd_.has_step_hits("probe")) {
+    // Build the display informations about the "probe" MC hits (if any) :
+    int nsteps = sd_.get_number_of_step_hits("probe");
+    for (int i = 0; i < nsteps; i++) {
+      const mctools::base_step_hit & truth_hit = sd_.get_step_hit("probe", i);
+      truth_hit.tree_dump(std::clog, "Truth 'probe' hit:");
+      const geomtools::vector_3d & step_start = truth_hit.get_position_start();
+      const geomtools::vector_3d & step_stop = truth_hit.get_position_stop();
+      const std::string & pname = truth_hit.get_particle_name();
+      geomtools::line_3d visu_step_segment(step_start, step_stop);
+
+      // Display color:
+      std::string step_color = "white";
+      if (pname == "gamma") step_color = "green";
+      else if (pname == "e+") step_color = "blue";
+      else if (pname == "e-") step_color = "red";
+
+      // Label:
+      std::ostringstream visu_step_name_oss;
+      visu_step_name_oss << "probe_" << i;
+
+      geomtools::display_data::display_item & visu_step_DI
+        = dd.add_static_item (visu_step_name_oss.str(),
+                              "group::mc::probe_hit",
                               step_color);
 
       geomtools::placement visu_step_plcmt;
@@ -327,7 +358,7 @@ void simulated_data_inspector::display(const mctools::simulated_data & sd_)
 
       // Label:
       std::ostringstream scin_hit_name_oss;
-      scin_hit_name_oss << "scin_step_" << i;
+      scin_hit_name_oss << "scin_" << i;
 
       geomtools::display_data::display_item & scin_hit_DI
         = dd.add_static_item (scin_hit_name_oss.str(),
@@ -368,8 +399,9 @@ void simulated_data_inspector::display(const mctools::simulated_data & sd_)
 
     std::clog << std::flush;
     std::cerr << std::endl
-              << "Enter the name of a geometry model (ex: 'world', type '.m' to print the list)" <<  "\n"
-              << "   or the GID of a volume (ex: '[1234:0.1.2]', type '.g' to print the list) " << "\n"
+              << "Enter the name of a geometry model (ex: 'world',        type '.M' to print the list)" <<  "\n"
+              << "   or the name of a logical volume (ex: '',             type '.L' to print the list) " << "\n"
+              << "   or the GID of a volume          (ex: '[1234:0.1.2]', type '.G' to print the list) " << "\n"
               << "   or type '.q' to quit ";
     if (! visu_object_name.empty ()) {
       std::cerr << " (default : '" << visu_object_name << "')";
@@ -377,18 +409,37 @@ void simulated_data_inspector::display(const mctools::simulated_data & sd_)
     std::cerr << ": ";
     std::string line;
     std::getline(std::cin, line);
-    std::istringstream line_iss(line);
+    std::istringstream command_iss(line);
     std::string token;
-    line_iss >> token;
-    if (token == ".m") {
-      geomtools::model_factory::print_list_of_models(_geometry_manager_->get_factory(),std::clog, 0);
-    } else if (token == ".g") {
-      geomtools::manager::print_list_of_gids(*_geometry_manager_, std::clog, 0);
+    command_iss >> token;
+    if (token == ".M") {
+      std::string print_models_options;
+      std::getline(command_iss, print_models_options);
+      int error = geomtools::model_factory::print_list_of_models(_geometry_manager_->get_factory(), std::cerr, print_models_options);
+      if (error > 0) {
+        DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                     "Invalid options '" << print_models_options << "' !");
+      }
+    } else if (token == ".L") {
+      std::string print_logical_options;
+      std::getline(command_iss, print_logical_options);
+      int error = geomtools::model_factory::print_list_of_logicals(_geometry_manager_->get_factory(), std::cerr, print_logical_options);
+      if (error > 0) {
+        DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                     "Invalid options '" << print_logical_options << "' !");
+      }
+    } else if (token == ".G") {
+      std::string print_gids_options;
+      std::getline(command_iss, print_gids_options);
+      int error = geomtools::manager::print_list_of_gids(*_geometry_manager_, std::cerr, print_gids_options);
+      if (error > 0) {
+        DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Invalid options '" << print_gids_options << "' !");
+      }
     } else if (token == ".q") {
       loop_stop = true;
     } else {
       visu_object_name = token;
-      line_iss >> token;
+      command_iss >> token;
       if (! token.empty() && token[0] == '-') {
         if (token == "-xy") view_label = geomtools::gnuplot_drawer::VIEW_2D_XY;
         if (token == "-xz") view_label = geomtools::gnuplot_drawer::VIEW_2D_XZ;

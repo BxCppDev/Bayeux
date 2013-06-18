@@ -71,7 +71,7 @@ int main(int argc_, char ** argv_)
               << "     g4_production\n"
               << "\n"
               << "     Copyright (C) 2013\n"
-              << "     Francois Mauger, Xavier Garrido\n"
+              << "     Francois Mauger, Xavier Garrido and Ben Morgan\n"
               << "\n";
 
 

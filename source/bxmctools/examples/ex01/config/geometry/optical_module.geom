@@ -13,7 +13,14 @@
 #################################################################
 [name="front_window.model" type="geomtools::simple_shaped_model"]
 
-#@config The list of properties to describe the film in front of the scintillator block
+#@config The configuration parameters for the film in front of the scintillator block
+
+############
+# Geometry #
+############
+
+#@description The default implicit length unit
+length_unit       : string  = "mm"
 
 #@description The name of the 3D shape
 shape_type :   string =  "box"
@@ -27,11 +34,16 @@ y   : real   = 300.0
 #@description The Z dimension
 z   : real   = 12.0e-3
 
-#@description The length unit
-length_unit       : string  = "mm"
+#######################
+# Material parameters #
+#######################
 
 #@description The name of the material
 material.ref      : string  = "mylar"
+
+#########################
+# Visibility parameters #
+#########################
 
 #@description The visibility hidden flag for the display
 visibility.hidden : boolean = 0
@@ -43,10 +55,17 @@ visibility.color  : string  = "green"
 #######################################################################
 [name="scintillator_block.model" type="geomtools::simple_shaped_model"]
 
-#@config The list of properties to describe the scintillator block
+#@config The configuration parameters for the scintillator block
 
 #@description The name of the 3D shape
 shape_type :   string =  "box"
+
+############
+# Geometry #
+############
+
+#@description The default implicit length unit
+length_unit       : string  = "mm"
 
 #@description The X dimension
 x   : real   = 300.0
@@ -57,11 +76,16 @@ y   : real   = 300.0
 #@description The Z dimension
 z   : real   =  10.0
 
-#@description The length unit
-length_unit       : string    = "mm"
+#######################
+# Material parameters #
+#######################
 
 #@description The name of the material
 material.ref      : string = "polystyrene"
+
+#########################
+# Visibility parameters #
+#########################
 
 #@description The visibility hidden flag for the display
 visibility.hidden : boolean = 0
@@ -69,9 +93,14 @@ visibility.hidden : boolean = 0
 #@description The recommended color for the display
 visibility.color  : string  = "cyan"
 
+#####################
+# Sensitive volumes #
+#####################
+
 #@description The 'sensitive' category attached to this detector volume
 sensitive.category  : string  = "scin.sd"
-#
+
+# Note:
 # We recommend that you name any sensitive category with the
 # ".sd" suffix. This is to ease the reading of other configuration
 # files at the simulation level (step hit processors). Also note
@@ -83,7 +112,14 @@ sensitive.category  : string  = "scin.sd"
 ################################################################
 [name="light_guide.model" type="geomtools::simple_shaped_model"]
 
-#@config The list of properties to describe the light guide
+#@config The configuration parameters for the light guide
+
+############
+# Geometry #
+############
+
+#@description The default implicit length unit
+length_unit : string    = "mm"
 
 #@description The name of the 3D shape
 shape_type : string = "polyhedra"
@@ -103,11 +139,16 @@ list_of_rmin : real [3] =    0.      0.       0.
 #@description The list of outer radius coordinates for the shape
 list_of_rmax : real [3] =   60.    150.     150.
 
-#@description The length unit
-length_unit  : string = "mm"
+#######################
+# Material parameters #
+#######################
 
 #@description The name of the material
 material.ref : string  = "plexiglass"
+
+#########################
+# Visibility parameters #
+#########################
 
 #@description The visibility hidden flag for the display
 visibility.hidden          : boolean = 0
@@ -119,22 +160,23 @@ visibility.color           : string  = "cyan"
 ########################################################################
 [name="rotated_light_guide.model" type="geomtools::rotated_boxed_model"]
 
-#@config The list of properties to describe the rotated light guide
+#@config The configuration parameters for the rotated light guide
 
-#@description The name of the material
-material.ref  : string = "air"
+############
+# Geometry #
+############
+
+#@description The default implicit length unit
+length_unit   : string = "mm"
+
+#@description The default implicit angle unit
+angle_unit    : string = "degree"
 
 #@description The rotation axis
 rotated.axis  : string = "z"
 
-#@description The angular unit
-angle_unit    : string = "degree"
-
 #@description The rotation angle
 rotated.angle : real   = 45.0
-
-#@description The length unit
-length_unit   : string = "mm"
 
 #@description The X dimension
 x             : real   = 300.0
@@ -147,6 +189,17 @@ rotated.model : string = "light_guide.model"
 
 #@description The label associated to the rotated daughter model
 rotated.label : string = "light_guide"
+
+#######################
+# Material parameters #
+#######################
+
+#@description The name of the material around the light guide to be rotated
+material.ref      : string  = "vacuum"
+
+#########################
+# Visibility parameters #
+#########################
 
 #@description The visibility hidden flag for the display
 visibility.hidden          : boolean = 0
@@ -161,7 +214,11 @@ visibility.hidden_envelope  : boolean = 0
 #######################################################################
 [name="focusing_electrode.model" type="geomtools::simple_shaped_model"]
 
-#@config The list of properties to describe the rotated light guide
+#@config The configuration parameters for the PMT's focusing electrode
+
+############
+# Geometry #
+############
 
 #@description The shape
 shape_type   : string =  "tube"
@@ -178,8 +235,16 @@ inner_r      : real   = 30.0
 #@description The outer radius dimension
 outer_r      : real   = 40.0
 
+#######################
+# Material parameters #
+#######################
+
 #@description The material name
 material.ref      : string  = "copper"
+
+#########################
+# Visibility parameters #
+#########################
 
 #@description The visibility hidden flag for the display
 visibility.hidden : boolean = 0
@@ -191,13 +256,17 @@ visibility.color  : string  = "red"
 ###########################################################
 [name="dynode.model" type="geomtools::simple_shaped_model"]
 
-#@config The list of properties to describe the dynode
+#@config The configuration parameters for the PMT's dynode
+
+############
+# Geometry #
+############
+
+#@description The default implicit length unit
+length_unit  : string = "mm"
 
 #@description The shape
 shape_type   : string =  "box"
-
-#@description The length unit
-length_unit  : string = "mm"
 
 #@description The X dimension
 x            : real   = 35.0
@@ -208,8 +277,16 @@ y            : real   = 20.0
 #@description The Z dimension
 z            : real   =  0.5
 
+#######################
+# Material parameters #
+#######################
+
 #@description The material name
 material.ref      : string  = "copper"
+
+#########################
+# Visibility parameters #
+#########################
 
 #@description The visibility hidden flag for the display
 visibility.hidden : boolean = 0
@@ -221,13 +298,33 @@ visibility.color  : string  = "red"
 ########################################################
 [name="PMT.model" type="geomtools::simple_shaped_model"]
 
+#@config The configuration parameters for the PMT's bulb and its contents
+
+############
+# Geometry #
+############
+
+#@description The default implicit length unit
+length_unit : string = "mm"
+
+#@description The shape of the PMT's bulb
 shape_type  : string = "polycone"
 
-#filled_mode : string = "by_extrusion"
+#@description The polycone build mode
+build_mode  : string = "datafile"
+
+#@description The polycone coordinates filename
+datafile    : string = "config/geometry/pmt_hamamatsu_R5912MOD_polycone.data"
+
+#@description The 'filled' mode to build the model
 filled_mode : string = "by_envelope"
 
-#@description The length unit
-length_unit : string = "mm"
+#@description The label of the PMT's bulb volume as daughter volume of the model's envelope
+filled_label : string = "bulb"
+
+#######################
+# Material parameters #
+#######################
 
 #@description The material name
 material.ref        : string = "glass"
@@ -235,11 +332,9 @@ material.ref        : string = "glass"
 #@description The inner material name
 material.filled.ref : string = "vacuum"
 
-#@description The polycone build mode
-build_mode  : string = "datafile"
-
-#@description The polycone coordinates filename
-datafile    : string = "config/geometry/pmt_hamamatsu_R5912MOD_polycone.data"
+#########################
+# Visibility parameters #
+#########################
 
 #@description The visibility hidden flag for the display
 visibility.hidden           : boolean = 0
@@ -251,10 +346,26 @@ visibility.hidden_envelop   : boolean = 0
 visibility.color            : string  = "magenta"
 
 #@description The visibility hidden flag for the daughters volumes
-visibility.daughters.hidden : boolean = 0
+#visibility.daughters.hidden : boolean = 0
+
+#@description The visibility hidden flag for the display
+visibility.filled.hidden           : boolean = 0
+
+#@description The visibility hidden flag for the envelope
+visibility.filled.hidden_envelop   : boolean = 1
+
+#@description The recommended color for the display
+visibility.filled.color            : string  = "grey"
+
+#@description The visibility hidden flag for the daughters volumes
+visibility.filled.daughters.hidden : boolean = 0
+
+###########################
+# Internal/daughter items #
+###########################
 
 #@description The list of daughter volumes by labels
-internal_item.labels 	    : string[12] = \
+internal_item.filled.labels : string[12] = \
 				"focusing_electrode" \
 				"dynode_0" \
 				"dynode_1" \
@@ -269,64 +380,71 @@ internal_item.labels 	    : string[12] = \
 				"anode"
 
 #@description The placement of the "focusing_electrode" daughter volume
-internal_item.placement.focusing_electrode : string  = "0 0 +20 (mm)"
+internal_item.filled.placement.focusing_electrode : string  = "0 0 +20 (mm)"
 
 #@description The model of the "focusing_electrode" daughter volume
-internal_item.model.focusing_electrode     : string  = "focusing_electrode.model"
+internal_item.filled.model.focusing_electrode     : string  = "focusing_electrode.model"
 
-internal_item.model.dynode_0     : string  = "dynode.model"
-internal_item.placement.dynode_0 : string  = "0 -15 +0 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_0     : string  = "dynode.model"
+internal_item.filled.placement.dynode_0 : string  = "0 -15 +0 (mm) / x +45 (degree)"
 
-internal_item.model.dynode_1     : string  = "dynode.model"
-internal_item.placement.dynode_1 : string  = "0 +15 +0 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_1     : string  = "dynode.model"
+internal_item.filled.placement.dynode_1 : string  = "0 +15 +0 (mm) / x +45 (degree)"
 
-internal_item.model.dynode_2     : string  = "dynode.model"
-internal_item.placement.dynode_2 : string  = "0 -15 -20 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_2     : string  = "dynode.model"
+internal_item.filled.placement.dynode_2 : string  = "0 -15 -20 (mm) / x +45 (degree)"
 
-internal_item.model.dynode_3     : string  = "dynode.model"
-internal_item.placement.dynode_3 : string  = "0 +15 -20 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_3     : string  = "dynode.model"
+internal_item.filled.placement.dynode_3 : string  = "0 +15 -20 (mm) / x +45 (degree)"
 
-internal_item.model.dynode_4     : string  = "dynode.model"
-internal_item.placement.dynode_4 : string  = "0 -15 -40 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_4     : string  = "dynode.model"
+internal_item.filled.placement.dynode_4 : string  = "0 -15 -40 (mm) / x +45 (degree)"
 
-internal_item.model.dynode_5     : string  = "dynode.model"
-internal_item.placement.dynode_5 : string  = "0 +15 -40 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_5     : string  = "dynode.model"
+internal_item.filled.placement.dynode_5 : string  = "0 +15 -40 (mm) / x +45 (degree)"
 
-internal_item.model.dynode_6     : string  = "dynode.model"
-internal_item.placement.dynode_6 : string  = "0 -15 -60 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_6     : string  = "dynode.model"
+internal_item.filled.placement.dynode_6 : string  = "0 -15 -60 (mm) / x +45 (degree)"
 
-internal_item.model.dynode_7     : string  = "dynode.model"
-internal_item.placement.dynode_7 : string  = "0 +15 -60 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_7     : string  = "dynode.model"
+internal_item.filled.placement.dynode_7 : string  = "0 +15 -60 (mm) / x +45 (degree)"
 
-internal_item.model.dynode_8     : string  = "dynode.model"
-internal_item.placement.dynode_8 : string  = "0 -15 -80 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_8     : string  = "dynode.model"
+internal_item.filled.placement.dynode_8 : string  = "0 -15 -80 (mm) / x +45 (degree)"
 
-internal_item.model.dynode_9     : string  = "dynode.model"
-internal_item.placement.dynode_9 : string  = "0 +15 -80 (mm) / x +45 (degree)"
+internal_item.filled.model.dynode_9     : string  = "dynode.model"
+internal_item.filled.placement.dynode_9 : string  = "0 +15 -80 (mm) / x +45 (degree)"
 
-internal_item.placement.anode : string  = "0 0 -95 (mm) / x +20 (degree)"
-internal_item.model.anode     : string  = "dynode.model"
+internal_item.filled.placement.anode    : string  = "0 0 -95 (mm) / x +20 (degree)"
+internal_item.filled.model.anode        : string  = "dynode.model"
 
-# The mapping directives for all "electrodes/dynodes" daughter volumes
+##########################################
+# GID mapping of internal/daughter items #
+##########################################
 
-mapping.daughter_id.dynode_0 : string  = "[pmt_dynode.gc:dynode=0]"
-mapping.daughter_id.dynode_1 : string  = "[pmt_dynode.gc:dynode=1]"
-mapping.daughter_id.dynode_2 : string  = "[pmt_dynode.gc:dynode=2]"
-mapping.daughter_id.dynode_3 : string  = "[pmt_dynode.gc:dynode=3]"
-mapping.daughter_id.dynode_4 : string  = "[pmt_dynode.gc:dynode=4]"
-mapping.daughter_id.dynode_5 : string  = "[pmt_dynode.gc:dynode=5]"
-mapping.daughter_id.dynode_6 : string  = "[pmt_dynode.gc:dynode=6]"
-mapping.daughter_id.dynode_7 : string  = "[pmt_dynode.gc:dynode=7]"
-mapping.daughter_id.dynode_8 : string  = "[pmt_dynode.gc:dynode=8]"
-mapping.daughter_id.dynode_9 : string  = "[pmt_dynode.gc:dynode=9]"
-mapping.daughter_id.anode    : string  = "[pmt_dynode.gc:dynode=10]"
-mapping.daughter_id.focusing_electrode : string = "[pmt_focus_electrode.gc]"
+mapping.filled.daughter_id.dynode_0 : string  = "[pmt_dynode.gc:dynode=0]"
+mapping.filled.daughter_id.dynode_1 : string  = "[pmt_dynode.gc:dynode=1]"
+mapping.filled.daughter_id.dynode_2 : string  = "[pmt_dynode.gc:dynode=2]"
+mapping.filled.daughter_id.dynode_3 : string  = "[pmt_dynode.gc:dynode=3]"
+mapping.filled.daughter_id.dynode_4 : string  = "[pmt_dynode.gc:dynode=4]"
+mapping.filled.daughter_id.dynode_5 : string  = "[pmt_dynode.gc:dynode=5]"
+mapping.filled.daughter_id.dynode_6 : string  = "[pmt_dynode.gc:dynode=6]"
+mapping.filled.daughter_id.dynode_7 : string  = "[pmt_dynode.gc:dynode=7]"
+mapping.filled.daughter_id.dynode_8 : string  = "[pmt_dynode.gc:dynode=8]"
+mapping.filled.daughter_id.dynode_9 : string  = "[pmt_dynode.gc:dynode=9]"
+mapping.filled.daughter_id.anode    : string  = "[pmt_dynode.gc:dynode=10]"
+mapping.filled.daughter_id.focusing_electrode : string = "[pmt_focus_electrode.gc]"
+mapping.filled.daughter_id.bulb     : string  = "[pmt_bulb.gc]"
 
 
 #############################################################
 [name="PMT_base.model" type="geomtools::simple_shaped_model"]
 
-#@config The list of properties to describe the PMT base
+#@config The configuration parameters for the PMT's base
+
+############
+# Geometry #
+############
 
 #@description The name of the 3D shape
 shape_type   : string =  "cylinder"
@@ -340,8 +458,16 @@ r            : real   = 30.0
 #@description The Z dimension
 z            : real   = 40.0
 
+#######################
+# Material parameters #
+#######################
+
 #@description The name of the material
 material.ref : string = "polystyrene"
+
+#########################
+# Visibility parameters #
+#########################
 
 #@description The visibility hidden flag for the display
 visibility.hidden : boolean = 0
@@ -349,14 +475,15 @@ visibility.hidden : boolean = 0
 #@description The recommended color for the display
 visibility.color  : string  = "orange"
 
-#@description The mapping directives for the "detectors" daughter volumes
-#mapping.daughter_id.scintillator_block : string  = "[scin_block.gc]"
-
 
 ##########################################################################
 [name="diaphragm.model" type="geomtools::cylindric_extrusion_boxed_model"]
 
-#@config The list of properties to describe the diaphragm
+#@config The configuration parameters for the diaphragm
+
+############
+# Geometry #
+############
 
 #@description The length unit
 length_unit       : string  = "mm"
@@ -373,8 +500,16 @@ y                : real   = 320.0
 #@description The Z dimension
 z                : real   =   1.0
 
+#######################
+# Material parameters #
+#######################
+
 #@description The name of the material
 material.ref : string = "copper"
+
+#########################
+# Visibility parameters #
+#########################
 
 #@description The visibility hidden flag for the display
 visibility.hidden : boolean = 0
@@ -386,8 +521,11 @@ visibility.color  : string  = "red"
 #############################################################
 [name="optical_module.model" type="geomtools::stacked_model"]
 
-#@description The name of the material
-material.ref      : string    = "copper"
+#@config The configuration parameters for the optical module
+
+############
+# Geometry #
+############
 
 #@description The stacking axis
 stacked.axis            : string = "z"
@@ -416,23 +554,48 @@ stacked.label_1   : string  = "PMT"
 stacked.model_0   : string  = "PMT_base.model"
 stacked.label_0   : string  = "PMT_base"
 
+#######################
+# Material parameters #
+#######################
+
+#@description The name of the material
+material.ref      : string    = "vacuum"
+
+#########################
+# Visibility parameters #
+#########################
+
 #@description The visibility hidden flag for the display
 visibility.hidden : boolean  = 0
 
 #@description The recommended color for the display
 visibility.color  : string   = "grey"
 
-#@description The mapping directives for the "detectors" daughter volumes
+##########################################
+# GID mapping of internal/daughter items #
+##########################################
+
+#@description The mapping directive for the "scintillator_block" daughter volume
 mapping.daughter_id.scintillator_block : string  = "[scin_block.gc]"
+
+#@description The mapping directive for the "diaphragm" daughter volume
 mapping.daughter_id.diaphragm          : string  = "[diaphragm.gc]"
+
+#@description The mapping directive for the "light_guide" daughter volume
 mapping.daughter_id.light_guide        : string  = "[light_guide.gc]"
 
 
-###################################################################
-[name="detector_column.model" type="geomtools::replicated_model"]
+#################################################################
+[name="optical_module_column.model" type="geomtools::replicated_model"]
 
-#@description The name of the material
-material.ref               : string = "air"
+#@config The configuration parameters for the column of optical modules
+
+############
+# Geometry #
+############
+
+#@description The default implicit length unit
+length_unit                : string = "cm"
 
 #@description The replication axis
 replicated.axis            : string = "y"
@@ -446,21 +609,35 @@ replicated.model           : string = "optical_module.model"
 #@description The label associated to the replicated volumes
 replicated.label           : string = "optical_modules"
 
-#@description The length unit
-length_unit                : string = "cm"
-
 #@description The step between replicated volumes
 replicated.step            : real = 30
 
-#@description The mapping directives for the "detectors" daughter volumes
-mapping.daughter_id.optical_modules : string  = "[detector.gc:row+0]"
+#######################
+# Material parameters #
+#######################
+
+#@description The name of the material around the optical modules
+material.ref      : string    = "vacuum"
+
+###########################
+# Internal/daughter items #
+###########################
+
+#@description The mapping directives for the "optical_modules" daughter volumes
+mapping.daughter_id.optical_modules : string  = "[optical_module.gc:row+0]"
 
 
 ###################################################################
-[name="detector_array.model" type="geomtools::replicated_model"]
+[name="optical_module_array.model" type="geomtools::replicated_model"]
 
-#@description The name of the material
-material.ref               : string = "air"
+#@config The configuration parameters for the array of optical modules
+
+############
+# Geometry #
+############
+
+#@description The default implicit length unit
+length_unit                : string = "cm"
 
 #@description The replication axis
 replicated.axis            : string = "x"
@@ -469,19 +646,27 @@ replicated.axis            : string = "x"
 replicated.number_of_items : integer = 2
 
 #@description The model of the replicated volumes
-replicated.model           : string = "detector_column.model"
+replicated.model           : string = "optical_module_column.model"
 
 #@description The label associated to the replicated volumes
-replicated.label           : string = "detectors"
-
-#@description The length unit
-length_unit                : string = "cm"
+replicated.label           : string = "optical_modules"
 
 #@description The step between replicated volumes
 replicated.step            : real = 30
 
-#@description The mapping directives for the "detectors" daughter volumes
-mapping.daughter_id.detectors : string  = "[detector_column.gc:column+0]"
+#######################
+# Material parameters #
+#######################
+
+#@description The name of the material around the replicated volumes
+material.ref      : string    = "vacuum"
+
+##########################################
+# GID mapping of internal/daughter items #
+##########################################
+
+#@description The mapping directives for the "optical_modules" daughter volumes
+mapping.daughter_id.optical_modules : string  = "[optical_module_column.gc:column+0]"
 
 
 # End of list of multi-properties.
