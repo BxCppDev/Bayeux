@@ -144,9 +144,9 @@ Quick start
 
 4. Standalone Geometry:
 
-   a. Run the ``geomtools_check_setup`` to check the virtual geometry::
+   a. Run the ``geomtools_inscpector`` to check the virtual geometry::
 
-         shell> geomtools_check_setup \
+         shell> geomtools_inspector \
                   --manager-config config/geometry/manager.conf \
                   --with-visu --visu-view-3d \
                   --with-gdml --gdml-to-root-display
