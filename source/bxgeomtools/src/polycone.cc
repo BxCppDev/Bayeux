@@ -443,10 +443,18 @@ namespace geomtools {
     double skin_step;
     datatools::invalidate (skin_step);
     bool ignore_rmin = false;
-    if (dc_mode_ == IGNORE_RMIN) ignore_rmin = true;
+    if (dc_mode_ == RMIN_RMAX) {
+      //std::cerr << "DEVEL: ****** polycone::initialize: RMIN_RMAX\n";
+    }
+    if (dc_mode_ == IGNORE_RMIN) {
+      ignore_rmin = true;
+      //std::cerr << "DEVEL: ****** polycone::initialize: IGNORE_RMIN\n";
+    }
     bool rmin_as_rmax = false;
-    if (dc_mode_ == RMIN_AS_RMAX) rmin_as_rmax = true;
-
+    if (dc_mode_ == RMIN_AS_RMAX) {
+      rmin_as_rmax = true;
+      //std::cerr << "DEVEL: ****** polycone::initialize: RMIN_AS_RMAX\n";
+    }
     while (! ifs.eof ()) {
       std::string line;
       std::getline (ifs, line);
@@ -467,6 +475,7 @@ namespace geomtools {
               length_unit = datatools::units::get_length_unit_from (unit_str);
             } else if (word == "#@ignore_rmin") {
               ignore_rmin = true;
+              //std::cerr << "DEVEL: ****** polycone::initialize: form file: IGNORE_RMIN\n";
             } else if (word == "#@z_factor") {
               iss >> z_factor;
               DT_THROW_IF (! iss, std::logic_error,
@@ -550,9 +559,9 @@ namespace geomtools {
         tr2 = r2 * r_factor * length_unit;
         if (datatools::is_valid (r1)) {
           if (rmin_as_rmax) {
-            this->add (tz, tr1, tr2, false);
-          } else {
             this->add (tz, 0.0, tr1, false);
+          } else {
+            this->add (tz, tr1, tr2, false);
           }
         } else {
           this->add (tz, tr2, false);

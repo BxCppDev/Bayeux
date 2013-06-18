@@ -177,7 +177,23 @@ namespace geomtools {
       DT_THROW_IF (! setup_.has_key ("datafile"), std::logic_error, "Missing 'datafile' property !");
       std::string datafile = setup_.fetch_string ("datafile");
       datatools::fetch_path_with_env (datafile);
-      this->initialize (datafile);
+      int dc_mode = RMIN_RMAX;
+      if (setup_.has_key ("datafile.columns")) {
+        std::string dc = setup_.fetch_string ("datafile.columns");
+        if (dc == "rmin_as_rmax") {
+          dc_mode = RMIN_AS_RMAX;
+        } else if (dc == "ignore_rmin") {
+          dc_mode = IGNORE_RMIN;
+        } else if (dc == "rmin_rmax") {
+          dc_mode = RMIN_RMAX;
+        } else {
+          DT_THROW_IF (true,
+                       std::logic_error,
+                       "Invalid 'datafile.columns' mode ('"
+                       << dc << "' !");
+        }
+      }
+      this->initialize (datafile, dc_mode);
     } else {
       DT_THROW_IF (true, std::logic_error, "Invalid build mode '" << build_mode_label << "' !");
     }
@@ -186,7 +202,7 @@ namespace geomtools {
   }
 
 
-  void polyhedra::initialize (const std::string & filename_)
+  void polyhedra::initialize (const std::string & filename_, int dc_mode_)
   {
     const std::string filename = filename_;
     std::ifstream ifs;
@@ -198,6 +214,18 @@ namespace geomtools {
     double z_factor = 1.0;
     double r_factor = 1.0;
     bool   ignore_rmin = false;
+    if (dc_mode_ == RMIN_RMAX) {
+      //std::cerr << "DEVEL: ****** polyhedra::initialize: RMIN_RMAX\n";
+    }
+    if (dc_mode_ == IGNORE_RMIN) {
+      ignore_rmin = true;
+      //std::cerr << "DEVEL: ****** polyhedra::initialize: IGNORE_RMIN\n";
+    }
+    bool rmin_as_rmax = false;
+    if (dc_mode_ == RMIN_AS_RMAX) {
+      rmin_as_rmax = true;
+      //std::cerr << "DEVEL: ****** polyhedra::initialize: RMIN_AS_RMAX\n";
+    }
 
     while (! ifs.eof ()) {
       std::string line;
@@ -289,10 +317,19 @@ namespace geomtools {
         const double tr1 = r1 * r_factor * length_unit;
         const double tr2 = r2 * r_factor * length_unit;
         if (datatools::is_valid (r1)) {
-          this->add (tz, tr1, tr2, false);
+          if (rmin_as_rmax) {
+            this->add (tz, 0.0, tr1, false);
+          } else {
+            this->add (tz, tr1, tr2, false);
+          }
         } else {
           this->add (tz, tr2, false);
         }
+        // if (datatools::is_valid (r1)) {
+        //   this->add (tz, tr1, tr2, false);
+        // } else {
+        //   this->add (tz, tr2, false);
+        // }
       }
     }
     this->_compute_all_ ();

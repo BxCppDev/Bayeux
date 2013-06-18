@@ -886,9 +886,17 @@ void print_shell_help (std::ostream & out_)
   out_ <<  "\tl | logical LOGICAL_NAME       : Print the logical volume named 'LOGICAL_NAME'    \n";
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
   out_ <<  "\td | display [-3d|-xy|-yz|xz] NAME :                                               \n";
-  out_ <<  "                                   Display the object named 'NAME'                  \n";
-#endif // GEOMTOOLS_WITH_ROOT_DISPLAY
-  out_ <<  "\tx | export_gdml GDML_FILENAME  :  Generate the GDML file 'GDML_FILENAME'          \n";
+  out_ <<  "\t                                 Display the object named 'NAME' where            \n";
+  out_ <<  "\t                                 'NAME' can be:                                   \n";
+  out_ <<  "\t                                  - the name of a geometry model,                 \n";
+  out_ <<  "\t                                  - the name of a logical volume,                 \n";
+  out_ <<  "\t                                  - the GID associated to a volume                \n";
+  out_ <<  "\t                                    by the active mapping.                        \n";
+#endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
+  out_ <<  "\tx | export_gdml [--root-display] GDML_FILENAME  :                                 \n";
+  out_ <<  "\t                                 Generate the GDML file 'GDML_FILENAME'.          \n";
+  out_ <<  "\t                                 The '--root-display' option triggers a           \n";
+  out_ <<  "\t                                 Root interactive visualization session.          \n";
   out_ <<  "\tq | quit                       : Quit                                             \n";
   return;
 }

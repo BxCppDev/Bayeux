@@ -214,7 +214,7 @@ visibility.color  : string  = "red"
 ########################################################
 [name="PMT.model" type="geomtools::simple_shaped_model"]
 
-#@config Parameters for the PM tube geoemtry model
+#@config Parameters for the PMT geometry model
 
 #@description The solid shape of the model
 shape_type  : string = "polycone"
@@ -229,7 +229,7 @@ build_mode  : string = "datafile"
 datafile    : string = "config/pmt_hamamatsu_R5912MOD_polycone.data"
 
 #@description The rule to read the file that contains the coordinates of the polycone (default: 'rmin_rmax')
-#datafile.columns  : string = "rmin_rmax"
+datafile.columns  : string = "rmin_rmax"
 
 #@description The filled mode of the polycone model (none|by_envelope)
 filled_mode : string = "by_envelope"

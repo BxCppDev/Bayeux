@@ -34,7 +34,7 @@ namespace geomtools {
     static const std::string POLYHEDRA_LABEL;
     static const size_t MIN_NUMBER_OF_SIDES = 3;
 
-    enum faces_mask_t
+    enum faces_mask_type
       {
         FACE_NONE         = geomtools::FACE_NONE,
         FACE_INNER_SIDE   = datatools::bit_mask::bit00,
@@ -46,6 +46,12 @@ namespace geomtools {
                            | FACE_BOTTOM
                            | FACE_TOP)
       };
+
+    enum datafile_column_mode {
+      RMIN_RMAX = 0,
+      IGNORE_RMIN = 1,
+      RMIN_AS_RMAX = 2
+    };
 
     /*
      * The polyhedra is defined by a list of (z, rmin, rmax) triplets
@@ -136,7 +142,8 @@ namespace geomtools {
 
     void initialize (const datatools::properties & setup_);
 
-    void initialize (const std::string & filename_);
+    void initialize (const std::string & filename_,
+                     int mode_ = RMIN_RMAX);
 
     void compute_inner_polyhedra (polyhedra & ip_);
 

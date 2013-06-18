@@ -61,6 +61,7 @@ namespace geomtools {
 
     bool is_extruded () const;
 
+    /* stackable interface */
     double get_xmin () const;
 
     double get_xmax () const;
@@ -74,6 +75,7 @@ namespace geomtools {
     double get_zmax () const;
 
     double get_z () const;
+    /* end of stackable interface */
 
   private:
 

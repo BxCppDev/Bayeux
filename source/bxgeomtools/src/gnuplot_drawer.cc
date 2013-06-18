@@ -741,20 +741,33 @@ namespace geomtools {
                      geo_mgr_.get_mapping(),
                      max_display_level_);
     } else {
-      //DT_LOG_DEBUG(datatools::logger::PRIO_NOTICE,"Label '" << what << "' is not a GID !");
-      geomtools::placement visu_placement;
-      const std::string & visu_model_name = what;
-      models_col_type::const_iterator found = geo_mgr_.get_factory ().get_models ().find (visu_model_name);
-      if (found == geo_mgr_.get_factory ().get_models ().end ()) {
-        DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
-                     "Cannot find geometry model with name='" << visu_model_name
-                     << "' in the geometry model factory !");
-        return EXIT_FAILURE;
+      //DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG,"Label '" << what << "' is not a GID !");
+      // Try to draw logical:
+      const logical_volume::dict_type & logs = geo_mgr_.get_factory ().get_logicals();
+      const std::string & visu_log_name = what;
+      logical_volume::dict_type::const_iterator log_found = logs.find(visu_log_name);
+      if (log_found != logs.end ()) {
+        geomtools::placement visu_placement;
+        draw (*log_found->second,
+              visu_placement,
+              max_display_level_,
+              "");
+      } else {
+        // Try to draw model:
+        geomtools::placement visu_placement;
+        const std::string & visu_model_name = what;
+        models_col_type::const_iterator found = geo_mgr_.get_factory ().get_models ().find (visu_model_name);
+        if (found == geo_mgr_.get_factory ().get_models ().end ()) {
+          DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                       "Cannot find geometry model with name='" << visu_model_name
+                       << "' in the geometry model factory !");
+          return EXIT_FAILURE;
+        }
+        draw (geo_mgr_.get_factory (),
+              visu_model_name,
+              visu_placement,
+              max_display_level_);
       }
-      draw (geo_mgr_.get_factory (),
-            visu_model_name,
-            visu_placement,
-            max_display_level_);
     }
     return EXIT_SUCCESS;
   }
