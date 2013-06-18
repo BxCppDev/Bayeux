@@ -52,7 +52,7 @@ genvtx_production \
     --shoot \
     --number-of-vertices 10000 \
     --prng-seed 314159 \
-    --vertex-generator "all_coil_bulk.vg" \
+    --vertex-generator "all_coil_body_bulk.vg" \
     --output-file "genvtx_ex01_vertices_2.txt" \
     --visu --tiny --tiny
 

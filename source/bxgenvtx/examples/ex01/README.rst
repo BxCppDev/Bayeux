@@ -95,23 +95,9 @@ Quick start
                --output-file "genvtx_ex01_vertices.txt" \
 	       --visu --tiny
 
-
-6. Check the output ``geomtools`` data file:
-
-     * ROOT display of the setup via the ``geomtools-ex01.gdml`` GDML file ::
-
-         shell> root
-         root [0] TGeoManager * geo = new TGeoManager("geo","geomtools examples/ex01 virtual setup");
-         root [1] TGeoManager * g2 = geo->Import("geomtools-ex01.gdml");
-         root [2] g2->SetVisOption(0);
-         root [3] g2->SetVisLevel(100);
-         root [4] g2->GetMasterVolume()->Draw("");
-	 root [5] .q
-
-8. Clean::
+7. Clean::
 
       shell> rm ex01
-      shell> rm geomtools-ex01.gdml
       shell> rm -fr __build
 
 
