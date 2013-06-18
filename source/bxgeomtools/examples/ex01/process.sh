@@ -5,7 +5,7 @@ opwd=$(pwd)
 build_dir=$(pwd)/__build
 test -d ${build_dir} && rm -fr ${build_dir}
 
-pandoc -r rst -w html README.rst -o geomtools_ex01_README.html
+pandoc -r rst -w html README.rst -o geomtools-ex01_README.html
 
 mkdir ${build_dir}
 cd ${build_dir}
@@ -30,8 +30,9 @@ geomtools_inspector \
    --with-visu --visu-view-3d
 
 rm -f ./ex01
+rm -f ./geomtools-ex01.C
 rm -f ./geomtools-ex01.gdml
-rm -f ./geomtools_ex01_README.html
+rm -f ./geomtools-ex01_README.html
 rm -fr ${build_dir}
 find . -name "*~" -exec rm -f \{\} \;
 

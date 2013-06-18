@@ -794,6 +794,7 @@ int export_gdml(const geomtools::manager & geo_mgr_,
   }
   GDML.export_gdml (fgdml, geometry_factory, top_mapping_model_name);
   DT_LOG_NOTICE(logging_, "GDML file '" << fgdml << "' has been generated !");
+  std::cerr << "GDML file '" << fgdml << "' has been generated !" << std::endl;
 
   if (root_display_) {
     DT_LOG_NOTICE(logging_, "Importing GDML file '" << fgdml << "' from ROOT TGeoManager...");
