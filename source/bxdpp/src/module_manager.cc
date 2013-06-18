@@ -198,15 +198,6 @@ namespace dpp {
                 "Invalid logging priority !");
     set_logging_priority(p);
 
-    // if (setup_.has_key ("logging.priority")) {
-    //   std::string pl = setup_.fetch_string ("logging.priority");
-    //   datatools::logger::priority p = datatools::logger::get_priority(pl);
-    //   DT_THROW_IF(p == datatools::logger::PRIO_UNDEFINED,
-    //               std::logic_error,
-    //               "Invalid logging priority '" << pl << "' !");
-    //   set_logging_priority (p);
-    // }
-
     if (setup_.has_flag ("factory.debug")) {
       _flags_ |= FACTORY_DEBUG;
     }
