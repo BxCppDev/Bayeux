@@ -207,8 +207,8 @@ int main (int argc_, char ** argv_)
         // } else if (option == "-MT" || option == "--mapping-top-model") {
         //   top_mapping_model_name = argv_[++iarg];
         } else {
-          DT_LOG_WARNING (logging, "Ignoring option '" << option << "' !");
           print_help ();
+          DT_LOG_WARNING (logging, "Ignoring option '" << option << "' !");
         }
       } else {
         std::string argument = token;
