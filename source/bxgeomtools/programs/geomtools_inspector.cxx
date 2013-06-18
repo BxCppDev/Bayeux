@@ -389,7 +389,6 @@ int main (int argc_, char ** argv_)
             } else {
               DT_LOG_WARNING(logging, "Sorry ! Mapping is only supported by a geometry manager !");
             }
-            command.clear();
           } else if (command == "x" || command == "export_gdml") {
             if (use_geo_mgr) {
               std::string gdml_file;
