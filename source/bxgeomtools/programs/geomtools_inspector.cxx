@@ -317,7 +317,12 @@ int main (int argc_, char ** argv_)
       bool go_on = true;
       std::string last_visu_object_name;
       /// Browser main loop :
-      do {
+      while (go_on) {
+        if (!std::cin || std::cin.eof()) {
+          std::cerr << std::flush;
+          std::cout << std::endl;
+          break;
+        }
         // Prompt:
         std::cerr << prompt << std::flush;
         if (! last_visu_object_name.empty ()) {
@@ -325,6 +330,10 @@ int main (int argc_, char ** argv_)
         }
         std::string line;
         std::getline (std::cin, line);
+        //std::cerr << "DEVEL: LINE = " << line << std::endl;
+        if (! std::cin || std::cin.eof()) {
+          go_on = false;
+        }
         {
           // Skip blank line and lines starting with '#' :
           std::istringstream dummy(line);
@@ -334,11 +343,17 @@ int main (int argc_, char ** argv_)
           if (word[0] == '#') continue;
         }
         // Manage continuation marks :
-        while (line[line.length()-1] == '\\') {
-          std::cerr << prompt_continue << std::flush;
-          std::string more;
-          std::getline (std::cin, more);
-          line += more;
+        if (go_on) {
+          while (line[line.length()-1] == '\\') {
+            line = line.substr(0, line.length()-1);
+            std::cerr << prompt_continue << std::flush;
+            std::string more;
+            std::getline (std::cin, more);
+            if (!std::cin || std::cin.eof()) {
+              go_on = false;
+            }
+            line += more;
+          }
         }
         // Interpreter block:
         {
@@ -497,11 +512,22 @@ int main (int argc_, char ** argv_)
               std::cerr << "error: " << "'" << command << "'" << " : Invalid command !" << std::endl;
             }
           }
-          if (! go_on) break;
+          // if (! go_on) {
+          //   std::cerr << "EXITING browser main loop.\n";
+          //   break;
+          // }
           if (visu_object_name.empty ()) continue;
           visu_object_name.clear();
         } // End of interpreter block.
-      } while (go_on); /// End of browser main loop.
+        if (std::cin.eof()) {
+          go_on = false;
+          break;
+        }
+        if (! go_on) {
+          //std::cerr << "DEVEL: EXITING browser main loop.\n";
+          break;
+        }
+      } // End of browser main loop.
     } // end of interactive
   }
   catch (std::exception & x) {
