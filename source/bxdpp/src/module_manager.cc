@@ -322,6 +322,7 @@ namespace dpp {
                     <<  module_entry_.get_module_name ()
                     << "'...");
       base_module & the_module = module_entry_.grab_module ();
+      the_module.set_name (module_entry_.get_module_name ());
       if (has_service_manager ()) {
         the_module.initialize (module_entry_.get_module_config (),
                                grab_service_manager (),
