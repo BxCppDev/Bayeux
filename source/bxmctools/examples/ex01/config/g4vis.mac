@@ -14,14 +14,18 @@
 #/vis/ASCIITree/verbose 3
 
 #
+/tracking/storeTrajectory 1
 /vis/open OGLIX
+/vis/viewer/set/style wireframe
 /vis/viewer/set/viewpointThetaPhi 30 50
 /vis/viewer/zoom 2
+/vis/viewer/flush
+/vis/scene/create
+/vis/scene/add/logicalVolume world.log
+/vis/sceneHandler/attach
 /vis/scene/add/axes 0 0 0 10 cm
 /vis/scene/add/logicalVolume world.log
-/vis/viewer/set/style wireframe
 /vis/scene/add/trajectories
-/tracking/storeTrajectory 1
 /vis/drawVolume
 
 

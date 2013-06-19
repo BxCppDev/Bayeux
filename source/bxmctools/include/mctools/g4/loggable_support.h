@@ -27,6 +27,8 @@ namespace mctools {
 
       datatools::logger::priority get_logging_priority() const;
 
+      void set_logging_priority(const std::string & priority_label_);
+
       void set_logging_priority(datatools::logger::priority);
 
       bool is_debug () const;

@@ -78,17 +78,6 @@ namespace mctools {
       /// Check initialization flag
       bool is_initialized () const;
 
-      /// Set debug flag
-      void set_debug (bool d_);
-
-      /// Check debug flag
-      bool is_debug () const;
-
-      /// Set verbose flag
-      void set_verbose (bool d_);
-
-      /// Check verbose flag
-      bool is_verbose () const;
 
       /// Return a non-mutable reference to the simulation manager
       const manager & get_manager () const;
@@ -172,24 +161,22 @@ namespace mctools {
 
     private:
 
-      bool _initialized_; /// Initialization flag
-      bool _debug_; /// Debug flag
-      bool _verbose_; /// Verbose flag
-      bool _abort_on_error_; /// Flag to force abortion on error while building the geometry setup
+      bool _initialized_;                        /// Initialization flag
+      bool _abort_on_error_;                     /// Flag to force abortion on error while building the geometry setup
 
       //! Main Geant4 manager:
-      manager * _g4_manager_;
+      manager * _g4_manager_;                    /// Handle to the Geant4 simulation manager
 
       //! Geometry manager:
       const geomtools::manager * _geom_manager_; /// Reference to the geometry manager
 
       //! Magnetic field manager:
-      bool   _using_mag_field_; /// Flag to use the Geant4 magnetic field system
-      std::string _emfield_geom_plugin_name_; /// The name of the EM field manager geometry plugin
+      bool   _using_mag_field_;                  /// Flag to use the Geant4 magnetic field system
+      std::string _emfield_geom_plugin_name_;    /// The name of the EM field manager geometry plugin
       const emfield::electromagnetic_field_manager * _mag_field_manager_; /// Reference to the EM field manager
-      double _miss_distance_unit_; /// Default miss distance length unit
-      double _general_miss_distance_; /// Default general miss distance
-      datatools::properties _mag_field_aux_; /// Auxiliary properties related to magnetic field
+      double _miss_distance_unit_;               /// Default miss distance length unit
+      double _general_miss_distance_;            /// Default general miss distance
+      datatools::properties _mag_field_aux_;     /// Auxiliary properties related to magnetic field
 
       //! User limits:
       bool                      _using_user_limits_;

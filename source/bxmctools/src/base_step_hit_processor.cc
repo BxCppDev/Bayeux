@@ -37,9 +37,9 @@ namespace mctools {
   void base_step_hit_processor::set_debug(bool d_)
   {
     if (d_) {
-       _logging_priority = datatools::logger::PRIO_DEBUG;
+      _logging_priority = datatools::logger::PRIO_DEBUG;
     } else {
-       _logging_priority = datatools::logger::PRIO_NOTICE;
+      _logging_priority = datatools::logger::PRIO_NOTICE;
     }
     return;
   }
@@ -127,19 +127,19 @@ namespace mctools {
       {
         the_hits.push_back(_pool->create());
         /*
-       //////////// 2013-05-13 FM : remove this test for now, may be unuseful...
-        // There is 2 references here:
-        // - one from the pool itself
-        // - the other fresh one from this collection of hits
-        if (the_hits.back().count() > 2)
-          {
-            ostringstream message;
-            message << "mctools::base_step_hit_processor::add_new_hit: "
-                    << "This hit is already referenced by another handle !";
-            th row logic_error(message.str());
-          }
+//////////// 2013-05-13 FM : remove this test for now, may be unuseful...
+// There is 2 references here:
+// - one from the pool itself
+// - the other fresh one from this collection of hits
+if (the_hits.back().count() > 2)
+{
+ostringstream message;
+message << "mctools::base_step_hit_processor::add_new_hit: "
+<< "This hit is already referenced by another handle !";
+th row logic_error(message.str());
+}
         */
-      }
+           }
     else
       {
         the_hits.push_back(simulated_data::hit_handle_type(new base_step_hit()));
@@ -219,50 +219,42 @@ namespace mctools {
   void base_step_hit_processor::initialize(const datatools::properties & config_,
                                            datatools::service_manager & service_mgr_)
   {
-    if (config_.has_flag ("verbose"))  {
-      set_logging_priority(datatools::logger::PRIO_NOTICE);
-    }
 
-    if (config_.has_flag ("debug")) {
-      set_logging_priority(datatools::logger::PRIO_DEBUG);
-    }
-
-    if (config_.has_key("logging.priority")) {
-      std::string prio_label = config_.fetch_string("logging.priority");
-      datatools::logger::priority p = datatools::logger::get_priority(prio_label);
-      DT_THROW_IF(p == datatools::logger::PRIO_UNDEFINED,
-                  std::domain_error,
-                  "Unknow logging priority ``" << prio_label << "`` !");
-      set_logging_priority(p);
-    }
-
+    // Logging priority:
+    datatools::logger::priority lp
+      = datatools::logger::extract_logging_configuration(config_,
+                                                         datatools::logger::PRIO_WARNING);
+    DT_THROW_IF(lp ==  datatools::logger::PRIO_UNDEFINED,
+                std::logic_error,
+                "Invalid logging priority !");
+    set_logging_priority(lp);
 
     if (! has_geom_manager())  {
-        if (config_.has_key("geometry_service.name")) {
-            std::string geo_service_name = config_.fetch_string("geometry_service.name");
-            DT_THROW_IF (! service_mgr_.has(geo_service_name),
-                         logic_error,
-                         "No service named '" << geo_service_name << "' found in the service manager !");
-            DT_THROW_IF (! service_mgr_.is_a<geomtools::geometry_service>(geo_service_name),
-                         logic_error,
-                         "Service named '" << geo_service_name << "' is not a geometry service !");
-            const geomtools::geometry_service & geo_srv = service_mgr_.get<geomtools::geometry_service>(geo_service_name);
-            DT_LOG_NOTICE(_logging_priority,
-                          "Set the geometry manager for '" << geo_service_name
-                          << "' service in the '" <<  get_name() << "' step hit processor.");
-            set_geom_manager(geo_srv.get_geom_manager());
-          }
+      if (config_.has_key("geometry_service.name")) {
+        std::string geo_service_name = config_.fetch_string("geometry_service.name");
+        DT_THROW_IF (! service_mgr_.has(geo_service_name),
+                     logic_error,
+                     "No service named '" << geo_service_name << "' found in the service manager !");
+        DT_THROW_IF (! service_mgr_.is_a<geomtools::geometry_service>(geo_service_name),
+                     logic_error,
+                     "Service named '" << geo_service_name << "' is not a geometry service !");
+        const geomtools::geometry_service & geo_srv = service_mgr_.get<geomtools::geometry_service>(geo_service_name);
+        DT_LOG_NOTICE(_logging_priority,
+                      "Set the geometry manager for '" << geo_service_name
+                      << "' service in the '" <<  get_name() << "' step hit processor.");
+        set_geom_manager(geo_srv.get_geom_manager());
       }
+    }
 
     if (config_.has_key("hit.category")) {
-        string hit_cat = config_.fetch_string("hit.category");
-        set_hit_category(hit_cat);
-      }
+      string hit_cat = config_.fetch_string("hit.category");
+      set_hit_category(hit_cat);
+    }
 
     if (config_.has_key("sensitive.category")) {
-        string sens_cat = config_.fetch_string("sensitive.category");
-        set_sensitive_category(sens_cat);
-      }
+      string sens_cat = config_.fetch_string("sensitive.category");
+      set_sensitive_category(sens_cat);
+    }
 
     // Export others 'sensitive' properties :
     config_.export_starting_with(_auxiliaries, "sensitive.");
@@ -304,19 +296,19 @@ namespace mctools {
 
     // Check if we should install a private hit pool in this processor :
     if (! has_pool()) {
-        if (config_.has_flag("use_private_pool")) {
-            size_t capacity = DEFAULT_POOL_CAPACITY;
+      if (config_.has_flag("use_private_pool")) {
+        size_t capacity = DEFAULT_POOL_CAPACITY;
 
-            // Use a dedicated capacity for the private pool :
-            if (config_.has_key("private_pool_capacity")) {
-                int cap = config_.fetch_integer("private_pool_capacity");
-                DT_THROW_IF (cap < 1,logic_error,"Invalid hit pool capacity(" << cap << ") !");
-                capacity =(size_t) cap;
-              }
-            setup_private_pool(capacity);
-            if (is_debug()) _private_pool->dump(clog, "Private hit pool: ");
-          }
+        // Use a dedicated capacity for the private pool :
+        if (config_.has_key("private_pool_capacity")) {
+          int cap = config_.fetch_integer("private_pool_capacity");
+          DT_THROW_IF (cap < 1,logic_error,"Invalid hit pool capacity(" << cap << ") !");
+          capacity =(size_t) cap;
+        }
+        setup_private_pool(capacity);
+        if (is_debug()) _private_pool->dump(clog, "Private hit pool: ");
       }
+    }
 
     return;
   }
@@ -326,48 +318,47 @@ namespace mctools {
   {
     bool devel = false;
 
-    if (a_sim_data.use_handle_hit_collection())
-      {
-        // Check if the event has a collection of hits
-        // within the requested hit category:
-        simulated_data::step_hits_dict_type::iterator found
-          = a_sim_data.grab_step_hits_dict().find(_hit_category);
-        if (found == a_sim_data.grab_step_hits_dict().end()) {
-          DT_LOG_TRACE(_logging_priority, "Add the category '" << _hit_category
-                       << "' list of hits in the current event...");
-          {
-            simulated_data::hit_handle_collection_type dummy;
-            a_sim_data.grab_step_hits_dict()[_hit_category] = dummy;
-          }
-          found = a_sim_data.grab_step_hits_dict().find(_hit_category);
+    if (a_sim_data.use_handle_hit_collection()) {
+      // Check if the event has a collection of hits
+      // within the requested hit category:
+      simulated_data::step_hits_dict_type::iterator found
+        = a_sim_data.grab_step_hits_dict().find(_hit_category);
+      if (found == a_sim_data.grab_step_hits_dict().end()) {
+        DT_LOG_TRACE(_logging_priority, "Add the category '" << _hit_category
+                     << "' list of hits in the current event...");
+        {
+          simulated_data::hit_handle_collection_type dummy;
+          a_sim_data.grab_step_hits_dict()[_hit_category] = dummy;
         }
-
-        // Pickup a reference to the proper list of handles of hits:
-        simulated_data::hit_handle_collection_type & hits = found->second;
-
-        // Invoke the virtual processing method:
-        process(the_base_step_hits, hits);
+        found = a_sim_data.grab_step_hits_dict().find(_hit_category);
       }
+
+      // Pickup a reference to the proper list of handles of hits:
+      simulated_data::hit_handle_collection_type & hits = found->second;
+
+      // Invoke the virtual processing method:
+      process(the_base_step_hits, hits);
+    }
 
     if (a_sim_data.use_plain_hit_collection()) {
-        // Check if the event has a collection of plain hits
-        // within the requested hit category:
-        simulated_data::plain_step_hits_dict_type::iterator found
-          = a_sim_data.grab_plain_step_hits_dict().find(_hit_category);
-        if (found == a_sim_data.grab_plain_step_hits_dict().end()) {
-          DT_LOG_TRACE(_logging_priority,"Add the category '" << _hit_category
-                       << "' list of hits in the current event...");
-          simulated_data::hit_collection_type dummy;
-          a_sim_data.grab_plain_step_hits_dict()[_hit_category] = dummy;
-          found = a_sim_data.grab_plain_step_hits_dict().find(_hit_category);
-        }
-
-        // Pickup a reference to the proper list of hits:
-        simulated_data::hit_collection_type & hits = found->second;
-
-        // Invoke the virtual processing method:
-        process(the_base_step_hits, hits);
+      // Check if the event has a collection of plain hits
+      // within the requested hit category:
+      simulated_data::plain_step_hits_dict_type::iterator found
+        = a_sim_data.grab_plain_step_hits_dict().find(_hit_category);
+      if (found == a_sim_data.grab_plain_step_hits_dict().end()) {
+        DT_LOG_TRACE(_logging_priority,"Add the category '" << _hit_category
+                     << "' list of hits in the current event...");
+        simulated_data::hit_collection_type dummy;
+        a_sim_data.grab_plain_step_hits_dict()[_hit_category] = dummy;
+        found = a_sim_data.grab_plain_step_hits_dict().find(_hit_category);
       }
+
+      // Pickup a reference to the proper list of hits:
+      simulated_data::hit_collection_type & hits = found->second;
+
+      // Invoke the virtual processing method:
+      process(the_base_step_hits, hits);
+    }
 
     return;
   }

@@ -2,7 +2,7 @@
 
 do_clean=1
 do_simulation=1
-
+only_build=0
 while [ -n "$1" ]; do
     token="$1"
     if [ "x${token}" == "x--no-clean" -o "x${token}" == "x-C" ]; then
@@ -13,6 +13,8 @@ while [ -n "$1" ]; do
 	do_simulation=1
     elif [ "x${token}" == "x--no-simulation" -o "x${token}" == "x-S" ]; then
 	do_simulation=0
+    elif [ "x${token}" == "x--only-build" -o "x${token}" == "x-o" ]; then
+	only_build=1
     fi
     shift 1
 done
@@ -35,12 +37,14 @@ cmake \
 make
 make install
 
-#exit 0
+if [ ${only_build} -eq 1 ]; then
+    exit 0
+fi
 cd ..
 ls -l
 
 echo -e "\nCheck the geometry..." 1>&2
-geomtools_inspector \
+echo "q" | geomtools_inspector \
     --manager-config config/geometry/manager.conf \
     --without-visu
 
@@ -118,6 +122,10 @@ if [ $do_simulation -eq 1 ]; then
 	--output-data-file "mctools_ex01_${eg_name}_${vg_name}.xml" \
 	--g4-macro "config/g4vis.mac"
 
+
+    echo -e "\nSet LD_LIBRARY_PATH..." 1>&2
+    export LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH}
+
     echo -e "\nBrowse the output plain simulated data file..." 1>&2
     ./ex01_read_plain_simdata \
 	--interactive  \
@@ -128,7 +136,7 @@ if [ $do_simulation -eq 1 ]; then
     echo -e "\nRun the Geant4 simulation non-interactively..." 1>&2
     g4_production \
         --logging-priority "warning" \
-	--number-of-events 10 \
+	--number-of-events 100 \
         --number-of-events-modulo 0 \
         --batch \
         --config "config/g4_manager.conf" \
@@ -163,7 +171,7 @@ if [ $do_simulation -eq 1 ]; then
 
 fi
 
-if [ $do_clean -eq 1 ]; then
+if [ ${do_clean} -eq 1 ]; then
     rm -f ex01_read_plain_simdata
     rm -f histos_Co60.root
     rm -f mctools_ex01-1.0.gdml
@@ -176,6 +184,7 @@ if [ $do_clean -eq 1 ]; then
     rm -f prng_states.save.~backup~
     rm -f mctools_ex01_Co60_source_0_bulk.data.gz
     rm -fr ${build_dir}
+    rm -fr ./lib
     find . -name "*~" -exec rm -f \{\} \;
 fi
 

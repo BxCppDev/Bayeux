@@ -70,7 +70,7 @@ namespace mctools {
     }
 
     // A sensitive category is mandatory for this processor,
-    // i.e. the one defined for the target scintillator blocks:
+    // i.e. the one defined for the target calorimeter blocks:
     DT_THROW_IF (_mapping_category_.empty (), std::logic_error,
                  "Missing 'mapping_category' string property for processor '" << get_name () << "' !");
 

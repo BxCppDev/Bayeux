@@ -88,7 +88,7 @@ namespace mctools {
 
   protected:
 
-    /// Main hidden algorithm
+    /// Main non-public algorithm
     void _process(const base_step_hit_processor::step_hit_ptr_collection_type & base_step_hits_,
                   simulated_data::hit_handle_collection_type * calo_hits_,
                   simulated_data::hit_collection_type * plain_calo_hits_);
@@ -114,12 +114,10 @@ namespace mctools {
                                                         * of the geometry category marked
                                                         * as 'any' for matching and saving MC hits;
                                                         * Used in case of partioned sensitive
-                                                        * scintillator volumes.
+                                                        * volumes.
                                                         */
     // internals:
-    const geomtools::mapping * _mapping_; /** The reference
-                                           * geometry ID mapping
-                                           */
+    const geomtools::mapping * _mapping_; /** The reference geometry ID mapping */
 
     const geomtools::id_mgr::categories_by_name_col_type * _categories_; /// Handle to a dictionary of categories keyed by name
 

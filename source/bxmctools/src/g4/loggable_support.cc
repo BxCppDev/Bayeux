@@ -65,6 +65,15 @@ namespace mctools {
       return _logging_priority >= datatools::logger::PRIO_NOTICE;
     }
 
+    void loggable_support::set_logging_priority(const std::string & priority_label_)
+    {
+      datatools::logger::priority p = datatools::logger::get_priority(priority_label_);
+      DT_THROW_IF(p == datatools::logger::PRIO_UNDEFINED,
+                  std::logic_error,
+                  "Invalid logging priority label '" << priority_label_ << "' !");
+      set_logging_priority(p);
+    }
+
     void loggable_support::set_logging_priority(datatools::logger::priority p)
     {
       _logging_priority = p;
@@ -74,20 +83,6 @@ namespace mctools {
     {
       set_logging_priority(datatools::logger::extract_logging_configuration(config_,
                                                                             datatools::logger::PRIO_WARNING));
-      /*
-      if (config_.has_key("logging.priority")) {
-        std::string ps = config_.fetch_string("logging.priority");
-        datatools::logger::priority p = datatools::logger::get_priority(ps);
-        DT_THROW_IF(p == datatools::logger::PRIO_UNDEFINED,
-                    std::logic_error,
-                    "Invalid logging priority label '" << ps << "' !");
-        set_logging_priority(p);
-      } else if (config_.has_flag("debug")) {
-        set_debug(true);
-      } else if (config_.has_flag("verbose")) {
-        set_verbose(true);
-      }
-      */
       return;
     }
 

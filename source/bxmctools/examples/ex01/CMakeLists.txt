@@ -24,12 +24,23 @@ find_package(mctools 1.0.0 REQUIRED)
 
 include_directories(${PROJECT_SOURCE_DIR} ${mctools_INCLUDE_DIRS})
 
+add_library(mctools_ex01 SHARED ex01_inspector.h ex01_inspector.cc)
+
 add_executable(ex01_read_plain_simdata ex01_read_plain_simdata.cxx)
 
-target_link_libraries(ex01_read_plain_simdata ${mctools_LIBRARY}
+target_link_libraries(ex01_read_plain_simdata mctools_ex01
+					      ${mctools_LIBRARY}
 					      ${mctools_BIO_LIBRARY}
 					      ${geomtools_BIO_LIBRARY}
 					      ${datatools_BIO_LIBRARY} )
+
+install( FILES
+         ${PROJECT_BINARY_DIR}/libmctools_ex01${CMAKE_SHARED_LIBRARY_SUFFIX}
+         DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
+         PERMISSIONS OWNER_READ OWNER_EXECUTE
+         GROUP_READ GROUP_EXECUTE
+         WORLD_READ WORLD_EXECUTE
+       )
 
 install ( FILES
     ${PROJECT_BINARY_DIR}/ex01_read_plain_simdata
