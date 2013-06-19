@@ -367,6 +367,10 @@ int main (int argc_, char ** argv_)
             go_on = false;
           } else if (command == "s" || command == "status") {
             print_status(geo_mgr, std::cerr);
+          } else if (command == "p" || command == "print_manager") {
+            geo_mgr.tree_dump(std::cout, "Geometry manager : ");
+          } else if (command == "f" || command == "print_factory") {
+            geo_mgr.get_factory().tree_dump(std::cout, "Geometry model factory : ");
           } else if (command == "m" || command == "model") {
             std::string model_name;
             command_iss >> model_name >> std::ws;
