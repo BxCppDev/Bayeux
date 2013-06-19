@@ -958,7 +958,12 @@ int main (int argc_, char ** argv_)
 
       ("load-dll,l",
        po::value<std::vector<std::string> > (),
-       "load a DLL"
+       "load a dynamic library"
+       )
+
+      ("dll-config",
+       po::value<std::vector<std::string> > (),
+       "load a configuration file for dynamic library loading"
        )
 
       ("interactive,I",
@@ -1093,6 +1098,10 @@ int main (int argc_, char ** argv_)
 
     if (vm.count ("load-dll")) {
       LL_dlls = vm["load-dll"].as<std::vector<std::string> > ();
+    }
+
+    if (vm.count ("dll-config")) {
+      LL_config = vm["dll-config"].as<std::string> ();
     }
 
     uint32_t LL_flags = datatools::library_loader::allow_unregistered;
