@@ -81,8 +81,7 @@ namespace dpp {
   //   return;
   // }
 
-  void
-  base_module::set_name (const std::string & a_new_value)
+  void base_module::set_name (const std::string & a_new_value)
   {
     DT_THROW_IF(is_initialized (),
                 std::logic_error,
@@ -93,14 +92,12 @@ namespace dpp {
     return;
   }
 
-  const std::string &
-  base_module::get_name () const
+  const std::string & base_module::get_name () const
   {
     return _name;
   }
 
-  void
-  base_module::_set_name (const std::string & a_new_value)
+  void base_module::_set_name (const std::string & a_new_value)
   {
     _name = a_new_value;
     return;
