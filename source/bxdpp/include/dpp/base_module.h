@@ -122,7 +122,7 @@ namespace dpp {
     virtual void reset () = 0;
 
     /// Default constructor :
-    base_module(datatools::logger::priority p = datatools::logger::PRIO_FATAL);
+    base_module(datatools::logger::priority p = datatools::logger::PRIO_NOTICE);
 
     /// Destructor :
     virtual ~base_module ();
