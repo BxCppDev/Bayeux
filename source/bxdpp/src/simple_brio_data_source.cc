@@ -209,9 +209,7 @@ namespace dpp {
                  std::logic_error,
                  "No source label is available !");
     if (_source_record.status == source_record::STATUS_CLOSED) {
-      std::clog << datatools::io::notice
-                << "dpp::simple_brio_data_source::has_next_record: "
-                << "Opening data source..." << std::endl;
+      DT_LOG_NOTICE (get_logging_priority (), "Opening data source...");
       this->simple_brio_data_source::open ();
     }
     return _has_next_record;
@@ -250,8 +248,8 @@ namespace dpp {
   }
 
   // ctor:
-  simple_brio_data_source::simple_brio_data_source (uint32_t a_flags)
-    : i_data_source (a_flags)
+  simple_brio_data_source::simple_brio_data_source (datatools::logger::priority a_priority)
+    : i_data_source (a_priority)
   {
     _brio_file_reader_ = 0;
     return;
@@ -259,8 +257,8 @@ namespace dpp {
 
   // ctor:
   simple_brio_data_source::simple_brio_data_source (const std::string & a_source_label,
-                                                    uint32_t a_flags)
-    : i_data_source (a_source_label, a_flags)
+                                                    datatools::logger::priority a_priority)
+    : i_data_source (a_source_label, a_priority)
   {
     _brio_file_reader_ = 0;
     this->open ();

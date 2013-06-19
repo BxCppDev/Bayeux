@@ -392,7 +392,7 @@ int main (int argc_, char ** argv_)
       if (debug) std::clog << datatools::io::notice
                            << "Using data source '" << input_file << "'..." << std::endl;
       dpp::simple_data_source source (input_file);
-      source.set_debug_level (debug ? 1: 0);
+      if (debug) source.set_logging_priority (datatools::logger::PRIO_DEBUG);
 
       // Loop on the event records from the data source file :
       int counts = 0;

@@ -385,10 +385,7 @@ namespace dpp {
       _file_index_++;
       DT_LOG_TRACE(_logging, "_file_index_ = " << _file_index_);
       if (_file_index_ >= _filenames_.size ()) {
-        std::ostringstream message;
-        message << "dpp::io_module::_load: "
-                << "No more available input data file !";
-        std::cerr << datatools::io::error << message.str () << std::endl;
+        DT_LOG_ERROR (get_logging_priority (), "No more available input data file !");
         load_status = PROCESS_FATAL;
         return load_status;
       }
@@ -410,12 +407,11 @@ namespace dpp {
         load_status = PROCESS_FATAL;
         return load_status;
       }
-      uint32_t input_flags = dpp::i_data_source::blank;
       if (brio_format) {
-        _brio_source_ = new dpp::simple_brio_data_source (source_label, input_flags);
+        _brio_source_ = new dpp::simple_brio_data_source (source_label, get_logging_priority ());
         _source_ = _brio_source_;
       } else {
-        _bio_source_ = new dpp::simple_data_source (source_label, input_flags);
+        _bio_source_ = new dpp::simple_data_source (source_label, get_logging_priority ());
         _source_ = _bio_source_;
       }
       if (! _source_->is_open ()) _source_->open ();
@@ -536,16 +532,15 @@ namespace dpp {
         store_status = PROCESS_FATAL;
         return store_status;
       }
-      uint32_t output_flags = dpp::i_data_sink::blank;
-      if (_preserve_existing_output_) {
-        output_flags |= dpp::i_data_sink::preserve_existing_sink;
-      }
       if (brio_format) {
-        _brio_sink_ = new dpp::simple_brio_data_sink (sink_label, output_flags);
+        _brio_sink_ = new dpp::simple_brio_data_sink (sink_label, get_logging_priority ());
         _sink_ = _brio_sink_;
       } else {
-        _bio_sink_ = new dpp::simple_data_sink (sink_label, output_flags);
+        _bio_sink_ = new dpp::simple_data_sink (sink_label, get_logging_priority ());
         _sink_ = _bio_sink_;
+      }
+      if (_preserve_existing_output_) {
+        _brio_sink_->set_preserve_existing_sink (true);
       }
       if (! _sink_->is_open ()) _sink_->open ();
       _file_record_counter_ = 0;

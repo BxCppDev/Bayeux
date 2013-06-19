@@ -43,19 +43,11 @@
 #include <datatools/things.h>
 
 namespace dpp {
-  
+
   /// \brief Data sink/writer abstract interface
   class i_data_sink
   {
   public:
-    
-    enum flags_type
-      {
-        blank    = 0x0,
-        debug    = 0x1,
-        preserve_existing_sink = 0x4,
-        defaults = blank,
-      };
 
     /// \brief Internal class of the i_data_sink interface class
     struct sink_record
@@ -70,19 +62,19 @@ namespace dpp {
       void reset ();
     };
 
-    bool is_debug () const;
+    /// Set logging priority
+    void set_logging_priority(datatools::logger::priority p);
 
-    int get_debug_level () const;
+    /// Returns logging priority
+    datatools::logger::priority get_logging_priority() const;
 
-    void set_debug_level (int);
- 
     void set_preserve_existing_sink (bool a_value);
 
     bool is_preserve_existing_sink () const;
 
   protected:
 
-    void set_defaults_ (uint32_t a_flags);
+    void set_defaults_ (datatools::logger::priority a_priority);
 
   public:
 
@@ -100,23 +92,24 @@ namespace dpp {
 
     virtual void close () = 0;
 
-    virtual void reset () = 0; 
+    virtual void reset () = 0;
 
   public:
 
     // ctor:
-    i_data_sink (uint32_t a_flags = 0);
+    i_data_sink (datatools::logger::priority a_priority = datatools::logger::PRIO_NOTICE);
 
     // ctor:
-    i_data_sink (const std::string & a_sink_label, uint32_t a_flags = 0);
+    i_data_sink (const std::string & a_sink_label,
+                 datatools::logger::priority a_priority = datatools::logger::PRIO_NOTICE);
 
     // dtor:
     virtual ~i_data_sink ();
 
   protected:
 
-    int         _debug_level;
-    bool        _preserve_existing_sink;
+    datatools::logger::priority _logging; /// The logging priority
+    bool        _preserve_existing_sink;  /// Preserve flag
     sink_record _sink_record;
 
   };

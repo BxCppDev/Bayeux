@@ -249,12 +249,12 @@ int main (int argc_, char ** argv_)
         {
           if (debug) std::clog << datatools::io::notice
                                << "Using data source '" << source_label << "'..." << std::endl;
-          uint32_t input_flags;
+          datatools::logger::priority priority = datatools::logger::PRIO_NOTICE;
           if (debug)
             {
-              input_flags |= dpp::simple_data_source::debug;
+              priority = datatools::logger::PRIO_DEBUG;
             }
-          dpp::simple_data_source source (source_label, input_flags);
+          dpp::simple_data_source source (source_label, priority);
 
           // Loop on the event records from the data source file :
           if (debug) std::clog << datatools::io::debug

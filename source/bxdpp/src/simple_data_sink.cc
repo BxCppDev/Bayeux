@@ -159,16 +159,16 @@ namespace dpp {
     return done;
   }
 
-  simple_data_sink::simple_data_sink (uint32_t a_flags)
-    : i_data_sink (a_flags)
+  simple_data_sink::simple_data_sink (datatools::logger::priority a_priority)
+    : i_data_sink (a_priority)
   {
-    this->simple_data_sink::set_defaults_ (a_flags);
+    this->simple_data_sink::set_defaults_ (a_priority);
     return;
   }
 
   simple_data_sink::simple_data_sink (const std::string & a_sink_label,
-                                      uint32_t a_flags)
-    : i_data_sink (a_sink_label, a_flags)
+                                      datatools::logger::priority a_priority)
+    : i_data_sink (a_sink_label, a_priority)
   {
     _boost_io_file_writer_ = 0;
     this->simple_data_sink::open ();
@@ -186,7 +186,7 @@ namespace dpp {
 // end of simple_data_sink.cc
 /*
 ** Local Variables: --
-** mode: c++
+** mode: c++ --
 ** indent-tabs-mode: nil --
 ** c-file-style: "gnu" --
 ** tab-width: 2 --

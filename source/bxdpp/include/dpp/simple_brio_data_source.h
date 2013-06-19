@@ -57,7 +57,7 @@ namespace dpp {
   public:
 
     virtual bool is_random () const;
-    
+
     virtual void open ();
 
     virtual bool has_next_record ();
@@ -69,11 +69,11 @@ namespace dpp {
     virtual void reset ();
 
     // ctor:
-    simple_brio_data_source (uint32_t a_flags = 0);
+    simple_brio_data_source (datatools::logger::priority a_priority = datatools::logger::PRIO_NOTICE);
 
     // ctor:
     simple_brio_data_source (const std::string & a_source_label,
-                             uint32_t a_flags = 0);
+                             datatools::logger::priority a_priority = datatools::logger::PRIO_NOTICE);
 
     // dtor:
     virtual ~simple_brio_data_source ();

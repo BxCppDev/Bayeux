@@ -29,7 +29,7 @@
  *
  */
 /**
- * 
+ *
  * Standard BOOST I/O file format for SuperNEMO data is :
  *
  *   Data: event record as 'snemo:core::model::event_record' (things)
@@ -41,7 +41,7 @@
  *
  *
  */
-#ifndef DPP_SIMPLE_DATA_SOURCE_H_ 
+#ifndef DPP_SIMPLE_DATA_SOURCE_H_
 #define DPP_SIMPLE_DATA_SOURCE_H_ 1
 
 #include <string>
@@ -64,7 +64,7 @@ namespace dpp {
   {
 
   public:
-    
+
     virtual void open ();
 
     virtual bool has_next_record ();
@@ -76,13 +76,13 @@ namespace dpp {
     virtual void reset ();
 
     // ctor:
-    simple_data_source (uint32_t a_flags = 0);
+    simple_data_source (datatools::logger::priority a_priority = datatools::logger::PRIO_NOTICE);
 
     // ctor:
     simple_data_source (const std::string & a_source_label,
-                        uint32_t a_flags = 0);
+                        datatools::logger::priority a_priority = datatools::logger::PRIO_NOTICE);
 
-    // dtor: 
+    // dtor:
     virtual ~simple_data_source ();
 
   protected:

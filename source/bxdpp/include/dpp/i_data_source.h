@@ -51,13 +51,6 @@ namespace dpp {
 
     static const int64_t UNKNOWN_NUMBER_OF_ENTRIES = -1;
 
-    enum flags_type
-      {
-        blank = 0x0,
-        debug = 0x1,
-        defaults = blank,
-      };
-
     /// \brief Internal class of the i_data_source interface class
     struct source_record
     {
@@ -72,20 +65,20 @@ namespace dpp {
       void reset ();
     };
 
-    bool is_debug () const;
+    /// Set logging priority
+    void set_logging_priority(datatools::logger::priority p);
 
-    int get_debug_level () const;
-
-    void set_debug_level (int);
+    /// Returns logging priority
+    datatools::logger::priority get_logging_priority() const;
 
   protected:
- 
-    void _set_defaults (uint32_t a_flags);
+
+    void _set_defaults (datatools::logger::priority a_priority);
 
     virtual void _check_next_record () = 0;
 
     // Default failing load method :
-    virtual bool _load_record (datatools::things & a_event_record, 
+    virtual bool _load_record (datatools::things & a_event_record,
                                int64_t a_entry);
 
     // Default failing getter method :
@@ -121,19 +114,20 @@ namespace dpp {
     virtual void reset () = 0;
 
     /// Constructor
-    i_data_source (uint32_t a_flags = 0);
+    i_data_source (datatools::logger::priority a_priority = datatools::logger::PRIO_NOTICE);
 
     /// Constructor
-    i_data_source (const std::string & a_source_label, uint32_t a_flags = 0);
+    i_data_source (const std::string & a_source_label,
+                   datatools::logger::priority a_priority = datatools::logger::PRIO_NOTICE);
 
     /// Destructor:
     virtual ~i_data_source ();
 
   protected:
- 
-    int           _debug_level; /// Debug level
-    bool          _has_next_record; /// Next record flag
-    source_record _source_record; /// Record dynamic informations about the data source
+
+    datatools::logger::priority _logging; /// The logging priority
+    bool          _has_next_record;       /// Next record flag
+    source_record _source_record;         /// Record dynamic informations about the data source
 
   };
 

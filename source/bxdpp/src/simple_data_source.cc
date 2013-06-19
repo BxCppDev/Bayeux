@@ -152,7 +152,7 @@ namespace dpp {
     namespace ds = datatools;
     //cerr << "DEVEL: dpp::simple_data_source::_open_file_source: Entering..." << std::endl;
     DT_THROW_IF (! boost::filesystem::exists (_source_record.effective_label),
-                 std::runtime_error,
+                 std::logic_error,
                  "File '" << _source_record.effective_label << "' does not exist !");
 
     int mode = 0;
@@ -202,9 +202,7 @@ namespace dpp {
                  "No source label is available !");
     if (_source_record.status == source_record::STATUS_CLOSED)
       {
-        std::clog << datatools::io::notice
-             << "dpp::simple_data_source::has_next_record: "
-             << "Opening data source..." << std::endl;
+        DT_LOG_NOTICE (get_logging_priority (), "Opening data source...");
         this->simple_data_source::open ();
       }
     return _has_next_record;
@@ -227,8 +225,8 @@ namespace dpp {
   }
 
   // ctor:
-  simple_data_source::simple_data_source (uint32_t a_flags)
-    : i_data_source (a_flags)
+  simple_data_source::simple_data_source (datatools::logger::priority a_priority)
+    : i_data_source (a_priority)
   {
     _boost_io_file_reader_ = 0;
     return;
@@ -236,8 +234,8 @@ namespace dpp {
 
   // ctor:
   simple_data_source::simple_data_source (const std::string & a_source_label,
-                                          uint32_t a_flags)
-    : i_data_source (a_source_label, a_flags)
+                                          datatools::logger::priority a_priority)
+    : i_data_source (a_source_label, a_priority)
   {
     _boost_io_file_reader_ = 0;
     this->simple_data_source::open ();

@@ -2,9 +2,9 @@
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
  * Last modified : 2013-02-16
- * 
+ *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -17,16 +17,16 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
- * 
- * Description: 
- * 
+ *
+ * Description:
+ *
  *   Generic data sink
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
 #ifndef DPP_SIMPLE_BRIO_DATA_SINK_H_
@@ -50,13 +50,13 @@ namespace dpp {
   /// \brief A brio-based I/O data sink/writer
   class simple_brio_data_sink : public i_data_sink
   {
-   
+
   protected:
-    
+
     void _open_file_sink ();
 
     void _close_file_sink ();
-        
+
   public:
 
     virtual bool is_random () const;
@@ -69,22 +69,23 @@ namespace dpp {
 
     virtual void reset ();
 
-  public: 
+  public:
 
     // ctor:
-    simple_brio_data_sink (uint32_t a_flags = 0);
+    simple_brio_data_sink (datatools::logger::priority a_priority = datatools::logger::PRIO_NOTICE);
+
 
     // ctor:
-    simple_brio_data_sink (const std::string & a_sink_label = "", 
-                           uint32_t a_flags = 0);
-    
+    simple_brio_data_sink (const std::string & a_sink_label = "",
+                           datatools::logger::priority a_priority = datatools::logger::PRIO_NOTICE);
+
     // dtor:
     virtual ~simple_brio_data_sink ();
-    
-  private: 
 
-    brio::writer * _brio_file_writer_; 
-      
+  private:
+
+    brio::writer * _brio_file_writer_;
+
   };
 
 }  // end of namespace dpp

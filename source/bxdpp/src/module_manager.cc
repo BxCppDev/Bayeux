@@ -67,14 +67,9 @@ namespace dpp {
 
   void module_manager::_preload_global_dict ()
   {
-    bool devel = false;
-    if (devel) {
-      std::clog << datatools::io::devel
-                << "dpp::module_manager::_preload_global_dict: "
-                << "Entering..."
-                << std::endl;
-    }
+    DT_LOG_TRACE (get_logging_priority (), "Entering...");
     _factory_register_.import (DATATOOLS_FACTORY_GET_SYSTEM_REGISTER (dpp::base_module));
+    DT_LOG_TRACE (get_logging_priority (), "Exiting.");
     return;
   }
 

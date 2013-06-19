@@ -45,23 +45,15 @@ namespace dpp {
     return;
   }
 
-  bool
-  i_data_source::is_debug () const
+  void i_data_source::set_logging_priority(datatools::logger::priority a_priority)
   {
-    return _debug_level > 0;
-  }
-
-  int
-  i_data_source::get_debug_level () const
-  {
-    return _debug_level;
-  }
-
-  void
-  i_data_source::set_debug_level (int a_debug_level)
-  {
-    _debug_level = a_debug_level;
+    _logging = a_priority;
     return;
+  }
+
+  datatools::logger::priority i_data_source::get_logging_priority() const
+  {
+    return _logging;
   }
 
   bool i_data_source::is_open () const
@@ -87,7 +79,7 @@ namespace dpp {
   bool i_data_source::_load_record (datatools::things & a_event_record,
                                     int64_t a_entry)
   {
-    DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+    DT_LOG_ERROR(get_logging_priority (),
                  "Load by entry number is not supported !");
     return false;
   }
@@ -139,12 +131,9 @@ namespace dpp {
     return _load_record (a_event_record, a_entry);
   }
 
-  void i_data_source::_set_defaults (uint32_t a_flags)
+  void i_data_source::_set_defaults (datatools::logger::priority a_priority)
   {
-    _debug_level = 0;
-    if (a_flags & debug) {
-      _debug_level = 1;
-    }
+    _logging = a_priority;
     _has_next_record = false;
     return;
   }
@@ -160,16 +149,16 @@ namespace dpp {
   }
 
   // ctor:
-  i_data_source::i_data_source (uint32_t a_flags)
+  i_data_source::i_data_source (datatools::logger::priority a_priority)
   {
-    this->_set_defaults (a_flags);
+    this->_set_defaults (a_priority);
     return;
   }
 
   i_data_source::i_data_source (const std::string & a_source_label,
-                                uint32_t a_flags)
+                                datatools::logger::priority a_priority)
   {
-    this->_set_defaults (a_flags);
+    this->_set_defaults (a_priority);
     this->set (a_source_label);
     return;
   }

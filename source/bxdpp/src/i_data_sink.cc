@@ -47,23 +47,15 @@ namespace dpp {
     return;
   }
 
-  bool
-  i_data_sink::is_debug () const
+  void i_data_sink::set_logging_priority(datatools::logger::priority a_priority)
   {
-    return _debug_level > 0;
-  }
-
-  int
-  i_data_sink::get_debug_level () const
-  {
-    return _debug_level;
-  }
-
-  void
-  i_data_sink::set_debug_level (int a_debug_level)
-  {
-    _debug_level = a_debug_level;
+    _logging = a_priority;
     return;
+  }
+
+  datatools::logger::priority i_data_sink::get_logging_priority() const
+  {
+    return _logging;
   }
 
   void i_data_sink::set_preserve_existing_sink (bool a_value)
@@ -95,16 +87,10 @@ namespace dpp {
     return;
   }
 
-  void i_data_sink::set_defaults_ (uint32_t a_flags)
+  void i_data_sink::set_defaults_ (datatools::logger::priority a_priority)
   {
-    _debug_level = 0;
-    if (a_flags & debug) {
-      _debug_level = 1;
-    }
+    _logging = a_priority;
     _preserve_existing_sink = false;
-    if (a_flags & preserve_existing_sink) {
-      _preserve_existing_sink = true;
-    }
     return;
   }
 
@@ -119,16 +105,16 @@ namespace dpp {
   }
 
   // ctor:
-  i_data_sink::i_data_sink (uint32_t a_flags)
+  i_data_sink::i_data_sink (datatools::logger::priority a_priority)
   {
-    this->set_defaults_ (a_flags);
+    this->set_defaults_ (a_priority);
     return;
   }
 
   // ctor:
-  i_data_sink::i_data_sink (const std::string & a_sink_label, uint32_t a_flags)
+  i_data_sink::i_data_sink (const std::string & a_sink_label, datatools::logger::priority a_priority)
   {
-    this->set_defaults_ (a_flags);
+    this->set_defaults_ (a_priority);
     this->set (a_sink_label);
     return;
   }
