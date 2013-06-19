@@ -367,9 +367,9 @@ int main (int argc_, char ** argv_)
             go_on = false;
           } else if (command == "s" || command == "status") {
             print_status(geo_mgr, std::cerr);
-          } else if (command == "p" || command == "print_manager") {
+          } else if (command == "P" || command == "print_manager") {
             geo_mgr.tree_dump(std::cout, "Geometry manager : ");
-          } else if (command == "f" || command == "print_factory") {
+          } else if (command == "F" || command == "print_factory") {
             geo_mgr.get_factory().tree_dump(std::cout, "Geometry model factory : ");
           } else if (command == "m" || command == "model") {
             std::string model_name;
@@ -723,6 +723,8 @@ void print_shell_help (std::ostream & out_)
 {
   out_ <<  "  h | help                       : Print this help                                  \n";
   out_ <<  "  s | status                     : Print the geometry setup status                  \n";
+  out_ <<  "  P | print_manager              : Print the geometry manager                       \n";
+  out_ <<  "  F | print_factory              : Print the geometry model factory                 \n";
   out_ <<  "  M | list_of_models [OPTIONS]   : Print the list of geometry models                \n";
   out_ <<  "                                   use '--help' for the list of options             \n";
   out_ <<  "  L | list_of_logicals [OPTIONS] : Print the list of logical volumes                \n";
