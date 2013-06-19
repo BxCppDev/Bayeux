@@ -7,9 +7,11 @@
 #include <exception>
 
 #include <boost/scoped_ptr.hpp>
+#include <boost/foreach.hpp>
 
 #include <datatools/properties.h>
 #include <datatools/clhep_units.h>
+#include <datatools/library_loader.h>
 
 #include <geomtools/geomtools_config.h>
 #include <geomtools/display_data.h>
@@ -48,9 +50,8 @@ int main (int argc_, char ** argv_)
     std::string VtxOutputFile;
     int         action = 0;
     int         prng_seed = mygsl::random_utils::SEED_INVALID;
-
-    // } else if ((option == "-G") || (option == "--dump-gids")) {
-    //   dump_gids = true;
+    std::vector<std::string> LL_dlls;
+    std::string LL_config;
 
     int iarg = 1;
     while (iarg < argc_) {
@@ -60,6 +61,10 @@ int main (int argc_, char ** argv_)
         if ((option == "-h") || (option == "--help")) {
           print_help(std::cout);
           return 0;
+        } else if (option == "--load-dll") {
+          LL_dlls.push_back (argv_[++iarg]);
+        } else if (option == "--dll-config") {
+          LL_config = argv_[++iarg];
         } else if ((option == "-L") || (option == "--logging-priority")) {
           std::string lp_name = argv_[++iarg];
           logging = datatools::logger::get_priority(lp_name);
@@ -118,6 +123,15 @@ int main (int argc_, char ** argv_)
         }
       }
       iarg++;
+    }
+
+    uint32_t LL_flags = datatools::library_loader::allow_unregistered;
+    datatools::library_loader LL(LL_flags, LL_config);
+    BOOST_FOREACH (const std::string & dll_name, LL_dlls) {
+      DT_LOG_NOTICE(logging,"Loading DLL '" << dll_name << "'...");
+      DT_THROW_IF (LL.load(dll_name) != EXIT_SUCCESS,
+                   std::runtime_error,
+                   "Loading DLL '" << dll_name << "' failed !");
     }
 
     if (action == 0) {
@@ -281,6 +295,10 @@ void print_help(std::ostream & out)
   out << "Options:                                                                    \n";
   out << "  -h, --help :                                                              \n";
   out << "     print this help then exit.                                             \n";
+  out << "  --load-dll LIBRARYNAME :                                                  \n";
+  out << "     load the LIBRARYNAME dynamic library                                   \n";
+  out << "  --dll-config DLLCONFIGFILE :                                              \n";
+  out << "     load the DLLCONFIGFILE dynamic library loader configuration file       \n";
   out << "  -L, --logging-priority PRIORITY :                                         \n";
   out << "     set the logging priority (default=\"fatal\").                          \n";
   out << "  -G, --geometry-manager CONFIGFILE :                                       \n";
