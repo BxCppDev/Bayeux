@@ -296,9 +296,9 @@ void print_help(std::ostream & out)
   out << "  -h, --help :                                                              \n";
   out << "     print this help then exit.                                             \n";
   out << "  --load-dll LIBRARYNAME :                                                  \n";
-  out << "     load the LIBRARYNAME dynamic library                                   \n";
+  out << "     load the LIBRARYNAME dynamic library.                                  \n";
   out << "  --dll-config DLLCONFIGFILE :                                              \n";
-  out << "     load the DLLCONFIGFILE dynamic library loader configuration file       \n";
+  out << "     use the DLLCONFIGFILE dynamic library loader configuration file.       \n";
   out << "  -L, --logging-priority PRIORITY :                                         \n";
   out << "     set the logging priority (default=\"fatal\").                          \n";
   out << "  -G, --geometry-manager CONFIGFILE :                                       \n";
