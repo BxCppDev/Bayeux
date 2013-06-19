@@ -166,8 +166,7 @@ namespace dpp {
     if (_boost_io_file_reader_ == 0)
       {
         _boost_io_file_reader_ = new ds::data_reader;
-        std::clog << "NOTICE: dpp::simple_data_source::_open_file_source: Label is '"
-             << _source_record.effective_label << "'." << std::endl;
+        DT_LOG_NOTICE (get_logging_priority (), "Label is '" << _source_record.effective_label << "'");
         _boost_io_file_reader_->init_multi (_source_record.effective_label);
         _source_record.status = source_record::STATUS_OPENED;
       }
