@@ -98,14 +98,15 @@ namespace emfield {
     return;
   }
 
-  void electromagnetic_field_manager::load (const std::string & rules_filename_)
+  void electromagnetic_field_manager::load (const std::string & fields_definitions_filename_)
   {
     DT_THROW_IF (is_initialized (),
                  std::logic_error,
-                 "Cannot load a rules file ! EM field manager is locked !");
-    std::string rules_filename = rules_filename_;
-    datatools::fetch_path_with_env (rules_filename);
-    _rules_.read (rules_filename);
+                 "Cannot load field definitions file '"
+                 << fields_definitions_filename_ << "' ! EM field manager is locked !");
+    std::string filename = fields_definitions_filename_;
+    datatools::fetch_path_with_env (filename);
+    _field_definitions_.read (filename);
     return;
   }
 
@@ -137,8 +138,8 @@ namespace emfield {
         set_logging_priority (datatools::logger::PRIO_TRACE);
       }
     for (datatools::multi_properties::entries_ordered_col_type::const_iterator i
-           = _rules_.ordered_entries ().begin ();
-         i != _rules_.ordered_entries ().end ();
+           = _field_definitions_.ordered_entries ().begin ();
+         i != _field_definitions_.ordered_entries ().end ();
          i++)
       {
         const datatools::multi_properties::entry * ptr_entry = *i;
@@ -172,7 +173,7 @@ namespace emfield {
         _fields_[field_name] = new_handle;
 
       }
-    _rules_.reset ();
+    _field_definitions_.reset ();
     return;
   }
 
@@ -222,11 +223,11 @@ namespace emfield {
       needs_service_manager = true;
     }
 
-    if (setup_.has_key ("field_rules_filenames")) {
-      std::vector<std::string> field_rules_filenames;
-      setup_.fetch ("field_rules_filenames", field_rules_filenames);
-      for (unsigned int i = 0; i < field_rules_filenames.size (); i++) {
-        load (field_rules_filenames[i]);
+    if (setup_.has_key ("field_definitions_filenames")) {
+      std::vector<std::string> field_definitions_filenames;
+      setup_.fetch ("field_definitions_filenames", field_definitions_filenames);
+      for (unsigned int i = 0; i < field_definitions_filenames.size (); i++) {
+        load (field_definitions_filenames[i]);
       }
     }
 
@@ -282,7 +283,7 @@ namespace emfield {
                  "Cannot reset the service manager ! EM field manager is not initialized !");
     _set_initialized (false);
     _fields_.clear ();
-    _rules_.reset ();
+    _field_definitions_.reset ();
     _geom_manager_ = 0;
     if (_geom_map_.get() != 0) {
       if (_geom_map_.get()->is_initialized()) {
@@ -359,8 +360,8 @@ namespace emfield {
 
     if (! _initialized_)  {
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Rules : ";
-      if ( _rules_.entries ().size () == 0) {
+           << "Field definitions : ";
+      if ( _field_definitions_.entries ().size () == 0) {
         out_ << "<empty>";
       }
       out_ << std::endl;
@@ -368,7 +369,7 @@ namespace emfield {
         std::ostringstream indent_oss;
         indent_oss << indent;
         indent_oss << datatools::i_tree_dumpable::skip_tag;
-        _rules_.tree_dump (out_, "", indent_oss.str ());
+        _field_definitions_.tree_dump (out_, "", indent_oss.str ());
       }
     }
 
