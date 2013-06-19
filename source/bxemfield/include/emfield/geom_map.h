@@ -52,7 +52,6 @@ namespace emfield {
     public:
       association_entry();
       inline const std::string & get_label() const { return label; }
-      inline const std::string & get_geom_model_name() const { return geom_model_name; }
       inline const std::string & get_logical_volume_name() const { return logical_volume_name; }
       inline bool has_logvol() const { return logvol != 0;}
       inline const geomtools::logical_volume & get_logvol() const { return *logvol;  }
@@ -60,13 +59,12 @@ namespace emfield {
       inline bool has_field() const { return field != 0; }
       inline const emfield::base_electromagnetic_field & get_field() const { return *field; }
     public:
-      std::string label;
-      std::string geom_model_name;
-      std::string logical_volume_name;
-      const geomtools::logical_volume * logvol;
-      std::string field_name;
+      std::string                                 label;
+      std::string                                 logical_volume_name;
+      const geomtools::logical_volume *           logvol;
+      std::string                                 field_name;
       const emfield::base_electromagnetic_field * field;
-      datatools::properties auxiliaries;
+      datatools::properties                       auxiliaries;
     };
 
     typedef std::map<std::string,association_entry> association_dict_type;
@@ -116,11 +114,11 @@ namespace emfield {
 
   private:
 
-    datatools::logger::priority _logging_priority_;         /// Logging priority threshold
-    bool _initialized_;                                     /// Initialization flag
-    const geomtools::manager * _geom_manager_;              /// The geometry manager
-    const electromagnetic_field_manager * _fields_manager_; /// The EM fields manager
-    association_dict_type _associations_map_;               /// Dictionnary of "geometry/EM field" associations
+    datatools::logger::priority           _logging_priority_; /// Logging priority threshold
+    bool                                  _initialized_;      /// Initialization flag
+    const geomtools::manager *            _geom_manager_;     /// The geometry manager
+    const electromagnetic_field_manager * _fields_manager_;   /// The EM fields manager
+    association_dict_type                 _associations_map_; /// Dictionnary of "logical volumes/EM field" associations
 
   };
 

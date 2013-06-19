@@ -88,38 +88,33 @@ namespace emfield {
 
   void geom_map::_construct (const datatools::properties& config_)
   {
-    DT_LOG_DEBUG (get_logging_priority (), "Geometry/EM Field map: ");
-    if (is_debug ())
-      {
-        config_.tree_dump (std::clog);
-      }
+    DT_LOG_DEBUG (get_logging_priority (), "Geometry volume/EM Field map: ");
+    if (is_debug ()) {
+      config_.tree_dump (std::clog);
+    }
     std::vector<std::string> association_labels;
-    if (config_.has_key ("associations.labels"))
-      {
-        config_.fetch ("associations.labels", association_labels);
-      }
-    DT_LOG_DEBUG (get_logging_priority (), "Number of geometry/field associations : " << association_labels.size ());
+    if (config_.has_key ("associations.labels")) {
+      config_.fetch ("associations.labels", association_labels);
+    }
+    DT_LOG_DEBUG (get_logging_priority (), "Number of geometry volume/field associations : " << association_labels.size ());
 
-    for (unsigned int i = 0; i < association_labels.size (); i++)
-      {
+    for (unsigned int i = 0; i < association_labels.size (); i++) {
         const std::string & association_label = association_labels[i];
-        DT_LOG_DEBUG (get_logging_priority (), "Processing geometry/field association labelled '" << association_label << "'...");
+        DT_LOG_DEBUG (get_logging_priority (), "Processing geometry volume/field association labelled '" << association_label << "'...");
 
-        const std::string model_name_key = "associations." + association_label + ".geometry_model";
+        const std::string volume_name_key = "associations." + association_label + ".volume";
         const std::string field_name_key = "associations." + association_label + ".field_name";
 
-        DT_THROW_IF (! config_.has_key (model_name_key), std::logic_error, "Missing '" << model_name_key << "' property !");
+        DT_THROW_IF (! config_.has_key (volume_name_key), std::logic_error, "Missing '" << volume_name_key << "' property !");
         DT_THROW_IF (! config_.has_key (field_name_key), std::logic_error, "Missing '" << field_name_key << "' property !");
 
-        const std::string model_name = config_.fetch_string (model_name_key);
-        geomtools::models_col_type::const_iterator model_found
-          = _geom_manager_->get_factory ().get_models ().find(model_name);
-        DT_THROW_IF (model_found == _geom_manager_->get_factory ().get_models ().end (),
+        const std::string volume_name = config_.fetch_string (volume_name_key);
+        geomtools::logical_volume::dict_type::const_iterator volume_found
+          = _geom_manager_->get_factory ().get_logicals ().find(volume_name);
+        DT_THROW_IF (volume_found == _geom_manager_->get_factory ().get_logicals ().end (),
                      std::logic_error,
-                     "Cannot find geometry model named '" << model_name << "' from the geometry manager !");
-
-        const geomtools::i_model * geom_model = model_found->second;
-        const geomtools::logical_volume & logvol = geom_model->get_logical ();
+                     "Cannot find logical volume named '" << volume_name << "' in the geometry manager !");
+        const geomtools::logical_volume & logvol = *volume_found->second;
 
         const std::string field_name = config_.fetch_string (field_name_key);
         DT_THROW_IF (! _fields_manager_->has_field (field_name),
@@ -131,14 +126,14 @@ namespace emfield {
           _associations_map_[association_label] = dummy;
         }
         association_entry & fe = _associations_map_[association_label];
-        fe.label = association_label;
-        fe.geom_model_name = model_name;
-        fe.logvol = &logvol;
-        fe.field_name = field_name;
-        fe.field = &field;
+        fe.label               = association_label;
+        fe.logical_volume_name = volume_name;
+        fe.logvol              = &logvol;
+        fe.field_name          = field_name;
+        fe.field               = &field;
         DT_LOG_NOTICE (get_logging_priority (),
                        "Add the EM association entry '" <<  association_label << "' with EM field '" << field_name << "' associated "
-                       << "to the logical volume '" << logvol.get_name() << "'.");
+                       << "to the logical volume '" << volume_name << "'.");
       }
 
     return;
