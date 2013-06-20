@@ -28,6 +28,8 @@
 #ifndef GEOMTOOLS_THE_INTROSPECTABLE_H_
 #define GEOMTOOLS_THE_INTROSPECTABLE_H_
 
+#include <datatools/datatools_config.h>
+#include <datatools/reflection_macros.h>
 #include <geomtools/geomtools_config.h>
 
 #include <geomtools/clhep-reflect.h>
