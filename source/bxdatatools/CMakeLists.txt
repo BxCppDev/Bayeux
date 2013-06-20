@@ -40,6 +40,8 @@ endif()
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 include(InstallDirs)
 
+message( STATUS "CMAKE_MODULE_PATH='${CMAKE_MODULE_PATH}'")
+
 #-----------------------------------------------------------------------
 # Build options
 #
