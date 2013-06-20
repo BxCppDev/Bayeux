@@ -29,7 +29,7 @@
 #include <boost/cstdint.hpp>
 
 #include <datatools/i_serializable.h>
-//#include <datatools/reflection_macros.h>
+#include <datatools/reflection_macros.h>
 
 #include <geomtools/geomtools_config.h>
 
