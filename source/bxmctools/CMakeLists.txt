@@ -155,6 +155,12 @@ else()
   set (MCTOOLS_WITH_TEST 0)
 endif()
 
+if (MCTOOLS_WITH_REFLECTION)
+  if (NOT geomtools_WITH_REFLECTION)
+    message ( FATAL "Cannot build mctools with reflection DLL because geomtools was not so !")
+  endif()
+endif ()
+
 #-----------------------------------------------------------------------
 # Build the support files
 #-----------------------------------------------------------------------
