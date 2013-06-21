@@ -57,8 +57,9 @@
 
 #include <CLHEP/Random/Random.h>
 
-#include <G4ParticleDefinition.hh>
 // G4 stuff:
+#include <globals.hh>
+#include <G4ParticleDefinition.hh>
 #include <G4UIterminal.hh>
 #include <G4UImanager.hh>
 #include <G4RunManager.hh>

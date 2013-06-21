@@ -33,6 +33,7 @@
 #include <mctools/g4/manager.h>
 
 // G4 stuff
+#include <globals.hh>
 #include <G4FieldManager.hh>
 #include <G4ChordFinder.hh>
 #include <G4TransportationManager.hh>
