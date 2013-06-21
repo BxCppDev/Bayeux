@@ -1482,9 +1482,11 @@ namespace mctools {
         datatools::fetch_path_with_env(g4_macro);
         if (! boost::filesystem::exists(g4_macro)) {
           std::ostringstream message;
-          message << "mctools::g4::manager::_at_run_simulation: Macro '"
-                  << g4_macro << "' does not exist !";
-          G4Exception(message.str());
+          message << "Macro '" << g4_macro << "' does not exist !";
+          G4Exception("mctools::g4::manager::_at_run_simulation",
+                      "FileError",
+                      RunMustBeAborted,
+                      message.str().c_str());
         }
       }
 

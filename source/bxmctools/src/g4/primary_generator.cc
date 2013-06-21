@@ -128,7 +128,10 @@ namespace mctools {
     {
       if (has_vertex_generator()) {
         if (! _vertex_generator_->is_initialized ()) {
-          G4Exception ("primary_generator::_check: Vertex generator manager is not initialized !");
+          G4Exception ("mctools::g4::primary_generator::_check",
+                       "InitializationError",
+                       RunMustBeAborted,
+                       "Vertex generator manager is not initialized !");
         }
       } else {
         DT_LOG_WARNING(_logprio(),"No vertex generator is provided; "
@@ -136,7 +139,10 @@ namespace mctools {
                        << "generated at the event generator level...");
       }
       if (! _event_generator_->is_initialized ()) {
-        G4Exception ("primary_generator::_check: Event generator manager is not initialized !");
+        G4Exception ("mctools::g4::primary_generator::_check",
+                     "InitializationError",
+                     RunMustBeAborted,
+                     "Event generator manager is not initialized !");
       }
       return;
     }
@@ -144,7 +150,10 @@ namespace mctools {
     void primary_generator::initialize (const datatools::properties & config_)
     {
       if (is_initialized ()) {
-        G4Exception ("primary_generator::initialized: Primary_Generator already initialized !");
+        G4Exception ("mctools::g4::primary_generator::initialized",
+                     "InitializationError",
+                     RunMustBeAborted,
+                     "Primary_Generator already initialized !");
       }
 
       // Convert particle names from genbb's scheme to Geant4 particle naming scheme
@@ -153,16 +162,28 @@ namespace mctools {
       }
       // checks:
       if (_run_action_ == 0) {
-        G4Exception ("primary_generator::initialized: Missing run action !");
+        G4Exception ("mctools::g4::primary_generator::initialized",
+                     "InitializationError",
+                      RunMustBeAborted,
+                     "Missing run action !");
       }
       if (_event_action_ == 0) {
-        G4Exception ("primary_generator::initialized: Missing event action !");
+        G4Exception ("mctools::g4::primary_generator::initialized",
+                     "InitializationError",
+                      RunMustBeAborted,
+                     "Missing event action !");
       }
       if (_vertex_generator_ == 0) {
-        G4Exception ("primary_generator::initialized: Missing vertex generator !");
+        G4Exception ("mctools::g4::primary_generator::initialized",
+                     "InitializationError",
+                      RunMustBeAborted,
+                     "Missing vertex generator !");
       }
       if (_event_generator_ == 0) {
-        G4Exception ("primary_generator::initialized: Missing event generator !");
+        G4Exception ("mctools::g4::primary_generator::initialized",
+                     "InitializationError",
+                      RunMustBeAborted,
+                     "Missing event generator !");
       }
       _check ();
       int n_particle = 1;
@@ -174,7 +195,10 @@ namespace mctools {
     void primary_generator::reset ()
     {
       if (! is_initialized ()) {
-        G4Exception ("primary_generator::reset: Primary_Generator is not initialized!");
+        G4Exception ("mctools::g4::primary_generator::reset",
+                     "InitializationError",
+                      FatalException,
+                     "Primary generator is not initialized!");
       }
       // destroy the gun:
       if (_particle_gun_ != 0) {
@@ -193,7 +217,10 @@ namespace mctools {
     void primary_generator::GeneratePrimaries (G4Event * g4_event_)
     {
       if (! is_initialized ()) {
-        G4Exception ("primary_generator::GeneratePrimaries: Primary_Generator is not initialized!");
+        G4Exception ("mctools::g4::primary_generator::GeneratePrimaries",
+                     "InitializationError",
+                      RunMustBeAborted,
+                     "Primary_Generator is not initialized!");
       }
 
       // THIS IS NOW INVALIDATED: 2011-04-19 FM: moved these bits to 'event_action::BeginOfEventAction' :
@@ -306,19 +333,24 @@ namespace mctools {
         G4String g4_particle_name = get_g4_particle_name_from_genbb_particle (genbb_particle);
         if (g4_particle_name[0] == '?') {
           std::ostringstream message;
-          message << "mctools::g4::primary_generator::_generate_event: "
-                  << "genbb's particle type " << genbb_particle.get_type() << " (with label='"
-                  << genbb_particle.get_particle_label() << "') is not recognized as a Geant4 particle !";
-          G4Exception (message.str ());
+          message << "genbb's particle type " << genbb_particle.get_type() << " (with label='"
+                  << genbb_particle.get_particle_label()
+                  << "') is not recognized as a Geant4 particle !";
+          G4Exception ("mctools::g4::primary_generator::_generate_event",
+                       "InvalidArgument",
+                       RunMustBeAborted,
+                       message.str ().c_str());
         }
         G4ParticleDefinition * g4_particle = particle_table->FindParticle (g4_particle_name);
-        if (g4_particle == 0)
-          {
-            std::ostringstream message;
-            message << "mctools::g4::primary_generator::_generate_event: "
-                    << "Particle named '" << g4_particle_name << "' is not defined within the Geant4 framework !";
-            G4Exception (message.str ());
-          }
+        if (g4_particle == 0) {
+          std::ostringstream message;
+          message << "mctools::g4::primary_generator::_generate_event: "
+                  << "Particle named '" << g4_particle_name << "' is not defined within the Geant4 framework !";
+          G4Exception ("mctools::g4::primary_generator::_generate_event",
+                       "InvalidArgument",
+                       RunMustBeAborted,
+                       message.str ().c_str());
+        }
         double mass = g4_particle->GetPDGMass ();
         relativistic_energy = hypot (total_momentum, mass);
         kinetic_energy = relativistic_energy - mass;
@@ -334,9 +366,11 @@ namespace mctools {
         } else {
           if (! genbb_particle.has_vertex ()) {
             std::ostringstream message;
-            message << "mctools::g4::primary_generator::_generate_event: "
-                    << "Particle named '" << g4_particle_name << "' has no valid vertex provided by the event generator !";
-            G4Exception (message.str ());
+            message << "Particle named '" << g4_particle_name << "' has no valid vertex provided by the event generator !";
+            G4Exception ("mctools::g4::primary_generator::_generate_event",
+                         "InvalidArgument",
+                         RunMustBeAborted,
+                         message.str ().c_str());
           }
           // Each particle originate from its own vertex provided by the event generator
           _particle_gun_->SetParticlePosition (genbb_particle.get_vertex ());

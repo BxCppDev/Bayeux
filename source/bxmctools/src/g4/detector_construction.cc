@@ -381,7 +381,10 @@ namespace mctools {
       world_physical_volume = _g4_construct();
 
       if (world_physical_volume == 0) {
-        G4Exception("mctools::g4::detector_construction::Construct: Missing world physical volume !");
+        G4Exception("mctools::g4::detector_construction::Construct",
+                    "GeometryError",
+                    FatalException,
+                    "Missing world physical volume !");
       }
 
       DT_LOG_TRACE(_logprio(), "Exiting.");
