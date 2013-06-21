@@ -115,7 +115,7 @@ FULL_PATH_NAMES        = YES
 # path to strip.
 
 STRIP_FROM_PATH        = "@DOXYGEN_INPUT_DIR@/include" \
-                         "@DOXYGEN_INPUT_DIR@/doc/api" \ 
+                         "@DOXYGEN_INPUT_DIR@/doc/api" \
                          "@PROJECT_BINARY_DIR@/include" \
                          "@DOXYGEN_INPUT_DIR@/doc/api/mainpage.hpp"
 
@@ -602,7 +602,7 @@ RECURSIVE              = YES
 # excluded from the INPUT source files. This way you can easily exclude a
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
-EXCLUDE                = detail .svn
+EXCLUDE                = detail .svn decay0_fortran
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or
 # directories that are symbolic links (a Unix filesystem feature) are excluded
@@ -616,7 +616,7 @@ EXCLUDE_SYMLINKS       = NO
 # against the file with absolute path, so to exclude all test directories
 # for example use the pattern */test/*
 
-EXCLUDE_PATTERNS       = 
+EXCLUDE_PATTERNS       =
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the
@@ -624,7 +624,7 @@ EXCLUDE_PATTERNS       =
 # wildcard * is used, a substring. Examples: ANamespace, AClass,
 # AClass::ANamespace, ANamespace::*Test
 
-EXCLUDE_SYMBOLS        = 
+EXCLUDE_SYMBOLS        =
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or
 # directories that contain example code fragments that are included (see

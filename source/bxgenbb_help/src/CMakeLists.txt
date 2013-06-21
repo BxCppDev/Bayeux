@@ -320,7 +320,10 @@ if(GENBB_HELP_WITH_REFLECTION)
   message (STATUS "Build genbb_help reflection DLL...")
   add_library(genbb_help_reflection SHARED ${genbb_help_reflection_SOURCES})
 
-  target_link_libraries(genbb_help_reflection genbb_help)
+  target_link_libraries(genbb_help_reflection
+                        genbb_help
+                        #geomtools_reflection
+                       )
 
   if(APPLE)
     set_property(TARGET genbb_help_reflection APPEND
