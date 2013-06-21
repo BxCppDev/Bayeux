@@ -23,16 +23,16 @@
 // Portable integral types (mandatory):
 #include <boost/cstdint.hpp>
 
-// Interfaces :
+// Datatools :
 #include <datatools/i_serializable.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/i_clear.h>
 #include <datatools/i_predicate.h>
 #include <datatools/bit_mask.h>
-
-// Attributes :
-#include <geomtools/geomtools_config.h>
 #include <datatools/properties.h>
+
+// Geomtools :
+#include <geomtools/geomtools_config.h>
 #include <geomtools/geom_id.h>
 
 namespace geomtools {

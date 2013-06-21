@@ -21,7 +21,6 @@
 #include <datatools/reflection_guard.h>
 #include <geomtools/reflection_guard.h>
 
-
 void test_placement()
 {
   datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;

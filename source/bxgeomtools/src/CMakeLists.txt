@@ -436,7 +436,10 @@ if(GEOMTOOLS_WITH_REFLECTION)
 
   add_library(geomtools_reflection SHARED ${geomtools_reflection_SOURCES})
 
-  target_link_libraries(geomtools_reflection geomtools)
+  target_link_libraries(geomtools_reflection
+                        geomtools
+                        #datatools_reflection
+                       )
 
   if(APPLE)
     set_property(TARGET geomtools_reflection APPEND

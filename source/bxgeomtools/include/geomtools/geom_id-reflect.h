@@ -6,9 +6,10 @@
 // Standard Library
 
 // Datatools
-#include <datatools/reflection_macros.h>
+//#include <datatools/reflection_macros.h>
 
 // Geomtools
+//#include <geomtools/geomtools_config.h>
 #include <geomtools/geom_id.h>
 
 // Export the introspection code for the 'geomtools::geom_id' class:

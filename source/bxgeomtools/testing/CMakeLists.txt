@@ -73,7 +73,7 @@ set ( geomtools_tests_programs
   test_manager.cxx
   test_service_manager.cxx
 )
-
+#set ( geomtools_tests_programs)
 if(GEOMTOOLS_WITH_REFLECTION)
   list(APPEND geomtools_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
 endif()

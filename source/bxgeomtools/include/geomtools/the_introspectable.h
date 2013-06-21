@@ -37,6 +37,7 @@
 #include <geomtools/base_hit-reflect.h>
 #include <geomtools/i_placement-reflect.h>
 #include <geomtools/placement-reflect.h>
+//#include <geomtools/blur_spot-reflect.h>
 
 #endif // GEOMTOOLS_THE_INTROSPECTABLE_H_
 

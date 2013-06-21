@@ -6,7 +6,7 @@
 // Standard Library
 
 // Datatools
-#include <datatools/reflection_macros.h>
+//#include <datatools/reflection_macros.h>
 
 // Geomtools
 #include <geomtools/blur_spot.h>

@@ -81,12 +81,17 @@ find_package(materials 4.0.0 REQUIRED)
 # - CLHEP
 find_package(CLHEP 2.1.0.1 REQUIRED NOMODULE)
 
-# - CAMP
+# - Reflection
 if (GEOMTOOLS_WITH_REFLECTION)
   set (GEOMTOOLS_WITH_REFLECTION 1)
+  if (NOT datatools_WITH_REFLECTION)
+    message ( FATAL "Cannot build geomtools with reflection DLL because datatools was not so !")
+  endif()
 else()
   set (GEOMTOOLS_WITH_REFLECTION 0)
 endif ()
+
+#message (STATUS "************* GEOMTOOLS_WITH_REFLECTION=${GEOMTOOLS_WITH_REFLECTION}")
 
 if(GEOMTOOLS_WITH_GNUPLOT_DISPLAY)
   set (GEOMTOOLS_WITH_GNUPLOT_DISPLAY 1)
