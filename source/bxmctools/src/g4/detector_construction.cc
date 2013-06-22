@@ -399,6 +399,7 @@ namespace mctools {
       // Automaticaly construct the geometry tree:
       G4VPhysicalVolume * world_physical_volume = 0;
       G4GDMLParser parser;
+      parser.SetStripFlag(false);
       if (_generate_gdml_file_) {
         write_tmp_gdml_file();
         parser.Read(_gdml_filename_, _gdml_validation_);
