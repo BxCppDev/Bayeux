@@ -28,6 +28,8 @@ set(mctools_PUBLIC_HEADERS
     include/mctools/base_step_hit_processor.h
     include/mctools/step_hit_processor_factory.h
     include/mctools/calorimeter_step_hit_processor.h
+    include/mctools/simulated_data_reader.h
+    include/mctools/simulated_data_input_module.h
 
     include/mctools/base_step_hit.ipp
     include/mctools/simulated_data.ipp
@@ -86,8 +88,10 @@ set(mctools_SOURCES
     base_step_hit_processor.cc
     step_hit_processor_factory.cc
     calorimeter_step_hit_processor.cc
-    simulated_data.cc
     utils.cc
+    simulated_data.cc
+    simulated_data_reader.cc
+    simulated_data_input_module.cc
   )
 
 # message(STATUS "********** mctools_SOURCES=${mctools_SOURCES}")

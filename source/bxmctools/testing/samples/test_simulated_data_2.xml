@@ -1,0 +1,1143 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE boost_serialization>
+<boost_serialization signature="serialization::archive" version="9">
+<record>datatools::properties</record>
+<record class_id="0" tracking_level="1" version="2" object_id="_0">
+	<datatool__i_serializable class_id="1" tracking_level="0" version="0"></datatool__i_serializable>
+	<description></description>
+	<properties class_id="2" tracking_level="0" version="0">
+		<count>2</count>
+		<item_version>0</item_version>
+		<item class_id="3" tracking_level="0" version="0">
+			<first>library</first>
+			<second class_id="4" tracking_level="0" version="0">
+				<description></description>
+				<flags>4</flags>
+				<string_values class_id="5" tracking_level="0" version="0">
+					<count>1</count>
+					<item_version>0</item_version>
+					<item>mctools</item>
+				</string_values>
+			</second>
+		</item>
+		<item>
+			<first>test</first>
+			<second>
+				<description></description>
+				<flags>1</flags>
+				<boolean_values>
+					<count>1</count>
+					<item>1</item>
+				</boolean_values>
+			</second>
+		</item>
+	</properties>
+</record>
+</boost_serialization>
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE boost_serialization>
+<boost_serialization signature="serialization::archive" version="9">
+<record>mctools::simulated_data</record>
+<record class_id="0" tracking_level="1" version="2" object_id="_0">
+	<datatool__i_serializable class_id="1" tracking_level="0" version="0"></datatool__i_serializable>
+	<vertex class_id="2" tracking_level="0" version="0">
+		<x>2</x>
+		<y>-4</y>
+		<z>7</z>
+	</vertex>
+	<primary_event class_id="3" tracking_level="1" version="4" object_id="_1">
+		<datatool__i_serializable></datatool__i_serializable>
+		<label></label>
+		<time>-1</time>
+		<particles class_id="4" tracking_level="0" version="0">
+			<count>2</count>
+			<item_version>2</item_version>
+			<item class_id="5" tracking_level="0" version="2">
+				<datatool__i_serializable></datatool__i_serializable>
+				<type>3</type>
+				<time>0</time>
+				<momentum>
+					<x>3</x>
+					<y>0</y>
+					<z>0</z>
+				</momentum>
+				<vertex>
+					<x>nan</x>
+					<y>nan</y>
+					<z>nan</z>
+				</vertex>
+			</item>
+			<item>
+				<datatool__i_serializable></datatool__i_serializable>
+				<type>1</type>
+				<time>1.3</time>
+				<momentum>
+					<x>0</x>
+					<y>2</y>
+					<z>0</z>
+				</momentum>
+				<vertex>
+					<x>nan</x>
+					<y>nan</y>
+					<z>nan</z>
+				</vertex>
+			</item>
+		</particles>
+		<classification></classification>
+		<genbb_weight>1</genbb_weight>
+		<auxiliaries class_id="6" tracking_level="1" version="2" object_id="_2">
+			<datatool__i_serializable></datatool__i_serializable>
+			<description></description>
+			<properties class_id="7" tracking_level="0" version="0">
+				<count>0</count>
+				<item_version>0</item_version>
+			</properties>
+		</auxiliaries>
+	</primary_event>
+	<properties object_id="_3">
+		<datatool__i_serializable></datatool__i_serializable>
+		<description></description>
+		<properties>
+			<count>4</count>
+			<item_version>0</item_version>
+			<item class_id="8" tracking_level="0" version="0">
+				<first>event_number</first>
+				<second class_id="9" tracking_level="0" version="0">
+					<description></description>
+					<flags>2</flags>
+					<integer_values>
+						<count>1</count>
+						<item_version>0</item_version>
+						<item>0</item>
+					</integer_values>
+				</second>
+			</item>
+			<item>
+				<first>fake</first>
+				<second>
+					<description></description>
+					<flags>1</flags>
+					<boolean_values>
+						<count>1</count>
+						<item>1</item>
+					</boolean_values>
+				</second>
+			</item>
+			<item>
+				<first>module_number</first>
+				<second>
+					<description></description>
+					<flags>2</flags>
+					<integer_values>
+						<count>1</count>
+						<item_version>0</item_version>
+						<item>0</item>
+					</integer_values>
+				</second>
+			</item>
+			<item>
+				<first>run_number</first>
+				<second>
+					<description></description>
+					<flags>2</flags>
+					<integer_values>
+						<count>1</count>
+						<item_version>0</item_version>
+						<item>666</item>
+					</integer_values>
+				</second>
+			</item>
+		</properties>
+	</properties>
+	<collection_type>1</collection_type>
+	<step_hits_dict class_id="12" tracking_level="0" version="0">
+		<count>4</count>
+		<item_version>0</item_version>
+		<item class_id="13" tracking_level="0" version="0">
+			<first>calo</first>
+			<second class_id="14" tracking_level="0" version="0">
+				<count>3</count>
+				<item_version>0</item_version>
+				<item class_id="15" tracking_level="0" version="0">
+					<sp class_id="16" tracking_level="0" version="1">
+						<px class_id="17" tracking_level="1" version="0" object_id="_4">
+							<geomtools__base_hit class_id="18" tracking_level="1" version="1" object_id="_5">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>0</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_6">
+							<geomtools__base_hit object_id="_7">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>1</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_8">
+							<geomtools__base_hit object_id="_9">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>2</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+			</second>
+		</item>
+		<item>
+			<first>gg</first>
+			<second>
+				<count>15</count>
+				<item_version>0</item_version>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_10">
+							<geomtools__base_hit object_id="_11">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>0</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_12">
+							<geomtools__base_hit object_id="_13">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>1</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_14">
+							<geomtools__base_hit object_id="_15">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>2</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_16">
+							<geomtools__base_hit object_id="_17">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>3</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_18">
+							<geomtools__base_hit object_id="_19">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>4</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_20">
+							<geomtools__base_hit object_id="_21">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>5</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_22">
+							<geomtools__base_hit object_id="_23">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>6</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_24">
+							<geomtools__base_hit object_id="_25">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>7</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_26">
+							<geomtools__base_hit object_id="_27">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>8</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_28">
+							<geomtools__base_hit object_id="_29">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>9</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_30">
+							<geomtools__base_hit object_id="_31">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>10</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_32">
+							<geomtools__base_hit object_id="_33">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>11</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_34">
+							<geomtools__base_hit object_id="_35">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>12</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_36">
+							<geomtools__base_hit object_id="_37">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>13</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_38">
+							<geomtools__base_hit object_id="_39">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>14</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+			</second>
+		</item>
+		<item>
+			<first>gveto</first>
+			<second>
+				<count>1</count>
+				<item_version>0</item_version>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_40">
+							<geomtools__base_hit object_id="_41">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>0</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+			</second>
+		</item>
+		<item>
+			<first>xcalo</first>
+			<second>
+				<count>0</count>
+				<item_version>0</item_version>
+			</second>
+		</item>
+	</step_hits_dict>
+</record>
+</boost_serialization>
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE boost_serialization>
+<boost_serialization signature="serialization::archive" version="9">
+<record>mctools::simulated_data</record>
+<record class_id="0" tracking_level="1" version="2" object_id="_0">
+	<datatool__i_serializable class_id="1" tracking_level="0" version="0"></datatool__i_serializable>
+	<vertex class_id="2" tracking_level="0" version="0">
+		<x>2</x>
+		<y>-4</y>
+		<z>7</z>
+	</vertex>
+	<primary_event class_id="3" tracking_level="1" version="4" object_id="_1">
+		<datatool__i_serializable></datatool__i_serializable>
+		<label></label>
+		<time>-1</time>
+		<particles class_id="4" tracking_level="0" version="0">
+			<count>2</count>
+			<item_version>2</item_version>
+			<item class_id="5" tracking_level="0" version="2">
+				<datatool__i_serializable></datatool__i_serializable>
+				<type>3</type>
+				<time>0</time>
+				<momentum>
+					<x>3</x>
+					<y>0</y>
+					<z>0</z>
+				</momentum>
+				<vertex>
+					<x>nan</x>
+					<y>nan</y>
+					<z>nan</z>
+				</vertex>
+			</item>
+			<item>
+				<datatool__i_serializable></datatool__i_serializable>
+				<type>1</type>
+				<time>1.3</time>
+				<momentum>
+					<x>0</x>
+					<y>2</y>
+					<z>0</z>
+				</momentum>
+				<vertex>
+					<x>nan</x>
+					<y>nan</y>
+					<z>nan</z>
+				</vertex>
+			</item>
+		</particles>
+		<classification></classification>
+		<genbb_weight>1</genbb_weight>
+		<auxiliaries class_id="6" tracking_level="1" version="2" object_id="_2">
+			<datatool__i_serializable></datatool__i_serializable>
+			<description></description>
+			<properties class_id="7" tracking_level="0" version="0">
+				<count>0</count>
+				<item_version>0</item_version>
+			</properties>
+		</auxiliaries>
+	</primary_event>
+	<properties object_id="_3">
+		<datatool__i_serializable></datatool__i_serializable>
+		<description></description>
+		<properties>
+			<count>4</count>
+			<item_version>0</item_version>
+			<item class_id="8" tracking_level="0" version="0">
+				<first>event_number</first>
+				<second class_id="9" tracking_level="0" version="0">
+					<description></description>
+					<flags>2</flags>
+					<integer_values>
+						<count>1</count>
+						<item_version>0</item_version>
+						<item>1</item>
+					</integer_values>
+				</second>
+			</item>
+			<item>
+				<first>fake</first>
+				<second>
+					<description></description>
+					<flags>1</flags>
+					<boolean_values>
+						<count>1</count>
+						<item>1</item>
+					</boolean_values>
+				</second>
+			</item>
+			<item>
+				<first>module_number</first>
+				<second>
+					<description></description>
+					<flags>2</flags>
+					<integer_values>
+						<count>1</count>
+						<item_version>0</item_version>
+						<item>0</item>
+					</integer_values>
+				</second>
+			</item>
+			<item>
+				<first>run_number</first>
+				<second>
+					<description></description>
+					<flags>2</flags>
+					<integer_values>
+						<count>1</count>
+						<item_version>0</item_version>
+						<item>666</item>
+					</integer_values>
+				</second>
+			</item>
+		</properties>
+	</properties>
+	<collection_type>1</collection_type>
+	<step_hits_dict class_id="12" tracking_level="0" version="0">
+		<count>4</count>
+		<item_version>0</item_version>
+		<item class_id="13" tracking_level="0" version="0">
+			<first>calo</first>
+			<second class_id="14" tracking_level="0" version="0">
+				<count>3</count>
+				<item_version>0</item_version>
+				<item class_id="15" tracking_level="0" version="0">
+					<sp class_id="16" tracking_level="0" version="1">
+						<px class_id="17" tracking_level="1" version="0" object_id="_4">
+							<geomtools__base_hit class_id="18" tracking_level="1" version="1" object_id="_5">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>0</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_6">
+							<geomtools__base_hit object_id="_7">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>1</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_8">
+							<geomtools__base_hit object_id="_9">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>2</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+			</second>
+		</item>
+		<item>
+			<first>gg</first>
+			<second>
+				<count>15</count>
+				<item_version>0</item_version>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_10">
+							<geomtools__base_hit object_id="_11">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>0</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_12">
+							<geomtools__base_hit object_id="_13">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>1</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_14">
+							<geomtools__base_hit object_id="_15">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>2</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_16">
+							<geomtools__base_hit object_id="_17">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>3</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_18">
+							<geomtools__base_hit object_id="_19">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>4</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_20">
+							<geomtools__base_hit object_id="_21">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>5</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_22">
+							<geomtools__base_hit object_id="_23">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>6</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_24">
+							<geomtools__base_hit object_id="_25">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>7</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_26">
+							<geomtools__base_hit object_id="_27">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>8</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_28">
+							<geomtools__base_hit object_id="_29">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>9</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_30">
+							<geomtools__base_hit object_id="_31">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>10</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_32">
+							<geomtools__base_hit object_id="_33">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>11</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_34">
+							<geomtools__base_hit object_id="_35">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>12</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_36">
+							<geomtools__base_hit object_id="_37">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>13</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_38">
+							<geomtools__base_hit object_id="_39">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>14</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+			</second>
+		</item>
+		<item>
+			<first>gveto</first>
+			<second>
+				<count>1</count>
+				<item_version>0</item_version>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_40">
+							<geomtools__base_hit object_id="_41">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>0</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+			</second>
+		</item>
+		<item>
+			<first>xcalo</first>
+			<second>
+				<count>0</count>
+				<item_version>0</item_version>
+			</second>
+		</item>
+	</step_hits_dict>
+</record>
+</boost_serialization>
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE boost_serialization>
+<boost_serialization signature="serialization::archive" version="9">
+<record>mctools::simulated_data</record>
+<record class_id="0" tracking_level="1" version="2" object_id="_0">
+	<datatool__i_serializable class_id="1" tracking_level="0" version="0"></datatool__i_serializable>
+	<vertex class_id="2" tracking_level="0" version="0">
+		<x>2</x>
+		<y>-4</y>
+		<z>7</z>
+	</vertex>
+	<primary_event class_id="3" tracking_level="1" version="4" object_id="_1">
+		<datatool__i_serializable></datatool__i_serializable>
+		<label></label>
+		<time>-1</time>
+		<particles class_id="4" tracking_level="0" version="0">
+			<count>2</count>
+			<item_version>2</item_version>
+			<item class_id="5" tracking_level="0" version="2">
+				<datatool__i_serializable></datatool__i_serializable>
+				<type>3</type>
+				<time>0</time>
+				<momentum>
+					<x>3</x>
+					<y>0</y>
+					<z>0</z>
+				</momentum>
+				<vertex>
+					<x>nan</x>
+					<y>nan</y>
+					<z>nan</z>
+				</vertex>
+			</item>
+			<item>
+				<datatool__i_serializable></datatool__i_serializable>
+				<type>1</type>
+				<time>1.3</time>
+				<momentum>
+					<x>0</x>
+					<y>2</y>
+					<z>0</z>
+				</momentum>
+				<vertex>
+					<x>nan</x>
+					<y>nan</y>
+					<z>nan</z>
+				</vertex>
+			</item>
+		</particles>
+		<classification></classification>
+		<genbb_weight>1</genbb_weight>
+		<auxiliaries class_id="6" tracking_level="1" version="2" object_id="_2">
+			<datatool__i_serializable></datatool__i_serializable>
+			<description></description>
+			<properties class_id="7" tracking_level="0" version="0">
+				<count>0</count>
+				<item_version>0</item_version>
+			</properties>
+		</auxiliaries>
+	</primary_event>
+	<properties object_id="_3">
+		<datatool__i_serializable></datatool__i_serializable>
+		<description></description>
+		<properties>
+			<count>4</count>
+			<item_version>0</item_version>
+			<item class_id="8" tracking_level="0" version="0">
+				<first>event_number</first>
+				<second class_id="9" tracking_level="0" version="0">
+					<description></description>
+					<flags>2</flags>
+					<integer_values>
+						<count>1</count>
+						<item_version>0</item_version>
+						<item>2</item>
+					</integer_values>
+				</second>
+			</item>
+			<item>
+				<first>fake</first>
+				<second>
+					<description></description>
+					<flags>1</flags>
+					<boolean_values>
+						<count>1</count>
+						<item>1</item>
+					</boolean_values>
+				</second>
+			</item>
+			<item>
+				<first>module_number</first>
+				<second>
+					<description></description>
+					<flags>2</flags>
+					<integer_values>
+						<count>1</count>
+						<item_version>0</item_version>
+						<item>0</item>
+					</integer_values>
+				</second>
+			</item>
+			<item>
+				<first>run_number</first>
+				<second>
+					<description></description>
+					<flags>2</flags>
+					<integer_values>
+						<count>1</count>
+						<item_version>0</item_version>
+						<item>666</item>
+					</integer_values>
+				</second>
+			</item>
+		</properties>
+	</properties>
+	<collection_type>1</collection_type>
+	<step_hits_dict class_id="12" tracking_level="0" version="0">
+		<count>4</count>
+		<item_version>0</item_version>
+		<item class_id="13" tracking_level="0" version="0">
+			<first>calo</first>
+			<second class_id="14" tracking_level="0" version="0">
+				<count>3</count>
+				<item_version>0</item_version>
+				<item class_id="15" tracking_level="0" version="0">
+					<sp class_id="16" tracking_level="0" version="1">
+						<px class_id="17" tracking_level="1" version="0" object_id="_4">
+							<geomtools__base_hit class_id="18" tracking_level="1" version="1" object_id="_5">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>0</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_6">
+							<geomtools__base_hit object_id="_7">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>1</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_8">
+							<geomtools__base_hit object_id="_9">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>2</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+			</second>
+		</item>
+		<item>
+			<first>gg</first>
+			<second>
+				<count>15</count>
+				<item_version>0</item_version>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_10">
+							<geomtools__base_hit object_id="_11">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>0</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_12">
+							<geomtools__base_hit object_id="_13">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>1</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_14">
+							<geomtools__base_hit object_id="_15">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>2</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_16">
+							<geomtools__base_hit object_id="_17">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>3</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_18">
+							<geomtools__base_hit object_id="_19">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>4</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_20">
+							<geomtools__base_hit object_id="_21">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>5</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_22">
+							<geomtools__base_hit object_id="_23">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>6</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_24">
+							<geomtools__base_hit object_id="_25">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>7</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_26">
+							<geomtools__base_hit object_id="_27">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>8</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_28">
+							<geomtools__base_hit object_id="_29">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>9</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_30">
+							<geomtools__base_hit object_id="_31">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>10</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_32">
+							<geomtools__base_hit object_id="_33">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>11</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_34">
+							<geomtools__base_hit object_id="_35">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>12</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_36">
+							<geomtools__base_hit object_id="_37">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>13</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_38">
+							<geomtools__base_hit object_id="_39">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>14</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+			</second>
+		</item>
+		<item>
+			<first>gveto</first>
+			<second>
+				<count>1</count>
+				<item_version>0</item_version>
+				<item>
+					<sp>
+						<px class_id_reference="17" object_id="_40">
+							<geomtools__base_hit object_id="_41">
+								<datatool__i_serializable></datatool__i_serializable>
+								<store>1</store>
+								<hit_id>0</hit_id>
+							</geomtools__base_hit>
+						</px>
+					</sp>
+				</item>
+			</second>
+		</item>
+		<item>
+			<first>xcalo</first>
+			<second>
+				<count>0</count>
+				<item_version>0</item_version>
+			</second>
+		</item>
+	</step_hits_dict>
+</record>
+</boost_serialization>
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE boost_serialization>
+<boost_serialization signature="serialization::archive" version="9">
+<record>datatools::properties</record>
+<record class_id="0" tracking_level="1" version="2" object_id="_0">
+	<datatool__i_serializable class_id="1" tracking_level="0" version="0"></datatool__i_serializable>
+	<description></description>
+	<properties class_id="2" tracking_level="0" version="0">
+		<count>1</count>
+		<item_version>0</item_version>
+		<item class_id="3" tracking_level="0" version="0">
+			<first>message</first>
+			<second class_id="4" tracking_level="0" version="0">
+				<description></description>
+				<flags>4</flags>
+				<string_values class_id="5" tracking_level="0" version="0">
+					<count>1</count>
+					<item_version>0</item_version>
+					<item>The end</item>
+				</string_values>
+			</second>
+		</item>
+	</properties>
+</record>
+</boost_serialization>
+

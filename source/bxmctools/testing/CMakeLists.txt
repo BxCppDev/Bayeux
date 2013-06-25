@@ -24,7 +24,9 @@
 set ( mctools_tests_programs
      test_base_step_hit.cxx
      test_simulated_data_1.cxx
+     test_simulated_data_reader_1.cxx
      test_step_hit_processor_factory.cxx
+     test_simulated_data_input_module_1.cxx
 )
 if (MCTOOLS_WITH_G4)
    list(APPEND mctools_tests_programs

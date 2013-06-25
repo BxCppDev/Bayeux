@@ -22,6 +22,7 @@
 #include <mctools/simulated_data.h>
 
 #include <mctools/mctools_config.h>
+#include <mctools/utils.h>
 #include <mctools/g4/run_action.h>
 #include <mctools/g4/manager.h>
 #include <mctools/g4/simulation_ctrl.h>
@@ -166,13 +167,13 @@ namespace mctools {
       _save_data_ = true;
       _output_file_preserve_ = true;
       _output_file_dir_ = ".";
-      _output_file_prefix_ = "mc_g4_";
+      _output_file_prefix_ = "mctools_g4_";
       _output_file_format_ = "ascii";
       _output_file_compression_ = "gzip";
       _output_file_ = "";
       _manager_ = &a_mgr;
-      _brio_general_info_store_label_ = "GI";
-      _brio_plain_simulated_data_store_label_ = "PSD";
+      _brio_general_info_store_label_ = io_utils::GENERAL_INFO_STORE;
+      _brio_plain_simulated_data_store_label_ = io_utils::PLAIN_SIMULATED_DATA_STORE;
       return;
     }
 

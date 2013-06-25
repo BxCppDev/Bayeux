@@ -47,6 +47,11 @@ namespace mctools {
   const std::string event_utils::EVENT_GENBB_WEIGHT = "event.genbb_weight";
   const std::string event_utils::EVENT_DEFAULT_SIMULATED_DATA_LABEL = "SD";
 
+
+  // Specific to I/O format :
+  const std::string io_utils::GENERAL_INFO_STORE         = "GI";
+  const std::string io_utils::PLAIN_SIMULATED_DATA_STORE = "PSD";
+
 } // end of namespace mctools
 
 // end of utils.cc

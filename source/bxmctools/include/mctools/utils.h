@@ -75,6 +75,13 @@ namespace mctools {
     static const std::string EVENT_DEFAULT_SIMULATED_DATA_LABEL;
   };
 
+  class io_utils
+  {
+  public:
+    static const std::string GENERAL_INFO_STORE;
+    static const std::string PLAIN_SIMULATED_DATA_STORE;
+  };
+
 } // end of namespace mctools
 
 #endif // MCTOOLS_UTILS_H_

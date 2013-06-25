@@ -26,19 +26,15 @@
 #include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
 #include <boost/foreach.hpp>
+#include <boost/scoped_ptr.hpp>
 
-#include <datatools/io_factory.h>
 #include <datatools/properties.h>
 #include <datatools/library_loader.h>
 
 #include <geomtools/manager.h>
-//#include <geomtools/gnuplot_draw.h>
-//#include <geomtools/gnuplot_drawer.h>
-//#include <geomtools/display_data.h>
-//#include <geomtools/line_3d.h>
-//#include <geomtools/blur_spot.h>
 
 #include <mctools/simulated_data.h>
+#include <mctools/simulated_data_reader.h>
 
 #include <datatools/bio_guard.h>
 #include <mygsl/bio_guard.h>
@@ -150,13 +146,8 @@ int main(int argc_, char **argv_) {
                  "File '" << plain_simulated_data_filename << "' does not exists !");
 
     // The  plain simulated data reader :
-    datatools::data_reader psd_reader(plain_simulated_data_filename,
-                                      datatools::using_multi_archives);
-
-    datatools::properties header;
-    datatools::properties footer;
-    bool has_header = false;
-    bool has_footer = false;
+    mctools::simulated_data_reader psd_reader;
+    psd_reader.initialize(plain_simulated_data_filename);
 
     // Geometry manager :
     DT_LOG_DEBUG(logging, "Initializing the geometry manager...");
@@ -169,57 +160,29 @@ int main(int argc_, char **argv_) {
     datatools::properties::read_config(geometry_config_filename, geo_mgr_config);
     geo_mgr.initialize(geo_mgr_config);
 
-    // The simulated data object to be loaded :
-    mctools::simulated_data simdata;
-
     // The simulated data inspector :
     mctools::ex01::simulated_data_inspector SDI;
     SDI.set_interactive(interactive);
     SDI.set_with_visualization(visualization);
     SDI.set_geometry_manager(geo_mgr);
 
+    // The simulated data object to be loaded :
+    mctools::simulated_data SD;
+
     // The simulated data loading loop :
     int psd_count = 0;
-    while (psd_reader.has_record_tag()) {
-
-      if (psd_reader.record_tag_is(datatools::properties::SERIAL_TAG)) {
-
-        // Depending on the Geant4 simulation options, a header and footer could have been
-        // stored as the first and last records of the archive file respectively :
-        if (! has_header) {
-          psd_reader.load(header); // Load the header
-          has_header = true;
-          header.tree_dump(std::clog, "Plain simulated data header:");
-        } else if (! has_footer) {
-          psd_reader.load(footer); // Load the footer
-          has_footer = true;
-          footer.tree_dump(std::clog, "Plain simulated data footer:");
-        } else {
-          DT_THROW_IF(true, std::logic_error,
-                      "Header and footer have already been loaded ! "
-                      << "Cannot identify additional record with serial tag '"
-                      << datatools::properties::SERIAL_TAG << "' ! Abort !");
-        }
-      } else if (psd_reader.record_tag_is(mctools::simulated_data::SERIAL_TAG)) {
-
-        // A plain `mctools::simulated_data' object is stored here :
-        psd_reader.load(simdata); // Load the simulated data object
-        DT_LOG_NOTICE(logging, "Simulated data #" << psd_count);
-        bool goon = SDI.inspect(simdata);
-        if (! goon) {
-          break;
-        }
-        simdata.clear(); // Reset the simulated data object before to read the next one (if any).
-        psd_count++;
-
-      } else {
-
-        // Here we are unable to identify the type of the record :
-        DT_THROW_IF(true, std::logic_error,
-                    "Cannot load record with serial tag '"
-                    << psd_reader.get_record_tag() << "' ! Abort !");
+    while (psd_reader.has_next()) {
+      // A plain `mctools::simulated_data' object is stored here :
+      psd_reader.load_next(SD); // Load the simulated data object
+      DT_LOG_NOTICE(logging, "Simulated data #" << psd_count);
+      bool goon = SDI.inspect(SD);
+      if (! goon) {
+        break;
       }
+      psd_count++;
     }
+    std::clog << "Number of processed simulated data records: " << psd_count << std::endl;
+
   }
   catch(std::exception& x) {
     DT_LOG_FATAL(logging, x.what());
