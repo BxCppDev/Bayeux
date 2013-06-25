@@ -77,7 +77,7 @@ namespace genbb {
   // ctor:
   primary_event::primary_event ()
   {
-    _time_ = -1.;
+     datatools::invalidate(_time_);
     _genbb_weight_ = 1.0;
     return;
   }
