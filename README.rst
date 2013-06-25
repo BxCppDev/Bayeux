@@ -39,6 +39,9 @@ genbb_help : C++ wrapper and extensions to the Decay0/GENBB program
 
 emfield :    Electromagnetic field modelling and management.
 
+mctools :    Tools and data models for Particle and Nuclear Physics 
+             Monte-Carlo simulation, wrapper engine for the Geant4 framework.
+
 trackfit :   Track fitting in a NEMO-like detector.
 
 
@@ -120,6 +123,7 @@ clicking on the Downloads tab, and then installing Command Line Tools.
 
    -  Boost 1.53.0 or higher: http://www.boost.org
        - with serialization, filesystem, system libraries.
+   -  Camp 0.7.1 : https://github.com/tegesoft/camp
    -  GSL 1.15 or higher: http://www.gnu.org/s/gsl
    -  CLHEP 2.1.3.2 or higher: http://proj-clhep.web.cern.ch
    -  Geant4 9.6.0 or higher: http://geant4.cern.ch
