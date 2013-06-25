@@ -1,0 +1,55 @@
+# - Top level CMake script for Bayeux
+#
+
+#-----------------------------------------------------------------------
+# Copyright 2012 Ben Morgan <bmorgan.warwick@gmail.com>
+# Copyright 2012 University of Warwick
+#
+# This file is part of Bayeux.
+#
+# Bayeux is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Bayeux is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Bayeux.  If not, see <http://www.gnu.org/licenses/>.
+#-----------------------------------------------------------------------
+
+#-----------------------------------------------------------------------
+# Enforce an out-of-source build.
+#
+if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+  message(STATUS "Bayeux requires an out-of-source build.")
+  message(STATUS "Please remove these files from ${CMAKE_BINARY_DIR} first:")
+  message(STATUS "  CMakeCache.txt")
+  message(STATUS "  CMakeFiles")
+  message(STATUS "Once these files are removed, create a separate directory")
+  message(STATUS "and run CMake from there, pointing it to:")
+  message(STATUS "  ${CMAKE_SOURCE_DIR}")
+  message(FATAL_ERROR "in-source build detected")
+endif()
+
+#-----------------------------------------------------------------------
+# CMake/project requirements and configuration
+#
+cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+project(Bayeux)
+
+# - Versioning
+set(Bayeux_VERSION_MAJOR 1)
+set(Bayeux_VERSION_MINOR 0)
+set(Bayeux_VERSION_PATCH 0)
+set(Bayeux_VERSION_STATUS "dev")
+set(Bayeux_VERSION "${Bayeux_VERSION_MAJOR}.${Bayeux_VERSION_MINOR}.${Bayeux_VERSION_PATCH}")
+
+#-----------------------------------------------------------------------
+# NOTIMPLEMENTED Fail
+#
+message(FATAL_ERROR "The build of Bayeux is not implemented yet...")
+
