@@ -13,7 +13,7 @@ About Bayeux
 ============
 
 Bayeux provides a collection of C++ classes and functions designed
-for the simulation, recording and analysis of data for experimental 
+for the simulation, recording and analysis of data for experimental
 particle and nuclear physics projects. This functionality is split
 into several specialized submodules:
 
@@ -23,13 +23,13 @@ brio :       A Boost over ROOT I/O serialization system (extends datatools).
 
 mygsl :      C++ wrapper and extensions to the GNU Scientific Library.
 
-geomtools :  Generic tools for working with experiment geometries and
-             provide input to simulation tools (i.e. GDML/Geant4).
-
 cuts :       Generic tools for making arbitrary data selections.
 
 materials :  Description of isotopes, elements and materials plus tools
-	           for input to simulation applications (i.e. GDML/Geant4).
+	     for input to simulation applications (i.e. GDML/Geant4).
+
+geomtools :  Generic tools for working with experiment geometries and
+             provide input to simulation tools (i.e. GDML/Geant4).
 
 genvtx :     Vertex random generator tools for input to
              simulation applications.
@@ -39,7 +39,7 @@ genbb_help : C++ wrapper and extensions to the Decay0/GENBB program
 
 emfield :    Electromagnetic field modelling and management.
 
-mctools :    Tools and data models for Particle and Nuclear Physics 
+mctools :    Tools and data models for Particle and Nuclear Physics
              Monte-Carlo simulation, wrapper engine for the Geant4 framework.
 
 trackfit :   Track fitting in a NEMO-like detector.
@@ -52,7 +52,7 @@ developed in Normandy ;-).
 
 Licensing
 ---------
-Please study the file ``LICENSE.txt`` for the distribution terms and 
+Please study the file ``LICENSE.txt`` for the distribution terms and
 conditions of use of Bayeux.
 
 
@@ -60,7 +60,7 @@ Getting Help
 ============
 
 If you have problems, questions, ideas or suggestions on Bayeux or
-any of its submodules, please contact the SuperNEMO Software Working 
+any of its submodules, please contact the SuperNEMO Software Working
 Group via the main development website https://nemo.lpc-caen.in2p3.fr/.
 
 
@@ -132,7 +132,7 @@ clicking on the Downloads tab, and then installing Command Line Tools.
 
 For ease of use, LPC Caen provide the Cadfael SDK which bundles these
 libraries for easy use by Bayeux and clients of Bayeux. You can use this
-bundle, or, at your discretion, your own, or system, installs of these 
+bundle, or, at your discretion, your own, or system, installs of these
 packages.
 
 Known Issues on Tested Platforms
