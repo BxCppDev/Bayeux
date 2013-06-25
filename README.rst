@@ -70,10 +70,10 @@ Getting Bayeux
 You can obtain the Bayeux source code from the main LPC Caen Subversion
 repository.
 
-Preparing Your System for Cadfael Installation
+Preparing Your System for Bayeux Installation
 ==============================================
 
-To install Cadfael, you first need the following sofware:
+To install Bayeux, you first need the following sofware:
 
 Prerequisite Software
 ---------------------
@@ -83,7 +83,7 @@ Prerequisite Software
    -  Linux
    -  Mac OS X 10.7 (Lion) or higher
 
-We expect Cadfael to work on most modern BSD based Unices or Linux
+We expect Bayeux to work on most modern BSD based Unices or Linux
 distributions derived from Fedora(RedHat) and Debian provided the
 software listed below is installed. However, we can only fully support
 and test the following at present:
@@ -130,7 +130,7 @@ clicking on the Downloads tab, and then installing Command Line Tools.
        - with GDML support enabled
    -  ROOT 5.34.0 or higher: http://root.cern.ch
 
-For ease of use, LPC Caen provide the Cadfael SDK which bundles these
+For ease of use, LPC Caen provides the Cadfael SDK which bundles these
 libraries for easy use by Bayeux and clients of Bayeux. You can use this
 bundle, or, at your discretion, your own, or system, installs of these
 packages.
