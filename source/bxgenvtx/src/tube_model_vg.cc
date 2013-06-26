@@ -346,7 +346,7 @@ namespace genvtx {
       src_shape = &src_log->get_effective_shape ();
     }
     if (! src_shape && src_log->has_shape ()) {
-      src_shape = &src_log->get_shape ();
+      src_shape  = &src_log->get_shape ();
     }
     DT_THROW_IF (! src_shape, std::logic_error,
                  "Logical '" << src_log->get_name () << "' has no shape !");
