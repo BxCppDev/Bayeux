@@ -117,24 +117,23 @@ endif()
 # Install resources :
 #
 
-set ( _emfield_TESTING_FULL_LOCAL_PATH
-      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/testing"
-    )
-message ( STATUS "${PROJECT_NAME} : emfield testing full local path = '${_emfield_TESTING_FULL_LOCAL_PATH}' " )
+# set ( _emfield_TESTING_FULL_LOCAL_PATH
+#       "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/testing"
+#     )
 
-install ( DIRECTORY ${PROJECT_SOURCE_DIR}/testing
-          DESTINATION ${CMAKE_INSTALL_DATADIR}
-          FILE_PERMISSIONS OWNER_READ OWNER_WRITE
-                           GROUP_READ GROUP_WRITE
-                           WORLD_READ
-          DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
-                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE
-                                WORLD_READ WORLD_EXECUTE
-          PATTERN 		".svn" EXCLUDE
-          PATTERN "*~" EXCLUDE
-          PATTERN "CMakeLists.txt" EXCLUDE
-          PATTERN "testDriver.bash" EXCLUDE
-         )
+# install ( DIRECTORY ${PROJECT_SOURCE_DIR}/testing
+#           DESTINATION ${CMAKE_INSTALL_DATADIR}
+#           FILE_PERMISSIONS OWNER_READ OWNER_WRITE
+#                            GROUP_READ GROUP_WRITE
+#                            WORLD_READ
+#           DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+#                                 GROUP_READ GROUP_WRITE  GROUP_EXECUTE
+#                                 WORLD_READ WORLD_EXECUTE
+#           PATTERN 		".svn" EXCLUDE
+#           PATTERN "*~" EXCLUDE
+#           PATTERN "CMakeLists.txt" EXCLUDE
+#           PATTERN "testDriver.bash" EXCLUDE
+#          )
 
 #-----------------------------------------------------------------------
 # Package
