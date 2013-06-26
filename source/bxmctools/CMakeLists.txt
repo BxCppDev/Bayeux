@@ -66,7 +66,7 @@ endif ()
 # Find external packages needed to build
 #
 
-set(Boost_COMPONENTS program_options thread)
+set(Boost_COMPONENTS thread)
 find_package(Boost 1.47 QUIET COMPONENTS ${Boost_COMPONENTS} NO_MODULE)
 find_package(Boost 1.47 REQUIRED ${Boost_COMPONENTS})
 
