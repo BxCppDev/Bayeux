@@ -60,6 +60,16 @@ namespace genvtx {
     return;
   }
 
+  int weight_info::get_type() const
+  {
+    return type;
+  }
+
+  double weight_info::get_value() const
+  {
+    return value;
+  }
+
   bool weight_info::has_type () const
   {
     return type > WEIGHTING_NONE && type <= WEIGHTING_MASS;
@@ -100,6 +110,21 @@ namespace genvtx {
     return mass;
   }
 
+  void weight_info::set_mass(double m)
+  {
+    mass = m;
+  }
+
+  void weight_info::set_value(double v)
+  {
+    value = v;
+  }
+
+  void weight_info::set_type(int t)
+  {
+    type = t;
+  }
+
   weight_info::weight_info ()
   {
     type = WEIGHTING_NONE;
@@ -108,11 +133,13 @@ namespace genvtx {
     return;
   }
 
-  void weight_info::dump(std::ostream & out_) const
+  void weight_info::dump(std::ostream & out_, const std::string & title_) const
   {
-    out_ << "genvtx::weight_info::dump: \n";
+    if (! title_.empty()) {
+      out_ << title_ << " : \n";
+    }
     out_ << "|-- " << "Type  = " << type << '\n';
-    out_ << "|-- " << "Value  = " << value << '\n';
+    out_ << "|-- " << "Value = " << value << '\n';
     out_ << "`-- " << "Mass  = " << mass/ CLHEP::gram << " g" << '\n';
   }
 

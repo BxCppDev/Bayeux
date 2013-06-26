@@ -231,7 +231,7 @@ namespace genvtx {
   }
 
   void tube_model_vg::_shoot_vertex_tubes (mygsl::rng & random_,
-                                                   geomtools::vector_3d & vertex_)
+                                           geomtools::vector_3d & vertex_)
   {
     double ran_w = random_.uniform ();
     int index = -1;
@@ -248,6 +248,13 @@ namespace genvtx {
 
     const geomtools::placement & world_plct
       = _entries_[index].ginfo->get_world_placement ();
+    // Special treatment for geomtools::rotated_boxed_model :
+    if (_entries_[index].ginfo->get_logical().has_effective_relative_placement()) {
+      const geomtools::placement & eff_ref_placement = _entries_[index].ginfo->get_logical().get_effective_relative_placement();
+      geomtools::vector_3d rel_vtx;
+      eff_ref_placement.child_to_mother(src_vtx, rel_vtx);
+      src_vtx = rel_vtx;
+    }
     world_plct.child_to_mother (src_vtx, vertex_);
     return;
   }
@@ -305,11 +312,12 @@ namespace genvtx {
     // Attempt to extract material info :
     double density = -1.0;
     if (is_mode_bulk ()) {
-      std::string material_name;
+       std::string material_name;
+      if (src_log->has_material_ref ()) {
+        material_name = src_log->get_material_ref ();
+      }
       if (src_log->has_effective_material_ref ()) {
         material_name = src_log->get_effective_material_ref ();
-      } else if (src_log->has_material_ref ()) {
-        material_name = src_log->get_material_ref ();
       }
       if (! material_name.empty()){
         const materials::manager * mat_mgr_ptr
@@ -325,6 +333,8 @@ namespace genvtx {
           if (found->second.has_ref ()) {
             const materials::material & the_material = found->second.get_ref ();
             density = the_material.get_density ();
+            DT_LOG_TRACE(get_logging_priority(),
+                         "Density = " << density / (CLHEP::g/CLHEP::cm3) << " g/cm3");
           }
         }
       }
@@ -332,38 +342,39 @@ namespace genvtx {
 
     int surface_mask = 0;
     if (is_mode_surface ()) {
-        _tube_vg_.set_mode (utils::MODE_SURFACE);
-        if (_surface_inner_side_) surface_mask |= geomtools::tube::FACE_INNER_SIDE;
-        if (_surface_outer_side_) surface_mask |= geomtools::tube::FACE_OUTER_SIDE;
-        if (_surface_bottom_)     surface_mask |= geomtools::tube::FACE_BOTTOM;
-        if (_surface_top_)        surface_mask |= geomtools::tube::FACE_TOP;
-        _tube_vg_.set_surface_mask (surface_mask);
-      } else {
-        _tube_vg_.set_mode (utils::MODE_BULK);
+      _tube_vg_.set_mode (utils::MODE_SURFACE);
+      if (_surface_inner_side_) surface_mask |= geomtools::tube::FACE_INNER_SIDE;
+      if (_surface_outer_side_) surface_mask |= geomtools::tube::FACE_OUTER_SIDE;
+      if (_surface_bottom_)     surface_mask |= geomtools::tube::FACE_BOTTOM;
+      if (_surface_top_)        surface_mask |= geomtools::tube::FACE_TOP;
+      _tube_vg_.set_surface_mask (surface_mask);
+    } else {
+      _tube_vg_.set_mode (utils::MODE_BULK);
+    }
+    const geomtools::i_shape_3d * src_shape_ptr = 0;
+    {
+      DT_THROW_IF (! src_log->has_shape (), std::logic_error,
+                   "Logical '" << src_log->get_name () << "' has " << "no shape !");
+      src_shape_ptr = &src_log->get_shape ();
+      if (src_log->has_effective_shape ()) {
+        src_shape_ptr = &src_log->get_effective_shape ();
       }
-    const geomtools::i_shape_3d * src_shape = 0;
-    if (! src_shape && src_log->has_effective_shape ()) {
-      src_shape = &src_log->get_effective_shape ();
     }
-    if (! src_shape && src_log->has_shape ()) {
-      src_shape = &src_log->get_shape ();
-    }
-    DT_THROW_IF (! src_shape, std::logic_error,
-                 "Logical '" << src_log->get_name () << "' has no shape !");
-    DT_THROW_IF (src_shape->get_shape_name () != "tube",
+    const geomtools::i_shape_3d & src_shape = *src_shape_ptr;
+    DT_THROW_IF (src_shape.get_shape_name () != "tube",
                  std::logic_error,
-                 "Shape is '" << src_shape->get_shape_name () << "' but "
+                 "Shape is '" << src_shape.get_shape_name () << "' but "
                  << "only tube shape is supported in vertex generator '" << get_name() << "' !");
-    const geomtools::tube * tube_shape = dynamic_cast<const geomtools::tube *>(src_shape);
-    _tube_vg_.set_tube (*tube_shape);
+    const geomtools::tube & tube_shape = dynamic_cast<const geomtools::tube &>(src_shape);
+    _tube_vg_.set_tube (tube_shape);
     _tube_vg_.set_skin_skip(_skin_skip_);
     _tube_vg_.set_skin_thickness(_skin_thickness_);
     _tube_vg_.initialize_simple ();
     double weight = 0.0;
     if (is_mode_surface ()) {
-      weight = tube_shape->get_surface (surface_mask);
+      weight = tube_shape.get_surface (surface_mask);
     } else {
-      weight = tube_shape->get_volume ();
+      weight = tube_shape.get_volume ();
     }
     // Compute weight:
     _entries_[0].cumulated_weight = _entries_[0].weight;
@@ -381,11 +392,11 @@ namespace genvtx {
       the_weight_type = weight_info::WEIGHTING_SURFACE;
     }
     weight_info the_weight_info;
-    the_weight_info.type = the_weight_type;
-    the_weight_info.value = the_weight_value;
+    the_weight_info.set_type(the_weight_type);
+    the_weight_info.set_value(the_weight_value);
     if (the_weight_type == weight_info::WEIGHTING_VOLUME && density > 0.0) {
       // Total mass computed for homogeneous density and
-      the_weight_info.mass = the_weight_value * density;
+      the_weight_info.set_mass(the_weight_value * density);
     }
     _set_total_weight (the_weight_info);
 

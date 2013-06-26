@@ -46,7 +46,6 @@ namespace genvtx {
     double cumulated_weight;
     const geomtools::geom_info * ginfo;
 
-
   };
 
   struct weight_info
@@ -77,12 +76,22 @@ namespace genvtx {
 
     double get_mass () const;
 
+    void set_mass(double);
+
+    void set_value(double);
+
+    void set_type(int);
+
+    int get_type() const;
+
+    double get_value() const;
+
     weight_info ();
 
-    void dump(std::ostream & = std::clog) const;
+    void dump(std::ostream & = std::clog, const std::string & title_ = "") const;
 
-  public:
-
+    //public:
+  private:
     double value; //<! Surface or volume (in CLHEP units)
     double mass;  //<! Mass (in CLHEP units)
     int    type;  //<! Type of generator: SURFACE, VOLUME (BULK)

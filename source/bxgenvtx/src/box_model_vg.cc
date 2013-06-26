@@ -272,6 +272,13 @@ namespace genvtx {
 
     const geomtools::placement & world_plct
       = _entries_[index].ginfo->get_world_placement ();
+    // Special treatment for geomtools::rotated_boxed_model :
+    if (_entries_[index].ginfo->get_logical().has_effective_relative_placement()) {
+      const geomtools::placement & eff_ref_placement = _entries_[index].ginfo->get_logical().get_effective_relative_placement();
+      geomtools::vector_3d rel_vtx;
+      eff_ref_placement.child_to_mother(src_vtx, rel_vtx);
+      src_vtx = rel_vtx;
+    }
     world_plct.child_to_mother (src_vtx, vertex_);
     return;
   }
@@ -335,22 +342,31 @@ namespace genvtx {
 
     // Attempt to extract material info :
     double density = -1.0;
-    if (is_mode_bulk ()
-        && src_log->has_material_ref ()) {
-      std::string material_name = src_log->get_material_ref ();
-      const materials::manager * mat_mgr_ptr
-        = detail::access_materials_manager(get_geom_manager (),
-                                           _materials_plugin_name_);
-      DT_THROW_IF (mat_mgr_ptr == 0, std::logic_error,
-                   "No geometry materials plugin named '" << _materials_plugin_name_
-                   << "' available from the geometry manager in vertex generator '" << get_name() << "' !");
-      const materials::manager & mat_mgr = *mat_mgr_ptr;
-      materials::material_dict_type::const_iterator found =
-        mat_mgr.get_materials ().find (material_name);
-      if (found != mat_mgr.get_materials ().end ()) {
-        if (found->second.has_ref ()) {
-          const materials::material & the_material = found->second.get_ref ();
-          density = the_material.get_density ();
+    if (is_mode_bulk ()) {
+      std::string material_name;
+      if (src_log->has_material_ref ()) {
+        material_name = src_log->get_material_ref ();
+      }
+      if (src_log->has_effective_material_ref ()) {
+        material_name = src_log->get_effective_material_ref ();
+      }
+      if (! material_name.empty()) {
+        const materials::manager * mat_mgr_ptr
+          = detail::access_materials_manager(get_geom_manager (),
+                                             _materials_plugin_name_);
+        DT_THROW_IF (mat_mgr_ptr == 0, std::logic_error,
+                     "No geometry materials plugin named '" << _materials_plugin_name_
+                     << "' available from the geometry manager in vertex generator '" << get_name() << "' !");
+        const materials::manager & mat_mgr = *mat_mgr_ptr;
+        materials::material_dict_type::const_iterator found =
+          mat_mgr.get_materials ().find (material_name);
+        if (found != mat_mgr.get_materials ().end ()) {
+          if (found->second.has_ref ()) {
+            const materials::material & the_material = found->second.get_ref ();
+            density = the_material.get_density ();
+            DT_LOG_TRACE(get_logging_priority(),
+                         "Density = " << density / (CLHEP::g/CLHEP::cm3) << " g/cm3");
+          }
         }
       }
     }
@@ -367,23 +383,30 @@ namespace genvtx {
     } else {
       _box_vg_.set_mode (utils::MODE_BULK);
     }
-    DT_THROW_IF (! src_log->has_shape (), std::logic_error,
-                 "Logical '" << src_log->get_name () << "' has " << "no shape !");
-    const geomtools::i_shape_3d & src_shape = src_log->get_shape ();
+    const geomtools::i_shape_3d * src_shape_ptr = 0;
+    {
+      DT_THROW_IF (! src_log->has_shape (), std::logic_error,
+                   "Logical '" << src_log->get_name () << "' has " << "no shape !");
+      src_shape_ptr = &src_log->get_shape ();
+      if (src_log->has_effective_shape ()) {
+        src_shape_ptr = &src_log->get_effective_shape ();
+      }
+    }
+    const geomtools::i_shape_3d & src_shape = *src_shape_ptr;
     DT_THROW_IF (src_shape.get_shape_name () != "box", std::logic_error,
                  "Shape is '" << src_shape.get_shape_name () << "' but "
                  << "only box shape is supported in vertex generator '" << get_name() << "' !");
-    const geomtools::box * box_shape
-      = dynamic_cast<const geomtools::box *> (&src_shape);
-    _box_vg_.set_box_ref (*box_shape);
+    const geomtools::box & box_shape
+      = dynamic_cast<const geomtools::box &> (src_shape);
+    _box_vg_.set_box_ref (box_shape);
     _box_vg_.set_skin_skip(_skin_skip_);
     _box_vg_.set_skin_thickness(_skin_thickness_);
     _box_vg_.initialize_simple ();
     double weight = 0.0;
     if (is_mode_surface ()) {
-      weight = box_shape->get_surface (surface_mask);
+      weight = box_shape.get_surface (surface_mask);
     } else {
-      weight = box_shape->get_volume ();
+      weight = box_shape.get_volume ();
     }
 
     // Compute weight:
@@ -402,11 +425,11 @@ namespace genvtx {
       the_weight_type = weight_info::WEIGHTING_SURFACE;
     }
     weight_info the_weight_info;
-    the_weight_info.type = the_weight_type;
-    the_weight_info.value = the_weight_value;
+    the_weight_info.set_type(the_weight_type);
+    the_weight_info.set_value(the_weight_value);
     if (the_weight_type == weight_info::WEIGHTING_VOLUME && density > 0) {
       // Total mass computed for homogeneous density:
-      the_weight_info.mass = the_weight_value * density;
+      the_weight_info.set_mass(the_weight_value * density);
     }
     _set_total_weight (the_weight_info);
 
