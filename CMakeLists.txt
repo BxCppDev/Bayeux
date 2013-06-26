@@ -48,16 +48,18 @@ set(Bayeux_VERSION_PATCH 0)
 set(Bayeux_VERSION_STATUS "dev")
 set(Bayeux_VERSION "${Bayeux_VERSION_MAJOR}.${Bayeux_VERSION_MINOR}.${Bayeux_VERSION_PATCH}")
 
-# - Output of build products to common location
+# - Configure output paths for products to give inplace build that roughly
+#   matches install layout.
 set(Bayeux_BUILDPRODUCT_DIR "${PROJECT_BINARY_DIR}/BuildProducts")
-
-#-----------------------------------------------------------------------
-# Configure output paths for products to give inplace build that roughly
-# matches install layout.
-#
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/lib")
 set(CMAKE_BINARY_OUTPUT_DIRECTORY  "${Bayeux_BUILDPRODUCT_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/lib")
+
+# - Custom Modules
+list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake)
+
+# - Extract SVN details of this Bayeux
+include(SVNUtilities)
 
 #-----------------------------------------------------------------------
 # Build the subdirectories
