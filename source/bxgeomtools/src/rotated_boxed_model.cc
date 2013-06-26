@@ -9,7 +9,6 @@
 
 #include <datatools/units.h>
 
-
 namespace geomtools {
 
   const geomtools::box & rotated_boxed_model::get_box () const
@@ -20,6 +19,11 @@ namespace geomtools {
   const geomtools::box & rotated_boxed_model::get_solid () const
   {
     return _solid_;
+  }
+
+  const placement & rotated_boxed_model::get_boxed_placement () const
+  {
+    return _boxed_placement_;
   }
 
   void rotated_boxed_model::set_boxed_model (const i_model & model_)
@@ -162,7 +166,6 @@ namespace geomtools {
                      std::logic_error,
                      "Missing 'z' property !");
       }
-
     }
 
     DT_THROW_IF (! models_, std::logic_error, "Missing logicals dictionary !");
@@ -298,7 +301,7 @@ namespace geomtools {
     grab_logical ().set_shape (_solid_);
     grab_logical ().set_material_ref (material_name);
     // >>> Special treatment:
-
+    // 2013-06-27 FM: add support for effective geometry informations:
     // Set effective shape:
     if (_boxed_model_->get_logical().has_shape()) {
       grab_logical ().set_effective_shape (_boxed_model_->get_logical().get_shape());
@@ -313,11 +316,19 @@ namespace geomtools {
     if (_boxed_model_->get_logical().has_effective_material_ref()) {
       grab_logical ().set_effective_material_ref (_boxed_model_->get_logical().get_effective_material_ref());
     }
+    // Set effective placement:
+    grab_logical ().set_effective_relative_placement (_boxed_placement_);
+    /*
+    if (_boxed_model_->get_logical().has_effective_relative_placement()) {
+      grab_logical ().set_effective_relative_placement (_boxed_model_->get_logical().get_effective_relative_placement());
+    }
+    */
+
     // <<<
     _boxed_phys_.set_name (i_model::make_physical_volume_name (rotated_label));
     _boxed_phys_.set_placement (_boxed_placement_);
     _boxed_phys_.set_logical (_boxed_model_->get_logical ());
-    _boxed_phys_.set_mother (_logical);
+    _boxed_phys_.set_mother (grab_logical ());
 
     DT_LOG_TRACE (get_logging_priority (), "Exiting.");
     return;

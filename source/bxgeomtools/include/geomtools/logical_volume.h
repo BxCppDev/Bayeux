@@ -31,6 +31,7 @@ namespace geomtools {
 
   class physical_volume;
   class i_model;
+  class placement;
 
   class logical_volume
     : public datatools::i_tree_dumpable
@@ -130,6 +131,12 @@ namespace geomtools {
 
     void set_effective_material_ref (const std::string & = "");
 
+    bool has_effective_relative_placement() const;
+
+    void set_effective_relative_placement (const placement &);
+
+    const placement & get_effective_relative_placement () const;
+
     uint32_t locate(const vector_3d & local_position_,
                     bool ignore_daugthers_ = false,
                     double tolerance_ = 0.0, double daughter_tolerance_ = 0.0,
@@ -154,7 +161,7 @@ namespace geomtools {
   private:
 
     std::string           _name_;         //!< The name of the volume
-    datatools::logger::priority _logging_priority_;
+    datatools::logger::priority _logging_priority_; //!< The logging priority threshold
     std::string           _material_ref_; //!< The name of the material
     bool                  _locked_;       //!< The lock flag
     datatools::properties _parameters_;   //!< The collection of auxiliary parameters
@@ -166,6 +173,7 @@ namespace geomtools {
     // Experimental:
     const i_model    *    _geo_model_;       //!< The geometry model
     const i_shape_3d *    _effective_shape_; //!< The effective shape to be taken into account for shape inspection
+    const placement *     _effective_relative_placement_; //!< The effective relative placement to be taken into account for volume inspection
     std::string           _effective_material_ref_; //!< The name of the effective material to be taken into account for material inspection
 
     physicals_col_type    _real_physicals_; //!< Unused

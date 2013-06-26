@@ -130,6 +130,22 @@ namespace geomtools {
     return *_effective_shape_;
   }
 
+  bool logical_volume::has_effective_relative_placement() const
+  {
+    return _effective_relative_placement_ != 0;
+  }
+
+  void logical_volume::set_effective_relative_placement (const placement & placement_)
+  {
+    _effective_relative_placement_ = &placement_;
+  }
+
+  const placement & logical_volume::get_effective_relative_placement () const
+  {
+    DT_THROW_IF (! _effective_relative_placement_, std::logic_error, "Missing effective placement for logical volume '" << get_name () << "' !");
+    return *_effective_relative_placement_;
+  }
+
   bool logical_volume::has_geometry_model() const
   {
     return _geo_model_ != 0;
@@ -199,13 +215,17 @@ namespace geomtools {
 
   void logical_volume::_init_defaults_ ()
   {
-    _logging_priority_ = datatools::logger::PRIO_FATAL;
     _name_.clear();
+    _logging_priority_ = datatools::logger::PRIO_FATAL;
+    _material_ref_.clear();
     _locked_ = false;
+    _parameters_.clear();
     _own_shape_ = false;
     _shape_ = 0;
     _geo_model_ = 0;
     _effective_shape_ = 0;
+    _effective_relative_placement_ = 0;
+    _effective_material_ref_.clear();
     _abstract_ = false;
     return;
   }
@@ -288,7 +308,7 @@ namespace geomtools {
     } else {
       name = name_;
     }
-    DT_THROW_IF (name.empty (), std::logic_error,  "Missing physical's name in logical volume '" <<  get_name()  << "' !");
+    DT_THROW_IF (name.empty (), std::logic_error, "Missing physical's name in logical volume '" <<  get_name()  << "' !");
     DT_THROW_IF (_parameters_.has_flag (HAS_REPLICA_FLAG), std::logic_error,
                  "Cannot add more physical volume for a 'replica' already exists in logical volume '" <<  get_name()  << "' !");
     if (phys_.get_placement ().is_replica ()) {
@@ -563,6 +583,13 @@ namespace geomtools {
       out_ << indent <<  datatools::i_tree_dumpable::tag
            << "Effective material : '"
            << get_effective_material_ref() << "'"
+           << endl;
+    }
+
+    if (has_effective_relative_placement()) {
+      out_ << indent <<  datatools::i_tree_dumpable::tag
+           << "Effective relative placement : '"
+           << get_effective_relative_placement() << "'"
            << endl;
     }
 
