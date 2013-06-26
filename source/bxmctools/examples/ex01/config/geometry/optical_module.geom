@@ -505,7 +505,7 @@ z                : real   =   1.0
 #######################
 
 #@description The name of the material
-material.ref : string = "copper"
+material.ref : string = "aluminium"
 
 #########################
 # Visibility parameters #

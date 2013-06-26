@@ -103,6 +103,10 @@ if [ $do_simulation -eq 1 ]; then
     vg_name="source_0_bulk.vg"
 #vg_name="col1_row0_scin_surface.vg"
 
+    eg_name="electron_1MeV"
+    vg_name="all_scin_bulk.vg"
+
+
     echo -e "\nRun the Geant4 simulation interactively..." 1>&2
     echo -e "/run/beamOn 5\nexit" | \
 	g4_production \
@@ -129,6 +133,7 @@ if [ $do_simulation -eq 1 ]; then
     echo -e "\nBrowse the output plain simulated data file..." 1>&2
     ./ex01_read_plain_simdata \
 	--interactive  \
+        --load-dll emfield \
 	--with-visualization \
 	--logging-priority "notice" \
 	--input-file "mctools_ex01_${eg_name}_${vg_name}.xml"
@@ -152,6 +157,7 @@ if [ $do_simulation -eq 1 ]; then
 
     echo -e "\nBrowse the output plain simulated data file..." 1>&2
     ./ex01_read_plain_simdata \
+        --load-dll emfield \
 	--interactive \
 	--with-visualization \
 	--logging-priority "notice" \

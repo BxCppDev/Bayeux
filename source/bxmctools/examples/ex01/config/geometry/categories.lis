@@ -6,7 +6,7 @@
 #@meta_label  "type"
 
 
-##################################################################
+####################################################
 # This is the mandatory top-level geometry category.
 # One should always provide it :
 [category="world" type="0"]
@@ -17,7 +17,7 @@
 addresses : string[1] = "world"
 
 
-##################################################################
+################################################################
 # This geometry category addresses an experimental area volume :
 [category="lab.gc"  type="100"]
 
@@ -27,7 +27,7 @@ addresses : string[1] = "world"
 addresses : string[1] = "area"
 
 
-##################################################################
+#####################################################
 # This geometry category addresses a vacuum chamber :
 [category="vessel.gc" type="200"]
 
@@ -98,8 +98,8 @@ addresses : string[1] = "position"
 inherits : string = "source.gc"
 
 
-#################################################################
-# This geometry category addresses of a calibration source film :
+##############################################################
+# This geometry category addresses a calibration source film :
 [category="source_film.gc" type="1020"]
 
 #@config The geometry category of a calibration source film
@@ -112,7 +112,7 @@ inherits : string = "source.gc"
 # This geometry category addresses a vertical column of optical modules :
 [category="optical_module_column.gc" type="2010"]
 
-#@config The geometry category of a calibration source film
+#@config The geometry category of a vertical column of optical modules
 
 #@description The GID address of a column is defined by its 'column' number
 addresses : string[1] = "column"

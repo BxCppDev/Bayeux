@@ -96,7 +96,7 @@ Introduction
    * Vertex generation:
 
      * ``config/vertex_generator/manager.conf`` : The main configuration file for the vertex
-       generator manager (``gencvtx::manager`` class).
+       generator manager (``genvtx::manager`` class).
      * ``config/vertex_generator/vertex_generators.conf`` :  The definitions of some vertex generators.
 
    * Geant4 simulation:
