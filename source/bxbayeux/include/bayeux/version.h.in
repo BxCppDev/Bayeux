@@ -1,0 +1,92 @@
+//! \file    version.h
+//! \brief   Describe the Bayeux API version
+//! \details Querying the version of Bayeux is needed at both
+//!          compile and runtime by clients so that they may adjust
+//!          their usage.
+//
+// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com> 
+// Copyright (c) 2013 by The University of Warwick
+//
+// This file is part of Bayeux.
+//
+// Bayeux is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Bayeux is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Bayeux.  If not, see <http://www.gnu.org/licenses/>.
+
+#ifndef BAYEUX_VERSION_H
+#define BAYEUX_VERSION_H
+// Standard Library
+#include <string>
+
+// Third Party
+// - A
+
+// This Project
+
+//----------------------------------------------------------------------
+// - Compile Time API
+//! Major version number of bayeux
+#define BAYEUX_VERSION_MAJOR @Bayeux_VERSION_MAJOR@
+
+//! Minor version number of bayeux
+#define BAYEUX_VERSION_MINOR @Bayeux_VERSION_MINOR@
+
+//! Patch version number of bayeux
+#define BAYEUX_VERSION_PATCH @Bayeux_VERSION_PATCH@
+
+//! Encode bayeux to ordered integer available at compile time
+#define BAYEUX_ENCODE_VERSION(major, minor, patch) ( \
+        ((major) * 10000) \
+      + ((minor) *   100) \
+      + ((patch) *     1))
+
+//! Integer encoded bayeux version available at compile time
+#define BAYEUX_VERSION BAYEUX_ENCODE_VERSION( \
+        BAYEUX_VERSION_MAJOR, \
+        BAYEUX_VERSION_MINOR, \
+        BAYEUX_VERSION_PATCH)
+
+//! String encoded full version number, e.g. "1.2.3", available at compile time
+#define BAYEUX_LIB_VERSION "@Bayeux_VERSION_MAJOR@.@Bayeux_VERSION_MINOR@.@Bayeux_VERSION_PATCH@"
+
+//! Check current version >= (major, minor, patch) at compile time
+#define BAYEUX_IS_AT_LEAST(major,minor,patch) ( \
+        BAYEUX_VERSION >= \
+        BAYEUX_ENCODE_VERSION(major,minor,patch))
+
+//----------------------------------------------------------------------
+// Runtime API
+namespace bayeux {
+//! \brief Describe the bayeux API version and features
+struct version {
+//! Return the major version number of bayeux, e.g., 1 for '1.2.3'
+static int get_major();
+
+//! Return the minor version number of bayeux, e.g., 2 for '1.2.3'
+static int get_minor();
+
+//! Return the patch version number of bayeux, e.g., 3 for '1.2.3'
+static int get_patch();
+
+//! Return the full version number of bayeux as a string, e.g., '1.2.3'
+static std::string get_version();
+
+//! Return true if the current bayeux version >= (major, minor, patch)
+static bool is_at_least(int major, int minor, int patch);
+
+//! Return true if the named feature is available in bayeux
+static bool has_feature(const std::string& feature);
+};
+} // namespace bayeux
+
+#endif // BAYEUX_VERSION_H
+

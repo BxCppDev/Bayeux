@@ -2,8 +2,8 @@
 #
 
 #-----------------------------------------------------------------------
-# Copyright 2012 Ben Morgan <bmorgan.warwick@gmail.com>
-# Copyright 2012 University of Warwick
+# Copyright 2012,2013 Ben Morgan <bmorgan.warwick@gmail.com>
+# Copyright 2012,2013 University of Warwick
 #
 # This file is part of Bayeux.
 #
@@ -48,8 +48,19 @@ set(Bayeux_VERSION_PATCH 0)
 set(Bayeux_VERSION_STATUS "dev")
 set(Bayeux_VERSION "${Bayeux_VERSION_MAJOR}.${Bayeux_VERSION_MINOR}.${Bayeux_VERSION_PATCH}")
 
+# - Output of build products to common location
+set(Bayeux_BUILDPRODUCT_DIR "${PROJECT_BINARY_DIR}/BuildProducts")
+
 #-----------------------------------------------------------------------
-# NOTIMPLEMENTED Fail
+# Configure output paths for products to give inplace build that roughly
+# matches install layout.
 #
-message(FATAL_ERROR "The build of Bayeux is not implemented yet...")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/lib")
+set(CMAKE_BINARY_OUTPUT_DIRECTORY  "${Bayeux_BUILDPRODUCT_DIR}/bin")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/lib")
+
+#-----------------------------------------------------------------------
+# Build the subdirectories
+#
+add_subdirectory(source)
 
