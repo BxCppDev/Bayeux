@@ -461,6 +461,35 @@ namespace geomtools {
     return bits;
   }
 
+
+  // static
+  bool logical_volume::same(const logical_volume & log1_,
+                               const logical_volume & log2_,
+                               uint32_t mode_)
+  {
+    if (&log1_ == &log2_) return true;
+    const i_shape_3d * sh1 = &log1_.get_shape ();
+    const i_shape_3d * sh2 = &log2_.get_shape ();
+    if (log1_.has_effective_shape()) {
+      sh1 = &log1_.get_effective_shape ();
+    }
+    if (log2_.has_effective_shape()) {
+      sh2 = &log2_.get_effective_shape ();
+    }
+    std::string mat1 = log1_.get_material_ref();
+    std::string mat2 = log2_.get_material_ref();
+    if (log1_.has_effective_material_ref()) {
+      mat1 = log1_.get_effective_material_ref();
+    }
+    if (log2_.has_effective_material_ref()) {
+      mat2 = log2_.get_effective_material_ref();
+    }
+    if (sh1 == sh2 && mat1 == mat2) {
+      return true;
+    }
+    return false;
+  }
+
   void logical_volume::tree_dump (ostream & out_,
                                   const string & title_,
                                   const string & indent_,

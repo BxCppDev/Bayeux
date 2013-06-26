@@ -63,26 +63,23 @@ namespace geomtools {
 
     /*** length unit ***/
     double lunit = CLHEP::mm;
-    if (config_.has_key ("length_unit"))
-      {
-        const std::string length_unit_str = config_.fetch_string ("length_unit");
-        lunit = datatools::units::get_length_unit_from (length_unit_str);
-      }
+    if (config_.has_key ("length_unit")) {
+      const std::string length_unit_str = config_.fetch_string ("length_unit");
+      lunit = datatools::units::get_length_unit_from (length_unit_str);
+    }
 
     double aunit = CLHEP::degree;
     /*** angle unit ***/
-    if (config_.has_key ("angle_unit"))
-      {
-        const std::string angle_unit_str = config_.fetch_string ("angle_unit");
-        aunit = datatools::units::get_angle_unit_from (angle_unit_str);
-      }
+    if (config_.has_key ("angle_unit")) {
+      const std::string angle_unit_str = config_.fetch_string ("angle_unit");
+      aunit = datatools::units::get_angle_unit_from (angle_unit_str);
+    }
 
     // fetch the label of the rotated boxed model:
     std::string rotated_label = "rotated";
-    if (config_.has_key ("rotated.label"))
-      {
-        rotated_label = config_.fetch_string ("rotated.label");
-      }
+    if (config_.has_key ("rotated.label")) {
+      rotated_label = config_.fetch_string ("rotated.label");
+    }
 
     // fetch the rotation axis:
     DT_THROW_IF (! config_.has_key ("rotated.axis"), std::logic_error,
@@ -93,25 +90,20 @@ namespace geomtools {
     std::string special_rotation_angle_label;
     double rotation_angle;
     datatools::invalidate (rotation_angle);
-    if (config_.has_key ("rotated.special_angle"))
-      {
-        special_rotation_angle_label = config_.fetch_string ("rotated.special_angle");
-        use_special_angle = true;
+    if (config_.has_key ("rotated.special_angle")) {
+      special_rotation_angle_label = config_.fetch_string ("rotated.special_angle");
+      use_special_angle = true;
+    } else if (config_.has_key ("rotated.angle")) {
+      rotation_angle = config_.fetch_real ("rotated.angle");
+      if (! config_.has_explicit_unit ("rotated.angle")) {
+        rotation_angle *= aunit;
       }
-    else if (config_.has_key ("rotated.angle"))
-      {
-        rotation_angle = config_.fetch_real ("rotated.angle");
-        if (! config_.has_explicit_unit ("rotated.angle")) {
-          rotation_angle *= aunit;
-        }
-        use_special_angle = false;
-      }
-    else
-      {
-        DT_THROW_IF (true,
-                     std::logic_error,
-                     "Missing 'rotated.special_angle' or 'rotation.angle' property for model '" << name_ << "' !");
-      }
+      use_special_angle = false;
+    } else {
+      DT_THROW_IF (true,
+                   std::logic_error,
+                   "Missing 'rotated.special_angle' or 'rotation.angle' property for model '" << name_ << "' !");
+    }
 
     DT_THROW_IF (! config_.has_key ("rotated.model"),
                  std::logic_error,
@@ -131,60 +123,47 @@ namespace geomtools {
     datatools::invalidate (z);
     // special angles: 0, 90, 180, 270 degrees
     int special_rotation_angle = ROTATION_ANGLE_INVALID;
-    if (use_special_angle)
-      {
-        special_rotation_angle =
-          get_special_rotation_angle_from_label (special_rotation_angle_label);
-        DT_THROW_IF (! check_special_rotation_angle (special_rotation_angle),
+    if (use_special_angle) {
+      special_rotation_angle =
+        get_special_rotation_angle_from_label (special_rotation_angle_label);
+      DT_THROW_IF (! check_special_rotation_angle (special_rotation_angle),
+                   std::logic_error,
+                   "Invalid rotation angle (" << special_rotation_angle_label << ") for model '" << name_ << "'!");
+    } else { // arbitrary angles:
+      if (config_.has_key ("x")) {
+        x = config_.fetch_real ("x");
+        if (! config_.has_explicit_unit ("x")) {
+          x *= lunit;
+        }
+      } else {
+        DT_THROW_IF ((rotation_axis == ROTATION_AXIS_Y) || (rotation_axis == ROTATION_AXIS_Z),
                      std::logic_error,
-                     "Invalid rotation angle (" << special_rotation_angle_label << ") for model '" << name_ << "'!");
+                     "Missing 'x' property !");
       }
-    // arbitrary angles:
-    else
-      {
-        if (config_.has_key ("x"))
-          {
-            x = config_.fetch_real ("x");
-            if (! config_.has_explicit_unit ("x")) {
-              x *= lunit;
-            }
-          }
-        else
-          {
-            DT_THROW_IF ((rotation_axis == ROTATION_AXIS_Y) || (rotation_axis == ROTATION_AXIS_Z),
-                         std::logic_error,
-                         "Missing 'x' property !");
-          }
 
-        if (config_.has_key ("y"))
-          {
-            y = config_.fetch_real ("y");
-            if (! config_.has_explicit_unit ("y")) {
-              y *= lunit;
-            }
-          }
-        else
-          {
-            DT_THROW_IF ((rotation_axis == ROTATION_AXIS_X) || (rotation_axis == ROTATION_AXIS_Z),
-                         std::logic_error,
-                         "Missing 'y' property !");
-          }
-
-        if (config_.has_key ("z"))
-          {
-            z = config_.fetch_real ("z");
-            if (! config_.has_explicit_unit ("z")) {
-              z *= lunit;
-            }
-          }
-        else
-          {
-            DT_THROW_IF ((rotation_axis == ROTATION_AXIS_X) || (rotation_axis == ROTATION_AXIS_Y),
-                         std::logic_error,
-                         "Missing 'z' property !");
-          }
-
+      if (config_.has_key ("y")) {
+        y = config_.fetch_real ("y");
+        if (! config_.has_explicit_unit ("y")) {
+          y *= lunit;
+        }
+      } else {
+        DT_THROW_IF ((rotation_axis == ROTATION_AXIS_X) || (rotation_axis == ROTATION_AXIS_Z),
+                     std::logic_error,
+                     "Missing 'y' property !");
       }
+
+      if (config_.has_key ("z")) {
+        z = config_.fetch_real ("z");
+        if (! config_.has_explicit_unit ("z")) {
+          z *= lunit;
+        }
+      } else {
+        DT_THROW_IF ((rotation_axis == ROTATION_AXIS_X) || (rotation_axis == ROTATION_AXIS_Y),
+                     std::logic_error,
+                     "Missing 'z' property !");
+      }
+
+    }
 
     DT_THROW_IF (! models_, std::logic_error, "Missing logicals dictionary !");
     // Boxed model:
@@ -219,115 +198,96 @@ namespace geomtools {
     _boxed_placement_.set_translation (x0, y0, z0);
     _solid_.reset ();
     // if some special angle is used (0, 90, 180, 270 degrees):
-    if (use_special_angle)
-      {
-        rotation_angle = get_special_rotation_angle (special_rotation_angle);
-        // compute the new stackable data attached to the rotated solid:
-        stackable_data the_new_SD;
-        the_new_SD.xmin = gxmin;
-        the_new_SD.xmax = gxmax;
-        the_new_SD.ymin = gymin;
-        the_new_SD.ymax = gymax;
-        the_new_SD.zmin = gzmin;
-        the_new_SD.zmax = gzmax;
-        if (rotation_axis == ROTATION_AXIS_X)
-          {
-            if (special_rotation_angle ==  ROTATION_ANGLE_90)
-              {
-                the_new_SD.ymax = -gzmin;
-                the_new_SD.zmax =  gymax;
-                the_new_SD.ymin = -gzmax;
-                the_new_SD.zmin =  gymin;
-              }
-            if (special_rotation_angle ==  ROTATION_ANGLE_180)
-              {
-                the_new_SD.ymax = -gymin;
-                the_new_SD.zmax = -gzmin;
-                the_new_SD.ymin = -gymax;
-                the_new_SD.zmin = -gzmax;
-              }
-            if (special_rotation_angle ==  ROTATION_ANGLE_270)
-              {
-                the_new_SD.ymax =  gzmax;
-                the_new_SD.zmax = -gymin;
-                the_new_SD.ymin =  gzmin;
-                the_new_SD.zmin = -gymax;
-              }
-          }
-
-        if (rotation_axis == ROTATION_AXIS_Y)
-          {
-            if (special_rotation_angle ==  ROTATION_ANGLE_90)
-              {
-                the_new_SD.zmax = -gxmin;
-                the_new_SD.xmax =  gzmax;
-                the_new_SD.zmin = -gxmax;
-                the_new_SD.xmin =  gzmin;
-              }
-            if (special_rotation_angle ==  ROTATION_ANGLE_180)
-              {
-                the_new_SD.zmax = -gzmin;
-                the_new_SD.xmax = -gxmin;
-                the_new_SD.zmin = -gzmax;
-                the_new_SD.xmin = -gxmax;
-              }
-            if (special_rotation_angle ==  ROTATION_ANGLE_270)
-              {
-                the_new_SD.zmax =  gxmax;
-                the_new_SD.xmax = -gzmin;
-                the_new_SD.zmin =  gxmin;
-                the_new_SD.xmin = -gzmax;
-              }
-          }
-
-        if (rotation_axis == ROTATION_AXIS_Z)
-          {
-            if (special_rotation_angle ==  ROTATION_ANGLE_90)
-              {
-                the_new_SD.xmax = -gymin;
-                the_new_SD.ymax =  gxmax;
-                the_new_SD.xmin = -gymax;
-                the_new_SD.ymin =  gxmin;
-              }
-            if (special_rotation_angle ==  ROTATION_ANGLE_180)
-              {
-                the_new_SD.xmax = -gxmin;
-                the_new_SD.ymax = -gymin;
-                the_new_SD.xmin = -gxmax;
-                the_new_SD.ymin = -gymax;
-              }
-            if (special_rotation_angle ==  ROTATION_ANGLE_270)
-              {
-                the_new_SD.xmax =  gymax;
-                the_new_SD.ymax = -gxmin;
-                the_new_SD.xmin =  gymin;
-                the_new_SD.ymin = -gxmax;
-              }
-          }
-        DT_LOG_TRACE (get_logging_priority (), "New SD:");
-        if (get_logging_priority () >= datatools::logger::PRIO_TRACE)
-          {
-            the_new_SD.tree_dump (std::cerr);
-          }
-        x = (the_new_SD.xmax - the_new_SD.xmin);
-        y = (the_new_SD.ymax - the_new_SD.ymin);
-        z = (the_new_SD.zmax - the_new_SD.zmin);
+    if (use_special_angle) {
+      rotation_angle = get_special_rotation_angle (special_rotation_angle);
+      // compute the new stackable data attached to the rotated solid:
+      stackable_data the_new_SD;
+      the_new_SD.xmin = gxmin;
+      the_new_SD.xmax = gxmax;
+      the_new_SD.ymin = gymin;
+      the_new_SD.ymax = gymax;
+      the_new_SD.zmin = gzmin;
+      the_new_SD.zmax = gzmax;
+      if (rotation_axis == ROTATION_AXIS_X) {
+        if (special_rotation_angle ==  ROTATION_ANGLE_90) {
+          the_new_SD.ymax = -gzmin;
+          the_new_SD.zmax =  gymax;
+          the_new_SD.ymin = -gzmax;
+          the_new_SD.zmin =  gymin;
+        }
+        if (special_rotation_angle ==  ROTATION_ANGLE_180) {
+          the_new_SD.ymax = -gymin;
+          the_new_SD.zmax = -gzmin;
+          the_new_SD.ymin = -gymax;
+          the_new_SD.zmin = -gzmax;
+        }
+        if (special_rotation_angle ==  ROTATION_ANGLE_270) {
+          the_new_SD.ymax =  gzmax;
+          the_new_SD.zmax = -gymin;
+          the_new_SD.ymin =  gzmin;
+          the_new_SD.zmin = -gymax;
+        }
       }
-    else // use an arbitrary angle:
-      {
-        if (rotation_axis == ROTATION_AXIS_X)
-          {
-            x = gxmax - gxmin;
-          }
-        if (rotation_axis == ROTATION_AXIS_Y)
-          {
-            y = gymax - gymin;
-          }
-        if (rotation_axis == ROTATION_AXIS_Z)
-          {
-            z = gzmax - gzmin;
-          }
+
+      if (rotation_axis == ROTATION_AXIS_Y) {
+        if (special_rotation_angle ==  ROTATION_ANGLE_90) {
+          the_new_SD.zmax = -gxmin;
+          the_new_SD.xmax =  gzmax;
+          the_new_SD.zmin = -gxmax;
+          the_new_SD.xmin =  gzmin;
+        }
+        if (special_rotation_angle ==  ROTATION_ANGLE_180) {
+          the_new_SD.zmax = -gzmin;
+          the_new_SD.xmax = -gxmin;
+          the_new_SD.zmin = -gzmax;
+          the_new_SD.xmin = -gxmax;
+        }
+        if (special_rotation_angle ==  ROTATION_ANGLE_270) {
+          the_new_SD.zmax =  gxmax;
+          the_new_SD.xmax = -gzmin;
+          the_new_SD.zmin =  gxmin;
+          the_new_SD.xmin = -gzmax;
+        }
       }
+
+      if (rotation_axis == ROTATION_AXIS_Z) {
+        if (special_rotation_angle ==  ROTATION_ANGLE_90) {
+          the_new_SD.xmax = -gymin;
+          the_new_SD.ymax =  gxmax;
+          the_new_SD.xmin = -gymax;
+          the_new_SD.ymin =  gxmin;
+        }
+        if (special_rotation_angle ==  ROTATION_ANGLE_180) {
+          the_new_SD.xmax = -gxmin;
+          the_new_SD.ymax = -gymin;
+          the_new_SD.xmin = -gxmax;
+          the_new_SD.ymin = -gymax;
+        }
+        if (special_rotation_angle ==  ROTATION_ANGLE_270) {
+          the_new_SD.xmax =  gymax;
+          the_new_SD.ymax = -gxmin;
+          the_new_SD.xmin =  gymin;
+          the_new_SD.ymin = -gxmax;
+        }
+      }
+      DT_LOG_TRACE (get_logging_priority (), "New SD:");
+      if (get_logging_priority () >= datatools::logger::PRIO_TRACE) {
+        the_new_SD.tree_dump (std::cerr);
+      }
+      x = (the_new_SD.xmax - the_new_SD.xmin);
+      y = (the_new_SD.ymax - the_new_SD.ymin);
+      z = (the_new_SD.zmax - the_new_SD.zmin);
+    } else { // use an arbitrary angle:
+      if (rotation_axis == ROTATION_AXIS_X) {
+        x = gxmax - gxmin;
+      }
+      if (rotation_axis == ROTATION_AXIS_Y) {
+        y = gymax - gymin;
+      }
+      if (rotation_axis == ROTATION_AXIS_Z) {
+        z = gzmax - gzmin;
+      }
+    }
     _boxed_placement_.set_orientation (rotation_axis, rotation_angle);
     _solid_.set_x (x);
     _solid_.set_y (y);
@@ -337,6 +297,23 @@ namespace geomtools {
     grab_logical ().set_name (i_model::make_logical_volume_name (name_));
     grab_logical ().set_shape (_solid_);
     grab_logical ().set_material_ref (material_name);
+    // >>> Special treatment:
+
+    // Set effective shape:
+    if (_boxed_model_->get_logical().has_shape()) {
+      grab_logical ().set_effective_shape (_boxed_model_->get_logical().get_shape());
+    }
+    if (_boxed_model_->get_logical().has_effective_shape()) {
+      grab_logical ().set_effective_shape (_boxed_model_->get_logical().get_effective_shape());
+    }
+    // Set effective material reference:
+    if (_boxed_model_->get_logical().has_material_ref()) {
+      grab_logical ().set_effective_material_ref (_boxed_model_->get_logical().get_material_ref());
+    }
+    if (_boxed_model_->get_logical().has_effective_material_ref()) {
+      grab_logical ().set_effective_material_ref (_boxed_model_->get_logical().get_effective_material_ref());
+    }
+    // <<<
     _boxed_phys_.set_name (i_model::make_physical_volume_name (rotated_label));
     _boxed_phys_.set_placement (_boxed_placement_);
     _boxed_phys_.set_logical (_boxed_model_->get_logical ());

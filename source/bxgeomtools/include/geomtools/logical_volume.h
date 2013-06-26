@@ -2,7 +2,7 @@
 /* logical_volume.h
  * Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-08
- * Last modified: 2013-06-17
+ * Last modified: 2013-06-26
  *
  * License:
  *
@@ -135,6 +135,8 @@ namespace geomtools {
                     double tolerance_ = 0.0, double daughter_tolerance_ = 0.0,
                     locate_result * = 0) const;
 
+    static bool same(const logical_volume & log1_, const logical_volume & log2_, uint32_t mode_ = 0);
+
   private:
 
     void _clear_shape_ ();
@@ -163,8 +165,8 @@ namespace geomtools {
 
     // Experimental:
     const i_model    *    _geo_model_;       //!< The geometry model
-    const i_shape_3d *    _effective_shape_; //!< The effective shape to be taken into account for shape extraction
-    std::string           _effective_material_ref_; //!< The name of the effective material
+    const i_shape_3d *    _effective_shape_; //!< The effective shape to be taken into account for shape inspection
+    std::string           _effective_material_ref_; //!< The name of the effective material to be taken into account for material inspection
 
     physicals_col_type    _real_physicals_; //!< Unused
 
