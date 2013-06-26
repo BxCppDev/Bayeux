@@ -130,91 +130,74 @@ namespace genvtx {
       }
     }
 
-    if (setup_.has_key ("length_unit"))
-      {
-        lunit_str = setup_.fetch_string ("length_unit");
-        lunit = datatools::units::get_length_unit_from (lunit_str);
+    if (setup_.has_key ("length_unit")) {
+      lunit_str = setup_.fetch_string ("length_unit");
+      lunit = datatools::units::get_length_unit_from (lunit_str);
+    }
+
+    if (setup_.has_key ("skin_skip")) {
+      skin_skip = setup_.fetch_real ("skin_skip");
+      skin_skip *= lunit;
+      treat_skin_skip = true;
+    }
+
+    if (setup_.has_key ("skin_thickness")) {
+      skin_thickness = setup_.fetch_real ("skin_thickness");
+      skin_thickness *= lunit;
+      treat_skin_thickness = true;
+    }
+
+    if (mode == MODE_SURFACE) {
+      std::vector<std::string> surfaces;
+      if (setup_.has_key ("surfaces")) {
+        setup_.fetch ("surfaces", surfaces);
+        treat_surface_mask = true;
       }
 
-    if (setup_.has_key ("skin_skip"))
-      {
-        skin_skip = setup_.fetch_real ("skin_skip");
-        skin_skip *= lunit;
-        treat_skin_skip = true;
+      for (int i = 0; i < surfaces.size (); i++) {
+        if (surfaces[i] == "all") {
+          surface_mask = geomtools::cylinder::FACE_ALL;
+          break;
+        } else if (surfaces[i] == "side") {
+          surface_mask |= geomtools::cylinder::FACE_SIDE;
+        } else if (surfaces[i] == "bottom") {
+          surface_mask |= geomtools::cylinder::FACE_BOTTOM;
+        } else if (surfaces[i] == "top") {
+          surface_mask |= geomtools::cylinder::FACE_TOP;
+        }
       }
-
-    if (setup_.has_key ("skin_thickness"))
-      {
-        skin_thickness = setup_.fetch_real ("skin_thickness");
-        skin_thickness *= lunit;
-        treat_skin_thickness = true;
-      }
-
-    if (mode == MODE_SURFACE)
-      {
-        std::vector<std::string> surfaces;
-        if (setup_.has_key ("surfaces"))
-          {
-            setup_.fetch ("surfaces", surfaces);
-            treat_surface_mask = true;
-          }
-
-        for (int i = 0; i < surfaces.size (); i++)
-          {
-            if (surfaces[i] == "all")
-              {
-                surface_mask = geomtools::cylinder::FACE_ALL;
-                break;
-              }
-            else if (surfaces[i] == "side")
-              {
-                surface_mask |= geomtools::cylinder::FACE_SIDE;
-              }
-            else if (surfaces[i] == "bottom")
-              {
-                surface_mask |= geomtools::cylinder::FACE_BOTTOM;
-              }
-            else if (surfaces[i] == "top")
-              {
-                surface_mask |= geomtools::cylinder::FACE_TOP;
-              }
-          }
-      }
+    }
 
     if (treat_mode) set_mode (mode);
     if (treat_skin_skip) set_skin_skip (skin_skip);
     if (treat_skin_thickness) set_skin_thickness (skin_thickness);
     if (mode == MODE_SURFACE && treat_surface_mask) set_surface_mask (surface_mask);
 
-    if (! _cylinder_.is_valid ())
-      {
-        double cylinder_r, cylinder_z;
-        datatools::invalidate (cylinder_r);
-        datatools::invalidate (cylinder_z);
-        double length_unit = CLHEP::millimeter;
+    if (! _cylinder_.is_valid ()) {
+      double cylinder_r, cylinder_z;
+      datatools::invalidate (cylinder_r);
+      datatools::invalidate (cylinder_z);
+      double length_unit = CLHEP::millimeter;
 
-        if (setup_.has_key ("length_unit"))
-          {
-            std::string length_unit_str = setup_.fetch_string ("length_unit");
-            length_unit = datatools::units::get_length_unit_from (length_unit_str);
-          }
-
-        if (setup_.has_key ("cylinder.r"))
-          {
-            cylinder_r = setup_.fetch_real ("cylinder.r");
-          }
-
-        if (setup_.has_key ("cylinder.z"))
-          {
-            cylinder_z = setup_.fetch_real ("cylinder.z");
-          }
-        {
-          cylinder_r *= lunit;
-          cylinder_z *= lunit;
-        }
-        geomtools::cylinder cyl (cylinder_r, cylinder_z);
-        set_cylinder (cyl);
+      if (setup_.has_key ("length_unit")) {
+        std::string length_unit_str = setup_.fetch_string ("length_unit");
+        length_unit = datatools::units::get_length_unit_from (length_unit_str);
       }
+
+      if (setup_.has_key ("cylinder.r")) {
+        cylinder_r = setup_.fetch_real ("cylinder.r");
+      }
+
+      if (setup_.has_key ("cylinder.z")) {
+        cylinder_z = setup_.fetch_real ("cylinder.z");
+      }
+      {
+        cylinder_r *= lunit;
+        cylinder_z *= lunit;
+      }
+      geomtools::cylinder cyl (cylinder_r, cylinder_z);
+      set_cylinder (cyl);
+    }
 
     _init_ ();
     _initialized_ = true;
@@ -231,22 +214,21 @@ namespace genvtx {
 
   void cylinder_vg::_init_ ()
   {
-    if (_mode_ == MODE_SURFACE)
-      {
-        DT_THROW_IF (_surface_mask_ == 0, std::logic_error, "Surface mask is zero !");
-        double s = _cylinder_.get_surface (_surface_mask_);
-        if (is_debug()) clog << "DEBUG: genvtx::cylinder_vg::_init_: Total surface = " << s << endl;
-        _sum_weight_[0] = _cylinder_.get_surface (_surface_mask_ & geomtools::cylinder::FACE_SIDE);
-        _sum_weight_[1] = _cylinder_.get_surface (_surface_mask_ & geomtools::cylinder::FACE_BOTTOM);
-        _sum_weight_[2] = _cylinder_.get_surface (_surface_mask_ & geomtools::cylinder::FACE_TOP);
-        for (int i = 0; i < 3; i++) {
-          _sum_weight_[i] /= s;
-          if (i > 0) {
-            _sum_weight_[i] += _sum_weight_[i - 1];
-          }
-          //if (is_debug()) clog << "DEBUG: genvtx::cylinder_vg::_init_: Surface weight [" << i << "] = " << _sum_weight_[i] << endl;
+    if (_mode_ == MODE_SURFACE) {
+      DT_THROW_IF (_surface_mask_ == 0, std::logic_error, "Surface mask is zero !");
+      double s = _cylinder_.get_surface (_surface_mask_);
+      if (is_debug()) clog << "DEBUG: genvtx::cylinder_vg::_init_: Total surface = " << s << endl;
+      _sum_weight_[0] = _cylinder_.get_surface (_surface_mask_ & geomtools::cylinder::FACE_SIDE);
+      _sum_weight_[1] = _cylinder_.get_surface (_surface_mask_ & geomtools::cylinder::FACE_BOTTOM);
+      _sum_weight_[2] = _cylinder_.get_surface (_surface_mask_ & geomtools::cylinder::FACE_TOP);
+      for (int i = 0; i < 3; i++) {
+        _sum_weight_[i] /= s;
+        if (i > 0) {
+          _sum_weight_[i] += _sum_weight_[i - 1];
         }
+        //if (is_debug()) clog << "DEBUG: genvtx::cylinder_vg::_init_: Surface weight [" << i << "] = " << _sum_weight_[i] << endl;
       }
+    }
     return;
   }
 

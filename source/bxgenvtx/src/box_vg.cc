@@ -109,10 +109,9 @@ namespace genvtx {
 
   const geomtools::box & box_vg::get_box_safe () const
   {
-    if (has_box_ref ())
-      {
-        return get_box_ref ();
-      }
+    if (has_box_ref ()) {
+      return get_box_ref ();
+    }
     return get_box ();
   }
 
@@ -154,107 +153,94 @@ namespace genvtx {
 
     if (_mode_ == MODE_INVALID) {
       if (setup_.has_key ("mode")) {
-          string mode_str = setup_.fetch_string ("mode");
-          if (mode_str == "surface") {
-              mode = MODE_SURFACE;
-            } else if (mode_str == "bulk") {
-              mode = MODE_BULK;
-            } else {
-              DT_THROW_IF(true, logic_error, "Invalid mode '" << mode_str << "' !");
-            }
-          treat_mode = true;
+        string mode_str = setup_.fetch_string ("mode");
+        if (mode_str == "surface") {
+          mode = MODE_SURFACE;
+        } else if (mode_str == "bulk") {
+          mode = MODE_BULK;
+        } else {
+          DT_THROW_IF(true, logic_error, "Invalid mode '" << mode_str << "' !");
         }
+        treat_mode = true;
+      }
     }
 
     if (setup_.has_key ("length_unit")) {
-        lunit_str = setup_.fetch_string ("length_unit");
-        lunit = datatools::units::get_length_unit_from (lunit_str);
-      }
+      lunit_str = setup_.fetch_string ("length_unit");
+      lunit = datatools::units::get_length_unit_from (lunit_str);
+    }
 
     if (setup_.has_key ("skin_skip")) {
-        skin_skip = setup_.fetch_real ("skin_skip");
-        if (! setup_.has_explicit_unit ("skin_skip")) skin_skip *= lunit;
-        treat_skin_skip = true;
-      }
+      skin_skip = setup_.fetch_real ("skin_skip");
+      if (! setup_.has_explicit_unit ("skin_skip")) skin_skip *= lunit;
+      treat_skin_skip = true;
+    }
 
     if (setup_.has_key ("skin_thickness")) {
-        skin_thickness = setup_.fetch_real ("skin_thickness");
-        if (! setup_.has_explicit_unit ("skin_thickness")) skin_thickness *= lunit;
-        treat_skin_thickness = true;
-      }
+      skin_thickness = setup_.fetch_real ("skin_thickness");
+      if (! setup_.has_explicit_unit ("skin_thickness")) skin_thickness *= lunit;
+      treat_skin_thickness = true;
+    }
 
     if (mode == MODE_SURFACE) {
-        std::vector<std::string> surfaces;
-        if (setup_.has_key ("surfaces")) {
-            setup_.fetch ("surfaces", surfaces);
-            treat_surface_mask = true;
-          }
-
-        for (int i = 0; i < surfaces.size (); i++) {
-            if (surfaces[i] == "all") {
-                surface_mask = geomtools::box::FACE_ALL;
-                break;
-              }
-            else if (surfaces[i] == "back")
-              {
-                surface_mask |= geomtools::box::FACE_BACK;
-              }
-            else if (surfaces[i] == "front")
-              {
-                surface_mask |= geomtools::box::FACE_FRONT;
-              }
-            else if (surfaces[i] == "left")
-              {
-                surface_mask |= geomtools::box::FACE_LEFT;
-              }
-            else if (surfaces[i] == "right")
-              {
-                surface_mask |= geomtools::box::FACE_RIGHT;
-              }
-            else if (surfaces[i] == "bottom")
-              {
-                surface_mask |= geomtools::box::FACE_BOTTOM;
-              }
-            else if (surfaces[i] == "top")
-              {
-                surface_mask |= geomtools::box::FACE_TOP;
-              }
-          }
-
+      std::vector<std::string> surfaces;
+      if (setup_.has_key ("surfaces")) {
+        setup_.fetch ("surfaces", surfaces);
+        treat_surface_mask = true;
       }
+
+      for (int i = 0; i < surfaces.size (); i++) {
+        if (surfaces[i] == "all") {
+          surface_mask = geomtools::box::FACE_ALL;
+          break;
+        } else if (surfaces[i] == "back") {
+          surface_mask |= geomtools::box::FACE_BACK;
+        } else if (surfaces[i] == "front") {
+          surface_mask |= geomtools::box::FACE_FRONT;
+        } else if (surfaces[i] == "left") {
+          surface_mask |= geomtools::box::FACE_LEFT;
+        } else if (surfaces[i] == "right") {
+          surface_mask |= geomtools::box::FACE_RIGHT;
+        } else if (surfaces[i] == "bottom") {
+          surface_mask |= geomtools::box::FACE_BOTTOM;
+        } else if (surfaces[i] == "top") {
+          surface_mask |= geomtools::box::FACE_TOP;
+        }
+      }
+
+    }
 
     if (treat_mode) set_mode (mode);
     if (treat_skin_skip) set_skin_skip (skin_skip);
     if (treat_skin_thickness) set_skin_thickness (skin_thickness);
     if (mode == MODE_SURFACE && treat_surface_mask) set_surface_mask (surface_mask);
 
-    if (! has_box_safe ())
-      {
-        double box_x, box_y, box_z;
-        datatools::invalidate (box_x);
-        datatools::invalidate (box_y);
-        datatools::invalidate (box_z);
-        string box_user_ref = vg_tools::SHAPE_REF_NONE;
-        string box_user_ref_name;
+    if (! has_box_safe ()) {
+      double box_x, box_y, box_z;
+      datatools::invalidate (box_x);
+      datatools::invalidate (box_y);
+      datatools::invalidate (box_z);
+      string box_user_ref = vg_tools::SHAPE_REF_NONE;
+      string box_user_ref_name;
 
-        if (setup_.has_key ("box.x")) {
-          box_x = setup_.fetch_real ("box.x");
-          if (! setup_.has_explicit_unit ("box.x")) box_x *= lunit;
-        }
-
-        if (setup_.has_key ("box.y")) {
-          box_y = setup_.fetch_real ("box.y");
-          if (! setup_.has_explicit_unit ("box.y")) box_y *= lunit;
-        }
-
-        if (setup_.has_key ("box.z")) {
-          box_z = setup_.fetch_real ("box.z");
-          if (! setup_.has_explicit_unit ("box.z")) box_z *= lunit;
-        }
-
-        geomtools::box box (box_x, box_y, box_z);
-        set_box (box);
+      if (setup_.has_key ("box.x")) {
+        box_x = setup_.fetch_real ("box.x");
+        if (! setup_.has_explicit_unit ("box.x")) box_x *= lunit;
       }
+
+      if (setup_.has_key ("box.y")) {
+        box_y = setup_.fetch_real ("box.y");
+        if (! setup_.has_explicit_unit ("box.y")) box_y *= lunit;
+      }
+
+      if (setup_.has_key ("box.z")) {
+        box_z = setup_.fetch_real ("box.z");
+        if (! setup_.has_explicit_unit ("box.z")) box_z *= lunit;
+      }
+
+      geomtools::box box (box_x, box_y, box_z);
+      set_box (box);
+    }
 
     _init_ ();
     _initialized_ = true;
@@ -271,25 +257,24 @@ namespace genvtx {
 
   void box_vg::_init_ ()
   {
-    if (_mode_ == MODE_SURFACE)
-      {
-        DT_THROW_IF (_surface_mask_ == 0, logic_error, "Surface mask is zero !");
-        double s = _box_.get_surface (_surface_mask_);
-        // if (is_debug()) clog << "DEBUG: genvtx::box_vg::_init_: Total surface = " << s << endl;
-        _sum_weight_[0] = _box_.get_surface (_surface_mask_ & geomtools::box::FACE_BACK);
-        _sum_weight_[1] = _box_.get_surface (_surface_mask_ & geomtools::box::FACE_FRONT);
-        _sum_weight_[2] = _box_.get_surface (_surface_mask_ & geomtools::box::FACE_LEFT);
-        _sum_weight_[3] = _box_.get_surface (_surface_mask_ & geomtools::box::FACE_RIGHT);
-        _sum_weight_[4] = _box_.get_surface (_surface_mask_ & geomtools::box::FACE_BOTTOM);
-        _sum_weight_[5] = _box_.get_surface (_surface_mask_ & geomtools::box::FACE_TOP);
-        for (int i = 0; i < 6; i++) {
-          _sum_weight_[i] /= s;
-          if (i > 0) {
-            _sum_weight_[i] += _sum_weight_[i - 1];
-          }
-          //if (is_debug()) clog << "DEBUG: genvtx::box_vg::_init_: Surface weight [" << i << "] = " << _sum_weight_[i] << endl;
+    if (_mode_ == MODE_SURFACE) {
+      DT_THROW_IF (_surface_mask_ == 0, logic_error, "Surface mask is zero !");
+      double s = _box_.get_surface (_surface_mask_);
+      // if (is_debug()) clog << "DEBUG: genvtx::box_vg::_init_: Total surface = " << s << endl;
+      _sum_weight_[0] = _box_.get_surface (_surface_mask_ & geomtools::box::FACE_BACK);
+      _sum_weight_[1] = _box_.get_surface (_surface_mask_ & geomtools::box::FACE_FRONT);
+      _sum_weight_[2] = _box_.get_surface (_surface_mask_ & geomtools::box::FACE_LEFT);
+      _sum_weight_[3] = _box_.get_surface (_surface_mask_ & geomtools::box::FACE_RIGHT);
+      _sum_weight_[4] = _box_.get_surface (_surface_mask_ & geomtools::box::FACE_BOTTOM);
+      _sum_weight_[5] = _box_.get_surface (_surface_mask_ & geomtools::box::FACE_TOP);
+      for (int i = 0; i < 6; i++) {
+        _sum_weight_[i] /= s;
+        if (i > 0) {
+          _sum_weight_[i] += _sum_weight_[i - 1];
         }
+        //if (is_debug()) clog << "DEBUG: genvtx::box_vg::_init_: Surface weight [" << i << "] = " << _sum_weight_[i] << endl;
       }
+    }
     return;
   }
 

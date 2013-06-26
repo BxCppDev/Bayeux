@@ -19,6 +19,8 @@
 
 #include <vector>
 
+#include <datatools/logger.h>
+
 #include <genvtx/vg_macros.h>
 #include <genvtx/utils.h>
 
@@ -44,14 +46,14 @@ namespace genvtx {
 
   public:
 
-    virtual void tree_dump (std::ostream & out_ = std::clog, 
-                            const std::string & title_ = "", 
-                            const std::string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_ = std::clog,
+                            const std::string & title_ = "",
+                            const std::string & indent_ = "",
                             bool inherit_ = false) const;
- 
+
     GENVTX_VG_INTERFACE_CTOR_DTOR (combined_vg);
 
- 
+
   private:
 
     void _init_ ();

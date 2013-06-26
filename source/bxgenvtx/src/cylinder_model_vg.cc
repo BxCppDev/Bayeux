@@ -389,6 +389,14 @@ namespace genvtx {
     bool surface_side   = false;
     bool surface_bottom = false;
     bool surface_top    = false;
+    double lunit = CLHEP::mm;
+    double skin_skip = 0.0 * CLHEP::mm;
+    double skin_thickness = 0.0 * CLHEP::mm ;
+
+    if (setup_.has_key ("length_unit")) {
+      std::string lunit_str = setup_.fetch_string ("length_unit");
+      lunit = datatools::units::get_length_unit_from (lunit_str);
+    }
 
     DT_THROW_IF (! setup_.has_key ("origin"), std::logic_error,
                  "Missing 'origin_rules' property in vertex generator '" << get_name() << "' !");
@@ -423,6 +431,18 @@ namespace genvtx {
                    "Missing some activated surface(s) property in vertex generator '" << get_name() << "' !");
     }
 
+    if (setup_.has_key ("skin_skip")) {
+      skin_skip = setup_.fetch_real ("skin_skip");
+      if (! setup_.has_explicit_unit ("skin_skip")) skin_skip *= lunit;
+    }
+
+    if (setup_.has_key ("skin_thickness")) {
+      skin_thickness = setup_.fetch_real ("skin_thickness");
+      if (! setup_.has_explicit_unit ("skin_thickness")) skin_thickness *= lunit;
+    }
+
+    set_skin_skip(skin_skip);
+    set_skin_thickness(skin_thickness);
     set_origin_rules (origin_rules);
     set_mode (mode);
     if (is_mode_surface ()) {
@@ -455,6 +475,10 @@ namespace genvtx {
       out_ << indent << du::i_tree_dumpable::tag
            << "Surface top    : " << _surface_top_ << std::endl;
     }
+    out_ << indent << du::i_tree_dumpable::tag
+         << "Skin skip      : " << _skin_skip_ / CLHEP::mm << std::endl;
+    out_ << indent << du::i_tree_dumpable::tag
+         << "Skin thickness : " << _skin_thickness_ / CLHEP::mm << std::endl;
     out_ << indent << du::i_tree_dumpable::tag
          << "Origin rules   : '" << _origin_rules_ << "'" << std::endl;
     out_ << indent << du::i_tree_dumpable::tag

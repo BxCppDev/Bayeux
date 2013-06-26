@@ -137,90 +137,75 @@ namespace genvtx {
       }
     }
 
-    if (setup_.has_key ("skin_skip"))
-      {
-        skin_skip = setup_.fetch_real ("skin_skip");
-        if (! setup_.has_explicit_unit("skin_skip")) skin_skip *= lunit;
-        treat_skin_skip = true;
+    if (setup_.has_key ("skin_skip")) {
+      skin_skip = setup_.fetch_real ("skin_skip");
+      if (! setup_.has_explicit_unit("skin_skip")) skin_skip *= lunit;
+      treat_skin_skip = true;
+    }
+
+    if (setup_.has_key ("skin_thickness")) {
+      skin_thickness = setup_.fetch_real ("skin_thickness");
+      if (! setup_.has_explicit_unit("skin_thickness")) skin_thickness *= lunit;
+      treat_skin_thickness = true;
+    }
+
+    if (mode == MODE_SURFACE) {
+      std::vector<std::string> surfaces;
+      if (setup_.has_key ("surfaces")) {
+        setup_.fetch ("surfaces", surfaces);
+        treat_surface_mask = true;
       }
 
-    if (setup_.has_key ("skin_thickness"))
-      {
-        skin_thickness = setup_.fetch_real ("skin_thickness");
-        if (! setup_.has_explicit_unit("skin_thickness")) skin_thickness *= lunit;
-        treat_skin_thickness = true;
-      }
-
-    if (mode == MODE_SURFACE)
-      {
-        std::vector<std::string> surfaces;
-        if (setup_.has_key ("surfaces")) {
-          setup_.fetch ("surfaces", surfaces);
-          treat_surface_mask = true;
+      for (int i = 0; i < surfaces.size (); i++) {
+        if (surfaces[i] == "all") {
+          surface_mask = geomtools::tube::FACE_ALL;
+          break;
+        } else if (surfaces[i] == "outer_side") {
+          surface_mask |= geomtools::tube::FACE_OUTER_SIDE;
+        } else if (surfaces[i] == "inner_side") {
+          surface_mask |= geomtools::tube::FACE_INNER_SIDE;
+        } else if (surfaces[i] == "bottom") {
+          surface_mask |= geomtools::tube::FACE_BOTTOM;
+        } else if (surfaces[i] == "top") {
+          surface_mask |= geomtools::tube::FACE_TOP;
         }
-
-        for (int i = 0; i < surfaces.size (); i++)
-          {
-            if (surfaces[i] == "all")
-              {
-                surface_mask = geomtools::tube::FACE_ALL;
-                break;
-              }
-            else if (surfaces[i] == "outer_side")
-              {
-                surface_mask |= geomtools::tube::FACE_OUTER_SIDE;
-              }
-            else if (surfaces[i] == "inner_side")
-              {
-                surface_mask |= geomtools::tube::FACE_INNER_SIDE;
-              }
-            else if (surfaces[i] == "bottom")
-              {
-                surface_mask |= geomtools::tube::FACE_BOTTOM;
-              }
-            else if (surfaces[i] == "top")
-              {
-                surface_mask |= geomtools::tube::FACE_TOP;
-              }
-          }
       }
+    }
 
     if (treat_mode) set_mode (mode);
     if (treat_skin_skip) set_skin_skip (skin_skip);
     if (treat_skin_thickness) set_skin_thickness (skin_thickness);
-    if (mode == MODE_SURFACE && treat_surface_mask)
-      {
-        set_surface_mask (surface_mask);
+    if (mode == MODE_SURFACE && treat_surface_mask) {
+      set_surface_mask (surface_mask);
+    }
+
+    if (! _tube_.is_valid ()) {
+      double tube_inner_r, tube_outer_r, tube_z;
+      datatools::invalidate (tube_inner_r);
+      datatools::invalidate (tube_outer_r);
+      datatools::invalidate (tube_z);
+      double length_unit = CLHEP::millimeter;
+
+      if (setup_.has_key ("tube.inner_r")) {
+        tube_inner_r = setup_.fetch_real ("tube.inner_r");
+        if (! setup_.has_explicit_unit("tube.inner_r")) tube_inner_r *= lunit;
       }
 
-    if (! _tube_.is_valid ())
-      {
-        double tube_inner_r, tube_outer_r, tube_z;
-        datatools::invalidate (tube_inner_r);
-        datatools::invalidate (tube_outer_r);
-        datatools::invalidate (tube_z);
-        double length_unit = CLHEP::millimeter;
-
-        if (setup_.has_key ("tube.inner_r")) {
-          tube_inner_r = setup_.fetch_real ("tube.inner_r");
-          if (! setup_.has_explicit_unit("tube.inner_r")) tube_inner_r *= lunit;
-        }
-
-        if (setup_.has_key ("tube.outer_r")) {
-          tube_outer_r = setup_.fetch_real ("tube.outer_r");
-          if (! setup_.has_explicit_unit("tube.outer_r")) tube_outer_r *= lunit;
-        }
-
-        if (setup_.has_key ("tube.z")) {
-          tube_z = setup_.fetch_real ("tube.z");
-          if (! setup_.has_explicit_unit("tube.z")) tube_z *= lunit;
-        }
-
-        geomtools::tube cyl (tube_inner_r,
-                             tube_outer_r,
-                             tube_z);
-        set_tube (cyl);
+      if (setup_.has_key ("tube.outer_r")) {
+        tube_outer_r = setup_.fetch_real ("tube.outer_r");
+        if (! setup_.has_explicit_unit("tube.outer_r")) tube_outer_r *= lunit;
       }
+
+      if (setup_.has_key ("tube.z")) {
+        tube_z = setup_.fetch_real ("tube.z");
+        if (! setup_.has_explicit_unit("tube.z")) tube_z *= lunit;
+      }
+
+      geomtools::tube cyl (tube_inner_r,
+                           tube_outer_r,
+                           tube_z);
+      set_tube (cyl);
+    }
 
     _init_ ();
     _initialized_ = true;

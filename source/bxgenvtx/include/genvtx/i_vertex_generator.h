@@ -153,7 +153,7 @@ namespace genvtx {
                             const std::string & indent_ = "",
                             bool inherit_               = false) const;
 
-    datatools::logger::priority  get_logging_priority() const;
+    datatools::logger::priority get_logging_priority() const;
 
     void set_logging_priority(datatools::logger::priority);
 
