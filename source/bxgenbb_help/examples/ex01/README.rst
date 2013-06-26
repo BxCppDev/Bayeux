@@ -24,6 +24,8 @@ Introduction
      * ``config/calibrations.conf`` : some event generators
      * ``config/dbd.conf`` : some event generators
      * ``config/misc.conf.conf`` : some event generators
+     * ``config/electron_energy_spectrum_0.data`` : data file
+       which contains the tabulated energy spectrum used by an electron generator
 
  * Built object(s) :
 
