@@ -117,6 +117,20 @@ namespace genvtx {
     return;
   }
 
+  void box_model_vg::set_skin_skip (double skin_skip_)
+  {
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
+    _skin_skip_ = skin_skip_;
+    return;
+  }
+
+  void box_model_vg::set_skin_thickness (double skin_thickness_)
+  {
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
+    _skin_thickness_ = skin_thickness_;
+    return;
+  }
+
   const std::string & box_model_vg::get_origin_rules () const
   {
     return _origin_rules_;
@@ -206,6 +220,8 @@ namespace genvtx {
     _surface_top_    = false;
     _surface_left_   = false;
     _surface_right_  = false;
+    _skin_skip_ = 0.0;
+    _skin_thickness_ = 0.0;
     if (_box_vg_.is_initialized()) _box_vg_.reset ();
     _origin_rules_.clear();
     _mapping_plugin_name_.clear();
@@ -307,9 +323,13 @@ namespace genvtx {
       if (src_log == 0) {
         src_log = &_entries_[i].ginfo->get_logical ();
       } else {
-        DT_THROW_IF (src_log != &_entries_[i].ginfo->get_logical (),
+        //DT_THROW_IF (src_log != &_entries_[i].ginfo->get_logical (),
+        DT_THROW_IF (! geomtools::logical_volume::same(*src_log, _entries_[i].ginfo->get_logical()),
                      std::logic_error,
-                     "Vertex location with different logical geometry volume are not supported  (different shapes or materials) in vertex generator '" << get_name() << "' !");
+                     "Vertex location with different logical geometry volumes ('" << src_log->get_name()
+                     << "' vs. '" << _entries_[i].ginfo->get_logical ().get_name()
+                     << "') are not supported  (different shapes or materials) in vertex generator '"
+                     << get_name() << "' !");
       }
     }
 
@@ -356,6 +376,8 @@ namespace genvtx {
     const geomtools::box * box_shape
       = dynamic_cast<const geomtools::box *> (&src_shape);
     _box_vg_.set_box_ref (*box_shape);
+    _box_vg_.set_skin_skip(_skin_skip_);
+    _box_vg_.set_skin_thickness(_skin_thickness_);
     _box_vg_.initialize_simple ();
     double weight = 0.0;
     if (is_mode_surface ()) {

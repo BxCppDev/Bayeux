@@ -62,6 +62,10 @@ namespace genvtx {
 
     void set_surface_front (bool);
 
+    void set_skin_skip (double skin_skip_);
+
+    void set_skin_thickness (double skin_thickness_);
+
     const std::string & get_origin_rules () const;
 
     void set_origin_rules (const std::string &);
@@ -112,6 +116,8 @@ namespace genvtx {
     bool                    _surface_top_;    //!< Flag for top surface generation mode
     bool                    _surface_left_;   //!< Flag for left surface generation mode
     bool                    _surface_right_;  //!< Flag for right surface generation mode
+    double                  _skin_skip_;      //!< Skip (normal to the surface) to an effective position of the skin relative to the surface of the box
+    double                  _skin_thickness_; //!< Intrinsic thickness of the surface
     genvtx::box_vg          _box_vg_;         //!< Embeded vertex generator from a box
     std::string             _origin_rules_;   //!< Rules to select the physical volumes from where to generate vertexes
     std::string             _mapping_plugin_name_;   //!< The name of the geometry 'mapping' plugin
