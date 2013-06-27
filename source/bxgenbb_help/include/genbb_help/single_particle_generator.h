@@ -35,16 +35,17 @@
 
 #include <string>
 
-#include <genbb_help/i_genbb.h>
+#include <datatools/properties.h>
+#include <datatools/units.h>
 
 #include <mygsl/rng.h>
 #include <mygsl/tabulated_function.h>
 #include <mygsl/von_neumann_method.h>
 #include <mygsl/histogram.h>
 
-#include <datatools/properties.h>
-#include <datatools/units.h>
 #include <geomtools/utils.h>
+
+#include <genbb_help/i_genbb.h>
 
 namespace genbb {
 
@@ -106,7 +107,7 @@ namespace genbb {
     virtual bool can_external_random () const;
     const mygsl::rng & get_random () const;
     mygsl::rng & grab_random ();
- 
+
     int get_mode () const;
     void set_mode (int);
 
@@ -134,7 +135,7 @@ namespace genbb {
     virtual void reset ();
 
     virtual bool has_next ();
-    
+
     /// Check initialization status
     virtual bool is_initialized () const;
 
@@ -188,10 +189,16 @@ namespace genbb {
     mygsl::rng    _random_; //!< Local PRNG
 
     GENBB_PG_REGISTRATION_INTERFACE(single_particle_generator);
- 
+
   };
 
 } // end of namespace genbb
+
+/***************
+ * OCD support *
+ ***************/
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(genbb::single_particle_generator)
 
 #endif // GENBB_HELP_SINGLE_PARTICLE_GENERATOR_H_
 
