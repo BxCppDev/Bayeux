@@ -468,12 +468,18 @@ namespace genbb {
       if (config_.has_key ("cone.axis")) {
         std::string cone_axis_str = config_.fetch_string ("cone.axis");
         geomtools::vector_3d cone_axis;
-        if (cone_axis_str == "x" || cone_axis_str == "X") {
+        if (cone_axis_str == "x" || cone_axis_str == "X" || cone_axis_str == "+x" || cone_axis_str == "+X") {
           cone_axis.set (1.0, 0.0, 0.0);
-        } else if (cone_axis_str == "y" || cone_axis_str == "Y") {
+        } else if (cone_axis_str == "y" || cone_axis_str == "Y" || cone_axis_str == "+y" || cone_axis_str == "+Y") {
           cone_axis.set (0.0, 1.0, 0.0);
-        } else if (cone_axis_str == "z" || cone_axis_str == "Z") {
+        } else if (cone_axis_str == "z" || cone_axis_str == "Z" || cone_axis_str == "+z" || cone_axis_str == "+Z") {
           cone_axis.set (0.0, 0.0, 1.0);
+        } else if (cone_axis_str == "-x" || cone_axis_str == "-X") {
+          cone_axis.set (-1.0, 0.0, 0.0);
+        } else if (cone_axis_str == "-y" || cone_axis_str == "-Y") {
+          cone_axis.set (0.0, -1.0, 0.0);
+        } else if (cone_axis_str == "-z" || cone_axis_str == "-Z") {
+          cone_axis.set (0.0, 0.0, -1.0);
         } else {
           double phi, theta;
           double angle_unit2 = angle_unit;
