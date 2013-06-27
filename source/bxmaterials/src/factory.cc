@@ -162,7 +162,7 @@ namespace materials {
 
     if (config_.has_key ("density.unit"))
       {
-        string density_unit_str =  config_.fetch_string ("density.unit");
+        string density_unit_str = config_.fetch_string ("density.unit");
         density_unit = datatools::units::get_density_unit_from (density_unit_str);
       }
 
