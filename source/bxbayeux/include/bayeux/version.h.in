@@ -43,6 +43,9 @@
 //! Patch version number of bayeux
 #define BAYEUX_VERSION_PATCH @Bayeux_VERSION_PATCH@
 
+//! Current revision/build number of bayeux, 0 for a release
+#define BAYEUX_VERSION_REVISION @Bayeux_VERSION_REVISION@
+
 //! Encode bayeux to ordered integer available at compile time
 #define BAYEUX_ENCODE_VERSION(major, minor, patch) ( \
         ((major) * 10000) \
@@ -76,6 +79,9 @@ static int get_minor();
 
 //! Return the patch version number of bayeux, e.g., 3 for '1.2.3'
 static int get_patch();
+
+//! Return the revision/build number of bayeux, e.g., 1234
+static int get_revision();
 
 //! Return the full version number of bayeux as a string, e.g., '1.2.3'
 static std::string get_version();

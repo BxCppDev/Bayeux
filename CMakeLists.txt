@@ -49,8 +49,17 @@ include(SVNUtilities)
 set(Bayeux_VERSION_MAJOR 1)
 set(Bayeux_VERSION_MINOR 0)
 set(Bayeux_VERSION_PATCH 0)
-set(Bayeux_VERSION_STATUS "dev")
 set(Bayeux_VERSION "${Bayeux_VERSION_MAJOR}.${Bayeux_VERSION_MINOR}.${Bayeux_VERSION_PATCH}")
+
+# - SVN Versioning, if available
+set(Bayeux_VERSION_REVISION 0)
+
+Subversion_DIRECTORY_IS_WC(${PROJECT_SOURCE_DIR} Bayeux)
+
+if(Bayeux_DIRECTORY_IS_WC)
+  Subversion_WC_INFO(${PROJECT_SOURCE_DIR} Bayeux)
+  set(Bayeux_VERSION_REVISION ${Bayeux_WC_REVISION})
+endif()
 
 # - Configure output paths for products to give inplace build that roughly
 #   matches install layout.

@@ -42,6 +42,10 @@ int version::get_patch() {
   return static_cast<int>(BAYEUX_VERSION_PATCH);
 }
 
+int version::get_revision() {
+  return static_cast<int>(BAYEUX_VERSION_REVISION);
+}
+
 std::string version::get_version() {
   static std::string version("");
 
