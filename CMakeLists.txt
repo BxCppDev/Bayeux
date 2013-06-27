@@ -41,6 +41,10 @@ endif()
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(Bayeux)
 
+# - Load Custom Modules
+list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake)
+include(SVNUtilities)
+
 # - Versioning
 set(Bayeux_VERSION_MAJOR 1)
 set(Bayeux_VERSION_MINOR 0)
@@ -54,12 +58,6 @@ set(Bayeux_BUILDPRODUCT_DIR "${PROJECT_BINARY_DIR}/BuildProducts")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/lib")
 set(CMAKE_BINARY_OUTPUT_DIRECTORY  "${Bayeux_BUILDPRODUCT_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/lib")
-
-# - Custom Modules
-list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake)
-
-# - Extract SVN details of this Bayeux
-include(SVNUtilities)
 
 #-----------------------------------------------------------------------
 # Build the subdirectories
