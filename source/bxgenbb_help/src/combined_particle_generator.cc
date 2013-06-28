@@ -252,7 +252,7 @@ namespace genbb {
             message << "genbb::combined_particle_generator::initialize: "
             << "Cannot parse activity value with its unit for particle generator '"
             << pg_label << "' (" << pg_act_str << ") !";
-            throw std::logic_error (message.str ());
+            th row std::logic_error (message.str ());
             }
             if (! unit_label.empty() && unit_label != "activity")
             {
@@ -260,7 +260,7 @@ namespace genbb {
             message << "genbb::combined_particle_generator::initialize: "
             << "Invalid unit ('" << unit_label << "') for the activity of the particle generator '"
             << pg_label << "' (" << pg_act << ") !";
-            throw std::logic_error (message.str ());
+            th row std::logic_error (message.str ());
             }
           */
           DT_THROW_IF (pg_act < 0.0, std::logic_error,

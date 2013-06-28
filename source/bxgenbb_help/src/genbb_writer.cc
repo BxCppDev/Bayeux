@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // genbb_writer.cc
 /*
  * Copyright 2007-2011 F. Mauger
@@ -7,15 +7,15 @@
  * it under the terms of the GNU General Public  License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
  */
@@ -29,6 +29,8 @@
 #include <string>
 #include <list>
 
+#include <datatools/exception.h>
+
 #include <genbb_help/primary_event.h>
 
 #include <CLHEP/Units/SystemOfUnits.h>
@@ -39,102 +41,102 @@ namespace genbb {
 
   void genbb_writer::set_seed ( int seed_ )
   {
-    _seed_ = seed_; 
+    _seed_ = seed_;
   }
-  
-  int genbb_writer::get_seed() const 
-  { 
-    return _seed_; 
+
+  int genbb_writer::get_seed() const
+  {
+    return _seed_;
   }
 
   void genbb_writer::set_npart ( int npart_ )
-  { 
-    _npart_ = npart_; 
+  {
+    _npart_ = npart_;
   }
-  
-  int genbb_writer::get_npart() const 
-  { 
-    return _npart_; 
+
+  int genbb_writer::get_npart() const
+  {
+    return _npart_;
   }
 
   void genbb_writer::set_part_per_evt ( int part_per_evt_ )
-  { 
-    _part_per_evt_ = part_per_evt_; 
+  {
+    _part_per_evt_ = part_per_evt_;
   }
-  
-  int genbb_writer::get_part_per_evt() const 
-  { 
-    return _part_per_evt_; 
+
+  int genbb_writer::get_part_per_evt() const
+  {
+    return _part_per_evt_;
   }
 
   void genbb_writer::set_type ( int type_ )
-  { 
-    _type_ = type_; 
+  {
+    _type_ = type_;
   }
-  
-  int genbb_writer::get_type() const 
-  { 
-    return _type_; 
+
+  int genbb_writer::get_type() const
+  {
+    return _type_;
   }
 
   void genbb_writer::set_Emin ( double Emin_ )
-  { 
-    _emin_ = Emin_; 
+  {
+    _emin_ = Emin_;
   }
 
-  double genbb_writer::get_Emin() const 
-  { 
+  double genbb_writer::get_Emin() const
+  {
     return _emin_;
   }
-  
+
   void genbb_writer::set_Emax ( double Emax_ )
-  { 
-    _emax_ = Emax_; 
+  {
+    _emax_ = Emax_;
   }
 
-  double genbb_writer::get_Emax() const 
+  double genbb_writer::get_Emax() const
   {
-    return _emax_; 
+    return _emax_;
   }
 
   void genbb_writer::set_phi_min ( double phi_min_ )
-  { 
-    _phi_min_ = phi_min_; 
+  {
+    _phi_min_ = phi_min_;
   }
-  
+
   double genbb_writer::get_phi_min() const
-  { 
-    return _phi_min_; 
+  {
+    return _phi_min_;
   }
 
   void genbb_writer::set_phi_max ( double phi_max_ )
-  { 
-    _phi_max_ = phi_max_; 
-  }
-  
-  double genbb_writer::get_phi_max() const 
   {
-    return _phi_max_; 
+    _phi_max_ = phi_max_;
   }
 
-  void genbb_writer::set_outfile ( std::string fout_ ) 
+  double genbb_writer::get_phi_max() const
   {
-    _fout_ = fout_; 
+    return _phi_max_;
   }
-  
-  std::string genbb_writer::get_outfile() const 
+
+  void genbb_writer::set_outfile ( std::string fout_ )
   {
-    return _fout_; 
+    _fout_ = fout_;
+  }
+
+  std::string genbb_writer::get_outfile() const
+  {
+    return _fout_;
   }
 
   void genbb_writer::set_debug ( bool d_ )
   {
-    _debug_ = d_; 
+    _debug_ = d_;
   }
-  
-  bool genbb_writer::is_debug () const 
+
+  bool genbb_writer::is_debug () const
   {
-    return _debug_; 
+    return _debug_;
   }
 
   void genbb_writer::run ()
@@ -164,7 +166,7 @@ namespace genbb {
             double theta              = myrandom ( 0., 2*M_PI );
             double RelativisticEnergy = 0.;
             double TotalMomentum      = 0.;
-            
+
             if ( _type_ == 2 || _type_ == 3 ) // e+ / e-
               {
                 RelativisticEnergy = KineticEnergy + ElectronMass;
@@ -181,11 +183,11 @@ namespace genbb {
               {
                 TotalMomentum = KineticEnergy;
               }
-            
+
             double x_mom = TotalMomentum * cos ( theta ) * sin ( phi );
             double y_mom = TotalMomentum * sin ( theta ) * sin ( phi );
             double z_mom = TotalMomentum * cos ( phi );
-            
+
             out << _type_ << " "
                 << x_mom << " "
                 << y_mom << " "
@@ -196,32 +198,28 @@ namespace genbb {
       }
     return;
   }
-  
+
 
   double genbb_writer::myrandom ( double min_, double max_ )
   {
     return ( max_ - min_ ) * drand48() + min_;
   }
-  
+
 
   void genbb_writer::init ()
   {
-    if ( _npart_ < 0        ||
-         _part_per_evt_ < 0 ||
-         _type_ == -1       ||
-         _emin_ < 0         ||
-         _emax_ < 0         ||
-         _phi_min_ < 0      ||
-                     _phi_max_ > M_PI    )
-      {
-        std::ostringstream message;
-        message << "genbb_writer::init: "
-                << "All the parameters of the writer are not well defined. Abort!";
-        throw std::runtime_error ( message.str() );
-      }
+    DT_THROW_IF (((_npart_ < 0)
+                  || (_part_per_evt_ < 0)
+                  || (_type_ == -1)
+                  || (_emin_ < 0)
+                  || (_emax_ < 0)
+                  || (_phi_min_ < 0)
+                      || (_phi_max_ > M_PI)),
+                 std::logic_error,
+                 "All the parameters of the writer are not well defined. Abort!");
     return;
   }
-  
+
 
   void genbb_writer::dump ( std::ostream & out_ ) const
   {
@@ -254,7 +252,7 @@ namespace genbb {
     srand48 ( _seed_ );
     return;
   }
-  
+
   // dtor:
   genbb_writer::~genbb_writer ()
   {

@@ -42,19 +42,6 @@ namespace genbb {
 
   GENBB_PG_REGISTRATION_IMPLEMENT(single_particle_generator,"genbb::single_particle_generator");
 
-  void single_particle_generator::_check_locked (const string & where_) const
-  {
-    if (_initialized_) {
-      ostringstream message;
-      if (! where_.empty ()) {
-        message << where_ << ": ";
-      }
-      message << "Operation prohibited ! Object is locked/initialized !";
-      throw logic_error (message.str ());
-    }
-    return;
-  }
-
   bool single_particle_generator::is_debug () const
   {
     return _debug_;

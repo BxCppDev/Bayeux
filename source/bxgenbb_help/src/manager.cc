@@ -406,18 +406,11 @@ namespace genbb {
     //           << "Particle generator '"
     //           << name
     //           << "' cannot be dropped !";
-    //   throw std::logic_error(message.str());
+    //   th row std::logic_error(message.str());
     // }
 
-    // if (this->is_debug()) {
-    //   std::clog << datatools::io::debug
-    //             << "genbb::manager::drop: "
-    //             << "Reset & remove particle generator '"
-    //             << name
-    //             << "' !"
-    //             << std::endl;
-    // }
-
+    DT_LOG_DEBUG(get_logging_priority(),
+                 "Reset & remove particle generator '" << name << "' !");
     this->_reset_pg(entry);
     _particle_generators_.erase(found);
     return;

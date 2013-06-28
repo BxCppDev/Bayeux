@@ -21,6 +21,8 @@
 
 #include <genbb_help/primary_particle.h>
 
+#include <datatools/exception.h>
+
 #include <genbb_help/genbb_help_config.h>
 
 // Special backward compatibility support for serialization :
@@ -216,7 +218,7 @@ namespace genbb {
     else if (is_alpha ()) c = +2.0;
     else if (get_type () == HE3) c = +2.0;
     else {
-      throw std::logic_error ("genbb::primary_particle::get_charge: Unknown particle !");
+      DT_THROW_IF(true, std::logic_error, "Unknown particle !");
     }
     return c;
   }

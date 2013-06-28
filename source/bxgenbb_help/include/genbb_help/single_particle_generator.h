@@ -78,9 +78,6 @@ namespace genbb {
         DIRECTION_DEFAULT    = DIRECTION_Z_AXIS
       };
 
-  protected:
-    void _check_locked (const std::string & where_) const;
-
   public:
     bool is_debug () const;
     void set_debug (bool);

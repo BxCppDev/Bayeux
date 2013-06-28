@@ -216,31 +216,22 @@ namespace genbb {
     DT_THROW_IF (! config_.has_key ("decay_type"), logic_error,
                  "Missing 'decay_type' property !");
     string tmp = config_.fetch_string ("decay_type");
-    if ((tmp != "DBD") && (tmp != "background")) {
-      ostringstream message;
-      message << "genbb::wgenbb::initialize: Invalid decay type '"
-              << tmp << "' !";
-      throw logic_error (message.str());
-    }
+    DT_THROW_IF ((tmp != "DBD") && (tmp != "background"),
+                 logic_error,
+                 "Invalid decay type '" << tmp << "' !");
     if (tmp == "background") {
       _decay_type_ = DECAY_TYPE_BACKGROUND;
     }
 
     if (tmp == "DBD") {
       _decay_type_ = DECAY_TYPE_DBD;
-
-      if (! config_.has_key ("decay_dbd_level")) {
-        ostringstream message;
-        message << "genbb::wgenbb::initialize: Missing DBD decay level !";
-        throw logic_error (message.str());
-      }
+      DT_THROW_IF (! config_.has_key ("decay_dbd_level"),
+                   logic_error,
+                   "Missing DBD decay level !");
       _decay_dbd_level_ = config_.fetch_integer ("decay_dbd_level");
-
-      if (! config_.has_key ("decay_dbd_mode")) {
-        ostringstream message;
-        message << "genbb::wgenbb::initialize: Missing DBD decay mode !";
-        throw logic_error (message.str());
-      }
+      DT_THROW_IF (! config_.has_key ("decay_dbd_mode"),
+                   logic_error,
+                   "Missing DBD decay mode !");
       _decay_dbd_mode_ = config_.fetch_integer ("decay_dbd_mode");
     }
 

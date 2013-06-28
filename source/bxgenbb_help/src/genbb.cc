@@ -33,6 +33,7 @@
 
 #include <datatools/utils.h>
 #include <datatools/units.h>
+#include <datatools/exception.h>
 
 #include <genbb_help/genbb.h>
 #include <genbb_help/genbb_utils.h>
@@ -201,18 +202,14 @@ namespace genbb {
 
   void genbb::set_tmp_dir (const string & td_)
   {
-    if (_initialized_) {
-      throw logic_error ("genbb::genbb::set_tmp_base_dir: Operation prohibited ! Object is locked !");
-    }
+    DT_THROW_IF (_initialized_, logic_error, "Operation prohibited ! Object is locked !");
     _forced_tmp_dir_ = td_;
     return;
   }
 
   void genbb::set_tmp_base_dir (const string & tbd_)
   {
-    if (_initialized_) {
-      throw logic_error ("genbb::genbb::set_tmp_base_dir: Operation prohibited ! Object is locked !");
-    }
+    DT_THROW_IF (_initialized_, logic_error, "Operation prohibited ! Object is locked !");
     _tmp_base_dir_ = tbd_;
     return;
   }
@@ -232,9 +229,7 @@ namespace genbb {
 
   void genbb::reset ()
   {
-    if (! _initialized_) {
-      throw logic_error ("genbb::genbb::reset: Object is not initialized !");
-    }
+    DT_THROW_IF (!_initialized_, logic_error, "Object is not initialized !");
     _initialized_ = false;
     _clean_ ();
     _test_ = false;
@@ -289,9 +284,7 @@ namespace genbb {
                           datatools::service_manager & service_manager_,
                           detail::pg_dict_type & dictionary_)
   {
-    if (_initialized_) {
-      throw logic_error ("genbb::genbb::initialize: Object is already initialized !");
-    }
+    DT_THROW_IF (_initialized_, logic_error, "Object is already initialized !");
     _initialize_base(config_);
 
     if (config_.has_flag ("debug")) {
@@ -302,9 +295,7 @@ namespace genbb {
 
       if (config_.has_key ("seed")) {
         long seed = config_.fetch_integer ("seed");
-        if (seed < 0) {
-          throw logic_error ("genbb::genbb::initialize: Invalid seed value (>=0) !");
-        }
+        DT_THROW_IF (seed < 0, logic_error, "Invalid seed value (>=0) !");
         _seed_ = seed;
       }
 
@@ -315,12 +306,8 @@ namespace genbb {
 
     if (config_.has_key ("buffer_size")) {
       int bs = config_.fetch_integer ("buffer_size");
-      if (bs <= 0) {
-        throw logic_error ("genbb::genbb::initialize: Invalid buffer size property !");
-      }
-      if (bs >= MAX_BUFFER_SIZE) {
-        throw logic_error ("genbb::genbb::initialize: Buffer size is too large !");
-      }
+      DT_THROW_IF (bs <= 0, logic_error, "Invalid buffer size property !");
+      DT_THROW_IF (bs >= MAX_BUFFER_SIZE, logic_error, "Buffer size is too large !");
       _buffer_size_ = bs;
     }
 
@@ -354,45 +341,29 @@ namespace genbb {
 
     if (config_.has_key ("decay_type")) {
       string tmp = config_.fetch_string ("decay_type");
-      if ((tmp != "DBD") && (tmp != "background")) {
-        ostringstream message;
-        message << "genbb::genbb::initialize: Invalid decay type '"
-                << tmp << "' !";
-        throw logic_error (message.str());
-      }
+      DT_THROW_IF ((tmp != "DBD") && (tmp != "background"), logic_error,
+                   "Invalid decay type '" << tmp << "' !");
       if (tmp == "background") {
         _decay_type_ = utils::DECAY_TYPE_BACKGROUND;
-
-        if (! config_.has_key ("decay_isotope")) {
-          ostringstream message;
-          message << "genbb::genbb::initialize: Missing background isotope !";
-          throw logic_error (message.str());
-        }
+        DT_THROW_IF (! config_.has_key ("decay_isotope"),
+                     logic_error,
+                     "Missing background isotope !");
         _decay_isotope_ = config_.fetch_string ("decay_isotope");
       }
 
       if (tmp == "DBD") {
         _decay_type_ = utils::DECAY_TYPE_DBD;
-
-        if (! config_.has_key ("decay_isotope")) {
-          ostringstream message;
-          message << "genbb::genbb::initialize: Missing DBD isotope !";
-          throw logic_error (message.str());
-        }
+        DT_THROW_IF (! config_.has_key ("decay_isotope"),
+                     logic_error,
+                     "Missing DBD isotope !");
         _decay_isotope_ = config_.fetch_string ("decay_isotope");
-
-        if (! config_.has_key ("decay_dbd_level")) {
-          ostringstream message;
-          message << "genbb::genbb::initialize: Missing DBD decay level !";
-          throw logic_error (message.str());
-        }
+        DT_THROW_IF (! config_.has_key ("decay_dbd_level"),
+                     logic_error,
+                     "Missing DBD decay level !");
         _decay_dbd_level_ = config_.fetch_integer ("decay_dbd_level");
-
-        if (! config_.has_key ("decay_dbd_mode")) {
-          ostringstream message;
-          message << "genbb::genbb::initialize: Missing DBD decay mode !";
-          throw logic_error (message.str());
-        }
+        DT_THROW_IF (! config_.has_key ("decay_dbd_mode"),
+                     logic_error,
+                     "Missing DBD decay mode !");
         _decay_dbd_mode_ = config_.fetch_integer ("decay_dbd_mode");
       }
 
@@ -431,13 +402,8 @@ namespace genbb {
               {
                 _use_energy_range_ = true;
               }
-            if (_energy_min_ >= _energy_max_)
-              {
-                ostringstream message;
-                message << "genbb::genbb::initialize: Invalid energy range !";
-                throw logic_error (message.str());
-              }
-
+            DT_THROW_IF (_energy_min_ >= _energy_max_, logic_error,
+                         "Invalid energy range !");
           }
       }
 
@@ -452,21 +418,16 @@ namespace genbb {
     {
       if (_forced_tmp_dir_.empty ())
         {
-          if (_tmp_base_dir_.empty ())
-            {
-              ostringstream message;
-              message << "genbb::genbb::initialize: Missing base temporary directory ! ";
-              throw logic_error (message.str());
-            }
+          DT_THROW_IF (_tmp_base_dir_.empty (), logic_error,
+                       "Missing base temporary directory !");
           datatools::fetch_path_with_env (_tmp_base_dir_);
           {
             if (! boost::filesystem::is_directory (_tmp_base_dir_))
               {
-                ostringstream message;
-                message << "genbb::genbb::initialize: Base temporary directory '"
-                        << _tmp_base_dir_ << "' does not exist ! you should first create it !";
                 _clean_ ();
-                throw logic_error (message.str());
+                DT_THROW_IF(true, logic_error,
+                            "Base temporary directory '"
+                            << _tmp_base_dir_ << "' does not exist ! You should first create it !");
               }
           }
 
@@ -480,31 +441,24 @@ namespace genbb {
           _tmp_dir_[i] = 0;
 
           char * ret = mkdtemp (_tmp_dir_);
-          if (ret == NULL)
-            {
-              ostringstream message;
-              message << "genbb::genbb::initialize: Cannot create temporary directory in '"
-                      << _tmp_base_dir_ << "' !";
-              throw logic_error (message.str());
-            }
+          DT_THROW_IF (ret == NULL, logic_error,
+                       "Cannot create temporary directory in '"
+                       << _tmp_base_dir_ << "' !");
         }
       else
         {
           datatools::fetch_path_with_env (_forced_tmp_dir_);
-          if (_forced_tmp_dir_.length () > (TMP_DIR_BUFSZ - 1))
-            {
-              ostringstream message;
-              message << "genbb::genbb::initialize: Temporary directory name is too long (<" << TMP_DIR_BUFSZ << ")!";
-              throw logic_error (message.str());
-
-            }
+          DT_THROW_IF (_forced_tmp_dir_.length () > (TMP_DIR_BUFSZ - 1),
+                       logic_error,
+                       "Temporary directory name is too long (<" << TMP_DIR_BUFSZ << ") !");
           if (! boost::filesystem::is_directory (_forced_tmp_dir_))
             {
               ostringstream message;
               message << "genbb::genbb::initialize: Temporary directory '"
                       << _forced_tmp_dir_ << "' does not exist ! You should first create it !";
               _clean_ ();
-              throw logic_error (message.str());
+              DT_THROW_IF(true, logic_error, "Temporary directory '"
+                          << _forced_tmp_dir_ << "' does not exist ! You should first create it !");
             }
           int i;
           for (i = 0; i < _forced_tmp_dir_.size (); i++)
@@ -522,13 +476,8 @@ namespace genbb {
 
       {
         _genbb_conf_file_.open (_genbb_conf_.c_str ());
-        if (! _genbb_conf_file_)
-          {
-            ostringstream message;
-            message << "genbb::genbb::initialize: Cannot create GENBB config file in '"
-                    << _tmp_dir_ << "' !";
-            throw logic_error (message.str());
-          }
+        DT_THROW_IF (! _genbb_conf_file_, logic_error,
+                     "Cannot create GENBB config file in '" << _tmp_dir_ << "' !");
         _genbb_conf_file_ << "type=" << _decay_type_ << endl;
         if (_decay_type_ == utils::DECAY_TYPE_BACKGROUND)
           {
@@ -629,34 +578,17 @@ namespace genbb {
         boost::algorithm::split(svec, line,
                                 boost::algorithm::is_any_of("="),
                                 boost::algorithm::token_compress_on );
-        if (svec.size () != 2)
-          {
-            ostringstream message;
-            message << "genbb::genbb::_load_next_genbb_: Invalid syntax ("
-                    << line << ") !";
-            throw logic_error (message.str ());
-          }
+        DT_THROW_IF (svec.size () != 2, logic_error,
+                     "Invalid syntax (" << line << ") !");
         if (svec[0] == "#@toallevents")
           {
             std::istringstream iss (svec[1]);
             double toallevents = 1.0;
             iss >> toallevents;
-            if (! iss)
-              {
-                std::ostringstream message;
-                message << "genbb::genbb::_load_next_genbb_: "
-                        << "Invalid format for 'toallevents' weight ("
-                        << line << ") !";
-                throw logic_error (message.str ());
-              }
-            if (toallevents < 1.0)
-              {
-                std::ostringstream message;
-                message << "genbb::genbb::_load_next_genbb_: "
-                        << "Invalid value for 'toallevents' weight ("
-                        << line << ") !";
-                throw logic_error (message.str ());
-              }
+            DT_THROW_IF (! iss, logic_error,
+                         "Invalid format for 'toallevents' weight (" << line << ") !");
+            DT_THROW_IF (toallevents < 1.0, logic_error,
+                         "Invalid value for 'toallevents' weight (" << line << ") !");
             _genbb_weight_ = 1.0  / toallevents;
             std::clog << "NOTICE: genbb::genbb::_load_next_genbb_: "
                       << "Load GENBB event weight = "
@@ -669,12 +601,7 @@ namespace genbb {
     {
       std::istringstream line_iss (line);
       line_iss >> ws >> evnum >> time >> npart >> ws;
-      if (! line_iss)
-        {
-          ostringstream message;
-          message << "genbb::genbb_mgr::_load_next_genbb_: Format error !";
-          throw logic_error (message.str ());
-        }
+      DT_THROW_IF (! line_iss, logic_error, "Format error !");
     }
     event_.set_time (time * CLHEP::second);
     event_.set_genbb_weight (_genbb_weight_);
@@ -731,20 +658,14 @@ namespace genbb {
 
     if (_decay_type_ == utils::INVALID_DECAY_TYPE)
       {
-        ostringstream message;
-        message << "genbb::genbb::_init_: "
-                << "Missing decay type !";
         _clean_ ();
-        throw logic_error (message.str());
+        DT_THROW_IF(true, logic_error, "Missing decay type !");
       }
 
     if (_decay_isotope_.empty ())
       {
-        ostringstream message;
-        message << "genbb::genbb::_init_: "
-                << "Missing decay isotope !";
         _clean_ ();
-        throw logic_error (message.str());
+        DT_THROW_IF(true, logic_error,  "Missing decay isotope !");
       }
 
     if (_decay_type_ == utils::DECAY_TYPE_DBD)
@@ -752,11 +673,8 @@ namespace genbb {
         const std::vector<std::string> & dbdnucs = utils::get_dbd_nuclides ();
         if (std::find(dbdnucs.begin (), dbdnucs.end (), _decay_isotope_) == dbdnucs.end ())
           {
-            ostringstream message;
-            message << "genbb::genbb::_init_: "
-                    << "Unknown isotope (" << _decay_isotope_ << ") !";
             _clean_ ();
-            throw logic_error (message.str());
+            DT_THROW_IF (true, logic_error,"Unknown isotope (" << _decay_isotope_ << ") !");
           }
       }
     else if (_decay_type_ == utils::DECAY_TYPE_BACKGROUND)
@@ -764,11 +682,8 @@ namespace genbb {
       }
     else
       {
-        ostringstream message;
-        message << "genbb::genbb::_init_: "
-                << "Invalid decay type !";
         _clean_ ();
-        throw logic_error (message.str());
+        DT_THROW_IF (true, logic_error,"Invalid decay type !");
       }
 
     // build the Genbb/Decay0 output data file name :
@@ -845,7 +760,8 @@ namespace genbb {
             message << "genbb::genbb::_init_: genbb command failed ! Check log file '"
                     << _genbb_log_ << "' !";
             _clean_ ();
-            throw logic_error (message.str());
+            DT_THROW_IF(true, logic_error, "genbb command failed ! Check log file '"
+                        << _genbb_log_ << "' !");
           }
       }
 
@@ -870,7 +786,7 @@ namespace genbb {
             _genbb_in_ = 0;
           }
         _genbb_data_ = "";
-        throw logic_error (message.str());
+        DT_THROW_IF(true, logic_error, message.str());
       }
     if (_debug_)
       {
