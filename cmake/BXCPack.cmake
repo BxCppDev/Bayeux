@@ -37,7 +37,7 @@ foreach(_vtag VERSION VERSION_MAJOR VERSION_MINOR VERSION_PATCH)
   set(CPACK_PACKAGE_${_vtag} "${${PROJECT_NAME}_${_vtag}}")
 endforeach()
 
-set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE.GPL3.txt")
+set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE.txt")
 set(CPACK_RESOURCE_FILE_README  "${PROJECT_SOURCE_DIR}/README.rst")
 
 #-----------------------------------------------------------------------
