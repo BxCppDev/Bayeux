@@ -1,0 +1,240 @@
+#!/bin/bash
+
+# Encapsulate tasks to run before unpacking
+cpack_preflight()
+{
+  # Sh function can't be empty, so always do something!
+  cpack_echo_info "Running preflight checks in ${toplevel}"
+  if [ "x@CPACK_STGZ_PREFLIGHT_SCRIPT@x" != "xx" ] ; then 
+    var=`cpack_tar_stream | tar -xf - -O @CPACK_STGZ_PREFLIGHT_SCRIPT@` || cpack_echo_exit "Failed to unpack preflight script"
+    eval "$var" || cpack_echo_exit "Failed to run preflight script"
+  fi
+  cpack_echo_info "Finished preflight checks"
+}
+
+# Encapsulate tasks to run after unpacking
+cpack_postflight()
+{
+  # Sh function can't be empty, so always do something!  
+  cpack_echo_info "Running postflight checks in ${toplevel}"
+  if [ "x@CPACK_STGZ_POSTFLIGHT_SCRIPT@x" != "xx" ] ; then 
+    . ${toplevel}/@CPACK_STGZ_POSTFLIGHT_SCRIPT@ || cpack_echo_exit "Failed to unpack postflight script"
+  fi
+  cpack_echo_info "Finished postflight checks"
+}
+
+# Display usage
+cpack_usage()
+{
+  cat <<EOF
+Usage: $0 [options]
+Options: [defaults in brackets after descriptions]
+  -h, --help        print this message
+  --version         print version
+  --license         print license information
+  --contents        list files that will be installed
+  --prefix=dir      directory in which to install
+  --accept-license  accept license automatically
+  --include-subdir  include the @CPACK_PACKAGE_FILE_NAME@ subdirectory
+  --exclude-subdir  exclude the @CPACK_PACKAGE_FILE_NAME@ subdirectory
+ 
+EOF
+  exit 1
+}
+
+# Logging
+# - Exit with failure
+cpack_echo_exit()
+{
+  cpack_echo_error "$1"
+  exit 1
+}
+
+# - Info
+cpack_echo_info()
+{
+  echo "[@CPACK_PACKAGE_NAME@Installer:info] $1"
+}
+
+# - Warning
+cpack_echo_warning()
+{
+  echo "[@CPACK_PACKAGE_NAME@Installer:warning] $1" 1>&2
+}
+
+# - Error
+cpack_echo_error()
+{
+  echo "[@CPACK_PACKAGE_NAME@Installer:error] $1" 1>&2
+}
+
+# Display version
+cpack_version()
+{
+  echo "@CPACK_PACKAGE_NAME@ @CPACK_PACKAGE_VERSION@ Installer, Copyright (c) 2013 @CPACK_PACKAGE_VENDOR@"
+}
+
+# Display license
+cpack_license()
+{
+  cat << ____cpack_license_content____
+@CPACK_RESOURCE_FILE_LICENSE_CONTENT@
+____cpack_license_content____
+}
+
+# Display contents
+cpack_contents()
+{
+  cpack_version
+  cpack_echo_info "Contents:"
+  cpack_tar_stream | tar -tf - || cpack_echo_error "Failed to read tar stream"
+}
+
+# Helper function to fix windows paths.
+cpack_fix_slashes ()
+{
+  echo "$1" | sed 's/\\/\//g'
+}
+
+# - Helper function to stream the TGZ archive portion through gunzip
+# the NUMERIC parameter in this command should be one more
+# than the number of lines in this header file
+# It also wraps the functionality todetermine appropriate number argument for 'tail'
+# there are tails which don't understand the "-n" argument, e.g. on SunOS
+# OTOH there are tails which complain when not using the "-n" argument (e.g. GNU)
+# so at first try to tail some file to see if tail fails if used with "-n"
+# if so, don't use "-n"
+cpack_tar_stream()
+{
+  try_tail_syntax="-n"
+  tail $try_tail_syntax +1 "$0" > /dev/null 2> /dev/null || try_tail_syntax=""
+  tail $try_tail_syntax +###CPACK_HEADER_LENGTH### "$0" | gunzip
+}
+
+# - Helper function to locate commands
+cpack_find_command()
+{
+  command -v "$1" > /dev/null 2>&1
+}
+
+#-----------------------------------------------------------------------
+# Startup...
+interactive=TRUE
+cpack_skip_license=FALSE
+cpack_include_subdir=""
+for a in "$@CPACK_AT_SIGN@"; do
+  if echo $a | grep "^--prefix=" > /dev/null 2> /dev/null; then
+    cpack_prefix_dir=`echo $a | sed "s/^--prefix=//"`
+    cpack_prefix_dir=`cpack_fix_slashes "${cpack_prefix_dir}"`
+  fi
+  if echo $a | grep "^--help" > /dev/null 2> /dev/null; then
+    cpack_usage 
+  fi
+  if echo $a | grep "^-h" > /dev/null 2> /dev/null; then
+    cpack_usage 
+  fi
+  if echo $a | grep "^--version" > /dev/null 2> /dev/null; then
+    cpack_version 
+    exit 2
+  fi
+  if echo $a | grep "^--license" > /dev/null 2> /dev/null; then
+    cpack_version
+    cpack_license
+    exit 2
+  fi
+  if echo $a | grep "^--contents" > /dev/null 2> /dev/null; then
+    cpack_contents
+    exit 2
+  fi
+  if echo $a | grep "^--include-subdir" > /dev/null 2> /dev/null; then
+    cpack_include_subdir=TRUE
+  fi
+  if echo $a | grep "^--exclude-subdir" > /dev/null 2> /dev/null; then
+    cpack_include_subdir=FALSE
+  fi
+  if echo $a | grep "^--accept-license" > /dev/null 2> /dev/null; then
+    cpack_skip_license=TRUE
+  fi
+done
+
+if [ "x${cpack_include_subdir}x" != "xx" -o "x${cpack_skip_license}x" = "xTRUEx" ]
+then
+  interactive=FALSE
+fi
+
+cpack_version
+echo "This is a self-extracting archive."
+toplevel="`pwd`"
+if [ "x${cpack_prefix_dir}x" != "xx" ]
+then
+  toplevel="${cpack_prefix_dir}"
+fi
+
+echo "The archive will be extracted to: ${toplevel}"
+
+if [ "x${interactive}x" = "xTRUEx" ]
+then
+  echo ""
+  echo "If you want to stop extracting, please press <ctrl-C>."
+
+  if [ "x${cpack_skip_license}x" != "xTRUEx" ]
+  then
+    more << ____cpack__here_doc____
+`cpack_license`
+____cpack__here_doc____
+    echo
+    echo "Do you accept the license? [yN]: "
+    read line leftover
+    case ${line} in
+      y* | Y*)
+        cpack_license_accepted=TRUE;;
+      *)
+        cpack_echo_exit "License not accepted. Exiting ...";;
+    esac
+  else
+    cpack_echo_info "@CPACK_PACKAGE_NAME@ license accepted by default"
+  fi
+
+  if [ "x${cpack_include_subdir}x" = "xx" ]
+  then
+    echo "By default @CPACK_PACKAGE_NAME@ will be installed in:"
+    echo "  \"${toplevel}/@CPACK_PACKAGE_FILE_NAME@\""
+    echo "Do you want to include the subdirectory @CPACK_PACKAGE_FILE_NAME@?"
+    echo "Saying no will install in: \"${toplevel}\" [Yn]: "
+    read line leftover
+    cpack_include_subdir=TRUE
+    case ${line} in
+      n* | N*)
+        cpack_include_subdir=FALSE
+    esac
+  fi
+fi
+
+# Run any preflight tasks
+cpack_preflight
+
+if [ "x${cpack_include_subdir}x" = "xTRUEx" ]
+then
+  toplevel="${toplevel}/@CPACK_PACKAGE_FILE_NAME@"
+  mkdir -p "${toplevel}" || cpack_echo_exit "Problem creating target directory ${toplevel}"
+  cpack_echo_info "Created target directory ${toplevel}"
+fi
+
+cpack_echo_info "Using target directory: ${toplevel}"
+
+cpack_echo_info "Extracting, please wait..."
+
+cpack_tar_stream | (cd "${toplevel}" && tar xf -) || cpack_echo_exit "Problem unpacking the @CPACK_PACKAGE_FILE_NAME@ bundle"
+
+cpack_echo_info "Unpacking finished successfully"
+
+# Run any postflight tasks
+cpack_postflight
+
+cpack_echo_info "@CPACK_PACKAGE_NAME@ installed successfully"
+
+exit 0
+#-----------------------------------------------------------
+#      Start of TAR.GZ file
+#-----------------------------------------------------------;
+

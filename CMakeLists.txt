@@ -73,3 +73,8 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/lib")
 #
 add_subdirectory(source)
 
+#-----------------------------------------------------------------------
+# Package Sources and Binaries
+#
+include(BXCPack)
+
