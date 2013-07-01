@@ -72,6 +72,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/lib")
 # Build the subdirectories
 #
 add_subdirectory(source)
+add_subdirectory(doc)
 
 #-----------------------------------------------------------------------
 # Package Sources and Binaries
