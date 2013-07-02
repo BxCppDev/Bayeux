@@ -45,6 +45,8 @@ namespace mctools {
 
   namespace g4 {
 
+    class detector_construction;
+
     class magnetic_field : public G4MagneticField,
                            public loggable_support
     {
@@ -93,6 +95,8 @@ namespace mctools {
       const emfield::base_electromagnetic_field    * _mag_field_;
       bool                                           _mag_field_check_pos_time_;
       geomtools::vector_3d                           _standalone_constant_mag_field_;
+
+      friend class detector_construction;
 
     };
 

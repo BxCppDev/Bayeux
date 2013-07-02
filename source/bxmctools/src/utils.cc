@@ -7,12 +7,13 @@
 namespace mctools {
 
   // Specific to sensitive steps :
-  const std::string sensitive_utils::SENSITIVE_DROP_ZERO_ENERGY_DEPOSIT   = "drop_zero_energy_deposit_steps";
-  const std::string sensitive_utils::SENSITIVE_STORE_G4_VOLUME            = "store_g4_volume";
-  const std::string sensitive_utils::SENSITIVE_STORE_G4_VOLUME_NAME_KEY   = "g4_volume.name";
-  const std::string sensitive_utils::SENSITIVE_STORE_G4_VOLUME_COPY_NUMBER_KEY = "g4_volume.copy_number";
+  const std::string sensitive_utils::SENSITIVE_HITS_BUFFER_CAPACITY       = "hits_buffer_capacity";
   const std::string sensitive_utils::SENSITIVE_TRACK_GAMMA                = "track_gamma";
   const std::string sensitive_utils::SENSITIVE_TRACK_NEUTRON              = "track_neutron";
+  const std::string sensitive_utils::SENSITIVE_DROP_ZERO_ENERGY_DEPOSIT   = "drop_zero_energy_deposit_steps";
+  const std::string sensitive_utils::SENSITIVE_RECORD_G4_VOLUME_INFOS     = "record_g4_volume_infos";
+  const std::string sensitive_utils::SENSITIVE_G4_VOLUME_NAME_KEY         = "g4_volume.name";
+  const std::string sensitive_utils::SENSITIVE_G4_VOLUME_COPY_NUMBER_KEY  = "g4_volume.copy_number";
   const std::string sensitive_utils::SENSITIVE_RECORD_MOMENTUM            = "record_momentum";
   const std::string sensitive_utils::SENSITIVE_RECORD_KINETIC_ENERGY      = "record_kinetic_energy";
   const std::string sensitive_utils::SENSITIVE_RECORD_CATEGORY            = "record_category";
@@ -24,7 +25,6 @@ namespace mctools {
   const std::string sensitive_utils::SENSITIVE_RECORD_ALPHA_QUENCHING     = "record_alpha_quenching";
   const std::string sensitive_utils::SENSITIVE_RECORD_TRACK_ID            = "record_track_id";
   const std::string sensitive_utils::SENSITIVE_RECORD_PRIMARY_PARTICLE    = "record_primary_particle";
-  const std::string sensitive_utils::SENSITIVE_HITS_BUFFER_CAPACITY       = "hits_buffer_capacity";
 
   // Specific to hits :
   const std::string hit_utils::HIT_MC_BUGGY_KEY            = "hit.mc_buggy";
@@ -46,7 +46,6 @@ namespace mctools {
   // Specific to simulated data :
   const std::string event_utils::EVENT_GENBB_WEIGHT = "event.genbb_weight";
   const std::string event_utils::EVENT_DEFAULT_SIMULATED_DATA_LABEL = "SD";
-
 
   // Specific to I/O format :
   const std::string io_utils::GENERAL_INFO_STORE         = "GI";

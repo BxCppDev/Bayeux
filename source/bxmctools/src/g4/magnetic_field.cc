@@ -242,7 +242,7 @@ namespace mctools {
       b_field_[1] = 0.0;
       b_field_[2] = 0.0;
       if (_mag_field_ != 0) {
-        //DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Compute magnetic field for Geant4 magnetic field '" << get_name() << "'...");
+        DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Compute magnetic field for Geant4 magnetic field '" << get_name() << "'...");
         geomtools::vector_3d pos(position_[0], position_[1], position_[2]);
         double time = position_[3];
         geomtools::vector_3d the_b_field;
@@ -259,7 +259,7 @@ namespace mctools {
                      "Magnetic field named '" << _name_
                      << "' cannot compute magnetic field value at "
                      << pos / CLHEP::mm << " [mm] / " << time / CLHEP::nanosecond << " [ns] !");
-        //DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Geant4 magnetic field '" << get_name() << "' is : " << the_b_field / CLHEP::gauss << " gauss");
+        DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Geant4 magnetic field '" << get_name() << "' is : " << the_b_field / CLHEP::gauss << " gauss");
         b_field_[0] = the_b_field.x();
         b_field_[1] = the_b_field.y();
         b_field_[2] = the_b_field.z();

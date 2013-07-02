@@ -377,7 +377,29 @@ namespace mctools {
 
       void _init_defaults ();
 
-      virtual void _init_manager_config ();
+      virtual void _init_core ();
+
+      virtual void _init_geometry ();
+
+      virtual void _init_vertex_generator ();
+
+      virtual void _init_event_generator ();
+
+      virtual void _init_detector_construction ();
+
+      virtual void _init_physics_list ();
+
+      virtual void _init_run_action ();
+
+      virtual void _init_event_action ();
+
+      virtual void _init_primary_generator_action ();
+
+      virtual void _init_tracking_action ();
+
+      virtual void _init_stepping_action ();
+
+      virtual void _init_stacking_action ();
 
       void _init_seeds ();
 
@@ -493,6 +515,14 @@ namespace mctools {
   } // end of namespace g4
 
 } // end of namespace mctools
+
+/***************************
+ * OCD support : interface *
+ ***************************/
+
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(mctools::g4::manager)
+
 
 #endif // MCTOOLS_G4_MANAGER_H_
 

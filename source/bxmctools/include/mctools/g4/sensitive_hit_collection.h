@@ -1,8 +1,8 @@
 // -*- mode: c++ ; -*-
 /* sensitive_hit_collection.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-05-26
- * Last modified: 2010-05-26
+ * Last modified: 2013-07-02
  *
  * License:
  *

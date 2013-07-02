@@ -39,9 +39,9 @@ namespace mctools {
     static const std::string SENSITIVE_RECORD_ALPHA_QUENCHING;
     static const std::string SENSITIVE_RECORD_TRACK_ID;
     static const std::string SENSITIVE_RECORD_PRIMARY_PARTICLE;
-    static const std::string SENSITIVE_STORE_G4_VOLUME;
-    static const std::string SENSITIVE_STORE_G4_VOLUME_NAME_KEY;
-    static const std::string SENSITIVE_STORE_G4_VOLUME_COPY_NUMBER_KEY;
+    static const std::string SENSITIVE_RECORD_G4_VOLUME_INFOS;
+    static const std::string SENSITIVE_G4_VOLUME_NAME_KEY;
+    static const std::string SENSITIVE_G4_VOLUME_COPY_NUMBER_KEY;
   };
 
   class hit_utils

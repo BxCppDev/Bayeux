@@ -44,27 +44,6 @@ namespace mctools {
 
     };
 
-    /*
-    //typedef G4THitsCollection<sensitive_hit> sensitive_hits_collection;
-
-    //#ifdef SNG4_SENSITIVE_HIT_OPTMEM
-    extern G4Allocator<sensitive_hit> g_sensitive_hit_allocator;
-
-    inline void * sensitive_hit::operator new (size_t a_size)
-    {
-      void * a_hit;
-      a_hit = (void *) g_sensitive_hit_allocator.MallocSingle ();
-      return (a_hit);
-    }
-
-    inline void sensitive_hit::operator delete (void * a_hit)
-    {
-      g_sensitive_hit_allocator.FreeSingle ((sensitive_hit *) a_hit);
-      return;
-    }
-    //#endif // SNG4_SENSITIVE_HIT_OPTMEM
-    */
-
   } // end of namespace g4
 
 } // end of namespace mctools

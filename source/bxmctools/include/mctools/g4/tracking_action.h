@@ -55,6 +55,10 @@ namespace mctools {
 
 } // end of namespace mctools
 
+/// OCD support : interface
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(mctools::g4::tracking_action)
+
 #endif // MCTOOLS_G4_TRACKING_ACTION_H_
 
 // end of tracking_action.h

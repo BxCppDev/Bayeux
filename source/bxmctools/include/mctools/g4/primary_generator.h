@@ -8,7 +8,7 @@
  *
  * Description:
  *
- *   G4 primary event generator
+ *   G4 primary event generator action
  *
  * History:
  *
@@ -97,7 +97,7 @@ namespace mctools {
       bool                 _initialized_; /// Initialization flag
       run_action        *  _run_action_; /// The Geant4 run action
       event_action      *  _event_action_; /// The Geant4 event action
-      ::genvtx::i_vertex_generator *  _vertex_generator_; /// The external vertex generator
+      ::genvtx::i_vertex_generator * _vertex_generator_; /// The external vertex generator
       ::genbb::i_genbb  *  _event_generator_; /// The external event generator
       G4ParticleGun *      _particle_gun_; /// The Geant4 particle gun
       geomtools::vector_3d _current_vertex_; /// The current generated vertex
@@ -109,6 +109,10 @@ namespace mctools {
   } // namespace g4
 
 } // namespace mctools
+
+/// OCD support : interface
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(mctools::g4::primary_generator)
 
 #endif // MCTOOLS_G4_PRIMARY_GENERATOR_H_
 

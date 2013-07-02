@@ -11,6 +11,8 @@
 #include <fstream>
 #include <string>
 
+#include <boost/algorithm/string.hpp>
+
 #include <datatools/units.h>
 #include <datatools/properties.h>
 #include <datatools/exception.h>
@@ -156,10 +158,44 @@ namespace mctools {
                      "Primary_Generator already initialized !");
       }
 
-      // Convert particle names from genbb's scheme to Geant4 particle naming scheme
+      loggable_support::_initialize_logging_support(config_);
+
+      // Convert particle names from genbb's scheme to Geant4 particle naming scheme :
       if (config_.has_key("particle_names_map")) {
-        // XXX not implemented yet !
+        std::vector<std::string> names;
+        config_.fetch("particle_names_map", names);
+        for (int i = 0; i < names.size(); i++) {
+          const std::string & mapping_entry = names[i];
+          std::vector<std::string> tokens;
+          boost::split (tokens, mapping_entry, boost::is_any_of("="));
+          DT_THROW_IF (tokens.size() != 2, std::logic_error,
+                       "Invalid particle name mapping entry '" << mapping_entry << "' !");
+          std::istringstream genbb_particle_name_iss(tokens[0]);
+          std::string genbb_particle_name;
+          genbb_particle_name_iss >> genbb_particle_name;
+          std::istringstream g4_particle_name_iss(tokens[1]);
+          std::string g4_particle_name;
+          g4_particle_name_iss >> g4_particle_name;
+          DT_THROW_IF (genbb_particle_name.empty(), std::logic_error,
+                       "Invalid genbb particle name extracted from mapping entry '" << mapping_entry << "' !");
+          DT_THROW_IF (g4_particle_name.empty(), std::logic_error,
+                       "Invalid Geant4 particle name extracted from mapping entry '" << mapping_entry << "' !");
+          _particle_names_map_[genbb_particle_name] = g4_particle_name;
+        }
+
+        if (_particle_names_map_.size()) {
+          DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "Genbb <-> Geant4 particle name mapping : ");
+          for(std::map<std::string, std::string>::const_iterator i
+                = _particle_names_map_.begin();
+              i !=  _particle_names_map_.end();
+              i++) {
+            const std::string & genbb_name = i->first;
+            const std::string & g4_name = i->second;
+            DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, " '" << genbb_name << "' <-> '" << g4_name << "'");
+          }
+        }
       }
+
       // checks:
       if (_run_action_ == 0) {
         G4Exception ("mctools::g4::primary_generator::initialized",
@@ -173,17 +209,14 @@ namespace mctools {
                       RunMustBeAborted,
                      "Missing event action !");
       }
-      if (_vertex_generator_ == 0) {
-        G4Exception ("mctools::g4::primary_generator::initialized",
-                     "InitializationError",
-                      RunMustBeAborted,
-                     "Missing vertex generator !");
-      }
       if (_event_generator_ == 0) {
         G4Exception ("mctools::g4::primary_generator::initialized",
                      "InitializationError",
                       RunMustBeAborted,
                      "Missing event generator !");
+      }
+      if (_vertex_generator_ == 0) {
+        DT_LOG_WARNING(_logprio(),"No vertex generator is provided !");
       }
       _check ();
       int n_particle = 1;
@@ -413,11 +446,11 @@ namespace mctools {
       if (p_.is_gamma ()) {
         return "gamma";
       }
-      if (p_.is_electron ()) {
-        return "e-";
-      }
       if (p_.is_positron ()) {
         return "e+";
+      }
+      if (p_.is_electron ()) {
+        return "e-";
       }
       if (p_.is_alpha ()) {
         return "alpha";
@@ -427,12 +460,6 @@ namespace mctools {
       }
       if (p_.get_type () == ::genbb::primary_particle::NEUTRON) {
         return "neutron";
-      }
-      if (p_.get_type () == ::genbb::primary_particle::MUON_MINUS) {
-        return "mu-";
-      }
-      if (p_.get_type () == ::genbb::primary_particle::MUON_PLUS) {
-        return "mu+";
       }
       if (p_.get_type () == ::genbb::primary_particle::MUON_MINUS) {
         return "mu-";
@@ -451,7 +478,8 @@ namespace mctools {
       }
       const std::string & part_label = p_.get_particle_label ();
 
-      std::map<std::string, std::string>::const_iterator found = _particle_names_map_.find (part_label);
+      std::map<std::string, std::string>::const_iterator found
+        = _particle_names_map_.find(part_label);
       if (found != _particle_names_map_.end()) {
         return found->second;
       }
@@ -461,5 +489,103 @@ namespace mctools {
   } // namespace g4
 
 } // namespace mctools
+
+/** Opening macro for implementation
+ *  This macro must be used outside of any namespace.
+ */
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::primary_generator,ocd_)
+{
+  // The class name :
+  ocd_.set_class_name ("mctools::g4::primary_generator");
+
+  // The class terse description :
+  ocd_.set_class_description ("The primary generator action");
+
+  // The library the class belongs to :
+  ocd_.set_class_library ("mctools_g4");
+
+  // The class detailed documentation :
+  ocd_.set_class_documentation ("This is Geant4 simulation engine embedded primary generator action. \n"
+                                );
+
+  {
+    // Description of the 'logging.priority' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("logging.priority")
+      .set_terse_description("Logging priority threshold")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_long_description("Allowed values are:                                    \n"
+                            "                                                       \n"
+                            " * ``\"fatal\"``       : print fatal error messages    \n"
+                            " * ``\"critical\"``    : print critical error messages \n"
+                            " * ``\"error\"``       : print error messages          \n"
+                            " * ``\"warning\"``     : print warnings                \n"
+                            " * ``\"notice\"``      : print notice messages         \n"
+                            " * ``\"information\"`` : print informational messages  \n"
+                            " * ``\"debug\"``       : print debug messages          \n"
+                            " * ``\"trace\"``       : print trace messages          \n"
+                            "                                                       \n"
+                            "Default value: ``\"warning\"``                         \n"
+                            "                                                       \n"
+                            "Example::                                              \n"
+                            "                                                       \n"
+                            "  logging.priority : string = \"warning\"              \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'particle_names_map' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("particle_names_map")
+      .set_terse_description("Genbb to Geant4 particle names mapping")
+      .set_traits(datatools::TYPE_STRING,
+                  datatools::configuration_property_description::ARRAY)
+      .set_mandatory(false)
+      .set_long_description("Genbb to Geant4 particle names lookup table. This table\n"
+                            "is provided when there is no Geant4 particle associated\n"
+                            "to a ``genbb`` particle type.                          \n"
+                            "                                                       \n"
+                            "Example::                                              \n"
+                            "                                                       \n"
+                            "  particle_names_map : string[3] = \\                  \n"
+                            "      \" G = geantino \"           \\                  \n"
+                            "      \" neutrino_muon = nu_mu \"  \\                  \n"
+                            "      \" op = optical_photon \"                        \n"
+                            "                                                       \n"
+                            "Note that common particles like electrons, positrons,  \n"
+                            "gammas... addressed by their Genbb type through the    \n"
+                            "Geant3 scheme have an immediate corresponding Geant4's \n"
+                            "particle.                                              \n"
+                            )
+      ;
+  }
+
+
+  // Additionnal configuration hints :
+  ocd_.set_configuration_hints("Typical configuration is::                                             \n"
+                               "                                                                       \n"
+                               " #@description Event action logging priority                           \n"
+                               " logging.priority : string = \"warning\"                               \n"
+                               "                                                                       \n"
+                               );
+
+  ocd_.set_validation_support(true);
+
+  // Lock the description:
+  ocd_.lock();
+
+  // ... and we are done.
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
+
+// Registration macro for class 'mctools::g4::primary_generator' :
+DOCD_CLASS_SYSTEM_REGISTRATION(mctools::g4::primary_generator,"mctools::g4::primary_generator")
+
 
 // end of primary_generator.cc

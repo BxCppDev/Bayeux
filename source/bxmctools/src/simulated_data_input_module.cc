@@ -155,8 +155,22 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mctools::simulated_data_input_module,ocd_)
 {
   ocd_.set_class_name ("mctools::simulated_data_input_module");
   ocd_.set_class_library ("mctools");
-  ocd_.set_class_description ("A module to load Monte-Carlo plain events from a set data files");
-
+  ocd_.set_class_description ("A module to load Monte-Carlo events from a set of data files produced by the ``g4_production`` executable.");
+  // The class detailed documentation :
+  ocd_.set_class_documentation ("The ``g4_production`` is able to produce Monte-Carlo events stored in Boost archive or \n"
+                                "Brio files using the data model implemented by the ``mctools::simulated_data`` class.  \n"
+                                "Such objects can be easily re-loaded from Boost archive or Brio files using the        \n"
+                                "``mctools::simulated_data_reader`` input reader.                                       \n"
+                                "On the other side, user may be interested by loading such ``mctools::simulated_data``  \n"
+                                "objects within a dedicated bank of a generic ``datatools::things`` container, here     \n"
+                                "considered as the *event data record*. The ``mctools::simulated_data_input_module``    \n"
+                                "object wraps a ``mctools::simulated_data_reader`` instance and enables to feed the     \n"
+                                "so-called *simulated data* bank of ``datatools::things`` data records from plain       \n"
+                                "``mctools::simulated_data`` objects natively stored in Boost archive or Brio           \n"
+                                "output files originaly procuded by the ``g4_production`` executable.                   \n"
+                                "It is thus possible to integrate a plain simulated data objects input stream           \n"
+                                "in the full data processing pipeline provided by ``dpp`` library.                      \n"
+                                );
 
 
   ocd_.set_configuration_hints ("A ``mctools::simulated_data_input_module`` object can be setup with the    \n"

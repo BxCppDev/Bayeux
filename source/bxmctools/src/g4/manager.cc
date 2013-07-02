@@ -911,12 +911,13 @@ namespace mctools {
       return;
     }
 
-    void manager::_init_manager_config()
+    void manager::_init_core()
     {
-
       // Main manager:
       const datatools::properties & manager_config
         = _multi_config_->get("manager").get_properties();
+
+      loggable_support::_initialize_logging_support(manager_config);
 
       DT_LOG_DEBUG(_logprio(), "Manager config :");
       if (is_debug()) {
@@ -983,7 +984,7 @@ namespace mctools {
         }
       */
 
-      // 2011-02-26 FM : only search for the 'g4_macro' property if '_g4_macro' is not set yet :
+      // 2011-02-26 FM : only search for the 'g4_macro' property if '_g4_macro_' is not set yet :
       if (! _g4_macro_.empty()) {
         if (manager_config.has_key("g4_macro")) {
           std::string g4m = manager_config.fetch_string( "g4_macro");
@@ -1023,6 +1024,266 @@ namespace mctools {
 
       /*** end of special configuration ***/
 
+      return;
+    }
+
+    void manager::_init_geometry()
+    {
+      // Geometry manager:
+      DT_LOG_NOTICE(_logprio(), "Geometry manager settings...");
+      if (has_external_geom_manager()) {
+        DT_LOG_NOTICE(_logprio(), "Use external geometry manager...");
+        DT_THROW_IF (! _external_geom_manager_->is_initialized(),
+                     std::logic_error,
+                     "External geometry manager is not initialized !");
+      } else {
+        DT_LOG_NOTICE(_logprio(), "Use embeded geometry manager...");
+        const datatools::properties & geometry_config
+          = _multi_config_->get("geometry").get_properties();
+        if (is_debug()) {
+          DT_LOG_DEBUG(_logprio(), "Geometry configuration : ");
+          geometry_config.tree_dump(std::clog);
+        }
+        DT_THROW_IF (! geometry_config.has_key("manager.config"),
+                     logic_error, "Missing geometry configuration !");
+        std::string geom_mgr_prop_filename = geometry_config.fetch_string("manager.config");
+        datatools::fetch_path_with_env(geom_mgr_prop_filename);
+        datatools::properties geom_mgr_config;
+        datatools::properties::read_config(geom_mgr_prop_filename, geom_mgr_config);
+        _geom_manager_.set_mapping_requested(true);
+        if (_use_time_stat_) {
+          _CTs_["GB"].start();
+        }
+        _geom_manager_.initialize(geom_mgr_config);
+        if (_use_time_stat_) {
+          _CTs_["GB"].stop();
+        }
+      }
+      return;
+    }
+
+    void manager::_init_vertex_generator()
+    {
+
+      // Vertex generator:
+      DT_LOG_NOTICE(_logprio(),"Vertex generator settings...");
+      if (_multi_config_->has_section("vertex_generator")) {
+        const datatools::properties & vertex_generator_config
+          = _multi_config_->get("vertex_generator").get_properties();
+        _vg_manager_.set_external_random(_vg_prng_);
+        if (has_service_manager()) {
+          _vg_manager_.set_service_manager(*_service_manager_);
+        }
+        _vg_manager_.set_geometry_manager(get_geom_manager());
+        _vg_manager_.set_generator_name(_vg_name_);
+        if (vertex_generator_config.has_key("manager.config")) {
+          // using an external configuration file:
+          std::string vtx_gtor_prop_filename
+            = vertex_generator_config.fetch_string("manager.config");
+          datatools::fetch_path_with_env(vtx_gtor_prop_filename);
+          datatools::properties vtx_gtor_config;
+          datatools::properties::read_config(vtx_gtor_prop_filename,
+                                             vtx_gtor_config);
+          _vg_manager_.initialize(vtx_gtor_config);
+        } else {
+          _vg_manager_.initialize(vertex_generator_config);
+        }
+        // if (vertex_generator_config.has_key("config")) {
+        //   // using an external configuration file:
+        //   std::string vtx_gtor_prop_filename
+        //     = vertex_generator_config.fetch_string("config");
+        //   datatools::fetch_path_with_env(vtx_gtor_prop_filename);
+        //   datatools::properties vtx_gtor_config;
+        //   datatools::properties::read_config(vtx_gtor_prop_filename, vtx_gtor_config);
+        //   _vg_manager_.initialize(vtx_gtor_config);
+        // }
+        // else {
+        //   // using properties:
+        //   _vg_manager_.initialize(vertex_generator_config);
+        // }
+        if (is_debug()) {
+          DT_LOG_DEBUG(_logprio(),"Vertex generator manager : ");
+          _vg_manager_.tree_dump(std::clog);
+        }
+        DT_THROW_IF (! _vg_manager_.has_generator(_vg_name_),
+                     std::logic_error,
+                     "Cannot find vertex generator named '"
+                     + _vg_name_ + "' !");
+        _vertex_generator_ = &_vg_manager_.grab(_vg_name_);
+      } else {
+        DT_LOG_WARNING(_logprio(), "No vertex generator settings.");
+      }
+      return;
+    }
+
+    void manager::_init_event_generator()
+    {
+      // Event generator:
+      DT_LOG_NOTICE(_logprio(), "Primary event generator settings...");
+      datatools::properties primary_generator_config;
+      DT_THROW_IF (!_multi_config_->has_section("event_generator"),
+                   std::logic_error,
+                   "Missing primary event generator configuration !");
+      primary_generator_config  = _multi_config_->get("event_generator").get_properties();
+      _eg_manager_.set_external_prng(_eg_prng_);
+      if (primary_generator_config.has_key("manager.config")) {
+        // using an external configuration file:
+        std::string event_gtor_prop_filename
+          = primary_generator_config.fetch_string("manager.config");
+        datatools::fetch_path_with_env(event_gtor_prop_filename);
+        datatools::properties event_gtor_config;
+        datatools::properties::read_config(event_gtor_prop_filename,
+                                           event_gtor_config);
+        _eg_manager_.initialize(event_gtor_config);
+      } else {
+        _eg_manager_.initialize(primary_generator_config);
+      }
+      DT_THROW_IF (! _eg_manager_.has(_eg_name_),
+                   std::logic_error,
+                   "Cannot find primary event generator named '" << _eg_name_ << "' !");
+      _event_generator_ = &_eg_manager_.grab(_eg_name_);
+      return;
+    }
+
+    void manager::_init_detector_construction ()
+    {
+      // Detector construction:
+      DT_LOG_NOTICE(_logprio(), "Detector construction...");
+      DT_THROW_IF (! _multi_config_->has_section("detector_construction"),
+                   std::logic_error,
+                   "Missing detector construction configuration !");
+      const datatools::properties & detector_construction_config
+        = _multi_config_->get("detector_construction").get_properties();
+      _user_detector_construction_ = new detector_construction(*this);
+      // the SHPF generator :
+      /*
+        if (_seed_manager_.has_seed(constants::instance().SHPF_LABEL))
+        {
+        int seed = _seed_manager_.get_seed(constants::instance().SHPF_LABEL);
+        _user_detector_construction_->set_SHPF_random_seed(seed);
+        std::clog << datatools::io::notice
+        << "mctools::g4::manager::_at_init: "
+        << "Using registered seed for '"
+        << constants::instance().SHPF_LABEL << "' : "
+        << seed
+        << std::endl;
+        }
+      */
+      _user_detector_construction_->grab_step_hit_processor_factory().set_external_prng(_shpf_prng_);
+      _user_detector_construction_->set_geometry_manager(get_geom_manager());
+      _user_detector_construction_->initialize(detector_construction_config);
+      _g4_run_manager_->SetUserInitialization(_user_detector_construction_);
+      return;
+    }
+
+    void manager::_init_physics_list ()
+    {
+      DT_LOG_NOTICE(_logprio(), "Physics list initialization...");
+      DT_THROW_IF (! _multi_config_->has_section("physics_list"),
+                   std::logic_error,
+                   "Missing physics list configuration !");
+      const datatools::properties & physics_list_config
+        = _multi_config_->get("physics_list").get_properties();
+      _user_physics_list_ = new physics_list;
+      _user_physics_list_->initialize(physics_list_config);
+      _g4_run_manager_->SetUserInitialization(_user_physics_list_);
+      DT_LOG_DEBUG(_logprio(), "Physics list: ");
+      if (is_debug()) _user_physics_list_->tree_dump(std::clog);
+      return;
+    }
+
+    void manager::_init_run_action ()
+    {
+      DT_LOG_NOTICE(_logprio(), "Run action initialization...");
+      DT_THROW_IF (! _multi_config_->has_section("run_action"),
+                   std::logic_error,
+                   "Missing run action configuration !");
+      const datatools::properties & run_action_config
+        = _multi_config_->get("run_action").get_properties();
+      _user_run_action_ = new run_action(*this);
+      if (! _output_data_file_.empty()) {
+        _user_run_action_->set_output_file(_output_data_file_);
+      }
+      if (has_number_events_modulo()) {
+        _user_run_action_->set_number_events_modulo(get_number_events_modulo());
+      }
+      _user_run_action_->set_use_run_header_footer(using_run_header_footer());
+      _user_run_action_->initialize(run_action_config);
+      _g4_run_manager_->SetUserAction(_user_run_action_);
+      return;
+    }
+
+    void manager::_init_event_action ()
+    {
+      DT_LOG_NOTICE(_logprio(), "Event action initialization...");
+      DT_THROW_IF (! _multi_config_->has_section("event_action"),
+                   std::logic_error,
+                   "Missing event action configuration !");
+      const datatools::properties & event_action_config
+        = _multi_config_->get("event_action").get_properties();
+      _user_event_action_ = new event_action(*_user_run_action_,
+                                             *_user_detector_construction_);
+      _user_event_action_->initialize(event_action_config);
+      _g4_run_manager_->SetUserAction(_user_event_action_);
+      return;
+    }
+
+
+    void manager::_init_primary_generator_action ()
+    {
+      DT_LOG_NOTICE(_logprio(), "Primary generator action initialization...");
+      DT_THROW_IF (!_multi_config_->has_section("primary_generator_action"),
+                   std::logic_error,
+                   "Missing primary event generator action configuration !");
+      const datatools::properties & primary_generator_config
+        = _multi_config_->get("primary_generator_action").get_properties();
+
+      _user_primary_generator_ = new primary_generator;
+      _user_primary_generator_->set_run_action(*_user_run_action_);
+      _user_primary_generator_->set_event_action(*_user_event_action_);
+      if (has_vertex_generator()) {
+        _user_primary_generator_->set_vertex_generator(*_vertex_generator_);
+      }
+      _user_primary_generator_->set_event_generator(*_event_generator_);
+      _user_primary_generator_->initialize(primary_generator_config);
+      _g4_run_manager_->SetUserAction(_user_primary_generator_);
+      return;
+    }
+
+    void manager::_init_tracking_action ()
+    {
+      DT_LOG_NOTICE(_logprio(), "Tracking action initialization...");
+      if (_multi_config_->has_section("tracking_action")) {
+        const datatools::properties &  tracking_action_config  = _multi_config_->get("tracking_action").get_properties();
+        _user_tracking_action_ = new tracking_action;
+        _user_tracking_action_->initialize(tracking_action_config);
+        _g4_run_manager_->SetUserAction(_user_tracking_action_);
+      }
+      return;
+    }
+
+    void manager::_init_stepping_action ()
+    {
+      DT_LOG_NOTICE(_logprio(), "Stepping action initialization...");
+      if (_multi_config_->has_section("stepping_action")) {
+        const datatools::properties & stepping_action_config = _multi_config_->get("stepping_action").get_properties();
+        _user_stepping_action_ = new stepping_action;
+        _user_stepping_action_->initialize(stepping_action_config);
+        _g4_run_manager_->SetUserAction(_user_stepping_action_);
+      }
+      return;
+    }
+
+
+    void manager::_init_stacking_action ()
+    {
+      DT_LOG_NOTICE(_logprio(), "Stacking action initialization...");
+      if (_multi_config_->has_section("stacking_action")) {
+        const datatools::properties & stacking_action_config = _multi_config_->get("stacking_action").get_properties();
+        _user_stacking_action_ = new stacking_action;
+        _user_stacking_action_->initialize(stacking_action_config);
+        _g4_run_manager_->SetUserAction(_user_stacking_action_);
+      }
       return;
     }
 
@@ -1139,13 +1400,16 @@ namespace mctools {
         = _multi_config_->get("manager").get_properties();
       loggable_support::_initialize_logging_support(manager_config);
 
-      _init_manager_config();
+      _init_core();
 
 
       /********************
        * GEOMETRY MANAGER *
        ********************/
 
+      _init_geometry();
+
+      /*
       // Geometry manager:
       DT_LOG_NOTICE(_logprio(), "Geometry manager settings...");
       if (has_external_geom_manager()) {
@@ -1176,11 +1440,15 @@ namespace mctools {
           _CTs_["GB"].stop();
         }
       }
+      */
 
       /********************
        * VERTEX GENERATOR *
        ********************/
 
+      _init_vertex_generator();
+
+      /*
       // Vertex generator:
       DT_LOG_NOTICE(_logprio(),"Vertex generator settings...");
       if (_multi_config_->has_section("vertex_generator")) {
@@ -1229,12 +1497,15 @@ namespace mctools {
       } else {
         DT_LOG_WARNING(_logprio(), "No vertex generator settings.");
       }
-
+      */
 
       /*******************
        * EVENT GENERATOR *
        *******************/
 
+      _init_event_generator();
+
+      /*
       // Event generator:
       DT_LOG_NOTICE(_logprio(), "Event generator settings...");
       DT_THROW_IF (!_multi_config_->has_section("primary_generator"),
@@ -1270,7 +1541,7 @@ namespace mctools {
                    std::logic_error,
                    "Cannot find primary event generator named '" << _eg_name_ << "' !");
       _event_generator_ = &_eg_manager_.grab(_eg_name_);
-
+      */
 
       /****************************
        * USER ACTIONS FOR GEANT 4 *
@@ -1284,30 +1555,36 @@ namespace mctools {
       DT_LOG_NOTICE(_logprio(), "User initializations...");
 
       // Detector construction:
+      _init_detector_construction ();
+
+      /*
       DT_LOG_NOTICE(_logprio(), "Detector construction...");
       const datatools::properties & detector_construction_config
         = _multi_config_->get("detector_construction").get_properties();
       _user_detector_construction_ = new detector_construction(*this);
       // the SHPF generator :
-      /*
-        if (_seed_manager_.has_seed(constants::instance().SHPF_LABEL))
-        {
-        int seed = _seed_manager_.get_seed(constants::instance().SHPF_LABEL);
-        _user_detector_construction_->set_SHPF_random_seed(seed);
-        std::clog << datatools::io::notice
-        << "mctools::g4::manager::_at_init: "
-        << "Using registered seed for '"
-        << constants::instance().SHPF_LABEL << "' : "
-        << seed
-        << std::endl;
-        }
-      */
+
+        // if (_seed_manager_.has_seed(constants::instance().SHPF_LABEL))
+        // {
+        // int seed = _seed_manager_.get_seed(constants::instance().SHPF_LABEL);
+        // _user_detector_construction_->set_SHPF_random_seed(seed);
+        // std::clog << datatools::io::notice
+        // << "mctools::g4::manager::_at_init: "
+        // << "Using registered seed for '"
+        // << constants::instance().SHPF_LABEL << "' : "
+        // << seed
+        // << std::endl;
+        // }
+
       _user_detector_construction_->grab_step_hit_processor_factory().set_external_prng(_shpf_prng_);
       _user_detector_construction_->set_geometry_manager(get_geom_manager());
       _user_detector_construction_->initialize(detector_construction_config);
       _g4_run_manager_->SetUserInitialization(_user_detector_construction_);
+      */
 
       // Physics list:
+      _init_physics_list ();
+      /*
       DT_LOG_NOTICE(_logprio(), "Physics list...");
       const datatools::properties & physics_list_config
         = _multi_config_->get("physics_list").get_properties();
@@ -1316,6 +1593,7 @@ namespace mctools {
       _g4_run_manager_->SetUserInitialization(_user_physics_list_);
       DT_LOG_DEBUG(_logprio(), "Physics list: ");
       if (is_debug()) _user_physics_list_->tree_dump(std::clog);
+      */
 
 #ifdef G4VIS_USE
       // G4 visualization:
@@ -1329,73 +1607,65 @@ namespace mctools {
       // User actions:
 
       // Run action:
-      DT_LOG_NOTICE(_logprio(), "Run action construction...");
-      const datatools::properties & run_action_config
-        = _multi_config_->get("run_action").get_properties();
-      _user_run_action_ = new run_action(*this);
-      if (! _output_data_file_.empty()) {
-        _user_run_action_->set_output_file(_output_data_file_);
-      }
-      if (has_number_events_modulo()) {
-        _user_run_action_->set_number_events_modulo(get_number_events_modulo());
-      }
-      _user_run_action_->set_use_run_header_footer(using_run_header_footer());
-      _user_run_action_->initialize(run_action_config);
-      _g4_run_manager_->SetUserAction(_user_run_action_);
+      _init_run_action ();
+      // DT_LOG_NOTICE(_logprio(), "Run action construction...");
+      // const datatools::properties & run_action_config
+      //   = _multi_config_->get("run_action").get_properties();
+      // _user_run_action_ = new run_action(*this);
+      // if (! _output_data_file_.empty()) {
+      //   _user_run_action_->set_output_file(_output_data_file_);
+      // }
+      // if (has_number_events_modulo()) {
+      //   _user_run_action_->set_number_events_modulo(get_number_events_modulo());
+      // }
+      // _user_run_action_->set_use_run_header_footer(using_run_header_footer());
+      // _user_run_action_->initialize(run_action_config);
+      // _g4_run_manager_->SetUserAction(_user_run_action_);
 
       // Event action:
-      DT_LOG_NOTICE(_logprio(), "Event action construction...");
-      const datatools::properties & event_action_config
-        = _multi_config_->get("event_action").get_properties();
-      _user_event_action_ = new event_action(*_user_run_action_,
-                                             *_user_detector_construction_);
-      _user_event_action_->initialize(event_action_config);
-      _g4_run_manager_->SetUserAction(_user_event_action_);
+      _init_event_action ();
+      // DT_LOG_NOTICE(_logprio(), "Event action construction...");
+      // const datatools::properties & event_action_config
+      //   = _multi_config_->get("event_action").get_properties();
+      // _user_event_action_ = new event_action(*_user_run_action_,
+      //                                        *_user_detector_construction_);
+      // _user_event_action_->initialize(event_action_config);
+      // _g4_run_manager_->SetUserAction(_user_event_action_);
 
       // Primary generator:
-      DT_LOG_NOTICE(_logprio(), "Primary generator...");
-
-      _user_primary_generator_ = new primary_generator;
-      if (primary_generator_config.has_flag("debug")) {
-        _user_primary_generator_->set_debug(true);
-      }
-      _user_primary_generator_->set_run_action(*_user_run_action_);
-      _user_primary_generator_->set_event_action(*_user_event_action_);
-      if (has_vertex_generator()) {
-        _user_primary_generator_->set_vertex_generator(*_vertex_generator_);
-      }
-      _user_primary_generator_->set_event_generator(*_event_generator_);
-      _user_primary_generator_->initialize(primary_generator_config);
-      _g4_run_manager_->SetUserAction(_user_primary_generator_);
+      _init_primary_generator_action ();
 
       // Tracking action:
-      DT_LOG_NOTICE(_logprio(), "Tracking action...");
-
-      const datatools::properties & tracking_action_config
-        = _multi_config_->get("tracking_action").get_properties();
-      _user_tracking_action_ = new tracking_action;
-      _user_tracking_action_->initialize(tracking_action_config);
-      _g4_run_manager_->SetUserAction(_user_tracking_action_);
+      _init_tracking_action ();
+      // DT_LOG_NOTICE(_logprio(), "Tracking action...");
+      // const datatools::properties & tracking_action_config
+      //   = _multi_config_->get("tracking_action").get_properties();
+      // _user_tracking_action_ = new tracking_action;
+      // _user_tracking_action_->initialize(tracking_action_config);
+      // _g4_run_manager_->SetUserAction(_user_tracking_action_);
 
       // Stepping action:
       bool use_stepping_action = false;
       if (use_stepping_action) {
-        DT_LOG_NOTICE(_logprio(), "Stepping action...");
-        const datatools::properties & stepping_action_config
-          = _multi_config_->get("stepping_action").get_properties();
-        _user_stepping_action_ = new stepping_action;
-        _user_stepping_action_->initialize(stepping_action_config);
-        _g4_run_manager_->SetUserAction(_user_stepping_action_);
+        _init_stepping_action ();
+        // DT_LOG_NOTICE(_logprio(), "Stepping action...");
+        // const datatools::properties & stepping_action_config
+        //   = _multi_config_->get("stepping_action").get_properties();
+        // _user_stepping_action_ = new stepping_action;
+        // _user_stepping_action_->initialize(stepping_action_config);
+        // _g4_run_manager_->SetUserAction(_user_stepping_action_);
       }
 
       // Stacking action:
+      _init_stacking_action ();
+      /*
       DT_LOG_NOTICE(_logprio(), "Stacking action...");
       const datatools::properties & stacking_action_config
         = _multi_config_->get("stacking_action").get_properties();
       _user_stacking_action_ = new stacking_action;
       _user_stacking_action_->initialize(stacking_action_config);
       _g4_run_manager_->SetUserAction(_user_stacking_action_);
-
+      */
 
       // G4 kernel initialization:
       DT_LOG_NOTICE(_logprio(), "G4 kernel initialization...");
@@ -1633,5 +1903,274 @@ namespace mctools {
   } // end of namespace g4
 
 } // end of namespace mctools
+
+
+/** Opening macro for implementation
+ *  This macro must be used outside of any namespace.
+ */
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::manager,ocd_)
+{
+  // The class name :
+  ocd_.set_class_name ("mctools::g4::manager");
+
+  // The class terse description :
+  ocd_.set_class_description ("The Geant4 simulation manager class");
+
+  // The library the class belongs to :
+  ocd_.set_class_library ("mctools_g4");
+
+  // The class detailed documentation :
+  ocd_.set_class_documentation ("The Geant4 simulation manager class embedes \n"
+                                "a full Geant4 based simulation engine.      \n"
+                                );
+
+  {
+    // Description of the 'logging.priority' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("logging.priority")
+      .set_section("manager")
+      .set_terse_description("Logging priority threshold")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_long_description("Allowed values are:                                    \n"
+                            "                                                       \n"
+                            " * ``\"fatal\"``       : print fatal error messages    \n"
+                            " * ``\"critical\"``    : print critical error messages \n"
+                            " * ``\"error\"``       : print error messages          \n"
+                            " * ``\"warning\"``     : print warnings                \n"
+                            " * ``\"notice\"``      : print notice messages         \n"
+                            " * ``\"information\"`` : print informational messages  \n"
+                            " * ``\"debug\"``       : print debug messages          \n"
+                            " * ``\"trace\"``       : print trace messages          \n"
+                            "                                                       \n"
+                            "Default value: ``\"warning\"``                         \n"
+                            "                                                       \n"
+                            "Example::                                              \n"
+                            "                                                       \n"
+                            "  [name=\"manager\"]                                   \n"
+                            "  logging.priority : string = \"warning\"              \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'number_of_events' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("number_of_events")
+      .set_section("manager")
+      .set_terse_description("Number of events to be simulated")
+      .set_traits(datatools::TYPE_INTEGER)
+      .set_mandatory(false)
+      .set_long_description("Allowed value: from ``1`` to ``100000000``                              \n"
+                            "                                                                        \n"
+                            "Example::                                                               \n"
+                            "                                                                        \n"
+                            "  [name=\"manager\"]                                                    \n"
+                            "  number_of_events : integer = 100000                                   \n"
+                            "                                                                        \n"
+                            "This property is not taken into account if the                          \n"
+                            "*number of events* attributes has been set previously through           \n"
+                            "the ``mctools::g4::manager::set_number_of_events(...)`` method.         \n"
+                            "                                                                        \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'g4_macro' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("g4_macro")
+      .set_section("manager")
+      .set_terse_description("Geant4 macro to be executed")
+      .set_traits(datatools::TYPE_STRING)
+      .set_path(true)
+      .set_long_description("Example::                                                               \n"
+                            "                                                                        \n"
+                            "  [name=\"manager\"]                                                    \n"
+                            "  g4_macro : string as path = \"g4.mac\"                                \n"
+                            "                                                                        \n"
+                            "This property is not taken into account if a Geant4 *macro*             \n"
+                            "has already been set by the simulation manager, through                 \n"
+                            "the ``mctools::g4::manager::set_g4_macro(...)`` method.                 \n"
+                            "                                                                        \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the geometry 'manager.config' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("manager.config")
+      .set_section("geometry")
+      .set_terse_description("Geometry manager main configuration file")
+      .set_traits(datatools::TYPE_STRING)
+      .set_path(true)
+      .set_mandatory(true)
+      .set_long_description("Example::                                                               \n"
+                            "                                                                        \n"
+                            "  [name=\"geometry\"]                                                   \n"
+                            "  manager.config : string as path = \"config/geometry/manager.conf\"   \n"
+                            "                                                                        \n"
+                            "This property is not taken into account if an external                  \n"
+                            "*geometry manager* is used by the simulation manager, through           \n"
+                            "the ``mctools::g4::manager::set_external_geom_manager(...)`` method.    \n"
+                            "                                                                        \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the vertex generator 'manager.config' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("manager.config")
+      .set_section("vertex_generator")
+      .set_terse_description("Vertex generator manager main configuration file")
+      .set_traits(datatools::TYPE_STRING)
+      .set_path(true)
+      .set_mandatory(true)
+      .set_long_description("Example::                                                                     \n"
+                            "                                                                              \n"
+                            "  [name=\"vertex_generator\"]                                                 \n"
+                            "  manager.config : string as path = \"config/vertex_generator/manager.conf\"  \n"
+                            "                                                                              \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the event generator 'manager.config' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("manager.config")
+      .set_section("event_generator")
+      .set_terse_description("Event generator manager main configuration file")
+      .set_traits(datatools::TYPE_STRING)
+      .set_path(true)
+      .set_mandatory(true)
+      .set_long_description("Example::                                                                     \n"
+                            "                                                                              \n"
+                            "  [name=\"event_generator\"]                                                  \n"
+                            "  manager.config : string as path = \"config/event_generator/manager.conf\"   \n"
+                            "                                                                              \n"
+                            )
+      ;
+  }
+
+  // Additionnal configuration hints :
+  ocd_.set_configuration_hints("The simulation manager can be parameterized and initialized           \n"
+                               "through a ``datatools::multi_properties`` object.                     \n"
+                               "The configuration contains several sections, each of them is          \n"
+                               "related to a specific sub-task. A typical layout is::                 \n"
+                               "                                                                      \n"
+                               "  #@description Configuration of the mctools Geant4 simulation engine \n"
+                               "  #@key_label   \"name\"                                              \n"
+                               "  #@meta_label  \"\"                                                  \n"
+                               "                                                                      \n"
+                               "                                                                      \n"
+                               "  [name=\"manager\"]                                                  \n"
+                               "  #@config Parameters for the main simulation engine                  \n"
+                               "                                                                      \n"
+                               "  #@description Manager logging priority                              \n"
+                               "  logging.priority : string = \"warning\"                             \n"
+                               "                                                                      \n"
+                               "  #@description Number of events to be simulated                      \n"
+                               "  number_of_events :integer = 10000                                   \n"
+                               "                                                                      \n"
+                               "                                                                      \n"
+                               "  [name=\"geometry\"]                                                 \n"
+                               "  #@config Parameters for the geometry modelling                      \n"
+                               "                                                                      \n"
+                               "  # See OCD support for class ``geomtools::manager``                  \n"
+                               "  manager.config : string as path = \"config/geometry/manager.conf\"  \n"
+                               "                                                                      \n"
+                               "                                                                      \n"
+                               "  [name=\"vertex_generator\"]                                         \n"
+                               "  #@config Parameters for the vertex generator                        \n"
+                               "                                                                      \n"
+                               "  # See OCD support for class ``genvtx::manager``                     \n"
+                               "  manager.config : string as path = \"config/vertex_generator/manager.conf\"  \n"
+                               "                                                                      \n"
+                               "                                                                      \n"
+                               "  [name=\"event_generator\"]                                          \n"
+                               "  #@config Parameters for the GENBB based event generator             \n"
+                               "                                                                      \n"
+                               "  # See OCD support for class ``genbb::manager``                      \n"
+                               "  manager.config : string as path = \"config/event_generator/manager.conf\"  \n"
+                               "                                                                      \n"
+                               "                                                                      \n"
+                               "  [name=\"detector_construction\"]                                    \n"
+                               "  #@config Parameters for the detector construction                   \n"
+                               "                                                                      \n"
+                               "  # See OCD support for class ``mctools::g4::detector_construction``  \n"
+                               "                                                                      \n"
+                               "                                                                      \n"
+                               "  [name=\"physics_list\"]                                             \n"
+                               "  #@config Parameters for the physics list                            \n"
+                               "                                                                      \n"
+                               "  # See OCD support for class ``mctools::g4::physics_list``           \n"
+                               "                                                                      \n"
+                               "                                                                      \n"
+                               "  [name=\"run_action\"]                                               \n"
+                               "  #@config Parameters for the run action                              \n"
+                               "                                                                      \n"
+                               "  # See OCD support for class ``mctools::g4::run_action``             \n"
+                               "                                                                      \n"
+                               "                                                                      \n"
+                               "  [name=\"event_action\"]                                             \n"
+                               "  #@config Parameters for the event action                            \n"
+                               "                                                                      \n"
+                               "  # See OCD support for class ``mctools::g4::event_action``           \n"
+                               "                                                                      \n"
+                               "                                                                      \n"
+                               "  [name=\"primary_generator_action\"]                                 \n"
+                               "  #@config Parameters for the primary generator action                \n"
+                               "                                                                      \n"
+                               "  # See OCD support for class ``mctools::g4::primary_generator``      \n"
+                               "                                                                      \n"
+                               "                                                                      \n"
+                               "  [name=\"tracking_action\"]                                          \n"
+                               "  #@config Parameters for the tracking action                         \n"
+                               "                                                                      \n"
+                               "  # See OCD support for class ``mctools::g4::tracking_action``        \n"
+                               "                                                                      \n"
+                               "                                                                      \n"
+                               "  [name=\"stepping_action\"]                                          \n"
+                               "  #@config Parameters for the stepping action                         \n"
+                               "                                                                      \n"
+                               "  # See OCD support for class ``mctools::g4::stepping_action``        \n"
+                               "                                                                      \n"
+                               "                                                                      \n"
+                               "  [name=\"stacking_action\"]                                          \n"
+                               "  #@config Parameters for the stacking action                         \n"
+                               "                                                                      \n"
+                               "  # See OCD support for class ``mctools::g4::stacking_action``        \n"
+                               "                                                                      \n"
+                             );
+
+  /** Set the validation support flag :
+   *  we activate this if the description of all configuration
+   *  properties has been provides (see above). This enables the
+   *  OCD tools to check the syntax and validaty of a given
+   *  configuration file.
+   */
+  ocd_.set_validation_support(true);
+
+  // Lock the description:
+  ocd_.lock();
+
+  // ... and we are done.
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
+
+// Registration macro for class 'mctools::g4::manager' :
+DOCD_CLASS_SYSTEM_REGISTRATION(mctools::g4::manager,"mctools::g4::manager")
+
 
 // end of manager.cc

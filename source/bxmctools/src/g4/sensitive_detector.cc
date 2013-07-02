@@ -225,15 +225,15 @@ namespace mctools {
       return oss.str ();
     }
 
-    void sensitive_detector::set_store_g4_volume_properties (bool flag_)
+    void sensitive_detector::set_record_g4_volume_properties (bool flag_)
     {
-      _store_g4_volume_properties_ = flag_;
+      _record_g4_volume_properties_ = flag_;
       return;
     }
 
-    bool sensitive_detector::is_store_g4_volume_properties () const
+    bool sensitive_detector::is_record_g4_volume_properties () const
     {
-      return _store_g4_volume_properties_;
+      return _record_g4_volume_properties_;
     }
 
     const string & sensitive_detector::get_sensitive_category () const
@@ -391,10 +391,10 @@ namespace mctools {
       }
 
       // Storing Geant4 volume properties
-      if (geomtools::sensitive::has_key (config_, sensitive_utils::SENSITIVE_STORE_G4_VOLUME)) {
+      if (geomtools::sensitive::has_key (config_, sensitive_utils::SENSITIVE_RECORD_G4_VOLUME_INFOS)) {
         const bool flag = geomtools::sensitive::has_flag (config_,
-                                                          sensitive_utils::SENSITIVE_STORE_G4_VOLUME);
-        set_store_g4_volume_properties (flag);
+                                                          sensitive_utils::SENSITIVE_RECORD_G4_VOLUME_INFOS);
+        set_record_g4_volume_properties (flag);
       }
 
       // Tracking gamma
@@ -418,7 +418,7 @@ namespace mctools {
       _track_gamma_                    = true;
       _track_neutron_                  = true;
       _drop_zero_energy_deposit_steps_ = false;
-      _store_g4_volume_properties_     = false;
+      _record_g4_volume_properties_    = false;
       _delta_ray_from_alpha_           = false;
       _record_primary_particle_        = false;
       _record_track_id_                = false;
@@ -813,10 +813,10 @@ namespace mctools {
         hit_aux.store (sensitive_category_key, get_sensitive_category ());
       }
 
-      if (_store_g4_volume_properties_) {
+      if (_record_g4_volume_properties_) {
         G4VPhysicalVolume * volume = step_->GetTrack ()->GetVolume ();
-        hit_aux.store_string(sensitive_utils::SENSITIVE_STORE_G4_VOLUME_NAME_KEY, volume->GetName ());
-        hit_aux.store_integer(sensitive_utils::SENSITIVE_STORE_G4_VOLUME_COPY_NUMBER_KEY, volume->GetCopyNo ());
+        hit_aux.store_string(sensitive_utils::SENSITIVE_G4_VOLUME_NAME_KEY, volume->GetName ());
+        hit_aux.store_integer(sensitive_utils::SENSITIVE_G4_VOLUME_COPY_NUMBER_KEY, volume->GetCopyNo ());
       }
 
       if (_manager_->using_time_stat ()) {
@@ -866,8 +866,8 @@ namespace mctools {
       // Flags
       {
         out_ << indent << du::i_tree_dumpable::tag
-             << "Store volume properties  : "
-             <<  (_store_g4_volume_properties_ ? "Yes": "No") << endl;
+             << "Record volume properties  : "
+             <<  (_record_g4_volume_properties_ ? "Yes": "No") << endl;
 
         out_ << indent << du::i_tree_dumpable::tag
              << "Drop zero energy deposit : "

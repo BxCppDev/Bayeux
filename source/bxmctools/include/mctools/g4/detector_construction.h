@@ -214,6 +214,10 @@ namespace mctools {
 
 } // end of namespace mctools
 
+/// OCD support : interface
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(mctools::g4::detector_construction)
+
 #endif // MCTOOLS_G4_DETECTOR_CONSTRUCTION_H_
 
 // end of detector_construction.h

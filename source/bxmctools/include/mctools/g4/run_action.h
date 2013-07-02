@@ -138,6 +138,10 @@ namespace mctools {
 
 } // end of namespace mctools
 
+/// OCD support : interface
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(mctools::g4::run_action)
+
 #endif // MCTOOLS_G4_RUN_ACTION_H_
 
 // end of run_action.h

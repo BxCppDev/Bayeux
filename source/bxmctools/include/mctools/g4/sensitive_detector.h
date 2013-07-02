@@ -86,8 +86,8 @@ namespace mctools {
       bool is_drop_zero_energy_deposit_steps () const;
       void set_drop_zero_energy_deposit_steps (bool);
 
-      bool is_store_g4_volume_properties () const;
-      void set_store_g4_volume_properties (bool);
+      bool is_record_g4_volume_properties () const;
+      void set_record_g4_volume_properties (bool);
 
       void attach_logical_volume (const std::string & log_volume_name_);
 
@@ -134,7 +134,7 @@ namespace mctools {
 
       std::string            _sensitive_category_; //!< The name of the sensitive hit catagory
       std::list<std::string> _attached_logical_volumes_; //! The list of geometry logical volumes attached to the sensitive category
-      bool                   _store_g4_volume_properties_;
+      bool                   _record_g4_volume_properties_;
       bool                   _drop_zero_energy_deposit_steps_;
       bool                   _record_momentum_;
       bool                   _record_kinetic_energy_;

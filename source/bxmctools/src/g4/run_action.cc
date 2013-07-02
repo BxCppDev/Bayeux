@@ -188,7 +188,7 @@ namespace mctools {
       // fetch parameters...
       loggable_support::_initialize_logging_support(a_config);
 
-      if (a_config.has_flag ("using_run_header_footer")) {
+      if (a_config.has_flag ("file.using_run_header_footer")) {
         set_use_run_header_footer (true);
       }
 
@@ -510,4 +510,316 @@ namespace mctools {
 
 } // end of namespacemctools
 
-  // end of run_action.cc
+/** Opening macro for implementation
+ *  This macro must be used outside of any namespace.
+ */
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::run_action,ocd_)
+{
+  // The class name :
+  ocd_.set_class_name ("mctools::g4::run_action");
+
+  // The class terse description :
+  ocd_.set_class_description ("The Geant4 simulation mandatory run action");
+
+  // The library the class belongs to :
+  ocd_.set_class_library ("mctools_g4");
+
+  // The class detailed documentation :
+  ocd_.set_class_documentation ("This is Geant4 simulation engine embedded run action.      \n"
+                                );
+
+  {
+    // Description of the 'logging.priority' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("logging.priority")
+      .set_terse_description("Logging priority threshold")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_long_description("Allowed values are:                                    \n"
+                            "                                                       \n"
+                            " * ``\"fatal\"``       : print fatal error messages    \n"
+                            " * ``\"critical\"``    : print critical error messages \n"
+                            " * ``\"error\"``       : print error messages          \n"
+                            " * ``\"warning\"``     : print warnings                \n"
+                            " * ``\"notice\"``      : print notice messages         \n"
+                            " * ``\"information\"`` : print informational messages  \n"
+                            " * ``\"debug\"``       : print debug messages          \n"
+                            " * ``\"trace\"``       : print trace messages          \n"
+                            "                                                       \n"
+                            "Default value: ``\"warning\"``                         \n"
+                            "                                                       \n"
+                            "Example::                                              \n"
+                            "                                                       \n"
+                            "  logging.priority : string = \"warning\"              \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'number_events_modulo' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("number_events_modulo")
+      .set_terse_description("The period to print the number of processed event")
+      .set_traits(datatools::TYPE_INTEGER)
+      .set_mandatory(false)
+      .set_long_description("Default value: ``0`` (no print)                         \n"
+                            "                                                        \n"
+                            "Example::                                               \n"
+                            "                                                        \n"
+                            "  number_events_modulo : integer = 100                  \n"
+                            "                                                        \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'file.no_save' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("file.no_save")
+      .set_terse_description("Flag to inhibit the saving of simulated data in some output file")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("Default value: ``0`` (save data)                              \n"
+                            "                                                              \n"
+                            "Example::                                                     \n"
+                            "                                                              \n"
+                            "  file.no_save : boolean = 0                                  \n"
+                            "                                                              \n"
+                            "This flag must be activated when the Geant4 simulation        \n"
+                            "engine is used from the ``mctools::g4::simulation_module``    \n"
+                            "class through a data processing pipeline because in this case \n"
+                            "the pipeline generally implements its own I/O mechanisms.     \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'file.no_preserve' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("file.no_preserve")
+      .set_terse_description("Flag to allow the overwriting of some already existing output file")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_triggered_by_flag("file.no_save", false)
+      .set_long_description("Default value: ``0`` (preserve existing data file)            \n"
+                            "                                                              \n"
+                            "Example::                                                     \n"
+                            "                                                              \n"
+                            "  file.no_preserve : boolean = 0                              \n"
+                            "                                                              \n"
+                            "When activated, this flag may implies the deletion of some    \n"
+                            "important data file. use it at your own risk !                \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'file.name' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("file.name")
+      .set_terse_description("The name of the file where to save the simulated data")
+      .set_traits(datatools::TYPE_STRING)
+      .set_path(true)
+      .set_complex_triggering_conditions(true)
+      //.set_triggered_by("file.no_save", false)
+      .set_long_description("This property is not taken into account if the *output file*  \n"
+                            "attribute has already been set by a previous  call to the     \n"
+                            "``mctools::g4::run_action::set_output_file(..;)`` method.     \n"
+                            "                                                              \n"
+                            "Example::                                                     \n"
+                            "                                                              \n"
+                            "  file.name : string as path = \"g4_production.out.xml\"      \n"
+                            "                                                              \n"
+                            "One must use a special extension corresponding to a           \n"
+                            "data format supported by Bayeux through the ``datatools`` and \n"
+                            "``brio`` libraries : \n"
+                            "                                                              \n"
+                            "  * ``.xml`` or ``.xml.gz`` or ``.xml.bz2`` : Boost XML archive\n"
+                            "  * ``.txt`` or ``.txt.gz`` or ``.txt.bz2`` : Boost ASCII archive\n"
+                            "  * ``.data`` or ``.data.gz`` or ``.data.bz2``: Boost binary archive\n"
+                            "  * ``.brio`` or ``.trio`` : resp. Brio binary and Brio ASCII \n"
+                            "                                                              \n"
+                            )
+      ;
+  }
+
+
+  {
+    // Description of the 'file.directory' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("file.directory")
+      .set_terse_description("The directory where the output data file is stored")
+      .set_traits(datatools::TYPE_STRING)
+      .set_path(true)
+      .set_complex_triggering_conditions(true)
+      .set_long_description("This property is not taken into account if the *output file*  \n"
+                            "attribute has already been set by a previous  call to the     \n"
+                            "``mctools::g4::run_action::set_output_file(..;)`` method or   \n"
+                            "by the ``file.directory`` property.                           \n"
+                            "                                                              \n"
+                            "Example::                                                     \n"
+                            "                                                              \n"
+                            "  file.directory : string as path = \"/tmp/data\"             \n"
+                            "                                                              \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'file.format' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("file.prefix")
+      .set_terse_description("The prefix of the output data file name")
+      .set_traits(datatools::TYPE_STRING)
+      .set_complex_triggering_conditions(true)
+      .set_long_description("This property is not taken into account if the *output file*  \n"
+                            "attribute has already been set by a previous  call to the     \n"
+                            "``mctools::g4::run_action::set_output_file(..;)`` method or   \n"
+                            "by the ``file.directory`` property.                           \n"
+                            "                                                              \n"
+                            "Example::                                                     \n"
+                            "                                                              \n"
+                            "  file.prefix : string = \"g4_production_\"                   \n"
+                            "                                                              \n"
+                            "Note that the Geant4 current run number will be appended to   \n"
+                            "the name of the output data file.                             \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'file.format' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("file.format")
+      .set_terse_description("The format of the output data file")
+      .set_traits(datatools::TYPE_STRING)
+      .set_complex_triggering_conditions(true)
+      .set_long_description("This property is not taken into account if the *output file*  \n"
+                            "attribute has already been set by a previous  call to the     \n"
+                            "``mctools::g4::run_action::set_output_file(..;)`` method or   \n"
+                            "by the ``file.directory`` property.                           \n"
+                            "                                                              \n"
+                            "Allowed values:                                               \n"
+                            "                                                              \n"
+                            " ``\"xml\" : Use the Boost portable XML archive format        \n"
+                            " ``\"ascii\" : Use the Boost portable text archive format     \n"
+                            " ``\"binary\" : Use the Boost portable binary archive format  \n"
+                            " ``\"brio\" : Use the portable Brio format (binary)           \n"
+                            " ``\"trio\" : Use the portable Brio format (text)             \n"
+                            "                                                              \n"
+                            "Example::                                                     \n"
+                            "                                                              \n"
+                            "  file.format : string = \"xml\"                              \n"
+                            "                                                              \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'file.format' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("file.compression")
+      .set_terse_description("The compression of the output data file")
+      .set_traits(datatools::TYPE_STRING)
+      .set_complex_triggering_conditions(true)
+      .set_long_description("This property is not taken into account if the *output file*  \n"
+                            "attribute has already been set by a previous  call to the     \n"
+                            "``mctools::g4::run_action::set_output_file(..;)`` method or   \n"
+                            "by the ``file.directory`` property.                           \n"
+                            "                                                              \n"
+                            "This property is not taken into account for Brio format which \n"
+                            "is already natively compressed.                               \n"
+                            "                                                              \n"
+                            "Allowed values:                                               \n"
+                            "                                                              \n"
+                            " ``\"none\" : No compression of the output data file          \n"
+                            " ``\"gzip\" : Use GZIP compression                            \n"
+                            " ``\"bzip2\" : Use BZIP2 compression                          \n"
+                            "                                                              \n"
+                            "Example::                                                     \n"
+                            "                                                              \n"
+                            "  file.compression : string = \"gzip\"                        \n"
+                            "                                                              \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'file.using_run_header_footer' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("file.using_run_header_footer")
+      .set_terse_description("Flag to activate the saving of special informations in run header and footer data structure")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_triggered_by_flag("file.no_save", false)
+      .set_long_description("Default value: ``0``                                    \n"
+                            "                                                        \n"
+                            "Example::                                               \n"
+                            "                                                        \n"
+                            "  using_run_header_footer : boolean = 0                 \n"
+                            "                                                        \n"
+                            )
+      ;
+  }
+
+
+  // Additionnal configuration hints :
+  ocd_.set_configuration_hints("Typical configuration is::                                             \n"
+                               "                                                                       \n"
+                               " #@description Run action logging priority                             \n"
+                               " logging.priority : string = \"warning\"                               \n"
+                               "                                                                       \n"
+                               " #@description Print period for event number                           \n"
+                               " number_events_modulo : integer = 100                                  \n"
+                               "                                                                       \n"
+                               " #@description Inhibit output data file                                \n"
+                               " file.no_save : boolean = 0                                            \n"
+                               "                                                                       \n"
+                               " #@description Print period for event number                           \n"
+                               " file.no_preserve : boolean = 0                                        \n"
+                               "                                                                       \n"
+                               " #@description The name of the output data file                        \n"
+                               " #file.name : string as path = \"/tmp/data/g4_sim_data.xml\"            \n"
+                               "                                                                       \n"
+                               " #@description Output file directory                                   \n"
+                               " file.directory : string as path = \"/tmp/data\"                       \n"
+                               "                                                                       \n"
+                               " #@description Output file prefix                                      \n"
+                               " file.prefix : string = \"g4_sim_data_\"                               \n"
+                               "                                                                       \n"
+                               " #@description Output file format                                      \n"
+                               " file.format : string = \"binary\"                                     \n"
+                               "                                                                       \n"
+                               " #@description Output file compression                                 \n"
+                               " file.compression : string = \"gzip\"                                  \n"
+                               "                                                                       \n"
+                               " #@description Save run header/footer information                      \n"
+                               " using_run_header_footer : boolean = 0                                 \n"
+                               "                                                                       \n"
+                               );
+
+  ocd_.set_validation_support(true);
+
+  // Lock the description:
+  ocd_.lock();
+
+  // ... and we are done.
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
+
+// Registration macro for class 'mctools::g4::manager' :
+DOCD_CLASS_SYSTEM_REGISTRATION(mctools::g4::run_action,"mctools::g4::run_action")
+
+// end of run_action.cc

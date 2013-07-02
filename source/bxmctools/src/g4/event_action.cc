@@ -439,4 +439,73 @@ namespace mctools {
 
 } // end of namespace mctools
 
-  // end of event_action.cc
+/** Opening macro for implementation
+ *  This macro must be used outside of any namespace.
+ */
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::event_action,ocd_)
+{
+  // The class name :
+  ocd_.set_class_name ("mctools::g4::event_action");
+
+  // The class terse description :
+  ocd_.set_class_description ("The Geant4 simulation mandatory event action");
+
+  // The library the class belongs to :
+  ocd_.set_class_library ("mctools_g4");
+
+  // The class detailed documentation :
+  ocd_.set_class_documentation ("This is Geant4 simulation engine embedded event action.      \n"
+                                );
+
+  {
+    // Description of the 'logging.priority' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("logging.priority")
+      .set_terse_description("Logging priority threshold")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_long_description("Allowed values are:                                    \n"
+                            "                                                       \n"
+                            " * ``\"fatal\"``       : print fatal error messages    \n"
+                            " * ``\"critical\"``    : print critical error messages \n"
+                            " * ``\"error\"``       : print error messages          \n"
+                            " * ``\"warning\"``     : print warnings                \n"
+                            " * ``\"notice\"``      : print notice messages         \n"
+                            " * ``\"information\"`` : print informational messages  \n"
+                            " * ``\"debug\"``       : print debug messages          \n"
+                            " * ``\"trace\"``       : print trace messages          \n"
+                            "                                                       \n"
+                            "Default value: ``\"warning\"``                         \n"
+                            "                                                       \n"
+                            "Example::                                              \n"
+                            "                                                       \n"
+                            "  logging.priority : string = \"warning\"              \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+  // Additionnal configuration hints :
+  ocd_.set_configuration_hints("Typical configuration is::                                             \n"
+                               "                                                                       \n"
+                               " #@description Event action logging priority                           \n"
+                               " logging.priority : string = \"warning\"                               \n"
+                               "                                                                       \n"
+                               );
+
+  ocd_.set_validation_support(true);
+
+  // Lock the description:
+  ocd_.lock();
+
+  // ... and we are done.
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
+
+// Registration macro for class 'mctools::g4::event_action' :
+DOCD_CLASS_SYSTEM_REGISTRATION(mctools::g4::event_action,"mctools::g4::event_action")
+
+
+// end of event_action.cc

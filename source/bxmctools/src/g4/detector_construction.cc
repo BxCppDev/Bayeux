@@ -112,10 +112,6 @@ namespace mctools {
       _using_regions_ = true;
 
       _using_sensitive_detectors_ = true;
-      //_sensitive_detectors_store_g4_volume = false;
-      //_sensitive_detectors_drop_zero_energy_deposit_steps = true;
-
-      //      _SHPF_random_seed_ = mygsl::random_utils::SEED_INVALID;
       return;
     }
 
@@ -210,6 +206,12 @@ namespace mctools {
         DT_THROW_IF(true, std::logic_error, "Missing property '" << "hit_processor_factory.config" << "' !");
       }
 
+      /*************************/
+
+      if (config_.has_key("using_user_limits")) {
+        _using_user_limits_ = config_.fetch_boolean("using_user_limits");
+      }
+
       config_.export_starting_with(_limits_config_, "limits.");
 
       // end of fetching.
@@ -269,13 +271,17 @@ namespace mctools {
        *                       *
        *************************/
 
+      if (config_.has_key("using_regions")) {
+        _using_regions_ = config_.fetch_boolean("using_regions");
+      }
+
       if (config_.has_key("regions")) {
         std::vector<std::string> regions;
         config_.fetch("regions", regions);
         for (unsigned int i = 0; i < regions.size(); ++i) {
           const std::string & the_region_label = regions[i];
           std::ostringstream key;
-          key << "regions." << the_region_label;
+          key << "regions." << the_region_label << ".volumes";
           DT_THROW_IF (! config_.has_key(key.str()), std::logic_error,
                        "Missing informations for region '" << key.str() << "' !");
           std::vector<std::string> the_region_infos;
@@ -474,7 +480,8 @@ namespace mctools {
 
     void detector_construction::_construct_magnetic_field()
     {
-      DT_LOG_TRACE(_logprio(),"Entering...");
+      datatools::logger::priority logging = _logprio();
+      DT_LOG_TRACE(logging,"Entering...");
 
       // if (! _mag_field_->is_active())
       //   {
@@ -492,21 +499,35 @@ namespace mctools {
       //   }
 
       if (has_mag_field_manager() && _mag_field_manager_->has_geom_map()) {
-        DT_LOG_NOTICE(_logprio(),"Processing geometry/EM field map...");
+        DT_LOG_NOTICE(logging,"Processing geometry/EM field map...");
+
+        std::vector<std::string> associations;
+        if (_mag_field_aux_.has_key("associations")) {
+          _mag_field_aux_.fetch("associations", associations);
+        }
         G4LogicalVolumeStore * g4_LV_store = G4LogicalVolumeStore::GetInstance();
         const emfield::geom_map & geomap = _mag_field_manager_->get_geom_map();
 
         typedef emfield::geom_map::association_dict_type gma_type;
         typedef emfield::geom_map::association_entry gma_entry_type;
         const gma_type & mfamap = geomap.get_associations();
-        for (gma_type::const_iterator i = mfamap.begin();
-             i !=  mfamap.end();
-             i++) {
-          const gma_entry_type & gefa = i->second;
+
+        for (int i = 0; i < associations.size(); i++) {
+          const std::string & association_name = associations[i];
+          gma_type::const_iterator found_association = mfamap.find(association_name);
+          if (found_association == mfamap.end()) {
+            std::ostringstream message;
+            message << "Cannot find association with name '" << association_name << "' "
+                    << "in field geometry map !";
+            if (_abort_on_error_) {
+              DT_THROW_IF(true, std::logic_error, message.str());
+            }
+            continue;
+          }
+          const gma_entry_type & gefa = found_association->second;
           if (! gefa.has_logvol()) {
             std::ostringstream message;
-            message << "mctools::g4::detector_construction::_construct_magnetic_field: "
-                    << "Missing G4 logical volume for geom/field association '" << i->first << "'(that looks a bug) !";
+            message << "Missing G4 logical volume for geom/field association '" << association_name << "' !";
             if (_abort_on_error_) {
               DT_THROW_IF(true, std::logic_error, message.str());
             }
@@ -516,40 +537,37 @@ namespace mctools {
           G4LogicalVolume * g4_module_log = g4_LV_store->GetVolume(g4_log_name, false);
           if (g4_module_log == 0) {
             std::ostringstream message;
-            message << "mctools::g4::detector_construction::_construct_magnetic_field: "
-                    << "Missing G4 logical volume with name '" << g4_log_name << "' !";
+            message << "Missing G4 logical volume with name '" << g4_log_name << "' !";
             if (_abort_on_error_) {
               DT_THROW_IF(true, std::logic_error, message.str());
             }
-            DT_LOG_WARNING(_logprio(), message.str());
+            DT_LOG_WARNING(logging, message.str());
             continue;
           } else {
-            DT_LOG_TRACE(_logprio()," -> G4 logical volume '" << g4_log_name << "' has a magnetic field.");
+            DT_LOG_TRACE(logging," -> G4 logical volume '" << g4_log_name << "' has a magnetic field.");
           }
+
           magnetic_field * mag_field = new magnetic_field;
-          if (_mag_field_aux_.has_key("magnetic_field.logging.priority")) {
-            std::string mag_field_logging_label = _mag_field_aux_.fetch_string("magnetic_field.logging.priority");
-            mag_field->set_logging_priority(mag_field_logging_label);
-          }
+          mag_field->loggable_support::_initialize_logging_support(_mag_field_aux_);
           DT_THROW_IF (gefa.field == 0, std::logic_error,
-                       "Missing field for geometry/association '" << i->first << "' !");
+                       "Missing field for geometry/association '" << association_name << "' !");
           DT_THROW_IF (! gefa.field->is_magnetic_field(), std::logic_error,
-                       "Field '" << i->first << "' is not a magnetic field !");
+                       "Field '" << association_name << "' is not a magnetic field !");
 
           // Check position/time :
           bool cpt = false;
-          std::string cpt_key = "check_pos_time." + i->first;
+          std::string cpt_key = "check_pos_time." + association_name;
           if (_mag_field_aux_.has_key(cpt_key)) {
             cpt = _mag_field_aux_.fetch_boolean(cpt_key);
           }
-          mag_field->set_name(i->first);
+          mag_field->set_name(association_name);
           mag_field->set_mag_field(*gefa.field);
           mag_field->set_mag_field_check_pos_time(cpt);
           mag_field->initialize();
 
           // Use the default miss distance :
           double miss_distance = _general_miss_distance_;
-          std::string md_log_key = "miss_distance." + i->first;
+          std::string md_log_key = "miss_distance." + association_name;
           if (_mag_field_aux_.has_key(md_log_key)) {
             miss_distance = _mag_field_aux_.fetch_real(md_log_key);
             if (! _mag_field_aux_.has_explicit_unit(md_log_key)) {
@@ -561,14 +579,16 @@ namespace mctools {
           detector_field_mgr->CreateChordFinder(mag_field);
           detector_field_mgr->GetChordFinder()->SetDeltaChord(miss_distance);
           g4_module_log->SetFieldManager(detector_field_mgr, true);
-          DT_LOG_NOTICE(_logprio(),
+          DT_LOG_NOTICE(logging,
                         "G4 logical volume '" << g4_log_name
-                        << "' has a magnetic field named '" << i->first  << "' !");
+                        << "' has a magnetic field named '" << gefa.get_field_name()
+                        << "' !");
+          DT_LOG_NOTICE(logging, "Miss distance is " << miss_distance / CLHEP::mm << " mm");
         }
-        DT_LOG_NOTICE(_logprio(),"Geometry/EM field map has been processed.");
+        DT_LOG_NOTICE(logging,"Geometry/EM field map has been processed.");
       }
 
-      DT_LOG_TRACE(_logprio(),"Exiting.");
+      DT_LOG_TRACE(logging,"Exiting.");
       return;
     }
 
@@ -720,20 +740,7 @@ namespace mctools {
                            << "' already exists ! Ignore this rule !");
             continue;
           } else {
-            // // XXX YYY ZZZ
-            // // Check if a list of models is provided : by name or by materials:
-            // if (! iSHP->second->get_aux().has_key("geometry.models") &&
-            //     ! iSHP->second->get_aux().has_key("geometry.models.with_materials"))
-            //   {
-            //     ostringstream message;
-            //     message << "mctools::g4::detector_construction::_construct_sensitive_detectors: "
-            //             << "New sensitive category '" << from_processor_sensitive_category
-            //             << "' has no geometry models associated to it ! Ignore this rule !";
-            //     std::clog << datatools::io::warning << message.str() << std::endl;
-            //     continue;
-            //   }
-
-            // At this point, we know that some geometry model(s)
+            // At this point, we know that some geometry volumes(s)
             // are attached to the newly created sensitive detector:
             DT_LOG_NOTICE(_logprio(),
                           "SHPF: Create a new sensitive detector with category '"
@@ -842,7 +849,7 @@ namespace mctools {
                 if (j != 0) message << ',';
                 message << ' ' << '"' << excluded_logicals[j] << '"';
               }
-              message << ") from the list of models to be associated to the new sensitive detector from SHPF with category '"
+              message << ") from the list of volumes to be associated to the new sensitive detector from SHPF with category '"
                       << from_processor_sensitive_category << "'";
               DT_LOG_NOTICE(_logprio(), message.str());
 
@@ -900,7 +907,7 @@ namespace mctools {
               {
                 // Makes the logical sensitive (using a trick because of the const-ness
                 // of the logical volume instance after building the model factory from
-                // the geometry manager :
+                // the geometry manager) :
                 geomtools::logical_volume * mutable_log
                   = const_cast<geomtools::logical_volume *>(&log);
                 geomtools::sensitive::set_sensitive_category(mutable_log->grab_parameters(),
@@ -1068,24 +1075,26 @@ namespace mctools {
       DT_LOG_TRACE(_logprio(),  "Entering...");
       G4LogicalVolumeStore * g4_LV_store = G4LogicalVolumeStore::GetInstance();
 
-      vector<string> models;
-      if (_limits_config_.has_key("limits.list_of_models")) {
-        _limits_config_.fetch("limits.list_of_models", models);
+      std::vector<std::string> log_volumes;
+      if (_limits_config_.has_key("limits.list_of_volumes")) {
+        _limits_config_.fetch("limits.list_of_volumes", log_volumes);
       }
-      if (models.size() == 0) {
+      if (log_volumes.size() == 0) {
         return;
       }
-      const geomtools::models_col_type & models_dict
-        = _geom_manager_->get_factory().get_models();
-      for (unsigned int i = 0; i < models.size(); ++i) {
-        const string & model_name = models[i];
-        geomtools::models_col_type::const_iterator found = models_dict.find(model_name);
-        if (found == models_dict.end()) {
-          DT_LOG_WARNING(_logprio(),  "Cannot find model '" << model_name << "' !");
+      // const geomtools::models_col_type & models_dict
+      //   = _geom_manager_->get_factory().get_models();
+      for (unsigned int i = 0; i < log_volumes.size(); ++i) {
+        const std::string & log_name = log_volumes[i];
+        geomtools::logical_volume::dict_type::const_iterator found
+          = _geom_manager_->get_factory().get_logicals().find(log_name);
+        //geomtools::models_col_type::const_iterator found = models_dict.find(model_name);
+        if (found == _geom_manager_->get_factory().get_logicals().end()) {
+          DT_LOG_WARNING(_logprio(), "Cannot find logical volume '" << log_name << "' !");
           continue;
         }
 
-        string log_name = geomtools::i_model::make_logical_volume_name(model_name);
+        //string log_name = geomtools::i_model::make_logical_volume_name(model_name);
         G4String g4_log_name = log_name.c_str();
         G4LogicalVolume * g4_module_log = g4_LV_store->GetVolume(g4_log_name, false);
         if (g4_module_log == 0) {
@@ -1095,8 +1104,8 @@ namespace mctools {
 
         // search for maximum step length:
         double max_step = DBL_MAX;
-        ostringstream prop_name;
-        prop_name << "limits.max_step." << model_name;
+        std::ostringstream prop_name;
+        prop_name << "limits.max_step." << log_name;
         if (_limits_config_.has_key(prop_name.str())) {
           max_step = _limits_config_.fetch_real(prop_name.str());
           if (! _limits_config_.has_explicit_unit(prop_name.str())) {
@@ -1127,7 +1136,7 @@ namespace mctools {
 
         for (unsigned int j = 0; j < the_region_infos.size(); ++j) {
           G4LogicalVolume * a_logical = 0;
-          string logical_volume_name = the_region_infos[j] + ".log";
+          string logical_volume_name = the_region_infos[j];
           G4String g4_logical_volume_name = logical_volume_name.c_str();
           a_logical = g4_LV_store->GetVolume(g4_logical_volume_name, false);
           if (a_logical != 0) {
@@ -1148,12 +1157,20 @@ namespace mctools {
       DT_LOG_TRACE(_logprio(),"Entering...");
 
       // Look for visibility properties :
+      /*
       for (geomtools::models_col_type::const_iterator i
              = _geom_manager_->get_factory().get_models().begin();
            i != _geom_manager_->get_factory().get_models().end();
            ++i) {
         const geomtools::i_model & model = *(i->second);
         const geomtools::logical_volume & log = model.get_logical();
+      */
+      for (geomtools::logical_volume::dict_type::const_iterator ilogical
+             = _geom_manager_->get_factory().get_logicals().begin();
+           ilogical != _geom_manager_->get_factory().get_logicals().end();
+           ++ilogical) {
+        // Get a reference to the associated logical volume :
+        const geomtools::logical_volume & log = *(ilogical->second);
         bool   visible = true;
         bool   daughters_visible = true;
         string display_color;
@@ -1231,5 +1248,651 @@ namespace mctools {
   } // end of namespace g4
 
 } // end of namespace mctools
+
+/** Opening macro for implementation
+ *  This macro must be used outside of any namespace.
+ */
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
+{
+  // The class name :
+  ocd_.set_class_name ("mctools::g4::detector_construction");
+
+  // The class terse description :
+  ocd_.set_class_description ("The Geant4 simulation mandatory detector construction");
+
+  // The library the class belongs to :
+  ocd_.set_class_library ("mctools_g4");
+
+  // The class detailed documentation :
+  ocd_.set_class_documentation ("This is Geant4 simulation engine embedded detector construction. \n"
+                                );
+
+  /********
+   * GDML *
+   ********/
+
+  {
+    // Description of the 'gdml.tmp_dir' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("gdml.tmp_dir")
+      .set_terse_description("The directory where the GDML file is generated by the ``geomtools::manager``")
+      .set_traits(datatools::TYPE_STRING)
+      .set_path(true)
+      .set_long_description("Example::                                                     \n"
+                            "                                                              \n"
+                            "  gdml.tmp_dir : string as path = \"/tmp/g4_work\"            \n"
+                            "                                                              \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'gdml.no_validation' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("gdml.no_validation")
+      .set_terse_description("Flag to inhibit the validation of the GDML file")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_long_description("Example::                                                     \n"
+                            "                                                              \n"
+                            "  gdml.no_validation : boolean = 0                            \n"
+                            "                                                              \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'gdml.schema_location' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("gdml.schema_location")
+      .set_terse_description("The label indicating where to find the GDML schema resources")
+      .set_traits(datatools::TYPE_STRING)
+      .set_long_description("Allowed values: ``\"local\"`` , ``\"remote\"``                \n"
+                            "Default value: ``\"remote\"`` (needs access to the Internet)  \n"
+                            "                                                              \n"
+                            "Example::                                                     \n"
+                            "                                                              \n"
+                            "  gdml.schema_location : string = \"local\"                   \n"
+                            "                                                              \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'materials.plugin_name' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("materials.plugin_name")
+      .set_terse_description("The name of the materials plugin embedded in the geometry manager for materials export in GDML")
+      .set_traits(datatools::TYPE_STRING)
+      .set_long_description("Default value: empty (plugin is autodetected)                \n"
+                            "                                                              \n"
+                            "Example::                                                     \n"
+                            "                                                              \n"
+                            "  materials.plugin_name : string = \"materials_driver\"       \n"
+                            "                                                              \n"
+                            )
+      ;
+  }
+
+  /*************************
+   *  Sensitive detectors  *
+   *************************/
+
+  {
+    // Description of the 'sensitive.detectors' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.detectors")
+      .set_terse_description("The list of sensitive detectors attached to the geometry")
+      .set_traits(datatools::TYPE_STRING,
+                  configuration_property_description::ARRAY)
+      .set_long_description("Default value: empty                                                  \n"
+                            "                                                                      \n"
+                            "Example::                                                             \n"
+                            "                                                                      \n"
+                            "  sensitive.detectors : string[2] = \"calo.sd\" \"tracker.sd\"        \n"
+                            "                                                                      \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'sensitive.XXX.record_track_id' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.${sensitive.detectors}.record_track_id")
+      .set_terse_description("Record the *track ID* attached to a given sensitive detector")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_long_description("Default value: 0                                                      \n"
+                            "                                                                      \n"
+                            "Example::                                                             \n"
+                            "                                                                      \n"
+                            "  sensitive.detectors : string[2] = \"calo.sd\" \"tracker.sd\"        \n"
+                            "  sensitive.calo.sd.record_track_id    : boolean = 0                  \n"
+                            "  sensitive.tracker.sd.record_track_id : boolean = 1                  \n"
+                            "                                                                      \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'sensitive.XXX.record_primary_particle' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.${sensitive.detectors}.record_primary_particle")
+      .set_terse_description("Record *primary particle* flag attached to a given sensitive detector")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_long_description("Default value: 0                                                      \n"
+                            "                                                                      \n"
+                            "Example::                                                             \n"
+                            "                                                                      \n"
+                            "  sensitive.detectors : string[2] = \"calo.sd\" \"tracker.sd\"        \n"
+                            "  sensitive.calo.sd.record_primary_particle    : boolean = 1          \n"
+                            "  sensitive.tracker.sd.record_primary_particle : boolean = 0          \n"
+                            "                                                                      \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'sensitive.XXX.record_alpha_quenching' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.${sensitive.detectors}.record_alpha_quenching")
+      .set_terse_description("Record the *alpha quenching* flag attached to a given sensitive detector")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_long_description("Default value: 0                                                      \n"
+                            "                                                                      \n"
+                            "Example::                                                             \n"
+                            "                                                                      \n"
+                            "  sensitive.detectors : string[2] = \"calo.sd\" \"tracker.sd\"        \n"
+                            "  sensitive.calo.sd.record_alpha_quenching    : boolean = 1           \n"
+                            "  sensitive.tracker.sd.record_alpha_quenching : boolean = 0           \n"
+                            "                                                                      \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'sensitive.XXX.record_major_track' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.${sensitive.detectors}.record_major_track")
+      .set_terse_description("Record the *major track* flag attached to a given sensitive detector")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_long_description("Default value: 0                                                      \n"
+                            "                                                                      \n"
+                            "Example::                                                             \n"
+                            "                                                                      \n"
+                            "  sensitive.detectors : string[2] = \"calo.sd\" \"tracker.sd\"        \n"
+                            "  sensitive.calo.sd.record_major_track    : boolean = 1               \n"
+                            "  sensitive.tracker.sd.record_major_track : boolean = 0               \n"
+                            "                                                                      \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'sensitive.XXX.major_track_minimum_energy' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.${sensitive.detectors}.major_track_minimum_energy")
+      .set_terse_description("Energy threshold to consider a track as a *major* one")
+      .set_traits(datatools::TYPE_REAL)
+      .set_explicit_unit(true)
+      .set_unit_label("energy")
+      .set_long_description("Default value: 0                                                          \n"
+                            "                                                                          \n"
+                            "Example::                                                                 \n"
+                            "                                                                          \n"
+                            "  sensitive.detectors : string[2] = \"calo.sd\" \"tracker.sd\"            \n"
+                            "  sensitive.calo.sd.record_major_track         : boolean = 1              \n"
+                            "  sensitive.calo.sd.major_track_minimum_energy : real as energy = 50 keV  \n"
+                            "                                                                          \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'sensitive.XXX.record_category' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.${sensitive.detectors}.record_category")
+      .set_terse_description("Record the *sensitive category* attached to a given sensitive detector")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_long_description("Default value: 0                                                      \n"
+                            "                                                                      \n"
+                            "Example::                                                             \n"
+                            "                                                                      \n"
+                            "  sensitive.detectors : string[2] = \"calo.sd\" \"tracker.sd\"        \n"
+                            "  sensitive.calo.sd.record_category    : boolean = 1                  \n"
+                            "  sensitive.tracker.sd.record_category : boolean = 1                  \n"
+                            "                                                                      \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'sensitive.XXX.record_momentum' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.${sensitive.detectors}.record_momentum")
+      .set_terse_description("Record the start and stop *momenta* of the step for a given sensitive detector")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_long_description("Default value: 0                                                      \n"
+                            "                                                                      \n"
+                            "Example::                                                             \n"
+                            "                                                                      \n"
+                            "  sensitive.detectors : string[2] = \"calo.sd\" \"tracker.sd\"        \n"
+                            "  sensitive.calo.sd.record_momentum    : boolean = 0                  \n"
+                            "  sensitive.tracker.sd.record_momentum : boolean = 1                  \n"
+                            "                                                                      \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'sensitive.XXX.record_kinetic_energy' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.${sensitive.detectors}.record_kinetic_energy")
+      .set_terse_description("Record the start and stop *kinetic energy* of the step for a given sensitive detector")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_long_description("Default value: 0                                                      \n"
+                            "                                                                      \n"
+                            "Example::                                                             \n"
+                            "                                                                      \n"
+                            "  sensitive.detectors : string[2] = \"calo.sd\" \"tracker.sd\"        \n"
+                            "  sensitive.calo.sd.record_kinetic_energy    : boolean = 1            \n"
+                            "  sensitive.tracker.sd.record_kinetic_energy : boolean = 0            \n"
+                            "                                                                      \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'sensitive.XXX.hits_buffer_capacity' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.${sensitive.detectors}.hits_buffer_capacity")
+      .set_terse_description("Pre-allocate the initial capacity of a buffer of step hits associated to a given sensitive detector")
+      .set_traits(datatools::TYPE_INTEGER)
+      .set_long_description("Default value: 1000                                                   \n"
+                            "                                                                      \n"
+                            "Example::                                                             \n"
+                            "                                                                      \n"
+                            "  sensitive.detectors : string[2] = \"calo.sd\" \"tracker.sd\"        \n"
+                            "  sensitive.calo.sd.hits_buffer_capacity    : integer = 30            \n"
+                            "  sensitive.tracker.sd.hits_buffer_capacity : integer = 100           \n"
+                            "                                                                      \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'sensitive.XXX.drop_zero_energy_deposit_steps' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.${sensitive.detectors}.drop_zero_energy_deposit_steps")
+      .set_terse_description("Drop zero energy deposit step hits for a given sensitive detector")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_long_description("Default value: 0                                                      \n"
+                            "                                                                      \n"
+                            "Example::                                                             \n"
+                            "                                                                      \n"
+                            "  sensitive.detectors : string[2] = \"calo.sd\" \"tracker.sd\"        \n"
+                            "  sensitive.calo.sd.drop_zero_energy_deposit_steps    : boolean = 1   \n"
+                            "  sensitive.tracker.sd.drop_zero_energy_deposit_steps : boolean = 0   \n"
+                            "                                                                      \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'sensitive.XXX.record_g4_volume_infos' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.${sensitive.detectors}.record_g4_volume_infos")
+      .set_terse_description("Record the Geant4 geometry volume informations for a given sensitive detector")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_long_description("Default value: 0                                                      \n"
+                            "                                                                      \n"
+                            "Example::                                                             \n"
+                            "                                                                      \n"
+                            "  sensitive.detectors : string[2] = \"calo.sd\" \"tracker.sd\"        \n"
+                            "  sensitive.calo.sd.record_g4_volume_infos    : boolean = 1           \n"
+                            "  sensitive.tracker.sd.record_g4_volume_infos : boolean = 1           \n"
+                            "                                                                      \n"
+                            )
+      ;
+  }
+
+  /***********
+   * Regions *
+   ***********/
+
+  {
+    // Description of the 'using_regions' volumes' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("using_regions")
+      .set_terse_description("Flag to activate regions")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_long_description("Default value: 1 (use regions)                                        \n"
+                            "                                                                      \n"
+                            "Example::                                                             \n"
+                            "                                                                      \n"
+                            "  using_regions : boolean = 1                                         \n"
+                            "                                                                      \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'regions' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("regions")
+      .set_terse_description("The list of regions attached to the geometry")
+      .set_traits(datatools::TYPE_STRING,
+                  configuration_property_description::ARRAY)
+      .set_long_description("Default value: empty                                                  \n"
+                            "                                                                      \n"
+                            "Example::                                                             \n"
+                            "                                                                      \n"
+                            "  regions : string[2] = \"calo\" \"tracker\"                          \n"
+                            "                                                                      \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'regions' volumes' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("regions.${regions}.volumes")
+      .set_terse_description("The list of volumes attached to a region referenced through its name")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .set_long_description("Default value: empty                                                  \n"
+                            "                                                                      \n"
+                            "Example::                                                             \n"
+                            "                                                                      \n"
+                            "  regions : string[2] = \"calo\" \"tracker\"                          \n"
+                            "  regions.calo.volumes    : string[2] = \"calo0.log\" \"calo1.log\"   \n"
+                            "  regions.tracker.volumes : string[1] = \"cells.log\"                 \n"
+                            "                                                                      \n"
+                            )
+      ;
+  }
+
+  /***************
+   * User limits *
+   ***************/
+
+  {
+    // Description of the 'using_user_limits' volumes' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("using_user_limits")
+      .set_terse_description("Flag to activate user limits")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_long_description("Default value: 1 (use user limits)                                    \n"
+                            "                                                                      \n"
+                            "Example::                                                             \n"
+                            "                                                                      \n"
+                            "  using_user_limits : boolean = 1                                     \n"
+                            "                                                                      \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'limits.list_of_volumes' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("limits.list_of_volumes")
+      .set_terse_description("The list of volumes where to apply user limits")
+      .set_traits(datatools::TYPE_STRING,
+                  configuration_property_description::ARRAY)
+      .set_long_description("Default value: empty                                                           \n"
+                            "                                                                               \n"
+                            "Example::                                                                      \n"
+                            "                                                                               \n"
+                            "  limits.list_of_volumes : string[2] = \"calo_block.log\" \"tracker_cell.log\" \n"
+                            "                                                                               \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'limits.max_step.XXX' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("limits.max_step.${limits.list_of_volumes}")
+      .set_terse_description("The maximum tracking step length associated to a given volume")
+      .set_traits(datatools::TYPE_REAL)
+      .set_explicit_unit(true)
+      .set_unit_label("length")
+      .set_long_description("Default value: empty                                                           \n"
+                            "                                                                               \n"
+                            "Example::                                                                      \n"
+                            "                                                                               \n"
+                            "  limits.list_of_volumes : string[2] = \"calo_block.log\" \"tracker_cell.log\" \n"
+                            "  limits.max_step.calo_block.log   : real as length = 0.5 mm                   \n"
+                            "  limits.max_step.tracker_cell.log : real as length = 5 mm                     \n"
+                            "                                                                               \n"
+                            )
+      ;
+  }
+
+
+
+  /******************
+   * Magnetic field *
+   ******************/
+
+  {
+    // Description of the 'using_magnetic_field' volumes' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("using_magnetic_field")
+      .set_terse_description("Flag to activate a magnetic field")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_long_description("Default value: 0 (no magnetic field)                                  \n"
+                            "                                                                      \n"
+                            "Example::                                                             \n"
+                            "                                                                      \n"
+                            "  using_magnetic_field : boolean = 0                                  \n"
+                            "                                                                      \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'magnetic_field.plugin_name' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("magnetic_field.plugin_name")
+      .set_terse_description("The name of the geometry magnetic field plugin embedded in the geometry manager")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .set_triggered_by_flag("using_magnetic_field")
+      .set_long_description("Default value:  (no magnetic field)                                   \n"
+                            "                                                                      \n"
+                            "Example::                                                             \n"
+                            "                                                                      \n"
+                            "  magnetic_field.plugin_name : string = \"coil_driver\"               \n"
+                            "                                                                      \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'magnetic_field.miss_distance.unit' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("magnetic_field.miss_distance.unit")
+      .set_terse_description("The default implicit magnetic field miss distance unit")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_triggered_by_flag("using_magnetic_field")
+      .set_long_description("Default value: ``\"mm\"``                                             \n"
+                            "                                                                      \n"
+                            "Example::                                                             \n"
+                            "                                                                      \n"
+                            "  magnetic_field.miss_distance.unit : string = \"mm\"                 \n"
+                            "                                                                      \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'magnetic_field.miss_distance.unit' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("magnetic_field.miss_distance")
+      .set_terse_description("The global magnetic field miss distance")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(false)
+      .set_triggered_by_flag("using_magnetic_field")
+      .set_long_description("Default value: ``\"mm\"``                                             \n"
+                            "                                                                      \n"
+                            "Example::                                                             \n"
+                            "                                                                      \n"
+                            "  magnetic_field.miss_distance : real as length = 1.2 mm              \n"
+                            "                                                                      \n"
+                            )
+      .set_explicit_unit(true)
+      .set_unit_label("length")
+      ;
+  }
+
+  {
+    // Description of the 'logging.priority' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("magnetic_field.logging.priority")
+      .set_terse_description("Logging priority threshold of the magnetic field manager")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_long_description("Allowed values are:                                      \n"
+                            "                                                         \n"
+                            " * ``\"fatal\"``       : print fatal error messages      \n"
+                            " * ``\"critical\"``    : print critical error messages   \n"
+                            " * ``\"error\"``       : print error messages            \n"
+                            " * ``\"warning\"``     : print warnings                  \n"
+                            " * ``\"notice\"``      : print notice messages           \n"
+                            " * ``\"information\"`` : print informational messages    \n"
+                            " * ``\"debug\"``       : print debug messages            \n"
+                            " * ``\"trace\"``       : print trace messages            \n"
+                            "                                                         \n"
+                            "Default value: ``\"warning\"``                           \n"
+                            "                                                         \n"
+                            "Example::                                                \n"
+                            "                                                         \n"
+                            "  magnetic_field.logging.priority : string = \"warning\" \n"
+                            "                                                         \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'magnetic_field.associations' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("magnetic_field.associations")
+      .set_terse_description("List of geom./mag. field associations with special criteria")
+      .set_traits(datatools::TYPE_STRING,
+                  configuration_property_description::ARRAY)
+      .set_mandatory(false)
+      .set_long_description("Example::                                                           \n"
+                            "                                                                    \n"
+                            "  magnetic_field.associations : string[2] = \"coil\" \"lab\"        \n"
+                            "                                                                    \n"
+                            "Note: the geometry volume/magnetic field association must exist in  \n"
+                            "the dedicated plugin.                                               \n"
+                            )
+      ;
+  };
+
+  {
+    // Description of the 'magnetic_field.check_pos_time.XXX' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("magnetic_field.miss_distance.${magnetic_field.associations}")
+      .set_terse_description("Set a specific miss distance for a given geom/mag. field association")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(false)
+      .set_explicit_unit(true)
+      .set_unit_label("length")
+      .set_long_description("Apply a special miss distance for a given geom. volume/mag. field association. \n"
+                            "                                                                    \n"
+                            "Example::                                                           \n"
+                            "                                                                    \n"
+                            "  magnetic_field.associations       : string[2] = \"coil\" \"lab\"  \n"
+                            "  magnetic_field.miss_distance.coil : real as length = 1 mm         \n"
+                            "  magnetic_field.miss_distance.lab  : real as length = 1 cm         \n"
+                            "                                                                    \n"
+                            "Note: the geometry volume/magnetic field association must exist in  \n"
+                            "the dedicated plugin.                                               \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'magnetic_field.check_pos_time.XXX' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("magnetic_field.check_pos_time.${magnetic_field.associations}")
+      .set_terse_description("Flag to force the checking of position/time while computing mag. field for a given geom/mag. field association")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("Activate the checking of postion/time while computing the           \n"
+                            "magnetic field referenced by a given geom. volume/mag. field association. \n"
+                            "                                                                    \n"
+                            "Example::                                                           \n"
+                            "                                                                    \n"
+                            "  magnetic_field.associations        : string[2] = \"coil\" \"lab\" \n"
+                            "  magnetic_field.check_pos_time.coil : boolean = 1                  \n"
+                            "  magnetic_field.check_pos_time.lab  : boolean = 0                  \n"
+                            "                                                                    \n"
+                            "Note: the geometry volume/magnetic field association must exist in  \n"
+                            "the dedicated plugin.                                               \n"
+                            )
+      ;
+  }
+
+  // Additionnal configuration hints :
+  ocd_.set_configuration_hints("Typical configuration is::                                                   \n"
+                               "                                                                             \n"
+                               "  [name=\"detector_construction\"]                                           \n"
+                               "  #@config Main configuration file for the detector construction user object \n"
+                               "  logging.priority : string = \"debug\"                                      \n"
+                               "  gdml.tmp_dir : string as path = \"/tmp/${USER}/mctools_g4.d\"              \n"
+                               "  gdml.schema_location : string = \"local\"                                  \n"
+                               "  gdml.no_validation   : boolean = 0                                         \n"
+                               "  materials.plugin_name : string = \"materials_driver\"                      \n"
+                               "  sensitive.detectors : string[1] = \"scin.sd\"                              \n"
+                               "  sensitive.scin.sd.hits_buffer_capacity : integer = 200                     \n"
+                               "  sensitive.scin.sd.record_track_id : boolean = 1                            \n"
+                               "                                                                             \n"
+                               );
+
+  ocd_.set_validation_support(true);
+
+  // Lock the description:
+  ocd_.lock();
+
+  // ... and we are done.
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
+
+// Registration macro for class 'mctools::g4::detector_construction' :
+DOCD_CLASS_SYSTEM_REGISTRATION(mctools::g4::detector_construction,"mctools::g4::detector_construction")
 
 // end of detector_construction.cc
