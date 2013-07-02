@@ -375,7 +375,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
   }
 
   {
-    // Description of some dynamic properties that depend on the "label" property:
+    // Description of some dynamic properties that depend on the "labels" property:
     datatools::configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("objects.${labels}.value")
       .set_terse_description("An integer value associated to the object referenced through its label")

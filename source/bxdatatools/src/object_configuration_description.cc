@@ -219,6 +219,29 @@ namespace datatools {
   configuration_property_description::set_name_pattern(const std::string &np_)
   {
     _name_pattern_ = np_;
+    int dollar_pos = np_.find('$');
+    if (dollar_pos != np_.npos) {
+      //std::cerr << "DEVEL: OCD: set_name_pattern : dollar_pos=" << dollar_pos << std::endl;
+      DT_THROW_IF(dollar_pos >= np_.size() - 3,
+                  std::logic_error,
+                  "Invalid format for dynamic property name pattern '" << np_ << "' ! Invalid '${XXX}' dynamic name pattern !");
+      DT_THROW_IF(np_[dollar_pos+1] != '{',
+                   std::logic_error,
+                  "Invalid format for dynamic property name pattern '" << np_ << "' ! Missing opening brace '{' after '$' in dynamic name pattern !");
+      std::string subnp = np_.substr(dollar_pos+2);
+      //std::cerr << "DEVEL: OCD: set_name_pattern : subnp='" << subnp << "'" << std::endl;
+      int close_pos = subnp.find('}');
+      DT_THROW_IF(close_pos == subnp.npos,
+                  std::logic_error,
+                  "Invalid format for dynamic property name pattern '" << np_ << "' ! Missing closing brace '}' in dynamic name pattern !");
+
+      std::string source_prop_name = subnp.substr(0, close_pos);
+      //std::cerr << "DEVEL: OCD: set_name_pattern : source_prop_name='" << source_prop_name << "'" << std::endl;
+      _dynamic_dependee_.type = DEP_DYNAMIC;
+      _dynamic_dependee_.name = source_prop_name;
+      _dynamic_dependee_.address = 0;
+    }
+    /*
     std::vector<std::string> strs;
     boost::split(strs,np_,boost::is_any_of("."));
     for (int i = 0; i < strs.size(); i++) {
@@ -247,6 +270,7 @@ namespace datatools {
           _dynamic_dependee_.address = 0;
         }
       }
+    */
 
     return *this;
   }
