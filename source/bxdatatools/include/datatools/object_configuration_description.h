@@ -104,9 +104,12 @@ public:
   configuration_property_description & set_unit_label(const std::string &);
   configuration_property_description & set_const(bool = true);
   configuration_property_description & set_path(bool = true);
+  configuration_property_description & set_section(const std::string & section_name_);
 
   bool is_valid() const;
   bool has_type() const;
+  bool has_section() const;
+  const std::string & get_section() const;
   bool is_const() const;
   bool is_mutable() const;
   bool has_single_type() const;
@@ -155,6 +158,7 @@ public:
 private:
 
   std::string  _name_pattern_; /// The name pattern of the property
+  std::string  _section_;      /// An optional string describing the configuration section
   std::string  _terse_description_; /// Terse description of the property
   std::string  _long_description_; /// Detailed description of the property
   int          _type_; /// property's type (BOOLEAN, INTEGER, REAL, STRING)
@@ -200,7 +204,16 @@ class object_configuration_description
       sgo_minimal = sgo_no_add_infos | sgo_no_config_hints
     };
 
-  typedef std::vector<configuration_property_description> cpd_col_type;
+  /*
+  struct configuration_section_description {
+    std::string name;
+    std::string class_name;
+    bool        mandatory;
+  };
+  */
+
+  typedef std::vector<configuration_property_description>         cpd_col_type;
+  //typedef std::map<std::string,configuration_section_description> csd_col_type;
 
   bool is_available() const;
 
@@ -296,7 +309,9 @@ private:
   std::string  _class_library_;       /// An optional string describing the library the class belongs to
   cpd_col_type _configuration_properties_infos_; /// Collection of documented properties
   std::string  _configuration_hints_; /// Some embeded plain text documentation
+  //csd_col_type _configuration_sections_infos_; /// Collection of documented sections
   bool         _validation_support_; /// Flag to support validation
+
 
 };
 

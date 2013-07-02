@@ -95,6 +95,16 @@ namespace datatools {
     return _const_;
   }
 
+  bool configuration_property_description::has_section() const
+  {
+    return ! _section_.empty();
+  }
+
+  const std::string & configuration_property_description::get_section() const
+  {
+    return _section_;
+  }
+
   bool configuration_property_description::is_mutable() const
   {
     return ! is_const();
@@ -238,6 +248,13 @@ namespace datatools {
         }
       }
 
+    return *this;
+  }
+
+  configuration_property_description &
+  configuration_property_description::set_section(const std::string & section_name_)
+  {
+    _section_ = section_name_;
     return *this;
   }
 
