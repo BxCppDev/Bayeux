@@ -115,9 +115,6 @@ foreach(test_program ${geomtools_tests_programs_list})
   set(_test_libraries geomtools)
 
   # Special bio DLL plugins :
-  if(datatools_WITH_BIO)
-    list(INSERT _test_libraries 0 datatools_bio)
-  endif()
   if(mygsl_WITH_BIO)
     list(INSERT _test_libraries 0 mygsl_bio )
   endif()

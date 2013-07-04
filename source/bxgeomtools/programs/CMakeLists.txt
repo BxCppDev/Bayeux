@@ -61,9 +61,6 @@ foreach ( pro_program ${geomtools_programs_list_CXX} )
     )
 
   # Special bio DLL plugins :
-  if(datatools_WITH_BIO)
-    list(INSERT _pro_libraries 0 datatools_bio)
-  endif()
   if(mygsl_WITH_BIO)
     list(INSERT _pro_libraries 0 mygsl_bio )
   endif()
