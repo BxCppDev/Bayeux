@@ -22,7 +22,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-----------------------------------------------------------------------
 
-set(datatools_WITH_BIO        @DATATOOLS_WITH_BIO@)
+set(datatools_WITH_BIO        ON)
 set(datatools_WITH_REFLECTION @DATATOOLS_WITH_REFLECTION@)
 set(datatools_DATA_DIR        @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@)
 

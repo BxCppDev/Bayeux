@@ -42,7 +42,7 @@ foreach(prod_program ${datatools_programs_list})
     set_target_properties(${prod_executable} PROPERTIES DEBUG_POSTFIX d)
   endif()
 
-  set(_prod_libraries datatools)
+  set(_prod_libraries datatools) 
   if(DATATOOLS_WITH_REFLECTION)
     list(INSERT _prod_libraries 0 datatools_reflection)
   endif()

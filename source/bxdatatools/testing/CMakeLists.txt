@@ -51,7 +51,7 @@ foreach(test_program ${datatools_tests_programs_list})
     set_target_properties(${test_executable} PROPERTIES DEBUG_POSTFIX d)
   endif()
 
-  set(_test_libraries datatools)
+  set(_test_libraries datatools) 
   if(DATATOOLS_WITH_REFLECTION)
     list(INSERT _test_libraries 0 datatools_reflection)
   endif()
