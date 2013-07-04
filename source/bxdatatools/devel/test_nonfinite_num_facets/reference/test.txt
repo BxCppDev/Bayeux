@@ -1,1 +1,0 @@
-22 serialization::archive 7 0 0 3.141593 3.14159265358979 -inf -inf inf inf nan nan
