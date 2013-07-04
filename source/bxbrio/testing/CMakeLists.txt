@@ -9,12 +9,12 @@
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation, either version 3 of the License, or
 ## (at your option) any later version.
-## 
+##
 ## brio is distributed in the hope that it will be useful,
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
-## 
+##
 ## You should have received a copy of the GNU General Public License
 ## along with brio.  If not, see <http://www.gnu.org/licenses/>.
 ##
@@ -23,17 +23,17 @@
 # Explicitely in this order because some 'reader' test programs use the output
 # files produced by some 'writer' test programs :
 set ( brio_tests_programs_list
-      test_brio.cxx 
-      test_data_io.cxx 
-      test_brio_writer_1.cxx 
-      test_brio_reader_1.cxx 
-      test_brio_writer_2.cxx 
-      test_brio_reader_2.cxx 
-      test_writer.cxx 
-      test_reader.cxx 
-      test_writer_2.cxx 
-      test_reader_2.cxx 
-      test_reader_3.cxx 
+      test_brio.cxx
+      test_data_io.cxx
+      test_brio_writer_1.cxx
+      test_brio_reader_1.cxx
+      test_brio_writer_2.cxx
+      test_brio_reader_2.cxx
+      test_writer.cxx
+      test_reader.cxx
+      test_writer_2.cxx
+      test_reader_2.cxx
+      test_reader_3.cxx
     )
 
 # include files search paths
@@ -57,30 +57,26 @@ foreach(test_program ${brio_tests_programs_list})
     set_target_properties(${test_executable} PROPERTIES DEBUG_POSTFIX d)
   endif()
 
-  set(_test_libraries brio) 
+  set(_test_libraries brio)
   #message (STATUS "testing: datatools_WITH_BIO=${datatools_WITH_BIO}")
   #message (STATUS "testing: datatools_BIO_LIBRARY=${datatools_BIO_LIBRARY}")
-
-  if(datatools_WITH_BIO)
-    list(INSERT _test_libraries 0 ${datatools_BIO_LIBRARY})
-  endif() 
 
   target_link_libraries(${test_executable} ${_test_libraries})
 
   add_test(NAME ${test_executable}.run
-    COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
+    COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash
     --tmp-dir ${_test_tmp_dir}
-    --prefix ${PROJECT_SOURCE_DIR} 
+    --prefix ${PROJECT_SOURCE_DIR}
     --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
     run
-    )	 
+    )
 
   unset(_test_libraries)
 endforeach ()
 
 add_custom_target(clean_test
-  COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
-  --prefix ${PROJECT_SOURCE_DIR} 
+  COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash
+  --prefix ${PROJECT_SOURCE_DIR}
   --tmp-dir ${_test_tmp_dir}
   clean
   )
