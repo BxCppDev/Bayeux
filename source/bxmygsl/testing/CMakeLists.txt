@@ -9,12 +9,12 @@
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation, either version 3 of the License, or
 ## (at your option) any later version.
-## 
+##
 ## mygsl is distributed in the hope that it will be useful,
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
-## 
+##
 ## You should have received a copy of the GNU General Public License
 ## along with mygsl.  If not, see <http://www.gnu.org/licenses/>.
 ##
@@ -23,7 +23,7 @@
 
 ###file(GLOB mygsl_tests_programs test_*.cxx)
 set ( mygsl_tests_programs
-  test_mygsl.cxx 
+  test_mygsl.cxx
   test_best_value.cxx
   test_constants.cxx
   test_datapoint.cxx
@@ -65,9 +65,9 @@ set ( mygsl_tests_programs
 list(REMOVE_ITEM mygsl_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
 if(MYGSL_WITH_REFLECTION)
   list(APPEND mygsl_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
-endif() 
+endif()
 
-set(mygsl_tests_programs_list "${mygsl_tests_programs}") 
+set(mygsl_tests_programs_list "${mygsl_tests_programs}")
 list(SORT mygsl_tests_programs_list)
 
 # include files search paths
@@ -91,31 +91,31 @@ foreach(test_program ${mygsl_tests_programs_list})
     set_target_properties(${test_executable} PROPERTIES DEBUG_POSTFIX d)
   endif()
 
-  set(_test_libraries mygsl) 
+  set(_test_libraries mygsl)
   if(MYGSL_WITH_BIO)
-    list(INSERT _test_libraries 0 mygsl_bio datatools_bio)
-  endif() 
+    list(INSERT _test_libraries 0 mygsl_bio)
+  endif()
   if(MYGSL_WITH_REFLECTION)
     list(INSERT _test_libraries 0 mygsl_reflection datatools_reflection)
-  endif() 
+  endif()
 
   target_link_libraries(${test_executable} ${_test_libraries})
 
   add_test(NAME ${test_executable}.run
-    COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
+    COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash
     --tmp-dir ${_test_tmp_dir}
-    --data-dir ${PROJECT_SOURCE_DIR} 
-    --prefix ${PROJECT_SOURCE_DIR} 
+    --data-dir ${PROJECT_SOURCE_DIR}
+    --prefix ${PROJECT_SOURCE_DIR}
     --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
     run
-    )	 
+    )
 
   unset(_test_libraries)
 endforeach ()
 
 add_custom_target(clean_test
-  COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
-  --prefix ${PROJECT_SOURCE_DIR} 
+  COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash
+  --prefix ${PROJECT_SOURCE_DIR}
   --tmp-dir ${_test_tmp_dir}
   clean
   )
