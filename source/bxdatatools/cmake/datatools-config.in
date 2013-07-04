@@ -36,10 +36,7 @@ datatools_cmake_config_dir="@CMAKE_INSTALL_PREFIX@/@_datatools_cmake_config_inst
 
 datatools_version=@datatools_VERSION@
 
-with_bio=0
-if [ "x@DATATOOLS_WITH_BIO@" == "x1" ]; then
-  with_bio=1
-fi
+with_bio=1
 
 with_reflection=0
 if [ "x@DATATOOLS_WITH_REFLECTION@" == "x1" ]; then
@@ -86,8 +83,6 @@ Known values for OPTION are:
     --without-bio       without linkage against the 'libdatatools_bio@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL
     --with-reflection    with linkage against the 'libdatatools_reflection@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL (default)
     --without-reflection without linkage against the 'libdatatools_reflection@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL
-  --with-bio            print if Boost/Serialization binary code is pre-built
-                        in an auxiliary shared library
   --with-reflection     print if CAMP-based reflection binary code is pre-built
                         in an auxiliary shared library
   --with-debug          print if datatools has been compiled in 'debug' mode

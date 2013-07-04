@@ -90,8 +90,9 @@ set(datatools_PUBLIC_HEADERS
   include/datatools/multi_properties-reflect.h
   include/datatools/properties-reflect.h
   include/datatools/things-reflect.h
+  include/datatools/the_serializable.h
+  include/datatools/the_serializable.ipp
   include/datatools/the_introspectable.h
-
   )
 list_prepend(datatools_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 
@@ -189,10 +190,11 @@ set(datatools_SOURCES
   version.cc
   version_check.cc
   version_id.cc
-  base_service.cc # MUST go at the end....
   object_configuration_description.cc
   ocd_utils.cc
   types.cc
+  the_serializable.cc
+  base_service.cc # MUST go at the end....
   )
 
 #-----------------------------------------------------------------------
@@ -273,33 +275,6 @@ set_target_properties(datatools
 target_link_libraries(datatools ${Boost_LIBRARIES} ${CAMP_LIBRARIES} ${CMAKE_DL_LIBS})
 
 set(DATATOOLS_TARGETS datatools)
-
-#-----------------------------------------------------------------------
-# BUILD THE DATATOOLS BOOST I/O COMPONENT
-# We build this as a shared library as we can then link to it directly
-# On Mac, we use dynamic_lookup for undefined symbols because we want
-# the lib to act as a plugin.
-#
-if(DATATOOLS_WITH_BIO)
-  set(datatools_bio_SOURCES
-    include/datatools/the_serializable.h
-    include/datatools/the_serializable.ipp
-    src/the_serializable.cc
-    )
-  list_prepend(datatools_bio_SOURCES "${PROJECT_SOURCE_DIR}/")
-
-  add_library(datatools_bio SHARED ${datatools_bio_SOURCES})
-
-  target_link_libraries(datatools_bio datatools)
-
-  if(APPLE)
-    set_property(TARGET datatools_bio APPEND
-      PROPERTY LINK_FLAGS "-undefined dynamic_lookup"
-      )
-  endif()
-
-  list(APPEND DATATOOLS_TARGETS datatools_bio)
-endif()
 
 #-----------------------------------------------------------------------
 # BUILD THE DATATOOLS REFLECTION COMPONENT

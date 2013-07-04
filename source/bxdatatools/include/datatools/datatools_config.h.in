@@ -7,7 +7,7 @@
 #define DATATOOLS_DATATOOLS_CONFIG_H_ 1
 
 //! Evaluates to true if datatools was built with Boost I/O support
-#cmakedefine01 DATATOOLS_WITH_BIO
+#define DATATOOLS_WITH_BIO 1
 
 //! Evaluates to true if datatools was built with CAMP reflection support
 #cmakedefine01 DATATOOLS_WITH_REFLECTION

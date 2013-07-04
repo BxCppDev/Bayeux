@@ -45,8 +45,6 @@ message( STATUS "CMAKE_MODULE_PATH='${CMAKE_MODULE_PATH}'")
 #-----------------------------------------------------------------------
 # Build options
 #
-#option(DATATOOLS_WITH_DEBUG "Build debug code" OFF)
-option(DATATOOLS_WITH_BIO   "Build auxiliary Boost I/O library" ON)
 option(DATATOOLS_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" ON)
 option(DATATOOLS_WITH_DOC   "Build the datatools documentation" ON)
 option(DATATOOLS_WITH_TEST  "Build the datatools test suite"    ON)
@@ -63,7 +61,9 @@ find_package(Boost 1.47 REQUIRED ${Boost_COMPONENTS})
 find_package(CLHEP 2.1.0.1 REQUIRED)
 
 # - CAMP
-find_package(CAMP 0.7.1 REQUIRED)
+if(DATATOOLS_WITH_REFLECTION)
+  find_package(CAMP 0.7.1 REQUIRED)
+endif()
 
 #-----------------------------------------------------------------------
 # On Apple, we fixup the install prefix to handle installing documentation,

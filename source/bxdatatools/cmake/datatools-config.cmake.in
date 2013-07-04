@@ -2,10 +2,8 @@
 # It defines the following variables
 #  datatools_INCLUDE_DIRS - include directories for datatools
 #  datatools_LIBRARY      - libraries to link against
-#  datatools_BIO_LIBRARY  - library targets to link against (Boost I/O library)
 #  datatools_REFLECTION_LIBRARY - library targets to link against (reflection library)
 #  datatools_LIBRARIES    - libraries to link against
-#  datatools_WITH_BIO     - flag for Boost/Serialization I/O DLL (a.k.a. 'bio')
 #  datatools_WITH_REFLECTION  - flag for reflection DLL
 #  datatools_DATA_DIR     - path to resource files (data, testing)
 
@@ -77,10 +75,6 @@ set(datatools_INCLUDE_DIRS
 #-----------------------------------------------------------------------
 # Set datatools_LIBRARIES variable
 set(datatools_LIBRARY datatools CACHE PATH "Path to datatools library")
-
-if(datatools_WITH_BIO)
-  set(datatools_BIO_LIBRARY datatools_bio)
-endif()
 
 if(datatools_WITH_REFLECTION)
   set(datatools_REFLECTION_LIBRARY datatools_reflection)
