@@ -79,9 +79,6 @@ foreach ( _mctools_g4_pro_program ${_mctools_g4_programs_list} )
   if ( mygsl_WITH_BIO )
     list ( APPEND _mctools_g4_link_libraries mygsl_bio )
   endif ()
-  if ( datatools_WITH_BIO )
-    list ( APPEND _mctools_g4_link_libraries datatools_bio )
-  endif ()
 
   # Special reflection DLL plugins :
   if(datatools_WITH_REFLECTION)
