@@ -30,7 +30,6 @@ set(datatools_VERSION_MINOR 0)
 set(datatools_VERSION_PATCH 0)
 set(datatools_VERSION "${datatools_VERSION_MAJOR}.${datatools_VERSION_MINOR}.${datatools_VERSION_PATCH}")
 
-
 # - Fixup default install prefix on Mac
 if(APPLE AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   set(CMAKE_INSTALL_PREFIX "/Library/Frameworks" CACHE PATH "Install path prefix, prepended onto install directories." FORCE)
@@ -39,8 +38,6 @@ endif()
 # - Load custom modules
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 include(InstallDirs)
-
-message( STATUS "CMAKE_MODULE_PATH='${CMAKE_MODULE_PATH}'")
 
 #-----------------------------------------------------------------------
 # Build options
@@ -53,7 +50,13 @@ option(DATATOOLS_WITH_TEST  "Build the datatools test suite"    ON)
 # Find external packages needed to build
 #
 # - Boost
-set(Boost_COMPONENTS iostreams serialization filesystem system program_options)
+set(Boost_COMPONENTS 
+  iostreams 
+  serialization 
+  filesystem 
+  system 
+  program_options
+  )
 find_package(Boost 1.47 QUIET COMPONENTS ${Boost_COMPONENTS} NO_MODULE)
 find_package(Boost 1.47 REQUIRED ${Boost_COMPONENTS})
 
@@ -100,13 +103,12 @@ endif()
 #
 if(UNIX)
   # - Normalize exported boolean variables
-  foreach(_ebv BIO REFLECTION)
-    if(DATATOOLS_WITH_${_ebv})
-      set(DATATOOLS_WITH_${_ebv} 1)
-    else()
-      set(DATATOOLS_WITH_${_ebv} 0)
-    endif()
-  endforeach()
+  set(DATATOOLS_WITH_BIO 1)
+  if(DATATOOLS_WITH_REFLECTION)
+    set(DATATOOLS_WITH_REFLECTION 1)
+  else()
+    set(DATATOOLS_WITH_REFLECTION 0)
+  endif()
 
   set(_ld_library_path_env "LD_LIBRARY_PATH")
   if(APPLE)
@@ -146,19 +148,22 @@ endif()
 
 # - Examples :
 set(_datatools_examples_FULL_LOCAL_PATH
-    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/examples"
-   )
+  "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/examples"
+  )
+
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples
-        DESTINATION ${CMAKE_INSTALL_DATADIR}
-        FILE_PERMISSIONS OWNER_READ OWNER_WRITE
-                         GROUP_READ GROUP_WRITE
-                         WORLD_READ
-        DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
-                              GROUP_READ GROUP_WRITE GROUP_EXECUTE
-                              WORLD_READ WORLD_EXECUTE
-        PATTERN ".svn" EXCLUDE
+  DESTINATION ${CMAKE_INSTALL_DATADIR}
+  FILE_PERMISSIONS 
+    OWNER_READ OWNER_WRITE
+    GROUP_READ GROUP_WRITE
+    WORLD_READ
+  DIRECTORY_PERMISSIONS 
+    OWNER_READ OWNER_WRITE OWNER_EXECUTE
+    GROUP_READ GROUP_WRITE GROUP_EXECUTE
+    WORLD_READ WORLD_EXECUTE
+  PATTERN ".svn" EXCLUDE
 	PATTERN "*~" EXCLUDE
-       )
+  )
 
 #-----------------------------------------------------------------------
 # Package

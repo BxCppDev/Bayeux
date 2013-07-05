@@ -41,14 +41,12 @@ if(DOXYGEN_FOUND)
     )
 
   if(APPLE)
+    set(DATATOOLS_GENERATE_DOCSET NO)
     option(DATATOOLS_WITH_DOCSET "Create Xcode Docset for datatools" OFF)
+
     if(DATATOOLS_WITH_DOCSET)
       set(DOXYGEN_GENERATE_DOCSET YES)
-    else()
-      set(DOXYGEN_GENERATE_DOCSET NO)
     endif()
-  else()
-    set(DOXYGEN_GENERATE_DOCSET NO)
   endif()
 
   if(WIN32)

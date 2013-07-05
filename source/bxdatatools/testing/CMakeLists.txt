@@ -22,9 +22,8 @@
 
 
 file(GLOB datatools_tests_programs test_*.cxx)
-list(REMOVE_ITEM datatools_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
-if(DATATOOLS_WITH_REFLECTION)
-  list(APPEND datatools_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
+if(NOT DATATOOLS_WITH_REFLECTION)
+  list(REMOVE_ITEM datatools_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
 endif()
 
 set(datatools_tests_programs_list "${datatools_tests_programs}")
