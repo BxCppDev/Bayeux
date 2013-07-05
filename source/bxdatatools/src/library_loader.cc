@@ -361,29 +361,6 @@ int library_loader::close(const std::string& lib_name_) {
 
 
 void library_loader::init() {
-  // checking test mode :
-  {
-    std::string env_name = "DATATOOLS_LIBRARY_LOADER_TEST";
-    const char* env_check = getenv(env_name.c_str());
-    if (env_check != 0) {
-      std::string ec = env_check;
-      if (ec == "1") {
-        flags_ |= test;
-      }
-    }
-  }
-
-  // configuration file :
-  if (config_filename_.empty()) {
-    std::string env_name = "DATATOOLS_LIBRARY_LOADER_CONFIG";
-    const char* env_check = getenv(env_name.c_str());
-    if (env_check != 0) {
-      config_filename_ = env_check;
-    } else if (this->is_test()) {
-      config_filename_ = "${DATATOOLS_ROOT}/resources/test/test_library_loader.conf";
-    }
-  }
-
   if (config_filename_.empty()) {
     //DT_LOG_WARNING(datatools::logger::PRIO_WARNING, "No library loader config file is available !");
     return;
