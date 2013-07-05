@@ -39,6 +39,10 @@ if(GENBB_HELP_WITH_REFLECTION)
   list (INSERT genbb_help_programs_list_CPP 0 genbb_inspector.cxx)
 endif()
 
+# We refind Boost to add in the program options library
+set(Boost_COMPONENTS)
+find_package(Boost 1.47 QUIET COMPONENTS ${Boost_COMPONENTS} program_options)
+
 # include files search paths
 include_directories ( ${PROJECT_SOURCE_DIR}/include
   ${PROJECT_BINARY_DIR}/include
@@ -72,7 +76,7 @@ if (GENBB_HELP_WITH_FORTRAN)
     target_link_libraries ( ${pro_executable}
       genbb_help_decay0_fortran
       ${mygsl_LIBRARIES}
-    )
+      )
 
   endforeach ()
 
@@ -124,7 +128,7 @@ foreach ( pro_program ${genbb_help_programs_list_CPP} )
   endif ()
 
   message (STATUS "${PROJECT_NAME}: programs: Link libraries='${_pro_libraries}'")
-  target_link_libraries ( ${pro_executable} ${_pro_libraries} )
+  target_link_libraries ( ${pro_executable} ${_pro_libraries} ${Boost_LIBRARIES})
 
 endforeach ()
 
