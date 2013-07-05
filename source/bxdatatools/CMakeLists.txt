@@ -50,15 +50,14 @@ option(DATATOOLS_WITH_TEST  "Build the datatools test suite"    ON)
 # Find external packages needed to build
 #
 # - Boost
-set(Boost_COMPONENTS 
+set(datatools_Boost_COMPONENTS 
   iostreams 
   serialization 
   filesystem 
   system 
-  program_options
   )
-find_package(Boost 1.47 QUIET COMPONENTS ${Boost_COMPONENTS} NO_MODULE)
-find_package(Boost 1.47 REQUIRED ${Boost_COMPONENTS})
+find_package(Boost 1.47 QUIET COMPONENTS ${datatools_Boost_COMPONENTS} NO_MODULE)
+find_package(Boost 1.47 REQUIRED ${datatools_Boost_COMPONENTS})
 
 # - CLHEP
 find_package(CLHEP 2.1.0.1 REQUIRED)
