@@ -20,12 +20,17 @@
 #include <string>
 #include <map>
 
+#include <boost/scoped_ptr.hpp>
+
 #include <datatools/i_tree_dump.h>
 
-#include "G4VUserPhysicsList.hh"
+//#include "G4VUserPhysicsList.hh"
+#include "G4VModularPhysicsList.hh"
 //#include "globals.hh"
 
 #include <mctools/g4/loggable_support.h>
+#include <mctools/g4/physics_list_utils.h>
+#include <mctools/g4/base_physics_constructor.h>
 
 namespace datatools {
   class properties;
@@ -35,7 +40,7 @@ namespace mctools {
 
   namespace g4 {
 
-    class physics_list : public G4VUserPhysicsList,
+    class physics_list : public G4VModularPhysicsList,
                          public datatools::i_tree_dumpable,
                          public loggable_support
     {
@@ -47,120 +52,89 @@ namespace mctools {
           VERBOSITY_MORE    = 2
         };
 
-      // http://geant4.in2p3.fr/IMG/pdf_Lecture-LowEnergyEMPhysics.pdf
-      static const std::string EM_MODEL_STANDARD;
-      static const std::string EM_MODEL_LOW_ENERGY_LIVERMORE;
-      static const std::string EM_MODEL_LOW_ENERGY_PENELOPE;
+      struct production_cuts_info {
+      public:
 
-    public:
+        production_cuts_info();
 
-      bool is_em_standard () const;
+        production_cuts_info(double all_value_);
 
-      bool is_em_low_energy_livermore () const;
+        production_cuts_info(double gamma_value_, double electron_value_,
+                             double positron_value_, double proton_value_);
 
-      bool is_em_low_energy_penelope () const;
+        void initialize(double default_cut_gamma_, double default_cut_electron_,
+                        double default_cut_positron_, double default_cut_proton_);
 
-      const std::string & get_em_model () const;
+      public:
 
-      physics_list (bool logging_ = false);
+        double gamma;
+        double electron;
+        double positron;
+        double proton;
 
-      ~physics_list ();
+      };
+
+      bool has_geant4_physics_list () const;
+
+      const G4VModularPhysicsList & get_geant4_physics_list() const;
+
+      G4VModularPhysicsList & grab_geant4_physics_list();
+
+      bool has_physics_constructor (const std::string & pc_name_) const;
+
+      const base_physics_constructor & get_physics_constructor(const std::string & pc_name_);
+
+      const physics_constructor_dict_type  & get_physics_constructors() const;
+
+      physics_constructor_dict_type  & grab_physics_constructors();
+
+      physics_list ();
+
+      virtual ~physics_list ();
 
       void initialize (const datatools::properties & config_);
+
+      void reset ();
 
       virtual void tree_dump (std::ostream      & out_    = std::clog,
                               const std::string & title_  = "",
                               const std::string & indent_ = "",
                               bool inherit_               = false) const;
 
-       // G4 mandatory interface: construct particle and physics
-      void ConstructParticle ();
+      // G4 mandatory interface: construct particle and physics
+      virtual void ConstructParticle();
 
-      void ConstructProcess ();
+      virtual void ConstructProcess();
 
-      void SetCuts ();
+      virtual void SetCuts ();
 
     protected:
 
       void _set_defaults();
 
-      void _initialize_deexcitation();
+      void _register_physics_constructors();
 
-      // these methods Construct particles
-      void _ConstructBosons ();
-      void _ConstructLeptons ();
-      void _ConstructMesons ();
-      void _ConstructBaryons ();
-      void _ConstructIons ();
-
-      // these methods Construct physics processes and register them
-      void _ConstructGeneral ();
-      void _ConstructEMProcess ();
-      void _ConstructHadronicProcess ();
+      void _SetCuts();
 
     private:
 
-      bool _initialized_;
-      bool _logging_;
-      bool _g4_verbosity_;
+      bool _initialized_; //!< Initialization flag
 
-      std::string _em_model_;
-      bool        _electron_energy_loss_;
-      bool        _electron_multiple_scattering_;
-      bool        _msc_use_distance_to_boundary_;
-      bool        _bremsstrahlung_;
+      std::string                              _geant4_physics_list_name_;
+      boost::scoped_ptr<G4VModularPhysicsList> _geant4_physics_list_; //!< Wrapped official Geant4 physics list
 
-      // http://geant4.in2p3.fr/IMG/pdf_Lecture-LowEnergyEMPhysics.pdf
-      bool        _em_fluo_;
-      bool        _em_auger_;
-      bool        _em_pixe_;
-      std::string _em_pixe_cross_section_model_;
-      static const std::string EM_PIXE_MODEL_EMPIRICAL;
-      static const std::string EM_PIXE_MODEL_ECPSSR_FORMFACTOR;
-      static const std::string EM_PIXE_MODEL_ECPSSR_ANALYTICAL;
-      struct region_deexcitation_type {
-        bool fluo;
-        bool auger;
-        bool pixe;
-        region_deexcitation_type();
-        region_deexcitation_type(bool,bool,bool);
-        bool is_activated() const;
-        bool is_fluo() const;
-        bool is_auger() const;
-        bool is_pixe() const;
-      };
-      std::map<std::string, region_deexcitation_type> _em_regions_deexcitation_;
 
-      bool        _use_geantinos_;
-      bool        _use_optical_photons_;
+      // Physics constructors:
+      base_physics_constructor::factory_register_type  _factory_register_;  //!< The embedded factory register for physics constructors
+      physics_constructor_dict_type                    _physics_constructors_; //!< The embedded dictionnary of physics constructors
 
-      bool        _use_muon_leptons_;
-      bool        _use_tau_leptons_;
-
-      bool        _use_light_mesons_;
-      bool        _use_charm_mesons_;
-      bool        _use_bottom_mesons_;
-
-      bool        _use_nucleons_;
-      bool        _use_strange_baryons_;
-      bool        _use_charm_baryons_;
-      bool        _use_bottom_baryons_;
-
-      bool        _use_light_nuclei_;
-      bool        _use_light_anti_nuclei_;
-      bool        _use_generic_ion_;
-
-      bool        _using_cuts_;
-      double      _default_cut_value_;
-      double      _cuts_min_energy_;
-      double      _cuts_max_energy_;
-      std::map<std::string, double> _region_cuts_;
-      std::map<std::string, double> _particle_cuts_;
-
-      double _electron_cut_;
-      double _positron_cut_;
-      double _gamma_cut_;
-      double _proton_cut_;
+      // Production cuts for secondary particles (only gamma, electron, positron, proton):
+      bool        _using_production_cuts_;
+      double      _production_cuts_low_energy_;
+      double      _production_cuts_high_energy_;
+      double      _production_cuts_default_value_;
+      production_cuts_info _production_cuts_values_;
+      std::map<std::string, production_cuts_info> _production_cuts_per_region_;
 
     };
 

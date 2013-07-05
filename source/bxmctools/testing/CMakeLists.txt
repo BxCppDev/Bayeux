@@ -33,6 +33,8 @@ if (MCTOOLS_WITH_G4)
      test_g4_prng.cxx
      test_g4_detector_construction.cxx
      test_g4_manager.cxx
+     test_g4_particles_physics_constructor.cxx
+     test_g4_em_physics_constructor.cxx
    )
 endif()
 

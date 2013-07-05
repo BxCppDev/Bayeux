@@ -258,7 +258,7 @@ namespace mctools {
             DT_LOG_NOTICE(_logprio(),"|-- " << "Sensitive detectors '" << *i << "'");
           }
           if (is_debug()) {
-            DT_LOG_DEBUG(_logprio(),"|-- " << "Sensitive parameters for '" << *i << "' : ");
+            DT_LOG_DEBUG(_logprio(),"    ==> " << "Sensitive parameters for '" << *i << "' : ");
             _SD_params_.get(*i).get_properties().tree_dump(std::clog, "");
           }
         }

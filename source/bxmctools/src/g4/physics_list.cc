@@ -1,11 +1,9 @@
 // -*- mode: c++ ; -*-
 /* physics_list.cc
  */
-
 /*
  *
- *
- * https://twiki.cern.ch/twiki/bin/view/Geant4/LoweMigratedLivermore
+ * http://geant4.cern.ch/UserDocumentation/UsersGuides/ForApplicationDeveloper/html/ch06.html
  *
  *
  */
@@ -13,6 +11,8 @@
 #include <mctools/g4/physics_list.h>
 
 #include <stdexcept>
+
+#include <boost/algorithm/string/predicate.hpp>
 
 #include <datatools/units.h>
 #include <datatools/ioutils.h>
@@ -24,571 +24,492 @@
 #include <globals.hh>
 #include <G4Version.hh>
 #include <G4UnitsTable.hh>
-#include <G4ProcessManager.hh>
+//#include <G4ProcessManager.hh>
 
 // Particles:
 #include <G4ParticleDefinition.hh>
 #include <G4ParticleTypes.hh>
 #include <G4ParticleTable.hh>
 
-// Bosons:
-//#include <G4BosonConstructor.hh>
-#include <G4ChargedGeantino.hh>
-#include <G4Geantino.hh>
-#include <G4Gamma.hh>
-#include <G4OpticalPhoton.hh>
-
-// Leptons
-//#include <G4LeptonConstructor.hh>
-#include <G4MuonPlus.hh>
-#include <G4MuonMinus.hh>
-#include <G4TauMinus.hh>
-#include <G4TauPlus.hh>
-#include <G4Electron.hh>
-#include <G4Positron.hh>
-#include <G4NeutrinoTau.hh>
-#include <G4AntiNeutrinoTau.hh>
-#include <G4NeutrinoMu.hh>
-#include <G4AntiNeutrinoMu.hh>
-#include <G4NeutrinoE.hh>
-#include <G4AntiNeutrinoE.hh>
-
-// Mesons:
-//#include <G4MesonConstructor.hh>
-#include <G4PionPlus.hh>
-#include <G4PionMinus.hh>
-#include <G4PionZero.hh>
-#include <G4Eta.hh>
-#include <G4EtaPrime.hh>
-
-#include <G4KaonPlus.hh>
-#include <G4KaonMinus.hh>
-#include <G4KaonZero.hh>
-#include <G4AntiKaonZero.hh>
-#include <G4KaonZeroLong.hh>
-#include <G4KaonZeroShort.hh>
-
-#include <G4DMesonPlus.hh>
-#include <G4DMesonMinus.hh>
-#include <G4DMesonZero.hh>
-#include <G4AntiDMesonZero.hh>
-#include <G4DsMesonPlus.hh>
-#include <G4DsMesonMinus.hh>
-#if G4VERSION_NUMBER == 960
-#include <G4Etac.hh>
-#endif // G4VERSION_NUMBER == 960
-#include <G4JPsi.hh>
-
-#include <G4BMesonPlus.hh>
-#include <G4BMesonMinus.hh>
-#include <G4BMesonZero.hh>
-#include <G4AntiBMesonZero.hh>
-#include <G4BsMesonZero.hh>
-#include <G4AntiBsMesonZero.hh>
-#if G4VERSION_NUMBER == 960
-#include <G4BcMesonPlus.hh>
-#include <G4BcMesonMinus.hh>
-#include <G4Upsiron.hh>
-#endif // G4VERSION_NUMBER == 960
-
-// Baryons:
-//#include <G4BaryonConstructor.hh>
-#include <G4Proton.hh>
-#include <G4AntiProton.hh>
-#include <G4Neutron.hh>
-#include <G4AntiNeutron.hh>
-
-#include <G4Lambda.hh>
-#include <G4SigmaPlus.hh>
-#include <G4SigmaZero.hh>
-#include <G4SigmaMinus.hh>
-#include <G4XiMinus.hh>
-#include <G4XiZero.hh>
-#include <G4OmegaMinus.hh>
-
-#include <G4AntiLambda.hh>
-#include <G4AntiSigmaPlus.hh>
-#include <G4AntiSigmaZero.hh>
-#include <G4AntiSigmaMinus.hh>
-#include <G4AntiXiMinus.hh>
-#include <G4AntiXiZero.hh>
-#include <G4AntiOmegaMinus.hh>
-
-#include <G4LambdacPlus.hh>
-#include <G4SigmacPlusPlus.hh>
-#include <G4SigmacPlus.hh>
-#include <G4SigmacZero.hh>
-#include <G4XicPlus.hh>
-#include <G4XicZero.hh>
-#include <G4OmegacZero.hh>
-
-#include <G4AntiLambdacPlus.hh>
-#include <G4AntiSigmacPlusPlus.hh>
-#include <G4AntiSigmacPlus.hh>
-#include <G4AntiSigmacZero.hh>
-#include <G4AntiXicPlus.hh>
-#include <G4AntiXicZero.hh>
-#include <G4AntiOmegacZero.hh>
-
-#if G4VERSION_NUMBER == 960
-#include <G4Lambdab.hh>
-#include <G4SigmabPlus.hh>
-#include <G4SigmabZero.hh>
-#include <G4SigmabMinus.hh>
-#include <G4XibZero.hh>
-#include <G4XibMinus.hh>
-#include <G4OmegabMinus.hh>
-#endif // G4VERSION_NUMBER == 960
-
-#if G4VERSION_NUMBER == 960
-#include <G4AntiLambdab.hh>
-#include <G4AntiSigmabPlus.hh>
-#include <G4AntiSigmabZero.hh>
-#include <G4AntiSigmabMinus.hh>
-#include <G4AntiXibZero.hh>
-#include <G4AntiXibMinus.hh>
-#include <G4AntiOmegabMinus.hh>
-#endif // G4VERSION_NUMBER == 960
-
-
-// Ions:
-//#include <G4IonConstructor.hh>
-// Nuclei
-#include <G4Alpha.hh>
-#include <G4Deuteron.hh>
-#include <G4Triton.hh>
-#include <G4He3.hh>
-#include <G4GenericIon.hh>
-// AntiNuclei
-#include <G4AntiAlpha.hh>
-#include <G4AntiDeuteron.hh>
-#include <G4AntiTriton.hh>
-#include <G4AntiHe3.hh>
-
-// EM processes :
-
-#include <G4EmProcessOptions.hh>
-#include <G4ComptonScattering.hh>
-#include <G4RayleighScattering.hh>
-#include <G4GammaConversion.hh>
-#include <G4PhotoElectricEffect.hh>
-#include <G4eMultipleScattering.hh>
-#include <G4eIonisation.hh>
-#include <G4eBremsstrahlung.hh>
-#include <G4eplusAnnihilation.hh>
-
-#include <G4MuMultipleScattering.hh>
-#include <G4MuIonisation.hh>
-#include <G4MuBremsstrahlung.hh>
-#include <G4MuPairProduction.hh>
-
-#include <G4hMultipleScattering.hh>
-#include <G4hIonisation.hh>
-#include <G4ionIonisation.hh>
-
-/* **** LIVERMORE **** */
-// Gammas :
-#include <G4LivermoreComptonModel.hh>
-#include <G4LivermoreRayleighModel.hh>
-#include <G4LivermoreGammaConversionModel.hh>
-#include <G4LivermorePhotoElectricModel.hh>
-
-// Electrons :
-#include <G4LivermoreIonisationModel.hh>
-#include <G4LivermoreBremsstrahlungModel.hh>
-
-/* **** PENELOPE **** */
-// Gammas :
-#include <G4PenelopeComptonModel.hh>
-#include <G4PenelopeRayleighModel.hh>
-#include <G4PenelopeGammaConversionModel.hh>
-#include <G4PenelopePhotoElectricModel.hh>
-
-// Electrons/positrons :
-#include <G4PenelopeIonisationModel.hh>
-#include <G4PenelopeBremsstrahlungModel.hh>
-
-// Positrons :
-#include <G4PenelopeAnnihilationModel.hh>
-
-
-/* **** Hadronic processes **** */
-
-//
-// Elastic processes:
-#include <G4HadronElasticProcess.hh>
-
-// Inelastic processes:
-#include <G4ProtonInelasticProcess.hh>
-#include <G4AntiProtonInelasticProcess.hh>
-#include <G4NeutronInelasticProcess.hh>
-#include <G4AntiNeutronInelasticProcess.hh>
-#include <G4PionPlusInelasticProcess.hh>
-#include <G4PionMinusInelasticProcess.hh>
-#include <G4KaonPlusInelasticProcess.hh>
-#include <G4KaonMinusInelasticProcess.hh>
-#include <G4KaonZeroSInelasticProcess.hh>
-#include <G4KaonZeroLInelasticProcess.hh>
-#include <G4DeuteronInelasticProcess.hh>
-#include <G4TritonInelasticProcess.hh>
-#include <G4AlphaInelasticProcess.hh>
-#include <G4HadronCaptureProcess.hh>
-
-// Low-energy Models: < 20GeV
-#include <G4LElastic.hh>
-#include <G4LEProtonInelastic.hh>
-#include <G4LEAntiProtonInelastic.hh>
-#include <G4LENeutronInelastic.hh>
-#include <G4LEAntiNeutronInelastic.hh>
-#include <G4LEPionPlusInelastic.hh>
-#include <G4LEPionMinusInelastic.hh>
-#include <G4LEKaonPlusInelastic.hh>
-#include <G4LEKaonMinusInelastic.hh>
-#include <G4LEKaonZeroSInelastic.hh>
-#include <G4LEKaonZeroLInelastic.hh>
-#include <G4LEDeuteronInelastic.hh>
-#include <G4LETritonInelastic.hh>
-#include <G4LEAlphaInelastic.hh>
-// High-energy Models: >20 GeV
-#include <G4HEProtonInelastic.hh>
-#include <G4HEAntiProtonInelastic.hh>
-#include <G4HEPionPlusInelastic.hh>
-#include <G4HEPionMinusInelastic.hh>
-#include <G4HEKaonPlusInelastic.hh>
-#include <G4HEKaonMinusInelastic.hh>
-#include <G4HEKaonZeroInelastic.hh>
-#include <G4HEAntiNeutronInelastic.hh>
-
-// Neutron high-precision models: <20 MeV
-#include <G4NeutronHPElastic.hh>
-#include <G4NeutronHPElasticData.hh>
-#include <G4NeutronHPInelastic.hh>
-#include <G4NeutronHPInelasticData.hh>
-#include <G4NeutronHPCapture.hh>
-#include <G4NeutronHPCaptureData.hh>
-#include <G4LCapture.hh>
-
-// Stopping processes:
-#include <G4PiMinusAbsorptionAtRest.hh>
-#include <G4KaonMinusAbsorptionAtRest.hh>
-
-#include <G4Decay.hh>
-
-#include <G4UserSpecialCuts.hh>
-#include <G4StepLimiter.hh>
-
 #include <G4ProductionCuts.hh>
 #include <G4RegionStore.hh>
+#include <G4PhysListFactory.hh>
 
 namespace mctools {
 
   namespace g4 {
 
-    using namespace std;
+    // *** physics_list::production_cuts_info *** //
 
-    const std::string physics_list::EM_MODEL_STANDARD   = "standard";
-    const std::string physics_list::EM_MODEL_LOW_ENERGY_LIVERMORE = "livermore";
-    const std::string physics_list::EM_MODEL_LOW_ENERGY_PENELOPE  = "penelope";
-
-    const std::string & physics_list::get_em_model () const
+    physics_list::production_cuts_info::production_cuts_info()
     {
-      return _em_model_;
+      datatools::invalidate(gamma);
+      datatools::invalidate(electron);
+      datatools::invalidate(positron);
+      datatools::invalidate(proton);
+      return;
     }
 
-    bool physics_list::is_em_standard () const
+    physics_list::production_cuts_info::production_cuts_info(double all_value_)
     {
-      return _em_model_ == EM_MODEL_STANDARD;
+      gamma    = all_value_;
+      electron = all_value_;
+      positron = all_value_;
+      proton = all_value_;
+      return;
     }
 
-    bool physics_list::is_em_low_energy_livermore () const
+    physics_list::production_cuts_info::production_cuts_info(double gamma_value_, double electron_value_, double positron_value_, double proton_value_)
     {
-      return _em_model_ == EM_MODEL_LOW_ENERGY_PENELOPE;
+      datatools::invalidate(gamma);
+      datatools::invalidate(electron);
+      datatools::invalidate(positron);
+      datatools::invalidate(proton);
+      gamma    = gamma_value_;
+      electron = electron_value_;
+      positron = positron_value_;
+      proton   = proton_value_;
+      return;
     }
 
-    bool physics_list::is_em_low_energy_penelope () const
+    void physics_list::production_cuts_info::initialize(double default_cut_gamma_,
+                                                        double default_cut_electron_,
+                                                        double default_cut_positron_,
+                                                        double default_cut_proton_)
     {
-      return _em_model_ == EM_MODEL_LOW_ENERGY_LIVERMORE;
+      if (! datatools::is_valid(gamma))    gamma    = default_cut_gamma_;
+      if (! datatools::is_valid(electron)) electron = default_cut_electron_;
+      if (! datatools::is_valid(positron)) positron = default_cut_positron_;
+      if (! datatools::is_valid(proton)) positron = default_cut_proton_;
+
+      DT_THROW_IF(datatools::is_valid(gamma) && gamma <= 0.0, std::domain_error,
+                  "Invalid production cut for gamma (" << gamma << ") !");
+      DT_THROW_IF(datatools::is_valid(electron) && electron <= 0.0, std::domain_error,
+                  "Invalid production cut for electron (" << electron << ") !");
+      DT_THROW_IF(datatools::is_valid(positron) && positron <= 0.0, std::domain_error,
+                  "Invalid production cut for positron (" << positron << ") !");
+      DT_THROW_IF(datatools::is_valid(proton) && proton <= 0.0, std::domain_error,
+                  "Invalid production cut for proton (" << proton << ") !");
+      return;
     }
 
-    // ctor:
-    physics_list::physics_list (bool logging_) : G4VUserPhysicsList ()
+    // *** physics_list *** //
+
+    bool physics_list::has_geant4_physics_list () const
+    {
+      return _geant4_physics_list_.get() != 0;
+    }
+
+    const G4VModularPhysicsList & physics_list::get_geant4_physics_list() const
+    {
+      DT_THROW_IF(! _geant4_physics_list_, std::logic_error,
+                  "No Geant4 physics list is defined !");
+      return *_geant4_physics_list_.get();
+    }
+
+    G4VModularPhysicsList & physics_list::grab_geant4_physics_list()
+    {
+      DT_THROW_IF(! _geant4_physics_list_, std::logic_error,
+                  "No Geant4 physics list is defined !");
+      return *_geant4_physics_list_.get();
+    }
+
+    physics_list::physics_list() : G4VModularPhysicsList ()
     {
       _initialized_ = false;
-      _logging_ = logging_;
+      _geant4_physics_list_.reset(0);
       this->_set_defaults ();
       return;
     }
 
-    // dtor:
     physics_list::~physics_list ()
     {
       return;
     }
 
+    void physics_list::_set_defaults ()
+    {
+
+      // Cuts:
+      _using_production_cuts_         = false;
+      datatools::invalidate(_production_cuts_low_energy_);
+      datatools::invalidate(_production_cuts_high_energy_);
+      _production_cuts_default_value_   = 1 * CLHEP::mm;
+      _production_cuts_values_.proton   = _production_cuts_default_value_;
+      _production_cuts_values_.electron = _production_cuts_default_value_;
+      _production_cuts_values_.positron = _production_cuts_default_value_;
+      _production_cuts_values_.gamma    = _production_cuts_default_value_;
+      _geant4_physics_list_name_.clear();
+      _geant4_physics_list_.reset(0);
+
+      return;
+    }
+
+    const physics_constructor_dict_type &
+    physics_list::get_physics_constructors() const
+    {
+      return _physics_constructors_;
+    }
+
+    physics_constructor_dict_type &
+    physics_list::grab_physics_constructors()
+    {
+      return _physics_constructors_;
+    }
+
+    bool physics_list::has_physics_constructor (const std::string & pc_name_) const
+    {
+      physics_constructor_dict_type::const_iterator pc_found = _physics_constructors_.find(pc_name_);
+      return pc_found != _physics_constructors_.end() && pc_found->second.handle;
+    }
+
+    const base_physics_constructor &
+    physics_list::get_physics_constructor(const std::string & pc_name_)
+    {
+      physics_constructor_dict_type::const_iterator pc_found = _physics_constructors_.find(pc_name_);
+      DT_THROW_IF(pc_found == _physics_constructors_.end(),
+                  std::logic_error,
+                  "Cannot find physics constructor with name '" << pc_name_ << "' !");
+      DT_THROW_IF(pc_found->second.handle,
+                  std::logic_error,
+                  "Physics constructor named '" << pc_name_ << "' is not instantiated !");
+      return pc_found->second.handle.get();
+    }
+
     void physics_list::initialize (const datatools::properties & config_)
     {
       DT_LOG_TRACE(_logprio(), "Entering...");
-      DT_THROW_IF (_initialized_, logic_error, "Already initialized !");
+      DT_THROW_IF (_initialized_, std::logic_error, "Already initialized !");
 
-      // *********************** Processes activation *************************** //
+      // *********************** General properties *************************** //
 
-      if (config_.has_key ("em.model")) {
-        _em_model_ = config_.fetch_string ("em.model");
-      }
-      DT_THROW_IF (_em_model_ != EM_MODEL_STANDARD
-                   && _em_model_ != EM_MODEL_LOW_ENERGY_LIVERMORE
-                   && _em_model_ != EM_MODEL_LOW_ENERGY_PENELOPE,
-                   std::logic_error,
-                   "Invalid electro-magnetic interaction model '" << _em_model_ << "' !");
+      loggable_support::_initialize_logging_support(config_);
 
-      DT_LOG_DEBUG(_logprio(),"Electro-magnetic model set to: '" << _em_model_ << "'");
+      _factory_register_.set_label ("mctools::g4::physics_list/factory");
+      _factory_register_.set_verbose (_logprio() == datatools::logger::PRIO_DEBUG);
+      _factory_register_.import(DATATOOLS_FACTORY_GET_SYSTEM_REGISTER (mctools::g4::base_physics_constructor));
 
-      if (config_.has_key ("electron.energy_loss")) {
-        _electron_energy_loss_ = config_.fetch_boolean ("electron.energy_loss");
-      }
-      DT_LOG_DEBUG(_logprio(), "Electrons energy Loss set to: "
-                   <<  _electron_energy_loss_);
-
-      if (config_.has_key ("electron.multiple_scattering")) {
-        _electron_multiple_scattering_ = config_.fetch_boolean ("electron.multiple_scattering");
-      }
-      DT_LOG_DEBUG(_logprio(),"Electrons multiple scattering set to: "
-                   << _electron_multiple_scattering_);
-
-      if (config_.has_key ("bremsstrahlung")) {
-        _bremsstrahlung_ = config_.fetch_boolean ("bremsstrahlung");
-      }
-      DT_LOG_DEBUG(_logprio(),"Bremsstrahlung set to: " <<  _bremsstrahlung_);
-
-
-      /* **** deexcitation **** */
-
-      if (config_.has_flag ("em.deexcitation.fluo")) {
-        _em_fluo_ = true;
-      }
-      DT_LOG_DEBUG(_logprio(),"EM fluroescence set to : " << _em_fluo_);
-
-      if (_em_fluo_) {
-        if (config_.has_flag ("em.deexcitation.auger")) {
-          _em_auger_ = true;
-        }
-        DT_LOG_DEBUG(_logprio(),"EM Auger set to : " << _em_auger_);
+      DT_LOG_DEBUG(_logprio(), "Physics list configuration : ");
+      if (_logprio() >= datatools::logger::PRIO_DEBUG) {
+        config_.tree_dump(std::cerr);
       }
 
-      if (config_.has_flag ("em.deexcitation.pixe")) {
-        _em_pixe_ = true;
-      }
-      DT_LOG_DEBUG(_logprio(),"EM PIXE set to : " << _em_pixe_);
+      // *********************** Geant4 physics list *************************** //
 
-      if (config_.has_key ("em.deexcitation.pixe.model")) {
-        _em_pixe_cross_section_model_ = config_.fetch_string ("em.deexcitation.pixe.model");
-        DT_THROW_IF (_em_pixe_cross_section_model_ != EM_PIXE_MODEL_EMPIRICAL
-                     && _em_pixe_cross_section_model_ != EM_PIXE_MODEL_ECPSSR_FORMFACTOR
-                     && _em_pixe_cross_section_model_ != EM_PIXE_MODEL_ECPSSR_ANALYTICAL,
+      // Try to use the Geant4 official G4PhysListFactory:
+      G4PhysListFactory geant4_physics_list_factory;
+      if (config_.has_key ("geant4.physics_list")) {
+        _geant4_physics_list_name_ = config_.fetch_string ("geant4.physics_list");
+        DT_THROW_IF (! geant4_physics_list_factory.IsReferencePhysList(_geant4_physics_list_name_),
                      std::logic_error,
-                     "Invalid EM PIXE cross-section model '" << _em_pixe_cross_section_model_ << "' !");
-        DT_LOG_DEBUG(_logprio(),"EM PIXE cross-section model set to : " << _em_pixe_cross_section_model_);
+                     "Geant4 physics list factory does not have any '"
+                     << _geant4_physics_list_name_ << "' physics list !");
+        _geant4_physics_list_.reset(geant4_physics_list_factory.GetReferencePhysList(_geant4_physics_list_name_));
       }
 
-      /* **** deexcitation per region **** */
-      std::vector<std::string> deexcitation_regions;
-      if (config_.has_key ("em.deexcitation.regions")) {
-        config_.fetch("em.deexcitation.regions", deexcitation_regions);
-      }
+      // *********************** Physics constructors *************************** //
 
-      for (int i  = 0; i < deexcitation_regions.size(); i++) {
-        const std::string & region_name = deexcitation_regions[i];
-        region_deexcitation_type rd(false,false,false);
-        if (_em_fluo_) {
-          std::ostringstream region_fluo_key;
-          region_fluo_key << "em.deexcitation.regions." << region_name << ".fluo";
-          if (config_.has_flag (region_fluo_key.str())) {
-            rd.fluo = true;
-          }
-          if (rd.fluo) {
-            std::ostringstream region_auger_key;
-            region_auger_key << "em.deexcitation.regions." << region_name << ".auger";
-            if (config_.has_flag (region_auger_key.str())) {
-              rd.auger = true;
-            }
-          }
-          std::ostringstream region_pixe_key;
-          region_pixe_key << "em.deexcitation.regions." << region_name << ".pixe";
-          if (config_.has_flag (region_pixe_key.str())) {
-            rd.pixe = true;
-          }
+      // If we do not use a Geant4 official G4PhysListFactory, we build
+      // our own physics list from a set of physics constructors instantiated
+      // from a dedicated factory :
+      if (! has_geant4_physics_list()) {
+        std::vector<std::string> physics_constructors_names;
+        if (config_.has_key ("physics_constructors.names")) {
+          config_.fetch ("physics_constructors.names", physics_constructors_names);
         }
-        _em_regions_deexcitation_[region_name] = rd;
+
+        DT_THROW_IF(physics_constructors_names.size() == 0,
+                    std::logic_error,
+                    "No physics constructor is provided !");
+
+        for (int i = 0; i < physics_constructors_names.size(); i++) {
+          const std::string & pc_name = physics_constructors_names[i];
+          DT_THROW_IF(pc_name.empty(), std::logic_error,
+                      "Empty physics constructor name !");
+          std::ostringstream pc_id_key;
+          pc_id_key << "physics_constructors." << pc_name << ".id";
+          DT_THROW_IF(! config_.has_key (pc_id_key.str()),
+                      std::logic_error,
+                      "Missing ID property '" << pc_id_key.str()
+                      << "' for physics constructor '" << pc_name << "' !");
+          const std::string & pc_id = config_.fetch_string (pc_id_key.str());
+
+          std::ostringstream pc_config_key;
+          pc_config_key << "physics_constructors." << pc_name << ".config";
+          DT_THROW_IF(! config_.has_key (pc_config_key.str()),
+                      std::logic_error,
+                      "Missing configuration property '" << pc_config_key.str()
+                      << "' for physics constructor '" << pc_name << "' !");
+          const std::string & pc_config = config_.fetch_string (pc_config_key.str());
+          {
+            physics_constructor_entry pc_dummy;
+            pc_dummy.name = pc_name;
+            pc_dummy.id = pc_id;
+            pc_dummy.status = 0;
+            physics_constructor_dict_type::const_iterator pc_found
+              = _physics_constructors_.find(pc_name);
+            DT_THROW_IF (pc_found != _physics_constructors_.end(),
+                         std::logic_error,
+                         "A physics constructor with name '" << pc_name << "' already exists !");
+            _physics_constructors_[pc_name] = pc_dummy;
+          }
+          physics_constructor_entry & pce = _physics_constructors_[pc_name];
+          std::string pc_config_filename = pc_config;
+          datatools::fetch_path_with_env(pc_config_filename);
+          pce.config.read_configuration(pc_config_filename);
+          pce.status = 0;
+
+          // if (boost::starts_with(pce.id, "geant4::")) {
+          //
+          //   // There is no support yet for Geant builder classes.
+          //   // This would imply some dedicated factory (not provided
+          //   // by Geant4 itself) and also some mechanism to parametrize
+          //   // physics builder objects (properties + CAMP ?)
+          //
+          // } else
+          {
+            // Search for the physics constructor ID in the factory dictionary:
+            DT_THROW_IF (! _factory_register_.has (pce.id),
+                         std::logic_error,
+                         "Cannot find physics constructor factory with ID '"
+                         << pce.id << "' for physics constructor named '"
+                         << pce.name << "' !");
+            const base_physics_constructor::factory_register_type::factory_type & the_factory
+              = _factory_register_.get(pce.id);
+            base_physics_constructor * pc = the_factory ();
+            DT_THROW_IF (pc == 0,
+                         std::logic_error,
+                         "Creation of '" <<pce.name << "' physics constructor of type '"
+                         << pce.id << "' failed !");
+            pc->set_name(pce.name);
+            pc->set_class_id(pce.id);
+            pc->_set_mother_physics_list(*this);
+            pce.handle.reset(pc);
+            pce.status |= physics_constructor_entry::STATUS_CREATED;
+            pc->initialize(pce.config, _physics_constructors_);
+            pce.status |= physics_constructor_entry::STATUS_INITIALIZED;
+          }
+        } // for (int i = 0; i < physics_constructors_names.size(); i++) {
+      } // if (! has_geant4_physics_list())
+
+
+      // *********************** Production cuts *************************** //
+
+      if (config_.has_key ("using_production_cuts")) {
+        _using_production_cuts_ = config_.fetch_boolean ("using_production_cuts");
       }
+      DT_LOG_DEBUG(_logprio(),"Use production cuts set to: " << _using_production_cuts_);
 
+      if (_using_production_cuts_) {
 
-      // *********************** Particles *************************** //
-
-      // Bosons:
-      if (config_.has_flag ("use_geantinos")) {
-        _use_geantinos_ = true;
-      }
-      DT_LOG_DEBUG(_logprio(),"Use geantinos set to: " << _use_geantinos_);
-
-      if (config_.has_flag ("use_optical_photons")) {
-        _use_optical_photons_ = true;
-      }
-      DT_LOG_DEBUG(_logprio(),"Use optical photons set to: " << _use_optical_photons_);
-
-      // Leptons:
-      if (config_.has_flag ("use_muon_leptons")) {
-        _use_muon_leptons_ = true;
-      }
-      DT_LOG_DEBUG(_logprio(),"Use muon leptons set to: " << _use_muon_leptons_);
-
-      if (config_.has_flag ("use_tau_leptons")) {
-        _use_tau_leptons_ = true;
-      }
-      DT_LOG_DEBUG(_logprio(),"Use tau leptons set to: " << _use_tau_leptons_);
-
-
-      // Mesons:
-      if (config_.has_flag ("use_light_mesons")) {
-        _use_light_mesons_ = true;
-      }
-      DT_LOG_DEBUG(_logprio(),"Use light mesons set to: " << _use_light_mesons_);
-
-      if (config_.has_flag ("use_charm_mesons")) {
-        _use_charm_mesons_ = true;
-      }
-      DT_LOG_DEBUG(_logprio(),"Use charm mesons set to: " << _use_charm_mesons_);
-
-      if (config_.has_flag ("use_bottom_mesons")) {
-        _use_bottom_mesons_ = true;
-      }
-      DT_LOG_DEBUG(_logprio(),"Use bottom mesons set to: " << _use_bottom_mesons_);
-
-      // Baryons :
-      if (config_.has_flag ("use_nucleons")) {
-        _use_nucleons_ = true;
-      }
-      DT_LOG_DEBUG(_logprio(),"Use nucleons set to: " << _use_nucleons_);
-
-      if (config_.has_flag ("use_strange_baryons")) {
-        _use_strange_baryons_ = true;
-      }
-      DT_LOG_DEBUG(_logprio(),"Use strange baryons set to: " << _use_strange_baryons_);
-
-      if (config_.has_flag ("use_charm_baryons")) {
-        _use_charm_baryons_ = true;
-      }
-      DT_LOG_DEBUG(_logprio(),"Use charm baryons set to: " << _use_charm_baryons_);
-
-      if (config_.has_flag ("use_bottom_baryons")) {
-        _use_bottom_baryons_ = true;
-      }
-      DT_LOG_DEBUG(_logprio(),"Use bottom baryons set to: " << _use_bottom_baryons_);
-
-      // Nuclei:
-      if (config_.has_flag ("use_light_nuclei")) {
-        _use_light_nuclei_ = true;
-      }
-      DT_LOG_DEBUG(_logprio(),"Use light nuclei set to: " << _use_light_nuclei_);
-
-      if (config_.has_flag ("use_light_anti_nuclei")) {
-        _use_light_anti_nuclei_ = true;
-      }
-      DT_LOG_DEBUG(_logprio(),"Use light anti-nuclei set to: " << _use_light_anti_nuclei_);
-
-      if (config_.has_flag ("use_generic_ion")) {
-        _use_generic_ion_ = true;
-      }
-      DT_LOG_DEBUG(_logprio(),"Use generic ion set to: " << _use_generic_ion_);
-
-      // *********************** Cuts *************************** //
-      if (config_.has_flag ("using_cuts")) {
-        _using_cuts_ = true;
-      }
-      DT_LOG_DEBUG(_logprio(),"Use cuts set to: " << _using_cuts_);
-
-      if (_using_cuts_) {
         // Production cuts:
         std::vector<std::string> regions;
         double lunit = CLHEP::mm;
+        double eunit = CLHEP::MeV;
+
+        // Production cuts length unit :
+        if (config_.has_key ("production_cuts.length_unit")) {
+          std::string lunit_str = config_.fetch_string ("production_cuts.length_unit");
+          lunit = datatools::units::get_length_unit_from (lunit_str);
+        }
+
+        // Production cuts energy unit :
+        if (config_.has_key ("production_cuts.energy_unit")) {
+          std::string eunit_str = config_.fetch_string ("production_cuts.energy_unit");
+          eunit = datatools::units::get_energy_unit_from (eunit_str);
+        }
+
+        // Production cuts low edge energy :
+        if (config_.has_key ("production_cuts.low_energy")) {
+          _production_cuts_low_energy_ = config_.fetch_real ("production_cuts.low_energy");
+          if (! config_.has_explicit_unit("production_cuts.low_energy")) _production_cuts_low_energy_ *= eunit;
+        }
+        DT_LOG_NOTICE(_logprio(), "Production cuts low edge energy: " << _production_cuts_low_energy_ / CLHEP::eV << " eV");
+
+        // Production cuts high edge energy :
+        if (config_.has_key ("production_cuts.high_energy")) {
+          _production_cuts_high_energy_ = config_.fetch_real ("production_cuts.high_energy");
+          if (! config_.has_explicit_unit("production_cuts.high_energy")) _production_cuts_high_energy_ *= eunit;
+        }
+        DT_LOG_NOTICE(_logprio(), "Production cuts high edge energy: " << _production_cuts_high_energy_ / CLHEP::MeV << " MeV");
+
+        // Default production cut value
+        if (config_.has_key ("production_cuts.default_value")) {
+          _production_cuts_default_value_ = config_.fetch_real ("production_cuts.default_value");
+          DT_THROW_IF(_production_cuts_default_value_ <= 0.0, std::domain_error,
+                      "Invalid default cut value (" << _production_cuts_default_value_ << ") !");
+          if (! config_.has_explicit_unit ("production_cuts.default_value")) {
+            _production_cuts_default_value_ *= lunit;
+          }
+        }
+
+        // Default production cut values per particle :
+        _production_cuts_values_.gamma    = _production_cuts_default_value_;
+        _production_cuts_values_.electron = _production_cuts_default_value_;
+        _production_cuts_values_.positron = _production_cuts_default_value_;
+        _production_cuts_values_.proton   = _production_cuts_default_value_;
+
+        // Default gamma production cut :
+        if (config_.has_key ("production_cuts.gamma")) {
+          _production_cuts_values_.gamma = config_.fetch_real ("production_cuts.gamma");
+          if (! config_.has_explicit_unit("production_cuts.gamma"))  {
+            _production_cuts_values_.gamma *= lunit;
+          }
+        }
+        DT_LOG_NOTICE(_logprio(), "Gamma cut set to: " << _production_cuts_values_.gamma / CLHEP::mm << " mm");
+
+        // Default electron production cut :
+        if (config_.has_key ("production_cuts.electron")) {
+          _production_cuts_values_.electron = config_.fetch_real ("production_cuts.electron");
+          if (! config_.has_explicit_unit("production_cuts.electron"))  {
+            _production_cuts_values_.electron *= lunit;
+          }
+        }
+        DT_LOG_NOTICE(_logprio(), "Electron cut set to: " << _production_cuts_values_.electron / CLHEP::mm << " mm");
+
+        // Default positron production cut :
+        if (config_.has_key ("production_cuts.positron")) {
+          _production_cuts_values_.positron = config_.fetch_real ("production_cuts.positron");
+          if (! config_.has_explicit_unit("production_cuts.positron"))  {
+            _production_cuts_values_.positron *= lunit;
+          }
+        }
+        DT_LOG_NOTICE(_logprio(), "Positron cut set to: " << _production_cuts_values_.positron / CLHEP::mm << " mm");
+
+        // Default proton production cut :
+        if (config_.has_key ("production_cuts.proton")) {
+          _production_cuts_values_.proton = config_.fetch_real ("production_cuts.proton");
+          if (! config_.has_explicit_unit("production_cuts.proton"))  {
+            _production_cuts_values_.proton *= lunit;
+          }
+        }
+        DT_LOG_NOTICE(_logprio(), "Proton cut set to: " << _production_cuts_values_.proton / CLHEP::mm << " mm");
+
+        // Production cuts per regions :
         if (config_.has_key ("production_cuts.regions")) {
           config_.fetch ("production_cuts.regions", regions);
 
-          if (config_.has_key ("production_cuts.length_unit")) {
-            string lunit_str = config_.fetch_string ("production_cuts.length_unit");
-            lunit = datatools::units::get_length_unit_from (lunit_str);
-          }
-
           for (int i = 0; i < (int) regions.size (); i++) {
-            const string & region_label = regions[i];
-            ostringstream key_ss;
-            key_ss << "production_cuts." << region_label;
+            const std::string & region_label = regions[i];
+            production_cuts_info pc_info;
+            pc_info.gamma    = _production_cuts_values_.gamma;
+            pc_info.electron = _production_cuts_values_.electron;
+            pc_info.positron = _production_cuts_values_.positron;
+            pc_info.proton   = _production_cuts_values_.proton;
+            int checked = false;
+            // try all particles first:
+            std::ostringstream key_ss;
+            key_ss << "production_cuts.regions." << region_label << ".all";
             std::string key = key_ss.str();
-            DT_THROW_IF (! config_.has_key(key),
-                         logic_error,
-                         "Missing production cuts for '"
-                         << key << "' !");
-            double production_cut = config_.fetch_real (key);
-            if (! config_.has_explicit_unit (key)) {
-              production_cut *= lunit;
+            if (config_.has_key(key)) {
+              double all_production_cut = config_.fetch_real(key);
+              if (! config_.has_explicit_unit (key)) {
+                all_production_cut *= lunit;
+              }
+              pc_info.gamma    = all_production_cut;
+              pc_info.electron = all_production_cut;
+              pc_info.positron = all_production_cut;
+              pc_info.proton   = all_production_cut;
+              checked = true;
+            } else {
+              // try gamma:
+              {
+                std::ostringstream key_ss;
+                key_ss << "production_cuts.regions." << region_label << ".gamma";
+                std::string key = key_ss.str();
+                if (config_.has_key(key)) {
+                  double gamma_production_cut = config_.fetch_real(key);
+                  if (! config_.has_explicit_unit (key)) {
+                    gamma_production_cut *= lunit;
+                  }
+                  pc_info.gamma = gamma_production_cut;
+                  checked = true;
+                }
+              }
+              // try electron:
+              {
+                std::ostringstream key_ss;
+                key_ss << "production_cuts.regions." << region_label << ".electron";
+                std::string key = key_ss.str();
+                if (config_.has_key(key)) {
+                  double electron_production_cut = config_.fetch_real(key);
+                  if (! config_.has_explicit_unit (key)) {
+                    electron_production_cut *= lunit;
+                  }
+                  pc_info.electron = electron_production_cut;
+                  checked = true;
+                }
+              }
+              // try positron:
+              {
+                std::ostringstream key_ss;
+                key_ss << "production_cuts.regions." << region_label << ".positron";
+                std::string key = key_ss.str();
+                if (config_.has_key(key)) {
+                  double positron_production_cut = config_.fetch_real(key);
+                  if (! config_.has_explicit_unit (key)) {
+                    positron_production_cut *= lunit;
+                  }
+                  pc_info.positron = positron_production_cut;
+                  checked = true;
+                }
+              }
+              // try proton:
+              {
+                std::ostringstream key_ss;
+                key_ss << "production_cuts.regions." << region_label << ".proton";
+                std::string key = key_ss.str();
+                if (config_.has_key(key)) {
+                  double proton_production_cut = config_.fetch_real(key);
+                  if (! config_.has_explicit_unit (key)) {
+                    proton_production_cut *= lunit;
+                  }
+                  pc_info.proton = proton_production_cut;
+                  checked = true;
+                }
+              }
             }
-            _region_cuts_[region_label] = production_cut;
+            DT_THROW_IF(! checked, std::logic_error,
+                        "Missing production cuts value(s)  for region '"
+                        << region_label << "' !");
+            pc_info.initialize(_production_cuts_values_.gamma,
+                               _production_cuts_values_.electron,
+                               _production_cuts_values_.positron,
+                               _production_cuts_values_.proton);
+            _production_cuts_per_region_[region_label] = pc_info;
           }
         }
 
-        DT_LOG_NOTICE(_logprio(), "Production cuts for regions : ");
-
-        for (map<string, double>::const_iterator i = _region_cuts_.begin ();
-             i != _region_cuts_.end ();
-             i++) {
-          map<string, double>::const_iterator j = i;
-          j++;
-          if (j == _region_cuts_.end ()) {
-            clog << "`-- ";
-          } else {
-            clog << "|-- ";
+        if (is_debug()) {
+          DT_LOG_DEBUG(_logprio(), "Production cuts for regions : ");
+          for (std::map<std::string, production_cuts_info>::const_iterator i
+                 = _production_cuts_per_region_.begin ();
+               i != _production_cuts_per_region_.end ();
+               i++) {
+            std::map<std::string, production_cuts_info>::const_iterator j = i;
+            j++;
+            if (j == _production_cuts_per_region_.end ()) {
+              std::clog << "`-- ";
+            } else {
+              std::clog << "|-- ";
+            }
+            std::clog << "Region '" << i->first << "'  :  Production cuts are : "
+                      << " gamma = " << i->second.gamma / CLHEP::mm << " mm"
+                      << " electron = " << i->second.electron / CLHEP::mm << " mm"
+                      << " positron = " << i->second.positron / CLHEP::mm << " mm"
+                      << " proton = " << i->second.proton / CLHEP::mm << " mm"
+              ;
+            std::clog << std::endl;
           }
-          clog << "Region '" << i->first << "'  :  Production cuts = "
-               << i->second/ CLHEP::mm << " mm" << endl;
         }
-
-        // Electron cut :
-        if (config_.has_key ("electron_cut")) {
-          _electron_cut_ = config_.fetch_real ("electron_cut");
-          if (! config_.has_explicit_unit("electron_cut")) _electron_cut_ *= lunit;
-        }
-        DT_LOG_NOTICE(_logprio(), "Electron cut set to: " << _electron_cut_ / CLHEP::mm << " mm");
-
-        // Positron cut :
-        if (config_.has_key ("positron_cut")) {
-          _positron_cut_ = config_.fetch_real ("positron_cut");
-          if (! config_.has_explicit_unit("positron_cut")) _positron_cut_ *= lunit;
-        }
-        DT_LOG_NOTICE(_logprio(), "Positron cut set to: " << _positron_cut_ / CLHEP::mm << " mm");
-
-        // Gamma cut :
-        if (config_.has_key ("gamma_cut")) {
-          _gamma_cut_ = config_.fetch_real ("gamma_cut");
-          if (! config_.has_explicit_unit("gamma_cut")) _gamma_cut_ *= lunit;
-        }
-        DT_LOG_NOTICE(_logprio(), "Gamma cut set to: " << _gamma_cut_ / CLHEP::mm << " mm");
-
-        // Proton cut :
-        if (config_.has_key ("proton_cut")) {
-          _proton_cut_ = config_.fetch_real ("proton_cut");
-          if (! config_.has_explicit_unit("proton_cut")) _proton_cut_ *= lunit;
-        }
-        DT_LOG_NOTICE(_logprio(), "Proton cut set to: " << _proton_cut_ / CLHEP::mm << " mm");
       }
 
-      SetVerboseLevel (_g4_verbosity_);
-      clog << datatools::io::notice
-           << "mctools::g4::physics_list::initialize: "
-           << "Original default cut Length : " << G4BestUnit (defaultCutValue, "Length") << endl;
-      SetDefaultCutValue (_default_cut_value_);
-      DT_LOG_NOTICE(_logprio(), "Default cut Length : " << G4BestUnit (defaultCutValue, "Length"));
+      //SetVerboseLevel (_g4_verbosity_);
+      std::clog << datatools::io::notice
+                << "mctools::g4::physics_list::initialize: "
+                << "Original default cut Length : " << G4BestUnit (defaultCutValue, "Length") << std::endl;
 
-      // Initialize deexcitation :
-      _initialize_deexcitation();
+      _register_physics_constructors();
 
       _initialized_ = true;
 
@@ -596,808 +517,145 @@ namespace mctools {
       return;
     }
 
-    void physics_list::_set_defaults ()
+    void physics_list::_register_physics_constructors()
     {
-      _g4_verbosity_ = VERBOSITY_SILENT;
+      DT_LOG_TRACE(_logprio(), "Entering...");
+      DT_THROW_IF (_initialized_, std::logic_error, "Already initialized !");
 
-      _em_model_                     = EM_MODEL_STANDARD;
-      _electron_energy_loss_         = true;
-      _electron_multiple_scattering_ = true;
-      // _msc_use_distance_to_boundary_ = true;
-      _bremsstrahlung_               = true;
-      _em_fluo_                      = false;
-      _em_auger_                     = false;
-      _em_pixe_                      = false;
-      _em_pixe_cross_section_model_.clear();
+      for (physics_constructor_dict_type::iterator i = _physics_constructors_.begin();
+           i != _physics_constructors_.end();
+           i++) {
+        physics_constructor_entry & pc_entry = i->second;
+        DT_THROW_IF(!(pc_entry.status & physics_constructor_entry::STATUS_INITIALIZED),
+                    std::logic_error,
+                    "Physics constructor '" << i->first << "' is not initialized !");
+        base_physics_constructor & pc = pc_entry.grab_physics_constructor();
+        DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
+                      "Registering physics constructor '" << i->first << "'...");
+        RegisterPhysics(new physics_constructor_proxy(pc));
+      }
 
-      // Bosons:
-      _use_geantinos_                = false;
-      _use_optical_photons_          = false;
-
-      // Leptons:
-      _use_muon_leptons_             = false;
-      _use_tau_leptons_              = false;
-
-      // Mesons:
-      _use_light_mesons_             = false;
-      _use_charm_mesons_             = false;
-      _use_bottom_mesons_            = false;
-
-      // Baryons:
-      _use_nucleons_                 = false;
-      _use_strange_baryons_          = false;
-      _use_charm_baryons_            = false;
-      _use_bottom_baryons_           = false;
-
-      // Ions:
-      _use_light_nuclei_             = false;
-      _use_light_anti_nuclei_        = false;
-      _use_generic_ion_              = false;
-
-      // Cuts:
-      _using_cuts_        = false;
-      _default_cut_value_ = 1.0 * CLHEP::micrometer;
-      datatools::invalidate(_cuts_min_energy_); //250*eV
-      datatools::invalidate(_cuts_max_energy_); //1*GeV
-      _electron_cut_ = 1.0 * CLHEP::mm;
-      _positron_cut_ = 1.0 * CLHEP::mm;
-      _gamma_cut_    = 1.0 * CLHEP::mm;
-      _proton_cut_   = 1.0 * CLHEP::mm;
-
+      DT_LOG_TRACE(_logprio(), "Exiting.");
       return;
     }
 
+    void physics_list::reset ()
+    {
+      DT_LOG_TRACE(_logprio(), "Entering...");
+      DT_THROW_IF (! _initialized_, std::logic_error, "Not initialized !");
+
+      _initialized_ = false;
+
+      if (has_geant4_physics_list()) {
+        _geant4_physics_list_.reset(0);
+        _geant4_physics_list_name_.clear();
+      } else {
+        _physics_constructors_.clear ();
+        _production_cuts_per_region_.clear();
+      }
+      _set_defaults ();
+
+
+      DT_LOG_TRACE(_logprio(), "Exiting.");
+      return;
+    }
 
     void physics_list::ConstructParticle ()
     {
-      DT_THROW_IF (! _initialized_, std::logic_error, "Not initialized !");
+      DT_LOG_TRACE(_logprio(), "Entering...");
 
-      // In this method, static member functions should be called
-      // for all particles which you want to use.
-      // This ensures that objects of these particle types will be
-      // created in the program.
+      if (has_geant4_physics_list()) {
+        grab_geant4_physics_list().ConstructParticle();
+      } else {
+        this->G4VModularPhysicsList::ConstructParticle();
+      }
 
-      // bosons
-      _ConstructBosons ();
-
-      // leptons
-      _ConstructLeptons ();
-
-      // mesons
-      _ConstructMesons ();
-
-      // baryons
-      _ConstructBaryons ();
-
-      // ions
-      _ConstructIons ();
-
+      DT_LOG_TRACE(_logprio(), "Exiting.");
       return;
     }
-
-    void physics_list::_ConstructIons ()
-    {
-      if (_use_light_nuclei_) {
-        G4Alpha::AlphaDefinition();
-        G4Deuteron::DeuteronDefinition();
-        G4Triton::TritonDefinition();
-        G4He3::He3Definition();
-      }
-      if (_use_light_anti_nuclei_) {
-        G4AntiAlpha::AntiAlphaDefinition();
-        G4AntiDeuteron::AntiDeuteronDefinition();
-        G4AntiTriton::AntiTritonDefinition();
-        G4AntiHe3::AntiHe3Definition();
-      }
-      if (_use_generic_ion_) {
-        G4GenericIon::GenericIonDefinition();
-      }
-      return;
-    }
-
-
-    void physics_list::_ConstructBosons ()
-    {
-      // gammas
-      G4Gamma::GammaDefinition ();
-
-      if (_use_geantinos_) {
-        G4Geantino::GeantinoDefinition ();
-        G4ChargedGeantino::ChargedGeantinoDefinition ();
-      }
-      if (_use_optical_photons_) {
-        G4OpticalPhoton::OpticalPhotonDefinition ();
-      }
-
-      return;
-    }
-
-    void physics_list::_ConstructLeptons ()
-    {
-      // Light leptons e+/e- :
-      //G4LeptonConstructor::ConstructELeptons();
-      G4Electron::ElectronDefinition();
-      G4Positron::PositronDefinition();
-      G4NeutrinoE::NeutrinoEDefinition();
-      G4AntiNeutrinoE::AntiNeutrinoEDefinition();
-
-      // Muon (anti-)leptons :
-      if (_use_muon_leptons_) {
-        //G4LeptonConstructor::ConstructMuLeptons();
-        G4MuonPlus::MuonPlusDefinition();
-        G4MuonMinus::MuonMinusDefinition();
-        G4NeutrinoMu::NeutrinoMuDefinition();
-        G4AntiNeutrinoMu::AntiNeutrinoMuDefinition();
-      }
-
-      // Tau (anti-)leptons :
-      if (_use_tau_leptons_) {
-        //G4LeptonConstructor::ConstructTauLeptons();
-        G4TauMinus::TauMinusDefinition();
-        G4TauPlus::TauPlusDefinition();
-        G4NeutrinoTau::NeutrinoTauDefinition();
-        G4AntiNeutrinoTau::AntiNeutrinoTauDefinition();
-      }
-
-      return;
-    }
-
-
-    void physics_list::_ConstructMesons ()
-    {
-      if (_use_light_mesons_) {
-        //G4MesonConstructor::ConstructLightMesons();
-        G4PionPlus::PionPlusDefinition();
-        G4PionMinus::PionMinusDefinition();
-        G4PionZero::PionZeroDefinition();
-        G4Eta::EtaDefinition();
-        G4EtaPrime::EtaPrimeDefinition();
-        G4KaonPlus::KaonPlusDefinition();
-        G4KaonMinus::KaonMinusDefinition();
-        G4KaonZero::KaonZeroDefinition();
-        G4AntiKaonZero::AntiKaonZeroDefinition();
-        G4KaonZeroLong::KaonZeroLongDefinition();
-        G4KaonZeroShort::KaonZeroShortDefinition();
-      }
-      if (_use_charm_mesons_) {
-        //G4MesonConstructor::ConstructCharmMesons();
-        G4DMesonPlus::DMesonPlusDefinition();
-        G4DMesonMinus::DMesonMinusDefinition();
-        G4DMesonZero::DMesonZeroDefinition();
-        G4AntiDMesonZero::AntiDMesonZeroDefinition();
-        G4DsMesonPlus::DsMesonPlusDefinition();
-        G4DsMesonMinus::DsMesonMinusDefinition();
-#if G4VERSION_NUMBER == 960
-        G4Etac::EtacDefinition();
-#endif // G4VERSION_NUMBER == 960
-        G4JPsi::JPsiDefinition();
-      }
-      if (_use_bottom_mesons_) {
-        //G4MesonConstructor::ConstructBottomMesons();
-        G4BMesonPlus::BMesonPlusDefinition();
-        G4BMesonMinus::BMesonMinusDefinition();
-        G4BMesonZero::BMesonZeroDefinition();
-        G4AntiBMesonZero::AntiBMesonZeroDefinition();
-        G4BsMesonZero::BsMesonZeroDefinition();
-        G4AntiBsMesonZero::AntiBsMesonZeroDefinition();
-#if G4VERSION_NUMBER == 960
-        G4BcMesonPlus::BcMesonPlusDefinition();
-        G4BcMesonMinus::BcMesonMinusDefinition();
-        G4Upsiron::UpsironDefinition();
-#endif // G4VERSION_NUMBER == 960
-
-      }
-      return;
-    }
-
-
-    void physics_list::_ConstructBaryons ()
-    {
-      if (_use_nucleons_) {
-        //G4BaryonConstructor::ConstructNucleons();
-        G4Proton::ProtonDefinition();
-        G4Neutron::NeutronDefinition();
-        G4AntiProton::AntiProtonDefinition();
-        G4AntiNeutron::AntiNeutronDefinition();
-      }
-      if (_use_strange_baryons_) {
-        //G4BaryonConstructor::ConstructStrangeBaryons();
-        G4Lambda::LambdaDefinition();
-        G4AntiLambda::AntiLambdaDefinition();
-        G4SigmaZero::SigmaZeroDefinition();
-        G4AntiSigmaZero::AntiSigmaZeroDefinition();
-        G4SigmaPlus::SigmaPlusDefinition();
-        G4AntiSigmaPlus::AntiSigmaPlusDefinition();
-        G4SigmaMinus::SigmaMinusDefinition();
-        G4AntiSigmaMinus::AntiSigmaMinusDefinition();
-        G4XiZero::XiZeroDefinition();
-        G4AntiXiZero::AntiXiZeroDefinition();
-        G4XiMinus::XiMinusDefinition();
-        G4AntiXiMinus::AntiXiMinusDefinition();
-        G4OmegaMinus::OmegaMinusDefinition();
-        G4AntiOmegaMinus::AntiOmegaMinusDefinition();
-      }
-      if (_use_charm_baryons_) {
-        //G4BaryonConstructor::ConstructCharmBaryons();
-        G4LambdacPlus::LambdacPlusDefinition();
-        G4SigmacPlusPlus::SigmacPlusPlusDefinition();
-        G4SigmacPlus::SigmacPlusDefinition();
-        G4SigmacZero::SigmacZeroDefinition();
-        G4XicPlus::XicPlusDefinition();
-        G4XicZero::XicZeroDefinition();
-        G4OmegacZero::OmegacZeroDefinition();
-
-        G4AntiLambdacPlus::AntiLambdacPlusDefinition();
-        G4AntiSigmacPlusPlus::AntiSigmacPlusPlusDefinition();
-        G4AntiSigmacPlus::AntiSigmacPlusDefinition();
-        G4AntiSigmacZero::AntiSigmacZeroDefinition();
-        G4AntiXicPlus::AntiXicPlusDefinition();
-        G4AntiXicZero::AntiXicZeroDefinition();
-        G4AntiOmegacZero::AntiOmegacZeroDefinition();
-      }
-      if (_use_bottom_baryons_) {
-        //G4BaryonConstructor::ConstructBottomBaryons();
-#if G4VERSION_NUMBER == 960
-        G4Lambdab::LambdabDefinition();
-        G4SigmabPlus::SigmabPlusDefinition();
-        G4SigmabZero::SigmabZeroDefinition();
-        G4SigmabMinus::SigmabMinusDefinition();
-        G4XibZero::XibZeroDefinition();
-        G4XibMinus::XibMinusDefinition();
-        G4OmegabMinus::OmegabMinusDefinition();
-#else // G4VERSION_NUMBER == 960
-        DT_LOG_WARNING(_logprio(), "Geant4 version " << G4VERSION_NUMBER << " does not support bottom baryons.");
-#endif // G4VERSION_NUMBER == 960
-
-#if G4VERSION_NUMBER == 960
-        G4AntiLambdab::AntiLambdabDefinition();
-        G4AntiSigmabPlus::AntiSigmabPlusDefinition();
-        G4AntiSigmabZero::AntiSigmabZeroDefinition();
-        G4AntiSigmabMinus::AntiSigmabMinusDefinition();
-        G4AntiXibZero::AntiXibZeroDefinition();
-        G4AntiXibMinus::AntiXibMinusDefinition();
-        G4AntiOmegabMinus::AntiOmegabMinusDefinition();
-#else // G4VERSION_NUMBER == 960
-        DT_LOG_WARNING(_logprio(), "Geant4 version " << G4VERSION_NUMBER << " does not support bottom anti-baryons.");
-#endif // G4VERSION_NUMBER == 960
-      }
-      return;
-    }
-
 
     void physics_list::ConstructProcess ()
     {
-      DT_THROW_IF (! _initialized_, std::logic_error, "Not initialized !");
+      DT_LOG_TRACE(_logprio(), "Entering...");
 
-      AddTransportation ();
-      _ConstructEMProcess ();
-      _ConstructGeneral ();
-
-      if (_use_nucleons_) {
-        _ConstructHadronicProcess ();
+      if (has_geant4_physics_list()) {
+        grab_geant4_physics_list().ConstructProcess();
+      } else {
+        this->G4VModularPhysicsList::ConstructProcess();
       }
 
-      return;
-    }
-
-    void physics_list::_ConstructEMProcess ()
-    {
-      double ms_electron_range_factor = 0.005;
-      theParticleIterator->reset ();
-      while ((*theParticleIterator) ()) {
-        G4ParticleDefinition * particle = theParticleIterator->value ();
-        G4ProcessManager     * pmanager = particle->GetProcessManager ();
-        G4String particle_name = particle->GetParticleName ();
-
-        DT_LOG_NOTICE (_logprio(), "Set electromagnetic processes for '"
-                       << particle_name << "'");
-
-
-        if (particle_name == "gamma") {
-          /***********
-           *  gamma  *
-           ***********/
-          G4PhotoElectricEffect * the_photoelectric_effect = new G4PhotoElectricEffect ();
-          G4ComptonScattering   * the_compton_scattering   = new G4ComptonScattering   ();
-          G4GammaConversion     * the_gamma_conversion     = new G4GammaConversion     ();
-          if (is_em_low_energy_livermore ()) {
-            // Livermore:
-            G4LivermorePhotoElectricModel* the_livermore_photoelectric_model
-              = new G4LivermorePhotoElectricModel ();
-            the_photoelectric_effect->SetModel (the_livermore_photoelectric_model);
-
-            G4LivermoreComptonModel* the_livermore_compton_model
-              = new G4LivermoreComptonModel ();
-            the_compton_scattering->SetModel (the_livermore_compton_model);
-
-            G4LivermoreGammaConversionModel* the_livermore_gamma_conversion_model
-              = new G4LivermoreGammaConversionModel ();
-            the_gamma_conversion->SetModel (the_livermore_gamma_conversion_model);
-          } else if (is_em_low_energy_penelope ()) {
-            // Penelope:
-            G4PenelopePhotoElectricModel* the_penelope_photoelectric_model
-              = new G4PenelopePhotoElectricModel ();
-            the_photoelectric_effect->SetModel (the_penelope_photoelectric_model);
-
-            G4PenelopeComptonModel* the_penelope_compton_model
-              = new G4PenelopeComptonModel ();
-            the_compton_scattering->SetModel (the_penelope_compton_model);
-
-            G4PenelopeGammaConversionModel* the_penelope_gamma_conversion_model
-              = new G4PenelopeGammaConversionModel ();
-            the_gamma_conversion->SetModel (the_penelope_gamma_conversion_model);
-          }
-
-          pmanager->AddDiscreteProcess (the_photoelectric_effect);
-          pmanager->AddDiscreteProcess (the_compton_scattering);
-          pmanager->AddDiscreteProcess (the_gamma_conversion);
-          //pmanager->AddProcess (new G4StepLimiter (), -1, -1, 4);
-
-        } else if (particle_name == "e-") {
-          /**************
-           *  electron  *
-           **************/
-          if (_electron_multiple_scattering_) {
-            // Multiple scattering:
-            G4eMultipleScattering * emuls = new G4eMultipleScattering ();
-            // Setting the FacRange to 0.005 instead of default value 0.2
-            emuls->SetRangeFactor (ms_electron_range_factor);
-            /*
-              #ifdef G4_VER_9
-              emuls->SetRangeFactor (0.005);
-              #else
-              emuls->SetFacrange (0.005);
-              #endif
-            */
-            //??? emuls->SetStepLimitType (fUseDistanceToBoundary);
-            pmanager->AddProcess (emuls,                   -1, 1, 1);
-          }
-          if (_electron_energy_loss_) {
-            // Ionisation:
-            G4eIonisation * the_ionisation = new G4eIonisation ();
-            if (is_em_low_energy_livermore ()) {
-              // Livermore:
-              G4LivermoreIonisationModel* the_livermore_ionisation_model
-                = new G4LivermoreIonisationModel ();
-              the_ionisation->SetEmModel(the_livermore_ionisation_model);
-            } else if (is_em_low_energy_penelope ()) {
-              // Penelope:
-              G4PenelopeIonisationModel* the_penelope_ionisation_model
-                = new G4PenelopeIonisationModel ();
-              the_ionisation->SetEmModel(the_penelope_ionisation_model);
-            }
-
-            // Bremsstrahlung:
-            G4eBremsstrahlung * the_bremsstrahlung = new G4eBremsstrahlung ();
-            if (is_em_low_energy_livermore ()) {
-              // Livermore:
-              G4LivermoreBremsstrahlungModel * the_livermore_bremsstrahlung_model
-                = new G4LivermoreBremsstrahlungModel ();
-              the_bremsstrahlung->SetEmModel(the_livermore_bremsstrahlung_model);
-            } else if (is_em_low_energy_penelope ()) {
-              // Penelope:
-              G4PenelopeBremsstrahlungModel* the_penelope_bremsstrahlung_model
-                = new G4PenelopeBremsstrahlungModel ();
-              the_bremsstrahlung->SetEmModel(the_penelope_bremsstrahlung_model);
-            }
-            pmanager->AddProcess (the_ionisation,       -1, 2, 2);
-            pmanager->AddProcess (the_bremsstrahlung,   -1, 3, 3);
-            pmanager->AddProcess (new G4StepLimiter,    -1,-1, 4);
-          }
-        } else if (particle_name == "e+") {
-
-          /**************
-           *  positron  *
-           **************/
-          if (_electron_multiple_scattering_) {
-            // Multiple scattering:
-            G4eMultipleScattering * emuls = new G4eMultipleScattering ();
-            // Setting the FacRange to 0.005 instead of default value 0.2
-            emuls->SetRangeFactor (ms_electron_range_factor);
-            // #ifdef G4_VER_9
-            //                emuls->SetRangeFactor (0.005);
-            // #else
-            //                emuls->SetFacrange (0.005);
-            // #endif
-            pmanager->AddProcess (emuls, -1, 1, 1);
-          }
-          if (_electron_energy_loss_) {
-            // Ionisation:
-            G4eIonisation * the_ionisation = new G4eIonisation ();
-            if (is_em_low_energy_livermore ()) {
-              // Livermore:
-              G4LivermoreIonisationModel * the_livermore_ionisation_model
-                = new G4LivermoreIonisationModel ();
-              the_ionisation->SetEmModel(the_livermore_ionisation_model);
-            } else if (is_em_low_energy_penelope ()) {
-              // Penelope:
-              G4PenelopeIonisationModel * the_penelope_ionisation_model
-                = new G4PenelopeIonisationModel ();
-              the_ionisation->SetEmModel(the_penelope_ionisation_model);
-            }
-            // Bremsstrahlung:
-            G4eBremsstrahlung * the_bremsstrahlung = new G4eBremsstrahlung ();
-            if (is_em_low_energy_livermore ()) {
-              // Livermore:
-              G4LivermoreBremsstrahlungModel * the_livermore_bremsstrahlung_model
-                = new G4LivermoreBremsstrahlungModel ();
-              the_bremsstrahlung->SetEmModel(the_livermore_bremsstrahlung_model);
-            } else if (is_em_low_energy_penelope ()) {
-              // Penelope:
-              G4PenelopeBremsstrahlungModel * the_penelope_bremsstrahlung_model
-                = new G4PenelopeBremsstrahlungModel ();
-              the_bremsstrahlung->SetEmModel(the_penelope_bremsstrahlung_model);
-            }
-            // e+ annihilation:
-            G4eplusAnnihilation * the_eplus_annihilation = new G4eplusAnnihilation ();
-            if (is_em_low_energy_penelope ()) {
-              G4PenelopeAnnihilationModel * the_penelope_annihilation_model
-                = new G4PenelopeAnnihilationModel ();
-              the_eplus_annihilation->SetModel(the_penelope_annihilation_model);
-            }
-            pmanager->AddProcess (the_ionisation,         -1, 2, 2);
-            pmanager->AddProcess (the_bremsstrahlung,     -1, 3, 3);
-            pmanager->AddProcess (the_eplus_annihilation,  0,-1, 4);
-            pmanager->AddProcess (new G4StepLimiter,      -1,-1, 5);
-          }
-        } else if (particle_name == "alpha" ||
-                   particle_name == "GenericIon") {
-          /************
-           *   ions   *
-           ************/
-          G4hMultipleScattering * the_ion_multiple_scattering = new G4hMultipleScattering ();
-          G4ionIonisation       * the_ion_ionisation          = new G4ionIonisation ();
-          pmanager->AddProcess (the_ion_multiple_scattering , -1, 1, 1);
-          pmanager->AddProcess (the_ion_ionisation,           -1, 2, 2);
-          pmanager->AddProcess (new G4StepLimiter,            -1,-1, 3);
-        } else if (particle_name == "mu+" ||
-                   particle_name == "mu-") {
-          /*************
-           *   muons   *
-           *************/
-          if (_use_muon_leptons_) {
-            pmanager->AddProcess (new G4MuMultipleScattering, -1,  1, 1);
-            pmanager->AddProcess (new G4MuIonisation,         -1,  2, 2);
-            pmanager->AddProcess (new G4MuBremsstrahlung,     -1,  3, 3);
-            pmanager->AddProcess (new G4MuPairProduction,     -1,  4, 4);
-            // pmanager->AddProcess (new G4StepLimiter,          -1, -1, 5);
-            // pmanager->AddProcess (new G4UserSpecialCuts,      -1, -1, 5);
-          }
-        } else {
-          /***********************
-           *   other particles   *
-           ***********************/
-          // all others charged particles
-          if ((!particle->IsShortLived ()) &&
-              (particle->GetPDGCharge () != 0.0)) {
-            pmanager->AddProcess (new G4hMultipleScattering,-1, 1, 1);
-            pmanager->AddProcess (new G4hIonisation,       -1, 2, 2);
-            //      pmanager->AddProcess(new G4StepLimiter,       -1,-1, 3);
-            //      pmanager->AddProcess(new G4UserSpecialCuts,   -1,-1, 3);
-          }
-        }
-      }
-      return;
-    }
-
-    void physics_list::_ConstructHadronicProcess ()
-    {
-      // Taken from ConstructHad() of
-      // $G4INSTALL/examples/advanced/underground_physics
-      // Makes discrete physics processes for the hadrons, at present
-      // limited to those particles with GHEISHA interactions (INTRC >
-      // 0).  The processes are: Elastic scattering and Inelastic
-      // scattering and Capture (neutron).  F.W.Jones 09-JUL-1998
-
-      // Elastic process
-      G4HadronElasticProcess * the_elastic_process = new G4HadronElasticProcess ();
-      G4LElastic             * the_elastic_model   = new G4LElastic ();
-      the_elastic_process->RegisterMe (the_elastic_model);
-
-      theParticleIterator->reset();
-      while ((*theParticleIterator)()) {
-        G4ParticleDefinition * particle = theParticleIterator->value ();
-        G4ProcessManager     * pmanager = particle->GetProcessManager ();
-        G4String particle_name = particle->GetParticleName ();
-        DT_LOG_NOTICE(_logprio(),"Set hadronic processes for '" << particle_name << "'");
-
-        if (particle_name == "neutron") {
-          {
-            // elastic scattering
-            G4HadronElasticProcess * the_elastic_process
-              = new G4HadronElasticProcess ();
-            G4LElastic * the_elastic_model = new G4LElastic ();
-            the_elastic_model->SetMinEnergy (19*CLHEP::MeV);
-            the_elastic_process->RegisterMe (the_elastic_model);
-            G4NeutronHPElastic * the_low_energy_elastic_model = new G4NeutronHPElastic ();
-            the_elastic_process->RegisterMe (the_low_energy_elastic_model);
-            G4NeutronHPElasticData * the_neutron_data = new G4NeutronHPElasticData ();
-            the_elastic_process->AddDataSet (the_neutron_data);
-            pmanager->AddDiscreteProcess (the_elastic_process);
-          }
-
-          {
-            // inelastic scattering
-            G4NeutronInelasticProcess * the_inelastic_process
-              = new G4NeutronInelasticProcess ("inelastic");
-            G4LENeutronInelastic * the_inelastic_model = new G4LENeutronInelastic ();
-            the_inelastic_model->SetMinEnergy (19*CLHEP::MeV);
-            the_inelastic_process->RegisterMe (the_inelastic_model);
-            G4NeutronHPInelastic * the_low_energy_inelastic_model
-              = new G4NeutronHPInelastic ();
-            the_inelastic_process->RegisterMe (the_low_energy_inelastic_model);
-            G4NeutronHPInelasticData * the_neutron_data
-              = new G4NeutronHPInelasticData ();
-            the_inelastic_process->AddDataSet (the_neutron_data);
-            pmanager->AddDiscreteProcess (the_inelastic_process);
-          }
-
-          {
-            // capture
-            G4HadronCaptureProcess * the_capture_process
-              = new G4HadronCaptureProcess ();
-            G4LCapture * the_capture_model = new G4LCapture ();
-            the_capture_model->SetMinEnergy (19*CLHEP::MeV);
-            the_capture_process->RegisterMe (the_capture_model);
-            G4NeutronHPCapture * the_low_energy_capture_model = new G4NeutronHPCapture ();
-            the_capture_process->RegisterMe (the_low_energy_capture_model);
-            G4NeutronHPCaptureData * the_neutron_data = new G4NeutronHPCaptureData ();
-            the_capture_process->AddDataSet (the_neutron_data);
-            pmanager->AddDiscreteProcess (the_capture_process);
-          }
-          //  G4ProcessManager* pmanager = G4Neutron::Neutron->GetProcessManager();
-          //  pmanager->AddProcess(new G4UserSpecialCuts(),-1,-1,1);
-        } else if (particle_name == "anti_neutron") {
-          G4HadronElasticProcess * the_elastic_process
-            = new G4HadronElasticProcess ();
-          G4LElastic * the_elastic_model = new G4LElastic ();
-          the_elastic_process->RegisterMe (the_elastic_model);
-          pmanager->AddDiscreteProcess (the_elastic_process);
-
-          G4AntiNeutronInelasticProcess * the_inelastic_process
-            = new G4AntiNeutronInelasticProcess ("inelastic");
-          G4LEAntiNeutronInelastic * the_low_energy_inelastic_model
-            = new G4LEAntiNeutronInelastic ();
-          the_inelastic_process->RegisterMe (the_low_energy_inelastic_model);
-          G4HEAntiNeutronInelastic * the_high_energy_inelastic_model =
-            new G4HEAntiNeutronInelastic ();
-          the_inelastic_process->RegisterMe (the_high_energy_inelastic_model);
-          pmanager->AddDiscreteProcess (the_inelastic_process);
-        } else if (particle_name == "pi+") {
-          pmanager->AddDiscreteProcess (the_elastic_process);
-          G4PionPlusInelasticProcess * the_inelastic_process
-            = new G4PionPlusInelasticProcess ("inelastic");
-          G4LEPionPlusInelastic * the_low_energy_inelastic_model
-            = new G4LEPionPlusInelastic ();
-          the_inelastic_process->RegisterMe (the_low_energy_inelastic_model);
-          G4HEPionPlusInelastic * the_high_energy_inelastic_model
-            = new G4HEPionPlusInelastic ();
-          the_inelastic_process->RegisterMe (the_high_energy_inelastic_model);
-          pmanager->AddDiscreteProcess (the_inelastic_process);
-        } else if (particle_name == "pi-") {
-          pmanager->AddDiscreteProcess (the_elastic_process);
-          G4PionMinusInelasticProcess * the_inelastic_process
-            = new G4PionMinusInelasticProcess ("inelastic");
-          G4LEPionMinusInelastic * the_low_energy_inelastic_model
-            = new G4LEPionMinusInelastic ();
-          the_inelastic_process->RegisterMe (the_low_energy_inelastic_model);
-          G4HEPionMinusInelastic * the_high_energy_inelastic_model
-            = new G4HEPionMinusInelastic ();
-          the_inelastic_process->RegisterMe (the_high_energy_inelastic_model);
-          pmanager->AddDiscreteProcess (the_inelastic_process);
-          pmanager->AddRestProcess (new G4PiMinusAbsorptionAtRest (), ordDefault);
-        } else if (particle_name == "kaon+") {
-          pmanager->AddDiscreteProcess (the_elastic_process);
-          G4KaonMinusInelasticProcess * the_inelastic_process
-            = new G4KaonMinusInelasticProcess ("inelastic");
-          G4LEKaonMinusInelastic * the_low_energy_inelastic_model
-            = new G4LEKaonMinusInelastic ();
-          the_inelastic_process->RegisterMe (the_low_energy_inelastic_model);
-          G4HEKaonMinusInelastic * the_high_energy_inelastic_model
-            = new G4HEKaonMinusInelastic ();
-          the_inelastic_process->RegisterMe (the_high_energy_inelastic_model);
-          pmanager->AddDiscreteProcess (the_inelastic_process);
-        } else if (particle_name == "kaon-") {
-          pmanager->AddDiscreteProcess (the_elastic_process);
-          G4KaonMinusInelasticProcess * the_inelastic_process
-            = new G4KaonMinusInelasticProcess ("inelastic");
-          G4LEKaonMinusInelastic * the_low_energy_inelastic_model
-            = new G4LEKaonMinusInelastic ();
-          the_inelastic_process->RegisterMe (the_low_energy_inelastic_model);
-          G4HEKaonMinusInelastic * the_high_energy_inelastic_model
-            = new G4HEKaonMinusInelastic ();
-          the_inelastic_process->RegisterMe (the_high_energy_inelastic_model);
-          pmanager->AddDiscreteProcess (the_inelastic_process);
-          pmanager->AddRestProcess (new G4KaonMinusAbsorptionAtRest (), ordDefault);
-        } else if (particle_name == "kaon0S") {
-          pmanager->AddDiscreteProcess (the_elastic_process);
-          G4KaonZeroSInelasticProcess * the_inelastic_process
-            = new G4KaonZeroSInelasticProcess ("inelastic");
-          G4LEKaonZeroSInelastic * the_low_energy_inelastic_model
-            = new G4LEKaonZeroSInelastic ();
-          the_inelastic_process->RegisterMe (the_low_energy_inelastic_model);
-          G4HEKaonZeroInelastic * the_high_energy_inelastic_model
-            = new G4HEKaonZeroInelastic ();
-          the_inelastic_process->RegisterMe (the_high_energy_inelastic_model);
-          pmanager->AddDiscreteProcess (the_inelastic_process);
-        } else if (particle_name == "kaon0L") {
-          pmanager->AddDiscreteProcess (the_elastic_process);
-          G4KaonZeroLInelasticProcess * the_inelastic_process
-            = new G4KaonZeroLInelasticProcess ("inelastic");
-          G4LEKaonZeroLInelastic * the_low_energy_inelastic_model
-            = new G4LEKaonZeroLInelastic ();
-          the_inelastic_process->RegisterMe (the_low_energy_inelastic_model);
-          G4HEKaonZeroInelastic * the_high_energy_inelastic_model
-            = new G4HEKaonZeroInelastic ();
-          the_inelastic_process->RegisterMe (the_high_energy_inelastic_model);
-          pmanager->AddDiscreteProcess (the_inelastic_process);
-        } else if (particle_name == "proton") {
-          pmanager->AddDiscreteProcess (the_elastic_process);
-          G4ProtonInelasticProcess * the_inelastic_process
-            = new G4ProtonInelasticProcess ("inelastic");
-          G4LEProtonInelastic * the_low_energy_inelastic_model
-            = new G4LEProtonInelastic ();
-          the_inelastic_process->RegisterMe (the_low_energy_inelastic_model);
-          G4HEProtonInelastic * the_high_energy_inelastic_model
-            = new G4HEProtonInelastic ();
-          the_inelastic_process->RegisterMe (the_high_energy_inelastic_model);
-          pmanager->AddDiscreteProcess (the_inelastic_process);
-        } else if (particle_name == "anti_proton") {
-          pmanager->AddDiscreteProcess (the_elastic_process);
-          G4AntiProtonInelasticProcess * the_inelastic_process
-            = new G4AntiProtonInelasticProcess ("inelastic");
-          G4LEAntiProtonInelastic * the_low_energy_inelastic_model
-            = new G4LEAntiProtonInelastic ();
-          the_inelastic_process->RegisterMe (the_low_energy_inelastic_model);
-          G4HEAntiProtonInelastic * the_high_energy_inelastic_model
-            = new G4HEAntiProtonInelastic ();
-          the_inelastic_process->RegisterMe (the_high_energy_inelastic_model);
-          pmanager->AddDiscreteProcess (the_inelastic_process);
-        } else if (particle_name == "deuteron") {
-          pmanager->AddDiscreteProcess (the_elastic_process);
-          G4DeuteronInelasticProcess * the_inelastic_process
-            = new G4DeuteronInelasticProcess ("inelastic");
-          G4LEDeuteronInelastic * the_low_energy_inelastic_model
-            = new G4LEDeuteronInelastic ();
-          the_inelastic_process->RegisterMe (the_low_energy_inelastic_model);
-          pmanager->AddDiscreteProcess (the_inelastic_process);
-        } else if (particle_name == "triton") {
-          pmanager->AddDiscreteProcess (the_elastic_process);
-          G4TritonInelasticProcess * the_inelastic_process
-            = new G4TritonInelasticProcess ("inelastic");
-          G4LETritonInelastic * the_low_energy_inelastic_model
-            = new G4LETritonInelastic ();
-          the_inelastic_process->RegisterMe (the_low_energy_inelastic_model);
-          pmanager->AddDiscreteProcess (the_inelastic_process);
-        } else if (particle_name == "alpha") {
-          pmanager->AddDiscreteProcess (the_elastic_process);
-          G4AlphaInelasticProcess * the_inelastic_process
-            = new G4AlphaInelasticProcess ("inelastic");
-          G4LEAlphaInelastic * the_low_energy_inelastic_model
-            = new G4LEAlphaInelastic ();
-          the_inelastic_process->RegisterMe (the_low_energy_inelastic_model);
-          pmanager->AddDiscreteProcess (the_inelastic_process);
-        } else {
-          DT_LOG_NOTICE(_logprio(), "Particle '" << particle_name << "' has no hadronic processes");
-        }
-      }
-      return;
-    }
-
-    void physics_list::_ConstructGeneral ()
-    {
-      // Add Decay Process
-      G4Decay * theDecayProcess = new G4Decay ();
-      theParticleIterator->reset ();
-      while ((*theParticleIterator) ()) {
-        G4ParticleDefinition * particle = theParticleIterator->value ();
-        G4ProcessManager     * pmanager = particle->GetProcessManager ();
-        if (theDecayProcess->IsApplicable (*particle)) {
-          pmanager->AddProcess (theDecayProcess);
-          // set ordering for PostStepDoIt and AtRestDoIt
-          pmanager->SetProcessOrdering (theDecayProcess, idxPostStep);
-          pmanager->SetProcessOrdering (theDecayProcess, idxAtRest);
-        }
-      }
-      return;
-    }
-
-    // static
-    const string physics_list::EM_PIXE_MODEL_EMPIRICAL         = "Empirical";
-    const string physics_list::EM_PIXE_MODEL_ECPSSR_FORMFACTOR = "ECPSSR_FormFactor";
-    const string physics_list::EM_PIXE_MODEL_ECPSSR_ANALYTICAL = "ECPSSR_Analytical";
-
-    physics_list::region_deexcitation_type::region_deexcitation_type()
-    {
-      fluo = false;
-      auger = false;
-      pixe = false;
-    }
-
-    physics_list::region_deexcitation_type::region_deexcitation_type(bool fluo_,bool auger_, bool pixe_)
-    {
-      fluo = fluo_;
-      auger = auger_;
-      pixe = pixe_;
-    }
-
-    bool physics_list::region_deexcitation_type::is_activated() const
-    {
-      return fluo || auger || pixe;
-    }
-
-    bool physics_list::region_deexcitation_type::is_fluo() const
-    {
-      return fluo;
-    }
-
-    bool physics_list::region_deexcitation_type::is_auger() const
-    {
-      return auger;
-    }
-
-    bool physics_list::region_deexcitation_type::is_pixe() const
-    {
-      return pixe;
-    }
-
-    void physics_list::_initialize_deexcitation ()
-    {
-      G4EmProcessOptions emOptions;
-      emOptions.SetFluo(_em_fluo_);
-      emOptions.SetAuger(_em_auger_);
-      emOptions.SetPIXE(_em_pixe_);
-      if (! _em_pixe_cross_section_model_.empty()) {
-        emOptions.SetPIXECrossSectionModel(_em_pixe_cross_section_model_);
-      }
-
-      for (std::map<std::string, region_deexcitation_type>::const_iterator i
-             = _em_regions_deexcitation_.begin();
-           i != _em_regions_deexcitation_.end();
-           i++) {
-        const std::string & region_name = i->first;
-        const region_deexcitation_type & rd = i->second;
-        G4Region * a_region = G4RegionStore::GetInstance ()->GetRegion (region_name);
-        DT_THROW_IF(a_region == 0, std::logic_error,
-                    "Cannot find region named '" << region_name
-                    << "' to apply de-excitation processes ");
-        emOptions.SetDeexcitationActiveRegion(region_name, rd.fluo, rd.auger, rd.pixe);
-      }
-
+      DT_LOG_TRACE(_logprio(), "Exiting.");
       return;
     }
 
     void physics_list::SetCuts ()
     {
       DT_LOG_TRACE(_logprio(), "Entering...");
-      // G4VUserPhysicsList::SetCutsWithDefault method sets
-      // the default cut value for all particle types
-      //
+
+      if (has_geant4_physics_list()) {
+        grab_geant4_physics_list().SetCuts();
+      } else {
+        _SetCuts ();
+      }
+
+      DT_LOG_TRACE(_logprio(), "Exiting.");
+      return;
+    }
+
+
+    void physics_list::_SetCuts ()
+    {
+      DT_LOG_TRACE(_logprio(), "Entering...");
+
+      SetDefaultCutValue(_production_cuts_default_value_);
+      DT_LOG_NOTICE(_logprio(), "Default cut Length : " << G4BestUnit(defaultCutValue, "Length"));
+
+      // G4VUserPhysicsList::SetCutsWithDefault method sets the default cut value for all particle types :
       SetCutsWithDefault ();
 
-      // G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(250*eV, 1*GeV);
+      double pct_low_edge_energy = G4ProductionCutsTable::GetProductionCutsTable()->GetLowEdgeEnergy();
+      double pct_high_edge_energy = G4ProductionCutsTable::GetProductionCutsTable()->GetHighEdgeEnergy();
+      DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
+                    "Default production cuts low edge energy = " << pct_low_edge_energy / CLHEP::eV << "eV");
+      DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
+                    "Default production cuts high edge energy = " << pct_high_edge_energy / CLHEP::GeV << "GeV");
 
-      if (_using_cuts_) {
-        DT_LOG_TRACE(_logprio(), "Using cuts...");
-        // Defining cuts for different particles:
-        // set cut values for gamma at first and for e- second and next for e+,
+      if (datatools::is_valid(_production_cuts_low_energy_)) {
+        pct_low_edge_energy = _production_cuts_low_energy_;
+      }
+      if (datatools::is_valid(_production_cuts_high_energy_)) {
+        pct_high_edge_energy = _production_cuts_high_energy_;
+      }
+      DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
+                    "Effective production cuts low edge energy = " << pct_low_edge_energy / CLHEP::eV << "eV");
+      DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
+                    "Effective production cuts high edge energy = " << pct_high_edge_energy / CLHEP::GeV << "GeV");
+      G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(pct_low_edge_energy, pct_high_edge_energy);
+
+      if (_using_production_cuts_) {
+        DT_LOG_TRACE(_logprio(), "Using production cuts...");
+        // Defining production cuts for different particles:
+        // set production cut values for gamma at first and for e- second and next for e+ thn proton
         // because some processes for e+/e- need cut values for gamma
-        SetCutValue(_gamma_cut_,    "gamma");
-        SetCutValue(_electron_cut_, "e-");
-        SetCutValue(_positron_cut_, "e+");
-        SetCutValue(_proton_cut_,   "proton");
+        SetCutValue(_production_cuts_values_.gamma,    "gamma"  );
+        SetCutValue(_production_cuts_values_.electron, "e-"     );
+        SetCutValue(_production_cuts_values_.positron, "e+"     );
+        SetCutValue(_production_cuts_values_.proton,   "proton" );
 
-        // Defining cuts for the different regions :
-        for (map<string, double>::const_iterator i = _region_cuts_.begin ();
-             i != _region_cuts_.end ();
+        // Defining production cuts for the different regions :
+        for (std::map<std::string, production_cuts_info>::const_iterator i = _production_cuts_per_region_.begin ();
+             i != _production_cuts_per_region_.end ();
              i++) {
-          const string & region_name = i->first;
-          double region_cut = i->second;
-          G4Region * a_region = G4RegionStore::GetInstance ()->GetRegion (region_name);
+          const std::string & region_name = i->first;
+          const production_cuts_info & pc_info = i->second;
+          G4Region * a_region = G4RegionStore::GetInstance()->GetRegion(region_name);
           if (a_region != 0) {
             G4ProductionCuts * a_region_cuts = new G4ProductionCuts;
-            a_region_cuts->SetProductionCut (region_cut);
-            a_region->SetProductionCuts (a_region_cuts);
+            a_region_cuts->SetProductionCut(pc_info.gamma,    G4ProductionCuts::GetIndex("gamma"));
+            a_region_cuts->SetProductionCut(pc_info.electron, G4ProductionCuts::GetIndex("e-"));
+            a_region_cuts->SetProductionCut(pc_info.positron, G4ProductionCuts::GetIndex("e+"));
+            a_region_cuts->SetProductionCut(pc_info.proton,   G4ProductionCuts::GetIndex("proton"));
+            a_region->SetProductionCuts(a_region_cuts);
           } else {
             DT_LOG_WARNING(_logprio(), "No region named '"
                            << region_name << "' to be given production cuts !");
@@ -1411,111 +669,102 @@ namespace mctools {
       return;
     }
 
-    void physics_list::tree_dump (ostream & out_,
-                                  const string & title_,
-                                  const string & indent_,
+    void physics_list::tree_dump (std::ostream & out_,
+                                  const std::string & title_,
+                                  const std::string & indent_,
                                   bool inherit_) const
     {
-      namespace du = datatools;
+      using namespace std;
       string indent;
       if (! indent_.empty ()) indent = indent_;
       if (! title_.empty ()) {
         out_ << indent << title_ << endl;
       }
 
-      out_ << indent << du::i_tree_dumpable::tag
+      out_ << indent << datatools::i_tree_dumpable::tag
            << "Initialized                  : " << (_initialized_ ? "Yes": "No") << endl;
 
-      out_ << indent << du::i_tree_dumpable::tag
-           << "Logging priority             : "
-           << datatools::logger::get_priority_label(_logprio()) << endl;
+      // Geant4 physics list:
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Geant4 physics list  : " << (has_geant4_physics_list() ? "Yes": "No") << endl;
+      out_ << indent << datatools::i_tree_dumpable::skip_tag
+           << datatools::i_tree_dumpable::tag
+           << "Name : '" << _geant4_physics_list_name_ << "'" << endl;
 
-      out_ << indent << du::i_tree_dumpable::tag
-           << "G4 verbosity                 : " << (_g4_verbosity_ ? "Yes" : "No") << endl;
-
-      out_ << indent << du::i_tree_dumpable::tag
-           << "EM model                     : " << _em_model_ << endl;
-
-      out_ << indent << du::i_tree_dumpable::tag
-           << "Electron energy loss         : "
-           << (_electron_energy_loss_ ? "Yes" : "No") << endl;
-      out_ << indent << du::i_tree_dumpable::tag
-           << "Electron multiple scattering : "
-           << (_electron_multiple_scattering_ ? "Yes" : "No") << endl;
-      out_ << indent << du::i_tree_dumpable::tag
-           << "MSC use distance to boundary : "
-           << (_msc_use_distance_to_boundary_ ? "Yes" : "No") << endl;
-      out_ << indent << du::i_tree_dumpable::tag
-           << "Set bremsstrahlung           : "
-           << (_bremsstrahlung_ ? "Yes" : "No") << endl;
-
-      out_ << indent << du::i_tree_dumpable::tag
-           << "Use geantinos                : " << (_use_geantinos_ ? "Yes" : "No") << endl;
-      out_ << indent << du::i_tree_dumpable::tag
-           << "Use optical photons          : " << (_use_optical_photons_ ? "Yes" : "No") << endl;
-      out_ << indent << du::i_tree_dumpable::tag
-           << "Use muon leptons             : " << (_use_muon_leptons_ ? "Yes" : "No") << endl;
-      out_ << indent << du::i_tree_dumpable::tag
-           << "Use tau leptons              : " << (_use_tau_leptons_ ? "Yes" : "No") << endl;
-      out_ << indent << du::i_tree_dumpable::tag
-           << "Use nucleons                 : " << (_use_nucleons_ ? "Yes" : "No") << endl;
-      out_ << indent << du::i_tree_dumpable::tag
-           << "Use strange baryons          : " << (_use_strange_baryons_ ? "Yes" : "No") << endl;
-      out_ << indent << du::i_tree_dumpable::tag
-           << "Use charm baryons            : " << (_use_charm_baryons_ ? "Yes" : "No") << endl;
-      out_ << indent << du::i_tree_dumpable::tag
-           << "Use bottom baryons           : " << (_use_bottom_baryons_ ? "Yes" : "No") << endl;
-      out_ << indent << du::i_tree_dumpable::tag
-           << "Use light mesons             : " << (_use_light_mesons_ ? "Yes" : "No") << endl;
-      out_ << indent << du::i_tree_dumpable::tag
-           << "Use charm mesons             : " << (_use_charm_mesons_ ? "Yes" : "No") << endl;
-      out_ << indent << du::i_tree_dumpable::tag
-           << "Use bottom mesons            : " << (_use_bottom_mesons_ ? "Yes" : "No") << endl;
-      out_ << indent << du::i_tree_dumpable::tag
-           << "Use light nuclei             : " << (_use_light_nuclei_ ? "Yes" : "No") << endl;
-      out_ << indent << du::i_tree_dumpable::tag
-           << "Use light anti-nuclei        : " << (_use_light_anti_nuclei_ ? "Yes" : "No") << endl;
-      out_ << indent << du::i_tree_dumpable::tag
-           << "Use generic ion              : " << (_use_generic_ion_ ? "Yes" : "No") << endl;
-
-      {
-        // cuts in region
-        out_ << indent << du::i_tree_dumpable::tag
-             << "Using cuts                 : " << (_using_cuts_ ? "Yes" : "No") << endl;
-        out_ << indent << du::i_tree_dumpable::tag
-             << "Default cut value          : "
-             << _default_cut_value_ / CLHEP::mm << " mm" << endl;
-        out_ << indent << du::i_tree_dumpable::tag
-             << "Regions cuts               : "
-             << (!_region_cuts_.empty () ? "Yes" : "No") << endl;
-        for (map<string, double>::const_iterator i = _region_cuts_.begin ();
-             i != _region_cuts_.end ();
-             i++) {
-          out_ << indent << du::i_tree_dumpable::skip_tag;
-          map<string, double>::const_iterator j = i;
-          j++;
-          if (j == _region_cuts_.end ()) {
-            out_ << du::i_tree_dumpable::last_tag;
-          } else {
-            out_ << du::i_tree_dumpable::tag;
-          }
-          out_ << "Region '" << i->first << "' : Production cuts = "
-               << i->second/ CLHEP::mm << " mm" << endl;
+      // Physics constructors:
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Physics constructors : ";
+      if (_physics_constructors_.size() == 0) {
+        out_ << "None";
+      }
+      out_ << endl;
+      for (physics_constructor_dict_type::const_iterator i
+             = _physics_constructors_.begin();
+           i != _physics_constructors_.end();
+           i++) {
+        const physics_constructor_entry & pc_entry = i->second;
+        out_ << indent << datatools::i_tree_dumpable::skip_tag;
+        physics_constructor_dict_type::const_iterator j = i;
+        j++;
+        std::ostringstream indent2;
+        indent2 << indent << datatools::i_tree_dumpable::skip_tag;
+        if (j == _physics_constructors_.end()) {
+          out_ << datatools::i_tree_dumpable::last_tag;
+          indent2 << datatools::i_tree_dumpable::last_skip_tag;
+        } else {
+          out_ << datatools::i_tree_dumpable::tag;
+          indent2 << datatools::i_tree_dumpable::skip_tag;
+        }
+        out_ << "'" << pc_entry.name << "' of type '" <<  pc_entry.id << "' (status=" << pc_entry.status << ")";
+        out_ << std::endl;
+        if (pc_entry.status & physics_constructor_entry::STATUS_CREATED) {
+          pc_entry.get_physics_constructor().tree_dump(out_, "", indent2.str());
         }
       }
 
-      {
-        // particles cuts
-        out_ << indent << du::i_tree_dumpable::tag
-             << "Electron cut               : "
-             << _electron_cut_ / CLHEP::mm << " mm" << endl;
-        out_ << indent << du::i_tree_dumpable::tag
-             << "Positron cut               : "
-             << _positron_cut_ / CLHEP::mm << " mm" << endl;
-        out_ << indent << du::i_tree_dumpable::last_tag
-             << "Gamma cut                  : "
-             << _gamma_cut_ / CLHEP::mm << " mm" << endl;
+      // Production cuts :
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Using production cuts        : " << (_using_production_cuts_ ? "Yes" : "No") << endl;
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Default production cut value : "
+           << _production_cuts_default_value_ / CLHEP::mm << " mm" << endl;
+      // Default particles cuts:
+      out_ << indent << datatools::i_tree_dumpable::last_tag
+           << "Default gamma production cut                  : "
+           << _production_cuts_values_.gamma / CLHEP::mm << " mm" << endl;
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Default electron production cut               : "
+           << _production_cuts_values_.electron / CLHEP::mm << " mm" << endl;
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Default positron production cut               : "
+           << _production_cuts_values_.positron / CLHEP::mm << " mm" << endl;
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Default proton production cut               : "
+           << _production_cuts_values_.proton / CLHEP::mm << " mm" << endl;
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Regions cuts                 : "
+           << (!_production_cuts_per_region_.empty () ? "Yes" : "No") << endl;
+      for (std::map<std::string, production_cuts_info>::const_iterator i = _production_cuts_per_region_.begin ();
+           i != _production_cuts_per_region_.end ();
+           i++) {
+        out_ << indent << datatools::i_tree_dumpable::skip_tag;
+        std::map<std::string, production_cuts_info>::const_iterator j = i;
+        j++;
+        if (j == _production_cuts_per_region_.end ()) {
+          out_ << datatools::i_tree_dumpable::last_tag;
+        } else {
+          out_ << datatools::i_tree_dumpable::tag;
+        }
+        out_ << "Region '" << i->first << "' :  Production cuts : "
+             << " gamma = " << i->second.gamma / CLHEP::mm << " mm"
+             << " electron = " << i->second.electron / CLHEP::mm << " mm"
+             << " positron = " << i->second.positron / CLHEP::mm << " mm"
+             << std::endl;
       }
+
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
+           << "Logging priority             : "
+           << datatools::logger::get_priority_label(_logprio()) << endl;
 
       return;
     }
@@ -1524,16 +773,16 @@ namespace mctools {
 
 } // end of namespace mctools
 
-/** Opening macro for implementation
- *  This macro must be used outside of any namespace.
- */
+  /** Opening macro for implementation
+   *  This macro must be used outside of any namespace.
+   */
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
 {
   // The class name :
   ocd_.set_class_name ("mctools::g4::physics_list");
 
   // The class terse description :
-  ocd_.set_class_description ("The Geant4 simulation manager embedded physics list instance");
+  ocd_.set_class_description ("The Geant4 simulation manager embedded physics list");
 
   // The library the class belongs to :
   ocd_.set_class_library ("mctools_g4");
@@ -1543,11 +792,436 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
                                 "physics list.                                \n"
                                 );
 
+
+  // ***** General ***** //
+
+  {
+    // Description of the 'logging.priority' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("logging.priority")
+      .set_terse_description("Logging priority threshold")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_long_description("Allowed values are:                                    \n"
+                            "                                                       \n"
+                            " * ``\"fatal\"``       : print fatal error messages    \n"
+                            " * ``\"critical\"``    : print critical error messages \n"
+                            " * ``\"error\"``       : print error messages          \n"
+                            " * ``\"warning\"``     : print warnings                \n"
+                            " * ``\"notice\"``      : print notice messages         \n"
+                            " * ``\"information\"`` : print informational messages  \n"
+                            " * ``\"debug\"``       : print debug messages          \n"
+                            " * ``\"trace\"``       : print trace messages          \n"
+                            "                                                       \n"
+                            "Default value: ``\"warning\"``                         \n"
+                            "                                                       \n"
+                            "Example::                                              \n"
+                            "                                                       \n"
+                            "  logging.priority : string = \"warning\"              \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+  // ***** Geant4 physics list ***** //
+
+  {
+    // Description of the 'geant4.physics_list' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+
+    // Dynamic build the long description :
+    std::ostringstream ld;
+    ld << "Geant4 provides a physics list factory that enables the instantiation \n"
+       << "and initialization of some predefined physics list from its registration\n"
+       << "name.                                                                 \n"
+       << "                                                                      \n"
+       << "Allowed values (from the ``G4PhysListFactory`` class) :               \n"
+       << "                                                                      \n";
+    G4PhysListFactory f;
+    for (int i = 0; i < f.AvailablePhysLists().size(); i++) {
+      ld << " * ``\"" <<   f.AvailablePhysLists()[i] << "\"``                    \n";
+    }
+    ld << "                                                                      \n"
+       << "Default: empty                                                        \n"
+       << "                                                                      \n"
+       << "Example::                                                             \n"
+       << "                                                                      \n"
+       << " geant4.physics_list : string= \"FTFP_BERT_EMV\"                      \n"
+       << "                                                                      \n"
+       << "This property is not compatible with the ``physics_constructors.names``\n"
+       << "property.                                                             \n"
+      ;
+
+    cpd.set_name_pattern("geant4.physics_list")
+      .set_terse_description("The name of the Geant4 physics list to activate")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_complex_triggering_conditions(true)
+      .set_long_description(ld.str())
+      ;
+    }
+
+  // ***** Physics constructor plugins ***** //
+
+  {
+    // Description of the 'physics_constructors.names' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("physics_constructors.names")
+      .set_terse_description("The names of physics constructor plugins to be loaded")
+      .set_traits(datatools::TYPE_STRING,
+                  datatools::configuration_property_description::ARRAY)
+      .set_mandatory(false)
+      .set_complex_triggering_conditions(true)
+      .set_long_description("Default: empty                                                             \n"
+                            "                                                                           \n"
+                            "Example::                                                                  \n"
+                            "                                                                           \n"
+                            " physics_constructors.names : string[2] = \"particles\" \"electromagnetic\" \n"
+                            "                                                                           \n"
+                            "This property is not compatible with the ``geant4.physics_list``           \n"
+                            "property.                                                                  \n"
+                           )
+      ;
+  }
+
+
+  {
+    // Description of the 'physics_constructors.XXX.id' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("physics_constructors.${physics_constructors.names}.id")
+      .set_terse_description("The class ID of a given physics constructor")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .set_long_description("Default: empty                                                             \n"
+                            "                                                                           \n"
+                            "Example::                                                                  \n"
+                            "                                                                           \n"
+                            " physics_constructors.names : string[2] = \"particles\" \"electromagnetic\" \n"
+                            " physics_constructors.particles.id : string = \\                           \n"
+                            "    \"mctools::g4::particles_physics_constructor\"                         \n"
+                            " physics_constructors.electromagnetic.id : string = \\                     \n"
+                            "    \"mctools::g4::em_physics_constructor\"                                \n"
+                            "                                                                           \n"
+                            )
+      ;
+  }
+
+
+  {
+    // Description of the 'physics_constructors.XXX.config' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("physics_constructors.${physics_constructors.names}.config")
+      .set_terse_description("The configuration file name of a given physics constructor")
+      .set_traits(datatools::TYPE_STRING)
+      .set_path(true)
+      .set_mandatory(true)
+      .set_long_description("Default: empty                                                             \n"
+                            "                                                                           \n"
+                            "Example::                                                                  \n"
+                            "                                                                           \n"
+                            " physics_constructors.names : string[2] = \"particles\" \"electromagnetic\" \n"
+                            " physics_constructors.particles.config : string as path = \\               \n"
+                            "    \"config/simulation/particles.conf\"                                   \n"
+                            " physics_constructors.electromagnetic.config : string as path = \\         \n"
+                            "    \"config/simulation/electromagnetic.conf\"                             \n"
+                            "                                                                           \n"
+                            )
+      ;
+  }
+
+  // ***** Production cuts ***** //
+
+  {
+    // Description of the 'using_production_cuts' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("using_production_cuts")
+      .set_terse_description("Flag to activate production cuts")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("Default: ``0``                                         \n"
+                            "                                                       \n"
+                            "Example::                                              \n"
+                            "                                                       \n"
+                            " using_production_cuts : boolean = 0                   \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'production_cuts.length_unit' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("production_cuts.length_unit")
+      .set_terse_description("The production cuts length unit symbol")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_long_description("Default: ``\"mm\"``                                    \n"
+                            "                                                       \n"
+                            "Example::                                              \n"
+                            "                                                       \n"
+                            " production_cuts.length_unit : string = \"mm\"         \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'production_cuts.energy_unit' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("production_cuts.energy_unit")
+      .set_terse_description("The production cuts energy unit symbol")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_long_description("Default: ``\"mm\"``                                    \n"
+                            "                                                       \n"
+                            "Example::                                              \n"
+                            "                                                       \n"
+                            " production_cuts.energy_unit : string = \"MeV\"        \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'production_cuts.default_value' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("production_cuts.default_value")
+      .set_terse_description("The production cuts default value")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(false)
+      .set_explicit_unit(true)
+      .set_unit_label("length")
+      .set_long_description("Default: ``10 um``                                      \n"
+                            "                                                        \n"
+                            "Example::                                               \n"
+                            "                                                        \n"
+                            " production_cuts.default_value : real as length = 10 um \n"
+                            "                                                        \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'production_cuts.low_energy' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("production_cuts.low_energy")
+      .set_terse_description("The production cuts energy low edge")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(false)
+      .set_explicit_unit(true)
+      .set_unit_label("energy")
+      .set_long_description("Default: not used                                      \n"
+                            "                                                       \n"
+                            "Example::                                              \n"
+                            "                                                       \n"
+                            " production_cuts.low_energy : real as energy =  250 eV \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'production_cuts.high_energy' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("production_cuts.high_energy")
+      .set_terse_description("The production cuts energy high edge")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(false)
+      .set_explicit_unit(true)
+      .set_unit_label("energy")
+      .set_long_description("Default: not used                                      \n"
+                            "                                                       \n"
+                            "Example::                                              \n"
+                            "                                                       \n"
+                            " production_cuts.high_energy : real as energy =  1 GeV \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'production_cuts.electron' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("production_cuts.electron")
+      .set_terse_description("The cut value for electrons")
+      .set_traits(datatools::TYPE_REAL)
+      .set_explicit_unit(true)
+      .set_unit_label("length")
+      .set_mandatory(false)
+      .set_long_description("Default: empty                                           \n"
+                            "                                                          \n"
+                            "Example::                                                \n"
+                            "                                                         \n"
+                            " production_cuts.electron : real as length = 1 mm \n"
+                            "                                                         \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'production_cuts.positron' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("production_cuts.positron")
+      .set_terse_description("The cut value for positrons")
+      .set_traits(datatools::TYPE_REAL)
+      .set_explicit_unit(true)
+      .set_unit_label("length")
+      .set_mandatory(false)
+      .set_long_description("Default: empty                                           \n"
+                            "                                                          \n"
+                            "Example::                                                \n"
+                            "                                                         \n"
+                            " production_cuts.positron : real as length = 1 mm \n"
+                            "                                                         \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'production_cuts.gamma' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("production_cuts.gamma")
+      .set_terse_description("The cut value for gammas")
+      .set_traits(datatools::TYPE_REAL)
+      .set_explicit_unit(true)
+      .set_unit_label("length")
+      .set_mandatory(false)
+      .set_long_description("Default: empty                                           \n"
+                            "                                                          \n"
+                            "Example::                                                \n"
+                            "                                                         \n"
+                            " production_cuts.gamma : real as length = 1 mm    \n"
+                            "                                                         \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'production_cuts.regions' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("production_cuts.regions")
+      .set_terse_description("The name of the regions with special production cuts")
+      .set_traits(datatools::TYPE_STRING,
+                  datatools::configuration_property_description::ARRAY)
+      .set_mandatory(false)
+      .set_long_description("Default: empty                                         \n"
+                            "                                                        \n"
+                            "Example::                                              \n"
+                            "                                                       \n"
+                            " production_cuts.regions : string[2] = \"A\" \"B\"     \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'production_cuts.regions.XXX.all' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("production_cuts.regions.${production_cuts.regions}.all")
+      .set_terse_description("The cut value applied to all particles within a given region")
+      .set_traits(datatools::TYPE_REAL)
+      .set_explicit_unit(true)
+      .set_unit_label("length")
+      .set_mandatory(false)
+      .set_long_description("Default: empty                                           \n"
+                            "                                                          \n"
+                            "Example::                                                \n"
+                            "                                                         \n"
+                            " production_cuts.regions : string[2] = \"A\" \"B\"       \n"
+                            " production_cuts.regions.A.all : real as length = 5 mm   \n"
+                            " production_cuts.regions.B.all : real as length = 1 mm   \n"
+                            "                                                         \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'production_cuts.regions.XXX.gamma' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("production_cuts.regions.${production_cuts.regions}.gamma")
+      .set_terse_description("The cut value applied to gamma within a given region")
+      .set_traits(datatools::TYPE_REAL)
+      .set_explicit_unit(true)
+      .set_unit_label("length")
+      .set_mandatory(false)
+      .set_long_description("Default: empty                                           \n"
+                            "                                                          \n"
+                            "Example::                                                \n"
+                            "                                                         \n"
+                            " production_cuts.regions : string[2] = \"A\" \"B\"       \n"
+                            " production_cuts.regions.A.gamma : real as length = 5 mm \n"
+                            " production_cuts.regions.B.gamma : real as length = 1 mm \n"
+                            "                                                         \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'production_cuts.regions.XXX.electron' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("production_cuts.regions.${production_cuts.regions}.electron")
+      .set_terse_description("The cut value applied to electron within a given region")
+      .set_traits(datatools::TYPE_REAL)
+      .set_explicit_unit(true)
+      .set_unit_label("length")
+      .set_mandatory(false)
+      .set_long_description("Default: empty                                           \n"
+                            "                                                          \n"
+                            "Example::                                                \n"
+                            "                                                         \n"
+                            " production_cuts.regions : string[2] = \"A\" \"B\"       \n"
+                            " production_cuts.regions.A.electron : real as length = 5 mm \n"
+                            " production_cuts.regions.B.electron : real as length = 1 mm \n"
+                            "                                                         \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'production_cuts.regions.XXX.positron' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("production_cuts.regions.${production_cuts.regions}.positron")
+      .set_terse_description("The cut value applied to positron within a given region")
+      .set_traits(datatools::TYPE_REAL)
+      .set_explicit_unit(true)
+      .set_unit_label("length")
+      .set_mandatory(false)
+      .set_long_description("Default: empty                                           \n"
+                            "                                                          \n"
+                            "Example::                                                \n"
+                            "                                                         \n"
+                            " production_cuts.regions : string[2] = \"A\" \"B\"       \n"
+                            " production_cuts.regions.A.positron : real as length = 5 mm \n"
+                            " production_cuts.regions.B.positron : real as length = 1 mm \n"
+                            "                                                         \n"
+                            )
+      ;
+  }
+
   // Additionnal configuration hints :
   ocd_.set_configuration_hints("Not available yet                    \n"
                                );
 
-  ocd_.set_validation_support(false);
+  ocd_.set_validation_support(true);
 
   // Lock the description:
   ocd_.lock();

@@ -54,7 +54,7 @@ int main (int argc_, char ** argv_)
 
     // Setup the geometry manager:
     if (gmgr_config_file.empty ()) {
-      gmgr_config_file = "${MCTOOLS_DATA_DIR}/testing/config/g4/test-1.0/geometry/manager.conf";
+      gmgr_config_file = "${MCTOOLS_DATA_DIR}/testing/config/g4/test-2.0/geometry/manager.conf";
     }
     datatools::fetch_path_with_env (gmgr_config_file);
     datatools::properties gmgr_config;
@@ -71,7 +71,7 @@ int main (int argc_, char ** argv_)
 
     // Setup the step hit processor factory:
     if (mconfig_filename.empty ()) {
-      mconfig_filename = "${MCTOOLS_DATA_DIR}/testing/config/g4/test-1.0/step_hit_processor_factory.conf";
+      mconfig_filename = "${MCTOOLS_DATA_DIR}/testing/config/g4/test-2.0/simulation/step_hit_processor_factory.conf";
     }
     datatools::fetch_path_with_env (mconfig_filename);
 

@@ -235,6 +235,10 @@ if(MCTOOLS_WITH_G4)
     include/mctools/g4/simulation_ctrl.h
     include/mctools/g4/g4_prng.h
     include/mctools/g4/magnetic_field.h
+    include/mctools/g4/physics_list_utils.h
+    include/mctools/g4/base_physics_constructor.h
+    include/mctools/g4/particles_physics_constructor.h
+    include/mctools/g4/em_physics_constructor.h
     include/mctools/g4/physics_list.h
     include/mctools/g4/manager_parameters.h
     include/mctools/g4/primary_generator.h
@@ -249,6 +253,8 @@ if(MCTOOLS_WITH_G4)
     src/g4/magnetic_field.cc
     src/g4/manager.cc
     src/g4/manager_parameters.cc
+    src/g4/base_physics_constructor.cc
+    src/g4/physics_list_utils.cc
     src/g4/physics_list.cc
     src/g4/primary_generator.cc
     src/g4/run_action.cc
@@ -262,6 +268,8 @@ if(MCTOOLS_WITH_G4)
     src/g4/stepping_verbose.cc
     src/g4/track_history.cc
     src/g4/tracking_action.cc
+    src/g4/particles_physics_constructor.cc
+    src/g4/em_physics_constructor.cc
     )
   list_prepend(mctools_g4_SOURCES "${PROJECT_SOURCE_DIR}/")
 

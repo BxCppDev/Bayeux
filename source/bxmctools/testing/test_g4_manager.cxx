@@ -102,19 +102,11 @@ int main (int argc_, char ** argv_)
       if (noevents < 1) noevents = 3;
 
       if (manager_config_filename.empty ()) {
-          manager_config_filename = "${MCTOOLS_DATA_DIR}/testing/config/g4/test-1.0/manager.conf";
-          clog << datatools::io::warning
-               << "Using default configuration file '"
-               << manager_config_filename << "' !" << endl;
-        }
-      // datatools::fetch_path_with_env (manager_config_filename);
-      // datatools::multi_properties configuration ("name",
-      //                                            "",
-      //                                            "Configuration for testing the mctools::g4::manager class");
-      // configuration.read (manager_config_filename);
-      // if (debug) configuration.tree_dump (clog,
-      //                                     "Configuration for the G4 simulation manager",
-      //                                     "DEBUG: ");
+        manager_config_filename = "${MCTOOLS_DATA_DIR}/testing/config/g4/test-2.0/simulation/manager.conf";
+        clog << datatools::io::warning
+             << "Using default configuration file '"
+             << manager_config_filename << "' !" << endl;
+      }
 
       // Setup parameters of the simulation manager :
       mctools::g4::manager_parameters params;
@@ -130,9 +122,8 @@ int main (int argc_, char ** argv_)
       params.g4_macro = g4_macro;
       params.manager_config_filename = manager_config_filename;
       params.noevents = noevents;
-      params.vg_name = "all_source_bulk.vg";
-      //params.vg_name = "vessel_inner_surface.vg";
-      params.eg_name = "bkg_K40";
+      params.vg_name = "source_bulk.vg";
+      params.eg_name = "electron_1MeV";
 
       // Declare the simulation manager:
       mctools::g4::manager sim_manager;

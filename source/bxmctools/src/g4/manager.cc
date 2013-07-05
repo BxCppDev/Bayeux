@@ -1088,19 +1088,10 @@ namespace mctools {
         } else {
           _vg_manager_.initialize(vertex_generator_config);
         }
-        // if (vertex_generator_config.has_key("config")) {
-        //   // using an external configuration file:
-        //   std::string vtx_gtor_prop_filename
-        //     = vertex_generator_config.fetch_string("config");
-        //   datatools::fetch_path_with_env(vtx_gtor_prop_filename);
-        //   datatools::properties vtx_gtor_config;
-        //   datatools::properties::read_config(vtx_gtor_prop_filename, vtx_gtor_config);
-        //   _vg_manager_.initialize(vtx_gtor_config);
-        // }
-        // else {
-        //   // using properties:
-        //   _vg_manager_.initialize(vertex_generator_config);
-        // }
+
+        DT_THROW_IF(!_vg_manager_.is_initialized(),
+                    std::logic_error,
+                    "Vertex generator manager is not initialized !");
         if (is_debug()) {
           DT_LOG_DEBUG(_logprio(),"Vertex generator manager : ");
           _vg_manager_.tree_dump(std::clog);
@@ -1138,6 +1129,9 @@ namespace mctools {
       } else {
         _eg_manager_.initialize(primary_generator_config);
       }
+      DT_THROW_IF(!_eg_manager_.is_initialized(),
+                  std::logic_error,
+                  "Primary event generator manager is not initialized !");
       DT_THROW_IF (! _eg_manager_.has(_eg_name_),
                    std::logic_error,
                    "Cannot find primary event generator named '" << _eg_name_ << "' !");
@@ -1396,9 +1390,9 @@ namespace mctools {
        ****************/
 
       // Main manager:
-      const datatools::properties & manager_config
-        = _multi_config_->get("manager").get_properties();
-      loggable_support::_initialize_logging_support(manager_config);
+      // const datatools::properties & manager_config
+      //   = _multi_config_->get("manager").get_properties();
+      // loggable_support::_initialize_logging_support(manager_config);
 
       _init_core();
 

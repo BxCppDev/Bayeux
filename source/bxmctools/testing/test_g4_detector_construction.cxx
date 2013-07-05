@@ -60,17 +60,17 @@ int main (int argc_, char ** argv_)
     geomtools::manager geo_manager;
     if (debug) geo_manager.set_logging_priority (datatools::logger::PRIO_DEBUG);
     datatools::properties gm_setup;
-    std::string gm_filename = "${MCTOOLS_DATA_DIR}/testing/config/g4/test-1.0/geometry/manager.conf";
+    std::string gm_filename = "${MCTOOLS_DATA_DIR}/testing/config/g4/test-2.0/geometry/manager.conf";
     datatools::fetch_path_with_env(gm_filename);
     datatools::properties::read_config(gm_filename, gm_setup);
     geo_manager.initialize (gm_setup);
 
     // Additional plugins :
-    std::string mag_field_plugin_file="${MCTOOLS_DATA_DIR}/testing/config/fields/test_emfield_geom_plugin.conf";
-    datatools::fetch_path_with_env(mag_field_plugin_file);
-    datatools::multi_properties mag_field_plugin_config;
-    mag_field_plugin_config.read(mag_field_plugin_file);
-    geo_manager.load_plugins(mag_field_plugin_config);
+    // std::string mag_field_plugin_file="${MCTOOLS_DATA_DIR}/testing/config/fields/test_emfield_geom_plugin.conf";
+    // datatools::fetch_path_with_env(mag_field_plugin_file);
+    // datatools::multi_properties mag_field_plugin_config;
+    // mag_field_plugin_config.read(mag_field_plugin_file);
+    // geo_manager.load_plugins(mag_field_plugin_config);
 
     // Geant4 detector construction :
     mctools::g4::manager my_g4_manager;
@@ -82,7 +82,7 @@ int main (int argc_, char ** argv_)
     dc_setup.store("gdml.schema_location", "local");
     dc_setup.store("materials.plugin_name", "materials_driver");
     dc_setup.store("hit_processor_factory.config",
-                   "${MCTOOLS_DATA_DIR}/testing/config/g4/test-1.0/step_hit_processor_factory.conf");
+                   "${MCTOOLS_DATA_DIR}/testing/config/g4/test-2.0/simulation/step_hit_processor_factory.conf");
     my_detector_construction.initialize(dc_setup);
     G4VPhysicalVolume * mother = my_detector_construction.Construct ();
 
