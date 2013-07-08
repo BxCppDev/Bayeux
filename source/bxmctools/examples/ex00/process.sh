@@ -114,7 +114,7 @@ if [ $do_simulation -eq 1 ]; then
     echo -e "\nBrowse the output plain simulated data file..." 1>&2
     ./ex00_read_plain_simdata \
 	--interactive  \
-        --load-dll emfield \
+        --load-dll "emfield" \
 	--with-visualization \
 	--logging-priority "notice" \
 	--input-file "mctools_ex00_${eg_name}_${vg_name}.xml"
@@ -138,7 +138,7 @@ if [ $do_simulation -eq 1 ]; then
 
     echo -e "\nBrowse the output plain simulated data file..." 1>&2
     ./ex00_read_plain_simdata \
-        --load-dll emfield \
+        --load-dll "emfield" \
 	--interactive \
 	--with-visualization \
 	--logging-priority "notice" \
@@ -159,11 +159,11 @@ if [ $do_simulation -eq 1 ]; then
 
     # echo -e "\nBrowse the output pipeline simulated data file..." 1>&2
     # ./ex00_read_pipeline_simdata \
-    #     --load-dll emfield  \
+    #     --load-dll "emfield"  \
     #     --logging-priority "notice" \
     #     --interactive \
     # 	--with-visualization \
-    #     --input-file "mctools_ex00_${sim_module}.dpp.xml"
+    #     --input-file "mctools_ex00_${sim_module}.dpp.brio"
 
 fi
 
