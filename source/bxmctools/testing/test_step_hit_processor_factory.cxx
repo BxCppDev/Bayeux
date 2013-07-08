@@ -7,6 +7,8 @@
 #include <exception>
 
 #include <datatools/multi_properties.h>
+#include <datatools/library_loader.h>
+
 
 #include <mctools/step_hit_processor_factory.h>
 
@@ -26,6 +28,11 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try {
     std::clog << "Test program for class 'step_hit_processor_factory'!" << std::endl;
+
+    string LL_config;
+    uint32_t LL_flags = datatools::library_loader::allow_unregistered;
+    datatools::library_loader LL (LL_flags, LL_config);
+    LL.load ("emfield");
 
     bool debug = false;
     std::string gmgr_config_file;
@@ -60,6 +67,8 @@ int main (int argc_, char ** argv_)
     datatools::properties gmgr_config;
     datatools::properties::read_config (gmgr_config_file,
                                         gmgr_config);
+
+    //return 0;
     geomtools::manager gmgr;
     if (debug) gmgr.set_logging_priority(datatools::logger::PRIO_DEBUG);
     gmgr.set_mapping_requested (true);
@@ -68,6 +77,8 @@ int main (int argc_, char ** argv_)
     if (debug) {
       std::clog << "DEBUG: Geometry manager is built." << std::endl;
     }
+
+    return 0;
 
     // Setup the step hit processor factory:
     if (mconfig_filename.empty ()) {

@@ -32,8 +32,8 @@ namespace mctools {
       std::string g4_macro;
       bool        g4_visu;
       bool        interactive;
-      uint32_t    noevents;
-      uint32_t    noevents_modulo;
+      uint32_t    number_of_events;
+      uint32_t    number_of_events_modulo;
       int         mgr_seed;
       std::string input_prng_states_file;
       std::string output_prng_states_file;

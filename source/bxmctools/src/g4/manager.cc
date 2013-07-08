@@ -408,18 +408,18 @@ namespace mctools {
     void manager::_init_defaults()
     {
       // pointers:
-      _g4_stepping_verbosity_  = 0;
-      _g4_run_manager_         = 0;
-      _g4_UI_                  = 0;
-      _user_physics_list_      = 0;
-      _user_primary_generator_ = 0;
-      _user_run_action_        = 0;
-      _user_event_action_      = 0;
-      _user_tracking_action_   = 0;
-      _user_stepping_action_   = 0;
-      _user_stacking_action_   = 0;
+      _g4_stepping_verbosity_   = 0;
+      _g4_run_manager_          = 0;
+      _g4_UI_                   = 0;
+      _user_physics_list_       = 0;
+      _user_primary_generator_  = 0;
+      _user_run_action_         = 0;
+      _user_event_action_       = 0;
+      _user_tracking_action_    = 0;
+      _user_stepping_action_    = 0;
+      _user_stacking_action_    = 0;
 #ifdef G4VIS_USE
-      _g4_vis_manager_         = 0;
+      _g4_vis_manager_          = 0;
 #endif // G4VIS_USE
 
       _vg_prng_seed_             = mygsl::random_utils::SEED_INVALID;
@@ -428,7 +428,7 @@ namespace mctools {
       _shpf_prng_seed_           = mygsl::random_utils::SEED_INVALID;
 
       _number_of_events_         = constants::instance().NO_LIMIT;
-      _number_events_modulo_     = run_action::NUMBER_EVENTS_MODULO_NONE;
+      _number_of_events_modulo_  = run_action::NUMBER_OF_EVENTS_MODULO_NONE;
       _g4_macro_                 = "";
       _g4_tracking_verbosity_    = 0;
       _use_event_number_as_seed_ = false;
@@ -462,25 +462,25 @@ namespace mctools {
       return _use_run_header_footer_;
     }
 
-    bool manager::has_number_events_modulo() const
+    bool manager::has_number_of_events_modulo() const
     {
-      return _number_events_modulo_ > run_action::NUMBER_EVENTS_MODULO_NONE;
+      return _number_of_events_modulo_ > run_action::NUMBER_OF_EVENTS_MODULO_NONE;
     }
 
-    void manager::set_number_events_modulo(int a_m)
+    void manager::set_number_of_events_modulo(int a_m)
     {
-      if (a_m <= run_action::NUMBER_EVENTS_MODULO_NONE) {
-        _number_events_modulo_ = run_action::NUMBER_EVENTS_MODULO_NONE;
+      if (a_m <= run_action::NUMBER_OF_EVENTS_MODULO_NONE) {
+        _number_of_events_modulo_ = run_action::NUMBER_OF_EVENTS_MODULO_NONE;
       } else {
-        _number_events_modulo_ = a_m;
+        _number_of_events_modulo_ = a_m;
       }
-      DT_LOG_DEBUG(_logprio(), "Number of events modulo = " << _number_events_modulo_);
+      DT_LOG_DEBUG(_logprio(), "Number of events modulo = " << _number_of_events_modulo_);
       return;
     }
 
-    int manager::get_number_events_modulo() const
+    int manager::get_number_of_events_modulo() const
     {
-      return _number_events_modulo_;
+      return _number_of_events_modulo_;
     }
 
     void manager::set_prng_state_save_modulo(int a_modulo)
@@ -601,7 +601,6 @@ namespace mctools {
       if (! _prng_state_manager_.has_state(constants::instance().SHPF_LABEL)) {
         _prng_state_manager_.add_state(constants::instance().SHPF_LABEL,
                                        _shpf_prng_.get_internal_state_size());
-        // _user_detector_construction_->get_SHPF_random().get_internal_state_size());
       }
 
       // Setup the output file name for PRNG internal states backup :
@@ -625,11 +624,6 @@ namespace mctools {
 
         // PRNG for Step Hit Processors :
         _shpf_prng_.from_buffer(_prng_state_manager_.get_state(constants::instance().SHPF_LABEL).state_buffer);
-
-        /*
-          if (_user_detector_construction_ != 0) {
-          _user_detector_construction_->grab_SHPF_random().from_buffer(_prng_state_manager_.get_state(constants::instance().SHPF_LABEL).state_buffer);
-          }*/
 
       }
 
@@ -971,19 +965,6 @@ namespace mctools {
         }
       }
 
-      // 2011-02-26 FM : only search for the 'seed' property if 'random seed' is not set yet :
-      // XXX
-      /*
-        if (! has_mgr_prng_seed())
-        {
-        if (manager_config.has_key("seed"))
-        {
-        int rseed = manager_config.fetch_integer("seed");
-        set_mgr_prng_seed(rseed);
-        }
-        }
-      */
-
       // 2011-02-26 FM : only search for the 'g4_macro' property if '_g4_macro_' is not set yet :
       if (! _g4_macro_.empty()) {
         if (manager_config.has_key("g4_macro")) {
@@ -1149,20 +1130,6 @@ namespace mctools {
       const datatools::properties & detector_construction_config
         = _multi_config_->get("detector_construction").get_properties();
       _user_detector_construction_ = new detector_construction(*this);
-      // the SHPF generator :
-      /*
-        if (_seed_manager_.has_seed(constants::instance().SHPF_LABEL))
-        {
-        int seed = _seed_manager_.get_seed(constants::instance().SHPF_LABEL);
-        _user_detector_construction_->set_SHPF_random_seed(seed);
-        std::clog << datatools::io::notice
-        << "mctools::g4::manager::_at_init: "
-        << "Using registered seed for '"
-        << constants::instance().SHPF_LABEL << "' : "
-        << seed
-        << std::endl;
-        }
-      */
       _user_detector_construction_->grab_step_hit_processor_factory().set_external_prng(_shpf_prng_);
       _user_detector_construction_->set_geometry_manager(get_geom_manager());
       _user_detector_construction_->initialize(detector_construction_config);
@@ -1198,8 +1165,8 @@ namespace mctools {
       if (! _output_data_file_.empty()) {
         _user_run_action_->set_output_file(_output_data_file_);
       }
-      if (has_number_events_modulo()) {
-        _user_run_action_->set_number_events_modulo(get_number_events_modulo());
+      if (has_number_of_events_modulo()) {
+        _user_run_action_->set_number_of_events_modulo(get_number_of_events_modulo());
       }
       _user_run_action_->set_use_run_header_footer(using_run_header_footer());
       _user_run_action_->initialize(run_action_config);
@@ -1609,8 +1576,8 @@ namespace mctools {
       // if (! _output_data_file_.empty()) {
       //   _user_run_action_->set_output_file(_output_data_file_);
       // }
-      // if (has_number_events_modulo()) {
-      //   _user_run_action_->set_number_events_modulo(get_number_events_modulo());
+      // if (has_number_of_events_modulo()) {
+      //   _user_run_action_->set_number_of_events_modulo(get_number_of_events_modulo());
       // }
       // _user_run_action_->set_use_run_header_footer(using_run_header_footer());
       // _user_run_action_->initialize(run_action_config);
@@ -1915,8 +1882,31 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::manager,ocd_)
 
   // The class detailed documentation :
   ocd_.set_class_documentation ("The Geant4 simulation manager class embedes \n"
-                                "a full Geant4 based simulation engine.      \n"
-                                );
+                                "a full Geant4 based simulation engine. It can be\n"
+                                "configured through a ``datatools::multi_properties`` object.\n"
+                                "Several embedded components are used :                  \n"
+                                "                                                        \n"
+                                " * a service manager (optional)                         \n"
+                                " * a geometry manager                                   \n"
+                                " * a vertex generator manager (optional)                \n"
+                                " * a primary event generator manager                    \n"
+                                " * a PRNG seed manager                                  \n"
+                                " * a PRNG internal state manager                        \n"
+                                " * a Geant4 run manager with embedded components:       \n"
+                                "                                                        \n"
+                                "   - detector construction                              \n"
+                                "   - primary generator                                  \n"
+                                "   - physics list                                       \n"
+                                "   - run action                                         \n"
+                                "   - event action                                       \n"
+                                "   - tracking action (optional)                         \n"
+                                "   - stepping action (optional)                         \n"
+                                "   - stacking action (optional)                         \n"
+                                "                                                        \n"
+                                " * a Geant4 user interface (UI) manager                 \n"
+                                " * a Geant4 visualization manager (optional)            \n"
+                                "                                                        \n"
+                               );
 
   {
     // Description of the 'logging.priority' configuration property :

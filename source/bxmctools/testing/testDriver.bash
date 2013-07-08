@@ -163,13 +163,6 @@ function do_run ()
 
     export CONFIG_DIR=${MCTOOLS_DATA_DIR}/testing/config/g4/test-2.0
 
-    G4DATADIR=${G4INSTALL}/../Geant4-data
-
-    export G4LEDATA=${G4DATADIR}/G4EMLOW6.19
-    export G4LEVELGAMMADATA=${G4DATADIR}/PhotonEvaporation2.1
-    export G4NEUTRONHPDATA=${G4DATADIR}/G4NDL3.14
-    export G4RADIOACTIVEDATA=${G4DATADIR}/RadioactiveDecay3.3
-
     ###############################
     # depends on materials data dir:
     if [ "x${materials_data_test_dir}" != "x" ]; then

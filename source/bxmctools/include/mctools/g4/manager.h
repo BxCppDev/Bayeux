@@ -155,11 +155,11 @@ namespace mctools {
       /// Return a mutable event_action reference
       event_action & grab_user_event_action ();
 
-      bool has_number_events_modulo () const;
+      bool has_number_of_events_modulo () const;
 
-      void set_number_events_modulo (int);
+      void set_number_of_events_modulo (int);
 
-      int get_number_events_modulo () const;
+      int get_number_of_events_modulo () const;
 
       void set_use_run_header_footer (bool a_use_run_header_footer);
 
@@ -436,8 +436,8 @@ namespace mctools {
       datatools::service_manager * _service_manager_; /// Service manager
 
       // Geometry manager :
-      const geomtools::manager  * _external_geom_manager_; /// External geometry manager
-      geomtools::manager          _geom_manager_; /// Embeded geometry manager
+      const geomtools::manager  *  _external_geom_manager_; /// External geometry manager
+      geomtools::manager           _geom_manager_; /// Embeded geometry manager
 
       // Vertex generation manager :
       int                          _vg_prng_seed_; /// Seed for the embeded PRNG for vertex generation
@@ -501,7 +501,7 @@ namespace mctools {
       std::string _output_prng_states_file_; /// Output filename for storage of PRNG internal states
       std::string _output_data_file_; /// Output data filename
       uint32_t    _number_of_events_; /// Number of events to be processed
-      int         _number_events_modulo_; /// Event number module for progression print
+      int         _number_of_events_modulo_; /// Event number modulo for progression print
       std::string _g4_macro_; /// Geant4 macro to be processed
       int         _g4_tracking_verbosity_; /// Geant 4 tracking verbosity
       bool        _forbid_private_hits_; /// Flag to disable the storage of MC true hits from 'private' collection of hits

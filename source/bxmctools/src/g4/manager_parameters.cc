@@ -39,14 +39,14 @@ namespace mctools {
     {
       this->logging                 = "warning";
       this->manager_config_filename = "";
+      this->interactive             = false;
       this->g4_macro                = "";
       this->g4_visu                 = false;
-      this->interactive             = false;
-      this->noevents                = mctools::g4::manager::constants::instance ().NO_LIMIT;
-      this->noevents_modulo         = 0; // not used
+      this->number_of_events        = mctools::g4::manager::constants::instance ().NO_LIMIT;
+      this->number_of_events_modulo = 0; // 0 == not used
       this->input_prng_states_file  = "";
       this->output_prng_states_file = "";
-      this->prng_states_save_modulo = 0; // not used
+      this->prng_states_save_modulo = 0; // 0 == not used
       this->input_prng_seeds_file   = "";
       this->output_prng_seeds_file  = "";
       this->output_data_file        = "";
@@ -75,33 +75,33 @@ namespace mctools {
       a_out << "    " << a_name << " \\" << endl;
       a_out << "         --interactive \\" << endl;
       a_out << "         --g4-visu \\" << endl;
-      a_out << "         --vertex-generator-name \"all_source_bulk.vg\"  \\" << endl;
+      a_out << "         --vertex-generator-name \"source_bulk.vg\"  \\" << endl;
       a_out << "         --vertex-generator-seed 0 \\" << endl;
-      a_out << "         --event-generator-name \"bkg_K40\" \\" << endl;
+      a_out << "         --event-generator-name \"K40\" \\" << endl;
       a_out << "         --event-generator-seed 0  \\" << endl;
       a_out << "         --g4-manager-seed 0       \\" << endl;
       a_out << "         --shpf-seed 0             \\" << endl;
       a_out << "         --output-prng-seeds-file mc_g4_production.seeds   \\" << endl;
       a_out << "         --output-prng-states-file mc_g4_production.states \\" << endl;
-      a_out << "         --config ${MCTOOLS_DATA_DIR}/testing/config/g4/test-1.0/manager.conf \\" << endl;
-      a_out << "                  ${MCTOOLS_DATA_DIR}/testing/config/g4/test-1.0/g4vis.mac" << endl;
+      a_out << "         --config ${CONFIG_DIR}/simulation/manager.conf \\" << endl;
+      a_out << "                  ${CONFIG_DIR}/simulation/geant4_visualization.macro" << endl;
       a_out << endl;
       a_out << " 2) Run the simulation in batch mode:" << endl;
       a_out << "    " << a_name << " \\" << endl;
       a_out << "         --batch                  \\" << endl;
       a_out << "         --using-time-statistics  \\" << endl;
-      a_out << "         --vertex-generator-name \"all_source_bulk.vg\"  \\" << endl;
+      a_out << "         --vertex-generator-name \"source_bulk.vg\"  \\" << endl;
       a_out << "         --vertex-generator-seed 0 \\" << endl;
-      a_out << "         --event-generator-name \"bkg_K40\"  \\" << endl;
+      a_out << "         --event-generator-name \"K40\"  \\" << endl;
       a_out << "         --event-generator-seed 0 \\" << endl;
       a_out << "         --g4-manager-seed 0      \\" << endl;
       a_out << "         --shpf-seed 0            \\" << endl;
       a_out << "         --output-prng-seeds-file mc_g4_production.seeds   \\" << endl;
       a_out << "         --output-prng-states-file mc_g4_production.states \\" << endl;
       a_out << "         --number-of-events 1     \\" << endl;
-      a_out << "         --config ${MCTOOLS_DATA_DIR}/testing/config/g4/test-1.0/manager.conf \\" << endl;
+      a_out << "         --config ${CONFIG_DIR}/simulation/manager.conf \\" << endl;
       a_out << "         --output-data-file mc_g4_sample_0.xml \\" << endl;
-      a_out << "         > mc_g4_production.log 2>&1" << endl;
+      a_out << "         > g4_production.log 2>&1" << endl;
       a_out << endl;
       a_out << endl;
 
@@ -183,12 +183,12 @@ namespace mctools {
       if (! a_params.eg_name.empty ()) {
         a_manager.set_event_generator_name (a_params.eg_name);
       }
-      if (a_params.noevents <= mctools::g4::manager::constants::instance ().NO_LIMIT) {
-        a_manager.set_number_of_events (a_params.noevents);
+      if (a_params.number_of_events <= mctools::g4::manager::constants::instance ().NO_LIMIT) {
+        a_manager.set_number_of_events (a_params.number_of_events);
       }
 
-      //if (a_params.noevents_modulo >= NUMBER_EVENTS_MODULO_NONE) {
-      a_manager.set_number_events_modulo (a_params.noevents_modulo);
+      //if (a_params.number_of_events_modulo >= NUMBER_OF_EVENTS_MODULO_NONE) {
+      a_manager.set_number_of_events_modulo (a_params.number_of_events_modulo);
       //}
 
       if (a_params.forbid_private_hits) {
@@ -225,7 +225,7 @@ namespace mctools {
                     "Initializing the simulation manager...");
       a_manager.initialize (the_configuration);
       DT_LOG_NOTICE(a_manager.get_logging_priority (),
-                    "Simulation manager has been configured and inltialized.");
+                    "Simulation manager has been configured and initialized.");
       return;
     }
 

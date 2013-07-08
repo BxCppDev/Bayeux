@@ -171,13 +171,14 @@ set_target_properties(mctools
     PUBLIC_HEADER                         "${mctools_PUBLIC_HEADERS}"
   )
 
+message ( STATUS "emfield_LIBRARIES='${emfield_LIBRARIES}'" )
 target_link_libraries(mctools
                         ${genvtx_LIBRARIES}
                         ${genbb_help_LIBRARIES}
                         ${emfield_LIBRARIES}
                         ${dpp_LIBRARIES}
                         ${CMAKE_DL_LIBS}
-  )
+                     )
 
 set(MCTOOLS_TARGETS mctools)
 
@@ -281,6 +282,9 @@ if(MCTOOLS_WITH_G4)
   endif()
   target_link_libraries(mctools_g4
                         mctools
+                        ${genvtx_LIBRARIES}
+                        ${genbb_help_LIBRARIES}
+                        ${emfield_LIBRARIES}
                         ${Geant4_LIBRARIES}
 			${Boost_LIBRARIES}
 			${_mctools_g4_additional_libs}

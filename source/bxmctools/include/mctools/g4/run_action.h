@@ -44,8 +44,8 @@ namespace mctools {
     {
     public:
 
-      static const int NUMBER_EVENTS_MODULO_NONE    = 0;
-      static const int NUMBER_EVENTS_MODULO_DEFAULT = 100;
+      static const int NUMBER_OF_EVENTS_MODULO_NONE    = 0;
+      static const int NUMBER_OF_EVENTS_MODULO_DEFAULT = 100;
 
       bool is_initialized () const;
 
@@ -53,11 +53,11 @@ namespace mctools {
 
       void set_use_run_header_footer (bool);
 
-      bool has_number_events_modulo () const;
+      bool has_number_of_events_modulo () const;
 
-      void set_number_events_modulo (int);
+      void set_number_of_events_modulo (int);
 
-      int get_number_events_modulo () const;
+      int get_number_of_events_modulo () const;
 
       int32_t get_number_of_processed_events () const;
 
@@ -110,7 +110,7 @@ namespace mctools {
 
       bool _initialized_;
       bool _use_run_header_footer_;
-      int  _number_events_modulo_;
+      int  _number_of_events_modulo_;
       int32_t   _number_of_processed_events_;
       int32_t   _number_of_saved_events_;
       manager * _manager_;

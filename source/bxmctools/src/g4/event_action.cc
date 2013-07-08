@@ -154,8 +154,8 @@ namespace mctools {
       DT_LOG_TRACE(_logprio(), "Entering...");
       G4int event_id = event_->GetEventID ();
       DT_LOG_DEBUG(_logprio(), "Event #" << event_id << " starts.");
-      if (_run_action_->has_number_events_modulo ()) {
-        if ((event_id % _run_action_->get_number_events_modulo ()) == 0) {
+      if (_run_action_->has_number_of_events_modulo ()) {
+        if ((event_id % _run_action_->get_number_of_events_modulo ()) == 0) {
           // Trace explicitely the event number :
           DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "Event #" << event_id);
         }

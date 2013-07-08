@@ -45,7 +45,7 @@ int main (int argc_, char ** argv_)
       string g4_macro;
       bool g4_visu = false;
       bool interactive = false;
-      size_t noevents = 0;
+      size_t number_of_events = 0;
 
       int iarg = 1;
       while (iarg < argc_) {
@@ -69,16 +69,16 @@ int main (int argc_, char ** argv_)
                    interactive = false;
                  }
                else if (option == "-1") {
-                   noevents = 1;
+                   number_of_events = 1;
                  }
                else if (option == "-2") {
-                   noevents = 2;
+                   number_of_events = 2;
                  }
                else if (option == "-10") {
-                   noevents = 10;
+                   number_of_events = 10;
                  }
                else if (option == "-100") {
-                   noevents = 100;
+                   number_of_events = 100;
                  }
                else {
                  clog << datatools::io::warning
@@ -99,7 +99,7 @@ int main (int argc_, char ** argv_)
       }
 
 
-      if (noevents < 1) noevents = 3;
+      if (number_of_events < 1) number_of_events = 3;
 
       if (manager_config_filename.empty ()) {
         manager_config_filename = "${MCTOOLS_DATA_DIR}/testing/config/g4/test-2.0/simulation/manager.conf";
@@ -121,7 +121,7 @@ int main (int argc_, char ** argv_)
       params.interactive = interactive;
       params.g4_macro = g4_macro;
       params.manager_config_filename = manager_config_filename;
-      params.noevents = noevents;
+      params.number_of_events = number_of_events;
       params.vg_name = "source_bulk.vg";
       params.eg_name = "electron_1MeV";
 

@@ -98,12 +98,12 @@ int main(int argc_, char ** argv_)
        "set the logging priority threshold")
 
       ("number-of-events,n",
-       po::value<uint32_t>(&params.noevents)
+       po::value<uint32_t>(&params.number_of_events)
        ->default_value(mctools::g4::manager::constants::instance().NO_LIMIT),
        "set the number of events to be simulated")
 
       ("number-of-events-modulo,m",
-       po::value<uint32_t>(&params.noevents_modulo)
+       po::value<uint32_t>(&params.number_of_events_modulo)
        ->default_value(0),
        "set the event print period (0 means no print)")
 

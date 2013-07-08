@@ -74,24 +74,24 @@ namespace mctools {
       return _save_data_;
     }
 
-    bool run_action::has_number_events_modulo () const
+    bool run_action::has_number_of_events_modulo () const
     {
-      return _number_events_modulo_ > NUMBER_EVENTS_MODULO_NONE;
+      return _number_of_events_modulo_ > NUMBER_OF_EVENTS_MODULO_NONE;
     }
 
-    void run_action::set_number_events_modulo (int modulo_)
+    void run_action::set_number_of_events_modulo (int modulo_)
     {
-      if (modulo_ <= NUMBER_EVENTS_MODULO_NONE) {
-        _number_events_modulo_ = NUMBER_EVENTS_MODULO_NONE;
+      if (modulo_ <= NUMBER_OF_EVENTS_MODULO_NONE) {
+        _number_of_events_modulo_ = NUMBER_OF_EVENTS_MODULO_NONE;
       } else {
-        _number_events_modulo_ = modulo_;
+        _number_of_events_modulo_ = modulo_;
       }
       return;
     }
 
-    int run_action::get_number_events_modulo () const
+    int run_action::get_number_of_events_modulo () const
     {
-      return _number_events_modulo_;
+      return _number_of_events_modulo_;
     }
 
     int32_t run_action::get_number_of_saved_events () const
@@ -163,8 +163,8 @@ namespace mctools {
       _initialized_ = false;
       _use_run_header_footer_ = false;
       _number_of_processed_events_ = 0;
-      _number_events_modulo_ = NUMBER_EVENTS_MODULO_NONE;
-      _save_data_ = true;
+      _number_of_events_modulo_ = NUMBER_OF_EVENTS_MODULO_NONE;
+      _save_data_ = false;
       _output_file_preserve_ = true;
       _output_file_dir_ = ".";
       _output_file_prefix_ = "mctools_g4_";
@@ -192,15 +192,15 @@ namespace mctools {
         set_use_run_header_footer (true);
       }
 
-      if (! has_number_events_modulo ()) {
-        if (a_config.has_key ("number_events_modulo")) {
-          int number_events_modulo = a_config.fetch_integer ("number_events_modulo");
-          set_number_events_modulo (number_events_modulo);
+      if (! has_number_of_events_modulo ()) {
+        if (a_config.has_key ("number_of_events_modulo")) {
+          int number_of_events_modulo = a_config.fetch_integer ("number_of_events_modulo");
+          set_number_of_events_modulo (number_of_events_modulo);
         }
       }
 
-      if (a_config.has_flag ("file.no_save")) {
-        _save_data_ = false;
+      if (a_config.has_key ("file.save")) {
+        _save_data_ = a_config.fetch_boolean ("file.save");
       }
 
       if (a_config.has_flag ("file.no_preserve")) {
@@ -210,9 +210,16 @@ namespace mctools {
       if (_save_data_) {
         if (_output_file_.empty ()) {
           if (a_config.has_key ("file.name")) {
-            _output_file_ = a_config.fetch_string ("file.name");
+            std::string output_file = a_config.fetch_string ("file.name");
+            set_output_file(output_file);
           }
         }
+      }
+
+      // Inhibit the data file saving in pipeine mode :
+      if (grab_manager().has_simulation_ctrl()) {
+        DT_LOG_WARNING(_logprio(), "Inhibit plain data saving in pipeline multi-tread mode !");
+        _save_data_ = false;
       }
 
       bool search_file_directives = true;
@@ -230,7 +237,7 @@ namespace mctools {
 
         bool using_brio = false;
         if (a_config.has_key ("file.format")) {
-          string format = a_config.fetch_string ("file.format");
+          std::string format = a_config.fetch_string ("file.format");
           bool ok = false;
           if (format == "brio" || format == "trio") {
             using_brio = true;
@@ -241,12 +248,12 @@ namespace mctools {
           if (ok) {
             _output_file_format_ = format;
           } else {
-            DT_THROW_IF(true, logic_error, "Invalid format '" << format << "' !");
+            DT_THROW_IF(true, std::logic_error, "Invalid format '" << format << "' !");
           }
         }
 
         if (! using_brio && a_config.has_key ("file.compression")) {
-          string compression = a_config.fetch_string ("file.compression");
+          std::string compression = a_config.fetch_string ("file.compression");
           bool ok = false;
           if (compression == "none") ok = true;
           else if (compression == "gzip") ok = true;
@@ -254,7 +261,7 @@ namespace mctools {
           if (ok) {
             _output_file_compression_ = compression;
           } else {
-            DT_THROW_IF(true, logic_error, "Invalid compression mode '" << compression << "' !");
+            DT_THROW_IF(true, std::logic_error, "Invalid compression mode '" << compression << "' !");
           }
         }
 
@@ -270,12 +277,12 @@ namespace mctools {
     void run_action::dump (ostream & a_out) const
     {
       a_out << "run_action::dump:" << endl;
-      a_out << "|-- Save data           : "  << _save_data_ << endl;
-      a_out << "|-- Output file dir     : '"  << _output_file_dir_ << "'" << endl;
-      a_out << "|-- Output file prefix  : '"  << _output_file_prefix_ << "'" << endl;
-      a_out << "|-- Output file format  : '"  << _output_file_format_ << "'" << endl;
-      a_out << "|-- Output compression  : '"  << _output_file_compression_ << "'" << endl;
-      a_out << "`-- Output file         : '"  << _output_file_ << "'" << endl;
+      a_out << "|-- Save data           : "  << _save_data_ << std::endl;
+      a_out << "|-- Output file dir     : '"  << _output_file_dir_ << "'" << std::endl;
+      a_out << "|-- Output file prefix  : '"  << _output_file_prefix_ << "'" << std::endl;
+      a_out << "|-- Output file format  : '"  << _output_file_format_ << "'" << std::endl;
+      a_out << "|-- Output compression  : '"  << _output_file_compression_ << "'" << std::endl;
+      a_out << "`-- Output file         : '"  << _output_file_ << "'" << std::endl;
       return;
     }
 
@@ -298,11 +305,11 @@ namespace mctools {
       //                     _manager_->get_event_generator ().get_generator_name ());
 
       const mygsl::seed_manager & the_seed_manager = _manager_->get_seed_manager ();
-      vector<string> seed_labels;
+      std::vector<std::string> seed_labels;
       the_seed_manager.get_labels (seed_labels);
       for (int i = 0; i < (int) seed_labels.size (); i++) {
         int32_t seed = the_seed_manager.get_seed (seed_labels[i]);
-        ostringstream seed_key;
+        std::ostringstream seed_key;
         seed_key << "seed." << seed_labels[i];
         _run_header_.store (seed_key.str (), seed);
       }
@@ -558,10 +565,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::run_action,ocd_)
   }
 
   {
-    // Description of the 'number_events_modulo' configuration property :
+    // Description of the 'number_of_events_modulo' configuration property :
     datatools::configuration_property_description & cpd
       = ocd_.add_property_info();
-    cpd.set_name_pattern("number_events_modulo")
+    cpd.set_name_pattern("number_of_events_modulo")
       .set_terse_description("The period to print the number of processed event")
       .set_traits(datatools::TYPE_INTEGER)
       .set_mandatory(false)
@@ -569,27 +576,29 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::run_action,ocd_)
                             "                                                        \n"
                             "Example::                                               \n"
                             "                                                        \n"
-                            "  number_events_modulo : integer = 100                  \n"
+                            "  number_of_events_modulo : integer = 100                  \n"
                             "                                                        \n"
                             )
       ;
   }
 
   {
-    // Description of the 'file.no_save' configuration property :
+    // Description of the 'file.save' configuration property :
     datatools::configuration_property_description & cpd
       = ocd_.add_property_info();
-    cpd.set_name_pattern("file.no_save")
+    cpd.set_name_pattern("file.save")
       .set_terse_description("Flag to inhibit the saving of simulated data in some output file")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
-      .set_long_description("Default value: ``0`` (save data)                              \n"
+      .set_long_description("Default value: ``0`` (don't save data)                        \n"
                             "                                                              \n"
                             "Example::                                                     \n"
                             "                                                              \n"
-                            "  file.no_save : boolean = 0                                  \n"
+                            "  file.save : boolean = 1                                     \n"
                             "                                                              \n"
-                            "This flag must be activated when the Geant4 simulation        \n"
+                            "This flag may be activated when the Geant4 simulation         \n"
+                            "engine is used from the ``g4_production`` executable.         \n"
+                            "This flag must be deactivated when the Geant4 simulation      \n"
                             "engine is used from the ``mctools::g4::simulation_module``    \n"
                             "class through a data processing pipeline because in this case \n"
                             "the pipeline generally implements its own I/O mechanisms.     \n"
@@ -605,7 +614,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::run_action,ocd_)
       .set_terse_description("Flag to allow the overwriting of some already existing output file")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
-      .set_triggered_by_flag("file.no_save", false)
+      .set_triggered_by_flag("file.save")
       .set_long_description("Default value: ``0`` (preserve existing data file)            \n"
                             "                                                              \n"
                             "Example::                                                     \n"
@@ -627,7 +636,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::run_action,ocd_)
       .set_traits(datatools::TYPE_STRING)
       .set_path(true)
       .set_complex_triggering_conditions(true)
-      //.set_triggered_by("file.no_save", false)
+      //.set_triggered_by("file.save")
       .set_long_description("This property is not taken into account if the *output file*  \n"
                             "attribute has already been set by a previous  call to the     \n"
                             "``mctools::g4::run_action::set_output_file(..;)`` method.     \n"
@@ -762,12 +771,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::run_action,ocd_)
       .set_terse_description("Flag to activate the saving of special informations in run header and footer data structure")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
-      .set_triggered_by_flag("file.no_save", false)
+      .set_triggered_by_flag("file.save")
       .set_long_description("Default value: ``0``                                    \n"
                             "                                                        \n"
                             "Example::                                               \n"
                             "                                                        \n"
-                            "  using_run_header_footer : boolean = 0                 \n"
+                            "  file.using_run_header_footer : boolean = 0            \n"
                             "                                                        \n"
                             )
       ;
@@ -781,16 +790,16 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::run_action,ocd_)
                                " logging.priority : string = \"warning\"                               \n"
                                "                                                                       \n"
                                " #@description Print period for event number                           \n"
-                               " number_events_modulo : integer = 100                                  \n"
+                               " number_of_events_modulo : integer = 100                               \n"
                                "                                                                       \n"
                                " #@description Inhibit output data file                                \n"
-                               " file.no_save : boolean = 0                                            \n"
+                               " file.save : boolean = 1                                               \n"
                                "                                                                       \n"
                                " #@description Print period for event number                           \n"
                                " file.no_preserve : boolean = 0                                        \n"
                                "                                                                       \n"
                                " #@description The name of the output data file                        \n"
-                               " #file.name : string as path = \"/tmp/data/g4_sim_data.xml\"            \n"
+                               " #file.name : string as path = \"/tmp/data/g4_sim_data.xml\"           \n"
                                "                                                                       \n"
                                " #@description Output file directory                                   \n"
                                " file.directory : string as path = \"/tmp/data\"                       \n"
@@ -805,7 +814,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::run_action,ocd_)
                                " file.compression : string = \"gzip\"                                  \n"
                                "                                                                       \n"
                                " #@description Save run header/footer information                      \n"
-                               " using_run_header_footer : boolean = 0                                 \n"
+                               " file.using_run_header_footer : boolean = 0                            \n"
                                "                                                                       \n"
                                );
 
