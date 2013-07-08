@@ -17,6 +17,10 @@ namespace mctools {
 
       void set_interactive(bool);
 
+      void set_dump_simulated_data(bool);
+
+      void set_dump_hits(bool);
+
       void set_with_visualization(bool);
 
       void set_geometry_manager(const geomtools::manager &);
@@ -28,12 +32,14 @@ namespace mctools {
     private:
 
       bool _interactive_;
+      bool _dump_simulated_data_;
+      bool _dump_hits_;
       bool _with_visualization_;
       const geomtools::manager * _geometry_manager_;
 
     };
 
-  }  // namespace ex00
+  } // namespace ex00
 } // namespace mctools
 
 #endif // MCTOOLS_EX00_INSPECTOR_H_

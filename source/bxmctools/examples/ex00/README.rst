@@ -91,10 +91,12 @@ Introduction
 
      * Plain simulation (``g4_production``):
 
-       * ``config/g4_manager.conf`` : The main configuration file for the Geant4 simulation engine.
-       * ``config/step_hit_processor_factory.conf`` : The definitions of the *step MC hit processors*
+       * ``config/simulation/manager.conf`` : The main configuration file for the Geant4 simulation engine.
+       * ``config/simulation/step_hit_processor_factory.conf`` : The definitions of the *step MC hit processors*
          associated to the sensitive detectors in the geometry.
-       * ``config/g4vis.mac`` : A sample Geant4 visualization macro (for interactive mode only).
+       * ``config/simulation/particles.conf`` : The configuration file to activate the set of particles to be tracked by Geant4.
+       * ``config/simulation/em.conf`` : The configuration file to activate electromagnetic processes within Geant4.
+       * ``config/simulation/geant4_visualization.mac`` : A sample Geant4 visualization macro (for interactive mode only).
 
      * Simulation through the data processing pipeline (``dpp_processing``):
 
@@ -102,7 +104,7 @@ Introduction
        * ``config/pipeline/module_manager.conf`` : the main configuration file of the *data processing
          module manager* embeded in the ``dpp_processing`` program.
        * ``config/pipeline/service_manager.conf`` : the main configuration of the *service manager* embeded in the
-         ``dpp_processing``program and used by the *module manager*.
+         ``dpp_processing`` program and used by the *module manager*.
        * ``config/pipeline/services.conf`` :  the definitions of the *services* used by the *data processing modules*.
          Here we define the *Geometry service* which wraps the *geometry manager*
          initialized from the ``config/geometry/manager.conf`` file (see above).
@@ -133,34 +135,40 @@ Quick start
 1. Build, install and setup the ``mctools`` library.
 2. Make a copy of the example directory::
 
-      shell> cp -a [mctools install base directory]/share/mctools/examples/ex00 /tmp/ex00
-      shell> cd /tmp/ex00
+      $ cp -a [mctools install base directory]/share/mctools/examples/ex00 /tmp/ex00
+      $ cd /tmp/ex00
 
 3. Build and install the example program::
 
-      shell> mkdir __build
-      shell> cd __build
-      shell> cmake \
+      $ mkdir __build
+      $ cd __build
+      $ cmake \
         -DCMAKE_INSTALL_PREFIX=.. \
         -Dmctools_DIR=$(mctools-config --prefix) \
         ..
-      shell> make
-      shell> make install
-      shell> cd ..
+      $ make
+      $ make install
+      $ cd ..
 
 4. Standalone Geometry:
 
+   First create the ``CONFIG_DIR`` environment variable::
+
+     $ export CONFIG_DIR="$(pwd)/config"
+
+
    a. Run the ``geomtools_inspector`` to check the virtual geometry::
 
-         shell> geomtools_inspector \
+         $ geomtools_inspector \
                   --load-dll emfield \
-                  --manager-config config/geometry/manager.conf \
+                  --manager-config ${CONFIG_DIR}/geometry/manager.conf \
                   --with-visu --visu-view-3d
          geomtools> help
          geomtools> display -3d world
          geomtools> display [1000:0]
          geomtools> display [2020:0.0]
-	 geomtools> quit
+         geomtools> export_gdml
+         geomtools> quit
 
       Note: here we load the ``emfield`` library because the geometry setup depends on
       a plugin dedicated to the modelization of electromagnetic fields provided by the
@@ -182,12 +190,18 @@ Quick start
 
    b. ROOT display of the setup via the ``mctools_ex00-1.0.gdml`` GDML file ::
 
-         shell> root
+         $ root
          root [0] TGeoManager * geo = new TGeoManager("geo","mctools examples/ex00 virtual setup");
          root [1] TGeoManager * g2 = geo->Import("mctools_ex00-1.0.gdml");
          root [2] g2->SetVisOption(0);
          root [3] g2->SetVisLevel(100);
          root [4] g2->GetMasterVolume()->Draw("");
+
+
+      Select ``Wiew|View With|OpenGL`` and type the ``t``, ``r`` and ``w`` to switch different rendering modes.
+
+      To exit the ROOT shell::
+
          root [5] .q
 
       It displays a 3D view of the setup using the ROOT visualization tool.
@@ -202,8 +216,8 @@ Quick start
 
     a. Show the list of available generators::
 
-         shell> genbb_inspector \
-                  --configuration "config/event_generator/manager.conf" \
+         $ genbb_inspector \
+                  --configuration "${CONFIG_DIR}/event_generator/manager.conf" \
                   --action "list"
          List of particle generators: :
          |-- electron_1MeV                  : genbb::single_particle_generator (not initialized)
@@ -216,8 +230,8 @@ Quick start
 
     b. Shoot some primary events from one event generator::
 
-         shell> genbb_inspector \
-                  --configuration "config/event_generator/manager.conf" \
+         $ genbb_inspector \
+                  --configuration "${CONFIG_DIR}/event_generator/manager.conf" \
                   --action "shoot" \
                   --generator "electron_1MeV_gaussian_100keV" \
                   --prng-seed 314159 \
@@ -226,7 +240,7 @@ Quick start
 
     c. Display histograms associated to the event kinematics::
 
-         shell> root histos_electron_1MeV_gaussian_100keV.root
+         $ root histos_electron_1MeV_gaussian_100keV.root
          root [1] TBrowser b; // then use the GUI to display the histograms
          root [2] .q
 
@@ -243,9 +257,10 @@ Quick start
 
     a. Show the list of available generators::
 
-         shell> genvtx_production \
-                 --geometry-manager "config/geometry/manager.conf" \
-                 --vertex-generator-manager "config/vertex_generator/manager.conf" \
+         $ genvtx_production \
+                 --load-dll "emfield" \
+                 --geometry-manager "${CONFIG_DIR}/geometry/manager.conf" \
+                 --vertex-generator-manager "${CONFIG_DIR}/vertex_generator/manager.conf" \
                  --list
          List of vertex generators :
          |-- lab_all_walls.vg  : Vertex generation from the surface of the experimental hall
@@ -264,10 +279,10 @@ Quick start
 
     b. Shoot some random vertex generators and visualize them::
 
-         shell> genvtx_production \
-                 --load-dll emfield  \
-                 --geometry-manager "config/geometry/manager.conf" \
-                 --vertex-generator-manager "config/vertex_generator/manager.conf" \
+         $ genvtx_production \
+                 --load-dll "emfield"  \
+                 --geometry-manager "${CONFIG_DIR}/geometry/manager.conf" \
+                 --vertex-generator-manager "${CONFIG_DIR}/vertex_generator/manager.conf" \
                  --shoot \
                  --number-of-vertices 400 \
                  --prng-seed 314159 \
@@ -287,10 +302,10 @@ Quick start
 
     c. Another random vertex generators::
 
-         shell> genvtx_production \
-                 --load-dll emfield  \
-                 --geometry-manager "config/geometry/manager.conf" \
-                 --vertex-generator-manager "config/vertex_generator/manager.conf" \
+         $ genvtx_production \
+                 --load-dll "emfield"  \
+                 --geometry-manager "${CONFIG_DIR}/geometry/manager.conf" \
+                 --vertex-generator-manager "${CONFIG_DIR}/vertex_generator/manager.conf" \
                  --shoot \
                  --number-of-vertices 2000 \
                  --prng-seed 314159 \
@@ -307,14 +322,14 @@ Quick start
 
 7. Geant4 simulation:
 
-    a. Run the simulation through a Geant4 interactive session with visualization::
+    a. Run the Geant4 simulation through a Geant4 interactive session with visualization::
 
-         shell> g4_production \
+         $ g4_production \
                 --logging-priority "warning" \
                 --number-of-events-modulo 1 \
                 --interactive \
                 --g4-visu \
-                --config "config/g4_manager.conf" \
+                --config "${CONFIG_DIR}/simulation/manager.conf" \
                 --vertex-generator-name "source_bulk.vg" \
                 --vertex-generator-seed 0 \
                 --event-generator-name "electron_1MeV_cone" \
@@ -324,7 +339,7 @@ Quick start
                 --output-prng-seeds-file "prng_seeds.save" \
                 --output-prng-states-file "prng_states.save" \
                 --output-data-file "mctools_ex00_electron_1MeV_source_bulk.xml" \
-                --g4-macro "config/g4vis.mac"
+                --g4-macro "${CONFIG_DIR}/simulation/geant4_visualization.mac"
 
       From the Geant4 interactive session::
 
@@ -334,77 +349,94 @@ Quick start
 
       It displays the virtual geometry setup using the Geant4 visualization driver.
 
-      .. image:: images/ex00_g4_production_0.jpg
-         :width: 200
-         :scale: 25 %
-         :alt: The Geant4 visualization of the geometry (file ``images/ex00_g4_production_0.jpg``)
-         :align: center
+      Snapshots:
+
+      * The Geant4 visualization of the geometry:
+
+         .. image:: images/ex00_g4_production_0.jpg
+            :width: 200
+            :scale: 25 %
+            :alt: The Geant4 visualization of the geometry (file ``images/ex00_g4_production_0.jpg``)
+            :align: center
+
+      * The Geant4 visualization of a 1MeV electron emitted from the source film and backscatterred on the absorber foil:
+
+         .. image:: images/ex00_g4_production_1.jpg
+            :width: 200
+            :scale: 25 %
+            :alt: The Geant4 visualization of a 1MeV electron emitted from the source film and backscatterred on the absorber foil (file ``images/ex00_g4_production_1.jpg``)
+            :align: center
+
+      * The Geant4 visualization of a 1MeV electron emitted from the source film and stopped in the scintillator block:
+
+         .. image:: images/ex00_g4_production_2.jpg
+            :width: 200
+            :scale: 25 %
+            :alt: The Geant4 visualization of a 1MeV electron emitted from the source film and stopped in the scintillator block (file ``images/ex00_g4_production_2.jpg``)
+            :align: center
+
+      *  The Geant4 visualization of many 1MeV electrons emitted in a cone from the bulk of the source film:
+
+         .. image:: images/ex00_g4_production_3.jpg
+            :width: 200
+            :scale: 25 %
+            :alt: The Geant4 visualization of many 1MeV electrons emitted from the source film (file ``images/ex00_g4_production_3.jpg``)
+            :align: center
 
 
-      .. image:: images/ex00_g4_production_1.jpg
-         :width: 200
-         :scale: 25 %
-         :alt: The Geant4 visualization of a 1MeV electron emitted from the source film and backscatterred on the absorber foil (file ``images/ex00_g4_production_1.jpg``)
-         :align: center
+      You may then browse the output plain simulated data file: ::
 
-
-      .. image:: images/ex00_g4_production_2.jpg
-         :width: 200
-         :scale: 25 %
-         :alt: The Geant4 visualization of a 1MeV electron emitted from the source film and stopped in the scintillator block (file ``images/ex00_g4_production_2.jpg``)
-         :align: center
-
-
-      .. image:: images/ex00_g4_production_3.jpg
-         :width: 200
-         :scale: 25 %
-         :alt: The Geant4 visualization of many 1MeV electrons emitted from the source film (file ``images/ex00_g4_production_3.jpg``)
-         :align: center
-
-
-      Then browse the output plain simulated data file ::
-
-         shell> ls -l mctools_ex00_electron_1MeV_source_bulk.xml
-         shell> export LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH}
-         shell> ./ex00_read_plain_simdata \
-                 --load-dll emfield  \
+         $ ls -l mctools_ex00_electron_1MeV_source_bulk.xml
+         $ export LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH}
+         $ ./ex00_read_plain_simdata \
+                 --load-dll "emfield"  \
                  --logging-priority "notice" \
                  --interactive \
                  --with-visualization \
                  --input-file "mctools_ex00_electron_1MeV_source_bulk.xml"
 
-      .. image:: images/ex00_g4_production_4.jpg
-         :width: 200
-         :scale: 25 %
-         :alt: The geomtools 3D visualization of a recorded simulated event (file ``images/ex00_g4_production_4.jpg``)
-         :align: center
+      Snapshots:
 
-      .. image:: images/ex00_g4_production_5.jpg
-         :width: 200
-         :scale: 25 %
-         :alt: The geomtools 3D visualization of a recorded simulated event with an electron stopped in the scintillator block after scattering the absorber foil (file ``images/ex00_g4_production_5.jpg``)
-         :align: center
+      * The geomtools 3D visualization of a recorded simulated event:
 
-      .. image:: images/ex00_g4_production_6.jpg
-         :width: 200
-         :scale: 25 %
-         :alt: The geomtools XZ-visualization of a recorded simulated event with an electron stopped in the scintillator block after scattering the absorber foil (file ``images/ex00_g4_production_6.jpg``)
-         :align: center
+         .. image:: images/ex00_g4_production_4.jpg
+            :width: 200
+            :scale: 25 %
+            :alt: The geomtools 3D visualization of a recorded simulated event (file ``images/ex00_g4_production_4.jpg``)
+            :align: center
 
-      .. image:: images/ex00_g4_production_7.jpg
-         :width: 200
-         :scale: 25 %
-         :alt: Detailed XZ-view of the electron hit in the scintillator block with superimposed electron track (file ``images/ex00_g4_production_7.jpg``)
-         :align: center
+      * The geomtools 3D visualization of a recorded simulated event with an electron stopped in the scintillator block after scattering the absorber foil:
 
-    b. Run the simulation in non-interactive mode::
+         .. image:: images/ex00_g4_production_5.jpg
+            :width: 200
+            :scale: 25 %
+            :alt: The geomtools 3D visualization of a recorded simulated event with an electron stopped in the scintillator block after scattering the absorber foil (file ``images/ex00_g4_production_5.jpg``)
+            :align: center
 
-         shell> g4_production \
+      * The geomtools XZ-visualization of a recorded simulated event with an electron stopped in the scintillator block after scattering the absorber foil:
+
+         .. image:: images/ex00_g4_production_6.jpg
+            :width: 200
+            :scale: 25 %
+            :alt: The geomtools XZ-visualization of a recorded simulated event with an electron stopped in the scintillator block after scattering the absorber foil (file ``images/ex00_g4_production_6.jpg``)
+            :align: center
+
+      * Detailed XZ-view of the electron hit in the scintillator block with superimposed electron track:
+
+         .. image:: images/ex00_g4_production_7.jpg
+            :width: 200
+            :scale: 25 %
+            :alt: Detailed XZ-view of the electron hit in the scintillator block with superimposed electron track (file ``images/ex00_g4_production_7.jpg``)
+            :align: center
+
+    b. Run the Geant4 simulation in non-interactive mode::
+
+         $ g4_production \
                 --logging-priority "warning" \
                 --number-of-events 100 \
                 --number-of-events-modulo 0 \
                 --batch \
-                --config "config/g4_manager.conf" \
+                --config "${CONFIG_DIR}/simulation/manager.conf" \
                 --vertex-generator-name "source_bulk.vg" \
                 --vertex-generator-seed 0 \
                 --event-generator-name "electron_1MeV" \
@@ -417,73 +449,115 @@ Quick start
 
        Then browse the output plain simulated data file ::
 
-         shell> ls -l mctools_ex00_electron_1MeV_source_bulk.data.gz
-         shell> ./ex00_read_plain_simdata \
-                 --load-dll emfield  \
+         $ ls -l mctools_ex00_electron_1MeV_source_bulk.data.gz
+         $ ./ex00_read_plain_simdata \
+                 --load-dll "emfield"  \
                  --logging-priority "notice" \
                  --interactive \
-		 --with-visualization \
+                 --with-visualization \
                  --input-file "mctools_ex00_electron_1MeV_source_bulk.data.gz"
 
-      .. image:: images/ex00_g4_production_8.jpg
-         :width: 200
-         :scale: 25 %
-         :alt: Detailed YZ-view of an electron absorbed in the source support (file ``images/ex00_g4_production_8.jpg``)
-         :align: center
 
-    c. Run the geant4 simulation through the data processing pipeline::
+       Detailed YZ-view of an electron emitted from the source film then absorbed in the source support:
 
-         shell> dpp_processing \
+          .. image:: images/ex00_g4_production_8.jpg
+             :width: 200
+             :scale: 25 %
+             :alt: Detailed YZ-view of an electron absorbed in the source support (file ``images/ex00_g4_production_8.jpg``)
+             :align: center
+
+    c. Run the Geant4 simulation through the data processing pipeline::
+
+         $ dpp_processing \
           --logging-priority "notice" \
-          --dlls-config "config/pipeline/dlls.conf" \
-          --module-manager-config "config/pipeline/module_manager.conf" \
+          --dlls-config "${CONFIG_DIR}/pipeline/dlls.conf" \
+          --module-manager-config "${CONFIG_DIR}/pipeline/module_manager.conf" \
           --max-records 1000 \
           --modulo 100 \
           --module "electron_1MeV_cone@source_bulk" \
-          --output-file "mctools_ex00_electron_1MeV@source_bulk.dpp.xml"
+          --output-file "mctools_ex00_electron_1MeV_cone@source_bulk.dpp.brio"
 
-       The output data file use the Boost XML archive format and stores the
+       The output data file uses the Brio format and stores the
        simulated data within ``datatools::things`` object records::
 
-         shell> ls -l mctools_ex00_electron_1MeV_cone@source_bulk.dpp.xml
-         shell> ./ex00_read_pipeline_simdata \
+         $ ls -l mctools_ex00_electron_1MeV_cone@source_bulk.dpp.brio
+         $ ./ex00_read_pipeline_simdata \
                  --load-dll emfield  \
                  --logging-priority "notice" \
                  --interactive \
-		 --with-visualization \
-                 --input-file "mctools_ex00_electron_1MeV_cone@source_bulk.dpp.xml"
+                 --with-visualization \
+                 --dump-data-record \
+                 --dump-simulated-data \
+                 --dump-hits \
+                 --input-file "mctools_ex00_electron_1MeV_cone@source_bulk.dpp.brio"
 
+       Snapshots:
 
-      .. image:: images/ex00_g4_pipeline_2.jpg
-         :width: 200
-         :scale: 25 %
-         :alt: The 3D-view of the simulated electron track with a scintillator hit (file ``images/ex00_g4_pipeline_2.jpg``)
-         :align: center
+        * The 3D-view of the simulated electron track with a scintillator hit:
 
-      .. image:: images/ex00_g4_pipeline_0.jpg
-         :width: 200
-         :scale: 25 %
-         :alt: The print of the simulated data bank (file ``images/ex00_g4_pipeline_0.jpg``)
-         :align: center
+          .. image:: images/ex00_g4_pipeline_2.jpg
+             :width: 200
+             :scale: 25 %
+             :alt: The 3D-view of the simulated electron track with a scintillator hit (file ``images/ex00_g4_pipeline_2.jpg``)
+             :align: center
 
-      .. image:: images/ex00_g4_pipeline_1.jpg
-         :width: 200
-         :scale: 25 %
-         :alt: The print of the scintillator hit (file ``images/ex00_g4_pipeline_0.jpg``)
-         :align: center
+        * The print of the event data record (class ``datatools::things``) with its embedded simulated data bank :
+
+          .. image:: images/ex00_g4_pipeline_00.jpg
+             :width: 200
+             :scale: 25 %
+             :alt: The print of the event data record with its embedded simulated data bank (file ``images/ex00_g4_pipeline_0.jpg``)
+             :align: center
+
+        * The print of the content of the simulated data bank (class ``mctools::simulated_data``) :
+
+          .. image:: images/ex00_g4_pipeline_0.jpg
+             :width: 200
+             :scale: 25 %
+             :alt: The print of the content of the simulated data bank (file ``images/ex00_g4_pipeline_0.jpg``)
+             :align: center
+
+        * The print of a ``__visu.tracks`` in the lab volume (class ``mctools::base_step_hit``) :
+
+          .. image:: images/ex00_g4_pipeline_1.jpg
+             :width: 200
+             :scale: 25 %
+             :alt: The print of a ``__visu.tracks`` in the lab volume (file ``images/ex00_g4_pipeline_1.jpg``)
+             :align: center
+
+        * The print of a ``__visu.tracks`` in the scintillator block (class ``mctools::base_step_hit``) :
+
+          .. image:: images/ex00_g4_pipeline_1a.jpg
+             :width: 200
+             :scale: 25 %
+             :alt: The print of a ``__visu.tracks`` in the scintillator block (file ``images/ex00_g4_pipeline_1a.jpg``)
+             :align: center
+
+        * The print of a ``scin`` hit in the scintillator block (class ``mctools::base_step_hit``):
+
+          .. image:: images/ex00_g4_pipeline_1b.jpg
+             :width: 200
+             :scale: 25 %
+             :alt: The print of a hit in the scintillator block (file ``images/ex00_g4_pipeline_1b.jpg``)
+             :align: center
 
 8. Clean::
 
-      shell> rm mctools_ex00_electron_1MeV_cone@source_bulk.dpp.xml
-      shell> rm prng_seeds.save
-      shell> rm prng_seeds.save.~backup~
-      shell> rm mctools_ex00_electron_1MeV_source_bulk.data.gz
-      shell> rm mctools_ex00_electron_1MeV_source_bulk.xml
-      shell> rm mctools_ex00_vertices2.txt
-      shell> rm mctools_ex00_vertices.txt
-      shell> rm histos_electron_1MeV_gaussian_100keV.root
-      shell> rm ex00_read_plain_simdata
-      shell> rm mctools_ex00-1.0.gdml
-      shell> rm geomtools_inspector.C
-      shell> rm -fr lib/
-      shell> rm -fr __build/
+      $ rm ex00_read_plain_simdata
+      $ rm ex00_read_pipeline_simdata
+      $ rm geomtools_inspector.C
+      $ rm histos_electron_1MeV_gaussian_100keV.root
+      $ rm -fr lib/
+      $ rm mctools_ex00-1.0.gdml
+      $ rm mctools_ex00_electron_1MeV_cone@source_bulk.dpp.brio
+      $ rm mctools_ex00_electron_1MeV_source_bulk.data.gz
+      $ rm mctools_ex00_electron_1MeV_source_bulk.xml
+      $ rm mctools-ex00_README.html
+      $ rm mctools_ex00_vertices2.txt
+      $ rm mctools_ex00_vertices_source_bulk.vg.txt
+      $ rm mctools_ex00_vertices.txt
+      $ rm prng_seeds.save
+      $ rm prng_seeds.save.~backup~
+      $ rm prng_states.save
+      $ rm prng_states.save.~backup~
+      $ rm -fr __build/

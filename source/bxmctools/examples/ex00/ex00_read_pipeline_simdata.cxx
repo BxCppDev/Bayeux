@@ -54,6 +54,9 @@ int main(int argc_, char **argv_) {
     std::string geometry_config_filename;
     bool interactive = false;
     bool visualization = false;
+    bool dump_data_record = false;
+    bool dump_simulated_data = false;
+    bool dump_hits = false;
     std::vector<std::string> LL_dlls;
     std::string              LL_config;
     std::string              SD_bank_label = "SD";
@@ -97,6 +100,24 @@ int main(int argc_, char **argv_) {
        ->zero_tokens()
        ->default_value(false),
        "activate visualization")
+
+      ("dump-data-record,D",
+       po::value<bool>(&dump_data_record)
+       ->zero_tokens()
+       ->default_value(false),
+       "dump each data record")
+
+      ("dump-simulated-data,S",
+       po::value<bool>(&dump_simulated_data)
+       ->zero_tokens()
+       ->default_value(false),
+       "dump each simulated data record")
+
+      ("dump-hits,H",
+       po::value<bool>(&dump_hits)
+       ->zero_tokens()
+       ->default_value(false),
+       "dump each truth step hit")
 
       ; // end of options description
 
@@ -178,6 +199,8 @@ int main(int argc_, char **argv_) {
     mctools::ex00::simulated_data_inspector SDI;
     SDI.set_interactive(interactive);
     SDI.set_with_visualization(visualization);
+    SDI.set_dump_simulated_data(dump_simulated_data);
+    SDI.set_dump_hits(dump_hits);
     SDI.set_geometry_manager(geo_mgr);
 
     // The event record with embedded simulated data bank to be loaded :
@@ -189,6 +212,10 @@ int main(int argc_, char **argv_) {
       // Load the event data record :
       reader.process(ER);
       DT_LOG_NOTICE(logging, "Event data record #" << edr_count);
+      if (dump_data_record) {
+        ER.tree_dump(std::clog, "Event data record : ", " ");
+        std::clog << std::endl;
+      }
       edr_count++;
       if (ER.has(SD_bank_label) && ER.is_a<mctools::simulated_data>(SD_bank_label)) {
         // Access to the "SD" bank with a stored `mctools::simulated_data' :

@@ -20,7 +20,19 @@ namespace mctools {
     simulated_data_inspector::simulated_data_inspector()
     {
       _interactive_ = true;
+      _dump_simulated_data_ = false;
+      _dump_hits_ = false;
       _with_visualization_ = false;
+    }
+
+    void simulated_data_inspector::set_dump_simulated_data(bool dsd_)
+    {
+      _dump_simulated_data_ = dsd_;
+    }
+
+    void simulated_data_inspector::set_dump_hits(bool dh_)
+    {
+      _dump_hits_ = dh_;
     }
 
     void simulated_data_inspector::set_interactive(bool i_)
@@ -41,7 +53,10 @@ namespace mctools {
 
     bool simulated_data_inspector::inspect(const mctools::simulated_data & sd_)
     {
-      sd_.tree_dump(std::clog, "Simulated data : ");
+      if (_dump_simulated_data_) {
+        sd_.tree_dump(std::clog, "Simulated data : ", " ");
+        std::clog << std::endl;
+      }
       if (_interactive_) {
         if (_with_visualization_) {
           display(sd_);
@@ -84,7 +99,10 @@ namespace mctools {
         int nsteps = sd_.get_number_of_step_hits("__visu.tracks");
         for (int i = 0; i < nsteps; i++) {
           const mctools::base_step_hit & truth_hit = sd_.get_step_hit("__visu.tracks", i);
-          //truth_hit.tree_dump(std::clog, "Truth '__visu.tracks' hit:");
+          if (_dump_hits_) {
+            truth_hit.tree_dump(std::clog, "Truth '__visu.tracks' hit : ", " ");
+            std::clog << std::endl;
+          }
           const geomtools::vector_3d & step_start = truth_hit.get_position_start();
           const geomtools::vector_3d & step_stop = truth_hit.get_position_stop();
           const std::string & pname = truth_hit.get_particle_name();
@@ -115,7 +133,10 @@ namespace mctools {
         int nsteps = sd_.get_number_of_step_hits("probe");
         for (int i = 0; i < nsteps; i++) {
           const mctools::base_step_hit & truth_hit = sd_.get_step_hit("probe", i);
-          truth_hit.tree_dump(std::clog, "Truth 'probe' hit:");
+          if (_dump_hits_) {
+            truth_hit.tree_dump(std::clog, "Truth 'probe' hit : ", " ");
+            std::clog << std::endl;
+          }
           const geomtools::vector_3d & step_start = truth_hit.get_position_start();
           const geomtools::vector_3d & step_stop = truth_hit.get_position_stop();
           const std::string & pname = truth_hit.get_particle_name();
@@ -146,7 +167,10 @@ namespace mctools {
         int nsteps = sd_.get_number_of_step_hits("scin");
         for (int i = 0; i < nsteps; i++) {
           const mctools::base_step_hit & truth_hit = sd_.get_step_hit("scin", i);
-          truth_hit.tree_dump(std::clog, "Truth 'scin' hit:");
+          if (_dump_hits_) {
+            truth_hit.tree_dump(std::clog, "Truth 'scin' hit : ", " ");
+            std::clog << std::endl;
+          }
           const geomtools::vector_3d & step_start = truth_hit.get_position_start();
           const geomtools::vector_3d & step_stop = truth_hit.get_position_stop();
 

@@ -43,6 +43,10 @@ fi
 cd ..
 ls -l
 
+
+echo -e "\nDefine the CONFIG_DIR environment variable..." 1>&2
+export CONFIG_DIR="./config"
+
 echo -e "\nCheck the geometry..." 1>&2
 echo "q" | geomtools_inspector \
     --manager-config config/geometry/manager.conf \
@@ -150,31 +154,38 @@ if [ $do_simulation -eq 1 ]; then
 	--max-records 100 \
 	--modulo 5 \
 	--module ${sim_module} \
-	--output-file "mctools_ex00_${sim_module}.dpp.xml"
+	--output-file "mctools_ex00_${sim_module}.dpp.brio"
 
 
-    echo -e "\nBrowse the output pipeline simulated data file..." 1>&2
-    ./ex00_read_pipeline_simdata \
-        --load-dll emfield  \
-        --logging-priority "notice" \
-        --interactive \
-	--with-visualization \
-        --input-file "mctools_ex00_${sim_module}.dpp.xml"
+    # echo -e "\nBrowse the output pipeline simulated data file..." 1>&2
+    # ./ex00_read_pipeline_simdata \
+    #     --load-dll emfield  \
+    #     --logging-priority "notice" \
+    #     --interactive \
+    # 	--with-visualization \
+    #     --input-file "mctools_ex00_${sim_module}.dpp.xml"
 
 fi
 
 if [ ${do_clean} -eq 1 ]; then
     rm -f ex00_read_plain_simdata
+    rm -f ex00_read_pipeline_simdata
+    rm -f geomtools_inspector.C
+    rm -f histos_electron_1MeV_gaussian_100keV.root
+    rm -f -fr lib/
     rm -f mctools_ex00-1.0.gdml
-    rm -f geomtools_check_setup.C
-    rm -f mctools_ex00_${eg_name}_${vg_name}.data.gz
-    rm -f mctools_ex00_${sim_module}.dpp.xml
-    rm -f mctools_ex00_${eg_name}_${vg_name}.xml
-    rm -f histos_${eg_name}.root
-    rm -f prng_seeds.save*
-    rm -f prng_states.save*
+    rm -f mctools_ex00_electron_1MeV_cone@source_bulk.dpp.brio
+    rm -f mctools_ex00_electron_1MeV_source_bulk.data.gz
+    rm -f mctools_ex00_electron_1MeV_source_bulk.xml
+    rm -f mctools-ex00_README.html
+    rm -f mctools_ex00_vertices2.txt
+    rm -f mctools_ex00_vertices_source_bulk.vg.txt
+    rm -f mctools_ex00_vertices.txt
+    rm -f prng_seeds.save
+    rm -f prng_seeds.save.~backup~
+    rm -f prng_states.save
+    rm -f prng_states.save.~backup~
     rm -fr ${build_dir}
-    rm -fr ./lib
     find . -name "*~" -exec rm -f \{\} \;
 fi
 
