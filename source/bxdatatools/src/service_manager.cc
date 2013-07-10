@@ -591,7 +591,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
                                 "A service manager can be configured *manually* from plain C++ code.\n"
                                 "Is is also possible to initialize it through a set of ASCII        \n"
                                 "configuration files, thus dynamically instantiating a list of      \n"
-                                "services with for various embeded functionalities.                 \n"
+                                "services with various embeded functionalities.                     \n"
                                 )
     ;
 
@@ -652,7 +652,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("services.configuration_files")
-      .set_terse_description("A list of configuration file names for embeded services")
+      .set_terse_description("A list of configuration filenames for embeded services")
       .set_traits(datatools::TYPE_STRING,
                   configuration_property_description::ARRAY)
       .set_mandatory(false)
@@ -660,13 +660,14 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
       .set_long_description(
                             "A list of filenames from where the manager               \n"
                             "loads the directives to dynamically instantiate          \n"
-                            "new embeded service objects. The filenames may contains  \n"
+                            "new embedded service objects. The filenames may contains  \n"
                             "some environment variables.                              \n"
                             "                                                         \n"
                             "Example::                                                \n"
                             "                                                         \n"
-                            "   services.configuration_files : string[1] as path = \\ \n"
-                            "     \"${CONFIG_REPOSITORY_DIR}/services.conf\"          \n"
+                            "   services.configuration_files : string[2] as path = \\ \n"
+                            "     \"${CONFIG_REPOSITORY_DIR}/services.conf\" \\       \n"
+                            "     \"${CONFIG_REPOSITORY_DIR}/other_services.conf\"    \n"
                             "                                                         \n"
                             "The target files must use the format of the              \n"
                             "``datatools::multi_properties`` class.                   \n"
@@ -694,6 +695,40 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
                                 "     \"${CONFIG_DIR}/io_services.conf\" \\                    \n"
                                 "     \"${CONFIG_DIR}/processing_services.conf\"               \n"
                                 "                                                              \n"
+                                "The ``${CONFIG_DIR}/database_services.conf``, ``${CONFIG_DIR}/io_services.conf``\n"
+                                "and ``${CONFIG_DIR}/processing_services.conf`` files use        \n"
+                                "the ``datatools::multi_properties`` ASCII format.               \n"
+                                "                                                                \n"
+                                "Example::                                                       \n"
+                                "                                                                \n"
+                                "  #@description A list of services                              \n"
+                                "  #@key_label   \"name\"                                        \n"
+                                "  #@meta_label  \"type\"                                        \n"
+                                "                                                                \n"
+                                "  [name=\"service_0\" type=\"service_class_ID_0\"]              \n"
+                                "                                                                \n"
+                                "  #@config A service object                                     \n"
+                                "                                                                \n"
+                                "  #@description A configuration parameter                       \n"
+                                "  debug : boolean = 1                                           \n"
+                                "                                                                \n"
+                                "  #@description Another configuration parameter                 \n"
+                                "  name : string = \"value\"                                     \n"
+                                "                                                                \n"
+                                "  ...                                                           \n"
+                                "                                                                \n"
+                                "  [name=\"service_1\" type=\"service_class_ID_1\"]              \n"
+                                "                                                                \n"
+                                "  #@config Another service object                               \n"
+                                "                                                                \n"
+                                "  #@description A configuration parameter                       \n"
+                                "  debug : boolean = 0                                           \n"
+                                "                                                                \n"
+                                "  #@description Another configuration parameter                 \n"
+                                "  name : string = \"value\"                                     \n"
+                                "                                                                \n"
+                                "  ...                                                           \n"
+                                "                                                                \n"
                                 );
 
   ocd_.set_validation_support(true);
