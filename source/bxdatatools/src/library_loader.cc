@@ -481,12 +481,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::library_loader,ocd_)
                                 "of shared libraries (DLL).                                   \n"
                                 );
 
-  ocd_.set_configuration_hints ("A library loader object may load directives from a file that  \n"
+  ocd_.set_configuration_hints ("A library loader object may load its setup directives from a file that  \n"
                                 "uses the format of the ``datatools::multi_properties`` object.\n"
                                 "Each section corresponds to the loading rules of a specific   \n"
-                                "DLL.                                                          \n"
+                                "shared library (DLL).                                         \n"
                                 "                                                              \n"
-                                "Example of configuration file::                               \n"
+                                "Example of configuration file: ::                             \n"
                                 "                                                              \n"
                                 "   #@key_label   \"name\"                                     \n"
                                 "   #@meta_label  \"filename\"                                 \n"
