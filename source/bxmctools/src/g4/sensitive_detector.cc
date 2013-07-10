@@ -1,5 +1,9 @@
 // -*- mode: c++ ; -*-
 /* sensitive_detector.cc
+ *
+ * How to access informations from a G4Step:
+ * http://geant4.web.cern.ch/geant4/UserDocumentation/UsersGuides/FAQ/html/ch01s04.html
+ *
  */
 
 #include <cstdlib>
@@ -53,6 +57,12 @@ namespace mctools {
       return;
     }
 
+    void sensitive_detector::set_track_optical_photon (bool track_op_)
+    {
+      _track_optical_photon_ = track_op_;
+      return;
+    }
+
     void sensitive_detector::set_track_neutron (bool track_neutron_)
     {
       _track_neutron_ = track_neutron_;
@@ -82,15 +92,21 @@ namespace mctools {
       return _aux_;
     }
 
-    void sensitive_detector::set_delta_ray_from_alpha (bool flag_)
+    void sensitive_detector::set_record_delta_ray_from_alpha (bool flag_)
     {
-      _delta_ray_from_alpha_ = flag_;
+      _record_delta_ray_from_alpha_ = flag_;
       return;
     }
 
     void sensitive_detector::set_record_track_id (bool record_)
     {
       _record_track_id_ = record_;
+      return;
+    }
+
+    void sensitive_detector::set_record_step_length (bool record_)
+    {
+      _record_step_length_ = record_;
       return;
     }
 
@@ -145,6 +161,12 @@ namespace mctools {
     void sensitive_detector::set_record_kinetic_energy (bool record_)
     {
       _record_kinetic_energy_ = record_;
+      return;
+    }
+
+    void sensitive_detector::set_record_boundaries (bool record_)
+    {
+      _record_boundaries_ = record_;
       return;
     }
 
@@ -241,12 +263,12 @@ namespace mctools {
       return _sensitive_category_;
     }
 
-    size_t sensitive_detector::get_hits_buffer_capacity () const
+    unsigned int sensitive_detector::get_hits_buffer_capacity () const
     {
       return _hits_buffer_capacity_;
     }
 
-    void sensitive_detector::set_hits_buffer_capacity (size_t capacity_)
+    void sensitive_detector::set_hits_buffer_capacity (unsigned int capacity_)
     {
       if (capacity_ > 0)
         {
@@ -270,6 +292,16 @@ namespace mctools {
       }
 
       {
+        // Record boundaries
+        const string trkid_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_BOUNDARIES);
+        if (config_.has_flag (trkid_key)) {
+          // this method enables the sensitive detector to record the boundary flags
+          // as an auxiliary properties of the step hit
+          set_record_boundaries (true);
+        }
+      }
+
+      {
         // Record primary particle flag
         const string pp_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_PRIMARY_PARTICLE);
         if (config_.has_flag (pp_key)) {
@@ -288,7 +320,7 @@ namespace mctools {
           // this should make possible to take into account quenching effects
           // along alpha tracks by aggregation of the total energy deposit
           // by secondary delta rays along the alpha track.
-          set_delta_ray_from_alpha (true);
+          set_record_delta_ray_from_alpha (true);
         }
       }
 
@@ -346,7 +378,7 @@ namespace mctools {
 
       {
         // 2011-08-26 FM: new option : 'record sensitive category'
-        string record_sensitive_category_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_CATEGORY);
+        string record_sensitive_category_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_SENSITIVE_CATEGORY);
         if (config_.has_flag (record_sensitive_category_key)) {
           set_record_sensitive_category (true);
         }
@@ -369,6 +401,14 @@ namespace mctools {
       }
 
       {
+        // Record true step length
+        string record_step_length_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_STEP_LENGTH);
+        if (config_.has_flag (record_step_length_key)) {
+          set_record_step_length (true);
+        }
+      }
+
+      {
         string key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_HITS_BUFFER_CAPACITY);
         if (config_.has_key (key)) {
           int cap = config_.fetch_integer (key);
@@ -376,7 +416,7 @@ namespace mctools {
                        "Invalid buffer size for sensitive detector '"
                        << _sensitive_category_
                        << "' !");
-          size_t capacity = (size_t) cap;
+          unsigned int capacity = (unsigned int) cap;
           if (capacity > 0) {
             set_hits_buffer_capacity (capacity);
           }
@@ -403,8 +443,13 @@ namespace mctools {
         set_track_gamma (flag);
       }
 
-      // Tracking neutron: if no key then use default behavior set in
-      // _set_defaults method
+      // Tracking optical photon
+      if (geomtools::sensitive::has_key (config_, sensitive_utils::SENSITIVE_TRACK_OPTICAL_PHOTON)) {
+        const bool flag = geomtools::sensitive::has_flag (config_, sensitive_utils::SENSITIVE_TRACK_OPTICAL_PHOTON);
+        set_track_optical_photon (flag);
+      }
+
+      // Tracking neutron:
       if (geomtools::sensitive::has_key (config_, sensitive_utils::SENSITIVE_TRACK_NEUTRON)) {
         const bool flag = geomtools::sensitive::has_flag (config_, sensitive_utils::SENSITIVE_TRACK_NEUTRON);
         set_track_neutron (flag);
@@ -416,10 +461,11 @@ namespace mctools {
     void sensitive_detector::_set_defaults ()
     {
       _track_gamma_                    = true;
+      _track_optical_photon_           = true;
       _track_neutron_                  = true;
       _drop_zero_energy_deposit_steps_ = false;
       _record_g4_volume_properties_    = false;
-      _delta_ray_from_alpha_           = false;
+      _record_delta_ray_from_alpha_    = false;
       _record_primary_particle_        = false;
       _record_track_id_                = false;
       _record_major_track_             = false;
@@ -430,6 +476,8 @@ namespace mctools {
       _record_creator_category_        = false;
       _record_material_                = false;
       _record_sensitive_category_      = false;
+      _record_step_length_             = false;
+      _record_boundaries_              = false;
       _hits_buffer_capacity_           = DEFAULT_HIT_BUFFER_CAPACITY;
 
       // G4 Stuff:
@@ -530,7 +578,7 @@ namespace mctools {
       _used_hits_count_ = 0;
 
       // Activates the track info mechanism :
-      if (_delta_ray_from_alpha_) _manager_->set_use_track_history (true);
+      if (_record_delta_ray_from_alpha_) _manager_->set_use_track_history (true);
       if (_record_track_id_)           _manager_->set_use_track_history (true);
       if (_record_primary_particle_)   _manager_->set_use_track_history (true);
       if (_record_major_track_)        _manager_->set_use_track_history (true);
@@ -584,7 +632,7 @@ namespace mctools {
         {
         sensitive_hits_collection * HC_tmp = 0;
         HC_tmp = (sensitive_hits_collection * ) ( some_hit_collections->GetHC (_HCID));
-        for (size_t i = 0; i < HC_tmp->GetSize (); i++ )
+        for (unsigned int i = 0; i < HC_tmp->GetSize (); i++ )
         {
         clog << "DEBUG: sensitive_detector::EndOfEvent: "
         << "hit collection (" << i
@@ -684,7 +732,7 @@ namespace mctools {
           }
         }
 
-        if (_delta_ray_from_alpha_) {
+        if (_record_delta_ray_from_alpha_) {
           /* Identify a delta-ray generated along
            * the track of an alpha particle:
            */
@@ -712,10 +760,10 @@ namespace mctools {
       } // if (_using_track_infos)
 
       if (_used_hits_count_ == (int) _hits_buffer_.size ()) {
-        //size_t osize = _hits_buffer.size ();
+        //unsigned int osize = _hits_buffer.size ();
         sensitive_hit a_hit;
         _hits_buffer_.push_back (a_hit);
-        //size_t nsize = _hits_buffer.size ();
+        //unsigned int nsize = _hits_buffer.size ();
         // cerr << datatools::io::devel
         //      << "snemo::g4::sensitive_detector::ProcessHits: "
         //      << "Increase the size of the buffer of sensitive hits for detector '"
@@ -757,23 +805,36 @@ namespace mctools {
 
       // Add auxiliary properties :
       if (_record_kinetic_energy_) {
-        hit_aux.store (mctools::track_utils::START_KINETIC_ENERGY_KEY,
-                       step_->GetPreStepPoint ()->GetKineticEnergy ());
-        hit_aux.store (mctools::track_utils::STOP_KINETIC_ENERGY_KEY,
-                       step_->GetPostStepPoint ()->GetKineticEnergy ());
+        hit_aux.store_real (mctools::track_utils::START_KINETIC_ENERGY_KEY,
+                            step_->GetPreStepPoint ()->GetKineticEnergy ());
+        hit_aux.store_real (mctools::track_utils::STOP_KINETIC_ENERGY_KEY,
+                            step_->GetPostStepPoint ()->GetKineticEnergy ());
+      }
+
+      if (_record_step_length_) {
+        hit_aux.store_real (mctools::track_utils::STEP_LENGTH, step_->GetStepLength ());
+      }
+
+      if (_record_boundaries_) {
+        if (step_->GetPreStepPoint ()->GetStepStatus() == fGeomBoundary) {
+          hit_aux.store_flag (mctools::track_utils::ENTERING_VOLUME_FLAG);
+        }
+        if (step_->GetPostStepPoint ()->GetStepStatus() == fGeomBoundary) {
+          hit_aux.store_flag (mctools::track_utils::LEAVING_VOLUME_FLAG);
+        }
       }
 
       const bool use_track_info = _manager_->has_track_history ();
       if (use_track_info) {
         // special features:
         if (_record_creator_process_ && ! _track_info_ptr_->get_creator_process_name ().empty ()) {
-          hit_aux.store (mctools::track_utils::CREATOR_PROCESS_KEY,
-                         _track_info_ptr_->get_creator_process_name ());
+          hit_aux.store_string (mctools::track_utils::CREATOR_PROCESS_KEY,
+                                _track_info_ptr_->get_creator_process_name ());
         }
 
         if (_record_creator_category_ && ! _track_info_ptr_->get_creator_sensitive_category ().empty ()) {
-          hit_aux.store (mctools::track_utils::CREATOR_CATEGORY_KEY,
-                         _track_info_ptr_->get_creator_sensitive_category ());
+          hit_aux.store_string (mctools::track_utils::CREATOR_CATEGORY_KEY,
+                                _track_info_ptr_->get_creator_sensitive_category ());
         }
 
         if (_record_primary_particle_ && primary_track) {
@@ -784,13 +845,13 @@ namespace mctools {
           hit_aux.store_flag (mctools::track_utils::MAJOR_TRACK_FLAG);
         }
 
-        if (_delta_ray_from_alpha_ && delta_ray_from_an_alpha) {
+        if (_record_delta_ray_from_alpha_ && delta_ray_from_an_alpha) {
           hit_aux.store_flag (mctools::track_utils::DELTA_RAY_FROM_ALPHA_FLAG);
         }
 
         if (_record_track_id_) {
-          hit_aux.store (mctools::track_utils::TRACK_ID_KEY, track_id);
-          hit_aux.store (mctools::track_utils::PARENT_TRACK_ID_KEY,
+          hit_aux.store_integer (mctools::track_utils::TRACK_ID_KEY, track_id);
+          hit_aux.store_integer (mctools::track_utils::PARENT_TRACK_ID_KEY,
                          parent_track_id);
         }
       }
@@ -803,14 +864,14 @@ namespace mctools {
         const G4Material * the_g4_material = step_->GetTrack ()->GetMaterial ();
         string material_ref = the_g4_material->GetName ().data ();
         boost::replace_all (material_ref, "__" , "::");
-        hit_aux.store (material_ref_key, material_ref);
+        hit_aux.store_string (material_ref_key, material_ref);
       }
       //<<<
 
       if (_record_sensitive_category_) {
         static string sensitive_category_key =
           geomtools::sensitive::make_key (geomtools::sensitive::constants::instance ().SENSITIVE_CATEGORY_PROPERTY);
-        hit_aux.store (sensitive_category_key, get_sensitive_category ());
+        hit_aux.store_string (sensitive_category_key, get_sensitive_category ());
       }
 
       if (_record_g4_volume_properties_) {
@@ -840,9 +901,9 @@ namespace mctools {
         out_ << indent << title_ << endl;
       }
       out_ << indent << du::i_tree_dumpable::tag
-           << "Logging priority : " << datatools::logger::get_priority_label(_logging_priority) << endl;
+           << "Logging priority : '" << datatools::logger::get_priority_label(_logging_priority) << "'" <<  endl;
       out_ << indent << du::i_tree_dumpable::tag
-           << "Category     : " << _sensitive_category_ << endl;
+           << "Category         : '" << _sensitive_category_ << "'" << endl;
       // Logical volumes
       {
         out_ << indent << du::i_tree_dumpable::tag
@@ -866,12 +927,24 @@ namespace mctools {
       // Flags
       {
         out_ << indent << du::i_tree_dumpable::tag
-             << "Record volume properties  : "
-             <<  (_record_g4_volume_properties_ ? "Yes": "No") << endl;
-
-        out_ << indent << du::i_tree_dumpable::tag
              << "Drop zero energy deposit : "
              <<  (_drop_zero_energy_deposit_steps_ ? "Yes": "No") << endl;
+
+        out_ << indent << du::i_tree_dumpable::tag
+             << "Track gamma              : "
+             <<  (_track_gamma_ ? "Yes": "No") << endl;
+
+        out_ << indent << du::i_tree_dumpable::tag
+             << "Track optical photon     : "
+             <<  (_track_optical_photon_ ? "Yes": "No") << endl;
+
+        out_ << indent << du::i_tree_dumpable::tag
+             << "Track neutron            : "
+             <<  (_track_neutron_ ? "Yes": "No") << endl;
+
+        out_ << indent << du::i_tree_dumpable::tag
+             << "Record volume properties  : "
+             <<  (_record_g4_volume_properties_ ? "Yes": "No") << endl;
 
         out_ << indent << du::i_tree_dumpable::tag
              << "Record momentum          : "
@@ -897,6 +970,10 @@ namespace mctools {
              << "Record major track       : "
              <<  (_record_major_track_ ? "Yes": "No");
 
+        out_ << indent << du::i_tree_dumpable::tag
+             << "Record material name     : "
+             <<  (_record_material_ ? "Yes": "No");
+
         if (_record_major_track_) {
           out_ << " (Emin > "
                << _major_track_minimum_energy_ / CLHEP::keV << " keV)"
@@ -906,16 +983,8 @@ namespace mctools {
         }
 
         out_ << indent << du::i_tree_dumpable::tag
-             << "Track gamma              : "
-             <<  (_track_gamma_ ? "Yes": "No") << endl;
-
-        out_ << indent << du::i_tree_dumpable::tag
-             << "Track neutron            : "
-             <<  (_track_neutron_ ? "Yes": "No") << endl;
-
-        out_ << indent << du::i_tree_dumpable::tag
-             << "Delta ray from alpha     : "
-             <<  (_delta_ray_from_alpha_ ? "Yes": "No") << endl;
+             << "Record delta ray from alpha     : "
+             <<  (_record_delta_ray_from_alpha_ ? "Yes": "No") << endl;
 
         out_ << indent << du::i_tree_dumpable::tag
              << "Track info pointer       : ";
@@ -982,5 +1051,442 @@ namespace mctools {
   } // end of namespace g4
 
 } // end of namespace mctools
+
+/** Opening macro for implementation
+ *  This macro must be used outside of any namespace.
+ */
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::sensitive_detector,ocd_)
+{
+  // The class name :
+  ocd_.set_class_name ("mctools::g4::sensitive_detector");
+
+  // The class terse description :
+  ocd_.set_class_description ("The Geant4 virtual sensitive detector");
+
+  // The library the class belongs to :
+  ocd_.set_class_library ("mctools_g4");
+
+  // The class detailed documentation :
+  ocd_.set_class_documentation ("This is the Geant4 virtual sensitive detector.        \n"
+                                "Sensitive detectors are associated to logical volumes \n"
+                                "in order to apply some special processing on the particles\n"
+                                "tracking steps that traverse these geometry volumes.  \n"
+                                "The sensitive detector object is thus responsible of  \n"
+                                "the recording of specific physics informations along  \n"
+                                "each step. The ``mctools::base_step_hit`` class is used\n"
+                                "as the data model for Monte-Carlo truth hits. It store \n"
+                                "the following attributes :                            \n"
+                                "                                                      \n"
+                                " * hit ID                                             \n"
+                                " * geometry ID of the traversed geometry volume       \n"
+                                " * start and stop position of the truth step          \n"
+                                " * start and stop time of the truth step              \n"
+                                " * start and stop momentum of the truth step          \n"
+                                " * particle name                                      \n"
+                                " * energy deposited along the step                    \n"
+                                "                                                      \n"
+                                "Additionnal auxiliary properties may be stored in any \n"
+                                "truth hit object:                                     \n"
+                                "                                                      \n"
+                                " * track ID and parent track ID                       \n"
+                                " * Geant4 geometry volume informations (name and copy number)\n"
+                                " * kinetic energy of the particle along the step      \n"
+                                " * primary particle flag                              \n"
+                                " * name of the creator process                        \n"
+                                " * major track flag                                   \n"
+                                " * name of the material                               \n"
+                                " * name of the sensitive category                     \n"
+                                " * step length                                        \n"
+                                " * boundary flags                                     \n"
+                                "                                                      \n"
+                                );
+
+
+  {
+    // Description of the 'logging.priority' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("logging.priority")
+      .set_terse_description("Logging priority threshold")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_long_description("Allowed values are:                                    \n"
+                            "                                                       \n"
+                            " * ``\"fatal\"``       : print fatal error messages    \n"
+                            " * ``\"critical\"``    : print critical error messages \n"
+                            " * ``\"error\"``       : print error messages          \n"
+                            " * ``\"warning\"``     : print warnings                \n"
+                            " * ``\"notice\"``      : print notice messages         \n"
+                            " * ``\"information\"`` : print informational messages  \n"
+                            " * ``\"debug\"``       : print debug messages          \n"
+                            " * ``\"trace\"``       : print trace messages          \n"
+                            "                                                       \n"
+                            "Default value: ``\"warning\"``                         \n"
+                            "                                                       \n"
+                            "Example::                                              \n"
+                            "                                                       \n"
+                            "  logging.priority : string = \"warning\"              \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+
+  {
+    // Description of the 'track_gamma' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.track_gamma")
+      .set_terse_description("Record *zero energy deposit* hits from gamma particle")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("Default value: ``1``                                   \n"
+                            "                                                       \n"
+                            "Example::                                              \n"
+                            "                                                       \n"
+                            "  sensitive.track_gamma : boolean = 1                  \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'track_optical_photon' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.track_optical_photon")
+      .set_terse_description("Record *zero energy deposit* hits from optical photon")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("Default value: ``1``                                   \n"
+                            "                                                       \n"
+                            "Example::                                              \n"
+                            "                                                       \n"
+                            "  sensitive.track_optical_photon : boolean = 1         \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'track_neutron' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.track_neutron")
+      .set_terse_description("Record *zero energy deposit* hits from neutron")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("Default value: ``1``                                   \n"
+                            "                                                       \n"
+                            "Example::                                              \n"
+                            "                                                       \n"
+                            "  sensitive.track_neutron : boolean = 1                \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'drop_zero_energy_deposit_steps' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.drop_zero_energy_deposit_steps")
+      .set_terse_description("Do not record *zero energy deposit* hits from particles other than photons and neutrons")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("Default value: ``0``                                   \n"
+                            "                                                       \n"
+                            "Example::                                              \n"
+                            "                                                       \n"
+                            "  sensitive.drop_zero_energy_deposit_steps : boolean = 0 \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+
+  {
+    // Description of the 'record_primary_particle' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.record_primary_particle")
+      .set_terse_description("Record the 'track.primary' flag")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("                                                       \n"
+                            "Example::                                              \n"
+                            "                                                       \n"
+                            "  sensitive.record_primary_particle : boolean = 1      \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+
+  {
+    // Description of the 'record_track_id' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.record_track_id")
+      .set_terse_description("Record the 'track.id' and 'track.parent_id' properties")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("Example::                                              \n"
+                            "                                                       \n"
+                            "  sensitive.record_track_id : boolean = 1              \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'record_alpha_quenching' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.record_alpha_quenching")
+      .set_terse_description("Record the 'track.delta_ray_from_alpha' flag for secondary ionization electrons from an alpha particle")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("Example::                                              \n"
+                            "                                                       \n"
+                            "  sensitive.record_alpha_quenching : boolean = 1       \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'record_major_track' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.record_major_track")
+      .set_terse_description("Record the 'track.major' flag for primary or high-energy particles")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("A *major* track is defined either :                    \n"
+                            "                                                       \n"
+                            " * as a primary particle track                         \n"
+                            " * as a track of a charged particle with kinetic energy\n"
+                            "   above a given threshold.                            \n"
+                            "                                                       \n"
+                            "Example::                                              \n"
+                            "                                                       \n"
+                            "  sensitive.record_major_track : boolean = 1           \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'record_major_track' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.major_track_minimum_energy")
+      .set_terse_description("Set the low energy threshold for major charged particles")
+      .set_traits(datatools::TYPE_REAL)
+      .set_explicit_unit(true)
+      .set_unit_label("energy")
+      .set_mandatory(false)
+      .set_triggered_by_flag("sensitive.record_major_track")
+      .set_long_description("Default value:: 10 keV  (above the energy of most delta-rays)\n"
+                            "                                                       \n"
+                            "Example::                                              \n"
+                            "                                                       \n"
+                            "  sensitive.record_major_track : boolean = 1           \n"
+                            "  sensitive.major_track_minimum_energy : real as energy = 25 keV \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+
+  {
+    // Description of the 'record_creator_process' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.record_creator_process")
+      .set_terse_description("Record the 'track.creator_process' string property")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("Example::                                              \n"
+                            "                                                       \n"
+                            "  sensitive.record_creator_process : boolean = 1       \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+
+  {
+    // Description of the 'record_material' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.record_material")
+      .set_terse_description("Record the 'material.ref' string property")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("Example::                                              \n"
+                            "                                                       \n"
+                            "  sensitive.record_material : boolean = 1              \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'record_kinetic_energy' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.record_kinetic_energy")
+      .set_terse_description("Record the 'track.start_kinetic_energy' and 'track.stop_kinetic_energy' real properties")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("Example::                                              \n"
+                            "                                                       \n"
+                            "  sensitive.record_kinetic_energy : boolean = 1        \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'record_momentum' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.record_momentum")
+      .set_terse_description("Record the start and stop momentum")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("Example::                                              \n"
+                            "                                                       \n"
+                            "  sensitive.record_momentum : boolean = 1              \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'record_sensitive_category' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.record_sensitive_category")
+     .set_terse_description("Record the 'sensitive.category' string property")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("Example::                                              \n"
+                            "                                                       \n"
+                            "  sensitive.record_sensitive_category : boolean = 1    \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'record_g4_volume_infos' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.record_g4_volume_infos")
+      .set_terse_description("Record the 'g4_volume.name' string and 'g4_volume.copy_number' integer properties")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("Example::                                              \n"
+                            "                                                       \n"
+                            "  sensitive.record_g4_volume_infos : boolean = 1       \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+  {
+    // Description of the 'hits_buffer_capacity' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.hits_buffer_capacity")
+      .set_terse_description("Setup the initial capacity of the sensitive hit buffer for memory optimization")
+      .set_traits(datatools::TYPE_INTEGER)
+      .set_mandatory(false)
+      .set_long_description("This property pre-allocate a buffer of hits from which \n"
+                            "truth/step hits associated to the sensitive detector   \n"
+                            "will be instantiated. This mechanism is supposed to    \n"
+                            "fasten the simulation, particularly when many hits are \n"
+                            "generated along a track within a given sensitive volume.\n"
+                            "The buffer is resused in each event, so memory allocation\n"
+                            "is done at the very first simulated event.             \n"
+                            "                                                       \n"
+                            "Example::                                              \n"
+                            "                                                       \n"
+                            "  sensitive.hits_buffer_capacity : integer = 100       \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+
+  {
+    // Description of the 'record_boundaries' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.record_boundaries")
+      .set_terse_description("Record the 'track.entering_volume' or 'track.leaving_volume' flags")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("Example::                                              \n"
+                            "                                                       \n"
+                            "  sensitive.record_boundaries : boolean = 1            \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+
+  {
+    // Description of the 'record_step_length' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("sensitive.record_step_length")
+      .set_terse_description("Record the 'track.step_length' real property")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("Example::                                              \n"
+                            "                                                       \n"
+                            "  sensitive.record_step_length : boolean = 1           \n"
+                            "                                                       \n"
+                            )
+      ;
+  }
+
+  // Additionnal configuration hints :
+  ocd_.set_configuration_hints("Typical configuration is::                                             \n"
+                               "                                                                       \n"
+                               "  logging.priority                     : string = \"warning\"          \n"
+                               "  sensitive.hits_buffer_capacity       : integer = 100                 \n"
+                               "  sensitive.record_primary_particle    : boolean = 1                   \n"
+                               "  sensitive.record_track_id            : boolean = 1                   \n"
+                               "  sensitive.record_alpha_quenching     : boolean = 1                   \n"
+                               "  sensitive.record_major_track         : boolean = 1                   \n"
+                               "  sensitive.major_track_minimum_energy : real as energy = 25 keV       \n"
+                               "  sensitive.record_creator_process     : boolean = 1                   \n"
+                               "  sensitive.record_material            : boolean = 1                   \n"
+                               "  sensitive.record_kinetic_energy      : boolean = 1                   \n"
+                               "  sensitive.record_momentum            : boolean = 1                   \n"
+                               "  sensitive.record_sensitive_category  : boolean = 1                   \n"
+                               "  sensitive.record_g4_volume_infos     : boolean = 1                   \n"
+                               "  sensitive.record_step_length         : boolean = 1                   \n"
+                               "  sensitive.record_boundaries          : boolean = 1                   \n"
+                               "                                                                       \n"
+                               );
+
+  ocd_.set_validation_support(true);
+
+  // Lock the description:
+  ocd_.lock();
+
+  // ... and we are done.
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
+
+// Registration macro for class 'mctools::g4::sensitive_detector' :
+DOCD_CLASS_SYSTEM_REGISTRATION(mctools::g4::sensitive_detector,"mctools::g4::sensitive_detector")
 
 // end of sensitive_detector.cc

@@ -306,14 +306,14 @@ visibility.color  : string  = "blue"
 #####################
 
 #@description The 'sensitive' category attached to this detector volume
-sensitive.category  : string  = "scin.sd"
+sensitive.category : string  = "scin_SD"
 
 # Note:
 # We recommend that you name any sensitive category with the
-# ".sd" suffix. This is to ease the reading of other configuration
+# "_SD" suffix. This is to ease the reading of other configuration
 # files at the simulation level (step hit processors). Also note
 # that if you prefix the sensitive category name with two underscores
-# (example: "__test.sd"), then the sensitive category is considered as
+# (example: "__test_SD"), then the sensitive category is considered as
 # "private" (non official) and may be processed in some special way by
 # the simulation engine.
 

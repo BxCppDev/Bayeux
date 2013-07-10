@@ -26,11 +26,12 @@ namespace mctools {
   public:
     static const std::string SENSITIVE_HITS_BUFFER_CAPACITY;
     static const std::string SENSITIVE_TRACK_GAMMA;
+    static const std::string SENSITIVE_TRACK_OPTICAL_PHOTON;
     static const std::string SENSITIVE_TRACK_NEUTRON;
     static const std::string SENSITIVE_DROP_ZERO_ENERGY_DEPOSIT;
     static const std::string SENSITIVE_RECORD_MOMENTUM;
     static const std::string SENSITIVE_RECORD_KINETIC_ENERGY;
-    static const std::string SENSITIVE_RECORD_CATEGORY;
+    static const std::string SENSITIVE_RECORD_SENSITIVE_CATEGORY;
     static const std::string SENSITIVE_RECORD_MATERIAL;
     static const std::string SENSITIVE_RECORD_CREATOR_CATEGORY;
     static const std::string SENSITIVE_RECORD_CREATOR_PROCESS;
@@ -42,6 +43,8 @@ namespace mctools {
     static const std::string SENSITIVE_RECORD_G4_VOLUME_INFOS;
     static const std::string SENSITIVE_G4_VOLUME_NAME_KEY;
     static const std::string SENSITIVE_G4_VOLUME_COPY_NUMBER_KEY;
+    static const std::string SENSITIVE_RECORD_STEP_LENGTH;
+    static const std::string SENSITIVE_RECORD_BOUNDARIES;
   };
 
   class hit_utils
@@ -66,6 +69,9 @@ namespace mctools {
     static const std::string CREATOR_PROCESS_KEY;
     static const std::string CREATOR_CATEGORY_KEY;
     static const std::string DELTA_RAY_FROM_ALPHA_FLAG;
+    static const std::string STEP_LENGTH;
+    static const std::string ENTERING_VOLUME_FLAG;
+    static const std::string LEAVING_VOLUME_FLAG;
   };
 
   class event_utils

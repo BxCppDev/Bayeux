@@ -34,8 +34,20 @@ cmake \
     -DCMAKE_INSTALL_PREFIX=.. \
     -Dmctools_DIR=$(mctools-config --prefix) \
     ..
+if [ $? -ne 0 ]; then
+    echo "ERROR: cmake failed !" 1>&2
+    exit 1
+fi
 make
+if [ $? -ne 0 ]; then
+    echo "ERROR: make failed !" 1>&2
+    exit 1
+fi
 make install
+if [ $? -ne 0 ]; then
+    echo "ERROR: make install failed !" 1>&2
+    exit 1
+fi
 
 if [ ${only_build} -eq 1 ]; then
     exit 0
@@ -43,62 +55,87 @@ fi
 cd ..
 ls -l
 
+echo -e "\nDefine the CONFIG_DIR environment variable..." 1>&2
+export CONFIG_DIR="./config"
+
 echo -e "\nCheck the geometry..." 1>&2
 echo "q" | geomtools_inspector \
     --load-dll "emfield" \
-    --manager-config config/geometry/manager.conf \
+    --manager-config ${CONFIG_DIR}/geometry/manager.conf \
     --without-visu
+if [ $? -ne 0 ]; then
+    echo "ERROR: geomtools_inspector failed !" 1>&2
+    exit 1
+fi
 
 echo -e "\nList the event generators..." 1>&2
 genbb_inspector \
-    --configuration "config/event_generator/manager.conf" \
+    --configuration "${CONFIG_DIR}/event_generator/manager.conf" \
     --action "list"
+if [ $? -ne 0 ]; then
+    echo "ERROR: genbb_inspector failed !" 1>&2
+    exit 1
+fi
 
 eg_name="Co60"
 
 echo -e "\nShoot some random events..." 1>&2
 genbb_inspector \
-    --configuration "config/event_generator/manager.conf" \
+    --configuration "${CONFIG_DIR}/event_generator/manager.conf" \
     --action "shoot" \
     --generator "${eg_name}" \
     --prng-seed 314159 \
     --number-of-events 1000 \
     --output-file "histos_${eg_name}.root"
-
-#root "histos_${eg_name}.root"
+if [ $? -ne 0 ]; then
+    echo "ERROR: genbb_inspector failed !" 1>&2
+    exit 1
+fi
 
 echo -e "\nList the vertex generators..." 1>&2
 genvtx_production \
     --load-dll "emfield" \
-    --geometry-manager "config/geometry/manager.conf" \
-    --vertex-generator-manager "config/vertex_generator/manager.conf" \
+    --geometry-manager "${CONFIG_DIR}/geometry/manager.conf" \
+    --vertex-generator-manager "${CONFIG_DIR}/vertex_generator/manager.conf" \
     --list
+if [ $? -ne 0 ]; then
+    echo "ERROR: genvtx_production failed !" 1>&2
+    exit 1
+fi
 
 vg_name="vessel_inner_surface.vg"
 
 echo -e "\nShoot some random vertexes..." 1>&2
 genvtx_production \
     --load-dll "emfield" \
-    --geometry-manager "config/geometry/manager.conf" \
-    --vertex-generator-manager "config/vertex_generator/manager.conf" \
+    --geometry-manager "${CONFIG_DIR}/geometry/manager.conf" \
+    --vertex-generator-manager "${CONFIG_DIR}/vertex_generator/manager.conf" \
     --shoot \
     --number-of-vertices 10000 \
     --prng-seed 314159 \
     --vertex-generator ${vg_name} \
     --output-file "mctools_ex01_vertices_${vg_name}.txt"
+if [ $? -ne 0 ]; then
+    echo "ERROR: genvtx_production failed !" 1>&2
+    exit 1
+fi
 
 vg_name="probe1_ring_bulk.vg"
 
 echo -e "\nShoot some random vertexes..." 1>&2
 genvtx_production \
     --load-dll "emfield" \
-    --geometry-manager "config/geometry/manager.conf" \
-    --vertex-generator-manager "config/vertex_generator/manager.conf" \
+    --geometry-manager "${CONFIG_DIR}/geometry/manager.conf" \
+    --vertex-generator-manager "${CONFIG_DIR}/vertex_generator/manager.conf" \
     --shoot \
     --number-of-vertices 10000 \
     --prng-seed 314159 \
     --vertex-generator ${vg_name} \
     --output-file "mctools_ex01_vertices_${vg_name}.txt"
+if [ $? -ne 0 ]; then
+    echo "ERROR: genvtx_production failed !" 1>&2
+    exit 1
+fi
 
 #################### SIMULATIONS ####################
 if [ $do_simulation -eq 1 ]; then
@@ -117,7 +154,7 @@ if [ $do_simulation -eq 1 ]; then
 	--number-of-events-modulo 1 \
 	--interactive \
 	--g4-visu \
-	--config "config/g4_manager.conf" \
+	--config "${CONFIG_DIR}/simulation/manager.conf" \
 	--vertex-generator-name ${vg_name} \
 	--vertex-generator-seed 0 \
 	--event-generator-name ${eg_name} \
@@ -127,7 +164,11 @@ if [ $do_simulation -eq 1 ]; then
 	--output-prng-seeds-file "prng_seeds.save" \
 	--output-prng-states-file "prng_states.save" \
 	--output-data-file "mctools_ex01_${eg_name}_${vg_name}.xml" \
-	--g4-macro "config/g4vis.mac"
+	--g4-macro "${CONFIG_DIR}/geant4_visualization.macro"
+    if [ $? -ne 0 ]; then
+	echo "ERROR: g4_production failed !" 1>&2
+	exit 1
+    fi
 
 
     echo -e "\nSet LD_LIBRARY_PATH..." 1>&2
@@ -140,6 +181,10 @@ if [ $do_simulation -eq 1 ]; then
 	--with-visualization \
 	--logging-priority "notice" \
 	--input-file "mctools_ex01_${eg_name}_${vg_name}.xml"
+    if [ $? -ne 0 ]; then
+	echo "ERROR: ex01_read_plain_simdata failed !" 1>&2
+	exit 1
+    fi
 
     echo -e "\nRun the Geant4 simulation non-interactively..." 1>&2
     g4_production \
@@ -147,7 +192,7 @@ if [ $do_simulation -eq 1 ]; then
 	--number-of-events 100 \
         --number-of-events-modulo 0 \
         --batch \
-        --config "config/g4_manager.conf" \
+        --config "${CONFIG_DIR}/simulation/manager.conf" \
 	--vertex-generator-name ${vg_name} \
 	--vertex-generator-seed 0 \
 	--event-generator-name ${eg_name} \
@@ -157,6 +202,10 @@ if [ $do_simulation -eq 1 ]; then
         --output-prng-seeds-file "prng_seeds.save" \
         --output-prng-states-file "prng_states.save" \
         --output-data-file "mctools_ex01_${eg_name}_${vg_name}.data.gz"
+    if [ $? -ne 0 ]; then
+	echo "ERROR: g4_production failed !" 1>&2
+	exit 1
+    fi
 
     echo -e "\nBrowse the output plain simulated data file..." 1>&2
     ./ex01_read_plain_simdata \
@@ -165,18 +214,26 @@ if [ $do_simulation -eq 1 ]; then
 	--with-visualization \
 	--logging-priority "notice" \
 	--input-file "mctools_ex01_${eg_name}_${vg_name}.data.gz"
+    if [ $? -ne 0 ]; then
+	echo "ERROR: ex01_read_plain_simdata failed !" 1>&2
+	exit 1
+    fi
 
     echo -e "\nRun the Geant4 simulation through a non-interactive data processing pipeline..." 1>&2
 
     sim_module="Co60@source_0_bulk"
     dpp_processing \
-	--logging-priority "debug" \
-	--dlls-config "config/pipeline/dlls.conf" \
-	--module-manager-config "config/pipeline/module_manager.conf" \
+	--logging-priority "warning" \
+	--dlls-config "${CONFIG_DIR}/pipeline/dlls.conf" \
+	--module-manager-config "${CONFIG_DIR}/pipeline/module_manager.conf" \
 	--max-records 7 \
 	--modulo 5 \
 	--module ${sim_module} \
 	--output-file "mctools_ex01_${sim_module}.dpp.brio"
+    if [ $? -ne 0 ]; then
+	echo "ERROR: dpp_processing failed !" 1>&2
+	exit 1
+    fi
 
 fi
 
@@ -187,9 +244,9 @@ if [ ${do_clean} -eq 1 ]; then
     rm -f geomtools_inspector.C
     rm -f histos_Co60.root
     rm -f mctools_ex01-1.0.gdml
-    rm -f mctools_ex01_Co60_source_0_bulk.data.gz
+    rm -f mctools_ex01_Co60_source_0_bulk.vg.data.gz
     rm -f mctools_ex01_${sim_module}.dpp.brio
-    rm -f mctools_ex01_Co60_source_0_bulk.xml
+    rm -f mctools_ex01_Co60_source_0_bulk.vg.xml
     rm -f mctools-ex01_README.html
     rm -f mctools_ex01_vertices.txt
     rm -f mctools_ex01_vertices_probe1_ring_bulk.vg.txt

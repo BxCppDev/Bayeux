@@ -110,10 +110,18 @@ namespace mctools {
 
     void manager::set_simulation_ctrl(simulation_ctrl & a_simulation_ctrl)
     {
+      DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
       DT_THROW_IF (has_simulation_ctrl(),
                    std::logic_error,
                    "Operation prohibited ! Manager already got a 'simulation ctrl' object !");
       _simulation_ctrl_ = &a_simulation_ctrl;
+      return;
+    }
+
+    void manager::reset_simulation_ctrl ()
+    {
+      DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
+      _simulation_ctrl_ = 0;
       return;
     }
 
@@ -900,8 +908,8 @@ namespace mctools {
     void manager::reset()
     {
       DT_THROW_IF (! _initialized_, std::logic_error, "Manager is not initialized !");
-      _at_reset();
       _initialized_ = false;
+      _at_reset();
       return;
     }
 
@@ -1684,6 +1692,9 @@ namespace mctools {
       _shpf_prng_.reset();
       _mgr_prng_.reset();
 
+
+      reset_simulation_ctrl();
+
       _track_history_.reset();
       _init_defaults();
       return;
@@ -1895,10 +1906,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::manager,ocd_)
                                 " * a Geant4 run manager with embedded components:       \n"
                                 "                                                        \n"
                                 "   - detector construction                              \n"
-                                "   - primary generator                                  \n"
                                 "   - physics list                                       \n"
                                 "   - run action                                         \n"
                                 "   - event action                                       \n"
+                                "   - primary generator action                           \n"
                                 "   - tracking action (optional)                         \n"
                                 "   - stepping action (optional)                         \n"
                                 "   - stacking action (optional)                         \n"

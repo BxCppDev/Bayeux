@@ -128,6 +128,9 @@ namespace mctools {
       /// Plug an external thread simulation control
       void set_simulation_ctrl (simulation_ctrl & a_simulation_ctrl);
 
+      /// Unplug an external thread simulation control
+      void reset_simulation_ctrl ();
+
       /// Return a non-mutable thread simulation control reference
       const simulation_ctrl & get_simulation_ctrl () const;
 

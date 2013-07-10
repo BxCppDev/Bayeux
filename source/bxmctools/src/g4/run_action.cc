@@ -218,7 +218,7 @@ namespace mctools {
 
       // Inhibit the data file saving in pipeine mode :
       if (grab_manager().has_simulation_ctrl()) {
-        DT_LOG_WARNING(_logprio(), "Inhibit plain data saving in pipeline multi-tread mode !");
+        DT_LOG_WARNING(_logprio(), "Inhibit plain data saving in multi-thread mode !");
         _save_data_ = false;
       }
 

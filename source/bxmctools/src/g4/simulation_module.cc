@@ -263,6 +263,18 @@ namespace mctools {
       // in the simulation manager) :
       _simulation_manager_->set_external_geom_manager (*_geometry_manager_);
 
+      // Install a simulation controler in the manager :
+      if (_simulation_ctrl_ == 0) {
+        DT_LOG_TRACE(get_logging_priority(),
+                     "Allocating the 'simulation_ctrl' object...");
+        _simulation_ctrl_ = new simulation_ctrl (*_simulation_manager_);
+        DT_LOG_TRACE(get_logging_priority(),
+                     "Install the 'simulation_ctrl' object in the G4 simulation manager...");
+        _simulation_manager_->set_simulation_ctrl (*_simulation_ctrl_);
+        DT_LOG_TRACE(get_logging_priority(),
+                     "New 'simulation_ctrl' object is allocated.");
+      }
+
       // Setup :
       mctools::g4::manager_parameters::setup (_simulation_manager_params_,
                                               *_simulation_manager_);
@@ -315,16 +327,16 @@ namespace mctools {
       _simulation_manager_->grab_user_event_action ().set_external_event_data (SD);
 
       {
-        if (_simulation_ctrl_ == 0) {
-          DT_LOG_TRACE(get_logging_priority(),
-                       "Allocating the 'simulation_ctrl' object...");
-          _simulation_ctrl_ = new simulation_ctrl (*_simulation_manager_);
-          DT_LOG_TRACE(get_logging_priority(),
-                       "Install the 'simulation_ctrl' object in the G4 simulation manager...");
-          _simulation_manager_->set_simulation_ctrl (*_simulation_ctrl_);
-          DT_LOG_TRACE(get_logging_priority(),
-                       "New 'simulation_ctrl' object is allocated.");
-        }
+        // if (_simulation_ctrl_ == 0) {
+        //   DT_LOG_TRACE(get_logging_priority(),
+        //                "Allocating the 'simulation_ctrl' object...");
+        //   _simulation_ctrl_ = new simulation_ctrl (*_simulation_manager_);
+        //   DT_LOG_TRACE(get_logging_priority(),
+        //                "Install the 'simulation_ctrl' object in the G4 simulation manager...");
+        //   _simulation_manager_->set_simulation_ctrl (*_simulation_ctrl_);
+        //   DT_LOG_TRACE(get_logging_priority(),
+        //                "New 'simulation_ctrl' object is allocated.");
+        // }
         {
           DT_LOG_TRACE(get_logging_priority(),
                        "Acquire the event control lock...");

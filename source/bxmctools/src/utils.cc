@@ -9,6 +9,7 @@ namespace mctools {
   // Specific to sensitive steps :
   const std::string sensitive_utils::SENSITIVE_HITS_BUFFER_CAPACITY       = "hits_buffer_capacity";
   const std::string sensitive_utils::SENSITIVE_TRACK_GAMMA                = "track_gamma";
+  const std::string sensitive_utils::SENSITIVE_TRACK_OPTICAL_PHOTON       = "track_optical_photon";
   const std::string sensitive_utils::SENSITIVE_TRACK_NEUTRON              = "track_neutron";
   const std::string sensitive_utils::SENSITIVE_DROP_ZERO_ENERGY_DEPOSIT   = "drop_zero_energy_deposit_steps";
   const std::string sensitive_utils::SENSITIVE_RECORD_G4_VOLUME_INFOS     = "record_g4_volume_infos";
@@ -16,7 +17,7 @@ namespace mctools {
   const std::string sensitive_utils::SENSITIVE_G4_VOLUME_COPY_NUMBER_KEY  = "g4_volume.copy_number";
   const std::string sensitive_utils::SENSITIVE_RECORD_MOMENTUM            = "record_momentum";
   const std::string sensitive_utils::SENSITIVE_RECORD_KINETIC_ENERGY      = "record_kinetic_energy";
-  const std::string sensitive_utils::SENSITIVE_RECORD_CATEGORY            = "record_category";
+  const std::string sensitive_utils::SENSITIVE_RECORD_SENSITIVE_CATEGORY  = "record_sensitive_category";
   const std::string sensitive_utils::SENSITIVE_RECORD_MATERIAL            = "record_material";
   const std::string sensitive_utils::SENSITIVE_RECORD_CREATOR_CATEGORY    = "record_creator_category";
   const std::string sensitive_utils::SENSITIVE_RECORD_CREATOR_PROCESS     = "record_creator_process";
@@ -25,6 +26,8 @@ namespace mctools {
   const std::string sensitive_utils::SENSITIVE_RECORD_ALPHA_QUENCHING     = "record_alpha_quenching";
   const std::string sensitive_utils::SENSITIVE_RECORD_TRACK_ID            = "record_track_id";
   const std::string sensitive_utils::SENSITIVE_RECORD_PRIMARY_PARTICLE    = "record_primary_particle";
+  const std::string sensitive_utils::SENSITIVE_RECORD_STEP_LENGTH         = "record_step_length";
+  const std::string sensitive_utils::SENSITIVE_RECORD_BOUNDARIES          = "record_boundaries";
 
   // Specific to hits :
   const std::string hit_utils::HIT_MC_BUGGY_KEY            = "hit.mc_buggy";
@@ -42,6 +45,9 @@ namespace mctools {
   const std::string track_utils::CREATOR_PROCESS_KEY       = "track.creator_process";
   const std::string track_utils::CREATOR_CATEGORY_KEY      = "track.creator_category";
   const std::string track_utils::DELTA_RAY_FROM_ALPHA_FLAG = "track.delta_ray_from_alpha";
+  const std::string track_utils::STEP_LENGTH               = "track.step_length";
+  const std::string track_utils::ENTERING_VOLUME_FLAG      = "track.entering_volume";
+  const std::string track_utils::LEAVING_VOLUME_FLAG       = "track.leaving_volume";
 
   // Specific to simulated data :
   const std::string event_utils::EVENT_GENBB_WEIGHT = "event.genbb_weight";
