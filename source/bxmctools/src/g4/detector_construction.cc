@@ -280,13 +280,69 @@ namespace mctools {
         config_.fetch("regions", regions);
         for (unsigned int i = 0; i < regions.size(); ++i) {
           const std::string & the_region_label = regions[i];
-          std::ostringstream key;
-          key << "regions." << the_region_label << ".volumes";
-          DT_THROW_IF (! config_.has_key(key.str()), std::logic_error,
-                       "Missing informations for region '" << key.str() << "' !");
-          std::vector<std::string> the_region_infos;
-          config_.fetch(key.str(), the_region_infos);
-          _region_infos_[the_region_label] = the_region_infos;
+          {
+            std::vector<std::string> dummy;
+            _region_infos_[the_region_label] = dummy;
+          }
+          std::vector<std::string> & ri = _region_infos_[the_region_label];
+
+          {
+            // Regions by volumes:
+            std::ostringstream key;
+            key << "regions." << the_region_label << ".volumes";
+            if (config_.has_key(key.str())) {
+              std::vector<std::string> the_region_infos;
+              config_.fetch(key.str(), the_region_infos);
+              for (int i = 0; i < the_region_infos.size(); i++) {
+                const std::string & log_name = the_region_infos[i];
+                if (std::find(ri.begin(), ri.end(), log_name) == ri.end()) {
+                  if (log_name != "world.log") {
+                    ri.push_back(log_name);
+                  }
+                }
+              }
+            }
+          } // Regions by volumes.
+
+          {
+            // Regions by materials:
+            std::ostringstream key;
+            key << "regions." << the_region_label << ".volumes_with_material";
+            if (config_.has_key(key.str())) {
+              std::string material_ref = config_.fetch_string(key.str());
+              for (geomtools::logical_volume::dict_type::const_iterator ilogical
+                     = _geom_manager_->get_factory().get_logicals().begin();
+                   ilogical != _geom_manager_->get_factory().get_logicals().end();
+                   ++ilogical) {
+                // Get a reference to the associated logical volume :
+                const geomtools::logical_volume & log = *(ilogical->second);
+                // Check if it is tagged as a 'sensitive' detector :
+                if (log.get_parameters().has_key("material.ref")) {
+                  const std::string & mr = log.get_parameters().fetch_string("material.ref");
+                  if (mr == material_ref) {
+                    if (std::find(ri.begin(), ri.end(), log.get_name()) == ri.end()) {
+                      if (log.get_name() != "world.log") {
+                        ri.push_back(log.get_name());
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          } // Regions by materials.
+
+          // {
+          //   // Excluded volumes:
+          //   std::ostringstream key;
+          //   key << "regions." << the_region_label << ".excluded_volumes";
+          //   if (config_.has_key(key.str())) {
+          //     std::vector<std::string> excluded_volumes;
+          //     config_.fetch(key.str(), excluded_volumes);
+          //   }
+          // }
+
+          DT_THROW_IF (ri.size() == 0, std::logic_error,
+                       "Region '" << the_region_label << "' has not logical volumes !");
         }
 
         DT_LOG_NOTICE(_logprio(), "Info for regions : ");
@@ -1090,7 +1146,9 @@ namespace mctools {
           = _geom_manager_->get_factory().get_logicals().find(log_name);
         //geomtools::models_col_type::const_iterator found = models_dict.find(model_name);
         if (found == _geom_manager_->get_factory().get_logicals().end()) {
-          DT_LOG_WARNING(_logprio(), "Cannot find logical volume '" << log_name << "' !");
+          //DT_LOG_WARNING(_logprio(), "Cannot find logical volume '" << log_name << "' !");
+          DT_THROW_IF(true, std::logic_error,
+                      "Cannot find logical volume '" << log_name << "' for user limits !");
           continue;
         }
 
@@ -1098,7 +1156,10 @@ namespace mctools {
         G4String g4_log_name = log_name.c_str();
         G4LogicalVolume * g4_module_log = g4_LV_store->GetVolume(g4_log_name, false);
         if (g4_module_log == 0) {
-          DT_LOG_WARNING(_logprio(), "Missing G4 logical volume with name '" << g4_log_name << "' !");
+          //DT_LOG_WARNING(_logprio(), "Missing G4 logical volume with name '" << g4_log_name << "' !");
+          DT_THROW_IF(true, std::logic_error,
+                      "Missing G4 logical volume with name '"
+                      << g4_log_name << "' for user limits !");
           continue;
         }
 
@@ -1142,7 +1203,10 @@ namespace mctools {
           if (a_logical != 0) {
             the_region->AddRootLogicalVolume(a_logical);
           } else {
-            DT_LOG_WARNING(_logprio(),"No logical volume named '"
+            // DT_LOG_WARNING(_logprio(),"No logical volume named '"
+            //                << logical_volume_name << "' to be added in the '"
+            //                << the_region_name << "' region !");
+            DT_THROW_IF(true,std::logic_error, "No logical volume named '"
                            << logical_volume_name << "' to be added in the '"
                            << the_region_name << "' region !");
           }

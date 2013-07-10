@@ -1,4 +1,4 @@
-// ex01_read_plain_simdata.cxx
+// ex01_read_pipeline_simdata.cxx
 /* Copyright (C) 2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,11 +30,13 @@
 
 #include <datatools/properties.h>
 #include <datatools/library_loader.h>
+#include <datatools/things.h>
+
+#include <dpp/io_module.h>
 
 #include <geomtools/manager.h>
 
 #include <mctools/simulated_data.h>
-#include <mctools/simulated_data_reader.h>
 
 #include <datatools/bio_guard.h>
 #include <mygsl/bio_guard.h>
@@ -48,12 +50,16 @@ int main(int argc_, char **argv_) {
   int error_code = EXIT_SUCCESS;
   try {
 
-    std::string plain_simulated_data_filename;
+    std::string pipeline_simulated_data_filename;
     std::string geometry_config_filename;
     bool interactive = false;
     bool visualization = false;
+    bool dump_data_record = false;
+    bool dump_simulated_data = false;
+    bool dump_hits = false;
     std::vector<std::string> LL_dlls;
     std::string              LL_config;
+    std::string              SD_bank_label = "SD";
 
     namespace po = boost::program_options;
     po::options_description opts("Allowed options");
@@ -76,8 +82,8 @@ int main(int argc_, char **argv_) {
        )
 
       ("input-file,i",
-       po::value<std::string>(&plain_simulated_data_filename),
-       "set the input plain simulated data file from which to load the Monte-Carlo data")
+       po::value<std::string>(&pipeline_simulated_data_filename),
+       "set the input pipeline simulated data file from which to load the Monte-Carlo data")
 
       ("geometry-config,g",
        po::value<std::string>(&geometry_config_filename),
@@ -94,6 +100,24 @@ int main(int argc_, char **argv_) {
        ->zero_tokens()
        ->default_value(false),
        "activate visualization")
+
+      ("dump-data-record,D",
+       po::value<bool>(&dump_data_record)
+       ->zero_tokens()
+       ->default_value(false),
+       "dump each data record")
+
+      ("dump-simulated-data,S",
+       po::value<bool>(&dump_simulated_data)
+       ->zero_tokens()
+       ->default_value(false),
+       "dump each simulated data record")
+
+      ("dump-hits,H",
+       po::value<bool>(&dump_hits)
+       ->zero_tokens()
+       ->default_value(false),
+       "dump each truth step hit")
 
       ; // end of options description
 
@@ -137,17 +161,28 @@ int main(int argc_, char **argv_) {
                    "Loading DLL '" << dll_name << "' failed !");
     }
 
-    DT_THROW_IF (plain_simulated_data_filename.empty(), std::logic_error,
-                 "Missing plain simulated data input file !");
+    DT_THROW_IF (pipeline_simulated_data_filename.empty(), std::logic_error,
+                 "Missing pipeline simulated data input file !");
 
-    // The input plain simulated data file :
-    DT_THROW_IF (! boost::filesystem::exists(plain_simulated_data_filename),
+    // The input pipeline simulated data file :
+    DT_THROW_IF (! boost::filesystem::exists(pipeline_simulated_data_filename),
                  std::runtime_error,
-                 "File '" << plain_simulated_data_filename << "' does not exists !");
+                 "File '" << pipeline_simulated_data_filename << "' does not exists !");
 
-    // The  plain simulated data reader :
-    mctools::simulated_data_reader psd_reader;
-    psd_reader.initialize(plain_simulated_data_filename);
+    // The pipeline simulated data reader :
+    dpp::io_module reader;
+
+    // Configuration:
+    datatools::properties reader_config;
+    reader_config.store ("logging.priority", "debug");
+    reader_config.store ("mode", "input");
+    reader_config.store ("input.max_files", 100);
+    reader_config.store ("input.max_record_total", 10000);
+    reader_config.store ("input.max_record_per_file", 10000);
+    reader_config.store ("input.mode", "single");
+    reader_config.store ("input.single.filename", pipeline_simulated_data_filename);
+    reader.initialize_standalone (reader_config);
+    reader.tree_dump (std::clog, "Simulated data reader module");
 
     // Geometry manager :
     DT_LOG_DEBUG(logging, "Initializing the geometry manager...");
@@ -164,24 +199,35 @@ int main(int argc_, char **argv_) {
     mctools::ex01::simulated_data_inspector SDI;
     SDI.set_interactive(interactive);
     SDI.set_with_visualization(visualization);
+    SDI.set_dump_simulated_data(dump_simulated_data);
+    SDI.set_dump_hits(dump_hits);
     SDI.set_geometry_manager(geo_mgr);
 
-    // The simulated data object to be loaded :
-    mctools::simulated_data SD;
+    // The event record with embedded simulated data bank to be loaded :
+    datatools::things ER;
 
     // The simulated data loading loop :
-    int psd_count = 0;
-    while (psd_reader.has_next()) {
-      // A plain `mctools::simulated_data' object is stored here :
-      psd_reader.load_next(SD); // Load the simulated data object
-      psd_count++;
-      DT_LOG_NOTICE(logging, "Simulated data #" << psd_count);
-      bool goon = SDI.inspect(SD);
-      if (! goon) {
-        break;
+    int edr_count = 0;
+    while (! reader.is_terminated()) {
+      // Load the event data record :
+      reader.process(ER);
+      DT_LOG_NOTICE(logging, "Event data record #" << edr_count);
+      if (dump_data_record) {
+        ER.tree_dump(std::clog, "Event data record : ", " ");
+        std::clog << std::endl;
       }
+      edr_count++;
+      if (ER.has(SD_bank_label) && ER.is_a<mctools::simulated_data>(SD_bank_label)) {
+        // Access to the "SD" bank with a stored `mctools::simulated_data' :
+        const mctools::simulated_data & SD = ER.grab<mctools::simulated_data>(SD_bank_label);
+        bool goon = SDI.inspect(SD);
+        if (! goon) {
+          break;
+        }
+      }
+      ER.clear();
     }
-    std::clog << "Number of processed simulated data records: " << psd_count << std::endl;
+    std::clog << "Number of processed event data records: " << edr_count << std::endl;
 
   }
   catch(std::exception& x) {
@@ -195,4 +241,4 @@ int main(int argc_, char **argv_) {
   return error_code;
 }
 
-// end of ex01_read_plain_simdata
+// end of ex01_read_pipeline_simdata

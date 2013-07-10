@@ -49,6 +49,7 @@ export CONFIG_DIR="./config"
 
 echo -e "\nCheck the geometry..." 1>&2
 echo "q" | geomtools_inspector \
+    --load-dll "emfield" \
     --manager-config config/geometry/manager.conf \
     --without-visu
 
@@ -71,12 +72,14 @@ genbb_inspector \
 
 echo -e "\nList the vertex generators..." 1>&2
 genvtx_production \
+    --load-dll "emfield" \
     --geometry-manager "config/geometry/manager.conf" \
     --vertex-generator-manager "config/vertex_generator/manager.conf" \
     --list
 
 echo -e "\nShoot some random vertexes..." 1>&2
 genvtx_production \
+    --load-dll "emfield" \
     --geometry-manager "config/geometry/manager.conf" \
     --vertex-generator-manager "config/vertex_generator/manager.conf" \
     --shoot \
@@ -181,10 +184,9 @@ if [ ${do_clean} -eq 1 ]; then
     rm -f mctools_ex00_vertices2.txt
     rm -f mctools_ex00_vertices_source_bulk.vg.txt
     rm -f mctools_ex00_vertices.txt
+    rm -f histos_electron_1MeV.root
     rm -f prng_seeds.save
-    rm -f prng_seeds.save.~backup~
     rm -f prng_states.save
-    rm -f prng_states.save.~backup~
     rm -fr ${build_dir}
     find . -name "*~" -exec rm -f \{\} \;
 fi

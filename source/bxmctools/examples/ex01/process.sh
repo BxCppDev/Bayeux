@@ -45,6 +45,7 @@ ls -l
 
 echo -e "\nCheck the geometry..." 1>&2
 echo "q" | geomtools_inspector \
+    --load-dll "emfield" \
     --manager-config config/geometry/manager.conf \
     --without-visu
 
@@ -68,6 +69,7 @@ genbb_inspector \
 
 echo -e "\nList the vertex generators..." 1>&2
 genvtx_production \
+    --load-dll "emfield" \
     --geometry-manager "config/geometry/manager.conf" \
     --vertex-generator-manager "config/vertex_generator/manager.conf" \
     --list
@@ -76,6 +78,7 @@ vg_name="vessel_inner_surface.vg"
 
 echo -e "\nShoot some random vertexes..." 1>&2
 genvtx_production \
+    --load-dll "emfield" \
     --geometry-manager "config/geometry/manager.conf" \
     --vertex-generator-manager "config/vertex_generator/manager.conf" \
     --shoot \
@@ -84,10 +87,11 @@ genvtx_production \
     --vertex-generator ${vg_name} \
     --output-file "mctools_ex01_vertices_${vg_name}.txt"
 
-vg_name="probe_bulk.vg"
+vg_name="probe1_ring_bulk.vg"
 
 echo -e "\nShoot some random vertexes..." 1>&2
 genvtx_production \
+    --load-dll "emfield" \
     --geometry-manager "config/geometry/manager.conf" \
     --vertex-generator-manager "config/vertex_generator/manager.conf" \
     --shoot \
@@ -101,10 +105,9 @@ if [ $do_simulation -eq 1 ]; then
 
     eg_name="Co60"
     vg_name="source_0_bulk.vg"
-#vg_name="col1_row0_scin_surface.vg"
-
-    eg_name="electron_1MeV"
-    vg_name="all_scin_bulk.vg"
+    #vg_name="col1_row0_scin_surface.vg"
+    # eg_name="electron_1MeV"
+    # vg_name="all_scin_bulk.vg"
 
 
     echo -e "\nRun the Geant4 simulation interactively..." 1>&2
@@ -133,7 +136,7 @@ if [ $do_simulation -eq 1 ]; then
     echo -e "\nBrowse the output plain simulated data file..." 1>&2
     ./ex01_read_plain_simdata \
 	--interactive  \
-        --load-dll emfield \
+        --load-dll "emfield" \
 	--with-visualization \
 	--logging-priority "notice" \
 	--input-file "mctools_ex01_${eg_name}_${vg_name}.xml"
@@ -157,7 +160,7 @@ if [ $do_simulation -eq 1 ]; then
 
     echo -e "\nBrowse the output plain simulated data file..." 1>&2
     ./ex01_read_plain_simdata \
-        --load-dll emfield \
+        --load-dll "emfield" \
 	--interactive \
 	--with-visualization \
 	--logging-priority "notice" \
@@ -173,24 +176,28 @@ if [ $do_simulation -eq 1 ]; then
 	--max-records 7 \
 	--modulo 5 \
 	--module ${sim_module} \
-	--output-file "mctools_ex01_${sim_module}.dpp.xml"
+	--output-file "mctools_ex01_${sim_module}.dpp.brio"
 
 fi
 
 if [ ${do_clean} -eq 1 ]; then
+
+    rm -f ex01_read_pipeline_simdata
     rm -f ex01_read_plain_simdata
+    rm -f geomtools_inspector.C
     rm -f histos_Co60.root
     rm -f mctools_ex01-1.0.gdml
-    rm -f geomtools_check_setup.C
-    rm -f mctools_ex01_Co60_source_0_bulk.xml
-    rm -f mctools_ex01_vertices_*.txt
-    rm -f prng_seeds.save
-    rm -f prng_seeds.save.~backup~
-    rm -f prng_states.save
-    rm -f prng_states.save.~backup~
     rm -f mctools_ex01_Co60_source_0_bulk.data.gz
+    rm -f mctools_ex01_${sim_module}.dpp.brio
+    rm -f mctools_ex01_Co60_source_0_bulk.xml
+    rm -f mctools-ex01_README.html
+    rm -f mctools_ex01_vertices.txt
+    rm -f mctools_ex01_vertices_probe1_ring_bulk.vg.txt
+    rm -f mctools_ex01_vertices_vessel_inner_surface.vg.txt
+    rm -f prng_seeds.save*
+    rm -f prng_states.save*
+    rm -fr lib
     rm -fr ${build_dir}
-    rm -fr ./lib
     find . -name "*~" -exec rm -f \{\} \;
 fi
 

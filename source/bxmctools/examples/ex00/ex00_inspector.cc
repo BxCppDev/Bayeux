@@ -128,40 +128,6 @@ namespace mctools {
         }
       }
 
-      if (sd_.has_step_hits("probe")) {
-        // Build the display informations about the "probe" MC hits (if any) :
-        int nsteps = sd_.get_number_of_step_hits("probe");
-        for (int i = 0; i < nsteps; i++) {
-          const mctools::base_step_hit & truth_hit = sd_.get_step_hit("probe", i);
-          if (_dump_hits_) {
-            truth_hit.tree_dump(std::clog, "Truth 'probe' hit : ", " ");
-            std::clog << std::endl;
-          }
-          const geomtools::vector_3d & step_start = truth_hit.get_position_start();
-          const geomtools::vector_3d & step_stop = truth_hit.get_position_stop();
-          const std::string & pname = truth_hit.get_particle_name();
-          geomtools::line_3d visu_step_segment(step_start, step_stop);
-
-          // Display color:
-          std::string step_color = "white";
-          if (pname == "gamma") step_color = "green";
-          else if (pname == "e+") step_color = "blue";
-          else if (pname == "e-") step_color = "red";
-
-          // Label:
-          std::ostringstream visu_step_name_oss;
-          visu_step_name_oss << "probe_" << i;
-
-          geomtools::display_data::display_item & visu_step_DI
-            = dd.add_static_item (visu_step_name_oss.str(),
-                                  "group::mc::probe_hit",
-                                  step_color);
-
-          geomtools::placement visu_step_plcmt;
-          visu_step_segment.generate_wires (visu_step_DI.paths, visu_step_plcmt);
-        }
-      }
-
       if (sd_.has_step_hits("scin")) {
         // Build the display informations about the "scin" MC hits (if any) :
         int nsteps = sd_.get_number_of_step_hits("scin");

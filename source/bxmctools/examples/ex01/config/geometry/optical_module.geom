@@ -314,7 +314,7 @@ shape_type  : string = "polycone"
 build_mode  : string = "datafile"
 
 #@description The polycone coordinates filename
-datafile    : string = "config/geometry/pmt_hamamatsu_R5912MOD_polycone.data"
+datafile    : string = "${CONFIG_DIR}/geometry/pmt_hamamatsu_R5912MOD_polycone.data"
 
 #@description The 'filled' mode to build the model
 filled_mode : string = "by_envelope"
@@ -492,10 +492,10 @@ length_unit       : string  = "mm"
 extrusion_radius : real   =  40.0
 
 #@description The X dimension
-x                : real   = 320.0
+x                : real   = 300.0
 
 #@description The Y dimension
-y                : real   = 320.0
+y                : real   = 300.0
 
 #@description The Z dimension
 z                : real   =   1.0
