@@ -116,6 +116,7 @@
 #include <genbb_help/decay0/Po214low.h>
 #include <genbb_help/decay0/Ra222.h>
 #include <genbb_help/decay0/Ra222low.h>
+#include <genbb_help/decay0/Ra226.h>
 #include <genbb_help/decay0/Ra228.h>
 #include <genbb_help/decay0/Rb87.h>
 #include <genbb_help/decay0/Rh106.h>
@@ -191,7 +192,8 @@ namespace genbb {
       // i2bbs=2 - to generate decay of background nuclide
       // or calibration source
       // chnuclide - character*16 name of nuclide:
-      // for i2bbs=1 - Ca48,
+      // =======> for i2bbs=1
+      // Ca48,
       // Ni58,
       // Zn64, Zn70,
       // Ge76,
@@ -213,7 +215,9 @@ namespace genbb {
       // Pb214 (for Pb214+Po214),
       // Po218 (for Po218+Rn218+Po214),
       // Rn222 (for Rn222+Ra222+Rn218+Po214)
-      // for i2bbs=2 - Ac228,
+      // Rn226 (for Rn226)
+      // =======> for i2bbs=2
+      // Ac228,
       // Am241,
       // Ar39,
       // Ar42,
@@ -250,6 +254,7 @@ namespace genbb {
       // Pb211,
       // Pb212,
       // Pb214,
+      // Ra226, // Added 2013-07-11
       // Ra228,
       // Rb87,
       // Rh106,
@@ -277,7 +282,7 @@ namespace genbb {
       // Mol (for Moller scattering),
       // Pai (for e+e- pair creation from
       // external gammas)
-      // ilevel - (for i2bbs=1 only) level of daughter nucleus occupied
+      // =======> ilevel - (for i2bbs=1 only) level of daughter nucleus occupied
       // in 2b decay (0 - ground state, 1 - first excited 0+ or
       // 2+ level, 2 - second excited 0+ or 2+ level etc.
       // excited levels with other spin than 0+ and 2+ should be
@@ -1427,6 +1432,7 @@ namespace genbb {
           } else if (boost::algorithm::starts_with(chnuclide_,"Pb211")) {
           } else if (boost::algorithm::starts_with(chnuclide_,"Pb212")) {
           } else if (boost::algorithm::starts_with(chnuclide_,"Pb214")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Ra226")) {
           } else if (boost::algorithm::starts_with(chnuclide_,"Ra228")) {
           } else if (boost::algorithm::starts_with(chnuclide_,"Rb87")) {
           } else if (boost::algorithm::starts_with(chnuclide_,"Rh106")) {
@@ -1669,6 +1675,7 @@ namespace genbb {
         if (boost::algorithm::starts_with(chnuclide_,"Pb211")) Pb211(prng_, event_, 0., tdnuc);
         if (boost::algorithm::starts_with(chnuclide_,"Pb212")) Pb212(prng_, event_, 0., tdnuc);
         if (boost::algorithm::starts_with(chnuclide_,"Pb214")) Pb214(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Ra226")) Ra226(prng_, event_, 0., tdnuc);
         if (boost::algorithm::starts_with(chnuclide_,"Ra228")) Ra228(prng_, event_, 0., tdnuc);
         if (boost::algorithm::starts_with(chnuclide_,"Rb87")) Rb87(prng_, event_, 0., tdnuc);
         if (boost::algorithm::starts_with(chnuclide_,"Rh106")) Rh106(prng_, event_, 0., tdnuc);
