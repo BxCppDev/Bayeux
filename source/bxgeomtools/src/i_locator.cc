@@ -53,6 +53,7 @@ namespace geomtools {
 
   void base_locator::_basic_initialize (const datatools::properties & config_)
   {
+    DT_THROW_IF (is_initialized (), std::logic_error, "Locator is already initialized !");
     DT_THROW_IF (_geo_manager_ == 0, std::logic_error, "Missing geometry manager ! Use the 'set_geo_manager' method before !");
     set_logging_priority(datatools::logger::extract_logging_configuration(config_,datatools::logger::PRIO_WARNING));
     return;
