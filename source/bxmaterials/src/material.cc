@@ -333,26 +333,28 @@ namespace materials {
   //________________________________________________________________________
   void material::build ()
   {
-    std::cerr << "DEVEL: material::build: Entering..." << std::endl;
+    bool devel = false;
+    //devel = true;
+    if (devel) std::cerr << "DEVEL: material::build: Entering..." << std::endl;
     DT_THROW_IF (is_locked (),std::logic_error, "Operation not allowed ! Object is locked !");
     DT_THROW_IF (_density_ <= 0.0, std::logic_error, "Invalid density !");
     if (is_composed_by_mean_z_a ()) {
-      std::cerr << "DEVEL: material::build: by mean Z/A..." << std::endl;
+      if (devel) std::cerr << "DEVEL: material::build: by mean Z/A..." << std::endl;
       DT_THROW_IF (_mean_z_ < 0.0, std::logic_error, "Invalid mean atomic number (Z) !");
       DT_THROW_IF (_mean_a_ < 0.0, std::logic_error, "Invalid mean mass number (A) !");
     } else {
-      std::cerr << "DEVEL: material::build: by composition: " << _composition_.size () << std::endl;
+      if (devel) std::cerr << "DEVEL: material::build: by composition: " << _composition_.size () << std::endl;
       DT_THROW_IF(_composition_.size () <= 0,
                   std::logic_error,
                   "Missing compound(s) in the current material ! Not implemented yet !");
       if (is_composed_by_fraction_mass ()) {
-        std::cerr << "DEVEL: material::build: by fraction mass..." << std::endl;
+        if (devel) std::cerr << "DEVEL: material::build: by fraction mass..." << std::endl;
        _normalize_weights_ ();
       }
       _compute_molar_mass_ ();
     }
     _lock_ ();
-    std::cerr << "DEVEL: material::build: Exiting." << std::endl;
+    if (devel) std::cerr << "DEVEL: material::build: Exiting." << std::endl;
     return;
   }
 

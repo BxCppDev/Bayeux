@@ -154,7 +154,7 @@ namespace materials {
                                        const material_dict_type & materials_) const
   {
     bool devel = false;
-    devel = true;
+    //devel = true;
     double density = 1.0;
     double density_unit = material::g_per_cm3;
     //cerr << "DEVEL: factory::create_material: 1 g=" << CLHEP::g << endl;
@@ -514,6 +514,8 @@ namespace materials {
         if (devel) std::cerr << "DEVEL: material '" << name_ << "' : number of compounds = "
                              << composition_names.size () << std::endl;
         for (int i = 0; i < composition_names.size (); i++) {
+          if (devel) std::cerr << "DEVEL: material '" << name_ << "' : compound name = '"
+                               << composition_names[i] << "'" << std::endl;
           element_dict_type::const_iterator found = elements_.find (composition_names[i]);
           DT_THROW_IF (found == elements_.end (),
                        std::logic_error,
@@ -530,6 +532,8 @@ namespace materials {
         if (devel) std::cerr << "DEVEL: material '" << name_ << "' : number of compounds = "
                              << composition_names.size () << std::endl;
         for (int i = 0; i < composition_names.size (); i++) {
+          if (devel) std::cerr << "DEVEL: material '" << name_ << "' : compound name = '"
+                               << composition_names[i] << "'" << std::endl;
           const element * a_elmt = 0;
           const material * a_matl = 0;
           if (composition_names[i] == name_) {
@@ -545,6 +549,8 @@ namespace materials {
             if (devel) std::cerr << "DEVEL: material '" << name_ << "' : Found compound element '"
                                  << composition_names[i] << "'" << std::endl;
           } else {
+            if (devel) std::cerr << "DEVEL: material '" << name_ << "' : Compound '"
+                                 << composition_names[i] << "' is not a known element..." << std::endl;
             material_dict_type::const_iterator found2 = materials_.find (composition_names[i]);
             if (found2 != materials_.end ()) {
               DT_THROW_IF (found2->second.is_alias(),
@@ -602,6 +608,7 @@ namespace materials {
       if (devel) std::cerr << "DEVEL: material '" << name_ << "' : building done." << std::endl;
     }
     catch (exception & x) {
+      DT_LOG_ERROR(datatools::logger::PRIO_ERROR, x.what ());
       //cerr << "materials::factory::create_material: " << "Exception : " << x.what () << endl;
       delete matl;
       matl = 0;

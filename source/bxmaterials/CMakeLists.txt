@@ -101,6 +101,11 @@ else()
   set (MATERIALS_WITH_TEST 0)
 endif()
 
+#-----------------------------------------------------------------------
+# Build the submodules as required
+#
+add_subdirectory(programs)
+
 #----------------------------------------------------------------
 # - Install public resources :
 

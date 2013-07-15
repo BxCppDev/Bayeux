@@ -589,7 +589,7 @@ namespace materials {
         out_ << indent << title_ << endl;
       }
     out_ << indent << i_tree_dumpable::tag
-         << "Name       :'" << get_name () << "'" << endl;
+         << "Name       : '" << get_name () << "'" << endl;
     if (is_known ())
       {
         out_ << indent << i_tree_dumpable::tag

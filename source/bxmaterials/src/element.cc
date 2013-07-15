@@ -411,30 +411,28 @@ namespace materials {
   {
     string indent;
     if (! indent_.empty ()) indent = indent_;
-    if (! title_.empty ())
-      {
-        out_ << indent << title_ << endl;
-      }
+    if (! title_.empty ()) {
+      out_ << indent << title_ << endl;
+    }
 
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "Name         : \""<< get_name() <<"\"" << endl;
+         << "Name         : '"<< get_name() << "'" << endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "Chem. symbol : \""<< get_symbol() <<"\"" << endl;
+         << "Chem. symbol : '"<< get_symbol() << "'" << endl;
+
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Z            : " << get_z() << endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Composition  : ";
-    if ( _composition_.size () == 0)
-      {
+    if ( _composition_.size () == 0) {
         out_ << "<empty>" << endl;
-      }
-    else
-      {
+      } else {
         out_ << endl;
         for (isotope_weight_map_type::const_iterator i = _composition_.begin ();
              i !=  _composition_.end ();
-             i++)
-          {
+             i++) {
             const string & key = i->first;
             const iso_entry & entry = i->second;
             isotope_weight_map_type::const_iterator j = i;
@@ -451,17 +449,14 @@ namespace materials {
       }
 
     out_ << indent << i_tree_dumpable::tag
-         << "Molar mass   : " <<  _molar_mass_ << " [g/mol]" << endl;
+         << "Molar mass (A) : " <<  _molar_mass_ << " [g/mol]" << endl;
 
     {
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Properties   : ";
-      if ( _properties_.size () == 0)
-        {
+      if ( _properties_.size () == 0) {
           out_ << "<empty>" <<endl;
-        }
-      else
-        {
+        } else {
           out_ << endl;
           ostringstream indent_oss;
           indent_oss << indent;
@@ -469,7 +464,6 @@ namespace materials {
           _properties_.tree_dump (out_, "", indent_oss.str ());
         }
     }
-
 
     out_ << indent << i_tree_dumpable::last_tag
          << "Locked       : " << (is_locked()? "Yes": "No") << endl;
