@@ -220,19 +220,19 @@ function do_run ()
     fi
     echo "NOTICE: ${appname}: Directory GENBB_HELP_DATA_DIR='${GENBB_HELP_DATA_DIR}'"  >&2
 
-    # depends on emfield data dir:
-    if [ "x${emfield_data_test_dir}" != "x" ]; then
-        export EMFIELD_DATA_DIR=${emfield_data_test_dir}
-    fi
-    if [ "x${EMFIELD_DATA_DIR}" = "x" ]; then
-        echo "ERROR: ${appname}: Missing EMFIELD_DATA_DIR environment variable !" >&2
-        return 1
-    fi
-    if [ ! -d ${EMFIELD_DATA_DIR} ]; then
-        echo "ERROR: ${appname}: Directory '${EMFIELD_DATA_DIR}' does not exists !" >&2
-        return 1
-    fi
-    echo "NOTICE: ${appname}: Directory EMFIELD_DATA_DIR='${EMFIELD_DATA_DIR}'"  >&2
+    # # depends on emfield data dir:
+    # if [ "x${emfield_data_test_dir}" != "x" ]; then
+    #     export EMFIELD_DATA_DIR=${emfield_data_test_dir}
+    # fi
+    # if [ "x${EMFIELD_DATA_DIR}" = "x" ]; then
+    #     echo "ERROR: ${appname}: Missing EMFIELD_DATA_DIR environment variable !" >&2
+    #     return 1
+    # fi
+    # if [ ! -d ${EMFIELD_DATA_DIR} ]; then
+    #     echo "ERROR: ${appname}: Directory '${EMFIELD_DATA_DIR}' does not exists !" >&2
+    #     return 1
+    # fi
+    # echo "NOTICE: ${appname}: Directory EMFIELD_DATA_DIR='${EMFIELD_DATA_DIR}'"  >&2
 
 
     #############################

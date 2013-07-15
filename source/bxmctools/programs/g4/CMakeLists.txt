@@ -45,6 +45,9 @@ include_directories(
 
 #add_definitions ()
 
+# We refind Boost to add in the program options library
+find_package(Boost QUIET COMPONENTS ${datatools_Boost_COMPONENTS} program_options)
+
 foreach ( _mctools_g4_pro_program ${_mctools_g4_programs_list} )
 
   unset ( _mctools_g4_pro_libraries )
@@ -96,6 +99,7 @@ foreach ( _mctools_g4_pro_program ${_mctools_g4_programs_list} )
 
   # -Wl,--no-as-needed
   target_link_libraries ( ${_mctools_g4_pro_executable}
+    ${Boost_LIBRARIES}
     ${_mctools_g4_link_libraries}
     )
 
