@@ -756,7 +756,7 @@ namespace geomtools {
   }
 
 
-  bool manager::can_drop_plugin(const std::string& plugin_name_)
+  bool manager::can_drop_plugin (const std::string& plugin_name_)
   {
     plugins_dict_type::const_iterator found = _plugins_.find(plugin_name_);
     DT_THROW_IF(found == _plugins_.end(),
@@ -766,7 +766,7 @@ namespace geomtools {
   }
 
 
-  void manager::drop_plugin(const std::string& plugin_name_)
+  void manager::drop_plugin (const std::string& plugin_name_)
   {
     plugins_dict_type::iterator found = _plugins_.find(plugin_name_);
     DT_THROW_IF(found == _plugins_.end(),
@@ -782,9 +782,9 @@ namespace geomtools {
     _plugins_.erase(found);
   }
 
-  void manager::print_plugins(std::ostream& out_,
-                              const std::string& title_,
-                              const std::string& indent_) const
+  void manager::print_plugins (std::ostream& out_,
+                               const std::string& title_,
+                               const std::string& indent_) const
   {
     std::string indent;
     if (!indent_.empty()) indent = indent_;
@@ -825,7 +825,7 @@ namespace geomtools {
 
   void manager::load_plugin(const std::string & plugin_name_,
                             const std::string & plugin_id_,
-                            const datatools::properties& plugin_config_,
+                            const datatools::properties & plugin_config_,
                             bool only_lock_)
   {
     DT_THROW_IF (only_lock_ && this->is_initialized(),
@@ -834,7 +834,7 @@ namespace geomtools {
     this->_load_plugin(plugin_name_, plugin_id_, plugin_config_);
   }
 
-  void manager::load_plugins(const datatools::multi_properties& plugin_mconfig_,
+  void manager::load_plugins(const datatools::multi_properties & plugin_mconfig_,
                              bool only_lock_)
   {
     DT_LOG_TRACE(_logging, "Entering...");
@@ -1318,23 +1318,23 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
   ocd_.set_class_name("geomtools::manager");
   ocd_.set_class_description("A virtual geometry manager");
   ocd_.set_class_library("geomtools");
-  ocd_.set_class_documentation("The geometry manager is the core class of the ``geomtools``   \n"
-                               "framework. It hosts four components :                       \n"
-                               "                                                            \n"
-                               " a) A factory of geometry models, which is responsible of the\n"
-                               "    construction of the full hierarchy of geometry volumes,  \n"
-                               "    compatible with the GDML hierarchical scheme (and thus   \n"
-                               "    Geant4).                                                 \n"
-                               " b) A manager for geometry IDs (GID), which describes the    \n"
-                               "    relationships between some geometry volumes in the geometry\n"
-                               "    hierarchy and the addressing scheme of such volumes      \n"
-                               "    based on geometry IDs (``geomtools::geom_id`` class).      \n"
-                               " c) A mapping object which is responsible of a lookup-table  \n"
-                               "    that allows to access fundamental informations about some\n"
-                               "    volume in the setup, given its unique GID and obeying the\n"
-                               "    numbering scheme setup by the GID manager.               \n"
-                               " d) A manager for geometry plugins which allows to dynamically\n"
-                               "    add new geometry-related functionnalities to the manager.\n"
+  ocd_.set_class_documentation("The geometry manager is the core class of the ``geomtools``     \n"
+                               "framework. It hosts four components :                           \n"
+                               "                                                                \n"
+                               " a) A factory of geometry models, which is responsible of the   \n"
+                               "    construction of the full hierarchy of geometry volumes,     \n"
+                               "    compatible with the GDML hierarchical scheme (and thus      \n"
+                               "    Geant4).                                                    \n"
+                               " b) A manager for geometry IDs (GID), which describes the       \n"
+                               "    relationships between some geometry volumes in the geometry \n"
+                               "    hierarchy and the addressing scheme of such volumes         \n"
+                               "    based on geometry IDs (``geomtools::geom_id`` class).       \n"
+                               " c) A mapping object which is responsible of a lookup-table     \n"
+                               "    that allows to access fundamental informations about some   \n"
+                               "    volume in the setup, given its unique GID and obeying the   \n"
+                               "    numbering scheme setup by the GID manager.                  \n"
+                               " d) A manager for geometry plugins which allows to dynamically  \n"
+                               "    add new geometry-related functionnalities to the manager.   \n"
                                );
 
 
@@ -1344,10 +1344,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
       .set_terse_description("The logging priority threshold")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
-      .set_long_description("Example::                                        \n"
-                            "                                                 \n"
-                            "    logging.priority : string = \"warning\"      \n"
-                            "                                                 \n"
+      .set_long_description("Example::                                   \n"
+                            "                                            \n"
+                            "    logging.priority : string = \"warning\" \n"
+                            "                                            \n"
                             )
       ;
   }
@@ -1391,8 +1391,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(true)
       .set_complex_triggering_conditions(true)
-      .set_long_description("Superseded by a previous call to :               \n"
-                            "  ``geomtools::manager::set_setup_label(...)``     \n"
+      .set_long_description("Superseded by a previous call to :             \n"
+                            "  ``geomtools::manager::set_setup_label(...)`` \n"
                             "                                               \n"
                             "Example::                                      \n"
                             "                                               \n"
@@ -1408,13 +1408,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
       .set_terse_description("The version string of the virtual geometry setup")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
-      .set_long_description("Superseded by a previous call to:                  \n"
-                            "  ``geomtools::manager::set_setup_version(...)``      \n"
-                            "                                               \n"
-                            "Example::                                      \n"
-                            "                                               \n"
-                            "    setup_version : string = \"0.1\"           \n"
-                            "                                               \n"
+      .set_long_description("Superseded by a previous call to:                \n"
+                            "  ``geomtools::manager::set_setup_version(...)`` \n"
+                            "                                                 \n"
+                            "Example::                                        \n"
+                            "                                                 \n"
+                            "    setup_version : string = \"0.1\"             \n"
+                            "                                                 \n"
                             )
       ;
   }
@@ -1425,13 +1425,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
       .set_terse_description("The description string of the virtual geometry setup")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
-      .set_long_description("Superseded by a previous call to :                       \n"
-                            "  ``geomtools::manager::set_setup_description(...)``       \n"
-                            "                                               \n"
-                            "Example::                                           \n"
-                            "                                                    \n"
-                            "    setup_description : string = \"My test setup\"  \n"
-                            "                                                    \n"
+      .set_long_description("Superseded by a previous call to :                   \n"
+                            "  ``geomtools::manager::set_setup_description(...)`` \n"
+                            "                                                     \n"
+                            "Example::                                            \n"
+                            "                                                     \n"
+                            "    setup_description : string = \"My test setup\"   \n"
+                            "                                                     \n"
                             )
       ;
   }
@@ -1461,16 +1461,16 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
       .set_terse_description("The flag to force the initialization of plugins at load stage.")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
-      .set_long_description("This flag triggers the initialization of plugins as soons as\n"
-                            "they are loaded in the geometry manager's plugin system.    \n"
-                            "Default is false to activate the dedicated resources of a   \n"
-                            "given plugin if and only if the plugin is used.             \n"
-                            "Not recommended for a production run.                       \n"
-                            "                                                            \n"
-                            "Example::                                                   \n"
-                            "                                                            \n"
-                            "    plugins.force_initialization_at_load : boolean = 0      \n"
-                            "                                                            \n"
+      .set_long_description("This flag triggers the initialization of plugins as soons as \n"
+                            "they are loaded in the geometry manager's plugin system.     \n"
+                            "Default is false to activate the dedicated resources of a    \n"
+                            "given plugin if and only if the plugin is used.              \n"
+                            "Not recommended for a production run.                        \n"
+                            "                                                             \n"
+                            "Example::                                                    \n"
+                            "                                                             \n"
+                            "    plugins.force_initialization_at_load : boolean = 0       \n"
+                            "                                                             \n"
                             )
       ;
   }
@@ -1482,14 +1482,14 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
       .set_terse_description("The debug flag of the geometry model factory")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
-      .set_long_description("This flag activates some debug printings from    \n"
-                            "the embedded geometry model factory.              \n"
-                            "Not recommended for a production run.            \n"
-                            "                                                 \n"
-                            "Example::                                        \n"
-                            "                                                 \n"
-                            "    factory.debug : boolean = 0                  \n"
-                            "                                                 \n"
+      .set_long_description("This flag activates some debug printings from \n"
+                            "the embedded geometry model factory.          \n"
+                            "Not recommended for a production run.         \n"
+                            "                                              \n"
+                            "Example::                                     \n"
+                            "                                              \n"
+                            "    factory.debug : boolean = 0               \n"
+                            "                                              \n"
                             )
       ;
   }
@@ -1501,32 +1501,32 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
       .set_traits(datatools::TYPE_STRING)
       .set_path(true)
       .set_mandatory(false)
-      .set_long_description("The *geometry list* file stores a list of filenames.        \n"
-                            "Each of these files contains rules that define geometry     \n"
+      .set_long_description("The *geometry list* file stores a list of filenames.         \n"
+                            "Each of these files contains rules that define geometry      \n"
                             "models to be instantiated by the embedded geometry model     \n"
-                            "factory.                                                    \n"
-                            "                                                 \n"
+                            "factory.                                                     \n"
+                            "                                                             \n"
                             "Example::                                                    \n"
-                            "                                                            \n"
-                            "    factory.geom_list : string as path = \\                 \n"
-                            "      \"${CONFIG_REPOSITORY_DIR}/geom/geom_files.lis\"      \n"
-                            "                                                            \n"
-                            "where the '.../geom/geom_files.lis' file has the following  \n"
-                            "format :                                                    \n"
-                            "                                                            \n"
-                            "     ${CONFIG_REPOSITORY_DIR}/geom/models/sources.geom      \n"
-                            "     ${CONFIG_REPOSITORY_DIR}/geom/models/detectors.geom    \n"
-                            "     ${CONFIG_REPOSITORY_DIR}/geom/models/shielding.geom    \n"
-                            "     ${CONFIG_REPOSITORY_DIR}/geom/models/vessel.geom       \n"
-                            "     ${CONFIG_REPOSITORY_DIR}/geom/models/lab.geom          \n"
-                            "     ${CONFIG_REPOSITORY_DIR}/geom/models/world.geom        \n"
-                            "                                                            \n"
-                            "                                                            \n"
-                            "The order of the geometry files (``*.geom``) is critical    \n"
-                            "because some geometry models may depend on other ones       \n"
-                            "which should thus be defined **before** their dependers.    \n"
-                            "See OCD support for ``mygsl::model_factory`` for further    \n"
-                            "informations about the configuration of geometry models.    \n"
+                            "                                                             \n"
+                            "    factory.geom_list : string as path = \\                  \n"
+                            "      \"${CONFIG_REPOSITORY_DIR}/geom/geom_files.lis\"       \n"
+                            "                                                             \n"
+                            "where the '.../geom/geom_files.lis' file has the following   \n"
+                            "format :                                                     \n"
+                            "                                                             \n"
+                            "     ${CONFIG_REPOSITORY_DIR}/geom/models/sources.geom       \n"
+                            "     ${CONFIG_REPOSITORY_DIR}/geom/models/detectors.geom     \n"
+                            "     ${CONFIG_REPOSITORY_DIR}/geom/models/shielding.geom     \n"
+                            "     ${CONFIG_REPOSITORY_DIR}/geom/models/vessel.geom        \n"
+                            "     ${CONFIG_REPOSITORY_DIR}/geom/models/lab.geom           \n"
+                            "     ${CONFIG_REPOSITORY_DIR}/geom/models/world.geom         \n"
+                            "                                                             \n"
+                            "                                                             \n"
+                            "The order of the geometry files (``*.geom``) is critical     \n"
+                            "because some geometry models may depend on other ones        \n"
+                            "which should thus be defined **before** their dependers.     \n"
+                            "See OCD support for ``geomtools::model_factory`` for further \n"
+                            "informations about the configuration of geometry models.     \n"
                             )
       ;
   }
@@ -1540,7 +1540,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
       .set_path(true)
       .set_mandatory(false)
       .set_long_description("Each of the addressed files contains rules that define geometry  \n"
-                            "models to be instantiated by the embedded geometry model          \n"
+                            "models to be instantiated by the embedded geometry model         \n"
                             "factory.                                                         \n"
                             "                                                                 \n"
                             "Example::                                                        \n"
@@ -1556,7 +1556,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
                             "The order of the geometry files (``*.geom``) is critical         \n"
                             "because some geometry models may depend on other ones            \n"
                             "which should thus be defined **before** their dependers.         \n"
-                            "See OCD support for ``mygsl::model_factory`` for further         \n"
+                            "See OCD support for ``geomtools::model_factory`` for further     \n"
                             "informations about the configuration of geometry models.         \n"
                             )
       ;
@@ -1570,39 +1570,39 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
       .set_traits(datatools::TYPE_STRING,
                   datatools::configuration_property_description::ARRAY)
       .set_mandatory(false)
-      .set_long_description("All auxiliary properties found in a geometry model definition  \n"
-                            "file that starts with one of these prefixes will be preserved  \n"
-                            "and stored in the geometry model constructed by the embedded    \n"
-                            "model factory. Such properties can then be used by external    \n"
-                            "algorithms and/or plugins to extract additional informations   \n"
-                            "and/or configuration parameters.                               \n"
-                            "A property prefix must ends with the dot ``.`` character.      \n"
-                            "Default behaviour already preserved the properties with the    \n"
-                            "following prefixes :                                           \n"
-                            "                                                               \n"
-                            "  * \"visibility.\" : Properties for rendering/display          \n"
-                            "                      (color, hidden...)                        \n"
-                            "  * \"mapping.\"    : Properties for automatic computing        \n"
-                            "                      of the geometry IDs (GID) associated to   \n"
-                            "                      the geometry volumes in the setup.        \n"
-                            "  * \"material.\"   : Properties related to the materials       \n"
-                            "                      the geometry volumes are made of.         \n"
-                            "                      Used by the material plugin.              \n"
-                            "  * \"sensitive.\"  : Properties related to the definition      \n"
-                            "                      of *sensitive* geometry volumes.          \n"
-                            "                      Such information can be used to associate \n"
-                            "                      a given logical volume (model) to some    \n"
-                            "                      sensitive detector within Geant4 (see     \n"
-                            "                      the ``mctools`` library and its ``mctools_g4``\n"
-                            "                      DLL plugin.                               \n"
-                            "                                                                \n"
-                            "Example::                                                       \n"
-                            "                                                                \n"
-                            "    factory.preserved_property_prefixes : string[3] =  \\       \n"
-                            "      \"display.\"         \\                                   \n"
-                            "      \"radioactivity.\"   \\                                   \n"
-                            "      \"magnetization.\"                                        \n"
-                            "                                                                \n"
+      .set_long_description("All auxiliary properties found in a geometry model definition        \n"
+                            "file that starts with one of these prefixes will be preserved        \n"
+                            "and stored in the geometry model constructed by the embedded         \n"
+                            "model factory. Such properties can then be used by external          \n"
+                            "algorithms and/or plugins to extract additional informations         \n"
+                            "and/or configuration parameters.                                     \n"
+                            "A property prefix must ends with the dot ``.`` character.            \n"
+                            "Default behaviour already preserved the properties with the          \n"
+                            "following prefixes :                                                 \n"
+                            "                                                                     \n"
+                            "  * \"visibility.\" : Properties for rendering/display               \n"
+                            "                      (color, hidden...)                             \n"
+                            "  * \"mapping.\"    : Properties for automatic computing             \n"
+                            "                      of the geometry IDs (GID) associated to        \n"
+                            "                      the geometry volumes in the setup.             \n"
+                            "  * \"material.\"   : Properties related to the materials            \n"
+                            "                      the geometry volumes are made of.              \n"
+                            "                      Used by the material plugin.                   \n"
+                            "  * \"sensitive.\"  : Properties related to the definition           \n"
+                            "                      of *sensitive* geometry volumes.               \n"
+                            "                      Such information can be used to associate      \n"
+                            "                      a given logical volume (model) to some         \n"
+                            "                      sensitive detector within Geant4 (see          \n"
+                            "                      the ``mctools`` library and its ``mctools_g4`` \n"
+                            "                      DLL plugin.                                    \n"
+                            "                                                                     \n"
+                            "Example::                                                            \n"
+                            "                                                                     \n"
+                            "    factory.preserved_property_prefixes : string[3] =  \\            \n"
+                            "      \"display.\"         \\                                        \n"
+                            "      \"radioactivity.\"   \\                                        \n"
+                            "      \"magnetization.\"                                             \n"
+                            "                                                                     \n"
                             )
       ;
   }
@@ -1614,15 +1614,15 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
       .set_terse_description("A name of the top level geometry volume")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
-      .set_long_description("This is the name used by the geometry system to identify\n"
-                            "the top level geometry logical volume that contains the \n"
-                            "full virtual geometry setup.                            \n"
-                            "Default value is: ``\"world\"``                         \n"
-                            "                                                        \n"
-                            "Example:                                                \n"
-                            "                                                        \n"
-                            "    world_name : string =  \"world\"                    \n"
-                            "                                                        \n"
+      .set_long_description("This is the name used by the geometry system to identify \n"
+                            "the top level geometry logical volume that contains the  \n"
+                            "full virtual geometry setup.                             \n"
+                            "Default value is: ``\"world\"``                          \n"
+                            "                                                         \n"
+                            "Example:                                                 \n"
+                            "                                                         \n"
+                            "    world_name : string =  \"world\"                     \n"
+                            "                                                         \n"
                             )
       ;
   }
@@ -1633,14 +1633,14 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
       .set_terse_description("The debug flag of the geometry ID (GID) manager")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
-      .set_long_description("This flag activates some debug printings from    \n"
-                            "the embedded geometry ID manager.                 \n"
-                            "Not recommended for a production run.            \n"
-                            "                                                 \n"
-                            "Example :                                        \n"
-                            "                                                 \n"
-                            "    id_mgr.debug : boolean = 0                   \n"
-                            "                                                 \n"
+      .set_long_description("This flag activates some debug printings from \n"
+                            "the embedded geometry ID manager.             \n"
+                            "Not recommended for a production run.         \n"
+                            "                                              \n"
+                            "Example :                                     \n"
+                            "                                              \n"
+                            "    id_mgr.debug : boolean = 0                \n"
+                            "                                              \n"
                             )
       ;
   }
@@ -1655,21 +1655,21 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
       .set_path(true)
       .set_mandatory(false)
       .set_long_description(
-                            "A list of filenames from where the geometry categories      \n"
-                            "used by the geometry ID manager are defined.                \n"
-                            "                                                            \n"
-                            "Example::                                                   \n"
-                            "                                                            \n"
-                            "    id_mgr.categories_list : string[1] as path = \\         \n"
-                            "      \"${CONFIG_REPOSITORY_DIR}/geom/geom_categories.lis\" \n"
-                            "                                                            \n"
-                            "The target files must use the format of the                 \n"
-                            "``datatools::multi_properties`` class.                      \n"
-                            "The loading order of the files is critical                  \n"
-                            "because some geometry categories may depend on other ones   \n"
-                            "which should thus be defined **before** their dependers.    \n"
-                            "See OCD support for ``mygsl::id_mgr`` for further           \n"
-                            "informations about the configuration of geometry categories.\n"
+                            "A list of filenames from where the geometry categories       \n"
+                            "used by the geometry ID manager are defined.                 \n"
+                            "                                                             \n"
+                            "Example::                                                    \n"
+                            "                                                             \n"
+                            "    id_mgr.categories_list : string[1] as path = \\          \n"
+                            "      \"${CONFIG_REPOSITORY_DIR}/geom/geom_categories.lis\"  \n"
+                            "                                                             \n"
+                            "The target files must use the format of the                  \n"
+                            "``datatools::multi_properties`` class.                       \n"
+                            "The loading order of the files is critical                   \n"
+                            "because some geometry categories may depend on other ones    \n"
+                            "which should thus be defined **before** their dependers.     \n"
+                            "See OCD support for ``geomtools::id_mgr`` for further        \n"
+                            "informations about the configuration of geometry categories. \n"
                             )
       ;
   }
@@ -1683,7 +1683,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
       .set_mandatory(false)
       .set_long_description("This flag triggers the generation of the map of geometry IDs         \n"
                             "associated to geometry volumes. This operation is performed          \n"
-                            "by the embedded geometry mapping object that hosts a dictionnary      \n"
+                            "by the embedded geometry mapping object that hosts a dictionnary     \n"
                             "of *geometry information* objects (``geomtools::geom_info`` class).  \n"
                             "Each *geometry information* object describes an unique geometry      \n"
                             "volume (placement, shape, auxiliary properties...), being            \n"
@@ -1695,7 +1695,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
                             "    build_mapping : boolean = 1                                      \n"
                             "                                                                     \n"
                             "All properties starting with the ``\"mapping.\"`` prefix are then    \n"
-                            "transmitted to initialize the the embedded 'mapping' object.         \n"
+                            "transmitted to initialize the embedded 'mapping' object.             \n"
                             "                                                                     \n"
                             "Example :                                                            \n"
                             "                                                                     \n"
@@ -1705,7 +1705,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
                             "    #mapping.only_categories : string [1] = \"scin_block.gc\"        \n"
                             "    mapping.excluded_categories : string [2] = \"bolt.gc\" \"screw\" \n"
                             "                                                                     \n"
-                            "See OCD support for ``mygsl::mapping`` for further                   \n"
+                            "See OCD support for ``geomtools::mapping`` for further               \n"
                             "informations about the configuration of geometry categories.         \n"
                             )
       ;
@@ -1719,28 +1719,28 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
                   datatools::configuration_property_description::ARRAY)
       .set_path(true)
       .set_mandatory(false)
-      .set_long_description("Each of the addressed files contains rules that define geometry       \n"
-                            "plugins. The files use the format of the ``datatools::multi_properties``\n"
-                            "class. The filenames may contain environment variables.               \n"
-                            "                                                                      \n"
-                            "Examples::                                                            \n"
-                            "                                                                      \n"
-                            "    plugins.configuration_files : string[2] as path =      \\         \n"
-                            "      \"${CONFIG_REPOSITORY_DIR}/geom/mapping_plugins.lis\"  \\       \n"
-                            "      \"${CONFIG_REPOSITORY_DIR}/geom/mag_field_plugin.lis\"          \n"
-                            "                                                                      \n"
-                            "Here some plugins with embedded dedicated mappingonbjects are defined  \n"
-                            "in the ``mapping_plugins.lis`` file::                                 \n"
-                            "                                                                      \n"
-                            "    #@description List of geometry plugins                            \n"
-                            "    #@key_label   \"name\"                                            \n"
-                            "    #@meta_label  \"type\"                                            \n"
-                            "                                                                      \n"
-                            "    [name=\"mapping_no_screw\" type=\"geomtools::mapping_plugin\"]    \n"
-                            "    mapping.excluded_categories : string [1] = \"screw.gc\"           \n"
-                            "                                                                      \n"
-                            "The ``geomtools::mapping_plugin`` is provided by the ``geomtools``    \n"
-                            "library.                                                              \n"
+      .set_long_description("Each of the addressed files contains rules that define geometry          \n"
+                            "plugins. The files use the format of the ``datatools::multi_properties`` \n"
+                            "class. The filenames may contain environment variables.                  \n"
+                            "                                                                         \n"
+                            "Examples::                                                               \n"
+                            "                                                                         \n"
+                            "    plugins.configuration_files : string[2] as path =      \\            \n"
+                            "      \"${CONFIG_REPOSITORY_DIR}/geom/mapping_plugins.conf\"  \\         \n"
+                            "      \"${CONFIG_REPOSITORY_DIR}/geom/mag_field_plugin.conf\"            \n"
+                            "                                                                         \n"
+                            "Here some plugins with embedded dedicated mapping objects are defined    \n"
+                            "in the ``mapping_plugins.conf`` file::                                   \n"
+                            "                                                                         \n"
+                            "    #@description List of geometry plugins                               \n"
+                            "    #@key_label   \"name\"                                               \n"
+                            "    #@meta_label  \"type\"                                               \n"
+                            "                                                                         \n"
+                            "    [name=\"mapping_no_screw\" type=\"geomtools::mapping_plugin\"]       \n"
+                            "    mapping.excluded_categories : string [1] = \"screw.gc\"              \n"
+                            "                                                                         \n"
+                            "The ``geomtools::mapping_plugin`` is provided by the ``geomtools``       \n"
+                            "library.                                                                 \n"
                             )
       ;
   }
