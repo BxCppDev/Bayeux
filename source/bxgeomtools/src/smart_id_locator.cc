@@ -230,7 +230,6 @@ namespace geomtools {
                                                  int type_,
                                                  double tolerance_) const
   {
-
     if (_mode_ & MODE_LAST)
       {
         // first search if one matched the last found object :

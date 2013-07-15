@@ -78,7 +78,7 @@ namespace geomtools {
       /// Constructor
       base_plugin();
 
-      /// Desstructor
+      /// Destructor
       virtual ~base_plugin();
 
       /// Set the reference to the geometry manager
