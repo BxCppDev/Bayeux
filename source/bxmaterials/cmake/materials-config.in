@@ -41,11 +41,6 @@ if [ "x@MATERIALS_WITH_DEBUG@" == "x1" -o "x@MATERIALS_WITH_DEBUG@" == "xON" ]; 
     with_debug=1
 fi
 
-with_bio=0
-# if [ "x@MATERIALS_WITH_BIO@" == "x1" -o "x@MATERIALS_WITH_BIO@" == "xON" ]; then
-#     with_bio=1
-# fi
-
 with_reflection=0
 # if [ "x@MATERIALS_WITH_REFLECTION@" == "x1" -o "x@MATERIALS_WITH_REFLECTION@" == "xON" ]; then
 #     with_reflection=1
@@ -92,10 +87,6 @@ Known values for OPTION are:
 
 EOF
 
-  #   --with-bio          with linkage against the 'libmaterials_bio@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL (default)
-  #   --without-bio       without linkage against the 'libmaterials_bio@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL
-  # --with-bio            print if Boost/Serialization binary code is pre-built
-  #                      in an auxiliary shared library
   #   --with-reflection    with linkage against the 'libmaterials_reflection@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL (default)
   #   --without-reflection without linkage against the 'libmaterials_reflection@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL
   #   return 0
@@ -175,12 +166,6 @@ if [ "x${option}" = "x--bindir" ]; then
 fi
 
 # compute default linkage :
-# bio_ldflags=
-# bio_ldflags_abs=
-# if [ ${with_bio} -eq 1 ]; then
-#     bio_ldflags=-lmaterials_bio
-#     bio_ldflags_abs=${materials_lib_dir}/libmaterials_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
-# fi
 
 # reflection_ldflags=
 # reflection_ldflags_abs=
@@ -196,13 +181,7 @@ fi
 if [ "x${option}" = "x--libs" -o "x${option}" = "x--ldflags" ]; then
     while [ -n "$1" ]; do
 	lib_option="$1"
-	# if [ "x${lib_option}" = "x--without-bio" ]; then
-	#     bio_ldflags=
-	#     bio_ldflags_abs=
-	# elif [ "x${lib_option}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
-	#     bio_ldflags=-lmaterials_bio
-	#     bio_ldflags_abs=${materials_lib_dir}/libmaterials_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
-	# elif [ "x${lib_option}" = "x--without-reflection" ]; then
+	# if [ "x${lib_option}" = "x--without-reflection" ]; then
 	#     reflection_ldflags=
 	#     reflection_ldflags_abs=
 	# elif [ "x${lib_option}" = "x--with-reflection" -a ${with_reflection} -eq 1 ]; then
@@ -225,12 +204,10 @@ fi
 if [ "x${option}" = "x--libs" ]; then
     if [ ${ldflags_abs_path} -eq 1 ]; then
 	#echo -n "${reflection_ldflags_abs} "
-	#echo -n "${bio_ldflags_abs} "
 	echo -n "${materials_lib_dir}/libmaterials@CMAKE_SHARED_LIBRARY_SUFFIX@ "
     else
 	echo -n "-L${materials_lib_dir} "
 	#echo -n "${reflection_ldflags} "
-	#echo -n "${bio_ldflags} "
 	echo -n "-lmaterials "
     fi
     echo
@@ -241,12 +218,10 @@ if [ "x${option}" = "x--ldflags" ]; then
     (
 	if [ ${ldflags_abs_path} -eq 1 ]; then
 	    #echo -n "${reflection_ldflags_abs} "
-	    #echo -n "${bio_ldflags_abs} "
 	    echo -n "${materials_lib_dir}/libmaterials@CMAKE_SHARED_LIBRARY_SUFFIX@ "
 	else
 	    echo -n "-L${materials_lib_dir} "
 	    #echo -n "${reflection_ldflags} "
-	    #echo -n "${bio_ldflags} "
 	    echo -n "-lmaterials "
 	fi
         echo -n "`datatools-config --ldflags ${ldflags_abs_path_option}` "
@@ -259,15 +234,6 @@ fi
 if [ "x${option}" = "x--with-debug" ]; then
     echo "${with_debug}"
     if [ "${with_debug}" = "1" ]; then
-	my_exit 0
-    else
-	my_exit 1
-    fi
-fi
-
-if [ "x${option}" = "x--with-bio" ]; then
-    echo "${with_bio}"
-    if [ "${with_bio}" = "1" ]; then
 	my_exit 0
     else
 	my_exit 1

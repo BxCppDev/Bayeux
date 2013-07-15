@@ -33,7 +33,7 @@ namespace materials {
     elt_ptr = 0;
     mat_ptr = 0;
 
-    weight          = -1;
+    weight      = -1;
     nb_of_atoms = -1;
     return;
   }
@@ -41,12 +41,12 @@ namespace materials {
   //________________________________________________________________________
   compound_entry::~compound_entry ()
   {
-    if(elt_ptr != 0){
+    if (elt_ptr != 0) {
       if (owned) delete elt_ptr;
       elt_ptr = 0;
     }
 
-    if(mat_ptr != 0){
+    if (mat_ptr != 0) {
       if (owned) delete mat_ptr;
       mat_ptr = 0;
     }
@@ -164,16 +164,13 @@ namespace materials {
   void material::set_mean_z_a (double z_, double a_)
   {
     DT_THROW_IF (is_locked (),std::logic_error, "Operation not allowed ! Object is locked !");
-    if (_proportion_unit_ == KP_UNDEFINED)
-      {
-        _proportion_unit_ = KP_ZA;
-      }
-    else
-      {
-        DT_THROW_IF (_proportion_unit_ != KP_ZA,
-                     std::logic_error,
-                     "Setting Z/A is not allowed in this mode !");
-      }
+    if (_proportion_unit_ == KP_UNDEFINED) {
+      _proportion_unit_ = KP_ZA;
+    } else {
+      DT_THROW_IF (_proportion_unit_ != KP_ZA,
+                   std::logic_error,
+                   "Setting Z/A is not allowed in this mode !");
+    }
     _set_mean_z_ (z_);
     _set_mean_a_ (a_);
     return;
@@ -198,21 +195,18 @@ namespace materials {
   //________________________________________________________________________
   void material::add_element_by_mass (const element & elt_ref_ , double weight_ , bool owned_ )
   {
-     DT_THROW_IF (is_locked (),std::logic_error, "Operation not allowed ! Object is locked !");
+    DT_THROW_IF (is_locked (),std::logic_error, "Operation not allowed ! Object is locked !");
 
     // check proportion_unit_type when add a new element
     // if you are adding the first element then set the proportion_unit
 
-    if ( _composition_.size () == 0)
-      {
-        _proportion_unit_ = KP_MASS;
-      }
-    else
-      {
-        DT_THROW_IF(_proportion_unit_!=KP_MASS,
-                    std::logic_error,
-                    "Unmatching proportion unit  !");
-      }
+    if ( _composition_.size () == 0) {
+      _proportion_unit_ = KP_MASS;
+    } else {
+      DT_THROW_IF(_proportion_unit_!=KP_MASS,
+                  std::logic_error,
+                  "Unmatching proportion unit  !");
+    }
 
     // check if the element is locked (which mean valid)
 
@@ -251,16 +245,13 @@ namespace materials {
     // check proportion_unit_type when add a new element
     // if you are adding the first element then set the proportion_unit
 
-    if (_composition_.size () == 0)
-      {
-        _proportion_unit_ = KP_ATOM;
-      }
-    else
-      {
-        DT_THROW_IF (_proportion_unit_ != KP_ATOM,
-                     std::logic_error,
-                     "Unmatching proportion unit  !");
-      }
+    if (_composition_.size () == 0) {
+      _proportion_unit_ = KP_ATOM;
+    } else {
+      DT_THROW_IF (_proportion_unit_ != KP_ATOM,
+                   std::logic_error,
+                   "Unmatching proportion unit  !");
+    }
 
     // check if the element is locked (which mean valid)
 
@@ -300,16 +291,13 @@ namespace materials {
     // check proportion_unit_type when add a new element
     // if you are adding the first element then set the proportion_unit
 
-    if ( _composition_.size () == 0)
-      {
-        _proportion_unit_ = KP_MASS;
-      }
-    else
-      {
-        DT_THROW_IF(_proportion_unit_ != KP_MASS,
-                    std::logic_error,
-                    "Unmatching proportion unit  !");
-      }
+    if ( _composition_.size () == 0) {
+      _proportion_unit_ = KP_MASS;
+    } else {
+      DT_THROW_IF(_proportion_unit_ != KP_MASS,
+                  std::logic_error,
+                  "Unmatching proportion unit  !");
+    }
 
     // check if the element is locked (which mean valid)
 
@@ -345,25 +333,26 @@ namespace materials {
   //________________________________________________________________________
   void material::build ()
   {
+    std::cerr << "DEVEL: material::build: Entering..." << std::endl;
     DT_THROW_IF (is_locked (),std::logic_error, "Operation not allowed ! Object is locked !");
     DT_THROW_IF (_density_ <= 0.0, std::logic_error, "Invalid density !");
-    if (is_composed_by_mean_z_a ())
-      {
-        DT_THROW_IF (_mean_z_ < 0.0, std::logic_error, "Invalid mean atomic number (Z) !");
-        DT_THROW_IF (_mean_a_ < 0.0, std::logic_error, "Invalid mean mass number (A) !");
+    if (is_composed_by_mean_z_a ()) {
+      std::cerr << "DEVEL: material::build: by mean Z/A..." << std::endl;
+      DT_THROW_IF (_mean_z_ < 0.0, std::logic_error, "Invalid mean atomic number (Z) !");
+      DT_THROW_IF (_mean_a_ < 0.0, std::logic_error, "Invalid mean mass number (A) !");
+    } else {
+      std::cerr << "DEVEL: material::build: by composition: " << _composition_.size () << std::endl;
+      DT_THROW_IF(_composition_.size () <= 0,
+                  std::logic_error,
+                  "Missing compound(s) in the current material ! Not implemented yet !");
+      if (is_composed_by_fraction_mass ()) {
+        std::cerr << "DEVEL: material::build: by fraction mass..." << std::endl;
+       _normalize_weights_ ();
       }
-    else
-      {
-        DT_THROW_IF(_composition_.size () <= 0,
-                    std::logic_error,
-                    "Missing compound(s) in the current material ! Not implemented yet !");
-        if (is_composed_by_fraction_mass ())
-          {
-            _normalize_weights_ ();
-          }
-        _compute_molar_mass_ ();
-      }
+      _compute_molar_mass_ ();
+    }
     _lock_ ();
+    std::cerr << "DEVEL: material::build: Exiting." << std::endl;
     return;
   }
 
@@ -380,19 +369,17 @@ namespace materials {
     for (composition_map_type::const_iterator i
            = _composition_.begin ();
          i != _composition_.end ();
-         i++)
-      {
-        const compound_entry & entry = i->second;
-        sum_weight += entry.weight;
-      }
+         i++) {
+      const compound_entry & entry = i->second;
+      sum_weight += entry.weight;
+    }
     // normalize all weights (fraction of mass):
     for (composition_map_type::iterator i = _composition_.begin ();
          i != _composition_.end ();
-         i++)
-      {
-        compound_entry & entry = i->second;
-        entry.weight /= sum_weight;
-      }
+         i++) {
+      compound_entry & entry = i->second;
+      entry.weight /= sum_weight;
+    }
     return;
   }
 
@@ -442,89 +429,73 @@ namespace materials {
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Composition  : ";
-    if (is_composed_by_mean_z_a ())
-      {
-        out_ << endl;
-        out_ << indent << datatools::i_tree_dumpable::skip_tag
-             << datatools::i_tree_dumpable::tag << "Mean Z : " <<_mean_z_ << endl;
-        out_ << indent << datatools::i_tree_dumpable::skip_tag
-             << datatools::i_tree_dumpable::last_tag << "Mean A : " << _mean_a_ << endl;
-
-      }
-    else
-      {
-        if ( _composition_.size () == 0)
-          {
-            out_ << " <empty>" << endl;
+    if (is_composed_by_mean_z_a ()) {
+      out_ << endl;
+      out_ << indent << datatools::i_tree_dumpable::skip_tag
+           << datatools::i_tree_dumpable::tag << "Mean Z : " <<_mean_z_ << endl;
+      out_ << indent << datatools::i_tree_dumpable::skip_tag
+           << datatools::i_tree_dumpable::last_tag << "Mean A : "
+           << _mean_a_ << " g/mol" << endl;
+    } else {
+      if ( _composition_.size () == 0) {
+        out_ << " <empty>" << endl;
+      } else {
+        if (_proportion_unit_ == KP_ATOM) {
+          out_ << "(# atoms) "<< endl;
+          for (composition_map_type::const_iterator i
+                 = _composition_.begin ();
+               i != _composition_.end ();
+               i++) {
+            const string & key = i->first;
+            const compound_entry & entry = i->second;
+            composition_map_type::const_iterator j = i;
+            j++;
+            string atag = datatools::i_tree_dumpable::TAG;
+            if (j == _composition_.end ()) atag = datatools::i_tree_dumpable::LAST_TAG;
+            out_ << indent << datatools::i_tree_dumpable::skip_tag << atag << "Element '"
+                 << entry.elt_ptr->get_name () << "'" << " : "
+                 << entry.nb_of_atoms << " "
+                 << (entry.owned? "(owned)": "(not owned)") << endl;
           }
-        else
-          {
-            if (_proportion_unit_ == KP_ATOM)
-              {
-                out_ << "(# atoms) "<< endl;
-                for (composition_map_type::const_iterator i
-                       = _composition_.begin ();
-                     i != _composition_.end ();
-                     i++)
-                  {
-                    const string & key = i->first;
-                    const compound_entry & entry = i->second;
-                    composition_map_type::const_iterator j = i;
-                    j++;
-                    string atag = datatools::i_tree_dumpable::TAG;
-                    if (j == _composition_.end ()) atag = datatools::i_tree_dumpable::LAST_TAG;
-                    out_ << indent << datatools::i_tree_dumpable::skip_tag << atag << "Element '"
-                         << entry.elt_ptr->get_name () << "'" << " : "
-                         << entry.nb_of_atoms << " "
-                         << (entry.owned? "(owned)": "(not owned)") << endl;
-                  }
-              }
+        }
 
-            if (_proportion_unit_ == KP_MASS)
-              {
-                out_ << "(% mass)  "<< endl;
-                for (composition_map_type::const_iterator i
-                       = _composition_.begin ();
-                     i != _composition_.end ();
-                     i++)
-                  {
-                    const string & key = i->first;
-                    const compound_entry & entry = i->second;
-                    composition_map_type::const_iterator j = i;
-                    j++;
-                    string atag = datatools::i_tree_dumpable::TAG;
-                    if (j == _composition_.end ()) atag = datatools::i_tree_dumpable::LAST_TAG;
-                    out_ << indent << datatools::i_tree_dumpable::skip_tag << atag;
-                    if (entry.mat_ptr == 0)
-                      {
-                        out_  << "Element '" << entry.elt_ptr->get_name ();
-                      }
-                    else
-                      {
-                        out_  << "Material '" << entry.mat_ptr->get_name ();
-                      }
-                    out_ << "'" << " : " << entry.weight << " "
-                         << (entry.owned? "(owned)": "(not owned)") << endl;
-                  }
-              }
+        if (_proportion_unit_ == KP_MASS) {
+          out_ << "(% mass)  "<< endl;
+          for (composition_map_type::const_iterator i
+                 = _composition_.begin ();
+               i != _composition_.end ();
+               i++) {
+            const string & key = i->first;
+            const compound_entry & entry = i->second;
+            composition_map_type::const_iterator j = i;
+            j++;
+            string atag = datatools::i_tree_dumpable::TAG;
+            if (j == _composition_.end ()) atag = datatools::i_tree_dumpable::LAST_TAG;
+            out_ << indent << datatools::i_tree_dumpable::skip_tag << atag;
+            if (entry.mat_ptr == 0) {
+              out_  << "Element '" << entry.elt_ptr->get_name ();
+            } else {
+              out_  << "Material '" << entry.mat_ptr->get_name ();
+            }
+            out_ << "'" << " : " << entry.weight << " "
+                 << (entry.owned? "(owned)": "(not owned)") << endl;
           }
+        }
       }
+    }
 
     {
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Properties   : ";
-      if ( _properties_.size () == 0)
-        {
-          out_ << "<empty>" << endl;
-        }
-      else
-        {
-          out_ << endl;
-          ostringstream indent_oss;
-          indent_oss << indent;
-          indent_oss << datatools::i_tree_dumpable::skip_tag;
-          _properties_.tree_dump (out_,"",indent_oss.str ());
-        }
+      if ( _properties_.size () == 0) {
+        out_ << "<empty>" << endl;
+      } else {
+        out_ << endl;
+        ostringstream indent_oss;
+        indent_oss << indent;
+        indent_oss << datatools::i_tree_dumpable::skip_tag;
+        _properties_.tree_dump (out_,"",indent_oss.str ());
+      }
     }
 
     {

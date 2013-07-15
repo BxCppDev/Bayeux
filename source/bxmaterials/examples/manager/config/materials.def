@@ -7,49 +7,49 @@
 
 [name="vacuum" type="material"]
 #@config Vacuum material
-density        : real   = 1.0e-15
-density.unit   : string = "mg/cm3"
-state          : string = "gas"
-composition.mode : string   = "fraction_mass"
+density.unit              : string = "mg/cm3"
+density                   : real   = 1.0e-15
+state                     : string = "gas"
+composition.mode          : string   = "fraction_mass"
 composition.names         : string [1]  = "Hydrogen"
 composition.fraction_mass : real   [1]  =    1.0
 
 [name="air" type="material"]
 #@config Air material
-density        : real   = 1.29
-density.unit   : string = "mg/cm3"
-state          : string = "gas"
-composition.mode : string   = "fraction_mass"
+density.unit              : string = "mg/cm3"
+density                   : real   = 1.29
+state                     : string = "gas"
+composition.mode          : string   = "fraction_mass"
 composition.names         : string [2]  = "Nitrogen" "Oxygen"
 composition.fraction_mass : real   [2]  =    0.7       0.3
 
 [name="hydrogen_gas" type="material"]
 #@config Hydrogen gas
-density        : real   = 1.0
-density.unit   : string = "mg/cm3"
-state          : string = "gas"
-composition.mode : string   = "fraction_mass"
+density.unit              : string = "mg/cm3"
+density                   : real   = 1.0
+state                     : string = "gas"
+composition.mode          : string   = "fraction_mass"
 composition.names         : string [1]  = "Hydrogen"
 composition.fraction_mass : real   [1]  =    1.0
 
 [name="copper" type="material"]
 #@config Copper material
-density        : real   = 8.9
-density.unit   : string = "g/cm3"
-state          : string = "solid"
+density.unit              : string = "g/cm3"
+density                   : real   = 8.9
+state                     : string = "solid"
 composition.mode          : string      = "fraction_mass"
 composition.names         : string [1]  = "Copper"
 composition.fraction_mass : real   [1]  =   1.0
 
 [name="water" type="material"]
 #@config Water material
-density          : real   = 1.0
-density.unit     : string = "g/cm3"
-temperature      : real   = 300.
-temperature.unit : string = "kelvin"
-pressure         : real   = 1.
-pressure.unit    : string = "bar"
-state            : string = "liquid"
+density.unit                : string = "g/cm3"
+density                     : real   = 1.0
+temperature.unit            : string = "kelvin"
+temperature                 : real   = 300.
+pressure.unit               : string = "bar"
+pressure                    : real   = 1.
+state                       : string = "liquid"
 composition.mode            : string       = "number_of_atoms"
 composition.names           : string  [2]  = "Hydrogen" "Oxygen"
 composition.number_of_atoms : integer [2]  =      2        1
@@ -58,20 +58,20 @@ mpt.op.rindex : real [5] = 1.33 1.34 1.35 1.40  1.42
 
 [name="borated_water_3%" type="material"]
 #@config Borated (3%) water material
-density          : real   = 1.0
-density.unit     : string = "g/cm3"
-temperature      : real   = 300.
-temperature.unit : string = "kelvin"
-pressure         : real   = 1.
-pressure.unit    : string = "bar"
-state            : string = "liquid"
+density.unit                : string = "g/cm3"
+density                     : real   = 1.0
+temperature.unit            : string = "kelvin"
+temperature                 : real   = 300.
+pressure.unit               : string = "bar"
+pressure                    : real   = 1.
+state                       : string = "liquid"
 composition.mode            : string       = "fraction_mass"
 composition.names           : string  [2]  = "water" "Boron"
 composition.fraction_mass   : real    [2]  =  0.97    0.03
 
 # Example of auxiliary properties :
 contamination.radiocontaminants : string [3] = "Bi-214" "Tl-208" "Pa-234"
-contamination.activities        : real   [3] =  20.e-6    5e-6    25e-6   
+contamination.activities        : real   [3] =  20.e-6    5e-6    25e-6
 
 
 [name="diamond" type="material"]
@@ -89,18 +89,18 @@ mean_a           : real   = 12.0
 
 [name="plexiglass" type="material"]
 #@config Plexiglass material (PMMA = C5H8O2)
-density          : real   = 1.190
-density.unit     : string = "g/cm3"
-state            : string = "solid"
+density                     : real   = 1.190
+density.unit                : string = "g/cm3"
+state                       : string = "solid"
 composition.mode            : string       = "number_of_atoms"
 composition.names           : string  [3]  = "Hydrogen" "Carbon" "Oxygen"
 composition.number_of_atoms : integer [3]  =     8        5        2
 
 [name="polystyrene" type="material"]
 #@config Polystyrene material
-density          : real   = 1.032
-density.unit     : string = "g/cm3"
-state            : string = "solid"
+density                     : real   = 1.032
+density.unit                : string = "g/cm3"
+state                       : string = "solid"
 composition.mode            : string       = "number_of_atoms"
 composition.names           : string  [2]  = "Hydrogen"  "Carbon"
 composition.number_of_atoms : integer [2]  =      8         8
@@ -108,9 +108,9 @@ composition.number_of_atoms : integer [2]  =      8         8
 
 [name="iron" type="material"]
 #@config Iron material
-density        : real   = 7.874 
-density.unit   : string = "g/cm3"
-state          : string = "solid"
+density                   : real   = 7.874
+density.unit              : string = "g/cm3"
+state                     : string = "solid"
 composition.mode          : string      = "fraction_mass"
 composition.names         : string [1]  = "Iron"
 composition.fraction_mass : real   [1]  =  1.0
@@ -118,29 +118,49 @@ composition.fraction_mass : real   [1]  =  1.0
 
 [name="mylar" type="material"]
 #@config Mylar material (C10H8O4)
-density          : real   = 1.397
-density.unit     : string = "g/cm3"
-state            : string = "solid"
+density                     : real   = 1.397
+density.unit                : string = "g/cm3"
+state                       : string = "solid"
 composition.mode            : string       = "number_of_atoms"
 composition.names           : string  [3]  = "Hydrogen" "Oxygen"  "Carbon"
 composition.number_of_atoms : integer [3]  =      8        4        10
 
 [name="glass" type="material"]
 #@config glass (Pyrex==borosilicate glass: 80.9%SIO2+12.9%B203+3.8%NA2O+2.2%AL2O3+0.4%K2O BY WEIGHT, also: http://en.wikipedia.org/wiki/Pyrex)
-density          : real   = 2.23
-density.unit     : string = "g/cm3"
-state            : string = "solid"
+density                   : real   = 2.23
+density.unit              : string = "g/cm3"
+state                     : string = "solid"
 composition.mode          : string      = "fraction_mass"
-composition.names         : string [6]  = "Silicium" "Oxygen" "Boron" "Sodium" "Aluminium" "Potassium" 
+composition.names         : string [6]  = "Silicium" "Oxygen" "Boron" "Sodium" "Aluminium" "Potassium"
 composition.fraction_mass : real   [6]  =  0.377      0.540    0.040   0.028    0.012  0.003
 
 [name="aluminium" type="material"]
 #@config Aluminium material
-density        : real   = 2.70
-density.unit   : string = "g/cm3"
-state          : string = "solid"
+density                   : real   = 2.70
+density.unit              : string = "g/cm3"
+state                     : string = "solid"
 composition.mode          : string      = "fraction_mass"
 composition.names         : string [1]  = "Aluminium"
 composition.fraction_mass : real   [1]  =  1.0
+
+[name="Silicon" type="material"]
+#@config Silicon material
+density                   : real   = 2.33
+density.unit              : string = "g/cm3"
+state                     : string = "solid"
+composition.mode          : string      = "fraction_mass"
+composition.names         : string [1]  = "Si"
+composition.fraction_mass : real   [1]  =  1.0
+
+[name="DopedSilicon" type="material"]
+#@config Doped Silicon material built by the 'doping elements' method
+build_mode                   : string = "doping"
+doping.doped_material        : string    = "Silicon"
+doping.doping_elements       : string[2] = "B"      "P"
+molar_concentration.unit     : string    = "atoms/cm3"
+doping.doping_concentrations : real[2]   = 3.2e20   0.1e20
+molar_volume.unit            : string    = "cm3/mol"
+doping.doping_molar_volumes  : real[2]   = 4.6      17.0
+state                        : string = "solid"
 
 # end

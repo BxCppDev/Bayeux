@@ -35,4 +35,6 @@
 	- add examples
 	- remove installation of tests
 	- OCD support with RST output
-
+2013-07-15 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+        - cleaning, commenting, re-indentation
+	- factory support of "doping" build method for material class

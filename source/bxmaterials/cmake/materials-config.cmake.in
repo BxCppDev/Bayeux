@@ -5,9 +5,7 @@
 #  materials_LIBRARIES    - libraries to link against
 
 # No supprt:
-#  materials_WITH_BIO     - flag for Boost/Serialization I/O DLL (a.k.a. 'bio')
 #  materials_WITH_REFLECTION  - flag for reflection DLL
-#  materials_BIO_LIBRARY  - library targets to link against (Boost I/O library)
 #  materials_REFLECTION_LIBRARY - library targets to link against (reflection library)
 
 #-----------------------------------------------------------------------
@@ -25,7 +23,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-----------------------------------------------------------------------
 
-#set(materials_WITH_BIO        @MATERIALS_WITH_BIO@)
 #set(materials_WITH_REFLECTION @MATERIALS_WITH_REFLECTION@)
 
 set(materials_DATATOOLS_DIR   @datatools_DIR@)
@@ -79,10 +76,6 @@ set(materials_INCLUDE_DIRS
 #-----------------------------------------------------------------------
 # Set materials_LIBRARIES variable
 set(materials_LIBRARY materials CACHE PATH "Path to materials library")
-
-# if(materials_WITH_BIO)
-#   set(materials_BIO_LIBRARY materials_bio)
-# endif()
 
 # if(materials_WITH_REFLECTION)
 #   set(materials_REFLECTION_LIBRARY materials_reflection)

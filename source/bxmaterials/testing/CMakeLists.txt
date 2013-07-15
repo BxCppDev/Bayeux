@@ -64,17 +64,6 @@ foreach(test_program ${materials_tests_programs_list})
 
   set(_test_libraries materials)
 
-  # # Special bio DLL plugins :
-  # if(datatools_WITH_BIO)
-  #   list(INSERT _test_libraries 0 datatools_bio)
-  # endif()
-  # if(mygsl_WITH_BIO)
-  #   list(INSERT _test_libraries 0 mygsl_bio )
-  # endif()
-  # if(MATERIALS_WITH_BIO)
-  #   list(INSERT _test_libraries 0 materials_bio )
-  # endif()
-
   # # Special reflection DLL plugins :
   # if(datatools_WITH_REFLECTION)
   #   list(INSERT _test_libraries 0 datatools_reflection)

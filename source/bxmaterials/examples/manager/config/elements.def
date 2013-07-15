@@ -19,7 +19,7 @@ isotope.weights : real[2]   = 0.000137 99.999863
 
 [name="Boron" type="element"]
 #@config The B natural element
-z               : integer   = 5 
+z               : integer   = 5
 isotope.names   : string[2] = "B-10" "B-11"
 isotope.weights : real[2]   =  19.9   80.1
 
@@ -80,7 +80,7 @@ isotope.weights : real[3]   = 92.2297  4.6832   3.0872
 [name="Phosphore" type="element"]
 #@config The Magnesium natural element
 z               : integer   = 15
-isotope.names   : string[1] = "P-31" 
+isotope.names   : string[1] = "P-31"
 isotope.weights : real[1]   = 100.0
 
 [name="Manganese" type="element"]
@@ -117,12 +117,27 @@ isotope.weights : real[2]   = 69.17 30.83
 #@config The Lead natural element
 z               : integer   = 82
 isotope.names   : string[4] = "Pb-204" "Pb-206" "Pb-207" "Pb-208"
-isotope.weights : real[4]   = 1.4      24.1     22.1     52.4 
+isotope.weights : real[4]   = 1.4      24.1     22.1     52.4
 
 [name="Potassium" type="element"]
 #@config The Potassium natural element
 z               : integer   = 19
 isotope.names   : string[3] = "K-39"   "K-40"   "K-41"
 isotope.weights : real[3]   = 93.2581  0.0117   6.7302
+
+[name="Si" type="element"]
+#@config The Silicon simplified element
+z               : integer   = 14
+a               : real      = 28.0855
+
+[name="B" type="element"]
+#@config The Boron simplified element
+z               : integer   = 5
+a               : real      = 10.811
+
+[name="P" type="element"]
+#@config The Phosphore simplified element
+z               : integer   = 15
+a               : real      = 30.973761
 
 # end

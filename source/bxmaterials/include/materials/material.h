@@ -154,7 +154,7 @@ namespace materials {
     std::string _name_;    //!< Name
     double      _density_; //!< Density
     double      _mean_z_;  //!< Mean atomic number
-    double      _mean_a_;  //!< Mean mass number
+    double      _mean_a_;  //!< Mean mass number in g/mol
 
     // composition:
 

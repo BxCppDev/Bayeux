@@ -1,5 +1,5 @@
-// -*- mode: c++; -*- 
-/* materials_config.h header file 
+// -*- mode: c++; -*-
+/* materials_config.h header file
  */
 
 #ifndef MATERIALS_MATERIALS_CONFIG_H_
@@ -26,11 +26,8 @@
 /***  materials debug flag ***/
 #cmakedefine01 MATERIALS_WITH_DEBUG
 
-/***  materials embedded Boost/Serialization based I/O ***/
-#cmakedefine01 MATERIALS_WITH_BIO
-
 /***  materials embedded CAMP-based reflection ***/
-#cmakedefine01 MATERIALS_WITH_REFLECTION
+//#cmakedefine01 MATERIALS_WITH_REFLECTION
 
 #define MATERIALS_DATA_SCHEMA_LOCAL_PATH "@_materials_DATA_SCHEMA_FULL_LOCAL_PATH@"
 

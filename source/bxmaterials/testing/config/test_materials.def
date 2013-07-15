@@ -71,7 +71,7 @@ composition.fraction_mass   : real    [2]  =  0.97    0.03
 
 # Example of auxiliary properties :
 contamination.radiocontaminants : string [3] = "Bi-214" "Tl-208" "Pa-234"
-contamination.activities        : real   [3] =  20.e-6    5e-6    25e-6   
+contamination.activities        : real   [3] =  20.e-6    5e-6    25e-6
 
 
 [name="diamond" type="material"]
@@ -108,7 +108,7 @@ composition.number_of_atoms : integer [2]  =      8         8
 
 [name="iron" type="material"]
 #@config Iron material
-density        : real   = 7.874 
+density        : real   = 7.874
 density.unit   : string = "g/cm3"
 state          : string = "solid"
 composition.mode          : string      = "fraction_mass"
@@ -131,7 +131,7 @@ density          : real   = 2.23
 density.unit     : string = "g/cm3"
 state            : string = "solid"
 composition.mode          : string      = "fraction_mass"
-composition.names         : string [6]  = "Silicium" "Oxygen" "Boron" "Sodium" "Aluminium" "Potassium" 
+composition.names         : string [6]  = "Silicium" "Oxygen" "Boron" "Sodium" "Aluminium" "Potassium"
 composition.fraction_mass : real   [6]  =  0.377      0.540    0.040   0.028    0.012  0.003
 
 [name="aluminium" type="material"]
@@ -142,5 +142,49 @@ state          : string = "solid"
 composition.mode          : string      = "fraction_mass"
 composition.names         : string [1]  = "Aluminium"
 composition.fraction_mass : real   [1]  =  1.0
+
+
+##### Test for doped materials :
+
+[name="Si" type="element"]
+#@config The Silicon simplified element
+z               : integer   = 14
+a               : real      = 28.0855
+
+
+[name="B" type="element"]
+#@config The Boron simplified element
+z               : integer   = 5
+a               : real      = 10.811
+
+
+[name="P" type="element"]
+#@config The Phosphore simplified element
+z               : integer   = 15
+a               : real      = 30.973761
+
+[name="Silicon" type="material"]
+#@config Silicon material
+density        : real   = 2.33
+density.unit   : string = "g/cm3"
+state          : string = "solid"
+composition.mode          : string      = "fraction_mass"
+composition.names         : string [1]  = "Si"
+composition.fraction_mass : real   [1]  =  1.0
+
+
+[name="DopedSilicium" type="material"]
+#@config Doped Silicium material
+density        : real   = 2.70
+density.unit   : string = "g/cm3"
+state          : string = "solid"
+build_mode     : string = "doping"
+doping.doped_material        : string    = "Silicon"
+doping.doping_elements       : string[2] = "B"      "P"
+molar_concentration.unit     : string    = "atoms/cm3"
+doping.doping_concentrations : real[2]   = 3.2e20   1.3e20
+molar_volume.unit            : string    = "cm3/mol"
+doping.doping_molar_volumes  : real[2]   = 4.6      17.0
+
 
 # end

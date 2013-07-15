@@ -14,8 +14,7 @@ function do_materials_print_info ()
 	echo "${indent}MATERIALS_NAME                = '${MATERIALS_NAME}'" 1>&2
 	echo "${indent}MATERIALS_VERSION             = '${MATERIALS_VERSION}'" 1>&2
 	echo "${indent}MATERIALS_WITH_DEBUG          = ${MATERIALS_WITH_DEBUG}" 1>&2
-	echo "${indent}MATERIALS_WITH_BIO            = ${MATERIALS_WITH_BIO}" 1>&2
-	echo "${indent}MATERIALS_WITH_REFLECTION     = ${MATERIALS_WITH_REFLECTION}" 1>&2
+	#echo "${indent}MATERIALS_WITH_REFLECTION     = ${MATERIALS_WITH_REFLECTION}" 1>&2
 	echo "${indent}MATERIALS_BIN_DIR             = '${MATERIALS_BIN_DIR}'"
 	echo "${indent}MATERIALS_ETC_DIR             = '${MATERIALS_ETC_DIR}'"
 	echo "${indent}MATERIALS_LIB_DIR             = '${MATERIALS_LIB_DIR}'"
@@ -34,7 +33,7 @@ alias materials_print_info='do_materials_print_info'
 function do_materials_setup ()
 {
     local verbose=0
-    
+
     while [ -n "$1" ]; do
 	if [ "$1" = "--verbose" -o "$1" = "-v" ]; then
 	  let verbose=verbose+1
@@ -49,7 +48,7 @@ function do_materials_setup ()
     if [ "x${MATERIALS_ROOT}" != "x" ]; then
 	echo "WARNING: do_materials_setup: materials is already setup !" 1>&2
 	return 2
-    fi 
+    fi
 
     if [ "x@MATERIALS_WITH_REFLECTION@" = "x1" ]; then
 	which camp-config >/dev/null 2>&1
@@ -82,7 +81,7 @@ function do_materials_setup ()
 	    echo "VERBOSE: do_materials_setup: Found datatools." 1>&2
 	fi
     fi
-     
+
     export MATERIALS_ROOT="@CMAKE_INSTALL_PREFIX@"
     export MATERIALS_ROOT_DIR="@CMAKE_INSTALL_PREFIX@"
     export MATERIALS_NAME="@PROJECT_NAME@"
@@ -102,18 +101,18 @@ function do_materials_setup ()
 	export PATH="${MATERIALS_BIN_DIR}:${PATH}"
     else
 	export PATH="${MATERIALS_BIN_DIR}"
-    fi 
-   
+    fi
+
     if [ -n "${@_ld_library_path_env@}" ]; then
 	export @_ld_library_path_env@="${MATERIALS_LIB_DIR}:${@_ld_library_path_env@}"
     else
 	export @_ld_library_path_env@="${MATERIALS_LIB_DIR}"
-    fi 
+    fi
 
     if [ ${verbose} -gt 1 ]; then
 	do_materials_print_info "VERBOSE: do_materials_setup"
     fi
- 
+
     if [ ${verbose} -ne 0 ]; then
 	echo "NOTICE: do_materials_setup: Setup materials done." 1>&2
     fi

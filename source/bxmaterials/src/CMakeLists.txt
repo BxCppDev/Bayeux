@@ -189,31 +189,6 @@ target_link_libraries(materials
 set(MATERIALS_TARGETS materials)
 
 #-----------------------------------------------------------------------
-# BUILD THE MATERIALS BOOST I/O COMPONENT
-# We build this as a shared library as we can then link to it directly
-# On Mac, we use dynamic_lookup for undefined symbols because we want
-# the lib to act as a plugin.
-#
-# if(MATERIALS_WITH_BIO)
-#   set(materials_bio_SOURCES
-#     include/materials/the_serializable.h
-#     include/materials/the_serializable.ipp
-#     the_serializable.cc
-#     )
-#   list_prepend(materials_bio_SOURCES "${PROJECT_SOURCE_DIR}/")
-#
-#   add_library(materials_bio SHARED ${materials_bio_SOURCES})
-#
-#   if(APPLE)
-#     set_property(TARGET materials_bio APPEND
-#       PROPERTY LINK_FLAGS "-undefined dynamic_lookup"
-#       )
-#   endif()
-#
-#   list(APPEND MATERIALS_TARGETS materials_bio)
-# endif()
-
-#-----------------------------------------------------------------------
 # BUILD THE MATERIALS REFLECTION COMPONENT
 # We build this as a shared library as we can then link to it directly
 # On Mac, we use dynamic_lookup for undefined symbols because we want

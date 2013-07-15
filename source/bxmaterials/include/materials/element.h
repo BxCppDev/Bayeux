@@ -90,7 +90,20 @@ namespace materials {
 
     void   set_z (const std::string  & symbol_);  //!<  Set the Z (number of protons) & the chemical symbol of the element.
 
-    void   set_molar_mass(double molar_mass_); //!<  Set the molar mass of the element.
+    /// Set the molar mass of the element [g/mol]
+    /** @code
+     *  double g_per_mol = CLHEP::g/CLHPE::mol;
+     *  double molar_mass = 12.34 * g_per_mol;
+     *  materials::element elmt;
+     *  elmt.set_molar_mass(molar_mass/g_per_mol);
+     *  @endcode
+     *  or
+     *  @code
+     *  double molar_mass = 12.34; // implicit [g/mol]
+     *  materials::element elmt;
+     *  elmt.set_molar_mass(molar_mass);
+     *  @endcode     */
+    void   set_molar_mass(double molar_mass_); //!<  Set the molar mass of the element [g/mol].
 
     void   add_isotope (const isotope & iso_ref_ , double weight_ = 1.0, bool owned_ = false);  //!<  Add an isotope with weight
 
@@ -110,6 +123,15 @@ namespace materials {
 
     int get_z () const {return _z_;}                    //!<  Return the number of protons (Z).
 
+    ///  Return the molar mass [g/mol]
+    /** @code
+     *  double g_per_mol = CLHEP::g/CLHPE::mol;
+     *  double molar_mass = 12.34 * g_per_mol;
+     *  materials::element elmt;
+     *  elmt.set_molar_mass(molar_mass/g_per_mol);
+     *  double reloaded_molar_mass = elmt.get_molar_mass() * g_per_mol;
+     *  @endcode
+     */
     double get_molar_mass () const {return _molar_mass_;} //!<  Return the molar mass [g/mol].
 
     bool is_locked () const {return _locked_;}           //!<  Return true if composition is valid, weights are normalized and molar mass is computed.
@@ -124,7 +146,6 @@ namespace materials {
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
                             bool inherit_ = false) const;  //!<  print info virtual method
-
 
    /* private set & find methods */
   private :
