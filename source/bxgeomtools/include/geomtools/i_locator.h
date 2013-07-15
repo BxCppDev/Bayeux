@@ -86,7 +86,7 @@ namespace geomtools {
     const manager & get_geo_manager () const;
 
     /// Main reset method
-    virtual int reset () = 0;
+    virtual void reset () = 0;
 
     /// Check if locator is initialized
     virtual bool is_initialized () const = 0;
