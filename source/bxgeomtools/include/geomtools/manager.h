@@ -254,9 +254,9 @@ namespace geomtools {
 
     geomtools::id_mgr & grab_id_mgr ();
 
-    const geomtools::mapping & get_mapping () const;
+    const geomtools::mapping & get_mapping (const std::string & mapping_name_ = "") const;
 
-    geomtools::mapping & grab_mapping ();
+    //geomtools::mapping & grab_mapping ();
 
     /* Plugins management */
 

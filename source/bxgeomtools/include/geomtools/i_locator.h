@@ -1,8 +1,9 @@
 // -*- mode: c++ ; -*-
 /* i_locator.h
- * Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Author(s):  Francois Mauger <mauger@lpccaen.in2p3.fr>
+ *             Xavier Garrido <garrido@lal.in2p3.fr>
  * Creation date: 2010-02-09
- * Last modified: 2013-05-29
+ * Last modified: 2013-07-16
  *
  * License:
  *
@@ -78,6 +79,9 @@ namespace geomtools {
 
     /// Main initialization method from a list of properties
     virtual void initialize (const datatools::properties & config_) = 0;
+
+    /// Check if there is a geometry manager
+    bool has_geo_manager() const;
 
     /// Set the reference to the geometry manager
     void set_geo_manager (const manager & mgr_);

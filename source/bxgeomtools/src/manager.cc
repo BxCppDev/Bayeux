@@ -42,6 +42,7 @@
 #include <geomtools/sensitive.h>
 #include <geomtools/material.h>
 #include <geomtools/mapping.h>
+#include <geomtools/mapping_plugin.h>
 
 namespace geomtools {
 
@@ -399,15 +400,22 @@ namespace geomtools {
     return;
   }
 
-  const geomtools::mapping & manager::get_mapping () const
+  const geomtools::mapping & manager::get_mapping (const std::string & mapping_name_) const
   {
+    if (! mapping_name_.empty()) {
+      DT_THROW_IF(! is_plugin_a<mapping_plugin>(mapping_name_),
+                  std::logic_error,
+                  "There is no mapping plugin named '" << mapping_name_ << "' !");
+      const mapping_plugin & mp = get_plugin<mapping_plugin>(mapping_name_);
+      return mp.get_mapping();
+    }
     return _mapping_;
   }
 
-  geomtools::mapping & manager::grab_mapping ()
-  {
-    return _mapping_;
-  }
+  // geomtools::mapping & manager::grab_mapping ()
+  // {
+  //   return _mapping_;
+  // }
 
   void manager::set_mapping_requested (bool a_)
   {

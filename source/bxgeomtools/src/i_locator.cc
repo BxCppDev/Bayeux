@@ -11,6 +11,7 @@ namespace geomtools {
                                 geom_id & gid_,
                                 double tolerance_) const
   {
+    gid_.invalidate();
     gid_ = get_geom_id (position_, type_, tolerance_);
     return gid_.is_valid ();
   }
@@ -37,6 +38,11 @@ namespace geomtools {
   {
     _geo_manager_ = 0;
     return;
+  }
+
+  bool base_locator::has_geo_manager() const
+  {
+    return _geo_manager_ != 0;
   }
 
   void base_locator::set_geo_manager (const manager & mgr_)

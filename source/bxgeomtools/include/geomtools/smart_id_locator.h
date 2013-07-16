@@ -34,7 +34,7 @@ namespace geomtools {
   {
   public:
 
-    enum mode_t
+    enum mode_type
       {
         MODE_INVALID = 0,
         MODE_LAST    = 1,
