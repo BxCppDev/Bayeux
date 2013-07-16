@@ -99,7 +99,7 @@ int main (int argc_, char ** argv_)
        "Do not limit the maximum number of data records to be processed.")
       ("module,m",
        po::value<std::vector<std::string> > (),
-       "add a module in the pipeline (optionnal).")
+       "add a module in the pipeline (optional).")
       ("module-manager-config,c",
        po::value<std::string> (),
        "set the module manager configuration file.")
