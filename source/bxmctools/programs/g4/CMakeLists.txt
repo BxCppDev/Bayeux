@@ -101,6 +101,7 @@ foreach ( _mctools_g4_pro_program ${_mctools_g4_programs_list} )
   target_link_libraries ( ${_mctools_g4_pro_executable}
     ${Boost_LIBRARIES}
     ${_mctools_g4_link_libraries}
+    ${Boost_LIBRARIES}
     )
 
   install ( FILES ${PROJECT_BINARY_DIR}/programs/g4/${_mctools_g4_pro_executable}

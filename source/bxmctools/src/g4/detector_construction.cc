@@ -1102,8 +1102,7 @@ namespace mctools {
       // Access to a given plugin by name and type :
       if (geo_mgr.has_plugin(materials_plugin_name)
           && geo_mgr.is_plugin_a<geomtools::materials_plugin>(materials_plugin_name)) {
-        DT_LOG_NOTICE(_logprio(), "Found materials plugin named '" << materials_plugin_name
-                      << "'");
+        DT_LOG_NOTICE(_logprio(), "Found materials plugin named '" << materials_plugin_name << "'");
         const geomtools::materials_plugin & mgp
           = geo_mgr.get_plugin<geomtools::materials_plugin>(materials_plugin_name);
         const materials::manager & mat_mgr = mgp.get_manager();
