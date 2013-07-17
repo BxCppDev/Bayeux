@@ -105,9 +105,8 @@ namespace geomtools {
     }
 
     std::string material = "vacuum";
-    if (material::has_key (config_, material::make_key (material::constants::instance ().MATERIAL_REF_PROPERTY))) {
-      material = config_.fetch_string (material::make_key (material::constants::instance ().MATERIAL_REF_PROPERTY));
-      DT_LOG_TRACE (get_logging_priority (), "key= 'material' = " << material);
+    if (config_.has_key("material.ref")) {
+      material = config_.fetch_string ("material.ref");
     }
 
     DT_THROW_IF (! config_.has_key ("setup.model"), std::logic_error, "Missing 'setup_model' property in simple world model '" << name_ << "' !");
@@ -163,10 +162,9 @@ namespace geomtools {
     _solid_.set_z (_world_z_);
     DT_THROW_IF (!_solid_.is_valid (), std::logic_error, "Invalid solid !");
 
-    _material_ = material;
     grab_logical ().set_name (i_model::make_logical_volume_name (name_));
     grab_logical ().set_shape (_solid_);
-    grab_logical ().set_material_ref (_material_);
+    grab_logical ().set_material_ref(material);
 
     DT_LOG_TRACE (get_logging_priority (), "Install physicals...");
     _setup_phys_.set_name (i_model::make_physical_volume_name (SETUP_LABEL));
