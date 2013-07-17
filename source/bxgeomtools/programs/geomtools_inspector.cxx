@@ -62,6 +62,9 @@ int export_gdml(const geomtools::manager & geo_mgr_,
                 const std::string & top_mapping_model_name_ = "",
                 const std::string & gdml_file_= "",
                 bool root_display_ = false,
+                int root_vis_option_ = 1,
+                int root_vis_level_ = 100,
+                const std::string & root_top_volume_ = "",
                 datatools::logger::priority logging_ = datatools::logger::PRIO_WARNING);
 
 int print_status(const geomtools::manager & geo_mgr_, std::ostream & out_ = std::clog);
@@ -412,9 +415,13 @@ int main (int argc_, char ** argv_)
             if (use_geo_mgr) {
               std::string gdml_file;
               bool root_display = false;
+              int root_vis_option = 1;
+              int root_vis_level = 100;
+              std::string root_top_volume = "";
               while (command_iss) {
                 std::string token;
                 command_iss >> token >> std::ws;
+                //std::cerr << "DEVEL: **** token = '" << token << "'" << std::endl;
                 if (token.empty()) break;
                 if (token[0] == '-') {
                   std::string option = token;
@@ -422,11 +429,42 @@ int main (int argc_, char ** argv_)
                     root_display = true;
                   } else if (option == "--no-root-display") {
                     root_display = false;
+                  } else if (option == "--root-vis-option") {
+                    command_iss >> root_vis_option;
+                    if (! command_iss) {
+                      DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Invalid format for '" << "--root-vis-option" << "' !");
+                      root_vis_option = 0;
+                    }
+                    if (root_vis_option < 0) {
+                      DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Invalid value for '" << "--root-vis-option" << "' !");
+                      root_vis_option = 0;
+                    }
+                    root_display = true;
+                  } else if (option == "--root-vis-level") {
+                    command_iss >> root_vis_level;
+                    if (! command_iss) {
+                      DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Invalid format for '" << "--root-vis-level" << "' !");
+                      root_vis_level = 100;
+                    }
+                    if (root_vis_option < 0) {
+                      DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Invalid value for '" << "--root-vis-level" << "' !");
+                      root_vis_level = 100;
+                    }
+                    root_display = true;
+                  } else if (option == "--root-top-volume") {
+                    command_iss >> root_top_volume;
+                    root_display = true;
+                   } else {
+                    DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Invalid option '" << token << "' !");
+                    break;
                   }
                 } else {
                   std::string argument = token;
                   if (gdml_file.empty()) {
                     gdml_file = argument;
+                  } else {
+                    DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Invalid argumentd option '" << argument << "' !");
+                    break;
                   }
                 }
                 if (command_iss.eof()) break;
@@ -435,7 +473,12 @@ int main (int argc_, char ** argv_)
                 std::cerr << "error: " << "'" << command << "'" << " : Root visualization is inhibited !" << std::endl;
                 root_display = false;
               }
-              int error = export_gdml(geo_mgr, materials_plugin_name, top_mapping_model_name, gdml_file, root_display, logging);
+              int error = export_gdml(geo_mgr, materials_plugin_name, top_mapping_model_name, gdml_file,
+                                      root_display,
+                                      root_vis_option,
+                                      root_vis_level,
+                                      root_top_volume,
+                                      logging);
               if (error > 0) {
                 DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Cannot export GDML file '" << gdml_file << "' !");
               }
@@ -742,7 +785,11 @@ void print_shell_help (std::ostream & out_)
   out_ <<  "                                    - the GID associated to a volume                \n";
   out_ <<  "                                      by the active mapping.                        \n";
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
-  out_ <<  "  x | export_gdml [--root-display] GDML_FILENAME  :                                 \n";
+  out_ <<  "  x | export_gdml [--root-display]                                                  \n";
+  out_ <<  "                  [--root-vis-option OPT]                                           \n";
+  out_ <<  "                  [--root-vis-level LEVEL]                                          \n";
+  out_ <<  "                  [--root-top-volume VOLUMENAME]                                    \n";
+  out_ <<  "                  GDML_FILENAME  :                                                  \n";
   out_ <<  "                                   Generate the GDML file 'GDML_FILENAME'.          \n";
   out_ <<  "                                   The '--root-display' option triggers a           \n";
   out_ <<  "                                   Root interactive visualization session.          \n";
@@ -755,6 +802,9 @@ int export_gdml(const geomtools::manager & geo_mgr_,
                 const std::string & top_mapping_model_name_,
                 const std::string & gdml_file_,
                 bool root_display_,
+                int root_vis_option_,
+                int root_vis_level_,
+                const std::string & root_top_volume_,
                 datatools::logger::priority logging_)
 {
   DT_LOG_NOTICE(logging_,"Exporting GDML...");
@@ -830,6 +880,14 @@ int export_gdml(const geomtools::manager & geo_mgr_,
   std::cerr << "GDML file '" << fgdml << "' has been generated !" << std::endl;
 
   if (root_display_) {
+    unsigned int vis_option = root_vis_option_;
+    unsigned int vis_level = root_vis_level_;
+    std::string top_volume = root_top_volume_;
+    if (! root_top_volume_.empty() && root_top_volume_.length() > 2) {
+      if (root_top_volume_[0] == '"' && root_top_volume_[root_top_volume_.length()-1] == '"') {
+        top_volume = root_top_volume_.substr(1,root_top_volume_.length()-2);
+      }
+    }
     DT_LOG_NOTICE(logging_, "Importing GDML file '" << fgdml << "' from ROOT TGeoManager...");
     std::ostringstream setup_title_oss;
     setup_title_oss << "Virtual geometry setup '";
@@ -844,9 +902,14 @@ int export_gdml(const geomtools::manager & geo_mgr_,
       rvm << "TGeoManager * geo = new TGeoManager(\"geo\",\""
           << setup_title_oss.str().c_str() << "\");" << std::endl;
       rvm << "TGeoManager * g2 = geo->Import(\"" << fgdml.c_str() << "\");" << std::endl;
-      rvm << "g2->SetVisOption(0);" << std::endl;
+      rvm << "g2->SetVisOption(" << vis_option << ");" << std::endl;
       rvm << "g2->SetVisLevel(100);" << std::endl;
-      rvm << "g2->GetMasterVolume()->Draw("");" << std::endl;
+      if (! root_top_volume_.empty()) {
+        rvm << "TGeoVolume * top_volume = g2->GetVolume(\"" << top_volume << "\");" << std::endl;
+        rvm << "if (top_volume != 0) { g2->SetTopVolume(top_volume); top_volume->Draw();}" << std::endl;
+      } else {
+        rvm << "g2->GetMasterVolume()->Draw("");" << std::endl;
+      }
       rvm << "std::cout << \"Enter '.q' to quit...\n\";" << std::endl;
       rvm << "}" << std::endl;
       rvm.close();
