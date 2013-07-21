@@ -70,8 +70,10 @@ int main (int argc_ , char ** argv_)
       clog << " Loading 'datatools_reflection'..." << endl;
       LL.load ("datatools_reflection");
 
-      clog << " Loading 'datatools_bio'..." << endl;
-      LL.load ("datatools_bio");
+      // 2013-07-16: Not existing anymore (btw library_loader perfectly handles
+      // the non existence of such library)
+      // clog << " Loading 'datatools_bio'..." << endl;
+      // LL.load ("datatools_bio");
 
       // clog << " Loading 'mygsl_bio'..." << endl;
       // LL.load ("mygsl_bio");
