@@ -111,6 +111,9 @@ class base_service : public datatools::i_tree_dumpable {
   /// Set the service's name
   void set_name(const std::string& name);
 
+  /// Common initialization of services
+  void common_initialize(const datatools::properties & config);
+
   /// Smart print
   virtual void tree_dump(std::ostream& out = std::clog,
                          const std::string & title = "",
@@ -131,4 +134,3 @@ class base_service : public datatools::i_tree_dumpable {
 }  // end of namespace datatools
 
 #endif // DATATOOLS_BASE_SERVICE_H_
-

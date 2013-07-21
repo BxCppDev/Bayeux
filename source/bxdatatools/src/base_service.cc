@@ -115,6 +115,13 @@ int base_service::initialize_standalone(
   return this->initialize(config, dummy);
 }
 
+void base_service::common_initialize(
+    const datatools::properties& config) {
+  // Logging priority:
+  datatools::logger::priority lp
+    = datatools::logger::extract_logging_configuration (config);
+  set_logging_priority(lp);
+}
 
 void base_service::tree_dump(std::ostream& out,
                              const std::string& title,
@@ -143,4 +150,3 @@ void base_service::tree_dump(std::ostream& out,
 }
 
 }  // end of namespace datatools
-
