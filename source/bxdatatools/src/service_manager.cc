@@ -119,11 +119,9 @@ void service_manager::load(const datatools::multi_properties& config) {
 
 void service_manager::initialize(const datatools::properties& config) {
   DT_THROW_IF(this->is_initialized(), std::logic_error, "Service manager is already initialized !");
-  if (!this->is_debug()) {
-    if (config.has_flag("debug")) {
-      this->set_debug(true);
-    }
-  }
+
+  datatools::logger::priority p = datatools::logger::extract_logging_configuration(config);
+  set_logging_priority (p);
 
   if (name_.empty()) {
     if (config.has_key("name")) {
@@ -597,18 +595,14 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
-    cpd.set_name_pattern("debug")
-      .set_terse_description("Flag to activate debugging output")
-      .set_traits(datatools::TYPE_BOOLEAN)
+    cpd.set_name_pattern("logging.priority")
+      .set_terse_description("Set the logging priority threshold")
+      .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
-      .set_long_description(
-                            "Superseded by the previous method call :                 \n"
-                            "  ``datatools::service_manager::set_debug(true)``        \n"
-                            "                                                         \n"
-                            "Example::                                                \n"
-                            "                                                         \n"
-                            "   debug : boolean = 0                                   \n"
-                            "                                                         \n"
+      .set_long_description("Example::                                 \n"
+                            "                                          \n"
+                            "  logging.priority : string = \"notice\"  \n"
+                            "                                          \n"
                             )
       ;
   }
