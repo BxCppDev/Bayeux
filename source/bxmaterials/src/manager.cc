@@ -138,6 +138,10 @@ namespace materials {
   {
     DT_THROW_IF (is_locked (), std::logic_error, "Manager is locked !");
 
+    // Logging priority:
+    datatools::logger::priority lp = datatools::logger::extract_logging_configuration (setup_);
+    set_logging_priority(lp);
+
     if (setup_.has_flag("debug")) {
       set_debug(true);
     }
