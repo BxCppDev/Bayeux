@@ -536,8 +536,6 @@ namespace geomtools {
 
   void manager::_at_init_ (const datatools::properties & config_)
   {
-    bool id_mgr_debug  = false;
-    bool factory_debug = false;
     std::string setup_label = _setup_label_;
     std::string setup_description = _setup_description_;
     std::string setup_version = _setup_version_;
@@ -585,16 +583,26 @@ namespace geomtools {
       _plugins_force_initialization_at_load_ = true;
     }
 
-    if (config_.has_flag ("factory.debug")) {
-      factory_debug = true;
-    }
-
-    if (config_.has_flag ("id_mgr.debug")) {
-      id_mgr_debug = true;
+    if (config_.has_flag ("id_mgr.logging.priority")) {
+      const std::string factory_priority = config_.fetch_string ("id_mgr.logging.priority");
+      datatools::logger::priority lp = datatools::logger::get_priority (factory_priority);
+      DT_THROW_IF (lp == datatools::logger::PRIO_UNDEFINED,
+                   std::logic_error,
+                   "Invalid logging priority label '" << factory_priority << "' !");
+      _id_manager_.set_logging_priority (lp);
     }
 
     if (config_.has_key ("id_mgr.categories_list")) {
       categories_list = config_.fetch_string ("id_mgr.categories_list");
+    }
+
+    if (config_.has_key ("factory.logging.priority")) {
+      const std::string factory_priority = config_.fetch_string ("factory.logging.priority");
+      datatools::logger::priority lp = datatools::logger::get_priority (factory_priority);
+      DT_THROW_IF (lp == datatools::logger::PRIO_UNDEFINED,
+                   std::logic_error,
+                   "Invalid logging priority label '" << factory_priority << "' !");
+      _factory_.set_logging_priority (lp);
     }
 
     if (config_.has_key ("factory.geom_list")) {
@@ -634,10 +642,6 @@ namespace geomtools {
      * Initialization of the geometry model factory *
      ************************************************/
     DT_LOG_NOTICE(_logging, "Initialization of the geometry  model factory...");
-
-    if (factory_debug) {
-      _factory_.set_debug(true);
-    }
 
     /* Property prefixes to be preserved in logical volumes */
     std::vector<std::string> default_factory_preserved_property_prefixes;
@@ -697,7 +701,12 @@ namespace geomtools {
                 "No geometry model was constructed for the geometry setup '"
                 << _setup_label_ << "' !");
     DT_LOG_DEBUG(_logging,"Geometry manager's model factory : ");
-    if (is_debug()) _factory_.tree_dump(std::clog, "");
+    if (_factory_.get_logging_priority () == datatools::logger::PRIO_DEBUG)
+      {
+        DT_LOG_DEBUG (datatools::logger::PRIO_DEBUG,
+                      "Geometry model factory:");
+        _factory_.tree_dump(std::clog);
+      }
 
     /*********************************************
      * Initialization of the geometry ID manager *
@@ -708,10 +717,10 @@ namespace geomtools {
       datatools::fetch_path_with_env (categories_list);
       _id_manager_.load (categories_list);
     }
-    if (id_mgr_debug) {
+    if (_id_manager_.get_logging_priority () == datatools::logger::PRIO_DEBUG) {
       DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG,
                    "Geometry manager's ID manager:");
-     _id_manager_.tree_dump (std::clog);
+      _id_manager_.tree_dump (std::clog);
     }
 
     DT_LOG_NOTICE(_logging, "Initialization of the geometry mapping...");
