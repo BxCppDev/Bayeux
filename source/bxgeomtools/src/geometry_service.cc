@@ -50,10 +50,8 @@ namespace geomtools {
     DT_THROW_IF (is_initialized (),
                  std::logic_error,
                  "Service '" << get_name () << "' is already initialized ! ");
-    bool debug = false;
-    if (a_config.has_flag ("debug")) {
-      debug = true;
-    }
+
+    base_service::common_initialize (a_config);
 
     std::string geometry_manager_configuration_file;
     if (a_config.has_key ("manager.configuration_file")) {
