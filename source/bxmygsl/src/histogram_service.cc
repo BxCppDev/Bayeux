@@ -91,6 +91,8 @@ namespace mygsl {
   {
     DT_THROW_IF (is_initialized (),std::logic_error,"Service '" << get_name () << "' is already initialized !");
 
+    base_service::common_initialize (config_);
+
     if (config_.has_key ("output_files")) {
       std::vector<std::string> output_files;
       config_.fetch ("output_files", output_files);
@@ -626,4 +628,3 @@ DOCD_CLASS_SYSTEM_REGISTRATION(::mygsl::histogram_service,"mygsl::histogram_serv
 ** tab-width: 2 --
 ** End: --
 */
-
