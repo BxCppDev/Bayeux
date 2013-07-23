@@ -38,6 +38,7 @@ set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include")
 include(bxbayeux_module.cmake)
 set(Bayeux_HEADERS ${bayeux_MODULE_HEADERS})
 set(Bayeux_SOURCES ${bayeux_MODULE_SOURCES})
+set(Bayeux_TESTS)
 
 # - The LPC Modules
 # The processing order should be from least to most dependent
@@ -72,4 +73,29 @@ install(TARGETS bayeux
 install(DIRECTORY ${Bayeux_BUILDPRODUCT_DIR}/include/
   DESTINATION include
   )
+
+#-----------------------------------------------------------------------
+# Build unit tests if required
+# - NB assumes each test .cxx file generates a single executable
+if(Bayeux_ENABLE_TESTING)
+  foreach(_m ${lpcmodules})
+    foreach(_testsource ${${_m}_MODULE_TESTS})
+      get_filename_component(_testname "${_testsource}" NAME_WE)
+      set(_testname "${_m}-${_testname}")
+
+      add_executable(${_testname} ${_testsource})
+      set_property(TARGET ${_testname}
+        APPEND PROPERTY INCLUDE_DIRECTORIES ${${_m}_test_dir}
+        )
+
+      target_link_libraries(${_testname} bayeux)
+      
+      add_test(NAME ${_testname} COMMAND ${_testname})
+      set_property(TEST ${_testname}
+        APPEND PROPERTY ENVIRONMENT ${${_m}_TEST_ENVIRONMENT}
+        )
+    endforeach()
+  endforeach()
+endif()
+
 

@@ -155,3 +155,69 @@ foreach(_hdrin ${${module_name}_MODULE_HEADERS})
   configure_file(${_hdrin} ${_hdrout} @ONLY)
 endforeach()
 
+# - Unit tests
+set(${module_name}_TEST_ENVIRONMENT "DATATOOLS_DATA_DIR=${module_root_dir}")
+
+set(${module_name}_MODULE_TESTS
+  ${module_test_dir}/test_binary_serialization.cxx
+  ${module_test_dir}/test_cloneable_2.cxx
+  ${module_test_dir}/test_cloneable.cxx
+  ${module_test_dir}/test_data_serialization.cxx
+  ${module_test_dir}/test_datatools.cxx
+  ${module_test_dir}/test_dummy_service.cxx
+  #${module_test_dir}/test_event_id.cxx <- interactive
+  ${module_test_dir}/test_exception.cxx
+  ${module_test_dir}/test_factory.cxx
+  ${module_test_dir}/test_handle_1.cxx
+  ${module_test_dir}/test_handle_2.cxx
+  ${module_test_dir}/test_handle_3.cxx
+  ${module_test_dir}/test_handle_macros.cxx
+  ${module_test_dir}/test_integer_range.cxx
+  ${module_test_dir}/test_ioutils.cxx
+  ${module_test_dir}/test_library_loader_0.cxx
+  ${module_test_dir}/test_library_loader_1.cxx
+  ${module_test_dir}/test_logger.cxx
+  ${module_test_dir}/test_multi_properties_0.cxx
+  ${module_test_dir}/test_multi_properties.cxx
+  ${module_test_dir}/test_named.cxx
+  ${module_test_dir}/test_nans_ar.cxx
+  ${module_test_dir}/test_OCD.cxx
+  ${module_test_dir}/test_predicate_1.cxx
+  ${module_test_dir}/test_properties_0.cxx
+  ${module_test_dir}/test_properties_2b.cxx
+  ${module_test_dir}/test_properties_2.cxx
+  ${module_test_dir}/test_properties_3.cxx
+  ${module_test_dir}/test_properties_4.cxx
+  #${module_test_dir}/test_properties.cxx <- interactive
+  ${module_test_dir}/test_real_range.cxx
+  #${module_test_dir}/test_reflection_0.cxx <- no reflection for now
+  ${module_test_dir}/test_ser_bitset.cxx
+  ${module_test_dir}/test_serializable_1.cxx
+  ${module_test_dir}/test_serializable_2.cxx
+  ${module_test_dir}/test_serialization_2.cxx
+  ${module_test_dir}/test_serialization_3.cxx
+  ${module_test_dir}/test_serialization_4.cxx
+  ${module_test_dir}/test_serialization.cxx
+  ${module_test_dir}/test_service_manager.cxx
+  ${module_test_dir}/test_shared_ptr_0.cxx
+  ${module_test_dir}/test_shared_ptr_1.cxx
+  ${module_test_dir}/test_smart_filename.cxx
+  ${module_test_dir}/test_smart_ref.cxx
+  ${module_test_dir}/test_temp_file.cxx
+  ${module_test_dir}/test_things_1.cxx
+  ${module_test_dir}/test_things_2.cxx
+  ${module_test_dir}/test_things_3.cxx
+  ${module_test_dir}/test_things.cxx
+  ${module_test_dir}/test_things_macros.cxx
+  ${module_test_dir}/test_time_tools.cxx
+  ${module_test_dir}/test_tmp.cxx
+  ${module_test_dir}/test_tracer.cxx
+  ${module_test_dir}/test_tree_dump.cxx
+  ${module_test_dir}/test_types.cxx
+  ${module_test_dir}/test_units.cxx
+  ${module_test_dir}/test_utils.cxx
+  ${module_test_dir}/test_version_check.cxx
+  ${module_test_dir}/test_version.cxx
+  ${module_test_dir}/test_version_id.cxx
+  )
+
