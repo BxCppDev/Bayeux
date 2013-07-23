@@ -69,6 +69,14 @@ set(CMAKE_BINARY_OUTPUT_DIRECTORY  "${Bayeux_BUILDPRODUCT_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/lib")
 
 #-----------------------------------------------------------------------
+# Configure testing if required
+#
+option(Bayeux_ENABLE_TESTING "Build unit testing system for Bayeux" OFF)
+if(Bayeux_ENABLE_TESTING)
+  enable_testing()
+endif()
+
+#-----------------------------------------------------------------------
 # Build the subdirectories
 #
 add_subdirectory(source)
