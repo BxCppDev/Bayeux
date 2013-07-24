@@ -41,10 +41,6 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/detail/Configure.h
   ${module_include_dir}/${module_name}/detail/DynamicLoader.h
   ${module_include_dir}/${module_name}/detail/ocd_utils.h
-  ${module_include_dir}/${module_name}/detail/reflection_export.h
-  ${module_include_dir}/${module_name}/detail/reflection_link_guard.h
-  ${module_include_dir}/${module_name}/detail/reflection_utils.h
-  ${module_include_dir}/${module_name}/detail/reflection_version.h
   ${module_include_dir}/${module_name}/eos/polymorphic_portable_archive.hpp
   ${module_include_dir}/${module_name}/eos/portable_archive_exception.hpp
   ${module_include_dir}/${module_name}/eos/portable_archive.hpp
@@ -52,7 +48,6 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/eos/portable_oarchive.hpp
   ${module_include_dir}/${module_name}/event_id.h
   ${module_include_dir}/${module_name}/event_id.ipp
-  ${module_include_dir}/${module_name}/event_id-reflect.h
   ${module_include_dir}/${module_name}/exception.h
   ${module_include_dir}/${module_name}/factory.h
   ${module_include_dir}/${module_name}/factory_macros.h
@@ -68,24 +63,18 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/i_predicate.h
   ${module_include_dir}/${module_name}/i_serializable.h
   ${module_include_dir}/${module_name}/i_serializable.ipp
-  ${module_include_dir}/${module_name}/i_serializable-reflect.h
   ${module_include_dir}/${module_name}/i_tree_dump.h
-  ${module_include_dir}/${module_name}/i_tree_dump-reflect.h
   ${module_include_dir}/${module_name}/library_loader.h
   ${module_include_dir}/${module_name}/logger.h
   ${module_include_dir}/${module_name}/memory_streambuf.h
   ${module_include_dir}/${module_name}/multi_properties.h
   ${module_include_dir}/${module_name}/multi_properties.ipp
-  ${module_include_dir}/${module_name}/multi_properties-reflect.h
   ${module_include_dir}/${module_name}/object_configuration_description.h
   ${module_include_dir}/${module_name}/ocd_macros.h
   ${module_include_dir}/${module_name}/properties.h
   ${module_include_dir}/${module_name}/properties.ipp
-  ${module_include_dir}/${module_name}/properties-reflect.h
   ${module_include_dir}/${module_name}/range_tools.h
   ${module_include_dir}/${module_name}/real_range.h
-  ${module_include_dir}/${module_name}/reflection_guard.h
-  ${module_include_dir}/${module_name}/reflection_macros.h
   ${module_include_dir}/${module_name}/safe_serial.h
   ${module_include_dir}/${module_name}/serialization_macros.h
   ${module_include_dir}/${module_name}/service_macros.h
@@ -95,14 +84,12 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/smart_filename.h
   ${module_include_dir}/${module_name}/smart_ref.h
   ${module_include_dir}/${module_name}/temporary_files.h
-  ${module_include_dir}/${module_name}/the_introspectable.h
   ${module_include_dir}/${module_name}/the_serializable.h
   ${module_include_dir}/${module_name}/the_serializable.ipp
   ${module_include_dir}/${module_name}/things.h
   ${module_include_dir}/${module_name}/things-inl.h
   ${module_include_dir}/${module_name}/things.ipp
   ${module_include_dir}/${module_name}/things_macros.h
-  ${module_include_dir}/${module_name}/things-reflect.h
   ${module_include_dir}/${module_name}/time_tools.h
   ${module_include_dir}/${module_name}/tracer.h
   ${module_include_dir}/${module_name}/types.h
@@ -134,7 +121,6 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/service_tools.cc
   ${module_source_dir}/smart_filename.cc
   ${module_source_dir}/temporary_files.cc
-  #${module_source_dir}/the_introspectable.cc <- Remove temporarily
   ${module_source_dir}/the_serializable.cc
   ${module_source_dir}/things.cc
   ${module_source_dir}/time_tools.cc
@@ -147,6 +133,33 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/version_id.cc
   ${module_source_dir}/base_service.cc # <- Must go at end
   )
+
+# - Reflection component - still optional, so factor out and allow for 
+#   inclusion later
+if(DATATOOLS_WITH_REFLECTION)
+  set(datatools_REFLECTION_HEADERS
+    ${module_include_dir}/${module_name}/reflection_guard.h
+    ${module_include_dir}/${module_name}/reflection_macros.h
+    ${module_include_dir}/${module_name}/i_serializable-reflect.h
+    ${module_include_dir}/${module_name}/i_tree_dump-reflect.h
+    ${module_include_dir}/${module_name}/event_id-reflect.h
+    ${module_include_dir}/${module_name}/multi_properties-reflect.h
+    ${module_include_dir}/${module_name}/properties-reflect.h
+    ${module_include_dir}/${module_name}/things-reflect.h
+    ${module_include_dir}/${module_name}/the_introspectable.h
+    ${module_include_dir}/${module_name}/detail/reflection_link_guard.h
+    ${module_include_dir}/${module_name}/detail/reflection_export.h
+    ${module_include_dir}/${module_name}/detail/reflection_utils.h
+    ${module_include_dir}/${module_name}/detail/reflection_version.h
+    )
+  set(datatools_REFLECTION_SOURCES
+    ${module_source_dir}/the_introspectable.cc
+    )
+  set(datatools_REFLECTION_TESTS
+    ${module_test_dir}/test_reflection_0.cxx
+    )
+endif()
+
 
 # - Published headers
 foreach(_hdrin ${${module_name}_MODULE_HEADERS})
@@ -190,7 +203,6 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_properties_4.cxx
   #${module_test_dir}/test_properties.cxx <- interactive
   ${module_test_dir}/test_real_range.cxx
-  #${module_test_dir}/test_reflection_0.cxx <- no reflection for now
   ${module_test_dir}/test_ser_bitset.cxx
   ${module_test_dir}/test_serializable_1.cxx
   ${module_test_dir}/test_serializable_2.cxx
