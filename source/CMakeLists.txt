@@ -64,6 +64,7 @@ set(Bayeux_TESTS)
 set(Bayeux_SUBMODULES
   datatools 
   cuts
+  materials
   mygsl
   )
 
