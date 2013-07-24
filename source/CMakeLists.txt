@@ -59,9 +59,16 @@ set(Bayeux_TESTS)
 # That's to ensure that any needed CMake variables are set in the correct
 # order, and that ordering of source files (and hence object files)
 # is correct.
-set(lpcmodules datatools mygsl)
+# NB: Order may need reviewing because may need least dependent object
+# files last because of the statics...
+set(Bayeux_SUBMODULES
+  datatools 
+  cuts
+  mygsl
+  )
+
 set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include/bayeux")
-foreach(_m ${lpcmodules})
+foreach(_m ${Bayeux_SUBMODULES})
   include(bx${_m}_module.cmake)
   list(APPEND Bayeux_HEADERS ${${_m}_MODULE_HEADERS})
   list(APPEND Bayeux_SOURCES ${${_m}_MODULE_SOURCES})
@@ -93,7 +100,7 @@ install(DIRECTORY ${Bayeux_BUILDPRODUCT_DIR}/include/
 # Build unit tests if required
 # - NB assumes each test .cxx file generates a single executable
 if(Bayeux_ENABLE_TESTING)
-  foreach(_m ${lpcmodules})
+  foreach(_m ${Bayeux_SUBMODULES})
     foreach(_testsource ${${_m}_MODULE_TESTS})
       get_filename_component(_testname "${_testsource}" NAME_WE)
       set(_testname "${_m}-${_testname}")
