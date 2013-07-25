@@ -67,6 +67,7 @@ set(Bayeux_SUBMODULES
   materials
   mygsl
   geomtools
+  emfield
   )
 
 set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include/bayeux")
