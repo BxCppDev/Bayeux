@@ -442,7 +442,6 @@ namespace genvtx {
 
   GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(box_model_vg,setup_,service_manager_,vgens_)
   {
-    using namespace std;
     DT_THROW_IF (is_initialized (), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
 
     GENVTX_VG_INITIALIZE_BASICS_INVOKE(setup_,service_manager_);
