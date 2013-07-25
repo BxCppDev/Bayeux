@@ -459,7 +459,7 @@ namespace genvtx {
     bool surface_right  = false;
     double lunit = CLHEP::mm;
     double skin_skip = 0.0 * CLHEP::mm;
-    double skin_thickness = 0.0 * CLHEP::mm ;
+    double skin_thickness = 0.0 * CLHEP::mm;
 
     if (setup_.has_key ("length_unit")) {
       std::string lunit_str = setup_.fetch_string ("length_unit");
