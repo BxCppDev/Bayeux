@@ -68,6 +68,7 @@ set(Bayeux_SUBMODULES
   mygsl
   geomtools
   emfield
+  genbb_help
   )
 
 set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include/bayeux")
@@ -76,6 +77,9 @@ foreach(_m ${Bayeux_SUBMODULES})
   list(APPEND Bayeux_HEADERS ${${_m}_MODULE_HEADERS})
   list(APPEND Bayeux_SOURCES ${${_m}_MODULE_SOURCES})
 endforeach()
+
+# Hack for genbb private headers
+include_directories(${genbb_help_include_dir})
 
 #-----------------------------------------------------------------------
 # Build/Link the library
