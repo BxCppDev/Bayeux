@@ -66,6 +66,7 @@ set(Bayeux_SUBMODULES
   cuts
   materials
   mygsl
+  geomtools
   )
 
 set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include/bayeux")
@@ -82,6 +83,7 @@ add_library(bayeux SHARED ${Bayeux_HEADERS} ${Bayeux_SOURCES})
 target_link_libraries(bayeux ${CMAKE_DL_LIBS})
 target_link_libraries(bayeux ${Boost_LIBRARIES})
 target_link_libraries(bayeux ${GSL_LIBRARIES})
+target_link_libraries(bayeux ${CLHEP_LIBRARIES})
 
 #-----------------------------------------------------------------------
 # Install targets and resources
