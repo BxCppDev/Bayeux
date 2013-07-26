@@ -72,6 +72,10 @@ namespace emfield {
   {
     DT_THROW_IF (is_initialized (), std::logic_error, "Already initialized !");
 
+    // Logging priority:
+    datatools::logger::priority lp = datatools::logger::extract_logging_configuration (config_);
+    set_logging_priority(lp);
+
     if (config_.has_flag ("debug"))
       {
         set_debug (true);
