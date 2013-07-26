@@ -113,7 +113,7 @@ namespace emfield {
   void electromagnetic_field_manager::_construct_geomap_ (const datatools::properties & setup_)
   {
     // Extract geomap setup
-    _geom_map_.reset (new geom_map);
+    _geom_map_.reset (new emfield::geom_map);
     _geom_map_.get()->set_debug (is_debug());
     _geom_map_.get()->set_fields_manager (const_cast<electromagnetic_field_manager&>(*this));
     if (has_geometry_manager ())
@@ -217,17 +217,17 @@ namespace emfield {
     datatools::logger::priority lp = datatools::logger::extract_logging_configuration (setup_);
     set_logging_priority(lp);
 
-    bool needs_service_manager = false;
-    if (setup_.has_flag ("needs_service_manager")) {
-      needs_service_manager = true;
-    }
-
     if (setup_.has_key ("field_definitions_filenames")) {
       std::vector<std::string> field_definitions_filenames;
       setup_.fetch ("field_definitions_filenames", field_definitions_filenames);
       for (unsigned int i = 0; i < field_definitions_filenames.size (); i++) {
         load (field_definitions_filenames[i]);
       }
+    }
+
+    bool needs_service_manager = false;
+    if (setup_.has_flag ("needs_service_manager")) {
+      needs_service_manager = true;
     }
 
     // Checks :
