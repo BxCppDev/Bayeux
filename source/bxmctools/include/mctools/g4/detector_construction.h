@@ -205,8 +205,8 @@ namespace mctools {
       region_infos_dict_type _region_infos_;
 
       // Step hit processor factory stuff (from mctools::core::step_hit_processor_factory) :
-      std::string        _SHPF_config_;
-      SHPF_type          _SHPF_;
+      datatools::properties _SHPF_config_;
+      SHPF_type             _SHPF_;
 
     };
 

@@ -196,11 +196,9 @@ namespace mctools {
         set_materials_geom_plugin_name(mpn);
       }
 
-      if (config_.has_key("hit_processor_factory.config")) {
-        _SHPF_config_ = config_.fetch_string("hit_processor_factory.config");
-      } else {
-        DT_THROW_IF(true, std::logic_error, "Missing property '" << "hit_processor_factory.config" << "' !");
-      }
+      config_.export_and_rename_starting_with(_SHPF_config_, "hit_processor_factory.", "");
+      DT_THROW_IF(_SHPF_config_.empty (), std::logic_error,
+                  "Missing property '" << "hit_processor_factory" << "' !");
 
       /*************************/
 
@@ -743,19 +741,23 @@ namespace mctools {
        * Setup the step hit processor factory *
        ****************************************/
 
-      bool SHPF_debug = false;
-      _SHPF_.set_debug(SHPF_debug);
       // Pass the address of the geometry manager to step hit processors :
       DT_LOG_NOTICE(_logprio(), "SHPF: Preparing the step hit processor factory (SHPF)...");
+      // Logging priority:
+      datatools::logger::priority lp = datatools::logger::extract_logging_configuration (_SHPF_config_);
+      if (lp != datatools::logger::PRIO_UNDEFINED) {
+        _SHPF_.set_logging_priority(lp);
+      }
       if (this->has_geometry_manager()) {
         _SHPF_.set_geometry_manager(this->get_geometry_manager());
       }
-      DT_THROW_IF (_SHPF_config_.empty(), std::logic_error,
-                   "Missing configuration file for the step hit processor factory !");
-      datatools::fetch_path_with_env(_SHPF_config_);
+      DT_THROW_IF(! _SHPF_config_.has_key ("config"), std::logic_error,
+                  "Missing configuration file for the step hit processor factory !");
+      std::string config_file = _SHPF_config_.fetch_string("config");
+      datatools::fetch_path_with_env(config_file);
       datatools::multi_properties mconfig("name", "type");
       DT_LOG_NOTICE(_logprio(), "SHPF: Parsing the SHPF configuration file...");
-      mconfig.read(_SHPF_config_);
+      mconfig.read(config_file);
       DT_LOG_NOTICE(_logprio(), "SHPF: The SHPF configuration file has been parsed.");
       DT_LOG_NOTICE(_logprio(), "SHPF: Loading the hit processors from the SHPF...");
       _SHPF_.load(mconfig);

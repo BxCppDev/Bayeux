@@ -234,7 +234,6 @@ namespace mctools {
                                       const string & type_,
                                       const datatools::properties & config_)
   {
-    using namespace datatools;
     bool debug = is_debug ();
     // if (is_debug ())
     //   {
