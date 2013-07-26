@@ -43,8 +43,10 @@ namespace emfield {
   {
     DT_THROW_IF (is_initialized (), std::logic_error, "Plugin is already initialized !");
 
-    if (config_.has_key("manager_config")) {
-      std::string mgr_config_file = config_.fetch_string("manager_config");
+    geomtools::manager::base_plugin::_basic_initialize(config_);
+
+    if (config_.has_key("manager.config")) {
+      std::string mgr_config_file = config_.fetch_string("manager.config");
       datatools::fetch_path_with_env(mgr_config_file);
       datatools::properties mgr_config;
       datatools::properties::read_config(mgr_config_file, mgr_config);
@@ -65,8 +67,7 @@ namespace emfield {
 
   void emfield_geom_plugin::_build_manager (const datatools::properties & manager_config_)
   {
-    datatools::logger::priority local_priority = datatools::logger::PRIO_FATAL;
-    DT_LOG_TRACE (local_priority, "Entering...");
+    DT_LOG_TRACE (get_logging_priority (), "Entering...");
 
     // std::vector<std::string> input_files;
     // if (manager_config_.has_key ("emfield.files"))
@@ -85,10 +86,10 @@ namespace emfield {
     //     _manager_.load (filename);
     //   }
 
-    _manager_.set_geometry_manager(get_geo_manager());
+    _manager_.set_geometry_manager (get_geo_manager());
     _manager_.initialize (manager_config_);
 
-    DT_LOG_TRACE (local_priority, "Exiting.");
+    DT_LOG_TRACE (get_logging_priority (), "Exiting.");
     return;
   }
 
