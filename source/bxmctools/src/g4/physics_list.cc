@@ -400,7 +400,7 @@ namespace mctools {
             // try all particles first:
             std::ostringstream key_ss;
             key_ss << "production_cuts.regions." << region_label << ".all";
-            std::string key = key_ss.str();
+            const std::string key = key_ss.str();
             if (config_.has_key(key)) {
               double all_production_cut = config_.fetch_real(key);
               if (! config_.has_explicit_unit (key)) {
@@ -416,7 +416,7 @@ namespace mctools {
               {
                 std::ostringstream key_ss;
                 key_ss << "production_cuts.regions." << region_label << ".gamma";
-                std::string key = key_ss.str();
+                const std::string key = key_ss.str();
                 if (config_.has_key(key)) {
                   double gamma_production_cut = config_.fetch_real(key);
                   if (! config_.has_explicit_unit (key)) {
@@ -430,7 +430,7 @@ namespace mctools {
               {
                 std::ostringstream key_ss;
                 key_ss << "production_cuts.regions." << region_label << ".electron";
-                std::string key = key_ss.str();
+                const std::string key = key_ss.str();
                 if (config_.has_key(key)) {
                   double electron_production_cut = config_.fetch_real(key);
                   if (! config_.has_explicit_unit (key)) {
@@ -444,7 +444,7 @@ namespace mctools {
               {
                 std::ostringstream key_ss;
                 key_ss << "production_cuts.regions." << region_label << ".positron";
-                std::string key = key_ss.str();
+                const std::string key = key_ss.str();
                 if (config_.has_key(key)) {
                   double positron_production_cut = config_.fetch_real(key);
                   if (! config_.has_explicit_unit (key)) {
@@ -458,7 +458,7 @@ namespace mctools {
               {
                 std::ostringstream key_ss;
                 key_ss << "production_cuts.regions." << region_label << ".proton";
-                std::string key = key_ss.str();
+                const std::string key = key_ss.str();
                 if (config_.has_key(key)) {
                   double proton_production_cut = config_.fetch_real(key);
                   if (! config_.has_explicit_unit (key)) {
@@ -505,9 +505,8 @@ namespace mctools {
       }
 
       //SetVerboseLevel (_g4_verbosity_);
-      std::clog << datatools::io::notice
-                << "mctools::g4::physics_list::initialize: "
-                << "Original default cut Length : " << G4BestUnit (defaultCutValue, "Length") << std::endl;
+      DT_LOG_NOTICE (_logprio (),
+                     "Original default cut Length : " << G4BestUnit (defaultCutValue, "Length"));
 
       _register_physics_constructors();
 
@@ -1236,4 +1235,3 @@ DOCD_CLASS_SYSTEM_REGISTRATION(mctools::g4::physics_list,"mctools::g4::physics_l
 
 
 // end of physics_list.cc
-
