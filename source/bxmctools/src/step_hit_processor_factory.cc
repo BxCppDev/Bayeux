@@ -15,8 +15,6 @@
 
 namespace mctools {
 
-  using namespace std;
-
   bool step_hit_processor_factory::is_initialized () const
   {
     return _initialized_;
@@ -44,12 +42,12 @@ namespace mctools {
     return;
   }
 
-  const string & step_hit_processor_factory::get_description () const
+  const std::string & step_hit_processor_factory::get_description () const
   {
     return _description_;
   }
 
-  void step_hit_processor_factory::set_description (const string & description_)
+  void step_hit_processor_factory::set_description (const std::string & description_)
   {
     _description_ = description_;
     return;
@@ -116,7 +114,7 @@ namespace mctools {
     return *_service_manager_;
   }
 
-  bool step_hit_processor_factory::has_processor (const string & name_)
+  bool step_hit_processor_factory::has_processor (const std::string & name_)
   {
     return _processors_.find (name_) != _processors_.end ();
   }
@@ -202,14 +200,14 @@ namespace mctools {
   }
 
   const base_step_hit_processor &
-  step_hit_processor_factory::get_processor (const string & name_) const
+  step_hit_processor_factory::get_processor (const std::string & name_) const
   {
     step_hit_processor_factory * mutable_this = const_cast<step_hit_processor_factory *>(this);
     return const_cast<base_step_hit_processor &>(mutable_this->grab_processor(name_));
   }
 
   base_step_hit_processor &
-  step_hit_processor_factory::grab_processor (const string & name_)
+  step_hit_processor_factory::grab_processor (const std::string & name_)
   {
     processor_dict_type::iterator found = _processors_.find (name_);
     DT_THROW_IF (found == _processors_.end (), std::logic_error,
@@ -230,17 +228,11 @@ namespace mctools {
   }
 
   base_step_hit_processor &
-  step_hit_processor_factory::create (const string & name_,
-                                      const string & type_,
+  step_hit_processor_factory::create (const std::string & name_,
+                                      const std::string & type_,
                                       const datatools::properties & config_)
   {
-    bool debug = is_debug ();
-    // if (is_debug ())
-    //   {
-    //     clog << io::debug
-    //          << "mctools::step_hit_processor_factory::create: "
-    //          << "Entering..." << endl;
-    //   }
+    DT_LOG_TRACE (get_logging_priority (), "Entering...");
     base_step_hit_processor * proc = 0;
     DT_THROW_IF (name_.empty (), std::logic_error,
                  "Missing step hit processor name !");
@@ -255,31 +247,17 @@ namespace mctools {
 
     const base_step_hit_processor::factory_register_type::factory_type & the_factory
       = _factory_register_.get (type_);
-    // if (debug)
-    //   {
-    //     std::clog << "DEBUG: snemo::core::processing::step_hit_processor_factory::create: "
-    //               << "About to create a new step hit processor of type \"" << type_
-    //               << "\" with name \"" << name_ << "\"..." << std::endl;
-    //   }
+    DT_LOG_TRACE (get_logging_priority (), "About to create a new step hit processor of type '"
+                  << type_ << "' with name '" << name_ << "'...");
     proc = the_factory ();
-    // if (is_debug ())
-    //   {
-    //     clog << io::debug
-    //          << "mctools::step_hit_processor_factory::create: "
-    //          << "Store the new '" << type_ << "' step hit processor with name '"
-    //          << name_ << "' ..." << endl;
-    //   }
+    DT_LOG_TRACE (get_logging_priority (), "Store the new '" << type_
+                  << "' step hit processor with name '" << name_ << "' ...");
     proc->set_name (name_);
 
     if (proc->accept_external_rng () && has_external_prng ()) {
       proc->set_external_rng (*_external_prng_);
     }
-    // if (is_debug ())
-    //   {
-    //     clog << io::debug
-    //          << "mctools::step_hit_processor_factory::create: "
-    //          << "Initialize the new processor..." << endl;
-    //   }
+    DT_LOG_DEBUG (get_logging_priority (), "Initialize the new processor...");
 
     bool accept_geom_manager = true;
     if (config_.has_flag("reject_geometry_manager_from_factory")) {
@@ -299,41 +277,28 @@ namespace mctools {
     processor_handle_type new_handle (proc);
     _handles_[name_] = new_handle;
     _processors_[name_] = proc;
-    // if (is_debug ()) {
-    //   clog << io::debug
-    //     << "mctools::step_hit_processor_factory::create: "
-    //     << "Exiting." << endl;
-    // }
+    DT_LOG_TRACE (get_logging_priority (), "Exiting.");
     return *proc;
   }
 
   void step_hit_processor_factory::load (const datatools::multi_properties & mprop_)
   {
-    using namespace datatools;
-    // if (is_debug ())
-    //   {
-    //     clog << io::debug << "mctools::step_hit_processor_factory::load: "
-    //          << "Entering..." << endl;
-    //     mprop_.tree_dump (std::cerr,
-    //                       "Step hit processors factory rules :" ,
-    //                       "DEBUG: step_hit_processor_factory::load: ");
-    //   }
-    for (multi_properties::entries_col_type::const_iterator i
+    DT_LOG_TRACE (get_logging_priority (), "Entering...");
+    if (is_debug ())
+      {
+        DT_LOG_DEBUG (get_logging_priority (), "Step hit processors factory rules:");
+        mprop_.tree_dump (std::clog);
+      }
+    for (datatools::multi_properties::entries_col_type::const_iterator i
            = mprop_.entries ().begin ();
          i != mprop_.entries ().end ();
          i++) {
-      const multi_properties::entry & e = i->second;
-      const string & name = e.get_key ();
-      const string & type = e.get_meta ();
-      const properties & config = e.get_properties ();
-      // if (is_debug ()) {
-      //     clog << io::debug
-      //          << "mctools::step_hit_processor_factory::load: "
-      //          << "Processor name = '" << name << "'" << endl;
-      //     clog << io::debug
-      //          << "mctools::step_hit_processor_factory::load: "
-      //          << "Processor type = '" << type << "'" << endl;
-      //   }
+      const datatools::multi_properties::entry & e = i->second;
+      const std::string & name = e.get_key ();
+      const std::string & type = e.get_meta ();
+      const datatools::properties & config = e.get_properties ();
+      DT_LOG_TRACE (get_logging_priority (), "Processor name = '" << name << "'");
+      DT_LOG_TRACE (get_logging_priority (), "Processor type = '" << type << "'");
       base_step_hit_processor & SHP = this->create (name,
                                                     type,
                                                     config);
@@ -342,66 +307,64 @@ namespace mctools {
   }
 
 
-  void step_hit_processor_factory::tree_dump (ostream & a_out,
-                                              const string & a_title,
-                                              const string & a_indent,
+  void step_hit_processor_factory::tree_dump (std::ostream & a_out,
+                                              const std::string & a_title,
+                                              const std::string & a_indent,
                                               bool a_inherit) const
   {
-    string indent;
+    std::string indent;
     if (! a_indent.empty ()) {
       indent = a_indent;
     }
     if ( ! a_title.empty ()) {
-      a_out << indent << a_title << endl;
+      a_out << indent << a_title << std::endl;
     }
 
-    namespace du = datatools;
-
     {
-      a_out << indent << du::i_tree_dumpable::tag
-            << "Factory register : " << endl;
-      ostringstream indent_ss;
-      indent_ss << indent << du::i_tree_dumpable::skip_tag;
+      a_out << indent << datatools::i_tree_dumpable::tag
+            << "Factory register : " << std::endl;
+      std::ostringstream indent_ss;
+      indent_ss << indent << datatools::i_tree_dumpable::skip_tag;
       _factory_register_.tree_dump (a_out, "", indent_ss.str ());
     }
-    a_out << indent << du::i_tree_dumpable::tag
-          << "Logging priority  : " << datatools::logger::get_priority_label(_logging_priority_) << endl;
-    a_out << indent << du::i_tree_dumpable::tag
-          << "Description : '" << _description_ << "'" << endl;
-    a_out << indent << du::i_tree_dumpable::tag
-          << "Service manager : " << _service_manager_ << endl;
-    a_out << indent << du::i_tree_dumpable::tag
-          << "Processor handles  : " << _handles_.size () << endl;
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Logging priority  : " << datatools::logger::get_priority_label(_logging_priority_) << std::endl;
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Description : '" << _description_ << "'" << std::endl;
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Service manager : " << _service_manager_ << std::endl;
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Processor handles  : " << _handles_.size () << std::endl;
     {
-      a_out << indent << du::i_tree_dumpable::tag
-            << "Processors : " << endl;
+      a_out << indent << datatools::i_tree_dumpable::tag
+            << "Processors : " << std::endl;
       for (processor_dict_type::const_iterator i = _processors_.begin ();
            i != _processors_.end ();
            i++) {
-        a_out << indent << du::i_tree_dumpable::skip_tag;
+        a_out << indent << datatools::i_tree_dumpable::skip_tag;
         processor_dict_type::const_iterator j = i;
         j++;
-        ostringstream indent_ss;
-        indent_ss << indent << du::i_tree_dumpable::skip_tag;
+        std::ostringstream indent_ss;
+        indent_ss << indent << datatools::i_tree_dumpable::skip_tag;
         if (j == _processors_.end ()) {
-          a_out << du::i_tree_dumpable::last_tag;
-          indent_ss << du::i_tree_dumpable::last_skip_tag;
+          a_out << datatools::i_tree_dumpable::last_tag;
+          indent_ss << datatools::i_tree_dumpable::last_skip_tag;
         } else {
-          a_out << du::i_tree_dumpable::tag;
-          indent_ss << du::i_tree_dumpable::skip_tag;
+          a_out << datatools::i_tree_dumpable::tag;
+          indent_ss << datatools::i_tree_dumpable::skip_tag;
         }
-        a_out << "Name: '" << i->first << "' address @ " << i->second << endl;
+        a_out << "Name: '" << i->first << "' address @ " << i->second << std::endl;
         i->second->tree_dump (a_out, "", indent_ss.str ());
       }
 
     }
-    a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)
-          << "External PRNG : " << _external_prng_ << endl;;
+    a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
+          << "External PRNG : " << _external_prng_ << std::endl;
 
     return;
   }
 
-  void step_hit_processor_factory::dump (ostream & out_) const
+  void step_hit_processor_factory::dump (std::ostream & out_) const
   {
     tree_dump (out_, "mctools::step_hit_processor_factory: ");
     return;
