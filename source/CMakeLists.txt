@@ -70,6 +70,7 @@ set(Bayeux_SUBMODULES
   emfield
   genbb_help
   genvtx
+  trackfit
   )
 
 set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include/bayeux")
