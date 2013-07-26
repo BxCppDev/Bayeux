@@ -214,9 +214,8 @@ namespace emfield {
                  "Cannot reset the service manager ! EM field manager is already initialized !");
 
     // Parse configuration parameters :
-    if (setup_.has_flag ("debug")) {
-      set_debug (true);
-    }
+    datatools::logger::priority lp = datatools::logger::extract_logging_configuration (setup_);
+    set_logging_priority(lp);
 
     bool needs_service_manager = false;
     if (setup_.has_flag ("needs_service_manager")) {
