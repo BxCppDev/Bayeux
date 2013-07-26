@@ -69,6 +69,7 @@ set(Bayeux_SUBMODULES
   geomtools
   emfield
   genbb_help
+  genvtx
   )
 
 set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include/bayeux")
