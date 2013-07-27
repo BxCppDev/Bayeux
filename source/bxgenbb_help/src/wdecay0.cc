@@ -280,6 +280,7 @@ namespace genbb {
                        bb_params());
       DT_THROW_IF (error != 0, std::logic_error, "genbbsub background generation failed !");
     }
+    event_.set_label (i_genbb::get_name ());
     if (compute_classification_) {
       event_.compute_classification ();
     }
