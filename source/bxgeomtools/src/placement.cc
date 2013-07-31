@@ -253,7 +253,7 @@ namespace geomtools {
   // Not recommended at all:
   void placement::set_orientation (const rotation_3d & r_)
   {
-    _rotation_axis_ == ROTATION_AXIS_INVALID;
+    _rotation_axis_ = ROTATION_AXIS_INVALID;
     _rotation_angle_ = std::numeric_limits<double>::quiet_NaN ();
     _phi_   = std::numeric_limits<double>::quiet_NaN ();
     _theta_ = std::numeric_limits<double>::quiet_NaN ();
