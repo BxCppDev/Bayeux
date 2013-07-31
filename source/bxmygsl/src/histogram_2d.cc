@@ -538,10 +538,6 @@ namespace mygsl {
   double histogram_2d::get (size_t ix_, size_t iy_) const
   {
     DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
-    if (ix_ < 0)        return _x_underflow_;
-    if (ix_ >= _h_->nx) return _x_overflow_;
-    if (iy_ < 0)        return _y_underflow_;
-    if (iy_ >= _h_->ny) return _y_overflow_;
     return gsl_histogram2d_get (_h_, ix_, iy_);
   }
 
@@ -1196,5 +1192,3 @@ namespace mygsl {
 }
 
 // end of mygsl::histogram_2d.cc
-
-

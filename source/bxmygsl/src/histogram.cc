@@ -420,8 +420,6 @@ namespace mygsl {
   double histogram::get (size_t i_) const
   {
     DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
-    if (i_ < 0) return _underflow_;
-    if (i_ >= _h_->n) return _overflow_;
     return gsl_histogram_get (_h_,i_);
   }
 
@@ -1176,5 +1174,3 @@ void histogram::tree_dump(std::ostream& out_,
 }
 
 // end of mygsl::histogram.cc
-
-
