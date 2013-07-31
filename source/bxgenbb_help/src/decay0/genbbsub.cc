@@ -877,9 +877,11 @@ namespace genbb {
             if (ilevel_ == 3) bb_params_.levelE=1134;
             if (ilevel_ == 4) bb_params_.levelE=1562;
             if (ilevel_ == 5) bb_params_.levelE=1706;
-            if (ilevel_ == 0 || ilevel_ == 3 || ilevel_ == 5);
+            if (ilevel_ == 0 || ilevel_ == 3 || ilevel_ == 5)
+              ;
             bb_params_.itrans02=0;
-            if (ilevel_ == 1 || ilevel_ == 2 || ilevel_ == 4);
+            if (ilevel_ == 1 || ilevel_ == 2 || ilevel_ == 4)
+              ;
             bb_params_.itrans02=2;
           } else if (boost::algorithm::starts_with(chnuclide_,"Cd108")) {
             bb_params_.Qbb=0.269;
@@ -1173,7 +1175,8 @@ namespace genbb {
             if (ilevel_ == 14) bb_params_.levelE=1989;
             if (ilevel_ == 15) bb_params_.levelE=2004;
             if (ilevel_ == 0  ||  ilevel_ == 2  ||  ilevel_ == 5  ||
-                ilevel_ == 7  ||  ilevel_ == 10  ||  ilevel_ == 14);
+                ilevel_ == 7  ||  ilevel_ == 10  ||  ilevel_ == 14)
+              ;
             bb_params_.itrans02=0;
             if (ilevel_ == 1  ||  ilevel_ == 3  ||  ilevel_ == 4  ||
                 ilevel_ == 6  ||  ilevel_ == 8  ||  ilevel_ == 9  ||
