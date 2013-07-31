@@ -823,7 +823,7 @@ namespace geomtools {
         }
         uint32_t address_value = addr_val;
         if (skip != no_skip){
-          if ((items_index_[i] >= 0) && (i < items_index_.size ())) {
+          if (i < items_index_.size()) {
             if (skip == skip_plus) {
               address_value += items_index_[i];
             } else if (skip == skip_minus) {
