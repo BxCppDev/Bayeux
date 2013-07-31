@@ -1269,6 +1269,8 @@ bool Gnuplot::file_available(const std::string &filename){
                     "No read permission for File \"" << filename << "\" !");
         return false;
       }
+
+      return true;
     }
   else{
     DT_THROW_IF(true, GnuplotException,
