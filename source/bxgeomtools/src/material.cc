@@ -67,17 +67,17 @@ namespace geomtools {
 
   bool material::is_gas (const datatools::properties & config_)
   {
-    material::has_flag (config_, material::constants::instance ().MATERIAL_GAS_FLAG);
+    return material::has_flag (config_, material::constants::instance ().MATERIAL_GAS_FLAG);
   }
 
   bool material::is_liquid (const datatools::properties & config_)
   {
-    material::has_flag (config_, material::constants::instance ().MATERIAL_LIQUID_FLAG);
+    return material::has_flag (config_, material::constants::instance ().MATERIAL_LIQUID_FLAG);
   }
 
   bool material::is_solid (const datatools::properties & config_)
   {
-    material::has_flag (config_, material::constants::instance ().MATERIAL_SOLID_FLAG);
+    return material::has_flag (config_, material::constants::instance ().MATERIAL_SOLID_FLAG);
   }
 
 } // end of namespace geomtools
