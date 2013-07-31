@@ -301,6 +301,7 @@ namespace mygsl {
     fft.process ();
     fft.dump (std::cout);
     if (debug) fft.dump (std::cerr, false);
+    return 0; // to suppress "control reaches end of non-void function"
   }
 
     /*
