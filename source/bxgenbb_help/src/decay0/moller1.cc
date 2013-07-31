@@ -61,7 +61,6 @@ namespace genbb {
       tel = eel-emass;
       pel = std::sqrt(std::abs((eel+emass)*tel));
       costh = (xe*eel+emass*(tel-xe))/(p*pel);
-       sinth;
       if (costh >= 1.) {
         costh = 1.;
         sinth = 0.;
