@@ -168,10 +168,10 @@ namespace mygsl {
         }
       }
       double y = this->eval(x);
-      if (isnan(y)) {
+      if (std::isnan(y)) {
         if (options_ & wo_skip_nan) continue;
       }
-      if (isinf(y)) {
+      if (std::isinf(y)) {
         if (options_ & wo_skip_inf) continue;
       }
       datatools::io::write_real_number(out_, x, xprecision);
