@@ -177,12 +177,12 @@ namespace dpp {
         } else {
           check = ER.has(_bank_names_.at (i));
         }
-          if (!check) break;
+        if (! check) break;
       }
       if (! check) {
         return cuts::SELECTION_REJECTED;
       }
-      return cuts::SELECTION_REJECTED;
+      return cuts::SELECTION_ACCEPTED;
     } else {
       DT_THROW_IF(true, std::domain_error, "Utils cut named '" << (has_name()?get_name():"?" ) << "': invalid mode !");
     }
