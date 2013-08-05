@@ -104,13 +104,12 @@ namespace dpp {
     }
 
     // 2012-04-24 FM+XG : Now allow a chain module without modules :
-    if (_modules_.size () > 0) {
+    if (_modules_.empty ()) {
       DT_LOG_WARNING(_logging,
                      "Chain module '" << get_name () << "' has no embedded modules !");
     }
 
     _set_initialized (true);
-
     return;
   }
 
