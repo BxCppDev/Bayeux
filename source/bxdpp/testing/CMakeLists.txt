@@ -26,6 +26,7 @@ set( dpp_tests_programs
      test_io_module.cxx
      test_module_chain.cxx
      test_module_manager.cxx
+     test_histogram_service.cxx
    )
 
 set(dpp_tests_programs_list "${dpp_tests_programs}")
