@@ -614,10 +614,10 @@ namespace mctools {
 
       double pct_low_edge_energy = G4ProductionCutsTable::GetProductionCutsTable()->GetLowEdgeEnergy();
       double pct_high_edge_energy = G4ProductionCutsTable::GetProductionCutsTable()->GetHighEdgeEnergy();
-      DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
-                    "Default production cuts low edge energy = " << pct_low_edge_energy / CLHEP::eV << "eV");
-      DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
-                    "Default production cuts high edge energy = " << pct_high_edge_energy / CLHEP::GeV << "GeV");
+      DT_LOG_NOTICE(_logprio (),
+                    "Default production cuts low edge energy = " << pct_low_edge_energy / CLHEP::eV << " eV");
+      DT_LOG_NOTICE(_logprio (),
+                    "Default production cuts high edge energy = " << pct_high_edge_energy / CLHEP::GeV << " GeV");
 
       if (datatools::is_valid(_production_cuts_low_energy_)) {
         pct_low_edge_energy = _production_cuts_low_energy_;
@@ -625,10 +625,10 @@ namespace mctools {
       if (datatools::is_valid(_production_cuts_high_energy_)) {
         pct_high_edge_energy = _production_cuts_high_energy_;
       }
-      DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
-                    "Effective production cuts low edge energy = " << pct_low_edge_energy / CLHEP::eV << "eV");
-      DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
-                    "Effective production cuts high edge energy = " << pct_high_edge_energy / CLHEP::GeV << "GeV");
+      DT_LOG_NOTICE(_logprio (),
+                    "Effective production cuts low edge energy = " << pct_low_edge_energy / CLHEP::eV << " eV");
+      DT_LOG_NOTICE(_logprio (),
+                    "Effective production cuts high edge energy = " << pct_high_edge_energy / CLHEP::GeV << " GeV");
       G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(pct_low_edge_energy, pct_high_edge_energy);
 
       if (_using_production_cuts_) {
