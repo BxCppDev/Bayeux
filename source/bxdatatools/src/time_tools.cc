@@ -269,13 +269,6 @@ void computing_time::g_compute_system_dead_time() {
   elapsed_time = diff.tv_sec * CLHEP::second
       + diff.tv_usec * CLHEP::microsecond;
   g_system_dead_time = elapsed_time / n;
-
-  std::clog << "NOTICE: "
-            << "computing_time::g_compute_system_dead_time: "
-            << "System dead time = "
-            << g_system_dead_time / CLHEP::second  << " s"
-            << std::endl;
 }
 
 } // namespace datatools
-
