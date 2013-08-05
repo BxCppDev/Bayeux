@@ -13,14 +13,14 @@ using namespace std;
 
 int main (int argc_ , char ** argv_)
 {
-  try 
+  try
     {
-      mygsl::interval i1 (2.0,  mygsl::interval::included, 
-			  4.25, mygsl::interval::included, 
-			  0.001);
-      mygsl::interval i2 (M_PI / 3., mygsl::interval::excluded, 
-			  3. * M_PI, mygsl::interval::included, 
-			  0.001);
+      mygsl::interval i1 (2.0,  mygsl::interval::included,
+                          4.25, mygsl::interval::included,
+                          0.001);
+      mygsl::interval i2 (M_PI / 3., mygsl::interval::excluded,
+                          3. * M_PI, mygsl::interval::included,
+                          0.001);
       mygsl::interval i3 = mygsl::interval::make_no_limit ();
       mygsl::interval i4 = mygsl::interval::make_min (-1.0);
       mygsl::interval i5 = mygsl::interval::make_max (+1.0, mygsl::interval::excluded);
@@ -40,38 +40,39 @@ int main (int argc_ , char ** argv_)
       clog << "i8 == " << i8 << endl;
 
       {
-	mygsl::interval i;
-	cin >> i;
-	if (cin)
-	  {
-	    clog << "input i == " << i << endl;
-	  }
-	else
-	  {
-	    cerr << "format error!" << endl;
-	  }
+        mygsl::interval i;
+        std::istringstream iss("[3.88; 5.11[");
+        iss >> i;
+        if (iss)
+          {
+            clog << "input i == " << i << endl;
+          }
+        else
+          {
+            cerr << "format error!" << endl;
+          }
       }
 
       try
-	{
-	  mygsl::interval ibad = mygsl::interval::make_min_max_included (+M_PI / 2., -M_E * 1.25);
-	}
-      catch (exception & x1) 
-	{ 
-	  clog << "WARNING: " << x1.what () << " ! As expected !" << endl;
-	}
-      
+        {
+          mygsl::interval ibad = mygsl::interval::make_min_max_included (+M_PI / 2., -M_E * 1.25);
+        }
+      catch (exception & x1)
+        {
+          clog << "WARNING: " << x1.what () << " ! As expected !" << endl;
+        }
+
       try
-	{
-	  mygsl::interval ibad = mygsl::interval::make_min_max_included (-M_PI / 2., +M_E * 1.25, 1000.);
-	}
-      catch (exception & x2) 
-	{
-	  clog << "WARNING: " << x2.what () << " ! As expected !" << endl;
-	}
+        {
+          mygsl::interval ibad = mygsl::interval::make_min_max_included (-M_PI / 2., +M_E * 1.25, 1000.);
+        }
+      catch (exception & x2)
+        {
+          clog << "WARNING: " << x2.what () << " ! As expected !" << endl;
+        }
 
     }
-  catch (exception & x) 
+  catch (exception & x)
     {
       cerr << "ERROR: " << x.what () << endl;
       return (EXIT_FAILURE);

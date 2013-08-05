@@ -24,23 +24,22 @@
 ###file(GLOB mygsl_tests_programs test_*.cxx)
 set ( mygsl_tests_programs
   test_mygsl.cxx
+  test_error.cxx
   test_best_value.cxx
   test_constants.cxx
   test_datapoint.cxx
-  #test_error.cxx
-  #test_fft_real2.cxx
-  #test_fft_real.cxx
+  test_fft_real2.cxx
+  test_fft_real.cxx
   test_histogram.cxx
   test_histogram_2d.cxx
   test_histogram_pool.cxx
-  test_histogram_service.cxx
   test_interval.cxx
   test_ioutils.cxx
   test_linear_regression.cxx
   test_linear_system_solver.cxx
   test_mean.cxx
   test_min_max.cxx
-  #test_multidimensional_minimization.cxx
+  test_multidimensional_minimization.cxx
   test_multi_eval.cxx
   test_multimin.cxx
   test_multiparameter_system.cxx

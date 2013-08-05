@@ -1,7 +1,7 @@
 // -*-mode: c++; -*-
 // mygsl/fft_real.h
 
-#ifndef MYGSL_FFT_REAL_H_ 
+#ifndef MYGSL_FFT_REAL_H_
 #define MYGSL_FFT_REAL_H_ 1
 
 #include <iostream>
@@ -22,14 +22,14 @@ namespace mygsl {
 
     void reset ();
 
-    void init (const std::vector<double> & sample_ , 
-               double start_ , 
+    void init (const std::vector<double> & sample_ ,
+               double start_ ,
                double step_ ,
                double min_freq_cutoff_ ,
                double max_freq_cutoff_);
 
-    void init (const std::vector<double> & sample_ , 
-               double start_ , 
+    void init (const std::vector<double> & sample_ ,
+               double start_ ,
                double step_ ,
                double max_freq_cutoff_);
 
@@ -42,8 +42,6 @@ namespace mygsl {
     void compute_filtered_data (std::vector<double> & filtered_data_) const;
 
     void process ();
-
-    static int main (int argc_ , char ** argv_);
 
   private:
 
@@ -58,7 +56,7 @@ namespace mygsl {
     double _step_;       // grid interval/scanning period
     double _F0_;         // scanning frequency
     double * _data_;     // sampled data
-    double * _data_rec_; 
+    double * _data_rec_;
     double * _freq_;
     double * _tmp_;
     double _Nyquist_freq_;

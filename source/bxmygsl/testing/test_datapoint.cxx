@@ -10,7 +10,7 @@ int main (int argc_ , char ** argv_)
 {
   using namespace std;
 
-  try  
+  try
     {
       mygsl::datapoint p1 (2.5, 3.4);
       mygsl::datapoint p2 (3.5, 2.24, 0.12);
@@ -20,8 +20,9 @@ int main (int argc_ , char ** argv_)
 
       mygsl::datapoint p3;
       clog << "Enter a datapoint (example: `1 0 0' ) : ";
-      cin >> p3;
-      if (! cin)
+      std::istringstream iss("1 0 0");
+      iss >> p3;
+      if (! iss)
         {
           cerr << "Format error!" << endl;
         }

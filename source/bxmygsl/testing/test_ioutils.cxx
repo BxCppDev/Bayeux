@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <sstream>
 #include <limits>
 
 #include <mygsl/ioutils.h>
@@ -9,7 +10,7 @@
 int main (int argc_ , char ** argv_)
 {
   using namespace std;
-  try  
+  try
     {
       double x       = 3.14159;
       double nan     = numeric_limits<double>::quiet_NaN ();
@@ -22,12 +23,13 @@ int main (int argc_ , char ** argv_)
 
 
       double y;
-      clog << "Enter a double precision number (examples: 3.14/" 
+      clog << "Enter a double precision number (examples: 3.14/"
            << mygsl::ioutils::NAN_STRING  << '/'
            << mygsl::ioutils::INF_POS_STRING  << '/'
            << mygsl::ioutils::INF_NEG_STRING  << ") : ";
-      cin >> mygsl::idouble (y);
-      if (! cin)
+      std::istringstream iss("3.1415");
+      iss >> mygsl::idouble (y);
+      if (! iss)
         {
           cerr << "Format error!" << endl;
         }

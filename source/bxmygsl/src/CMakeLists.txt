@@ -32,7 +32,7 @@ include/mygsl/histogram_2d.h
 include/mygsl/histogram.h
 include/mygsl/histogram_pool.h
 include/mygsl/histogram_utils.h
-include/mygsl/histogram_service.h
+#include/mygsl/histogram_service.h
 include/mygsl/interval.h
 include/mygsl/ioutils.h
 include/mygsl/linear_regression.h
@@ -115,7 +115,7 @@ set(mygsl_SOURCES
   histogram_2d.cc
   histogram.cc
   histogram_pool.cc
-  histogram_service.cc
+  #histogram_service.cc
   interval.cc
   ioutils.cc
   linear_regression.cc
