@@ -907,7 +907,7 @@ namespace mctools {
       // Logical volumes
       {
         out_ << indent << du::i_tree_dumpable::tag
-             << "Attached logical volumes : " << _attached_logical_volumes_.size () << endl;
+             << "Attached logical volumes    : " << _attached_logical_volumes_.size () << endl;
         for (list<string>::const_iterator
                ilog = _attached_logical_volumes_.begin ();
              ilog != _attached_logical_volumes_.end (); ++ilog) {
@@ -927,52 +927,48 @@ namespace mctools {
       // Flags
       {
         out_ << indent << du::i_tree_dumpable::tag
-             << "Drop zero energy deposit : "
-             <<  (_drop_zero_energy_deposit_steps_ ? "Yes": "No") << endl;
+             << "Drop zero energy deposit    : "
+             <<  (_drop_zero_energy_deposit_steps_ ? "Yes" : "No") << endl;
 
         out_ << indent << du::i_tree_dumpable::tag
-             << "Track gamma              : "
-             <<  (_track_gamma_ ? "Yes": "No") << endl;
+             << "Track gamma                 : "
+             <<  (_track_gamma_ ? "Yes" : "No") << endl;
 
         out_ << indent << du::i_tree_dumpable::tag
-             << "Track optical photon     : "
-             <<  (_track_optical_photon_ ? "Yes": "No") << endl;
+             << "Track optical photon        : "
+             <<  (_track_optical_photon_ ? "Yes" : "No") << endl;
 
         out_ << indent << du::i_tree_dumpable::tag
-             << "Track neutron            : "
-             <<  (_track_neutron_ ? "Yes": "No") << endl;
+             << "Track neutron               : "
+             <<  (_track_neutron_ ? "Yes" : "No") << endl;
 
         out_ << indent << du::i_tree_dumpable::tag
-             << "Record volume properties  : "
-             <<  (_record_g4_volume_properties_ ? "Yes": "No") << endl;
+             << "Record volume properties    : "
+             <<  (_record_g4_volume_properties_ ? "Yes" : "No") << endl;
 
         out_ << indent << du::i_tree_dumpable::tag
-             << "Record momentum          : "
-             <<  (_record_momentum_ ? "Yes": "No") << endl;
+             << "Record momentum             : "
+             <<  (_record_momentum_ ? "Yes" : "No") << endl;
 
         out_ << indent << du::i_tree_dumpable::tag
-             << "Record kinetic energy    : "
-             <<  (_record_kinetic_energy_ ? "Yes": "No") << endl;
+             << "Record kinetic energy       : "
+             <<  (_record_kinetic_energy_ ? "Yes" : "No") << endl;
 
         out_ << indent << du::i_tree_dumpable::tag
-             << "Record primary particle  : "
-             <<  (_record_primary_particle_ ? "Yes": "No") << endl;
+             << "Record primary particle     : "
+             <<  (_record_primary_particle_ ? "Yes" : "No") << endl;
 
         out_ << indent << du::i_tree_dumpable::tag
-             << "Record track id          : "
-             <<  (_record_track_id_ ? "Yes": "No") << endl;
+             << "Record track id             : "
+             <<  (_record_track_id_ ? "Yes" : "No") << endl;
 
         out_ << indent << du::i_tree_dumpable::tag
-             << "Record creator process   : "
-             <<  (_record_creator_process_ ? "Yes": "No") << endl;
+             << "Record creator process      : "
+             <<  (_record_creator_process_ ? "Yes" : "No") << endl;
 
         out_ << indent << du::i_tree_dumpable::tag
-             << "Record major track       : "
-             <<  (_record_major_track_ ? "Yes": "No");
-
-        out_ << indent << du::i_tree_dumpable::tag
-             << "Record material name     : "
-             <<  (_record_material_ ? "Yes": "No");
+             << "Record major track          : "
+             <<  (_record_major_track_ ? "Yes" : "No");
 
         if (_record_major_track_) {
           out_ << " (Emin > "
@@ -983,23 +979,27 @@ namespace mctools {
         }
 
         out_ << indent << du::i_tree_dumpable::tag
-             << "Record delta ray from alpha     : "
-             <<  (_record_delta_ray_from_alpha_ ? "Yes": "No") << endl;
+             << "Record material name        : "
+             <<  (_record_material_ ? "Yes" : "No") << endl;
 
         out_ << indent << du::i_tree_dumpable::tag
-             << "Track info pointer       : ";
+             << "Record delta ray from alpha : "
+             <<  (_record_delta_ray_from_alpha_ ? "Yes" : "No") << endl;
+
+        out_ << indent << du::i_tree_dumpable::tag
+             << "Track info pointer          : ";
         if (_track_info_ptr_ != 0) out_ << _track_info_ptr_;
         else                       out_ << "Not allocated";
         out_ << endl;
 
         out_ << indent << du::i_tree_dumpable::tag
-             << "Parent track info pointer : ";
+             << "Parent track info pointer   : ";
         if (_parent_track_info_ptr_ != 0) out_ << _parent_track_info_ptr_;
         else                              out_ << "Not allocated";
         out_ << endl;
 
         out_ << indent << du::i_tree_dumpable::tag
-             << "Hits buffer capacity     : "
+             << "Hits buffer capacity        : "
              << _hits_buffer_capacity_ << endl;
       }
 
@@ -1018,7 +1018,7 @@ namespace mctools {
       // Associated step hit processor
       {
         out_ << indent << du::i_tree_dumpable::last_tag
-             << "Step hit processors      : ";
+             << "Step hit processors         : ";
 
         if (_hit_processors_.size () == 0) {
           out_ << "No" << endl;
