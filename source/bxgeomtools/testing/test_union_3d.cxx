@@ -20,6 +20,7 @@ int main (int argc_, char ** argv_)
     {
       bool debug = false;
       long seed = 314159;
+      bool interactive = false;
 
       int iarg = 1;
       while (iarg < argc_)
@@ -27,6 +28,7 @@ int main (int argc_, char ** argv_)
           string arg = argv_[iarg];
 
           if (arg == "-d" || arg == "--debug") debug = true;
+          if (arg == "-i" || arg == "--interactive") interactive = true;
 
           iarg++;
         }
@@ -54,8 +56,10 @@ int main (int argc_, char ** argv_)
         u1.set_shape2 (b2, p2);
         u1.tree_dump (clog, "Union:");
 
-        char c;
-        cin >> c;
+        if (interactive) {
+          char c;
+          cin >> c;
+        }
 
         geomtools::vector_3d pos (4.0 * CLHEP::mm,
                                   3.0 * CLHEP::mm,

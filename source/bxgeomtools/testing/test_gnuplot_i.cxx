@@ -19,6 +19,7 @@ int main(int argc, char* argv[])
 {
 
     cout << "*** example of gnuplot control through C++ ***" << endl << endl;
+    bool interactive = false;
 
     //
     // Using the GnuplotException class
@@ -208,7 +209,7 @@ int main(int argc, char* argv[])
         g10.cmd("set samples 400").cmd("plot abs(x)/2"); // either with cmd()
         g10 << "replot sqrt(x)" << "replot sqrt(-x)";    // or with <<
 
-        wait_for_key();
+        if (interactive) wait_for_key();
 
     }
     catch (GnuplotException ge)

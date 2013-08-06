@@ -32,13 +32,14 @@ set ( geomtools_tests_programs
   test_disk.cxx
   test_gdml_writer.cxx
   test_geom_id.cxx
+  test_gnuplot_i.cxx
   test_helix.cxx
   test_hexagon_box.cxx
   test_id_mgr.cxx
   test_id_selector.cxx
   test_i_model.cxx
   test_intersection_3d.cxx
-  #test_intersection.cxx
+  test_intersection.cxx
   test_logical_volume.cxx
   test_model_factory.cxx
   test_multiple_placement.cxx

@@ -34,12 +34,13 @@ int main (int argc_, char ** argv_)
       bool devel = false;
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
       string drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
-      bool draw = true;
+      bool draw = false;
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
       bool gdml = true;
       bool dump = true;
       string setup_filename;
       string model_name;
+      bool interactive = false;
 
       int iarg = 1;
       while (iarg < argc_)
@@ -53,6 +54,10 @@ int main (int argc_, char ** argv_)
                  {
                    debug = true;
                  }
+               else if (option == "--interactive")
+                 {
+                   interactive = true;
+                 }
                else if (option == "--devel")
                  {
                    devel = true;
@@ -61,6 +66,10 @@ int main (int argc_, char ** argv_)
                else if (option == "-D" || option == "--no-draw")
                  {
                    draw = false;
+                 }
+               else if ( option == "--draw")
+                 {
+                   draw = true;
                  }
                else if (option == "-G")
                  {
@@ -146,8 +155,12 @@ int main (int argc_, char ** argv_)
 
       if (model_name.empty ())
         {
-          clog << "Enter the name of the geometry model to be displayed: ";
-          getline (cin, model_name);
+          if (interactive) {
+            clog << "Enter the name of the geometry model to be displayed: ";
+            getline (cin, model_name);
+          } else {
+            model_name = "world";
+          }
         }
       if (model_name.empty ())
         {

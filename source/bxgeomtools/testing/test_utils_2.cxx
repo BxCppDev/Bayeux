@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_utils_2.cxx
 
 #include <cstdlib>
@@ -22,13 +22,14 @@ using namespace std;
 int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
-  try 
+  try
     {
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
       bool draw = false;
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
       long seed = 314159;
       srand48 (seed);
+      bool interactive = false;
 
       using namespace geomtools;
 
@@ -37,13 +38,17 @@ int main (int argc_, char ** argv_)
       string word;
       {
         string s;
-        getline (cin, s);
-        istringstream iss (s);
-        iss >> word;
-        if (! iss)
-          {
-            throw runtime_error ("Invalid format for rotation axis!");
-          }
+        if (interactive) {
+          getline (cin, s);
+          istringstream iss (s);
+          iss >> word;
+          if (! iss)
+            {
+              throw runtime_error ("Invalid format for rotation axis!");
+            }
+        } else {
+          word = "z";
+        }
       }
       if (word == "x") rotation_axis = ROTATION_AXIS_X;
       else if (word == "y") rotation_axis = ROTATION_AXIS_Y;
@@ -57,13 +62,17 @@ int main (int argc_, char ** argv_)
       clog << "Enter rotation angle (degree): ";
       {
         string s;
-        getline (cin, s);
-        istringstream iss (s);
-        iss >> rotation_angle;
-        if (! iss)
-          {
-            throw runtime_error ("Invalid format for rotation angle !");
-          }
+        if (interactive) {
+          getline (cin, s);
+          istringstream iss (s);
+          iss >> rotation_angle;
+          if (! iss)
+            {
+              throw runtime_error ("Invalid format for rotation angle !");
+            }
+        } else {
+          rotation_angle = 90.0;
+        }
       }
       rotation_angle *= CLHEP::degree;
 
@@ -80,15 +89,15 @@ int main (int argc_, char ** argv_)
       datatools::temp_file tmp_file;
       tmp_file.set_remove_at_destroy (true);
       tmp_file.create ("/tmp", ".test_utils_2_");
- 
+
       gnuplot_draw::draw_box (tmp_file.out (), pos, rot, b);
       tmp_file.close ();
       usleep (200);
- 
+
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
       if (draw)
         {
-          Gnuplot g1 ("lines"); 
+          Gnuplot g1 ("lines");
           g1.set_xrange (-10, +10).set_yrange (-10, +10).set_zrange (-10, +10);
           g1.set_xlabel ("x").set_ylabel ("y").set_zlabel ("z");
           g1.plotfile_xyz (tmp_file.get_filename (), 1, 2, 3, "3D view");
@@ -100,12 +109,12 @@ int main (int argc_, char ** argv_)
     }
   catch (exception & x)
     {
-      cerr << "error: " << x.what() << endl; 
+      cerr << "error: " << x.what() << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return error_code;

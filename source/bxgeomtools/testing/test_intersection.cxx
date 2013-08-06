@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 // test_intersection.cxx
 
 #include <cstdlib>
@@ -18,9 +18,10 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for 'intersection' utilities !" << endl; 
-  
+      clog << "Test program for 'intersection' utilities !" << endl;
+
       bool debug = false;
+      bool interactive = false;
 
       int iarg = 1;
       while (iarg < argc_)
@@ -29,38 +30,52 @@ int main (int argc_, char ** argv_)
 
           if (token[0] == '-')
             {
-               string option = token; 
-               if ((option == "-d") || (option == "--debug")) 
+               string option = token;
+               if ((option == "-d") || (option == "--debug"))
                  {
                    debug = true;
                  }
-               else 
-                 { 
-                    clog << "warning: ignoring option '" << option << "'!" << endl; 
+               else if ((option == "-i") || (option == "--interactive"))
+                 {
+                   interactive = true;
+                 }
+               else
+                 {
+                    clog << "warning: ignoring option '" << option << "'!" << endl;
                  }
             }
           else
             {
-              string argument = token; 
-              { 
-                clog << "warning: ignoring argument '" << argument << "'!" << endl; 
+              string argument = token;
+              {
+                clog << "warning: ignoring argument '" << argument << "'!" << endl;
               }
             }
           iarg++;
       }
-    
-      
+
+
       using namespace geomtools;
 
       double b = 0.0;
       double e = 10.0;
       clog << "Enter pedestal 'b' : ";
       clog << " (hint: 2.6225, )" << endl;
-      cin >> b;
+      if (interactive) {
+        cin >> b;
+      } else {
+        std::istringstream iss(" 2.6225");
+        iss >> b;
+      }
       clog << " b == " << b << endl;
       clog << "Enter range 'e' : ";
       clog << " (hint: 1.0, )" << endl;
-      cin >> e;
+      if (interactive) {
+        cin >> e;
+      } else {
+        std::istringstream iss("1.0");
+        iss >> e;
+      }
       clog << " e == " << e << endl;
 
       vector_2d C (2, 3);
@@ -81,39 +96,39 @@ int main (int argc_, char ** argv_)
       my_line.set_last (P2 + 15. * u);
       my_line.tree_dump (clog, "my_line");
 
-      
+
 
       {
-	vector_3d p1 = P1;
-	vector_3d p2 = P2;
-	geomtools::gnuplot_draw::basic_draw_point (cout, p1);
-	geomtools::gnuplot_draw::basic_draw_point (cout, p2);
-	cout << endl;
-	cout << endl;
-	
-	geomtools::vector_3d circle_pos = C;
-	geomtools::gnuplot_draw::basic_draw_point (cout, circle_pos);
-	cout << endl;
-	cout << endl;
-	geomtools::rotation_3d circle_rot;
-	geomtools::create_rotation (circle_rot, 0.0, 0.0, 0.0);
-	geomtools::gnuplot_draw::draw_circle (cout, 
-					      circle_pos,
-					      circle_rot, 
-					      my_circle);
-	cout << endl;
-	cout << endl;
+        vector_3d p1 = P1;
+        vector_3d p2 = P2;
+        geomtools::gnuplot_draw::basic_draw_point (cout, p1);
+        geomtools::gnuplot_draw::basic_draw_point (cout, p2);
+        cout << endl;
+        cout << endl;
 
-	geomtools::vector_3d line_pos;
-	geomtools::rotation_3d line_rot;
-	geomtools::create_rotation (line_rot, 0.0, 0.0, 0.0);
-	geomtools::gnuplot_draw::draw_line (cout, 
-					    line_pos,
-					    line_rot, 
-					    my_line);
-	cout << endl;
-	cout << endl;
-	
+        geomtools::vector_3d circle_pos = C;
+        geomtools::gnuplot_draw::basic_draw_point (cout, circle_pos);
+        cout << endl;
+        cout << endl;
+        geomtools::rotation_3d circle_rot;
+        geomtools::create_rotation (circle_rot, 0.0, 0.0, 0.0);
+        geomtools::gnuplot_draw::draw_circle (cout,
+                                              circle_pos,
+                                              circle_rot,
+                                              my_circle);
+        cout << endl;
+        cout << endl;
+
+        geomtools::vector_3d line_pos;
+        geomtools::rotation_3d line_rot;
+        geomtools::create_rotation (line_rot, 0.0, 0.0, 0.0);
+        geomtools::gnuplot_draw::draw_line (cout,
+                                            line_pos,
+                                            line_rot,
+                                            my_line);
+        cout << endl;
+        cout << endl;
+
       }
 
       size_t nsols;
@@ -121,52 +136,52 @@ int main (int argc_, char ** argv_)
       intersection::find_intersection_line_circle_2d (P1, u, C, R, nsols, I1, I2);
 
       {
-	vector_3d i1;
-	invalidate (i1);
-	if (nsols >= 1)
-	  {
-	    i1 = I1;
-	  }
-	geomtools::gnuplot_draw::basic_draw_point (cout, i1);
+        vector_3d i1;
+        invalidate (i1);
+        if (nsols >= 1)
+          {
+            i1 = I1;
+          }
+        geomtools::gnuplot_draw::basic_draw_point (cout, i1);
 
-	vector_3d i2;
-	invalidate (i2);
-	if (nsols == 2)
-	  {
-	    i2 = I2;
-	  }
-	geomtools::gnuplot_draw::basic_draw_point (cout, i2);
+        vector_3d i2;
+        invalidate (i2);
+        if (nsols == 2)
+          {
+            i2 = I2;
+          }
+        geomtools::gnuplot_draw::basic_draw_point (cout, i2);
 
-	cout << endl;
-	cout << endl;
+        cout << endl;
+        cout << endl;
       }
 
-      
+
       vector_2d S1, S2;
       if (intersection::find_intersection_segment_disk_2d (P1, P2, C, R, S1, S2))
-	{
-	  vector_3d s1;
-	  invalidate (s1);
-	  s1 = S1;
-	  geomtools::gnuplot_draw::basic_draw_point (cout, s1);
-	  vector_3d s2;
-	  invalidate (s2);
-	  s2 = S2;
-	  geomtools::gnuplot_draw::basic_draw_point (cout, s2);
-	  
-	  cout << endl;
-	  cout << endl;
-	}
+        {
+          vector_3d s1;
+          invalidate (s1);
+          s1 = S1;
+          geomtools::gnuplot_draw::basic_draw_point (cout, s1);
+          vector_3d s2;
+          invalidate (s2);
+          s2 = S2;
+          geomtools::gnuplot_draw::basic_draw_point (cout, s2);
+
+          cout << endl;
+          cout << endl;
+        }
 
     }
   catch (exception & x)
     {
-      cerr << "error: " << x.what () << endl; 
+      cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);
