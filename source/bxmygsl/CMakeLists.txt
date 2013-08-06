@@ -82,9 +82,6 @@ find_package(datatools 5.0.0 REQUIRED)
 # - GSL
 find_package(GSL 1.14 REQUIRED)
 
-# - ROOT
-#find_package(ROOT 5.26.00 REQUIRED)
-
 #-----------------------------------------------------------------------
 # On Apple, we fixup the install prefix to handle installing documentation,
 # support files and so on under the framework's "Resources" directory.
