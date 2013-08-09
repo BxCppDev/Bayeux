@@ -76,8 +76,8 @@ namespace dpp {
       }
     std::string label = _sink_record.effective_label;
     std::string file_name;
-    bool   file_mode = false;
-    bool   upload_mode = false;
+    bool file_mode = false;
+    bool upload_mode = false;
     if (boost::find_first (label, "://")) {
         if (boost::starts_with (label, "file://")) {
             file_mode = true;
@@ -142,7 +142,7 @@ namespace dpp {
         DT_THROW_IF (is_preserve_existing_sink (),
                      std::logic_error,
                      "File '" << _sink_record.effective_label << "' already exists !");
-        DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
+        DT_LOG_WARNING(get_logging_priority (),
                        "File '" << _sink_record.effective_label << "' already exists !");
       }
     int mode = 0;
@@ -162,7 +162,12 @@ namespace dpp {
                                        datatools::things::SERIAL_TAG,
                                        256000);
         _brio_file_writer_->select_store (brio_common::EVENT_RECORD_STORE_LABEL);
-        _brio_file_writer_->print_info (std::clog);
+        if (get_logging_priority () >= datatools::logger::PRIO_INFORMATION)
+          {
+            DT_LOG_INFORMATION (get_logging_priority (),
+                                "Create brio file with the following setup:");
+            _brio_file_writer_->tree_dump (std::clog);
+          }
         _sink_record.status = sink_record::STATUS_OPENED;
       }
     return;
