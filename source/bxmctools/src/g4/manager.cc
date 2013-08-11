@@ -800,13 +800,13 @@ namespace mctools {
     // ctor:
     manager::manager()
     {
-      _initialized_ = false;
+      _initialized_           = false;
       _simulation_ctrl_label_ = "";
-      _simulation_ctrl_ = 0;
-      _service_manager_ = 0;
+      _simulation_ctrl_       = 0;
+      _service_manager_       = 0;
       _external_geom_manager_ = 0;
-      _vertex_generator_ = 0;
-      _event_generator_ = 0;
+      _vertex_generator_      = 0;
+      _event_generator_       = 0;
       _init_defaults();
       return;
     }
@@ -826,6 +826,7 @@ namespace mctools {
       // are initialized with the current time :
       // 2012-06-08 FM : fix to make all seeds different(and
       // automatically randomize 'SEED_TIME'):
+      _seed_manager_.set_logging_priority (get_logging_priority ());
       _seed_manager_.ensure_different_seeds();
       if (is_debug()) {
         _seed_manager_.dump(std::clog);

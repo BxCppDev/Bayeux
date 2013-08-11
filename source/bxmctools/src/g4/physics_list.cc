@@ -529,7 +529,7 @@ namespace mctools {
                     std::logic_error,
                     "Physics constructor '" << i->first << "' is not initialized !");
         base_physics_constructor & pc = pc_entry.grab_physics_constructor();
-        DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
+        DT_LOG_NOTICE(_logprio(),
                       "Registering physics constructor '" << i->first << "'...");
         RegisterPhysics(new physics_constructor_proxy(pc));
       }

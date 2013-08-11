@@ -154,7 +154,7 @@ th row logic_error(message.str());
 
   base_step_hit_processor::base_step_hit_processor()
   {
-    _logging_priority = datatools::logger::PRIO_NOTICE;
+    _logging_priority = datatools::logger::PRIO_WARNING;
     _geom_manager = 0;
     _private_pool = 0;
     _pool_owner = false;
