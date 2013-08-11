@@ -321,7 +321,7 @@ namespace mygsl {
               }
           }
       }
-    DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "All seeds have been made different.");
+    DT_LOG_NOTICE(get_logging_priority (), "All seeds have been made different.");
     return;
   }
 
