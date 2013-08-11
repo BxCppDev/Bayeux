@@ -81,7 +81,6 @@ namespace mctools {
       unsigned int get_hits_buffer_capacity() const;
       void set_hits_buffer_capacity(unsigned int);
 
-
       const datatools::properties & get_auxiliaries() const;
       datatools::properties & grab_auxiliaries();
 

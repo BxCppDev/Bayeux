@@ -316,8 +316,6 @@ th row logic_error(message.str());
   void base_step_hit_processor::process(const base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
                                         simulated_data & a_sim_data)
   {
-    bool devel = false;
-
     if (a_sim_data.use_handle_hit_collection()) {
       // Check if the event has a collection of hits
       // within the requested hit category:
@@ -472,7 +470,6 @@ th row logic_error(message.str());
                                                            the_base_step_hits,
                                                            the_hits)
   {
-    bool devel = true;
     uint32_t count = 0;
     // 2011-04-14 FM : BUG FIX : several processors may use the same
     // 'hit_handle_collection_type' as output, so we must NOT clear 'the_hits' here :
@@ -507,7 +504,6 @@ th row logic_error(message.str());
                                                           the_base_step_hits,
                                                           the_plain_hits)
   {
-    bool devel = true;
     uint32_t count = 0;
     size_t current_size = the_plain_hits.size();
     the_plain_hits.reserve(current_size + the_base_step_hits.size());
