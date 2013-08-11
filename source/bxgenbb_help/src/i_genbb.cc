@@ -36,7 +36,6 @@ namespace genbb {
   // Factory stuff :
   DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(i_genbb,"genbb::i_genbb/__system__");
 
-
   const std::string & i_genbb::get_name() const
   {
     return _name_;

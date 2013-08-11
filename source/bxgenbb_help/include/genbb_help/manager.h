@@ -47,7 +47,6 @@
 #include <datatools/i_tree_dump.h>
 #include <datatools/bit_mask.h>
 #include <datatools/logger.h>
-#include <datatools/logger.h>
 
 // Mygsl
 #include <mygsl/rng.h> // Pseudo random number generator
@@ -258,4 +257,3 @@ namespace genbb {
 DOCD_CLASS_DECLARATION(genbb::manager)
 
 #endif // GENBB_HELP_MANAGER_H_
-

@@ -1,4 +1,5 @@
 #include <genbb_help/i_genbb.h>
+#include <genbb_help/manager.h>
 #include <genbb_help/detail/pg_tools.h>
 
 #include <datatools/service_manager.h>
@@ -199,7 +200,9 @@ namespace genbb {
                 mygsl::rng * external_random_)
     {
       if (entry_.is_created()) return;
-      DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
+      datatools::logger::priority local_priority = entry_.has_manager () ?
+        entry_.get_manager ().get_logging_priority () : datatools::logger::PRIO_NOTICE;
+      DT_LOG_NOTICE(local_priority,
                     "Creating the particle generator entry with name '"
                     <<  entry_.get_name()
                     << "'...");
@@ -224,7 +227,7 @@ namespace genbb {
       ptr->set_name(entry_.get_name());
 
       if (external_random_ != 0 && ptr->can_external_random()) {
-        DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
+        DT_LOG_NOTICE(local_priority,
                       "Set the external PRNG for the particle generator '"
                       <<  entry_.get_name()
                       << "'");
@@ -243,7 +246,9 @@ namespace genbb {
       if (!entry_.is_created()) {
         create(entry_,factory_,external_random_);
       }
-      DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
+      datatools::logger::priority local_priority = entry_.has_manager () ?
+        entry_.get_manager ().get_logging_priority () : datatools::logger::PRIO_NOTICE;
+      DT_LOG_NOTICE(local_priority,
                     "Initializing the particle generator entry with name '"
                     <<  entry_.get_name()
                     << "'...");
@@ -276,4 +281,3 @@ namespace genbb {
 
   }  // end of namespace detail
 }  // end of namespace genbb
-
