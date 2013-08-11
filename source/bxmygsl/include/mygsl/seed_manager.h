@@ -2,9 +2,9 @@
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-02-26
  * Last modified : 2012-06-08
- * 
+ *
  * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -17,15 +17,15 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
- * 
- * Description: 
+ *
+ * Description:
  *
  *   A manager for PRNG's seeds
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
 #ifndef MYGSL_SEED_MANAGER_H_
@@ -38,6 +38,7 @@
 
 #include <boost/cstdint.hpp>
 
+#include <datatools/logger.h>
 #include <datatools/bit_mask.h>
 
 namespace mygsl {
@@ -46,9 +47,9 @@ namespace mygsl {
 
   /** A seed manager instance is responsible to save
    *  a collection of seeds used to initialize a set
-   *  of pseudo-random number generators (PRNG). As 
-   *  the PRNGs are all labelled with a unique name. The 
-   *  seed manager uses an internal dictionnary to store 
+   *  of pseudo-random number generators (PRNG). As
+   *  the PRNGs are all labelled with a unique name. The
+   *  seed manager uses an internal dictionnary to store
    *  the seeds. It is possible to force a seed value
    *  for a given PRNG as well as to use a seed determined
    *  by some specific PRNG initialized with the current time.
@@ -57,13 +58,13 @@ namespace mygsl {
    */
   class seed_manager
   {
-  public: 
-      
+  public:
+
     /// An alias for the embedded seed dictionnary container class
     typedef std::map<std::string, int32_t> dict_type;
 
     static const std::string INIT_SEED_FROM_ENV_NAME;
-      
+
     enum init_seed_from_type
       {
         INIT_SEED_FROM_UNDEFINED    = 0,
@@ -75,23 +76,23 @@ namespace mygsl {
         INIT_SEED_FROM_DEFAULT = INIT_SEED_FROM_URANDOM,
       };
 
-  public: 
-      
+  public:
+
     /// Return true if the seed has a valid value
     static bool seed_is_valid (int);
 
-    /// Check if the debug mode is activated
-    bool is_debug () const;
-      
-    /// Set/unset the debug mode
-    void set_debug (bool);
- 
+    /// Get logging priority
+    datatools::logger::priority get_logging_priority () const;
+
+    /// Set/unset the logging priority
+    void set_logging_priority (datatools::logger::priority);
+
     /// Build an array of all the PRNGs' labels stored in the manager
     void get_labels (std::vector<std::string> & labels_) const;
 
     /// Check is a PRNG with a given label has an associated seed
     bool has_seed (const std::string & label_) const;
-      
+
     /// Install the seed value associated to a PRNG with a given label
     void add_seed (const std::string & label_, int32_t seed_);
 
@@ -104,7 +105,7 @@ namespace mygsl {
     /// Clear the list of stored seeds
     void clear ();
 
-    /// Make all seeds associated to all PRNGs invalid 
+    /// Make all seeds associated to all PRNGs invalid
     void invalidate ();
 
     /// Make all seeds associated to all PRNGs set by the current time
@@ -128,33 +129,33 @@ namespace mygsl {
   protected:
 
     void _ensure_different_seeds (mygsl::rng * random_ = 0);
- 
+
     int32_t _set_seed_for_seeds ();
 
   private:
-    
+
     void _set_init_seed_flags_ ();
 
   public:
 
     /// Returns the number of PRNG's seed values storedin the manager
     size_t size () const;
-      
-    /// Check if the manager is empty 
+
+    /// Check if the manager is empty
     bool empty () const;
 
-  public: 
-      
+  public:
+
     /// Default constructor:
     seed_manager ();
-      
+
     /// Destructor:
     virtual ~seed_manager ();
 
     void set_init_seed_flags (uint32_t);
 
     uint32_t get_init_seed_flags () const;
-      
+
   public:
 
     /// Basic print
@@ -165,12 +166,12 @@ namespace mygsl {
 
     /// Load the seeds informations froma stream
     friend std::istream & operator>> (std::istream &, seed_manager &);
-      
-  private: 
-      
-    bool      _debug_; /// Debug flag   
-    uint32_t  _init_seed_flags_; /// Seed initialization flags
-    dict_type _dict_;  /// Dictionnary of seeds associated to PRNGs' labels
+
+  private:
+
+    datatools::logger::priority _logging_priority_; /// Logging priority
+    uint32_t  _init_seed_flags_;                    /// Seed initialization flags
+    dict_type _dict_;                               /// Dictionnary of seeds associated to PRNGs' labels
 
   };
 

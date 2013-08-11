@@ -47,14 +47,14 @@ namespace mygsl {
 
   const std::string seed_manager::INIT_SEED_FROM_ENV_NAME = "MYGSL_SEED_MANAGER_INIT_SEED_FROM";
 
-  bool seed_manager::is_debug () const
+  datatools::logger::priority seed_manager::get_logging_priority () const
   {
-    return _debug_;
+    return _logging_priority_;
   }
 
-  void seed_manager::set_debug (bool new_value_)
+  void seed_manager::set_logging_priority (datatools::logger::priority priority_)
   {
-    _debug_ = new_value_;
+    _logging_priority_ = priority_;
     return;
   }
 
@@ -71,7 +71,7 @@ namespace mygsl {
 
   bool seed_manager::empty () const
   {
-    return _dict_.size () == 0;
+    return _dict_.empty ();
   }
 
   void seed_manager::all_time_seeds ()
@@ -108,7 +108,7 @@ namespace mygsl {
               }
             else
               {
-                DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
+                DT_LOG_WARNING(get_logging_priority (),
                                "Invalid value ('" << init_seed_from_env << "') for the '" << INIT_SEED_FROM_ENV_NAME << "' environment variable !");
               }
           }
@@ -123,22 +123,17 @@ namespace mygsl {
 
   int32_t seed_manager::_set_seed_for_seeds ()
   {
-    bool devel = false;
     _set_init_seed_flags_ ();
     int32_t seed = 0;
     if (_init_seed_flags_ & INIT_SEED_FROM_CURRENT_TIME )
       {
         seed += (int32_t) time (0);
-        // if (devel)
-        //   std::cerr << "DEVEL: mygsl::seed_manager::_set_seed_for_seeds: seed="
-        //             << seed << " (from current time)" << std::endl;
+        DT_LOG_TRACE (get_logging_priority (), "seed=" << seed << " (from current time)");
       }
     if (_init_seed_flags_ & INIT_SEED_FROM_CURRENT_PID )
       {
         seed += (int32_t) getpid ();
-        // if (devel)
-        //   std::cerr << "DEVEL: mygsl::seed_manager::_set_seed_for_seeds: seed="
-        //             << seed << " (from current PID)" << std::endl;
+        DT_LOG_TRACE (get_logging_priority (), "seed=" << seed << " (from current PID)");
       }
     if (_init_seed_flags_ & INIT_SEED_FROM_URANDOM )
       {
@@ -152,9 +147,7 @@ namespace mygsl {
         size_t szr = fread (&useed, sizeof (useed), 1, urandom);
         seed += (int32_t) useed & 0x7FFFFFFF;
         fclose (urandom);
-        // if (devel)
-        //   std::cerr << "mygsl::seed_manager::_set_seed_for_seeds: seed="
-        //             << seed << " (from '/dev/urandom')" << std::endl;
+        DT_LOG_TRACE (get_logging_priority (), "seed=" << seed << " (from '/dev/urandom')");
       }
     // Not supported yet :
     // if (_init_seed_flags_ | INIT_SEED_RANDOM_DEVICE )
@@ -163,9 +156,7 @@ namespace mygsl {
     //     seed += (int32_t) rd ();
     //   }
     seed &= 0x7FFFFFFF;
-    // if (devel)
-    //   std::cerr << "DEVEL: mygsl::seed_manager::_set_seed_for_seeds: final seed="
-    //             << seed << std::endl;
+    DT_LOG_TRACE (get_logging_priority (), "final seed=" << seed);
     return seed;
   }
 
@@ -257,7 +248,6 @@ namespace mygsl {
 
   void seed_manager::_ensure_different_seeds (mygsl::rng * random_)
   {
-    bool devel = false;
     int32_t seed = (int32_t) time (0);
     mygsl::rng * r = random_;
     mygsl::rng r2;
@@ -272,7 +262,6 @@ namespace mygsl {
 
     typedef std::multimap<int32_t, std::string> seed_mmap_type;
     typedef seed_mmap_type::iterator            iter_type;
-    typedef std::pair<int32_t, std::string>     pair_type;
 
     seed_mmap_type mmseeds;
     for (dict_type::const_iterator i = _dict_.begin ();
@@ -281,48 +270,27 @@ namespace mygsl {
       {
         const std::string & l = i->first;
         int32_t s = i->second;
-        mmseeds.insert ( pair_type (s,l) );
+        mmseeds.insert (std::make_pair (s,l));
       }
     // showing contents:
-    // if (devel)
-    //   {
-    //     std::clog << "DEVEL: "
-    //               << "mygsl::seed_manager: " << "Contains:\n";
-    //   }
+    DT_LOG_TRACE (get_logging_priority (), "Seed manager contains:");
     iter_type it, it2;
     for (iter_type it = mmseeds.begin();
          it != mmseeds.end();
-         it = it2 )
+         it = it2)
       {
         int32_t theKeySeed = (*it).first;
         std::pair<iter_type, iter_type> keyRange = mmseeds.equal_range(theKeySeed);
 
-        // if (devel)
-        //   {
-        //     std::clog << "DEVEL: "
-        //               << "mygsl::seed_manager: " << "  for seed==" << theKeySeed << " , PRNGs are : " ;
-        //   }
+        DT_LOG_TRACE (get_logging_priority (), "  for seed==" << theKeySeed << " , PRNGs are : " );
         for (it2 = keyRange.first;  it2 != keyRange.second;  ++it2)
           {
-            // if (devel)
-            //   {
-            //     std::clog << '"' << (*it2).second << '"' << " ";
-            //   }
+            DT_LOG_TRACE (get_logging_priority (), '"' << (*it2).second << '"' << " ");
           }
-        // if (devel)
-        //   {
-        //     std::clog << std::endl;
-        //   }
         if ((theKeySeed != random_utils::SEED_INVALID)
             && (mmseeds.count (theKeySeed) > 1))
           {
-            // if (devel)
-            //   {
-            //     std::clog << "DEVEL: "
-            //               << "mygsl::seed_manager: "
-            //               << "Detected identical seeds for this group of PRNGs."
-            //               << std::endl;
-            //   }
+            DT_LOG_TRACE (get_logging_priority (), "Detected identical seeds for this group of PRNGs.");
             int count = 0;
             for (it2 = keyRange.first;  it2 != keyRange.second;  ++it2)
               {
@@ -335,27 +303,15 @@ namespace mygsl {
                 if (do_it)
                   {
                     int32_t theSeed = theKeySeed;
-                    // if (devel)
-                    //   {
-                    //     std::clog << "DEVEL: "
-                    //               << "mygsl::seed_manager: "
-                    //               << "Setting a new seed for PRNG '" << prng_label << "'..."
-                    //               << std::endl;
-                    //   }
+                    DT_LOG_TRACE (get_logging_priority (), "Setting a new seed for PRNG '" << prng_label << "'...");
                     while (true)
                       {
                         int32_t theNewSeed = 1 + r->uniform_int (std::numeric_limits<int32_t>::max () / 2);
                         if (mmseeds.count (theNewSeed) == 0)
                           {
                             update_seed (prng_label, theNewSeed);
-                            // if (devel)
-                            //   {
-                            //     std::clog << "DEVEL: "
-                            //               << "mygsl::seed_manager: "
-                            //               << "PRNG '" << prng_label << "' has now seed = "
-                            //               << theNewSeed
-                            //               << std::endl;
-                            //   }
+                            DT_LOG_TRACE (get_logging_priority (), "PRNG '" << prng_label << "' has now seed = "
+                                          << theNewSeed);
                             break;
                           }
                       }
@@ -452,7 +408,7 @@ namespace mygsl {
   // ctor:
   seed_manager::seed_manager ()
   {
-    _debug_ = false;
+    _logging_priority_ = datatools::logger::PRIO_WARNING;
     _init_seed_flags_ = INIT_SEED_FROM_UNDEFINED;
     //INIT_SEED_DEFAULT;
     return;
@@ -536,10 +492,8 @@ namespace mygsl {
          beg != tok.end ();
          ++beg)
       {
-        //clog << "DEVEL: New label/seed pair : "<< *beg << endl;
         boost::char_separator<char> sep2 ("=");
         tokenizator tok (*beg, sep2);
-        //clog << "DEVEL: New label/seed pair : "<< *beg << endl;
         string label;
         int32_t seed = -1;
         int count = 0;
@@ -547,7 +501,6 @@ namespace mygsl {
              beg2 != tok.end ();
              ++beg2)
           {
-            //clog << "DEVEL: " << *beg2 << " ";
             count++;
             if (count > 2)
               {
