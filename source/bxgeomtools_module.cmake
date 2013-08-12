@@ -260,7 +260,7 @@ endforeach()
 set(${module_name}_TEST_ENVIRONMENT "GEOMTOOLS_DATA_DIR=${module_root_dir}")
 
 set(${module_name}_MODULE_TESTS
-  #${module_test_dir}/test_address_set.cxx <- Interactive
+  ${module_test_dir}/test_address_set.cxx
   ${module_test_dir}/test_base_hit.cxx
   ${module_test_dir}/test_blur_spot.cxx
   ${module_test_dir}/test_box.cxx
@@ -270,20 +270,20 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_disk.cxx
   ${module_test_dir}/test_display_data.cxx
   ${module_test_dir}/test_gdml_writer.cxx
-  #${module_test_dir}/test_geom_id.cxx <- Interactive
+  ${module_test_dir}/test_geom_id.cxx
   ${module_test_dir}/test_geomtools.cxx
   ${module_test_dir}/test_gnuplot_draw.cxx
-  #${module_test_dir}/test_gnuplot_i.cxx <- Interactive
+  ${module_test_dir}/test_gnuplot_i.cxx
   ${module_test_dir}/test_helix.cxx
   ${module_test_dir}/test_hexagon_box.cxx
   ${module_test_dir}/test_id_mgr.cxx
   ${module_test_dir}/test_id_selector.cxx
   ${module_test_dir}/test_i_model.cxx
   ${module_test_dir}/test_intersection_3d.cxx
-  #${module_test_dir}/test_intersection.cxx <- Interactive
+  ${module_test_dir}/test_intersection.cxx
   ${module_test_dir}/test_logical_volume.cxx
   ${module_test_dir}/test_manager.cxx
-  #${module_test_dir}/test_model_factory.cxx <- Interactive
+  ${module_test_dir}/test_model_factory.cxx
   ${module_test_dir}/test_multiple_placement.cxx
   ${module_test_dir}/test_physical_volume.cxx
   ${module_test_dir}/test_placement_2.cxx
@@ -308,8 +308,8 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_stl_tools.cxx
   ${module_test_dir}/test_subtraction_3d.cxx
   ${module_test_dir}/test_tessellated_solid.cxx
-  #${module_test_dir}/test_tube.cxx <- Interactive
-  #${module_test_dir}/test_union_3d.cxx <- Interactive
-  #${module_test_dir}/test_utils_2.cxx <- Interactive
+  ${module_test_dir}/test_tube.cxx
+  ${module_test_dir}/test_union_3d.cxx
+  ${module_test_dir}/test_utils_2.cxx
   ${module_test_dir}/test_utils.cxx
   )
