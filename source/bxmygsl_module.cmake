@@ -45,7 +45,6 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/histogram.ipp
   ${module_include_dir}/${module_name}/histogram_pool.h
   ${module_include_dir}/${module_name}/histogram_pool.ipp
-  #${module_include_dir}/${module_name}/histogram_service.h <- Ugh
   ${module_include_dir}/${module_name}/histogram_utils.h
   ${module_include_dir}/${module_name}/interval.h
   ${module_include_dir}/${module_name}/interval.ipp
@@ -88,7 +87,6 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/histogram_2d.cc
   ${module_source_dir}/histogram.cc
   ${module_source_dir}/histogram_pool.cc
-  #${module_source_dir}/histogram_service.cc <- Not here you don't...
   ${module_source_dir}/interval.cc
   ${module_source_dir}/ioutils.cc
   ${module_source_dir}/i_unary_function.cc
@@ -131,22 +129,21 @@ set(${module_name}_TEST_ENVIRONMENT "MYGSL_DATA_DIR=${module_root_dir}")
 set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_best_value.cxx
   ${module_test_dir}/test_constants.cxx
-  #${module_test_dir}/test_datapoint.cxx <- Interactive
-  #${module_test_dir}/test_error.cxx <- Not in tests
-  #${module_test_dir}/test_fft_real2.cxx <- Not in tests
-  #${module_test_dir}/test_fft_real.cxx <- Not in tests
+  ${module_test_dir}/test_datapoint.cxx
+  ${module_test_dir}/test_error.cxx
+  ${module_test_dir}/test_fft_real2.cxx
+  ${module_test_dir}/test_fft_real.cxx
   ${module_test_dir}/test_histogram_2d.cxx
   ${module_test_dir}/test_histogram.cxx
   ${module_test_dir}/test_histogram_pool.cxx
-  #${module_test_dir}/test_histogram_service.cxx <- No source, no test
-  #${module_test_dir}/test_interval.cxx <- Interactive
-  #${module_test_dir}/test_ioutils.cxx <- Interactive
+  ${module_test_dir}/test_interval.cxx
+  ${module_test_dir}/test_ioutils.cxx
   ${module_test_dir}/test_i_unary_function.cxx
   ${module_test_dir}/test_linear_regression.cxx
   ${module_test_dir}/test_linear_system_solver.cxx
   ${module_test_dir}/test_mean.cxx
   ${module_test_dir}/test_min_max.cxx
-  #${module_test_dir}/test_multidimensional_minimization.cxx <- Not in tests
+  ${module_test_dir}/test_multidimensional_minimization.cxx
   ${module_test_dir}/test_multi_eval.cxx
   ${module_test_dir}/test_multimin.cxx
   ${module_test_dir}/test_multiparameter_system.cxx
@@ -155,15 +152,12 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_ode.cxx
   ${module_test_dir}/test_one_dimensional_minimization.cxx
   ${module_test_dir}/test_one_dimensional_root_finding.cxx
-  #${module_test_dir}/test_permutation.cxx <- Interactive
+  ${module_test_dir}/test_permutation.cxx
   ${module_test_dir}/test_polynomial.cxx
   ${module_test_dir}/test_prng_state_manager.cxx
   ${module_test_dir}/test_rng_2.cxx
   ${module_test_dir}/test_rng.cxx
   ${module_test_dir}/test_seed_manager.cxx
-  #${module_test_dir}/test_tabfunc_2.cxx <- Not in tests
-  #${module_test_dir}/test_tabfunc_3.cxx <- Not in tests
-  #${module_test_dir}/test_tabfunc.cxx <- Not in tests
   ${module_test_dir}/test_tabulated_function_2.cxx
   ${module_test_dir}/test_tabulated_function_3.cxx
   ${module_test_dir}/test_tabulated_function.cxx
