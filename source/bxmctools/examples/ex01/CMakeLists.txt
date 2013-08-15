@@ -14,6 +14,11 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
   message(FATAL_ERROR "in-source build detected")
 endif()
 
+# - Boost
+set(Boost_COMPONENTS program_options)
+find_package(Boost 1.47 QUIET COMPONENTS ${Boost_COMPONENTS} NO_MODULE)
+find_package(Boost 1.47 REQUIRED ${Boost_COMPONENTS})
+
 # - mctools :
 if (NOT mctools_DIR)
   execute_process(COMMAND mctools-config --prefix
@@ -40,7 +45,7 @@ target_link_libraries(ex01_read_plain_simdata mctools_ex01
 					      ${mctools_LIBRARY}
 					      ${mctools_BIO_LIBRARY}
 					      ${geomtools_BIO_LIBRARY}
-					      ${datatools_BIO_LIBRARY} )
+					      ${Boost_LIBRARIES} )
 
 install ( FILES
     ${PROJECT_BINARY_DIR}/ex01_read_plain_simdata
@@ -56,7 +61,7 @@ target_link_libraries(ex01_read_pipeline_simdata mctools_ex01
 					      ${mctools_LIBRARY}
 					      ${mctools_BIO_LIBRARY}
 					      ${geomtools_BIO_LIBRARY}
-					      ${datatools_BIO_LIBRARY} )
+					      ${Boost_LIBRARIES} )
 
 install ( FILES
     ${PROJECT_BINARY_DIR}/ex01_read_pipeline_simdata
