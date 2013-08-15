@@ -399,11 +399,9 @@ namespace dpp {
         return load_status;
       }
       if (brio_format) {
-        simple_brio_data_source * brio_source = new dpp::simple_brio_data_source (source_label, get_logging_priority ());
-        _source_ = brio_source;
+        _source_ = new dpp::simple_brio_data_source (source_label, get_logging_priority ());
       } else {
-        simple_data_source * bio_source = new dpp::simple_data_source (source_label, get_logging_priority ());
-        _source_ = bio_source;
+        _source_ = new dpp::simple_data_source (source_label, get_logging_priority ());
       }
       if (! _source_->is_open ()) _source_->open ();
       DT_LOG_TRACE(_logging, "Source is open.");
@@ -520,14 +518,12 @@ namespace dpp {
         return store_status;
       }
       if (brio_format) {
-        simple_brio_data_sink * brio_sink = new dpp::simple_brio_data_sink (sink_label, get_logging_priority ());
-        if (_preserve_existing_output_) {
-          brio_sink->set_preserve_existing_sink (true);
-        }
-        _sink_ = brio_sink;
+        _sink_ = new dpp::simple_brio_data_sink (sink_label, get_logging_priority ());
       } else {
-        simple_data_sink * bio_sink = new dpp::simple_data_sink (sink_label, get_logging_priority ());
-        _sink_ = bio_sink;
+        _sink_ = new dpp::simple_data_sink (sink_label, get_logging_priority ());
+      }
+      if (_preserve_existing_output_) {
+        _sink_->set_preserve_existing_sink (true);
       }
       if (! _sink_->is_open ()) _sink_->open ();
       _file_record_counter_ = 0;

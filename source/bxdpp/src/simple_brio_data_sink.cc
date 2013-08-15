@@ -140,7 +140,7 @@ namespace dpp {
     namespace ds = datatools;
     if (boost::filesystem::exists (_sink_record.effective_label)) {
         DT_THROW_IF (is_preserve_existing_sink (),
-                     std::logic_error,
+                     std::runtime_error,
                      "File '" << _sink_record.effective_label << "' already exists !");
         DT_LOG_WARNING(get_logging_priority (),
                        "File '" << _sink_record.effective_label << "' already exists !");
