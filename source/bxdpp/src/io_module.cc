@@ -156,10 +156,6 @@ namespace dpp {
     _file_index_ = -1;
     _source_ = 0;
     _sink_   = 0;
-    _bio_source_ = 0;
-    _bio_sink_   = 0;
-    _brio_source_ = 0;
-    _brio_sink_   = 0;
     return;
   }
 
@@ -325,8 +321,6 @@ namespace dpp {
         }
         delete _source_;
         _source_ = 0;
-        _bio_source_ = 0;
-        _brio_source_ = 0;
       }
     }
 
@@ -337,8 +331,6 @@ namespace dpp {
         }
         delete _sink_;
         _sink_ = 0;
-        _bio_sink_ = 0;
-        _brio_sink_ = 0;
       }
     }
 
@@ -378,7 +370,6 @@ namespace dpp {
     DT_LOG_TRACE(_logging, "Entering...");
     DT_LOG_TRACE(_logging, "_filenames_.size () = " << _filenames_.size ());
     // attempt to open a source of event records :
-    //while ((_bio_source_ == 0) && (_brio_source_ == 0))
     int load_status = PROCESS_OK;
     while (_source_ == 0) {
       _file_record_counter_ = 0;
@@ -408,11 +399,11 @@ namespace dpp {
         return load_status;
       }
       if (brio_format) {
-        _brio_source_ = new dpp::simple_brio_data_source (source_label, get_logging_priority ());
-        _source_ = _brio_source_;
+        simple_brio_data_source * brio_source = new dpp::simple_brio_data_source (source_label, get_logging_priority ());
+        _source_ = brio_source;
       } else {
-        _bio_source_ = new dpp::simple_data_source (source_label, get_logging_priority ());
-        _source_ = _bio_source_;
+        simple_data_source * bio_source = new dpp::simple_data_source (source_label, get_logging_priority ());
+        _source_ = bio_source;
       }
       if (! _source_->is_open ()) _source_->open ();
       DT_LOG_TRACE(_logging, "Source is open.");
@@ -422,8 +413,6 @@ namespace dpp {
         _source_->reset ();
         delete _source_;
         _source_ = 0;
-        _brio_source_ = 0;
-        _bio_source_ = 0;
       }
     }
     // force loading of the current event record :
@@ -476,8 +465,6 @@ namespace dpp {
         _source_->reset ();
         delete _source_;
         _source_ = 0;
-        _brio_source_ = 0;
-        _bio_source_ = 0;
       }
       _file_record_counter_ = 0;
       int effective_max_files = _max_files_;
@@ -533,14 +520,14 @@ namespace dpp {
         return store_status;
       }
       if (brio_format) {
-        _brio_sink_ = new dpp::simple_brio_data_sink (sink_label, get_logging_priority ());
-        _sink_ = _brio_sink_;
+        simple_brio_data_sink * brio_sink = new dpp::simple_brio_data_sink (sink_label, get_logging_priority ());
+        if (_preserve_existing_output_) {
+          brio_sink->set_preserve_existing_sink (true);
+        }
+        _sink_ = brio_sink;
       } else {
-        _bio_sink_ = new dpp::simple_data_sink (sink_label, get_logging_priority ());
-        _sink_ = _bio_sink_;
-      }
-      if (_preserve_existing_output_) {
-        _brio_sink_->set_preserve_existing_sink (true);
+        simple_data_sink * bio_sink = new dpp::simple_data_sink (sink_label, get_logging_priority ());
+        _sink_ = bio_sink;
       }
       if (! _sink_->is_open ()) _sink_->open ();
       _file_record_counter_ = 0;
@@ -587,8 +574,6 @@ namespace dpp {
         _sink_->reset ();
         delete _sink_;
         _sink_ = 0;
-        _brio_sink_ = 0;
-        _bio_sink_ = 0;
       }
       _file_record_counter_ = 0;
       if (_max_files_ > 0) {
@@ -658,13 +643,11 @@ namespace dpp {
 
     if (is_input ()) {
       a_out << indent << datatools::i_tree_dumpable::tag
-            << "Source : " << _source_
-            << " (bio @ " << _bio_source_
-            << ", brio @ " << _brio_source_ << ')' << std::endl;
+            << "Source : " << _source_ << std::endl;
     }
     if (is_output ()) {
       a_out << indent << datatools::i_tree_dumpable::tag
-            << "Sink : " << _sink_ << " (bio @ " << _bio_sink_ << ", brio @ " << _brio_sink_ << ')' << std::endl;
+            << "Sink : " << _sink_  << std::endl;
     }
 
     a_out << indent << datatools::i_tree_dumpable::tag

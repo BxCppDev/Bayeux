@@ -40,10 +40,6 @@ namespace dpp {
 
   class i_data_sink;
   class i_data_source;
-  class simple_data_sink;
-  class simple_data_source;
-  class simple_brio_data_sink;
-  class simple_brio_data_source;
   class context_service;
 
   /// \brief A data processing module for automated I/O operations
@@ -108,14 +104,10 @@ namespace dpp {
     int _file_index_;             //!< Index of the current datafile index
 
     // Readers:
-    i_data_source           * _source_;      //!< abstract data reader
-    simple_data_source      * _bio_source_;  //!< Boost data reader
-    simple_brio_data_source * _brio_source_; //!< Boost/ROOT (brio) data reader
+    i_data_source           * _source_;      //!< Abstract data reader
 
     // Writers:
-    i_data_sink             * _sink_;        //!< abstract data writer
-    simple_data_sink        * _bio_sink_;    //!< Boost data writer
-    simple_brio_data_sink   * _brio_sink_;   //!< Boost/ROOT (brio) data writer
+    i_data_sink             * _sink_;        //!< Abstract data writer
 
     // Services:
     std::string            _Ctx_label_;      //!< The label of the context service
@@ -125,7 +117,6 @@ namespace dpp {
     // Future ?
     string                      _IO_label_;      //!< The label of the I/O service
     dpp::io_service           * _IO_service_;    //!< The I/O service
-
     */
 
     // Macro to automate the registration of the module :
