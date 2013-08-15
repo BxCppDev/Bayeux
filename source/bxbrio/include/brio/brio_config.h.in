@@ -20,15 +20,9 @@
 //  BRIO_LIB_VERSION must be defined to be the same as BRIO_VERSION
 //  but as a *string* in the form "x.y[.z]" where x is the major version
 //  number, y is the minor version number, and z is the patch level if not 0.
-
 #define BRIO_LIB_VERSION "@brio_VERSION@"
-
-/***  brio debug flag ***/
-#cmakedefine01 BRIO_WITH_DEBUG
-
-//! The installation path of the brio resource files :
-#define BRIO_DATA_INSTALL_DIR "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
 
 #endif // BRIO_BRIO_CONFIG_H_
 
 // end of brio_config.h
+
