@@ -327,6 +327,7 @@ function do_configure ()
     local with_test=1
     local with_dependency_check=0
     local with_fortran=0
+    local with_inspector=1
 
     local with_bio=0
     if [ ${bio_support} -eq 1 ]; then
@@ -362,6 +363,10 @@ function do_configure ()
 	    with_fortran=1
 	elif [ "${option}" = "--without-fortran" ]; then
 	    with_fortran=0
+	elif [ "${option}" = "--with-inspector" ]; then
+	    with_inspector=1
+	elif [ "${option}" = "--without-inspector" ]; then
+	    with_inspector=0
 	elif [ ${bio_support} -eq 1 -a "${option}" = "--with-bio" ]; then
 	    with_bio=1
 	elif [ ${bio_support} -eq 1 -a "${option}" = "--without-bio" ]; then
@@ -400,6 +405,7 @@ function do_configure ()
     pkgtools__msg_notice "With documentation    : '${with_doc}'"
     pkgtools__msg_notice "With test material    : '${with_test}'"
     pkgtools__msg_notice "With Fortran          : '${with_fortran}'"
+    pkgtools__msg_notice "With inspector        : '${with_inspector}'"
     if [ ${bio_support} -eq 1 ]; then
 	pkgtools__msg_notice "With Boost I/O DLL    : '${with_bio}'"
     fi
@@ -429,6 +435,7 @@ function do_configure ()
 	-DGENBB_HELP_WITH_FORTRAN=${with_fortran} \
 	-DGENBB_HELP_WITH_DOC=${with_doc} \
 	-DGENBB_HELP_WITH_TEST=${with_test} \
+	-DGENBB_HELP_WITH_INSPECTOR=${with_inspector} \
 	${additional_options} \
 	..
     if [ $? -ne 0 ]; then

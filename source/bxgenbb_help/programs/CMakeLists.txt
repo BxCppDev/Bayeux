@@ -34,7 +34,7 @@ set ( genbb_help_programs_list_CPP
   genbbmgr.cxx
 )
 
-if(GENBB_HELP_WITH_REFLECTION)
+if(GENBB_HELP_WITH_INSPECTOR)
   message ( STATUS "${PROJECT_NAME}: programs: Support the 'genbb_inspector' utility" )
   list (INSERT genbb_help_programs_list_CPP 0 genbb_inspector.cxx)
 endif()
@@ -43,12 +43,21 @@ endif()
 set(Boost_COMPONENTS)
 find_package(Boost 1.47 QUIET COMPONENTS ${Boost_COMPONENTS} program_options)
 
+if(GENBB_HELP_WITH_INSPECTOR)
+  # - dpp
+  find_package(dpp 1.0.0 REQUIRED)
+endif()
+
 # include files search paths
 include_directories ( ${PROJECT_SOURCE_DIR}/include
   ${PROJECT_BINARY_DIR}/include
   ${geomtools_INCLUDE_DIRS}
   ${PROJECT_SOURCE_DIR}/testing
   )
+
+if(GENBB_HELP_WITH_INSPECTOR)
+  include_directories (	${dpp_INCLUDE_DIRS} )
+endif()
 
 # linker search paths :
 link_directories ( ${PROJECT_BINARY_DIR}/src )
@@ -123,6 +132,11 @@ foreach ( pro_program ${genbb_help_programs_list_CPP} )
   if ( geomtools_WITH_BIO )
     list ( INSERT _pro_libraries 0 ${geomtools_BIO_LIBRARY} )
   endif ()
+
+  if(GENBB_HELP_WITH_INSPECTOR)
+    list ( INSERT _pro_libraries 0 ${dpp_LIBRARIES} )
+  endif ()
+
   if ( GENBB_HELP_WITH_BIO )
     list ( INSERT _pro_libraries 0 genbb_help_bio )
   endif ()

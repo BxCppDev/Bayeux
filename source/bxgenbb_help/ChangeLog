@@ -36,5 +36,7 @@
 2013-05-06 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* C++ port of the decay0 library
 	* make the Fortran library and associated tools built as an option
-
+2013-08-15: by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* fix some remaining F77 to C++ port bugs
+	* make the 'genbb_inspector.cxx' program depending of the 'dpp' library which host the 'dpp::histogram_service' class in place of the 'mygsl' lib. add the 'GENBB_HELP_WITH_INSPECTOR' option (ON by deffault) to activate/inhibit the building of this utility executable. And thus introduce a 'dpp' dependency (sorry for that !).
 

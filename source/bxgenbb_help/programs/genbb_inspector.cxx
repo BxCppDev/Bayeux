@@ -54,7 +54,7 @@
 #include <datatools/exception.h>
 #include <datatools/logger.h>
 
-#include <mygsl/histogram_service.h>
+#include <dpp/histogram_service.h>
 #include <mygsl/histogram_pool.h>
 #include <mygsl/histogram_1d.h>
 #include <mygsl/histogram_2d.h>
@@ -677,7 +677,7 @@ namespace genbb {
     mygsl::rng _prng_;
     genbb::manager _manager_;
     genbb::i_genbb * _generator_;
-    mygsl::histogram_service _histos_service_;
+    dpp::histogram_service _histos_service_;
     mygsl::histogram_pool * _histos_;
     std::string _title_prefix_;
     std::string _name_suffix_;
