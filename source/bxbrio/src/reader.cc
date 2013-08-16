@@ -21,22 +21,6 @@
 // This Project
 
 namespace brio {
-void reader::set_check_serial_tag(bool new_value_) {
-  _check_serial_tag_ = new_value_;
-}
-
-bool reader::is_check_serial_tag() const {
-  return _check_serial_tag_;
-}
-
-void reader::_set_default() {
-  detail::base_io::_set_default();
-  _allow_mixed_types_in_stores_ = false;
-  _allow_automatic_store_ = true;
-  _check_serial_tag_ = true;
-  _automatic_store_ = 0;
-}
-
 // ctor:
 reader::reader() : detail::base_io(RW_READ) {
   reader::_set_default();
@@ -48,11 +32,11 @@ reader::reader(const std::string& filename_, datatools::logger::priority p_)
   reader::_set_default();
   std::string ext = boost::filesystem::extension(filename_);
   if (ext == store_info::TRIO_FILE_EXTENSION) {
-    set_format (detail::base_io::TEXT_LABEL);
+    this->set_format(detail::base_io::TEXT_LABEL);
   } else {
-    set_format (detail::base_io::PBA_LABEL);
+    this->set_format(detail::base_io::PBA_LABEL);
   }
-  open(filename_);
+  this->open(filename_);
 }
 
 // ctor:
@@ -70,6 +54,22 @@ reader::~reader() {
     this->close();
   }
   this->detail::base_io::_reset();
+}
+
+void reader::set_check_serial_tag(bool new_value_) {
+  _check_serial_tag_ = new_value_;
+}
+
+bool reader::is_check_serial_tag() const {
+  return _check_serial_tag_;
+}
+
+void reader::_set_default() {
+  detail::base_io::_set_default();
+  _allow_mixed_types_in_stores_ = false;
+  _allow_automatic_store_ = true;
+  _check_serial_tag_ = true;
+  _automatic_store_ = 0;
 }
 
 void reader::print_info(std::ostream& out_) const {
@@ -104,13 +104,7 @@ void reader::tree_dump(std::ostream& out_,
 }
 
 bool reader::has_previous(const std::string& label_) const {
-  DT_THROW_IF(!this->is_opened(),
-              std::logic_error,
-              "Operation prohibited; file is not opened !");
-  const store_info *ptr_si = this->_get_store_info(label_);
-  DT_THROW_IF(ptr_si == 0,
-              std::logic_error,
-              "Missing explicit and valid store label!");
+  const store_info *ptr_si = this->get_store_or_throw(label_);
   if (ptr_si->number_of_entries == 0){
     return false;
   } else {
@@ -122,13 +116,7 @@ bool reader::has_previous(const std::string& label_) const {
 }
 
 bool reader::has_next(const std::string& label_) const {
-  DT_THROW_IF(!this->is_opened(),
-              std::logic_error,
-              "Operation prohibited; file is not opened!");
-  const store_info *ptr_si = this->_get_store_info(label_);
-  DT_THROW_IF (ptr_si == 0,
-               std::logic_error,
-               "Missing explicit and valid store label !");
+  const store_info *ptr_si = this->get_store_or_throw(label_);
   if (ptr_si->number_of_entries == 0) {
     return false;
   } else {
@@ -140,24 +128,12 @@ bool reader::has_next(const std::string& label_) const {
 }
 
 void reader::rewind_store(const std::string& label_) {
-  DT_THROW_IF(!this->is_opened(),
-              std::logic_error,
-              "Operation prohibited; file is not opened !");
-  store_info *ptr_si = this->_get_store_info(label_);
-  DT_THROW_IF(ptr_si == 0,
-              std::logic_error,
-              "Missing explicit and valid store label !");
+  store_info* ptr_si = this->get_store_or_throw(label_);
   ptr_si->current_entry = -1;
 }
 
 void reader::unwind_store(const std::string& label_) {
-  DT_THROW_IF(!this->is_opened(),
-              std::logic_error,
-              "Operation prohibited; file is not opened !");
-  store_info *ptr_si = this->_get_store_info(label_);
-  DT_THROW_IF(ptr_si == 0,
-              std::logic_error,
-              "Missing explicit and valid store label !");
+  store_info* ptr_si = this->get_store_or_throw(label_);
   ptr_si->current_entry = ptr_si->number_of_entries;
 }
 
@@ -281,6 +257,28 @@ void reader::_at_open(const std::string& filename_) {
       _current_store = _automatic_store_;
   }
   DT_LOG_TRACE(this->get_logging_priority(),"Exiting." );
+}
+
+const store_info* reader::get_store_or_throw(const std::string& label) const {
+  DT_THROW_IF(!this->is_opened(),
+              std::logic_error,
+              "Operation prohibited; file is not opened !");
+  const store_info *ptr_si = this->_get_store_info(label);
+  DT_THROW_IF(ptr_si == 0,
+              std::logic_error,
+              "Missing explicit and valid store label !");
+  return ptr_si;
+}
+
+store_info* reader::get_store_or_throw(const std::string& label) {
+  DT_THROW_IF(!this->is_opened(),
+              std::logic_error,
+              "Operation prohibited; file is not opened !");
+  store_info *ptr_si = this->_get_store_info(label);
+  DT_THROW_IF(ptr_si == 0,
+              std::logic_error,
+              "Missing explicit and valid store label !");
+  return ptr_si;
 }
 
 } // end of namespace brio

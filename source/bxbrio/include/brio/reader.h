@@ -113,12 +113,19 @@ class reader : public detail::base_io {
   void print_info(std::ostream& out_ = std::clog) const;
 
  protected:
-  virtual void _at_open(const std::string & filename_);
+  virtual void _at_open(const std::string& filename_);
 
   template<class T>
   int _at_load(T& data_, store_info *ptr_si_, int64_t nentry_); 
 
   void _set_default();
+
+ private:
+  //! Return pointer to store with name label. Throw if file is not
+  //! open or store does not exist
+  const store_info* get_store_or_throw(const std::string& label) const;
+  store_info* get_store_or_throw(const std::string& label);
+
 
  private:
   bool _allow_mixed_types_in_stores_; /// Flag to allow stores with mixed types
