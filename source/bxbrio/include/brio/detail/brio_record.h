@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*- 
 /* brio_record.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-07-16
@@ -13,42 +12,38 @@
  * History: 
  * 
  */
-
 #ifndef BRIO_DETAIL_BRIO_RECORD_H_
 #define BRIO_DETAIL_BRIO_RECORD_H_ 1
 
+// Standard Library
 #include <vector>
 
+// Third Party
+// - ROOT
 #include <TObject.h>
 #include <TBuffer.h>
 #include <TString.h>
 
+// This Project
 #include <brio/detail/TArrayCMod.h>
 
-//
-// http://www.codeproject.com/KB/architecture/ratkfactory.aspx
-//
-
 /// The internal ROOT I/O record class
-class brio_record : public TObject
-{
-public:
-    
+class brio_record : public TObject {
+ public:   
   TString    fSerialTag;  /// The serialization tag of the data class
   UInt_t     fVersionTag; /// The serialization version number of the data class
   TArrayCMod fDataBuffer; /// The buffer of bytes that contains the Boost archive associated to the serialized data
 
-public: 
-
-  //! Reset the internal data
-  void reset ();
-
+ public: 
   //! Constructor
-  brio_record ();
+  brio_record();
 
   //! Destructor
-  virtual ~brio_record ();
-  
+  virtual ~brio_record();
+ 
+  //! Reset the internal data
+  void reset();
+ 
   ClassDef(brio_record,1) //Basic BRIO record
 };
 

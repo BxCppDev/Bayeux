@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /* base_io.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-11-03
@@ -17,165 +16,164 @@
 #ifndef BRIO_DETAIL_BASE_IO_H_
 #define BRIO_DETAIL_BASE_IO_H_ 1
 
+// Standard Library
 #include <string>
 #include <list>
 #include <locale>
 
+// Third Party
+// - Boost
 // 2012-01-09 FM : now use the Boost 1.47 header :
 //#include <boost/math/nonfinite_num_facets.hpp>
 #include <boost/math/special_functions/nonfinite_num_facets.hpp>
 
+// - datatools
 #include <datatools/i_serializable.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/logger.h>
 
+// This Project
 #include <brio/utils.h>
 
 class TFile;
 
 /// The main namespace of the  brio library
 namespace brio {
-  /// Private namespace
-  namespace detail {
+/// Private namespace
+namespace detail {
+//! \brief The internal I/O base class
+class base_io : public datatools::i_tree_dumpable {
+ public:
+  static const std::string PBA_LABEL;  /// Label for Boost portable binary archive
+  static const std::string TEXT_LABEL; /// Label for Boost portable text archive
 
-    //! \brief The internal I/O base class
-    class base_io : public datatools::i_tree_dumpable
-    {
-    public:
+  enum format_type {
+    FORMAT_UNDEFINED = 0,
+    FORMAT_PBA       = 1, /// Boost portable binary archive (file extension: .brio)
+    FORMAT_TEXT      = 2, /// Boost portable text archive (file extension: .trio)
+  };
 
-      static const std::string PBA_LABEL;  /// Label for Boost portable binary archive
-      static const std::string TEXT_LABEL; /// Label for Boost portable text archive
+  enum rw_type {
+    RW_UNDEFINED = 0,
+    RW_READ      = 1, /// Reader mode
+    RW_WRITE     = 2  /// Writer mode
+  };
 
-      enum format_type {
-        FORMAT_UNDEFINED = 0,
-        FORMAT_PBA       = 1, /// Boost portable binary archive (file extension: .brio)
-        FORMAT_TEXT      = 2, /// Boost portable text archive (file extension: .trio)
-      };
+ public:
+  base_io(int rw_);
+  base_io(int rw_, datatools::logger::priority p_);
+  base_io(int rw_, int format_, datatools::logger::priority p_);
 
-      enum rw_type {
-        RW_UNDEFINED = 0,
-        RW_READ      = 1, /// Reader mode
-        RW_WRITE     = 2  /// Writer mode
-      };
+  virtual ~base_io();
 
-      static int get_format (const std::string & format_str_);
+  //! File open
+  virtual void open(const std::string& filename_);
 
-      bool is_debug () const;
+  //! File close
+  virtual void close();
 
-      void set_debug (bool);
+  virtual bool is_opened() const;
 
-      bool is_verbose () const;
+  bool is_reading() const;
 
-      void set_verbose (bool);
+  bool is_writing() const;
 
-      bool is_reading () const;
+  bool is_format_pba() const;
 
-      bool is_writing () const;
+  bool is_format_text() const;
 
-      bool is_format_pba () const;
+  int get_format() const;
 
-      bool is_format_text () const;
+  void set_format(int format_);
 
-      int get_format () const;
+  void set_format(const std::string& format_str_);
 
-      void set_format (int format_);
+  static int get_format (const std::string& format_str_);
 
-      void set_format (const std::string & format_str_);
+  bool is_debug() const;
 
-      virtual bool is_opened () const;
+  void set_debug(bool);
 
-      int64_t get_number_of_entries (const std::string & label_ = "") const;
+  bool is_verbose() const;
 
-      int64_t get_current_entry (const std::string & label_ = "") const;
+  void set_verbose(bool);
 
-      const std::string & get_serialization_tag (const std::string & label_ = "") const;
+  int64_t get_number_of_entries(const std::string& label_ = "") const;
 
-      bool has_store (const std::string & label_) const;
+  int64_t get_current_entry(const std::string& label_ = "") const;
 
-      bool has_store_with_serial_tag (const std::string & label_, const std::string & serial_tag_) const;
+  const std::string& get_serialization_tag(const std::string& label_ = "") const;
 
-      template <class T>
-      bool has_store_with_matching_serial_tag (const std::string & label_) const
-      {
-        store_info_dict_type::const_iterator found = _store_infos.find (label_);
-        if (found == _store_infos.end ()) return false;
-        const store_info & the_si = found->second;
-        if (the_si.has_dedicated_serialization_tag ()) {
-          return datatools::check_serial_tag<T>(the_si.get_serialization_tag ());
-        }
-        return false;
-      }
+  bool has_store(const std::string& label_) const;
 
-      bool has_mixed_store (const std::string & label_) const;
+  bool has_store_with_serial_tag(const std::string& label_, const std::string& serial_tag_) const;
 
-      void select_store (const std::string & label_);
+  template <class T>
+  bool has_store_with_matching_serial_tag(const std::string& label_) const;
 
-      bool has_automatic_store () const;
+  bool has_mixed_store(const std::string& label_) const;
 
-      void select_automatic_store ();
+  void select_store(const std::string& label_);
 
-      void unselect_store ();
+  bool has_automatic_store() const;
 
-      base_io (int rw_);
+  void select_automatic_store();
 
-      base_io (int rw_, datatools::logger::priority p_);
+  void unselect_store();
 
-      base_io (int rw_, int format_, datatools::logger::priority p_);
+  void get_list_of_stores(std::list<std::string>& list_) const;
 
-      virtual ~base_io ();
+  virtual void tree_dump(std::ostream& out_ = std::clog,
+                         const std::string & title_ = "",
+                         const std::string & indent_ = "",
+                         bool inherit_ = false) const;
 
-      void get_list_of_stores (std::list<std::string> & list_) const;
+  void reset();
 
-      virtual void tree_dump (std::ostream & out_ = std::clog,
-                              const std::string & title_ = "",
-                              const std::string & indent_ = "",
-                              bool inherit_ = false) const;
+  void set_logging_priority(datatools::logger::priority);
 
-      //! File open
-      virtual void open (const std::string & filename_);
+  datatools::logger::priority get_logging_priority() const;
 
-      //! File close
-      virtual void close ();
+ protected:
+  virtual void _at_open(const std::string& filename_) = 0;
 
-      void reset();
+  void _set_default();
 
-      void set_logging_priority(datatools::logger::priority);
+  void _reset();
 
-      datatools::logger::priority get_logging_priority() const;
+  store_info* _get_store_info(const std::string& label_ = "");
 
-    protected:
+  const store_info* _get_store_info(const std::string & label_ = "") const;
 
-      virtual void _at_open (const std::string & filename_) = 0;
+ protected:
+  std::string _filename;       /// Name of the current I/O file (extensions are \b .brio or \b .trio)
+  TFile*      _file;           /// Handle to the current embedded ROOT file
+  store_info_dict_type _store_infos; /// Dictionnary of \e stores
+  store_info*          _current_store;  /// Handle to the current active \e store (if any)
+  int _rw;             /// Read/write mode tag
+  std::locale* _default_locale; /// Default I/O locale (for portable streams)
+  std::locale* _locale;         /// I/O locale (for portable streams)
 
-      void _set_default ();
+ private:
+  datatools::logger::priority _logging_priority_;
+  int  _format_;  /// Format tag (can be Boost portable binary or text archives)
+};
 
-      void _reset ();
-
-      store_info * _get_store_info (const std::string & label_ = "");
-
-      const store_info * _get_store_info (const std::string & label_ = "") const;
-
-    private:
-
-      datatools::logger::priority _logging_priority_;
-      int  _format_;  /// Format tag (can be Boost portable binary or text archives)
-
-    protected:
-
-      std::string       _filename;       /// Name of the current I/O file (extensions are \b .brio or \b .trio)
-      TFile *           _file;           /// Handle to the current embedded ROOT file
-      store_info_dict_type _store_infos; /// Dictionnary of \e stores
-      store_info *      _current_store;  /// Handle to the current active \e store (if any)
-      int               _rw;             /// Read/write mode tag
-      std::locale    *  _default_locale; /// Default I/O locale (for portable streams)
-      std::locale    *  _locale;         /// I/O locale (for portable streams)
-
-    };
-
-
-  } // end of namespace detail
+//----------------------------------------------------------------------
+// Template function definitions
+//
+template <class T>
+bool base_io::has_store_with_matching_serial_tag(const std::string& label_) const {
+  store_info_dict_type::const_iterator found = _store_infos.find(label_);
+  if (found == _store_infos.end()) return false;
+  const store_info& the_si = found->second;
+  if (the_si.has_dedicated_serialization_tag()) {
+    return datatools::check_serial_tag<T>(the_si.get_serialization_tag());
+  }
+  return false;
+}
+} // end of namespace detail
 } // end of namespace brio
 
 #endif // BRIO_DETAIL_BASE_IO_H_
 
-// end of base_io.h
