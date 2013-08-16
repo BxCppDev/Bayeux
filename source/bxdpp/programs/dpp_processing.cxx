@@ -36,7 +36,8 @@
 
 #include <dpp/dpp_config.h>
 #include <dpp/base_module.h>
-#include <dpp/io_module.h>
+#include <dpp/input_module.h>
+#include <dpp/output_module.h>
 #include <dpp/module_manager.h>
 
 int main (int argc_, char ** argv_)
@@ -63,6 +64,7 @@ int main (int argc_, char ** argv_)
     int    max_records = 0;
     int    max_records_per_output_file = 0;
     bool   save_stopped_data_records = false;
+    bool   preserve_existing_files = false;
 
     // Shortcut for Boost/program_options namespace :
     // See: http://www.boost.org/doc/libs/1_46_1/doc/html/program_options.html
@@ -109,6 +111,9 @@ int main (int argc_, char ** argv_)
       ("output-file,o",
        po::value<std::vector<std::string> > (),
        "set the output file (optional).")
+      ("preserve-existing-files,x",
+       po::value<bool>(&preserve_existing_files)->zero_tokens()->default_value (false),
+       "preserve existing files (recommended).")
       ("max-records-per-output-file,O",
        po::value<int> (&max_records_per_output_file)->default_value (0),
        "set the maximum number of data records per output file.")
@@ -318,15 +323,15 @@ int main (int argc_, char ** argv_)
     }
 
     // Setup the data output sink :
-    boost::scoped_ptr<dpp::io_module> sink;
+    boost::scoped_ptr<dpp::output_module> sink;
     if (output_files.size () > 0) {
-      sink.reset (new dpp::io_module);
+      sink.reset (new dpp::output_module);
       datatools::properties sink_config;
-      sink_config.store ("mode", "output");
-      sink_config.store ("output.mode", "list");
-      sink_config.store ("output.list.filenames", output_files);
+      if (preserve_existing_files) sink_config.store_flag("preserve_existing_files");
+      sink_config.store ("files.mode", "list");
+      sink_config.store ("files.list.filenames", output_files);
       if (max_records_per_output_file > 0) {
-        sink_config.store ("output.max_record_per_file", max_records_per_output_file);
+        sink_config.store ("max_record_per_file", max_records_per_output_file);
       }
       if (MM && MM.get ()->has_service_manager()) {
         sink->initialize_with_service (sink_config,
@@ -337,13 +342,12 @@ int main (int argc_, char ** argv_)
     }
 
     // Setup the data input source :
-    boost::scoped_ptr<dpp::io_module> source;
+    boost::scoped_ptr<dpp::input_module> source;
     if (input_files.size () > 0) {
-      source.reset (new dpp::io_module);
+      source.reset (new dpp::input_module);
       datatools::properties source_config;
-      source_config.store ("mode", "input");
-      source_config.store ("input.mode", "list");
-      source_config.store ("input.list.filenames", input_files);
+      source_config.store ("files.mode", "list");
+      source_config.store ("files.list.filenames", input_files);
       if (MM && MM.get ()->has_service_manager()) {
         source->initialize_with_service (source_config,
                                          MM.get ()->grab_service_manager ());

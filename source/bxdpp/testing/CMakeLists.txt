@@ -23,7 +23,7 @@
 
 set( dpp_tests_programs
      test_module.cxx
-     test_io_module.cxx
+     test_input_output_modules.cxx
      test_module_chain.cxx
      test_module_manager.cxx
      test_histogram_service.cxx

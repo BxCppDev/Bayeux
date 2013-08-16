@@ -1,9 +1,9 @@
-/* io_module.h
+/* io_common.h
  * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
- * Creation date : 2011-09-10
- * Last modified : 2013-05-15
+ * Creation date : 2013-08-16
+ * Last modified : 2013-08-16
  *
- * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,78 +23,121 @@
  *
  * Description:
  *
- *   A data processing module.
+ *   Base class for I/O modules.
  *
  * History:
  *
  */
 
-#ifndef DPP_IO_MODULE_H_
-#define DPP_IO_MODULE_H_ 1
-
-#include <dpp/base_module.h>    // data processing module abstract base class
+#ifndef DPP_IO_COMMON_H_
+#define DPP_IO_COMMON_H_ 1
 
 #include <datatools/smart_filename.h>
+#include <datatools/logger.h>
 
 namespace dpp {
 
+  class context_service;
   class i_data_sink;
   class i_data_source;
-  class context_service;
 
-  /// \brief A data processing module for automated I/O operations
-  DPP_MODULE_CLASS_DECLARE(io_module)
+  /// \brief Some common data structure for I/O modules
+  class io_common
   {
   public:
 
-    DPP_MODULE_INTERFACE_CTOR_DTOR(io_module);
-
-    enum rw_mode_type
-    {
-      RW_MODE_INVALID = -1,
-      RW_MODE_INPUT   =  0,
-      RW_MODE_OUTPUT  =  1
+    enum format_type {
+      FORMAT_INVALID = -1,
+      FORMAT_BIO     = 0,
+      FORMAT_BRIO    = 1
     };
 
-    bool is_terminated () const;
+    static format_type guess_format_from_filename(const std::string &);
 
-    bool is_input () const;
+    static i_data_source * allocate_reader(const std::string &,
+                                           datatools::logger::priority);
 
-    bool is_output () const;
+    static i_data_sink * allocate_writer(const std::string &,
+                                         datatools::logger::priority);
+
+    io_common(datatools::logger::priority & logging_,
+              const std::string & module_name_);
+
+    virtual ~io_common();
+
+    void set_module_name (const std::string &);
+
+    const std::string & get_module_name() const;
+
+    void set_context_label (const std::string &);
+
+    const std::string & get_context_label() const;
 
     void set_context_service (dpp::context_service & a_context_service,
                               const std::string & a_ctx_label = "Ctx");
-    void set_rw_mode (rw_mode_type a_rw_mode);
-    void set_preserve_existing_output (bool a_preserve_existing_output);
+
+    bool has_context_service() const;
+
+    const dpp::context_service & get_context_service() const;
+
+    dpp::context_service & grab_context_service();
+
     void set_max_files (int a_max_files);
+
+    int get_max_files() const;
+
     void set_max_record_total (int a_max_record_total);
+
+    int get_max_record_total() const;
+
     void set_max_record_per_file (int a_max_record_per_file);
-    void set_filenames (const datatools::properties & a_setup);
+
+    int get_max_record_per_file() const;
+
+    void init_filenames (const datatools::properties & a_setup);
+
+    const datatools::smart_filename & get_filenames() const;
+
+    datatools::smart_filename & grab_filenames();
+
+    bool is_terminated () const;
+
+    void set_terminated (bool);
+
+    int get_file_record_counter() const;
+
+    int get_record_counter() const;
+
+    int get_file_index() const;
+
+    void set_file_record_counter(int);
+
+    void set_record_counter(int);
+
+    void set_file_index(int);
+
+    void initialize(const datatools::properties & a_config,
+                    datatools::service_manager & a_service_manager);
+
+    void reset();
 
     virtual void tree_dump (std::ostream & a_out         = std::clog,
                             const std::string & a_title  = "",
                             const std::string & a_indent = "",
                             bool a_inherit          = false) const;
 
-    void print (std::ostream & a_out = std::clog) const;
-
   protected:
-
-    int _load (datatools::things & a_event_record);
-
-    int _store (const datatools::things & a_event_record);
 
     void _set_defaults ();
 
   private:
 
     // Configuration attributes:
-    int _rw_mode_;                   //!< Read/write mode (input/output)
-    bool _preserve_existing_output_; //!< Flag to preserve existing output files
+    std::string _module_name_;               //!< Name of the associated module
+    datatools::logger::priority * _logging_; //!< Handle to the logging priority of the associated module
     int _max_record_per_file_;       //!< Maximum number of event records per file
     int _max_record_total_;          //!< Maximum number of event records to be processed
     int _max_files_;                 //!< Maximum number of data files to be processed
-
     datatools::smart_filename _filenames_; //!< Smart list of data filenames
 
     /* Running/dynamic attributes: */
@@ -103,32 +146,17 @@ namespace dpp {
     int _record_counter_;         //!< Total event record counter
     int _file_index_;             //!< Index of the current datafile index
 
-    // Readers:
-    i_data_source           * _source_;      //!< Abstract data reader
-
-    // Writers:
-    i_data_sink             * _sink_;        //!< Abstract data writer
-
     // Services:
     std::string            _Ctx_label_;      //!< The label of the context service
     dpp::context_service * _Ctx_service_;    //!< The context service
-
-    /*
-    // Future ?
-    string                      _IO_label_;      //!< The label of the I/O service
-    dpp::io_service           * _IO_service_;    //!< The I/O service
-    */
-
-    // Macro to automate the registration of the module :
-    DPP_MODULE_REGISTRATION_INTERFACE(io_module);
 
   };
 
 } // namespace dpp
 
-#endif // DPP_IO_MODULE_H_
+#endif // DPP_IO_COMMON_H_
 
-// end of io_module.h
+// end of io_common.h
 /*
 ** Local Variables: --
 ** mode: c++ --

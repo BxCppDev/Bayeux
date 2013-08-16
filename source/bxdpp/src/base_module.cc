@@ -213,8 +213,8 @@ namespace dpp {
     a_out << indent << datatools::i_tree_dumpable::tag
           << "Module version     : '" << _version << "'" << std::endl;
     a_out << indent << datatools::i_tree_dumpable::tag
-          << "Module logging threshold : "
-          << datatools::logger::get_priority_label(_logging) << std::endl;
+          << "Module logging threshold : '"
+          << datatools::logger::get_priority_label(_logging) << "'" << std::endl;
     a_out << indent << datatools::i_tree_dumpable::tag
           << "Module initialized : " << is_initialized () << std::endl;
     a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)

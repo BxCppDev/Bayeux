@@ -397,20 +397,19 @@ DOCD_CLASS_SYSTEM_REGISTRATION(::dpp::if_module,"dpp::if_module")
 
 
 
-
 /****************************************************************/
-// OCD support for class '::dpp::io_module' :
-DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::io_module,ocd_)
+// OCD support for class '::dpp::output_module' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::output_module,ocd_)
 {
-  ocd_.set_class_name ("dpp::io_module");
+  ocd_.set_class_name ("dpp::output_module");
   ocd_.set_class_library ("dpp");
-  ocd_.set_class_description ("An input/ouput module able to load/store data record in/from files");
+  ocd_.set_class_description ("An output module able to store data record in files");
 
 
-  ocd_.set_configuration_hints ("A ``dpp::io_module`` object can be setup with the following syntax            \n"
+  ocd_.set_configuration_hints ("A ``dpp::output_module`` object can be setup with the following syntax        \n"
                                 "in a ``datatools::multi_properties`` configuration file, typically from       \n"
                                 "a module manager object.                                                      \n"
-                                "The input/output files setup directives use the ``datatools::smart_file_name``\n"
+                                "The output files setup directives use the ``datatools::smart_file_name``      \n"
                                 "class. See OCD support for the ``datatools::smart_filename`` class.           \n"
                                 "                                                                      \n"
                                 "Examples::                                                            \n"
@@ -418,48 +417,89 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::io_module,ocd_)
                                 "    #@key_label   \"name\"                                            \n"
                                 "    #@meta_label  \"type\"                                            \n"
                                 "                                                                      \n"
-                                "    [name=\"load_data\" type=\"dpp::io_module\"]                      \n"
-                                "    #@config An input data processing module                          \n"
-                                "    debug                       : boolean = 0                         \n"
-                                "    mode                        : string = \"input\"                  \n"
-                                "    input.preserve_existing     : boolean = 1                         \n"
-                                "    input.max_record_per_file   : integer = 10000                     \n"
-                                "    input.max_files             : integer = 10                        \n"
-                                "    input.max_record_total      : integer = 100000                    \n"
-                                "    input.mode                  : string = \"incremental\"            \n"
-                                "    input.incremental.path      : string = \"${RAW_DATA_DIR}\"        \n"
-                                "    input.incremental.prefix    : string = \"run_\"                   \n"
-                                "    input.incremental.extension : string = \".data.gz\"               \n"
-                                "    input.incremental.start     : integer = 0                         \n"
-                                "    input.incremental.increment : integer = 1                         \n"
-                                "    input.incremental.stop      : integer = 10                        \n"
-                                "                                                                      \n"
-                                "    [name=\"store_data\" type=\"dpp::io_module\"]                     \n"
+                                "    [name=\"store_data\" type=\"dpp::output_module\"]                 \n"
                                 "    #@config An output data processing module                         \n"
                                 "    debug                        : boolean = 0                        \n"
-                                "    mode                         : string = \"output\"                \n"
-                                "    output.preserve_existing     : boolean = 1                        \n"
-                                "    output.max_record_per_file   : integer = 20000                    \n"
-                                "    output.max_files             : integer = 5                        \n"
-                                "    output.max_record_total      : integer = 100000                   \n"
-                                "    output.mode                  : string = \"incremental\"           \n"
-                                "    output.incremental.path      : string = \"${REC_DATA_DIR}\"       \n"
-                                "    output.incremental.prefix    : string = \"recons_\"               \n"
-                                "    output.incremental.extension : string = \".data.gz\"              \n"
-                                "    output.incremental.start     : integer = 0                        \n"
-                                "    output.incremental.increment : integer = 1                        \n"
-                                "    output.incremental.stop      : integer = 5                        \n"
+                                "    preserve_existing            : boolean = 1                        \n"
+                                "    max_record_per_file          : integer = 20000                    \n"
+                                "    max_files                    : integer = 5                        \n"
+                                "    max_record_total             : integer = 100000                   \n"
+                                "    files.mode                   : string = \"incremental\"           \n"
+                                "    files.incremental.path       : string = \"${REC_DATA_DIR}\"       \n"
+                                "    files.incremental.prefix     : string = \"recons_\"               \n"
+                                "    files.incremental.extension  : string = \".data.gz\"              \n"
+                                "    files.incremental.start      : integer = 0                        \n"
+                                "    files.incremental.increment  : integer = 1                        \n"
+                                "    files.incremental.stop       : integer = 5                        \n"
+                                "                                                                      \n"
+                                "    [name=\"store_data2\" type=\"dpp::output_module\"]                \n"
+                                "    #@config An output data processing module                         \n"
+                                "    debug                        : boolean = 0                        \n"
+                                "    preserve_existing            : boolean = 1                        \n"
+                                "    files.mode                   : string = \"single\"                \n"
+                                "    files.single.filename        : string = \"${REC_DATA_DIR}/recons_X.xml\" \n"
                                 "                                                                      \n"
                                 );
 
-  ocd_.set_validation_support(true);
+  ocd_.set_validation_support(false);
   ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
-DOCD_CLASS_SYSTEM_REGISTRATION(::dpp::io_module,"dpp::io_module")
+DOCD_CLASS_SYSTEM_REGISTRATION(::dpp::output_module,"dpp::output_module")
 
 
+/****************************************************************/
+// OCD support for class '::dpp::input_module' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::input_module,ocd_)
+{
+  ocd_.set_class_name ("dpp::input_module");
+  ocd_.set_class_library ("dpp");
+  ocd_.set_class_description ("An input module able to load data record from files");
+
+
+  ocd_.set_configuration_hints ("A ``dpp::input_module`` object can be setup with the following syntax         \n"
+                                "in a ``datatools::multi_properties`` configuration file, typically from       \n"
+                                "a module manager object.                                                      \n"
+                                "The input files setup directives use the ``datatools::smart_file_name``       \n"
+                                "class. See OCD support for the ``datatools::smart_filename`` class.           \n"
+                                "                                                                      \n"
+                                "Examples::                                                            \n"
+                                "                                                                      \n"
+                                "    #@key_label   \"name\"                                            \n"
+                                "    #@meta_label  \"type\"                                            \n"
+                                "                                                                      \n"
+                                "    [name=\"load_data\" type=\"dpp::input_module\"]                   \n"
+                                "    #@config An input data processing module                          \n"
+                                "    debug                       : boolean = 0                         \n"
+                                "    max_record_per_file         : integer = 10000                     \n"
+                                "    max_files                   : integer = 10                        \n"
+                                "    max_record_total            : integer = 100000                    \n"
+                                "    files.mode                  : string = \"incremental\"            \n"
+                                "    files.incremental.path      : string = \"${RAW_DATA_DIR}\"        \n"
+                                "    files.incremental.prefix    : string = \"run_\"                   \n"
+                                "    files.incremental.extension : string = \".data.gz\"               \n"
+                                "    files.incremental.start     : integer = 0                         \n"
+                                "    files.incremental.increment : integer = 1                         \n"
+                                "    files.incremental.stop      : integer = 10                        \n"
+                                "                                                                      \n"
+                                "    [name=\"load_data2\" type=\"dpp::input_module\"]                  \n"
+                                "    #@config An input data processing module                          \n"
+                                "    debug                       : boolean = 0                         \n"
+                                "    files.mode                  : string = \"single\"                 \n"
+                                "    files.single.filename       : string = \"${RAW_DATA_DIR}/run_324.brio\" \n"
+                                "                                                                      \n"
+                                );
+
+  ocd_.set_validation_support(false);
+  ocd_.lock();
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+DOCD_CLASS_SYSTEM_REGISTRATION(::dpp::input_module,"dpp::input_module")
+
+
+/****************************************************************/
 // OCD support for class '::dpp::utils_module' :
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::utils_module,ocd_)
 {

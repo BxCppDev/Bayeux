@@ -12,13 +12,15 @@
 #include <dpp/dump_module.h>
 #include <dpp/chain_module.h>
 #include <dpp/if_module.h>
-#include <dpp/io_module.h>
+#include <dpp/input_module.h>
+#include <dpp/output_module.h>
 #include <dpp/utils_module.h>
 
 DOCD_CLASS_DECLARATION(dpp::dump_module)
 DOCD_CLASS_DECLARATION(dpp::chain_module)
 DOCD_CLASS_DECLARATION(dpp::if_module)
-DOCD_CLASS_DECLARATION(dpp::io_module)
+DOCD_CLASS_DECLARATION(dpp::input_module)
+DOCD_CLASS_DECLARATION(dpp::output_module)
 DOCD_CLASS_DECLARATION(dpp::utils_module)
 
 

@@ -30,7 +30,9 @@ set(dpp_PUBLIC_HEADERS
     include/dpp/i_data_sink.h
     include/dpp/i_data_source.h
     include/dpp/if_module.h
-    include/dpp/io_module.h
+    include/dpp/io_common.h
+    include/dpp/input_module.h
+    include/dpp/output_module.h
     include/dpp/module_macros.h
     include/dpp/module_manager.h
     include/dpp/module_tools.h
@@ -91,7 +93,9 @@ set(dpp_SOURCES
     context_service.cc
     dummy_module.cc
     if_module.cc
-    io_module.cc
+    io_common.cc
+    input_module.cc
+    output_module.cc
     module_manager.cc
     module_tools.cc
     i_data_sink.cc
