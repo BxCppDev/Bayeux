@@ -27,8 +27,10 @@ endfunction()
 set(brio_PUBLIC_HEADERS
   include/brio/brio.h
   include/brio/reader.h
+  include/brio/reader-inl.h
   include/brio/utils.h
   include/brio/writer.h
+  include/brio/writer-inl.h
   )
 list_prepend(brio_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 
