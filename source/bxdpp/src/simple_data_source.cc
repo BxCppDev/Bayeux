@@ -134,15 +134,16 @@ namespace dpp {
   void simple_data_source::_close_file_source ()
   {
     //cerr << "DEVEL: dpp::simple_data_source::_close_file_source: Entering..." << std::endl;
-    if (_boost_io_file_reader_ != 0)
-      {
+    if (_boost_io_file_reader_ != 0) {
+      if (_boost_io_file_reader_->is_initialized()) {
         _boost_io_file_reader_->reset ();
-        delete _boost_io_file_reader_;
-        _boost_io_file_reader_ = 0;
-        _source_record.status = source_record::STATUS_CLOSED;
-        _source_record.reset ();
-        _has_next_record = false;
       }
+      delete _boost_io_file_reader_;
+      _boost_io_file_reader_ = 0;
+      _source_record.status = source_record::STATUS_CLOSED;
+      _source_record.reset ();
+      _has_next_record = false;
+    }
     //cerr << "DEVEL: dpp::simple_data_source::_close_file_source: Exiting." << std::endl;
     return;
   }

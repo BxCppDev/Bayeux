@@ -126,12 +126,12 @@ namespace dpp {
   void simple_brio_data_sink::_close_file_sink ()
   {
     if (_brio_file_writer_ != 0) {
-        _brio_file_writer_->close ();
-        delete _brio_file_writer_;
-        _brio_file_writer_ = 0;
-        _sink_record.status = sink_record::STATUS_CLOSED;
-        _sink_record.reset ();
-      }
+      if (_brio_file_writer_->is_opened()) _brio_file_writer_->close ();
+      delete _brio_file_writer_;
+      _brio_file_writer_ = 0;
+      _sink_record.status = sink_record::STATUS_CLOSED;
+      _sink_record.reset ();
+    }
     return;
   }
 

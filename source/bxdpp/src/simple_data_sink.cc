@@ -115,7 +115,9 @@ namespace dpp {
   void simple_data_sink::close_file_sink_ ()
   {
     if (_boost_io_file_writer_ != 0) {
-      _boost_io_file_writer_->reset ();
+      if (_boost_io_file_writer_->is_initialized()) {
+        _boost_io_file_writer_->reset ();
+      }
       delete _boost_io_file_writer_;
       _boost_io_file_writer_ = 0;
       _sink_record.status = sink_record::STATUS_CLOSED;

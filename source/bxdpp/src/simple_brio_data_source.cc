@@ -121,7 +121,7 @@ namespace dpp {
   void simple_brio_data_source::_close_file_source ()
   {
     if (_brio_file_reader_ != 0) {
-      _brio_file_reader_->close ();
+      if (_brio_file_reader_->is_opened()) _brio_file_reader_->close ();
       delete _brio_file_reader_;
       _brio_file_reader_ = 0;
       _source_record.reset ();
