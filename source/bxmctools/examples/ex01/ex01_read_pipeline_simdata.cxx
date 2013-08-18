@@ -32,7 +32,7 @@
 #include <datatools/library_loader.h>
 #include <datatools/things.h>
 
-#include <dpp/io_module.h>
+#include <dpp/input_module.h>
 
 #include <geomtools/manager.h>
 
@@ -170,17 +170,16 @@ int main(int argc_, char **argv_) {
                  "File '" << pipeline_simulated_data_filename << "' does not exists !");
 
     // The pipeline simulated data reader :
-    dpp::io_module reader;
+    dpp::input_module reader;
 
     // Configuration:
     datatools::properties reader_config;
     reader_config.store ("logging.priority", "debug");
-    reader_config.store ("mode", "input");
-    reader_config.store ("input.max_files", 100);
-    reader_config.store ("input.max_record_total", 10000);
-    reader_config.store ("input.max_record_per_file", 10000);
-    reader_config.store ("input.mode", "single");
-    reader_config.store ("input.single.filename", pipeline_simulated_data_filename);
+    reader_config.store ("max_files", 100);
+    reader_config.store ("max_record_total", 10000);
+    reader_config.store ("max_record_per_file", 10000);
+    reader_config.store ("files.mode", "single");
+    reader_config.store ("files.single.filename", pipeline_simulated_data_filename);
     reader.initialize_standalone (reader_config);
     reader.tree_dump (std::clog, "Simulated data reader module");
 
