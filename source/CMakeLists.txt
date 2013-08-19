@@ -70,6 +70,7 @@ set(Bayeux_SUBMODULES
   genvtx
   trackfit
   brio
+  dpp
   )
 
 set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include/bayeux")
