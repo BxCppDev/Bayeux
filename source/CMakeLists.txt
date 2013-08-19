@@ -86,18 +86,18 @@ include_directories(${genbb_help_include_dir})
 #-----------------------------------------------------------------------
 # Build/Link the library
 #
-add_library(bayeux SHARED ${Bayeux_HEADERS} ${Bayeux_SOURCES})
-target_link_libraries(bayeux ${CMAKE_DL_LIBS})
-target_link_libraries(bayeux ${Boost_LIBRARIES})
-target_link_libraries(bayeux ${GSL_LIBRARIES})
-target_link_libraries(bayeux ${CLHEP_LIBRARIES})
-target_link_libraries(bayeux ${ROOT_LIBRARIES})
+add_library(Bayeux SHARED ${Bayeux_HEADERS} ${Bayeux_SOURCES})
+target_link_libraries(Bayeux ${CMAKE_DL_LIBS})
+target_link_libraries(Bayeux ${Boost_LIBRARIES})
+target_link_libraries(Bayeux ${GSL_LIBRARIES})
+target_link_libraries(Bayeux ${CLHEP_LIBRARIES})
+target_link_libraries(Bayeux ${ROOT_LIBRARIES})
 
 #-----------------------------------------------------------------------
 # Install targets and resources
 #
-install(TARGETS bayeux
-  EXPORT  bayeux-targets
+install(TARGETS Bayeux
+  EXPORT  BayeuxTargets
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
@@ -106,6 +106,9 @@ install(TARGETS bayeux
 install(DIRECTORY ${Bayeux_BUILDPRODUCT_DIR}/include/
   DESTINATION include
   )
+
+export(TARGETS Bayeux FILE ${Bayeux_BUILDPRODUCT_DIR}/lib/cmake/Bayeux-${Bayeux_VERSION}/BayeuxTargets.cmake)
+install(EXPORT BayeuxTargets DESTINATION lib/cmake/Bayeux-${Bayeux_VERSION})
 
 #-----------------------------------------------------------------------
 # Build unit tests if required
@@ -121,7 +124,7 @@ if(Bayeux_ENABLE_TESTING)
         APPEND PROPERTY INCLUDE_DIRECTORIES ${${_m}_test_dir}
         )
 
-      target_link_libraries(${_testname} bayeux)
+      target_link_libraries(${_testname} Bayeux)
       
       add_test(NAME ${_testname} COMMAND ${_testname})
       set_property(TEST ${_testname}

@@ -50,7 +50,7 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND} -E make_directory ${Bayeux_DOXYGEN_OUTPUT_DIR}
   COMMAND ${DOXYGEN_EXECUTABLE} ${Bayeux_DOXYFILE_OUT}
   WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
-  DEPENDS bayeux ${Bayeux_DOXYFILE_OUT}
+  DEPENDS Bayeux ${Bayeux_DOXYFILE_OUT}
   COMMENT "Doxygenating Bayeux"
   )
 

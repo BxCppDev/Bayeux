@@ -1,0 +1,46 @@
+# - Config file for the Bayeux package
+# It defines the following variables
+#  Bayeux_INCLUDE_DIRS - include directories for Bayeux
+#  Bayeux_DEFINITIONS  - compile definitions needed to use Bayeux
+#  Bayeux_LIBRARIES    - libraries to link against
+
+#----------------------------------------------------------------------
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#----------------------------------------------------------------------
+
+#-----------------------------------------------------------------------
+# Locate ourselves, since all our config files should have been installed
+# alongside us...
+#
+get_filename_component(__bayeux_config_dir "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+#-----------------------------------------------------------------------
+# Hard code paths to headers for now...
+#
+get_filename_component(BAYEUX_INCLUDE_DIR "${__bayeux_config_dir}/../../../i
+nclude/" ABSOLUTE CACHE)
+set(BAYEUX_INCLUDE_DIRS "${BAYEUX_INCLUDE_DIR}" "${BAYEUX_INCLUDE_DIR}/bayeux")
+
+#-----------------------------------------------------------------------
+# Handle paths/targets for third party deps here...
+
+#-----------------------------------------------------------------------
+# Include the file listing all the imported targets.
+# This is installed in the same location as us...
+#
+include("${__bayeux_config_dir}/BayeuxTargets.cmake")
+set(BAYEUX_LIBRARY bayeux CACHE FILE "Bayeux library (imported)")
+set(BAYEUX_LIBRARIES ${BAYEUX_LIBRARY})
+
+
