@@ -24,21 +24,18 @@
 #-----------------------------------------------------------------------
 # Configure build of Bayeux library
 # - Packages
+# - Boost
 find_package(Boost 1.48.0 REQUIRED filesystem system serialization iostreams)
+
+# - CLHEP
 find_package(CLHEP REQUIRED)
 
+# - GSL
 find_package(GSL QUIET NO_MODULE)
-if(NOT GSL_FOUND)
-  find_path(GSL_INCLUDE_DIR NAMES gsl/gsl_version.h DOC "Path to GSL headers")
-  find_library(GSL_LIBRARY NAMES gsl DOC "Path to GSL library")
-  find_library(GSL_CBLAS_LIBRARY NAMES gslcblas DOC "Path to GSL CBLAS library")
-  if(NOT GSL_INCLUDE_DIR OR NOT GSL_LIBRARY OR NOT GSL_CBLAS_LIBRARY)
-    message(FATAL_ERROR "Could NOT find GSL")
-  else()
-    set(GSL_INCLUDE_DIRS "${GSL_INCLUDE_DIR}")
-    set(GSL_LIBRARIES "${GSL_LIBRARY}" "${GSL_CBLAS_LIBRARY}")
-  endif()
-endif()
+
+# - ROOT
+find_package(ROOT 5.34.00 REQUIRED RIO Tree)
+
 
 # - Core Includes for Bayeux + Third Party
 include_directories(${Bayeux_BUILDPRODUCT_DIR}/include)
@@ -46,6 +43,7 @@ include_directories(${Bayeux_BUILDPRODUCT_DIR}/include/bayeux)
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${CLHEP_INCLUDE_DIRS})
 include_directories(${GSL_INCLUDE_DIRS})
+include_directories(${ROOT_INCLUDE_DIRS})
 
 # - Configure Bayeux submodule first
 set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include")
@@ -71,6 +69,7 @@ set(Bayeux_SUBMODULES
   genbb_help
   genvtx
   trackfit
+  brio
   )
 
 set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include/bayeux")
@@ -91,6 +90,7 @@ target_link_libraries(bayeux ${CMAKE_DL_LIBS})
 target_link_libraries(bayeux ${Boost_LIBRARIES})
 target_link_libraries(bayeux ${GSL_LIBRARIES})
 target_link_libraries(bayeux ${CLHEP_LIBRARIES})
+target_link_libraries(bayeux ${ROOT_LIBRARIES})
 
 #-----------------------------------------------------------------------
 # Install targets and resources
