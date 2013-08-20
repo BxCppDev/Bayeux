@@ -149,12 +149,12 @@ the required third party packages.
 To build Bayeux, simply do, from the directory in which this file
 resides:
 
-..code:: bash
+.. code:: sh
 
-$ mkdir build
-$ cd build
-$ cmake -DCMAKE_INSTALL_PREFIX=<where you want to install> -DCMAKE_PREFIX_PATH=<path to your Cadfael install> ..
-$ make && make install
+    $ mkdir build
+    $ cd build
+    $ cmake -DCMAKE_INSTALL_PREFIX=<where you want to install> -DCMAKE_PREFIX_PATH=<path to your Cadfael install> ..
+    $ make && make install
 
 
 Troubleshooting
