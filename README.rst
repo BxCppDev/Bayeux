@@ -39,10 +39,9 @@ genbb_help : C++ wrapper and extensions to the Decay0/GENBB program
 
 emfield :    Electromagnetic field modelling and management.
 
-mctools :    Tools and data models for Particle and Nuclear Physics
-             Monte-Carlo simulation, wrapper engine for the Geant4 framework.
-
 trackfit :   Track fitting in a NEMO-like detector.
+
+dpp :        A basic data processing pipeline API.
 
 
 Naming
@@ -142,7 +141,20 @@ None known at present.
 
 Installing Bayeux
 =================
-WIP
+Bayeux provides a CMake based build system. We'll assume for brevity
+that you are using a UNIX system on the command line (i.e. Mac or Linux).
+We'll also assume that you're going to use the Cadfael SDK to provide
+the required third party packages.
+
+To build Bayeux, simply do, from the directory in which this file
+resides:
+
+..code:: shell
+
+$ mkdir build
+$ cd build
+$ cmake -DCMAKE_INSTALL_PREFIX=<where you want to install> -DCMAKE_PREFIX_PATH=<path to your Cadfael install> ..
+$ make && make install
 
 
 Troubleshooting
@@ -152,7 +164,7 @@ WIP
 
 Using Bayeux
 ============
-WIP
+See the projects under the examples directory.
 
 
 Developing Bayeux
