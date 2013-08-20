@@ -82,28 +82,9 @@ endif()
 add_subdirectory(source)
 add_subdirectory(doc)
 
-#-----------------------------------------------------------------------
-# Generate support files
-#
-# - Versioning (build and install trees)
-configure_file(cmake/BayeuxVersionConfig.cmake.in
-  ${Bayeux_BUILDPRODUCT_DIR}/lib/cmake/Bayeux-${Bayeux_VERSION}/BayeuxVersionConfig.cmake
-  @ONLY
-  )
-
-# - Config (build and install trees *at present*)
-configure_file(cmake/BayeuxConfig.cmake.in
-  ${Bayeux_BUILDPRODUCT_DIR}/lib/cmake/Bayeux-${Bayeux_VERSION}/BayeuxConfig.cmake
-  @ONLY
-  )
-
-install(
-  FILES 
-    ${Bayeux_BUILDPRODUCT_DIR}/lib/cmake/Bayeux-${Bayeux_VERSION}/BayeuxVersionConfig.cmake
-    ${Bayeux_BUILDPRODUCT_DIR}/lib/cmake/Bayeux-${Bayeux_VERSION}/BayeuxConfig.cmake
-  DESTINATION 
-    lib/cmake/Bayeux-${Bayeux_VERSION}
-  )
+if(Bayeux_ENABLE_TESTING)
+  add_subdirectory(examples)
+endif()
 
 #-----------------------------------------------------------------------
 # Package Sources and Binaries

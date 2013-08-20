@@ -111,6 +111,30 @@ export(TARGETS Bayeux FILE ${Bayeux_BUILDPRODUCT_DIR}/lib/cmake/Bayeux-${Bayeux_
 install(EXPORT BayeuxTargets DESTINATION lib/cmake/Bayeux-${Bayeux_VERSION})
 
 #-----------------------------------------------------------------------
+# Configure/Install support files
+# Done here so that external package variables are visible
+#
+# - Versioning (build and install trees)
+configure_file(${PROJECT_SOURCE_DIR}/cmake/BayeuxVersionConfig.cmake.in
+  ${Bayeux_BUILDPRODUCT_DIR}/lib/cmake/Bayeux-${Bayeux_VERSION}/BayeuxVersionConfig.cmake
+  @ONLY
+  )
+
+# - Config (build and install trees *at present*)
+configure_file(${PROJECT_SOURCE_DIR}/cmake/BayeuxConfig.cmake.in
+  ${Bayeux_BUILDPRODUCT_DIR}/lib/cmake/Bayeux-${Bayeux_VERSION}/BayeuxConfig.cmake
+  @ONLY
+  )
+
+install(
+  FILES 
+    ${Bayeux_BUILDPRODUCT_DIR}/lib/cmake/Bayeux-${Bayeux_VERSION}/BayeuxVersionConfig.cmake
+    ${Bayeux_BUILDPRODUCT_DIR}/lib/cmake/Bayeux-${Bayeux_VERSION}/BayeuxConfig.cmake
+  DESTINATION 
+    lib/cmake/Bayeux-${Bayeux_VERSION}
+  )
+
+#-----------------------------------------------------------------------
 # Build unit tests if required
 # - NB assumes each test .cxx file generates a single executable
 if(Bayeux_ENABLE_TESTING)
