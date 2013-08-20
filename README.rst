@@ -149,7 +149,7 @@ the required third party packages.
 To build Bayeux, simply do, from the directory in which this file
 resides:
 
-..code:: shell
+..code:: bash
 
 $ mkdir build
 $ cd build
