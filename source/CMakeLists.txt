@@ -51,6 +51,7 @@ include(bxbayeux_module.cmake)
 set(Bayeux_HEADERS ${bayeux_MODULE_HEADERS})
 set(Bayeux_SOURCES ${bayeux_MODULE_SOURCES})
 set(Bayeux_TESTS)
+set(Bayeux_RESOURCES)
 
 # - The LPC Modules
 # The processing order should be from least to most dependent
@@ -74,10 +75,13 @@ set(Bayeux_SUBMODULES
   )
 
 set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include/bayeux")
+set(MODULE_RESOURCE_ROOT "${Bayeux_BUILDPRODUCT_DIR}/share/Bayeux-${Bayeux_VERSION}/resources")
+
 foreach(_m ${Bayeux_SUBMODULES})
   include(bx${_m}_module.cmake)
   list(APPEND Bayeux_HEADERS ${${_m}_MODULE_HEADERS})
   list(APPEND Bayeux_SOURCES ${${_m}_MODULE_SOURCES})
+  list(APPEND Bayeux_RESOURCES ${${_m}_MODULE_RESOURCES})
 endforeach()
 
 # Hack for genbb private headers
@@ -102,18 +106,21 @@ install(TARGETS Bayeux
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
   )
-
 install(DIRECTORY ${Bayeux_BUILDPRODUCT_DIR}/include/
   DESTINATION include
   )
-
-export(TARGETS Bayeux FILE ${Bayeux_BUILDPRODUCT_DIR}/lib/cmake/Bayeux-${Bayeux_VERSION}/BayeuxTargets.cmake)
-install(EXPORT BayeuxTargets DESTINATION lib/cmake/Bayeux-${Bayeux_VERSION})
+install(DIRECTORY ${Bayeux_BUILDPRODUCT_DIR}/share/
+  DESTINATION share
+  )
 
 #-----------------------------------------------------------------------
 # Configure/Install support files
 # Done here so that external package variables are visible
 #
+# - Targets
+export(TARGETS Bayeux FILE ${Bayeux_BUILDPRODUCT_DIR}/lib/cmake/Bayeux-${Bayeux_VERSION}/BayeuxTargets.cmake)
+install(EXPORT BayeuxTargets DESTINATION lib/cmake/Bayeux-${Bayeux_VERSION})
+
 # - Versioning (build and install trees)
 configure_file(${PROJECT_SOURCE_DIR}/cmake/BayeuxVersionConfig.cmake.in
   ${Bayeux_BUILDPRODUCT_DIR}/lib/cmake/Bayeux-${Bayeux_VERSION}/BayeuxVersionConfig.cmake

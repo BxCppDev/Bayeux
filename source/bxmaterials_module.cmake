@@ -3,9 +3,11 @@
 # To configure the module headers, the variable
 # MODULE_HEADER_ROOT must be set before including this file
 
-if(NOT MODULE_HEADER_ROOT)
-  message(FATAL_ERROR "MODULE_HEADER_ROOT not specified")
-endif()
+foreach(_modulevar MODULE_HEADER_ROOT MODULE_RESOURCE_ROOT)
+  if(NOT ${_modulevar})
+    message(FATAL_ERROR "${_modulevar} not specified")
+  endif()
+endforeach()
 
 # - Module
 set(module_name materials)
@@ -13,8 +15,9 @@ set(module_root_dir "${CMAKE_CURRENT_SOURCE_DIR}/bx${module_name}")
 set(module_include_dir "${module_root_dir}/include")
 set(module_source_dir  "${module_root_dir}/src")
 set(module_test_dir    "${module_root_dir}/testing")
+set(module_resource_dir "${module_root_dir}/resources")
 
-foreach(dir root_dir include_dir source_dir test_dir)
+foreach(dir root_dir include_dir source_dir test_dir resource_dir)
   set(${module_name}_${dir} ${module_${dir}})
 endforeach()
 
@@ -67,3 +70,23 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_material.cxx
   ${module_test_dir}/test_materials.cxx
   )
+
+# - Resource files
+set(${module_name}_MODULE_RESOURCES
+  ${module_resource_dir}/data/isotopic_compositions_nist.dat
+  ${module_resource_dir}/data/JEFF311RDD_ALL.OUT
+  ${module_resource_dir}/data/mass.mas03
+  ${module_resource_dir}/data/README.txt
+  ${module_resource_dir}/data/simple_elements.def
+  ${module_resource_dir}/data/std_elements.def
+  ${module_resource_dir}/data/std_isotopes.def
+  ${module_resource_dir}/data/std_materials.def
+  )
+
+# - Publish resource files
+foreach(_rfin ${${module_name}_MODULE_RESOURCES})
+  string(REGEX REPLACE "\\.in$" "" _rfout "${_rfin}")
+  string(REGEX REPLACE "^${module_resource_dir}" "${MODULE_RESOURCE_ROOT}" _rfout "${_rfout}")
+  configure_file(${_rfin} ${_rfout} @ONLY)
+endforeach()
+

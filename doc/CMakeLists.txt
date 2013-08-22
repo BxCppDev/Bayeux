@@ -37,7 +37,7 @@ find_package(Doxygen 1.8.0 REQUIRED)
 
 set(Bayeux_DOXYFILE_IN  bayeux_doxygen.conf.in)
 set(Bayeux_DOXYFILE_OUT ${PROJECT_BINARY_DIR}/doc/bayeux_doxygen.conf)
-set(Bayeux_DOXYGEN_OUTPUT_DIR  ${Bayeux_BUILDPRODUCT_DIR}/share/bayeux/Documentation/API)
+set(Bayeux_DOXYGEN_OUTPUT_DIR  ${Bayeux_BUILDPRODUCT_DIR}/share/Bayeux-${Bayeux_VERSION}/Documentation/API)
 set(Bayeux_DOXYGEN_OUTPUT_FILE ${Bayeux_DOXYGEN_OUTPUT_DIR}/html/index.html)
 
 #-----------------------------------------------------------------------
