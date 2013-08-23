@@ -47,8 +47,8 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/element.cc
   ${module_source_dir}/factory.cc
   ${module_source_dir}/isotope.cc
-  ${module_source_dir}/manager.cc
   ${module_source_dir}/material.cc
+  ${module_source_dir}/manager.cc
   ${module_source_dir}/materials_driver.cc
   )
 
