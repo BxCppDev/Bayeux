@@ -38,6 +38,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/isotope.h
   ${module_include_dir}/${module_name}/manager.h
   ${module_include_dir}/${module_name}/material.h
+  ${module_include_dir}/${module_name}/materials_driver.h
   ${module_include_dir}/${module_name}/materials_config.h.in
   )
 
@@ -48,6 +49,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/isotope.cc
   ${module_source_dir}/manager.cc
   ${module_source_dir}/material.cc
+  ${module_source_dir}/materials_driver.cc
   )
 
 # - Published headers
