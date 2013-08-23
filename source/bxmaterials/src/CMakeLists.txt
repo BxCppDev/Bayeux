@@ -32,6 +32,7 @@ include/materials/factory.h
 include/materials/isotope.h
 include/materials/manager.h
 include/materials/material.h
+include/materials/materials_driver.h
   )
 list_prepend(materials_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 
@@ -78,6 +79,7 @@ set(materials_SOURCES
     element.cc
     factory.cc
     manager.cc
+    materials_driver.cc
   )
 
 #-----------------------------------------------------------------------

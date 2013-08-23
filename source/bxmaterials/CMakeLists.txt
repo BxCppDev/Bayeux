@@ -125,7 +125,7 @@ install ( DIRECTORY ${PROJECT_SOURCE_DIR}/resources/data
          )
 
 # - Examples :
-set(_datatools_examples_FULL_LOCAL_PATH
+set(_materials_examples_FULL_LOCAL_PATH
     "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/examples"
    )
 
