@@ -23,12 +23,6 @@
 
 #define MATERIALS_LIB_VERSION "@materials_VERSION@"
 
-/***  materials debug flag ***/
-#cmakedefine01 MATERIALS_WITH_DEBUG
-
-/***  materials embedded CAMP-based reflection ***/
-//#cmakedefine01 MATERIALS_WITH_REFLECTION
-
 #define MATERIALS_DATA_SCHEMA_LOCAL_PATH "@_materials_DATA_SCHEMA_FULL_LOCAL_PATH@"
 
 //! The installation path of the geomtools resource files :
