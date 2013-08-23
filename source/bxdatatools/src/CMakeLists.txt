@@ -73,6 +73,7 @@ set(datatools_PUBLIC_HEADERS
 
   include/datatools/object_configuration_description.h
   include/datatools/ocd_macros.h
+  include/datatools/ocd_driver.h
 
   include/datatools/i_serializable.ipp
   include/datatools/event_id.ipp
@@ -192,6 +193,7 @@ set(datatools_SOURCES
   version_id.cc
   object_configuration_description.cc
   ocd_utils.cc
+  ocd_driver.cc
   types.cc
   the_serializable.cc
   base_service.cc # MUST go at the end....
