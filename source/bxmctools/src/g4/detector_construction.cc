@@ -48,8 +48,6 @@ namespace mctools {
 
   namespace g4 {
 
-    using namespace std;
-
     const double detector_construction::DEFAULT_MISS_DISTANCE = 0.5 * CLHEP::mm;
 
     const detector_construction::sensitive_detector_dict_type &
@@ -67,14 +65,14 @@ namespace mctools {
     const manager &
     detector_construction::get_manager() const
     {
-      DT_THROW_IF (_g4_manager_ == 0, logic_error,"Operation prohibited !");
+      DT_THROW_IF (_g4_manager_ == 0, std::logic_error, "Operation prohibited !");
       return *_g4_manager_;
     }
 
     manager &
     detector_construction::grab_manager()
     {
-      DT_THROW_IF (_g4_manager_ == 0, logic_error,"Operation prohibited !");
+      DT_THROW_IF (_g4_manager_ == 0, std::logic_error, "Operation prohibited !");
       return *_g4_manager_;
     }
 
@@ -93,21 +91,22 @@ namespace mctools {
 
       _g4_manager_ = &g4_mgr_;
       _geom_manager_ = 0;
-      _generate_gdml_file_ = true;
       _materials_geom_plugin_name_ = "";
-      _gdml_filename_ = "";
-      _gdml_file_dir_ = "";
-      _gdml_schema_ = geomtools::gdml_writer::DEFAULT_REMOTE_GDML_SCHEMA;
-      _gdml_validation_ = true;
 
-      _using_vis_attributes_ = true;
-      _using_user_limits_ = true;
-      _using_regions_ = true;
+      _generate_gdml_file_ = true;
+      _gdml_filename_      = "";
+      _gdml_file_dir_      = "";
+      _gdml_schema_        = geomtools::gdml_writer::DEFAULT_REMOTE_GDML_SCHEMA;
+      _gdml_validation_    = true;
+
+      _using_vis_attributes_      = true;
+      _using_user_limits_         = true;
+      _using_regions_             = true;
       _using_sensitive_detectors_ = true;
-      _using_mag_field_ = true;
-      _mag_field_manager_  = 0;
-      _miss_distance_unit_ = CLHEP::mm;
-      _general_miss_distance_ = DEFAULT_MISS_DISTANCE;
+      _using_mag_field_           = true;
+      _mag_field_manager_         = 0;
+      _miss_distance_unit_        = CLHEP::mm;
+      _general_miss_distance_     = DEFAULT_MISS_DISTANCE;
       return;
     }
 
@@ -117,8 +116,8 @@ namespace mctools {
 
       // Clear visualization attributes:
       _vis_attributes_.clear();
-      for (map<string, G4VisAttributes *>::iterator i = _vis_attributes_.begin();
-           i != _vis_attributes_.end();
+      for (std::map<std::string, G4VisAttributes *>::iterator
+             i = _vis_attributes_.begin(); i != _vis_attributes_.end();
            ++i) {
         if (i->second != 0) {
           delete i->second;
@@ -127,7 +126,7 @@ namespace mctools {
       }
 
       // Clear user limits:
-      for (list<G4UserLimits *>::iterator i = _user_limits_col_.begin();
+      for (std::list<G4UserLimits *>::iterator i = _user_limits_col_.begin();
            i != _user_limits_col_.end();
            ++i) {
         if (*i != 0) {
@@ -676,7 +675,7 @@ namespace mctools {
         }
 
         // Get the 'sensitive category' for this detector :
-        string sensitive_category
+        std::string sensitive_category
           = geomtools::sensitive::get_sensitive_category(log.get_parameters());
         if (sensitive_category.empty()) {
           DT_LOG_WARNING(_logprio(),"Empty sensitive category name ! Ignore !");
@@ -777,7 +776,7 @@ namespace mctools {
              = _SHPF_.get_processors().begin();
            iSHP != _SHPF_.get_processors().end();
            ++iSHP) {
-          const string & hit_category = iSHP->second->get_hit_category();
+        const std::string & hit_category = iSHP->second->get_hit_category();
           if (_g4_manager_->forbids_private_hits()) {
             if (boost::starts_with(hit_category, "_")) {
               DT_LOG_WARNING(_logprio(),
@@ -788,7 +787,7 @@ namespace mctools {
             }
           }
 
-          const string & from_processor_sensitive_category = iSHP->second->get_sensitive_category();
+          const std::string & from_processor_sensitive_category = iSHP->second->get_sensitive_category();
 
           // If the sensitive_category already exists (from the geometry model setup):
           if (_sensitive_detectors_.find(from_processor_sensitive_category)
@@ -858,7 +857,7 @@ namespace mctools {
                             << from_processor_sensitive_category << "'");
               iSHP->second->get_auxiliaries().fetch("geometry.volumes.with_materials", materials);
 
-              ostringstream message;
+              std::ostringstream message;
               message << "SHPF: Searching for logical volumes with material in (";
               for (int j = 0; j < materials.size(); j++) {
                 if (j != 0) message << ',';
@@ -873,7 +872,7 @@ namespace mctools {
                      = _geom_manager_->get_factory().get_logicals().begin();
                    ilogical != _geom_manager_->get_factory().get_logicals().end();
                    ++ilogical) {
-                const string & logical_name = ilogical->first;
+                const std::string & logical_name = ilogical->first;
                 const geomtools::logical_volume & log = *(ilogical->second);;
                 bool checked_material = false;
                 std::string mat_name;
@@ -903,7 +902,7 @@ namespace mctools {
             if (iSHP->second->get_auxiliaries().has_key("geometry.volumes.excluded")) {
               std::vector<std::string> excluded_logicals;
               iSHP->second->get_auxiliaries().fetch("geometry.volumes.excluded", excluded_logicals);
-              ostringstream message;
+              std::ostringstream message;
               message << "SHPF: Excluding logical volumes in (";
               for (int j = 0; j < excluded_logicals.size(); j++) {
                 if (j != 0) message << ',';
@@ -928,10 +927,10 @@ namespace mctools {
             // Loop on the specified logical volumes and make them sensitive
             // with the new sensitive detector.
             // Detect conflict(more than one sensitive detector per logical volume).
-            for (vector<string>::const_iterator ilogical = logicals.begin();
+            for (std::vector<std::string>::const_iterator ilogical = logicals.begin();
                  ilogical != logicals.end();
                  ++ilogical) {
-              const string & logical_name = *ilogical;
+              const std::string & logical_name = *ilogical;
               geomtools::logical_volume::dict_type::const_iterator found
                 = _geom_manager_->get_factory().get_logicals().find(logical_name);
               if (found == _geom_manager_->get_factory().get_logicals().end()) {
@@ -974,7 +973,7 @@ namespace mctools {
                                                              from_processor_sensitive_category);
               }
 
-              ostringstream message;
+              std::ostringstream message;
               message << "SHPF: Make the G4 logical volume '" << log.get_name()
                       << "' a sensitive detector with category '"
                       << from_processor_sensitive_category << "'";
@@ -992,8 +991,8 @@ namespace mctools {
              = _SHPF_.get_processors().begin();
            iSHP != _SHPF_.get_processors().end();
            ++iSHP) {
-        const string & processor_name = iSHP->first;
-        const string & hit_category = iSHP->second->get_hit_category();
+        const std::string & processor_name = iSHP->first;
+        const std::string & hit_category = iSHP->second->get_hit_category();
         if (_g4_manager_->forbids_private_hits()) {
           if (boost::starts_with(hit_category, "_")) {
             DT_LOG_WARNING(_logprio(), "SHPF: Sensitive detector '" << iSHP->second->get_name()
@@ -1002,7 +1001,7 @@ namespace mctools {
             continue;
           }
         }
-        const string & from_processor_sensitive_category = iSHP->second->get_sensitive_category();
+        const std::string & from_processor_sensitive_category = iSHP->second->get_sensitive_category();
         sensitive_detector_dict_type::iterator iSD
           = _sensitive_detectors_.find(from_processor_sensitive_category);
         if (iSD == _sensitive_detectors_.end()) {
@@ -1018,10 +1017,10 @@ namespace mctools {
                = _sensitive_detectors_.begin();
              iSD != _sensitive_detectors_.end();
              ++iSD) {
-          const string & sensitive_category = iSD->first;
+          const std::string & sensitive_category = iSD->first;
           sensitive_detector * SD = iSD->second;
           DT_LOG_NOTICE(_logprio(),"Sensitive detector '" << sensitive_category << "' : ");
-          SD->tree_dump(clog, "");
+          SD->tree_dump(std::clog, "");
         }
       }
 
@@ -1051,31 +1050,31 @@ namespace mctools {
 
       DT_THROW_IF (! _geom_manager_->is_initialized(), std::logic_error,
                    "Geometry manager is not initialized !");
-      ostringstream tmp_file_template_oss;
+      std::ostringstream tmp_file_template_oss;
       if (! _gdml_file_dir_.empty()) {
         if (! boost::filesystem::is_directory(_gdml_file_dir_)) {
           bool do_mkdir = true;
           if (do_mkdir) {
             DT_LOG_WARNING(_logprio(), "Attempt to create the temporary directory '"
                            << _gdml_file_dir_ << "'...");
-            ostringstream syscmd;
+            std::ostringstream syscmd;
             syscmd << "mkdir -p " << _gdml_file_dir_;
             int syserr = system(syscmd.str().c_str());
             DT_THROW_IF (syserr == -1, std::runtime_error,
                          "Cannot create temporary directory '" << _gdml_file_dir_ << "' !");
           } else {
-            DT_THROW_IF(true, logic_error, "Temporary directory '" << _gdml_file_dir_ << "' does not exist !");
+            DT_THROW_IF(true, std::logic_error, "Temporary directory '" << _gdml_file_dir_ << "' does not exist !");
           }
         }
         tmp_file_template_oss << _gdml_file_dir_ << '/';
       }
-      tmp_file_template_oss << "mctools_g4_geometry.gdml." << "XXXXXX" << ends;
-      string tmp_file_template = tmp_file_template_oss.str();
+      tmp_file_template_oss << "mctools_g4_geometry.gdml." << "XXXXXX" << std::ends;
+      std::string tmp_file_template = tmp_file_template_oss.str();
       char tmp_gdml_filename[1024];
       copy(tmp_file_template.begin(), tmp_file_template.end(), tmp_gdml_filename);
 
       int err = mkstemp(tmp_gdml_filename);
-      DT_THROW_IF (err == -1, runtime_error, "Cannot create GDML temporary file !");
+      DT_THROW_IF (err == -1, std::runtime_error, "Cannot create GDML temporary file !");
       _gdml_filename_ = tmp_gdml_filename;
 
 
@@ -1193,14 +1192,14 @@ namespace mctools {
       for (region_infos_dict_type::const_iterator i = _region_infos_.begin();
            i != _region_infos_.end();
            ++i) {
-        const string & the_region_name = i->first;
-        const vector<string> & the_region_infos = i->second;
+        const std::string & the_region_name = i->first;
+        const std::vector<std::string> & the_region_infos = i->second;
 
         G4Region * the_region = new G4Region(the_region_name);
 
         for (unsigned int j = 0; j < the_region_infos.size(); ++j) {
           G4LogicalVolume * a_logical = 0;
-          string logical_volume_name = the_region_infos[j];
+          std::string logical_volume_name = the_region_infos[j];
           G4String g4_logical_volume_name = logical_volume_name.c_str();
           a_logical = g4_LV_store->GetVolume(g4_logical_volume_name, false);
           if (a_logical != 0) {
@@ -1240,7 +1239,7 @@ namespace mctools {
         const geomtools::logical_volume & log = *(ilogical->second);
         bool   visible = true;
         bool   daughters_visible = true;
-        string display_color;
+        std::string display_color;
         bool   force_wire_frame = true;
         bool   force_solid = false;
         if (geomtools::visibility::is_hidden(log.get_parameters())) {
