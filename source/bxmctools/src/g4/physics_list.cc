@@ -193,6 +193,10 @@ namespace mctools {
       if (_logprio() >= datatools::logger::PRIO_DEBUG) {
         config_.tree_dump(std::cerr);
       }
+      // Set G4VUserPhysicsList verbosity
+      if (_logprio () < datatools::logger::PRIO_NOTICE)     SetVerboseLevel (VERBOSITY_SILENT);
+      else if (_logprio () < datatools::logger::PRIO_DEBUG) SetVerboseLevel (VERBOSITY_WARNING);
+      else                                                  SetVerboseLevel (VERBOSITY_MORE);
 
       // *********************** Geant4 physics list *************************** //
 
