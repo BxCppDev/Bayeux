@@ -12,8 +12,6 @@
 
 namespace mctools {
 
-  using namespace std;
-
   /*** serialization ***/
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (simulated_data,"mctools::simulated_data")
 
@@ -145,9 +143,9 @@ namespace mctools {
     return _plain_step_hits_dict_;
   }
 
-  void simulated_data::get_step_hits_categories (vector<string> & the_categories,
+  void simulated_data::get_step_hits_categories (std::vector<std::string> & the_categories,
                                                  unsigned int a_mode,
-                                                 const string & a_prefix) const
+                                                 const std::string & a_prefix) const
   {
     the_categories.clear ();
     if (a_mode == HIT_CATEGORY_TYPE_ALL) {
@@ -157,7 +155,7 @@ namespace mctools {
         for (step_hits_dict_type::const_iterator i = _step_hits_dict_.begin ();
              i != _step_hits_dict_.end ();
              i++) {
-          const string & category = i->first;
+          const std::string & category = i->first;
           the_categories[count] = category;
           ++count;
         }
@@ -168,7 +166,7 @@ namespace mctools {
         for (plain_step_hits_dict_type::const_iterator i = _plain_step_hits_dict_.begin ();
              i != _plain_step_hits_dict_.end ();
              i++) {
-          const string & category = i->first;
+          const std::string & category = i->first;
           the_categories[count] = category;
           ++count;
         }
@@ -180,7 +178,7 @@ namespace mctools {
         for (step_hits_dict_type::const_iterator i = _step_hits_dict_.begin ();
              i != _step_hits_dict_.end ();
              i++) {
-          const string & category = i->first;
+          const std::string & category = i->first;
           if (! boost::starts_with(category, "--")) {
             the_categories.push_back (category);
           }
@@ -191,7 +189,7 @@ namespace mctools {
         for (plain_step_hits_dict_type::const_iterator i = _plain_step_hits_dict_.begin ();
              i != _plain_step_hits_dict_.end ();
              i++) {
-          const string & category = i->first;
+          const std::string & category = i->first;
           if (! boost::starts_with(category, "--")) {
             the_categories.push_back (category);
           }
@@ -204,7 +202,7 @@ namespace mctools {
         for (step_hits_dict_type::const_iterator i = _step_hits_dict_.begin ();
              i != _step_hits_dict_.end ();
              i++) {
-          const string & category = i->first;
+          const std::string & category = i->first;
           if (boost::starts_with(category, "--")) {
             the_categories.push_back (category);
           }
@@ -215,7 +213,7 @@ namespace mctools {
         for (plain_step_hits_dict_type::const_iterator i = _plain_step_hits_dict_.begin ();
              i != _plain_step_hits_dict_.end ();
              i++) {
-          const string & category = i->first;
+          const std::string & category = i->first;
           if (boost::starts_with(category, "--")) {
             the_categories.push_back (category);
           }
@@ -228,7 +226,7 @@ namespace mctools {
         for (step_hits_dict_type::const_iterator i = _step_hits_dict_.begin ();
              i != _step_hits_dict_.end ();
              i++) {
-          const string & category = i->first;
+          const std::string & category = i->first;
           if (boost::starts_with(category, a_prefix)) {
             the_categories.push_back (category);
           }
@@ -239,7 +237,7 @@ namespace mctools {
         for (plain_step_hits_dict_type::const_iterator i = _plain_step_hits_dict_.begin ();
              i != _plain_step_hits_dict_.end ();
              i++) {
-          const string & category = i->first;
+          const std::string & category = i->first;
           if (boost::starts_with(category, a_prefix)) {
             the_categories.push_back (category);
           }
@@ -252,7 +250,7 @@ namespace mctools {
     return;
   }
 
-  simulated_data & simulated_data::add_step_hits (const string & a_category, size_t a_capacity)
+  simulated_data & simulated_data::add_step_hits (const std::string & a_category, size_t a_capacity)
   {
     if (use_handle_hit_collection ()) {
       if (has_step_hits (a_category)) {
@@ -277,7 +275,7 @@ namespace mctools {
     return *this;
   }
 
-  simulated_data & simulated_data::remove_step_hits (const string & a_category)
+  simulated_data & simulated_data::remove_step_hits (const std::string & a_category)
   {
     if (use_handle_hit_collection ()) {
       step_hits_dict_type::iterator found = _step_hits_dict_.find (a_category);
@@ -297,7 +295,7 @@ namespace mctools {
   }
 
   base_step_hit &
-  simulated_data::add_step_hit (const string & a_category)
+  simulated_data::add_step_hit (const std::string & a_category)
   {
     if (use_handle_hit_collection ()) {
       step_hits_dict_type::iterator found
@@ -320,7 +318,7 @@ namespace mctools {
     }
   }
 
-  size_t simulated_data::get_number_of_step_hits (const string & a_category) const
+  size_t simulated_data::get_number_of_step_hits (const std::string & a_category) const
   {
     if (use_handle_hit_collection ()) {
       step_hits_dict_type::const_iterator found
@@ -341,7 +339,7 @@ namespace mctools {
   }
 
   const base_step_hit &
-  simulated_data::get_step_hit (const string & a_category, int a_hit_index) const
+  simulated_data::get_step_hit (const std::string & a_category, int a_hit_index) const
   {
     if (use_handle_hit_collection ()) {
       step_hits_dict_type::const_iterator found
@@ -371,7 +369,7 @@ namespace mctools {
   }
 
   base_step_hit &
-  simulated_data::grab_step_hit (const string & a_category, int a_hit_index)
+  simulated_data::grab_step_hit (const std::string & a_category, int a_hit_index)
   {
     if (use_handle_hit_collection ()) {
       step_hits_dict_type::iterator found
@@ -400,7 +398,7 @@ namespace mctools {
     }
   }
 
-  bool simulated_data::has_step_hits (const string & a_category) const
+  bool simulated_data::has_step_hits (const std::string & a_category) const
   {
     if (use_handle_hit_collection ()) {
       return _step_hits_dict_.find (a_category) != _step_hits_dict_.end ();
@@ -412,7 +410,7 @@ namespace mctools {
   }
 
   simulated_data::hit_handle_collection_type &
-  simulated_data::grab_step_hits (const string & a_category)
+  simulated_data::grab_step_hits (const std::string & a_category)
   {
     DT_THROW_IF (! use_handle_hit_collection (),
                  std::logic_error,
@@ -425,7 +423,7 @@ namespace mctools {
   }
 
   const simulated_data::hit_handle_collection_type &
-  simulated_data::get_step_hits (const string & a_category) const
+  simulated_data::get_step_hits (const std::string & a_category) const
   {
     DT_THROW_IF (! use_handle_hit_collection (),
                  std::logic_error,
@@ -439,7 +437,7 @@ namespace mctools {
 
 
   simulated_data::hit_collection_type &
-  simulated_data::grab_plain_step_hits (const string & a_category)
+  simulated_data::grab_plain_step_hits (const std::string & a_category)
   {
     DT_THROW_IF (! use_plain_hit_collection (),
                  std::logic_error,
@@ -452,7 +450,7 @@ namespace mctools {
   }
 
   const simulated_data::hit_collection_type &
-  simulated_data::get_plain_step_hits (const string & a_category) const
+  simulated_data::get_plain_step_hits (const std::string & a_category) const
   {
     DT_THROW_IF (! use_plain_hit_collection (),
                  std::logic_error,
@@ -513,111 +511,110 @@ namespace mctools {
 
   /*** tree_dump ***/
 
-  void simulated_data::tree_dump (ostream & a_out,
-                                  const string & a_title,
-                                  const string & a_indent,
+  void simulated_data::tree_dump (std::ostream & a_out,
+                                  const std::string & a_title,
+                                  const std::string & a_indent,
                                   bool a_inherit) const
   {
-    string indent;
+    std::string indent;
     if (! a_indent.empty ()) {
       indent = a_indent;
     }
     if ( !a_title.empty () ) {
-      a_out << indent << a_title << endl;
+      a_out << indent << a_title << std::endl;
     }
-    namespace du = datatools;
 
     // Properties:
     {
-      a_out << indent << du::i_tree_dumpable::tag
+      a_out << indent << datatools::i_tree_dumpable::tag
             << "Properties : ";
       if (_properties_.size () == 0) {
         a_out << "<empty>";
       }
-      a_out << endl;
+      a_out << std::endl;
       {
-        ostringstream indent_oss;
+        std::ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << du::i_tree_dumpable::skip_tag;
+        indent_oss << datatools::i_tree_dumpable::skip_tag;
         _properties_.tree_dump (a_out, "", indent_oss.str ());
       }
     }
 
     // Collection type :
-    a_out << indent << du::i_tree_dumpable::tag
-          << "Collection type : " << (int) _collection_type_ << endl;
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Collection type : " << (int) _collection_type_ << std::endl;
 
     // Step hits collections (handle type):
     if (use_handle_hit_collection ()) {
-      a_out << indent << du::i_tree_dumpable::tag
+      a_out << indent << datatools::i_tree_dumpable::tag
             << "Collections of step hit handles : ";
       if (_step_hits_dict_.size () == 0) {
         a_out << "None";
       }
-      a_out << endl;
+      a_out << std::endl;
       for (step_hits_dict_type::const_iterator i = _step_hits_dict_.begin ();
            i != _step_hits_dict_.end ();
            i++) {
-        const string & category = i->first;
+        const std::string & category = i->first;
         size_t no_hits = i->second.size ();
         step_hits_dict_type::const_iterator j = i;
         j++;
-        a_out << indent << du::i_tree_dumpable::skip_tag;
+        a_out << indent << datatools::i_tree_dumpable::skip_tag;
         if (j == _step_hits_dict_.end ()) {
-          a_out << du::i_tree_dumpable::last_tag;
+          a_out << datatools::i_tree_dumpable::last_tag;
         } else {
-          a_out << du::i_tree_dumpable::tag;
+          a_out << datatools::i_tree_dumpable::tag;
         }
         a_out << "Category '" << category << "' has "
               << no_hits << " hit(s)"  << " [capacity="
-              << i->second.capacity () << ']' << endl;
+              << i->second.capacity () << ']' << std::endl;
       }
     }
 
     // Step hits collections (plain type):
     if (use_plain_hit_collection ()) {
-        a_out << indent << du::i_tree_dumpable::tag
+        a_out << indent << datatools::i_tree_dumpable::tag
               << "Collections of plain step hits : ";
         if (_plain_step_hits_dict_.size () == 0) {
           a_out << "None";
         }
-        a_out << endl;
+        a_out << std::endl;
         for (plain_step_hits_dict_type::const_iterator i = _plain_step_hits_dict_.begin ();
              i != _plain_step_hits_dict_.end ();
              i++) {
-          const string & category = i->first;
+          const std::string & category = i->first;
           size_t no_hits = i->second.size ();
           plain_step_hits_dict_type::const_iterator j = i;
           j++;
-          a_out << indent << du::i_tree_dumpable::skip_tag;
+          a_out << indent << datatools::i_tree_dumpable::skip_tag;
           if (j == _plain_step_hits_dict_.end ()) {
-            a_out << du::i_tree_dumpable::last_tag;
+            a_out << datatools::i_tree_dumpable::last_tag;
           }
           else {
-            a_out << du::i_tree_dumpable::tag;
+            a_out << datatools::i_tree_dumpable::tag;
           }
           a_out << "Category '" << category << "' has "
                 << no_hits << " hit(s)"  << " [capacity="
-                << i->second.capacity () << ']' << endl;
+                << i->second.capacity () << ']' << std::endl;
         }
       }
 
     // Primary event:
     {
-      a_out << indent << du::i_tree_dumpable::tag
-            << "Primary event : " << endl;
+      a_out << indent << datatools::i_tree_dumpable::tag
+            << "Primary event : " << std::endl;
       {
-        ostringstream indent_oss;
+        std::ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << du::i_tree_dumpable::skip_tag;
+        indent_oss << datatools::i_tree_dumpable::skip_tag;
         _primary_event_.tree_dump (a_out, "", indent_oss.str ());
       }
     }
 
     // Vertex:
     {
-      a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)
-            << "Vertex : " << _vertex_ / CLHEP::mm  << " mm"<< endl;
+      a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
+            << "Vertex : " << _vertex_ / CLHEP::mm  << " mm"<< std::endl;
     }
 
     return;

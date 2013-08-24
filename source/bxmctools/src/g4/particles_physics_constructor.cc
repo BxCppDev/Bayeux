@@ -338,51 +338,50 @@ namespace mctools {
                                                    bool inherit_) const
     {
       this->base_physics_constructor::tree_dump(out_, title_, indent_, true);
-      using namespace std;
       std::string indent;
       if (! indent_.empty ()) indent = indent_;
 
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Use geantinos                : " << (_use_geantinos_ ? "Yes" : "No") << endl;
+           << "Use geantinos                : " << (_use_geantinos_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Use optical photons          : " << (_use_optical_photons_ ? "Yes" : "No") << endl;
+           << "Use optical photons          : " << (_use_optical_photons_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Use muon leptons             : " << (_use_muon_leptons_ ? "Yes" : "No") << endl;
+           << "Use muon leptons             : " << (_use_muon_leptons_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Use tau leptons              : " << (_use_tau_leptons_ ? "Yes" : "No") << endl;
+           << "Use tau leptons              : " << (_use_tau_leptons_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Use nucleons                 : " << (_use_nucleons_ ? "Yes" : "No") << endl;
+           << "Use nucleons                 : " << (_use_nucleons_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Use strange baryons          : " << (_use_strange_baryons_ ? "Yes" : "No") << endl;
+           << "Use strange baryons          : " << (_use_strange_baryons_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Use charm baryons            : " << (_use_charm_baryons_ ? "Yes" : "No") << endl;
+           << "Use charm baryons            : " << (_use_charm_baryons_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Use bottom baryons           : " << (_use_bottom_baryons_ ? "Yes" : "No") << endl;
+           << "Use bottom baryons           : " << (_use_bottom_baryons_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Use light mesons             : " << (_use_light_mesons_ ? "Yes" : "No") << endl;
+           << "Use light mesons             : " << (_use_light_mesons_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Use charm mesons             : " << (_use_charm_mesons_ ? "Yes" : "No") << endl;
+           << "Use charm mesons             : " << (_use_charm_mesons_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Use bottom mesons            : " << (_use_bottom_mesons_ ? "Yes" : "No") << endl;
+           << "Use bottom mesons            : " << (_use_bottom_mesons_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Use light nuclei             : " << (_use_light_nuclei_ ? "Yes" : "No") << endl;
+           << "Use light nuclei             : " << (_use_light_nuclei_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Use light anti-nuclei        : " << (_use_light_anti_nuclei_ ? "Yes" : "No") << endl;
+           << "Use light anti-nuclei        : " << (_use_light_anti_nuclei_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
-           << "Use generic ion              : " << (_use_generic_ion_ ? "Yes" : "No") << endl;
+           << "Use generic ion              : " << (_use_generic_ion_ ? "Yes" : "No") << std::endl;
 
       return;
     }
@@ -952,5 +951,3 @@ DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
 
 // Registration macro for class 'mctools::g4::particles_physics_constructor' :
 DOCD_CLASS_SYSTEM_REGISTRATION(mctools::g4::particles_physics_constructor,"mctools::g4::particles_physics_constructor")
-
-

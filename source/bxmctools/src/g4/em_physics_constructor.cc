@@ -447,91 +447,90 @@ namespace mctools {
                                             bool inherit_) const
     {
       this->base_physics_constructor::tree_dump(out_, title_, indent_, true);
-      using namespace std;
       std::string indent;
       if (! indent_.empty ()) indent = indent_;
 
       // EM model:
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Electro-magnetic model       : " << _em_model_ << endl;
+           << "Electro-magnetic model       : " << _em_model_ << std::endl;
 
       // Gamma:
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Gamma Rayleigh scattering    : "
-           << (_em_gamma_rayleigh_scattering_ ? "Yes" : "No") << endl;
+           << (_em_gamma_rayleigh_scattering_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Gamma photo-electric         : "
-           << (_em_gamma_photo_electric_ ? "Yes" : "No") << endl;
+           << (_em_gamma_photo_electric_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Gamma Compton scattering     : "
-           << (_em_gamma_compton_scattering_ ? "Yes" : "No") << endl;
+           << (_em_gamma_compton_scattering_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Gamma conversion             : "
-           << (_em_gamma_conversion_ ? "Yes" : "No") << endl;
+           << (_em_gamma_conversion_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Gamma conversion to muons    : "
-           << (_em_gamma_conversion_to_muons_ ? "Yes" : "No") << endl;
+           << (_em_gamma_conversion_to_muons_ ? "Yes" : "No") << std::endl;
 
       // Electron/positron:
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Electron/positron ionisation : "
-           << (_em_electron_ionisation_ ? "Yes" : "No") << endl;
+           << (_em_electron_ionisation_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Electron/positron  bremsstrahlung : "
-           << (_em_electron_bremsstrahlung_ ? "Yes" : "No") << endl;
+           << (_em_electron_bremsstrahlung_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Electron/positron multiple scattering : "
-           << (_em_electron_multiple_scattering_ ? "Yes" : "No") << endl;
+           << (_em_electron_multiple_scattering_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Electron/positron multiple scattering uses distance to boundary : "
-           << (_em_electron_ms_use_distance_to_boundary_ ? "Yes" : "No") << endl;
+           << (_em_electron_ms_use_distance_to_boundary_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Electron/positron multiple scattering range factor : "
-           << (_em_electron_ms_range_factor_) << endl;
+           << (_em_electron_ms_range_factor_) << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Positron annihilation : "
-           << (_em_positron_annihilation_ ? "Yes" : "No") << endl;
+           << (_em_positron_annihilation_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Electron/positron step limiter : "
-           << (_em_electron_step_limiter_ ? "Yes" : "No") << endl;
+           << (_em_electron_step_limiter_ ? "Yes" : "No") << std::endl;
 
       // Atomic deexcitation:
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Atomic deexcitation : " << endl;
+           << "Atomic deexcitation : " << std::endl;
       out_ << indent << datatools::i_tree_dumpable::skip_tag
            << datatools::i_tree_dumpable::tag
            << "Fluorescence : "
-           << (_em_fluorescence_ ? "Yes" : "No") << endl;
+           << (_em_fluorescence_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::skip_tag
            << datatools::i_tree_dumpable::tag
            << "Auger : "
-           << (_em_auger_ ? "Yes" : "No") << endl;
+           << (_em_auger_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::skip_tag
            << datatools::i_tree_dumpable::tag
            << "PIXE : "
-           << (_em_pixe_ ? "Yes" : "No") << endl;
+           << (_em_pixe_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::skip_tag
            << datatools::i_tree_dumpable::tag
            << "PIXE cross section model : "
-           << "'" << _em_pixe_cross_section_model_ << "'" << endl;
+           << "'" << _em_pixe_cross_section_model_ << "'" << std::endl;
 
       // Atomic deexcitation per region :
       out_ << indent << datatools::i_tree_dumpable::skip_tag
            << datatools::i_tree_dumpable::last_tag
-           << "Atomic deexcitation per region : " << endl;
+           << "Atomic deexcitation per region : " << std::endl;
 
       for (std::map<std::string, region_deexcitation_type>::const_iterator i = _em_regions_deexcitation_.begin();
            i != _em_regions_deexcitation_.end();
@@ -555,37 +554,37 @@ namespace mctools {
       // Ion:
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Ion ionisation : "
-           << (_em_ion_ionisation_ ? "Yes" : "No") << endl;
+           << (_em_ion_ionisation_ ? "Yes" : "No") << std::endl;
 
 
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Ion multiple scattering : "
-           << (_em_ion_multiple_scattering_ ? "Yes" : "No") << endl;
+           << (_em_ion_multiple_scattering_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Ion step limiter : "
-           << (_em_ion_step_limiter_ ? "Yes" : "No") << endl;
+           << (_em_ion_step_limiter_ ? "Yes" : "No") << std::endl;
 
       // Muon:
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Muon ionisation : "
-           << (_em_muon_ionisation_ ? "Yes" : "No") << endl;
+           << (_em_muon_ionisation_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Muon bremsstrahlung : "
-           << (_em_muon_bremsstrahlung_ ? "Yes" : "No") << endl;
+           << (_em_muon_bremsstrahlung_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Muon pair production : "
-           << (_em_muon_pair_production_ ? "Yes" : "No") << endl;
+           << (_em_muon_pair_production_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Muon multiple scattering : "
-           << (_em_muon_multiple_scattering_ ? "Yes" : "No") << endl;
+           << (_em_muon_multiple_scattering_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
            << "Muon step limiter : "
-           << (_em_muon_step_limiter_ ? "Yes" : "No") << endl;
+           << (_em_muon_step_limiter_ ? "Yes" : "No") << std::endl;
 
       return;
     }

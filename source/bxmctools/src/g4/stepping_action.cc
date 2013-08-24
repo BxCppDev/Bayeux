@@ -23,8 +23,6 @@ namespace mctools {
 
   namespace g4 {
 
-    using namespace std;
-
     // ctor:
     stepping_action::stepping_action ()
     {

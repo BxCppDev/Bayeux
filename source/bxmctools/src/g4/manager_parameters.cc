@@ -20,8 +20,6 @@ namespace mctools {
 
   namespace g4 {
 
-    using namespace std;
-
     // ctor:
     manager_parameters::manager_parameters ()
     {
@@ -63,47 +61,47 @@ namespace mctools {
       return;
     }
 
-    void manager_parameters::print_examples (ostream & a_out,
-                                             const string & a_name,
-                                             const string & a_title)
+    void manager_parameters::print_examples (std::ostream & a_out,
+                                             const std::string & a_name,
+                                             const std::string & a_title)
     {
       if (! a_title.empty ()) {
-        a_out << a_title << endl;
+        a_out << a_title << std::endl;
       }
-      a_out << endl;
-      a_out << " 1) Interactive test:" << endl;
-      a_out << "    " << a_name << " \\" << endl;
-      a_out << "         --interactive \\" << endl;
-      a_out << "         --g4-visu \\" << endl;
-      a_out << "         --vertex-generator-name \"source_bulk.vg\"  \\" << endl;
-      a_out << "         --vertex-generator-seed 0 \\" << endl;
-      a_out << "         --event-generator-name \"K40\" \\" << endl;
-      a_out << "         --event-generator-seed 0  \\" << endl;
-      a_out << "         --g4-manager-seed 0       \\" << endl;
-      a_out << "         --shpf-seed 0             \\" << endl;
-      a_out << "         --output-prng-seeds-file mc_g4_production.seeds   \\" << endl;
-      a_out << "         --output-prng-states-file mc_g4_production.states \\" << endl;
-      a_out << "         --config ${CONFIG_DIR}/simulation/manager.conf \\" << endl;
-      a_out << "                  ${CONFIG_DIR}/simulation/geant4_visualization.macro" << endl;
-      a_out << endl;
-      a_out << " 2) Run the simulation in batch mode:" << endl;
-      a_out << "    " << a_name << " \\" << endl;
-      a_out << "         --batch                  \\" << endl;
-      a_out << "         --using-time-statistics  \\" << endl;
-      a_out << "         --vertex-generator-name \"source_bulk.vg\"  \\" << endl;
-      a_out << "         --vertex-generator-seed 0 \\" << endl;
-      a_out << "         --event-generator-name \"K40\"  \\" << endl;
-      a_out << "         --event-generator-seed 0 \\" << endl;
-      a_out << "         --g4-manager-seed 0      \\" << endl;
-      a_out << "         --shpf-seed 0            \\" << endl;
-      a_out << "         --output-prng-seeds-file mc_g4_production.seeds   \\" << endl;
-      a_out << "         --output-prng-states-file mc_g4_production.states \\" << endl;
-      a_out << "         --number-of-events 1     \\" << endl;
-      a_out << "         --config ${CONFIG_DIR}/simulation/manager.conf \\" << endl;
-      a_out << "         --output-data-file mc_g4_sample_0.xml \\" << endl;
-      a_out << "         > g4_production.log 2>&1" << endl;
-      a_out << endl;
-      a_out << endl;
+      a_out << std::endl;
+      a_out << " 1) Interactive test:" << std::endl;
+      a_out << "    " << a_name << " \\" << std::endl;
+      a_out << "         --interactive \\" << std::endl;
+      a_out << "         --g4-visu \\" << std::endl;
+      a_out << "         --vertex-generator-name \"source_bulk.vg\"  \\" << std::endl;
+      a_out << "         --vertex-generator-seed 0 \\" << std::endl;
+      a_out << "         --event-generator-name \"K40\" \\" << std::endl;
+      a_out << "         --event-generator-seed 0  \\" << std::endl;
+      a_out << "         --g4-manager-seed 0       \\" << std::endl;
+      a_out << "         --shpf-seed 0             \\" << std::endl;
+      a_out << "         --output-prng-seeds-file mc_g4_production.seeds   \\" << std::endl;
+      a_out << "         --output-prng-states-file mc_g4_production.states \\" << std::endl;
+      a_out << "         --config ${CONFIG_DIR}/simulation/manager.conf \\" << std::endl;
+      a_out << "                  ${CONFIG_DIR}/simulation/geant4_visualization.macro" << std::endl;
+      a_out << std::endl;
+      a_out << " 2) Run the simulation in batch mode:" << std::endl;
+      a_out << "    " << a_name << " \\" << std::endl;
+      a_out << "         --batch                  \\" << std::endl;
+      a_out << "         --using-time-statistics  \\" << std::endl;
+      a_out << "         --vertex-generator-name \"source_bulk.vg\"  \\" << std::endl;
+      a_out << "         --vertex-generator-seed 0 \\" << std::endl;
+      a_out << "         --event-generator-name \"K40\"  \\" << std::endl;
+      a_out << "         --event-generator-seed 0 \\" << std::endl;
+      a_out << "         --g4-manager-seed 0      \\" << std::endl;
+      a_out << "         --shpf-seed 0            \\" << std::endl;
+      a_out << "         --output-prng-seeds-file mc_g4_production.seeds   \\" << std::endl;
+      a_out << "         --output-prng-states-file mc_g4_production.states \\" << std::endl;
+      a_out << "         --number-of-events 1     \\" << std::endl;
+      a_out << "         --config ${CONFIG_DIR}/simulation/manager.conf \\" << std::endl;
+      a_out << "         --output-data-file mc_g4_sample_0.xml \\" << std::endl;
+      a_out << "         > g4_production.log 2>&1" << std::endl;
+      a_out << std::endl;
+      a_out << std::endl;
 
       return;
     }
@@ -114,16 +112,16 @@ namespace mctools {
       /*** Setup ***/
 
       DT_THROW_IF (! mygsl::seed_manager::seed_is_valid (a_params.vg_seed),
-                   logic_error,
+                   std::logic_error,
                    "Invalid vertex generator seed value !");
       DT_THROW_IF (! mygsl::seed_manager::seed_is_valid (a_params.eg_seed),
-                   logic_error,
+                   std::logic_error,
                    "Invalid event generator seed value !");
       DT_THROW_IF (! mygsl::seed_manager::seed_is_valid (a_params.mgr_seed),
-                   logic_error,
+                   std::logic_error,
                    "Invalid G4 generator seed value !");
       DT_THROW_IF (! mygsl::seed_manager::seed_is_valid (a_params.shpf_seed),
-                   logic_error,
+                   std::logic_error,
                    "Invalid SHPF generator seed value !");
 
       datatools::logger::priority mlogprio = datatools::logger::PRIO_WARNING;
@@ -173,7 +171,7 @@ namespace mctools {
         a_manager.set_output_prng_states_file (a_params.output_prng_states_file);
       }
       if (! a_params.output_data_file.empty ()) {
-        string output_data_file = a_params.output_data_file;
+        std::string output_data_file = a_params.output_data_file;
         datatools::fetch_path_with_env (output_data_file);
         a_manager.set_output_data_file (output_data_file);
       }
@@ -208,7 +206,7 @@ namespace mctools {
       DT_THROW_IF (a_params.manager_config_filename.empty (),
                    std::logic_error,
                    "Missing configuration filename for the simulation manager !");
-      string manager_config_filename = a_params.manager_config_filename;
+      std::string manager_config_filename = a_params.manager_config_filename;
       datatools::fetch_path_with_env (manager_config_filename);
       DT_THROW_IF (! boost::filesystem::exists (manager_config_filename),
                    std::runtime_error,

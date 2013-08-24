@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* stepping_verbose.cc
  */
 
@@ -14,78 +14,76 @@
 namespace mctools {
 
   namespace g4 {
-  
-    using namespace std;
 
     stepping_verbose::stepping_verbose ()
     {
     }
-     
+
     stepping_verbose::~stepping_verbose ()
     {
     }
-    
+
     void stepping_verbose::StepInfo ()
     {
       CopyState ();
-      
-      int saved_precision = clog.precision (10);
-      
+
+      int saved_precision = std::clog.precision (10);
+
       if (verboseLevel >= 1)
         {
           if (verboseLevel >= 4) VerboseTrack ();
           if (verboseLevel >= 3)
             {
-              clog << endl;    
-              clog << "mctools::g4::stepping_verbose::StepInfo " << endl
-                   << setw ( 6) << "Step num"
-                   << setw ( 6) << "X"          << "    "
-                   << setw ( 6) << "Y"          << "    "
-                   << setw ( 6) << "Z"          << "    "
-                   << setw ( 9) << "KineE"      << " "
-                   << setw ( 9) << "dEStep"     << " "  
-                   << setw (10) << "StepLeng"     
-                   << setw (10) << "TrakLeng"  << "  "
-                   << setw (20) << "Volume"    << "  "
-                   << setw (10) << "Material"
-                   << setw (10) << "Process"   << endl;           
+              std::clog << std::endl;
+              std::clog << "mctools::g4::stepping_verbose::StepInfo " << std::endl
+                        << std::setw ( 6) << "Step num"
+                        << std::setw ( 6) << "X"          << "    "
+                        << std::setw ( 6) << "Y"          << "    "
+                        << std::setw ( 6) << "Z"          << "    "
+                        << std::setw ( 9) << "KineE"      << " "
+                        << std::setw ( 9) << "dEStep"     << " "
+                        << std::setw (10) << "StepLeng"
+                        << std::setw (10) << "TrakLeng"  << "  "
+                        << std::setw (20) << "Volume"    << "  "
+                        << std::setw (10) << "Material"
+                        << std::setw (10) << "Process"   << std::endl;
             }
-          
-          clog << setw (5) << fTrack->GetCurrentStepNumber () << " "
-               << setw (6) << G4BestUnit (fTrack->GetPosition ().x (), "Length")
-               << setw (6) << G4BestUnit (fTrack->GetPosition ().y (), "Length")
-               << setw (6) << G4BestUnit (fTrack->GetPosition ().z (), "Length")
-               << setw (6) << G4BestUnit (fTrack->GetKineticEnergy (), "Energy")
-               << setw (6) << G4BestUnit (fStep->GetTotalEnergyDeposit (), "Energy")
-               << setw (6) << G4BestUnit (fStep->GetStepLength (), "Length")
-               << setw (6) << G4BestUnit (fTrack->GetTrackLength (),"Length")
-               << "  ";
-          
-          // if (fStepStatus != fWorldBoundary){ 
-          if (fTrack->GetNextVolume () != 0) 
-            { 
-              clog << setw (20) << fTrack->GetVolume ()->GetName ();
-            } 
-          else 
+
+          std::clog << std::setw (5) << fTrack->GetCurrentStepNumber () << " "
+                    << std::setw (6) << G4BestUnit (fTrack->GetPosition ().x (), "Length")
+                    << std::setw (6) << G4BestUnit (fTrack->GetPosition ().y (), "Length")
+                    << std::setw (6) << G4BestUnit (fTrack->GetPosition ().z (), "Length")
+                    << std::setw (6) << G4BestUnit (fTrack->GetKineticEnergy (), "Energy")
+                    << std::setw (6) << G4BestUnit (fStep->GetTotalEnergyDeposit (), "Energy")
+                    << std::setw (6) << G4BestUnit (fStep->GetStepLength (), "Length")
+                    << std::setw (6) << G4BestUnit (fTrack->GetTrackLength (),"Length")
+                    << "  ";
+
+          // if (fStepStatus != fWorldBoundary){
+          if (fTrack->GetNextVolume () != 0)
             {
-              clog << setw (20) << "<out of world>";
+              std::clog << std::setw (20) << fTrack->GetVolume ()->GetName ();
             }
-          
-          clog << setw (10) << fTrack->GetMaterial ()->GetName ();
-          
+          else
+            {
+              std::clog << std::setw (20) << "<out of world>";
+            }
+
+          std::clog << std::setw (10) << fTrack->GetMaterial ()->GetName ();
+
           if (fStep->GetPostStepPoint ()->GetProcessDefinedStep () != NULL)
             {
-              clog << "  " 
-                   << setw (10) << fStep->GetPostStepPoint ()->GetProcessDefinedStep ()
+              std::clog << "  "
+                        << std::setw (10) << fStep->GetPostStepPoint ()->GetProcessDefinedStep ()
                 ->GetProcessName ();
-            } 
-          else 
-            {
-              clog << "   UserLimit";
             }
-          
-          clog << endl;
-          
+          else
+            {
+              std::clog << "   UserLimit";
+            }
+
+          std::clog << std::endl;
+
           if (verboseLevel == 2)
             {
               G4int tN2ndariesTot = fN2ndariesAtRestDoIt +
@@ -93,43 +91,43 @@ namespace mctools {
                 fN2ndariesPostStepDoIt;
               if (tN2ndariesTot > 0)
                 {
-                  clog << endl 
-                       << "    :----- List of 2ndaries - "
-                       << "#SpawnInStep=" << setw (3) << tN2ndariesTot << "  "
-                       << " (Rest="  << setw (2) << fN2ndariesAtRestDoIt
-                       << ",Along=" << setw (2) << fN2ndariesAlongStepDoIt
-                       << ",Post="  << setw (2) << fN2ndariesPostStepDoIt
-                       << "), "
-                       << "#SpawnTotal=" << setw (3) << (*fSecondary).size ()
-                       << " ---------------"
-                       << endl;
-                  
-                  for (size_t lp1= (*fSecondary).size () - tN2ndariesTot; 
-                       lp1 < (*fSecondary).size (); 
+                  std::clog << std::endl
+                            << "    :----- List of 2ndaries - "
+                            << "#SpawnInStep=" << std::setw (3) << tN2ndariesTot << "  "
+                            << " (Rest="  << std::setw (2) << fN2ndariesAtRestDoIt
+                            << ",Along=" << std::setw (2) << fN2ndariesAlongStepDoIt
+                            << ",Post="  << std::setw (2) << fN2ndariesPostStepDoIt
+                            << "), "
+                            << "#SpawnTotal=" << std::setw (3) << (*fSecondary).size ()
+                            << " ---------------"
+                            << std::endl;
+
+                  for (size_t lp1= (*fSecondary).size () - tN2ndariesTot;
+                       lp1 < (*fSecondary).size ();
                        lp1++)
                     {
-                      clog << "    : "
-                           << setw (6)
-                           << G4BestUnit ((*fSecondary)[lp1]->GetPosition ().x (), "Length")
-                           << setw (6)
-                           << G4BestUnit ((*fSecondary)[lp1]->GetPosition ().y (), "Length")
-                           << setw (6)
-                           << G4BestUnit ((*fSecondary)[lp1]->GetPosition ().z (), "Length")
-                           << setw (6)
-                           << G4BestUnit ((*fSecondary)[lp1]->GetKineticEnergy (), "Energy")
-                           << setw (10)
-                           << (*fSecondary)[lp1]->GetDefinition ()->GetParticleName ()
-                           << endl;
+                      std::clog << "    : "
+                                << std::setw (6)
+                                << G4BestUnit ((*fSecondary)[lp1]->GetPosition ().x (), "Length")
+                                << std::setw (6)
+                                << G4BestUnit ((*fSecondary)[lp1]->GetPosition ().y (), "Length")
+                                << std::setw (6)
+                                << G4BestUnit ((*fSecondary)[lp1]->GetPosition ().z (), "Length")
+                                << std::setw (6)
+                                << G4BestUnit ((*fSecondary)[lp1]->GetKineticEnergy (), "Energy")
+                                << std::setw (10)
+                                << (*fSecondary)[lp1]->GetDefinition ()->GetParticleName ()
+                                << std::endl;
                     }
-                
-                  clog << "    :-----------------------------"
-                       << "----------------------------------"
-                       << "-- EndOf2ndaries Info ---------------"
-                       << endl;
+
+                  std::clog << "    :-----------------------------"
+                            << "----------------------------------"
+                            << "-- EndOf2ndaries Info ---------------"
+                            << std::endl;
                 }
-            } 
+            }
         }
-      clog.precision (saved_precision);
+      std::clog.precision (saved_precision);
       return;
     }
 
@@ -137,45 +135,45 @@ namespace mctools {
     void stepping_verbose::TrackingStarted ()
     {
       CopyState();
-    
-      int saved_precision = clog.precision (10);
+
+      int saved_precision = std::clog.precision (10);
       if (verboseLevel > 0)
         {
-          clog << setw (5) << "In Stepping Verbose: Tracking Started:" << endl << " Step "
-               << setw (6) << "X"          << "    "
-               << setw (6) << "Y"          << "    "  
-               << setw (6) << "Z"          << "    "
-               << setw (9) << "KineE"      << " "
-               << setw (9) << "dEStep"     << " "  
-               << setw (10) << "StepLeng"  
-               << setw (10) << "TrakLeng"   << "  "
-               << setw (20) << "Volume"     << "  "
-               << setw (10) << "Material"
-               << setw (10) << "Process"    << endl;         
+          std::clog << std::setw (5) << "In Stepping Verbose: Tracking Started:" << std::endl << " Step "
+                    << std::setw (6) << "X"          << "    "
+                    << std::setw (6) << "Y"          << "    "
+                    << std::setw (6) << "Z"          << "    "
+                    << std::setw (9) << "KineE"      << " "
+                    << std::setw (9) << "dEStep"     << " "
+                    << std::setw (10) << "StepLeng"
+                    << std::setw (10) << "TrakLeng"   << "  "
+                    << std::setw (20) << "Volume"     << "  "
+                    << std::setw (10) << "Material"
+                    << std::setw (10) << "Process"    << std::endl;
 
-          clog << setw (5) << fTrack->GetCurrentStepNumber () << " "
-               << setw (6) << G4BestUnit (fTrack->GetPosition ().x (), "Length")
-               << setw (6) << G4BestUnit (fTrack->GetPosition ().y (), "Length")
-               << setw (6) << G4BestUnit (fTrack->GetPosition ().z (), "Length")
-               << setw (6) << G4BestUnit (fTrack->GetKineticEnergy (), "Energy")
-               << setw (6) << G4BestUnit (fStep->GetTotalEnergyDeposit (), "Energy")
-               << setw (6) << G4BestUnit (fStep->GetStepLength (), "Length")
-               << setw (6) << G4BestUnit (fTrack->GetTrackLength (), "Length")
-               << "  ";
+          std::clog << std::setw (5) << fTrack->GetCurrentStepNumber () << " "
+                    << std::setw (6) << G4BestUnit (fTrack->GetPosition ().x (), "Length")
+                    << std::setw (6) << G4BestUnit (fTrack->GetPosition ().y (), "Length")
+                    << std::setw (6) << G4BestUnit (fTrack->GetPosition ().z (), "Length")
+                    << std::setw (6) << G4BestUnit (fTrack->GetKineticEnergy (), "Energy")
+                    << std::setw (6) << G4BestUnit (fStep->GetTotalEnergyDeposit (), "Energy")
+                    << std::setw (6) << G4BestUnit (fStep->GetStepLength (), "Length")
+                    << std::setw (6) << G4BestUnit (fTrack->GetTrackLength (), "Length")
+                    << "  ";
 
           if (fTrack->GetNextVolume () != 0)
             {
-              clog << setw (10) << fTrack->GetVolume ()->GetName ();
-            } 
-          else 
-            {
-              clog << setw (20) << "<out of world>";
+              std::clog << std::setw (10) << fTrack->GetVolume ()->GetName ();
             }
-          // clog << setw (10) << "  XXXXXX";
-          // clog << "    initStep" << endl;
-          clog << endl;
+          else
+            {
+              std::clog << std::setw (20) << "<out of world>";
+            }
+          // std::clog << std::setw (10) << "  XXXXXX";
+          // std::clog << "    initStep" << std::endl;
+          std::clog << std::endl;
         }
-      clog.precision (saved_precision);
+      std::clog.precision (saved_precision);
       return;
     }
 

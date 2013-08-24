@@ -14,8 +14,6 @@
 
 namespace mctools {
 
-  using namespace std;
-
   DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(base_step_hit_processor, "mctools::base_step_hit_processor/__system__");
 
   datatools::logger::priority base_step_hit_processor::get_logging_priority() const
@@ -49,7 +47,7 @@ namespace mctools {
     return _name;
   }
 
-  void base_step_hit_processor::set_name(const string & n_)
+  void base_step_hit_processor::set_name(const std::string & n_)
   {
     _name = n_;
     return;
@@ -82,7 +80,7 @@ namespace mctools {
   {
     if (_private_pool != 0) {
       DT_THROW_IF (_private_pool->get_number_of_used_item() > 0,
-                   logic_error,
+                   std::logic_error,
                    "Cannot resize private pool for processor '" << get_name() << "' !");
       if (capacity_ < _private_pool->get_capacity()) {
         return;
@@ -111,7 +109,7 @@ namespace mctools {
   base_step_hit_processor::pool_type & base_step_hit_processor::get_pool() const
   {
     DT_THROW_IF (_pool == 0,
-                 logic_error,
+                 std::logic_error,
                  "Processor '" << get_name() << "' does not use any pool of hits !");
     return *_pool;
   }
@@ -170,23 +168,23 @@ th row logic_error(message.str());
     return;
   }
 
-  const string & base_step_hit_processor::get_hit_category() const
+  const std::string & base_step_hit_processor::get_hit_category() const
   {
     return _hit_category;
   }
 
-  void base_step_hit_processor::set_hit_category(const string & hc_)
+  void base_step_hit_processor::set_hit_category(const std::string & hc_)
   {
     _hit_category = hc_;
     return;
   }
 
-  const string & base_step_hit_processor::get_sensitive_category() const
+  const std::string & base_step_hit_processor::get_sensitive_category() const
   {
     return _sensitive_category;
   }
 
-  void base_step_hit_processor::set_sensitive_category(const string & sc_)
+  void base_step_hit_processor::set_sensitive_category(const std::string & sc_)
   {
     _sensitive_category = sc_;
     return;
@@ -231,12 +229,12 @@ th row logic_error(message.str());
 
     if (! has_geom_manager())  {
       if (config_.has_key("geometry_service.name")) {
-        std::string geo_service_name = config_.fetch_string("geometry_service.name");
+        const std::string geo_service_name = config_.fetch_string("geometry_service.name");
         DT_THROW_IF (! service_mgr_.has(geo_service_name),
-                     logic_error,
+                     std::logic_error,
                      "No service named '" << geo_service_name << "' found in the service manager !");
         DT_THROW_IF (! service_mgr_.is_a<geomtools::geometry_service>(geo_service_name),
-                     logic_error,
+                     std::logic_error,
                      "Service named '" << geo_service_name << "' is not a geometry service !");
         const geomtools::geometry_service & geo_srv = service_mgr_.get<geomtools::geometry_service>(geo_service_name);
         DT_LOG_NOTICE(_logging_priority,
@@ -247,12 +245,12 @@ th row logic_error(message.str());
     }
 
     if (config_.has_key("hit.category")) {
-      string hit_cat = config_.fetch_string("hit.category");
+      const std::string hit_cat = config_.fetch_string("hit.category");
       set_hit_category(hit_cat);
     }
 
     if (config_.has_key("sensitive.category")) {
-      string sens_cat = config_.fetch_string("sensitive.category");
+      const std::string sens_cat = config_.fetch_string("sensitive.category");
       set_sensitive_category(sens_cat);
     }
 
@@ -287,11 +285,11 @@ th row logic_error(message.str());
 
     // Check:
     DT_THROW_IF (_hit_category.empty(),
-                 logic_error,
+                 std::logic_error,
                  "Missing hit category !");
     // Check:
     DT_THROW_IF (_sensitive_category.empty(),
-                 logic_error,
+                 std::logic_error,
                  "Missing sensitive category !");
 
     // Check if we should install a private hit pool in this processor :
@@ -302,11 +300,11 @@ th row logic_error(message.str());
         // Use a dedicated capacity for the private pool :
         if (config_.has_key("private_pool_capacity")) {
           int cap = config_.fetch_integer("private_pool_capacity");
-          DT_THROW_IF (cap < 1,logic_error,"Invalid hit pool capacity(" << cap << ") !");
+          DT_THROW_IF (cap < 1, std::logic_error, "Invalid hit pool capacity(" << cap << ") !");
           capacity =(size_t) cap;
         }
         setup_private_pool(capacity);
-        if (is_debug()) _private_pool->dump(clog, "Private hit pool: ");
+        if (is_debug()) _private_pool->dump(std::clog, "Private hit pool: ");
       }
     }
 
@@ -365,13 +363,13 @@ th row logic_error(message.str());
   void base_step_hit_processor::process(const base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
                                         simulated_data::hit_collection_type & the_plain_hits)
   {
-    DT_THROW_IF(true, runtime_error, "Not implemented !");
+    DT_THROW_IF(true, std::runtime_error, "Not implemented !");
     return;
   }
 
-  void base_step_hit_processor::tree_dump(ostream & a_out,
-                                          const string & a_title,
-                                          const string & a_indent,
+  void base_step_hit_processor::tree_dump(std::ostream & a_out,
+                                          const std::string & a_title,
+                                          const std::string & a_indent,
                                           bool a_inherit) const
   {
     std::string indent;
@@ -379,34 +377,32 @@ th row logic_error(message.str());
       indent = a_indent;
     }
     if ( ! a_title.empty()) {
-      a_out << indent << a_title << endl;
+      a_out << indent << a_title << std::endl;
     }
 
-    namespace du = datatools;
-
-    a_out << indent << du::i_tree_dumpable::tag
-          << "Logging priority   : " << datatools::logger::get_priority_label(_logging_priority) << endl;
-    a_out << indent << du::i_tree_dumpable::tag
-          << "Name               : '" << _name << "'" << endl;
-    a_out << indent << du::i_tree_dumpable::tag
-          << "Hit category       : '" << _hit_category << "'" << endl;
-    a_out << indent << du::i_tree_dumpable::tag
-          << "Sensitive category : '" << _sensitive_category << "'" << endl;
-    a_out << indent << du::i_tree_dumpable::tag
-          << "Geometry manager   : " << _geom_manager << endl;
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Logging priority   : " << datatools::logger::get_priority_label(_logging_priority) << std::endl;
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Name               : '" << _name << "'" << std::endl;
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Hit category       : '" << _hit_category << "'" << std::endl;
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Sensitive category : '" << _sensitive_category << "'" << std::endl;
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Geometry manager   : " << _geom_manager << std::endl;
     {
-      a_out << indent << du::i_tree_dumpable::tag
-            << "Auxiliary properties : " << endl;
+      a_out << indent << datatools::i_tree_dumpable::tag
+            << "Auxiliary properties : " << std::endl;
       std::ostringstream indent_ss;
-      indent_ss << indent << du::i_tree_dumpable::skip_tag ;
+      indent_ss << indent << datatools::i_tree_dumpable::skip_tag ;
       _auxiliaries.tree_dump(a_out, "", indent_ss.str());
     }
-    a_out << indent << du::i_tree_dumpable::tag
-          << "Private pool : " << _private_pool << endl;
-    a_out << indent << du::i_tree_dumpable::tag
-          << "Pool owner   : " << _pool_owner << endl;
-    a_out << indent << du::i_tree_dumpable::inherit_tag(a_inherit)
-          << "Pool         : " << _pool << endl;
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Private pool : " << _private_pool << std::endl;
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Pool owner   : " << _pool_owner << std::endl;
+    a_out << indent << datatools::i_tree_dumpable::inherit_tag(a_inherit)
+          << "Pool         : " << _pool << std::endl;
 
     return;
   }

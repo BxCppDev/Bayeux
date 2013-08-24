@@ -36,8 +36,6 @@ namespace mctools {
 
   namespace g4 {
 
-    using namespace std;
-
     const double sensitive_detector::DEFAULT_MAJOR_TRACK_MINIMUM_ENERGY = 10. * CLHEP::keV;
 
     bool sensitive_detector::is_drop_zero_energy_deposit_steps () const
@@ -194,33 +192,31 @@ namespace mctools {
     }
 
     mctools::base_step_hit_processor &
-    sensitive_detector::grab_hit_processor (const string & name_)
+    sensitive_detector::grab_hit_processor (const std::string & name_)
     {
       hit_processor_dict_type::iterator found = _hit_processors_.find (name_);
       DT_THROW_IF (found == _hit_processors_.end (),
-                   logic_error, "No '" << name_ << "' hit processor !");
+                   std::logic_error, "No '" << name_ << "' hit processor !");
       return *found->second;
     }
 
-    void sensitive_detector::add_hit_processor (const string & name_,
+    void sensitive_detector::add_hit_processor (const std::string & name_,
                                                 mctools::base_step_hit_processor & shp_)
     {
       DT_THROW_IF (_hit_processors_.find (name_) != _hit_processors_.end (),
-                   logic_error,
-                   "This sensitive detector '"
-                   << _sensitive_category_
-                   << "' already has a '"
-                   << name_ << "' hit processor !");
+                   std::logic_error,
+                   "This sensitive detector '" << _sensitive_category_
+                   << "' already has a '" << name_ << "' hit processor !");
       _hit_processors_[name_] = &shp_;
       return;
     }
 
-    bool sensitive_detector::has_hit_processor (const string & name_) const
+    bool sensitive_detector::has_hit_processor (const std::string & name_) const
     {
       return (_hit_processors_.find (name_) != _hit_processors_.end ());
     }
 
-    void sensitive_detector::attach_logical_volume (const string & log_volume_name_)
+    void sensitive_detector::attach_logical_volume (const std::string & log_volume_name_)
     {
       if (find (_attached_logical_volumes_.begin (),
                 _attached_logical_volumes_.end (),
@@ -234,15 +230,15 @@ namespace mctools {
       return;
     }
 
-    list<string> &
+    std::list<std::string> &
     sensitive_detector::grab_attached_logical_volumes ()
     {
       return _attached_logical_volumes_;
     }
 
-    string sensitive_detector::make_hit_collection_name (const string & name_)
+    std::string sensitive_detector::make_hit_collection_name (const std::string & name_)
     {
-      ostringstream oss;
+      std::ostringstream oss;
       oss << name_ << ".hit_collection";
       return oss.str ();
     }
@@ -258,7 +254,7 @@ namespace mctools {
       return _record_g4_volume_properties_;
     }
 
-    const string & sensitive_detector::get_sensitive_category () const
+    const std::string & sensitive_detector::get_sensitive_category () const
     {
       return _sensitive_category_;
     }
@@ -283,7 +279,7 @@ namespace mctools {
 
       {
         // Record track id
-        const string trkid_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_TRACK_ID);
+        const std::string trkid_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_TRACK_ID);
         if (config_.has_flag (trkid_key)) {
           // this method enables the sensitive detector to record the track ID
           // as an auxiliary properties of the step hit
@@ -293,7 +289,7 @@ namespace mctools {
 
       {
         // Record boundaries
-        const string trkid_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_BOUNDARIES);
+        const std::string trkid_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_BOUNDARIES);
         if (config_.has_flag (trkid_key)) {
           // this method enables the sensitive detector to record the boundary flags
           // as an auxiliary properties of the step hit
@@ -303,7 +299,7 @@ namespace mctools {
 
       {
         // Record primary particle flag
-        const string pp_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_PRIMARY_PARTICLE);
+        const std::string pp_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_PRIMARY_PARTICLE);
         if (config_.has_flag (pp_key)) {
           // this method enables the sensitive detector to record a dedicated flag
           // as an auxiliary properties of the step hit to flag a primary track
@@ -313,7 +309,7 @@ namespace mctools {
 
       {
         // Record alpha quenching flag
-        const string aq_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_ALPHA_QUENCHING);
+        const std::string aq_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_ALPHA_QUENCHING);
         if (config_.has_flag (aq_key)) {
           // this method enables to add a special flag to the step hit
           // for delta rays produced along the track of alpha particles;
@@ -333,17 +329,17 @@ namespace mctools {
       // be sure to set properties properly
       {
         // Record major track
-        const string rmt_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_MAJOR_TRACK);
+        const std::string rmt_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_MAJOR_TRACK);
         if (config_.has_flag (rmt_key)) {
           set_record_major_track (true);
         }
       }
 
       {
-        const string mtme_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_MAJOR_TRACK_MINIMUM_ENERGY);
+        const std::string mtme_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_MAJOR_TRACK_MINIMUM_ENERGY);
         if (config_.has_key (mtme_key)) {
-          double e_min = config_.fetch_real (mtme_key) * CLHEP::keV;
-          DT_THROW_IF (e_min < 0, logic_error,
+          const double e_min = config_.fetch_real (mtme_key) * CLHEP::keV;
+          DT_THROW_IF (e_min < 0, std::logic_error,
                        "Invalid minimum energy for major track mode "
                        << "for sensitive detector '"
                        << _sensitive_category_
@@ -354,7 +350,7 @@ namespace mctools {
 
       {
         // Record creator process
-        string record_creator_process_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_CREATOR_PROCESS);
+        const std::string record_creator_process_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_CREATOR_PROCESS);
         if (config_.has_flag (record_creator_process_key)) {
           set_record_creator_process (true);
         }
@@ -362,7 +358,7 @@ namespace mctools {
 
       {
         // Record sensitive category where particle is created
-        string record_creator_category_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_CREATOR_CATEGORY);
+        const std::string record_creator_category_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_CREATOR_CATEGORY);
         if (config_.has_flag (record_creator_category_key)) {
           set_record_creator_category (true);
         }
@@ -370,7 +366,7 @@ namespace mctools {
 
       {
         // 2011-08-26 FM: new option : 'record material'
-        string record_material_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_MATERIAL);
+        const std::string record_material_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_MATERIAL);
         if (config_.has_flag (record_material_key)) {
           set_record_material (true);
         }
@@ -378,7 +374,7 @@ namespace mctools {
 
       {
         // 2011-08-26 FM: new option : 'record sensitive category'
-        string record_sensitive_category_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_SENSITIVE_CATEGORY);
+        const std::string record_sensitive_category_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_SENSITIVE_CATEGORY);
         if (config_.has_flag (record_sensitive_category_key)) {
           set_record_sensitive_category (true);
         }
@@ -386,7 +382,7 @@ namespace mctools {
 
       {
         // Record momentum
-        string record_momentum_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_MOMENTUM);
+        const std::string record_momentum_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_MOMENTUM);
         if (config_.has_flag (record_momentum_key)) {
           set_record_momentum (true);
         }
@@ -394,7 +390,7 @@ namespace mctools {
 
       {
         // Record kinetic energy
-        string record_kinetic_energy_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_KINETIC_ENERGY);
+        const std::string record_kinetic_energy_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_KINETIC_ENERGY);
         if (config_.has_flag (record_kinetic_energy_key)) {
           set_record_kinetic_energy (true);
         }
@@ -402,21 +398,21 @@ namespace mctools {
 
       {
         // Record true step length
-        string record_step_length_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_STEP_LENGTH);
+        const std::string record_step_length_key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_RECORD_STEP_LENGTH);
         if (config_.has_flag (record_step_length_key)) {
           set_record_step_length (true);
         }
       }
 
       {
-        string key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_HITS_BUFFER_CAPACITY);
+        const std::string key = geomtools::sensitive::make_key (sensitive_utils::SENSITIVE_HITS_BUFFER_CAPACITY);
         if (config_.has_key (key)) {
-          int cap = config_.fetch_integer (key);
-          DT_THROW_IF (cap < 0, logic_error,
+          const int cap = config_.fetch_integer (key);
+          DT_THROW_IF (cap < 0, std::logic_error,
                        "Invalid buffer size for sensitive detector '"
                        << _sensitive_category_
                        << "' !");
-          unsigned int capacity = (unsigned int) cap;
+          const unsigned int capacity = (unsigned int) cap;
           if (capacity > 0) {
             set_hits_buffer_capacity (capacity);
           }
@@ -487,7 +483,7 @@ namespace mctools {
     }
 
     // ctor:
-    sensitive_detector::sensitive_detector (const string & sensitive_category_)
+    sensitive_detector::sensitive_detector (const std::string & sensitive_category_)
       : G4VSensitiveDetector (sensitive_category_)
     {
       _manager_ = 0;
@@ -682,7 +678,7 @@ namespace mctools {
         _manager_->grab_CT_map ()["SD"].start ();
       }
 
-      const string track_particle_name = step_->GetTrack ()->GetDefinition ()->GetParticleName ();
+      const std::string track_particle_name = step_->GetTrack ()->GetDefinition ()->GetParticleName ();
       const int track_id        = step_->GetTrack ()->GetTrackID ();
       const int parent_track_id = step_->GetTrack ()->GetParentID ();
 
@@ -859,17 +855,17 @@ namespace mctools {
       // 2011-08-26, FM: add
       //>>>
       if (_record_material_) {
-        static string material_ref_key =
+        static std::string material_ref_key =
           geomtools::material::make_key (geomtools::material::constants::instance ().MATERIAL_REF_PROPERTY);
         const G4Material * the_g4_material = step_->GetTrack ()->GetMaterial ();
-        string material_ref = the_g4_material->GetName ().data ();
+        std::string material_ref = the_g4_material->GetName ().data ();
         boost::replace_all (material_ref, "__" , "::");
         hit_aux.store_string (material_ref_key, material_ref);
       }
       //<<<
 
       if (_record_sensitive_category_) {
-        static string sensitive_category_key =
+        static std::string sensitive_category_key =
           geomtools::sensitive::make_key (geomtools::sensitive::constants::instance ().SENSITIVE_CATEGORY_PROPERTY);
         hit_aux.store_string (sensitive_category_key, get_sensitive_category ());
       }
@@ -889,159 +885,158 @@ namespace mctools {
       return true;
     }
 
-    void sensitive_detector::tree_dump (ostream & out_,
-                                        const string & title_,
-                                        const string & indent_,
+    void sensitive_detector::tree_dump (std::ostream & out_,
+                                        const std::string & title_,
+                                        const std::string & indent_,
                                         bool inherit_) const
     {
-      namespace du = datatools;
-      string indent;
+      std::string indent;
       if (! indent_.empty ()) indent = indent_;
       if (! title_.empty ()) {
-        out_ << indent << title_ << endl;
+        out_ << indent << title_ << std::endl;
       }
-      out_ << indent << du::i_tree_dumpable::tag
-           << "Logging priority : '" << datatools::logger::get_priority_label(_logging_priority) << "'" <<  endl;
-      out_ << indent << du::i_tree_dumpable::tag
-           << "Category         : '" << _sensitive_category_ << "'" << endl;
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Logging priority : '" << datatools::logger::get_priority_label(_logging_priority) << "'" <<  std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Category         : '" << _sensitive_category_ << "'" << std::endl;
       // Logical volumes
       {
-        out_ << indent << du::i_tree_dumpable::tag
-             << "Attached logical volumes    : " << _attached_logical_volumes_.size () << endl;
-        for (list<string>::const_iterator
+        out_ << indent << datatools::i_tree_dumpable::tag
+             << "Attached logical volumes    : " << _attached_logical_volumes_.size () << std::endl;
+        for (std::list<std::string>::const_iterator
                ilog = _attached_logical_volumes_.begin ();
              ilog != _attached_logical_volumes_.end (); ++ilog) {
-          out_ << indent << du::i_tree_dumpable::skip_tag;
-          list<string>::const_iterator jlog = ilog;
+          out_ << indent << datatools::i_tree_dumpable::skip_tag;
+          std::list<std::string>::const_iterator jlog = ilog;
           if (++jlog == _attached_logical_volumes_.end ()) {
-            out_ << du::i_tree_dumpable::last_tag;
+            out_ << datatools::i_tree_dumpable::last_tag;
           } else {
-            out_ << du::i_tree_dumpable::tag;
+            out_ << datatools::i_tree_dumpable::tag;
           }
           out_ << "Logical["
                << std::distance (_attached_logical_volumes_.begin (), ilog)
-               << "]: '" << *ilog << "'" << endl;
+               << "]: '" << *ilog << "'" << std::endl;
         }
       }
 
       // Flags
       {
-        out_ << indent << du::i_tree_dumpable::tag
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Drop zero energy deposit    : "
-             <<  (_drop_zero_energy_deposit_steps_ ? "Yes" : "No") << endl;
+             <<  (_drop_zero_energy_deposit_steps_ ? "Yes" : "No") << std::endl;
 
-        out_ << indent << du::i_tree_dumpable::tag
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Track gamma                 : "
-             <<  (_track_gamma_ ? "Yes" : "No") << endl;
+             <<  (_track_gamma_ ? "Yes" : "No") << std::endl;
 
-        out_ << indent << du::i_tree_dumpable::tag
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Track optical photon        : "
-             <<  (_track_optical_photon_ ? "Yes" : "No") << endl;
+             <<  (_track_optical_photon_ ? "Yes" : "No") << std::endl;
 
-        out_ << indent << du::i_tree_dumpable::tag
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Track neutron               : "
-             <<  (_track_neutron_ ? "Yes" : "No") << endl;
+             <<  (_track_neutron_ ? "Yes" : "No") << std::endl;
 
-        out_ << indent << du::i_tree_dumpable::tag
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Record volume properties    : "
-             <<  (_record_g4_volume_properties_ ? "Yes" : "No") << endl;
+             <<  (_record_g4_volume_properties_ ? "Yes" : "No") << std::endl;
 
-        out_ << indent << du::i_tree_dumpable::tag
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Record momentum             : "
-             <<  (_record_momentum_ ? "Yes" : "No") << endl;
+             <<  (_record_momentum_ ? "Yes" : "No") << std::endl;
 
-        out_ << indent << du::i_tree_dumpable::tag
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Record kinetic energy       : "
-             <<  (_record_kinetic_energy_ ? "Yes" : "No") << endl;
+             <<  (_record_kinetic_energy_ ? "Yes" : "No") << std::endl;
 
-        out_ << indent << du::i_tree_dumpable::tag
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Record primary particle     : "
-             <<  (_record_primary_particle_ ? "Yes" : "No") << endl;
+             <<  (_record_primary_particle_ ? "Yes" : "No") << std::endl;
 
-        out_ << indent << du::i_tree_dumpable::tag
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Record track id             : "
-             <<  (_record_track_id_ ? "Yes" : "No") << endl;
+             <<  (_record_track_id_ ? "Yes" : "No") << std::endl;
 
-        out_ << indent << du::i_tree_dumpable::tag
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Record creator process      : "
-             <<  (_record_creator_process_ ? "Yes" : "No") << endl;
+             <<  (_record_creator_process_ ? "Yes" : "No") << std::endl;
 
-        out_ << indent << du::i_tree_dumpable::tag
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Record major track          : "
              <<  (_record_major_track_ ? "Yes" : "No");
 
         if (_record_major_track_) {
           out_ << " (Emin > "
                << _major_track_minimum_energy_ / CLHEP::keV << " keV)"
-               << endl;
+               << std::endl;
         } else {
-          out_ << endl;
+          out_ << std::endl;
         }
 
-        out_ << indent << du::i_tree_dumpable::tag
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Record material name        : "
-             <<  (_record_material_ ? "Yes" : "No") << endl;
+             <<  (_record_material_ ? "Yes" : "No") << std::endl;
 
-        out_ << indent << du::i_tree_dumpable::tag
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Record delta ray from alpha : "
-             <<  (_record_delta_ray_from_alpha_ ? "Yes" : "No") << endl;
+             <<  (_record_delta_ray_from_alpha_ ? "Yes" : "No") << std::endl;
 
-        out_ << indent << du::i_tree_dumpable::tag
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Track info pointer          : ";
         if (_track_info_ptr_ != 0) out_ << _track_info_ptr_;
         else                       out_ << "Not allocated";
-        out_ << endl;
+        out_ << std::endl;
 
-        out_ << indent << du::i_tree_dumpable::tag
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Parent track info pointer   : ";
         if (_parent_track_info_ptr_ != 0) out_ << _parent_track_info_ptr_;
         else                              out_ << "Not allocated";
-        out_ << endl;
+        out_ << std::endl;
 
-        out_ << indent << du::i_tree_dumpable::tag
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Hits buffer capacity        : "
-             << _hits_buffer_capacity_ << endl;
+             << _hits_buffer_capacity_ << std::endl;
       }
 
       // {
-      //   out_ << indent << du::i_tree_dumpable::tag
+      //   out_ << indent << datatools::i_tree_dumpable::tag
       //        << "Properties : "
-      //        << endl;
+      //        << std::endl;
       //   {
       //     ostringstream indent_oss;
       //     indent_oss << indent;
-      //     indent_oss << du::i_tree_dumpable::skip_tag;
+      //     indent_oss << datatools::i_tree_dumpable::skip_tag;
       //     _aux.tree_dump (out_, "", indent_oss.str ());
       //   }
       // }
 
       // Associated step hit processor
       {
-        out_ << indent << du::i_tree_dumpable::last_tag
+        out_ << indent << datatools::i_tree_dumpable::last_tag
              << "Step hit processors         : ";
 
         if (_hit_processors_.size () == 0) {
-          out_ << "No" << endl;
+          out_ << "No" << std::endl;
         } else {
-          out_ << _hit_processors_.size () << endl;
+          out_ << _hit_processors_.size () << std::endl;
           for (hit_processor_dict_type::const_iterator ihp
                  = _hit_processors_.begin ();
                ihp != _hit_processors_.end ();
                ++ihp) {
-            const string & hp_name = ihp->first;
+            const std::string & hp_name = ihp->first;
             mctools::base_step_hit_processor * hp = ihp->second;
 
-            out_ << indent << du::i_tree_dumpable::last_skip_tag;
+            out_ << indent << datatools::i_tree_dumpable::last_skip_tag;
             hit_processor_dict_type::const_iterator jhp = ihp;
             if (++jhp == _hit_processors_.end ()) {
-              out_ << du::i_tree_dumpable::last_tag;
+              out_ << datatools::i_tree_dumpable::last_tag;
             } else {
-              out_ << du::i_tree_dumpable::tag;
+              out_ << datatools::i_tree_dumpable::tag;
             }
             out_ << "Processor[" << std::distance (_hit_processors_.begin (), ihp)
                  << "]: '" << hp_name
                  << "' @ " << hp << " with hit category '"
-                 << hp->get_hit_category () << "'" << endl;
+                 << hp->get_hit_category () << "'" << std::endl;
           }
         }
       }

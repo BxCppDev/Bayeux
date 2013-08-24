@@ -30,8 +30,6 @@ namespace mctools {
 
   namespace g4 {
 
-    using namespace std;
-
     void g4_prng::set_random (mygsl::rng & rng_)
     {
       _random_ = &rng_;
@@ -88,22 +86,22 @@ namespace mctools {
       return;
     }
 
-    void g4_prng::saveStatus ( const char filename_[]) const
+    void g4_prng::saveStatus (const char filename_[]) const
     {
-      _random_->store (string (filename_));
+      _random_->store (std::string (filename_));
       return;
     }
 
-    void g4_prng::restoreStatus ( const char filename_[])
+    void g4_prng::restoreStatus (const char filename_[])
     {
-      _random_->load (string (filename_));
+      _random_->load (std::string (filename_));
       return;
     }
 
     void g4_prng::showStatus () const
     {
-      _random_->to_stream (clog);
-      clog << endl;
+      _random_->to_stream (std::clog);
+      std::clog << std::endl;
       return;
     }
 

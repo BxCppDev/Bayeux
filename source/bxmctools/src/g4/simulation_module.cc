@@ -29,15 +29,13 @@ namespace mctools {
 
   namespace g4 {
 
-    using namespace std;
-
     // Registration instantiation macro :
     DPP_MODULE_REGISTRATION_IMPLEMENT(simulation_module, "mctools::g4::simulation_module");
 
     void simulation_module::set_geometry_manager (const geomtools::manager & geometry_manager_)
     {
       DT_THROW_IF (_geometry_manager_ != 0 && _geometry_manager_->is_initialized (),
-                   logic_error,
+                   std::logic_error,
                    "Embedded geometry manager is already initialized !");
       _geometry_manager_ = &geometry_manager_;
       return;
@@ -178,7 +176,7 @@ namespace mctools {
 
       if (_geometry_manager_ == 0)  {
         // Access to the Geometry Service :
-        DT_THROW_IF (_Geo_label_.empty (),logic_error,
+        DT_THROW_IF (_Geo_label_.empty (), std::logic_error,
                      "Module '" << get_name ()
                      << "' has no valid '" << "Geo_label" << "' property !");
         if (service_manager_.has (_Geo_label_)
@@ -190,13 +188,13 @@ namespace mctools {
             // in the simulation manager :
             this->set_geometry_manager (Geo.get_geom_manager ());
           } else {
-            DT_THROW_IF (true,logic_error,
+          DT_THROW_IF (true, std::logic_error,
                          "Module '" << get_name ()
                          << "' has no '" << _Geo_label_ << "' geometry service !");
           }
       }
 
-      DT_THROW_IF (_geometry_manager_ == 0, logic_error, "Missing geometry manager !");
+      DT_THROW_IF (_geometry_manager_ == 0, std::logic_error, "Missing geometry manager !");
 
       if (_SD_label_.empty ()) {
         // Use the default label for the 'Simulated data' bank :
@@ -217,7 +215,7 @@ namespace mctools {
     void simulation_module::reset ()
     {
       DT_LOG_TRACE(get_logging_priority(),"Entering...");
-      DT_THROW_IF (! is_initialized (), logic_error,
+      DT_THROW_IF (! is_initialized (), std::logic_error,
                    "Module '" << get_name () << "' is not initialized !");
 
       if (_simulation_ctrl_ != 0) {
@@ -244,7 +242,7 @@ namespace mctools {
     // Processing :
     int simulation_module::process (datatools::things & event_record_)
     {
-      DT_THROW_IF (! is_initialized (), logic_error,
+      DT_THROW_IF (! is_initialized (), std::logic_error,
                    "Module '" << get_name () << "' is not initialized !");
       int status = _simulate_event(event_record_);
       return status;
@@ -314,7 +312,7 @@ namespace mctools {
       }
       mctools::simulated_data & SD = *ptr_SD;
       DT_THROW_IF (former_SD && ! _erase_former_SD_bank_,
-                   logic_error,
+                   std::logic_error,
                    "Module '" << get_name () << "' cannot remove former '" << _SD_label_ <<  "' bank from simulated data !");
 
       DT_LOG_TRACE(get_logging_priority(),

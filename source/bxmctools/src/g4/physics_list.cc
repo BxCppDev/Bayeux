@@ -677,22 +677,21 @@ namespace mctools {
                                   const std::string & indent_,
                                   bool inherit_) const
     {
-      using namespace std;
-      string indent;
+      std::string indent;
       if (! indent_.empty ()) indent = indent_;
       if (! title_.empty ()) {
-        out_ << indent << title_ << endl;
+        out_ << indent << title_ << std::endl;
       }
 
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Initialized                  : " << (_initialized_ ? "Yes": "No") << endl;
+           << "Initialized                  : " << (_initialized_ ? "Yes": "No") << std::endl;
 
       // Geant4 physics list:
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Geant4 physics list  : " << (has_geant4_physics_list() ? "Yes": "No") << endl;
+           << "Geant4 physics list  : " << (has_geant4_physics_list() ? "Yes": "No") << std::endl;
       out_ << indent << datatools::i_tree_dumpable::skip_tag
            << datatools::i_tree_dumpable::tag
-           << "Name : '" << _geant4_physics_list_name_ << "'" << endl;
+           << "Name : '" << _geant4_physics_list_name_ << "'" << std::endl;
 
       // Physics constructors:
       out_ << indent << datatools::i_tree_dumpable::tag
@@ -700,7 +699,7 @@ namespace mctools {
       if (_physics_constructors_.size() == 0) {
         out_ << "None";
       }
-      out_ << endl;
+      out_ << std::endl;
       for (physics_constructor_dict_type::const_iterator i
              = _physics_constructors_.begin();
            i != _physics_constructors_.end();
@@ -727,26 +726,26 @@ namespace mctools {
 
       // Production cuts :
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Using production cuts        : " << (_using_production_cuts_ ? "Yes" : "No") << endl;
+           << "Using production cuts        : " << (_using_production_cuts_ ? "Yes" : "No") << std::endl;
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Default production cut value : "
-           << _production_cuts_default_value_ / CLHEP::mm << " mm" << endl;
+           << _production_cuts_default_value_ / CLHEP::mm << " mm" << std::endl;
       // Default particles cuts:
       out_ << indent << datatools::i_tree_dumpable::last_tag
            << "Default gamma production cut                  : "
-           << _production_cuts_values_.gamma / CLHEP::mm << " mm" << endl;
+           << _production_cuts_values_.gamma / CLHEP::mm << " mm" << std::endl;
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Default electron production cut               : "
-           << _production_cuts_values_.electron / CLHEP::mm << " mm" << endl;
+           << _production_cuts_values_.electron / CLHEP::mm << " mm" << std::endl;
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Default positron production cut               : "
-           << _production_cuts_values_.positron / CLHEP::mm << " mm" << endl;
+           << _production_cuts_values_.positron / CLHEP::mm << " mm" << std::endl;
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Default proton production cut               : "
-           << _production_cuts_values_.proton / CLHEP::mm << " mm" << endl;
+           << _production_cuts_values_.proton / CLHEP::mm << " mm" << std::endl;
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Regions cuts                 : "
-           << (!_production_cuts_per_region_.empty () ? "Yes" : "No") << endl;
+           << (!_production_cuts_per_region_.empty () ? "Yes" : "No") << std::endl;
       for (std::map<std::string, production_cuts_info>::const_iterator i = _production_cuts_per_region_.begin ();
            i != _production_cuts_per_region_.end ();
            i++) {
@@ -767,7 +766,7 @@ namespace mctools {
 
       out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
            << "Logging priority             : "
-           << datatools::logger::get_priority_label(_logprio()) << endl;
+           << datatools::logger::get_priority_label(_logprio()) << std::endl;
 
       return;
     }

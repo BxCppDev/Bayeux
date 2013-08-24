@@ -46,8 +46,6 @@ namespace mctools {
 
   namespace g4 {
 
-    using namespace std;
-
     bool primary_generator::is_initialized () const
     {
       return _initialized_;
@@ -200,19 +198,19 @@ namespace mctools {
       if (_run_action_ == 0) {
         G4Exception ("mctools::g4::primary_generator::initialized",
                      "InitializationError",
-                      RunMustBeAborted,
+                     RunMustBeAborted,
                      "Missing run action !");
       }
       if (_event_action_ == 0) {
         G4Exception ("mctools::g4::primary_generator::initialized",
                      "InitializationError",
-                      RunMustBeAborted,
+                     RunMustBeAborted,
                      "Missing event action !");
       }
       if (_event_generator_ == 0) {
         G4Exception ("mctools::g4::primary_generator::initialized",
                      "InitializationError",
-                      RunMustBeAborted,
+                     RunMustBeAborted,
                      "Missing event generator !");
       }
       if (_vertex_generator_ == 0) {
@@ -230,7 +228,7 @@ namespace mctools {
       if (! is_initialized ()) {
         G4Exception ("mctools::g4::primary_generator::reset",
                      "InitializationError",
-                      FatalException,
+                     FatalException,
                      "Primary generator is not initialized!");
       }
       // destroy the gun:
@@ -252,7 +250,7 @@ namespace mctools {
       if (! is_initialized ()) {
         G4Exception ("mctools::g4::primary_generator::GeneratePrimaries",
                      "InitializationError",
-                      RunMustBeAborted,
+                     RunMustBeAborted,
                      "Primary_Generator is not initialized!");
       }
 
@@ -350,7 +348,7 @@ namespace mctools {
         const ::genbb::primary_particle & genbb_particle = *i;
         particle_counter += 1;
 
-        string particle_label = ::genbb::primary_particle::get_label (genbb_particle.get_type());
+        const std::string particle_label = ::genbb::primary_particle::get_label (genbb_particle.get_type());
         double particle_time       = genbb_particle.get_time ();
         double total_momentum      = genbb_particle.get_momentum ().mag ();
         double relativistic_energy = 0.;
@@ -415,26 +413,26 @@ namespace mctools {
         _particle_gun_->GeneratePrimaryVertex (g4_event_);
 
         if (_logprio() == datatools::logger::PRIO_TRACE) {
-          const string tag           = "|-- ";
-          const string skip_tag      = "|   ";
-          const string last_tag      = "`-- ";
-          const string last_skip_tag = "    ";
-          string tag1 = tag;
-          string tag2 = skip_tag;
+          const std::string tag           = "|-- ";
+          const std::string skip_tag      = "|   ";
+          const std::string last_tag      = "`-- ";
+          const std::string last_skip_tag = "    ";
+          std::string tag1 = tag;
+          std::string tag2 = skip_tag;
           if (particle_counter == current_generated_event.get_particles().size ()) {
             tag1 = last_tag;
             tag2 = last_skip_tag;
           }
           DT_LOG_TRACE(_logprio(), "Particle #" << particle_counter << " : ");
-          clog << tag2 << tag      << "Type       = "
-               << genbb_particle.get_type() << " ('" << particle_label << "')"
-               << endl;
-          clog << tag2 << tag      << "Time       = "
-               << _particle_gun_->GetParticleTime () / CLHEP::ns << " ns"
-               << endl;
-          clog << tag2 << tag      << "Energy     = " << kinetic_energy / CLHEP::keV << " keV" << endl;
-          clog << tag2 << tag      << "Position   = " << _current_vertex_ / CLHEP::mm << " mm" << endl;
-          clog << tag2 << last_tag << "Momentum   = " << genbb_particle.get_momentum() / CLHEP::keV << " keV" << endl;
+          std::clog << tag2 << tag      << "Type       = "
+                    << genbb_particle.get_type() << " ('" << particle_label << "')"
+                    << std::endl;
+          std::clog << tag2 << tag      << "Time       = "
+                    << _particle_gun_->GetParticleTime () / CLHEP::ns << " ns"
+                    << std::endl;
+          std::clog << tag2 << tag      << "Energy     = " << kinetic_energy / CLHEP::keV << " keV" << std::endl;
+          std::clog << tag2 << tag      << "Position   = " << _current_vertex_ / CLHEP::mm << " mm" << std::endl;
+          std::clog << tag2 << last_tag << "Momentum   = " << genbb_particle.get_momentum() / CLHEP::keV << " keV" << std::endl;
         }
       }
 

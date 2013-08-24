@@ -22,8 +22,6 @@ namespace mctools {
 
   namespace g4 {
 
-    using namespace std;
-
     // ctor:
     tracking_action::tracking_action ()
     {

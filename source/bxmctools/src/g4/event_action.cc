@@ -36,8 +36,6 @@ namespace mctools {
 
   namespace g4 {
 
-    using namespace std;
-
     const run_action & event_action::get_run_action () const
     {
       return *_run_action_;
@@ -95,7 +93,7 @@ namespace mctools {
 
     void event_action::reset ()
     {
-      DT_THROW_IF(! is_initialized (), logic_error, "Not initialized !");
+      DT_THROW_IF(! is_initialized (), std::logic_error, "Not initialized !");
       _at_reset_ ();
       _initialized_ = false;
       return;
@@ -113,12 +111,12 @@ namespace mctools {
 
     void event_action::initialize (const datatools::properties & config_)
     {
-      DT_THROW_IF (is_initialized (), logic_error, "Already initialized !");
+      DT_THROW_IF (is_initialized (), std::logic_error, "Already initialized !");
 
       loggable_support::_initialize_logging_support(config_);
 
       if (config_.has_key ("event_model.hit_collection_type")) {
-        string event_model_collection_type
+        const std::string event_model_collection_type
           = config_.fetch_string ("event_model.hit_collection_type");
         event_action::sim_data_type & event_data = this->grab_event_data ();
         event_data.reset_collection_type ();
@@ -127,7 +125,7 @@ namespace mctools {
         } else if (event_model_collection_type == "handle") {
           event_data.set_collection_type (sim_data_type::HANDLE_HIT_COLLECTION_TYPE);
         } else {
-          DT_THROW_IF(true, logic_error, "Invalid hit collection type '" << event_model_collection_type << "' !");
+          DT_THROW_IF(true, std::logic_error, "Invalid hit collection type '" << event_model_collection_type << "' !");
         }
       }
       // end of fetching.
@@ -250,7 +248,7 @@ namespace mctools {
              = _detector_construction_->get_sensitive_detectors ().begin ();
            iSD != _detector_construction_->get_sensitive_detectors ().end ();
            iSD++) {
-        const string & sensitive_category = iSD->first;
+        const std::string & sensitive_category = iSD->first;
         sensitive_detector & the_detector = *iSD->second;
 
         DT_LOG_DEBUG(_logprio(), "Processing hits from sensitive detector '"
@@ -324,7 +322,7 @@ namespace mctools {
 
       DT_LOG_DEBUG(_logprio(), "Event data: ");
       if (is_debug()) {
-        get_event_data ().tree_dump (clog);
+        get_event_data ().tree_dump (std::clog);
         //get_event_data ().get_primary_event ().dump (clog, "Primary event (genbb format): ");
       }
 

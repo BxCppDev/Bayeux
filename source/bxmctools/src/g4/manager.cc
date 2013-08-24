@@ -76,8 +76,6 @@ namespace mctools {
 
   namespace g4 {
 
-    using namespace std;
-
     const std::string manager::DEFAULT_PRNG_ID = "taus2";
 
     // static
@@ -277,7 +275,7 @@ namespace mctools {
       return is_interactive() && _g4_visualization_;
     }
 
-    const string & manager::get_g4_macro() const
+    const std::string & manager::get_g4_macro() const
     {
       return _g4_macro_;
     }
@@ -287,7 +285,7 @@ namespace mctools {
       return ! _g4_macro_.empty();
     }
 
-    void manager::set_g4_macro(const string & g4_macro_)
+    void manager::set_g4_macro(const std::string & g4_macro_)
     {
       DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
       _g4_macro_ = g4_macro_;
@@ -317,12 +315,12 @@ namespace mctools {
     void manager::set_number_of_events(uint32_t nevents_)
     {
       DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
-      DT_THROW_IF (nevents_ < NUMBER_OF_EVENTS_LOWER_LIMIT,
-                   std::domain_error,
-                   "Invalid 'zero' number of events !");
-      DT_THROW_IF (nevents_ > NUMBER_OF_EVENTS_UPPER_LIMIT,
-                   std::domain_error,
-                   "Invalid 'too large' number of events !");
+      DT_THROW_IF(nevents_ < NUMBER_OF_EVENTS_LOWER_LIMIT,
+                  std::domain_error,
+                  "Invalid 'zero' number of events !");
+      DT_THROW_IF(nevents_ > NUMBER_OF_EVENTS_UPPER_LIMIT,
+                  std::domain_error,
+                  "Invalid 'too large' number of events !");
       _number_of_events_ = nevents_;
       if (_number_of_events_ > NUMBER_OF_EVENTS_WARNING_LIMIT) {
         DT_LOG_WARNING(_logprio(), "Number of events is high = " << _number_of_events_);
@@ -663,12 +661,12 @@ namespace mctools {
       return ! _input_prng_seeds_file_.empty();
     }
 
-    const string & manager::get_input_prng_seeds_file() const
+    const std::string & manager::get_input_prng_seeds_file() const
     {
       return _input_prng_seeds_file_;
     }
 
-    void manager::set_input_prng_seeds_file(const string & fn_)
+    void manager::set_input_prng_seeds_file(const std::string & fn_)
     {
       _input_prng_seeds_file_ = fn_;
       return;
@@ -679,12 +677,12 @@ namespace mctools {
       return ! _output_prng_seeds_file_.empty();
     }
 
-    const string & manager::get_output_prng_seeds_file() const
+    const std::string & manager::get_output_prng_seeds_file() const
     {
       return _output_prng_seeds_file_;
     }
 
-    void manager::set_output_prng_seeds_file(const string & fn_)
+    void manager::set_output_prng_seeds_file(const std::string & fn_)
     {
       _output_prng_seeds_file_ = fn_;
       return;
@@ -696,7 +694,7 @@ namespace mctools {
       return;
     }
 
-    const string & manager::get_output_prng_states_file() const
+    const std::string & manager::get_output_prng_states_file() const
     {
       return _output_prng_states_file_;
     }
@@ -706,7 +704,7 @@ namespace mctools {
       return ! _output_prng_states_file_.empty();
     }
 
-    void manager::set_output_prng_states_file(const string & fn_)
+    void manager::set_output_prng_states_file(const std::string & fn_)
     {
       _output_prng_states_file_ = fn_;
       return;
@@ -719,7 +717,7 @@ namespace mctools {
     }
 
 
-    const string & manager::get_input_prng_states_file() const
+    const std::string & manager::get_input_prng_states_file() const
     {
       return _input_prng_states_file_;
     }
@@ -729,13 +727,13 @@ namespace mctools {
       return ! _input_prng_states_file_.empty();
     }
 
-    void manager::set_input_prng_states_file(const string & fn_)
+    void manager::set_input_prng_states_file(const std::string & fn_)
     {
       _input_prng_states_file_ = fn_;
       return;
     }
 
-    void manager::set_output_data_file(const string & fn_)
+    void manager::set_output_data_file(const std::string & fn_)
     {
       _output_data_file_ = fn_;
       return;
@@ -1035,7 +1033,7 @@ namespace mctools {
           geometry_config.tree_dump(std::clog);
         }
         DT_THROW_IF (! geometry_config.has_key("manager.config"),
-                     logic_error, "Missing geometry configuration !");
+                     std::logic_error, "Missing geometry configuration !");
         std::string geom_mgr_prop_filename = geometry_config.fetch_string("manager.config");
         datatools::fetch_path_with_env(geom_mgr_prop_filename);
         datatools::properties geom_mgr_config;

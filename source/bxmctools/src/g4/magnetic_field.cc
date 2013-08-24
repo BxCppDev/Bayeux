@@ -27,8 +27,6 @@ namespace mctools {
 
   namespace g4 {
 
-    using namespace std;
-
     bool magnetic_field::has_name() const
     {
       return ! _name_.empty();
@@ -272,18 +270,18 @@ namespace mctools {
       return;
     }
 
-    void magnetic_field::dump(ostream & out_) const
+    void magnetic_field::dump(std::ostream & out_) const
     {
-      out_ << "magnetic_field:" << endl;
-      out_ << "|-- Name                   : '" << _name_ << "'" << endl;
+      out_ << "magnetic_field:" << std::endl;
+      out_ << "|-- Name                   : '" << _name_ << "'" << std::endl;
       if (geomtools::is_valid(_standalone_constant_mag_field_)) {
         out_ << "|-- Standalone constant magnetic field : "
              << _standalone_constant_mag_field_ / CLHEP::gauss
-             << " gauss" << endl;
+             << " gauss" << std::endl;
       } else {
-        out_ << "|-- Magnetic field         : " << _mag_field_ << endl;
+        out_ << "|-- Magnetic field         : " << _mag_field_ << std::endl;
       }
-      out_ << "`-- Check field pos/time   : " << _mag_field_check_pos_time_ << endl;
+      out_ << "`-- Check field pos/time   : " << _mag_field_check_pos_time_ << std::endl;
       return;
     }
 
@@ -292,4 +290,3 @@ namespace mctools {
 } // end of namespace mctools
 
 // end of magnetic_field.cc
-

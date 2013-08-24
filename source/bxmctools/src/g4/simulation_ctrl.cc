@@ -15,8 +15,6 @@ namespace mctools {
 
   namespace g4 {
 
-    using namespace std;
-
     void simulation_ctrl::set_simulation_manager (manager & a_simulation_manager)
     {
       simulation_manager = &a_simulation_manager;

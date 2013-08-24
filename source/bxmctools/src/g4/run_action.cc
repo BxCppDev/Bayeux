@@ -40,8 +40,6 @@ namespace mctools {
 
   namespace g4 {
 
-    using namespace std;
-
     bool run_action::is_initialized () const
     {
       return _initialized_;
@@ -54,7 +52,7 @@ namespace mctools {
 
     void run_action::set_use_run_header_footer (bool a_new_value)
     {
-      DT_THROW_IF (is_initialized (), logic_error, "Object is locked !");
+      DT_THROW_IF (is_initialized (), std::logic_error, "Object is locked !");
       _use_run_header_footer_ = a_new_value;
       return;
     }
@@ -128,9 +126,9 @@ namespace mctools {
       return;
     }
 
-    void run_action::set_output_file (const string & a_filename)
+    void run_action::set_output_file (const std::string & a_filename)
     {
-      DT_THROW_IF (is_initialized (), logic_error,
+      DT_THROW_IF (is_initialized (), std::logic_error,
                    "Cannot change output  file name ! Object is locked !");
       _output_file_ = a_filename;
       _save_data_ = true;
@@ -160,19 +158,19 @@ namespace mctools {
     // ctor:
     run_action::run_action (manager & a_mgr)
     {
-      _initialized_ = false;
-      _use_run_header_footer_ = false;
-      _number_of_processed_events_ = 0;
-      _number_of_events_modulo_ = NUMBER_OF_EVENTS_MODULO_NONE;
-      _save_data_ = false;
-      _output_file_preserve_ = true;
-      _output_file_dir_ = ".";
-      _output_file_prefix_ = "mctools_g4_";
-      _output_file_format_ = "ascii";
-      _output_file_compression_ = "gzip";
-      _output_file_ = "";
-      _manager_ = &a_mgr;
-      _brio_general_info_store_label_ = io_utils::GENERAL_INFO_STORE;
+      _initialized_                           = false;
+      _use_run_header_footer_                 = false;
+      _number_of_processed_events_            = 0;
+      _number_of_events_modulo_               = NUMBER_OF_EVENTS_MODULO_NONE;
+      _save_data_                             = false;
+      _output_file_preserve_                  = true;
+      _output_file_dir_                       = ".";
+      _output_file_prefix_                    = "mctools_g4_";
+      _output_file_format_                    = "ascii";
+      _output_file_compression_               = "gzip";
+      _output_file_                           = "";
+      _manager_                               = &a_mgr;
+      _brio_general_info_store_label_         = io_utils::GENERAL_INFO_STORE;
       _brio_plain_simulated_data_store_label_ = io_utils::PLAIN_SIMULATED_DATA_STORE;
       return;
     }
@@ -194,7 +192,7 @@ namespace mctools {
 
       if (! has_number_of_events_modulo ()) {
         if (a_config.has_key ("number_of_events_modulo")) {
-          int number_of_events_modulo = a_config.fetch_integer ("number_of_events_modulo");
+          const int number_of_events_modulo = a_config.fetch_integer ("number_of_events_modulo");
           set_number_of_events_modulo (number_of_events_modulo);
         }
       }
@@ -210,7 +208,7 @@ namespace mctools {
       if (_save_data_) {
         if (_output_file_.empty ()) {
           if (a_config.has_key ("file.name")) {
-            std::string output_file = a_config.fetch_string ("file.name");
+            const std::string output_file = a_config.fetch_string ("file.name");
             set_output_file(output_file);
           }
         }
@@ -276,7 +274,7 @@ namespace mctools {
 
     void run_action::dump (ostream & a_out) const
     {
-      a_out << "run_action::dump:" << endl;
+      a_out << "run_action::dump:" << std::endl;
       a_out << "|-- Save data           : "  << _save_data_ << std::endl;
       a_out << "|-- Output file dir     : '"  << _output_file_dir_ << "'" << std::endl;
       a_out << "|-- Output file prefix  : '"  << _output_file_prefix_ << "'" << std::endl;
@@ -333,9 +331,9 @@ namespace mctools {
 
     void run_action::BeginOfRunAction (const G4Run* a_run)
     {
-      cout << flush;
-      cerr << flush;
-      clog << flush;
+      std::cout << std::flush;
+      std::cerr << std::flush;
+      std::clog << std::flush;
       DT_LOG_NOTICE(_logprio(),"# Run " << a_run->GetRunID () << " is starting...");
       _number_of_processed_events_ = 0;
       _number_of_saved_events_ = 0;
@@ -371,7 +369,7 @@ namespace mctools {
         bool using_brio = false;
         bool output_file_directives = false;
         if (_output_file_.empty ()) {
-          ostringstream output_file_oss;
+          std::ostringstream output_file_oss;
           if (! _output_file_dir_.empty ()) {
             output_file_oss << _output_file_dir_;
             if (_output_file_dir_[_output_file_dir_.size () - 1] != '/') {
@@ -411,11 +409,11 @@ namespace mctools {
           _output_file_ = output_file_oss.str ();
           output_file_directives = true;
         }
-        string output_file_name = _output_file_;
+        std::string output_file_name = _output_file_;
         datatools::fetch_path_with_env (output_file_name);
         if (! output_file_directives) {
           using_brio = false;
-          string extension = boost::filesystem::extension (output_file_name);
+          const std::string extension = boost::filesystem::extension (output_file_name);
           if (extension == brio::store_info::BRIO_FILE_EXTENSION) {
             using_brio = true;
           } else if (extension == brio::store_info::TRIO_FILE_EXTENSION) {
@@ -444,7 +442,7 @@ namespace mctools {
             _brio_writer_.select_store (_brio_general_info_store_label_);
             _brio_writer_.store (_run_header_);
           }
-          const std::string & store = _brio_plain_simulated_data_store_label_;
+          const std::string store = _brio_plain_simulated_data_store_label_;
           DT_LOG_DEBUG(_logprio(), "Brio writer has store '" << store
                         << "' : " << _brio_writer_.has_store(store));
           _brio_writer_.add_store (store, mctools::simulated_data::SERIAL_TAG);

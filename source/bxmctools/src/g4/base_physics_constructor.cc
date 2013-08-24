@@ -108,35 +108,32 @@ namespace mctools {
       return;
     }
 
-    void base_physics_constructor::tree_dump (std::ostream & out_,
-                                              const std::string & title_,
-                                              const std::string & indent_,
-                                              bool inherit_) const
+    void base_physics_constructor::tree_dump(std::ostream & out_,
+                                             const std::string & title_,
+                                             const std::string & indent_,
+                                             bool inherit_) const
     {
-      using namespace std;
       std::string indent;
       if (! indent_.empty ()) indent = indent_;
       if (! title_.empty ()) {
-        out_ << indent << title_ << endl;
+        out_ << indent << title_ << std::endl;
       }
 
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Name                  : '" << _name_ << "'" << endl;
+           << "Name                  : '" << _name_ << "'" << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Class ID              : '" << _class_id_ << "'" << endl;
+           << "Class ID              : '" << _class_id_ << "'" << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Logging priority      : "
-           << datatools::logger::get_priority_label(_logprio()) << endl;
+           << datatools::logger::get_priority_label(_logprio()) << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Mother physics list   : " << (_mother_physics_list_ != 0 ? "Yes": "No") << endl;
+           << "Mother physics list   : " << (_mother_physics_list_ != 0 ? "Yes": "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
-           << "Initialized           : " << (is_initialized() ? "Yes": "No") << endl;
-
-
+           << "Initialized           : " << (is_initialized() ? "Yes": "No") << std::endl;
       return;
     }
 

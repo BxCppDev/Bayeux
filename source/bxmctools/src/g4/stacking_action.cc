@@ -27,8 +27,6 @@ namespace mctools {
 
   namespace g4 {
 
-    using namespace std;
-
     stacking_action::stacking_action ()
     {
       _g4_navigator_ = 0;
@@ -75,7 +73,7 @@ namespace mctools {
       if ((_killer_volume_names_.size () > 0) && (_killer_volumes_.size () == 0)) {
         G4LogicalVolumeStore * g4_lv_store = G4LogicalVolumeStore::GetInstance ();
         for (int i = 0; i < (int) _killer_volume_names_.size (); i++) {
-          ostringstream added_volume_name;
+          std::ostringstream added_volume_name;
           added_volume_name << _killer_volume_names_[i];
           G4String g4_log_name = added_volume_name.str ().c_str ();
           G4LogicalVolume * g4_volume_log = g4_lv_store->GetVolume (g4_log_name, false);
@@ -88,9 +86,9 @@ namespace mctools {
       if ((_killer_material_names_.size () > 0) && (_killer_materials_.size () == 0)) {
         //G4LogicalVolumeStore * g4_lv_store = G4LogicalVolumeStore::GetInstance ();
         for (int i = 0; i < (int) _killer_material_names_.size (); i++) {
-          ostringstream added_material_name;
+          std::ostringstream added_material_name;
           added_material_name << _killer_material_names_[i];
-          string stmp = added_material_name.str ();
+          std::string stmp = added_material_name.str ();
           boost::algorithm::replace_all (stmp, ":", "_"); // a trick for GDML does not support ':' in (XML) names.
           G4String g4_material_name = stmp.c_str ();
           G4Material * g4_material = G4Material::GetMaterial (g4_material_name, false);

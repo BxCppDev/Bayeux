@@ -16,8 +16,6 @@
 
 namespace mctools {
 
-  using namespace std;
-
   // serial tag for datatools::serialization::i_serializable interface :
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(base_step_hit, "mctools::base_step_hit")
 
@@ -229,12 +227,12 @@ namespace mctools {
     return true;
   }
 
-  const string & base_step_hit::get_particle_name () const
+  const std::string & base_step_hit::get_particle_name () const
   {
     return _particle_name_;
   }
 
-  void base_step_hit::set_particle_name (const string & n)
+  void base_step_hit::set_particle_name (const std::string & n)
   {
     _store |= STORE_PARTICLE_NAME;
     _particle_name_ = n;
@@ -274,42 +272,41 @@ namespace mctools {
     return;
   }
 
-  void base_step_hit::tree_dump (ostream & a_out ,
-                                 const string & a_title,
-                                 const string & a_indent,
+  void base_step_hit::tree_dump (std::ostream & a_out ,
+                                 const std::string & a_title,
+                                 const std::string & a_indent,
                                  bool a_inherit) const
   {
-    namespace du = datatools;
-    string indent;
+    std::string indent;
     if (! a_indent.empty ())
       {
         indent = a_indent;
       }
     geomtools::base_hit::tree_dump (a_out, a_title, indent, true);
 
-    a_out << indent << du::i_tree_dumpable::tag
-          << "Position start : " << _position_start_ / CLHEP::mm  << " mm" << endl;
-    a_out << indent << du::i_tree_dumpable::tag
-          << "Position stop  : " << _position_stop_ / CLHEP::mm << " mm" << endl;
-    a_out << indent << du::i_tree_dumpable::tag
-          << "Time start     : " << _time_start_ / CLHEP::ns << " ns" << endl;
-    a_out << indent << du::i_tree_dumpable::tag
-          << "Time stop      : " << _time_stop_ / CLHEP::ns << " ns" << endl;
-    a_out << indent << du::i_tree_dumpable::tag
-          << "Momentum start : " << _momentum_start_ / CLHEP::keV << " keV" << endl;
-    a_out << indent << du::i_tree_dumpable::tag
-          << "Momentum stop  : " << _momentum_stop_ / CLHEP::keV << " keV" << endl;
-    a_out << indent << du::i_tree_dumpable::tag
-          << "Energy deposit : " << _energy_deposit_ / CLHEP::keV << " keV" << endl;
-    a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)
-          << "Particle name  : `" << _particle_name_ << "'" << endl;
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Position start : " << _position_start_ / CLHEP::mm  << " mm" << std::endl;
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Position stop  : " << _position_stop_ / CLHEP::mm << " mm" << std::endl;
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Time start     : " << _time_start_ / CLHEP::ns << " ns" << std::endl;
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Time stop      : " << _time_stop_ / CLHEP::ns << " ns" << std::endl;
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Momentum start : " << _momentum_start_ / CLHEP::keV << " keV" << std::endl;
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Momentum stop  : " << _momentum_stop_ / CLHEP::keV << " keV" << std::endl;
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Energy deposit : " << _energy_deposit_ / CLHEP::keV << " keV" << std::endl;
+    a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
+          << "Particle name  : `" << _particle_name_ << "'" << std::endl;
 
     return;
   }
 
   void base_step_hit::dump () const
   {
-    tree_dump (clog);
+    tree_dump (std::clog);
     return;
   }
 
