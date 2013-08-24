@@ -8,8 +8,6 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   const std::string box::BOX_LABEL = "box";
 
   double box::get_xmin () const
@@ -449,21 +447,21 @@ namespace geomtools {
   }
 
 
-  void box::tree_dump (ostream & a_out,
-                       const string & a_title,
-                       const string & a_indent,
+  void box::tree_dump (std::ostream & a_out,
+                       const std::string & a_title,
+                       const std::string & a_indent,
                        bool a_inherit) const
   {
-    string indent;
+    std::string indent;
     if (! a_indent.empty ()) indent = a_indent;
     i_object_3d::tree_dump (a_out, a_title, a_indent, true);
 
     a_out << indent << datatools::i_tree_dumpable::tag
-          << "X : " << get_x () / CLHEP::mm << " mm" << endl;
+          << "X : " << get_x () / CLHEP::mm << " mm" << std::endl;
     a_out << indent << datatools::i_tree_dumpable::tag
-          << "Y : " << get_y () / CLHEP::mm << " mm" << endl;
+          << "Y : " << get_y () / CLHEP::mm << " mm" << std::endl;
     a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
-          << "Z : " << get_z () / CLHEP::mm << " mm" << endl;
+          << "Z : " << get_z () / CLHEP::mm << " mm" << std::endl;
     return;
   }
 

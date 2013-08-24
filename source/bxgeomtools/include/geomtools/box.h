@@ -16,8 +16,7 @@
 #ifndef GEOMTOOLS_BOX_H_
 #define GEOMTOOLS_BOX_H_ 1
 
-#include <sstream>
-#include <stdexcept>
+#include <boost/cstdint.hpp>
 
 #include <geomtools/i_shape_3d.h>
 #include <geomtools/i_stackable.h>
@@ -161,4 +160,3 @@ namespace geomtools {
 #endif // GEOMTOOLS_BOX_H_
 
 // end of box.h
-
