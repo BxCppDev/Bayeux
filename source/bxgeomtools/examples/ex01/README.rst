@@ -88,9 +88,7 @@ Quick start
 5. Run the ``geomtools_inspector`` ::
 
       shell> geomtools_inspector \
-               --manager-config config/manager.conf \
-               --with-gdml \
-               --with-visu --visu-view-3d
+               --manager-config config/manager.conf --visu-view-3d
 
    It displays views of the setup using the ``geomtools`` Gnuplot viewer.
 

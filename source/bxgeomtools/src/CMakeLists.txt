@@ -110,6 +110,7 @@ set(geomtools_PUBLIC_HEADERS
   include/geomtools/visibility.h
   include/geomtools/manager.h
   include/geomtools/manager_macros.h
+  include/geomtools/geomtools_driver.h
   include/geomtools/geometry_service.h
   include/geomtools/materials_plugin.h
   include/geomtools/materials_utils.h
@@ -260,6 +261,7 @@ set(geomtools_SOURCES
   gnuplot_draw.cc
   display_data.cc
   manager.cc
+  geomtools_driver.cc
   geometry_service.cc
   ocd_support.cc
   )
@@ -357,6 +359,10 @@ include_directories(
   ${CLHEP_INCLUDE_DIR}
   )
 
+if(GEOMTOOLS_WITH_ROOT_DISPLAY)
+include_directories ( ${ROOT_INCLUDE_DIR} )
+endif()
+
 add_library(geomtools SHARED
   ${geomtools_PUBLIC_HEADERS}
   ${geomtools_detail_HEADERS}
@@ -375,13 +381,16 @@ set_target_properties(geomtools
     PUBLIC_HEADER                         "${geomtools_PUBLIC_HEADERS}"
   )
 
-
 target_link_libraries(geomtools
      ${mygsl_LIBRARIES}
      ${materials_LIBRARIES}
      ${CLHEP_LIBRARIES}
      ${CMAKE_DL_LIBS}
   )
+
+if(GEOMTOOLS_WITH_ROOT_DISPLAY)
+    target_link_libraries(geomtools ${ROOT_LIBRARIES} -lGeom)
+endif()
 
 set(GEOMTOOLS_TARGETS geomtools)
 

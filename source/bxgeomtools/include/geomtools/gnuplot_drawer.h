@@ -97,7 +97,18 @@ namespace geomtools {
 
   public:
 
-    static bool g_devel;
+    void set_output (const std::string & output_);
+
+    void reset_output ();
+
+    void set_terminal (const std::string & terminal_ = "",
+                       const std::string & terminal_options_ = "");
+
+    void reset_terminal ();
+
+    int set_output_medium (const std::string & file_ = "",
+                           const std::string & terminal_ = "",
+                           const std::string & terminal_options_ = "");
 
     void set_view (const std::string & view_);
 
@@ -110,6 +121,10 @@ namespace geomtools {
     void set_labels (bool labels_);
 
     bool use_labels () const;
+
+    void set_using_title (bool);
+
+    bool use_title () const;
 
     bool is_view_2d () const;
 
@@ -139,7 +154,7 @@ namespace geomtools {
 
     void reset_cstreams ();
 
-    void dump ();
+    void print (std::ostream & out_) const;
 
   private:
 
@@ -207,12 +222,16 @@ namespace geomtools {
     cstreams_col_type     _cstreams_;
     datatools::properties _props_;
     std::string _view_;
+    bool        _using_title_;
     bool        _labels_;
     std::string _mode_;
     range _xrange_;
     range _yrange_;
     range _zrange_;
     dd_col_type _display_data_;
+    std::string _terminal_;
+    std::string _terminal_options_;
+    std::string _output_;
 
   }; // class gnuplot_drawer
 

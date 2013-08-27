@@ -2,15 +2,23 @@
 /* gnuplot_drawer.cc
  */
 
+// Ourself:
 #include <geomtools/gnuplot_drawer.h>
 
+// Standard libraries:
 #include <stdexcept>
 #include <cstdlib>
 
+// Third party
+#include <boost/filesystem.hpp>
+
+// Datatools:
 #include <datatools/i_tree_dump.h>
 #include <datatools/exception.h>
 #include <datatools/logger.h>
+#include <datatools/utils.h>
 
+// Geomtools:
 #include <geomtools/model_factory.h>
 #include <geomtools/placement.h>
 #include <geomtools/physical_volume.h>
@@ -224,6 +232,17 @@ namespace geomtools {
     return _labels_;
   }
 
+  void gnuplot_drawer::set_using_title (bool u_)
+  {
+    _using_title_ = u_;
+    return;
+  }
+
+  bool gnuplot_drawer::use_title () const
+  {
+    return _using_title_;
+  }
+
   void gnuplot_drawer::add_display_data(const display_data & dd_)
   {
     const placement pl;
@@ -254,10 +273,13 @@ namespace geomtools {
     _initialized_ = false;
     _view_ = gnuplot_drawer::DEFAULT_VIEW;
     _mode_ = gnuplot_drawer::DEFAULT_MODE;
+    _using_title_ = true;
     _labels_ = true;
     _xrange_.set_axis ('x');
     _yrange_.set_axis ('y');
     _zrange_.set_axis ('z');
+    reset_output ();
+    reset_terminal ();
     return;
   }
 
@@ -287,12 +309,49 @@ namespace geomtools {
 
   void gnuplot_drawer::reset ()
   {
-    reset_cstreams ();
-    _view_ = gnuplot_drawer::DEFAULT_VIEW;
-    _mode_ = gnuplot_drawer::DEFAULT_MODE;
-    _labels_ = true;
     _initialized_ = false;
+    reset_cstreams ();
+    reset_terminal ();
+    _view_ = gnuplot_drawer::DEFAULT_VIEW;
+    _labels_ = true;
+    _using_title_ = true;
+    _mode_ = gnuplot_drawer::DEFAULT_MODE;
+    _display_data_.clear();
     return;
+  }
+
+  void gnuplot_drawer::print (std::ostream & out_) const
+  {
+    out_ << "Gnuplot drawer : " << std::endl;
+    out_ << "|-- " << "Initialized : " << _initialized_ << std::endl;
+    out_ << "|-- " << "Streams     : " << _cstreams_.size() << std::endl;
+    for (cstreams_col_type::const_iterator i = _cstreams_.begin();
+         i != _cstreams_.end();
+         i++) {
+      cstreams_col_type::const_iterator j = i;
+      j++;
+      out_ << "|   ";
+      if (j ==  _cstreams_.end()) out_ << "`-- ";
+      else out_ << "|-- ";
+      out_ << "Color : '" << i->first << "'" << std::endl;
+    }
+    out_ << "|-- " << "Properties  : " << _props_.size() << std::endl;
+    out_ << "|-- " << "View        : " << _view_ << std::endl;
+    out_ << "|-- " << "Labels      : " << _labels_ << std::endl;
+    out_ << "|-- " << "Mode        : " << _mode_ << std::endl;
+    out_ << "|-- " << "X-range     : ";
+    _xrange_.print(out_);
+    out_<< std::endl;
+    out_ << "|-- " << "Y-range     : ";
+    _yrange_.print(out_);
+    out_<< std::endl;
+    out_ << "|-- " << "Z-range     : ";
+    _zrange_.print(out_);
+    out_<< std::endl;
+    out_ << "|-- " << "Terminal         : " << _terminal_ << std::endl;
+    out_ << "|-- " << "Terminal options : " << _terminal_options_ << std::endl;
+    out_ << "`-- " << "Output           : " << _output_ << std::endl;
+   return;
   }
 
   /****************************************************/
@@ -541,19 +600,35 @@ namespace geomtools {
     std::string view = _view_;
 
     Gnuplot g1 ("lines");
-    g1.cmd ("set terminal x11 persist size 500,500");
-    g1.cmd ("set size ratio -1");
-    std::ostringstream title_oss;
-    if (! title_.empty()) {
-      title_oss << title_;
-    } else {
-      title_oss << "Instance of logical volume '" << log_.get_name() << "'";
+    std::string set_term_args = "set terminal ";
+    set_term_args += _terminal_;
+    if (! _terminal_options_.empty()) {
+      set_term_args += " " + _terminal_options_;
     }
-    if (!title_oss.str ().empty()) {
-      g1.set_title(title_oss.str ());
-    }
-    std::ostringstream cmdstr;
+    g1.cmd (set_term_args);
 
+    if (! _output_.empty()) {
+      std::string output = _output_;
+      datatools::fetch_path_with_env(output);
+      std::string set_output_args = "set output ";
+      set_output_args += "'" + output + "'";
+      g1.cmd(set_output_args);
+    }
+
+    g1.cmd ("set size ratio -1");
+    if (use_title()) {
+      std::ostringstream title_oss;
+      if (! title_.empty()) {
+        title_oss << title_;
+      } else {
+        title_oss << "Instance of logical volume '" << log_.get_name() << "'";
+      }
+      if (!title_oss.str ().empty()) {
+        g1.set_title(title_oss.str ());
+      }
+    }
+
+    std::ostringstream cmdstr;
     int col1 = 1;
     int col2 = 2;
     int col3 = 3;
@@ -673,25 +748,30 @@ namespace geomtools {
         }
       }
     }
-    DT_LOG_TRACE (local_priority, "GNUPLOT command is :" << cmdstr.str ());
-    if (! cmdstr.str ().empty ()) {
-      g1.cmd (cmdstr.str ());
-      g1.showonscreen (); // window output
-      wait_for_key ();
-      usleep (200);
+    DT_LOG_TRACE (local_priority, "GNUPLOT command is :" << cmdstr.str());
+    //std::cerr << "DEVEL: " << "GNUPLOT command is :" << cmdstr.str() << std::endl;
+    if (! cmdstr.str().empty()) {
+      g1.cmd (cmdstr.str());
+      if (! _output_.empty()) {
+        DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "File '" << _output_ << "' was generated.");
+      }
+      g1.showonscreen(); // window output
+      wait_for_key();
+      usleep(200);
     } else {
       DT_LOG_WARNING(datatools::logger::PRIO_WARNING, "Nothing to display !");
     }
 
     // remove tmp files:
-    for (cstreams_col_type::iterator i = _cstreams_.begin ();
-         i !=  _cstreams_.end ();
+    for (cstreams_col_type::iterator i = _cstreams_.begin();
+         i != _cstreams_.end();
          i++) {
       cstream & cs = i->second;
-      unlink (cs.filename.c_str ());
+      unlink(cs.filename.c_str());
+      //std::cerr << "DEVEL: " << "file " << cs.filename << " was deleted !" << std::endl;
     }
-    DT_LOG_TRACE (local_priority, "reset_cstreams...");
-    reset_cstreams ();
+    DT_LOG_TRACE(local_priority, "reset_cstreams...");
+    reset_cstreams();
     return;
   }
 
@@ -857,6 +937,94 @@ namespace geomtools {
     }
     DT_LOG_TRACE (local_priority, "Exiting.");
     return;
+  }
+
+  void gnuplot_drawer::set_output (const std::string & output_)
+  {
+    _output_ = output_;
+    return;
+  }
+
+  void gnuplot_drawer::reset_output ()
+  {
+    _output_.clear();
+    return;
+  }
+
+  void gnuplot_drawer::set_terminal (const std::string & terminal_,
+                                     const std::string & terminal_options_)
+  {
+    _terminal_ = terminal_;
+    _terminal_options_ = terminal_options_;
+    return;
+  }
+
+  void gnuplot_drawer::reset_terminal ()
+  {
+    _terminal_ = "x11";
+    _terminal_options_ = "persist size 500,500";
+    _output_.clear();
+    return;
+  }
+
+  int gnuplot_drawer::set_output_medium (const std::string & file_,
+                                         const std::string & terminal_,
+                                         const std::string & terminal_options_)
+  {
+    std::string output;
+    std::string terminal;
+    std::string terminal_options;
+    if (! file_.empty()) {
+      std::string file = file_;
+      datatools::fetch_path_with_env(file);
+      output = file;
+      boost::filesystem::path output_pth = file;
+      boost::filesystem::path output_ext = output_pth.extension();
+      if (output_ext.empty()) {
+        DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                     "Cannot extract terminal type from file '" << file_ << "' !");
+        return 1;
+      }
+      const std::string ext = output_ext.string();
+      if (ext == ".jpeg" || ext == ".jpg") {
+        terminal = "jpeg";
+        terminal_options = "nointerlace large enhanced size 500,500 xffffff";
+      } else if (ext == ".png") {
+        terminal = "png";
+        terminal_options = "notransparent nointerlace medium enhanced xffffff";
+      } else if (ext == ".eps") {
+        terminal = "postscript";
+        terminal_options = "eps enhanced color solid size 15cm,15cm";
+      } else if (ext == ".fig") {
+        terminal = "fig";
+        terminal_options = "color landscape size 20 20 metric pointsmax 1000 solid textspecial depth 50";
+      } else {
+        DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                     "Cannot extract terminal type from file '" << file_ << "' !");
+        return 1;
+      }
+    }
+    if (! terminal_.empty()) {
+      if (terminal != terminal_) {
+        DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                     "Guessed terminal '" << terminal << "' does not match "
+                     << "requested terminal '" << terminal_ << "' !");
+        return 1;
+      }
+    }
+
+    if (! terminal_options_.empty()) {
+      terminal_options = terminal_options_;
+    }
+
+    if (terminal == "x11") {
+      reset_terminal();
+      reset_output();
+    } else {
+      set_output(output);
+      set_terminal(terminal, terminal_options);
+    }
+    return 0;
   }
 
 } // end of namespace geomtools
