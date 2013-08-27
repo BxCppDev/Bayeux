@@ -50,49 +50,29 @@ namespace genvtx {
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
 
-   // parameters of the spot vertex generator:
-    double x, y, z;
-    x = y = z = 0.0;
-    double lunit = CLHEP::millimeter;
-    string lunit_str;
-
-    if (configuration_.has_key ("spot.x"))
-      {
-        x = configuration_.fetch_real ("spot.x");
-      }
-
-    if (configuration_.has_key ("spot.y"))
-      {
-        y = configuration_.fetch_real ("spot.y");
-      }
-
-    if (configuration_.has_key ("spot.z"))
-      {
-        z = configuration_.fetch_real ("spot.z");
-      }
-
+    double lunit = CLHEP::mm;
     if (configuration_.has_key ("spot.length_unit"))
       {
-        lunit_str = configuration_.fetch_string ("spot.length_unit");
-        if (lunit_str == "none")
-          {
-            lunit = 1.0;
-          }
-        else
-          {
-            lunit = datatools::units::get_length_unit_from (lunit_str);
-          }
+        const std::string lunit_str = configuration_.fetch_string ("spot.length_unit");
+        lunit = datatools::units::get_length_unit_from (lunit_str);
       }
 
-    if (! lunit_str.empty ())
-      {
-        x *= lunit;
-        y *= lunit;
-        z *= lunit;
-      }
+    DT_THROW_IF (! configuration_.has_key ("spot.x"), std::logic_error,
+                 "Missing 'spot.x' property in spot vertex model '" << get_name () << "' !");
+    double x = configuration_.fetch_real ("spot.x");
+    if (! configuration_.has_explicit_unit ("spot.x")) x *= lunit;
+
+    DT_THROW_IF (! configuration_.has_key ("spot.y"), std::logic_error,
+                 "Missing 'spot.y' property in spot vertex model '" << get_name () << "' !");
+    double y = configuration_.fetch_real ("spot.y");
+    if (! configuration_.has_explicit_unit ("spot.y")) y *= lunit;
+
+    DT_THROW_IF (! configuration_.has_key ("spot.z"), std::logic_error,
+                 "Missing 'spot.z' property in spot vertex model '" << get_name () << "' !");
+    double z = configuration_.fetch_real ("spot.z");
+    if (! configuration_.has_explicit_unit ("spot.z")) z *= lunit;
 
     set_spot (x, y, z);
-
     return;
   }
 
