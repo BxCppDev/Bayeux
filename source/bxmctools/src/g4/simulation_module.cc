@@ -100,8 +100,8 @@ namespace mctools {
       _simulation_manager_params_.g4_visu     = false;
       _simulation_manager_params_.g4_macro    = "";
 
-      if (config_.has_flag ("manager.logging")) {
-        _simulation_manager_params_.logging = config_.fetch_string("manager.logging");
+      if (config_.has_flag ("manager.logging.priority")) {
+        _simulation_manager_params_.logging = config_.fetch_string("manager.logging.priority");
       } else if (config_.has_flag ("manager.debug")) {
         _simulation_manager_params_.logging = "debug";
       } else if (config_.has_flag ("manager.verbose")) {
