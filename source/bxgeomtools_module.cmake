@@ -32,6 +32,7 @@ set(geomtools_VERSION "${geomtools_VERSION_MAJOR}.${geomtools_VERSION_MINOR}.${g
 set(GEOMTOOLS_WITH_BIO 1)
 set(GEOMTOOLS_WITH_REFLECTION 0)
 set(GEOMTOOLS_WITH_GNUPLOT_DISPLAY 1)
+set(GEOMTOOLS_WITH_ROOT_DISPLAY 1)
 
 # - Raw Headers and Sources
 set(${module_name}_MODULE_HEADERS
@@ -139,6 +140,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/utils.h
   ${module_include_dir}/${module_name}/utils.ipp
   ${module_include_dir}/${module_name}/visibility.h
+  ${module_include_dir}/${module_name}/geomtools_driver.h
   )
 
 # - NB Order of sources appears to be important - taken from geomtools
@@ -228,6 +230,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/the_serializable.cc
   ${module_source_dir}/gnuplot_i.cc
   ${module_source_dir}/gnuplot_drawer.cc
+  ${module_source_dir}/geomtools_driver.cc
   )
 
 # - Reflection components
