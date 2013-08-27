@@ -1052,7 +1052,6 @@ namespace mctools {
 
     void manager::_init_vertex_generator()
     {
-
       // Vertex generator:
       DT_LOG_NOTICE(_logprio(),"Vertex generator settings...");
       if (_multi_config_->has_section("vertex_generator")) {

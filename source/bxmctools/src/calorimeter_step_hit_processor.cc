@@ -90,7 +90,7 @@ namespace mctools {
       }
     }
 
-    DT_LOG_DEBUG (get_logging_priority (), "Parse setup properties for processor '" << get_name () << "' ...");
+    DT_LOG_DEBUG (get_logging_priority (), "Parsed setup properties for processor '" << get_name () << "' ...");
 
     // pickup the ID mapping from the geometry manager:
     _mapping_ = &_geom_manager->get_mapping ();
@@ -361,6 +361,7 @@ namespace mctools {
                                                 simulated_data::hit_handle_collection_type * scintillation_hits_,
                                                 simulated_data::hit_collection_type        * plain_scintillation_hits_)
   {
+    DT_LOG_TRACE (get_logging_priority (), "Entering...");
     // Check the type of output collection (handles or plain hits) :
     bool use_handles = false;
     if (scintillation_hits_ != 0) {
@@ -564,6 +565,7 @@ namespace mctools {
 
     }
 
+    DT_LOG_TRACE (get_logging_priority (), "Exiting.");
     return;
   }
 
