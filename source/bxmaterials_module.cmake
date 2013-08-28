@@ -40,7 +40,11 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/material.h
   ${module_include_dir}/${module_name}/materials_driver.h
   ${module_include_dir}/${module_name}/materials_config.h.in
+  ${module_include_dir}/${module_name}/resource.h
   )
+
+# - configure resources
+configure_file(${module_source_dir}/resource.cc.in resource.cc)
 
 set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/chemical_symbol.cc
@@ -50,6 +54,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/material.cc
   ${module_source_dir}/manager.cc
   ${module_source_dir}/materials_driver.cc
+  resource.cc
   )
 
 # - Published headers
@@ -71,6 +76,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_manager.cxx
   ${module_test_dir}/test_material.cxx
   ${module_test_dir}/test_materials.cxx
+  ${module_test_dir}/test_resource.cxx
   )
 
 # - Resource files
