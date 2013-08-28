@@ -1,16 +1,21 @@
 // -*- mode: c++ ; -*-
 /* isotope.cc
  */
-
+// Ourselves
 #include <materials/isotope.h>
 
+// Standard Library
 #include <fstream>
 #include <stdexcept>
 #include <sstream>
 
+// Third Party
+// - A
 #include <datatools/exception.h>
 #include <datatools/logger.h>
 
+// This Project
+#include <materials/resource.h>
 #include <materials/materials_config.h>
 #include <materials/chemical_symbol.h>
 
@@ -140,14 +145,7 @@ namespace materials {
     _is_known_ = false;
 
     //-----------------  Open an ifstream from file mass.mas03  ----------------------------
-
-    string tape_name = MATERIALS_DATA_INSTALL_DIR;;
-    if (getenv("MATERIALS_DATA_DIR")!=NULL)
-      {
-        tape_name = getenv("MATERIALS_DATA_DIR");
-      }
-    tape_name += "/resources/data/mass.mas03";
-
+    std::string tape_name = materials::get_resource("mass.mas03");
     ifstream ifstr_tape;
     ifstr_tape.open(tape_name.c_str ());
     DT_THROW_IF(! ifstr_tape.is_open (),
@@ -226,15 +224,7 @@ namespace materials {
     */
 
     //-----------------  Open an ifstream from file mass.mas03  ----------------------------
-
-    string tape_name = MATERIALS_DATA_INSTALL_DIR;;
-    if (getenv ("MATERIALS_DATA_DIR") != NULL)
-      {
-        tape_name = getenv ("MATERIALS_DATA_DIR");
-      }
-    tape_name += "/resources/data/";
-    tape_name += input_file_name_;
-
+    std::string tape_name = materials::get_resource(input_file_name_);
     ifstream ifstr_tape;
     ifstr_tape.open (tape_name.c_str ());
     DT_THROW_IF (! ifstr_tape.is_open (),
@@ -443,14 +433,7 @@ namespace materials {
     */
     //-----------------  Open an ifstream from file JEFF311RDD_ALL.OUT ----------------------------
 
-
-    string tape_name = MATERIALS_DATA_INSTALL_DIR;;
-    if (getenv("MATERIALS_DATA_DIR")!=NULL)
-      {
-        tape_name = getenv("MATERIALS_DATA_DIR");
-      }
-    tape_name +="/resources/data/";
-    tape_name +=input_file_name_;
+    std::string tape_name = materials::get_resource(input_file_name_);
     ifstream ifstr_tape;
     ifstr_tape.open(tape_name.c_str ());
     DT_THROW_IF(!ifstr_tape.is_open (),

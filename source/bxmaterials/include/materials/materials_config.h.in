@@ -20,13 +20,7 @@
 //  MATERIALS_LIB_VERSION must be defined to be the same as MATERIALS_VERSION
 //  but as a *string* in the form "x.y[.z]" where x is the major version
 //  number, y is the minor version number, and z is the patch level if not 0.
-
 #define MATERIALS_LIB_VERSION "@materials_VERSION@"
-
-#define MATERIALS_DATA_SCHEMA_LOCAL_PATH "@_materials_DATA_SCHEMA_FULL_LOCAL_PATH@"
-
-//! The installation path of the geomtools resource files :
-#define MATERIALS_DATA_INSTALL_DIR "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
 
 #endif // MATERIALS_MATERIALS_CONFIG_H_
 

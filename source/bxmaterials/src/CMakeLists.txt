@@ -33,6 +33,7 @@ include/materials/isotope.h
 include/materials/manager.h
 include/materials/material.h
 include/materials/materials_driver.h
+include/materials/resource.h
   )
 list_prepend(materials_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 
@@ -72,6 +73,12 @@ endif()
 #-----------------------------------------------------------------------
 # SOURCE FILES
 # Pretty basic!
+# configure the resource source
+configure_file(
+  ${PROJECT_SOURCE_DIR}/src/resource.cc.in
+  ${PROJECT_BINARY_DIR}/src/resource.cc
+  )
+
 set(materials_SOURCES
     chemical_symbol.cc
     isotope.cc
@@ -80,6 +87,7 @@ set(materials_SOURCES
     factory.cc
     manager.cc
     materials_driver.cc
+    ${PROJECT_BINARY_DIR}/src/resource.cc
   )
 
 #-----------------------------------------------------------------------

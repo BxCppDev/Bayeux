@@ -1,16 +1,21 @@
 // -*- mode: c++ ; -*-
 /* element.cc
  */
-
+// - Ourselves
 #include <materials/element.h>
 
+// Standard Library
 #include <stdexcept>
 #include <sstream>
 #include <fstream>
 
+// Third Party
+// - datatools
 #include <datatools/exception.h>
 #include <datatools/logger.h>
 
+// This Project
+#include <materials/resource.h>
 #include <materials/materials_config.h>
 #include <materials/isotope.h>
 #include <materials/chemical_symbol.h>
@@ -279,14 +284,7 @@ namespace materials {
   {
 
     //-----------------  Open an ifstream from file atomic_weight_nist.dat  ----------------------------
-
-    string tape_name = MATERIALS_DATA_INSTALL_DIR;
-
-    if (getenv("MATERIALS_DATA_DIR") != NULL)
-      {
-        tape_name.assign (getenv ("MATERIALS_DATA_DIR"));
-      }
-    tape_name += "/resources/data/isotopic_compositions_nist.dat";
+    std::string tape_name = materials::get_resource("isotopic_compositions_nist.dat");
     ifstream ifstr_tape;
     ifstr_tape.open (tape_name.c_str ());
     DT_THROW_IF(! ifstr_tape.is_open (),
