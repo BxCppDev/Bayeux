@@ -28,7 +28,7 @@ namespace materials {
   {
     bool is_symbol_found = false;
 
-    int i_z = 0;
+    size_t i_z = 0;
 
     while(!is_symbol_found && i_z < NB_CHEMICAL_SYMBOLS)
       {
@@ -42,7 +42,7 @@ namespace materials {
     return(i_z-1);
   }
 
-  const string & chemical_symbol::symbol_from_z (int z_)
+  const string & chemical_symbol::symbol_from_z (size_t z_)
   {
     if( z_ >= 1  &&  z_ < NB_CHEMICAL_SYMBOLS)
       {

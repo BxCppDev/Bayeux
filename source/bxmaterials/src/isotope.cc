@@ -334,7 +334,7 @@ namespace materials {
       \param z_ : Number of protons  ( 0 <  Z  <= chemical_symbol::NB_CHEMICAL_SYMBOLS)
     */
 
-    if(  z_ >  0  &&  z_ <= chemical_symbol::NB_CHEMICAL_SYMBOLS )
+    if(  z_ >  0  &&  z_ <= (int)chemical_symbol::NB_CHEMICAL_SYMBOLS )
       {
         _z_ = z_;
       }
@@ -551,7 +551,6 @@ namespace materials {
   //________________________________________________________________________
   void isotope::build ()
   {
-    bool use_mass_db = true;
     bool use_decay_db = false;
     _build (use_decay_db);
     return;
@@ -663,7 +662,7 @@ double endfline_to_double (const std::string & endf_line)
   string s_number;
   if(endf_line.find("E")==string::npos)
     {
-      int pos;
+      size_t pos = 0;
       if (endf_line.find("+")!=string::npos) pos = endf_line.find_first_of ("+");
       if (endf_line.find("-")!=string::npos) pos = endf_line.find_first_of ("-");
       s_number = endf_line.substr (0, pos) + "E";

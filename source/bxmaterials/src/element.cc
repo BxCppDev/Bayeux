@@ -154,7 +154,7 @@ namespace materials {
     DT_THROW_IF(is_locked(),std::logic_error,"Operation not allowed ! Object is locked !");
 
     bool is_symbol_found = false;
-    int i_Z = 0;
+    size_t i_Z = 0;
 
     while (i_Z < chemical_symbol::NB_CHEMICAL_SYMBOLS)
       {
@@ -178,7 +178,7 @@ namespace materials {
   {
     DT_THROW_IF(is_locked(),std::logic_error,"Operation not allowed ! Object is locked !");
 
-    if ((z_ >= 0) && (z_ <= chemical_symbol::NB_CHEMICAL_SYMBOLS))
+    if ((z_ >= 0) && (z_ <= (int)chemical_symbol::NB_CHEMICAL_SYMBOLS))
       {
         _z_ = z_;
         _symbol_ = chemical_symbol::table[_z_];
@@ -431,7 +431,6 @@ namespace materials {
         for (isotope_weight_map_type::const_iterator i = _composition_.begin ();
              i !=  _composition_.end ();
              i++) {
-            const string & key = i->first;
             const iso_entry & entry = i->second;
             isotope_weight_map_type::const_iterator j = i;
             j++;

@@ -158,7 +158,7 @@ namespace materials {
       setup_.fetch("configuration_files", conf_files);
     }
 
-    for (int i = 0; i < conf_files.size(); i++) {
+    for (size_t i = 0; i < conf_files.size(); i++) {
       std::string filename = conf_files[i];
       datatools::fetch_path_with_env(filename);
       datatools::multi_properties mconfig;

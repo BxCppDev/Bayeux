@@ -448,7 +448,6 @@ namespace materials {
                  = _composition_.begin ();
                i != _composition_.end ();
                i++) {
-            const string & key = i->first;
             const compound_entry & entry = i->second;
             composition_map_type::const_iterator j = i;
             j++;
@@ -467,7 +466,6 @@ namespace materials {
                  = _composition_.begin ();
                i != _composition_.end ();
                i++) {
-            const string & key = i->first;
             const compound_entry & entry = i->second;
             composition_map_type::const_iterator j = i;
             j++;

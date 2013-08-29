@@ -99,7 +99,6 @@ namespace materials {
     double a = -1.0;
     vector<string> isotopes;
     vector<double> weights;
-    double molar_mass_unit = 1.0;
 
     DT_THROW_IF (!config_.has_key ("z"),
                  std::logic_error ,
@@ -134,7 +133,7 @@ namespace materials {
     else
       {
         // add isotopes in element:
-        for (int i = 0; i < isotopes.size (); i++)
+        for (size_t i = 0; i < isotopes.size (); i++)
           {
             isotope_dict_type::const_iterator found = isotopes_.find (isotopes[i]);
             DT_THROW_IF (found == isotopes_.end (),
@@ -357,7 +356,7 @@ namespace materials {
                   "Invalid 'doping.doping_elements' property value for material '" << name_ << "' !");
       if (devel) {
         std::cerr << "DEVEL: material '" << name_ << "' : doping elements = ";
-        for (int i = 0; i < doping_elements.size(); i++) {
+        for (size_t i = 0; i < doping_elements.size(); i++) {
           std::cerr << "'" << doping_elements[i] << "' ";
         }
         std::cerr << std::endl;
@@ -372,13 +371,13 @@ namespace materials {
                    std::logic_error,
                    "Cannot use explicit unit for property '" << "doping.doping_concentrations"
                    << "' for material '" << name_ << "' !");
-      for (int i = 0; i < doping_concentrations.size(); i++) {
+      for (size_t i = 0; i < doping_concentrations.size(); i++) {
         doping_concentrations[i] *= molar_concentration_unit;
       }
       double atoms_per_cm3 = 1./CLHEP::mole/CLHEP::Avogadro/CLHEP::cm3;
       if (devel) {
         std::cerr << "DEVEL: material '" << name_ << "' : doping concentration = ";
-        for (int i = 0; i < doping_concentrations.size(); i++) {
+        for (size_t i = 0; i < doping_concentrations.size(); i++) {
           std::cerr << " " << doping_concentrations[i] / atoms_per_cm3 << " ";
         }
         std::cerr << " [atoms/cm3]" << std::endl;
@@ -393,12 +392,12 @@ namespace materials {
                    std::logic_error,
                    "Cannot use explicit unit for property '" << "doping.doping_molar_volumes"
                    << "' for material '" << name_ << "' !");
-      for (int i = 0; i < doping_molar_volumes.size(); i++) {
+      for (size_t i = 0; i < doping_molar_volumes.size(); i++) {
         doping_molar_volumes[i] *= molar_volume_unit;
       }
       if (devel) {
         std::cerr << "DEVEL: material '" << name_ << "' : doping molar volumes = ";
-        for (int i = 0; i < doping_molar_volumes.size(); i++) {
+        for (size_t i = 0; i < doping_molar_volumes.size(); i++) {
           std::cerr << " " << doping_molar_volumes[i] / (CLHEP::cm3/CLHEP::mole) << " ";
         }
         std::cerr << " [cm3/mol]" << std::endl;
@@ -424,7 +423,7 @@ namespace materials {
 
       std::vector<double> doping_masses_ref;
       double total_mass_ref = 0.0;
-      for (int i = 0; i < doping_elements.size(); i++) {
+      for (size_t i = 0; i < doping_elements.size(); i++) {
         const std::string & doping_element_name = doping_elements[i];
         if (devel) std::cerr << "DEVEL: material '" << name_ << "' :  --> doping_element_name = '"
                              << doping_element_name << "': " << std::endl;
@@ -476,7 +475,7 @@ namespace materials {
       if (devel) std::cerr << "DEVEL: material '" << name_ << "' : Add compound '" << doped_material_name
                            << "' with fraction mass = " << doped_mass_ref / total_mass_ref << std::endl;
       // Then add the doping elements:
-      for (int i = 0; i < doping_elements.size(); i++) {
+      for (size_t i = 0; i < doping_elements.size(); i++) {
         const std::string & doping_element_name = doping_elements[i];
         composition_names.push_back(doping_element_name);
         composition_fraction_mass.push_back(doping_masses_ref[i] / total_mass_ref);
@@ -513,7 +512,7 @@ namespace materials {
         if (devel) std::cerr << "DEVEL: material '" << name_ << "' : by NUMBER_OF_ATOMS..." << std::endl;
         if (devel) std::cerr << "DEVEL: material '" << name_ << "' : number of compounds = "
                              << composition_names.size () << std::endl;
-        for (int i = 0; i < composition_names.size (); i++) {
+        for (size_t i = 0; i < composition_names.size (); i++) {
           if (devel) std::cerr << "DEVEL: material '" << name_ << "' : compound name = '"
                                << composition_names[i] << "'" << std::endl;
           element_dict_type::const_iterator found = elements_.find (composition_names[i]);
@@ -531,7 +530,7 @@ namespace materials {
         if (devel) std::cerr << "DEVEL: material '" << name_ << "' : by FRACTION_MASS..." << std::endl;
         if (devel) std::cerr << "DEVEL: material '" << name_ << "' : number of compounds = "
                              << composition_names.size () << std::endl;
-        for (int i = 0; i < composition_names.size (); i++) {
+        for (size_t i = 0; i < composition_names.size (); i++) {
           if (devel) std::cerr << "DEVEL: material '" << name_ << "' : compound name = '"
                                << composition_names[i] << "'" << std::endl;
           const element * a_elmt = 0;
