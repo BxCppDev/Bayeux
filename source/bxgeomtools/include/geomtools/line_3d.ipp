@@ -1,19 +1,19 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 //! \file geomtools/line_3d.ipp
 
 #ifndef GEOMTOOLS_LINE_3D_IPP_
 #define GEOMTOOLS_LINE_3D_IPP_ 1
 
-#include <boost/archive/archive_exception.hpp>
+#include <geomtools/line_3d.h>
+
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
 
-#include <datatools/utils.h>
-#include <geomtools/line_3d.h>
 #include <datatools/i_serializable.ipp>
-         
+#include <geomtools/utils.ipp>
+
 namespace geomtools {
-  
+
   template<class Archive>
   void line_3d::serialize (Archive & a_ar , const unsigned int a_version)
   {
@@ -29,7 +29,7 @@ namespace geomtools {
     return;
   }
 
-} // end of namespace geomtools 
+} // end of namespace geomtools
 
 #include <boost/serialization/version.hpp>
 BOOST_CLASS_VERSION(geomtools::line_3d, 1)
