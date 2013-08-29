@@ -1,8 +1,8 @@
 // -*- mode: c++; -*-
 //! \file geomtools/helix_3d.ipp
 
-#ifndef __geomtools__helix_3d_ipp
-#define __geomtools__helix_3d_ipp 1
+#ifndef GEOMTOOLS_HELIX_3D_IPP_
+#define GEOMTOOLS_HELIX_3D_IPP_ 1
 
 #include <geomtools/helix_3d.h>
 
@@ -40,6 +40,6 @@ namespace geomtools {
 #include <boost/serialization/version.hpp>
 BOOST_CLASS_VERSION(geomtools::helix_3d, 1)
 
-#endif // __geomtools__helix_3d_ipp
+#endif // GEOMTOOLS_HELIX_3D_IPP_
 
 // end of helix_3d.ipp
