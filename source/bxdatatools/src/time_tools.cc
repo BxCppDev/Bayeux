@@ -259,7 +259,7 @@ void computing_time::g_compute_system_dead_time() {
   gettimeofday(&start, NULL);
   size_t n = 10;
 
-  for (int i = 0; i < (n - 1); i++) {
+  for (size_t i = 0; i < (n - 1); i++) {
     gettimeofday(&stop, NULL);
   }
 

@@ -200,7 +200,7 @@ void version_id::set_tag(const std::string& tag) {
                "Version ID's tag '"
                << trimed_tag << "' is not allowed !");
   validate = true;
-  for (int i = 0; i < trimed_tag.length(); i++) {
+  for (size_t i = 0; i < trimed_tag.length(); i++) {
     char c = trimed_tag[i];
     if (ispunct(c) && c != '-' && c !=  '_') {
       validate = false;
@@ -616,7 +616,6 @@ bool version_id::matches(const std::string& version_rule,
 int version_id::compare(const version_id& vid0,
                         const version_id& vid1,
                         bool major_only) {
-  bool devel = false;
   if (vid0 == vid1) return 0;
   const version_id& v1 = vid0;
   const version_id& v2 = vid1;
@@ -758,4 +757,3 @@ bool version_id::are_orderable(const version_id& vid0,
 } // namespace datatools
 
 // end of version_id.cc
-

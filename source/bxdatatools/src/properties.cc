@@ -1303,7 +1303,8 @@ namespace datatools {
     DT_THROW_IF (! data_ptr->is_string(),
                  std::logic_error,
                  "Property '" << prop_key << "' is not of string type in properties described by '" << get_description() << "' !");
-    int error = data_ptr->set_explicit_path(a_explicit_path);
+    DT_THROW_IF (data_ptr->set_explicit_path(a_explicit_path) != data::ERROR_SUCCESS,
+                 std::logic_error, "Setting explicit path fails !");
   }
 
 
@@ -1314,7 +1315,8 @@ namespace datatools {
     DT_THROW_IF (! data_ptr->is_real(),
                  std::logic_error,
                  "Property '" << prop_key << "' is not of real type in properties described by '" << get_description() << "' !");
-    int error = data_ptr->set_explicit_unit(a_explicit_unit);
+    DT_THROW_IF (data_ptr->set_explicit_unit(a_explicit_unit) != data::ERROR_SUCCESS,
+                 std::logic_error, "Setting explicit unit fails !");
   }
 
   void properties::store(const std::string& key, const std::string& value,
@@ -2957,4 +2959,3 @@ namespace datatools {
 
 
 } // end of namespace datatools
-

@@ -219,7 +219,7 @@ namespace datatools {
   configuration_property_description::set_name_pattern(const std::string &np_)
   {
     _name_pattern_ = np_;
-    int dollar_pos = np_.find('$');
+    size_t dollar_pos = np_.find('$');
     if (dollar_pos != np_.npos) {
       //std::cerr << "DEVEL: OCD: set_name_pattern : dollar_pos=" << dollar_pos << std::endl;
       DT_THROW_IF(dollar_pos >= np_.size() - 3,
@@ -230,7 +230,7 @@ namespace datatools {
                   "Invalid format for dynamic property name pattern '" << np_ << "' ! Missing opening brace '{' after '$' in dynamic name pattern !");
       std::string subnp = np_.substr(dollar_pos+2);
       //std::cerr << "DEVEL: OCD: set_name_pattern : subnp='" << subnp << "'" << std::endl;
-      int close_pos = subnp.find('}');
+      size_t close_pos = subnp.find('}');
       DT_THROW_IF(close_pos == subnp.npos,
                   std::logic_error,
                   "Invalid format for dynamic property name pattern '" << np_ << "' ! Missing closing brace '}' in dynamic name pattern !");
@@ -618,7 +618,7 @@ namespace datatools {
     if (_dynamic_dependers_.size() == 0) {
       out_ << "none";
     } else {
-      for (int i = 0; i < _dynamic_dependers_.size(); i++) {
+      for (size_t i = 0; i < _dynamic_dependers_.size(); i++) {
         out_ << std::endl << indent << "  " << " + "
              << "``" <<  _dynamic_dependers_[i].get_name() << "``";
        }
@@ -681,7 +681,7 @@ namespace datatools {
     } else {
       if (is_static() && _dynamic_dependers_.size()) {
         out_ << indent_ << "|-- " << "Dependers : " << _dynamic_dependers_.size() << "\n";
-        for (int i = 0; i < _dynamic_dependers_.size(); i++) {
+        for (size_t i = 0; i < _dynamic_dependers_.size(); i++) {
           out_ << indent_ << "|-- ";
           if (i == _dynamic_dependers_.size() - 1) out_ << "`-- ";
           else out_ << "|-- ";
@@ -699,7 +699,7 @@ namespace datatools {
       out_ << indent_ << "|-- " << "Complex triggering conditions : " << _complex_triggering_conditions_ << "\n";
     } else if (_triggering_.size()) {
       out_ << indent_ << "|-- " << "Triggering : " << _triggering_.size() << "\n";
-      for (int i = 0; i < _triggering_.size(); i++) {
+      for (size_t i = 0; i < _triggering_.size(); i++) {
         out_ << indent_ << "|-- ";
         if (i == _triggering_.size() - 1) out_ << "`-- ";
         else out_ << "|-- ";
@@ -720,7 +720,7 @@ namespace datatools {
       if (is_triggered_by_label() && _triggered_by_label_.has_name()) {
         out_ << indent_ << "|-- " << "Triggered by label : '"  << _triggered_by_label_.name << "'";
         out_ << " with one of the values in : ";
-        for (int itl = 0; itl < _triggered_by_label_.triggering_labels.size(); itl++) {
+        for (size_t itl = 0; itl < _triggered_by_label_.triggering_labels.size(); itl++) {
           out_ << " '" << _triggered_by_label_.triggering_labels[itl] << "'";
         }
         if (! _triggered_by_label_.has_address()) {
@@ -848,9 +848,9 @@ namespace datatools {
     if (!(po_flags_ & po_no_title)) {
       std::ostringstream title_oss;
       title_oss << "Configuration of ``" << get_class_name () << "``";
-      size_t len = title_oss.str().size();
+      const size_t len = title_oss.str().size();
       std::ostringstream title_bar;
-      for (int i = 0; i < len; i++) {
+      for (size_t i = 0; i < len; i++) {
         title_bar << '=';
       }
 
@@ -901,7 +901,7 @@ namespace datatools {
       out_ << indent_ << std::endl;
       out_ << indent_ << "Description of configuration properties" << std::endl;
       out_ << indent_ << "---------------------------------------" << std::endl;
-      for (int i = 0; i < _configuration_properties_infos_.size(); i++) {
+      for (size_t i = 0; i < _configuration_properties_infos_.size(); i++) {
         out_ << indent_ << std::endl;
         const configuration_property_description & cpd = _configuration_properties_infos_[i];
         cpd.print(out_, indent_);
@@ -968,14 +968,13 @@ namespace datatools {
                     "No library for class named '" << get_class_name() << "' !");
     }
     // Establish interdependencies between dependees/dependers dynamic properties :
-    for (int i = 0; i < _configuration_properties_infos_.size(); i++) {
+    for (size_t i = 0; i < _configuration_properties_infos_.size(); i++) {
       configuration_property_description & cpd = _configuration_properties_infos_[i];
       if (cpd.is_static()) {
         continue;
       }
       configuration_property_description::dependency_entry & dde = cpd._dynamic_dependee_;
-      bool found_dependency = false;
-      for (int k = 0; k < _configuration_properties_infos_.size(); k++) {
+      for (size_t k = 0; k < _configuration_properties_infos_.size(); k++) {
         if (k == i) continue;
         configuration_property_description & cpd2 = _configuration_properties_infos_[k];
         // std::cerr << "DEVEL: " << "datatools::object_configuration_description::_at_lock_: "
@@ -1023,14 +1022,13 @@ namespace datatools {
     }
 
     // Establish interdependencies between triggering/triggered properties (BY FLAG):
-    for (int i = 0; i < _configuration_properties_infos_.size(); i++) {
+    for (size_t i = 0; i < _configuration_properties_infos_.size(); i++) {
       configuration_property_description & cpd = _configuration_properties_infos_[i];
       if (! cpd.is_triggered_by_flag()) {
         continue;
       }
       configuration_property_description::dependency_entry & trigger = cpd._triggered_by_flag_;
-      bool found_trigger = false;
-      for (int k = 0; k < _configuration_properties_infos_.size(); k++) {
+      for (size_t k = 0; k < _configuration_properties_infos_.size(); k++) {
         if (k == i) continue;
         configuration_property_description & cpd2 = _configuration_properties_infos_[k];
         // std::cerr << "DEVEL: " << "datatools::object_configuration_description::_at_lock_: "
@@ -1071,14 +1069,13 @@ namespace datatools {
     }
 
     // Establish interdependencies between triggering/triggered properties (BY LABEL):
-    for (int i = 0; i < _configuration_properties_infos_.size(); i++) {
+    for (size_t i = 0; i < _configuration_properties_infos_.size(); i++) {
       configuration_property_description & cpd = _configuration_properties_infos_[i];
       if (! cpd.is_triggered_by_label()) {
         continue;
       }
       configuration_property_description::dependency_entry & trigger = cpd._triggered_by_label_;
-      bool found_trigger = false;
-      for (int k = 0; k < _configuration_properties_infos_.size(); k++) {
+      for (size_t k = 0; k < _configuration_properties_infos_.size(); k++) {
         if (k == i) continue;
         configuration_property_description & cpd2 = _configuration_properties_infos_[k];
         // std::cerr << "DEVEL: " << "datatools::object_configuration_description::_at_lock_: "
@@ -1138,7 +1135,7 @@ namespace datatools {
     out_ << indent_ << "|-- " << "Class documentation : " << _class_documentation_ << "\n";
     out_ << indent_ << "|-- " << "Class library       : " << _class_library_ << "\n";
     out_ << indent_ << "|-- " << "Configuration properties : \n";
-    for (int i = 0; i < _configuration_properties_infos_.size(); i++) {
+    for (size_t i = 0; i < _configuration_properties_infos_.size(); i++) {
       out_ << indent_ << "|   ";
       std::string tag = "|   ";
       if (i ==  _configuration_properties_infos_.size() - 1) {
@@ -1273,7 +1270,7 @@ namespace datatools {
                  std::logic_error,
                  "OCD object has no validation support !");
     // Loop on all documented properties :
-    for (int i = 0; i < _configuration_properties_infos_.size(); i++) {
+    for (size_t i = 0; i < _configuration_properties_infos_.size(); i++) {
       const configuration_property_description & cpd = _configuration_properties_infos_[i];
 
       // Process static properties :
@@ -1291,7 +1288,7 @@ namespace datatools {
           continue;
         }
         config_.fetch(dee_ref.get_name_pattern(), words);
-        for (int iword = 0; iword < words.size(); iword++) {
+        for (size_t iword = 0; iword < words.size(); iword++) {
           const std::string & word = words[iword];
           std::string dynprop_name = cpd.get_name_pattern();
           std::string token = "${"+dee_ref.get_name_pattern()+"}";
@@ -1441,7 +1438,7 @@ namespace datatools {
     out_ << "# Lines starting with '" << '#' << "' are simple comments.\n";
     out_ << '\n';
 
-    for (int i = 0; i < _configuration_properties_infos_.size(); i++) {
+    for (size_t i = 0; i < _configuration_properties_infos_.size(); i++) {
       const configuration_property_description & cpd = _configuration_properties_infos_[i];
 
       // Process static property :
@@ -1505,7 +1502,7 @@ namespace datatools {
             }
             out_ << " if dependee string property '"
                  << cpd.get_triggered_by_label().get_name() << "' is set to one of these values : \n";
-            for (int itl = 0; itl < cpd.get_triggered_by_label().triggering_labels.size(); itl++) {
+            for (size_t itl = 0; itl < cpd.get_triggered_by_label().triggering_labels.size(); itl++) {
               out_ << "#    '" << cpd.get_triggered_by_label().triggering_labels[itl] << "'\n";
             }
           }
@@ -1518,11 +1515,11 @@ namespace datatools {
         if (cpd.has_dynamic_dependers()) {
           std::vector<std::string> words;
           PROP.fetch(cpd.get_name_pattern(), words);
-          for (int idder = 0; idder < cpd.get_number_of_dynamic_dependers(); idder++) {
+          for (size_t idder = 0; idder < cpd.get_number_of_dynamic_dependers(); idder++) {
             const configuration_property_description::dependency_entry & dder
               = cpd.get_dynamic_depender(idder);
             //std::cerr << "DEVEL: " << "Depender = '" << dder.get_name() << "' " << '\n';
-            for (int iword = 0; iword < words.size(); iword++) {
+            for (size_t iword = 0; iword < words.size(); iword++) {
               const std::string & word = words[iword];
               //std::cerr << "DEVEL: " << "  word = '" << word << "' " << '\n';
               std::string dynprop_name = dder.get_name();

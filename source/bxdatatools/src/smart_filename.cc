@@ -156,7 +156,7 @@ const std::string& smart_filename::get_filename(int a_index) const {
   DT_THROW_IF (a_index < 0, std::range_error, "Index " << a_index << " is not valid !");
   if (this->is_incremental()
       && ! this->is_ranged()
-      && (a_index >= list_.size())) {
+      && (a_index >= (int)list_.size())) {
     smart_filename* mutable_this = const_cast<smart_filename*>(this);
     for (int i = list_.size(); i <= a_index; ++i) {
       string filename;
@@ -165,7 +165,7 @@ const std::string& smart_filename::get_filename(int a_index) const {
       mutable_this->add_list(filename);
     }
   } else {
-    DT_THROW_IF (a_index < 0 || a_index > list_.size(),
+    DT_THROW_IF (a_index < 0 || a_index > (int)list_.size(),
                  std::range_error,
                  "Index " << a_index<< " is not valid !");
   }
@@ -506,7 +506,7 @@ void smart_filename::dump(std::ostream& a_out) const {
       a_out << "    ";
       int j = i;
       j++;
-      if (j != list_.size ()) {
+      if (j != (int)list_.size ()) {
         a_out << "|-- ";
       } else {
         a_out << "`-- ";

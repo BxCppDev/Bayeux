@@ -480,7 +480,7 @@ things::add_entry_impl (const std::string& a_name,
 
 const std::string&
 things::get_entry_name(int index_) const {
-  DT_THROW_IF (index_ < 0 || index_ >= things_.size (),
+  DT_THROW_IF (index_ < 0 || index_ >= (int)things_.size (),
                std::range_error,
                "Invalid bank index '" << index_ << "' !");
   int count = 0;
@@ -585,4 +585,3 @@ things::get(const std::string& a_name,
 }
 
 }  // end of namespace datatools
-

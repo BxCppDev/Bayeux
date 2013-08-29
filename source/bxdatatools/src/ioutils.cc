@@ -9,7 +9,7 @@
 
 // Third Party
 // - Boost
-#include <boost/algorithm/string/split.hpp> 
+#include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 
 // This Project
@@ -24,9 +24,9 @@ namespace datatools {
     if (text_.empty()) return;
     std::vector<std::string> lines;
     boost::split(lines,text_,boost::is_any_of("\n"));
-    for (int il = 0; il < lines.size(); il++) {
+    for (size_t il = 0; il < lines.size(); il++) {
       out_ << indent_ << lines[il];
-      //if (il != lines.size() - 1) 
+      //if (il != lines.size() - 1)
       out_ << '\n';
     }
     return;
@@ -41,7 +41,7 @@ const std::string io::NAN_REAL_REPR = "nan";
 const std::string io::PLUS_INFINITY_REAL_REPR = "inf";
 const std::string io::MINUS_INFINITY_REAL_REPR = "-inf";
 
-// static 
+// static
 void io::write_real_number(std::ostream & out_, const double & val_, int precision_)
 {
   if (datatools::is_normal(val_)) {
@@ -60,7 +60,7 @@ void io::write_real_number(std::ostream & out_, const double & val_, int precisi
   return;
 }
 
-// static 
+// static
 bool io::read_real_number(std::istream & in_, double & val_, bool & normal_)
 {
   normal_ = false;
@@ -317,4 +317,3 @@ std::string io::to_binary(const uint32_t& val, bool show_all) {
 }
 
 } // namespace datatools
-

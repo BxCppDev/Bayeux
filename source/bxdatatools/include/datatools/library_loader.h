@@ -60,8 +60,6 @@ typedef datatools::detail::DynamicLoader::SymbolPointer symbol_ptr;
 //! \brief A class used internally by the library_loader class
 struct library_entry_type {
 
-  datatools::detail::DynamicLoader::LibraryHandle handle;
-
   library_entry_type(const std::string& lib_name      = "",
                      const std::string& lib_directory = "",
                      const std::string& lib_filename  = "",
@@ -82,6 +80,7 @@ public:
   std::string version;
   bool   autoload;
   int    status;
+  datatools::detail::DynamicLoader::LibraryHandle handle;
 
 };
 
@@ -184,4 +183,3 @@ class library_loader : boost::noncopyable {
 DOCD_CLASS_DECLARATION(datatools::library_loader)
 
 #endif // DATATOOLS_LIBRARY_LOADER_H_
-

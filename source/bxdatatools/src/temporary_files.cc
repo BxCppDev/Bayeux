@@ -155,7 +155,6 @@ std::ifstream& temp_file::in() {
 
 
 void temp_file::create(std::string a_path_dir, std::string a_pattern) {
-  bool devel = false;
   DT_THROW_IF (this->is_valid(),
                std::logic_error,
                "Temporary file has already been created !");
