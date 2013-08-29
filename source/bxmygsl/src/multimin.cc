@@ -180,7 +180,7 @@ namespace mygsl {
 
   void multimin_system::print_params( std::ostream & out_ ) const
   {
-    for ( int i=0; i<_params.size(); i++ ) {
+    for (size_t i=0; i<_params.size(); i++ ) {
 
       out_ << _params.at(i).name << ": "
            << _params.at(i).value << " ["
@@ -194,7 +194,7 @@ namespace mygsl {
 
   void multimin_system::print_params2( std::ostream & out_ ) const
   {
-    for ( int i=0; i<_params.size(); i++ ) {
+    for (size_t i=0; i<_params.size(); i++ ) {
       out_ << _params.at(i).value << ' ';
     }
     return;
@@ -363,7 +363,7 @@ namespace mygsl {
     size_t fd=get_free_dimension();
     DT_THROW_IF ( dimension_ != fd, std::range_error, "Invalid dimension !");
     int i_free=0;
-    for ( int i_par=0; i_par<get_dimension(); i_par++ ) {
+    for (size_t i_par=0; i_par<get_dimension(); i_par++ ) {
       if ( is_param_free(i_par) ) {
         pars_[i_free] = get_param_value(i_par);
         i_free++;
@@ -378,7 +378,7 @@ namespace mygsl {
     DT_THROW_IF ( dimension_ != get_free_dimension(), std::range_error,
                   "Invalid dimension !");
     int i_free=0;
-    for ( int i=0; i<get_dimension(); i++ ) {
+    for (size_t i=0; i<get_dimension(); i++ ) {
       if ( is_param_free(i) ) {
         _params.at(i).set_value_no_check(pars_[i_free]);
         i_free++;
@@ -396,7 +396,7 @@ namespace mygsl {
     out_ << tag << "dimension: " << get_dimension() << std::endl;
     out_ << tag << "# free parameter: " << get_free_dimension() << std::endl;
     out_ << last_tag << "Parameters:" << std::endl;
-    for ( int i=0; i<_params.size(); i++ ) {
+    for (size_t i=0; i<_params.size(); i++ ) {
       std::string & atag=tag;
       if ( i==_params.size()-1) atag=last_tag;
       out_ << "   " << atag << "'" << get_param_name(i) << "': " << get_param_value(i)
@@ -475,7 +475,7 @@ namespace mygsl {
     //           << (status==GSL_SUCCESS?"minimum found":"continue")
     //           << ')' << std::endl;
     std::cout << iter << ' ' << dim << ' ';
-    for ( int i=0; i<dim ; i++ ) {
+    for (size_t i=0; i<dim ; i++ ) {
       std::cout << x[i] << ' ';
     }
     std::cout << f << ' ' << status << ' ';
@@ -574,7 +574,7 @@ namespace mygsl {
     std::cerr << "DEVEL: "
               << " _x_.owner  = " << _x_->owner
               << std::endl;
-    for ( int i=0; i< _x_->size; i++ ) {
+    for (size_t i=0; i< _x_->size; i++ ) {
       std::cerr << "DEVEL: "
                 << " _x_.data["<< i<< "]  = " << _x_->data[i]
                 << std::endl;
@@ -582,7 +582,7 @@ namespace mygsl {
     std::cerr << "DEVEL: "
               << " _x_.block.size  = " << _x_->block->size
               << std::endl;
-    for ( int i=0; i< _x_->block->size; i++ ) {
+    for (size_t i=0; i< _x_->block->size; i++ ) {
       std::cerr << "DEVEL: "
                   << " _x_.block["<< i<< "]  = " << _x_->block->data[i]
                 << std::endl;
@@ -662,7 +662,7 @@ namespace mygsl {
       _ss_ = gsl_vector_alloc(n);
       gsl_vector_set_zero(_ss_);
       int i_free=0;
-      for ( int i=0; i< _sys_->get_dimension(); i++ ) {
+      for (size_t i=0; i< _sys_->get_dimension(); i++ ) {
         if ( _sys_->is_param_free(i) ) {
           gsl_vector_set(_ss_,i_free,_sys_->get_param_step(i));
           i_free++;
@@ -799,7 +799,7 @@ namespace mygsl {
     size_t dim    = 0;
     double * x    = 0;
     _epsabs_      = 1.e-2;
-    double f;
+    double f = 0.0;
 
     do {
       // if ( multimin::g_debug ) std::cerr << std::endl << "DEBUG: multimin::minimize: NEW ITERATTION" << std::endl;

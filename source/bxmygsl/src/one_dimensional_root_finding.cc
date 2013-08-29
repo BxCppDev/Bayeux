@@ -317,13 +317,12 @@ namespace mygsl {
     if (_debug_) {
       //clog << "one_dimensional_root_solver::solve: entering..." << endl;
     }
-    int status = 0;
-    int iter   = 0;
+    int status  = 0;
+    size_t iter = 0;
     _root_.reset ();
-    double r, x_lo, x_hi; // MODE_F
-    double x, x0;         // MODE_FDF
+    double r = 0.0, x_lo = 0.0, x_hi = 0.0; // MODE_F
+    double x = 0.0, x0 = 0.0;               // MODE_FDF
     _epsabs_ = epsabs_;
-    double epsrel = 0.0;
     if (_debug_) {
       //clog << "one_dimensional_root_solver::solve: setting function and starting values..." << endl;
     }

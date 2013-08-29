@@ -58,7 +58,7 @@ namespace mygsl {
   void multiparameter_system::init ()
   {
     lock_params ();
-    for (int i = 0; i < _auto_params_.size (); i++)
+    for (size_t i = 0; i < _auto_params_.size (); i++)
       {
         /*
           cerr << "DEVEL: multiparameter_system::init: "
@@ -105,7 +105,7 @@ namespace mygsl {
              << "deleting params..."
              << endl;
       }
-    for (int i = 0; i < _params_.size (); i++)
+    for (size_t i = 0; i < _params_.size (); i++)
       {
         if (_params_[i] != 0)
           {
@@ -198,7 +198,7 @@ namespace mygsl {
 
   void multiparameter_system::add_param (const param_entry & pe_, const string & comment_)
   {
-    bool devel = false;
+    //bool devel = false;
     DT_THROW_IF (is_lock_params (),
                  std::logic_error,
                  "System is locked !");
@@ -273,7 +273,7 @@ namespace mygsl {
 
   void multiparameter_system::print_line (std::ostream & out_) const
   {
-    for (int i = 0; i < _params_.size (); i++)
+    for (size_t i = 0; i < _params_.size (); i++)
       {
         out_ << _params_[i]->get_value () << ' ';
       }
@@ -298,7 +298,7 @@ namespace mygsl {
     out_ << indent << stag << tag << "Number of const parameters : " << _const_params_.size () << endl;
     out_ << indent << stag << ltag << "Number of auto parameters  : " << _auto_params_.size () << endl;
     out_ << indent << ltag << "Parameters: " << endl;
-    for (int i = 0; i < _params_.size (); i++)
+    for (size_t i = 0; i < _params_.size (); i++)
       {
         string atag = tag;
         string atag2 = stag;
@@ -318,7 +318,7 @@ namespace mygsl {
   void multiparameter_system::print_status (ostream & out_) const
   {
     out_ << "Multi-parameter system status: " << endl;
-    for (int i = 0; i < get_number_of_params (); i++)
+    for (size_t i = 0; i < get_number_of_params (); i++)
       {
         get_param (i).print_status (out_);
       }
@@ -590,8 +590,7 @@ namespace mygsl {
 
   void multiparameter_system::store_parameters (std::ostream & out_ ) const
   {
-
-    for (int i = 0; i < get_number_of_params (); i++)
+    for (size_t i = 0; i < get_number_of_params (); i++)
       {
         // print name:
         out_.width (12);

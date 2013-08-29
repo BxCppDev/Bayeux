@@ -88,11 +88,11 @@ namespace mygsl {
         _init_ (dim);
       }
     // input values:
-    for (int i = 0; i < a_.size (); i++)
+    for (size_t i = 0; i < a_.size (); i++)
       {
         gsl_vector_set (_vva_, (size_t) i, a_[i]);
       }
-    for (int i = 0; i < b_.size (); i++)
+    for (size_t i = 0; i < b_.size (); i++)
       {
         gsl_vector_set (_vvb_, (size_t) i, b_[i]);
       }
@@ -110,13 +110,13 @@ namespace mygsl {
       }
     {
       std::ostringstream message;
-      for (int i = 0; i < _dimension_; i++) message << ' ' << gsl_vector_get (_x_, i);
+      for (size_t i = 0; i < _dimension_; i++) message << ' ' << gsl_vector_get (_x_, i);
       DT_LOG_DEBUG(logging,"x = (" << message.str() << ')');
     }
     // output values:
     x_.reserve (_dimension_);
     double check = 0.0;
-    for (int i = 0; i < _dimension_; i++) {
+    for (size_t i = 0; i < _dimension_; i++) {
       x_[i] = gsl_vector_get (_x_, i);
       check += x_[i];
     }

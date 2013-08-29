@@ -119,7 +119,7 @@ namespace mygsl {
   {
     virtual void compute_automatic_params ()
     {
-      for (int i = 0; i < get_number_of_auto_params (); i++)
+      for (size_t i = 0; i < get_number_of_auto_params (); i++)
 	{
 	  grab_auto_param (i).set_value_no_check (666.);
 	  grab_auto_param (i).set_auto_computed (true);

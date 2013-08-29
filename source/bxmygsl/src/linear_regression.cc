@@ -177,19 +177,18 @@ namespace mygsl {
   void linear_regression::init (const vector<datapoint> & p_)
   {
     DT_THROW_IF (p_.size () < 3, std::logic_error, "Not enough data points !");
-    size_t n = p_.size ();
+    const size_t n = p_.size ();
     _can_weighted_ = true;
     _delete_ = true;
     _x_ = new double [n];
     _y_ = new double [n];
     _w_ = new double [n];
     _can_weighted_ = true;
-    int count = 0;
-    for (int i = 0; i < n; i++) {
+    for (size_t i = 0; i < n; i++) {
       _x_[i] = p_[i].x ();
       _y_[i] = p_[i].y ();
       if (! p_[i].is_weighted ()) {
-        DT_LOG_WARNING(datatools::logger::PRIO_WARNING, "Datapoint #" << count << " is not weighted !");
+        DT_LOG_WARNING(datatools::logger::PRIO_WARNING, "Datapoint #" << i << " is not weighted !");
         _can_weighted_ = false;
       }
       _w_[i] = p_[i].sigma_y ();
@@ -206,20 +205,19 @@ namespace mygsl {
                                 const double * w_)
   {
     DT_THROW_IF (npoints_ < 3, std::logic_error, "Not enough datapoints !");
-    size_t n = npoints_;
+    const size_t n = npoints_;
     _can_weighted_ = true;
     _delete_ = false;
     _x_ = const_cast<double *> (x_);
     _y_ = const_cast<double *> (y_);
     _w_ = 0;
     _can_weighted_ = false;
-    int count = 0;
     if (w_ != 0) {
       _w_ = const_cast<double *> (w_);
       _can_weighted_ = true;
-      for (int i = 0; i < n; i++) {
+      for (size_t i = 0; i < n; i++) {
         if (isnan (_w_[i])) {
-          DT_LOG_WARNING(datatools::logger::PRIO_WARNING, "Datapoint #" << count << " is not weighted !");
+          DT_LOG_WARNING(datatools::logger::PRIO_WARNING, "Datapoint #" << i << " is not weighted !");
           _can_weighted_ = false;
         }
       }
@@ -249,7 +247,7 @@ namespace mygsl {
     } else {
       _can_weighted_ = false;
     }
-    size_t n = x_.size ();
+    const size_t n = x_.size ();
 
     // 2009-10-28 FM: std::vector::data() method is not available:
     /*
@@ -260,22 +258,21 @@ namespace mygsl {
     _delete_ = true;
     _x_ = new double [n];
     _y_ = new double [n];
-    for (int i = 0; i < n; i++) {
+    for (size_t i = 0; i < n; i++) {
       _x_[i] = x_[i];
       _y_[i] = y_[i];
     }
 
     _w_ = 0;
-    int count = 0;
     if (w_.size () != 0) {
       // 2009-10-28 FM: missing std::vector::data() method:
       //_w_ = const_cast<double *>(w_.data ());
       _w_ = new double [n];
       _can_weighted_ = true;
-      for (int i = 0; i < n; i++) {
+      for (size_t i = 0; i < n; i++) {
         _w_[i] = w_[i];
         if (isnan (_w_[i])) {
-          DT_LOG_WARNING(datatools::logger::PRIO_WARNING, "Datapoint #" << count << " is not weighted !");
+          DT_LOG_WARNING(datatools::logger::PRIO_WARNING, "Datapoint #" << i << " is not weighted !");
           _can_weighted_ = false;
         }
       }

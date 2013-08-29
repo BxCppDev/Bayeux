@@ -53,7 +53,7 @@ namespace mygsl {
 
   double multidimensional_minimization_system::func_eval_f_MR  (double x_, void * params_)
   {
-    bool local_devel = false;
+    // bool local_devel = false;
     //if (local_devel) clog << "DEVEL: func_eval_f: entering... " << endl;
     func_eval_f_param * fefp = static_cast<func_eval_f_param *>(params_);
     int free_param_index = fefp->free_param_index;
@@ -88,7 +88,7 @@ namespace mygsl {
     // search for 'out of limits' free parameters:
     double slope = _out_of_limit_slope_;
     bool dump = false;
-    for (int i = 0; i < get_number_of_free_params (); i++)
+    for (size_t i = 0; i < get_number_of_free_params (); i++)
       {
         double dist = get_free_param (i).get_dist_to_limit ();
         double step = get_free_param (i).get_step ();
@@ -106,7 +106,7 @@ namespace mygsl {
       }
 
     // search for 'out of limits' auto parameters:
-    for (int i = 0; i < get_number_of_auto_params (); i++)
+    for (size_t i = 0; i < get_number_of_auto_params (); i++)
       {
         double dist = get_auto_param (i).get_dist_to_limit ();
         double step = get_auto_param (i).get_step ();
@@ -135,8 +135,7 @@ namespace mygsl {
       }
 
     // search for 'out of limits' free parameters:
-    double slope = _out_of_limit_slope_;
-    for (int i = 0; i < get_number_of_free_params (); i++)
+    for (size_t i = 0; i < get_number_of_free_params (); i++)
       {
         double sign = get_free_param (i).get_sign_limit ();
         // add arbitrary derivative value:
@@ -144,7 +143,7 @@ namespace mygsl {
       }
 
     // search for 'out of limits' auto parameters:
-    for (int i = 0; i < get_number_of_auto_params (); i++)
+    for (size_t i = 0; i < get_number_of_auto_params (); i++)
       {
         double sign = get_auto_param (i).get_sign_limit ();
         // add arbitrary derivative value:
@@ -157,9 +156,9 @@ namespace mygsl {
   int multidimensional_minimization_system::_numerical_eval_df_MR_ (double * gradient_)
   {
     // clog << "DEVEL: MMS::_numerical_eval_df_MR_" << endl;
-    bool local_devel = false;
+    //bool local_devel = false;
     //if (local_devel) clog << "DEVEL: __numerical_eval_df: entering..." << endl;
-    for (int i = 0; i < get_number_of_free_params (); i++)
+    for (size_t i = 0; i < get_number_of_free_params (); i++)
       {
         double save_value = get_free_param (i).get_value ();
         double x = save_value;
@@ -262,10 +261,9 @@ namespace mygsl {
   void multidimensional_minimization_system::to_double_star (double * pars_,
                                                              size_t dimension_) const
   {
-    size_t fd = get_number_of_free_params ();
+    const size_t fd = get_number_of_free_params ();
     DT_THROW_IF (dimension_ != fd, std::range_error, "Invalid dimension!");
-    int i_free = 0;
-    for (int i = 0; i < fd; i++)
+    for (size_t i = 0; i < fd; i++)
       {
         pars_[i] = get_free_param (i).get_value ();
       }
@@ -276,7 +274,7 @@ namespace mygsl {
                                                                size_t dimension_)
   {
     DT_THROW_IF (dimension_ != get_number_of_free_params (), std::range_error, "Invalid dimension!");
-    for (int i = 0; i < get_number_of_free_params (); i++)
+    for (size_t i = 0; i < get_number_of_free_params (); i++)
       {
         grab_free_param (i).set_value_no_check (pars_[i]);
       }
@@ -477,7 +475,7 @@ namespace mygsl {
     //               << ')' << std::endl;
     //   }
     std::cout << iter << ' ' << dim << ' ';
-    for (int i = 0; i < dim ; i++)
+    for (size_t i = 0; i < dim ; i++)
       {
         std::cout.precision (15);
         std::cout << x[i] << ' ';
@@ -586,7 +584,7 @@ namespace mygsl {
     std::cerr << "DEVEL: "
               << " _x_.owner  = " << _x_->owner
               << std::endl;
-    for (int i = 0; i < _x_->size; i++)
+    for (size_t i = 0; i < _x_->size; i++)
       {
         std::cerr << "DEVEL: "
                   << " _x_.data[" << i << "]  = " << _x_->data[i]
@@ -595,7 +593,7 @@ namespace mygsl {
     std::cerr << "DEVEL: "
               << " _x_.block.size  = " << _x_->block->size
               << std::endl;
-    for (int i = 0; i < _x_->block->size; i++)
+    for (size_t i = 0; i < _x_->block->size; i++)
       {
         std::cerr << "DEVEL: "
                   << " _x_.block[" << i << "]  = " << _x_->block->data[i]
@@ -663,7 +661,7 @@ namespace mygsl {
       {
         _ss_ = gsl_vector_alloc (n);
         gsl_vector_set_zero (_ss_);
-        for (int i = 0; i < _sys_->get_number_of_free_params (); i++)
+        for (size_t i = 0; i < _sys_->get_number_of_free_params (); i++)
           {
             gsl_vector_set (_ss_, i, _sys_->get_param (i).get_step ());
           }

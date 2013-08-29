@@ -111,7 +111,7 @@ namespace mygsl {
         DT_THROW_IF(true, std::logic_error, "Invalid bin axis value !");
       }
     aux.export_all (_auxiliaries_);
-    for (int i = 0; i < imported_aux_prefixes_.size(); i++)
+    for (size_t i = 0; i < imported_aux_prefixes_.size(); i++)
       {
         h_._auxiliaries_.export_starting_with(_auxiliaries_,
                                               imported_aux_prefixes_[i]);
@@ -137,7 +137,7 @@ namespace mygsl {
     h_._auxiliaries_.export_starting_with(aux, "unit.");
     h_._auxiliaries_.export_starting_with(aux, "display.");
     aux.export_all (_auxiliaries_);
-    for (int i = 0; i < imported_aux_prefixes_.size(); i++)
+    for (size_t i = 0; i < imported_aux_prefixes_.size(); i++)
       {
         h_._auxiliaries_.export_starting_with(_auxiliaries_,
                                               imported_aux_prefixes_[i]);
@@ -171,7 +171,7 @@ namespace mygsl {
         double log_factor = pow (max_/min_, 1./n_);
         std::vector<double> log_ranges;
         log_ranges.reserve (n_ + 1);
-        for (int i = 0; i < (n_ + 1); i++)
+        for (size_t i = 0; i < (n_ + 1); i++)
           {
             double val = min_ * gsl_pow_int (log_factor, i);
             log_ranges.push_back (val);
@@ -403,8 +403,7 @@ namespace mygsl {
   void histogram::set (size_t i_, double value_)
   {
     DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
-    DT_THROW_IF (i_ < 0 ||  i_ >= _h_->n,
-                 std::logic_error, "Invalid range !");
+    DT_THROW_IF (i_ >= _h_->n, std::logic_error, "Invalid range !");
     invalidate_counters ();
     _h_->bin[i_] = value_;
     return;
@@ -413,7 +412,7 @@ namespace mygsl {
   double histogram::at (size_t i_) const
   {
     DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
-    DT_THROW_IF (i_ < 0 ||  i_ >= _h_->n, std::logic_error, "Invalid range !");
+    DT_THROW_IF (i_ >= _h_->n, std::logic_error, "Invalid range !");
     return gsl_histogram_get (_h_, i_);
   }
 
@@ -496,16 +495,16 @@ namespace mygsl {
     size_t nrange2  = n2 + 1;
     double * range2 = new double[nrange2];
 
-    for (int i = 0; i < nrange2; i++)
+    for (size_t i = 0; i < nrange2; i++)
       {
         int i2 = i * f;
         range2[i] = _h_->range[i2];
       }
     gsl_histogram_set_ranges (h2, range2, nrange2);
-    for (int i = 0; i < n2; i++)
+    for (size_t i = 0; i < n2; i++)
       {
         double w = 0.0;
-        for (int j = 0; j < f; j++)
+        for (size_t j = 0; j < f; j++)
           {
             w += _h_->bin[f * i + j];
           }
@@ -671,10 +670,10 @@ namespace mygsl {
 
   void histogram::print_ascii (std::ostream & out_, int mode_) const
   {
-    size_t screen_width = 55;
+    const size_t screen_width = 55;
     double ymin = min_val ();
     double ymax = max_val ();
-    if (ymin == 0 & ymax == 0)
+    if (ymin == 0 && ymax == 0)
       {
         ymin = 0;
         ymax = +1;
@@ -692,13 +691,13 @@ namespace mygsl {
       {
         dy = (ymax - ymin) / screen_width;
       }
-    int j0 = 0;
+    size_t j0 = 0;
     if (ymin < 0)
       {
-        j0 = (int) (-ymin / dy);
+        j0 = (size_t) (-ymin / dy);
       }
-    int prec = 9;
-    int jskip = prec + 4;
+    const size_t prec = 9;
+    const size_t jskip = prec + 4;
 
     // std::cout << "DEVEL: j0   = " << j0 << std::endl;
     // std::cout << "DEVEL: ymin = " << ymin << std::endl;
@@ -764,9 +763,9 @@ namespace mygsl {
       }
     //std::cerr << "DEVEL: jmin=" << jmin << std::endl;
     //std::cerr << "DEVEL: jmax=" << jmax << std::endl;
-    for (int j = 0; j < screen_width; j++)
+    for (int j = 0; j < (int)screen_width; j++)
       {
-        if (j == j0)
+        if (j == (int)j0)
           {
             out_ << '|';
           }

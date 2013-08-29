@@ -38,7 +38,7 @@ void polynomial::set_coeff(unsigned int i_, double c_) {
   if (i_ > get_degree()) {
     unsigned int sz = _c_.size();
     _c_.resize(i_ + 1);
-    for (int i = sz; i < _c_.size(); ++i) {
+    for (size_t i = sz; i < _c_.size(); ++i) {
       _c_[i] = 0.0;
     }
   }
@@ -106,7 +106,7 @@ void polynomial::print(ostream & out_, int format_, bool eol_) const {
     exp_sym  = "^";
   }
   bool first = true;
-  for (int deg = 0; deg <= get_degree(); ++deg) {
+  for (size_t deg = 0; deg <= get_degree(); ++deg) {
     if (_c_[deg] == 0.0) {
       continue;
     } else {
@@ -249,4 +249,3 @@ bool polynomial::solver::solve(const polynomial& p_) {
 }
 
 } // namespace mygsl
-

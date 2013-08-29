@@ -423,7 +423,7 @@ namespace mygsl {
     double   t = t_;
     double * y = y_;
     std::cout << t << ' ';
-    for (int i=0; i<dim_ ; i++) {
+    for (size_t i=0; i<dim_ ; i++) {
       std::cout << y[i] << ' ';
     }
     std::cout << std::endl;

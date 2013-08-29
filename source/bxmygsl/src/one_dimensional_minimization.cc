@@ -212,8 +212,8 @@ namespace mygsl {
                                               double m_,
                                               double epsabs_)
   {
-    int status = 0;
-    int iter   = 0;
+    int status  = 0;
+    size_t iter = 0;
     _minimum_value_.reset ();
     double m = m_;
     double a = a_;

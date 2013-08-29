@@ -124,7 +124,7 @@ namespace mygsl {
     h_._auxiliaries_.export_starting_with(aux, "unit.");
     h_._auxiliaries_.export_starting_with(aux, "display.");
     aux.export_all (_auxiliaries_);
-    for (int i = 0; i < imported_aux_prefixes_.size(); i++) {
+    for (size_t i = 0; i < imported_aux_prefixes_.size(); i++) {
       h_._auxiliaries_.export_starting_with(_auxiliaries_,
                                             imported_aux_prefixes_[i]);
     }
@@ -154,7 +154,7 @@ namespace mygsl {
     hy_.get_auxiliaries ().export_and_rename_starting_with(aux, "unit.", "y.unit.");
     hy_.get_auxiliaries ().export_and_rename_starting_with(aux, "display.xaxis.", "display.yaxis.");
     aux.export_all (_auxiliaries_);
-    for (int i = 0; i < imported_aux_prefixes_.size(); i++) {
+    for (size_t i = 0; i < imported_aux_prefixes_.size(); i++) {
       hx_.get_auxiliaries ().export_starting_with(_auxiliaries_,
                                                   imported_aux_prefixes_[i]);
       hy_.get_auxiliaries ().export_starting_with(_auxiliaries_,
@@ -210,7 +210,7 @@ namespace mygsl {
       std::vector<double> xranges;
       xranges.reserve (nx_ + 1);
       if (xmode_ == BIN_MODE_LINEAR) {
-        for (int i = 0; i < (nx_ + 1); i++)
+        for (size_t i = 0; i < (nx_ + 1); i++)
           {
             xranges.push_back (xmin_ + i * _x_binning_info_);
           }
@@ -218,7 +218,7 @@ namespace mygsl {
       else
         {
           double xfactor = pow (xmax_/xmin_, 1./nx_);
-          for (int i = 0; i < (nx_ + 1); i++)
+          for (size_t i = 0; i < (nx_ + 1); i++)
             {
               double xval = xmin_ * gsl_pow_int (xfactor, i);
               xranges.push_back (xval);
@@ -230,15 +230,15 @@ namespace mygsl {
       yranges.reserve (ny_ + 1);
       if (ymode_ == BIN_MODE_LINEAR)
         {
-          for (int i = 0; i < (ny_ + 1); i++)
+          for (size_t i = 0; i < (ny_ + 1); i++)
             {
               yranges.push_back (ymin_ + i * _y_binning_info_);
             }
         }
       else
         {
-          double yfactor = pow (ymax_/ymin_, 1./ny_);
-          for (int i = 0; i < (ny_ + 1); i++)
+          const double yfactor = std::pow (ymax_/ymin_, 1./ny_);
+          for (size_t i = 0; i < (ny_ + 1); i++)
             {
               double yval = ymin_ * gsl_pow_int (yfactor, i);
               yranges.push_back (yval);
@@ -520,16 +520,16 @@ namespace mygsl {
   double histogram_2d::at (size_t ix_, size_t iy_) const
   {
     DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
-    DT_THROW_IF (ix_ < 0 || ix_ >= _h_->nx, std::logic_error, "Invalid X range !");
-    DT_THROW_IF (iy_ < 0 || iy_ >= _h_->ny, std::logic_error, "Invalid Y range !");
+    DT_THROW_IF (ix_ >= _h_->nx, std::logic_error, "Invalid X range !");
+    DT_THROW_IF (iy_ >= _h_->ny, std::logic_error, "Invalid Y range !");
     return gsl_histogram2d_get (_h_,ix_,iy_);
   }
 
   void histogram_2d::set (size_t ix_, size_t iy_, double value_)
   {
     DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
-    DT_THROW_IF (ix_ < 0 || ix_ >= _h_->nx, std::logic_error, "Invalid range for X index!");
-    DT_THROW_IF (iy_ < 0 || iy_ >= _h_->ny, std::logic_error, "Invalid range for Y index!");
+    DT_THROW_IF (ix_ >= _h_->nx, std::logic_error, "Invalid range for X index!");
+    DT_THROW_IF (iy_ >= _h_->ny, std::logic_error, "Invalid range for Y index!");
     invalidate_counters ();
     _h_->bin[ix_ * _h_->ny + iy_] = value_;
     return;

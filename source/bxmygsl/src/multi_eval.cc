@@ -36,7 +36,7 @@ namespace mygsl {
 
   bool multi_eval::is_valid (const double * x_) const
   {
-    for (int i = 0; i < _domains_.size (); i++) {
+    for (size_t i = 0; i < _domains_.size (); i++) {
       if (! is_valid (i, x_[i])) return false;
     }
     return true;
@@ -122,21 +122,21 @@ namespace mygsl {
 
   const double & unary_eval_from_multi::param (int i_) const
   {
-    DT_THROW_IF ((i_ < 0) || (i_ >= _params_.size ()),
+    DT_THROW_IF ((i_ < 0) || (i_ >= (int)_params_.size ()),
                  std::domain_error, "Invalid parameter index !");
     return _params_[i_];
   }
 
   double & unary_eval_from_multi::param (int i_)
   {
-    DT_THROW_IF ((i_ < 0) || (i_ >= _params_.size ()),
+    DT_THROW_IF ((i_ < 0) || (i_ >= (int)_params_.size ()),
                  std::domain_error, "Invalid parameter index !");
     return _params_[i_];
   }
 
   void unary_eval_from_multi::set_index (int i_)
   {
-    DT_THROW_IF ((i_ < 0) || (i_ >= _multi_eval_->get_dimension ()),
+    DT_THROW_IF ((i_ < 0) || (i_ >= (int)_multi_eval_->get_dimension ()),
                  std::domain_error, "Invalid parameter index !");
     _index_ = i_;
     return;
@@ -167,7 +167,7 @@ namespace mygsl {
   {
     vector<double> v;
     v.assign (multi_eval_.get_dimension (), 0.0);
-    for (int i = 0; i < v.size (); i++) {
+    for (size_t i = 0; i < v.size (); i++) {
       v[i] = params_[i];
     }
     init (multi_eval_, i_, v);

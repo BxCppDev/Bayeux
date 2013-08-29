@@ -186,7 +186,7 @@ permutation& permutation::operator--() {
 }
 
 void permutation::print(ostream& out_, bool eol_) const {
-  for (int i = 0; i < size(); ++i) {
+  for (size_t i = 0; i < size(); ++i) {
     if (i != 0) {
       out_ << ' ';
     }
@@ -197,7 +197,7 @@ void permutation::print(ostream& out_, bool eol_) const {
 
 ostream& operator<<(ostream& out_, const permutation& p_) {
   out_ << '(';
-  for (int i = 0; i < p_.size(); ++i) {
+  for (size_t i = 0; i < p_.size(); ++i) {
     if (i != 0) {
       out_ << ", ";
     }
@@ -259,7 +259,7 @@ istream& operator>>(istream& in_, permutation& p_) {
   }
   if (count > 0) {
     p_.init(count);
-    for (int i = 0; i < count; i++) {
+    for (size_t i = 0; i < count; i++) {
       p_.pImpl->_perm_->data[i] = values.front();
       values.pop_front();
     }

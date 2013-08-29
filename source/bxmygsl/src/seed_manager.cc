@@ -141,10 +141,9 @@ namespace mygsl {
         DT_THROW_IF (! boost::filesystem::exists (dev_urandom.c_str ()),
                      std::runtime_error,
                      "No '" << dev_urandom << "' entropy source on this host !");
-        unsigned int useed;
+        unsigned int useed = 0;
         FILE *urandom;
         urandom = fopen (dev_urandom.c_str (), "r");
-        size_t szr = fread (&useed, sizeof (useed), 1, urandom);
         seed += (int32_t) useed & 0x7FFFFFFF;
         fclose (urandom);
         DT_LOG_TRACE (get_logging_priority (), "seed=" << seed << " (from '/dev/urandom')");
@@ -302,7 +301,6 @@ namespace mygsl {
                   }
                 if (do_it)
                   {
-                    int32_t theSeed = theKeySeed;
                     DT_LOG_TRACE (get_logging_priority (), "Setting a new seed for PRNG '" << prng_label << "'...");
                     while (true)
                       {

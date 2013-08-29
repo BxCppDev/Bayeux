@@ -228,7 +228,7 @@ namespace mygsl {
     if (histo_pool_->_auxiliaries_.has_key("histo.export_prefixes")) {
       std::vector<std::string> export_prefixes;
       histo_pool_->_auxiliaries_.fetch("histo.export_prefixes", export_prefixes);
-      for (int i = 0; i < export_prefixes.size(); i++) {
+      for (size_t i = 0; i < export_prefixes.size(); i++) {
         const std::string & aux_prefix = export_prefixes[i];
         h1_setup_.export_starting_with (h1_.grab_auxiliaries (), aux_prefix);
       }
@@ -342,7 +342,7 @@ namespace mygsl {
       if (h1_setup_.has_key ("bounds")) {
         h1_setup_.fetch ("bounds", xranges);
         if (! h1_setup_.has_explicit_unit("bounds")) {
-          for (int i = 0; i < xranges.size(); i++) {
+          for (size_t i = 0; i < xranges.size(); i++) {
             xranges[i] *= xunit;
           }
         }
@@ -462,7 +462,7 @@ namespace mygsl {
     if (histo_pool_->_auxiliaries_.has_key("histo.export_prefixes")) {
       std::vector<std::string> export_prefixes;
       histo_pool_->_auxiliaries_.fetch("histo.export_prefixes", export_prefixes);
-      for (int i = 0; i < export_prefixes.size(); i++) {
+      for (size_t i = 0; i < export_prefixes.size(); i++) {
         const std::string & aux_prefix = export_prefixes[i];
         h2_setup_.export_starting_with (h2_.grab_auxiliaries (), aux_prefix);
       }
@@ -673,7 +673,7 @@ namespace mygsl {
       if (h2_setup_.has_key ("x.bounds")) {
         h2_setup_.fetch ("x.bounds", xranges);
         if (! h2_setup_.has_explicit_unit("x.bounds")) {
-          for (int i = 0; i < xranges.size(); i++) {
+          for (size_t i = 0; i < xranges.size(); i++) {
             xranges[i] *= xunit;
           }
         }
@@ -681,7 +681,7 @@ namespace mygsl {
       if (h2_setup_.has_key ("y.bounds")) {
         h2_setup_.fetch ("y.bounds", yranges);
         if (! h2_setup_.has_explicit_unit("y.bounds")) {
-          for (int i = 0; i < yranges.size(); i++) {
+          for (size_t i = 0; i < yranges.size(); i++) {
             yranges[i] *= yunit;
           }
         }
@@ -798,7 +798,7 @@ namespace mygsl {
       setup_.fetch ("histo.setups", histo_setup_filenames);
     }
 
-    for (int i = 0; i < histo_setup_filenames.size (); i++) {
+    for (size_t i = 0; i < histo_setup_filenames.size (); i++) {
       load (histo_setup_filenames[i]);
     }
 
@@ -2386,4 +2386,3 @@ DOCD_CLASS_SYSTEM_REGISTRATION(::mygsl::histogram_1d,  "mygsl::histogram_1d")
 DOCD_CLASS_SYSTEM_REGISTRATION(::mygsl::histogram_2d,  "mygsl::histogram_2d")
 
 // end of histogram_pool.cc
-

@@ -181,7 +181,7 @@ namespace mygsl {
 
   void rng::print_dict (std::ostream & out_)
   {
-    bool devel = false;
+    //bool devel = false;
     /*
     if (devel)
       {
@@ -481,10 +481,7 @@ namespace mygsl {
   {
     DT_THROW_IF (! is_initialized(),  std::logic_error, "Generator is not initialized !");
     FILE * stream = fopen (filename_.c_str (), "w");
-    if (stream == NULL) {
-      int errid=errno;
-      DT_THROW_IF(true, std::runtime_error, "Cannot open file '"  << filename_ << "' !");
-    }
+    DT_THROW_IF(stream == 0, std::runtime_error, "Cannot open file '"  << filename_ << "' !");
     int ret = gsl_rng_fwrite (stream, _r_);
     DT_THROW_IF (ret == GSL_EFAILED,std::runtime_error, "Cannot store state in file '" << filename_ << "' !");
     fclose (stream);
@@ -495,17 +492,11 @@ namespace mygsl {
   {
     DT_THROW_IF (! is_initialized(),  std::logic_error, "Generator is not initialized !");
     FILE * stream = fopen (filename_.c_str (), "r");
-    if (stream == NULL) {
-      int errid=errno;
-      DT_THROW_IF(true, std::runtime_error, "Cannot open file '"  << filename_ << "' !");
-    }
+    DT_THROW_IF(stream == 0, std::runtime_error, "Cannot open file '"  << filename_ << "' !");
     int ret = gsl_rng_fread (stream, _r_);
     DT_THROW_IF (ret == GSL_EFAILED,std::runtime_error, "Cannot load state from file '" << filename_ << "' !");
     ret = fclose (stream);
-    if (ret != 0) {
-      int errid = errno;
-      DT_THROW_IF(true, std::runtime_error, "Cannot close file '" << filename_ << "' !");
-    }
+    DT_THROW_IF(ret != 0, std::runtime_error, "Cannot close file '" << filename_ << "' !");
     return;
   }
 
@@ -517,7 +508,7 @@ namespace mygsl {
     const unsigned char * b = (const unsigned char *) state;
     buffer_.reserve (n);
     buffer_.clear ();
-    for (int i = 0; i < n; i++) {
+    for (size_t i = 0; i < n; i++) {
       buffer_.push_back (*b);
       b++;
     }
@@ -540,7 +531,7 @@ namespace mygsl {
     out_ << n;
     if (state != 0) {
       const unsigned char * b = (const unsigned char *) state;
-      for (int i = 0; i < n; i++) {
+      for (size_t i = 0; i < n; i++) {
         unsigned int c = (unsigned int) *b;
         out_ << ' ' << std::dec << c;
         b++;
@@ -559,7 +550,7 @@ namespace mygsl {
                  "Size of the state buffer does not match the size of the internal state of the '"
                  << this->name () << "' generator !");
     unsigned char * b = static_cast<unsigned char *> (state);
-    for (int i = 0; i < buffer_.size (); i++) {
+    for (size_t i = 0; i < buffer_.size (); i++) {
       *b = buffer_[i];
       b++;
     }

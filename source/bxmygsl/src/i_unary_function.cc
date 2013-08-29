@@ -152,8 +152,7 @@ namespace mygsl {
     if (fxprecision <= 0) fxprecision=datatools::io::REAL_PRECISION;
     DT_THROW_IF (! out_,  std::runtime_error, "Cannot write in the output stream !");
     double dx = (max_ - min_) / nsamples_;
-    double x = min_;
-    for (int i = 0; i < nsamples_; i++) {
+    for (size_t i = 0; i < nsamples_; i++) {
       double x = min_ + i * dx;
       if (options_ & wo_skip_odod) {
         if (this->has_explicit_domain_of_definition()) {

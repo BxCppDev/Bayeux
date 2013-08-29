@@ -201,7 +201,7 @@ namespace mygsl {
     //             << name << "'" << std::endl;
     // }
 
-    if (npoints < (int)min_size) {
+    if (npoints < min_size) {
       if (pImpl->_gs_ != 0) gsl_spline_free(pImpl->_gs_);
       pImpl->_gs_ = 0;
       DT_THROW_IF(true,std::logic_error,"Not enough data points for '"  << name << "' interpolator !");
@@ -271,7 +271,7 @@ namespace mygsl {
   }
 
   void tabulated_function::add_point(double x_, double y_, bool lock_after_) {
-    bool local_debug = false;
+    // bool local_debug = false;
     /*
     if (local_debug) {
       std::cerr << "DEBUG: mygsl::tabulated_function::add_point: "
@@ -322,7 +322,7 @@ namespace mygsl {
                  std::out_of_range, "Interpolator '" << pImpl->_interpolator_name_ << "' is not supported !");
     size_t n = 0;
     in_ >> n >> std::ws;
-    for (int i = 0; i < n ; ++i) {
+    for (size_t i = 0; i < n ; ++i) {
       double x, y;
       in_ >> x >> std::ws >> y >> std::ws;
       DT_THROW_IF (!in_, std::logic_error, "Invalid format for (x, y) data point");
