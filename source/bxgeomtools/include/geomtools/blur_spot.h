@@ -123,7 +123,7 @@ namespace geomtools {
     blur_spot ();
 
     /// Constructor
-    blur_spot (uint8_t dimension_,
+    blur_spot (int8_t dimension_,
                double tolerance_ = DEFAULT_VALUE);
 
     /// Set the position of the object

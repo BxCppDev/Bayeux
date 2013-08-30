@@ -134,7 +134,7 @@ namespace geomtools {
   }
 
   // Constructor :
-  blur_spot::blur_spot (uint8_t blur_dimension_,
+  blur_spot::blur_spot (int8_t blur_dimension_,
                         double tolerance_)
   {
     _blur_dimension_ = DIMENSION_INVALID;
