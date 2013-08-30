@@ -98,7 +98,7 @@ namespace cuts {
                   std::logic_error,
                   "Missing 'cuts' name property !");
       a_configuration.fetch("cuts", cut_names);
-      for (int i = 0; i < cut_names.size(); i++) {
+      for (size_t i = 0; i < cut_names.size(); i++) {
         const std::string & cut_name = cut_names[i];
         cut_handle_dict_type::iterator found = a_cut_dict.find(cut_name);
         DT_THROW_IF(found == a_cut_dict.end(),
