@@ -757,7 +757,7 @@ namespace geomtools {
           setup_.fetch(i_model::constants::instance ().EXPORTED_PROPERTIES_PREFIXES_KEY,
                        exported_prefixes);
         }
-        for (int i = 0; i < exported_prefixes.size(); i++) {
+        for (size_t i = 0; i < exported_prefixes.size(); i++) {
           const std::string & topic_prefix = exported_prefixes[i];
           const std::string filled_topic_prefix = topic_prefix + "filled.";
           DT_LOG_NOTICE(get_logging_priority (),

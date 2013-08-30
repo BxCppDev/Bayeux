@@ -306,7 +306,6 @@ namespace geomtools {
          i != get_entries ().end ();
          i++)
       {
-        const std::string & entry_name = i->first;
         const display_entry & de = i->second;
         if (de.is_framed ())
           {
@@ -379,7 +378,7 @@ namespace geomtools {
     // Display groups:
     a_out << indent << datatools::i_tree_dumpable::tag;
     a_out << "Display groups: " << _groups_.size () << std::endl;
-    for (int i = 0; i < _groups_.size (); i++)
+    for (size_t i = 0; i < _groups_.size (); i++)
       {
         a_out << indent << datatools::i_tree_dumpable::skip_tag;
         if (i + 1  < _groups_.size ())
@@ -392,7 +391,7 @@ namespace geomtools {
     // Display colors:
     a_out << indent << datatools::i_tree_dumpable::tag;
     a_out << "Colors : " << _colors_.size () << std::endl;
-    for (int i = 0; i < _colors_.size (); i++)
+    for (size_t i = 0; i < _colors_.size (); i++)
       {
         a_out << indent << datatools::i_tree_dumpable::skip_tag;
         if (i + 1  < _colors_.size ())

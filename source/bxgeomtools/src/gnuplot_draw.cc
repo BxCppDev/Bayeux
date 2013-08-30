@@ -532,7 +532,7 @@ namespace geomtools {
         S2 = &C;
       }
 
-      for (int i = 1; i < n_tube_sampling_; i++) {
+      for (size_t i = 1; i < n_tube_sampling_; i++) {
         vector_3d D1 = (*Q1-*P1)/n_tube_sampling_;
         vector_3d D2 = (*Q2-*P2)/n_tube_sampling_;
         vector_3d U = *P1 + i * D1;
@@ -548,7 +548,7 @@ namespace geomtools {
         polyline.push_back (VT);
         basic_draw_polyline (out_, polyline);
       }
-      for (int i = 1; i < n_tube_sampling_; i++) {
+      for (size_t i = 1; i < n_tube_sampling_; i++) {
         vector_3d D1 = (*S1-*R1)/n_tube_sampling_;
         vector_3d D2 = (*S2-*R2)/n_tube_sampling_;
         vector_3d U = *R1 + i * D1;
@@ -564,7 +564,7 @@ namespace geomtools {
         polyline.push_back (VT);
         basic_draw_polyline (out_, polyline);
       }
-      for (int i = 1; i < n_tube_sampling_; i++) {
+      for (size_t i = 1; i < n_tube_sampling_; i++) {
         vector_3d D1 = (*R1-*Q1)/n_tube_sampling_;
         vector_3d D2 = (*R2-*Q2)/n_tube_sampling_;
         vector_3d U = *Q1 + i * D1;
@@ -580,7 +580,7 @@ namespace geomtools {
         polyline.push_back (VT);
         basic_draw_polyline (out_, polyline);
       }
-      for (int i = 1; i < n_tube_sampling_; i++) {
+      for (size_t i = 1; i < n_tube_sampling_; i++) {
         vector_3d D1 = (*P1-*S1)/n_tube_sampling_;
         vector_3d D2 = (*P2-*S2)/n_tube_sampling_;
         vector_3d U = *S1 + i * D1;
@@ -901,7 +901,7 @@ namespace geomtools {
         polyline_type polyline_meridian;
         double phi = i * dphi;
         double z = -radius_;
-        for (int j = 0; j <= (int) z_sample + 2 + (i == 0 ? 1: 0); j++) {
+        for (size_t j = 0; j <= z_sample + 2 + (i == 0 ? 1: 0); j++) {
           //double z = -radius_ + j * dz;
           double theta = std::acos (z / radius_);
           vector_3d P;
@@ -928,7 +928,7 @@ namespace geomtools {
     // draw parallels:
     {
       double z = -radius_ + factor * dz;
-      for (int j = 1; j <= (int) z_sample + 1; j++) {
+      for (size_t j = 1; j <= z_sample + 1; j++) {
         polyline_type polyline_parallel;
         for (size_t i = 0; i <= phy_sample ; ++i) {
           vector_3d P;
@@ -1612,10 +1612,8 @@ namespace geomtools {
                            const i_object_3d & o_,
                            unsigned long mode_)
   {
-    bool mode_wired_cylinder = mode_ & gnuplot_draw::MODE_WIRED_CYLINDER;
-
     // multi-placement:
-    for (int i = 0; i < p_.get_number_of_items (); i++) {
+    for (size_t i = 0; i < p_.get_number_of_items (); i++) {
       placement p;
       p_.get_placement (i, p);
       const vector_3d & pos = p.get_translation ();

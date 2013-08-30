@@ -184,12 +184,9 @@ namespace geomtools {
       j++;
       mygsl::interval domain (tf.x_min (), tf.x_max (), 0.01 * skin);
       const double drdz = mygsl::derivative (tf, xi, domain);
-      const double ux = 1.0;
       const double uy = drdz;
       const double dyij = skin / sqrt (1 + uy * uy);
       const double dxij = - dyij * uy;
-      const double xj = xi + dxij;
-      const double yj = yi + dyij;
       const double xk = xi - dxij;
       const double yk = yi - dyij;
       //tf2.add_point (xj, yj, false);
@@ -247,6 +244,7 @@ namespace geomtools {
     double dz = dx;
     double za, ra;
     datatools::invalidate (za);
+    datatools::invalidate (ra);
     double z = z1;
     bool stop = false;
     do {
@@ -269,7 +267,7 @@ namespace geomtools {
         r_outer = 0.0;
       }
       double r_inner = tf3bis (z);
-      if (datatools::is_valid (za)) {
+      if (datatools::is_valid (za) && datatools::is_valid (ra)) {
         const double zb = z;
         const double rb = r_inner;
         if ((ra * rb) < 0.0) {
@@ -683,7 +681,6 @@ namespace geomtools {
     // bottom surface:
     {
       rz_col_type::const_iterator i = _points_.begin ();
-      const double z0 = i->first;
       const double rmin0 = i->second.rmin;
       const double rmax0 = i->second.rmax;
       _bottom_surface_ = M_PI * (rmax0 * rmax0 - rmin0 * rmin0);
@@ -1032,7 +1029,7 @@ namespace geomtools {
     }
     size_t n;
     in_ >> n;
-    for (int i = 0; i < n; i++) {
+    for (size_t i = 0; i < n; i++) {
       double rmin, rmax, z;
       in_ >> z >> rmin >> rmax;
       if (! in_) {

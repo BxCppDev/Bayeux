@@ -10,8 +10,6 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   size_t regular_grid_placement::get_dimension () const
   {
     return 2;
@@ -32,8 +30,8 @@ namespace geomtools {
     return (_number_of_columns_ > 0)
       && (_number_of_rows_ > 0)
       && _basic_placement_.is_valid ()
-      && isnormal (_column_step_)
-      && isnormal (_row_step_);
+      && std::isnormal (_column_step_)
+      && std::isnormal (_row_step_);
   }
 
   void regular_grid_placement::invalidate ()
@@ -150,14 +148,14 @@ namespace geomtools {
     return _number_of_columns_ * _number_of_rows_;
   }
 
-  size_t regular_grid_placement::compute_index_map (vector<uint32_t> & map_,
+  size_t regular_grid_placement::compute_index_map (std::vector<uint32_t> & map_,
                                                     int item_) const
   {
-    DT_THROW_IF ((item_ < 0) || (item_ >= get_number_of_items ()), std::domain_error,
+    DT_THROW_IF ((item_ < 0) || (item_ >= (int)get_number_of_items ()), std::domain_error,
                  "Invalid item index '" << item_ << "' !");
-    uint32_t nitem = (uint32_t) item_;
-    uint32_t icol = nitem % _number_of_columns_;
-    uint32_t irow = nitem / _number_of_columns_;
+    const uint32_t nitem = (uint32_t) item_;
+    const uint32_t icol = nitem % _number_of_columns_;
+    const uint32_t irow = nitem / _number_of_columns_;
     map_.clear ();
     map_.push_back (icol);
     map_.push_back (irow);
@@ -181,10 +179,8 @@ namespace geomtools {
   void regular_grid_placement::get_placement (int item_, placement & p_) const
   {
     p_ = _basic_placement_;
-    vector_3d trans = p_.get_translation ();
-    vector_3d step;
-    double x, y, z;
-    bool centered = _centered_;
+    double x = 0.0, y = 0.0, z = 0.0;
+    const bool centered = _centered_;
     if (is_mode_xy ())
       {
         x = (item_ % _number_of_columns_) * _column_step_;
@@ -218,8 +214,8 @@ namespace geomtools {
             z -= 0.5 * (_number_of_rows_    - 1) * _row_step_;
           }
       }
-    step.set (x, y, z);
-    trans += step;
+    const vector_3d step (x, y, z);
+    const vector_3d trans = p_.get_translation () + step;
     p_.set_translation (trans);
     return;
   }
@@ -312,19 +308,19 @@ namespace geomtools {
     return;
   }
 
-  void regular_grid_placement::tree_dump (ostream & out_,
-                                          const string & title_,
-                                          const string & indent_,
+  void regular_grid_placement::tree_dump (std::ostream & out_,
+                                          const std::string & title_,
+                                          const std::string & indent_,
                                           bool inherit_) const
   {
-    string indent;
+    std::string indent;
     if (! indent_.empty ()) indent = indent_;
     this->i_placement::tree_dump (out_, title_, indent, true);
 
     {
-      ostringstream oss_title;
+      std::ostringstream oss_title;
       oss_title << indent << datatools::i_tree_dumpable::tag << "Basic placement :";
-      ostringstream oss_indent;
+      std::ostringstream oss_indent;
       oss_indent << indent << datatools::i_tree_dumpable::skip_tag;
       _basic_placement_.tree_dump (out_,
                                    oss_title.str (),
@@ -332,22 +328,22 @@ namespace geomtools {
     }
 
     out_ << indent << datatools::i_tree_dumpable::tag << "Mode : "
-         << _mode_  << endl;
+         << _mode_  << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag << "Column step : "
-         << _column_step_  << endl;
+         << _column_step_  << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag << "Row step : "
-         << _row_step_  << endl;
+         << _row_step_  << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag << "Number of columns : "
-         << _number_of_columns_  << endl;
+         << _number_of_columns_  << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag << "Number of rows : "
-         << _number_of_rows_  << endl;
+         << _number_of_rows_  << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
-         << "Centered :" << is_centered () << endl;
+         << "Centered :" << is_centered () << std::endl;
 
     return;
   }

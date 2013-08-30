@@ -98,7 +98,7 @@ namespace geomtools {
   {
     int code = 0;
     DT_LOG_TRACE(logging, "Entering...");
-    int iarg = 0;
+    size_t iarg = 0;
     DT_LOG_TRACE(logging, "argv size = " << argv_.size());
     while (iarg < argv_.size()) {
       std::string token = argv_[iarg++];
@@ -326,7 +326,7 @@ namespace geomtools {
       DT_THROW_IF (_params_.setup_filenames.size () == 0,
                    std::logic_error,
                    "Missing list of geometry models configuration files or geometry manager configuration file!");
-      for (int i = 0; i  < _params_.setup_filenames.size(); i++) {
+      for (size_t i = 0; i  < _params_.setup_filenames.size(); i++) {
         std::string geom_filename = _params_.setup_filenames[i];
         datatools::fetch_path_with_env (geom_filename);
         _geo_factory_.get()->load (geom_filename);
@@ -529,7 +529,6 @@ namespace geomtools {
 #if GEOMTOOLS_WITH_ROOT_DISPLAY == 1
     if (root_display_) {
       unsigned int vis_option = root_vis_option_;
-      unsigned int vis_level  = root_vis_level_;
       std::string  top_volume = root_top_volume_;
       if (! root_top_volume_.empty() && root_top_volume_.length() > 2) {
         if (root_top_volume_[0] == '"' && root_top_volume_[root_top_volume_.length()-1] == '"') {
@@ -697,7 +696,7 @@ namespace geomtools {
     int root_vis_option = 1;
     int root_vis_level  = 100;
     std::string root_top_volume = "";
-    int argcount = 0;
+    size_t argcount = 0;
     while (argcount < argv_.size()) {
       const std::string & token = argv_[argcount++];
       if (token.empty()) break;
@@ -798,7 +797,7 @@ namespace geomtools {
     std::string terminal;
     std::string terminal_options;
     bool using_title = true;
-    int argcount = 0;
+    size_t argcount = 0;
     while (argcount < argv_.size()) {
       const std::string & token = argv_[argcount++];
       if (token.empty()) break;

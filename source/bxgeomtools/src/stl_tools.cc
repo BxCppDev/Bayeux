@@ -188,7 +188,7 @@ namespace geomtools {
         pass_counter++;
 
         // If there are ones, we delete all facets that use them :
-        for (int ivertex = 0; ivertex < nsvtx; ivertex++) {
+        for (size_t ivertex = 0; ivertex < nsvtx; ivertex++) {
           DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
                          "Suspicious vertex #"
                          << suspicious_vertex_indexes[ivertex]);
@@ -210,7 +210,7 @@ namespace geomtools {
             suspicious_facet_indexes.push_back (ref_facet_iter->first);
           }
 
-          for (int ifacet = 0; ifacet < suspicious_facet_indexes.size (); ifacet++) {
+          for (size_t ifacet = 0; ifacet < suspicious_facet_indexes.size (); ifacet++) {
             DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
                            "Remove suspicious facet #" << suspicious_facet_indexes[ifacet]);
             ts_.remove_facet (suspicious_facet_indexes[ifacet]);
@@ -241,7 +241,7 @@ namespace geomtools {
       // if (is_debug()) std::clog << "DEBUG: geomtools::stl::stl_to_geomtools_converter::convert: "
       //                                << "Number of facets = " << solid_.facets.size()
       //                                << std::endl;
-      for (int ifacet = 0; ifacet < solid_.facets.size(); ifacet++) {
+      for (size_t ifacet = 0; ifacet < solid_.facets.size(); ifacet++) {
           // if (is_debug()) std::clog << "DEBUG: geomtools::stl::stl_to_geomtools_converter::convert: "
           //                        << "Processing facets #" << ifacet << " ..."
           //                        << std::endl;
@@ -258,7 +258,7 @@ namespace geomtools {
           DT_THROW_IF (a_facet.vertices.size () != 3,
                        std::logic_error,
                        "Invalid number of vertices (" << a_facet.vertices.size () << ") for facet #" << ifacet << " !");
-          for (int ivtx = 0; ivtx < a_facet.vertices.size (); ivtx++) {
+          for (size_t ivtx = 0; ivtx < a_facet.vertices.size (); ivtx++) {
             const vertex & a_vertex = a_facet.vertices[ivtx];
             double x, y, z;
             x = a_vertex.x;

@@ -264,7 +264,6 @@ namespace geomtools {
     }
 
     const double zcyl = mother_cylinder.get_z ();
-    const double rcyl = mother_cylinder.get_r ();
     const double c = zcyl - h;
     const double rs = extrusion_sphere.get_r ();
     const double a = rs - c;

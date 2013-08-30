@@ -107,7 +107,7 @@ namespace geomtools {
 
   const facet_vertex & facet34::get_vertex (int i_) const
   {
-    DT_THROW_IF((i_ < 0) || (i_ >= _number_of_vertices_),
+    DT_THROW_IF((i_ < 0) || (i_ >= (int)_number_of_vertices_),
                 std::logic_error,
                 "Invalid vertex index " << i_ << " !");
     return *_vertices_[i_];
@@ -115,7 +115,7 @@ namespace geomtools {
 
   int32_t facet34::get_vertex_key (int i_) const
   {
-    DT_THROW_IF((i_ < 0) || (i_ >= _number_of_vertices_),
+    DT_THROW_IF((i_ < 0) || (i_ >= (int)_number_of_vertices_),
                 std::logic_error,
                 "Invalid vertex index " << i_ << " !");
     return _vertices_keys_[i_];
@@ -158,7 +158,6 @@ namespace geomtools {
         const geomtools::vector_3d & v3 = _vertices_[3]->get_position ();
         const geomtools::vector_3d u23 = v3 - v2;
         geomtools::vector_3d n2 = u12.cross (u23);
-        const double m2 = n2.mag ();
         n2 /= m;
         if (! geomtools::are_near (n, n2, 1.e-5))
           {
@@ -567,7 +566,7 @@ namespace geomtools {
 
   double facet34::get_internal_angle (int i_) const
   {
-    DT_THROW_IF ((i_ < 0) || (i_ >= _number_of_vertices_),
+    DT_THROW_IF ((i_ < 0) || (i_ >= (int)_number_of_vertices_),
                  std::logic_error ,
                  "Invalid vertex index " << i_ << " !");
     return _internal_angles_[i_];
@@ -637,7 +636,7 @@ namespace geomtools {
       }
     out_ << "}";
     out_ << ",angles={";
-    for (int i=0; i<get_number_of_vertices (); i++)
+    for (size_t i=0; i<get_number_of_vertices (); i++)
       {
         if (i!=0) out_ << ',';
         out_ << get_internal_angle (i) / CLHEP::degree << " °";
@@ -1260,7 +1259,7 @@ namespace geomtools {
     ivtx[2] = ivtx2_;
     ivtx[3] = ivtx3_;
     vertices_col_type::iterator vtx_it[4];
-    for (int i = 0; i < dim; i++) {
+    for (size_t i = 0; i < dim; i++) {
       vtx_it[i] = _vertices_.find (ivtx[i]);
       DT_THROW_IF (vtx_it[i] == _vertices_.end (),
                    std::logic_error,
@@ -1307,7 +1306,7 @@ namespace geomtools {
     facet34 the_facet = facet_found->second;
 
     // Traverse the collection of vertices in the facet :
-    for (int i = 0; i < the_facet.get_number_of_vertices (); i++) {
+    for (size_t i = 0; i < the_facet.get_number_of_vertices (); i++) {
         //int vtxkey = the_facet_ptr->get_vertex_key (i);
         int vtxkey = the_facet.get_vertex_key (i);
 
@@ -1406,11 +1405,6 @@ namespace geomtools {
       const geomtools::vector_3d u2 = fct.get_vertex (2).position - fct.get_vertex (1).position;
       const geomtools::vector_3d u3 = u1.cross (u2);
       const int color = 5 + (int) (5 * u3.cosTheta ());
-      const double dx = fct.get_vertex (1).position.x () - fct.get_vertex (0).position.x ();
-      const double dy = fct.get_vertex (1).position.y () - fct.get_vertex (0).position.y ();
-      const double dz = fct.get_vertex (1).position.z () - fct.get_vertex (0).position.z ();
-      const double m2 = dx * dx + dy * dy + dz * dz;
-      const double m  = sqrt (m2);
       fct.get_vertex (0).print_xyz (out_, color);
       fct.get_vertex (1).print_xyz (out_, color);
       out_ << std::endl;
@@ -1424,6 +1418,9 @@ namespace geomtools {
         out_ << std::endl;
       }
       /*
+        const double dx = fct.get_vertex (1).position.x () - fct.get_vertex (0).position.x ();
+        const double dy = fct.get_vertex (1).position.y () - fct.get_vertex (0).position.y ();
+        const double dz = fct.get_vertex (1).position.z () - fct.get_vertex (0).position.z ();
         if (nvtx == 3)
         {
         facet_vertex last;

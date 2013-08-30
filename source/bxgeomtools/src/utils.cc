@@ -604,15 +604,15 @@ namespace geomtools {
   {
     // http://www.geometrictools.com/Documentation/EulerAngles.pdf
     rotation_3d rot = rot_.inverse ();
-    double r00 = rot.xx ();
-    double r01 = rot.xy ();
-    double r02 = rot.xz ();
-    double r10 = rot.yx ();
-    double r11 = rot.yy ();
-    double r12 = rot.yz ();
-    double r20 = rot.zx ();
-    double r21 = rot.zy ();
-    double r22 = rot.zz ();
+    const double r00 = rot.xx ();
+    const double r01 = rot.xy ();
+    const double r02 = rot.xz ();
+    const double r10 = rot.yx ();
+    const double r11 = rot.yy ();
+    const double r12 = rot.yz ();
+    const double r20 = rot.zx ();
+    const double r21 = rot.zy ();
+    const double r22 = rot.zz ();
     double thetaX  = numeric_limits<double>::quiet_NaN ();
     double thetaY  = numeric_limits<double>::quiet_NaN ();
     double thetaZ  = numeric_limits<double>::quiet_NaN ();
@@ -730,15 +730,15 @@ namespace geomtools {
 
     // http://www.geometrictools.com/Documentation/EulerAngles.pdf
     rotation_3d rot = rot_.inverse ();
-    double r00 = rot.xx ();
-    double r01 = rot.xy ();
-    double r02 = rot.xz ();
-    double r10 = rot.yx ();
-    double r11 = rot.yy ();
-    double r12 = rot.yz ();
-    double r20 = rot.zx ();
-    double r21 = rot.zy ();
-    double r22 = rot.zz ();
+    const double r00 = rot.xx ();
+    const double r01 = rot.xy ();
+    const double r02 = rot.xz ();
+    const double r10 = rot.yx ();
+    const double r11 = rot.yy ();
+    const double r12 = rot.yz ();
+    const double r20 = rot.zx ();
+    const double r21 = rot.zy ();
+    const double r22 = rot.zz ();
     double thetaZ0 = numeric_limits<double>::quiet_NaN ();
     double thetaY  = numeric_limits<double>::quiet_NaN ();
     double thetaZ1 = numeric_limits<double>::quiet_NaN ();
@@ -1041,7 +1041,7 @@ namespace geomtools {
     }
     double wsum = 0.0;
     weighted_barycenter_.set (0.0, 0.0, 0.0);
-    for (int i = 0; i < points_.size (); i++) {
+    for (size_t i = 0; i < points_.size (); i++) {
       double wi = weights_[i];
       wsum += wi;
       weighted_barycenter_ += (points_[i] * wi);

@@ -129,7 +129,7 @@ namespace geomtools {
       size_t n_sides = 0;
       if (setup_.has_key ("sides")) {
         const int ns = setup_.fetch_integer ("sides");
-        DT_THROW_IF (ns < MIN_NUMBER_OF_SIDES, std::domain_error, "'sides' is not large enough !");
+        DT_THROW_IF (ns < (int)MIN_NUMBER_OF_SIDES, std::domain_error, "'sides' is not large enough !");
         n_sides = ns;
       }
       this->set_n_sides (n_sides);
@@ -244,7 +244,7 @@ namespace geomtools {
               DT_THROW_IF (! iss, std::logic_error,
                            "Invalid format for the number of sides directive in data file '"
                            << filename << "' at line " << count << " !");
-              DT_THROW_IF (ns < MIN_NUMBER_OF_SIDES, std::domain_error,
+              DT_THROW_IF (ns < (int)MIN_NUMBER_OF_SIDES, std::domain_error,
                            "Number of sides is not large enough in data file '"
                            << filename << "' at line " << count << " !");
               const size_t nsides = (size_t) ns;
@@ -422,7 +422,7 @@ namespace geomtools {
     _r_max_ = max_radius;
     // compute the XY-bounding box:
     const double alpha = 2.0 * M_PI / _n_sides_;
-    for (int i = 0; i < _n_sides_; i++) {
+    for (size_t i = 0; i < _n_sides_; i++) {
       const double theta = alpha * i;
       const double xs  = _r_max_ * cos (theta);
       const double ys  = _r_max_ * sin (theta);
@@ -447,13 +447,13 @@ namespace geomtools {
   {
     vector_3d corner;
     geomtools::invalidate (corner);
-    DT_THROW_IF ((zplane_index_ < 0)  || (zplane_index_ > _points_.size ()),
+    DT_THROW_IF ((zplane_index_ < 0)  || (zplane_index_ > (int)_points_.size ()),
                  std::domain_error,
                  "Invalid Z-plane index (" << zplane_index_ << ") !");
-    DT_THROW_IF ((corner_index_ < 0)  || (corner_index_ > _n_sides_),
+    DT_THROW_IF ((corner_index_ < 0)  || (corner_index_ > (int)_n_sides_),
                  std::domain_error,
                  "Invalid corner index (" << corner_index_ << ") !");
-    size_t zcount = 0;
+    int zcount = 0;
     rz_col_type::const_iterator i = _points_.begin ();
     for (; i != _points_.end (); i++) {
       if (zcount == zplane_index_) {
@@ -481,7 +481,6 @@ namespace geomtools {
     // bottom surface:
     {
       rz_col_type::const_iterator i = _points_.begin ();
-      const double z0 = i->first;
       const double rmin0 = i->second.rmin;
       const double rmax0 = i->second.rmax;
       regular_polygon bottom_inner_polygon (_n_sides_, rmin0);
@@ -907,7 +906,7 @@ namespace geomtools {
     p_.set_n_sides (n_sides);
     size_t n;
     in_ >> n;
-    for (int i = 0; i < n; i++) {
+    for (size_t i = 0; i < n; i++) {
       double rmin, rmax, z;
       in_ >> z >> rmin >> rmax;
       if (! in_) {

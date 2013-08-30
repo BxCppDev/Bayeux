@@ -230,7 +230,7 @@ namespace geomtools {
     DT_LOG_DEBUG(get_logging_priority(),
                  "Number of exported properties prefixes is "
                  << exported_properties_prefixes.size() << " in geometry model '" << get_name() << "'...");
-    for (int i = 0; i < exported_properties_prefixes.size(); i++) {
+    for (size_t i = 0; i < exported_properties_prefixes.size(); i++) {
       const std::string & prefix = exported_properties_prefixes[i];
       DT_LOG_DEBUG(get_logging_priority(), "Export properties starting with '"
                    << prefix << "' to the top logical in geometry model '" << get_name() << "'...");

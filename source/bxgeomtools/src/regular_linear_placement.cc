@@ -136,7 +136,7 @@ namespace geomtools {
   size_t regular_linear_placement::compute_index_map (vector<uint32_t> & map_,
                                                       int item_) const
   {
-    DT_THROW_IF ((item_ < 0) || (item_ >= get_number_of_items ()),
+    DT_THROW_IF ((item_ < 0) || (item_ >= (int)get_number_of_items ()),
                  std::domain_error,
                  "Invalid item index '" << item_ << "' !");
     map_.clear ();

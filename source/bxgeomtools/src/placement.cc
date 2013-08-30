@@ -298,7 +298,7 @@ namespace geomtools {
   size_t placement::compute_index_map (vector<uint32_t> & map_,
                                        int item_) const
   {
-    DT_THROW_IF ((item_ < 0) || (item_ >= get_number_of_items ()), std::domain_error,
+    DT_THROW_IF ((item_ < 0) || (item_ >= (int)get_number_of_items ()), std::domain_error,
                  "Invalid item index '" << item_ << "' !");
     map_.clear ();
     map_.push_back (item_);

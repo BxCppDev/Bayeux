@@ -173,7 +173,7 @@ namespace geomtools {
       has_only = true;
       std::vector<std::string> only;
       config_.fetch ("mapping.only_categories", only);
-      for (int i = 0; i < only.size (); i++) {
+      for (size_t i = 0; i < only.size (); i++) {
         add_only (only[i]);
       }
     }
@@ -183,7 +183,7 @@ namespace geomtools {
                    "The 'mapping.excluded_categories' property is not compatible with 'mapping.only_categories' property !");
       std::vector<std::string> excluded;
       config_.fetch ("mapping.excluded_categories", excluded);
-      for (int i = 0; i < excluded.size (); i++) {
+      for (size_t i = 0; i < excluded.size (); i++) {
         add_excluded (excluded[i]);
       }
     }
@@ -460,7 +460,7 @@ namespace geomtools {
       DT_LOG_TRACE (get_logging_priority (), _indenter_ <<
                     "-> Number of items: " << phys_placement.get_number_of_items ());
       // Loop on replicated children physical volumes:
-      for (int item = 0; item < phys_placement.get_number_of_items (); item++) {
+      for (size_t item = 0; item < phys_placement.get_number_of_items (); item++) {
         DT_LOG_TRACE (get_logging_priority (), _indenter_ << "-> item #" << item << ": ");
 
         // get the current item placement in the mother coordinates system:
@@ -612,7 +612,7 @@ namespace geomtools {
       //////////////////////////////////////////////////
       // Loop on replicated children physical volumes //
       //////////////////////////////////////////////////
-      for (int item = 0; item < phys_placement.get_number_of_items (); item++) {
+      for (size_t item = 0; item < phys_placement.get_number_of_items (); item++) {
         DT_LOG_TRACE (get_logging_priority (), _indenter_ << "-> item #" << item << ": ");
 
         // get the current item placement in the mother coordinates system:
@@ -639,7 +639,7 @@ namespace geomtools {
         if (! daughter_category_info.empty ()) {
           geom_id item_id;
           bool match = false;
-          int imother = 0;
+          size_t imother = 0;
           while (! match && imother < propagated_world_ids.size()) {
             // For this level of mother volume :
             const geom_id & mother_id = propagated_world_ids[imother];
@@ -707,7 +707,7 @@ namespace geomtools {
             if (expect_mother) {
               std::ostringstream message;
               message << "Cannot build any GID scheme from all levels of mothership from GIDs={";
-              for (int i = 0; i < propagated_world_ids.size(); i++) {
+              for (size_t i = 0; i < propagated_world_ids.size(); i++) {
                 if (i > 0) message << ", ";
                 message << propagated_world_ids[i];
               }

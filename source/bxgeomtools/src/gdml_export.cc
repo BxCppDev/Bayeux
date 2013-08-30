@@ -152,8 +152,6 @@ namespace geomtools {
     std::string xsi          = gdml_writer::DEFAULT_XSI;
     std::string gdml_schema  = gdml_writer::DEFAULT_REMOTE_GDML_SCHEMA;
 
-    bool local_gdml_resources = false;
-
     if (_parameters_.has_key ("xml_version")) {
       xml_version = _parameters_.fetch_string ("xml_version");
     }
@@ -233,7 +231,6 @@ namespace geomtools {
     DT_THROW_IF (! gdml_writer::solid_type_is_supported (shape_name),
                  std::logic_error,
                  "Solid type '" << shape_name << "' is not supported !");
-    bool composite = false;
 
     if (shape_.is_composite ()) {
       /* GDML constraints:
@@ -470,7 +467,7 @@ namespace geomtools {
           ref_rot_name_oss << ".rot";
         }
         DT_LOG_TRACE (get_logging_priority (), "Add placements for " << nitems << " items...");
-        for (int i = 0; i < nitems; i++) {
+        for (size_t i = 0; i < nitems; i++) {
           // extract placement for item 'i':
           placement p;
           pp->get_placement (i, p);

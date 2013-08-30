@@ -32,7 +32,7 @@ namespace geomtools {
 
   bool id_mgr::category_info::has_subaddress (const std::string & a_label, int a_count) const
   {
-    for (int i = 0; i < addresses.size (); i++) {
+    for (size_t i = 0; i < addresses.size (); i++) {
       if (addresses[i] == a_label) return true;
     }
     return false;
@@ -40,7 +40,7 @@ namespace geomtools {
 
   int id_mgr::category_info::get_subaddress_index (const std::string & a_label, int a_count) const
   {
-    for (int i = 0; i < addresses.size (); i++) {
+    for (size_t i = 0; i < addresses.size (); i++) {
       if (addresses[i] == a_label) return i;
     }
     return -1;
@@ -53,7 +53,7 @@ namespace geomtools {
 
   bool id_mgr::category_info::has_ancestor (const std::string & cat_) const
   {
-    return (find (ancestors.begin (), ancestors.end(), cat_)
+    return (std::find (ancestors.begin (), ancestors.end(), cat_)
             != ancestors.end ());
   }
 
@@ -145,7 +145,7 @@ namespace geomtools {
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Ancestors ["
            <<  ancestors.size () << "] :";
-      for (int i = 0; i < ancestors.size (); i++) {
+      for (size_t i = 0; i < ancestors.size (); i++) {
         out_ << ' ' << '"' << ancestors[i] << '"';
       }
       out_ << std::endl;
@@ -154,21 +154,21 @@ namespace geomtools {
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Extends   : \"" << extends << "\" by ["
            <<  extends_by.size () << "] : ";
-      for (int i = 0; i < extends_by.size (); i++) {
+      for (size_t i = 0; i < extends_by.size (); i++) {
         out_ << ' ' << '"' << extends_by[i] << '"';
       }
       out_ << std::endl;
     }
     out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
          << "Addresses [" << get_depth () << "] :";
-    for (int i = 0; i < addresses.size (); i++) {
+    for (size_t i = 0; i < addresses.size (); i++) {
       out_ << ' ' << '"' << addresses[i] << '"';
     }
     out_ << std::endl;
     /*
       out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
       << "Nbits [" << nbits.size () << "] :";
-      for (int i = 0; i < nbits.size (); i++)
+      for (size_t i = 0; i < nbits.size (); i++)
       {
       out_ << ' ' << '"' << nbits[i] << '"';
       }
@@ -333,7 +333,7 @@ namespace geomtools {
           cat_entry.extends = extends;
           std::vector<std::string> by;
           props.fetch ("by", by);
-          for (int i = 0; i < by.size (); i++) {
+          for (size_t i = 0; i < by.size (); i++) {
             cat_entry.extends_by.push_back (by[i]);
             cat_entry.addresses.push_back (by[i]);
           }
@@ -528,8 +528,7 @@ namespace geomtools {
     categories_by_type_col_type::const_iterator found =
       _categories_by_type_.find (id_type);
     const category_info & ci = *found->second;
-    int i = -1;
-    for (int j = 0; j < ci.addresses.size (); j++) {
+    for (size_t j = 0; j < ci.addresses.size (); j++) {
       if (ci.addresses[j] == what_) {
         return true;
       }
@@ -556,7 +555,7 @@ namespace geomtools {
       _categories_by_type_.find (id_type);
     const category_info & ci = *found->second;
     int i = -1;
-    for (int j = 0; j < ci.addresses.size (); j++) {
+    for (size_t j = 0; j < ci.addresses.size (); j++) {
       if (ci.addresses[j] == what_) {
         i = j;
         break;
@@ -578,7 +577,7 @@ namespace geomtools {
       _categories_by_type_.find (id_type);
     const category_info & ci = *found->second;
     int i = -1;
-    for (int j = 0; j < ci.addresses.size (); j++) {
+    for (size_t j = 0; j < ci.addresses.size (); j++) {
       DT_LOG_TRACE (get_logging_priority (), "what=" << what_);
       if (ci.addresses[j] == what_) {
         i = j;
@@ -607,7 +606,7 @@ namespace geomtools {
     std::ostringstream oss;
     if (! has_category_info (id_.get_type ())) {
       oss << "category=`" << geom_id::IO_TYPE_INVALID << "' : ";
-      for (int i = 0; i < id_.get_depth (); i++) {
+      for (size_t i = 0; i < id_.get_depth (); i++) {
         oss << ' ' << "address[" << i << "]" << "=";
         if (id_.get (i) == geom_id::INVALID_ADDRESS) {
           oss << geom_id::IO_ADDRESS_INVALID;
@@ -618,7 +617,7 @@ namespace geomtools {
     } else {
       const category_info & ci = get_category_info (id_.get_type ());
       oss << "category=`" << ci.category << "' : ";
-      for (int i = 0; i < id_.get_depth (); i++) {
+      for (size_t i = 0; i < id_.get_depth (); i++) {
         oss << ' ' << ci.addresses[i] << "=";
         if (id_.get (i) == geom_id::INVALID_ADDRESS) {
           oss << geom_id::IO_ADDRESS_INVALID;

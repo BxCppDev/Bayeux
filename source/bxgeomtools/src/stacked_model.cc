@@ -558,7 +558,7 @@ namespace geomtools {
     grab_logical ().set_material_ref (material_name);
 
     // starting position:
-    double pos;
+    double pos = 0.0;
     if (is_stacking_along_x ())
       {
         pos = -0.5 * stacked_x;

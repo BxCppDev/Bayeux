@@ -1004,9 +1004,9 @@ Gnuplot& Gnuplot::plot_image(const unsigned char * ucPicBuf,
   // write the data to file
   //
   int iIndex = 0;
-  for(int iRow = 0; iRow < iHeight; iRow++)
+  for(size_t iRow = 0; iRow < iHeight; iRow++)
     {
-      for(int iColumn = 0; iColumn < iWidth; iColumn++)
+      for(size_t iColumn = 0; iColumn < iWidth; iColumn++)
         {
           tmp << iColumn << " " << iRow  << " "
               << static_cast<float>(ucPicBuf[iIndex++]) << std::endl;

@@ -263,7 +263,6 @@ namespace geomtools {
       for (logical_volume::physicals_col_type::const_iterator iphys = model->get_logical ().get_physicals ().begin();
            iphys != model->get_logical ().get_physicals ().end();
            iphys++) {
-        const std::string & phys_name = iphys->first;
         const physical_volume & phys_vol = *iphys->second;
         if (phys_vol.has_logical()) {
           const logical_volume & phys_log = phys_vol.get_logical();
@@ -329,12 +328,12 @@ namespace geomtools {
         out_ << "[" << _logicals_.size () << "]";
       }
       out_ << endl;
-      for (logical_volume::dict_type::const_iterator i = _logicals_.begin ();
-           i != _logicals_.end ();
-           i++) {
-        const string & key = i->first;
-        const logical_volume * a_logical = i->second;
-      }
+      // for (logical_volume::dict_type::const_iterator i = _logicals_.begin ();
+      //      i != _logicals_.end ();
+      //      i++) {
+      //   const string & key = i->first;
+      //   const logical_volume * a_logical = i->second;
+      // }
     }
 
     // Models:

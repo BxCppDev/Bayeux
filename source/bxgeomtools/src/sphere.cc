@@ -166,7 +166,7 @@ namespace geomtools {
                          int mask_    ,
                          double skin_) const
   {
-    bool debug = false;
+    // bool debug = false;
     //debug = true;
     double skin = get_skin ();
     if (skin_ > USING_PROPER_SKIN) skin = skin_;
@@ -200,7 +200,7 @@ namespace geomtools {
                           intercept_t & intercept_,
                           double skin_) const
   {
-    bool debug = false;
+    // bool debug = false;
     //debug = true;
     const unsigned int NFACES = 1;
     double t[NFACES];

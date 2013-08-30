@@ -472,9 +472,8 @@ namespace geomtools {
           continue;
         }
         const geomtools::i_placement * pp = &(phys.get_placement ());
-        size_t npp = 0;
-        npp = pp->get_number_of_items ();
-        for (int i = 0; i < npp; i++) {
+        size_t npp = pp->get_number_of_items ();
+        for (size_t i = 0; i < npp; i++) {
           geomtools::placement p;
           // get placement from the daughter physical #i:
           pp->get_placement (i, p);
@@ -517,7 +516,6 @@ namespace geomtools {
     if (max_display_level_ < 0) {
       max_display_level = 0;
     }
-    const geomtools::logical_volume & log = log_;
 
     datatools::properties visu_config;
     visibility::extract (log_.get_parameters (), visu_config);
@@ -585,7 +583,6 @@ namespace geomtools {
       std::ostringstream oss;
       oss << ".tmp_gnuplot_drawer_" << label <<"_XXXXXX";
       sprintf (tmp, "%s", oss.str ().c_str ());
-      char * c = mktemp (tmp);
       std::string tmp_filename = tmp;
       cs.filename = tmp;
       std::ofstream tmp_file (cs.filename.c_str ());
@@ -914,13 +911,13 @@ namespace geomtools {
     int draw_frame_index = -1;
     std::string draw_group;
     std::string draw_name;
-    for (int idd = 0; idd < _display_data_.size(); idd++) {
+    for (size_t idd = 0; idd < _display_data_.size(); idd++) {
       const display_data & dd = _display_data_[idd].get_display_data();
       const placement & dd_pl = _display_data_[idd].get_placement();
 
       DT_LOG_TRACE (local_priority, "Display data:");
       if (local_priority >= datatools::logger::PRIO_TRACE) dd.tree_dump(std::cerr);
-      for (int icolor = 0; icolor < dd.get_colors().size(); icolor++) {
+      for (size_t icolor = 0; icolor < dd.get_colors().size(); icolor++) {
         const std::string & draw_color = dd.get_colors()[icolor];
         DT_LOG_TRACE (local_priority, "Color = " << draw_color);
         std::ostringstream & colored_out = _get_stream(draw_color);

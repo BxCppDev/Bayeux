@@ -652,7 +652,7 @@ namespace geomtools {
 
     std::vector<std::string> effective_factory_preserved_property_prefixes = default_factory_preserved_property_prefixes;
 
-    for (int i = 0; i < factory_preserved_property_prefixes.size (); i++) {
+    for (size_t i = 0; i < factory_preserved_property_prefixes.size (); i++) {
       const std::string & prefix = factory_preserved_property_prefixes[i];
       if (prefix.empty()) {
         continue;
@@ -664,7 +664,7 @@ namespace geomtools {
       }
     }
 
-    for (int i = 0; i < effective_factory_preserved_property_prefixes.size (); i++) {
+    for (size_t i = 0; i < effective_factory_preserved_property_prefixes.size (); i++) {
       const std::string & prefix = effective_factory_preserved_property_prefixes[i];
       DT_THROW_IF(prefix.empty(),
                   std::logic_error,
@@ -1055,7 +1055,7 @@ namespace geomtools {
          << datatools::i_tree_dumpable::last_tag
          << "Exported property prefixes : "
          << " " << std::endl;
-   for (int i = 0; i < _factory_.get_property_prefixes().size(); i++) {
+   for (size_t i = 0; i < _factory_.get_property_prefixes().size(); i++) {
      out_ << indent << datatools::i_tree_dumpable::skip_tag
           << datatools::i_tree_dumpable::last_skip_tag;
      if (i != _factory_.get_property_prefixes().size() - 1) {
@@ -1296,7 +1296,7 @@ namespace geomtools {
         count++;
       } else {
         out_ << gid << " as '" << category << "' with addresses: ";
-        for (int j = 0; j < cat_info->get_depth(); j++) {
+        for (size_t j = 0; j < cat_info->get_depth(); j++) {
           out_ << ' ' << cat_info->addresses[j];
           if (j < cat_info->get_depth()-1) out_ << ',';
         }

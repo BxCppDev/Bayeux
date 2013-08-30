@@ -419,7 +419,7 @@ namespace geomtools {
             DT_LOG_DEBUG(logging, "Placement has " << daughter_placement.get_number_of_items ()
                          << " items.");
              // Loop on all placements :
-            for(int item = 0; item < daughter_placement.get_number_of_items (); item++) {
+            for(size_t item = 0; item < daughter_placement.get_number_of_items (); item++) {
               vector_3d daughter_item_position;
               placement daughter_item_placement;
               daughter_placement.get_placement (item, daughter_item_placement);

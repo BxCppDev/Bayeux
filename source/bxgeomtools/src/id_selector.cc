@@ -108,7 +108,7 @@ namespace geomtools {
       DT_THROW_IF (addr_rule.empty (), logic_error, "Address rule is empty !");
 
       int addr_index = -1;
-      for (int i = 0; i < _cat_info_->addresses.size (); i++) {
+      for (size_t i = 0; i < _cat_info_->addresses.size (); i++) {
         if (_cat_info_->addresses[i] == addr_name) {
           addr_index = i;
           break;

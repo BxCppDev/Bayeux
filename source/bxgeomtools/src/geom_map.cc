@@ -189,7 +189,7 @@ namespace geomtools {
                                          int type_,
                                          double tolerance_) const
   {
-    int requested_type = type_;
+    const size_t requested_type = type_;
     for (geom_info_dict_type::const_iterator i = _geom_infos_.begin ();
          i != _geom_infos_.end ();
          i++) {
