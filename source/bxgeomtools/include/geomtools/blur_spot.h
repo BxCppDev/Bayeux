@@ -245,13 +245,13 @@ namespace geomtools {
 
   private:
 
-    uint8_t   _blur_dimension_; /// Dimension of the object
-    double    _tolerance_;      /// Intrinsic tolerance
-    placement _placement_;      /// Placement
+    int8_t    _blur_dimension_;          /// Dimension of the object
+    double    _tolerance_;               /// Intrinsic tolerance
+    placement _placement_;               /// Placement
+    double _x_error_;                    /// Error/spread of the spot along the X-axis
+    double _y_error_;                    /// Error/spread of the spot along the Y-axis
+    double _z_error_;                    /// Error/spread of the spot along the Z-axis
     datatools::properties _auxiliaries_; /// Container of auxiliary properties
-    double _x_error_; /// Error/spread of the spot along the X-axis
-    double _y_error_; /// Error/spread of the spot along the Y-axis
-    double _z_error_; /// Error/spread of the spot along the Z-axis
 
     DATATOOLS_SERIALIZATION_DECLARATION();
 
@@ -324,4 +324,3 @@ DR_CLASS_INIT(::geomtools::blur_spot);
 #endif // GEOMTOOLS_BLUR_SPOT_H_
 
 // end of blur_spot.h
-
