@@ -164,7 +164,7 @@ bool base_io::has_store(const std::string& label_) const {
   return found != _store_infos.end();
 }
 
-bool base_io::has_store_with_serial_tag(const std::string& label_, 
+bool base_io::has_store_with_serial_tag(const std::string& label_,
                                         const std::string& serial_tag_) const {
   store_info_dict_type::const_iterator found = _store_infos.find(label_);
   if (found == _store_infos.end()) return false;
@@ -230,7 +230,7 @@ void base_io::select_store(const std::string& label_) {
   store_info* si = this->_get_store_info(label_);
   DT_THROW_IF(si == 0,
               std::logic_error,
-              "No store with label '" << label_ 
+              "No store with label '" << label_
               << "' nor default store available !");
   _current_store = si;
 }
@@ -355,7 +355,7 @@ void base_io::tree_dump(std::ostream& out_, const std::string& title_,
   if (!indent_.empty()) indent = indent_;
   if (!title_.empty()) out_ << indent << title_ << std::endl;
 
-  out_ << indent << i_tree_dumpable::tag 
+  out_ << indent << i_tree_dumpable::tag
        << "Logging : " << _logging_priority_ << std::endl;
 
   // 2011-06-16 FM: restored
@@ -384,7 +384,6 @@ void base_io::tree_dump(std::ostream& out_, const std::string& title_,
   for (store_info_dict_type::const_iterator i = _store_infos.begin();
        i != _store_infos.end();
        ++i) {
-    const std::string& label = i->first;
     const store_info& si = i->second;
     store_info_dict_type::const_iterator j = i;
     j++;
@@ -395,9 +394,9 @@ void base_io::tree_dump(std::ostream& out_, const std::string& title_,
       tag = "`-- ";
       skip_tag = "    ";
     }
-    out_ << indent << "|   " << tag 
+    out_ << indent << "|   " << tag
          << "Store label: '" << si.label << "' : " << std::endl;
-    out_ << indent << "|   " << skip_tag 
+    out_ << indent << "|   " << skip_tag
          << "|-- " << "Serialization tag = ";
     if (si.has_dedicated_serialization_tag()) {
       out_ << indent << "'" << si.get_serialization_tag () << "'";
@@ -412,7 +411,7 @@ void base_io::tree_dump(std::ostream& out_, const std::string& title_,
     } else if (si.current_entry >= si.number_of_entries) {
       out_ << "<unwind>";
     } else {
-      out_ << '#' << si.current_entry 
+      out_ << '#' << si.current_entry
            << " in [ 0 : " << (si.number_of_entries - 1) << " ]";
     }
     out_ << std::endl;
@@ -430,4 +429,3 @@ void base_io::tree_dump(std::ostream& out_, const std::string& title_,
 }
 } // end of namespace detail
 } // end of namespace brio
-

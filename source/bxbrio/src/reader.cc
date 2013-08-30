@@ -27,7 +27,7 @@ reader::reader() : detail::base_io(RW_READ) {
 }
 
 // ctor:
-reader::reader(const std::string& filename_, datatools::logger::priority p_) 
+reader::reader(const std::string& filename_, datatools::logger::priority p_)
   : detail::base_io (RW_READ, p_) {
   reader::_set_default();
   std::string ext = boost::filesystem::extension(filename_);
@@ -41,7 +41,7 @@ reader::reader(const std::string& filename_, datatools::logger::priority p_)
 
 // ctor:
 reader::reader(const std::string& filename_, const std::string& format_str_,
-               datatools::logger::priority p_) 
+               datatools::logger::priority p_)
   : detail::base_io (RW_READ, p_) {
   reader::_set_default();
   set_format(format_str_);
@@ -86,17 +86,17 @@ void reader::tree_dump(std::ostream& out_,
   detail::base_io::tree_dump(out_, title_, indent_, true);
 
   out_ <<  indent << i_tree_dumpable::tag
-       << "Allow automatic store: " << _allow_automatic_store_ 
+       << "Allow automatic store: " << _allow_automatic_store_
        << std::endl;
 
   if (_automatic_store_ != 0) {
     out_ <<  indent << i_tree_dumpable::tag
-         << "Automatic store: '" << _automatic_store_->label << "'" 
+         << "Automatic store: '" << _automatic_store_->label << "'"
          << std::endl;
   }
 
   out_ <<  indent << i_tree_dumpable::tag
-       << "Allow mixed types in stores: " 
+       << "Allow mixed types in stores: "
        << _allow_mixed_types_in_stores_ << std::endl;
 
   out_ <<  indent << i_tree_dumpable::inherit_tag(inherit_)
@@ -145,7 +145,6 @@ void reader::_at_open(const std::string& filename_) {
               "File '" << _filename << "' does not exist !");
 
   std::string default_extension = store_info::DEFAULT_FILE_EXTENSION;
-  static size_t test_extension_size = store_info::DEFAULT_FILE_EXTENSION.length();
   std::string extension = boost::filesystem::extension(_filename);
   DT_LOG_DEBUG(this->get_logging_priority(),
                "Extension is `" << extension << "' !");
@@ -210,7 +209,7 @@ void reader::_at_open(const std::string& filename_) {
     _file->GetObject(store_label.c_str(), the_tree);
     DT_THROW_IF(the_tree == 0,
                 std::logic_error,
-                "Cannot retrieve store's tree labelled '" 
+                "Cannot retrieve store's tree labelled '"
                 << store_label.c_str ()
                 << "' from  file '" << _filename << "' !");
     the_si.tree = the_tree;
@@ -222,7 +221,7 @@ void reader::_at_open(const std::string& filename_) {
     DT_THROW_IF(obj_array->GetEntries() != 1,
                 std::runtime_error,
                 "The store's tree labelled '" << store_label.c_str()
-                 << "' from  file '" << _filename 
+                 << "' from  file '" << _filename
                  << "' has not an unique branch ! Unsupported format !");
 
     TObject *obj_branch = obj_array->At(0);

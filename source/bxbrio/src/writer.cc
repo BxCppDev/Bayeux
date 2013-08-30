@@ -140,30 +140,30 @@ void writer::tree_dump(std::ostream& out_,
   detail::base_io::tree_dump(out_, title_, indent_, true);
 
   out_ <<  indent << i_tree_dumpable::tag
-       << "Allow automatic store: " << _allow_automatic_store_ 
+       << "Allow automatic store: " << _allow_automatic_store_
        << std::endl;
 
   if (_automatic_store_ != 0) {
     out_ <<  indent << i_tree_dumpable::tag
-         << "Automatic store: '" << _automatic_store_->label << "'" 
+         << "Automatic store: '" << _automatic_store_->label << "'"
          << std::endl;
   }
 
   out_ <<  indent << i_tree_dumpable::tag
-       << "Allow mixed types in stores: " << _allow_mixed_types_in_stores_ 
+       << "Allow mixed types in stores: " << _allow_mixed_types_in_stores_
        << std::endl;
 
   out_ <<  indent << i_tree_dumpable::inherit_tag (inherit_)
-       << "Locked: " << _locked_ 
+       << "Locked: " << _locked_
        << std::endl;
 }
 
-int writer::add_store(const std::string& label_, 
-                      const std::string& serial_tag_, 
+int writer::add_store(const std::string& label_,
+                      const std::string& serial_tag_,
                       size_t buffer_size_) {
-  DT_THROW_IF(serial_tag_.empty(), 
-              std::logic_error, 
-              "Missing serialization tag for store with label '"  
+  DT_THROW_IF(serial_tag_.empty(),
+              std::logic_error,
+              "Missing serialization tag for store with label '"
               << label_ << "' !");
   store_info *si = this->_add_store(label_, serial_tag_, buffer_size_);
   if (!si) {
@@ -181,8 +181,8 @@ int writer::add_store(const std::string& label_, size_t buffer_size_) {
 }
 
 int writer::add_mixed_store(const std::string& label_, size_t buffer_size_) {
-  DT_THROW_IF(!_allow_mixed_types_in_stores_, 
-              std::logic_error, 
+  DT_THROW_IF(!_allow_mixed_types_in_stores_,
+              std::logic_error,
               "Stores with mixed data types are not allowed !");
   store_info *si = this->_add_store(label_, store_info::NO_DEDICATED_SERIAL_TAG_LABEL, buffer_size_);
   if (si == 0) {
@@ -194,24 +194,24 @@ int writer::add_mixed_store(const std::string& label_, size_t buffer_size_) {
 store_info* writer::_add_store(const std::string& label_,
                                const std::string& serial_tag_,
                                size_t buffer_size_) {
-  DT_THROW_IF(!this->is_opened(), 
-              std::logic_error, 
-              "Operation prohibited; file for store label '" << label_ 
+  DT_THROW_IF(!this->is_opened(),
+              std::logic_error,
+              "Operation prohibited; file for store label '" << label_
               << "' is not opened !");
-  DT_THROW_IF(this->is_locked(), 
-              std::logic_error, 
+  DT_THROW_IF(this->is_locked(),
+              std::logic_error,
               "Operation prohibited; writer is locked !");
   DT_THROW_IF(label_.empty(), std::logic_error, "Empty label !");
   DT_THROW_IF(!_allow_automatic_store_
               && (label_ == store_info::AUTOMATIC_STORE_LABEL),
               std::logic_error,
-              "Label '" << label_ 
+              "Label '" << label_
               << "' for a conventional automatic store is not allowed !");
   DT_LOG_NOTICE(this->get_logging_priority(),
                 "Create a new store with label '" << label_ << "'...");
   const store_info *ptr_si = this->_get_store_info(label_);
-  DT_THROW_IF(ptr_si != 0, 
-              std::logic_error, 
+  DT_THROW_IF(ptr_si != 0,
+              std::logic_error,
               "Store with label '" << label_ << "' already exists !");
   // create a new store:
   {
@@ -262,8 +262,6 @@ void writer::_at_open (const std::string& filename_) {
                 "File '" << _filename << "' already exists !");
   }
   std::string default_extension = store_info::DEFAULT_FILE_EXTENSION;
-  static size_t test_extension_size
-      = store_info::DEFAULT_FILE_EXTENSION.length();
   std::string extension = boost::filesystem::extension(_filename);
   DT_LOG_DEBUG(this->get_logging_priority(),
                "Extension is `" << extension << "' !");
@@ -273,16 +271,16 @@ void writer::_at_open (const std::string& filename_) {
   }
   if (extension != expected_extension) {
     DT_LOG_WARNING(this->get_logging_priority(),
-                   "Using extension different from `" 
+                   "Using extension different from `"
                    << expected_extension<< "' is not recommended !");
   }
   std::string mode = "RECREATE";
   _file = new TFile(_filename.c_str(), mode.c_str(), "ROOT file from the `brio' library");
-  DT_THROW_IF(_file == 0, 
-              std::runtime_error, 
+  DT_THROW_IF(_file == 0,
+              std::runtime_error,
               "Cannot open file '" << _filename << "' !");
   if (_file->IsOpen()) {
-    DT_LOG_NOTICE(this->get_logging_priority(), 
+    DT_LOG_NOTICE(this->get_logging_priority(),
                   "File '" << _filename << "' has been successfully opened !");
   } else {
     DT_THROW_IF(true, std::runtime_error, "File '" << _filename << "' is not opened !");
@@ -292,4 +290,3 @@ void writer::_at_open (const std::string& filename_) {
 } // end of namespace brio
 
 // end of writer.cc
-
