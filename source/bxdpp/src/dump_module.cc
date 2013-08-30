@@ -184,7 +184,7 @@ namespace dpp {
       _grab_output () << _indent_ << _title_ << ": " << std::endl;
     }
 
-    for (int ibank = 0; ibank < bank_labels.size(); ibank++) {
+    for (size_t ibank = 0; ibank < bank_labels.size(); ibank++) {
       const std::string & bank_label = bank_labels[ibank];
       const datatools::i_serializable & bank = the_data_record.get(bank_label);
       std::string tag = "|-- ";

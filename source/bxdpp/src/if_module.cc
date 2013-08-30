@@ -81,9 +81,10 @@ namespace dpp {
     DT_THROW_IF(is_initialized (),
                 std::logic_error,
                 "If module '" << get_name () << "' is initialized !");
-    DT_THROW_IF(status_ != PROCESS_INVALID
-                && status_ != PROCESS_CONTINUE
-                && status_ != PROCESS_STOP,
+    const processing_status_flags_type status = (processing_status_flags_type)status_;
+    DT_THROW_IF(status != PROCESS_INVALID
+                && status != PROCESS_CONTINUE
+                && status != PROCESS_STOP,
                 std::logic_error,
                 "If module '" << get_name () << "' has invalid *then status* " << status_ << " !");
     _then_status_ = status_;
@@ -98,9 +99,10 @@ namespace dpp {
     DT_THROW_IF(is_initialized (),
                 std::logic_error,
                 "If module '" << get_name () << "' is initialized !");
-    DT_THROW_IF(status_ != PROCESS_INVALID
-                && status_ != PROCESS_CONTINUE
-                && status_ != PROCESS_STOP,
+    const processing_status_flags_type status = (processing_status_flags_type)status_;
+    DT_THROW_IF(status != PROCESS_INVALID
+                && status != PROCESS_CONTINUE
+                && status != PROCESS_STOP,
                 std::logic_error,
                 "If module '" << get_name () << "' has invalid *else status* " << status_ << " !");
     _else_status_ = status_;
@@ -321,8 +323,9 @@ namespace dpp {
     } else if (cut_status == cuts::SELECTION_ACCEPTED) {
       DT_LOG_DEBUG(_logging, "Cut '" << _condition_cut_.label << "' has been checked.");
       process_status = PROCESS_SUCCESS;
-      if (_then_status_ != PROCESS_INVALID) {
-        if (_then_status_ == PROCESS_CONTINUE) {
+      const processing_status_flags_type then_status = (processing_status_flags_type)_then_status_;
+      if (then_status != PROCESS_INVALID) {
+        if (then_status == PROCESS_CONTINUE) {
           process_status = PROCESS_SUCCESS;
         } else {
           process_status = PROCESS_STOP;
@@ -337,8 +340,9 @@ namespace dpp {
     } else {
       DT_LOG_DEBUG(_logging, "Cut '" << _condition_cut_.label << "' has NOT been checked.");
       process_status = PROCESS_SUCCESS;
-      if (_else_status_ != PROCESS_INVALID) {
-        if (_else_status_ == PROCESS_CONTINUE) {
+      const processing_status_flags_type else_status = (processing_status_flags_type)_else_status_;
+      if (else_status != PROCESS_INVALID) {
+        if (else_status == PROCESS_CONTINUE) {
           process_status = PROCESS_SUCCESS;
         } else {
           process_status = PROCESS_STOP;

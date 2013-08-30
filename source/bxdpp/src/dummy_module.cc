@@ -152,7 +152,6 @@ namespace dpp {
       DT_LOG_DEBUG(_logging, "Found the '" << _GP_label_ << "' bank !");
       DT_LOG_DEBUG(_logging, "Adding the '" << _flag_name_ << "' flag property...");
       std::string key = _flag_name_;
-      int count = 0;
       the_gp_bank.update_flag (key);
     } else {
       DT_LOG_CRITICAL(_logging, "Could not find any GP bank !");

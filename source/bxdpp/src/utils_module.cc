@@ -163,7 +163,7 @@ namespace dpp {
 
   void utils_module::_process_remove_banks (datatools::things & a_data_record)
   {
-    for (int i = 0; i < _remove_bank_labels_.size(); i++) {
+    for (size_t i = 0; i < _remove_bank_labels_.size(); i++) {
       const std::string & removable_bank_label = _remove_bank_labels_[i];
       DT_THROW_IF(removable_bank_label.empty (),
                   std::logic_error,

@@ -96,7 +96,7 @@ namespace dpp {
     if (config_.has_key ("output_files")) {
       std::vector<std::string> output_files;
       config_.fetch ("output_files", output_files);
-      for (int i = 0; i < output_files.size(); i++) {
+      for (size_t i = 0; i < output_files.size(); i++) {
         add_output_file(output_files[i]);
       }
     }
@@ -179,7 +179,7 @@ namespace dpp {
                               boost::algorithm::is_any_of("\n"),
                               boost::algorithm::token_compress_on );
       rh2d_.SetTitle (splitted_title_lines[0].c_str ());
-      for (int i = 1; i < splitted_title_lines.size(); i++) {
+      for (size_t i = 1; i < splitted_title_lines.size(); i++) {
         rh2d_.SetTitle(Form("#splitline{%s}{%s}",
                             rh2d_.GetTitle(),
                             splitted_title_lines[i].c_str()));
@@ -208,22 +208,22 @@ namespace dpp {
     {
       std::vector<double> xbins;
       xbins.assign (nxbins + 1, 0.0);
-      for (int xbin_index = 0; xbin_index < nxbins; xbin_index++) {
+      for (size_t xbin_index = 0; xbin_index < nxbins; xbin_index++) {
         std::pair<double,double> xbin_range = h2d_.get_xrange (xbin_index);
         xbins[xbin_index] = xbin_range.first / xunit;
       }
       xbins[nxbins] = h2d_.get_xrange (nxbins - 1).second / xunit;
       std::vector<double> ybins;
       ybins.assign (nybins + 1, 0.0);
-      for (int ybin_index = 0; ybin_index < nybins; ybin_index++) {
+      for (size_t ybin_index = 0; ybin_index < nybins; ybin_index++) {
         std::pair<double,double> ybin_range = h2d_.get_yrange (ybin_index);
         ybins[ybin_index] = ybin_range.first / yunit;
       }
       ybins[nybins] = h2d_.get_yrange (nybins - 1).second / yunit;
       rh2d_.SetBins (nxbins, &xbins[0], nybins, &ybins[0]);
     }
-    for (int xbin_index = 0; xbin_index < nxbins; xbin_index++) {
-      for (int ybin_index = 0; ybin_index < nybins; ybin_index++) {
+    for (size_t xbin_index = 0; xbin_index < nxbins; xbin_index++) {
+      for (size_t ybin_index = 0; ybin_index < nybins; ybin_index++) {
         double bin_content = h2d_.get (xbin_index, ybin_index);
         rh2d_.SetBinContent (xbin_index+1, ybin_index+1, bin_content);
       }
@@ -303,7 +303,7 @@ namespace dpp {
                               boost::algorithm::is_any_of("\n"),
                               boost::algorithm::token_compress_on );
       rh1d_.SetTitle (splitted_title_lines[0].c_str ());
-      for (int i = 1; i < splitted_title_lines.size(); i++) {
+      for (size_t i = 1; i < splitted_title_lines.size(); i++) {
         rh1d_.SetTitle(Form("#splitline{%s}{%s}",
                             rh1d_.GetTitle(),
                             splitted_title_lines[i].c_str()));
@@ -391,7 +391,7 @@ namespace dpp {
     _pool_.names (histo2d_names, "dim=2");
 
     DT_LOG_NOTICE(get_logging_priority(),"Exporting 1D-histograms...");
-    for (int i = 0; i < histo1d_names.size (); i++) {
+    for (size_t i = 0; i < histo1d_names.size (); i++) {
       const std::string & hname = histo1d_names[i];
       const mygsl::histogram_1d & h1d = _pool_.get_1d (hname);
       const std::string & htitle = _pool_.get_title (hname);
@@ -417,7 +417,7 @@ namespace dpp {
       rootH1d.Write ();
     }
     DT_LOG_NOTICE(get_logging_priority(),"Exporting 2D-histograms...");
-    for (int i = 0; i < histo2d_names.size (); i++) {
+    for (size_t i = 0; i < histo2d_names.size (); i++) {
       const std::string & hname = histo2d_names[i];
       const mygsl::histogram_2d & h2d = _pool_.get_2d (hname);
       const std::string & htitle = _pool_.get_title (hname);

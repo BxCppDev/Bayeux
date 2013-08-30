@@ -91,7 +91,7 @@ namespace dpp {
       a_config.fetch ("modules", modules);
     }
 
-    for (int i = 0; i < modules.size (); i++) {
+    for (size_t i = 0; i < modules.size (); i++) {
       module_handle_dict_type::iterator found
         = a_module_dict.find (modules[i]);
       DT_THROW_IF(found == a_module_dict.end (),

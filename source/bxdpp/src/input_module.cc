@@ -150,7 +150,7 @@ namespace dpp {
       _grab_common().set_file_record_counter(0);
       _grab_common().set_file_index(get_common().get_file_index()+1);
       DT_LOG_TRACE(_logging, "file_index = " << get_common().get_file_index());
-      if (get_common().get_file_index() >= get_common().get_filenames().size ()) {
+      if (get_common().get_file_index() >= (int)get_common().get_filenames().size ()) {
         DT_LOG_ERROR (get_logging_priority (), "No more available input data file !");
         load_status = PROCESS_FATAL;
         return load_status;
@@ -241,7 +241,7 @@ namespace dpp {
                         << effective_max_files << ") !");
         }
       }
-      if ((get_common().get_file_index() + 1) >= get_common().get_filenames().size ()) {
+      if ((get_common().get_file_index() + 1) >= (int)get_common().get_filenames().size ()) {
         stop_input = true;
         std::ostringstream message;
         DT_LOG_NOTICE(_logging,

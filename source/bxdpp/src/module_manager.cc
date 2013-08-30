@@ -354,7 +354,6 @@ namespace dpp {
                                      const std::string & module_id_,
                                      const datatools::properties & module_config_)
   {
-    bool debug = is_debug ();
     DT_LOG_TRACE (get_logging_priority(), "Entering...");
     DT_THROW_IF(has(module_name_),
                 std::logic_error,

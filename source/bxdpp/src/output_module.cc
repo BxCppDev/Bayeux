@@ -166,7 +166,7 @@ namespace dpp {
     int store_status = PROCESS_OK;
     if (_sink_ == 0) {
       _grab_common().set_file_index(get_common().get_file_index()+1);
-      if (get_common().get_file_index() >= get_common().get_filenames().size ()) {
+      if (get_common().get_file_index() >= (int)get_common().get_filenames().size ()) {
         store_status = PROCESS_FATAL;
         return store_status;
       }
@@ -236,7 +236,7 @@ namespace dpp {
                         << "of output files (" << get_common().get_max_files() << ") !");
         }
       }
-      if ((get_common().get_file_index() + 1) >= get_common().get_filenames().size ()) {
+      if ((get_common().get_file_index() + 1) >= (int)get_common().get_filenames().size ()) {
         stop_output = true;
         DT_LOG_NOTICE(_logging, "Module '" << get_name () << "' has filled the last requested "
                       << "output file (total is " << get_common().get_filenames().size () << " files) !");

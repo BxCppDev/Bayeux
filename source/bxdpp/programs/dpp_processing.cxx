@@ -308,7 +308,7 @@ int main (int argc_, char ** argv_)
     DT_THROW_IF(module_names.size () && ! MM, std::logic_error,
                 "No module manager is available to queue "
                 << module_names.size () << " requested modules !");
-    for (int i = 0; i < module_names.size (); i++) {
+    for (size_t i = 0; i < module_names.size (); i++) {
       const std::string & module_name = module_names[i];
       DT_THROW_IF(! MM.get ()->has (module_name),
                   std::logic_error,
