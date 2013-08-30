@@ -171,7 +171,7 @@ namespace genbb {
     if (config_.has_key ("generators.labels")) {
       std::vector<std::string> pg_labels;
       config_.fetch ("generators.labels", pg_labels);
-      for (int i = 0; i < pg_labels.size(); i++) {
+      for (size_t i = 0; i < pg_labels.size(); i++) {
         const std::string & pg_label = pg_labels[i];
         // Extract the name of the PG contribution with given label :
         std::ostringstream pg_name_key_oss;
@@ -291,7 +291,7 @@ namespace genbb {
     double prob = grab_random ().flat(0.0, 1.0);
     //std::cerr << "DEVEL: " << "prob=" << prob << '\n';
     int pg_index = -1;
-    for (int i = 0; i < _generators_info_.size(); i++) {
+    for (size_t i = 0; i < _generators_info_.size(); i++) {
       if (prob < _generators_info_[i].cumul_prob) {
         pg_index = i;
         //std::cerr << "DEVEL: " << "  pg_index=" << pg_index << '\n';
@@ -325,13 +325,13 @@ namespace genbb {
 
     // Compute the sum of probabilities :
     double cumul = 0.0;
-    for (int i = 0; i < _generators_info_.size(); i++) {
+    for (size_t i = 0; i < _generators_info_.size(); i++) {
       entry_type & e = _generators_info_[i];
       cumul += e.prob;
       e.cumul_prob = cumul;
     }
     // Normalize probabilities :
-    for (int i = 0; i < _generators_info_.size(); i++) {
+    for (size_t i = 0; i < _generators_info_.size(); i++) {
       entry_type & e = _generators_info_[i];
       e.prob /= cumul;
       e.cumul_prob /= cumul;
@@ -362,7 +362,7 @@ namespace genbb {
     out_ << indent_ << "`-- " << "Generators    : "
          << "[" << _generators_info_.size() << "]"
          << std::endl;
-    for (int i = 0; i < _generators_info_.size(); i++) {
+    for (size_t i = 0; i < _generators_info_.size(); i++) {
       const entry_type & e = _generators_info_[i];
       out_ << indent_ << "    ";
       if (i+1 != _generators_info_.size()) {

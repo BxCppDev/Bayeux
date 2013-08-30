@@ -293,33 +293,31 @@ namespace genbb {
                                     const std::string & indent_,
                                     bool inherit_) const
   {
-    namespace du = datatools;
     std::string indent;
     if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ()) {
       out_ << indent << title_ << std::endl;
     }
-    double mass = get_mass ();
     double energy = get_kinetic_energy ();
 
-    out_ << indent << du::i_tree_dumpable::tag << "Type           : " << _type_;
+    out_ << indent << datatools::i_tree_dumpable::tag << "Type           : " << _type_;
     if (_type_ != UNDEF) {
       out_ << " (" << get_particle_label_from_type (_type_) << ')';
     }
     out_ << std::endl;
-    out_ << indent << du::i_tree_dumpable::tag << "Particle label : '" << _particle_label_ << "'"
+    out_ << indent << datatools::i_tree_dumpable::tag << "Particle label : '" << _particle_label_ << "'"
          << std::endl;
     std::ostringstream time_oss;
     time_oss.precision (15);
     time_oss << _time_ / CLHEP::ns;
-    out_ << indent << du::i_tree_dumpable::tag << "Time           : " << time_oss.str ()
+    out_ << indent << datatools::i_tree_dumpable::tag << "Time           : " << time_oss.str ()
          << " ns" << std::endl;
-    out_ << indent << du::i_tree_dumpable::tag << "Kinetic energy : " << energy / CLHEP::MeV
+    out_ << indent << datatools::i_tree_dumpable::tag << "Kinetic energy : " << energy / CLHEP::MeV
          << " MeV" << std::endl;
-    out_ << indent << du::i_tree_dumpable::tag << "Momentum       : "
+    out_ << indent << datatools::i_tree_dumpable::tag << "Momentum       : "
          << _momentum_ / CLHEP::MeV
          << " MeV" << std::endl;
-    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
          << "Vertex         : ";
     if (has_vertex ()) {
       out_ << _vertex_ / CLHEP::mm

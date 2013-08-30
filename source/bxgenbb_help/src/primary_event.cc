@@ -140,10 +140,7 @@ namespace genbb {
 
   const primary_particle & primary_event::get_particle(int index_) const
   {
-    DT_THROW_IF(index_ < 0,
-                std::range_error,
-                "Invalid particle index '" << index_ << "' !");
-    DT_THROW_IF(index_ >= _particles_.size(),
+    DT_THROW_IF(index_ < 0 || index_ >= (int)_particles_.size(),
                 std::range_error,
                 "Invalid particle index '" << index_ << "' !");
     int count = 0;
@@ -159,10 +156,7 @@ namespace genbb {
 
   primary_particle & primary_event::grab_particle(int index_)
   {
-    DT_THROW_IF(index_ < 0,
-                std::range_error,
-                "Invalid particle index '" << index_ << "' !");
-    DT_THROW_IF(index_ >= _particles_.size(),
+    DT_THROW_IF(index_ < 0 || index_ >= (int)_particles_.size(),
                 std::range_error,
                 "Invalid particle index '" << index_ << "' !");
     int count = 0;

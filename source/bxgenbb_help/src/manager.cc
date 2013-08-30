@@ -398,7 +398,6 @@ namespace genbb {
         out.width(30);
         out << pg_name << " : " << pg_record.get_id () << " ";
         out << '(';
-        int count = 0;
         if (pg_record.is_initialized()) {
           out << "initialized";
         } else {

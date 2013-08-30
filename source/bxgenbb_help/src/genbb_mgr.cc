@@ -455,7 +455,7 @@ namespace genbb {
       vector<string> input_files;
       if (config_.has_key ("input_files")) {
         config_.fetch ("input_files", input_files);
-        for (int i = 0; i < input_files.size (); i++) {
+        for (size_t i = 0; i < input_files.size (); i++) {
           datatools::fetch_path_with_env (input_files[i]);
           set (input_files[i]);
         }
