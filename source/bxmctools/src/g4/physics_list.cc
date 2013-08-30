@@ -226,7 +226,7 @@ namespace mctools {
                     std::logic_error,
                     "No physics constructor is provided !");
 
-        for (int i = 0; i < physics_constructors_names.size(); i++) {
+        for (size_t i = 0; i < physics_constructors_names.size(); i++) {
           const std::string & pc_name = physics_constructors_names[i];
           DT_THROW_IF(pc_name.empty(), std::logic_error,
                       "Empty physics constructor name !");
@@ -842,7 +842,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
        << "Allowed values (from the ``G4PhysListFactory`` class) :               \n"
        << "                                                                      \n";
     G4PhysListFactory f;
-    for (int i = 0; i < f.AvailablePhysLists().size(); i++) {
+    for (size_t i = 0; i < f.AvailablePhysLists().size(); i++) {
       ld << " * ``\"" <<   f.AvailablePhysLists()[i] << "\"``                    \n";
     }
     ld << "                                                                      \n"

@@ -285,7 +285,7 @@ namespace mctools {
             if (config_.has_key(key.str())) {
               std::vector<std::string> the_region_infos;
               config_.fetch(key.str(), the_region_infos);
-              for (int i = 0; i < the_region_infos.size(); i++) {
+              for (size_t i = 0; i < the_region_infos.size(); i++) {
                 const std::string & log_name = the_region_infos[i];
                 if (std::find(ri.begin(), ri.end(), log_name) == ri.end()) {
                   if (log_name != "world.log") {
@@ -312,7 +312,7 @@ namespace mctools {
                 // Check if it is tagged as a 'sensitive' detector :
                 if (log.get_parameters().has_key("material.ref")) {
                   const std::string & mr = log.get_parameters().fetch_string("material.ref");
-                  for (int i = 0; i < material_refs.size(); i++) {
+                  for (size_t i = 0; i < material_refs.size(); i++) {
                     const std::string & material_ref = material_refs[i];
                     if (mr == material_ref) {
                       if (std::find(ri.begin(), ri.end(), log.get_name()) == ri.end()) {
@@ -335,7 +335,7 @@ namespace mctools {
             if (config_.has_key(key.str())) {
               std::vector<std::string> excluded_volumes;
               config_.fetch(key.str(), excluded_volumes);
-              for (int i = 0; i < excluded_volumes.size(); i++) {
+              for (size_t i = 0; i < excluded_volumes.size(); i++) {
                 const std::string & log_name = excluded_volumes[i];
                 ri.erase( std::remove( ri.begin(), ri.end(), log_name ), ri.end() );
               }
@@ -569,7 +569,7 @@ namespace mctools {
         typedef emfield::geom_map::association_entry gma_entry_type;
         const gma_type & mfamap = geomap.get_associations();
 
-        for (int i = 0; i < associations.size(); i++) {
+        for (size_t i = 0; i < associations.size(); i++) {
           const std::string & association_name = associations[i];
           gma_type::const_iterator found_association = mfamap.find(association_name);
           if (found_association == mfamap.end()) {
@@ -859,7 +859,7 @@ namespace mctools {
 
               std::ostringstream message;
               message << "SHPF: Searching for logical volumes with material in (";
-              for (int j = 0; j < materials.size(); j++) {
+              for (size_t j = 0; j < materials.size(); j++) {
                 if (j != 0) message << ',';
                 message << ' ' << '"' << materials[j] << '"';
               }
@@ -876,7 +876,7 @@ namespace mctools {
                 const geomtools::logical_volume & log = *(ilogical->second);;
                 bool checked_material = false;
                 std::string mat_name;
-                for (int imat = 0; imat < materials.size(); imat++) {
+                for (size_t imat = 0; imat < materials.size(); imat++) {
                   mat_name = materials[imat];
                   if (log.get_material_ref() == mat_name) {
                     checked_material = true;
@@ -904,7 +904,7 @@ namespace mctools {
               iSHP->second->get_auxiliaries().fetch("geometry.volumes.excluded", excluded_logicals);
               std::ostringstream message;
               message << "SHPF: Excluding logical volumes in (";
-              for (int j = 0; j < excluded_logicals.size(); j++) {
+              for (size_t j = 0; j < excluded_logicals.size(); j++) {
                 if (j != 0) message << ',';
                 message << ' ' << '"' << excluded_logicals[j] << '"';
               }
@@ -912,7 +912,7 @@ namespace mctools {
                       << from_processor_sensitive_category << "'";
               DT_LOG_NOTICE(_logprio(), message.str());
 
-              for (int ixm = 0; ixm < excluded_logicals.size(); ixm++) {
+              for (size_t ixm = 0; ixm < excluded_logicals.size(); ixm++) {
                 logicals.erase(std::remove(logicals.begin(), logicals.end(), excluded_logicals[ixm]), logicals.end());
               }
             }

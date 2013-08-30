@@ -198,7 +198,7 @@ namespace mctools {
     DT_THROW_IF(is_initialized(), std::logic_error,
                 "Reader is already initialized !");
     datatools::smart_filename::make_list(_filenames_);
-    for (int i = 0; i < filenames_.size(); i++) {
+    for (size_t i = 0; i < filenames_.size(); i++) {
       _filenames_.add_to_list(filenames_[i]);
     }
     _initialize();
@@ -319,7 +319,7 @@ namespace mctools {
       _file_record_counter_ = 0;
       _file_index_++;
       DT_LOG_TRACE(_logging_, "_file_index_ = " << _file_index_);
-      if (_file_index_ >= _filenames_.size ()) {
+      if (_file_index_ >= (int)_filenames_.size ()) {
         DT_LOG_NOTICE (_logging_, "No more available input data file ! Reader is terminated.");
         _terminated_ = true;
         break;
@@ -527,7 +527,7 @@ namespace mctools {
                         << effective_max_files << ") !");
         }
       }
-      if ((_file_index_ + 1) >= _filenames_.size ()) {
+      if ((_file_index_ + 1) >= (int)_filenames_.size ()) {
         stop_input = true;
         std::ostringstream message;
         DT_LOG_NOTICE(_logging_,

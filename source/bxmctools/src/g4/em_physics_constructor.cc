@@ -306,7 +306,7 @@ namespace mctools {
         config_.fetch("em.deexcitation.regions", deexcitation_regions);
       }
 
-      for (int i  = 0; i < deexcitation_regions.size(); i++) {
+      for (size_t i  = 0; i < deexcitation_regions.size(); i++) {
         const std::string & region_name = deexcitation_regions[i];
         region_deexcitation_type rd(false,false,false);
         if (_em_fluorescence_) {

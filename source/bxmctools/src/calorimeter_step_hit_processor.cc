@@ -112,7 +112,7 @@ namespace mctools {
     _calo_block_locator_.set_gmap (*_mapping_);
     _calo_block_locator_.initialize (_calo_block_type_);
 
-    for (int i = 0; i < any_addresses_labels.size (); i++) {
+    for (size_t i = 0; i < any_addresses_labels.size (); i++) {
       std::vector<std::string> strs;
       boost::split (strs, any_addresses_labels[i], boost::is_any_of("@"));
       DT_THROW_IF (strs.size () > 2, std::logic_error,

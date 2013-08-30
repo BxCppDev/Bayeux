@@ -162,7 +162,7 @@ namespace mctools {
       if (config_.has_key("particle_names_map")) {
         std::vector<std::string> names;
         config_.fetch("particle_names_map", names);
-        for (int i = 0; i < names.size(); i++) {
+        for (size_t i = 0; i < names.size(); i++) {
           const std::string & mapping_entry = names[i];
           std::vector<std::string> tokens;
           boost::split (tokens, mapping_entry, boost::is_any_of("="));

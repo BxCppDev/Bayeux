@@ -154,7 +154,7 @@ namespace mctools {
       config_.fetch("processors.configuration", proc_configs);
     }
 
-    for (int i = 0; i < proc_configs.size(); i++) {
+    for (size_t i = 0; i < proc_configs.size(); i++) {
       std::string filename = proc_configs[i];
       datatools::fetch_path_with_env(filename);
       datatools::multi_properties mp;
