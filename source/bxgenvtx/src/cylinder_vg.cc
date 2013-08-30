@@ -15,8 +15,6 @@
 
 namespace genvtx {
 
-  using namespace std;
-
   GENVTX_VG_REGISTRATION_IMPLEMENT(cylinder_vg,"genvtx::cylinder_vg");
 
   int cylinder_vg::get_mode () const
@@ -27,7 +25,7 @@ namespace genvtx {
   void cylinder_vg::set_mode (int mode_)
   {
     DT_THROW_IF ((mode_ !=  MODE_BULK) && (mode_ !=  MODE_SURFACE),
-                 logic_error, "Invalid mode !");
+                 std::logic_error, "Invalid mode !");
     _mode_ = mode_;
     return;
   }
@@ -99,9 +97,6 @@ namespace genvtx {
 
   GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(cylinder_vg,setup_,service_manager_,vgens_)
   {
-    if (is_debug ()) std::cerr << "DEBUG: genvtx::cylinder_vg::initialize: Entering..." << std::endl;
-    using namespace std;
-    bool devel = false;
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
 
     // parameters of the cylinder vertex generator:
@@ -110,7 +105,7 @@ namespace genvtx {
     double skin_thickness = 0.0;
     int    surface_mask = geomtools::cylinder::FACE_NONE;
     double lunit = CLHEP::mm;
-    string lunit_str;
+    std::string lunit_str;
     bool treat_mode           = false;
     bool treat_surface_mask   = false;
     bool treat_skin_skip      = false;
@@ -118,13 +113,13 @@ namespace genvtx {
 
     if (_mode_ == MODE_INVALID) {
       if (setup_.has_key ("mode")) {
-        string mode_str = setup_.fetch_string ("mode");
+        const std::string mode_str = setup_.fetch_string ("mode");
         if (mode_str == "surface") {
           mode = MODE_SURFACE;
         } else if (mode_str == "bulk") {
           mode = MODE_BULK;
         } else {
-          DT_THROW_IF (true,logic_error ,"Invalid mode '" << mode_str << "' !");
+          DT_THROW_IF (true,std::logic_error ,"Invalid mode '" << mode_str << "' !");
         }
         treat_mode = true;
       }
@@ -154,7 +149,7 @@ namespace genvtx {
         treat_surface_mask = true;
       }
 
-      for (int i = 0; i < surfaces.size (); i++) {
+      for (size_t i = 0; i < surfaces.size (); i++) {
         if (surfaces[i] == "all") {
           surface_mask = geomtools::cylinder::FACE_ALL;
           break;
@@ -206,7 +201,7 @@ namespace genvtx {
 
   GENVTX_VG_RESET_IMPLEMENT_HEAD(cylinder_vg)
   {
-    DT_THROW_IF (! is_initialized (), logic_error, "Not initialized !");
+    DT_THROW_IF (! is_initialized (), std::logic_error, "Not initialized !");
     _reset_ ();
     _initialized_ = false;
     return;
@@ -216,17 +211,17 @@ namespace genvtx {
   {
     if (_mode_ == MODE_SURFACE) {
       DT_THROW_IF (_surface_mask_ == 0, std::logic_error, "Surface mask is zero !");
-      double s = _cylinder_.get_surface (_surface_mask_);
-      if (is_debug()) clog << "DEBUG: genvtx::cylinder_vg::_init_: Total surface = " << s << endl;
+      const double s = _cylinder_.get_surface (_surface_mask_);
+      DT_LOG_DEBUG (get_logging_priority (), "Total surface = " << s);
       _sum_weight_[0] = _cylinder_.get_surface (_surface_mask_ & geomtools::cylinder::FACE_SIDE);
       _sum_weight_[1] = _cylinder_.get_surface (_surface_mask_ & geomtools::cylinder::FACE_BOTTOM);
       _sum_weight_[2] = _cylinder_.get_surface (_surface_mask_ & geomtools::cylinder::FACE_TOP);
-      for (int i = 0; i < 3; i++) {
+      for (size_t i = 0; i < 3; i++) {
         _sum_weight_[i] /= s;
         if (i > 0) {
           _sum_weight_[i] += _sum_weight_[i - 1];
         }
-        //if (is_debug()) clog << "DEBUG: genvtx::cylinder_vg::_init_: Surface weight [" << i << "] = " << _sum_weight_[i] << endl;
+        DT_LOG_TRACE (get_logging_priority (), "Surface weight [" << i << "] = " << _sum_weight_[i]);
       }
     }
     return;
@@ -245,7 +240,7 @@ namespace genvtx {
     _surface_mask_ = geomtools::cylinder::FACE_ALL;
     _skin_skip_ = 0.0;
     _skin_thickness_ = 0.0;
-    for (int i = 0; i < 3; i++) {
+    for (size_t i = 0; i < 3; i++) {
       _sum_weight_[i] = 0.0;
     }
     return;
@@ -256,46 +251,34 @@ namespace genvtx {
                                const std::string & indent_,
                                bool inherit_) const
   {
-    namespace du = datatools;
-    string indent;
+    std::string indent;
     if (! indent_.empty ()) indent = indent_;
     i_vertex_generator::tree_dump (out_, title_, indent_, true);
-    out_ << indent << du::i_tree_dumpable::tag;
-    out_ << "Cylinder : " << _cylinder_ << endl;
-    out_ << indent << du::i_tree_dumpable::tag << "Mode :        " << _mode_ << endl;
-    out_ << indent << du::i_tree_dumpable::tag << "Surface mask: " << _surface_mask_ << endl;
-    out_ << indent << du::i_tree_dumpable::tag << "Skin skip:    " << _skin_skip_ << endl;
-    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
-         << "Skin thickness: " << _skin_thickness_ << endl;
+    out_ << indent << datatools::i_tree_dumpable::tag;
+    out_ << "Cylinder : " << _cylinder_ << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::tag << "Mode :        " << _mode_ << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::tag << "Surface mask: " << _surface_mask_ << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::tag << "Skin skip:    " << _skin_skip_ << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
+         << "Skin thickness: " << _skin_thickness_ << std::endl;
     return;
   }
 
   GENVTX_VG_SHOOT_VERTEX_IMPLEMENT_HEAD(cylinder_vg,random_,vertex_)
   {
-    bool devel = false;
-    DT_THROW_IF (! is_initialized (), logic_error, "Not initialized !");
+    DT_THROW_IF (! is_initialized (), std::logic_error, "Not initialized !");
     geomtools::invalidate (vertex_);
-    double r, t;
+    double r = 0.0;
     double t_max = 2. * M_PI;
-    t = random_.uniform () * t_max;
-    double x, y, z;
+    double t = random_.uniform () * t_max;
+    double x = 0.0, y = 0.0, z = 0.0;
     if (_mode_ == MODE_BULK) {
-      // if (devel)
-      //   {
-      //     clog << "DEVEL: genvtx::cylinder_vg::_shoot_vertex: "
-      //          << "Bulk mode..." << endl;
-      //   }
       double r_max = _cylinder_.get_r () - 0.5 * _skin_thickness_;
       r = sqrt (random_.uniform ()) * r_max;
       z = (random_.uniform () - 0.5) * (_cylinder_.get_z () - _skin_thickness_);
     }
 
     if (_mode_ == MODE_SURFACE) {
-      // if (devel)
-      //   {
-      //     clog << "DEVEL: genvtx::cylinder_vg::_shoot_vertex: "
-      //          << "Surface mode..." << endl;
-      //   }
       double r0 = random_.uniform ();
 
       double delta_thick = 0.0;

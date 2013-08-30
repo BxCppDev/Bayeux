@@ -129,28 +129,25 @@ namespace genvtx {
                                       vgens_)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
-    using namespace std;
-    bool devel = false;
     double x, y, z;
     double phi, theta, delta;
     x = y = z = 0.0;
     phi = theta = delta = 0.0;
-    i_vertex_generator * vg = 0;
     double lunit = 1. * CLHEP::millimeter;
     double aunit = 1. * CLHEP::degree;
 
     if (! has_vg ()) {
         // parameters of the vertex generator :
-        string vg_name;
+      std::string vg_name;
 
-        if (configuration_.has_key ("vertex_generator.name")) {
-          vg_name = configuration_.fetch_string ("vertex_generator.name");
-          vg_dict_type::iterator vg_found = vgens_.find (vg_name);
-          DT_THROW_IF (vg_found == vgens_.end (),std::logic_error,
-                       "Cannot find a vertex generator with name '"
-                       <<  vg_name << "' !");
-          set_vg (vg_found->second.grab_initialized_vg_handle ());
-        }
+      if (configuration_.has_key ("vertex_generator.name")) {
+        vg_name = configuration_.fetch_string ("vertex_generator.name");
+        vg_dict_type::iterator vg_found = vgens_.find (vg_name);
+        DT_THROW_IF (vg_found == vgens_.end (),std::logic_error,
+                     "Cannot find a vertex generator with name '"
+                     <<  vg_name << "' !");
+        set_vg (vg_found->second.grab_initialized_vg_handle ());
+      }
     }
 
     if (configuration_.has_key ("length_unit")) {

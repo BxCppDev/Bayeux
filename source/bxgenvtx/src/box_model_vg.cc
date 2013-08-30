@@ -259,7 +259,7 @@ namespace genvtx {
   {
     double ran_w = random_.uniform ();
     int index = -1;
-    for (int i = 0; i < _entries_.size (); i++) {
+    for (size_t i = 0; i < _entries_.size (); i++) {
       if (ran_w <= _entries_[i].cumulated_weight) {
         index = i;
         break;
@@ -324,7 +324,7 @@ namespace genvtx {
     std::copy (entries.begin (), entries.end (), _entries_.begin ());
 
     const geomtools::logical_volume * src_log = 0;
-    for (int i = 0; i < _entries_.size (); i++) {
+    for (size_t i = 0; i < _entries_.size (); i++) {
       DT_LOG_DEBUG(get_logging_priority(),
                    "ID #" << i << " = " << _entries_[i].ginfo->get_id ());
       if (src_log == 0) {
@@ -411,7 +411,7 @@ namespace genvtx {
 
     // Compute weight:
     _entries_[0].cumulated_weight = _entries_[0].weight;
-    for (int i = 0; i < _entries_.size (); i++) {
+    for (size_t i = 0; i < _entries_.size (); i++) {
       _entries_[i].weight = weight;
       double cumul = 0.0;
       if (i > 0) cumul = _entries_[i - 1].cumulated_weight;
@@ -434,7 +434,7 @@ namespace genvtx {
     _set_total_weight (the_weight_info);
 
     // Normalize weight:
-    for (int i = 0; i < _entries_.size (); i++) {
+    for (size_t i = 0; i < _entries_.size (); i++) {
       _entries_[i].cumulated_weight /= _entries_.back ().cumulated_weight;
     }
     return;

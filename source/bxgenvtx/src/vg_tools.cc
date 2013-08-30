@@ -211,7 +211,6 @@ namespace genvtx {
          << "Vg handle   : ";
     if (has_vg ())
       {
-        const i_vertex_generator & bm = _vg_handle_.get ();
         out_ << "'" << "yes" << "'";
       }
     else

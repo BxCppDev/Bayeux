@@ -75,10 +75,9 @@ namespace genvtx {
   void combined_vg::_shoot_vertex_combined (mygsl::rng & random_,
                                             geomtools::vector_3d & vertex_)
   {
-    bool devel = false;
     double ran_w = random_.uniform ();
     int index = -1;
-    for (int i = 0; i < _entries_.size (); i++) {
+    for (size_t i = 0; i < _entries_.size (); i++) {
       if (ran_w <= _entries_[i].cumulated_weight) {
         index = i;
         break;
@@ -101,7 +100,7 @@ namespace genvtx {
   {
     DT_THROW_IF (! a_vg,std::logic_error,
                  "Cannot add a NULL vertex generator handle in combined vertex generator '" << get_name() << "' !");
-    for (int i = 0; i < _entries_.size (); ++i) {
+    for (size_t i = 0; i < _entries_.size (); ++i) {
       const entry_type & a_entry = _entries_[i];
       DT_THROW_IF (&a_entry.vg_handle.get () == &a_vg.get (),
                    std::logic_error,
@@ -125,7 +124,7 @@ namespace genvtx {
                  "Missing weighted vertex generators in combined vertex generator '" << get_name() << "' !");
 
     // compute cumulated weights :
-    for (int i = 0; i < _entries_.size (); i++) {
+    for (size_t i = 0; i < _entries_.size (); i++) {
       DT_LOG_TRACE (get_logging_priority(), "Entry #" << i << " is '" << _entries_[i].name << "' ");
       double cumul = 0.0;
       if (i > 0) {
@@ -145,7 +144,7 @@ namespace genvtx {
     DT_LOG_TRACE (get_logging_priority(), "Total weight = "<< the_weight_value << "' ");
 
     // normalize weight:
-    for (int i = 0; i < _entries_.size (); i++) {
+    for (size_t i = 0; i < _entries_.size (); i++) {
       _entries_[i].cumulated_weight /= _entries_.back ().cumulated_weight;
       DT_LOG_TRACE (get_logging_priority(), "Cumulated weight for generator '"
                     << _entries_[i].name << "' " << " = " << _entries_[i].cumulated_weight);
@@ -246,7 +245,7 @@ namespace genvtx {
     // End of parsing configuration parameters.
 
     int no_activity_type = weight_info::WEIGHTING_NONE;
-    for (int i = 0; i < generator_names.size (); i++) {
+    for (size_t i = 0; i < generator_names.size (); i++) {
       const std::string & the_vg_name = generator_names[i];
       DT_LOG_TRACE (get_logging_priority(), "i = " << i << " VG name = '" << the_vg_name << "'");
       genvtx::vg_dict_type::iterator found = vgens_.find (the_vg_name);
@@ -355,20 +354,19 @@ namespace genvtx {
                                const std::string & indent_,
                                bool inherit_) const
   {
-    namespace du = datatools;
     std::string indent;
     if (! indent_.empty ()) indent = indent_;
     i_vertex_generator::tree_dump (out_, title_, indent_, true);
 
-    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
          << "Entries        : " << _entries_.size () << std::endl;
 
-    for (int i = 0; i < _entries_.size (); i++) {
-      out_ << indent << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+    for (size_t i = 0; i < _entries_.size (); i++) {
+      out_ << indent << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
       if (i == _entries_.size () - 1) {
-        out_ << du::i_tree_dumpable::last_tag;
+        out_ << datatools::i_tree_dumpable::last_tag;
       } else {
-        out_ << du::i_tree_dumpable::tag;
+        out_ << datatools::i_tree_dumpable::tag;
       }
       const entry_type & e = _entries_[i];
       out_ << e.name << ": ";

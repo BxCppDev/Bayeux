@@ -185,7 +185,7 @@ int main (int argc_, char ** argv_)
       std::string vg_current;
       VGMgr.vg_names(vg_names, vg_descriptions, vg_current);
       std::cerr << "List of vertex generators : " << std::endl;
-      for (int i = 0; i < vg_names.size(); i++) {
+      for (size_t i = 0; i < vg_names.size(); i++) {
         const std::string & vg_name = vg_names[i];
         if (i < vg_names.size() - 1 ) std::cerr << "|-- ";
         else std::cerr << "`-- ";

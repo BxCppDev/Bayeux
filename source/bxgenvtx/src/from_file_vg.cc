@@ -94,13 +94,11 @@ namespace genvtx {
                                       vgens_)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
-    using namespace std;
-    bool devel = false;
     double lunit = DEFAULT_LENGTH_UNIT;
-    string lunit_str;
+    std::string lunit_str;
 
     // parameters of the cut:
-    string filename;
+    std::string filename;
 
     if (_filename_.empty ()) {
       if (configuration_.has_key ("filename")) {

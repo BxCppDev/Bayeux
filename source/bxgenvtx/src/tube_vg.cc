@@ -16,8 +16,6 @@
 
 namespace genvtx {
 
-  using namespace std;
-
   GENVTX_VG_REGISTRATION_IMPLEMENT(tube_vg,"genvtx::tube_vg");
 
   int tube_vg::get_mode () const
@@ -29,7 +27,7 @@ namespace genvtx {
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
     DT_THROW_IF ((mode_ !=  MODE_BULK) && (mode_ !=  MODE_SURFACE),
-                 logic_error, "Invalid mode !");
+                 std::logic_error, "Invalid mode !");
     _mode_ = mode_;
     return;
   }
@@ -102,8 +100,6 @@ namespace genvtx {
 
   GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(tube_vg,setup_,service_manager_,vgens_)
   {
-    using namespace std;
-    bool devel = false;
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
 
     // parameters of the tube vertex generator:
@@ -112,7 +108,7 @@ namespace genvtx {
     double skin_thickness = 0.0;
     int    surface_mask = geomtools::tube::FACE_NONE;
     double lunit = CLHEP::mm;
-    string lunit_str;
+    std::string lunit_str;
     bool treat_mode           = false;
     bool treat_surface_mask   = false;
     bool treat_skin_skip      = false;
@@ -125,13 +121,13 @@ namespace genvtx {
 
     if (_mode_ == MODE_INVALID) {
       if (setup_.has_key ("mode")) {
-        string mode_str = setup_.fetch_string ("mode");
+        const std::string mode_str = setup_.fetch_string ("mode");
         if (mode_str == "surface") {
           mode = MODE_SURFACE;
         } else if (mode_str == "bulk") {
           mode = MODE_BULK;
         } else {
-          DT_THROW_IF(true,logic_error, "Invalid mode '" << mode_str << "' !");
+          DT_THROW_IF(true,std::logic_error, "Invalid mode '" << mode_str << "' !");
         }
         treat_mode = true;
       }
@@ -156,7 +152,7 @@ namespace genvtx {
         treat_surface_mask = true;
       }
 
-      for (int i = 0; i < surfaces.size (); i++) {
+      for (size_t i = 0; i < surfaces.size (); i++) {
         if (surfaces[i] == "all") {
           surface_mask = geomtools::tube::FACE_ALL;
           break;
@@ -184,7 +180,6 @@ namespace genvtx {
       datatools::invalidate (tube_inner_r);
       datatools::invalidate (tube_outer_r);
       datatools::invalidate (tube_z);
-      double length_unit = CLHEP::millimeter;
 
       if (setup_.has_key ("tube.inner_r")) {
         tube_inner_r = setup_.fetch_real ("tube.inner_r");
@@ -222,21 +217,20 @@ namespace genvtx {
 
   void tube_vg::_init_ ()
   {
-    bool devel = false;
     if (_mode_ == MODE_SURFACE) {
-      DT_THROW_IF (_surface_mask_ == 0, logic_error, "Surface mask is null !");
-      double s = _tube_.get_surface (_surface_mask_);
-      //if (devel) clog << "DEVEL: genvtx::tube_vg::_init_: Total surface = " << s << endl;
+      DT_THROW_IF (_surface_mask_ == 0, std::logic_error, "Surface mask is null !");
+      const double s = _tube_.get_surface (_surface_mask_);
+      DT_LOG_DEBUG (get_logging_priority (), "Total surface = " << s);
       _sum_weight_[0] = _tube_.get_surface (_surface_mask_ & geomtools::tube::FACE_OUTER_SIDE);
       _sum_weight_[1] = _tube_.get_surface (_surface_mask_ & geomtools::tube::FACE_BOTTOM);
       _sum_weight_[2] = _tube_.get_surface (_surface_mask_ & geomtools::tube::FACE_TOP);
       _sum_weight_[3] = _tube_.get_surface (_surface_mask_ & geomtools::tube::FACE_INNER_SIDE);
-      for (int i = 0; i < 3; i++) {
+      for (size_t i = 0; i < 3; i++) {
         _sum_weight_[i] /= s;
         if (i > 0) {
           _sum_weight_[i] += _sum_weight_[i - 1];
         }
-        //if (devel) clog << "DEVEL: genvtx::tube_vg::_init_: Surface weight [" << i << "] = " << _sum_weight_[i] << endl;
+        DT_LOG_TRACE (get_logging_priority (), "Surface weight [" << i << "] = " << _sum_weight_[i]);
       }
     }
     /*
@@ -262,7 +256,7 @@ namespace genvtx {
     _surface_mask_ = geomtools::tube::FACE_ALL;
     _skin_skip_ = 0.0;
     _skin_thickness_ = 0.0;
-    for (int i = 0; i < 3; i++) {
+    for (size_t i = 0; i < 3; i++) {
       _sum_weight_[i] = 0.0;
     }
     //datatools::invalidate(_r1_sqr_);
@@ -275,94 +269,82 @@ namespace genvtx {
                            const std::string & indent_,
                            bool inherit_) const
   {
-    namespace du = datatools;
-    string indent;
+    std::string indent;
     if (! indent_.empty ()) indent = indent_;
     i_vertex_generator::tree_dump (out_, title_, indent_, true);
-    out_ << indent << du::i_tree_dumpable::tag;
-    out_ << "Tube : " << _tube_ << endl;
-    out_ << indent << du::i_tree_dumpable::tag << "Mode :        " << _mode_ << endl;
-    out_ << indent << du::i_tree_dumpable::tag << "Surface mask: " << _surface_mask_ << endl;
-    out_ << indent << du::i_tree_dumpable::tag << "Skin skip:    " << _skin_skip_ << endl;
-    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
-         << "Skin thickness: " << _skin_thickness_ << endl;
+    out_ << indent << datatools::i_tree_dumpable::tag;
+    out_ << "Tube : " << _tube_ << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::tag << "Mode :        " << _mode_ << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::tag << "Surface mask: " << _surface_mask_ << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::tag << "Skin skip:    " << _skin_skip_ << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
+         << "Skin thickness: " << _skin_thickness_ << std::endl;
     return;
   }
 
   GENVTX_VG_SHOOT_VERTEX_IMPLEMENT_HEAD(tube_vg,random_,vertex_)
   {
-    bool devel = false;
-    DT_THROW_IF (! is_initialized (), logic_error, "Not initialized !");
+    DT_THROW_IF (! is_initialized (), std::logic_error, "Not initialized !");
     geomtools::invalidate (vertex_);
-    double r, t;
-    double t_max = 2. * M_PI;
-    t = random_.uniform () * t_max;
-    double x, y, z;
+    const double t_max = 2. * M_PI;
+    const double t = random_.uniform () * t_max;
+    double r = 0.0;
+    double x = 0.0, y = 0.0, z = 0.0;
     if (_mode_ == MODE_BULK) {
-      // if (devel)
-      //   {
-      //     clog << "DEVEL: genvtx::tube_vg::_shoot_vertex: "
-      //          << "Bulk mode..." << endl;
-      //   }
-      double r_min = _tube_.get_inner_r () + 0.5 * _skin_thickness_;
-      double r_max = _tube_.get_outer_r () - 0.5 * _skin_thickness_;
-      double r_min2 = r_min * r_min;
-      double r_max2 = r_max * r_max;
+      const double r_min = _tube_.get_inner_r () + 0.5 * _skin_thickness_;
+      const double r_max = _tube_.get_outer_r () - 0.5 * _skin_thickness_;
+      const double r_min2 = r_min * r_min;
+      const double r_max2 = r_max * r_max;
       r = std::sqrt (r_min2 + random_.uniform () * (r_max2 - r_min2));
       z = (random_.uniform () - 0.5) * (_tube_.get_z () - _skin_thickness_);
     }
 
     if (_mode_ == MODE_SURFACE) {
-      // if (devel)
-      //   {
-      //     clog << "DEVEL: genvtx::tube_vg::_shoot_vertex: "
-      //          << "Surface mode..." << endl;
-      //   }
-      double r0 = random_.uniform ();
+      const double r0 = random_.uniform ();
 
       double delta_thick = 0.0;
       if (_skin_thickness_ > 0.0) {
-        double r3 = random_.uniform ();
+        const double r3 = random_.uniform ();
         delta_thick = (r3 - 0.5) * _skin_thickness_;
       }
 
       // outer surface :
       if (r0 < _sum_weight_[0]) {
-        double r_min  = _tube_.get_outer_r ()
+        const double r_min  = _tube_.get_outer_r ()
           + _skin_skip_
           - 0.5 * _skin_thickness_;
-        double r_max  = r_min + _skin_thickness_;
-        double r_min2 = r_min * r_min;
-        double r_max2 = r_max * r_max;
+        const double r_max  = r_min + _skin_thickness_;
+        const double r_min2 = r_min * r_min;
+        const double r_max2 = r_max * r_max;
         r = std::sqrt (r_min2 + random_.uniform () * (r_max2 - r_min2));
         z = +(random_.uniform () - 0.5) * (_tube_.get_z ());
       }
       // bottom surface :
       else if (r0 < _sum_weight_[1]) {
-        double r_max = _tube_.get_outer_r ();
-        double r_min = _tube_.get_inner_r ();
-        double r_max2 = r_max * r_max;
-        double r_min2 = r_min * r_min;
+        const double r_max = _tube_.get_outer_r ();
+        const double r_min = _tube_.get_inner_r ();
+        const double r_max2 = r_max * r_max;
+        const double r_min2 = r_min * r_min;
         r = std::sqrt (r_min2 + random_.uniform () * (r_max2 - r_min2));
         z = -(_tube_.get_half_z () + _skin_skip_ + delta_thick);
       }
       // top_surface :
       else if (r0 < _sum_weight_[2]) {
-        double r_max = _tube_.get_outer_r ();
-        double r_min = _tube_.get_inner_r ();
-        double r_max2 = r_max * r_max;
-        double r_min2 = r_min * r_min;
+        const double r_max = _tube_.get_outer_r ();
+        const double r_min = _tube_.get_inner_r ();
+        const double r_max2 = r_max * r_max;
+        const double r_min2 = r_min * r_min;
         r = std::sqrt (r_min2 + random_.uniform () * (r_max2 - r_min2));
         z = +(_tube_.get_half_z () + _skin_skip_ + delta_thick);
       }
       // inner surface :
       else {
-        double r_min  = _tube_.get_inner_r ()
+        const double r_min  = _tube_.get_inner_r ()
           - _skin_skip_
           - 0.5 * _skin_thickness_;
-        double r_max  = r_min + _skin_thickness_;
-        double r_min2 = r_min * r_min;
-        double r_max2 = r_max * r_max;
+        const double r_max  = r_min + _skin_thickness_;
+        const double r_min2 = r_min * r_min;
+        const double r_max2 = r_max * r_max;
         r = (sqrt (r_min2 + random_.uniform () * (r_max2 - r_min2)));
         z = +(random_.uniform () - 0.5) * (_tube_.get_z ());
       }
