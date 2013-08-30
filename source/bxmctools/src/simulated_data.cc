@@ -20,7 +20,7 @@ namespace mctools {
     DT_THROW_IF (_step_hits_dict_.size () > 0 || _plain_step_hits_dict_.size () > 0,
                  std::logic_error,
                  "Cannot reset the collection type "
-                 << "for the dictionary of hit collections is not empty !");
+                 << "since the dictionary of hit collections is not empty !");
     _collection_type_ = INVALID_HIT_COLLECTION_TYPE;
     return;
   }
@@ -30,7 +30,7 @@ namespace mctools {
     DT_THROW_IF (_step_hits_dict_.size () > 0 || _plain_step_hits_dict_.size () > 0,
                  std::logic_error,
                  "Cannot set the collection type "
-                 << "for the dictionary of hit collections is not empty !");
+                 << "since the dictionary of hit collections is not empty !");
     DT_THROW_IF (_collection_type_ != INVALID_HIT_COLLECTION_TYPE,
                  std::logic_error,
                  "Cannot change the collection type !");
@@ -262,7 +262,7 @@ namespace mctools {
         _step_hits_dict_[a_category].reserve (a_capacity);
       }
     }
-    if (use_plain_hit_collection ()) {
+    else if (use_plain_hit_collection ()) {
       if (has_step_hits (a_category)) {
         return *this;
       }
@@ -271,6 +271,9 @@ namespace mctools {
       if (a_capacity > 0) {
         _plain_step_hits_dict_[a_category].reserve (a_capacity);
       }
+    }
+    else {
+      DT_THROW_IF (true, std::logic_error, "Simulation must either use 'handle' or 'plain' hit collection!");
     }
     return *this;
   }
@@ -284,12 +287,15 @@ namespace mctools {
       }
       _step_hits_dict_.erase (found);
     }
-    if (use_plain_hit_collection ()) {
+    else if (use_plain_hit_collection ()) {
       plain_step_hits_dict_type::iterator found = _plain_step_hits_dict_.find (a_category);
       if (found == _plain_step_hits_dict_.end ()) {
         return *this;
       }
       _plain_step_hits_dict_.erase (found);
+    }
+    else {
+      DT_THROW_IF (true, std::logic_error, "Simulation must either use 'handle' or 'plain' hit collection!");
     }
     return *this;
   }
@@ -297,6 +303,7 @@ namespace mctools {
   base_step_hit &
   simulated_data::add_step_hit (const std::string & a_category)
   {
+    base_step_hit * bsh = 0;
     if (use_handle_hit_collection ()) {
       step_hits_dict_type::iterator found
         = _step_hits_dict_.find (a_category);
@@ -304,9 +311,9 @@ namespace mctools {
                    std::logic_error,
                    "No collection of hits with category '" << a_category << "' !");
       found->second.push_back (hit_handle_type (new base_step_hit));
-      return found->second.back ().grab ();
+      bsh = &found->second.back ().grab ();
     }
-    if (use_plain_hit_collection ()) {
+    else if (use_plain_hit_collection ()) {
       plain_step_hits_dict_type::iterator found
         = _plain_step_hits_dict_.find (a_category);
       DT_THROW_IF (found == _plain_step_hits_dict_.end (),
@@ -314,88 +321,107 @@ namespace mctools {
                    "No collection of hits with category '" << a_category << "' !");
       base_step_hit dummy;
       found->second.push_back (dummy);
-      return found->second.back ();
+      bsh = &found->second.back ();
     }
+    else {
+      DT_THROW_IF (true, std::logic_error, "Simulation must either use 'handle' or 'plain' hit collection!");
+    }
+    return *bsh;
   }
 
   size_t simulated_data::get_number_of_step_hits (const std::string & a_category) const
   {
+    size_t nbr_step_hits = 0;
     if (use_handle_hit_collection ()) {
       step_hits_dict_type::const_iterator found
         = _step_hits_dict_.find (a_category);
       DT_THROW_IF (found == _step_hits_dict_.end (),
                    std::logic_error,
                    "No collection of hits with category '" << a_category << "' !");
-      return found->second.size ();
+      nbr_step_hits = found->second.size ();
     }
-    if (use_plain_hit_collection ()) {
+    else if (use_plain_hit_collection ()) {
       plain_step_hits_dict_type::const_iterator found
         = _plain_step_hits_dict_.find (a_category);
       DT_THROW_IF (found == _plain_step_hits_dict_.end (),
                    std::logic_error,
                    "No collection of hits with category '" << a_category << "' !");
-      return found->second.size ();
+      nbr_step_hits = found->second.size ();
     }
+    else {
+      DT_THROW_IF (true, std::logic_error, "Simulation must either use 'handle' or 'plain' hit collection!");
+    }
+    return nbr_step_hits;
   }
 
   const base_step_hit &
   simulated_data::get_step_hit (const std::string & a_category, int a_hit_index) const
   {
+    const base_step_hit * bsh = 0;
     if (use_handle_hit_collection ()) {
       step_hits_dict_type::const_iterator found
         = _step_hits_dict_.find (a_category);
       DT_THROW_IF (found == _step_hits_dict_.end (),
                    std::logic_error,
                    "No collection of handles of hits with category '" << a_category << "' !");
-      DT_THROW_IF (a_hit_index < 0 || a_hit_index >= found->second.size (),
+      DT_THROW_IF (a_hit_index < 0 || a_hit_index >= (int)found->second.size (),
                    std::logic_error,
                    "Invalid hit index in category '" << a_category << "' !");
       DT_THROW_IF (! found->second[a_hit_index].has_data (),
                    std::logic_error,
                    "null handle at index " << a_hit_index << " in category '" << a_category << "' !");
-      return found->second[a_hit_index].get ();
+      bsh = &found->second[a_hit_index].get ();
     }
-    if (use_plain_hit_collection ()) {
+    else if (use_plain_hit_collection ()) {
       plain_step_hits_dict_type::const_iterator found
         = _plain_step_hits_dict_.find (a_category);
       DT_THROW_IF (found == _plain_step_hits_dict_.end (),
                    std::logic_error,
                    "No collection of plain hits with category '" << a_category << "' !");
-      DT_THROW_IF (a_hit_index < 0 || a_hit_index >= found->second.size (),
+      DT_THROW_IF (a_hit_index < 0 || a_hit_index >= (int)found->second.size (),
                    std::logic_error,
                    "Invalid hit index in category '" << a_category << "' !");
-      return found->second[a_hit_index];
+      bsh = &found->second[a_hit_index];
     }
+    else {
+      DT_THROW_IF (true, std::logic_error, "Simulation must either use 'handle' or 'plain' hit collection!");
+    }
+    return *bsh;
   }
 
   base_step_hit &
   simulated_data::grab_step_hit (const std::string & a_category, int a_hit_index)
   {
+    base_step_hit * bsh = 0;
     if (use_handle_hit_collection ()) {
       step_hits_dict_type::iterator found
         = _step_hits_dict_.find (a_category);
       DT_THROW_IF (found == _step_hits_dict_.end (),
                    std::logic_error,
                    "No collection of handles of hits with category '" << a_category << "' !");
-      DT_THROW_IF (a_hit_index < 0 || a_hit_index >= found->second.size (),
+      DT_THROW_IF (a_hit_index < 0 || a_hit_index >= (int)found->second.size (),
                    std::logic_error,
                    "Invalid hit index in category '" << a_category << "' !");
       DT_THROW_IF (! found->second[a_hit_index].has_data (),
                    std::logic_error,
                    "Null handle at index " << a_hit_index << " in category '" << a_category << "' !");
-      return found->second[a_hit_index].grab ();
+      bsh = &found->second[a_hit_index].grab ();
     }
-    if (use_plain_hit_collection ()) {
+    else if (use_plain_hit_collection ()) {
       plain_step_hits_dict_type::iterator found
         = _plain_step_hits_dict_.find (a_category);
       DT_THROW_IF (found == _plain_step_hits_dict_.end (),
                    std::logic_error,
                    "No collection of plain hits with category '" << a_category << "' !");
-      DT_THROW_IF (a_hit_index < 0 || a_hit_index >= found->second.size (),
+      DT_THROW_IF (a_hit_index < 0 || a_hit_index >= (int)found->second.size (),
                    std::logic_error,
                    "Invalid hit index in category '" << a_category << "' !");
-      return found->second[a_hit_index];
+      bsh = &found->second[a_hit_index];
     }
+    else {
+      DT_THROW_IF (true, std::logic_error, "Simulation must either use 'handle' or 'plain' hit collection!");
+    }
+    return *bsh;
   }
 
   bool simulated_data::has_step_hits (const std::string & a_category) const
