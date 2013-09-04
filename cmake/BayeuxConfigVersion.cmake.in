@@ -1,8 +1,8 @@
 # - Bayeux CMake Versioning File for External Projects
 # This file is configured by Bayeux for use with CMake's find_package in
-# Config mode. It enables external projects to determine the version of 
-# Bayeux found. More importantly, it allows that command to automatically 
-# determine whether the found install is compatible with any VERSION that 
+# Config mode. It enables external projects to determine the version of
+# Bayeux found. More importantly, it allows that command to automatically
+# determine whether the found install is compatible with any VERSION that
 # was supplied with find_package.
 #
 # This file is configured by Bayeux's CMake system and SHOULD NOT BE EDITED
@@ -10,7 +10,7 @@
 
 # - Installed Version as set from CMake
 set(PACKAGE_VERSION "@Bayeux_VERSION@")
- 
+
 #-----------------------------------------------------------------------
 # Check whether the requested PACKAGE_FIND_VERSION is compatible with this
 # installed version.

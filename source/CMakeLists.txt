@@ -25,13 +25,13 @@
 # Configure build of Bayeux library
 # - Packages
 # - Boost
-find_package(Boost 1.48.0 REQUIRED filesystem system serialization iostreams)
+find_package(Boost 1.48.0 REQUIRED filesystem system serialization iostreams NO_MODULE)
 
 # - CLHEP
-find_package(CLHEP REQUIRED)
+find_package(CLHEP 2.1.3.1 REQUIRED)
 
 # - GSL
-find_package(GSL QUIET NO_MODULE)
+find_package(GSL 1.15 QUIET NO_MODULE)
 
 # - ROOT
 find_package(ROOT 5.34.00 REQUIRED RIO Tree)
@@ -61,7 +61,7 @@ set(Bayeux_RESOURCES)
 # NB: Order may need reviewing because may need least dependent object
 # files last because of the statics...
 set(Bayeux_SUBMODULES
-  datatools 
+  datatools
   cuts
   materials
   mygsl
@@ -122,8 +122,8 @@ export(TARGETS Bayeux FILE ${Bayeux_BUILDPRODUCT_DIR}/lib/cmake/Bayeux-${Bayeux_
 install(EXPORT BayeuxTargets DESTINATION lib/cmake/Bayeux-${Bayeux_VERSION})
 
 # - Versioning (build and install trees)
-configure_file(${PROJECT_SOURCE_DIR}/cmake/BayeuxVersionConfig.cmake.in
-  ${Bayeux_BUILDPRODUCT_DIR}/lib/cmake/Bayeux-${Bayeux_VERSION}/BayeuxVersionConfig.cmake
+configure_file(${PROJECT_SOURCE_DIR}/cmake/BayeuxConfigVersion.cmake.in
+  ${Bayeux_BUILDPRODUCT_DIR}/lib/cmake/Bayeux-${Bayeux_VERSION}/BayeuxConfigVersion.cmake
   @ONLY
   )
 
@@ -134,10 +134,10 @@ configure_file(${PROJECT_SOURCE_DIR}/cmake/BayeuxConfig.cmake.in
   )
 
 install(
-  FILES 
-    ${Bayeux_BUILDPRODUCT_DIR}/lib/cmake/Bayeux-${Bayeux_VERSION}/BayeuxVersionConfig.cmake
+  FILES
+    ${Bayeux_BUILDPRODUCT_DIR}/lib/cmake/Bayeux-${Bayeux_VERSION}/BayeuxConfigVersion.cmake
     ${Bayeux_BUILDPRODUCT_DIR}/lib/cmake/Bayeux-${Bayeux_VERSION}/BayeuxConfig.cmake
-  DESTINATION 
+  DESTINATION
     lib/cmake/Bayeux-${Bayeux_VERSION}
   )
 
@@ -156,7 +156,7 @@ if(Bayeux_ENABLE_TESTING)
         )
 
       target_link_libraries(${_testname} Bayeux)
-      
+
       add_test(NAME ${_testname} COMMAND ${_testname})
       set_property(TEST ${_testname}
         APPEND PROPERTY ENVIRONMENT ${${_m}_TEST_ENVIRONMENT}
