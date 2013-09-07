@@ -103,6 +103,7 @@
 #include <genbb_help/decay0/Os186low.h>
 #include <genbb_help/decay0/Os190low.h>
 #include <genbb_help/decay0/P32.h>
+#include <genbb_help/decay0/Pa231.h>
 #include <genbb_help/decay0/Pa234m.h>
 #include <genbb_help/decay0/Pb210.h>
 #include <genbb_help/decay0/Pb211.h>
@@ -249,6 +250,7 @@ namespace genbb {
       // Mn54,
       // Na22,
       // P32,
+      // Pa231, // Added 2013-09-06
       // Pa234m,
       // Pb210,
       // Pb211,
@@ -1430,6 +1432,7 @@ namespace genbb {
           } else if (boost::algorithm::starts_with(chnuclide_,"Mn54")) {
           } else if (boost::algorithm::starts_with(chnuclide_,"Na22")) {
           } else if (boost::algorithm::starts_with(chnuclide_,"P32")) {
+          } else if (boost::algorithm::starts_with(chnuclide_,"Pa231")) {
           } else if (boost::algorithm::starts_with(chnuclide_,"Pa234m")) {
           } else if (boost::algorithm::starts_with(chnuclide_,"Pb210")) {
           } else if (boost::algorithm::starts_with(chnuclide_,"Pb211")) {
@@ -1673,6 +1676,7 @@ namespace genbb {
         if (boost::algorithm::starts_with(chnuclide_,"Mn54")) Mn54(prng_, event_, 0., tdnuc);
         if (boost::algorithm::starts_with(chnuclide_,"Na22")) Na22(prng_, event_, 0., tdnuc);
         if (boost::algorithm::starts_with(chnuclide_,"P32")) P32(prng_, event_, 0., tdnuc);
+        if (boost::algorithm::starts_with(chnuclide_,"Pa231")) Pa231(prng_, event_, 0., tdnuc);
         if (boost::algorithm::starts_with(chnuclide_,"Pa234m")) Pa234m(prng_, event_, 0., tdnuc);
         if (boost::algorithm::starts_with(chnuclide_,"Pb210")) Pb210(prng_, event_, 0., tdnuc);
         if (boost::algorithm::starts_with(chnuclide_,"Pb211")) Pb211(prng_, event_, 0., tdnuc);
