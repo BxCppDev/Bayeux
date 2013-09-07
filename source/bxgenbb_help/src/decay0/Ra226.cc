@@ -78,34 +78,34 @@ namespace genbb {
         decay0_alpha(prng_, event_, 4.160,0.,0.,t);
         if (debug) std::cerr << "genbb::decay0::Ra226: " << "alpha 4160" << std::endl;
         if (debug) std::cerr << "genbb::decay0::Ra226: " << "   with t=" << t << " sec" << std::endl;
-        goto level_63500;
+        goto level_635000;
       } else if (palpha <= 0.0010) {
         // Alpha 4191 keV:
         decay0_alpha(prng_, event_, 4.191,0.,0.,t);
         if (debug) std::cerr << "genbb::decay0::Ra226: " << "alpha 4191" << std::endl;
         if (debug) std::cerr << "genbb::decay0::Ra226: " << "   with t=" << t << " sec" << std::endl;
-        goto level_60000;
+        goto level_600000;
       } else if (palpha <= 0.0076) {
         // Alpha 4340 keV:
         decay0_alpha(prng_, event_, 4.340,0.,0.,t);
         if (debug) std::cerr << "genbb::decay0::Ra226: " << "alpha 4340" << std::endl;
         if (debug) std::cerr << "genbb::decay0::Ra226: " << "   with t=" << t << " sec" << std::endl;
-        goto level_44800;
+        goto level_448000;
       } else if (palpha <= 5.9576) {
         // Alpha 4601 keV:
         decay0_alpha(prng_, event_, 4.601,0.,0.,t);
         if (debug) std::cerr << "genbb::decay0::Ra226: " << "alpha 4601" << std::endl;
         if (debug) std::cerr << "genbb::decay0::Ra226: " << "   with t=" << t << " sec" << std::endl;
-       goto level_18600;
+       goto level_186000;
       } else {
         // Alpha 4784 keV:
         if (debug) std::cerr << "genbb::decay0::Ra226: " << "alpha 4784" << std::endl;
         decay0_alpha(prng_, event_, 4.78434,0.,0.,t);
         if (debug) std::cerr << "genbb::decay0::Ra226: " << "   with t=" << t << " sec" << std::endl;
-        goto level_00000;
+        goto level_000000;
       }
 
-    level_63500  :
+    level_635000  :
       // Level 635.5 keV:
       if (debug) std::cerr << "genbb::decay0::Ra226: " << "level 635.5" << std::endl;
       thlev=0.;
@@ -114,9 +114,9 @@ namespace genbb {
                           RnElectronBindingEnergyL, 0.00191,
                           RnElectronBindingEnergyM, 0.000449,
                           0.,tclev,thlev,tdlev);
-      goto level_18600;
+      goto level_186000;
 
-    level_60000  :
+    level_600000  :
       // Level 600.7 keV:
       if (debug) std::cerr << "genbb::decay0::Ra226: " << "level 600.7" << std::endl;
       thlev=0.;
@@ -127,17 +127,17 @@ namespace genbb {
                             RnElectronBindingEnergyL, 0.00103,
                             RnElectronBindingEnergyM, 0.000243,
                             0.,tclev,thlev,tdlev);
-        goto level_00000;
+        goto level_000000;
       } else {
         decay0_nucltransKLM(prng_, event_, 0.4146,
                             RnElectronBindingEnergyK, 0.01329,
                             RnElectronBindingEnergyL, 0.00228,
                             RnElectronBindingEnergyM, 0.000537,
                             0.,tclev,thlev,tdlev);
-        goto level_18600;
+        goto level_186000;
       }
 
-    level_44800  :
+    level_448000  :
       // Level 448.4 keV:
       if (debug) std::cerr << "genbb::decay0::Ra226: " << "level 448.4" << std::endl;
       thlev=0.;
@@ -146,9 +146,9 @@ namespace genbb {
                           RnElectronBindingEnergyL, 0.0868,
                           RnElectronBindingEnergyM, 0.0230,
                           0.,tclev,thlev,tdlev);
-      goto level_18600;
+      goto level_186000;
 
-    level_18600  :
+    level_186000  :
       // Level 186.2 keV:
       if (debug) std::cerr << "genbb::decay0::Ra226: " << "level 186.2" << std::endl;
       thlev=0.32e-9;
@@ -158,9 +158,9 @@ namespace genbb {
                           RnElectronBindingEnergyM, 0.0963,
                           0.,tclev,thlev,tdlev);
       if (debug) std::cerr << "genbb::decay0::Ra226: " << "   with tdlev=" << tdlev << " sec" << std::endl;
-      goto level_00000;
+      goto level_000000;
 
-    level_00000 :
+    level_000000 :
       return;
    }
 
