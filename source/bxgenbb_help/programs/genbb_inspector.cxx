@@ -76,24 +76,25 @@ namespace genbb {
     inspector_params();
     void reset();
     void dump(std::ostream & = std::clog) const;
-    bool debug; /// Debug flag
+    bool debug;                                    /// Debug flag
     int trace_index;
-    bool interactive; /// Interactive flag
+    bool interactive;                              /// Interactive flag
     std::vector<std::string> unrecognized_options; /// Unrecognized options
-    std::string configuration; /// Particle generator manager configuration file
+    std::string configuration;                     /// Particle generator manager configuration file
     std::string action;
-    std::string generator; /// Particle generator name
+    std::string generator;                         /// Particle generator name
     std::vector<std::string> output_paths;
-    int number_of_events; /// Number of generated events
-    int prng_seed; /// PRNG seed
-    int prng_trunc; /// PRNG hack
-    std::string prng_tracker; /// PRNG tracker output file
+    int number_of_events;                          /// Number of generated events
+    int print_modulo;                              /// Modulo print period for generated events
+    int prng_seed;                                 /// PRNG seed
+    int prng_trunc;                                /// PRNG hack
+    std::string prng_tracker;                      /// PRNG tracker output file
     double prompt_time_limit; // Prompt time limit (in ns)
-    std::vector<std::string> histos_definitions; /// Histograms' definition files
-    bool prompt; /// Flag to analyze prompt event
-    bool delayed; /// Flag to analyze delayed event
-    std::string title_prefix; /// User title prefix for histograms
-    std::string name_suffix; /// User name suffix for histograms
+    std::vector<std::string> histos_definitions;   /// Histograms' definition files
+    bool prompt;                                   /// Flag to analyze prompt event
+    bool delayed;                                  /// Flag to analyze delayed event
+    std::string title_prefix;                      /// User title prefix for histograms
+    std::string name_suffix;                       /// User name suffix for histograms
   };
 
   void inspector_params::dump(std::ostream & out_) const
@@ -109,6 +110,7 @@ namespace genbb {
     out_ << "|-- generator          = " << generator << std::endl;
     out_ << "|-- output_paths       = " << output_paths.size() << std::endl;
     out_ << "|-- number_of_events   = " << number_of_events << std::endl;
+    out_ << "|-- print_modulo       = " << print_modulo << std::endl;
     out_ << "|-- prng_seed          = " << prng_seed << std::endl;
     out_ << "|-- prng_trunc         = " << prng_trunc << std::endl;
     out_ << "|-- prng_tracker       = " << prng_tracker << std::endl;
@@ -130,6 +132,7 @@ namespace genbb {
     unrecognized_options.clear();
     output_paths.clear();
     number_of_events = -1;
+    print_modulo = 10;
     prng_seed = 0;
     prng_trunc = 0;
     prng_tracker.clear();
@@ -981,6 +984,14 @@ int main (int argc_, char ** argv_)
        " --number-of-events 10000             "
        )
 
+      ("modulo,%",
+       po::value<int>(&params.print_modulo)
+       ->default_value (10),
+       "set the modulo print periof of generated events. \n"
+       "Example :                                        \n"
+       " --modulo 100                                      "
+       )
+
       ("trace-index,x",
        po::value<int>(&params.trace_index)
        ->default_value (0),
@@ -1132,7 +1143,6 @@ int main (int argc_, char ** argv_)
   }
   catch (std::exception & x) {
     DT_LOG_FATAL(datatools::logger::PRIO_FATAL, x.what ());
-    usage (opts, std::cerr);
     error_code = EXIT_FAILURE;
   }
   catch (...) {
@@ -1306,7 +1316,7 @@ namespace genbb {
         //std::cerr << "DEVEL: initializing HS...\n";
         //hs_config.tree_dump(std::cerr, "Histogram service config : ", "DEVEL: ");
         //_histos_service_.tree_dump(std::cerr, "Histogram service: ", "DEVEL: ");
-        for (int i = 0; i < 10000; i++) std::cerr << std::flush;
+        //for (int i = 0; i < 10000; i++) std::cerr << std::flush;
         _histos_service_.initialize_standalone(hs_config);
         _histos_ = &_histos_service_.grab_pool();
       }
@@ -1369,7 +1379,8 @@ namespace genbb {
         if (_params_.debug) decay_event.tree_dump(std::clog, "Decay event: ", "DEBUG: ");
         _inspect(decay_event);
         count++;
-        if ((count == 1) || (count % 5000) == 0 || count == max_count) {
+        const int modulo = _params_.print_modulo;
+        if ((count == 1) || (count % modulo) == 0 || count == max_count) {
           DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "Generated event #" << count);
         }
         if (count >= max_count) break;
