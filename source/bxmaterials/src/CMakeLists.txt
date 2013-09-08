@@ -26,14 +26,14 @@ endfunction()
 #   )
 
 set(materials_PUBLIC_HEADERS
-include/materials/chemical_symbol.h
-include/materials/element.h
-include/materials/factory.h
-include/materials/isotope.h
-include/materials/manager.h
-include/materials/material.h
-include/materials/materials_driver.h
-include/materials/resource.h
+    include/materials/chemical_symbol.h
+    include/materials/element.h
+    include/materials/factory.h
+    include/materials/isotope.h
+    include/materials/manager.h
+    include/materials/material.h
+    include/materials/materials_driver.h
+    include/materials/resource.h
   )
 list_prepend(materials_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 
@@ -42,7 +42,14 @@ configure_file(
   ${PROJECT_SOURCE_DIR}/include/materials/materials_config.h.in
   ${PROJECT_BINARY_DIR}/include/materials/materials_config.h
   )
-list(APPEND materials_PUBLIC_HEADERS ${PROJECT_BINARY_DIR}/include/materials/materials_config.h)
+configure_file(
+  ${PROJECT_SOURCE_DIR}/include/materials/version.h.in
+  ${PROJECT_BINARY_DIR}/include/materials/version.h
+  )
+list(APPEND materials_PUBLIC_HEADERS
+  ${PROJECT_BINARY_DIR}/include/materials/materials_config.h
+  ${PROJECT_BINARY_DIR}/include/materials/version.h
+  )
 
 #-----------------------------------------------------------------------
 # PRIVATE HEADERS
@@ -87,6 +94,7 @@ set(materials_SOURCES
     factory.cc
     manager.cc
     materials_driver.cc
+    version.cc
     ${PROJECT_BINARY_DIR}/src/resource.cc
   )
 

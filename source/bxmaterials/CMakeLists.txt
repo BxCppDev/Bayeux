@@ -27,9 +27,8 @@ project(materials)
 # - Versioning
 set(materials_VERSION_MAJOR 4)
 set(materials_VERSION_MINOR 0)
-set(materials_PATCH_VERSION 0)
-set(materials_VERSION "${materials_VERSION_MAJOR}.${materials_VERSION_MINOR}.${materials_PATCH_VERSION}")
-math(EXPR _materials_VERSION_NUMERIC "${materials_VERSION_MAJOR}*100000+${materials_VERSION_MINOR}*100+${materials_PATCH_VERSION}")
+set(materials_VERSION_PATCH 0)
+set(materials_VERSION "${materials_VERSION_MAJOR}.${materials_VERSION_MINOR}.${materials_VERSION_PATCH}")
 
 # - Fixup default install prefix on Mac
 if(APPLE AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)

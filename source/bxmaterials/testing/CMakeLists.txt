@@ -31,6 +31,7 @@ set ( materials_tests_programs
     test_materials.cxx
     test_manager.cxx
     test_manager_2.cxx
+    test_version.cxx
 )
 
 ###message (STATUS "materials_tests_programs=${materials_tests_programs}" )
