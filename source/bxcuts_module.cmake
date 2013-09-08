@@ -22,8 +22,8 @@ endforeach()
 # - Versioning
 set(cuts_VERSION_MAJOR 4)
 set(cuts_VERSION_MINOR 0)
-set(cuts_PATCH_VERSION 0)
-set(cuts_VERSION "${cuts_VERSION_MAJOR}.${cuts_VERSION_MINOR}.${cuts_PATCH_VERSION}")
+set(cuts_VERSION_PATCH 0)
+set(cuts_VERSION "${cuts_VERSION_MAJOR}.${cuts_VERSION_MINOR}.${cuts_VERSION_PATCHd}")
 
 
 # - Raw Headers and Sources
@@ -50,6 +50,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/reject_cut.h
   ${module_include_dir}/${module_name}/xnor_cut.h
   ${module_include_dir}/${module_name}/xor_cut.h
+  ${module_include_dir}/${module_name}/version.h.in
   )
 
 set(${module_name}_MODULE_SOURCES
@@ -74,6 +75,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/reject_cut.cc
   ${module_source_dir}/xnor_cut.cc
   ${module_source_dir}/xor_cut.cc
+  ${module_source_dir}/version.cc
 
     )
 
@@ -93,4 +95,5 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_cuts.cxx
   ${module_test_dir}/test_manager.cxx
   ${module_test_dir}/test_random_cut.cxx
+  ${module_test_dir}/test_version.cxx
   )
