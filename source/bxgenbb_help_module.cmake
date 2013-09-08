@@ -139,6 +139,7 @@ set(${module_name}_PRIVATE_MODULE_HEADERS
   ${module_include_dir}/${module_name}/decay0/Os186low.h
   ${module_include_dir}/${module_name}/decay0/Os190low.h
   ${module_include_dir}/${module_name}/decay0/P32.h
+  ${module_include_dir}/${module_name}/decay0/Pa231.h
   ${module_include_dir}/${module_name}/decay0/Pa234m.h
   ${module_include_dir}/${module_name}/decay0/pairext1.h
   ${module_include_dir}/${module_name}/decay0/pairext.h
@@ -305,6 +306,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/decay0/Os186low.cc
   ${module_source_dir}/decay0/Os190low.cc
   ${module_source_dir}/decay0/P32.cc
+  ${module_source_dir}/decay0/Pa231.cc
   ${module_source_dir}/decay0/Pa234m.cc
   ${module_source_dir}/decay0/pair.cc
   ${module_source_dir}/decay0/pairext1.cc
