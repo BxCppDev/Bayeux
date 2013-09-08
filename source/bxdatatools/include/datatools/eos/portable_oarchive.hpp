@@ -321,7 +321,10 @@ namespace eos {
 				// examine the number of bytes
 				// needed to represent the number
 				signed char size = 0;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wshift-count-overflow"
 				do { temp >>= CHAR_BIT; ++size; } 
+#pragma clang diagnostic pop
 				while (temp != 0 && temp != (T) -1);
 
 				// encode the sign bit into the size
