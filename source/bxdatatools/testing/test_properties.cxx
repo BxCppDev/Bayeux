@@ -275,7 +275,8 @@ int main (int argc_, char ** argv_)
       clog << "Enter a list of double-quoted strings (ex: \"my\" \"favorite\" \"color\" \"is\" \"blue\"): "
            << endl;
       string as;
-      getline (cin, as);
+      std::istringstream sin("\"my\" \"favorite\" \"color\" \"is\" \"blue\"");
+      getline(sin, as);
 
       string s2;
       istringstream iss (as);
