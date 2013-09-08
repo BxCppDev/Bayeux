@@ -40,6 +40,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/material.h
   ${module_include_dir}/${module_name}/materials_driver.h
   ${module_include_dir}/${module_name}/materials_config.h.in
+  ${module_include_dir}/${module_name}/version.h.in
   ${module_include_dir}/${module_name}/resource.h
   )
 
@@ -54,6 +55,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/material.cc
   ${module_source_dir}/manager.cc
   ${module_source_dir}/materials_driver.cc
+  ${module_source_dir}/version.cc
   resource.cc
   )
 
@@ -77,6 +79,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_material.cxx
   ${module_test_dir}/test_materials.cxx
   ${module_test_dir}/test_resource.cxx
+  ${module_test_dir}/test_version.cxx
   )
 
 # - Resource files
