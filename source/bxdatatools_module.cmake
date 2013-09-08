@@ -136,7 +136,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/base_service.cc # <- Must go at end
   )
 
-# - Reflection component - still optional, so factor out and allow for 
+# - Reflection component - still optional, so factor out and allow for
 #   inclusion later
 if(DATATOOLS_WITH_REFLECTION)
   set(datatools_REFLECTION_HEADERS
@@ -180,7 +180,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_data_serialization.cxx
   ${module_test_dir}/test_datatools.cxx
   ${module_test_dir}/test_dummy_service.cxx
-  #${module_test_dir}/test_event_id.cxx <- interactive
+  ${module_test_dir}/test_event_id.cxx
   ${module_test_dir}/test_exception.cxx
   ${module_test_dir}/test_factory.cxx
   ${module_test_dir}/test_handle_1.cxx
@@ -203,7 +203,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_properties_2.cxx
   ${module_test_dir}/test_properties_3.cxx
   ${module_test_dir}/test_properties_4.cxx
-  #${module_test_dir}/test_properties.cxx <- interactive
+  ${module_test_dir}/test_properties.cxx
   ${module_test_dir}/test_real_range.cxx
   ${module_test_dir}/test_ser_bitset.cxx
   ${module_test_dir}/test_serializable_1.cxx
