@@ -27,9 +27,8 @@ project(cuts)
 # - Versioning
 set(cuts_VERSION_MAJOR 4)
 set(cuts_VERSION_MINOR 0)
-set(cuts_PATCH_VERSION 0)
-set(cuts_VERSION "${cuts_VERSION_MAJOR}.${cuts_VERSION_MINOR}.${cuts_PATCH_VERSION}")
-math(EXPR _cuts_VERSION_NUMERIC "${cuts_VERSION_MAJOR}*100000+${cuts_VERSION_MINOR}*100+${cuts_PATCH_VERSION}")
+set(cuts_VERSION_PATCH 0)
+set(cuts_VERSION "${cuts_VERSION_MAJOR}.${cuts_VERSION_MINOR}.${cuts_VERSION_PATCH}")
 
 # - Fixup default install prefix on Mac
 if(APPLE AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)

@@ -9,12 +9,12 @@
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation, either version 3 of the License, or
 ## (at your option) any later version.
-## 
+##
 ## cuts is distributed in the hope that it will be useful,
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
-## 
+##
 ## You should have received a copy of the GNU General Public License
 ## along with cuts.  If not, see <http://www.gnu.org/licenses/>.
 ##
@@ -23,19 +23,20 @@
 
 ###file(GLOB cuts_tests_programs test_*.cxx)
 set ( cuts_tests_programs
-  test_accept_cut.cxx 
-  test_random_cut.cxx 
+  test_accept_cut.cxx
+  test_random_cut.cxx
   test_and_cut.cxx
   test_manager.cxx
+  test_version.cxx
 )
 
 ###message (STATUS "cuts_tests_programs=${cuts_tests_programs}" )
 # list(REMOVE_ITEM cuts_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
 # if(CUTS_WITH_REFLECTION)
 #   list(APPEND cuts_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
-# endif() 
+# endif()
 
-set(cuts_tests_programs_list "${cuts_tests_programs}") 
+set(cuts_tests_programs_list "${cuts_tests_programs}")
 list(SORT cuts_tests_programs_list)
 
 # include files search paths
@@ -58,31 +59,31 @@ foreach(test_program ${cuts_tests_programs_list})
     set_target_properties(${test_executable} PROPERTIES DEBUG_POSTFIX d)
   endif()
 
-  set(_test_libraries cuts) 
+  set(_test_libraries cuts)
   # if(CUTS_WITH_BIO)
   #   list(INSERT _test_libraries 0 cuts_bio datatools_bio)
-  # endif() 
+  # endif()
   # if(CUTS_WITH_REFLECTION)
   #   list(INSERT _test_libraries 0 cuts_reflection datatools_reflection)
-  # endif() 
+  # endif()
 
   target_link_libraries(${test_executable} ${_test_libraries})
 
   add_test(NAME ${test_executable}.run
-    COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
+    COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash
     --tmp-dir ${_test_tmp_dir}
-    --data-dir ${PROJECT_SOURCE_DIR} 
-    --prefix ${PROJECT_SOURCE_DIR} 
+    --data-dir ${PROJECT_SOURCE_DIR}
+    --prefix ${PROJECT_SOURCE_DIR}
     --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
     run
-    )	 
+    )
 
   unset(_test_libraries)
 endforeach ()
 
 add_custom_target(clean_test
-  COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
-  --prefix ${PROJECT_SOURCE_DIR} 
+  COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash
+  --prefix ${PROJECT_SOURCE_DIR}
   --tmp-dir ${_test_tmp_dir}
   clean
   )

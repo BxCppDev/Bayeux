@@ -49,8 +49,17 @@ list_prepend(cuts_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 configure_file(
   ${PROJECT_SOURCE_DIR}/include/cuts/cuts_config.h.in
   ${PROJECT_BINARY_DIR}/include/cuts/cuts_config.h
-  )
-list(APPEND cuts_PUBLIC_HEADERS ${PROJECT_BINARY_DIR}/include/cuts/cuts_config.h)
+  @ONLY
+)
+configure_file(
+  ${PROJECT_SOURCE_DIR}/include/cuts/version.h.in
+  ${PROJECT_BINARY_DIR}/include/cuts/version.h
+  @ONLY
+)
+list(APPEND cuts_PUBLIC_HEADERS
+  ${PROJECT_BINARY_DIR}/include/cuts/cuts_config.h
+  ${PROJECT_BINARY_DIR}/include/cuts/version.h
+)
 
 #-----------------------------------------------------------------------
 # PRIVATE HEADERS
@@ -108,6 +117,7 @@ set(cuts_SOURCES
     multi_or_cut.cc
     multi_xor_cut.cc
     ocd_support.cc
+    version.cc
   )
 
 #-----------------------------------------------------------------------
