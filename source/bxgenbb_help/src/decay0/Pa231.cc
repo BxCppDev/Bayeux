@@ -191,16 +191,16 @@ namespace genbb {
       thlev = 0.0;
       pgamma = 100. * prng_ ();
       if (pgamma <= 14.62)  {
-        decay0_gamma(prng_, event_, 582.3, tclev, thlev, tdlev);
+        decay0_gamma(prng_, event_, 0.5823, tclev, thlev, tdlev);
         goto level_74000;
       } else if (pgamma <= 37.26) {
-        decay0_gamma(prng_, event_, 571.9, tclev, thlev, tdlev);
+        decay0_gamma(prng_, event_, 0.5719, tclev, thlev, tdlev);
         goto level_84000;
       } else if (pgamma <= 60.84) {
-        decay0_gamma(prng_, event_, 610.1, tclev, thlev, tdlev);
+        decay0_gamma(prng_, event_, 0.6101, tclev, thlev, tdlev);
         goto level_46000;
       } else {
-        decay0_gamma(prng_, event_, 546.5, tclev, thlev, tdlev);
+        decay0_gamma(prng_, event_, 0.5465, tclev, thlev, tdlev);
         goto level_109000;
       }
 
@@ -210,13 +210,13 @@ namespace genbb {
       thlev = 0.0;
       pgamma = 100. * prng_ ();
       if (pgamma <= 16.80) {
-        decay0_gamma(prng_, event_, 535.43, tclev,thlev,tdlev);
+        decay0_gamma(prng_, event_, 0.53543, tclev,thlev,tdlev);
         goto level_27000;
       } else if (pgamma <= 54.54) {
-        decay0_gamma(prng_, event_, 516.45, tclev,thlev,tdlev);
+        decay0_gamma(prng_, event_, 0.51645, tclev,thlev,tdlev);
         goto level_46000;
       } else {
-        decay0_gamma(prng_, event_, 488.66, tclev,thlev,tdlev);
+        decay0_gamma(prng_, event_, 0.48866, tclev,thlev,tdlev);
         goto level_74000;
       }
 
@@ -226,10 +226,10 @@ namespace genbb {
       thlev = 0.0;
       pgamma = 100. * prng_ ();
       if (pgamma <= 47.37) {
-        decay0_gamma(prng_, event_, 509.63, tclev,thlev,tdlev);
+        decay0_gamma(prng_, event_, 0.50963, tclev,thlev,tdlev);
         goto level_27000;
       } else {
-        decay0_gamma(prng_, event_, 490.65, tclev,thlev,tdlev);
+        decay0_gamma(prng_, event_, 0.49065, tclev,thlev,tdlev);
         goto level_46000;
       }
 
@@ -239,10 +239,10 @@ namespace genbb {
       thlev = 0.0;
       pgamma = 100. * prng_ ();
       if (pgamma <= 47.95) {
-        decay0_gamma(prng_, event_, 427.14, tclev,thlev,tdlev);
+        decay0_gamma(prng_, event_, 0.42714, tclev,thlev,tdlev);
         goto level_74000;
       } else {
-        decay0_gamma(prng_, event_, 501.28, tclev,thlev,tdlev);
+        decay0_gamma(prng_, event_, 0.50128, tclev,thlev,tdlev);
         goto level_0000;
       }
 
@@ -250,7 +250,7 @@ namespace genbb {
       // Level 469.24 keV
       DT_LOG_DEBUG (local_priority, "level 469.24 keV");
       thlev = 0.0;
-      decay0_gamma(prng_, event_, 384.69, tclev,thlev,tdlev);
+      decay0_gamma(prng_, event_, 0.38469, tclev,thlev,tdlev);
       goto level_84000;
 
     level_437000 :
@@ -259,31 +259,31 @@ namespace genbb {
       thlev = 0.0;
       pgamma = 100. * prng_ ();
       if (pgamma <= 7.75) {
-        decay0_nucltransKLM(prng_, event_, 410.590,
+        decay0_nucltransKLM(prng_, event_, 0.410590,
                             AcElectronBindingEnergyK, 0.01482,
                             AcElectronBindingEnergyL, 0.00264,
                             AcElectronBindingEnergyM, 0.000628,
                             0.,tclev,thlev,tdlev);
         goto level_27000;
       } else if (pgamma <= 17.2) {
-        decay0_nucltransKLM(prng_, event_, 50.730,
+        decay0_nucltransKLM(prng_, event_, 0.050730,
                             AcElectronBindingEnergyK, 0.0,
                             AcElectronBindingEnergyL, 18.8,
                             AcElectronBindingEnergyM, 4.52,
                             0.,tclev,thlev,tdlev);
         goto level_387000;
       } else if (pgamma <= 36.57) {
-        decay0_gamma(prng_, event_, 437.960, tclev,thlev,tdlev);
+        decay0_gamma(prng_, event_, 0.437960, tclev,thlev,tdlev);
         goto level_0000;
       } else if (pgamma <= 65.54) {
-        decay0_nucltransKLM(prng_, event_, 391.610,
+        decay0_nucltransKLM(prng_, event_, 0.391610,
                             AcElectronBindingEnergyK, 0.01636,
                             AcElectronBindingEnergyL, 0.00293,
                             AcElectronBindingEnergyM, 0.000697,
                             0.,tclev,thlev,tdlev);
         goto level_46000;
       } else {
-        decay0_gamma(prng_, event_, 363.820, tclev,thlev,tdlev);
+        decay0_gamma(prng_, event_, 0.363820, tclev,thlev,tdlev);
         goto level_74000;
       }
 
@@ -293,10 +293,10 @@ namespace genbb {
       thlev = 0.0;
       pgamma = 100. * prng_ ();
       if (pgamma <= 7.63) {
-        decay0_gamma(prng_, event_, 435.190, tclev,thlev,tdlev);
+        decay0_gamma(prng_, event_, 0.435190, tclev,thlev,tdlev);
         goto level_0000;
       } else {
-        decay0_nucltransKLM(prng_, event_, 407.820,
+        decay0_nucltransKLM(prng_, event_, 0.407820,
                             AcElectronBindingEnergyK, 0.269,
                             AcElectronBindingEnergyL, 0.0496,
                             AcElectronBindingEnergyM, 0.01187,
@@ -311,24 +311,24 @@ namespace genbb {
       pgamma = 100. * prng_ ();
       if (pgamma <= 3.51) {
         thlev = 0.0;
-        decay0_nucltransKLM(prng_, event_, 395.610,
+        decay0_nucltransKLM(prng_, event_, 0.395610,
                             AcElectronBindingEnergyK, 0.01601,
                             AcElectronBindingEnergyL, 0.00286,
                             AcElectronBindingEnergyM, 0.000682,
                             0.,tclev,thlev,tdlev);
         goto level_29000;
       } else if (pgamma <= 7.86) {
-        decay0_nucltransKLM(prng_, event_, 351.450,
+        decay0_nucltransKLM(prng_, event_, 0.351450,
                             AcElectronBindingEnergyK, 0.0206,
                             AcElectronBindingEnergyL, 0.00373,
                             AcElectronBindingEnergyM, 0.000891,
                             0.,tclev,thlev,tdlev);
         goto level_74000;
       } else if (pgamma <= 22.62) {
-        decay0_gamma(prng_, event_, 398.220, tclev,thlev,tdlev);
+        decay0_gamma(prng_, event_, 0.398220, tclev,thlev,tdlev);
         goto level_27000;
       } else {
-        decay0_nucltransKLM(prng_, event_, 379.240,
+        decay0_nucltransKLM(prng_, event_, 0.379240,
                             AcElectronBindingEnergyK, 0.25,
                             AcElectronBindingEnergyL, 0.052,
                             AcElectronBindingEnergyM, 0.0125,
@@ -342,59 +342,59 @@ namespace genbb {
       thlev = 0.0;
       pgamma = 100. * prng_ ();
       if (pgamma <= 0.03) {
-        decay0_nucltransKLM(prng_, event_, 387.230,
+        decay0_nucltransKLM(prng_, event_, 0.387230,
                             AcElectronBindingEnergyK, 0.0430,
                             AcElectronBindingEnergyL, 0.0254,
                             AcElectronBindingEnergyM, 0.00667,
                             0.,tclev,thlev,tdlev);
         goto level_0000;
       } else if (pgamma <= 0.53) {
-        decay0_nucltransKLM(prng_, event_, 57.190,
+        decay0_nucltransKLM(prng_, event_, 0.057190,
                           AcElectronBindingEnergyK, 0.0,
                           AcElectronBindingEnergyL, 108.5,
                           AcElectronBindingEnergyM, 29.6,
                           0.,tclev,thlev,tdlev);
         goto level_330000;
       } else if (pgamma <= 1.46) {
-        decay0_gamma(prng_, event_, 359.860, tclev,thlev,tdlev);
+        decay0_gamma(prng_, event_, 0.359860, tclev,thlev,tdlev);
         goto level_27000;
       } else if (pgamma <= 8.87) {
-        decay0_nucltransKLM(prng_, event_, 277.290,
+        decay0_nucltransKLM(prng_, event_, 0.277290,
                             AcElectronBindingEnergyK, 0.4,
                             AcElectronBindingEnergyL, 0.11,
                             AcElectronBindingEnergyM, 0.03,
                             0.,tclev,thlev,tdlev);
         goto level_109000;
       } else if (pgamma <= 19.63) {
-        decay0_nucltransKLM(prng_, event_, 313.090,
+        decay0_nucltransKLM(prng_, event_, 0.313090,
                             AcElectronBindingEnergyK, 0.22,
                             AcElectronBindingEnergyL, 0.070,
                             AcElectronBindingEnergyM, 0.0177,
                             0.,tclev,thlev,tdlev);
         goto level_74000;
       } else if (pgamma <= 37.95) {
-        decay0_nucltransKLM(prng_, event_, 357.250,
+        decay0_nucltransKLM(prng_, event_, 0.357250,
                             AcElectronBindingEnergyK, 0.34,
                             AcElectronBindingEnergyL, 0.066,
                             AcElectronBindingEnergyM, 0.0159,
                             0.,tclev,thlev,tdlev);
         goto level_29000;
       } else if (pgamma <= 57.25) {
-        decay0_nucltransKLM(prng_, event_, 340.880,
+        decay0_nucltransKLM(prng_, event_, 0.340880,
                             AcElectronBindingEnergyK, 0.081,
                             AcElectronBindingEnergyL, 0.020,
                             AcElectronBindingEnergyM, 0.0050,
                             0.,tclev,thlev,tdlev);
         goto level_46000;
       } else if (pgamma <= 77.1) {
-        decay0_nucltransKLM(prng_, event_, 260.370,
+        decay0_nucltransKLM(prng_, event_, 0.260370,
                           AcElectronBindingEnergyK, 0.37,
                           AcElectronBindingEnergyL, 0.133,
                           AcElectronBindingEnergyM, 0.0340,
                           0.,tclev,thlev,tdlev);
         goto level_126000;
       } else {
-        decay0_nucltransKLM(prng_, event_, 302.680,
+        decay0_nucltransKLM(prng_, event_, 0.302680,
                             AcElectronBindingEnergyK, 0.0285,
                             AcElectronBindingEnergyL, 0.00527,
                             AcElectronBindingEnergyM, 0.001260,
@@ -408,21 +408,21 @@ namespace genbb {
       thlev = 0.0;
       pgamma = 100. * prng_ ();
       if (pgamma <= 3.57) {
-        decay0_nucltransKLM(prng_, event_, 24.460,
+        decay0_nucltransKLM(prng_, event_, 0.024460,
                             AcElectronBindingEnergyK, 0.0,
                             AcElectronBindingEnergyL, 161.3,
                             AcElectronBindingEnergyM, 39.0,
                             0.,tclev,thlev,tdlev);
         goto level_330000;
       } else if (pgamma <= 29.88) {
-        decay0_nucltransKLM(prng_, event_, 327.130,
+        decay0_nucltransKLM(prng_, event_, 0.327130,
                             AcElectronBindingEnergyK, 0.0240,
                             AcElectronBindingEnergyL, 0.00440,
                             AcElectronBindingEnergyM, 0.001050,
                             0.,tclev,thlev,tdlev);
         goto level_27000;
       } else {
-        decay0_nucltransKLM(prng_, event_, 354.500,
+        decay0_nucltransKLM(prng_, event_, 0.354500,
                             AcElectronBindingEnergyK, 0.0855,
                             AcElectronBindingEnergyL, 0.0386,
                             AcElectronBindingEnergyM, 0.01003,
@@ -436,49 +436,49 @@ namespace genbb {
       thlev = 0.0;
       pgamma = 100. * prng_ ();
       if (pgamma <= 0.06) {
-        decay0_nucltransKLM(prng_, event_, 56.900,
+        decay0_nucltransKLM(prng_, event_, 0.056900,
                             AcElectronBindingEnergyK, 0.0,
                             AcElectronBindingEnergyL, 28,
                             AcElectronBindingEnergyM, 7.1,
                             0.,tclev,thlev,tdlev);
         goto level_273000;
       } else if (pgamma <= 0.15) {
-        decay0_nucltransKLM(prng_, event_, 245.490,
+        decay0_nucltransKLM(prng_, event_, 0.245490,
                             AcElectronBindingEnergyK, 3.70,
                             AcElectronBindingEnergyL, 1.143,
                             AcElectronBindingEnergyM, 0.293,
                             0.,tclev,thlev,tdlev);
         goto level_84000;
       } else if (pgamma <= 1.5) {
-        decay0_nucltransKLM(prng_, event_, 255.900,
+        decay0_nucltransKLM(prng_, event_, 0.255900,
                             AcElectronBindingEnergyK, 0.0992,
                             AcElectronBindingEnergyL, 0.1216,
                             AcElectronBindingEnergyM, 0.0327,
                             0.,tclev,thlev,tdlev);
         goto level_74000;
       } else if (pgamma <= 18.85) {
-        decay0_nucltransKLM(prng_, event_, 330.040,
+        decay0_nucltransKLM(prng_, event_, 0.330040,
                             AcElectronBindingEnergyK, 0.430,
                             AcElectronBindingEnergyL, 0.0836,
                             AcElectronBindingEnergyM, 0.0202,
                             0.,tclev,thlev,tdlev);
         goto level_0000;
       } else if (pgamma <= 39.9) {
-        decay0_nucltransKLM(prng_, event_, 283.690,
+        decay0_nucltransKLM(prng_, event_, 0.283690,
                             AcElectronBindingEnergyK, 0.0329,
                             AcElectronBindingEnergyL, 0.00614,
                             AcElectronBindingEnergyM, 0.001468,
                             0.,tclev,thlev,tdlev);
         goto level_46000;
       } else if (pgamma <= 69.25) {
-        decay0_nucltransKLM(prng_, event_, 302.670,
+        decay0_nucltransKLM(prng_, event_, 0.302670,
                             AcElectronBindingEnergyK, 0.0285,
                             AcElectronBindingEnergyL, 0.00527,
                             AcElectronBindingEnergyM, 0.001260,
                             0.,tclev,thlev,tdlev);
         goto level_27000;
       } else {
-        decay0_nucltransKLM(prng_, event_, 300.060,
+        decay0_nucltransKLM(prng_, event_, 0.300060,
                             AcElectronBindingEnergyK, 0.613,
                             AcElectronBindingEnergyL, 0.1146,
                             AcElectronBindingEnergyM, 0.0275,
@@ -492,10 +492,10 @@ namespace genbb {
       thlev = 0.0;
       pgamma = 100. * prng_ ();
       if (pgamma <= 46.88) {
-        decay0_gamma(prng_, event_, 258.380, tclev,thlev,tdlev);
+        decay0_gamma(prng_, event_, 0.258380, tclev,thlev,tdlev);
         goto level_46000;
       } else {
-        decay0_gamma(prng_, event_, 230.590, tclev,thlev,tdlev);
+        decay0_gamma(prng_, event_, 0.230590, tclev,thlev,tdlev);
         goto level_74000;
       }
 
@@ -505,24 +505,24 @@ namespace genbb {
       thlev = 0.0;
       pgamma = 100. * prng_ ();
       if (pgamma <= 2.75) {
-        decay0_gamma(prng_, event_, 199.000, tclev,thlev,tdlev);
+        decay0_gamma(prng_, event_, 0.199000, tclev,thlev,tdlev);
         goto level_74000;
       } else if (pgamma <= 13.77) {
-        decay0_nucltransKLM(prng_, event_, 245.770,
+        decay0_nucltransKLM(prng_, event_, 0.245770,
                             AcElectronBindingEnergyK, 0.0455,
                             AcElectronBindingEnergyL, 0.00867,
                             AcElectronBindingEnergyM, 0.00208,
                             0.,tclev,thlev,tdlev);
         goto level_27000;
       } else if (pgamma <= 46.83) {
-        decay0_nucltransKLM(prng_, event_, 243.160,
+        decay0_nucltransKLM(prng_, event_, 0.243160,
                             AcElectronBindingEnergyK, 0.56,
                             AcElectronBindingEnergyL, 0.176,
                             AcElectronBindingEnergyM, 0.0445,
                             0.,tclev,thlev,tdlev);
         goto level_29000;
       } else {
-        decay0_nucltransKLM(prng_, event_, 273.140,
+        decay0_nucltransKLM(prng_, event_, 0.273140,
                             AcElectronBindingEnergyK, 0.57,
                             AcElectronBindingEnergyL, 0.131,
                             AcElectronBindingEnergyM, 0.0323,
@@ -536,14 +536,14 @@ namespace genbb {
       thlev = 0.0;
       pgamma = 100. * prng_ ();
       if (pgamma <= 27.71) {
-        decay0_nucltransKLM(prng_, event_, 144.430,
+        decay0_nucltransKLM(prng_, event_, 0.144430,
                             AcElectronBindingEnergyK, 0.263,
                             AcElectronBindingEnergyL, 1.407,
                             AcElectronBindingEnergyM, 0.384,
                             0.,tclev,thlev,tdlev);
         goto level_126000;
       } else {
-        decay0_nucltransKLM(prng_, event_, 72.580,
+        decay0_nucltransKLM(prng_, event_, 0.072580,
                             AcElectronBindingEnergyK, 0.0,
                             AcElectronBindingEnergyL, 6.59,
                             AcElectronBindingEnergyM, 1.582,
@@ -557,14 +557,14 @@ namespace genbb {
       thlev = 0.0;
       pgamma = 100. * prng_ ();
       if (pgamma <= 17.52) {
-        decay0_nucltransKLM(prng_, event_, 23.460,
+        decay0_nucltransKLM(prng_, event_, 0.023460,
                             AcElectronBindingEnergyK, 0.0,
                             AcElectronBindingEnergyL, 182,
                             AcElectronBindingEnergyM, 44.1,
                             0.,tclev,thlev,tdlev);
         goto level_187000;
       } else {
-        decay0_nucltransKLM(prng_, event_, 100.840,
+        decay0_nucltransKLM(prng_, event_, 0.100840,
                             AcElectronBindingEnergyK, 0.0,
                             AcElectronBindingEnergyL, 7.30,
                             AcElectronBindingEnergyM, 2.00,
@@ -578,14 +578,14 @@ namespace genbb {
       thlev = 0.0;
       pgamma = 100. * prng_ ();
       if (pgamma <= 30.65) {
-        decay0_nucltransKLM(prng_, event_, 71.850,
+        decay0_nucltransKLM(prng_, event_, 0.071850,
                             AcElectronBindingEnergyK, 0.0,
                             AcElectronBindingEnergyL, 6.79,
                             AcElectronBindingEnergyM, 1.630,
                             0.,tclev,thlev,tdlev);
         goto level_126000;
       } else {
-        decay0_nucltransKLM(prng_, event_, 124.570,
+        decay0_nucltransKLM(prng_, event_, 0.124570,
                             AcElectronBindingEnergyK, 0.285,
                             AcElectronBindingEnergyL, 2.75,
                             AcElectronBindingEnergyM, 0.752,
@@ -599,21 +599,21 @@ namespace genbb {
       thlev = 0.0;
       pgamma = 100. * prng_ ();
       if (pgamma <= 6.21) {
-        decay0_nucltransKLM(prng_, event_, 60.460,
+        decay0_nucltransKLM(prng_, event_, 0.060460,
                             AcElectronBindingEnergyK, 0.0,
                             AcElectronBindingEnergyL, 0.327,
                             AcElectronBindingEnergyM, 0.0800,
                             0.,tclev,thlev,tdlev);
         goto level_126000;
       } else if (pgamma <= 28.48) {
-        decay0_nucltransKLM(prng_, event_, 102.770,
+        decay0_nucltransKLM(prng_, event_, 0.102770,
                             AcElectronBindingEnergyK, 0.0,
                             AcElectronBindingEnergyL, 6.69,
                             AcElectronBindingEnergyM, 1.83,
                             0.,tclev,thlev,tdlev);
         goto level_84000;
       } else {
-        decay0_nucltransKLM(prng_, event_, 77.380,
+        decay0_nucltransKLM(prng_, event_, 0.077380,
                             AcElectronBindingEnergyK, 0.0,
                             AcElectronBindingEnergyL, 5.47,
                             AcElectronBindingEnergyM, 1.313,
@@ -627,14 +627,14 @@ namespace genbb {
       thlev = 0.0;
       pgamma = 100. * prng_ ();
       if (pgamma <= 47.50) {
-        decay0_nucltransKLM(prng_, event_, 52.720,
+        decay0_nucltransKLM(prng_, event_, 0.052720,
                             AcElectronBindingEnergyK, 0.0,
                             AcElectronBindingEnergyL, 16.81,
                             AcElectronBindingEnergyM, 4.03,
                             0.,tclev,thlev,tdlev);
         goto level_74000;
       } else {
-        decay0_nucltransKLM(prng_, event_, 96.880,
+        decay0_nucltransKLM(prng_, event_, 0.096880,
                             AcElectronBindingEnergyK, 0.0,
                             AcElectronBindingEnergyL, 8.81,
                             AcElectronBindingEnergyM, 2.41,
@@ -648,21 +648,21 @@ namespace genbb {
       thlev = 0.0;
       pgamma = 100. * prng_ ();
       if (pgamma <= 10.46) {
-        decay0_nucltransKLM(prng_, event_, 35.800,
+        decay0_nucltransKLM(prng_, event_, 0.035800,
                             AcElectronBindingEnergyK, 0.0,
                             AcElectronBindingEnergyL, 1.313,
                             AcElectronBindingEnergyM, 0.327,
                             0.,tclev,thlev,tdlev);
         goto level_74000;
       } else if (pgamma <= 39.07) {
-        decay0_nucltransKLM(prng_, event_, 63.590,
+        decay0_nucltransKLM(prng_, event_, 0.063590,
                             AcElectronBindingEnergyK, 0.0,
                             AcElectronBindingEnergyL, 65.1,
                             AcElectronBindingEnergyM, 17.8,
                             0.,tclev,thlev,tdlev);
         goto level_46000;
       } else {
-        decay0_nucltransKLM(prng_, event_, 25.390,
+        decay0_nucltransKLM(prng_, event_, 0.025390,
                             AcElectronBindingEnergyK, 0.0,
                             AcElectronBindingEnergyL, 144.6,
                             AcElectronBindingEnergyM, 34.9,
@@ -676,21 +676,21 @@ namespace genbb {
       thlev = 0.0;
       pgamma = 100. * prng_ ();
       if (pgamma <= 12.65) {
-        decay0_nucltransKLM(prng_, event_, 57.180,
+        decay0_nucltransKLM(prng_, event_, 0.057180,
                             AcElectronBindingEnergyK, 0.0,
                             AcElectronBindingEnergyL, 108.6,
                             AcElectronBindingEnergyM, 29.6,
                             0.,tclev,thlev,tdlev);
         goto level_27000;
       } else if (pgamma <= 41.22) {
-        decay0_nucltransKLM(prng_, event_, 54.570,
+        decay0_nucltransKLM(prng_, event_, 0.054570,
                             AcElectronBindingEnergyK, 0.0,
                             AcElectronBindingEnergyL, 0.430,
                             AcElectronBindingEnergyM, 0.1053,
                             0.,tclev,thlev,tdlev);
         goto level_29000;
       } else {
-        decay0_nucltransKLM(prng_, event_, 38.200,
+        decay0_nucltransKLM(prng_, event_, 0.038200,
                             AcElectronBindingEnergyK, 0.0,
                             AcElectronBindingEnergyL, 66,
                             AcElectronBindingEnergyM, 17,
@@ -704,14 +704,14 @@ namespace genbb {
       thlev = 0.0;
       pgamma = 100. * prng_ ();
       if (pgamma <= 28.85) {
-        decay0_nucltransKLM(prng_, event_, 74.140,
+        decay0_nucltransKLM(prng_, event_, 0.074140,
                             AcElectronBindingEnergyK, 0.0,
                             AcElectronBindingEnergyL, 31.2,
                             AcElectronBindingEnergyM, 8.53,
                             0.,tclev,thlev,tdlev);
         goto level_0000;
       } else {
-        decay0_nucltransKLM(prng_, event_, 44.160,
+        decay0_nucltransKLM(prng_, event_, 0.044160,
                             AcElectronBindingEnergyK, 0.0,
                             AcElectronBindingEnergyL, 28.3,
                             AcElectronBindingEnergyM, 6.79,
@@ -725,21 +725,21 @@ namespace genbb {
       thlev = 0.0;
       pgamma = 100. * prng_ ();
       if (pgamma <= 24.33) {
-        decay0_nucltransKLM(prng_, event_, 46.350,
+        decay0_nucltransKLM(prng_, event_, 0.046350,
                             AcElectronBindingEnergyK, 0.0,
                             AcElectronBindingEnergyL, 0.663,
                             AcElectronBindingEnergyM, 0.1634,
                             0.,tclev,thlev,tdlev);
         goto level_0000;
       } else if (pgamma <= 52.63) {
-        decay0_nucltransKLM(prng_, event_, 16.370,
+        decay0_nucltransKLM(prng_, event_, 0.016370,
                             AcElectronBindingEnergyK, 0.0,
                             AcElectronBindingEnergyL, 5.06,
                             AcElectronBindingEnergyM, 2.68,
                             0.,tclev,thlev,tdlev);
         goto level_29000;
       } else {
-        decay0_nucltransKLM(prng_, event_, 18.980,
+        decay0_nucltransKLM(prng_, event_, 0.018980,
                             AcElectronBindingEnergyK, 0.0,
                             AcElectronBindingEnergyL, 2.35,
                             AcElectronBindingEnergyM, 82.7,
@@ -751,7 +751,7 @@ namespace genbb {
       // Level 29.98 keV
       DT_LOG_DEBUG (local_priority, "level 29.98 keV");
       thlev = 0.0;
-      decay0_nucltransKLM(prng_, event_, 29.980,
+      decay0_nucltransKLM(prng_, event_, 0.029980,
                           AcElectronBindingEnergyK, 0.0,
                           AcElectronBindingEnergyL, 202,
                           AcElectronBindingEnergyM, 52,
@@ -762,7 +762,7 @@ namespace genbb {
       // Level 27.37 keV
       DT_LOG_DEBUG (local_priority, "level 27.37 keV");
       thlev = 38.3e-9;
-      decay0_nucltransKLM(prng_, event_, 27.370,
+      decay0_nucltransKLM(prng_, event_, 0.027370,
                           AcElectronBindingEnergyK, 0.0,
                           AcElectronBindingEnergyL, 3.3,
                           AcElectronBindingEnergyM, 0.87,
