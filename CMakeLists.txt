@@ -63,7 +63,12 @@ endif()
 
 # - Configure output paths for products to give inplace build that roughly
 #   matches install layout.
-set(Bayeux_BUILDPRODUCT_DIR "${PROJECT_BINARY_DIR}/BuildProducts")
+#   We allow a parent project to change the output root so that Bayeux
+#   can be embedded in another project
+if(NOT Bayeux_EMBEDDED OR NOT Bayeux_BUILDPRODUCT_DIR)
+  set(Bayeux_BUILDPRODUCT_DIR "${PROJECT_BINARY_DIR}/BuildProducts")
+endif()
+
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/lib")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  "${Bayeux_BUILDPRODUCT_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/lib")
@@ -87,7 +92,9 @@ if(Bayeux_ENABLE_TESTING)
 endif()
 
 #-----------------------------------------------------------------------
-# Package Sources and Binaries
+# Package Sources and Binaries - only if not embedded
 #
-include(BXCPack)
+if(NOT Bayeux_EMBEDDED)
+  include(BXCPack)
+endif()
 
