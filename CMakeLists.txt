@@ -65,7 +65,7 @@ endif()
 #   matches install layout.
 set(Bayeux_BUILDPRODUCT_DIR "${PROJECT_BINARY_DIR}/BuildProducts")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/lib")
-set(CMAKE_BINARY_OUTPUT_DIRECTORY  "${Bayeux_BUILDPRODUCT_DIR}/bin")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  "${Bayeux_BUILDPRODUCT_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/lib")
 
 #-----------------------------------------------------------------------

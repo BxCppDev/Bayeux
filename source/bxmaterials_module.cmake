@@ -15,9 +15,10 @@ set(module_root_dir "${CMAKE_CURRENT_SOURCE_DIR}/bx${module_name}")
 set(module_include_dir "${module_root_dir}/include")
 set(module_source_dir  "${module_root_dir}/src")
 set(module_test_dir    "${module_root_dir}/testing")
+set(module_app_dir     "${module_root_dir}/programs")
 set(module_resource_dir "${module_root_dir}/resources")
 
-foreach(dir root_dir include_dir source_dir test_dir resource_dir)
+foreach(dir root_dir include_dir source_dir test_dir app_dir resource_dir)
   set(${module_name}_${dir} ${module_${dir}})
 endforeach()
 
@@ -80,6 +81,11 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_materials.cxx
   ${module_test_dir}/test_resource.cxx
   ${module_test_dir}/test_version.cxx
+  )
+
+# - Applications
+set(${module_name}_MODULE_APPS
+  ${module_app_dir}/materials_inspector.cxx
   )
 
 # - Resource files

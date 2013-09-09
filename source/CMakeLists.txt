@@ -82,6 +82,7 @@ foreach(_m ${Bayeux_SUBMODULES})
   list(APPEND Bayeux_HEADERS ${${_m}_MODULE_HEADERS})
   list(APPEND Bayeux_SOURCES ${${_m}_MODULE_SOURCES})
   list(APPEND Bayeux_RESOURCES ${${_m}_MODULE_RESOURCES})
+  list(APPEND Bayeux_APPS ${${_m}_MODULE_APPS})
 endforeach()
 
 # Hack for genbb private headers
@@ -98,9 +99,38 @@ target_link_libraries(Bayeux ${CLHEP_LIBRARIES})
 target_link_libraries(Bayeux ${ROOT_LIBRARIES})
 
 #-----------------------------------------------------------------------
+# Build/Link the executables
+#
+set(Bayeux_APP_TARGETS)
+foreach(_bxapp ${Bayeux_APPS})
+  get_filename_component(_app_basename ${_bxapp} NAME_WE)
+  add_executable(bx${_app_basename} ${_bxapp})
+  set_target_properties(bx${_app_basename}
+    PROPERTIES INSTALL_RPATH_USE_LINK_PATH 1
+    )
+  if(UNIX AND NOT APPLE)
+    set_target_properties(bx${_app_basename}
+      PROPERTIES INSTALL_RPATH "\$ORIGIN/../lib"
+      )
+  elseif(APPLE)
+    # Temporary setting - needs testing
+    set_target_properties(bx${_app_basename}
+      PROPERTIES INSTALL_RPATH "@loader_path"
+      )
+  endif()
+
+  target_link_libraries(bx${_app_basename} Bayeux)
+
+  # - Hack to get program_options in without linking it to libBayeux
+  target_link_libraries(bx${_app_basename} ${Boost_program_options_LIBRARY})
+
+  list(APPEND Bayeux_APP_TARGETS bx${_app_basename})
+endforeach()
+
+#-----------------------------------------------------------------------
 # Install targets and resources
 #
-install(TARGETS Bayeux
+install(TARGETS Bayeux ${Bayeux_APP_TARGETS}
   EXPORT  BayeuxTargets
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
