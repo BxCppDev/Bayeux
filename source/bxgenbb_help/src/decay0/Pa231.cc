@@ -65,7 +65,7 @@ namespace genbb {
       double tdlev;       /// output - time of decay of level (sec)
       double t;           /// output - time of decay
       const double AcElectronBindingEnergyK = 0.106855; /// binding energy of electron (MeV) on K-shell
-      const double AcElectronBindingEnergyL = 0.018264; /// binding energy of electron (MeV) on L-shel
+      const double AcElectronBindingEnergyL = 0.018264; /// binding energy of electron (MeV) on L-shell
       const double AcElectronBindingEnergyM = 0.004031; /// binding energy of electron (MeV) on M-shell
 
       // Probabilities
