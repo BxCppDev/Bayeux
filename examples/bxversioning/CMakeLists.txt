@@ -3,10 +3,10 @@ project(bxversioning)
 
 find_package(Bayeux REQUIRED)
 
-include_directories(${BAYEUX_INCLUDE_DIRS})
+include_directories(${Bayeux_INCLUDE_DIRS})
 
 add_executable(bxversioning bxversioning.cc)
-target_link_libraries(bxversioning ${BAYEUX_LIBRARIES})
+target_link_libraries(bxversioning ${Bayeux_LIBRARIES})
 
 enable_testing()
 add_test(runcheck bxversioning)

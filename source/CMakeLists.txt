@@ -181,9 +181,15 @@ if(Bayeux_ENABLE_TESTING)
       set(_testname "${_m}-${_testname}")
 
       add_executable(${_testname} ${_testsource})
-      set_property(TARGET ${_testname}
-        APPEND PROPERTY INCLUDE_DIRECTORIES ${${_m}_test_dir}
-        )
+
+      # Handle CMake version difference temporarily
+      if(CMAKE_VERSION VERSION_GREATER 2.8.7)
+        set_property(TARGET ${_testname}
+          APPEND PROPERTY INCLUDE_DIRECTORIES ${${_m}_test_dir}
+          )
+      else()
+        include_directories(BEFORE ${${_m}_test_dir})
+      endif()
 
       target_link_libraries(${_testname} Bayeux)
 

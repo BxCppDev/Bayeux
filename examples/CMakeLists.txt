@@ -25,19 +25,19 @@ include(ExternalProject)
 
 #-----------------------------------------------------------------------
 # Basic example
-#
-ExternalProject_Add(Bayeux_BasicVersionCheck
-  DEPENDS Bayeux
-  LIST_SEPARATOR @
-  SOURCE_DIR ${PROJECT_SOURCE_DIR}/examples/bxversioning
-  DOWNLOAD_COMMAND ""
-  CONFIGURE_COMMAND ${CMAKE_COMMAND}
-                    -DCMAKE_PREFIX_PATH=${Bayeux_BUILDPRODUCT_DIR}
-                    <SOURCE_DIR>
-  BUILD_COMMAND     make VERBOSE=1
-  TEST_COMMAND      make test
-  INSTALL_COMMAND   ""
-  )
-
-
+# - Requires support for internal dependencies in ExternalProject 
+if(CMAKE_VERSION VERSION_GREATER 2.8.10)
+  ExternalProject_Add(Bayeux_BasicVersionCheck
+    DEPENDS Bayeux
+    LIST_SEPARATOR @
+    SOURCE_DIR ${PROJECT_SOURCE_DIR}/examples/bxversioning
+    DOWNLOAD_COMMAND ""
+    CONFIGURE_COMMAND ${CMAKE_COMMAND}
+    -DCMAKE_PREFIX_PATH=${Bayeux_BUILDPRODUCT_DIR}
+    <SOURCE_DIR>
+    BUILD_COMMAND     make VERBOSE=1
+    TEST_COMMAND      make test
+    INSTALL_COMMAND   ""
+    )
+endif()
 
