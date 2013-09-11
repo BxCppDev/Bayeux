@@ -7,6 +7,7 @@
 #include <exception>
 
 #include <cuts/cuts_config.h>
+#include <cuts/version.h>
 
 using namespace std;
 
