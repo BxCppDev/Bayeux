@@ -656,7 +656,7 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories
 # with spaces.
 
-INPUT                  = @PROJECT_SOURCE_DIR@/doc @Bayeux_BUILDPRODUCT_DIR@/include
+INPUT                  = @PROJECT_SOURCE_DIR@/doc @Bayeux_BUILDPRODUCT_DIR@/include/bayeux
 
 
 # This tag can be used to specify the character encoding of the source files
