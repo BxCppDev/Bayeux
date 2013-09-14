@@ -76,7 +76,6 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/xnor_cut.cc
   ${module_source_dir}/xor_cut.cc
   ${module_source_dir}/version.cc
-
     )
 
 # - Published headers

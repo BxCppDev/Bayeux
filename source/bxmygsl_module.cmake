@@ -76,6 +76,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/the_serializable.h
   ${module_include_dir}/${module_name}/the_serializable.ipp
   ${module_include_dir}/${module_name}/von_neumann_method.h
+  ${module_include_dir}/${module_name}/version.h.in
   )
 
 set(${module_name}_MODULE_SOURCES
@@ -114,6 +115,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/tabulated_function.cc
   ${module_source_dir}/the_serializable.cc
   ${module_source_dir}/von_neumann_method.cc
+  ${module_source_dir}/version.cc
   )
 
 # - Published headers
