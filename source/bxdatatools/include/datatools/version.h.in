@@ -1,10 +1,10 @@
-//! \file    version.h
+//! \file    datatools/version.h
 //! \brief   Describe the datatools API version
 //! \details Querying the version of datatools is needed at both
 //!          compile and runtime by clients so that they may adjust
 //!          their usage.
 //
-// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com> 
+// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com>
 // Copyright (c) 2013 by The University of Warwick
 //
 // This file is part of datatools.
