@@ -1,4 +1,4 @@
-//! \file    version.h
+//! \file    materials/version.h
 //! \brief   Describe the materials API version
 //! \details Querying the version of materials is needed at both
 //!          compile and runtime by clients so that they may adjust
