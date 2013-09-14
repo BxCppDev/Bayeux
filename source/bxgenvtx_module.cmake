@@ -46,6 +46,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/cylinder_model_vg.h
   ${module_include_dir}/${module_name}/tube_model_vg.h
   ${module_include_dir}/${module_name}/genvtx_config.h.in
+  ${module_include_dir}/${module_name}/version.h.in
   ${module_include_dir}/${module_name}/detail/vg_tools.h
   ${module_include_dir}/${module_name}/detail/geom_manager_utils.h
   )
@@ -68,6 +69,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/cylinder_model_vg.cc
   ${module_source_dir}/tube_model_vg.cc
   ${module_source_dir}/geom_manager_utils.cc
+  ${module_source_dir}/version.cc
   )
 
 # - Published headers
@@ -81,7 +83,7 @@ endforeach()
 set(${module_name}_TEST_ENVIRONMENT "GENVTX_DATA_DIR=${module_root_dir};MATERIALS_DATA_DIR=${module_root_dir}/../bxmaterials")
 
 set(${module_name}_MODULE_TESTS
-  ${module_test_dir}/test_genvtx.cxx 
+  ${module_test_dir}/test_genvtx.cxx
   ${module_test_dir}/test_spot_vertex_generator.cxx
   ${module_test_dir}/test_box_vg.cxx
   ${module_test_dir}/test_cylinder_vg.cxx
