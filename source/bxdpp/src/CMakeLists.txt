@@ -54,7 +54,14 @@ configure_file(
   ${PROJECT_SOURCE_DIR}/include/dpp/dpp_config.h.in
   ${PROJECT_BINARY_DIR}/include/dpp/dpp_config.h
   )
-list(APPEND dpp_PUBLIC_HEADERS ${PROJECT_BINARY_DIR}/include/dpp/dpp_config.h)
+configure_file(
+  ${PROJECT_SOURCE_DIR}/include/dpp/version.h.in
+  ${PROJECT_BINARY_DIR}/include/dpp/version.h
+  )
+list(APPEND
+     dpp_PUBLIC_HEADERS ${PROJECT_BINARY_DIR}/include/dpp/dpp_config.h
+     dpp_PUBLIC_HEADERS ${PROJECT_BINARY_DIR}/include/dpp/version.h
+    )
 
 #-----------------------------------------------------------------------
 # PRIVATE HEADERS
@@ -109,6 +116,7 @@ set(dpp_SOURCES
     dump_module.cc
     histogram_service.cc
     ocd_support.cc
+    version.cc
     )
 
 #-----------------------------------------------------------------------

@@ -27,9 +27,8 @@ project(dpp)
 # - Versioning
 set(dpp_VERSION_MAJOR 1)
 set(dpp_VERSION_MINOR 0)
-set(dpp_PATCH_VERSION 0)
-set(dpp_VERSION "${dpp_VERSION_MAJOR}.${dpp_VERSION_MINOR}.${dpp_PATCH_VERSION}")
-math(EXPR _dpp_VERSION_NUMERIC "${dpp_VERSION_MAJOR}*100000+${dpp_VERSION_MINOR}*100+${dpp_PATCH_VERSION}")
+set(dpp_VERSION_PATCH 0)
+set(dpp_VERSION "${dpp_VERSION_MAJOR}.${dpp_VERSION_MINOR}.${dpp_VERSION_PATCH}")
 
 # - Fixup default install prefix on Mac
 if(APPLE AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
