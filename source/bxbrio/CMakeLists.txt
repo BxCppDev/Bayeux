@@ -27,9 +27,8 @@ project(brio)
 # - Versioning
 set(brio_VERSION_MAJOR 4)
 set(brio_VERSION_MINOR 0)
-set(brio_PATCH_VERSION 1)
-set(brio_VERSION "${brio_VERSION_MAJOR}.${brio_VERSION_MINOR}.${brio_PATCH_VERSION}")
-math(EXPR _brio_VERSION_NUMERIC "${brio_VERSION_MAJOR}*100000+${brio_VERSION_MINOR}*100+${brio_PATCH_VERSION}")
+set(brio_VERSION_PATCH 1)
+set(brio_VERSION "${brio_VERSION_MAJOR}.${brio_VERSION_MINOR}.${brio_VERSION_PATCH}")
 
 # - Fixup default install prefix on Mac
 if(APPLE AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)

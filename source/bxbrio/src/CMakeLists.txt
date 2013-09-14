@@ -31,15 +31,23 @@ set(brio_PUBLIC_HEADERS
   include/brio/utils.h
   include/brio/writer.h
   include/brio/writer-inl.h
+  include/brio/version.h.in
   )
 list_prepend(brio_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 
 # - Add config header
 configure_file(
   ${PROJECT_SOURCE_DIR}/include/brio/brio_config.h.in
-  ${PROJECT_BINARY_DIR}/include/brio/brio_config.h
+  ${PROJECT_BINARY_DIR}/include/brio/version.h
   )
-list(APPEND brio_PUBLIC_HEADERS ${PROJECT_BINARY_DIR}/include/brio/brio_config.h)
+configure_file(
+  ${PROJECT_SOURCE_DIR}/include/brio/brio_config.h.in
+  ${PROJECT_BINARY_DIR}/include/brio/version.h
+  )
+list(APPEND brio_PUBLIC_HEADERS
+     ${PROJECT_BINARY_DIR}/include/brio/brio_config.h
+     ${PROJECT_BINARY_DIR}/include/brio/version.h
+    )
 
 #-----------------------------------------------------------------------
 # PRIVATE HEADERS
@@ -57,7 +65,7 @@ set_source_files_properties(${brio_detail_HEADERS}
     MACOSX_PACKAGE_LOCATION Headers/detail
   )
 
-# We have to install the detail header modules separately if brio 
+# We have to install the detail header modules separately if brio
 # isn't built as a Framework.
 if(NOT APPLE)
   foreach(_module detail)
@@ -79,7 +87,8 @@ set(brio_SOURCES
   TArrayCMod.cc
   utils.cc
   writer.cc
-  ${_brio_dict_sources} 
+  version.cc
+  ${_brio_dict_sources}
   )
 
 #-----------------------------------------------------------------------
@@ -88,14 +97,14 @@ set(brio_SOURCES
 # resources on Mac. This allows them to be easily imported into the
 # Framework with minimal platform specific commands by adding them
 # as sources of the framework/library.
-# We have to deal with the library depends part of this later because 
+# We have to deal with the library depends part of this later because
 # their generation require the targets to be present...
 #
 if(APPLE)
   set(TO_BRIO_INCLUDEDIR "../..")
 else()
-  file(RELATIVE_PATH TO_BRIO_INCLUDEDIR 
-    "${CMAKE_INSTALL_FULL_LIBDIR}/cmake/brio-${brio_VERSION}" 
+  file(RELATIVE_PATH TO_BRIO_INCLUDEDIR
+    "${CMAKE_INSTALL_FULL_LIBDIR}/cmake/brio-${brio_VERSION}"
     "${CMAKE_INSTALL_FULL_INCLUDEDIR}"
     )
 endif()
@@ -107,7 +116,7 @@ set(brio_RESOURCES
 
 foreach(_brioresource ${brio_RESOURCES})
   configure_file(
-    ${PROJECT_SOURCE_DIR}/${_brioresource}.in 
+    ${PROJECT_SOURCE_DIR}/${_brioresource}.in
     ${PROJECT_BINARY_DIR}/${_brioresource}
     @ONLY
     )
@@ -132,13 +141,13 @@ endif()
 #
 include_directories(
   ${PROJECT_BINARY_DIR}/include
-  ${PROJECT_SOURCE_DIR}/include	
+  ${PROJECT_SOURCE_DIR}/include
   ${ROOT_INCLUDE_DIR}
   ${datatools_INCLUDE_DIRS}
   )
 
-add_library(brio SHARED  
-  ${brio_PUBLIC_HEADERS} 
+add_library(brio SHARED
+  ${brio_PUBLIC_HEADERS}
   ${brio_detail_HEADERS}
   ${brio_SOURCES}
   ${brio_RESOURCES_OUTPUTS}
@@ -150,7 +159,7 @@ if ( _generate_root_dict )
 endif ()
 
 set_target_properties(brio
-  PROPERTIES 
+  PROPERTIES
     FRAMEWORK                             ON
     MACOSX_FRAMEWORK_IDENTIFIER           org.supernemo.brio
     MACOSX_FRAMEWORK_BUNDLE_VERSION       ${brio_VERSION}
@@ -160,27 +169,27 @@ set_target_properties(brio
     PUBLIC_HEADER                         "${brio_PUBLIC_HEADERS}"
   )
 
-target_link_libraries(brio 
-                      ${datatools_LIBRARIES} 
-                      ${ROOT_LIBRARIES} 
+target_link_libraries(brio
+                      ${datatools_LIBRARIES}
+                      ${ROOT_LIBRARIES}
                       ${CMAKE_DL_LIBS})
 
 set(BRIO_TARGETS brio)
 
 #-----------------------------------------------------------------------
 # EXPORT AND INSTALL LIBRARY TARGETS
-# We make use of the full signature 
+# We make use of the full signature
 install(TARGETS ${BRIO_TARGETS}
   EXPORT        brio-libraries
-  RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR} 
+  RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
                 COMPONENT Runtime
-  LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR} 
+  LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
                 COMPONENT Runtime
-  FRAMEWORK     DESTINATION ${BRIO_FRAMEWORK_LOCATION} 
+  FRAMEWORK     DESTINATION ${BRIO_FRAMEWORK_LOCATION}
                 COMPONENT Runtime
-  ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} 
+  ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
                 COMPONENT Development
-  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/brio 
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/brio
                 COMPONENT Development
   )
 
@@ -188,11 +197,11 @@ install(TARGETS ${BRIO_TARGETS}
 # We also need to generate a file for the build tree, but at present
 # we leave this out for simplicity.
 if(APPLE)
-  install(EXPORT brio-libraries 
+  install(EXPORT brio-libraries
     DESTINATION CMake COMPONENT Development
     )
 else()
-  install(EXPORT brio-libraries 
+  install(EXPORT brio-libraries
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/brio-${brio_VERSION} COMPONENT Development
     )
 endif()
