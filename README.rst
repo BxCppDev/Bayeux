@@ -126,13 +126,22 @@ clicking on the Downloads tab, and then installing Command Line Tools.
    -  GSL 1.15 or higher: http://www.gnu.org/s/gsl
    -  CLHEP 2.1.3.2 or higher: http://proj-clhep.web.cern.ch
    -  Geant4 9.6.0 or higher: http://geant4.cern.ch
-       - with GDML support enabled
+       - with GDML support enabled (through the XercesC library)
    -  ROOT 5.34.0 or higher: http://root.cern.ch
+      geomtools requires you setup ROOT at least with support for:
+       * minimal X11,
+       * GDML,
+       * OpenGL.
 
 For ease of use, LPC Caen provides the Cadfael SDK which bundles these
 libraries for easy use by Bayeux and clients of Bayeux. You can use this
 bundle, or, at your discretion, your own, or system, installs of these
 packages.
+
+-  **Additional Software Required**
+
+   - geomtools also requires Gnuplot 4.0 or higher: http://www.gnuplot.info
+
 
 Known Issues on Tested Platforms
 --------------------------------
