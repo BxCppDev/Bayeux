@@ -1,27 +1,9 @@
-// -*- mode: c++; -*- 
-/* genvtx_config.h header file 
+// -*- mode: c++; -*-
+/* genvtx_config.h header file
  */
 
 #ifndef GENVTX_GENVTX_CONFIG_H_
 #define GENVTX_GENVTX_CONFIG_H_ 1
-
-/*** genvtx versioning information ***/
-
-//  GENVTX_VERSION % 100        is the patch level
-//  GENVTX_VERSION / 100 % 1000 is the minor version
-//  GENVTX_VERSION / 100000     is the major version
-
-#define GENVTX_VERSION_MAJOR @genvtx_VERSION_MAJOR@
-#define GENVTX_VERSION_MINOR @genvtx_VERSION_MINOR@
-#define GENVTX_PATCH_VERSION @genvtx_PATCH_VERSION@
-
-#define GENVTX_VERSION @_genvtx_VERSION_NUMERIC@
-
-//  GENVTX_LIB_VERSION must be defined to be the same as GENVTX_VERSION
-//  but as a *string* in the form "x.y[.z]" where x is the major version
-//  number, y is the minor version number, and z is the patch level if not 0.
-
-#define GENVTX_LIB_VERSION "@genvtx_VERSION@"
 
 /***  genvtx debug flag ***/
 #cmakedefine01 GENVTX_WITH_DEBUG

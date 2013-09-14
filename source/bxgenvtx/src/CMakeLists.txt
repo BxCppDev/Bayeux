@@ -45,7 +45,14 @@ configure_file(
   ${PROJECT_SOURCE_DIR}/include/genvtx/genvtx_config.h.in
   ${PROJECT_BINARY_DIR}/include/genvtx/genvtx_config.h
   )
-list(APPEND genvtx_PUBLIC_HEADERS ${PROJECT_BINARY_DIR}/include/genvtx/genvtx_config.h)
+configure_file(
+  ${PROJECT_SOURCE_DIR}/include/genvtx/version.h.in
+  ${PROJECT_BINARY_DIR}/include/genvtx/version.h
+  )
+list(APPEND genvtx_PUBLIC_HEADERS
+  ${PROJECT_BINARY_DIR}/include/genvtx/genvtx_config.h
+  ${PROJECT_BINARY_DIR}/include/genvtx/version.h
+)
 
 #-----------------------------------------------------------------------
 # PRIVATE HEADERS
@@ -95,6 +102,7 @@ set(genvtx_SOURCES
    cylinder_model_vg.cc
    tube_model_vg.cc
    geom_manager_utils.cc
+   version.cc
   )
 
 #-----------------------------------------------------------------------

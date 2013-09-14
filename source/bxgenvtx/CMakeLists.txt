@@ -27,9 +27,8 @@ project(genvtx)
 # - Versioning
 set(genvtx_VERSION_MAJOR 4)
 set(genvtx_VERSION_MINOR 0)
-set(genvtx_PATCH_VERSION 0)
-set(genvtx_VERSION "${genvtx_VERSION_MAJOR}.${genvtx_VERSION_MINOR}.${genvtx_PATCH_VERSION}")
-math(EXPR _genvtx_VERSION_NUMERIC "${genvtx_VERSION_MAJOR}*100000+${genvtx_VERSION_MINOR}*100+${genvtx_PATCH_VERSION}")
+set(genvtx_VERSION_PATCH 0)
+set(genvtx_VERSION "${genvtx_VERSION_MAJOR}.${genvtx_VERSION_MINOR}.${genvtx_VERSION_PATCH}")
 
 # - Fixup default install prefix on Mac
 if(APPLE AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
