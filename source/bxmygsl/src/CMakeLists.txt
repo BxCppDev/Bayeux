@@ -147,6 +147,7 @@ set(mygsl_SOURCES
   von_neumann_method.cc
   i_unary_function.cc
   i_unary_function_with_derivative.cc
+  version.cc
   )
 
 #-----------------------------------------------------------------------
