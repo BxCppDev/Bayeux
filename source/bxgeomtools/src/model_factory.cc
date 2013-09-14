@@ -237,18 +237,22 @@ namespace geomtools {
       const datatools::multi_properties::entry & e = *ptr_entry;
       string model_name = e.get_key ();
       string model_type = e.get_meta ();
-      if (! _factory_register_.has (model_type)) {
-        DT_LOG_TRACE(_logging_priority_,
-                     "No registered class with ID '"
-                     << model_type << "' for model named '" << model_name << " !");
-        continue;
-      }
+      // if (! _factory_register_.has(model_type)) {
+      //   DT_LOG_TRACE(_logging_priority_,
+      //                "No registered class with ID '"
+      //                << model_type << "' for model named '" << model_name << " !");
+      //   continue;
+      // }
+      DT_THROW_IF(! _factory_register_.has(model_type),
+                  std::runtime_error,
+                  "Cannot find any registered geometry model class factory with ID '"
+                  << model_type << "' for model named '" << model_name << " !");
       const i_model::factory_register_type::factory_type & the_factory
-        = _factory_register_.get (model_type);
+        = _factory_register_.get(model_type);
       DT_LOG_TRACE(_logging_priority_,
                    "About to create a new model of type \"" << model_type
                    << "\" with name \"" << model_name << "\"...");
-      i_model * model = the_factory ();
+      i_model * model = the_factory();
       model->construct (model_name, e.get_properties (), _property_prefixes_, &_models_);
       _models_[model_name] = model;
       DT_LOG_DEBUG(_logging_priority_,"Adding model '" << model_name << "'...");
