@@ -2,7 +2,7 @@
 Bayeux C++ Library for Experimental Particle/Nuclear Physics
 ============================================================
 
-:Authors: François Mauger; Xavier Garrido, Ben Morgan
+:Authors: François Mauger, Xavier Garrido, Ben Morgan
 :Date:    Today
 
 .. contents::
