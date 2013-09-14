@@ -38,10 +38,10 @@ list_prepend(brio_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 # - Add config header
 configure_file(
   ${PROJECT_SOURCE_DIR}/include/brio/brio_config.h.in
-  ${PROJECT_BINARY_DIR}/include/brio/version.h
+  ${PROJECT_BINARY_DIR}/include/brio/brio_config.h
   )
 configure_file(
-  ${PROJECT_SOURCE_DIR}/include/brio/brio_config.h.in
+  ${PROJECT_SOURCE_DIR}/include/brio/version.h.in
   ${PROJECT_BINARY_DIR}/include/brio/version.h
   )
 list(APPEND brio_PUBLIC_HEADERS
