@@ -568,7 +568,7 @@ namespace geomtools {
         errcode = system(cat_com.str().c_str());
 
         std::ostringstream rvm_com;
-        rvm_com << "root -l " << rvm_name << std::ends;
+        rvm_com << "root.exe -l " << rvm_name << std::ends;
         errcode = system(rvm_com.str().c_str());
         if (errcode != 0) {
           DT_LOG_ERROR(logging_, "Cannot run the ROOT visualization macro '" << rvm_name << "' !");
