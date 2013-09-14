@@ -74,7 +74,14 @@ configure_file(
   ${PROJECT_SOURCE_DIR}/include/mygsl/mygsl_config.h.in
   ${PROJECT_BINARY_DIR}/include/mygsl/mygsl_config.h
   )
-list(APPEND mygsl_PUBLIC_HEADERS ${PROJECT_BINARY_DIR}/include/mygsl/mygsl_config.h)
+configure_file(
+  ${PROJECT_SOURCE_DIR}/include/mygsl/version.h.in
+  ${PROJECT_BINARY_DIR}/include/mygsl/version.h
+  )
+list(APPEND mygsl_PUBLIC_HEADERS
+  ${PROJECT_BINARY_DIR}/include/mygsl/mygsl_config.h
+  ${PROJECT_BINARY_DIR}/include/mygsl/version.h
+  )
 
 #-----------------------------------------------------------------------
 # PRIVATE HEADERS

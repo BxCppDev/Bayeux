@@ -27,9 +27,8 @@ project(mygsl)
 # - Versioning
 set(mygsl_VERSION_MAJOR 4)
 set(mygsl_VERSION_MINOR 0)
-set(mygsl_PATCH_VERSION 0)
-set(mygsl_VERSION "${mygsl_VERSION_MAJOR}.${mygsl_VERSION_MINOR}.${mygsl_PATCH_VERSION}")
-math(EXPR _mygsl_VERSION_NUMERIC "${mygsl_VERSION_MAJOR}*100000+${mygsl_VERSION_MINOR}*100+${mygsl_PATCH_VERSION}")
+set(mygsl_VERSION_PATCH 0)
+set(mygsl_VERSION "${mygsl_VERSION_MAJOR}.${mygsl_VERSION_MINOR}.${mygsl_VERSION_PATCH}")
 
 # - Fixup default install prefix on Mac
 if(APPLE AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
