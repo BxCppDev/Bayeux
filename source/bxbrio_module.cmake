@@ -23,8 +23,8 @@ endforeach()
 # - Versioning
 set(brio_VERSION_MAJOR 1)
 set(brio_VERSION_MINOR 0)
-set(brio_PATCH_VERSION 0)
-set(brio_VERSION "${brio_VERSION_MAJOR}.${brio_VERSION_MINOR}.${brio_PATCH_VERSION}")
+set(brio_VERSION_PATCH 0)
+set(brio_VERSION "${brio_VERSION_MAJOR}.${brio_VERSION_MINOR}.${brio_VERSION_PATCH}")
 
 
 # - Raw Headers and Sources
@@ -36,6 +36,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/reader-inl.h
   ${module_include_dir}/${module_name}/writer.h
   ${module_include_dir}/${module_name}/writer-inl.h
+  ${module_include_dir}/${module_name}/version.h.in
   ${module_include_dir}/${module_name}/detail/base_io.h
   ${module_include_dir}/${module_name}/detail/brio_record.h
   ${module_include_dir}/${module_name}/detail/TArrayCMod.h
@@ -47,12 +48,13 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/utils.cc
   ${module_source_dir}/reader.cc
   ${module_source_dir}/writer.cc
+  ${module_source_dir}/version.cc
   ${module_source_dir}/TArrayCMod.cc
   )
 
 # - Generate ROOT headers
-root_generate_dictionary("${module_include_dir}/${module_name}/detail/brio_record.h;${module_include_dir}/${module_name}/detail/TArrayCMod.h" 
-  "${PROJECT_SOURCE_DIR}/source/brio_linkdef.h" 
+root_generate_dictionary("${module_include_dir}/${module_name}/detail/brio_record.h;${module_include_dir}/${module_name}/detail/TArrayCMod.h"
+  "${PROJECT_SOURCE_DIR}/source/brio_linkdef.h"
   "${PROJECT_BINARY_DIR}/brio_dict.cc"
   "${module_include_dir}"
   )

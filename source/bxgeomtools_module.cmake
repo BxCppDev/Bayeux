@@ -26,8 +26,8 @@ endforeach()
 # - Versioning
 set(geomtools_VERSION_MAJOR 4)
 set(geomtools_VERSION_MINOR 0)
-set(geomtools_PATCH_VERSION 0)
-set(geomtools_VERSION "${geomtools_VERSION_MAJOR}.${geomtools_VERSION_MINOR}.${geomtools_PATCH_VERSION}")
+set(geomtools_VERSION_PATCH 0)
+set(geomtools_VERSION "${geomtools_VERSION_MAJOR}.${geomtools_VERSION_MINOR}.${geomtools_VERSION_PATCH}")
 
 # - Boost I/O, CAMP Reflection, Gnuplot pipe interface
 set(GEOMTOOLS_WITH_BIO 1)
@@ -142,6 +142,8 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/utils.ipp
   ${module_include_dir}/${module_name}/visibility.h
   ${module_include_dir}/${module_name}/geomtools_driver.h
+  ${module_include_dir}/${module_name}/visibility.h
+  ${module_include_dir}/${module_name}/version.h.in
   )
 
 # - NB Order of sources appears to be important - taken from geomtools
@@ -232,6 +234,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/gnuplot_i.cc
   ${module_source_dir}/gnuplot_drawer.cc
   ${module_source_dir}/geomtools_driver.cc
+  ${module_source_dir}/version.cc
   )
 
 # - Reflection components

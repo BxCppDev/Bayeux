@@ -23,8 +23,8 @@ endforeach()
 # - Versioning
 set(dpp_VERSION_MAJOR 1)
 set(dpp_VERSION_MINOR 0)
-set(dpp_PATCH_VERSION 0)
-set(dpp_VERSION "${dpp_VERSION_MAJOR}.${dpp_VERSION_MINOR}.${dpp_PATCH_VERSION}")
+set(dpp_VERSION_PATCH 0)
+set(dpp_VERSION "${dpp_VERSION_MAJOR}.${dpp_VERSION_MINOR}.${dpp_VERSION_PATCH}")
 
 
 # - Raw Headers and Sources
@@ -55,6 +55,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/histogram_service.h
   ${module_include_dir}/${module_name}/ocd_support.h
   ${module_include_dir}/${module_name}/dpp_config.h.in
+  ${module_include_dir}/${module_name}/version.h.in
   )
 
 set(${module_name}_MODULE_SOURCES
@@ -81,6 +82,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/dump_module.cc
   ${module_source_dir}/histogram_service.cc
   ${module_source_dir}/ocd_support.cc
+  ${module_source_dir}/version.cc
   )
 
 # - Published headers
