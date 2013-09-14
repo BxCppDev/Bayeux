@@ -37,11 +37,11 @@
  *    - header (DPP_DU::properties) [optional]
  *    - footer (DPP_DU::properties) [optional]
  *   Store: "ER" (event record as 'DPP_DU::things' (things))
- *    - event record #0
- *    - event record #1
- *    - event record #2
+ *    - event record # 0
+ *    - event record # 1
+ *    - event record # 2
  *    - ...
- *    - event record #N
+ *    - event record # N
  *
  */
 
@@ -58,7 +58,7 @@ namespace dpp {
     static const std::string GENERAL_INFO_STORE_LABEL;
     static const std::string EVENT_RECORD_STORE_LABEL;
   };
-  
+
 } // end of namespace dpp
 
 #endif // DPP_BRIO_COMMON_H_

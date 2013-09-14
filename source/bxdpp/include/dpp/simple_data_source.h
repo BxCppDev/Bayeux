@@ -33,11 +33,11 @@
  * Standard BOOST I/O file format for SuperNEMO data is :
  *
  *   Data: event record as 'snemo:core::model::event_record' (things)
- *    - event record #0
- *    - event record #1
- *    - event record #2
+ *    - event record # 0
+ *    - event record # 1
+ *    - event record # 2
  *    - ...
- *    - event record #N
+ *    - event record # N
  *
  *
  */
