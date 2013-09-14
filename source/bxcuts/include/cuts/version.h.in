@@ -1,4 +1,4 @@
-//! \file    version.h
+//! \file    cuts/version.h
 //! \brief   Describe the cuts API version
 //! \details Querying the version of cuts is needed at both
 //!          compile and runtime by clients so that they may adjust
