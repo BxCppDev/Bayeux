@@ -14,6 +14,7 @@
 
 // Geomtools:
 #include <geomtools/geomtools_config.h>
+#include <geomtools/version.h>
 #include <geomtools/geomtools_driver.h>
 
 void print_splash(std::ostream & out_ = std::clog);

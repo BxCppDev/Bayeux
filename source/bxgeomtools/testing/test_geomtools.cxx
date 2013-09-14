@@ -7,6 +7,7 @@
 #include <exception>
 
 #include <geomtools/geomtools_config.h>
+#include <geomtools/version.h>
 #include <datatools/library_loader.h>
 
 using namespace std;
