@@ -20,11 +20,6 @@ endfunction()
 # Because we're in the awkward position of separate headers and sources,
 # use a simple listing and then prepend the actual source dir root
 
-# file ( GLOB geomtools_PUBLIC_HEADERS
-#   ${PROJECT_SOURCE_DIR}/include/geomtools/*.h
-#   ${PROJECT_BINARY_DIR}/include/geomtools/geomtools_config.h
-#   )
-
 set(geomtools_PUBLIC_HEADERS
   include/geomtools/address_set.h
   include/geomtools/base_hit.h
@@ -148,7 +143,13 @@ configure_file(
   ${PROJECT_SOURCE_DIR}/include/geomtools/geomtools_config.h.in
   ${PROJECT_BINARY_DIR}/include/geomtools/geomtools_config.h
   )
-list(APPEND geomtools_PUBLIC_HEADERS ${PROJECT_BINARY_DIR}/include/geomtools/geomtools_config.h)
+  ${PROJECT_SOURCE_DIR}/include/geomtools/version.h.in
+  ${PROJECT_BINARY_DIR}/include/geomtools/version.h
+  )
+list(APPEND geomtools_PUBLIC_HEADERS
+     ${PROJECT_BINARY_DIR}/include/geomtools/geomtools_config.h
+     ${PROJECT_BINARY_DIR}/include/geomtools/version.h
+  )
 
 #-----------------------------------------------------------------------
 # PRIVATE HEADERS
@@ -264,6 +265,7 @@ set(geomtools_SOURCES
   geomtools_driver.cc
   geometry_service.cc
   ocd_support.cc
+  version.cc
   )
 
 #message(STATUS "********** GEOMTOOLS_WITH_GNUPLOT_DISPLAY=${GEOMTOOLS_WITH_GNUPLOT_DISPLAY}")
