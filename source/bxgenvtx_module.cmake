@@ -23,8 +23,8 @@ endforeach()
 # - Versioning
 set(genvtx_VERSION_MAJOR 4)
 set(genvtx_VERSION_MINOR 0)
-set(genvtx_PATCH_VERSION 0)
-set(genvtx_VERSION "${genvtx_VERSION_MAJOR}.${genvtx_VERSION_MINOR}.${genvtx_PATCH_VERSION}")
+set(genvtx_VERSION_PATCH 0)
+set(genvtx_VERSION "${genvtx_VERSION_MAJOR}.${genvtx_VERSION_MINOR}.${genvtx_VERSION_PATCH}")
 set(GENVTX_WITH_BIO 1)
 
 # - Raw Headers and Sources
