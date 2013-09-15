@@ -22,8 +22,8 @@ endforeach()
 # - Versioning
 set(emfield_VERSION_MAJOR 1)
 set(emfield_VERSION_MINOR 0)
-set(emfield_PATCH_VERSION 0)
-set(emfield_VERSION "${emfield_VERSION_MAJOR}.${emfield_VERSION_MINOR}.${emfield_PATCH_VERSION}")
+set(emfield_VERSION_PATCH 0)
+set(emfield_VERSION "${emfield_VERSION_MAJOR}.${emfield_VERSION_MINOR}.${emfield_VERSION_PATCH}")
 
 
 # - Raw Headers and Sources
@@ -39,6 +39,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/emfield_geom_plugin.h
   ${module_include_dir}/${module_name}/geom_map.h
   ${module_include_dir}/${module_name}/emfield_config.h.in
+  ${module_include_dir}/${module_name}/version.h.in
   )
 
 set(${module_name}_MODULE_SOURCES
@@ -51,6 +52,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/uniform_magnetic_field.cc
   ${module_source_dir}/emfield_geom_plugin.cc
   ${module_source_dir}/geom_map.cc
+  ${module_source_dir}/version.cc
   )
 
 # - Published headers
