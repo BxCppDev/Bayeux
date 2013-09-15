@@ -1,0 +1,92 @@
+//! \file    emfield/version.h
+//! \brief   Describe the emfield API version
+//! \details Querying the version of emfield is needed at both
+//!          compile and runtime by clients so that they may adjust
+//!          their usage.
+//
+// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com>
+// Copyright (c) 2013 by The University of Warwick
+//
+// This file is part of emfield.
+//
+// emfield is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// emfield is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with emfield.  If not, see <http://www.gnu.org/licenses/>.
+
+#ifndef EMFIELD_VERSION_H
+#define EMFIELD_VERSION_H
+// Standard Library
+#include <string>
+
+// Third Party
+// - A
+
+// This Project
+
+//----------------------------------------------------------------------
+// - Compile Time API
+//! Major version number of emfield
+#define EMFIELD_VERSION_MAJOR @emfield_VERSION_MAJOR@
+
+//! Minor version number of emfield
+#define EMFIELD_VERSION_MINOR @emfield_VERSION_MINOR@
+
+//! Patch version number of emfield
+#define EMFIELD_VERSION_PATCH @emfield_VERSION_PATCH@
+
+//! Encode emfield to ordered integer available at compile time
+#define EMFIELD_ENCODE_VERSION(major, minor, patch) ( \
+        ((major) * 10000) \
+      + ((minor) *   100) \
+      + ((patch) *     1))
+
+//! Integer encoded emfield version available at compile time
+#define EMFIELD_VERSION EMFIELD_ENCODE_VERSION( \
+        EMFIELD_VERSION_MAJOR, \
+        EMFIELD_VERSION_MINOR, \
+        EMFIELD_VERSION_PATCH)
+
+//! String encoded full version number, e.g. "1.2.3", available at compile time
+#define EMFIELD_LIB_VERSION "@emfield_VERSION@"
+
+//! Check current version >= (major, minor, patch) at compile time
+#define EMFIELD_IS_AT_LEAST(major,minor,patch) ( \
+        EMFIELD_VERSION >= \
+        EMFIELD_ENCODE_VERSION(major,minor,patch))
+
+//----------------------------------------------------------------------
+// Runtime API
+namespace emfield {
+//! \brief Describe the emfield API version and features
+struct version {
+//! Return the major version number of emfield, e.g., 1 for '1.2.3'
+static int get_major();
+
+//! Return the minor version number of emfield, e.g., 2 for '1.2.3'
+static int get_minor();
+
+//! Return the patch version number of emfield, e.g., 3 for '1.2.3'
+static int get_patch();
+
+//! Return the full version number of emfield as a string, e.g., '1.2.3'
+static std::string get_version();
+
+//! Return true if the current emfield version >= (major, minor, patch)
+static bool is_at_least(int major, int minor, int patch);
+
+//! Return true if the named feature is available in emfield
+static bool has_feature(const std::string& feature);
+};
+} // namespace emfield
+
+#endif // EMFIELD_VERSION_H
+

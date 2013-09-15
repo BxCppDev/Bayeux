@@ -39,7 +39,14 @@ configure_file(
   ${PROJECT_SOURCE_DIR}/include/emfield/emfield_config.h.in
   ${PROJECT_BINARY_DIR}/include/emfield/emfield_config.h
   )
-list(APPEND emfield_PUBLIC_HEADERS ${PROJECT_BINARY_DIR}/include/emfield/emfield_config.h)
+configure_file(
+  ${PROJECT_SOURCE_DIR}/include/emfield/version.h.in
+  ${PROJECT_BINARY_DIR}/include/emfield/version.h
+  )
+list(APPEND emfield_PUBLIC_HEADERS
+  ${PROJECT_BINARY_DIR}/include/emfield/emfield_config.h
+  ${PROJECT_BINARY_DIR}/include/emfield/version.h
+)
 
 #-----------------------------------------------------------------------
 # PRIVATE HEADERS
@@ -79,6 +86,7 @@ set(emfield_SOURCES
     uniform_magnetic_field.cc
     emfield_geom_plugin.cc
     geom_map.cc
+    version.cc
   )
 
 #-----------------------------------------------------------------------

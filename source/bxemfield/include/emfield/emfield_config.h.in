@@ -1,27 +1,9 @@
-// -*- mode: c++; -*- 
-/* emfield_config.h header file 
+// -*- mode: c++; -*-
+/* emfield_config.h header file
  */
 
 #ifndef EMFIELD_EMFIELD_CONFIG_H_
 #define EMFIELD_EMFIELD_CONFIG_H_ 1
-
-/*** emfield versioning information ***/
-
-//  EMFIELD_VERSION % 100        is the patch level
-//  EMFIELD_VERSION / 100 % 1000 is the minor version
-//  EMFIELD_VERSION / 100000     is the major version
-
-#define EMFIELD_VERSION_MAJOR @emfield_VERSION_MAJOR@
-#define EMFIELD_VERSION_MINOR @emfield_VERSION_MINOR@
-#define EMFIELD_PATCH_VERSION @emfield_PATCH_VERSION@
-
-#define EMFIELD_VERSION @_emfield_VERSION_NUMERIC@
-
-//  EMFIELD_LIB_VERSION must be defined to be the same as EMFIELD_VERSION
-//  but as a *string* in the form "x.y[.z]" where x is the major version
-//  number, y is the minor version number, and z is the patch level if not 0.
-
-#define EMFIELD_LIB_VERSION "@emfield_VERSION@"
 
 /***  emfield debug flag ***/
 #cmakedefine01 EMFIELD_WITH_DEBUG

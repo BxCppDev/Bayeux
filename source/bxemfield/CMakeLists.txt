@@ -27,9 +27,8 @@ project(emfield)
 # - Versioning
 set(emfield_VERSION_MAJOR 1)
 set(emfield_VERSION_MINOR 0)
-set(emfield_PATCH_VERSION 0)
-set(emfield_VERSION "${emfield_VERSION_MAJOR}.${emfield_VERSION_MINOR}.${emfield_PATCH_VERSION}")
-math(EXPR _emfield_VERSION_NUMERIC "${emfield_VERSION_MAJOR}*100000+${emfield_VERSION_MINOR}*100+${emfield_PATCH_VERSION}")
+set(emfield_VERSION_PATCH 0)
+set(emfield_VERSION "${emfield_VERSION_MAJOR}.${emfield_VERSION_MINOR}.${emfield_VERSION_PATCH}")
 
 # - Fixup default install prefix on Mac
 if(APPLE AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
