@@ -10,6 +10,7 @@
 
 #include <datatools/utils.h>
 
+#include <genbb_help/version.h>
 #include <genbb_help/genbb.h>
 #include <genbb_help/primary_event.h>
 #include <mygsl/rng.h>
@@ -19,6 +20,7 @@ using namespace std;
 int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
+  clog << "genbb_help version : " << GENBB_HELP_LIB_VERSION << endl;
   try {
     bool debug = false;
     bool test = false;
