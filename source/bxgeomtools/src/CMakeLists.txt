@@ -143,6 +143,7 @@ configure_file(
   ${PROJECT_SOURCE_DIR}/include/geomtools/geomtools_config.h.in
   ${PROJECT_BINARY_DIR}/include/geomtools/geomtools_config.h
   )
+configure_file(
   ${PROJECT_SOURCE_DIR}/include/geomtools/version.h.in
   ${PROJECT_BINARY_DIR}/include/geomtools/version.h
   )
