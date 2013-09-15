@@ -23,8 +23,8 @@ endforeach()
 # - Versioning
 set(genbb_help_VERSION_MAJOR 5)
 set(genbb_help_VERSION_MINOR 0)
-set(genbb_help_PATCH_VERSION 0)
-set(genbb_help_VERSION "${genbb_help_VERSION_MAJOR}.${genbb_help_VERSION_MINOR}.${genbb_help_PATCH_VERSION}")
+set(genbb_help_VERSION_PATCH 0)
+set(genbb_help_VERSION "${genbb_help_VERSION_MAJOR}.${genbb_help_VERSION_MINOR}.${genbb_help_VERSION_PATCH}")
 
 # - Boost I/O, CAMP Reflection, Gnuplot pipe interface
 set(GENBB_HELP_WITH_BIO 1)
@@ -48,6 +48,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/the_serializable.ipp
   ${module_include_dir}/${module_name}/the_serializable.h
   ${module_include_dir}/${module_name}/genbb_help_config.h.in
+  ${module_include_dir}/${module_name}/version.h.in
   ${module_include_dir}/${module_name}/detail/bio_link_guard.h
   ${module_include_dir}/${module_name}/detail/pg_tools.h
   )
@@ -219,6 +220,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/single_particle_generator.cc
   ${module_source_dir}/combined_particle_generator.cc
   ${module_source_dir}/manager.cc
+  ${module_source_dir}/version.cc
   ${module_source_dir}/the_serializable.cc
   ${module_source_dir}/decay0/Ac228.cc
   ${module_source_dir}/decay0/alpha.cc
