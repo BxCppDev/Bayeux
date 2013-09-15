@@ -22,8 +22,8 @@ endforeach()
 # - Versioning
 set(trackfit_VERSION_MAJOR 3)
 set(trackfit_VERSION_MINOR 0)
-set(trackfit_PATCH_VERSION 0)
-set(trackfit_VERSION "${trackfit_VERSION_MAJOR}.${trackfit_VERSION_MINOR}.${trackfit_PATCH_VERSION}")
+set(trackfit_VERSION_PATCH 0)
+set(trackfit_VERSION "${trackfit_VERSION_MAJOR}.${trackfit_VERSION_MINOR}.${trackfit_VERSION_PATCH}")
 
 
 # - Raw Headers and Sources
@@ -35,6 +35,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/i_drift_time_calibration.h
   ${module_include_dir}/${module_name}/line_fit_mgr.h
   ${module_include_dir}/${module_name}/trackfit_config.h.in
+  ${module_include_dir}/${module_name}/version.h.in
   )
 
 set(${module_name}_MODULE_SOURCES
@@ -44,6 +45,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/helix_fit_mgr.cc
   ${module_source_dir}/i_drift_time_calibration.cc
   ${module_source_dir}/line_fit_mgr.cc
+  ${module_source_dir}/version.cc
   )
 
 # - Published headers
