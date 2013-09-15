@@ -106,9 +106,15 @@ configure_file(
   ${PROJECT_SOURCE_DIR}/include/genbb_help/genbb_help_config.h.in
   ${PROJECT_BINARY_DIR}/include/genbb_help/genbb_help_config.h
   )
+configure_file(
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/version.h.in
+  ${PROJECT_BINARY_DIR}/include/genbb_help/version.h
+  )
 
 list(APPEND genbb_help_PUBLIC_HEADERS
-     ${PROJECT_BINARY_DIR}/include/genbb_help/genbb_help_config.h)
+     ${PROJECT_BINARY_DIR}/include/genbb_help/genbb_help_config.h
+     ${PROJECT_BINARY_DIR}/include/genbb_help/version.h
+)
 
 #-----------------------------------------------------------------------
 # PRIVATE HEADERS
@@ -155,6 +161,7 @@ set(genbb_help_SOURCES
       single_particle_generator.cc
       combined_particle_generator.cc
       manager.cc
+      version.cc
 )
 
 if (GENBB_HELP_WITH_FORTRAN)

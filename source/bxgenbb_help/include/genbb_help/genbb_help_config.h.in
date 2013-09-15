@@ -5,24 +5,6 @@
 #ifndef GENBB_HELP_GENBB_HELP_CONFIG_H_
 #define GENBB_HELP_GENBB_HELP_CONFIG_H_ 1
 
-/*** genbb_help versioning information ***/
-
-//  GENBB_HELP_VERSION % 100        is the patch level
-//  GENBB_HELP_VERSION / 100 % 1000 is the minor version
-//  GENBB_HELP_VERSION / 100000     is the major version
-
-#define GENBB_HELP_VERSION_MAJOR @genbb_help_VERSION_MAJOR@
-#define GENBB_HELP_VERSION_MINOR @genbb_help_VERSION_MINOR@
-#define GENBB_HELP_PATCH_VERSION @genbb_help_PATCH_VERSION@
-
-#define GENBB_HELP_VERSION @_genbb_help_VERSION_NUMERIC@
-
-//  GENBB_HELP_LIB_VERSION must be defined to be the same as GENBB_HELP_VERSION
-//  but as a *string* in the form "x.y[.z]" where x is the major version
-//  number, y is the minor version number, and z is the patch level if not 0.
-
-#define GENBB_HELP_LIB_VERSION "@genbb_help_VERSION@"
-
 /***  genbb_help debug flag ***/
 #cmakedefine01 GENBB_HELP_WITH_DEBUG
 

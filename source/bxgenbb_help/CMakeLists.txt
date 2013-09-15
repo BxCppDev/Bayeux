@@ -27,9 +27,8 @@ project(genbb_help C CXX Fortran )
 # - Versioning
 set(genbb_help_VERSION_MAJOR 5)
 set(genbb_help_VERSION_MINOR 0)
-set(genbb_help_PATCH_VERSION 0)
-set(genbb_help_VERSION "${genbb_help_VERSION_MAJOR}.${genbb_help_VERSION_MINOR}.${genbb_help_PATCH_VERSION}")
-math(EXPR _genbb_help_VERSION_NUMERIC "${genbb_help_VERSION_MAJOR}*100000+${genbb_help_VERSION_MINOR}*100+${genbb_help_PATCH_VERSION}")
+set(genbb_help_VERSION_PATCH 0)
+set(genbb_help_VERSION "${genbb_help_VERSION_MAJOR}.${genbb_help_VERSION_MINOR}.${genbb_help_VERSION_PATCH}")
 
 # - Fixup default install prefix on Mac
 if(APPLE AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
