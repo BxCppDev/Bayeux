@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_serializable.cxx
 
 #include <cstdlib>
@@ -8,12 +8,12 @@
 
 #include <geomtools/utils.h>
 #include <geomtools/geom_id.h>
-#include <geomtools/geomtools_config.h>
+#include <geomtools/version.h>
 #include <datatools/properties.h>
 #include <datatools/multi_properties.h>
 
 #include <datatools/io_factory.h>
- 
+
 // Some pre-processor guard about Boost I/O usage and linkage :
 #include <datatools/bio_guard.h>
 #include <geomtools/bio_guard.h>
@@ -24,7 +24,7 @@ int main (int argc_, char ** argv_)
 {
   cerr << "Program starts..." << endl;
   int error_code = EXIT_SUCCESS;
-  try 
+  try
     {
 
       geomtools::vector_2d pos2d;
@@ -42,7 +42,7 @@ int main (int argc_, char ** argv_)
 
       {
         datatools::data_writer writer;
-        writer.init ("test_utils.txt", 
+        writer.init ("test_utils.txt",
                      datatools::using_multi_archives);
         datatools::properties config;
         config.store_flag ("test");
@@ -66,9 +66,9 @@ int main (int argc_, char ** argv_)
 
       {
         datatools::data_writer writer;
-        writer.init ("test_utils_3d.txt", 
+        writer.init ("test_utils_3d.txt",
                      datatools::using_multi_archives);
-        
+
         datatools::properties config;
         config.store_flag ("test");
         config.tree_dump (cerr, "Config :");
@@ -88,9 +88,9 @@ int main (int argc_, char ** argv_)
 
       {
         datatools::data_writer writer;
-        writer.init ("test_utils_gid.txt", 
+        writer.init ("test_utils_gid.txt",
                      datatools::using_multi_archives);
-        
+
         datatools::properties config;
         config.store_flag ("test");
         config.store ("library", "geomtools");
@@ -108,10 +108,10 @@ int main (int argc_, char ** argv_)
         writer.reset ();
         cerr << endl;
       }
-        
+
       {
         datatools::data_reader reader;
-        reader.init ("test_utils_gid.txt", 
+        reader.init ("test_utils_gid.txt",
                      datatools::using_multi_archives);
         datatools::properties config;
         reader.load (config);
@@ -130,10 +130,10 @@ int main (int argc_, char ** argv_)
         reader.reset ();
         cerr << endl;
       }
-        
+
       {
         datatools::data_reader reader;
-        reader.init ("test_utils.txt", 
+        reader.init ("test_utils.txt",
                      datatools::using_multi_archives);
         datatools::properties config;
         reader.load (config);
@@ -160,10 +160,10 @@ int main (int argc_, char ** argv_)
         */
         cerr << endl;
      }
-       
+
       {
         datatools::data_reader reader;
-        reader.init ("test_utils_3d.txt", 
+        reader.init ("test_utils_3d.txt",
                      datatools::using_multi_archives);
         datatools::properties config;
         reader.load (config);
@@ -185,26 +185,26 @@ int main (int argc_, char ** argv_)
 
       {
         datatools::data_writer writer;
-        writer.init ("test_utils2.txt", 
+        writer.init ("test_utils2.txt",
                      datatools::using_multi_archives);
-        
+
         for (int i = 0; i < 4; i++)
           {
             geomtools::rotation r;
-            if (i == 3) 
+            if (i == 3)
               {
                 geomtools::invalidate (r);
               }
-            else 
+            else
               {
-                geomtools::create_rotation (r, 
+                geomtools::create_rotation (r,
                                             2. * M_PI * geomtools::random_tools::random_flat (),
                                             0.25 * M_PI * geomtools::random_tools::random_flat (),
                                             0.0);
               }
             cerr << "r[" << i << "] = " << r << endl;
-            geomtools::tree_dump (r, 
-                                  cerr, 
+            geomtools::tree_dump (r,
+                                  cerr,
                                   "Rotation matrix (saved):");
             writer.store (geomtools::io::ROTATION_3D_SERIAL_TAG, r);
           }
@@ -213,7 +213,7 @@ int main (int argc_, char ** argv_)
 
       {
         datatools::data_reader reader;
-        reader.init ("test_utils2.txt", 
+        reader.init ("test_utils2.txt",
                      datatools::using_multi_archives);
         int i = 0;
         while (reader.has_record_tag ())
@@ -222,8 +222,8 @@ int main (int argc_, char ** argv_)
               {
                 geomtools::rotation r;
                 reader.load (geomtools::io::ROTATION_3D_SERIAL_TAG, r);
-                geomtools::tree_dump (r, 
-                                      cerr, 
+                geomtools::tree_dump (r,
+                                      cerr,
                                       "Rotation matrix (loaded):");
                 cerr << endl;
               }
@@ -233,24 +233,24 @@ int main (int argc_, char ** argv_)
         cerr << endl;
       }
 
-      geomtools::create_rotation (rot, 
-                                  30.0 * CLHEP::degree, 
+      geomtools::create_rotation (rot,
+                                  30.0 * CLHEP::degree,
                                   45. * CLHEP::degree,
                                   0.0);
-      geomtools::tree_dump (rot, cerr, "Rotation matrix 3D (valid):"); 
+      geomtools::tree_dump (rot, cerr, "Rotation matrix 3D (valid):");
       geomtools::invalidate (rot);
       geomtools::tree_dump (rot, cerr, "Rotation matrix 3D (invalid):");
       cerr << endl;
- 
+
     }
   catch (exception & x)
     {
-      cerr << "error: " << x.what() << endl; 
+      cerr << "error: " << x.what() << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return error_code;
