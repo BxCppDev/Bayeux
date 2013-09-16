@@ -58,10 +58,10 @@ configure_file(
   ${PROJECT_SOURCE_DIR}/include/dpp/version.h.in
   ${PROJECT_BINARY_DIR}/include/dpp/version.h
   )
-list(APPEND
-     dpp_PUBLIC_HEADERS ${PROJECT_BINARY_DIR}/include/dpp/dpp_config.h
-     dpp_PUBLIC_HEADERS ${PROJECT_BINARY_DIR}/include/dpp/version.h
-    )
+list(APPEND dpp_PUBLIC_HEADERS
+  ${PROJECT_BINARY_DIR}/include/dpp/dpp_config.h
+  ${PROJECT_BINARY_DIR}/include/dpp/version.h
+  )
 
 #-----------------------------------------------------------------------
 # PRIVATE HEADERS
