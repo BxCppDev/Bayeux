@@ -1,6 +1,6 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 // test_manager.cxx
- 
+
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -9,7 +9,7 @@
 #include <datatools/properties.h>
 #include <datatools/clhep_units.h>
 #include <geomtools/manager.h>
-#include <genvtx/genvtx_config.h>
+#include <genvtx/version.h>
 #include <genvtx/manager.h>
 
 #include <geomtools/geomtools_config.h>
@@ -20,11 +20,11 @@
 #include <geomtools/gnuplot_draw.h>
 
 int main (int argc_, char ** argv_)
-{ 
+{
   int error_code = EXIT_SUCCESS;
   try {
-    std::clog << "Test program for the 'genvtx::manager' class." << std::endl; 
-  
+    std::clog << "Test program for the 'genvtx::manager' class." << std::endl;
+
     bool debug = false;
     bool verbose = false;
     int nshoots = 1;
@@ -41,7 +41,7 @@ int main (int argc_, char ** argv_)
       std::string token = argv_[iarg];
 
       if (token[0] == '-')  {
-        std::string option = token; 
+        std::string option = token;
         if ((option == "-d") || (option == "--debug")) {
           debug = true;
         }
@@ -73,21 +73,21 @@ int main (int argc_, char ** argv_)
         else if ((option == "-T2") || (option == "--test-2")){
           test_id = 2;
         }
-        else { 
-          std::clog << "warning: ignoring option '" << option << "'!" << std::endl; 
+        else {
+          std::clog << "warning: ignoring option '" << option << "'!" << std::endl;
         }
       }
       else{
-        std::string argument = token; 
-        { 
-          std::clog << "warning: ignoring argument '" << argument << "'!" << std::endl; 
+        std::string argument = token;
+        {
+          std::clog << "warning: ignoring argument '" << argument << "'!" << std::endl;
         }
-      } 
-      iarg++; 
+      }
+      iarg++;
     }
 
     std::clog << "genvtx version : " << GENVTX_LIB_VERSION << std::endl;
- 
+
     // Configuration files :
     std::string GeoMgrConfigFile = "${GENVTX_DATA_DIR}/testing/config/test-1.0/geometry/manager.conf";
     std::string VGMgrConfigFile = "${GENVTX_DATA_DIR}/testing/config/test-1.0/vg_mgr.conf";
@@ -95,17 +95,17 @@ int main (int argc_, char ** argv_)
       GeoMgrConfigFile = "${GEOMTOOLS_DATA_DIR}/testing/config/test-1.0/test_manager.conf";
       VGMgrConfigFile = "${GENVTX_DATA_DIR}/testing/config/test-2.0/vg_mgr.conf";
     }
- 
+
     // Geometry manager :
     geomtools::manager GeoMgr;
     datatools::fetch_path_with_env (GeoMgrConfigFile);
     datatools::properties GeoMgrConfig;
-    datatools::properties::read_config (GeoMgrConfigFile, GeoMgrConfig); 
+    datatools::properties::read_config (GeoMgrConfigFile, GeoMgrConfig);
     GeoMgr.initialize (GeoMgrConfig);
- 
+
     if (dump_gids) {
       std::clog << "The embeded GID mapping : " << std::endl;
-      GeoMgr.get_mapping ().dump_dictionnary (std::clog);   
+      GeoMgr.get_mapping ().dump_dictionnary (std::clog);
     }
     // Vertex generator manager :
     genvtx::manager VGMgr;
@@ -114,10 +114,10 @@ int main (int argc_, char ** argv_)
     VGMgr.set_random_seed(314159);
     datatools::fetch_path_with_env (VGMgrConfigFile);
     datatools::properties VGMgrConfig;
-    datatools::properties::read_config (VGMgrConfigFile, VGMgrConfig); 
+    datatools::properties::read_config (VGMgrConfigFile, VGMgrConfig);
     VGMgr.initialize (VGMgrConfig);
     VGMgr.tree_dump(std::clog, "The vertex generator manager: ");
-      
+
     if (! vg_name.empty()) {
       VGMgr.activate_current_vg(vg_name);
     }
@@ -142,12 +142,12 @@ int main (int argc_, char ** argv_)
       if (visu) {
         std::ostringstream vertex_name_oss;
         vertex_name_oss << "vertex_" << vtx_counter;
-        geomtools::display_data::display_item & vertex_spot_DI            
+        geomtools::display_data::display_item & vertex_spot_DI
           = dd.add_static_item (vertex_name_oss.str(),
                                 "group::vertex",
                                 "magenta");
         geomtools::placement vertex_plcmt;
-        vertex_plcmt.set_translation(vertex_pos);                   
+        vertex_plcmt.set_translation(vertex_pos);
         vertex_spot.generate_wires (vertex_spot_DI.paths, vertex_plcmt);
       }
       vtx_counter++;
@@ -167,11 +167,11 @@ int main (int argc_, char ** argv_)
       GPD.add_display_data (dd, dd_pl);
       GPD.set_view (geomtools::gnuplot_drawer::VIEW_3D);
       GPD.set_mode (geomtools::gnuplot_drawer::MODE_WIRED);
-      int view_code = GPD.draw (GeoMgr, 
-                                visu_object, 
+      int view_code = GPD.draw (GeoMgr,
+                                visu_object,
                                 100);
       if (view_code != 0) {
-        std::cerr << "ERROR: " << "Cannot display the object with label '" 
+        std::cerr << "ERROR: " << "Cannot display the object with label '"
                   << GeoMgr.get_world_name () << "' !" << std::endl;
       }
     }
@@ -180,18 +180,18 @@ int main (int argc_, char ** argv_)
       datatools::object_configuration_description OCD;
       datatools::load_ocd<genvtx::manager>(OCD);
       std::ofstream fscf ("test_OCD_manager.sample.conf");
-      OCD.generate_sample_configuration(fscf, 
+      OCD.generate_sample_configuration(fscf,
                                         "the configuration of a 'genvtx::manager' test object");
       OCD.print(std::clog);
     }
     std::clog << "The end." << std::endl;
   }
-  catch (std::exception & x) { 
-    std::cerr << "error: " << x.what () << std::endl; 
+  catch (std::exception & x) {
+    std::cerr << "error: " << x.what () << std::endl;
     error_code = EXIT_FAILURE;
   }
   catch (...) {
-    std::cerr << "error: " << "Unexpected error !" << std::endl; 
+    std::cerr << "error: " << "Unexpected error !" << std::endl;
     error_code = EXIT_FAILURE;
   }
   return (error_code);
