@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 //! \file datatools/properties.ipp
 #ifndef DATATOOLS_PROPERTIES_IPP_
 #define DATATOOLS_PROPERTIES_IPP_
@@ -16,7 +16,7 @@
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/vector.hpp>
- 
+
 // This Project
 #include <datatools/i_serializable.ipp>
 #include <datatools/utils.h>
@@ -24,6 +24,7 @@
 namespace datatools {
 
 
+/// Boost serialization template method
 DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(properties::data, archive, version)
 {
   archive & boost::serialization::make_nvp("description", _description_);
@@ -44,6 +45,7 @@ DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(properties::data, archive, ve
 }
 
 
+/// Boost serialization template method
 DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(properties, archive, version)
 {
   if (version ==1 ) {
@@ -59,7 +61,7 @@ DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(properties, archive, version)
   archive & boost::serialization::make_nvp("properties",  _props_);
 }
 
-} // end of namespace datatools 
+} // end of namespace datatools
 
 #include <boost/serialization/version.hpp>
 BOOST_CLASS_VERSION(datatools::properties, 2)

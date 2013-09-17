@@ -19,6 +19,7 @@
 #include <datatools/properties.ipp>
 
 namespace datatools {
+  /// Boost serialization template method
 DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(advanced_object, archive, version)
 {
   archive & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;

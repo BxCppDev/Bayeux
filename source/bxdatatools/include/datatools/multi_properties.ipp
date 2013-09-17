@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 //! \file datatools/multi_properties.ipp
 #ifndef DATATOOLS_MULTI_PROPERTIES_IPP_
 #define DATATOOLS_MULTI_PROPERTIES_IPP_
@@ -14,16 +14,17 @@
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/map.hpp>
 #include <boost/serialization/list.hpp>
-#include <boost/serialization/vector.hpp> 
+#include <boost/serialization/vector.hpp>
 #include <boost/serialization/string.hpp>
 
 // This Project
 #include <datatools/i_serializable.ipp>
 #include <datatools/utils.h>
 #include <datatools/properties.ipp>
- 
+
 namespace datatools {
 
+/// Boost serialization template method
 DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(multi_properties::entry, archive, version)
 {
   archive & boost::serialization::make_nvp("key", key_);
@@ -32,6 +33,7 @@ DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(multi_properties::entry, arch
 }
 
 
+/// Boost serialization template method
 DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(multi_properties, archive, version)
 {
   if (version == 1) {
@@ -49,7 +51,7 @@ DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(multi_properties, archive, ve
   archive & boost::serialization::make_nvp("ordered_entries", ordered_entries_);
 }
 
-} // end of namespace datatools 
+} // end of namespace datatools
 
 #include <boost/serialization/version.hpp>
 BOOST_CLASS_VERSION(datatools::multi_properties, 2)

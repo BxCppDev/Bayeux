@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 //! \file datatools/things.ipp
 #ifndef DATATOOLS_THINGS_IPP_
 #define DATATOOLS_THINGS_IPP_
@@ -24,13 +24,15 @@
 namespace datatools {
 
 
+/// Boost serialization template method
 DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(things::entry_type, archive, version)
 {
   archive & boost::serialization::make_nvp("description", description);
   archive & boost::serialization::make_nvp("flags",       flags);
-  archive & boost::serialization::make_nvp("handle",      handle); 
+  archive & boost::serialization::make_nvp("handle",      handle);
 }
 
+/// Boost serialization template method
 DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(things, archive, version)
 {
   if (version == 0) {
@@ -44,7 +46,7 @@ DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(things, archive, version)
   archive & boost::serialization::make_nvp("things",      things_);
 }
 
-} // end of namespace datatools 
+} // end of namespace datatools
 
 #include <boost/serialization/version.hpp>
 BOOST_CLASS_VERSION(datatools::things, 1)
