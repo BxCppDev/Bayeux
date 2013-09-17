@@ -33,6 +33,7 @@
 // - Camp
 #include <camp/camptype.hpp>
 #include <camp/class.hpp>
+#include <camp/enum.hpp>
 #include <camp/userobject.hpp>
 #include <camp/value.hpp>
 #include <camp/args.hpp>
@@ -44,13 +45,23 @@
 #include <datatools/detail/reflection_version.h>
 
 // Inform Camp that class Type exists :
-#define DR_CLASS_REGISTER(Type)                   \
-  CAMP_TYPE( Type )                               \
+#define DR_CLASS_REGISTER(Type) \
+  CAMP_TYPE( Type )             \
+  /**/
+
+// Inform Camp that type Type exists :
+#define DR_TYPE_REGISTER(Type) \
+  DR_CLASS_REGISTER( Type )    \
   /**/
 
 // Inform Camp that non copyable class Type exists :
-#define DR_CLASS_NONCOPYABLE_REGISTER(Type)       \
-  CAMP_TYPE_NONCOPYABLE( Type )                   \
+#define DR_CLASS_NONCOPYABLE_REGISTER(Type) \
+  CAMP_TYPE_NONCOPYABLE( Type )             \
+  /**/
+
+// Inform Camp that non copyable type Type exists :
+#define DR_TYPE_NONCOPYABLE_REGISTER(Type) \
+  DR_CLASS_NONCOPYABLE_REGISTER( Type )    \
   /**/
 
 // Declare Camp RTTI within class declaration :
@@ -67,6 +78,10 @@
       }}}                                                               \
   /**/
 
+#define DR_TYPE_IMPLEMENT_REFLECTION_DECLARATION(Introspectable)       \
+  DR_CLASS_IMPLEMENT_REFLECTION_DECLARATION(Introspectable)             \
+  /**/
+
 #define DR_CLASS_INIT(Introspectable)                           \
   DR_CLASS_REGISTER(Introspectable);                            \
   DR_CLASS_IMPLEMENT_REFLECTION_DECLARATION(Introspectable);    \
@@ -77,6 +92,13 @@
   DR_CLASS_IMPLEMENT_REFLECTION_DECLARATION(Introspectable);    \
   /**/
 
+#define DR_TYPE_INIT(Introspectable)            \
+  DR_CLASS_INIT(Introspectable)                 \
+  /**/
+
+#define DR_TYPE_NONCOPYABLE_INIT(Introspectable)        \
+  DR_CLASS_NONCOPYABLE_INIT(Introspectable)             \
+  /**/
 
 /****************************************
  *    Introspection metaclass macros    *
@@ -87,6 +109,9 @@
   void implement_reflection< TypeId > (unsigned int TypeTag)    \
   /**/
 
+#define DR_TYPE_IMPLEMENT_REFLECTION_HEAD(TypeId,TypeTag)       \
+  DR_CLASS_IMPLEMENT_REFLECTION_HEAD(TypeId,TypeTag)            \
+  /**/
 
 // Declare introspection metadata for a class :
 #define DR_CLASS_DECLARE2(TypeId,TypeName)      \
@@ -433,10 +458,25 @@
   DR_CLASS_REFMETHOD4_CONST(MethodName,TypeId,RefMethodId,void,Arg0Type,Arg1Type,Arg2Type,Arg3Type) \
   /**/
 
+// Declare introspection metadata for an enum :
+#define DR_ENUM_DECLARE2(TypeId,TypeName)      \
+  ::camp::Enum::declare< TypeId >(TypeName)    \
+  /**/
+
+// Declare introspection metadata for a enum :
+#define DR_ENUM_DECLARE(TypeId)                                        \
+  DR_ENUM_DECLARE2( TypeId , ::datatools::detail::reflection::guid< TypeId >() ) \
+  /**/
+
+#define DR_ENUM_PAIR(PairName,PairValue)                                \
+  value( PairName, PairValue )                                          \
+  /**/
+
 
 /************************************************************************/
 
 #define DR_CLASS         camp::Class
+#define DR_ENUM          camp::Enum
 #define DR_CLASS_BY_NAME camp::classByName
 #define DR_OBJECT        camp::UserObject
 #define DR_VALUE         camp::Value
@@ -446,12 +486,12 @@
 #define DR_CALL          call
 #define DR_GET           get
 #define DR_NOTYPE        camp::noType
-#define DR_BOOLEAN       camp::boolType
-#define DR_INTEGER       camp::intType
-#define DR_REAL          camp::realType
-#define DR_STRING        camp::stringType
-#define DR_ENUM          camp::enumType
-#define DR_ARRAY         camp::arrayType
+#define DR_BOOLEANTYPE   camp::boolType
+#define DR_INTEGERTYPE   camp::intType
+#define DR_REALTYPE      camp::realType
+#define DR_STRINGTYPE    camp::stringType
+#define DR_ENUMTYPE      camp::enumType
+#define DR_ARRAYTYPE     camp::arrayType
 #define DR_USERTYPE      camp::userType
 
 #define DR_REF(TypeId)                          \
@@ -501,6 +541,10 @@
 #define DR_CLASS_EXPORT(T, K)                   \
   DR_CLASS_EXPORT_KEY (T, K)                    \
   DR_CLASS_EXPORT_IMPLEMENT (T)                 \
+  /**/
+
+#define DR_TYPE_EXPORT(T, K)                \
+  DR_CLASS_EXPORT (T, K)                    \
   /**/
 
 // specify the current version number for the class

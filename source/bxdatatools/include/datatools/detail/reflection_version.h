@@ -12,7 +12,7 @@
 // reflection_version_h
 // This code is derived from Boost/Serialization's version.hpp:
 
-// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com . 
+// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com .
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -27,8 +27,8 @@
 #include <boost/mpl/less.hpp>
 #include <boost/mpl/comparison.hpp>
 
-namespace datatools { 
-  namespace detail { 
+namespace datatools {
+  namespace detail {
     namespace reflection {
 
     struct basic_traits;
@@ -58,6 +58,7 @@ namespace datatools {
       };
 
 #ifndef BOOST_NO_INCLASS_MEMBER_INITIALIZATION
+    /// Special initialization for specific compiler not supporting in class member initialization
     template<class T>
       const int version<T>::value;
 #endif

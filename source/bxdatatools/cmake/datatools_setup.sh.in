@@ -33,7 +33,7 @@ alias datatools_print_info='do_datatools_print_info'
 function do_datatools_setup ()
 {
     local verbose=0
-    
+
     while [ -n "$1" ]; do
 	if [ "$1" = "--verbose" -o "$1" = "-v" ]; then
 	  let verbose=verbose+1
@@ -48,40 +48,40 @@ function do_datatools_setup ()
     if [ "x${DATATOOLS_ROOT}" != "x" ]; then
 	echo "WARNING: do_datatools_setup: datatools is already setup !" 1>&2
 	return 2
-    fi 
-
-    if [ "x@DATATOOLS_WITH_REFLECTION@" = "x1" ]; then
-	which camp-config >/dev/null 2>&1
-	if [ $? -ne 0 ]; then
-	    echo "ERROR: do_datatools_setup: Cannot find CAMP setup ! Abort !" 1>&2
-	    return 1
-	else
-	    if [ ${verbose} -ne 0 ]; then
-		echo "VERBOSE: do_datatools_setup: Found CAMP." 1>&2
-	    fi
-	fi
-    fi
- 
-    which clhep-config >/dev/null 2>&1
-    if [ $? -ne 0 ]; then
-	echo "ERROR: do_datatools_setup: Cannot find CLHEP setup ! Abort !" 1>&2
-	return 1
-    else
-	if [ ${verbose} -ne 0 ]; then
-	    echo "VERBOSE: do_datatools_setup: Found CLHEP." 1>&2
-	fi
     fi
 
-    which boost-config >/dev/null 2>&1
-    if [ $? -ne 0 ]; then
-	echo "ERROR: do_datatools_setup: Cannot find Boost setup ! Abort !" 1>&2
-	return 1
-    else
-	if [ ${verbose} -ne 0 ]; then
-	    echo "VERBOSE: do_datatools_setup: Found Boost." 1>&2
-	fi
-    fi
-    
+    # if [ "x@DATATOOLS_WITH_REFLECTION@" = "x1" ]; then
+    # 	which camp-config >/dev/null 2>&1
+    # 	if [ $? -ne 0 ]; then
+    # 	    echo "ERROR: do_datatools_setup: Cannot find CAMP setup ! Abort !" 1>&2
+    # 	    return 1
+    # 	else
+    # 	    if [ ${verbose} -ne 0 ]; then
+    # 		echo "VERBOSE: do_datatools_setup: Found CAMP." 1>&2
+    # 	    fi
+    # 	fi
+    # fi
+
+    # which clhep-config >/dev/null 2>&1
+    # if [ $? -ne 0 ]; then
+    # 	echo "ERROR: do_datatools_setup: Cannot find CLHEP setup ! Abort !" 1>&2
+    # 	return 1
+    # else
+    # 	if [ ${verbose} -ne 0 ]; then
+    # 	    echo "VERBOSE: do_datatools_setup: Found CLHEP." 1>&2
+    # 	fi
+    # fi
+
+    # which boost-config >/dev/null 2>&1
+    # if [ $? -ne 0 ]; then
+    # 	echo "ERROR: do_datatools_setup: Cannot find Boost setup ! Abort !" 1>&2
+    # 	return 1
+    # else
+    # 	if [ ${verbose} -ne 0 ]; then
+    # 	    echo "VERBOSE: do_datatools_setup: Found Boost." 1>&2
+    # 	fi
+    # fi
+
     export DATATOOLS_ROOT="@CMAKE_INSTALL_PREFIX@"
     export DATATOOLS_ROOT_DIR="@CMAKE_INSTALL_PREFIX@"
     export DATATOOLS_NAME="@PROJECT_NAME@"
@@ -100,18 +100,18 @@ function do_datatools_setup ()
 	export PATH="${DATATOOLS_BIN_DIR}:${PATH}"
     else
 	export PATH="${DATATOOLS_BIN_DIR}"
-    fi 
-   
+    fi
+
     if [ -n "${@_ld_library_path_env@}" ]; then
 	export @_ld_library_path_env@="${DATATOOLS_LIB_DIR}:${@_ld_library_path_env@}"
     else
 	export @_ld_library_path_env@="${DATATOOLS_LIB_DIR}"
-    fi 
+    fi
 
     if [ ${verbose} -gt 1 ]; then
 	do_datatools_print_info "VERBOSE: do_datatools_setup"
     fi
- 
+
     if [ ${verbose} -ne 0 ]; then
 	echo "NOTICE: do_datatools_setup: Setup datatools done." 1>&2
     fi

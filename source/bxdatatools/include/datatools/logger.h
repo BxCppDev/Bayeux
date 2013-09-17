@@ -60,8 +60,6 @@
 // - A
 #include "boost/current_function.hpp"
 
-// This Project
-
 namespace datatools {
 
 // Forward declaration:
@@ -81,6 +79,7 @@ struct logger {
     PRIO_DEBUG,        //!< A debugging message.
     PRIO_TRACE         //!< A tracing message. This is the lowest priority.
   };
+
 
   //! return priority enumeration value from string
   //! The string can take three forms for matching, e.g. the PRIO_FATAL
@@ -280,6 +279,14 @@ struct logger {
     std::clog << "[trace:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
   }\
 }
+
+
+#if DATATOOLS_WITH_REFLECTION == 1
+// This Project
+#include <datatools/reflection_macros.h>
+// Activate reflection layer for the 'datatools::logger::priority' class:
+DR_TYPE_INIT(::datatools::logger::priority);
+#endif // DATATOOLS_WITH_REFLECTION
 
 #endif // DATATOOLS_LOGGER_H
 

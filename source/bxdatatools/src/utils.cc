@@ -20,9 +20,12 @@
 // - Boost
 #include <boost/tokenizer.hpp>
 #include <boost/scoped_ptr.hpp>
+#include <boost/filesystem.hpp>
 
 // This Project
 #include <datatools/ioutils.h>
+#include <datatools/library_info.h>
+#include <datatools/properties.h>
 
 namespace datatools {
 
@@ -126,6 +129,7 @@ class fetch_path_processor {
 
  private:
   bool process_impl(std::string &);
+  bool _trace_;
   bool _use_global_path_;
   std::string _parent_path_;
 };
@@ -179,6 +183,7 @@ fetch_path_processor::fetch_path_processor(std::string parent_path_,
                                            bool use_global_path_) {
   _use_global_path_ = use_global_path_;
   _parent_path_ = parent_path_;
+  _trace_ = false;
 }
 
 
@@ -188,12 +193,65 @@ bool fetch_path_processor::process(std::string& path) {
 
 
 bool fetch_path_processor::process_impl(std::string& path) {
+  bool trace = _trace_;
+  //trace = true;
   std::string::size_type dollar;
   std::string text = path;
+  bool registered_lib_resource = false;
+  if (text[0] == '@') {
+    int pos = text.find(':');
+    DT_THROW_IF(pos == text.npos,
+                std::logic_error,
+                "Invalid syntax for library location !");
+    std::string library_name = text.substr(1, pos-1);
+    if (trace) {
+      DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+                   "Found resource directive for library '" << library_name
+                   << "' in path '" << path << ".");
+    }
+    DT_THROW_IF(! datatools::library_info::has(library_name),
+                std::logic_error,
+                "Unregistered library '" << library_name << "' !");
+    if (trace) {
+      datatools::library_info::print(library_name, std::cerr);
+      DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+                   "INSTALL_RESOURCE_DIR = '"
+                   << datatools::library_info::INSTALL_RESOURCE_DIR << "'");
+    }
+    const datatools::properties & lib_infos = datatools::library_info::get(library_name);
+    if (lib_infos.has_key(datatools::library_info::INSTALL_RESOURCE_DIR)) {
+      boost::filesystem::path resource_dir = lib_infos.fetch_string(datatools::library_info::INSTALL_RESOURCE_DIR);
+      if (trace) {
+        DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+                     "Resource installation path for library '" << library_name
+                     << "' in path '" << path << " is '" << resource_dir << "'.");
+      }
+      boost::filesystem::path resource_relative_path = text.substr(pos+1);
+      if (trace) {
+        DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+                     "Resource relative path for library '" << library_name
+                     << "' in path '" << path << " is '" << resource_relative_path << "'.");
+      }
+      boost::filesystem::path resource_full_path = resource_dir / resource_relative_path;
+      text = resource_full_path.string();
+      if (trace) {
+        DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+                     "Resource absolute path for library '" << library_name
+                     << "' in path '" << path << " is '" << text << "'.");
+      }
+      registered_lib_resource = true;
+    } else {
+      DT_THROW_IF(true, std::logic_error,
+                 "No resource installation directory for library '" << library_name
+                 << "' in path '" << path << ".");
+    }
 
-  DT_THROW_IF(path.find('?') != path.npos || path.find('*') != path.npos,
+
+  }
+
+  DT_THROW_IF(text.find('?') != text.npos || text.find('*') != text.npos,
               std::logic_error,
-              "Wildcard characters found in path = " << path);
+              "Wildcard characters found in path = " << text);
 
   {
     std::ostringstream s;
@@ -202,14 +260,13 @@ bool fetch_path_processor::process_impl(std::string& path) {
 
     DT_THROW_IF(we_error != 0,
                 std::logic_error,
-                "wordexp error, code = " << we_error << ", input = " << path);
+                "wordexp error, code = " << we_error << ", input = '" << path << "'");
 
     if (p.we_wordc == 0) {
       return false;
     }
 
     char** w = p.we_wordv;
-    //std::cerr << "************ WORDEXP=";
     if (p.we_wordc > 1) {
       std::ostringstream message;
       message << "datatools::fetch_path_processor::process_impl: "
@@ -294,21 +351,23 @@ bool fetch_path_processor::process_impl(std::string& path) {
   path = text;
   */
 
-  // Check for an explicit parent path :
-  std::string parent_path = _parent_path_;
-  if (parent_path.empty()) {
-    // Check for an implicit parent path :
-    if (use_global_path() && datatools::has_global_path())  {
-      parent_path = get_global_path();
+  if (! registered_lib_resource) {
+    // Check for an explicit parent path :
+    std::string parent_path = _parent_path_;
+    if (parent_path.empty()) {
+      // Check for an implicit parent path :
+      if (use_global_path() && datatools::has_global_path())  {
+        parent_path = get_global_path();
+      }
     }
-  }
-  if (! parent_path.empty()
-      && (path.substr(0, 1) != "/")
-      && (path != ".")
-      && (path.substr(0, 2) != "./")
-      && (path.find(":/") == std::string::npos)) {
-    // Process relative path with prepend parent path :
-    text = parent_path + '/' + path;
+    if (! parent_path.empty()
+        && (path.substr(0, 1) != "/")
+        && (path != ".")
+        && (path.substr(0, 2) != "./")
+        && (path.find(":/") == std::string::npos)) {
+      // Process relative path with prepend parent path :
+      text = parent_path + '/' + path;
+    }
   }
   path = text;
   return true;

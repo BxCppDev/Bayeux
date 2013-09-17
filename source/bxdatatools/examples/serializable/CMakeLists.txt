@@ -14,15 +14,24 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
   message(FATAL_ERROR "in-source build detected")
 endif()
 
-# - datatools :
-if (NOT datatools_DIR)
-  execute_process(COMMAND datatools-config --prefix
-                  OUTPUT_VARIABLE datatools_DIR )
+
+if (USE_BAYEUX)
+  # - Bayeux :
+  find_package(Bayeux 1.0.0 REQUIRED)
+  set(_incs ${Bayeux_INCLUDE_DIRS})
+  set(_libs ${Bayeux_LIBRARIES})
+else()
+  # - Datatools :
+  if (NOT datatools_DIR)
+    execute_process(COMMAND datatools-config --prefix
+                     OUTPUT_VARIABLE datatools_DIR )
+  endif()
+  find_package(datatools 5.0.0 REQUIRED)
+  set(_incs ${datatools_INCLUDE_DIRS})
+  set(_libs ${datatools_LIBRARIES})
 endif()
 
-find_package(datatools 5.0.0 REQUIRED)
-
-include_directories(${PROJECT_SOURCE_DIR} ${datatools_INCLUDE_DIRS})
+include_directories(${PROJECT_SOURCE_DIR} ${_incs})
 
 add_library(datatools_ex_serializable SHARED
             raw_hit.h
@@ -31,7 +40,7 @@ add_library(datatools_ex_serializable SHARED
 	    raw_data.cc
 	    )
 
-target_link_libraries(datatools_ex_serializable ${datatools_LIBRARY} )
+target_link_libraries(datatools_ex_serializable ${_libs} )
 
 install( FILES
          ${PROJECT_BINARY_DIR}/libdatatools_ex_serializable${CMAKE_SHARED_LIBRARY_SUFFIX}

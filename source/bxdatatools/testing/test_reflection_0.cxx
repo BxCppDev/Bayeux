@@ -19,7 +19,6 @@
 #include <datatools/reflection_guard.h>
 
 
-
 void test_things (bool debug_)
 {
   std::clog << "*** test_things : " << std::endl;

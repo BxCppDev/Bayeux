@@ -22,6 +22,7 @@ endfunction()
 
 set(datatools_PUBLIC_HEADERS
   include/datatools/types.h
+  include/datatools/advanced_object.h
   include/datatools/archives_instantiation.h
   include/datatools/archives_list.h
   include/datatools/base_service.h
@@ -45,6 +46,7 @@ set(datatools_PUBLIC_HEADERS
   include/datatools/i_predicate.h
   include/datatools/i_serializable.h
   include/datatools/i_tree_dump.h
+  include/datatools/library_info.h
   include/datatools/library_loader.h
   include/datatools/logger.h
   include/datatools/tracer.h
@@ -80,19 +82,20 @@ set(datatools_PUBLIC_HEADERS
   include/datatools/properties.ipp
   include/datatools/multi_properties.ipp
   include/datatools/things.ipp
+  include/datatools/advanced_object.ipp
   include/datatools/the_serializable.ipp
   include/datatools/the_serializable.h
 
   include/datatools/reflection_guard.h
   include/datatools/reflection_macros.h
+  include/datatools/logger-reflect.h
   include/datatools/i_serializable-reflect.h
   include/datatools/i_tree_dump-reflect.h
   include/datatools/event_id-reflect.h
   include/datatools/multi_properties-reflect.h
   include/datatools/properties-reflect.h
+  include/datatools/advanced_object-reflect.h
   include/datatools/things-reflect.h
-  include/datatools/the_serializable.h
-  include/datatools/the_serializable.ipp
   include/datatools/the_introspectable.h
   )
 list_prepend(datatools_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
@@ -105,6 +108,10 @@ configure_file(
 configure_file(
   ${PROJECT_SOURCE_DIR}/include/datatools/version.h.in
   ${PROJECT_BINARY_DIR}/include/datatools/version.h
+  )
+configure_file(
+  ${PROJECT_SOURCE_DIR}/src/_init_fini.cc.in
+  ${PROJECT_BINARY_DIR}/src/_init_fini.cc
   )
 
 list(APPEND datatools_PUBLIC_HEADERS
@@ -195,8 +202,11 @@ set(datatools_SOURCES
   ocd_utils.cc
   ocd_driver.cc
   types.cc
+  advanced_object.cc
+  library_info.cc
   the_serializable.cc
   base_service.cc # Must go at the end... not sure.
+  ${PROJECT_BINARY_DIR}/src/_init_fini.cc
   )
 
 #-----------------------------------------------------------------------
@@ -293,6 +303,7 @@ if(DATATOOLS_WITH_REFLECTION)
     include/datatools/properties-reflect.h
     include/datatools/multi_properties-reflect.h
     include/datatools/things-reflect.h
+    include/datatools/advanced_object-reflect.h
 
     include/datatools/the_introspectable.h
     src/the_introspectable.cc

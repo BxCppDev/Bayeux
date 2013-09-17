@@ -4,6 +4,7 @@
 #define DATATOOLS_EVENT_ID_REFLECT_H_
 
 // Standard Library
+#include <iostream>
 
 // Third Party
 #include <boost/scoped_ptr.hpp>
@@ -20,6 +21,7 @@ namespace datatools {
 
     DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::event_id, tag_)
     {
+      std::cerr << "DEVEL: ***** Registering class '::datatools::event_id'... " << std::endl;
       // Declare and populate the reflection metaclass for the 'datatools::event_id' class:
       DR_CLASS_DECLARE (::datatools::event_id)
         .DR_CLASS_BASE(::datatools::i_serializable)
