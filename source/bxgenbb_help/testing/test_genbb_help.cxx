@@ -6,7 +6,7 @@
 #include <string>
 #include <exception>
 
-#include <genbb_help/genbb_help_config.h>
+#include <genbb_help/version.h>
 
 int main (int argc_, char ** argv_)
 {
