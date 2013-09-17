@@ -136,6 +136,7 @@ install(TARGETS Bayeux ${Bayeux_APP_TARGETS}
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
   )
+###message( STATUS "Bayeux_BUILDPRODUCT_DIR='${Bayeux_BUILDPRODUCT_DIR}'")
 install(DIRECTORY ${Bayeux_BUILDPRODUCT_DIR}/include/
   DESTINATION include
   )

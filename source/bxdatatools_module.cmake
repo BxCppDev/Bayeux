@@ -26,9 +26,10 @@ set(datatools_VERSION_MINOR 0)
 set(datatools_VERSION_PATCH 0)
 set(datatools_VERSION "${datatools_VERSION_MAJOR}.${datatools_VERSION_MINOR}.${datatools_VERSION_PATCH}")
 
-
 # - Raw Headers and Sources
 set(${module_name}_MODULE_HEADERS
+  ${module_include_dir}/${module_name}/advanced_object.h
+  ${module_include_dir}/${module_name}/advanced_object.ipp
   ${module_include_dir}/${module_name}/archives_instantiation.h
   ${module_include_dir}/${module_name}/archives_list.h
   ${module_include_dir}/${module_name}/base_service.h
@@ -65,6 +66,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/i_serializable.h
   ${module_include_dir}/${module_name}/i_serializable.ipp
   ${module_include_dir}/${module_name}/i_tree_dump.h
+  ${module_include_dir}/${module_name}/library_info.h
   ${module_include_dir}/${module_name}/library_loader.h
   ${module_include_dir}/${module_name}/logger.h
   ${module_include_dir}/${module_name}/memory_streambuf.h
@@ -102,7 +104,11 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/version_id.h
   )
 
+# - configure resources
+configure_file(${module_source_dir}/_init_fini.cc.in _init_fini.cc)
+
 set(${module_name}_MODULE_SOURCES
+  ${module_source_dir}/advanced_object.cc
   ${module_source_dir}/DynamicLoader.cc
   ${module_source_dir}/event_id.cc
   ${module_source_dir}/factory.cc
@@ -112,6 +118,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/ioutils.cc
   ${module_source_dir}/i_serializable.cc
   ${module_source_dir}/i_tree_dump.cc
+  ${module_source_dir}/library_info.cc
   ${module_source_dir}/library_loader.cc
   ${module_source_dir}/logger.cc
   ${module_source_dir}/multi_properties.cc
@@ -135,16 +142,20 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/version_check.cc
   ${module_source_dir}/version_id.cc
   ${module_source_dir}/base_service.cc # <- Must go at end
+  _init_fini.cc
   )
 
 # - Reflection component - still optional, so factor out and allow for
 #   inclusion later
+
 if(DATATOOLS_WITH_REFLECTION)
   set(datatools_REFLECTION_HEADERS
     ${module_include_dir}/${module_name}/reflection_guard.h
     ${module_include_dir}/${module_name}/reflection_macros.h
     ${module_include_dir}/${module_name}/i_serializable-reflect.h
     ${module_include_dir}/${module_name}/i_tree_dump-reflect.h
+    ${module_include_dir}/${module_name}/logger-reflect.h
+    ${module_include_dir}/${module_name}/advanced_object-reflect.h
     ${module_include_dir}/${module_name}/event_id-reflect.h
     ${module_include_dir}/${module_name}/multi_properties-reflect.h
     ${module_include_dir}/${module_name}/properties-reflect.h
@@ -162,7 +173,6 @@ if(DATATOOLS_WITH_REFLECTION)
     ${module_test_dir}/test_reflection_0.cxx
     )
 endif()
-
 
 # - Published headers
 foreach(_hdrin ${${module_name}_MODULE_HEADERS})
@@ -190,6 +200,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_handle_macros.cxx
   ${module_test_dir}/test_integer_range.cxx
   ${module_test_dir}/test_ioutils.cxx
+  ${module_test_dir}/test_library_info.cxx
   ${module_test_dir}/test_library_loader_0.cxx
   ${module_test_dir}/test_library_loader_1.cxx
   ${module_test_dir}/test_logger.cxx
