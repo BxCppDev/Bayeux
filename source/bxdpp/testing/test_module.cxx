@@ -30,6 +30,7 @@
 #include <datatools/bio_guard.h>
 #include <datatools/exception.h>
 
+#include <dpp/version.h>
 #include <dpp/base_module.h>
 #include <dpp/simple_data_source.h>
 #include <dpp/simple_data_sink.h>
