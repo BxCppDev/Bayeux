@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* genbb_help::primary_event.ipp */
 
 #ifndef GENBB_HELP_PRIMARY_EVENT_IPP_
@@ -12,23 +12,24 @@
 //#include <datatools/serialization/utils.h>
 #include <datatools/i_serializable.ipp>
 #include <genbb_help/primary_particle.ipp>
-#include <boost/serialization/list.hpp> 
+#include <boost/serialization/list.hpp>
 #include <boost/serialization/string.hpp>
 
 namespace genbb {
 
+  /// Boost serialization template method
   template<class Archive>
-  void primary_event::serialize (Archive            & a_ar, 
+  void primary_event::serialize (Archive            & a_ar,
                                  const unsigned int   a_version)
   {
     if (a_version > 0)
       {
-        a_ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;    
+        a_ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
       }
     // 2012-06-26 FM : support GENBB 'labelled' MC event :
     if (a_version < 3)
       {
-        if (Archive::is_saving::value) 
+        if (Archive::is_saving::value)
           {
             a_ar & boost::serialization::make_nvp ("label", _label_);
           }
@@ -47,7 +48,7 @@ namespace genbb {
     // 2012-06-21 FM : support GENBB 'weighted' MC event :
     if (a_version < 2)
       {
-        if (Archive::is_saving::value) 
+        if (Archive::is_saving::value)
           {
             a_ar & boost::serialization::make_nvp ("genbb_weight", _genbb_weight_);
           }
@@ -63,7 +64,7 @@ namespace genbb {
     // 2013-03-6 FM : support 'auxiliaries' :
     if (a_version < 4)
       {
-        if (Archive::is_saving::value) 
+        if (Archive::is_saving::value)
           {
             a_ar & boost::serialization::make_nvp ("auxiliaries", _auxiliaries_);
           }

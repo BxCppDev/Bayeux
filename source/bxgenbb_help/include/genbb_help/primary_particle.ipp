@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* genbb_help::primary_particle.ipp */
 
 #ifndef GENBB_HELP_PRIMARY_PARTICLE_IPP_
@@ -16,13 +16,14 @@
 
 namespace genbb {
 
+  /// Boost serialization template method
   template<class Archive>
-  void primary_particle::serialize (Archive            & a_ar, 
+  void primary_particle::serialize (Archive            & a_ar,
                                     const unsigned int   a_version)
   {
     if (a_version > 0)
       {
-        a_ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;    
+        a_ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
       }
     a_ar & boost::serialization::make_nvp ("type", _type_);
     if (_type_ == UNDEF)
