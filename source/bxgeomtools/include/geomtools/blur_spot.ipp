@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 //! \file geomtools/blur_spot.ipp
 
 #ifndef __geomtools__blur_spot_ipp
@@ -12,9 +12,10 @@
 #include <datatools/i_serializable.ipp>
 #include <datatools/properties.ipp>
 #include <geomtools/placement.ipp>
-         
+
 namespace geomtools {
-  
+
+  /// Boost serialization template method
   template<class Archive>
   void blur_spot::serialize (Archive & ar_ , const unsigned int version_)
   {
@@ -35,7 +36,7 @@ namespace geomtools {
     return;
   }
 
-} // end of namespace geomtools 
+} // end of namespace geomtools
 
 #endif // __geomtools__blur_spot_ipp
 

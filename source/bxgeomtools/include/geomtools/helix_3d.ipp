@@ -14,6 +14,7 @@
 
 namespace geomtools {
 
+  /// Boost serialization template method
   template<class Archive>
   void helix_3d::serialize (Archive & a_ar , const unsigned int a_version)
   {

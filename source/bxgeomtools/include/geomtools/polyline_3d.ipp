@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 //! \file geomtools/polyline_3d.ipp
 
 #ifndef __geomtools__polyline_3d_ipp
@@ -11,9 +11,10 @@
 
 #include <datatools/utils.h>
 #include <geomtools/polyline_3d.h>
-         
+
 namespace geomtools {
-  
+
+  /// Boost serialization template method
   template<class Archive>
   void polyline_3d::serialize (Archive & a_ar , const unsigned int a_version)
   {
@@ -26,7 +27,7 @@ namespace geomtools {
     return;
   }
 
-} // end of namespace geomtools 
+} // end of namespace geomtools
 
 #include <boost/serialization/version.hpp>
 BOOST_CLASS_VERSION(geomtools::polyline_3d, 1)

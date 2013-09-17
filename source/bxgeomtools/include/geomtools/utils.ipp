@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 //! \file geomtools/utils.ipp
 
 #ifndef GEOMTOOLS_UTILS_IPP_
@@ -16,10 +16,12 @@
 namespace boost {
 
   namespace serialization {
-    
+
     // Vector 2D:
+
+    /// Boost serialization template method
     template<class Archive>
-    void save (Archive & a_ar , 
+    void save (Archive & a_ar ,
                const geomtools::vector_2d & a_vector,
                const unsigned int a_version)
     {
@@ -29,9 +31,10 @@ namespace boost {
       a_ar & boost::serialization::make_nvp ("y", y);
       return;
     }
-    
+
+    /// Boost serialization template method
     template<class Archive>
-    void load (Archive & a_ar , 
+    void load (Archive & a_ar ,
                geomtools::vector_2d & a_vector,
                const unsigned int a_version)
     {
@@ -42,7 +45,8 @@ namespace boost {
       a_vector.set (x, y);
       return;
     }
-    
+
+    /// Boost serialization template method
     template<class Archive>
     void serialize (Archive & a_ar,
                     geomtools::vector_2d  & a_vector,
@@ -50,8 +54,8 @@ namespace boost {
     {
       boost::serialization::split_free (a_ar, a_vector, a_version);
       return;
-    } 
-    
+    }
+
   } // namespace serialization
 
 } // namespace boost
@@ -61,10 +65,11 @@ namespace boost {
 namespace boost {
 
   namespace serialization {
-    
+
     // Vector 3D:
+    /// Boost serialization template method
     template<class Archive>
-    void save (Archive & a_ar , 
+    void save (Archive & a_ar ,
                const geomtools::vector_3d & a_vector,
                const unsigned int a_version)
     {
@@ -76,9 +81,10 @@ namespace boost {
       a_ar & boost::serialization::make_nvp ("z", z);
       return;
     }
-    
+
+    /// Boost serialization template method
     template<class Archive>
-    void load (Archive & a_ar , 
+    void load (Archive & a_ar ,
                geomtools::vector_3d & a_vector,
                const unsigned int a_version)
     {
@@ -91,7 +97,8 @@ namespace boost {
       a_vector.set (x, y, z);
       return;
     }
-    
+
+    /// Boost serialization template method
     template<class Archive>
     void serialize (Archive & a_ar,
                     geomtools::vector_3d  & a_vector,
@@ -99,8 +106,8 @@ namespace boost {
     {
       boost::serialization::split_free (a_ar, a_vector, a_version);
       return;
-    } 
-    
+    }
+
   } // namespace serialization
 
 } // namespace boost
@@ -109,10 +116,11 @@ namespace boost {
 namespace boost {
 
   namespace serialization {
-    
+
     // Rotation 3D :
+    /// Boost serialization template method
     template<class Archive>
-    void save (Archive & a_ar , 
+    void save (Archive & a_ar ,
                const geomtools::rotation_3d & a_rotation,
                const unsigned int a_version)
     {
@@ -140,16 +148,17 @@ namespace boost {
         }
       return;
     }
-    
+
+    /// Boost serialization template method
     template<class Archive>
-    void load (Archive & a_ar , 
+    void load (Archive & a_ar ,
                geomtools::rotation_3d & a_rotation,
                const unsigned int a_version)
     {
       double rxx (0.0), rxy (0.0), rxz (0.0);
       double ryx (0.0), ryy (0.0), ryz (0.0);
       double rzx (0.0), rzy (0.0), rzz (0.0);
-      a_ar & boost::serialization::make_nvp ("xx", rxx); 
+      a_ar & boost::serialization::make_nvp ("xx", rxx);
       if (rxx == rxx)
         {
           a_ar & boost::serialization::make_nvp ("xy", rxy);
@@ -162,14 +171,15 @@ namespace boost {
           a_ar & boost::serialization::make_nvp ("zz", rzz);
           a_rotation = geomtools::rotation_wrapper_t (rxx, rxy, rxz, ryx, ryy, ryz, rzx, rzy, rzz);
         }
-      else 
+      else
         {
           a_rotation = geomtools::rotation_3d ();
           geomtools::invalidate (a_rotation);
         }
       return;
     }
-    
+
+    /// Boost serialization template method
     template<class Archive>
     void serialize (Archive & a_ar,
                     geomtools::rotation_3d  & a_rotation,
@@ -177,8 +187,8 @@ namespace boost {
     {
       boost::serialization::split_free (a_ar, a_rotation, a_version);
       return;
-    } 
-    
+    }
+
   } // namespace serialization
 
 } // namespace boost

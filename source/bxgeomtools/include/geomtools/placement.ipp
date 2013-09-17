@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 //! \file geomtools/placement.ipp
 
 #ifndef GEOMTOOLS_PLACEMENT_IPP_
@@ -13,9 +13,10 @@
 #include <geomtools/placement.h>
 #include <geomtools/utils.ipp>
 #include <geomtools/i_placement.ipp>
-         
+
 namespace geomtools {
-  
+
+  /// Boost serialization template method
   template<class Archive>
   void placement::serialize (Archive & ar_ , const unsigned int version_)
   {
@@ -37,6 +38,6 @@ namespace geomtools {
     return;
   }
 
-} // end of namespace geomtools 
+} // end of namespace geomtools
 
 #endif // GEOMTOOLS_PLACEMENT_IPP_
