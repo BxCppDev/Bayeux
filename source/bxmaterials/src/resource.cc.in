@@ -26,6 +26,8 @@
 #include <cstdlib>
 
 // Third Party
+// Boost
+#include <boost/filesystem.hpp>
 // - datatools
 #include <datatools/exception.h>
 
@@ -34,15 +36,17 @@
 namespace {
 //! Return the path to the root resource directory
 std::string get_resource_root(bool overriden_env) {
-  static const std::string resource_path = "/resources/data";
-  static const std::string install_root = "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@" + resource_path;
+  static const boost::filesystem::path resource_path = "resources";
+  static const boost::filesystem::path install_root = "@CMAKE_INSTALL_PREFIX@";
+  boost::filesystem::path install_data_root = install_root / "@CMAKE_INSTALL_DATADIR@";
   // Not sure to maintain this in the future:
   if(overriden_env) {
     if (std::getenv("MATERIALS_DATA_DIR")) {
-      return std::string(std::string(std::getenv("MATERIALS_DATA_DIR")) + "/resources/data");
+      install_data_root = std::string(std::getenv("MATERIALS_DATA_DIR"));
     }
   }
-  return install_root;
+  boost::filesystem::path install_resource_root = install_data_root / resource_path;
+  return install_resource_root.string();
 }
 } // namespace
 
