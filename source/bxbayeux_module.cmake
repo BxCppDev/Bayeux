@@ -23,9 +23,16 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/version.h.in
   )
 
+# - configure resources
+configure_file(${module_source_dir}/_init_fini.cc.in bx${module_name}/_init_fini.cc)
+
 set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/version.cc
   )
+
+set(${module_name}_ENDING_MODULE_SOURCES
+  bx${module_name}/_init_fini.cc
+)
 
 # - Publish headers
 foreach(_hdrin ${${module_name}_MODULE_HEADERS})

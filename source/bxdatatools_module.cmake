@@ -104,9 +104,6 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/version_id.h
   )
 
-# - configure resources
-configure_file(${module_source_dir}/_init_fini.cc.in _init_fini.cc)
-
 set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/advanced_object.cc
   ${module_source_dir}/DynamicLoader.cc
@@ -142,7 +139,6 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/version_check.cc
   ${module_source_dir}/version_id.cc
   ${module_source_dir}/base_service.cc # <- Must go at end
-  _init_fini.cc
   )
 
 # - Reflection component - still optional, so factor out and allow for

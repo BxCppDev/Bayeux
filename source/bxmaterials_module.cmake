@@ -46,7 +46,7 @@ set(${module_name}_MODULE_HEADERS
   )
 
 # - configure resources
-configure_file(${module_source_dir}/resource.cc.in resource.cc)
+configure_file(${module_source_dir}/resource.cc.in bx${module_name}/resource.cc)
 
 set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/chemical_symbol.cc
@@ -57,7 +57,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/manager.cc
   ${module_source_dir}/materials_driver.cc
   ${module_source_dir}/version.cc
-  resource.cc
+  bx${module_name}/resource.cc
   )
 
 # - Published headers

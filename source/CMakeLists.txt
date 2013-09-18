@@ -45,14 +45,6 @@ include_directories(${CLHEP_INCLUDE_DIRS})
 include_directories(${GSL_INCLUDE_DIRS})
 include_directories(${ROOT_INCLUDE_DIRS})
 
-# - Configure Bayeux submodule first
-set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include")
-include(bxbayeux_module.cmake)
-set(Bayeux_HEADERS ${bayeux_MODULE_HEADERS})
-set(Bayeux_SOURCES ${bayeux_MODULE_SOURCES})
-set(Bayeux_TESTS)
-set(Bayeux_RESOURCES)
-
 # - The LPC Modules
 # The processing order should be from least to most dependent
 # That's to ensure that any needed CMake variables are set in the correct
@@ -72,10 +64,22 @@ set(Bayeux_SUBMODULES
   trackfit
   brio
   dpp
-  )
+)
+
+# - Configure Bayeux submodule first
+set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include")
+include(bxbayeux_module.cmake)
+set(Bayeux_HEADERS ${bayeux_MODULE_HEADERS})
+set(Bayeux_SOURCES ${bayeux_MODULE_SOURCES})
+set(Bayeux_TESTS)
+set(Bayeux_RESOURCES)
+
+set(CMAKE_INSTALL_DATADIR "share/Bayeux-${Bayeux_VERSION}")
+message( STATUS "CMAKE_INSTALL_DATADIR='${CMAKE_INSTALL_DATADIR}'" )
 
 set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include/bayeux")
-set(MODULE_RESOURCE_ROOT "${Bayeux_BUILDPRODUCT_DIR}/share/Bayeux-${Bayeux_VERSION}/resources")
+#set(MODULE_RESOURCE_ROOT "${Bayeux_BUILDPRODUCT_DIR}/share/Bayeux-${Bayeux_VERSION}/resources")
+set(MODULE_RESOURCE_ROOT "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}")
 
 foreach(_m ${Bayeux_SUBMODULES})
   include(bx${_m}_module.cmake)
@@ -84,6 +88,10 @@ foreach(_m ${Bayeux_SUBMODULES})
   list(APPEND Bayeux_RESOURCES ${${_m}_MODULE_RESOURCES})
   list(APPEND Bayeux_APPS ${${_m}_MODULE_APPS})
 endforeach()
+
+# - We must put this at the end because it needs static code from
+#   datatools,cuts, materials...
+list(APPEND Bayeux_SOURCES ${bayeux_ENDING_MODULE_SOURCES})
 
 # Hack for genbb private headers
 include_directories(${genbb_help_include_dir})
@@ -136,7 +144,6 @@ install(TARGETS Bayeux ${Bayeux_APP_TARGETS}
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
   )
-###message( STATUS "Bayeux_BUILDPRODUCT_DIR='${Bayeux_BUILDPRODUCT_DIR}'")
 install(DIRECTORY ${Bayeux_BUILDPRODUCT_DIR}/include/
   DESTINATION include
   )
