@@ -1,0 +1,62 @@
+/* materials/_init_fini.cc
+ */
+// Ourselves
+
+// This package:
+#include <materials/materials_config.h>
+#include <datatools/library_info.h>
+#include <datatools/properties.h>
+#include <materials/version.h>
+#include <materials/resource.h>
+
+__attribute__((constructor))
+static void materials_initializer()
+{
+  DT_LOG_TRACE(datatools::library_info::logging() == datatools::logger::PRIO_TRACE,
+               "Entering...");
+  static bool initialized = false;
+  if (! initialized) {
+    datatools::properties & lib_infos
+      = datatools::library_info::registration("materials",
+                                              "Description of isotopes, elements and materials plus tools "
+                                              "for input to simulation applications (i.e. GDML/Geant4).",
+                                              materials::version::get_version(),
+                                              "@CMAKE_INSTALL_PREFIX@",                        // Hardcoded for now
+                                              "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@",
+                                              );
+
+    // Additionnal stored parameters :
+    lib_infos.store_string(datatools::library_info::INSTALL_RESOURCE_DIR,
+                           materials::resource::get_resource_dir());
+    lib_infos.store_integer(datatools::library_info::VERSION_MAJOR,
+                            materials::version::get_major());
+    lib_infos.store_integer(datatools::library_info::VERSION_MINOR,
+                            materials::version::get_minor());
+    lib_infos.store_integer(datatools::library_info::VERSION_PATCH,
+                            materials::version::get_patch());
+    lib_infos.store_string(datatools::library_info::BUILD_TYPE,
+                           "@CMAKE_BUILD_TYPE@");
+
+    if (datatools::library_info::logging() >= datatools::logger::PRIO_TRACE) {
+      DT_LOG_TRACE(datatools::library_info::logging() == datatools::logger::PRIO_TRACE,
+                   "Status of the library info register: " );
+      datatools::library_info::status(std::cerr);
+    }
+    initialized = true;
+  }
+  DT_LOG_TRACE(datatools::library_info::logging() == datatools::logger::PRIO_TRACE, "Exiting.");
+  return;
+}
+
+__attribute__((destructor))
+static void materials_finalizer()
+{
+  DT_LOG_TRACE(datatools::library_info::logging() == datatools::logger::PRIO_TRACE, "Entering...");
+  if (datatools::library_info::has("materials")) {
+    datatools::library_info::unregistration("materials");
+  }
+  DT_LOG_TRACE(datatools::library_info::logging() == datatools::logger::PRIO_TRACE, "Exiting." );
+  return;
+}
+
+// end of materials/_init_fini.cc
