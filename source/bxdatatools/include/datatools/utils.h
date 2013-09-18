@@ -59,24 +59,44 @@ void minus_infinity(double& value);
 // Set a double to +infinity:
 void infinity(double& value);
 
+/* Functions to expand string as path */
+
+/** Fetch the expanded path computed from the 'word' string.
+ */
+std::string fetch_path(const std::string& path_str);
+
 /** Extract the expanded path computed from the 'word' string.
- * Internally uses the 'getenv' function.
+ * Internally uses the 'getenv' function and the 'datatools::library_info'
+ * register.
  */
 bool fetch_path_with_env(std::string& word);
 
 /** Extract the expanded path computed from the 'word' string.
- * Internally uses the 'getenv' function.
+ * Internally uses the 'datatools::library_info'
+ * register.
+ */
+bool fetch_path_without_env(std::string& word);
+
+/** Extract the expanded path computed from the 'word' string.
+ * Internally uses the 'getenv' function and the datatools::library_info
+/* Functions to expand string as path */
+
+/** Extract the expanded path computed from the 'word' string.
+ * Internally uses the 'getenv' function and the datatools::library_info
+ * register.
  */
 bool fetch_path_with_env_p(std::string& word,
                            const std::string & parent_path_);
 
 /** Extract the expanded path computed from the 'word' string.
- * Internally uses the 'getenv' function.
+ * Internally uses the 'getenv' function and the datatools::library_info
+ * register.
  */
 bool fetch_path_with_env_g(std::string& word);
 
 /** Extract the expanded path computed from the 'word' string.
- * Internally uses the 'getenv' function.
+ * Internally uses the 'getenv' function and the datatools::library_info
+ * register.
  */
 bool fetch_path_with_env_pg(std::string& word,
                             const std::string & parent_path_);
@@ -93,18 +113,18 @@ void set_global_path(const std::string & gpath_);
 /** Get the datatools' global path */
 const std::string & get_global_path();
 
-/** Extract the expanded path computed from the 'word' string.
- * Internally uses the system's shell.
- *
- * This method is not very elegant. It uses
- * brute force, asking a shell to interpret the string via a 'system' call
- * and using a temporary file to save the result. Urrkkk!
- * That enables the expansion of environment variables embeded
- * in the 'path_str' string:
- *
- * Example: '$HOME/foo.dat' is expanded to '/home/&gt;login&lt;/foo.dat'
- *
- */
+
+//! Extract the expanded path computed from the 'word' string.
+//! Internally uses the system's shell.
+//!
+//! This method is not very elegant. It uses
+//! brute force, asking a shell to interpret the string via a 'system' call
+//! and using a temporary file to save the result. Urrkkk!
+//! That enables the expansion of environment variables embeded
+//! in the 'path_str' string:
+//!
+//! Example: '$HOME/foo.dat' is expanded to '/home/&gt;login&lt;/foo.dat'
+//! @deprecated Use the fetch_path function.
 std::string expand_path(const std::string& path_str);
 
 /** The function splits the string 'a_word' using separators given

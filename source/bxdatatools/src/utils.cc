@@ -119,7 +119,8 @@ const std::string & get_global_path()
 class fetch_path_processor {
  public:
   fetch_path_processor(std::string parent_path_ = "",
-                       bool use_global_path_ = false);
+                       bool use_global_path_ = false,
+                       bool use_env_ = true);
 
   bool process(std::string&);
 
@@ -128,9 +129,10 @@ class fetch_path_processor {
   bool use_global_path() const;
 
  private:
-  bool process_impl(std::string &);
+  void process_impl(std::string &);
   bool _trace_;
   bool _use_global_path_;
+  bool _use_env_;
   std::string _parent_path_;
 };
 
@@ -180,22 +182,33 @@ bool fetch_path_processor::use_global_path() const
 
 
 fetch_path_processor::fetch_path_processor(std::string parent_path_,
-                                           bool use_global_path_) {
+                                           bool use_global_path_,
+                                           bool use_env_) {
   _use_global_path_ = use_global_path_;
   _parent_path_ = parent_path_;
   _trace_ = false;
+  _use_env_ = use_env_;
 }
 
 
 bool fetch_path_processor::process(std::string& path) {
-  return this->process_impl(path);
+  try {
+    this->process_impl(path);
+  } catch (std::exception & error) {
+    DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                 "Cannot process path '" << path << "' : "
+                 << error.what());
+    return false;
+  }
+  return true;
 }
 
-
-bool fetch_path_processor::process_impl(std::string& path) {
+// Hmmm probably this method needs refactoring... (with Boost/Spirit?)
+void fetch_path_processor::process_impl(std::string& path) {
   bool trace = _trace_;
   //trace = true;
-  std::string::size_type dollar;
+
+  // working buffer:
   std::string text = path;
   bool registered_lib_resource = false;
   if (text[0] == '@') {
@@ -243,7 +256,7 @@ bool fetch_path_processor::process_impl(std::string& path) {
     } else {
       DT_THROW_IF(true, std::logic_error,
                  "No resource installation directory for library '" << library_name
-                 << "' in path '" << path << ".");
+                 << "' in path '" << path << "' !");
     }
 
 
@@ -253,7 +266,8 @@ bool fetch_path_processor::process_impl(std::string& path) {
               std::logic_error,
               "Wildcard characters found in path = " << text);
 
-  {
+  if (_use_env_) {
+    // Activate the parsing of embedded environment variables:
     std::ostringstream s;
     wordexp_t p;
     int we_error = wordexp( text.c_str(), &p, WRDE_NOCMD|WRDE_SHOWERR|WRDE_UNDEF);
@@ -263,18 +277,17 @@ bool fetch_path_processor::process_impl(std::string& path) {
                 "wordexp error, code = " << we_error << ", input = '" << path << "'");
 
     if (p.we_wordc == 0) {
-      return false;
+      DT_THROW_IF(true, std::logic_error, "Nothing to expand !");
     }
 
     char** w = p.we_wordv;
     if (p.we_wordc > 1) {
       std::ostringstream message;
-      message << "datatools::fetch_path_processor::process_impl: "
-              << "wordexp expands to many tokens : ";
+      message << "wordexp expands to many tokens : ";
       for (size_t i = 0; i < p.we_wordc; i++) {
-        //std::cerr << w[i];
         message << " '" << w[i]<< "'";
       }
+      wordfree( &p );
       DT_THROW_IF(true, std::logic_error, message.str());
     }
     s << w[0];
@@ -283,75 +296,9 @@ bool fetch_path_processor::process_impl(std::string& path) {
   }
   path = text;
 
-  // Old implementation :
-  /*
-  if (text.substr(0, 2) == "~/") {
-    // Process special HOME dir :
-    std::string tmp = text.substr(2);
-    text = "${HOME}/" + tmp;
-  } else if (text == "~") {
-    // Process special HOME dir :
-    text = "${HOME}";
-  }
-  */
-
-  /*
-  while ((dollar = text.find ('$')) != std::string::npos) {
-    std::string::size_type slash = text.find('/', dollar + 1);
-    std::string::size_type back_slash = text.find('\\', dollar + 1);
-    std::string::size_type pos = std::string::npos;
-
-    if (slash != std::string::npos) {
-      if (back_slash != std::string::npos) {
-        pos = std::min(slash, back_slash);
-      } else {
-        pos = slash;
-      }
-    } else {
-      if (back_slash != std::string::npos) {
-        pos = back_slash;
-      } else {
-        pos = std::string::npos;
-      }
-    }
-    std::string env;
-    if (pos == std::string::npos) {
-      env = text.substr(dollar + 1, text.length() - (dollar + 1));
-    } else {
-      //     abc$xxx/ef
-      //     0  3   7 9
-      env = text.substr(dollar + 1, pos - (dollar + 1));
-    }
-    std::string env_candidate = env;
-    if (!env.empty()) {
-      if (env[0] == '{') {
-        if (env[env.size() - 1] != '}') {
-          return false;
-        } else {
-          env_candidate = env.substr(1, env.size() - 2);
-        }
-      }
-    } else {
-      return false;
-    }
-    if (env_candidate.empty()) {
-      return false;
-    }
-    char* val = ::getenv(env_candidate.c_str());
-    if (val) {
-      std::string value = text.substr(0, dollar);
-      value += val;
-      if(pos != std::string::npos) {
-        value += text.substr (pos, text.length() - pos);
-      }
-      text = value;
-    }
-    if (!val) return false; // Stop looping if env variable not found.
-  }
-  path = text;
-  */
-
   if (! registered_lib_resource) {
+    // If the path does not start with a "@libname:" prefix
+    // we can search for an explicit parent path :
     // Check for an explicit parent path :
     std::string parent_path = _parent_path_;
     if (parent_path.empty()) {
@@ -370,13 +317,28 @@ bool fetch_path_processor::process_impl(std::string& path) {
     }
   }
   path = text;
-  return true;
+  return;
 }
 /**************************************************/
 
+std::string fetch_path(const std::string& word)
+{
+  std::string w = word; // Working buffer
+  fetch_path_processor fpp("", true, true);
+  bool r = fpp.process(w);
+  DT_THROW_IF(!r, std::logic_error, "Cannot fetch path from '" << word << "' !");
+  return w;
+}
+
+
+bool fetch_path_without_env(std::string& path) {
+  fetch_path_processor fpp("", false, false);
+  return fpp.process(path);
+}
+
 
 bool fetch_path_with_env(std::string& path) {
-  fetch_path_processor fpp("",false);
+  fetch_path_processor fpp("", false, true);
   return fpp.process(path);
 }
 
