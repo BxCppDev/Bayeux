@@ -58,18 +58,24 @@ namespace datatools {
   const std::string library_info::RESOURCE_LABEL = "resource";
 
   const std::string library_info::NAME                 = "name";
+  const std::string library_info::LIBNAME              = "libname";
   const std::string library_info::DESCRIPTION          = "description";
   const std::string library_info::URL                  = "url";
+  const std::string library_info::AUTHORS              = "authors";
+  const std::string library_info::COPYRIGHT            = "copyright";
   const std::string library_info::VERSION              = "version";
   const std::string library_info::VERSION_MAJOR        = "version.major";
   const std::string library_info::VERSION_MINOR        = "version.minor";
   const std::string library_info::VERSION_PATCH        = "version.patch";
   const std::string library_info::BUILD_TYPE           = "build_type";
+  const std::string library_info::MODULES              = "modules";
   const std::string library_info::INSTALL_PREFIX       = "install.prefix";
-  const std::string library_info::INSTALL_LIB_DIR      = "install.library.dir";
-  const std::string library_info::INSTALL_RESOURCE_DIR = "install.resource.dir";
-  const std::string library_info::ENV_LIB_DIR          = "env.library.dir";
-  const std::string library_info::ENV_RESOURCE_DIR     = "env.resource.dir";
+  const std::string library_info::INSTALL_INCLUDE_DIR  = "install.include_dir";
+  const std::string library_info::INSTALL_LIB_DIR      = "install.library_dir";
+  const std::string library_info::INSTALL_BIN_DIR      = "install.bin_dir";
+  const std::string library_info::INSTALL_RESOURCE_DIR = "install.resource_dir";
+  const std::string library_info::ENV_LIB_DIR          = "env.library_dir";
+  const std::string library_info::ENV_RESOURCE_DIR     = "env.resource_dir";
 
 
   logger::priority library_info::logging()
@@ -257,9 +263,11 @@ namespace datatools {
              false);
     }
 
-    lib_info.tree_dump(std::clog, "Library informations: ");
+    if (::datatools::library_info::logging() >= ::datatools::logger::PRIO_TRACE) {
+      lib_info.tree_dump(std::cerr, "Library informations: ", "[trace] ");
+    }
 
-    DT_LOG_DEBUG(::datatools::library_info::logging(),
+    DT_LOG_TRACE(::datatools::library_info::logging(),
                  "Library information store for library '" << library_name_
                  << "' is now registered.");
     return lib_info;
@@ -304,7 +312,7 @@ namespace datatools {
                 std::logic_error,
                 "Library '" << library_name_ << "' is not registered !");
     db.remove(library_name_);
-    DT_LOG_DEBUG(::datatools::library_info::logging(),
+    DT_LOG_TRACE(::datatools::library_info::logging(),
                  "Library information store for library '" << library_name_
                  << "' is now unregistered.");
     return;

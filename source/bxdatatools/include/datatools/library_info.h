@@ -52,15 +52,21 @@ namespace datatools {
     static const std::string RESOURCE_LABEL;
 
     static const std::string NAME;
+    static const std::string LIBNAME;
     static const std::string DESCRIPTION;
     static const std::string URL;
+    static const std::string AUTHORS;
+    static const std::string COPYRIGHT;
     static const std::string VERSION;
     static const std::string VERSION_MAJOR;
     static const std::string VERSION_MINOR;
     static const std::string VERSION_PATCH;
     static const std::string BUILD_TYPE;
+    static const std::string MODULES;
     static const std::string INSTALL_PREFIX;
+    static const std::string INSTALL_INCLUDE_DIR;
     static const std::string INSTALL_LIB_DIR;
+    static const std::string INSTALL_BIN_DIR;
     static const std::string INSTALL_RESOURCE_DIR;
     static const std::string ENV_LIB_DIR;
     static const std::string ENV_RESOURCE_DIR;
