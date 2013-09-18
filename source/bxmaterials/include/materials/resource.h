@@ -1,13 +1,13 @@
 //! \file    resource.h
 //! \brief   Utilities for accessing materials resource files
 //! \details The materials library makes use of several resource files
-//!          containing isotopic and radioactive decays data. 
+//!          containing isotopic and radioactive decays data.
 //!
 //!          As these files are not compiled into the materials library,
 //!          materials provides a simple API to get a path to known
 //!          resource files.
 //
-// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com> 
+// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com>
 // Copyright (c) 2013 by The University of Warwick
 //
 // This file is part of materials.
@@ -36,14 +36,23 @@
 // This Project
 
 namespace materials {
+
+//! Return URL, i.e. a path, to the  base directory where resource files are installed
+//! \param overriden_env If set this flag trigger the search for the
+//!        environment variable MATERIAL_DATA_DIR as a directory path on the filesystem
+//!        as an alternative base directory for resources in place of the
+//!        standard installation path
+std::string get_resource_dir(bool overriden_env = false);
+
 //! Return URL, i.e. a path, to named resource
 //! By default the encoded resource root, determined at compile time
 //! is used to search for the resource. This can be overriden by setting
 //! the MATERIALS_DATA_DIR environment variable to a path holding custom
 //! resources.
-//! \param rname name of resource, given as a path relative to 
+//! \param rname name of resource, given as a path relative to
 //!        resource root.
-std::string get_resource(const std::string& rname);
+//! \param overriden_env flag to allow path overriding by the MATERIALS_DATA_DIR environment variable.
+std::string get_resource(const std::string& rname, bool overriden_env = false);
 } // namespace materials
 
 #endif // MATERIALS_RESOURCE_H

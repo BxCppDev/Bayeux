@@ -33,25 +33,32 @@
 
 namespace {
 //! Return the path to the root resource directory
-std::string get_resource_root() {
+std::string get_resource_root(bool overriden_env) {
   static const std::string resource_path = "/resources/data";
   static const std::string install_root = "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@" + resource_path;
-  if(std::getenv("MATERIALS_DATA_DIR")) {
-    return std::string(std::string(std::getenv("MATERIALS_DATA_DIR")) + "/resources/data");
+  // Not sure to maintain this in the future:
+  if(overriden_env) {
+    if (std::getenv("MATERIALS_DATA_DIR")) {
+      return std::string(std::string(std::getenv("MATERIALS_DATA_DIR")) + "/resources/data");
+    }
   }
-
   return install_root;
 }
-} // namespace 
+} // namespace
 
 namespace materials {
-std::string get_resource(const std::string& rname) {
+
+std::string get_resource_dir(bool overriden_env) {
+  return get_resource_root(overriden_env);
+}
+
+std::string get_resource(const std::string& rname, bool overriden_env) {
   DT_THROW_IF(rname[0] == '/', std::logic_error, "invalid resource name");
 
-  std::string fullpath(get_resource_root() + "/" + rname);
+  std::string fullpath(get_resource_root(overriden_env) + "/" + rname);
   std::ifstream check(fullpath.c_str());
-  DT_THROW_IF(!check.good(), 
-              std::runtime_error, 
+  DT_THROW_IF(!check.good(),
+              std::runtime_error,
               "unreadable resource '" << fullpath << "'")
   return fullpath;
 }
