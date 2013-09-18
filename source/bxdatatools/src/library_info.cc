@@ -74,6 +74,7 @@ namespace datatools {
   const std::string library_info::INSTALL_LIB_DIR      = "install.library_dir";
   const std::string library_info::INSTALL_BIN_DIR      = "install.bin_dir";
   const std::string library_info::INSTALL_RESOURCE_DIR = "install.resource_dir";
+  const std::string library_info::INSTALL_DOC_DIR      = "install.doc_dir";
   const std::string library_info::ENV_LIB_DIR          = "env.library_dir";
   const std::string library_info::ENV_RESOURCE_DIR     = "env.resource_dir";
 

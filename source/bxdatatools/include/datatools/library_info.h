@@ -68,6 +68,7 @@ namespace datatools {
     static const std::string INSTALL_LIB_DIR;
     static const std::string INSTALL_BIN_DIR;
     static const std::string INSTALL_RESOURCE_DIR;
+    static const std::string INSTALL_DOC_DIR;
     static const std::string ENV_LIB_DIR;
     static const std::string ENV_RESOURCE_DIR;
 
