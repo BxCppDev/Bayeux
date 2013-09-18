@@ -389,6 +389,13 @@ namespace emfield {
     return false;
   }
 
+  void base_electromagnetic_field::initialize_simple ()
+  {
+    const datatools::properties dummy;
+    initialize_standalone(dummy);
+    return;
+  }
+
 
   void base_electromagnetic_field::initialize_standalone (const datatools::properties & setup_)
   {

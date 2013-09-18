@@ -108,6 +108,8 @@ namespace emfield {
                                double time_,
                                geomtools::vector_3d & field_) const;
 
+    virtual void initialize_simple ();
+
     virtual void initialize_standalone (const datatools::properties & setup_);
 
     virtual void initialize_with_service_only (const datatools::properties & setup_,
