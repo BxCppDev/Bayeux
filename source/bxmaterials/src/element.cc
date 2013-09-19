@@ -317,7 +317,8 @@ namespace materials {
 
     while( !is_z_found && getline(ifstr_tape,nist_line) )
       {
-        if( atoi ((nist_line.substr (0, 4)).c_str ()) == _z_ && nist_line.find (chemical_symbol::symbol_from_z (_z_)) != string::npos)
+        if( atoi ((nist_line.substr (0, 4)).c_str ()) == _z_
+            && nist_line.find (chemical_symbol::symbol_from_z (_z_)) != string::npos)
           {
             cout << nist_line.substr (4, 4) << endl;
             is_z_found = true ;
@@ -327,7 +328,8 @@ namespace materials {
     if(! is_z_found)
       {
         DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
-                       "Z values  '" << _z_ << "' not found in file 'isotopic_compositions_nist.dat' !");
+                       "Z values  '" << _z_
+                       << "' not found in file 'isotopic_compositions_nist.dat' !");
         // throw logic_error (message.str ());
       }
     return;
@@ -434,8 +436,10 @@ namespace materials {
             const iso_entry & entry = i->second;
             isotope_weight_map_type::const_iterator j = i;
             j++;
-            string atag = datatools::i_tree_dumpable::TAG;
-            if (j == _composition_.end ()) atag = datatools::i_tree_dumpable::LAST_TAG;
+            string atag = datatools::i_tree_dumpable::tags::item();
+            if (j == _composition_.end ()) {
+              atag = datatools::i_tree_dumpable::tags::last_item();
+            }
             out_  << indent
                   << i_tree_dumpable::skip_tag
                   << atag

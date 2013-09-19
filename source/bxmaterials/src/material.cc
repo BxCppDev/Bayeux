@@ -451,8 +451,10 @@ namespace materials {
             const compound_entry & entry = i->second;
             composition_map_type::const_iterator j = i;
             j++;
-            string atag = datatools::i_tree_dumpable::TAG;
-            if (j == _composition_.end ()) atag = datatools::i_tree_dumpable::LAST_TAG;
+            string atag = datatools::i_tree_dumpable::tags::item();
+            if (j == _composition_.end ()) {
+              atag = datatools::i_tree_dumpable::tags::last_item();
+            }
             out_ << indent << datatools::i_tree_dumpable::skip_tag << atag << "Element '"
                  << entry.elt_ptr->get_name () << "'" << " : "
                  << entry.nb_of_atoms << " "
@@ -469,8 +471,8 @@ namespace materials {
             const compound_entry & entry = i->second;
             composition_map_type::const_iterator j = i;
             j++;
-            string atag = datatools::i_tree_dumpable::TAG;
-            if (j == _composition_.end ()) atag = datatools::i_tree_dumpable::LAST_TAG;
+            string atag = datatools::i_tree_dumpable::tags::item();
+            if (j == _composition_.end ()) atag = datatools::i_tree_dumpable::tags::last_item();
             out_ << indent << datatools::i_tree_dumpable::skip_tag << atag;
             if (entry.mat_ptr == 0) {
               out_  << "Element '" << entry.elt_ptr->get_name ();
