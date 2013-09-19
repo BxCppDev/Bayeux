@@ -39,12 +39,12 @@ int main (int a_argc, char ** a_argv)
   try {
     bool debug = false;
 
-    int N = -1;
+    int N = 3;
     int seed = 314159;
-    string type = "";
-    double Emin = -1., Emax = -1.;
-    double phi_min = -1., phi_max = -1.;
-    string file_out = "";
+    string type = "e-";
+    double Emin = 0.0, Emax = 4.0;
+    double phi_min = 0., phi_max = 30.;
+    string file_out = "test_genbb_writer.data";
 
     int iarg = 1;
     while (iarg < a_argc) {
