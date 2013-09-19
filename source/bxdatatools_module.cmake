@@ -181,6 +181,7 @@ endforeach()
 set(${module_name}_TEST_ENVIRONMENT "DATATOOLS_DATA_DIR=${module_root_dir}")
 
 set(${module_name}_MODULE_TESTS
+  ${module_test_dir}/test_advanced_object.cxx
   ${module_test_dir}/test_binary_serialization.cxx
   ${module_test_dir}/test_cloneable_2.cxx
   ${module_test_dir}/test_cloneable.cxx
