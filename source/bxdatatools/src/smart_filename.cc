@@ -46,9 +46,30 @@ namespace datatools {
 
 using namespace std;
 
-const string smart_filename::MODE_SINGLE_LABEL      =  "single";
-const string smart_filename::MODE_LIST_LABEL        =  "list";
-const string smart_filename::MODE_INCREMENTAL_LABEL =  "incremental";
+const std::string smart_filename::labels::mode_single()
+{
+  std::string label;
+  if (label.empty()) label = "single";
+  return label;
+}
+
+const std::string smart_filename::labels::mode_list()
+{
+  std::string label;
+  if (label.empty()) label = "list";
+  return label;
+}
+
+const std::string smart_filename::labels::mode_incremental()
+{
+  std::string label;
+  if (label.empty()) label = "incremental";
+  return label;
+}
+
+// const string smart_filename::MODE_SINGLE_LABEL      =  "single";
+// const string smart_filename::MODE_LIST_LABEL        =  "list";
+// const string smart_filename::MODE_INCREMENTAL_LABEL =  "incremental";
 
 bool smart_filename::is_debug() const {
   return debug_;
@@ -492,9 +513,9 @@ void smart_filename::dump(std::ostream& a_out) const {
     a_out << "|-- Initialized : '" << "Yes" << "'" << std::endl;
   }
   std::string mode_str = "";
-  if (this->is_single()) mode_str = MODE_SINGLE_LABEL;
-  if (this->is_list()) mode_str = MODE_LIST_LABEL;
-  if (this->is_incremental()) mode_str = MODE_INCREMENTAL_LABEL;
+  if (this->is_single()) mode_str = labels::mode_single();
+  if (this->is_list()) mode_str = labels::mode_list();
+  if (this->is_incremental()) mode_str = labels::mode_incremental();
   a_out << "|-- Mode        : '" << mode_str << "'" << std::endl;
   a_out << "|-- Ranged      : " << ranged_ << std::endl;
   if (!this->is_valid()) {
@@ -531,11 +552,11 @@ void smart_filename::initialize(const properties& a_config) {
 
   std::string mode_str = a_config.fetch_string("mode");
 
-  if (mode_str == MODE_SINGLE_LABEL) {
+  if (mode_str == labels::mode_single()) {
     DT_THROW_IF (!a_config.has_key("single.filename"),std::logic_error,"Missing 'single.filename' key !");
     std::string single_filename = a_config.fetch_string("single.filename");
     smart_filename::make_single(*this, single_filename, expand_path);
-  } else if (mode_str == MODE_LIST_LABEL) {
+  } else if (mode_str == labels::mode_list()) {
     bool allow_duplicate = false;
     if (a_config.has_flag("list.duplicate")) {
       allow_duplicate = true;
@@ -552,7 +573,7 @@ void smart_filename::initialize(const properties& a_config) {
         this->add(list_vec[i]);
       }
     }
-  } else if (mode_str == MODE_INCREMENTAL_LABEL) {
+  } else if (mode_str == labels::mode_incremental()) {
     std::string incremental_prefix = a_config.fetch_string("incremental.prefix");
     std::string incremental_suffix = "";
     std::string incremental_path;

@@ -26,17 +26,21 @@
 #include <datatools/exception.h>
 
 namespace datatools {
-double computing_time::g_system_dead_time =
-    std::numeric_limits<double>::quiet_NaN();
+
+const double computing_time::system_dead_time()
+{
+  static double sdt = std::numeric_limits<double>::quiet_NaN();
+  if (sdt != sdt) {
+    sdt = compute_system_dead_time();
+  }
+  return sdt;
+}
 
 // Constructor:
 computing_time::computing_time() {
-  if (!datatools::is_valid(g_system_dead_time)) {
-    g_compute_system_dead_time();
-  }
+  system_dead_time_ = system_dead_time();
   this->reset();
 }
-
 
 // Destructor:
 computing_time::~computing_time() {}
@@ -63,7 +67,7 @@ double computing_time::get_last_elapsed_time() const {
 
 
 double computing_time::get_total_time() const {
-  return this->get_sum_time() - 2 * this->get_counts()*g_system_dead_time;
+  return this->get_sum_time() - 2 * this->get_counts()*system_dead_time_;
 }
 
 
@@ -179,7 +183,7 @@ void computing_time::tree_dump(std::ostream& a_out,
 
   a_out << indent << i_tree_dumpable::tag
         << "System dead time   : "
-        << g_system_dead_time / CLHEP::microsecond << " us" << std::endl;
+        << system_dead_time_ / CLHEP::microsecond << " us" << std::endl;
 
   if (counts_ == 0) {
     a_out << indent << i_tree_dumpable::inherit_tag(a_inherit)
@@ -252,12 +256,13 @@ bool computing_time::g_timeval_subtract(const timeval& a_start,
 }
 
 
-void computing_time::g_compute_system_dead_time() {
+double computing_time::compute_system_dead_time() {
+  double system_dead_time =
   // preliminary:
-  g_system_dead_time = 0.0 * CLHEP::second;
+  system_dead_time = 0.0 * CLHEP::second;
   timeval start, stop;
   gettimeofday(&start, NULL);
-  size_t n = 10;
+  size_t n = 50;
 
   for (size_t i = 0; i < (n - 1); i++) {
     gettimeofday(&stop, NULL);
@@ -268,7 +273,8 @@ void computing_time::g_compute_system_dead_time() {
   g_timeval_subtract(stop, start, diff);
   elapsed_time = diff.tv_sec * CLHEP::second
       + diff.tv_usec * CLHEP::microsecond;
-  g_system_dead_time = elapsed_time / n;
+  system_dead_time = elapsed_time / n;
+  return system_dead_time;
 }
 
 } // namespace datatools

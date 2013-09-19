@@ -47,30 +47,55 @@ namespace datatools {
   /// \brief Host the register of library informations
   struct library_info {
 
-    static const std::string LIB_LABEL;
-    static const std::string EXEC_LABEL;
-    static const std::string RESOURCE_LABEL;
+    struct keys {
+      static const std::string lib_label();
+      static const std::string exec_label();
+      static const std::string resource_label();
+      static const std::string name();
+      static const std::string libname();
+      static const std::string description();
+      static const std::string url();
+      static const std::string authors();
+      static const std::string copyright();
+      static const std::string version();
+      static const std::string version_major();
+      static const std::string version_minor();
+      static const std::string version_patch();
+      static const std::string build_type();
+      static const std::string modules();
+      static const std::string install_prefix();
+      static const std::string install_include_dir();
+      static const std::string install_lib_dir();
+      static const std::string install_bin_dir();
+      static const std::string install_resource_dir();
+      static const std::string install_doc_dir();
+      static const std::string env_lib_dir();
+      static const std::string env_resource_dir();
+    };
 
-    static const std::string NAME;
-    static const std::string LIBNAME;
-    static const std::string DESCRIPTION;
-    static const std::string URL;
-    static const std::string AUTHORS;
-    static const std::string COPYRIGHT;
-    static const std::string VERSION;
-    static const std::string VERSION_MAJOR;
-    static const std::string VERSION_MINOR;
-    static const std::string VERSION_PATCH;
-    static const std::string BUILD_TYPE;
-    static const std::string MODULES;
-    static const std::string INSTALL_PREFIX;
-    static const std::string INSTALL_INCLUDE_DIR;
-    static const std::string INSTALL_LIB_DIR;
-    static const std::string INSTALL_BIN_DIR;
-    static const std::string INSTALL_RESOURCE_DIR;
-    static const std::string INSTALL_DOC_DIR;
-    static const std::string ENV_LIB_DIR;
-    static const std::string ENV_RESOURCE_DIR;
+    /* static const std::string LIB_LABEL; */
+    /* static const std::string EXEC_LABEL; */
+    /* static const std::string RESOURCE_LABEL; */
+    /* static const std::string NAME; */
+    /* static const std::string LIBNAME; */
+    /* static const std::string DESCRIPTION; */
+    /* static const std::string URL; */
+    /* static const std::string AUTHORS; */
+    /* static const std::string COPYRIGHT; */
+    /* static const std::string VERSION; */
+    /* static const std::string VERSION_MAJOR; */
+    /* static const std::string VERSION_MINOR; */
+    /* static const std::string VERSION_PATCH; */
+    /* static const std::string BUILD_TYPE; */
+    /* static const std::string MODULES; */
+    /* static const std::string INSTALL_PREFIX; */
+    /* static const std::string INSTALL_INCLUDE_DIR; */
+    /* static const std::string INSTALL_LIB_DIR; */
+    /* static const std::string INSTALL_BIN_DIR; */
+    /* static const std::string INSTALL_RESOURCE_DIR; */
+    /* static const std::string INSTALL_DOC_DIR; */
+    /* static const std::string ENV_LIB_DIR; */
+    /* static const std::string ENV_RESOURCE_DIR; */
 
     // Should one expose these 2 funcs ?
     /// Return a mutable reference to the library info register

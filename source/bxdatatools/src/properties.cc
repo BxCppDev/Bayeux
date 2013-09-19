@@ -74,6 +74,27 @@ namespace datatools {
   const double      properties::data::DEFAULT_VALUE_REAL    = 0.0;
   const std::string properties::data::DEFAULT_VALUE_STRING  = "";
 
+  const bool properties::data::defaults::boolean_value()
+  {
+    return false;
+  }
+
+  const int properties::data::defaults::integer_value()
+  {
+    return 0;
+  }
+
+  const double properties::data::defaults::real_value()
+  {
+    return 0.0;
+  }
+
+  const std::string properties::data::defaults::string_value()
+  {
+    static std::string s;
+    return s;
+  }
+
   bool properties::data::has_forbidden_char(const std::string& a_str) {
     return a_str.find_first_of(STRING_FORBIDDEN_CHAR) != a_str.npos;
   }
@@ -108,19 +129,19 @@ namespace datatools {
     _flags_ &= ~MASK_TYPE;
     if (a_type == TYPE_BOOLEAN_SYMBOL) {
       _flags_ |= TYPE_BOOLEAN;
-      if (memsize > 0) _boolean_values_.assign(memsize, DEFAULT_VALUE_BOOLEAN);
+      if (memsize > 0) _boolean_values_.assign(memsize, defaults::boolean_value());
     }
     if (a_type == TYPE_INTEGER_SYMBOL) {
       _flags_ |= TYPE_INTEGER;
-      if (memsize > 0) _integer_values_.assign(memsize, DEFAULT_VALUE_INTEGER);
+      if (memsize > 0) _integer_values_.assign(memsize, defaults::integer_value());
     }
     if (a_type == TYPE_REAL_SYMBOL) {
       _flags_ |= TYPE_REAL;
-      if (memsize > 0) _real_values_.assign(memsize, DEFAULT_VALUE_REAL);
+      if (memsize > 0) _real_values_.assign(memsize, defaults::real_value());
     }
     if (a_type == TYPE_STRING_SYMBOL) {
       _flags_ |= TYPE_STRING;
-      if (memsize > 0) _string_values_.assign(memsize, DEFAULT_VALUE_STRING);
+      if (memsize > 0) _string_values_.assign(memsize, defaults::string_value());
     }
     return ERROR_SUCCESS;
   }
@@ -599,8 +620,17 @@ namespace datatools {
   //----------------------------------------------------------------------
   // properties::key_validator implementation
   //
-  const std::string properties::default_key_validator::ALLOWED_CHARS =
-               "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.";
+  // const std::string properties::default_key_validator::ALLOWED_CHARS =
+  //              "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.";
+
+  const std::string & properties::default_key_validator::allowed_chars()
+  {
+    static std::string chars;
+    if (chars.empty()) {
+      chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.";
+    }
+    return chars;
+  }
 
   properties::default_key_validator::default_key_validator() {}
 
@@ -608,7 +638,7 @@ namespace datatools {
 
   bool properties::default_key_validator::operator()(const std::string& prop_key) const {
     if (prop_key.empty()) return false;
-    if (prop_key.find_first_not_of(ALLOWED_CHARS) != prop_key.npos) return false;
+    if (prop_key.find_first_not_of(allowed_chars()) != prop_key.npos) return false;
     if (prop_key.find_first_of("0123456789.") == 0) return false;
     if (prop_key[prop_key.size()-1] == '.') return false;
     return true;
@@ -618,7 +648,13 @@ namespace datatools {
   //----------------------------------------------------------------------
   // properties class implementation
   //
-  const std::string properties::PRIVATE_PROPERTY_PREFIX = "__";
+  // const std::string properties::PRIVATE_PROPERTY_PREFIX = "__";
+  const std::string & properties::private_property_prefix()
+  {
+    static std::string prefix;
+    if (prefix.empty()) prefix = "__";
+    return prefix;
+  }
 
   void properties::_validate_key_(const std::string& prop_key) const {
     if (_key_validator_ != 0) {
@@ -1083,15 +1119,15 @@ namespace datatools {
     if (properties::key_is_private(key)) return key;
 
     std::ostringstream oss;
-    oss << PRIVATE_PROPERTY_PREFIX << key;
+    oss << private_property_prefix() << key;
     return oss.str();
   }
 
 
   bool properties::key_is_private(const std::string& key) {
     if (key.size() < 2) return false;
-    return key.substr(0, PRIVATE_PROPERTY_PREFIX.size())
-      == PRIVATE_PROPERTY_PREFIX;
+    return key.substr(0, private_property_prefix().size())
+      == private_property_prefix();
   }
 
 
@@ -1949,7 +1985,7 @@ namespace datatools {
                  std::logic_error,
                  "Property '" << prop_key << "' is not a vector of booleans !");
     values.resize(data_ptr->size());
-    values.assign(data_ptr->size(), data::DEFAULT_VALUE_BOOLEAN);
+    values.assign(data_ptr->size(), data::defaults::boolean_value());
     for (int i = 0; i < (int)values.size(); ++i) {
       bool val;
       int error = data_ptr->get_value(val, i);
@@ -1969,7 +2005,7 @@ namespace datatools {
                  std::logic_error,
                  "Property '" << prop_key << "' is not a vector of integers !");
     values.resize(data_ptr->size());
-    values.assign(data_ptr->size(), data::DEFAULT_VALUE_INTEGER);
+    values.assign(data_ptr->size(),data::defaults::integer_value());
     for (int i = 0; i < (int)values.size(); ++i) {
       int error = data_ptr->get_value(values[i], i);
       DT_THROW_IF (error != data::ERROR_SUCCESS,
@@ -1988,7 +2024,7 @@ namespace datatools {
                  std::logic_error,
                  "Property '" << prop_key << "' is not a vector of reals !");
     values.resize(data_ptr->size());
-    values.assign(data_ptr->size(), data::DEFAULT_VALUE_REAL);
+    values.assign(data_ptr->size(), data::defaults::real_value());
     for (int i = 0; i < (int)values.size(); ++i) {
       int error = data_ptr->get_value(values[i], i);
       DT_THROW_IF (error != data::ERROR_SUCCESS,
@@ -2007,7 +2043,7 @@ namespace datatools {
                  std::logic_error,
                  "Property '" << prop_key << "' is not a vector of string in properties described by '" << get_description() << "' !");
     values.resize(data_ptr->size());
-    values.assign (data_ptr->size (), data::DEFAULT_VALUE_STRING);
+    values.assign (data_ptr->size (), data::defaults::string_value());
     for (int i = 0; i < (int)values.size(); ++i) {
       int error = data_ptr->get_value(values[i], i);
       DT_THROW_IF (error != data::ERROR_SUCCESS,

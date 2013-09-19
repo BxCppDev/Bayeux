@@ -20,15 +20,35 @@ const int32_t version_id::INVALID_NUMBER = -1;
 const char version_id::INVALID_SYMBOL = '?';
 const char version_id::NUMERIC_SEPARATOR = '.';
 const char version_id::TAG_SEPARATOR = '-';
-const int32_t version_id::MAX_RC_NUM   = 9999;
+const int32_t version_id::MAX_RC_NUM   =   9999;
 const int32_t version_id::ALPHA_NUM    = -10003;
 const int32_t version_id::BETA_NUM     = -10002;
 const int32_t version_id::RC_BASE_NUM  = -10001;
 
-const std::string version_id::ALPHA_TAG = "alpha";
-const std::string version_id::BETA_TAG  = "beta";
-const std::string version_id::RELEASE_CANDIDATE_PREFIX_TAG = "rc";
+// const std::string version_id::ALPHA_TAG = "alpha";
+// const std::string version_id::BETA_TAG  = "beta";
+// const std::string version_id::RELEASE_CANDIDATE_PREFIX_TAG = "rc";
 
+const std::string & version_id::tags::alpha()
+{
+  static std::string tag;
+  if (tag.empty()) tag = "alpha";
+  return tag;
+}
+
+const std::string & version_id::tags::beta()
+{
+  static std::string tag;
+  if (tag.empty()) tag = "beta";
+  return tag;
+}
+
+const std::string & version_id::tags::release_candidate_prefix()
+{
+  static std::string tag;
+  if (tag.empty()) tag = "rc";
+  return tag;
+}
 
 version_id::version_id() {
   major_ = INVALID_NUMBER;
@@ -221,12 +241,12 @@ void version_id::set_tag(const std::string& tag) {
     }
   } else {
     // check special orderable tags :
-    if (tag_ == ALPHA_TAG) {
+    if (tag_ == tags::alpha()) {
       tag_number_ = ALPHA_NUM;
-    } else if (tag_ == BETA_TAG) {
+    } else if (tag_ == tags::beta()) {
       tag_number_ = BETA_NUM;
     } else if (tag_.length() > 2
-               && tag_.substr(0,2) == RELEASE_CANDIDATE_PREFIX_TAG) {
+               && tag_.substr(0,2) == tags::release_candidate_prefix()) {
       std::string rc_tag_tail = tag_.substr(2);
       if (!rc_tag_tail.empty()) {
         std::istringstream rc_tag_iss(rc_tag_tail);

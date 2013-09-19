@@ -25,8 +25,6 @@ DATATOOLS_SERIALIZATION_IMPLEMENTATION_ADVANCED(multi_properties,"datatools::mul
 const char multi_properties::OPEN = '[';
 const char multi_properties::CLOSE = ']';
 const char multi_properties::COMMENT = '#';
-//const std::string multi_properties::DEFAULT_KEY_LABEL = "name";
-//const std::string multi_properties::DEFAULT_META_LABEL = "type";
 const bool multi_properties::with_header_footer = true;
 const bool multi_properties::without_header_footer = false;
 const bool multi_properties::write_public_only = false;
@@ -36,13 +34,15 @@ const bool multi_properties::read_private_also = false;
 
 const std::string & multi_properties::defaults::key_label()
 {
-  static const std::string value = "name";
+  static std::string value;
+  if (value.empty()) value = "name";
   return value;
 }
 
 const std::string & multi_properties::defaults::meta_label()
 {
-  static const std::string value = "type";
+  static std::string value;
+  if (value.empty()) value = "type";
   return value;
 }
 
@@ -183,8 +183,8 @@ const std::string & multi_properties::get_meta_label() const {
 
 uint32_t multi_properties::size() const {
   DT_THROW_IF (ordered_entries_.size() != entries_.size(),
-               std::logic_error,
-               "Containers are broken !");
+               std::runtime_error,
+               "Internal containers are broken !");
   return entries_.size();
 }
 
@@ -194,8 +194,8 @@ bool multi_properties::empty () const
 }
 
 void multi_properties::reset() {
-  key_label_ = defaults::key_label(); // was DEFAULT_KEY_LABEL;
-  meta_label_ = defaults::meta_label(); // = DEFAULT_META_LABEL;
+  key_label_ = defaults::key_label();
+  meta_label_ = defaults::meta_label();
   ordered_entries_.clear();
   entries_.clear();
 }
@@ -221,10 +221,9 @@ void multi_properties::_init_(const std::string& a_key_label,
                               const std::string& a_description,
                               bool a_debug) {
   debug_ = a_debug;
-  key_label_ = defaults::key_label(); // was DEFAULT_KEY_LABEL;
-  meta_label_ = defaults::meta_label(); // was DEFAULT_META_LABEL;
+  key_label_ = defaults::key_label();
+  meta_label_ = defaults::meta_label();
   if (!a_key_label.empty()) this->set_key_label(a_key_label);
-  //if (! a_meta_label.empty ())
   this->set_meta_label(a_meta_label);
   this->set_description(a_description);
 }

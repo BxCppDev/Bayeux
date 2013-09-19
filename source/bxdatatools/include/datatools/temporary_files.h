@@ -13,7 +13,7 @@ namespace datatools {
  */
 class temp_file {
  public:
-  static const std::string DEFAULT_PATTERN;
+  static const std::string & default_pattern();
 
  public:
   temp_file();

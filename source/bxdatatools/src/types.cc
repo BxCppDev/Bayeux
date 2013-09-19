@@ -13,13 +13,13 @@ namespace datatools {
     typedef boost::bimap< int, std::string > bm_type;
     static boost::scoped_ptr<bm_type> _bmap;
     if (_bmap.get() == 0) {
-        _bmap.reset(new bm_type);
-        _bmap.get()->insert( bm_type::value_type(TYPE_NONE, "?" ) );
-        _bmap.get()->insert( bm_type::value_type(TYPE_BOOLEAN, "boolean" ) );
-        _bmap.get()->insert( bm_type::value_type(TYPE_INTEGER, "integer" ) );
-        _bmap.get()->insert( bm_type::value_type(TYPE_REAL,    "real" ) );
-        _bmap.get()->insert( bm_type::value_type(TYPE_STRING,  "string" ) );
-      }
+      _bmap.reset(new bm_type);
+      _bmap.get()->insert( bm_type::value_type(TYPE_NONE,    "?" ) );
+      _bmap.get()->insert( bm_type::value_type(TYPE_BOOLEAN, "boolean" ) );
+      _bmap.get()->insert( bm_type::value_type(TYPE_INTEGER, "integer" ) );
+      _bmap.get()->insert( bm_type::value_type(TYPE_REAL,    "real" ) );
+      _bmap.get()->insert( bm_type::value_type(TYPE_STRING,  "string" ) );
+    }
     return *_bmap.get();
   }
 

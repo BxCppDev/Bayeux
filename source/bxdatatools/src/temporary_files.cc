@@ -22,7 +22,12 @@
 
 namespace datatools {
 
-const std::string temp_file::DEFAULT_PATTERN = "tmp_";
+const std::string & temp_file::default_pattern()
+{
+  static std::string pattern;
+  if (pattern.empty()) pattern = "tmp_";
+  return pattern;
+}
 
 // ctor:
 temp_file::temp_file() {
@@ -178,7 +183,7 @@ void temp_file::create(std::string a_path_dir, std::string a_pattern) {
   }
 
   if (a_pattern.empty()) {
-    pattern_ = DEFAULT_PATTERN;
+    pattern_ = default_pattern();
   } else {
     fetch_path_with_env(a_pattern);
     DT_THROW_IF (a_pattern.find_first_of('/') != a_pattern.npos,

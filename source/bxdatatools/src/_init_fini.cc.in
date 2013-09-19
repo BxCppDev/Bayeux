@@ -36,17 +36,22 @@ static void datatools_initializer()
      */
     // Additionnal stored parameters :
 
-    lib_infos.store_integer(datatools::library_info::VERSION_MAJOR,
+    lib_infos.store_integer(datatools::library_info::keys::version_major(),
                             datatools::version::get_major());
-    lib_infos.store_integer(datatools::library_info::VERSION_MINOR,
+
+    lib_infos.store_integer(datatools::library_info::keys::version_minor(),
                             datatools::version::get_minor());
-    lib_infos.store_integer(datatools::library_info::VERSION_PATCH,
+
+    lib_infos.store_integer(datatools::library_info::keys::version_patch(),
                             datatools::version::get_patch());
+
     lib_infos.store_boolean("with_bio",
                             DATATOOLS_WITH_BIO);
+
     lib_infos.store_boolean("with_reflection",
                             DATATOOLS_WITH_REFLECTION);
-    lib_infos.store_string(datatools::library_info::BUILD_TYPE,
+
+    lib_infos.store_string(datatools::library_info::keys::build_type(),
                            "@CMAKE_BUILD_TYPE@");
 
     if (datatools::library_info::logging() >= datatools::logger::PRIO_TRACE) {

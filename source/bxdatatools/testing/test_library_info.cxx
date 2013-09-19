@@ -36,9 +36,9 @@ int main (int argc_, char ** argv_) {
 
       foo_lib_infos.store("debug_level", 3);
       foo_lib_infos.store_flag("test");
-      foo_lib_infos.store_integer(datatools::library_info::VERSION_MAJOR, 3);
-      foo_lib_infos.store_integer(datatools::library_info::VERSION_MINOR, 14);
-      foo_lib_infos.store_integer(datatools::library_info::VERSION_PATCH, 160);
+      foo_lib_infos.store_integer(datatools::library_info::keys::version_major(), 3);
+      foo_lib_infos.store_integer(datatools::library_info::keys::version_minor(), 14);
+      foo_lib_infos.store_integer(datatools::library_info::keys::version_patch(), 160);
       foo_lib_infos.store_boolean("with_bio", true);
       foo_lib_infos.store_boolean("with_reflection", true);
       datatools::library_info::print("foo", std::cout);
@@ -49,9 +49,9 @@ int main (int argc_, char ** argv_) {
                   << std::endl;
       }
 
-      if (foo_lib_infos.has_key(datatools::library_info::INSTALL_RESOURCE_DIR)) {
+      if (foo_lib_infos.has_key(datatools::library_info::keys::install_resource_dir())) {
         std::string resdir =
-          foo_lib_infos.fetch_string(datatools::library_info::INSTALL_RESOURCE_DIR);
+          foo_lib_infos.fetch_string(datatools::library_info::keys::install_resource_dir());
         std::clog << "Found foo resource dir : '" << resdir << "'"
                   << std::endl;
       }

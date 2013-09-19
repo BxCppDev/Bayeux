@@ -16,7 +16,9 @@ namespace datatools {
 //! \brief A pure abstract class (interface) for inherited named objects.
 class i_named {
  public:
-  static const std::string ANONYMOUS_LABEL;
+  struct constants {
+    static const std::string anonymous_label();
+  };
 
   /**
    * A pure virtual member.
@@ -29,7 +31,7 @@ class i_named {
   static bool is_anonymous(const i_named& a_named);
 };
 
-} // end of namespace datatools 
+} // end of namespace datatools
 
 #endif // DATATOOLS_I_NAMED_H_
 

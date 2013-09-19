@@ -104,8 +104,6 @@ class multi_properties :
   static const char OPEN;
   static const char CLOSE;
   static const char COMMENT;
-  //static const std::string DEFAULT_KEY_LABEL;
-  //static const std::string DEFAULT_META_LABEL;
   static const bool with_header_footer;
   static const bool without_header_footer;
   static const bool write_public_only;

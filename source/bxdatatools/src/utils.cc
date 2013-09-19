@@ -229,11 +229,11 @@ void fetch_path_processor::process_impl(std::string& path) {
       datatools::library_info::print(library_name, std::cerr);
       DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
                    "INSTALL_RESOURCE_DIR = '"
-                   << datatools::library_info::INSTALL_RESOURCE_DIR << "'");
+                   << datatools::library_info::keys::install_resource_dir() << "'");
     }
     const datatools::properties & lib_infos = datatools::library_info::get(library_name);
-    if (lib_infos.has_key(datatools::library_info::INSTALL_RESOURCE_DIR)) {
-      boost::filesystem::path resource_dir = lib_infos.fetch_string(datatools::library_info::INSTALL_RESOURCE_DIR);
+    if (lib_infos.has_key(datatools::library_info::keys::install_resource_dir())) {
+      boost::filesystem::path resource_dir = lib_infos.fetch_string(datatools::library_info::keys::install_resource_dir());
       if (trace) {
         DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
                      "Resource installation path for library '" << library_name

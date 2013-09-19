@@ -2,9 +2,9 @@
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-09-12
  * Last modified : 2011-09-12
- * 
+ *
  * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -17,17 +17,17 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
- * 
- * 
- * Description: 
+ *
+ *
+ * Description:
  *
  *   Automated incremental filename
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 #ifndef DATATOOLS_SMART_FILENAME_H_
 #define DATATOOLS_SMART_FILENAME_H_
@@ -45,20 +45,17 @@
 
 namespace datatools {
 
-/*! \brief A class that builds an arbitrary list of filenames on user request. 
+/*! \brief A class that builds an arbitrary list of filenames on user request.
  *  Supported modes are:
  *  \li "single" : single filename
  *  \li "list" : explicit list of filenames
  *  \li "incremental" : list of filenames built from an incremental approach
  */
 class smart_filename {
- public: 
-  static const int         MODE_INCREMENTAL_UNRANGED          = -1;
-  static const int         MODE_INCREMENTAL_DEFAULT_START     =  0;
-  static const int         MODE_INCREMENTAL_DEFAULT_INCREMENT =  1;
-  static const std::string MODE_SINGLE_LABEL;
-  static const std::string MODE_LIST_LABEL;
-  static const std::string MODE_INCREMENTAL_LABEL;
+ public:
+  static const int MODE_INCREMENTAL_UNRANGED          = -1;
+  static const int MODE_INCREMENTAL_DEFAULT_START     =  0;
+  static const int MODE_INCREMENTAL_DEFAULT_INCREMENT =  1;
 
   enum mode_t {
     MODE_INVALID     =  0,
@@ -67,7 +64,17 @@ class smart_filename {
     MODE_INCREMENTAL =  0x4
   };
 
- public: 
+  /* static const std::string MODE_SINGLE_LABEL; */
+  /* static const std::string MODE_LIST_LABEL; */
+  /* static const std::string MODE_INCREMENTAL_LABEL; */
+
+  struct labels {
+    static const std::string mode_single();
+    static const std::string mode_list();
+    static const std::string mode_incremental();
+  };
+
+ public:
   typedef std::vector<std::string>  list_type;
   typedef list_type::const_iterator const_iterator;
 
@@ -124,9 +131,9 @@ class smart_filename {
   // list mode :
   void add_to_list(const std::string& filename);
 
-  void reset();  
+  void reset();
 
-  void build_incremental_filename(int increment_index, 
+  void build_incremental_filename(int increment_index,
                                   std::string& filename) const;
 
   void dump(std::ostream& out = std::clog) const;
@@ -135,7 +142,7 @@ class smart_filename {
 
   void print_list_of_filenames(std::ostream& out = std::clog) const;
 
-  void store_list_of_filenames(const std::string& a_list_filename, 
+  void store_list_of_filenames(const std::string& a_list_filename,
                                bool append = true) const;
 
   static void make_single(smart_filename& a_smart_filename,
@@ -147,12 +154,12 @@ class smart_filename {
                         bool expand_path = true);
 
   static void make_list(smart_filename& a_smart_filename,
-                         const std::string& a_list_file, 
+                         const std::string& a_list_file,
                          bool allow_duplication = false,
                          bool expand_path = true);
 
   static void make_incremental(smart_filename& a_smart_filename,
-                               const std::string& path, 
+                               const std::string& path,
                                const std::string& prefix,
                                const std::string& extension,
                                int stopping_index,
@@ -163,7 +170,7 @@ class smart_filename {
                                bool expand_path = true);
 
   static void make_unranged_incremental(smart_filename& smart_filename,
-                                        const std::string& path, 
+                                        const std::string& path,
                                         const std::string& prefix,
                                         const std::string & a_extension,
                                         int starting_index = 0,
@@ -173,7 +180,7 @@ class smart_filename {
                                         bool expand_path = true);
 
 
- protected:  
+ protected:
   void set_mode(int);
 
   // list:
@@ -185,7 +192,7 @@ class smart_filename {
   void set_current_index(int);
 
 
- private: 
+ private:
   bool        debug_; //! Debug flag
   uint32_t    mode_; //! Mode
   bool        expand_path_; //! Flag to expand the file path name

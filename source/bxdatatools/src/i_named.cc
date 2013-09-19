@@ -4,22 +4,28 @@
 
 namespace datatools {
 
-const std::string i_named::ANONYMOUS_LABEL = "__anonymous__";
+// static
+const std::string i_named::constants::anonymous_label()
+{
+  return  std::string("__anonymous__");
+}
 
 bool i_named::has_a_name(const i_named& a_named) {
   if (const_cast<i_named&>(a_named).get_name().empty()) {
     return false;
   }
 
-  if (const_cast<i_named&>(a_named).get_name() == ANONYMOUS_LABEL) {
+  if (const_cast<i_named&>(a_named).get_name()
+      == i_named::constants::anonymous_label()) {
     return false;
   }
   return true;
 }
 
 bool i_named::is_anonymous(const i_named& a_named) {
-  return const_cast<i_named&>(a_named).get_name() == ANONYMOUS_LABEL;
+  return const_cast<i_named&>(a_named).get_name()
+    == i_named::constants::anonymous_label();
 }
 
-} // end of namespace datatools 
+} // end of namespace datatools
 

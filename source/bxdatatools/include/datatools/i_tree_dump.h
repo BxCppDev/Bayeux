@@ -21,10 +21,18 @@ namespace datatools {
  */
 class i_tree_dumpable {
  public:
-  static const std::string TAG;
-  static const std::string LAST_TAG;
-  static const std::string SKIP_TAG;
-  static const std::string LAST_SKIP_TAG;
+
+  struct tags {
+    static const std::string item();
+    static const std::string last_item();
+    static const std::string skip_item();
+    static const std::string last_skip_item();
+  };
+
+  /* static const std::string TAG; */
+  /* static const std::string LAST_TAG; */
+  /* static const std::string SKIP_TAG; */
+  /* static const std::string LAST_SKIP_TAG; */
 
   enum ostream_type {
     OSTREAM_COUT=1,

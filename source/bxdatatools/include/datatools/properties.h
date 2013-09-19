@@ -81,39 +81,42 @@ class properties :
     static const int  ERROR_SUCCESS; // = 0;
     static const int  ERROR_FAILURE; // = 1;
     static const int  ERROR_BADTYPE; // = 2;
-    static const int  ERROR_RANGE; //   = 3;
-    static const int  ERROR_LOCK; //    = 4;
+    static const int  ERROR_RANGE;   // = 3;
+    static const int  ERROR_LOCK;    // = 4;
 
-    static const char MASK_TYPE; //    = 0x7;
+    static const char MASK_TYPE;          // = 0x7;
     static const char MASK_EXPLICIT_PATH; // = 0x10;
     static const char MASK_EXPLICIT_UNIT; // = 0x20;
-    static const char MASK_LOCK; //    = 0x40;
-    static const char MASK_VECTOR; //  = 0x80;
+    static const char MASK_LOCK;          // = 0x40;
+    static const char MASK_VECTOR;        // = 0x80;
 
-    static const char TYPE_NONE; //    = 0x0;
+    static const char TYPE_NONE;    // = 0x0;
     static const char TYPE_BOOLEAN; // = 0x1;
     static const char TYPE_INTEGER; // = 0x2;
-    static const char TYPE_REAL; //    = 0x3;
-    static const char TYPE_STRING; //  = 0x4;
+    static const char TYPE_REAL;    // = 0x3;
+    static const char TYPE_STRING;  // = 0x4;
 
     static const char TYPE_BOOLEAN_SYMBOL; // = 'B';
     static const char TYPE_INTEGER_SYMBOL; // = 'I';
-    static const char TYPE_REAL_SYMBOL; //    = 'R';
-    static const char TYPE_STRING_SYMBOL; //  = 'S';
+    static const char TYPE_REAL_SYMBOL;    // = 'R';
+    static const char TYPE_STRING_SYMBOL;  // = 'S';
 
     static const char STRING_FORBIDDEN_CHAR; // = '"';
 
     static const int  SCALAR_DEF; //  = -1;
     static const int  SCALAR_SIZE; // =  1;
 
+    struct defaults {
+      static const bool boolean_value();
+      static const int integer_value();
+      static const double real_value();
+      static const std::string string_value();
+    };
+
     static const bool        DEFAULT_VALUE_BOOLEAN;
     static const int         DEFAULT_VALUE_INTEGER;
     static const double      DEFAULT_VALUE_REAL;
     static const std::string DEFAULT_VALUE_STRING;
-
-    // static const std::string NAN_REAL_REPR;
-    // static const std::string PLUS_INF_REAL_REPR;
-    // static const std::string MINUS_INF_REAL_REPR;
 
    public:
     typedef std::vector<bool>        vbool;
@@ -328,8 +331,9 @@ class properties :
   //! \brief Default abstract class for key validator.
   class default_key_validator : public basic_key_validator {
    public:
-    static const std::string ALLOWED_CHARS;
-   public:
+    // static const std::string ALLOWED_CHARS;
+    static const std::string & allowed_chars();
+
     // ctor
     default_key_validator();
 
@@ -427,7 +431,8 @@ class properties :
   //static bool g_debug;
 
   //! Prefix string used for the naming of private properties
-  static const std::string PRIVATE_PROPERTY_PREFIX;
+  //static const std::string PRIVATE_PROPERTY_PREFIX;
+  static const std::string & private_property_prefix();
 
   // Typedefs declarations:
  protected:

@@ -14,13 +14,13 @@
 namespace datatools {
 
 /**!  \struct computing_time
-  \brief A class that compute time statistics 
+  \brief A class that compute time statistics
   */
 class computing_time : public i_tree_dumpable {
  public:
-  static double g_system_dead_time;
+    //static double g_system_dead_time;
+  static const double system_dead_time();
 
- public:
   // ctor:
   computing_time();
 
@@ -59,22 +59,23 @@ class computing_time : public i_tree_dumpable {
 
   void reset();
 
-  virtual void tree_dump(std::ostream& a_out = std::clog, 
+  virtual void tree_dump(std::ostream& a_out = std::clog,
                          const std::string& a_title = "",
                          const std::string& a_indent = "",
                          bool a_inherit = false) const;
 
-  static bool g_timeval_subtract(const timeval& a_stop, 
+  static bool g_timeval_subtract(const timeval& a_stop,
                                  const timeval& a_start,
                                  timeval& a_result);
 
-  static void g_compute_system_dead_time();
+  static double compute_system_dead_time();
 
 
  private:
   timeval start_;
   timeval stop_;
   size_t  counts_;
+  double  system_dead_time_;
   double  sum_time_;
   double  min_time_;
   double  max_time_;
@@ -82,7 +83,7 @@ class computing_time : public i_tree_dumpable {
   double  last_elapsed_time_;
 };
 
-} // namespace datatools 
+} // namespace datatools
 
 #endif // DATATOOLS_TIME_TOOLS_H_
 

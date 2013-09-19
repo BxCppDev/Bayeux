@@ -53,31 +53,190 @@ namespace {
 
 namespace datatools {
 
-  const std::string library_info::LIB_LABEL      = "library";
-  const std::string library_info::EXEC_LABEL     = "executable";
-  const std::string library_info::RESOURCE_LABEL = "resource";
+  const std::string library_info::keys::lib_label()
+  {
+    static std::string key;
+    if (key.empty()) key = "library";
+    return key;
+  }
 
-  const std::string library_info::NAME                 = "name";
-  const std::string library_info::LIBNAME              = "libname";
-  const std::string library_info::DESCRIPTION          = "description";
-  const std::string library_info::URL                  = "url";
-  const std::string library_info::AUTHORS              = "authors";
-  const std::string library_info::COPYRIGHT            = "copyright";
-  const std::string library_info::VERSION              = "version";
-  const std::string library_info::VERSION_MAJOR        = "version.major";
-  const std::string library_info::VERSION_MINOR        = "version.minor";
-  const std::string library_info::VERSION_PATCH        = "version.patch";
-  const std::string library_info::BUILD_TYPE           = "build_type";
-  const std::string library_info::MODULES              = "modules";
-  const std::string library_info::INSTALL_PREFIX       = "install.prefix";
-  const std::string library_info::INSTALL_INCLUDE_DIR  = "install.include_dir";
-  const std::string library_info::INSTALL_LIB_DIR      = "install.library_dir";
-  const std::string library_info::INSTALL_BIN_DIR      = "install.bin_dir";
-  const std::string library_info::INSTALL_RESOURCE_DIR = "install.resource_dir";
-  const std::string library_info::INSTALL_DOC_DIR      = "install.doc_dir";
-  const std::string library_info::ENV_LIB_DIR          = "env.library_dir";
-  const std::string library_info::ENV_RESOURCE_DIR     = "env.resource_dir";
+  const std::string library_info::keys::exec_label()
+  {
+    static std::string key;
+    if (key.empty()) key = "executable";
+    return key;
+  }
 
+  const std::string library_info::keys::resource_label()
+  {
+    static std::string key;
+    if (key.empty()) key = "resource";
+    return key;
+  }
+
+  const std::string library_info::keys::name()
+  {
+    static std::string key;
+    if (key.empty()) key = "name";
+    return key;
+  }
+
+  const std::string library_info::keys::libname()
+  {
+    static std::string key;
+    if (key.empty()) key = "libname";
+    return key;
+  }
+
+  const std::string library_info::keys::description()
+  {
+    static std::string key;
+    if (key.empty()) key = "description";
+    return key;
+  }
+
+  const std::string library_info::keys::url()
+  {
+    static std::string key;
+    if (key.empty()) key = "url";
+    return key;
+  }
+
+  const std::string library_info::keys::authors()
+  {
+    static std::string key;
+    if (key.empty()) key = "authors";
+    return key;
+  }
+
+  const std::string library_info::keys::copyright()
+  {
+    static std::string key;
+    if (key.empty()) key = "copyright";
+    return key;
+  }
+
+  const std::string library_info::keys::version()
+  {
+    static std::string key;
+    if (key.empty()) key = "version";
+    return key;
+  }
+
+  const std::string library_info::keys::version_major()
+  {
+    static std::string key;
+    if (key.empty()) key = "version.major";
+    return key;
+  }
+
+  const std::string library_info::keys::version_minor()
+  {
+    static std::string key;
+    if (key.empty()) key = "version.minor";
+    return key;
+  }
+
+  const std::string library_info::keys::version_patch()
+  {
+    static std::string key;
+    if (key.empty()) key = "version.patch";
+    return key;
+  }
+
+  const std::string library_info::keys::build_type()
+  {
+    static std::string key;
+    if (key.empty()) key = "build_type";
+    return key;
+  }
+
+  const std::string library_info::keys::modules()
+  {
+    static std::string key;
+    if (key.empty()) key = "modules";
+    return key;
+  }
+
+  const std::string library_info::keys::install_prefix()
+  {
+    static std::string key;
+    if (key.empty()) key = "install.prefix";
+    return key;
+  }
+
+  const std::string library_info::keys::install_include_dir()
+  {
+    static std::string key;
+    if (key.empty()) key = "install.include_dir";
+    return key;
+  }
+
+  const std::string library_info::keys::install_lib_dir()
+  {
+    static std::string key;
+    if (key.empty()) key = "install.library_dir";
+    return key;
+  }
+
+  const std::string library_info::keys::install_bin_dir()
+  {
+    static std::string key;
+    if (key.empty()) key = "install.bin_dir";
+    return key;
+  }
+
+  const std::string library_info::keys::install_resource_dir()
+  {
+    static std::string key;
+    if (key.empty()) key = "install.resource_dir";
+    return key;
+  }
+
+  const std::string library_info::keys::install_doc_dir()
+  {
+    static std::string key;
+    if (key.empty()) key = "install.doc_dir";
+    return key;
+  }
+
+  const std::string library_info::keys::env_lib_dir()
+  {
+    static std::string key;
+    if (key.empty()) key = "env.library_dir";
+    return key;
+  }
+
+  const std::string library_info::keys::env_resource_dir()
+  {
+    static std::string key;
+    if (key.empty()) key = "env.resource_dir";
+    return key;
+  }
+
+  // const std::string library_info::LIB_LABEL      = "library";
+  // const std::string library_info::EXEC_LABEL     = "executable";
+  // const std::string library_info::RESOURCE_LABEL = "resource";
+  // const std::string library_info::NAME                 = "name";
+  // const std::string library_info::LIBNAME              = "libname";
+  // const std::string library_info::DESCRIPTION          = "description";
+  // const std::string library_info::URL                  = "url";
+  // const std::string library_info::AUTHORS              = "authors";
+  // const std::string library_info::COPYRIGHT            = "copyright";
+  // const std::string library_info::VERSION              = "version";
+  // const std::string library_info::VERSION_MAJOR        = "version.major";
+  // const std::string library_info::VERSION_MINOR        = "version.minor";
+  // const std::string library_info::VERSION_PATCH        = "version.patch";
+  // const std::string library_info::BUILD_TYPE           = "build_type";
+  // const std::string library_info::MODULES              = "modules";
+  // const std::string library_info::INSTALL_PREFIX       = "install.prefix";
+  // const std::string library_info::INSTALL_INCLUDE_DIR  = "install.include_dir";
+  // const std::string library_info::INSTALL_LIB_DIR      = "install.library_dir";
+  // const std::string library_info::INSTALL_BIN_DIR      = "install.bin_dir";
+  // const std::string library_info::INSTALL_RESOURCE_DIR = "install.resource_dir";
+  // const std::string library_info::INSTALL_DOC_DIR      = "install.doc_dir";
+  // const std::string library_info::ENV_LIB_DIR          = "env.library_dir";
+  // const std::string library_info::ENV_RESOURCE_DIR     = "env.resource_dir";
 
   logger::priority library_info::logging()
   {
@@ -214,35 +373,35 @@ namespace datatools {
     DT_THROW_IF(db.has_key(library_name_),
                 std::logic_error,
                 "Library '" << library_name_ << "' is already registered !");
-    properties & lib_info = db.add_section(library_name_, LIB_LABEL);
+    properties & lib_info = db.add_section(library_name_, keys::lib_label());
     {
       std::ostringstream desc;
       desc << "Runtime information store for library '" << library_name_ << "'";
       lib_info.set_description(desc.str());
     }
     update(library_name_,
-           library_info::NAME,
+           library_info::keys::name(),
            library_name_,
            "string",
            true);
 
     if (!library_desc_.empty()) {
       update(library_name_,
-             library_info::DESCRIPTION,
+             library_info::keys::description(),
              library_desc_,
              "string",
              true);
     }
 
     update(library_name_,
-           library_info::VERSION,
+           library_info::keys::version(),
            library_version_,
            "string",
            true);
 
     if (!install_prefix_.empty()) {
       update(library_name_,
-             library_info::INSTALL_PREFIX,
+             library_info::keys::install_prefix(),
              install_prefix_,
              "string",
              false);
@@ -250,7 +409,7 @@ namespace datatools {
 
     if (!install_lib_path_.empty()) {
       update(library_name_,
-             library_info::INSTALL_LIB_DIR,
+             library_info::keys::install_lib_dir(),
              install_lib_path_,
              "string",
              false);
@@ -258,7 +417,7 @@ namespace datatools {
 
     if (!install_resource_path_.empty()) {
       update(library_name_,
-             library_info::INSTALL_RESOURCE_DIR,
+             library_info::keys::install_resource_dir(),
              install_resource_path_,
              "string",
              false);

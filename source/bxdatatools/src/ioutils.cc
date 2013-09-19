@@ -37,9 +37,37 @@ bool io::g_colored_stream_ = false;
 io   io::g_io_;
 io::indenter io::indent;
 
-const std::string io::NAN_REAL_REPR = "nan";
-const std::string io::PLUS_INFINITY_REAL_REPR = "inf";
-const std::string io::MINUS_INFINITY_REAL_REPR = "-inf";
+
+const std::string io::constants::nan_real_repr()
+{
+  static std::string value;
+  if (value.empty()) {
+    value = "nan";
+  }
+  return value;
+}
+
+const std::string io::constants::plus_infinity_real_repr()
+{
+  static std::string value;
+  if (value.empty()) {
+    value = "inf";
+  }
+  return value;
+}
+
+const std::string io::constants::minus_infinity_real_repr()
+{
+  static std::string value;
+  if (value.empty()) {
+    value = "-inf";
+  }
+  return value;
+}
+
+// const std::string io::NAN_REAL_REPR = "nan";
+// const std::string io::PLUS_INFINITY_REAL_REPR = "inf";
+// const std::string io::MINUS_INFINITY_REAL_REPR = "-inf";
 
 // static
 void io::write_real_number(std::ostream & out_, const double & val_, int precision_)
@@ -51,11 +79,11 @@ void io::write_real_number(std::ostream & out_, const double & val_, int precisi
     out_.precision(oldprec);
   }
   else if (datatools::is_infinity(val_)) {
-    if (val_ > 0) out_ << io::PLUS_INFINITY_REAL_REPR;
-    else out_ << io::MINUS_INFINITY_REAL_REPR;
+    if (val_ > 0) out_ << io::constants::plus_infinity_real_repr();
+    else out_ << io::constants::minus_infinity_real_repr();
   }
   else {
-    out_ << io::NAN_REAL_REPR;
+    out_ << io::constants::nan_real_repr();
   }
   return;
 }
@@ -69,13 +97,13 @@ bool io::read_real_number(std::istream & in_, double & val_, bool & normal_)
   if (!in_) {
     return false;
   }
-  if (real_token == io::PLUS_INFINITY_REAL_REPR) {
+  if (real_token == io::constants::plus_infinity_real_repr()) {
     datatools::plus_infinity(val_);
   }
-  else if (real_token == io::MINUS_INFINITY_REAL_REPR) {
+  else if (real_token == io::constants::minus_infinity_real_repr()) {
     datatools::minus_infinity(val_);
   }
-  else if (real_token == io::NAN_REAL_REPR) {
+  else if (real_token == io::constants::nan_real_repr()) {
     datatools::invalidate(val_);
   }
   else {

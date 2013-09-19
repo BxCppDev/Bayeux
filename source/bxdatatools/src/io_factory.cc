@@ -18,11 +18,56 @@ namespace datatools {
 // The io_factory class
 
 // file extensions recognized by the library:
-const std::string io_factory::TXT_EXT   = "txt";
-const std::string io_factory::XML_EXT   = "xml";
-const std::string io_factory::BIN_EXT   = "data";
-const std::string io_factory::GZ_EXT    = "gz";
-const std::string io_factory::BZIP2_EXT = "bz2";
+// const std::string io_factory::TXT_EXT   = "txt";
+// const std::string io_factory::XML_EXT   = "xml";
+// const std::string io_factory::BIN_EXT   = "data";
+// const std::string io_factory::GZ_EXT    = "gz";
+// const std::string io_factory::BZIP2_EXT = "bz2";
+
+const std::string io_factory::format::text_extension()
+{
+  static std::string value;
+  if (value.empty()) {
+    value = "txt";
+  }
+  return value;
+}
+
+const std::string io_factory::format::xml_extension()
+{
+  static std::string value;
+  if (value.empty()) {
+    value = "xml";
+  }
+  return value;
+}
+
+const std::string io_factory::format::binary_extension()
+{
+  static std::string value;
+  if (value.empty()) {
+    value = "data";
+  }
+  return value;
+}
+
+const std::string io_factory::format::gzip_extension()
+{
+  static std::string value;
+  if (value.empty()) {
+    value = "gz";
+  }
+  return value;
+}
+
+const std::string io_factory::format::bzip2_extension()
+{
+  static std::string value;
+  if (value.empty()) {
+    value = "bz2";
+  }
+  return value;
+}
 
 // Logging features:
 void io_factory::set_logging_priority(::datatools::logger::priority p)
@@ -556,19 +601,19 @@ int io_factory::guess_mode_from_filename(const std::string& a_filename,
        ++i) {
     std::string ext = *i;
     if (!comp) {
-      if (ext == GZ_EXT) {
+      if (ext == io_factory::format::gzip_extension()) {
         comp = gz = true;
-      } else if (ext == BZIP2_EXT) {
+      } else if (ext == io_factory::format::bzip2_extension()) {
         comp = bz2 = true;
       }
     }
 
     if (!format) {
-      if (ext == TXT_EXT) {
+      if (ext == io_factory::format::text_extension()) {
         format = txt = true;
-      } else if (ext == BIN_EXT) {
+      } else if (ext == io_factory::format::binary_extension()) {
         format = bin = true;
-      } else if (ext == XML_EXT) {
+      } else if (ext == io_factory::format::xml_extension()) {
         format = xml = true;
       }
     }
