@@ -104,14 +104,19 @@ class multi_properties :
   static const char OPEN;
   static const char CLOSE;
   static const char COMMENT;
-  static const std::string DEFAULT_KEY_LABEL;
-  static const std::string DEFAULT_META_LABEL;
+  //static const std::string DEFAULT_KEY_LABEL;
+  //static const std::string DEFAULT_META_LABEL;
   static const bool with_header_footer;
   static const bool without_header_footer;
   static const bool write_public_only;
   static const bool write_private_also;
   static const bool read_public_only;
   static const bool read_private_also;
+
+  struct defaults {
+    static const std::string & key_label();
+    static const std::string & meta_label();
+  };
 
  public:
   //! \brief Internal data stored within the dictionary of the multi_properties class.
