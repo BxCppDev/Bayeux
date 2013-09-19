@@ -1,13 +1,13 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* isotope.h
  * Author (s) : Benoit Guillon  <guillon@lpccaen.in2p3.fr>
  * Creation date: 2010-03-06
  * Last modified: 2010-03-06
  *
- * Description : A simple class to handle only isotopes (ZAI) and their basic properties (mass & decays). 
+ * Description : A simple class to handle only isotopes (ZAI) and their basic properties (mass & decays).
  *
  */
- 
+
 #ifndef MATERIALS_ISOTOPE_H_
 #define MATERIALS_ISOTOPE_H_ 1
 
@@ -15,33 +15,33 @@
 #include <datatools/i_tree_dump.h>
 
 namespace materials {
-  
-  /*! \brief A simple class to handle known isotopes (ZAI) and their basic properties (mass & decays). 
-   *    
-   *  - Isotope are build with a name and (Z, A, I) attributes :  
-   *           - name : which should be used as its id  ( = 'ChA-(I)' or '?-0' by default ) 
-   *           - Z :  number of protons equivalent to the chemical symbol     ( = 0 by default )     
-   *           - A :  number of nucleons    ( = 0 by default ) 
-   *           - I  :  Isomeric state if long half-life time excited states { 0 = ground state =' ' ; 1 = 
-   *                  first excited ='M' ;  2 =.....='N'  ;  3 = third  excited='O' }  ( = 0 by default ) 
+
+  /*! \brief A simple class to handle known isotopes (ZAI) and their basic properties (mass & decays).
    *
-   *     - I suppose we will only use known isotopes, thus it 's should be not possible to create an unknow ZAI ( except with default constructor ) : 
+   *  - Isotope are build with a name and (Z, A, I) attributes :
+   *           - name : which should be used as its id  ( = 'ChA-(I)' or '?-0' by default )
+   *           - Z :  number of protons equivalent to the chemical symbol     ( = 0 by default )
+   *           - A :  number of nucleons    ( = 0 by default )
+   *           - I  :  Isomeric state if long half-life time excited states { 0 = ground state =' ' ; 1 =
+   *                  first excited ='M' ;  2 =.....='N'  ;  3 = third  excited='O' }  ( = 0 by default )
+   *
+   *     - I suppose we will only use known isotopes, thus it 's should be not possible to create an unknow ZAI ( except with default constructor ) :
    *           - For consistency, the 3 attributes (Z,A,I) cannot be initialized separately
-   *           - Tabulated value of (Z,A) are searched in data file ( 'resources/mass.mas03' by default ) 
+   *           - Tabulated value of (Z,A) are searched in data file ( 'resources/mass.mas03' by default )
    *           - Note : Isomeric state (I) stay a 'free' parameter which is not checked for the moment
-   *             
+   *
    *    Isotope have mass data [mass with its error], which can be initialize with 'set_mass ()' or 'find_mass ()' methods  ( = [0.,0.] by default ).
    *
    *  Likewise, Isotope have decay data [stability flag, half-life time with its error], initialized with 'set_decay ()' or 'find_decay ()' methods (= [unstable, -1, -1] by default).
    *
    *  Note : When the set_zai method is invoked, all others attributes (mass & decay) are reinitialized to their default values.
-   *     
+   *
    \author BG
-   @version 1.0                  
+   @version 1.0
   */
-  
+
   class isotope : public datatools::i_tree_dumpable
-  {   
+  {
   public:
 
     enum isomeric_level_t
@@ -55,122 +55,122 @@ namespace materials {
         ISOMERIC_O     = 3
       };
 
-    /* constructor - destructor */    
-      
-    isotope ();                      //!< Default Constructor   
-    isotope (const std::string & name_);  //!< Normal Constructor        
-    isotope (const std::string & name_, 
-             const int z_ , 
-             const int a_ , 
-             const int i_ = GROUND_STATE, 
-             bool build_ = false);   //!< Normal Constructor      
-    isotope (const std::string & name_, 
-             const std::string & ch_symbol_, 
-             const int a_,  
-             const int i_ = GROUND_STATE, 
-             bool build_ = false);  //!< Normal Constructor         
+    /* constructor - destructor */
+
+    isotope ();                      //!< Default Constructor
+    isotope (const std::string & name_);  //!< Normal Constructor
+    isotope (const std::string & name_,
+             const int z_ ,
+             const int a_ ,
+             const int i_ = GROUND_STATE,
+             bool build_ = false);   //!< Normal Constructor
+    isotope (const std::string & name_,
+             const std::string & ch_symbol_,
+             const int a_,
+             const int i_ = GROUND_STATE,
+             bool build_ = false);  //!< Normal Constructor
     virtual ~isotope ();            //!< Destructor
 
-    /* public set & find methods */   
-      
+    /* public set & find methods */
+
     void set_name (const  std::string & name_);                               //!<  Set the name
-    
-    void set_zai (const  int z_, const int a_, const int i_ = 0);        //!<  Set Z, A, I attributes 
-      
-    void set_mass (const double mass_, const double err_mass_);          //!<  Set the mass in gramm per mol [g/mol] 
-    
-    void find_mass (const  std::string & input_file_name_ = "mass.mas03");    //!<  Search & set the mass from input file (= 'resources/mass.mass03' by default)
-       
-    void set_decay (const double half_life_time_, const double err_half_life_time_=0);  //!<  Set the decay data 
-    
-    void find_decay (const  std::string & input_file_name_ = "JEFF311RDD_ALL.OUT");          //!<  Search & set the decay data from input file (= 'resources/JEFF311RDD_ALL.OUT' by default)           
-  
-    /* const retrieval methods */        
-       
-    const std::string & get_name () const { return _name_; } //!< Return the name 
-    
-    const std::string & get_ch_symbol () const;              //!< Return the chemical symbol        
-    
-    std::string get_zai_name () const;                       //!< Return the zai name : 'ChA(I)'         
-      
+
+    void set_zai (const  int z_, const int a_, const int i_ = 0);        //!<  Set Z, A, I attributes
+
+    void set_mass (const double mass_, const double err_mass_);          //!<  Set the mass in gramm per mol [g/mol]
+
+    void find_mass (const  std::string & input_file_name_ = "");    //!<  Search & set the mass from input file (= 'data/mass.mass03' by default)
+
+    void set_decay (const double half_life_time_, const double err_half_life_time_=0);  //!<  Set the decay data
+
+    void find_decay (const  std::string & input_file_name_ = "");          //!<  Search & set the decay data from input file (= 'data/JEFF311RDD_ALL.OUT' by default)
+
+    /* const retrieval methods */
+
+    const std::string & get_name () const { return _name_; } //!< Return the name
+
+    const std::string & get_ch_symbol () const;              //!< Return the chemical symbol
+
+    std::string get_zai_name () const;                       //!< Return the zai name : 'ChA(I)'
+
     int get_z () const {return _z_;}          //!< Return Z (number of protons)
-    
+
     int get_a () const {return _a_;}          //!< Return A (number of nucleons)
-    
-    int get_i () const {return _i_;}          //!< Return I (isomeric state)     
-      
+
+    int get_i () const {return _i_;}          //!< Return I (isomeric state)
+
     bool is_known () const; //!< Return _is_known_ boolean flag
-      
-    bool has_mass_data ()  const ;                    //!< Return true if mass data have been set properly, false either 
-    
+
+    bool has_mass_data ()  const ;                    //!< Return true if mass data have been set properly, false either
+
     double get_mass ( )    const { return _mass_; }     //!<  Return the mass in gramm per mol [g/mol]
-    
+
     double get_err_mass () const { return _err_mass_; } //!<  Return the error on the mass in gramm per mol [g/mol]
-      
-    bool has_decay_data () const; //!< Return true if decay data have been set properly, false either  
-    
-    bool is_stable ()     const;  //!< Return true if isotope is stable, false either 
-    
+
+    bool has_decay_data () const; //!< Return true if decay data have been set properly, false either
+
+    bool is_stable ()     const;  //!< Return true if isotope is stable, false either
+
     double get_half_life_time () const {return _half_life_time_;} //!< Return the half-life time in second [s]
-    
+
     double get_err_half_life_time () const {return _err_half_life_time_;} //!< Return the error on half-life time in second [s]
-      
-    bool is_locked ()     const; //!< Return true if isotope is locked (i.e. fully set), false either    
-    
-    void build () ;              //!< Lock the isotope data structure (i.e. invoking)    
 
-    //! Print info      
-    virtual void tree_dump (std::ostream & out_         = std::clog, 
-                            const std::string & title_  = "", 
-                            const std::string & indent_ = "", 
-                            bool inherit_          = false) const;          
+    bool is_locked ()     const; //!< Return true if isotope is locked (i.e. fully set), false either
 
-    //! Give access to properties 
+    void build () ;              //!< Lock the isotope data structure (i.e. invoking)
+
+    //! Print info
+    virtual void tree_dump (std::ostream & out_         = std::clog,
+                            const std::string & title_  = "",
+                            const std::string & indent_ = "",
+                            bool inherit_          = false) const;
+
+    //! Give access to properties
     datatools::properties & grab_properties ();
 
-    //! Give access to properties 
+    //! Give access to properties
     const datatools::properties & get_properties () const;
 
   protected:
 
     void _build (bool use_decay_);
-    
+
   private :   /* private set & find methods */
-      
-    void _check_za_ ();       //!<  true is (Z,A) values are founded in file mass.mas03   
-      
-    void _init_ ();           //!<  Initialize attributes according to new (Z, A, I) values   
-      
+
+    void _check_za_ ();       //!<  true is (Z,A) values are founded in file mass.mas03
+
+    void _init_ ();           //!<  Initialize attributes according to new (Z, A, I) values
+
     void _set_z_ (const int z_);           //!<  Set Z, the number of protons  : 0 <  Z  <= 119  (check if exist)
-    
+
     void _set_a_ (const int a_);           //!<  Set A,the number of nucleons : Z <= A  <= 293
-    
-    void _set_i_ (const int i_);           //!<  Set I, the Isomeric state :  I={0,1,2,3} ={' ','M','N','O'} 
 
-    void _set_name_ (const std::string & name_);   //!< Set the name             
-   
-    void _set_mass_ (const double mass_, const double err_mass_=0);          //!<  Set the mass and its error in gramm per mol [g/mol]       
-      
-    void _set_half_life_time_ (const double half_life_time_ , const double err_half_life_time_);    //!<  Set the half-life time and its error in second [s]     
+    void _set_i_ (const int i_);           //!<  Set I, the Isomeric state :  I={0,1,2,3} ={' ','M','N','O'}
 
-  private :   /* private attributes */   
+    void _set_name_ (const std::string & name_);   //!< Set the name
 
-    int _z_;    //!<  Number of protons   (0<Z<=119)   
-    int _a_;    //!<  Number of nucleons  (Z<=A<=293)  
-    int _i_;    //!<  Isomeric states I={0,1,2,3} ={' ','M','N','O'} for "long half-life" time excited states               
-      
-    std::string _name_;  //!<  Name of the isotope, which should be used as its id ( by default = 'ChA(I)' = ZAI name )    
-                  
+    void _set_mass_ (const double mass_, const double err_mass_=0);          //!<  Set the mass and its error in gramm per mol [g/mol]
+
+    void _set_half_life_time_ (const double half_life_time_ , const double err_half_life_time_);    //!<  Set the half-life time and its error in second [s]
+
+  private :   /* private attributes */
+
+    int _z_;    //!<  Number of protons   (0<Z<=119)
+    int _a_;    //!<  Number of nucleons  (Z<=A<=293)
+    int _i_;    //!<  Isomeric states I={0,1,2,3} ={' ','M','N','O'} for "long half-life" time excited states
+
+    std::string _name_;  //!<  Name of the isotope, which should be used as its id ( by default = 'ChA(I)' = ZAI name )
+
     double _mass_;     //!<  Mass in gramm per mol [amu]
-    double _err_mass_; //!<  Error on the mass in gramm per mol [amu]     
-       
+    double _err_mass_; //!<  Error on the mass in gramm per mol [amu]
+
     double _half_life_time_;     //!<  Half life time in second [s]
     double _err_half_life_time_; //!<  Error on the half life time in second [s]
-      
+
     bool _is_known_;             //!<  Boolean flag [false by default] = true is (Z,A) values are founded in file mass.mas03
-      
-    datatools::properties _properties_;     //!<  datatools properties         
-                
+
+    datatools::properties _properties_;     //!<  datatools properties
+
   }; // end of class isotope
 
 } // end of namespace materials

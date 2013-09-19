@@ -145,7 +145,7 @@ namespace materials {
     _is_known_ = false;
 
     //-----------------  Open an ifstream from file mass.mas03  ----------------------------
-    std::string tape_name = materials::get_resource("mass.mas03");
+    std::string tape_name = materials::get_resource("data/mass.mas03");
     ifstream ifstr_tape;
     ifstr_tape.open(tape_name.c_str ());
     DT_THROW_IF(! ifstr_tape.is_open (),
@@ -219,12 +219,16 @@ namespace materials {
   //________________________________________________________________________
   void isotope::find_mass (const string & input_file_name_ )
   {
+    std::string ifn = input_file_name_;
+    if (ifn.empty()) {
+      ifn = "data/mass.mas03";
+    }
     /*!
       \param input_file_name_ : Name of the input data file
     */
 
     //-----------------  Open an ifstream from file mass.mas03  ----------------------------
-    std::string tape_name = materials::get_resource(input_file_name_);
+    std::string tape_name = materials::get_resource(ifn);
     ifstream ifstr_tape;
     ifstr_tape.open (tape_name.c_str ());
     DT_THROW_IF (! ifstr_tape.is_open (),
@@ -428,12 +432,17 @@ namespace materials {
   //________________________________________________________________________
   void isotope::find_decay(const  string & input_file_name_)
   {
+    std::string ifn = input_file_name_;
+    if (ifn.empty()) {
+      ifn = "data/JEFF311RDD_ALL.OUT";
+    }
+
     /*!
       \param input_file_name_ : Name of the input data file
     */
     //-----------------  Open an ifstream from file JEFF311RDD_ALL.OUT ----------------------------
 
-    std::string tape_name = materials::get_resource(input_file_name_);
+    std::string tape_name = materials::get_resource(ifn);
     ifstream ifstr_tape;
     ifstr_tape.open(tape_name.c_str ());
     DT_THROW_IF(!ifstr_tape.is_open (),
@@ -540,11 +549,10 @@ namespace materials {
   void isotope::_build (bool use_decay_)
   {
     bool use_decay_db = false;
-    find_mass ();
-    if (use_decay_db)
-      {
-        find_decay ();
-      }
+    find_mass();
+    if (use_decay_db) {
+      find_decay ();
+    }
     return;
   }
 

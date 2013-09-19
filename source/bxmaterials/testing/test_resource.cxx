@@ -44,7 +44,7 @@ bool test_valid_resource() {
   std::string rspath;
 
   try {
-    rspath = materials::get_resource("std_isotopes.def");
+    rspath = materials::get_resource("data/std_isotopes.def");
     std::ifstream check(rspath.c_str());
     if(!check.good()) {
       std::cerr << "FAIL : returned path to resource is unreadable ("
@@ -65,10 +65,10 @@ bool test_valid_resource() {
 
 
 //! group tests
-int main(int argc, const char *argv[]) { 
+int main(int argc, const char *argv[]) {
   if(!test_invalid_resource()) return EXIT_FAILURE;
   if(!test_valid_resource()) return EXIT_FAILURE;
-  
+
   return EXIT_SUCCESS;
 }
 

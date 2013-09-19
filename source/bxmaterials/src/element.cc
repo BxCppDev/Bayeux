@@ -284,7 +284,7 @@ namespace materials {
   {
 
     //-----------------  Open an ifstream from file atomic_weight_nist.dat  ----------------------------
-    std::string tape_name = materials::get_resource("isotopic_compositions_nist.dat");
+    std::string tape_name = materials::get_resource("data/isotopic_compositions_nist.dat");
     ifstream ifstr_tape;
     ifstr_tape.open (tape_name.c_str ());
     DT_THROW_IF(! ifstr_tape.is_open (),
