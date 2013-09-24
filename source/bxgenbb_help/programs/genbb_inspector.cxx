@@ -1592,9 +1592,9 @@ namespace genbb {
             }
             double value;
             datatools::invalidate(value);
-            if (val.type() == DR_REAL) {
+            if (val.type() == DR_REALTYPE) {
               value = val.to<double>();
-            } else if (val.type() == DR_INTEGER) {
+            } else if (val.type() == DR_INTEGERTYPE) {
               int ival = val.to<int>();
               value = ival * 1.0;
             }
@@ -1696,9 +1696,9 @@ namespace genbb {
                              "Cannot find function named '" << x_value_accessor << "' in meta class !");
               }
             }
-            if (x_val.type() == DR_REAL) {
+            if (x_val.type() == DR_REALTYPE) {
               x_value = x_val.to<double>();
-            } else if (x_val.type() == DR_INTEGER) {
+            } else if (x_val.type() == DR_INTEGERTYPE) {
               int ival = x_val.to<int>();
               x_value = ival * 1.0;
             }
@@ -1718,9 +1718,9 @@ namespace genbb {
                              "Cannot find property named '" << y_value_accessor << "' in meta class !");
               }
             }
-            if (y_val.type() == DR_REAL) {
+            if (y_val.type() == DR_REALTYPE) {
               y_value = y_val.to<double>();
-            } else if (y_val.type() == DR_INTEGER) {
+            } else if (y_val.type() == DR_INTEGERTYPE) {
               int ival = y_val.to<int>();
               y_value = ival * 1.0;
             }
