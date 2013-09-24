@@ -19,19 +19,19 @@
 namespace mygsl {
 
   class min_max
-    {
-    public:
-      bool is_valid () const;
-      double get_min () const;
-      double get_max () const;
-      double get_median () const;
-      min_max ();
-      void reset ();
-      void add (double value_);
-    private:
-      double _min_;
-      double _max_;
-     };
+  {
+  public:
+    bool is_valid() const;
+    double get_min() const;
+    double get_max() const;
+    double get_median() const;
+    min_max();
+    void reset();
+    void add(double value_);
+  private:
+    double _min_;
+    double _max_;
+  };
 
 } // end of namespace mygsl
 

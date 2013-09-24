@@ -205,7 +205,7 @@ namespace mygsl {
     }
     if (_control_) {
       gsl_odeiv_control_free (_control_);
-      _control_=0;
+      _control_ = 0;
     }
     if (_step_) {
       gsl_odeiv_step_free (_step_);

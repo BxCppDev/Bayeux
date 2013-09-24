@@ -1,4 +1,4 @@
-// mygsl::min_max.cc 
+// mygsl::min_max.cc
 
 #include <mygsl/min_max.h>
 
@@ -33,7 +33,7 @@ namespace mygsl {
   {
     return 0.5 * (_min_ + _max_);
   }
-  
+
   min_max::min_max ()
   {
     reset ();
@@ -49,22 +49,17 @@ namespace mygsl {
 
   void min_max::add (double value_)
   {
-    if (_min_ > _max_)
-      {
+    if (_min_ > _max_) {
+      _min_ = value_;
+      _max_ = value_;
+    } else {
+      if (value_ < _min_) {
         _min_ = value_;
+      }
+      if (value_ > _max_) {
         _max_ = value_;
       }
-    else
-      {
-        if (value_ < _min_)
-          {
-            _min_ = value_;
-          }
-        if (value_ > _max_)
-          {
-            _max_ = value_;
-          }
-      }    
+    }
     return;
   }
 

@@ -18,13 +18,46 @@ namespace mygsl {
 
   using namespace std;
 
-  const std::string tabulated_function::LINEAR_INTERP_NAME = "linear";
-  const std::string tabulated_function::POLYNOMIAL_INTERP_NAME = "polynomial";
-  const std::string tabulated_function::CSPLINE_INTERP_NAME = "cspline";
-  const std::string tabulated_function::CSPLINE_PERIODIC_INTERP_NAME = "cspline_periodic";
-  const std::string tabulated_function::AKIMA_INTERP_NAME = "akima";
-  const std::string tabulated_function::AKIMA_PERIODIC_INTERP_NAME = "akima_periodic";
-  const std::string tabulated_function::DEFAULT_INTERP_NAME = tabulated_function::LINEAR_INTERP_NAME;
+  const std::string & tabulated_function::linear_interp_name()
+  {
+    static std::string name = "linear";
+    return name;
+  }
+
+  const std::string & tabulated_function::polynomial_interp_name()
+  {
+    static std::string name = "polynomial";
+    return name;
+  }
+
+  const std::string & tabulated_function::cspline_interp_name()
+  {
+    static std::string name = "cspline";
+    return name;
+  }
+
+  const std::string & tabulated_function::cspline_periodic_interp_name()
+  {
+    static std::string name = "cspline_periodic";
+    return name;
+  }
+
+  const std::string & tabulated_function::akima_interp_name()
+  {
+    static std::string name = "akima";
+    return name;
+  }
+
+  const std::string & tabulated_function::akima_periodic_interp_name()
+  {
+    static std::string name = "akima_periodic";
+    return name;
+  }
+
+  const std::string & tabulated_function::default_interp_name()
+  {
+    return linear_interp_name();
+  }
 
   //----------------------------------------------------------------------
   // Internal implementation struct
@@ -60,6 +93,9 @@ namespace mygsl {
     pImpl->_x_min_  = 0.0;
     pImpl->_x_max_  = -1.0;
     pImpl->_interpolator_name_ = interp_name_;
+    if (pImpl->_interpolator_name_.empty()) {
+      pImpl->_interpolator_name_ = default_interp_name();
+    }
   }
 
   tabulated_function::tabulated_function(const tabulated_function& tab_func_) {
@@ -110,16 +146,16 @@ namespace mygsl {
   }
 
   const std::string& tabulated_function::default_interpolator_name() {
-    return DEFAULT_INTERP_NAME;
+    return linear_interp_name();
   }
 
   bool tabulated_function::interpolator_name_is_valid(const std::string& name_){
-    if (name_ == LINEAR_INTERP_NAME) return true;
-    if (name_ == POLYNOMIAL_INTERP_NAME) return true;
-    if (name_ == CSPLINE_INTERP_NAME) return true;
-    if (name_ == CSPLINE_PERIODIC_INTERP_NAME) return true;
-    if (name_ == AKIMA_INTERP_NAME) return true;
-    if (name_ == AKIMA_PERIODIC_INTERP_NAME) return true;
+    if (name_ == linear_interp_name()) return true;
+    if (name_ == polynomial_interp_name()) return true;
+    if (name_ == cspline_interp_name()) return true;
+    if (name_ == cspline_periodic_interp_name()) return true;
+    if (name_ == akima_interp_name()) return true;
+    if (name_ == akima_periodic_interp_name()) return true;
     return false;
   }
 
@@ -168,23 +204,23 @@ namespace mygsl {
     //   std::cerr << "DEBUG: tabulated_function::lock_table: name='"
     //             << pImpl->_interpolator_name_ << "'" << std::endl;
     // }
-    if (pImpl->_interpolator_name_ == LINEAR_INTERP_NAME) {
+    if (pImpl->_interpolator_name_ == linear_interp_name()) {
       git = gsl_interp_linear;
     }
-    if (pImpl->_interpolator_name_ == POLYNOMIAL_INTERP_NAME) {
+    if (pImpl->_interpolator_name_ == polynomial_interp_name()) {
       git = gsl_interp_polynomial;
       if (npoints > polynomial_alert_max_points) polynomial_alert = true;
     }
-    if (pImpl->_interpolator_name_ == CSPLINE_INTERP_NAME) {
+    if (pImpl->_interpolator_name_ == cspline_interp_name()) {
       git = gsl_interp_cspline;
     }
-    if (pImpl->_interpolator_name_ == CSPLINE_PERIODIC_INTERP_NAME) {
+    if (pImpl->_interpolator_name_ == cspline_periodic_interp_name()) {
       git = gsl_interp_cspline_periodic;
     }
-    if (pImpl->_interpolator_name_ == AKIMA_INTERP_NAME) {
+    if (pImpl->_interpolator_name_ == akima_interp_name()) {
       git = gsl_interp_akima;
     }
-    if (pImpl->_interpolator_name_ == AKIMA_PERIODIC_INTERP_NAME) {
+    if (pImpl->_interpolator_name_ == akima_periodic_interp_name()) {
       git = gsl_interp_akima_periodic;
     }
 
@@ -302,11 +338,12 @@ namespace mygsl {
   void tabulated_function::reset() {
     unlock_table();
     pImpl->_points_.clear();
-    pImpl->_interpolator_name_ = DEFAULT_INTERP_NAME;
+    pImpl->_interpolator_name_ = default_interp_name();
   }
 
   tabulated_function::~tabulated_function() {
-    reset();
+    unlock_table();
+    pImpl->_points_.clear();
   }
 
   double tabulated_function::_eval(double x_) const {

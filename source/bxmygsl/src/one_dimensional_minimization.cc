@@ -12,12 +12,28 @@ namespace mygsl {
 
   using namespace std;
 
-  const string one_dimensional_minimization::GOLDENSECTION_METHOD_LABEL = "goldensection";
-  const string one_dimensional_minimization::BRENT_METHOD_LABEL = "brent";
+  const std::string & one_dimensional_minimization::goldensection_method_label()
+  {
+    static std::string lbl;
+    if (lbl.empty()) {
+      lbl = "goldensection";
+    }
+    return lbl;
+  }
 
-  const size_t one_dimensional_minimization::DEFAULT_MAX_ITER   = 1000;
-  const double one_dimensional_minimization::DEFAULT_EPSABS     = 1.e-3;
+  const std::string & one_dimensional_minimization::brent_method_label()
+  {
+    static std::string lbl;
+    if (lbl.empty()) {
+      lbl = "brent";
+    }
+    return lbl;
+  }
 
+  const double one_dimensional_minimization::default_epsabs()
+  {
+    return 1.e-3;
+  }
 
   /**********************************************************/
   void one_dimensional_minimization::at_step_action::operator () (int status_,
@@ -132,7 +148,7 @@ namespace mygsl {
     _status_ = 0;
     _iter_ = 0;
     _max_iter_ = DEFAULT_MAX_ITER;
-    _epsabs_ = DEFAULT_EPSABS;
+    _epsabs_ = default_epsabs();
     _functor_ = 0;
     _converged_ = false;
     _minimum_value_.reset ();
@@ -143,7 +159,10 @@ namespace mygsl {
   // dtor:
   one_dimensional_minimization::~one_dimensional_minimization ()
   {
-    reset ();
+    if (_fminimizer_ != 0)  {
+      gsl_min_fminimizer_free (_fminimizer_);
+      _fminimizer_ = 0;
+    }
     return;
   }
 
@@ -169,18 +188,22 @@ namespace mygsl {
   void one_dimensional_minimization::initialize (const i_unary_function & functor_,
                                                  const string & method_)
   {
+    string method = method_;
+    if (method.empty()) {
+      method = brent_method_label();
+    }
     _functor_ = &functor_;
 
-    if (method_ == GOLDENSECTION_METHOD_LABEL) {
+    if (method == goldensection_method_label()) {
       _fminimizer_type_ = gsl_min_fminimizer_goldensection;
-    } else if (method_ == BRENT_METHOD_LABEL) {
+    } else if (method == brent_method_label()) {
       _fminimizer_type_ = gsl_min_fminimizer_brent;
     } else {
-      DT_THROW_IF(true,logic_error, "Method '" << method_ << "' is not valid !");
+      DT_THROW_IF(true,logic_error, "Method '" << method << "' is not valid !");
     }
     if (_debug_) {
       clog << "mygsl::one_dimensional_minimization::initialize: method is '"
-           << method_ << "'" << endl;
+           << method << "'" << endl;
     }
 
     _function_.function = g_function;
@@ -200,7 +223,7 @@ namespace mygsl {
     _status_ = 0;
     _iter_ = 0;
     _max_iter_ = DEFAULT_MAX_ITER;
-    _epsabs_ = DEFAULT_EPSABS;
+    _epsabs_ = default_epsabs();
     _functor_ = 0;
     _converged_ = false;
     _minimum_value_.reset ();
@@ -279,8 +302,12 @@ namespace mygsl {
                                                      double epsabs_,
                                                      const string & method_name_)
   {
+    std::string method_name = method_name_;
+    if (method_name.empty()) {
+      method_name = brent_method_label();
+    }
     mygsl::one_dimensional_minimization minimizer;
-    minimizer.init (func_, method_name_);
+    minimizer.init (func_, method_name);
     if (minimizer.minimize (a_, b_, m_, epsabs_) == 0) {
         return minimizer.get_minimum_value ();
       }

@@ -50,7 +50,7 @@ namespace mygsl {
     von_neumann_method (double xmin_,
                         double xmax_,
                         const i_unary_function & func_,
-                        double fmax_ = AUTO_FMAX,
+                        double fmax_ = 0.0,
                         size_t nsamples_ = DEFAULT_NSAMPLES,
                         size_t max_counts_ = DEFAULT_MAX_COUNTS);
 

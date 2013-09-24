@@ -28,13 +28,13 @@ namespace mygsl {
   public:
     typedef std::map<double,double> points_map_type;
 
-    static const std::string LINEAR_INTERP_NAME;
-    static const std::string POLYNOMIAL_INTERP_NAME;
-    static const std::string CSPLINE_INTERP_NAME;
-    static const std::string CSPLINE_PERIODIC_INTERP_NAME;
-    static const std::string AKIMA_INTERP_NAME;
-    static const std::string AKIMA_PERIODIC_INTERP_NAME;
-    static const std::string DEFAULT_INTERP_NAME;
+    static const std::string & linear_interp_name();
+    static const std::string & polynomial_interp_name();
+    static const std::string & cspline_interp_name();
+    static const std::string & cspline_periodic_interp_name();
+    static const std::string & akima_interp_name();
+    static const std::string & akima_periodic_interp_name();
+    static const std::string & default_interp_name();
 
   public:
 
@@ -45,7 +45,7 @@ namespace mygsl {
     virtual bool is_in_domain_of_definition(double x_) const;
 
     /// Constructor
-    tabulated_function(const std::string& interp_name_ = DEFAULT_INTERP_NAME);
+    tabulated_function(const std::string& interp_name_ = "");
 
     tabulated_function(const tabulated_function& tab_func_);
 
