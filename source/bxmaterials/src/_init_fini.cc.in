@@ -28,12 +28,16 @@ static void materials_initializer()
     // Additionnal stored parameters :
     lib_infos.store_string(datatools::library_info::keys::install_resource_dir(),
                            materials::resource::get_resource_dir());
+
     lib_infos.store_integer(datatools::library_info::keys::version_major(),
                             materials::version::get_major());
+
     lib_infos.store_integer(datatools::library_info::keys::version_minor(),
                             materials::version::get_minor());
+
     lib_infos.store_integer(datatools::library_info::keys::version_patch(),
                             materials::version::get_patch());
+
     lib_infos.store_string(datatools::library_info::build_type(),
                            "@CMAKE_BUILD_TYPE@");
 

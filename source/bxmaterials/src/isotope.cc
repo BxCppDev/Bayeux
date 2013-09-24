@@ -145,7 +145,7 @@ namespace materials {
     _is_known_ = false;
 
     //-----------------  Open an ifstream from file mass.mas03  ----------------------------
-    std::string tape_name = materials::get_resource("data/mass.mas03");
+    std::string tape_name = materials::get_resource("data/mass.mas03", true);
     ifstream ifstr_tape;
     ifstr_tape.open(tape_name.c_str ());
     DT_THROW_IF(! ifstr_tape.is_open (),
@@ -228,7 +228,7 @@ namespace materials {
     */
 
     //-----------------  Open an ifstream from file mass.mas03  ----------------------------
-    std::string tape_name = materials::get_resource(ifn);
+    std::string tape_name = materials::get_resource(ifn, true);
     ifstream ifstr_tape;
     ifstr_tape.open (tape_name.c_str ());
     DT_THROW_IF (! ifstr_tape.is_open (),
@@ -442,7 +442,7 @@ namespace materials {
     */
     //-----------------  Open an ifstream from file JEFF311RDD_ALL.OUT ----------------------------
 
-    std::string tape_name = materials::get_resource(ifn);
+    std::string tape_name = materials::get_resource(ifn, true);
     ifstream ifstr_tape;
     ifstr_tape.open(tape_name.c_str ());
     DT_THROW_IF(!ifstr_tape.is_open (),

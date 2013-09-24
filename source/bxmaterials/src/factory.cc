@@ -155,7 +155,7 @@ namespace materials {
     bool devel = false;
     //devel = true;
     double density = 1.0;
-    double density_unit = material::g_per_cm3;
+    double density_unit = material::g_per_cm3();
     //cerr << "DEVEL: factory::create_material: 1 g=" << CLHEP::g << endl;
     //cerr << "DEVEL: factory::create_material: 1 cm3=" << CLHEP::cm3 << endl;
     string formula;

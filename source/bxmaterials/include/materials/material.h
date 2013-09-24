@@ -45,7 +45,7 @@ namespace materials {
     bool is_valid () const;
   };
 
-  typedef std::map<std::string, compound_entry>  composition_map_type;
+  typedef std::map<std::string, compound_entry> composition_map_type;
 
   class material : public datatools::i_tree_dumpable
   {
@@ -55,8 +55,6 @@ namespace materials {
     //! Define the proportion units :
     /*! KP_ATOM (number of atoms by molecule) or KP_MASS (% mass)
      */
-
-
     enum proportion_unit_type
       {
         KP_UNDEFINED = -1,
@@ -68,7 +66,7 @@ namespace materials {
         MEAN_ZA = 2
       };
 
-    static const double g_per_cm3;
+    static const double g_per_cm3();
 
     /// Defaut Constructor
     material (); //!< Defaut Constructor

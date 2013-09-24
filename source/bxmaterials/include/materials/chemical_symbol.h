@@ -38,9 +38,9 @@ namespace materials {
 
     static const std::string table[NB_CHEMICAL_SYMBOLS];
 
-    static int z_from_symbol (const std::string & symbol_);
+    static int z_from_symbol(const std::string & symbol_);
 
-    static const std::string & symbol_from_z (size_t z_);
+    static const std::string & symbol_from_z(size_t z_);
 
   };
 

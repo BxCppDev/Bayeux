@@ -23,7 +23,15 @@ namespace materials {
 
   using namespace std;
 
-  const double material::g_per_cm3 = CLHEP::g / CLHEP::cm3;
+  const double material::g_per_cm3()
+  {
+    // static double u = -1.0;
+    // if (u < 0.0) {
+    //   u = CLHEP::g / CLHEP::cm3;
+    // }
+    // return u;
+    return CLHEP::g / CLHEP::cm3;
+  }
 
   //________________________________________________________________________
   compound_entry::compound_entry ()
@@ -94,7 +102,7 @@ namespace materials {
     _name_ = "";
     _proportion_unit_ = KP_UNDEFINED;
     _locked_ = false;
-    _density_ = -1.0 * g_per_cm3;
+    _density_ = -1.0 * g_per_cm3();
     _mean_z_ = -1.0;
     _mean_a_ = -1.0;
     return;
@@ -104,7 +112,7 @@ namespace materials {
   material::material (const string & name_)
   {
     set_name (name_);
-    _density_ = -1.0 * g_per_cm3;
+    _density_ = -1.0 * g_per_cm3();
     _locked_ = false;
     return;
   }
@@ -427,7 +435,7 @@ namespace materials {
          << "Name         : \"" << get_name() <<"\"" << endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "Density      : " << get_density() / g_per_cm3 << " g/cm3" << endl;
+         << "Density      : " << get_density() / g_per_cm3() << " g/cm3" << endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Composition  : ";
