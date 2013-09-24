@@ -385,11 +385,11 @@ namespace mctools {
 
           // Boost serialization format extension:
           if (_output_file_format_ == "ascii") {
-            output_file_oss << '.' << datatools::io_factory::TXT_EXT;
+            output_file_oss << '.' << datatools::io_factory::format::text_extension ();
           } else if (_output_file_format_ == "binary") {
-            output_file_oss << '.' << datatools::io_factory::BIN_EXT;
+            output_file_oss << '.' << datatools::io_factory::format::binary_extension ();
           } else if (_output_file_format_ == "xml") {
-            output_file_oss << '.' << datatools::io_factory::XML_EXT;
+            output_file_oss << '.' << datatools::io_factory::format::xml_extension ();
           } else if (_output_file_format_ == "brio") {
             using_brio = true;
             output_file_oss << brio::store_info::BRIO_FILE_EXTENSION;
@@ -401,9 +401,9 @@ namespace mctools {
           // compression extension:
           if (! using_brio) {
             if (_output_file_compression_ == "gzip") {
-              output_file_oss << '.' << datatools::io_factory::GZ_EXT;
+              output_file_oss << '.' << datatools::io_factory::format::gzip_extension ();
             } else if (_output_file_compression_ == "bzip2") {
-              output_file_oss << '.' << datatools::io_factory::BZIP2_EXT;
+              output_file_oss << '.' << datatools::io_factory::format::bzip2_extension ();
             }
           }
           _output_file_ = output_file_oss.str ();
