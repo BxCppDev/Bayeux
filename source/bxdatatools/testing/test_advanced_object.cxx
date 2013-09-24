@@ -11,7 +11,7 @@
 #include <datatools/io_factory.h>
 
 #include <datatools/advanced_object.ipp>
-//#include <datatools/reflection_guard.h>
+#include <datatools/reflection_guard.h>
 
 #if DATATOOLS_WITH_REFLECTION == 1
 void test_reflection()

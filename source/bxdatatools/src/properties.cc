@@ -42,37 +42,33 @@ namespace datatools {
   //----------------------------------------------------------------------
   // properties::data class implementation
   //
-  const int  properties::data::ERROR_SUCCESS = 0;
-  const int  properties::data::ERROR_FAILURE = 1;
-  const int  properties::data::ERROR_BADTYPE = 2;
-  const int  properties::data::ERROR_RANGE   = 3;
-  const int  properties::data::ERROR_LOCK    = 4;
+  // const int  properties::data::ERROR_SUCCESS = 0;
+  // const int  properties::data::ERROR_FAILURE = 1;
+  // const int  properties::data::ERROR_BADTYPE = 2;
+  // const int  properties::data::ERROR_RANGE   = 3;
+  // const int  properties::data::ERROR_LOCK    = 4;
 
-  const char properties::data::MASK_TYPE    = 0x7;
-  const char properties::data::MASK_EXPLICIT_PATH = 0x10;
-  const char properties::data::MASK_EXPLICIT_UNIT = 0x20;
-  const char properties::data::MASK_LOCK    = 0x40;
-  const char properties::data::MASK_VECTOR  = 0x80;
+  // const char properties::data::MASK_TYPE    = 0x7;
+  // const char properties::data::MASK_EXPLICIT_PATH = 0x10;
+  // const char properties::data::MASK_EXPLICIT_UNIT = 0x20;
+  // const char properties::data::MASK_LOCK    = 0x40;
+  // const char properties::data::MASK_VECTOR  = 0x80;
 
-  const char properties::data::TYPE_NONE    = 0x0;
-  const char properties::data::TYPE_BOOLEAN = 0x1;
-  const char properties::data::TYPE_INTEGER = 0x2;
-  const char properties::data::TYPE_REAL    = 0x3;
-  const char properties::data::TYPE_STRING  = 0x4;
+  // const char properties::data::TYPE_NONE    = 0x0;
+  // const char properties::data::TYPE_BOOLEAN = 0x1;
+  // const char properties::data::TYPE_INTEGER = 0x2;
+  // const char properties::data::TYPE_REAL    = 0x3;
+  // const char properties::data::TYPE_STRING  = 0x4;
 
-  const char properties::data::TYPE_BOOLEAN_SYMBOL = 'B';
-  const char properties::data::TYPE_INTEGER_SYMBOL = 'I';
-  const char properties::data::TYPE_REAL_SYMBOL    = 'R';
-  const char properties::data::TYPE_STRING_SYMBOL  = 'S';
+  // const char properties::data::TYPE_BOOLEAN_SYMBOL = 'B';
+  // const char properties::data::TYPE_INTEGER_SYMBOL = 'I';
+  // const char properties::data::TYPE_REAL_SYMBOL    = 'R';
+  // const char properties::data::TYPE_STRING_SYMBOL  = 'S';
 
-  const char properties::data::STRING_FORBIDDEN_CHAR = '"';
+  // const char properties::data::STRING_FORBIDDEN_CHAR = '"';
 
-  const int  properties::data::SCALAR_DEF  = -1;
-  const int  properties::data::SCALAR_SIZE =  1;
-  const bool        properties::data::DEFAULT_VALUE_BOOLEAN = false;
-  const int         properties::data::DEFAULT_VALUE_INTEGER = 0;
-  const double      properties::data::DEFAULT_VALUE_REAL    = 0.0;
-  const std::string properties::data::DEFAULT_VALUE_STRING  = "";
+  // const int  properties::data::SCALAR_DEF  = -1;
+  // const int  properties::data::SCALAR_SIZE =  1;
 
   const bool properties::data::defaults::boolean_value()
   {
@@ -782,7 +778,8 @@ namespace datatools {
 
   // dtor:
   properties::~properties() {
-    properties::clear();
+    _props_.clear();
+    _clear_key_validator_();
   }
 
 
@@ -942,7 +939,8 @@ namespace datatools {
 
 
   void properties::clear() {
-    this->reset();
+    _props_.clear();
+    _clear_key_validator_();
   }
 
 
@@ -2348,21 +2346,21 @@ namespace datatools {
   }
 
   // Static constants:
-  const char properties::config::DEFAULT_CONTINUATION_CHAR = '\\';
-  const char properties::config::DEFAULT_COMMENT_CHAR = '#';
-  const char properties::config::DEFAULT_ASSIGN_CHAR  = '=';
-  const char properties::config::DEFAULT_DESC_CHAR    = ':';
-  const char properties::config::OPEN_VECTOR          = '[';
-  const char properties::config::CLOSE_VECTOR         = ']';
-  const int properties::config::MODE_BARE          = 0;
-  const int properties::config::MODE_HEADER_FOOTER = 1;
-  const int properties::config::MODE_DEFAULT       = MODE_HEADER_FOOTER;
-  const int properties::config::mode_header_footer = MODE_HEADER_FOOTER;
-  const int properties::config::mode_bare          = MODE_BARE;
-  const bool properties::config::write_private_also = false;
-  const bool properties::config::write_public_only  = true;
-  const bool properties::config::without_smart_modulo = false;
-  const bool properties::config::with_smart_modulo  = true;
+  // const char properties::config::DEFAULT_CONTINUATION_CHAR = '\\';
+  // const char properties::config::DEFAULT_COMMENT_CHAR = '#';
+  // const char properties::config::DEFAULT_ASSIGN_CHAR  = '=';
+  // const char properties::config::DEFAULT_DESC_CHAR    = ':';
+  // const char properties::config::OPEN_VECTOR          = '[';
+  // const char properties::config::CLOSE_VECTOR         = ']';
+  // const int properties::config::MODE_BARE          = 0;
+  // const int properties::config::MODE_HEADER_FOOTER = 1;
+  // const int properties::config::MODE_DEFAULT       = MODE_HEADER_FOOTER;
+  // const int properties::config::mode_header_footer = MODE_HEADER_FOOTER;
+  // const int properties::config::mode_bare          = MODE_BARE;
+  // const bool properties::config::write_private_also = false;
+  // const bool properties::config::write_public_only  = true;
+  // const bool properties::config::without_smart_modulo = false;
+  // const bool properties::config::with_smart_modulo  = true;
 
   properties::config::config(bool a_use_smart_modulo,
                              int a_mode,
@@ -2696,25 +2694,26 @@ namespace datatools {
             if (type == properties::data::TYPE_BOOLEAN_SYMBOL && !scalar) {
               if (vsize > 0) {
                 v_booleans.assign(vsize,
-                                  properties::data::DEFAULT_VALUE_BOOLEAN);
+                                  properties::data::defaults::boolean_value());
               }
             }
             if (type == properties::data::TYPE_INTEGER_SYMBOL && !scalar)
               {
                 if (vsize > 0) {
                   v_integers.assign(vsize,
-                                    properties::data::DEFAULT_VALUE_INTEGER);
+                                    properties::data::defaults::integer_value());
                 }
               }
             if (type == properties::data::TYPE_REAL_SYMBOL && !scalar) {
               if (vsize > 0) {
-                v_reals.assign(vsize,properties::data::DEFAULT_VALUE_REAL);
+                v_reals.assign(vsize,
+                               properties::data::defaults::real_value());
               }
             }
             if (type == properties::data::TYPE_STRING_SYMBOL && !scalar) {
               if (vsize > 0) {
                 v_strings.assign(vsize,
-                                 properties::data::DEFAULT_VALUE_STRING);
+                                 properties::data::defaults::string_value());
               }
             }
             std::istringstream iss(property_value_str);

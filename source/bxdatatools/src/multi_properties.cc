@@ -202,7 +202,8 @@ void multi_properties::reset() {
 
 
 void multi_properties::clear() {
-  this->reset();
+  ordered_entries_.clear();
+  entries_.clear();
 }
 
 
@@ -250,7 +251,8 @@ multi_properties::multi_properties(const std::string& a_key_label,
 
 // dtor:
 multi_properties::~multi_properties() {
-  this->reset();
+  ordered_entries_.clear();
+  entries_.clear();
 }
 
 

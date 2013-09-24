@@ -1,6 +1,13 @@
 // -*- mode: c++; -*-
 /* the_introspectable.cc
  */
+
+// Standard Library
+#include <iostream>
+
+// Ourselves :
+#include <datatools/the_introspectable.h>
+
 // Third Party
 // - Boost
 #include <boost/scoped_ptr.hpp>
@@ -22,18 +29,22 @@ namespace reflection {
     }
     dynamic_link_guard& dynamic_link_guard::instance()
     {
-      static boost::scoped_ptr<dynamic_link_guard> g_global_guard (0);
-      if ( g_global_guard.get () == 0)
-        {
-          g_global_guard.reset (new dynamic_link_guard);
-        }
-      return *g_global_guard.get ();
+      std::cerr << "datatools::detail::reflection::dynamic_link_guard: Construction..." << std::endl;
+      bool devel = false;
+      devel = true;
+      static boost::scoped_ptr<dynamic_link_guard> guard (0);
+      if ( guard.get () == 0) {
+        guard.reset (new dynamic_link_guard);
+      }
+      if (devel) {
+        std::cerr << "datatools::detail::reflection::dynamic_link_guard::instance: Ok." << std::endl;
+      }
+      std::cerr << "datatools::detail::reflection::dynamic_link_guard: Construction done." << std::endl;
+      return *guard.get ();
     }
 
 } // end namespace reflection
 } // end namespace detail
 } // end namespace datatools
-
-#include <datatools/the_introspectable.h>
 
 // end of the_introspectable.cc

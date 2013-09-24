@@ -5,6 +5,9 @@
 
 // Standard Library
 
+
+#include <camp/enum.hpp>
+
 // Datatools
 #include <datatools/advanced_object.h>
 #include <datatools/properties.h>
@@ -18,6 +21,7 @@ namespace datatools {
 
     DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::advanced_object, tag_)
     {
+      // std::cerr << "DEVEL: ***** Registering class '::datatools::advanced_object'... " << std::endl;
       // Declare and populate the reflection metaclass for the 'datatools::advanced_object' class:
       DR_CLASS_DECLARE (::datatools::advanced_object)
         .DR_CLASS_BASE(::datatools::i_serializable)
@@ -73,6 +77,12 @@ namespace datatools {
                          ::datatools::advanced_object::grab_auxiliaries,
                          datatools::properties &)
         ;
+      // std::cerr << "DEVEL: Number of metaenums = " << camp::enumCount() << std::endl;
+      // for (int i = 0; i < camp::enumCount(); i++) {
+      //   const camp::Enum & e = camp::enumByIndex(i);
+      //   std::cerr << "DEVEL: Metaenum #" << i << " : " << e.name() << std::endl;
+      // }
+      // std::cerr << "DEVEL: ***** Registering class '::datatools::advanced_object' done." << std::endl;
       return;
     }
 
