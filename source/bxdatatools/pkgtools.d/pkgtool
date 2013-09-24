@@ -459,7 +459,7 @@ function do_configure ()
     if [ "x${cadfael_prefix_dir}" != "x" ]; then
         pkgtools__msg_warning "!!! EXPERIMENTAL FEATURE !!! Passing Cadfael prefix path"
 	additional_options="${additional_options}-DCMAKE_FIND_ROOT_PATH:PATH=${cadfael_prefix_dir} "
-    elif [ "x${CADFAEL_SHARE_DIR}" = "x" ]; then
+    elif [ "x${CADFAEL_SHARE_DIR}" != "x" ]; then
 	additional_options="${additional_options}-DCMAKE_MODULE_PATH:PATH=${CADFAEL_SHARE_DIR}/cmake/Modules "
     fi
 
