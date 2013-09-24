@@ -23,16 +23,11 @@ class i_tree_dumpable {
  public:
 
   struct tags {
-    static const std::string item();
-    static const std::string last_item();
-    static const std::string skip_item();
-    static const std::string last_skip_item();
+    static const std::string & item();
+    static const std::string & last_item();
+    static const std::string & skip_item();
+    static const std::string & last_skip_item();
   };
-
-  /* static const std::string TAG; */
-  /* static const std::string LAST_TAG; */
-  /* static const std::string SKIP_TAG; */
-  /* static const std::string LAST_SKIP_TAG; */
 
   enum ostream_type {
     OSTREAM_COUT=1,
@@ -42,13 +37,13 @@ class i_tree_dumpable {
 
  public:
 
-  static std::ostream& last_skip_tag(std::ostream& out);
+  static std::ostream & last_skip_tag(std::ostream& out);
 
-  static std::ostream& skip_tag(std::ostream& out);
+  static std::ostream & skip_tag(std::ostream& out);
 
-  static std::ostream& last_tag(std::ostream& out);
+  static std::ostream & last_tag(std::ostream& out);
 
-  static std::ostream& tag(std::ostream& out);
+  static std::ostream & tag(std::ostream& out);
 
   /// Main interface method for smart dump
   virtual void tree_dump (std::ostream& out = std::clog,

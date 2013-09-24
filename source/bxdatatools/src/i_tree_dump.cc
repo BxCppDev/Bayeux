@@ -13,7 +13,7 @@
 
 namespace datatools {
 
-const std::string i_tree_dumpable::tags::item()
+const std::string & i_tree_dumpable::tags::item()
 {
   static std::string value;
   if (value.empty()) {
@@ -22,7 +22,7 @@ const std::string i_tree_dumpable::tags::item()
   return value;
 }
 
-const std::string i_tree_dumpable::tags::last_item()
+const std::string & i_tree_dumpable::tags::last_item()
 {
   static std::string value;
   if (value.empty()) {
@@ -31,7 +31,7 @@ const std::string i_tree_dumpable::tags::last_item()
   return value;
 }
 
-const std::string i_tree_dumpable::tags::skip_item()
+const std::string & i_tree_dumpable::tags::skip_item()
 {
   static std::string value;
   if (value.empty()) {
@@ -40,7 +40,7 @@ const std::string i_tree_dumpable::tags::skip_item()
   return value;
 }
 
-const std::string i_tree_dumpable::tags::last_skip_item()
+const std::string & i_tree_dumpable::tags::last_skip_item()
 {
   static std::string value;
   if (value.empty()) {
@@ -50,19 +50,13 @@ const std::string i_tree_dumpable::tags::last_skip_item()
 }
 
 
-// const std::string i_tree_dumpable::TAG           = "|-- ";
-// const std::string i_tree_dumpable::LAST_TAG      = "`-- ";
-// const std::string i_tree_dumpable::SKIP_TAG      = "|   ";
-// const std::string i_tree_dumpable::LAST_SKIP_TAG = "    ";
-
-
-std::ostream& i_tree_dumpable::last_skip_tag(std::ostream& out) {
+std::ostream & i_tree_dumpable::last_skip_tag(std::ostream& out) {
   out << tags::last_skip_item();
   return out;
 }
 
 
-std::ostream& i_tree_dumpable::skip_tag(std::ostream& out) {
+std::ostream & i_tree_dumpable::skip_tag(std::ostream& out) {
   out << tags::skip_item();
   return out;
 }
@@ -74,7 +68,7 @@ std::ostream & i_tree_dumpable::last_tag(std::ostream& out) {
 }
 
 
-std::ostream& i_tree_dumpable::tag(std::ostream& out) {
+std::ostream & i_tree_dumpable::tag(std::ostream& out) {
   out << tags::item();
   return out;
 }

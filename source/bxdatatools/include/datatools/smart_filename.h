@@ -64,14 +64,10 @@ class smart_filename {
     MODE_INCREMENTAL =  0x4
   };
 
-  /* static const std::string MODE_SINGLE_LABEL; */
-  /* static const std::string MODE_LIST_LABEL; */
-  /* static const std::string MODE_INCREMENTAL_LABEL; */
-
   struct labels {
-    static const std::string mode_single();
-    static const std::string mode_list();
-    static const std::string mode_incremental();
+    static const std::string & mode_single();
+    static const std::string & mode_list();
+    static const std::string & mode_incremental();
   };
 
  public:

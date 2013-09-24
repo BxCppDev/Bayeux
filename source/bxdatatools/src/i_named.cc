@@ -5,9 +5,13 @@
 namespace datatools {
 
 // static
-const std::string i_named::constants::anonymous_label()
+const std::string & i_named::constants::anonymous_label()
 {
-  return  std::string("__anonymous__");
+  static std::string lbl;
+  if (lbl.empty()) {
+    lbl = "__anonymous__";
+  }
+  return lbl;
 }
 
 bool i_named::has_a_name(const i_named& a_named) {

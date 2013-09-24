@@ -644,7 +644,6 @@ namespace datatools {
   //----------------------------------------------------------------------
   // properties class implementation
   //
-  // const std::string properties::PRIVATE_PROPERTY_PREFIX = "__";
   const std::string & properties::private_property_prefix()
   {
     static std::string prefix;

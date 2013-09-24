@@ -137,6 +137,7 @@ namespace datatools {
 #define DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()        \
   public:                                                       \
   static const std::string SERIAL_TAG;                          \
+  static const std::string & serial_tag();                      \
   virtual const std::string& get_serial_tag() const;            \
   /**/
 
@@ -153,8 +154,15 @@ namespace datatools {
  */
 #define DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(ClassName,ClassSerialTag) \
   const std::string ClassName::SERIAL_TAG = ClassSerialTag;             \
+  const std::string& ClassName::serial_tag() {                          \
+    static std::string stag;                                            \
+    if (stag.empty()) {                                                 \
+      stag = ClassSerialTag;                                            \
+    }                                                                   \
+    return stag;                                                        \
+  }                                                                     \
   const std::string& ClassName::get_serial_tag() const {                \
-    return ClassName::SERIAL_TAG;                                       \
+    return ClassName::serial_tag();                                     \
   }                                                                     \
   /**/
 
@@ -165,9 +173,9 @@ namespace datatools {
     const std::string & serial_tag<ClassName> (){                       \
       static boost::scoped_ptr<std::string> g_serial_tag (0);           \
       if ( !g_serial_tag){                                              \
-        g_serial_tag.reset (new std::string (ClassSerialTag));          \
+        g_serial_tag.reset(new std::string (ClassSerialTag));           \
       }                                                                 \
-      return *g_serial_tag.get ();                                      \
+      return *g_serial_tag.get();                                       \
     }                                                                   \
   }                                                                     \
   /**/
@@ -421,7 +429,7 @@ namespace datatools {
   bool check_serial_tag(const std::string stag_,
                         const std::string alt_tag_ = "",
                         typename boost::disable_if< has_bsts<T> >::type* dummy = 0) {
-    if (stag_ == T::SERIAL_TAG) return true;
+    if (stag_ == T::serial_tag()) return true;
     if (! alt_tag_.empty())
       {
         if (stag_ == alt_tag_) return true;
@@ -433,12 +441,11 @@ namespace datatools {
   bool check_serial_tag(const std::string stag_,
                         const std::string alt_tag_ = "",
                         typename boost::enable_if< has_bsts<T> >::type* dummy = 0) {
-    if (stag_ == T::SERIAL_TAG) return true;
+    if (stag_ == T::serial_tag()) return true;
     if (stag_ == ::datatools::backward_serial_tag<T> (0)) return true;
-    if (! alt_tag_.empty())
-      {
-        if (stag_ == alt_tag_) return true;
-      }
+    if (! alt_tag_.empty()) {
+      if (stag_ == alt_tag_) return true;
+    }
     return false;
   }
 

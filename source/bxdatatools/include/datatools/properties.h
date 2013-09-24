@@ -326,7 +326,6 @@ class properties :
   //! \brief Default abstract class for key validator.
   class default_key_validator : public basic_key_validator {
    public:
-    // static const std::string ALLOWED_CHARS;
     static const std::string & allowed_chars();
 
     // ctor
@@ -426,7 +425,6 @@ class properties :
   //static bool g_debug;
 
   //! Prefix string used for the naming of private properties
-  //static const std::string PRIVATE_PROPERTY_PREFIX;
   static const std::string & private_property_prefix();
 
   // Typedefs declarations:

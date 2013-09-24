@@ -38,7 +38,7 @@ io   io::g_io_;
 io::indenter io::indent;
 
 
-const std::string io::constants::nan_real_repr()
+const std::string & io::constants::nan_real_repr()
 {
   static std::string value;
   if (value.empty()) {
@@ -47,7 +47,7 @@ const std::string io::constants::nan_real_repr()
   return value;
 }
 
-const std::string io::constants::plus_infinity_real_repr()
+const std::string & io::constants::plus_infinity_real_repr()
 {
   static std::string value;
   if (value.empty()) {
@@ -56,7 +56,7 @@ const std::string io::constants::plus_infinity_real_repr()
   return value;
 }
 
-const std::string io::constants::minus_infinity_real_repr()
+const std::string & io::constants::minus_infinity_real_repr()
 {
   static std::string value;
   if (value.empty()) {
@@ -64,10 +64,6 @@ const std::string io::constants::minus_infinity_real_repr()
   }
   return value;
 }
-
-// const std::string io::NAN_REAL_REPR = "nan";
-// const std::string io::PLUS_INFINITY_REAL_REPR = "inf";
-// const std::string io::MINUS_INFINITY_REAL_REPR = "-inf";
 
 // static
 void io::write_real_number(std::ostream & out_, const double & val_, int precision_)

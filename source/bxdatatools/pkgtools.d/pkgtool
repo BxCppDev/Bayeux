@@ -339,6 +339,7 @@ function do_configure ()
     local with_dependency_check=0
     local build_type=
     local cadfael_cmake_config_dir=
+    local cadfael_prefix_dir=
     while [ -n "$1" ]; do
 	local option="$1"
 	#pkgtools__msg_warning "Option: '${option}'"
@@ -354,6 +355,9 @@ function do_configure ()
 	elif [ "${option}" = "--cadfael-cmake-config-dir" ]; then
 	    shift 1
 	    cadfael_cmake_config_dir="$1"
+	elif [ "${option}" = "--cadfael-prefix-dir" ]; then
+	    shift 1
+	    cadfael_prefix_dir="$1"
 	elif [ "${option}" = "--release-build" ]; then
 	    build_type="Release"
 	    with_debug=0
@@ -452,10 +456,19 @@ function do_configure ()
         pkgtools__msg_warning "!!! EXPERIMENTAL FEATURE !!! Passing Cadfael CMake configuration file"
 	additional_options="${additional_options}-DCADFAEL_CMAKE_CONFIG_DIR:PATH=${cadfael_cmake_config_dir} "
     fi
+    if [ "x${cadfael_prefix_dir}" != "x" ]; then
+        pkgtools__msg_warning "!!! EXPERIMENTAL FEATURE !!! Passing Cadfael prefix path"
+	additional_options="${additional_options}-DCMAKE_FIND_ROOT_PATH:PATH=${cadfael_prefix_dir} "
+    elif [ "x${CADFAEL_SHARE_DIR}" = "x" ]; then
+	additional_options="${additional_options}-DCMAKE_MODULE_PATH:PATH=${CADFAEL_SHARE_DIR}/cmake/Modules "
+    fi
+
+#	-DCMAKE_MODULE_PATH=${CADFAEL_SHARE_DIR}/cmake/Modules \
+#	-DCMAKE_FIND_ROOT_PATH=${CADFAEL_SHARE_DIR}/cmake/Modules \
+
     cmake \
 	-DCMAKE_INSTALL_PREFIX:PATH=${install_prefix} \
 	-DCMAKE_BUILD_TYPE:STRING=${build_type} \
-	-DCMAKE_MODULE_PATH=${CADFAEL_SHARE_DIR}/cmake/Modules \
 	-DDATATOOLS_WITH_BIO=${with_bio} \
 	-DDATATOOLS_WITH_REFLECTION=${with_reflection} \
 	-DDATATOOLS_WITH_DOC=${with_doc} \

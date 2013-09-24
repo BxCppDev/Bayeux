@@ -73,10 +73,6 @@ class version_id {
   static const int32_t BETA_NUM; //    = -10002;
   static const int32_t RC_BASE_NUM; //  = -10001;
 
-  // static const std::string ALPHA_TAG;
-  // static const std::string BETA_TAG;
-  // static const std::string RELEASE_CANDIDATE_PREFIX_TAG;
-
   struct tags {
     static const std::string & alpha();
     static const std::string & beta();

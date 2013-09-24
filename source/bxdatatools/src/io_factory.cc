@@ -17,7 +17,7 @@ namespace datatools {
 //----------------------------------------------------------------------
 // The io_factory class
 
-const std::string io_factory::format::text_extension()
+const std::string & io_factory::format::text_extension()
 {
   static std::string value;
   if (value.empty()) {
@@ -26,7 +26,7 @@ const std::string io_factory::format::text_extension()
   return value;
 }
 
-const std::string io_factory::format::xml_extension()
+const std::string & io_factory::format::xml_extension()
 {
   static std::string value;
   if (value.empty()) {
@@ -35,7 +35,7 @@ const std::string io_factory::format::xml_extension()
   return value;
 }
 
-const std::string io_factory::format::binary_extension()
+const std::string & io_factory::format::binary_extension()
 {
   static std::string value;
   if (value.empty()) {
@@ -44,7 +44,7 @@ const std::string io_factory::format::binary_extension()
   return value;
 }
 
-const std::string io_factory::format::gzip_extension()
+const std::string & io_factory::format::gzip_extension()
 {
   static std::string value;
   if (value.empty()) {
@@ -53,7 +53,7 @@ const std::string io_factory::format::gzip_extension()
   return value;
 }
 
-const std::string io_factory::format::bzip2_extension()
+const std::string & io_factory::format::bzip2_extension()
 {
   static std::string value;
   if (value.empty()) {
@@ -689,7 +689,11 @@ io_writer::~io_writer() {
 //----------------------------------------------------------------------
 // The data_reader class
 //
-const std::string data_reader::EMPTY_RECORD_TAG = "";
+const std::string & data_reader::empty_record_tag()
+{
+  static std::string tag;
+  return tag;
+}
 
 // ctor
 data_reader::data_reader() {
@@ -758,7 +762,7 @@ void data_reader::read_next_tag() {
   DT_LOG_TRACE(reader_->get_logging_priority(),"Entering...");
   if (status_ != STATUS_OK) {
     DT_LOG_TRACE(reader_->get_logging_priority(),"status != STATUS_Ok");
-    next_tag_ = EMPTY_RECORD_TAG;
+    next_tag_ = empty_record_tag();
     return;
   }
   DT_LOG_TRACE(reader_->get_logging_priority(),"Continue...");
@@ -782,17 +786,17 @@ void data_reader::read_next_tag() {
     if (msg.find ("EOF") != msg.npos) {
     }
     status_   = STATUS_ERROR;
-    next_tag_ = EMPTY_RECORD_TAG;
+    next_tag_ = empty_record_tag();
     DT_LOG_TRACE(reader_->get_logging_priority(), x.what());
   }
   catch (std::exception& x) {
     status_   = STATUS_ERROR;
-    next_tag_ = EMPTY_RECORD_TAG;
+    next_tag_ = empty_record_tag();
   }
   catch (...) {
     DT_LOG_WARNING(reader_->get_logging_priority(),"Unexpected exception!");
     status_   = STATUS_ERROR;
-    next_tag_ = EMPTY_RECORD_TAG;
+    next_tag_ = empty_record_tag();
   }
 }
 
@@ -820,7 +824,7 @@ void data_reader::reset_reader() {
 
 
 const std::string& data_reader::get_record_tag() const {
-  if (status_ != STATUS_OK) return EMPTY_RECORD_TAG;
+  if (status_ != STATUS_OK) return empty_record_tag();
   return next_tag_;
 }
 

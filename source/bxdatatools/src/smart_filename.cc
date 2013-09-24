@@ -46,30 +46,29 @@ namespace datatools {
 
 using namespace std;
 
-const std::string smart_filename::labels::mode_single()
+const std::string & smart_filename::labels::mode_single()
 {
-  std::string label;
+  static std::string label;
   if (label.empty()) label = "single";
   return label;
 }
 
-const std::string smart_filename::labels::mode_list()
+
+const std::string & smart_filename::labels::mode_list()
 {
-  std::string label;
+  static std::string label;
   if (label.empty()) label = "list";
   return label;
 }
 
-const std::string smart_filename::labels::mode_incremental()
+
+const std::string & smart_filename::labels::mode_incremental()
 {
-  std::string label;
+  static std::string label;
   if (label.empty()) label = "incremental";
   return label;
 }
 
-// const string smart_filename::MODE_SINGLE_LABEL      =  "single";
-// const string smart_filename::MODE_LIST_LABEL        =  "list";
-// const string smart_filename::MODE_INCREMENTAL_LABEL =  "incremental";
 
 bool smart_filename::is_debug() const {
   return debug_;

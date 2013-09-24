@@ -17,7 +17,7 @@ namespace datatools {
 class i_named {
  public:
   struct constants {
-    static const std::string anonymous_label();
+    static const std::string & anonymous_label();
   };
 
   /**

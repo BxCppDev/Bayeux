@@ -109,11 +109,11 @@ class io_factory : public datatools::i_tree_dumpable {
   };
 
   struct format {
-    static const std::string text_extension();
-    static const std::string xml_extension();
-    static const std::string binary_extension();
-    static const std::string gzip_extension();
-    static const std::string bzip2_extension();
+    static const std::string & text_extension();
+    static const std::string & xml_extension();
+    static const std::string & binary_extension();
+    static const std::string & gzip_extension();
+    static const std::string & bzip2_extension();
   };
 
   static int guess_mode_from_filename(const std::string& a_filename,
@@ -455,7 +455,7 @@ class data_reader {
     STATUS_ERROR = 1
   };
 
-  static const std::string EMPTY_RECORD_TAG;
+  static const std::string & empty_record_tag();
 
   /// Constructor
   data_reader();
@@ -591,7 +591,7 @@ class data_reader {
       }
       //<<<
       status_   = STATUS_ERROR;
-      next_tag_ = EMPTY_RECORD_TAG;
+      next_tag_ = empty_record_tag();
       DT_THROW_IF(true, std::logic_error, x.what());
     }
     catch (...) {
@@ -599,7 +599,7 @@ class data_reader {
                    "Cannot read data: "
                    << "Unexpected exception" << " !");
       status_   = STATUS_ERROR;
-      next_tag_ = EMPTY_RECORD_TAG;
+      next_tag_ = empty_record_tag();
       DT_THROW_IF(true, std::logic_error, "Unexpected error!");
     }
   }

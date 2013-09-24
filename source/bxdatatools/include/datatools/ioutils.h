@@ -73,19 +73,13 @@ struct io {
   struct constants {
 
     /// A portable representation for a NaN
-    static const std::string nan_real_repr();
+    static const std::string & nan_real_repr();
     /// A portable representation for +infinity
-    static const std::string plus_infinity_real_repr();
+    static const std::string & plus_infinity_real_repr();
     /// A portable representation for -infinity
-    static const std::string minus_infinity_real_repr();
-    // static const int real_precision();
-    // static const int real4_precision();
-    // static const int real8_precision();
+    static const std::string & minus_infinity_real_repr();
   };
 
-  // static const std::string NAN_REAL_REPR; /// A portable representation for a NaN
-  // static const std::string PLUS_INFINITY_REAL_REPR; /// A portable representation for +infinity
-  // static const std::string MINUS_INFINITY_REAL_REPR; /// A portable representation for -infinity
   static const int REAL_PRECISION  = 16; /// Default precision for double
   static const int REAL8_PRECISION = 16; /// Default precision for double
   static const int REAL4_PRECISION = 8;  /// Default precision for float
