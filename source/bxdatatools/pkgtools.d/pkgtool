@@ -463,9 +463,6 @@ function do_configure ()
 	additional_options="${additional_options}-DCMAKE_MODULE_PATH:PATH=${CADFAEL_SHARE_DIR}/cmake/Modules "
     fi
 
-#	-DCMAKE_MODULE_PATH=${CADFAEL_SHARE_DIR}/cmake/Modules \
-#	-DCMAKE_FIND_ROOT_PATH=${CADFAEL_SHARE_DIR}/cmake/Modules \
-
     cmake \
 	-DCMAKE_INSTALL_PREFIX:PATH=${install_prefix} \
 	-DCMAKE_BUILD_TYPE:STRING=${build_type} \

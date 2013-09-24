@@ -421,8 +421,6 @@ class properties :
 // properties class declarations
 //
  public:
-  //! Global static debug variable
-  //static bool g_debug;
 
   //! Prefix string used for the naming of private properties
   static const std::string & private_property_prefix();
@@ -965,7 +963,7 @@ class properties :
 
  protected:
 
-  static default_key_validator g_default_key_validator;
+  static default_key_validator & global_default_key_validator();
 
 
   // methods:

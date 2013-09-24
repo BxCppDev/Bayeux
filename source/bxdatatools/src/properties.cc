@@ -16,6 +16,7 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/archive/polymorphic_oarchive.hpp>
 #include <boost/archive/polymorphic_iarchive.hpp>
+#include <boost/scoped_ptr.hpp>
 
 // This Project
 #include <datatools/utils.h>
@@ -37,7 +38,14 @@ namespace datatools {
 
   //bool properties::g_debug = false;
 
-  properties::default_key_validator properties::g_default_key_validator;
+  properties::default_key_validator & properties::global_default_key_validator()
+  {
+    static boost::scoped_ptr<properties::default_key_validator> dkv;
+    if (!dkv) {
+      dkv.reset(new properties::default_key_validator);
+    }
+    return *dkv;
+  }
 
   //----------------------------------------------------------------------
   // properties::data class implementation
@@ -715,7 +723,7 @@ namespace datatools {
 
   void properties::set_default_key_validator() {
     this->_clear_key_validator_();
-    _key_validator_ = &g_default_key_validator;// new default_key_validator;
+    _key_validator_ = &global_default_key_validator();
     _key_validator_deletion_ = false; //true;
   }
 
