@@ -17,13 +17,6 @@ namespace datatools {
 //----------------------------------------------------------------------
 // The io_factory class
 
-// file extensions recognized by the library:
-// const std::string io_factory::TXT_EXT   = "txt";
-// const std::string io_factory::XML_EXT   = "xml";
-// const std::string io_factory::BIN_EXT   = "data";
-// const std::string io_factory::GZ_EXT    = "gz";
-// const std::string io_factory::BZIP2_EXT = "bz2";
-
 const std::string io_factory::format::text_extension()
 {
   static std::string value;

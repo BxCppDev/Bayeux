@@ -278,11 +278,11 @@ private:
   void read_impl(std::istream& a_in, bool a_skip_private);
 
  private:
-  bool                  debug_; /// Debug flag
+  bool                  debug_;       /// Debug flag
   std::string           description_; /// Description of the container
-  std::string           key_label_; /// The key label used by the container
-  std::string           meta_label_; /// The meta label used by the container
-  entries_col_type         entries_; /// List of stored properties objects (unordered)
+  std::string           key_label_;   /// The key label used by the container
+  std::string           meta_label_;  /// The meta label used by the container
+  entries_col_type      entries_;     /// List of stored properties objects (unordered)
   entries_ordered_col_type ordered_entries_; /// List of ordered properties objects
 
   //! Cloneable interface

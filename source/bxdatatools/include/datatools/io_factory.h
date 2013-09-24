@@ -108,12 +108,6 @@ class io_factory : public datatools::i_tree_dumpable {
         MODE_NO_APPEND
   };
 
-  // static const std::string TXT_EXT;
-  // static const std::string XML_EXT;
-  // static const std::string BIN_EXT;
-  // static const std::string GZ_EXT;
-  // static const std::string BZIP2_EXT;
-
   struct format {
     static const std::string text_extension();
     static const std::string xml_extension();
