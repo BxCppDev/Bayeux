@@ -300,7 +300,7 @@ namespace genbb {
     datatools::invalidate (_max_energy_);
 
     // GSL (mygsl::tabulated_function class)
-    _spectrum_interpolation_name_ = mygsl::tabulated_function::LINEAR_INTERP_NAME;
+    _spectrum_interpolation_name_ = mygsl::tabulated_function::linear_interp_name ();
 
     _direction_mode_ = DIRECTION_DEFAULT;
     _cone_max_angle_ = 0.0 * CLHEP::degree;
@@ -353,7 +353,7 @@ namespace genbb {
     _vnm_.reset ();
     _energy_spectrum_.reset ();
     _energy_spectrum_filename_ = "";
-    _spectrum_interpolation_name_ = mygsl::tabulated_function::LINEAR_INTERP_NAME;
+    _spectrum_interpolation_name_ = mygsl::tabulated_function::linear_interp_name ();
 
     _direction_mode_ = DIRECTION_DEFAULT;
     _cone_max_angle_ = 0.0 * CLHEP::degree;
