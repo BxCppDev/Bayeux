@@ -57,7 +57,7 @@ namespace dpp {
       module_handle_type handle; //!< Module handle
     };
 
-    static const std::string DEFAULT_CUT_SERVICE_LABEL;
+    static const std::string & default_cut_service_label();
 
     void set_cut_service_label (const std::string & label_);
 

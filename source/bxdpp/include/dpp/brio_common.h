@@ -55,8 +55,8 @@ namespace dpp {
   /// \brief brio I/O constants
   struct brio_common
   {
-    static const std::string GENERAL_INFO_STORE_LABEL;
-    static const std::string EVENT_RECORD_STORE_LABEL;
+    static const std::string & general_info_store_label();
+    static const std::string & event_record_store_label();
   };
 
 } // end of namespace dpp

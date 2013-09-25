@@ -149,17 +149,17 @@ namespace dpp {
       _brio_file_reader_->open (_source_record.effective_label);
 
       // Try to find the 'general info' store :
-      if (_brio_file_reader_->has_store_with_serial_tag (brio_common::GENERAL_INFO_STORE_LABEL,
-                                                         datatools::properties::SERIAL_TAG)) {
+      if (_brio_file_reader_->has_store_with_serial_tag (brio_common::general_info_store_label(),
+                                                         datatools::properties::serial_tag())) {
         // If found, select it:
-        _brio_file_reader_->select_store (brio_common::GENERAL_INFO_STORE_LABEL);
+        _brio_file_reader_->select_store (brio_common::general_info_store_label());
 
         // Note: here we could read all 'properties' record from the 'general info' store,
         // and store them in a 'multiproperties' container...
       }
 
-      std::string checked_store = brio_common::EVENT_RECORD_STORE_LABEL;
-      std::string checked_serial_tag = datatools::things::SERIAL_TAG;
+      std::string checked_store = brio_common::event_record_store_label();
+      std::string checked_serial_tag = datatools::things::serial_tag();
       if (! _brio_file_reader_->has_store_with_serial_tag (checked_store, checked_serial_tag)) {
         _brio_file_reader_->print_info (std::cerr);
         DT_THROW_IF(true,
@@ -196,7 +196,7 @@ namespace dpp {
   void simple_brio_data_source::_check_next_record ()
   {
     _has_next_record = false;
-    _brio_file_reader_->select_store (brio_common::EVENT_RECORD_STORE_LABEL);
+    _brio_file_reader_->select_store (brio_common::event_record_store_label());
     if (_brio_file_reader_->has_next ()) {
       _has_next_record = true;
     }

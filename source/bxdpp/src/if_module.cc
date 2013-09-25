@@ -39,7 +39,11 @@ namespace dpp {
   // Registration instantiation macro :
   DPP_MODULE_REGISTRATION_IMPLEMENT(if_module, "dpp::if_module");
 
-  const std::string if_module::DEFAULT_CUT_SERVICE_LABEL = "Cuts";
+  const std::string & if_module::default_cut_service_label()
+  {
+    static std::string label = "Cuts";
+    return label;
+  }
 
   void if_module::set_cut_service_label (const std::string & label_)
   {
@@ -185,7 +189,7 @@ namespace dpp {
 
     if (! _condition_cut_.handle) {
       if (_cut_service_label_.empty ()) {
-        set_cut_service_label (DEFAULT_CUT_SERVICE_LABEL);
+        set_cut_service_label (default_cut_service_label());
       }
 
       bool check = a_service_manager.has (_cut_service_label_)

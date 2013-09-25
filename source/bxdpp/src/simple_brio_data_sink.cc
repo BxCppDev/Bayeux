@@ -155,13 +155,13 @@ namespace dpp {
     if (_brio_file_writer_ == 0) {
         _brio_file_writer_ = new brio::writer;
         _brio_file_writer_->open (_sink_record.effective_label);
-        _brio_file_writer_->add_store (brio_common::GENERAL_INFO_STORE_LABEL,
-                                       datatools::properties::SERIAL_TAG,
+        _brio_file_writer_->add_store (brio_common::general_info_store_label(),
+                                       datatools::properties::serial_tag(),
                                        32000);
-        _brio_file_writer_->add_store (brio_common::EVENT_RECORD_STORE_LABEL,
-                                       datatools::things::SERIAL_TAG,
+        _brio_file_writer_->add_store (brio_common::event_record_store_label(),
+                                       datatools::things::serial_tag(),
                                        256000);
-        _brio_file_writer_->select_store (brio_common::EVENT_RECORD_STORE_LABEL);
+        _brio_file_writer_->select_store (brio_common::event_record_store_label());
         if (get_logging_priority () >= datatools::logger::PRIO_INFORMATION)
           {
             DT_LOG_INFORMATION (get_logging_priority (),
