@@ -96,7 +96,7 @@ namespace mctools {
       _generate_gdml_file_ = true;
       _gdml_filename_      = "";
       _gdml_file_dir_      = "";
-      _gdml_schema_        = geomtools::gdml_writer::DEFAULT_REMOTE_GDML_SCHEMA;
+      _gdml_schema_        = geomtools::gdml_writer::default_remote_gdml_schema();
       _gdml_validation_    = true;
 
       _using_vis_attributes_      = true;
@@ -181,7 +181,7 @@ namespace mctools {
       if (config_.has_key("gdml.schema_location")) {
         std::string gdml_schema_location = config_.fetch_string("gdml.schema_location") ;
         if (gdml_schema_location == "remote") {
-          _gdml_schema_ = geomtools::gdml_writer::DEFAULT_REMOTE_GDML_SCHEMA;
+          _gdml_schema_ = geomtools::gdml_writer::default_remote_gdml_schema();
         } else if (gdml_schema_location == "local") {
           _gdml_schema_ = "${GEOMTOOLS_DATA_DIR}/resources/gdml_schema/gdml.xsd";
           datatools::fetch_path_with_env(_gdml_schema_);
@@ -1112,17 +1112,17 @@ namespace mctools {
       DT_THROW_IF (mat_mgr_ref == 0,std::logic_error,"Cannot find a material driver plugin in the geometry manager !");
       DT_LOG_NOTICE(_logprio(), "Export GDML materials from the materials driver plugin: ");
       geomtools::export_gdml(*mat_mgr_ref, materials_writer);
-      GDML.attach_external_materials(materials_writer.get_stream(geomtools::gdml_writer::MATERIALS_SECTION));
+      GDML.attach_external_materials(materials_writer.get_stream(geomtools::gdml_writer::materials_section()));
 
       GDML.add_auxiliary_support(false);
       GDML.add_replica_support(false);
-      GDML.parameters().store("xml_version",  geomtools::gdml_writer::DEFAULT_XML_VERSION);
-      GDML.parameters().store("xml_encoding", geomtools::gdml_writer::DEFAULT_XML_ENCODING);
+      GDML.parameters().store("xml_version",  geomtools::gdml_writer::default_xml_version());
+      GDML.parameters().store("xml_encoding", geomtools::gdml_writer::default_xml_encoding());
 
       GDML.parameters().store("gdml_schema",  _gdml_schema_);
 
-      GDML.parameters().store("length_unit",  geomtools::gdml_export::DEFAULT_LENGTH_UNIT);
-      GDML.parameters().store("angle_unit",   geomtools::gdml_export::DEFAULT_ANGLE_UNIT);
+      GDML.parameters().store("length_unit",  geomtools::gdml_export::default_length_unit());
+      GDML.parameters().store("angle_unit",   geomtools::gdml_export::default_angle_unit());
       GDML.export_gdml(_gdml_filename_, _geom_manager_->get_factory(), "world");
       return;
     }

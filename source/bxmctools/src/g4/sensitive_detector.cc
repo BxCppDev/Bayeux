@@ -856,7 +856,7 @@ namespace mctools {
       //>>>
       if (_record_material_) {
         static std::string material_ref_key =
-          geomtools::material::make_key (geomtools::material::constants::instance ().MATERIAL_REF_PROPERTY);
+          geomtools::material::make_key (geomtools::material::material_ref_property ());
         const G4Material * the_g4_material = step_->GetTrack ()->GetMaterial ();
         std::string material_ref = the_g4_material->GetName ().data ();
         boost::replace_all (material_ref, "__" , "::");
