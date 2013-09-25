@@ -160,13 +160,13 @@ int main (int argc_, char ** argv_)
       }
       std::cerr << "Visu object label : '" << visu_object << "'" << std::endl;
       geomtools::gnuplot_drawer GPD;
-      GPD.grab_properties().store(geomtools::gnuplot_drawer::WORLD_NAME_KEY,
+      GPD.grab_properties().store(geomtools::gnuplot_drawer::world_name_key(),
                                   GeoMgr.get_world_name ());
       geomtools::placement dd_pl;
       dd_pl.set_translation (0.0, 0.0*CLHEP::cm, 0.0);
       GPD.add_display_data (dd, dd_pl);
-      GPD.set_view (geomtools::gnuplot_drawer::VIEW_3D);
-      GPD.set_mode (geomtools::gnuplot_drawer::MODE_WIRED);
+      GPD.set_view (geomtools::gnuplot_drawer::view_3d());
+      GPD.set_mode (geomtools::gnuplot_drawer::mode_wired());
       int view_code = GPD.draw (GeoMgr,
                                 visu_object,
                                 100);

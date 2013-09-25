@@ -23,7 +23,11 @@ namespace genvtx {
 
   GENVTX_VG_REGISTRATION_IMPLEMENT(from_file_vg,"genvtx::from_file_vg");
 
-  const double from_file_vg::DEFAULT_LENGTH_UNIT = 1.0;
+  const double from_file_vg::default_length_unit()
+  {
+    static double val = 1.0;
+    return val;
+  }
 
   bool from_file_vg::is_open  () const
   {
@@ -94,7 +98,7 @@ namespace genvtx {
                                       vgens_)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
-    double lunit = DEFAULT_LENGTH_UNIT;
+    double lunit = default_length_unit();
     std::string lunit_str;
 
     // parameters of the cut:
@@ -111,7 +115,7 @@ namespace genvtx {
       set_length_unit (lunit);
     }
     if (! datatools::is_valid(_length_unit_)) {
-      set_length_unit(DEFAULT_LENGTH_UNIT);
+      set_length_unit(default_length_unit());
     }
 
     _open_source ();
@@ -131,8 +135,8 @@ namespace genvtx {
   {
     _filename_ = "";
     _open_ = false;
-    geomtools::invalidate (_next_);
-    datatools::invalidate (_length_unit_);
+    geomtools::invalidate(_next_);
+    datatools::invalidate(_length_unit_);
     return;
   }
 
