@@ -37,13 +37,13 @@ int main(int argc_, char ** argv_)
 
     // A Gnuplot based 3D-renderer :
     geomtools::gnuplot_drawer GPD;
-    GPD.grab_properties().store(geomtools::gnuplot_drawer::WORLD_NAME_KEY,
+    GPD.grab_properties().store(geomtools::gnuplot_drawer::world_name_key(),
                                GM.get_world_name ());
-    GPD.set_view (geomtools::gnuplot_drawer::VIEW_3D);
-    GPD.set_mode (geomtools::gnuplot_drawer::MODE_WIRED);
+    GPD.set_view (geomtools::gnuplot_drawer::view_3d());
+    GPD.set_mode (geomtools::gnuplot_drawer::mode_wired());
     int view_code = GPD.draw (GM,
                               "world",
-                              geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT);
+                              geomtools::gnuplot_drawer::display_level_no_limit());
 
   }
   catch(std::exception & x) {

@@ -26,7 +26,6 @@ echo "Run the 'ex01' program..." 1>&2
 echo "Browse the geometry setup via the 'geomtools_inspector' program..." 1>&2
 geomtools_inspector \
    --manager-config config/manager.conf \
-   --with-gdml \
    --with-visu --visu-view-3d
 
 rm -f ./ex01
