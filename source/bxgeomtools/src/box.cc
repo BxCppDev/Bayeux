@@ -8,7 +8,17 @@
 
 namespace geomtools {
 
-  const std::string box::BOX_LABEL = "box";
+  //DT_STATIC_CONST_STRING_REF_DEFINITION(box, box_label, "box");
+
+  const std::string & box::box_label()
+  {
+    static std::string label;
+    if (label.empty()) {
+      label = "box";
+    }
+    return label;
+  }
+
 
   double box::get_xmin () const
   {
@@ -168,7 +178,7 @@ namespace geomtools {
   std::string
   box::get_shape_name () const
   {
-    return BOX_LABEL;
+    return box_label();
   }
 
   double
@@ -395,7 +405,7 @@ namespace geomtools {
   std::ostream &
   operator<< (std::ostream & a_out, const box & a_box)
   {
-    a_out << '{' << box::BOX_LABEL << ' '
+    a_out << '{' << box::box_label() << ' '
           << a_box._x_ << ' '
           << a_box._y_ << ' '
           << a_box._z_ << '}';
@@ -415,7 +425,7 @@ namespace geomtools {
       }
     std::string name;
     a_in >> name;
-    if (name != box::BOX_LABEL)
+    if (name != box::box_label())
       {
         a_in.clear (std::ios_base::failbit);
         return a_in;

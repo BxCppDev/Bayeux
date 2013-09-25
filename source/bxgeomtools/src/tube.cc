@@ -16,37 +16,44 @@ namespace geomtools {
 
   using namespace std;
 
-  const std::string tube::TUBE_LABEL = "tube";
-
-    double tube::get_xmin () const
-    {
-      return -_outer_r_;
+  const std::string & tube::tube_label()
+  {
+    static std::string label;
+    if (label.empty()) {
+      label = "tube";
     }
+    return label;
+  }
 
-    double tube::get_xmax () const
-    {
-      return +_outer_r_;
-    }
+  double tube::get_xmin () const
+  {
+    return -_outer_r_;
+  }
 
-    double tube::get_ymin () const
-    {
-      return -_outer_r_;
-    }
+  double tube::get_xmax () const
+  {
+    return +_outer_r_;
+  }
 
-    double tube::get_ymax () const
-    {
-      return +_outer_r_;
-    }
+  double tube::get_ymin () const
+  {
+    return -_outer_r_;
+  }
 
-    double tube::get_zmin () const
-    {
-      return -0.5*_z_;
-    }
+  double tube::get_ymax () const
+  {
+    return +_outer_r_;
+  }
 
-    double tube::get_zmax () const
-    {
-      return +0.5*_z_;
-    }
+  double tube::get_zmin () const
+  {
+    return -0.5*_z_;
+  }
+
+  double tube::get_zmax () const
+  {
+    return +0.5*_z_;
+  }
 
   double tube::get_z () const
   {
@@ -176,7 +183,7 @@ namespace geomtools {
 
   std::string tube::get_shape_name () const
   {
-    return tube::TUBE_LABEL;
+    return tube::tube_label();
   }
 
   bool tube::is_inside ( const vector_3d & point_ , double skin_ ) const
@@ -270,7 +277,7 @@ namespace geomtools {
 
   std::ostream & operator<< (std::ostream & out_, const tube & t_)
   {
-    out_ << '{' << tube::TUBE_LABEL << ' '
+    out_ << '{' << tube::tube_label() << ' '
          << t_._inner_r_ << ' '
          << t_._outer_r_ << ' '
          << t_._z_ << '}';
@@ -289,7 +296,7 @@ namespace geomtools {
       }
     std::string name;
     in_ >> name;
-    if (name != tube::TUBE_LABEL)
+    if (name != tube::tube_label())
       {
         in_.clear (std::ios_base::failbit);
         return in_;

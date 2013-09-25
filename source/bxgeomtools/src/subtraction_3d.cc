@@ -12,11 +12,18 @@
 
 namespace geomtools {
 
-  const std::string subtraction_3d::SUBTRACTION_3D_LABEL = "subtraction_3d";
+  const std::string & subtraction_3d::subtraction_3d_label()
+  {
+    static std::string label;
+    if (label.empty()) {
+      label = "subtraction_3d";
+    }
+    return label;
+  }
 
   std::string subtraction_3d::get_shape_name () const
   {
-    return SUBTRACTION_3D_LABEL;
+    return subtraction_3d_label();
   }
 
   subtraction_3d::subtraction_3d () : i_composite_shape_3d ()

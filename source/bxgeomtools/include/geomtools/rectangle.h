@@ -31,7 +31,8 @@ namespace geomtools {
   {
 
   public:
-    static const std::string RECTANGLE_LABEL;
+
+    static const std::string & rectangle_label();
 
   public:
 

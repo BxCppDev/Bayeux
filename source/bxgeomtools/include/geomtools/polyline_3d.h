@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* polyline_3d.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009-03-31
@@ -19,12 +19,13 @@
 
 namespace geomtools {
 
-  class polyline_3d : 
+  class polyline_3d :
     public i_shape_1d,
     DATATOOLS_SERIALIZABLE_CLASS
   {
   public:
-    static const std::string POLYLINE_3D_LABEL;
+
+    static const std::string & polyline_3d_label();
 
     static const bool CLOSED = true;
     static const bool closed = CLOSED;
@@ -55,11 +56,11 @@ namespace geomtools {
     void add (const vector_3d &);
 
     int get_number_of_points () const;
-      
+
     const vector_3d & get_point (int i_) const;
 
     int get_number_of_vertex () const;
-      
+
     const vector_3d & get_vertex (int i_) const;
 
     // inefficient algorithm:
@@ -67,12 +68,12 @@ namespace geomtools {
 
     // inefficient algorithm:
     basic_polyline_3d make_vertex_collection () const;
- 
+
   public:
 
-    virtual bool is_on_curve (const vector_3d & position_, 
+    virtual bool is_on_curve (const vector_3d & position_,
                               double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
-      
+
     virtual vector_3d get_direction_on_curve (const vector_3d & position_) const;
 
   private:
@@ -82,9 +83,9 @@ namespace geomtools {
 
     /* interface i_serializable */
     DATATOOLS_SERIALIZATION_DECLARATION();
-      
-  }; 
- 
+
+  };
+
 } // end of namespace geomtools
 
 #include <boost/serialization/export.hpp>

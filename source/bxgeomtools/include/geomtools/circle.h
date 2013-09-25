@@ -29,9 +29,9 @@ namespace geomtools {
   {
 
   public:
-    static const std::string CIRCLE_LABEL;
 
-  public:
+    //DT_STATIC_CONST_STRING_REF_DECLARATION(circle_label);
+    static const std::string & circle_label();
 
     bool is_valid () const;
 

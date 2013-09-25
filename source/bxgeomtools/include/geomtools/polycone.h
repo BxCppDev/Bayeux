@@ -29,7 +29,7 @@ namespace geomtools {
   class polycone : public i_shape_3d, public i_stackable
   {
   public:
-    static const std::string POLYCONE_LABEL;
+    static const std::string & polycone_label();
 
     enum faces_mask_type
       {

@@ -14,6 +14,18 @@ namespace geomtools {
   const double i_shape_3d::DEFAULT_SKIN      = GEOMTOOLS_DEFAULT_TOLERANCE;
   const double i_shape_3d::USING_PROPER_SKIN = GEOMTOOLS_PROPER_TOLERANCE;
 
+  // static
+  double i_shape_3d::get_default_skin ()
+  {
+    return GEOMTOOLS_DEFAULT_TOLERANCE;
+  }
+
+  // static
+  double i_shape_3d::get_proper_skin ()
+  {
+    return GEOMTOOLS_PROPER_TOLERANCE;
+  }
+
   bool i_shape_3d::has_number_of_faces() const
   {
     return get_number_of_faces() > 0;
@@ -42,18 +54,6 @@ namespace geomtools {
   double i_shape_3d::get_surface(uint32_t flags_) const
   {
     return std::numeric_limits<double>::quiet_NaN();
-  }
-
-  // static
-  double i_shape_3d::get_default_skin ()
-  {
-    return GEOMTOOLS_DEFAULT_TOLERANCE;
-  }
-
-  // static
-  double i_shape_3d::get_proper_skin ()
-  {
-    return GEOMTOOLS_PROPER_TOLERANCE;
   }
 
   bool i_shape_3d::is_composite () const

@@ -465,7 +465,7 @@ namespace geomtools {
     _logging            = datatools::logger::PRIO_WARNING;
     _initialized_       = false;
     _mapping_requested_ = false;
-    _world_name_        = geomtools::model_factory::DEFAULT_WORLD_LABEL;
+    _world_name_        = geomtools::model_factory::default_world_label();
     _services_ = 0;
     _plugins_factory_preload_ = true;
     _plugins_force_initialization_at_load_ = false;
@@ -476,8 +476,8 @@ namespace geomtools {
   manager::~manager ()
   {
     if (_initialized_) {
-        reset ();
-      }
+      reset();
+    }
     clear_plugins ();
     reset_services ();
     return;
@@ -647,7 +647,7 @@ namespace geomtools {
     std::vector<std::string> default_factory_preserved_property_prefixes;
     default_factory_preserved_property_prefixes.push_back(visibility::constants::instance().VISIBILITY_PREFIX);
     default_factory_preserved_property_prefixes.push_back(mapping::constants::instance().MAPPING_PREFIX);
-    default_factory_preserved_property_prefixes.push_back(material::constants::instance().MATERIAL_PREFIX);
+    default_factory_preserved_property_prefixes.push_back(material::material_prefix());
     default_factory_preserved_property_prefixes.push_back(sensitive::constants::instance().SENSITIVE_PREFIX);
 
     std::vector<std::string> effective_factory_preserved_property_prefixes = default_factory_preserved_property_prefixes;

@@ -27,9 +27,33 @@
 
 namespace geomtools {
 
-  const std::string gdml_export::DEFAULT_LENGTH_UNIT  = "mm";
-  const std::string gdml_export::DEFAULT_ANGLE_UNIT   = "deg";
-  const std::string gdml_export::DEFAULT_DENSITY_UNIT = "g/cm3";
+  const std::string & gdml_export::default_length_unit()
+  {
+    static std::string unit;
+    if (unit.empty()) {
+      unit = "mm";
+    }
+    return unit;
+  }
+
+  const std::string & gdml_export::default_angle_unit()
+  {
+    static std::string unit;
+    if (unit.empty()) {
+      unit = "deg";
+    }
+    return unit;
+  }
+
+  const std::string & gdml_export::default_density_unit()
+  {
+    static std::string unit;
+    if (unit.empty()) {
+      unit = "g/cm3";
+    }
+    return unit;
+  }
+
 
   datatools::logger::priority gdml_export::get_logging_priority () const
   {
@@ -91,9 +115,9 @@ namespace geomtools {
   {
     _logging_priority_          = datatools::logger::PRIO_WARNING;
     _factory_                   = 0;
-    _length_unit_               = DEFAULT_LENGTH_UNIT;
-    _angle_unit_                = DEFAULT_ANGLE_UNIT;
-    _density_unit_              = DEFAULT_DENSITY_UNIT;
+    _length_unit_               = default_length_unit();
+    _angle_unit_                = default_angle_unit();
+    _density_unit_              = default_density_unit();
     _external_materials_stream_ = 0;
     _support_auxiliary_         = true;
     _support_replica_           = false;
@@ -118,14 +142,18 @@ namespace geomtools {
                                  const std::string & model_name_)
   {
     DT_THROW_IF (! factory_.is_locked (), std::logic_error, "Factory is not locked !");
+    std::string model_name = model_name_;
+    if (model_name.empty() || model_name == "<default>") {
+      model_name = model_factory::default_world_label();
+    }
     std::ofstream fout;
     std::string gdml_filename = filename_;
-    datatools::fetch_path_with_env (gdml_filename);
-    fout.open (gdml_filename.c_str ());
+    datatools::fetch_path_with_env(gdml_filename);
+    fout.open(gdml_filename.c_str());
     DT_THROW_IF (! fout,std::runtime_error, "Cannot open GDML file '"
                  << filename_ << "' (as '" << gdml_filename
                  << "') !");
-    _export_gdml (fout, factory_, model_name_);
+    _export_gdml(fout, factory_, model_name);
     return;
   }
 
@@ -147,10 +175,10 @@ namespace geomtools {
     _writer_.init ();
     _export_gdml_model (top_model);
 
-    std::string xml_version  = gdml_writer::DEFAULT_XML_VERSION;
-    std::string xml_encoding = gdml_writer::DEFAULT_XML_ENCODING;
-    std::string xsi          = gdml_writer::DEFAULT_XSI;
-    std::string gdml_schema  = gdml_writer::DEFAULT_REMOTE_GDML_SCHEMA;
+    std::string xml_version  = gdml_writer::default_xml_version();
+    std::string xml_encoding = gdml_writer::default_xml_encoding();
+    std::string xsi          = gdml_writer::default_xsi();
+    std::string gdml_schema  = gdml_writer::default_remote_gdml_schema();
 
     if (_parameters_.has_key ("xml_version")) {
       xml_version = _parameters_.fetch_string ("xml_version");
@@ -176,7 +204,7 @@ namespace geomtools {
       std::ostringstream out;
       out << "file://"
           << GEOMTOOLS_GDML_SCHEMA_LOCAL_PATH
-          << '/' << gdml_writer::DEFAULT_GDML_SCHEMA;
+          << '/' << gdml_writer::default_gdml_schema();
       gdml_schema = out.str ();
     } else {
       if (_parameters_.has_key ("gdml_schema")) {
@@ -198,15 +226,15 @@ namespace geomtools {
 
     // add a fake material:
     if (has_fake_materials()) {
-      _writer_.add_material (material::constants::instance ().MATERIAL_REF_DEFAULT,
+      _writer_.add_material (material::material_ref_default(),
                              1.0,
                              1. * CLHEP::g / CLHEP::cm3,
                              1.00);
-      _writer_.add_material (material::constants::instance ().MATERIAL_REF_UNKNOWN,
+      _writer_.add_material (material::material_ref_unknown(),
                              1.0,
                              1. * CLHEP::g / CLHEP::cm3,
                              1.00);
-      _writer_.add_material (material::constants::instance ().MATERIAL_REF_VACUUM,
+      _writer_.add_material (material::material_ref_vacuum(),
                              1.0,
                              1.e-15 * CLHEP::g / CLHEP::cm3,
                              1.00);
@@ -349,12 +377,12 @@ namespace geomtools {
     // export solid shape:
     const i_shape_3d & log_solid = logical.get_shape ();
     std::ostringstream solid_name_oss;
-    solid_name_oss << log_name << i_model::constants::instance ().SOLID_SUFFIX;
+    solid_name_oss << log_name << i_model::solid_suffix();
     std::string solid_name = solid_name_oss.str ();
     _export_gdml_solid (log_solid, solid_name);
 
     // prepare volume export
-    std::string material_ref = material::constants::instance ().MATERIAL_REF_UNKNOWN;
+    std::string material_ref = material::material_ref_unknown();
     std::string solid_ref = solid_name;
     DT_LOG_TRACE (get_logging_priority (), "Logical:");
     if (get_logging_priority () >= datatools::logger::PRIO_TRACE) logical.tree_dump (std::cerr);
@@ -476,7 +504,7 @@ namespace geomtools {
           std::ostringstream pos_name_oss;
           pos_name_oss << log_name << '.' << phys.get_name ();
           if (multiple) pos_name_oss << "__" << i << "__";
-          pos_name_oss << io::POSITION_SUFFIX;
+          pos_name_oss << io::position_suffix();
           _writer_.add_position (pos_name_oss.str (),
                                  p.get_translation (),
                                  _length_unit_);
@@ -487,7 +515,7 @@ namespace geomtools {
           std::ostringstream rot_name_oss;
           rot_name_oss << log_name << '.' << phys.get_name ();
           if (multiple) rot_name_oss << "__" << i << "__";
-          rot_name_oss << io::ROTATION_SUFFIX;
+          rot_name_oss << io::rotation_suffix();
           std::string rot_name = rot_name_oss.str ();
           bool add_rot = false;
           // XXX YYY ZZZ

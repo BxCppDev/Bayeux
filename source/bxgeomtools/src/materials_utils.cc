@@ -138,7 +138,7 @@ namespace geomtools {
   {
     geomtools::gdml_writer GW;
     export_gdml (mat_mgr_, GW);
-    out_ << GW.get_stream (geomtools::gdml_writer::MATERIALS_SECTION).str ();
+    out_ << GW.get_stream(geomtools::gdml_writer::materials_section()).str ();
     return;
   }
 

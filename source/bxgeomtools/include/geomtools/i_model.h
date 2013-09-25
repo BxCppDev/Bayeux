@@ -37,15 +37,11 @@ namespace geomtools {
   public:
 
     /// \brief Constants parameters used by geometry models
-    struct constants {
-      constants ();
-      static const constants & instance ();
-      std::string SOLID_SUFFIX; //!< Special suffix for solid naming
-      std::string LOGICAL_SUFFIX; //!< Special suffix for logical volume naming
-      std::string PHYSICAL_SUFFIX; //!< Special suffix for physical volume naming
-      std::string PHANTOM_SOLID_FLAG; //!< Special flag for phantom envelope solid
-      std::string EXPORTED_PROPERTIES_PREFIXES_KEY; //!< Special key for exporting prefixed properties in logical volumes
-    };
+    static const std::string & solid_suffix();
+    static const std::string & logical_suffix();
+    static const std::string & physical_suffix();
+    static const std::string & phantom_solid_flag();
+    static const std::string & exported_properties_prefixes_key();
 
     typedef geomtools::models_col_type models_col_type;
 

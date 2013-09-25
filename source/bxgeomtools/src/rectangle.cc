@@ -18,11 +18,19 @@ namespace geomtools {
 
   using namespace std;
 
-  const string rectangle::RECTANGLE_LABEL = "rectangle";
+  const std::string & rectangle::rectangle_label()
+  {
+    static std::string label;
+    if (label.empty()) {
+      label = "rectangle";
+    }
+    return label;
+  }
+
 
   string rectangle::get_shape_name () const
   {
-    return RECTANGLE_LABEL;
+    return rectangle::rectangle_label();
   }
 
   double rectangle::get_x () const

@@ -55,7 +55,7 @@ namespace geomtools {
 
     // check if model has a logical volume with a box shape:
     const i_shape_3d & shape = model_.get_logical ().get_shape ();
-    DT_THROW_IF (shape.get_shape_name () != box::BOX_LABEL, std::logic_error,
+    DT_THROW_IF (shape.get_shape_name () != box::box_label(), std::logic_error,
                  "Model has no 'box' shape ! Found '" << shape.get_shape_name () << "' !");
     _boxed_model_ = &model_;
     return;

@@ -39,7 +39,7 @@ namespace geomtools {
 
   public:
 
-    static const std::string SPHERE_LABEL;
+    static const std::string & sphere_label();
 
   public:
 

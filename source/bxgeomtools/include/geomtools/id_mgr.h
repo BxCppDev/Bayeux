@@ -38,10 +38,10 @@ namespace geomtools {
 
   public:
 
-    static const std::string CATEGORY_KEY_LABEL;
-    static const std::string TYPE_META_LABEL;
-    static const std::string DEFAULT_WORLD_CATEGORY;
-    static const int         WORD_TYPE;
+    static const std::string & category_key_label();
+    static const std::string & type_meta_label();
+    static const std::string & default_world_category();
+    static const int     WORD_TYPE = 0;
 
     /** A class that documents the hierarchical relationship
      *  of a geometry category :

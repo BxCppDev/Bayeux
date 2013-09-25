@@ -34,9 +34,9 @@ namespace geomtools {
   class gdml_export
   {
   public:
-    static const std::string DEFAULT_LENGTH_UNIT;
-    static const std::string DEFAULT_ANGLE_UNIT;
-    static const std::string DEFAULT_DENSITY_UNIT;
+    static const std::string & default_length_unit();
+    static const std::string & default_angle_unit();
+    static const std::string & default_density_unit();
 
   public:
 
@@ -68,7 +68,7 @@ namespace geomtools {
 
     virtual void export_gdml (const std::string & filename_,
                               const model_factory & factory_,
-                              const std::string & model_name_ = model_factory::DEFAULT_WORLD_LABEL);
+                              const std::string & model_name_ = "");
 
     void attach_external_materials (const std::ostringstream & oss_);
 

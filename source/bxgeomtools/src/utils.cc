@@ -31,11 +31,50 @@ namespace geomtools {
     return GEOMTOOLS_PROPER_TOLERANCE;
   }
 
-  const string io::VECTOR_2D_SERIAL_TAG   = "__geomtools::vector_2d__";
-  const string io::VECTOR_3D_SERIAL_TAG   = "__geomtools::vector_3d__";
-  const string io::ROTATION_3D_SERIAL_TAG = "__geomtools::rotation_3d__";
-  const string io::POSITION_SUFFIX = ".pos";
-  const string io::ROTATION_SUFFIX = ".rot";
+  const string & io::vector_2d_serial_tag()
+  {
+    static std::string tag;
+    if (tag.empty()) {
+      tag = "__geomtools::vector_2d__";
+    }
+    return tag;
+  }
+
+  const string & io::vector_3d_serial_tag()
+  {
+    static std::string tag;
+    if (tag.empty()) {
+      tag = "__geomtools::vector_3d__";
+    }
+    return tag;
+  }
+
+  const string & io::rotation_3d_serial_tag()
+  {
+    static std::string tag;
+    if (tag.empty()) {
+      tag = "__geomtools::rotation_3d__";
+    }
+    return tag;
+  }
+
+  const string & io::position_suffix()
+  {
+    static std::string tag;
+    if (tag.empty()) {
+      tag = ".pos";
+    }
+    return tag;
+  }
+
+  const string & io::rotation_suffix()
+  {
+    static std::string tag;
+    if (tag.empty()) {
+      tag = ".rot";
+    }
+    return tag;
+  }
 
   string to_xy (const vector_2d & p_)
   {
@@ -979,23 +1018,40 @@ namespace geomtools {
     return;
   }
 
-  const string filled_utils::FILLED_NONE_LABEL         = "none";
-  const string filled_utils::FILLED_BY_ENVELOPE_LABEL  = "by_envelope";
-  const string filled_utils::FILLED_BY_EXTRUSION_LABEL = "by_extrusion";
+  const std::string & filled_utils::filled_none_label()
+  {
+    static std::string label;
+    if (label.empty()) label = "none";
+    return label;
+  }
+
+  const std::string & filled_utils::filled_by_envelope_label()
+  {
+    static std::string label;
+    if (label.empty()) label = "by_envelope";
+    return label;
+  }
+
+  const std::string & filled_utils::filled_by_extrusion_label()
+  {
+    static std::string label;
+    if (label.empty()) label = "by_extrusion";
+    return label;
+  }
 
   string filled_utils::get_filled_mode_label(filled_utils::filled_type t)
   {
-    if (t == FILLED_NONE) return FILLED_NONE_LABEL;
-    if (t == FILLED_BY_ENVELOPE) return FILLED_BY_ENVELOPE_LABEL;
-    if (t == FILLED_BY_EXTRUSION) return FILLED_BY_EXTRUSION_LABEL;
+    if (t == FILLED_NONE) return filled_none_label();
+    if (t == FILLED_BY_ENVELOPE) return filled_by_envelope_label();
+    if (t == FILLED_BY_EXTRUSION) return filled_by_extrusion_label();
     return "";
   }
 
   filled_utils::filled_type filled_utils::get_filled_mode(const std::string & filled_label)
   {
-    if ( filled_label == FILLED_NONE_LABEL) return FILLED_NONE;
-    if ( filled_label == FILLED_BY_ENVELOPE_LABEL) return FILLED_BY_ENVELOPE;
-    if ( filled_label == FILLED_BY_EXTRUSION_LABEL) return FILLED_BY_EXTRUSION;
+    if ( filled_label == filled_none_label()) return FILLED_NONE;
+    if ( filled_label == filled_by_envelope_label()) return FILLED_BY_ENVELOPE;
+    if ( filled_label == filled_by_extrusion_label()) return FILLED_BY_EXTRUSION;
     return FILLED_UNDEFINED;
   }
 

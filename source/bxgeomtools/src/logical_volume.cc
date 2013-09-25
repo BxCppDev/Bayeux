@@ -17,7 +17,12 @@ namespace geomtools {
 
   using namespace std;
 
-  const string logical_volume::HAS_REPLICA_FLAG = "__has_replica";
+  // static
+  const std::string & logical_volume::has_replica_flag()
+  {
+    static std::string token = "__has_replica";
+    return token;
+  }
 
   bool logical_volume::is_locked () const
   {
@@ -309,12 +314,12 @@ namespace geomtools {
       name = name_;
     }
     DT_THROW_IF (name.empty (), std::logic_error, "Missing physical's name in logical volume '" <<  get_name()  << "' !");
-    DT_THROW_IF (_parameters_.has_flag (HAS_REPLICA_FLAG), std::logic_error,
+    DT_THROW_IF (_parameters_.has_flag(logical_volume::has_replica_flag()), std::logic_error,
                  "Cannot add more physical volume for a 'replica' already exists in logical volume '" <<  get_name()  << "' !");
     if (phys_.get_placement ().is_replica ()) {
       DT_THROW_IF (_physicals_.size () > 0, std::logic_error,
                    "Cannot add a 'replica' physical volume for other physicals already exist in logical volume '" <<  get_name()  << "' !");
-      _parameters_.store_flag (HAS_REPLICA_FLAG);
+      _parameters_.store_flag (logical_volume::has_replica_flag());
     }
     _physicals_[name] = &phys_;
     return;

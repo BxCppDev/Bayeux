@@ -18,6 +18,8 @@
 
 #include <string>
 
+//#include <datatools/datatools_macros.h>
+
 #include <geomtools/utils.h>
 #include <geomtools/i_object_3d.h>
 #include <geomtools/i_stackable.h>

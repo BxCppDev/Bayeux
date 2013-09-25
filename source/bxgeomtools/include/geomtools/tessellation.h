@@ -212,7 +212,7 @@ namespace geomtools {
     static const uint32_t FACE_ALL   = FACE_ALL_BITS;
     static const int INVALID_VERTEX  = -1;
     static const int MAX_VERTEX      = 0x0FFFFFFF;
-    static const std::string TESSELLATED_LABEL;
+    static const std::string & tessellated_label();
 
     typedef std::map<unsigned int, facet_vertex> vertices_col_type;
     typedef std::map<unsigned int, facet34> facets_col_type;

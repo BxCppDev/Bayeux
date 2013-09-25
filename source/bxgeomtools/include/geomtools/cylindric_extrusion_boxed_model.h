@@ -38,8 +38,8 @@ namespace geomtools {
   {
   public:
 
-    static const std::string LABEL_PROPERTY_PREFIX;
-    static const std::string EXTRUSION_LABEL;
+    //static const std::string & label_property_prefix();
+    //static const std::string & extrusion_label();
 
     void set_material_name (const std::string &);
 

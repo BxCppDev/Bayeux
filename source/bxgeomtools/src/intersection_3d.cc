@@ -9,11 +9,16 @@
 
 namespace geomtools {
 
-  const std::string intersection_3d::INTERSECTION_3D_LABEL = "intersection_3d";
+  // static
+  const std::string & intersection_3d::intersection_3d_label()
+  {
+    static std::string token = "intersection_3d";
+    return token;
+  }
 
   std::string intersection_3d::get_shape_name () const
   {
-    return INTERSECTION_3D_LABEL;
+    return intersection_3d_label();
   }
 
   intersection_3d::intersection_3d () : i_composite_shape_3d ()

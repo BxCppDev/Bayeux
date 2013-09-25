@@ -35,7 +35,7 @@ namespace geomtools {
     DATATOOLS_SERIALIZABLE_CLASS
   {
   public:
-    static const std::string HELIX_3D_LABEL;
+    static const std::string & helix_3d_label();
 
     bool is_normal();
 

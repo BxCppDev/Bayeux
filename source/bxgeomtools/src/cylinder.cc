@@ -2,6 +2,8 @@
 /* cylinder.cc
  */
 
+#include <string>
+
 #include <geomtools/cylinder.h>
 
 #include <datatools/exception.h>
@@ -10,7 +12,14 @@ namespace geomtools {
 
   using namespace std;
 
-  const string cylinder::CYLINDER_LABEL = "cylinder";
+  const std::string & cylinder::cylinder_label()
+  {
+    static std::string label;
+    if (label.empty()) {
+      label = "cylinder";
+    }
+    return label;
+  }
 
   double cylinder::get_xmin () const
   {
@@ -141,7 +150,7 @@ namespace geomtools {
   string
   cylinder::get_shape_name () const
   {
-    return CYLINDER_LABEL;
+    return cylinder_label();
   }
 
   double
@@ -391,7 +400,7 @@ namespace geomtools {
 
   ostream & operator<< (ostream & a_out, const cylinder & a_cylinder)
   {
-    a_out << '{' << cylinder::CYLINDER_LABEL << ' '
+    a_out << '{' << cylinder::cylinder_label() << ' '
           << a_cylinder._radius_ << ' '
           << a_cylinder._z_ << '}';
     return a_out;
@@ -409,7 +418,7 @@ namespace geomtools {
       }
     string name;
     a_in >> name;
-    if (name != cylinder::CYLINDER_LABEL)
+    if (name != cylinder::cylinder_label())
       {
         a_in.clear (ios_base::failbit);
         return a_in;

@@ -12,23 +12,48 @@ namespace geomtools {
 
   using namespace std;
 
-  const string mapping_utils::MAPPING_PREFIX                = "mapping.";
-  const string mapping_utils::MAPPING_CATEGORY_PROPERTY     = "category";
-  const string mapping_utils::MAPPING_ADDRESS_PROPERTY      = "address";
-  const string mapping_utils::MAPPING_ID_PROPERTY           = "id";
-  const string mapping_utils::MAPPING_DAUGHTER_ID_PROPERTY  = "daughter_id";
+  // static
+  const string & mapping_utils::mapping_prefix()
+  {
+    static std::string prefix = "mapping.";
+    return prefix;
+  }
+
+  const string & mapping_utils::mapping_category_property()
+  {
+    static std::string property = "category";
+    return property;
+  }
+
+  const string & mapping_utils::mapping_address_property()
+  {
+    static std::string property = "address";
+    return property;
+  }
+
+  const string & mapping_utils::mapping_id_property()
+  {
+    static std::string property = "id";
+    return property;
+  }
+
+  const string & mapping_utils::mapping_daughter_id_property()
+  {
+    static std::string property = "daughter_id";
+    return property;
+  }
 
   void mapping_utils::extract (const datatools::properties & source_,
                                datatools::properties & target_)
   {
-    source_.export_starting_with (target_, mapping_utils::MAPPING_PREFIX);
+    source_.export_starting_with (target_, mapping_utils::mapping_prefix());
     return;
   }
 
   string mapping_utils::make_key (const string & key_)
   {
     ostringstream key_oss;
-    key_oss << mapping_utils::MAPPING_PREFIX << key_;
+    key_oss << mapping_utils::mapping_prefix() << key_;
     return key_oss.str ();
   }
 
@@ -46,13 +71,13 @@ namespace geomtools {
 
  bool mapping_utils::has_id (const datatools::properties & config_)
  {
-    return (config_.has_key (mapping_utils::make_key (mapping_utils::MAPPING_ID_PROPERTY)));
+   return (config_.has_key (mapping_utils::make_key (mapping_utils::mapping_id_property())));
  }
 
   void mapping_utils::fetch_id (const datatools::properties & config_,
                                 string & id_info_)
   {
-    config_.fetch (mapping_utils::make_key (mapping_utils::MAPPING_ID_PROPERTY), id_info_);
+    config_.fetch (mapping_utils::make_key (mapping_utils::mapping_id_property()), id_info_);
     return;
   }
 
@@ -60,7 +85,7 @@ namespace geomtools {
                                        const string & daughter_name_)
   {
     ostringstream daughter_id_name;
-    daughter_id_name << mapping_utils::make_key (mapping_utils::MAPPING_DAUGHTER_ID_PROPERTY)
+    daughter_id_name << mapping_utils::make_key (mapping_utils::mapping_daughter_id_property())
                      << "." << daughter_name_;
     return (config_.has_key (daughter_id_name.str ()));
   }
@@ -70,7 +95,7 @@ namespace geomtools {
                                          string & id_info_)
   {
     ostringstream daughter_id_name;
-    daughter_id_name << mapping_utils::make_key (mapping_utils::MAPPING_DAUGHTER_ID_PROPERTY)
+    daughter_id_name << mapping_utils::make_key (mapping_utils::mapping_daughter_id_property())
                      << "." << daughter_name_;
     config_.fetch (daughter_id_name.str (), id_info_);
     return;

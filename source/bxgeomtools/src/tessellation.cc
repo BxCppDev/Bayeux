@@ -914,7 +914,14 @@ namespace geomtools {
 
   /*** tessellated_solid ***/
 
-  const std::string tessellated_solid::TESSELLATED_LABEL = "tessellated";
+  const std::string & tessellated_solid::tessellated_label()
+  {
+    static std::string label;
+    if (label.empty()) {
+      label = "tessellated";
+    }
+    return label;
+  }
 
   bool tessellated_solid::is_locked () const
   {
@@ -1477,7 +1484,7 @@ namespace geomtools {
 
   std::string tessellated_solid::get_shape_name () const
   {
-    return tessellated_solid::TESSELLATED_LABEL;
+    return tessellated_solid::tessellated_label();
   }
 
   /*

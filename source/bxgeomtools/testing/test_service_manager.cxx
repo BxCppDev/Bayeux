@@ -114,19 +114,19 @@ int main (int argc_, char ** argv_)
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
             if (visu)
               {
-                std::string visu_drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
+                std::string visu_drawer_view = geomtools::gnuplot_drawer::view_3d();
                 bool visu_drawer_labels = true;
                 std::string visu_model_name = geom_mgr.get_world_name ();
                 geomtools::placement p;
                 p.set (0, 0, 0, 0 * CLHEP::degree, 0 * CLHEP::degree, 0);
                 geomtools::gnuplot_drawer GPD;
-                GPD.set_mode (geomtools::gnuplot_drawer::MODE_WIRED);
+                GPD.set_mode (geomtools::gnuplot_drawer::mode_wired());
                 GPD.set_view (visu_drawer_view);
                 GPD.set_labels (visu_drawer_labels);
                 GPD.draw (geom_mgr.get_factory(),
                           visu_model_name,
                           p,
-                          geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT);
+                          geomtools::gnuplot_drawer::display_level_no_limit());
               }
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
           }

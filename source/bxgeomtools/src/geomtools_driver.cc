@@ -52,7 +52,7 @@ namespace geomtools {
 
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
     visu = true;
-    visu_drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
+    visu_drawer_view = geomtools::gnuplot_drawer::view_3d();
     visu_drawer_labels = true;
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
@@ -78,7 +78,7 @@ namespace geomtools {
 
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
     visu = true;
-    visu_drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
+    visu_drawer_view = geomtools::gnuplot_drawer::view_3d();
     visu_object_name.clear();
     visu_drawer_labels = true;
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
@@ -268,7 +268,9 @@ namespace geomtools {
   geomtools_driver::~geomtools_driver()
   {
     if (is_initialized()) {
-      reset();
+      if (_geo_mgr_) _geo_mgr_.reset(0);
+      if (_geo_factory_) _geo_factory_.reset(0);
+      //reset();
     }
     return;
   }
@@ -346,11 +348,11 @@ namespace geomtools {
            = geometry_factory.get_models ().begin ();
          i != geometry_factory.get_models ().end ();
          i++) {
-      if (i->second->get_name () == geomtools::model_factory::DEFAULT_WORLD_LABEL) {
+      if (i->second->get_name () == geomtools::model_factory::default_world_label()) {
         _has_world_ = true;
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
         if (_params_.visu_object_name.empty ()) {
-          _params_.visu_object_name = geomtools::model_factory::DEFAULT_WORLD_LABEL;
+          _params_.visu_object_name = geomtools::model_factory::default_world_label();
         }
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
         break;
@@ -460,7 +462,7 @@ namespace geomtools {
     std::string materials_plugin_name = materials_plugin_name_;
     std::string top_mapping_model_name = top_mapping_model_name_;
     if (top_mapping_model_name.empty ()) {
-      top_mapping_model_name = geomtools::model_factory::DEFAULT_WORLD_LABEL;
+      top_mapping_model_name = geomtools::model_factory::default_world_label();
     }
     geomtools::gdml_writer material_writer; // GDML writer for materials
     DT_LOG_NOTICE(logging_,"Accessing the materials driver plugin...");
@@ -491,7 +493,7 @@ namespace geomtools {
     if (mat_mgr_ref != 0) {
       DT_LOG_NOTICE(logging_,"Exporting GDML materials from the materials driver plugin... ");
       geomtools::export_gdml (*mat_mgr_ref, material_writer);
-      GDML.attach_external_materials (material_writer.get_stream (geomtools::gdml_writer::MATERIALS_SECTION));
+      GDML.attach_external_materials (material_writer.get_stream (geomtools::gdml_writer::materials_section()));
     } else {
       DT_LOG_WARNING(logging_,"No material definitions have been attached to the GDML export !");
     }
@@ -499,15 +501,15 @@ namespace geomtools {
     GDML.add_auxiliary_support (false);
     GDML.add_replica_support (true);
     GDML.parameters ().store ("xml_version",
-                              geomtools::gdml_writer::DEFAULT_XML_VERSION);
+                              geomtools::gdml_writer::default_xml_version());
     GDML.parameters ().store ("xml_encoding",
-                              geomtools::gdml_writer::DEFAULT_XML_ENCODING);
+                              geomtools::gdml_writer::default_xml_encoding());
     GDML.parameters ().store ("gdml_schema",
-                              geomtools::gdml_writer::DEFAULT_GDML_SCHEMA);
+                              geomtools::gdml_writer::default_gdml_schema());
     GDML.parameters ().store ("length_unit",
-                              geomtools::gdml_export::DEFAULT_LENGTH_UNIT);
+                              geomtools::gdml_export::default_length_unit());
     GDML.parameters ().store ("angle_unit",
-                              geomtools::gdml_export::DEFAULT_ANGLE_UNIT);
+                              geomtools::gdml_export::default_angle_unit());
     std::ostringstream fgdml_oss;
     if (! gdml_file_.empty()) {
       std::string gdml_file = gdml_file_;
@@ -520,7 +522,7 @@ namespace geomtools {
     const geomtools::model_factory & geometry_factory = geo_mgr_.get_factory ();
 
     if (top_mapping_model_name.empty ()) {
-      top_mapping_model_name = geomtools::model_factory::DEFAULT_WORLD_LABEL;
+      top_mapping_model_name = geomtools::model_factory::default_world_label();
     }
     GDML.export_gdml (fgdml, geometry_factory, top_mapping_model_name);
     DT_LOG_NOTICE(logging_, "GDML file '" << fgdml << "' has been generated !");
@@ -859,7 +861,7 @@ namespace geomtools {
       if (! _params_.visu_object_name.empty()) {
         visu_object_name = _params_.visu_object_name;
       } else if (_has_world_) {
-        visu_object_name = geomtools::model_factory::DEFAULT_WORLD_LABEL;
+        visu_object_name = geomtools::model_factory::default_world_label();
       }
     }
 
@@ -870,7 +872,7 @@ namespace geomtools {
       std::clog << "`-- Show labels    : " << _params_.visu_drawer_labels << std::endl;
     }
     geomtools::gnuplot_drawer GPD;
-    GPD.set_mode (geomtools::gnuplot_drawer::MODE_WIRED);
+    GPD.set_mode (geomtools::gnuplot_drawer::mode_wired());
     GPD.set_view (_params_.visu_drawer_view);
     if (! output.empty() || ! terminal.empty()) {
       GPD.set_output_medium (output, terminal, terminal_options);
@@ -909,17 +911,17 @@ namespace geomtools {
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
   std::string geomtools_driver::get_drawer_view (const std::string & view_label_)
   {
-    std::string drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
+    std::string drawer_view = geomtools::gnuplot_drawer::view_3d();
     if (view_label_ == "-xy" || view_label_ == "--visu-view-xy")  {
-      drawer_view = geomtools::gnuplot_drawer::VIEW_2D_XY;
+      drawer_view = geomtools::gnuplot_drawer::view_2d_xy();
     } else if (view_label_ == "-xz" || view_label_ == "--visu-view-xz")  {
-      drawer_view = geomtools::gnuplot_drawer::VIEW_2D_XZ;
+      drawer_view = geomtools::gnuplot_drawer::view_2d_xz();
     } else if (view_label_ == "-yz" || view_label_ == "--visu-view-yz") {
-      drawer_view = geomtools::gnuplot_drawer::VIEW_2D_YZ;
+      drawer_view = geomtools::gnuplot_drawer::view_2d_yz();
     } else if (view_label_ == "-3d" || view_label_ == "--visu-view-3d") {
-      drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
+      drawer_view = geomtools::gnuplot_drawer::view_3d();
     } else if (view_label_ == "-3d-free" || view_label_ == "--visu-view-3d-free") {
-      drawer_view = geomtools::gnuplot_drawer::VIEW_3D_FREE_SCALE;
+      drawer_view = geomtools::gnuplot_drawer::view_3d_free_scale();
     } else {
       DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
                      "Unknown view label '" << view_label_ << "' ! Using default 3D view...");

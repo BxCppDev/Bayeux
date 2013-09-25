@@ -31,7 +31,8 @@ namespace geomtools {
   {
   public:
 
-    static const std::string POLYHEDRA_LABEL;
+    static const std::string & polyhedra_label();
+
     static const size_t MIN_NUMBER_OF_SIDES = 3;
 
     enum faces_mask_type

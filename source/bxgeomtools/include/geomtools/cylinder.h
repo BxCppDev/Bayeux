@@ -31,7 +31,7 @@ namespace geomtools {
     {
 
     public:
-      static const std::string CYLINDER_LABEL;
+      static const std::string & cylinder_label();
 
       enum faces_mask_type
         {

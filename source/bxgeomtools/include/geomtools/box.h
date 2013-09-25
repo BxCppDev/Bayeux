@@ -18,6 +18,7 @@
 
 #include <boost/cstdint.hpp>
 
+// This project
 #include <geomtools/i_shape_3d.h>
 #include <geomtools/i_stackable.h>
 #include <geomtools/polyline_3d.h>
@@ -32,7 +33,10 @@ namespace geomtools {
   {
 
   public:
-    static const std::string BOX_LABEL;
+
+    static const std::string & box_label();
+    //DT_STATIC_CONST_STRING_REF_DECLARATION(box_label);
+
     enum faces_mask_type
       {
         FACE_NONE   = geomtools::FACE_NONE,

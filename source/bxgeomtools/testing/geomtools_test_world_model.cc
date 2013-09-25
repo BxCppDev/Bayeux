@@ -57,10 +57,10 @@ namespace geomtools {
         phi *= CLHEP::degree;
       }
 
-    if (material::has_key (config_, material::make_key (material::constants::instance ().MATERIAL_REF_PROPERTY)))
+    if (material::has_key (config_, material::make_key (material::material_ref_property())))
       {
         if (devel) clog << "DEVEL: test_world_model::_at_construct: key= 'material'..." << endl;
-        material = config_.fetch_string (material::make_key (material::constants::instance ().MATERIAL_REF_PROPERTY));
+        material = config_.fetch_string (material::make_key (material::material_ref_property()));
       }
 
     if (config_.has_key ("setup_model"))

@@ -14,7 +14,15 @@ namespace geomtools {
 
   using namespace std;
 
-  const std::string sphere::SPHERE_LABEL = "sphere";
+  const std::string & sphere::sphere_label()
+  {
+    static std::string label;
+    if (label.empty()) {
+      label = "sphere";
+    }
+    return label;
+  }
+
 
   double sphere::get_xmin () const
   {
@@ -124,7 +132,7 @@ namespace geomtools {
   std::string
   sphere::get_shape_name () const
   {
-    return SPHERE_LABEL;
+    return sphere_label();
   }
 
   bool
@@ -305,7 +313,7 @@ namespace geomtools {
   std::ostream &
   operator<< (std::ostream & out_, const sphere & s_)
   {
-    out_ << '{' << sphere::SPHERE_LABEL << ' '
+    out_ << '{' << sphere::sphere_label() << ' '
          << s_._r_ << '}';
     return out_;
   }
@@ -322,7 +330,7 @@ namespace geomtools {
     }
     std::string name;
     in_ >> name;
-    if (name != sphere::SPHERE_LABEL) {
+    if (name != sphere::sphere_label()) {
       in_.clear (std::ios_base::failbit);
       return in_;
     }

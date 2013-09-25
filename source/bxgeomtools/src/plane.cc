@@ -12,11 +12,18 @@
 
 namespace geomtools {
 
-  const std::string plane::PLANE_LABEL = "plane";
+  const std::string & plane::plane_label()
+  {
+    static std::string label;
+    if (label.empty()) {
+      label = "plane";
+    }
+    return label;
+  }
 
   std::string plane::get_shape_name () const
   {
-    return PLANE_LABEL;
+    return plane_label();
   }
 
   bool plane::is_valid () const

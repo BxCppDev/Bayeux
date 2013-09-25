@@ -12,44 +12,77 @@ namespace geomtools {
 
   using namespace std;
 
-  // static 
-  const material::constants & 
-  material::constants::instance ()
+  // static
+  std::string & material::material_prefix()
   {
-    static boost::scoped_ptr<material::constants> g_global_constants (0);
-    if ( g_global_constants.get () == 0)
-      {
-        g_global_constants.reset (new material::constants);
-      }
-    return *g_global_constants.get ();
+    static std::string prefix = "material.";
+    return prefix;
   }
 
-  material::constants::constants ()
+  std::string & material::material_ref_property()
   {
-    MATERIAL_PREFIX       = "material.";
-    MATERIAL_REF_PROPERTY = "ref";
-    MATERIAL_REF_DEFAULT  = "__default__";
-    MATERIAL_REF_UNKNOWN  = "__unknown__";
-    MATERIAL_REF_VACUUM   = "__vacuum__";
-    MATERIAL_SOLID_FLAG   = "solid";
-    MATERIAL_LIQUID_FLAG  = "liquid";
-    MATERIAL_GAS_FLAG     = "gas";
-    MATERIAL_GAS_PRESSURE_PROPERTY    = "gas_pressure";
-    MATERIAL_GAS_TEMPERATURE_PROPERTY = "gas_temperature";
-    return;
+    static std::string prefix = "ref";
+    return prefix;
+  }
+
+  std::string & material::material_ref_default()
+  {
+    static std::string token = "__default__";
+    return token;
+  }
+
+  std::string & material::material_ref_unknown()
+  {
+    static std::string token = "__unknown__";
+    return token;
+  }
+
+  std::string & material::material_ref_vacuum()
+  {
+    static std::string token = "__vacuum__";
+    return token;
+  }
+
+  std::string & material::material_solid_flag()
+  {
+    static std::string token = "solid";
+    return token;
+  }
+
+  std::string & material::material_liquid_flag()
+  {
+    static std::string token = "liquid";
+    return token;
+  }
+
+  std::string & material::material_gas_flag()
+  {
+    static std::string token = "gas";
+    return token;
+  }
+
+  std::string & material::material_gas_pressure_property()
+  {
+    static std::string token = "gas_pressure";
+    return token;
+  }
+
+  std::string & material::material_gas_temperature_property()
+  {
+    static std::string token = "gas_temperature";
   }
 
   string material::make_key (const string & key_)
   {
     ostringstream key_oss;
-    key_oss << material::constants::instance ().MATERIAL_PREFIX << key_;
+    key_oss << material::material_prefix() << key_;
     return key_oss.str ();
   }
 
   void material::extract (const datatools::properties & source_,
                           datatools::properties & target_)
   {
-    source_.export_starting_with (target_, material::constants::instance ().MATERIAL_PREFIX);
+    source_.export_starting_with (target_, material::material_prefix());
     return;
   }
 
@@ -67,17 +100,17 @@ namespace geomtools {
 
   bool material::is_gas (const datatools::properties & config_)
   {
-    return material::has_flag (config_, material::constants::instance ().MATERIAL_GAS_FLAG);
+    return material::has_flag (config_, material::material_gas_flag());
   }
 
   bool material::is_liquid (const datatools::properties & config_)
   {
-    return material::has_flag (config_, material::constants::instance ().MATERIAL_LIQUID_FLAG);
+    return material::has_flag (config_, material::material_liquid_flag());
   }
 
   bool material::is_solid (const datatools::properties & config_)
   {
-    return material::has_flag (config_, material::constants::instance ().MATERIAL_SOLID_FLAG);
+    return material::has_flag (config_, material::material_solid_flag());
   }
 
 } // end of namespace geomtools

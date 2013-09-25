@@ -50,7 +50,7 @@ namespace geomtools {
       int daughter_placement_index;
     };
 
-    static const std::string HAS_REPLICA_FLAG;
+    static const std::string & has_replica_flag();
 
     bool is_locked () const;
 

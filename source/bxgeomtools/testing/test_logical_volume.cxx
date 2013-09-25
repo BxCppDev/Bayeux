@@ -233,8 +233,8 @@ int main (int argc_, char ** argv_)
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
     if (draw) {
 
-      std::string visu_drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
-      std::string visu_drawer_mode = geomtools::gnuplot_drawer::MODE_WIRED;
+      std::string visu_drawer_view = geomtools::gnuplot_drawer::view_3d();
+      std::string visu_drawer_mode = geomtools::gnuplot_drawer::mode_wired();
       bool visu_drawer_labels = true;
       geomtools::gnuplot_drawer GPD;
       geomtools::placement world_placement;
@@ -244,7 +244,7 @@ int main (int argc_, char ** argv_)
       GPD.set_labels (visu_drawer_labels);
       GPD.draw (world_log,
                 world_placement,
-                geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT,
+                geomtools::gnuplot_drawer::display_level_no_limit(),
                 "world");
 
 

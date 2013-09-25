@@ -23,7 +23,15 @@ namespace geomtools {
 
   using namespace std;
 
-  const string model_factory::DEFAULT_WORLD_LABEL = "world";
+  // static
+  const std::string & model_factory::default_world_label()
+  {
+    static std::string label;
+    if (label.empty()) {
+      label = "world";
+    }
+    return label;
+  }
 
   bool model_factory::is_locked () const
   {

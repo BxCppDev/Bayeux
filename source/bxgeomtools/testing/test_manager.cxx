@@ -159,8 +159,8 @@ int main (int argc_, char ** argv_)
       bool   dump = false;
       bool   visu = false;
       std::string visu_object_name = "";
-      int    visu_depth  = geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT;
-      std::string drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
+      int    visu_depth  = geomtools::gnuplot_drawer::display_level_no_limit();
+      std::string drawer_view = geomtools::gnuplot_drawer::view_3d();
       bool   gdml = false;
       bool   gdml_replica_support = false;
       bool   use_plugins = false;
@@ -256,19 +256,19 @@ int main (int argc_, char ** argv_)
                 }
               else if (option == "-xy")
                 {
-                  drawer_view = geomtools::gnuplot_drawer::VIEW_2D_XY;
+                  drawer_view = geomtools::gnuplot_drawer::view_2d_xy();
                 }
               else if (option == "-xz")
                 {
-                  drawer_view = geomtools::gnuplot_drawer::VIEW_2D_XZ;
+                  drawer_view = geomtools::gnuplot_drawer::view_2d_xz();
                 }
               else if (option == "-yz")
                 {
-                  drawer_view = geomtools::gnuplot_drawer::VIEW_2D_YZ;
+                  drawer_view = geomtools::gnuplot_drawer::view_2d_yz();
                 }
               else if (option == "-3d")
                 {
-                  drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
+                  drawer_view = geomtools::gnuplot_drawer::view_3d();
                 }
               else if (option == "--add-display-data")
                 {
@@ -444,19 +444,19 @@ int main (int argc_, char ** argv_)
                 {
                   if (option_view == "-xy")
                     {
-                      drawer_view = geomtools::gnuplot_drawer::VIEW_2D_XY;
+                      drawer_view = geomtools::gnuplot_drawer::view_2d_xy();
                     }
                   else if (option_view == "-xz")
                     {
-                      drawer_view = geomtools::gnuplot_drawer::VIEW_2D_XZ;
+                      drawer_view = geomtools::gnuplot_drawer::view_2d_xz();
                     }
                   else if (option_view == "-yz")
                     {
-                      drawer_view = geomtools::gnuplot_drawer::VIEW_2D_YZ;
+                      drawer_view = geomtools::gnuplot_drawer::view_2d_yz();
                     }
                   else if (option_view == "-3d")
                     {
-                      drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
+                      drawer_view = geomtools::gnuplot_drawer::view_3d();
                     }
                 }
 
@@ -472,7 +472,7 @@ int main (int argc_, char ** argv_)
               std::vector<boost::shared_ptr<geomtools::display_data> > dd_ptrs;
 
               geomtools::gnuplot_drawer GPD;
-              GPD.grab_properties().store(geomtools::gnuplot_drawer::WORLD_NAME_KEY,
+              GPD.grab_properties().store(geomtools::gnuplot_drawer::world_name_key(),
                                           geo_mgr.get_world_name ());
               if (add_dd)
                 {
@@ -564,18 +564,18 @@ int main (int argc_, char ** argv_)
                 }
               if (force_show)
                 {
-                  GPD.grab_properties ().store (geomtools::gnuplot_drawer::FORCE_SHOW_PROPERTY_NAME, true);
+                  GPD.grab_properties ().store (geomtools::gnuplot_drawer::force_show_property_name(), true);
                 }
               if (force_show_envelope)
                 {
-                  GPD.grab_properties ().store (geomtools::gnuplot_drawer::FORCE_SHOW_ENVELOPE_PROPERTY_NAME, true);
+                  GPD.grab_properties ().store (geomtools::gnuplot_drawer::force_show_envelope_property_name(), true);
                 }
               if (force_show_children)
                 {
-                  GPD.grab_properties ().store (geomtools::gnuplot_drawer::FORCE_SHOW_CHILDREN_PROPERTY_NAME, true);
+                  GPD.grab_properties ().store (geomtools::gnuplot_drawer::force_show_children_property_name(), true);
                 }
               GPD.set_view (drawer_view);
-              GPD.set_mode (geomtools::gnuplot_drawer::MODE_WIRED);
+              GPD.set_mode (geomtools::gnuplot_drawer::mode_wired());
               int view_code = GPD.draw (geo_mgr,
                                         visu_object_name,
                                         visu_depth);
@@ -621,21 +621,21 @@ int main (int argc_, char ** argv_)
               std::clog << "NOTICE: "
                         << "Export GDML materials from the materials driver plugin: "<< std::endl;
               geomtools::export_gdml (*mat_mgr_ref, material_writer);
-              GDML.attach_external_materials (material_writer.get_stream (geomtools::gdml_writer::MATERIALS_SECTION));
+              GDML.attach_external_materials (material_writer.get_stream (geomtools::gdml_writer::materials_section()));
             }
 
           GDML.add_auxiliary_support (false);
           GDML.add_replica_support (gdml_replica_support);
           GDML.parameters ().store ("xml_version",
-                                    geomtools::gdml_writer::DEFAULT_XML_VERSION);
+                                    geomtools::gdml_writer::default_xml_version());
           GDML.parameters ().store ("xml_encoding",
-                                    geomtools::gdml_writer::DEFAULT_XML_ENCODING);
+                                    geomtools::gdml_writer::default_xml_encoding());
           GDML.parameters ().store ("gdml_schema",
-                                    geomtools::gdml_writer::DEFAULT_GDML_SCHEMA);
+                                    geomtools::gdml_writer::default_gdml_schema());
           GDML.parameters ().store ("length_unit",
-                                    geomtools::gdml_export::DEFAULT_LENGTH_UNIT);
+                                    geomtools::gdml_export::default_length_unit());
           GDML.parameters ().store ("angle_unit",
-                                    geomtools::gdml_export::DEFAULT_ANGLE_UNIT);
+                                    geomtools::gdml_export::default_angle_unit());
           GDML.export_gdml ("${GEOMTOOLS_TMP_DIR}/test_manager.gdml",
                             geo_mgr.get_factory (),
                             world_model_name);

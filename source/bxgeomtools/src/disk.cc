@@ -19,11 +19,18 @@ namespace geomtools {
 
   using namespace std;
 
-  const string disk::DISK_LABEL = "disk";
+  const std::string & disk::disk_label()
+  {
+    static std::string label;
+    if (label.empty()) {
+      label = "disk";
+    }
+    return label;
+  }
 
   string disk::get_shape_name () const
   {
-    return DISK_LABEL;
+    return disk_label();
   }
 
   double disk::get_r () const

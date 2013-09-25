@@ -20,7 +20,14 @@ namespace geomtools {
 
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (line_3d,"geomtools::line_3d")
 
-  const string line_3d::LINE_3D_LABEL = "line_3d";
+  const std::string & line_3d::line_3d_label()
+  {
+    static std::string label;
+    if (label.empty()) {
+      label = "line_3d";
+    }
+    return label;
+  }
 
   bool line_3d::is_normal ()
   {
@@ -34,7 +41,7 @@ namespace geomtools {
 
   string line_3d::get_shape_name () const
   {
-    return line_3d::LINE_3D_LABEL;
+    return line_3d::line_3d_label();
   }
 
   bool

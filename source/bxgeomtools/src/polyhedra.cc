@@ -20,7 +20,14 @@
 
 namespace geomtools {
 
-  const std::string polyhedra::POLYHEDRA_LABEL = "polyhedra";
+  const std::string & polyhedra::polyhedra_label()
+  {
+    static std::string label;
+    if (label.empty()) {
+      label = "polyhedra";
+    }
+    return label;
+  }
 
   double polyhedra::get_xmin () const
   {
@@ -54,7 +61,7 @@ namespace geomtools {
 
   std::string polyhedra::get_shape_name () const
   {
-    return POLYHEDRA_LABEL;
+    return polyhedra_label();
   }
 
   void polyhedra::set_n_sides (size_t n_sides_)
@@ -871,7 +878,7 @@ namespace geomtools {
 
   std::ostream & operator<< (std::ostream & out_, const polyhedra & p_)
   {
-    out_ << '{' << polyhedra::POLYHEDRA_LABEL;
+    out_ << '{' << polyhedra::polyhedra_label();
     out_ << ' ' << p_._n_sides_;
     out_ << ' ' << p_._points_.size ();
     for (polyhedra::rz_col_type::const_iterator i = p_._points_.begin ();
@@ -897,7 +904,7 @@ namespace geomtools {
     }
     std::string name;
     in_ >> name;
-    if (name != polyhedra::POLYHEDRA_LABEL) {
+    if (name != polyhedra::polyhedra_label()) {
       in_.clear (std::ios_base::failbit);
       return in_;
     }

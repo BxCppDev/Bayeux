@@ -33,7 +33,7 @@ int main (int argc_, char ** argv_)
       bool debug = false;
       bool devel = false;
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
-      string drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
+      string drawer_view = geomtools::gnuplot_drawer::view_3d();
       bool draw = false;
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
       bool gdml = true;
@@ -81,19 +81,19 @@ int main (int argc_, char ** argv_)
                  }
                else if (option == "-xy")
                  {
-                   drawer_view = geomtools::gnuplot_drawer::VIEW_2D_XY;
+                   drawer_view = geomtools::gnuplot_drawer::view_2d_xy();
                  }
                else if (option == "-xz")
                  {
-                   drawer_view = geomtools::gnuplot_drawer::VIEW_2D_XZ;
+                   drawer_view = geomtools::gnuplot_drawer::view_2d_xz();
                  }
                else if (option == "-yz")
                  {
-                   drawer_view = geomtools::gnuplot_drawer::VIEW_2D_YZ;
+                   drawer_view = geomtools::gnuplot_drawer::view_2d_yz();
                  }
                else if (option == "-3d")
                  {
-                   drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
+                   drawer_view = geomtools::gnuplot_drawer::view_3d();
                  }
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
                else if (option == "-m")
@@ -173,11 +173,11 @@ int main (int argc_, char ** argv_)
         {
           geomtools::gnuplot_drawer GPD;
           GPD.set_view (drawer_view);
-          GPD.set_mode (geomtools::gnuplot_drawer::MODE_WIRED);
+          GPD.set_mode (geomtools::gnuplot_drawer::mode_wired());
           GPD.draw (factory,
                     model_name,
                     p,
-                    geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT);
+                    geomtools::gnuplot_drawer::display_level_no_limit());
         }
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
@@ -217,17 +217,17 @@ int main (int argc_, char ** argv_)
         geomtools::gdml_export GDML;
         if (devel) GDML.set_logging_priority (datatools::logger::PRIO_TRACE);
         GDML.add_replica_support (true);
-        GDML.attach_external_materials (writer.get_stream (geomtools::gdml_writer::MATERIALS_SECTION));
+        GDML.attach_external_materials (writer.get_stream (geomtools::gdml_writer::materials_section()));
         GDML.parameters ().store ("xml_version",
-                                  geomtools::gdml_writer::DEFAULT_XML_VERSION);
+                                  geomtools::gdml_writer::default_xml_version());
         GDML.parameters ().store ("xml_encoding",
-                                  geomtools::gdml_writer::DEFAULT_XML_ENCODING);
+                                  geomtools::gdml_writer::default_xml_encoding());
         GDML.parameters ().store ("gdml_schema",
-                                  geomtools::gdml_writer::DEFAULT_GDML_SCHEMA);
+                                  geomtools::gdml_writer::default_gdml_schema());
         GDML.parameters ().store ("length_unit",
-                                  geomtools::gdml_export::DEFAULT_LENGTH_UNIT);
+                                  geomtools::gdml_export::default_length_unit());
         GDML.parameters ().store ("angle_unit",
-                                  geomtools::gdml_export::DEFAULT_ANGLE_UNIT);
+                                  geomtools::gdml_export::default_angle_unit());
         GDML.export_gdml ("test_model_factory.gdml", factory, model_name);
       }
     }

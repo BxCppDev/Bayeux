@@ -121,9 +121,9 @@ namespace geomtools {
     _inner_shape_            = 0;
     _outer_shape_            = 0;
     _shape_name_             = ""; // no defined shape
-    _material_name_          = ""; //material::constants::instance ().MATERIAL_REF_UNKNOWN;
+    _material_name_          = ""; //material::material_ref_unknown();
     _filled_mode_            = filled_utils::FILLED_NONE;
-    _filled_material_name_   = ""; //material::constants::instance ().MATERIAL_REF_UNKNOWN;
+    _filled_material_name_   = ""; //material::material_ref_unknown();
     return;
   }
 
@@ -148,7 +148,7 @@ namespace geomtools {
     DT_LOG_TRACE (get_logging_priority (), "Entering...");
 
     // Initialization:
-    _filled_material_name_ = material::constants::instance ().MATERIAL_REF_UNKNOWN;
+    _filled_material_name_ = material::material_ref_unknown();
 
     // Parsing shape:
     DT_THROW_IF (! config_.has_key ("shape_type"), std::logic_error, "Missing 'shape_type' property in simple shaped model '" << name_ << "' !");
@@ -708,8 +708,8 @@ namespace geomtools {
     this->i_model::_pre_construct(setup_,models_);
 
     std::vector<std::string> properties_prefixes;
-    if (setup_.has_key(i_model::constants::instance ().EXPORTED_PROPERTIES_PREFIXES_KEY)) {
-      setup_.fetch(i_model::constants::instance ().EXPORTED_PROPERTIES_PREFIXES_KEY,
+    if (setup_.has_key(i_model::exported_properties_prefixes_key())) {
+      setup_.fetch(i_model::exported_properties_prefixes_key(),
                    properties_prefixes);
     }
 
@@ -721,7 +721,7 @@ namespace geomtools {
         // Add "internal_item." as exported prefixed properties:
         properties_prefixes.push_back(ii_prefix);
         // Update the vector of exported prefixed properties:
-        setup_.update(i_model::constants::instance ().EXPORTED_PROPERTIES_PREFIXES_KEY,
+        setup_.update(i_model::exported_properties_prefixes_key(),
                       properties_prefixes);
         DT_LOG_DEBUG(log_level,
                      "Update the vector of exported prefixed properties.");
@@ -753,8 +753,8 @@ namespace geomtools {
           _inner_logical_.grab_parameters ().set_description(log_params_desc.str());
         }
         std::vector<std::string> exported_prefixes;
-        if (setup_.has_key(i_model::constants::instance ().EXPORTED_PROPERTIES_PREFIXES_KEY)) {
-          setup_.fetch(i_model::constants::instance ().EXPORTED_PROPERTIES_PREFIXES_KEY,
+        if (setup_.has_key(i_model::exported_properties_prefixes_key())) {
+          setup_.fetch(i_model::exported_properties_prefixes_key(),
                        exported_prefixes);
         }
         for (size_t i = 0; i < exported_prefixes.size(); i++) {

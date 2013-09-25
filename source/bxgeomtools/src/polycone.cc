@@ -21,11 +21,18 @@
 
 namespace geomtools {
 
-  const std::string polycone::POLYCONE_LABEL = "polycone";
+  const std::string & polycone::polycone_label()
+  {
+    static std::string label;
+    if (label.empty()) {
+      label = "polycone";
+    }
+    return label;
+  }
 
   std::string polycone::get_shape_name () const
   {
-    return POLYCONE_LABEL;
+    return polycone_label();
   }
 
   double polycone::get_xmin () const
@@ -998,7 +1005,7 @@ namespace geomtools {
 
   std::ostream & operator<< (std::ostream & out_, const polycone & p_)
   {
-    out_ << '{' << polycone::POLYCONE_LABEL;
+    out_ << '{' << polycone::polycone_label();
     out_ << ' ' << p_._points_.size ();
     for (polycone::rz_col_type::const_iterator i = p_._points_.begin ();
          i != p_._points_.end ();
@@ -1023,7 +1030,7 @@ namespace geomtools {
     }
     std::string name;
     in_ >> name;
-    if (name != polycone::POLYCONE_LABEL) {
+    if (name != polycone::polycone_label()) {
       in_.clear (std::ios_base::failbit);
       return in_;
     }

@@ -54,7 +54,7 @@ int main (int argc_, char ** argv_)
                                     geomtools::random_tools::random_flat ());
             if (i == 3) geomtools::invalidate (v);
             cerr << "v[" << i << "] = " << v << endl;
-            writer.store (geomtools::io::VECTOR_2D_SERIAL_TAG, v);
+            writer.store (geomtools::io::vector_2d_serial_tag(), v);
           }
         /*
         datatools::multi_properties mconfig;
@@ -80,7 +80,7 @@ int main (int argc_, char ** argv_)
                                     geomtools::random_tools::random_flat ());
             if (i == 3) geomtools::invalidate (v);
             cerr << "v[" << i << "] = " << v << endl;
-            writer.store (geomtools::io::VECTOR_3D_SERIAL_TAG, v);
+            writer.store (geomtools::io::vector_3d_serial_tag(), v);
           }
         writer.reset ();
         cerr << endl;
@@ -103,7 +103,7 @@ int main (int argc_, char ** argv_)
             geomtools::geom_id gid (666, i);
             if (i == 3) gid.invalidate ();
             cerr << "gid[" << i << "] = " << gid << endl;
-            writer.store (geomtools::geom_id::SERIAL_TAG, gid);
+            writer.store (geomtools::geom_id::serial_tag(), gid);
           }
         writer.reset ();
         cerr << endl;
@@ -141,10 +141,10 @@ int main (int argc_, char ** argv_)
         int i = 0;
         while (reader.has_record_tag ())
           {
-            if (reader.get_record_tag () == geomtools::io::VECTOR_2D_SERIAL_TAG)
+            if (reader.get_record_tag () == geomtools::io::vector_2d_serial_tag())
               {
                 geomtools::vector_2d v;
-                reader.load (geomtools::io::VECTOR_2D_SERIAL_TAG, v);
+                reader.load (geomtools::io::vector_2d_serial_tag(), v);
                 cerr << "v[" << i << "] (LOADED) = " << v << endl;
               }
             else
@@ -171,10 +171,10 @@ int main (int argc_, char ** argv_)
         int i = 0;
         while (reader.has_record_tag ())
           {
-            if (reader.get_record_tag () == geomtools::io::VECTOR_3D_SERIAL_TAG)
+            if (reader.get_record_tag () == geomtools::io::vector_3d_serial_tag())
               {
                 geomtools::vector_3d v;
-                reader.load (geomtools::io::VECTOR_3D_SERIAL_TAG, v);
+                reader.load (geomtools::io::vector_3d_serial_tag(), v);
                 cerr << "v[" << i << "] (LOADED) = " << v << endl;
               }
             i++;
@@ -206,7 +206,7 @@ int main (int argc_, char ** argv_)
             geomtools::tree_dump (r,
                                   cerr,
                                   "Rotation matrix (saved):");
-            writer.store (geomtools::io::ROTATION_3D_SERIAL_TAG, r);
+            writer.store (geomtools::io::rotation_3d_serial_tag(), r);
           }
         writer.reset ();
       }
@@ -218,10 +218,10 @@ int main (int argc_, char ** argv_)
         int i = 0;
         while (reader.has_record_tag ())
           {
-            if (reader.get_record_tag () == geomtools::io::ROTATION_3D_SERIAL_TAG)
+            if (reader.get_record_tag () == geomtools::io::rotation_3d_serial_tag())
               {
                 geomtools::rotation r;
-                reader.load (geomtools::io::ROTATION_3D_SERIAL_TAG, r);
+                reader.load (geomtools::io::rotation_3d_serial_tag(), r);
                 geomtools::tree_dump (r,
                                       cerr,
                                       "Rotation matrix (loaded):");

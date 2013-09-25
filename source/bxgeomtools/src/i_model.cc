@@ -19,23 +19,34 @@ namespace geomtools {
   DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION (i_model, "geomtools::i_model/__system__");
 
   // static
-  const i_model::constants & i_model::constants::instance ()
+  const std::string & i_model::solid_suffix()
   {
-    static boost::scoped_ptr<i_model::constants> g_global_constants (0);
-    if ( g_global_constants.get () == 0) {
-      g_global_constants.reset (new i_model::constants);
-    }
-    return *g_global_constants.get ();
+    static std::string token = ".solid";
+    return token;
   }
 
-  i_model::constants::constants ()
+  const std::string & i_model::logical_suffix()
   {
-    SOLID_SUFFIX       = ".solid";
-    LOGICAL_SUFFIX     = ".log";
-    PHYSICAL_SUFFIX    = ".phys";
-    PHANTOM_SOLID_FLAG = "phantom_solid";
-    EXPORTED_PROPERTIES_PREFIXES_KEY = "__geomtools__i_model__exported_properties_prefixes";
-    return;
+    static std::string token = ".log";
+    return token;
+  }
+
+  const std::string & i_model::physical_suffix()
+  {
+    static std::string token = ".phys";
+    return token;
+  }
+
+  const std::string & i_model::phantom_solid_flag()
+  {
+    static std::string token = "phantom_solid";
+    return token;
+  }
+
+  const std::string & i_model::exported_properties_prefixes_key()
+  {
+    static std::string token = "__geomtools__i_model__exported_properties_prefixes";
+    return token;
   }
 
   datatools::logger::priority i_model::get_logging_priority () const
@@ -51,24 +62,24 @@ namespace geomtools {
 
   std::string i_model::make_solid_name (const std::string & basename_)
   {
-    return basename_ + i_model::constants::instance().SOLID_SUFFIX;
+    return basename_ + i_model::solid_suffix();
   }
 
   std::string i_model::make_logical_volume_name (const std::string & basename_)
   {
-    return basename_ + i_model::constants::instance().LOGICAL_SUFFIX;
+    return basename_ + i_model::logical_suffix();
   }
 
   std::string i_model::make_physical_volume_name (const std::string & basename_)
   {
-    return basename_ + i_model::constants::instance().PHYSICAL_SUFFIX;
+    return basename_ + i_model::physical_suffix();
   }
 
   std::string i_model::make_physical_volume_name (const std::string & basename_,
                                                   int nitems_)
   {
     std::ostringstream oss;
-    oss << basename_ << i_model::constants::instance().PHYSICAL_SUFFIX
+    oss << basename_ << i_model::physical_suffix()
         << "." << "__" << 0 << ".." << (nitems_ - 1) << "__";
     return oss.str ();
   }
@@ -77,7 +88,7 @@ namespace geomtools {
                                                            int item_)
   {
     std::ostringstream oss;
-    oss << basename_ << i_model::constants::instance().PHYSICAL_SUFFIX
+    oss << basename_ << i_model::physical_suffix()
         << "." << "__" << item_ << "__";
     return oss.str ();
   }
@@ -86,7 +97,7 @@ namespace geomtools {
                                                            int i_, int j_)
   {
     std::ostringstream oss;
-    oss << basename_ << i_model::constants::instance().PHYSICAL_SUFFIX
+    oss << basename_ << i_model::physical_suffix()
         << "." << "__" << i_ << "__"
         << "__" << j_ << "__";
     return oss.str ();
@@ -97,7 +108,7 @@ namespace geomtools {
                                                   int nrows_)
   {
     std::ostringstream oss;
-    oss << basename_ << i_model::constants::instance().PHYSICAL_SUFFIX
+    oss << basename_ << i_model::physical_suffix()
         << "." << "__" << 0 << ".." << (ncols_ - 1) << "__"
         << "__" << 0 << ".." << (nrows_ - 1) << "__";
     return oss.str ();
@@ -105,7 +116,7 @@ namespace geomtools {
 
   std::string i_model::extract_label_from_physical_volume_name (const std::string & physical_volume_name_)
   {
-    const size_t pos = physical_volume_name_.rfind (i_model::constants::instance().PHYSICAL_SUFFIX);
+    const size_t pos = physical_volume_name_.rfind (i_model::physical_suffix());
     DT_THROW_IF(pos == physical_volume_name_.npos,
                 std::logic_error,
                 "Do not recognize a physical volume name from '"
@@ -212,7 +223,7 @@ namespace geomtools {
 
   void i_model::_pre_construct (datatools::properties & setup_, models_col_type * models_)
   {
-    if (setup_.has_flag (i_model::constants::instance().PHANTOM_SOLID_FLAG)) {
+    if (setup_.has_flag (i_model::phantom_solid_flag())) {
       _set_phantom_solid (true);
     }
 
@@ -222,8 +233,8 @@ namespace geomtools {
   void i_model::_post_construct (datatools::properties & setup_, models_col_type * models_)
   {
     std::vector<std::string> exported_properties_prefixes;
-    if (setup_.has_key(i_model::constants::instance ().EXPORTED_PROPERTIES_PREFIXES_KEY)) {
-      setup_.fetch(i_model::constants::instance ().EXPORTED_PROPERTIES_PREFIXES_KEY,
+    if (setup_.has_key(i_model::exported_properties_prefixes_key())) {
+      setup_.fetch(i_model::exported_properties_prefixes_key(),
                    exported_properties_prefixes);
     }
     // Push some of the model's setup properties into the logical for further usage:
@@ -269,15 +280,15 @@ namespace geomtools {
                       << name_ << "'";
       _logical.grab_parameters ().set_description(log_params_desc.str());
     }
-    setup.store(i_model::constants::instance ().EXPORTED_PROPERTIES_PREFIXES_KEY,
+    setup.store(i_model::exported_properties_prefixes_key(),
                 properties_prefixes_);
     _common_construct (setup);
     _pre_construct (setup, models_);
     _at_construct (name_, setup_, models_);
     _post_construct (setup, models_);
     _logical.set_geometry_model(*this);
-    if (setup.has_key(i_model::constants::instance ().EXPORTED_PROPERTIES_PREFIXES_KEY)) {
-      setup.erase(i_model::constants::instance ().EXPORTED_PROPERTIES_PREFIXES_KEY);
+    if (setup.has_key(i_model::exported_properties_prefixes_key())) {
+      setup.erase(i_model::exported_properties_prefixes_key());
     }
     _logical.lock();
     _constructed_ = true;

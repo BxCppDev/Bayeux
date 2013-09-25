@@ -35,7 +35,7 @@ namespace geomtools {
   {
   public:
 
-    static const std::string DEFAULT_WORLD_LABEL;
+    static const std::string & default_world_label();
 
     /// Check if the factory is locked
     bool is_locked () const;

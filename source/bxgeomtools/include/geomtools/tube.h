@@ -45,7 +45,7 @@ namespace geomtools {
 
   public:
 
-    static const std::string TUBE_LABEL;
+    static const std::string & tube_label();
 
   public:
 

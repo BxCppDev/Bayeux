@@ -37,24 +37,23 @@ namespace geomtools {
   {
   public:
 
-    static const std::string VIEW_KEY;
-    static const std::string VIEW_2D_XY;
-    static const std::string VIEW_2D_XZ;
-    static const std::string VIEW_2D_YZ;
-    static const std::string VIEW_3D;
-    static const std::string VIEW_3D_FREE_SCALE;
-    static const std::string DEFAULT_VIEW;
+    static const int DISPLAY_LEVEL_NO_LIMIT = 1000;
 
-    static const int    DISPLAY_LEVEL_NO_LIMIT;
-
-    static const std::string MODE_WIRED;
-    static const std::string MODE_SOLID;
-    static const std::string DEFAULT_MODE;
-
-    static const std::string FORCE_SHOW_PROPERTY_NAME;
-    static const std::string FORCE_SHOW_ENVELOPE_PROPERTY_NAME;
-    static const std::string FORCE_SHOW_CHILDREN_PROPERTY_NAME;
-    static const std::string WORLD_NAME_KEY;
+    static const int           display_level_no_limit();
+    static const std::string & view_key();
+    static const std::string & view_2d_xy();
+    static const std::string & view_2d_xz();
+    static const std::string & view_2d_yz();
+    static const std::string & view_3d();
+    static const std::string & view_3d_free_scale();
+    static const std::string & default_view();
+    static const std::string & mode_wired();
+    static const std::string & mode_solid();
+    static const std::string & default_mode();
+    static const std::string & force_show_property_name();
+    static const std::string & force_show_envelope_property_name();
+    static const std::string & force_show_children_property_name();
+    static const std::string & world_name_key();
 
     static void wait_for_key ();
 

@@ -1,16 +1,16 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* regular_polygon.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-14
  * Last modified: 2010-02-14
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *   A regular_polygon in x-y plane
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
 #ifndef GEOMTOOLS_REGULAR_POLYGON_H_
@@ -24,22 +24,22 @@ namespace geomtools {
 
   class regular_polygon : public i_shape_2d
   {
-    
+
   public:
-    static const std::string REGULAR_POLYGON_LABEL;
- 
-    enum mode_t
+    static const std::string & regular_polygon_label();
+
+    enum mode_type
       {
         BUILD_BY_RADIUS  = 1,
         BUILD_BY_APOTHEM = 2
-      };   
+      };
 
-  private: 
+  private:
     /*
      *       C         B
      *        *-------*
      *       /       / \
-     *      /       /   * M         
+     *      /       /   * M
      *     /    O  /     \
      *  D *       * <-r-> *-- -----------------> y
      *     \      :      / A
@@ -60,7 +60,7 @@ namespace geomtools {
     uint32_t _n_sides_; //! The number of sides/vertices of the polygon
     double   _r_;       //! The radius of the polygon, i.e. the distance from center to vertices (circumradius)
 
-  public: 
+  public:
 
     bool is_valid () const;
 
@@ -83,16 +83,16 @@ namespace geomtools {
     void set_r (double);
 
     void set_diameter (double);
- 
+
     double get_diameter () const;
- 
+
     double get_surface () const;
- 
+
     void get_vertex (int n_, double & x_, double & y_) const;
- 
+
     void get_vertex (int n_, vector_3d & vertex_) const;
 
-  public: 
+  public:
     // ctor:
     regular_polygon ();
 
@@ -100,26 +100,26 @@ namespace geomtools {
 
     // dtor:
     virtual ~regular_polygon ();
-  
+
     // methods:
     virtual std::string get_shape_name () const;
-      
+
     virtual bool is_on_surface (const vector_3d &,
-                                double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const; 
-    
+                                double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+
     virtual vector_3d get_normal_on_surface (const vector_3d & position_,
                                              bool up_ = true) const;
-    
-    virtual bool find_intercept (const vector_3d & from_, 
+
+    virtual bool find_intercept (const vector_3d & from_,
                                  const vector_3d & direction_,
                                  intercept_t & intercept_,
                                  double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
-    virtual void tree_dump (std::ostream & out_ = std::clog, 
-                            const std::string & title_ = "", 
-                            const std::string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_ = std::clog,
+                            const std::string & title_ = "",
+                            const std::string & indent_ = "",
                             bool inherit_= false) const;
- 
+
   };
 
 } // end of namespace geomtools

@@ -8,7 +8,14 @@ namespace geomtools {
 
   using namespace std;
 
-  const std::string hexagon_box::HEXAGON_BOX_LABEL = "hexagon_box";
+  const std::string & hexagon_box::hexagon_box_label()
+  {
+    static std::string label;
+    if (label.empty()) {
+      label = "hexagon_box";
+    }
+    return label;
+  }
 
   double
   hexagon_box::get_radius () const
@@ -86,7 +93,7 @@ namespace geomtools {
   std::string
   hexagon_box::get_shape_name () const
   {
-    return HEXAGON_BOX_LABEL;
+    return hexagon_box_label();
   }
 
   double
@@ -358,7 +365,7 @@ namespace geomtools {
   std::ostream &
   operator<< (std::ostream & out_, const hexagon_box & b_)
   {
-    out_ << '{' << hexagon_box::HEXAGON_BOX_LABEL << ' '
+    out_ << '{' << hexagon_box::hexagon_box_label() << ' '
          << b_._radius_ << ' '
          << b_._z_ << '}';
     return out_;
@@ -377,7 +384,7 @@ namespace geomtools {
       }
     std::string name;
     in_ >> name;
-    if (name != hexagon_box::HEXAGON_BOX_LABEL)
+    if (name != hexagon_box::hexagon_box_label())
       {
         in_.clear (std::ios_base::failbit);
         return in_;

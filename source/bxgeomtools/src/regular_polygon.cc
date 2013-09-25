@@ -20,11 +20,18 @@ namespace geomtools {
 
   using namespace std;
 
-  const string regular_polygon::REGULAR_POLYGON_LABEL = "regular_polygon";
+  const std::string & regular_polygon::regular_polygon_label()
+  {
+    static std::string label;
+    if (label.empty()) {
+      label = "regular_polygon";
+    }
+    return label;
+  }
 
   string regular_polygon::get_shape_name () const
   {
-    return REGULAR_POLYGON_LABEL;
+    return regular_polygon_label();
   }
 
   uint32_t regular_polygon::get_n_sides () const

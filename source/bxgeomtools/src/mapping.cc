@@ -368,7 +368,7 @@ namespace geomtools {
   void mapping::_build_ ()
   {
     DT_LOG_TRACE(_logging, "Entering...");
-    std::string world_cat_name = id_mgr:: DEFAULT_WORLD_CATEGORY;
+    std::string world_cat_name = id_mgr::default_world_category();
     DT_THROW_IF (! _get_id_manager ().has_category_info (world_cat_name),
                  std::logic_error,
                  "Unknown 'world' category '" << world_cat_name << "' !");

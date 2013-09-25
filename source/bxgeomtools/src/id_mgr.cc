@@ -20,10 +20,24 @@
 
 namespace geomtools {
 
-  const std::string id_mgr::CATEGORY_KEY_LABEL     = "category";
-  const std::string id_mgr::TYPE_META_LABEL        = "type";
-  const std::string id_mgr::DEFAULT_WORLD_CATEGORY = "world";
-  const int         id_mgr::WORD_TYPE              = 0;
+  // static
+  const std::string & id_mgr::category_key_label()
+  {
+    static std::string token = "category";
+    return token;
+  }
+
+  const std::string & id_mgr::type_meta_label()
+  {
+    static std::string token = "type";
+    return token;
+  }
+
+  const std::string & id_mgr::default_world_category()
+  {
+    static std::string token = "world";
+    return token;
+  }
 
   bool id_mgr::category_info::is_valid () const
   {
@@ -249,11 +263,11 @@ namespace geomtools {
 
   void id_mgr::init_from (const datatools::multi_properties & mp_)
   {
-    DT_THROW_IF (mp_.get_key_label () != id_mgr::CATEGORY_KEY_LABEL,
+    DT_THROW_IF (mp_.get_key_label () != id_mgr::category_key_label(),
                  std::logic_error,
                  "Key label '" << mp_.get_key_label () << "' is not valid !");
 
-    DT_THROW_IF (mp_.get_meta_label () != id_mgr::TYPE_META_LABEL,
+    DT_THROW_IF (mp_.get_meta_label () != id_mgr::type_meta_label(),
                  std::logic_error,
                  "Meta label '" << mp_.get_meta_label () << "' is not valid !");
 
@@ -277,7 +291,7 @@ namespace geomtools {
 
       DT_THROW_IF (type_meta.empty (),
                    std::logic_error,
-                   "Missing '" << TYPE_META_LABEL << "' info !");
+                   "Missing '" << type_meta_label() << "' info !");
 
       int type = geom_id::INVALID_TYPE;
       {
@@ -353,11 +367,11 @@ namespace geomtools {
 
   void id_mgr::load (const std::string & filename_)
   {
-    datatools::multi_properties mp (CATEGORY_KEY_LABEL, TYPE_META_LABEL);
+    datatools::multi_properties mp(category_key_label(), type_meta_label());
     std::string fn = filename_;
-    datatools::fetch_path_with_env (fn);
-    mp.read (fn);
-    init_from (mp);
+    datatools::fetch_path_with_env(fn);
+    mp.read(fn);
+    init_from(mp);
     return;
   }
 

@@ -17,11 +17,19 @@ namespace geomtools {
 
   using namespace std;
 
-  const string circle::CIRCLE_LABEL = "circle";
+  //DT_STATIC_CONST_STRING_REF_DEFINITION(circle, circle_label, "circle");
+  const std::string & circle::circle_label()
+  {
+    static std::string label;
+    if (label.empty()) {
+      label = "circle";
+    }
+    return label;
+  }
 
   string circle::get_shape_name () const
   {
-    return CIRCLE_LABEL;
+    return circle_label();
   }
 
   unsigned int circle::get_number_of_path() const

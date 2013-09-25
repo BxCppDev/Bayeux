@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_utils.cxx
 
 #include <cstdlib>
@@ -14,11 +14,11 @@
 // Some pre-processor guard about Boost I/O usage and linkage :
 #include <geomtools/bio_guard.h>
 
-int 
+int
 main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
-  try 
+  try
     {
       long seed = 314159;
       srand48 (seed);
@@ -47,7 +47,7 @@ main (int argc_, char ** argv_)
           geomtools::vector_3d orth_dir;
           geomtools::randomize_orthogonal_direction (drand48, dir, orth_dir);
           std::clog << "Random orthogonal direction: " << orth_dir << std::endl;
-      
+
           geomtools::gnuplot_draw::basic_draw_point (std::cout, origin);
           geomtools::gnuplot_draw::basic_draw_point (std::cout, orth_dir);
           if (i == 0) // trick
@@ -59,9 +59,9 @@ main (int argc_, char ** argv_)
       {
         std::cout << "Serialize..." << std::endl;
         datatools::data_writer writer;
-        writer.init ("test_utils.txt", 
+        writer.init ("test_utils.txt",
                      datatools::using_multi_archives);
-        
+
         for (int i = 0; i < 5; i++)
           {
             geomtools::vector_3d v (geomtools::random_tools::random_flat (),
@@ -69,7 +69,7 @@ main (int argc_, char ** argv_)
                                     geomtools::random_tools::random_flat ());
             if (i == 3) geomtools::invalidate (v);
             std::clog << "v[" << i << "] = " << v << std::endl;
-            writer.store (geomtools::io::VECTOR_3D_SERIAL_TAG, v);
+            writer.store (geomtools::io::vector_3d_serial_tag(), v);
           }
         writer.reset ();
         std::cout << "Done" << std::endl << std::endl;
@@ -78,15 +78,15 @@ main (int argc_, char ** argv_)
       {
         std::cout << "Deserialize..." << std::endl;
         datatools::data_reader reader;
-        reader.init ("test_utils.txt", 
+        reader.init ("test_utils.txt",
                      datatools::using_multi_archives);
         int i = 0;
         while (reader.has_record_tag ())
           {
-            if (reader.get_record_tag () == geomtools::io::VECTOR_3D_SERIAL_TAG)
+            if (reader.get_record_tag () == geomtools::io::vector_3d_serial_tag())
               {
                 geomtools::vector_3d v;
-                reader.load (geomtools::io::VECTOR_3D_SERIAL_TAG, v);
+                reader.load (geomtools::io::vector_3d_serial_tag(), v);
                 std::clog << "v[" << i << "] = " << v << std::endl;
               }
             i++;
@@ -98,28 +98,28 @@ main (int argc_, char ** argv_)
       {
         std::cout << "Serialize (2)..." << std::endl;
         datatools::data_writer writer;
-        writer.init ("test_utils2.txt", 
+        writer.init ("test_utils2.txt",
                      datatools::using_multi_archives);
-        
+
         for (int i = 0; i < 4; i++)
           {
             geomtools::rotation r;
-            if (i == 3) 
+            if (i == 3)
               {
                 geomtools::invalidate (r);
               }
-            else 
+            else
               {
-                geomtools::create_rotation (r, 
+                geomtools::create_rotation (r,
                                             2. * M_PI * geomtools::random_tools::random_flat (),
                                             0.25 * M_PI * geomtools::random_tools::random_flat (),
                                             0.0);
               }
             std::clog << "r[" << i << "] = " << r << std::endl;
-            geomtools::tree_dump (r, 
-                                  std::clog, 
+            geomtools::tree_dump (r,
+                                  std::clog,
                                   "Rotation matrix (saved):");
-            writer.store (geomtools::io::ROTATION_3D_SERIAL_TAG, r);
+            writer.store (geomtools::io::rotation_3d_serial_tag(), r);
           }
         writer.reset ();
         std::cout << "Done" << std::endl << std::endl;
@@ -128,17 +128,17 @@ main (int argc_, char ** argv_)
       {
         std::cout << "Deserialize (2)..." << std::endl;
         datatools::data_reader reader;
-        reader.init ("test_utils2.txt", 
+        reader.init ("test_utils2.txt",
                      datatools::using_multi_archives);
         int i = 0;
         while (reader.has_record_tag ())
           {
-            if (reader.get_record_tag () == geomtools::io::ROTATION_3D_SERIAL_TAG)
+            if (reader.get_record_tag () == geomtools::io::rotation_3d_serial_tag())
               {
                 geomtools::rotation r;
-                reader.load (geomtools::io::ROTATION_3D_SERIAL_TAG, r);
-                geomtools::tree_dump (r, 
-                                      std::clog, 
+                reader.load (geomtools::io::rotation_3d_serial_tag(), r);
+                geomtools::tree_dump (r,
+                                      std::clog,
                                       "Rotation matrix (loaded):");
                 std::clog << std::endl;
               }
@@ -148,23 +148,23 @@ main (int argc_, char ** argv_)
         std::cout << "Done" << std::endl << std::endl;
       }
 
-      geomtools::create_rotation(rot, 
-                                 30.0 * CLHEP::degree, 
+      geomtools::create_rotation(rot,
+                                 30.0 * CLHEP::degree,
                                  45. * CLHEP::degree,
                                  0.0);
-      geomtools::tree_dump (rot, std::clog, "Rotation matrix (valid):"); 
+      geomtools::tree_dump (rot, std::clog, "Rotation matrix (valid):");
       geomtools::invalidate (rot);
       geomtools::tree_dump (rot, std::clog, "Rotation matrix (invalid):");
- 
+
     }
   catch (std::exception & x)
     {
-      std::cerr << "error: " << x.what() << std::endl; 
+      std::cerr << "error: " << x.what() << std::endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      std::cerr << "error: " << "unexpected error!" << std::endl; 
+      std::cerr << "error: " << "unexpected error!" << std::endl;
       error_code = EXIT_FAILURE;
     }
   return error_code;

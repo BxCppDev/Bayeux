@@ -11,7 +11,14 @@
 
 namespace geomtools {
 
-  const std::string helix_3d::HELIX_3D_LABEL = "helix_3d";
+  const std::string & helix_3d::helix_3d_label()
+  {
+    static std::string label;
+    if (label.empty()) {
+      label = "helix_3d";
+    }
+    return label;
+  }
 
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (helix_3d,"geomtools::helix_3d")
 
@@ -28,7 +35,7 @@ namespace geomtools {
 
   std::string helix_3d::get_shape_name () const
   {
-    return helix_3d::HELIX_3D_LABEL;
+    return helix_3d::helix_3d_label();
   }
 
   bool helix_3d::is_valid () const

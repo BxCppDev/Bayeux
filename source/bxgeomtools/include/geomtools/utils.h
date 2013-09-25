@@ -180,9 +180,9 @@ namespace geomtools {
         FILLED_BY_EXTRUSION =  2
       };
 
-    static const std::string FILLED_NONE_LABEL;
-    static const std::string FILLED_BY_ENVELOPE_LABEL;
-    static const std::string FILLED_BY_EXTRUSION_LABEL;
+    static const std::string & filled_none_label();
+    static const std::string & filled_by_envelope_label();
+    static const std::string & filled_by_extrusion_label();
 
     static std::string get_filled_mode_label(filled_utils::filled_type);
 
@@ -589,11 +589,11 @@ namespace geomtools {
 
   struct io
   {
-    static const std::string VECTOR_2D_SERIAL_TAG;
-    static const std::string VECTOR_3D_SERIAL_TAG;
-    static const std::string ROTATION_3D_SERIAL_TAG;
-    static const std::string POSITION_SUFFIX;
-    static const std::string ROTATION_SUFFIX;
+    static const std::string & vector_2d_serial_tag();
+    static const std::string & vector_3d_serial_tag();
+    static const std::string & rotation_3d_serial_tag();
+    static const std::string & position_suffix();
+    static const std::string & rotation_suffix();
   };
 
 } // end namespace geomtools

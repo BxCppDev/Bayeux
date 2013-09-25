@@ -1,16 +1,16 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* material.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-03-13
  * Last modified: 2010-03-13
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *  Utilities for material reference.
  *
- * History: 
- * 
+ * History:
+ *
  */
 
 #ifndef GEOMTOOLS_MATERIAL_H_
@@ -31,23 +31,16 @@ namespace geomtools {
   {
   public:
 
-    struct constants
-    {
-      std::string MATERIAL_PREFIX;
-      std::string MATERIAL_REF_PROPERTY;
-      std::string MATERIAL_REF_DEFAULT;
-      std::string MATERIAL_REF_UNKNOWN;
-      std::string MATERIAL_REF_VACUUM;
-      std::string MATERIAL_SOLID_FLAG;
-      std::string MATERIAL_LIQUID_FLAG;
-      std::string MATERIAL_GAS_FLAG;
-      std::string MATERIAL_GAS_PRESSURE_PROPERTY;
-      std::string MATERIAL_GAS_TEMPERATURE_PROPERTY;
-
-      constants ();
-
-      static const constants & instance ();
-    };
+    static std::string & material_prefix();
+    static std::string & material_ref_property();
+    static std::string & material_ref_default();
+    static std::string & material_ref_unknown();
+    static std::string & material_ref_vacuum();
+    static std::string & material_solid_flag();
+    static std::string & material_liquid_flag();
+    static std::string & material_gas_flag();
+    static std::string & material_gas_pressure_property();
+    static std::string & material_gas_temperature_property();
 
     static std::string make_key (const std::string & flag_);
 

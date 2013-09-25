@@ -28,7 +28,7 @@ namespace geomtools {
 
   public:
 
-    static const std::string HEXAGON_BOX_LABEL;
+    static const std::string & hexagon_box_label();
 
     /*
      *

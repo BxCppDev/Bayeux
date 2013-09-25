@@ -34,25 +34,95 @@
 
 namespace geomtools {
 
-  const std::string gnuplot_drawer::VIEW_KEY   = "view";
-  const std::string gnuplot_drawer::VIEW_2D_XY = "xy";
-  const std::string gnuplot_drawer::VIEW_2D_XZ = "xz";
-  const std::string gnuplot_drawer::VIEW_2D_YZ = "yz";
-  const std::string gnuplot_drawer::VIEW_3D    = "xyz";
-  const std::string gnuplot_drawer::VIEW_3D_FREE_SCALE = "xyz_free";
-  const std::string gnuplot_drawer::DEFAULT_VIEW = gnuplot_drawer::VIEW_3D;
+  // static
+  const int gnuplot_drawer::display_level_no_limit()
+  {
+    return gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT;
+  }
 
-  const int         gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT = 1000;
+  const std::string & gnuplot_drawer::view_key()
+  {
+    static std::string token = "view";
+    return token;
+  }
 
-  const std::string gnuplot_drawer::MODE_WIRED = "wired";
-  const std::string gnuplot_drawer::MODE_SOLID = "solid";
-  const std::string gnuplot_drawer::DEFAULT_MODE = MODE_WIRED;
+  const std::string & gnuplot_drawer::view_2d_xy()
+  {
+    static std::string token = "xy";
+    return token;
+  }
 
-  const std::string gnuplot_drawer::FORCE_SHOW_PROPERTY_NAME          = "visibility.force_show";
-  const std::string gnuplot_drawer::FORCE_SHOW_ENVELOPE_PROPERTY_NAME = "visibility.force_show_envelope";
-  const std::string gnuplot_drawer::FORCE_SHOW_CHILDREN_PROPERTY_NAME = "visibility.force_show_children";
+  const std::string & gnuplot_drawer::view_2d_xz()
+  {
+    static std::string token = "xz";
+    return token;
+  }
 
-  const std::string gnuplot_drawer::WORLD_NAME_KEY = "world_name";
+  const std::string & gnuplot_drawer::view_2d_yz()
+  {
+    static std::string token = "yz";
+    return token;
+  }
+
+  const std::string & gnuplot_drawer::view_3d()
+  {
+    static std::string token = "xyz";
+    return token;
+  }
+
+  const std::string & gnuplot_drawer::view_3d_free_scale()
+  {
+    static std::string token = "xyz_free";
+    return token;
+  }
+
+  const std::string & gnuplot_drawer::default_view()
+  {
+    static std::string token = gnuplot_drawer::view_3d();
+    return token;
+  }
+
+  const std::string & gnuplot_drawer::mode_wired()
+  {
+    static std::string token = "wired";
+    return token;
+  }
+
+  const std::string & gnuplot_drawer::mode_solid()
+  {
+    static std::string token = "solid";
+    return token;
+  }
+
+  const std::string & gnuplot_drawer::default_mode()
+  {
+    static std::string token = gnuplot_drawer::mode_wired();
+    return token;
+  }
+
+  const std::string & gnuplot_drawer::force_show_property_name()
+  {
+    static std::string token = "visibility.force_show";
+    return token;
+  }
+
+  const std::string & gnuplot_drawer::force_show_envelope_property_name()
+  {
+    static std::string token = "visibility.force_show_envelope";
+    return token;
+  }
+
+  const std::string & gnuplot_drawer::force_show_children_property_name()
+  {
+    static std::string token = "visibility.force_show_children";
+    return token;
+  }
+
+  const std::string & gnuplot_drawer::world_name_key()
+  {
+    static std::string token = "world_name";
+    return token;
+  }
 
   gnuplot_drawer::cstream::cstream ()
   {
@@ -191,17 +261,17 @@ namespace geomtools {
 
   bool gnuplot_drawer::is_view_3d () const
   {
-    return _view_ == VIEW_3D;
+    return _view_ == view_3d();
   }
 
   bool gnuplot_drawer::is_solid () const
   {
-    return _mode_ == MODE_SOLID;
+    return _mode_ == mode_solid();
   }
 
   bool gnuplot_drawer::is_wired () const
   {
-    return _mode_ == MODE_WIRED;
+    return _mode_ == mode_wired();
   }
 
   std::ostringstream & gnuplot_drawer::_get_stream (const std::string & section_)
@@ -271,8 +341,8 @@ namespace geomtools {
   gnuplot_drawer::gnuplot_drawer ()
   {
     _initialized_ = false;
-    _view_ = gnuplot_drawer::DEFAULT_VIEW;
-    _mode_ = gnuplot_drawer::DEFAULT_MODE;
+    _view_ = gnuplot_drawer::default_view();
+    _mode_ = gnuplot_drawer::default_mode();
     _using_title_ = true;
     _labels_ = true;
     _xrange_.set_axis ('x');
@@ -285,7 +355,9 @@ namespace geomtools {
 
   gnuplot_drawer::~gnuplot_drawer ()
   {
-    reset ();
+    reset_cstreams ();
+    reset_terminal ();
+    _display_data_.clear();
     return;
   }
 
@@ -312,10 +384,10 @@ namespace geomtools {
     _initialized_ = false;
     reset_cstreams ();
     reset_terminal ();
-    _view_ = gnuplot_drawer::DEFAULT_VIEW;
+    _view_ = gnuplot_drawer::default_view();
     _labels_ = true;
     _using_title_ = true;
-    _mode_ = gnuplot_drawer::DEFAULT_MODE;
+    _mode_ = gnuplot_drawer::default_mode();
     _display_data_.clear();
     return;
   }
@@ -386,8 +458,8 @@ namespace geomtools {
         shown = false;
       }
 
-      if (get_properties ().has_key (FORCE_SHOW_PROPERTY_NAME)) {
-        shown = get_properties ().fetch_boolean (FORCE_SHOW_PROPERTY_NAME);
+      if (get_properties ().has_key (force_show_property_name())) {
+        shown = get_properties ().fetch_boolean (force_show_property_name());
       }
 
       if (visibility::is_hidden_envelope (log_visu_config)) {
@@ -396,8 +468,8 @@ namespace geomtools {
       DT_LOG_TRACE (local_priority, "Show         = " << shown);
       DT_LOG_TRACE (local_priority, "Show envelope = " << shown_envelope);
 
-      if (get_properties ().has_key (FORCE_SHOW_ENVELOPE_PROPERTY_NAME))  {
-        shown_envelope = get_properties ().fetch_boolean (FORCE_SHOW_ENVELOPE_PROPERTY_NAME);
+      if (get_properties ().has_key (force_show_envelope_property_name()))  {
+        shown_envelope = get_properties ().fetch_boolean (force_show_envelope_property_name());
       }
 
       // Draw the envelope volume :
@@ -447,8 +519,8 @@ namespace geomtools {
         draw_children = false;
       }
 
-      if (get_properties ().has_key (FORCE_SHOW_CHILDREN_PROPERTY_NAME)) {
-        draw_children = get_properties ().fetch_boolean (FORCE_SHOW_CHILDREN_PROPERTY_NAME);
+      if (get_properties ().has_key (force_show_children_property_name())) {
+        draw_children = get_properties ().fetch_boolean (force_show_children_property_name());
       }
 
       DT_LOG_TRACE (local_priority, "Drawing children...");
@@ -637,7 +709,7 @@ namespace geomtools {
       g1.cmd ("unset ytics");
       g1.cmd ("unset ztics");
     }
-    if (view == gnuplot_drawer::VIEW_2D_XY) {
+    if (view == gnuplot_drawer::view_2d_xy()) {
       if (labels) {
         g1.set_xlabel ("x").set_ylabel ("y");
         g1.cmd ("set xtics");
@@ -647,7 +719,7 @@ namespace geomtools {
       col2 = 2;
     }
 
-    if (view == gnuplot_drawer::VIEW_2D_XZ) {
+    if (view == gnuplot_drawer::view_2d_xz()) {
       if (labels) {
         g1.set_xlabel ("x").set_ylabel ("z");
         g1.cmd ("set xtics");
@@ -657,7 +729,7 @@ namespace geomtools {
       col2 = 3;
     }
 
-    if (view == gnuplot_drawer::VIEW_2D_YZ) {
+    if (view == gnuplot_drawer::view_2d_yz()) {
       if (labels) {
         g1.set_xlabel ("y").set_ylabel ("z");
         g1.cmd ("set ytics");
@@ -667,7 +739,7 @@ namespace geomtools {
       col2 = 3;
     }
 
-    if (view == gnuplot_drawer::VIEW_3D) {
+    if (view == gnuplot_drawer::view_3d()) {
       plot_dim = 3;
       g1.cmd ("set view equal xyz");
       {
@@ -701,7 +773,7 @@ namespace geomtools {
       col3 = 3;
     }
 
-    if (view == gnuplot_drawer::VIEW_3D_FREE_SCALE) {
+    if (view == gnuplot_drawer::view_3d_free_scale()) {
       plot_dim = 3;
       if (labels) {
         g1.set_xlabel ("x").set_ylabel ("y").set_zlabel ("z");
@@ -886,12 +958,12 @@ namespace geomtools {
 
     bool draw_dd = true;
     std::string world_name;
-    if (get_properties().has_key(gnuplot_drawer::WORLD_NAME_KEY)
-        && get_properties().is_string(gnuplot_drawer::WORLD_NAME_KEY)) {
-      world_name = get_properties().fetch_string(gnuplot_drawer::WORLD_NAME_KEY);
+    if (get_properties().has_key(gnuplot_drawer::world_name_key())
+        && get_properties().is_string(gnuplot_drawer::world_name_key())) {
+      world_name = get_properties().fetch_string(gnuplot_drawer::world_name_key());
     }
     if (world_name.empty()) {
-      world_name = geomtools::model_factory::DEFAULT_WORLD_LABEL;
+      world_name = geomtools::model_factory::default_world_label();
     }
     if (draw_dd && (name_ == world_name)) {
       _draw_display_data(mf_, p_);

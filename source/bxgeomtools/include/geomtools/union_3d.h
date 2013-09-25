@@ -24,7 +24,7 @@ namespace geomtools {
   {
   public:
 
-    static const std::string UNION_3D_LABEL;
+    static const std::string & union_3d_label();
 
     std::string get_shape_name () const;
 
