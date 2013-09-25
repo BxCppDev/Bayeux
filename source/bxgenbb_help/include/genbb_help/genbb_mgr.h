@@ -53,14 +53,13 @@ namespace genbb {
   {
   public:
 
-    enum format_type
-      {
-        FORMAT_GENBB = 0,
-        FORMAT_BOOST = 1
-      };
+    enum format_type {
+      FORMAT_GENBB = 0,
+      FORMAT_BOOST = 1
+    };
 
-    static const std::string FORMAT_GENBB_LABEL;
-    static const std::string FORMAT_BOOST_LABEL;
+    static const std::string & format_genbb_label();
+    static const std::string & format_boost_label();
 
     bool is_debug () const;
 
@@ -70,7 +69,7 @@ namespace genbb {
 
     void set_format (int format_ = FORMAT_GENBB);
 
-    void set_format (const std::string & format_ = FORMAT_GENBB_LABEL);
+    void set_format (const std::string & format_ = "");
 
     bool is_format_genbb () const;
 

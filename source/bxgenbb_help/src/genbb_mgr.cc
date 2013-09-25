@@ -51,8 +51,18 @@ namespace genbb {
 
   GENBB_PG_REGISTRATION_IMPLEMENT(genbb_mgr,"genbb::genbb_mgr");
 
-  const string genbb_mgr::FORMAT_GENBB_LABEL = "genbb";
-  const string genbb_mgr::FORMAT_BOOST_LABEL = "boost";
+  // static
+  const std::string & genbb_mgr::format_genbb_label()
+  {
+    static std::string label = "genbb";
+    return label;
+  }
+
+  const std::string & genbb_mgr::format_boost_label()
+  {
+    static std::string label = "boost";
+    return label;
+  }
 
   bool genbb_mgr::is_initialized () const
   {
@@ -106,15 +116,19 @@ namespace genbb {
   void genbb_mgr::set_format (const string & format_label_)
   {
     DT_THROW_IF(_initialized_, logic_error, "Operation not allowed ! Manager is locked !");
+    string format_label = format_label_;
+    if (format_label.empty()) {
+      format_label = format_genbb_label();
+    }
     int fmt = FORMAT_GENBB;
-    DT_THROW_IF ((format_label_ != FORMAT_GENBB_LABEL)
-                 && (format_label_ != FORMAT_BOOST_LABEL),
+    DT_THROW_IF ((format_label != format_genbb_label())
+                 && (format_label != format_boost_label()),
                  logic_error,
-                 "Invalid format label '" << format_label_ << "' !");
-    if (format_label_ == FORMAT_GENBB_LABEL) {
+                 "Invalid format label '" << format_label << "' !");
+    if (format_label == format_genbb_label()) {
       fmt = FORMAT_GENBB;
     }
-    if (format_label_ == FORMAT_BOOST_LABEL) {
+    if (format_label == format_boost_label()) {
       fmt = FORMAT_BOOST;
     }
     this->set_format (fmt);
