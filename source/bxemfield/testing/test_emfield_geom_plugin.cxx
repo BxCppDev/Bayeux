@@ -165,15 +165,15 @@ int main (int argc_, char ** argv_)
       }
     }
     if (plot) {
-      int    visu_depth  = geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT;
-      std::string drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
+      int         visu_depth  = geomtools::gnuplot_drawer::display_level_no_limit();
+      std::string drawer_view = geomtools::gnuplot_drawer::view_3d();
       std::string visu_object_name = "world";
 
       geomtools::gnuplot_drawer GPD;
-      GPD.grab_properties().store(geomtools::gnuplot_drawer::WORLD_NAME_KEY,
+      GPD.grab_properties().store(geomtools::gnuplot_drawer::world_name_key(),
                                   geo_manager.get_world_name ());
-      GPD.set_view (drawer_view);
-      GPD.set_mode (geomtools::gnuplot_drawer::MODE_WIRED);
+      GPD.set_view(drawer_view);
+      GPD.set_mode(geomtools::gnuplot_drawer::mode_wired());
       geomtools::placement DD_pl;
       DD_pl.set_translation(0,0,0);
       GPD.add_display_data(DD, DD_pl);
