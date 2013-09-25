@@ -47,9 +47,8 @@ namespace dpp {
   {
   public:
 
-    static const std::string DEFAULT_GP_LABEL;
-    static const std::string DEFAULT_FLAG_NAME;
-    static const std::string UNINITIALIZED_LABEL;
+    static const std::string & default_gp_label();
+    static const std::string & default_flag_name();
 
     /// Set the flag name
     void set_flag_name(const std::string & a_flag_name);
@@ -100,7 +99,7 @@ namespace dpp {
   private:
 
     std::string _GP_label_;  //!< The name of the "General properties" data bank in the data record.
-    std::string _flag_name_; //!< The flag to be stored inside the "General properties" data bank.
+    std::string _flag_name_; //!< The name of the flag to be stored inside the "General properties" data bank.
 
     // Macro to automate the registration of the module :
     DPP_MODULE_REGISTRATION_INTERFACE(dummy_module);

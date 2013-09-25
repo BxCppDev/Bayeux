@@ -33,14 +33,19 @@ namespace dpp {
   // Registration instantiation macro :
   DPP_MODULE_REGISTRATION_IMPLEMENT(dummy_module, "dpp::dummy_module");
 
-  // The string used to flag the not-initialized label of the module :
-  const std::string dummy_module::UNINITIALIZED_LABEL = "";
-
   // The default GP label of the bank :
-  const std::string dummy_module::DEFAULT_GP_LABEL = "GP";
+  const std::string & dummy_module::default_gp_label()
+  {
+    static std::string label = "GP";
+    return label;
+  }
 
   // The default flag name :
-  const std::string dummy_module::DEFAULT_FLAG_NAME = "dpp::dummy_module::flag_name";
+  const std::string & dummy_module::default_flag_name()
+  {
+    static std::string label = "dpp::dummy_module::flag_name";
+    return label;
+  }
 
   // Setter for the EH label of the module :
   void dummy_module::set_GP_label (const std::string & a_gp_label)
@@ -73,8 +78,8 @@ namespace dpp {
   // Constructor :
   DPP_MODULE_CONSTRUCTOR_IMPLEMENT_HEAD(dummy_module,logging_priority_)
   {
-    _flag_name_ = UNINITIALIZED_LABEL;
-    _GP_label_  = DEFAULT_GP_LABEL;
+    _flag_name_ = "";
+    _GP_label_  = "";
     return;
   }
 
@@ -93,7 +98,7 @@ namespace dpp {
 
     _common_initialize(a_config);
 
-    if (_flag_name_ == UNINITIALIZED_LABEL) {
+    if (_flag_name_.empty()) {
       // If the label is no setup, pickup from the configuration list:
       if (a_config.has_key ("flag_name")) {
         std::string flag_name = a_config.fetch_string ("flag_name");
@@ -101,18 +106,22 @@ namespace dpp {
       }
     }
 
-    if (a_config.has_key ("GP_label")) {
+    if (a_config.has_key("GP_label")) {
       std::string gp_label = a_config.fetch_string ("GP_label");
-      set_GP_label (gp_label);
+      set_GP_label(gp_label);
+    }
+
+    if (_GP_label_.empty()) {
+      set_GP_label(default_gp_label());
     }
 
     // Default :
-    if (_flag_name_ == UNINITIALIZED_LABEL) {
-      _flag_name_ = DEFAULT_FLAG_NAME;
+    if (_flag_name_.empty()) {
+      _flag_name_ = default_flag_name();
     }
 
     // Flag the initialization status :
-    if (_GP_label_ != UNINITIALIZED_LABEL) {
+    if (! _GP_label_.empty()) {
       _set_initialized (true);
     }
     return;
@@ -126,7 +135,7 @@ namespace dpp {
                 "Module '" << get_name () << "' is not initialized !");
     _set_initialized (false);
     _flag_name_.clear();
-    _GP_label_ = DEFAULT_GP_LABEL;
+    _GP_label_.clear();
     return;
   }
 
