@@ -1,7 +1,7 @@
 /* library_info.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-09-16
- * Last modified: 2013-09-16
+ * Last modified: 2013-09-26
  *
  * License:
  *
@@ -38,15 +38,21 @@
 
 // Datatools
 #include <datatools/logger.h>
+#include <datatools/multi_properties.h>
+#include <datatools/i_tree_dump.h>
 
 namespace datatools {
 
   class multi_properties;
   class properties;
 
-  /// \brief Host the register of library informations
-  struct library_info {
+  /// \brief Host a register of static and/or dynamic informations about libraries or software components
+  class library_info :
+    public i_tree_dumpable
+  {
 
+  public:
+    /// Library/software component description property keys
     struct keys {
       static const std::string & lib_label();
       static const std::string & exec_label();
@@ -73,58 +79,79 @@ namespace datatools {
       static const std::string & env_resource_dir();
     };
 
-    // Should one expose these 2 funcs ?
-    /// Return a mutable reference to the library info register
-    static multi_properties & grab_db();
+    /// Constructor
+    library_info();
 
-    /// Return a non mutable reference to the library info register
-    static const multi_properties & get_db();
+    /// Destructor
+    ~library_info();
 
     /// Return the logging priority of the library info register
-    static logger::priority logging();
+    logger::priority get_logging() const;
 
     /// Set the logging priority of the library info register
-    static void logging(logger::priority);
+    void set_logging(logger::priority);
 
     /// Build a list of currently registered library names
-    static void names(std::vector<std::string> &);
-
-    /// Print status of the library info register
-    static void status(std::ostream & = std::clog);
+    void names(std::vector<std::string> &) const;
 
     /// Register basic infos for a given library
-    static properties & registration(const std::string & library_name_,
-				     const std::string & library_desc_ = "",
-				     const std::string & library_version_ = "",
-				     const std::string & install_prefix_ = "",
-				     const std::string & install_lib_path_ = "",
-				     const std::string & install_resource_path_ = "");
+    properties & registration(const std::string & library_name_,
+                              const std::string & library_desc_ = "",
+                              const std::string & library_version_ = "",
+                              const std::string & install_prefix_ = "",
+                              const std::string & install_lib_path_ = "",
+                              const std::string & install_resource_path_ = "");
 
     /// Unregister a given library
-    static void unregistration(const std::string & library_name_);
+    void unregistration(const std::string & library_name_);
 
     /// Check if some infos about a given library exist
-    static bool has(const std::string & library_name_);
+    bool has(const std::string & library_name_) const;
 
-    static void update(const std::string & library_name_,
-		       const std::string & info_key_,
-		       const std::string & info_value_,
-		       const std::string & info_type_ = "",
-		       bool locked_ = true);
+    /// Update
+    void update(const std::string & library_name_,
+                const std::string & info_key_,
+                const std::string & info_value_,
+                const std::string & info_type_ = "",
+                bool locked_ = true);
 
     /// Erase a library info from the register
-    static void erase(const std::string & library_name_,
-		      const std::string & info_key_);
+    void erase(const std::string & library_name_,
+               const std::string & info_key_);
+
+    /// Clear all library infos from the register
+    void clear();
 
     /// Print the library infos from the register
-    static void print(const std::string & library_name_,
-		      std::ostream & out_ = std::clog);
+    void print(const std::string & library_name_,
+               std::ostream & out_ = std::clog) const;
 
-    /// Return a mutable reference to the library infos container
-    static properties & grab(const std::string & library_name_);
+    /// Initialize the library info register
+    void initialize();
+
+    /// Terminate the library info register
+    void reset();
+
+    /// Check the library info register initialization status
+    bool is_initialized();
 
     /// Return a non-mutable reference to the library infos container
-    static const properties & get(const std::string & library_name_);
+    const properties & get(const std::string & library_name_) const;
+
+    /// Return a mutable reference to the library infos container
+    properties & grab(const std::string & library_name_);
+
+    /// Smart print
+    void tree_dump(std::ostream& out_ = std::clog,
+                   const std::string& title_ = "",
+                   const std::string& indent_ = "",
+                   bool inherit_ = false) const;
+
+  private:
+
+    bool                        _initialized_; /// Initialization flag
+    logger::priority            _logging_;     /// Logging priority
+    datatools::multi_properties _db_;          /// Main register
 
   };
 

@@ -19,246 +19,235 @@
 #include <datatools/multi_properties.h>
 #include <datatools/types.h>
 
-
-namespace {
-
-  datatools::multi_properties & _get_db()
-  {
-    static boost::scoped_ptr<datatools::multi_properties> _db;
-    if (!_db) {
-      _db.reset(new datatools::multi_properties);
-    }
-    return *_db.get();
-  }
-
-  datatools::logger::priority & _logging()
-  {
-    static bool _initialized = false;
-    static datatools::logger::priority _logging = datatools::logger::PRIO_WARNING;
-    if (! _initialized) {
-      char * c = getenv("DATATOOLS_LIBINFO_TRACE");
-      if (c != NULL) {
-        std::string dt_value = c;
-        if (dt_value == "1") {
-          _logging = datatools::logger::PRIO_TRACE;
-        }
-      }
-      _initialized = true;
-    }
-    return _logging;
-  }
-
-}
-
-
 namespace datatools {
 
-  const std::string & library_info::keys::lib_label()
+  // Constructor
+  library_info::library_info()
+  {
+    _initialized_ = false;
+    _logging_ = datatools::logger::PRIO_WARNING;
+    return;
+  }
+
+  // Destructor
+  library_info::~library_info()
+  {
+    this->clear();
+    return;
+  }
+
+  // Clear
+  void library_info::clear()
+  {
+    _db_.clear();
+    return;
+  }
+
+  // Check the library info register
+  bool library_info::is_initialized() {
+    return _initialized_;
+  }
+
+  // Initialize the library info register
+  void library_info::initialize()
+  {
+    // Protection:
+    DT_THROW_IF (library_info::is_initialized(),
+                 std::logic_error,
+                 "Already initialized !");
+    _initialized_ = true;
+    return;
+  }
+
+  // Reset the library info register
+  void library_info::reset()
+  {
+    // Protection:
+    DT_THROW_IF (!library_info::is_initialized(),
+                 std::logic_error,
+                 "Not initialized !");
+    _initialized_ = false;
+    _db_.reset();
+    return;
+  }
+
+  const std::string &library_info::keys::lib_label()
   {
     static std::string key;
     if (key.empty()) key = "library";
     return key;
   }
 
-  const std::string & library_info::keys::exec_label()
+  const std::string &library_info::keys::exec_label()
   {
     static std::string key;
     if (key.empty()) key = "executable";
     return key;
   }
 
-  const std::string & library_info::keys::resource_label()
+  const std::string &library_info::keys::resource_label()
   {
     static std::string key;
     if (key.empty()) key = "resource";
     return key;
   }
 
-  const std::string & library_info::keys::name()
+  const std::string &library_info::keys::name()
   {
     static std::string key;
     if (key.empty()) key = "name";
     return key;
   }
 
-  const std::string & library_info::keys::libname()
+  const std::string &library_info::keys::libname()
   {
     static std::string key;
     if (key.empty()) key = "libname";
     return key;
   }
 
-  const std::string & library_info::keys::description()
+  const std::string &library_info::keys::description()
   {
     static std::string key;
     if (key.empty()) key = "description";
     return key;
   }
 
-  const std::string & library_info::keys::url()
+  const std::string &library_info::keys::url()
   {
     static std::string key;
     if (key.empty()) key = "url";
     return key;
   }
 
-  const std::string & library_info::keys::authors()
+  const std::string &library_info::keys::authors()
   {
     static std::string key;
     if (key.empty()) key = "authors";
     return key;
   }
 
-  const std::string & library_info::keys::copyright()
+  const std::string &library_info::keys::copyright()
   {
     static std::string key;
     if (key.empty()) key = "copyright";
     return key;
   }
 
-  const std::string & library_info::keys::version()
+  const std::string &library_info::keys::version()
   {
     static std::string key;
     if (key.empty()) key = "version";
     return key;
   }
 
-  const std::string & library_info::keys::version_major()
+  const std::string &library_info::keys::version_major()
   {
     static std::string key;
     if (key.empty()) key = "version.major";
     return key;
   }
 
-  const std::string & library_info::keys::version_minor()
+  const std::string &library_info::keys::version_minor()
   {
     static std::string key;
     if (key.empty()) key = "version.minor";
     return key;
   }
 
-  const std::string & library_info::keys::version_patch()
+  const std::string &library_info::keys::version_patch()
   {
     static std::string key;
     if (key.empty()) key = "version.patch";
     return key;
   }
 
-  const std::string & library_info::keys::build_type()
+  const std::string &library_info::keys::build_type()
   {
     static std::string key;
     if (key.empty()) key = "build_type";
     return key;
   }
 
-  const std::string & library_info::keys::modules()
+  const std::string &library_info::keys::modules()
   {
     static std::string key;
     if (key.empty()) key = "modules";
     return key;
   }
 
-  const std::string & library_info::keys::install_prefix()
+  const std::string &library_info::keys::install_prefix()
   {
     static std::string key;
     if (key.empty()) key = "install.prefix";
     return key;
   }
 
-  const std::string & library_info::keys::install_include_dir()
+  const std::string &library_info::keys::install_include_dir()
   {
     static std::string key;
     if (key.empty()) key = "install.include_dir";
     return key;
   }
 
-  const std::string & library_info::keys::install_lib_dir()
+  const std::string &library_info::keys::install_lib_dir()
   {
     static std::string key;
     if (key.empty()) key = "install.library_dir";
     return key;
   }
 
-  const std::string & library_info::keys::install_bin_dir()
+  const std::string &library_info::keys::install_bin_dir()
   {
     static std::string key;
     if (key.empty()) key = "install.bin_dir";
     return key;
   }
 
-  const std::string & library_info::keys::install_resource_dir()
+  const std::string &library_info::keys::install_resource_dir()
   {
     static std::string key;
     if (key.empty()) key = "install.resource_dir";
     return key;
   }
 
-  const std::string & library_info::keys::install_doc_dir()
+  const std::string &library_info::keys::install_doc_dir()
   {
     static std::string key;
     if (key.empty()) key = "install.doc_dir";
     return key;
   }
 
-  const std::string & library_info::keys::env_lib_dir()
+  const std::string &library_info::keys::env_lib_dir()
   {
     static std::string key;
     if (key.empty()) key = "env.library_dir";
     return key;
   }
 
-  const std::string & library_info::keys::env_resource_dir()
+  const std::string &library_info::keys::env_resource_dir()
   {
     static std::string key;
     if (key.empty()) key = "env.resource_dir";
     return key;
   }
 
-
-  logger::priority library_info::logging()
+  logger::priority library_info::get_logging() const
   {
-    return _logging();
+    return _logging_;
   }
 
 
-  void library_info::logging(logger::priority p)
+  void library_info::set_logging(logger::priority p)
   {
-    _logging() = p;
+    _logging_ = p;
     return;
   }
 
 
-  multi_properties & library_info::grab_db()
+  void library_info::names(std::vector<std::string> & v_) const
   {
-    return _get_db();
-  }
-
-
-  const multi_properties & library_info::get_db()
-  {
-    return _get_db();
-  }
-
-
-  void library_info::names(std::vector<std::string> & v_)
-  {
-    get_db().ordered_keys(v_);
-    return;
-  }
-
-  void library_info::status(std::ostream & out_)
-  {
-    out_ << "Library info register contents: " << std::endl;
-    std::vector<std::string> libnames;
-    datatools::library_info::names(libnames);
-    for (int i = 0; i < libnames.size(); i++) {
-      if (i < libnames.size() - 1 ) {
-        out_ << "|-- ";
-      } else {
-        out_ << "`-- ";
-      }
-      out_ << "Library: '" << libnames[i] << "'" << std::endl;
-    }
+    _db_.ordered_keys(v_);
     return;
   }
 
@@ -273,16 +262,16 @@ namespace datatools {
                 "Missing library name !");
     DT_THROW_IF(info_key_.empty(),
                 std::logic_error,
-                "Missing info key name for library '" << library_name_ << "' !");
+                "Missing info key name for library '"
+                << library_name_ << "' !");
     DT_THROW_IF(info_value_.empty(),
                 std::logic_error,
                 "Missing value for info key '" << info_key_ << "' in library '"
                 << library_name_ << "' !");
-    multi_properties & db = grab_db();
-    DT_THROW_IF(! db.has_key(library_name_),
+    DT_THROW_IF(! _db_.has_key(library_name_),
                 std::logic_error,
                 "Library '" << library_name_ << "' is not registered !");
-    properties & lib_info = db.grab_section(library_name_);
+    properties & lib_info = _db_.grab_section(library_name_);
 
     int t = TYPE_STRING;
     if (! info_type_.empty()) {
@@ -346,11 +335,10 @@ namespace datatools {
     DT_THROW_IF(library_name_.empty(),
                 std::logic_error,
                 "Missing library name !");
-    multi_properties & db = grab_db();
-    DT_THROW_IF(db.has_key(library_name_),
+    DT_THROW_IF(_db_.has_key(library_name_),
                 std::logic_error,
                 "Library '" << library_name_ << "' is already registered !");
-    properties & lib_info = db.add_section(library_name_, keys::lib_label());
+    properties & lib_info = _db_.add_section(library_name_, keys::lib_label());
     {
       std::ostringstream desc;
       desc << "Runtime information store for library '" << library_name_ << "'";
@@ -370,11 +358,13 @@ namespace datatools {
              true);
     }
 
-    update(library_name_,
-           library_info::keys::version(),
-           library_version_,
-           "string",
-           true);
+    if (!library_version_.empty()) {
+      update(library_name_,
+             library_info::keys::version(),
+             library_version_,
+             "string",
+             true);
+    }
 
     if (!install_prefix_.empty()) {
       update(library_name_,
@@ -400,38 +390,36 @@ namespace datatools {
              false);
     }
 
-    if (::datatools::library_info::logging() >= ::datatools::logger::PRIO_TRACE) {
+    if (this->get_logging() >= ::datatools::logger::PRIO_TRACE) {
       lib_info.tree_dump(std::cerr, "Library informations: ", "[trace] ");
     }
 
-    DT_LOG_TRACE(::datatools::library_info::logging(),
+    DT_LOG_TRACE(this->get_logging(),
                  "Library information store for library '" << library_name_
                  << "' is now registered.");
     return lib_info;
   }
 
 
-  bool library_info::has(const std::string & library_name_)
+  bool library_info::has(const std::string & library_name_) const
   {
     DT_THROW_IF(library_name_.empty(),
                 std::logic_error,
                 "Missing library name !");
-    const multi_properties & db = get_db();
-    return db.has_key(library_name_);
+     return _db_.has_key(library_name_);
   }
 
 
   void library_info::print(const std::string & library_name_,
-                           std::ostream & out_)
+                           std::ostream & out_) const
   {
     DT_THROW_IF(library_name_.empty(),
                 std::logic_error,
                 "Missing library name !");
-    multi_properties & db = grab_db();
-    DT_THROW_IF(!db.has_key(library_name_),
+    DT_THROW_IF(!_db_.has_key(library_name_),
                 std::logic_error,
                 "Library '" << library_name_ << "' is not registered !");
-    const properties & lib_info = db.get_section(library_name_);
+    const properties & lib_info = _db_.get_section(library_name_);
     std::ostringstream title_oss;
     title_oss << "Library information store for '" << library_name_ << "' : ";
     lib_info.tree_dump(out_,title_oss.str());
@@ -444,12 +432,11 @@ namespace datatools {
     DT_THROW_IF(library_name_.empty(),
                 std::logic_error,
                 "Missing library name !");
-    multi_properties & db = grab_db();
-    DT_THROW_IF(! db.has_key(library_name_),
+    DT_THROW_IF(! _db_.has_key(library_name_),
                 std::logic_error,
                 "Library '" << library_name_ << "' is not registered !");
-    db.remove(library_name_);
-    DT_LOG_TRACE(::datatools::library_info::logging(),
+    _db_.remove(library_name_);
+    DT_LOG_TRACE(::datatools::library_info::get_logging(),
                  "Library information store for library '" << library_name_
                  << "' is now unregistered.");
     return;
@@ -465,14 +452,13 @@ namespace datatools {
     DT_THROW_IF(info_key_.empty(),
                 std::logic_error,
                 "Missing info key name for library '" << library_name_ << "' !");
-    multi_properties & db = grab_db();
-    DT_THROW_IF(! db.has_key(library_name_),
+    DT_THROW_IF(! _db_.has_key(library_name_),
                 std::logic_error,
                 "Library '" << library_name_ << "' is not registered !");
-    properties & lib_info = db.grab_section(library_name_);
+    properties & lib_info = _db_.grab_section(library_name_);
     DT_THROW_IF(!lib_info.has_key(info_key_),
                 std::logic_error,
-                "Library '" << library_name_ << "' iinformation has no key '"
+                "Library '" << library_name_ << "' information has no key '"
                 << info_key_ << "' !");
     lib_info.erase(info_key_);
     return;
@@ -484,27 +470,59 @@ namespace datatools {
     DT_THROW_IF(library_name_.empty(),
                 std::logic_error,
                 "Missing library name !");
-    multi_properties & db = grab_db();
-    DT_THROW_IF(!db.has_key(library_name_),
+    DT_THROW_IF(!_db_.has_key(library_name_),
                 std::logic_error,
                 "Library '" << library_name_ << "' is not registered !");
-    properties & lib_info = db.grab_section(library_name_);
+    properties & lib_info = _db_.grab_section(library_name_);
     return lib_info;
   }
 
 
-  const properties & library_info::get(const std::string & library_name_)
+  const properties & library_info::get(const std::string & library_name_) const
   {
     DT_THROW_IF(library_name_.empty(),
                 std::logic_error,
                 "Missing library name !");
-    multi_properties & db = grab_db();
-    DT_THROW_IF(!db.has_key(library_name_),
+    DT_THROW_IF(!_db_.has_key(library_name_),
                 std::logic_error,
                 "Library '" << library_name_ << "' is not registered !");
-    const properties & lib_info = db.get_section(library_name_);
+    const properties & lib_info = _db_.get_section(library_name_);
     return lib_info;
   }
+
+  void library_info::tree_dump(std::ostream& out_,
+                               const std::string& title_,
+                               const std::string& indent_,
+                               bool inherit_) const
+  {
+    std::string indent;
+    if (!indent_.empty()) indent = indent_;
+    if (!title_.empty()) {
+      out_ << indent << title_ << std::endl;
+    }
+    out_ << indent << i_tree_dumpable::tag
+         << "Initialized   : " << _initialized_ << std::endl;
+    std::vector<std::string> libnames;
+    datatools::library_info::names(libnames);
+    out_ << indent << i_tree_dumpable::tag
+         << "Registered libraries/components : " << libnames.size() << std::endl;
+    for (int i = 0; i < libnames.size(); i++) {
+      out_ << indent << i_tree_dumpable::skip_tag;
+      if (i < libnames.size() - 1 ) {
+        out_ << i_tree_dumpable::tag;
+      } else {
+        out_ << i_tree_dumpable::last_tag;
+      }
+      out_ << "Library: '" << libnames[i] << "'" << std::endl;
+    }
+
+    out_ << indent << i_tree_dumpable::inherit_tag(inherit_)
+         << "Logging   : '"
+         << datatools::logger::get_priority_label(_logging_) << "'"
+         << std::endl;
+    return;
+  }
+
 
 } // end of namespace datatools
 

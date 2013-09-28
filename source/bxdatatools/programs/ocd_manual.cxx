@@ -12,14 +12,15 @@
 #include <boost/program_options.hpp>
 
 // Datatools
-#include <datatools/datatools_config.h>
+#include <datatools/datatools.h>
 #include <datatools/ocd_driver.h>
 
 /****************
  * Main program *
  ****************/
-int main (int argc_, char ** argv_)
+int main(int argc_, char ** argv_)
 {
+  DATATOOLS_INIT_MAIN(argc_,argv_);
   int error_code = EXIT_SUCCESS;
   datatools::ocd_driver_params params;
   try {
@@ -102,12 +103,14 @@ int main (int argc_, char ** argv_)
 
     po::variables_map vm;
     po::parsed_options parsed =
-      po::command_line_parser (argc_, argv_)
+      po::command_line_parser(argc_, argv_)
       .options (opts)
       .positional (args)
       .allow_unregistered()
       .run ();
-    params.action_options = po::collect_unrecognized(parsed.options, po::include_positional);
+    params.action_options =
+      po::collect_unrecognized(parsed.options,
+                               po::include_positional);
     // po::store (po::command_line_parser (argc_, argv_)
     //            .options (opts)
     //            .positional (args)
@@ -175,6 +178,7 @@ int main (int argc_, char ** argv_)
     std::cerr << "error: ocd_manual: " << "unexpected error !" << std::endl;
     error_code = EXIT_FAILURE;
   }
+  DATATOOLS_FINI();
   return (error_code);
 }
 

@@ -45,16 +45,23 @@ include(InstallDirs)
 option(DATATOOLS_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" ON)
 option(DATATOOLS_WITH_DOC   "Build the datatools documentation" ON)
 option(DATATOOLS_WITH_TEST  "Build the datatools test suite"    ON)
+option(DATATOOLS_WITH_IMPLICIT_INIT_FINI "Build the datatools library with automated kernel initialization (for standalone build)" ON)
+
+if (DATATOOLS_BUNDLED)
+  set(DATATOOLS_WITH_IMPLICIT_INIT_FINI 1)
+endif()
 
 #-----------------------------------------------------------------------
 # Find external packages needed to build
 #
 # - Boost
-set(datatools_Boost_COMPONENTS 
-  iostreams 
-  serialization 
-  filesystem 
-  system 
+set(datatools_Boost_COMPONENTS
+  iostreams
+  serialization
+  filesystem
+  system
+  program_options
+  #thread
   )
 find_package(Boost 1.47 QUIET COMPONENTS ${datatools_Boost_COMPONENTS} NO_MODULE)
 find_package(Boost 1.47 REQUIRED ${datatools_Boost_COMPONENTS})
@@ -152,11 +159,11 @@ set(_datatools_examples_FULL_LOCAL_PATH
 
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples
   DESTINATION ${CMAKE_INSTALL_DATADIR}
-  FILE_PERMISSIONS 
+  FILE_PERMISSIONS
     OWNER_READ OWNER_WRITE
     GROUP_READ GROUP_WRITE
     WORLD_READ
-  DIRECTORY_PERMISSIONS 
+  DIRECTORY_PERMISSIONS
     OWNER_READ OWNER_WRITE OWNER_EXECUTE
     GROUP_READ GROUP_WRITE GROUP_EXECUTE
     WORLD_READ WORLD_EXECUTE

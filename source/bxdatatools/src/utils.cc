@@ -26,6 +26,7 @@
 #include <datatools/ioutils.h>
 #include <datatools/library_info.h>
 #include <datatools/properties.h>
+#include <datatools/kernel.h>
 
 namespace datatools {
 
@@ -118,9 +119,22 @@ const std::string & get_global_path()
 /**************************************************/
 class fetch_path_processor {
  public:
+
+  enum use_type {
+    USE_NOTHING        = 0x0,
+    USE_TRACE          = bit_mask::bit01,
+    USE_GLOBAL_PATH    = bit_mask::bit02,
+    USE_ENVIRON        = bit_mask::bit03,
+    USE_KERNEL_LIBINFO = bit_mask::bit04
+  };
+
   fetch_path_processor(std::string parent_path_ = "",
                        bool use_global_path_ = false,
-                       bool use_env_ = true);
+                       bool use_env_ = true,
+                       bool use_kernel_libinfo_ = true);
+
+  fetch_path_processor(uint32_t use_mode,
+                       const std::string & parent_path_ = "");
 
   bool process(std::string&);
 
@@ -128,11 +142,16 @@ class fetch_path_processor {
 
   bool use_global_path() const;
 
+  void set_use_kernel_libinfo(bool);
+
+  bool use_kernel_libinfo() const;
+
  private:
   void process_impl(std::string &);
   bool _trace_;
   bool _use_global_path_;
   bool _use_env_;
+  bool _use_kernel_libinfo_;
   std::string _parent_path_;
 };
 
@@ -180,14 +199,38 @@ bool fetch_path_processor::use_global_path() const
   return _use_global_path_;
 }
 
+void fetch_path_processor::set_use_kernel_libinfo(bool ukl_)
+{
+  _use_kernel_libinfo_ = ukl_;
+  return;
+}
+
+bool fetch_path_processor::use_kernel_libinfo() const
+{
+  return _use_kernel_libinfo_;
+}
+
+fetch_path_processor::fetch_path_processor(uint32_t use_mode_,
+                                           const std::string & parent_path_)
+{
+  _trace_ = false;
+  _use_global_path_ = use_mode_ & USE_GLOBAL_PATH;
+  _use_env_ = use_mode_ & USE_ENVIRON;
+  _use_kernel_libinfo_ = use_mode_ & USE_KERNEL_LIBINFO;
+  _parent_path_ = parent_path_;
+  return;
+}
+
 
 fetch_path_processor::fetch_path_processor(std::string parent_path_,
                                            bool use_global_path_,
-                                           bool use_env_) {
+                                           bool use_env_,
+                                           bool use_kernel_libinfo_) {
   _use_global_path_ = use_global_path_;
   _parent_path_ = parent_path_;
   _trace_ = false;
   _use_env_ = use_env_;
+  _use_kernel_libinfo_ = use_kernel_libinfo_;
 }
 
 
@@ -212,6 +255,17 @@ void fetch_path_processor::process_impl(std::string& path) {
   std::string text = path;
   bool registered_lib_resource = false;
   if (text[0] == '@') {
+    DT_THROW_IF(! datatools::kernel::is_instantiated(),
+                std::runtime_error,
+                "The datatools kernel has not been instantiated within this session !"
+                << "No support for '@foo:bar.txt' syntax !");
+    const datatools::kernel & dtk = datatools::kernel::instance();
+    DT_THROW_IF(! dtk.has_library_info_register(),
+                std::runtime_error,
+                "The datatools kernel library info register has not been activated in this session !"
+                << "No support for '@foo:bar.txt' syntax !");
+    const datatools::library_info & lib_info_reg =
+      datatools::kernel::instance().get_library_info_register();
     int pos = text.find(':');
     DT_THROW_IF(pos == text.npos,
                 std::logic_error,
@@ -222,16 +276,16 @@ void fetch_path_processor::process_impl(std::string& path) {
                    "Found resource directive for library '" << library_name
                    << "' in path '" << path << ".");
     }
-    DT_THROW_IF(! datatools::library_info::has(library_name),
+    DT_THROW_IF(! lib_info_reg.has(library_name),
                 std::logic_error,
-                "Unregistered library '" << library_name << "' !");
+                "Unregistered resource path for library '" << library_name << "' !");
     if (trace) {
-      datatools::library_info::print(library_name, std::cerr);
+      lib_info_reg.print(library_name, std::cerr);
       DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
                    "INSTALL_RESOURCE_DIR = '"
                    << datatools::library_info::keys::install_resource_dir() << "'");
     }
-    const datatools::properties & lib_infos = datatools::library_info::get(library_name);
+    const datatools::properties & lib_infos = lib_info_reg.get(library_name);
     if (lib_infos.has_key(datatools::library_info::keys::install_resource_dir())) {
       boost::filesystem::path resource_dir = lib_infos.fetch_string(datatools::library_info::keys::install_resource_dir());
       if (trace) {
@@ -258,8 +312,6 @@ void fetch_path_processor::process_impl(std::string& path) {
                  "No resource installation directory for library '" << library_name
                  << "' in path '" << path << "' !");
     }
-
-
   }
 
   DT_THROW_IF(text.find('?') != text.npos || text.find('*') != text.npos,
@@ -324,7 +376,7 @@ void fetch_path_processor::process_impl(std::string& path) {
 std::string fetch_path(const std::string& word)
 {
   std::string w = word; // Working buffer
-  fetch_path_processor fpp("", true, true);
+  fetch_path_processor fpp("", true, true, true);
   bool r = fpp.process(w);
   DT_THROW_IF(!r, std::logic_error, "Cannot fetch path from '" << word << "' !");
   return w;
@@ -332,20 +384,20 @@ std::string fetch_path(const std::string& word)
 
 
 bool fetch_path_without_env(std::string& path) {
-  fetch_path_processor fpp("", false, false);
+  fetch_path_processor fpp("", false, false, true);
   return fpp.process(path);
 }
 
 
 bool fetch_path_with_env(std::string& path) {
-  fetch_path_processor fpp("", false, true);
+  fetch_path_processor fpp("", false, true, true);
   return fpp.process(path);
 }
 
 
 bool fetch_path_with_env_p(std::string& path,
                            const std::string & parent_path_) {
-  fetch_path_processor fpp(parent_path_, false);
+  fetch_path_processor fpp(parent_path_, false, true, true);
   return fpp.process(path);
 }
 

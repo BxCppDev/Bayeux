@@ -30,7 +30,7 @@ include_directories(
   ${Boost_INCLUDE_DIRS}
   )
 
-set(_prod_libraries datatools) 
+set(_prod_libraries datatools)
 if(DATATOOLS_WITH_REFLECTION)
   list(INSERT _prod_libraries 0 datatools_reflection)
 endif()
@@ -38,7 +38,7 @@ endif()
 #-----------------------------------------------------------------------
 # The ocd_manual app...
 # We refind Boost to add in the program options library
-find_package(Boost QUIET COMPONENTS ${datatools_Boost_COMPONENTS} program_options)
+#find_package(Boost QUIET COMPONENTS ${datatools_Boost_COMPONENTS} program_options)
 
 add_executable(ocd_manual ocd_manual.cxx)
 target_link_libraries(ocd_manual ${_prod_libraries} ${Boost_LIBRARIES})
@@ -47,4 +47,4 @@ install(TARGETS ocd_manual
   DESTINATION bin
   COMPONENT Runtime
   )
-  
+

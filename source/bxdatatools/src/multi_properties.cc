@@ -194,10 +194,9 @@ bool multi_properties::empty () const
 }
 
 void multi_properties::reset() {
-  key_label_ = defaults::key_label();
-  meta_label_ = defaults::meta_label();
-  ordered_entries_.clear();
-  entries_.clear();
+  key_label_.clear();
+  meta_label_.clear();
+  this->clear();
 }
 
 
@@ -222,8 +221,8 @@ void multi_properties::_init_(const std::string& a_key_label,
                               const std::string& a_description,
                               bool a_debug) {
   debug_ = a_debug;
-  key_label_ = defaults::key_label();
-  meta_label_ = defaults::meta_label();
+  if (key_label_.empty()) key_label_ = defaults::key_label();
+  if (meta_label_.empty()) meta_label_ = defaults::meta_label();
   if (!a_key_label.empty()) this->set_key_label(a_key_label);
   this->set_meta_label(a_meta_label);
   this->set_description(a_description);
@@ -231,13 +230,14 @@ void multi_properties::_init_(const std::string& a_key_label,
 
 // ctor:
 multi_properties::multi_properties() {
-  _init_ ("", "", "", false);
+  debug_ = false;
+  _init_("", "", "", false);
 }
 
 // ctor:
 multi_properties::multi_properties(const std::string& a_key_label,
                                    const std::string& a_meta_label) {
-  _init_ (a_key_label,a_meta_label,"",false);
+  _init_(a_key_label,a_meta_label,"",false);
 }
 
 // ctor:
@@ -245,7 +245,7 @@ multi_properties::multi_properties(const std::string& a_key_label,
                                    const std::string& a_meta_label,
                                    const std::string& a_description,
                                    bool a_debug) {
-  _init_ (a_key_label,a_meta_label,a_description,a_debug);
+  _init_(a_key_label,a_meta_label,a_description,a_debug);
 }
 
 

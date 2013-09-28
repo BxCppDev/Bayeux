@@ -30,6 +30,7 @@ set(datatools_PUBLIC_HEADERS
   include/datatools/bit_mask.h
   include/datatools/caster_utils.h
   include/datatools/clhep_units.h
+  include/datatools/datatools.h
   include/datatools/event_id.h
   include/datatools/exception.h
   include/datatools/factory.h
@@ -46,6 +47,7 @@ set(datatools_PUBLIC_HEADERS
   include/datatools/i_predicate.h
   include/datatools/i_serializable.h
   include/datatools/i_tree_dump.h
+  include/datatools/kernel.h
   include/datatools/library_info.h
   include/datatools/library_loader.h
   include/datatools/logger.h
@@ -109,9 +111,10 @@ configure_file(
   ${PROJECT_SOURCE_DIR}/include/datatools/version.h.in
   ${PROJECT_BINARY_DIR}/include/datatools/version.h
   )
+
 configure_file(
-  ${PROJECT_SOURCE_DIR}/src/_init_fini.cc.in
-  ${PROJECT_BINARY_DIR}/src/_init_fini.cc
+  ${PROJECT_SOURCE_DIR}/src/_datatools.cc.in
+  ${PROJECT_BINARY_DIR}/src/_datatools.cc
   )
 
 list(APPEND datatools_PUBLIC_HEADERS
@@ -172,7 +175,9 @@ endif()
 # SOURCE FILES
 # Pretty basic!
 set(datatools_SOURCES
+  base_service.cc # Must go at the end... not sure.
   DynamicLoader.cc
+  datatools.cc
   event_id.cc
   factory.cc
   i_named.cc
@@ -181,6 +186,7 @@ set(datatools_SOURCES
   integer_range.cc
   io_factory.cc
   ioutils.cc
+  kernel.cc
   library_loader.cc
   logger.cc
   tracer.cc
@@ -205,9 +211,15 @@ set(datatools_SOURCES
   advanced_object.cc
   library_info.cc
   the_serializable.cc
-  base_service.cc # Must go at the end... not sure.
-  ${PROJECT_BINARY_DIR}/src/_init_fini.cc
+  #base_service.cc # Must go at the end... not sure.
+  ${PROJECT_BINARY_DIR}/src/_datatools.cc
   )
+
+if (DATATOOLS_WITH_IMPLICIT_INIT_FINI)
+  list(APPEND datatools_SOURCES
+    _init_fini.cc
+  )
+endif()
 
 #-----------------------------------------------------------------------
 # CMAKE RESOURCE FILES
