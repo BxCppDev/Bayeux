@@ -118,6 +118,9 @@ EOF
 EOF
     fi
     cat <<EOF
+      --with-implicit-init-fini  : use implicit init/fini at DLL loading
+      --without-implicit-init-fini :
+                                   do not use implicit init/fini at DLL loading
       --with-documentation       : generate documentation material (default)
       --without-documentation    : do not generate documentation material
       --with-test                : generate test material (default)
@@ -321,6 +324,7 @@ function do_configure ()
     local reset_build_dir=0
     local with_doc=1
     local with_test=1
+    local with_implicit_init_fini=1
     local with_dependency_check=0
     local with_bash_setup=1
 
@@ -341,6 +345,10 @@ function do_configure ()
 	elif [ "${option}" = "--install-prefix" ]; then
 	    shift 1
 	    install_prefix="$1"
+	elif [ "${option}" = "--with-implicit-init-fini" ]; then
+	    with_implicit_init_fini=1
+	elif [ "${option}" = "--without-implicit-init-fini" ]; then
+	    with_implicit_init_fini=0
 	elif [ "${option}" = "--with-documentation" ]; then
 	    with_doc=1
 	elif [ "${option}" = "--without-documentation" ]; then
@@ -390,6 +398,7 @@ function do_configure ()
     pkgtools__msg_notice "Installation prefix   : '${install_prefix}'"
     pkgtools__msg_notice "With documentation    : '${with_doc}'"
     pkgtools__msg_notice "With test material    : '${with_test}'"
+    pkgtools__msg_notice "With implicit init/fini : '${with_implicit_init_fini}'"
     if [ ${bio_support} -eq 1 ]; then
 	pkgtools__msg_notice "With Boost I/O DLL    : '${with_bio}'"
     fi
@@ -419,6 +428,7 @@ function do_configure ()
 	-DMATERIALS_WITH_DOC=${with_doc} \
 	-DMATERIALS_WITH_TEST=${with_test} \
 	-DMATERIALS_WITH_BASH_SETUP=${with_bash_setup} \
+	-DMATERIALS_WITH_IMPLICIT_INIT_FINI=${with_implicit_init_fini} \
 	${additional_options} \
 	..
     if [ $? -ne 0 ]; then

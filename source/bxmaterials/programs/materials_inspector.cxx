@@ -7,82 +7,228 @@
 #include <string>
 #include <exception>
 
+// Third Party
+#include <boost/program_options.hpp>
+
 // Datatools
 #include <datatools/logger.h>
 #include <datatools/exception.h>
+#include <datatools/datatools.h>
 
 // Materials
+#include <materials/materials.h>
 #include <materials/materials_driver.h>
 
-void print_help(std::ostream & out_);
+void print_help(std::ostream & out_,
+                const boost::program_options::options_description & opts_);
 
 int main (int argc_, char ** argv_)
 {
+  MATERIALS_INIT_MAIN(argc_,argv_);
   int error_code = EXIT_SUCCESS;
   datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
   materials::materials_driver_params MDP;
-  try {
+  namespace po = boost::program_options;
+  po::options_description opts("Allowed options ");
 
-    int iarg = 1;
-    while (iarg < argc_) {
-      std::string token = argv_[iarg];
-      if (token[0] == '-') {
-        std::string option = token;
-        if ((option == "-h") || (option == "--help")) {
-          print_help(std::cout);
-          return 0;
-        } else if (option == "--load-dll") {
-          MDP.LL_dlls.push_back (argv_[++iarg]);
-        } else if (option == "--dll-config") {
-          MDP.LL_config = argv_[++iarg];
-        } else if ((option == "-L") || (option == "--logging-priority")) {
-          std::string lp_name = argv_[++iarg];
-          logging = datatools::logger::get_priority(lp_name);
-          DT_THROW_IF(logging == datatools::logger::PRIO_UNDEFINED,
-                      std::logic_error, "Undefined logging priority '"
-                      << lp_name << "' !");
-        } else if ((option == "-c") || (option == "--manager-config")) {
-          MDP.MaterialsMgrConfigFile = argv_[++iarg];
-        } else if ((option == "-I") || (option == "--list-isotopes")) {
-          MDP.action |= materials::materials_driver_params::ACTION_LIST_ISOTOPES;
-        } else if ((option == "-E") || (option == "--list-elements")) {
-          MDP.action |= materials::materials_driver_params::ACTION_LIST_ELEMENTS;
-        } else if ((option == "-M") || (option == "--list-materials")) {
-          MDP.action |= materials::materials_driver_params::ACTION_LIST_MATERIALS;
-        } else if ((option == "-A") || (option == "--list-aliases")) {
-          MDP.action |= materials::materials_driver_params::ACTION_LIST_ALIASES;
-        } else if ((option == "-i") || (option == "--show-isotope")) {
-          MDP.action |= materials::materials_driver_params::ACTION_SHOW_ISOTOPE;
-          MDP.show_target = argv_[++iarg];
-        } else if ((option == "-e") || (option == "--show-element")) {
-          MDP.action |= materials::materials_driver_params::ACTION_SHOW_ELEMENT;
-          MDP.show_target = argv_[++iarg];
-        } else if ((option == "-m") || (option == "--show-material")) {
-          MDP.action |= materials::materials_driver_params::ACTION_SHOW_MATERIAL;
-          MDP.show_target = argv_[++iarg];
-        } else if (option == "--with-decoration") {
-          MDP.with_decoration = true;
-        } else if (option == "--without-decoration") {
-          MDP.with_decoration = false;
-        } else {
-          MDP.action_options.push_back(option);
-        }
-      } else {
-        std::string argument = token;
-        if (MDP.MaterialsMgrConfigFile.empty()) {
-          MDP.MaterialsMgrConfigFile = argument;
-        } else {
-          DT_LOG_WARNING(logging, "Ignoring argument '" << argument << "' !");
-        }
-      }
-      iarg++;
+  try {
+    // Temporary variables for command line parsing:
+    std::string logging_label = "warning";
+    bool help           = false;
+    bool dump_manager   = false;
+    bool list_isotopes  = false;
+    bool list_elements  = false;
+    bool list_materials = false;
+    bool list_aliases   = false;
+    std::string show_isotope;
+    std::string show_element;
+    std::string show_material;
+    bool with_decoration    = false;
+    bool without_decoration = false;
+
+    opts.add_options ()
+
+      ("help,h",
+       po::value<bool>(&help)
+       ->zero_tokens()
+       ->default_value(false),
+       "Print help then exit.")
+
+      ("logging,G",
+       po::value<std::string> (&logging_label),
+       "Set the logging priority threshold.         \n"
+       "Example :                                   \n"
+       " --logging \"trace\"                          "
+       )
+
+      ("dlls-config,L",
+       po::value<std::string> (&MDP.LL_config),
+       "Set the DLL loader configuration file.      \n"
+       "Example :                                   \n"
+       " --dlls-config dlls.conf                    "
+       )
+
+      ("load-dll,l",
+       po::value<std::vector<std::string> >(&MDP.LL_dlls),
+       "Set a DLL to be loaded.                     \n"
+       "Example :                                   \n"
+       " --load-dll stdmat                            "
+       )
+
+      ("manager-config,c",
+       po::value<std::string>(&MDP.MaterialsMgrConfigFile),
+       "Set the materials manager configuration file.   \n"
+       "Example :                                       \n"
+       " --manager-config config/materials/manager.conf   "
+       )
+
+      ("dump-manager,D",
+       po::value<bool>(&dump_manager)
+       ->zero_tokens()
+       ->default_value(false),
+       "Dump the material manager's internals.")
+
+      ("list-isotopes,I",
+       po::value<bool>(&list_isotopes)
+       ->zero_tokens()
+       ->default_value(false),
+       "Prints the list of registered isotopes.")
+
+      ("list-elements,E",
+       po::value<bool>(&list_elements)
+       ->zero_tokens()
+       ->default_value (false),
+       "Prints the list of registered elements.")
+
+      ("list-materials,M",
+       po::value<bool>(&list_materials)
+       ->zero_tokens()
+       ->default_value (false),
+       "Prints the list of registered materials.")
+
+      ("list-aliases,A",
+       po::value<bool>(&list_aliases)
+       ->zero_tokens()
+       ->default_value (false),
+       "Prints the list of registered material aliases.")
+
+      ("show-isotope,i",
+       po::value<std::string>(&show_isotope),
+       "Show a registered isotope.                  \n"
+       "Example :                                   \n"
+       " --show-isotope \"He-6\"                      ")
+
+      ("show-element,e",
+       po::value<std::string>(&show_element),
+       "Show a registered element.                  \n"
+       "Example :                                   \n"
+       " --show-element \"Al\"                        ")
+
+      ("show-material,m",
+       po::value<std::string>(&show_material),
+       "Show a registered material.                  \n"
+       "Example :                                    \n"
+       " --show-material \"ShieldingMetal\"            ")
+
+      ("with-decoration,o",
+       po::value<bool>(&with_decoration)
+       ->zero_tokens()
+       ->default_value(true),
+       "produce list output with fancy headers, titles and decoration.")
+
+      ("without-decoration,O",
+       po::value<bool>(&without_decoration)
+       ->zero_tokens()
+       ->default_value(false),
+       "produce list output without fancy headers, titles and decoration.")
+
+      ; // end of options' description
+
+    // Describe command line arguments :
+    po::positional_options_description args;
+    args.add("manager-config", -1);
+
+    po::variables_map vm;
+    po::parsed_options parsed =
+      po::command_line_parser(argc_, argv_)
+      .options(opts)
+      .positional(args)
+      .allow_unregistered()
+      .run();
+    MDP.action_options =
+      po::collect_unrecognized(parsed.options,
+                               po::include_positional);
+    po::store(parsed, vm);
+    po::notify(vm);
+
+    bool run = true;
+    // Fetch the opts/args :
+    if (help) {
+      //std::cerr << "********* TEST HELP" << std::endl;
+      print_help(std::cout, opts);
+      run = false;
     }
 
-    MDP.logging = logging;
-    materials::materials_driver MD;
-    MD.initialize(MDP);
-    MD.run_action(std::cout, std::clog);
-    MD.reset();
+    if (run) {
+
+      if (vm.count("logging")) {
+        logging = datatools::logger::get_priority(vm["logging"].as<std::string>());
+        MDP.logging = logging;
+      }
+
+      if (dump_manager) {
+        MDP.action |= materials::materials_driver_params::ACTION_DUMP_MANAGER;
+      }
+
+      if (list_isotopes) {
+        MDP.action |= materials::materials_driver_params::ACTION_LIST_ISOTOPES;
+      }
+
+      if (list_elements) {
+        MDP.action |= materials::materials_driver_params::ACTION_LIST_ELEMENTS;
+      }
+
+      if (list_materials) {
+        MDP.action |= materials::materials_driver_params::ACTION_LIST_MATERIALS;
+      }
+
+      if (list_aliases) {
+        MDP.action |= materials::materials_driver_params::ACTION_LIST_ALIASES;
+      }
+
+      if (vm.count("show-isotope")) {
+        MDP.show_target = vm["show-isotope"].as<std::string>() ;
+        MDP.action |= materials::materials_driver_params::ACTION_SHOW_ISOTOPE;
+      }
+
+      if (vm.count("show-element")) {
+        MDP.show_target = vm["show-element"].as<std::string>() ;
+        MDP.action |= materials::materials_driver_params::ACTION_SHOW_ELEMENT;
+        }
+
+      if (vm.count("show-material")) {
+        MDP.show_target = vm["show-material"].as<std::string>() ;
+        MDP.action |= materials::materials_driver_params::ACTION_SHOW_MATERIAL;
+      }
+
+      if (with_decoration) {
+         MDP.with_decoration = true;
+      }
+
+      if (without_decoration) {
+         MDP.with_decoration = false;
+      }
+
+      if (logging >= datatools::logger::PRIO_DEBUG) {
+        MDP.dump(std::cerr);
+      }
+
+      // Run the driver:
+      materials::materials_driver MD;
+      MD.initialize(MDP);
+      MD.run_action(std::cout, std::clog);
+      MD.reset();
+    } // end of run
 
   }
   catch (std::exception & x) {
@@ -93,53 +239,38 @@ int main (int argc_, char ** argv_)
     DT_LOG_FATAL(logging, "Unexpected error !");
     error_code = EXIT_FAILURE;
   }
+  if (error_code != EXIT_SUCCESS) {
+    print_help(std::cerr, opts);
+  }
+  MATERIALS_FINI();
   return (error_code);
 }
 
-void print_help(std::ostream & out)
+void print_help(std::ostream & out_,
+                const boost::program_options::options_description & opts_)
 {
-  out << "Inspect materials from a isotopes/elements/materials manager.               \n";
-  out << "                                                                            \n";
-  out << "Usage::                                                                     \n";
-  out << "                                                                            \n";
-  out << "   materials_inspector [OPTION]...                                          \n";
-  out << "                                                                            \n";
-  out << "Options::                                                                   \n";
-  out << "                                                                            \n";
-  out << "  -h, --help :                                                              \n";
-  out << "     print this help then exit.                                             \n";
-  out << "  --load-dll LIBRARYNAME :                                                  \n";
-  out << "     load the LIBRARYNAME dynamic library.                                  \n";
-  out << "  --dll-config DLLCONFIGFILE :                                              \n";
-  out << "     use the DLLCONFIGFILE dynamic library loader configuration file.       \n";
-  out << "  -L, --logging-priority PRIORITY :                                         \n";
-  out << "     set the logging priority (default=\"fatal\").                          \n";
-  out << "  -c, --manager-config CONFIGFILE :                                         \n";
-  out << "     set the configuration file for the materials manager.                  \n";
-  out << "  -I, --list-isotopes :                                                     \n";
-  out << "     list the available isotopes from the materials manager.                \n";
-  out << "  -E, --list-elements :                                                     \n";
-  out << "     list the available elements from the materials manager.                \n";
-  out << "  -M, --list-materials :                                                    \n";
-  out << "     list the available materials from the materials manager.               \n";
-  out << "  -A, --list-aliases :                                                      \n";
-  out << "     list the available materials aliases from the materials manager.       \n";
-  out << "  --with-decoration : print fancy headers, titles and decoration            \n";
-  out << "                      (only for -I, -E, -M and -A)                          \n";
-  out << "  --without-decoration : do not print fancy headers, titles and decoration  \n";
-  out << "                         (only for -I, -E, -M and -A)                       \n";
-  out << "  -i, --show-isotope ISONAME  : show isotope ISONAME.                       \n";
-  out << "  -e, --show-element ELENAME  : show element ELENAME.                       \n";
-  out << "  -m, --show-material MATNAME : show material MATNAME.                      \n";
-  out << "                                                                            \n";
-  out << "Example:                                                                    \n";
-  out << "                                                                            \n";
-  out << "  List the available isotopes::                                             \n";
-  out << "                                                                            \n";
-  out << "     materials_inspector \\                                                 \n";
-  out << "       --materials-manager \"${CONFIG_DIR}/materials/manager.conf\" \\      \n";
-  out << "       --list-isotopes                                                      \n";
-  out << "                                                                            \n";
+  out_ << "Inspect a manager of registered isotopes, elements and materials.           \n";
+  out_ << "                                                                            \n";
+  out_ << "Usage:                                                                      \n";
+  out_ << "                                                                            \n";
+  out_ << "  materials_inspector [[option]... ] [manager config file]                  \n";
+  out_ << "                                                                            \n";
+  out_ << opts_;
+  out_ << "                                                                            \n";
+  out_ << "Examples:                                                                   \n";
+  out_ << "                                                                            \n";
+  out_ << "  List the list of registered isotopes:                                     \n";
+  out_ << "                                                                            \n";
+  out_ << "   $ materials_inspector \\                                                 \n";
+  out_ << "       --manager-config \"${CONFIG_DIR}/materials/manager.conf\" \\         \n";
+  out_ << "       --list-isotopes --with-decoration                                    \n";
+  out_ << "                                                                            \n";
+  out_ << "  Print a registered material:                                              \n";
+  out_ << "                                                                            \n";
+  out_ << "   $ materials_inspector \\                                                 \n";
+  out_ << "       --manager-config \"${CONFIG_DIR}/materials/manager.conf\" \\         \n";
+  out_ << "       --show-material \"Steel100Cr6\"                                      \n";
+  out_ << "                                                                            \n";
   return;
 }
 

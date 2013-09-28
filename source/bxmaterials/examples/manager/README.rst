@@ -17,18 +17,19 @@ Introduction
  * Configuration files :
 
    * ``config/manager.conf`` : main configuration file of the materials manager
-   * ``config/isotopes.conf`` : definition of isotopes
-   * ``config/elements.def`` : definition of elements
-   * ``config/materials.def`` : definition of materials
-   * ``config/material_aliases.def`` : definition of material aliases
-   * ``config/material_aliases.redef`` : redefinition of some material
-     aliases (superseded some previous definitions)
+   * ``config/isotopes.conf`` : definition of registered isotopes
+   * ``config/elements.def`` : definition of registered elements
+   * ``config/materials.def`` : definition of registered materials
+   * ``config/material_aliases.def`` : definition of registered material aliases
+   * ``config/material_aliases.redef`` : redefinition of some registered material
+     aliases (supersedes some previous definitions)
 
  * Build method : CMake
 
- * Objects :
+ * Binary files :
 
   * ``ex_manager`` : the example executable linked to the ``materials`` DLL
+  * ``materials_inspector`` : the official *inspector* executable from the ``materials`` library.
 
 
 
@@ -38,30 +39,32 @@ Quick start
 1. Build, install and setup the materials library
 2. Make a copy of the example directory::
 
-     shell> cp -a [materials install base directory]/share/materials/examples/manager /tmp/materials_ex_manager
-     shell> cd /tmp/materials_ex_manager
+     $ cp -a [materials install base directory]/share/materials/examples/manager /tmp/materials_ex_manager
+     $ cd /tmp/materials_ex_manager
 
 3. Build and install the example::
 
-     shell> mkdir __build
-     shell> cd __build
-     shell> cmake \
+     $ mkdir __build
+     $ cd __build
+     $ cmake \
        -DCMAKE_INSTALL_PREFIX=.. \
        -Dmaterials_DIR=$(materials-config --prefix) \
        ..
-     shell> make
-     shell> make install
-     shell> cd ..
+     $ make
+     $ make install
+     $ cd ..
 
-4. Run the example::
+4. Inspect the material manager configuration::
 
-     shell> ./ex_manager
+     $ materials_inspector --manager-config "config/manager.conf" --with-decoration -M
 
-5. Check the output file:
+5. Run the example program::
+
+     $ ./ex_manager
 
 6. Clean::
 
-     shell> rm -f ex_manager
-     shell> rm -fr __build
+     $ rm -f ex_manager
+     $ rm -fr __build
 
 

@@ -32,6 +32,7 @@ set(materials_PUBLIC_HEADERS
     include/materials/isotope.h
     include/materials/manager.h
     include/materials/material.h
+    include/materials/materials.h
     include/materials/materials_driver.h
     include/materials/resource.h
   )
@@ -94,9 +95,17 @@ set(materials_SOURCES
     factory.cc
     manager.cc
     materials_driver.cc
+    materials.cc
     version.cc
     ${PROJECT_BINARY_DIR}/src/resource.cc
+    ${PROJECT_BINARY_DIR}/src/_materials.cc
+   )
+
+if (MATERIALS_WITH_IMPLICIT_INIT_FINI)
+  list(APPEND materials_SOURCES
+    _init_fini.cc
   )
+endif()
 
 #-----------------------------------------------------------------------
 # CMAKE RESOURCE FILES
@@ -119,6 +128,11 @@ endif()
 set(materials_RESOURCES
   cmake/materials-config.cmake
   cmake/materials-config-version.cmake
+  )
+
+configure_file(
+  ${PROJECT_SOURCE_DIR}/src/_materials.cc.in
+  ${PROJECT_BINARY_DIR}/src/_materials.cc
   )
 
 foreach(_dtresource ${materials_RESOURCES})

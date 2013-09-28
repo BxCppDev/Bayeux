@@ -37,6 +37,7 @@ namespace materials {
       ACTION_SHOW_ISOTOPE   =  0x10,
       ACTION_SHOW_ELEMENT   =  0x20,
       ACTION_SHOW_MATERIAL  =  0x40,
+      ACTION_DUMP_MANAGER   =  0x1000,
     };
 
     materials_driver_params();
@@ -44,6 +45,8 @@ namespace materials {
     virtual ~materials_driver_params();
 
     void reset();
+
+    void dump(std::ostream & = std::clog) const;
 
   public:
 
@@ -79,7 +82,7 @@ namespace materials {
 
     /// Main run method
     int run_action(std::ostream & out_ = std::cout,
-		   std::ostream & log_ = std::clog);
+                   std::ostream & log_ = std::clog);
 
   private:
 

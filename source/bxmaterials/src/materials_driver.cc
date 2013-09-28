@@ -28,8 +28,7 @@ namespace materials {
 
   materials_driver_params::materials_driver_params()
   {
-    action  = 0;
-    with_decoration = true;
+    reset();
     return;
   }
 
@@ -48,6 +47,21 @@ namespace materials {
     LL_dlls.clear();
     LL_config.clear();
     MaterialsMgrConfigFile.clear();
+    logging = datatools::logger::PRIO_WARNING;
+    return;
+  }
+
+  void materials_driver_params::dump(std::ostream & out_) const
+  {
+    out_ << "materials driver configuration parameters: " << std::endl;
+    out_ << "|-- " << "Manager config file : '" << MaterialsMgrConfigFile << "'\n";
+    out_ << "|-- " << "Logging          : '" << datatools::logger::get_priority_label(logging) << "'\n";
+    out_ << "|-- " << "DLLs             : " << LL_dlls.size() << "\n";
+    out_ << "|-- " << "DLL config       : '" << LL_config << "'\n";
+    out_ << "|-- " << "Action           : " << action << "\n";
+    out_ << "|-- " << "Show target      : '" << show_target << "'\n";
+    out_ << "|-- " << "With decoration  : " << with_decoration << "\n";
+    out_ << "`-- " << "Action options   : " << action_options.size() << "\n";
     return;
   }
 
@@ -129,6 +143,11 @@ namespace materials {
     //               "--XXX") != _params_.action_options.end()) {
     //   XXX = false;
     // }
+
+    if (_params_.action & materials_driver_params::ACTION_DUMP_MANAGER) {
+      std::ostream & dump_out = out_;
+      _mgr_.get()->tree_dump(dump_out, "Material manager : ");
+    }
 
     if (_params_.action & materials_driver_params::ACTION_LIST_ISOTOPES) {
       if (_params_.with_decoration) log_ << "List of isotopes: " << std::endl;

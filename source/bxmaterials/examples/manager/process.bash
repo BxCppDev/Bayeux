@@ -22,9 +22,12 @@ make install
 
 cd ${opwd}
 
+materials_inspector --manager-config "config/manager.conf" --with-decoration -M
+
 ./ex_manager
 
 rm -f ex_manager
+rm -f README.html
 rm -fr ${build_dir}
 rm -f *~
 

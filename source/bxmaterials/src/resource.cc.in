@@ -44,8 +44,8 @@ std::string get_resource_root(bool overriden_env) {
   // Not sure to maintain this in the future:
   if(overriden_env) {
     if (std::getenv("MATERIALS_DATA_DIR")) {
-      DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
-                     "Using MATERIALS_DATA_DIR overriding environ variable...");
+      //DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
+      //               "Using MATERIALS_DATA_DIR overriding environ variable...");
       install_data_root = std::string(std::getenv("MATERIALS_DATA_DIR"));
     }
   }
