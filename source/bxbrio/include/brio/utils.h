@@ -17,6 +17,7 @@
 #define BRIO_UTILS_H_ 1
 
 // Standard Library
+#include <string>
 #include <vector>
 #include <map>
 
@@ -33,16 +34,18 @@ namespace brio {
 /// A class that contains internal dynamic informations for a given \e store
 class store_info {
  public:
-  static const std::string BRIO_FILE_EXTENSION;
-  static const std::string TRIO_FILE_EXTENSION;
-  static const std::string DEFAULT_FILE_EXTENSION;
-  static const std::string DEFAULT_STORE_TITLE;
-  static const std::string AUTOMATIC_STORE_LABEL;
-  static const size_t DEFAULT_STORE_BUFFER_SIZE;
-  static const size_t DEFAULT_STREAM_BUFFER_SIZE;
-  static const std::string POSTPONED_DEDICATED_SERIAL_TAG_LABEL;
-  static const std::string NO_DEDICATED_SERIAL_TAG_LABEL;
-  
+  struct constants {
+    static const std::string & brio_file_extension();
+    static const std::string & trio_file_extension();
+    static const std::string & default_file_extension();
+    static const std::string & default_store_title();
+    static const std::string & automatic_store_label();
+    static const std::string & postponed_dedicated_serial_tag_label();
+    static const std::string & no_dedicated_serial_tag_label();
+    static const size_t        default_store_buffer_size();
+    static const size_t        default_stream_buffer_size();
+  };
+
   enum mode_type {
     MODE_READ    = 0x0,
     MODE_WRITE   = 0x1,
@@ -53,8 +56,8 @@ class store_info {
     MODE_DEFAULT = MODE_READ | MODE_BRIO
   };
 
-  static const int SUCCESS;
-  static const int ERROR;
+  static const int SUCCESS = 0;
+  static const int ERROR   = 1;
 
 
  public:

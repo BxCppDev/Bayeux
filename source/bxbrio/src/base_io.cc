@@ -23,8 +23,20 @@
 
 namespace brio {
 namespace detail {
-const std::string base_io::PBA_LABEL  = "pba";
-const std::string base_io::TEXT_LABEL = "text";
+
+const std::string & base_io::pba_label()
+{
+  static std::string lbl;
+  if (lbl.empty()) lbl = "pba";
+  return lbl;
+}
+
+const std::string & base_io::text_label()
+{
+  static std::string lbl;
+  if (lbl.empty()) lbl = "text";
+  return lbl;
+}
 
 void base_io::set_logging_priority(datatools::logger::priority p) {
   _logging_priority_ = p;
@@ -36,8 +48,8 @@ datatools::logger::priority base_io::get_logging_priority() const {
 
 // static :
 int base_io::get_format (const std::string& format_str_) {
-  if (format_str_ == PBA_LABEL) return FORMAT_PBA;
-  if (format_str_ == TEXT_LABEL) return FORMAT_TEXT;
+  if (format_str_ == pba_label()) return FORMAT_PBA;
+  if (format_str_ == text_label()) return FORMAT_TEXT;
   DT_THROW_IF(true,
               std::logic_error,
               "Invalid format label '" << format_str_ << "' !");
@@ -131,12 +143,12 @@ void base_io::open(const std::string& filename_) {
   if (_format_ == FORMAT_UNDEFINED) {
     DT_LOG_NOTICE(this->get_logging_priority(),"Guessing the archive format from the filename !");
     std::string file_extension = boost::filesystem::extension(filename_);
-    if (file_extension == store_info::TRIO_FILE_EXTENSION) {
+    if (file_extension == store_info::constants::trio_file_extension()) {
       this->set_format(FORMAT_TEXT);
-      DT_LOG_NOTICE(this->get_logging_priority(),"Using '" << TEXT_LABEL << "' archive format !");
+      DT_LOG_NOTICE(this->get_logging_priority(),"Using '" << text_label() << "' archive format !");
     } else {
       this->set_format(FORMAT_PBA);
-      DT_LOG_NOTICE(this->get_logging_priority(),"Using '" << PBA_LABEL << "' archive format !");
+      DT_LOG_NOTICE(this->get_logging_priority(),"Using '" << pba_label() << "' archive format !");
     }
   }
   this->_at_open(filename_);
@@ -144,15 +156,15 @@ void base_io::open(const std::string& filename_) {
 }
 
 bool base_io::has_automatic_store() const {
-  return has_store (store_info::AUTOMATIC_STORE_LABEL);
+  return has_store (store_info::constants::automatic_store_label());
 }
 
 void base_io::select_automatic_store() {
   DT_THROW_IF(!this->has_automatic_store(),
               std::logic_error,
               "No automatic store (with label '"
-              << store_info::AUTOMATIC_STORE_LABEL << "') is available !");
-  this->select_store(store_info::AUTOMATIC_STORE_LABEL);
+              << store_info::constants::automatic_store_label() << "') is available !");
+  this->select_store(store_info::constants::automatic_store_label());
 }
 
 bool base_io::has_store(const std::string& label_) const {
@@ -360,7 +372,7 @@ void base_io::tree_dump(std::ostream& out_, const std::string& title_,
 
   // 2011-06-16 FM: restored
   out_ << indent << i_tree_dumpable::tag << "Format: '"
-       << (_format_ == FORMAT_PBA ? base_io::PBA_LABEL : base_io::TEXT_LABEL)
+       << (_format_ == FORMAT_PBA ? base_io::pba_label() : base_io::text_label())
        << "'" << std::endl;
 
   out_ << indent << i_tree_dumpable::tag

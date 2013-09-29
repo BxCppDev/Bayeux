@@ -44,8 +44,8 @@ namespace detail {
 //! \brief The internal I/O base class
 class base_io : public datatools::i_tree_dumpable {
  public:
-  static const std::string PBA_LABEL;  /// Label for Boost portable binary archive
-  static const std::string TEXT_LABEL; /// Label for Boost portable text archive
+    static const std::string & pba_label();  /// Label for Boost portable binary archive
+    static const std::string & text_label(); /// Label for Boost portable text archive
 
   enum format_type {
     FORMAT_UNDEFINED = 0,

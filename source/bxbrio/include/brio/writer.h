@@ -110,7 +110,7 @@ class writer : public detail::base_io {
    *  to store objects with arbitrary serialization tags
    */
   int add_mixed_store(const std::string& a_label,
-                      size_t a_buffer_size = store_info::DEFAULT_STORE_BUFFER_SIZE);
+                      size_t a_buffer_size = 0);
 
   // Store template method
   template <typename T>
@@ -134,7 +134,7 @@ class writer : public detail::base_io {
 
   template <typename T>
   int _at_store(const T& a_data, store_info *a_store_info);
- 
+
   virtual void _at_open(const std::string& a_filename);
 
  private:

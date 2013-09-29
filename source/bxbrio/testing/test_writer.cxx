@@ -1,6 +1,6 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 // test_writer.cxx
- 
+
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -22,8 +22,8 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'brio::writer' !" << endl; 
-  
+      clog << "Test program for class 'brio::writer' !" << endl;
+
       bool debug = false;
       bool verbose = false;
       bool with_mixed = false;
@@ -38,59 +38,59 @@ int main (int argc_, char ** argv_)
         {
           string token = argv_[iarg];
 
-          if (token[0] == '-') 
+          if (token[0] == '-')
             {
-               string option = token; 
-               if ((option == "-d") || (option == "--debug")) 
+               string option = token;
+               if ((option == "-d") || (option == "--debug"))
                  {
                    debug = true;
                  }
-               else if ((option == "-D") || (option == "--dump")) 
+               else if ((option == "-D") || (option == "--dump"))
                  {
                    dump = true;
                  }
-               else if ((option == "-v") || (option == "--verbose")) 
+               else if ((option == "-v") || (option == "--verbose"))
                  {
                    verbose = true;
                  }
-               else if ((option == "-m") || (option == "--many")) 
+               else if ((option == "-m") || (option == "--many"))
                  {
                    data_count = 1000;
                  }
-               else if ((option == "-M") || (option == "--manymany")) 
+               else if ((option == "-M") || (option == "--manymany"))
                  {
                    data_count = 100000;
                  }
-               else if ((option == "-x")) 
+               else if ((option == "-x"))
                  {
                    with_mixed = true;
-                 } 
-               else if ((option == "-p")) 
+                 }
+               else if ((option == "-p"))
                  {
                    pre_set_stores = false;
                  }
-               else if ((option == "-t")) 
+               else if ((option == "-t"))
                  {
-                   text = true; 
+                   text = true;
                  }
-               else 
-                 { 
-                    clog << "warning: ignoring option '" << option << "'!" << endl; 
+               else
+                 {
+                    clog << "warning: ignoring option '" << option << "'!" << endl;
                  }
             }
           else
             {
-              string argument = token; 
-              { 
-                clog << "warning: ignoring argument '" << argument << "'!" << endl; 
+              string argument = token;
+              {
+                clog << "warning: ignoring argument '" << argument << "'!" << endl;
               }
-            } 
-          iarg++; 
+            }
+          iarg++;
       }
- 
+
       srand48 (seed);
 
-      // Declare a brio writer:           
+      // Declare a brio writer:
       brio::writer my_writer;
 
       /* Some setup before opening the output file */
@@ -98,38 +98,38 @@ int main (int argc_, char ** argv_)
       my_writer.set_verbose (verbose);
 
       // Allow to use some stores with serialized objects of different types (dangerous):
-      my_writer.set_allow_mixed_types_in_stores (with_mixed); 
+      my_writer.set_allow_mixed_types_in_stores (with_mixed);
 
       // Allow the automatic creation of the so-called *automatic* store:
-      my_writer.set_allow_automatic_store (true); 
+      my_writer.set_allow_automatic_store (true);
 
       // Attach the brio writer to a ROOT file:
       string filename = "test_io.brio";
       if (text)
         {
-          clog << "notice: using '" << brio::writer::TEXT_LABEL << "' archive format !" << endl; 
+          clog << "notice: using '" << brio::writer::text_label() << "' archive format !" << endl;
           filename = "test_io.trio";
         }
       else
         {
-          clog << "notice: using '" << brio::writer::PBA_LABEL << "' archive format !" << endl; 
+          clog << "notice: using '" << brio::writer::pba_label() << "' archive format !" << endl;
         }
-      my_writer.open (filename); 
+      my_writer.open (filename);
 
-      // Print writer's status: 
+      // Print writer's status:
       my_writer.print_info (clog);
 
       // Setup pre-defined stores:
       if (pre_set_stores)
         {
-          /* Setup a store labelled 'header' 
-           * with dedicated serialization tag 
+          /* Setup a store labelled 'header'
+           * with dedicated serialization tag
            * and dedicated buffer size:
            */
-          my_writer.add_store ("header", datatools::properties::SERIAL_TAG, 32000);
+          my_writer.add_store ("header", datatools::properties::serial_tag(), 32000);
 
-          // Idem for a store labelled 'data': 
-          my_writer.add_store ("data", brio::test::data_t::SERIAL_TAG, 256000);
+          // Idem for a store labelled 'data':
+          my_writer.add_store ("data", brio::test::data_t::serial_tag(), 256000);
 
           /* Setup a store labelled 'mixed_data' with
            * dedicated buffer size but possibly mixing
@@ -139,18 +139,18 @@ int main (int argc_, char ** argv_)
             {
               my_writer.add_mixed_store ("mixed_data", 256000);
             }
-          
-          // Idem for a store labelled 'data': 
-          my_writer.add_store ("data2", brio::test::data_t::SERIAL_TAG, 256000);
+
+          // Idem for a store labelled 'data':
+          my_writer.add_store ("data2", brio::test::data_t::serial_tag(), 256000);
 
           // Lock the writer to prevent to add more stores:
           my_writer.lock ();
         }
 
-      if (my_writer.has_store_with_serial_tag ("data2", brio::test::data_t::SERIAL_TAG))
+      if (my_writer.has_store_with_serial_tag ("data2", brio::test::data_t::serial_tag()))
         {
           clog << "notice: found a store labelled '" << "data2"
-               << "' with serial tag '" << brio::test::data_t::SERIAL_TAG << "'..." << endl;
+               << "' with serial tag '" << brio::test::data_t::serial_tag() << "'..." << endl;
         }
 
       if (my_writer.has_mixed_store ("mixed_data"))
@@ -186,11 +186,11 @@ int main (int argc_, char ** argv_)
       infos.store ("io_system", "ROOT");
       infos.store ("archive_format", "portable archive");
       infos.store ("author", "King Arthur");
-      if (dump) 
+      if (dump)
         {
           infos.tree_dump (clog, "Properties to be stored in the 'header' store: ");
         }
-      
+
       // Store it in the `header' store:
       my_writer.store (infos, "header");
 
@@ -201,7 +201,7 @@ int main (int argc_, char ** argv_)
       infos.store ("favorite_colour", "blue");
       infos.store ("favorite_animal", "swallow");
       infos.store ("favorite_fruit",  "coconut");
-      if (dump) 
+      if (dump)
         {
           infos.tree_dump (clog, "Another properties to be stored in the 'header' store: ");
         }
@@ -223,15 +223,15 @@ int main (int argc_, char ** argv_)
           my_writer.unselect_store ();
         }
       // Store `data' randomized objects within another store;
-      for (int i = 0; i < data_count; i++) 
+      for (int i = 0; i < data_count; i++)
         {
           brio::test::data_t data;
           data.randomize ();
-          if (dump) 
+          if (dump)
             {
               data.dump (clog, "Data to be stored in the 'data' store: ");
             }
-          // 
+          //
           my_writer.store (data);
         }
 
@@ -239,10 +239,10 @@ int main (int argc_, char ** argv_)
       if (my_writer.has_store ("mixed_data"))
         {
           my_writer.select_store ("mixed_data");
-          
+
           brio::test::data_t data;
           data.randomize ();
-          if (dump) 
+          if (dump)
             {
               data.dump (clog, "Data to be stored in the 'mixed_data' store in ROOT file: ");
             }
@@ -250,7 +250,7 @@ int main (int argc_, char ** argv_)
 
           datatools::properties infos;
           infos.store_flag ("in_mixed_store");
-          if (dump) 
+          if (dump)
             {
               infos.tree_dump (clog, "Properties to be stored in the 'mixed_data' store in ROOT file: ");
             }
@@ -267,11 +267,11 @@ int main (int argc_, char ** argv_)
           my_writer.select_store ("data2");
           brio::test::data_t data;
           data.randomize ();
-          if (dump) 
+          if (dump)
             {
               data.dump (clog);
             }
-          // 
+          //
           //my_writer.store (data);
         }
       */
@@ -286,20 +286,20 @@ int main (int argc_, char ** argv_)
 
       // Print writer's status:
       my_writer.print_info (clog);
-      
+
       // Close the file.
       my_writer.close ();
-  
+
       clog << "The end." << endl;
     }
   catch (exception & x)
-    { 
-      cerr << "error: " << x.what () << endl; 
+    {
+      cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);

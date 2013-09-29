@@ -31,10 +31,10 @@ reader::reader(const std::string& filename_, datatools::logger::priority p_)
   : detail::base_io (RW_READ, p_) {
   reader::_set_default();
   std::string ext = boost::filesystem::extension(filename_);
-  if (ext == store_info::TRIO_FILE_EXTENSION) {
-    this->set_format(detail::base_io::TEXT_LABEL);
+  if (ext == store_info::constants::trio_file_extension()) {
+    this->set_format(detail::base_io::text_label());
   } else {
-    this->set_format(detail::base_io::PBA_LABEL);
+    this->set_format(detail::base_io::pba_label());
   }
   this->open(filename_);
 }
@@ -144,13 +144,15 @@ void reader::_at_open(const std::string& filename_) {
               std::runtime_error,
               "File '" << _filename << "' does not exist !");
 
-  std::string default_extension = store_info::DEFAULT_FILE_EXTENSION;
+  std::string default_extension =
+    store_info::constants::default_file_extension();
   std::string extension = boost::filesystem::extension(_filename);
   DT_LOG_DEBUG(this->get_logging_priority(),
                "Extension is `" << extension << "' !");
-  std::string expected_extension = store_info::DEFAULT_FILE_EXTENSION;
+  std::string expected_extension =
+    store_info::constants::default_file_extension();
   if (this->is_format_text()) {
-    expected_extension = store_info::TRIO_FILE_EXTENSION;
+    expected_extension = store_info::constants::trio_file_extension();
   }
   if (extension != expected_extension) {
     DT_LOG_WARNING(this->get_logging_priority(),
@@ -233,7 +235,7 @@ void reader::_at_open(const std::string& filename_) {
                 << "' from  file '" << _filename << "' !");
     std::string branch_name = the_branch->GetName();
     the_si.serialization_tag = branch_name;
-    if (branch_name == store_info::NO_DEDICATED_SERIAL_TAG_LABEL) {
+    if (branch_name == store_info::constants::no_dedicated_serial_tag_label()) {
       _allow_mixed_types_in_stores_ = true;
     }
     the_si.number_of_entries = the_si.tree->GetEntries();
@@ -243,7 +245,7 @@ void reader::_at_open(const std::string& filename_) {
     the_branch->SetAutoDelete(kFALSE);
 
     // tag if the automatic store label has been found:
-    if (store_label == store_info::AUTOMATIC_STORE_LABEL) {
+    if (store_label == store_info::constants::automatic_store_label()) {
       _allow_automatic_store_ = true;
       _automatic_store_ = &the_si;
     }

@@ -103,10 +103,10 @@ writer::writer(const std::string& filename_, datatools::logger::priority p_)
   : detail::base_io(RW_WRITE,p_) {
   writer::_set_default();
   std::string ext = boost::filesystem::extension(filename_);
-  if (ext == store_info::TRIO_FILE_EXTENSION) {
-    this->set_format(detail::base_io::TEXT_LABEL);
+  if (ext == store_info::constants::trio_file_extension()) {
+    this->set_format(detail::base_io::text_label());
   } else {
-    this->set_format(detail::base_io::PBA_LABEL);
+    this->set_format(detail::base_io::pba_label());
   }
   this->open(filename_);
 }
@@ -173,7 +173,7 @@ int writer::add_store(const std::string& label_,
 }
 
 int writer::add_store(const std::string& label_, size_t buffer_size_) {
-  store_info *si = this->_add_store(label_, store_info::POSTPONED_DEDICATED_SERIAL_TAG_LABEL, buffer_size_);
+  store_info *si = this->_add_store(label_, store_info::constants::postponed_dedicated_serial_tag_label(), buffer_size_);
   if (si == 0) {
     return 1;
   }
@@ -181,10 +181,14 @@ int writer::add_store(const std::string& label_, size_t buffer_size_) {
 }
 
 int writer::add_mixed_store(const std::string& label_, size_t buffer_size_) {
+  size_t buffer_size = buffer_size_;
+  if (buffer_size == 0) {
+    buffer_size = store_info::constants::default_store_buffer_size();
+  }
   DT_THROW_IF(!_allow_mixed_types_in_stores_,
               std::logic_error,
               "Stores with mixed data types are not allowed !");
-  store_info *si = this->_add_store(label_, store_info::NO_DEDICATED_SERIAL_TAG_LABEL, buffer_size_);
+  store_info *si = this->_add_store(label_, store_info::constants::no_dedicated_serial_tag_label(), buffer_size);
   if (si == 0) {
     return 1;
   }
@@ -203,7 +207,7 @@ store_info* writer::_add_store(const std::string& label_,
               "Operation prohibited; writer is locked !");
   DT_THROW_IF(label_.empty(), std::logic_error, "Empty label !");
   DT_THROW_IF(!_allow_automatic_store_
-              && (label_ == store_info::AUTOMATIC_STORE_LABEL),
+              && (label_ == store_info::constants::automatic_store_label()),
               std::logic_error,
               "Label '" << label_
               << "' for a conventional automatic store is not allowed !");
@@ -238,8 +242,8 @@ store_info* writer::_add_store(const std::string& label_,
   int splitlevel = 0; // no branch-splitting of the streamed 'brio_record' instance
   const std::string* branch_name = &the_si.serialization_tag;
   if (the_si.serialization_tag.empty()
-      || the_si.serialization_tag == store_info::NO_DEDICATED_SERIAL_TAG_LABEL) {
-    branch_name = &store_info::NO_DEDICATED_SERIAL_TAG_LABEL;
+      || the_si.serialization_tag == store_info::constants::no_dedicated_serial_tag_label()) {
+    branch_name = &store_info::constants::no_dedicated_serial_tag_label();
   }
   the_si.tree->Branch(branch_name->c_str(),
                       "brio_record",
@@ -247,7 +251,7 @@ store_info* writer::_add_store(const std::string& label_,
                       the_si.bufsize,
                       splitlevel);
   _current_store = &the_si;
-  if (label_ == store_info::AUTOMATIC_STORE_LABEL) {
+  if (label_ == store_info::constants::automatic_store_label()) {
     _automatic_store_ = _current_store;
   }
   return _current_store;
@@ -261,13 +265,13 @@ void writer::_at_open (const std::string& filename_) {
                 std::runtime_error,
                 "File '" << _filename << "' already exists !");
   }
-  std::string default_extension = store_info::DEFAULT_FILE_EXTENSION;
+  std::string default_extension = store_info::constants::default_file_extension();
   std::string extension = boost::filesystem::extension(_filename);
   DT_LOG_DEBUG(this->get_logging_priority(),
                "Extension is `" << extension << "' !");
-  std::string expected_extension = store_info::DEFAULT_FILE_EXTENSION;
+  std::string expected_extension = store_info::constants::default_file_extension();
   if (this->is_format_text()) {
-    expected_extension = store_info::TRIO_FILE_EXTENSION;
+    expected_extension = store_info::constants::trio_file_extension();
   }
   if (extension != expected_extension) {
     DT_LOG_WARNING(this->get_logging_priority(),

@@ -35,12 +35,12 @@ int writer::store(const T& a_data, const std::string& a_label) {
       DT_THROW_IF(!_allow_automatic_store_,
                   std::logic_error,
                   "No target store is selected nor target !");
-      ptr_si = this->_add_store(store_info::AUTOMATIC_STORE_LABEL,
+      ptr_si = this->_add_store(store_info::constants::automatic_store_label(),
                                 a_data.get_serial_tag(),
-                                store_info::DEFAULT_STORE_BUFFER_SIZE);
+                                store_info::constants::default_store_buffer_size());
     } else {
       ptr_si = this->_add_store(a_label, a_data.get_serial_tag(),
-                                store_info::DEFAULT_STORE_BUFFER_SIZE);
+                                store_info::constants::default_store_buffer_size());
     }
   }
   // Final check:
@@ -62,8 +62,8 @@ int writer::_at_store(const T& a_data, store_info *a_store_info) {
   DT_LOG_TRACE(this->get_logging_priority(),"Entering...");
   store_info *ptr_si = a_store_info;
   // First serialized object sets the serialization tag for this store:
-  if (ptr_si->serialization_tag == 
-      store_info::POSTPONED_DEDICATED_SERIAL_TAG_LABEL) {
+  if (ptr_si->serialization_tag ==
+      store_info::constants::postponed_dedicated_serial_tag_label()) {
     ptr_si->serialization_tag = a_data.get_serial_tag();
   }
   // Else if the store has a dedicated serialization tag:
@@ -72,17 +72,17 @@ int writer::_at_store(const T& a_data, store_info *a_store_info) {
     DT_THROW_IF(a_data.get_serial_tag() != ptr_si->get_serialization_tag(),
                 std::logic_error,
                 "Serialization tag mismatch ! "
-                << "Attempt to store an object with `" 
+                << "Attempt to store an object with `"
                 << a_data.get_serial_tag ()
                 << "' serialization tag "
-                << "in the store labelled '" 
-                << ptr_si->label 
+                << "in the store labelled '"
+                << ptr_si->label
                 << "' with dedicated `"
-                << ptr_si->get_serialization_tag () 
+                << ptr_si->get_serialization_tag ()
                 << "' serialization tag !");
   }
 
-  // Prepare the (std::vector<char>) buffer to host the binary archive 
+  // Prepare the (std::vector<char>) buffer to host the binary archive
   // as a sequence of bytes:
   typedef std::vector<char> buffer_type;
 
@@ -93,9 +93,9 @@ int writer::_at_store(const T& a_data, store_info *a_store_info) {
   if (!ptr_si->buffer.empty()) {
     ptr_si->buffer.clear();
   } else if (ptr_si->buffer.capacity() == 0) {
-    // Ensure minimum starting capacity of the buffer of characters for 
+    // Ensure minimum starting capacity of the buffer of characters for
     // streaming in order to optimize possible memory reallocation:
-    ptr_si->buffer.reserve(store_info::DEFAULT_STREAM_BUFFER_SIZE);
+    ptr_si->buffer.reserve(store_info::constants::default_stream_buffer_size());
   }
 
   // Archiving is redirected to the buffer:
