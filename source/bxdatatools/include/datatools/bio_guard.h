@@ -43,7 +43,7 @@
 #warning This executable is built with its own datatools Boost/Serialization code.
 #include <datatools/the_serializable.h>
 #else
-#warning This executable must ensure the datatools Boost/Serialization library is loaded.
+//#warning This executable must ensure the datatools Boost/Serialization library is loaded.
 namespace datatools {
 
 /** \brief Data structure that ensures the invocation of some explicit code
