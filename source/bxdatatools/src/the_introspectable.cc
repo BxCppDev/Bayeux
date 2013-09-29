@@ -29,9 +29,9 @@ namespace reflection {
     }
     dynamic_link_guard& dynamic_link_guard::instance()
     {
-      std::cerr << "datatools::detail::reflection::dynamic_link_guard: Construction..." << std::endl;
+      //std::cerr << "datatools::detail::reflection::dynamic_link_guard: Construction..." << std::endl;
       bool devel = false;
-      devel = true;
+      //devel = true;
       static boost::scoped_ptr<dynamic_link_guard> guard (0);
       if ( guard.get () == 0) {
         guard.reset (new dynamic_link_guard);

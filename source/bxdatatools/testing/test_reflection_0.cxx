@@ -18,14 +18,12 @@
 #include <datatools/things.h>
 
 // Some pre-processor guard about CAMP reflection usage and linkage :
-#include <datatools/bio_guard.h>
 #include <datatools/reflection_guard.h>
-
 
 void test_things (bool debug_)
 {
   std::clog << "*** test_things : " << std::endl;
-  //return ;
+
   // Access meta class for class 'things' :
   const DR_CLASS & tMetaClass = DR_CLASS_BY_NAME("datatools::things");
   {

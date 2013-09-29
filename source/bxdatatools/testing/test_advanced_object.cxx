@@ -13,7 +13,7 @@
 #include <datatools/advanced_object.ipp>
 #include <datatools/reflection_guard.h>
 
-#if DATATOOLS_WITH_REFLECTION == 1
+//#if DATATOOLS_WITH_REFLECTION == 1
 void test_reflection()
 {
   std::cerr << "\n******** Entering test_reflection... " << std::endl;
@@ -51,7 +51,7 @@ void test_reflection()
 
   return;
 }
-#endif // DATATOOLS_WITH_REFLECTION == 1
+//#endif // DATATOOLS_WITH_REFLECTION == 1
 
 int main (int argc_, char ** argv_) {
   int error_code = EXIT_SUCCESS;
