@@ -283,7 +283,8 @@ struct logger {
   }\
 }
 
-// Activate reflection layer for the 'datatools::logger::priority' class:
+// Activate reflection layer for the 'datatools::logger::priority' enum:
+DR_TYPE_INIT(::datatools::logger); // mandatory to access the embedded enum
 DR_TYPE_INIT(::datatools::logger::priority);
 
 #endif // DATATOOLS_LOGGER_H

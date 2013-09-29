@@ -6,9 +6,12 @@
 #include <sstream>
 #include <stdexcept>
 
+#include <camp/invalidenum.hpp>
+
 #include <datatools/logger.h>
 
 // Introspectable classes :
+#include <datatools/logger.h>
 #include <datatools/event_id.h>
 #include <datatools/properties.h>
 #include <datatools/multi_properties.h>
@@ -222,6 +225,38 @@ void test_event_id (bool debug_)
 }
 
 
+//#include<camp/detail/enummanager.hpp>
+
+void test_logger (bool debug_)
+{
+  std::clog << "*** test_logger : " << std::endl;
+  {
+    const DR_CLASS & tMetaClass = camp::classByName("datatools::logger");
+    std::clog << "tMetaClass = " << tMetaClass.name() <<  std::endl;
+
+    try {
+      camp::detail::EnumManager & emgr = camp::detail::EnumManager::instance();
+      std::clog << "Count: " << emgr.count() << std::endl;
+
+      if (emgr.enumExists("datatools::logger::priority")) {
+        std::clog << "Exists: " << "datatools::logger::property" << std::endl;
+      } else {
+        std::clog << "Does not exist: " << "datatools::logger::property" << std::endl;
+       }
+
+      const DR_ENUM & tMetaEnum = camp::enumByName("datatools::logger::priority");
+      for (int i = 0; i < tMetaEnum.size(); i++) {
+        std::clog << " - Key '" << tMetaEnum.pair(i).name
+                  << "' has value = " << tMetaEnum.pair(i).value << std::endl;
+      }
+    } catch (camp::InvalidEnum & ie) {
+      std::cerr << "Error: test_logger: " << ie.what() << " for enum named '" << ie.enumName() << "'" << std::endl;
+      throw;
+    }
+ }
+
+  return;
+}
 
 int main (int argc_, char ** argv_)
 {
@@ -253,11 +288,18 @@ int main (int argc_, char ** argv_)
       srand48 (seed);
 
       DT_LOG_NOTICE(logging, "Number of metaclasses = " << camp::classCount());
-
       for (int i = 0; i < camp::classCount(); i++) {
         const camp::Class & c = camp::classByIndex(i);
         DT_LOG_NOTICE(logging, "Metaclass #" << i << " : " << c.name());
       }
+
+      DT_LOG_NOTICE(logging, "Number of metaenums = " << camp::enumCount());
+      for (int i = 0; i < camp::enumCount(); i++) {
+        const camp::Enum & e = camp::enumByIndex(i);
+        DT_LOG_NOTICE(logging, "Metaenum #" << i << " : " << e.name());
+      }
+
+      test_logger (debug);
 
       test_event_id (debug);
 

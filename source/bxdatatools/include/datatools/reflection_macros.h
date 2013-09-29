@@ -34,8 +34,18 @@
 #include <camp/camptype.hpp>
 #include <camp/class.hpp>
 #include <camp/enum.hpp>
-#include <camp/userobject.hpp>
 #include <camp/value.hpp>
+#include <camp/function.hpp>
+#include <camp/property.hpp>
+#include <camp/arrayproperty.hpp>
+#include <camp/enumobject.hpp>
+#include <camp/userobject.hpp>
+#include <camp/classvisitor.hpp>
+#include <camp/simpleproperty.hpp>
+#include <camp/arrayproperty.hpp>
+#include <camp/enumproperty.hpp>
+#include <camp/userproperty.hpp>
+#include <camp/observer.hpp>
 #include <camp/args.hpp>
 #include <camp/function.hpp>
 
@@ -468,16 +478,19 @@
   DR_ENUM_DECLARE2( TypeId , ::datatools::detail::reflection::guid< TypeId >() ) \
   /**/
 
-#define DR_ENUM_PAIR(PairName,PairValue)                                \
-  value( PairName, PairValue )                                          \
-  /**/
-
 
 /************************************************************************/
 
 #define DR_CLASS         camp::Class
 #define DR_ENUM          camp::Enum
 #define DR_CLASS_BY_NAME camp::classByName
+#define DR_CLASS_BY_TYPE camp::classByType
+#define DR_CLASS_BY_INDEX camp::classByIndex
+#define DR_CLASS_BY_OBJECT camp::classByObject
+#define DR_ENUM_BY_NAME  camp::enumByName
+#define DR_ENUM_BY_TYPE  camp::enumByType
+#define DR_ENUM_BY_INDEX  camp::enumByIndex
+#define DR_ENUM_BY_OBJECT  camp::enumByObject
 #define DR_OBJECT        camp::UserObject
 #define DR_VALUE         camp::Value
 #define DR_ARGS          camp::Args
@@ -493,6 +506,13 @@
 #define DR_ENUMTYPE      camp::enumType
 #define DR_ARRAYTYPE     camp::arrayType
 #define DR_USERTYPE      camp::userType
+#define DR_ENUM_VALUE    value
+#define DR_ENUM_NAME     name
+#define DR_ENUM_SIZE     size
+
+#define DR_ENUM_PAIR(PairName,PairValue)                                \
+  DR_ENUM_VALUE( PairName, PairValue )                                  \
+  /**/
 
 #define DR_REF(TypeId)                          \
   boost::ref( TypeId )                          \

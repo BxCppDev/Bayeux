@@ -10,11 +10,19 @@
 #include <datatools/logger.h>
 
 // Export the introspection code for the 'datatools::logger::priority' enum:
+DR_CLASS_EXPORT(::datatools::logger, "datatools::logger")
 DR_TYPE_EXPORT(::datatools::logger::priority, "datatools::logger::priority")
 
 namespace datatools {
   namespace detail {
     namespace reflection {
+
+      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::datatools::logger, tag_)
+        {
+          DR_CLASS_DECLARE(::datatools::logger)
+            ;
+          return;
+        }
 
       DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::datatools::logger::priority, tag_)
         {
