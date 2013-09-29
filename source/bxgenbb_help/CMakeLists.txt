@@ -88,17 +88,23 @@ endif ()
 
 if(GENBB_HELP_WITH_REFLECTION)
   set (GENBB_HELP_WITH_REFLECTION 1)
-  if (NOT geomtools_WITH_REFLECTION)
-    message ( FATAL "Cannot build genbb_help with reflection DLL because geomtools was not so !")
-  endif()
+  # if (NOT geomtools_WITH_REFLECTION)
+  #   message ( FATAL "Cannot build genbb_help with reflection DLL because geomtools was not so !")
+  # endif()
 else()
   set (GENBB_HELP_WITH_REFLECTION 0)
-  set (GENBB_HELP_WITH_INSPECTOR 0)
+  #set (GENBB_HELP_WITH_INSPECTOR 1)
 endif ()
 
 #-----------------------------------------------------------------------
 # Find external packages needed to build
 #
+# - datatools
+#find_package(datatools 5.0.0 REQUIRED)
+
+# - mygsl
+#find_package(mygsl 4.0.0 REQUIRED)
+
 # - geomtools
 find_package(geomtools 4.0.0 REQUIRED)
 

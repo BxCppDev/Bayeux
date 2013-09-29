@@ -38,6 +38,7 @@ set ( genbb_help_tests_programs_list_CPP
       test_single_particle_generator.cxx
       test_wdecay0.cxx
       test_manager.cxx
+      test_reflection_0.cxx
       decay0/test_decay0_alpha.cxx
       decay0/test_decay0_bb.cxx
       decay0/test_decay0_beta1.cxx
@@ -52,9 +53,9 @@ set ( genbb_help_tests_programs_list_CPP
       decay0/test_decay0_tgold.cxx
     )
 
-if(GENBB_HELP_WITH_REFLECTION)
-  list(APPEND genbb_help_tests_programs_list_CPP ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
-endif()
+# if(GENBB_HELP_WITH_REFLECTION)
+#   list(APPEND genbb_help_tests_programs_list_CPP ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
+# endif()
 
 if (GENBB_HELP_WITH_FORTRAN)
   list (APPEND genbb_help_tests_programs_list_CPP

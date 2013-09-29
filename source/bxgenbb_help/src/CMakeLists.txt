@@ -324,12 +324,11 @@ if(GENBB_HELP_WITH_REFLECTION)
     )
   list_prepend(genbb_help_reflection_SOURCES "${PROJECT_SOURCE_DIR}/")
 
-  message (STATUS "Build genbb_help reflection DLL...")
+  message(STATUS "Build genbb_help reflection DLL...")
   add_library(genbb_help_reflection SHARED ${genbb_help_reflection_SOURCES})
 
   target_link_libraries(genbb_help_reflection
                         genbb_help
-                        #geomtools_reflection
                        )
 
   if(APPLE)

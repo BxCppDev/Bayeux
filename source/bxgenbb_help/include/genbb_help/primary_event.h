@@ -144,16 +144,14 @@ namespace genbb {
     double                _genbb_weight_;
     datatools::properties _auxiliaries_;
 
-  //! Support for Boost-based serialization
-  DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(primary_event)
+    //! Support for Boost-based serialization
+    DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(primary_event)
 
-  //! Support for backward compatibility serialization tag
-  DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT()
+    //! Support for backward compatibility serialization tag
+    DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT()
 
-#if GENBB_HELP_WITH_REFLECTION == 1
     //! Reflection interface
     DR_CLASS_RTTI();
-#endif
 
   };
 
@@ -164,10 +162,8 @@ BOOST_CLASS_EXPORT_KEY2(genbb::primary_event, "genbb::primary_event")
 
 DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::genbb::primary_event)
 
-#if GENBB_HELP_WITH_REFLECTION == 1
 // Activate reflection layer for the genbb::primary_event class :
 DR_CLASS_INIT(::genbb::primary_event);
-#endif // GENBB_HELP_WITH_REFLECTION
 
 #endif // GENBB_HELP_PRIMARY_EVENT_H_
 

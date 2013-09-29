@@ -121,25 +121,37 @@ foreach ( pro_program ${genbb_help_programs_list_CPP} )
   # our executable needs,
   set ( _pro_libraries genbb_help )
 
-  if ( ${pro_program} STREQUAL "genbb_inspector.cxx" )
-    message (STATUS "${PROJECT_NAME}: programs: datatools_REFLECTION_LIBRARY=${datatools_REFLECTION_LIBRARY}")
-    list ( INSERT _pro_libraries 0 ${datatools_REFLECTION_LIBRARY} )
-  endif()
 
+  if(GENBB_HELP_WITH_INSPECTOR)
+    list ( INSERT _pro_libraries 0 ${dpp_LIBRARIES} )
+  endif ()
+
+  # Special bio DLL plugins :
   if ( mygsl_WITH_BIO )
     list ( INSERT _pro_libraries 0 ${mygsl_BIO_LIBRARY} )
   endif ()
   if ( geomtools_WITH_BIO )
     list ( INSERT _pro_libraries 0 ${geomtools_BIO_LIBRARY} )
   endif ()
-
-  if(GENBB_HELP_WITH_INSPECTOR)
-    list ( INSERT _pro_libraries 0 ${dpp_LIBRARIES} )
-  endif ()
-
   if ( GENBB_HELP_WITH_BIO )
     list ( INSERT _pro_libraries 0 genbb_help_bio )
   endif ()
+
+  if ( ${pro_program} STREQUAL "genbb_inspector.cxx" )
+    message (STATUS "${PROJECT_NAME}: programs: datatools_REFLECTION_LIBRARY=${datatools_REFLECTION_LIBRARY}")
+    message (STATUS "${PROJECT_NAME}: programs: datatools_BIO_LIBRARY=${datatools_BIO_LIBRARY}")
+    # Special reflection DLL plugins :
+    if(datatools_WITH_REFLECTION)
+      list(INSERT _pro_libraries 0 ${datatools_REFLECTION_LIBRARY})
+    endif()
+    if(geomtools_WITH_REFLECTION)
+      LIST(INSERT _pro_libraries 0 ${geomtools_REFLECTION_LIBRARY} )
+    endif()
+    if(GENBB_HELP_WITH_REFLECTION)
+      LIST(INSERT _pro_libraries 0 genbb_help_reflection )
+    endif()
+  endif()
+
 
   message (STATUS "${PROJECT_NAME}: programs: Link libraries='${_pro_libraries}'")
   target_link_libraries ( ${pro_executable} ${_pro_libraries} ${Boost_LIBRARIES})

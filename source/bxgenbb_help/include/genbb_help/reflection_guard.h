@@ -43,7 +43,7 @@
 #warning This executable is built with its own genbb_help reflection code.
 #include <genbb_help/the_introspectable.h>
 #else
-#warning This executable must ensure the genbb_help reflection library is loaded.
+//#warning This executable must ensure the genbb_help reflection library is loaded.
 
 namespace genbb {
 

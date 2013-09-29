@@ -42,13 +42,8 @@
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
 #include <datatools/units.h>
-#if DATATOOLS_WITH_REFLECTION == 1
-#warning Found reflection support in datatools
 #include <datatools/reflection_macros.h>
 #include <datatools/reflection_guard.h>
-#else
-#error No reflection support in datatools
-#endif
 #include <datatools/library_loader.h>
 #include <datatools/tracer.h>
 #include <datatools/exception.h>
@@ -63,10 +58,14 @@
 #include <genbb_help/manager.h>
 #include <genbb_help/primary_event.h>
 
-// Some pre-processor guard about Boost I/O usage and linkage :
+// Some pre-processor linkage guard :
 #include <datatools/bio_guard.h>
+#include <mygsl/bio_guard.h>
 #include <geomtools/bio_guard.h>
 #include <genbb_help/bio_guard.h>
+#include <datatools/reflection_guard.h>
+#include <geomtools/reflection_guard.h>
+#include <genbb_help/reflection_guard.h>
 
 namespace genbb {
 
