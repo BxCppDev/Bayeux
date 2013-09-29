@@ -70,8 +70,13 @@ if(NOT Bayeux_EMBEDDED OR NOT Bayeux_BUILDPRODUCT_DIR)
 endif()
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/lib")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  "${Bayeux_BUILDPRODUCT_DIR}/bin")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/lib")
+
+#-----------------------------------------------------------------------
+# Use implicit Bayeux init/fini instruction
+#
+option(Bayeux_WITH_IMPLICIT_INIT_FINI "Build implicit init/fini code for Bayeux" OFF)
 
 #-----------------------------------------------------------------------
 # Configure testing if required

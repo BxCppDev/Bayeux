@@ -60,16 +60,10 @@ void title(std::string t_) {
 
 // - Bayeux
 #include <bayeux/version.h>
-// - Bayeux/datatools
-#include <datatools/library_info.h>
 
 int example_bayeux()
 {
   title("bayeux");
-
-  if (datatools::library_info::has("datatools")) {
-    datatools::library_info::print("bayeux", std::clog);
-  }
 
   std::clog << "Bayeux version is: " << bayeux::version::get_version() << std::endl;
 
@@ -81,15 +75,21 @@ int example_bayeux()
 #include <datatools/datatools_config.h>
 #include <datatools/version.h>
 #include <datatools/properties.h>
+#include <datatools/kernel.h>
+#include <datatools/library_info.h>
 
 int example_datatools()
 {
   title("datatools");
 
-  if (datatools::library_info::has("datatools")) {
-    datatools::library_info::print("datatools", std::clog);
-  }
   std::clog << "datatools version is: " << datatools::version::get_version() << std::endl;
+
+  if (datatools::kernel::is_instantiated()) {
+    std::clog << "datatools kernel is instantiated." << std::endl;
+    datatools::kernel & dt_kernel = datatools::kernel::instance();
+    const datatools::library_info & lib_info_reg = dt_kernel.get_library_info_register();
+    lib_info_reg.tree_dump(std::clog, "Library info register: ");
+  }
 
   {
     std::clog << "datatools::properties object manipulation example: " << std::endl;
@@ -131,10 +131,6 @@ int example_cuts()
 {
   title("cuts");
 
-  if (datatools::library_info::has("cuts")) {
-    datatools::library_info::print("cuts", std::clog);
-  }
-
   std::clog << "cuts version is: " << cuts::version::get_version() << std::endl;
 
   return 0;
@@ -148,10 +144,6 @@ int example_cuts()
 int example_materials()
 {
   title("materials");
-
-  if (datatools::library_info::has("materials")) {
-    datatools::library_info::print("materials", std::clog);
-  }
 
   std::clog << "materials version is   : "
             << materials::version::get_version() << std::endl;
@@ -194,9 +186,6 @@ int example_mygsl()
 {
   title("mygsl");
 
-  if (datatools::library_info::has("mygsl")) {
-    datatools::library_info::print("mygsl", std::clog);
-  }
   std::clog << "mygsl version is: "
             << mygsl::version::get_version() << std::endl;
 
@@ -232,9 +221,6 @@ int example_geomtools()
 {
   title("geomtools");
 
-  if (datatools::library_info::has("geomtools")) {
-    datatools::library_info::print("geomtools", std::clog);
-  }
   std::clog << "geomtools version is: "
             << geomtools::version::get_version() << std::endl;
 
@@ -275,9 +261,6 @@ int example_emfield()
 {
   title("emfield");
 
-  if (datatools::library_info::has("emfield")) {
-    datatools::library_info::print("emfield", std::clog);
-  }
   std::clog << "emfield version is: "
             << emfield::version::get_version() << std::endl;
 
@@ -314,9 +297,6 @@ int example_genbb_help()
 {
   title("genbb_help");
 
-  if (datatools::library_info::has("genbb_help")) {
-    datatools::library_info::print("genbb_help", std::clog);
-  }
   std::clog << "genbb_help version is: "
             << genbb::version::get_version() << std::endl;
 
@@ -356,9 +336,6 @@ int example_genvtx()
 {
   title("genvtx");
 
-  if (datatools::library_info::has("genvtx")) {
-    datatools::library_info::print("genvtx", std::clog);
-  }
   std::clog << "genvtx version is: "
             << genvtx::version::get_version() << std::endl;
 
@@ -395,10 +372,6 @@ int example_trackfit()
 {
   title("trackfit");
 
-  if (datatools::library_info::has("trackfit")) {
-    datatools::library_info::print("trackfit", std::clog);
-  }
-
   std::clog << "trackfit version is: " << trackfit::version::get_version() << std::endl;
   return 0;
 }
@@ -412,10 +385,6 @@ int example_trackfit()
 int example_brio()
 {
   title("brio");
-
-  if (datatools::library_info::has("brio")) {
-    datatools::library_info::print("brio", std::clog);
-  }
 
   std::clog << "brio version is: " << brio::version::get_version() << std::endl;
 
@@ -458,18 +427,32 @@ int example_dpp()
 {
   title("dpp");
 
-  if (datatools::library_info::has("dpp")) {
-    datatools::library_info::print("dpp", std::clog);
-  }
-
   std::clog << "dpp version is: " << dpp::version::get_version() << std::endl;
-
 
   return 0;
 }
 
+int example_reflection()
+{
+  std::clog << "Number of metaclasses = " << camp::classCount() << std::endl;
+  for (int i = 0; i < camp::classCount(); i++) {
+    const camp::Class & c = camp::classByIndex(i);
+    std::clog << "Metaclass #" << i << " : " << c.name() << std::endl;
+  }
 
-int main(int argc, const char *argv[]) {
+  std::clog << "Number of metaenums = " << camp::enumCount() << std::endl;
+  for (int i = 0; i < camp::enumCount(); i++) {
+    const camp::Enum & e = camp::enumByIndex(i);
+    std::clog << "Metaenum #" << i << " : " << e.name() << std::endl;
+  }
+  return 0;
+}
+
+#include <bayeux/bayeux.h>
+
+int main(int argc, char *argv[]) {
+  BAYEUX_INIT_MAIN(argc, argv);
+  int error_code = EXIT_SUCCESS;
   try {
     std::clog << "Welcome to Bayeux bxexample01 !" << std::endl;
 
@@ -493,11 +476,16 @@ int main(int argc, const char *argv[]) {
     example_trackfit();
     example_brio();
     example_dpp();
+    example_reflection();
 
     std::clog << "The end." << std::endl;
   } catch (std::exception & error) {
     DT_LOG_ERROR(datatools::logger::PRIO_ERROR, error.what());
-    return 1;
+    error_code = EXIT_FAILURE;
+  } catch (...) {
+    DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Unexpected error !");
+    error_code = EXIT_FAILURE;
   }
-  return 0;
+  BAYEUX_FINI();
+  return error_code;
 }

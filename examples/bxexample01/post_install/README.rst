@@ -28,7 +28,7 @@ Installation through CMake
 4. Build: ::
 
      $ make
-     $ ./bxexample01 --interactive
+     $ ./bxexample01 --interactive --datatools::logging trace
 
 5. Installation: ::
 

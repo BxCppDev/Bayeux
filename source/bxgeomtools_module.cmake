@@ -31,7 +31,7 @@ set(geomtools_VERSION "${geomtools_VERSION_MAJOR}.${geomtools_VERSION_MINOR}.${g
 
 # - Boost I/O, CAMP Reflection, Gnuplot pipe interface
 set(GEOMTOOLS_WITH_BIO 1)
-set(GEOMTOOLS_WITH_REFLECTION 0)
+set(GEOMTOOLS_WITH_REFLECTION 1)
 set(GEOMTOOLS_WITH_GNUPLOT_DISPLAY 1)
 set(GEOMTOOLS_WITH_ROOT_DISPLAY 1)
 
@@ -144,6 +144,16 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/geomtools_driver.h
   ${module_include_dir}/${module_name}/visibility.h
   ${module_include_dir}/${module_name}/version.h.in
+  ${module_include_dir}/${module_name}/base_hit-reflect.h
+  ${module_include_dir}/${module_name}/blur_spot-reflect.h
+  ${module_include_dir}/${module_name}/clhep-reflect.h
+  ${module_include_dir}/${module_name}/detail/reflection_link_guard.h
+  ${module_include_dir}/${module_name}/geom_id-reflect.h
+  ${module_include_dir}/${module_name}/i_placement-reflect.h
+  ${module_include_dir}/${module_name}/placement-reflect.h
+  ${module_include_dir}/${module_name}/reflection_guard.h
+  ${module_include_dir}/${module_name}/the_introspectable.h
+  ${module_include_dir}/${module_name}/utils-reflect.h
   )
 
 # - NB Order of sources appears to be important - taken from geomtools
@@ -235,29 +245,30 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/gnuplot_drawer.cc
   ${module_source_dir}/geomtools_driver.cc
   ${module_source_dir}/version.cc
+  ${module_source_dir}/the_introspectable.cc
   )
 
 # - Reflection components
-if(GEOMTOOLS_WITH_REFLECTION)
-  set(geomtools_REFLECTION_HEADERS
-    ${module_include_dir}/${module_name}/base_hit-reflect.h
-    ${module_include_dir}/${module_name}/blur_spot-reflect.h
-    ${module_include_dir}/${module_name}/clhep-reflect.h
-    ${module_include_dir}/${module_name}/detail/reflection_link_guard.h
-    ${module_include_dir}/${module_name}/geom_id-reflect.h
-    ${module_include_dir}/${module_name}/i_placement-reflect.h
-    ${module_include_dir}/${module_name}/placement-reflect.h
-    ${module_include_dir}/${module_name}/reflection_guard.h
-    ${module_include_dir}/${module_name}/the_introspectable.h
-    ${module_include_dir}/${module_name}/utils-reflect.h
-    )
-  set(geomtools_REFLECTION_SOURCES
-    ${module_source_dir}/the_introspectable.cc
-    )
-  set(geomtools_REFLECTION_TESTS
-    ${module_test_dir}/test_reflection_0.cxx
-    )
-endif()
+# if(GEOMTOOLS_WITH_REFLECTION)
+#   set(geomtools_REFLECTION_HEADERS
+#     ${module_include_dir}/${module_name}/base_hit-reflect.h
+#     ${module_include_dir}/${module_name}/blur_spot-reflect.h
+#     ${module_include_dir}/${module_name}/clhep-reflect.h
+#     ${module_include_dir}/${module_name}/detail/reflection_link_guard.h
+#     ${module_include_dir}/${module_name}/geom_id-reflect.h
+#     ${module_include_dir}/${module_name}/i_placement-reflect.h
+#     ${module_include_dir}/${module_name}/placement-reflect.h
+#     ${module_include_dir}/${module_name}/reflection_guard.h
+#     ${module_include_dir}/${module_name}/the_introspectable.h
+#     ${module_include_dir}/${module_name}/utils-reflect.h
+#     )
+#   set(geomtools_REFLECTION_SOURCES
+#     ${module_source_dir}/the_introspectable.cc
+#     )
+#   set(geomtools_REFLECTION_TESTS
+#     ${module_test_dir}/test_reflection_0.cxx
+#     )
+# endif()
 
 # - Published headers
 foreach(_hdrin ${${module_name}_MODULE_HEADERS})
@@ -322,6 +333,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_union_3d.cxx
   ${module_test_dir}/test_utils_2.cxx
   ${module_test_dir}/test_utils.cxx
+  ${module_test_dir}/test_reflection_0.cxx
   )
 
 # - Applications

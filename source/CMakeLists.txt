@@ -25,7 +25,10 @@
 # Configure build of Bayeux library
 # - Packages
 # - Boost
-find_package(Boost 1.48.0 REQUIRED filesystem system serialization iostreams NO_MODULE)
+find_package(Boost 1.48.0 REQUIRED filesystem system serialization iostreams program_options NO_MODULE)
+
+# - Camp
+find_package(CAMP 0.7.1 REQUIRED)
 
 # - CLHEP
 find_package(CLHEP 2.1.3.1 REQUIRED)
@@ -44,6 +47,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${CLHEP_INCLUDE_DIRS})
 include_directories(${GSL_INCLUDE_DIRS})
 include_directories(${ROOT_INCLUDE_DIRS})
+include_directories(${CAMP_INCLUDE_DIRS})
 
 # - The LPC Modules
 # The processing order should be from least to most dependent
@@ -65,6 +69,8 @@ set(Bayeux_SUBMODULES
   brio
   dpp
 )
+
+#option(GENBB_HELP_WITH_REFLECTION "Build genbb_help reflection" ON)
 
 # - Configure Bayeux submodule first
 set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include")
@@ -90,9 +96,11 @@ foreach(_m ${Bayeux_SUBMODULES})
 endforeach()
 
 # - We must put this at the end because it needs static code from
-#   datatools,cuts, materials...
+#   datatools, cuts, materials...
 list(APPEND Bayeux_SOURCES ${bayeux_ENDING_MODULE_SOURCES})
 
+# Hack for datatools headers
+include_directories(${datatools_include_dir})
 # Hack for genbb private headers
 include_directories(${genbb_help_include_dir})
 
@@ -102,6 +110,7 @@ include_directories(${genbb_help_include_dir})
 add_library(Bayeux SHARED ${Bayeux_HEADERS} ${Bayeux_SOURCES})
 target_link_libraries(Bayeux ${CMAKE_DL_LIBS})
 target_link_libraries(Bayeux ${Boost_LIBRARIES})
+target_link_libraries(Bayeux ${CAMP_LIBRARIES})
 target_link_libraries(Bayeux ${GSL_LIBRARIES})
 target_link_libraries(Bayeux ${CLHEP_LIBRARIES})
 target_link_libraries(Bayeux ${ROOT_LIBRARIES})
@@ -186,6 +195,7 @@ if(Bayeux_ENABLE_TESTING)
   foreach(_m ${Bayeux_SUBMODULES})
     foreach(_testsource ${${_m}_MODULE_TESTS})
       get_filename_component(_testname "${_testsource}" NAME_WE)
+      message(STATUS "Module: ${_m} Test: ${_testname}")
       set(_testname "${_m}-${_testname}")
 
       add_executable(${_testname} ${_testsource})

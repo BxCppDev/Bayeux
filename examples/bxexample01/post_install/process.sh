@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+
+# Usage:
+#  ./process.sh --cadfael-dir ${SW_WORK_DIR}/Cadfael/Binary/Cadfael-trunk/Install-Linux-x86_64 --bayeux-dir ${SW2_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-Linux-x86_64
+
 while [ -n "$1" ]; do
     token="$1"
     if [ "x${token:0:1}" = "x-" ]; then
@@ -27,7 +31,7 @@ mkdir __build
 cd __build
 cmake \
     -DCMAKE_INSTALL_PREFIX:PATH=${install_dir} \
-    -DCMAKE_FIND_ROOT_PATH:PATH=${BAYEUX_INSTALL_DIR}:${CADFAEL_INSTALL_DIR} \
+    -DCMAKE_FIND_ROOT_PATH:PATH="${BAYEUX_INSTALL_DIR};${CADFAEL_INSTALL_DIR}" \
     ..
 if [ $? -ne 0 ]; then
     echo "error: CMake configuration failed !" 1>&2

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(bxexample01)
 
-find_package(Bayeux REQUIRED)
+find_package(Bayeux REQUIRED NO_MODULE)
 
 include_directories(${Bayeux_INCLUDE_DIRS})
 

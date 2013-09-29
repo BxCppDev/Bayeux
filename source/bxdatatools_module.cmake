@@ -26,6 +26,9 @@ set(datatools_VERSION_MINOR 0)
 set(datatools_VERSION_PATCH 0)
 set(datatools_VERSION "${datatools_VERSION_MAJOR}.${datatools_VERSION_MINOR}.${datatools_VERSION_PATCH}")
 
+# - CAMP Reflection
+set(DATATOOLS_WITH_REFLECTION 1)
+
 # - Raw Headers and Sources
 set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/advanced_object.h
@@ -37,6 +40,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/bit_mask.h
   ${module_include_dir}/${module_name}/caster_utils.h
   ${module_include_dir}/${module_name}/clhep_units.h
+  ${module_include_dir}/${module_name}/datatools.h
   ${module_include_dir}/${module_name}/datatools_config.h.in
   ${module_include_dir}/${module_name}/detail/api.h
   ${module_include_dir}/${module_name}/detail/bio_link_guard.h
@@ -66,6 +70,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/i_serializable.h
   ${module_include_dir}/${module_name}/i_serializable.ipp
   ${module_include_dir}/${module_name}/i_tree_dump.h
+  ${module_include_dir}/${module_name}/kernel.h
   ${module_include_dir}/${module_name}/library_info.h
   ${module_include_dir}/${module_name}/library_loader.h
   ${module_include_dir}/${module_name}/logger.h
@@ -79,6 +84,8 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/properties.ipp
   ${module_include_dir}/${module_name}/range_tools.h
   ${module_include_dir}/${module_name}/real_range.h
+  ${module_include_dir}/${module_name}/reflection_guard.h
+  ${module_include_dir}/${module_name}/reflection_macros.h
   ${module_include_dir}/${module_name}/safe_serial.h
   ${module_include_dir}/${module_name}/serialization_macros.h
   ${module_include_dir}/${module_name}/service_macros.h
@@ -102,73 +109,96 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/version_check.h
   ${module_include_dir}/${module_name}/version.h.in
   ${module_include_dir}/${module_name}/version_id.h
-  )
+
+  ${module_include_dir}/${module_name}/i_serializable-reflect.h
+  ${module_include_dir}/${module_name}/i_tree_dump-reflect.h
+  ${module_include_dir}/${module_name}/logger-reflect.h
+  ${module_include_dir}/${module_name}/advanced_object-reflect.h
+  ${module_include_dir}/${module_name}/event_id-reflect.h
+  ${module_include_dir}/${module_name}/multi_properties-reflect.h
+  ${module_include_dir}/${module_name}/properties-reflect.h
+  ${module_include_dir}/${module_name}/things-reflect.h
+  ${module_include_dir}/${module_name}/the_introspectable.h
+  ${module_include_dir}/${module_name}/detail/reflection_link_guard.h
+  ${module_include_dir}/${module_name}/detail/reflection_export.h
+  ${module_include_dir}/${module_name}/detail/reflection_utils.h
+  ${module_include_dir}/${module_name}/detail/reflection_version.h
+)
+
+# - configure special source file
+configure_file(${module_source_dir}/_datatools.cc.in
+               bx${module_name}/_datatools.cc
+              )
+
+# ls -1 bxdatatools/src/*.cc | sed -e 's@bxdatatools/src@${module_source_dir}@g'  | grep -v _init_fini | grep -v the_introspectable
 
 set(${module_name}_MODULE_SOURCES
-  ${module_source_dir}/advanced_object.cc
-  ${module_source_dir}/DynamicLoader.cc
-  ${module_source_dir}/event_id.cc
-  ${module_source_dir}/factory.cc
-  ${module_source_dir}/i_named.cc
-  ${module_source_dir}/integer_range.cc
-  ${module_source_dir}/io_factory.cc
-  ${module_source_dir}/ioutils.cc
-  ${module_source_dir}/i_serializable.cc
-  ${module_source_dir}/i_tree_dump.cc
-  ${module_source_dir}/library_info.cc
-  ${module_source_dir}/library_loader.cc
-  ${module_source_dir}/logger.cc
-  ${module_source_dir}/multi_properties.cc
-  ${module_source_dir}/object_configuration_description.cc
-  ${module_source_dir}/ocd_utils.cc
-  ${module_source_dir}/ocd_driver.cc
-  ${module_source_dir}/properties.cc
-  ${module_source_dir}/real_range.cc
-  ${module_source_dir}/service_manager.cc
-  ${module_source_dir}/service_tools.cc
-  ${module_source_dir}/smart_filename.cc
-  ${module_source_dir}/temporary_files.cc
-  ${module_source_dir}/the_serializable.cc
-  ${module_source_dir}/things.cc
-  ${module_source_dir}/time_tools.cc
-  ${module_source_dir}/tracer.cc
-  ${module_source_dir}/types.cc
-  ${module_source_dir}/units.cc
-  ${module_source_dir}/utils.cc
-  ${module_source_dir}/version.cc
-  ${module_source_dir}/version_check.cc
-  ${module_source_dir}/version_id.cc
-  ${module_source_dir}/base_service.cc # <- Must go at end
+${module_source_dir}/advanced_object.cc
+${module_source_dir}/base_service.cc
+${module_source_dir}/datatools.cc
+${module_source_dir}/DynamicLoader.cc
+${module_source_dir}/event_id.cc
+${module_source_dir}/factory.cc
+${module_source_dir}/i_named.cc
+${module_source_dir}/integer_range.cc
+${module_source_dir}/io_factory.cc
+${module_source_dir}/ioutils.cc
+${module_source_dir}/i_serializable.cc
+${module_source_dir}/i_tree_dump.cc
+${module_source_dir}/kernel.cc
+${module_source_dir}/library_info.cc
+${module_source_dir}/library_loader.cc
+${module_source_dir}/logger.cc
+${module_source_dir}/multi_properties.cc
+${module_source_dir}/object_configuration_description.cc
+${module_source_dir}/ocd_driver.cc
+${module_source_dir}/ocd_utils.cc
+${module_source_dir}/properties.cc
+${module_source_dir}/real_range.cc
+${module_source_dir}/service_manager.cc
+${module_source_dir}/service_tools.cc
+${module_source_dir}/smart_filename.cc
+${module_source_dir}/temporary_files.cc
+${module_source_dir}/the_serializable.cc
+${module_source_dir}/things.cc
+${module_source_dir}/time_tools.cc
+${module_source_dir}/tracer.cc
+${module_source_dir}/types.cc
+${module_source_dir}/units.cc
+${module_source_dir}/utils.cc
+${module_source_dir}/version.cc
+${module_source_dir}/version_check.cc
+${module_source_dir}/version_id.cc
+${module_source_dir}/the_introspectable.cc
+bx${module_name}/_datatools.cc
   )
 
 # - Reflection component - still optional, so factor out and allow for
 #   inclusion later
-
-if(DATATOOLS_WITH_REFLECTION)
-  set(datatools_REFLECTION_HEADERS
-    ${module_include_dir}/${module_name}/reflection_guard.h
-    ${module_include_dir}/${module_name}/reflection_macros.h
-    ${module_include_dir}/${module_name}/i_serializable-reflect.h
-    ${module_include_dir}/${module_name}/i_tree_dump-reflect.h
-    ${module_include_dir}/${module_name}/logger-reflect.h
-    ${module_include_dir}/${module_name}/advanced_object-reflect.h
-    ${module_include_dir}/${module_name}/event_id-reflect.h
-    ${module_include_dir}/${module_name}/multi_properties-reflect.h
-    ${module_include_dir}/${module_name}/properties-reflect.h
-    ${module_include_dir}/${module_name}/things-reflect.h
-    ${module_include_dir}/${module_name}/the_introspectable.h
-    ${module_include_dir}/${module_name}/detail/reflection_link_guard.h
-    ${module_include_dir}/${module_name}/detail/reflection_export.h
-    ${module_include_dir}/${module_name}/detail/reflection_utils.h
-    ${module_include_dir}/${module_name}/detail/reflection_version.h
-    )
-  set(datatools_REFLECTION_SOURCES
-    ${module_source_dir}/the_introspectable.cc
-    )
-  set(datatools_REFLECTION_TESTS
-    ${module_test_dir}/test_reflection_0.cxx
-    )
-endif()
+# if(DATATOOLS_WITH_REFLECTION)
+#   set(datatools_REFLECTION_HEADERS
+#     ${module_include_dir}/${module_name}/reflection_guard.h
+#     ${module_include_dir}/${module_name}/i_serializable-reflect.h
+#     ${module_include_dir}/${module_name}/i_tree_dump-reflect.h
+#     ${module_include_dir}/${module_name}/logger-reflect.h
+#     ${module_include_dir}/${module_name}/advanced_object-reflect.h
+#     ${module_include_dir}/${module_name}/event_id-reflect.h
+#     ${module_include_dir}/${module_name}/multi_properties-reflect.h
+#     ${module_include_dir}/${module_name}/properties-reflect.h
+#     ${module_include_dir}/${module_name}/things-reflect.h
+#     ${module_include_dir}/${module_name}/the_introspectable.h
+#     ${module_include_dir}/${module_name}/detail/reflection_link_guard.h
+#     ${module_include_dir}/${module_name}/detail/reflection_export.h
+#     ${module_include_dir}/${module_name}/detail/reflection_utils.h
+#     ${module_include_dir}/${module_name}/detail/reflection_version.h
+#     )
+#   set(datatools_REFLECTION_SOURCES
+#     ${module_source_dir}/the_introspectable.cc
+#     )
+#   set(datatools_REFLECTION_TESTS
+#     ${module_test_dir}/test_reflection_0.cxx
+#     )
+# endif()
 
 # - Published headers
 foreach(_hdrin ${${module_name}_MODULE_HEADERS})
@@ -180,69 +210,73 @@ endforeach()
 # - Unit tests
 set(${module_name}_TEST_ENVIRONMENT "DATATOOLS_DATA_DIR=${module_root_dir}")
 
+# ls -1 bxdatatools/testing/*.cxx | sed -e 's@bxdatatools/testing@${module_test_dir}@g'
+
 set(${module_name}_MODULE_TESTS
-  ${module_test_dir}/test_advanced_object.cxx
-  ${module_test_dir}/test_binary_serialization.cxx
-  ${module_test_dir}/test_cloneable_2.cxx
-  ${module_test_dir}/test_cloneable.cxx
-  ${module_test_dir}/test_data_serialization.cxx
-  ${module_test_dir}/test_datatools.cxx
-  ${module_test_dir}/test_dummy_service.cxx
-  ${module_test_dir}/test_event_id.cxx
-  ${module_test_dir}/test_exception.cxx
-  ${module_test_dir}/test_factory.cxx
-  ${module_test_dir}/test_handle_1.cxx
-  ${module_test_dir}/test_handle_2.cxx
-  ${module_test_dir}/test_handle_3.cxx
-  ${module_test_dir}/test_handle_macros.cxx
-  ${module_test_dir}/test_integer_range.cxx
-  ${module_test_dir}/test_ioutils.cxx
-  ${module_test_dir}/test_library_info.cxx
-  ${module_test_dir}/test_library_loader_0.cxx
-  ${module_test_dir}/test_library_loader_1.cxx
-  ${module_test_dir}/test_logger.cxx
-  ${module_test_dir}/test_multi_properties_0.cxx
-  ${module_test_dir}/test_multi_properties.cxx
-  ${module_test_dir}/test_named.cxx
-  ${module_test_dir}/test_nans_ar.cxx
-  ${module_test_dir}/test_OCD.cxx
-  ${module_test_dir}/test_predicate_1.cxx
-  ${module_test_dir}/test_properties_0.cxx
-  ${module_test_dir}/test_properties_2b.cxx
-  ${module_test_dir}/test_properties_2.cxx
-  ${module_test_dir}/test_properties_3.cxx
-  ${module_test_dir}/test_properties_4.cxx
-  ${module_test_dir}/test_properties.cxx
-  ${module_test_dir}/test_real_range.cxx
-  ${module_test_dir}/test_ser_bitset.cxx
-  ${module_test_dir}/test_serializable_1.cxx
-  ${module_test_dir}/test_serializable_2.cxx
-  ${module_test_dir}/test_serialization_2.cxx
-  ${module_test_dir}/test_serialization_3.cxx
-  ${module_test_dir}/test_serialization_4.cxx
-  ${module_test_dir}/test_serialization.cxx
-  ${module_test_dir}/test_service_manager.cxx
-  ${module_test_dir}/test_shared_ptr_0.cxx
-  ${module_test_dir}/test_shared_ptr_1.cxx
-  ${module_test_dir}/test_smart_filename.cxx
-  ${module_test_dir}/test_smart_ref.cxx
-  ${module_test_dir}/test_temp_file.cxx
-  ${module_test_dir}/test_things_1.cxx
-  ${module_test_dir}/test_things_2.cxx
-  ${module_test_dir}/test_things_3.cxx
-  ${module_test_dir}/test_things.cxx
-  ${module_test_dir}/test_things_macros.cxx
-  ${module_test_dir}/test_time_tools.cxx
-  ${module_test_dir}/test_tmp.cxx
-  ${module_test_dir}/test_tracer.cxx
-  ${module_test_dir}/test_tree_dump.cxx
-  ${module_test_dir}/test_types.cxx
-  ${module_test_dir}/test_units.cxx
-  ${module_test_dir}/test_utils.cxx
-  ${module_test_dir}/test_version_check.cxx
-  ${module_test_dir}/test_version.cxx
-  ${module_test_dir}/test_version_id.cxx
-  )
+${module_test_dir}/test_advanced_object.cxx
+${module_test_dir}/test_binary_serialization.cxx
+${module_test_dir}/test_cloneable_2.cxx
+${module_test_dir}/test_cloneable.cxx
+${module_test_dir}/test_data_serialization.cxx
+${module_test_dir}/test_datatools.cxx
+${module_test_dir}/test_dummy_service.cxx
+${module_test_dir}/test_event_id.cxx
+${module_test_dir}/test_exception.cxx
+${module_test_dir}/test_factory.cxx
+${module_test_dir}/test_handle_1.cxx
+${module_test_dir}/test_handle_2.cxx
+${module_test_dir}/test_handle_3.cxx
+${module_test_dir}/test_handle_macros.cxx
+${module_test_dir}/test_integer_range.cxx
+${module_test_dir}/test_ioutils.cxx
+${module_test_dir}/test_kernel.cxx
+${module_test_dir}/test_library_info.cxx
+${module_test_dir}/test_library_loader_0.cxx
+${module_test_dir}/test_library_loader_1.cxx
+${module_test_dir}/test_logger.cxx
+${module_test_dir}/test_multi_properties_0.cxx
+${module_test_dir}/test_multi_properties.cxx
+${module_test_dir}/test_named.cxx
+${module_test_dir}/test_nans_ar.cxx
+${module_test_dir}/test_OCD.cxx
+${module_test_dir}/test_predicate_1.cxx
+${module_test_dir}/test_properties_0.cxx
+${module_test_dir}/test_properties_2b.cxx
+${module_test_dir}/test_properties_2.cxx
+${module_test_dir}/test_properties_3.cxx
+${module_test_dir}/test_properties_4.cxx
+${module_test_dir}/test_properties.cxx
+${module_test_dir}/test_real_range.cxx
+${module_test_dir}/test_reflection_0.cxx
+${module_test_dir}/test_ser_bitset.cxx
+${module_test_dir}/test_serializable_1.cxx
+${module_test_dir}/test_serializable_2.cxx
+${module_test_dir}/test_serialization_2.cxx
+${module_test_dir}/test_serialization_3.cxx
+${module_test_dir}/test_serialization_4.cxx
+${module_test_dir}/test_serialization.cxx
+${module_test_dir}/test_service_manager.cxx
+${module_test_dir}/test_shared_ptr_0.cxx
+${module_test_dir}/test_shared_ptr_1.cxx
+${module_test_dir}/test_smart_filename.cxx
+${module_test_dir}/test_smart_ref.cxx
+${module_test_dir}/test_temp_file.cxx
+${module_test_dir}/test_things_1.cxx
+${module_test_dir}/test_things_2.cxx
+${module_test_dir}/test_things_3.cxx
+${module_test_dir}/test_things.cxx
+${module_test_dir}/test_things_macros.cxx
+${module_test_dir}/test_time_tools.cxx
+${module_test_dir}/test_tmp.cxx
+${module_test_dir}/test_tracer.cxx
+${module_test_dir}/test_tree_dump.cxx
+${module_test_dir}/test_types.cxx
+${module_test_dir}/test_units.cxx
+${module_test_dir}/test_utils.cxx
+${module_test_dir}/test_version_check.cxx
+${module_test_dir}/test_version.cxx
+${module_test_dir}/test_version_id.cxx
+)
 
 # - Applications
 set(${module_name}_MODULE_APPS

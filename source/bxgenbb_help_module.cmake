@@ -28,7 +28,7 @@ set(genbb_help_VERSION "${genbb_help_VERSION_MAJOR}.${genbb_help_VERSION_MINOR}.
 
 # - Boost I/O, CAMP Reflection, Gnuplot pipe interface
 set(GENBB_HELP_WITH_BIO 1)
-set(GENBB_HELP_WITH_REFLECTION 0)
+set(GENBB_HELP_WITH_REFLECTION 1)
 
 # - Raw Headers and Sources
 set(${module_name}_MODULE_HEADERS
@@ -203,6 +203,11 @@ set(${module_name}_PRIVATE_MODULE_HEADERS
   ${module_include_dir}/${module_name}/decay0/Zn65.h
   ${module_include_dir}/${module_name}/decay0/Zr92low.h
   ${module_include_dir}/${module_name}/decay0/Zr96.h
+  ${module_include_dir}/${module_name}/primary_particle-reflect.h
+  ${module_include_dir}/${module_name}/primary_event-reflect.h
+  ${module_include_dir}/${module_name}/the_introspectable.h
+  ${module_include_dir}/${module_name}/reflection_guard.h
+  ${module_include_dir}/${module_name}/detail/reflection_link_guard.h
   )
 
 # - NB Order of sources appears to be important - taken from genbb_help
@@ -371,24 +376,25 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/decay0/Zn65.cc
   ${module_source_dir}/decay0/Zr92low.cc
   ${module_source_dir}/decay0/Zr96.cc
+  ${module_source_dir}/the_introspectable.cc
   )
 
-# - Reflection components
-if(GENBB_HELP_WITH_REFLECTION)
-  set(genbb_help_REFLECTION_HEADERS
-    ${module_include_dir}/${module_name}/primary_particle-reflect.h
-    ${module_include_dir}/${module_name}/primary_event-reflect.h
-    ${module_include_dir}/${module_name}/the_introspectable.h
-    ${module_include_dir}/${module_name}/reflection_guard.h
-    ${module_include_dir}/${module_name}/detail/reflection_link_guard.h
-    )
-  set(genbb_help_REFLECTION_SOURCES
-    ${module_source_dir}/the_introspectable.cc
-    )
-  set(genbb_help_REFLECTION_TESTS
-    ${module_testing_dir}/test_reflection_0.cxx
-    )
-endif()
+# # - Reflection components
+# if(GENBB_HELP_WITH_REFLECTION)
+#   set(genbb_help_REFLECTION_HEADERS
+#     ${module_include_dir}/${module_name}/primary_particle-reflect.h
+#     ${module_include_dir}/${module_name}/primary_event-reflect.h
+#     ${module_include_dir}/${module_name}/the_introspectable.h
+#     ${module_include_dir}/${module_name}/reflection_guard.h
+#     ${module_include_dir}/${module_name}/detail/reflection_link_guard.h
+#     )
+#   set(genbb_help_REFLECTION_SOURCES
+#     ${module_source_dir}/the_introspectable.cc
+#     )
+#   set(genbb_help_REFLECTION_TESTS
+#     ${module_testing_dir}/test_reflection_0.cxx
+#     )
+# endif()
 
 # - Publish public headers only
 foreach(_hdrin ${${module_name}_MODULE_HEADERS})
@@ -433,6 +439,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/decay0/test_decay0_gfang.cxx
   ${module_test_dir}/decay0/test_decay0_plog69.cxx
   ${module_test_dir}/decay0/test_decay0_tgold.cxx
+  ${module_test_dir}/test_reflection_0.cxx
   )
 
 # - Applications

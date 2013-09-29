@@ -49,6 +49,7 @@ Naming
 Bayeux is named thus because it weaves together several threads of software
 developed in Normandy ;-).
 
+
 Licensing
 ---------
 Please study the file ``LICENSE.txt`` for the distribution terms and

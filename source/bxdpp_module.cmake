@@ -94,11 +94,12 @@ endforeach()
 
 # - Unit tests
 set(${module_name}_TEST_ENVIRONMENT "DPP_DATA_DIR=${module_root_dir}")
+list(APPEND ${module_name}_TEST_ENVIRONMENT "DPP_TMP_TEST_DIR=${CMAKE_BINARY_DIR}/Testing" )
 
 set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_module.cxx
   ${module_test_dir}/test_input_output_modules.cxx
-  #${module_test_dir}/test_module_chain.cxx #<- Requires program_options
+  ${module_test_dir}/test_module_chain.cxx #<- Requires program_options
   ${module_test_dir}/test_module_manager.cxx
   ${module_test_dir}/test_histogram_service.cxx
   )
