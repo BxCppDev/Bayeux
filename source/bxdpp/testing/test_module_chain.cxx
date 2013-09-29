@@ -143,25 +143,27 @@ int main (int argc_, char ** argv_)
                     << max_number_of_events << ".\n";
         }
 
-      if (vm.count ("input-file"))
-        {
-          input_files = vm["input-file"].as< std::vector<std::string> > ();
-          std::clog << "Input files are : \n";
-          BOOST_FOREACH (const std::string & file_name, input_files)
-            {
-              std::clog << " Input file : '" << file_name << "'\n.";
-            }
-        }
-      else
-        {
-          throw std::logic_error ("Missing input file(s) !");
-        }
+      if (vm.count("input-file")) {
+        input_files = vm["input-file"].as< std::vector<std::string> > ();
+        std::clog << "Input files are : \n";
+        BOOST_FOREACH (const std::string & file_name, input_files)
+          {
+            std::clog << " Input file : '" << file_name << "'\n.";
+          }
+      } else {
+        //throw std::logic_error ("Missing input file(s) !");
+        input_files.push_back("${DPP_DATA_DIR}/testing/data/data_0.txt.gz");
+        input_files.push_back("${DPP_DATA_DIR}/testing/data/data_1.txt.gz");
+        input_files.push_back("${DPP_DATA_DIR}/testing/data/data_2.txt.gz");
+        input_files.push_back("${DPP_DATA_DIR}/testing/data/data_3.txt.gz");
+      }
 
-      if (vm.count ("output-file"))
-        {
-          output_file = vm["output-file"].as<std::string> ();
-          std::clog << "Output file is : " << output_file << ".\n";
-        }
+      if (vm.count("output-file")) {
+        output_file = vm["output-file"].as<std::string> ();
+        std::clog << "Output file is : " << output_file << ".\n";
+      } else {
+        output_file = "${DPP_TMP_TEST_DIR}/test_module_manager_out.txt";
+      }
 
       if (vm.count ("module-name"))
         {
@@ -171,9 +173,10 @@ int main (int argc_, char ** argv_)
         }
       else
         {
-          std::ostringstream message;
-          message << "Missing module name !";
-          throw std::logic_error (message.str ());
+          // std::ostringstream message;
+          // message << "Missing module name !";
+          // throw std::logic_error (message.str ());
+          module_name = "chain0";
         }
 
       if (vm.count ("manager-config"))
@@ -184,9 +187,10 @@ int main (int argc_, char ** argv_)
         }
       else
         {
-          std::ostringstream message;
-          message << "Missing module manager configuration file !";
-          throw std::logic_error (message.str ());
+          // std::ostringstream message;
+          // message << "Missing module manager configuration file !";
+          // throw std::logic_error (message.str ());
+          mgr_config = "${DPP_DATA_DIR}/testing/config/test_module_manager.conf";
         }
 
       if (print_modulo < 0)

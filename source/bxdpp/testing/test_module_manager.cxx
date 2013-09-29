@@ -133,7 +133,13 @@ int main (int argc_, char ** argv_)
 
       if (io_files.size () < 2)
         {
-          throw std::logic_error ("Missing input source(s) and output sink !");
+          //throw std::logic_error ("Missing input source(s) and output sink !");
+          io_files.push_back("${DPP_DATA_DIR}/testing/data/data_0.txt.gz");
+          io_files.push_back("${DPP_DATA_DIR}/testing/data/data_1.txt.gz");
+          io_files.push_back("${DPP_DATA_DIR}/testing/data/data_2.txt.gz");
+          io_files.push_back("${DPP_DATA_DIR}/testing/data/data_3.txt.gz");
+          io_files.push_back("${DPP_TMP_TEST_DIR}/test_module_manager_out.txt");
+
         }
       output_file = io_files.back ();
       io_files.pop_back ();

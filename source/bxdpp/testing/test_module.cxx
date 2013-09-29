@@ -360,10 +360,18 @@ int main (int argc_, char ** argv_)
           iarg++;
         }
 
+
+      if (input_file.empty()) {
+        input_file = "${DPP_DATA_DIR}/testing/data/data_0.txt.gz";
+      }
+      if (output_file.empty()) {
+        output_file = "test_module_out.txt.gz";
+      }
+
       DT_THROW_IF(input_file.empty(),
                   std::logic_error,
                   "Missing input source !");
-      DT_THROW_IF(input_file.empty(),
+      DT_THROW_IF(output_file.empty(),
                   std::logic_error,
                   "Missing output sink !");
 
