@@ -2,7 +2,7 @@
 /* utils.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
- * Last modified: 2010-10-28
+ * Last modified: 2013-09-29
  *
  * License:
  *
@@ -16,13 +16,18 @@
 #ifndef GEOMTOOLS_UTILS_H_
 #define GEOMTOOLS_UTILS_H_ 1
 
+
+// Standard library
 #include <string>
 #include <iostream>
 #include <list>
 #include <vector>
 
+// Datatools
 #include <datatools/bit_mask.h>
+#include <datatools/reflection_macros.h>
 
+// This module
 #include <geomtools/geomtools_config.h>
 #include <geomtools/clhep.h>
 #include <geomtools/utils.h>
@@ -671,12 +676,10 @@ namespace boost {
 
 } // namespace boost
 
-#if GEOMTOOLS_WITH_REFLECTION == 1
-CAMP_TYPE(geomtools::orientation_type);
-CAMP_TYPE(geomtools::direction_type);
-CAMP_TYPE(geomtools::axis_type);
-CAMP_TYPE(geomtools::rotation_axis_type);
-#endif // GEOMTOOLS_WITH_REFLECTION
+DR_TYPE_INIT(geomtools::orientation_type);
+DR_TYPE_INIT(geomtools::direction_type);
+DR_TYPE_INIT(geomtools::axis_type);
+DR_TYPE_INIT(geomtools::rotation_axis_type);
 
 #endif // GEOMTOOLS_UTILS_H_
 

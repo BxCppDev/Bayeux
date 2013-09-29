@@ -255,6 +255,9 @@ namespace geomtools {
 
     DATATOOLS_SERIALIZATION_DECLARATION();
 
+    //! Reflection interface
+    DR_CLASS_RTTI();
+
   };
 
   template <class BoostRandomizer>
@@ -316,10 +319,8 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#if GEOMTOOLS_WITH_REFLECTION == 1
 // Activate reflection layer for the blur_spot class :
 DR_CLASS_INIT(::geomtools::blur_spot);
-#endif // GEOMTOOLS_WITH_REFLECTION
 
 #endif // GEOMTOOLS_BLUR_SPOT_H_
 

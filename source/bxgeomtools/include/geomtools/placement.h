@@ -216,10 +216,8 @@ namespace geomtools {
 
     DATATOOLS_SERIALIZATION_DECLARATION();
 
-#if GEOMTOOLS_WITH_REFLECTION == 1
     //! Reflection interface
     DR_CLASS_RTTI();
-#endif
 
   };
 
@@ -227,10 +225,8 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#if GEOMTOOLS_WITH_REFLECTION == 1
 // Activate reflection layer for the ::geomtools::placement class :
 DR_CLASS_INIT(::geomtools::placement);
-#endif // GEOMTOOLS_WITH_REFLECTION
 
 #endif // GEOMTOOLS_PLACEMENT_H_
 

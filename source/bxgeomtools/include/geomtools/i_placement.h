@@ -25,13 +25,12 @@
 
 #include <datatools/i_serializable.h>
 #include <datatools/i_tree_dump.h>
+#include <datatools/reflection_macros.h>
 
 #include <geomtools/geomtools_config.h>
 #include <geomtools/utils.h>
 
-#if GEOMTOOLS_WITH_REFLECTION == 1
 #include <datatools/reflection_macros.h>
-#endif // GEOMTOOLS_WITH_REFLECTION
 
 namespace geomtools {
 
@@ -77,20 +76,15 @@ namespace geomtools {
 
     DATATOOLS_SERIALIZATION_DECLARATION();
 
-
-#if GEOMTOOLS_WITH_REFLECTION == 1
     //! Reflection interface
     DR_CLASS_RTTI();
-#endif
+
   };
 
 } // end of namespace geomtools
 
-#if GEOMTOOLS_WITH_REFLECTION == 1
 // Activate reflection layer for the geomtools::i_placement class :
-#include <datatools/reflection_macros.h>
 DR_CLASS_INIT(::geomtools::i_placement);
-#endif // GEOMTOOLS_WITH_REFLECTION
 
 #endif // GEOMTOOLS_I_PLACEMENT_H_
 

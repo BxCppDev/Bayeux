@@ -26,13 +26,11 @@ namespace geomtools {
 
 }
 
-#if GEOMTOOLS_WITH_REFLECTION == 1
 // Activate reflection layer for some classes :
 #include <datatools/reflection_macros.h>
 DR_CLASS_INIT(::geomtools::vector_2d);
 DR_CLASS_INIT(::geomtools::vector_3d);
 DR_CLASS_INIT(::geomtools::rotation_3d);
-#endif // GEOMTOOLS_WITH_REFLECTION
 
 namespace geomtools {
 

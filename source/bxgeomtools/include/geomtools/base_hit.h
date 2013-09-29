@@ -328,19 +328,15 @@ namespace geomtools {
 
     DATATOOLS_SERIALIZATION_DECLARATION();
 
-#if GEOMTOOLS_WITH_REFLECTION == 1
     //! Reflection interface
     DR_CLASS_RTTI();
-#endif
 
   };
 
 } // end of namespace geomtools
 
-#if GEOMTOOLS_WITH_REFLECTION == 1
 // Activate reflection layer for the geomtools::base_hit class :
 DR_CLASS_INIT(::geomtools::base_hit);
-#endif // GEOMTOOLS_WITH_REFLECTION
 
 #endif // GEOMTOOLS_BASE_HIT_H_
 

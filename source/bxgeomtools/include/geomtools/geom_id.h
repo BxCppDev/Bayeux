@@ -29,6 +29,7 @@
 #include <boost/cstdint.hpp>
 
 #include <datatools/i_serializable.h>
+#include <datatools/reflection_macros.h>
 
 #include <geomtools/geomtools_config.h>
 
@@ -197,10 +198,8 @@ namespace geomtools {
 
     DATATOOLS_SERIALIZATION_DECLARATION();
 
-#if GEOMTOOLS_WITH_REFLECTION == 1
     //! Reflection interface
     DR_CLASS_RTTI();
-#endif
 
   };
 
@@ -209,12 +208,9 @@ namespace geomtools {
 #include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT_KEY2(geomtools::geom_id, "geomtools::geom_id")
 
-#if GEOMTOOLS_WITH_REFLECTION == 1
 //#warning Activate reflection layer for the geomtools::geom_id class
 // Activate reflection layer for the geomtools::geom_id class :
-#include <datatools/reflection_macros.h>
 DR_CLASS_INIT(::geomtools::geom_id);
-#endif // GEOMTOOLS_WITH_REFLECTION
 
 #endif // GEOMTOOLS_GEOM_ID_H_
 
