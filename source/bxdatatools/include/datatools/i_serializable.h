@@ -41,9 +41,7 @@
 #include <datatools/utils.h>
 
 // Datatools reflection utilities :
-#if DATATOOLS_WITH_REFLECTION == 1
 #include <datatools/reflection_macros.h>
-#endif
 
 /// Main namespace of the datatools library
 namespace datatools {
@@ -64,18 +62,14 @@ namespace datatools {
     // Factory stuff :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_serializable);
 
-#if DATATOOLS_WITH_REFLECTION == 1
     DR_CLASS_RTTI();
-#endif
 
   };
 
 } // end of namespace datatools
 
-#if DATATOOLS_WITH_REFLECTION == 1
-//#warning Activate reflection layer for the 'datatools::i_serializable' class.
+// Activate reflection layer for the 'datatools::i_serializable' class.
 DR_CLASS_INIT(::datatools::i_serializable);
-#endif // DATATOOLS_WITH_REFLECTION
 
 
 

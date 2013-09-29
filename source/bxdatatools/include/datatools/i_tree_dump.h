@@ -10,9 +10,7 @@
 #include <datatools/datatools_config.h>
 
 // Datatools reflection utilities :
-#if DATATOOLS_WITH_REFLECTION == 1
 #include <datatools/reflection_macros.h>
-#endif
 
 namespace datatools {
 
@@ -86,18 +84,14 @@ class i_tree_dumpable {
     bool inherit_;
   };
 
-#if DATATOOLS_WITH_REFLECTION == 1
     DR_CLASS_RTTI();
-#endif
 
 };
 
 } // end of namespace datatools
 
-#if DATATOOLS_WITH_REFLECTION == 1
 // Activate reflection layer for the 'datatools::i_tree_dumpable' class:
 DR_CLASS_INIT(::datatools::i_tree_dumpable);
-#endif // DATATOOLS_WITH_REFLECTION
 
 #endif // DATATOOLS_I_TREE_DUMP_H_
 

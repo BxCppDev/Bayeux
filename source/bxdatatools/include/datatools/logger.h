@@ -60,6 +60,9 @@
 // - A
 #include "boost/current_function.hpp"
 
+// This module
+#include <datatools/reflection_macros.h>
+
 namespace datatools {
 
 // Forward declaration:
@@ -280,13 +283,8 @@ struct logger {
   }\
 }
 
-
-#if DATATOOLS_WITH_REFLECTION == 1
-// This Project
-#include <datatools/reflection_macros.h>
 // Activate reflection layer for the 'datatools::logger::priority' class:
 DR_TYPE_INIT(::datatools::logger::priority);
-#endif // DATATOOLS_WITH_REFLECTION
 
 #endif // DATATOOLS_LOGGER_H
 

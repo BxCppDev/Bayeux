@@ -42,9 +42,7 @@
 #include <datatools/logger.h>
 #include <datatools/properties.h>
 
-#if DATATOOLS_WITH_REFLECTION == 1
 #include <datatools/reflection_macros.h>
-#endif
 
 namespace datatools {
 
@@ -123,10 +121,8 @@ namespace datatools {
     //! Serialization interface
     DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(advanced_object);
 
-#if DATATOOLS_WITH_REFLECTION == 1
-  //! Reflection interface
-  DR_CLASS_RTTI();
-#endif
+    //! Reflection interface
+    DR_CLASS_RTTI();
 
   };
 
@@ -134,9 +130,7 @@ namespace datatools {
 
 #include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT_KEY2(datatools::advanced_object, "datatools::advanced_object");
-#if DATATOOLS_WITH_REFLECTION == 1
 // Activate reflection layer for the 'datatools::advanced_object' class:
 DR_CLASS_INIT(::datatools::advanced_object);
-#endif // DATATOOLS_WITH_REFLECTION
 
 #endif // DATATOOLS_ADVANCED_OBJECT_H_

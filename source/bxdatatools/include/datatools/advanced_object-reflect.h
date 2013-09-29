@@ -5,7 +5,6 @@
 
 // Standard Library
 
-
 #include <camp/enum.hpp>
 
 // Datatools

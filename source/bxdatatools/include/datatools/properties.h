@@ -54,9 +54,7 @@
 #include <datatools/bit_mask.h>
 #include <datatools/exception.h>
 
-#if DATATOOLS_WITH_REFLECTION == 1
 #include <datatools/reflection_macros.h>
-#endif
 
 namespace datatools {
 
@@ -993,10 +991,8 @@ class properties :
   DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(properties);
   DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT()
 
-#if DATATOOLS_WITH_REFLECTION == 1
   //! Reflection interface
   DR_CLASS_RTTI();
-#endif
 
 };
 
@@ -1051,10 +1047,8 @@ DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::datatools::propert
 #include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT_KEY2(datatools::properties, "datatools::properties");
 
-#if DATATOOLS_WITH_REFLECTION == 1
 // Activate reflection layer for the 'datatools::properties' class:
 DR_CLASS_INIT(::datatools::properties);
-#endif // DATATOOLS_WITH_REFLECTION
 
 #endif // DATATOOLS_UTILS_PROPERTIES_H_
 

@@ -193,9 +193,7 @@ class event_id :
   //! Support for backward compatibility serialization tag
   DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT()
 
-#if DATATOOLS_WITH_REFLECTION == 1
-    DR_CLASS_RTTI();
-#endif
+  DR_CLASS_RTTI();
 
 };
 
@@ -224,9 +222,7 @@ class event_id_equal_predicate : public std::unary_function<event_id, bool> {
 
 DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::datatools::event_id)
 
-#if DATATOOLS_WITH_REFLECTION == 1
 // Activate reflection layer for the 'datatools::event_id' class:
 DR_CLASS_INIT(::datatools::event_id);
-#endif // DATATOOLS_WITH_REFLECTION
 
 #endif // DATATOOLS_EVENT_ID_H_

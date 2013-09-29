@@ -316,7 +316,7 @@ if(DATATOOLS_WITH_REFLECTION)
     include/datatools/multi_properties-reflect.h
     include/datatools/things-reflect.h
     include/datatools/advanced_object-reflect.h
-
+    include/datatools/logger-reflect.h
     include/datatools/the_introspectable.h
     src/the_introspectable.cc
     )

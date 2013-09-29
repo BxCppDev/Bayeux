@@ -228,7 +228,7 @@ int io_factory::init_read(const std::string& stream_name) {
     }
     DT_THROW_IF (! *fin_,
                  std::runtime_error,
-                 "Cannot open input stream!");
+                 "Cannot open input file stream '" << stream_name << "' !");
     in_fs_->push(*fin_);
   }
 
@@ -316,7 +316,7 @@ int io_factory::init_write(const std::string& stream_name) {
     fout_ = new std::ofstream(stream_name.c_str(), open_mode);
     DT_THROW_IF (!*fout_,
                  std::runtime_error,
-                 "Cannot open output stream !");
+                 "Cannot open output file stream '" << stream_name << "' !");
     out_fs_->push(*fout_);
   }
 

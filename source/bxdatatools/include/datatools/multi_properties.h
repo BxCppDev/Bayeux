@@ -292,10 +292,8 @@ private:
   DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(multi_properties);
   DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT();
 
-#if DATATOOLS_WITH_REFLECTION == 1
   //! Reflection interface
   DR_CLASS_RTTI();
-#endif
 
 };
 
@@ -309,10 +307,8 @@ DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::datatools::multi_p
 #include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT_KEY2(datatools::multi_properties, "datatools::multi_properties")
 
-#if DATATOOLS_WITH_REFLECTION == 1
 // Activate reflection layer for the 'datatools::multi_properties' class:
 DR_CLASS_INIT(::datatools::multi_properties);
-#endif // DATATOOLS_WITH_REFLECTION
 
 #endif // DATATOOLS_MULTI_PROPERTIES_H_
 

@@ -266,10 +266,9 @@ class things :
   DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(things);
   DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT();
 
-#if DATATOOLS_WITH_REFLECTION == 1
   //! Reflection interface
   DR_CLASS_RTTI();
-#endif
+
 };
 
 }  // end of namespace datatools
@@ -285,10 +284,8 @@ DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::datatools::things)
 #include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT_KEY2(datatools::things,"datatools::things");
 
-#if DATATOOLS_WITH_REFLECTION == 1
 // Activate reflection layer for the 'datatools::things' class:
 DR_CLASS_NONCOPYABLE_INIT(::datatools::things);
-#endif // DATATOOLS_WITH_REFLECTION
 
 #endif // DATATOOLS_THINGS_H_
 
