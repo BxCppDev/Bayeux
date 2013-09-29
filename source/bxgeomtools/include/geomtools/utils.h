@@ -16,7 +16,6 @@
 #ifndef GEOMTOOLS_UTILS_H_
 #define GEOMTOOLS_UTILS_H_ 1
 
-
 // Standard library
 #include <string>
 #include <iostream>
@@ -30,7 +29,6 @@
 // This module
 #include <geomtools/geomtools_config.h>
 #include <geomtools/clhep.h>
-#include <geomtools/utils.h>
 
 namespace geomtools {
 
@@ -128,7 +126,7 @@ namespace geomtools {
 
   enum vertex_1d
     {
-      VERTEX_NONE = 0x0,
+      VERTEX_NONE     = 0x0,
       VERTEX_ALL_BITS = 0xFFFFFFFF
     };
 
@@ -676,10 +674,11 @@ namespace boost {
 
 } // namespace boost
 
-DR_TYPE_INIT(geomtools::orientation_type);
-DR_TYPE_INIT(geomtools::direction_type);
-DR_TYPE_INIT(geomtools::axis_type);
-DR_TYPE_INIT(geomtools::rotation_axis_type);
+// Activate reflection layer for some 'geomtools::XXX' enums:
+DR_TYPE_INIT(::geomtools::orientation_type);
+DR_TYPE_INIT(::geomtools::direction_type);
+DR_TYPE_INIT(::geomtools::axis_type);
+DR_TYPE_INIT(::geomtools::rotation_axis_type);
 
 #endif // GEOMTOOLS_UTILS_H_
 

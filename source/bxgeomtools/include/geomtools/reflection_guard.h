@@ -43,7 +43,7 @@
 #warning This executable is built with its own geomtools reflection code.
 #include <geomtools/the_introspectable.h>
 #else
-#warning This executable must ensure the geomtools reflection library is loaded.
+//#warning This executable must ensure the geomtools reflection library is loaded.
 
 namespace geomtools {
 

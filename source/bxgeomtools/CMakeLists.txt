@@ -83,9 +83,9 @@ find_package(CLHEP 2.1.0.1 REQUIRED NOMODULE)
 # - Reflection
 if (GEOMTOOLS_WITH_REFLECTION)
   set (GEOMTOOLS_WITH_REFLECTION 1)
-  if (NOT datatools_WITH_REFLECTION)
-    message ( FATAL "Cannot build geomtools with reflection DLL because datatools was not so !")
-  endif()
+  # if (NOT datatools_WITH_REFLECTION)
+  #   message ( FATAL "Cannot build geomtools with reflection DLL because datatools was not so !")
+  # endif()
 else()
   set (GEOMTOOLS_WITH_REFLECTION 0)
 endif ()
@@ -166,23 +166,6 @@ install ( DIRECTORY ${PROJECT_SOURCE_DIR}/resources/gdml_schema
           PATTERN ".svn" EXCLUDE
           PATTERN "*~" EXCLUDE
          )
-
-# set ( _geomtools_testing_FULL_LOCAL_PATH
-#       "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/testing"
-#     )
-# message ( STATUS "${PROJECT_NAME} : geomtools testing full local path = '${_geomtools_testing_FULL_LOCAL_PATH}' " )
-
-# install ( DIRECTORY ${PROJECT_SOURCE_DIR}/testing
-#           DESTINATION ${CMAKE_INSTALL_DATADIR}
-#           FILE_PERMISSIONS OWNER_READ OWNER_WRITE
-#                            GROUP_READ GROUP_WRITE
-#                            WORLD_READ
-#           DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
-#                                 GROUP_READ GROUP_WRITE  GROUP_EXECUTE
-#                                 WORLD_READ WORLD_EXECUTE
-#           PATTERN ".svn" EXCLUDE
-#           PATTERN "*~" EXCLUDE
-#          )
 
 
 #----------------------------------------------------------------

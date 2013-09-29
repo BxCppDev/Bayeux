@@ -86,12 +86,12 @@ namespace datatools {
           .DR_CLASS_VOID_METHOD("reset",
                                 ::geomtools::blur_spot,
                                 ::geomtools::blur_spot::reset)
-          .DR_CLASS_METHOD2_CONST("match",
-                                  ::geomtools::blur_spot,
-                                  ::geomtools::blur_spot::match_impl,
-                                  bool,
-                                  const ::geomtools::blur_spot &,
-                                  bool)
+          // .DR_CLASS_METHOD2_CONST("match",
+          //                         ::geomtools::blur_spot,
+          //                         ::geomtools::blur_spot::match_impl,
+          //                         bool,
+          //                         const ::geomtools::blur_spot &,
+          //                         bool)
 
           ;
         return;

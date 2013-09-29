@@ -164,6 +164,57 @@ void test_vector_3d()
   return;
 }
 
+void test_enums()
+{
+  std::clog << std::endl << "*** test_enums : Reflection..." << std::endl;
+
+  std::clog <<  "Number of meta-classes = " << camp::classCount() << std::endl;
+  for (int i = 0; i < camp::classCount(); i++) {
+    const camp::Class & c = camp::classByIndex(i);
+    std::clog << "Metaclass #" << i << " : " << c.name() << std::endl;
+  }
+
+  std::clog <<  "Number of meta-enums = " << camp::enumCount() << std::endl;
+  for (int i = 0; i < camp::enumCount(); i++) {
+    const camp::Enum & e = camp::enumByIndex(i);
+    std::clog << "Metaenum #" << i << " : " << e.name() << std::endl;
+  }
+
+  camp::detail::EnumManager & emgr = camp::detail::EnumManager::instance();
+  std::clog << "Count: " << emgr.count() << std::endl;
+
+  {
+    const DR_ENUM & tMetaEnum = camp::enumByName("datatools::logger::priority");
+    std::clog << "Meta Enum '" << tMetaEnum.name() << std::endl;
+    for (int i = 0; i < tMetaEnum.size(); i++) {
+      std::clog << " - Key '" << tMetaEnum.pair(i).name
+                << "' has value = " << tMetaEnum.pair(i).value << std::endl;
+    }
+  }
+
+
+  {
+    const DR_ENUM & tMetaEnum = camp::enumByName("geomtools::orientation_type");
+    std::clog << "Meta Enum '" << tMetaEnum.name() << std::endl;
+    for (int i = 0; i < tMetaEnum.size(); i++) {
+      std::clog << " - Key '" << tMetaEnum.pair(i).name
+                << "' has value = " << tMetaEnum.pair(i).value << std::endl;
+    }
+  }
+
+  {
+    const DR_ENUM & tMetaEnum = camp::enumByName("geomtools::axis_type");
+    std::clog << "Meta Enum '" << tMetaEnum.name() << std::endl;
+     for (int i = 0; i < tMetaEnum.size(); i++) {
+      std::clog << " - Key '" << tMetaEnum.pair(i).name
+                << "' has value = " << tMetaEnum.pair(i).value << std::endl;
+    }
+  }
+
+
+  return;
+}
+
 #include <camp/classget.hpp>
 
 int main (int argc_, char ** argv_)
@@ -178,6 +229,9 @@ int main (int argc_, char ** argv_)
       const camp::Class & c = camp::classByIndex(i);
       DT_LOG_NOTICE(logging, "Metaclass #" << i << " : " << c.name());
     }
+
+    DT_LOG_NOTICE(logging, "Running test_enums...");
+    test_enums();
 
     DT_LOG_NOTICE(logging, "Running test_vector_3d...");
     test_vector_3d();

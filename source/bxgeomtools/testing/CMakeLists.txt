@@ -73,11 +73,12 @@ set ( geomtools_tests_programs
   test_display_data.cxx
   test_manager.cxx
   test_service_manager.cxx
+  test_reflection_0.cxx
 )
 #set ( geomtools_tests_programs)
-if(GEOMTOOLS_WITH_REFLECTION)
-  list(APPEND geomtools_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
-endif()
+# if(GEOMTOOLS_WITH_REFLECTION)
+#   list(APPEND geomtools_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
+# endif()
 
 set(geomtools_tests_programs_list "${geomtools_tests_programs}")
 list(SORT geomtools_tests_programs_list)
