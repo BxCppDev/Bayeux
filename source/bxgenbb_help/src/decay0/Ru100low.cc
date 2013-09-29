@@ -199,7 +199,7 @@ namespace genbb
         ctet2 = 1. - 2. * prng_ ();
         stet2 = std::sqrt (1. - ctet2 * ctet2);
         ctet = ctet1 * ctet2 + stet1 * stet2 * cos (phi1 - phi2);
-        if (prng_ () * (1. + abs (a2) + abs (a4)) >
+        if (prng_ () * (1. + std::abs (a2) + std::abs (a4)) >
             1. + a2 * gsl_pow_2(ctet) + a4 *  gsl_pow_4(ctet)) {
           goto label_1;
         }

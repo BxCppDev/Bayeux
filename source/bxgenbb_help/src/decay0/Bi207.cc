@@ -340,14 +340,14 @@ namespace genbb {
       ctet=ctet1*ctet2+stet1*stet2*cos(phi1-phi2);
       p2=(3.*gsl_pow_2(ctet)-1.)/2.;
       p4=(35.*gsl_pow_4(ctet)-30.*gsl_pow_2(ctet)+3.)/8.;
-      if (prng_()*(1.+abs(a2)+abs(a4)) > 1.+a2*p2+a4*p4) {
+      if (prng_()*(1.+std::abs(a2)+std::abs(a4)) > 1.+a2*p2+a4*p4) {
         goto label_3;
       }
-      ip1064->grab_momentum().set (p1064 * stet1 * cos (phi1),
-                                   p1064 * stet1 * sin (phi1),
+      ip1064->grab_momentum().set (p1064 * stet1 * std::cos (phi1),
+                                   p1064 * stet1 * std::sin (phi1),
                                    p1064 * ctet1);
-      ip570->grab_momentum().set (p570 * stet2 * cos (phi2),
-                                  p570 * stet2 * sin (phi2),
+      ip570->grab_momentum().set (p570 * stet2 * std::cos (phi2),
+                                  p570 * stet2 * std::sin (phi2),
                                   p570 * ctet2);
       return;
     }
