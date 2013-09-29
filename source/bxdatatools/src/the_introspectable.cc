@@ -36,10 +36,10 @@ namespace reflection {
       if ( guard.get () == 0) {
         guard.reset (new dynamic_link_guard);
       }
-      if (devel) {
-        std::cerr << "datatools::detail::reflection::dynamic_link_guard::instance: Ok." << std::endl;
-      }
-      std::cerr << "datatools::detail::reflection::dynamic_link_guard: Construction done." << std::endl;
+      // if (devel) {
+      //   std::cerr << "datatools::detail::reflection::dynamic_link_guard::instance: Ok." << std::endl;
+      // }
+      // std::cerr << "datatools::detail::reflection::dynamic_link_guard: Construction done." << std::endl;
       return *guard.get ();
     }
 
