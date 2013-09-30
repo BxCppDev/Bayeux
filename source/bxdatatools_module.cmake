@@ -169,7 +169,7 @@ ${module_source_dir}/utils.cc
 ${module_source_dir}/version.cc
 ${module_source_dir}/version_check.cc
 ${module_source_dir}/version_id.cc
-${module_source_dir}/the_introspectable.cc
+#${module_source_dir}/the_introspectable.cc
 bx${module_name}/_datatools.cc
   )
 

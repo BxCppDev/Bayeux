@@ -83,6 +83,8 @@ namespace bayeux {
                                       "for input to simulation applications (i.e. GDML/Geant4).",
                                       materials::version::get_version()
                                       );
+				std::cerr << "*** DEVEL *** Registering materials module's resource directory : "
+									<< materials::get_resource_dir(false) << std::endl;	
         materials_lib_infos.store_string(datatools::library_info::keys::install_resource_dir(),
                                          materials::get_resource_dir(false)
                                          );
@@ -107,10 +109,10 @@ namespace bayeux {
       }
 
       {
-        datatools::properties & genvtx_lib_infos
-          = lib_info_reg.registration("genvtx",
-                                      "Vertex random generator tools for input to simulation applications.",
-                                      genvtx::version::get_version()
+        datatools::properties & emfield_lib_infos
+          = lib_info_reg.registration("emfield",
+                                      "Electromagnetic field modelling and management.",
+                                      emfield::version::get_version()
                                       );
       }
 
@@ -123,11 +125,12 @@ namespace bayeux {
                                       );
       }
 
+
       {
-        datatools::properties & emfield_lib_infos
-          = lib_info_reg.registration("emfield",
-                                      "Electromagnetic field modelling and management.",
-                                      emfield::version::get_version()
+        datatools::properties & genvtx_lib_infos
+          = lib_info_reg.registration("genvtx",
+                                      "Vertex random generator tools for input to simulation applications.",
+                                      genvtx::version::get_version()
                                       );
       }
 

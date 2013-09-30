@@ -32,6 +32,7 @@ configure_file(${module_source_dir}/_bayeux.cc.in
 set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/version.cc
   ${module_source_dir}/bayeux.cc
+  ${module_source_dir}/the_introspectable.cc
   bx${module_name}/_bayeux.cc
   )
 

@@ -70,8 +70,6 @@ set(Bayeux_SUBMODULES
   dpp
 )
 
-#option(GENBB_HELP_WITH_REFLECTION "Build genbb_help reflection" ON)
-
 # - Configure Bayeux submodule first
 set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include")
 include(bxbayeux_module.cmake)
@@ -85,7 +83,9 @@ message( STATUS "CMAKE_INSTALL_DATADIR='${CMAKE_INSTALL_DATADIR}'" )
 
 set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include/bayeux")
 #set(MODULE_RESOURCE_ROOT "${Bayeux_BUILDPRODUCT_DIR}/share/Bayeux-${Bayeux_VERSION}/resources")
-set(MODULE_RESOURCE_ROOT "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}")
+set(MODULE_RESOURCE_ROOT "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}/resources")
+#set(MODULE_RESOURCE_ROOT "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}")
+message( STATUS "MODULE_RESOURCE_ROOT='${MODULE_RESOURCE_ROOT}'" )
 
 foreach(_m ${Bayeux_SUBMODULES})
   include(bx${_m}_module.cmake)
@@ -195,7 +195,7 @@ if(Bayeux_ENABLE_TESTING)
   foreach(_m ${Bayeux_SUBMODULES})
     foreach(_testsource ${${_m}_MODULE_TESTS})
       get_filename_component(_testname "${_testsource}" NAME_WE)
-      message(STATUS "Module: ${_m} Test: ${_testname}")
+      # message(STATUS "Module: ${_m} Test: ${_testname}")
       set(_testname "${_m}-${_testname}")
 
       add_executable(${_testname} ${_testsource})

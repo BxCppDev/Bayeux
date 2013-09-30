@@ -245,7 +245,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/gnuplot_drawer.cc
   ${module_source_dir}/geomtools_driver.cc
   ${module_source_dir}/version.cc
-  ${module_source_dir}/the_introspectable.cc
+  #${module_source_dir}/the_introspectable.cc
   )
 
 # - Reflection components

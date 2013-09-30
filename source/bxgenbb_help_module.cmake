@@ -51,6 +51,11 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/version.h.in
   ${module_include_dir}/${module_name}/detail/bio_link_guard.h
   ${module_include_dir}/${module_name}/detail/pg_tools.h
+  ${module_include_dir}/${module_name}/primary_particle-reflect.h
+  ${module_include_dir}/${module_name}/primary_event-reflect.h
+  ${module_include_dir}/${module_name}/the_introspectable.h
+  ${module_include_dir}/${module_name}/reflection_guard.h
+  ${module_include_dir}/${module_name}/detail/reflection_link_guard.h
   )
 
 set(${module_name}_PRIVATE_MODULE_HEADERS
@@ -203,11 +208,6 @@ set(${module_name}_PRIVATE_MODULE_HEADERS
   ${module_include_dir}/${module_name}/decay0/Zn65.h
   ${module_include_dir}/${module_name}/decay0/Zr92low.h
   ${module_include_dir}/${module_name}/decay0/Zr96.h
-  ${module_include_dir}/${module_name}/primary_particle-reflect.h
-  ${module_include_dir}/${module_name}/primary_event-reflect.h
-  ${module_include_dir}/${module_name}/the_introspectable.h
-  ${module_include_dir}/${module_name}/reflection_guard.h
-  ${module_include_dir}/${module_name}/detail/reflection_link_guard.h
   )
 
 # - NB Order of sources appears to be important - taken from genbb_help
@@ -376,7 +376,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/decay0/Zn65.cc
   ${module_source_dir}/decay0/Zr92low.cc
   ${module_source_dir}/decay0/Zr96.cc
-  ${module_source_dir}/the_introspectable.cc
+  #${module_source_dir}/the_introspectable.cc
   )
 
 # # - Reflection components
