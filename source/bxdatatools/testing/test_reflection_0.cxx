@@ -7,6 +7,7 @@
 #include <stdexcept>
 
 #include <camp/invalidenum.hpp>
+#include <camp/invalidclass.hpp>
 
 #include <datatools/logger.h>
 
@@ -223,8 +224,6 @@ void test_event_id (bool debug_)
 }
 
 
-//#include<camp/detail/enummanager.hpp>
-
 void test_logger (bool debug_)
 {
   std::clog << "*** test_logger : " << std::endl;
@@ -285,6 +284,7 @@ int main (int argc_, char ** argv_)
 
       srand48 (seed);
 
+			/*
       DT_LOG_NOTICE(logging, "Number of metaclasses = " << camp::classCount());
       for (int i = 0; i < camp::classCount(); i++) {
         const camp::Class & c = camp::classByIndex(i);
@@ -306,12 +306,14 @@ int main (int argc_, char ** argv_)
       test_multi_properties (debug);
 
       test_things (debug);
-
+			*/
       std::clog << "The end" << std::endl;
-
     }
-  catch (std::exception & x)
-    {
+  catch (camp::InvalidClass & ic) {
+    std::cerr << "ERROR: test_reflection_0: " << ic.what () << " class : " << ic.className() << std::endl;
+    exit (EXIT_FAILURE);
+  }
+  catch (std::exception & x) {
       std::cerr << "ERROR: test_reflection_0: " << x.what () << std::endl;
       exit (EXIT_FAILURE);
     }

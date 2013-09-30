@@ -20,7 +20,8 @@ namespace datatools {
 
     DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::advanced_object, tag_)
     {
-      // std::cerr << "DEVEL: ***** Registering class '::datatools::advanced_object'... " << std::endl;
+// 			std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
+// 								<< "datatools::advanced_object" << std::endl;
       // Declare and populate the reflection metaclass for the 'datatools::advanced_object' class:
       DR_CLASS_DECLARE (::datatools::advanced_object)
         .DR_CLASS_BASE(::datatools::i_serializable)

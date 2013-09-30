@@ -84,7 +84,7 @@ class i_tree_dumpable {
     bool inherit_;
   };
 
-    DR_CLASS_RTTI();
+	DR_CLASS_RTTI();
 
 };
 

@@ -4,6 +4,7 @@
 #define DATATOOLS_I_SERIALIZABLE_REFLECT_H_
 
 // Standard Library
+#include <iostream>
 
 // Third Party
 
@@ -19,6 +20,8 @@ namespace datatools {
 
       DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::i_serializable, tag_)
       {
+// 				std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
+// 									<< "datatools::i_serializable" << std::endl;
         DR_CLASS_DECLARE (::datatools::i_serializable)
           /*
           .DR_CLASS_METHOD_CONST("get_serial_tag",
