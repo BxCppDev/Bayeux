@@ -392,10 +392,10 @@ namespace mctools {
             output_file_oss << '.' << datatools::io_factory::format::xml_extension ();
           } else if (_output_file_format_ == "brio") {
             using_brio = true;
-            output_file_oss << brio::store_info::BRIO_FILE_EXTENSION;
+            output_file_oss << brio::store_info::constants::brio_file_extension ();
           } else if (_output_file_format_ == "trio") {
             using_brio = true;
-            output_file_oss << brio::store_info::TRIO_FILE_EXTENSION;
+            output_file_oss << brio::store_info::constants::trio_file_extension ();
           }
 
           // compression extension:
@@ -414,9 +414,9 @@ namespace mctools {
         if (! output_file_directives) {
           using_brio = false;
           const std::string extension = boost::filesystem::extension (output_file_name);
-          if (extension == brio::store_info::BRIO_FILE_EXTENSION) {
+          if (extension == brio::store_info::constants::brio_file_extension ()) {
             using_brio = true;
-          } else if (extension == brio::store_info::TRIO_FILE_EXTENSION) {
+          } else if (extension == brio::store_info::constants::trio_file_extension ()) {
             using_brio = true;
           }
         }
