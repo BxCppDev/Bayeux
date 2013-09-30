@@ -21,6 +21,9 @@ namespace datatools {
 
       DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::blur_spot, tag_)
       {
+// 				std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
+// 									<< "geomtools::blur_spot" << std::endl;
+				
         DR_CLASS_DECLARE (::geomtools::blur_spot)
           .DR_CLASS_BASE(::datatools::i_serializable)
           .DR_CLASS_BASE(::datatools::i_tree_dumpable)

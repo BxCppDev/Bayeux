@@ -34,6 +34,8 @@
 // Geomtools :
 #include <geomtools/geomtools_config.h>
 #include <geomtools/geom_id.h>
+#include <datatools/properties.h>
+
 
 namespace geomtools {
 

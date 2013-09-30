@@ -577,7 +577,7 @@ namespace geomtools {
 
     if (datatools::is_valid (skin_thickness)) {
       if (! datatools::is_valid (skin_step)) {
-        skin_step = abs (zmax_ - zmin_) / 20.0;
+        skin_step = std::abs (zmax_ - zmin_) / 20.0;
       }
       _build_from_envelope_and_skin_ (skin_thickness, skin_step, zmin_, zmax_);
     }
@@ -782,7 +782,7 @@ namespace geomtools {
         const double R2 = r1;
         const double R1_2 = R1 * R1;
         const double R2_2 = R2 * R2;
-        const double h = abs (z1 - z0);
+        const double h = std::abs (z1 - z0);
         const double V = M_PI * h * (R1_2 + R2_2 + R1 * R2) / 3;
         vext += V;
         // increment:
@@ -806,7 +806,7 @@ namespace geomtools {
         const double R2 = rmin1;
         const double R1_2 = R1 * R1;
         const double R2_2 = R2 * R2;
-        const double h = abs (z1 - z0);
+        const double h = std::abs (z1 - z0);
         const double V = M_PI * h * (R1_2 + R2_2 + R1 * R2) / 3;
         vint += V;
         // increment:
@@ -952,14 +952,14 @@ namespace geomtools {
     if (mask & FACE_BOTTOM) {
       const double zbottom = _points_.begin ()->first;
       const double rbottom = _points_.begin ()->second.rmax;
-      if ((abs(z - zbottom) < hskin)
+      if ((std::abs(z - zbottom) < hskin)
           && (r < (rbottom + hskin))) return true;
     }
 
     if (mask & FACE_TOP) {
       const double ztop = _points_.rbegin ()->first;
       const double rtop = _points_.rbegin ()->second.rmax;
-      if ((abs(z - ztop) < hskin)
+      if ((std::abs(z - ztop) < hskin)
           && (r < (rtop + hskin))) return true;
     }
 

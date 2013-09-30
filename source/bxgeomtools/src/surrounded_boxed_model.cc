@@ -355,7 +355,7 @@ namespace geomtools {
 
       if (position == BACK)
         {
-          dx0 = abs (g2xmax - g2xmin);
+          dx0 = std::abs (g2xmax - g2xmin);
           x0 -= dx0;
           mmy0.add (g2ymin);
           mmy1.add (g2ymax);
@@ -364,7 +364,7 @@ namespace geomtools {
         }
       if (position == FRONT)
         {
-          dx1 = abs (g2xmax - g2xmin);
+          dx1 = std::abs (g2xmax - g2xmin);
           x1 += dx1;
           mmy0.add (g2ymin);
           mmy1.add (g2ymax);
@@ -373,7 +373,7 @@ namespace geomtools {
         }
       if (position == LEFT)
         {
-          dy0 = abs (g2ymax - g2ymin);
+          dy0 = std::abs (g2ymax - g2ymin);
           y0 -= dy0;
           mmx0.add (g2xmin);
           mmx1.add (g2xmax);
@@ -382,7 +382,7 @@ namespace geomtools {
         }
       if (position == RIGHT)
         {
-          dy1 = abs (g2ymax - g2ymin);
+          dy1 = std::abs (g2ymax - g2ymin);
           y1 += dy1;
           mmx0.add (g2xmin);
           mmx1.add (g2xmax);
@@ -391,7 +391,7 @@ namespace geomtools {
         }
       if (position == BOTTOM)
         {
-          dz0 = abs (g2zmax - g2zmin);
+          dz0 = std::abs (g2zmax - g2zmin);
           z0 -= dz0;
           mmx0.add (g2xmin);
           mmx1.add (g2xmax);
@@ -400,7 +400,7 @@ namespace geomtools {
         }
       if (position == TOP)
         {
-          dz1 = abs (g2zmax - g2zmin);
+          dz1 = std::abs (g2zmax - g2zmin);
           z1 += dz1;
           mmx0.add (g2xmin);
           mmx1.add (g2xmax);

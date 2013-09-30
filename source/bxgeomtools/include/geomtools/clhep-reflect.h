@@ -23,6 +23,9 @@ namespace datatools {
 
       DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::vector_2d, tag_)
       {
+// 				std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
+// 									<< "geomtools::vector_2d" << std::endl;
+				
         // Declare and populate the reflection metaclass for the 'geomtools::vector_2d' class:
         DR_CLASS_DECLARE (::geomtools::vector_2d)
           .DR_CLASS_CONSTRUCTOR()
@@ -114,6 +117,8 @@ namespace datatools {
 
       DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::vector_3d, tag_)
       {
+				std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
+									<< "geomtools::vector_3d" << std::endl;
 
         // Unambiguous overloaded methods addressing :
         typedef double (::geomtools::vector_3d::*theta_1_method_type)() const;

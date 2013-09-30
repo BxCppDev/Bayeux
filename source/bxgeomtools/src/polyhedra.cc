@@ -433,8 +433,8 @@ namespace geomtools {
       const double theta = alpha * i;
       const double xs  = _r_max_ * cos (theta);
       const double ys  = _r_max_ * sin (theta);
-      const double axs = abs (xs);
-      const double ays = abs (ys);
+      const double axs = std::abs (xs);
+      const double ays = std::abs (ys);
       if (! datatools::is_valid (_xy_max_)) {
         _xy_max_ = axs;
       }
@@ -516,7 +516,7 @@ namespace geomtools {
         const double a2 = 2 * rmax1 * sin (angle);
         const double a1_2 = a1 * a1;
         const double a2_2 = a2 * a2;
-        const double h = abs (z1 - z0);
+        const double h = std::abs (z1 - z0);
         const double A = 0.25
           * M_PI
           * (
@@ -560,7 +560,7 @@ namespace geomtools {
         const double a2 = 2 * rmin1 * sin (angle);
         const double a1_2 = a1 * a1;
         const double a2_2 = a2 * a2;
-        const double h = abs (z1 - z0);
+        const double h = std::abs (z1 - z0);
         const double A = 0.25
           * M_PI
           * (
@@ -601,7 +601,7 @@ namespace geomtools {
         const double angle = M_PI / n;
         const double a1 = 2 * rmax0 * sin (angle);
         const double a2 = 2 * rmax1 * sin (angle);
-        const double h = abs (z1 - z0);
+        const double h = std::abs (z1 - z0);
         const double V = n * h * (a1 * a1 + a2 * a2 + a1 * a2) / tan (angle) / 12;
         vext += V;
         // increment:
@@ -626,7 +626,7 @@ namespace geomtools {
         const double angle = M_PI / n;
         const double a1 = 2 * rmin0 * sin (angle);
         const double a2 = 2 * rmin1 * sin (angle);
-        const double h = abs (z1 - z0);
+        const double h = std::abs (z1 - z0);
         const double V = n * h * (a1 * a1 + a2 * a2 + a1 * a2) / tan (angle) / 12;
         vint += V;
         // increment:
@@ -821,7 +821,7 @@ namespace geomtools {
       {
       double zbottom = _points_.begin ()->first;
       double rbottom = _points_.begin ()->second;
-      if ((abs(z - zbottom) < hskin)
+      if ((std::abs(z - zbottom) < hskin)
       && (r < (rbottom + hskin))) return true;
       }
 
@@ -829,7 +829,7 @@ namespace geomtools {
       {
       double ztop = _points_.rbegin ()->first;
       double rtop = _points_.rbegin ()->second;
-      if ((abs(z - ztop) < hskin)
+      if ((std::abs(z - ztop) < hskin)
       && (r < (rtop + hskin))) return true;
       }
 
@@ -855,7 +855,7 @@ namespace geomtools {
       double alpha = atan2 (r2 - r1, z2 - z1);
       double epsilon = skin / cos (alpha);
       double rs = r1 + (r2 - r1) * (z2 - z1) / ( z - z1);
-      if (abs(r - rs) < 0.5 * epsilon)
+      if (std::abs(r - rs) < 0.5 * epsilon)
       {
       return true;
       }
