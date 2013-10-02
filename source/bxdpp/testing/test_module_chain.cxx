@@ -51,9 +51,7 @@ namespace po = boost::program_options;
 int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
-
-  try
-    {
+  try {
       std::clog << "The event record processing test program." << std::endl;
 
       bool   debug;
@@ -158,6 +156,7 @@ int main (int argc_, char ** argv_)
         input_files.push_back("${DPP_DATA_DIR}/testing/data/data_3.txt.gz");
       }
 
+
       if (vm.count("output-file")) {
         output_file = vm["output-file"].as<std::string> ();
         std::clog << "Output file is : " << output_file << ".\n";
@@ -204,13 +203,17 @@ int main (int argc_, char ** argv_)
       uint32_t flags = dpp::module_manager::BLANK;
       if (debug) flags |= dpp::module_manager::FACTORY_DEBUG;
       dpp::module_manager MM (flags);
+
+      std::cerr << "****** DEVEL ***** Go* " << std::endl;
+      //return 0;
+
       if (verbose) {
         MM.set_logging_priority(datatools::logger::PRIO_NOTICE);
       }
       if (debug) {
         MM.set_logging_priority(datatools::logger::PRIO_DEBUG);
       }
-
+      //return 0;
       // Load properties from the configuration file:
       if (mgr_config.empty ())
         {
@@ -221,10 +224,14 @@ int main (int argc_, char ** argv_)
       std::string MM_config_file = mgr_config;
       datatools::fetch_path_with_env (MM_config_file);
       std::clog << "Manager config. file : '" << MM_config_file << "'" << std::endl;
+
+      //return 0;
       datatools::properties MM_config;
       datatools::properties::read_config (MM_config_file, MM_config);
       MM.initialize (MM_config);
       if (debug) MM.tree_dump (std::clog, "Module manager (initialized) : ", "DEBUG: ");
+
+      //return 0;
 
       std::clog << "Module to be used : '" << module_name << "'" << std::endl;
       if (! MM.has (module_name))
@@ -301,17 +308,16 @@ int main (int argc_, char ** argv_)
       // Terminate the module manager :
       MM.reset ();
 
-    }
-  catch (std::exception & x)
-    {
-      std::cerr << "error: " << x.what () << std::endl;
-      error_code = EXIT_FAILURE;
-    }
-  catch (...)
-    {
-      std::cerr << "error: " << "unexpected error !" << std::endl;
-      error_code = EXIT_FAILURE;
-    }
+      std::cerr << "****** DEVEL ***** The end " << std::endl;
+   }
+  catch (std::exception & x) {
+    std::cerr << "error: " << x.what () << std::endl;
+    error_code = EXIT_FAILURE;
+  }
+  catch (...) {
+    std::cerr << "error: " << "unexpected error !" << std::endl;
+    error_code = EXIT_FAILURE;
+  }
   return (error_code);
 }
 

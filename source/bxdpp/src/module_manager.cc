@@ -112,6 +112,7 @@ namespace dpp {
     _flags_                 = flags_;
     _service_manager_owner_ = false;
     _service_manager_       = 0;
+    std::cerr << "****** DEVEL ***** module_manager::module_manager* " << std::endl;
     return;
   }
 
