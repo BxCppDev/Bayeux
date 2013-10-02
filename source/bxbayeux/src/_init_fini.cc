@@ -1,11 +1,10 @@
 /* bayeux/_init_fini.cc
  */
 // Ourselves
-#include <bayeux/bayeux_config.h>
+#include <bayeux/bayeux.h>
 
 // This package:
 #include <datatools/logger.h>
-#include <bayeux/bayeux.h>
 
 __attribute__((constructor))
 static void bayeux_initializer()
@@ -15,8 +14,7 @@ static void bayeux_initializer()
    * This technique may/will change in the future.      *
    ******************************************************/
   DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Entering...");
-  bayeux::initialize(0,0);
-  bayeux::_special_initialize_impl();
+  ::bayeux::initialize(0,0);
   DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Exiting.");
   return;
 }
@@ -29,8 +27,7 @@ static void bayeux_finalizer()
    * This technique may/will change in the future.      *
    ******************************************************/
   DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Entering...");
-  bayeux::_special_terminate_impl();
-  bayeux::terminate();
+  ::bayeux::terminate();
   DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Exiting.");
   return;
 }

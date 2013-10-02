@@ -28,6 +28,7 @@
 #include <string>
 
 // This project
+//#include <bayeux/bayeux_config.h>
 
 namespace bayeux {
 
@@ -44,18 +45,15 @@ namespace bayeux {
 /// bayeux initialization macro using main function arguments
 #define BAYEUX_INIT_MAIN(Argc,Argv)		\
   ::bayeux::initialize( Argc , Argv );		\
-  ::bayeux::_special_initialize_impl();		\
   /**/
 
 /// bayeux initialization macro
 #define BAYEUX_INIT()				\
   ::bayeux::initialize();			\
-  ::bayeux::_special_initialize_impl();		\
   /**/
 
 /// bayeux termination macro
 #define BAYEUX_FINI()				\
-  ::bayeux::_special_terminate_impl();		\
   ::bayeux::terminate();			\
   /**/
 
