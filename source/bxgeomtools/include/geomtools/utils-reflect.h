@@ -20,8 +20,8 @@ namespace datatools {
 
       DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::orientation_type, tag_)
       {
-				std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
-									<< "geomtools::orientation_type" << std::endl;
+        //std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
+        //          << "geomtools::orientation_type" << std::endl;
         DR_ENUM_DECLARE(::geomtools::orientation_type)
           .DR_ENUM_PAIR("vertical",   geomtools::VERTICAL)
           .DR_ENUM_PAIR("horizontal", geomtools::HORIZONTAL)
@@ -31,8 +31,8 @@ namespace datatools {
 
       DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::direction_type, tag_)
       {
-				std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
-									<< "geomtools::direction_type" << std::endl;
+        // std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
+        //        << "geomtools::direction_type" << std::endl;
         DR_ENUM_DECLARE(::geomtools::direction_type)
           .DR_ENUM_PAIR("back",   geomtools::BACK)
           .DR_ENUM_PAIR("front",  geomtools::FRONT)
@@ -46,8 +46,8 @@ namespace datatools {
 
       DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::axis_type, tag_)
       {
-				std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
-									<< "geomtools::axis_type" << std::endl;
+        // std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
+        //           << "geomtools::axis_type" << std::endl;
         DR_ENUM_DECLARE(::geomtools::axis_type)
           .DR_ENUM_PAIR("invalid", geomtools::AXIS_INVALID)
           .DR_ENUM_PAIR("x",       geomtools::AXIS_X)
@@ -59,8 +59,8 @@ namespace datatools {
 
       DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::rotation_axis_type, tag_)
       {
-				std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
-									<< "geomtools::rotation_axis_type" << std::endl;
+        // std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
+        //           << "geomtools::rotation_axis_type" << std::endl;
         DR_ENUM_DECLARE(::geomtools::rotation_axis_type)
           .DR_ENUM_PAIR("invalid", geomtools::ROTATION_AXIS_INVALID)
           .DR_ENUM_PAIR("x",       geomtools::ROTATION_AXIS_X)
