@@ -68,6 +68,13 @@ find_package(ROOT @ROOT_VERSION@ EXACT REQUIRED
   NO_DEFAULT_PATH
   )
 
+# - CAMP
+find_package(CAMP @CAMP_VERSION@ EXACT REQUIRED
+  NO_MODULE
+  PATHS @CAMP_DIR@
+  NO_DEFAULT_PATH
+  )
+
 #-----------------------------------------------------------------------
 # Append third party include directories to Bayeux's so exposed
 # headers are visible
