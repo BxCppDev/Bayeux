@@ -296,7 +296,7 @@ set_target_properties(datatools
     PUBLIC_HEADER                         "${datatools_PUBLIC_HEADERS}"
   )
 
-target_link_libraries(datatools ${Boost_LIBRARIES} ${CAMP_LIBRARIES} ${CMAKE_DL_LIBS})
+target_link_libraries(datatools ${CAMP_LIBRARIES} ${Boost_LIBRARIES} ${CMAKE_DL_LIBS})
 
 set(DATATOOLS_TARGETS datatools)
 
