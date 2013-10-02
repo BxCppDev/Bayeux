@@ -65,7 +65,6 @@ set(Bayeux_SUBMODULES
   emfield
   genbb_help
   genvtx
-  trackfit
   brio
   dpp
 )
@@ -79,13 +78,11 @@ set(Bayeux_TESTS)
 set(Bayeux_RESOURCES)
 
 set(CMAKE_INSTALL_DATADIR "share/Bayeux-${Bayeux_VERSION}")
-message( STATUS "CMAKE_INSTALL_DATADIR='${CMAKE_INSTALL_DATADIR}'" )
 
 set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include/bayeux")
 #set(MODULE_RESOURCE_ROOT "${Bayeux_BUILDPRODUCT_DIR}/share/Bayeux-${Bayeux_VERSION}/resources")
 set(MODULE_RESOURCE_ROOT "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}/resources")
 #set(MODULE_RESOURCE_ROOT "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}")
-message( STATUS "MODULE_RESOURCE_ROOT='${MODULE_RESOURCE_ROOT}'" )
 
 foreach(_m ${Bayeux_SUBMODULES})
   include(bx${_m}_module.cmake)

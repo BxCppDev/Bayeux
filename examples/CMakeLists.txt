@@ -26,7 +26,7 @@ include(ExternalProject)
 #-----------------------------------------------------------------------
 # Basic example
 # - Requires support for internal dependencies in ExternalProject
-if(CMAKE_VERSION VERSION_GREATER 2.8.10)
+if(CMAKE_VERSION VERSION_GREATER 2.8.10.99)
   ExternalProject_Add(Bayeux_BasicVersionCheck
     DEPENDS Bayeux
     LIST_SEPARATOR @
@@ -44,7 +44,7 @@ endif()
 #-----------------------------------------------------------------------
 # Basic example
 # - Requires support for internal dependencies in ExternalProject
-if(CMAKE_VERSION VERSION_GREATER 2.8.10)
+if(CMAKE_VERSION VERSION_GREATER 2.8.10.99)
   ExternalProject_Add(Bayeux_BasicModulesCheck
     DEPENDS Bayeux
     LIST_SEPARATOR @
