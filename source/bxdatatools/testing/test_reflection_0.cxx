@@ -255,6 +255,7 @@ void test_logger (bool debug_)
   return;
 }
 
+
 int main (int argc_, char ** argv_)
 {
   datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
@@ -284,7 +285,7 @@ int main (int argc_, char ** argv_)
 
       srand48 (seed);
 
-			/*
+
       DT_LOG_NOTICE(logging, "Number of metaclasses = " << camp::classCount());
       for (int i = 0; i < camp::classCount(); i++) {
         const camp::Class & c = camp::classByIndex(i);
@@ -306,7 +307,7 @@ int main (int argc_, char ** argv_)
       test_multi_properties (debug);
 
       test_things (debug);
-			*/
+
       std::clog << "The end" << std::endl;
     }
   catch (camp::InvalidClass & ic) {

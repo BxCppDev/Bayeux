@@ -61,6 +61,7 @@ namespace datatools {
       std::string              library_info_logging_label;
       bool                     inhibit_library_info_register;
       std::vector<std::string> unrecognized_args;
+      std::vector<std::string> resource_paths;
       bool                     splash;
       param_type();
       void reset();
@@ -98,6 +99,12 @@ namespace datatools {
 
     /// Return a non mutable reference to the library/component info registe
     const library_info & get_library_info_register() const;
+
+    /// Return the name of the current application
+    const std::string & get_application_name() const;
+
+    /// Check if the name of the current application is defined
+    bool has_application_name() const;
 
     /// Check if the kernel singleton is available
     static bool is_instantiated();
@@ -138,7 +145,7 @@ namespace datatools {
     logger::priority _logging_;     /// Logging priority
     bool             _activate_library_info_register_; /// Activation flag for Library/component information register
     boost::scoped_ptr<library_info> _library_info_register_; /// Library/component information register
-
+    std::string     _application_name_; /// The name of the current application
     static kernel * _instance_; /// Singleton handle
 
   };

@@ -61,7 +61,7 @@
 
 // Inform Camp that type Type exists :
 #define DR_TYPE_REGISTER(Type) \
-  DR_CLASS_REGISTER( Type )    \
+  CAMP_TYPE( Type )    \
   /**/
 
 // Inform Camp that non copyable class Type exists :
@@ -71,7 +71,7 @@
 
 // Inform Camp that non copyable type Type exists :
 #define DR_TYPE_NONCOPYABLE_REGISTER(Type) \
-  DR_CLASS_NONCOPYABLE_REGISTER( Type )    \
+  CAMP_TYPE_NONCOPYABLE( Type )    \
   /**/
 
 // Declare Camp RTTI within class declaration :
@@ -481,15 +481,15 @@
 
 /************************************************************************/
 
-#define DR_CLASS         camp::Class
-#define DR_ENUM          camp::Enum
-#define DR_CLASS_BY_NAME camp::classByName
-#define DR_CLASS_BY_TYPE camp::classByType
-#define DR_CLASS_BY_INDEX camp::classByIndex
+#define DR_CLASS           camp::Class
+#define DR_ENUM            camp::Enum
+#define DR_CLASS_BY_NAME   camp::classByName
+#define DR_CLASS_BY_TYPE   camp::classByType
+#define DR_CLASS_BY_INDEX  camp::classByIndex
 #define DR_CLASS_BY_OBJECT camp::classByObject
-#define DR_ENUM_BY_NAME  camp::enumByName
-#define DR_ENUM_BY_TYPE  camp::enumByType
-#define DR_ENUM_BY_INDEX  camp::enumByIndex
+#define DR_ENUM_BY_NAME    camp::enumByName
+#define DR_ENUM_BY_TYPE    camp::enumByType
+#define DR_ENUM_BY_INDEX   camp::enumByIndex
 #define DR_ENUM_BY_OBJECT  camp::enumByObject
 #define DR_OBJECT        camp::UserObject
 #define DR_VALUE         camp::Value
@@ -510,8 +510,8 @@
 #define DR_ENUM_NAME     name
 #define DR_ENUM_SIZE     size
 
-#define DR_ENUM_PAIR(PairName,PairValue)                                \
-  DR_ENUM_VALUE( PairName, PairValue )                                  \
+#define DR_ENUM_PAIR(PairName,PairValue)        \
+  value( PairName, PairValue )                  \
   /**/
 
 #define DR_REF(TypeId)                          \

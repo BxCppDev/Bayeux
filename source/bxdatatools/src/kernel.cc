@@ -4,6 +4,7 @@
 
 // Third Party
 #include <boost/program_options.hpp>
+#include <boost/filesystem.hpp>
 
 // This project
 #include <datatools/library_info.h>
@@ -76,7 +77,7 @@ namespace datatools {
        ->default_value(false),
        "Print splash screen at datatools kernel loading.            \n"
        "Example :                                                   \n"
-       "  --datatools::splash                                           "
+       "  --datatools::splash                                         "
        )
       ("datatools::logging",
        po::value<std::string>(&params_.logging_label)
@@ -99,6 +100,16 @@ namespace datatools {
        "Inhibit the use of the library/component information register.  \n"
        "Example :                                                       \n"
        "  --datatools::nolibinfo                                          "
+       )
+      ("datatools::resource_path",
+       po::value< std::vector<std::string> >(&params_.resource_paths),
+       "Register some resource paths associated to some libraries or modules.\n"
+       "Example :                                                            \n"
+       "  Register the \"foo@path1/subdir1\" path as the root directory of   \n"
+       "  the \"foo\" library and the \"bar@path2/subdir2\" path as the      \n"
+       "  root directory of the \"bar\" software module:                     \n"
+       "    --datatools::resource_path \"foo@path1/subdir1\"                     \n"
+       "    --datatools::resource_path \"bar@path2/subdir2\"                       "
        )
       ;
 
@@ -126,7 +137,7 @@ namespace datatools {
                               std::ostream & out_,
                               const std::string & indent_)
   {
-    out_ << "\ndatatools -- Kernel configuration options" << std::endl;
+    //out_ << "\ndatatools -- Kernel configuration options" << std::endl;
     out_ << std::endl;
     out_ << opts_ << std::endl;
     out_ << std::endl;
@@ -144,7 +155,7 @@ namespace datatools {
     out_ << "   Library info register : " << (kern_.has_library_info_register()?
                                               "activated" : "NA") << "\n";
     if (kern_.has_library_info_register()) {
-      // on board registered libraries...
+      // On board registered libraries...
     }
     out_ << "\n";
     return;
@@ -156,8 +167,10 @@ namespace datatools {
       this->_activate_library_info_register_ = false;
     }
 
+    // Set the kernel logging priority threshold:
     this->_logging_ = datatools::logger::get_priority(params_.logging_label);
 
+    // Instantiate the kernel library information register:
     if (this->_activate_library_info_register_) {
       _library_info_register_.reset(new library_info);
       _library_info_register_->set_logging(datatools::logger::get_priority(params_.library_info_logging_label));
@@ -167,33 +180,68 @@ namespace datatools {
       DT_LOG_TRACE(_logging_, "Kernel's library info registered is not created.");
     }
 
+    // Splash some fancy screen:
     if (params_.splash) {
       kernel::print_splash(kernel::const_instance(),std::clog);
     }
 
+    // Parse some special directives to load arbitrary resource path associated
+    // to some library or some software component identified by their names:
+    for (int i = 0; i < params_.resource_paths.size(); i++) {
+      std::string resource_path_registration = params_.resource_paths[i];
+      DT_LOG_TRACE(_logging_, "Resource path registration : '"
+                   << resource_path_registration << "'");
+      // format is :
+      //   "foo@path1/subdir/..."
+      int apos = resource_path_registration.find('@');
+      DT_THROW_IF(apos == resource_path_registration.npos,
+                  std::logic_error,
+                  "Invalid syntax in resource path registration directive ('"
+                  << resource_path_registration << "' !");
+      std::string lib_name = resource_path_registration.substr(0,apos);
+      // boost::filesystem::path
+      std::string lib_resource_path = resource_path_registration.substr(apos+1);
+      DT_LOG_TRACE(_logging_, "Library " << lib_name << "' resource path '"
+                   << lib_resource_path << "' registration...");
+      DT_THROW_IF(_library_info_register_->has("lib_name"),
+                  std::logic_error,
+                  "Library info '"<< lib_name << "'is already registered !");
+      datatools::properties & lib_infos
+        = _library_info_register_->registration(lib_name);
+      lib_infos.store_string(datatools::library_info::keys::install_resource_dir(),
+                             lib_resource_path
+                             );
+    }
+    if (_logging_ >= datatools::logger::PRIO_TRACE) {
+      _library_info_register_->tree_dump(std::cerr, "Library information register: ");
+    }
     return;
   }
 
   void kernel::initialize(int argc_, char * argv_[])
   {
+    // Fetch the application name:
+    if ( argc_ >= 1 ) {
+      _application_name_= argv_[0];
+    }
+
     // Parse command line options:
     namespace po = boost::program_options;
     param_type params;
-    po::options_description opts("datatools kernel allowed options ");
+    po::options_description opts("datatools kernel options ");
     build_opt_desc(opts, params);
     po::positional_options_description args;
     po::variables_map vm;
     po::parsed_options parsed =
       po::command_line_parser(argc_, argv_)
-      .options(opts)
-      .positional(args)
+      .options(opts) // Only options to be parsed.
+      //.positional(args) // This crashes so dont't use it here !
       .allow_unregistered()
       .run();
     params.unrecognized_args = po::collect_unrecognized(parsed.options,
                                                         po::include_positional);
     po::store(parsed, vm);
     po::notify(vm);
-
     if (params.help) {
       print_opt_desc(opts, std::cout);
     }
@@ -219,10 +267,21 @@ namespace datatools {
 
     // Revert to default idle status:
     _activate_library_info_register_ = true;
+    _application_name_.clear();
 
     _initialized_ = false;
     DT_LOG_TRACE(_logging_, "Kernel has shutdown.");
     return;
+  }
+
+  const std::string & kernel::get_application_name() const
+  {
+    return _application_name_;
+  }
+
+  bool kernel::has_application_name() const
+  {
+    return ! _application_name_.empty();
   }
 
   logger::priority kernel::get_logging() const
@@ -266,6 +325,8 @@ namespace datatools {
     }
     out_ << indent << i_tree_dumpable::tag
          << "Initialized   : " << _initialized_ << std::endl;
+    out_ << indent << i_tree_dumpable::tag
+         << "Application   : '" << _application_name_ << "'" << std::endl;
     out_ << indent << i_tree_dumpable::tag
          << "Logging   : '"
          << datatools::logger::get_priority_label(_logging_) << "'"

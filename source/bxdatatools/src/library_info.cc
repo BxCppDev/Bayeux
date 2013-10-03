@@ -516,6 +516,14 @@ namespace datatools {
       out_ << "Library: '" << libnames[i] << "'" << std::endl;
     }
 
+    {
+      out_ << indent << i_tree_dumpable::tag
+           << "DB   : " << std::endl;
+      std::ostringstream indent2;
+      indent2 << indent <<  i_tree_dumpable::skip_tag;
+      _db_.tree_dump(out_, "", indent2.str());
+    }
+
     out_ << indent << i_tree_dumpable::inherit_tag(inherit_)
          << "Logging   : '"
          << datatools::logger::get_priority_label(_logging_) << "'"
