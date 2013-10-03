@@ -33,9 +33,9 @@
 #include <emfield/version.h>
 #include <genbb_help/version.h>
 #include <genvtx/version.h>
-#include <trackfit/version.h>
 #include <brio/version.h>
 #include <dpp/version.h>
+//#include <mctools/version.h>
 
 // This package
 #include <datatools/kernel.h>
@@ -135,14 +135,6 @@ namespace bayeux {
           = lib_info_reg.registration("genvtx",
                                       "Vertex random generator tools for input to simulation applications.",
                                       genvtx::version::get_version()
-                                      );
-      }
-
-      {
-        datatools::properties & trackfit_lib_infos
-          = lib_info_reg.registration("trackfit",
-                                      "Track fitting in a NEMO-like detector.",
-                                      trackfit::version::get_version()
                                       );
       }
 
@@ -257,9 +249,6 @@ namespace bayeux {
         }
         if (lib_info_reg.has("brio")) {
           lib_info_reg.unregistration("brio");
-        }
-        if (lib_info_reg.has("trackfit")) {
-          lib_info_reg.unregistration("trackfit");
         }
         if (lib_info_reg.has("genvtx")) {
           lib_info_reg.unregistration("genvtx");

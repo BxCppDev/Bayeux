@@ -1,0 +1,39 @@
+//! \file  bayeux/bayeux_config.h
+//! \brief Configuration parameters for Bayeux
+//! \details
+//
+// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com>
+// Copyright (c) 2013 by The University of Warwick
+// Copyright (c) 2013 by Francois Mauger <mauger@lpccaen.in2p3.fr>
+// Copyright (c) 2013 by Université de Caen
+//
+// This file is part of Bayeux.
+//
+// Bayeux is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Bayeux is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Bayeux. If not, see <http://www.gnu.org/licenses/>.
+
+#ifndef BAYEUX_BAYEUX_CONFIG_H
+#define BAYEUX_BAYEUX_CONFIG_H
+// Standard Library
+#include <string>
+
+//! Evaluates to true if Bayeux was built with automated init/fini operation at DLL loading
+#cmakedefine01 BAYEUX_WITH_IMPLICIT_INIT_FINI
+
+//! The list of Bayeux  submodules :
+#define BAYEUX_SUBMODULES "@Bayeux_SUBMODULES@"
+
+//! The installation path of the Bayeux resource files :
+#define BAYEUX_DATA_INSTALL_DIR "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
+
+#endif // BAYEUX_BAYEUX_CONFIG_H

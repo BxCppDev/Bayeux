@@ -22,6 +22,7 @@ endforeach()
 set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/bayeux.h
   ${module_include_dir}/${module_name}/version.h.in
+  ${module_include_dir}/${module_name}/bayeux_config.h.in
   )
 
 # - configure special source file
@@ -38,7 +39,7 @@ set(${module_name}_MODULE_SOURCES
 
 set(${module_name}_ENDING_MODULE_SOURCES )
 
-if (Bayeux_WITH_IMPLICIT_INIT_FINI)
+if (BAYEUX_WITH_IMPLICIT_INIT_FINI)
   list(APPEND ${module_name}_ENDING_MODULE_SOURCES
               bx${module_name}/_init_fini.cc
     )

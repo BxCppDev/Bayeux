@@ -41,27 +41,21 @@ endif()
 set(bxexample01_Boost_COMPONENTS filesystem program_options)
 find_package(Boost 1.53 REQUIRED COMPONENTS ${bxexample01_Boost_COMPONENTS})
 
-# - CAMP
-find_package(CAMP 0.7.1 REQUIRED)
-
 # - Bayeux
 find_package(Bayeux 1.0.0 REQUIRED)
 
 include_directories(
   ${PROJECT_BINARY_DIR}/include
   ${PROJECT_SOURCE_DIR}/include
-  ${Boost_INCLUDE_DIRS}
-  ${CAMP_INCLUDE_DIRS}
   ${Bayeux_INCLUDE_DIRS}
   )
 
 set(_bxexample01_libraries
   ${Bayeux_LIBRARIES}
-  ${Boost_LIBRARIES}
-  ${CAMP_LIBRARIES}
+  # ${Boost_LIBRARIES}
+  # ${CAMP_LIBRARIES}
   )
 
-message (STATUS "******* CAMP_LIBRARIES=${CAMP_LIBRARIES}")
 # RPATH setup
 #SET(CMAKE_SKIP_BUILD_RPATH FALSE)
 #SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)

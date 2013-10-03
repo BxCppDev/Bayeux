@@ -67,6 +67,7 @@ set(Bayeux_SUBMODULES
   genvtx
   brio
   dpp
+  #mctools
 )
 
 # - Configure Bayeux submodule first

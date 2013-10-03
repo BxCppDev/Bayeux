@@ -365,17 +365,6 @@ int example_genvtx()
 }
 
 
-// - Bayeux/trackfit
-#include <trackfit/version.h>
-
-int example_trackfit()
-{
-  title("trackfit");
-
-  std::clog << "trackfit version is: " << trackfit::version::get_version() << std::endl;
-  return 0;
-}
-
 
 // - Bayeux/brio
 #include <brio/version.h>
@@ -432,6 +421,18 @@ int example_dpp()
   return 0;
 }
 
+// // - Bayeux/mctools
+// #include <mctools/version.h>
+
+// int example_mctools()
+// {
+//   title("mctools");
+
+//   std::clog << "mctools version is: " << mctools::version::get_version() << std::endl;
+
+//   return 0;
+// }
+
 int example_reflection()
 {
   std::clog << "Number of metaclasses = " << camp::classCount() << std::endl;
@@ -452,6 +453,7 @@ int example_reflection()
 
 int main(int argc, char *argv[]) {
   BAYEUX_INIT_MAIN(argc, argv);
+
   int error_code = EXIT_SUCCESS;
   try {
     std::clog << "Welcome to Bayeux bxexample01 !" << std::endl;
@@ -464,7 +466,6 @@ int main(int argc, char *argv[]) {
       params().interactive = true;
     }
 
-    example_bayeux();
     example_datatools();
     example_cuts();
     example_materials();
@@ -473,10 +474,11 @@ int main(int argc, char *argv[]) {
     example_emfield();
     example_genbb_help();
     example_genvtx();
-    example_trackfit();
     example_brio();
     example_dpp();
+    //example_mctools();
     example_reflection();
+    example_bayeux();
 
     std::clog << "The end." << std::endl;
   } catch (std::exception & error) {
@@ -486,6 +488,7 @@ int main(int argc, char *argv[]) {
     DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Unexpected error !");
     error_code = EXIT_FAILURE;
   }
+
   BAYEUX_FINI();
   return error_code;
 }
