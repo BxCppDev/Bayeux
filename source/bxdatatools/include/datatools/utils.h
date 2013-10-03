@@ -79,10 +79,6 @@ bool fetch_path_without_env(std::string& word);
 
 /** Extract the expanded path computed from the 'word' string.
  * Internally uses the 'getenv' function and the datatools::library_info
-/* Functions to expand string as path */
-
-/** Extract the expanded path computed from the 'word' string.
- * Internally uses the 'getenv' function and the datatools::library_info
  * register.
  */
 bool fetch_path_with_env_p(std::string& word,
