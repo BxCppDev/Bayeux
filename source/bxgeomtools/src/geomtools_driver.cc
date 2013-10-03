@@ -317,8 +317,13 @@ namespace geomtools {
     if (! _params_.geo_mgr_config_file.empty()) {
       _geo_mgr_.reset(new manager);
       _geo_mgr_.get()->set_logging_priority (_params_.logging);
+      std::string geo_mgr_config_file = _params_.geo_mgr_config_file;
+      DT_THROW_IF(! datatools::fetch_path_with_env(geo_mgr_config_file),
+                  std::runtime_error,
+                  "Cannot fetch path from geometry manager configuration file '"
+                  << geo_mgr_config_file << "' !");
       datatools::properties geo_mgr_config;
-      datatools::properties::read_config (_params_.geo_mgr_config_file,
+      datatools::properties::read_config (geo_mgr_config_file,
                                           geo_mgr_config);
       _geo_mgr_.get()->initialize (geo_mgr_config);
       _geo_factory_ref_ = &_geo_mgr_.get()->get_factory ();
@@ -629,6 +634,30 @@ namespace geomtools {
       return 1;
     }
     if (_geo_mgr_) _geo_mgr_.get()->tree_dump(out_, "Geometry manager : ");
+    return 0;
+  }
+
+  int geomtools_driver::command_print_mapping(std::ostream & out_,
+                                              const std::string & mapping_name_) const
+  {
+    if (! is_initialized()) {
+      DT_LOG_ERROR(_params_.logging, "Geometry driver is not initialized !");
+      return 1;
+    }
+   try {
+      const geomtools::mapping & gmpg
+        = _geo_mgr_.get()->get_mapping(mapping_name_);
+      std::ostringstream mapping_title;
+      mapping_title << "Geometry mapping ";
+      mapping_title << '(' << mapping_name_ << ')';
+      mapping_title << " : ";
+      out_ << mapping_title << std::endl;
+      gmpg.smart_print(out_);
+    } catch (std::exception & error) {
+      DT_LOG_ERROR(_params_.logging, "Cannot find mapping with name '"
+                   << mapping_name_ << "' !");
+      return 1;
+    }
     return 0;
   }
 

@@ -109,37 +109,6 @@ int main(int argc_, char ** argv_)
       run = false;
     }
 
-    /*
-    int iarg = 1;
-    while (iarg < argc_) {
-      std::string token = argv_[iarg++];
-      if (token[0] == '-' || token[0] == '+') {
-        std::string option = token;
-        if ((option == "-h") || (option == "--help"))  {
-          print_help(std::clog);
-          return 0;
-        } else if ((option == "-S") || (option == "--no-splash"))  {
-          splash = false;
-        } else if ((option == "-G") || (option == "--logging")) {
-          GDP_argv.push_back(option);
-          std::string logging_label = argv_[iarg++];
-          GDP_argv.push_back(logging_label);
-          datatools::logger::priority lp = datatools::logger::get_priority(logging_label);
-          if (lp == datatools::logger::PRIO_UNDEFINED) {
-            DT_LOG_WARNING(logging, "Invalid logging priority '" << logging_label << "' ! Ignore !");
-          } else {
-            logging = lp;
-          }
-        } else {
-          GDP_argv.push_back(option);
-        }
-      } else {
-        std::string argument = token;
-        GDP_argv.push_back(argument);
-      }
-    }
-    */
-
     // The geomtools driver :
     geomtools::geomtools_driver GD;
     {
@@ -226,6 +195,11 @@ int main(int argc_, char ** argv_)
           GD.command_print_manager(std::cout);
         } else if (command == "F" || command == "print_factory") {
           GD.command_print_factory(std::cout);
+        } else if (command == "A" || command == "print_mapping") {
+          std::string mapping_name;
+          command_iss >> mapping_name >> std::ws;
+          GD.command_print_mapping(std::cout, mapping_name);
+          mapping_name.clear();
         } else if (command == "m" || command == "model") {
           std::string model_name;
           command_iss >> model_name >> std::ws;
@@ -382,8 +356,9 @@ void print_shell_help (geomtools::geomtools_driver & gd_, std::ostream & out_)
   out_ <<  "  i | initialize [OPTIONS] FILE  : Initialize the geometry driver                   \n";
   out_ <<  "                                   Use 'initialize --help' for the online help.     \n";
   out_ <<  "  r | reset                      : Terminate the geometry driver                    \n";
-  out_ <<  "  P | print_manager              : Print the embeded geometry manager               \n";
-  out_ <<  "  F | print_factory              : Print the embeded geometry model factory         \n";
+  out_ <<  "  P | print_manager              : Print the embedded geometry manager              \n";
+  out_ <<  "  F | print_factory              : Print the embedded geometry model factory        \n";
+  out_ <<  "  A | print_mapping [NAME]       : Print the embedded mapping object                \n";
   out_ <<  "  M | list_of_models [OPTIONS]   : Print the list of geometry models.               \n";
   out_ <<  "                                   Use 'list_of_models --help' for the list of options.   \n";
   out_ <<  "  L | list_of_logicals [OPTIONS] : Print the list of logical volumes.                     \n";

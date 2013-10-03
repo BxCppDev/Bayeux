@@ -298,7 +298,7 @@ namespace geomtools {
       std::string tag2 ="|   ";
       if (++j == _get_geom_infos().end ()) {
         tag1 ="`-- ";
-        tag2 ="|   ";
+        tag2 ="    ";
       }
       out_ << tag1;
       out_ << "GID = " << i->first;
@@ -317,7 +317,7 @@ namespace geomtools {
            << std::endl;
       out_ << indent_ << tag2 << "|-- " << "Material  : '"
            << ginfo.get_logical ().get_material_ref ()<< "'" << std::endl;
-      out_ << indent_ << tag2 << "|-- "<< "Shape     : '"
+      out_ << indent_ << tag2 << "|-- " << "Shape     : '"
            << ginfo.get_logical ().get_shape ().get_shape_name ()
            << "'" << std::endl;
       out_ << indent_ << tag2 << "|-- " << "World placement : ["
@@ -336,10 +336,9 @@ namespace geomtools {
             std::string token;
             std::istringstream token_iss (user);
             token_iss >> token >> std::ws;
-            if (token == ".q" || token == ".quit")
-              {
-                break;
-              }
+            if (token == ".q" || token == ".quit") {
+              break;
+            }
           }
         }
       }

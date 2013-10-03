@@ -118,6 +118,10 @@ namespace geomtools {
     /// Print factory status
     int command_print_factory(std::ostream & out_) const;
 
+    /// Print mapping status
+    int command_print_mapping(std::ostream & out_,
+                              const std::string & mapping_name_ = "") const;
+
     /// Print the list of geometry models
     int command_print_list_of_models(std::ostream & out_, const std::string & print_models_options_ = "") const;
 
