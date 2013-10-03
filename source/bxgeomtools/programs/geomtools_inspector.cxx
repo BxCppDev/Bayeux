@@ -8,9 +8,14 @@
 #include <exception>
 #include <vector>
 
+// Third Party
+#include <boost/program_options.hpp>
+
 // Datatools:
+#include <datatools/datatools.h>
 #include <datatools/exception.h>
 #include <datatools/logger.h>
+#include <datatools/kernel.h>
 
 // Geomtools:
 #include <geomtools/geomtools_config.h>
@@ -19,20 +24,92 @@
 
 void print_splash(std::ostream & out_ = std::clog);
 
-void print_help(std::ostream & out_ = std::clog);
+void print_help(const boost::program_options::options_description & opts_,
+                std::ostream & out_ = std::clog);
 
 void print_shell_help(geomtools::geomtools_driver & gd_,
                       std::ostream & out_ = std::clog);
 
 int main(int argc_, char ** argv_)
 {
+  DATATOOLS_INIT_MAIN(argc_, argv_);
+
   int error_code = EXIT_SUCCESS;
   datatools::logger::priority logging = datatools::logger::PRIO_WARNING;
+  namespace po = boost::program_options;
+  boost::program_options::options_description opts("geomtools inspector configuration parameters");
+
   try {
-    const std::string prompt = "geomtools> ";
-    const std::string prompt_continue = "> ";
-    bool splash = true;
+    std::string prompt = "geomtools> ";
+    std::string prompt_continue = "> ";
+    bool run = true;
+    bool help = false;
+    bool no_splash = false;
+    std::string logging_label = "warning";
     std::vector<std::string> GDP_argv;
+    //std::string manager_config;
+
+    opts.add_options()
+      ("help,h",
+       po::value<bool>(&help)
+       ->zero_tokens()
+       ->default_value(false),
+       "Print help then exit.  \n"
+       )
+      ("logging,G",
+       po::value<std::string>(&logging_label)
+       ->default_value("warning"),
+       "Set the logging priority threshold.\n"
+       "Example :                          \n"
+       "  --logging \"warning\"           "
+       )
+      ("prompt,P",
+       po::value<std::string>(&prompt)
+       ->default_value("geomtools> "),
+       "Set the prompt.          \n"
+       "Example :                \n"
+       "  --prompt \"Geo$ \"  "
+       )
+      ("no-splash,S",
+       po::value<bool>(&no_splash)
+       ->zero_tokens()
+       ->default_value(false),
+       "Do not print the geomtools splash screen.\n"
+       "Example :                                \n"
+       "  --no-splash                          "
+       )
+      ;
+
+
+    po::positional_options_description args;
+    //args.add("manager-config", -1);
+
+    po::variables_map vm;
+    po::parsed_options parsed =
+      po::command_line_parser(argc_, argv_)
+      .options(opts)
+      //.positional(args) // Not used here.
+      .allow_unregistered()
+      .run();
+    GDP_argv = po::collect_unrecognized(parsed.options,
+                                        po::include_positional);
+    po::store(parsed, vm);
+    po::notify(vm);
+
+    datatools::logger::priority lp = datatools::logger::get_priority(logging_label);
+    GDP_argv.push_back("--logging");
+    GDP_argv.push_back(logging_label);
+
+    if (! no_splash) {
+      print_splash(std::cerr);
+    }
+
+    if (help) {
+      print_help(opts, std::cout);
+      run = false;
+    }
+
+    /*
     int iarg = 1;
     while (iarg < argc_) {
       std::string token = argv_[iarg++];
@@ -61,10 +138,7 @@ int main(int argc_, char ** argv_)
         GDP_argv.push_back(argument);
       }
     }
-
-    if (splash) {
-      print_splash(std::cerr);
-    }
+    */
 
     // The geomtools driver :
     geomtools::geomtools_driver GD;
@@ -81,8 +155,8 @@ int main(int argc_, char ** argv_)
       }
     }
 
-    // The geomtools inspector shell:
-    bool go_on = true;
+    // Run the geomtools inspector shell:
+    bool go_on = run;
     /// Browser main loop :
     while (go_on) {
       if (!std::cin || std::cin.eof()) {
@@ -234,9 +308,10 @@ int main(int argc_, char ** argv_)
         break;
       }
     } // End of browser main loop.
+
   }
   catch (std::exception & x) {
-    print_help ();
+    print_help(opts);
     DT_LOG_FATAL(datatools::logger::PRIO_FATAL, "geomtools_inspector: " << x.what ());
     error_code = EXIT_FAILURE;
   }
@@ -244,6 +319,8 @@ int main(int argc_, char ** argv_)
     DT_LOG_FATAL(datatools::logger::PRIO_FATAL, "geomtools_inspector: " << "Unexpected error !");
     error_code = EXIT_FAILURE;
   }
+
+  DATATOOLS_FINI();
   return (error_code);
 }
 
@@ -268,7 +345,8 @@ void print_splash(std::ostream & out_)
   return;
 }
 
-void print_help (std::ostream & out_)
+void print_help (const boost::program_options::options_description & opts_,
+                 std::ostream & out_)
 {
   out_ << "geomtools_inspector -- Inspect and display a virtual geometry" << std::endl;
   out_ << "\n";
@@ -276,16 +354,24 @@ void print_help (std::ostream & out_)
 
   out_ << "  geomtools_inspector [OPTIONS...] [MGRCFG_FILE]\n\n";
   out_ << "Options: \n\n";
-  out_ << "     -h|--help             Print this help            \n";
-  out_ << "     -S|--no-splash        Do not print splash screen \n";
-  geomtools::geomtools_driver_params GDP;
-  std::vector<std::string> argv;
-  argv.push_back("--help-short");
-  GDP.parse(argv, out_);
-
+  out_ << opts_;
+  {
+    out_ << "\nDatatools kernel options: \n";
+    boost::program_options::options_description kopts;
+    datatools::kernel::param_type kparams;
+    datatools::kernel::build_opt_desc(kopts, kparams);
+    datatools::kernel::print_opt_desc(kopts, out_);
+  }
+  {
+    out_ << "\nDefault inspector options: \n";
+    geomtools::geomtools_driver_params GDP;
+    std::vector<std::string> argv;
+    argv.push_back("--help-short");
+    GDP.parse(argv, out_);
+  }
   out_ << "\n";
   out_ << "Examples:\n\n";
-  out_ << "     geomtools_inspector --manager-config config/geometry/setup-1.0/manager.conf \n\n";
+  out_ << "  geomtools_inspector --manager-config config/geometry/setup-1.0/manager.conf \n\n";
   return;
 }
 
