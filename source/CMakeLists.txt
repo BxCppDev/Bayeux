@@ -63,10 +63,10 @@ set(Bayeux_SUBMODULES
   mygsl
   geomtools
   emfield
-  genbb_help
-  genvtx
   brio
   dpp
+  genbb_help
+  genvtx
   mctools
 )
 
