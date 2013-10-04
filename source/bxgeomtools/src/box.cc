@@ -185,33 +185,30 @@ namespace geomtools {
   box::get_surface (uint32_t a_mask) const
   {
     double s = 0.0;
-    int mask = a_mask;
-    if (a_mask == (int) ALL_SURFACES) mask = FACE_ALL;
+    uint32_t mask = a_mask;
+    //std::cerr << "DEVEL *** box::get_surface : mask  = " << (uint32_t) (mask) << std::endl;
+    //std::cerr << "DEVEL *** box::get_surface :   ALL_SURFACES  = " << (uint32_t) (ALL_SURFACES) << std::endl;
+    if (a_mask == (uint32_t) ALL_SURFACES) mask = FACE_ALL;
+    //std::cerr << "DEVEL *** box::get_surface :   effective mask  = " << (uint32_t) (mask) << std::endl;
 
-    if (mask & FACE_BACK)
-      {
-        s += _y_ * _z_;
-      }
-    if (mask & FACE_FRONT)
-      {
-        s += _y_ * _z_;
-      }
-    if (mask & FACE_LEFT)
-      {
-        s += _x_ * _z_;
-      }
-    if (mask & FACE_RIGHT)
-      {
-        s += _x_ * _z_;
-      }
-    if (mask & FACE_BOTTOM)
-      {
-        s += _x_ * _y_;
-      }
-    if (mask & FACE_TOP)
-      {
-        s += _x_ * _y_;
-      }
+    if (mask & FACE_BACK) {
+      s += _y_ * _z_;
+    }
+    if (mask & FACE_FRONT) {
+      s += _y_ * _z_;
+    }
+    if (mask & FACE_LEFT) {
+      s += _x_ * _z_;
+    }
+    if (mask & FACE_RIGHT) {
+      s += _x_ * _z_;
+    }
+    if (mask & FACE_BOTTOM) {
+      s += _x_ * _y_;
+    }
+    if (mask & FACE_TOP) {
+      s += _x_ * _y_;
+    }
     return s;
   }
 
@@ -298,51 +295,44 @@ namespace geomtools {
     if (a_mask == (int) ALL_SURFACES) mask = FACE_ALL;
 
     double hskin = 0.5 * skin;
-    if (mask & FACE_BACK)
-      {
-        if ((std::abs (a_position.x () + 0.5 * _x_) < hskin)
-            && (std::abs (a_position.y ()) < 0.5 * _y_)
-            && (std::abs (a_position.z ()) < 0.5 * _z_)) return true;
-      }
-    if (mask & FACE_FRONT)
-      {
-        if ((std::abs (a_position.x () - 0.5 * _x_) < hskin)
-            && (std::abs (a_position.y ()) < 0.5 * _y_)
-            && (std::abs (a_position.z ()) < 0.5 * _z_)) return true;
-      }
-    if (mask & FACE_LEFT)
-      {
-        if ((std::abs (a_position.y () + 0.5 * _y_) < hskin)
-            && (std::abs (a_position.x ()) < 0.5 * _x_)
-            && (std::abs (a_position.z ()) < 0.5 * _z_)) return true;
-      }
-    if (mask & FACE_RIGHT)
-      {
-        if (debug)
-          {
-            std::clog << "DEVEL: box::is_on_surface: FACE_RIGHT" << std::endl;
-            std::clog << "DEVEL: box::is_on_surface: hskin=" << hskin << std::endl;
-            std::clog << "DEVEL: box::is_on_surface: point=" << a_position << std::endl;
-            std::clog << "DEVEL: box::is_on_surface: dim x=" << 0.5 * _x_ << std::endl;
-            std::clog << "DEVEL: box::is_on_surface: dim y=" << 0.5 * _y_ << std::endl;
-            std::clog << "DEVEL: box::is_on_surface: dim z=" << 0.5 * _z_ << std::endl;
-          }
-        if ((std::abs (a_position.y () - 0.5 * _y_) < hskin)
-            && (std::abs (a_position.x ()) < 0.5 * _x_)
-            && (std::abs (a_position.z ()) < 0.5 * _z_)) return true;
-      }
-    if (mask & FACE_BOTTOM)
-      {
-        if ((std::abs (a_position.z () + 0.5 * _z_) < hskin)
-            && (std::abs (a_position.x ()) < 0.5 * _x_)
-            && (std::abs (a_position.y ()) < 0.5 * _y_)) return true;
-      }
-    if (mask & FACE_TOP)
-      {
-        if ((std::abs (a_position.z () - 0.5 * _z_) < hskin)
-            && (std::abs (a_position.x ()) < 0.5 * _x_)
-            && (std::abs (a_position.y ()) < 0.5 * _y_)) return true;
-      }
+    if (mask & FACE_BACK) {
+      if ((std::abs (a_position.x () + 0.5 * _x_) < hskin)
+          && (std::abs (a_position.y ()) < 0.5 * _y_)
+          && (std::abs (a_position.z ()) < 0.5 * _z_)) return true;
+    }
+    if (mask & FACE_FRONT) {
+      if ((std::abs (a_position.x () - 0.5 * _x_) < hskin)
+          && (std::abs (a_position.y ()) < 0.5 * _y_)
+          && (std::abs (a_position.z ()) < 0.5 * _z_)) return true;
+    }
+    if (mask & FACE_LEFT) {
+      if ((std::abs (a_position.y () + 0.5 * _y_) < hskin)
+          && (std::abs (a_position.x ()) < 0.5 * _x_)
+          && (std::abs (a_position.z ()) < 0.5 * _z_)) return true;
+    }
+    if (mask & FACE_RIGHT) {
+      // if (debug) {
+      //     std::clog << "DEVEL: box::is_on_surface: FACE_RIGHT" << std::endl;
+      //     std::clog << "DEVEL: box::is_on_surface: hskin=" << hskin << std::endl;
+      //     std::clog << "DEVEL: box::is_on_surface: point=" << a_position << std::endl;
+      //     std::clog << "DEVEL: box::is_on_surface: dim x=" << 0.5 * _x_ << std::endl;
+      //     std::clog << "DEVEL: box::is_on_surface: dim y=" << 0.5 * _y_ << std::endl;
+      //     std::clog << "DEVEL: box::is_on_surface: dim z=" << 0.5 * _z_ << std::endl;
+      //   }
+      if ((std::abs (a_position.y () - 0.5 * _y_) < hskin)
+          && (std::abs (a_position.x ()) < 0.5 * _x_)
+          && (std::abs (a_position.z ()) < 0.5 * _z_)) return true;
+    }
+    if (mask & FACE_BOTTOM) {
+      if ((std::abs (a_position.z () + 0.5 * _z_) < hskin)
+          && (std::abs (a_position.x ()) < 0.5 * _x_)
+          && (std::abs (a_position.y ()) < 0.5 * _y_)) return true;
+    }
+    if (mask & FACE_TOP) {
+      if ((std::abs (a_position.z () - 0.5 * _z_) < hskin)
+          && (std::abs (a_position.x ()) < 0.5 * _x_)
+          && (std::abs (a_position.y ()) < 0.5 * _y_)) return true;
+    }
     return false;
   }
 
@@ -484,46 +474,40 @@ namespace geomtools {
     dim[1] = 0.5*get_y ();
     dim[2] = 0.5*get_z ();
 
-    for (int i = 0; i < 3; i++)
-      {
-        for (int j = 0; j < 2; j++)
-          {
-            vector_3d vertex[4];
-            if (i ==0)
-              {
-                vertex[0].set ((1 - 2 *j) * dim[0],   dim[1],  dim[2]);
-                vertex[1].set ((1 - 2 *j) * dim[0],   dim[1], -dim[2]);
-                vertex[2].set ((1 - 2 *j) * dim[0],  -dim[1], -dim[2]);
-                vertex[3].set ((1 - 2 *j) * dim[0],  -dim[1],  dim[2]);
-              }
-            if (i == 1)
-              {
-                vertex[0].set ( dim[0], (1 - 2 *j) * dim[1],   dim[2]);
-                vertex[1].set (-dim[0], (1 - 2 *j) * dim[1],   dim[2]);
-                vertex[2].set (-dim[0], (1 - 2 *j) * dim[1],  -dim[2]);
-                vertex[3].set ( dim[0], (1 - 2 *j) * dim[1],  -dim[2]);
-              }
-            if (i == 2)
-              {
-                vertex[0].set ( dim[0],  dim[1], (1 - 2 *j) * dim[2]);
-                vertex[1].set (-dim[0],  dim[1], (1 - 2 *j) * dim[2]);
-                vertex[2].set (-dim[0], -dim[1], (1 - 2 *j) * dim[2]);
-                vertex[3].set ( dim[0], -dim[1], (1 - 2 *j) * dim[2]);
-              }
-            {
-              polyline_3d dummy;
-              lpl_.push_back (dummy);
-            }
-            polyline_3d & pl = lpl_.back ();
-            pl.set_closed (true);
-            for (int i = 0; i < 4; i++)
-              {
-                vector_3d v;
-                p_.child_to_mother (vertex[i], v);
-                pl.add (v);
-              }
-          }
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 2; j++) {
+        vector_3d vertex[4];
+        if (i ==0) {
+          vertex[0].set ((1 - 2 *j) * dim[0],   dim[1],  dim[2]);
+          vertex[1].set ((1 - 2 *j) * dim[0],   dim[1], -dim[2]);
+          vertex[2].set ((1 - 2 *j) * dim[0],  -dim[1], -dim[2]);
+          vertex[3].set ((1 - 2 *j) * dim[0],  -dim[1],  dim[2]);
+        }
+        if (i == 1) {
+          vertex[0].set ( dim[0], (1 - 2 *j) * dim[1],   dim[2]);
+          vertex[1].set (-dim[0], (1 - 2 *j) * dim[1],   dim[2]);
+          vertex[2].set (-dim[0], (1 - 2 *j) * dim[1],  -dim[2]);
+          vertex[3].set ( dim[0], (1 - 2 *j) * dim[1],  -dim[2]);
+        }
+        if (i == 2) {
+          vertex[0].set ( dim[0],  dim[1], (1 - 2 *j) * dim[2]);
+          vertex[1].set (-dim[0],  dim[1], (1 - 2 *j) * dim[2]);
+          vertex[2].set (-dim[0], -dim[1], (1 - 2 *j) * dim[2]);
+          vertex[3].set ( dim[0], -dim[1], (1 - 2 *j) * dim[2]);
+        }
+        {
+          polyline_3d dummy;
+          lpl_.push_back (dummy);
+        }
+        polyline_3d & pl = lpl_.back ();
+        pl.set_closed (true);
+        for (int i = 0; i < 4; i++) {
+          vector_3d v;
+          p_.child_to_mother (vertex[i], v);
+          pl.add (v);
+        }
       }
+    }
     return;
   }
 

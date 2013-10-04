@@ -34,7 +34,7 @@ alias geomtools_print_info='do_geomtools_print_info'
 function do_geomtools_setup ()
 {
     local verbose=0
-    
+
     while [ -n "$1" ]; do
 	if [ "$1" = "--verbose" -o "$1" = "-v" ]; then
 	  let verbose=verbose+1
@@ -49,50 +49,50 @@ function do_geomtools_setup ()
     if [ "x${GEOMTOOLS_ROOT}" != "x" ]; then
 	echo "WARNING: do_geomtools_setup: geomtools is already setup !" 1>&2
 	return 2
-    fi 
-
-    if [ "x@GEOMTOOLS_WITH_REFLECTION@" = "x1" ]; then
-	which camp-config >/dev/null 2>&1
-	if [ $? -ne 0 ]; then
-	    echo "ERROR: do_geomtools_setup: Cannot find CAMP setup ! Abort !" 1>&2
-	    return 1
-	else
-	    if [ ${verbose} -ne 0 ]; then
-		echo "VERBOSE: do_geomtools_setup: Found CAMP." 1>&2
-	    fi
-	fi
     fi
 
-    which clhep-config >/dev/null 2>&1
-    if [ $? -ne 0 ]; then
-	echo "ERROR: do_geomtools_setup: Cannot find CLHEP setup ! Abort !" 1>&2
-	return 1
-    else
-	if [ ${verbose} -ne 0 ]; then
-	    echo "VERBOSE: do_geomtools_setup: Found CLHEP." 1>&2
-	fi
-    fi
+    # if [ "x@GEOMTOOLS_WITH_REFLECTION@" = "x1" ]; then
+    # 	which camp-config >/dev/null 2>&1
+    # 	if [ $? -ne 0 ]; then
+    # 	    echo "ERROR: do_geomtools_setup: Cannot find CAMP setup ! Abort !" 1>&2
+    # 	    return 1
+    # 	else
+    # 	    if [ ${verbose} -ne 0 ]; then
+    # 		echo "VERBOSE: do_geomtools_setup: Found CAMP." 1>&2
+    # 	    fi
+    # 	fi
+    # fi
 
-    which mygsl-config >/dev/null 2>&1
-    if [ $? -ne 0 ]; then
-	echo "ERROR: do_geomtools_setup: Cannot find mygsl setup ! Abort !" 1>&2
-	return 1
-    else
-	if [ ${verbose} -ne 0 ]; then
-	    echo "VERBOSE: do_geomtools_setup: Found mygsl." 1>&2
-	fi
-    fi
+    # which clhep-config >/dev/null 2>&1
+    # if [ $? -ne 0 ]; then
+    # 	echo "ERROR: do_geomtools_setup: Cannot find CLHEP setup ! Abort !" 1>&2
+    # 	return 1
+    # else
+    # 	if [ ${verbose} -ne 0 ]; then
+    # 	    echo "VERBOSE: do_geomtools_setup: Found CLHEP." 1>&2
+    # 	fi
+    # fi
 
-    which materials-config >/dev/null 2>&1
-    if [ $? -ne 0 ]; then
-	echo "ERROR: do_geomtools_setup: Cannot find materials setup ! Abort !" 1>&2
-	return 1
-    else
-	if [ ${verbose} -ne 0 ]; then
-	    echo "VERBOSE: do_geomtools_setup: Found materials." 1>&2
-	fi
-    fi
-     
+    # which mygsl-config >/dev/null 2>&1
+    # if [ $? -ne 0 ]; then
+    # 	echo "ERROR: do_geomtools_setup: Cannot find mygsl setup ! Abort !" 1>&2
+    # 	return 1
+    # else
+    # 	if [ ${verbose} -ne 0 ]; then
+    # 	    echo "VERBOSE: do_geomtools_setup: Found mygsl." 1>&2
+    # 	fi
+    # fi
+
+    # which materials-config >/dev/null 2>&1
+    # if [ $? -ne 0 ]; then
+    # 	echo "ERROR: do_geomtools_setup: Cannot find materials setup ! Abort !" 1>&2
+    # 	return 1
+    # else
+    # 	if [ ${verbose} -ne 0 ]; then
+    # 	    echo "VERBOSE: do_geomtools_setup: Found materials." 1>&2
+    # 	fi
+    # fi
+
     export GEOMTOOLS_ROOT="@CMAKE_INSTALL_PREFIX@"
     export GEOMTOOLS_ROOT_DIR="@CMAKE_INSTALL_PREFIX@"
     export GEOMTOOLS_NAME="@PROJECT_NAME@"
@@ -112,18 +112,18 @@ function do_geomtools_setup ()
 	export PATH="${GEOMTOOLS_BIN_DIR}:${PATH}"
     else
 	export PATH="${GEOMTOOLS_BIN_DIR}"
-    fi 
-   
+    fi
+
     if [ -n "${@_ld_library_path_env@}" ]; then
 	export @_ld_library_path_env@="${GEOMTOOLS_LIB_DIR}:${@_ld_library_path_env@}"
     else
 	export @_ld_library_path_env@="${GEOMTOOLS_LIB_DIR}"
-    fi 
+    fi
 
     if [ ${verbose} -gt 1 ]; then
 	do_geomtools_print_info "VERBOSE: do_geomtools_setup"
     fi
- 
+
     if [ ${verbose} -ne 0 ]; then
 	echo "NOTICE: do_geomtools_setup: Setup geomtools done." 1>&2
     fi

@@ -42,8 +42,8 @@ namespace geomtools {
       };
 
     enum surface_bits {
-      ALL_SURFACES = 0x0,
-      NO_SURFACES  = FACE_ALL_BITS
+      NO_SURFACES  = 0,
+      ALL_SURFACES = FACE_ALL_BITS
     };
 
     bool has_user_draw () const;
