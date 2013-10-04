@@ -44,7 +44,10 @@ bool test_valid_resource() {
   std::string rspath;
 
   try {
-    rspath = materials::get_resource("data/std_isotopes.def");
+    // The 'true' argument allows the use of the MATERIAL_DATA_DIR environement
+    // variable to be used in place of the standard installation path.
+    // Mandatory for testing before installation.
+    rspath = materials::get_resource("data/std_isotopes.def", true);
     std::ifstream check(rspath.c_str());
     if(!check.good()) {
       std::cerr << "FAIL : returned path to resource is unreadable ("
