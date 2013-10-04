@@ -2,6 +2,9 @@
 /* the_introspectable.cc
  */
 
+// Ourselves
+#include <bayeux/bayeux_config.h>
+
 // Standard Library
 #include <iostream>
 
@@ -39,6 +42,7 @@ namespace reflection {
 } // end namespace datatools
 
 
+#if BAYEUX_WITH_GEOMTOOLS == 1
 #include <geomtools/detail/reflection_link_guard.h>
 #include <geomtools/the_introspectable.h>
 
@@ -67,7 +71,9 @@ namespace reflection {
 } // end namespace detail
 } // end namespace geomtools
 
+#endif // BAYEUX_WITH_GEOMTOOLS == 1
 
+#if BAYEUX_WITH_GENBB_HELP == 1
 #include <genbb_help/detail/reflection_link_guard.h>
 #include <genbb_help/the_introspectable.h>
 
@@ -95,5 +101,7 @@ namespace reflection {
 } // end namespace reflection
 } // end namespace detail
 } // end namespace genbb
+
+#endif // BAYEUX_WITH_GENBB_HELP == 1
 
 // end of the_introspectable.cc

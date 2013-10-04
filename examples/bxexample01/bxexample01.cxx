@@ -59,6 +59,7 @@ void title(std::string t_) {
 }
 
 // - Bayeux
+#include <bayeux/bayeux_config.h>
 #include <bayeux/version.h>
 
 int example_bayeux()
@@ -124,6 +125,7 @@ int example_datatools()
 }
 
 
+#if BAYEUX_WITH_CUTS == 1
 // - Bayeux/cuts
 #include <cuts/version.h>
 
@@ -135,8 +137,10 @@ int example_cuts()
 
   return 0;
 }
+#endif // BAYEUX_WITH_CUTS == 1
 
 
+#if BAYEUX_WITH_MATERIALS == 1
 // - Bayeux/materials
 #include <materials/version.h>
 #include <materials/resource.h>
@@ -176,8 +180,10 @@ int example_materials()
 
   return 0;
 }
+#endif // BAYEUX_WITH_MATERIALS == 1
 
 
+#if BAYEUX_WITH_MYGSL == 1
 // - Bayeux/mygsl
 #include <mygsl/version.h>
 #include <mygsl/histogram_1d.h>
@@ -209,8 +215,10 @@ int example_mygsl()
 
   return 0;
 }
+#endif // BAYEUX_WITH_MYGSL == 1
 
 
+#if BAYEUX_WITH_GEOMTOOLS == 1
 // - Bayeux/geomtools
 #include <geomtools/version.h>
 #include <geomtools/box.h>
@@ -251,8 +259,10 @@ int example_geomtools()
 
   return 0;
 }
+#endif // BAYEUX_WITH_GEOMTOOLS == 1
 
 
+#if BAYEUX_WITH_EMFIELD == 1
 // - Bayeux/emfield
 #include <emfield/version.h>
 #include <emfield/uniform_magnetic_field.h>
@@ -286,8 +296,10 @@ int example_emfield()
 
   return 0;
 }
+#endif // BAYEUX_WITH_EMFIELD == 1
 
 
+#if BAYEUX_WITH_GENBB_HELP == 1
 // - Bayeux/genbb_help
 #include <genbb_help/version.h>
 #include <genbb_help/wdecay0.h>
@@ -325,8 +337,10 @@ int example_genbb_help()
   }
   return 0;
 }
+#endif // BAYEUX_WITH_GENBB_HELP == 1
 
 
+#if BAYEUX_WITH_GENVTX == 1
 // - Bayeux/genvtx
 #include <genvtx/version.h>
 #include <genvtx/box_vg.h>
@@ -363,9 +377,10 @@ int example_genvtx()
   }
   return 0;
 }
+#endif // BAYEUX_WITH_GENVTX == 1
 
 
-
+#if BAYEUX_WITH_BRIO == 1
 // - Bayeux/brio
 #include <brio/version.h>
 #include <brio/writer.h>
@@ -407,8 +422,10 @@ int example_brio()
   std::clog << "brio serialization example is terminated." << std::endl;
   return 0;
 }
+#endif // BAYEUX_WITH_BRIO == 1
 
 
+#if BAYEUX_WITH_DPP == 1
 // - Bayeux/dpp
 #include <dpp/version.h>
 
@@ -420,7 +437,9 @@ int example_dpp()
 
   return 0;
 }
+#endif // BAYEUX_WITH_DPP == 1
 
+#if BAYEUX_WITH_MCTOOLS == 1
 // // - Bayeux/mctools
 // #include <mctools/version.h>
 
@@ -432,6 +451,7 @@ int example_dpp()
 
 //   return 0;
 // }
+#endif // BAYEUX_WITH_MCTOOLS == 1
 
 int example_reflection()
 {
@@ -467,16 +487,46 @@ int main(int argc, char *argv[]) {
     }
 
     example_datatools();
+#if BAYEUX_WITH_CUTS == 1
     example_cuts();
+#endif // BAYEUX_WITH_CUTS == 1
+
+#if BAYEUX_WITH_MATERIALS == 1
     example_materials();
+#endif // BAYEUX_WITH_MATERIALS == 1
+
+#if BAYEUX_WITH_MYGSL == 1
     example_mygsl();
+#endif // BAYEUX_WITH_MYGSL == 1
+
+#if BAYEUX_WITH_GEOMTOOLS == 1
     example_geomtools();
+#endif // BAYEUX_WITH_GEOMTOOLS == 1
+
+#if BAYEUX_WITH_EMFIELD == 1
     example_emfield();
+#endif // BAYEUX_WITH_EMFIELD == 1
+
+#if BAYEUX_WITH_GENBB_HELP == 1
     example_genbb_help();
+#endif // BAYEUX_WITH_GENBB_HELP == 1
+
+#if BAYEUX_WITH_GENVTX == 1
     example_genvtx();
+#endif // BAYEUX_WITH_GENVTX == 1
+
+#if BAYEUX_WITH_BRIO == 1
     example_brio();
+#endif // BAYEUX_WITH_BRIO == 1
+
+#if BAYEUX_WITH_DPP == 1
     example_dpp();
+#endif // BAYEUX_WITH_DPP == 1
+
+#if BAYEUX_WITH_MCTOOLS == 1
     //example_mctools();
+#endif // BAYEUX_WITH_MCTOOLS == 1
+
     example_reflection();
     example_bayeux();
 

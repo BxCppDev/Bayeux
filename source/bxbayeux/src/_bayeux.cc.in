@@ -21,21 +21,52 @@
 // along with Bayeux.  If not, see <http://www.gnu.org/licenses/>.
 
 // This package
+#include <bayeux/bayeux_config.h>
+#include <bayeux/version.h>
 
 // Submodules version
-#include <bayeux/version.h>
 #include <datatools/version.h>
+
+#if BAYEUX_WITH_CUTS == 1
 #include <cuts/version.h>
+#endif // BAYEUX_WITH_CUTS == 1
+
+#if BAYEUX_WITH_MATERIALS == 1
 #include <materials/version.h>
 #include <materials/resource.h>
+#endif // BAYEUX_WITH_MATERIALS == 1
+
+#if BAYEUX_WITH_MYGSL == 1
 #include <mygsl/version.h>
+#endif // BAYEUX_WITH_MYGSL == 1
+
+#if BAYEUX_WITH_GEOMTOOLS == 1
 #include <geomtools/version.h>
+#endif // BAYEUX_WITH_GEOMTOOLS == 1
+
+#if BAYEUX_WITH_EMFIELD == 1
 #include <emfield/version.h>
+#endif // BAYEUX_WITH_EMFIELD == 1
+
+#if BAYEUX_WITH_GENBB_HELP == 1
 #include <genbb_help/version.h>
+#endif // BAYEUX_WITH_GENBB_HELP == 1
+
+#if BAYEUX_WITH_GENVTX == 1
 #include <genvtx/version.h>
+#endif // BAYEUX_WITH_GENVTX == 1
+
+#if BAYEUX_WITH_BRIO == 1
 #include <brio/version.h>
+#endif // BAYEUX_WITH_BRIO == 1
+
+#if BAYEUX_WITH_DPP == 1
 #include <dpp/version.h>
+#endif // BAYEUX_WITH_DPP == 1
+
+#if BAYEUX_WITH_MCTOOLS == 1
 //#include <mctools/version.h>
+#endif // BAYEUX_WITH_MCTOOLS == 1
 
 // This package
 #include <datatools/kernel.h>
@@ -61,7 +92,7 @@ namespace bayeux {
       // Bundled submodules:
       {
         if (lib_info_reg.has("datatools")) {
-          std::cerr << "***** DEVEL ***** datatools is already registered !!!!!" << std::endl;
+          //std::cerr << "***** DEVEL ***** datatools is already registered !!!!!" << std::endl;
         }
         datatools::properties & datatools_lib_infos
           = lib_info_reg.registration("datatools",
@@ -71,6 +102,7 @@ namespace bayeux {
                                       );
       }
 
+#if BAYEUX_WITH_CUTS == 1
       {
         datatools::properties & cuts_lib_infos
           = lib_info_reg.registration("cuts",
@@ -78,8 +110,10 @@ namespace bayeux {
                                       cuts::version::get_version()
                                       );
       }
+#endif // BAYEUX_WITH_CUTS == 1
 
 
+#if BAYEUX_WITH_MATERIALS == 1
       {
         datatools::properties & materials_lib_infos
           = lib_info_reg.registration("materials",
@@ -93,8 +127,10 @@ namespace bayeux {
                                          materials::get_resource_dir(false)
                                          );
       }
+#endif // BAYEUX_WITH_MATERIALS == 1
 
 
+#if BAYEUX_WITH_MYGSL == 1
       {
         datatools::properties & mygsl_lib_infos
           = lib_info_reg.registration("mygsl",
@@ -102,7 +138,9 @@ namespace bayeux {
                                       mygsl::version::get_version()
                                       );
       }
+#endif // BAYEUX_WITH_MYGSL == 1
 
+#if BAYEUX_WITH_GEOMTOOLS == 1
       {
         datatools::properties & geomtools_lib_infos
           = lib_info_reg.registration("geomtools",
@@ -111,7 +149,9 @@ namespace bayeux {
                                       geomtools::version::get_version()
                                       );
       }
+#endif // BAYEUX_WITH_GEOMTOOLS == 1
 
+#if BAYEUX_WITH_EMFIELD == 1
       {
         datatools::properties & emfield_lib_infos
           = lib_info_reg.registration("emfield",
@@ -119,7 +159,29 @@ namespace bayeux {
                                       emfield::version::get_version()
                                       );
       }
+#endif // BAYEUX_WITH_EMFIELD == 1
 
+#if BAYEUX_WITH_BRIO == 1
+      {
+        datatools::properties & brio_lib_infos
+          = lib_info_reg.registration("brio",
+                                      "A Boost over ROOT I/O serialization system (extends datatools).",
+                                      brio::version::get_version()
+                                      );
+      }
+#endif // BAYEUX_WITH_BRIO == 1
+
+#if BAYEUX_WITH_DPP == 1
+      {
+        datatools::properties & dpp_lib_infos
+          = lib_info_reg.registration("dpp",
+                                      "A basic data processing pipeline API.",
+                                      dpp::version::get_version()
+                                      );
+      }
+#endif // BAYEUX_WITH_DPP == 1
+
+#if BAYEUX_WITH_GENBB_HELP == 1
       {
         datatools::properties & genbb_help_lib_infos
           = lib_info_reg.registration("genbb_help",
@@ -128,8 +190,10 @@ namespace bayeux {
                                       genbb::version::get_version()
                                       );
       }
+#endif // BAYEUX_WITH_GENBB_HELP == 1
 
 
+#if BAYEUX_WITH_GENVTX == 1
       {
         datatools::properties & genvtx_lib_infos
           = lib_info_reg.registration("genvtx",
@@ -137,24 +201,10 @@ namespace bayeux {
                                       genvtx::version::get_version()
                                       );
       }
-
-      {
-        datatools::properties & brio_lib_infos
-          = lib_info_reg.registration("brio",
-                                      "A Boost over ROOT I/O serialization system (extends datatools).",
-                                      brio::version::get_version()
-                                      );
-      }
-
-      {
-        datatools::properties & dpp_lib_infos
-          = lib_info_reg.registration("dpp",
-                                      "A basic data processing pipeline API.",
-                                      dpp::version::get_version()
-                                      );
-      }
+#endif // BAYEUX_WITH_GENVTX == 1
 
       /*
+#if BAYEUX_WITH_MCTOOLS == 1
       {
         datatools::properties & mctools_lib_infos
           = lib_info_reg.registration("mctools",
@@ -162,6 +212,7 @@ namespace bayeux {
                                       mctools::version::get_version()
                                       );
       }
+#endif // BAYEUX_WITH_MCTOOLS == 1
       */
 
       // Top-level bundle library:
@@ -241,36 +292,67 @@ namespace bayeux {
         if (lib_info_reg.has("bayeux")) {
           lib_info_reg.unregistration("bayeux");
         }
-        if (lib_info_reg.has("mctools")) {
-          lib_info_reg.unregistration("mctools");
-        }
-        if (lib_info_reg.has("dpp")) {
-          lib_info_reg.unregistration("dpp");
-        }
-        if (lib_info_reg.has("brio")) {
-          lib_info_reg.unregistration("brio");
-        }
+
+// #if BAYEUX_WITH_MCTOOLS == 1
+//         if (lib_info_reg.has("mctools")) {
+//           lib_info_reg.unregistration("mctools");
+//         }
+// #endif // BAYEUX_WITH_MCTOOLS == 1
+
+#if BAYEUX_WITH_GENVTX == 1
         if (lib_info_reg.has("genvtx")) {
           lib_info_reg.unregistration("genvtx");
         }
+#endif // BAYEUX_WITH_GENVTX == 1
+
+#if BAYEUX_WITH_GENBB_HELP == 1
         if (lib_info_reg.has("genbb_help")) {
           lib_info_reg.unregistration("genbb_help");
         }
+#endif // BAYEUX_WITH_GENBB_HELP == 1
+
+#if BAYEUX_WITH_DPP == 1
+        if (lib_info_reg.has("dpp")) {
+          lib_info_reg.unregistration("dpp");
+        }
+#endif // BAYEUX_WITH_DPP == 1
+
+#if BAYEUX_WITH_BRIO == 1
+        if (lib_info_reg.has("brio")) {
+          lib_info_reg.unregistration("brio");
+        }
+#endif // BAYEUX_WITH_BRIO == 1
+
+#if BAYEUX_WITH_EMFIELD == 1
         if (lib_info_reg.has("emfield")) {
           lib_info_reg.unregistration("emfield");
         }
+#endif // BAYEUX_WITH_EMFIELD == 1
+
+#if BAYEUX_WITH_GEOMTOOLS == 1
         if (lib_info_reg.has("geomtools")) {
           lib_info_reg.unregistration("geomtools");
         }
+#endif // BAYEUX_WITH_GEOMTOOLS == 1
+
+#if BAYEUX_WITH_DPP == 1
         if (lib_info_reg.has("mygsl")) {
           lib_info_reg.unregistration("mygsl");
         }
+#endif // BAYEUX_WITH_MYGSL == 1
+
+#if BAYEUX_WITH_MATERIALS == 1
         if (lib_info_reg.has("materials")) {
           lib_info_reg.unregistration("materials");
         }
+#endif // BAYEUX_WITH_MATERIALS == 1
+
+#if BAYEUX_WITH_CUTS == 1
         if (lib_info_reg.has("cuts")) {
           lib_info_reg.unregistration("cuts");
         }
+#endif // BAYEUX_WITH_CUTS == 1
+
         if (lib_info_reg.has("datatools")) {
           lib_info_reg.unregistration("datatools");
         }
