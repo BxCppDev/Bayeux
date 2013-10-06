@@ -255,20 +255,39 @@ namespace genvtx {
   {
     if (_mode_ == MODE_SURFACE) {
       DT_THROW_IF (_surface_mask_ == 0, std::logic_error, "Surface mask is zero !");
+      //std::cerr << "DEVEL *** Surface mask = " << _surface_mask_ << std::endl;
       const double s = _box_.get_surface (_surface_mask_);
       DT_LOG_DEBUG (get_logging_priority (), "Total surface = " << s);
-      _sum_weight_[0] = _box_.get_surface (_surface_mask_ & geomtools::box::FACE_BACK);
-      _sum_weight_[1] = _box_.get_surface (_surface_mask_ & geomtools::box::FACE_FRONT);
-      _sum_weight_[2] = _box_.get_surface (_surface_mask_ & geomtools::box::FACE_LEFT);
-      _sum_weight_[3] = _box_.get_surface (_surface_mask_ & geomtools::box::FACE_RIGHT);
-      _sum_weight_[4] = _box_.get_surface (_surface_mask_ & geomtools::box::FACE_BOTTOM);
-      _sum_weight_[5] = _box_.get_surface (_surface_mask_ & geomtools::box::FACE_TOP);
+      /*
+      std::cerr << "DEVEL *** Total surface s = " << s << std::endl;
+      std::cerr << "DEVEL *** Surface back   = " <<  _box_.get_parameter("surface.back") << std::endl;
+      std::cerr << "DEVEL *** Surface front  = " <<  _box_.get_parameter("surface.front") << std::endl;
+      std::cerr << "DEVEL *** Surface left   = " <<  _box_.get_parameter("surface.left") << std::endl;
+      std::cerr << "DEVEL *** Surface right  = " <<  _box_.get_parameter("surface.right") << std::endl;
+      std::cerr << "DEVEL *** Surface bottom = " <<  _box_.get_parameter("surface.bottom") << std::endl;
+      std::cerr << "DEVEL *** Surface top    = " <<  _box_.get_parameter("surface.top") << std::endl;
+
+      std::cerr << "DEVEL *** Surface mask&back   = " << (int) (_surface_mask_ & geomtools::box::FACE_BACK) << std::endl;
+      std::cerr << "DEVEL *** Surface mask&front  = " << (int) (_surface_mask_ & geomtools::box::FACE_FRONT) << std::endl;
+      std::cerr << "DEVEL *** Surface mask&left  = " << (int) (_surface_mask_ & geomtools::box::FACE_LEFT) << std::endl;
+      std::cerr << "DEVEL *** Surface mask&right  = " << (int) (_surface_mask_ & geomtools::box::FACE_RIGHT) << std::endl;
+      std::cerr << "DEVEL *** Surface mask&bottom  = " << (int) (_surface_mask_ & geomtools::box::FACE_BOTTOM) << std::endl;
+      std::cerr << "DEVEL *** Surface mask&top  = " << (int) (_surface_mask_ & geomtools::box::FACE_TOP) << std::endl;
+      */
+      _sum_weight_[0] = _box_.get_surface(_surface_mask_ & geomtools::box::FACE_BACK);
+      _sum_weight_[1] = _box_.get_surface(_surface_mask_ & geomtools::box::FACE_FRONT);
+      _sum_weight_[2] = _box_.get_surface(_surface_mask_ & geomtools::box::FACE_LEFT);
+      _sum_weight_[3] = _box_.get_surface(_surface_mask_ & geomtools::box::FACE_RIGHT);
+      _sum_weight_[4] = _box_.get_surface(_surface_mask_ & geomtools::box::FACE_BOTTOM);
+      _sum_weight_[5] = _box_.get_surface(_surface_mask_ & geomtools::box::FACE_TOP);
       for (int i = 0; i < 6; i++) {
+        //std::cerr << "DEVEL *** Surface absolute weight [" << i << "] = " << _sum_weight_[i] << std::endl;
         _sum_weight_[i] /= s;
         if (i > 0) {
           _sum_weight_[i] += _sum_weight_[i - 1];
         }
         DT_LOG_TRACE (get_logging_priority (), "Surface weight [" << i << "] = " << _sum_weight_[i]);
+        //std::cerr << "DEVEL *** Surface cumulated normalized weight [" << i << "] = " << _sum_weight_[i] << std::endl;
       }
     }
     return;
@@ -343,28 +362,35 @@ namespace genvtx {
         r3 = random_.uniform ();
         delta_thick = (r3 - 0.5) * _skin_thickness_;
       }
+      std::cerr << "*** DEVEL *** box_vg::shoot_vertex: r0 = " << r0 << std::endl;
 
       if (r0 < _sum_weight_[0]) {
+        std::cerr << "*** DEVEL *** box_vg::shoot_vertex: [0]" << std::endl;
         y = (r1 - 0.5) * the_box->get_y ();
         z = (r2 - 0.5) * the_box->get_z ();
         x = -(the_box->get_half_x () + _skin_skip_ + delta_thick);
       } else if (r0 < _sum_weight_[1]) {
+        std::cerr << "*** DEVEL *** box_vg::shoot_vertex: [1]" << std::endl;
         y = (r1 - 0.5) * the_box->get_y ();
         z = (r2 - 0.5) * the_box->get_z ();
         x = +(the_box->get_half_x () + _skin_skip_ + delta_thick);
       } else if (r0 < _sum_weight_[2]) {
+        std::cerr << "*** DEVEL *** box_vg::shoot_vertex: [2]" << std::endl;
         x = (r1 - 0.5) * the_box->get_x ();
         z = (r2 - 0.5) * the_box->get_z ();
         y = -(the_box->get_half_y () + _skin_skip_ + delta_thick);
       } else if (r0 < _sum_weight_[3]) {
+        std::cerr << "*** DEVEL *** box_vg::shoot_vertex: [3]" << std::endl;
         x = (r1 - 0.5) * the_box->get_x ();
         z = (r2 - 0.5) * the_box->get_z ();
         y = +(the_box->get_half_y () + _skin_skip_ + delta_thick);
       } else if (r0 < _sum_weight_[4]) {
+        std::cerr << "*** DEVEL *** box_vg::shoot_vertex: [4]" << std::endl;
         x = (r1 - 0.5) * the_box->get_x ();
         y = (r2 - 0.5) * the_box->get_y ();
         z = -(the_box->get_half_z () + _skin_skip_ + delta_thick);
       } else {
+        std::cerr << "*** DEVEL *** box_vg::shoot_vertex: [5]" << std::endl;
         x = (r1 - 0.5) * the_box->get_x ();
         y = (r2 - 0.5) * the_box->get_y ();
         z = +(the_box->get_half_z () + _skin_skip_ + delta_thick);

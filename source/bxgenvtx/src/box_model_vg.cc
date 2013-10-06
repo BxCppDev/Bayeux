@@ -402,6 +402,7 @@ namespace genvtx {
     _box_vg_.set_skin_skip(_skin_skip_);
     _box_vg_.set_skin_thickness(_skin_thickness_);
     _box_vg_.initialize_simple ();
+    //_box_vg_.tree_dump(std::cerr, "Box VG: ", "***** DEVEL ***** ");
     double weight = 0.0;
     if (is_mode_surface ()) {
       weight = box_shape.get_surface (surface_mask);
@@ -540,6 +541,7 @@ namespace genvtx {
       set_surface_left   (surface_left);
       set_surface_right  (surface_right);
     }
+    //this->tree_dump(std::cerr, "Box model VG:", "***** DEVEL ***** ");
 
     _init_ ();
     _initialized_ = true;

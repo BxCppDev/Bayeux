@@ -37,6 +37,7 @@ set(genvtx_PUBLIC_HEADERS
   include/genvtx/box_model_vg.h
   include/genvtx/cylinder_model_vg.h
   include/genvtx/tube_model_vg.h
+  include/genvtx/genvtx_driver.h
   )
 list_prepend(genvtx_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 
@@ -103,6 +104,7 @@ set(genvtx_SOURCES
    tube_model_vg.cc
    geom_manager_utils.cc
    version.cc
+   genvtx_driver.cc
   )
 
 #-----------------------------------------------------------------------
@@ -206,6 +208,7 @@ set_target_properties(genvtx
     PUBLIC_HEADER                         "${genvtx_PUBLIC_HEADERS}"
   )
 
+message (STATUS "geomtools_LIBRARIES='${geomtools_LIBRARIES}'")
 target_link_libraries(genvtx
     ${geomtools_LIBRARIES}
     ${CMAKE_DL_LIBS}

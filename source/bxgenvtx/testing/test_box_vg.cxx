@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 // test_box_vg.cxx
 
 #include <cstdlib>
@@ -17,8 +17,8 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'box_vg'!" << endl; 
-  
+      clog << "Test program for class 'box_vg'!" << endl;
+
       bool debug = false;
 
       int iarg = 1;
@@ -28,21 +28,21 @@ int main (int argc_, char ** argv_)
 
           if (token[0] == '-')
             {
-               string option = token; 
-               if ((option == "-d") || (option == "--debug")) 
+               string option = token;
+               if ((option == "-d") || (option == "--debug"))
                  {
                    debug = true;
                  }
-               else 
-                 { 
-                    clog << "warning: ignoring option '" << option << "'!" << endl; 
+               else
+                 {
+                    clog << "warning: ignoring option '" << option << "'!" << endl;
                  }
             }
           else
             {
-              string argument = token; 
-               { 
-                clog << "warning: ignoring argument '" << argument << "'!" << endl; 
+              string argument = token;
+               {
+                clog << "warning: ignoring argument '" << argument << "'!" << endl;
               }
             }
           iarg++;
@@ -51,11 +51,13 @@ int main (int argc_, char ** argv_)
       std::string       rng_id = "mt19937";
       unsigned long int rng_seed = 12345;
       mygsl::rng random (rng_id, rng_seed);
-         
+
+      size_t nshoots = 1000;
+
       geomtools::box b (4., 2., 3.);
 
       {
-        geomtools::vector_3d pos; 
+        geomtools::vector_3d pos;
         geomtools::rotation_3d rot;
         geomtools::gnuplot_draw::draw_box (cout, pos, rot, b);
         cout << endl << endl;
@@ -82,8 +84,8 @@ int main (int argc_, char ** argv_)
         vg.set_skin_thickness (0.20);
         vg.initialize_simple ();
         vg.tree_dump (clog, "Box vertex generator (bottom+right surface, skipped)");
-        size_t nshoots = 2000;
-        geomtools::vector_3d vertex;     
+        // size_t nshoots = 20;
+        geomtools::vector_3d vertex;
         for (int i = 0; i < nshoots; i++)
           {
             vg.shoot_vertex (random, vertex);
@@ -105,8 +107,8 @@ int main (int argc_, char ** argv_)
         vg.set_skin_thickness (0.30);
         vg.initialize_simple ();
         vg.tree_dump (clog, "Box vertex generator (bulk)");
-        size_t nshoots = 5000;
-        geomtools::vector_3d vertex;     
+        //size_t nshoots = 50;
+        geomtools::vector_3d vertex;
         for (int i = 0; i < nshoots; i++)
           {
             vg.shoot_vertex (random, vertex);
@@ -136,31 +138,31 @@ int main (int argc_, char ** argv_)
           config.store ("length_unit", "mm");
         }
         config.tree_dump (clog, "Configuration for dynamic VG:");
-        const genvtx::i_vertex_generator::factory_register_type & the_vg_factory 
+        const genvtx::i_vertex_generator::factory_register_type & the_vg_factory
           = DATATOOLS_FACTORY_GET_SYSTEM_REGISTER (genvtx::i_vertex_generator);
 
         ivg = the_vg_factory.get ("genvtx::box_vg")(); // new genvtx::box_vg;
         ivg->initialize_standalone (config);
-        size_t nshoots = 1000;
-        geomtools::vector_3d vertex;     
+        //size_t nshoots = 10;
+        geomtools::vector_3d vertex;
         for (int i = 0; i < nshoots; i++)
           {
             ivg->shoot_vertex (random, vertex);
             geomtools::gnuplot_draw::basic_draw_point (cout, vertex, true);
           }
-        cout << endl << endl; 
+        cout << endl << endl;
         if (ivg != 0) delete ivg;
       }
 
     }
   catch (exception & x)
     {
-      cerr << "error: " << x.what () << endl; 
+      cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);

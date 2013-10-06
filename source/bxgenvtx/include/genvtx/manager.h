@@ -131,7 +131,7 @@ namespace genvtx {
 
     bool has_generator (const std::string &) const;
 
-    genvtx::vg_handle_type grab_generator (const std::string & vg_name_);
+    genvtx::vg_handle_type grab_generator(const std::string & vg_name_);
 
     /// Constructor
     manager (datatools::logger::priority p_ = datatools::logger::PRIO_WARNING,
