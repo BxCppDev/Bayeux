@@ -363,7 +363,7 @@ include_directories(
   )
 
 if(GEOMTOOLS_WITH_ROOT_DISPLAY)
-include_directories ( ${ROOT_INCLUDE_DIR} )
+#include_directories ( ${ROOT_INCLUDE_DIR} )
 endif()
 
 add_library(geomtools SHARED
@@ -392,7 +392,7 @@ target_link_libraries(geomtools
   )
 
 if(GEOMTOOLS_WITH_ROOT_DISPLAY)
-    target_link_libraries(geomtools ${ROOT_LIBRARIES} -lGeom)
+#    target_link_libraries(geomtools ${ROOT_LIBRARIES} -lGeom)
 endif()
 
 set(GEOMTOOLS_TARGETS geomtools)

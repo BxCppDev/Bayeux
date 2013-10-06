@@ -80,7 +80,6 @@ int main(int argc_, char ** argv_)
        )
       ;
 
-
     po::positional_options_description args;
     //args.add("manager-config", -1);
 

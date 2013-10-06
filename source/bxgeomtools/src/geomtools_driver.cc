@@ -29,10 +29,10 @@
 #include <geomtools/gnuplot_drawer.h>
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
-#if GEOMTOOLS_WITH_ROOT_DISPLAY == 1
-#include <TGeoManager.h>
-#include <TBrowser.h>
-#endif // GEOMTOOLS_WITH_ROOT_DISPLAY
+//#if GEOMTOOLS_WITH_ROOT_DISPLAY == 1
+//#include <TGeoManager.h>
+//#include <TBrowser.h>
+//#endif // GEOMTOOLS_WITH_ROOT_DISPLAY
 
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
 std::string get_drawer_view (const std::string & option_);
