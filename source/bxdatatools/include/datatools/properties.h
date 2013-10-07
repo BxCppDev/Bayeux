@@ -76,33 +76,33 @@ class properties :
   //! \brief Internal data stored within the dictionary of the properties class.
   class data {
    public:
-    static const int  ERROR_SUCCESS = 0;
-    static const int  ERROR_FAILURE = 1;
-    static const int  ERROR_BADTYPE = 2;
-    static const int  ERROR_RANGE = 3;
-    static const int  ERROR_LOCK = 4;
+    static const int  ERROR_SUCCESS; // = 0;
+    static const int  ERROR_FAILURE; //  = 1;
+    static const int  ERROR_BADTYPE; //  = 2;
+    static const int  ERROR_RANGE; //  = 3;
+    static const int  ERROR_LOCK; //  = 4;
 
-    static const char MASK_TYPE = 0x7;
-    static const char MASK_EXPLICIT_PATH = 0x10;
-    static const char MASK_EXPLICIT_UNIT = 0x20;
-    static const char MASK_LOCK = 0x40;
-    static const char MASK_VECTOR = 0x80;
+    static const char MASK_TYPE; // = 0x7;
+    static const char MASK_EXPLICIT_PATH; // = 0x10;
+    static const char MASK_EXPLICIT_UNIT; // = 0x20;
+    static const char MASK_LOCK; // = 0x40;
+    static const char MASK_VECTOR; // = 0x80;
 
-    static const char TYPE_NONE = 0x0;
-    static const char TYPE_BOOLEAN = 0x1;
-    static const char TYPE_INTEGER = 0x2;
-    static const char TYPE_REAL = 0x3;
-    static const char TYPE_STRING = 0x4;
+    static const char TYPE_NONE; // = 0x0;
+    static const char TYPE_BOOLEAN; // = 0x1;
+    static const char TYPE_INTEGER; // = 0x2;
+    static const char TYPE_REAL; // = 0x3;
+    static const char TYPE_STRING; // = 0x4;
 
-    static const char TYPE_BOOLEAN_SYMBOL = 'B';
-    static const char TYPE_INTEGER_SYMBOL = 'I';
-    static const char TYPE_REAL_SYMBOL = 'R';
-    static const char TYPE_STRING_SYMBOL = 'S';
+    static const char TYPE_BOOLEAN_SYMBOL; // = 'B';
+    static const char TYPE_INTEGER_SYMBOL; // = 'I';
+    static const char TYPE_REAL_SYMBOL; // = 'R';
+    static const char TYPE_STRING_SYMBOL; // = 'S';
 
-    static const char STRING_FORBIDDEN_CHAR = '"';
+    static const char STRING_FORBIDDEN_CHAR; // = '"';
 
-    static const int  SCALAR_DEF = -1;
-    static const int  SCALAR_SIZE =  1;
+    static const int  SCALAR_DEF; // = -1;
+    static const int  SCALAR_SIZE; // =  1;
 
     struct defaults {
       static const bool boolean_value();
@@ -342,28 +342,28 @@ class properties :
   //! \brief Class for ASCII file I/O operations with properties objects.
   class config {
    public:
-    static const char DEFAULT_CONTINUATION_CHAR = '\\';
-    static const char DEFAULT_COMMENT_CHAR  = '#';
-    static const char DEFAULT_ASSIGN_CHAR   = '=';
-    static const char DEFAULT_DESC_CHAR     = ':';
-    static const char OPEN_VECTOR           = '[';
-    static const char CLOSE_VECTOR          = ']';
+    static const char DEFAULT_CONTINUATION_CHAR; // = '\\';
+    static const char DEFAULT_COMMENT_CHAR; //  = '#';
+    static const char DEFAULT_ASSIGN_CHAR; //   = '=';
+    static const char DEFAULT_DESC_CHAR; //     = ':';
+    static const char OPEN_VECTOR; //           = '[';
+    static const char CLOSE_VECTOR; //          = ']';
 
-    static const int MODE_BARE          = 0;
-    static const int MODE_HEADER_FOOTER = 1;
-    static const int MODE_DEFAULT       = MODE_HEADER_FOOTER;
-    static const int mode_header_footer = MODE_HEADER_FOOTER;
-    static const int mode_bare          = MODE_BARE;
+    static const int MODE_BARE; //          = 0;
+    static const int MODE_HEADER_FOOTER; // = 1;
+    static const int MODE_DEFAULT; //       = MODE_HEADER_FOOTER;
+    static const int mode_header_footer; // = MODE_HEADER_FOOTER;
+    static const int mode_bare; //          = MODE_BARE;
 
-    static const bool write_private_also   = false;
-    static const bool write_public_only    = true;
-    static const bool without_smart_modulo = false;
-    static const bool with_smart_modulo    = true;
+    static const bool write_private_also; //   = false;
+    static const bool write_public_only; //    = true;
+    static const bool without_smart_modulo; // = false;
+    static const bool with_smart_modulo; //    = true;
 
    public:
     // Constructor
     config(bool a_use_smart_modulo = false,
-           int a_mode = MODE_DEFAULT,
+           int a_mode = 1, // MODE_DEFAULT
            bool a_write_public_only = true);
 
     // Destructor
@@ -1051,4 +1051,3 @@ BOOST_CLASS_EXPORT_KEY2(datatools::properties, "datatools::properties");
 DR_CLASS_INIT(::datatools::properties);
 
 #endif // DATATOOLS_UTILS_PROPERTIES_H_
-
