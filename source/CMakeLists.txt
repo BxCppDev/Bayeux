@@ -81,8 +81,12 @@ option(BAYEUX_WITH_DPP        "Build Bayeux with dpp"        ON)
 option(BAYEUX_WITH_GENBB_HELP "Build Bayeux with genbb_help" ON)
 option(BAYEUX_WITH_GENVTX     "Build Bayeux with genvtx"     ON)
 option(BAYEUX_WITH_MCTOOLS    "Build Bayeux with mctools"    ON)
+option(BAYEUX_WITH_MCTOOLS_G4 "Build Bayeux with mctools/Geant4" ON)
 
 # - Process dependencies explicitely
+if (BAYEUX_WITH_MCTOOLS_G4)
+  set(BAYEUX_WITH_MCTOOLS ON)
+endif()
 if (BAYEUX_WITH_MCTOOLS)
   set(BAYEUX_WITH_GENBB_HELP ON)
   set(BAYEUX_WITH_GENVTX ON)
@@ -120,6 +124,7 @@ message (STATUS "About to build dpp        : ${BAYEUX_WITH_DPP}" )
 message (STATUS "About to build genbb_help : ${BAYEUX_WITH_GENBB_HELP}" )
 message (STATUS "About to build genvtx     : ${BAYEUX_WITH_GENVTX}" )
 message (STATUS "About to build mctools    : ${BAYEUX_WITH_MCTOOLS}" )
+message (STATUS "About to build mctools/G4 : ${BAYEUX_WITH_MCTOOLS_G4}" )
 message (STATUS "About to build Bayeux..." )
 
 # - Resource installation base dir
@@ -286,5 +291,3 @@ if(Bayeux_ENABLE_TESTING)
     endforeach()
   endforeach()
 endif()
-
-
