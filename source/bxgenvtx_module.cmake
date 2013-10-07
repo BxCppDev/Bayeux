@@ -47,6 +47,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/tube_model_vg.h
   ${module_include_dir}/${module_name}/genvtx_config.h.in
   ${module_include_dir}/${module_name}/version.h.in
+  ${module_include_dir}/${module_name}/genvtx_driver.h
   ${module_include_dir}/${module_name}/detail/vg_tools.h
   ${module_include_dir}/${module_name}/detail/geom_manager_utils.h
   )
@@ -70,6 +71,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/tube_model_vg.cc
   ${module_source_dir}/geom_manager_utils.cc
   ${module_source_dir}/version.cc
+  ${module_source_dir}/genvtx_driver.cc
   )
 
 # - Published headers
@@ -99,4 +101,3 @@ set(${module_name}_MODULE_TESTS
 set(${module_name}_MODULE_APPS
   ${module_app_dir}/genvtx_production.cxx
   )
-
