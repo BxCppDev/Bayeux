@@ -55,7 +55,6 @@ int main(int argc_, char ** argv_)
     if (params.help) {
       print_help(opts, std::cout);
       run_session = false;
-      std::cerr << "*** DEVEL *** Help! " << std::endl;
     }
 
     if (run_session) {
@@ -97,16 +96,16 @@ int main(int argc_, char ** argv_)
 void print_help(boost::program_options::options_description & opts_,
                 std::ostream & out)
 {
-  genvtx::genvtx_driver_params driver_params;
-  //boost::program_options::options_description driver_general_opts;
   boost::program_options::options_description driver_init_opts;
   boost::program_options::options_description driver_action_opts;
-  //genvtx::genvtx_driver::build_general_opts(driver_init_opts, driver_params);
+  boost::program_options::options_description driver_all_opts;
+  genvtx::genvtx_driver_params driver_params;
   genvtx::genvtx_driver::build_initialization_opts(driver_init_opts, driver_params);
   genvtx::genvtx_driver::build_action_opts(driver_action_opts, driver_params);
-
-  // boost::program_options::options_description all_opts;
-  // all_opts.add(driver_init_opts).add(driver_action_opts);
+  driver_all_opts
+    .add(opts_)
+    .add(driver_init_opts)
+    .add(driver_action_opts);
 
   out << "Usage : genvtx_production [OPTION]...                                       \n";
   out << "                                                                            \n";
@@ -114,10 +113,7 @@ void print_help(boost::program_options::options_description & opts_,
   out << "  managed by a vertex generator manager associated to a                     \n";
   out << "  geometry manager.                                                         \n";
   out << "                                                                            \n";
-  out << opts_ << std::endl;
-  //out << driver_general_opts << std::endl;
-  out << driver_init_opts << std::endl;
-  out << driver_action_opts  << std::endl;
+  out << driver_all_opts << std::endl;
   out << "                                                                            \n";
   out << "Example:                                                                    \n";
   out << "                                                                            \n";
@@ -127,6 +123,13 @@ void print_help(boost::program_options::options_description & opts_,
   out << "       --geometry-manager \"${CONFIG_DIR}/geometry/manager.conf\" \\        \n";
   out << "       --vertex-generator-manager \"${CONFIG_DIR}/vertex/manager.conf\" \\  \n";
   out << "       --list                                                               \n";
+  out << "                                                                            \n";
+  out << "  Show a given vertex generator:                                            \n";
+  out << "                                                                            \n";
+  out << "     genvtx_production \\                                                   \n";
+  out << "       --geometry-manager \"${CONFIG_DIR}/geometry/manager.conf\" \\        \n";
+  out << "       --vertex-generator-manager \"${CONFIG_DIR}/vertex/manager.conf\" \\  \n";
+  out << "       --show --vertex-generator \"scintillator_block.vg\"                  \n";
   out << "                                                                            \n";
   out << "  Generate some vertices, store then in a file and display:                 \n";
   out << "                                                                            \n";

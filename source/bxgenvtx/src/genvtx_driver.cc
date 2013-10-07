@@ -512,23 +512,27 @@ namespace genvtx {
     */
 
     // PRNG
-    if (_params_.prng_type.empty()) {
-      _params_.prng_type = "taus2";
+    if (_action_ & genvtx_driver::ACTION_SHOOT) {
+      if (_params_.prng_type.empty()) {
+        _params_.prng_type = "taus2";
+      }
+      if (_params_.prng_seed <= mygsl::random_utils::SEED_INVALID) {
+        _params_.prng_seed = 1;
+      }
+      _prng_.reset(new mygsl::rng);
+      _prng_->initialize(_params_.prng_type, _params_.prng_seed);
     }
-    if (_params_.prng_seed <= mygsl::random_utils::SEED_INVALID) {
-      _params_.prng_seed = 1;
-    }
-    _prng_.reset(new mygsl::rng);
-    _prng_->initialize(_params_.prng_type, _params_.prng_seed);
 
     // Vertex generator manager :
     _vtx_mgr_.reset(new genvtx::manager(_logging_));
     _vtx_mgr_->set_geometry_manager(*_geo_mgr_);
-    _vtx_mgr_->set_external_random(*_prng_);
-    datatools::fetch_path_with_env (_params_.VGMgrConfigFile);
+    if (_action_ & genvtx_driver::ACTION_SHOOT) {
+      _vtx_mgr_->set_external_random(*_prng_);
+    }
+    datatools::fetch_path_with_env(_params_.VGMgrConfigFile);
     datatools::properties VGMgrConfig;
-    datatools::properties::read_config (_params_.VGMgrConfigFile, VGMgrConfig);
-    _vtx_mgr_->initialize (VGMgrConfig);
+    datatools::properties::read_config(_params_.VGMgrConfigFile, VGMgrConfig);
+    _vtx_mgr_->initialize(VGMgrConfig);
     DT_LOG_DEBUG(_logging_, "The vertex generator manager: ");
     if (_logging_ >= datatools::logger::PRIO_DEBUG) {
       _vtx_mgr_->tree_dump(std::clog);
@@ -550,7 +554,7 @@ namespace genvtx {
     }
     if (_action_ & genvtx_driver::ACTION_SHOOT) {
       DT_THROW_IF(_params_.nshoots <= 0, std::range_error,
-                  "Invalid number of vertixes (" << _params_.nshoots << ") !");
+                  "Invalid number of vertexes to be generated (" << _params_.nshoots << ") !");
     }
 
     _initialized_ = true;
@@ -564,6 +568,7 @@ namespace genvtx {
                  "Driver is not initialized !");
     _initialized_ = false;
     _action_ = ACTION_UNDEFINED;
+    _prng_.reset();
     _vtx_mgr_.reset();
     _geo_mgr_.reset();
     _params_.reset();
@@ -604,9 +609,6 @@ namespace genvtx {
         std::clog << "Usage:" << std::endl;
         std::clog << "  initialize [OPTIONS]" << std::endl;
         std::clog << drv_all_opts << std::endl;
-        //std::clog << drv_general_opts << std::endl;
-        //std::clog << drv_init_opts << std::endl;
-        //std::clog << drv_action_opts << std::endl;
         return EXIT_SUCCESS;
       }
 
@@ -666,15 +668,18 @@ namespace genvtx {
     namespace po = boost::program_options;
     po::options_description drv_general_opts("Driver general options");
     po::options_description drv_action_opts("Driver action options");
+    po::options_description drv_all_opts;
     try {
       genvtx_driver::build_general_opts(drv_general_opts, _params_);
       genvtx_driver::build_action_opts(drv_action_opts, _params_);
+      drv_all_opts
+        .add(drv_general_opts)
+        .add(drv_action_opts);
       po::positional_options_description args;
       po::variables_map vm;
       po::parsed_options parsed =
         po::command_line_parser(argv_)
-        .options(drv_general_opts)
-        .options(drv_action_opts)
+        .options(drv_all_opts)
         .allow_unregistered()
         .run();
       std::vector<std::string> unrecognized
@@ -686,8 +691,7 @@ namespace genvtx {
       if (_params_.help) {
         std::clog << "Usage:" << std::endl;
         std::clog << "  run [OPTIONS]" << std::endl;
-        std::clog << drv_general_opts << std::endl;
-        std::clog << drv_action_opts << std::endl;
+        std::clog << drv_all_opts << std::endl;
         return EXIT_SUCCESS;
       }
 

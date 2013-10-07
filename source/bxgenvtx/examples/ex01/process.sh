@@ -3,13 +3,23 @@
 
 clean=1
 help=0
+debug=0
 html=0
 html_file=genvtx-ex01_README.html
 
 opwd=$(pwd)
 
-while getopts "hCH:" "$@" ;  do
+function my_exit()
+{
+    cd ${opwd}
+    exit $1
+}
+
+while getopts "dhCH:" opt ;  do
     case $opt in
+	d)
+	    debug=1
+	    ;;
 	h)
 	    help=1
 	    ;;
@@ -22,15 +32,18 @@ while getopts "hCH:" "$@" ;  do
 	    ;;
 	\?)
 	    echo "ERROR: Invalid option: -$OPTARG" >&2
-	    cd ${opwd}
-	    exit 1
+	    my_exit 1
 	    ;;
 	:)
 	    echo "ERROR: Missing argument for option: -$OPTARG" >&2
-
+	    my_exit 1
+	    ;;
     esac
 done
-shift $(( OPTIND - 1 ));
+shift $(($OPTIND -1))
+if [ $debug -eq 1 ]; then
+    printf "DEBUG: Remaining arguments are: %s\n" "$*" >&2
+fi
 
 if [ $help -eq 1 ]; then
     cat<<EOF
@@ -40,6 +53,7 @@ Usage:
   process.sh [OPTIONS...]
 
 EOF
+    my_exit 0
 fi
 
 build_dir=$(pwd)/__build
@@ -66,18 +80,44 @@ echo "Check the  geometry setup : " 1>&2
 geomtools_inspector \
    --manager-config config/geometry/manager.conf \
    --with-visu --visu-view-3d
+if [ $? -ne 0 ]; then
+    echo "ERROR: Geometry check failed !" 1>&2
+    my_exit 1
+fi
 
 
 echo "Run the example program : " 1>&2
 ./ex01 > ex01_vertices.data
+if [ $? -ne 0 ]; then
+    echo "ERROR: example program ex01 failed !" 1>&2
+    my_exit 1
+fi
 gnuplot ./ex01.gp
+if [ $? -ne 0 ]; then
+    echo "ERROR: gnuplot display failed !" 1>&2
+    my_exit 1
+fi
 
 echo "Run the genvtx_production program : " 1>&2
+
+echo "NOTICE: Print usage : " 1>&2
+genvtx_production --help
+if [ $? -ne 0 ]; then
+    echo "ERROR: Print help failed !" 1>&2
+    my_exit 1
+fi
+
+echo "NOTICE: List vertex generators : " 1>&2
 genvtx_production \
     --geometry-manager config/geometry/manager.conf \
     --vertex-generator-manager config/vertex/manager.conf \
     --list
+if [ $? -ne 0 ]; then
+    echo "ERROR: List vertex generators failed !" 1>&2
+    my_exit 1
+fi
 
+echo "NOTICE: Shoot vertexes : " 1>&2
 genvtx_production \
     --geometry-manager config/geometry/manager.conf \
     --vertex-generator-manager config/vertex/manager.conf \
@@ -88,7 +128,12 @@ genvtx_production \
     --output-file "genvtx_ex01_vertices.txt" \
     --visu \
     --visu-spot-zoom 0.5
+if [ $? -ne 0 ]; then
+    echo "ERROR: Shoot vertexes failed !" 1>&2
+    my_exit 1
+fi
 
+echo "NOTICE: Shoot vertexes : " 1>&2
 genvtx_production \
     --geometry-manager config/geometry/manager.conf \
     --vertex-generator-manager config/vertex/manager.conf \
@@ -99,8 +144,13 @@ genvtx_production \
     --output-file "genvtx_ex01_vertices_2.txt" \
     --visu \
     --visu-spot-zoom 0.5
+if [ $? -ne 0 ]; then
+    echo "ERROR: Shoot vertexes failed !" 1>&2
+    my_exit 1
+fi
 
 if [ $clean -eq 1 ]; then
+    echo "NOTICE: Clean..." 1>&2
     rm -f ./ex01
     rm -f ./ex01_vertices.data
     rm -f ./genvtx_ex01_vertices.txt
@@ -110,8 +160,7 @@ if [ $clean -eq 1 ]; then
     find . -name "*~" -exec rm -f \{\} \;
 fi
 
-cd ${opwd}
 
-exit 0
+my_exit 0
 
 # end
