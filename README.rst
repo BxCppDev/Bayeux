@@ -19,29 +19,30 @@ into several specialized submodules:
 
 datatools :  Serializable data structures based on Boost.
 
-brio :       A Boost over ROOT I/O serialization system (extends datatools).
-
-mygsl :      C++ wrapper and extensions to the GNU Scientific Library.
-
 cuts :       Generic tools for making arbitrary data selections.
 
 materials :  Description of isotopes, elements and materials plus tools
 	     for input to simulation applications (i.e. GDML/Geant4).
 
+mygsl :      C++ wrapper and extensions to the GNU Scientific Library.
+
 geomtools :  Generic tools for working with experiment geometries and
              provide input to simulation tools (i.e. GDML/Geant4).
 
-genvtx :     Vertex random generator tools for input to
-             simulation applications.
+emfield :    Electromagnetic field modelling and management.
+
+brio :       A Boost over ROOT I/O serialization system (extends datatools).
+
+dpp :        A basic data processing pipeline API.
 
 genbb_help : C++ wrapper and extensions to the Decay0/GENBB program
              by Vladimir Tretyak, for input to simulation applications.
 
-emfield :    Electromagnetic field modelling and management.
+genvtx :     Vertex random generator tools for input to
+             simulation applications.
 
-trackfit :   Track fitting in a NEMO-like detector.
-
-dpp :        A basic data processing pipeline API.
+mctools :    Utilities for particle and nuclear physics simulation with
+             a Geant4 interface.
 
 
 Naming
@@ -180,4 +181,3 @@ See the projects under the examples directory.
 Developing Bayeux
 =================
 WIP
-
