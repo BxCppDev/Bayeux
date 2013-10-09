@@ -30,20 +30,6 @@
 //! Evaluates to true if Bayeux was built with automated init/fini operation at DLL loading
 #cmakedefine01 BAYEUX_WITH_IMPLICIT_INIT_FINI
 
-//! The list of Bayeux  submodules :
-#define BAYEUX_SUBMODULES "@Bayeux_SUBMODULES@"
-
-#cmakedefine01 BAYEUX_WITH_CUTS
-#cmakedefine01 BAYEUX_WITH_MATERIALS
-#cmakedefine01 BAYEUX_WITH_MYGSL
-#cmakedefine01 BAYEUX_WITH_GEOMTOOLS
-#cmakedefine01 BAYEUX_WITH_EMFIELD
-#cmakedefine01 BAYEUX_WITH_BRIO
-#cmakedefine01 BAYEUX_WITH_DPP
-#cmakedefine01 BAYEUX_WITH_GENBB_HELP
-#cmakedefine01 BAYEUX_WITH_GENVTX
-#cmakedefine01 BAYEUX_WITH_MCTOOLS
-
 //! The installation path of the Bayeux resource files :
 #define BAYEUX_DATA_INSTALL_DIR "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
 

@@ -39,6 +39,12 @@ find_package(GSL 1.15 QUIET NO_MODULE)
 # - ROOT
 find_package(ROOT 5.34.00 REQUIRED RIO Tree)
 
+# - Optional build of G4 component of mctools
+option(BAYEUX_WITH_GEANT4 "Build Geant4 extension module" OFF)
+if(BAYEUX_WITH_GEANT4)
+  find_package(Geant4 9.6.0 REQUIRED ui_all vis_all)
+endif()
+
 # - Core Includes for Bayeux + Third Party
 include_directories(${Bayeux_BUILDPRODUCT_DIR}/include)
 include_directories(${Bayeux_BUILDPRODUCT_DIR}/include/bayeux)
@@ -88,14 +94,11 @@ set(MODULE_RESOURCE_ROOT "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}/re
 #set(MODULE_RESOURCE_ROOT "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}")
 
 foreach(_m ${Bayeux_SUBMODULES})
-  string(TOUPPER "${_m}" _M)
-  if ( ("${_m}" STREQUAL "datatools") OR (${BAYEUX_WITH_${_M}}) )
-    include(bx${_m}_module.cmake)
-    list(APPEND Bayeux_HEADERS ${${_m}_MODULE_HEADERS})
-    list(APPEND Bayeux_SOURCES ${${_m}_MODULE_SOURCES})
-    list(APPEND Bayeux_RESOURCES ${${_m}_MODULE_RESOURCES})
-    list(APPEND Bayeux_APPS ${${_m}_MODULE_APPS})
-  endif()
+  include(bx${_m}_module.cmake)
+  list(APPEND Bayeux_HEADERS ${${_m}_MODULE_HEADERS})
+  list(APPEND Bayeux_SOURCES ${${_m}_MODULE_SOURCES})
+  list(APPEND Bayeux_RESOURCES ${${_m}_MODULE_RESOURCES})
+  list(APPEND Bayeux_APPS ${${_m}_MODULE_APPS})
 endforeach()
 
 # - We must put this at the end because it needs static code from
