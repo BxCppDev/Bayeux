@@ -13,16 +13,17 @@
 #include <mctools/step_hit_processor_factory.h>
 
 #include <geomtools/manager.h>
+#include <emfield/version.h>
 
 // For Boost I/O :
 // Some pre-processor guard about Boost I/O usage and linkage :
-#include <datatools/bio_guard.h>
+//#include <datatools/bio_guard.h>
 #include <mygsl/bio_guard.h>
 #include <geomtools/bio_guard.h>
 #include <genbb_help/bio_guard.h>
 #include <mctools/bio_guard.h>
 
-int main (int argc_, char ** argv_)
+int main(int argc_, char ** argv_)
 {
   using namespace std;
   int error_code = EXIT_SUCCESS;
@@ -31,8 +32,10 @@ int main (int argc_, char ** argv_)
 
     string LL_config;
     uint32_t LL_flags = datatools::library_loader::allow_unregistered;
-    datatools::library_loader LL (LL_flags, LL_config);
-    LL.load ("emfield");
+    datatools::library_loader LL(LL_flags, LL_config);
+    //LL.load ("emfield");
+    // Force granular emfield DLL to be linked:
+    std::string emfver = emfield::version::get_version();
 
     bool debug = false;
     std::string gmgr_config_file;

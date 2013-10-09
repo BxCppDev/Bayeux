@@ -1,27 +1,9 @@
-// -*- mode: c++; -*- 
-/* mctools_config.h header file 
+// -*- mode: c++; -*-
+/* mctools_config.h header file
  */
 
 #ifndef MCTOOLS_MCTOOLS_CONFIG_H_
 #define MCTOOLS_MCTOOLS_CONFIG_H_ 1
-
-/*** mctools versioning information ***/
-
-//  MCTOOLS_VERSION % 100        is the patch level
-//  MCTOOLS_VERSION / 100 % 1000 is the minor version
-//  MCTOOLS_VERSION / 100000     is the major version
-
-#define MCTOOLS_VERSION_MAJOR @mctools_VERSION_MAJOR@
-#define MCTOOLS_VERSION_MINOR @mctools_VERSION_MINOR@
-#define MCTOOLS_PATCH_VERSION @mctools_PATCH_VERSION@
-
-#define MCTOOLS_VERSION @_mctools_VERSION_NUMERIC@
-
-//  MCTOOLS_LIB_VERSION must be defined to be the same as MCTOOLS_VERSION
-//  but as a *string* in the form "x.y[.z]" where x is the major version
-//  number, y is the minor version number, and z is the patch level if not 0.
-
-#define MCTOOLS_LIB_VERSION "@mctools_VERSION@"
 
 /***  mctools debug flag ***/
 #cmakedefine01 MCTOOLS_WITH_DEBUG
@@ -40,9 +22,9 @@
 
 #if MCTOOLS_WITH_G4_G4VIS_USE == 1
 #cmakedefine G4VIS_USE
-#cmakedefine G4VIS_USE_OPENGLX  
-#cmakedefine G4VIS_USE_OPENGLXM 
-#cmakedefine G4VIS_USE_OPENGLQT 
+#cmakedefine G4VIS_USE_OPENGLX
+#cmakedefine G4VIS_USE_OPENGLXM
+#cmakedefine G4VIS_USE_OPENGLQT
 #endif
 
 //! The installation path of the mctools resource files :

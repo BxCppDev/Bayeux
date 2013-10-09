@@ -27,9 +27,9 @@ project(mctools)
 # - Versioning
 set(mctools_VERSION_MAJOR 1)
 set(mctools_VERSION_MINOR 0)
-set(mctools_PATCH_VERSION 0)
+set(mctools_VERSION_PATCH 0)
 set(mctools_VERSION "${mctools_VERSION_MAJOR}.${mctools_VERSION_MINOR}.${mctools_PATCH_VERSION}")
-math(EXPR _mctools_VERSION_NUMERIC "${mctools_VERSION_MAJOR}*100000+${mctools_VERSION_MINOR}*100+${mctools_PATCH_VERSION}")
+math(EXPR _mctools_VERSION_NUMERIC "${mctools_VERSION_MAJOR}*100000+${mctools_VERSION_MINOR}*100+${mctools_VERSION_PATCH}")
 
 # - Fixup default install prefix on Mac
 if(APPLE AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)

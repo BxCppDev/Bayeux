@@ -55,7 +55,10 @@ configure_file(
   ${PROJECT_BINARY_DIR}/include/mctools/version.h
   )
 
-list(APPEND mctools_PUBLIC_HEADERS ${PROJECT_BINARY_DIR}/include/mctools/mctools_config.h ${PROJECT_BINARY_DIR}/include/mctools/version.h)
+list(APPEND mctools_PUBLIC_HEADERS
+  ${PROJECT_BINARY_DIR}/include/mctools/mctools_config.h
+  ${PROJECT_BINARY_DIR}/include/mctools/version.h
+)
 
 #-----------------------------------------------------------------------
 # PRIVATE HEADERS

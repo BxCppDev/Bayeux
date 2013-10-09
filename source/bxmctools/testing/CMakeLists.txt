@@ -116,6 +116,8 @@ foreach(test_program ${mctools_tests_programs_list})
 
   set(_test_libraries mctools)
 
+  list(APPEND _test_libraries emfield )
+
   # Special bio DLL plugins :
   if(mygsl_WITH_BIO)
     list(INSERT _test_libraries 0 mygsl_bio )
