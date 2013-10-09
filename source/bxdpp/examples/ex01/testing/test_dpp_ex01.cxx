@@ -1,9 +1,14 @@
+// Standard library
 #include <iostream>
 #include <exception>
+#include <cstdlib>
 
+// Third party
+// - datatools
 #include <datatools/clhep_units.h>
 #include <datatools/io_factory.h>
 
+// This project
 #include <dpp_ex01/hit.h>
 #include <dpp_ex01/raw_data.h>
 
@@ -55,5 +60,7 @@ int main() {
   }
   catch (std::exception & x) {
     std::cerr << "ERROR: " << x.what() << std::endl;
+    return EXIT_FAILURE;
   }
+  return EXIT_SUCCESS;
 }

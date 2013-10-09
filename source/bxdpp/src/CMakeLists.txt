@@ -46,6 +46,7 @@ set(dpp_PUBLIC_HEADERS
     include/dpp/utils_cut.h
     include/dpp/histogram_service.h
     include/dpp/ocd_support.h
+    include/dpp/dpp_driver.h
   )
 list_prepend(dpp_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 
@@ -117,6 +118,7 @@ set(dpp_SOURCES
     histogram_service.cc
     ocd_support.cc
     version.cc
+    dpp_driver.cc
     )
 
 #-----------------------------------------------------------------------
