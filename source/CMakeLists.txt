@@ -70,62 +70,6 @@ set(Bayeux_SUBMODULES
   mctools
 )
 
-# - All submodules activation is the default
-option(BAYEUX_WITH_CUTS       "Build Bayeux with cuts"       ON)
-option(BAYEUX_WITH_MATERIALS  "Build Bayeux with materials"  ON)
-option(BAYEUX_WITH_MYGSL      "Build Bayeux with mygsl"      ON)
-option(BAYEUX_WITH_GEOMTOOLS  "Build Bayeux with geomtools"  ON)
-option(BAYEUX_WITH_EMFIELD    "Build Bayeux with emfield"    ON)
-option(BAYEUX_WITH_BRIO       "Build Bayeux with brio"       ON)
-option(BAYEUX_WITH_DPP        "Build Bayeux with dpp"        ON)
-option(BAYEUX_WITH_GENBB_HELP "Build Bayeux with genbb_help" ON)
-option(BAYEUX_WITH_GENVTX     "Build Bayeux with genvtx"     ON)
-option(BAYEUX_WITH_MCTOOLS    "Build Bayeux with mctools"    ON)
-option(BAYEUX_WITH_MCTOOLS_G4 "Build Bayeux with mctools/Geant4" ON)
-
-# - Process dependencies explicitely
-if (BAYEUX_WITH_MCTOOLS_G4)
-  set(BAYEUX_WITH_MCTOOLS ON)
-endif()
-if (BAYEUX_WITH_MCTOOLS)
-  set(BAYEUX_WITH_GENBB_HELP ON)
-  set(BAYEUX_WITH_GENVTX ON)
-  set(BAYEUX_WITH_DPP ON)
-  set(BAYEUX_WITH_EMFIELD ON)
-endif()
-if (BAYEUX_WITH_GENBB_HELP)
-  set(BAYEUX_WITH_GEOMTOOLS ON)
-  set(BAYEUX_WITH_DPP ON)
-endif()
-if (BAYEUX_WITH_GENVTX)
-  set(BAYEUX_WITH_GEOMTOOLS ON)
-endif()
-if (BAYEUX_WITH_EMFIELD)
-  set(BAYEUX_WITH_GEOMTOOLS ON)
-endif()
-if (BAYEUX_WITH_DPP)
-  set(BAYEUX_WITH_MYGSL ON)
-  set(BAYEUX_WITH_CUTS ON)
-  set(BAYEUX_WITH_BRIO ON)
-endif()
-if (BAYEUX_WITH_GEOMTOOLS)
-  set(BAYEUX_WITH_MYGSL ON)
-  set(BAYEUX_WITH_MATERIALS ON)
-endif()
-
-message (STATUS "About to build datatools" )
-message (STATUS "About to build cuts       : ${BAYEUX_WITH_CUTS}" )
-message (STATUS "About to build materials  : ${BAYEUX_WITH_MATERIALS}" )
-message (STATUS "About to build mygsl      : ${BAYEUX_WITH_MYGSL}" )
-message (STATUS "About to build geomtools  : ${BAYEUX_WITH_GEOMTOOLS}" )
-message (STATUS "About to build emfield    : ${BAYEUX_WITH_EMFIELD}" )
-message (STATUS "About to build brio       : ${BAYEUX_WITH_BRIO}" )
-message (STATUS "About to build dpp        : ${BAYEUX_WITH_DPP}" )
-message (STATUS "About to build genbb_help : ${BAYEUX_WITH_GENBB_HELP}" )
-message (STATUS "About to build genvtx     : ${BAYEUX_WITH_GENVTX}" )
-message (STATUS "About to build mctools    : ${BAYEUX_WITH_MCTOOLS}" )
-message (STATUS "About to build mctools/G4 : ${BAYEUX_WITH_MCTOOLS_G4}" )
-message (STATUS "About to build Bayeux..." )
 
 # - Resource installation base dir
 set(CMAKE_INSTALL_DATADIR "share/Bayeux-${Bayeux_VERSION}")
@@ -146,7 +90,6 @@ set(MODULE_RESOURCE_ROOT "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}/re
 foreach(_m ${Bayeux_SUBMODULES})
   string(TOUPPER "${_m}" _M)
   if ( ("${_m}" STREQUAL "datatools") OR (${BAYEUX_WITH_${_M}}) )
-    message (STATUS "Processing submodule ${_m}..." )
     include(bx${_m}_module.cmake)
     list(APPEND Bayeux_HEADERS ${${_m}_MODULE_HEADERS})
     list(APPEND Bayeux_SOURCES ${${_m}_MODULE_SOURCES})
@@ -163,19 +106,13 @@ list(APPEND Bayeux_SOURCES ${bayeux_ENDING_MODULE_SOURCES})
 #include_directories(${datatools_include_dir})
 
 # Hack for geomtools private headers
-if (BAYEUX_WITH_GEOMTOOLS)
 include_directories(${geomtools_include_dir})
-endif (BAYEUX_WITH_GEOMTOOLS)
 
 # Hack for genbb_help private headers
-if (BAYEUX_WITH_GENBB_HELP)
 include_directories(${genbb_help_include_dir})
-endif (BAYEUX_WITH_GENBB_HELP)
 
 # Hack for mctools private headers
-if (BAYEUX_WITH_MCTOOLS)
 include_directories(${mctools_include_dir})
-endif (BAYEUX_WITH_MCTOOLS)
 
 #-----------------------------------------------------------------------
 # Build/Link the library

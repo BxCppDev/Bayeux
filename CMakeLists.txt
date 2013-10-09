@@ -77,6 +77,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/lib")
 # Use implicit Bayeux init/fini instruction
 #
 option(BAYEUX_WITH_IMPLICIT_INIT_FINI "Build implicit init/fini code for Bayeux" OFF)
+mark_as_advanced(BAYEUX_WITH_IMPLICIT_INIT_FINI)
 
 #-----------------------------------------------------------------------
 # Configure testing if required
