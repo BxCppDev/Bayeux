@@ -45,12 +45,17 @@ set(mctools_PUBLIC_HEADERS
     )
 list_prepend(mctools_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 
-# - Add config header
+# - Add config and version headers
 configure_file(
   ${PROJECT_SOURCE_DIR}/include/mctools/mctools_config.h.in
   ${PROJECT_BINARY_DIR}/include/mctools/mctools_config.h
   )
-list(APPEND mctools_PUBLIC_HEADERS ${PROJECT_BINARY_DIR}/include/mctools/mctools_config.h)
+configure_file(
+  ${PROJECT_SOURCE_DIR}/include/mctools/version.h.in
+  ${PROJECT_BINARY_DIR}/include/mctools/version.h
+  )
+
+list(APPEND mctools_PUBLIC_HEADERS ${PROJECT_BINARY_DIR}/include/mctools/mctools_config.h ${PROJECT_BINARY_DIR}/include/mctools/version.h)
 
 #-----------------------------------------------------------------------
 # PRIVATE HEADERS
@@ -92,6 +97,7 @@ set(mctools_SOURCES
     simulated_data.cc
     simulated_data_reader.cc
     simulated_data_input_module.cc
+    version.cc
   )
 
 # message(STATUS "********** mctools_SOURCES=${mctools_SOURCES}")
