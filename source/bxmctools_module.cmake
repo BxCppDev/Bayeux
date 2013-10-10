@@ -92,3 +92,60 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_simulated_data_input_module_1.cxx
   )
 
+#-----------------------------------------------------------------------
+# The Geant4 Extension Headers and Sources
+#
+set(${module_name}_GEANT4_HEADERS
+  ${module_include_dir}/${module_name}/g4/simulation_module.h
+  ${module_include_dir}/${module_name}/g4/primary_generator.h
+  ${module_include_dir}/${module_name}/g4/magnetic_field.h
+  ${module_include_dir}/${module_name}/g4/manager_parameters.h
+  ${module_include_dir}/${module_name}/g4/particles_physics_constructor.h
+  ${module_include_dir}/${module_name}/g4/physics_list_utils.h
+  ${module_include_dir}/${module_name}/g4/tracking_action.h
+  ${module_include_dir}/${module_name}/g4/stacking_action.h
+  ${module_include_dir}/${module_name}/g4/g4_prng.h
+  ${module_include_dir}/${module_name}/g4/run_action.h
+  ${module_include_dir}/${module_name}/g4/sensitive_detector.h
+  ${module_include_dir}/${module_name}/g4/simulation_ctrl.h
+  ${module_include_dir}/${module_name}/g4/em_physics_constructor.h
+  ${module_include_dir}/${module_name}/g4/loggable_support.h
+  ${module_include_dir}/${module_name}/g4/manager.h
+  ${module_include_dir}/${module_name}/g4/sensitive_hit.h
+  ${module_include_dir}/${module_name}/g4/physics_list.h
+  ${module_include_dir}/${module_name}/g4/event_action.h
+  ${module_include_dir}/${module_name}/g4/stepping_verbose.h
+  ${module_include_dir}/${module_name}/g4/base_physics_constructor.h
+  ${module_include_dir}/${module_name}/g4/detector_construction.h
+  ${module_include_dir}/${module_name}/g4/track_history.h
+  ${module_include_dir}/${module_name}/g4/stepping_action.h
+  ${module_include_dir}/${module_name}/g4/sensitive_hit_collection.h
+  )
+
+set(${module_name}_GEANT4_SOURCES
+  ${module_source_dir}/g4/manager_parameters.cc
+  ${module_source_dir}/g4/particles_physics_constructor.cc
+  ${module_source_dir}/g4/physics_list_utils.cc
+  ${module_source_dir}/g4/tracking_action.cc
+  ${module_source_dir}/g4/stacking_action.cc
+  ${module_source_dir}/g4/g4_prng.cc
+  ${module_source_dir}/g4/run_action.cc
+  ${module_source_dir}/g4/sensitive_detector.cc
+  ${module_source_dir}/g4/simulation_ctrl.cc
+  ${module_source_dir}/g4/em_physics_constructor.cc
+  ${module_source_dir}/g4/loggable_support.cc
+  ${module_source_dir}/g4/manager.cc
+  ${module_source_dir}/g4/physics_list.cc
+  ${module_source_dir}/g4/sensitive_hit.cc
+  ${module_source_dir}/g4/stepping_verbose.cc
+  ${module_source_dir}/g4/event_action.cc
+  ${module_source_dir}/g4/base_physics_constructor.cc
+  ${module_source_dir}/g4/detector_construction.cc
+  ${module_source_dir}/g4/track_history.cc
+  ${module_source_dir}/g4/stepping_action.cc
+  ${module_source_dir}/g4/sensitive_hit_collection.cc
+  ${module_source_dir}/g4/primary_generator.cc
+  ${module_source_dir}/g4/simulation_module.cc
+  ${module_source_dir}/g4/magnetic_field.cc
+  )
+

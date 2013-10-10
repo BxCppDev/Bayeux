@@ -39,11 +39,6 @@ find_package(GSL 1.15 QUIET NO_MODULE)
 # - ROOT
 find_package(ROOT 5.34.00 REQUIRED RIO Tree)
 
-# - Optional build of G4 component of mctools
-option(BAYEUX_WITH_GEANT4 "Build Geant4 extension module" OFF)
-if(BAYEUX_WITH_GEANT4)
-  find_package(Geant4 9.6.0 REQUIRED ui_all vis_all)
-endif()
 
 # - Core Includes for Bayeux + Third Party
 include_directories(${Bayeux_BUILDPRODUCT_DIR}/include)
@@ -89,9 +84,7 @@ set(Bayeux_TESTS)
 set(Bayeux_RESOURCES)
 
 set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include/bayeux")
-#set(MODULE_RESOURCE_ROOT "${Bayeux_BUILDPRODUCT_DIR}/share/Bayeux-${Bayeux_VERSION}/resources")
 set(MODULE_RESOURCE_ROOT "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}/resources")
-#set(MODULE_RESOURCE_ROOT "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}")
 
 foreach(_m ${Bayeux_SUBMODULES})
   include(bx${_m}_module.cmake)
@@ -127,6 +120,26 @@ target_link_libraries(Bayeux ${CAMP_LIBRARIES})
 target_link_libraries(Bayeux ${GSL_LIBRARIES})
 target_link_libraries(Bayeux ${CLHEP_LIBRARIES})
 target_link_libraries(Bayeux ${ROOT_LIBRARIES})
+
+#-----------------------------------------------------------------------
+# - Build/Link the geant4 extension module, if required
+option(Bayeux_WITH_GEANT4 "Build Geant4 extension module" OFF)
+if(Bayeux_WITH_GEANT4)
+  find_package(Geant4 9.6.0 REQUIRED ui_all vis_all gdml)
+  include_directories(${Geant4_INCLUDE_DIRS})
+  add_library(Bayeux_mctools_geant4 MODULE ${mctools_GEANT4_SOURCES} ${mctool_GEANT4_HEADERS})
+  # Hack - strip "-D" flag as we should only supply the def names
+  set(Bayeux_Geant4_DEFINITIONS)
+  foreach(_def ${Geant4_DEFINITIONS})
+    string(REGEX REPLACE "^-D" "" _bxdef ${_def})
+    list(APPEND Bayeux_Geant4_DEFINITIONS ${_bxdef})
+  endforeach()
+  
+  set_target_properties(Bayeux_mctools_geant4
+    PROPERTIES COMPILE_DEFINITIONS ${Bayeux_Geant4_DEFINITIONS}
+    )
+  target_link_libraries(Bayeux_mctools_geant4 ${Geant4_LIBRARIES})
+endif()
 
 #-----------------------------------------------------------------------
 # Build/Link the executables
