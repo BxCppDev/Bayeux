@@ -31,6 +31,7 @@ set(GENVTX_WITH_BIO 1)
 set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/box_vg.h
   ${module_include_dir}/${module_name}/cylinder_vg.h
+  ${module_include_dir}/${module_name}/sphere_vg.h
   ${module_include_dir}/${module_name}/from_file_vg.h
   ${module_include_dir}/${module_name}/i_vertex_generator.h
   ${module_include_dir}/${module_name}/placement_vg.h
@@ -45,6 +46,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/box_model_vg.h
   ${module_include_dir}/${module_name}/cylinder_model_vg.h
   ${module_include_dir}/${module_name}/tube_model_vg.h
+  ${module_include_dir}/${module_name}/sphere_model_vg.h
   ${module_include_dir}/${module_name}/genvtx_config.h.in
   ${module_include_dir}/${module_name}/version.h.in
   ${module_include_dir}/${module_name}/genvtx_driver.h
@@ -58,6 +60,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/from_file_vg.cc
   ${module_source_dir}/placement_vg.cc
   ${module_source_dir}/box_vg.cc
+  ${module_source_dir}/sphere_vg.cc
   ${module_source_dir}/cylinder_vg.cc
   ${module_source_dir}/tube_vg.cc
   ${module_source_dir}/vg_tools.cc
@@ -69,6 +72,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/box_model_vg.cc
   ${module_source_dir}/cylinder_model_vg.cc
   ${module_source_dir}/tube_model_vg.cc
+  ${module_source_dir}/sphere_model_vg.cc
   ${module_source_dir}/geom_manager_utils.cc
   ${module_source_dir}/version.cc
   ${module_source_dir}/genvtx_driver.cc
@@ -90,6 +94,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_box_vg.cxx
   ${module_test_dir}/test_cylinder_vg.cxx
   ${module_test_dir}/test_tube_vg.cxx
+  ${module_test_dir}/test_sphere_vg.cxx
   ${module_test_dir}/test_placement_vg.cxx
   ${module_test_dir}/test_from_file_vg.cxx
   ${module_test_dir}/test_triangle_random_tools.cxx
