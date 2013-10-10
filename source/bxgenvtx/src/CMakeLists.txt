@@ -30,6 +30,7 @@ set(genvtx_PUBLIC_HEADERS
   include/genvtx/spot_vertex_generator.h
   include/genvtx/triangle_random_tools.h
   include/genvtx/tube_vg.h
+  include/genvtx/sphere_vg.h
   include/genvtx/vg_macros.h
   include/genvtx/utils.h
   include/genvtx/manager.h
@@ -37,6 +38,7 @@ set(genvtx_PUBLIC_HEADERS
   include/genvtx/box_model_vg.h
   include/genvtx/cylinder_model_vg.h
   include/genvtx/tube_model_vg.h
+  include/genvtx/sphere_model_vg.h
   include/genvtx/genvtx_driver.h
   )
 list_prepend(genvtx_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
@@ -93,6 +95,7 @@ set(genvtx_SOURCES
    box_vg.cc
    cylinder_vg.cc
    tube_vg.cc
+   sphere_vg.cc
    vg_tools.cc
    triangle_random_tools.cc
    quadrangle_random_tools.cc
@@ -102,6 +105,7 @@ set(genvtx_SOURCES
    box_model_vg.cc
    cylinder_model_vg.cc
    tube_model_vg.cc
+   sphere_model_vg.cc
    geom_manager_utils.cc
    version.cc
    genvtx_driver.cc

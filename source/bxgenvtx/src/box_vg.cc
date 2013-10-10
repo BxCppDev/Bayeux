@@ -356,41 +356,33 @@ namespace genvtx {
       const double r0 = random_.uniform ();
       const double r1 = random_.uniform ();
       const double r2 = random_.uniform ();
-      double r3 = 0.0;
       double delta_thick = 0.0;
       if (_skin_thickness_ > 0.0) {
-        r3 = random_.uniform ();
+        double r3 = random_.uniform ();
         delta_thick = (r3 - 0.5) * _skin_thickness_;
       }
-      std::cerr << "*** DEVEL *** box_vg::shoot_vertex: r0 = " << r0 << std::endl;
 
       if (r0 < _sum_weight_[0]) {
-        std::cerr << "*** DEVEL *** box_vg::shoot_vertex: [0]" << std::endl;
         y = (r1 - 0.5) * the_box->get_y ();
         z = (r2 - 0.5) * the_box->get_z ();
         x = -(the_box->get_half_x () + _skin_skip_ + delta_thick);
       } else if (r0 < _sum_weight_[1]) {
-        std::cerr << "*** DEVEL *** box_vg::shoot_vertex: [1]" << std::endl;
         y = (r1 - 0.5) * the_box->get_y ();
         z = (r2 - 0.5) * the_box->get_z ();
         x = +(the_box->get_half_x () + _skin_skip_ + delta_thick);
       } else if (r0 < _sum_weight_[2]) {
-        std::cerr << "*** DEVEL *** box_vg::shoot_vertex: [2]" << std::endl;
         x = (r1 - 0.5) * the_box->get_x ();
         z = (r2 - 0.5) * the_box->get_z ();
         y = -(the_box->get_half_y () + _skin_skip_ + delta_thick);
       } else if (r0 < _sum_weight_[3]) {
-        std::cerr << "*** DEVEL *** box_vg::shoot_vertex: [3]" << std::endl;
         x = (r1 - 0.5) * the_box->get_x ();
         z = (r2 - 0.5) * the_box->get_z ();
         y = +(the_box->get_half_y () + _skin_skip_ + delta_thick);
       } else if (r0 < _sum_weight_[4]) {
-        std::cerr << "*** DEVEL *** box_vg::shoot_vertex: [4]" << std::endl;
         x = (r1 - 0.5) * the_box->get_x ();
         y = (r2 - 0.5) * the_box->get_y ();
         z = -(the_box->get_half_z () + _skin_skip_ + delta_thick);
       } else {
-        std::cerr << "*** DEVEL *** box_vg::shoot_vertex: [5]" << std::endl;
         x = (r1 - 0.5) * the_box->get_x ();
         y = (r2 - 0.5) * the_box->get_y ();
         z = +(the_box->get_half_z () + _skin_skip_ + delta_thick);

@@ -14,7 +14,7 @@
 
 // Third party
 // - Boost:
-#include <boost/program_options.hpp>
+//#include <boost/program_options.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/scoped_ptr.hpp>
 
@@ -100,14 +100,14 @@ namespace genvtx {
     int command_run(const std::vector<std::string> & argv_);
     int command_reset(const std::vector<std::string> & argv_);
 
-    static void build_general_opts(boost::program_options::options_description &,
-                                   genvtx_driver_params &);
+    // static void build_general_opts(boost::program_options::options_description &,
+    //                                genvtx_driver_params &);
 
-    static void build_initialization_opts(boost::program_options::options_description &,
-                                          genvtx_driver_params &);
+    // static void build_initialization_opts(boost::program_options::options_description &,
+    //                                       genvtx_driver_params &);
 
-    static void build_action_opts(boost::program_options::options_description &,
-                                  genvtx_driver_params &);
+    // static void build_action_opts(boost::program_options::options_description &,
+    //                               genvtx_driver_params &);
 
 
   private:

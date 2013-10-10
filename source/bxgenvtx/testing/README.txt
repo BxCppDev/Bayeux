@@ -10,19 +10,22 @@ classes.
 Run test scripts from the '__build-Linux-x86_64' build directory :
 
 bash$ GENVTX_BIN_DIR=__build-Linux-x86_64/testing/ \
-        gnuplot testing/test_box_vg.gp 
+        gnuplot testing/test_box_vg.gp
 
 bash$ GENVTX_BIN_DIR=__build-Linux-x86_64/testing/ \
-        gnuplot testing/test_cylinder_vg.gp 
+        gnuplot testing/test_cylinder_vg.gp
 
 bash$ GENVTX_BIN_DIR=__build-Linux-x86_64/testing/ \
-        gnuplot testing/test_tube_vg.gp 
+        gnuplot testing/test_tube_vg.gp
 
 bash$ GENVTX_BIN_DIR=__build-Linux-x86_64/testing/ \
-        gnuplot testing/test_placement_vg.gp 
+        gnuplot testing/test_sphere_vg.gp
+
+bash$ GENVTX_BIN_DIR=__build-Linux-x86_64/testing/ \
+        gnuplot testing/test_placement_vg.gp
 
 bash$ GENVTX_DATA_DIR=$(pwd) GENVTX_BIN_DIR=__build-Linux-x86_64/testing/ \
-        gnuplot testing/test_from_file_vg.gp 
+        gnuplot testing/test_from_file_vg.gp
 
 bash$ __build-Linux-x86_64/testing/test_quadrangle_random_tools --draw
 
@@ -41,15 +44,15 @@ Configuration test-1.0 :
     --manager-config ${GENVTX_DATA_DIR}/testing/config/test-1.0/geometry/manager.conf \
     --with-visu --visu-view-3d  \
     --with-mapping \
-    --with-gdml 
+    --with-gdml
 
-List of available vertex generators: 
+List of available vertex generators:
 
   'all_capacitors_side.vg'
   'all_mezzanine_pcb_bulk.vg'
   'board_pcb_bulk.vg'
-  'hall_roof.vg' 
-  'some_mezzanines_pcb_bulk.vg' 
+  'hall_roof.vg'
+  'some_mezzanines_pcb_bulk.vg'
 
   bash$ GENVTX_DATA_DIR=$(pwd) \
     __build-Linux-x86_64/testing/test_manager \
@@ -59,28 +62,28 @@ List of available vertex generators:
   bash$ GENVTX_DATA_DIR=$(pwd) \
     __build-Linux-x86_64/testing/test_manager \
       --vertex-generator "hall_roof.vg" \
-      --many --many --many --visu 
+      --many --many --many --visu
 
   bash$ GENVTX_DATA_DIR=$(pwd) \
     __build-Linux-x86_64/testing/test_manager \
       --vertex-generator "all_capacitors_side.vg" \
       --many --many --many \
       --dump-gids \
-      --visu --tiny --tiny 
+      --visu --tiny --tiny
 
   bash$ GENVTX_DATA_DIR=$(pwd) \
     __build-Linux-x86_64/testing/test_manager \
       --vertex-generator "all_capacitors_side.vg" \
       --many --many --many \
       --dump-gids \
-      --visu --visu-object "[1000:6.0]" --tiny --tiny 
+      --visu --visu-object "[1000:6.0]" --tiny --tiny
 
   bash$ GENVTX_DATA_DIR=$(pwd) \
     __build-Linux-x86_64/testing/test_manager \
       --vertex-generator "some_mezzanines_pcb_bulk.vg" \
       --many --many --many \
       --dump-gids \
-      --visu --tiny 
+      --visu --tiny
 
 Configuration test-2.0 :
 ------------------------
@@ -91,7 +94,7 @@ Configuration test-2.0 :
       --vertex-generator "all_source_bulk.vg" \
       --many --many \
       --dump-gids \
-      --visu --tiny 
+      --visu --tiny
 
   bash$ GENVTX_DATA_DIR=$(pwd) \
     __build-Linux-x86_64/testing/test_manager \
@@ -99,7 +102,7 @@ Configuration test-2.0 :
       --vertex-generator "source_0_bulk.vg" \
       --many --many \
       --dump-gids \
-      --visu --tiny 
+      --visu --tiny
 
   bash$ GENVTX_DATA_DIR=$(pwd) \
     __build-Linux-x86_64/testing/test_manager \
@@ -107,7 +110,7 @@ Configuration test-2.0 :
       --vertex-generator "all_scin_surface.vg" \
       --many --many --many --many \
       --dump-gids \
-      --visu --tiny 
+      --visu --tiny
 
   bash$ GENVTX_DATA_DIR=$(pwd) \
     __build-Linux-x86_64/testing/test_manager \
@@ -115,7 +118,7 @@ Configuration test-2.0 :
       --vertex-generator "special_scin_surface.vg" \
       --many --many --many --many \
       --dump-gids \
-      --visu --tiny 
+      --visu --tiny
 
 
 --

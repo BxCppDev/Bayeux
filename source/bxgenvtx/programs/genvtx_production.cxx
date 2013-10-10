@@ -20,8 +20,21 @@
 // - genvtx:
 #include <genvtx/genvtx_driver.h>
 
-void print_help(boost::program_options::options_description & opts_,
-                std::ostream & out_ = std::clog);
+namespace genvtx {
+
+  void print_help(boost::program_options::options_description & opts_,
+                  std::ostream & out_ = std::clog);
+
+  void build_general_opts(boost::program_options::options_description &,
+                          genvtx_driver_params &);
+
+  void build_initialization_opts(boost::program_options::options_description &,
+                                 genvtx_driver_params &);
+
+  void build_action_opts(boost::program_options::options_description &,
+                         genvtx_driver_params &);
+
+}
 
 int main(int argc_, char ** argv_)
 {
@@ -35,7 +48,7 @@ int main(int argc_, char ** argv_)
     bool run_session = true;
     genvtx::genvtx_driver_params params;
 
-    genvtx::genvtx_driver::build_general_opts(opts, params);
+    genvtx::build_general_opts(opts, params);
     po::positional_options_description args;
     po::variables_map vm;
     po::parsed_options parsed =
