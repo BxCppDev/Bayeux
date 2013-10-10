@@ -75,7 +75,7 @@ namespace genvtx {
   class genvtx_driver {
   public:
 
-    /// \brief User interface access class
+    /// \brief User interface access class (driver's friend)
     struct ui_access {
       ui_access(genvtx_driver &);
       genvtx_driver_params & params();
@@ -84,7 +84,7 @@ namespace genvtx {
       genvtx_driver * _driver_;
     };
 
-    friend class user_interface;
+    friend class ui_access; // explicit friendship
 
     enum action_flag_type {
       ACTION_UNDEFINED = -1,
