@@ -20,6 +20,11 @@
 ##
 ###############################################################################
 
+set(datatools_Boost_COMPONENTS
+  program_options
+  )
+find_package(Boost 1.47 QUIET COMPONENTS ${datatools_Boost_COMPONENTS} NO_MODULE)
+find_package(Boost 1.47 REQUIRED ${datatools_Boost_COMPONENTS})
 
 set (genvtx_prod_programs_list genvtx_production.cxx )
 
@@ -28,6 +33,7 @@ include_directories(
   ${PROJECT_BINARY_DIR}/include
   ${PROJECT_SOURCE_DIR}/include
   ${geomtools_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIRS}
   ${PROJECT_SOURCE_DIR}/programs
   )
 
@@ -40,6 +46,7 @@ foreach(prod_program ${genvtx_prod_programs_list})
   endif()
 
   set(_prod_libraries genvtx)
+  list(APPEND _prod_libraries ${Boost_LIBRARIES})
 
   # # Special bio DLL plugins :
   # if(datatools_WITH_BIO)

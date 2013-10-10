@@ -14,7 +14,6 @@
 
 // Third party
 // - Boost:
-//#include <boost/program_options.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/scoped_ptr.hpp>
 
@@ -75,6 +74,18 @@ namespace genvtx {
   /// \brief The genvtx driver
   class genvtx_driver {
   public:
+
+    /// \brief User interface access class
+    struct ui_access {
+      ui_access(genvtx_driver &);
+      genvtx_driver_params & params();
+      genvtx_driver & driver();
+    private:
+      genvtx_driver * _driver_;
+    };
+
+    friend class user_interface;
+
     enum action_flag_type {
       ACTION_UNDEFINED = -1,
       ACTION_NONE      =  0,
@@ -91,24 +102,8 @@ namespace genvtx {
     void initialize();
     void reset();
     void run();
-    //void set_logging(datatools::logger::priority);
     datatools::logger::priority get_logging() const;
     const genvtx_driver_params & get_params() const;
-
-    // Command line interface:
-    int command_initialize(const std::vector<std::string> & argv_);
-    int command_run(const std::vector<std::string> & argv_);
-    int command_reset(const std::vector<std::string> & argv_);
-
-    // static void build_general_opts(boost::program_options::options_description &,
-    //                                genvtx_driver_params &);
-
-    // static void build_initialization_opts(boost::program_options::options_description &,
-    //                                       genvtx_driver_params &);
-
-    // static void build_action_opts(boost::program_options::options_description &,
-    //                               genvtx_driver_params &);
-
 
   private:
 

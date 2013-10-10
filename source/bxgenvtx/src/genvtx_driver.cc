@@ -109,6 +109,24 @@ namespace genvtx {
 
   // ------------------------------------------------
 
+  genvtx_driver::ui_access::ui_access(genvtx_driver & driver_)
+  {
+    _driver_ = &driver_;
+    return;
+  }
+
+  genvtx_driver_params & genvtx_driver::ui_access::params()
+  {
+    return _driver_->_params_;
+  }
+
+  genvtx_driver & genvtx_driver::ui_access::driver()
+  {
+    return *_driver_;
+  }
+
+  // ------------------------------------------------
+
   genvtx_driver::genvtx_driver()
   {
     _initialized_ = false;
@@ -284,172 +302,6 @@ namespace genvtx {
     return;
   }
 
-  // static
-  void genvtx_driver::build_general_opts(boost::program_options::options_description & opts_,
-                                         genvtx_driver_params & params_)
-  {
-    namespace po = boost::program_options;
-    opts_.add_options()
-      ("help,h",
-       po::value<bool>(&params_.help)
-       ->zero_tokens()
-       //->default_value(false)
-       ,
-       "Print help then exit.   \n"
-       "Example :               \n"
-       "  --help                  "
-       )
-      ("logging",
-       po::value<std::string>(&params_.logging_label)
-       //->default_value("warning")
-       ,
-       "Set the logging priority threshold.\n"
-       "Example :                          \n"
-       "  --logging \"warning\"              "
-       )
-      ;
-    return;
-  }
-
-  // static
-  void genvtx_driver::build_initialization_opts(boost::program_options::options_description & opts_,
-                                                genvtx_driver_params & params_)
-  {
-    namespace po = boost::program_options;
-    opts_.add_options()
-       ("dll-config",
-       po::value<std::string>(&params_.LL_config),
-       "Set the dynamic library loader configuration file.           \n"
-       "Example :                          \n"
-       "  --dll-config \"dlls.lis\"          "
-       )
-      ("load-dll",
-       po::value<std::vector<std::string> >(&params_.LL_dlls),
-       "Load a given dynamic library (DLL).      \n"
-       "Example :                                \n"
-       "  --load-dll \"foo\" --load-dll \"bar\"    "
-       )
-      ("geometry-manager",
-       po::value<std::string>(&params_.GeoMgrConfigFile),
-       "Set the geometry manager configuration file.\n"
-       "Example :                                   \n"
-       "  --geometry-manager \"geo_mgr.conf\"         "
-       )
-      ("vertex-generator-manager",
-       po::value<std::string>(&params_.VGMgrConfigFile),
-       "Set the vertex generator manager configuration file.\n"
-       "Example :                                           \n"
-       "  --vertex-generator-manager \"vg_mgr.conf\"          "
-       )
-      ;
-    return;
-  }
-
-  // static
-  void genvtx_driver::build_action_opts(boost::program_options::options_description & opts_,
-                                        genvtx_driver_params & params_)
-  {
-    namespace po = boost::program_options;
-    opts_.add_options()
-      ("list,l",
-       po::value<bool>(&params_.action_list)
-       ->zero_tokens()
-       //->default_value(false)
-       ,
-       "List the available vertex generators defined\n"
-       "in the vertex generator manager.   \n"
-       "Example :                          \n"
-       "  --list                             "
-       )
-      ("vertex-generator,g",
-       po::value<std::string>(&params_.generator_name),
-       "Set the name of the vertex generator to be     \n"
-       "shown or shot.                                 \n"
-       "Example :                                      \n"
-       "  --vertex-generator \"calib_source_bulk.conf\"  "
-       )
-      ("show,w",
-       po::value<bool>(&params_.action_show)
-       ->zero_tokens()
-       //->default_value(false)
-       ,
-       "Print a vertex generator defined\n"
-       "in the vertex generator manager.   \n"
-       "Example :                          \n"
-       "  --show                           \n"
-       "  --vertex-generator \"calib_source_bulk.conf\" \n"
-       )
-      ("shoot,s",
-       po::value<bool>(&params_.action_shoot)
-       ->zero_tokens()
-       //->default_value(false)
-       ,
-       "Generate random vertices from a given \n"
-       "vertex generator defined in the       \n"
-       "vertex generator manager.             \n"
-       "Example :                             \n"
-       "  --shoot                             \n"
-       "  --vertex-generator \"calib_source_bulk.conf\" "
-       )
-      ("prng-type",
-       po::value<std::string>(&params_.prng_type)
-       //->default_value("taus2")
-       ,
-       "Set the type of the random number generator. \n"
-       "Example :                                    \n"
-       "  --prng-type \"taus2\"                        "
-       )
-       ("prng-seed",
-       po::value<int>(&params_.prng_seed),
-       "Set the seed for the random number generator. \n"
-       "Example :                                     \n"
-       "  --prng-seed 314159                            "
-       )
-       ("number-of-vertices,n",
-       po::value<int>(&params_.nshoots),
-       "Set the number of vertices to be generated.\n"
-       "Example :                                  \n"
-       "  --number-of-vertices 1000                  "
-       )
-      ("output-file,o",
-       po::value<std::string>(&params_.VtxOutputFile),
-       "Set the output file name where to store  \n"
-       "generated vertices.                      \n"
-       "Example :                                \n"
-       "  --output-file \"vertexes.data\"          "
-       )
-      ("visu",
-       po::value<bool>(&params_.action_visu)
-       ->zero_tokens()
-       //->default_value(false)
-       ,
-       "Activate the visualization of randomly \n"
-       "generated vertices.                    \n"
-       "Example :                              \n"
-       "  --visu                                 "
-       )
-      ("visu-max-counts",
-       po::value<int>(&params_.visu_max_counts)
-       //->default_value(10000)
-       ,
-       "Set the maximum number of randomly  \n"
-       "generated vertices to be displayed. \n"
-       "Example :                           \n"
-       "  --visu-max-counts 100               "
-       )
-      ("visu-spot-zoom",
-       po::value<double>(&params_.visu_spot_zoom)
-       //->default_value(1.0)
-       ,
-       "Set the zoom factor of the randomly  \n"
-       "generated vertices to be displayed.  \n"
-       "Example :                            \n"
-       "  --visu-spot-zoom 3.0                 "
-       )
-      ;
-    return;
-  }
-
   void genvtx_driver::setup(const genvtx_driver_params & params_)
   {
     DT_THROW_IF (is_initialized(),
@@ -574,137 +426,6 @@ namespace genvtx {
     _params_.reset();
     _logging_ = datatools::logger::PRIO_WARNING;
     return;
-  }
-
-  int genvtx_driver::command_initialize(const std::vector<std::string> & argv_)
-  {
-    namespace po = boost::program_options;
-    po::options_description drv_general_opts("Driver general options");
-    po::options_description drv_init_opts("Driver initialization options");
-    po::options_description drv_action_opts("Driver action options");
-    boost::program_options::options_description drv_all_opts;
-
-    try {
-      genvtx_driver::build_general_opts(drv_general_opts, _params_);
-      genvtx_driver::build_initialization_opts(drv_init_opts, _params_);
-      genvtx_driver::build_action_opts(drv_action_opts, _params_);
-      drv_all_opts
-        .add(drv_general_opts)
-        .add(drv_init_opts)
-        .add(drv_action_opts);
-      po::positional_options_description args;
-      po::variables_map vm;
-      po::parsed_options parsed =
-        po::command_line_parser(argv_)
-        .options(drv_all_opts)
-        .allow_unregistered()
-        .run();
-      std::vector<std::string> unrecognized
-        = po::collect_unrecognized(parsed.options,
-                                   po::include_positional);
-      po::store(parsed, vm);
-      po::notify(vm);
-
-      if (_params_.help) {
-        std::clog << "Usage:" << std::endl;
-        std::clog << "  initialize [OPTIONS]" << std::endl;
-        std::clog << drv_all_opts << std::endl;
-        return EXIT_SUCCESS;
-      }
-
-      initialize();
-    }
-    catch (std::exception& error) {
-      DT_LOG_ERROR(_logging_, error.what());
-      return EXIT_FAILURE;
-    }
-    catch (...) {
-      DT_LOG_ERROR(_logging_, "Unexpected error !");
-      return EXIT_FAILURE;
-    }
-    return EXIT_SUCCESS;
-  }
-
-
-  int genvtx_driver::command_reset(const std::vector<std::string> & argv_)
-  {
-    namespace po = boost::program_options;
-    po::options_description drv_general_opts("Driver general options");
-    try {
-      genvtx_driver::build_general_opts(drv_general_opts, _params_);
-      po::positional_options_description args;
-      po::variables_map vm;
-      po::parsed_options parsed =
-        po::command_line_parser(argv_)
-        .options(drv_general_opts)
-        .allow_unregistered()
-        .run();
-      std::vector<std::string> unrecognized
-        = po::collect_unrecognized(parsed.options,
-                                   po::include_positional);
-      po::store(parsed, vm);
-      po::notify(vm);
-
-      if (_params_.help) {
-        std::clog << "Usage:" << std::endl;
-        std::clog << "  reset [OPTIONS]" << std::endl;
-        std::clog << drv_general_opts << std::endl;
-        return EXIT_SUCCESS;
-      }
-      reset();
-    }
-    catch (std::exception& error) {
-      return EXIT_FAILURE;
-    }
-    catch (...) {
-      DT_LOG_ERROR(_logging_, "Unexpected error !");
-      return EXIT_FAILURE;
-    }
-    return EXIT_SUCCESS;
-  }
-
-  int genvtx_driver::command_run(const std::vector<std::string> & argv_)
-  {
-    namespace po = boost::program_options;
-    po::options_description drv_general_opts("Driver general options");
-    po::options_description drv_action_opts("Driver action options");
-    po::options_description drv_all_opts;
-    try {
-      genvtx_driver::build_general_opts(drv_general_opts, _params_);
-      genvtx_driver::build_action_opts(drv_action_opts, _params_);
-      drv_all_opts
-        .add(drv_general_opts)
-        .add(drv_action_opts);
-      po::positional_options_description args;
-      po::variables_map vm;
-      po::parsed_options parsed =
-        po::command_line_parser(argv_)
-        .options(drv_all_opts)
-        .allow_unregistered()
-        .run();
-      std::vector<std::string> unrecognized
-        = po::collect_unrecognized(parsed.options,
-                                   po::include_positional);
-      po::store(parsed, vm);
-      po::notify(vm);
-
-      if (_params_.help) {
-        std::clog << "Usage:" << std::endl;
-        std::clog << "  run [OPTIONS]" << std::endl;
-        std::clog << drv_all_opts << std::endl;
-        return EXIT_SUCCESS;
-      }
-
-      run();
-    }
-    catch (std::exception& error) {
-      return EXIT_FAILURE;
-    }
-    catch (...) {
-      DT_LOG_ERROR(_logging_, "Unexpected error !");
-      return EXIT_FAILURE;
-    }
-    return EXIT_SUCCESS;
   }
 
 } // end of namespace genvtx
