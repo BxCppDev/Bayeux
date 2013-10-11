@@ -29,6 +29,7 @@ set(geomtools_PUBLIC_HEADERS
   include/geomtools/circle.h
   include/geomtools/clhep.h
   include/geomtools/color.h
+  include/geomtools/cone.h
   include/geomtools/cylinder.h
   include/geomtools/cylindric_extrusion_boxed_model.h
   include/geomtools/disk.h
@@ -224,6 +225,7 @@ set(geomtools_SOURCES
   rectangle.cc
   disk.cc
   plane.cc
+  cone.cc
   plate_with_hole_model.cc
   spherical_extrusion_cylinder_model.cc
   spherical_extrusion_box_model.cc

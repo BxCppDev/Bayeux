@@ -1096,4 +1096,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-  // end of polycone.cc
+// end of polycone.cc

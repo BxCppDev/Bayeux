@@ -62,6 +62,7 @@ set ( geomtools_tests_programs
   test_serializable_2.cxx
   test_serializable.cxx
   test_sphere.cxx
+  test_cone.cxx
   test_subtraction_3d.cxx
   test_tessellated_solid.cxx
   test_stl_tools.cxx

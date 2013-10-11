@@ -1,0 +1,20 @@
+# -*- mode: gnuplot; -*-
+# C++ source: ./programs/test_cone.cxx
+# GEOMTOOLS_BIN_DIR=__build-Linux-x86_64/testing gnuplot testing/test_cone.gpl
+
+! ${GEOMTOOLS_BIN_DIR}/test_cone > test_cone.data
+
+set xrange [-5:5]
+set yrange [-5:5]
+set zrange [0:5]
+set xlabel "x"
+set ylabel "y"
+set zlabel "z"
+set title "test_cone.cxx - test "
+splot \
+  "test_cone.data" index 0 title "Conical slice" with lines
+pause -1 "Hit [Enter]..."
+
+! rm -f test_cone.data
+
+# end
