@@ -37,7 +37,7 @@ find_package(CLHEP 2.1.3.1 REQUIRED)
 find_package(GSL 1.15 QUIET NO_MODULE)
 
 # - ROOT
-find_package(ROOT 5.34.00 REQUIRED RIO Tree)
+find_package(ROOT 5.34.00 REQUIRED Hist RIO Tree)
 
 
 # - Core Includes for Bayeux + Third Party
