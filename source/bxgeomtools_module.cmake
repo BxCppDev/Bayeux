@@ -47,6 +47,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/circle.h
   ${module_include_dir}/${module_name}/clhep.h
   ${module_include_dir}/${module_name}/color.h
+  ${module_include_dir}/${module_name}/cone.h
   ${module_include_dir}/${module_name}/cylinder.h
   ${module_include_dir}/${module_name}/cylindric_extrusion_boxed_model.h
   ${module_include_dir}/${module_name}/detail/bio_link_guard.h
@@ -215,6 +216,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/surrounded_boxed_model.cc
   ${module_source_dir}/cylinder.cc
   ${module_source_dir}/box.cc
+  ${module_source_dir}/cone.cc
   ${module_source_dir}/sphere.cc
   ${module_source_dir}/tube.cc
   ${module_source_dir}/tessellation.cc
@@ -287,6 +289,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_box.cxx
   ${module_test_dir}/test_circle.cxx
   ${module_test_dir}/test_color.cxx
+  ${module_test_dir}/test_cone.cxx
   ${module_test_dir}/test_cylinder.cxx
   ${module_test_dir}/test_disk.cxx
   ${module_test_dir}/test_display_data.cxx
@@ -360,4 +363,3 @@ foreach(_rfin ${${module_name}_MODULE_RESOURCES})
   string(REGEX REPLACE "^${module_resource_dir}" "${MODULE_RESOURCE_ROOT}" _rfout "${_rfout}")
   configure_file(${_rfin} ${_rfout} @ONLY)
 endforeach()
-
