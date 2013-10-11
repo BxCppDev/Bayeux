@@ -2,7 +2,7 @@
 # C++ source: ./programs/test_polycone_2.cxx
 #
 
-! ${GEOMTOOLS_ROOT}/$(geomtools-config --system)/bin/test_polycone_2 resources/data/test_hamamatsu_R5912MOD_1.data > test_polycone_2.data
+! ${GEOMTOOLS_BIN_DIR}/test_polycone_2 testing/data/test_hamamatsu_R5912MOD_1.data > test_polycone_2.data
 
 sz=125.0
 set xrange [-sz:sz]
@@ -28,4 +28,4 @@ pause -1
 
 ! rm -f test_polycone_2.data
 
-# end 
+# end

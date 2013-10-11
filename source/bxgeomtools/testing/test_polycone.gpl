@@ -2,7 +2,7 @@
 # C++ source: ./programs/test_polycone.cxx
 #
 
-! ${GEOMTOOLS_ROOT}/$(geomtools-config --system)/bin/test_polycone > test_polycone.data
+! ${GEOMTOOLS_BIN_DIR}/test_polycone > test_polycone.data
 
 sz=200
 set xrange [-sz:sz]
@@ -13,7 +13,8 @@ set ylabel "y"
 set zlabel "z"
 set title "test_polycone.cxx - test"
 splot \
-  "test_polycone.data" index 0 title "Polycone 3D" with lines
+  "test_polycone.data" index 0 title "Polycone 3D" with lines, \
+  "test_polycone.data" index 1 title "Another polycone 3D" with lines
 pause -1
 
 set size ratio -1
@@ -21,9 +22,10 @@ set xlabel "x"
 set ylabel "z"
 set title "test_polycone.cxx - test"
 plot \
-  "test_polycone.data" index 0 u 1:3 title "Polycone XZ" with lines
+  "test_polycone.data" index 0 u 1:3 title "Polycone XZ" with lines, \
+  "test_polycone.data" index 1 u 1:3 title "Another polycone XZ" with lines
 pause -1
 
 ! rm -f test_polycone.data
 
-# end 
+# end

@@ -18,6 +18,7 @@
 #include <mygsl/tabulated_function.h>
 #include <mygsl/numerical_differentiation.h>
 #include <mygsl/interval.h>
+#include <geomtools/cone.h>
 
 namespace geomtools {
 
@@ -706,15 +707,9 @@ namespace geomtools {
         const double z1 = j->first;
         const double rmin1 = j->second.rmin;
         const double rmax1 = j->second.rmax;
-        // See: http://en.wikipedia.org/wiki/Frustum#Surface_Area
         const double R1 = rmax0;
         const double R2 = rmax1;
-        const double R1_2 = R1 * R1;
-        const double R2_2 = R2 * R2;
-        const double h = std::abs (z1 - z0);
-        const double A = M_PI * (R1_2 + R2_2 +
-                                 std::sqrt ((R1_2 - R2_2) * (R1_2 - R2_2)
-                                            + h * h * (R1_2 + R2_2) * (R1_2 + R2_2)));
+        const double A = cone::compute_frustrum_lateral_surface(z0, z1, R1, R2);
         s += A;
         // increment:
         j++;
@@ -744,12 +739,7 @@ namespace geomtools {
         // See: http://en.wikipedia.org/wiki/Frustum#Surface_Area
         const double R1 = rmin0;
         const double R2 = rmin1;
-        const double R1_2 = R1 * R1;
-        const double R2_2 = R2 * R2;
-        const double h = std::abs (z1 - z0);
-        const double A = M_PI * (R1_2 + R2_2 +
-                                 std::sqrt ((R1_2 - R2_2) * (R1_2 - R2_2)
-                                            + h * h * (R1_2 + R2_2) * (R1_2 + R2_2)));
+        const double A = cone::compute_frustrum_lateral_surface(z0, z1, R1, R2);
         s += A;
         // increment:
         j++;
@@ -777,13 +767,9 @@ namespace geomtools {
       while (j != _points_.end ()) {
         const double z1 = j->first;
         const double r1 = j->second.rmax;
-        // See: http://en.wikipedia.org/wiki/Frustum# Volume
         const double R1 = rmax0;
         const double R2 = r1;
-        const double R1_2 = R1 * R1;
-        const double R2_2 = R2 * R2;
-        const double h = std::abs (z1 - z0);
-        const double V = M_PI * h * (R1_2 + R2_2 + R1 * R2) / 3;
+        const double V = cone::compute_frustrum_volume(z0,z1,R1,R2);
         vext += V;
         // increment:
         j++;
@@ -801,13 +787,9 @@ namespace geomtools {
       while (j != _points_.end ()) {
         const double z1 = j->first;
         const double rmin1 = j->second.rmin;
-        // See: http://en.wikipedia.org/wiki/Frustum# Volume
         const double R1 = rmin0;
         const double R2 = rmin1;
-        const double R1_2 = R1 * R1;
-        const double R2_2 = R2 * R2;
-        const double h = std::abs (z1 - z0);
-        const double V = M_PI * h * (R1_2 + R2_2 + R1 * R2) / 3;
+        const double V = cone::compute_frustrum_volume(z0,z1,R1,R2);
         vint += V;
         // increment:
         j++;
@@ -853,6 +835,8 @@ namespace geomtools {
     if ( flag_ == "z_min" )              return get_z_min ();
     if ( flag_ == "z_max" )              return get_z_max ();
     if ( flag_ == "volume" )             return get_volume ();
+    if ( flag_ == "volume.inner" )       return _inner_volume_;
+    if ( flag_ == "volume.outer" )       return _outer_volume_;
     if ( flag_ == "surface.top" )        return get_surface (FACE_TOP);
     if ( flag_ == "surface.bottom" )     return get_surface (FACE_BOTTOM);
     if ( flag_ == "surface.inner_side" ) return get_surface (FACE_INNER_SIDE);

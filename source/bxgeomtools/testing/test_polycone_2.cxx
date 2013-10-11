@@ -1,5 +1,5 @@
-// -*- mode: c++ ; -*- 
-// test_polycone.cxx 
+// -*- mode: c++ ; -*-
+// test_polycone_2.cxx
 
 #include <cstdlib>
 #include <iostream>
@@ -17,8 +17,8 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'polycone'!" << endl; 
-  
+      clog << "Test program for class 'polycone'!" << endl;
+
       bool debug = false;
       string datafile;
       double zmin = std::numeric_limits<double>::quiet_NaN ();
@@ -31,31 +31,31 @@ int main (int argc_, char ** argv_)
 
           if (token[0] == '-')
             {
-               string option = token; 
-               if ((option == "-d") || (option == "--debug")) 
+               string option = token;
+               if ((option == "-d") || (option == "--debug"))
                  {
                    debug = true;
                  }
-               else 
-                 { 
-                    clog << "warning: ignoring option '" << option << "'!" << endl; 
+               else
+                 {
+                    clog << "warning: ignoring option '" << option << "'!" << endl;
                  }
             }
           else
             {
-              string argument = token; 
+              string argument = token;
               if (datafile.empty ())
                 {
                   datafile = argument;
                 }
               else
-                { 
-                  clog << "warning: ignoring argument '" << argument << "'!" << endl; 
+                {
+                  clog << "warning: ignoring argument '" << argument << "'!" << endl;
                 }
             }
           iarg++;
       }
-        
+
       geomtools::polycone PC1;
       if (datafile.empty ())
         {
@@ -77,9 +77,9 @@ int main (int argc_, char ** argv_)
         geomtools::vector_3d polycone_pos;
         geomtools::rotation polycone_rot;
         geomtools::create_rotation (polycone_rot, 0.0, 0.0, 0.0);
-        geomtools::gnuplot_draw::draw_polycone (cout, 
-                                                polycone_pos, 
-                                                polycone_rot, 
+        geomtools::gnuplot_draw::draw_polycone (cout,
+                                                polycone_pos,
+                                                polycone_rot,
                                                 PC1);
         cout << endl << endl;
       }
@@ -88,9 +88,9 @@ int main (int argc_, char ** argv_)
         geomtools::vector_3d polycone_pos;
         geomtools::rotation polycone_rot;
         geomtools::create_rotation (polycone_rot, 0.0, 0.0, 0.0);
-        geomtools::gnuplot_draw::draw_polycone (cout, 
-                                                polycone_pos, 
-                                                polycone_rot, 
+        geomtools::gnuplot_draw::draw_polycone (cout,
+                                                polycone_pos,
+                                                polycone_rot,
                                                 PC2);
         cout << endl << endl;
       }
@@ -98,15 +98,15 @@ int main (int argc_, char ** argv_)
     }
   catch (exception & x)
     {
-      cerr << "error: " << x.what () << endl; 
+      cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);
 }
 
-// end of test_polycone.cxx
+// end of test_polycone_2.cxx
