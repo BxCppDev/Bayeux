@@ -19,13 +19,13 @@ namespace geomtools {
   class cone {
   public:
 
-    /// Compute the lateral surface of a conical slice
-    static double compute_slice_lateral_surface(double z1_, double z2_,
-                                                double r1_, double r2_);
+    /// Compute the lateral surface of a conical frustrum
+    static double compute_frustrum_lateral_surface(double z1_, double z2_,
+                                                   double r1_, double r2_);
 
-    /// Compute the volume of a conical slice
-    static double compute_slice_volume(double z1_, double z2_,
-                                       double r1_, double r2_);
+    /// Compute the volume of a conical frustrum
+    static double compute_frustrum_volume(double z1_, double z2_,
+                                          double r1_, double r2_);
 
   };
 

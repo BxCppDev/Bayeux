@@ -12,7 +12,7 @@ set ylabel "y"
 set zlabel "z"
 set title "test_cone.cxx - test "
 splot \
-  "test_cone.data" index 0 title "Conical slice" with lines
+  "test_cone.data" index 0 title "Conical frustrum" with lines
 pause -1 "Hit [Enter]..."
 
 ! rm -f test_cone.data

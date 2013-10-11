@@ -41,14 +41,14 @@ int main (int argc_, char ** argv_)
       iarg++;
     }
 
-    double z1 = 2.0;
-    double z2 = 4.0;
-    double r1 = 3.0;
-    double r2 = 2.0;
-    double surface = geomtools::cone::compute_slice_lateral_surface(z1, z2, r1, r2);
-    std::clog << "Conical slice surface : " << surface << std::endl;
-    double volume = geomtools::cone::compute_slice_volume(z1, z2, r1, r2);
-    std::clog << "Conical slice volume  : " << volume << std::endl;
+    double z1 = 4.0;
+    double z2 = 2.0;
+    double r1 = 2.0;
+    double r2 = 3.0;
+    double surface = geomtools::cone::compute_frustrum_lateral_surface(z1, z2, r1, r2);
+    std::clog << "Conical frustrum surface : " << surface << std::endl;
+    double volume = geomtools::cone::compute_frustrum_volume(z1, z2, r1, r2);
+    std::clog << "Conical frustrum volume  : " << volume << std::endl;
 
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
     {
