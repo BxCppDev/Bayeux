@@ -121,6 +121,11 @@ target_link_libraries(Bayeux ${GSL_LIBRARIES})
 target_link_libraries(Bayeux ${CLHEP_LIBRARIES})
 target_link_libraries(Bayeux ${ROOT_LIBRARIES})
 
+# - On Apple, ensure dynamic_lookup of undefined symbols
+if(APPLE)
+  set_target_properties(Bayeux PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
+endif()
+
 #-----------------------------------------------------------------------
 # - Build/Link the geant4 extension module, if required
 option(Bayeux_WITH_GEANT4 "Build Geant4 extension module" OFF)
@@ -139,6 +144,11 @@ if(Bayeux_WITH_GEANT4)
     PROPERTIES COMPILE_DEFINITIONS ${Bayeux_Geant4_DEFINITIONS}
     )
   target_link_libraries(Bayeux_mctools_geant4 ${Geant4_LIBRARIES})
+
+  # - On Apple, ensure dynamic_lookup of undefined symbols
+  if(APPLE)
+    set_target_properties(Bayeux_mctools_geant4 PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
+  endif()
 endif()
 
 #-----------------------------------------------------------------------
@@ -158,7 +168,9 @@ foreach(_bxapp ${Bayeux_APPS})
   elseif(APPLE)
     # Temporary setting - needs testing
     set_target_properties(bx${_app_basename}
-      PROPERTIES INSTALL_RPATH "@loader_path"
+      PROPERTIES 
+        INSTALL_RPATH "@loader_path"
+        LINK_FLAGS "-undefined dynamic_lookup"
       )
   endif()
 
@@ -236,6 +248,12 @@ if(Bayeux_ENABLE_TESTING)
       endif()
 
       target_link_libraries(${_testname} Bayeux)
+
+      # - On Apple, ensure dynamic_lookup of undefined symbols
+      if(APPLE)
+        set_target_properties(${_testname} PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
+      endif()
+
 
       add_test(NAME ${_testname} COMMAND ${_testname})
       set_property(TEST ${_testname}
