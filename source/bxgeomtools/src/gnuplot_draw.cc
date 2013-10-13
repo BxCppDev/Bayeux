@@ -956,6 +956,217 @@ namespace geomtools {
   }
 
   void
+  gnuplot_draw::draw_right_circular_conical_frustrum (std::ostream & out_,
+                                                      const vector_3d & position_,
+                                                      const rotation_3d & rotation_,
+                                                      double z1_, double rmin1_, double rmax1_,
+                                                      double z2_, double rmin2_, double rmax2_,
+                                                      double phi1_, double phi2_,
+                                                      size_t arc_sampling_)
+  {
+    double phi1 = phi1_;
+    double phi2 = phi2_;
+    rotation_3d inverse_rotation (rotation_);
+    inverse_rotation.invert ();
+    size_t phy_sample = arc_sampling_;
+    double dphi = (phi2 - phi1) * CLHEP::radian / phy_sample;
+
+    // Outer surface:
+    for (size_t i = 0; i <= phy_sample ; ++i) {
+      polyline_type polyline_meridian;
+      double phi = phi1 + i * dphi;
+      {
+        double z = z1_;
+        double r = rmax1_;
+        vector_3d P;
+        P.set (r * std::cos (phi),
+               r * std::sin (phi),
+               z);
+        vector_3d P2 (P);
+        P2.transform (inverse_rotation);
+        P2 += position_;
+        polyline_meridian.push_back (P2);
+      }
+      {
+        double z = z2_;
+        double r = rmax2_;
+        vector_3d P;
+        P.set (r * std::cos (phi),
+               r * std::sin (phi),
+               z);
+        vector_3d P2 (P);
+        P2.transform (inverse_rotation);
+        P2 += position_;
+        polyline_meridian.push_back (P2);
+      }
+      basic_draw_polyline (out_, polyline_meridian);
+    }
+
+    // Inner surface:
+    for (size_t i = 0; i <= phy_sample ; ++i) {
+      polyline_type polyline_meridian;
+      double phi = phi1 + i * dphi;
+      {
+        double z = z1_;
+        double r = rmin1_;
+        vector_3d P;
+        P.set (r * std::cos (phi),
+               r * std::sin (phi),
+               z);
+        vector_3d P2 (P);
+        P2.transform (inverse_rotation);
+        P2 += position_;
+        polyline_meridian.push_back (P2);
+      }
+      {
+        double z = z2_;
+        double r = rmin2_;
+        vector_3d P;
+        P.set (r * std::cos (phi),
+               r * std::sin (phi),
+               z);
+        vector_3d P2 (P);
+        P2.transform (inverse_rotation);
+        P2 += position_;
+        polyline_meridian.push_back (P2);
+      }
+      basic_draw_polyline (out_, polyline_meridian);
+    }
+
+    // Outer parallels:
+    {
+      polyline_type polyline_parallel;
+      double z = z1_;
+      double r = rmax1_;
+      for (size_t i = 0; i <= phy_sample ; ++i) {
+        vector_3d P;
+        double phi = phi1 + i * dphi;
+        P.set (r * std::cos (phi),
+               r * std::sin (phi),
+               z);
+        vector_3d P2 (P);
+        P2.transform (inverse_rotation);
+        P2 += position_;
+        polyline_parallel.push_back (P2);
+      }
+      basic_draw_polyline (out_, polyline_parallel);
+    }
+    {
+      polyline_type polyline_parallel;
+      double z = z2_;
+      double r = rmax2_;
+      for (size_t i = 0; i <= phy_sample ; ++i) {
+        vector_3d P;
+        double phi = phi1 + i * dphi;
+        P.set (r * std::cos (phi),
+               r * std::sin (phi),
+               z);
+        vector_3d P2 (P);
+        P2.transform (inverse_rotation);
+        P2 += position_;
+        polyline_parallel.push_back (P2);
+      }
+      basic_draw_polyline (out_, polyline_parallel);
+    }
+
+    // Inner parallels:
+    {
+      polyline_type polyline_parallel;
+      double z = z1_;
+      double r = rmin1_;
+      for (size_t i = 0; i <= phy_sample ; ++i) {
+        vector_3d P;
+        double phi = phi1 + i * dphi;
+        P.set (r * std::cos (phi),
+               r * std::sin (phi),
+               z);
+        vector_3d P2 (P);
+        P2.transform (inverse_rotation);
+        P2 += position_;
+        polyline_parallel.push_back (P2);
+      }
+      basic_draw_polyline (out_, polyline_parallel);
+    }
+    {
+      polyline_type polyline_parallel;
+      double z = z2_;
+      double r = rmin2_;
+      for (size_t i = 0; i <= phy_sample ; ++i) {
+        vector_3d P;
+        double phi = phi1 + i * dphi;
+        P.set (r * std::cos (phi),
+               r * std::sin (phi),
+               z);
+        vector_3d P2 (P);
+        P2.transform (inverse_rotation);
+        P2 += position_;
+        polyline_parallel.push_back (P2);
+      }
+      basic_draw_polyline (out_, polyline_parallel);
+    }
+
+    // Radii:
+    if ((phi2 - phi1) < 2*M_PI) {
+      double phi[2];
+      phi[0] = phi1;
+      phi[1] = phi2;
+      double z;
+      double r;
+      vector_3d P, P2;
+      {
+       // First base:
+        for (int i = 0; i < 2; i++) {
+          polyline_type polyline_radius;
+          z = z1_;
+          r = rmin1_;
+          P.set (r * std::cos(phi[i]),
+                 r * std::sin(phi[i]),
+                 z);
+          P2 = P;
+          P2.transform(inverse_rotation);
+          P2 += position_;
+          polyline_radius.push_back (P2);
+          r = rmax1_;
+          P.set (r * std::cos(phi[i]),
+                 r * std::sin(phi[i]),
+                 z);
+          P2 = P;
+          P2.transform(inverse_rotation);
+          P2 += position_;
+          polyline_radius.push_back (P2);
+          basic_draw_polyline(out_, polyline_radius);
+        }
+      }
+      {
+        // Second base:
+        for (int i = 0; i < 2; i++) {
+          polyline_type polyline_radius;
+          z = z2_;
+          r = rmin2_;
+          P.set (r * std::cos(phi[i]),
+                 r * std::sin(phi[i]),
+                 z);
+          P2 = P;
+          P2.transform (inverse_rotation);
+          P2 += position_;
+          polyline_radius.push_back (P2);
+          r = rmax2_;
+          P.set (r * std::cos(phi[i]),
+                 r * std::sin(phi[i]),
+                 z);
+          P2 = P;
+          P2.transform (inverse_rotation);
+          P2 += position_;
+          polyline_radius.push_back (P2);
+          basic_draw_polyline (out_, polyline_radius);
+        }
+      }
+    }
+
+    return;
+  }
+
+  void
   gnuplot_draw::draw_polycone (std::ostream & out_,
                                const vector_3d & position_,
                                const rotation_3d & rotation_,

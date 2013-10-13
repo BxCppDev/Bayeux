@@ -16,10 +16,16 @@
 #ifndef GEOMTOOLS_GNUPLOT_DRAW_H_
 #define GEOMTOOLS_GNUPLOT_DRAW_H_ 1
 
+// Standard library
 #include <iostream>
+#include <cmath>
 
-#include <geomtools/utils.h>
+// Third party
+// - mygsl
 #include <mygsl/min_max.h>
+
+// This project
+#include <geomtools/utils.h>
 
 namespace geomtools {
 
@@ -280,6 +286,15 @@ namespace geomtools {
                    const rotation_3d &,
                    const polycone &,
                    size_t = 36);
+
+    static void
+    draw_right_circular_conical_frustrum (std::ostream &,
+                                          const vector_3d &,
+                                          const rotation_3d &,
+                                          double z1_, double rmin1_, double rmax1_,
+                                          double z2_, double rmin2_, double rmax2_,
+                                          double phi1_ = 0.0, double phi2_ = 2 * M_PI,
+                                          size_t arc_sampling_ = 36);
 
     static void
     draw_polyhedra (std::ostream &,
