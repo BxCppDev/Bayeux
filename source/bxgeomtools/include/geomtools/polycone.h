@@ -55,6 +55,11 @@ namespace geomtools {
       double rmin, rmax;
     };
 
+    struct frustrum_data {
+      double z1, a1, b1;
+      double z2, a2, b2;
+    };
+
     typedef std::map<double, r_min_max> rz_col_type;
 
   public:
@@ -88,6 +93,10 @@ namespace geomtools {
     void _compute_all_ ();
 
   public:
+
+    unsigned int number_of_frustra() const;
+
+    void get_frustrum(int i_, frustrum_data &) const;
 
     const rz_col_type & points () const;
 

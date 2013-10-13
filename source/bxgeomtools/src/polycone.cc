@@ -135,6 +135,38 @@ namespace geomtools {
     return;
   }
 
+  unsigned int polycone::number_of_frustra() const
+  {
+    return _points_.size() - 1;
+  }
+
+  void polycone::get_frustrum(int index_, frustrum_data & fd_) const
+  {
+    DT_THROW_IF (index_ < 0 || index_ >= number_of_frustra(),
+                 std::range_error,
+                 "Invalid frustrum index (" << index_ << ") !");
+    int count = 0;
+    for (rz_col_type::const_iterator it = _points_.begin ();
+         it != _points_.end ();
+         it++) {
+      rz_col_type::const_iterator jt = it;
+      jt++;
+      if (count == index_) {
+        fd_.z1 = it->first;
+        fd_.a1 = it->second.rmin;
+        fd_.b1 = it->second.rmax;
+        fd_.z2 = jt->first;
+        fd_.a2 = jt->second.rmin;
+        fd_.b2 = jt->second.rmax;
+        break;
+      }
+      count++;
+      if (count == _points_.size()) break;
+    }
+
+    return;
+  }
+
   void polycone::_build_from_envelope_and_skin_ (double skin_thickness_,
                                                  double skin_step_)
   {
