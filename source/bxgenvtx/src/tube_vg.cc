@@ -225,7 +225,7 @@ namespace genvtx {
       _sum_weight_[1] = _tube_.get_surface (_surface_mask_ & geomtools::tube::FACE_BOTTOM);
       _sum_weight_[2] = _tube_.get_surface (_surface_mask_ & geomtools::tube::FACE_TOP);
       _sum_weight_[3] = _tube_.get_surface (_surface_mask_ & geomtools::tube::FACE_INNER_SIDE);
-      for (size_t i = 0; i < 3; i++) {
+      for (size_t i = 0; i < 4; i++) {
         _sum_weight_[i] /= s;
         if (i > 0) {
           _sum_weight_[i] += _sum_weight_[i - 1];
@@ -256,11 +256,9 @@ namespace genvtx {
     _surface_mask_ = geomtools::tube::FACE_ALL;
     _skin_skip_ = 0.0;
     _skin_thickness_ = 0.0;
-    for (size_t i = 0; i < 3; i++) {
+    for (size_t i = 0; i < 4; i++) {
       _sum_weight_[i] = 0.0;
     }
-    //datatools::invalidate(_r1_sqr_);
-    //datatools::invalidate(_r2_sqr_);
     return;
   }
 

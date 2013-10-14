@@ -29,8 +29,11 @@ set(genvtx_PUBLIC_HEADERS
   include/genvtx/quadrangle_random_tools.h
   include/genvtx/spot_vertex_generator.h
   include/genvtx/triangle_random_tools.h
+  include/genvtx/ring_random_tools.h
+  include/genvtx/conical_frustrum_random_tools.h
   include/genvtx/tube_vg.h
   include/genvtx/sphere_vg.h
+  include/genvtx/polycone_vg.h
   include/genvtx/vg_macros.h
   include/genvtx/utils.h
   include/genvtx/manager.h
@@ -96,9 +99,12 @@ set(genvtx_SOURCES
    cylinder_vg.cc
    tube_vg.cc
    sphere_vg.cc
+   polycone_vg.cc
    vg_tools.cc
+   ring_random_tools.cc
    triangle_random_tools.cc
    quadrangle_random_tools.cc
+   conical_frustrum_random_tools.cc
    utils.cc
    manager.cc
    combined_vg.cc

@@ -31,8 +31,12 @@ set ( genvtx_tests_programs
       test_sphere_vg.cxx
       test_placement_vg.cxx
       test_from_file_vg.cxx
+      test_polycone_vg.cxx
+      test_polycone_vg_2.cxx
       test_triangle_random_tools.cxx
       test_quadrangle_random_tools.cxx
+      test_ring_random_tools.cxx
+      test_conical_frustrum_random_tools.cxx
       test_manager.cxx
 )
 
