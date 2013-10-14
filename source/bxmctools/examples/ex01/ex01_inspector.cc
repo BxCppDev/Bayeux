@@ -200,20 +200,20 @@ namespace mctools {
       }
 
       std::string visu_object_name;
-      std::string view_label = geomtools::gnuplot_drawer::VIEW_3D;
-      int visu_depth = geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT;
+      std::string view_label = geomtools::gnuplot_drawer::view_3d();
+      int visu_depth = geomtools::gnuplot_drawer::display_level_no_limit();
       bool loop_stop = false;
       do {
         if (visu_object_name.empty()) {
           visu_object_name = _geometry_manager_->get_world_name ();
         }
         geomtools::gnuplot_drawer GPD;
-        GPD.grab_properties().store(geomtools::gnuplot_drawer::WORLD_NAME_KEY,
+        GPD.grab_properties().store(geomtools::gnuplot_drawer::world_name_key(),
                                     _geometry_manager_->get_world_name ());
         geomtools::placement dd_pl;
         dd_pl.set_translation(0.0, 0.0, 0.0);
         GPD.add_display_data(dd, dd_pl);
-        GPD.set_mode(geomtools::gnuplot_drawer::MODE_WIRED);
+        GPD.set_mode(geomtools::gnuplot_drawer::mode_wired());
         GPD.set_view(view_label);
         GPD.set_labels(true);
         int view_code = GPD.draw(*_geometry_manager_,
@@ -269,10 +269,10 @@ namespace mctools {
           visu_object_name = token;
           command_iss >> token;
           if (! token.empty() && token[0] == '-') {
-            if (token == "-xy") view_label = geomtools::gnuplot_drawer::VIEW_2D_XY;
-            if (token == "-xz") view_label = geomtools::gnuplot_drawer::VIEW_2D_XZ;
-            if (token == "-yz") view_label = geomtools::gnuplot_drawer::VIEW_2D_YZ;
-            if (token == "-3d") view_label = geomtools::gnuplot_drawer::VIEW_3D;
+            if (token == "-xy") view_label = geomtools::gnuplot_drawer::view_2d_xy();
+            if (token == "-xz") view_label = geomtools::gnuplot_drawer::view_2d_xz();
+            if (token == "-yz") view_label = geomtools::gnuplot_drawer::view_2d_yz();
+            if (token == "-3d") view_label = geomtools::gnuplot_drawer::view_3d();
           }
         }
       } while (!loop_stop);

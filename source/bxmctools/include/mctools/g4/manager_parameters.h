@@ -15,8 +15,13 @@
 #ifndef MCTOOLS_G4_MANAGER_PARAMETERS_H_
 #define MCTOOLS_G4_MANAGER_PARAMETERS_H_ 1
 
+// Standard library:
 #include <string>
 #include <iostream>
+#include <vector>
+
+// Third party:
+// - Boost
 #include <boost/cstdint.hpp>
 
 namespace mctools {
@@ -28,6 +33,8 @@ namespace mctools {
     struct manager_parameters
     {
       std::string logging;
+      std::vector<std::string> dlls; /// List of DLLs to be loaded
+      std::string dll_loader_config; /// Configuration file of the DLL loader
       std::string manager_config_filename;
       std::string g4_macro;
       bool        g4_visu;
@@ -59,12 +66,8 @@ namespace mctools {
 
       void reset ();
 
-      static void print_examples (std::ostream      & a_out   = std::clog,
-                                  const std::string & a_name  = "sng4_production",
-                                  const std::string & a_title = "");
-
-      static void setup (const manager_parameters & a_params,
-                         manager & a_manager);
+      static void setup(const manager_parameters & a_params,
+                        manager & a_manager);
 
     }; // end of class manager_parameters
 

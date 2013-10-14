@@ -35,74 +35,31 @@ namespace mctools {
 
     void manager_parameters::set_defaults ()
     {
-      this->logging                 = "warning";
-      this->manager_config_filename = "";
-      this->interactive             = false;
-      this->g4_macro                = "";
-      this->g4_visu                 = false;
-      this->number_of_events        = mctools::g4::manager::constants::instance ().NO_LIMIT;
+      this->logging = "warning";
+      this->dlls.clear();
+      this->dll_loader_config.clear();
+      this->manager_config_filename.clear();
+      this->interactive = false;
+      this->g4_macro.clear();
+      this->g4_visu = false;
+      this->number_of_events = mctools::g4::manager::constants::instance ().NO_LIMIT;
       this->number_of_events_modulo = 0; // 0 == not used
-      this->input_prng_states_file  = "";
-      this->output_prng_states_file = "";
+      this->input_prng_states_file.clear();
+      this->output_prng_states_file.clear();
       this->prng_states_save_modulo = 0; // 0 == not used
-      this->input_prng_seeds_file   = "";
-      this->output_prng_seeds_file  = "";
-      this->output_data_file        = "";
-      this->vg_name                 = "";
-      this->vg_seed                 = mygsl::random_utils::SEED_INVALID;
-      this->eg_name                 = "";
-      this->eg_seed                 = mygsl::random_utils::SEED_INVALID;
-      this->mgr_seed                = mygsl::random_utils::SEED_INVALID;
-      this->shpf_seed               = mygsl::random_utils::SEED_INVALID;
-      this->using_time_stat                   = false;
-      this->forbid_private_hits               = false;
+      this->input_prng_seeds_file.clear();
+      this->output_prng_seeds_file.clear();
+      this->output_data_file.clear();
+      this->vg_name.clear();
+      this->vg_seed = mygsl::random_utils::SEED_INVALID;
+      this->eg_name.clear();
+      this->eg_seed = mygsl::random_utils::SEED_INVALID;
+      this->mgr_seed = mygsl::random_utils::SEED_INVALID;
+      this->shpf_seed = mygsl::random_utils::SEED_INVALID;
+      this->using_time_stat = false;
+      this->forbid_private_hits = false;
       this->dont_save_no_sensitive_hit_events = false;
-      this->use_run_header_footer             = false;
-      return;
-    }
-
-    void manager_parameters::print_examples (std::ostream & a_out,
-                                             const std::string & a_name,
-                                             const std::string & a_title)
-    {
-      if (! a_title.empty ()) {
-        a_out << a_title << std::endl;
-      }
-      a_out << std::endl;
-      a_out << " 1) Interactive test:" << std::endl;
-      a_out << "    " << a_name << " \\" << std::endl;
-      a_out << "         --interactive \\" << std::endl;
-      a_out << "         --g4-visu \\" << std::endl;
-      a_out << "         --vertex-generator-name \"source_bulk.vg\"  \\" << std::endl;
-      a_out << "         --vertex-generator-seed 0 \\" << std::endl;
-      a_out << "         --event-generator-name \"K40\" \\" << std::endl;
-      a_out << "         --event-generator-seed 0  \\" << std::endl;
-      a_out << "         --g4-manager-seed 0       \\" << std::endl;
-      a_out << "         --shpf-seed 0             \\" << std::endl;
-      a_out << "         --output-prng-seeds-file mc_g4_production.seeds   \\" << std::endl;
-      a_out << "         --output-prng-states-file mc_g4_production.states \\" << std::endl;
-      a_out << "         --config ${CONFIG_DIR}/simulation/manager.conf \\" << std::endl;
-      a_out << "                  ${CONFIG_DIR}/simulation/geant4_visualization.macro" << std::endl;
-      a_out << std::endl;
-      a_out << " 2) Run the simulation in batch mode:" << std::endl;
-      a_out << "    " << a_name << " \\" << std::endl;
-      a_out << "         --batch                  \\" << std::endl;
-      a_out << "         --using-time-statistics  \\" << std::endl;
-      a_out << "         --vertex-generator-name \"source_bulk.vg\"  \\" << std::endl;
-      a_out << "         --vertex-generator-seed 0 \\" << std::endl;
-      a_out << "         --event-generator-name \"K40\"  \\" << std::endl;
-      a_out << "         --event-generator-seed 0 \\" << std::endl;
-      a_out << "         --g4-manager-seed 0      \\" << std::endl;
-      a_out << "         --shpf-seed 0            \\" << std::endl;
-      a_out << "         --output-prng-seeds-file mc_g4_production.seeds   \\" << std::endl;
-      a_out << "         --output-prng-states-file mc_g4_production.states \\" << std::endl;
-      a_out << "         --number-of-events 1     \\" << std::endl;
-      a_out << "         --config ${CONFIG_DIR}/simulation/manager.conf \\" << std::endl;
-      a_out << "         --output-data-file mc_g4_sample_0.xml \\" << std::endl;
-      a_out << "         > g4_production.log 2>&1" << std::endl;
-      a_out << std::endl;
-      a_out << std::endl;
-
+      this->use_run_header_footer = false;
       return;
     }
 
@@ -145,7 +102,7 @@ namespace mctools {
       if (a_params.mgr_seed != mygsl::random_utils::SEED_INVALID) {
         // register the G4 manager seed :
         a_manager.grab_seed_manager ().update_seed (mctools::g4::manager::constants::instance ().G4_MANAGER_LABEL, a_params.mgr_seed);
-        }
+      }
       if (a_params.vg_seed != mygsl::random_utils::SEED_INVALID) {
         // register the vertex generator's seed :
         a_manager.grab_seed_manager ().update_seed (mctools::g4::manager::constants::instance ().VERTEX_GENERATOR_LABEL, a_params.vg_seed);

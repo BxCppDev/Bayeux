@@ -28,6 +28,7 @@
 #include <boost/foreach.hpp>
 #include <boost/scoped_ptr.hpp>
 
+#include <datatools/datatools.h>
 #include <datatools/properties.h>
 #include <datatools/library_loader.h>
 #include <datatools/things.h>
@@ -46,6 +47,8 @@
 #include <ex00_inspector.h>
 
 int main(int argc_, char **argv_) {
+  DATATOOLS_INIT_MAIN(argc_, argv_);
+
   datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
   int error_code = EXIT_SUCCESS;
   try {
@@ -237,6 +240,8 @@ int main(int argc_, char **argv_) {
     DT_LOG_FATAL(logging, "Unexpected error !");
     error_code = EXIT_FAILURE;
   }
+
+  DATATOOLS_FINI();
   return error_code;
 }
 
