@@ -31,6 +31,7 @@ set(GENVTX_WITH_BIO 1)
 set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/box_vg.h
   ${module_include_dir}/${module_name}/cylinder_vg.h
+  ${module_include_dir}/${module_name}/conical_frustrum_random_tools.h
   ${module_include_dir}/${module_name}/sphere_vg.h
   ${module_include_dir}/${module_name}/from_file_vg.h
   ${module_include_dir}/${module_name}/i_vertex_generator.h
@@ -38,7 +39,9 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/quadrangle_random_tools.h
   ${module_include_dir}/${module_name}/spot_vertex_generator.h
   ${module_include_dir}/${module_name}/triangle_random_tools.h
+  ${module_include_dir}/${module_name}/ring_random_tools.h
   ${module_include_dir}/${module_name}/tube_vg.h
+  ${module_include_dir}/${module_name}/polycone_vg.h
   ${module_include_dir}/${module_name}/vg_macros.h
   ${module_include_dir}/${module_name}/utils.h
   ${module_include_dir}/${module_name}/manager.h
@@ -63,9 +66,12 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/sphere_vg.cc
   ${module_source_dir}/cylinder_vg.cc
   ${module_source_dir}/tube_vg.cc
+  ${module_source_dir}/polycone_vg.cc
   ${module_source_dir}/vg_tools.cc
   ${module_source_dir}/triangle_random_tools.cc
   ${module_source_dir}/quadrangle_random_tools.cc
+  ${module_source_dir}/ring_random_tools.cc
+  ${module_source_dir}/conical_frustrum_random_tools.cc
   ${module_source_dir}/utils.cc
   ${module_source_dir}/manager.cc
   ${module_source_dir}/combined_vg.cc
@@ -97,8 +103,12 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_sphere_vg.cxx
   ${module_test_dir}/test_placement_vg.cxx
   ${module_test_dir}/test_from_file_vg.cxx
+  ${module_test_dir}/test_polycone_vg.cxx
+  ${module_test_dir}/test_polycone_vg_2.cxx
   ${module_test_dir}/test_triangle_random_tools.cxx
   ${module_test_dir}/test_quadrangle_random_tools.cxx
+  ${module_test_dir}/test_conical_frustrum_random_tools.cxx
+  ${module_test_dir}/test_ring_random_tools.cxx
   ${module_test_dir}/test_manager.cxx
   )
 
