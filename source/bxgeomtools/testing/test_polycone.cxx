@@ -118,7 +118,9 @@ int main (int argc_, char ** argv_)
                                                                       polycone_rot,
                                                                       fd.z1, fd.a1, fd.b1,
                                                                       fd.z2, fd.a2, fd.b2,
-                                                                      0.0, 2 * M_PI);
+                                                                      0.0, 2 * M_PI,
+                                                                      36,
+                                                                      0xB); // default=0xF
         cout << endl << endl;
      }
     }

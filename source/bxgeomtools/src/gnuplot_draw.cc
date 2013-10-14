@@ -962,7 +962,8 @@ namespace geomtools {
                                                       double z1_, double rmin1_, double rmax1_,
                                                       double z2_, double rmin2_, double rmax2_,
                                                       double phi1_, double phi2_,
-                                                      size_t arc_sampling_)
+                                                      size_t arc_sampling_,
+                                                      uint32_t iobt_mask_)
   {
     double phi1 = phi1_;
     double phi2 = phi2_;
@@ -972,6 +973,7 @@ namespace geomtools {
     double dphi = (phi2 - phi1) * CLHEP::radian / phy_sample;
 
     // Outer surface:
+    if (iobt_mask_ & 0x2) {
     for (size_t i = 0; i <= phy_sample ; ++i) {
       polyline_type polyline_meridian;
       double phi = phi1 + i * dphi;
@@ -1001,8 +1003,10 @@ namespace geomtools {
       }
       basic_draw_polyline (out_, polyline_meridian);
     }
+    }
 
     // Inner surface:
+    if (iobt_mask_ & 0x1) {
     for (size_t i = 0; i <= phy_sample ; ++i) {
       polyline_type polyline_meridian;
       double phi = phi1 + i * dphi;
@@ -1032,9 +1036,10 @@ namespace geomtools {
       }
       basic_draw_polyline (out_, polyline_meridian);
     }
+    }
 
     // Outer parallels:
-    {
+    if (iobt_mask_ & 0x4) {
       polyline_type polyline_parallel;
       double z = z1_;
       double r = rmax1_;
@@ -1051,7 +1056,7 @@ namespace geomtools {
       }
       basic_draw_polyline (out_, polyline_parallel);
     }
-    {
+    if (iobt_mask_ & 0x8) {
       polyline_type polyline_parallel;
       double z = z2_;
       double r = rmax2_;
@@ -1070,7 +1075,7 @@ namespace geomtools {
     }
 
     // Inner parallels:
-    {
+    if (iobt_mask_ & 0x4) {
       polyline_type polyline_parallel;
       double z = z1_;
       double r = rmin1_;
@@ -1087,7 +1092,7 @@ namespace geomtools {
       }
       basic_draw_polyline (out_, polyline_parallel);
     }
-    {
+    if (iobt_mask_ & 0x8) {
       polyline_type polyline_parallel;
       double z = z2_;
       double r = rmin2_;
@@ -1113,8 +1118,8 @@ namespace geomtools {
       double z;
       double r;
       vector_3d P, P2;
-      {
-       // First base:
+      if (iobt_mask_ & 0x4) {
+        // First base:
         for (int i = 0; i < 2; i++) {
           polyline_type polyline_radius;
           z = z1_;
@@ -1137,7 +1142,7 @@ namespace geomtools {
           basic_draw_polyline(out_, polyline_radius);
         }
       }
-      {
+      if (iobt_mask_ & 0x8) {
         // Second base:
         for (int i = 0; i < 2; i++) {
           polyline_type polyline_radius;
@@ -1173,16 +1178,29 @@ namespace geomtools {
                                const polycone & p_,
                                size_t arc_sampling_)
   {
+    draw_polycone_sector(out_, position_, rotation_, p_,
+                         0.0* CLHEP::radian, 2 * M_PI * CLHEP::radian, arc_sampling_);
+    return;
+  }
+
+  void
+  gnuplot_draw::draw_polycone_sector (std::ostream & out_,
+                                      const vector_3d & position_,
+                                      const rotation_3d & rotation_,
+                                      const polycone & p_,
+                                      double phi1_, double phi2_,
+                                      size_t arc_sampling_)
+  {
     rotation_3d inverse_rotation (rotation_);
     inverse_rotation.invert ();
 
     size_t phy_sample = arc_sampling_;
-    double dphi =  2 * M_PI * CLHEP::radian / phy_sample;
+    double dphi = (phi2_ - phi1_) / phy_sample;
 
     // outer surface:
     for (size_t i = 0; i <= phy_sample ; ++i) {
       polyline_type polyline_meridian;
-      double phi = i * dphi;
+      double phi = phi1_ + i * dphi;
       for (polycone::rz_col_type::const_iterator j = p_.points ().begin ();
            j != p_.points ().end ();
            j++) {
@@ -1208,7 +1226,7 @@ namespace geomtools {
       double r = j->second.rmax;
       for (size_t i = 0; i <= phy_sample ; ++i) {
         vector_3d P;
-        double phi = i * dphi;
+        double phi = phi1_ + i * dphi;
         P.set (r * std::cos (phi),
                r * std::sin (phi),
                z);
@@ -1225,7 +1243,7 @@ namespace geomtools {
       for (size_t i = 0; i <= phy_sample ; ++i)
         {
           polyline_type polyline_meridian;
-          double phi = i * dphi;
+          double phi = phi1_ + i * dphi;
           for (polycone::rz_col_type::const_iterator j = p_.points ().begin ();
                j != p_.points ().end ();
                j++) {
@@ -1251,7 +1269,7 @@ namespace geomtools {
         double r = j->second.rmin;
         for (size_t i = 0; i <= phy_sample ; ++i) {
           vector_3d P;
-          double phi = i * dphi;
+          double phi = phi1_ + i * dphi;
           P.set (r * std::cos (phi),
                  r * std::sin (phi),
                  z);

@@ -1,9 +1,9 @@
 # -*- mode: gnuplot; -*-
 # C++ source: ./programs/test_tessellated_solid.cxx
 #
+# GEOMTOOLS_BIN_DIR=$(pwd)/__build-Linux-x86_64/testing gnuplot testing/test_tessellated_solid.gpl
 
-
-#! ${GEOMTOOLS_ROOT}/$(geomtools-config --system)/bin/test_tessellated_solid > test_tessellated_solid.data
+! ${GEOMTOOLS_BIN_DIR}/test_tessellated_solid > test_tessellated_solid.data
 
 sz=3.
 set xrange [-sz:sz]
@@ -21,4 +21,4 @@ pause -1
 
 ! #rm -f test_tessellated_solid.data
 
-# end 
+# end

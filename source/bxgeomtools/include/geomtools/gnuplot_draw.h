@@ -281,11 +281,19 @@ namespace geomtools {
                  size_t = 16);
 
     static void
+    draw_polycone_sector (std::ostream &,
+                          const vector_3d &,
+                          const rotation_3d &,
+                          const polycone &,
+                          double phi1_, double phi2_,
+                          size_t arc_sampling_ = 36);
+
+    static void
     draw_polycone (std::ostream &,
                    const vector_3d &,
                    const rotation_3d &,
                    const polycone &,
-                   size_t = 36);
+                   size_t arc_sampling_ = 36);
 
     static void
     draw_right_circular_conical_frustrum (std::ostream &,
@@ -294,7 +302,8 @@ namespace geomtools {
                                           double z1_, double rmin1_, double rmax1_,
                                           double z2_, double rmin2_, double rmax2_,
                                           double phi1_ = 0.0, double phi2_ = 2 * M_PI,
-                                          size_t arc_sampling_ = 36);
+                                          size_t arc_sampling_ = 36,
+                                          uint32_t iobt_mask_ = 0xF);
 
     static void
     draw_polyhedra (std::ostream &,
