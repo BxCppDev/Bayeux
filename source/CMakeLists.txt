@@ -149,7 +149,7 @@ if(Bayeux_WITH_GEANT4)
   endforeach()
 
   set_target_properties(Bayeux_mctools_geant4
-    PROPERTIES COMPILE_DEFINITIONS ${Bayeux_Geant4_DEFINITIONS}
+    PROPERTIES COMPILE_DEFINITIONS "${Bayeux_Geant4_DEFINITIONS}"
     )
   target_link_libraries(Bayeux_mctools_geant4 ${Geant4_LIBRARIES} ${Boost_thread_LIBRARY})
 
