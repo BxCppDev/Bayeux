@@ -37,7 +37,7 @@ find_package(CLHEP 2.1.3.1 REQUIRED)
 find_package(GSL 1.15 QUIET NO_MODULE)
 
 # - ROOT
-find_package(ROOT 5.34.00 REQUIRED Hist RIO Tree)
+find_package(ROOT 5.34.00 REQUIRED Core Hist RIO Tree)
 
 
 # - Core Includes for Bayeux + Third Party
@@ -139,7 +139,7 @@ if(Bayeux_WITH_GEANT4)
     string(REGEX REPLACE "^-D" "" _bxdef ${_def})
     list(APPEND Bayeux_Geant4_DEFINITIONS ${_bxdef})
   endforeach()
-  
+
   set_target_properties(Bayeux_mctools_geant4
     PROPERTIES COMPILE_DEFINITIONS ${Bayeux_Geant4_DEFINITIONS}
     )
@@ -168,7 +168,7 @@ foreach(_bxapp ${Bayeux_APPS})
   elseif(APPLE)
     # Temporary setting - needs testing
     set_target_properties(bx${_app_basename}
-      PROPERTIES 
+      PROPERTIES
         INSTALL_RPATH "@loader_path"
         LINK_FLAGS "-undefined dynamic_lookup"
       )
