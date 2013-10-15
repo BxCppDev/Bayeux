@@ -140,7 +140,7 @@ if(Bayeux_WITH_GEANT4)
   find_package(Boost REQUIRED thread)
 
   include_directories(${Geant4_INCLUDE_DIRS})
-  add_library(Bayeux_mctools_geant4 MODULE ${mctools_GEANT4_SOURCES} ${mctool_GEANT4_HEADERS})
+  add_library(Bayeux_mctools_geant4 SHARED ${mctools_GEANT4_SOURCES} ${mctool_GEANT4_HEADERS})
   # Hack - strip "-D" flag as we should only supply the def names
   set(Bayeux_Geant4_DEFINITIONS)
   foreach(_def ${Geant4_DEFINITIONS})
