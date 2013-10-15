@@ -80,6 +80,11 @@ option(BAYEUX_WITH_IMPLICIT_INIT_FINI "Build implicit init/fini code for Bayeux"
 mark_as_advanced(BAYEUX_WITH_IMPLICIT_INIT_FINI)
 
 #-----------------------------------------------------------------------
+# Option for enabling Geant4 module
+#
+option(Bayeux_WITH_GEANT4 "Build Geant4 extension module" OFF)
+
+#-----------------------------------------------------------------------
 # Configure testing if required
 #
 option(Bayeux_ENABLE_TESTING "Build unit testing system for Bayeux" OFF)

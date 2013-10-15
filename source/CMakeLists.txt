@@ -127,10 +127,18 @@ if(APPLE)
 endif()
 
 #-----------------------------------------------------------------------
+# Set variable to hold addons for later export
+#
+set(Bayeux_ADDON_TARGETS)
+
+#-----------------------------------------------------------------------
 # - Build/Link the geant4 extension module, if required
-option(Bayeux_WITH_GEANT4 "Build Geant4 extension module" OFF)
+#
 if(Bayeux_WITH_GEANT4)
   find_package(Geant4 9.6.0 REQUIRED ui_all vis_all gdml)
+  # Also need Boost.Thread, ugh
+  find_package(Boost REQUIRED thread)
+
   include_directories(${Geant4_INCLUDE_DIRS})
   add_library(Bayeux_mctools_geant4 MODULE ${mctools_GEANT4_SOURCES} ${mctool_GEANT4_HEADERS})
   # Hack - strip "-D" flag as we should only supply the def names
@@ -143,18 +151,19 @@ if(Bayeux_WITH_GEANT4)
   set_target_properties(Bayeux_mctools_geant4
     PROPERTIES COMPILE_DEFINITIONS ${Bayeux_Geant4_DEFINITIONS}
     )
-  target_link_libraries(Bayeux_mctools_geant4 ${Geant4_LIBRARIES})
+  target_link_libraries(Bayeux_mctools_geant4 ${Geant4_LIBRARIES} ${Boost_thread_LIBRARY})
 
   # - On Apple, ensure dynamic_lookup of undefined symbols
   if(APPLE)
     set_target_properties(Bayeux_mctools_geant4 PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
   endif()
+
+  list(APPEND Bayeux_ADDON_TARGETS Bayeux_mctools_geant4)
 endif()
 
 #-----------------------------------------------------------------------
 # Build/Link the executables
 #
-set(Bayeux_APP_TARGETS)
 foreach(_bxapp ${Bayeux_APPS})
   get_filename_component(_app_basename ${_bxapp} NAME_WE)
   add_executable(bx${_app_basename} ${_bxapp})
@@ -179,13 +188,13 @@ foreach(_bxapp ${Bayeux_APPS})
   # - Hack to get program_options in without linking it to libBayeux
   target_link_libraries(bx${_app_basename} ${Boost_program_options_LIBRARY})
 
-  list(APPEND Bayeux_APP_TARGETS bx${_app_basename})
+  list(APPEND Bayeux_ADDON_TARGETS bx${_app_basename})
 endforeach()
 
 #-----------------------------------------------------------------------
 # Install targets and resources
 #
-install(TARGETS Bayeux ${Bayeux_APP_TARGETS}
+install(TARGETS Bayeux ${Bayeux_ADDON_TARGETS}
   EXPORT  BayeuxTargets
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
@@ -203,7 +212,7 @@ install(DIRECTORY ${Bayeux_BUILDPRODUCT_DIR}/share/
 # Done here so that external package variables are visible
 #
 # - Targets
-export(TARGETS Bayeux FILE ${Bayeux_BUILDPRODUCT_DIR}/lib/cmake/Bayeux-${Bayeux_VERSION}/BayeuxTargets.cmake)
+export(TARGETS Bayeux ${Bayeux_ADDON_TARGETS} FILE ${Bayeux_BUILDPRODUCT_DIR}/lib/cmake/Bayeux-${Bayeux_VERSION}/BayeuxTargets.cmake)
 install(EXPORT BayeuxTargets DESTINATION lib/cmake/Bayeux-${Bayeux_VERSION})
 
 # - Versioning (build and install trees)

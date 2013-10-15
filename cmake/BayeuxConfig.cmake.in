@@ -29,7 +29,10 @@ get_filename_component(__bayeux_config_dir "${CMAKE_CURRENT_LIST_FILE}" PATH)
 # Hard code paths to headers for now...
 #
 get_filename_component(Bayeux_INCLUDE_DIR "${__bayeux_config_dir}/../../../include/" ABSOLUTE CACHE)
+mark_as_advanced(Bayeux_INCLUDE_DIR)
+
 set(Bayeux_INCLUDE_DIRS "${Bayeux_INCLUDE_DIR}" "${Bayeux_INCLUDE_DIR}/bayeux")
+
 set(Bayeux_DEFINITIONS)
 
 #-----------------------------------------------------------------------
@@ -75,6 +78,9 @@ find_package(CAMP @CAMP_VERSION@ EXACT REQUIRED
   NO_DEFAULT_PATH
   )
 
+# - NB, nothing for Geant4 yet because it's not an interface of
+# the plugin
+
 #-----------------------------------------------------------------------
 # Append third party include directories to Bayeux's so exposed
 # headers are visible
@@ -94,7 +100,16 @@ if(NOT Bayeux_TARGETS_LOADED)
   include("${__bayeux_config_dir}/BayeuxTargets.cmake")
   set(Bayeux_TARGETS_LOADED 1)
 endif()
+
+# - Bayeux itself
 set(Bayeux_LIBRARY Bayeux CACHE FILE "Bayeux library (imported)")
 set(Bayeux_LIBRARIES ${Bayeux_LIBRARY})
+mark_as_advanced(Bayeux_LIBRARY)
 
+# - Optional Geant4 MC Module
+if(TARGET Bayeux_mctools_geant4)
+  set(Bayeux_MCTOOLS_GEANT4_FOUND 1)
+  set(Bayeux_MCTOOLS_GEANT4_LIBRARY Bayeux_mctools_geant4 CACHE FILE "Bayeux mctools/geant4 module (imported)")
+  mark_as_advanced(Bayeux_MCTOOLS_GEANT4_LIBRARY)
+endif()
 
