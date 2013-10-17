@@ -64,6 +64,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/manager.cc
   ${module_source_dir}/materials_driver.cc
   ${module_source_dir}/version.cc
+  ${module_source_dir}/materials.cc
   bx${module_name}/resource.cc
   bx${module_name}/_materials.cc
   )
@@ -114,4 +115,3 @@ foreach(_rfin ${${module_name}_MODULE_RESOURCES})
   string(REGEX REPLACE "^${module_resource_dir}" "${MODULE_RESOURCE_ROOT}" _rfout "${_rfout}")
   configure_file(${_rfin} ${_rfout} @ONLY)
 endforeach()
-
