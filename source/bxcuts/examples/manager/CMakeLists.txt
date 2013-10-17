@@ -14,15 +14,23 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
   message(FATAL_ERROR "in-source build detected")
 endif()
 
-# - cuts :
-if (NOT cuts_DIR)
-  execute_process(COMMAND cuts-config --prefix
-                  OUTPUT_VARIABLE cuts_DIR )
+if (USE_BAYEUX)
+  # - Bayeux :
+  find_package(Bayeux 1.0.0 REQUIRED)
+  set(_incs ${Bayeux_INCLUDE_DIRS})
+  set(_libs ${Bayeux_LIBRARIES})
+else()
+  # - cuts :
+  if (NOT cuts_DIR)
+    execute_process(COMMAND cuts-config --prefix
+                     OUTPUT_VARIABLE cuts_DIR )
+  endif()
+  find_package(cuts 4.0.0 REQUIRED)
+  set(_incs ${cuts_INCLUDE_DIRS})
+  set(_libs ${cuts_LIBRARIES})
 endif()
 
-find_package(cuts 4.0.0 REQUIRED)
-
-include_directories(${PROJECT_SOURCE_DIR} ${cuts_INCLUDE_DIRS})
+include_directories(${PROJECT_SOURCE_DIR} ${_incs})
 
 add_executable(ex_manager data.cc
 			  sphere_cut.cc
@@ -30,7 +38,7 @@ add_executable(ex_manager data.cc
 			  color_cut.cc
 			  ex_manager.cxx)
 
-target_link_libraries(ex_manager ${cuts_LIBRARY} )
+target_link_libraries(ex_manager ${_libs} )
 
 install ( FILES
     ${PROJECT_BINARY_DIR}/ex_manager

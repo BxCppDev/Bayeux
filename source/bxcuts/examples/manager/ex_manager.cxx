@@ -1,6 +1,7 @@
 // -*- mode: c++ ; -*-
 // ex_manager.cxx
 
+// Standard library
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -10,11 +11,19 @@
 #include <vector>
 #include <map>
 
+// Third party
+// - datatools:
+#include <datatools/datatools.h>
+#if DATATOOLS_STANDALONE == 0
+// - bayeux:
+#include <bayeux/bayeux.h>
+#endif
+// - datatools:
 #include <datatools/utils.h>
 #include <datatools/properties.h>
 #include <datatools/logger.h>
 #include <datatools/exception.h>
-
+// - cuts:
 #include <cuts/cuts_config.h>
 #include <cuts/cut_manager.h>
 
@@ -28,6 +37,12 @@
 
 int main(int argc_, char ** argv_)
 {
+#if DATATOOLS_STANDALONE == 1
+  DATATOOLS_INIT_MAIN(argc_, argv_);
+#else
+  BAYEUX_INIT_MAIN(argc_, argv_);
+#endif // DATATOOLS_STANDALONE == 1
+
   datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
   int error_code = EXIT_SUCCESS;
   try {
@@ -233,6 +248,11 @@ int main(int argc_, char ** argv_)
     DT_LOG_FATAL(logging,"Unexpected error !");
     error_code = EXIT_FAILURE;
   }
+#if DATATOOLS_STANDALONE == 1
+  DATATOOLS_FINI();
+#else
+  BAYEUX_FINI();
+#endif // DATATOOLS_STANDALONE == 1
   return(error_code);
 }
 
