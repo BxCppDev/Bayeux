@@ -14,6 +14,7 @@ set(module_include_dir "${module_root_dir}/include")
 set(module_source_dir  "${module_root_dir}/src")
 set(module_test_dir    "${module_root_dir}/testing")
 set(module_app_dir     "${module_root_dir}/programs")
+set(module_resource_dir "${module_root_dir}/resources")
 
 foreach(dir root_dir include_dir source_dir app_dir test_dir)
   set(${module_name}_${dir} ${module_${dir}})
@@ -47,6 +48,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/primary_particle.ipp
   ${module_include_dir}/${module_name}/the_serializable.ipp
   ${module_include_dir}/${module_name}/the_serializable.h
+  ${module_include_dir}/${module_name}/genbb_help.h
   ${module_include_dir}/${module_name}/genbb_help_config.h.in
   ${module_include_dir}/${module_name}/version.h.in
   ${module_include_dir}/${module_name}/detail/bio_link_guard.h
@@ -56,7 +58,17 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/the_introspectable.h
   ${module_include_dir}/${module_name}/reflection_guard.h
   ${module_include_dir}/${module_name}/detail/reflection_link_guard.h
+  ${module_include_dir}/${module_name}/resource.h
   )
+
+# - configure special source file
+configure_file(${module_source_dir}/_genbb_help.cc.in
+               bx${module_name}/_genbb_help.cc
+              )
+
+# - configure resources
+configure_file(${module_source_dir}/resource.cc.in
+               bx${module_name}/resource.cc)
 
 set(${module_name}_PRIVATE_MODULE_HEADERS
   ${module_include_dir}/${module_name}/decay0/Ac228.h
@@ -227,6 +239,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/manager.cc
   ${module_source_dir}/version.cc
   ${module_source_dir}/the_serializable.cc
+  ${module_source_dir}/genbb_help.cc
   ${module_source_dir}/decay0/Ac228.cc
   ${module_source_dir}/decay0/alpha.cc
   ${module_source_dir}/decay0/Am241.cc
@@ -376,6 +389,8 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/decay0/Zn65.cc
   ${module_source_dir}/decay0/Zr92low.cc
   ${module_source_dir}/decay0/Zr96.cc
+  bx${module_name}/resource.cc
+  bx${module_name}/_genbb_help.cc
   #${module_source_dir}/the_introspectable.cc
   )
 
@@ -444,6 +459,24 @@ set(${module_name}_MODULE_TESTS
 
 # - Applications
 set(${module_name}_MODULE_APPS
-  #${module_app_dir}/genbb_inspector.cxx
+  ${module_app_dir}/genbb_inspector.cxx
   )
 
+# - Resource files
+set(${module_name}_MODULE_RESOURCES
+  ${module_resource_dir}/manager/config/pro-1.0/misc.conf
+  ${module_resource_dir}/manager/config/pro-1.0/calibrations.conf
+  ${module_resource_dir}/manager/config/pro-1.0/manager.conf
+  ${module_resource_dir}/manager/config/pro-1.0/backgrounds.conf
+  ${module_resource_dir}/manager/config/pro-1.0/dbd.conf
+  ${module_resource_dir}/inspector/config/le_nuphy-1.0/inspector_histos_delayed.conf
+  ${module_resource_dir}/inspector/config/le_nuphy-1.0/inspector_histos_prompt.conf
+  ${module_resource_dir}/inspector/config/le_nuphy-1.0/README.rst
+  )
+
+# - Publish resource files
+foreach(_rfin ${${module_name}_MODULE_RESOURCES})
+  string(REGEX REPLACE "\\.in$" "" _rfout "${_rfin}")
+  string(REGEX REPLACE "^${module_resource_dir}" "${MODULE_RESOURCE_ROOT}" _rfout "${_rfout}")
+  configure_file(${_rfin} ${_rfout} @ONLY)
+endforeach()

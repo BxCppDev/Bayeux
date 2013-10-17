@@ -15,7 +15,7 @@ set(module_root_dir     "${CMAKE_CURRENT_SOURCE_DIR}/bx${module_name}")
 set(module_include_dir  "${module_root_dir}/include")
 set(module_source_dir   "${module_root_dir}/src")
 set(module_test_dir     "${module_root_dir}/testing")
-set(module_app_dir     "${module_root_dir}/programs")
+set(module_app_dir      "${module_root_dir}/programs")
 set(module_resource_dir "${module_root_dir}/resources")
 
 foreach(dir root_dir include_dir source_dir test_dir app_dir resource_dir)
@@ -155,7 +155,12 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/reflection_guard.h
   ${module_include_dir}/${module_name}/the_introspectable.h
   ${module_include_dir}/${module_name}/utils-reflect.h
+  ${module_include_dir}/${module_name}/resource.h
   )
+
+# - configure resources
+configure_file(${module_source_dir}/resource.cc.in
+               bx${module_name}/resource.cc)
 
 # - NB Order of sources appears to be important - taken from geomtools
 #   listing. Note that the_serializable.cc is added manually - not
@@ -247,6 +252,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/gnuplot_drawer.cc
   ${module_source_dir}/geomtools_driver.cc
   ${module_source_dir}/version.cc
+  bx${module_name}/resource.cc
   #${module_source_dir}/the_introspectable.cc
   )
 

@@ -73,7 +73,7 @@ set(Bayeux_SUBMODULES
 
 
 # - Resource installation base dir
-set(CMAKE_INSTALL_DATADIR "share/Bayeux-${Bayeux_VERSION}")
+set(CMAKE_INSTALL_DATAROOTDIR "share/Bayeux-${Bayeux_VERSION}")
 
 # - Configure Bayeux submodule first
 set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include")
@@ -84,9 +84,12 @@ set(Bayeux_TESTS)
 set(Bayeux_RESOURCES)
 
 set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include/bayeux")
-set(MODULE_RESOURCE_ROOT "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}/resources")
+#set(MODULE_RESOURCE_ROOT "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}/resources")
 
 foreach(_m ${Bayeux_SUBMODULES})
+  set(CMAKE_INSTALL_DATADIR "${CMAKE_INSTALL_DATAROOTDIR}/${_m}")
+  set(MODULE_RESOURCE_ROOT
+      "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}/resources")
   include(bx${_m}_module.cmake)
   list(APPEND Bayeux_HEADERS ${${_m}_MODULE_HEADERS})
   list(APPEND Bayeux_SOURCES ${${_m}_MODULE_SOURCES})

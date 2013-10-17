@@ -120,6 +120,9 @@ namespace bayeux {
                                       "provide input to simulation tools (i.e. GDML/Geant4).",
                                       geomtools::version::get_version()
                                       );
+        geomtools_lib_infos.store_string(datatools::library_info::keys::install_resource_dir(),
+                                         geomtools::get_resource_dir(false)
+                                         );
       }
 
       {
@@ -153,6 +156,9 @@ namespace bayeux {
                                       "for input to simulation applications.",
                                       genbb::version::get_version()
                                       );
+        genbb_help_lib_infos.store_string(datatools::library_info::keys::install_resource_dir(),
+                                          genbb::get_resource_dir(false)
+                                          );
       }
 
 
