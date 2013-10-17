@@ -92,6 +92,18 @@ if(Bayeux_ENABLE_TESTING)
   enable_testing()
 endif()
 
+# - Normalize exported boolean variables
+if(Bayeux_WITH_GEANT4)
+  set(Bayeux_WITH_GEANT4 1)
+else()
+  set(Bayeux_WITH_GEANT4 0)
+endif()
+if(Bayeux_ENABLE_TESTING)
+  set(Bayeux_ENABLE_TESTING 1)
+else()
+  set(Bayeux_ENABLE_TESTING 0)
+endif()
+
 #-----------------------------------------------------------------------
 # Build the subdirectories
 #
@@ -108,4 +120,3 @@ endif()
 if(NOT Bayeux_EMBEDDED)
   include(BXCPack)
 endif()
-

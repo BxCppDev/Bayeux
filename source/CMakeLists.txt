@@ -235,6 +235,24 @@ install(
     lib/cmake/Bayeux-${Bayeux_VERSION}
   )
 
+if(UNIX)
+  # - configure UNIX bayeux-config scripts
+  configure_file(bxbayeux/bayeux-config.in
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bayeux-config
+    #bx${module_name}/bayeux-config
+    @ONLY
+    )
+
+  install(FILES ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bayeux-config
+    DESTINATION bin
+    PERMISSIONS
+    OWNER_READ OWNER_WRITE OWNER_EXECUTE
+    GROUP_READ GROUP_WRITE GROUP_EXECUTE
+    WORLD_READ             WORLD_EXECUTE
+    COMPONENT   Development
+    )
+endif(UNIX)
+
 #-----------------------------------------------------------------------
 # Build unit tests if required
 # - NB assumes each test .cxx file generates a single executable

@@ -15,7 +15,6 @@ int main(int argc, const char *argv[])
   simParams.set_defaults();
 
   mctools::g4::manager simManager;
-
+  simManager.dump_base(std::cout, "The Geant4 manager: ");
   return 0;
 }
-

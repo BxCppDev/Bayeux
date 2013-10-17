@@ -44,6 +44,7 @@ endforeach()
 # - configure special source file
 configure_file(${module_source_dir}/_bayeux.cc.in
                bx${module_name}/_bayeux.cc
+	       @ONLY
               )
 
 if (BAYEUX_WITH_IMPLICIT_INIT_FINI)
