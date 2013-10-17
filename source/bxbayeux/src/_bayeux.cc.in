@@ -24,7 +24,7 @@
 #include <bayeux/bayeux_config.h>
 #include <bayeux/version.h>
 
-// Submodules version
+// Submodules version & resource
 #include <datatools/version.h>
 
 #include <cuts/version.h>
