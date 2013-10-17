@@ -2,7 +2,7 @@
 /* \file genbb_inspector.cxx
  * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2013-04-20
- * Last modified : 2013-06-03
+ * Last modified : 2013-10-17
  *
  * Copyright (C) 2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -22,6 +22,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
+// Ourselves
+#include <genbb_help/genbb_help_config.h>
+
+// Standard libraries:
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -30,14 +34,15 @@
 #include <algorithm>
 #include <numeric>
 
+// Third Party
+// - Boost
 #include <boost/program_options.hpp>
-
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/phoenix_core.hpp>
 #include <boost/spirit/include/phoenix_operator.hpp>
 #include <boost/fusion/include/vector.hpp>
 #include <boost/fusion/include/at_c.hpp>
-
+// - datatools:
 #include <datatools/datatools_config.h>
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
@@ -48,18 +53,23 @@
 #include <datatools/tracer.h>
 #include <datatools/exception.h>
 #include <datatools/logger.h>
-
-#include <dpp/histogram_service.h>
+// - mygsl:
 #include <mygsl/histogram_pool.h>
 #include <mygsl/histogram_1d.h>
 #include <mygsl/histogram_2d.h>
+// - dpp:
+#include <dpp/histogram_service.h>
+#if DATATOOLS_STANDALONE == 0
+// - bayeux:
+#include <bayeux/bayeux.h>
+#endif
 
-#include <genbb_help/genbb_help_config.h>
+// This project
 #include <genbb_help/manager.h>
 #include <genbb_help/primary_event.h>
 
 // Some pre-processor linkage guard :
-#include <datatools/bio_guard.h>
+//#include <datatools/bio_guard.h>
 #include <mygsl/bio_guard.h>
 #include <geomtools/bio_guard.h>
 #include <genbb_help/bio_guard.h>
@@ -937,6 +947,12 @@ void usage (const boost::program_options::options_description &,
 
 int main (int argc_, char ** argv_)
 {
+#if DATATOOLS_STANDALONE == 1
+  DATATOOLS_INIT_MAIN(argc_, argv_);
+#else
+  BAYEUX_INIT_MAIN(argc_, argv_);
+#endif
+
   int error_code = EXIT_SUCCESS;
   genbb::inspector_params params;
   namespace po = boost::program_options;
@@ -1101,16 +1117,16 @@ int main (int argc_, char ** argv_)
     po::notify (vm);
 
     // Fetch the opts/args :
-    if (vm.count ("help")) {
+    if (vm.count("help")) {
       usage(opts, std::cout);
       return error_code;
     }
 
-    if (vm.count ("load-dll")) {
+    if (vm.count("load-dll")) {
       LL_dlls = vm["load-dll"].as<std::vector<std::string> > ();
     }
 
-    if (vm.count ("dll-config")) {
+    if (vm.count("dll-config")) {
       LL_config = vm["dll-config"].as<std::string> ();
     }
 
@@ -1142,6 +1158,7 @@ int main (int argc_, char ** argv_)
   }
   catch (std::exception & x) {
     DT_LOG_FATAL(datatools::logger::PRIO_FATAL, x.what ());
+    usage(opts, std::cerr);
     error_code = EXIT_FAILURE;
   }
   catch (...) {
@@ -1149,30 +1166,41 @@ int main (int argc_, char ** argv_)
     usage (opts,std::cerr);
     error_code = EXIT_FAILURE;
   }
+
+#if DATATOOLS_STANDALONE == 1
+  DATATOOLS_FINI();
+#else
+  BAYEUX_FINI();
+#endif
   return error_code;
 }
 
 void usage (const boost::program_options::options_description & options_,
             std::ostream & out_)
 {
-  out_ << "\ngenbb_inspector -- Inspector for GENBB primary event generators" << std::endl;
+#if GENBB_HELP_STANDALONE == 1
+    const std::string APP_NAME = "genbb_inspector";
+#else
+    const std::string APP_NAME = "bxgenbb_inspector";
+#endif // GENBB_HELP_STANDALONE == 1
+  out_ << "\n " << APP_NAME << " -- Inspector for GENBB primary event generators" << std::endl;
   out_ << std::endl;
   out_ << "Usage : " << std::endl;
   out_ << std::endl;
-  out_ << "  genbb_inspector [OPTIONS] [ARGUMENTS] " << std::endl << std::endl;
+  out_ << "  " << APP_NAME << " [OPTIONS] [ARGUMENTS] " << std::endl << std::endl;
   out_ << options_ << std::endl;
   out_ << "Examples : " << std::endl;
   out_ << "" << std::endl;
-  out_ << "  genbb_inspector --help\n";
+  out_ << "  " << APP_NAME << " --help\n";
   out_ << "" << std::endl;
-  out_ << "  genbb_inspector \\\n";
+  out_ << "  " << APP_NAME << " \\\n";
   out_ << "    --configuration \""
        << GENBB_HELP_DATA_INSTALL_DIR
        << "/resources/manager/config/pro-1.0/manager.conf"
        << "\" \\\n";
   out_ << "    --action \"list\"  \\\n";
   out_ << "" << std::endl;
-  out_ << "  genbb_inspector \\\n";
+  out_ << "  " << APP_NAME << "  \\\n";
   out_ << "    --configuration \""
        << GENBB_HELP_DATA_INSTALL_DIR
        << "/resources/manager/config/pro-1.0/manager.conf"
@@ -1243,6 +1271,10 @@ namespace genbb {
     if (_name_suffix_.empty() && ! _params_.name_suffix.empty()) {
       _name_suffix_ = _params_.name_suffix;
     }
+
+    DT_THROW_IF(_params_.action.empty(),
+                std::logic_error,
+                "Missing action !");
 
     DT_THROW_IF(_params_.action != "list" && _params_.action != "shoot",
                 std::logic_error,
@@ -1476,8 +1508,6 @@ namespace genbb {
           idata.other_negative_particles_momenta.push_back(pp.get_momentum ());
         }
       }
-
-      //idata.sort();
 
       // Fetch the names of the histogram in the current 'timing' group :
       std::vector<std::string> histo_names;

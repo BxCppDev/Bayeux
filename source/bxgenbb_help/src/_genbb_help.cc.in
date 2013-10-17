@@ -1,0 +1,109 @@
+/* genbb_help/_genbb_help.cc
+ */
+// Ourselves
+#include <genbb_help/genbb_help.h>
+
+// Third-party:
+// - datatools
+#include <datatools/kernel.h>
+#include <datatools/library_info.h>
+#include <datatools/properties.h>
+
+// This package:
+#include <genbb_help/version.h>
+#include <genbb_help/resource.h>
+
+namespace genbb {
+
+  void _special_initialize_impl()
+  {
+#if GENBB_HELP_STANDALONE == 1
+    DT_THROW_IF(!datatools::kernel::is_instantiated(),
+                std::runtime_error,
+                "The datatools kernel is not instantiated !");
+    datatools::kernel & krnl = datatools::kernel::instance();
+    // Populate the library info register:
+    if (krnl.has_library_info_register()) {
+      // Registration of the datatools component in the kernel's library info register:
+      datatools::library_info & lib_info_reg = krnl.grab_library_info_register();
+      datatools::properties & lib_infos
+        = lib_info_reg.registration("genbb_help",
+                                    "C++ wrapper and extensions to the Decay0/GENBB program"
+                                    "by Vladimir Tretyak, for input to simulation applications (i.e. Geant4)."
+                                    genbb::version::get_version(),
+                                    "@CMAKE_INSTALL_PREFIX@", // Hardcoded for now
+                                    "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@" // Hardcoded for now
+                                    );
+
+      /* If needed, we could replace the hardcoded paths above by some
+       * calls to runtime API methods (particulary for relocatable lib):
+       *
+       *   datatools::install::get_prefix()
+       *   datatools::install::get_lib_dir()
+       *   datatools::install::get_data_dir()
+       *
+       * as it is done with : datatools::version::get_version()
+       */
+      // Additionnal stored parameters :
+
+      lib_infos.store_string(datatools::library_info::keys::install_resource_dir(),
+                             genbb::get_resource_dir());
+
+
+      lib_infos.store_integer(datatools::library_info::keys::version_major(),
+                              genbb::version::get_major());
+
+      lib_infos.store_integer(datatools::library_info::keys::version_minor(),
+                              genbb::version::get_minor());
+
+      lib_infos.store_integer(datatools::library_info::keys::version_patch(),
+                              genbb::version::get_patch());
+
+
+      lib_infos.store_string(datatools::library_info::keys::build_type(),
+                             "@CMAKE_BUILD_TYPE@");
+
+      if (lib_info_reg.get_logging() >= datatools::logger::PRIO_TRACE) {
+        DT_LOG_TRACE(lib_info_reg.get_logging(),
+                     "Status of the library info register: " );
+        lib_info_reg.tree_dump(std::cerr);
+      }
+    }
+#else // GENBB_HELP_STANDALONE == 1
+    // Nothing to do in bundle mode
+#endif // GENBB_HELP_STANDALONE == 0
+    return;
+  }
+
+  void _special_terminate_impl()
+  {
+#if GENBB_HELP_STANDALONE == 1
+    if (datatools::kernel::is_instantiated()) {
+      datatools::kernel & krnl = datatools::kernel::instance();
+      if (krnl.has_library_info_register()) {
+
+        // Access to the datatools kernel library info register:
+        datatools::library_info & lib_info_reg = krnl.grab_library_info_register();
+
+        // Unregistration of the genbb_help component in the kernel's
+        // library info register:
+        if (lib_info_reg.has("genbb_help")) {
+          lib_info_reg.unregistration("genbb_help");
+        }
+
+        if (lib_info_reg.get_logging() >= datatools::logger::PRIO_TRACE) {
+          DT_LOG_TRACE(lib_info_reg.get_logging(),
+                       "Status of the library info register: " );
+          lib_info_reg.tree_dump(std::cerr);
+        }
+      }
+    }
+#else // GENBB_HELP_STANDALONE == 1
+    // Nothing to do in bundle mode
+#endif // GENBB_HELP_STANDALONE == 0
+    return;
+  }
+
+} // end of namespace genbb
+
+// end of genbb_help/_genbb_help.cc

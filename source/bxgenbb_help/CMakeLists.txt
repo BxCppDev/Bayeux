@@ -24,6 +24,12 @@ endif()
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(genbb_help C CXX Fortran )
 
+# - Default build is from Bayeux
+#  Setting GENBB_HELP_STANDALONE to 1 must be used for a individual build
+if (UNDEF GENBB_HELP_STANDALONE)
+  set (GENBB_HELP_STANDALONE 0)
+endif()
+
 # - Versioning
 set(genbb_help_VERSION_MAJOR 5)
 set(genbb_help_VERSION_MINOR 0)
@@ -73,6 +79,7 @@ option(GENBB_HELP_WITH_REFLECTION  "Build auxiliary CAMP-based reflection librar
 option(GENBB_HELP_WITH_INSPECTOR "Build the inspector program" ON)
 option(GENBB_HELP_WITH_DOC  "Build the genbb_help documentation" ON)
 option(GENBB_HELP_WITH_TEST "Build the genbb_help test suite"    ON)
+option(GENBB_HELP_WITH_IMPLICIT_INIT_FINI "Build the genbb_help library with automated kernel initialization (for standalone build)" ON)
 
 if (GENBB_HELP_WITH_DEBUG)
   set (GENBB_HELP_WITH_DEBUG 1)

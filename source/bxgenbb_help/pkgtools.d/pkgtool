@@ -436,6 +436,7 @@ function do_configure ()
 	-Ddatatools_DIR=${DATATOOLS_CMAKE_CONFIG_DIR} \
 	-Dgeomtools_DIR=${GEOMTOOLS_CMAKE_CONFIG_DIR} \
 	-DCMAKE_MODULE_PATH:PATH="${CADFAEL_SHARE_DIR}/cmake/Modules;${CMAKE_MODULE_PATH}" \
+	-DGENBB_HELP_STANDALONE=1 \
 	-DGENBB_HELP_WITH_BIO=${with_bio} \
 	-DGENBB_HELP_WITH_FORTRAN=${with_fortran} \
 	-DGENBB_HELP_WITH_DOC=${with_doc} \

@@ -92,6 +92,8 @@ file ( GLOB genbb_help_PUBLIC_HEADERS
   ${PROJECT_SOURCE_DIR}/include/genbb_help/primary_event-reflect.h
   ${PROJECT_SOURCE_DIR}/include/genbb_help/the_introspectable.h
   ${PROJECT_SOURCE_DIR}/include/genbb_help/reflection_guard.h
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/genbb_help.h
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/resource.h
   )
 
 if (GENBB_HELP_WITH_FORTRAN)
@@ -148,6 +150,12 @@ endif()
 #-----------------------------------------------------------------------
 # SOURCE FILES
 ###      genbb_commons.cc
+# configure the resource source
+configure_file(
+  ${PROJECT_SOURCE_DIR}/src/resource.cc.in
+  ${PROJECT_BINARY_DIR}/src/resource.cc
+  )
+
 # Pretty basic!
 set(genbb_help_SOURCES
       genbb_utils.cc
@@ -162,7 +170,16 @@ set(genbb_help_SOURCES
       combined_particle_generator.cc
       manager.cc
       version.cc
+      genbb_help.cc
+      ${PROJECT_BINARY_DIR}/src/resource.cc
+      ${PROJECT_BINARY_DIR}/src/_genbb_help.cc
 )
+
+if (GENBB_HELP_WITH_IMPLICIT_INIT_FINI)
+  list(APPEND genbb_help_SOURCES
+    _init_fini.cc
+  )
+endif()
 
 if (GENBB_HELP_WITH_FORTRAN)
    list(APPEND genbb_help_SOURCES genbb.cc)

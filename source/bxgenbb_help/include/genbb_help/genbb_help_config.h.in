@@ -5,6 +5,9 @@
 #ifndef GENBB_HELP_GENBB_HELP_CONFIG_H_
 #define GENBB_HELP_GENBB_HELP_CONFIG_H_ 1
 
+/***  genbb_help is built standalone or not ***/
+#cmakedefine01 GENBB_HELP_STANDALONE
+
 /***  genbb_help debug flag ***/
 #cmakedefine01 GENBB_HELP_WITH_DEBUG
 
