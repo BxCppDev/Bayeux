@@ -2,7 +2,7 @@
 // ocd_manual.cxx
 
 // This project
-#include <datatools/datatools_config.h>
+#include <datatools/datatools.h>
 
 // Standard Library
 #include <cstdlib>
@@ -22,7 +22,6 @@
 #endif // DATATOOLS_STANDALONE == 1
 
 // - datatools
-#include <datatools/datatools.h>
 #include <datatools/logger.h>
 #include <datatools/exception.h>
 #include <datatools/ocd_driver.h>
