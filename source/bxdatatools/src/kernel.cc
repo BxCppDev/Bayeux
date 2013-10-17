@@ -145,16 +145,17 @@ namespace datatools {
   }
 
   // static
-  void kernel::print_splash(const kernel & kern_,  std::ostream & out_)
+  void kernel::print_splash(std::ostream & out_)
   {
     out_ << "\n";
     out_ << "   D A T A T O O L S    K E R N E L\n";
     out_ << "\n";
     out_ << "   Version: " << datatools::version::get_version() << "\n";
     out_ << "\n";
-    out_ << "   Library info register : " << (kern_.has_library_info_register()?
+    const datatools::kernel & kern =  datatools::kernel::const_instance();
+    out_ << "   Library info register : " << (kern.has_library_info_register()?
                                               "activated" : "NA") << "\n";
-    if (kern_.has_library_info_register()) {
+    if (kern.has_library_info_register()) {
       // On board registered libraries...
     }
     out_ << "\n";
@@ -182,7 +183,7 @@ namespace datatools {
 
     // Splash some fancy screen:
     if (params_.splash) {
-      kernel::print_splash(kernel::const_instance(),std::clog);
+      kernel::print_splash(std::clog);
     }
 
     // Parse some special directives to load arbitrary resource path associated
@@ -235,7 +236,7 @@ namespace datatools {
     po::parsed_options parsed =
       po::command_line_parser(argc_, argv_)
       .options(opts) // Only options to be parsed.
-      //.positional(args) // This crashes so dont't use it here !
+      //.positional(args) // This crashes so we don't use it here !
       .allow_unregistered()
       .run();
     params.unrecognized_args = po::collect_unrecognized(parsed.options,
@@ -375,4 +376,3 @@ namespace datatools {
   }
 
 } // end of namespace datatools
-

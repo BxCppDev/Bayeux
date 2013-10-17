@@ -24,6 +24,12 @@ endif()
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(datatools)
 
+# - Default build is from Bayeux
+#  Setting DATATOOLS_STANDALONE to 1 must be used for a individual build
+if (UNDEF DATATOOLS_STANDALONE)
+  set (DATATOOLS_STANDALONE 0)
+endif()
+
 # - Versioning
 set(datatools_VERSION_MAJOR 5)
 set(datatools_VERSION_MINOR 0)
@@ -47,7 +53,7 @@ option(DATATOOLS_WITH_DOC   "Build the datatools documentation" ON)
 option(DATATOOLS_WITH_TEST  "Build the datatools test suite"    ON)
 option(DATATOOLS_WITH_IMPLICIT_INIT_FINI "Build the datatools library with automated kernel initialization (for standalone build)" ON)
 
-if (DATATOOLS_BUNDLED)
+if (DATATOOLS_STANDALONE)
   set(DATATOOLS_WITH_IMPLICIT_INIT_FINI 1)
 endif()
 

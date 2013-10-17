@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
-use_bayeux=0
-if [ "$1" = "--use-bayeux" ]; then
-    use_bayeux=1
+use_bayeux=1
+which bayeux-config > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    use_bayeux=0
 fi
 
 opwd=$(pwd)
@@ -21,24 +22,16 @@ if [ $use_bayeux -eq 0 ]; then
 	echo "ERROR: Missing datatools-config !" >&2
 	exit 0
     fi
-    # cmake \
-    # 	-DCMAKE_INSTALL_PREFIX=.. \
-    # 	-Ddatatools_DIR=$(datatools-config --prefix) \
-    # 	..
     cmake \
 	-DCMAKE_INSTALL_PREFIX=.. \
 	-DCMAKE_FIND_ROOT_PATH:PATH=$(datatools-config --prefix) \
 	..
     ocd_manual_bin="ocd_manual"
 else
-    if [ -z "${BAYEUX_INSTALL_DIR}" ]; then
-	echo "ERROR: Missing Bayeux installation path 'BAYEUX_INSTALL_DIR' !" >&2
-	exit 0
-    fi
     cmake \
 	-DCMAKE_INSTALL_PREFIX=.. \
 	-DUSE_BAYEUX:BOOLEAN=1 \
-	-DCMAKE_FIND_ROOT_PATH:PATH=${BAYEUX_INSTALL_DIR} \
+	-DCMAKE_FIND_ROOT_PATH:PATH=$(bayeux-config --prefix) \
 	..
     ocd_manual_bin="bxocd_manual"
 fi
@@ -58,7 +51,7 @@ LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH} \
     --class-id "foo"            \
     --action show > foo_ocd.rst
 
-which pandoc
+which pandoc > /dev/null 2>&1
 if [ $? -eq 0 ]; then
     pandoc -r rst -w html foo_ocd.rst > foo_ocd.html
 fi

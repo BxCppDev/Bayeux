@@ -1,6 +1,9 @@
 // -*- mode: c++ ; -*-
 // ocd_manual.cxx
 
+// This project
+#include <datatools/datatools_config.h>
+
 // Standard Library
 #include <cstdlib>
 #include <iostream>
@@ -9,63 +12,148 @@
 #include <vector>
 
 // Third Party
+
+// - Boost
 #include <boost/program_options.hpp>
 
-// Datatools
+#if DATATOOLS_STANDALONE == 0
+// - bayeux:
+#include <bayeux/bayeux.h>
+#endif // DATATOOLS_STANDALONE == 1
+
+// - datatools
 #include <datatools/datatools.h>
+#include <datatools/logger.h>
+#include <datatools/exception.h>
 #include <datatools/ocd_driver.h>
+
+namespace datatools {
+
+  // User interface for this app:
+  struct ui {
+
+    static
+    void build_options(boost::program_options::options_description & opts_,
+                       datatools::ocd_driver_params & params_);
+
+    static
+    void print_usage(boost::program_options::options_description & opts_,
+                     std::ostream & out_);
+  };
+
+}
 
 /****************
  * Main program *
  ****************/
 int main(int argc_, char ** argv_)
 {
-  DATATOOLS_INIT_MAIN(argc_,argv_);
+#if DATATOOLS_STANDALONE == 1
+  DATATOOLS_INIT_MAIN(argc_, argv_);
+#else
+  BAYEUX_INIT_MAIN(argc_, argv_);
+#endif // DATATOOLS_STANDALONE == 1
+
   int error_code = EXIT_SUCCESS;
   datatools::ocd_driver_params params;
   try {
     namespace po = boost::program_options;
     po::options_description opts ("Allowed options ");
 
-    opts.add_options ()
+    datatools::ui::build_options(opts, params);
 
-      ("help,h", "produce help message")
+    // Describe command line arguments :
+    po::positional_options_description args;
+    args.add("class-id", 1);
+
+    po::variables_map vm;
+    po::parsed_options parsed =
+      po::command_line_parser(argc_, argv_)
+      .options(opts)
+      .positional(args)
+      .allow_unregistered()
+      .run();
+    params.action_options =
+      po::collect_unrecognized(parsed.options,
+                               po::include_positional);
+    po::store(parsed, vm);
+    po::notify(vm);
+
+    // Fetch the opts/args :
+    if (vm.count("help")) {
+      if (vm["help"].as<bool>()) {
+        datatools::ui::print_usage(opts, std::cout);
+        return (1);
+      }
+    }
+
+    if (params.debug) params.print(std::cerr);
+
+    datatools::ocd_driver ocdd;
+    ocdd.initialize(params);
+    ocdd.run();
+    ocdd.reset();
+
+  }
+  catch (std::exception & x) {
+    DT_LOG_FATAL(datatools::logger::PRIO_FATAL, x.what ());
+    error_code = EXIT_FAILURE;
+  }
+  catch (...) {
+    DT_LOG_FATAL(datatools::logger::PRIO_FATAL, "Unexpected error !");
+    error_code = EXIT_FAILURE;
+  }
+
+#if DATATOOLS_STANDALONE == 1
+  DATATOOLS_FINI();
+#else
+  BAYEUX_FINI();
+#endif // DATATOOLS_STANDALONE == 1
+  return error_code;
+}
+
+namespace datatools {
+
+  void ui::build_options(boost::program_options::options_description & opts_,
+                         datatools::ocd_driver_params & params_)
+  {
+    namespace po = boost::program_options;
+    opts_.add_options()
+
+      ("help,h",
+       po::value<bool>() ->zero_tokens()
+       ->default_value(false),
+       "produce help message")
 
       ("debug,d",
-       po::value<bool>(&params.debug)
+       po::value<bool>(&params_.debug)
        ->zero_tokens()
-       ->default_value (false),
+       ->default_value(false),
        "produce debug logging")
 
-      // ("interactive,I",
-      //  po::value<bool>(&params.interactive)
-      //  ->zero_tokens()
-      //  ->default_value (false),
-      //  "run in interactive mode (not implemented)")
-
       ("dlls-config,L",
-       po::value<std::string> (&params.dll_loader_config),
+       po::value<std::string>(&params_.dll_loader_config),
        "set the DLL loader configuration file.      \n"
        "Example :                                   \n"
        " --dlls-config dlls.conf                    "
        )
 
       ("load-dll,l",
-       po::value<std::vector<std::string> >(&params.dlls),
+       po::value<std::vector<std::string> >(&params_.dlls),
        "set a DLL to be loaded.                     \n"
        "Example :                                   \n"
        " --load-dll genvtx                          "
        )
 
       ("class-id,c",
-       po::value<std::string> (&params.class_id),
+       po::value<std::string>(&params_.class_id),
        "set the ID of the class to be investigated. \n"
        "Example :                                   \n"
        " --class-id genvtx::manager                 "
        )
 
       ("action,a",
-       po::value<std::string> (&params.action),
+       po::value<std::string>(&params_.action),
        "define the action to be performed.                \n"
        "Actions:                                          \n"
        " list     : list the registered classes by ID     \n"
@@ -87,99 +175,76 @@ int main(int argc_, char ** argv_)
        )
 
       ("input-file,i",
-       po::value<std::string> (&params.input_path),
+       po::value<std::string>(&params_.input_path),
        "set the name of an input filename.")
 
       ("output-file,o",
-       po::value<std::string> (&params.output_path),
+       po::value<std::string>(&params_.output_path),
        "set the name of an output filename.")
 
       ; // end of options' description
-
-
-    // Describe command line arguments :
-    po::positional_options_description args;
-    args.add ("class-id", 1);
-
-    po::variables_map vm;
-    po::parsed_options parsed =
-      po::command_line_parser(argc_, argv_)
-      .options (opts)
-      .positional (args)
-      .allow_unregistered()
-      .run ();
-    params.action_options =
-      po::collect_unrecognized(parsed.options,
-                               po::include_positional);
-    // po::store (po::command_line_parser (argc_, argv_)
-    //            .options (opts)
-    //            .positional (args)
-    //            .allow_unregistered()
-    //            .run (), vm);
-    po::store (parsed, vm);
-    po::notify (vm);
-
-    // Fetch the opts/args :
-    if (vm.count ("help")) {
-      std::cout << "\nocd_manual -- Object Configuration Description Manual" << std::endl;
-      std::cout << "                     (datatools OCD support)" << std::endl;
-      std::cout << std::endl;
-      std::cout << "Usage : " << std::endl;
-      std::cout << std::endl;
-      std::cout << "  ocd_manual [OPTIONS] [ARGUMENTS] " << std::endl << std::endl;
-      std::cout << opts << std::endl;
-      std::cout << "Examples : " << std::endl;
-      std::cout << "                                                                  " << std::endl;
-      std::cout << "  ocd_manual --help                                               " << std::endl;
-      std::cout << "                                                                  " << std::endl;
-      std::cout << "  ocd_manual --action list                                        " << std::endl;
-      std::cout << "                                                                  " << std::endl;
-      std::cout << "  ocd_manual --load-dll genvtx --action list                      " << std::endl;
-      std::cout << "                                                                  " << std::endl;
-      std::cout << "  ocd_manual --class-id datatools::service_manager    \\          " << std::endl
-                << "             --action show [--no-configuration-infos] \\          " << std::endl
-                << "                           [--no-title]               \\          " << std::endl
-                << "             | pandoc -r rst -w plain                 \\          " << std::endl
-                << "             | less                                               " << std::endl;
-      std::cout << "                                                                  " << std::endl;
-      std::cout << "  ocd_manual --class-id datatools::service_manager    \\          " << std::endl
-                << "             --action show [--no-configuration-infos] \\          " << std::endl
-                << "                           [--no-title]               \\          " << std::endl
-                << "             | pandoc -T=\"datatools::service_manager\" \\        " << std::endl
-                << "                      -r rst -w html                  \\          " << std::endl
-                << "                      -o \"datatools__service_manager.html\"      " << std::endl;
-      std::cout << "                                                                  " << std::endl;
-      std::cout << "  ocd_manual --class-id datatools::service_manager \\             " << std::endl
-                << "             --action skeleton                     \\             " << std::endl
-                << "             [--no-additional-infos]               \\             " << std::endl
-                << "             [--no-configuration-hints]            \\             " << std::endl
-                << "             --output-file sm.conf                                " << std::endl;
-      std::cout << "                                                                  " << std::endl;
-      std::cout << "  ocd_manual --class-id datatools::service_manager \\             " << std::endl
-                << "             --action validate --input-file sm.conf               " << std::endl;
-      std::cout << "                                                                  " << std::endl;
-      std::cout << std::endl;
-      return (1);
-    }
-
-    if (params.debug) params.print(std::cerr);
-
-    datatools::ocd_driver ocdd;
-    ocdd.initialize(params);
-    ocdd.run();
-    ocdd.reset();
-
+    return;
   }
-  catch (std::exception & x) {
-    std::cerr << "error: ocd_manual:" << x.what () << std::endl;
-    error_code = EXIT_FAILURE;
+
+  void ui::print_usage(boost::program_options::options_description & opts_,
+                       std::ostream & out_)
+  {
+#if DATATOOLS_STANDALONE == 1
+    const std::string APP_NAME = "ocd_manual";
+#else
+    const std::string APP_NAME = "bxocd_manual";
+#endif // DATATOOLS_STANDALONE == 1
+    out_ << "\n" << APP_NAME << " -- Object Configuration Description Manual" << std::endl;
+    out_ << "                     (datatools OCD support)" << std::endl;
+    out_ << std::endl;
+    out_ << "Usage : " << std::endl;
+    out_ << std::endl;
+    out_ << "  " << APP_NAME << " [OPTIONS] [ARGUMENTS] " << std::endl << std::endl;
+    out_ << opts_ << std::endl;
+    out_ << "Examples : " << std::endl;
+    out_ << "                                                        " << std::endl;
+    out_ << "  " << APP_NAME << " --help                             " << std::endl;
+    out_ << "                                                        " << std::endl;
+    out_ << "  " << APP_NAME << " --action list                      " << std::endl;
+    out_ << "                                                        " << std::endl;
+    out_ << "  " << APP_NAME << " --action list | grep ^datatools::  " << std::endl;
+    out_ << "                                                        " << std::endl;
+#if DATATOOLS_STANDALONE == 1
+    out_ << "  " << APP_NAME << " --load-dll genvtx --action list    " << std::endl;
+#else
+    out_ << "  " << APP_NAME << " --load-dll foo --action list       " << std::endl;
+#endif // DATATOOLS_STANDALONE == 1
+    out_ << "                                                        " << std::endl;
+    out_ << "  " << APP_NAME << " \\" << std::endl
+         << "             --class-id datatools::service_manager    \\" << std::endl
+         << "             --action show [--no-configuration-infos] \\" << std::endl
+         << "                           [--no-title]               \\" << std::endl
+         << "             | pandoc -r rst -w plain                 \\" << std::endl
+         << "             | less                                     " << std::endl;
+    out_ << "                                                        " << std::endl;
+    out_ << "  " << APP_NAME << " \\" << std::endl
+         << "             --class-id datatools::service_manager    \\" << std::endl
+         << "             --action show [--no-configuration-infos] \\" << std::endl
+         << "                           [--no-title]               \\" << std::endl
+         << "             | pandoc -T=\"datatools::service_manager\" \\" << std::endl
+         << "                      -r rst -w html                    \\" << std::endl
+         << "                      -o \"datatools__service_manager.html\" " << std::endl;
+    out_ << "                                                             " << std::endl;
+    out_ << "  " << APP_NAME << " \\" << std::endl
+         << "             --class-id datatools::service_manager \\" << std::endl
+         << "             --action skeleton                     \\" << std::endl
+         << "             [--no-additional-infos]               \\" << std::endl
+         << "             [--no-configuration-hints]            \\" << std::endl
+         << "             --output-file sm.conf                   " << std::endl;
+    out_ << "                                                     " << std::endl;
+    out_ << "  " << APP_NAME << " \\" << std::endl
+         << "             --class-id datatools::service_manager \\" << std::endl
+         << "             --action validate --input-file sm.conf          " << std::endl;
+    out_ << "                                                             " << std::endl;
+    out_ << std::endl;
+    return;
   }
-  catch (...) {
-    std::cerr << "error: ocd_manual: " << "unexpected error !" << std::endl;
-    error_code = EXIT_FAILURE;
-  }
-  DATATOOLS_FINI();
-  return (error_code);
+
 }
 
 // end of ocd_manual.cxx

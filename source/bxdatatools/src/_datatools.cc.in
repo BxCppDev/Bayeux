@@ -11,7 +11,7 @@ namespace datatools {
 
   void _special_initialize_impl()
   {
-#if DATATOOLS_BUNDLED == 0
+#if DATATOOLS_STANDALONE == 1
     DT_THROW_IF(!datatools::kernel::is_instantiated(),
                 std::runtime_error,
                 "The datatools kernel is not instantiated !");
@@ -68,14 +68,15 @@ namespace datatools {
       }
       }
     }
-#else // DATATOOLS_BUNDLED == 0
-#endif // DATATOOLS_BUNDLED == 0
+#else // DATATOOLS_STANDALONE == 1
+    // Nothing to do in bundle mode
+#endif // DATATOOLS_STANDALONE == 0
     return;
   }
 
   void _special_terminate_impl()
   {
-#if DATATOOLS_BUNDLED == 0
+#if DATATOOLS_STANDALONE == 1
     if (datatools::kernel::is_instantiated()) {
       datatools::kernel & krnl = datatools::kernel::instance();
       if (krnl.has_library_info_register()) {
@@ -96,10 +97,10 @@ namespace datatools {
         }
       }
     }
-#else // DATATOOLS_BUNDLED == 0
-#endif // DATATOOLS_BUNDLED == 0
+#else // DATATOOLS_STANDALONE == 1
+    // Nothing to do in bundle mode
+#endif // DATATOOLS_STANDALONE == 1
     return;
   }
 
 } // end of namespace datatools
-

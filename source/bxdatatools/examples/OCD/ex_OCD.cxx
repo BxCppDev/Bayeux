@@ -3,7 +3,7 @@
  *
  * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2013-05-10
- * Last modified : 2013-05-13
+ * Last modified : 2013-10-17
  *
  * Copyright (C) 2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -29,21 +29,39 @@
  *
  */
 
+// This project
+#include <datatools/datatools_config.h>
+
+// Standard Library
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <exception>
 
-#include <datatools/datatools_config.h>
+// Third Party
+
+#if DATATOOLS_STANDALONE == 0
+// - bayeux:
+#include <bayeux/bayeux.h>
+#endif // DATATOOLS_STANDALONE == 1
+
+// - datatools
 #include <datatools/object_configuration_description.h>
 #include <datatools/service_manager.h>
 #include <datatools/logger.h>
 
+// This example
 #include <foo.h>
 
 int main (int argc_, char ** argv_)
 {
+#if DATATOOLS_STANDALONE == 1
+  DATATOOLS_INIT_MAIN(argc_, argv_);
+#else
+  BAYEUX_INIT_MAIN(argc_, argv_);
+#endif // DATATOOLS_STANDALONE == 1
+
   datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
   int error_code = EXIT_SUCCESS;
   try {
@@ -145,6 +163,12 @@ int main (int argc_, char ** argv_)
     datatools_fatal(logging, "unexpected error !");
     error_code = EXIT_FAILURE;
   }
+
+#if DATATOOLS_STANDALONE == 1
+  DATATOOLS_FINI();
+#else
+  BAYEUX_FINI();
+#endif // DATATOOLS_STANDALONE == 1
   return (error_code);
 }
 

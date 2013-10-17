@@ -7,7 +7,9 @@
 #define DATATOOLS_DATATOOLS_CONFIG_H_ 1
 
 //! Evaluates to true if datatools is built within a bundle library (Bayeux)
-#cmakedefine01 DATATOOLS_BUNDLED
+
+/*** datatools is built within Bayeux ***/
+#cmakedefine01 DATATOOLS_STANDALONE
 
 //! Evaluates to true if datatools was built with Boost I/O support
 #define DATATOOLS_WITH_BIO 1

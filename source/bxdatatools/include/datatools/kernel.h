@@ -55,6 +55,7 @@ namespace datatools {
 
   public:
 
+    /// \brief The set of configuration parameters for the datatools' kernel
     struct param_type {
       bool                     help;
       std::string              logging_label;
@@ -120,7 +121,7 @@ namespace datatools {
 
     static void build_opt_desc(boost::program_options::options_description &, param_type &);
 
-    static void print_splash(const kernel &,  std::ostream & = std::clog);
+    static void print_splash(std::ostream & = std::clog);
 
     static void print_opt_desc(const boost::program_options::options_description &,
                                std::ostream & = std::clog,
