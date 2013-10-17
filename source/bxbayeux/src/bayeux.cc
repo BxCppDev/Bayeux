@@ -37,10 +37,10 @@ namespace bayeux {
 
   void initialize(int argc_, char * argv_[])
   {
-    //std::cerr << "***** DEVEL ***** bayeux::initialize: Entering..." << std::endl;
-    // Wrap datatools kernel initialization
+    // Wrap datatools kernel initialization:
     ::datatools::initialize(argc_,argv_);
 
+    // Tests :
     // datatools::kernel & krnl = datatools::kernel::instance();
     // if (krnl.has_library_info_register()) {
     //   datatools::library_info & lib_info_reg
@@ -48,18 +48,19 @@ namespace bayeux {
     //   lib_info_reg.tree_dump(std::cerr, "bayeux::initialize: Before special initialize", "DEVEL: ");
     // }
 
+    // Special initialization code:
     ::bayeux::_special_initialize_impl();
-    //std::cerr << "***** DEVEL ***** bayeux::initialize: Exiting." << std::endl;
     return;
   }
 
   void terminate()
   {
-    //std::cerr << "***** DEVEL ***** bayeux::terminate: Entering..." << std::endl;
-    //Wrap datatools kernel termination
+    // Special termination code:
     ::bayeux::_special_terminate_impl();
+
+    // Wrap datatools kernel termination:
     ::datatools::terminate();
-    //std::cerr << "***** DEVEL ***** bayeux::terminate: Exiting." << std::endl;
+
     return;
   }
 

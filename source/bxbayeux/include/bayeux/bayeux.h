@@ -49,7 +49,7 @@ namespace bayeux {
 
 /// bayeux initialization macro
 #define BAYEUX_INIT()				\
-  ::bayeux::initialize();			\
+  ::bayeux::initialize(0, 0);			\
   /**/
 
 /// bayeux termination macro

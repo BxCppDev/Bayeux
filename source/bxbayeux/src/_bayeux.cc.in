@@ -250,9 +250,9 @@ namespace bayeux {
           lib_info_reg.unregistration("bayeux");
         }
 
-         if (lib_info_reg.has("mctools")) {
-           lib_info_reg.unregistration("mctools");
-         }
+        if (lib_info_reg.has("mctools")) {
+          lib_info_reg.unregistration("mctools");
+        }
 
         if (lib_info_reg.has("genvtx")) {
           lib_info_reg.unregistration("genvtx");
