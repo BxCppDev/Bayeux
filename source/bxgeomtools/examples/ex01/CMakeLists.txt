@@ -20,7 +20,7 @@ if (USE_BAYEUX)
   set(_incs ${Bayeux_INCLUDE_DIRS})
   set(_libs ${Bayeux_LIBRARIES})
 else()
-  # - Datatools :
+  # - geomtools :
   if (NOT geomtools_DIR)
     execute_process(COMMAND geomtools-config --prefix
                      OUTPUT_VARIABLE geomtools_DIR )
