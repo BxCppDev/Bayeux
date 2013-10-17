@@ -24,6 +24,12 @@ endif()
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(geomtools)
 
+# - Default build is from Bayeux
+#  Setting GEOMTOOLS_STANDALONE to 1 must be used for a individual build
+if (UNDEF GEOMTOOLS_STANDALONE)
+  set (GEOMTOOLS_STANDALONE 0)
+endif()
+
 # - Versioning
 set(geomtools_VERSION_MAJOR 4)
 set(geomtools_VERSION_MINOR 0)

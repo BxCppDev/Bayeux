@@ -1,14 +1,35 @@
+// This project:
+#include <geomtools/geomtools_config.h>
+
+// Standard library
 #include <cstdlib>
 #include <exception>
 #include <iostream>
 
+// Third party
+#if GEOMTOOLS_STANDALONE == 0
+// - bayeux:
+#include <bayeux/bayeux.h>
+#endif
+
+// - datatools:
+#include <datatools/datatools.h>
 #include <datatools/logger.h>
 
+// - geomtools:
 #include <geomtools/manager.h>
 #include <geomtools/gnuplot_drawer.h>
 
 int main(int argc_, char ** argv_)
 {
+#if GEOMTOOLS_STANDALONE == 1
+  DATATOOLS_INIT_MAIN(argc_, argv_);
+#else
+  BAYEUX_INIT_MAIN(argc_, argv_);
+#endif
+
+  int error_code = EXIT_SUCCESS;
+
   datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
   try {
 
@@ -48,9 +69,17 @@ int main(int argc_, char ** argv_)
   }
   catch(std::exception & x) {
     DT_LOG_FATAL(datatools::logger::PRIO_FATAL,x.what());
+    error_code = EXIT_FAILURE;
   }
   catch(...) {
     DT_LOG_FATAL(datatools::logger::PRIO_FATAL,"Unexpected error !");
+    error_code = EXIT_FAILURE;
   }
-  return 0;
+
+#if GEOMTOOLS_STANDALONE == 1
+  DATATOOLS_FINI();
+#else
+  BAYEUX_FINI();
+#endif
+  return error_code;
 }

@@ -9,15 +9,21 @@
 #include <vector>
 
 // Third Party
+// - Boost
 #include <boost/program_options.hpp>
 
-// Datatools:
+#if GEOMTOOLS_STANDALONE == 0
+// - bayeux:
+#include <bayeux/bayeux.h>
+#endif
+
+// - datatools:
 #include <datatools/datatools.h>
 #include <datatools/exception.h>
 #include <datatools/logger.h>
 #include <datatools/kernel.h>
 
-// Geomtools:
+// - geomtools:
 #include <geomtools/geomtools_config.h>
 #include <geomtools/version.h>
 #include <geomtools/geomtools_driver.h>
@@ -32,7 +38,11 @@ void print_shell_help(geomtools::geomtools_driver & gd_,
 
 int main(int argc_, char ** argv_)
 {
+#if GEOMTOOLS_STANDALONE == 1
   DATATOOLS_INIT_MAIN(argc_, argv_);
+#else
+  BAYEUX_INIT_MAIN(argc_, argv_);
+#endif
 
   int error_code = EXIT_SUCCESS;
   datatools::logger::priority logging = datatools::logger::PRIO_WARNING;
@@ -293,7 +303,11 @@ int main(int argc_, char ** argv_)
     error_code = EXIT_FAILURE;
   }
 
+#if GEOMTOOLS_STANDALONE == 1
   DATATOOLS_FINI();
+#else
+  BAYEUX_FINI();
+#endif
   return (error_code);
 }
 

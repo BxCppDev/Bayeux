@@ -5,6 +5,9 @@
 #ifndef GEOMTOOLS_GEOMTOOLS_CONFIG_H_
 #define GEOMTOOLS_GEOMTOOLS_CONFIG_H_ 1
 
+/***  geomtools is built within Bayeux ***/
+#cmakedefine01 GEOMTOOLS_STANDALONE
+
 /***  geomtools debug flag ***/
 #cmakedefine01 GEOMTOOLS_WITH_DEBUG
 
