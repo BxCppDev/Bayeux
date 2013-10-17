@@ -21,9 +21,9 @@ endforeach()
 
 # - In place defs for module CMake variables...
 # - Versioning
-set(brio_VERSION_MAJOR 1)
+set(brio_VERSION_MAJOR 4)
 set(brio_VERSION_MINOR 0)
-set(brio_VERSION_PATCH 0)
+set(brio_VERSION_PATCH 1)
 set(brio_VERSION "${brio_VERSION_MAJOR}.${brio_VERSION_MINOR}.${brio_VERSION_PATCH}")
 
 
