@@ -35,10 +35,12 @@
 #include <mygsl/version.h>
 
 #include <geomtools/version.h>
+#include <geomtools/resource.h>
 
 #include <emfield/version.h>
 
 #include <genbb_help/version.h>
+#include <genbb_help/resource.h>
 
 #include <genvtx/version.h>
 
