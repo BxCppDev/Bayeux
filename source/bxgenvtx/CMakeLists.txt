@@ -24,6 +24,12 @@ endif()
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(genvtx)
 
+# - Default build is from Bayeux
+#  Setting GENVTX_STANDALONE to 1 must be used for a individual build
+if (UNDEF GENVTX_STANDALONE)
+  set (GENVTX_STANDALONE 0)
+endif()
+
 # - Versioning
 set(genvtx_VERSION_MAJOR 4)
 set(genvtx_VERSION_MINOR 0)

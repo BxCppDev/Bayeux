@@ -5,6 +5,9 @@
 #ifndef GENVTX_GENVTX_CONFIG_H_
 #define GENVTX_GENVTX_CONFIG_H_ 1
 
+/*** genvtxdatatools is built built standalone or not ***/
+#cmakedefine01 GENVTX_STANDALONE
+
 /***  genvtx debug flag ***/
 #cmakedefine01 GENVTX_WITH_DEBUG
 

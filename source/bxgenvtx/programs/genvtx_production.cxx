@@ -1,6 +1,9 @@
 // -*- mode: c++ ; -*-
 // genvtx_production.cxx
 
+// Ourselves
+#include <genvtx/genvtx_config.h>
+
 // Standard libraries:
 #include <cstdlib>
 #include <iostream>
@@ -10,13 +13,16 @@
 // Third Party
 // - Boost:
 #include <boost/program_options.hpp>
-
-// Bayeux
+#if GENVTX_STANDALONE == 0
+// - Bayeux:
+#include <bayeux/bayeux.h>
+#endif
 // - datatools:
 #include <datatools/datatools.h>
 #include <datatools/logger.h>
 #include <datatools/exception.h>
-
+// - materials:
+#include <materials/materials.h>
 // - genvtx:
 #include <genvtx/genvtx_driver.h>
 
@@ -51,7 +57,11 @@ namespace genvtx {
 
 int main(int argc_, char ** argv_)
 {
-  DATATOOLS_INIT_MAIN(argc_, argv_);
+#if MATERIALS_STANDALONE == 1
+  MATERIALS_INIT_MAIN(argc_, argv_);
+#else
+  BAYEUX_INIT_MAIN(argc_, argv_);
+#endif
 
   int error_code = EXIT_SUCCESS;
   datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
@@ -118,11 +128,15 @@ int main(int argc_, char ** argv_)
     error_code = EXIT_FAILURE;
   }
 
-  DATATOOLS_FINI();
+#if MATERIALS_STANDALONE == 1
+  MATERIALS_FINI();
+#else
+  BAYEUX_FINI();
+#endif
   return (error_code);
 }
 
-
+// Implementation:
 namespace genvtx {
 
   cli::cli(genvtx_driver & driver_) : genvtx_driver::ui_access(driver_)
@@ -144,7 +158,13 @@ namespace genvtx {
       .add(driver_init_opts)
       .add(driver_action_opts);
 
-    out << "Usage : genvtx_production [OPTION]...                                       \n";
+#if GEOMTOOLS_STANDALONE == 1
+    const std::string APP_NAME = "genvtx_production";
+#else
+    const std::string APP_NAME = "bxgenvtx_production";
+#endif // GEOMTOOLS_STANDALONE == 1
+
+    out << "Usage : " << APP_NAME << " [OPTION]...                                   \n";
     out << "                                                                            \n";
     out << "  Inspect and generate vertices from a vertex generator                     \n";
     out << "  managed by a vertex generator manager associated to a                     \n";
@@ -156,21 +176,21 @@ namespace genvtx {
     out << "                                                                            \n";
     out << "  List the available vertex generators:                                     \n";
     out << "                                                                            \n";
-    out << "     genvtx_production \\                                                   \n";
+    out << "     " << APP_NAME << " \\                                                   \n";
     out << "       --geometry-manager \"${CONFIG_DIR}/geometry/manager.conf\" \\        \n";
     out << "       --vertex-generator-manager \"${CONFIG_DIR}/vertex/manager.conf\" \\  \n";
     out << "       --list                                                               \n";
     out << "                                                                            \n";
     out << "  Show a given vertex generator:                                            \n";
     out << "                                                                            \n";
-    out << "     genvtx_production \\                                                   \n";
+    out << "     " << APP_NAME << " \\                                                   \n";
     out << "       --geometry-manager \"${CONFIG_DIR}/geometry/manager.conf\" \\        \n";
     out << "       --vertex-generator-manager \"${CONFIG_DIR}/vertex/manager.conf\" \\  \n";
     out << "       --show --vertex-generator \"scintillator_block.vg\"                  \n";
     out << "                                                                            \n";
     out << "  Generate some vertices, store then in a file and display:                 \n";
     out << "                                                                            \n";
-    out << "     genvtx_production \\                                                   \n";
+    out << "     " << APP_NAME << " \\                                                   \n";
     out << "       --geometry-manager \"${CONFIG_DIR}/geometry/manager.conf\" \\        \n";
     out << "       --vertex-generator-manager \"${CONFIG_DIR}/vertex/manager.conf\" \\  \n";
     out << "       --shoot \\                                                           \n";

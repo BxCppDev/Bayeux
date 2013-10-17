@@ -1,21 +1,38 @@
 // -*- mode: c++ ; -*-
 // ex01.cxx
 
+// Ourselves
+#include <genvtx/genvtx_config.h>
+
+// Standard libraries:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
+// Third Party
+#if GENVTX_STANDALONE == 0
+// - Bayeux:
+#include <bayeux/bayeux.h>
+#endif
+// - datatools:
 #include <datatools/utils.h>
 #include <datatools/clhep_units.h>
 #include <datatools/properties.h>
-
+// - geomtools:
 #include <geomtools/manager.h>
 #include <geomtools/gnuplot_draw.h>
+// - genvtx:
 #include <genvtx/manager.h>
 
 int main(int argc_, char ** argv_)
 {
+#if MATERIALS_STANDALONE == 1
+  MATERIALS_INIT_MAIN(argc_, argv_);
+#else
+  BAYEUX_INIT_MAIN(argc_, argv_);
+#endif
+
   datatools::logger::priority logging = datatools::logger::PRIO_WARNING;
   int error_code = EXIT_SUCCESS;
   try {
@@ -95,6 +112,11 @@ int main(int argc_, char ** argv_)
     DT_LOG_FATAL(datatools::logger::PRIO_FATAL, "Unexpected error !");
     error_code = EXIT_FAILURE;
   }
+#if MATERIALS_STANDALONE == 1
+  MATERIALS_FINI();
+#else
+  BAYEUX_FINI();
+#endif
   return(error_code);
 }
 
