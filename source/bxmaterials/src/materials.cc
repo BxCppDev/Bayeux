@@ -1,4 +1,4 @@
-/* i_named.cc */
+/* materials.cc */
 
 // This project
 #include <materials/materials_config.h>
