@@ -16,6 +16,7 @@ namespace materials {
 
   void terminate();
 
+  // details... should be hidden
   void _special_initialize_impl();
 
   void _special_terminate_impl();
@@ -24,17 +25,17 @@ namespace materials {
 /// materials' kernel initialization macro using main function arguments
 #define MATERIALS_INIT_MAIN(Argc,Argv)          \
   DATATOOLS_INIT_MAIN( Argc , Argv );           \
-  ::materials::_special_initialize_impl();      \
+  ::materials::initialize( Argc , Argv );       \
   /**/
 
 /// materials' kernel initialization macro
 #define MATERIALS_INIT()                        \
-  DATATOOLS_INIT_MAIN();                        \
-  ::materials::_special_initialize_impl();      \
+  DATATOOLS_INIT_MAIN( 0, 0 );                  \
+  ::materials::initialize(0, 0);                \
   /**/
 
 #define MATERIALS_FINI()                        \
-  ::materials::_special_terminate_impl();       \
+  ::materials::terminate();                     \
   DATATOOLS_FINI();                             \
   /**/
 

@@ -1,6 +1,9 @@
 // -*- mode: c++ ; -*-
 // materials_inspector.cxx
 
+// This project
+#include <materials/materials_config.h>
+
 // Standard Library
 #include <cstdlib>
 #include <iostream>
@@ -8,19 +11,32 @@
 #include <exception>
 
 // Third Party
+// - Boost
 #include <boost/program_options.hpp>
 
-// Datatools
+#if DATATOOLS_STANDALONE == 0
+// - bayeux:
+#include <bayeux/bayeux.h>
+#endif // DATATOOLS_STANDALONE == 1
+
+// - datatools
 #include <datatools/logger.h>
 #include <datatools/exception.h>
 #include <datatools/datatools.h>
 
-// Materials
+// - materials
 #include <materials/materials.h>
 #include <materials/materials_driver.h>
 
-void print_help(std::ostream & out_,
-                const boost::program_options::options_description & opts_);
+namespace materials {
+  struct ui {
+
+    static
+    void print_usage(std::ostream & out_,
+                     const boost::program_options::options_description & opts_);
+
+  };
+}
 
 int main (int argc_, char ** argv_)
 {
@@ -164,8 +180,7 @@ int main (int argc_, char ** argv_)
     bool run = true;
     // Fetch the opts/args :
     if (help) {
-      //std::cerr << "********* TEST HELP" << std::endl;
-      print_help(std::cout, opts);
+      materials::ui::print_usage(std::cout, opts);
       run = false;
     }
 
@@ -204,7 +219,7 @@ int main (int argc_, char ** argv_)
       if (vm.count("show-element")) {
         MDP.show_target = vm["show-element"].as<std::string>() ;
         MDP.action |= materials::materials_driver_params::ACTION_SHOW_ELEMENT;
-        }
+      }
 
       if (vm.count("show-material")) {
         MDP.show_target = vm["show-material"].as<std::string>() ;
@@ -212,11 +227,11 @@ int main (int argc_, char ** argv_)
       }
 
       if (with_decoration) {
-         MDP.with_decoration = true;
+        MDP.with_decoration = true;
       }
 
       if (without_decoration) {
-         MDP.with_decoration = false;
+        MDP.with_decoration = false;
       }
 
       if (logging >= datatools::logger::PRIO_DEBUG) {
@@ -240,38 +255,42 @@ int main (int argc_, char ** argv_)
     error_code = EXIT_FAILURE;
   }
   if (error_code != EXIT_SUCCESS) {
-    print_help(std::cerr, opts);
+    materials::ui::print_usage(std::cerr, opts);
   }
   MATERIALS_FINI();
   return (error_code);
 }
 
-void print_help(std::ostream & out_,
-                const boost::program_options::options_description & opts_)
-{
-  out_ << "Inspect a manager of registered isotopes, elements and materials.           \n";
-  out_ << "                                                                            \n";
-  out_ << "Usage:                                                                      \n";
-  out_ << "                                                                            \n";
-  out_ << "  materials_inspector [[option]... ] [manager config file]                  \n";
-  out_ << "                                                                            \n";
-  out_ << opts_;
-  out_ << "                                                                            \n";
-  out_ << "Examples:                                                                   \n";
-  out_ << "                                                                            \n";
-  out_ << "  List the list of registered isotopes:                                     \n";
-  out_ << "                                                                            \n";
-  out_ << "   $ materials_inspector \\                                                 \n";
-  out_ << "       --manager-config \"${CONFIG_DIR}/materials/manager.conf\" \\         \n";
-  out_ << "       --list-isotopes --with-decoration                                    \n";
-  out_ << "                                                                            \n";
-  out_ << "  Print a registered material:                                              \n";
-  out_ << "                                                                            \n";
-  out_ << "   $ materials_inspector \\                                                 \n";
-  out_ << "       --manager-config \"${CONFIG_DIR}/materials/manager.conf\" \\         \n";
-  out_ << "       --show-material \"Steel100Cr6\"                                      \n";
-  out_ << "                                                                            \n";
-  return;
-}
+namespace materials {
+
+  void ui::print_usage(std::ostream & out_,
+                       const boost::program_options::options_description & opts_)
+  {
+    out_ << "Inspect a manager of registered isotopes, elements and materials.           \n";
+    out_ << "                                                                            \n";
+    out_ << "Usage:                                                                      \n";
+    out_ << "                                                                            \n";
+    out_ << "  materials_inspector [[option]... ] [manager config file]                  \n";
+    out_ << "                                                                            \n";
+    out_ << opts_;
+    out_ << "                                                                            \n";
+    out_ << "Examples:                                                                   \n";
+    out_ << "                                                                            \n";
+    out_ << "  List the list of registered isotopes:                                     \n";
+    out_ << "                                                                            \n";
+    out_ << "   $ materials_inspector \\                                                 \n";
+    out_ << "       --manager-config \"${CONFIG_DIR}/materials/manager.conf\" \\         \n";
+    out_ << "       --list-isotopes --with-decoration                                    \n";
+    out_ << "                                                                            \n";
+    out_ << "  Print a registered material:                                              \n";
+    out_ << "                                                                            \n";
+    out_ << "   $ materials_inspector \\                                                 \n";
+    out_ << "       --manager-config \"${CONFIG_DIR}/materials/manager.conf\" \\         \n";
+    out_ << "       --show-material \"Steel100Cr6\"                                      \n";
+    out_ << "                                                                            \n";
+    return;
+  }
+
+} // end of materials
 
 // end of materials_inspector.cxx

@@ -17,6 +17,7 @@ namespace materials {
 
   void _special_initialize_impl()
   {
+#if MATERIALS_STANDALONE == 1
     DT_THROW_IF(!datatools::kernel::is_instantiated(),
                 std::runtime_error,
                 "The datatools kernel is not instantiated !");
@@ -68,11 +69,15 @@ namespace materials {
         lib_info_reg.tree_dump(std::cerr);
       }
     }
+#else // MATERIALS_STANDALONE == 1
+    // Nothing to do in bundle mode
+#endif // MATERIALS_STANDALONE == 0
     return;
   }
 
   void _special_terminate_impl()
   {
+#if MATERIALS_STANDALONE == 1
     if (datatools::kernel::is_instantiated()) {
       datatools::kernel & krnl = datatools::kernel::instance();
       if (krnl.has_library_info_register()) {
@@ -93,6 +98,9 @@ namespace materials {
         }
       }
     }
+#else // MATERIALS_STANDALONE == 1
+    // Nothing to do in bundle mode
+#endif // MATERIALS_STANDALONE == 0
     return;
   }
 

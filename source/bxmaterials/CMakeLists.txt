@@ -24,6 +24,12 @@ endif()
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(materials)
 
+# - Default build is from Bayeux
+#  Setting MATERIALS_STANDALONE to 1 must be used for a individual build
+if (UNDEF MATERIALS_STANDALONE)
+  set (MATERIALS_STANDALONE 0)
+endif()
+
 # - Versioning
 set(materials_VERSION_MAJOR 4)
 set(materials_VERSION_MINOR 0)
