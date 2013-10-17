@@ -136,6 +136,8 @@ set(geomtools_PUBLIC_HEADERS
   include/geomtools/the_introspectable.h
   include/geomtools/reflection_guard.h
 
+  include/geomtools/resource.h
+
   )
 list_prepend(geomtools_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 
@@ -185,6 +187,12 @@ endif()
 #-----------------------------------------------------------------------
 # SOURCE FILES
 # Pretty basic!
+# configure the resource source
+configure_file(
+  ${PROJECT_SOURCE_DIR}/src/resource.cc.in
+  ${PROJECT_BINARY_DIR}/src/resource.cc
+  )
+
 set(geomtools_SOURCES
   base_hit.cc
   blur_spot.cc
@@ -269,16 +277,15 @@ set(geomtools_SOURCES
   geometry_service.cc
   ocd_support.cc
   version.cc
+  ${PROJECT_BINARY_DIR}/src/resource.cc
   )
 
-#message(STATUS "********** GEOMTOOLS_WITH_GNUPLOT_DISPLAY=${GEOMTOOLS_WITH_GNUPLOT_DISPLAY}")
 if (GEOMTOOLS_WITH_GNUPLOT_DISPLAY)
   list (APPEND geomtools_SOURCES
     ${PROJECT_SOURCE_DIR}/src/gnuplot_i.cc
     ${PROJECT_SOURCE_DIR}/src/gnuplot_drawer.cc
     )
 endif ()
-#message(STATUS "********** geomtools_SOURCES=${geomtools_SOURCES}")
 
 #-----------------------------------------------------------------------
 # CMAKE RESOURCE FILES
