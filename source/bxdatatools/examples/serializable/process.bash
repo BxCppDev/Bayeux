@@ -28,7 +28,7 @@ else
     cmake \
 	-DCMAKE_INSTALL_PREFIX=.. \
 	-DUSE_BAYEUX:BOOLEAN=1 \
-	-DCMAKE_FIND_ROOT_PATH:PATH=$(datatools-config --prefix) \
+	-DCMAKE_FIND_ROOT_PATH:PATH=$(bayeux-config --prefix) \
 	..
 fi
 make
