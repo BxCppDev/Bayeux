@@ -8,7 +8,7 @@
 
 //! Evaluates to true if datatools is built within a bundle library (Bayeux)
 
-/*** datatools is built within Bayeux ***/
+/*** datatools is built built standalone or not ***/
 #cmakedefine01 DATATOOLS_STANDALONE
 
 //! Evaluates to true if datatools was built with Boost I/O support

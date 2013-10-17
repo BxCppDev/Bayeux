@@ -31,11 +31,14 @@ namespace datatools {
         }
       }
     }
+
+    ::datatools::_special_initialize_impl();
     return;
   }
 
   void terminate()
   {
+    ::datatools::_special_terminate_impl();
     if (datatools::kernel::is_instantiated()) {
       datatools::kernel & krnl = datatools::kernel::instance();
       if (krnl.is_initialized()) {
@@ -46,4 +49,3 @@ namespace datatools {
   }
 
 } // end of namespace datatools
-
