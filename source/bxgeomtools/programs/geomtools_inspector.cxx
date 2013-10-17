@@ -262,7 +262,7 @@ int main(int argc_, char ** argv_)
               if (command_iss.eof()) break;
             } // end of parsing
             int error = GD.command_export_gdml(argv);
-            if (error != 0) {
+            if (error > 0) {
               DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Cannot export GDML file !");
             }
           } else {
