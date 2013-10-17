@@ -2,7 +2,7 @@
 // materials_inspector.cxx
 
 // This project
-#include <materials/materials_config.h>
+#include <materials/materials.h>
 
 // Standard Library
 #include <cstdlib>
@@ -14,10 +14,10 @@
 // - Boost
 #include <boost/program_options.hpp>
 
-#if DATATOOLS_STANDALONE == 0
+#if MATERIALS_STANDALONE == 0
 // - bayeux:
 #include <bayeux/bayeux.h>
-#endif // DATATOOLS_STANDALONE == 1
+#endif // MATERIALS_STANDALONE == 1
 
 // - datatools
 #include <datatools/logger.h>
@@ -25,7 +25,6 @@
 #include <datatools/datatools.h>
 
 // - materials
-#include <materials/materials.h>
 #include <materials/materials_driver.h>
 
 namespace materials {
@@ -38,9 +37,16 @@ namespace materials {
   };
 }
 
+/****************
+ * Main program *
+ ****************/
 int main (int argc_, char ** argv_)
 {
-  MATERIALS_INIT_MAIN(argc_,argv_);
+#if MATERIALS_STANDALONE == 1
+  MATERIALS_INIT_MAIN(argc_, argv_);
+#else
+  BAYEUX_INIT_MAIN(argc_, argv_);
+#endif // MATERIALS_STANDALONE == 1
   int error_code = EXIT_SUCCESS;
   datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
   materials::materials_driver_params MDP;
@@ -257,7 +263,11 @@ int main (int argc_, char ** argv_)
   if (error_code != EXIT_SUCCESS) {
     materials::ui::print_usage(std::cerr, opts);
   }
+#if MATERIALS_STANDALONE == 1
   MATERIALS_FINI();
+#else
+  BAYEUX_FINI();
+#endif // MATERIALS_STANDALONE == 1
   return (error_code);
 }
 
@@ -266,6 +276,8 @@ namespace materials {
   void ui::print_usage(std::ostream & out_,
                        const boost::program_options::options_description & opts_)
   {
+
+
     out_ << "Inspect a manager of registered isotopes, elements and materials.           \n";
     out_ << "                                                                            \n";
     out_ << "Usage:                                                                      \n";
