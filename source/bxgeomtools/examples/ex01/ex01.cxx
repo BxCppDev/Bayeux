@@ -1,5 +1,5 @@
 // This project:
-#include <geomtools/geomtools_config.h>
+#include <geomtools/geomtools.h>
 
 // Standard library
 #include <cstdlib>
@@ -16,17 +16,20 @@
 #include <datatools/datatools.h>
 #include <datatools/logger.h>
 
+// - materials:
+#include <materials/materials.h>
+
 // - geomtools:
 #include <geomtools/manager.h>
 #include <geomtools/gnuplot_drawer.h>
 
 int main(int argc_, char ** argv_)
 {
-#if GEOMTOOLS_STANDALONE == 1
-  DATATOOLS_INIT_MAIN(argc_, argv_);
+#if MATERIALS_STANDALONE == 1
+  MATERIALS_INIT_MAIN(argc_, argv_);
 #else
   BAYEUX_INIT_MAIN(argc_, argv_);
-#endif
+#endif // MATERIALS_STANDALONE == 1
 
   int error_code = EXIT_SUCCESS;
 
@@ -76,10 +79,10 @@ int main(int argc_, char ** argv_)
     error_code = EXIT_FAILURE;
   }
 
-#if GEOMTOOLS_STANDALONE == 1
-  DATATOOLS_FINI();
+#if MATERIALS_STANDALONE == 1
+  MATERIALS_FINI();
 #else
   BAYEUX_FINI();
-#endif
+#endif // MATERIALS_STANDALONE == 1
   return error_code;
 }

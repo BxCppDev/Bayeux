@@ -14,19 +14,27 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
   message(FATAL_ERROR "in-source build detected")
 endif()
 
-# - geomtools :
-if (NOT geomtools_DIR)
-  execute_process(COMMAND geomtools-config --prefix
-                  OUTPUT_VARIABLE geomtools_DIR )
+if (USE_BAYEUX)
+  # - Bayeux :
+  find_package(Bayeux 1.0.0 REQUIRED)
+  set(_incs ${Bayeux_INCLUDE_DIRS})
+  set(_libs ${Bayeux_LIBRARIES})
+else()
+  # - Datatools :
+  if (NOT geomtools_DIR)
+    execute_process(COMMAND geomtools-config --prefix
+                     OUTPUT_VARIABLE geomtools_DIR )
+  endif()
+  find_package(geomtools 4.0.0 REQUIRED)
+  set(_incs ${geomtools_INCLUDE_DIRS})
+  set(_libs ${geomtools_LIBRARIES})
 endif()
 
-find_package(geomtools 4.0.0 REQUIRED)
-
-include_directories(${PROJECT_SOURCE_DIR} ${geomtools_INCLUDE_DIRS})
+include_directories(${PROJECT_SOURCE_DIR} ${_incs})
 
 add_executable(ex01 ex01.cxx)
 
-target_link_libraries(ex01 ${geomtools_LIBRARY} )
+target_link_libraries(ex01 ${_libs} )
 
 install ( FILES
     ${PROJECT_BINARY_DIR}/ex01

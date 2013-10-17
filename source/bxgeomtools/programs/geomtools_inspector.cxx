@@ -1,6 +1,9 @@
 // -*- mode: c++ ; -*-
 // geomtools_inspector.cxx
 
+// Ourselves
+#include <geomtools/geomtools.h>
+
 // Standard libraries:
 #include <cstdlib>
 #include <iostream>
@@ -23,8 +26,10 @@
 #include <datatools/logger.h>
 #include <datatools/kernel.h>
 
+// - materials:
+#include <materials/materials.h>
+
 // - geomtools:
-#include <geomtools/geomtools_config.h>
 #include <geomtools/version.h>
 #include <geomtools/geomtools_driver.h>
 
@@ -38,8 +43,8 @@ void print_shell_help(geomtools::geomtools_driver & gd_,
 
 int main(int argc_, char ** argv_)
 {
-#if GEOMTOOLS_STANDALONE == 1
-  DATATOOLS_INIT_MAIN(argc_, argv_);
+#if MATERIALS_STANDALONE == 1
+  MATERIALS_INIT_MAIN(argc_, argv_);
 #else
   BAYEUX_INIT_MAIN(argc_, argv_);
 #endif
@@ -303,8 +308,8 @@ int main(int argc_, char ** argv_)
     error_code = EXIT_FAILURE;
   }
 
-#if GEOMTOOLS_STANDALONE == 1
-  DATATOOLS_FINI();
+#if MATERIALS_STANDALONE == 1
+  MATERIALS_FINI();
 #else
   BAYEUX_FINI();
 #endif
@@ -314,7 +319,7 @@ int main(int argc_, char ** argv_)
 void print_splash(std::ostream & out_)
 {
   out_ << "                                                 \n"
-       << "\tG E O M T O O L S                              \n"
+       << "\tG E O M T O O L S    I N S P E C T O R         \n"
        << "\tVersion " << GEOMTOOLS_LIB_VERSION << "        \n"
        << "                                                 \n"
        << "\tCopyright (C) 2009-2013                        \n"
@@ -335,11 +340,16 @@ void print_splash(std::ostream & out_)
 void print_help (const boost::program_options::options_description & opts_,
                  std::ostream & out_)
 {
-  out_ << "geomtools_inspector -- Inspect and display a virtual geometry" << std::endl;
+#if GEOMTOOLS_STANDALONE == 1
+    const std::string APP_NAME = "geomtools_inspector";
+#else
+    const std::string APP_NAME = "bxgeomtools_inspector";
+#endif // GEOMTOOLS_STANDALONE == 1
+    out_ << APP_NAME << " -- Inspect and display a virtual geometry" << std::endl;
   out_ << "\n";
   out_ << "Usage: \n\n";
 
-  out_ << "  geomtools_inspector [OPTIONS...] [MGRCFG_FILE]\n\n";
+  out_ << "  " << APP_NAME << " [OPTIONS...] [MGRCFG_FILE]\n\n";
   out_ << "Options: \n\n";
   out_ << opts_;
   {
@@ -358,7 +368,7 @@ void print_help (const boost::program_options::options_description & opts_,
   }
   out_ << "\n";
   out_ << "Examples:\n\n";
-  out_ << "  geomtools_inspector --manager-config config/geometry/setup-1.0/manager.conf \n\n";
+  out_ << "  " << APP_NAME << " --manager-config config/geometry/setup-1.0/manager.conf \n\n";
   return;
 }
 
