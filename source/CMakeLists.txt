@@ -161,6 +161,9 @@ if(Bayeux_WITH_GEANT4)
     set_target_properties(Bayeux_mctools_geant4 PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
   endif()
 
+  # - Create the public link interface
+  set_target_properties(Bayeux_mctools_geant4 PROPERTIES LINK_INTERFACE_LIBRARIES "")
+
   list(APPEND Bayeux_ADDON_TARGETS Bayeux_mctools_geant4)
 endif()
 
@@ -259,6 +262,7 @@ endif(UNIX)
 #-----------------------------------------------------------------------
 # Build unit tests if required
 # - NB assumes each test .cxx file generates a single executable
+# - We also output the executables to a dedicated directory
 if(Bayeux_ENABLE_TESTING)
   foreach(_m ${Bayeux_SUBMODULES})
     foreach(_testsource ${${_m}_MODULE_TESTS})
@@ -267,6 +271,11 @@ if(Bayeux_ENABLE_TESTING)
       set(_testname "${_m}-${_testname}")
 
       add_executable(${_testname} ${_testsource})
+
+      # Output to testing subdirectory
+      set_property(TARGET ${_testname}
+        PROPERTY RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bxtests"
+        )
 
       # Handle CMake version difference temporarily
       if(CMAKE_VERSION VERSION_GREATER 2.8.7)
