@@ -26,7 +26,7 @@ project(datatools)
 
 # - Default build is from Bayeux
 #  Setting DATATOOLS_STANDALONE to 1 must be used for a individual build
-if (UNDEF DATATOOLS_STANDALONE)
+if (NOT DEFINED DATATOOLS_STANDALONE)
   set (DATATOOLS_STANDALONE 0)
 endif()
 
