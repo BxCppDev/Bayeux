@@ -26,7 +26,7 @@ project(genvtx)
 
 # - Default build is from Bayeux
 #  Setting GENVTX_STANDALONE to 1 must be used for a individual build
-if (UNDEF GENVTX_STANDALONE)
+if (NOT DEFINED GENVTX_STANDALONE)
   set (GENVTX_STANDALONE 0)
 endif()
 
