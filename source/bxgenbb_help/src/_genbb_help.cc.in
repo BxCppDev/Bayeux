@@ -29,7 +29,7 @@ namespace genbb {
       datatools::properties & lib_infos
         = lib_info_reg.registration("genbb_help",
                                     "C++ wrapper and extensions to the Decay0/GENBB program"
-                                    "by Vladimir Tretyak, for input to simulation applications (i.e. Geant4)."
+                                    "by Vladimir Tretyak, for input to simulation applications (i.e. Geant4).",
                                     genbb::version::get_version(),
                                     "@CMAKE_INSTALL_PREFIX@", // Hardcoded for now
                                     "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@" // Hardcoded for now

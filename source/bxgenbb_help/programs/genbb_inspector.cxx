@@ -23,7 +23,7 @@
  */
 
 // Ourselves
-#include <genbb_help/genbb_help_config.h>
+#include <genbb_help/genbb_help.h>
 
 // Standard libraries:
 #include <cstdlib>
@@ -59,7 +59,7 @@
 #include <mygsl/histogram_2d.h>
 // - dpp:
 #include <dpp/histogram_service.h>
-#if DATATOOLS_STANDALONE == 0
+#if GENBB_HELP_STANDALONE == 0
 // - bayeux:
 #include <bayeux/bayeux.h>
 #endif
@@ -947,8 +947,8 @@ void usage (const boost::program_options::options_description &,
 
 int main (int argc_, char ** argv_)
 {
-#if DATATOOLS_STANDALONE == 1
-  DATATOOLS_INIT_MAIN(argc_, argv_);
+#if GENBB_HELP_STANDALONE == 1
+  GENBB_HELP_INIT_MAIN(argc_, argv_);
 #else
   BAYEUX_INIT_MAIN(argc_, argv_);
 #endif
@@ -1167,8 +1167,8 @@ int main (int argc_, char ** argv_)
     error_code = EXIT_FAILURE;
   }
 
-#if DATATOOLS_STANDALONE == 1
-  DATATOOLS_FINI();
+#if GENBB_HELP_STANDALONE == 1
+  GENBB_HELP_FINI();
 #else
   BAYEUX_FINI();
 #endif

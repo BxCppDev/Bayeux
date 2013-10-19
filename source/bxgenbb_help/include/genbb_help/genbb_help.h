@@ -35,7 +35,7 @@ namespace genbb {
   /**/
 
 #define GENBB_HELP_FINI()                        \
-  ::genbb_help::terminate();                     \
+  ::genbb::terminate();                          \
   DATATOOLS_FINI();				 \
   /**/
 

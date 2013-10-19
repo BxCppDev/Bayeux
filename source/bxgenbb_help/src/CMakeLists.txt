@@ -112,6 +112,10 @@ configure_file(
   ${PROJECT_SOURCE_DIR}/include/genbb_help/version.h.in
   ${PROJECT_BINARY_DIR}/include/genbb_help/version.h
   )
+configure_file(
+  ${PROJECT_SOURCE_DIR}/src/_genbb_help.cc.in
+  ${PROJECT_BINARY_DIR}/src/_genbb_help.cc
+  )
 
 list(APPEND genbb_help_PUBLIC_HEADERS
      ${PROJECT_BINARY_DIR}/include/genbb_help/genbb_help_config.h

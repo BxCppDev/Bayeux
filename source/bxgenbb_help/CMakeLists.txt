@@ -26,7 +26,7 @@ project(genbb_help C CXX Fortran )
 
 # - Default build is from Bayeux
 #  Setting GENBB_HELP_STANDALONE to 1 must be used for a individual build
-if (UNDEF GENBB_HELP_STANDALONE)
+if (NOT DEFINED GENBB_HELP_STANDALONE)
   set (GENBB_HELP_STANDALONE 0)
 endif()
 
