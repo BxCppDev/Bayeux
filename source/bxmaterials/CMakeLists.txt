@@ -26,7 +26,7 @@ project(materials)
 
 # - Default build is from Bayeux
 #  Setting MATERIALS_STANDALONE to 1 must be used for a individual build
-if (UNDEF MATERIALS_STANDALONE)
+if (NOT DEFINED MATERIALS_STANDALONE)
   set (MATERIALS_STANDALONE 0)
 endif()
 
