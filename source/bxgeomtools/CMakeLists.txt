@@ -26,7 +26,7 @@ project(geomtools)
 
 # - Default build is from Bayeux
 #  Setting GEOMTOOLS_STANDALONE to 1 must be used for a individual build
-if (UNDEF GEOMTOOLS_STANDALONE)
+if (NOT DEFINED GEOMTOOLS_STANDALONE)
   set (GEOMTOOLS_STANDALONE 0)
 endif()
 
