@@ -108,8 +108,8 @@ namespace datatools {
        "  Register the \"foo@path1/subdir1\" path as the root directory of   \n"
        "  the \"foo\" library and the \"bar@path2/subdir2\" path as the      \n"
        "  root directory of the \"bar\" software module:                     \n"
-       "    --datatools::resource_path \"foo@path1/subdir1\"                     \n"
-       "    --datatools::resource_path \"bar@path2/subdir2\"                       "
+       "    --datatools::resource_path \"foo@path1/subdir1\"                 \n"
+       "    --datatools::resource_path \"bar@path2/subdir2\"                   "
        )
       ;
 
@@ -229,7 +229,7 @@ namespace datatools {
     // Parse command line options:
     namespace po = boost::program_options;
     param_type params;
-    po::options_description opts("datatools kernel options ");
+    po::options_description opts("datatools' kernel options ");
     build_opt_desc(opts, params);
     po::positional_options_description args;
     po::variables_map vm;
