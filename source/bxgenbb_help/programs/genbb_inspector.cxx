@@ -172,6 +172,8 @@ namespace genbb {
     double get_gamma_energy(int i_) const;
     double get_alpha_energy(int i_) const;
     double get_neutron_energy(int i_) const;
+    double get_muon_minus_energy(int i_) const;
+    double get_muon_plus_energy(int i_) const;
     double get_other_neutral_particle_energy(int i_) const;
     double get_other_positive_particle_energy(int i_) const;
     double get_other_negative_particle_energy(int i_) const;
@@ -181,6 +183,8 @@ namespace genbb {
     double get_gammas_energy_sum() const;
     double get_alphas_energy_sum() const;
     double get_neutrons_energy_sum() const;
+    double get_muons_minus_energy_sum() const;
+    double get_muons_plus_energy_sum() const;
     double get_other_neutral_particles_energy_sum() const;
     double get_other_positive_particles_energy_sum() const;
     double get_other_negative_particles_energy_sum() const;
@@ -190,6 +194,8 @@ namespace genbb {
     double get_gamma_time(int i_) const;
     double get_alpha_time(int i_) const;
     double get_neutron_time(int i_) const;
+    double get_muon_minus_time(int i_) const;
+    double get_muon_plus_time(int i_) const;
     double get_other_neutral_particle_time(int i_) const;
     double get_other_positive_particle_time(int i_) const;
     double get_other_negative_particle_time(int i_) const;
@@ -199,6 +205,8 @@ namespace genbb {
     double get_gamma_phi(int i_) const;
     double get_alpha_phi(int i_) const;
     double get_neutron_phi(int i_) const;
+    double get_muon_minus_phi(int i_) const;
+    double get_muon_plus_phi(int i_) const;
     double get_other_neutral_particle_phi(int i_) const;
     double get_other_positive_particle_phi(int i_) const;
     double get_other_negative_particle_phi(int i_) const;
@@ -208,6 +216,8 @@ namespace genbb {
     double get_gamma_cos_theta(int i_) const;
     double get_alpha_cos_theta(int i_) const;
     double get_neutron_cos_theta(int i_) const;
+    double get_muon_minus_cos_theta(int i_) const;
+    double get_muon_plus_cos_theta(int i_) const;
     double get_other_neutral_particle_cos_theta(int i_) const;
     double get_other_positive_particle_cos_theta(int i_) const;
     double get_other_negative_particle_cos_theta(int i_) const;
@@ -226,6 +236,8 @@ namespace genbb {
     int number_of_gammas;
     int number_of_alphas;
     int number_of_neutrons;
+    int number_of_muons_minus;
+    int number_of_muons_plus;
     int number_of_other_neutral_particles;
     int number_of_other_positive_particles;
     int number_of_other_negative_particles;
@@ -235,6 +247,8 @@ namespace genbb {
     std::vector<double> gammas_energies;
     std::vector<double> alphas_energies;
     std::vector<double> neutrons_energies;
+    std::vector<double> muons_minus_energies;
+    std::vector<double> muons_plus_energies;
     std::vector<double> other_neutral_particles_energies;
     std::vector<double> other_positive_particles_energies;
     std::vector<double> other_negative_particles_energies;
@@ -244,6 +258,8 @@ namespace genbb {
     std::vector<double> gammas_times;
     std::vector<double> alphas_times;
     std::vector<double> neutrons_times;
+    std::vector<double> muons_minus_times;
+    std::vector<double> muons_plus_times;
     std::vector<double> other_neutral_particles_times;
     std::vector<double> other_positive_particles_times;
     std::vector<double> other_negative_particles_times;
@@ -253,6 +269,8 @@ namespace genbb {
     std::vector<geomtools::vector_3d> gammas_momenta;
     std::vector<geomtools::vector_3d> alphas_momenta;
     std::vector<geomtools::vector_3d> neutrons_momenta;
+    std::vector<geomtools::vector_3d> muons_minus_momenta;
+    std::vector<geomtools::vector_3d> muons_plus_momenta;
     std::vector<geomtools::vector_3d> other_neutral_particles_momenta;
     std::vector<geomtools::vector_3d> other_positive_particles_momenta;
     std::vector<geomtools::vector_3d> other_negative_particles_momenta;
@@ -273,6 +291,8 @@ namespace genbb {
     number_of_gammas = 0;
     number_of_alphas = 0;
     number_of_neutrons = 0;
+    number_of_muons_minus = 0;
+    number_of_muons_plus = 0;
     number_of_other_neutral_particles = 0;
     number_of_other_positive_particles = 0;
     number_of_other_negative_particles = 0;
@@ -285,6 +305,8 @@ namespace genbb {
     gammas_energies.clear();
     alphas_energies.clear();
     neutrons_energies.clear();
+    muons_minus_energies.clear();
+    muons_plus_energies.clear();
     other_neutral_particles_energies.clear();
     other_positive_particles_energies.clear();
     other_negative_particles_energies.clear();
@@ -294,6 +316,8 @@ namespace genbb {
     gammas_times.clear();
     alphas_times.clear();
     neutrons_times.clear();
+    muons_minus_times.clear();
+    muons_plus_times.clear();
     other_neutral_particles_times.clear();
     other_positive_particles_times.clear();
     other_negative_particles_times.clear();
@@ -303,6 +327,8 @@ namespace genbb {
     gammas_momenta.clear();
     alphas_momenta.clear();
     neutrons_momenta.clear();
+    muons_minus_momenta.clear();
+    muons_plus_momenta.clear();
     other_neutral_particles_momenta.clear();
     other_positive_particles_momenta.clear();
     other_negative_particles_momenta.clear();
@@ -332,6 +358,8 @@ namespace genbb {
     if (type1_ == "gamma") i1max = gammas_momenta.size();
     if (type1_ == "alpha") i1max = alphas_momenta.size();
     if (type1_ == "neutron") i1max = neutrons_momenta.size();
+    if (type1_ == "muons_minus") i1max = muons_minus_momenta.size();
+    if (type1_ == "muons_plus") i1max = muons_plus_momenta.size();
     if (type1_ == "other_neutral") i1max = other_neutral_particles_momenta.size();
     if (type1_ == "other_positive") i1max = other_positive_particles_momenta.size();
     if (type1_ == "other_negative") i1max = other_negative_particles_momenta.size();
@@ -341,6 +369,8 @@ namespace genbb {
     if (type2_ == "gamma") i2max = gammas_momenta.size();
     if (type2_ == "alpha") i2max = alphas_momenta.size();
     if (type2_ == "neutron") i2max = neutrons_momenta.size();
+    if (type1_ == "muons_minus") i2max = muons_minus_momenta.size();
+    if (type1_ == "muons_plus") i2max = muons_plus_momenta.size();
     if (type2_ == "other_neutral") i2max = other_neutral_particles_momenta.size();
     if (type2_ == "other_positive") i2max = other_positive_particles_momenta.size();
     if (type2_ == "other_negative") i2max = other_negative_particles_momenta.size();
@@ -352,6 +382,8 @@ namespace genbb {
       if (type1_ == "gamma") p1 = &gammas_momenta[i1_];
       if (type1_ == "alpha") p1 = &alphas_momenta[i1_];
       if (type1_ == "neutron") p1 = &neutrons_momenta[i1_];
+      if (type1_ == "muon_minus") p1 = &muons_minus_momenta[i1_];
+      if (type1_ == "muon_plus") p1 = &muons_plus_momenta[i1_];
       if (type1_ == "other_neutral") p1 = &other_neutral_particles_momenta[i1_];
       if (type1_ == "other_positive") p1 = &other_positive_particles_momenta[i1_];
       if (type1_ == "other_negative") p1 = &other_negative_particles_momenta[i1_];
@@ -361,6 +393,8 @@ namespace genbb {
       if (type2_ == "gamma") p2 = &gammas_momenta[i2_];
       if (type2_ == "alpha") p2 = &alphas_momenta[i2_];
       if (type2_ == "neutron") p2 = &neutrons_momenta[i2_];
+      if (type1_ == "muon_minus") p2 = &muons_minus_momenta[i2_];
+      if (type1_ == "muon_plus") p2 = &muons_plus_momenta[i2_];
       if (type2_ == "other_neutral") p2 = &other_neutral_particles_momenta[i2_];
       if (type2_ == "other_positive") p2 = &other_positive_particles_momenta[i2_];
       if (type2_ == "other_negative") p2 = &other_negative_particles_momenta[i2_];
@@ -402,6 +436,18 @@ namespace genbb {
   {
     if ( i_ < 0 || i_ >= neutrons_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
     return neutrons_momenta[i_].phi();
+  }
+
+  double inspector_data::get_muon_minus_phi(int i_) const
+  {
+    if ( i_ < 0 || i_ >= muons_minus_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
+    return muons_minus_momenta[i_].phi();
+  }
+
+  double inspector_data::get_muon_plus_phi(int i_) const
+  {
+    if ( i_ < 0 || i_ >= muons_plus_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
+    return muons_plus_momenta[i_].phi();
   }
 
   double inspector_data::get_other_neutral_particle_phi(int i_) const
@@ -455,6 +501,18 @@ namespace genbb {
     return neutrons_momenta[i_].cosTheta();
   }
 
+  double inspector_data::get_muon_minus_cos_theta(int i_) const
+  {
+    if ( i_ < 0 || i_ >= muons_minus_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
+    return muons_minus_momenta[i_].cosTheta();
+  }
+
+  double inspector_data::get_muon_plus_cos_theta(int i_) const
+  {
+    if ( i_ < 0 || i_ >= muons_plus_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
+    return muons_plus_momenta[i_].cosTheta();
+  }
+
   double inspector_data::get_other_neutral_particle_cos_theta(int i_) const
   {
     if ( i_ < 0 || i_ >= other_neutral_particles_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
@@ -504,6 +562,18 @@ namespace genbb {
     return neutrons_energies[i_];
   }
 
+  double inspector_data::get_muon_minus_energy(int i_) const
+  {
+    if ( i_ < 0 || i_ >= muons_minus_energies.size()) return std::numeric_limits<double>::quiet_NaN();
+    return muons_minus_energies[i_];
+  }
+
+  double inspector_data::get_muon_plus_energy(int i_) const
+  {
+    if ( i_ < 0 || i_ >= muons_plus_energies.size()) return std::numeric_limits<double>::quiet_NaN();
+    return muons_plus_energies[i_];
+  }
+
   double inspector_data::get_other_neutral_particle_energy(int i_) const
   {
     if ( i_ < 0 || i_ >= other_neutral_particles_energies.size()) return std::numeric_limits<double>::quiet_NaN();
@@ -550,6 +620,18 @@ namespace genbb {
   {
     if ( i_ < 0 || i_ >= neutrons_times.size()) return std::numeric_limits<double>::quiet_NaN();
     return neutrons_times[i_];
+  }
+
+  double inspector_data::get_muon_minus_time(int i_) const
+  {
+    if ( i_ < 0 || i_ >= muons_minus_times.size()) return std::numeric_limits<double>::quiet_NaN();
+    return muons_minus_times[i_];
+  }
+
+  double inspector_data::get_muon_plus_time(int i_) const
+  {
+    if ( i_ < 0 || i_ >= muons_plus_times.size()) return std::numeric_limits<double>::quiet_NaN();
+    return muons_plus_times[i_];
   }
 
   double inspector_data::get_other_neutral_particle_time(int i_) const
@@ -610,6 +692,22 @@ namespace genbb {
                            0.0);
   }
 
+  double inspector_data::get_muons_minus_energy_sum() const
+  {
+    if (muons_minus_energies.size() == 0) return std::numeric_limits<double>::quiet_NaN();
+    return std::accumulate(muons_minus_energies.begin(),
+                           muons_minus_energies.end(),
+                           0.0);
+  }
+
+  double inspector_data::get_muons_plus_energy_sum() const
+  {
+    if (muons_plus_energies.size() == 0) return std::numeric_limits<double>::quiet_NaN();
+    return std::accumulate(muons_plus_energies.begin(),
+                           muons_plus_energies.end(),
+                           0.0);
+  }
+
   double inspector_data::get_other_neutral_particles_energy_sum() const
   {
     if (other_neutral_particles_energies.size() == 0) return std::numeric_limits<double>::quiet_NaN();
@@ -643,6 +741,8 @@ namespace genbb {
     std::sort(positrons_energies.begin(), positrons_energies.end());
     std::sort(alphas_energies.begin(), alphas_energies.end());
     std::sort(neutrons_energies.begin(), neutrons_energies.end());
+    std::sort(muons_minus_energies.begin(), muons_minus_energies.end());
+    std::sort(muons_plus_energies.begin(), muons_plus_energies.end());
     std::sort(other_neutral_particles_energies.begin(), other_neutral_particles_energies.end());
     std::sort(other_positive_particles_energies.begin(), other_positive_particles_energies.end());
     std::sort(other_negative_particles_energies.begin(), other_negative_particles_energies.end());
@@ -652,6 +752,8 @@ namespace genbb {
     std::reverse(positrons_energies.begin(), positrons_energies.end());
     std::reverse(alphas_energies.begin(), alphas_energies.end());
     std::reverse(neutrons_energies.begin(), neutrons_energies.end());
+    std::reverse(muons_minus_energies.begin(), muons_minus_energies.end());
+    std::reverse(muons_plus_energies.begin(), muons_plus_energies.end());
     std::reverse(other_neutral_particles_energies.begin(), other_neutral_particles_energies.end());
     std::reverse(other_positive_particles_energies.begin(), other_positive_particles_energies.end());
     std::reverse(other_negative_particles_energies.begin(), other_negative_particles_energies.end());
@@ -739,6 +841,10 @@ namespace datatools {
                                     genbb::inspector_data::number_of_alphas)
           .DR_CLASS_PROPERTY_GETTER("number_of_neutrons",
                                     genbb::inspector_data::number_of_neutrons)
+          .DR_CLASS_PROPERTY_GETTER("number_of_muons_minus",
+                                    genbb::inspector_data::number_of_muons_minus)
+          .DR_CLASS_PROPERTY_GETTER("number_of_muons_plus",
+                                    genbb::inspector_data::number_of_muons_plus)
           .DR_CLASS_PROPERTY_GETTER("number_of_other_neutral_particles",
                                     genbb::inspector_data::number_of_other_neutral_particles)
           .DR_CLASS_PROPERTY_GETTER("number_of_other_positive_particles",
@@ -756,6 +862,10 @@ namespace datatools {
                                     genbb::inspector_data::get_alphas_energy_sum)
           .DR_CLASS_PROPERTY_GETTER("neutrons_energy_sum",
                                     genbb::inspector_data::get_neutrons_energy_sum)
+          .DR_CLASS_PROPERTY_GETTER("muons_minus_energy_sum",
+                                    genbb::inspector_data::get_muons_minus_energy_sum)
+          .DR_CLASS_PROPERTY_GETTER("muons_plus_energy_sum",
+                                    genbb::inspector_data::get_muons_plus_energy_sum)
           .DR_CLASS_PROPERTY_GETTER("other_neutral_particles_energy_sum",
                                     genbb::inspector_data::get_other_neutral_particles_energy_sum)
           .DR_CLASS_PROPERTY_GETTER("other_positive_particles_energy_sum",
@@ -786,6 +896,16 @@ namespace datatools {
           .DR_CLASS_METHOD1_CONST("neutron_energy",
                                   genbb::inspector_data,
                                   genbb::inspector_data::get_neutron_energy,
+                                  double,
+                                  int)
+          .DR_CLASS_METHOD1_CONST("muon_minus_energy",
+                                  genbb::inspector_data,
+                                  genbb::inspector_data::get_muon_minus_energy,
+                                  double,
+                                  int)
+          .DR_CLASS_METHOD1_CONST("muon_plus_energy",
+                                  genbb::inspector_data,
+                                  genbb::inspector_data::get_muon_plus_energy,
                                   double,
                                   int)
           .DR_CLASS_METHOD1_CONST("other_neutral_particle_energy",
@@ -829,6 +949,16 @@ namespace datatools {
                                   genbb::inspector_data::get_neutron_time,
                                   double,
                                   int)
+          .DR_CLASS_METHOD1_CONST("muon_minus_time",
+                                  genbb::inspector_data,
+                                  genbb::inspector_data::get_muon_minus_time,
+                                  double,
+                                  int)
+          .DR_CLASS_METHOD1_CONST("muon_plus_time",
+                                  genbb::inspector_data,
+                                  genbb::inspector_data::get_muon_plus_time,
+                                  double,
+                                  int)
           .DR_CLASS_METHOD1_CONST("other_neutral_particle_time",
                                   genbb::inspector_data,
                                   genbb::inspector_data::get_other_neutral_particle_time,
@@ -870,6 +1000,16 @@ namespace datatools {
                                   genbb::inspector_data::get_neutron_phi,
                                   double,
                                   int)
+          .DR_CLASS_METHOD1_CONST("muon_minus_phi",
+                                  genbb::inspector_data,
+                                  genbb::inspector_data::get_muon_minus_phi,
+                                  double,
+                                  int)
+          .DR_CLASS_METHOD1_CONST("muon_plus_phi",
+                                  genbb::inspector_data,
+                                  genbb::inspector_data::get_muon_plus_phi,
+                                  double,
+                                  int)
           .DR_CLASS_METHOD1_CONST("other_neutral_particle_phi",
                                   genbb::inspector_data,
                                   genbb::inspector_data::get_other_neutral_particle_phi,
@@ -909,6 +1049,16 @@ namespace datatools {
           .DR_CLASS_METHOD1_CONST("neutron_cos_theta",
                                   genbb::inspector_data,
                                   genbb::inspector_data::get_neutron_cos_theta,
+                                  double,
+                                  int)
+          .DR_CLASS_METHOD1_CONST("muon_minus_cos_theta",
+                                  genbb::inspector_data,
+                                  genbb::inspector_data::get_muon_minus_cos_theta,
+                                  double,
+                                  int)
+          .DR_CLASS_METHOD1_CONST("muon_plus_cos_theta",
+                                  genbb::inspector_data,
+                                  genbb::inspector_data::get_muon_plus_cos_theta,
                                   double,
                                   int)
           .DR_CLASS_METHOD1_CONST("other_neutral_particle_cos_theta",
@@ -1514,6 +1664,16 @@ namespace genbb {
           idata.neutrons_energies.push_back(ke);
           idata.neutrons_times.push_back(time);
           idata.neutrons_momenta.push_back(pp.get_momentum ());
+        } else if (pp.is_muon_minus()) {
+          idata.number_of_muons_minus++;
+          idata.muons_minus_energies.push_back(ke);
+          idata.muons_minus_times.push_back(time);
+          idata.muons_minus_momenta.push_back(pp.get_momentum ());
+        } else if (pp.is_muon_plus()) {
+          idata.number_of_muons_plus++;
+          idata.muons_plus_energies.push_back(ke);
+          idata.muons_plus_times.push_back(time);
+          idata.muons_plus_momenta.push_back(pp.get_momentum ());
         } else if (std::abs(pp.get_charge()) < 0.1) {
           idata.number_of_other_neutral_particles++;
           idata.other_neutral_particles_energies.push_back(ke);
