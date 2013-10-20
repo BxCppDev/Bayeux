@@ -53,6 +53,7 @@
 #include <datatools/tracer.h>
 #include <datatools/exception.h>
 #include <datatools/logger.h>
+#include <datatools/kernel.h>
 // - mygsl:
 #include <mygsl/histogram_pool.h>
 #include <mygsl/histogram_1d.h>
@@ -69,7 +70,6 @@
 #include <genbb_help/primary_event.h>
 
 // Some pre-processor linkage guard :
-//#include <datatools/bio_guard.h>
 #include <mygsl/bio_guard.h>
 #include <geomtools/bio_guard.h>
 #include <genbb_help/bio_guard.h>
@@ -86,11 +86,11 @@ namespace genbb {
     void reset();
     void dump(std::ostream & = std::clog) const;
     bool debug;                                    /// Debug flag
-    int trace_index;
+    int trace_index;                               /// Index associated to tracing messages
     bool interactive;                              /// Interactive flag
     std::vector<std::string> unrecognized_options; /// Unrecognized options
     std::string configuration;                     /// Particle generator manager configuration file
-    std::string action;
+    std::string action;                            /// Action to be performed
     std::string generator;                         /// Particle generator name
     std::vector<std::string> output_paths;
     int number_of_events;                          /// Number of generated events
@@ -956,7 +956,7 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   genbb::inspector_params params;
   namespace po = boost::program_options;
-  po::options_description opts("Allowed options ");
+  po::options_description opts("Allowed options");
   po::positional_options_description args;
   try {
     std::vector<std::string> LL_dlls;
@@ -964,14 +964,10 @@ int main (int argc_, char ** argv_)
 
     opts.add_options()
       ("help,h",
-       "produce help message"
-       )
-
-      ("debug,d",
-       po::value<bool>(&params.debug)
+       po::value<bool>()
        ->zero_tokens()
-       ->default_value (false),
-       "produce debug logging"
+       ->default_value(false),
+       "produce help message"
        )
 
       ("load-dll,l",
@@ -982,6 +978,13 @@ int main (int argc_, char ** argv_)
       ("dll-config",
        po::value<std::vector<std::string> > (),
        "load a configuration file for dynamic library loading"
+       )
+
+      ("debug,d",
+       po::value<bool>(&params.debug)
+       ->zero_tokens()
+       ->default_value(false),
+       "produce debug logging"
        )
 
       ("interactive,I",
@@ -1102,22 +1105,22 @@ int main (int argc_, char ** argv_)
       ; // end of options description
 
     // Describe command line arguments :
-    //args.add ("generator", 1);
+    //args.add ("generator", 1); // NOT USED
 
     po::variables_map vm;
     po::parsed_options parsed =
-      po::command_line_parser (argc_, argv_)
-      .options (opts)
-      .positional (args)
+      po::command_line_parser(argc_, argv_)
+      .options(opts)
+      //.positional(args) // NOT USED
       .allow_unregistered()
-      .run ();
+      .run();
     params.unrecognized_options = po::collect_unrecognized(parsed.options,
                                                            po::include_positional);
-    po::store (parsed, vm);
-    po::notify (vm);
+    po::store(parsed, vm);
+    po::notify(vm);
 
     // Fetch the opts/args :
-    if (vm.count("help")) {
+    if (vm["help"].as<bool>()) {
       usage(opts, std::cout);
       return error_code;
     }
@@ -1139,11 +1142,11 @@ int main (int argc_, char ** argv_)
                    "Loading DLL '" << dll_name << "' failed !");
     }
 
-    if (vm.count ("output-file")) {
+    if (vm.count("output-file")) {
       params.output_paths = vm["output-file"].as<std::vector<std::string> > ();
     }
 
-    if (vm.count ("histo-def")) {
+    if (vm.count("histo-def")) {
       params.histos_definitions = vm["histo-def"].as<std::vector<std::string> > ();
     }
 
@@ -1189,10 +1192,18 @@ void usage (const boost::program_options::options_description & options_,
   out_ << std::endl;
   out_ << "  " << APP_NAME << " [OPTIONS] [ARGUMENTS] " << std::endl << std::endl;
   out_ << options_ << std::endl;
+  boost::program_options::options_description datatools_kernel_options("Special options for the datatools' kernel") ;
+  datatools::kernel::param_type datatools_kernel_params;
+  datatools::kernel::build_opt_desc(datatools_kernel_options, datatools_kernel_params);
+  out_ << std::endl;
+  out_ << datatools_kernel_options << std::endl;
+  out_ << std::endl;
   out_ << "Examples : " << std::endl;
+
   out_ << "" << std::endl;
   out_ << "  " << APP_NAME << " --help\n";
   out_ << "" << std::endl;
+
   out_ << "  " << APP_NAME << " \\\n";
   out_ << "    --configuration \""
        << GENBB_HELP_DATA_INSTALL_DIR
@@ -1200,6 +1211,14 @@ void usage (const boost::program_options::options_description & options_,
        << "\" \\\n";
   out_ << "    --action \"list\"  \\\n";
   out_ << "" << std::endl;
+
+  out_ << "  " << APP_NAME << " \\\n";
+  out_ << "    --load-dll \"foo\" \\\n";
+  out_ << "    --datatools::resource_path \"foo@${FOO_INSTALLATION_DIR}/share/foo-1.0.0/resources\" \\\n";
+  out_ << "    --configuration \"@foo:config/event_generation/1.0/manager.conf\" \\\n";
+  out_ << "    --action \"list\"  \\\n";
+  out_ << "" << std::endl;
+
   out_ << "  " << APP_NAME << "  \\\n";
   out_ << "    --configuration \""
        << GENBB_HELP_DATA_INSTALL_DIR
@@ -1208,8 +1227,8 @@ void usage (const boost::program_options::options_description & options_,
   out_ << "    --action \"shoot\"  \\\n";
   out_ << "    --generator \"Bi214_Po214\" \\\n";
   out_ << "    --prng-seed 314159 \\\n";
-  out_ << "    --prng-tracker \"genbb_inspector_prng.trk\" \\\n";
   out_ << "    --number-of-events 100000 \\\n";
+  out_ << "    --modulo 1000 \\\n";
   out_ << "    --histo-def \""
        << GENBB_HELP_DATA_INSTALL_DIR
        << "/resources/inspector/config/le_nuphy-1.0/inspector_histos_prompt.conf"
@@ -1221,7 +1240,7 @@ void usage (const boost::program_options::options_description & options_,
   out_ << "    --prompt-time-limit 1 \\\n";
   out_ << "    --prompt \\\n";
   out_ << "    --delayed \\\n";
-  out_ << "    --title-prefix \"Bi214-Po214 (decay0 C++ port)\" \\\n";
+  out_ << "    --title-prefix \"Bi214-Po214\" \\\n";
   out_ << "    --output-file \"histos_Bi214_Po214.root\" \n";
   out_ << "\n";
 
@@ -1284,6 +1303,10 @@ namespace genbb {
     _manager_.set_debug(_params_.debug);
     _manager_.set_external_prng(_prng_);
     datatools::properties config;
+    DT_THROW_IF(_params_.configuration.empty(),
+                std::logic_error,
+                "Missing configuration file for the primary event generator manager !");
+
     std::string config_filename = _params_.configuration;
     datatools::fetch_path_with_env(config_filename);
     datatools::properties::read_config(config_filename, config);
