@@ -112,6 +112,9 @@ Examples:
    Print LDFLAGS with absolute paths:
     \$ ${script_name} --ldflags --absolute-path
 
+   Print the versions of all Bayeux's modules:
+   \$ find \$(${script_name} --incdir)/bayeux -name version.h -exec grep _LIB_VERSION \{\} \; | cut -d' ' -f 2-3 | tr ' ' '=' | tr -d '"'
+
 EOF
     return 0
 }
