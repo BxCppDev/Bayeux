@@ -1415,7 +1415,7 @@ namespace genbb {
     }
 
     if (_params_.action == "list") {
-      _manager_.dump_particle_generators(std::cout,"List of particle generators: ","");
+      _manager_.dump_particle_generators(std::cout,"List of particle generators","");
     }
 
     if (_params_.action == "shoot") {
