@@ -87,6 +87,11 @@ configure_file(
   ${PROJECT_BINARY_DIR}/src/resource.cc
   )
 
+configure_file(
+  ${PROJECT_SOURCE_DIR}/src/_materials.cc.in
+  ${PROJECT_BINARY_DIR}/src/_materials.cc
+  )
+
 set(materials_SOURCES
     chemical_symbol.cc
     isotope.cc
@@ -128,11 +133,6 @@ endif()
 set(materials_RESOURCES
   cmake/materials-config.cmake
   cmake/materials-config-version.cmake
-  )
-
-configure_file(
-  ${PROJECT_SOURCE_DIR}/src/_materials.cc.in
-  ${PROJECT_BINARY_DIR}/src/_materials.cc
   )
 
 foreach(_dtresource ${materials_RESOURCES})
