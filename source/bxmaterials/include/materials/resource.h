@@ -39,7 +39,7 @@ namespace materials {
 
 //! Return URL, i.e. a path, to the  base directory where resource files are installed
 //! \param overriden_env If set this flag trigger the search for the
-//!        environment variable MATERIAL_DATA_DIR as a directory path on the filesystem
+//!        environment variable MATERIALS_DATA_DIR as a directory path on the filesystem
 //!        as an alternative base directory for resources in place of the
 //!        standard installation path
 std::string get_resource_dir(bool overriden_env = false);
@@ -56,4 +56,3 @@ std::string get_resource(const std::string& rname, bool overriden_env = false);
 } // namespace materials
 
 #endif // MATERIALS_RESOURCE_H
-
