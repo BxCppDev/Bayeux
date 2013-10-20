@@ -23,7 +23,7 @@ endforeach()
 set(cuts_VERSION_MAJOR 4)
 set(cuts_VERSION_MINOR 0)
 set(cuts_VERSION_PATCH 0)
-set(cuts_VERSION "${cuts_VERSION_MAJOR}.${cuts_VERSION_MINOR}.${cuts_VERSION_PATCHd}")
+set(cuts_VERSION "${cuts_VERSION_MAJOR}.${cuts_VERSION_MINOR}.${cuts_VERSION_PATCHD}")
 
 
 # - Raw Headers and Sources
