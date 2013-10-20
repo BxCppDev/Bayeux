@@ -96,6 +96,7 @@ foreach(_m ${Bayeux_SUBMODULES})
   list(APPEND Bayeux_RESOURCES ${${_m}_MODULE_RESOURCES})
   list(APPEND Bayeux_APPS ${${_m}_MODULE_APPS})
 endforeach()
+set(CMAKE_INSTALL_DATADIR "${CMAKE_INSTALL_DATAROOTDIR}")
 
 # - We must put this at the end because it needs static code from
 #   datatools, cuts, materials...
