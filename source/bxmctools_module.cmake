@@ -57,6 +57,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/detail/bio_link_guard.h
   ${module_include_dir}/${module_name}/detail/reflection_link_guard.h
   ${module_include_dir}/${module_name}/detail/step_hit_processor_macros.h
+  ${module_include_dir}/${module_name}/mctools.h
   )
 
 set(${module_name}_MODULE_SOURCES
@@ -70,6 +71,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/simulated_data_input_module.cc
   ${module_source_dir}/version.cc
   ${module_source_dir}/the_serializable.cc
+  ${module_source_dir}/mctools.cc
   )
 
 # - Published headers
@@ -160,5 +162,10 @@ if(Bayeux_WITH_GEANT4)
     ${module_source_dir}/g4/simulation_module.cc
     ${module_source_dir}/g4/magnetic_field.cc
     )
-endif()
 
+    # - Applications
+    set(${module_name}_GEANT4_MODULE_APPS
+      ${module_app_dir}/g4/g4_production.cxx
+      )
+
+endif()

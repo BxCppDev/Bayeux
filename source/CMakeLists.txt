@@ -95,6 +95,9 @@ foreach(_m ${Bayeux_SUBMODULES})
   list(APPEND Bayeux_SOURCES ${${_m}_MODULE_SOURCES})
   list(APPEND Bayeux_RESOURCES ${${_m}_MODULE_RESOURCES})
   list(APPEND Bayeux_APPS ${${_m}_MODULE_APPS})
+  if (DEFINED ${_m}_GEANT4_MODULE_APPS)
+    list(APPEND Bayeux_GEANT4_APPS ${${_m}_GEANT4_MODULE_APPS})
+  endif()
 endforeach()
 set(CMAKE_INSTALL_DATADIR "${CMAKE_INSTALL_DATAROOTDIR}")
 
@@ -171,7 +174,11 @@ endif()
 #-----------------------------------------------------------------------
 # Build/Link the executables
 #
-foreach(_bxapp ${Bayeux_APPS})
+#message(STATUS "Build/Link the executables...")
+#message(STATUS "Bayeux_APPS=${Bayeux_APPS}")
+#message(STATUS "Bayeux_GEANT4_APPS=${Bayeux_GEANT4_APPS}")
+foreach(_bxapp IN LISTS Bayeux_APPS Bayeux_GEANT4_APPS)
+  #message(STATUS "Processing application '${_bxapp}'...")
   get_filename_component(_app_basename ${_bxapp} NAME_WE)
   add_executable(bx${_app_basename} ${_bxapp})
   set_target_properties(bx${_app_basename}
@@ -190,6 +197,14 @@ foreach(_bxapp ${Bayeux_APPS})
       )
   endif()
 
+  if(Bayeux_WITH_GEANT4)
+    list(FIND Bayeux_GEANT4_APPS ${_bxapp} _g4app_found)
+    #message(STATUS "Application '${_bxapp}' : found=${_g4app_found}")
+    if (_g4app_found GREATER -1)
+      message(STATUS "Application '${_bxapp}' is link to the Geant4 addon library.")
+      target_link_libraries(bx${_app_basename} Bayeux_mctools_geant4)
+    endif()
+  endif()
   target_link_libraries(bx${_app_basename} Bayeux)
 
   # - Hack to get program_options in without linking it to libBayeux
