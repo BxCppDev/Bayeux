@@ -58,7 +58,6 @@ option(MATERIALS_WITH_DOC  "Build the materials documentation" ON)
 option(MATERIALS_WITH_TEST "Build the materials test suite"    ON)
 option(MATERIALS_WITH_BASH_SETUP "Build the materials with Bash setup macro" ON)
 option(MATERIALS_WITH_GNUPLOT_DISPLAY  "Build the Gnuplot-based display tools" ON )
-option(MATERIALS_WITH_GNUPLOT_DISPLAY  "Build the Gnuplot-based display tools" ON )
 option(MATERIALS_WITH_IMPLICIT_INIT_FINI "Build the materials library with automated kernel initialization (for standalone build)" ON)
 
 

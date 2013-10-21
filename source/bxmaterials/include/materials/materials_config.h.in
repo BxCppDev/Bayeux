@@ -11,7 +11,7 @@
 //! Evaluates to true if materials was built with automated init/fini operation at DLL loading
 #cmakedefine01 MATERIALS_WITH_IMPLICIT_INIT_FINI
 
-//! The installation path of the datatools resource files :
+//! The installation path of the materials resource files :
 #define MATERIALS_DATA_INSTALL_DIR "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
 
 #endif // MATERIALS_MATERIALS_CONFIG_H_
