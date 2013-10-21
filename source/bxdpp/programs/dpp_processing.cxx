@@ -27,6 +27,7 @@
 #include <datatools/kernel.h>
 #include <datatools/logger.h>
 #include <datatools/exception.h>
+#include <datatools/kernel.h>
 
 // - Boost I/O guard
 #include <datatools/bio_guard.h>
@@ -55,14 +56,14 @@ int main (int argc_, char ** argv_)
     dpp::dpp_driver_params::build_opts(opts, DP);
 
     // Describe command line arguments :
-    po::positional_options_description args;
-    args.add ("input-file", -1);
+    //po::positional_options_description args;
+    //args.add ("input-file", -1);
 
     po::variables_map vm;
     po::parsed_options parsed =
       po::command_line_parser(argc_, argv_)
       .options(opts)
-      .positional(args)
+      //.positional(args)
       .allow_unregistered()
       .run();
     /*
@@ -123,6 +124,12 @@ void print_usage(std::ostream & out_)
   dpp::dpp_driver_params dummy;
   dpp::dpp_driver_params::build_opts(opts, dummy);
   out_ << opts << std::endl;
+  {
+    boost::program_options::options_description kopts("datatools' kernel options");
+    datatools::kernel::param_type kparams;
+    datatools::kernel::build_opt_desc(kopts, kparams);
+    datatools::kernel::print_opt_desc(kopts, out_);
+  }
   out_ << std::endl;
   out_ << "Examples : " << std::endl;
   out_ << std::endl;

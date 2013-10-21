@@ -98,7 +98,10 @@ namespace dpp {
   {
     namespace po = boost::program_options;
     opts_.add_options ()
-      ("help,h", "produce help message.")
+      ("help,h", po::value<bool> (&params_.help)
+       ->zero_tokens()
+       ->default_value(false),
+       "produce help message.")
       ("logging-priority,P",
        po::value<std::string>(&params_.logging_label)->default_value ("warning"),
        "set the logging priority.")
