@@ -127,11 +127,11 @@ Special options for developpers (not recommended):
     --relative-path     use relative DLL path (default)
     --absolute-path     use absolute DLL path
     --with-geant4       use the Geant4 shared library addon
-
 EOF
 fi
 
     cat<<EOF
+
 Examples:
 
    Print the Bayeux's installation prefix:
