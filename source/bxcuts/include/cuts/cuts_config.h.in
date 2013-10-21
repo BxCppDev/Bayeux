@@ -5,17 +5,8 @@
 #ifndef CUTS_CUTS_CONFIG_H_
 #define CUTS_CUTS_CONFIG_H_ 1
 
-/***  cuts debug flag ***/
+/*  cuts debug flag */
 #cmakedefine01 CUTS_WITH_DEBUG
-
-/***  cuts embedded Boost/Serialization based I/O ***/
-//#cmakedefine01 CUTS_WITH_BIO
-
-/***  cuts embedded CAMP-based reflection ***/
-//#cmakedefine01 CUTS_WITH_REFLECTION
-
-//! The installation path of the cuts resource files :
-#define CUTS_DATA_INSTALL_DIR "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
 
 #endif // CUTS_CUTS_CONFIG_H_
 
