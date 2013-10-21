@@ -36,7 +36,7 @@
 
 // Third party
 // - Boost
-#include <boost/program_options.hpp>
+//#include <boost/program_options.hpp>
 #include <boost/scoped_ptr.hpp>
 
 // - datatools
@@ -67,8 +67,8 @@ namespace dpp {
     bool   preserve_existing_files;
 
 
-    static void build_opts(boost::program_options::options_description &,
-                           dpp_driver_params &);
+    /* static void build_opts(boost::program_options::options_description &, */
+    /*                        dpp_driver_params &); */
 
   };
 

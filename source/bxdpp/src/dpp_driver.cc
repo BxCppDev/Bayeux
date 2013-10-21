@@ -92,6 +92,7 @@ namespace dpp {
     return;
   }
 
+  /*
   // static
   void dpp_driver_params::build_opts(boost::program_options::options_description & opts_,
                                      dpp_driver_params & params_)
@@ -144,6 +145,7 @@ namespace dpp {
       ;
     return;
   }
+*/
 
   /* ------------------------------------------------------------ */
 
