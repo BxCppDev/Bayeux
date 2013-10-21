@@ -8,17 +8,11 @@
 /***  emfield debug flag ***/
 #cmakedefine01 EMFIELD_WITH_DEBUG
 
-/***  emfield embedded Boost/Serialization based I/O ***/
-//#cmakedefine01 EMFIELD_WITH_BIO
-
 /***  emfield embedded CAMP-based reflection ***/
 //#cmakedefine01 EMFIELD_WITH_REFLECTION
 
 /***  emfield with Gnuplot display ***/
 #cmakedefine01 EMFIELD_WITH_GNUPLOT_DISPLAY
-
-//! The installation path of the emfield resource files :
-#define EMFIELD_DATA_INSTALL_DIR "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
 
 #endif // EMFIELD_EMFIELD_CONFIG_H_
 
