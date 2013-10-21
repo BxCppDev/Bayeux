@@ -72,9 +72,6 @@ set(Bayeux_SUBMODULES
 )
 
 
-# - Resource installation base dir
-#set(CMAKE_INSTALL_DATAROOTDIR "share/Bayeux-${Bayeux_VERSION}")
-
 # - Configure Bayeux submodule first
 set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include")
 include(bxbayeux_module.cmake)
@@ -83,8 +80,12 @@ set(Bayeux_SOURCES ${bayeux_MODULE_SOURCES})
 set(Bayeux_TESTS)
 set(Bayeux_RESOURCES)
 
+# - Resource subdirectory: define the BUNDLE_RESOURCE_TAG variable in order to reuse it
+#   in configurable 'resource.cc.in' files:
+set(BUNDLE_RESOURCE_TAG "Bayeux-${Bayeux_VERSION}/resources")
+
 set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include/bayeux")
-set(MODULE_RESOURCE_ROOT_BASE "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}/Bayeux-${Bayeux_VERSION}/resources")
+set(MODULE_RESOURCE_ROOT_BASE "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}/${BUNDLE_RESOURCE_TAG}")
 
 foreach(_m ${Bayeux_SUBMODULES})
   set(MODULE_RESOURCE_ROOT "${MODULE_RESOURCE_ROOT_BASE}/${_m}")
