@@ -14,9 +14,6 @@
 /***  mygsl embedded CAMP-based reflection ***/
 #cmakedefine01 MYGSL_WITH_REFLECTION
 
-//! The installation path of the mygsl resource files :
-#define MYGSL_DATA_INSTALL_DIR "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
-
 #endif // MYGSL_MYGSL_CONFIG_H_
 
 // end of mygsl_config.h
