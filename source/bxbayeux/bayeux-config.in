@@ -1,11 +1,18 @@
 #!/usr/bin/env bash
 # bayeux-config
 # Author: F. Mauger <mauger@lpccaen.in2p3.fr>
+#
+# This script should not be used to compile and link applications
+# with Bayeux support. CMake must be used for that. This script is
+# provided only as an utility tools to help the localization of Bayeux
+# system components (headers, DLL, resource files...).
+#
 
 script_name="bayeux-config"
 opwd=$(pwd)
 help=0
 debug=0
+devel=0
 
 function my_exit()
 {
@@ -72,6 +79,15 @@ bayeux_xercesc_inc_dir=`echo ${bayeux_xercesc_bin_dir}   | sed -e 's%/bin%/inclu
 bayeux_xercesc_lib_dir=`echo ${bayeux_xercesc_bin_dir}   | sed -e 's%/bin%/lib%g'`
 bayeux_xercesc_libs="xerces-c"
 
+option="$1"
+shift 1
+
+if [ "x${option}" = "x--devel" ]; then
+    # Devel mode
+    devel=1
+    option="$1"
+fi
+
 function print_help ()
 {
     cat<<EOF
@@ -95,6 +111,14 @@ Supported values for OPTION are:
                          - genbb_help
   --docdir              print documentation base directory
   --cmake-config-dir    print the installation directory for the 'BayeuxConfig.cmake' file
+  --devel               switch to special devel mode (first switch on the command line)
+EOF
+
+if [ $devel -eq 1 ]; then
+    cat<<EOF
+
+Special options for developpers (not recommended):
+
   --include             print include path pre-processor flags without dependencies
   --cflags              print include path pre-processor flags with dependencies
   --libs    [option]    print library linking information, without dependencies
@@ -104,13 +128,14 @@ Supported values for OPTION are:
     --absolute-path     use absolute DLL path
     --with-geant4       use the Geant4 shared library addon
 
+EOF
+fi
+
+    cat<<EOF
 Examples:
 
    Print the Bayeux's installation prefix:
     \$ ${script_name} --prefix
-
-   Print LDFLAGS with absolute paths:
-    \$ ${script_name} --ldflags --absolute-path
 
    Print the versions of all Bayeux's modules:
    \$ find \$(${script_name} --incdir)/bayeux -name version.h -exec grep _LIB_VERSION \{\} \; | cut -d' ' -f 2-3 | tr ' ' '=' | tr -d '"'
@@ -118,9 +143,6 @@ Examples:
 EOF
     return 0
 }
-
-option="$1"
-shift 1
 
 if [ "x${option}" = "x" ]; then
     echo "ERROR: ${script_name}: Missing option ! Abort !" 1>&2
@@ -201,6 +223,7 @@ if [ "x${option}" = "x--cmake-config-dir" ]; then
     my_exit 0
 fi
 
+if [ $devel -eq 1 ]; then
 if [ "x${option}" = "x--include" ]; then
     echo -n "-I${bayeux_include_dir}  "
     echo -n "-I${bayeux_include_dir}/bayeux "
@@ -307,6 +330,8 @@ if [ "x${option}" = "x--ldflags" ]; then
 
     echo
     my_exit 0
+fi
+
 fi
 
 if [ "x${option}" = "x--has-geant4" ]; then
