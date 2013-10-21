@@ -61,6 +61,16 @@ if(Bayeux_DIRECTORY_IS_WC)
   set(Bayeux_VERSION_REVISION ${Bayeux_WC_REVISION})
 endif()
 
+# - Standard UNIX Tool install paths, including relative paths for use
+# by applications requiring resources
+# Validate that certain paths are relative, otherwise relocation may fail
+include(GNUInstallDirs)
+foreach(_dir BINDIR LIBDIR INCLUDEDIR DATAROOTDIR)
+  if(IS_ABSOLUTE "${CMAKE_INSTALL_${_dir}}")
+    message(FATAL_ERROR "Absolute path for CMAKE_INSTALL_${_dir} not allowed")
+  endif()
+endforeach()
+
 # - Configure output paths for products to give inplace build that roughly
 #   matches install layout.
 #   We allow a parent project to change the output root so that Bayeux
@@ -69,9 +79,9 @@ if(NOT Bayeux_EMBEDDED OR NOT Bayeux_BUILDPRODUCT_DIR)
   set(Bayeux_BUILDPRODUCT_DIR "${PROJECT_BINARY_DIR}/BuildProducts")
 endif()
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/lib")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/bin")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/lib")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}")
 
 #-----------------------------------------------------------------------
 # Use implicit Bayeux init/fini instruction
@@ -120,3 +130,4 @@ endif()
 if(NOT Bayeux_EMBEDDED)
   include(BXCPack)
 endif()
+

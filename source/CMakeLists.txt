@@ -73,7 +73,7 @@ set(Bayeux_SUBMODULES
 
 
 # - Resource installation base dir
-set(CMAKE_INSTALL_DATAROOTDIR "share/Bayeux-${Bayeux_VERSION}")
+#set(CMAKE_INSTALL_DATAROOTDIR "share/Bayeux-${Bayeux_VERSION}")
 
 # - Configure Bayeux submodule first
 set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include")
@@ -84,12 +84,10 @@ set(Bayeux_TESTS)
 set(Bayeux_RESOURCES)
 
 set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include/bayeux")
-#set(MODULE_RESOURCE_ROOT "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}/resources")
+set(MODULE_RESOURCE_ROOT_BASE "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}/Bayeux-${Bayeux_VERSION}/resources")
 
 foreach(_m ${Bayeux_SUBMODULES})
-  set(CMAKE_INSTALL_DATADIR "${CMAKE_INSTALL_DATAROOTDIR}/${_m}")
-  set(MODULE_RESOURCE_ROOT
-      "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}/resources")
+  set(MODULE_RESOURCE_ROOT "${MODULE_RESOURCE_ROOT_BASE}/${_m}")
   include(bx${_m}_module.cmake)
   list(APPEND Bayeux_HEADERS ${${_m}_MODULE_HEADERS})
   list(APPEND Bayeux_SOURCES ${${_m}_MODULE_SOURCES})
@@ -99,7 +97,6 @@ foreach(_m ${Bayeux_SUBMODULES})
     list(APPEND Bayeux_GEANT4_APPS ${${_m}_GEANT4_MODULE_APPS})
   endif()
 endforeach()
-set(CMAKE_INSTALL_DATADIR "${CMAKE_INSTALL_DATAROOTDIR}")
 
 # - We must put this at the end because it needs static code from
 #   datatools, cuts, materials...
@@ -174,11 +171,7 @@ endif()
 #-----------------------------------------------------------------------
 # Build/Link the executables
 #
-#message(STATUS "Build/Link the executables...")
-#message(STATUS "Bayeux_APPS=${Bayeux_APPS}")
-#message(STATUS "Bayeux_GEANT4_APPS=${Bayeux_GEANT4_APPS}")
 foreach(_bxapp IN LISTS Bayeux_APPS Bayeux_GEANT4_APPS)
-  #message(STATUS "Processing application '${_bxapp}'...")
   get_filename_component(_app_basename ${_bxapp} NAME_WE)
   add_executable(bx${_app_basename} ${_bxapp})
   set_target_properties(bx${_app_basename}
@@ -186,7 +179,7 @@ foreach(_bxapp IN LISTS Bayeux_APPS Bayeux_GEANT4_APPS)
     )
   if(UNIX AND NOT APPLE)
     set_target_properties(bx${_app_basename}
-      PROPERTIES INSTALL_RPATH "\$ORIGIN/../lib"
+      PROPERTIES INSTALL_RPATH "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
       )
   elseif(APPLE)
     # Temporary setting - needs testing
@@ -199,7 +192,6 @@ foreach(_bxapp IN LISTS Bayeux_APPS Bayeux_GEANT4_APPS)
 
   if(Bayeux_WITH_GEANT4)
     list(FIND Bayeux_GEANT4_APPS ${_bxapp} _g4app_found)
-    #message(STATUS "Application '${_bxapp}' : found=${_g4app_found}")
     if (_g4app_found GREATER -1)
       message(STATUS "Application '${_bxapp}' is link to the Geant4 addon library.")
       target_link_libraries(bx${_app_basename} Bayeux_mctools_geant4)
@@ -218,15 +210,15 @@ endforeach()
 #
 install(TARGETS Bayeux ${Bayeux_ADDON_TARGETS}
   EXPORT  BayeuxTargets
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION bin
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   )
 install(DIRECTORY ${Bayeux_BUILDPRODUCT_DIR}/include/
-  DESTINATION include
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
   )
 install(DIRECTORY ${Bayeux_BUILDPRODUCT_DIR}/share/
-  DESTINATION share
+  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}
   )
 
 #-----------------------------------------------------------------------
@@ -234,27 +226,27 @@ install(DIRECTORY ${Bayeux_BUILDPRODUCT_DIR}/share/
 # Done here so that external package variables are visible
 #
 # - Targets
-export(TARGETS Bayeux ${Bayeux_ADDON_TARGETS} FILE ${Bayeux_BUILDPRODUCT_DIR}/lib/cmake/Bayeux-${Bayeux_VERSION}/BayeuxTargets.cmake)
-install(EXPORT BayeuxTargets DESTINATION lib/cmake/Bayeux-${Bayeux_VERSION})
+export(TARGETS Bayeux ${Bayeux_ADDON_TARGETS} FILE ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake/Bayeux-${Bayeux_VERSION}/BayeuxTargets.cmake)
+install(EXPORT BayeuxTargets DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Bayeux-${Bayeux_VERSION})
 
 # - Versioning (build and install trees)
 configure_file(${PROJECT_SOURCE_DIR}/cmake/BayeuxConfigVersion.cmake.in
-  ${Bayeux_BUILDPRODUCT_DIR}/lib/cmake/Bayeux-${Bayeux_VERSION}/BayeuxConfigVersion.cmake
+  ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake/Bayeux-${Bayeux_VERSION}/BayeuxConfigVersion.cmake
   @ONLY
   )
 
 # - Config (build and install trees *at present*)
 configure_file(${PROJECT_SOURCE_DIR}/cmake/BayeuxConfig.cmake.in
-  ${Bayeux_BUILDPRODUCT_DIR}/lib/cmake/Bayeux-${Bayeux_VERSION}/BayeuxConfig.cmake
+  ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake/Bayeux-${Bayeux_VERSION}/BayeuxConfig.cmake
   @ONLY
   )
 
 install(
   FILES
-    ${Bayeux_BUILDPRODUCT_DIR}/lib/cmake/Bayeux-${Bayeux_VERSION}/BayeuxConfigVersion.cmake
-    ${Bayeux_BUILDPRODUCT_DIR}/lib/cmake/Bayeux-${Bayeux_VERSION}/BayeuxConfig.cmake
+    ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake/Bayeux-${Bayeux_VERSION}/BayeuxConfigVersion.cmake
+    ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake/Bayeux-${Bayeux_VERSION}/BayeuxConfig.cmake
   DESTINATION
-    lib/cmake/Bayeux-${Bayeux_VERSION}
+    ${CMAKE_INSTALL_LIBDIR}/cmake/Bayeux-${Bayeux_VERSION}
   )
 
 if(UNIX)
@@ -266,7 +258,7 @@ if(UNIX)
     )
 
   install(FILES ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bayeux-config
-    DESTINATION bin
+    DESTINATION ${CMAKE_INSTALL_BINDIR}
     PERMISSIONS
     OWNER_READ OWNER_WRITE OWNER_EXECUTE
     GROUP_READ GROUP_WRITE GROUP_EXECUTE
