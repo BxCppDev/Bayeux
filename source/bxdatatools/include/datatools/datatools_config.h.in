@@ -20,9 +20,6 @@
 //! Evaluates to true if datatools was built with automated init/fini operation at DLL loading
 #cmakedefine01 DATATOOLS_WITH_IMPLICIT_INIT_FINI
 
-//! The installation path of the datatools resource files :
-#define DATATOOLS_DATA_INSTALL_DIR "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
-
 #endif // DATATOOLS_DATATOOLS_CONFIG_H_
 
 // end of datatools_config.h
