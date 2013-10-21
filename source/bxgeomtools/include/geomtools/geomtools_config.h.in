@@ -31,9 +31,6 @@
 
 #cmakedefine01 GEOMTOOLS_WITH_ROOT_DISPLAY
 
-//! The installation path of the geomtools resource files :
-#define GEOMTOOLS_DATA_INSTALL_DIR "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
-
 #endif // GEOMTOOLS_GEOMTOOLS_CONFIG_H_
 
 // end of geomtools_config.h
