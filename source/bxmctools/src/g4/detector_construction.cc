@@ -21,6 +21,7 @@
 #include <geomtools/manager.h>
 #include <geomtools/materials_plugin.h>
 #include <geomtools/materials_utils.h>
+#include <geomtools/resource.h>
 
 #include <emfield/base_electromagnetic_field.h>
 #include <emfield/electromagnetic_field_manager.h>
@@ -183,7 +184,7 @@ namespace mctools {
         if (gdml_schema_location == "remote") {
           _gdml_schema_ = geomtools::gdml_writer::default_remote_gdml_schema();
         } else if (gdml_schema_location == "local") {
-          _gdml_schema_ = "${GEOMTOOLS_DATA_DIR}/resources/gdml_schema/gdml.xsd";
+          _gdml_schema_ = geomtools::get_resource("gdml_schema/gdml.xsd");
           datatools::fetch_path_with_env(_gdml_schema_);
         } else {
           DT_THROW_IF(true, std::logic_error, "Missing property '" << "gdml.schema_location" << "' !");
