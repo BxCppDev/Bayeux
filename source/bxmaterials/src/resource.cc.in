@@ -34,11 +34,16 @@
 #include <datatools/logger.h>
 
 // This Project
+#include <materials/materials_config.h>
 
 namespace {
 //! Return the path to the root resource directory
 std::string get_resource_root(bool overriden_env) {
+#if MATERIALS_STANDALONE == 1
   static const boost::filesystem::path resource_path = "resources";
+#else
+  static const boost::filesystem::path resource_path = "@BUNDLE_RESOURCE_TAG@/materials";
+#endif
   static const boost::filesystem::path install_root = "@CMAKE_INSTALL_PREFIX@";
   boost::filesystem::path install_data_root = install_root / "@CMAKE_INSTALL_DATADIR@";
   // Not sure to maintain this in the future:
@@ -71,5 +76,3 @@ std::string get_resource(const std::string& rname, bool overriden_env) {
   return fullpath;
 }
 } // namespace materials
-
-
