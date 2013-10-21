@@ -26,6 +26,9 @@
  *
  */
 
+// Ourselves
+#include <mctools/mctools.h>
+
 // Standard library
 #include <cstdlib>
 #include <iostream>
@@ -39,6 +42,11 @@
 #include <boost/foreach.hpp>
 #include <boost/program_options.hpp>
 
+#if MCTOOLS_STANDALONE == 0
+// - bayeux:
+#include <bayeux/bayeux.h>
+#endif
+
 // - datatools
 #include <datatools/datatools.h>
 #include <datatools/datatools_config.h>
@@ -48,9 +56,13 @@
 #include <datatools/library_loader.h>
 #include <datatools/logger.h>
 #include <datatools/exception.h>
+#include <datatools/kernel.h>
 
 // - mygsl
 #include <mygsl/random_utils.h>
+
+// - geomtools
+#include <geomtools/geomtools.h>
 
 // - mctools
 #include <mctools/version.h>
@@ -92,7 +104,11 @@ struct ui {
 
 int main(int argc_, char ** argv_)
 {
-  DATATOOLS_INIT_MAIN(argc_, argv_);
+#if MCTOOLS_STANDALONE == 1
+  MCTOOLS_INIT_MAIN(argc_, argv_);
+#else
+  BAYEUX_INIT_MAIN(argc_, argv_);
+#endif
 
   int error_code = EXIT_SUCCESS;
   datatools::logger::priority logging = datatools::logger::PRIO_WARNING;
@@ -209,17 +225,27 @@ int main(int argc_, char ** argv_)
   }
   DT_LOG_TRACE(logging, "g4_production ends here.");
 
-  DATATOOLS_FINI();
+#if MCTOOLS_STANDALONE == 1
+  MCTOOLS_FINI();
+#else
+  BAYEUX_FINI();
+#endif
   return(error_code);
 }
 
 void ui::splash(std::ostream & out_)
 {
+#if MCTOOLS_STANDALONE == 1
+  const std::string APP_NAME = "g4_production";
+#else
+  const std::string APP_NAME = "bxg4_production";
+#endif
   out_ << "\n"
-       << "     M C T O O L S - G 4\n"
-       << "     Version " << MCTOOLS_LIB_VERSION << "\n"
-       << "     g4_production\n"
-       << "\n"
+       << "     M C T O O L S - G 4";
+  out_ << "\n";
+  out_ << "     Version " << MCTOOLS_LIB_VERSION << "\n";
+  out_ << "     " << APP_NAME << "\n";
+  out_ << "\n"
        << "     Copyright (C) 2013\n"
        << "     Francois Mauger, Xavier Garrido and Ben Morgan\n"
        << "\n";
@@ -229,20 +255,31 @@ void ui::splash(std::ostream & out_)
 void ui::print_usage(const boost::program_options::options_description & opts_,
                  std::ostream & out_)
 {
-  out_ << "g4_production -- A generic GEANT4 simulation program" << std::endl;
+#if MCTOOLS_STANDALONE == 1
+  const std::string APP_NAME = "g4_production";
+#else
+  const std::string APP_NAME = "bxg4_production";
+#endif
+  out_ << APP_NAME << " -- A generic GEANT4 simulation program" << std::endl;
   out_ << std::endl;
   out_ << "Usage : " << std::endl;
   out_ << std::endl;
-  out_ << "  g4_production [OPTIONS] [ARGUMENTS] "
+  out_ << "  " << APP_NAME << " [OPTIONS] [ARGUMENTS] "
        << std::endl;
   out_ << std::endl;
   out_ << opts_ << std::endl;
+  {
+    //    out_ << "\nDatatools kernel options: \n";
+    boost::program_options::options_description kopts("datatools' kernel options");
+    datatools::kernel::param_type kparams;
+    datatools::kernel::build_opt_desc(kopts, kparams);
+    datatools::kernel::print_opt_desc(kopts, out_);
+  }
   out_ << std::endl;
   ui::print_examples(out_,
-                     "g4_production",
+                     APP_NAME,
                      "Examples : ");
   out_ << std::endl;
-
   return;
 }
 

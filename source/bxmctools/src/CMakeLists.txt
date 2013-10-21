@@ -30,6 +30,7 @@ set(mctools_PUBLIC_HEADERS
     include/mctools/calorimeter_step_hit_processor.h
     include/mctools/simulated_data_reader.h
     include/mctools/simulated_data_input_module.h
+    include/mctools/mctools.h
 
     include/mctools/base_step_hit.ipp
     include/mctools/simulated_data.ipp
@@ -101,6 +102,7 @@ set(mctools_SOURCES
     simulated_data_reader.cc
     simulated_data_input_module.cc
     version.cc
+    mctools.cc
   )
 
 # message(STATUS "********** mctools_SOURCES=${mctools_SOURCES}")

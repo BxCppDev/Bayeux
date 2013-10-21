@@ -466,6 +466,7 @@ function do_configure ()
         -Dgenvtx_DIR=${GENVTX_CMAKE_CONFIG_DIR} \
         -Demfield_DIR=${EMFIELD_CMAKE_CONFIG_DIR} \
 	-DCMAKE_MODULE_PATH:PATH="${CADFAEL_SHARE_DIR}/cmake/Modules;${CMAKE_MODULE_PATH}" \
+	-DMCTOOLS_STANDALONE=1 \
  	-DMCTOOLS_WITH_DEBUG=${with_debug} \
 	-DMCTOOLS_WITH_BIO=${with_bio} \
 	-DMCTOOLS_WITH_REFLECTION=${with_reflection} \

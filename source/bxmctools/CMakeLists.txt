@@ -24,6 +24,12 @@ endif()
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(mctools)
 
+# - Default build is from Bayeux
+#  Setting MCTOOLS_STANDALONE to 1 must be used for a individual build
+if (NOT DEFINED MCTOOLS_STANDALONE)
+  set (MCTOOLS_STANDALONE 0)
+endif()
+
 # - Versioning
 set(mctools_VERSION_MAJOR 1)
 set(mctools_VERSION_MINOR 0)
