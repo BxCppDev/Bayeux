@@ -1,7 +1,7 @@
 /* dpp_processing.cxx
  * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-07-03
- * Last modified : 2013-05-12
+ * Last modified : 2013-10-21
  *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -99,12 +99,10 @@ int main (int argc_, char ** argv_)
   }
   catch (std::exception & x) {
     DT_LOG_FATAL(logging, APP_NAME_PREFIX << x.what ());
-    print_usage(std::cerr);
     error_code = EXIT_FAILURE;
   }
   catch (...) {
     DT_LOG_FATAL(logging, APP_NAME_PREFIX << "Unexpected error !");
-    print_usage(std::cerr);
     error_code = EXIT_FAILURE;
   }
 
@@ -130,7 +128,7 @@ void print_usage(std::ostream & out_)
   out_ << std::endl;
   out_ << "  Process the chain of 'my_moduleX' (X=1,2,3) data processing modules from the 'mydllY' libraries (Y=1,2): " << std::endl;
   out_ << std::endl;
-  out_ << "  bash$ dpp_processing              \\" << std::endl;
+  out_ << "  $ dpp_processing              \\" << std::endl;
   out_ << "          -c my_module_manager.conf   \\" << std::endl;
   out_ << "          -l my_dll1                  \\" << std::endl;
   out_ << "          -l my_dll2                  \\" << std::endl;
@@ -144,20 +142,20 @@ void print_usage(std::ostream & out_)
   out_ << std::endl;
   out_ << "  Simple use cases : " << std::endl;
   out_ << std::endl;
-  out_ << "  bash$ dpp_processing   \\" << std::endl;
+  out_ << "  $ dpp_processing   \\" << std::endl;
   out_ << "          -c ${DPP_DATA_DIR}/testing/config/test_module_manager.conf \\" << std::endl;
   out_ << "          -i ${DPP_DATA_DIR}/testing/data/data_0.txt.gz     \\" << std::endl;
   out_ << "          -m clear         \\" << std::endl;
   out_ << "          -m chain1        \\" << std::endl;
   out_ << "          -o processed.xml   " << std::endl;
   out_ << std::endl;
-  out_ << "  bash$ dpp_processing   \\" << std::endl;
+  out_ << "  $ dpp_processing   \\" << std::endl;
   out_ << "          -c ${DPP_DATA_DIR}/testing/config/test_module_manager.conf \\" << std::endl;
   out_ << "          -M 10            \\" << std::endl;
   out_ << "          -m chain1        \\" << std::endl;
   out_ << "          -m dump_in_file    " << std::endl;
   out_ << std::endl;
-  out_ << "  bash$ dpp_processing   \\" << std::endl;
+  out_ << "  $ dpp_processing   \\" << std::endl;
   out_ << "          -c ${DPP_DATA_DIR}/testing/config/test_module_manager.conf \\" << std::endl;
   out_ << "          -M 10            \\" << std::endl;
   out_ << "          -m chain1        \\" << std::endl;
