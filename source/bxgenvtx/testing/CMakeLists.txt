@@ -64,14 +64,14 @@ set(_genvtx_test_additional_options )
 # depends on materials data dir:
 if (DEFINED materials_DATA_DIR
     AND NOT "x${materials_DATA_DIR}" STREQUAL "x" )
-  list (APPEND _genvtx_test_additional_options --materials-data-dir ${materials_DATA_DIR} )
+  list (APPEND _genvtx_test_additional_options --materials-resource-dir "${materials_DATA_DIR}/resources" )
   message ( STATUS "${PROJECT_NAME}: testing: Using option '${_genvtx_test_additional_options}'" )
 endif ()
 
 # depends on geomtools data dir:
 if (DEFINED geomtools_DATA_DIR
     AND NOT "x${geomtools_DATA_DIR}" STREQUAL "x" )
-  list (APPEND _genvtx_test_additional_options --geomtools-data-dir ${geomtools_DATA_DIR} )
+  list (APPEND _genvtx_test_additional_options --geomtools-resource-dir "${geomtools_DATA_DIR}/resources" )
   message ( STATUS "${PROJECT_NAME}: testing: Using option '${_genvtx_test_additional_options}'" )
 endif ()
 
@@ -87,31 +87,11 @@ foreach(test_program ${genvtx_tests_programs_list})
 
   set(_test_libraries genvtx)
 
-  # # Special bio DLL plugins :
-  # if(datatools_WITH_BIO)
-  #   list(INSERT _test_libraries 0 datatools_bio)
-  # endif()
-  # if(mygsl_WITH_BIO)
-  #   list(INSERT _test_libraries 0 mygsl_bio )
-  # endif()
-  # if(GENVTX_WITH_BIO)
-  #   list(INSERT _test_libraries 0 genvtx_bio )
-  # endif()
-
-  # # Special reflection DLL plugins :
-  # if(datatools_WITH_REFLECTION)
-  #   list(INSERT _test_libraries 0 datatools_reflection)
-  # endif()
-  # if(GENVTX_WITH_REFLECTION)
-  #   list(INSERT _test_libraries 0 genvtx_reflection )
-  # endif()
-
   target_link_libraries(${test_executable} ${_test_libraries})
 
   add_test(NAME ${test_executable}.run
     COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash
     --tmp-dir ${_test_tmp_dir}
-    --data-dir ${PROJECT_SOURCE_DIR}
     --prefix ${PROJECT_SOURCE_DIR}
     --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
     ${_genvtx_test_additional_options}

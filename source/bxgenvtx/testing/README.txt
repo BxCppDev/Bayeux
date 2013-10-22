@@ -24,7 +24,7 @@ bash$ GENVTX_BIN_DIR=__build-Linux-x86_64/testing/ \
 bash$ GENVTX_BIN_DIR=__build-Linux-x86_64/testing/ \
         gnuplot testing/test_placement_vg.gp
 
-bash$ GENVTX_DATA_DIR=$(pwd) GENVTX_BIN_DIR=__build-Linux-x86_64/testing/ \
+bash$ GENVTX_TESTING_DIR=$(pwd)/testing GENVTX_BIN_DIR=__build-Linux-x86_64/testing/ \
         gnuplot testing/test_from_file_vg.gp
 
 bash$ __build-Linux-x86_64/testing/test_quadrangle_random_tools --draw
@@ -39,9 +39,9 @@ Check the setup of the test_manager program:
 Configuration test-1.0 :
 ------------------------
 
-  bash$ GENVTX_DATA_DIR=$(pwd) \
+  bash$ GENVTX_TESTING_DIR=$(pwd)/testing \
     geomtools_check_setup \
-    --manager-config ${GENVTX_DATA_DIR}/testing/config/test-1.0/geometry/manager.conf \
+    --manager-config ${GENVTX_TESTING_DIR}/config/test-1.0/geometry/manager.conf \
     --with-visu --visu-view-3d  \
     --with-mapping \
     --with-gdml
@@ -54,31 +54,31 @@ List of available vertex generators:
   'hall_roof.vg'
   'some_mezzanines_pcb_bulk.vg'
 
-  bash$ GENVTX_DATA_DIR=$(pwd) \
+  bash$ GENVTX_TESTING_DIR=$(pwd)/testing \
     __build-Linux-x86_64/testing/test_manager \
       --vertex-generator "some_mezzanines_pcb_bulk.vg" \
       --many
 
-  bash$ GENVTX_DATA_DIR=$(pwd) \
+  bash$ GENVTX_TESTING_DIR=$(pwd)/testing \
     __build-Linux-x86_64/testing/test_manager \
       --vertex-generator "hall_roof.vg" \
       --many --many --many --visu
 
-  bash$ GENVTX_DATA_DIR=$(pwd) \
+  bash$ GENVTX_TESTING_DIR=$(pwd)/testing \
     __build-Linux-x86_64/testing/test_manager \
       --vertex-generator "all_capacitors_side.vg" \
       --many --many --many \
       --dump-gids \
       --visu --tiny --tiny
 
-  bash$ GENVTX_DATA_DIR=$(pwd) \
+  bash$ GENVTX_TESTING_DIR=$(pwd)/testing \
     __build-Linux-x86_64/testing/test_manager \
       --vertex-generator "all_capacitors_side.vg" \
       --many --many --many \
       --dump-gids \
       --visu --visu-object "[1000:6.0]" --tiny --tiny
 
-  bash$ GENVTX_DATA_DIR=$(pwd) \
+  bash$ GENVTX_TESTING_DIR=$(pwd)/testing \
     __build-Linux-x86_64/testing/test_manager \
       --vertex-generator "some_mezzanines_pcb_bulk.vg" \
       --many --many --many \
@@ -88,7 +88,7 @@ List of available vertex generators:
 Configuration test-2.0 :
 ------------------------
 
-  bash$ GENVTX_DATA_DIR=$(pwd) \
+  bash$ GENVTX_TESTING_DIR=$(pwd)/testing \
     __build-Linux-x86_64/testing/test_manager \
       --test-2 \
       --vertex-generator "all_source_bulk.vg" \
@@ -96,7 +96,7 @@ Configuration test-2.0 :
       --dump-gids \
       --visu --tiny
 
-  bash$ GENVTX_DATA_DIR=$(pwd) \
+  bash$ GENVTX_TESTING_DIR=$(pwd)/testing \
     __build-Linux-x86_64/testing/test_manager \
       --test-2 \
       --vertex-generator "source_0_bulk.vg" \
@@ -104,7 +104,7 @@ Configuration test-2.0 :
       --dump-gids \
       --visu --tiny
 
-  bash$ GENVTX_DATA_DIR=$(pwd) \
+  bash$ GENVTX_TESTING_DIR=$(pwd)/testing \
     __build-Linux-x86_64/testing/test_manager \
       --test-2 \
       --vertex-generator "all_scin_surface.vg" \
@@ -112,7 +112,7 @@ Configuration test-2.0 :
       --dump-gids \
       --visu --tiny
 
-  bash$ GENVTX_DATA_DIR=$(pwd) \
+  bash$ GENVTX_TESTING_DIR=$(pwd)/testing \
     __build-Linux-x86_64/testing/test_manager \
       --test-2 \
       --vertex-generator "special_scin_surface.vg" \

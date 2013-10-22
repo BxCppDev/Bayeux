@@ -48,7 +48,7 @@ int main (int argc_, char ** argv_)
 
     genvtx::from_file_vg vg;
     if (input_vertex_file.empty()) {
-      input_vertex_file = "${GENVTX_DATA_DIR}/testing/data/test_cylinder_vertices.data";
+      input_vertex_file = "${GENVTX_TESTING_DIR}/data/test_cylinder_vertices.data";
     }
     vg.set_filename (input_vertex_file);
     vg.set_length_unit (CLHEP::mm);

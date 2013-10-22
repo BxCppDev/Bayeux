@@ -22,7 +22,7 @@ function do_genvtx_print_info ()
 	echo "${indent}GENVTX_DOC_DIR             = '${GENVTX_DOC_DIR}'"
 	echo "${indent}GENVTX_INCLUDE_DIR         = '${GENVTX_INCLUDE_DIR}'"
 	echo "${indent}GENVTX_CMAKE_CONFIG_DIR    = '${GENVTX_CMAKE_CONFIG_DIR}'" 1>&2
-	echo "${indent}GENVTX_DATA_DIR            = '${GENVTX_DATA_DIR}'" 1>&2
+	echo "${indent}GENVTX_RESOURCE_DIR        = '${GENVTX_RESOURCE_DIR}'" 1>&2
     else
 	echo "${indent}genvtx is not setup." 1>&2
     fi
@@ -34,7 +34,7 @@ alias genvtx_print_info='do_genvtx_print_info'
 function do_genvtx_setup ()
 {
     local verbose=0
-    
+
     while [ -n "$1" ]; do
 	if [ "$1" = "--verbose" -o "$1" = "-v" ]; then
 	  let verbose=verbose+1
@@ -49,30 +49,8 @@ function do_genvtx_setup ()
     if [ "x${GENVTX_ROOT}" != "x" ]; then
 	echo "WARNING: do_genvtx_setup: genvtx is already setup !" 1>&2
 	return 2
-    fi 
-
-    if [ "x@GENVTX_WITH_REFLECTION@" = "x1" ]; then
-	which camp-config >/dev/null 2>&1
-	if [ $? -ne 0 ]; then
-	    echo "ERROR: do_genvtx_setup: Cannot find CAMP setup ! Abort !" 1>&2
-	    return 1
-	else
-	    if [ ${verbose} -ne 0 ]; then
-		echo "VERBOSE: do_genvtx_setup: Found CAMP." 1>&2
-	    fi
-	fi
     fi
 
-    which geomtools-config >/dev/null 2>&1
-    if [ $? -ne 0 ]; then
-	echo "ERROR: do_genvtx_setup: Cannot find geomtools setup ! Abort !" 1>&2
-	return 1
-    else
-	if [ ${verbose} -ne 0 ]; then
-	    echo "VERBOSE: do_genvtx_setup: Found geomtools." 1>&2
-	fi
-    fi
-     
     export GENVTX_ROOT="@CMAKE_INSTALL_PREFIX@"
     export GENVTX_ROOT_DIR="@CMAKE_INSTALL_PREFIX@"
     export GENVTX_NAME="@PROJECT_NAME@"
@@ -82,7 +60,7 @@ function do_genvtx_setup ()
     export GENVTX_LIB_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@"
     export GENVTX_DOC_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DOCDIR@"
     export GENVTX_INCLUDE_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_INCLUDEDIR@"
-    export GENVTX_DATA_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
+    export GENVTX_RESOURCE_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/resources"
     export GENVTX_WITH_DEBUG=@GENVTX_WITH_DEBUG@
     export GENVTX_WITH_BIO=@GENVTX_WITH_BIO@
     export GENVTX_WITH_REFLECTION=@GENVTX_WITH_REFLECTION@
@@ -92,18 +70,18 @@ function do_genvtx_setup ()
 	export PATH="${GENVTX_BIN_DIR}:${PATH}"
     else
 	export PATH="${GENVTX_BIN_DIR}"
-    fi 
-   
+    fi
+
     if [ -n "${@_ld_library_path_env@}" ]; then
 	export @_ld_library_path_env@="${GENVTX_LIB_DIR}:${@_ld_library_path_env@}"
     else
 	export @_ld_library_path_env@="${GENVTX_LIB_DIR}"
-    fi 
+    fi
 
     if [ ${verbose} -gt 1 ]; then
 	do_genvtx_print_info "VERBOSE: do_genvtx_setup"
     fi
- 
+
     if [ ${verbose} -ne 0 ]; then
 	echo "NOTICE: do_genvtx_setup: Setup genvtx done." 1>&2
     fi

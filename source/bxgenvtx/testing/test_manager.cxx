@@ -89,11 +89,11 @@ int main (int argc_, char ** argv_)
     std::clog << "genvtx version : " << GENVTX_LIB_VERSION << std::endl;
 
     // Configuration files :
-    std::string GeoMgrConfigFile = "${GENVTX_DATA_DIR}/testing/config/test-1.0/geometry/manager.conf";
-    std::string VGMgrConfigFile = "${GENVTX_DATA_DIR}/testing/config/test-1.0/vg_mgr.conf";
+    std::string GeoMgrConfigFile = "${GENVTX_TESTING_DIR}/config/test-1.0/geometry/manager.conf";
+    std::string VGMgrConfigFile = "${GENVTX_TESTING_DIR}/config/test-1.0/vg_mgr.conf";
     if (test_id == 2) {
-      GeoMgrConfigFile = "${GEOMTOOLS_DATA_DIR}/testing/config/test-1.0/test_manager.conf";
-      VGMgrConfigFile = "${GENVTX_DATA_DIR}/testing/config/test-2.0/vg_mgr.conf";
+      GeoMgrConfigFile = "${GENVTX_TESTING_DIR}/config/test-1.0/test_manager.conf";
+      VGMgrConfigFile = "${GENVTX_TESTING_DIR}/config/test-2.0/vg_mgr.conf";
     }
 
     // Geometry manager :
