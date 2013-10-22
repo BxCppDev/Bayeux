@@ -2,7 +2,7 @@
 
 
 # Usage:
-#  ./process.sh --cadfael-dir ${SW_WORK_DIR}/Cadfael/Binary/Cadfael-trunk/Install-Linux-x86_64 --bayeux-dir ${SW2_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-Linux-x86_64
+#  ./process.sh --cadfael-dir ${SW_WORK_DIR}/Cadfael/Binary/Cadfael-trunk/Install-Linux-x86_64 --bayeux-dir ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-Linux-x86_64
 #  ./process.sh --cadfael-dir /data/nemo/group/sw/Cadfael/Binary/Cadfael-trunk/Install-SL5.3-x86_64 --bayeux-dir /data/nemo/group/sw/Bayeux/Binary/Bayeux-trunk/Install-SL5.3-x86_64
 
 while [ -n "$1" ]; do
