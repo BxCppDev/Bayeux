@@ -16,8 +16,8 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'datatools::smart_filename'!" << endl; 
-  
+      clog << "Test program for class 'datatools::smart_filename'!" << endl;
+
       bool debug = false;
 
       int iarg = 1;
@@ -27,22 +27,22 @@ int main (int argc_, char ** argv_)
 
           if (token[0] == '-')
             {
-              string option = token; 
-              if ((option == "-d") || (option == "--debug")) 
+              string option = token;
+              if ((option == "-d") || (option == "--debug"))
                 {
                   debug = true;
                 }
-              else 
-                { 
-                  clog << "warning: ignoring option '" << option << "'!" << endl; 
+              else
+                {
+                  clog << "warning: ignoring option '" << option << "'!" << endl;
                 }
             }
           else
             {
-              string argument = token; 
+              string argument = token;
               /* Here you may add more argument handlers... */
-              { 
-                clog << "warning: ignoring argument '" << argument << "'!" << endl; 
+              {
+                clog << "warning: ignoring argument '" << argument << "'!" << endl;
               }
             }
           iarg++;
@@ -93,15 +93,15 @@ int main (int argc_, char ** argv_)
 
       {
         cout << endl << "*** Incremental filename : " << endl;
-        datatools::smart_filename sf3;    
-        datatools::smart_filename::make_incremental (sf3, 
+        datatools::smart_filename sf3;
+        datatools::smart_filename::make_incremental (sf3,
                                                      "/tmp/${USER}",
                                                      "file_",
                                                      ".data",
                                                      10,
                                                      0,
                                                      +1);
-        
+
         sf3.dump ();
         for (int i = 0; i < sf3.size (); ++i)
           {
@@ -132,15 +132,15 @@ int main (int argc_, char ** argv_)
       {
         cout << endl << "*** Incremental filename (2) : " << endl;
         datatools::smart_filename sf5;
-        
-        datatools::smart_filename::make_incremental (sf5, 
+
+        datatools::smart_filename::make_incremental (sf5,
                                           "/tmp/${USER}",
                                           "file2_",
                                           ".data",
                                           2,
                                           7,
                                           -1);
-        
+
         sf5.dump ();
         for (int i = 0; i < sf5.size (); ++i)
           {
@@ -156,14 +156,14 @@ int main (int argc_, char ** argv_)
         cout << endl << "*** Smart filename (from config file) : " << endl;
         datatools::smart_filename sf6;
         datatools::properties config6;
-        string file6 = "${DATATOOLS_DATA_DIR}/testing/config/test_smart_filename_1.conf";
+        string file6 = "${DATATOOLS_TESTING_DIR}/config/test_smart_filename_1.conf";
         datatools::fetch_path_with_env (file6);
         datatools::properties::read_config (file6, config6);
         sf6.initialize (config6);
         sf6.dump ();
-        if (sf6.has_filename ("${DATATOOLS_DATA_DIR}/testing/test_smart_filename.cxx"))
+        if (sf6.has_filename ("${DATATOOLS_TESTING_DIR}/test_smart_filename.cxx"))
           {
-            clog << "Has filename '" << "${DATATOOLS_DATA_DIR}/testing/test_smart_filename.cxx" << "'." << endl;
+            clog << "Has filename '" << "${DATATOOLS_TESTING_DIR}/test_smart_filename.cxx" << "'." << endl;
           }
       }
 
@@ -171,7 +171,7 @@ int main (int argc_, char ** argv_)
         cout << endl << "*** Smart filename (from config file) : " << endl;
         datatools::smart_filename sf7;
         datatools::properties config7;
-        string file7 = "${DATATOOLS_DATA_DIR}/testing/config/test_smart_filename_2.conf";
+        string file7 = "${DATATOOLS_TESTING_DIR}/config/test_smart_filename_2.conf";
         datatools::fetch_path_with_env (file7);
         datatools::properties::read_config (file7, config7);
         sf7.initialize (config7);
@@ -190,7 +190,7 @@ int main (int argc_, char ** argv_)
         cout << endl << "*** Smart filename (from config file) : " << endl;
         datatools::smart_filename sf8;
         datatools::properties config8;
-        string file8 = "${DATATOOLS_DATA_DIR}/testing/config/test_smart_filename_3.conf";
+        string file8 = "${DATATOOLS_TESTING_DIR}/config/test_smart_filename_3.conf";
         datatools::fetch_path_with_env (file8);
         datatools::properties::read_config (file8, config8);
         sf8.initialize (config8);
@@ -205,7 +205,7 @@ int main (int argc_, char ** argv_)
         cout << endl << "*** Smart filename (from config file) : " << endl;
         datatools::smart_filename sf9;
         datatools::properties config9;
-        string file9 = "${DATATOOLS_DATA_DIR}/testing/config/test_smart_filename_4.conf";
+        string file9 = "${DATATOOLS_TESTING_DIR}/config/test_smart_filename_4.conf";
         datatools::fetch_path_with_env (file9);
         datatools::properties::read_config (file9, config9);
         sf9.initialize (config9);
@@ -236,7 +236,7 @@ int main (int argc_, char ** argv_)
         cout << endl << "*** Smart filename (from config file) : " << endl;
         datatools::smart_filename sf10;
         datatools::properties config10;
-        string file10 = "${DATATOOLS_DATA_DIR}/testing/config/test_smart_filename_5.conf";
+        string file10 = "${DATATOOLS_TESTING_DIR}/config/test_smart_filename_5.conf";
         datatools::fetch_path_with_env (file10);
         datatools::properties::read_config (file10, config10);
         sf10.initialize (config10);
@@ -258,17 +258,17 @@ int main (int argc_, char ** argv_)
       {
         cout << endl << "*** Unranged incremental filename : " << endl;
         datatools::smart_filename sf11;
-        
-        datatools::smart_filename::make_unranged_incremental (sf11, 
+
+        datatools::smart_filename::make_unranged_incremental (sf11,
                                                    "/tmp/${USER}",
                                                    "head_",
                                                    ".data",
                                                    0,
-                                                   +1, 
+                                                   +1,
                                                    "_tail",
-                                                   4, 
+                                                   4,
                                                    true);
-        
+
         sf11.dump ();
         for (int i = 0; i < 25; ++i)
           {
@@ -288,12 +288,12 @@ int main (int argc_, char ** argv_)
     }
   catch (exception & x)
     {
-      cerr << "error: " << x.what () << endl; 
+      cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);

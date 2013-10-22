@@ -46,7 +46,7 @@ void test_path_manipulation()
     wordexp_t p;
     char **w;
     int i;
-    wordexp(DATATOOLS_DATA_INSTALL_DIR"/testing/test_[a-c]*.cxx", &p, 0);
+    wordexp("${HOME}/testing/test_[a-c]*.cxx", &p, 0);
     w = p.we_wordv;
     for (i = 0; i < p.we_wordc; i++)
       std::clog << w[i] << '\n';

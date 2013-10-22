@@ -59,30 +59,13 @@ int main (int argc_ , char ** argv_)
           libname = "crypto"; // or "curses" ...
         }
 
-      string LL_config = "${DATATOOLS_DATA_DIR}/testing/config/test_library_loader.conf";
+      string LL_config = "${DATATOOLS_TESTING_DIR}/config/test_library_loader.conf";
       uint32_t LL_flags = datatools::library_loader::allow_unregistered;
       datatools::library_loader LL (LL_flags, LL_config);
       datatools::library_loader LL2 (LL_flags, LL_config);
 
       clog << " Loading 'ssl'..." << endl;
       LL.load ("ssl");
-
-      //clog << " Loading 'datatools_reflection'..." << endl;
-      //LL.load ("datatools_reflection");
-
-      // 2013-07-16: Not existing anymore (btw library_loader perfectly handles
-      // the non existence of such library)
-      // clog << " Loading 'datatools_bio'..." << endl;
-      // LL.load ("datatools_bio");
-
-      // clog << " Loading 'mygsl_bio'..." << endl;
-      // LL.load ("mygsl_bio");
-
-      // clog << "Loading 'mygsl'..." << endl;
-      // LL.load ("mygsl");
-
-      // clog << "Loading 'geomtools'..." << endl;
-      // LL.load ("geomtools");
 
       clog << "Loading '" << libname << "'..." << endl;
       LL.load (libname);
@@ -93,22 +76,11 @@ int main (int argc_ , char ** argv_)
       clog << "Closing '" << libname << "'..." << endl;
       LL.close (libname);
 
-      //clog << "Loading 'geomtools' (2)..." << endl;
-      //LL2.load ("geomtools");
-
       LL2.print (clog);
 
       clog << "Closing all..." << endl;
       LL.close_all ();
 
-      //clog << "Closing 'geomtools'..." << endl;
-      //library_loader::get_library_loader ().close ("geomtools");
-
-      //clog << "Closing 'mygsl'..." << endl;
-      //library_loader::get_library_loader ().close ("mygsl");
-
-      //clog << "Closing 'ssl'..." << endl;
-      //library_loader::get_library_loader ().close ("ssl");
       clog << "Closing all (2)..." << endl;
       LL2.close_all ();
 

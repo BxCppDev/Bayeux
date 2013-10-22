@@ -1,5 +1,5 @@
-#!/usr/bin/env bash 
-# -*- mode: shell-script; -*- 
+#!/usr/bin/env bash
+# -*- mode: shell-script; -*-
 # testDriver.bash
 
 APPNAME="datatools/testDriver"
@@ -12,8 +12,8 @@ function my_exit ()
   exit $1
 }
 
-appname=${APPNAME} 
-appversion=0.1 
+appname=${APPNAME}
+appversion=0.1
 the_base_dir=$(pwd)
 debug=0
 
@@ -29,7 +29,7 @@ function print_usage ()
 
   Options:
 
-    -h 
+    -h
     --help    : print this help then exit
 
     --version  : print version then exit
@@ -40,7 +40,6 @@ EOF
 
 tmp_test_dir=/tmp/${USER}/datatools/test
 prefix_test_dir=
-data_test_dir=
 exe_test=
 
 #######################################################
@@ -69,9 +68,6 @@ while [ -n "$1" ]; do
     elif [ "${opt}" = "--tmp-dir" ]; then
       shift 1
       tmp_test_dir="$1"
-    elif [ "${opt}" = "--data-dir" ]; then
-      shift 1
-      data_test_dir="$1"
     elif [ "${opt}" = "--exe" ]; then
       shift 1
       exe_test="$1"
@@ -84,9 +80,9 @@ while [ -n "$1" ]; do
     parse_switch=0
     if [ "x${the_action_mode}" = "x" ]; then
       if [ "$arg" = "run" ]; then
-        the_action_mode="${arg}"	
+        the_action_mode="${arg}"
       elif [ "$arg" = "clean" ]; then
-        the_action_mode="${arg}"	
+        the_action_mode="${arg}"
       else
         echo "ERROR: ${appname}: Invalid argument '${arg}' !" >&2
         my_exit 1
@@ -98,12 +94,11 @@ while [ -n "$1" ]; do
   shift 1
 done
 
-if [ ${debug} -ne 0 ]; then  
+if [ ${debug} -ne 0 ]; then
   echo "DEBUG: ${appname}: the_action_mode=${the_action_mode}" >&2
   echo "DEBUG: ${appname}: tmp_test_dir=${tmp_test_dir}" >&2
   echo "DEBUG: ${appname}: exe_test=${exe_test}" >&2
   echo "DEBUG: ${appname}: prefix_test_dir=${prefix_test_dir}" >&2
-  echo "DEBUG: ${appname}: data_test_dir=${data_test_dir}" >&2
 fi
 
 ##########################################################
@@ -169,18 +164,15 @@ function do_run ()
     echo "ERROR: ${appname}: Missing prefix_test_dir !"
     return 1
   fi
+  export DATATOOLS_TESTING_DIR=${prefix_test_dir}/testing
 
-  if [ "x${data_test_dir}" != "x" ]; then
-    export DATATOOLS_DATA_DIR=${data_test_dir}
-  fi
-
-  if [ "x${DATATOOLS_DATA_DIR}" = "x" ]; then
-    echo "ERROR: ${appname}: Missing DATATOOLS_DATA_DIR environment variable !" >&2
+  if [ "x${DATATOOLS_TESTING_DIR}" = "x" ]; then
+    echo "ERROR: ${appname}: Missing DATATOOLS_TESTING_DIR environment variable !" >&2
     return 1
   fi
 
-  if [ ! -d ${DATATOOLS_DATA_DIR} ]; then
-    echo "ERROR: ${appname}: Directory '${DATATOOLS_DATA_DIR}' does not exists !" >&2
+  if [ ! -d ${DATATOOLS_TESTING_DIR} ]; then
+    echo "ERROR: ${appname}: Directory '${DATATOOLS_TESTING_DIR}' does not exists !" >&2
     return 1
   fi
 
@@ -195,7 +187,7 @@ function do_run ()
 
   ****************************************************
   datatool test log file :
-  '${exe_test}' 
+  '${exe_test}'
   ****************************************************
 EOF
 
@@ -209,27 +201,27 @@ EOF
     echo "exec name arg1 arg2" | ${bin} >> ${tmp_test_dir}/tests.log 2>&1
     if [ $? -ne 0 ]; then
       return 1
-    fi 
+    fi
   elif [ "${exe}" = "test_event_id" ]; then
     echo "9_666" | ${bin} >> ${tmp_test_dir}/tests.log 2>&1
     if [ $? -ne 0 ]; then
       return 1
-    fi 
+    fi
   elif [ "${exe}" = "test_ioutils" ]; then
     echo "3.14" | ${bin} >> ${tmp_test_dir}/tests.log 2>&1
     if [ $? -ne 0 ]; then
       return 1
-    fi 
+    fi
   elif [ "${exe}" = "test_properties" ]; then
     echo \"my\" \"favorite\" \"color\" \"is\" \"blue\" | ${bin} >> ${tmp_test_dir}/tests.log 2>&1
     if [ $? -ne 0 ]; then
       return 1
-    fi 
+    fi
   else
     ${bin} >> ${tmp_test_dir}/tests.log 2>&1
     if [ $? -ne 0 ]; then
       return 1
-    fi 
+    fi
   fi
 
   cd ${opwd}
@@ -248,7 +240,7 @@ function main ()
     return 1
   fi
 
-  # Perform action...    
+  # Perform action...
   if [ "${action_mode}" = "run" ]; then
     if [ "x${exe_test}" = "x" ]; then
       echo "ERROR: ${appname}: Missing executable name !" >&2
@@ -273,7 +265,7 @@ function main ()
 
 ##########################################################
 
-main 
+main
 if [ $? -ne 0 ]; then
   echo "ERROR: ${appname}: Failure !" >&2
   my_exit 1

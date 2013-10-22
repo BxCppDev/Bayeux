@@ -1,6 +1,6 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 // test_OCD.cxx
- 
+
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -43,13 +43,13 @@ struct foo {
         throw std::logic_error("foo::initialize: Missing '"+debug_level_key+"' property!");
       }
       debug_level = config_.fetch_integer(debug_level_key);
-    } 
+    }
 
     // Parse mandatory 'name' :
     const std::string name_key = "name";
     if (config_.has_key(name_key)) {
       name = config_.fetch_string(name_key);
-    } 
+    }
     else {
       throw std::logic_error("foo::initialize: Missing '"+name_key+"' property!");
     }
@@ -58,26 +58,26 @@ struct foo {
     const std::string what_key = "what";
     if (config_.has_key(what_key)) {
       what = config_.fetch_string(what_key);
-    } 
+    }
 
     // Parse 'what' :
     const std::string tmpfile_key = "tmpfile";
     if (config_.has_key(tmpfile_key)) {
       tmpfile = config_.fetch_path(tmpfile_key);
-    } 
+    }
 
     // Parse 'width' :
     const std::string width_key = "width";
     if (config_.has_key(width_key)) {
       width = config_.fetch_real(width_key);
       width *= length_unit;
-    } 
+    }
 
     // Parse 'weight' :
     const std::string weight_key = "weight";
     if (config_.has_key(weight_key)) {
       weight = config_.fetch_real(weight_key);
-    } 
+    }
 
     // Parse 'labels' :
     const std::string labels_key = "labels";
@@ -87,28 +87,28 @@ struct foo {
       config_.fetch(labels_key, labels);
       // Parse dependees of the 'labels' property :
       for (int i = 0; i < labels.size() ; i++) {
-        std::string value_key = "objects." + labels[i] + ".value"; 
+        std::string value_key = "objects." + labels[i] + ".value";
         if (! config_.has_key(value_key)) {
           throw std::logic_error("foo::initialize: Missing '"+value_key+"' property!");
-        } 
+        }
         std::pair<int,std::string> entry;
         entry.first = config_.fetch_integer(value_key);
-        entry.second = "white"; 
-        std::string color_key = "objects." + labels[i] + ".color"; 
+        entry.second = "white";
+        std::string color_key = "objects." + labels[i] + ".color";
         if (config_.has_key(color_key)) {
-          entry.second = config_.fetch_string(color_key);         
-        } 
+          entry.second = config_.fetch_string(color_key);
+        }
         dict[labels[i]] = entry;
-      }    
-    } 
+      }
+    }
 
     // Rather complex triggering conditions for the 'dummy" property :
     if (! name.empty() && name[0] == '_' && dict.size() >= 2) {
       const std::string dummy_key = "dummy";
       if (! config_.has_key(dummy_key)) {
         throw std::logic_error("foo::initialize: Missing '"+dummy_key+"' property!");
-      } 
-      dummy = config_.fetch_integer(dummy_key);     
+      }
+      dummy = config_.fetch_integer(dummy_key);
     }
 
     // Parse mandatory 'secret' :
@@ -120,7 +120,7 @@ struct foo {
         std::cerr << "DEVEL: foo::initialize: "
                   << "You have found my secret !" << std::endl;
       }
-    } 
+    }
 
     initialized = true;
   }
@@ -147,7 +147,7 @@ struct foo {
     out_ << "|-- Tmpfile : '" << tmpfile << "'" << std::endl;
     out_ << "|-- Dict : " << std::endl;
     for (std::map<std::string, std::pair<int,std::string> >::const_iterator i
-           = dict.begin(); 
+           = dict.begin();
          i != dict.end();
          i++) {
       out_ << "|   ";
@@ -155,14 +155,14 @@ struct foo {
       j++;
       if (j == dict.end()) out_ << "`-- ";
       else out_ << "|-- ";
-      out_ << i->first << " : {" << i->second.first 
+      out_ << i->first << " : {" << i->second.first
            << ";" << i->second.second << "}" << std::endl;
     }
     out_ << "|-- Dummy : " <<dummy << " " << std::endl;
     out_ << "|-- Width : " << width / CLHEP::mm << " mm" << std::endl;
-    out_ << "`-- Weight : " 
-         << weight / datatools::units::get_unit(datatools::units::get_default_unit_symbol_from_label("mass")) 
-         << " " << datatools::units::get_default_unit_symbol_from_label("mass") 
+    out_ << "`-- Weight : "
+         << weight / datatools::units::get_unit(datatools::units::get_default_unit_symbol_from_label("mass"))
+         << " " << datatools::units::get_default_unit_symbol_from_label("mass")
          << std::endl;
  }
 
@@ -202,21 +202,21 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
 {
   ocd_.set_class_name ("foo");
   ocd_.set_class_description ("A foo class");
-  
+
   {
-    datatools::configuration_property_description & cpd 
+    datatools::configuration_property_description & cpd
       = ocd_.add_property_info();
     cpd.set_name_pattern("debug")
       .set_terse_description("Flag to activate debugging output")
       .set_traits(datatools::TYPE_BOOLEAN)
-      .set_mandatory(false) 
+      .set_mandatory(false)
       .set_long_description("The allowed values are 0 (false) or 1 (true). \n"
                             )
-      ;    
+      ;
   }
- 
+
   {
-    datatools::configuration_property_description & cpd 
+    datatools::configuration_property_description & cpd
       = ocd_.add_property_info();
     cpd.set_name_pattern("debug.level")
       .set_terse_description("The debugging level")
@@ -227,11 +227,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
                             "to 10 (maximal debugging output).                \n"
                             "It is mandatory if 'debug' flag property is set. \n"
                             )
-      ;    
+      ;
   }
-  
+
   {
-    datatools::configuration_property_description & cpd 
+    datatools::configuration_property_description & cpd
       = ocd_.add_property_info();
     cpd.set_name_pattern("name")
       .set_terse_description("The name of the foo object")
@@ -243,9 +243,9 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
                             )
       ;
   }
-  
+
   {
-    datatools::configuration_property_description & cpd 
+    datatools::configuration_property_description & cpd
       = ocd_.add_property_info();
     cpd.set_name_pattern("what")
       .set_terse_description("The foo object's embeded description string")
@@ -256,10 +256,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
                             "It may spread over several lines.              \n"
                             )
       ;
-  }  
- 
+  }
+
   {
-    datatools::configuration_property_description & cpd 
+    datatools::configuration_property_description & cpd
       = ocd_.add_property_info();
     cpd.set_name_pattern("tmpfile")
       .set_terse_description("Some file path associated to the foo object")
@@ -270,8 +270,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_long_description("A valid filesystem path to a file. \n"
                             )
       ;
-  }  
-  
+  }
+
   {
     datatools::configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("width")
@@ -282,8 +282,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
                             "implicit length unit.                       \n"
                             )
       ;
-  } 
-  
+  }
+
   {
     datatools::configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("weight")
@@ -296,21 +296,21 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_explicit_unit(true)
       .set_unit_label("length")
       ;
-  }  
-    
+  }
+
   {
     datatools::configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("labels")
       .set_terse_description("A list of labels")
-      .set_traits(datatools::TYPE_STRING, 
+      .set_traits(datatools::TYPE_STRING,
                   configuration_property_description::ARRAY)
       .set_mandatory(false)
       .set_long_description("A list of string labels representing external objects      \n"
                             "addressed through their name from an external dictionnary. \n"
                             )
     ;
-  }  
- 
+  }
+
   {
     datatools::configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("objects.${labels}.value")
@@ -321,7 +321,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
                             "vector of properties.                               \n"
                             )
    ;
-  }  
+  }
 
   {
     datatools::configuration_property_description & cpd = ocd_.add_property_info();
@@ -333,7 +333,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
                             "of string properties. If unspecified, a default color is used. \n"
                             )
    ;
-  }  
+  }
 
   {
     datatools::configuration_property_description & cpd = ocd_.add_property_info();
@@ -345,7 +345,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
                             "rather complex conditions (RTFM!).               \n"
                            )
       ;
-  }  
+  }
 
   {
     datatools::configuration_property_description & cpd = ocd_.add_property_info();
@@ -357,11 +357,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
                             "Use it at your own risk !                      \n"
                            )
       ;
-  }  
+  }
 
-  ocd_.set_configuration_hints("Nothing special.\n"); 
-  ocd_.set_validation_support(true); 
-  ocd_.lock(); 
+  ocd_.set_configuration_hints("Nothing special.\n");
+  ocd_.set_validation_support(true);
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
@@ -374,8 +374,8 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for the 'OCD' tools." << endl; 
-  
+      clog << "Test program for the 'OCD' tools." << endl;
+
       bool debug = false;
       bool verbose = false;
 
@@ -384,50 +384,50 @@ int main (int argc_, char ** argv_)
         {
           string token = argv_[iarg];
 
-          if (token[0] == '-') 
+          if (token[0] == '-')
             {
-              string option = token; 
-              if ((option == "-d") || (option == "--debug")) 
+              string option = token;
+              if ((option == "-d") || (option == "--debug"))
                 {
                   debug = true;
                 }
-              else if ((option == "-v") || (option == "--verbose")) 
+              else if ((option == "-v") || (option == "--verbose"))
                 {
                   verbose = true;
                 }
-              else 
-                { 
-                  clog << "warning: ignoring option '" << option << "'!" << endl; 
+              else
+                {
+                  clog << "warning: ignoring option '" << option << "'!" << endl;
                 }
             }
           else
             {
-              string argument = token; 
-              { 
-                clog << "warning: ignoring argument '" << argument << "'!" << endl; 
+              string argument = token;
+              {
+                clog << "warning: ignoring argument '" << argument << "'!" << endl;
               }
-            } 
-          iarg++; 
+            }
+          iarg++;
         }
 
       {
         clog << endl;
         datatools::object_configuration_description OCD;
         if (! datatools::load_ocd<datatools::properties>(OCD)) {
-          clog << "No OCD support for the 'datatools::properties' class." << endl;        
+          clog << "No OCD support for the 'datatools::properties' class." << endl;
         }
       }
- 
+
       {
         clog << endl;
         datatools::object_configuration_description OCD;
         if (datatools::load_ocd<foo>(OCD)) {
-          clog << "Found OCD support for the 'foo' class." << endl;        
+          clog << "Found OCD support for the 'foo' class." << endl;
           OCD.print(std::clog, "*** ");
           OCD.dump(std::clog, "OCD: ");
-          
-          std::string foo_config_file 
-            = "${DATATOOLS_DATA_DIR}/testing/config/test_OCD_foo.conf";
+
+          std::string foo_config_file
+            = "${DATATOOLS_TESTING_DIR}/config/test_OCD_foo.conf";
           datatools::fetch_path_with_env(foo_config_file);
           datatools::properties foo_config;
           datatools::properties::read_config(foo_config_file, foo_config);
@@ -438,10 +438,10 @@ int main (int argc_, char ** argv_)
               std::clog << "The property file '" << foo_config_file << "' is valid !\n";
             }
             else {
-              std::clog << "The property file '" << foo_config_file 
+              std::clog << "The property file '" << foo_config_file
                         << "' does not conform the OCD rules ! ";
               std::clog << "Message is : " << message << "\n";
-            }          
+            }
           }
           foo f;
           f.initialize(foo_config);
@@ -451,18 +451,18 @@ int main (int argc_, char ** argv_)
           OCD.generate_sample_configuration(fscf, "the configuration of a 'foo' test object");
         }
       }
- 
+
       {
         clog << endl;
         datatools::object_configuration_description OCD;
         if (datatools::load_ocd<datatools::service_manager>(OCD)) {
-          clog << "Found OCD support for the 'datatools::service_manager' class." << endl;        
+          clog << "Found OCD support for the 'datatools::service_manager' class." << endl;
           OCD.print(std::clog, "=== ");
           std::ofstream fscf ("test_OCD_SM.sample.conf");
           OCD.generate_sample_configuration(fscf, "the configuration of a 'datatools::service_manager' object");
         }
       }
- 
+
       // Print the list of class ID with OCD system support :
       DOCD_GET_SYSTEM_REGISTRATION().smart_dump(std::clog, "The OCD system registration : ");
 
@@ -471,21 +471,21 @@ int main (int argc_, char ** argv_)
       OCDreg.smart_dump(std::clog, "An OCD registration : ");
 
       if (OCDreg.has_id("foo")) {
-        clog << "Class 'foo' has OCD support." << endl;   
+        clog << "Class 'foo' has OCD support." << endl;
         const datatools::object_configuration_description & foo_OCD = OCDreg.get("foo");
         foo_OCD.dump(std::clog, "foo OCD: ");
       }
-       
+
       clog << "The end." << endl;
     }
   catch (exception & x)
-    { 
-      cerr << "error: " << x.what () << endl; 
+    {
+      cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error !" << endl; 
+      cerr << "error: " << "unexpected error !" << endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);

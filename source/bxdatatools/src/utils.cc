@@ -233,7 +233,6 @@ fetch_path_processor::fetch_path_processor(std::string parent_path_,
   _use_kernel_libinfo_ = use_kernel_libinfo_;
 }
 
-
 bool fetch_path_processor::process(std::string& path) {
   try {
     this->process_impl(path);
@@ -257,13 +256,13 @@ void fetch_path_processor::process_impl(std::string& path) {
   if (text[0] == '@') {
     DT_THROW_IF(! datatools::kernel::is_instantiated(),
                 std::runtime_error,
-                "The datatools kernel has not been instantiated within this session !"
+                "The datatools kernel has not been instantiated !"
                 << "No support for '@foo:bar.txt' syntax !");
     const datatools::kernel & dtk = datatools::kernel::instance();
     DT_THROW_IF(! dtk.has_library_info_register(),
                 std::runtime_error,
-                "The datatools kernel library info register has not been activated in this session !"
-                << "No support for '@foo:bar.txt' syntax !");
+                "The datatools kernel library info register has not been activated !"
+                << "No support for '@foo:bar/blah.txt' syntax !");
     const datatools::library_info & lib_info_reg =
       datatools::kernel::instance().get_library_info_register();
     int pos = text.find(':');
@@ -282,12 +281,33 @@ void fetch_path_processor::process_impl(std::string& path) {
     if (trace) {
       lib_info_reg.print(library_name, std::cerr);
       DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
-                   "INSTALL_RESOURCE_DIR = '"
+                   "INSTALL_RESOURCE_DIR key is = '"
                    << datatools::library_info::keys::install_resource_dir() << "'");
     }
+
     const datatools::properties & lib_infos = lib_info_reg.get(library_name);
-    if (lib_infos.has_key(datatools::library_info::keys::install_resource_dir())) {
-      boost::filesystem::path resource_dir = lib_infos.fetch_string(datatools::library_info::keys::install_resource_dir());
+
+    // Search for resource directory path from the register:
+    std::string resource_dir_str;
+
+    // From the registered environment variable name (if any):
+    if (resource_dir_str.empty() && lib_infos.has_key(datatools::library_info::keys::env_resource_dir())) {
+      std::string env_resource_dir = lib_infos.fetch_string(datatools::library_info::keys::env_resource_dir());
+      if (! env_resource_dir.empty()) {
+        const char *env_value = getenv(env_resource_dir.c_str());
+        if (env_value != 0) {
+          resource_dir_str = std::string(env_value);
+        }
+      }
+    }
+
+    // From the registered installation path (if any):
+    if (resource_dir_str.empty() && lib_infos.has_key(datatools::library_info::keys::install_resource_dir())) {
+       resource_dir_str = lib_infos.fetch_string(datatools::library_info::keys::install_resource_dir());
+    }
+
+    if (! resource_dir_str.empty()) {
+      boost::filesystem::path resource_dir = resource_dir_str;
       if (trace) {
         DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
                      "Resource installation path for library '" << library_name
@@ -489,4 +509,3 @@ void split_string(const std::string& text, const std::string& separators,
 }
 
 } // namespace datatools
-

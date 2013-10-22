@@ -21,7 +21,7 @@ function do_datatools_print_info ()
 	echo "${indent}DATATOOLS_DOC_DIR             = '${DATATOOLS_DOC_DIR}'"
 	echo "${indent}DATATOOLS_INCLUDE_DIR         = '${DATATOOLS_INCLUDE_DIR}'"
 	echo "${indent}DATATOOLS_CMAKE_CONFIG_DIR    = '${DATATOOLS_CMAKE_CONFIG_DIR}'" 1>&2
-	echo "${indent}DATATOOLS_DATA_DIR            = '${DATATOOLS_DATA_DIR}'" 1>&2
+	echo "${indent}DATATOOLS_RESOURCE_DIR        = '${DATATOOLS_RESOURCE_DIR}'" 1>&2
     else
 	echo "${indent}datatools is not setup." 1>&2
     fi
@@ -50,38 +50,6 @@ function do_datatools_setup ()
 	return 2
     fi
 
-    # if [ "x@DATATOOLS_WITH_REFLECTION@" = "x1" ]; then
-    # 	which camp-config >/dev/null 2>&1
-    # 	if [ $? -ne 0 ]; then
-    # 	    echo "ERROR: do_datatools_setup: Cannot find CAMP setup ! Abort !" 1>&2
-    # 	    return 1
-    # 	else
-    # 	    if [ ${verbose} -ne 0 ]; then
-    # 		echo "VERBOSE: do_datatools_setup: Found CAMP." 1>&2
-    # 	    fi
-    # 	fi
-    # fi
-
-    # which clhep-config >/dev/null 2>&1
-    # if [ $? -ne 0 ]; then
-    # 	echo "ERROR: do_datatools_setup: Cannot find CLHEP setup ! Abort !" 1>&2
-    # 	return 1
-    # else
-    # 	if [ ${verbose} -ne 0 ]; then
-    # 	    echo "VERBOSE: do_datatools_setup: Found CLHEP." 1>&2
-    # 	fi
-    # fi
-
-    # which boost-config >/dev/null 2>&1
-    # if [ $? -ne 0 ]; then
-    # 	echo "ERROR: do_datatools_setup: Cannot find Boost setup ! Abort !" 1>&2
-    # 	return 1
-    # else
-    # 	if [ ${verbose} -ne 0 ]; then
-    # 	    echo "VERBOSE: do_datatools_setup: Found Boost." 1>&2
-    # 	fi
-    # fi
-
     export DATATOOLS_ROOT="@CMAKE_INSTALL_PREFIX@"
     export DATATOOLS_ROOT_DIR="@CMAKE_INSTALL_PREFIX@"
     export DATATOOLS_NAME="@PROJECT_NAME@"
@@ -91,7 +59,7 @@ function do_datatools_setup ()
     export DATATOOLS_LIB_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@"
     export DATATOOLS_DOC_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DOCDIR@"
     export DATATOOLS_INCLUDE_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_INCLUDEDIR@"
-    export DATATOOLS_DATA_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
+    export DATATOOLS_RESOURCE_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/resources"
     export DATATOOLS_WITH_BIO=@DATATOOLS_WITH_BIO@
     export DATATOOLS_WITH_REFLECTION=@DATATOOLS_WITH_REFLECTION@
     export DATATOOLS_CMAKE_CONFIG_DIR="@CMAKE_INSTALL_PREFIX@/@_datatools_cmake_config_install_dir@"
