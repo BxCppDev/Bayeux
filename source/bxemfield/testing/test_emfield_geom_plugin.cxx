@@ -82,13 +82,13 @@ int main (int argc_, char ** argv_)
     geo_manager.tree_dump(std::clog, "The geometry manager (uninitialized) : ");
     if (debug) geo_manager.set_logging_priority (datatools::logger::PRIO_DEBUG);
 
-    std::string mag_field_plugin_file="${EMFIELD_DATA_DIR}/testing/config/test_emfield_geom_plugin.conf";
+    std::string mag_field_plugin_file="${EMFIELD_TESTING_DIR}/config/test_emfield_geom_plugin.conf";
     datatools::fetch_path_with_env(mag_field_plugin_file);
     datatools::multi_properties mag_field_plugins_setup;
     mag_field_plugins_setup.read(mag_field_plugin_file);
 
     datatools::properties gm_setup;
-    std::string gm_filename = "${EMFIELD_DATA_DIR}/testing/config/geometry/test_manager.conf";
+    std::string gm_filename = "${EMFIELD_TESTING_DIR}/config/geometry/test_manager.conf";
     datatools::fetch_path_with_env(gm_filename);
     datatools::properties::read_config(gm_filename, gm_setup);
     geo_manager.initialize (gm_setup);

@@ -52,14 +52,14 @@ set(_emfield_test_additional_options )
 # depends on materials data dir:
 if (DEFINED materials_DATA_DIR
     AND NOT "x${materials_DATA_DIR}" STREQUAL "x" )
-  list (APPEND _emfield_test_additional_options --materials-data-dir ${materials_DATA_DIR} )
+  list (APPEND _emfield_test_additional_options --materials-resource-dir ${materials_DATA_DIR}/resources )
   message ( STATUS "${PROJECT_NAME}: testing: Using option '${_emfield_test_additional_options}'" )
 endif ()
 
 # depends on geomtools data dir:
 if (DEFINED geomtools_DATA_DIR
     AND NOT "x${geomtools_DATA_DIR}" STREQUAL "x" )
-  list (APPEND _emfield_test_additional_options --geomtools-data-dir ${geomtools_DATA_DIR} )
+  list (APPEND _emfield_test_additional_options --geomtools-resource-dir ${geomtools_DATA_DIR}/resources )
   message ( STATUS "${PROJECT_NAME}: testing: Using option '${_emfield_test_additional_options}'" )
 endif ()
 
@@ -80,7 +80,6 @@ foreach(test_program ${emfield_tests_programs_list})
   add_test(NAME ${test_executable}.run
     COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash
     --tmp-dir ${_test_tmp_dir}
-    --data-dir ${PROJECT_SOURCE_DIR}
     --prefix ${PROJECT_SOURCE_DIR}
     --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
     ${_emfield_test_additional_options}

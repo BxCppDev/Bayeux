@@ -232,7 +232,7 @@ material.filled.ref : string = "vacuum"
 build_mode  : string = "datafile"
 
 #@description The polycone coordinates filename
-datafile    : string = "${EMFIELD_DATA_DIR}/testing/config/geometry/pmt_hamamatsu_R5912MOD_polycone.data"
+datafile    : string = "${EMFIELD_TESTING_DIR}/config/geometry/pmt_hamamatsu_R5912MOD_polycone.data"
 
 #@description The visibility hidden flag for the display
 visibility.hidden           : boolean = 0

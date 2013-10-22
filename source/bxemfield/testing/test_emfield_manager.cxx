@@ -94,7 +94,7 @@ int main (int argc_, char ** argv_)
       // This is the service manager :
       datatools::service_manager SRVCmgr;
       datatools::properties SRVCmgrConfig;
-      std::string SRVCmgrConfigFile = "${EMFIELD_DATA_DIR}/testing/config/test_service_manager.conf";
+      std::string SRVCmgrConfigFile = "${EMFIELD_TESTING_DIR}/config/test_service_manager.conf";
       if (debug) clog << datatools::io::debug << "Setup file = "
                       << SRVCmgrConfigFile << endl;
       datatools::fetch_path_with_env(SRVCmgrConfigFile);
@@ -108,7 +108,7 @@ int main (int argc_, char ** argv_)
       emfield::electromagnetic_field_manager EMFmgr;
       EMFmgr.set_debug(debug);
       EMFmgr.set_service_manager (SRVCmgr); // Attach the service manager
-      std::string EMFmgrConfigFile = "${EMFIELD_DATA_DIR}/testing/config/test_manager.conf";
+      std::string EMFmgrConfigFile = "${EMFIELD_TESTING_DIR}/config/test_manager.conf";
       datatools::properties EMFmgrConfig;
       datatools::fetch_path_with_env(EMFmgrConfigFile);
       datatools::properties::read_config(EMFmgrConfigFile, EMFmgrConfig);
