@@ -72,11 +72,11 @@ int main (int argc_, char ** argv_)
       mctools::simulated_data_reader reader;
       if (debug) reader.set_logging_priority(datatools::logger::PRIO_TRACE);
       std::vector<std::string> files;
-      files.push_back("${MCTOOLS_DATA_DIR}/testing/samples/test_simulated_data_0.brio");
-      files.push_back("${MCTOOLS_DATA_DIR}/testing/samples/test_simulated_data_0.xml");
-      files.push_back("${MCTOOLS_DATA_DIR}/testing/samples/test_simulated_data_1.xml");
-      files.push_back("${MCTOOLS_DATA_DIR}/testing/samples/test_simulated_data_1.brio");
-      files.push_back("${MCTOOLS_DATA_DIR}/testing/samples/test_simulated_data_2.xml");
+      files.push_back("${MCTOOLS_TESTING_DIR}/samples/test_simulated_data_0.brio");
+      files.push_back("${MCTOOLS_TESTING_DIR}/samples/test_simulated_data_0.xml");
+      files.push_back("${MCTOOLS_TESTING_DIR}/samples/test_simulated_data_1.xml");
+      files.push_back("${MCTOOLS_TESTING_DIR}/samples/test_simulated_data_1.brio");
+      files.push_back("${MCTOOLS_TESTING_DIR}/samples/test_simulated_data_2.xml");
       reader.initialize(files);
       if (debug) reader.tree_dump(std::cerr, "Reader status: ");
       if (reader.has_run_header()) {

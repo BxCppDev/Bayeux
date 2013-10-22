@@ -23,7 +23,7 @@ function do_mctools_print_info ()
 	echo "${indent}MCTOOLS_DOC_DIR             = '${MCTOOLS_DOC_DIR}'" 1>&2
 	echo "${indent}MCTOOLS_INCLUDE_DIR         = '${MCTOOLS_INCLUDE_DIR}'" 1>&2
 	echo "${indent}MCTOOLS_CMAKE_CONFIG_DIR    = '${MCTOOLS_CMAKE_CONFIG_DIR}'" 1>&2
-	echo "${indent}MCTOOLS_DATA_DIR            = '${MCTOOLS_DATA_DIR}'" 1>&2
+	echo "${indent}MCTOOLS_RESOURCE_DIR        = '${MCTOOLS_RESOURCE_DIR}'" 1>&2
     else
 	echo "${indent}mctools is not setup." 1>&2
     fi
@@ -52,46 +52,6 @@ function do_mctools_setup ()
 	return 2
     fi
 
-    which dpp-config >/dev/null 2>&1
-    if [ $? -ne 0 ]; then
-	echo "ERROR: do_mctools_setup: Cannot find dpp setup ! Abort !" 1>&2
-	return 1
-    else
-	if [ ${verbose} -ne 0 ]; then
-	    echo "VERBOSE: do_mctools_setup: Found dpp." 1>&2
-	fi
-    fi
-
-    which genbb_help-config >/dev/null 2>&1
-    if [ $? -ne 0 ]; then
-	echo "ERROR: do_mctools_setup: Cannot find genbb_help setup ! Abort !" 1>&2
-	return 1
-    else
-	if [ ${verbose} -ne 0 ]; then
-	    echo "VERBOSE: do_mctools_setup: Found genbb_help." 1>&2
-	fi
-    fi
-
-    which genvtx-config >/dev/null 2>&1
-    if [ $? -ne 0 ]; then
-	echo "ERROR: do_mctools_setup: Cannot find genvtx setup ! Abort !" 1>&2
-	return 1
-    else
-	if [ ${verbose} -ne 0 ]; then
-	    echo "VERBOSE: do_mctools_setup: Found genvtx." 1>&2
-	fi
-    fi
-
-    which emfield-config >/dev/null 2>&1
-    if [ $? -ne 0 ]; then
-	echo "ERROR: do_mctools_setup: Cannot find emfield setup ! Abort !" 1>&2
-	return 1
-    else
-	if [ ${verbose} -ne 0 ]; then
-	    echo "VERBOSE: do_mctools_setup: Found emfield." 1>&2
-	fi
-    fi
-
     export MCTOOLS_ROOT="@CMAKE_INSTALL_PREFIX@"
     export MCTOOLS_ROOT_DIR="@CMAKE_INSTALL_PREFIX@"
     export MCTOOLS_NAME="@PROJECT_NAME@"
@@ -101,7 +61,7 @@ function do_mctools_setup ()
     export MCTOOLS_LIB_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@"
     export MCTOOLS_DOC_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DOCDIR@"
     export MCTOOLS_INCLUDE_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_INCLUDEDIR@"
-    export MCTOOLS_DATA_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
+    export MCTOOLS_RESOURCE_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/resources"
     export MCTOOLS_WITH_DEBUG=@MCTOOLS_WITH_DEBUG@
     export MCTOOLS_WITH_BIO=@MCTOOLS_WITH_BIO@
     export MCTOOLS_WITH_REFLECTION=@MCTOOLS_WITH_REFLECTION@

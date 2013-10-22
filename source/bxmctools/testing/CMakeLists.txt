@@ -72,37 +72,37 @@ set(_mctools_test_additional_options )
 # depends on materials data dir:
 if (DEFINED materials_DATA_DIR
     AND NOT "x${materials_DATA_DIR}" STREQUAL "x" )
-  list (APPEND _mctools_test_additional_options --materials-data-dir ${materials_DATA_DIR} )
+  list (APPEND _mctools_test_additional_options --materials-resource-dir ${materials_DATA_DIR}/resources )
   message ( STATUS "${PROJECT_NAME}: testing: Using option '${_mctools_test_additional_options}'" )
 endif ()
 
 # depends on geomtools data dir:
 if (DEFINED geomtools_DATA_DIR
     AND NOT "x${geomtools_DATA_DIR}" STREQUAL "x" )
-  list (APPEND _mctools_test_additional_options --geomtools-data-dir ${geomtools_DATA_DIR} )
+  list (APPEND _mctools_test_additional_options --geomtools-resource-dir ${geomtools_DATA_DIR}/resources )
   message ( STATUS "${PROJECT_NAME}: testing: Using option '${_mctools_test_additional_options}'" )
 endif ()
 
-# depends on genvtx data dir:
-if (DEFINED genvtx_DATA_DIR
-    AND NOT "x${genvtx_DATA_DIR}" STREQUAL "x" )
-  list (APPEND _mctools_test_additional_options --genvtx-data-dir ${genvtx_DATA_DIR} )
-  message ( STATUS "${PROJECT_NAME}: testing: Using option '${_mctools_test_additional_options}'" )
-endif ()
+# # depends on genvtx data dir:
+# if (DEFINED genvtx_DATA_DIR
+#     AND NOT "x${genvtx_DATA_DIR}" STREQUAL "x" )
+#   list (APPEND _mctools_test_additional_options --genvtx-resource-dir ${genvtx_DATA_DIR}/resources )
+#   message ( STATUS "${PROJECT_NAME}: testing: Using option '${_mctools_test_additional_options}'" )
+# endif ()
 
 # depends on genbb_help data dir:
 if (DEFINED genbb_help_DATA_DIR
     AND NOT "x${genbb_help_DATA_DIR}" STREQUAL "x" )
-  list (APPEND _mctools_test_additional_options --genbb_help-data-dir ${genbb_help_DATA_DIR} )
+  list (APPEND _mctools_test_additional_options --genbb_help-resource-dir ${genbb_help_DATA_DIR}/resources )
   message ( STATUS "${PROJECT_NAME}: testing: Using option '${_mctools_test_additional_options}'" )
 endif ()
 
 # depends on emfield data dir:
-if (DEFINED emfield_DATA_DIR
-    AND NOT "x${emfield_DATA_DIR}" STREQUAL "x" )
-  list (APPEND _mctools_test_additional_options --emfield-data-dir ${emfield_DATA_DIR} )
-  message ( STATUS "${PROJECT_NAME}: testing: Using option '${_mctools_test_additional_options}'" )
-endif ()
+# if (DEFINED emfield_DATA_DIR
+#     AND NOT "x${emfield_DATA_DIR}" STREQUAL "x" )
+#   list (APPEND _mctools_test_additional_options --emfield-resource-dir ${emfield_DATA_DIR}/resources )
+#   message ( STATUS "${PROJECT_NAME}: testing: Using option '${_mctools_test_additional_options}'" )
+# endif ()
 
 execute_process(COMMAND cmake -E remove_directory ${_test_tmp_dir} )
 
@@ -156,7 +156,6 @@ foreach(test_program ${mctools_tests_programs_list})
   add_test(NAME ${test_executable}.run
     COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash
     --tmp-dir ${_test_tmp_dir}
-    --data-dir ${PROJECT_SOURCE_DIR}
     --prefix ${PROJECT_SOURCE_DIR}
     --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
     ${_mctools_test_additional_options}

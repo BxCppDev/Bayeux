@@ -102,7 +102,7 @@ int main (int argc_, char ** argv_)
       if (number_of_events < 1) number_of_events = 3;
 
       if (manager_config_filename.empty ()) {
-        manager_config_filename = "${MCTOOLS_DATA_DIR}/testing/config/g4/test-2.0/simulation/manager.conf";
+        manager_config_filename = "${MCTOOLS_TESTING_DIR}/config/g4/test-2.0/simulation/manager.conf";
         clog << datatools::io::warning
              << "Using default configuration file '"
              << manager_config_filename << "' !" << endl;

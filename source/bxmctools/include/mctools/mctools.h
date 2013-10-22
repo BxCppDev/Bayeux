@@ -10,7 +10,7 @@
 #include <datatools/datatools.h>
 #include <mctools/mctools_config.h>
 
-namespace genbb {
+namespace mctools {
 
   void initialize(int argc_ = 0, char * argv_[] = 0);
 

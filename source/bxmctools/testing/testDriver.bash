@@ -40,13 +40,12 @@ EOF
 
 tmp_test_dir=/tmp/${USER}/mctools/test
 prefix_test_dir=
-data_test_dir=
 exe_test=
-geomtools_data_test_dir=
-materials_data_test_dir=
-genvtx_data_test_dir=
-genbb_help_data_test_dir=
-emfield_data_test_dir=
+geomtools_resource_test_dir=
+materials_resource_test_dir=
+#genvtx_resource_test_dir=
+genbb_help_resource_test_dir=
+emfield_resource_test_dir=
 
 #######################################################
 
@@ -71,30 +70,27 @@ while [ -n "$1" ]; do
 	elif [ "${opt}" = "--prefix" ]; then
 	    shift 1
 	    prefix_test_dir="$1"
-	elif [ "${opt}" = "--data-dir" ]; then
-	    shift 1
-	    data_test_dir="$1"
 	elif [ "${opt}" = "--tmp-dir" ]; then
 	    shift 1
 	    tmp_test_dir="$1"
 	elif [ "${opt}" = "--exe" ]; then
 	    shift 1
 	    exe_test="$1"
-        elif [ "${opt}" = "--materials-data-dir" ]; then
+        elif [ "${opt}" = "--materials-resource-dir" ]; then
             shift 1
-            materials_data_test_dir="$1"
-        elif [ "${opt}" = "--geomtools-data-dir" ]; then
+            materials_resource_test_dir="$1"
+        elif [ "${opt}" = "--geomtools-resource-dir" ]; then
             shift 1
-            geomtools_data_test_dir="$1"
-        elif [ "${opt}" = "--genvtx-data-dir" ]; then
+            geomtools_resource_test_dir="$1"
+        # elif [ "${opt}" = "--genvtx-resource-dir" ]; then
+        #     shift 1
+        #     genvtx_resource_test_dir="$1"
+        elif [ "${opt}" = "--genbb_help-resource-dir" ]; then
             shift 1
-            genvtx_data_test_dir="$1"
-        elif [ "${opt}" = "--genbb_help-data-dir" ]; then
+            genbb_help_resource_test_dir="$1"
+        elif [ "${opt}" = "--emfield-resource-dir" ]; then
             shift 1
-            genbb_help_data_test_dir="$1"
-        elif [ "${opt}" = "--emfield-data-dir" ]; then
-            shift 1
-            emfield_data_test_dir="$1"
+            emfield_resource_test_dir="$1"
 	else
 	    echo "ERROR: ${appname}: Invalid option '${opt}' !" >&2
 	    my_exit 1
@@ -123,12 +119,11 @@ if [ ${debug} -ne 0 ]; then
     echo "DEBUG: ${appname}: tmp_test_dir=${tmp_test_dir}" >&2
     echo "DEBUG: ${appname}: exe_test=${exe_test}" >&2
     echo "DEBUG: ${appname}: prefix_test_dir=${prefix_test_dir}" >&2
-    echo "DEBUG: ${appname}: data_test_dir=${data_test_dir}" >&2
-    echo "DEBUG: ${appname}: materials_data_test_dir=${materials_data_test_dir}" >&2
-    echo "DEBUG: ${appname}: geomtools_data_test_dir=${geomtools_data_test_dir}" >&2
-    echo "DEBUG: ${appname}: genvtx_data_test_dir=${genvtx_data_test_dir}" >&2
-    echo "DEBUG: ${appname}: genbb_help_data_test_dir=${genbb_help_data_test_dir}" >&2
-    echo "DEBUG: ${appname}: emfield_data_test_dir=${emfield_data_test_dir}" >&2
+    echo "DEBUG: ${appname}: materials_resource_test_dir=${materials_resource_test_dir}" >&2
+    echo "DEBUG: ${appname}: geomtools_resource_test_dir=${geomtools_resource_test_dir}" >&2
+    #echo "DEBUG: ${appname}: genvtx_resource_test_dir=${genvtx_resource_test_dir}" >&2
+    echo "DEBUG: ${appname}: genbb_help_resource_test_dir=${genbb_help_resource_test_dir}" >&2
+    echo "DEBUG: ${appname}: emfield_resource_test_dir=${emfield_resource_test_dir}" >&2
 fi
 
 ##########################################################
@@ -148,91 +143,91 @@ function do_run ()
 {
     opwd=$(pwd)
 
-    if [ "x${data_test_dir}" != "x" ]; then
-	export MCTOOLS_DATA_DIR=${data_test_dir}
+    if [ "x${prefix_test_dir}" != "x" ]; then
+	export MCTOOLS_TESTING_DIR=${prefix_test_dir}/testing
     fi
 
-    if [ "x${MCTOOLS_DATA_DIR}" = "x" ]; then
-	echo "ERROR: ${appname}: Missing MCTOOLS_DATA_DIR environment variable !"
+    if [ "x${MCTOOLS_TESTING_DIR}" = "x" ]; then
+	echo "ERROR: ${appname}: Missing MCTOOLS_TESTING_DIR environment variable !"
 	return 1
     fi
-    if [ ! -d ${MCTOOLS_DATA_DIR} ]; then
-	echo "ERROR: ${appname}: Directory '${MCTOOLS_DATA_DIR}' does not exists !"
+    if [ ! -d ${MCTOOLS_TESTING_DIR} ]; then
+	echo "ERROR: ${appname}: Directory '${MCTOOLS_TESTING_DIR}' does not exists !"
 	return 1
     fi
 
-    export CONFIG_DIR=${MCTOOLS_DATA_DIR}/testing/config/g4/test-2.0
+    export CONFIG_DIR=${MCTOOLS_TESTING_DIR}/config/g4/test-2.0
 
     ###############################
-    # depends on materials data dir:
-    if [ "x${materials_data_test_dir}" != "x" ]; then
-        export MATERIALS_DATA_DIR=${materials_data_test_dir}
+    # depends on materials resources dir:
+    if [ "x${materials_resource_test_dir}" != "x" ]; then
+        export MATERIALS_RESOURCE_DIR=${materials_resource_test_dir}
     fi
-    if [ "x${MATERIALS_DATA_DIR}" = "x" ]; then
-        echo "ERROR: ${appname}: Missing MATERIALS_DATA_DIR environment variable !" >&2
+    if [ "x${MATERIALS_RESOURCE_DIR}" = "x" ]; then
+        echo "ERROR: ${appname}: Missing MATERIALS_RESOURCE_DIR environment variable !" >&2
         return 1
     fi
-    if [ ! -d ${MATERIALS_DATA_DIR} ]; then
-        echo "ERROR: ${appname}: Directory '${MATERIALS_DATA_DIR}' does not exists !" >&2
+    if [ ! -d ${MATERIALS_RESOURCE_DIR} ]; then
+        echo "ERROR: ${appname}: Directory '${MATERIALS_RESOURCE_DIR}' does not exists !" >&2
         return 1
     fi
-    echo "NOTICE: ${appname}: Directory MATERIALS_DATA_DIR='${MATERIALS_DATA_DIR}'"  >&2
+    echo "NOTICE: ${appname}: Directory MATERIALS_RESOURCE_DIR='${MATERIALS_RESOURCE_DIR}'"  >&2
 
-    # depends on geomtools data dir:
-    if [ "x${geomtools_data_test_dir}" != "x" ]; then
-        export GEOMTOOLS_DATA_DIR=${geomtools_data_test_dir}
+    # depends on geomtools resources dir:
+    if [ "x${geomtools_resource_test_dir}" != "x" ]; then
+        export GEOMTOOLS_RESOURCE_DIR=${geomtools_resource_test_dir}
     fi
-    if [ "x${GEOMTOOLS_DATA_DIR}" = "x" ]; then
-        echo "ERROR: ${appname}: Missing GEOMTOOLS_DATA_DIR environment variable !" >&2
+    if [ "x${GEOMTOOLS_RESOURCE_DIR}" = "x" ]; then
+        echo "ERROR: ${appname}: Missing GEOMTOOLS_RESOURCE_DIR environment variable !" >&2
         return 1
     fi
-    if [ ! -d ${GEOMTOOLS_DATA_DIR} ]; then
-        echo "ERROR: ${appname}: Directory '${GEOMTOOLS_DATA_DIR}' does not exists !" >&2
+    if [ ! -d ${GEOMTOOLS_RESOURCE_DIR} ]; then
+        echo "ERROR: ${appname}: Directory '${GEOMTOOLS_RESOURCE_DIR}' does not exists !" >&2
         return 1
     fi
-    echo "NOTICE: ${appname}: Directory GEOMTOOLS_DATA_DIR='${GEOMTOOLS_DATA_DIR}'"  >&2
+    echo "NOTICE: ${appname}: Directory GEOMTOOLS_RESOURCE_DIR='${GEOMTOOLS_RESOURCE_DIR}'"  >&2
 
-    # depends on genvtx data dir:
-    if [ "x${genvtx_data_test_dir}" != "x" ]; then
-        export GENVTX_DATA_DIR=${genvtx_data_test_dir}
-    fi
-    if [ "x${GENVTX_DATA_DIR}" = "x" ]; then
-        echo "ERROR: ${appname}: Missing GENVTX_DATA_DIR environment variable !" >&2
-        return 1
-    fi
-    if [ ! -d ${GENVTX_DATA_DIR} ]; then
-        echo "ERROR: ${appname}: Directory '${GENVTX_DATA_DIR}' does not exists !" >&2
-        return 1
-    fi
-    echo "NOTICE: ${appname}: Directory GENVTX_DATA_DIR='${GENVTX_DATA_DIR}'"  >&2
-
-    # depends on genbb_help data dir:
-    if [ "x${genbb_help_data_test_dir}" != "x" ]; then
-        export GENBB_HELP_DATA_DIR=${genbb_help_data_test_dir}
-    fi
-    if [ "x${GENBB_HELP_DATA_DIR}" = "x" ]; then
-        echo "ERROR: ${appname}: Missing GENBB_HELP_DATA_DIR environment variable !" >&2
-        return 1
-    fi
-    if [ ! -d ${GENBB_HELP_DATA_DIR} ]; then
-        echo "ERROR: ${appname}: Directory '${GENBB_HELP_DATA_DIR}' does not exists !" >&2
-        return 1
-    fi
-    echo "NOTICE: ${appname}: Directory GENBB_HELP_DATA_DIR='${GENBB_HELP_DATA_DIR}'"  >&2
-
-    # # depends on emfield data dir:
-    # if [ "x${emfield_data_test_dir}" != "x" ]; then
-    #     export EMFIELD_DATA_DIR=${emfield_data_test_dir}
+    # depends on genvtx resources dir:
+    # if [ "x${genvtx_resource_test_dir}" != "x" ]; then
+    #     export GENVTX_RESOURCE_DIR=${genvtx_resource_test_dir}
     # fi
-    # if [ "x${EMFIELD_DATA_DIR}" = "x" ]; then
-    #     echo "ERROR: ${appname}: Missing EMFIELD_DATA_DIR environment variable !" >&2
+    # if [ "x${GENVTX_RESOURCE_DIR}" = "x" ]; then
+    #     echo "ERROR: ${appname}: Missing GENVTX_RESOURCE_DIR environment variable !" >&2
     #     return 1
     # fi
-    # if [ ! -d ${EMFIELD_DATA_DIR} ]; then
-    #     echo "ERROR: ${appname}: Directory '${EMFIELD_DATA_DIR}' does not exists !" >&2
+    # if [ ! -d ${GENVTX_RESOURCE_DIR} ]; then
+    #     echo "ERROR: ${appname}: Directory '${GENVTX_RESOURCE_DIR}' does not exists !" >&2
     #     return 1
     # fi
-    # echo "NOTICE: ${appname}: Directory EMFIELD_DATA_DIR='${EMFIELD_DATA_DIR}'"  >&2
+    # echo "NOTICE: ${appname}: Directory GENVTX_RESOURCE_DIR='${GENVTX_RESOURCE_DIR}'"  >&2
+
+    # depends on genbb_help resources dir:
+    if [ "x${genbb_help_resource_test_dir}" != "x" ]; then
+        export GENBB_HELP_RESOURCE_DIR=${genbb_help_resource_test_dir}
+    fi
+    if [ "x${GENBB_HELP_RESOURCE_DIR}" = "x" ]; then
+        echo "ERROR: ${appname}: Missing GENBB_HELP_RESOURCE_DIR environment variable !" >&2
+        return 1
+    fi
+    if [ ! -d ${GENBB_HELP_RESOURCE_DIR} ]; then
+        echo "ERROR: ${appname}: Directory '${GENBB_HELP_RESOURCE_DIR}' does not exists !" >&2
+        return 1
+    fi
+    echo "NOTICE: ${appname}: Directory GENBB_HELP_RESOURCE_DIR='${GENBB_HELP_RESOURCE_DIR}'"  >&2
+
+    # # depends on emfield resources dir:
+    # if [ "x${emfield_resource_test_dir}" != "x" ]; then
+    #     export EMFIELD_RESOURCE_DIR=${emfield_resource_test_dir}
+    # fi
+    # if [ "x${EMFIELD_RESOURCE_DIR}" = "x" ]; then
+    #     echo "ERROR: ${appname}: Missing EMFIELD_RESOURCE_DIR environment variable !" >&2
+    #     return 1
+    # fi
+    # if [ ! -d ${EMFIELD_RESOURCE_DIR} ]; then
+    #     echo "ERROR: ${appname}: Directory '${EMFIELD_RESOURCE_DIR}' does not exists !" >&2
+    #     return 1
+    # fi
+    # echo "NOTICE: ${appname}: Directory EMFIELD_RESOURCE_DIR='${EMFIELD_RESOURCE_DIR}'"  >&2
 
 
     #############################

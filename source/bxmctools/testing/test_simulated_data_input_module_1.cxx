@@ -62,8 +62,8 @@ int main (int argc_, char ** argv_)
     PSDIMconf.store_flag("SD_bank.overwrite_existing");
     PSDIMconf.store("input.files.mode", "list");
     std::vector<string> filenames;
-    filenames.push_back("${MCTOOLS_DATA_DIR}/testing/samples/test_simulated_data_1.brio");
-    filenames.push_back("${MCTOOLS_DATA_DIR}/testing/samples/test_simulated_data_1.xml");
+    filenames.push_back("${MCTOOLS_TESTING_DIR}/samples/test_simulated_data_1.brio");
+    filenames.push_back("${MCTOOLS_TESTING_DIR}/samples/test_simulated_data_1.xml");
     PSDIMconf.store("input.files.list.filenames", filenames);
     PSDIMconf.store("input.max_files", 100);
     PSDIMconf.store("input.max_record_total", 100000);

@@ -599,19 +599,19 @@ int main (int argc_, char ** argv_)
         {
           if (devel)
             {
-              fname = "${SNCORE_DATA_DIR}/resources/setups/snemo/samples/snemo_SD_0.txt.gz";
+              fname = "${SNCORE_TESTING_DIR}/../resources/setups/snemo/samples/snemo_SD_0.txt.gz";
             }
           else
             {
               //throw logic_error ("Missing input file name !");
-              fname = "${SNCORE_DATA_DIR}/resources/setups/snemo/samples/snemo_SD_0.txt.gz";
+              fname = "${SNCORE_TESTING_DIR}/../resources/setups/snemo/samples/snemo_SD_0.txt.gz";
             }
         }
       clog << datatools::io::notice << "Input file name : '" << fname << "'" <<  endl;
       datatools::fetch_path_with_env (fname);
       if (gmanager_config_file.empty ())
         {
-          gmanager_config_file = "${SNGEOMETRY_DATA_DIR}/resources/setups/snemo/config_1.0/manager.conf";
+          gmanager_config_file = "${SNGEOMETRY_TESTING_DIR}/../resources/setups/snemo/config_1.0/manager.conf";
         }
       datatools::fetch_path_with_env (gmanager_config_file);
       clog << datatools::io::notice << "Geometry manager config. file : '"
