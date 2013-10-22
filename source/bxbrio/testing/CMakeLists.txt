@@ -58,8 +58,6 @@ foreach(test_program ${brio_tests_programs_list})
   endif()
 
   set(_test_libraries brio)
-  #message (STATUS "testing: datatools_WITH_BIO=${datatools_WITH_BIO}")
-  #message (STATUS "testing: datatools_BIO_LIBRARY=${datatools_BIO_LIBRARY}")
 
   target_link_libraries(${test_executable} ${_test_libraries})
 

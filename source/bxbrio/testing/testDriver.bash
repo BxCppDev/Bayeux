@@ -1,19 +1,19 @@
-#!/usr/bin/env bash 
-# -*- mode: shell-script; -*- 
+#!/usr/bin/env bash
+# -*- mode: shell-script; -*-
 # testDriver.bash
 
 APPNAME="brio/testDriver"
 
 opwd=$(pwd)
-	
+
 function my_exit ()
 {
     cd ${opwd}
     exit $1
 }
 
-appname=${APPNAME} 
-appversion=0.1 
+appname=${APPNAME}
+appversion=0.1
 the_base_dir=$(pwd)
 debug=0
 
@@ -29,11 +29,11 @@ function print_usage ()
 
   Options:
 
-    -h 
+    -h
     --help    : print this help then exit
 
     --version  : print version then exit
- 
+
 EOF
     return 0
 }
@@ -80,9 +80,9 @@ while [ -n "$1" ]; do
 	parse_switch=0
 	if [ "x${the_action_mode}" = "x" ]; then
 	    if [ "$arg" = "run" ]; then
-		the_action_mode="${arg}"	
+		the_action_mode="${arg}"
             elif [ "$arg" = "clean" ]; then
-	        the_action_mode="${arg}"	
+	        the_action_mode="${arg}"
 	    else
 		echo "ERROR: ${appname}: Invalid argument '${arg}' !" >&2
 		my_exit 1
@@ -94,7 +94,7 @@ while [ -n "$1" ]; do
     shift 1
 done
 
-if [ ${debug} -ne 0 ]; then  
+if [ ${debug} -ne 0 ]; then
     echo "DEBUG: ${appname}: the_action_mode=${the_action_mode}" >&2
     echo "DEBUG: ${appname}: tmp_test_dir=${tmp_test_dir}" >&2
     echo "DEBUG: ${appname}: exe_test=${exe_test}" >&2
@@ -120,19 +120,21 @@ function do_run ()
 	echo "ERROR: ${appname}: Missing prefix_test_dir !"
 	return 1
     fi
-    
+
+    export BRIO_TESTING_DIR=${prefix_test_dir}/testing
+
     export BRIO_ROOT=${prefix_test_dir}
     echo "NOTICE: ${appname}: First clean the test temporary directory..." >&2
     if [ ! -d ${tmp_test_dir} ]; then
 	mkdir -p ${tmp_test_dir}
     fi
     cd ${tmp_test_dir}
- 
+
     cat >> ${tmp_test_dir}/tests.log<<EOF
 
 ****************************************************
 brio test log file :
-'${exe_test}' 
+'${exe_test}'
 ****************************************************
 EOF
     bin=${exe_test}
@@ -145,12 +147,12 @@ EOF
 	echo "XXX" | ${bin} >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
 	    return 1
-	fi 
+	fi
     else
 	${bin} >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
 	    return 1
-	fi 
+	fi
     fi
 
     cd ${opwd}
@@ -169,7 +171,7 @@ function main ()
 	return 1
     fi
 
-    # Perform action...    
+    # Perform action...
     if [ "${action_mode}" = "run" ]; then
 	if [ "x${exe_test}" = "x" ]; then
 	    echo "ERROR: ${appname}: Missing executable name !" >&2
@@ -181,7 +183,7 @@ function main ()
 	    return 1
 	fi
     fi
-    
+
     if [ "${action_mode}" = "clean" ]; then
     	do_clean $@
     	if [ $? -ne 0 ]; then
@@ -194,7 +196,7 @@ function main ()
 
 ##########################################################
 
-main 
+main
 if [ $? -ne 0 ]; then
     echo "ERROR: ${appname}: Failure !" >&2
     my_exit 1
