@@ -93,9 +93,9 @@ int main (int argc_, char ** argv_)
         // source of event records :
         input_config.store ("files.mode", "incremental");
 #if DPP_DATATOOLS_LEGACY == 1
-        input_config.store ("files.incremental.path", "${DPP_DATA_DIR}/testing/legacy_data");
+        input_config.store ("files.incremental.path", "${DPP_TESTING_DIR}/legacy_data");
 #else
-        input_config.store ("files.incremental.path", "${DPP_DATA_DIR}/testing/data");
+        input_config.store ("files.incremental.path", "${DPP_TESTING_DIR}/data");
 #endif
         input_config.store ("files.incremental.prefix", "data_");
         input_config.store ("files.incremental.extension", "txt.gz");
@@ -215,9 +215,9 @@ int main (int argc_, char ** argv_)
         std::clog << datatools::io::notice
                   << "test_input_module: 'simple_brio_data_source' class example: " << std::endl;
 #if DPP_DATATOOLS_LEGACY == 1
-        dpp::simple_brio_data_source sbds ("${DPP_DATA_DIR}/testing/data/data_0.brio");
+        dpp::simple_brio_data_source sbds ("${DPP_TESTING_DIR}/data/data_0.brio");
 #else
-        dpp::simple_brio_data_source sbds ("${DPP_DATA_DIR}/testing/legacy_data/data_0.brio");
+        dpp::simple_brio_data_source sbds ("${DPP_TESTING_DIR}/legacy_data/data_0.brio");
 #endif
 
         // generic data source interface:

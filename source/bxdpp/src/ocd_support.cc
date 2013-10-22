@@ -100,7 +100,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::dump_module,ocd_)
                             "Example::                                                       \n"
                             "                                                                \n"
                             "    output          : string         = \"file\"                 \n"
-                            "    output.filename : string as path = \"${DATA_DIR}/data.out\" \n"
+                            "    output.filename : string as path = \"${OUTPUT_DIR}/data.out\" \n"
                             "                                                                \n"
                            )
       ;
@@ -118,7 +118,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::dump_module,ocd_)
                                 "    [name=\"dump_file\" type=\"dpp::dump_module\"]                    \n"
                                 "    #@config A dump module                                            \n"
                                 "    output          : string         = \"file\"                       \n"
-                                "    output.filename : string as path = \"${DATA_DIR}/data.out\"       \n"
+                                "    output.filename : string as path = \"${OUTPUT_DIR}/data.out\"       \n"
                                 "                                                                      \n"
                                 "    [name=\"dump_stdout\" type=\"dpp::dump_module\"]                  \n"
                                 "    #@config A dump module                                            \n"
@@ -425,7 +425,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::output_module,ocd_)
                                 "    max_files                    : integer = 5                        \n"
                                 "    max_record_total             : integer = 100000                   \n"
                                 "    files.mode                   : string = \"incremental\"           \n"
-                                "    files.incremental.path       : string = \"${REC_DATA_DIR}\"       \n"
+                                "    files.incremental.path       : string = \"${REC_OUTPUT_DIR}\"       \n"
                                 "    files.incremental.prefix     : string = \"recons_\"               \n"
                                 "    files.incremental.extension  : string = \".data.gz\"              \n"
                                 "    files.incremental.start      : integer = 0                        \n"
@@ -437,7 +437,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::output_module,ocd_)
                                 "    debug                        : boolean = 0                        \n"
                                 "    preserve_existing            : boolean = 1                        \n"
                                 "    files.mode                   : string = \"single\"                \n"
-                                "    files.single.filename        : string = \"${REC_DATA_DIR}/recons_X.xml\" \n"
+                                "    files.single.filename        : string = \"${REC_OUTPUT_DIR}/recons_X.xml\" \n"
                                 "                                                                      \n"
                                 );
 
@@ -476,7 +476,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::input_module,ocd_)
                                 "    max_files                   : integer = 10                        \n"
                                 "    max_record_total            : integer = 100000                    \n"
                                 "    files.mode                  : string = \"incremental\"            \n"
-                                "    files.incremental.path      : string = \"${RAW_DATA_DIR}\"        \n"
+                                "    files.incremental.path      : string = \"${RAW_OUTPUT_DIR}\"        \n"
                                 "    files.incremental.prefix    : string = \"run_\"                   \n"
                                 "    files.incremental.extension : string = \".data.gz\"               \n"
                                 "    files.incremental.start     : integer = 0                         \n"
@@ -487,7 +487,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::input_module,ocd_)
                                 "    #@config An input data processing module                          \n"
                                 "    debug                       : boolean = 0                         \n"
                                 "    files.mode                  : string = \"single\"                 \n"
-                                "    files.single.filename       : string = \"${RAW_DATA_DIR}/run_324.brio\" \n"
+                                "    files.single.filename       : string = \"${RAW_OUTPUT_DIR}/run_324.brio\" \n"
                                 "                                                                      \n"
                                 );
 

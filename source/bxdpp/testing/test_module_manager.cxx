@@ -14,7 +14,7 @@
  *
  *  test_module_manager --debug \
  *    --module "chain1" \
- *    ${DPP_DATA_DIR}/testing/data/data_0.txt.gz \
+ *    ${DPP_TESTING_DIR}/data/data_0.txt.gz \
  *    out.txt.gz
  *
  */
@@ -134,10 +134,10 @@ int main (int argc_, char ** argv_)
       if (io_files.size () < 2)
         {
           //throw std::logic_error ("Missing input source(s) and output sink !");
-          io_files.push_back("${DPP_DATA_DIR}/testing/data/data_0.txt.gz");
-          io_files.push_back("${DPP_DATA_DIR}/testing/data/data_1.txt.gz");
-          io_files.push_back("${DPP_DATA_DIR}/testing/data/data_2.txt.gz");
-          io_files.push_back("${DPP_DATA_DIR}/testing/data/data_3.txt.gz");
+          io_files.push_back("${DPP_TESTING_DIR}/data/data_0.txt.gz");
+          io_files.push_back("${DPP_TESTING_DIR}/data/data_1.txt.gz");
+          io_files.push_back("${DPP_TESTING_DIR}/data/data_2.txt.gz");
+          io_files.push_back("${DPP_TESTING_DIR}/data/data_3.txt.gz");
           io_files.push_back("${DPP_TMP_TEST_DIR}/test_module_manager_out.txt");
 
         }
@@ -157,7 +157,7 @@ int main (int argc_, char ** argv_)
       dpp::module_manager MM (flags);
 
       // load properties from the configuration file:
-      std::string MM_config_file = "${DPP_DATA_DIR}/testing/config/test_module_manager.conf";
+      std::string MM_config_file = "${DPP_TESTING_DIR}/config/test_module_manager.conf";
       if (! mgr_config.empty ())
         {
           MM_config_file = mgr_config;

@@ -13,7 +13,7 @@
  * Usage:
  *
  *  test_module --debug \
- *    ${DPP_DATA_DIR}/testing/data/data_0.txt.gz \
+ *    ${DPP_TESTING_DIR}/data/data_0.txt.gz \
  *    out.txt.gz
  *
  */
@@ -362,7 +362,7 @@ int main (int argc_, char ** argv_)
 
 
       if (input_file.empty()) {
-        input_file = "${DPP_DATA_DIR}/testing/data/data_0.txt.gz";
+        input_file = "${DPP_TESTING_DIR}/data/data_0.txt.gz";
       }
       if (output_file.empty()) {
         output_file = "test_module_out.txt.gz";

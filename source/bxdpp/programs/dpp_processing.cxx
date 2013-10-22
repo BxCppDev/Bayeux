@@ -12,6 +12,9 @@
  *
  */
 
+// This project
+#include <dpp/dpp_config.h>
+
 // Standard library
 #include <cstdlib>
 #include <iostream>
@@ -21,6 +24,11 @@
 // Third party
 // - Boost
 #include <boost/program_options.hpp>
+
+#if DPP_STANDALONE == 0
+// - Bayeux:
+#include <bayeux/bayeux.h>
+#endif // DPP_STANDALONE == 0
 
 // - datatools
 #include <datatools/datatools.h>
@@ -36,28 +44,43 @@
 // This project
 #include <dpp/dpp_driver.h>
 
-/// Print usage
-void print_usage(std::ostream &);
+struct ui {
 
-// Build options
-void build_opts(boost::program_options::options_description &,
-                dpp::dpp_driver_params &);
+  /// Print usage
+  static  void print_usage(std::ostream &);
+
+  // Build options
+  static void build_opts(boost::program_options::options_description &,
+                         dpp::dpp_driver_params &);
+
+  static const std::string APP_NAME;
+
+};
+
+#if DPP_STANDALONE == 0
+const std::string ui::APP_NAME = "dpp_processing";
+#else
+const std::string ui::APP_NAME = "bxdpp_processing";
+#endif
 
 int main (int argc_, char ** argv_)
 {
+#if DPP_STANDALONE == 1
   DATATOOLS_INIT_MAIN(argc_, argv_);
+#else
+  BAYEUX_INIT_MAIN(argc_, argv_);
+#endif // DPP_STANDALONE == 1
 
   int error_code = EXIT_SUCCESS;
   datatools::logger::priority logging = datatools::logger::PRIO_WARNING;
-  const std::string APP_NAME_PREFIX = "dpp_processing: ";
   namespace po = boost::program_options;
   po::options_description opts ("Allowed options");
 
   try {
-    // The dpp_processing data record processing program.
+    // The dpp_driver parameters.
     dpp::dpp_driver_params DP;
     bool run = true;
-    build_opts(opts, DP);
+    ui::build_opts(opts, DP);
 
     po::variables_map vm;
     po::parsed_options parsed =
@@ -66,9 +89,9 @@ int main (int argc_, char ** argv_)
       .allow_unregistered()
       .run();
     /*
-    std::vector<std::string> unrecognized_options
+      std::vector<std::string> unrecognized_options
       = po::collect_unrecognized(parsed.options,
-                                 po::include_positional);
+      po::include_positional);
     */
     po::store(parsed, vm);
     po::notify(vm);
@@ -80,7 +103,7 @@ int main (int argc_, char ** argv_)
                 "Invalid logging priority '" << DP.logging_label << "' !");
 
     if (DP.help) {
-      print_usage(std::cout);
+      ui::print_usage(std::cout);
       run = false;
     }
 
@@ -98,26 +121,30 @@ int main (int argc_, char ** argv_)
 
   }
   catch (std::exception & x) {
-    DT_LOG_FATAL(logging, APP_NAME_PREFIX << x.what ());
+    DT_LOG_FATAL(logging, ui::APP_NAME << ": " << x.what ());
     error_code = EXIT_FAILURE;
   }
   catch (...) {
-    DT_LOG_FATAL(logging, APP_NAME_PREFIX << "Unexpected error !");
+    DT_LOG_FATAL(logging, ui::APP_NAME << ": " << "Unexpected error !");
     error_code = EXIT_FAILURE;
   }
 
+#if DPP_STANDALONE == 1
   DATATOOLS_FINI();
+#else
+  BAYEUX_FINI();
+#endif // DPP_STANDALONE == 1
   return (error_code);
 }
 
 
-void print_usage(std::ostream & out_)
+void ui::print_usage(std::ostream & out_)
 {
-  out_ << "dpp_processing -- A generic data chain processing program" << std::endl;
+  out_ << APP_NAME << " -- A generic data chain processing program" << std::endl;
   out_ << std::endl;
   out_ << "Usage : " << std::endl;
   out_ << std::endl;
-  out_ << "  dpp_processing [OPTIONS] [ARGUMENTS] " << std::endl;
+  out_ << "  " << APP_NAME << " [OPTIONS] [ARGUMENTS] " << std::endl;
   out_ << std::endl;
   boost::program_options::options_description opts("Allowed options");
   dpp::dpp_driver_params dummy;
@@ -134,7 +161,7 @@ void print_usage(std::ostream & out_)
   out_ << std::endl;
   out_ << "  Process the chain of 'my_moduleX' (X=1,2,3) data processing modules from the 'mydllY' libraries (Y=1,2): " << std::endl;
   out_ << std::endl;
-  out_ << "  $ dpp_processing              \\" << std::endl;
+  out_ << "  $ " << APP_NAME << "  \\" << std::endl;
   out_ << "          -c my_module_manager.conf   \\" << std::endl;
   out_ << "          -l my_dll1                  \\" << std::endl;
   out_ << "          -l my_dll2                  \\" << std::endl;
@@ -148,21 +175,21 @@ void print_usage(std::ostream & out_)
   out_ << std::endl;
   out_ << "  Simple use cases : " << std::endl;
   out_ << std::endl;
-  out_ << "  $ dpp_processing   \\" << std::endl;
-  out_ << "          -c ${DPP_DATA_DIR}/testing/config/test_module_manager.conf \\" << std::endl;
-  out_ << "          -i ${DPP_DATA_DIR}/testing/data/data_0.txt.gz     \\" << std::endl;
+  out_ << "  $ " << APP_NAME << "  \\" << std::endl;
+  out_ << "          -c ${DPP_TESTING_DIR}/config/test_module_manager.conf \\" << std::endl;
+  out_ << "          -i ${DPP_TESTING_DIR}/data/data_0.txt.gz     \\" << std::endl;
   out_ << "          -m clear         \\" << std::endl;
   out_ << "          -m chain1        \\" << std::endl;
   out_ << "          -o processed.xml   " << std::endl;
   out_ << std::endl;
-  out_ << "  $ dpp_processing   \\" << std::endl;
-  out_ << "          -c ${DPP_DATA_DIR}/testing/config/test_module_manager.conf \\" << std::endl;
+  out_ << "  $ " << APP_NAME << "   \\" << std::endl;
+  out_ << "          -c ${DPP_TESTING_DIR}/config/test_module_manager.conf \\" << std::endl;
   out_ << "          -M 10            \\" << std::endl;
   out_ << "          -m chain1        \\" << std::endl;
   out_ << "          -m dump_in_file    " << std::endl;
   out_ << std::endl;
-  out_ << "  $ dpp_processing   \\" << std::endl;
-  out_ << "          -c ${DPP_DATA_DIR}/testing/config/test_module_manager.conf \\" << std::endl;
+  out_ << "  $ " << APP_NAME << "    \\" << std::endl;
+  out_ << "          -c ${DPP_TESTING_DIR}/config/test_module_manager.conf \\" << std::endl;
   out_ << "          -M 10            \\" << std::endl;
   out_ << "          -m chain1        \\" << std::endl;
   out_ << "          -o processed.xml   " << std::endl;
@@ -170,8 +197,8 @@ void print_usage(std::ostream & out_)
   return;
 }
 
-void build_opts(boost::program_options::options_description & opts_,
-                dpp::dpp_driver_params & params_)
+void ui::build_opts(boost::program_options::options_description & opts_,
+                    dpp::dpp_driver_params & params_)
 {
   namespace po = boost::program_options;
   opts_.add_options ()
@@ -205,7 +232,7 @@ void build_opts(boost::program_options::options_description & opts_,
      "set the module manager configuration file.")
     ("input-file,i",
      po::value<std::vector<std::string> > (&params_.input_files),
-       "set an input file (optional).")
+     "set an input file (optional).")
     ("output-file,o",
      po::value<std::vector<std::string> > (&params_.output_files),
      "set the output file (optional).")

@@ -5,17 +5,11 @@
 #ifndef DPP_DPP_CONFIG_H_
 #define DPP_DPP_CONFIG_H_ 1
 
+/*** dpp is built standalone or not ***/
+#cmakedefine01 DPP_STANDALONE
+
 /*** dpp debug flag ***/
 #cmakedefine01 DPP_WITH_DEBUG
-
-/*** dpp embedded Boost/Serialization based I/O ***/
-//#cmakedefine01 DPP_WITH_BIO
-
-/*** dpp embedded CAMP-based reflection ***/
-//#cmakedefine01 DPP_WITH_REFLECTION
-
-//! The installation path of the dpp resource files :
-#define DPP_DATA_INSTALL_DIR "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
 
 #endif // DPP_DPP_CONFIG_H_
 

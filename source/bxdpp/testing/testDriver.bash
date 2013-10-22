@@ -40,7 +40,6 @@ EOF
 
 tmp_test_dir=/tmp/${USER}/dpp/test
 prefix_test_dir=
-data_test_dir=
 bin_test_dir=
 lib_test_dir=
 etc_test_dir=
@@ -70,9 +69,6 @@ while [ -n "$1" ]; do
 	elif [ "${opt}" = "--prefix" ]; then
 	    shift 1
 	    prefix_test_dir="$1"
-	elif [ "${opt}" = "--data-dir" ]; then
-	    shift 1
-	    data_test_dir="$1"
 	elif [ "${opt}" = "--bin-dir" ]; then
 	    shift 1
 	    bin_test_dir="$1"
@@ -154,16 +150,16 @@ function do_run ()
 	export DPP_LIB_DIR=${lib_test_dir}
     fi
 
-    if [ "x${data_test_dir}" != "x" ]; then
-	export DPP_DATA_DIR=${data_test_dir}
+    if [ "x${prefix_test_dir}" != "x" ]; then
+	export DPP_TESTING_DIR=${prefix_test_dir}/testing
     fi
 
-    if [ "x${DPP_DATA_DIR}" = "x" ]; then
-	echo "ERROR: ${appname}: Missing DPP_DATA_DIR environment variable !"
+    if [ "x${DPP_TESTING_DIR}" = "x" ]; then
+	echo "ERROR: ${appname}: Missing DPP_TESTING_DIR environment variable !"
 	return 1
     fi
-    if [ ! -d ${DPP_DATA_DIR} ]; then
-	echo "ERROR: ${appname}: Directory '${DPP_DATA_DIR}' does not exists !"
+    if [ ! -d ${DPP_TESTING_DIR} ]; then
+	echo "ERROR: ${appname}: Directory '${DPP_TESTING_DIR}' does not exists !"
 	return 1
     fi
 
@@ -189,7 +185,7 @@ EOF
     fi
     exe=$(basename ${exe_test})
     if [ "${exe}" = "test_module" ]; then
-	${bin} -10 ${DPP_DATA_DIR}/testing/data/data_0.txt.gz \
+	${bin} -10 ${DPP_TESTING_DIR}/data/data_0.txt.gz \
 	    ${tmp_test_dir}/test_module_out.txt.gz \
 	    >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
@@ -198,12 +194,12 @@ EOF
     elif [ "${exe}" = "test_module_chain" ]; then
 	${bin} --debug 1 \
             -l mygsl \
-	    -c ${DPP_DATA_DIR}/testing/config/test_module_manager.conf \
+	    -c ${DPP_TESTING_DIR}/config/test_module_manager.conf \
 	    --module-name "chain0" \
-	    -i ${DPP_DATA_DIR}/testing/data/data_0.txt.gz \
-	    -i ${DPP_DATA_DIR}/testing/data/data_1.txt.gz \
-	    -i ${DPP_DATA_DIR}/testing/data/data_2.txt.gz \
-	    -i ${DPP_DATA_DIR}/testing/data/data_3.txt.gz \
+	    -i ${DPP_TESTING_DIR}/data/data_0.txt.gz \
+	    -i ${DPP_TESTING_DIR}/data/data_1.txt.gz \
+	    -i ${DPP_TESTING_DIR}/data/data_2.txt.gz \
+	    -i ${DPP_TESTING_DIR}/data/data_3.txt.gz \
 	    -o ${tmp_test_dir}/test_module_chain_out.txt \
 	    >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
@@ -213,12 +209,12 @@ EOF
 	${bin} --debug \
             -l mygsl \
 	    --verbose \
-	    --config ${DPP_DATA_DIR}/testing/config/test_module_manager.conf \
+	    --config ${DPP_TESTING_DIR}/config/test_module_manager.conf \
 	    --module "chain1" \
-	    ${DPP_DATA_DIR}/testing/data/data_0.txt.gz \
-	    ${DPP_DATA_DIR}/testing/data/data_1.txt.gz \
-	    ${DPP_DATA_DIR}/testing/data/data_2.txt.gz \
-	    ${DPP_DATA_DIR}/testing/data/data_3.txt.gz \
+	    ${DPP_TESTING_DIR}/data/data_0.txt.gz \
+	    ${DPP_TESTING_DIR}/data/data_1.txt.gz \
+	    ${DPP_TESTING_DIR}/data/data_2.txt.gz \
+	    ${DPP_TESTING_DIR}/data/data_3.txt.gz \
 	    ${tmp_test_dir}/test_module_manager_out.txt \
 	    >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then

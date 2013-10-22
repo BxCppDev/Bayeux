@@ -94,7 +94,7 @@ int main (int argc_, char ** argv_)
 
         // Load another multi_property container stored in a file :
         datatools::properties services_setup;
-        string services_setup_file = "${DPP_DATA_DIR}/testing/config/test_service_manager.conf";
+        string services_setup_file = "${DPP_TESTING_DIR}/config/test_service_manager.conf";
         datatools::fetch_path_with_env (services_setup_file);
         datatools::properties::read_config (services_setup_file, services_setup);
         SM.initialize (services_setup);

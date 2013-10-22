@@ -14,8 +14,8 @@
  * test_module_chain \
  *   --debug 1 \
  *   --module-name chain1 \
- *   -c ${DPP_DATA_DIR}/testing/config/test_module_manager.conf   \
- *   -i ${DPP_DATA_DIR}/testing/data/data_0.txt.gz \
+ *   -c ${DPP_TESTING_DIR}/config/test_module_manager.conf   \
+ *   -i ${DPP_TESTING_DIR}/data/data_0.txt.gz \
  *   -o out.txt.gz
  *
  */
@@ -150,10 +150,10 @@ int main (int argc_, char ** argv_)
           }
       } else {
         //throw std::logic_error ("Missing input file(s) !");
-        input_files.push_back("${DPP_DATA_DIR}/testing/data/data_0.txt.gz");
-        input_files.push_back("${DPP_DATA_DIR}/testing/data/data_1.txt.gz");
-        input_files.push_back("${DPP_DATA_DIR}/testing/data/data_2.txt.gz");
-        input_files.push_back("${DPP_DATA_DIR}/testing/data/data_3.txt.gz");
+        input_files.push_back("${DPP_TESTING_DIR}/data/data_0.txt.gz");
+        input_files.push_back("${DPP_TESTING_DIR}/data/data_1.txt.gz");
+        input_files.push_back("${DPP_TESTING_DIR}/data/data_2.txt.gz");
+        input_files.push_back("${DPP_TESTING_DIR}/data/data_3.txt.gz");
       }
 
 
@@ -189,7 +189,7 @@ int main (int argc_, char ** argv_)
           // std::ostringstream message;
           // message << "Missing module manager configuration file !";
           // throw std::logic_error (message.str ());
-          mgr_config = "${DPP_DATA_DIR}/testing/config/test_module_manager.conf";
+          mgr_config = "${DPP_TESTING_DIR}/config/test_module_manager.conf";
         }
 
       if (print_modulo < 0)

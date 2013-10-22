@@ -22,7 +22,7 @@ function do_dpp_print_info ()
 	echo "${indent}DPP_DOC_DIR             = '${DPP_DOC_DIR}'"
 	echo "${indent}DPP_INCLUDE_DIR         = '${DPP_INCLUDE_DIR}'"
 	echo "${indent}DPP_CMAKE_CONFIG_DIR    = '${DPP_CMAKE_CONFIG_DIR}'" 1>&2
-	echo "${indent}DPP_DATA_DIR            = '${DPP_DATA_DIR}'" 1>&2
+	echo "${indent}DPP_RESOURCE_DIR        = '${DPP_RESOURCE_DIR}'" 1>&2
     else
 	echo "${indent}dpp is not setup." 1>&2
     fi
@@ -34,7 +34,7 @@ alias dpp_print_info='do_dpp_print_info'
 function do_dpp_setup ()
 {
     local verbose=0
-    
+
     while [ -n "$1" ]; do
 	if [ "$1" = "--verbose" -o "$1" = "-v" ]; then
 	  let verbose=verbose+1
@@ -49,50 +49,8 @@ function do_dpp_setup ()
     if [ "x${DPP_ROOT}" != "x" ]; then
 	echo "WARNING: do_dpp_setup: dpp is already setup !" 1>&2
 	return 2
-    fi 
-
-    # if [ "x@DPP_WITH_REFLECTION@" = "x1" ]; then
-    # 	which camp-config >/dev/null 2>&1
-    # 	if [ $? -ne 0 ]; then
-    # 	    echo "ERROR: do_dpp_setup: Cannot find CAMP setup ! Abort !" 1>&2
-    # 	    return 1
-    # 	else
-    # 	    if [ ${verbose} -ne 0 ]; then
-    # 		echo "VERBOSE: do_dpp_setup: Found CAMP." 1>&2
-    # 	    fi
-    # 	fi
-    # fi
-
-    which brio-config >/dev/null 2>&1
-    if [ $? -ne 0 ]; then
-	echo "ERROR: do_dpp_setup: Cannot find brio setup ! Abort !" 1>&2
-	return 1
-    else
-	if [ ${verbose} -ne 0 ]; then
-	    echo "VERBOSE: do_dpp_setup: Found brio." 1>&2
-	fi
     fi
 
-    which cuts-config >/dev/null 2>&1
-    if [ $? -ne 0 ]; then
-	echo "ERROR: do_dpp_setup: Cannot find cuts setup ! Abort !" 1>&2
-	return 1
-    else
-	if [ ${verbose} -ne 0 ]; then
-	    echo "VERBOSE: do_dpp_setup: Found cuts." 1>&2
-	fi
-    fi
-
-    which mygsl-config >/dev/null 2>&1
-    if [ $? -ne 0 ]; then
-	echo "ERROR: do_dpp_setup: Cannot find mygsl setup ! Abort !" 1>&2
-	return 1
-    else
-	if [ ${verbose} -ne 0 ]; then
-	    echo "VERBOSE: do_dpp_setup: Found mygsl." 1>&2
-	fi
-    fi
-     
     export DPP_ROOT="@CMAKE_INSTALL_PREFIX@"
     export DPP_ROOT_DIR="@CMAKE_INSTALL_PREFIX@"
     export DPP_NAME="@PROJECT_NAME@"
@@ -102,7 +60,7 @@ function do_dpp_setup ()
     export DPP_LIB_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@"
     export DPP_DOC_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DOCDIR@"
     export DPP_INCLUDE_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_INCLUDEDIR@"
-    export DPP_DATA_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
+    export DPP_RESOURCE_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/resources"
     export DPP_WITH_DEBUG=@DPP_WITH_DEBUG@
     export DPP_WITH_BIO=@DPP_WITH_BIO@
     export DPP_WITH_REFLECTION=@DPP_WITH_REFLECTION@
@@ -112,18 +70,18 @@ function do_dpp_setup ()
 	export PATH="${DPP_BIN_DIR}:${PATH}"
     else
 	export PATH="${DPP_BIN_DIR}"
-    fi 
-   
+    fi
+
     if [ -n "${@_ld_library_path_env@}" ]; then
 	export @_ld_library_path_env@="${DPP_LIB_DIR}:${@_ld_library_path_env@}"
     else
 	export @_ld_library_path_env@="${DPP_LIB_DIR}"
-    fi 
+    fi
 
     if [ ${verbose} -gt 1 ]; then
 	do_dpp_print_info "VERBOSE: do_dpp_setup"
     fi
- 
+
     if [ ${verbose} -ne 0 ]; then
 	echo "NOTICE: do_dpp_setup: Setup dpp done." 1>&2
     fi
