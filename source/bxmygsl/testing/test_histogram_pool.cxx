@@ -194,7 +194,7 @@ void test_2 ()
   mygsl::histogram_pool HP ("A set of histograms");
   HP.set_logging_priority(datatools::logger::PRIO_NOTICE);
 
-  HP.load ("${MYGSL_DATA_DIR}/testing/config/test_histogram_pool.conf");
+  HP.load ("${MYGSL_TESTING_DIR}/config/test_histogram_pool.conf");
 
   HP.tree_dump (std::clog, "HP : ", "INFO: ");
   std::clog << std::endl;

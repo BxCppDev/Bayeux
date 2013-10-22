@@ -23,7 +23,7 @@ int main(int argc_ , char ** argv_)
 
   // read sampled signal from a file:
   double adc_shift = 56.; // (mV)
-  std::string fname = "${MYGSL_DATA_DIR}/testing/config/demo_signal.samples";
+  std::string fname = "${MYGSL_TESTING_DIR}/config/demo_signal.samples";
   datatools::fetch_path_with_env(fname);
   std::ifstream f_data (fname.c_str());
   double peak = +1.e10; // trick

@@ -1,19 +1,19 @@
-#!/usr/bin/env bash 
-# -*- mode: shell-script; -*- 
+#!/usr/bin/env bash
+# -*- mode: shell-script; -*-
 # testDriver.bash
 
 APPNAME="mygsl/testDriver"
 
 opwd=$(pwd)
-	
+
 function my_exit ()
 {
     cd ${opwd}
     exit $1
 }
 
-appname=${APPNAME} 
-appversion=0.1 
+appname=${APPNAME}
+appversion=0.1
 the_base_dir=$(pwd)
 debug=0
 
@@ -29,18 +29,17 @@ function print_usage ()
 
   Options:
 
-    -h 
+    -h
     --help    : print this help then exit
 
     --version  : print version then exit
- 
+
 EOF
     return 0
 }
 
 tmp_test_dir=/tmp/${USER}/mygsl/test
 prefix_test_dir=
-data_test_dir=
 exe_test=
 
 #######################################################
@@ -66,9 +65,6 @@ while [ -n "$1" ]; do
 	elif [ "${opt}" = "--prefix" ]; then
 	    shift 1
 	    prefix_test_dir="$1"
-	elif [ "${opt}" = "--data-dir" ]; then
-            shift 1
-            data_test_dir="$1"
  	elif [ "${opt}" = "--tmp-dir" ]; then
 	    shift 1
 	    tmp_test_dir="$1"
@@ -84,9 +80,9 @@ while [ -n "$1" ]; do
 	parse_switch=0
 	if [ "x${the_action_mode}" = "x" ]; then
 	    if [ "$arg" = "run" ]; then
-		the_action_mode="${arg}"	
+		the_action_mode="${arg}"
             elif [ "$arg" = "clean" ]; then
-	        the_action_mode="${arg}"	
+	        the_action_mode="${arg}"
 	    else
 		echo "ERROR: ${appname}: Invalid argument '${arg}' !" >&2
 		my_exit 1
@@ -98,7 +94,7 @@ while [ -n "$1" ]; do
     shift 1
 done
 
-if [ ${debug} -ne 0 ]; then  
+if [ ${debug} -ne 0 ]; then
     echo "DEBUG: ${appname}: the_action_mode=${the_action_mode}" >&2
     echo "DEBUG: ${appname}: tmp_test_dir=${tmp_test_dir}" >&2
     echo "DEBUG: ${appname}: exe_test=${exe_test}" >&2
@@ -125,21 +121,18 @@ function do_run ()
 	echo "ERROR: ${appname}: Missing prefix_test_dir !"
 	return 1
     fi
+    export MYGSL_TESTING_DIR=${prefix_test_dir}/testing
 
-    if [ "x${data_test_dir}" != "x" ]; then
-        export MYGSL_DATA_DIR=${data_test_dir}
-    fi
-
-    if [ "x${MYGSL_DATA_DIR}" = "x" ]; then
-        echo "ERROR: ${appname}: Missing MYGSL_DATA_DIR environment variable !"
+    if [ "x${MYGSL_TESTING_DIR}" = "x" ]; then
+        echo "ERROR: ${appname}: Missing MYGSL_TESTING_DIR environment variable !"
         return 1
     fi
-    if [ ! -d ${MYGSL_DATA_DIR} ]; then
-        echo "ERROR: ${appname}: Directory '${MYGSL_DATA_DIR}' does not exists !"
+    if [ ! -d ${MYGSL_TESTING_DIR} ]; then
+        echo "ERROR: ${appname}: Directory '${MYGSL_TESTING_DIR}' does not exists !"
         return 1
     fi
 
-    
+
     export MYGSL_ROOT=${prefix_test_dir}
     echo "NOTICE: ${appname}: First clean the test temporary directory..." >&2
     if [ ! -d ${tmp_test_dir} ]; then
@@ -148,12 +141,12 @@ function do_run ()
     export MYGSL_TMP_TEST_DIR=${tmp_test_dir}
     echo "NOTICE: ${appname}: MYGSL_TMP_TEST_DIR=${MYGSL_TMP_TEST_DIR}" >&2
     cd ${tmp_test_dir}
- 
+
     cat >> ${tmp_test_dir}/tests.log<<EOF
 
 ****************************************************
 mygsl test log file :
-'${exe_test}' 
+'${exe_test}'
 ****************************************************
 EOF
     bin=${exe_test}
@@ -166,17 +159,17 @@ EOF
 	echo "1 0 0" | ${bin} >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
 	    return 1
-	fi 
+	fi
     elif [ "${exe}" = "test_interval" ]; then
 	echo "[0:1]" | ${bin} >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
 	    return 1
-	fi 
+	fi
     elif [ "${exe}" = "test_ioutils" ]; then
 	echo "3.14" | ${bin} >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
 	    return 1
-	fi 
+	fi
     elif [ "${exe}" = "test_permutation" ]; then
 	echo "(1, 0, 2)" | ${bin} >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
@@ -186,12 +179,12 @@ EOF
 	echo "XXX" | ${bin} >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
 	    return 1
-	fi 
+	fi
     else
 	${bin} >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
 	    return 1
-	fi 
+	fi
     fi
 
     cd ${opwd}
@@ -210,7 +203,7 @@ function main ()
 	return 1
     fi
 
-    # Perform action...    
+    # Perform action...
     if [ "${action_mode}" = "run" ]; then
 	if [ "x${exe_test}" = "x" ]; then
 	    echo "ERROR: ${appname}: Missing executable name !" >&2
@@ -222,7 +215,7 @@ function main ()
 	    return 1
 	fi
     fi
-    
+
     if [ "${action_mode}" = "clean" ]; then
     	do_clean $@
     	if [ $? -ne 0 ]; then
@@ -235,7 +228,7 @@ function main ()
 
 ##########################################################
 
-main 
+main
 if [ $? -ne 0 ]; then
     echo "ERROR: ${appname}: Failure !" >&2
     my_exit 1
