@@ -20,8 +20,6 @@
 ##
 ###############################################################################
 
-
-###file(GLOB materials_tests_programs test_*.cxx)
 set ( materials_tests_programs
     test_chemical_symbol.cxx
     test_element.cxx
@@ -33,12 +31,6 @@ set ( materials_tests_programs
     test_manager_2.cxx
     test_version.cxx
 )
-
-###message (STATUS "materials_tests_programs=${materials_tests_programs}" )
-# list(REMOVE_ITEM materials_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
-# if(MATERIALS_WITH_REFLECTION)
-#   list(APPEND materials_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
-# endif()
 
 set(materials_tests_programs_list "${materials_tests_programs}")
 list(SORT materials_tests_programs_list)
@@ -65,20 +57,11 @@ foreach(test_program ${materials_tests_programs_list})
 
   set(_test_libraries materials)
 
-  # # Special reflection DLL plugins :
-  # if(datatools_WITH_REFLECTION)
-  #   list(INSERT _test_libraries 0 datatools_reflection)
-  # endif()
-  # if(MATERIALS_WITH_REFLECTION)
-  #   list(INSERT _test_libraries 0 materials_reflection )
-  # endif()
-
   target_link_libraries(${test_executable} ${_test_libraries})
 
   add_test(NAME ${test_executable}.run
     COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash
     --tmp-dir ${_test_tmp_dir}
-    --data-dir ${PROJECT_SOURCE_DIR}
     --prefix ${PROJECT_SOURCE_DIR}
     --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
     run

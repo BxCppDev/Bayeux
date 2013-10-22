@@ -44,7 +44,7 @@ int main (int argc_, char ** argv_)
     }
 
     if (MatMgrSetupFile.empty()) {
-      MatMgrSetupFile = "${MATERIALS_DATA_DIR}/testing/config/test_manager.conf";
+      MatMgrSetupFile = "${MATERIALS_RESOURCE_DIR}/../testing/config/test_manager.conf";
     }
     datatools::fetch_path_with_env(MatMgrSetupFile);
 

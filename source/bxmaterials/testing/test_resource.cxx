@@ -44,7 +44,7 @@ bool test_valid_resource() {
   std::string rspath;
 
   try {
-    // The 'true' argument allows the use of the MATERIAL_DATA_DIR environement
+    // The 'true' argument allows the use of the MATERIAL_RESOURCE_DIR environement
     // variable to be used in place of the standard installation path.
     // Mandatory for testing before installation.
     rspath = materials::get_resource("data/std_isotopes.def", true);
@@ -74,5 +74,3 @@ int main(int argc, const char *argv[]) {
 
   return EXIT_SUCCESS;
 }
-
-

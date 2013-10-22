@@ -21,7 +21,7 @@ function do_materials_print_info ()
 	echo "${indent}MATERIALS_DOC_DIR             = '${MATERIALS_DOC_DIR}'"
 	echo "${indent}MATERIALS_INCLUDE_DIR         = '${MATERIALS_INCLUDE_DIR}'"
 	echo "${indent}MATERIALS_CMAKE_CONFIG_DIR    = '${MATERIALS_CMAKE_CONFIG_DIR}'" 1>&2
-	echo "${indent}MATERIALS_DATA_DIR            = '${MATERIALS_DATA_DIR}'" 1>&2
+	echo "${indent}MATERIALS_RESOURCE_DIR        = '${MATERIALS_RESOURCE_DIR}'" 1>&2
     else
 	echo "${indent}materials is not setup." 1>&2
     fi
@@ -62,26 +62,6 @@ function do_materials_setup ()
 	fi
     fi
 
-    # which clhep-config >/dev/null 2>&1
-    # if [ $? -ne 0 ]; then
-    # 	echo "ERROR: do_materials_setup: Cannot find CLHEP setup ! Abort !" 1>&2
-    # 	return 1
-    # else
-    # 	if [ ${verbose} -ne 0 ]; then
-    # 	    echo "VERBOSE: do_materials_setup: Found CLHEP." 1>&2
-    # 	fi
-    # fi
-
-    which datatools-config >/dev/null 2>&1
-    if [ $? -ne 0 ]; then
-	echo "ERROR: do_materials_setup: Cannot find datatools setup ! Abort !" 1>&2
-	return 1
-    else
-	if [ ${verbose} -ne 0 ]; then
-	    echo "VERBOSE: do_materials_setup: Found datatools." 1>&2
-	fi
-    fi
-
     export MATERIALS_ROOT="@CMAKE_INSTALL_PREFIX@"
     export MATERIALS_ROOT_DIR="@CMAKE_INSTALL_PREFIX@"
     export MATERIALS_NAME="@PROJECT_NAME@"
@@ -91,7 +71,7 @@ function do_materials_setup ()
     export MATERIALS_LIB_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@"
     export MATERIALS_DOC_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DOCDIR@"
     export MATERIALS_INCLUDE_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_INCLUDEDIR@"
-    export MATERIALS_DATA_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
+    export MATERIALS_RESOURCE_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/resources"
     export MATERIALS_WITH_DEBUG=@MATERIALS_WITH_DEBUG@
     export MATERIALS_WITH_BIO=@MATERIALS_WITH_BIO@
     export MATERIALS_WITH_REFLECTION=@MATERIALS_WITH_REFLECTION@

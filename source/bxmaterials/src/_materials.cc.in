@@ -49,6 +49,9 @@ namespace materials {
       lib_infos.store_string(datatools::library_info::keys::install_resource_dir(),
                              materials::get_resource_dir());
 
+      lib_infos.store_string(datatools::library_info::keys::env_resource_dir(),
+                             MATERIALS_ENV_RESOURCE_DIR);
+
 
       lib_infos.store_integer(datatools::library_info::keys::version_major(),
                               materials::version::get_major());
