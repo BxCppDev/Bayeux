@@ -474,6 +474,7 @@ function do_configure ()
 	-DMCTOOLS_WITH_TEST=${with_test} \
 	-DMCTOOLS_WITH_G4=${with_g4} \
 	-DMCTOOLS_WITH_G4_G4VIS_USE=${with_g4_visualization} \
+        ${additional_options} \
 	..
     if [ $? -ne 0 ]; then
 	pkgtools__msg_error "Cannot configure the '${package_name}' package !"
