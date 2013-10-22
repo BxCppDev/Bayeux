@@ -12,7 +12,7 @@ From a pkgtools build :
 
 Test the 'test_manager' executable :
 
-  bash$ CUTS_DATA_DIR=$(pwd) __build-Linux-x86_64/testing/test_manager 
+  bash$ CUTS_TESTING_DIR=$(pwd)/testing __build-Linux-x86_64/testing/test_manager
 
 Also :
 
@@ -21,4 +21,3 @@ Also :
 
 
 --
-

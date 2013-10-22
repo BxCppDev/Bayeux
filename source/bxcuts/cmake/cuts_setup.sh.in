@@ -20,7 +20,7 @@ function do_cuts_print_info ()
 	echo "${indent}CUTS_DOC_DIR             = '${CUTS_DOC_DIR}'"
 	echo "${indent}CUTS_INCLUDE_DIR         = '${CUTS_INCLUDE_DIR}'"
 	echo "${indent}CUTS_CMAKE_CONFIG_DIR    = '${CUTS_CMAKE_CONFIG_DIR}'" 1>&2
-	echo "${indent}CUTS_DATA_DIR            = '${CUTS_DATA_DIR}'" 1>&2
+	echo "${indent}CUTS_RESOURCE_DIR        = '${CUTS_RESOURCE_DIR}'" 1>&2
     else
 	echo "${indent}cuts is not setup." 1>&2
     fi
@@ -68,7 +68,7 @@ function do_cuts_setup ()
     export CUTS_LIB_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@"
     export CUTS_DOC_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DOCDIR@"
     export CUTS_INCLUDE_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_INCLUDEDIR@"
-    export CUTS_DATA_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
+    export CUTS_RESOURCE_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/resources"
     export CUTS_WITH_DEBUG=@CUTS_WITH_DEBUG@
     export CUTS_CMAKE_CONFIG_DIR="@CMAKE_INSTALL_PREFIX@/@_cuts_cmake_config_install_dir@"
 

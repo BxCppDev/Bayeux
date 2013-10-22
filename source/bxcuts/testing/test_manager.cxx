@@ -91,7 +91,7 @@ int main (int argc_, char ** argv_)
 
       if (config_filename.empty ())
         {
-          config_filename = "${CUTS_DATA_DIR}/testing/config/test_cut_manager.conf";
+          config_filename = "${CUTS_TESTING_DIR}/config/test_cut_manager.conf";
         }
       datatools::fetch_path_with_env (config_filename);
       datatools::properties::read_config (config_filename,

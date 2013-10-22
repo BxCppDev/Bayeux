@@ -2,7 +2,7 @@
 
 opwd=$(pwd)
 cd ..
-export CUTS_DATA_DIR=$(pwd)
+export CUTS_TESTING_DIR=$(pwd)/testing
 
 cd ${opwd}
 if [ "x${CUTS_SRC_ROOT}" = "x" ]; then
@@ -17,7 +17,7 @@ if [ ! -x  ${CUTS_SRC_ROOT}/__build-${arch}/testing/test_manager ]; then
     exit 1
 fi
 
-CUTS_TESTING_CONFIG_DIR=${CUTS_DATA_DIR}/testing/config
+CUTS_TESTING_CONFIG_DIR=${CUTS_TESTING_DIR}/config
 if [ ! -d ${CUTS_TESTING_CONFIG_DIR} ]; then
     export CUTS_TESTING_CONFIG_DIR=${CUTS_SRC_ROOT}/testing/config
 fi
