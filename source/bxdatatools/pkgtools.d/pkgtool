@@ -477,7 +477,6 @@ function do_configure ()
 	-DCMAKE_BUILD_TYPE:STRING=${build_type} \
 	-DDATATOOLS_STANDALONE=1 \
 	-DDATATOOLS_WITH_REFLECTION=${with_reflection} \
-	-DDATATOOLS_WITH_REFLECTION=${with_reflection} \
 	-DDATATOOLS_WITH_DOC=${with_doc} \
 	-DDATATOOLS_WITH_TEST=${with_test} \
 	-DDATATOOLS_WITH_IMPLICIT_INIT_FINI=${with_implicit_init_fini} \
