@@ -28,7 +28,7 @@ int main (int argc_, char ** argv_)
     }
 
     genbb::genbb_mgr mgr;
-    mgr.set ("${GENBB_HELP_DATA_DIR}/testing/data/se82_0nubb_mn.genbb");
+    mgr.set ("${GENBB_HELP_TESTING_DIR}/data/se82_0nubb_mn.genbb");
     if (debug) mgr.dump ();
     mgr.initialize_simple ();
     mgr.dump ();

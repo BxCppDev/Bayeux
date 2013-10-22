@@ -28,9 +28,9 @@ int main (int argc_, char ** argv_)
     genbb::genbb_mgr mgr (genbb::genbb_mgr::FORMAT_BOOST);
 
     // Boost archive input data files:
-    mgr.set ("${GENBB_HELP_DATA_DIR}/testing/data/bipo212_1.boost.txt.gz");
-    mgr.set ("${GENBB_HELP_DATA_DIR}/testing/data/bipo212_2.boost.txt.gz");
-    mgr.set ("${GENBB_HELP_DATA_DIR}/testing/data/bipo212_3.boost.txt.gz");
+    mgr.set ("${GENBB_HELP_TESTING_DIR}/data/bipo212_1.boost.txt.gz");
+    mgr.set ("${GENBB_HELP_TESTING_DIR}/data/bipo212_2.boost.txt.gz");
+    mgr.set ("${GENBB_HELP_TESTING_DIR}/data/bipo212_3.boost.txt.gz");
     if (debug) mgr.dump ();
 
     // initialize/lock the manager:

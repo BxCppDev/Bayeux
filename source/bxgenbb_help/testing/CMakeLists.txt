@@ -86,14 +86,14 @@ set(_test_tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/testing_output")
 # depends on materials data dir:
 if (DEFINED materials_DATA_DIR
     AND NOT "x${materials_DATA_DIR}" STREQUAL "x" )
-  list (APPEND _genbb_help_test_additional_options --materials-data-dir ${materials_DATA_DIR} )
+  list (APPEND _genbb_help_test_additional_options --materials-resource-dir ${materials_DATA_DIR}/resources )
   message ( STATUS "${PROJECT_NAME}: testing: Using option '${_genbb_help_test_additional_options}'" )
 endif ()
 
 # depends on geomtools data dir:
 if (DEFINED geomtools_DATA_DIR
     AND NOT "x${geomtools_DATA_DIR}" STREQUAL "x" )
-  list (APPEND _genbb_help_test_additional_options --geomtools-data-dir ${geomtools_DATA_DIR} )
+  list (APPEND _genbb_help_test_additional_options --geomtools-resource-dir ${geomtools_DATA_DIR}/resources )
   message ( STATUS "${PROJECT_NAME}: testing: Using option '${_genbb_help_test_additional_options}'" )
 endif ()
 
@@ -141,16 +141,14 @@ foreach ( test_program ${genbb_help_tests_programs_list_CPP} )
       list(INSERT _test_libraries 0 genbb_help_reflection )
     endif()
 
-    #message ( STATUS "testing: Libraries = '${_test_libraries}'" )
-
     target_link_libraries ( ${test_executable} ${_test_libraries} )
 
     add_test ( NAME ${test_executable}.run
                COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash
                        --tmp-dir ${_test_tmp_dir}
                        --source-dir ${PROJECT_SOURCE_DIR}
+                       --prefix-dir ${PROJECT_SOURCE_DIR}
                        --binary-dir ${PROJECT_BINARY_DIR}
-                       --data-dir ${PROJECT_SOURCE_DIR}
                        --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
                        ${_genbb_help_test_additional_options}
 	               run
@@ -181,7 +179,7 @@ if (GENBB_HELP_WITH_FORTRAN)
                        --tmp-dir ${_test_tmp_dir}
                        --source-dir ${PROJECT_SOURCE_DIR}
                        --binary-dir ${PROJECT_BINARY_DIR}
-                       --data-dir ${PROJECT_SOURCE_DIR}
+                       --prefix-dir ${PROJECT_SOURCE_DIR}
                        --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
                        ${_genbb_help_test_additional_options}
 	               run
@@ -196,7 +194,7 @@ add_custom_target ( clean_test
                       --tmp-dir ${_test_tmp_dir}
                       --source-dir ${PROJECT_SOURCE_DIR}
                       --binary-dir ${PROJECT_BINARY_DIR}
-                      --data-dir ${PROJECT_SOURCE_DIR}
+                      --prefix-dir ${PROJECT_SOURCE_DIR}
                       clean
                     )
 

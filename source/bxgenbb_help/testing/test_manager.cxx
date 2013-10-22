@@ -60,10 +60,10 @@ int main (int argc_, char ** argv_)
     // Particle generator manager configuration:
     datatools::properties config;
     std::string config_filename;
-    config_filename = "${GENBB_HELP_DATA_DIR}/testing/config/test-2.0/manager.conf";
+    config_filename = "${GENBB_HELP_TESTING_DIR}/config/test-2.0/manager.conf";
 #if GENBB_HELP_WITH_FORTRAN == 1
     if (use_fortran_lib) {
-      config_filename = "${GENBB_HELP_DATA_DIR}/testing/config/test-1.0/manager.conf";
+      config_filename = "${GENBB_HELP_TESTING_DIR}/config/test-1.0/manager.conf";
     }
 #endif // GENBB_HELP_WITH_FORTRAN == 1
     datatools::fetch_path_with_env(config_filename);

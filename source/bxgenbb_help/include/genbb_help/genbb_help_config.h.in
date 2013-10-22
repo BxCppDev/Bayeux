@@ -23,6 +23,8 @@
 /***  genbb_help with Gnuplot display ***/
 #cmakedefine01 GENBB_HELP_WITH_GNUPLOT_DISPLAY
 
+#define GENBB_HELP_ENV_RESOURCE_DIR "GENBB_HELP_RESOURCE_DIR"
+
 #endif // GENBB_HELP_GENBB_HELP_CONFIG_H_
 
 // end of genbb_help_config.h

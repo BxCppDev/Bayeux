@@ -11,7 +11,7 @@ genbb_help: testing programs and scripts
 
 
 Cd in the genbb_help base source directory :
- 
+
 bb0nu and bb2nu plots :
 -----------------------
 
@@ -23,29 +23,29 @@ bb0nu and bb2nu plots :
 Another test program :
 ----------------------
 
-  bash$  ./testing/test_bb0nu_channel_2.sh 
+  bash$  ./testing/test_bb0nu_channel_2.sh
 
 
 Run the particle generator manager :
 ------------------------------------
 
-  bash$ GENBB_HELP_DATA_DIR=$(pwd) \
+  bash$ GENBB_HELP_TESTING_DIR=$(pwd)/testing \
     __build-Linux-x86_64/testing/test_manager \
     --particle-generator "bb0nu_Se82"
 
-  bash$ GENBB_HELP_DATA_DIR=$(pwd) \
+  bash$ GENBB_HELP_TESTING_DIR=$(pwd)/testing \
     __build-Linux-x86_64/testing/test_manager \
     --particle-generator "bkg_Bi214_Po214"
 
-  bash$ GENBB_HELP_DATA_DIR=$(pwd) \
+  bash$ GENBB_HELP_TESTING_DIR=$(pwd)/testing \
     __build-Linux-x86_64/testing/test_manager \
     --particle-generator "bkg_Bi214_Po214_process"
 
-  bash$ GENBB_HELP_DATA_DIR=$(pwd) \
+  bash$ GENBB_HELP_TESTING_DIR=$(pwd)/testing \
     __build-Linux-x86_64/testing/test_manager \
     --particle-generator "bkg_Bi212_Po212_from_files"
 
-  bash$ GENBB_HELP_DATA_DIR=$(pwd) \
+  bash$ GENBB_HELP_TESTING_DIR=$(pwd)/testing \
     __build-Linux-x86_64/testing/test_manager \
     --particle-generator "bkgd_model_0"
 

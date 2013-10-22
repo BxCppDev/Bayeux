@@ -68,6 +68,7 @@
 // This project
 #include <genbb_help/manager.h>
 #include <genbb_help/primary_event.h>
+#include <genbb_help/resource.h>
 
 // Some pre-processor linkage guard :
 #include <mygsl/bio_guard.h>
@@ -1356,8 +1357,7 @@ void usage (const boost::program_options::options_description & options_,
 
   out_ << "  " << APP_NAME << " \\\n";
   out_ << "    --configuration \""
-       << GENBB_HELP_DATA_INSTALL_DIR
-       << "/resources/manager/config/pro-1.0/manager.conf"
+       << "@genbb_help:manager/config/pro-1.0/manager.conf"
        << "\" \\\n";
   out_ << "    --action \"list\"  \\\n";
   out_ << "" << std::endl;
@@ -1371,8 +1371,7 @@ void usage (const boost::program_options::options_description & options_,
 
   out_ << "  " << APP_NAME << "  \\\n";
   out_ << "    --configuration \""
-       << GENBB_HELP_DATA_INSTALL_DIR
-       << "/resources/manager/config/pro-1.0/manager.conf"
+       << "@genbb_help:manager/config/pro-1.0/manager.conf"
        << "\" \\\n";
   out_ << "    --action \"shoot\"  \\\n";
   out_ << "    --generator \"Bi214_Po214\" \\\n";
@@ -1380,12 +1379,10 @@ void usage (const boost::program_options::options_description & options_,
   out_ << "    --number-of-events 100000 \\\n";
   out_ << "    --modulo 1000 \\\n";
   out_ << "    --histo-def \""
-       << GENBB_HELP_DATA_INSTALL_DIR
-       << "/resources/inspector/config/le_nuphy-1.0/inspector_histos_prompt.conf"
+       << "@genbb_help:inspector/config/le_nuphy-1.0/inspector_histos_prompt.conf"
        << "\" \\\n";
   out_ << "    --histo-def \""
-       << GENBB_HELP_DATA_INSTALL_DIR
-       << "/resources/inspector/config/le_nuphy-1.0/inspector_histos_delayed.conf"
+       << "@genbb_help:inspector/config/le_nuphy-1.0/inspector_histos_delayed.conf"
        << "\" \\\n";
   out_ << "    --prompt-time-limit 1 \\\n";
   out_ << "    --prompt \\\n";
@@ -1478,16 +1475,16 @@ namespace genbb {
       if (_params_.histos_definitions.size() == 0) {
         if (_params_.prompt) {
           std::ostringstream filename;
-          filename << GENBB_HELP_DATA_INSTALL_DIR << '/'
-                   << "resources/inspector/config/le_nuphy-1.0/inspector_histos_prompt.conf";
+          filename << genbb::get_resource_dir() << '/'
+                   << "inspector/config/le_nuphy-1.0/inspector_histos_prompt.conf";
           _params_.histos_definitions.push_back(filename.str());
           DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
                         "Using default definition file for histograms : '" << filename.str() << "'");
         }
         if (_params_.delayed) {
           std::ostringstream filename;
-          filename << GENBB_HELP_DATA_INSTALL_DIR << '/'
-                   << "resources/inspector/config/le_nuphy-1.0/inspector_histos_delayed.conf";
+          filename << genbb::get_resource_dir() << '/'
+                   << "inspector/config/le_nuphy-1.0/inspector_histos_delayed.conf";
           _params_.histos_definitions.push_back(filename.str());
           DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
                         "Using default definition file for histograms : '" << filename.str() << "'");

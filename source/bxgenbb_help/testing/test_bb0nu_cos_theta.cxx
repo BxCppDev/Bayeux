@@ -39,7 +39,7 @@ int main (int argc_, char ** argv_)
     }
     if (input_file.empty ()) {
       clog << datatools::io::notice << "Using default input_file !" << endl;
-      input_file = "${GENBB_HELP_DATA_DIR}/testing/data/se82_0nubb_mn.genbb";
+      input_file = "${GENBB_HELP_TESTING_DIR}/data/se82_0nubb_mn.genbb";
     }
     datatools::fetch_path_with_env (input_file);
     clog << datatools::io::notice << "input_file = '" << input_file << "'" << endl;
