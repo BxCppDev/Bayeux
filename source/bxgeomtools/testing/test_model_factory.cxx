@@ -129,7 +129,7 @@ int main (int argc_, char ** argv_)
 
       if (setup_filename.empty ())
         {
-          setup_filename = "${GEOMTOOLS_DATA_DIR}/testing/config/test_geometry_models.conf";
+          setup_filename = "${GEOMTOOLS_TESTING_DIR}/config/test_geometry_models.conf";
         }
       datatools::fetch_path_with_env (setup_filename);
       factory.load (setup_filename);

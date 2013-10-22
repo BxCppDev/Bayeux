@@ -152,14 +152,9 @@ bash$ geomtools-config --cflags
 ...
 bash$ geomtools-config --ldflags
 ...
-bash$ geomtools_check_setup -GRD -c ${GEOMTOOLS_DATA_DIR}/testing/config/test-1.0/test_manager.conf
+bash$ geomtools_check_setup -GRD -c ${GEOMTOOLS_TESTING_DIR}/config/test-1.0/test_manager.conf
 }}}
 
 --
 François Mauger <mauger@lpccaen.in2p3.fr>
 Updated: 2013-04-24
-
-
-
-
-

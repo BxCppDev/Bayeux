@@ -94,7 +94,7 @@ int main (int argc_, char ** argv_)
         SM.tree_dump (clog, "Service manager : ");
 
         datatools::properties SM_setup;
-        string SM_setup_file = "${GEOMTOOLS_DATA_DIR}/testing/config/test_service_manager.conf";
+        string SM_setup_file = "${GEOMTOOLS_TESTING_DIR}/config/test_service_manager.conf";
         if (debug) clog << datatools::io::debug << "Setup file = "
                         << SM_setup_file << endl;
         datatools::fetch_path_with_env (SM_setup_file);

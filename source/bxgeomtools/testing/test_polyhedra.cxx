@@ -1,5 +1,5 @@
-// -*- mode: c++ ; -*- 
-// test_polyhedra.cxx 
+// -*- mode: c++ ; -*-
+// test_polyhedra.cxx
 
 #include <cstdlib>
 #include <iostream>
@@ -17,8 +17,8 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'polyhedra'!" << endl; 
-  
+      clog << "Test program for class 'polyhedra'!" << endl;
+
       bool debug = false;
       bool draw = true;
       int iarg = 1;
@@ -28,32 +28,32 @@ int main (int argc_, char ** argv_)
 
           if (token[0] == '-')
             {
-               string option = token; 
-               if ((option == "-d") || (option == "--debug")) 
+               string option = token;
+               if ((option == "-d") || (option == "--debug"))
                  {
                    debug = true;
                  }
-               else if ((option == "-D") || (option == "--draw")) 
+               else if ((option == "-D") || (option == "--draw"))
                  {
                    draw = false;
                  }
-               else 
-                 { 
-                    clog << "warning: ignoring option '" << option << "'!" << endl; 
+               else
+                 {
+                    clog << "warning: ignoring option '" << option << "'!" << endl;
                  }
             }
           else
             {
-              string argument = token; 
-              { 
-                clog << "warning: ignoring argument '" << argument << "'!" << endl; 
+              string argument = token;
+              {
+                clog << "warning: ignoring argument '" << argument << "'!" << endl;
               }
             }
           iarg++;
       }
-    
+
       geomtools::polyhedra my_polyhedra;
-      string datafile = "${GEOMTOOLS_DATA_DIR}/testing/data/test_light_guide_0.data";
+      string datafile = "${GEOMTOOLS_TESTING_DIR}/data/test_light_guide_0.data";
       datatools::fetch_path_with_env (datafile);
       my_polyhedra.initialize (datafile);
       if (debug)
@@ -67,9 +67,9 @@ int main (int argc_, char ** argv_)
         geomtools::vector_3d polyhedra_pos;
         geomtools::rotation polyhedra_rot;
         geomtools::create_rotation (polyhedra_rot, 0.0, 0.0, 0.0);
-        geomtools::gnuplot_draw::draw_polyhedra (cout, 
-                                                 polyhedra_pos, 
-                                                 polyhedra_rot, 
+        geomtools::gnuplot_draw::draw_polyhedra (cout,
+                                                 polyhedra_pos,
+                                                 polyhedra_rot,
                                                  my_polyhedra);
         cout << endl << endl;
       }
@@ -78,12 +78,12 @@ int main (int argc_, char ** argv_)
     }
   catch (exception & x)
     {
-      cerr << "error: " << x.what () << endl; 
+      cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);

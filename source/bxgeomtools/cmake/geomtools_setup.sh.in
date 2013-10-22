@@ -22,7 +22,7 @@ function do_geomtools_print_info ()
 	echo "${indent}GEOMTOOLS_DOC_DIR             = '${GEOMTOOLS_DOC_DIR}'"
 	echo "${indent}GEOMTOOLS_INCLUDE_DIR         = '${GEOMTOOLS_INCLUDE_DIR}'"
 	echo "${indent}GEOMTOOLS_CMAKE_CONFIG_DIR    = '${GEOMTOOLS_CMAKE_CONFIG_DIR}'" 1>&2
-	echo "${indent}GEOMTOOLS_DATA_DIR            = '${GEOMTOOLS_DATA_DIR}'" 1>&2
+	echo "${indent}GEOMTOOLS_RESOURCE_DIR        = '${GEOMTOOLS_RESOURCE_DIR}'" 1>&2
     else
 	echo "${indent}geomtools is not setup." 1>&2
     fi
@@ -51,48 +51,6 @@ function do_geomtools_setup ()
 	return 2
     fi
 
-    # if [ "x@GEOMTOOLS_WITH_REFLECTION@" = "x1" ]; then
-    # 	which camp-config >/dev/null 2>&1
-    # 	if [ $? -ne 0 ]; then
-    # 	    echo "ERROR: do_geomtools_setup: Cannot find CAMP setup ! Abort !" 1>&2
-    # 	    return 1
-    # 	else
-    # 	    if [ ${verbose} -ne 0 ]; then
-    # 		echo "VERBOSE: do_geomtools_setup: Found CAMP." 1>&2
-    # 	    fi
-    # 	fi
-    # fi
-
-    # which clhep-config >/dev/null 2>&1
-    # if [ $? -ne 0 ]; then
-    # 	echo "ERROR: do_geomtools_setup: Cannot find CLHEP setup ! Abort !" 1>&2
-    # 	return 1
-    # else
-    # 	if [ ${verbose} -ne 0 ]; then
-    # 	    echo "VERBOSE: do_geomtools_setup: Found CLHEP." 1>&2
-    # 	fi
-    # fi
-
-    # which mygsl-config >/dev/null 2>&1
-    # if [ $? -ne 0 ]; then
-    # 	echo "ERROR: do_geomtools_setup: Cannot find mygsl setup ! Abort !" 1>&2
-    # 	return 1
-    # else
-    # 	if [ ${verbose} -ne 0 ]; then
-    # 	    echo "VERBOSE: do_geomtools_setup: Found mygsl." 1>&2
-    # 	fi
-    # fi
-
-    # which materials-config >/dev/null 2>&1
-    # if [ $? -ne 0 ]; then
-    # 	echo "ERROR: do_geomtools_setup: Cannot find materials setup ! Abort !" 1>&2
-    # 	return 1
-    # else
-    # 	if [ ${verbose} -ne 0 ]; then
-    # 	    echo "VERBOSE: do_geomtools_setup: Found materials." 1>&2
-    # 	fi
-    # fi
-
     export GEOMTOOLS_ROOT="@CMAKE_INSTALL_PREFIX@"
     export GEOMTOOLS_ROOT_DIR="@CMAKE_INSTALL_PREFIX@"
     export GEOMTOOLS_NAME="@PROJECT_NAME@"
@@ -102,7 +60,7 @@ function do_geomtools_setup ()
     export GEOMTOOLS_LIB_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@"
     export GEOMTOOLS_DOC_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DOCDIR@"
     export GEOMTOOLS_INCLUDE_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_INCLUDEDIR@"
-    export GEOMTOOLS_DATA_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
+    export GEOMTOOLS_RESOURCE_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/resources"
     export GEOMTOOLS_WITH_DEBUG=@GEOMTOOLS_WITH_DEBUG@
     export GEOMTOOLS_WITH_BIO=@GEOMTOOLS_WITH_BIO@
     export GEOMTOOLS_WITH_REFLECTION=@GEOMTOOLS_WITH_REFLECTION@

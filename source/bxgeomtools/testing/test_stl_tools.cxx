@@ -60,7 +60,7 @@ void test_facet ()
   typedef std::string::const_iterator iterator_type;
   typedef geomtools::stl::facet_parser<iterator_type> facet_parser_type;
 
-  std::string stl_file_path = "${GEOMTOOLS_DATA_DIR}/testing/data/test_stl_one_facet.stl";
+  std::string stl_file_path = "${GEOMTOOLS_TESTING_DIR}/data/test_stl_one_facet.stl";
   datatools::fetch_path_with_env (stl_file_path);
   std::cerr << "DEVEL: stl_file_path='" << stl_file_path <<"'\n";
   std::ifstream fin (stl_file_path.c_str (), std::ios::binary);
@@ -132,7 +132,7 @@ void test_solid (bool draw_, std::string stlfp_)
   typedef std::string::const_iterator iterator_type;
   typedef geomtools::stl::solid_parser<iterator_type> solid_parser_type;
 
-  std::string stl_file_path = "${GEOMTOOLS_DATA_DIR}/testing/data/test_stl_import.stl";
+  std::string stl_file_path = "${GEOMTOOLS_TESTING_DIR}/data/test_stl_import.stl";
   if (! stlfp_.empty ())
     {
       stl_file_path = stlfp_;

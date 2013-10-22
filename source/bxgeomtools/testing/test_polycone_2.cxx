@@ -59,7 +59,7 @@ int main (int argc_, char ** argv_)
       geomtools::polycone PC1;
       if (datafile.empty ())
         {
-          datafile = "${GEOMTOOLS_DATA_DIR}/testing/data/test_hamamatsu_R5912MOD_1.data";
+          datafile = "${GEOMTOOLS_TESTING_DIR}/data/test_hamamatsu_R5912MOD_1.data";
         }
       datatools::fetch_path_with_env (datafile);
       zmin = -100 * CLHEP::mm;

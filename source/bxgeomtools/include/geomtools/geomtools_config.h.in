@@ -31,6 +31,8 @@
 
 #cmakedefine01 GEOMTOOLS_WITH_ROOT_DISPLAY
 
+#define GEOMTOOLS_ENV_RESOURCE_DIR "GEOMTOOLS_RESOURCE_DIR"
+
 #endif // GEOMTOOLS_GEOMTOOLS_CONFIG_H_
 
 // end of geomtools_config.h

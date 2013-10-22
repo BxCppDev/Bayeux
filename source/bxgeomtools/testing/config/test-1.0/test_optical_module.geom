@@ -234,7 +234,7 @@ material.filled.ref : string = "vacuum"
 build_mode  : string = "datafile"
 
 #@description The polycone coordinates filename
-datafile    : string = "${GEOMTOOLS_DATA_DIR}/testing/data/test_hamamatsu_R5912MOD_polycone.data"
+datafile    : string = "${GEOMTOOLS_TESTING_DIR}/data/test_hamamatsu_R5912MOD_polycone.data"
 
 #@description The visibility hidden flag for the display
 visibility.hidden           : boolean = 0

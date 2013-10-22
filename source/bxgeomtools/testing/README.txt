@@ -21,22 +21,22 @@ List the names of the materials used in the geometry :
  polystyrene
  vacuum
 
-Run the test program for the geomtools geometry manager from the 
+Run the test program for the geomtools geometry manager from the
 "__build-Linux-x86_64" CMake build dir :
 
-  bash$ GEOMTOOLS_DATA_DIR=$(pwd) \
+  bash$ GEOMTOOLS_TESTING_DIR=$(pwd)/testing \
         GEOMTOOLS_TMP_DIR=$(pwd) \
         __build-Linux-x86_64/testing/test_manager \
           --dump \
           --plugins \
           --visu \
           --nb-display-data 7 \
-          --gdml 
+          --gdml
 
 
-Run the test program for the geomtools geometry service : 
+Run the test program for the geomtools geometry service :
 
-  bash$ GEOMTOOLS_DATA_DIR=$(pwd) __build-Linux-x86_64/testing/test_service_manager --visu 
+  bash$ GEOMTOOLS_TESTING_DIR=$(pwd)/testing __build-Linux-x86_64/testing/test_service_manager --visu
 
 
 Run the display data test :

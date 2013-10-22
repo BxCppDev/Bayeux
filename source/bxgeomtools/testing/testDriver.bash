@@ -1,5 +1,5 @@
-#!/usr/bin/env bash 
-# -*- mode: shell-script; -*- 
+#!/usr/bin/env bash
+# -*- mode: shell-script; -*-
 # testDriver.bash
 
 APPNAME="geomtools/testDriver"
@@ -12,8 +12,8 @@ function my_exit ()
     exit $1
 }
 
-appname=${APPNAME} 
-appversion=0.1 
+appname=${APPNAME}
+appversion=0.1
 the_base_dir=$(pwd)
 debug=0
 
@@ -29,21 +29,20 @@ function print_usage ()
 
   Options:
 
-    -h 
+    -h
     --help    : print this help then exit
 
     --version  : print version then exit
- 
+
 EOF
     return 0
 }
 
 tmp_test_dir=/tmp/${USER}/geomtools/testing
 prefix_test_dir=
-data_test_dir=
 exe_test=
-# depends on materials data dir:
-materials_data_test_dir=
+# depends on materials resource dir:
+materials_resource_test_dir=
 
 
 #######################################################
@@ -78,9 +77,9 @@ while [ -n "$1" ]; do
 	elif [ "${opt}" = "--exe" ]; then
 	    shift 1
 	    exe_test="$1"
-        elif [ "${opt}" = "--materials-data-dir" ]; then
+        elif [ "${opt}" = "--materials-resource-dir" ]; then
             shift 1
-            materials_data_test_dir="$1"
+            materials_resource_test_dir="$1"
 	else
 	    echo "ERROR: ${appname}: Invalid option '${opt}' !" >&2
 	    my_exit 1
@@ -90,9 +89,9 @@ while [ -n "$1" ]; do
 	parse_switch=0
 	if [ "x${the_action_mode}" = "x" ]; then
 	    if [ "$arg" = "run" ]; then
-		the_action_mode="${arg}"	
+		the_action_mode="${arg}"
             elif [ "$arg" = "clean" ]; then
-	        the_action_mode="${arg}"	
+	        the_action_mode="${arg}"
 	    else
 		echo "ERROR: ${appname}: Invalid argument '${arg}' !" >&2
 		my_exit 1
@@ -104,13 +103,13 @@ while [ -n "$1" ]; do
     shift 1
 done
 
-if [ ${debug} -ne 0 ]; then  
+if [ ${debug} -ne 0 ]; then
     echo "DEBUG: ${appname}: the_action_mode=${the_action_mode}" >&2
     echo "DEBUG: ${appname}: tmp_test_dir=${tmp_test_dir}" >&2
     echo "DEBUG: ${appname}: exe_test=${exe_test}" >&2
     echo "DEBUG: ${appname}: prefix_test_dir=${prefix_test_dir}" >&2
     echo "DEBUG: ${appname}: data_test_dir=${data_test_dir}" >&2
-    echo "DEBUG: ${appname}: materials_data_test_dir=${materials_data_test_dir}" >&2
+    echo "DEBUG: ${appname}: materials_resource_test_dir=${materials_resource_test_dir}" >&2
 fi
 
 ##########################################################
@@ -132,36 +131,32 @@ function do_run ()
     opwd=$(pwd)
 
     if [ "x${prefix_test_dir}" != "x" ]; then
-	export GEOMTOOLS_DATA_DIR=${prefix_test_dir}
+	export GEOMTOOLS_TESTING_DIR=${prefix_test_dir}/testing
     fi
 
-    if [ "x${data_test_dir}" != "x" ]; then
-        export GEOMTOOLS_DATA_DIR=${data_test_dir}
+    if [ "x${GEOMTOOLS_TESTING_DIR}" = "x" ]; then
+	echo "ERROR: ${appname}: Missing GEOMTOOLS_TESTING_DIR environment variable !" >&2
+	return 1
+    fi
+    if [ ! -d ${GEOMTOOLS_TESTING_DIR} ]; then
+	echo "ERROR: ${appname}: Directory '${GEOMTOOLS_TESTING_DIR}' does not exists !" >&2
+	return 1
     fi
 
-    if [ "x${GEOMTOOLS_DATA_DIR}" = "x" ]; then
-	echo "ERROR: ${appname}: Missing GEOMTOOLS_DATA_DIR environment variable !" >&2
-	return 1
-    fi
-    if [ ! -d ${GEOMTOOLS_DATA_DIR} ]; then
-	echo "ERROR: ${appname}: Directory '${GEOMTOOLS_DATA_DIR}' does not exists !" >&2
-	return 1
-    fi
-    
     ###############################
     # depends on materials data dir:
-    if [ "x${materials_data_test_dir}" != "x" ]; then
-        export MATERIALS_DATA_DIR=${materials_data_test_dir}
+    if [ "x${materials_resource_test_dir}" != "x" ]; then
+        export MATERIALS_RESOURCE_DIR=${materials_resource_test_dir}
     fi
-    if [ "x${MATERIALS_DATA_DIR}" = "x" ]; then
-        echo "ERROR: ${appname}: Missing MATERIALS_DATA_DIR environment variable !" >&2
+    if [ "x${MATERIALS_RESOURCE_DIR}" = "x" ]; then
+        echo "ERROR: ${appname}: Missing MATERIALS_RESOURCE_DIR environment variable !" >&2
         return 1
     fi
-    if [ ! -d ${MATERIALS_DATA_DIR} ]; then
-        echo "ERROR: ${appname}: Directory '${MATERIALS_DATA_DIR}' does not exists !" >&2
+    if [ ! -d ${MATERIALS_RESOURCE_DIR} ]; then
+        echo "ERROR: ${appname}: Directory '${MATERIALS_RESOURCE_DIR}' does not exists !" >&2
         return 1
     fi
-    echo "NOTICE: ${appname}: Directory MATERIALS_DATA_DIR='${MATERIALS_DATA_DIR}'"  >&2
+    echo "NOTICE: ${appname}: Directory MATERIALS_RESOURCE_DIR='${MATERIALS_RESOURCE_DIR}'"  >&2
 
     #############################
 
@@ -178,7 +173,7 @@ function do_run ()
 
 ****************************************************
 geomtools test log file :
-'${exe_test}' 
+'${exe_test}'
 ****************************************************
 EOF
     bin=${exe_test}
@@ -191,68 +186,67 @@ EOF
 	echo -e "{1;4;5}\n" | ${bin} >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
 	    return 1
-	fi 
+	fi
     elif [ "${exe}" = "test_geom_id" ]; then
 	echo "[12:1.45.3]" | ${bin} >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
 	    return 1
-	fi 
+	fi
     elif [ "${exe}" = "test_model_factory" ]; then
 	echo -e "\n" | ${bin} --no-draw >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
 	    return 1
-	fi 
+	fi
     elif [ "${exe}" = "test_multiple_placement" ]; then
 	echo | ${bin} --no-draw >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
 	    return 1
-	fi 
+	fi
     elif [ "${exe}" = "test_regular_grid_placement" ]; then
 	echo | ${bin} --no-draw >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
 	    return 1
-	fi 
+	fi
     elif [ "${exe}" = "test_regular_linear_placement" ]; then
 	echo | ${bin} --no-draw >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
 	    return 1
-	fi 
+	fi
     elif [ "${exe}" = "test_tube" ]; then
 	echo "{tube 900 1000 1000}" | ${bin} >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
 	    return 1
-	fi 
+	fi
     elif [ "${exe}" = "test_union_3d" ]; then
 	echo "" | ${bin} >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
 	    return 1
-	fi 
+	fi
     elif [ "${exe}" = "test_utils_2" ]; then
 	echo -e "z\n90" | ${bin} >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
 	    return 1
-	fi 
+	fi
     elif [ "${exe}" = "test_serializable_3" ]; then
 	${bin} --no-ab >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
 	    return 1
-	fi 
+	fi
     elif [ "${exe}" = "test_stl_tools" ]; then
-	#${bin} -f ${GEOMTOOLS_DATA_DIR}/testing/data/test_stl_pave2.stl >> ${tmp_test_dir}/tests.log 2>&1
-	${bin} -f ${GEOMTOOLS_DATA_DIR}/testing/data/test_stl_import.stl >> ${tmp_test_dir}/tests.log 2>&1
+	${bin} -f ${GEOMTOOLS_TESTING_DIR}/data/test_stl_import.stl >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
 	    return 1
-	fi 
+	fi
     elif [ "${exe}" = "test_manager" ]; then
 	${bin} --plugins --gdml >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
 	    return 1
-	fi 
+	fi
     else
 	${bin} >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
 	    return 1
-	fi 
+	fi
     fi
 
     cd ${opwd}
@@ -263,15 +257,15 @@ function main ()
 {
     local action_mode=${the_action_mode}
     local action_options=${the_action_options}
-    
+
     # Some checks...
     if [ -z "${action_mode}" ]; then
 	echo "ERROR: ${appname}: Missing action !" >&2
 	print_usage
 	return 1
     fi
-    
-    # Perform action...    
+
+    # Perform action...
     if [ "${action_mode}" = "run" ]; then
 	if [ "x${exe_test}" = "x" ]; then
 	    echo "ERROR: ${appname}: Missing executable name !" >&2
@@ -283,7 +277,7 @@ function main ()
 	    return 1
 	fi
     fi
-    
+
     if [ "${action_mode}" = "clean" ]; then
     	do_clean $@
     	if [ $? -ne 0 ]; then
@@ -296,7 +290,7 @@ function main ()
 
 ##########################################################
 
-main 
+main
 if [ $? -ne 0 ]; then
     echo "ERROR: ${appname}: Failure !" >&2
     my_exit 1

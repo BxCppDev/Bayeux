@@ -101,7 +101,7 @@ set(_geomtools_test_additional_options )
 # depends on materials data dir:
 if (DEFINED materials_DATA_DIR
     AND NOT "x${materials_DATA_DIR}" STREQUAL "x" )
-  list (APPEND _geomtools_test_additional_options --materials-data-dir ${materials_DATA_DIR} )
+  list (APPEND _geomtools_test_additional_options --materials-resource-dir ${materials_DATA_DIR}/resources )
   message ( STATUS "${PROJECT_NAME}: testing: Using option '${_geomtools_test_additional_options}'" )
 endif ()
 
@@ -138,7 +138,6 @@ foreach(test_program ${geomtools_tests_programs_list})
   add_test(NAME ${test_executable}.run
     COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash
     --tmp-dir ${_test_tmp_dir}
-    --data-dir ${PROJECT_SOURCE_DIR}
     --prefix ${PROJECT_SOURCE_DIR}
     --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
      ${_geomtools_test_additional_options}

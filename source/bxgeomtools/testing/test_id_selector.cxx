@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 // test_id_selector.cxx
 
 #include <cstdlib>
@@ -16,8 +16,8 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'id_selector'!" << endl; 
-  
+      clog << "Test program for class 'id_selector'!" << endl;
+
       bool debug = false;
 
       int iarg = 1;
@@ -27,28 +27,28 @@ int main (int argc_, char ** argv_)
 
           if (token[0] == '-')
             {
-               string option = token; 
-               if ((option == "-d") || (option == "--debug")) 
+               string option = token;
+               if ((option == "-d") || (option == "--debug"))
                  {
                    debug = true;
                  }
-              else 
-                 { 
-                    clog << "warning: ignoring option '" << option << "'!" << endl; 
+              else
+                 {
+                    clog << "warning: ignoring option '" << option << "'!" << endl;
                  }
             }
           else
             {
-              string argument = token; 
-              { 
-                clog << "warning: ignoring argument '" << argument << "'!" << endl; 
+              string argument = token;
+              {
+                clog << "warning: ignoring argument '" << argument << "'!" << endl;
               }
             }
           iarg++;
-      } 
-    
+      }
+
       geomtools::id_mgr my_id_mgr;
-      my_id_mgr.load ("${GEOMTOOLS_DATA_DIR}/testing/config/test_geom_id_mgr.lis");
+      my_id_mgr.load ("${GEOMTOOLS_TESTING_DIR}/config/test_geom_id_mgr.lis");
       if (debug) my_id_mgr.tree_dump (clog, "ID manager:", "DEBUG: ");
 
       geomtools::id_selector IDS (my_id_mgr);
@@ -67,7 +67,7 @@ int main (int argc_, char ** argv_)
           geomtools::geom_id gid;
           my_id_mgr.make_id ("source_pad", gid);
           gid.set_address (module, layer, strip, pad);
-          
+
           // Check it:
           if (IDS.match (gid))
             {
@@ -82,12 +82,12 @@ int main (int argc_, char ** argv_)
     }
   catch (exception & x)
     {
-      cerr << "error: " << x.what () << endl; 
+      cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);

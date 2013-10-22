@@ -303,7 +303,7 @@ int main (int argc_, char ** argv_)
 
       if (manager_config_file.empty ())
         {
-          manager_config_file = "${GEOMTOOLS_DATA_DIR}/testing/config/test-1.0/test_manager.conf";
+          manager_config_file = "${GEOMTOOLS_TESTING_DIR}/config/test-1.0/test_manager.conf";
         }
       datatools::fetch_path_with_env (manager_config_file);
       std::clog << "Manager config. file : '" << manager_config_file << "'" << std::endl;
