@@ -20,6 +20,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Bayeux.  If not, see <http://www.gnu.org/licenses/>.
 
+// Standard library
+#include <string>
+
 // This package
 #include <bayeux/bayeux_config.h>
 #include <bayeux/version.h>
@@ -31,16 +34,19 @@
 
 #include <materials/version.h>
 #include <materials/resource.h>
+#include <materials/materials_config.h>
 
 #include <mygsl/version.h>
 
 #include <geomtools/version.h>
 #include <geomtools/resource.h>
+#include <geomtools/geomtools_config.h>
 
 #include <emfield/version.h>
 
 #include <genbb_help/version.h>
 #include <genbb_help/resource.h>
+#include <genbb_help/genbb_help_config.h>
 
 #include <genvtx/version.h>
 
@@ -99,11 +105,13 @@ namespace bayeux {
                                       "for input to simulation applications (i.e. GDML/Geant4).",
                                       materials::version::get_version()
                                       );
-        // std::cerr << "*** DEVEL *** Registering materials module's resource directory : "
-        //           << materials::get_resource_dir(false) << std::endl;
         materials_lib_infos.store_string(datatools::library_info::keys::install_resource_dir(),
                                          materials::get_resource_dir(false)
                                          );
+        materials_lib_infos.store_string(datatools::library_info::keys::env_resource_dir(),
+                                         std::string(MATERIALS_ENV_RESOURCE_DIR)
+                                         );
+
       }
 
 
@@ -124,6 +132,9 @@ namespace bayeux {
                                       );
         geomtools_lib_infos.store_string(datatools::library_info::keys::install_resource_dir(),
                                          geomtools::get_resource_dir(false)
+                                         );
+        geomtools_lib_infos.store_string(datatools::library_info::keys::env_resource_dir(),
+                                         std::string(GEOMTOOLS_ENV_RESOURCE_DIR)
                                          );
       }
 
@@ -161,6 +172,9 @@ namespace bayeux {
         genbb_help_lib_infos.store_string(datatools::library_info::keys::install_resource_dir(),
                                           genbb::get_resource_dir(false)
                                           );
+        genbb_help_lib_infos.store_string(datatools::library_info::keys::env_resource_dir(),
+                                         std::string(GENBB_HELP_ENV_RESOURCE_DIR)
+                                         );
       }
 
 
@@ -216,7 +230,10 @@ namespace bayeux {
         bayeux_lib_infos.store_string(datatools::library_info::keys::install_bin_dir(),
                                       "@CMAKE_INSTALL_PREFIX@/bin");
         bayeux_lib_infos.store_string(datatools::library_info::keys::install_resource_dir(),
-                                      "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
+                                      "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/Bayeux-@Bayeux_VERSION@/resources"
+                                      );
+        bayeux_lib_infos.store_string(datatools::library_info::keys::env_resource_dir(),
+                                      std::string(BAYEUX_ENV_RESOURCE_DIR)
                                       );
         bayeux_lib_infos.store_integer(datatools::library_info::keys::version_major(),
                                        bayeux::version::get_major());

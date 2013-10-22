@@ -29,4 +29,6 @@
 //! Evaluates to true if Bayeux was built with automated init/fini operation at DLL loading
 #cmakedefine01 BAYEUX_WITH_IMPLICIT_INIT_FINI
 
+#define BAYEUX_ENV_RESOURCE_DIR "BAYEUX_RESOURCE_DIR"
+
 #endif // BAYEUX_BAYEUX_CONFIG_H

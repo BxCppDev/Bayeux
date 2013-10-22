@@ -208,7 +208,7 @@ foreach(_hdrin ${${module_name}_MODULE_HEADERS})
 endforeach()
 
 # - Unit tests
-set(${module_name}_TEST_ENVIRONMENT "DATATOOLS_DATA_DIR=${module_root_dir}")
+set(${module_name}_TEST_ENVIRONMENT "DATATOOLS_TESTING_DIR=${module_test_dir}")
 
 # ls -1 bxdatatools/testing/*.cxx | sed -e 's@bxdatatools/testing@${module_test_dir}@g'
 
@@ -282,4 +282,3 @@ ${module_test_dir}/test_version_id.cxx
 set(${module_name}_MODULE_APPS
   ${module_app_dir}/ocd_manual.cxx
   )
-

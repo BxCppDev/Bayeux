@@ -86,7 +86,7 @@ foreach(_hdrin ${${module_name}_MODULE_HEADERS})
 endforeach()
 
 # - Unit tests
-set(${module_name}_TEST_ENVIRONMENT "CUTS_DATA_DIR=${module_root_dir}")
+set(${module_name}_TEST_ENVIRONMENT "CUTS_TESTING_DIR=${module_test_dir}")
 
 set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_accept_cut.cxx

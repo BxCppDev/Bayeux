@@ -394,23 +394,6 @@ set(${module_name}_MODULE_SOURCES
   #${module_source_dir}/the_introspectable.cc
   )
 
-# # - Reflection components
-# if(GENBB_HELP_WITH_REFLECTION)
-#   set(genbb_help_REFLECTION_HEADERS
-#     ${module_include_dir}/${module_name}/primary_particle-reflect.h
-#     ${module_include_dir}/${module_name}/primary_event-reflect.h
-#     ${module_include_dir}/${module_name}/the_introspectable.h
-#     ${module_include_dir}/${module_name}/reflection_guard.h
-#     ${module_include_dir}/${module_name}/detail/reflection_link_guard.h
-#     )
-#   set(genbb_help_REFLECTION_SOURCES
-#     ${module_source_dir}/the_introspectable.cc
-#     )
-#   set(genbb_help_REFLECTION_TESTS
-#     ${module_testing_dir}/test_reflection_0.cxx
-#     )
-# endif()
-
 # - Publish public headers only
 foreach(_hdrin ${${module_name}_MODULE_HEADERS})
   string(REGEX REPLACE "\\.in$" "" _hdrout "${_hdrin}")
@@ -422,7 +405,7 @@ endforeach()
 list(APPEND ${module_name}_MODULE_HEADERS ${${module_name}_PRIVATE_MODULE_HEADERS})
 
 # - Unit tests
-set(${module_name}_TEST_ENVIRONMENT "GENBB_HELP_DATA_DIR=${module_root_dir}")
+set(${module_name}_TEST_ENVIRONMENT "GENBB_HELP_RESOURCE_DIR=${module_resource_dir};GENBB_HELP_TESTING_DIR=${module_test_dir}")
 
 set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_genbb_help.cxx

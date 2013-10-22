@@ -118,4 +118,3 @@ endif()
 if(NOT Bayeux_EMBEDDED)
   include(BXCPack)
 endif()
-

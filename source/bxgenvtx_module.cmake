@@ -92,7 +92,7 @@ foreach(_hdrin ${${module_name}_MODULE_HEADERS})
 endforeach()
 
 # - Unit tests
-set(${module_name}_TEST_ENVIRONMENT "GENVTX_DATA_DIR=${module_root_dir};MATERIALS_DATA_DIR=${module_root_dir}/../bxmaterials")
+set(${module_name}_TEST_ENVIRONMENT "GENVTX_TESTING_DIR=${module_test_dir};MATERIALS_RESOURCE_DIR=${module_root_dir}/../bxmaterials/resources")
 
 set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_genvtx.cxx

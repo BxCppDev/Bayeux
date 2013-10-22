@@ -95,7 +95,7 @@ foreach(_hdrin ${${module_name}_MODULE_HEADERS})
 endforeach()
 
 # - Unit tests
-set(${module_name}_TEST_ENVIRONMENT "DPP_DATA_DIR=${module_root_dir}")
+set(${module_name}_TEST_ENVIRONMENT "DPP_TESTING_DIR=${module_test_dir}")
 list(APPEND ${module_name}_TEST_ENVIRONMENT "DPP_TMP_TEST_DIR=${CMAKE_BINARY_DIR}/Testing" )
 
 set(${module_name}_MODULE_TESTS

@@ -126,7 +126,7 @@ foreach(_hdrin ${${module_name}_MODULE_HEADERS})
 endforeach()
 
 # - Unit tests
-set(${module_name}_TEST_ENVIRONMENT "MYGSL_DATA_DIR=${module_root_dir}")
+set(${module_name}_TEST_ENVIRONMENT "MYGSL_TESTING_DIR=${module_test_dir}")
 
 set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_best_value.cxx
