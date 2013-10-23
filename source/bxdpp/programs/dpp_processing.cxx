@@ -1,7 +1,7 @@
 /* dpp_processing.cxx
  * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-07-03
- * Last modified : 2013-10-21
+ * Last modified : 2013-10-23
  *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -49,15 +49,16 @@ struct ui {
   /// Print usage
   static  void print_usage(std::ostream &);
 
-  // Build options
+  /// Build options
   static void build_opts(boost::program_options::options_description &,
                          dpp::dpp_driver_params &);
 
+  /// Application name
   static const std::string APP_NAME;
 
 };
 
-#if DPP_STANDALONE == 0
+#if DPP_STANDALONE == 1
 const std::string ui::APP_NAME = "dpp_processing";
 #else
 const std::string ui::APP_NAME = "bxdpp_processing";
