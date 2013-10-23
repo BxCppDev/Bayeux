@@ -216,9 +216,9 @@ namespace genvtx {
     genvtx::i_vertex_generator::factory_register_type _factory_register_; //!< The vertex generator factory register
     bool _factory_preload_;         //!< Factory dictionary preload flag
     bool _factory_debug_;           //!< Factory debug flag
-    int         _random_seed_;      //!< The seed of the embeded pseudo random number generator (PRNG)
-    std::string _rng_id_;           //!< The ID of the embeded pseudo random number generator (PRNG)
-    mygsl::rng  _random_;           //!< The embeded pseudo random number generator (PRNG)
+    int         _random_seed_;      //!< The seed of the embedded pseudo random number generator (PRNG)
+    std::string _rng_id_;           //!< The ID of the embedded pseudo random number generator (PRNG)
+    mygsl::rng  _random_;           //!< The embedded pseudo random number generator (PRNG)
     mygsl::rng * _external_random_; //!< The external pseudo random number generator (PRNG)
 
     datatools::service_manager * _service_manager_;  //!< The service manager
