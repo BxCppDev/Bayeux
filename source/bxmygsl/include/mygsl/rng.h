@@ -70,7 +70,7 @@ namespace mygsl {
 
     void initialize (const datatools::properties & config_);
 
-    /// Deprecated :
+    // Deprecated :
     void init (const std::string & id_, int32_t seed_ = 0);
 
     bool is_seed_invalid() const;
