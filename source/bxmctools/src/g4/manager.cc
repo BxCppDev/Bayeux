@@ -909,6 +909,7 @@ namespace mctools {
       DT_THROW_IF (! _initialized_, std::logic_error, "Manager is not initialized !");
       _initialized_ = false;
       _at_reset();
+      _init_defaults(); // XXX
       return;
     }
 
@@ -1690,11 +1691,10 @@ namespace mctools {
       _shpf_prng_.reset();
       _mgr_prng_.reset();
 
-
       reset_simulation_ctrl();
 
       _track_history_.reset();
-      _init_defaults();
+      //_init_defaults();
       return;
     }
 

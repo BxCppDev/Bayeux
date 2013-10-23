@@ -195,20 +195,26 @@ int main(int argc_, char ** argv_)
                    "Loading DLL '" << dll_name << "' failed !");
     }
 
-    // Declare the simulation manager:
-    mctools::g4::manager sim_manager;
+    {
+      // Declare the simulation manager:
+      DT_LOG_NOTICE(logging, "Instantiate the simulation manager...");
+      mctools::g4::manager sim_manager;
 
-    DT_LOG_NOTICE(logging, "Setup the simulation manager...");
+      // Configure the simulation manager:
+      DT_LOG_NOTICE(logging, "Setup the simulation manager...");
+      mctools::g4::manager_parameters::setup(params, sim_manager);
 
-    // Configure the simulation manager:
-    mctools::g4::manager_parameters::setup(params, sim_manager);
+      // Run the simulation session :
+      DT_LOG_NOTICE(logging, "Simulation session starts...");
+      sim_manager.run_simulation();
+      DT_LOG_NOTICE(logging, "Simulation session is stopped.");
 
-    DT_LOG_NOTICE(logging, "Simulation session starts...");
+      // Explicitely terminate the simulation manager:
+      DT_LOG_NOTICE(logging, "Terminate the simulation manager...");
+      sim_manager.reset();
+      DT_LOG_NOTICE(logging, "Simulation manager is terminated.");
+    } // Destructor is invoked here.
 
-    // Run the simulation session :
-    sim_manager.run_simulation();
-
-    DT_LOG_NOTICE(logging, "Simulation session is stopped.");
   }
   catch (std::exception & x) {
     DT_LOG_FATAL(logging, x.what());
