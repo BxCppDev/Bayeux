@@ -192,6 +192,11 @@ namespace genbb {
                                   const std::string& title  = "",
                                   const std::string& indent = "") const;
 
+    void print_particle_generators(std::ostream& out = std::clog,
+                                   const std::string& title  = "",
+                                   const std::string& indent = "",
+                                   const std::string& mode = "") const;
+
     /// Smart print
     virtual void tree_dump(std::ostream& out         = std::clog,
                            const std::string& title  = "",

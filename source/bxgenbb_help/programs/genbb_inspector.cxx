@@ -92,6 +92,7 @@ namespace genbb {
     std::vector<std::string> unrecognized_options; /// Unrecognized options
     std::string configuration;                     /// Particle generator manager configuration file
     std::string action;                            /// Action to be performed
+    std::string list_print_mode;                   /// Print list mode ("tree", "raw");
     std::string generator;                         /// Particle generator name
     std::vector<std::string> output_paths;
     int number_of_events;                          /// Number of generated events
@@ -117,6 +118,7 @@ namespace genbb {
          << std::endl;
     out_ << "|-- configuration      = " << configuration << std::endl;
     out_ << "|-- action             = " << action << std::endl;
+    out_ << "|-- list_print_mode    = " << list_print_mode << std::endl;
     out_ << "|-- generator          = " << generator << std::endl;
     out_ << "|-- output_paths       = " << output_paths.size() << std::endl;
     out_ << "|-- number_of_events   = " << number_of_events << std::endl;
@@ -139,6 +141,7 @@ namespace genbb {
     trace_index = 0;
     interactive = false;
     action.clear();
+    list_print_mode.clear();
     unrecognized_options.clear();
     output_paths.clear();
     number_of_events = -1;
@@ -1156,7 +1159,7 @@ int main (int argc_, char ** argv_)
       ("modulo,%",
        po::value<int>(&params.print_modulo)
        ->default_value (10),
-       "set the modulo print periof of generated events. \n"
+       "set the modulo print period of generated events. \n"
        "Example :                                        \n"
        " --modulo 100                                      "
        )
@@ -1206,6 +1209,14 @@ int main (int argc_, char ** argv_)
        " --action \"list\"      \n"
        " --action \"shoot\"     "
        )
+
+      ("list-print-mode",
+       po::value<std::string> (&params.list_print_mode),
+       "set the print mode for list action.            \n"
+       "Examples :                                     \n"
+       " --action \"list\" --list-print-mode \"tree\"  \n"
+       " --action \"list\" --list-print-mode \"raw\"     "
+        )
 
       ("generator,g",
        po::value<std::string> (&params.generator),
@@ -1460,6 +1471,9 @@ namespace genbb {
     _manager_.initialize(config);
 
     if (_params_.action == "list") {
+      if (_params_.list_print_mode.empty()) {
+        _params_.list_print_mode = "tree";
+      }
     }
 
     if (_params_.action == "shoot") {
@@ -1562,7 +1576,12 @@ namespace genbb {
     }
 
     if (_params_.action == "list") {
-      _manager_.dump_particle_generators(std::cout,"List of particle generators","");
+      std::string print_mode = _params_.list_print_mode;
+      std::string title;
+      if (print_mode == "tree") {
+        title = "List of particle generators";
+      }
+      _manager_.print_particle_generators(std::cout, title, "", print_mode);
     }
 
     if (_params_.action == "shoot") {

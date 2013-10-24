@@ -371,10 +371,22 @@ namespace genbb {
     return;
   }
 
-
   void manager::dump_particle_generators(std::ostream& out,
-                                         const std::string& title,
-                                         const std::string& an_indent) const {
+                                          const std::string& title,
+                                          const std::string& an_indent) const {
+
+    print_particle_generators(out, title, an_indent, "tree");
+    return;
+  }
+
+  void manager::print_particle_generators(std::ostream& out,
+                                          const std::string& title,
+                                          const std::string& an_indent,
+                                          const std::string& mode) const {
+    std::string print_mode = mode;
+    if (print_mode.empty()) {
+      print_mode = "tree";
+    }
     std::string indent;
     if (!an_indent.empty()) indent = an_indent;
     if (!title.empty()) out << title << ":" << std::endl;
@@ -387,24 +399,31 @@ namespace genbb {
            ++it) {
         count++;
         out << indent;
-        if (count == sz) {
-          out << "`-- ";
-        } else {
-          out << "|-- ";
-        }
         const std::string& pg_name = it->first;
         const detail::pg_entry_type& pg_record = it->second;
-        out.setf(std::ios::left, std::ios::adjustfield);
-        out.width(30);
-        out << pg_name << " : " << pg_record.get_id () << " ";
-        out << '(';
-        if (pg_record.is_initialized()) {
-          out << "initialized";
-        } else {
-          out << "not initialized";
+
+        if (print_mode == "tree") {
+          // tree mode:
+          if (count == sz) {
+            out << "`-- ";
+          } else {
+            out << "|-- ";
+          }
+          out.setf(std::ios::left, std::ios::adjustfield);
+          out.width(30);
+          out << pg_name << " : " << pg_record.get_id () << " ";
+          out << '(';
+          if (pg_record.is_initialized()) {
+            out << "initialized";
+          } else {
+            out << "not initialized";
+          }
+          out << ')';
+          out << std::endl;
+        } else if (print_mode == "raw") {
+          // raw mode:
+          out << pg_name << std::endl;
         }
-        out << ')';
-        out << std::endl;
       }
     }
     return;
