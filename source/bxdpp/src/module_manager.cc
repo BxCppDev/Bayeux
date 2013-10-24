@@ -213,7 +213,7 @@ namespace dpp {
         service_manager_configuration_file
           = setup_.fetch_string ("service_manager.configuration");
         DT_LOG_NOTICE (get_logging_priority(),
-                       "Embeds a service manager setup from file '"
+                       "Embeds a service manager from setup file '"
                        << service_manager_configuration_file << "' !" << std::endl);
         datatools::fetch_path_with_env (service_manager_configuration_file);
         datatools::properties service_manager_configuration;
@@ -222,7 +222,7 @@ namespace dpp {
         install_service_manager (service_manager_configuration);
       } else {
         DT_LOG_WARNING (get_logging_priority(),
-                        "No service manager configuration property !");
+                        "There is no 'service_manager.configuration' configuration property ! So we won't use an embedded service manager. For now, this is not a issue.");
       }
     }
 
@@ -239,7 +239,7 @@ namespace dpp {
     if (! has_service_manager ()) {
         DT_LOG_WARNING (get_logging_priority(),
                         "No service manager is available ! "
-                        << "This forbids the use of some processing modules that depend on external services !");
+                        << "This will forbid the use of some processing modules that need to access to some specific external services. This depends on your pipeline setup. For now, we continue without a service manager.");
     } else {
       DT_LOG_NOTICE (get_logging_priority(),
                      "We now have a service manager available !");
