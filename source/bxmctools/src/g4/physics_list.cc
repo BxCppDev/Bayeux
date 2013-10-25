@@ -839,7 +839,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
        << "and initialization of some predefined physics list from its registration\n"
        << "name.                                                                 \n"
        << "                                                                      \n"
-       << "Allowed values (from the ``G4PhysListFactory`` class) :               \n"
+       << "Allowed values from Geant4 [" << G4VERSION_NUMBER
+       << "] (``G4PhysListFactory`` class) : \n"
        << "                                                                      \n";
     G4PhysListFactory f;
     for (size_t i = 0; i < f.AvailablePhysLists().size(); i++) {
@@ -888,7 +889,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
                            )
       ;
   }
-
 
   {
     // Description of the 'physics_constructors.XXX.id' configuration property :
