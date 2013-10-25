@@ -1040,7 +1040,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
 
 
   {
-    // Description of the 'em.electron.energy_loss' configuration property :
+    // Description of the 'em.electron.ionisation' configuration property :
     datatools::configuration_property_description & cpd
       = ocd_.add_property_info();
     cpd.set_name_pattern("em.electron.ionisation")

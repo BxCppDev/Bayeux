@@ -35,7 +35,7 @@ namespace mctools {
       else if (label_ == "hadronic_elastic") return bHadronElastic;
       else if (label_ == "hadronic_inelastic") return bHadronInelastic;
       else if (label_ == "stopping") return bStopping;
-      else if (label_ ==  "ions") return bIons;
+      else if (label_ == "ions") return bIons;
       else return bUnknown;
     }
 
@@ -179,4 +179,3 @@ namespace mctools {
   } // end of namespace g4
 
 } // end of namespace mctools
-

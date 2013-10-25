@@ -46,23 +46,32 @@ namespace mctools {
         bool is_pixe() const;
       };
 
+      /// Check the standard EM processes
       bool is_em_standard () const;
 
+      /// Check the low energy Livermore EM processes
       bool is_em_low_energy_livermore () const;
 
+      /// Check the low energy Penelope EM processes
       bool is_em_low_energy_penelope () const;
 
+      /// Return the name of the EM processes
       const std::string & get_em_model () const;
 
+      /// Default constructor
       em_physics_constructor ();
 
+      /// Destructor
       virtual ~em_physics_constructor ();
 
+      /// Initialization
       virtual void initialize (const datatools::properties & config_,
                                physics_constructor_dict_type & dict_);
 
+      /// Reset
       virtual void reset ();
 
+      /// Smart print
       virtual void tree_dump (std::ostream      & out_    = std::clog,
                               const std::string & title_  = "",
                               const std::string & indent_ = "",
