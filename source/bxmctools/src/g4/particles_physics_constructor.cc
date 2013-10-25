@@ -417,7 +417,8 @@ namespace mctools {
     void particles_physics_constructor::_ConstructIons ()
     {
       if (_use_light_nuclei_) {
-        G4Alpha::AlphaDefinition();
+       DT_LOG_NOTICE(_logprio(), "Activating light nuclei...");
+       G4Alpha::AlphaDefinition();
         G4Deuteron::DeuteronDefinition();
         G4Triton::TritonDefinition();
         if (! _he3_as_generic_ion_) {
@@ -425,6 +426,7 @@ namespace mctools {
         }
       }
       if (_use_light_anti_nuclei_) {
+        DT_LOG_NOTICE(_logprio(), "Activating light anti-nuclei...");
         G4AntiAlpha::AntiAlphaDefinition();
         G4AntiDeuteron::AntiDeuteronDefinition();
         G4AntiTriton::AntiTritonDefinition();
@@ -433,6 +435,7 @@ namespace mctools {
         }
       }
       if (_use_generic_ion_) {
+        DT_LOG_NOTICE(_logprio(), "Activating generic ion...");
         G4GenericIon::GenericIonDefinition();
       }
       return;
@@ -442,13 +445,16 @@ namespace mctools {
     void particles_physics_constructor::_ConstructBosons ()
     {
       // gammas
+      DT_LOG_NOTICE(_logprio(), "Activating gamma...");
       G4Gamma::GammaDefinition ();
 
       if (_use_geantinos_) {
+        DT_LOG_NOTICE(_logprio(), "Activating geantino...");
         G4Geantino::GeantinoDefinition ();
         G4ChargedGeantino::ChargedGeantinoDefinition ();
       }
       if (_use_optical_photons_) {
+        DT_LOG_NOTICE(_logprio(), "Activating optical photons...");
         G4OpticalPhoton::OpticalPhotonDefinition ();
       }
 
@@ -458,26 +464,32 @@ namespace mctools {
     void particles_physics_constructor::_ConstructLeptons ()
     {
       // Light leptons e+/e- :
-      //G4LeptonConstructor::ConstructELeptons();
+      // From: G4LeptonConstructor::ConstructELeptons();
+      DT_LOG_NOTICE(_logprio(), "Activating e+/e-...");
       G4Electron::ElectronDefinition();
       G4Positron::PositronDefinition();
+      DT_LOG_NOTICE(_logprio(), "Activating (anti-)nu_e...");
       G4NeutrinoE::NeutrinoEDefinition();
       G4AntiNeutrinoE::AntiNeutrinoEDefinition();
 
       // Muon (anti-)leptons :
       if (_use_muon_leptons_) {
-        //G4LeptonConstructor::ConstructMuLeptons();
+        DT_LOG_NOTICE(_logprio(), "Activating mu+/mu-...");
+        // From: G4LeptonConstructor::ConstructMuLeptons();
         G4MuonPlus::MuonPlusDefinition();
         G4MuonMinus::MuonMinusDefinition();
+        DT_LOG_NOTICE(_logprio(), "Activating (anti-)nu_mu...");
         G4NeutrinoMu::NeutrinoMuDefinition();
         G4AntiNeutrinoMu::AntiNeutrinoMuDefinition();
       }
 
       // Tau (anti-)leptons :
       if (_use_tau_leptons_) {
-        //G4LeptonConstructor::ConstructTauLeptons();
+        DT_LOG_NOTICE(_logprio(), "Activating tau+/tau-...");
+        // From: G4LeptonConstructor::ConstructTauLeptons();
         G4TauMinus::TauMinusDefinition();
         G4TauPlus::TauPlusDefinition();
+        DT_LOG_NOTICE(_logprio(), "Activating (anti-)nu_tau...");
         G4NeutrinoTau::NeutrinoTauDefinition();
         G4AntiNeutrinoTau::AntiNeutrinoTauDefinition();
       }
@@ -489,7 +501,8 @@ namespace mctools {
     void particles_physics_constructor::_ConstructMesons ()
     {
       if (_use_light_mesons_) {
-        //G4MesonConstructor::ConstructLightMesons();
+        DT_LOG_NOTICE(_logprio(), "Activating (anti-)light mesons...");
+        // From: G4MesonConstructor::ConstructLightMesons();
         G4PionPlus::PionPlusDefinition();
         G4PionMinus::PionMinusDefinition();
         G4PionZero::PionZeroDefinition();
@@ -503,7 +516,8 @@ namespace mctools {
         G4KaonZeroShort::KaonZeroShortDefinition();
       }
       if (_use_charm_mesons_) {
-        //G4MesonConstructor::ConstructCharmMesons();
+        DT_LOG_NOTICE(_logprio(), "Activating (anti-)light charm mesons...");
+        // From: G4MesonConstructor::ConstructCharmMesons();
         G4DMesonPlus::DMesonPlusDefinition();
         G4DMesonMinus::DMesonMinusDefinition();
         G4DMesonZero::DMesonZeroDefinition();
@@ -516,7 +530,8 @@ namespace mctools {
         G4JPsi::JPsiDefinition();
       }
       if (_use_bottom_mesons_) {
-        //G4MesonConstructor::ConstructBottomMesons();
+        DT_LOG_NOTICE(_logprio(), "Activating (anti-)light bottom mesons...");
+        // From: G4MesonConstructor::ConstructBottomMesons();
         G4BMesonPlus::BMesonPlusDefinition();
         G4BMesonMinus::BMesonMinusDefinition();
         G4BMesonZero::BMesonZeroDefinition();
@@ -537,14 +552,16 @@ namespace mctools {
     void particles_physics_constructor::_ConstructBaryons ()
     {
       if (_use_nucleons_) {
-        //G4BaryonConstructor::ConstructNucleons();
+        DT_LOG_NOTICE(_logprio(), "Activating (anti-)nucleons...");
+        // From: G4BaryonConstructor::ConstructNucleons();
         G4Proton::ProtonDefinition();
         G4Neutron::NeutronDefinition();
         G4AntiProton::AntiProtonDefinition();
         G4AntiNeutron::AntiNeutronDefinition();
       }
       if (_use_strange_baryons_) {
-        //G4BaryonConstructor::ConstructStrangeBaryons();
+        DT_LOG_NOTICE(_logprio(), "Activating strange (anti-)baryons...");
+        // From: G4BaryonConstructor::ConstructStrangeBaryons();
         G4Lambda::LambdaDefinition();
         G4AntiLambda::AntiLambdaDefinition();
         G4SigmaZero::SigmaZeroDefinition();
@@ -561,7 +578,8 @@ namespace mctools {
         G4AntiOmegaMinus::AntiOmegaMinusDefinition();
       }
       if (_use_charm_baryons_) {
-        //G4BaryonConstructor::ConstructCharmBaryons();
+        DT_LOG_NOTICE(_logprio(), "Activating charm (anti-)baryons...");
+        // From: G4BaryonConstructor::ConstructCharmBaryons();
         G4LambdacPlus::LambdacPlusDefinition();
         G4SigmacPlusPlus::SigmacPlusPlusDefinition();
         G4SigmacPlus::SigmacPlusDefinition();
@@ -579,7 +597,8 @@ namespace mctools {
         G4AntiOmegacZero::AntiOmegacZeroDefinition();
       }
       if (_use_bottom_baryons_) {
-        //G4BaryonConstructor::ConstructBottomBaryons();
+        DT_LOG_NOTICE(_logprio(), "Activating bottom baryons...");
+        // From: G4BaryonConstructor::ConstructBottomBaryons();
 #if G4VERSION_NUMBER == 960
         G4Lambdab::LambdabDefinition();
         G4SigmabPlus::SigmabPlusDefinition();
@@ -593,6 +612,7 @@ namespace mctools {
 #endif // G4VERSION_NUMBER == 960
 
 #if G4VERSION_NUMBER == 960
+        DT_LOG_NOTICE(_logprio(), "Activating bottom anti-baryons...");
         G4AntiLambdab::AntiLambdabDefinition();
         G4AntiSigmabPlus::AntiSigmabPlusDefinition();
         G4AntiSigmabZero::AntiSigmabZeroDefinition();
