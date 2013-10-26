@@ -92,12 +92,17 @@ mark_as_advanced(BAYEUX_WITH_IMPLICIT_INIT_FINI)
 #-----------------------------------------------------------------------
 # Option for enabling Geant4 module
 #
-option(Bayeux_WITH_GEANT4 "Build Geant4 extension module" OFF)
+if(NOT DEFINED Bayeux_WITH_GEANT4)
+  set(Bayeux_WITH_GEANT4 OFF CACHE BOOL "Build Geant4 extension module")
+endif()
 
 #-----------------------------------------------------------------------
 # Configure testing if required
 #
-option(Bayeux_ENABLE_TESTING "Build unit testing system for Bayeux" OFF)
+if(NOT DEFINED Bayeux_ENABLE_TESTING)
+  set(Bayeux_ENABLE_TESTING OFF CACHE BOOL "Build unit testing system for Bayeux")
+endif()
+
 if(Bayeux_ENABLE_TESTING)
   enable_testing()
 endif()

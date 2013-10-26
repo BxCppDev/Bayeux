@@ -24,7 +24,9 @@
 #-----------------------------------------------------------------------
 # Optional for enabling documentation
 #
-option(Bayeux_BUILD_DOCS "Build Bayeux documentation products" ON)
+if(NOT DEFINED Bayeux_BUILD_DOCS)
+  set(Bayeux_BUILD_DOCS OFF CACHE BOOL "Build Bayeux documentation products")
+endif()
 
 if(NOT Bayeux_BUILD_DOCS)
   return()
