@@ -184,7 +184,7 @@ namespace mctools {
         if (gdml_schema_location == "remote") {
           _gdml_schema_ = geomtools::gdml_writer::default_remote_gdml_schema();
         } else if (gdml_schema_location == "local") {
-          _gdml_schema_ = geomtools::get_resource("gdml_schema/gdml.xsd");
+          _gdml_schema_ = geomtools::get_resource("gdml_schema/gdml.xsd", true);
           datatools::fetch_path_with_env(_gdml_schema_);
         } else {
           DT_THROW_IF(true, std::logic_error, "Missing property '" << "gdml.schema_location" << "' !");
