@@ -26,7 +26,7 @@
 # - Packages
 # - Boost
 find_package(Boost 1.48.0 REQUIRED filesystem system serialization iostreams program_options NO_MODULE)
-set(Bayeux_Boost_LIBRARIES ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARRY} ${Boost_SERIALIZATION_LIBRARY} ${Boost_IOSTREAMS_LIBRARY} ${Boost_PROGRAM_OPTIONS_LIBRARY})
+set(Bayeux_Boost_LIBRARIES ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_SERIALIZATION_LIBRARY} ${Boost_IOSTREAMS_LIBRARY} ${Boost_PROGRAM_OPTIONS_LIBRARY})
 
 # - Camp
 find_package(CAMP 0.7.1 REQUIRED)
