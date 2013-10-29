@@ -26,6 +26,7 @@
 # - Packages
 # - Boost
 find_package(Boost 1.48.0 REQUIRED filesystem system serialization iostreams program_options NO_MODULE)
+set(Bayeux_Boost_LIBRARIES ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARRY} ${Boost_SERIALIZATION_LIBRARY} ${Boost_IOSTREAMS_LIBRARY} ${Boost_PROGRAM_OPTIONS_LIBRARY})
 
 # - Camp
 find_package(CAMP 0.7.1 REQUIRED)
@@ -39,6 +40,14 @@ find_package(GSL 1.15 QUIET NO_MODULE)
 # - ROOT
 find_package(ROOT 5.34.00 REQUIRED Core Hist RIO Tree)
 
+# - Geant4 if building the MCTools extension library
+# We do this here because we may need to configure files in MCTools
+# using the results of the search
+if(Bayeux_WITH_GEANT4)
+  find_package(Geant4 9.6.0 REQUIRED ui_all vis_all gdml)
+  # Also need Boost.Thread, ugh
+  find_package(Boost REQUIRED thread)
+endif()
 
 # - Core Includes for Bayeux + Third Party
 include_directories(${Bayeux_BUILDPRODUCT_DIR}/include)
@@ -120,7 +129,7 @@ include_directories(${mctools_include_dir})
 #
 add_library(Bayeux SHARED ${Bayeux_HEADERS} ${Bayeux_SOURCES})
 target_link_libraries(Bayeux ${CMAKE_DL_LIBS})
-target_link_libraries(Bayeux ${Boost_LIBRARIES})
+target_link_libraries(Bayeux ${Bayeux_Boost_LIBRARIES})
 target_link_libraries(Bayeux ${CAMP_LIBRARIES})
 target_link_libraries(Bayeux ${GSL_LIBRARIES})
 target_link_libraries(Bayeux ${CLHEP_LIBRARIES})
@@ -156,10 +165,6 @@ set(Bayeux_ADDON_TARGETS)
 # - Build/Link the geant4 extension module, if required
 #
 if(Bayeux_WITH_GEANT4)
-  find_package(Geant4 9.6.0 REQUIRED ui_all vis_all gdml)
-  # Also need Boost.Thread, ugh
-  find_package(Boost REQUIRED thread)
-
   include_directories(${Geant4_INCLUDE_DIRS})
   add_library(Bayeux_mctools_geant4 SHARED ${mctools_GEANT4_SOURCES} ${mctool_GEANT4_HEADERS})
   # Hack - strip "-D" flag as we should only supply the def names
@@ -172,7 +177,7 @@ if(Bayeux_WITH_GEANT4)
   set_target_properties(Bayeux_mctools_geant4
     PROPERTIES COMPILE_DEFINITIONS "${Bayeux_Geant4_DEFINITIONS}"
     )
-  target_link_libraries(Bayeux_mctools_geant4 ${Geant4_LIBRARIES} ${Boost_thread_LIBRARY})
+  target_link_libraries(Bayeux_mctools_geant4 ${Geant4_LIBRARIES} ${Boost_THREAD_LIBRARY})
 
   # - Set RPATH as needed
   set_target_properties(Bayeux_mctools_geant4 PROPERTIES INSTALL_RPATH_USE_LINK_PATH 1)
