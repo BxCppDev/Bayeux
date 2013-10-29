@@ -126,6 +126,22 @@ target_link_libraries(Bayeux ${GSL_LIBRARIES})
 target_link_libraries(Bayeux ${CLHEP_LIBRARIES})
 target_link_libraries(Bayeux ${ROOT_LIBRARIES})
 
+# - Set RPATH as needed
+set_target_properties(Bayeux PROPERTIES INSTALL_RPATH_USE_LINK_PATH 1)
+
+if(UNIX AND NOT APPLE)
+  set_target_properties(Bayeux
+    PROPERTIES INSTALL_RPATH "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
+    )
+elseif(APPLE)
+  # Temporary setting - needs testing
+  set_target_properties(Bayeux
+    PROPERTIES
+      INSTALL_RPATH "@rpath"
+      LINK_FLAGS "-undefined dynamic_lookup"
+    )
+endif()
+
 # - On Apple, ensure dynamic_lookup of undefined symbols
 if(APPLE)
   set_target_properties(Bayeux PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
@@ -157,6 +173,22 @@ if(Bayeux_WITH_GEANT4)
     PROPERTIES COMPILE_DEFINITIONS "${Bayeux_Geant4_DEFINITIONS}"
     )
   target_link_libraries(Bayeux_mctools_geant4 ${Geant4_LIBRARIES} ${Boost_thread_LIBRARY})
+
+  # - Set RPATH as needed
+  set_target_properties(Bayeux_mctools_geant4 PROPERTIES INSTALL_RPATH_USE_LINK_PATH 1)
+
+  if(UNIX AND NOT APPLE)
+    set_target_properties(Bayeux_mctools_geant4
+      PROPERTIES INSTALL_RPATH "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
+      )
+  elseif(APPLE)
+    # Temporary setting - needs testing
+    set_target_properties(Bayeux_mctools_geant4
+      PROPERTIES
+        INSTALL_RPATH "@rpath"
+        LINK_FLAGS "-undefined dynamic_lookup"
+      )
+  endif()
 
   # - On Apple, ensure dynamic_lookup of undefined symbols
   if(APPLE)
@@ -194,7 +226,6 @@ foreach(_bxapp IN LISTS Bayeux_APPS Bayeux_GEANT4_APPS)
   if(Bayeux_WITH_GEANT4)
     list(FIND Bayeux_GEANT4_APPS ${_bxapp} _g4app_found)
     if (_g4app_found GREATER -1)
-      message(STATUS "Application '${_bxapp}' is linked to the Bayeux's Geant4 addon library.")
       target_link_libraries(bx${_app_basename} Bayeux_mctools_geant4)
     endif()
   endif()
@@ -217,9 +248,6 @@ install(TARGETS Bayeux ${Bayeux_ADDON_TARGETS}
   )
 install(DIRECTORY ${Bayeux_BUILDPRODUCT_DIR}/include/
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-  )
-install(DIRECTORY ${Bayeux_BUILDPRODUCT_DIR}/share/
-  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}
   )
 
 #-----------------------------------------------------------------------

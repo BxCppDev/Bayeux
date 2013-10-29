@@ -118,6 +118,12 @@ if(Bayeux_ENABLE_TESTING)
 endif()
 
 #-----------------------------------------------------------------------
+# Install common resources
+install(DIRECTORY ${Bayeux_BUILDPRODUCT_DIR}/share/Bayeux-${Bayeux_VERSION}
+  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}
+  )
+
+#-----------------------------------------------------------------------
 # Package Sources and Binaries - only if not embedded
 #
 if(NOT Bayeux_EMBEDDED)
