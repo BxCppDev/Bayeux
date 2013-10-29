@@ -150,7 +150,7 @@ namespace mctools {
     void primary_generator::initialize (const datatools::properties & config_)
     {
       if (is_initialized ()) {
-        G4Exception ("mctools::g4::primary_generator::initialized",
+        G4Exception ("mctools::g4::primary_generator::initialize",
                      "InitializationError",
                      RunMustBeAborted,
                      "Primary_Generator already initialized !");
@@ -196,19 +196,19 @@ namespace mctools {
 
       // checks:
       if (_run_action_ == 0) {
-        G4Exception ("mctools::g4::primary_generator::initialized",
+        G4Exception ("mctools::g4::primary_generator::initialize",
                      "InitializationError",
                      RunMustBeAborted,
                      "Missing run action !");
       }
       if (_event_action_ == 0) {
-        G4Exception ("mctools::g4::primary_generator::initialized",
+        G4Exception ("mctools::g4::primary_generator::initialize",
                      "InitializationError",
                      RunMustBeAborted,
                      "Missing event action !");
       }
       if (_event_generator_ == 0) {
-        G4Exception ("mctools::g4::primary_generator::initialized",
+        G4Exception ("mctools::g4::primary_generator::initialize",
                      "InitializationError",
                      RunMustBeAborted,
                      "Missing event generator !");
