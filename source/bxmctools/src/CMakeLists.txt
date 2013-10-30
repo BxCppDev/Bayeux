@@ -105,8 +105,6 @@ set(mctools_SOURCES
     mctools.cc
   )
 
-# message(STATUS "********** mctools_SOURCES=${mctools_SOURCES}")
-
 #-----------------------------------------------------------------------
 # CMAKE RESOURCE FILES
 # We do this here because it allows us to to add the config files as
