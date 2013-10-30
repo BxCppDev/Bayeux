@@ -54,6 +54,7 @@
 #include <mctools/g4/stepping_action.h>
 #include <mctools/g4/stacking_action.h>
 #include <mctools/g4/simulation_ctrl.h>
+#include <mctools/g4/data_libraries.h>
 
 #include <CLHEP/Random/Random.h>
 
@@ -454,6 +455,11 @@ namespace mctools {
       _use_run_header_footer_             = false;
 
       _use_track_history_ = false;
+
+      // - Data Libs
+      geant4_data_library dl;
+      dl.configure_data();
+
       return;
     }
 

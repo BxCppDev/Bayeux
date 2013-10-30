@@ -227,10 +227,22 @@ endif()
 # the lib to act as a plugin.
 #
 if(MCTOOLS_WITH_G4)
+  include_directories(${Geant4_INCLUDE_DIRS})
 
- include_directories(${Geant4_INCLUDE_DIRS})
+  if(Geant4_DATASETS)
+    set(MCTOOLS_G4_DATA_ASSIGNMENTS)
+    foreach(_ds ${Geant4_DATASETS})
+      list(APPEND MCTOOLS_G4_DATA_ASSIGNMENTS "(\"${Geant4_DATASET_${_ds}_ENVVAR}\", \"${Geant4_DATASET_${_ds}_PATH}\")")
+    endforeach()
+    string(REPLACE ";" "" MCTOOLS_G4_DATA_ASSIGNMENTS ${MCTOOLS_G4_DATA_ASSIGNMENTS})
+  endif()
 
- set(mctools_g4_PUBLIC_HEADERS
+  configure_file(
+    ${PROJECT_SOURCE_DIR}/include/mctools/g4/data_libraries.h.in
+    ${PROJECT_BINARY_DIR}/include/mctools/data_libraries.h
+    )
+
+  set(mctools_g4_PUBLIC_HEADERS
     include/mctools/g4/loggable_support.h
     include/mctools/g4/tracking_action.h
     include/mctools/g4/track_history.h
@@ -257,6 +269,7 @@ if(MCTOOLS_WITH_G4)
   )
 
   set(mctools_g4_SOURCES
+    ${PROJECT_BINARY_DIR}/include/mctools/data_libraries.h
     ${mctools_g4_PUBLIC_HEADERS}
     src/g4/loggable_support.cc
     src/g4/detector_construction.cc
