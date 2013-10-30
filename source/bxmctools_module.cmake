@@ -116,7 +116,14 @@ if(Bayeux_WITH_GEANT4)
     configure_file(${_hdrin} ${_hdrout} @ONLY)
   endforeach()
 
+  # - Configurable private headers
+  configure_file(${module_include_dir}/${module_name}/g4/data_libraries.h.in
+    mctools/g4/data_libraries.h
+    @ONLY
+    )
+
   set(${module_name}_GEANT4_SOURCES
+    mctools/g4/data_libraries.h
     ${module_include_dir}/${module_name}/g4/simulation_module.h
     ${module_include_dir}/${module_name}/g4/primary_generator.h
     ${module_include_dir}/${module_name}/g4/magnetic_field.h

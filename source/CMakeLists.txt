@@ -45,6 +45,13 @@ find_package(ROOT 5.34.00 REQUIRED Core Hist RIO Tree)
 # using the results of the search
 if(Bayeux_WITH_GEANT4)
   find_package(Geant4 9.6.0 REQUIRED ui_all vis_all gdml)
+  if(Geant4_DATASETS)
+    set(MCTOOLS_G4_DATA_ASSIGNMENTS)
+    foreach(_ds ${Geant4_DATASETS})
+      list(APPEND MCTOOLS_G4_DATA_ASSIGNMENTS "(\"${Geant4_DATASET_${_ds}_ENVVAR}\", \"${Geant4_DATASET_${_ds}_PATH}\")")
+    endforeach()
+    string(REPLACE ";" "" MCTOOLS_G4_DATA_ASSIGNMENTS ${MCTOOLS_G4_DATA_ASSIGNMENTS})
+  endif()
   # Also need Boost.Thread, ugh
   find_package(Boost REQUIRED thread)
 endif()
@@ -121,8 +128,9 @@ include_directories(${geomtools_include_dir})
 # Hack for genbb_help private headers
 include_directories(${genbb_help_include_dir})
 
-# Hack for mctools private headers
+# Hack for mctools private/generated headers
 include_directories(${mctools_include_dir})
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 #-----------------------------------------------------------------------
 # Build/Link the library
