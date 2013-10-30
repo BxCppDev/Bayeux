@@ -239,7 +239,7 @@ if(MCTOOLS_WITH_G4)
 
   configure_file(
     ${PROJECT_SOURCE_DIR}/include/mctools/g4/data_libraries.h.in
-    ${PROJECT_BINARY_DIR}/include/mctools/data_libraries.h
+    ${PROJECT_BINARY_DIR}/include/mctools/g4/data_libraries.h
     )
 
   set(mctools_g4_PUBLIC_HEADERS
@@ -269,7 +269,6 @@ if(MCTOOLS_WITH_G4)
   )
 
   set(mctools_g4_SOURCES
-    ${PROJECT_BINARY_DIR}/include/mctools/data_libraries.h
     ${mctools_g4_PUBLIC_HEADERS}
     src/g4/loggable_support.cc
     src/g4/detector_construction.cc
@@ -297,6 +296,8 @@ if(MCTOOLS_WITH_G4)
     src/g4/em_physics_constructor.cc
     )
   list_prepend(mctools_g4_SOURCES "${PROJECT_SOURCE_DIR}/")
+
+  list(APPEND mctools_g4_SOURCES ${PROJECT_BINARY_DIR}/include/mctools/g4/data_libraries.h)
 
   add_library(mctools_g4 SHARED ${mctools_g4_SOURCES})
 
