@@ -215,8 +215,9 @@ if(Bayeux_WITH_GEANT4)
 endif()
 
 #-----------------------------------------------------------------------
-# Build/Link the executables
+# Build/Link the executables - can be switched off when embedded
 #
+if(NOT Bayeux_EMBEDDED OR (Bayeux_EMBEDDED AND Bayeux_BUILD_TOOLS))
 foreach(_bxapp IN LISTS Bayeux_APPS Bayeux_GEANT4_APPS)
   get_filename_component(_app_basename ${_bxapp} NAME_WE)
   add_executable(bx${_app_basename} ${_bxapp})
@@ -249,6 +250,7 @@ foreach(_bxapp IN LISTS Bayeux_APPS Bayeux_GEANT4_APPS)
 
   list(APPEND Bayeux_ADDON_TARGETS bx${_app_basename})
 endforeach()
+endif()
 
 #-----------------------------------------------------------------------
 # Install targets and resources
