@@ -208,7 +208,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mctools::simulated_data_input_module,ocd_)
                                 "  input.files.mode : string = \"single\"                             \n"
                                 "                                                                     \n"
                                 "  #@description Input file mode                                      \n"
-                                "  input.single.filename : string = \"sd.xml\"                        \n"
+                                "  input.files.single.filename : string = \"sd.xml\"                        \n"
                                 "                                                                     \n"
                                 "or::                                                                 \n"
                                 "                                                                     \n"
