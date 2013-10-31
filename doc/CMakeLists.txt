@@ -58,3 +58,8 @@ add_custom_command(
 
 add_custom_target(bayeux_docs ALL DEPENDS ${Bayeux_DOXYGEN_OUTPUT_FILE})
 
+configure_file(BayeuxDocs.cmake.in
+  ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake/Bayeux-${Bayeux_VERSION}/BayeuxDocs.cmake
+  @ONLY
+  )
+

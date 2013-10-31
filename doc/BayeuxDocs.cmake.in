@@ -1,0 +1,5 @@
+# - Specify location of Doxygen HTML directory and tagfile
+#
+set(Bayeux_DOXYGEN_HTML_DIR "")
+set(Bayeux_DOXYGEN_TAGFILE "")
+

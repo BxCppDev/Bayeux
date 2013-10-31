@@ -3,6 +3,12 @@
 #  Bayeux_INCLUDE_DIRS - include directories for Bayeux
 #  Bayeux_DEFINITIONS  - compile definitions needed to use Bayeux
 #  Bayeux_LIBRARIES    - libraries to link against
+#
+#  Bayeux_DOXYGEN_HTML_DIR - path to directory holding Doxygen docs
+#                            for Bayeux. Empty if docs were not built
+#  Bayeux_DOXYGEN_TAGFILE  - path to Doxygen tagfile for Bayeux's docs
+#                            Empty if docs were not built
+#
 
 #----------------------------------------------------------------------
 # This program is free software: you can redistribute it and/or modify
@@ -112,4 +118,9 @@ if(TARGET Bayeux_mctools_geant4)
   set(Bayeux_MCTOOLS_GEANT4_LIBRARY Bayeux_mctools_geant4 CACHE FILE "Bayeux mctools/geant4 module (imported)")
   mark_as_advanced(Bayeux_MCTOOLS_GEANT4_LIBRARY)
 endif()
+
+#-----------------------------------------------------------------------
+# Documentation - loaded optionally from its own file
+#
+include("${__bayeux_config_dir}/BayeuxDoc.cmake" OPTIONAL)
 
