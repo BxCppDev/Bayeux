@@ -13,9 +13,82 @@
 namespace mctools {
 
   // Registration instantiation macro :
-  DPP_MODULE_REGISTRATION_IMPLEMENT(simulated_data_input_module, "mctools::simulated_data_input_module");
+  DPP_MODULE_REGISTRATION_IMPLEMENT(simulated_data_input_module,
+                                    "mctools::simulated_data_input_module");
 
   const std::string simulated_data_input_module::DEFAULT_SD_BANK_LABEL = "SD";
+
+  void simulated_data_input_module::set_limits(int max_record_total_,
+                                               int max_record_per_file_,
+                                               int max_files_)
+  {
+    if (max_record_total_ > 0) {
+      _reader_setup_.store("files.max_record_total", max_record_total_);
+    }
+    if (max_record_per_file_ > 0) {
+      _reader_setup_.store("files.max_record_per_file", max_record_per_file_);
+    }
+    if (max_files_ > 0) {
+      _reader_setup_.store("files.max_files", max_files_);
+    }
+    return;
+  }
+
+  void simulated_data_input_module::set_single_input_file(const std::string & filepath_)
+  {
+    DT_THROW_IF (is_initialized (), std::logic_error,
+                 "Module '" << get_name () << "' is already initialized !");
+    _reader_setup_.store("files.mode", "single");
+    _reader_setup_.store("files.single.filename", filepath_);
+    return;
+  }
+
+  void simulated_data_input_module::set_list_of_input_files(const std::vector<std::string> & filepaths_,
+                                                            bool allow_duplicate_)
+  {
+    DT_THROW_IF (is_initialized (), std::logic_error,
+                 "Module '" << get_name () << "' is already initialized !");
+    _reader_setup_.store("files.mode", "list");
+    _reader_setup_.store_boolean("files.list.duplicate", allow_duplicate_);
+    _reader_setup_.store("files.list.filenames", filepaths_);
+    return;
+  }
+
+  void simulated_data_input_module::set_incremental_input_files(const std::string & path_,
+                                                                const std::string & prefix_,
+                                                                const std::string & extension_,
+                                                                unsigned int stop_,
+                                                                unsigned int start_,
+                                                                int increment_)
+  {
+    DT_THROW_IF (is_initialized (), std::logic_error,
+                 "Module '" << get_name () << "' is already initialized !");
+    _reader_setup_.store("files.mode", "incremental");
+    _reader_setup_.store_string("files.incremental.path", path_);
+    _reader_setup_.store_string("files.incremental.prefix", prefix_);
+    _reader_setup_.store_string("files.incremental.extension", extension_);
+    _reader_setup_.store_integer("files.incremental.start", start_);
+    _reader_setup_.store_integer("files.incremental.stop", stop_);
+    _reader_setup_.store_integer("files.incremental.increment", increment_);
+    return;
+  }
+
+  void simulated_data_input_module::set_sd_bank_label(const std::string & bank_label_)
+  {
+    DT_THROW_IF (is_initialized (), std::logic_error,
+                 "Module '" << get_name () << "' is already initialized !");
+    _sd_bank_label_ = bank_label_;
+    return;
+  }
+
+  void simulated_data_input_module::set_overwrite_existing_sd_bank_label(bool o_)
+  {
+    DT_THROW_IF (is_initialized (), std::logic_error,
+                 "Module '" << get_name () << "' is already initialized !");
+    _overwrite_existing_sd_bank_label_ = o_;
+    return;
+  }
+
 
   simulated_data_input_module::simulated_data_input_module(datatools::logger::priority logging_priority)
     : dpp::base_module(logging_priority)
@@ -35,8 +108,8 @@ namespace mctools {
 
   // Initialization :
   void simulated_data_input_module::initialize (const datatools::properties  & a_config,
-                                                      datatools::service_manager   & a_service_manager,
-                                                      dpp::module_handle_dict_type & a_module_dict)
+                                                datatools::service_manager   & a_service_manager,
+                                                dpp::module_handle_dict_type & a_module_dict)
   {
     DT_THROW_IF (is_initialized (), std::logic_error,
                  "Module '" << get_name () << "' is already initialized !");
@@ -58,11 +131,15 @@ namespace mctools {
     }
 
     // Initialize the reader :
-    _reader_.reset(new mctools::simulated_data_reader);
-    datatools::properties reader_config;
-    a_config.export_and_rename_starting_with(reader_config, "input.", "");
-    reader_config.tree_dump(std::clog, "Reader configuration parameters: ");
-    _reader_.get()->initialize(reader_config);
+    if (! _reader_) {
+      _reader_.reset(new mctools::simulated_data_reader);
+      // datatools::properties reader_config;
+      if (_reader_setup_.empty()) {
+        a_config.export_and_rename_starting_with(_reader_setup_, "input.", "");
+      }
+      _reader_setup_.tree_dump(std::clog, "Reader configuration parameters: ");
+      _reader_.get()->initialize(_reader_setup_);
+    }
 
     // Finalize initialization :
     if (_sd_bank_label_.empty()) {
@@ -97,6 +174,7 @@ namespace mctools {
       _reader_.get()->reset ();
       _reader_.reset(0);
     }
+    _reader_setup_.clear();
     _sd_bank_label_.clear();
     _overwrite_existing_sd_bank_label_ = false;
 
@@ -179,7 +257,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mctools::simulated_data_input_module,ocd_)
                                 "                                                                     \n"
                                 "Example::                                                            \n"
                                 "                                                                     \n"
-                                "  #@description A module that read simulated data from mctools::g4 simulation output\n"
+                                "  #@description A module that reads simulated data from mctools::g4 simulation output\n"
                                 "  #@key_label   \"name\"                                             \n"
                                 "  #@meta_label  \"type\"                                             \n"
                                 "                                                                     \n"
@@ -208,7 +286,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mctools::simulated_data_input_module,ocd_)
                                 "  input.files.mode : string = \"single\"                             \n"
                                 "                                                                     \n"
                                 "  #@description Input file mode                                      \n"
-                                "  input.files.single.filename : string = \"sd.xml\"                        \n"
+                                "  input.files.single.filename : string = \"sd.xml\"                  \n"
                                 "                                                                     \n"
                                 "or::                                                                 \n"
                                 "                                                                     \n"

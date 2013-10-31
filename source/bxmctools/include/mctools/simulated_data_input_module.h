@@ -40,6 +40,24 @@ namespace mctools {
 
     bool is_terminated () const;
 
+    void set_single_input_file(const std::string & filepath_);
+
+    void set_list_of_input_files(const std::vector<std::string> & filepaths_,
+                                 bool allow_duplicate_ = false);
+
+    void set_incremental_input_files(const std::string & path_,
+                                     const std::string & prefix_,
+                                     const std::string & extension_,
+                                     unsigned int stop_,
+                                     unsigned int start_ = 0,
+                                     int increment_ = 1);
+
+    void set_sd_bank_label(const std::string & bank_label_);
+
+    void set_overwrite_existing_sd_bank_label(bool);
+
+    void set_limits(int max_record_total_, int max_record_per_file_ = 0, int max_files_ = -1);
+
   protected:
 
     int _load (datatools::things & a_event_record);
@@ -48,6 +66,7 @@ namespace mctools {
 
     bool _overwrite_existing_sd_bank_label_; //!< Flag to overwrite an existing simulated data bank
     std::string _sd_bank_label_; //!< The label of the simulated data bank
+    datatools::properties _reader_setup_; //!< Reader setup
     boost::scoped_ptr<mctools::simulated_data_reader> _reader_; //!< Reader
 
     // Macro to automate the registration of the module :
