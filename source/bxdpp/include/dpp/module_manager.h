@@ -1,7 +1,7 @@
 /* module_manager.h
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-22
- * Last modified : 2013-02-15
+ * Last modified : 2013-11-01
  *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -47,13 +47,12 @@ namespace dpp {
   {
   public:
 
-    enum ctor_flag_type
-      {
-        BLANK             = 0,
-        FACTORY_DEBUG     = datatools::bit_mask::bit00,
-        FACTORY_NOPRELOAD = datatools::bit_mask::bit01,
-        FACTORY_INITIALIZATION_AT_LOAD = datatools::bit_mask::bit02,
-     };
+    enum ctor_flag_type {
+      BLANK             = 0,
+      FACTORY_DEBUG     = datatools::bit_mask::bit00,
+      FACTORY_NOPRELOAD = datatools::bit_mask::bit01,
+      FACTORY_INITIALIZATION_AT_LOAD = datatools::bit_mask::bit02,
+    };
 
     bool is_debug () const;
 
@@ -82,6 +81,8 @@ namespace dpp {
     bool is_initialized () const;
 
     void initialize (const datatools::properties & setup_);
+
+    void initialize_simple ();
 
     void reset ();
 
@@ -113,6 +114,8 @@ namespace dpp {
     void initialize_module (module_entry_type & module_entry_);
 
     void load_modules (const datatools::multi_properties & modules_config_);
+
+    void load_modules (const std::string & modules_defs_);
 
     datatools::logger::priority get_logging_priority() const;
 

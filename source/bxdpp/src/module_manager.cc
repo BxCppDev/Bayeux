@@ -180,6 +180,13 @@ namespace dpp {
     return _initialized_;
   }
 
+  void module_manager::initialize_simple ()
+  {
+    datatools::properties dummy;
+    initialize(dummy);
+    return;
+  }
+
   void module_manager::initialize (const datatools::properties & setup_)
   {
     DT_THROW_IF(is_initialized(),
@@ -399,6 +406,25 @@ namespace dpp {
                 std::logic_error,
                 "Module manager is already initialized !");
     _load_module (module_name_, module_id_, module_config_);
+    return;
+  }
+
+  void module_manager::load_modules (const datatools::multi_properties & modules_config_)
+  {
+    DT_THROW_IF(is_initialized(),
+                std::logic_error,
+                "Module manager is already initialized !");
+    _load_modules(modules_config_);
+    return;
+  }
+
+  void module_manager::load_modules (const std::string & modules_defs_)
+  {
+    datatools::multi_properties modules_defs;
+    std::string modules_defs_path = modules_defs_;
+    datatools::fetch_path_with_env(modules_defs_path);
+    modules_defs.read(modules_defs_path);
+    this->load_modules(modules_defs);
     return;
   }
 
