@@ -24,11 +24,7 @@
 
 #include <datatools/properties.h>
 #include <datatools/service_manager.h>
-//#include <datatools/ioutils.h>
-//#include <datatools/io_factory.h>
 #include <datatools/exception.h>
-
-//#include <brio/utils.h>
 
 #include <dpp/output_module.h>
 #include <dpp/io_common.h>
@@ -42,12 +38,67 @@ namespace dpp {
 
   /*** Implementation of the interface ***/
 
-  bool output_module::is_terminated () const
+  void output_module::set_limits(int max_record_total_,
+                                 int max_record_per_file_,
+                                 int max_files_)
   {
-    DT_THROW_IF(! is_initialized (),
-                std::logic_error,
-                "Output module '" << get_name () << "' is not initialized ! ");
-    return get_common().is_terminated();
+    DT_THROW_IF (is_initialized (), std::logic_error,
+                 "Output module '" << get_name () << "' is already initialized !");
+    io_common & ioc = _grab_common();
+    if (max_record_total_ > 0) {
+      ioc.set_max_record_total(max_record_total_);
+    }
+    if (max_record_per_file_ > 0) {
+      ioc.set_max_record_per_file(max_record_per_file_);
+    }
+    if (max_files_ > 0) {
+      ioc.set_max_files(max_files_);
+    }
+    return;
+  }
+
+  void output_module::set_single_output_file(const std::string & filepath_)
+  {
+    DT_THROW_IF (is_initialized (), std::logic_error,
+                 "Output module '" << get_name () << "' is already initialized !");
+    io_common & ioc = _grab_common();
+    datatools::smart_filename::make_single(ioc.grab_filenames(), filepath_);
+    return;
+  }
+
+  void output_module::set_list_of_output_files(const std::vector<std::string> & filepaths_,
+                                               bool allow_duplicate_)
+  {
+    DT_THROW_IF (is_initialized (), std::logic_error,
+                 "Output module '" << get_name () << "' is already initialized !");
+    io_common & ioc = _grab_common();
+    datatools::smart_filename & filenames = ioc.grab_filenames();
+    datatools::smart_filename::make_list(filenames, allow_duplicate_);
+    for (int i = 0; i < filepaths_.size(); i++) {
+      filenames.add_to_list(filepaths_[i]);
+    }
+    return;
+  }
+
+  void output_module::set_incremental_output_files(const std::string & path_,
+                                                 const std::string & prefix_,
+                                                 const std::string & extension_,
+                                                 unsigned int stop_,
+                                                 unsigned int start_,
+                                                 int increment_)
+  {
+    DT_THROW_IF (is_initialized (), std::logic_error,
+                 "Output module '" << get_name () << "' is already initialized !");
+    io_common & ioc = _grab_common();
+    datatools::smart_filename::make_incremental(ioc.grab_filenames(),
+                                                path_,
+                                                prefix_,
+                                                extension_,
+                                                stop_,
+                                                start_,
+                                                increment_
+                                                );
+    return;
   }
 
   void output_module::set_preserve_existing_output (bool a_preserve_existing_output)
@@ -59,6 +110,14 @@ namespace dpp {
     return;
   }
 
+  bool output_module::is_terminated () const
+  {
+    DT_THROW_IF(! is_initialized (),
+                std::logic_error,
+                "Output module '" << get_name () << "' is not initialized ! ");
+    return get_common().is_terminated();
+  }
+
   void output_module::_set_defaults ()
   {
     _preserve_existing_output_ = false;
@@ -68,11 +127,16 @@ namespace dpp {
 
   const io_common & output_module::get_common() const
   {
+    DT_THROW_IF(! _common_, std::logic_error,
+                "No internal output common data is defined !");
     return *_common_.get();
   }
 
   io_common & output_module::_grab_common()
   {
+    if (! _common_) {
+      _common_.reset(new io_common(_logging, get_name()));
+    }
     return *_common_.get();
   }
 
@@ -94,14 +158,16 @@ namespace dpp {
   {
     DT_THROW_IF(is_initialized (),
                 std::logic_error,
-                "I/O module '" << get_name () << "' is already initialized ! ");
+                "Output module '" << get_name () << "' is already initialized ! ");
 
     _common_initialize(a_config);
 
     /**************************************************************
      *   fetch setup parameters from the configuration container  *
      **************************************************************/
-    _common_.reset(new io_common(_logging, get_name()));
+    if (! _common_) {
+      _grab_common();
+    }
     _common_.get()->initialize(a_config, a_service_manager);
 
     if (a_config.has_flag ("preserve_existing_files")) {
@@ -122,7 +188,7 @@ namespace dpp {
   {
     DT_THROW_IF(! is_initialized (),
                 std::logic_error,
-                "I/O module '" << get_name () << "' is not initialized !");
+                "Output module '" << get_name () << "' is not initialized !");
 
     /****************************
      *  revert to some defaults *
@@ -211,14 +277,14 @@ namespace dpp {
       if (get_common().get_file_record_counter() >= get_common().get_max_record_total()) {
         stop_output = true;
         stop_file   = true;
-        DT_LOG_NOTICE(_logging, "Module '" << get_name () << "' has reached the maximum number "
+        DT_LOG_NOTICE(_logging, "Output module '" << get_name () << "' has reached the maximum number "
                       << "of records stored in the output data source (" << get_common().get_max_record_total() << ") !");
       }
     }
     if (get_common().get_max_record_per_file() > 0) {
       if (get_common().get_file_record_counter() >= get_common().get_max_record_per_file()) {
         stop_file = true;
-        DT_LOG_NOTICE(_logging, "Module '" << get_name () << "' has reached the maximum number "
+        DT_LOG_NOTICE(_logging, "Output module '" << get_name () << "' has reached the maximum number "
                       << "of records to be stored in the current output file (" << get_common().get_max_record_per_file() << ") !");
       }
     }
@@ -232,13 +298,13 @@ namespace dpp {
       if (get_common().get_max_files() > 0) {
         if ((get_common().get_file_index() + 1) >= get_common().get_max_files()) {
           stop_output = true;
-          DT_LOG_NOTICE(_logging, "Module '" << get_name () << "' has reached the requested maximum number "
+          DT_LOG_NOTICE(_logging, "Output module '" << get_name () << "' has reached the requested maximum number "
                         << "of output files (" << get_common().get_max_files() << ") !");
         }
       }
       if ((get_common().get_file_index() + 1) >= (int)get_common().get_filenames().size ()) {
         stop_output = true;
-        DT_LOG_NOTICE(_logging, "Module '" << get_name () << "' has filled the last requested "
+        DT_LOG_NOTICE(_logging, "Output module '" << get_name () << "' has filled the last requested "
                       << "output file (total is " << get_common().get_filenames().size () << " files) !");
       }
     }

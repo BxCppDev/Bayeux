@@ -291,27 +291,35 @@ namespace dpp {
     /**************************************************************
      *   fetch setup parameters from the configuration container  *
      **************************************************************/
-    init_filenames (a_config);
-
-    if (a_config.has_key ("max_files")) {
-      _max_files_ = a_config.fetch_integer ("max_files");
-      DT_THROW_IF(_max_files_ < 1,
-                  std::logic_error,
-                  "I/O Module '" << get_module_name () << "' : invalid max number of files !");
+    if (! _filenames_.is_valid ()) {
+      init_filenames (a_config);
     }
 
-    if (a_config.has_key ("max_record_total")) {
-      _max_record_total_ = a_config.fetch_integer ("max_record_total");
-      DT_THROW_IF(_max_record_total_ < 1,
-                  std::logic_error,
-                  "I/O Module '" << get_module_name () << "' : invalid max total number of data records !");
+    if (_max_files_ < 0) {
+      if (a_config.has_key ("max_files")) {
+        _max_files_ = a_config.fetch_integer ("max_files");
+        DT_THROW_IF(_max_files_ < 1,
+                    std::logic_error,
+                    "I/O Module '" << get_module_name () << "' : invalid max number of files !");
+      }
     }
 
-    if (a_config.has_key ("max_record_per_file")) {
-      _max_record_per_file_ = a_config.fetch_integer ("max_record_per_file");
-      DT_THROW_IF(_max_record_per_file_ < 1,
-                  std::logic_error,
-                  "I/O module '" << get_module_name () << "' : invalid max number of data records per file !");
+    if (_max_record_total_ == 0) {
+      if (a_config.has_key ("max_record_total")) {
+        _max_record_total_ = a_config.fetch_integer ("max_record_total");
+        DT_THROW_IF(_max_record_total_ < 1,
+                    std::logic_error,
+                    "I/O Module '" << get_module_name () << "' : invalid max total number of data records !");
+      }
+    }
+
+    if (_max_record_per_file_ == 0) {
+      if (a_config.has_key ("max_record_per_file")) {
+        _max_record_per_file_ = a_config.fetch_integer ("max_record_per_file");
+        DT_THROW_IF(_max_record_per_file_ < 1,
+                    std::logic_error,
+                    "I/O module '" << get_module_name () << "' : invalid max number of data records per file !");
+      }
     }
 
     if (_Ctx_service_ == 0) {

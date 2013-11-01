@@ -48,6 +48,22 @@ namespace dpp {
   {
   public:
 
+    void set_limits(int max_record_total_,
+                    int max_record_per_file_ = 0,
+                    int max_files_ = -1);
+
+    void set_single_input_file(const std::string & filepath_);
+
+    void set_list_of_input_files(const std::vector<std::string> & filepaths_,
+                                 bool allow_duplicate_ = false);
+
+    void set_incremental_input_files(const std::string & path_,
+                                     const std::string & prefix_,
+                                     const std::string & extension_,
+                                     unsigned int stop_,
+                                     unsigned int start_ = 0,
+                                     int increment_ = 1);
+
     DPP_MODULE_INTERFACE_CTOR_DTOR(input_module);
 
     virtual void tree_dump (std::ostream & a_out         = std::clog,

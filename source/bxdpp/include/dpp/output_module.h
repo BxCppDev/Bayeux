@@ -50,6 +50,22 @@ namespace dpp {
 
     DPP_MODULE_INTERFACE_CTOR_DTOR(output_module);
 
+    void set_limits(int max_record_total_,
+                    int max_record_per_file_ = 0,
+                    int max_files_ = -1);
+
+    void set_single_output_file(const std::string & filepath_);
+
+    void set_list_of_output_files(const std::vector<std::string> & filepaths_,
+                                  bool allow_duplicate_ = false);
+
+    void set_incremental_output_files(const std::string & path_,
+                                      const std::string & prefix_,
+                                      const std::string & extension_,
+                                      unsigned int stop_,
+                                      unsigned int start_ = 0,
+                                      int increment_ = 1);
+
     void set_preserve_existing_output (bool a_preserve_existing_output);
 
     virtual void tree_dump (std::ostream & a_out         = std::clog,

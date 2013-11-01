@@ -38,11 +38,74 @@ namespace dpp {
 
   /*** Implementation of the interface ***/
 
+  void input_module::set_limits(int max_record_total_,
+                                int max_record_per_file_,
+                                int max_files_)
+  {
+    DT_THROW_IF (is_initialized (), std::logic_error,
+                 "Input module '" << get_name () << "' is already initialized !");
+    io_common & ioc = _grab_common();
+    if (max_record_total_ > 0) {
+      ioc.set_max_record_total(max_record_total_);
+    }
+    if (max_record_per_file_ > 0) {
+      ioc.set_max_record_per_file(max_record_per_file_);
+    }
+    if (max_files_ > 0) {
+      ioc.set_max_files(max_files_);
+    }
+    return;
+  }
+
+  void input_module::set_single_input_file(const std::string & filepath_)
+  {
+    DT_THROW_IF (is_initialized (), std::logic_error,
+                 "Input module '" << get_name () << "' is already initialized !");
+    io_common & ioc = _grab_common();
+    datatools::smart_filename::make_single(ioc.grab_filenames(), filepath_);
+    return;
+  }
+
+  void input_module::set_list_of_input_files(const std::vector<std::string> & filepaths_,
+                                             bool allow_duplicate_)
+  {
+    DT_THROW_IF (is_initialized (), std::logic_error,
+                 "Input module '" << get_name () << "' is already initialized !");
+    io_common & ioc = _grab_common();
+    datatools::smart_filename & filenames = ioc.grab_filenames();
+    datatools::smart_filename::make_list(filenames, allow_duplicate_);
+    for (int i = 0; i < filepaths_.size(); i++) {
+      filenames.add_to_list(filepaths_[i]);
+    }
+    return;
+  }
+
+  void input_module::set_incremental_input_files(const std::string & path_,
+                                                 const std::string & prefix_,
+                                                 const std::string & extension_,
+                                                 unsigned int stop_,
+                                                 unsigned int start_,
+                                                 int increment_)
+  {
+    DT_THROW_IF (is_initialized (), std::logic_error,
+                 "Input module '" << get_name () << "' is already initialized !");
+    io_common & ioc = _grab_common();
+    datatools::smart_filename::make_incremental(ioc.grab_filenames(),
+                                                path_,
+                                                prefix_,
+                                                extension_,
+                                                stop_,
+                                                start_,
+                                                increment_
+                                                );
+    return;
+  }
+
   bool input_module::is_terminated () const
   {
     DT_THROW_IF(! is_initialized (),
                 std::logic_error,
-                "Input module '" << get_name () << "' is not initialized ! ");
+                "Input module '" << get_name () << "' is not initialized !");
     return get_common().is_terminated();
   }
 
@@ -54,11 +117,16 @@ namespace dpp {
 
   const io_common & input_module::get_common() const
   {
+    DT_THROW_IF(! _common_, std::logic_error,
+                "No internal input common data is defined !");
     return *_common_.get();
   }
 
   io_common & input_module::_grab_common()
   {
+    if (! _common_) {
+      _common_.reset(new io_common(_logging, get_name()));
+    }
     return *_common_.get();
   }
 
@@ -87,7 +155,9 @@ namespace dpp {
     /**************************************************************
      *   fetch setup parameters from the configuration container  *
      **************************************************************/
-    _common_.reset(new io_common(_logging, get_name()));
+    if (! _common_) {
+      _grab_common();
+    }
     _common_.get()->initialize(a_config, a_service_manager);
 
     /*************************************
@@ -202,7 +272,7 @@ namespace dpp {
         stop_input = true;
         stop_file   = true;
         DT_LOG_NOTICE(_logging,
-                      "Module '" << get_name () << "' has reached the maximum number "
+                      "Input module '" << get_name () << "' has reached the maximum number "
                       << "of data records from the input data source (" << get_common().get_max_record_total() << ") !");
       }
     }
@@ -211,7 +281,7 @@ namespace dpp {
         stop_file = true;
         std::ostringstream message;
         DT_LOG_NOTICE(_logging,
-                      "Module '" << get_name () << "' has reached the maximum number "
+                      "Input module '" << get_name () << "' has reached the maximum number "
                       << "of records from the current input file (" << get_common().get_max_record_per_file() << ") !");
       }
     }
@@ -237,7 +307,7 @@ namespace dpp {
         if ((get_common().get_file_index() + 1) >= effective_max_files) {
           stop_input = true;
           DT_LOG_NOTICE(_logging,
-                        "Module '" << get_name () << "' has reached the requested maximum number of input file(s) ("
+                        "Input module '" << get_name () << "' has reached the requested maximum number of input file(s) ("
                         << effective_max_files << ") !");
         }
       }
@@ -245,7 +315,7 @@ namespace dpp {
         stop_input = true;
         std::ostringstream message;
         DT_LOG_NOTICE(_logging,
-                      "Module '" << get_name () << "' has loaded the last available input file (total is "
+                      "Input module '" << get_name () << "' has loaded the last available input file (total is "
                       << get_common().get_filenames().size ()
                       << " file" << (get_common().get_filenames().size ()>1?"":"s") << ")!");
       }
