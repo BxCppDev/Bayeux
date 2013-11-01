@@ -397,6 +397,11 @@ namespace dpp {
       const std::string & htitle = _pool_.get_title (hname);
       const std::string & hgroup = _pool_.get_group (hname);
       std::ostringstream title_oss;
+      // If histogram group starts with '__' we consider it as 'private' and do
+      // not export it. This trick is particularly useful when defining
+      // 'template' histogram to avoid the export of these templates.
+      const bool is_private_histogram = boost::starts_with (hgroup, "__");
+      if (is_private_histogram) continue;
       if (! _root_export_title_prefix_.empty()) {
         title_oss << _root_export_title_prefix_ << std::endl;
       }
@@ -422,6 +427,8 @@ namespace dpp {
       const mygsl::histogram_2d & h2d = _pool_.get_2d (hname);
       const std::string & htitle = _pool_.get_title (hname);
       const std::string & hgroup = _pool_.get_group (hname);
+      const bool is_private_histogram = boost::starts_with (hgroup, "__");
+      if (is_private_histogram) continue;
       std::ostringstream title_oss;
       if (! _root_export_title_prefix_.empty()) {
         title_oss << _root_export_title_prefix_ << std::endl;
