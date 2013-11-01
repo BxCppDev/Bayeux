@@ -161,7 +161,6 @@ namespace dpp {
       std::string checked_store = brio_common::event_record_store_label();
       std::string checked_serial_tag = datatools::things::serial_tag();
       if (! _brio_file_reader_->has_store_with_serial_tag (checked_store, checked_serial_tag)) {
-        _brio_file_reader_->print_info (std::cerr);
         DT_THROW_IF(true,
                     std::logic_error,
                     "Cannot find a store with label '"
@@ -171,7 +170,10 @@ namespace dpp {
                     << _source_record.effective_label << " !");
       }
       _brio_file_reader_->select_store (checked_store);
-      _brio_file_reader_->print_info (std::clog);
+      DT_LOG_DEBUG (get_logging_priority (), "Dumping BRIO source status:");
+      if (get_logging_priority () >= datatools::logger::PRIO_DEBUG) {
+        _brio_file_reader_->tree_dump ();
+      }
       _source_record.status = source_record::STATUS_OPENED;
     }
     _has_next_record = false;
