@@ -93,6 +93,14 @@ namespace mctools {
     /// Initialize the reader from a collection of filenames
     void initialize(const std::vector<std::string> & filenames_);
 
+    /// Initialize the reader from a set of incremental filenames
+    void initialize(const std::string & path_,
+                    const std::string & prefix_,
+                    const std::string & extension_,
+                    unsigned int stop_,
+                    unsigned int start_ = 0,
+                    int increment_ = 1);
+
     /// Initialize the reader from a list of parameters
     void initialize(const datatools::properties & setup_);
 
@@ -171,6 +179,10 @@ namespace mctools {
 
 
 } // end of namespace mctools
+
+// Object configuration description (OCD) support :
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(mctools::simulated_data_reader)
 
 #endif // MCTOOLS_SIMULATED_DATA_READER_H_
 

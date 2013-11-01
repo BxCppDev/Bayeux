@@ -22,14 +22,16 @@ namespace mctools {
                                                int max_record_per_file_,
                                                int max_files_)
   {
+    DT_THROW_IF (is_initialized (), std::logic_error,
+                 "Module '" << get_name () << "' is already initialized !");
     if (max_record_total_ > 0) {
-      _reader_setup_.store("files.max_record_total", max_record_total_);
+      _reader_setup_.store("max_record_total", max_record_total_);
     }
     if (max_record_per_file_ > 0) {
-      _reader_setup_.store("files.max_record_per_file", max_record_per_file_);
+      _reader_setup_.store("max_record_per_file", max_record_per_file_);
     }
     if (max_files_ > 0) {
-      _reader_setup_.store("files.max_files", max_files_);
+      _reader_setup_.store("max_files", max_files_);
     }
     return;
   }
@@ -228,6 +230,7 @@ namespace mctools {
   }
 
 } // end of namespace mctools
+
 // OCD support for class 'mctools::simulated_data_input_module' :
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mctools::simulated_data_input_module,ocd_)
 {

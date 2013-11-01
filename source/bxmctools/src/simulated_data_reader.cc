@@ -206,6 +206,30 @@ namespace mctools {
     return;
   }
 
+  /// Initialize the reader from a set of incremental filenames
+  void simulated_data_reader::initialize(const std::string & path_,
+                                         const std::string & prefix_,
+                                         const std::string & extension_,
+                                         unsigned int stop_,
+                                         unsigned int start_,
+                                         int increment_)
+  {
+    DT_LOG_TRACE(_logging_, "Entering...");
+    DT_THROW_IF(is_initialized(), std::logic_error,
+                "Reader is already initialized !");
+    datatools::smart_filename::make_incremental(_filenames_,
+                                                path_,
+                                                prefix_,
+                                                extension_,
+                                                stop_,
+                                                start_,
+                                                increment_
+                                                );
+    _initialize();
+    DT_LOG_TRACE(_logging_, "Exiting.");
+    return;
+  }
+
   /// Initialize the reader from a list of parameters
   void simulated_data_reader::initialize(const datatools::properties & setup_)
   {
@@ -605,5 +629,58 @@ namespace mctools {
   }
 
 } // end of namespace mctools
+
+
+// OCD support for class 'mctools::simulated_data_reader' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mctools::simulated_data_reader,ocd_)
+{
+  ocd_.set_class_name ("mctools::simulated_data_reader");
+  ocd_.set_class_library ("mctools");
+  ocd_.set_class_description ("A reader to load Monte-Carlo events from a set of data files produced by the ``g4_production`` executable.");
+
+
+  ocd_.set_configuration_hints ("A ``mctools::simulated_data_reader`` object can be setup with the    \n"
+                                "following syntax in a ``datatools::properties`` configuration        \n"
+                                "file.                                                                \n"
+                                "                                                                     \n"
+                                "Example::                                                            \n"
+                                "                                                                     \n"
+                                "  #@config A simulated data reader                                   \n"
+                                "                                                                     \n"
+                                "  #@description The logging priority                                 \n"
+                                "  logging.priority : string = \"fatal\"                              \n"
+                                "                                                                     \n"
+                                "  #@description Input max number of files                            \n"
+                                "  max_files : integer =  10                                          \n"
+                                "                                                                     \n"
+                                "  #@description Input max number of records                          \n"
+                                "  max_record_total : integer =  100000                               \n"
+                                "                                                                     \n"
+                                "  #@description Input max number of records per file                 \n"
+                                "  max_record_per_file : integer =  10000                             \n"
+                                "                                                                     \n"
+                                "  #@description Input file mode                                      \n"
+                                "  files.mode : string = \"single\"                                   \n"
+                                "                                                                     \n"
+                                "  #@description Input file mode                                      \n"
+                                "  files.single.filename : string = \"sd.xml\"                        \n"
+                                "                                                                     \n"
+                                "or::                                                                 \n"
+                                "                                                                     \n"
+                                "  #@description Input file mode                                      \n"
+                                "  files.mode : string = \"list\"                                     \n"
+                                "                                                                     \n"
+                                "  #@description List of input files                                  \n"
+                                "  files.list.filenames : string[2] = \"sd0.xml\" \"sd1.xml\"         \n"
+                                "                                                                     \n"
+                                );
+
+  ocd_.set_validation_support(false);
+  ocd_.lock();
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+DOCD_CLASS_SYSTEM_REGISTRATION(::mctools::simulated_data_reader,"mctools::simulated_data_reader")
+
 
 // end of simulated_data_reader.cc
