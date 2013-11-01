@@ -80,26 +80,25 @@ void reader::tree_dump(std::ostream& out_,
                        const std::string& title_,
                        const std::string& indent_,
                        bool inherit_) const {
-  using namespace datatools;
   std::string indent;
   if (!indent_.empty()) indent = indent_;
   detail::base_io::tree_dump(out_, title_, indent_, true);
 
-  out_ <<  indent << i_tree_dumpable::tag
+  out_ <<  indent << datatools::i_tree_dumpable::tag
        << "Allow automatic store: " << _allow_automatic_store_
        << std::endl;
 
   if (_automatic_store_ != 0) {
-    out_ <<  indent << i_tree_dumpable::tag
+    out_ <<  indent << datatools::i_tree_dumpable::tag
          << "Automatic store: '" << _automatic_store_->label << "'"
          << std::endl;
   }
 
-  out_ <<  indent << i_tree_dumpable::tag
+  out_ <<  indent << datatools::i_tree_dumpable::tag
        << "Allow mixed types in stores: "
        << _allow_mixed_types_in_stores_ << std::endl;
 
-  out_ <<  indent << i_tree_dumpable::inherit_tag(inherit_)
+  out_ <<  indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
        << "Check serial tag: " << _check_serial_tag_ << std::endl;
 }
 
