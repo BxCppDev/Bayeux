@@ -36,6 +36,7 @@ namespace geomtools {
   class manager;
 }
 
+/// Top-level namespace of the Bayeux/emfield module library
 namespace emfield {
 
   class geom_map;
