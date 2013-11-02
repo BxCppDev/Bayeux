@@ -21,6 +21,7 @@
 // Third Party
 #include <boost/scoped_ptr.hpp>
 
+/// The namespace of the Bayeux/materials module library
 namespace materials {
 
   class manager;
