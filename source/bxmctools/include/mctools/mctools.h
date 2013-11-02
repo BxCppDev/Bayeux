@@ -10,25 +10,22 @@
 #include <datatools/datatools.h>
 #include <mctools/mctools_config.h>
 
+/// Top-level namespace of the Bayeux/mctools module library
 namespace mctools {
 
   void initialize(int argc_ = 0, char * argv_[] = 0);
 
   void terminate();
 
-  // details... should be hidden
-  //void _special_initialize_impl();
-
-  //void _special_terminate_impl();
 }
 
-/// mctools' kernel initialization macro using main function arguments
+/// Bayeux/mctools initialization macro using main function arguments
 #define MCTOOLS_INIT_MAIN(Argc,Argv)             \
   DATATOOLS_INIT_MAIN( Argc , Argv );            \
   ::mctools::initialize( Argc , Argv );          \
   /**/
 
-/// mctools' kernel initialization macro
+/// Bayeux/mctools kernel initialization macro
 #define MCTOOLS_INIT()                           \
   DATATOOLS_INIT_MAIN( 0, 0 );                   \
   ::mctools::initialize(0, 0);                   \

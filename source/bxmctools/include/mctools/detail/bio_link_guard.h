@@ -4,14 +4,14 @@
 #define MCTOOLS_DETAIL_BIO_LINK_GUARD_H_
 
 namespace mctools {
-/// Non-public material
+/// Nested private namespace of the Bayeux/mctools module library (detail)
 namespace detail {
-/// Non-public material dedicated to serialization   
+/// Nested private namespace of the Bayeux/mctools module library (serialization)
 namespace serialization {
 
 /** \brief Data structure to ensure that a given executable is linked
- *        against the mctools_bio DLL with new gcc 4.6 linking strategy 
- *        even if no explicit mctools serialization code is explicitely 
+ *        against the mctools_bio DLL with new gcc 4.6 linking strategy
+ *        even if no explicit mctools serialization code is explicitely
  *        invoked from the executable.
  */
 class dynamic_link_guard {
@@ -29,4 +29,3 @@ class dynamic_link_guard {
 } // end namespace mctools
 
 #endif // MCTOOLS_DETAIL_BIO_LINK_GUARD_H_
-

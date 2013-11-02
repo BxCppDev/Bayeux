@@ -79,6 +79,7 @@ namespace datatools {
 
 namespace mctools {
 
+  /// Nested namespace of the Bayeux/mctools module library's Geant4 pluggin
   namespace g4 {
 
     class run_action;
