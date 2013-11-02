@@ -32,6 +32,7 @@
 // Geomtools
 #include <geomtools/geomtools_config.h>
 
+/// Top-level namespace of the Bayeux/geomtools module library
 namespace geomtools {
 
   class model_factory;

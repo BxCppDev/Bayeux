@@ -37,6 +37,7 @@
 
 namespace geomtools {
 
+  /// Nested namespace of the Bayeux/geomtools module library (STereoLithography)
   namespace stl {
 
     /*******************

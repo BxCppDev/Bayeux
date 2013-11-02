@@ -94,6 +94,18 @@ namespace geomtools {
 
     typedef std::vector<dd_entry> dd_col_type;
 
+    struct visibility_rules {
+      visibility_rules();
+      void reset();
+    public:
+      bool active;
+      bool show_volume;
+      bool show_envelope;
+      bool show_daughters;
+      int daughter_level;
+      std::string color;
+    };
+
   public:
 
     void set_output (const std::string & output_);
@@ -135,6 +147,10 @@ namespace geomtools {
 
     bool is_initialized () const;
 
+    // visibility_rules & grab_vis_rules();
+
+    // const visibility_rules & grab_vis_rules() const;
+
     datatools::properties & grab_properties ();
 
     const datatools::properties & get_properties () const;
@@ -160,6 +176,13 @@ namespace geomtools {
     void _draw_ (const logical_volume & log_,
                  const placement & p_,
                  int max_display_level_ = 0);
+
+    /*
+    // Future : enrich the interface of the '_draw_' method...
+    void _draw_ (const logical_volume & log_,
+                 const placement & p_,
+                 const visibility_rules & vis_rules_);
+    */
 
   public:
 
@@ -227,6 +250,7 @@ namespace geomtools {
     range _xrange_;
     range _yrange_;
     range _zrange_;
+    //visibility_rules _vis_rules_;
     dd_col_type _display_data_;
     std::string _terminal_;
     std::string _terminal_options_;

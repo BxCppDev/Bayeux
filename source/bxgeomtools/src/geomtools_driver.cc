@@ -813,15 +813,18 @@ namespace geomtools {
   int geomtools_driver::command_gnuplot_display(const std::vector<std::string> & argv_,
                                                 std::ostream & out_)
   {
+    int error_code = 0;
     if (! is_initialized()) {
       DT_LOG_ERROR(_params_.logging,
                    "Driver is not initialized !");
-      return 1;
+      error_code = 1;
+      return error_code;
     }
     if (! _params_.visu) {
       DT_LOG_ERROR(_params_.logging,
                    "Visualization is inhibited !");
-      return 1;
+      error_code = 1;
+      return error_code;
     }
     std::string visu_object_name;
     std::string output;
@@ -920,19 +923,32 @@ namespace geomtools {
                      "Cannot display the object with model name or GID : '"
                      << _params_.visu_object_name << "' !");
         _params_.visu_object_name.clear();
+        error_code = 1;
       } else {
         _params_.visu_object_name = visu_object_name;
       }
     } else {
-      geomtools::placement root_plcmt;
-      root_plcmt.set (0, 0, 0, 0 * CLHEP::degree, 0 * CLHEP::degree, 0);
-      GPD.draw (*_geo_factory_ref_,
-                visu_object_name,
-                root_plcmt,
-                geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT);
-      _params_.visu_object_name = visu_object_name;
+      try {
+        geomtools::placement root_plcmt;
+        root_plcmt.set (0, 0, 0, 0 * CLHEP::degree, 0 * CLHEP::degree, 0);
+        GPD.draw (*_geo_factory_ref_,
+                  visu_object_name,
+                  root_plcmt,
+                  geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT);
+        _params_.visu_object_name = visu_object_name;
+      }
+      catch (std::exception & error) {
+        DT_LOG_ERROR(_params_.logging, error.what());
+        _params_.visu_object_name.clear();
+        error_code = 1;
+      }
+      catch (...) {
+        DT_LOG_ERROR(_params_.logging, "Unexpected error !");
+        _params_.visu_object_name.clear();
+        error_code = 1;
+      }
     }
-    return 0;
+    return error_code;
   }
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 

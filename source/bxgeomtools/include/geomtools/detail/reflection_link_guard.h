@@ -27,6 +27,7 @@
 
 namespace geomtools {
 namespace detail {
+/// Nested private namespace of the Bayeux/geomtools module library (reflection)
 namespace reflection {
 
 /** \brief Data structure to ensure that a given executable is linked
@@ -46,4 +47,3 @@ class dynamic_link_guard {
 } // end namespace geomtools
 
 #endif // GEOMTOOLS_DETAIL_REFLECTION_LINK_GUARD_H_
-

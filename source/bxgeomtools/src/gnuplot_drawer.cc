@@ -34,6 +34,38 @@
 
 namespace geomtools {
 
+  gnuplot_drawer::visibility_rules::visibility_rules()
+  {
+    active = false;
+    show_volume = true;
+    show_envelope = false;
+    show_daughters = true;
+    daughter_level = 1;
+    color.clear();
+    return;
+  }
+
+  void gnuplot_drawer::visibility_rules::reset()
+  {
+    active = false;
+    show_volume = true;
+    show_envelope = false;
+    show_daughters = true;
+    color.clear();
+  }
+
+  /*
+  gnuplot_drawer::visibility_rules & gnuplot_drawer::grab_vis_rules()
+  {
+    return _vis_rules_;
+  }
+
+  const gnuplot_drawer::visibility_rules & gnuplot_drawer::grab_vis_rules() const
+  {
+    return _vis_rules_;
+  }
+  */
+
   // static
   const int gnuplot_drawer::display_level_no_limit()
   {
@@ -427,6 +459,28 @@ namespace geomtools {
   }
 
   /****************************************************/
+
+  /*
+  void gnuplot_drawer::_draw_ (const logical_volume & log_,
+                               const placement & p_,
+                               int max_display_level_)
+  {
+    visibility_rules vr;
+    vr.active = true;
+    vr.show_volume = true;
+    vr.show_envelope = false;
+    vr.show_daughters = true;
+    vr.daughter_level = max_display_level_;
+    this->_draw_(log_, p_, vr);
+    return;
+  }
+
+  void gnuplot_drawer::_draw_ (const logical_volume & log_,
+                               const placement & p_,
+                               const visibility_rules & vis_rules_)
+  {
+  }
+  */
 
   void gnuplot_drawer::_draw_ (const logical_volume & log_,
                                const placement & p_,
