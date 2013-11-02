@@ -154,14 +154,9 @@ elseif(APPLE)
   # Temporary setting - needs testing
   set_target_properties(Bayeux
     PROPERTIES
-      INSTALL_RPATH "@rpath"
+      INSTALL_NAME_DIR "@rpath"
       LINK_FLAGS "-undefined dynamic_lookup"
     )
-endif()
-
-# - On Apple, ensure dynamic_lookup of undefined symbols
-if(APPLE)
-  set_target_properties(Bayeux PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
 endif()
 
 #-----------------------------------------------------------------------
@@ -198,14 +193,9 @@ if(Bayeux_WITH_GEANT4)
     # Temporary setting - needs testing
     set_target_properties(Bayeux_mctools_geant4
       PROPERTIES
-        INSTALL_RPATH "@rpath"
+        INSTALL_NAME_DIR "@rpath"
         LINK_FLAGS "-undefined dynamic_lookup"
       )
-  endif()
-
-  # - On Apple, ensure dynamic_lookup of undefined symbols
-  if(APPLE)
-    set_target_properties(Bayeux_mctools_geant4 PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
   endif()
 
   # - Create the public link interface
@@ -232,8 +222,9 @@ foreach(_bxapp IN LISTS Bayeux_APPS Bayeux_GEANT4_APPS)
     # Temporary setting - needs testing
     set_target_properties(bx${_app_basename}
       PROPERTIES
-        INSTALL_RPATH "@loader_path"
-        LINK_FLAGS "-undefined dynamic_lookup"
+        BUILD_WITH_INSTALL_RPATH 1
+        INSTALL_RPATH "@loader_path/../${CMAKE_INSTALL_LIBDIR}"
+        LINK_FLAGS "-Wl,-rpath,@loader_path/../${CMAKE_INSTALL_LIBDIR} -undefined dynamic_lookup"
       )
   endif()
 

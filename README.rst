@@ -181,3 +181,23 @@ See the projects under the examples directory.
 Developing Bayeux
 =================
 WIP
+A note on RPATHs
+----------------
+You should not use the (DY)LD_LIBRARY_PATH variables because they are
+intended for testing, not production (see the man pages of ld/dyld).
+Bayeux uses rpaths to provide a simple setup that allows apps to be run
+directly with guaranteed library lookup. Morever, relative rpaths are used
+that generally allow Bayeux to be reloacatable.
+
+However, these settings are platform dependent and CMake has only added
+support for this gradually. In particular, see these references:
+
+* [Kitware Blog article on Mac OS X RPATH handling](http://www.kitware.com/blog/home/post/510)
+* [Handling Mac RPATH on older CMake](http://www.mail-archive.com/cmake@cmake.org/msg47143.html)
+* [CMake's general RPATH handling](http://www.cmake.org/Wiki/CMake_RPATH_handling)
+
+Note also that if you have (DY)LD_LIBRARY_PATH set, you may see startup 
+errors if any of the paths contain libraries used by Bayeux, e.g. ROOT. 
+In general, you should never need to set the library path, though many
+scientific software projects (badly mis)use it.
+
