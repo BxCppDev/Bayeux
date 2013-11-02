@@ -1,19 +1,19 @@
 // constants.h
 
-#ifndef MYGSL_CONSTANTS_H_ 
+#ifndef MYGSL_CONSTANTS_H_
 #define MYGSL_CONSTANTS_H_ 1
 
-//! Library general namespace
+/// Top-level namespace of the Bayeux/mygsl module library
 namespace mygsl {
 
-  //! Library units child namespace
+  /// Nested namespace of the Bayeux/mygsl module library (constants)
   namespace constants {
 
     //! MKSA system of units and constants
     class mksa
     {
     public:
-  
+
       static const double acre;
       static const double angstrom;
       static const double astronomical_unit;
@@ -116,13 +116,13 @@ namespace mygsl {
       static const double week;
       static const double yard;
     }; // end of class mksa
-  
-  
+
+
     //! Units prefixes and constants
     class num
     {
     public:
-  
+
       static const double atto;
       static const double avogadro;
       static const double exa;
@@ -142,12 +142,12 @@ namespace mygsl {
       static const double zepto;
       static const double zetta;
     }; // end of class num
-  
+
     //! CSGM system of units and constants
     class cgsm
     {
     public:
-  
+
       static const double acre;
       static const double angstrom;
       static const double astronomical_unit;
@@ -174,7 +174,7 @@ namespace mygsl {
       static const double foot;
       static const double footcandle;
       static const double footlambert;
-      // 2009-11623 FM: remove 
+      // 2009-11623 FM: remove
       // static const double gauss;
       static const double gram_force;
       static const double grav_accel;
@@ -248,7 +248,7 @@ namespace mygsl {
       static const double week;
       static const double yard;
     }; // end of class cgsm
-  
+
   } // end of namespace constants
 
 } // end of namespace mygsl
