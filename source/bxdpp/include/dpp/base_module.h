@@ -44,7 +44,6 @@
 #include <datatools/logger.h>
 #include <datatools/things.h>
 
-/// \brief The datatools library's main namespace
 namespace datatools {
   // Forward declaration :
   class properties;
@@ -52,7 +51,7 @@ namespace datatools {
   class service_manager;
 }
 
-/// \brief The dpp library's main namespace
+/// Top-level namespace of the Bayeux/dpp module library
 namespace dpp {
 
   /// \brief Base processing module (abstract interface)
