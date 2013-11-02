@@ -29,6 +29,7 @@ namespace mygsl {
   class rng;
 }
 
+/// Top-level namespace of the Bayeux/genvtx module library
 namespace genvtx {
 
   class manager;

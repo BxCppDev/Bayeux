@@ -20,6 +20,7 @@ namespace geomtools {
 }
 
 namespace genvtx {
+  /// Nested private namespace of the Bayeux/genvtx module library (detail)
   namespace detail {
 
     const materials::manager *
