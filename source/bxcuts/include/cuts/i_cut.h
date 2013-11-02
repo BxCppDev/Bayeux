@@ -45,13 +45,12 @@
 
 #include <cuts/cut_tools.h>
 
-/// Main datatools namespace (cuts depends on datatools)
 namespace datatools {
   class properties;
   class service_manager;
 }
 
-/// Main cuts namespace
+/// Top-level namespace of the Bayeux/cuts module library
 namespace cuts {
 
   /// \brief The cut abstract base class
