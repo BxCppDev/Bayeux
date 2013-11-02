@@ -37,9 +37,9 @@
 
 class TFile;
 
-/// The main namespace of the  brio library
+/// Top-level namespace of the Bayeux/brio module library
 namespace brio {
-/// Private namespace
+/// Nested namespace of the Bayeux/brio module library (detail)
 namespace detail {
 //! \brief The internal I/O base class
 class base_io : public datatools::i_tree_dumpable {
@@ -176,4 +176,3 @@ bool base_io::has_store_with_matching_serial_tag(const std::string& label_) cons
 } // end of namespace brio
 
 #endif // BRIO_DETAIL_BASE_IO_H_
-
