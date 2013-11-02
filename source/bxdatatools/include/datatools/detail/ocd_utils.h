@@ -1,12 +1,12 @@
 /* -*- mode: c++; -*- */
 /* datatools::detail::ocd_utils.h */
-/* 
+/*
  * Description :
  *
  *  Some useful classes related to OCD features.
  *
  * Copyright (C) 2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -19,10 +19,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
- */ 
+ */
 #ifndef DATATOOLS_DETAIL_OCD_UTILS_H_
 #define DATATOOLS_DETAIL_OCD_UTILS_H_
 
@@ -36,9 +36,11 @@
 
 #include <datatools/object_configuration_description.h>
 
-namespace datatools {                                                   
-  namespace detail {                                                   
-    namespace ocd {                                                   
+namespace datatools {
+  /// Nested private namespace of the Bayeux/datatools module library (detail)
+  namespace detail {
+    /// Nested private namespace of the Bayeux/datatools module library (OCD)
+    namespace ocd {
       template <typename T>
       struct loader {};
       template <typename T>
@@ -50,10 +52,10 @@ namespace datatools {
 #include <boost/utility/enable_if.hpp>
 #include <boost/mpl/has_xxx.hpp>
 
-/// Template support for configurable type 
+/// Template support for configurable type
 BOOST_MPL_HAS_XXX_TRAIT_DEF(load);
 
-namespace datatools {                                                   
+namespace datatools {
 
   template <typename ConfigurableType>
   bool load_ocd(::datatools::object_configuration_description & ocd_,
@@ -76,9 +78,9 @@ namespace datatools {
 
 #include <boost/shared_ptr.hpp>
 
-namespace datatools {                                                   
-  namespace detail {                                                   
-    namespace ocd {                                                   
+namespace datatools {
+  namespace detail {
+    namespace ocd {
 
       /// \brief OCD registration container
       class ocd_registration
@@ -91,7 +93,7 @@ namespace datatools {
           ocd_handle_type handle;
         };
 
-        typedef std::map<std::string, entry_type> ocd_dict_type; 
+        typedef std::map<std::string, entry_type> ocd_dict_type;
 
         ocd_registration(bool preload_system_registration_ = false);
 
@@ -99,7 +101,7 @@ namespace datatools {
 
         bool has_id(const std::string & class_id_) const;
 
-        const object_configuration_description & 
+        const object_configuration_description &
         get(const std::string & class_id_) const;
 
         template<class T>
@@ -108,14 +110,14 @@ namespace datatools {
         void smart_dump(std::ostream & out_ = std::clog,
                         const std::string & title_ = "",
                         const std::string & indent_ = "") const;
-   
+
         void compute_ids(std::vector<std::string> &) const;
-              
+
         // Access to a static singleton (mutable version) :
-        static ocd_registration & grab_system_registration(); 
+        static ocd_registration & grab_system_registration();
 
         // Access to a static singleton (non-mutable version) :
-        static const ocd_registration & get_system_registration(); 
+        static const ocd_registration & get_system_registration();
 
       protected:
 
@@ -123,7 +125,7 @@ namespace datatools {
 
       private:
 
-        ocd_dict_type _dict_; 
+        ocd_dict_type _dict_;
 
       };
 
@@ -160,19 +162,18 @@ namespace datatools {
           object_configuration_description & the_ocd = *h.get();
           bool support = load_ocd<T>(the_ocd);
           if (support) {
-            ocd_reg.registration<T>(class_id_, h); 
+            ocd_reg.registration<T>(class_id_, h);
           }
         }
       };
- 
-      template <typename ClassType>                                        
-      struct _ocd_sfr {                                                 
-      };                                                              
- 
+
+      template <typename ClassType>
+      struct _ocd_sfr {
+      };
+
     } // namespace ocd
   } // namespace detail
 } // namespace datatools
 
 
 #endif // DATATOOLS_DETAIL_OCD_UTILS_H_
-

@@ -24,7 +24,7 @@
  *
  * Description:
  *
- *   Automated incremental filename
+ *   Automated incremental filenames
  *
  * History:
  *
@@ -214,4 +214,3 @@ class smart_filename {
 DOCD_CLASS_DECLARATION(datatools::smart_filename)
 
 #endif // DATATOOLS_SMART_FILENAME_H_
-

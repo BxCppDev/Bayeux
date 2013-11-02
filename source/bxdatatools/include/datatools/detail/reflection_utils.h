@@ -1,12 +1,12 @@
 /* -*- mode: c++; -*- */
 /* datatools::reflection_utils.h */
-/* 
+/*
  * Description :
  *
  *  Some useful classes and macros related to datatools/Camp reflection.
  *
  * Copyright (C) 2012 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -19,10 +19,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
- */ 
+ */
 #ifndef DATATOOLS_DETAIL_REFLECTION_UTILS_H_
 #define DATATOOLS_DETAIL_REFLECTION_UTILS_H_
 
@@ -34,16 +34,14 @@
 #include <boost/bind.hpp>
 #include <boost/ref.hpp>
 
-namespace datatools{    
-  /// Non-public material
-  namespace detail {                                             
-    /// Non-public material dedicated to reflection   
-    namespace reflection {                                             
-      template<typename Introspectable> 
+namespace datatools{
+  namespace detail {
+    /// Nested private namespace of the Bayeux/datatools module library (reflection)
+    namespace reflection {
+      template<typename Introspectable>
       void implement_reflection (unsigned int);
-    }              
-  }                                                       
-}                                                                       
+    }
+  }
+}
 
 #endif // DATATOOLS_DETAIL_REFLECTION_UTILS_H_
-

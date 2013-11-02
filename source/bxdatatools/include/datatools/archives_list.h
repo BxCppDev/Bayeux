@@ -37,23 +37,23 @@
 #include <datatools/eos/portable_iarchive.hpp>
 #include <datatools/eos/portable_oarchive.hpp>
 
-/// Namespace used by the portable binary archives
+/// Top-level namespace of the portable binary archives
 namespace eos
 {
 }
 
-/// Namespace of the Boost library
+/// Top-level namespace of the Boost library
 namespace boost
 {
-  /// Namespace used by the Boost archives
+  /// Nested namespace of the Boost library (archives)
   namespace archive
   {
   }
-  /// Namespace used by the Boost/Serialization library
+
+  /// Nested namespace of the Boost/Serialization library
   namespace serialization
   {
   }
 }
 
 #endif // DATATOOLS_ARCHIVES_LIST_H_
-

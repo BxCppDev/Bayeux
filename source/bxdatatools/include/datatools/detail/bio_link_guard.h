@@ -5,12 +5,12 @@
 
 namespace datatools {
 namespace detail {
-/// Non-public material dedicated to serialization   
+/// Nested private namespace of the Bayeux/datatools module library (serialization)
 namespace serialization {
 
 /** \brief Data structure to ensure that a given executable is linked
- *        against the datatools_bio DLL with new gcc 4.6 linking strategy 
- *        even if no explicit datatools serialization code is explicitely 
+ *        against the datatools_bio DLL with new gcc 4.6 linking strategy
+ *        even if no explicit datatools serialization code is explicitely
  *        invoked from the executable.
  */
 class dynamic_link_guard {
@@ -28,4 +28,3 @@ class dynamic_link_guard {
 } // end namespace datatools
 
 #endif // DATATOOLS_DETAIL_BIO_LINK_GUARD_H_
-

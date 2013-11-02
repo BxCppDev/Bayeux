@@ -13,6 +13,7 @@
 // This project
 #include <datatools/datatools_config.h>
 
+/// Top-level namespace of the Bayeux/datatools module library
 namespace datatools {
 
   void initialize(int argc_ = 0, char * argv_[] = 0);
