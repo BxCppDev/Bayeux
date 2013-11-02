@@ -27,6 +27,7 @@
 
 namespace genbb {
 namespace detail {
+/// Nested private namespace of the Bayeux/datatools module library (reflection)
 namespace reflection {
 
 /** \brief Data structure to ensure that a given executable is linked
@@ -46,4 +47,3 @@ class dynamic_link_guard {
 } // end namespace genbb
 
 #endif // GENBB_HELP_DETAIL_REFLECTION_LINK_GUARD_H_
-

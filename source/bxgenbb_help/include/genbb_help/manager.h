@@ -61,6 +61,7 @@ namespace datatools {
   class service_manager;
 }
 
+/// Top-level namespace of the Bayeux/genbb_help module library
 namespace genbb {
 
   /*! \brief GENBB particle manager management class

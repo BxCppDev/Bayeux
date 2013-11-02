@@ -104,6 +104,7 @@ namespace genbb {
     std::vector<std::string> histos_definitions;   /// Histograms' definition files
     bool prompt;                                   /// Flag to analyze prompt event
     bool delayed;                                  /// Flag to analyze delayed event
+    std::vector<std::string> histo_groups;         /// Group of histograms
     std::string title_prefix;                      /// User title prefix for histograms
     std::string name_suffix;                       /// User name suffix for histograms
   };
@@ -130,6 +131,7 @@ namespace genbb {
     out_ << "|-- histos_definitions = " << histos_definitions.size() << std::endl;
     out_ << "|-- prompt             = " << prompt << std::endl;
     out_ << "|-- delayed            = " << delayed << std::endl;
+    out_ << "|-- histo_groups       = " << histo_groups.size() << std::endl;
     out_ << "|-- title_prefix       = " << title_prefix << std::endl;
     out_ << "`-- name_suffix        = " << name_suffix << std::endl;
     return;
@@ -153,6 +155,7 @@ namespace genbb {
     histos_definitions.clear();
     prompt = true;
     delayed = false;
+    histo_groups.clear();
     title_prefix.clear();
     name_suffix.clear();
     return;
@@ -1254,6 +1257,11 @@ int main (int argc_, char ** argv_)
        "analyze delayed particles"
        )
 
+      // ("histo-group,G",
+      //  po::value<std::vector<std::string> > (&params.histo_groups),
+      //  "activate the building of histograms a given group."
+      //  )
+
       ("title-prefix,T",
        po::value<std::string>(&params.title_prefix),
        "set a title prefix for exported histograms"
@@ -1488,6 +1496,12 @@ namespace genbb {
       std::vector<std::string> pool_histo_setups;
       if (_params_.histos_definitions.size() == 0) {
         if (_params_.prompt) {
+          if (std::find(_params_.histo_groups.begin(),
+                        _params_.histo_groups.end(),
+                        "prompt") == _params_.histo_groups.end()) {
+            _params_.histo_groups.push_back("prompt");
+          }
+
           std::ostringstream filename;
           filename << genbb::get_resource_dir() << '/'
                    << "inspector/config/le_nuphy-1.0/inspector_histos_prompt.conf";
@@ -1496,6 +1510,11 @@ namespace genbb {
                         "Using default definition file for histograms : '" << filename.str() << "'");
         }
         if (_params_.delayed) {
+          if (std::find(_params_.histo_groups.begin(),
+                        _params_.histo_groups.end(),
+                        "delayed") == _params_.histo_groups.end()) {
+            _params_.histo_groups.push_back("delayed");
+          }
           std::ostringstream filename;
           filename << genbb::get_resource_dir() << '/'
                    << "inspector/config/le_nuphy-1.0/inspector_histos_delayed.conf";

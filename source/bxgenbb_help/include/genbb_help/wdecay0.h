@@ -43,6 +43,7 @@
 
 namespace genbb {
 
+  /// Nested namespace of the Bayeux/genbb_help module library (decay0 C++ port)
   namespace decay0 {
     struct bbpars;
   }

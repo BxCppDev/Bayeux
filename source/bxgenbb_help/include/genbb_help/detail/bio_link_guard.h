@@ -4,13 +4,14 @@
 #define GENBB_HELP_DETAIL_BIO_LINK_GUARD_H_ 1
 
 namespace genbb {
+/// Nested private namespace of the Bayeux/geomtools module library (detail)
 namespace detail {
-/// Non-public material dedicated to serialization   
+/// Nested private namespace of the Bayeux/geomtools module library (serialization)
 namespace serialization {
 
 /** \brief Data structure to ensure that a given executable is linked
- *        against the genbb_help_bio DLL with new gcc 4.6 linking strategy 
- *        even if no explicit genbb serialization code is explicitely 
+ *        against the genbb_help_bio DLL with new gcc 4.6 linking strategy
+ *        even if no explicit genbb serialization code is explicitely
  *        invoked from the executable.
  */
 class dynamic_link_guard {
@@ -28,4 +29,3 @@ class dynamic_link_guard {
 } // end namespace genbb
 
 #endif // GENBB_HELP_DETAIL_BIO_LINK_GUARD_H_
-
