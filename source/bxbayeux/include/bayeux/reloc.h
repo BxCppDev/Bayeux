@@ -58,6 +58,9 @@ namespace bayeux {
   //! Return URL, i.e. a path, to the base directory where Bayeux's documentation is installed
   std::string get_doc_dir();
 
+  //! Return URL, i.e. a path, to the base directory where Bayeux's examples are installed
+  std::string get_example_dir();
+
 } // end of namespace bayeux
 
 #endif // BAYEUX_RELOC_HPP

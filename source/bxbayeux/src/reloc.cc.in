@@ -97,4 +97,11 @@ namespace bayeux {
     return dir;
   }
 
+  std::string get_example_dir() {
+    init_directories();
+    std::string dir = br_find_data_dir("@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@");
+    dir += "/@Bayeux_EXAMPLE_DIR@";
+    return dir;
+  }
+
 } // namespace bayeux

@@ -32,6 +32,9 @@
 //! Evaluates to true if Bayeux was built with Geant4 extension module
 #cmakedefine01 BAYEUX_WITH_GEANT4
 
+//! Evaluates to true if Bayeux was installes examples
+#cmakedefine01 BAYEUX_WITH_EXAMPLES
+
 //! Evaluates to true if Bayeux was built with documentation
 #cmakedefine01 BAYEUX_WITH_DOCS
 

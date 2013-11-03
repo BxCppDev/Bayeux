@@ -131,22 +131,21 @@ if(NOT DEFINED Bayeux_BUILD_DOCS)
 endif()
 
 if(NOT Bayeux_BUILD_DOCS)
-  set(BAYEUX_WITH_DOCS 1)
-else()
   set(BAYEUX_WITH_DOCS 0)
+else()
+  set(BAYEUX_WITH_DOCS 1)
 endif()
 
 #-----------------------------------------------------------------------
-# Optional for enabling examples
+# Optional for installing examples
 #
-option(Bayeux_WITH_EXAMPLES "Install Bayeux with examples" ON)
-# if(NOT DEFINED Bayeux_WITH_EXAMPLES)
-#   set(Bayeux_WITH_EXAMPLES OFF CACHE BOOL "Install Bayeux with examples")
-# endif()
+if(NOT DEFINED Bayeux_WITH_EXAMPLES)
+  set(Bayeux_WITH_EXAMPLES ON CACHE BOOL "Install Bayeux with examples")
+endif()
 if(NOT Bayeux_WITH_EXAMPLES)
-  set(BAYEUX_WITH_EXAMPLES 1)
-else()
   set(BAYEUX_WITH_EXAMPLES 0)
+else()
+  set(BAYEUX_WITH_EXAMPLES 1)
 endif()
 
 #-----------------------------------------------------------------------
