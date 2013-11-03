@@ -203,7 +203,7 @@ namespace mygsl {
   // static
   void histogram_pool::init_histo_1d (histogram_1d & h1_,
                                       const datatools::properties& h1_setup_,
-                                      const histogram_pool* histo_pool_ )
+                                      const histogram_pool* histo_pool_)
   {
     if (h1_.is_initialized ()) {
       h1_.reset ();
