@@ -1,0 +1,100 @@
+// reloc.cc - Implementation of Bayeux relocatable feature
+//
+// Copyright (c) 2013 by François Mauger <mauger@lpccaeb.in2p3.fr>
+//
+// This file is part of Bayeux.
+//
+// Bayeux is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Bayeux is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Bayeux.  If not, see <http://www.gnu.org/licenses/>.
+
+// Ourselves
+#include <bayeux/reloc.h>
+
+// Standard Library
+#include <iostream>
+#include <fstream>
+#include <cstdlib>
+#include <sstream>
+#include <stdexcept>
+
+// Third Party
+// Boost
+#include <boost/filesystem.hpp>
+
+// This Project
+#include <bayeux/bayeux_config.h>
+
+#include <bayeux/BayeuxBinReloc.h>
+namespace {
+
+  //! Initialize directory
+  int _init_directories() {
+    BrInitError err;
+    int error_code = br_init_lib(&err);
+    return error_code;
+  }
+
+} // namespace
+
+namespace bayeux {
+
+  int init_directories() {
+    int error_code = 0;
+    static bool init = false;
+    if (! init) {
+      error_code = _init_directories();
+      init = true;
+    }
+    return error_code;
+  }
+
+  std::string get_prefix_dir() {
+    init_directories();
+    std::string dir = br_find_prefix("@CMAKE_INSTALL_PREFIX@");
+    return dir;
+  }
+
+  std::string get_library_dir() {
+    init_directories();
+    std::string dir = br_find_lib_dir("@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@");
+    return dir;
+  }
+
+  std::string get_binary_dir() {
+    init_directories();
+    std::string dir = br_find_bin_dir("@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@");
+    return dir;
+  }
+
+  std::string get_data_dir() {
+    init_directories();
+    std::string dir = br_find_data_dir("@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@");
+    dir += "/@Bayeux_TAG@";
+    return dir;
+  }
+
+  std::string get_resource_dir() {
+    init_directories();
+    std::string dir = br_find_data_dir("@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@");
+    dir += "/@Bayeux_RESOURCE_DIR@";
+    return dir;
+  }
+
+  std::string get_doc_dir() {
+    init_directories();
+    std::string dir = br_find_data_dir("@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@");
+    dir += "/@Bayeux_DOCUMENTATION_DIR@";
+    return dir;
+  }
+
+} // namespace bayeux

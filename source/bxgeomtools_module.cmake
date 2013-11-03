@@ -17,6 +17,7 @@ set(module_source_dir   "${module_root_dir}/src")
 set(module_test_dir     "${module_root_dir}/testing")
 set(module_app_dir      "${module_root_dir}/programs")
 set(module_resource_dir "${module_root_dir}/resources")
+set(module_examples_dir "${module_root_dir}/examples")
 
 foreach(dir root_dir include_dir source_dir test_dir app_dir resource_dir)
   set(${module_name}_${dir} ${module_${dir}})
@@ -253,30 +254,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/geomtools_driver.cc
   ${module_source_dir}/version.cc
   bx${module_name}/resource.cc
-  #${module_source_dir}/the_introspectable.cc
   )
-
-# - Reflection components
-# if(GEOMTOOLS_WITH_REFLECTION)
-#   set(geomtools_REFLECTION_HEADERS
-#     ${module_include_dir}/${module_name}/base_hit-reflect.h
-#     ${module_include_dir}/${module_name}/blur_spot-reflect.h
-#     ${module_include_dir}/${module_name}/clhep-reflect.h
-#     ${module_include_dir}/${module_name}/detail/reflection_link_guard.h
-#     ${module_include_dir}/${module_name}/geom_id-reflect.h
-#     ${module_include_dir}/${module_name}/i_placement-reflect.h
-#     ${module_include_dir}/${module_name}/placement-reflect.h
-#     ${module_include_dir}/${module_name}/reflection_guard.h
-#     ${module_include_dir}/${module_name}/the_introspectable.h
-#     ${module_include_dir}/${module_name}/utils-reflect.h
-#     )
-#   set(geomtools_REFLECTION_SOURCES
-#     ${module_source_dir}/the_introspectable.cc
-#     )
-#   set(geomtools_REFLECTION_TESTS
-#     ${module_test_dir}/test_reflection_0.cxx
-#     )
-# endif()
 
 # - Published headers
 foreach(_hdrin ${${module_name}_MODULE_HEADERS})
@@ -369,3 +347,8 @@ foreach(_rfin ${${module_name}_MODULE_RESOURCES})
   string(REGEX REPLACE "^${module_resource_dir}" "${MODULE_RESOURCE_ROOT}" _rfout "${_rfout}")
   configure_file(${_rfin} ${_rfout} @ONLY)
 endforeach()
+
+# - Examples dir
+set(${module_name}_MODULE_EXAMPLES
+  ${module_examples_dir}
+  )

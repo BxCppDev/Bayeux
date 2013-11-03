@@ -22,24 +22,13 @@
 #-----------------------------------------------------------------------
 
 #-----------------------------------------------------------------------
-# Optional for enabling documentation
-#
-if(NOT DEFINED Bayeux_BUILD_DOCS)
-  set(Bayeux_BUILD_DOCS OFF CACHE BOOL "Build Bayeux documentation products")
-endif()
-
-if(NOT Bayeux_BUILD_DOCS)
-  return()
-endif()
-
-#-----------------------------------------------------------------------
 # Set up build of documentation
 #
 find_package(Doxygen 1.8.0 REQUIRED)
 
 set(Bayeux_DOXYFILE_IN  bayeux_doxygen.conf.in)
 set(Bayeux_DOXYFILE_OUT ${PROJECT_BINARY_DIR}/doc/bayeux_doxygen.conf)
-set(Bayeux_DOXYGEN_OUTPUT_DIR  ${Bayeux_BUILDPRODUCT_DIR}/share/Bayeux-${Bayeux_VERSION}/Documentation/API)
+set(Bayeux_DOXYGEN_OUTPUT_DIR  ${Bayeux_BUILDPRODUCT_DIR}/share/${Bayeux_DOCUMENTATION_DIR}/API)
 set(Bayeux_DOXYGEN_OUTPUT_FILE ${Bayeux_DOXYGEN_OUTPUT_DIR}/html/index.html)
 
 #-----------------------------------------------------------------------
@@ -59,7 +48,6 @@ add_custom_command(
 add_custom_target(bayeux_docs ALL DEPENDS ${Bayeux_DOXYGEN_OUTPUT_FILE})
 
 configure_file(BayeuxDocs.cmake.in
-  ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake/Bayeux-${Bayeux_VERSION}/BayeuxDocs.cmake
+  ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake/${Bayeux_TAG}/BayeuxDocs.cmake
   @ONLY
   )
-

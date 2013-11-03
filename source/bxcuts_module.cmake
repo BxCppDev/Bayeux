@@ -13,6 +13,7 @@ set(module_root_dir "${CMAKE_CURRENT_SOURCE_DIR}/bx${module_name}")
 set(module_include_dir "${module_root_dir}/include")
 set(module_source_dir  "${module_root_dir}/src")
 set(module_test_dir    "${module_root_dir}/testing")
+set(module_examples_dir "${module_root_dir}/examples")
 
 foreach(dir root_dir include_dir source_dir test_dir)
   set(${module_name}_${dir} ${module_${dir}})
@@ -95,4 +96,9 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_manager.cxx
   ${module_test_dir}/test_random_cut.cxx
   ${module_test_dir}/test_version.cxx
+  )
+
+# - Examples dir
+set(${module_name}_MODULE_EXAMPLES
+  ${module_examples_dir}
   )

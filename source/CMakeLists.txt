@@ -43,6 +43,7 @@ find_package(ROOT 5.34.00 REQUIRED Core Hist RIO Tree)
 # - Geant4 if building the MCTools extension library
 # We do this here because we may need to configure files in MCTools
 # using the results of the search
+set(BAYEUX_WITH_GEANT4 0)
 if(Bayeux_WITH_GEANT4)
   find_package(Geant4 9.6.0 REQUIRED ui_all vis_all gdml)
   if(Geant4_DATASETS)
@@ -54,6 +55,7 @@ if(Bayeux_WITH_GEANT4)
   endif()
   # Also need Boost.Thread, ugh
   find_package(Boost REQUIRED thread)
+  set(BAYEUX_WITH_GEANT4 1)
 endif()
 
 # - Core Includes for Bayeux + Third Party
@@ -87,7 +89,6 @@ set(Bayeux_SUBMODULES
   mctools
 )
 
-
 # - Configure Bayeux submodule first
 set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include")
 include(bxbayeux_module.cmake)
@@ -95,16 +96,15 @@ set(Bayeux_HEADERS ${bayeux_MODULE_HEADERS})
 set(Bayeux_SOURCES ${bayeux_MODULE_SOURCES})
 set(Bayeux_TESTS)
 set(Bayeux_RESOURCES)
-
-# - Resource subdirectory: define the BUNDLE_RESOURCE_TAG variable in order to reuse it
-#   in configurable 'resource.cc.in' files:
-set(BUNDLE_RESOURCE_TAG "Bayeux-${Bayeux_VERSION}/resources")
+list(APPEND Bayeux_APPS ${bayeux_MODULE_APPS})
 
 set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include/bayeux")
-set(MODULE_RESOURCE_ROOT_BASE "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}/${BUNDLE_RESOURCE_TAG}")
+set(MODULE_RESOURCE_ROOT_BASE "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}/${Bayeux_RESOURCE_DIR}")
+set(MODULE_EXAMPLE_ROOT_BASE "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}/${Bayeux_EXAMPLE_DIR}")
 
 foreach(_m ${Bayeux_SUBMODULES})
   set(MODULE_RESOURCE_ROOT "${MODULE_RESOURCE_ROOT_BASE}/${_m}")
+  set(MODULE_EXAMPLE_ROOT "${MODULE_EXAMPLE_ROOT_BASE}/${_m}")
   include(bx${_m}_module.cmake)
   list(APPEND Bayeux_HEADERS ${${_m}_MODULE_HEADERS})
   list(APPEND Bayeux_SOURCES ${${_m}_MODULE_SOURCES})
@@ -112,6 +112,9 @@ foreach(_m ${Bayeux_SUBMODULES})
   list(APPEND Bayeux_APPS ${${_m}_MODULE_APPS})
   if (DEFINED ${_m}_GEANT4_MODULE_APPS)
     list(APPEND Bayeux_GEANT4_APPS ${${_m}_GEANT4_MODULE_APPS})
+  endif()
+  if (DEFINED ${_m}_MODULE_EXAMPLES)
+    list(APPEND Bayeux_EXAMPLES ${${_m}_MODULE_EXAMPLES})
   endif()
 endforeach()
 
@@ -145,6 +148,9 @@ target_link_libraries(Bayeux ${ROOT_LIBRARIES})
 
 # - Set RPATH as needed
 set_target_properties(Bayeux PROPERTIES INSTALL_RPATH_USE_LINK_PATH 1)
+
+# - Use BinReloc
+set_target_properties(Bayeux PROPERTIES COMPILE_DEFINITIONS ENABLE_BINRELOC)
 
 if(UNIX AND NOT APPLE)
   set_target_properties(Bayeux
@@ -261,27 +267,27 @@ install(DIRECTORY ${Bayeux_BUILDPRODUCT_DIR}/include/
 # Done here so that external package variables are visible
 #
 # - Targets
-export(TARGETS Bayeux ${Bayeux_ADDON_TARGETS} FILE ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake/Bayeux-${Bayeux_VERSION}/BayeuxTargets.cmake)
-install(EXPORT BayeuxTargets DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Bayeux-${Bayeux_VERSION})
+export(TARGETS Bayeux ${Bayeux_ADDON_TARGETS} FILE ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake/${Bayeux_TAG}/BayeuxTargets.cmake)
+install(EXPORT BayeuxTargets DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${Bayeux_TAG})
 
 # - Versioning (build and install trees)
 configure_file(${PROJECT_SOURCE_DIR}/cmake/BayeuxConfigVersion.cmake.in
-  ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake/Bayeux-${Bayeux_VERSION}/BayeuxConfigVersion.cmake
+  ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake/${Bayeux_TAG}/BayeuxConfigVersion.cmake
   @ONLY
   )
 
 # - Config (build and install trees *at present*)
 configure_file(${PROJECT_SOURCE_DIR}/cmake/BayeuxConfig.cmake.in
-  ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake/Bayeux-${Bayeux_VERSION}/BayeuxConfig.cmake
+  ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake/${Bayeux_TAG}/BayeuxConfig.cmake
   @ONLY
   )
 
 install(
   FILES
-    ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake/Bayeux-${Bayeux_VERSION}/BayeuxConfigVersion.cmake
-    ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake/Bayeux-${Bayeux_VERSION}/BayeuxConfig.cmake
+    ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake/${Bayeux_TAG}/BayeuxConfigVersion.cmake
+    ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake/${Bayeux_TAG}/BayeuxConfig.cmake
   DESTINATION
-    ${CMAKE_INSTALL_LIBDIR}/cmake/Bayeux-${Bayeux_VERSION}
+    ${CMAKE_INSTALL_LIBDIR}/cmake/${Bayeux_TAG}
   )
 
 #-----------------------------------------------------------------------
@@ -292,7 +298,6 @@ if(Bayeux_ENABLE_TESTING)
   foreach(_m ${Bayeux_SUBMODULES})
     foreach(_testsource ${${_m}_MODULE_TESTS})
       get_filename_component(_testname "${_testsource}" NAME_WE)
-      # message(STATUS "Module: ${_m} Test: ${_testname}")
       set(_testname "${_m}-${_testname}")
 
       add_executable(${_testname} ${_testsource})
@@ -318,11 +323,22 @@ if(Bayeux_ENABLE_TESTING)
         set_target_properties(${_testname} PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
       endif()
 
-
       add_test(NAME ${_testname} COMMAND ${_testname})
       set_property(TEST ${_testname}
         APPEND PROPERTY ENVIRONMENT ${${_m}_TEST_ENVIRONMENT}
         )
+    endforeach()
+  endforeach()
+endif()
+
+#-----------------------------------------------------------------------
+# Install examples if required
+if(Bayeux_WITH_EXAMPLES)
+  foreach(_m ${Bayeux_SUBMODULES})
+    foreach(_example ${${_m}_MODULE_EXAMPLES})
+      install(DIRECTORY ${_example}/
+	DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${Bayeux_EXAMPLE_DIR}/${_m}
+	)
     endforeach()
   endforeach()
 endif()

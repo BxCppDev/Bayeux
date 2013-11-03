@@ -15,6 +15,7 @@ set(module_source_dir  "${module_root_dir}/src")
 set(module_test_dir    "${module_root_dir}/testing")
 set(module_app_dir     "${module_root_dir}/programs")
 set(module_resource_dir "${module_root_dir}/resources")
+set(module_examples_dir "${module_root_dir}/examples")
 
 foreach(dir root_dir include_dir source_dir app_dir test_dir)
   set(${module_name}_${dir} ${module_${dir}})
@@ -463,3 +464,8 @@ foreach(_rfin ${${module_name}_MODULE_RESOURCES})
   string(REGEX REPLACE "^${module_resource_dir}" "${MODULE_RESOURCE_ROOT}" _rfout "${_rfout}")
   configure_file(${_rfin} ${_rfout} @ONLY)
 endforeach()
+
+# - Examples dir
+set(${module_name}_MODULE_EXAMPLES
+  ${module_examples_dir}
+  )

@@ -29,6 +29,14 @@
 //! Evaluates to true if Bayeux was built with automated init/fini operation at DLL loading
 #cmakedefine01 BAYEUX_WITH_IMPLICIT_INIT_FINI
 
+//! Evaluates to true if Bayeux was built with Geant4 extension module
+#cmakedefine01 BAYEUX_WITH_GEANT4
+
+//! Evaluates to true if Bayeux was built with documentation
+#cmakedefine01 BAYEUX_WITH_DOCS
+
 #define BAYEUX_ENV_RESOURCE_DIR "BAYEUX_RESOURCE_DIR"
+
+#define BAYEUX_SUBMODULES "@Bayeux_SUBMODULES@"
 
 #endif // BAYEUX_BAYEUX_CONFIG_H

@@ -108,6 +108,50 @@ if(Bayeux_ENABLE_TESTING)
 endif()
 
 #-----------------------------------------------------------------------
+# - Parent subdirectory of all Bayeux data files: define the Bayeux_TAG variable:
+set(Bayeux_TAG "Bayeux-${Bayeux_VERSION}")
+
+#-----------------------------------------------------------------------
+# - Resource subdirectory: define the Bayeux_RESOURCE_DIR variable:
+set(Bayeux_RESOURCE_DIR "${Bayeux_TAG}/resources")
+
+#-----------------------------------------------------------------------
+# - Example subdirectory: define the Bayeux_EXAMPLE_DIR variable:
+set(Bayeux_EXAMPLE_DIR "${Bayeux_TAG}/examples")
+
+#-----------------------------------------------------------------------
+# - Documentation subdirectory: define the Bayeux_DOCUMENTATION_DIR:
+set(Bayeux_DOCUMENTATION_DIR "${Bayeux_TAG}/Documentation")
+
+#-----------------------------------------------------------------------
+# Optional for enabling documentation
+#
+if(NOT DEFINED Bayeux_BUILD_DOCS)
+  set(Bayeux_BUILD_DOCS OFF CACHE BOOL "Build Bayeux documentation products")
+endif()
+
+if(NOT Bayeux_BUILD_DOCS)
+  set(BAYEUX_WITH_DOCS 1)
+  return()
+else()
+  set(BAYEUX_WITH_DOCS 0)
+endif()
+
+#-----------------------------------------------------------------------
+# Optional for enabling examples
+#
+option(Bayeux_WITH_EXAMPLES "Install Bayeux with examples" ON)
+# if(NOT DEFINED Bayeux_WITH_EXAMPLES)
+#   set(Bayeux_WITH_EXAMPLES OFF CACHE BOOL "Install Bayeux with examples")
+# endif()
+if(NOT Bayeux_WITH_EXAMPLES)
+  set(BAYEUX_WITH_EXAMPLES 1)
+  return()
+else()
+  set(BAYEUX_WITH_EXAMPLES 0)
+endif()
+
+#-----------------------------------------------------------------------
 # Build the subdirectories
 #
 add_subdirectory(source)
@@ -119,7 +163,7 @@ endif()
 
 #-----------------------------------------------------------------------
 # Install common resources
-install(DIRECTORY ${Bayeux_BUILDPRODUCT_DIR}/share/Bayeux-${Bayeux_VERSION}
+install(DIRECTORY ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATAROOTDIR}/${Bayeux_TAG}
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}
   )
 

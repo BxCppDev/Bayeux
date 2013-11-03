@@ -14,6 +14,7 @@ set(module_include_dir "${module_root_dir}/include")
 set(module_source_dir  "${module_root_dir}/src")
 set(module_test_dir    "${module_root_dir}/testing")
 set(module_app_dir     "${module_root_dir}/programs")
+set(module_examples_dir "${module_root_dir}/examples")
 
 foreach(dir root_dir include_dir source_dir test_dir app_dir)
   set(${module_name}_${dir} ${module_${dir}})
@@ -281,4 +282,9 @@ ${module_test_dir}/test_version_id.cxx
 # - Applications
 set(${module_name}_MODULE_APPS
   ${module_app_dir}/ocd_manual.cxx
+  )
+
+# - Examples dir
+set(${module_name}_MODULE_EXAMPLES
+  ${module_examples_dir}
   )
