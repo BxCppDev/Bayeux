@@ -14,22 +14,10 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
   message(FATAL_ERROR "in-source build detected")
 endif()
 
-
-if (USE_BAYEUX)
-  # - Bayeux :
-  find_package(Bayeux 1.0.0 REQUIRED)
-  set(_incs ${Bayeux_INCLUDE_DIRS})
-  set(_libs ${Bayeux_LIBRARIES})
-else()
-  # - Datatools :
-  if (NOT datatools_DIR)
-    execute_process(COMMAND datatools-config --prefix
-                     OUTPUT_VARIABLE datatools_DIR )
-  endif()
-  find_package(datatools 5.0.0 REQUIRED)
-  set(_incs ${datatools_INCLUDE_DIRS})
-  set(_libs ${datatools_LIBRARIES})
-endif()
+# - Bayeux :
+find_package(Bayeux 1.0.0 REQUIRED)
+set(_incs ${Bayeux_INCLUDE_DIRS})
+set(_libs ${Bayeux_LIBRARIES})
 
 include_directories(${PROJECT_SOURCE_DIR} ${_incs})
 

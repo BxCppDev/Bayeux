@@ -6,12 +6,12 @@ Introduction
 ============
 
  * Description:
-   This example illustrates the use of the Object Configuration
-   Description mechanism (OCD) associated to an arbitrary user
-   class and an official class from the datatools library.
-   The user class being part of a DLL, one show how to browse
-   the associated OCD material through the ``ocd_manual``
-   executable.
+
+   This  example  illustrates  the  use of  the  Object  Configuration
+   Description mechanism  (OCD) associated to an  arbitrary user class
+   and  an official  class from  the Bayeux/datatools  module library.
+   The user  class being  part of a  DLL, one show  how to  browse the
+   associated OCD material through the ``bxocd_manual`` executable.
 
  * Source files :
 
@@ -35,10 +35,10 @@ Introduction
 Quick start
 ===========
 
-1. Build, install and setup the datatools library
+1. Build, install and setup the Bayeux library
 2. Make a copy of the example directory::
 
-      shell> cp -a <datatools installation base directory>/share/datatools/examples/OCD /tmp/datatools_ex_OCD
+      shell> cp -a $(bxquery --exampledir)/datatools/OCD /tmp/datatools_ex_OCD
       shell> cd /tmp/datatools_ex_OCD
 
 3. Build and install the example::
@@ -47,7 +47,7 @@ Quick start
       shell> cd __build
       shell> cmake \
         -DCMAKE_INSTALL_PREFIX=.. \
-        -Ddatatools_DIR=<datatools installation base directory> \
+        -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
         ..
       shell> make
       shell> make install
@@ -59,7 +59,7 @@ Quick start
       shell> ls -l ./ex_OCD
       shell> ./ex_OCD
       shell> LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH} \
-             ocd_manual --load-dll "datatools_ex_OCD" \
+             bxocd_manual --load-dll "datatools_ex_OCD" \
                           --class-id "foo"            \
                           --action show
 
@@ -82,5 +82,3 @@ Quick start
       shell> rm ex_OCD.service_manager.skeleton.conf
       shell> rm ex_OCD
       shell> rm -fr __build
-
-

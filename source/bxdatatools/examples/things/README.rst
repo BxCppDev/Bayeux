@@ -25,7 +25,7 @@ Quick start
 1. Build, install and setup the datatools library
 2. Make a copy of the example directory::
 
-      shell> cp -a <datatools installation base directory>/share/datatools/examples/things /tmp/datatools_ex_things
+      shell> cp -a $(bxquery --exampledir)/datatools/examples/things /tmp/datatools_ex_things
       shell> cd /tmp/datatools_ex_things
 
 3. Build and install the example::
@@ -34,7 +34,7 @@ Quick start
       shell> cd __build
       shell> cmake \
         -DCMAKE_INSTALL_PREFIX=.. \
-        -Ddatatools_DIR=<datatools installation base directory> \
+        -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
         ..
       shell> make
       shell> make install
@@ -48,5 +48,3 @@ Quick start
 
       shell> rm ex_things_1
       shell> rm -fr __build
-
-

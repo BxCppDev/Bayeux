@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-use_bayeux=1
-which bayeux-config > /dev/null 2>&1
+which bxquery > /dev/null 2>&1
 if [ $? -ne 0 ]; then
-    use_bayeux=0
+    echo "ERROR: Missing Bayeux's bxquery !" >&2
+    exit 1
 fi
 
 opwd=$(pwd)
@@ -16,25 +16,10 @@ install_dir=$(pwd)
 mkdir ${build_dir}
 cd ${build_dir}
 
-if [ $use_bayeux -eq 0 ]; then
-    which datatools-config
-    if [ $? -ne 0 ]; then
-	echo "ERROR: Missing datatools-config !" >&2
-	exit 0
-    fi
-    cmake \
-	-DCMAKE_INSTALL_PREFIX=.. \
-	-DCMAKE_FIND_ROOT_PATH:PATH=$(datatools-config --prefix) \
-	..
-    ocd_manual_bin="ocd_manual"
-else
-    cmake \
-	-DCMAKE_INSTALL_PREFIX=.. \
-	-DUSE_BAYEUX:BOOLEAN=1 \
-	-DCMAKE_FIND_ROOT_PATH:PATH=$(bayeux-config --prefix) \
-	..
-    ocd_manual_bin="bxocd_manual"
-fi
+cmake \
+    -DCMAKE_INSTALL_PREFIX=.. \
+    -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
+    ..
 make
 make install
 
@@ -47,7 +32,7 @@ echo "Run the example program : " 1>&2
 LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH} ./ex_OCD
 
 LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH} \
-    ${ocd_manual_bin} --load-dll "datatools_ex_OCD" \
+    bxocd_manual --load-dll "datatools_ex_OCD" \
     --class-id "foo"            \
     --action show > foo_ocd.rst
 
