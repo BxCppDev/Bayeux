@@ -20,6 +20,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Bayeux.  If not, see <http://www.gnu.org/licenses/>.
 #-----------------------------------------------------------------------
+if(NOT Bayeux_BUILD_DOCS)
+  return()
+else()
 
 #-----------------------------------------------------------------------
 # Set up build of documentation
