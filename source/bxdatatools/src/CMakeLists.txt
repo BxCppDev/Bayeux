@@ -34,6 +34,7 @@ set(datatools_PUBLIC_HEADERS
   include/datatools/event_id.h
   include/datatools/exception.h
   include/datatools/factory.h
+  include/datatools/factory-inl.h
   include/datatools/factory_macros.h
   include/datatools/handle.h
   include/datatools/handle_macros.h
