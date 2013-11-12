@@ -34,6 +34,7 @@
 #include <datatools/ioutils.h>
 #include <datatools/bio_guard.h>
 #include <datatools/library_loader.h>
+#include <datatools/factory_macros.h>
 
 #include <dpp/base_module.h>
 #include <dpp/module_macros.h>
@@ -241,6 +242,16 @@ int main (int argc_, char ** argv_)
        datatools::load_ocd<dpp::module_manager>(OCD);
        std::ofstream fscf ("test_OCD_module_manager.sample.conf");
        OCD.generate_sample_configuration(fscf, "the configuration of a 'dpp::module_manager' test object");
+      }
+
+      std::vector<std::string> mods;
+      const dpp::base_module::factory_register_type & frt
+        = dpp::base_module::get_system_factory_register();
+      frt.list_of_factories(mods);
+      // or: DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(dpp::base_module).list_of_factories(mods);
+      std::clog << "List of modules: " << std::endl;
+      for (int i = 0; i < mods.size(); i++) {
+        std::clog << mods[i] << std::endl;
       }
 
     }
