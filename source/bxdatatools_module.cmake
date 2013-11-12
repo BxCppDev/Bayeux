@@ -57,6 +57,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/event_id.ipp
   ${module_include_dir}/${module_name}/exception.h
   ${module_include_dir}/${module_name}/factory.h
+  ${module_include_dir}/${module_name}/factory-inl.h
   ${module_include_dir}/${module_name}/factory_macros.h
   ${module_include_dir}/${module_name}/handle.h
   ${module_include_dir}/${module_name}/handle_macros.h
