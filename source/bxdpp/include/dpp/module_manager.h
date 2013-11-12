@@ -74,9 +74,16 @@ namespace dpp {
 
     const base_module & get (const std::string & module_name_) const;
 
+    module_handle_dict_type & grab_modules ();
+
+    // DEPRECATED
     module_handle_dict_type & get_modules ();
 
     const module_handle_dict_type & get_modules () const ;
+
+    /// Return an array of pairs describing the name and
+    /// class registration ID for each managed modules
+    void build_modules_infos(std::vector<std::pair<std::string,std::string> > & infos_) const;
 
     bool is_initialized () const;
 

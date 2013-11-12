@@ -480,6 +480,24 @@ namespace dpp {
     return _modules_.find (module_name_) != _modules_.end ();
   }
 
+  void module_manager::build_modules_infos(std::vector<std::pair<std::string,std::string> > & infos_) const
+  {
+    // Ensure the empty array is empty (is it questionnable? should we allow 'append' mode ?):
+    infos_.clear();
+    for (module_handle_dict_type::const_iterator i = _modules_.begin ();
+         i != _modules_.end ();
+         i++) {
+      {
+        std::pair<std::string,std::string> dummy;
+        infos_.push_back(dummy);
+      }
+      std::pair<std::string,std::string> & module_desc = infos_.back();
+      module_desc.first = i->first;
+      module_desc.second = i->second.get_module_id();
+    }
+    return;
+  }
+
   void module_manager::remove (const std::string & module_name_)
   {
     _modules_.erase (module_name_);
@@ -506,6 +524,12 @@ namespace dpp {
     return const_cast<base_module &> (mutable_this->grab (module_name_));
   }
 
+  module_handle_dict_type & module_manager::grab_modules ()
+  {
+    return _modules_;
+  }
+
+  // Deprecated
   module_handle_dict_type & module_manager::get_modules ()
   {
     return _modules_;

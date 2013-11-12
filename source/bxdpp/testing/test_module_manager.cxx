@@ -234,6 +234,29 @@ int main (int argc_, char ** argv_)
             }
         }
 
+      std::vector<std::pair<std::string,std::string> > modules_infos;
+      MM.build_modules_infos(modules_infos);
+      std::clog << "\nManaged modules are: " << std::endl;
+      for (int i = 0; i < modules_infos.size(); i++) {
+        std::clog << "'" << modules_infos[i].first << "' as a '" <<   modules_infos[i].second << "'"
+                  << std::endl;
+      }
+
+      std::clog << "\nManaged modules are: " << std::endl;
+      const dpp::module_handle_dict_type & MD = MM.get_modules();
+      for (dpp::module_handle_dict_type::const_iterator i = MD.begin();
+           i != MD.end();
+           i++) {
+        std::clog << "'" << i->first << "' as '";
+        const dpp::module_entry_type & me = i->second;
+        std::clog << me.get_module_id();
+        std::clog << "'" << std::endl;
+        // Also we can inspect the configuration:
+        //   me.get_module_config(); (properties...)
+        // the status within the manager
+        //   me.is_created() ,  me.is_initialized()
+      }
+
       // Terminate the module manager :
       MM.reset ();
 
@@ -245,11 +268,13 @@ int main (int argc_, char ** argv_)
       }
 
       std::vector<std::string> mods;
-      const dpp::base_module::factory_register_type & frt
-        = dpp::base_module::get_system_factory_register();
-      frt.list_of_factories(mods);
-      // or: DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(dpp::base_module).list_of_factories(mods);
-      std::clog << "List of modules: " << std::endl;
+      /*
+       * const dpp::base_module::factory_register_type & frt
+       *   = dpp::base_module::get_system_factory_register();
+       * frt.list_of_factories(mods);
+       */
+      DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(dpp::base_module).list_of_factories(mods);
+      std::clog << "\nList of registered modules: " << std::endl;
       for (int i = 0; i < mods.size(); i++) {
         std::clog << mods[i] << std::endl;
       }
