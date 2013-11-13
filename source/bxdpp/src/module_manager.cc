@@ -84,6 +84,13 @@ namespace dpp {
     return;
   }
 
+  void module_manager::build_registered_module_types(std::vector<std::string> & ids_) const
+  {
+    ids_.clear();
+    _factory_register_.list_of_factories(ids_);
+    return;
+  }
+
   void module_manager::set_debug (bool debug_)
   {
     if (debug_) {

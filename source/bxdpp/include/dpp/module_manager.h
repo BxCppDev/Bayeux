@@ -1,7 +1,7 @@
 /* module_manager.h
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-22
- * Last modified : 2013-11-01
+ * Last modified : 2013-11-13
  *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -31,12 +31,17 @@
 #ifndef DPP_MODULE_MANAGER_H_
 #define DPP_MODULE_MANAGER_H_ 1
 
+// Standard library
 #include <string>
+#include <vector>
 
+// Third party
+// - Boost
 #include <boost/cstdint.hpp>
-
+// - Bayeux/datatools
 #include <datatools/logger.h>
 
+// This project
 #include <dpp/base_module.h>
 #include <dpp/module_tools.h>
 
@@ -142,8 +147,12 @@ namespace dpp {
 
     void _reset_module (module_entry_type & module_entry_);
 
+  public:
+
+    /// Check if a module factory given by ID is registered
     bool has_module_type (const std::string & module_id_) const;
 
+    /// Register a factory for a given module class given a (unique) ID
     template <class ModuleClass>
     void register_module_type (const std::string & module_id_)
     {
@@ -151,7 +160,11 @@ namespace dpp {
       return;
     }
 
+    /// Unregister a module factory
     void unregister_module_type (const std::string & module_id_);
+
+    /// Copy registered module factories IDs in the supplied vector
+    void build_registered_module_types(std::vector<std::string> & ids_) const;
 
   protected:
 

@@ -257,6 +257,13 @@ int main (int argc_, char ** argv_)
         //   me.is_created() ,  me.is_initialized()
       }
 
+      std::clog << "\nList of manager registered modules IDs: " << std::endl;
+      std::vector<std::string> mmods;
+      MM.build_registered_module_types(mmods);
+      for (int i = 0; i < mmods.size(); i++) {
+        std::clog << mmods[i] << std::endl;
+      }
+
       // Terminate the module manager :
       MM.reset ();
 
@@ -267,14 +274,14 @@ int main (int argc_, char ** argv_)
        OCD.generate_sample_configuration(fscf, "the configuration of a 'dpp::module_manager' test object");
       }
 
-      std::vector<std::string> mods;
       /*
        * const dpp::base_module::factory_register_type & frt
        *   = dpp::base_module::get_system_factory_register();
        * frt.list_of_factories(mods);
        */
+      std::vector<std::string> mods;
       DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(dpp::base_module).list_of_factories(mods);
-      std::clog << "\nList of registered modules: " << std::endl;
+      std::clog << "\nList of system registered modules: " << std::endl;
       for (int i = 0; i < mods.size(); i++) {
         std::clog << mods[i] << std::endl;
       }
