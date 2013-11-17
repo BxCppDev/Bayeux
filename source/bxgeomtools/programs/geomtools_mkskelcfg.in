@@ -47,12 +47,12 @@ Usage:
                                       describing the virtual geometry of the
                                       setup.
                                       Example:
-                                        --setup-label "bipo3::commissioning"
+                                        --config-base-dir "."
 
    ${this_bxapp} -l|--setup-label arg  :
                                       Set the label of the setup to 'arg'.
                                       Example:
-                                        --config-base-dir "/tmp/${USER}/resources"
+                                        --setup-label "my_setup"
 
    ${this_bxapp} -v|--setup-version arg  :
                                       Set the version of the setup to 'arg'.
@@ -62,15 +62,15 @@ Usage:
    ${this_bxapp} -m|--registered-module arg :
                                       Use the registered base directory from the
                                       module/library 'arg'. Used file path syntax
-                                      is: "@module:path/to/setup/file.conf".
+                                      is: "@arg:path/to/setup/file.conf".
                                       Example:
                                         --registered-module "my_setup"
 
    ${this_bxapp} -p|--skeleton-profile arg :
                                       Use the skeleton profile 'arg'.
-                                      Default value is: 'default'.
+                                      Default value is: '${default_skeleton_profile}'.
                                       Example:
-                                        --skeleton-profile "default"
+                                        --skeleton-profile "${default_skeleton_profile}"
 
 EOF
     return
@@ -87,7 +87,8 @@ default_setup_label="my_setup"
 setup_label=""
 default_setup_version="0.1"
 setup_version=""
-default_skeleton_profile="default"
+known_skeleton_profiles="s2d4"
+default_skeleton_profile="s2d4"
 skeleton_profile=""
 registered_module=""
 env_config_dir=""
@@ -185,7 +186,7 @@ function ui_dialog()
     return 0;
 }
 
-if [ ${interactive} ]; then
+if [ ${interactive} -eq 1 ]; then
     if [ $debug -eq 1 ]; then
 	echo "DEBUG: Entering interactive dialog..." >&2
     fi
@@ -210,6 +211,12 @@ fi
 
 if [ -z "$skeleton_profile" ]; then
     skeleton_profile="$default_skeleton_profile"
+fi
+
+echo "${known_skeleton_profiles}" | tr [[:space:]] ' ' | tr -s ' ' | tr ' ' '\n'  | grep $skeleton_profile > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "ERROR: Profile '${skeleton_profile}' is not valid ! Abort !" >&2
+    my_exit 1
 fi
 
 setup_label_path=$(echo "${setup_label}" | sed -e 's%::%/%g' -e 's%[[:space:]]%_%g')
@@ -256,19 +263,23 @@ if [ "x${setup_base_dir:0:1}" != "x/" ]; then
     fi
 fi
 
-
-function populate_geometry_config_default()
+# Skeleton profile 's2d4' implements a simple geometry setup
+# with two 'source' physical volumes and four 'detector' physical
+# volumes.
+function populate_geometry_config_s2d4()
 {
+    echo "NOTICE: Populating skeleton profile 's2d4'..." >&2
     _dbq="\`\`"
 
     #######################################################################
     cat > ${setup_base_dir}/README.rst <<EOF
-Virtual geometry setup ``${setup_label}`` (version ``${setup_version}``)
-===============================================================================================
+Virtual geometry setup ${_dbq}${setup_label}${_dbq} (version ${_dbq}${setup_version}${_dbq})
+==============================================================================
 
-This sample README file has been automatically generated to describe
-this skeleton directory with sample geometry configuration files.
-From this directory, you can now build your own geometry setup.
+This   README   file  has   been   automatically   generated  by   the
+${_dbq}${this_bxapp}${_dbq} script to describe a skeleton directory with a
+set of toy geometry configuration  files.  From this sample directory,
+you can now build your own virtual geometry setup.
 
 Files
 -----
@@ -296,14 +307,12 @@ Files
        of the materials of which the geometry volumes are made of.
      * ${_dbq}material_aliases.def${_dbq} : The definition of a material aliases used by the material plugin.
 
-Inspector
----------
+Geometry inspector
+------------------
 
 Run the Bayeux/geomtools inspector program: ::
 
 EOF
-
-
 
 if [ "x${registered_module}" != "x" ]; then
     cat >> ${setup_base_dir}/README.rst <<EOF
@@ -766,12 +775,12 @@ mapping.only_categories : string [1] = "detector.gc"
 EOF
 
     return 0
-} # populate_geometry_config_default()
+} # populate_geometry_config_s2d4()
 
-if [ "${skeleton_profile}" = "default" ]; then
-    populate_geometry_config_default
+if [ "${skeleton_profile}" = "s2d4" ]; then
+    populate_geometry_config_s2d4
     if [ $? -ne 0 ]; then
-	echo "ERROR: Function 'populate_geometry_config_default' failed ! Abort !" >&2
+	echo "ERROR: Function 'populate_geometry_config_s2d4' failed ! Abort !" >&2
 	# rm -fr ${setup_base_dir}
 	my_exit 1
     fi
@@ -781,10 +790,9 @@ else
 fi
 
 echo -e "Virtual geometry configuration directory for\nsetup with label '${setup_label}' and version '${setup_version}' : \n" >&2
-tree ${setup_base_dir}
-
-
-
+echo "###############################################################" >&2
+which tree > /dev/null 2>&1 && LANG=C tree ${setup_base_dir} || ls -R ${setup_base_dir}
+echo "###############################################################" >&2
 
 my_exit 0
 
