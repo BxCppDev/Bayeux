@@ -227,14 +227,14 @@ fi
 
 if [ $debug -eq 1 ]; then
     (
-    echo "DEBUG: config_base_dir='${config_base_dir}'"
-    echo "DEBUG: setup_label='${setup_label}'"
-    echo "DEBUG: setup_label_path='${setup_label_path}'"
-    echo "DEBUG: setup_version='${setup_version}'"
-    echo "DEBUG: setup_base_dir='${setup_base_dir}'"
-    echo "DEBUG: registered_module='${registered_module}'"
-    echo "DEBUG: skeleton_profile='${skeleton_profile}'"
-    echo "DEBUG: env_config_dir='${env_config_dir}'"
+	echo "DEBUG: config_base_dir='${config_base_dir}'"
+	echo "DEBUG: setup_label='${setup_label}'"
+	echo "DEBUG: setup_label_path='${setup_label_path}'"
+	echo "DEBUG: setup_version='${setup_version}'"
+	echo "DEBUG: setup_base_dir='${setup_base_dir}'"
+	echo "DEBUG: registered_module='${registered_module}'"
+	echo "DEBUG: skeleton_profile='${skeleton_profile}'"
+	echo "DEBUG: env_config_dir='${env_config_dir}'"
     ) >&2
 fi
 
@@ -293,9 +293,10 @@ Genbb inspector
 Run the Bayeux/genvtx production program: ::
 
 EOF
+    geo_setup_base_dir="${config_base_dir}/${setup_label_path}/geometry/${setup_version}"
 
-if [ "x${registered_module}" != "x" ]; then
-    cat >> ${setup_base_dir}/README.rst <<EOF
+    if [ "x${registered_module}" != "x" ]; then
+	cat >> ${setup_base_dir}/README.rst <<EOF
   $ bxgenvtx_production \\
       --datatools::resource_path toto@${config_base_dir} \\
       --geometry-manager "${geo_setup_base_dir}/manager.conf" \\
@@ -303,9 +304,8 @@ if [ "x${registered_module}" != "x" ]; then
       --list
 
 EOF
-elif [ "x${env_config_dir}" != "x" ]; then
-    geo_setup_base_dir="${config_base_dir}/${setup_label_path}/geometry/${setup_version}"
-    cat >> ${setup_base_dir}/README.rst <<EOF
+    elif [ "x${env_config_dir}" != "x" ]; then
+	cat >> ${setup_base_dir}/README.rst <<EOF
   $ ${env_config_dir}=${config_base_dir} \\
     bxgenvtx_production \\
       --geometry-manager "${geo_setup_base_dir}/manager.conf" \\
@@ -313,15 +313,16 @@ elif [ "x${env_config_dir}" != "x" ]; then
       --list
 
 EOF
-else
-   cat >> ${setup_base_dir}/README.rst <<EOF
+    else
+	cat >> ${setup_base_dir}/README.rst <<EOF
   $ bxgenvtx_production \\
       --geometry-manager "${geo_setup_base_dir}/manager.conf" \\
       --vertex-generator-manager "${setup_base_dir}/manager.conf" \\
       --list
 
 EOF
-fi
+    fi
+
     #######################################################################
     cat > ${setup_base_dir}/manager.conf <<EOF
 # List of configuration properties (datatools::properties).
