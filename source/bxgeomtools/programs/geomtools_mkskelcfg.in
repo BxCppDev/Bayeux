@@ -1,0 +1,796 @@
+#!/usr/bin/env bash
+
+opwd=$(pwd)
+geomtools_version=@geomtools_VERSION@
+this_bxapp="bxgeomtools_mkskelcfg"
+
+function my_exit()
+{
+    cd ${opwd}
+    exit $1
+}
+
+function splash()
+{
+    cat<<EOF
+
+        G E O M T O O L S    M K S K E L
+        Version ${geomtools_version}
+        Bayeux version @Bayeux_VERSION@
+
+        Copyright (C) 2013
+        Francois Mauger, Xavier Garrido and Ben Morgan
+
+        command line help: type "${this_bxapp} --help"
+
+EOF
+    return
+}
+
+function print_usage()
+{
+    cat<<EOF
+
+${this_bxapp} -- Build and populate a virtual geometry skeleton configuration directory
+
+Usage:
+
+   ${this_bxapp} -h|--help     : Print this help then exit.
+
+   ${this_bxapp} -V|--version  : Print the current version then exit.
+
+   ${this_bxapp} -d|--debug    : Switch on debug mode and messages.
+
+   ${this_bxapp} -c|--config-base-dir arg  :
+                                      Make 'arg' be the configuration base directory
+                                      where to store the configuration files
+                                      describing the virtual geometry of the
+                                      setup.
+                                      Example:
+                                        --setup-label "bipo3::commissioning"
+
+   ${this_bxapp} -l|--setup-label arg  :
+                                      Set the label of the setup to 'arg'.
+                                      Example:
+                                        --config-base-dir "/tmp/${USER}/resources"
+
+   ${this_bxapp} -v|--setup-version arg  :
+                                      Set the version of the setup to 'arg'.
+                                      Example:
+                                        --setup-version "0.1"
+
+   ${this_bxapp} -m|--registered-module arg :
+                                      Use the registered base directory from the
+                                      module/library 'arg'. Used file path syntax
+                                      is: "@module:path/to/setup/file.conf".
+                                      Example:
+                                        --registered-module "my_setup"
+
+   ${this_bxapp} -p|--skeleton-profile arg :
+                                      Use the skeleton profile 'arg'.
+                                      Default value is: 'default'.
+                                      Example:
+                                        --skeleton-profile "default"
+
+EOF
+    return
+}
+
+interactive=0
+splash=1
+debug=0
+version=0
+help=0
+default_config_base_dir="."
+config_base_dir=""
+default_setup_label="my_setup"
+setup_label=""
+default_setup_version="0.1"
+setup_version=""
+default_skeleton_profile="default"
+skeleton_profile=""
+registered_module=""
+env_config_dir=""
+
+while [ -n "$1" ]; do
+    token="$1"
+    #echo "NOTICE: Command line token is : '${token}' !" >&2
+    if [ "x${token:0:1}" = "x-" ]; then
+        option="$token"
+	#echo "NOTICE: Command line option is : '${option}' !" >&2
+        if [  ${option} = "-V" -o ${option} = "--version" ]; then
+	    version=1
+	elif [ ${option} = "-h" -o ${option} = "--help" ]; then
+	    help=1
+	elif [ ${option} = "-i" -o ${option} = "--interactive" ]; then
+	    interactive=1
+	elif [ ${option} = "-d" -o ${option} = "--debug" ]; then
+	    debug=1
+	elif [ ${option} = "-c" -o ${option} = "--config-base-dir" ]; then
+	    shift 1
+	    config_base_dir="$1"
+	elif [ ${option} = "-l" -o ${option} = "--setup-label" ]; then
+	    shift 1
+	    setup_label="$1"
+	elif [ ${option} = "-v" -o ${option} = "--setup-version" ]; then
+	    shift 1
+	    setup_version="$1"
+	elif [ ${option} = "-p" -o ${option} = "--skeleton-profile" ]; then
+	    shift 1
+	    skeleton_profile="$1"
+	elif [ ${option} = "-m" -o ${option} = "--registered-module" ]; then
+	    shift 1
+	    registered_module="$1"
+	elif [ ${option} = "-e" -o ${option} = "--env-base-path" ]; then
+	    shift 1
+	    env_config_dir="$1"
+	fi
+    else
+        argument="$token"
+	echo "WARNING: Ignoring command line argument '${argument}' !" >&2
+    fi
+    shift 1
+done
+
+if [ $splash -eq 1 ]; then
+    splash
+fi
+
+if [ $version -eq 1 ]; then
+    echo "${geomtools_version}"
+    my_exit 0
+fi
+
+if [ $help -eq 1 ]; then
+    print_usage
+    my_exit 0
+fi
+
+function ui_read()
+{
+    default_value="$1"
+    read value
+    if [ "x${value}" = "x" ]; then
+	value="${default_value}"
+    fi
+    eval "echo ${value}"
+    #echo "${value}"
+    return 0
+}
+
+function ui_dialog()
+{
+    echo -n "Enter the setup label [${setup_label}]: " >&2
+    setup_label=$(ui_read "${setup_label}")
+    #read setup_label
+
+    echo -n "Enter the setup version [${setup_version}]: " >&2
+    setup_version=$(ui_read "${setup_version}")
+    #read setup_version
+
+    echo -n "Enter the configuration base directory [${config_base_dir}]: " >&2
+    config_base_dir=$(ui_read "${config_base_dir}")
+    #read config_base_dir
+    #config_base_dir=$(eval "echo ${config_base_dir})
+
+    echo -n "Enter the name/label of the skeleton profile [${skeleton_profile}]: " >&2
+    skeleton_profile=$(ui_read "${skeleton_profile}")
+    #read skeleton_profile
+
+    echo -n "Enter the name/label of the registered module/library [${registered_module}]: " >&2
+    registered_module=$(ui_read "${registered_module}")
+    #read registered_module
+
+    if [ "x${registered_module}" = "x" ]; then
+	echo "Enter the name of the environment variable that addresses" >&2
+	echo -n "  the configuration base directory [${env_config_dir}]: " >&2
+	#read env_config_dir
+	env_config_dir=$(ui_read "${env_config_dir}")
+    fi
+    return 0;
+}
+
+if [ ${interactive} ]; then
+    if [ $debug -eq 1 ]; then
+	echo "DEBUG: Entering interactive dialog..." >&2
+    fi
+    ui_dialog
+    if [ $? -ne 0 ]; then
+	echo "ERROR:  User dialog failed ! Abort !" >&2
+	my_exit 1
+    fi
+fi
+
+if [ -z "$config_base_dir" ]; then
+    config_base_dir="$default_config_base_dir"
+fi
+
+if [ -z "$setup_label" ]; then
+    setup_label="$default_setup_label"
+fi
+
+if [ -z "$setup_version" ]; then
+    setup_version="$default_setup_version"
+fi
+
+if [ -z "$skeleton_profile" ]; then
+    skeleton_profile="$default_skeleton_profile"
+fi
+
+setup_label_path=$(echo "${setup_label}" | sed -e 's%::%/%g' -e 's%[[:space:]]%_%g')
+setup_base_dir="${config_base_dir}/${setup_label_path}/geometry/${setup_version}"
+if [ "x${setup_base_dir:0:2}" = "x./" ]; then
+    setup_base_dir="${setup_base_dir:2}"
+fi
+if [ $debug -eq 1 ]; then
+    (
+    echo "DEBUG: config_base_dir='${config_base_dir}'"
+    echo "DEBUG: setup_label='${setup_label}'"
+    echo "DEBUG: setup_label_path='${setup_label_path}'"
+    echo "DEBUG: setup_version='${setup_version}'"
+    echo "DEBUG: setup_base_dir='${setup_base_dir}'"
+    echo "DEBUG: registered_module='${registered_module}'"
+    echo "DEBUG: skeleton_profile='${skeleton_profile}'"
+    echo "DEBUG: env_config_dir='${env_config_dir}'"
+    ) >&2
+fi
+
+if [ -d ${setup_base_dir} ]; then
+    echo "ERROR: Directory '${setup_base_dir}' already exists ! Abort !" >&2
+    my_exit 1
+fi
+
+mkdir -p ${setup_base_dir}
+if [ $? -ne 0 ]; then
+    echo "ERROR: Directory '${setup_base_dir}' was not created ! Abort !" >&2
+    my_exit 1
+fi
+
+### bxocd_manual --class-id "geomtools::manager" --action skeleton --output-file ${setup_base_dir}/manager.conf.example
+
+config_prefix=""
+# In case of relative path to configuration files:
+if [ "x${setup_base_dir:0:1}" != "x/" ]; then
+    if [ "x${registered_module}" != "x" ]; then
+	config_prefix="@${registered_module}:"
+    elif [ "x${env_config_dir}" != "x" ]; then
+	config_prefix="\${${env_config_dir}}/"
+    else
+	env_config_dir="SETUP_CONFIG_DIR"
+	config_prefix="\${${env_config_dir}}/"
+    fi
+fi
+
+
+function populate_geometry_config_default()
+{
+    _dbq="\`\`"
+
+    #######################################################################
+    cat > ${setup_base_dir}/README.rst <<EOF
+Virtual geometry setup ``${setup_label}`` (version ``${setup_version}``)
+===============================================================================================
+
+This sample README file has been automatically generated to describe
+this skeleton directory with sample geometry configuration files.
+From this directory, you can now build your own geometry setup.
+
+Files
+-----
+
+ * ${_dbq}README.rst${_dbq} : This file.
+ * ${_dbq}manager.conf${_dbq} : The main configuration file for the geometry manager.
+ * ${_dbq}categories.lis${_dbq} : Contains the definition of geometry categories
+   used by the automated numbering scheme for the mapping of geometry volumes
+   through geometry identifiers (GIDs).
+ * Folders:
+
+   * ${_dbq}models${_dbq} : Contains the files that describe geometry models.
+
+     * ${_dbq}source.geom${_dbq} : The definition of a source geometry model.
+     * ${_dbq}detector.geom${_dbq} : The definition of a detector geometry model.
+     * ${_dbq}world.geom${_dbq} : The definition of the top-level geometry volume (world) and
+       its daughter physical volumes (source and detectors).
+     * ${_dbq}geom_models.lis${_dbq} : The list of files of geometry models (alternative setup
+       property in the ${_dbq}manager.conf${_dbq} file).
+
+   * ${_dbq}plugins${_dbq} : Contains the files that describe plugins for the geometry manager.
+
+     * ${_dbq}mappings.conf${_dbq} : The definition of plugins for dedicated geometry mapping.
+     * ${_dbq}materials.conf${_dbq} : The definition of a plugin dedicated to the description
+       of the materials of which the geometry volumes are made of.
+     * ${_dbq}material_aliases.def${_dbq} : The definition of a material aliases used by the material plugin.
+
+Inspector
+---------
+
+Run the Bayeux/geomtools inspector program: ::
+
+EOF
+
+
+
+if [ "x${registered_module}" != "x" ]; then
+    cat >> ${setup_base_dir}/README.rst <<EOF
+  $ bxgeomtools_inspector \\
+      --datatools::resource_path toto@${config_base_dir} \\
+      --manager-config "${setup_base_dir}/manager.conf"
+
+EOF
+elif [ "x${env_config_dir}" != "x" ]; then
+    cat >> ${setup_base_dir}/README.rst <<EOF
+  $ ${env_config_dir}=${config_base_dir} \\
+    bxgeomtools_inspector \\
+      --manager-config "${setup_base_dir}/manager.conf"
+
+EOF
+else
+   cat >> ${setup_base_dir}/README.rst <<EOF
+  $ bxgeomtools_inspector --manager-config "${setup_base_dir}/manager.conf"
+
+EOF
+fi
+    #######################################################################
+    cat > ${setup_base_dir}/manager.conf <<EOF
+# List of configuration properties (datatools::properties).
+# Lines starting with '#@' are special directives.
+# Lines starting with '#' are simple comments.
+
+#@description The logging priority threshold
+### logging.priority : string = "warning"
+
+#@description The label that identifies the virtual geometry setup
+setup_label : string = "${setup_label}"
+
+#@description The version string of the virtual geometry setup
+setup_version : string = "${setup_version}"
+
+#@description The description string of the virtual geometry setup
+### setup_description : string = "Short description of the setup"
+
+#@description The flag inhibits the preloading of plugins' factories
+### plugins.factory_no_preload : boolean = 0
+
+#@description The flag to force the initialization of plugins at load stage.
+### plugins.force_initialization_at_load : boolean = 0
+
+#@description The debug flag of the geometry model factory
+### factory.debug : boolean = 0
+
+#@description A file that contains a list of geometry definition files
+### factory.geom_list : string as path  = "${config_prefix}${setup_base_dir}/models/geom_models.lis"
+
+#@description A list of files that contains geometry models' definitions
+factory.geom_files : string[3] as path  = \\
+  "${config_prefix}${setup_base_dir}/models/source.geom" \\
+  "${config_prefix}${setup_base_dir}/models/detector.geom" \\
+  "${config_prefix}${setup_base_dir}/models/world.geom"
+
+#@description A list of prefixes for property keys that are stored in the geometry logical volumes
+### factory.preserved_property_prefixes : string[3] = \\
+###   "radioactivity." \\
+###   "magnetization." \\
+###   "optical_properties."
+
+#@description A name of the top level geometry volume
+### world_name : string = "world"
+
+#@description The debug flag of the geometry ID (GID) manager
+### id_mgr.debug : boolean = 0
+
+#@description The configuration file that defines geometry categories
+id_mgr.categories_list : string as path = "${config_prefix}${setup_base_dir}/categories.lis"
+
+#@description This flag triggers the generation of a map of geometry IDs
+build_mapping : boolean = 1
+
+#@description A list of files that contains geometry plugins' definitions
+plugins.configuration_files : string[2] as path = \\
+  "${config_prefix}${setup_base_dir}/plugins/materials.conf" \\
+  "${config_prefix}${setup_base_dir}/plugins/mappings.conf"
+
+
+EOF
+
+    #######################################################################
+    cat > ${setup_base_dir}/categories.lis <<EOF
+# -*- mode: conf-unix; -*-
+# List of geometry ID categories/types (datatools::multi_properties):
+
+#@description A  list of geometry ID categories/types
+#@key_label   "category"
+#@meta_label  "type"
+
+
+###########################
+[category="world" type="0"]
+
+#@config The mandatory geometry category of the top-level world volume
+
+#@description The world's GID address is characterized by its 'world' number
+addresses : string[1] = "world"
+
+
+##################################
+[category="source.gc" type="1000"]
+
+#@config The geometry category associated to source volume
+
+#@description The source GID address is characterized by its 'position' number
+addresses : string[1] = "position"
+
+
+####################################
+[category="detector.gc" type="2000"]
+
+#@config The geometry category associated to detector volumes
+
+#@description The detector GID address is characterized by its 'module' number
+addresses : string[1] = "module"
+
+
+# end
+EOF
+
+    #######################################################################
+    mkdir -p ${setup_base_dir}/models
+    if [ $? -ne 0 ]; then
+	echo "ERROR: Directory '${setup_base_dir}/models' was not created ! Abort !" >&2
+	return 1
+    fi
+
+    #######################################################################
+    cat > ${setup_base_dir}/models/geom_models.lis <<EOF
+# Ordered list of geometry models:
+${config_prefix}${setup_base_dir}/models/dummy.geom
+${config_prefix}${setup_base_dir}/models/world.geom
+# end
+EOF
+
+
+    #######################################################################
+    cat > ${setup_base_dir}/models/world.geom <<EOF
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description The geometry model of the world (mother-of-all) volume
+
+#@key_label   "name"
+#@meta_label  "type"
+
+
+####################################################
+[name="world" type="geomtools::simple_shaped_model"]
+
+#@config The list of properties to configure the world logical volume
+
+############
+# Geometry #
+############
+
+#@description The default length unit
+length_unit     : string = "mm"
+
+#@description The name of the 3D shape of the world logical volume
+shape_type  : string = "box"
+
+#@description The world volume X dimension (box)
+x         : real   = 800.0 mm
+
+#@description The world volume Y dimension (box)
+y         : real   = 800.0 mm
+
+#@description The world volume Z dimension (box)
+z         : real   = 800.0 mm
+
+############
+# Material #
+############
+
+#@description The name of the material that fills the lab atmosphere
+material.ref : string = "vacuum"
+
+###################
+# Daughter volume #
+###################
+
+#@description The list of daughter volumes by labels
+internal_item.labels : string[6] = \\
+  "source_A" "source_B" \\
+  "detector_A" "detector_B" "detector_C" "detector_D"
+
+#@description The model of the "source_A" daughter volume
+internal_item.model.source_A         : string  = "source.model"
+
+#@description The placement of the "source_A" daughter volume
+internal_item.placement.source_A     : string  = "-20 0 0 (cm) / y 90 (degree)"
+
+#@description The model of the "source" daughter volume
+internal_item.model.source_B         : string  = "source.model"
+
+#@description The placement of the "detector0" daughter volume
+internal_item.placement.source_B     : string  = "-15 +25 +7 (cm) @ -30 90 0 (degree)"
+
+#@description The model of the "detector0" daughter volume
+internal_item.model.detector_A       : string  = "detector.model"
+
+#@description The placement of the "detector0" daughter volume
+internal_item.placement.detector_A   : string  = "+30 -4 -4 (cm) / y 90 (degree)"
+
+#@description The model of the "detector1" daughter volume
+internal_item.model.detector_B       : string  = "detector.model"
+
+#@description The placement of the "detector1" daughter volume
+internal_item.placement.detector_B   : string  = "+30 -4 +4 (cm) / y 90 (degree)"
+
+#@description The model of the "detector0" daughter volume
+internal_item.model.detector_C       : string  = "detector.model"
+
+#@description The placement of the "detector0" daughter volume
+internal_item.placement.detector_C   : string  = "+30 +4 -4 (cm) / y 90 (degree)"
+
+#@description The model of the "detector1" daughter volume
+internal_item.model.detector_D       : string  = "detector.model"
+
+#@description The placement of the "detector1" daughter volume
+internal_item.placement.detector_D   : string  = "+25 +20 +15 (cm) @ 25 70 (degree)"
+
+###########
+# Mapping #
+###########
+
+#@description The mapping directives for the "source_A" daughter volume
+mapping.daughter_id.source_A    : string  = "[source.gc:position=0]"
+
+#@description The mapping directives for the "source_B" daughter volume
+mapping.daughter_id.source_B    : string  = "[source.gc:position=1]"
+
+#@description The mapping directives for the "detector_A" daughter volume
+mapping.daughter_id.detector_A : string  = "[detector.gc:module=0]"
+
+#@description The mapping directives for the "detector_B" daughter volume
+mapping.daughter_id.detector_B : string  = "[detector.gc:module=1]"
+
+#@description The mapping directives for the "detector_C" daughter volume
+mapping.daughter_id.detector_C : string  = "[detector.gc:module=2]"
+
+#@description The mapping directives for the "detector_D" daughter volume
+mapping.daughter_id.detector_D : string  = "[detector.gc:module=3]"
+
+##############
+# Visibility #
+##############
+
+#@description The recommended color for the display of the world volume
+visibility.color            : string  = "cyan"
+
+#@description The visibility hidden flag for the display of the world volume
+visibility.hidden           : boolean = 0
+
+#@description The daughters' visibility hidden flag for the display
+visibility.daughters.hidden : boolean = 0
+
+EOF
+
+
+    #######################################################################
+    cat > ${setup_base_dir}/models/source.geom <<EOF
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description The geometry model of the source volume
+
+#@key_label   "name"
+#@meta_label  "type"
+
+
+###########################################################
+[name="source.model" type="geomtools::simple_shaped_model"]
+
+#@config The list of properties to configure the source logical volume
+
+############
+# Geometry #
+############
+
+#@description The default length unit
+length_unit : string = "mm"
+
+#@description The name of the 3D shape of the source volume
+shape_type  : string = "cylinder"
+
+#@description The source volume radius
+r           : real   =  30.0 mm
+
+#@description The source volume Z dimension
+z           : real   = 300.0 um
+
+############
+# Material #
+############
+
+#@description The name of the material that fills the source volume
+material.ref : string = "source_material"
+
+##############
+# Visibility #
+##############
+
+#@description The recommended color for the display of the dummy volume
+visibility.color  : string  = "red"
+
+#@description The visibility hidden flag for the display of the dummy volume
+visibility.hidden : boolean = 0
+
+EOF
+
+    #######################################################################
+    cat > ${setup_base_dir}/models/detector.geom <<EOF
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description The geometry model of the detector volume
+
+#@key_label   "name"
+#@meta_label  "type"
+
+
+#############################################################
+[name="detector.model" type="geomtools::simple_shaped_model"]
+
+#@config The list of properties to configure the detector logical volume
+
+############
+# Geometry #
+############
+
+#@description The default length unit
+length_unit : string = "mm"
+
+#@description The name of the 3D shape of the detector volume
+shape_type  : string = "box"
+
+#@description The detector volume X dimension
+x           : real   =  60.0 mm
+
+#@description The detector volume Y dimension
+y           : real   =  60.0 mm
+
+#@description The detector volume Z dimension
+z           : real   =  100.0 mm
+
+############
+# Material #
+############
+
+#@description The name of the material that fills the detector volume
+material.ref : string = "detector_material"
+
+#############
+# Sensitive #
+#############
+
+#@description The name of the sensitive category associated to the detector volume
+sensitive.category : string = "calorimeter"
+
+##############
+# Visibility #
+##############
+
+#@description The recommended color for the display of the detector volume
+visibility.color  : string  = "blue"
+
+#@description The visibility hidden flag for the display of the detector volume
+visibility.hidden : boolean = 0
+
+EOF
+
+    #######################################################################
+    mkdir -p ${setup_base_dir}/plugins
+    if [ $? -ne 0 ]; then
+	echo "ERROR: Directory '${setup_base_dir}/plugins' was not created ! Abort !" >&2
+	return 1
+    fi
+
+    #######################################################################
+    cat > ${setup_base_dir}/plugins/materials.conf <<EOF
+# -*- mode: conf-unix; -*-
+# List of geometry plugins (datatools::multi_properties):
+
+#@description List of geometry plugins
+#@key_label   "name"
+#@meta_label  "type"
+
+############################################################
+[name="materials_driver" type="geomtools::materials_plugin"]
+
+#@config The list of properties to configure the materials plugins
+
+#@description Debug flag
+materials.debug  : boolean = 0
+
+#@description The list of files that describes isotopes/elements/materials
+materials.files : string[4] as path = \\
+  "@materials:data/std_isotopes.def" \\
+  "@materials:data/std_elements.def" \\
+  "@materials:data/std_materials.def" \\
+  "${config_prefix}${setup_base_dir}/plugins/material_aliases.def"
+
+# end
+EOF
+
+    #######################################################################
+    cat > ${setup_base_dir}/plugins/material_aliases.def <<EOF
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description A sample list of aliases for standard materials
+#@key_label   "name"
+#@meta_label  "type"
+
+
+############################
+[name="vacuum" type="alias"]
+#@description The alias for vacuum
+material : string = "std::vacuum"
+
+
+#####################################
+[name="source_material" type="alias"]
+#@description The alias for Mylar
+material : string = "std::mylar"
+
+
+#######################################
+[name="detector_material" type="alias"]
+#@description The alias for NaI
+material : string = "std::NaI"
+
+
+# end
+EOF
+
+    #######################################################################
+    cat > ${setup_base_dir}/plugins/mappings.conf <<EOF
+# -*- mode: conf-unix; -*-
+# List of geometry plugins (datatools::multi_properties):
+
+#@description List of geometry plugins
+#@key_label   "name"
+#@meta_label  "type"
+
+########################################################
+[name="only_detectors" type="geomtools::mapping_plugin"]
+
+#@config GID mapping only for volumes of the 'detector.gc' geometry category
+
+#@description The list of geometry categories to be mapped by this plugin
+mapping.only_categories : string [1] = "detector.gc"
+
+# end
+EOF
+
+    return 0
+} # populate_geometry_config_default()
+
+if [ "${skeleton_profile}" = "default" ]; then
+    populate_geometry_config_default
+    if [ $? -ne 0 ]; then
+	echo "ERROR: Function 'populate_geometry_config_default' failed ! Abort !" >&2
+	# rm -fr ${setup_base_dir}
+	my_exit 1
+    fi
+else
+    echo "ERROR: Unknown skeleton profile '${skeleton_profile}' ! Abort !" >&2
+    my_exit 1
+fi
+
+echo -e "Virtual geometry configuration directory for\nsetup with label '${setup_label}' and version '${setup_version}' : \n" >&2
+tree ${setup_base_dir}
+
+
+
+
+my_exit 0
+
+# end
