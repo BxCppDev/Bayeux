@@ -162,30 +162,25 @@ function ui_dialog()
 {
     echo -n "Enter the setup label [${setup_label}]: " >&2
     setup_label=$(ui_read "${setup_label}")
-    #read setup_label
 
     echo -n "Enter the setup version [${setup_version}]: " >&2
     setup_version=$(ui_read "${setup_version}")
-    #read setup_version
-
-    echo -n "Enter the configuration base directory [${config_base_dir}]: " >&2
-    config_base_dir=$(ui_read "${config_base_dir}")
-    #read config_base_dir
-    #config_base_dir=$(eval "echo ${config_base_dir})
 
     echo -n "Enter the name/label of the skeleton profile [${skeleton_profile}]: " >&2
     skeleton_profile=$(ui_read "${skeleton_profile}")
-    #read skeleton_profile
 
-    echo -n "Enter the name/label of the registered module/library [${registered_module}]: " >&2
-    registered_module=$(ui_read "${registered_module}")
-    #read registered_module
+    echo -n "Enter the configuration base directory [${config_base_dir}]: " >&2
+    config_base_dir=$(ui_read "${config_base_dir}")
 
-    if [ "x${registered_module}" = "x" ]; then
-	echo "Enter the name of the environment variable that addresses" >&2
-	echo -n "  the configuration base directory [${env_config_dir}]: " >&2
-	#read env_config_dir
-	env_config_dir=$(ui_read "${env_config_dir}")
+    if [ "x${config_base_dir}" = "x" ]; then
+	echo -n "Enter the name/label of the registered module/library [${registered_module}]: " >&2
+	registered_module=$(ui_read "${registered_module}")
+
+	if [ "x${registered_module}" = "x" ]; then
+	    echo "Enter the name of the environment variable that addresses" >&2
+	    echo -n "  the configuration base directory [${env_config_dir}]: " >&2
+	    env_config_dir=$(ui_read "${env_config_dir}")
+	fi
     fi
     return 0;
 }
