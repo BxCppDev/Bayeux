@@ -45,8 +45,7 @@ Usage:
    ${this_bxapp} -c|--config-base-dir arg  :
                                       Make 'arg' be the configuration base directory
                                       where to store the configuration files
-                                      describing the virtual geometry of the
-                                      setup.
+                                      for the primary event generator manager.
                                       Example:
                                         --config-base-dir "."
 
@@ -264,12 +263,11 @@ if [ "x${setup_base_dir:0:1}" != "x/" ]; then
     fi
 fi
 
-# Skeleton profile 'calib' implements a simple geometry setup
-# with two 'source' physical volumes and four 'detector' physical
-# volumes.
+# Skeleton profile 'calib' implements a set of simple
+# primary decay event generators.
 function populate_genbb_config_calib()
 {
-    echo "NOTICE: Populating skeleton profile 's2d4'..." >&2
+    echo "NOTICE: Populating skeleton profile 'calib'..." >&2
     _dbq="\`\`"
 
     #######################################################################
@@ -396,7 +394,7 @@ else
     my_exit 1
 fi
 
-echo -e "Virtual genbb configuration directory for\nsetup with label '${setup_label}' and version '${setup_version}' : \n" >&2
+echo -e "Primary event generation configuration directory for\nsetup with label '${setup_label}' and version '${setup_version}' : \n" >&2
 echo "###############################################################" >&2
 which tree > /dev/null 2>&1 && LANG=C tree ${setup_base_dir} || ls -R ${setup_base_dir}
 echo "###############################################################" >&2
