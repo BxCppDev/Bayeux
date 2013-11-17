@@ -14,7 +14,7 @@ function splash()
 {
     cat<<EOF
 
-        G E O M T O O L S    M K S K E L
+        G E O M T O O L S    M K S K E L C F G
         Version ${geomtools_version}
         Bayeux version @Bayeux_VERSION@
 
