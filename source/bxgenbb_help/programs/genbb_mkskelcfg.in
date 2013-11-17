@@ -284,7 +284,7 @@ Files
 -----
 
  * ${_dbq}README.rst${_dbq} : This file.
- * ${_dbq}manager.conf${_dbq} : The main configuration file for the geometry manager.
+ * ${_dbq}manager.conf${_dbq} : The main configuration file for the primary event generation manager.
  * ${_dbq}generators.def${_dbq} : Contains the definition of primary event generators.
 
 Genbb inspector
