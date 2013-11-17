@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-
 use_bayeux=1
-which bayeux-config > /dev/null 2>&1
+which bxquery > /dev/null 2>&1
 if [ $? -ne 0 ]; then
     use_bayeux=0
 fi
@@ -91,7 +90,7 @@ else
     cmake \
 	-DCMAKE_INSTALL_PREFIX=.. \
 	-DUSE_BAYEUX:BOOLEAN=1 \
-	-DCMAKE_FIND_ROOT_PATH:PATH=$(bayeux-config --prefix) \
+	-DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
 	..
     genvtx_production_bin="bxgenvtx_production"
     geomtools_inspector_bin="bxgeomtools_inspector"
