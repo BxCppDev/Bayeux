@@ -1,0 +1,835 @@
+#!/usr/bin/env bash
+
+opwd=$(pwd)
+mctools_version=@mctools_VERSION@
+this_bxapp="bxmctools_g4_mkskelcfg"
+
+function my_exit()
+{
+    cd ${opwd}
+    exit $1
+}
+
+function splash()
+{
+    cat<<EOF
+
+        M C T O O L S    G 4    M K S K E L C F G
+        Version ${mctools_version}
+        Bayeux version @Bayeux_VERSION@
+
+        Copyright (C) 2013
+        Francois Mauger, Xavier Garrido and Ben Morgan
+
+        command line help: type "${this_bxapp} --help"
+
+EOF
+    return
+}
+
+function print_usage()
+{
+    cat<<EOF
+
+${this_bxapp} -- Build and populate a skeleton configuration directory
+                 for the mctools Geant4 simulation driver.
+
+Usage:
+
+   ${this_bxapp} -h|--help     : Print this help then exit.
+
+   ${this_bxapp} -V|--version  : Print the current version then exit.
+
+   ${this_bxapp} -d|--debug    : Switch on debug mode and messages.
+
+   ${this_bxapp} -c|--config-base-dir arg  :
+                                      Make 'arg' be the configuration base directory
+                                      where to store the configuration files
+                                      for the Geant4 simulation manager.
+                                      Example:
+                                        --config-base-dir "."
+
+   ${this_bxapp} -l|--setup-label arg  :
+                                      Set the label of the setup to 'arg'.
+                                      Example:
+                                        --setup-label "my_setup"
+
+   ${this_bxapp} -v|--setup-version arg  :
+                                      Set the version of the setup to 'arg'.
+                                      Example:
+                                        --setup-version "0.1"
+
+   ${this_bxapp} -m|--registered-module arg :
+                                      Use the registered base directory from the
+                                      module/library 'arg'. Used file path syntax
+                                      is: "@arg:path/to/setup/file.conf".
+                                      Example:
+                                        --registered-module "my_setup"
+
+   ${this_bxapp} -p|--skeleton-profile arg :
+                                      Use the skeleton profile 'arg'.
+                                      Default value is: '${default_skeleton_profile}'.
+                                      Example:
+                                        --skeleton-profile "${default_skeleton_profile}"
+
+EOF
+    return
+}
+
+interactive=0
+splash=1
+debug=0
+version=0
+help=0
+default_config_base_dir="."
+config_base_dir=""
+default_setup_label="my_setup"
+setup_label=""
+default_setup_version="0.1"
+setup_version=""
+known_skeleton_profiles="s2d4"
+default_skeleton_profile="s2d4"
+skeleton_profile=""
+registered_module=""
+env_config_dir=""
+no_gve=0
+
+while [ -n "$1" ]; do
+    token="$1"
+    #echo "NOTICE: Command line token is : '${token}' !" >&2
+    if [ "x${token:0:1}" = "x-" ]; then
+        option="$token"
+	#echo "NOTICE: Command line option is : '${option}' !" >&2
+        if [  ${option} = "-V" -o ${option} = "--version" ]; then
+	    version=1
+	elif [ ${option} = "-h" -o ${option} = "--help" ]; then
+	    help=1
+	elif [ ${option} = "-i" -o ${option} = "--interactive" ]; then
+	    interactive=1
+	elif [ ${option} = "-d" -o ${option} = "--debug" ]; then
+	    debug=1
+	elif [ ${option} = "-c" -o ${option} = "--config-base-dir" ]; then
+	    shift 1
+	    config_base_dir="$1"
+	elif [ ${option} = "-l" -o ${option} = "--setup-label" ]; then
+	    shift 1
+	    setup_label="$1"
+	elif [ ${option} = "-v" -o ${option} = "--setup-version" ]; then
+	    shift 1
+	    setup_version="$1"
+	elif [ ${option} = "-p" -o ${option} = "--skeleton-profile" ]; then
+	    shift 1
+	    skeleton_profile="$1"
+	elif [ ${option} = "-m" -o ${option} = "--registered-module" ]; then
+	    shift 1
+	    registered_module="$1"
+	elif [ ${option} = "-e" -o ${option} = "--env-base-path" ]; then
+	    shift 1
+	    env_config_dir="$1"
+	elif [ ${option} = "--no-gve" ]; then
+	    no_gve=1
+	fi
+    else
+        argument="$token"
+	echo "WARNING: Ignoring command line argument '${argument}' !" >&2
+    fi
+    shift 1
+done
+
+if [ $splash -eq 1 ]; then
+    splash
+fi
+
+if [ $version -eq 1 ]; then
+    echo "${genvtx_version}"
+    my_exit 0
+fi
+
+if [ $help -eq 1 ]; then
+    print_usage
+    my_exit 0
+fi
+
+function ui_read()
+{
+    default_value="$1"
+    read value
+    if [ "x${value}" = "x" ]; then
+	value="${default_value}"
+    fi
+    eval "echo ${value}"
+    return 0
+}
+
+function ui_dialog()
+{
+    echo -n "Enter the setup label [${setup_label}]: " >&2
+    setup_label=$(ui_read "${setup_label}")
+
+    echo -n "Enter the setup version [${setup_version}]: " >&2
+    setup_version=$(ui_read "${setup_version}")
+
+    echo -n "Enter the name/label of the skeleton profile [${skeleton_profile}]: " >&2
+    skeleton_profile=$(ui_read "${skeleton_profile}")
+
+    echo -n "Enter the configuration base directory [${config_base_dir}]: " >&2
+    config_base_dir=$(ui_read "${config_base_dir}")
+
+    if [ "x${config_base_dir}" = "x" ]; then
+	echo -n "Enter the name/label of the registered module/library [${registered_module}]: " >&2
+	registered_module=$(ui_read "${registered_module}")
+
+	if [ "x${registered_module}" = "x" ]; then
+	    echo "Enter the name of the environment variable that addresses" >&2
+	    echo -n "  the configuration base directory [${env_config_dir}]: " >&2
+	    env_config_dir=$(ui_read "${env_config_dir}")
+	fi
+    fi
+    return 0;
+}
+
+if [ ${interactive} -eq 1 ]; then
+    if [ $debug -eq 1 ]; then
+	echo "DEBUG: Entering interactive dialog..." >&2
+    fi
+    ui_dialog
+    if [ $? -ne 0 ]; then
+	echo "ERROR:  User dialog failed ! Abort !" >&2
+	my_exit 1
+    fi
+fi
+
+if [ -z "$config_base_dir" ]; then
+    config_base_dir="$default_config_base_dir"
+fi
+
+if [ -z "$setup_label" ]; then
+    setup_label="$default_setup_label"
+fi
+
+if [ -z "$setup_version" ]; then
+    setup_version="$default_setup_version"
+fi
+
+if [ -z "$skeleton_profile" ]; then
+    skeleton_profile="$default_skeleton_profile"
+fi
+
+echo "${known_skeleton_profiles}" | tr [[:space:]] ' ' | tr -s ' ' | tr ' ' '\n'  | grep $skeleton_profile > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "ERROR: Profile '${skeleton_profile}' is not valid ! Abort !" >&2
+    my_exit 1
+fi
+
+setup_label_path=$(echo "${setup_label}" | sed -e 's%::%/%g' -e 's%[[:space:]]%_%g')
+setup_base_dir="${config_base_dir}/${setup_label_path}/simulation/geant4_control/${setup_version}"
+if [ "x${setup_base_dir:0:2}" = "x./" ]; then
+    setup_base_dir="${setup_base_dir:2}"
+fi
+
+if [ $debug -eq 1 ]; then
+    (
+	echo "DEBUG: config_base_dir='${config_base_dir}'"
+	echo "DEBUG: setup_label='${setup_label}'"
+	echo "DEBUG: setup_label_path='${setup_label_path}'"
+	echo "DEBUG: setup_version='${setup_version}'"
+	echo "DEBUG: setup_base_dir='${setup_base_dir}'"
+	echo "DEBUG: registered_module='${registered_module}'"
+	echo "DEBUG: skeleton_profile='${skeleton_profile}'"
+	echo "DEBUG: env_config_dir='${env_config_dir}'"
+    ) >&2
+fi
+
+if [ ${no_gve} -eq 0 ]; then
+    bxgeomtools_mkskelcfg \
+      --config-base-dir "${config_base_dir}" \
+      --setup-label "${setup_label}" \
+      --setup-version "${setup_version}" \
+      --skeleton-profile "s2d4"
+    bxgenbb_mkskelcfg \
+      --config-base-dir "${config_base_dir}" \
+      --setup-label "${setup_label}" \
+      --setup-version "${setup_version}" \
+      --skeleton-profile "calib"
+    bxgenvtx_mkskelcfg \
+      --config-base-dir "${config_base_dir}" \
+      --setup-label "${setup_label}" \
+      --setup-version "${setup_version}" \
+      --skeleton-profile "s2d4"
+fi
+
+if [ -d ${setup_base_dir} ]; then
+    echo "ERROR: Directory '${setup_base_dir}' already exists ! Abort !" >&2
+    my_exit 1
+fi
+
+mkdir -p ${setup_base_dir}
+if [ $? -ne 0 ]; then
+    echo "ERROR: Directory '${setup_base_dir}' was not created ! Abort !" >&2
+    my_exit 1
+fi
+
+config_prefix=""
+# In case of relative path to configuration files:
+if [ "x${setup_base_dir:0:1}" != "x/" ]; then
+    if [ "x${registered_module}" != "x" ]; then
+	config_prefix="@${registered_module}:"
+    elif [ "x${env_config_dir}" != "x" ]; then
+	config_prefix="\${${env_config_dir}}/"
+    else
+	env_config_dir="SETUP_CONFIG_DIR"
+	config_prefix="\${${env_config_dir}}/"
+    fi
+fi
+
+# Skeleton profile 's2d4' implements some simple vertex generator
+function populate_mctools_g4_config_s2d4()
+{
+    echo "NOTICE: Populating skeleton profile 's2d4'..." >&2
+    _dbq="\`\`"
+
+    #######################################################################
+    cat > ${setup_base_dir}/README.rst <<EOF
+Primary event generation setup ${_dbq}${setup_label}${_dbq} (version ${_dbq}${setup_version}${_dbq})
+==============================================================================
+
+This   README   file  has   been   automatically   generated  by   the
+${_dbq}${this_bxapp}${_dbq} script to describe a skeleton directory with a
+set of  configuration files for Geant4 simulation. From this sample directory,
+you can now build your own simulation manager.
+
+Files
+-----
+
+ * ${_dbq}README.rst${_dbq} : This file.
+ * ${_dbq}manager.conf${_dbq} : The main configuration file for the vertex generation manager.
+ * ${_dbq}step_hit_processors.conf${_dbq} : Contains the definition of step hit processors.
+ * ${_dbq}processes${_dbq} : Contains configuration files for physics processes
+
+   * ${_dbq}particles.conf${_dbq} : Particle definitions
+   * ${_dbq}em.conf${_dbq} : Electromagnetic processes
+
+Genbb inspector
+------------------
+
+Run the Bayeux/genvtx production program: ::
+
+EOF
+    geo_setup_base_dir="${config_base_dir}/${setup_label_path}/geometry/${setup_version}"
+
+    if [ "x${registered_module}" != "x" ]; then
+	cat >> ${setup_base_dir}/README.rst <<EOF
+  $ bxg4_production \\
+      --datatools::resource_path toto@${config_base_dir} \\
+      --geometry-manager "${geo_setup_base_dir}/manager.conf" \\
+      --vertex-generator-manager "${setup_base_dir}/manager.conf" \\
+      --list
+
+EOF
+    elif [ "x${env_config_dir}" != "x" ]; then
+	cat >> ${setup_base_dir}/README.rst <<EOF
+  $ ${env_config_dir}=${config_base_dir} \\
+    bxg4_production \\
+      --geometry-manager "${geo_setup_base_dir}/manager.conf" \\
+      --vertex-generator-manager "${setup_base_dir}/manager.conf" \\
+      --list
+
+EOF
+    else
+	cat >> ${setup_base_dir}/README.rst <<EOF
+  $ bxg4_production \\
+      --geometry-manager "${geo_setup_base_dir}/manager.conf" \\
+      --vertex-generator-manager "${setup_base_dir}/manager.conf" \\
+      --list
+
+EOF
+    fi
+
+    #######################################################################
+    cat > ${setup_base_dir}/manager.conf <<EOF
+# -*- mode: conf-unix; -*-
+# List of configuration properties (datatools::multi_properties).
+# Lines starting with '#@' are special directives.
+# Lines starting with '#' are simple comments.
+
+#@description Configuration of the mctools Geant4 simulation engine
+#@key_label   "name"
+#@meta_label  ""
+
+######################################
+# MANAGER (main configuration level) #
+######################################
+[name="manager"]
+
+#@description Geant4 simulation manager logging priority
+### logging.priority : string = "warning"
+
+############
+# GEOMETRY #
+############
+[name="geometry"]
+
+#@description Main configuration file for the geometry manager:
+manager.config : string as path = \\
+  "${config_prefix}${config_base_dir}/geometry/${setup_label}/manager.conf"
+
+#############################################
+# GENBB PRIMARY PARTICLES/EVENTS GENERATION #
+#############################################
+[name="event_generator"]
+
+#@config Configuration of the event generator manager
+
+#@description Configuration file for the embedded 'genbb::manager'
+manager.config : string as path = \\
+  "${config_prefix}${config_base_dir}/simulation/primary_events/${setup_label}/manager.conf"
+
+#####################
+# VERTEX GENERATION #
+#####################
+[name="vertex_generator"]
+
+#@description Main configuration file for the vertex generator manager
+manager.config : string as path = \\
+  "${config_prefix}${config_base_dir}/simulation/vertexes/${setup_label}/manager.conf"
+
+#########################
+# DETECTOR CONSTRUCTION #
+#########################
+[name="detector_construction"]
+
+#@config Main configuration file for the detector construction user object:
+
+#@description Detector construction logging priority threshold
+logging.priority : string = "trace"
+
+          ##################
+          # GDML interface #
+          ##################
+
+#@description Temporary directory for GDML file generation:
+gdml.tmp_dir : string as path = "/tmp/${USER}/mctools_g4.d"
+
+#@description GDML schema location ("local" or "remote"):
+gdml.schema_location : string = "local"
+
+#@description Flag to do GDML validation
+### gdml.validation   : boolean = 1
+
+          ###################
+          # Material plugin #
+          ###################
+
+#@description The name of the materials geometry plugin (default: empty => autodetect)
+### materials.plugin_name : string = "materials_driver"
+
+#@description Configuration file for the step hit processor factory:
+hit_processor_factory.config : string as path = "${config_prefix}${setup_base_dir}/step_hit_processors.conf"
+
+          #######################
+          # Sensitive detectors #
+          #######################
+
+# List of sensitive detectors to be applied specific parameters at MC hits generation.
+# We typically consider here the 'official' sensitive categories attached to some geometry
+# models in the geometry configuration files.
+
+#@description List of sensitive detectors :
+sensitive.detectors : string[1] = "detector.sd"
+
+                   ########################################################
+                   # Truth hits from the 'detector_SD' sensitive category #
+                   ########################################################
+
+#@description Debug flag for sensitive detector "scin_SD"
+sensitive.scin_SD.debug                            : boolean = 0
+
+#@description Buffer capacity for hits (sensitive detector "scin_SD")
+sensitive.scin_SD.hits_buffer_capacity             : integer = 200
+
+#@description Flag to activate the recording of alpha particle quenching (sensitive detector "scin_SD")
+sensitive.scin_SD.record_alpha_quenching           : boolean = 1
+
+#@description Flag to activate the recording of any track ID (sensitive detector "scin_SD")
+sensitive.scin_SD.record_track_id                  : boolean = 1
+
+#@description Flag to activate the recording of any primary particle flag (sensitive detector "scin_SD")
+sensitive.scin_SD.record_primary_particle          : boolean = 1
+
+#@description Flag to drop hits with zero energy deposit (sensitive detector "scin_SD")
+sensitive.scin_SD.drop_zero_energy_deposit_steps   : boolean = 0
+
+#@description Flag to track gamma particles (sensitive detector "scin_SD")
+sensitive.scin_SD.track_gamma                      : boolean = 1
+
+          ##########
+          # Limits #
+          ##########
+
+#@description List of geometry logical volumes with max steps:
+limits.list_of_volumes : string[2] = \
+		       "source.model.log" \
+		       "detector.model.log"
+
+#@description Max step length inside source pad:
+limits.max_step.source.model.log         : real as length = 5 um
+
+#@description Max step length inside scintillator block:
+limits.max_step.detector_block.model.log : real as length = 100 um
+
+          ###########
+          # Regions #
+          ###########
+
+#@description List of regions
+regions : string[2] = "detector" "source"
+
+#@description List of attached volumes/models for region "detector"
+regions.detector.volumes : string[1] = "detector.model.log"
+
+#@description List of attached volumes/models for region "source"
+regions.source.volumes   : string[1] = "source.model.log"
+
+################
+# PHYSICS LIST #
+################
+[name="physics_list"]
+
+#@config Main configuration file for the physics lists
+
+#@description Physics list logging priority (default: "warning")
+logging.priority : string = "debug"
+
+#@description Physics list logging debug flag (shortcut)
+### logging.debug : boolean = 1
+
+          #######################
+          # Geant4 physics list #
+          #######################
+
+#@description List of physics constructors
+#geant4.physics_list : string = "LBE"
+
+          ###############################
+          # Physics constructor plugins #
+          ###############################
+
+#@description List of physics constructors
+physics_constructors.names : string[2] = "particles" "em"
+
+#@description Class ID of the physics constructors named 'particles'
+physics_constructors.particles.id     : string = "mctools::g4::particles_physics_constructor"
+
+#@description Configuration file of the physics constructors named 'particles'
+physics_constructors.particles.config : string as path = "${CONFIG_DIR}/simulation/particles.conf"
+
+#@description Class ID of the physics constructors named 'em'
+physics_constructors.em.id            : string = "mctools::g4::em_physics_constructor"
+
+#@description Configuration file of the physics constructors named 'em'
+physics_constructors.em.config        : string as path = "${CONFIG_DIR}/simulation/em.conf"
+
+          ##########################
+          # Region production cuts #
+          ##########################
+
+#@description The activation flag for regions' cuts
+using_production_cuts : boolean = 1
+
+#@description The default length unit for region's cuts (default: mm)
+### production_cuts.length_unit : string = "mm"
+
+#@description The default energy unit for region's cuts (default: MeV)
+### production_cuts.energy_unit : string = "MeV"
+
+#@description The energy high edge for cuts
+### production_cuts.low_energy : real as energy = 1000 eV
+
+#@description The energy low edge for cuts
+### production_cuts.high_energy : real as energy = 1 TeV
+
+#@description The production cut default value
+production_cuts.default_value : real as length = 1.0 mm
+
+#@description The production cut for gamma
+production_cuts.gamma : real as length = 1.0 mm
+
+#@description The production cut for electron
+production_cuts.electron : real as length = 1.0 mm
+
+#@description The production cut for positron
+production_cuts.positron : real as length = 1.0 mm
+
+#@description The production cut for proton
+production_cuts.proton : real as length = 1.0 mm
+
+#@description The list of regions with special production cuts
+# production_cuts.regions  : string [3] = "source" "detector" "lab"
+
+#@description The electron cut value for region "source"
+# production_cuts.regions.source.electron       : real as length = 0.05 mm
+
+#@description The electron cut value for region "lab"
+# production_cuts.regions.lab.electron         : real as length = 0.5 mm
+
+#@description The gamma cut value for region "scintillator"
+# production_cuts.regions.detector.gamma : real as length = 5.0 mm
+
+##############
+# RUN ACTION #
+##############
+[name="run_action"]
+
+#@config Configuration of the run action
+
+#@description Run action logging priority
+logging.priority : string = "debug"
+
+#@description Event number print modulo
+number_events_modulo : integer = 1
+
+          #####################
+          # Plain output file #
+          #####################
+
+#@description Activate the storage of some meta data in a run header and footer
+### file.using_run_header_footer : boolean = 0
+
+#@description If set, this flag triggers the generation of output files
+file.save : boolean = 1
+
+#@description If set, this flag allows to overwrite an existing output files
+file.no_preserve : boolean = 1
+
+#@description The name of the output file
+#file.name : string as path = ""
+
+#@description Path directory for output files
+# file.directory : string = "."
+
+#@description Format of the output files ("xml", "binary", "ascii", "brio")
+# file.format : string = "brio"
+# file.format : string = "ascii"
+file.format : string = "xml"
+
+#@description Compression mode of the output files ("none", "gzip", "bzip2"; not for the "brio" format)
+# file.compression : string = "gzip"
+
+#@description Prefix of the output files' name
+file.prefix : string = "mctools_ex00_"
+
+################
+# EVENT ACTION #
+################
+[name="event_action"]
+
+#@config Configuration of the event action
+
+#@description Event action logging priority
+logging.priority : string = "warning"
+
+############################
+# PRIMARY GENERATOR ACTION #
+############################
+[name="primary_generator_action"]
+
+#@config Configuration of the primary generator action
+
+#@description Primary generator action logging priority
+logging.priority : string = "warning"
+
+###################
+# TRACKING ACTION #
+###################
+[name="tracking_action"]
+
+#@config Configuration of the tracking action
+
+#@description Tracking action logging priority
+logging.priority : string = "warning"
+
+###################
+# STEPPING ACTION #
+###################
+[name="stepping_action"]
+
+#@config Configuration of the stepping action
+
+#@description Stepping action logging priority
+logging.priority : string = "warning"
+
+###################
+# STACKING ACTION #
+###################
+[name="stacking_action"]
+
+#@config Configuration of the stacking action
+
+#@description Stacking action logging priority
+logging.priority : string = "warning"
+
+          ############################
+          # Kill secondary particles #
+          ############################
+
+#@description Activate the killing of secondary particles within some volumes
+# kill_particles : boolean = 0
+
+#@description Kill secondary particles within some given volumes
+# kill_particles.volumes : string[1] = "detector.model.log"
+
+#@description Kill secondary particles within some given materials
+# kill_particles.materials : string[1] = "detector_material"
+
+EOF
+
+    #######################################################################
+    mkdir -p ${setup_base_dir}/processes
+    if [ $? -ne 0 ]; then
+	echo "ERROR: Directory '${setup_base_dir}/processes' was not created ! Abort !" >&2
+	return 1
+    fi
+
+    #######################################################################
+    cat > ${setup_base_dir}/processes/particles.conf <<EOF
+# -*- mode: conf-unix; -*-
+EOF
+    bxocd_manual \
+	--action skeleton \
+        --no-additional-infos \
+        --no-configuration-hints \
+	--load-dll Bayeux_mctools_geant4 \
+	--class-id mctools::g4::particles_physics_constructor \
+	>> ${setup_base_dir}/processes/particles.conf <<EOF
+   cat >> ${setup_base_dir}/processes/particles.conf <<EOF
+# end
+EOF
+
+    #######################################################################
+    cat > ${setup_base_dir}/processes/em.conf <<EOF
+# -*- mode: conf-unix; -*-
+EOF
+    bxocd_manual \
+	--action skeleton \
+        --no-additional-infos \
+        --no-configuration-hints \
+	--load-dll Bayeux_mctools_geant4 \
+	--class-id mctools::g4::em_physics_constructor \
+	>> ${setup_base_dir}/processes/em.conf <<EOF
+   cat >> ${setup_base_dir}/processes/em.conf <<EOF
+# end
+EOF
+
+    #######################################################################
+    cat > ${setup_base_dir}/step_hit_processors.conf <<EOF
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description A list of simulated step hit processors
+#@key_label   "name"
+#@meta_label  "type"
+
+
+#################################################################################
+[name="calorimeter.hit_processor" type="mctools::calorimeter_step_hit_processor"]
+
+#@config The step hit processor for the scintillator blocks
+
+##################################
+# Basic configuration parameters #
+##################################
+
+#@description Debug flag
+debug                 : boolean = 0
+
+#@description The name of the category of MC hits output by this processor
+hit.category          : string = "calorimeter"
+
+#@description The name of the sensitive MC hits the processor must process to fill the output hit category
+sensitive.category    : string = "calorimeter_SD"
+
+#@description Flag to activate a preallocated buffer/pool of MC hits to optimize memory management
+use_private_pool      : boolean  = 1
+
+#@description Initial capacity of the buffer/pool of MC hits
+private_pool_capacity : integer  = 10
+
+##############################################################################
+# Parameters specific to the 'mctools::calorimeter_step_hit_processor' class #
+##############################################################################
+
+#@description The time spread of primary MC step hits to apply the clusterization
+cluster.time_range    : real as time  = 1.0 ns
+
+#@description The spacial spread of primary MC step hits to apply the clusterization
+cluster.space_range   : real as length = 10.0 mm
+
+#@description The name of the geometry category to be attached to the output MC hits
+mapping.category      : string = "detector.gc"
+
+
+###################################################################################
+[name="calorimeter.visu.hit_processor" type="mctools::push_all_step_hit_processor"]
+
+#@config The step hit processor for collecting all scintillator hits in the detector volume for visualization
+
+##################################
+# Basic configuration parameters #
+##################################
+
+#@description Debug flag
+debug              : boolean = 0
+
+#@description The name of the target collection of MC hits
+hit.category       : string  = "__visu.tracks"
+
+#@description The sensitive category
+sensitive.category : string  = "calorimeter_SD"
+
+
+##############################################################################
+[name="source.visu.hit_processor" type="mctools::push_all_step_hit_processor"]
+
+#@config The step hit processor for collecting all scintillator hits in the source volume for visualization
+
+##################################
+# Basic configuration parameters #
+##################################
+
+#@description Debug flag
+debug              : boolean = 0
+
+#@description The name of the target collection of MC hits
+hit.category       : string  = "__visu.tracks"
+
+#@description The sensitive category
+sensitive.category : string  = "__source_SD"
+
+#@description The list of materials of which some geometry volumes are made of and for which we want to record MC hits for visualization
+geometry.volumes.with_materials : string[1] = "source_material"
+
+# end
+EOF
+
+    return 0
+}
+
+if [ "${skeleton_profile}" = "s2d4" ]; then
+    populate_mctools_g4_config_s2d4
+    if [ $? -ne 0 ]; then
+	echo "ERROR: Function 'populate_mctools_g4_config_s2d4' failed ! Abort !" >&2
+	my_exit 1
+    fi
+else
+    echo "ERROR: Unknown skeleton profile '${skeleton_profile}' ! Abort !" >&2
+    my_exit 1
+fi
+
+echo -e "Geant4-based simulation configuration directory for\nsetup with label '${setup_label}' and version '${setup_version}' : \n" >&2
+echo "###############################################################" >&2
+which tree > /dev/null 2>&1 && LANG=C tree ${setup_base_dir} || ls -R ${setup_base_dir}
+echo "###############################################################" >&2
+
+my_exit 0
+
+# end
