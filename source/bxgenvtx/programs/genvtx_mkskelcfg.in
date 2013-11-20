@@ -357,7 +357,7 @@ EOF
 geometry.setup_requirement : string = "${setup_label}"
 
 #@description Identification of the geometry origin of vertex in term of geometry category and addresses (GID)
-origin : string  = " category='source.gc' position='{0}' "
+origin : string  = " category='source.gc' position={0} "
 
 #@description The mode used for vertex generator from the underlying cylinder model associated to the target logical volume
 mode   : string  = "bulk"
@@ -371,7 +371,7 @@ mode   : string  = "bulk"
 geometry.setup_requirement : string = "${setup_label}"
 
 #@description Identification of the geometry origin of vertex in term of geometry category and addresses (GID)
-origin : string  = " category='source.gc' position='{1}' "
+origin : string  = " category='source.gc' position={1} "
 
 #@description The mode used for vertex generator from the underlying cylinder model associated to the target logical volume
 mode   : string  = "bulk"
