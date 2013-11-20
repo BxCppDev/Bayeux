@@ -675,7 +675,7 @@ material.ref : string = "detector_material"
 #############
 
 #@description The name of the sensitive category associated to the detector volume
-sensitive.category : string = "calorimeter"
+sensitive.category : string = "detector_SD"
 
 ##############
 # Visibility #
