@@ -203,6 +203,10 @@ if [ -z "$config_base_dir" ]; then
     config_base_dir="$default_config_base_dir"
 fi
 
+if [ "x${config_base_dir:0:1}" = "x." ]; then
+    echo "" >&2
+fi
+
 if [ -z "$setup_label" ]; then
     setup_label="$default_setup_label"
 fi
@@ -222,7 +226,9 @@ if [ $? -ne 0 ]; then
 fi
 
 setup_label_path=$(echo "${setup_label}" | sed -e 's%::%/%g' -e 's%[[:space:]]%_%g')
-setup_base_dir="${config_base_dir}/${setup_label_path}/simulation/geant4_control/${setup_version}"
+setup_path_dir="${config_base_dir}/${setup_label_path}"
+setup_path_dir=`echo ${setup_path_dir} | sed -e 's|^\./||g' -e 's|/\./|/|g'  `
+setup_base_dir="${setup_path_dir}/simulation/geant4_control/${setup_version}"
 if [ "x${setup_base_dir:0:2}" = "x./" ]; then
     setup_base_dir="${setup_base_dir:2}"
 fi
@@ -233,6 +239,7 @@ if [ $debug -eq 1 ]; then
 	echo "DEBUG: setup_label='${setup_label}'"
 	echo "DEBUG: setup_label_path='${setup_label_path}'"
 	echo "DEBUG: setup_version='${setup_version}'"
+	echo "DEBUG: setup_path_dir='${setup_path_dir}'"
 	echo "DEBUG: setup_base_dir='${setup_base_dir}'"
 	echo "DEBUG: registered_module='${registered_module}'"
 	echo "DEBUG: skeleton_profile='${skeleton_profile}'"
@@ -304,7 +311,7 @@ Files
  * ${_dbq}README.rst${_dbq} : This file.
  * ${_dbq}manager.conf${_dbq} : The main configuration file for the vertex generation manager.
  * ${_dbq}step_hit_processors.conf${_dbq} : Contains the definition of step hit processors.
- * ${_dbq}processes${_dbq} : Contains configuration files for physics processes
+ * ${_dbq}processes${_dbq} : This folder contains configuration files for physics processes
 
    * ${_dbq}particles.conf${_dbq} : Particle definitions
    * ${_dbq}em.conf${_dbq} : Electromagnetic processes
@@ -315,7 +322,7 @@ Genbb inspector
 Run the Bayeux/genvtx production program: ::
 
 EOF
-    geo_setup_base_dir="${config_base_dir}/${setup_label_path}/geometry/${setup_version}"
+    geo_setup_base_dir="${setup_path_dir}/geometry/${setup_version}"
 
     if [ "x${registered_module}" != "x" ]; then
 	cat >> ${setup_base_dir}/README.rst <<EOF
@@ -371,7 +378,7 @@ EOF
 
 #@description Main configuration file for the geometry manager:
 manager.config : string as path = \\
-  "${config_prefix}${config_base_dir}/geometry/${setup_label}/manager.conf"
+  "${config_prefix}${setup_path_dir}/geometry/${setup_version}/manager.conf"
 
 #############################################
 # GENBB PRIMARY PARTICLES/EVENTS GENERATION #
@@ -382,7 +389,7 @@ manager.config : string as path = \\
 
 #@description Configuration file for the embedded 'genbb::manager'
 manager.config : string as path = \\
-  "${config_prefix}${config_base_dir}/simulation/primary_events/${setup_label}/manager.conf"
+  "${config_prefix}${setup_path_dir}/simulation/primary_events/${setup_version}/manager.conf"
 
 #####################
 # VERTEX GENERATION #
@@ -391,7 +398,7 @@ manager.config : string as path = \\
 
 #@description Main configuration file for the vertex generator manager
 manager.config : string as path = \\
-  "${config_prefix}${config_base_dir}/simulation/vertexes/${setup_label}/manager.conf"
+  "${config_prefix}${setup_path_dir}/simulation/vertexes/${setup_version}/manager.conf"
 
 #########################
 # DETECTOR CONSTRUCTION #
@@ -435,32 +442,32 @@ hit_processor_factory.config : string as path = "${config_prefix}${setup_base_di
 # models in the geometry configuration files.
 
 #@description List of sensitive detectors :
-sensitive.detectors : string[1] = "detector.sd"
+sensitive.detectors : string[1] = "detector_SD"
 
                    ########################################################
                    # Truth hits from the 'detector_SD' sensitive category #
                    ########################################################
 
-#@description Debug flag for sensitive detector "scin_SD"
-sensitive.scin_SD.debug                            : boolean = 0
+#@description Debug flag for sensitive detector "detector_SD"
+sensitive.detector_SD.debug                            : boolean = 0
 
-#@description Buffer capacity for hits (sensitive detector "scin_SD")
-sensitive.scin_SD.hits_buffer_capacity             : integer = 200
+#@description Buffer capacity for hits (sensitive detector "detector_SD")
+sensitive.detector_SD.hits_buffer_capacity             : integer = 200
 
-#@description Flag to activate the recording of alpha particle quenching (sensitive detector "scin_SD")
-sensitive.scin_SD.record_alpha_quenching           : boolean = 1
+#@description Flag to activate the recording of alpha particle quenching (sensitive detector "detector_SD")
+sensitive.detector_SD.record_alpha_quenching           : boolean = 1
 
-#@description Flag to activate the recording of any track ID (sensitive detector "scin_SD")
-sensitive.scin_SD.record_track_id                  : boolean = 1
+#@description Flag to activate the recording of any track ID (sensitive detector "detector_SD")
+sensitive.detector_SD.record_track_id                  : boolean = 1
 
-#@description Flag to activate the recording of any primary particle flag (sensitive detector "scin_SD")
-sensitive.scin_SD.record_primary_particle          : boolean = 1
+#@description Flag to activate the recording of any primary particle flag (sensitive detector "detector_SD")
+sensitive.detector_SD.record_primary_particle          : boolean = 1
 
-#@description Flag to drop hits with zero energy deposit (sensitive detector "scin_SD")
-sensitive.scin_SD.drop_zero_energy_deposit_steps   : boolean = 0
+#@description Flag to drop hits with zero energy deposit (sensitive detector "detector_SD")
+sensitive.detector_SD.drop_zero_energy_deposit_steps   : boolean = 0
 
-#@description Flag to track gamma particles (sensitive detector "scin_SD")
-sensitive.scin_SD.track_gamma                      : boolean = 1
+#@description Flag to track gamma particles (sensitive detector "detector_SD")
+sensitive.detector_SD.track_gamma                      : boolean = 1
 
           ##########
           # Limits #
@@ -521,13 +528,13 @@ physics_constructors.names : string[2] = "particles" "em"
 physics_constructors.particles.id     : string = "mctools::g4::particles_physics_constructor"
 
 #@description Configuration file of the physics constructors named 'particles'
-physics_constructors.particles.config : string as path = "${CONFIG_DIR}/simulation/particles.conf"
+physics_constructors.particles.config : string as path = "${config_prefix}${setup_base_dir}/processes/particles.conf"
 
 #@description Class ID of the physics constructors named 'em'
 physics_constructors.em.id            : string = "mctools::g4::em_physics_constructor"
 
 #@description Configuration file of the physics constructors named 'em'
-physics_constructors.em.config        : string as path = "${CONFIG_DIR}/simulation/em.conf"
+physics_constructors.em.config        : string as path = "${config_prefix}${setup_base_dir}/processes/em.conf"
 
           ##########################
           # Region production cuts #

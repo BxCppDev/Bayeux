@@ -91,7 +91,6 @@ namespace mctools {
                                                                em_physics_constructor,
                                                                "mctools::g4::em_physics_constructor");
 
-
     // *** em_physics_constructor::region_deexcitation_type *** //
 
     em_physics_constructor::region_deexcitation_type::region_deexcitation_type()
