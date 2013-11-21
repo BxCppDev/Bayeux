@@ -637,12 +637,12 @@ void smart_filename::initialize(const properties& a_config) {
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::smart_filename,ocd_)
 {
   ocd_.set_class_name ("datatools::smart_filename");
-  ocd_.set_class_description ("Smart automated filename");
+  ocd_.set_class_description ("Smart automated list of filenames");
   ocd_.set_class_library ("datatools");
   ocd_.set_class_documentation ("A ``datatools::smart_filename`` object stores a sorted      \n"
                                 "list of filenames.                           \n"
                                 "There are three different modes to build     \n"
-                                "the list of filenames :                      \n"
+                                "such a list of filenames :                   \n"
                                 "                                             \n"
                                 "a. the *single* mode manages one and         \n"
                                 "   only one filename explicitely provided by \n"
@@ -667,6 +667,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::smart_filename,ocd_)
       .set_terse_description("Flag to activate debugging output")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(false)
       ;
   }
 
@@ -676,9 +677,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::smart_filename,ocd_)
       .set_terse_description("Flag to inhibit the path shell expansion within filenames")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
-      .set_long_description("Default value: ``0``          \n"
-                            "                                                     \n"
-                            "Example::                                            \n"
+      .set_default_value_boolean(false)
+      .set_long_description("Example::                                            \n"
                             "                                                     \n"
                             "  no_expand_path : boolean = 0                       \n"
                             "                                                     \n"
@@ -692,13 +692,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::smart_filename,ocd_)
       .set_terse_description("The filenames building mode")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(true)
-      .set_long_description("The ``mode`` property takes its value in :           \n"
+      .set_long_description("Supported values for the ``mode`` property are :     \n"
                             "                                                     \n"
-                            "* ``single``      : handle a unique filename         \n"
+                            "* ``single``      : handle a unique filename.        \n"
                             "* ``list``        : handle several filenames from    \n"
-                            "  a list of filenames              \n"
+                            "  a list of filenames.                               \n"
                             "* ``incremental`` : generate a list of filenames     \n"
-                            "  with an integer increment       \n"
+                            "  with an integer increment.                         \n"
                             "                                                     \n"
                             "Example::                                            \n"
                             "                                                     \n"
@@ -736,16 +736,15 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::smart_filename,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_triggered_by_label("mode", "list")
-      .set_long_description("This flag allows the duplication of a given filename in the  \n"
-                            "list of files.                                               \n"
+      .set_default_value_boolean(false)
+      .set_long_description("If set, this flag allows the duplication of a given filename \n"
+                            "in the list of filenames.                                    \n"
                             "This behaviour is disabled by default.                       \n"
-                            "                                                             \n"
-                            "Default value: ``0``                                         \n"
                             "                                                             \n"
                             "Example::                                                    \n"
                             "                                                             \n"
                             "   mode           : string = \"list\"                        \n"
-                            "   list.duplicate : boolean = 1                              \n"
+                            "   list.duplicate : boolean = 0                              \n"
                             "                                                             \n"
                             )
        ;
@@ -754,7 +753,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::smart_filename,ocd_)
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("list.file")
-      .set_terse_description("The name of a plain text file that contains a list of filenames")
+      .set_terse_description("The name of a plain text file that contains an explicit list of filenames")
       .set_traits(datatools::TYPE_STRING)
       .set_path(true)
       .set_mandatory(false)
@@ -781,7 +780,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::smart_filename,ocd_)
                             "   # the end of the list.                                    \n"
                             "                                                             \n"
                             "                                                             \n"
-                            "The filenames may contain some environment variable.         \n"
+                            "The filenames may contain some environment variable(s).      \n"
                             "Blank lines are ignored as well as lines starting with ``#``.\n"
                             )
        ;
@@ -797,7 +796,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::smart_filename,ocd_)
       .set_mandatory(false)
       .set_triggered_by_label("mode", "list")
       .set_long_description("The names of the several filenames in ``list`` mode.       \n"
-                            "The filenames may contain some environment variable.       \n"
+                            "The filenames may contain some environment variable(s).    \n"
                             "                                                           \n"
                             "Example::                                                  \n"
                             "                                                           \n"
@@ -895,10 +894,9 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::smart_filename,ocd_)
       .set_traits(datatools::TYPE_INTEGER)
       .set_mandatory(false)
       .set_triggered_by_label("mode", "incremental")
+      .set_default_value_integer(1)
       .set_long_description("The increment for automatic building of filenames in          \n"
                             "``incremental`` mode.                                         \n"
-                            "                                                              \n"
-                            "Default value : ``1``.                                        \n"
                             "                                                              \n"
                             "Value ``0`` is illegal.                                       \n"
                             "                                                              \n"

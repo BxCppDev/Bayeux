@@ -29,13 +29,18 @@
 #ifndef DATATOOLS_OBJECT_CONFIGURATION_DESCRIPTION_H_
 #define DATATOOLS_OBJECT_CONFIGURATION_DESCRIPTION_H_
 
+// Standard library
 #include <iostream>
 #include <string>
 #include <vector>
 
+// Third party
+// - Boost
 #include <boost/scoped_ptr.hpp>
 #include <boost/cstdint.hpp>
+#include <boost/logic/tribool.hpp>
 
+// This project
 #include <datatools/properties.h>
 #include <datatools/types.h>
 
@@ -105,6 +110,11 @@ public:
   configuration_property_description & set_const(bool = true);
   configuration_property_description & set_path(bool = true);
   configuration_property_description & set_section(const std::string & section_name_);
+  configuration_property_description & set_default_value_boolean(bool);
+  configuration_property_description & set_default_value_integer(int);
+  configuration_property_description & set_default_value_real(double);
+  configuration_property_description & set_default_value_string(const std::string &);
+  configuration_property_description & set_default_array_size(int);
 
   bool is_valid() const;
   bool has_type() const;
@@ -128,6 +138,13 @@ public:
   const std::string & get_terse_description() const;
   bool has_long_description() const;
   const std::string & get_long_description() const;
+  bool has_default_value() const;
+  bool get_default_value_boolean() const;
+  int get_default_value_integer() const;
+  double get_default_value_real() const;
+  const std::string & get_default_value_string() const;
+  bool has_default_array_size() const;
+  int get_default_array_size() const;
   bool is_mandatory() const;
   int  get_type() const;
   bool is_scalar() const;
@@ -169,6 +186,11 @@ private:
   std::string  _unit_symbol_; /// Explicit unit symbol for REAL property with 'path' trait
   bool         _array_; /// Array trait (any type)
   int          _array_fixed_size_; /// Array fixed size (-1 if not fixed)
+  int          _default_array_size_; /// Default array size (-1 if not set)
+  boost::logic::tribool _default_value_boolean_; /// Default boolean value description
+  int          _default_value_integer_; /// Default integer value description
+  double       _default_value_real_; /// Default real value description
+  std::string  _default_value_string_; /// Default string value description
   bool         _mandatory_; /// Flag for a mandatory property
   bool         _complex_triggering_conditions_; /// Flag for complex triggering conditions of the property that cannot be describe through the 'configuration_property_description' mechanism
   bool         _complex_dependencies_; /// Flag for complex dependencies of the property that cannot be describe through the 'configuration_property_description' mechanism

@@ -1,12 +1,19 @@
 // -*- mode: c++; -*-
 // object_configuration_description.cc
 
+// Ourselves:
+#include <datatools/object_configuration_description.h>
+
+// Standard library
+#include <limits>
+
+// Third party
+// - Boost
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/scoped_ptr.hpp>
 
-// Ourselves:
-#include <datatools/object_configuration_description.h>
+// This project
 #include <datatools/properties.h>
 #include <datatools/ioutils.h>
 #include <datatools/units.h>
@@ -209,6 +216,11 @@ namespace datatools {
     _explicit_unit_ = false;
     _array_ = false;
     _array_fixed_size_ = -1;
+    _default_array_size_ = -1;
+    _default_value_boolean_ = boost::logic::tribool(boost::logic::indeterminate);
+    _default_value_integer_ = std::numeric_limits<int>::min();
+    _default_value_real_ = std::numeric_limits<double>::quiet_NaN();
+    _default_value_string_ = "__??__";
     _mandatory_ = false;
     _complex_triggering_conditions_ = false;
     _complex_dependencies_ = false;
@@ -331,6 +343,100 @@ namespace datatools {
                  "Explicit unit is only supported by 'real' properties but the property with name pattern '" << _name_pattern_ << "' is not a 'real' !");
     _explicit_unit_ = xu_;
     return *this;
+  }
+
+  configuration_property_description &
+  configuration_property_description::set_default_array_size(int dasz_)
+  {
+    DT_THROW_IF(is_fixed_sized_array(), std::logic_error,
+                "Property description has a fixed array size !");
+    _default_array_size_ = dasz_;
+    return *this;
+  }
+
+  bool configuration_property_description::has_default_array_size() const
+  {
+    return _default_array_size_ >= 0;
+  }
+
+  int configuration_property_description::get_default_array_size() const
+  {
+    return _default_array_size_;
+  }
+
+  configuration_property_description &
+  configuration_property_description::set_default_value_boolean(bool dv_)
+  {
+    DT_THROW_IF(! is_boolean(), std::logic_error, "Not a boolean property description !");
+    _default_value_boolean_ = boost::logic::tribool(dv_);
+    return *this;
+  }
+
+  configuration_property_description &
+  configuration_property_description::set_default_value_integer(int dv_)
+  {
+    DT_THROW_IF(! is_integer(), std::logic_error, "Not an integer property description !");
+    _default_value_integer_ = dv_;
+    return *this;
+  }
+
+  configuration_property_description &
+  configuration_property_description::set_default_value_real(double dv_)
+  {
+    DT_THROW_IF(! is_real(), std::logic_error, "Not a real property description !");
+    _default_value_real_ = dv_;
+    return *this;
+  }
+
+  configuration_property_description &
+  configuration_property_description::set_default_value_string(const std::string & dv_)
+  {
+    DT_THROW_IF(! is_string(), std::logic_error, "Not a string property description !");
+    _default_value_string_ = dv_;
+    return *this;
+  }
+
+  bool configuration_property_description::has_default_value() const
+  {
+    if (is_scalar()) {
+      if (is_boolean()) {
+        return (_default_value_boolean_ == true || _default_value_boolean_ == false);
+      }
+      if (is_integer()) {
+        return _default_value_integer_ > std::numeric_limits<int>::min();
+      }
+      if (is_real()) {
+        return _default_value_real_ == _default_value_real_;
+      }
+      if (is_string()) {
+        return _default_value_string_ != "__??__";
+      }
+    }
+    return false;
+  }
+
+  bool
+  configuration_property_description::get_default_value_boolean() const
+  {
+    return _default_value_boolean_;
+  }
+
+  int
+  configuration_property_description::get_default_value_integer() const
+  {
+    return _default_value_integer_;
+  }
+
+  double
+  configuration_property_description::get_default_value_real() const
+  {
+    return _default_value_real_;
+  }
+
+  const std::string &
+  configuration_property_description::get_default_value_string() const
+  {
+    return _default_value_string_;
   }
 
   configuration_property_description &
@@ -544,7 +650,8 @@ namespace datatools {
 
     out_ << std::endl << indent << "**General informations :** " << std::endl;
 
-    out_ << indent << std::endl;;
+    out_ << indent << std::endl;
+
     out_ << indent << "* Type: ";
     if (! has_type()) {
       out_ << "undefined : ";
@@ -577,6 +684,21 @@ namespace datatools {
       out_ << "``";
       out_ << std::endl;
     }
+    out_ << indent << "* Default value : ";
+    if (has_default_value()) {
+      if (is_boolean()) {
+        out_ << "``" << get_default_value_boolean() << "``";
+      } else if (is_integer()) {
+        out_ << "``" << get_default_value_integer() << "``";
+      } else if (is_real()) {
+        out_ << "``" << get_default_value_real() << "``";
+      } else if (is_string()) {
+        out_ << "``\"" << get_default_value_string() << "\"``";
+      }
+    } else {
+      out_ << "<none provided>";
+    }
+    out_ << std::endl;
 
     out_ << indent << "* Dynamic : ";
     if (is_dynamic()) {
@@ -1318,13 +1440,19 @@ namespace datatools {
      if (cpd_.is_array()) {
        if (cpd_.is_fixed_sized_array()) {
          array_sz = cpd_.get_array_fixed_size();
+       } else if (cpd_.has_default_array_size()) {
+         array_sz = cpd_.get_default_array_size();
        }
      }
      // Boolean :
      if (cpd_.is_boolean()) {
        if (cpd_.is_scalar()) {
+         bool default_value = false;
+         if (cpd_.has_default_value()) {
+           default_value = cpd_.get_default_value_boolean();
+         }
          prop_.store_boolean(cpd_.get_name_pattern(),
-                             false,
+                             default_value,
                              cpd_.get_terse_description(),
                              cpd_.is_const());
        }
@@ -1342,8 +1470,12 @@ namespace datatools {
      // Integer :
      if (cpd_.is_integer()) {
        if (cpd_.is_scalar()) {
+         int default_value = 1;
+         if (cpd_.has_default_value()) {
+           default_value = cpd_.get_default_value_integer();
+         }
          prop_.store_integer(cpd_.get_name_pattern(),
-                             1,
+                             default_value,
                              cpd_.get_terse_description(),
                              cpd_.is_const());
        }
@@ -1361,6 +1493,10 @@ namespace datatools {
      // Real :
      if (cpd_.is_real()) {
        if (cpd_.is_scalar()) {
+         double default_value = 1.1;
+         if (cpd_.has_default_value()) {
+           default_value = cpd_.get_default_value_real();
+         }
          prop_.store_real(cpd_.get_name_pattern(),
                           1.1,
                           cpd_.get_terse_description(),
@@ -1386,11 +1522,15 @@ namespace datatools {
        std::string ext = "";
        if (cpd_.is_path()) {
          token = "file";
-         ext = ".data";
+         ext = ".ext";
        }
        if (cpd_.is_scalar()) {
+         std::string default_value = token + ext;
+         if (cpd_.has_default_value()) {
+           default_value = cpd_.get_default_value_string();
+         }
          prop_.store_string(cpd_.get_name_pattern(),
-                            token + ext,
+                            default_value,
                             cpd_.get_terse_description(),
                             cpd_.is_const());
        }

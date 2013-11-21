@@ -475,7 +475,7 @@ void service_manager::load_service(const std::string& name,
 void service_manager::preload_global_dict() {
   DT_LOG_TRACE(get_logging_priority(),"Entering !");
   factory_register_.import(DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(datatools::base_service));
-  DT_LOG_TRACE(get_logging_priority(),"Embeded.");
+  DT_LOG_TRACE(get_logging_priority(),"Embedded.");
 }
 
 
@@ -589,7 +589,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
                                 "A service manager can be configured *manually* from plain C++ code.\n"
                                 "Is is also possible to initialize it through a set of ASCII        \n"
                                 "configuration files, thus dynamically instantiating a list of      \n"
-                                "services with various embeded functionalities.                     \n"
+                                "services with various embedded functionalities.                     \n"
                                 )
     ;
 
@@ -599,7 +599,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
       .set_terse_description("Set the logging priority threshold")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
-      .set_long_description("Example::                                 \n"
+      .set_default_value_string("warning")
+      .set_long_description("Supported values:                         \n"
+                            "                                          \n"
+                            " * ``""``                                 \n"
+                            "                                          \n"
+                            "                                          \n"
+                            "Example::                                 \n"
                             "                                          \n"
                             "  logging.priority : string = \"notice\"  \n"
                             "                                          \n"
@@ -680,7 +686,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
 
   ocd_.set_configuration_hints ("Configuration example for a ``datatools::service_manager`` object:: \n"
                                 "                                                              \n"
-                                "   debug : boolean = 0                                        \n"
+                                "   logging.priority : string = \"warning\"                    \n"
                                 "   name  : string = \"CoreServices\"                          \n"
                                 "   description  : string = \\                                 \n"
                                 "     \"Core services manager for data processing\"            \n"
@@ -689,8 +695,9 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
                                 "     \"${CONFIG_DIR}/io_services.conf\" \\                    \n"
                                 "     \"${CONFIG_DIR}/processing_services.conf\"               \n"
                                 "                                                              \n"
-                                "The ``${CONFIG_DIR}/database_services.conf``, ``${CONFIG_DIR}/io_services.conf``\n"
-                                "and ``${CONFIG_DIR}/processing_services.conf`` files use        \n"
+                                "The ``${CONFIG_DIR}/database_services.conf``,                 \n"
+                                "``${CONFIG_DIR}/io_services.conf`` and                        \n"
+                                "``${CONFIG_DIR}/processing_services.conf`` files use          \n"
                                 "the ``datatools::multi_properties`` ASCII format.               \n"
                                 "                                                                \n"
                                 "Example::                                                       \n"
@@ -704,10 +711,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
                                 "  #@config A service object                                     \n"
                                 "                                                                \n"
                                 "  #@description A configuration parameter                       \n"
-                                "  debug : boolean = 1                                           \n"
+                                "  logging.priority : string =  \"warning\"                      \n"
                                 "                                                                \n"
                                 "  #@description Another configuration parameter                 \n"
-                                "  name : string = \"value\"                                     \n"
+                                "  mode : string = \"remote\"                                    \n"
                                 "                                                                \n"
                                 "  ...                                                           \n"
                                 "                                                                \n"
@@ -716,10 +723,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
                                 "  #@config Another service object                               \n"
                                 "                                                                \n"
                                 "  #@description A configuration parameter                       \n"
-                                "  debug : boolean = 0                                           \n"
+                                "  logging.priority : string =  \"information\"                  \n"
                                 "                                                                \n"
                                 "  #@description Another configuration parameter                 \n"
-                                "  name : string = \"value\"                                     \n"
+                                "  algorithm : string = \"experimental\"                         \n"
                                 "                                                                \n"
                                 "  ...                                                           \n"
                                 "                                                                \n"

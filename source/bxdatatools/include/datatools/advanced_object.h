@@ -41,8 +41,8 @@
 #include <datatools/i_tree_dump.h>
 #include <datatools/logger.h>
 #include <datatools/properties.h>
-
 #include <datatools/reflection_macros.h>
+#include <datatools/ocd_macros.h>
 
 namespace datatools {
 
@@ -109,6 +109,10 @@ namespace datatools {
 			   const std::string& title_  = "",
 			   const std::string& indent_ = "",
 			   bool inherit_ = false) const;
+
+  protected:
+
+    static void _load_ocd(datatools::object_configuration_description &);
 
   private:
 

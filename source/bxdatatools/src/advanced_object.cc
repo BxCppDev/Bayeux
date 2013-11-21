@@ -222,4 +222,79 @@ namespace datatools {
     return;
   }
 
+  // static
+  void advanced_object::_load_ocd(datatools::object_configuration_description & ocd_)
+  {
+    {
+      configuration_property_description & cpd = ocd_.add_configuration_property_info();
+      cpd.set_name_pattern("logging.priority")
+        .set_terse_description("Set the logging priority threshold")
+        .set_traits(datatools::TYPE_STRING)
+        .set_mandatory(false)
+        .set_default_value_string("warning")
+        .set_long_description(
+                              "Allowed values are:                             \n"
+                              "                                                \n"
+                              "  * ``\"trace\"`` : Heavy development messages  \n"
+                              "  * ``\"debug\"`` : Debug messages              \n"
+                              "  * ``\"information\"`` :                       \n"
+                              "  * ``\"notice\"`` :                        \n"
+                              "  * ``\"warning\"`` :                       \n"
+                              "  * ``\"error\"`` :                         \n"
+                              "  * ``\"critical\"`` :                      \n"
+                              "  * ``\"fatal\"`` :                         \n"
+                              "                                            \n"
+                              "Example::                                   \n"
+                              "                                            \n"
+                              "  logging.priority : string = \"notice\"    \n"
+                              "                                            \n"
+                              )
+        ;
+    }
+
+    {
+      configuration_property_description & cpd = ocd_.add_configuration_property_info();
+      cpd.set_name_pattern("name")
+        .set_terse_description("Set the name of the object")
+        .set_traits(datatools::TYPE_STRING)
+        .set_mandatory(false)
+        .set_long_description("Example::                                 \n"
+                              "                                          \n"
+                              "  name : string = \"foo_id\"              \n"
+                              "                                          \n"
+                              )
+        ;
+    }
+
+    {
+      configuration_property_description & cpd = ocd_.add_configuration_property_info();
+      cpd.set_name_pattern("display_name")
+        .set_terse_description("Set the display name of the object")
+        .set_traits(datatools::TYPE_STRING)
+        .set_mandatory(false)
+        .set_long_description("Example::                                 \n"
+                              "                                          \n"
+                              "  display name : string = \"Foo's ID\"    \n"
+                              "                                          \n"
+                              )
+        ;
+    }
+
+    {
+      configuration_property_description & cpd = ocd_.add_configuration_property_info();
+      cpd.set_name_pattern("description")
+        .set_terse_description("Set the description of the object")
+        .set_traits(datatools::TYPE_STRING)
+        .set_mandatory(false)
+        .set_long_description("Example::                                 \n"
+                              "                                          \n"
+                              "  description : string = \"A dummy object\"\n"
+                              "                                          \n"
+                              )
+        ;
+    }
+
+    return;
+  }
+
 } // end of namespace datatools
