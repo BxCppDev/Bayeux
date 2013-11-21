@@ -42,4 +42,4 @@ namespace materials {
     return;
   }
 
-} // end of namespace datatools
+} // end of namespace materials
