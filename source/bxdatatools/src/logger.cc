@@ -32,8 +32,9 @@
 #include "boost/bimap/multiset_of.hpp"
 
 // This Project
-#include "datatools/properties.h"
 #include "datatools/exception.h"
+#include "datatools/properties.h"
+#include <datatools/object_configuration_description.h>
 
 namespace {
 //! Hide awkward boost bimap declaration in a typedef
@@ -121,5 +122,39 @@ logger::priority logger::extract_logging_configuration(
   return p;
 }
 
-} // namespace datatools
+void logger::declare_ocd_logging_configuration(datatools::object_configuration_description & ocd_,
+                                               const std::string & prefix_)
+{
+  {
+    std::ostringstream desc;
+    desc <<  "Allowed values are:                      \n"
+      "                                                \n"
+      "  * ``\"trace\"`` : Heavy development messages  \n"
+      "  * ``\"debug\"`` : Debug messages              \n"
+      "  * ``\"information\"`` :                       \n"
+      "  * ``\"notice\"`` :                            \n"
+      "  * ``\"warning\"`` :                           \n"
+      "  * ``\"error\"`` :                             \n"
+      "  * ``\"critical\"`` :                          \n"
+      "  * ``\"fatal\"`` : Only fatal error messages   \n"
+      "                                                \n"
+      "Example::                                       \n"
+      "                                                \n";
+    desc << "  " << prefix_;
+    desc << "logging.priority : string = \"notice\" \n"
+      "                                                \n";
 
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern(prefix_ + "logging.priority")
+      .set_terse_description("Set the logging priority threshold")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_default_value_string("warning")
+      .set_long_description(desc.str())
+      ;
+    }
+
+  return;
+}
+
+} // namespace datatools

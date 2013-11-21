@@ -65,8 +65,9 @@
 
 namespace datatools {
 
-// Forward declaration:
+// Forward declarations:
 class properties;
+class object_configuration_description;
 
 //! Organise logging functionality under one roof
 struct logger {
@@ -123,7 +124,12 @@ struct logger {
   //! @param throw_on_error is true, an invalid logging priority label
   //!        triggers an exception
   //! @returns the priority as configured from the properties
-  static priority extract_logging_configuration(const datatools::properties & config, priority default_prio = datatools::logger::PRIO_FATAL, bool throw_on_error = true);
+  static priority extract_logging_configuration(const datatools::properties & config,
+						priority default_prio = datatools::logger::PRIO_FATAL,
+						bool throw_on_error = true);
+
+  static void declare_ocd_logging_configuration(datatools::object_configuration_description &,
+						const std::string & = "");
 
 };
 } // namespace datatools
@@ -288,4 +294,3 @@ DR_TYPE_INIT(::datatools::logger); // mandatory to access the embedded enum
 DR_TYPE_INIT(::datatools::logger::priority);
 
 #endif // DATATOOLS_LOGGER_H
-

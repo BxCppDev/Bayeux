@@ -42,7 +42,8 @@
 #include <datatools/logger.h>
 #include <datatools/properties.h>
 #include <datatools/reflection_macros.h>
-#include <datatools/ocd_macros.h>
+#include <datatools/object_configuration_description.h>
+//#include <datatools/ocd_macros.h>
 
 namespace datatools {
 

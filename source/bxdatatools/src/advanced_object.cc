@@ -4,6 +4,7 @@
 // This project:
 #include <datatools/exception.h>
 #include <datatools/properties.h>
+#include <datatools/logger.h>
 
 namespace datatools {
 
@@ -225,32 +226,7 @@ namespace datatools {
   // static
   void advanced_object::_load_ocd(datatools::object_configuration_description & ocd_)
   {
-    {
-      configuration_property_description & cpd = ocd_.add_configuration_property_info();
-      cpd.set_name_pattern("logging.priority")
-        .set_terse_description("Set the logging priority threshold")
-        .set_traits(datatools::TYPE_STRING)
-        .set_mandatory(false)
-        .set_default_value_string("warning")
-        .set_long_description(
-                              "Allowed values are:                             \n"
-                              "                                                \n"
-                              "  * ``\"trace\"`` : Heavy development messages  \n"
-                              "  * ``\"debug\"`` : Debug messages              \n"
-                              "  * ``\"information\"`` :                       \n"
-                              "  * ``\"notice\"`` :                        \n"
-                              "  * ``\"warning\"`` :                       \n"
-                              "  * ``\"error\"`` :                         \n"
-                              "  * ``\"critical\"`` :                      \n"
-                              "  * ``\"fatal\"`` :                         \n"
-                              "                                            \n"
-                              "Example::                                   \n"
-                              "                                            \n"
-                              "  logging.priority : string = \"notice\"    \n"
-                              "                                            \n"
-                              )
-        ;
-    }
+    logger::declare_ocd_logging_configuration(ocd_, "");
 
     {
       configuration_property_description & cpd = ocd_.add_configuration_property_info();
