@@ -395,14 +395,14 @@ function do_configure ()
     test -f ${pkgtools_conf} && rm -f ${pkgtools_conf}
     echo "build_dir=${the_build_dir}" >> ${pkgtools_conf}
 
-    pkgtools__msg_notice "Installation prefix   : '${install_prefix}'"
-    pkgtools__msg_notice "With documentation    : '${with_doc}'"
-    pkgtools__msg_notice "With test material    : '${with_test}'"
+    pkgtools__msg_notice "Installation prefix     : '${install_prefix}'"
+    pkgtools__msg_notice "With documentation      : '${with_doc}'"
+    pkgtools__msg_notice "With test material      : '${with_test}'"
     pkgtools__msg_notice "With implicit init/fini : '${with_implicit_init_fini}'"
     if [ ${bio_support} -eq 1 ]; then
-	pkgtools__msg_notice "With Boost I/O DLL    : '${with_bio}'"
+        pkgtools__msg_notice "With Boost I/O DLL      : '${with_bio}'"
     fi
-    pkgtools__msg_notice "With dependency check : '${with_dependency_check}'"
+    pkgtools__msg_notice "With dependency check   : '${with_dependency_check}'"
 
     if [ ${with_dependency_check} -eq 1 ]; then
 	do_check
