@@ -1,6 +1,7 @@
 // test_prng_state_manager.cxx
 
 #include <cstdlib>
+#include <cstdio>
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -8,6 +9,8 @@
 
 #include <mygsl/rng.h>
 #include <mygsl/prng_state_manager.h>
+#include <datatools/utils.h>
+#include <boost/filesystem.hpp>
 
 using namespace std;
 
@@ -51,8 +54,12 @@ int main (int argc_, char ** argv_)
       mygsl::rng r2("taus2", 314159);
       mygsl::rng r3("taus2", (unsigned long int) time (0));
 
+      std::string fpath = "/tmp/${USER}/mygsl_tests";
+      std::string fstates = fpath +"/test_prng_state_manager.data";
+      std::string fstates_bak = fstates + ".~backup~";
+
       mygsl::prng_state_manager PSM;
-      PSM.set_filename ("/tmp/${USER}/mygsl_tests/test_prng_state_manager.data");
+      PSM.set_filename (fstates);
       PSM.add_state ("r1", r1.get_internal_state_size ( ));
       PSM.add_state ("r2", r2.get_internal_state_size ( ));
       PSM.add_state ("r3", r3.get_internal_state_size ( ));
@@ -134,6 +141,15 @@ int main (int argc_, char ** argv_)
           cout.width (12);
           cout << r3 () << endl;
         }
+
+      {
+        clog << "Remove temporary files..." << endl;
+        std::string tmp = fpath;
+        datatools::fetch_path_with_env(tmp);
+        clog << "tmp='" << tmp << "'" << endl;
+        boost::filesystem::remove_all(tmp);
+      }
+      clog << "The end." << endl;
     }
   catch (exception & x)
     {
