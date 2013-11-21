@@ -14,13 +14,31 @@ namespace materials {
 
   void initialize(int argc_, char * argv_[])
   {
-    ::materials::_special_initialize_impl();
+    static bool _init = false;
+    if (!_init) {
+      ::materials::_special_initialize_impl();
+      _init = true;
+    } else {
+#if MATERIALS_WITH_IMPLICIT_INIT_FINI == 0
+      DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
+                     "Attempt to initialize the already initialized Bayeux/materials library module !");
+#endif
+    }
     return;
   }
 
   void terminate()
   {
-    ::materials::_special_terminate_impl();
+    static bool _terminate = false;
+    if (!_terminate) {
+      ::materials::_special_terminate_impl();
+      _terminate = true;
+    } else {
+#if MATERIALS_WITH_IMPLICIT_INIT_FINI == 0
+      DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
+                     "Attempt to terminate the already terminated Bayeux/materials library module !");
+#endif
+    }
     return;
   }
 
