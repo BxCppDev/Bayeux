@@ -902,6 +902,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_terse_description("Logging priority threshold")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
+      .set_default_value_string("warning")
       .set_long_description("Allowed values are:                                    \n"
                             "                                                       \n"
                             " * ``\"fatal\"``       : print fatal error messages    \n"
@@ -931,6 +932,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_terse_description("Name of the EM model")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
+      .set_default_value_string("standard")
       .set_long_description("Default: ``\"standard\"``                              \n"
                             "                                                       \n"
                             "Allowed values:                                        \n"
@@ -955,6 +957,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_terse_description("Flag to activate the gamma Rayleigh scattering")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(false)
       .set_long_description("Default: ``0``                                         \n"
                             "                                                       \n"
                             "Example::                                              \n"
@@ -973,6 +976,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_terse_description("Flag to activate the gamma photo-electric effect")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(true)
       .set_long_description("Default: ``1``                                         \n"
                             "                                                       \n"
                             "Example::                                              \n"
@@ -991,6 +995,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_terse_description("Flag to activate the gamma Compton scattering")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(true)
       .set_long_description("Default: ``1``                                         \n"
                             "                                                       \n"
                             "Example::                                              \n"
@@ -1009,6 +1014,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_terse_description("Flag to activate the gamma conversion")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(true)
       .set_long_description("Default: ``1``                                         \n"
                             "                                                       \n"
                             "Example::                                              \n"
@@ -1027,6 +1033,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_terse_description("Flag to activate the gamma conversion to muons")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(false)
       .set_long_description("Default: ``0``                                         \n"
                             "                                                       \n"
                             "Example::                                              \n"
@@ -1046,6 +1053,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_terse_description("Flag to activate the electron/positron ionisation")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(true)
       .set_long_description("Default: ``1``                                         \n"
                             "                                                       \n"
                             "Example::                                              \n"
@@ -1064,6 +1072,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_terse_description("Flag to activate the bremsstrahlung effect for electron/positron")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(true)
       .set_long_description("Default: ``1``                                         \n"
                             "                                                       \n"
                             "Example::                                              \n"
@@ -1082,6 +1091,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_terse_description("Flag to activate the electron/positron multiple scattering")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(true)
       .set_long_description("Default: ``1``                                         \n"
                             "                                                       \n"
                             "Example::                                              \n"
@@ -1100,6 +1110,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_terse_description("Flag to use distance to boundary in the electron/positron multiple scattering")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(true)
       .set_long_description("Default: ``1``                                         \n"
                             "                                                       \n"
                             "Example::                                              \n"
@@ -1118,6 +1129,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_terse_description("The range factor in the electron/positron multiple scattering")
       .set_traits(datatools::TYPE_REAL)
       .set_mandatory(false)
+      .set_default_value_real(0.005)
       .set_long_description("Default: ``0.005``                                     \n"
                             "                                                       \n"
                             "Example::                                              \n"
@@ -1136,6 +1148,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_terse_description("Flag to activate the electron/positron step limiter")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(true)
       .set_long_description("Default: ``1``                                         \n"
                             "                                                       \n"
                             "Example::                                              \n"
@@ -1154,6 +1167,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_terse_description("Flag to activate the positron annihilation")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(true)
       .set_long_description("Default: ``1``                                         \n"
                             "                                                       \n"
                             "Example::                                              \n"
@@ -1172,6 +1186,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_terse_description("Flag to activate the atomic deexcitation and fluorescence")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(false)
       .set_long_description("Default: ``0``                                         \n"
                             "                                                       \n"
                             "Example::                                              \n"
@@ -1190,6 +1205,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_terse_description("Flag to activate Auger process")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(false)
       .set_long_description("Default: ``0``                                         \n"
                             "                                                       \n"
                             "Example::                                              \n"
@@ -1210,6 +1226,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_terse_description("Flag to activate PIXE process (Particle Induced X-ray Emission)")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(false)
       .set_long_description("Default: ``0``                                         \n"
                             "                                                       \n"
                             "Example::                                              \n"
@@ -1228,6 +1245,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_terse_description("The name of the PIXE cross-section model")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
+      .set_default_value_string("Empirical")
       .set_long_description("Default: ``\"Empirical\"``                             \n"
                             "                                                       \n"
                             "Allowed values are:                                    \n"
@@ -1271,6 +1289,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_terse_description("Flag to activate fluorecence in some given region")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(false)
       .set_long_description("Default: ``0``                                         \n"
                            "                                                        \n"
                             "Example::                                              \n"
@@ -1291,6 +1310,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_terse_description("Flag to activate Auger effect in some given region")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(false)
       .set_long_description("Default: ``0``                                         \n"
                            "                                                        \n"
                             "Example::                                              \n"
@@ -1311,6 +1331,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_terse_description("Flag to activate PIXE effect in some given region")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(false)
       .set_long_description("Default: ``0``                                         \n"
                            "                                                        \n"
                             "Example::                                              \n"

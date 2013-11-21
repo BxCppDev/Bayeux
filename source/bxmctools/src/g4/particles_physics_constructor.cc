@@ -661,6 +661,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_terse_description("Logging priority threshold")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
+      .set_default_value_string("warning")
       .set_long_description("Allowed values are:                                    \n"
                             "                                                       \n"
                             " * ``\"fatal\"``       : print fatal error messages    \n"
@@ -691,6 +692,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_terse_description("Flag to setup the Geantinos mock particles")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(false)
       .set_long_description("Default: ``0``                                         \n"
                             "                                                       \n"
                             "Example::                                              \n"
@@ -709,6 +711,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_terse_description("Flag to setup the optical photons")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(false)
       .set_long_description("Default: ``0``                                         \n"
                             "                                                       \n"
                             "Example::                                              \n"
@@ -727,6 +730,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_terse_description("Flag to setup the muon leptons")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(false)
       .set_long_description("Default: ``0``                                         \n"
                             "                                                       \n"
                             "Example::                                              \n"
@@ -745,6 +749,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_terse_description("Flag to setup the tau leptons")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(false)
       .set_long_description("Default: ``0``                                         \n"
                             "                                                       \n"
                             "Example::                                              \n"
@@ -763,6 +768,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_terse_description("Flag to setup the light mesons")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(false)
       .set_long_description("Default: ``0``                                         \n"
                             "                                                       \n"
                             "Example::                                              \n"
@@ -781,6 +787,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_terse_description("Flag to setup the charm mesons")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(false)
       .set_long_description("Default: ``0``                                         \n"
                             "                                                       \n"
                             "Example::                                              \n"
@@ -799,6 +806,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_terse_description("Flag to setup the bottom mesons")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(false)
       .set_long_description("Default: ``0``                                         \n"
                             "                                                       \n"
                             "Example::                                              \n"
@@ -817,6 +825,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_terse_description("Flag to setup the nucleons")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(true)
       .set_long_description("Default: ``1``                                         \n"
                             "                                                       \n"
                             "Example::                                              \n"
@@ -835,6 +844,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_terse_description("Flag to setup strange baryons")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(false)
       .set_long_description("Default: ``0``                                         \n"
                             "                                                       \n"
                             "Example::                                              \n"
@@ -853,6 +863,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_terse_description("Flag to setup charm baryons")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(false)
       .set_long_description("Default: ``0``                                         \n"
                             "                                                       \n"
                             "Example::                                              \n"
@@ -871,6 +882,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_terse_description("Flag to setup bottom baryons")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(false)
       .set_long_description("Default: ``0``                                         \n"
                             "                                                       \n"
                             "Example::                                              \n"
@@ -889,6 +901,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_terse_description("Flag to setup light nuclei")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(true)
       .set_long_description("Default: ``1``                                         \n"
                             "                                                       \n"
                             "Example::                                              \n"
@@ -907,6 +920,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_terse_description("Flag to setup light anti-nuclei")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(false)
       .set_long_description("Default: ``0``                                         \n"
                             "                                                       \n"
                             "Example::                                              \n"
@@ -925,6 +939,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_terse_description("Flag to setup generic ion")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(true)
       .set_long_description("Default: ``1``                                         \n"
                             "                                                       \n"
                             "Example::                                              \n"
