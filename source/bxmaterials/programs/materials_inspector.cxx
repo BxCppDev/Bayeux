@@ -260,9 +260,6 @@ int main (int argc_, char ** argv_)
     DT_LOG_FATAL(logging, "Unexpected error !");
     error_code = EXIT_FAILURE;
   }
-  if (error_code != EXIT_SUCCESS) {
-    materials::ui::print_usage(std::cerr, opts);
-  }
 #if MATERIALS_STANDALONE == 1
   MATERIALS_FINI();
 #else
