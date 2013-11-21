@@ -1331,12 +1331,10 @@ int main (int argc_, char ** argv_)
   }
   catch (std::exception & x) {
     DT_LOG_FATAL(datatools::logger::PRIO_FATAL, x.what ());
-    usage(opts, std::cerr);
     error_code = EXIT_FAILURE;
   }
   catch (...) {
     DT_LOG_FATAL(datatools::logger::PRIO_FATAL, "Unexpected error !");
-    usage (opts,std::cerr);
     error_code = EXIT_FAILURE;
   }
 
