@@ -419,18 +419,18 @@ function do_configure ()
     fi
 
     cd ${the_build_dir}
-    cmake \
-	-DCMAKE_INSTALL_PREFIX:PATH=${install_prefix} \
-	-DCMAKE_BUILD_TYPE:STRING=Release \
-	-DMATERIALS_STANDALONE=1 \
-	-Ddatatools_DIR=${DATATOOLS_CMAKE_CONFIG_DIR} \
+    cmake                                                                                  \
+	-DCMAKE_INSTALL_PREFIX:PATH=${install_prefix}                                      \
+	-DCMAKE_BUILD_TYPE:STRING=Release                                                  \
+	-DMATERIALS_STANDALONE=1                                                           \
+	-Ddatatools_DIR=${DATATOOLS_CMAKE_CONFIG_DIR}                                      \
 	-DCMAKE_MODULE_PATH:PATH="${CADFAEL_SHARE_DIR}/cmake/Modules;${CMAKE_MODULE_PATH}" \
-	-DMATERIALS_WITH_DEBUG=${with_debug} \
-	-DMATERIALS_WITH_DOC=${with_doc} \
-	-DMATERIALS_WITH_TEST=${with_test} \
-	-DMATERIALS_WITH_BASH_SETUP=${with_bash_setup} \
-	-DMATERIALS_WITH_IMPLICIT_INIT_FINI=${with_implicit_init_fini} \
-	${additional_options} \
+	-DMATERIALS_WITH_DEBUG=${with_debug}                                               \
+	-DMATERIALS_WITH_DOC=${with_doc}                                                   \
+	-DMATERIALS_WITH_TEST=${with_test}                                                 \
+	-DMATERIALS_WITH_BASH_SETUP=${with_bash_setup}                                     \
+	-DMATERIALS_WITH_IMPLICIT_INIT_FINI=${with_implicit_init_fini}                     \
+	${additional_options}                                                              \
 	..
     if [ $? -ne 0 ]; then
 	pkgtools__msg_error "Cannot configure the '${package_name}' package !"
