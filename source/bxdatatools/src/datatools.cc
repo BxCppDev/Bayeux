@@ -34,6 +34,7 @@ namespace datatools {
         }
       }
       ::datatools::_special_initialize_impl();
+      _init = true;
     } else {
 #if DATATOOLS_WITH_IMPLICIT_INIT_FINI == 0
       DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
@@ -54,6 +55,7 @@ namespace datatools {
           krnl.shutdown();
         }
       }
+      _terminate = true;
     } else {
 #if DATATOOLS_WITH_IMPLICIT_INIT_FINI == 0
       DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
