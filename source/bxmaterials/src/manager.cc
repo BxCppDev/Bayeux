@@ -441,6 +441,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::materials::manager,ocd_)
       .set_terse_description("Flag to activate debugging output")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(false)
       .set_long_description("Superseded by a previous call to :              \n"
                             "  ``materials::manager::set_debug(true)``       \n"
                             "                                                \n"
@@ -458,23 +459,24 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::materials::manager,ocd_)
       .set_terse_description("Flag to allow material alias overloading")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
-      .set_long_description("Users are invited to define material aliases, i.e. some    \n"
-                            "human-friendly character strings that are associated       \n"
-                            "to material objects stored in the manager's dictionnary.  \n"
-                            "Typically, one may want to use the alias ``metal`` as a      \n"
-                            "shortcut for the ``std::inox`` material.                     \n"
-                            "If the use changes his/her mind, is is easy to make the    \n"
-                            "``metal`` string the alias of the ``std::copper`` material.    \n"
-                            "This gives some flexibility by just changing the definition\n"
-                            "of an alias without changing the definitions of standard   \n"
-                            "materials like copper or inox registered in some standard  \n"
-                            "dictionnary.                                               \n"
-                            "When the ``alias_allow_overload`` is set, it is possible to  \n"
-                            "provide duplicated definitions of an alias, the last one   \n"
-                            "overloading the former ones. Otherwise, multiple alias     \n"
-                            "definition is considered as an error.                      \n"
-                            "Superseded by a previous call of :                           \n"
-                            "  ``materials::manager::set_alias_allow_overload(true)``       \n"
+      .set_default_value_boolean(false)
+      .set_long_description("Users are invited to define material aliases, i.e. some     \n"
+                            "human-friendly character strings that are associated        \n"
+                            "to material objects stored in the manager's dictionnary  .  \n"
+                            "Typically, one may want to use the alias ``metal`` as a     \n"
+                            "shortcut for the ``std::inox`` material.                    \n"
+                            "If the user changes his/her mind, it is easy to make the    \n"
+                            "``metal`` string the alias of the ``std::copper`` material. \n"
+                            "This gives some flexibility by just changing the definition \n"
+                            "of an alias without changing the definitions of standard    \n"
+                            "materials like copper or inox registered in some standard   \n"
+                            "dictionnary.                                                \n"
+                            "When the ``alias_allow_overload`` is set, it is possible to \n"
+                            "provide duplicated definitions of an alias, the last one    \n"
+                            "overloading the former ones. Otherwise, multiple alias      \n"
+                            "definition is considered as an error.                       \n"
+                            "Superseded by a previous call of :                          \n"
+                            "  ``materials::manager::set_alias_allow_overload(true)``    \n"
                             "                                                \n"
                             "Example::                                       \n"
                             "                                                \n"
