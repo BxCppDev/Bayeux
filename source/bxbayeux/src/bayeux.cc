@@ -28,6 +28,7 @@
 
 // This project
 #include <datatools/datatools.h>
+#include <datatools/logger.h>
 
 // Tests
 // #include <datatools/kernel.h>
@@ -37,30 +38,47 @@ namespace bayeux {
 
   void initialize(int argc_, char * argv_[])
   {
-    // Wrap datatools kernel initialization:
-    ::datatools::initialize(argc_,argv_);
+    static bool _init = false;
+    if (! _init) {
+      // Wrap datatools kernel initialization:
+      ::datatools::initialize(argc_,argv_);
 
-    // Tests :
-    // datatools::kernel & krnl = datatools::kernel::instance();
-    // if (krnl.has_library_info_register()) {
-    //   datatools::library_info & lib_info_reg
-    //     = krnl.grab_library_info_register();
-    //   lib_info_reg.tree_dump(std::cerr, "bayeux::initialize: Before special initialize", "DEVEL: ");
-    // }
+      // Tests :
+      // datatools::kernel & krnl = datatools::kernel::instance();
+      // if (krnl.has_library_info_register()) {
+      //   datatools::library_info & lib_info_reg
+      //     = krnl.grab_library_info_register();
+      //   lib_info_reg.tree_dump(std::cerr, "bayeux::initialize: Before special initialize", "DEVEL: ");
+      // }
 
-    // Special initialization code:
-    ::bayeux::_special_initialize_impl();
+      // Special initialization code:
+      ::bayeux::_special_initialize_impl();
+      _init = true;
+    } else {
+#if BAYEUX_WITH_IMPLICIT_INIT_FINI == 0
+      DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
+                     "Attempt to initialize the already initialized Bayeux library !");
+#endif
+    }
     return;
   }
 
   void terminate()
   {
-    // Special termination code:
-    ::bayeux::_special_terminate_impl();
+    static bool _terminate = false;
+    if (!_terminate) {
+      // Special termination code:
+      ::bayeux::_special_terminate_impl();
 
-    // Wrap datatools kernel termination:
-    ::datatools::terminate();
-
+      // Wrap datatools kernel termination:
+      ::datatools::terminate();
+      _terminate = true;
+    } else {
+#if BAYEUX_WITH_IMPLICIT_INIT_FINI == 0
+      DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
+                     "Attempt to terminate the already terminated Bayeux library !");
+#endif
+    }
     return;
   }
 
