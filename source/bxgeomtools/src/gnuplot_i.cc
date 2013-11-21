@@ -208,7 +208,7 @@ void stringtok (Container &container,
 //
 Gnuplot::~Gnuplot()
 {
-  //  remove_tmpfiles();
+  remove_tmpfiles();
 
   // A stream opened by popen() should be closed by pclose()
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__TOS_WIN__)
@@ -226,7 +226,7 @@ Gnuplot::~Gnuplot()
 //
 Gnuplot& Gnuplot::reset_plot()
 {
-  //  remove_tmpfiles();
+  remove_tmpfiles();
 
   _nplots_ = 0;
 
@@ -240,7 +240,7 @@ Gnuplot& Gnuplot::reset_plot()
 //
 Gnuplot& Gnuplot::reset_all()
 {
-  //  remove_tmpfiles();
+  remove_tmpfiles();
 
   _nplots_ = 0;
   cmd("reset");
