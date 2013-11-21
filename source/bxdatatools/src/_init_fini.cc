@@ -21,7 +21,6 @@ static void datatools_initializer()
 {
   //DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Entering...");
   datatools::initialize(0,0);
-  datatools::_special_initialize_impl();
   //DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Exiting.");
   return;
 }
@@ -30,7 +29,6 @@ __attribute__((destructor))
 static void datatools_finalizer()
 {
   //DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Entering...");
-  datatools::_special_terminate_impl();
   datatools::terminate();
   //DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Exiting.");
   return;

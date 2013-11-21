@@ -29,17 +29,14 @@ namespace datatools {
 /// datatools' kernel initialization macro using main function arguments
 #define DATATOOLS_INIT_MAIN(Argc,Argv)          \
   ::datatools::initialize( Argc , Argv );       \
-  /*::datatools::_special_initialize_impl();*/  \
   /**/
 
 /// datatools' kernel initialization macro
-#define DATATOOLS_INIT()                                \
-  ::datatools::initialize(0, 0);                        \
-  /*::datatools::_special_initialize_impl();*/          \
+#define DATATOOLS_INIT()                        \
+  ::datatools::initialize(0, 0);                \
   /**/
 
 #define DATATOOLS_FINI()                        \
-  /*::datatools::_special_terminate_impl();*/   \
   ::datatools::terminate();                     \
   /**/
 
