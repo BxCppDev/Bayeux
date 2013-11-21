@@ -120,31 +120,31 @@ int main (int argc_, char ** argv_)
     source_log.tree_dump(cout, "Source");
 
     datatools::temp_file tmp_setup;
-    tmp_setup.set_remove_at_destroy(false);
+    tmp_setup.set_remove_at_destroy(true);
     tmp_setup.create ("/tmp", "geomtools_test_logical_volume_setup_");
 
     datatools::temp_file tmp_vertexes_1;
-    tmp_vertexes_1.set_remove_at_destroy(false);
+    tmp_vertexes_1.set_remove_at_destroy(true);
     tmp_vertexes_1.create ("/tmp", "geomtools_test_logical_volume_vertexes_1_");
     tmp_vertexes_1.out() << "# vertexes outside source : " << std::endl;
 
     datatools::temp_file tmp_vertexes_2;
-    tmp_vertexes_2.set_remove_at_destroy(false);
+    tmp_vertexes_2.set_remove_at_destroy(true);
     tmp_vertexes_2.create ("/tmp", "geomtools_test_logical_volume_vertexes_2_");
     tmp_vertexes_2.out() << "# vertexes inside source : " << std::endl;
 
     datatools::temp_file tmp_vertexes_3;
-    tmp_vertexes_3.set_remove_at_destroy(false);
+    tmp_vertexes_3.set_remove_at_destroy(true);
     tmp_vertexes_3.create ("/tmp", "geomtools_test_logical_volume_vertexes_3_");
     tmp_vertexes_3.out() << "# vertexes on source surface: " << std::endl;
 
     datatools::temp_file tmp_vertexes_4;
-    tmp_vertexes_4.set_remove_at_destroy(false);
+    tmp_vertexes_4.set_remove_at_destroy(true);
     tmp_vertexes_4.create ("/tmp", "geomtools_test_logical_volume_vertexes_4_");
     tmp_vertexes_4.out() << "# vertexes inside source daughter : " << std::endl;
 
     datatools::temp_file tmp_vertexes_5;
-    tmp_vertexes_5.set_remove_at_destroy(false);
+    tmp_vertexes_5.set_remove_at_destroy(true);
     tmp_vertexes_5.create ("/tmp", "geomtools_test_logical_volume_vertexes_5_");
     tmp_vertexes_5.out() << "# vertexes on source daughter surface: " << std::endl;
 
