@@ -123,6 +123,7 @@ logger::priority logger::extract_logging_configuration(
 }
 
 void logger::declare_ocd_logging_configuration(datatools::object_configuration_description & ocd_,
+                                               const std::string & default_value_,
                                                const std::string & prefix_)
 {
   {
@@ -137,11 +138,14 @@ void logger::declare_ocd_logging_configuration(datatools::object_configuration_d
       "  * ``\"error\"`` :                             \n"
       "  * ``\"critical\"`` :                          \n"
       "  * ``\"fatal\"`` : Only fatal error messages   \n"
-      "                                                \n"
-      "Example::                                       \n"
       "                                                \n";
-    desc << "  " << prefix_;
-    desc << "logging.priority : string = \"notice\" \n"
+    std::ostringstream example;
+    example <<
+      "Set the logging priority to allow the printing  \n"
+      "of informational messages: ::                   \n"
+      "                                                \n";
+    example << "  " << prefix_;
+    example << "logging.priority : string = \"notice\" \n"
       "                                                \n";
 
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
@@ -149,8 +153,9 @@ void logger::declare_ocd_logging_configuration(datatools::object_configuration_d
       .set_terse_description("Set the logging priority threshold")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
-      .set_default_value_string("warning")
+      .set_default_value_string(default_value_.empty() ? "fatal": default_value_)
       .set_long_description(desc.str())
+      .add_example(example.str())
       ;
     }
 

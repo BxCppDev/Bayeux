@@ -115,6 +115,7 @@ public:
   configuration_property_description & set_default_value_real(double);
   configuration_property_description & set_default_value_string(const std::string &);
   configuration_property_description & set_default_array_size(int);
+  configuration_property_description & add_example(const std::string &example_);
 
   bool is_valid() const;
   bool has_type() const;
@@ -138,6 +139,8 @@ public:
   const std::string & get_terse_description() const;
   bool has_long_description() const;
   const std::string & get_long_description() const;
+  unsigned int get_number_of_examples() const;
+  const std::string & get_example(int) const;
   bool has_default_value() const;
   bool get_default_value_boolean() const;
   int get_default_value_integer() const;
@@ -178,6 +181,7 @@ private:
   std::string  _section_;      /// An optional string describing the configuration section
   std::string  _terse_description_; /// Terse description of the property
   std::string  _long_description_; /// Detailed description of the property
+  std::vector<std::string> _examples_; /// List of examples
   int          _type_; /// property's type (BOOLEAN, INTEGER, REAL, STRING)
   bool         _const_; /// Constness of the property's value
   bool         _path_; /// Explicit path trait for STRING property

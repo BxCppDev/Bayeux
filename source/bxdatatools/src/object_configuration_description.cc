@@ -616,6 +616,25 @@ namespace datatools {
     return !_long_description_.empty();
   }
 
+  unsigned int
+  configuration_property_description::get_number_of_examples() const
+  {
+    return _examples_.size();
+  }
+
+  const std::string &
+  configuration_property_description::get_example(int index_) const
+  {
+    return _examples_.at(index_);
+  }
+
+  configuration_property_description &
+  configuration_property_description::add_example(const std::string &example_)
+  {
+    _examples_.push_back(example_);
+    return *this;
+  }
+
   bool configuration_property_description::is_mandatory() const
   {
     return _mandatory_;
@@ -752,6 +771,23 @@ namespace datatools {
       out_ << std::endl << indent << "**Detailed description :** " << std::endl;
       out_ << indent << std::endl;
       print_multi_lines(out_, _long_description_, indent);
+    }
+
+    if (get_number_of_examples() > 0) {
+      // out_ << std::endl << indent << "**Example";
+      // if (get_number_of_examples() > 1) {
+      //   out_ << "s";
+      // }
+      // out_ << " :** " << std::endl;
+      for (int i = 0; i < get_number_of_examples(); i++) {
+        out_ << std::endl << indent << "***Example ";
+        if (get_number_of_examples() > 1) {
+          out_ << (i + 1);
+        }
+        out_ <<  " :*** "    << std::endl;
+        out_ << indent << std::endl;
+        print_multi_lines(out_, get_example(i), indent);
+      }
     }
 
     return;

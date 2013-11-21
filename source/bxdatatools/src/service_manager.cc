@@ -593,25 +593,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
                                 )
     ;
 
-  {
-    configuration_property_description & cpd = ocd_.add_configuration_property_info();
-    cpd.set_name_pattern("logging.priority")
-      .set_terse_description("Set the logging priority threshold")
-      .set_traits(datatools::TYPE_STRING)
-      .set_mandatory(false)
-      .set_default_value_string("warning")
-      .set_long_description("Supported values:                         \n"
-                            "                                          \n"
-                            " * ``""``                                 \n"
-                            "                                          \n"
-                            "                                          \n"
-                            "Example::                                 \n"
-                            "                                          \n"
-                            "  logging.priority : string = \"notice\"  \n"
-                            "                                          \n"
-                            )
-      ;
-  }
+  datatools::logger::declare_ocd_logging_configuration(ocd_, "warning");
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
@@ -623,11 +605,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
                             "Superseded by the previous method call :                 \n"
                             "  ``datatools::service_manager::set_name(...)``          \n"
                             "                                                         \n"
-                            "Example::                                                \n"
-                            "                                                         \n"
-                            "   name : string = \"DASM\"                              \n"
-                            "                                                         \n"
-                           )
+                            )
+      .add_example("The name of the manager: ::                              \n"
+                   "                                                         \n"
+                   "   name : string = \"DASM\"                              \n"
+                   "                                                         \n"
+                   )
       ;
   }
 
@@ -641,11 +624,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
                             "Superseded by the previous method call :                 \n"
                             "  ``datatools::service_manager::set_description(...)``   \n"
                             "                                                         \n"
-                            "Example::                                                \n"
-                            "                                                         \n"
-                            "   description : string = \"The service manager for data analysis\" \n"
-                            "                                                         \n"
                             )
+       .add_example("The manager's description string: ::                                \n"
+                    "                                                                    \n"
+                    "   description : string = \"The service manager for data analysis\" \n"
+                    "                                                                    \n"
+                    )
       ;
   }
 
@@ -660,14 +644,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
       .set_long_description(
                             "A list of filenames from where the manager               \n"
                             "loads the directives to dynamically instantiate          \n"
-                            "new embedded service objects. The filenames may contains  \n"
+                            "new embedded service objects. The filenames may contains \n"
                             "some environment variables.                              \n"
-                            "                                                         \n"
-                            "Example::                                                \n"
-                            "                                                         \n"
-                            "   services.configuration_files : string[2] as path = \\ \n"
-                            "     \"${CONFIG_REPOSITORY_DIR}/services.conf\" \\       \n"
-                            "     \"${CONFIG_REPOSITORY_DIR}/other_services.conf\"    \n"
                             "                                                         \n"
                             "The target files must use the format of the              \n"
                             "``datatools::multi_properties`` class.                   \n"
@@ -680,7 +658,14 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
                             "previous method calls :                                  \n"
                             "  ``datatools::service_manager::load(...)``              \n"
                             )
-    ;
+      .add_example(
+                   "A service manager with two sets of services: ::          \n"
+                   "                                                         \n"
+                   "   services.configuration_files : string[2] as path = \\ \n"
+                   "     \"${CONFIG_REPOSITORY_DIR}/services.conf\" \\       \n"
+                   "     \"${CONFIG_REPOSITORY_DIR}/other_services.conf\"    \n"
+                   )
+      ;
   }
 
 
@@ -698,9 +683,9 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
                                 "The ``${CONFIG_DIR}/database_services.conf``,                 \n"
                                 "``${CONFIG_DIR}/io_services.conf`` and                        \n"
                                 "``${CONFIG_DIR}/processing_services.conf`` files use          \n"
-                                "the ``datatools::multi_properties`` ASCII format.               \n"
+                                "the ``datatools::multi_properties`` ASCII format.             \n"
                                 "                                                                \n"
-                                "Example::                                                       \n"
+                                "***Example :*** ::                                              \n"
                                 "                                                                \n"
                                 "  #@description A list of services                              \n"
                                 "  #@key_label   \"name\"                                        \n"

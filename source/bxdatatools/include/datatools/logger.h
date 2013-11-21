@@ -129,7 +129,8 @@ struct logger {
 						bool throw_on_error = true);
 
   static void declare_ocd_logging_configuration(datatools::object_configuration_description &,
-						const std::string & = "");
+						const std::string & default_value_ = "warning",
+						const std::string & prefix_ = "");
 
 };
 } // namespace datatools
