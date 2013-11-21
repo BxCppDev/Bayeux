@@ -14,14 +14,32 @@ namespace genbb {
 
   void initialize(int argc_, char * argv_[])
   {
-    ::genbb::_special_initialize_impl();
+    static bool _init = false;
+    if (!_init) {
+      ::genbb::_special_initialize_impl();
+      _init = true;
+    } else {
+#if GENBB_HELP_WITH_IMPLICIT_INIT_FINI == 0
+      DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
+                     "Attempt to initialize the already initialized Bayeux/genbb_help library module !");
+#endif
+    }
     return;
   }
 
   void terminate()
   {
-    ::genbb::_special_terminate_impl();
+    static bool _terminate = false;
+    if (!_terminate) {
+      ::genbb::_special_terminate_impl();
+      _terminate = true;
+    } else {
+#if GENBB_HELP_WITH_IMPLICIT_INIT_FINI == 0
+      DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
+                     "Attempt to terminate the already terminated Bayeux/genbb_help library module !");
+#endif
+    }
     return;
   }
 
-} // end of namespace datatools
+} // end of namespace genbb

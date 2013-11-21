@@ -325,6 +325,7 @@ function do_configure ()
     local reset_build_dir=0
     local with_doc=1
     local with_test=1
+    local with_implicit_init_fini=1
     local with_dependency_check=0
     local with_fortran=0
     local with_inspector=1
@@ -347,6 +348,10 @@ function do_configure ()
 	elif [ "${option}" = "--install-prefix" ]; then
 	    shift 1
 	    install_prefix="$1"
+	elif [ "${option}" = "--with-implicit-init-fini" ]; then
+	    with_implicit_init_fini=1
+	elif [ "${option}" = "--without-implicit-init-fini" ]; then
+	    with_implicit_init_fini=0
 	elif [ "${option}" = "--with-documentation" ]; then
 	    with_doc=1
 	elif [ "${option}" = "--without-documentation" ]; then
@@ -405,16 +410,17 @@ function do_configure ()
     test -f ${pkgtools_conf} && rm -f ${pkgtools_conf}
     echo "build_dir=${the_build_dir}" >> ${pkgtools_conf}
 
-    pkgtools__msg_notice "Installation prefix   : '${install_prefix}'"
-    pkgtools__msg_notice "With documentation    : '${with_doc}'"
-    pkgtools__msg_notice "With test material    : '${with_test}'"
-    pkgtools__msg_notice "With Fortran          : '${with_fortran}'"
-    pkgtools__msg_notice "With inspector        : '${with_inspector}'"
-    pkgtools__msg_notice "With reflection       : '${with_reflection}'"
+    pkgtools__msg_notice "Installation prefix     : '${install_prefix}'"
+    pkgtools__msg_notice "With documentation      : '${with_doc}'"
+    pkgtools__msg_notice "With test material      : '${with_test}'"
+    pkgtools__msg_notice "With implicit init/fini : '${with_implicit_init_fini}'"
+    pkgtools__msg_notice "With Fortran            : '${with_fortran}'"
+    pkgtools__msg_notice "With inspector          : '${with_inspector}'"
+    pkgtools__msg_notice "With reflection         : '${with_reflection}'"
     if [ ${bio_support} -eq 1 ]; then
-	pkgtools__msg_notice "With Boost I/O DLL    : '${with_bio}'"
+        pkgtools__msg_notice "With Boost I/O DLL      : '${with_bio}'"
     fi
-    pkgtools__msg_notice "With dependency check : '${with_dependency_check}'"
+    pkgtools__msg_notice "With dependency check   : '${with_dependency_check}'"
 
     if [ ${with_dependency_check} -eq 1 ]; then
 	do_check
@@ -430,20 +436,21 @@ function do_configure ()
     # 	additional_options="${additional_options}-DGENBB_HELP_WITH_BIO=${with_bio} "
     # fi
     cd ${the_build_dir}
-    cmake \
-	-DCMAKE_INSTALL_PREFIX:PATH=${install_prefix} \
-	-DCMAKE_BUILD_TYPE:STRING=Release \
-	-Ddatatools_DIR=${DATATOOLS_CMAKE_CONFIG_DIR} \
-	-Dgeomtools_DIR=${GEOMTOOLS_CMAKE_CONFIG_DIR} \
+    cmake                                                                                  \
+	-DCMAKE_INSTALL_PREFIX:PATH=${install_prefix}                                      \
+	-DCMAKE_BUILD_TYPE:STRING=Release                                                  \
+	-Ddatatools_DIR=${DATATOOLS_CMAKE_CONFIG_DIR}                                      \
+	-Dgeomtools_DIR=${GEOMTOOLS_CMAKE_CONFIG_DIR}                                      \
 	-DCMAKE_MODULE_PATH:PATH="${CADFAEL_SHARE_DIR}/cmake/Modules;${CMAKE_MODULE_PATH}" \
-	-DGENBB_HELP_STANDALONE=1 \
-	-DGENBB_HELP_WITH_BIO=${with_bio} \
-	-DGENBB_HELP_WITH_FORTRAN=${with_fortran} \
-	-DGENBB_HELP_WITH_DOC=${with_doc} \
-	-DGENBB_HELP_WITH_TEST=${with_test} \
-	-DGENBB_HELP_WITH_REFLECTION=${with_reflection} \
-	-DGENBB_HELP_WITH_INSPECTOR=${with_inspector} \
-	${additional_options} \
+	-DGENBB_HELP_STANDALONE=1                                                          \
+	-DGENBB_HELP_WITH_BIO=${with_bio}                                                  \
+	-DGENBB_HELP_WITH_FORTRAN=${with_fortran}                                          \
+	-DGENBB_HELP_WITH_DOC=${with_doc}                                                  \
+	-DGENBB_HELP_WITH_TEST=${with_test}                                                \
+	-DGENBB_HELP_WITH_REFLECTION=${with_reflection}                                    \
+	-DGENBB_HELP_WITH_INSPECTOR=${with_inspector}                                      \
+	-DGENBB_HELP_WITH_IMPLICIT_INIT_FINI=${with_implicit_init_fini}                    \
+	${additional_options}                                                              \
 	..
     if [ $? -ne 0 ]; then
 	pkgtools__msg_error "Cannot configure the '${package_name}' package !"

@@ -8,6 +8,9 @@
 /***  genbb_help is built standalone or not ***/
 #cmakedefine01 GENBB_HELP_STANDALONE
 
+//! Evaluates to true if materials was built with automated init/fini operation at DLL loading
+#cmakedefine01 GENBB_HELP_WITH_IMPLICIT_INIT_FINI
+
 /***  genbb_help debug flag ***/
 #cmakedefine01 GENBB_HELP_WITH_DEBUG
 
