@@ -43,6 +43,8 @@ class temp_file {
 
   void set_remove_at_destroy(bool);
 
+  void set_verbose(bool);
+
   std::ofstream& out();
 
   std::ifstream& in();
@@ -59,6 +61,7 @@ class temp_file {
 
 
  private:
+  bool   verbose_;
   bool   remove_at_destroy_;
   std::string path_dir_;
   std::string pattern_;
@@ -74,4 +77,3 @@ class temp_file {
 } // namespace datatools
 
 #endif // DATATOOLS_TEMPORARY_FILES_H_
-

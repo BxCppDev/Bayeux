@@ -85,10 +85,12 @@ temp_file::temp_file(std::string path_dir, std::string pattern,
 // dtor:
 temp_file::~temp_file() {
   if (remove_at_destroy_) {
-    DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
-                  "Deleting the temporary file with name '"
-                  << filename_
-                  << "'");
+    if(verbose_) {
+      DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
+                    "Deleting the temporary file with name '"
+                    << filename_
+                    << "'");
+    }
     this->remove();
   }
   if (template_ != 0) {
@@ -120,6 +122,11 @@ bool temp_file::is_write_open() const {
 
 void temp_file::set_remove_at_destroy(bool r) {
   remove_at_destroy_ = r;
+}
+
+
+void temp_file::set_verbose(bool v) {
+  verbose_ = v;
 }
 
 
@@ -245,6 +252,7 @@ void temp_file::remove() {
 
 
 void temp_file::set_defaults() {
+  verbose_ = false;
   remove_at_destroy_ = true;
   template_ = 0;
   read_open_ = false;
