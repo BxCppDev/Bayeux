@@ -208,7 +208,7 @@ namespace mctools {
       _use_light_nuclei_             = true;
       _he3_as_generic_ion_           = false;
       _use_light_anti_nuclei_        = false;
-      _use_generic_ion_              = false;
+      _use_generic_ion_              = true;
 
       return;
     }
@@ -306,6 +306,8 @@ namespace mctools {
       if (config_.has_key ("use_generic_ion")) {
         _use_generic_ion_ = config_.fetch_boolean ("use_generic_ion");
       }
+
+      // End of parsing.
 
       if (_use_light_nuclei_ && _he3_as_generic_ion_) {
         _use_generic_ion_ = true;
@@ -651,38 +653,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
                                 "initialize a list of Geant4 particles on user demand.\n"
                                 );
 
-
-
-  {
-    // Description of the 'logging.priority' configuration property :
-    datatools::configuration_property_description & cpd
-      = ocd_.add_property_info();
-    cpd.set_name_pattern("logging.priority")
-      .set_terse_description("Logging priority threshold")
-      .set_traits(datatools::TYPE_STRING)
-      .set_mandatory(false)
-      .set_default_value_string("warning")
-      .set_long_description("Allowed values are:                                    \n"
-                            "                                                       \n"
-                            " * ``\"fatal\"``       : print fatal error messages    \n"
-                            " * ``\"critical\"``    : print critical error messages \n"
-                            " * ``\"error\"``       : print error messages          \n"
-                            " * ``\"warning\"``     : print warnings                \n"
-                            " * ``\"notice\"``      : print notice messages         \n"
-                            " * ``\"information\"`` : print informational messages  \n"
-                            " * ``\"debug\"``       : print debug messages          \n"
-                            " * ``\"trace\"``       : print trace messages          \n"
-                            "                                                       \n"
-                            "Default value: ``\"warning\"``                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            "  logging.priority : string = \"warning\"              \n"
-                            "                                                       \n"
-                            )
-      ;
-  }
-
+  logger::declare_ocd_logging_configuration(ocd_, "warning");
 
   {
     // Description of the 'use_geantinos' configuration property :
@@ -693,13 +664,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(false)
-      .set_long_description("Default: ``0``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " use_geantinos : boolean = 0                           \n"
-                            "                                                       \n"
-                            )
+      .add_example("Activate the *geantinos* mock particles: :: \n"
+                   "                                            \n"
+                   " use_geantinos : boolean = 1                \n"
+                   "                                            \n"
+                   )
       ;
   }
 
@@ -712,13 +681,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(false)
-      .set_long_description("Default: ``0``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " use_optical_photons : boolean = 0                     \n"
-                            "                                                       \n"
-                            )
+      .add_example("Activate the *optical* photons: :: \n"
+                   "                                   \n"
+                   " use_optical_photons : boolean = 1 \n"
+                   "                                   \n"
+                   )
       ;
   }
 
@@ -731,13 +698,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(false)
-      .set_long_description("Default: ``0``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " use_muon_leptons : boolean = 0                        \n"
-                            "                                                       \n"
-                            )
+      .add_example("Activate the *muon* leptons: :: \n"
+                   "                                \n"
+                   " use_muon_leptons : boolean = 1 \n"
+                   "                                \n"
+                   )
       ;
   }
 
@@ -750,13 +715,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(false)
-      .set_long_description("Default: ``0``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " use_tau_leptons : boolean = 0                         \n"
-                            "                                                       \n"
-                            )
+      .add_example("Activate the *tau* leptons: :: \n"
+                   "                               \n"
+                   " use_tau_leptons : boolean = 1 \n"
+                   "                               \n"
+                   )
       ;
   }
 
@@ -769,13 +732,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(false)
-      .set_long_description("Default: ``0``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " use_light_mesons : boolean = 0                        \n"
-                            "                                                       \n"
-                            )
+      .add_example("Activate the *light* mesons: :: \n"
+                   "                                \n"
+                   " use_light_mesons : boolean = 1 \n"
+                   "                                \n"
+                   )
       ;
   }
 
@@ -788,13 +749,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(false)
-      .set_long_description("Default: ``0``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " use_charm_mesons : boolean = 0                        \n"
-                            "                                                       \n"
-                            )
+      .add_example("Activate the *charm* mesons: :: \n"
+                   "                                \n"
+                   " use_charm_mesons : boolean = 1 \n"
+                   "                                \n"
+                   )
       ;
   }
 
@@ -807,13 +766,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(false)
-      .set_long_description("Default: ``0``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " use_bottom_mesons : boolean = 0                       \n"
-                            "                                                       \n"
-                            )
+      .add_example("Activate the *bottom* mesons: :: \n"
+                   "                                 \n"
+                   " use_bottom_mesons : boolean = 1 \n"
+                   "                                 \n"
+                   )
       ;
   }
 
@@ -826,13 +783,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(true)
-      .set_long_description("Default: ``1``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " use_nucleons : boolean = 1                            \n"
-                            "                                                       \n"
-                            )
+      .add_example("Activate the *nucleons*: :: \n"
+                   "                            \n"
+                   " use_nucleons : boolean = 1 \n"
+                   "                            \n"
+                   )
       ;
   }
 
@@ -845,13 +800,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(false)
-      .set_long_description("Default: ``0``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " use_strange_baryons : boolean = 0                     \n"
-                            "                                                       \n"
-                            )
+      .add_example("Activate the *strange* baryons: :: \n"
+                   "                                   \n"
+                   " use_strange_baryons : boolean = 1 \n"
+                   "                                   \n"
+                   )
       ;
   }
 
@@ -864,13 +817,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(false)
-      .set_long_description("Default: ``0``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " use_charm_baryons : boolean = 0                       \n"
-                            "                                                       \n"
-                            )
+      .add_example("Activate the *charm* baryons: :: \n"
+                   "                                 \n"
+                   " use_charm_baryons : boolean = 1 \n"
+                   "                                 \n"
+                   )
       ;
   }
 
@@ -883,13 +834,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(false)
-      .set_long_description("Default: ``0``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " use_bottom_baryons : boolean = 0                      \n"
-                            "                                                       \n"
-                            )
+      .add_example("Activate the *bottom* baryons: :: \n"
+                   "                                  \n"
+                   " use_bottom_baryons : boolean = 1 \n"
+                   "                                  \n"
+                   )
       ;
   }
 
@@ -902,13 +851,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(true)
-      .set_long_description("Default: ``1``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " use_light_nuclei : boolean = 1                        \n"
-                            "                                                       \n"
-                            )
+      .add_example("Activate the *light* nuclei: :: \n"
+                   "                                \n"
+                   " use_light_nuclei : boolean = 1 \n"
+                   "                                \n"
+                   )
       ;
   }
 
@@ -921,13 +868,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(false)
-      .set_long_description("Default: ``0``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " use_light_anti_nuclei : boolean = 0                   \n"
-                            "                                                       \n"
-                            )
+      .add_example("Activate the *light* anti nuclei: :: \n"
+                   "                                     \n"
+                   " use_light_anti_nuclei : boolean = 1 \n"
+                   "                                     \n"
+                   )
       ;
   }
 
@@ -940,13 +885,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::particles_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(true)
-      .set_long_description("Default: ``1``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " use_generic_ion : boolean = 1                         \n"
-                            "                                                       \n"
-                            )
+      .add_example("Activate the *generic ion*: :: \n"
+                   "                               \n"
+                   " use_generic_ion : boolean = 1 \n"
+                   "                               \n"
+                   )
       ;
   }
 

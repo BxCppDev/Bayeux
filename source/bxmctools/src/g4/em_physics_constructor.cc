@@ -894,35 +894,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
                                 );
 
 
-  {
-    // Description of the 'logging.priority' configuration property :
-    datatools::configuration_property_description & cpd
-      = ocd_.add_property_info();
-    cpd.set_name_pattern("logging.priority")
-      .set_terse_description("Logging priority threshold")
-      .set_traits(datatools::TYPE_STRING)
-      .set_mandatory(false)
-      .set_default_value_string("warning")
-      .set_long_description("Allowed values are:                                    \n"
-                            "                                                       \n"
-                            " * ``\"fatal\"``       : print fatal error messages    \n"
-                            " * ``\"critical\"``    : print critical error messages \n"
-                            " * ``\"error\"``       : print error messages          \n"
-                            " * ``\"warning\"``     : print warnings                \n"
-                            " * ``\"notice\"``      : print notice messages         \n"
-                            " * ``\"information\"`` : print informational messages  \n"
-                            " * ``\"debug\"``       : print debug messages          \n"
-                            " * ``\"trace\"``       : print trace messages          \n"
-                            "                                                       \n"
-                            "Default value: ``\"warning\"``                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            "  logging.priority : string = \"warning\"              \n"
-                            "                                                       \n"
-                            )
-      ;
-  }
+  logger::declare_ocd_logging_configuration(ocd_, "warning");
 
   {
     // Description of the 'em.model' configuration property :
@@ -940,12 +912,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
                             " * ``standard``  : Standard EM processes               \n"
                             " * ``livermore`` : Livermore low-energy model          \n"
                             " * ``penelope``  : Penelope low-energy model           \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " em.model : string = \"standard\"                      \n"
-                            "                                                       \n"
                             )
+      .add_example("Use the *Livermore* EM model: ::   \n"
+                   "                                   \n"
+                   " em.model : string = \"livermore\" \n"
+                   "                                   \n"
+                   )
       ;
   }
 
@@ -958,13 +930,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(false)
-      .set_long_description("Default: ``0``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " em.gamma.rayleigh_scattering : boolean = 0            \n"
-                            "                                                       \n"
-                            )
+      .add_example("Activate Rayleigh scattering : ::           \n"
+                   "                                            \n"
+                   " em.gamma.rayleigh_scattering : boolean = 1 \n"
+                   "                                            \n"
+                   )
       ;
   }
 
@@ -977,13 +947,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(true)
-      .set_long_description("Default: ``1``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " em.gamma.photo_electric : boolean = 1                 \n"
-                            "                                                       \n"
-                            )
+      .add_example("Activate photoelectric effect : ::     \n"
+                   "                                       \n"
+                   " em.gamma.photo_electric : boolean = 1 \n"
+                   "                                       \n"
+                   )
       ;
   }
 
@@ -996,13 +964,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(true)
-      .set_long_description("Default: ``1``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " em.gamma.compton_scattering : boolean = 1             \n"
-                            "                                                       \n"
-                            )
+      .add_example("Activate Compton scattering : ::           \n"
+                   "                                           \n"
+                   " em.gamma.compton_scattering : boolean = 1 \n"
+                   "                                           \n"
+                   )
       ;
   }
 
@@ -1015,13 +981,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(true)
-      .set_long_description("Default: ``1``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " em.gamma.conversion : boolean = 1                     \n"
-                            "                                                       \n"
-                            )
+      .add_example("Activate gamma conversion : ::     \n"
+                   "                                   \n"
+                   " em.gamma.conversion : boolean = 1 \n"
+                   "                                   \n"
+                   )
       ;
   }
 
@@ -1034,13 +998,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(false)
-      .set_long_description("Default: ``0``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " em.gamma.conversion_to_muons : boolean = 0            \n"
-                            "                                                       \n"
-                            )
+      .add_example("Activate gamma conversion to muons : ::     \n"
+                   "                                            \n"
+                   " em.gamma.conversion_to_muons : boolean = 1 \n"
+                   "                                            \n"
+                   )
       ;
   }
 
@@ -1054,13 +1016,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(true)
-      .set_long_description("Default: ``1``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " em.electron.ionisation : boolean = 1                  \n"
-                            "                                                       \n"
-                            )
+      .add_example("Activate electron/positron ionisation : :: \n"
+                   "                                           \n"
+                   " em.electron.ionisation : boolean = 1      \n"
+                   "                                           \n"
+                   )
       ;
   }
 
@@ -1073,13 +1033,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(true)
-      .set_long_description("Default: ``1``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " em.electron.bremsstrahlung : boolean = 1              \n"
-                            "                                                       \n"
-                            )
+      .add_example("Activate electron/positron bremsstrahlung : :: \n"
+                   "                                               \n"
+                   " em.electron.bremsstrahlung : boolean = 1      \n"
+                   "                                               \n"
+                   )
       ;
   }
 
@@ -1092,13 +1050,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(true)
-      .set_long_description("Default: ``1``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " em.electron.multiple_scattering : boolean = 1         \n"
-                            "                                                       \n"
-                            )
+      .add_example("Activate electron/positron multiple scattering : :: \n"
+                   "                                                    \n"
+                   " em.electron.multiple_scattering : boolean = 1      \n"
+                   "                                                    \n"
+                   )
       ;
   }
 
@@ -1111,13 +1067,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(true)
-      .set_long_description("Default: ``1``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " em.electron.multiple_scattering.use_distance_to_boundary : boolean = 1  \n"
-                            "                                                       \n"
-                            )
+      .add_example("Use the distance to boundary algorithm for electron/positron multiple scattering : :: \n"
+                   "                                                                         \n"
+                   " em.electron.multiple_scattering.use_distance_to_boundary : boolean = 1  \n"
+                   "                                                                         \n"
+                   )
       ;
   }
 
@@ -1130,13 +1084,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_REAL)
       .set_mandatory(false)
       .set_default_value_real(0.005)
-      .set_long_description("Default: ``0.005``                                     \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " em.electron.multiple_scattering.range_factor : real = 0.005 \n"
-                            "                                                       \n"
-                            )
+      .add_example("Set the electron/positron multiple scattering range factor : :: \n"
+                   "                                                                \n"
+                   " em.electron.multiple_scattering.range_factor : real = 0.005    \n"
+                   "                                                                \n"
+                   )
       ;
   }
 
@@ -1149,13 +1101,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(true)
-      .set_long_description("Default: ``1``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " em.electron.step_limiter : boolean = 1                \n"
-                            "                                                       \n"
-                            )
+      .add_example("Set the electron/positron step limiter technique : ::  \n"
+                   "                                                       \n"
+                   " em.electron.step_limiter : boolean = 1                \n"
+                   "                                                       \n"
+                   )
       ;
   }
 
@@ -1168,13 +1118,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(true)
-      .set_long_description("Default: ``1``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " em.positron.annihilation : boolean = 1                \n"
-                            "                                                       \n"
-                            )
+      .add_example("Activate positron annihilation : ::     \n"
+                   "                                        \n"
+                   " em.positron.annihilation : boolean = 1 \n"
+                   "                                        \n"
+                   )
       ;
   }
 
@@ -1187,13 +1135,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(false)
-      .set_long_description("Default: ``0``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " em.deexcitation.fluorescence : boolean = 0            \n"
-                            "                                                       \n"
-                            )
+      .add_example("Activate deexcitation by fluorescence : ::  \n"
+                   "                                            \n"
+                   " em.deexcitation.fluorescence : boolean = 1 \n"
+                   "                                            \n"
+                   )
       ;
   }
 
@@ -1206,15 +1152,15 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(false)
-      .set_long_description("Default: ``0``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " em.deexcitation.auger : boolean = 0                   \n"
-                            "                                                       \n"
+      .set_long_description(
                             "Auger effect is only activated if ``em.deexcitation.fluorescence``\n"
-                            " is also activated.                                       \n"
+                            "is also activated.                                                \n"
                             )
+      .add_example("Activate deexcitation by Auger effect : :: \n"
+                   "                                           \n"
+                   " em.deexcitation.auger : boolean = 1       \n"
+                   "                                           \n"
+                   )
       ;
   }
 
@@ -1227,13 +1173,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(false)
-      .set_long_description("Default: ``0``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " em.deexcitation.pixe : boolean = 0                    \n"
-                            "                                                       \n"
-                            )
+      .add_example("Activate deexcitation by PIXE process : :: \n"
+                   "                                           \n"
+                   " em.deexcitation.pixe : boolean = 1        \n"
+                   "                                           \n"
+                   )
       ;
   }
 
@@ -1246,19 +1190,17 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
       .set_default_value_string("Empirical")
-      .set_long_description("Default: ``\"Empirical\"``                             \n"
-                            "                                                       \n"
-                            "Allowed values are:                                    \n"
+      .set_long_description("Allowed values are:                                    \n"
                             "                                                       \n"
                             " * ``\"Empirical\"``                                   \n"
                             " * ``\"ECPSSR_FormFactor\"``                           \n"
                             " * ``\"ECPSSR_Analytical\"``                           \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " em.deexcitation.pixe.cross_section_model : string = \"Empirical\"  \n"
-                            "                                                       \n"
                             )
+      .add_example("Use the *empirical* PIXE model : :: \n"
+                   "                                                       \n"
+                   " em.deexcitation.pixe.cross_section_model : string = \"Empirical\"  \n"
+                   "                                                       \n"
+                   )
       ;
   }
 
@@ -1271,13 +1213,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_STRING,
                   datatools::configuration_property_description::ARRAY)
       .set_mandatory(false)
-      .set_long_description("Default: empty                                         \n"
-                           "                                                        \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " em.deexcitation.regions : string[2] = \"A\" \"B\"     \n"
-                            "                                                       \n"
-                            )
+      .add_example("Define two regions with activated deexcitation: :: \n"
+                   "                                                   \n"
+                   " em.deexcitation.regions : string[2] = \"A\" \"B\" \n"
+                   "                                                   \n"
+                   )
       ;
   }
 
@@ -1290,15 +1230,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(false)
-      .set_long_description("Default: ``0``                                         \n"
-                           "                                                        \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " em.deexcitation.regions : string[2] = \"A\" \"B\"     \n"
-                            " em.deexcitation.regions.A.fluorescence : boolean = 1  \n"
-                            " em.deexcitation.regions.B.fluorescence : boolean = 1  \n"
-                            "                                                       \n"
-                            )
+      .add_example("Activate fluorescence in two *deexcitation* regions: :: \n"
+                   "                                                        \n"
+                   " em.deexcitation.regions : string[2] = \"A\" \"B\"      \n"
+                   " em.deexcitation.regions.A.fluorescence : boolean = 1   \n"
+                   " em.deexcitation.regions.B.fluorescence : boolean = 1   \n"
+                   "                                                        \n"
+                   )
       ;
   }
 
@@ -1311,15 +1249,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(false)
-      .set_long_description("Default: ``0``                                         \n"
-                           "                                                        \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " em.deexcitation.regions : string[2] = \"A\" \"B\"     \n"
-                            " em.deexcitation.regions.A.auger : boolean = 1         \n"
-                            " em.deexcitation.regions.B.auger : boolean = 1         \n"
-                            "                                                       \n"
-                            )
+      .add_example("Activate Auger effect in two *deexcitation* regions: :: \n"
+                   "                                                        \n"
+                   " em.deexcitation.regions : string[2] = \"A\" \"B\"      \n"
+                   " em.deexcitation.regions.A.auger : boolean = 1          \n"
+                   " em.deexcitation.regions.B.auger : boolean = 1          \n"
+                   "                                                        \n"
+                   )
       ;
   }
 
@@ -1332,15 +1268,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(false)
-      .set_long_description("Default: ``0``                                         \n"
-                           "                                                        \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " em.deexcitation.regions : string[2] = \"A\" \"B\"     \n"
-                            " em.deexcitation.regions.A.pixe : boolean = 1          \n"
-                            " em.deexcitation.regions.B.pixe : boolean = 1          \n"
-                            "                                                       \n"
-                            )
+      .add_example("Activate PIXE effect in two *deexcitation* regions: :: \n"
+                   "                                                       \n"
+                   " em.deexcitation.regions : string[2] = \"A\" \"B\"     \n"
+                   " em.deexcitation.regions.A.pixe : boolean = 1          \n"
+                   " em.deexcitation.regions.B.pixe : boolean = 1          \n"
+                   "                                                       \n"
+                   )
       ;
   }
 

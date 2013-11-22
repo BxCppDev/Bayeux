@@ -797,34 +797,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
 
   // ***** General ***** //
 
-  {
-    // Description of the 'logging.priority' configuration property :
-    datatools::configuration_property_description & cpd
-      = ocd_.add_property_info();
-    cpd.set_name_pattern("logging.priority")
-      .set_terse_description("Logging priority threshold")
-      .set_traits(datatools::TYPE_STRING)
-      .set_mandatory(false)
-      .set_long_description("Allowed values are:                                    \n"
-                            "                                                       \n"
-                            " * ``\"fatal\"``       : print fatal error messages    \n"
-                            " * ``\"critical\"``    : print critical error messages \n"
-                            " * ``\"error\"``       : print error messages          \n"
-                            " * ``\"warning\"``     : print warnings                \n"
-                            " * ``\"notice\"``      : print notice messages         \n"
-                            " * ``\"information\"`` : print informational messages  \n"
-                            " * ``\"debug\"``       : print debug messages          \n"
-                            " * ``\"trace\"``       : print trace messages          \n"
-                            "                                                       \n"
-                            "Default value: ``\"warning\"``                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            "  logging.priority : string = \"warning\"              \n"
-                            "                                                       \n"
-                            )
-      ;
-  }
+  logger::declare_ocd_logging_configuration(ocd_, "warning");
 
   // ***** Geant4 physics list ***** //
 
@@ -846,15 +819,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
     for (size_t i = 0; i < f.AvailablePhysLists().size(); i++) {
       ld << " * ``\"" <<   f.AvailablePhysLists()[i] << "\"``                    \n";
     }
-    ld << "                                                                      \n"
-       << "Default: empty                                                        \n"
-       << "                                                                      \n"
-       << "Example::                                                             \n"
-       << "                                                                      \n"
-       << " geant4.physics_list : string= \"FTFP_BERT_EMV\"                      \n"
-       << "                                                                      \n"
-       << "This property is not compatible with the ``physics_constructors.names``\n"
-       << "property.                                                             \n"
+    ld << "This property is not compatible with the ``physics_constructors.names``\n"
+       << "property.                                                              \n"
       ;
 
     cpd.set_name_pattern("geant4.physics_list")
@@ -863,6 +829,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
       .set_mandatory(false)
       .set_complex_triggering_conditions(true)
       .set_long_description(ld.str())
+      .add_example(
+                   "                                                                      \n"
+                   "  geant4.physics_list : string= \"FTFP_BERT_EMV\"                      \n"
+                   "                                                                      \n"
+                   )
       ;
     }
 
@@ -878,15 +849,14 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
                   datatools::configuration_property_description::ARRAY)
       .set_mandatory(false)
       .set_complex_triggering_conditions(true)
-      .set_long_description("Default: empty                                                             \n"
-                            "                                                                           \n"
-                            "Example::                                                                  \n"
-                            "                                                                           \n"
-                            " physics_constructors.names : string[2] = \"particles\" \"electromagnetic\" \n"
-                            "                                                                           \n"
+      .set_long_description(
                             "This property is not compatible with the ``geant4.physics_list``           \n"
                             "property.                                                                  \n"
-                           )
+                            )
+      .add_example("                                                                            \n"
+                   " physics_constructors.names : string[2] = \"particles\" \"electromagnetic\" \n"
+                   "                                                                            \n"
+                   )
       ;
   }
 
@@ -898,17 +868,15 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
       .set_terse_description("The class ID of a given physics constructor")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(true)
-      .set_long_description("Default: empty                                                             \n"
-                            "                                                                           \n"
-                            "Example::                                                                  \n"
-                            "                                                                           \n"
-                            " physics_constructors.names : string[2] = \"particles\" \"electromagnetic\" \n"
-                            " physics_constructors.particles.id : string = \\                           \n"
-                            "    \"mctools::g4::particles_physics_constructor\"                         \n"
-                            " physics_constructors.electromagnetic.id : string = \\                     \n"
-                            "    \"mctools::g4::em_physics_constructor\"                                \n"
-                            "                                                                           \n"
-                            )
+      .add_example("Registration of particles and electromagnetic processes: ::                \n"
+                   "                                                                           \n"
+                   " physics_constructors.names : string[2] = \"particles\" \"electromagnetic\" \n"
+                   " physics_constructors.particles.id : string = \\                           \n"
+                   "    \"mctools::g4::particles_physics_constructor\"                         \n"
+                   " physics_constructors.electromagnetic.id : string = \\                     \n"
+                   "    \"mctools::g4::em_physics_constructor\"                                \n"
+                   "                                                                           \n"
+                   )
       ;
   }
 
