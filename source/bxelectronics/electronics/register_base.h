@@ -62,6 +62,17 @@ namespace electronics {
     /// Add a bitset
     void add_bitset(const std::string & name_, const bitset_desc &);
 
+    /// Add a bitset
+    void add_bitset(const std::string & name_,
+                    uint8_t lsb_position_,
+                    uint8_t size_,
+                    const std::string & default_value_ = "");
+
+    /// Append a bitset
+    void append_bitset(const std::string & name_,
+                       uint8_t size_,
+                       const std::string & default_value_ = "");
+
     /* ***********
      * INTERFACE *
      *************/
@@ -83,6 +94,14 @@ namespace electronics {
     virtual bool allow_embedded_components() const;
 
   protected:
+
+    /// Common initialization of the board
+    void _register_initialize(const datatools::properties & config_,
+                              component_pool_type& components_);
+
+    /// Common termination of the board
+    void _register_reset();
+
 
   private:
 

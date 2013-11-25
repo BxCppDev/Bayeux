@@ -82,56 +82,6 @@ namespace electronics {
     return (component_type) _type_;
   }
 
-  /*
-  void component_base::set_mother(component_base & mother_)
-  {
-    DT_THROW_IF(is_locked(),
-                std::logic_error,
-                "Component '" << get_name() << "' is locked !");
-    DT_THROW_IF(has_mother(),
-                std::logic_error,
-                "Component '" << get_name() << "' already has a mother component !");
-    DT_THROW_IF(this == &mother_,
-                std::logic_error,
-                "Component '" << get_name() << "' cannot be its own mother !");
-    _mother_ = &mother_;
-    return;
-  }
-
-  void component_base::reset_mother()
-  {
-    DT_THROW_IF(is_locked(),
-                std::logic_error,
-                "Component '" << get_name() << "' is already initialized !");
-    DT_THROW_IF(!has_mother(),
-                std::logic_error,
-                "Component '" << get_name() << "' has no mother component !");
-    _mother_ = 0;
-    return;
-  }
-
-  bool component_base::has_mother() const
-  {
-    return _mother_ != 0;
-  }
-
-  component_base & component_base::grab_mother()
-  {
-    DT_THROW_IF(!has_mother(),
-                std::logic_error,
-                "Component '" << get_name() << "' has no mother component !");
-    return *_mother_;
-  }
-
-  const component_base & component_base::get_mother() const
-  {
-    DT_THROW_IF(!has_mother(),
-                std::logic_error,
-                "Component '" << get_name() << "' has no mother component !");
-    return *_mother_;
-  }
-  */
-
   void component_base::build_embedded_labels(std::vector<std::string>& labels_) const
   {
     labels_.clear();

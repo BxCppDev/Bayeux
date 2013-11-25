@@ -22,11 +22,13 @@ set(electronicsLibrary_HEADERS
   ${electronics_SOURCE_DIR}/component_types-reflect.h
   ${electronics_SOURCE_DIR}/component_base.h
   ${electronics_SOURCE_DIR}/bitset_desc.h
+  ${electronics_SOURCE_DIR}/register_base.h
   ${electronics_SOURCE_DIR}/board_base.h
   ${electronics_SOURCE_DIR}/crate_base.h
   ${electronics_SOURCE_DIR}/rack_base.h
   ${electronics_SOURCE_DIR}/component_manager.h
-  )
+  #${electronics_SOURCE_DIR}/digitized_signal.h
+ )
 
 # - Publish headers
 foreach(_hdrin ${electronicsLibrary_HEADERS})
@@ -47,11 +49,13 @@ set(electronicsLibrary_SOURCES
   ${electronics_SOURCE_DIR}/component_utils.cc
   ${electronics_SOURCE_DIR}/component_base.cc
   ${electronics_SOURCE_DIR}/bitset_desc.cc
+  ${electronics_SOURCE_DIR}/register_base.cc
   ${electronics_SOURCE_DIR}/board_base.cc
   ${electronics_SOURCE_DIR}/crate_base.cc
   ${electronics_SOURCE_DIR}/rack_base.cc
   ${electronics_SOURCE_DIR}/component_manager.cc
   ${electronics_SOURCE_DIR}/the_introspectable.cc
+  #${electronics_SOURCE_DIR}/digitized_signal.cc
   #${CMAKE_CURRENT_BINARY_DIR}/test.cc
 )
 

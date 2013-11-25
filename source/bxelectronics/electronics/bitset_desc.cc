@@ -23,13 +23,14 @@
 // Third Party
 // - Bayeux/datatools
 #include <datatools/exception.h>
+#include <datatools/logger.h>
 
 namespace electronics {
 
   bitset_desc::bitset_desc()
   {
     _size_ = 0;
-    _lsb_position_ = 64;
+    _lsb_position_ = INVALID_BIT_POSITION;
     return;
   }
 
@@ -55,10 +56,10 @@ namespace electronics {
       }
     }
 
-    if (_lsb_position_ >= 64) {
+    if (_lsb_position_ == INVALID_BIT_POSITION) {
       if (config_.has_key("lsb_position")) {
         int pos = config_.fetch_integer("lsb_position");
-        DT_THROW_IF(pos < 0 && pos >= 64,
+        DT_THROW_IF(pos < 0 && pos >= INVALID_BIT_POSITION,
                     std::logic_error,
                     "Register '" << get_name() << "' : Invalid LSB position '" << pos << "' !");
         set_lsb_position((uint8_t) pos);
@@ -104,6 +105,11 @@ namespace electronics {
 
   void bitset_desc::set_size(uint8_t sz_)
   {
+    if (! _default_value_.empty()) {
+      DT_THROW_IF(_default_value_.length() != sz_,
+                  std::range_error, "Bitset size '" << sz_
+                  << "' is not compatible with default value '" << _default_value_ << "' !");
+    }
     _size_ = sz_;
     if (_default_value_.empty()) {
       for (int i = 0; i < _size_; i++) {
@@ -144,6 +150,7 @@ namespace electronics {
   void bitset_desc::set_lsb_position(uint8_t lsb_pos_)
   {
     _lsb_position_ = lsb_pos_;
+    DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "LSB=" << (int) _lsb_position_);
     return;
   }
 
@@ -152,9 +159,18 @@ namespace electronics {
     return _lsb_position_;
   }
 
+  void bitset_desc::set(uint8_t lsb_position_, uint8_t size_, const std::string & default_value_)
+  {
+    reset();
+    set_lsb_position(lsb_position_);
+    set_size(size_);
+    set_default_value(default_value_);
+    return;
+  }
+
   uint8_t bitset_desc::get_msb_position() const
   {
-    if (! is_valid()) return 64;
+    if (! is_valid()) return INVALID_BIT_POSITION;
     return _lsb_position_ + _size_ - 1;
   }
 
@@ -162,7 +178,9 @@ namespace electronics {
   {
     DT_THROW_IF(!is_valid(), std::logic_error, "Bitset '" << get_name()
                   << "' is not valid !");
-    dbs_ = boost::dynamic_bitset<>(_default_value_);
+    boost::dynamic_bitset<> dummy(_default_value_);
+    dbs_ = dummy;
+    dummy.reset();
     return;
   }
 
@@ -173,7 +191,10 @@ namespace electronics {
     DT_THROW_IF(get_msb_position() >= size_, std::logic_error, "Bitset '" << get_name()
                   << "' is not valid !");
     boost::dynamic_bitset<> dummy(_size_, 0x0);
-    dbs_ = boost::dynamic_bitset<>(size_, ((~dummy).to_ulong() << _lsb_position_));
+    boost::dynamic_bitset<> dummy2(_size_, ((~dummy).to_ulong() << _lsb_position_));
+    dbs_ = dummy2;
+    dummy2.reset();
+    dummy.reset();
     return;
   }
 

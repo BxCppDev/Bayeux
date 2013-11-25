@@ -18,6 +18,8 @@ namespace electronics {
 
   public:
 
+    static const uint8_t INVALID_BIT_POSITION = 64;
+
     /// Default constructor
     bitset_desc();
 
@@ -47,6 +49,9 @@ namespace electronics {
 
     /// Get the bitset default value
     const std::string & get_default_value() const;
+
+    /// Set the bitset internals
+    void set(uint8_t lsb_position_, uint8_t size_, const std::string &);
 
     /// Initialize
     void initialize(const datatools::properties& config_);

@@ -43,6 +43,7 @@ namespace electronics {
     if (is_initialized()) {
       reset();
     }
+    _mask_.reset(0);
     return;
   }
 
@@ -53,91 +54,125 @@ namespace electronics {
     return;
   }
 
-    /// Check read access flag
-    bool register_base::is_readable() const
-    {
-      return _readable_;
-    }
+  /// Check read access flag
+  bool register_base::is_readable() const
+  {
+    return _readable_;
+  }
 
-    /// Set write access flag
-    void register_base::set_writable(bool w_)
-    {
-      _writable_ = w_;
-      return;
-    }
+  /// Set write access flag
+  void register_base::set_writable(bool w_)
+  {
+    _writable_ = w_;
+    return;
+  }
 
-    /// Check write access flag
-    bool register_base::is_writable() const
-    {
-      return _writable_;
-    }
+  /// Check write access flag
+  bool register_base::is_writable() const
+  {
+    return _writable_;
+  }
 
-    /// Set the size
-    void register_base::set_size(uint8_t sz_)
-    {
-      switch(sz_) {
-      case SIZE_8:
-      case SIZE_16:
-      case SIZE_24:
-      case SIZE_32:
-      case SIZE_48:
-      case SIZE_64:
-        _size_ = sz_;
-        break;
-      default:
-        DT_THROW_IF(true, std::domain_error,
-                    "Invalid register size '" << sz_ << "' !");
-      }
-      _mask_.resize(sz_);
-      return;
+  /// Set the size
+  void register_base::set_size(uint8_t sz_)
+  {
+    switch(sz_) {
+    case SIZE_8:
+    case SIZE_16:
+    case SIZE_24:
+    case SIZE_32:
+    case SIZE_48:
+    case SIZE_64:
+      _size_ = sz_;
+      break;
+    default:
+      DT_THROW_IF(true, std::domain_error,
+                  "Invalid register size '" << sz_ << "' !");
     }
+    _mask_.resize(sz_, false);
+    return;
+  }
 
-    /// Get the size
-    uint8_t register_base::get_size() const
-    {
-      return _size_;
+  /// Get the size
+  uint8_t register_base::get_size() const
+  {
+    return _size_;
+  }
+
+  /// Get the effective size
+  uint8_t register_base::get_effective_size() const
+  {
+    uint32_t eff_size = 0;
+    for (bitsets_dict_type::const_iterator i = _bitsets_.begin();
+         i != _bitsets_.end();
+         i++) {
+      eff_size += i->second.get_size();
     }
+    return eff_size;
+  }
 
-    /// Get the effective size
-    uint8_t register_base::get_effective_size() const
-    {
-      uint32_t eff_size = 0;
-      for (bitsets_dict_type::const_iterator i = _bitsets_.begin();
-           i != _bitsets_.end();
-           i++) {
-        eff_size += i->second.get_size();
-      }
-      return eff_size;
-    }
-
-    /// Add a bitset
-    void register_base::add_bitset(const std::string & name_, const bitset_desc & bs_)
-    {
-      DT_THROW_IF(name_.empty(),
-                  std::logic_error,
-                  "Register '" << get_name() << "' cannot host an anonymous bitset !");
-      DT_THROW_IF(_bitsets_.find(name_) != _bitsets_.end(),
-                  std::logic_error,
-                  "Register '" << get_name() << "' already has a bitset named '" << name_ << "' !");
-      DT_THROW_IF(bs_.get_msb_position() >= _size_,
-                  std::range_error,
+  /// Add a bitset
+  void register_base::add_bitset(const std::string & name_, const bitset_desc & bs_)
+  {
+    datatools::logger::priority prio = datatools::logger::PRIO_DEBUG;
+    DT_THROW_IF(name_.empty(),
+                std::logic_error,
+                "Register '" << get_name() << "' cannot host an anonymous bitset !");
+    DT_THROW_IF(_bitsets_.find(name_) != _bitsets_.end(),
+                std::logic_error,
+                "Register '" << get_name() << "' already has a bitset named '" << name_ << "' !");
+    DT_THROW_IF(bs_.get_msb_position() >= _size_,
+                std::range_error,
+                "Register '" << get_name()
+                << "'  is too small to address bitset named '" << name_ << "' ! ");
+    DT_LOG_DEBUG(prio, "Name='" << name_ << "'"
+                 << " LSB=" << (int) bs_.get_lsb_position()
+                 << " MSB=" << (int) bs_.get_msb_position());
+    for (int ibit = bs_.get_lsb_position();
+         ibit <= bs_.get_msb_position();
+         ibit++) {
+      DT_THROW_IF(_mask_[ibit],
+                  std::domain_error,
                   "Register '" << get_name()
-                  << "'  is too small to address bitset named '" << name_ << "' ! ");
-      for (int ibit = bs_.get_lsb_position();
-           ibit <= bs_.get_msb_position();
-           ibit++) {
-        DT_THROW_IF(_mask_[ibit],
-                    std::domain_error,
-                    "Register '" << get_name()
-                    << "' : Collision at bit '" << ibit << "' for bitset named '" << name_ << "' ! ");
-        _mask_[ibit] = true;
-      }
-      _bitsets_[name_] = bs_;
-      return;
+                  << "' : Collision at bit '" << ibit << "' for bitset named '" << name_ << "' ! ");
+      _mask_[ibit] = true;
+      DT_LOG_DEBUG(prio, "  mask=" << _mask_);
     }
+    _bitsets_[name_] = bs_;
+    return;
+  }
+
+  /// Add a bitset
+  void register_base::add_bitset(const std::string & name_,
+                                 uint8_t lsb_position_,
+                                 uint8_t size_,
+                                 const std::string & default_value_)
+  {
+    bitset_desc bs;
+    bs.set_lsb_position(lsb_position_);
+    bs.set_size(size_);
+    bs.set_default_value(default_value_);
+    this->add_bitset(name_, bs);
+    bs.reset();
+    return;
+  }
+
+  void register_base::append_bitset(const std::string & name_,
+                                    uint8_t size_,
+                                    const std::string & default_value_)
+  {
+    boost::dynamic_bitset<> dummy(_mask_);
+    dummy.flip();
+    uint8_t lsb_pos = dummy.find_first();
+    DT_THROW_IF(lsb_pos == dummy.npos, std::range_error,
+                "No more bits available in the register for bitset '" << name_ << "' !");
+    dummy.reset();
+    add_bitset(name_, lsb_pos, size_, default_value_);
+    return;
+  }
 
   void register_base::initialize(const datatools::properties& config_,
-                                  component_pool_type& components_)
+                                 component_pool_type& components_)
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
@@ -166,11 +201,11 @@ namespace electronics {
 
   void register_base::_register_reset()
   {
-    _size_ = SIZE_UNDEFINED;
-    _mask_.reset(0);
+    _bitsets_.clear();
+    _mask_.reset();
     _readable_ = true;
     _writable_ = true;
-    _bitsets_.clear();
+    _size_ = SIZE_UNDEFINED;
     this->_component_reset();
     return;
   }
@@ -202,9 +237,9 @@ namespace electronics {
     }
 
     if (! _bitsets_.size()) {
+      std::vector<std::string> bitsets_labels;
       if (config_.has_key("register.bitsets")) {
-        std::vector<std::string> bitsets_labels;
-        config_.fetch_boolean("register.bitsets", bitsets_labels);
+        config_.fetch("register.bitsets", bitsets_labels);
       }
       for (int i = 0; i < bitsets_labels.size(); i++) {
         std::ostringstream oss1;
@@ -221,6 +256,28 @@ namespace electronics {
     DT_THROW_IF(! _bitsets_.size(),
                 std::logic_error,
                 "Register '" << get_name() << "' has no bitset layout !");
+    return;
+  }
+
+  void register_base::tree_dump(std::ostream& out_,
+                                const std::string& title_,
+                                const std::string& indent_,
+                                bool inherits_) const
+  {
+    this->component_base::tree_dump(out_, title_, indent_, true);
+
+    out_ << indent_ << i_tree_dumpable::tag
+         << "Size : " << (int) _size_ << std::endl;
+
+    out_ << indent_ << i_tree_dumpable::tag
+         << "Mask : '" << _mask_ << "'" << std::endl;
+
+    out_ << indent_ << i_tree_dumpable::tag
+         << "Readable : " << _readable_ << std::endl;
+
+    out_ << indent_ << i_tree_dumpable::tag
+         << "Writable : " << _writable_ << std::endl;
+
     return;
   }
 

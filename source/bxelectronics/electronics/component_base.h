@@ -46,21 +46,6 @@ namespace electronics {
     /// Return the type of the electronic component
     component_type get_type() const;
 
-    // /// Set mother component
-    // virtual void set_mother(component_base &);
-
-    // /// Check if there is a mother component
-    // bool has_mother() const;
-
-    // /// Unlink the mother component
-    // void reset_mother();
-
-    // /// Return a mutable reference to the mother component
-    // component_base & grab_mother();
-
-    // /// Return a non mutable reference to the mother component
-    // const component_base & get_mother() const;
-
     /// Build the list of all embedded components' labels
     void build_embedded_labels(std::vector<std::string>&) const;
 
@@ -128,7 +113,7 @@ namespace electronics {
 
     bool                  _initialized_; //!< Initialization flag
     int32_t               _type_;        //!< Type of the electronics component model
-    component_dict_type   _embedded_components_;   //!< Dictionary of embedded components models
+    component_dict_type   _embedded_components_; //!< Dictionary of embedded components models
 
     // Factory stuff :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(component_base);
