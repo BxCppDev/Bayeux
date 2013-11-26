@@ -32,8 +32,8 @@ set(DATATOOLS_WITH_REFLECTION 1)
 
 # - Raw Headers and Sources
 set(${module_name}_MODULE_HEADERS
-  ${module_include_dir}/${module_name}/advanced_object.h
-  ${module_include_dir}/${module_name}/advanced_object.ipp
+  #${module_include_dir}/${module_name}/advanced_object.h
+  #${module_include_dir}/${module_name}/advanced_object.ipp
   ${module_include_dir}/${module_name}/archives_instantiation.h
   ${module_include_dir}/${module_name}/archives_list.h
   ${module_include_dir}/${module_name}/base_service.h
@@ -48,6 +48,8 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/detail/Configure.h
   ${module_include_dir}/${module_name}/detail/DynamicLoader.h
   ${module_include_dir}/${module_name}/detail/ocd_utils.h
+  ${module_include_dir}/${module_name}/enriched_base.h
+  ${module_include_dir}/${module_name}/enriched_base.ipp
   ${module_include_dir}/${module_name}/eos/polymorphic_portable_archive.hpp
   ${module_include_dir}/${module_name}/eos/portable_archive_exception.hpp
   ${module_include_dir}/${module_name}/eos/portable_archive.hpp
@@ -115,7 +117,8 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/i_serializable-reflect.h
   ${module_include_dir}/${module_name}/i_tree_dump-reflect.h
   ${module_include_dir}/${module_name}/logger-reflect.h
-  ${module_include_dir}/${module_name}/advanced_object-reflect.h
+  #${module_include_dir}/${module_name}/advanced_object-reflect.h
+  ${module_include_dir}/${module_name}/enriched_base-reflect.h
   ${module_include_dir}/${module_name}/event_id-reflect.h
   ${module_include_dir}/${module_name}/multi_properties-reflect.h
   ${module_include_dir}/${module_name}/properties-reflect.h
@@ -135,10 +138,11 @@ configure_file(${module_source_dir}/_datatools.cc.in
 # ls -1 bxdatatools/src/*.cc | sed -e 's@bxdatatools/src@${module_source_dir}@g'  | grep -v _init_fini | grep -v the_introspectable
 
 set(${module_name}_MODULE_SOURCES
-${module_source_dir}/advanced_object.cc
+#${module_source_dir}/advanced_object.cc
 ${module_source_dir}/base_service.cc
 ${module_source_dir}/datatools.cc
 ${module_source_dir}/DynamicLoader.cc
+${module_source_dir}/enriched_base.cc
 ${module_source_dir}/event_id.cc
 ${module_source_dir}/factory.cc
 ${module_source_dir}/i_named.cc
@@ -215,7 +219,8 @@ set(${module_name}_TEST_ENVIRONMENT "DATATOOLS_TESTING_DIR=${module_test_dir}")
 # ls -1 bxdatatools/testing/*.cxx | sed -e 's@bxdatatools/testing@${module_test_dir}@g'
 
 set(${module_name}_MODULE_TESTS
-${module_test_dir}/test_advanced_object.cxx
+#${module_test_dir}/test_advanced_object.cxx
+${module_test_dir}/test_enriched_base.cxx
 ${module_test_dir}/test_binary_serialization.cxx
 ${module_test_dir}/test_cloneable_2.cxx
 ${module_test_dir}/test_cloneable.cxx
