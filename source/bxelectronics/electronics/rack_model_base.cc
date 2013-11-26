@@ -1,4 +1,4 @@
-// rack_base.cc
+// rack_model_base.cc
 //
 //
 // Copyright (c) 2013 by François Mauger <mauger@lpccaen.in2p3.fr>
@@ -19,31 +19,31 @@
 // along with electronics.  If not, see <http://www.gnu.org/licenses/>.
 
 // Ourselves
-#include "electronics/rack_base.h"
+#include "electronics/rack_model_base.h"
 
 // Third Party
 
 // This project
-#include <electronics/crate_base.h>
+#include <electronics/crate_model_base.h>
 #include <electronics/component_types.h>
 
 namespace electronics {
 
-  ELECTRONICS_COMPONENT_REGISTRATION_IMPLEMENT(rack_base, "electronics::rack_base");
+  ELECTRONICS_COMPONENT_REGISTRATION_IMPLEMENT(rack_model_base, "electronics::rack_model_base");
 
-  rack_base::rack_base()
+  rack_model_base::rack_model_base()
   {
     set_type(TYPE_RACK);
     _max_number_of_crates_ = 0;
     return;
   }
 
-  rack_base::~rack_base()
+  rack_model_base::~rack_model_base()
   {
     return;
   }
 
-  void rack_base::set_max_number_of_crates(uint32_t nos_)
+  void rack_model_base::set_max_number_of_crates(uint32_t nos_)
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
@@ -52,22 +52,22 @@ namespace electronics {
     return;
   }
 
-  uint32_t rack_base::get_max_number_of_crates()
+  uint32_t rack_model_base::get_max_number_of_crates()
   {
     return _max_number_of_crates_;
   }
 
-  bool rack_base::has_format() const
+  bool rack_model_base::has_format() const
   {
     return ! _format_.empty();
   }
 
-  const std::string & rack_base::get_format() const
+  const std::string & rack_model_base::get_format() const
   {
     return _format_;
   }
 
-  void rack_base::set_format(const std::string & format_)
+  void rack_model_base::set_format(const std::string & format_)
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
@@ -76,12 +76,12 @@ namespace electronics {
     return;
   }
 
-  bool rack_base::has_crate(uint32_t slot_id_) const
+  bool rack_model_base::has_crate(uint32_t slot_id_) const
   {
     return _crates_.find(slot_id_) != _crates_.end();
   }
 
-  void rack_base::remove_crate(uint32_t slot_id_)
+  void rack_model_base::remove_crate(uint32_t slot_id_)
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
@@ -98,7 +98,7 @@ namespace electronics {
     return;
   }
 
-  void rack_base::add_crate(uint32_t slot_id_,
+  void rack_model_base::add_crate(uint32_t slot_id_,
                             component_handle_type & crate_)
   {
     DT_THROW_IF(is_initialized(),
@@ -114,7 +114,7 @@ namespace electronics {
     DT_THROW_IF(! crate_.has_data(),
                 std::logic_error,
                 "Rack '" << get_name() << "' cannot embed a NULL crate at slot '" << slot_id_ << "' !");
-    const crate_base * crate = dynamic_cast<const crate_base *>(&crate_.get());
+    const crate_model_base * crate = dynamic_cast<const crate_model_base *>(&crate_.get());
     DT_THROW_IF(crate == 0,
                 std::logic_error,
                 "Rack '" << get_name() << "' : Attempt to embed a non crate component '"
@@ -140,7 +140,7 @@ namespace electronics {
     return;
   }
 
-  component_handle_type & rack_base::grab_crate(uint32_t slot_id_)
+  component_handle_type & rack_model_base::grab_crate(uint32_t slot_id_)
   {
     indexed_component_dict_type::iterator found = _crates_.find(slot_id_);
     DT_THROW_IF(found == _crates_.end(),
@@ -149,7 +149,7 @@ namespace electronics {
     return found->second;
   }
 
-  const component_handle_type & rack_base::get_crate(uint32_t slot_id_) const
+  const component_handle_type & rack_model_base::get_crate(uint32_t slot_id_) const
   {
     indexed_component_dict_type::const_iterator found = _crates_.find(slot_id_);
     DT_THROW_IF(found == _crates_.end(),
@@ -160,7 +160,7 @@ namespace electronics {
   }
 
 
-  void rack_base::_rack_reset()
+  void rack_model_base::_rack_reset()
   {
     _crates_.clear();
     _max_number_of_crates_ = 0;
@@ -169,7 +169,7 @@ namespace electronics {
     return;
   }
 
-  void rack_base::_rack_initialize(const datatools::properties & config_,
+  void rack_model_base::_rack_initialize(const datatools::properties & config_,
                                    component_pool_type& components_)
   {
     this->_component_initialize(config_, components_);
@@ -207,7 +207,7 @@ namespace electronics {
     return;
   }
 
-  void rack_base::initialize(const datatools::properties& config_,
+  void rack_model_base::initialize(const datatools::properties& config_,
                              component_pool_type& components_)
   {
     DT_THROW_IF(is_initialized(),
@@ -220,7 +220,7 @@ namespace electronics {
     return;
   }
 
-  void rack_base::reset()
+  void rack_model_base::reset()
   {
     DT_THROW_IF(! is_initialized(),
                 std::logic_error,
@@ -230,12 +230,12 @@ namespace electronics {
     return;
   }
 
-  void rack_base::tree_dump(std::ostream& out_,
+  void rack_model_base::tree_dump(std::ostream& out_,
                             const std::string& title_,
                             const std::string& indent_,
                             bool inherit_) const
   {
-    this->component_base::tree_dump(out_, title_, indent_, true);
+    this->component_model_base::tree_dump(out_, title_, indent_, true);
 
     out_ << indent_ << i_tree_dumpable::tag
          << "Format : '" << _format_ << "'" << std::endl;

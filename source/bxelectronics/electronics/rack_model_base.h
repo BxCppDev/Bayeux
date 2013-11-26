@@ -1,21 +1,21 @@
 // -*- mode: c++; -*-
-#ifndef ELECTRONICS_RACK_BASE_H
-#define ELECTRONICS_RACK_BASE_H
+#ifndef ELECTRONICS_RACK_MODEL_BASE_H
+#define ELECTRONICS_RACK_MODEL_BASE_H
 
-#include <electronics/component_base.h>
+#include <electronics/component_model_base.h>
 
 namespace electronics {
 
   /// \brief The base class of an electronic rack
-  class rack_base : public component_base
+  class rack_model_base : public component_model_base
   {
   public:
 
     /// Default constructor
-    rack_base();
+    rack_model_base();
 
     /// Destructor
-    virtual ~rack_base();
+    virtual ~rack_model_base();
 
     /// Set the max number of crates
     void set_max_number_of_crates(uint32_t);
@@ -80,10 +80,10 @@ namespace electronics {
     indexed_component_dict_type _crates_; //!< List of embedded crates
 
     // Automated registration in the system factory register
-    ELECTRONICS_COMPONENT_REGISTRATION_INTERFACE(rack_base);
+    ELECTRONICS_COMPONENT_REGISTRATION_INTERFACE(rack_model_base);
 
   };
 
 } // end of namespace electronics
 
-#endif // ELECTRONICS_RACK_BASE_H
+#endif // ELECTRONICS_RACK_MODEL_BASE_H

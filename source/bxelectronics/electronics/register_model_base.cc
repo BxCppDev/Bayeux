@@ -1,4 +1,4 @@
-// register_desc.cc
+// register_model_base.cc
 //
 // Copyright (c) 2013 by François Mauger <mauger@lpccaen.in2p3.fr>
 //
@@ -18,7 +18,7 @@
 // along with Bayeux/electronics.  If not, see <http://www.gnu.org/licenses/>.
 
 // Ourselves
-#include "electronics/register_desc.h"
+#include "electronics/register_model_base.h"
 
 // Third Party
 // - Bayeux/datatools
@@ -27,9 +27,9 @@
 
 namespace electronics {
 
-  ELECTRONICS_COMPONENT_REGISTRATION_IMPLEMENT(register_desc, "electronics::register_desc");
+  ELECTRONICS_COMPONENT_REGISTRATION_IMPLEMENT(register_model_base, "electronics::register_model_base");
 
-  register_desc::register_desc()
+  register_model_base::register_model_base()
   {
     _size_ = SIZE_UNDEFINED;
     _readable_ = true;
@@ -38,7 +38,7 @@ namespace electronics {
     return;
   }
 
-  register_desc::~register_desc()
+  register_model_base::~register_model_base()
   {
     if (is_initialized()) {
       reset();
@@ -48,33 +48,33 @@ namespace electronics {
   }
 
   /// Set read access flag
-  void register_desc::set_readable(bool r_)
+  void register_model_base::set_readable(bool r_)
   {
     _readable_ = r_;
     return;
   }
 
   /// Check read access flag
-  bool register_desc::is_readable() const
+  bool register_model_base::is_readable() const
   {
     return _readable_;
   }
 
   /// Set write access flag
-  void register_desc::set_writable(bool w_)
+  void register_model_base::set_writable(bool w_)
   {
     _writable_ = w_;
     return;
   }
 
   /// Check write access flag
-  bool register_desc::is_writable() const
+  bool register_model_base::is_writable() const
   {
     return _writable_;
   }
 
   /// Set the size
-  void register_desc::set_size(uint8_t sz_)
+  void register_model_base::set_size(uint8_t sz_)
   {
     switch(sz_) {
     case SIZE_8:
@@ -94,13 +94,13 @@ namespace electronics {
   }
 
   /// Get the size
-  uint8_t register_desc::get_size() const
+  uint8_t register_model_base::get_size() const
   {
     return _size_;
   }
 
   /// Get the effective size
-  uint8_t register_desc::get_effective_size() const
+  uint8_t register_model_base::get_effective_size() const
   {
     uint32_t eff_size = 0;
     for (bitsets_dict_type::const_iterator i = _bitsets_.begin();
@@ -112,13 +112,13 @@ namespace electronics {
   }
 
   /// Get the register mask
-  const boost::dynamic_bitset<> & register_desc::get_mask() const
+  const boost::dynamic_bitset<> & register_model_base::get_mask() const
   {
     return _mask_;
   }
 
   /// Add a bitset
-  void register_desc::add_bitset(const std::string & name_, const bitset_desc & bs_)
+  void register_model_base::add_bitset(const std::string & name_, const bitset_desc & bs_)
   {
     datatools::logger::priority prio = datatools::logger::PRIO_DEBUG;
     DT_THROW_IF(name_.empty(),
@@ -149,7 +149,7 @@ namespace electronics {
   }
 
   /// Add a bitset
-  void register_desc::add_bitset(const std::string & name_,
+  void register_model_base::add_bitset(const std::string & name_,
                                  uint8_t lsb_position_,
                                  uint8_t size_,
                                  const std::string & default_value_)
@@ -163,7 +163,7 @@ namespace electronics {
     return;
   }
 
-  void register_desc::append_bitset(const std::string & name_,
+  void register_model_base::append_bitset(const std::string & name_,
                                     uint8_t size_,
                                     const std::string & default_value_)
   {
@@ -178,7 +178,7 @@ namespace electronics {
   }
 
   /// Build a dynamic bitset from the register description
-  void register_desc::make(boost::dynamic_bitset<> & dbs_) const
+  void register_model_base::make(boost::dynamic_bitset<> & dbs_) const
   {
     DT_THROW_IF(!is_initialized(),
                 std::logic_error,
@@ -199,7 +199,7 @@ namespace electronics {
     return;
   }
 
-  void register_desc::initialize(const datatools::properties& config_,
+  void register_model_base::initialize(const datatools::properties& config_,
                                  component_pool_type& components_)
   {
     DT_THROW_IF(is_initialized(),
@@ -212,7 +212,7 @@ namespace electronics {
     return;
   }
 
-  void register_desc::reset()
+  void register_model_base::reset()
   {
     DT_THROW_IF(! is_initialized(),
                 std::logic_error,
@@ -222,12 +222,12 @@ namespace electronics {
     return;
   }
 
-  bool register_desc::allow_embedded_components() const
+  bool register_model_base::allow_embedded_components() const
   {
     return false;
   }
 
-  void register_desc::_register_reset()
+  void register_model_base::_register_reset()
   {
     _bitsets_.clear();
     _mask_.reset();
@@ -238,7 +238,7 @@ namespace electronics {
     return;
   }
 
-  void register_desc::_register_initialize(const datatools::properties& config_,
+  void register_model_base::_register_initialize(const datatools::properties& config_,
                                            component_pool_type& components_)
   {
     this->_component_initialize(config_, components_);
@@ -287,12 +287,12 @@ namespace electronics {
     return;
   }
 
-  void register_desc::tree_dump(std::ostream& out_,
+  void register_model_base::tree_dump(std::ostream& out_,
                                 const std::string& title_,
                                 const std::string& indent_,
                                 bool inherits_) const
   {
-    this->component_base::tree_dump(out_, title_, indent_, true);
+    this->component_model_base::tree_dump(out_, title_, indent_, true);
 
     out_ << indent_ << i_tree_dumpable::tag
          << "Size : " << (int) _size_ << std::endl;

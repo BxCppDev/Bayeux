@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
-#ifndef ELECTRONICS_REGISTER_DESC_H
-#define ELECTRONICS_REGISTER_DESC_H
+#ifndef ELECTRONICS_REGISTER_MODEL_BASE_H
+#define ELECTRONICS_REGISTER_MODEL_BASE_H
 
 // Standard library
 #include <string>
@@ -12,13 +12,13 @@
 #include <boost/dynamic_bitset.hpp>
 
 // This project
-#include <electronics/component_base.h>
+#include <electronics/component_model_base.h>
 #include <electronics/bitset_desc.h>
 
 namespace electronics {
 
   /// \brief Description of the layout of a register of finite size
-  class register_desc : public component_base
+  class register_model_base : public component_model_base
   {
   public:
     typedef std::map<std::string, bitset_desc> bitsets_dict_type;
@@ -34,10 +34,10 @@ namespace electronics {
     };
 
     /// Default constructor
-    register_desc();
+    register_model_base();
 
     /// Destructor
-    virtual ~register_desc();
+    virtual ~register_model_base();
 
     /// Set read access flag
     void set_readable(bool);
@@ -118,10 +118,10 @@ namespace electronics {
     // uint64_t _address_; //!< Hardware address
     bitsets_dict_type _bitsets_; //!< Dictionary of bitsets
 
-    ELECTRONICS_COMPONENT_REGISTRATION_INTERFACE(register_desc);
+    ELECTRONICS_COMPONENT_REGISTRATION_INTERFACE(register_model_base);
 
   };
 
 } // end of namespace electronics
 
-#endif // ELECTRONICS_REGISTER_DESC_H
+#endif // ELECTRONICS_REGISTER_MODEL_BASE_H

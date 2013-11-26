@@ -1,4 +1,4 @@
-// board_base.cc
+// board_model_base.cc
 //
 // Copyright (c) 2013 by François Mauger <mauger@lpccaen.in2p3.fr>
 //
@@ -18,16 +18,16 @@
 // along with Bayeux/electronics. If not, see <http://www.gnu.org/licenses/>.
 
 // Ourselves
-#include "electronics/board_base.h"
+#include "electronics/board_model_base.h"
 
 // This project
 #include "electronics/component_types.h"
 
 namespace electronics {
 
-  ELECTRONICS_COMPONENT_REGISTRATION_IMPLEMENT(board_base, "electronics::board_base");
+  ELECTRONICS_COMPONENT_REGISTRATION_IMPLEMENT(board_model_base, "electronics::board_model_base");
 
-  board_base::board_base()
+  board_model_base::board_model_base()
   {
     set_type(TYPE_MODULE_BOARD);
     _slot_width_ = 0;
@@ -35,7 +35,7 @@ namespace electronics {
     return;
   }
 
-  board_base::~board_base()
+  board_model_base::~board_model_base()
   {
     if (is_initialized()) {
       reset();
@@ -43,12 +43,12 @@ namespace electronics {
     return;
   }
 
-  uint32_t board_base::get_slot_with() const
+  uint32_t board_model_base::get_slot_with() const
   {
     return _slot_width_;
   }
 
-  void board_base::set_slot_width(uint32_t sw_)
+  void board_model_base::set_slot_width(uint32_t sw_)
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
@@ -57,12 +57,12 @@ namespace electronics {
     return;
   }
 
-  uint32_t board_base::get_max_number_of_mezzanine_boards() const
+  uint32_t board_model_base::get_max_number_of_mezzanine_boards() const
   {
     return _max_number_of_mezzanine_boards_;
   }
 
-  void board_base::set_max_number_of_mezzanine_boards(uint32_t n_)
+  void board_model_base::set_max_number_of_mezzanine_boards(uint32_t n_)
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
@@ -71,17 +71,17 @@ namespace electronics {
     return;
   }
 
-  bool board_base::has_format() const
+  bool board_model_base::has_format() const
   {
     return ! _format_.empty();
   }
 
-  const std::string & board_base::get_format() const
+  const std::string & board_model_base::get_format() const
   {
     return _format_;
   }
 
-  void board_base::set_format(const std::string & format_)
+  void board_model_base::set_format(const std::string & format_)
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
@@ -90,17 +90,17 @@ namespace electronics {
     return;
   }
 
-  bool board_base::has_mezzanine_format() const
+  bool board_model_base::has_mezzanine_format() const
   {
     return ! _mezzanine_format_.empty();
   }
 
-  const std::string & board_base::get_mezzanine_format() const
+  const std::string & board_model_base::get_mezzanine_format() const
   {
     return _mezzanine_format_;
   }
 
-  void board_base::set_mezzanine_format(const std::string & format_)
+  void board_model_base::set_mezzanine_format(const std::string & format_)
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
@@ -109,12 +109,12 @@ namespace electronics {
     return;
   }
 
-  bool board_base::has_mezzanine_board(uint32_t mezzanine_slot_) const
+  bool board_model_base::has_mezzanine_board(uint32_t mezzanine_slot_) const
   {
     return _mezzanine_boards_.find(mezzanine_slot_) != _mezzanine_boards_.end();
   }
 
-  void board_base::remove_mezzanine_board(uint32_t mezzanine_slot_)
+  void board_model_base::remove_mezzanine_board(uint32_t mezzanine_slot_)
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
@@ -132,7 +132,7 @@ namespace electronics {
     return;
   }
 
-  void board_base::add_mezzanine_board(uint32_t mezzanine_slot_,
+  void board_model_base::add_mezzanine_board(uint32_t mezzanine_slot_,
                                        component_handle_type & mezzanine_)
   {
     DT_THROW_IF(is_initialized(),
@@ -151,7 +151,7 @@ namespace electronics {
     DT_THROW_IF(! mezzanine_.has_data(),
                 std::logic_error,
                 "Board '" << get_name() << "' cannot embed a NULL mezzanine board at slot '" << mezzanine_slot_ << "' !");
-    const board_base * mez_board = dynamic_cast<const board_base *>(&mezzanine_.get());
+    const board_model_base * mez_board = dynamic_cast<const board_model_base *>(&mezzanine_.get());
     DT_THROW_IF(mez_board == 0 || mez_board->get_type() != TYPE_MODULE_MEZZANINE_BOARD,
                 std::logic_error,
                 "Board '" << get_name() << "' : Attempt to embed a non mezzanine component '"
@@ -177,7 +177,7 @@ namespace electronics {
     return;
   }
 
-  component_handle_type & board_base::grab_mezzanine_board(uint32_t mezzanine_slot_)
+  component_handle_type & board_model_base::grab_mezzanine_board(uint32_t mezzanine_slot_)
   {
     indexed_component_dict_type::iterator found = _mezzanine_boards_.find(mezzanine_slot_);
     DT_THROW_IF(found == _mezzanine_boards_.end(),
@@ -186,7 +186,7 @@ namespace electronics {
     return found->second;
   }
 
-  const component_handle_type & board_base::get_mezzanine_board(uint32_t mezzanine_slot_) const
+  const component_handle_type & board_model_base::get_mezzanine_board(uint32_t mezzanine_slot_) const
   {
     indexed_component_dict_type::const_iterator found = _mezzanine_boards_.find(mezzanine_slot_);
     DT_THROW_IF(found == _mezzanine_boards_.end(),
@@ -196,7 +196,7 @@ namespace electronics {
     return found->second;
   }
 
-  void board_base::_board_reset()
+  void board_model_base::_board_reset()
   {
     _mezzanine_boards_.clear();
     _slot_width_ = 0;
@@ -207,7 +207,7 @@ namespace electronics {
     return;
   }
 
-  void board_base::_board_initialize(const datatools::properties & config_,
+  void board_model_base::_board_initialize(const datatools::properties & config_,
                                      component_pool_type& components_)
   {
     this->_component_initialize(config_, components_);
@@ -261,7 +261,7 @@ namespace electronics {
     return;
   }
 
-  void board_base::initialize(const datatools::properties& config_,
+  void board_model_base::initialize(const datatools::properties& config_,
                               component_pool_type& components_)
   {
     DT_THROW_IF(is_initialized(),
@@ -274,7 +274,7 @@ namespace electronics {
     return;
   }
 
-  void board_base::reset()
+  void board_model_base::reset()
   {
     DT_THROW_IF(! is_initialized(),
                 std::logic_error,
@@ -284,12 +284,12 @@ namespace electronics {
     return;
   }
 
-  void board_base::tree_dump(std::ostream& out_,
+  void board_model_base::tree_dump(std::ostream& out_,
                              const std::string& title_,
                              const std::string& indent_,
                              bool inherits_) const
   {
-    this->component_base::tree_dump(out_, title_, indent_, true);
+    this->component_model_base::tree_dump(out_, title_, indent_, true);
 
     out_ << indent_ << i_tree_dumpable::tag
          << "Format : '" << _format_ << "'" << std::endl;
@@ -337,4 +337,4 @@ namespace electronics {
 
 } // end of namespace electronics
 
-// end of board_base.cc
+// end of board_model_base.cc

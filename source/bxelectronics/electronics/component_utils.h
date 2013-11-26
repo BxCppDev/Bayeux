@@ -19,10 +19,12 @@
 namespace electronics {
 
   /// Build a name from a prefix and an integral index
-  std::string make_indexed_name(const std::string & prefix_, uint32_t index_);
+  std::string make_indexed_name(const std::string & prefix_,
+                                uint32_t index_,
+                                const std::string & suffix_= "");
 
-  class component_base;
-  typedef datatools::handle<component_base> component_handle_type;
+  class component_model_base;
+  typedef datatools::handle<component_model_base> component_handle_type;
 
   class component_manager;
 

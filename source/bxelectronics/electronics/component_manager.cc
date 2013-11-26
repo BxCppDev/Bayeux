@@ -35,7 +35,7 @@
 #include <datatools/logger.h>
 
 // This project
-#include <electronics/component_base.h>
+#include <electronics/component_model_base.h>
 
 namespace electronics {
 
@@ -242,9 +242,9 @@ namespace electronics {
 
   // Constructor :
   component_manager::component_manager(uint32_t flag)
-    : _factory_register_("electronics::component_base/component_factory",
+    : _factory_register_("electronics::component_model_base/component_factory",
                         flag & FACTORY_VERBOSE ?
-                        component_base::factory_register_type::verbose : 0) {
+                        component_model_base::factory_register_type::verbose : 0) {
     _initialized_ = false;
 
     set_logging_priority(datatools::logger::PRIO_WARNING);
@@ -486,7 +486,7 @@ namespace electronics {
 
   void component_manager::preload_global_dict() {
     DT_LOG_TRACE(get_logging_priority(),"Entering !");
-    _factory_register_.import(DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(component_base));
+    _factory_register_.import(DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(component_model_base));
     DT_LOG_TRACE(get_logging_priority(),"Embeded.");
     return;
   }
@@ -505,9 +505,9 @@ namespace electronics {
                    << "' for component named '"
                    << entry.get_component_name() << "' !");
 
-      typedef component_base::factory_register_type::factory_type FactoryType;
+      typedef component_model_base::factory_register_type::factory_type FactoryType;
       const FactoryType& the_factory = _factory_register_.get(entry.get_component_id());
-      component_base* ptr = the_factory();
+      component_model_base* ptr = the_factory();
       ptr->set_name(entry.get_component_name());
       entry.grab_component_handle().reset(ptr);
       entry.update_component_status(component_entry::STATUS_CREATED);
@@ -530,7 +530,7 @@ namespace electronics {
                    "Initializing component named '"
                    << entry.get_component_name()
                    << "'...");
-      component_base& the_component = entry.grab_component_handle().grab();
+      component_model_base& the_component = entry.grab_component_handle().grab();
       the_component.initialize(entry.get_component_config(), _components_);
       entry.update_component_status(component_entry::STATUS_INITIALIZED);
     }
@@ -540,7 +540,7 @@ namespace electronics {
 
   void component_manager::reset_component(component_entry& entry) {
     if (entry.is_initialized()) {
-      component_base& the_component = entry.grab_component_handle().grab();
+      component_model_base& the_component = entry.grab_component_handle().grab();
       the_component.reset();
       entry.reset_component_status(component_entry::STATUS_INITIALIZED);
     }
@@ -578,7 +578,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::electronics::component_manager,ocd_)
                                 "initialization, management and destruction of various electronics    \n"
                                 "*component* models.                                                  \n"
                                 "A component model is a special object that fulfils the generic       \n"
-                                "``electronics::component_base`` interface. A component model is      \n"
+                                "``electronics::component_model_base`` interface. A component model is\n"
                                 "generally dedicated to some special task : description of a crate,   \n"
                                 "a board, a chip... Such component models are hosted by the           \n"
                                 "*component manager* which provides an unique counter for             \n"

@@ -1,4 +1,4 @@
-// crate_base.cc
+// crate_model_base.cc
 //
 // Copyright (c) 2013 by François Mauger <mauger@lpccaen.in2p3.fr>
 //
@@ -18,31 +18,31 @@
 // along with Bayeux/electronics.  If not, see <http://www.gnu.org/licenses/>.
 
 // Ourselves
-#include "electronics/crate_base.h"
+#include "electronics/crate_model_base.h"
 
 // Third Party
 
 // This project
-#include <electronics/board_base.h>
+#include <electronics/board_model_base.h>
 #include <electronics/component_types.h>
 
 namespace electronics {
 
-  ELECTRONICS_COMPONENT_REGISTRATION_IMPLEMENT(crate_base, "electronics::crate_base");
+  ELECTRONICS_COMPONENT_REGISTRATION_IMPLEMENT(crate_model_base, "electronics::crate_model_base");
 
-  crate_base::crate_base()
+  crate_model_base::crate_model_base()
   {
     set_type(TYPE_CRATE);
     _max_number_of_modules_ = 0;
     return;
   }
 
-  crate_base::~crate_base()
+  crate_model_base::~crate_model_base()
   {
     return;
   }
 
-  void crate_base::set_max_number_of_modules(uint32_t nos_)
+  void crate_model_base::set_max_number_of_modules(uint32_t nos_)
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
@@ -51,22 +51,22 @@ namespace electronics {
     return;
   }
 
-  uint32_t crate_base::get_max_number_of_modules()
+  uint32_t crate_model_base::get_max_number_of_modules()
   {
     return _max_number_of_modules_;
   }
 
-  bool crate_base::has_format() const
+  bool crate_model_base::has_format() const
   {
     return ! _format_.empty();
   }
 
-  const std::string & crate_base::get_format() const
+  const std::string & crate_model_base::get_format() const
   {
     return _format_;
   }
 
-  void crate_base::set_format(const std::string & format_)
+  void crate_model_base::set_format(const std::string & format_)
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
@@ -75,12 +75,12 @@ namespace electronics {
     return;
   }
 
-  bool crate_base::has_module(uint32_t slot_id_) const
+  bool crate_model_base::has_module(uint32_t slot_id_) const
   {
     return _modules_.find(slot_id_) != _modules_.end();
   }
 
-  void crate_base::remove_module(uint32_t slot_id_)
+  void crate_model_base::remove_module(uint32_t slot_id_)
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
@@ -97,7 +97,7 @@ namespace electronics {
     return;
   }
 
-  void crate_base::add_module(uint32_t slot_id_,
+  void crate_model_base::add_module(uint32_t slot_id_,
                               component_handle_type & module_)
   {
     DT_THROW_IF(is_initialized(),
@@ -113,7 +113,7 @@ namespace electronics {
     DT_THROW_IF(! module_.has_data(),
                 std::logic_error,
                 "Crate '" << get_name() << "' cannot embed a NULL module at slot '" << slot_id_ << "' !");
-    const board_base * module = dynamic_cast<const board_base *>(&module_.get());
+    const board_model_base * module = dynamic_cast<const board_model_base *>(&module_.get());
     DT_THROW_IF(module == 0,
                 std::logic_error,
                 "Crate '" << get_name() << "' : Attempt to embed a non module component '"
@@ -139,7 +139,7 @@ namespace electronics {
     return;
   }
 
-  component_handle_type & crate_base::grab_module(uint32_t slot_id_)
+  component_handle_type & crate_model_base::grab_module(uint32_t slot_id_)
   {
     indexed_component_dict_type::iterator found = _modules_.find(slot_id_);
     DT_THROW_IF(found == _modules_.end(),
@@ -148,7 +148,7 @@ namespace electronics {
     return found->second;
   }
 
-  const component_handle_type & crate_base::get_module(uint32_t slot_id_) const
+  const component_handle_type & crate_model_base::get_module(uint32_t slot_id_) const
   {
     indexed_component_dict_type::const_iterator found = _modules_.find(slot_id_);
     DT_THROW_IF(found == _modules_.end(),
@@ -159,7 +159,7 @@ namespace electronics {
   }
 
 
-  void crate_base::_crate_reset()
+  void crate_model_base::_crate_reset()
   {
     _modules_.clear();
     _max_number_of_modules_ = 0;
@@ -168,7 +168,7 @@ namespace electronics {
     return;
   }
 
-  void crate_base::_crate_initialize(const datatools::properties & config_,
+  void crate_model_base::_crate_initialize(const datatools::properties & config_,
                                      component_pool_type& components_)
   {
     this->_component_initialize(config_, components_);
@@ -206,7 +206,7 @@ namespace electronics {
     return;
   }
 
-  void crate_base::initialize(const datatools::properties& config_,
+  void crate_model_base::initialize(const datatools::properties& config_,
                               component_pool_type& components_)
   {
     DT_THROW_IF(is_initialized(),
@@ -219,7 +219,7 @@ namespace electronics {
     return;
   }
 
-  void crate_base::reset()
+  void crate_model_base::reset()
   {
     DT_THROW_IF(! is_initialized(),
                 std::logic_error,
@@ -229,12 +229,12 @@ namespace electronics {
     return;
   }
 
-  void crate_base::tree_dump(std::ostream& out_,
+  void crate_model_base::tree_dump(std::ostream& out_,
                              const std::string& title_,
                              const std::string& indent_,
                              bool inherit_) const
   {
-    this->component_base::tree_dump(out_, title_, indent_, true);
+    this->component_model_base::tree_dump(out_, title_, indent_, true);
 
     out_ << indent_ << i_tree_dumpable::tag
          << "Format : '" << _format_ << "'" << std::endl;

@@ -1,21 +1,21 @@
 // -*- mode: c++; -*-
-#ifndef ELECTRONICS_BOARD_BASE_H
-#define ELECTRONICS_BOARD_BASE_H
+#ifndef ELECTRONICS_BOARD_MODEL_BASE_H
+#define ELECTRONICS_BOARD_MODEL_BASE_H
 
-#include <electronics/component_base.h>
+#include <electronics/component_model_base.h>
 
 namespace electronics {
 
   /// \brief Generic base model of a electronic board
-  class board_base : public component_base
+  class board_model_base : public component_model_base
   {
   public:
 
     /// Default constructor
-    board_base();
+    board_model_base();
 
     /// Destructor
-    virtual ~board_base();
+    virtual ~board_model_base();
 
     /// Return the slot width
     uint32_t get_slot_with() const;
@@ -98,12 +98,12 @@ namespace electronics {
     indexed_component_dict_type _mezzanine_boards_; //!< Embedded mezzanine boards addressed by slot
 
     // Automated registration in the system factory register
-    ELECTRONICS_COMPONENT_REGISTRATION_INTERFACE(board_base);
+    ELECTRONICS_COMPONENT_REGISTRATION_INTERFACE(board_model_base);
 
   };
 
-  typedef board_base module_base;
+  typedef board_model_base module_model_base;
 
 } // end of namespace electronics
 
-#endif // ELECTRONICS_BOARD_BASE_H
+#endif // ELECTRONICS_BOARD_MODEL_BASE_H

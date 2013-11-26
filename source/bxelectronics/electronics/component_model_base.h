@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
-#ifndef ELECTRONICS_COMPONENT_BASE_H
-#define ELECTRONICS_COMPONENT_BASE_H
+#ifndef ELECTRONICS_COMPONENT_MODEL_BASE_H
+#define ELECTRONICS_COMPONENT_MODEL_BASE_H
 
 // Standard library
 #include <string>
@@ -24,18 +24,18 @@ namespace electronics {
   class component_manager;
 
   /// \brief The base class of all electronic component models
-  class component_base : public datatools::enriched_base
+  class component_model_base : public datatools::enriched_base
   {
   public:
 
     /// Default constructor
-    component_base();
+    component_model_base();
 
     /// Default constructor
-    explicit component_base(component_type type_);
+    explicit component_model_base(component_type type_);
 
     /// Destructor
-    virtual ~component_base();
+    virtual ~component_model_base();
 
     /// Check if component has a type
     bool has_type() const;
@@ -112,17 +112,17 @@ namespace electronics {
   private:
 
     bool                  _initialized_; //!< Initialization flag
-    int32_t               _type_;        //!< Type of the electronics component model
+    int32_t               _type_;        //!< Device type of the electronics component model
     component_dict_type   _embedded_components_; //!< Dictionary of embedded components models
 
     // Factory stuff :
-    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(component_base);
+    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(component_model_base);
 
     // Automated registration in the system factory register
-    ELECTRONICS_COMPONENT_REGISTRATION_INTERFACE(component_base);
+    ELECTRONICS_COMPONENT_REGISTRATION_INTERFACE(component_model_base);
 
   };
 
 } // end of namespace electronics
 
-#endif // FLELECTRONICS_COMPONENT_BASE_H
+#endif // FLELECTRONICS_COMPONENT_MODEL_BASE_H

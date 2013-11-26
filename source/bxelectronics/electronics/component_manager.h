@@ -50,7 +50,7 @@
 
 // This project
 #include <electronics/component_utils.h>
-#include <electronics/component_base.h>
+#include <electronics/component_model_base.h>
 
 namespace datatools {
 
@@ -216,7 +216,7 @@ namespace electronics {
     std::string  _setup_description_; //!< the description of the setup
     bool         _preload_;           //!< Factory preload flag
     bool         _force_initialization_at_load_; //!< Flag for triggering component  initialization at load (rather than first use)
-    component_base::factory_register_type  _factory_register_; //!< Factory register
+    component_model_base::factory_register_type  _factory_register_; //!< Factory register
     component_pool_type                    _components_;       //!< Dictionary of components
     geomtools::id_mgr _eid_manager_; //!< manager of electronics ID
     // Mapping...

@@ -1,4 +1,4 @@
-// component_base.cc
+// component_model_base.cc
 //
 // Copyright (c) 2013 by François Mauger <mauger@lpccaen.in2p3.fr>
 //
@@ -18,7 +18,7 @@
 // along with Bayeux/electronics.  If not, see <http://www.gnu.org/licenses/>.
 
 // Ourselves
-#include "electronics/component_base.h"
+#include "electronics/component_model_base.h"
 
 // Third Party
 // - Bayeux/datatools
@@ -32,25 +32,25 @@
 
 namespace electronics {
 
-  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(component_base,
-                                                   "electronics::component_base/__system__");
+  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(component_model_base,
+                                                   "electronics::component_model_base/__system__");
 
-  ELECTRONICS_COMPONENT_REGISTRATION_IMPLEMENT(component_base, "electronics::component_base");
+  ELECTRONICS_COMPONENT_REGISTRATION_IMPLEMENT(component_model_base, "electronics::component_model_base");
 
-  component_base::component_base()
+  component_model_base::component_model_base()
   {
     _initialized_ = false;
     _type_ = TYPE_UNDEFINED;
     return;
   }
 
-  component_base::component_base(component_type type_)
+  component_model_base::component_model_base(component_type type_)
   {
     set_type(type_);
     return;
   }
 
-  component_base::~component_base()
+  component_model_base::~component_model_base()
   {
     if (is_initialized()) {
       reset();
@@ -58,17 +58,17 @@ namespace electronics {
     return;
   }
 
-  bool component_base::allow_embedded_components() const
+  bool component_model_base::allow_embedded_components() const
   {
     return true;
   }
 
-  bool component_base::has_type() const
+  bool component_model_base::has_type() const
   {
     return _type_ != TYPE_UNDEFINED;
   }
 
-  void component_base::set_type(component_type type_)
+  void component_model_base::set_type(component_type type_)
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
@@ -77,12 +77,12 @@ namespace electronics {
     return;
   }
 
-  component_type component_base::get_type() const
+  component_type component_model_base::get_type() const
   {
     return (component_type) _type_;
   }
 
-  void component_base::build_embedded_labels(std::vector<std::string>& labels_) const
+  void component_model_base::build_embedded_labels(std::vector<std::string>& labels_) const
   {
     labels_.clear();
     labels_.reserve(_embedded_components_.size());
@@ -94,12 +94,12 @@ namespace electronics {
     return;
   }
 
-  bool component_base::has_embedded(const std::string & embedded_label_) const
+  bool component_model_base::has_embedded(const std::string & embedded_label_) const
   {
     return _embedded_components_.find(embedded_label_) != _embedded_components_.end();
   }
 
-  void component_base::remove_embedded(const std::string & embedded_label_)
+  void component_model_base::remove_embedded(const std::string & embedded_label_)
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
@@ -116,7 +116,7 @@ namespace electronics {
     return;
   }
 
-  void component_base::add_embedded(const std::string & embedded_label_,
+  void component_model_base::add_embedded(const std::string & embedded_label_,
                                     component_handle_type & embedded_)
   {
     DT_THROW_IF(is_initialized(),
@@ -150,7 +150,7 @@ namespace electronics {
   }
 
   component_handle_type &
-  component_base::grab_embedded(const std::string & embedded_label_)
+  component_model_base::grab_embedded(const std::string & embedded_label_)
   {
     component_dict_type::iterator found = _embedded_components_.find(embedded_label_);
     DT_THROW_IF(found == _embedded_components_.end(),
@@ -161,7 +161,7 @@ namespace electronics {
   }
 
   const component_handle_type &
-  component_base::get_embedded(const std::string & embedded_label_) const
+  component_model_base::get_embedded(const std::string & embedded_label_) const
   {
     component_dict_type::const_iterator found = _embedded_components_.find(embedded_label_);
     DT_THROW_IF(found == _embedded_components_.end(),
@@ -171,7 +171,7 @@ namespace electronics {
     return found->second;
   }
 
-  void component_base::tree_dump(std::ostream& out_,
+  void component_model_base::tree_dump(std::ostream& out_,
                                  const std::string& title_,
                                  const std::string& indent_,
                                  bool inherit_) const
@@ -215,12 +215,12 @@ namespace electronics {
     return;
   }
 
-  bool component_base::is_initialized() const
+  bool component_model_base::is_initialized() const
   {
     return _is_initialized();
   }
 
-  void component_base::initialize_simple()
+  void component_model_base::initialize_simple()
   {
     datatools::properties dummy_config;
     component_pool_type dummy_pool;
@@ -228,14 +228,14 @@ namespace electronics {
     return;
   }
 
-  void component_base::initialize_standalone(const datatools::properties& config_)
+  void component_model_base::initialize_standalone(const datatools::properties& config_)
   {
     component_pool_type dummy_pool;
     this->initialize(config_, dummy_pool);
     return;
   }
 
-  void component_base::initialize(const datatools::properties& config_,
+  void component_model_base::initialize(const datatools::properties& config_,
                                   component_pool_type& components_)
   {
     DT_THROW_IF(is_initialized(),
@@ -248,7 +248,7 @@ namespace electronics {
     return;
   }
 
-  void component_base::reset()
+  void component_model_base::reset()
   {
     DT_THROW_IF(! is_initialized(),
                 std::logic_error,
@@ -258,14 +258,14 @@ namespace electronics {
     return;
   }
 
-  void component_base::_component_reset()
+  void component_model_base::_component_reset()
   {
     _embedded_components_.clear();
     _type_ = TYPE_UNDEFINED;
     return;
   }
 
-  void component_base::_component_initialize(const datatools::properties& config_,
+  void component_model_base::_component_initialize(const datatools::properties& config_,
                                              component_pool_type& components_)
   {
     // Logging priority:
@@ -326,12 +326,12 @@ namespace electronics {
     return;
   }
 
-  bool component_base::_is_initialized() const
+  bool component_model_base::_is_initialized() const
   {
     return _initialized_;
   }
 
-  void component_base::_set_initialized(bool init_)
+  void component_model_base::_set_initialized(bool init_)
   {
     _initialized_ = init_;
     return;

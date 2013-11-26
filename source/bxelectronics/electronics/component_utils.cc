@@ -31,17 +31,18 @@
 #include <datatools/exception.h>
 
 // This project
-#include <electronics/component_base.h>
+#include <electronics/component_model_base.h>
 #include <electronics/component_manager.h>
 
 
 namespace electronics {
 
   std::string make_indexed_name(const std::string & prefix_,
-                                uint32_t index_)
+                                uint32_t index_,
+                                const std::string & suffix_)
   {
     std::ostringstream oss;
-    oss << prefix_ << index_;
+    oss << prefix_ << index_ << suffix_;
     return oss.str();
   }
 

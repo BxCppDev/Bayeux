@@ -1,21 +1,21 @@
 // -*- mode: c++; -*-
-#ifndef ELECTRONICS_CRATE_BASE_H
-#define ELECTRONICS_CRATE_BASE_H
+#ifndef ELECTRONICS_CRATE_MODEL_BASE_H
+#define ELECTRONICS_CRATE_MODEL_BASE_H
 
-#include <electronics/component_base.h>
+#include <electronics/component_model_base.h>
 
 namespace electronics {
 
   /// \brief The base class of an electronic crate
-  class crate_base : public component_base
+  class crate_model_base : public component_model_base
   {
   public:
 
     /// Default constructor
-    crate_base();
+    crate_model_base();
 
     /// Destructor
-    virtual ~crate_base();
+    virtual ~crate_model_base();
 
     /// Set the max number of modules
     void set_max_number_of_modules(uint32_t);
@@ -80,10 +80,10 @@ namespace electronics {
     indexed_component_dict_type _modules_; //!< List of embedded modules
 
     // Automated registration in the system factory register
-    ELECTRONICS_COMPONENT_REGISTRATION_INTERFACE(crate_base);
+    ELECTRONICS_COMPONENT_REGISTRATION_INTERFACE(crate_model_base);
 
   };
 
 } // end of namespace electronics
 
-#endif // ELECTRONICS_CRATE_BASE_H
+#endif // ELECTRONICS_CRATE_MODEL_BASE_H
