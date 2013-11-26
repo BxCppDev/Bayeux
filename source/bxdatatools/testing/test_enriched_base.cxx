@@ -1,4 +1,4 @@
-/* test_advanced_object.cxx */
+/* test_enriched_base.cxx */
 
 // - Boost
 #include <boost/scoped_ptr.hpp>
@@ -6,22 +6,22 @@
 // - Ourselves
 #include <datatools/datatools_config.h>
 #include <datatools/logger.h>
-#include <datatools/advanced_object.h>
+#include <datatools/enriched_base.h>
 #include <datatools/properties.h>
 #include <datatools/io_factory.h>
 
-#include <datatools/advanced_object.ipp>
+#include <datatools/enriched_base.ipp>
 #include <datatools/reflection_guard.h>
 
 //#if DATATOOLS_WITH_REFLECTION == 1
 void test_reflection()
 {
   std::cerr << "\n******** Entering test_reflection... " << std::endl;
-  const DR_CLASS & aoMetaClass = DR_CLASS_BY_NAME("datatools::advanced_object");
+  const DR_CLASS & aoMetaClass = DR_CLASS_BY_NAME("datatools::enriched_base");
   std::cerr << "******** Go. " << std::endl;
 
-  boost::scoped_ptr<datatools::advanced_object> ao;
-  ao.reset(aoMetaClass.construct<datatools::advanced_object>());
+  boost::scoped_ptr<datatools::enriched_base> ao;
+  ao.reset(aoMetaClass.construct<datatools::enriched_base>());
   DR_OBJECT aoObj = ao.get();
   aoObj.call("smart_print", DR_ARGS(1, "Advanced object: ", "*** "));
   std::cerr << "******** Test 1. " << std::endl;
@@ -56,7 +56,7 @@ void test_reflection()
 int main (int argc_, char ** argv_) {
   int error_code = EXIT_SUCCESS;
   try {
-    datatools::advanced_object obj;
+    datatools::enriched_base obj;
     obj.set_name_c("object1")
       .set_display_name_c("o1")
       .set_terse_description_c("A dummy object.")
@@ -66,7 +66,7 @@ int main (int argc_, char ** argv_) {
     obj.tree_dump(std::cout, "An object : ");
 
     {
-      datatools::data_writer writer("test_advanced_object.xml");
+      datatools::data_writer writer("test_enriched_base.xml");
       writer.store(obj);
     }
 
@@ -85,4 +85,3 @@ int main (int argc_, char ** argv_) {
   }
   return error_code;
 }
-

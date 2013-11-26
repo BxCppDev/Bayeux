@@ -1,10 +1,10 @@
 // -*- mode: c++; -*-
-//! \file advanced_object.ipp
-#ifndef DATATOOLS_ADVANCED_OBJECT_IPP_
-#define DATATOOLS_ADVANCED_OBJECT_IPP_
+//! \file enriched_base.ipp
+#ifndef DATATOOLS_ENRICHED_BASE_IPP_
+#define DATATOOLS_ENRICHED_BASE_IPP_
 
 // Ourselves
-#include <datatools/advanced_object.h>
+#include <datatools/enriched_base.h>
 
 // Standard Library
 
@@ -20,7 +20,7 @@
 
 namespace datatools {
   /// Boost serialization template method
-DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(advanced_object, archive, version)
+DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(enriched_base, archive, version)
 {
   archive & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
   archive & boost::serialization::make_nvp("name",              _name_);
@@ -33,6 +33,6 @@ DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(advanced_object, archive, ver
 } // end of namespace datatools
 
 //#include <boost/serialization/version.hpp>
-//BOOST_CLASS_VERSION(datatools::advanced_object, 1)
+//BOOST_CLASS_VERSION(datatools::enriched_base, 1)
 
-#endif // DATATOOLS_ADVANCED_OBJECT_IPP_
+#endif // DATATOOLS_ENRICHED_BASE_IPP_

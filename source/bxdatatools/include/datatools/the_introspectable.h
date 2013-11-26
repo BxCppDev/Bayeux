@@ -44,7 +44,9 @@
 
 #include <datatools/things-reflect.h>
 
-#include <datatools/advanced_object-reflect.h>
+//#include <datatools/advanced_object-reflect.h>
+
+#include <datatools/enriched_base-reflect.h>
 
 #endif // DATATOOLS_THE_INTROSPECTABLE_H_
 

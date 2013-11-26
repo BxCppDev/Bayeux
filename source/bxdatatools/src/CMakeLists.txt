@@ -22,7 +22,7 @@ endfunction()
 
 set(datatools_PUBLIC_HEADERS
   include/datatools/types.h
-  include/datatools/advanced_object.h
+  #include/datatools/advanced_object.h
   include/datatools/archives_instantiation.h
   include/datatools/archives_list.h
   include/datatools/base_service.h
@@ -31,6 +31,7 @@ set(datatools_PUBLIC_HEADERS
   include/datatools/caster_utils.h
   include/datatools/clhep_units.h
   include/datatools/datatools.h
+  include/datatools/enriched_base.h
   include/datatools/event_id.h
   include/datatools/exception.h
   include/datatools/factory.h
@@ -85,7 +86,8 @@ set(datatools_PUBLIC_HEADERS
   include/datatools/properties.ipp
   include/datatools/multi_properties.ipp
   include/datatools/things.ipp
-  include/datatools/advanced_object.ipp
+  #include/datatools/advanced_object.ipp
+  include/datatools/enriched_base.ipp
   include/datatools/the_serializable.ipp
   include/datatools/the_serializable.h
 
@@ -97,7 +99,8 @@ set(datatools_PUBLIC_HEADERS
   include/datatools/event_id-reflect.h
   include/datatools/multi_properties-reflect.h
   include/datatools/properties-reflect.h
-  include/datatools/advanced_object-reflect.h
+  #include/datatools/advanced_object-reflect.h
+  include/datatools/enriched_base-reflect.h
   include/datatools/things-reflect.h
   include/datatools/the_introspectable.h
   )
@@ -209,7 +212,8 @@ set(datatools_SOURCES
   ocd_utils.cc
   ocd_driver.cc
   types.cc
-  advanced_object.cc
+  #advanced_object.cc
+  enriched_base.cc
   library_info.cc
   the_serializable.cc
   #base_service.cc # Must go at the end... not sure.
