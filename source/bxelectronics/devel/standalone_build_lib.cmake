@@ -22,7 +22,7 @@ set(electronicsLibrary_HEADERS
   ${electronics_SOURCE_DIR}/component_types-reflect.h
   ${electronics_SOURCE_DIR}/component_base.h
   ${electronics_SOURCE_DIR}/bitset_desc.h
-  ${electronics_SOURCE_DIR}/register_base.h
+  ${electronics_SOURCE_DIR}/register_desc.h
   ${electronics_SOURCE_DIR}/board_base.h
   ${electronics_SOURCE_DIR}/crate_base.h
   ${electronics_SOURCE_DIR}/rack_base.h
@@ -49,7 +49,7 @@ set(electronicsLibrary_SOURCES
   ${electronics_SOURCE_DIR}/component_utils.cc
   ${electronics_SOURCE_DIR}/component_base.cc
   ${electronics_SOURCE_DIR}/bitset_desc.cc
-  ${electronics_SOURCE_DIR}/register_base.cc
+  ${electronics_SOURCE_DIR}/register_desc.cc
   ${electronics_SOURCE_DIR}/board_base.cc
   ${electronics_SOURCE_DIR}/crate_base.cc
   ${electronics_SOURCE_DIR}/rack_base.cc

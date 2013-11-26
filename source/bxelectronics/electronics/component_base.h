@@ -12,7 +12,7 @@
 
 // - Bayeux/datatools
 #include <datatools/factory_macros.h>
-#include <datatools/advanced_object.h>
+#include <datatools/enriched_base.h>
 
 // This project
 #include <electronics/component_utils.h>
@@ -24,7 +24,7 @@ namespace electronics {
   class component_manager;
 
   /// \brief The base class of all electronic component models
-  class component_base : public datatools::advanced_object
+  class component_base : public datatools::enriched_base
   {
   public:
 

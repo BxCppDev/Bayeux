@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
-#ifndef ELECTRONICS_REGISTER_BASE_H
-#define ELECTRONICS_REGISTER_BASE_H
+#ifndef ELECTRONICS_REGISTER_DESC_H
+#define ELECTRONICS_REGISTER_DESC_H
 
 // Standard library
 #include <string>
@@ -17,7 +17,8 @@
 
 namespace electronics {
 
-  class register_base : public component_base
+  /// \brief Description of the layout of a register of finite size
+  class register_desc : public component_base
   {
   public:
     typedef std::map<std::string, bitset_desc> bitsets_dict_type;
@@ -33,10 +34,10 @@ namespace electronics {
     };
 
     /// Default constructor
-    register_base();
+    register_desc();
 
     /// Destructor
-    virtual ~register_base();
+    virtual ~register_desc();
 
     /// Set read access flag
     void set_readable(bool);
@@ -59,19 +60,25 @@ namespace electronics {
     /// Get the effective size
     uint8_t get_effective_size() const;
 
+    /// Get the register mask
+    const boost::dynamic_bitset<> & get_mask() const;
+
     /// Add a bitset
     void add_bitset(const std::string & name_, const bitset_desc &);
 
-    /// Add a bitset
+    /// Add a bitset a some given LSB position
     void add_bitset(const std::string & name_,
                     uint8_t lsb_position_,
                     uint8_t size_,
                     const std::string & default_value_ = "");
 
-    /// Append a bitset
+    /// Append a bitset from the first available bit slot found in the mask
     void append_bitset(const std::string & name_,
                        uint8_t size_,
                        const std::string & default_value_ = "");
+
+    /// Build a dynamic bitset from the register description
+    void make(boost::dynamic_bitset<> & dbs_) const;
 
     /* ***********
      * INTERFACE *
@@ -102,20 +109,19 @@ namespace electronics {
     /// Common termination of the board
     void _register_reset();
 
-
   private:
 
     uint8_t _size_; //!< Size of the register
     boost::dynamic_bitset<> _mask_; //!< Full bit mask
     bool _readable_; //!< Read access flag
     bool _writable_; //!< Write access flag
-    uint64_t _address_; //!< Hardware address
+    // uint64_t _address_; //!< Hardware address
     bitsets_dict_type _bitsets_; //!< Dictionary of bitsets
 
-    ELECTRONICS_COMPONENT_REGISTRATION_INTERFACE(register_base);
+    ELECTRONICS_COMPONENT_REGISTRATION_INTERFACE(register_desc);
 
   };
 
 } // end of namespace electronics
 
-#endif // ELECTRONICS_REGISTER_BASE_H
+#endif // ELECTRONICS_REGISTER_DESC_H

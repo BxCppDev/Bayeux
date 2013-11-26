@@ -6,6 +6,7 @@
 
 namespace electronics {
 
+  /// \brief The base class of an electronic rack
   class rack_base : public component_base
   {
   public:

@@ -94,7 +94,7 @@ namespace electronics {
     _size_ = 0;
     _lsb_position_ = 64;
     _default_value_.clear();
-    this->advanced_object::clear_advanced();
+    this->enriched_base::clear_advanced();
     return;
   }
 
@@ -203,7 +203,7 @@ namespace electronics {
                               const std::string& indent_,
                               bool inherit_) const
   {
-    this->advanced_object::tree_dump(out_, title_, indent_, true);
+    this->enriched_base::tree_dump(out_, title_, indent_, true);
 
     out_ << indent_ << i_tree_dumpable::tag
          << "Valid : " << is_valid() << std::endl;

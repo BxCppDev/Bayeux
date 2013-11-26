@@ -15,8 +15,8 @@ namespace electronics {
 
   template <class T>
   bool component_manager::is_a(const std::string& name) const {
-    component_pool_type::const_iterator found = components_.find(name);
-    DT_THROW_IF (found == components_.end(),
+    component_pool_type::const_iterator found = _components_.find(name);
+    DT_THROW_IF (found == _components_.end(),
                  std::logic_error,
                  "No component named '" << name << "' !");
     const component_entry& entry = found->second;
@@ -34,8 +34,8 @@ namespace electronics {
 
   template<class T>
   T& component_manager::grab(const std::string& name) {
-    component_pool_type::iterator found = components_.find(name);
-    DT_THROW_IF (found == components_.end(),
+    component_pool_type::iterator found = _components_.find(name);
+    DT_THROW_IF (found == _components_.end(),
                  std::logic_error,
                  "No component named '" << name << "' !");
     component_entry& entry = found->second;
@@ -61,7 +61,7 @@ namespace electronics {
 
   template <class ComponentClass>
   void component_manager::register_component_type(const std::string& id) {
-    factory_register_.registration(id, boost::factory<ComponentClass*>());
+    _factory_register_.registration(id, boost::factory<ComponentClass*>());
   }
 
 } // end of namespace electronics

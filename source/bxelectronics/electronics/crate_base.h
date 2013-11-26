@@ -6,6 +6,7 @@
 
 namespace electronics {
 
+  /// \brief The base class of an electronic crate
   class crate_base : public component_base
   {
   public:

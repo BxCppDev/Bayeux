@@ -46,46 +46,50 @@ namespace electronics {
   // Default logger interface
 
   // Logging features:
-  void component_manager::set_logging_priority(::datatools::logger::priority p)
+  void component_manager::set_logging_priority(::datatools::logger::priority p_)
   {
-    _logging_priority = p;
+    _logging_priority_ = p_;
     return;
   }
 
   datatools::logger::priority component_manager::get_logging_priority() const
   {
-    return _logging_priority;
+    return _logging_priority_;
   }
 
-  void component_manager::set_name(const std::string& name) {
-    name_ = name;
+  void component_manager::set_setup_label(const std::string& label_) {
+    _setup_label_ = label_;
     return;
   }
 
-
-  void component_manager::set_description(const std::string& description) {
-    description_ = description;
+  void component_manager::set_setup_version(const std::string& version_) {
+    _setup_version_ = version_;
     return;
   }
 
-
-  const std::string& component_manager::get_name() const {
-    return name_;
+  void component_manager::set_setup_description(const std::string& description_) {
+    _setup_description_ = description_;
+    return;
   }
 
-
-  const std::string& component_manager::get_description() const {
-    return description_;
+  const std::string& component_manager::get_setup_label() const {
+    return _setup_label_;
   }
 
+  const std::string& component_manager::get_setup_version() const {
+    return _setup_version_;
+  }
+
+  const std::string& component_manager::get_setup_description() const {
+    return _setup_description_;
+  }
 
   bool component_manager::is_debug() const {
     return get_logging_priority() >= datatools::logger::PRIO_DEBUG;
   }
 
-
-  void component_manager::set_debug(bool debug) {
-    if (debug) {
+  void component_manager::set_debug(bool debug_) {
+    if (debug_) {
       set_logging_priority(datatools::logger::PRIO_DEBUG);
     } else {
       set_logging_priority(datatools::logger::PRIO_WARNING);
@@ -93,30 +97,31 @@ namespace electronics {
     return;
   }
 
-
   bool component_manager::is_initialized() const {
-    return initialized_;
+    return _initialized_;
   }
 
-
-  void component_manager::load(const std::string& name,
-                               const std::string& id,
-                               const datatools::properties& config) {
-    this->load_component(name, id, config);
+  void component_manager::load(const std::string& name_,
+                               const std::string& id_,
+                               const datatools::properties& config_) {
+    this->load_component(name_, id_, config_);
     return;
   }
 
 
-  void component_manager::load(const datatools::multi_properties& config) {
+  void component_manager::load(const datatools::multi_properties& config_) {
     DT_LOG_TRACE(get_logging_priority(), "Entering...");
-    DT_THROW_IF(this->is_initialized(), std::logic_error, "Component manager is already initialized !");
-    for (datatools::multi_properties::entries_ordered_col_type::const_iterator i = config.ordered_entries().begin();
-         i != config.ordered_entries().end();
+    DT_THROW_IF(this->is_initialized(), std::logic_error,
+                "Component manager is already initialized !");
+    for (datatools::multi_properties::entries_ordered_col_type::const_iterator i
+           = config_.ordered_entries().begin();
+         i != config_.ordered_entries().end();
          ++i) {
       datatools::multi_properties::entry* mpe = *i;
       const std::string& component_name = mpe->get_key();
       const std::string& component_id = mpe->get_meta();
-      DT_LOG_DEBUG (get_logging_priority(), "Configuration for component named '" << component_name << "' "
+      DT_LOG_DEBUG (get_logging_priority(), "Configuration for component named '"
+                    << component_name << "' "
                     << " with ID '" << component_id << "'...");
       this->load_component(component_name, component_id, mpe->get_properties());
     }
@@ -124,21 +129,27 @@ namespace electronics {
   }
 
 
-  void component_manager::initialize(const datatools::properties& config) {
+  void component_manager::initialize(const datatools::properties& config_) {
     DT_THROW_IF(this->is_initialized(), std::logic_error, "Component manager is already initialized !");
 
-    datatools::logger::priority p = datatools::logger::extract_logging_configuration(config);
+    datatools::logger::priority p = datatools::logger::extract_logging_configuration(config_);
     set_logging_priority (p);
 
-    if (name_.empty()) {
-      if (config.has_key("name")) {
-        name_ = config.fetch_string("name");
+    if (_setup_label_.empty()) {
+      if (config_.has_key("setup_label")) {
+        _setup_label_ = config_.fetch_string("setup_label");
       }
     }
 
-    if (description_.empty()) {
-      if (config.has_key("description")) {
-        description_ = config.fetch_string("description");
+    if (_setup_version_.empty()) {
+      if (config_.has_key("setup_version")) {
+        _setup_version_ = config_.fetch_string("setup_version");
+      }
+    }
+
+    if (_setup_description_.empty()) {
+      if (config_.has_key("setup_description")) {
+        _setup_description_ = config_.fetch_string("setup_description");
       }
     }
 
@@ -150,8 +161,8 @@ namespace electronics {
 
       CFList conf_file_list;
 
-      if (config.has_key(conf_file_key)) {
-        config.fetch(conf_file_key, conf_file_list);
+      if (config_.has_key(conf_file_key)) {
+        config_.fetch(conf_file_key, conf_file_list);
       }
 
       for (CFListIterator i = conf_file_list.begin();
@@ -164,10 +175,29 @@ namespace electronics {
       }
     }
 
-    initialized_ = true;
+    // EID manager:
+    std::vector<std::string> eid_mgr_defs;
+    {
+      if (config_.has_key("eid_manager.categories")) {
+        config_.fetch("eid_manager.categories", eid_mgr_defs);
+      }
+    }
+
+    for (int i = 0; i < eid_mgr_defs.size(); i++) {
+      load_eid_categories(eid_mgr_defs[i]);
+    }
+
+    _initialized_ = true;
     return;
   }
 
+  void component_manager::load_eid_categories(const std::string & file_)
+  {
+    std::string ftmp = file_;
+    datatools::fetch_path_with_env(ftmp);
+    _eid_manager_.load(ftmp);
+    return;
+  }
 
   void component_manager::initialize() {
     datatools::properties dummy_config;
@@ -178,17 +208,17 @@ namespace electronics {
 
   void component_manager::reset() {
     DT_LOG_TRACE(get_logging_priority(),"Entering...");
-    DT_THROW_IF(!initialized_,std::logic_error,"Manager is not initialized !");
-    size_t count = components_.size();
-    size_t initial_size = components_.size();
-    while (components_.size() > 0) {
-      for (component_pool_type::iterator it = components_.begin();
-           it != components_.end();
+    DT_THROW_IF(!_initialized_,std::logic_error,"Manager is not initialized !");
+    size_t count = _components_.size();
+    size_t initial_size = _components_.size();
+    while (_components_.size() > 0) {
+      for (component_pool_type::iterator it = _components_.begin();
+           it != _components_.end();
            ++it) {
         component_entry& entry = it->second;
-        DT_LOG_DEBUG(get_logging_priority(),"Removing component '" << entry.get_component_name ()  << "'...");
+        DT_LOG_DEBUG(get_logging_priority(), "Removing component '" << entry.get_component_name ()  << "'...");
         this->reset_component(entry);
-        components_.erase(it);
+        _components_.erase(it);
         --count;
         break;
       }
@@ -196,35 +226,32 @@ namespace electronics {
         break;
       }
     }
-    if (components_.size() > 0) {
-      DT_LOG_WARNING(get_logging_priority(),"There are some left components !");
+    if (_components_.size() > 0) {
+      DT_LOG_WARNING(get_logging_priority(), "There are some left components !");
     }
-    components_.clear();
-    factory_register_.reset();
-    force_initialization_at_load_ = false;
-    preload_ = true;
-    initialized_ = false;
-    DT_LOG_TRACE(get_logging_priority(),"Exiting.");
+    _eid_manager_.reset();
+    _components_.clear();
+    _factory_register_.reset();
+    _force_initialization_at_load_ = false;
+    _preload_ = true;
+    _initialized_ = false;
+    DT_LOG_TRACE(get_logging_priority(), "Exiting.");
     return;
   }
 
 
   // Constructor :
-  component_manager::component_manager(const std::string& name,
-                                       const std::string& description,
-                                       uint32_t flag)
-    : factory_register_("electronics::component_base/component_factory",
+  component_manager::component_manager(uint32_t flag)
+    : _factory_register_("electronics::component_base/component_factory",
                         flag & FACTORY_VERBOSE ?
                         component_base::factory_register_type::verbose : 0) {
-    initialized_ = false;
-    this->set_name(name);
-    this->set_description(description);
+    _initialized_ = false;
 
     set_logging_priority(datatools::logger::PRIO_WARNING);
-    force_initialization_at_load_ = false;
+    _force_initialization_at_load_ = false;
 
     if (flag & FORCE_INITIALIZATION_AT_LOAD) {
-      force_initialization_at_load_ = true;
+      _force_initialization_at_load_ = true;
     }
 
     bool preload = true;
@@ -232,41 +259,44 @@ namespace electronics {
       preload = false;
     }
 
-    this->set_preload(preload);
+    this->_set_preload_(preload);
     return;
   }
 
 
   // Destructor :
   component_manager::~component_manager () {
-    if (initialized_) this->reset();
+    if (_initialized_) this->reset();
     return;
   }
 
+  const geomtools::id_mgr & component_manager::get_eid_manager() const
+  {
+    return _eid_manager_;
+  }
 
   /****************
    *   COMPONENTS   *
    ****************/
 
   bool component_manager::has(const std::string& name) const {
-    return components_.find(name) != components_.end();
+    return _components_.find(name) != _components_.end();
   }
 
   bool component_manager::is_initialized(const std::string& name) const {
-    component_pool_type::const_iterator found = components_.find(name);
-    return found != components_.end() && found->second.is_initialized();
+    component_pool_type::const_iterator found = _components_.find(name);
+    return found != _components_.end() && found->second.is_initialized();
   }
 
   // Who needs this (components is an implementation detail....)
   const component_pool_type& component_manager::get_components() const {
-    return components_;
+    return _components_;
   }
 
 
   component_pool_type& component_manager::grab_components() {
-    return components_;
+    return _components_;
   }
-
 
   void component_manager::dump_components(std::ostream& out,
                                           const std::string& title,
@@ -278,10 +308,10 @@ namespace electronics {
 
     // Components:
     {
-      size_t sz = components_.size();
+      size_t sz = _components_.size();
       size_t count = 0;
-      for (component_pool_type::const_iterator it = components_.begin();
-           it != components_.end();
+      for (component_pool_type::const_iterator it = _components_.begin();
+           it != _components_.end();
            ++it) {
         count++;
         out << indent;
@@ -309,12 +339,12 @@ namespace electronics {
 
 
   bool component_manager::has_component_type(const std::string& id) const {
-    return factory_register_.has(id);
+    return _factory_register_.has(id);
   }
 
 
   void component_manager::unregister_component_type(const std::string& id) {
-    factory_register_.unregistration(id);
+    _factory_register_.unregistration(id);
     return;
   }
 
@@ -329,13 +359,18 @@ namespace electronics {
     if (!title.empty()) out << indent << title << std::endl;
 
     out << indent << i_tree_dumpable::tag
-        << "Name           : '"
-        << name_
+        << "Setup label       : '"
+        << _setup_label_
         << "'" << std::endl;
 
     out << indent << i_tree_dumpable::tag
-        << "Description    : '"
-        << description_
+        << "Setup version     : '"
+        << _setup_version_
+        << "'" << std::endl;
+
+    out << indent << i_tree_dumpable::tag
+        << "Setup description : '"
+        << _setup_description_
         << "'" << std::endl;
 
     out << indent << i_tree_dumpable::tag
@@ -345,12 +380,12 @@ namespace electronics {
 
     out << indent << i_tree_dumpable::tag
         << "Preload        : "
-        << preload_
+        << _preload_
         << std::endl;
 
     out << indent << i_tree_dumpable::tag
         << "Force initialization : "
-        << force_initialization_at_load_
+        << _force_initialization_at_load_
         << std::endl;
 
     out << indent << i_tree_dumpable::tag
@@ -359,20 +394,20 @@ namespace electronics {
       std::ostringstream indent_oss;
       indent_oss << indent << i_tree_dumpable::skip_tag;
 
-      factory_register_.print(out, indent_oss.str());
+      _factory_register_.print(out, indent_oss.str());
     }
 
     {
       out << indent << i_tree_dumpable::tag
           << "Components       : ";
-      size_t sz = components_.size();
+      size_t sz = _components_.size();
       if (sz == 0) {
         out << "<none>";
       }
 
       out << std::endl;
-      for (component_pool_type::const_iterator i = components_.begin();
-           i != components_.end();
+      for (component_pool_type::const_iterator i = _components_.begin();
+           i != _components_.end();
            ++i) {
         const std::string& component_name = i->first;
         const component_entry& component_entry = i->second;
@@ -382,7 +417,7 @@ namespace electronics {
         indent_oss << indent << i_tree_dumpable::skip_tag;
         component_pool_type::const_iterator j = i;
         j++;
-        if (j == components_.end()) {
+        if (j == _components_.end()) {
           out << i_tree_dumpable::last_tag;
           indent_oss << i_tree_dumpable::last_skip_tag;
         } else {
@@ -394,10 +429,22 @@ namespace electronics {
       }
     }
 
-    out << indent << i_tree_dumpable::inherit_tag(inherit)
-        << "Initialized    : "
-        << this->is_initialized()
-        << std::endl;
+    {
+      out << indent << i_tree_dumpable::tag
+          << "EID manager    : "
+          << std::endl;
+      std::ostringstream indent_oss;
+      indent_oss << indent << i_tree_dumpable::skip_tag;
+      _eid_manager_.tree_dump(std::clog, "", indent_oss.str());
+    }
+
+    {
+      out << indent << i_tree_dumpable::inherit_tag(inherit)
+          << "Initialized    : "
+          << this->is_initialized()
+          << std::endl;
+    }
+
     return;
   }
 
@@ -419,17 +466,17 @@ namespace electronics {
       tmp_entry.set_component_name(name);
       DT_LOG_DEBUG(get_logging_priority(),
                    "Add an entry for component '"<< name << "'...");
-      components_[name] = tmp_entry;
+      _components_[name] = tmp_entry;
     }
     // fetch a reference on it and update :
-    component_entry& new_entry = components_.find(name)->second;
+    component_entry& new_entry = _components_.find(name)->second;
     new_entry.set_component_manager(*this);
     new_entry.set_component_id(id);
     new_entry.set_component_config(config);
     //new_entry.component_status = component_entry::STATUS_BLANK;
     DT_LOG_DEBUG(get_logging_priority(),"Fetch...");
     this->create_component(new_entry);
-    if (force_initialization_at_load_) {
+    if (_force_initialization_at_load_) {
       this->initialize_component(new_entry);
     }
     DT_LOG_TRACE(get_logging_priority(),"Exiting.");
@@ -439,7 +486,7 @@ namespace electronics {
 
   void component_manager::preload_global_dict() {
     DT_LOG_TRACE(get_logging_priority(),"Entering !");
-    factory_register_.import(DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(component_base));
+    _factory_register_.import(DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(component_base));
     DT_LOG_TRACE(get_logging_priority(),"Embeded.");
     return;
   }
@@ -451,7 +498,7 @@ namespace electronics {
                    "Creating component named '" <<  entry.get_component_name()
                    << "'...");
       // search for the component's label in the factory dictionary:
-      DT_THROW_IF (!factory_register_.has(entry.get_component_id()),
+      DT_THROW_IF (!_factory_register_.has(entry.get_component_id()),
                    std::logic_error,
                    "Cannot find component factory with ID '"
                    << entry.get_component_id()
@@ -459,7 +506,7 @@ namespace electronics {
                    << entry.get_component_name() << "' !");
 
       typedef component_base::factory_register_type::factory_type FactoryType;
-      const FactoryType& the_factory = factory_register_.get(entry.get_component_id());
+      const FactoryType& the_factory = _factory_register_.get(entry.get_component_id());
       component_base* ptr = the_factory();
       ptr->set_name(entry.get_component_name());
       entry.grab_component_handle().reset(ptr);
@@ -484,7 +531,7 @@ namespace electronics {
                    << entry.get_component_name()
                    << "'...");
       component_base& the_component = entry.grab_component_handle().grab();
-      the_component.initialize(entry.get_component_config(), components_);
+      the_component.initialize(entry.get_component_config(), _components_);
       entry.update_component_status(component_entry::STATUS_INITIALIZED);
     }
     return;
@@ -504,9 +551,9 @@ namespace electronics {
   //----------------------------------------------------------------------
   // Private Interface Definitions
 
-  void component_manager::set_preload(bool preload) {
-    preload_ = preload;
-    if (preload_) {
+  void component_manager::_set_preload_(bool preload) {
+    _preload_ = preload;
+    if (_preload_) {
       this->preload_global_dict();
     }
     return;
@@ -525,22 +572,22 @@ namespace electronics {
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::electronics::component_manager,ocd_)
 {
   ocd_.set_class_name ("::electronics::component_manager");
-  ocd_.set_class_description ("A generic manager for electronics component objects");
+  ocd_.set_class_description ("A generic manager for electronics component models");
   ocd_.set_class_library ("Bayeux/electronics");
   ocd_.set_class_documentation ("A *component manager* is responsible of the instantiation,           \n"
-                                "initialization, management and destruction of various *component*    \n"
-                                "objects.                                                           \n"
-                                "A component is a special object that fulfils the generic             \n"
-                                "``electronics::component_base`` interface. A component is generally      \n"
-                                "dedicated to some special task : description of a crate,      \n"
-                                "a board, a chip... Such component objects are hosted    \n"
-                                "by the *component manager* which provides an unique counter for      \n"
-                                "end-users and client applications to configure, initialize and     \n"
-                                "access to the functionalities offered by the on-board components.    \n"
+                                "initialization, management and destruction of various electronics    \n"
+                                "*component* models.                                                  \n"
+                                "A component model is a special object that fulfils the generic       \n"
+                                "``electronics::component_base`` interface. A component model is      \n"
+                                "generally dedicated to some special task : description of a crate,   \n"
+                                "a board, a chip... Such component models are hosted by the           \n"
+                                "*component manager* which provides an unique counter for             \n"
+                                "end-users and client applications to configure, initialize and       \n"
+                                "access to the functionalities offered by the component models.       \n"
                                 "A component manager can be configured *manually* from plain C++ code.\n"
-                                "Is is also possible to initialize it through a set of ASCII        \n"
-                                "configuration files, thus dynamically instantiating a list of      \n"
-                                "components with various embedded functionalities.                     \n"
+                                "Is is also possible to initialize it through a set of ASCII          \n"
+                                "configuration files, thus dynamically instantiating a list of        \n"
+                                "component models with various embedded functionalities.              \n"
                                 )
     ;
 
@@ -560,37 +607,54 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::electronics::component_manager,ocd_)
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
-    cpd.set_name_pattern("name")
-      .set_terse_description("The name of the component manager object")
+    cpd.set_name_pattern("setup_label")
+      .set_terse_description("The label of the electronics virtual setup")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(true)
       .set_long_description(
-                            "Superseded by the previous method call :                 \n"
-                            "  ``electronics::component_manager::set_name(...)``\n"
-                            "                                                         \n"
-                            "Example::                                                \n"
-                            "                                                         \n"
-                            "   name : string = \"ECM\"                               \n"
-                            "                                                         \n"
-                            )
+                            "Superseded by the previous method call :                   \n"
+                            "  ``electronics::component_manager::set_setup_label(...)`` \n"
+                            "                                                           \n")
+      .add_example("::                                 \n"
+                   "                                   \n"
+                   "  setup_label : string = \"ECM\"   \n"
+                   "                                   \n"
+                   )
       ;
   }
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
-    cpd.set_name_pattern("description")
-      .set_terse_description("The embeded description string")
+    cpd.set_name_pattern("setup_version")
+      .set_terse_description("The version of the electronics virtual setup")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .set_long_description(
+                            "Superseded by the previous method call :                     \n"
+                            "  ``electronics::component_manager::set_setup_version(...)`` \n"
+                            "                                                             \n")
+      .add_example("::                                 \n"
+                   "                                   \n"
+                   "  setup_version : string = \"1.0\" \n"
+                   "                                   \n"
+                   )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("setup_description")
+      .set_terse_description("The description of the electronics virtual setup")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
-      .set_long_description(
-                            "Superseded by the previous method call :                 \n"
-                            "  ``electronics::component_manager::set_description(...)``   \n"
-                            "                                                         \n"
-                            "Example::                                                \n"
-                            "                                                         \n"
-                            "   description : string = \"The component manager for data analysis\" \n"
-                            "                                                         \n"
-                            )
+      .set_long_description("Superseded by the previous method call :                         \n"
+                            "  ``electronics::component_manager::set_setup_description(...)`` \n"
+                            "                                                                 \n")
+      .add_example("::                                                               \n"
+                   "                                                                 \n"
+                   "  setup_description : string = \"The electronics virtual setup\" \n"
+                   "                                                                 \n"
+                   )
       ;
   }
 
@@ -603,38 +667,38 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::electronics::component_manager,ocd_)
       .set_mandatory(false)
       .set_path(true)
       .set_long_description(
-                            "A list of filenames from where the manager               \n"
-                            "loads the directives to dynamically instantiate          \n"
-                            "new embedded component objects. The filenames may contains  \n"
+                            "A list of filenames from where the manager loads the     \n"
+                            "directives to dynamically instantiate new embedded       \n"
+                            "component model objects. The filenames may contains      \n"
                             "some environment variables.                              \n"
-                            "                                                         \n"
-                            "Example::                                                \n"
-                            "                                                         \n"
-                            "   components.configuration_files : string[2] as path = \\ \n"
-                            "     \"${CONFIG_REPOSITORY_DIR}/components.conf\" \\       \n"
-                            "     \"${CONFIG_REPOSITORY_DIR}/other_components.conf\"    \n"
-                            "                                                         \n"
                             "The target files must use the format of the              \n"
                             "``datatools::multi_properties`` class.                   \n"
                             "The loading order of the files is critical               \n"
-                            "because some components may depend on other ones           \n"
+                            "because some components may depend on other ones         \n"
                             "which should thus be defined **before** their            \n"
                             "dependers.                                               \n"
                             "                                                         \n"
-                            "Extends the instantiation of components triggered by       \n"
+                            "Extends the instantiation of components triggered by     \n"
                             "previous method calls :                                  \n"
-                            "  ``electronics::component_manager::load(...)``              \n"
-                            )
+                            "  ``electronics::component_manager::load(...)``          \n"
+                            "                                                         \n")
+      .add_example("A setup with two files::                                   \n"
+                   "                                                           \n"
+                   "   components.configuration_files : string[2] as path = \\ \n"
+                   "     \"${CONFIG_REPOSITORY_DIR}/components.conf\" \\       \n"
+                   "     \"${CONFIG_REPOSITORY_DIR}/other_components.conf\"    \n"
+                   "                                                           \n"
+                   )
       ;
   }
 
 
-  ocd_.set_configuration_hints ("Configuration example for a ``electronics::component_manage`` object:: \n"
+  ocd_.set_configuration_hints ("Configuration example for a ``electronics::component_manager`` object:: \n"
                                 "                                                                \n"
-                                "   debug : boolean = 0                                          \n"
-                                "   name  : string = \"CoreComponents\"                          \n"
-                                "   description  : string = \\                                   \n"
-                                "     \"Core components manager for data processing\"            \n"
+                                "   setup_label : string = \"MyExperiment\"                      \n"
+                                "   setup_version : string = \"1.0\"                             \n"
+                                "   setup_description  : string = \\                             \n"
+                                "     \"Core components manager for MyExperiment\"               \n"
                                 "   components.configuration_files : string[2] as path = \\      \n"
                                 "     \"${CONFIG_DIR}/frontend_components.conf\" \\              \n"
                                 "     \"${CONFIG_DIR}/trigger_components.conf\"                  \n"
@@ -649,7 +713,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::electronics::component_manager,ocd_)
                                 "  #@key_label   \"name\"                                        \n"
                                 "  #@meta_label  \"type\"                                        \n"
                                 "                                                                \n"
-                                "  [name=\"component_0\" type=\"component_class_ID_0\"]          \n"
+                                "  [name=\"component_0\" type=\"component_model_0\"]             \n"
                                 "                                                                \n"
                                 "  #@config A component object                                   \n"
                                 "                                                                \n"
@@ -661,7 +725,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::electronics::component_manager,ocd_)
                                 "                                                                \n"
                                 "  ...                                                           \n"
                                 "                                                                \n"
-                                "  [name=\"component_1\" type=\"component_class_ID_1\"]          \n"
+                                "  [name=\"component_1\" type=\"component_model_1\"]             \n"
                                 "                                                                \n"
                                 "  #@config Another component object                             \n"
                                 "                                                                \n"

@@ -5,9 +5,10 @@ message( STATUS "electronics_TEST_DIR='${electronics_TEST_DIR}'")
 set(electronics_TESTS
   ${electronics_TEST_DIR}/test_component_base.cxx
   ${electronics_TEST_DIR}/test_bitset_desc.cxx
-  ${electronics_TEST_DIR}/test_register_base.cxx
+  ${electronics_TEST_DIR}/test_register_desc.cxx
   ${electronics_TEST_DIR}/test_board_base.cxx
   ${electronics_TEST_DIR}/test_crate_base.cxx
+  ${electronics_TEST_DIR}/test_rack_base.cxx
   ${electronics_TEST_DIR}/test_component_manager.cxx
   #${electronics_TEST_DIR}/test_digitized_signal.cxx
   )

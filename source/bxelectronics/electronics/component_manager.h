@@ -23,7 +23,7 @@
  *
  * Description:
  *
- *   A component manager.
+ *   An electronic component manager.
  *
  * History:
  *
@@ -45,6 +45,8 @@
 #include <datatools/i_tree_dump.h>
 #include <datatools/properties.h>
 #include <datatools/bit_mask.h>
+// - Bayeux/geomtools
+#include <geomtools/id_mgr.h>
 
 // This project
 #include <electronics/component_utils.h>
@@ -72,31 +74,30 @@ namespace electronics {
     };
 
   public:
+
     /// Constructor
-    component_manager(const std::string& name = "",
-                      const std::string & description = "",
-                      uint32_t flag = BLANK);
+    component_manager(uint32_t flag = 0);
 
     /// Destructor
     ~component_manager();
 
-    /// Set the name of the component manager
-    void set_name(const std::string& name);
+    /// Set the name of the setup
+    void set_setup_label(const std::string& name);
 
-    /// Set the description of the component manager
-    void set_description(const std::string& description);
+    /// Set the description of the setup
+    void set_setup_description(const std::string& description);
 
-    /// Set the version of the component manager
-    void set_version(const std::string& version);
+    /// Set the version of the setup
+    void set_setup_version(const std::string& version);
 
-    /// Get the name of the component manager
-    const std::string& get_name() const;
+    /// Get the name of the setup
+    const std::string& get_setup_label() const;
 
-    /// Get the description of the component manager
-    const std::string& get_description() const;
+    /// Get the description of the setup
+    const std::string& get_setup_description() const;
 
-    /// Get the version of the component manager
-    const std::string& get_version() const;
+    /// Get the version of the setup
+    const std::string& get_setup_version() const;
 
     /// Check the debug flag
     bool is_debug() const;
@@ -165,6 +166,10 @@ namespace electronics {
 
     void load(const datatools::multi_properties& config);
 
+    const geomtools::id_mgr & get_eid_manager() const;
+
+    void load_eid_categories(const std::string &);
+
     const component_pool_type& get_components() const;
 
     component_pool_type& grab_components();
@@ -198,21 +203,24 @@ namespace electronics {
     void preload_global_dict();
 
   private:
+
     /// Set the factory preload flag
-    void set_preload(bool preload);
+    void _set_preload_(bool preload);
 
   private:
 
-    datatools::logger::priority _logging_priority; /// Logging priority threshold
-    bool         initialized_; /// Initialization flag
-    std::string  name_; /// Manager's name
-    std::string  description_; /// Manager's description
-    bool         preload_; /// Factory preload flag
-    bool         force_initialization_at_load_; /// Flag for triggering component  initialization at load (rather than first use)
+    datatools::logger::priority _logging_priority_; //!< Logging priority threshold
+    bool         _initialized_;       //!< Initialization flag
+    std::string  _setup_label_;       //!< the label associated to the setup
+    std::string  _setup_version_;     //!< the version tag of the setup
+    std::string  _setup_description_; //!< the description of the setup
+    bool         _preload_;           //!< Factory preload flag
+    bool         _force_initialization_at_load_; //!< Flag for triggering component  initialization at load (rather than first use)
+    component_base::factory_register_type  _factory_register_; //!< Factory register
+    component_pool_type                    _components_;       //!< Dictionary of components
+    geomtools::id_mgr _eid_manager_; //!< manager of electronics ID
+    // Mapping...
 
-    // 2012-04-09 FM : support for datatools::factory system :
-    component_base::factory_register_type  factory_register_;
-    component_pool_type                    components_; /// Dictionary of components
   };
 
 } // end of namespace electronics

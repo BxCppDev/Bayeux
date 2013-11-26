@@ -6,6 +6,7 @@
 
 namespace electronics {
 
+  /// \brief Generic base model of a electronic board
   class board_base : public component_base
   {
   public:

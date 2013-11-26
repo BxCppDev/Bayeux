@@ -10,11 +10,12 @@
 #include <boost/cstdint.hpp>
 #include <boost/dynamic_bitset.hpp>
 // - Bayeux/datatools
-#include <datatools/advanced_object.h>
+#include <datatools/enriched_base.h>
 
 namespace electronics {
 
-  class bitset_desc : public datatools::advanced_object {
+  /// \brief Description of the layout of a biset within a register
+  class bitset_desc : public datatools::enriched_base {
 
   public:
 

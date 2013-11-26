@@ -176,7 +176,7 @@ namespace electronics {
                                  const std::string& indent_,
                                  bool inherit_) const
   {
-    this->advanced_object::tree_dump(out_, title_, indent_, true);
+    this->enriched_base::tree_dump(out_, title_, indent_, true);
 
     out_ << indent_ << i_tree_dumpable::tag
          << "Initialized : " << _initialized_ << std::endl;
