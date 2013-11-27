@@ -171,6 +171,12 @@ namespace electronics {
     return found->second;
   }
 
+  const component_dict_type &
+  component_model_base::get_embedded_components() const
+  {
+    return _embedded_components_;
+  }
+
   void component_model_base::tree_dump(std::ostream& out_,
                                  const std::string& title_,
                                  const std::string& indent_,

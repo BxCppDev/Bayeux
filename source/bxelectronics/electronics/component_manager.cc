@@ -36,6 +36,7 @@
 
 // This project
 #include <electronics/component_model_base.h>
+#include <electronics/mapping_utils.h>
 
 namespace electronics {
 
@@ -44,6 +45,13 @@ namespace electronics {
   //
 
   // Default logger interface
+
+  // static
+  const std::string & component_manager::default_top_level_name()
+  {
+    static std::string _name("setup");
+    return _name;
+  }
 
   // Logging features:
   void component_manager::set_logging_priority(::datatools::logger::priority p_)
@@ -83,6 +91,64 @@ namespace electronics {
   const std::string& component_manager::get_setup_description() const {
     return _setup_description_;
   }
+
+  void component_manager::set_preload(bool b_)
+  {
+    _preload_ = b_;
+    return;
+  }
+
+  bool component_manager::get_preload() const
+  {
+    return _preload_;
+  }
+
+  void component_manager::set_force_initialization_at_load(bool b_)
+  {
+    _force_initialization_at_load_ = b_;
+    return;
+  }
+
+  bool component_manager::get_force_initialization_at_load() const
+  {
+    return _force_initialization_at_load_;
+  }
+
+  void component_manager::set_mapping_requested(bool b_)
+  {
+    _mapping_requested_ = b_;
+    return;
+  }
+
+  bool component_manager::get_mapping_requested() const
+  {
+    return _mapping_requested_;
+  }
+
+  void component_manager::add_auxiliary_property_prefix(const std::string & prefix_)
+  {
+    //std::cerr << "DEVEL: component_manager::add_auxiliary_property_prefix: Entering..." << std::endl;
+    DT_THROW_IF(prefix_.empty(),
+                std::logic_error,
+                "Property prefix to be preserved cannot be empty !");
+    DT_THROW_IF((std::find(_auxiliary_property_prefixes_.begin (),
+                           _auxiliary_property_prefixes_.end (),
+                           prefix_) != _auxiliary_property_prefixes_.end()),
+                std::logic_error,
+                "Property prefix to be preserved '" << prefix_<< "' already exists !");
+    //std::cerr << "DEVEL: component_manager::add_auxiliary_property_prefix: Prefix '"
+    //          << prefix_ << "'" << std::endl;
+    _auxiliary_property_prefixes_.push_back(prefix_);
+    //std::cerr << "DEVEL: component_manager::add_auxiliary_property_prefix: Exiting." << std::endl;
+    return;
+  }
+
+  const std::vector<std::string> &
+  component_manager::get_auxiliary_property_prefixes() const
+  {
+    return _auxiliary_property_prefixes_;
+  }
+
 
   bool component_manager::is_debug() const {
     return get_logging_priority() >= datatools::logger::PRIO_DEBUG;
@@ -132,9 +198,26 @@ namespace electronics {
   void component_manager::initialize(const datatools::properties& config_) {
     DT_THROW_IF(this->is_initialized(), std::logic_error, "Component manager is already initialized !");
 
+    // Parse logging parameteres:
     datatools::logger::priority p = datatools::logger::extract_logging_configuration(config_);
     set_logging_priority (p);
 
+    if (config_.has_key("no_preload")) {
+      set_preload(config_.fetch_boolean("no_preload"));
+    }
+    if (get_preload()) {
+      _do_preload_global_dict();
+    }
+
+    if (config_.has_key("force_initialization_at_load")) {
+      set_force_initialization_at_load(config_.fetch_boolean("force_initialization_at_load"));
+    }
+
+    if (config_.has_key("mapping_requested")) {
+      set_mapping_requested(config_.fetch_boolean("mapping_requested"));
+    }
+
+    // Documentation for this setup
     if (_setup_label_.empty()) {
       if (config_.has_key("setup_label")) {
         _setup_label_ = config_.fetch_string("setup_label");
@@ -153,7 +236,8 @@ namespace electronics {
       }
     }
 
-    // components :
+
+    // Components :
     {
       typedef std::vector<std::string> CFList;
       typedef CFList::iterator CFListIterator;
@@ -187,7 +271,62 @@ namespace electronics {
       load_eid_categories(eid_mgr_defs[i]);
     }
 
+    /* Property prefixes to be preserved in component models */
+    std::vector<std::string> preserved_property_prefixes;
+    if (config_.has_key("preserved_property_prefixes")) {
+      config_.fetch("preserved_property_prefixes", preserved_property_prefixes);
+      //std::cerr << "DEVEL: component_manager::initialize: # prefixes = " << preserved_property_prefixes.size() << std::endl;
+    }
+
+    /* Default list of property prefixes to be preserved in component models */
+    std::vector<std::string> default_preserved_property_prefixes;
+    default_preserved_property_prefixes.push_back(mapping_utils::mapping_prefix());
+
+    std::vector<std::string> effective_preserved_property_prefixes = default_preserved_property_prefixes;
+
+    for (int i = 0; i < preserved_property_prefixes.size (); i++) {
+      const std::string & prefix = preserved_property_prefixes[i];
+      if (prefix.empty()) {
+        continue;
+      }
+      if (std::find(effective_preserved_property_prefixes.begin(),
+                    effective_preserved_property_prefixes.end(),
+                    prefix) == effective_preserved_property_prefixes.end()) {
+        effective_preserved_property_prefixes.push_back(prefix);
+      }
+    }
+    //std::cerr << "DEVEL: component_manager::initialize: # effective prefixes = "
+    //          << effective_preserved_property_prefixes.size() << std::endl;
+
+    for (int i = 0; i < effective_preserved_property_prefixes.size(); i++) {
+      const std::string & prefix = effective_preserved_property_prefixes[i];
+      DT_THROW_IF(prefix.empty(),
+                  std::logic_error,
+                  "Property prefix to be preserved in component models is empty !");
+      DT_THROW_IF(prefix[prefix.length() - 1] != '.',
+                  std::logic_error,
+                  "Property prefix to be preserved in component models must end with a dot '.' ("
+                  << prefix << " ) !");
+      DT_LOG_NOTICE(_logging_priority_,
+                   "Property prefix '" << prefix << "' will be preserved in component models");
+      add_auxiliary_property_prefix(prefix);
+    }
+
     _initialized_ = true;
+
+    // Mapping :
+    if (get_mapping_requested()) {
+      _mapping_.set_manager(*this);
+      _mapping_.set_eid_manager(_eid_manager_);
+      _mapping_.set_top_level_name(default_top_level_name());
+      datatools::properties mapping_config;
+      config_.export_and_rename_starting_with(mapping_config, "mapping.", "");
+      _mapping_.configure(mapping_config);
+      //std::cerr << "DEVEL: component_manager::initialize: Initializing the mapping..." << std::endl;
+      _mapping_.initialize();
+      //std::cerr << "DEVEL: component_manager::initialize: mapping is built." << std::endl;
+    }
+
     return;
   }
 
@@ -199,6 +338,7 @@ namespace electronics {
     return;
   }
 
+
   void component_manager::initialize() {
     datatools::properties dummy_config;
     this->initialize(dummy_config);
@@ -209,6 +349,7 @@ namespace electronics {
   void component_manager::reset() {
     DT_LOG_TRACE(get_logging_priority(),"Entering...");
     DT_THROW_IF(!_initialized_,std::logic_error,"Manager is not initialized !");
+    _initialized_ = false;
     size_t count = _components_.size();
     size_t initial_size = _components_.size();
     while (_components_.size() > 0) {
@@ -229,12 +370,17 @@ namespace electronics {
     if (_components_.size() > 0) {
       DT_LOG_WARNING(get_logging_priority(), "There are some left components !");
     }
+    if (_mapping_.is_initialized()) {
+      _mapping_.reset();
+    }
     _eid_manager_.reset();
     _components_.clear();
     _factory_register_.reset();
     _force_initialization_at_load_ = false;
     _preload_ = true;
-    _initialized_ = false;
+    _preloaded_ = false;
+    _mapping_requested_ = true;
+
     DT_LOG_TRACE(get_logging_priority(), "Exiting.");
     return;
   }
@@ -249,17 +395,23 @@ namespace electronics {
 
     set_logging_priority(datatools::logger::PRIO_WARNING);
     _force_initialization_at_load_ = false;
+    _mapping_requested_ = true;
+    _preload_ = true;
+    _preloaded_ = false;
 
+    // Process constructor flags:
     if (flag & FORCE_INITIALIZATION_AT_LOAD) {
-      _force_initialization_at_load_ = true;
+      set_force_initialization_at_load(true);
     }
 
-    bool preload = true;
+    if (flag & true) {
+      set_mapping_requested(false);
+    }
+
     if (flag & NO_PRELOAD) {
-      preload = false;
+      set_preload(false);
     }
 
-    this->_set_preload_(preload);
     return;
   }
 
@@ -348,7 +500,6 @@ namespace electronics {
     return;
   }
 
-
   void component_manager::tree_dump(std::ostream& out,
                                     const std::string& title,
                                     const std::string& a_indent,
@@ -384,16 +535,44 @@ namespace electronics {
         << std::endl;
 
     out << indent << i_tree_dumpable::tag
+        << "Preloaded        : "
+        << _preloaded_
+        << std::endl;
+
+    out << indent << i_tree_dumpable::tag
         << "Force initialization : "
         << _force_initialization_at_load_
         << std::endl;
 
     out << indent << i_tree_dumpable::tag
-        << "List of registered components : " << std::endl;
+        << "Mapping requested : "
+        << _mapping_requested_
+        << std::endl;
+
+    out << indent << i_tree_dumpable::tag
+        << "Auxiliary property prefixes : "
+        << std::endl;
+    for (int i = 0; i < _auxiliary_property_prefixes_.size(); i++) {
+      const std::string & prefix = _auxiliary_property_prefixes_[i];
+      out << indent << i_tree_dumpable::skip_tag;
+      if (i < _auxiliary_property_prefixes_.size() - 1) {
+        out << i_tree_dumpable::tag;
+      } else {
+        out << i_tree_dumpable::last_tag;
+      }
+      out << "'" << prefix << "'";
+      out << std::endl;
+    }
+
+    out << indent << i_tree_dumpable::tag
+        << "Mapping : "
+        << std::endl;
+
+    out << indent << i_tree_dumpable::tag
+        << "List of registered electronic component models : " << std::endl;
     {
       std::ostringstream indent_oss;
       indent_oss << indent << i_tree_dumpable::skip_tag;
-
       _factory_register_.print(out, indent_oss.str());
     }
 
@@ -436,6 +615,15 @@ namespace electronics {
       std::ostringstream indent_oss;
       indent_oss << indent << i_tree_dumpable::skip_tag;
       _eid_manager_.tree_dump(std::clog, "", indent_oss.str());
+    }
+
+    {
+      out << indent << i_tree_dumpable::tag
+          << "Mapping    : "
+          << std::endl;
+      std::ostringstream indent_oss;
+      indent_oss << indent << i_tree_dumpable::skip_tag;
+      _mapping_.tree_dump(std::clog, "", indent_oss.str());
     }
 
     {
@@ -484,10 +672,13 @@ namespace electronics {
   }
 
 
-  void component_manager::preload_global_dict() {
-    DT_LOG_TRACE(get_logging_priority(),"Entering !");
-    _factory_register_.import(DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(component_model_base));
-    DT_LOG_TRACE(get_logging_priority(),"Embeded.");
+  void component_manager::_do_preload_global_dict() {
+    if (! _preloaded_) {
+      DT_LOG_TRACE(get_logging_priority(),"Entering !");
+      _factory_register_.import(DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(component_model_base));
+      DT_LOG_TRACE(get_logging_priority(),"Embeded.");
+      _preloaded_ = true;
+    }
     return;
   }
 
@@ -532,6 +723,13 @@ namespace electronics {
                    << "'...");
       component_model_base& the_component = entry.grab_component_handle().grab();
       the_component.initialize(entry.get_component_config(), _components_);
+      for (int i = 0; i < _auxiliary_property_prefixes_.size(); i++) {
+        const std::string & prefix = _auxiliary_property_prefixes_[i];
+        DT_LOG_DEBUG(get_logging_priority(), "Export auxiliary properties starting with '"
+                     << prefix << "' to the component model named '" << entry.get_component_name() << "'...");
+        entry.get_component_config().export_starting_with(the_component.grab_auxiliaries(),
+                                                          prefix);
+      }
       entry.update_component_status(component_entry::STATUS_INITIALIZED);
     }
     return;
@@ -543,18 +741,6 @@ namespace electronics {
       component_model_base& the_component = entry.grab_component_handle().grab();
       the_component.reset();
       entry.reset_component_status(component_entry::STATUS_INITIALIZED);
-    }
-    return;
-  }
-
-
-  //----------------------------------------------------------------------
-  // Private Interface Definitions
-
-  void component_manager::_set_preload_(bool preload) {
-    _preload_ = preload;
-    if (_preload_) {
-      this->preload_global_dict();
     }
     return;
   }

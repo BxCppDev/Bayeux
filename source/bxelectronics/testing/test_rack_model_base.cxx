@@ -1,3 +1,4 @@
+// Standard library
 #include <iostream>
 
 // Third party
@@ -6,9 +7,9 @@
 #include <datatools/exception.h>
 
 // This project
-#include <electronics/rack_base.h>
-#include <electronics/crate_base.h>
-#include <electronics/board_base.h>
+#include <electronics/rack_model_base.h>
+#include <electronics/crate_model_base.h>
+#include <electronics/board_model_base.h>
 #include <electronics/component_types.h>
 
 int main( int argc_, char * argv_[])
@@ -19,8 +20,8 @@ int main( int argc_, char * argv_[])
 
     // Control FPGA:
     electronics::component_handle_type ctrl_fpga_handle;
-    ctrl_fpga_handle.reset(new electronics::component_base);
-    electronics::component_base & ctrl_fpga = ctrl_fpga_handle.grab();
+    ctrl_fpga_handle.reset(new electronics::component_model_base);
+    electronics::component_model_base & ctrl_fpga = ctrl_fpga_handle.grab();
     ctrl_fpga.set_name("FEB_CTRL_FPGA");
     ctrl_fpga.set_display_name("FEB Control FPGA");
     ctrl_fpga.set_terse_description("FEB Control FPGA");
@@ -37,9 +38,9 @@ int main( int argc_, char * argv_[])
     // Boards:
     electronics::component_handle_type board_handle;
 
-    board_handle.reset(new electronics::board_base);
-    electronics::board_base & board
-      = dynamic_cast<electronics::board_base &>(board_handle.grab());
+    board_handle.reset(new electronics::board_model_base);
+    electronics::board_model_base & board
+      = dynamic_cast<electronics::board_model_base &>(board_handle.grab());
     board.set_name("FEB");
     board.set_display_name("Front end board");
     board.set_terse_description("A dummy frontend board");
@@ -58,9 +59,9 @@ int main( int argc_, char * argv_[])
 
     // Crate:
     electronics::component_handle_type crate_handle;
-    crate_handle.reset(new electronics::crate_base);
-    electronics::crate_base & crate
-      = dynamic_cast<electronics::crate_base &>(crate_handle.grab());
+    crate_handle.reset(new electronics::crate_model_base);
+    electronics::crate_model_base & crate
+      = dynamic_cast<electronics::crate_model_base &>(crate_handle.grab());
     crate.set_name("CaloCrate");
     crate.set_display_name("Calorimeter Crate");
     crate.set_terse_description("A calorimeter crate");
@@ -82,9 +83,9 @@ int main( int argc_, char * argv_[])
 
     // Rack:
     electronics::component_handle_type rack_handle;
-    rack_handle.reset(new electronics::rack_base);
-    electronics::rack_base & rack
-      = dynamic_cast<electronics::rack_base &>(rack_handle.grab());
+    rack_handle.reset(new electronics::rack_model_base);
+    electronics::rack_model_base & rack
+      = dynamic_cast<electronics::rack_model_base &>(rack_handle.grab());
     rack.set_name("CaloRack");
     rack.set_display_name("Calorimeter Rack");
     rack.set_terse_description("The calorimeter rack");

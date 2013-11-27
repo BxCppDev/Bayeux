@@ -6,7 +6,7 @@
 #include <datatools/exception.h>
 
 // This project
-#include <electronics/board_base.h>
+#include <electronics/board_model_base.h>
 #include "electronics/component_types.h"
 
 int main( int argc_, char * argv_[])
@@ -18,8 +18,8 @@ int main( int argc_, char * argv_[])
     // Board:
     electronics::component_handle_type board_handle;
 
-    board_handle.reset(new electronics::board_base);
-    electronics::board_base & board = dynamic_cast<electronics::board_base &>(board_handle.grab());
+    board_handle.reset(new electronics::board_model_base);
+    electronics::board_model_base & board = dynamic_cast<electronics::board_model_base &>(board_handle.grab());
     board.set_name(electronics::make_indexed_name("FEB_", 0));
     board.set_display_name(electronics::make_indexed_name("FEB #", 0));
     board.set_terse_description("A dummy frontend board");
@@ -37,9 +37,9 @@ int main( int argc_, char * argv_[])
       if (imezz == 1) continue;
       // Mezzanine:
       electronics::component_handle_type mezzanine_handle;
-      mezzanine_handle.reset(new electronics::board_base);
-      electronics::board_base & mezzanine =
-        dynamic_cast<electronics::board_base &>(mezzanine_handle.grab());
+      mezzanine_handle.reset(new electronics::board_model_base);
+      electronics::board_model_base & mezzanine =
+        dynamic_cast<electronics::board_model_base &>(mezzanine_handle.grab());
       mezzanine.set_name(electronics::make_indexed_name("Mezzanine_", imezz));
       mezzanine.set_display_name(electronics::make_indexed_name("Mezzanine board #", imezz));
       mezzanine.set_terse_description("Mezzanine board");
@@ -56,8 +56,8 @@ int main( int argc_, char * argv_[])
     {
       // Control FPGA:
       electronics::component_handle_type ctrl_fpga_handle;
-      ctrl_fpga_handle.reset(new electronics::component_base);
-      electronics::component_base & ctrl_fpga = ctrl_fpga_handle.grab();
+      ctrl_fpga_handle.reset(new electronics::component_model_base);
+      electronics::component_model_base & ctrl_fpga = ctrl_fpga_handle.grab();
       ctrl_fpga.set_name("CTRL_FPGA");
       ctrl_fpga.set_display_name("Control FPGA");
       ctrl_fpga.set_terse_description("Control FPGA");

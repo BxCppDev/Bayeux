@@ -7,9 +7,9 @@
 
 // This project
 #include <electronics/component_manager.h>
-#include <electronics/rack_base.h>
-#include <electronics/crate_base.h>
-#include <electronics/board_base.h>
+#include <electronics/rack_model_base.h>
+#include <electronics/crate_model_base.h>
+#include <electronics/board_model_base.h>
 #include <electronics/component_types.h>
 
 int main( int argc_, char * argv_[])
@@ -27,11 +27,13 @@ int main( int argc_, char * argv_[])
     comp_mgr.initialize(comp_mgr_config);
     comp_mgr.tree_dump(std::clog, "The electronics components manager: ");
 
-    if (comp_mgr.is_a<electronics::component_base>("setup")) {
-      const electronics::component_base & setup
-        = comp_mgr.get<electronics::component_base>("setup");
+    if (comp_mgr.is_a<electronics::component_model_base>("setup")) {
+      const electronics::component_model_base & setup
+        = comp_mgr.get<electronics::component_model_base>("setup");
       setup.tree_dump(std::clog, "The electronics setup: ");
     }
+
+    std::cerr << "DEVEL: The end." << std::endl;
 
   }
   catch (std::exception& error) {

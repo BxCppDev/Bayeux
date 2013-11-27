@@ -1,3 +1,4 @@
+// Standard library
 #include <iostream>
 
 // Third party
@@ -6,7 +7,7 @@
 #include <datatools/exception.h>
 
 // This project
-#include <electronics/register_desc.h>
+#include <electronics/register_model_base.h>
 
 int main( int argc_, char * argv_[])
 {
@@ -14,13 +15,13 @@ int main( int argc_, char * argv_[])
 
   try {
 
-    electronics::register_desc RegDesc;
+    electronics::register_model_base RegDesc;
     RegDesc.set_name("FOOREG");
     //RegDesc.set_logging_priority(datatools::logger::PRIO_DEBUG);
     RegDesc.set_display_name("Configuration register #0");
     RegDesc.set_terse_description("Configuration register");
     RegDesc.grab_auxiliaries().store_flag("test");
-    RegDesc.set_size(electronics::register_desc::SIZE_16);
+    RegDesc.set_size(electronics::register_model_base::SIZE_16);
     RegDesc.set_readable(true);
     RegDesc.set_writable(true);
     RegDesc.add_bitset("HMULT",  0,  3, "001");

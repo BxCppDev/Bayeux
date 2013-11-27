@@ -1,3 +1,4 @@
+// STandard library
 #include <iostream>
 
 // Third party
@@ -7,7 +8,7 @@
 
 // This project
 #include <electronics/component_types.h>
-#include <electronics/component_base.h>
+#include <electronics/component_model_base.h>
 #include <electronics/component_utils.h>
 
 int main( int argc_, char * argv_[])
@@ -18,8 +19,8 @@ int main( int argc_, char * argv_[])
 
     // Board:
     electronics::component_handle_type board_handle;
-    board_handle.reset(new electronics::component_base);
-    electronics::component_base & board = board_handle.grab();
+    board_handle.reset(new electronics::component_model_base);
+    electronics::component_model_base & board = board_handle.grab();
     board.set_name(electronics::make_indexed_name("Calo_FEB_", 0));
     board.set_display_name(electronics::make_indexed_name("Calo FEB #", 0));
     board.set_terse_description("SuperNEMO calorimeter 8-channel WaveCatcher frontend board");
@@ -33,8 +34,8 @@ int main( int argc_, char * argv_[])
     for (int i_asic = 0; i_asic < 8; i_asic++) {
       // ASIC:
       electronics::component_handle_type asic_handle;
-      asic_handle.reset(new electronics::component_base);
-      electronics::component_base & asic = asic_handle.grab();
+      asic_handle.reset(new electronics::component_model_base);
+      electronics::component_model_base & asic = asic_handle.grab();
       asic.set_name(electronics::make_indexed_name("Calo_ASIC_", i_asic));
       asic.set_display_name(electronics::make_indexed_name("Calo ASIC #", i_asic));
       asic.set_terse_description("2-channel SAMLONG chip");
@@ -52,8 +53,8 @@ int main( int argc_, char * argv_[])
     for (int i_fe_fpga = 0; i_fe_fpga < 4; i_fe_fpga++) {
       // Front end FPGA:
       electronics::component_handle_type fe_fpga_handle;
-      fe_fpga_handle.reset(new electronics::component_base);
-      electronics::component_base & fe_fpga = fe_fpga_handle.grab();
+      fe_fpga_handle.reset(new electronics::component_model_base);
+      electronics::component_model_base & fe_fpga = fe_fpga_handle.grab();
       fe_fpga.set_name(electronics::make_indexed_name("Calo_FE_FPGA_", i_fe_fpga));
       fe_fpga.set_display_name(electronics::make_indexed_name("Calo FE FPGA #", i_fe_fpga));
       fe_fpga.set_terse_description("SuperNEMO calorimeter 4-channel FE_FPGA");
@@ -73,8 +74,8 @@ int main( int argc_, char * argv_[])
     {
       // Control FPGA:
       electronics::component_handle_type ctrl_fpga_handle;
-      ctrl_fpga_handle.reset(new electronics::component_base);
-      electronics::component_base & ctrl_fpga = ctrl_fpga_handle.grab();
+      ctrl_fpga_handle.reset(new electronics::component_model_base);
+      electronics::component_model_base & ctrl_fpga = ctrl_fpga_handle.grab();
       ctrl_fpga.set_name("Calo_CTRL_FPGA");
       ctrl_fpga.set_display_name("Calo FE FPGA");
       ctrl_fpga.set_terse_description("SuperNEMO calorimeter 16-channel CTRL_FPGA");

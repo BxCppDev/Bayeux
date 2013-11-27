@@ -65,6 +65,9 @@ namespace electronics {
     /// Return a non mutable handle to the embedded component
     const component_handle_type & get_embedded(const std::string & embedded_label_) const;
 
+    /// Return the dictionary of embedded components
+    const component_dict_type & get_embedded_components() const;
+
     /* ***********
      * INTERFACE *
      *************/

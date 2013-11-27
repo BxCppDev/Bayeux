@@ -5,12 +5,16 @@
 #@meta_label "type"
 
 
-[category="setup.ec" type="1000"]
-addresses : string[1] = "setup_id"
+[category="setup" type="0"]
+addresses : string[1] = "setup"
+
+
+[category="detector.ec" type="1000"]
+addresses : string[1] = "module_id"
 
 
 [category="rack.ec" type="1100"]
-extends : string    = "setup.ec"
+extends : string    = "detector.ec"
 by      : string[1] = "rack_id"
 
 

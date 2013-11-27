@@ -1,3 +1,4 @@
+// Standard library
 #include <iostream>
 
 // Third party
@@ -6,8 +7,8 @@
 #include <datatools/exception.h>
 
 // This project
-#include <electronics/crate_base.h>
-#include <electronics/board_base.h>
+#include <electronics/crate_model_base.h>
+#include <electronics/board_model_base.h>
 #include <electronics/component_types.h>
 
 int main( int argc_, char * argv_[])
@@ -18,8 +19,8 @@ int main( int argc_, char * argv_[])
 
     // Model of the control FPGA:
     electronics::component_handle_type ctrl_fpga_handle;
-    ctrl_fpga_handle.reset(new electronics::component_base);
-    electronics::component_base & ctrl_fpga = ctrl_fpga_handle.grab();
+    ctrl_fpga_handle.reset(new electronics::component_model_base);
+    electronics::component_model_base & ctrl_fpga = ctrl_fpga_handle.grab();
     ctrl_fpga.set_name("CTRL_FPGA");
     ctrl_fpga.set_display_name("Control FPGA");
     ctrl_fpga.set_terse_description("Control FPGA");
@@ -35,9 +36,9 @@ int main( int argc_, char * argv_[])
 
     // Model of Control Board:
     electronics::component_handle_type ctrl_board_handle;
-    ctrl_board_handle.reset(new electronics::board_base);
-    electronics::board_base & ctrl_board
-      = dynamic_cast<electronics::board_base &>(ctrl_board_handle.grab());
+    ctrl_board_handle.reset(new electronics::board_model_base);
+    electronics::board_model_base & ctrl_board
+      = dynamic_cast<electronics::board_model_base &>(ctrl_board_handle.grab());
     ctrl_board.set_name("CB");
     ctrl_board.set_display_name("Control board");
     ctrl_board.set_terse_description("A dummy control board");
@@ -53,9 +54,9 @@ int main( int argc_, char * argv_[])
 
     // Model of FEB:
     electronics::component_handle_type feb_board_handle;
-    feb_board_handle.reset(new electronics::board_base);
-    electronics::board_base & feb_board
-      = dynamic_cast<electronics::board_base &>(feb_board_handle.grab());
+    feb_board_handle.reset(new electronics::board_model_base);
+    electronics::board_model_base & feb_board
+      = dynamic_cast<electronics::board_model_base &>(feb_board_handle.grab());
     feb_board.set_name("FEB");
     feb_board.set_display_name("Front end board");
     feb_board.set_terse_description("A dummy frontend board");
@@ -72,9 +73,9 @@ int main( int argc_, char * argv_[])
 
     // Model of crate:
     electronics::component_handle_type crate_handle;
-    crate_handle.reset(new electronics::crate_base);
-    electronics::crate_base & crate
-      = dynamic_cast<electronics::crate_base &>(crate_handle.grab());
+    crate_handle.reset(new electronics::crate_model_base);
+    electronics::crate_model_base & crate
+      = dynamic_cast<electronics::crate_model_base &>(crate_handle.grab());
     crate.set_name("Crate");
     crate.set_display_name("Front end electronics crate");
     crate.set_terse_description("A dummy crate");

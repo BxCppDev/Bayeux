@@ -45,17 +45,10 @@ namespace electronics {
     return dynamic_cast<T&>(entry.grab_component_handle().grab());
   }
 
-
-  template<class T>
-  T& component_manager::get(const std::string& name) {
-    return this->grab<T>(name);
-  }
-
-
   template<class T>
   const T& component_manager::get(const std::string& name) const {
     component_manager* sm = const_cast<component_manager*>(this);
-    return const_cast<T&>(sm->get<T>(name));
+    return const_cast<T&>(sm->grab<T>(name));
   }
 
 

@@ -41,6 +41,7 @@
 // - Boost
 #include <boost/cstdint.hpp>
 
+// Third Party
 // - Bayeux/datatools
 #include <datatools/i_tree_dump.h>
 #include <datatools/properties.h>
@@ -51,6 +52,7 @@
 // This project
 #include <electronics/component_utils.h>
 #include <electronics/component_model_base.h>
+#include <electronics/mapping.h>
 
 namespace datatools {
 
@@ -65,15 +67,18 @@ namespace electronics {
    *
    */
   class component_manager : public datatools::i_tree_dumpable {
+
   public:
+
+    static const std::string & default_top_level_name();
+
     enum flag_type {
       BLANK              = 0,
       NO_PRELOAD         = datatools::bit_mask::bit00,
       FORCE_INITIALIZATION_AT_LOAD = datatools::bit_mask::bit01,
-      FACTORY_VERBOSE    = datatools::bit_mask::bit02
+      FACTORY_VERBOSE    = datatools::bit_mask::bit02,
+      NO_BUILD_MAPPING   = datatools::bit_mask::bit03
     };
-
-  public:
 
     /// Constructor
     component_manager(uint32_t flag = 0);
@@ -98,6 +103,30 @@ namespace electronics {
 
     /// Get the version of the setup
     const std::string& get_setup_version() const;
+
+    /// Set the factory preload flag
+    void set_preload(bool);
+
+    /// Get the factory preload flag
+    bool get_preload() const;
+
+    /// Set the build mapping flag
+    void set_mapping_requested(bool);
+
+    /// Get the build mapping flag
+    bool get_mapping_requested() const;
+
+    /// Set the 'force initialization at load' flag
+    void set_force_initialization_at_load(bool);
+
+    /// Get the 'force initialization at load' flag
+    bool get_force_initialization_at_load() const;
+
+    /// Add a property prefix to be preserved in models
+    void add_auxiliary_property_prefix(const std::string & prefix_);
+
+    /// Return the array of exported property prefixes
+    const std::vector<std::string> & get_auxiliary_property_prefixes() const;
 
     /// Check the debug flag
     bool is_debug() const;
@@ -139,13 +168,6 @@ namespace electronics {
      */
     template <class T>
     bool is_a(const std::string& name) const;
-
-    /** Deprecated, please use the 'grab' method.
-     *  @param name The name of the component to be checked
-     *  @return a mutable reference to the component instance requested by name and type
-     */
-    template<class T>
-    T& get(const std::string& name);
 
     /**  Same as the mutable 'get' method
      *   @param name The name of the component to be checked
@@ -200,12 +222,7 @@ namespace electronics {
 
   protected:
 
-    void preload_global_dict();
-
-  private:
-
-    /// Set the factory preload flag
-    void _set_preload_(bool preload);
+    void _do_preload_global_dict();
 
   private:
 
@@ -215,10 +232,15 @@ namespace electronics {
     std::string  _setup_version_;     //!< the version tag of the setup
     std::string  _setup_description_; //!< the description of the setup
     bool         _preload_;           //!< Factory preload flag
+    bool         _preloaded_;         //!< Factory preload
     bool         _force_initialization_at_load_; //!< Flag for triggering component  initialization at load (rather than first use)
+    std::vector<std::string> _auxiliary_property_prefixes_; //!< List of property prefixes to be preserved in component models auxiliary properties
+
     component_model_base::factory_register_type  _factory_register_; //!< Factory register
-    component_pool_type                    _components_;       //!< Dictionary of components
+    component_pool_type _components_;       //!< Dictionary of components
     geomtools::id_mgr _eid_manager_; //!< manager of electronics ID
+    bool              _mapping_requested_; //!< Mapping build request flag
+    mapping           _mapping_; //!< Default mapping
     // Mapping...
 
   };
