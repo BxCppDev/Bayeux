@@ -58,9 +58,9 @@ namespace datatools {
                                ::datatools::enriched_base,
                                ::datatools::enriched_base::has_auxiliaries,
                                bool)
-        .DR_CLASS_VOID_METHOD("clear_advanced",
+        .DR_CLASS_VOID_METHOD("clear",
                               ::datatools::enriched_base,
-                              ::datatools::enriched_base::clear_advanced)
+                              ::datatools::enriched_base::clear)
         .DR_CLASS_VOID_METHOD("reset_auxiliaries",
                               ::datatools::enriched_base,
                               ::datatools::enriched_base::reset_auxiliaries)

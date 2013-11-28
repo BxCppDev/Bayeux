@@ -104,7 +104,7 @@ namespace datatools {
 
       logger::priority get_logging_priority() const;
 
-      void clear_advanced();
+      void clear();
 
       virtual void tree_dump(std::ostream& out_ = std::clog,
 			     const std::string& title_  = "",
