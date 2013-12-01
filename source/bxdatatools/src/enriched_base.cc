@@ -25,7 +25,7 @@ namespace datatools {
 
   enriched_base::enriched_base()
   {
-    _logging_priority_ = logger::PRIO_WARNING;
+    _logging_priority_ = logger::PRIO_FATAL;
     return;
   }
 
@@ -226,7 +226,7 @@ namespace datatools {
   // static
   void enriched_base::_load_ocd(datatools::object_configuration_description & ocd_)
   {
-    logger::declare_ocd_logging_configuration(ocd_, "");
+    logger::declare_ocd_logging_configuration(ocd_, "fatal");
 
     {
       configuration_property_description & cpd = ocd_.add_configuration_property_info();
