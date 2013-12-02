@@ -66,18 +66,18 @@ Quick start
 
       shell> ./ex01
 
-5. Run the ``geomtools_inspector`` to check the virtual geometry::
+5. Run the ``bxgeomtools_inspector`` to check the virtual geometry::
 
-         shell> geomtools_inspector \
+         shell> bxgeomtools_inspector \
                   --manager-config config/geometry/manager.conf \
                   --with-visu --visu-view-3d
 
 
-5. Run the ``genvtx_production``:
+5. Run the ``bxgenvtx_production``:
 
    * List the available vertex generators::
 
-      shell> genvtx_production \
+      shell> bxgenvtx_production \
                --geometry-manager config/geometry/manager.conf \
                --vertex-generator-manager config/vertex/manager.conf \
                --list
@@ -85,7 +85,7 @@ Quick start
 
    * Generate vertices::
 
-      shell> genvtx_production \
+      shell> bxgenvtx_production \
                --geometry-manager config/geometry/manager.conf \
                --vertex-generator-manager config/vertex/manager.conf \
                --shoot \
