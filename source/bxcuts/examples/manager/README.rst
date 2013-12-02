@@ -36,7 +36,7 @@ Quick start
 1. Build, install and setup the Bayeux library
 2. Make a copy of the example directory::
 
-      shell> cp -a [cuts install base directory]/share/cuts/examples/manager /tmp/cuts_ex_manager
+      shell> cp -a $(bxquery --exampledir)/cuts/examples/manager /tmp/cuts_ex_manager
       shell> cd /tmp/cuts_ex_manager
 
 3. Build and install the example::
