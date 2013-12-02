@@ -26,10 +26,10 @@ Introduction
 Quick start
 ===========
 
-1. Build, install and setup the brio library
+1. Build, install and setup the Bayeux library
 2. Make a copy of the example directory::
 
-      shell> cp -a [brio install base directory]/share/brio/examples/ex01 /tmp/ex01
+      shell> cp -a $(bxquery --exampledir)/brio/examples/ex01 /tmp/ex01
       shell> cd /tmp/ex01
 
 3. Build and install the example::
@@ -38,7 +38,7 @@ Quick start
       shell> cd __build
       shell> cmake \
         -DCMAKE_INSTALL_PREFIX=.. \
-        -Dbrio_DIR=$(brio-config --prefix) \
+        -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
         ..
       shell> make
       shell> make install
@@ -61,5 +61,3 @@ Quick start
       shell> rm ex01_data.brio
       shell> rm ex01
       shell> rm -fr __build
-
-

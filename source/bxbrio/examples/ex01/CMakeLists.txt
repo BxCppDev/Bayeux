@@ -14,19 +14,16 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
   message(FATAL_ERROR "in-source build detected")
 endif()
 
-# - brio :
-if (NOT brio_DIR)
-  execute_process(COMMAND brio-config --prefix
-                  OUTPUT_VARIABLE brio_DIR )
-endif()
+# - Bayeux :
+find_package(Bayeux 1.0.0 REQUIRED)
+set(_incs ${Bayeux_INCLUDE_DIRS})
+set(_libs ${Bayeux_LIBRARIES})
 
-find_package(brio 4.0.0 REQUIRED)
-
-include_directories(${PROJECT_SOURCE_DIR} ${brio_INCLUDE_DIRS})
+include_directories(${PROJECT_SOURCE_DIR} ${_incs})
 
 add_executable(ex01 ex01.cxx foo.cc)
 
-target_link_libraries(ex01 ${brio_LIBRARY} )
+target_link_libraries(ex01 ${_libs} )
 
 install ( FILES
     ${PROJECT_BINARY_DIR}/ex01
