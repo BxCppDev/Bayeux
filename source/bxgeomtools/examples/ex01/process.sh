@@ -1,51 +1,55 @@
 #!/usr/bin/env bash
 
-use_bayeux=1
-which bayeux-config > /dev/null 2>&1
+which bxquery > /dev/null 2>&1
 if [ $? -ne 0 ]; then
-    use_bayeux=0
+    echo "ERROR: Missing Bayeux's bxquery !" >&2
+    exit 1
 fi
-
 opwd=$(pwd)
+
+function my_exit()
+{
+    cd ${opwd}
+    exit $1
+}
 
 build_dir=$(pwd)/__build
 test -d ${build_dir} && rm -fr ${build_dir}
 
-pandoc -r rst -w html README.rst -o geomtools-ex01_README.html
-
-mkdir ${build_dir}
+test ! -d ${build_dir} && mkdir ${build_dir}
 cd ${build_dir}
 
-if [ $use_bayeux -eq 0 ]; then
-    which geomtools-config
-    if [ $? -ne 0 ]; then
-	echo "ERROR: Missing geomtools-config !" >&2
-	exit 0
-    fi
-    cmake \
-	-DCMAKE_INSTALL_PREFIX=.. \
-    	-Dgeomtools_DIR=$(geomtools-config --prefix) \
-	-DCMAKE_FIND_ROOT_PATH:PATH=$(geomtools-config --prefix) \
-	..
-    #	-Dgeomtools_DIR=$(geomtools-config --prefix) \
-    geomtools_inspector_bin="geomtools_inspector"
-else
-    echo "NOTICE: Using Bayeux..." >&2
-    cmake \
-	-DCMAKE_INSTALL_PREFIX=.. \
-	-DUSE_BAYEUX:BOOLEAN=1 \
-	-DCMAKE_FIND_ROOT_PATH:PATH=$(bayeux-config --prefix) \
-	..
-    geomtools_inspector_bin="bxgeomtools_inspector"
+cmake \
+    -DCMAKE_INSTALL_PREFIX=.. \
+    -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
+    ..
+if [ $? -ne 0 ]; then
+    echo "ERROR: Configuration failed !" 1>&2
+    my_exit 1
 fi
 make
+if [ $? -ne 0 ]; then
+    echo "ERROR: Build failed !" 1>&2
+    my_exit 1
+fi
 make install
+if [ $? -ne 0 ]; then
+    echo "ERROR: Installation failed !" 1>&2
+    my_exit 1
+fi
 
 cd ${opwd}
 ls -l
 
+#pandoc -r rst -w html README.rst -o geomtools-ex01_README.html
+geomtools_inspector_bin="bxgeomtools_inspector"
+
 echo "Run the 'ex01' program..." 1>&2
 ./ex01
+if [ $? -ne 0 ]; then
+    echo "ERROR: Example program ex01 failed !" 1>&2
+    my_exit 1
+fi
 
 echo "Browse the geometry setup via the '${geomtools_inspector_bin}' program..." 1>&2
 ${geomtools_inspector_bin} \
@@ -62,6 +66,6 @@ find . -name "*~" -exec rm -f \{\} \;
 
 cd ${opwd}
 
-exit 0
+my_exit 0
 
 # end

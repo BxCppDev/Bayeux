@@ -56,7 +56,7 @@ Introduction
 
  * Built object(s) :
 
-     * ``ex01`` : the example executable linked to the ``geomtools`` library.
+     * ``ex01`` : the example executable linked to the ``Bayeux`` library.
 
  * Build method: CMake.
 
@@ -66,8 +66,8 @@ Quick start
 1. Build, install and setup the geomtools library
 2. Make a copy of the example directory::
 
-      shell> cp -a [geomtools install base directory]/share/geomtools/examples/ex01 /tmp/ex01
-      shell> cd /tmp/ex01
+      shell> cp -a $(bxquery --exampledir)/geomtools/examples/ex01 /tmp/geomtools_ex01
+      shell> cd /tmp/geomtools_ex01
 
 3. Build and install the example::
 
@@ -75,7 +75,7 @@ Quick start
       shell> cd __build
       shell> cmake \
         -DCMAKE_INSTALL_PREFIX=.. \
-        -Dgeomtools_DIR=$(geomtools-config --prefix) \
+        -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
         ..
       shell> make
       shell> make install
@@ -85,9 +85,9 @@ Quick start
 
       shell> ./ex01
 
-5. Run the ``geomtools_inspector`` ::
+5. Run the ``bxgeomtools_inspector`` ::
 
-      shell> geomtools_inspector \
+      shell> bxgeomtools_inspector \
                --manager-config config/manager.conf --visu-view-3d
 
    It displays views of the setup using the ``geomtools`` Gnuplot viewer.
@@ -131,5 +131,3 @@ Quick start
       shell> rm ex01
       shell> rm geomtools-ex01.gdml
       shell> rm -fr __build
-
-
