@@ -54,6 +54,6 @@ rm -f ex_properties
 rm -fr ${build_dir}
 find . -name "*~" -exec rm -f \{\} \;
 
-exit 0
+my_exit 0
 
 # end
