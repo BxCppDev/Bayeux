@@ -39,7 +39,7 @@ if [ $? -ne 0 ]; then
     my_exit 1
 fi
 
-cd ..
+cd ${opwd}
 ls -l
 
 echo "Running ex01..." 1>&2
@@ -84,6 +84,6 @@ rm -fr ${build_dir}
 
 cd ${opwd}
 
-exit 0
+my_exit 0
 
 # end

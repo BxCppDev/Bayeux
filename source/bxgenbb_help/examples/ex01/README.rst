@@ -29,14 +29,14 @@ Introduction
 
  * Built object(s) :
 
-     * ``ex01`` : the example executable linked to the ``genbb_help`` library.
+     * ``ex01`` : the example executable linked to the ``Bayeux`` library.
 
  * Build method: CMake.
 
 Quick start
 ===========
 
-1. Build, install and setup the geomtools library
+1. Build, install and setup the Bayeux library
 2. Make a copy of the example directory::
 
       shell> cp -a [genbb_help install base directory]/share/genbb_help/examples/ex01 /tmp/ex01
