@@ -29,8 +29,8 @@ Quick start
 1. Build, install and setup the Bayeux library
 2. Make a copy of the example directory::
 
-      shell> cp -a $(bxquery --exampledir)/brio/examples/ex01 /tmp/ex01
-      shell> cd /tmp/ex01
+      shell> cp -a $(bxquery --exampledir)/brio/examples/ex01 /tmp/brio_ex01
+      shell> cd /tmp/brio_ex01
 
 3. Build and install the example::
 
