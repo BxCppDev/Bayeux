@@ -37,14 +37,14 @@ Introduction
 
  * Built object(s) :
 
-    * ``ex01`` : the example executable linked to the ``genvtx`` library.
+    * ``ex01`` : the example executable linked to the ``Bayeux`` library.
 
  * Build method: CMake.
 
 Quick start
 ===========
 
-1. Build, install and setup the geomtools library
+1. Build, install and setup the Bayeux library
 2. Make a copy of the example directory::
 
       shell> cp -a [geomtools install base directory]/share/geomtools/examples/ex01 /tmp/ex01
