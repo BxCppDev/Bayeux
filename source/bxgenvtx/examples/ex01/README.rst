@@ -56,7 +56,7 @@ Quick start
       shell> cd __build
       shell> cmake \
         -DCMAKE_INSTALL_PREFIX=.. \
-        -Dgenvtx_DIR=$(genvtx-config --prefix) \
+	-DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
         ..
       shell> make
       shell> make install
@@ -99,5 +99,3 @@ Quick start
 
       shell> rm ex01
       shell> rm -fr __build
-
-

@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 
-use_bayeux=1
 which bxquery > /dev/null 2>&1
 if [ $? -ne 0 ]; then
-    use_bayeux=0
+    echo "ERROR: Missing Bayeux's bxquery !" >&2
+    exit 1
 fi
+
+opwd=$(pwd)
 
 clean=1
 help=0
 debug=0
 html=0
 html_file=genvtx-ex01_README.html
-
-opwd=$(pwd)
 
 function my_exit()
 {
@@ -64,6 +64,9 @@ fi
 build_dir=$(pwd)/__build
 test -d ${build_dir} && rm -fr ${build_dir}
 
+test ! -d ${build_dir} && mkdir ${build_dir}
+cd ${build_dir}
+
 if [ $html -eq 1 ]; then
     pandoc -r rst -w html README.rst -o ${html_file}
 fi
@@ -71,30 +74,13 @@ fi
 mkdir ${build_dir}
 cd ${build_dir}
 
-if [ $use_bayeux -eq 0 ]; then
-    which genvtx-config
-    if [ $? -ne 0 ]; then
-	echo "ERROR: Missing genvtx-config !" >&2
-	exit 0
-    fi
-    cmake \
-	-DCMAKE_INSTALL_PREFIX=.. \
-    	-Dgenvtx_DIR=$(genvtx-config --prefix) \
-	-DCMAKE_FIND_ROOT_PATH:PATH=$(genvtx-config --prefix) \
-	..
-    #	-Dgeomtools_DIR=$(geomtools-config --prefix) \
-    genvtx_production_bin="genvtx_production"
-    geomtools_inspector_bin="geomtools_inspector"
-else
-    echo "NOTICE: Using Bayeux..." >&2
-    cmake \
-	-DCMAKE_INSTALL_PREFIX=.. \
-	-DUSE_BAYEUX:BOOLEAN=1 \
-	-DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
-	..
-    genvtx_production_bin="bxgenvtx_production"
-    geomtools_inspector_bin="bxgeomtools_inspector"
-fi
+echo "NOTICE: Using Bayeux..." >&2
+cmake \
+    -DCMAKE_INSTALL_PREFIX=.. \
+    -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
+    ..
+genvtx_production_bin="bxgenvtx_production"
+geomtools_inspector_bin="bxgeomtools_inspector"
 make
 make install
 

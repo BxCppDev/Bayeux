@@ -14,21 +14,10 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
   message(FATAL_ERROR "in-source build detected")
 endif()
 
-if (USE_BAYEUX)
-  # - Bayeux :
-  find_package(Bayeux 1.0.0 REQUIRED)
-  set(_incs ${Bayeux_INCLUDE_DIRS})
-  set(_libs ${Bayeux_LIBRARIES})
-else()
-  # - genvtx :
-  if (NOT genvtx_DIR)
-    execute_process(COMMAND genvtx-config --prefix
-                     OUTPUT_VARIABLE genvtx_DIR )
-  endif()
-  find_package(genvtx 4.0.0 REQUIRED)
-  set(_incs ${genvtx_INCLUDE_DIRS})
-  set(_libs ${genvtx_LIBRARIES})
-endif()
+# - Bayeux :
+find_package(Bayeux 1.0.0 REQUIRED)
+set(_incs ${Bayeux_INCLUDE_DIRS})
+set(_libs ${Bayeux_LIBRARIES})
 
 include_directories(${PROJECT_SOURCE_DIR} ${_incs})
 
