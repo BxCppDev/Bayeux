@@ -48,7 +48,7 @@ Quick start
 1. Build, install and setup the datatools library
 2. Make a copy of the example directory::
 
-      shell> cp -a $(bxquery --exampledir)/datatools/examples/things /tmp/datatools_ex_serializable
+      shell> cp -a $(bxquery --exampledir)/datatools/examples/serializable /tmp/datatools_ex_serializable
       shell> cd /tmp/datatools_ex_serializable
 
 3. Build and install the example::
