@@ -1,12 +1,18 @@
 #!/usr/bin/env bash
 
-use_bayeux=1
-which bayeux-config > /dev/null 2>&1
+which bxquery > /dev/null 2>&1
 if [ $? -ne 0 ]; then
-    use_bayeux=0
+    echo "ERROR: Missing Bayeux's bxquery !" >&2
+    exit 1
 fi
 
 opwd=$(pwd)
+
+function my_exit()
+{
+    cd ${opwd}
+    exit $1
+}
 
 build_dir=$(pwd)/__build
 test -d ${build_dir} && rm -fr ${build_dir}
@@ -16,27 +22,24 @@ install_dir=$(pwd)
 mkdir ${build_dir}
 cd ${build_dir}
 
-if [ $use_bayeux -eq 0 ]; then
-    which cuts-config
-    if [ $? -ne 0 ]; then
-	echo "ERROR: Missing cuts-config !" >&2
-	exit 0
-    fi
-    cmake \
-	-DCMAKE_INSTALL_PREFIX=.. \
-    	-Dcuts_DIR=$(cuts-config --prefix) \
-	-DCMAKE_FIND_ROOT_PATH:PATH=$(cuts-config --prefix) \
-	..
-else
-    echo "NOTICE: Using Bayeux..." >&2
-    cmake \
-	-DCMAKE_INSTALL_PREFIX=.. \
-	-DUSE_BAYEUX:BOOLEAN=1 \
-	-DCMAKE_FIND_ROOT_PATH:PATH=$(bayeux-config --prefix) \
-	..
+cmake \
+    -DCMAKE_INSTALL_PREFIX=.. \
+    -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
+    ..
+if [ $? -ne 0 ]; then
+    echo "ERROR: Configuration failed !" 1>&2
+    my_exit 1
 fi
 make
+if [ $? -ne 0 ]; then
+    echo "ERROR: Build failed !" 1>&2
+    my_exit 1
+fi
 make install
+if [ $? -ne 0 ]; then
+    echo "ERROR: Installation failed !" 1>&2
+    my_exit 1
+fi
 
 cd ${opwd}
 
@@ -50,6 +53,6 @@ rm -f ex_manager
 rm -fr ${build_dir}
 rm -f *~
 
-exit 0
+my_exit 0
 
 # end

@@ -33,7 +33,7 @@ Introduction
 Quick start
 ===========
 
-1. Build, install and setup the cuts library
+1. Build, install and setup the Bayeux library
 2. Make a copy of the example directory::
 
       shell> cp -a [cuts install base directory]/share/cuts/examples/manager /tmp/cuts_ex_manager
@@ -45,7 +45,7 @@ Quick start
      shell> cd __build
      shell> cmake \
        -DCMAKE_INSTALL_PREFIX=.. \
-       -Dcuts_DIR=$(cuts-config --prefix) \
+       -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
        ..
      shell> make
      shell> make install
@@ -68,5 +68,3 @@ Quick start
      shell> rm -f ex_manager.selected.data
      shell> rm -f ex_manager
      shell> rm -fr __build
-
-
