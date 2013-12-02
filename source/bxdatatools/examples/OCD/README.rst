@@ -26,8 +26,8 @@ Introduction
 
  * Built objects :
 
-   * the ``datatools_ex_OCD`` : DLL linked with the ``datatools`` DLL
-   * the ``ex_OCD`` : executable linked with the ``datatools_ex_OCD`` DLL
+   * the ``datatools_ex_OCD`` : DLL linked with the ``Bayeux`` DLL
+   * the ``ex_OCD`` : executable linked with the ``Bayeux`` DLL
 
  * Build method: CMake
 

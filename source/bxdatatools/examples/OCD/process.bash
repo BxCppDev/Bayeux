@@ -8,20 +8,37 @@ fi
 
 opwd=$(pwd)
 
+function my_exit()
+{
+    cd ${opwd}
+    exit $1
+}
+
+
 build_dir=$(pwd)/__build
 test -d ${build_dir} && rm -fr ${build_dir}
 
-install_dir=$(pwd)
-
-mkdir ${build_dir}
+test ! -d ${build_dir} && mkdir ${build_dir}
 cd ${build_dir}
 
 cmake \
     -DCMAKE_INSTALL_PREFIX=.. \
     -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
     ..
+if [ $? -ne 0 ]; then
+    echo "ERROR: Configuration failed !" 1>&2
+    my_exit 1
+fi
 make
+if [ $? -ne 0 ]; then
+    echo "ERROR: Build failed !" 1>&2
+    my_exit 1
+fi
 make install
+if [ $? -ne 0 ]; then
+    echo "ERROR: Installation failed !" 1>&2
+    my_exit 1
+fi
 
 cd ${opwd}
 
@@ -30,6 +47,10 @@ ls -l ./ex_OCD
 
 echo "Run the example program : " 1>&2
 LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH} ./ex_OCD
+if [ $? -ne 0 ]; then
+    echo "ERROR: Example program ex_OCD failed !" 1>&2
+    my_exit 1
+fi
 
 LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH} \
     bxocd_manual --load-dll "datatools_ex_OCD" \
@@ -53,6 +74,6 @@ rm -f ex_OCD
 rm -fr ./lib
 rm -fr ${build_dir}
 
-exit 0
+my_exit 0
 
 # end
