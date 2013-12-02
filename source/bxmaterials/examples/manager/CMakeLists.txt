@@ -14,20 +14,16 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
   message(FATAL_ERROR "in-source build detected")
 endif()
 
-# - materials :
-if (NOT materials_DIR)
-  execute_process(COMMAND materials-config --prefix
-                  OUTPUT_VARIABLE materials_DIR )
-endif()
+# - Bayeux :
+find_package(Bayeux 1.0.0 REQUIRED)
+set(_incs ${Bayeux_INCLUDE_DIRS})
+set(_libs ${Bayeux_LIBRARIES})
 
-find_package(materials 4.0.0 REQUIRED)
-message (STATUS "XXX=${materials_INCLUDE_DIRS}" )
-
-include_directories(${PROJECT_SOURCE_DIR} ${materials_INCLUDE_DIRS})
+include_directories(${PROJECT_SOURCE_DIR} ${_incs})
 
 add_executable(ex_manager ex_manager.cxx)
 
-target_link_libraries(ex_manager ${materials_LIBRARY} )
+target_link_libraries(ex_manager ${_libs} )
 
 install ( FILES
     ${PROJECT_BINARY_DIR}/ex_manager

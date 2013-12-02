@@ -28,18 +28,18 @@ Introduction
 
  * Binary files :
 
-  * ``ex_manager`` : the example executable linked to the ``materials`` DLL
-  * ``materials_inspector`` : the official *inspector* executable from the ``materials`` library.
+  * ``ex_manager`` : the example executable linked to the ``Bayeux`` DLL
+  * ``materials_inspector`` : the official *inspector* executable from the ``Bayeux`` library.
 
 
 
 Quick start
 ===========
 
-1. Build, install and setup the materials library
+1. Build, install and setup the Bayeux library
 2. Make a copy of the example directory::
 
-     $ cp -a [materials install base directory]/share/materials/examples/manager /tmp/materials_ex_manager
+     $ cp -a $(bxquery --exampledir)/materials/examples/manager /tmp/materials_ex_manager
      $ cd /tmp/materials_ex_manager
 
 3. Build and install the example::
@@ -48,7 +48,7 @@ Quick start
      $ cd __build
      $ cmake \
        -DCMAKE_INSTALL_PREFIX=.. \
-       -Dmaterials_DIR=$(materials-config --prefix) \
+       -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
        ..
      $ make
      $ make install
@@ -56,7 +56,7 @@ Quick start
 
 4. Inspect the material manager configuration::
 
-     $ materials_inspector --manager-config "config/manager.conf" --with-decoration -M
+     $ bxmaterials_inspector --manager-config "config/manager.conf" --with-decoration -M
 
 5. Run the example program::
 
@@ -66,5 +66,3 @@ Quick start
 
      $ rm -f ex_manager
      $ rm -fr __build
-
-
