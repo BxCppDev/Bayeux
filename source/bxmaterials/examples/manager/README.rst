@@ -29,7 +29,7 @@ Introduction
  * Binary files :
 
   * ``ex_manager`` : the example executable linked to the ``Bayeux`` DLL
-  * ``materials_inspector`` : the official *inspector* executable from the ``Bayeux`` library.
+  * ``bxmaterials_inspector`` : the official *inspector* executable from the ``Bayeux`` library.
 
 
 
