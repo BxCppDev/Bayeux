@@ -79,10 +79,22 @@ cmake \
     -DCMAKE_INSTALL_PREFIX=.. \
     -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
     ..
+if [ $? -ne 0 ]; then
+    echo "ERROR: Configuration failed !" 1>&2
+    my_exit 1
+fi
 genvtx_production_bin="bxgenvtx_production"
 geomtools_inspector_bin="bxgeomtools_inspector"
 make
+if [ $? -ne 0 ]; then
+    echo "ERROR: Build failed !" 1>&2
+    my_exit 1
+fi
 make install
+if [ $? -ne 0 ]; then
+    echo "ERROR: Installation failed !" 1>&2
+    my_exit 1
+fi
 
 cd ..
 ls -l
@@ -111,12 +123,12 @@ fi
 echo "Run the example program : " 1>&2
 ./ex01 > ex01_vertices.data
 if [ $? -ne 0 ]; then
-    echo "ERROR: example program ex01 failed !" 1>&2
+    echo "ERROR: Example program ex01 failed !" 1>&2
     my_exit 1
 fi
 gnuplot ./ex01.gp
 if [ $? -ne 0 ]; then
-    echo "ERROR: gnuplot display failed !" 1>&2
+    echo "ERROR: Gnuplot display failed !" 1>&2
     my_exit 1
 fi
 
