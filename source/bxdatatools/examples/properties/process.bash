@@ -8,6 +8,12 @@ fi
 
 opwd=$(pwd)
 
+function my_exit()
+{
+    cd ${opwd}
+    exit $1
+}
+
 build_dir=$(pwd)/__build
 test -d ${build_dir} && rm -fr ${build_dir}
 
