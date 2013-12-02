@@ -48,7 +48,7 @@ Quick start
       shell> cd __build
       shell> cmake \
         -DCMAKE_INSTALL_PREFIX=.. \
-        -Dgenbb_help_DIR=$(genbb_help-config --prefix) \
+	-DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
         ..
       shell> make
       shell> make install
@@ -86,5 +86,3 @@ Quick start
       shell> rm ex01
       shell> rm genbb_help-ex01.gdml
       shell> rm -fr __build
-
-

@@ -14,22 +14,16 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
   message(FATAL_ERROR "in-source build detected")
 endif()
 
-# - genbb_help :
-if (NOT genbb_help_DIR)
-  execute_process(COMMAND genbb_help-config --prefix
-                  OUTPUT_VARIABLE genbb_help_DIR )
-endif()
+# - Bayeux :
+find_package(Bayeux 1.0.0 REQUIRED)
+set(_incs ${Bayeux_INCLUDE_DIRS})
+set(_libs ${Bayeux_LIBRARIES})
 
-find_package(genbb_help 5.0.0 REQUIRED)
-
-include_directories(${PROJECT_SOURCE_DIR} ${genbb_help_INCLUDE_DIRS})
+include_directories(${PROJECT_SOURCE_DIR} ${_incs})
 
 add_executable(ex01 ex01.cxx)
 
-target_link_libraries(ex01 ${genbb_help_LIBRARY}
-			   ${genbb_help_BIO_LIBRARY}
-			   ${geomtools_BIO_LIBRARY}
-			   ${datatools_BIO_LIBRARY} )
+target_link_libraries(ex01 ${_libs} )
 
 install ( FILES
     ${PROJECT_BINARY_DIR}/ex01
