@@ -8,7 +8,7 @@ Introduction
  * Description:
 
    This example illustrates how to create classes with
-   serialization support within the ``datatools`` framework.
+   serialization support within the ``Bayeux/datatools`` framework.
 
  * Source files :
 
@@ -45,7 +45,7 @@ Introduction
 Quick start
 ===========
 
-1. Build, install and setup the datatools library
+1. Build, install and setup the Bayeux library
 2. Make a copy of the example directory::
 
       shell> cp -a $(bxquery --exampledir)/datatools/examples/serializable /tmp/datatools_ex_serializable
