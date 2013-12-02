@@ -17,7 +17,7 @@ Introduction
  * Build method: CMake
  * Built object :
 
-   * ``ex_properties`` : executable linked with the ``datatools`` shared library.
+   * ``ex_properties`` : executable linked with the ``Bayeux`` shared library.
 
 Quick start
 ===========

@@ -18,12 +18,28 @@ cmake \
     -DCMAKE_INSTALL_PREFIX=.. \
     -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
     ..
+if [ $? -ne 0 ]; then
+    echo "ERROR: Configuration failed !" 1>&2
+    my_exit 1
+fi
 make
+if [ $? -ne 0 ]; then
+    echo "ERROR: Build failed !" 1>&2
+    my_exit 1
+fi
 make install
+if [ $? -ne 0 ]; then
+    echo "ERROR: Installation failed !" 1>&2
+    my_exit 1
+fi
 
 cd ${opwd}
 
 ./ex_properties --debug
+if [ $? -ne 0 ]; then
+    echo "ERROR: Example program ex_properties failed !" 1>&2
+    my_exit 1
+fi
 
 cat foo.conf
 
