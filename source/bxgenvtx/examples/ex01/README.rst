@@ -47,8 +47,8 @@ Quick start
 1. Build, install and setup the Bayeux library
 2. Make a copy of the example directory::
 
-      shell> cp -a [geomtools install base directory]/share/geomtools/examples/ex01 /tmp/ex01
-      shell> cd /tmp/ex01
+      shell> cp -a $(bxquery --exampledir)/genvtx/examples/ex01 /tmp/genvtx_ex01
+      shell> cd /tmp/genvtx_ex01
 
 3. Build and install the example::
 
