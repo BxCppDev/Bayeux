@@ -17,12 +17,12 @@ Introduction
  * Build method: CMake
  * Built object(s) :
 
-   * ``ex_things_1`` : executable linked with the ``datatools`` DLL
+   * ``ex_things_1`` : executable linked with the ``Bayeux`` DLL
 
 Quick start
 ===========
 
-1. Build, install and setup the datatools library
+1. Build, install and setup the Bayeux library
 2. Make a copy of the example directory::
 
       shell> cp -a $(bxquery --exampledir)/datatools/examples/things /tmp/datatools_ex_things
