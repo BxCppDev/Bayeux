@@ -50,7 +50,9 @@ add_custom_command(
 
 add_custom_target(bayeux_docs ALL DEPENDS ${Bayeux_DOXYGEN_OUTPUT_FILE})
 
-configure_file(BayeuxDocs.cmake.in
-  ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake/${Bayeux_TAG}/BayeuxDocs.cmake
-  @ONLY
-  )
+set(__doc_cmake_dir ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake/${Bayeux_TAG})
+
+file(RELATIVE_PATH Bayeux_DOXYGEN_HTML_DIR_RELATIVE ${__doc_cmake_dir} ${Bayeux_DOXYGEN_OUTPUT_DIR}/html)
+file(RELATIVE_PATH Bayeux_DOXYGEN_TAGFILE_RELATIVE ${__doc_cmake_dir} ${Bayeux_DOXYGEN_OUTPUT_DIR}/bayeux.doxy.tag)
+
+configure_file(BayeuxDocs.cmake.in ${__doc_cmake_dir}/BayeuxDocs.cmake @ONLY)

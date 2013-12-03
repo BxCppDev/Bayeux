@@ -122,5 +122,5 @@ endif()
 #-----------------------------------------------------------------------
 # Documentation - loaded optionally from its own file
 #
-include("${__bayeux_config_dir}/BayeuxDoc.cmake" OPTIONAL)
+include("${__bayeux_config_dir}/BayeuxDocs.cmake" OPTIONAL)
 
