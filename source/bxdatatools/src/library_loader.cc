@@ -20,7 +20,6 @@
 
 // This Project
 #include <datatools/detail/DynamicLoader.h>
-
 #include <datatools/utils.h>
 #include <datatools/handle.h>
 #include <datatools/multi_properties.h>
@@ -28,8 +27,6 @@
 #include <datatools/logger.h>
 
 namespace datatools {
-
-
 //----------------------------------------------------------------------
 // library_entry struct
 // ctor :
@@ -91,11 +88,9 @@ void library_entry_type::print(std::ostream& out,
 
 //----------------------------------------------------------------------
 // library_loader class
-
 bool library_loader::is_debug() const {
   return flags_ & debug;
 }
-
 
 void library_loader::set_debug(bool allow) {
   if (allow) {
@@ -105,11 +100,9 @@ void library_loader::set_debug(bool allow) {
   }
 }
 
-
 bool library_loader::is_test() const {
   return flags_ & test;
 }
-
 
 void library_loader::set_allow_unregistered(bool allow) {
   if (allow) {
@@ -118,7 +111,6 @@ void library_loader::set_allow_unregistered(bool allow) {
     flags_ &= allow_unregistered;
   }
 }
-
 
 bool library_loader::allowing_unregistered() const {
   return flags_ & allow_unregistered;
@@ -140,12 +132,27 @@ symbol_ptr library_loader::get_symbol_address(const std::string& lib_name_,
 
 
 // ctor :
-library_loader::library_loader(uint32_t flags,
-                               const std::string& config_file) {
-  flags_ = flags;
-  config_filename_ = config_file;
+library_loader::library_loader(uint32_t flags) : flags_(flags), config_(datatools::multi_properties("name", "filename")) {
   this->init();
 }
+
+library_loader::library_loader(uint32_t flags,
+                               const std::string& config_file) : flags_(flags), config_(datatools::multi_properties("name", "filename")) {
+  if(!config_file.empty()) {
+    std::string resolvedPathToConfig(config_file);
+    datatools::fetch_path_with_env(resolvedPathToConfig);
+    config_.read(resolvedPathToConfig);
+  }
+  this->init();
+}
+
+library_loader::library_loader(uint32_t flags,
+                               const datatools::multi_properties& config) : flags_(flags), config_(config) {
+  this->init();
+}
+
+
+
 
 
 int library_loader::close_all() {
@@ -361,18 +368,10 @@ int library_loader::close(const std::string& lib_name_) {
 
 
 void library_loader::init() {
-  if (config_filename_.empty()) {
-    //DT_LOG_WARNING(datatools::logger::PRIO_WARNING, "No library loader config file is available !");
-    return;
-  }
-
-  namespace du = datatools;
-  fetch_path_with_env(config_filename_);
-  du::multi_properties config("name", "filename");
-  config.read(config_filename_);
+  if (config_.empty()) return;
 
   BOOST_FOREACH(const multi_properties::entry* ptr,
-                config.ordered_entries()) {
+                config_.ordered_entries()) {
     const multi_properties::entry& e = *ptr;
     const properties& lib_properties = e.get_properties();
     std::string lib_name       = e.get_key ();
@@ -424,7 +423,6 @@ void library_loader::init() {
 void library_loader::print(std::ostream& out) const {
   out << "Library loader : " << std::endl;
   out << "Flags              : " << flags_ << std::endl;
-  out << "Configuration file : '" << config_filename_ << "'" << std::endl;
   out << "List of registered shared libraries :" << std::endl;
   for (handle_library_entry_dict_type::const_iterator i
        = libraries_.begin();
