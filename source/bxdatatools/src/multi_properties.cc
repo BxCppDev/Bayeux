@@ -188,9 +188,9 @@ uint32_t multi_properties::size() const {
   return entries_.size();
 }
 
-bool multi_properties::empty () const
+bool multi_properties::empty() const
 {
-  return size () > 0;
+  return this->size() == 0;
 }
 
 void multi_properties::reset() {
