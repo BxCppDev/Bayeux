@@ -22,7 +22,7 @@ endif()
 # Project configuration
 #
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
-project(genbb_help C CXX Fortran )
+project(genbb_help C CXX)
 
 # - Default build is from Bayeux
 #  Setting GENBB_HELP_STANDALONE to 1 must be used for a individual build
@@ -56,6 +56,7 @@ option(GENBB_HELP_WITH_FORTRAN "Build the original Fortran decay0 library and as
 # Fortran/C/C++ stuff
 # See : http://www.cmake.org/cmake/help/cmake-2-8-docs.html#module:FortranCInterface
 if (GENBB_HELP_WITH_FORTRAN)
+  enable_language(Fortran)
   include(FortranCInterface)
   FortranCInterface_VERIFY( CXX QUIET )
   if (NOT FortranCInterface_VERIFIED_CXX )
