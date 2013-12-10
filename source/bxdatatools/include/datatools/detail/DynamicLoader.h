@@ -92,7 +92,14 @@ public:
   static const char* LibPrefix() { return "lib"; }
 
   /** Return the default module suffix for the current platform.  */
-  static const char* LibExtension() { return ".so"; }
+  static const char* LibExtension() {
+#if defined(__APPLE__)
+    // NB could also be ".bundle"
+    return ".dylib";
+#else // default POSIX
+    return ".so";
+#endif
+  }
 
   /** Return the last error produced from a calls made on this class. */
   static const char* LastError();
