@@ -33,7 +33,7 @@ namespace datatools {
     return found->second;
   }
 
-  const int get_type_from_label(const std::string & label_)
+  int get_type_from_label(const std::string & label_)
   {
     const boost::bimap< int, std::string >::right_const_iterator found
       = get_type_to_labels_map().right.find(label_);

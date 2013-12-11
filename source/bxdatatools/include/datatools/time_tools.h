@@ -19,7 +19,7 @@ namespace datatools {
 class computing_time : public i_tree_dumpable {
  public:
     //static double g_system_dead_time;
-  static const double system_dead_time();
+  static double system_dead_time();
 
   // ctor:
   computing_time();

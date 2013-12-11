@@ -78,18 +78,15 @@ namespace datatools {
   const int  properties::data::SCALAR_DEF  = -1;
   const int  properties::data::SCALAR_SIZE =  1;
 
-  const bool properties::data::defaults::boolean_value()
-  {
+  bool properties::data::defaults::boolean_value() {
     return false;
   }
 
-  const int properties::data::defaults::integer_value()
-  {
+  int properties::data::defaults::integer_value() {
     return 0;
   }
 
-  const double properties::data::defaults::real_value()
-  {
+  double properties::data::defaults::real_value() {
     return 0.0;
   }
 
@@ -2991,8 +2988,8 @@ namespace datatools {
   // Specialization :
   template <>
   bool check_serial_tag<properties>(const std::string stag_,
-                                    const std::string alt_tag_,
-                                    boost::enable_if< has_bsts<properties> >::type* dummy) {
+                                    const std::string /*alt_tag_*/,
+                                    boost::enable_if< has_bsts<properties> >::type* /*dummy*/) {
     if (stag_ == properties::SERIAL_TAG) return true;
     if (stag_ == ::datatools::backward_serial_tag<properties> (0)) return true;
     if (stag_ == "datatools:utils::properties") return true;

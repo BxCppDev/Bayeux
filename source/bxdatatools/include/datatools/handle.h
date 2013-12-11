@@ -173,7 +173,7 @@ class handle {
  private:
   friend class boost::serialization::access;
   template <class Archive>
-  void serialize(Archive& ar, int version) {
+  void serialize(Archive& ar, int /*version*/) {
     ar & boost::serialization::make_nvp("sp", sp_);
   }
 

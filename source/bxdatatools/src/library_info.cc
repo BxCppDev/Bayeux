@@ -506,7 +506,7 @@ namespace datatools {
     datatools::library_info::names(libnames);
     out_ << indent << i_tree_dumpable::tag
          << "Registered libraries/components : " << libnames.size() << std::endl;
-    for (int i = 0; i < libnames.size(); i++) {
+    for (size_t i = 0; i < libnames.size(); i++) {
       out_ << indent << i_tree_dumpable::skip_tag;
       if (i < libnames.size() - 1 ) {
         out_ << i_tree_dumpable::tag;

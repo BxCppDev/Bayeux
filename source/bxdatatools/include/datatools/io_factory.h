@@ -551,6 +551,7 @@ class data_reader {
   template <typename Data>
   void load_serializable(Data& data,
     typename boost::disable_if< has_bsts<Data> >::type* dummy = 0) {
+    if(!dummy) dummy=0;
     this->load(data.get_serial_tag(), data);
   }
 
@@ -558,6 +559,7 @@ class data_reader {
   void load_serializable(
     Data& data,
     typename boost::enable_if< has_bsts<Data> >::type* dummy = 0) {
+    if(!dummy) dummy=0;
     this->load_alt(data.get_serial_tag(),
                    ::datatools::backward_serial_tag<Data> (0),
                    data);

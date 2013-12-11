@@ -27,7 +27,7 @@
 
 namespace datatools {
 
-const double computing_time::system_dead_time()
+double computing_time::system_dead_time()
 {
   static double sdt = std::numeric_limits<double>::quiet_NaN();
   if (sdt != sdt) {
@@ -257,9 +257,7 @@ bool computing_time::g_timeval_subtract(const timeval& a_start,
 
 
 double computing_time::compute_system_dead_time() {
-  double system_dead_time =
-  // preliminary:
-  system_dead_time = 0.0 * CLHEP::second;
+  double system_dead_time = 0.0 * CLHEP::second;
   timeval start, stop;
   gettimeofday(&start, NULL);
   size_t n = 50;

@@ -265,7 +265,7 @@ void fetch_path_processor::process_impl(std::string& path) {
                 << "No support for '@foo:bar/blah.txt' syntax !");
     const datatools::library_info & lib_info_reg =
       datatools::kernel::instance().get_library_info_register();
-    int pos = text.find(':');
+    size_t pos = text.find(':');
     DT_THROW_IF(pos == text.npos,
                 std::logic_error,
                 "Invalid syntax for library location !");

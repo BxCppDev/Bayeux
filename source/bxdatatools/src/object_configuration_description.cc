@@ -779,7 +779,7 @@ namespace datatools {
       //   out_ << "s";
       // }
       // out_ << " :** " << std::endl;
-      for (int i = 0; i < get_number_of_examples(); i++) {
+      for (size_t i = 0; i < get_number_of_examples(); i++) {
         out_ << std::endl << indent << "***Example ";
         if (get_number_of_examples() > 1) {
           out_ << (i + 1);

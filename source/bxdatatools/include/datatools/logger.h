@@ -204,19 +204,16 @@ struct logger {
 // To actually produce a compiler warning on clang or gcc:
 // Local deprecation namespace which we can use to store deprecated macros
 // This uses a pattern of a deprecated type tag
-//namespace datatools_deprecated {
+// namespace datatools_deprecated {
 // For example, to deprecate datatools_fatal, define:
-//struct datatools_fatal {} __attribute__ ((deprecated)) ;
+// struct datatools_fatal {} __attribute__ ((deprecated)) ;
 // then define datatools_fatal(Priority,Message) as an instantiation
 // of datatools_fatal in a scope block:
-//#define datatools_fatal(Priority, Message) \
-//{ \
-//  datatools_deprecated::datatools_fatal a; \
-//}
-//Provided the compiler supports deprecation, this should emit a warning
-//that datatools_fatal is deprecated. The name may or may not change
-//depending on the compiler.
-//} // namespace
+// #define datatools_fatal(Priority, Message) {datatools_deprecated::datatools_fatal a;}
+// Provided the compiler supports deprecation, this should emit a warning
+// that datatools_fatal is deprecated. The name may or may not change
+// depending on the compiler.
+// } // namespace
 
 //! Log Message if Priority is greater or equal to PRIO_FATAL
 //! @deprecated Use DT_LOG_FATAL macro.

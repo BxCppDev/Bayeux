@@ -25,7 +25,7 @@
 namespace datatools {
 
 /// Boost serialization template method
-DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(multi_properties::entry, archive, version)
+DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(multi_properties::entry, archive, /*version*/)
 {
   archive & boost::serialization::make_nvp("key", key_);
   archive & boost::serialization::make_nvp("meta", meta_);

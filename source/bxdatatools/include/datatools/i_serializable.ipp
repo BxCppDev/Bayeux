@@ -15,7 +15,7 @@
 namespace datatools {
 
 /// Boost serialization template method
-DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(i_serializable, archive, version)
+DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(i_serializable, /*archive*/, /*version*/)
 {
 }
 

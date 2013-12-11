@@ -18,7 +18,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::i_serializable, tag_)
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::i_serializable, /*tag_*/)
       {
 // 				std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
 // 									<< "datatools::i_serializable" << std::endl;

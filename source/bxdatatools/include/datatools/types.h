@@ -34,7 +34,7 @@ namespace datatools {
 
   const std::string get_label_from_type(int type_);
 
-  const int get_type_from_label(const std::string & label_);
+  int get_type_from_label(const std::string & label_);
 
 
 } // end of namespace datatools

@@ -105,9 +105,9 @@ class properties :
     static const int  SCALAR_SIZE; // =  1;
 
     struct defaults {
-      static const bool boolean_value();
-      static const int integer_value();
-      static const double real_value();
+      static bool boolean_value();
+      static int integer_value();
+      static double real_value();
       static const std::string string_value();
     };
 

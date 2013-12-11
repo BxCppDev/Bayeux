@@ -480,7 +480,7 @@ void smart_filename::build_incremental_filename(
 }
 
 
-void smart_filename::print_list_of_filenames(std::ostream& a_out) const {
+void smart_filename::print_list_of_filenames(std::ostream& /*a_out*/) const {
   DT_THROW_IF (!this->is_initialized(),logic_error,"Smart file is not initialized !");
 }
 

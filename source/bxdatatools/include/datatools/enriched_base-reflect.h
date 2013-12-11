@@ -18,7 +18,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-    DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::enriched_base, tag_)
+    DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::enriched_base, /*tag_*/)
     {
 //                      std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
 //                                                              << "datatools::enriched_base" << std::endl;

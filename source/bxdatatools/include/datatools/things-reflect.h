@@ -18,7 +18,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-    DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::things,tag_)
+    DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::things, /*tag_*/)
     {
       // Declare and populate the introspection metaclass for the 'datatools::things' class:
       DR_CLASS_DECLARE (::datatools::things)

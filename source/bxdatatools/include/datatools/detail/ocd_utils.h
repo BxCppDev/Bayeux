@@ -69,6 +69,7 @@ namespace datatools {
   bool load_ocd(::datatools::object_configuration_description & ocd_,
                 typename boost::enable_if< has_load< ::datatools::detail::ocd::loader<ConfigurableType> > >::type* dummy = 0)
   {
+    (void)dummy;
     typename ::datatools::detail::ocd::loader<ConfigurableType>::load l;
     l(ocd_);
     return true;

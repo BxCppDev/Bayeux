@@ -135,7 +135,7 @@ namespace datatools {
   // static
   void kernel::print_opt_desc(const boost::program_options::options_description & opts_,
                               std::ostream & out_,
-                              const std::string & indent_)
+                              const std::string& /*indent_*/)
   {
     //out_ << "\ndatatools -- Kernel configuration options" << std::endl;
     out_ << std::endl;
@@ -188,13 +188,13 @@ namespace datatools {
 
     // Parse some special directives to load arbitrary resource path associated
     // to some library or some software component identified by their names:
-    for (int i = 0; i < params_.resource_paths.size(); i++) {
+    for (size_t i = 0; i < params_.resource_paths.size(); i++) {
       std::string resource_path_registration = params_.resource_paths[i];
       DT_LOG_TRACE(_logging_, "Resource path registration : '"
                    << resource_path_registration << "'");
       // format is :
       //   "foo@path1/subdir/..."
-      int apos = resource_path_registration.find('@');
+      size_t apos = resource_path_registration.find('@');
       DT_THROW_IF(apos == resource_path_registration.npos,
                   std::logic_error,
                   "Invalid syntax in resource path registration directive ('"

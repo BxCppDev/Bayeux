@@ -17,14 +17,14 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::datatools::logger, tag_)
+      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::datatools::logger, /*tag_*/)
         {
           DR_CLASS_DECLARE(::datatools::logger)
             ;
           return;
         }
 
-      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::datatools::logger::priority, tag_)
+      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::datatools::logger::priority, /*tag_*/)
         {
           DR_ENUM_DECLARE(::datatools::logger::priority)
             .DR_ENUM_PAIR("undefined",   ::datatools::logger::PRIO_UNDEFINED)

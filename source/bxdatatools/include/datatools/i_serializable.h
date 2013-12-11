@@ -203,7 +203,7 @@ namespace datatools {
 #define DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_IMPLEMENTATION(ClassName,ClassBackwardSerialTag) \
   namespace datatools {                                                 \
     template <>                                                         \
-    const std::string & backward_serial_tag<ClassName> (int i){         \
+    const std::string & backward_serial_tag<ClassName> (int /*i*/){         \
       static boost::scoped_ptr<std::string> g_backward_serial_tag (0);  \
       if ( !g_backward_serial_tag){                                     \
         g_backward_serial_tag.reset (new std::string (ClassBackwardSerialTag)); \
@@ -423,6 +423,7 @@ namespace datatools {
   bool check_serial_tag(const std::string stag_,
                         const std::string alt_tag_ = "",
                         typename boost::disable_if< has_bsts<T> >::type* dummy = 0) {
+    if(!dummy) dummy=0;
     if (stag_ == T::serial_tag()) return true;
     if (! alt_tag_.empty())
       {
@@ -435,6 +436,7 @@ namespace datatools {
   bool check_serial_tag(const std::string stag_,
                         const std::string alt_tag_ = "",
                         typename boost::enable_if< has_bsts<T> >::type* dummy = 0) {
+    if(!dummy) dummy = 0;
     if (stag_ == T::serial_tag()) return true;
     if (stag_ == ::datatools::backward_serial_tag<T> (0)) return true;
     if (! alt_tag_.empty()) {
