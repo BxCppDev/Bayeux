@@ -133,10 +133,6 @@ namespace emfield {
 
   void electromagnetic_field_manager::_construct_ ()
   {
-    if (getenv ("EMFIELD_MANAGER_DEVEL") != NULL)
-      {
-        set_logging_priority (datatools::logger::PRIO_TRACE);
-      }
     for (datatools::multi_properties::entries_ordered_col_type::const_iterator i
            = _field_definitions_.ordered_entries ().begin ();
          i != _field_definitions_.ordered_entries ().end ();
