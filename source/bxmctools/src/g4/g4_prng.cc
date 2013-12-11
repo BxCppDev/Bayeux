@@ -70,7 +70,7 @@ namespace mctools {
       return;
     }
 
-    void g4_prng::setSeed (long seed_, int dummy_)
+    void g4_prng::setSeed (long seed_, int /*dummy_*/)
     {
       _random_seed_ = seed_;
       _random_->set_seed (seed_);

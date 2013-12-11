@@ -214,7 +214,7 @@ namespace mctools {
     }
 
     void particles_physics_constructor::initialize (const datatools::properties & config_,
-                                                    physics_constructor_dict_type & dict_)
+                                                    physics_constructor_dict_type & /*dict_*/)
     {
       DT_LOG_TRACE(_logprio(), "Entering...");
       DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");

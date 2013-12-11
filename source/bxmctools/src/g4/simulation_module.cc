@@ -66,7 +66,7 @@ namespace mctools {
     // Initialization :
     void simulation_module::initialize (const datatools::properties  & config_,
                                         datatools::service_manager   & service_manager_,
-                                        dpp::module_handle_dict_type & module_dict_)
+                                        dpp::module_handle_dict_type & /*module_dict_*/)
     {
       DT_THROW_IF (is_initialized (), std::logic_error,
                    "Module '" << get_name () << "' is already initialized !");

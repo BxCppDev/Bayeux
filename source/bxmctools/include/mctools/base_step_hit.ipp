@@ -17,7 +17,7 @@ namespace mctools {
 
   template<class Archive>
   void base_step_hit::serialize (Archive            & ar,
-                                 const unsigned int   version)
+                                 const unsigned int   /*version*/)
   {
     // inherit from the 'base_hit' mother class:
     ar & boost::serialization::make_nvp("geomtools__base_hit",

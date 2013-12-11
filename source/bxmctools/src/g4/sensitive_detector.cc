@@ -532,7 +532,7 @@ namespace mctools {
       return;
     }
 
-    void sensitive_detector::Initialize (G4HCofThisEvent * some_hit_collections_)
+    void sensitive_detector::Initialize (G4HCofThisEvent * /*some_hit_collections_*/)
     {
       //cerr << datatools::io::devel << "snemo::g4::sensitive_detector::Initialize: "
       //            << "Entering for detector '" << _sensitive_category_ << "'..." << endl;
@@ -644,7 +644,7 @@ namespace mctools {
     }
 
     G4bool sensitive_detector::ProcessHits (G4Step * step_,
-                                            G4TouchableHistory * touchable_history_)
+                                            G4TouchableHistory * /*touchable_history_*/)
     {
       DT_LOG_TRACE(_logprio(),"Entering...");
       const bool do_process_hits = true;
@@ -888,7 +888,7 @@ namespace mctools {
     void sensitive_detector::tree_dump (std::ostream & out_,
                                         const std::string & title_,
                                         const std::string & indent_,
-                                        bool inherit_) const
+                                        bool /*inherit_*/) const
     {
       std::string indent;
       if (! indent_.empty ()) indent = indent_;

@@ -41,7 +41,7 @@ namespace mctools {
       return;
     }
 
-    void tracking_action::PreUserTrackingAction (const G4Track * track_)
+    void tracking_action::PreUserTrackingAction (const G4Track * /*track_*/)
     {
       /*
       G4int track_id     = track_->GetTrackID ();
@@ -54,7 +54,7 @@ namespace mctools {
       return;
     }
 
-    void tracking_action::PostUserTrackingAction(const G4Track* track_)
+    void tracking_action::PostUserTrackingAction(const G4Track* /*track_*/)
     {
       //G4int             track_id = track_->GetTrackID ();
       //CLHEP::Hep3Vector position = track_->GetPosition ();

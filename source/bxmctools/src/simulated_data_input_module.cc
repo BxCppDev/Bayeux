@@ -110,8 +110,8 @@ namespace mctools {
 
   // Initialization :
   void simulated_data_input_module::initialize (const datatools::properties  & a_config,
-                                                datatools::service_manager   & a_service_manager,
-                                                dpp::module_handle_dict_type & a_module_dict)
+                                                datatools::service_manager   & /*a_service_manager*/,
+                                                dpp::module_handle_dict_type & /*a_module_dict*/)
   {
     DT_THROW_IF (is_initialized (), std::logic_error,
                  "Module '" << get_name () << "' is already initialized !");

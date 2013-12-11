@@ -569,7 +569,7 @@ namespace mctools {
     return;
   }
 
-  void calorimeter_step_hit_processor::merge_scintillation_hits (simulated_data::hit_handle_collection_type & scintillation_hits_)
+  void calorimeter_step_hit_processor::merge_scintillation_hits (simulated_data::hit_handle_collection_type & /*scintillation_hits_*/)
   {
     // pickup a reference to the proper list of hits:
     //simulated_data::hit_handle_collection_type & scintillation_hits = scintillation_hits_;

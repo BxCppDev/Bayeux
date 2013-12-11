@@ -68,7 +68,7 @@ namespace mctools {
     return false;
   }
 
-  void base_step_hit_processor::set_external_rng(mygsl::rng & rng_)
+  void base_step_hit_processor::set_external_rng(mygsl::rng & /*rng_*/)
   {
     DT_LOG_WARNING(_logging_priority,
                    "Processor '" << get_name() << "' does not use any external PRNG. "
@@ -360,8 +360,8 @@ th row logic_error(message.str());
   }
 
 
-  void base_step_hit_processor::process(const base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
-                                        simulated_data::hit_collection_type & the_plain_hits)
+  void base_step_hit_processor::process(const base_step_hit_processor::step_hit_ptr_collection_type & /*the_base_step_hits*/,
+                                        simulated_data::hit_collection_type & /*the_plain_hits*/)
   {
     DT_THROW_IF(true, std::runtime_error, "Not implemented !");
     return;
@@ -547,16 +547,16 @@ th row logic_error(message.str());
   }
 
   MCTOOLS_STEP_HIT_PROCESSOR_PROCESS_HANDLE_IMPLEMENT_HEAD(kill_all_step_hit_processor,
-                                                           the_base_step_hits,
-                                                           the_hits)
+                                                           /*the_base_step_hits*/,
+                                                           /*the_hits*/)
   {
     // nothing to be done here.
     return;
   }
 
   MCTOOLS_STEP_HIT_PROCESSOR_PROCESS_PLAIN_IMPLEMENT_HEAD(kill_all_step_hit_processor,
-                                                          the_base_step_hits,
-                                                          the_plain_hits)
+                                                          /*the_base_step_hits*/,
+                                                          /*the_plain_hits*/)
   {
     // nothing to be done here.
     return;

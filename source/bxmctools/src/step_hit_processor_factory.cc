@@ -299,9 +299,8 @@ namespace mctools {
       const datatools::properties & config = e.get_properties ();
       DT_LOG_TRACE (get_logging_priority (), "Processor name = '" << name << "'");
       DT_LOG_TRACE (get_logging_priority (), "Processor type = '" << type << "'");
-      base_step_hit_processor & SHP = this->create (name,
-                                                    type,
-                                                    config);
+      //base_step_hit_processor & SHP =
+      this->create (name, type, config);
     }
     return;
   }

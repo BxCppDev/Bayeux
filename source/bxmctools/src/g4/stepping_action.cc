@@ -53,7 +53,7 @@ namespace mctools {
       return;
     }
 
-    void stepping_action::_stepping_action_base (const G4Step * g4_step_)
+    void stepping_action::_stepping_action_base (const G4Step * /*g4_step_*/)
     {
       DT_LOG_TRACE(_logprio(), "Entering...");
       _number_of_steps_++;

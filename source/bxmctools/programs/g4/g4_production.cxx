@@ -444,7 +444,7 @@ void ui::build_opts(boost::program_options::options_description & opts_,
 }
 
 void ui::process_opts( const boost::program_options::variables_map & vm_,
-                   const boost::program_options::options_description & opts_,
+                   const boost::program_options::options_description & /*opts_*/,
                    mctools::g4::manager_parameters & params_)
 {
   // Fetch the opts/args :
