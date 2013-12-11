@@ -63,7 +63,7 @@ namespace cuts {
 
   CUT_INITIALIZE_IMPLEMENT_HEAD(i_binary_cut,
                                 a_configuration,
-                                a_service_manager,
+                                /*a_service_manager*/,
                                 a_cut_dict)
   {
     DT_THROW_IF(is_initialized(),

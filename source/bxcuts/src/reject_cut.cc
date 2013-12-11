@@ -30,8 +30,8 @@ namespace cuts {
 
   CUT_INITIALIZE_IMPLEMENT_HEAD(reject_cut,
                                 a_configuration,
-                                a_service_manager,
-                                a_dict)
+                                /*a_service_manager*/,
+                                /*a_dict*/)
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
