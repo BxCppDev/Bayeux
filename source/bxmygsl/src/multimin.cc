@@ -792,7 +792,7 @@ namespace mygsl {
     // if ( multimin::g_debug ) std::clog << "DEBUG: multimin::_at_step_hook: exiting." << std::endl;
   }
 
-  int multimin::minimize( double epsabs_ )
+  int multimin::minimize( double /*epsabs_*/ )
   {
     size_t iter   = 0;
     int    status = 0;

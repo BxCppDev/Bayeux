@@ -74,7 +74,7 @@ polynomial::polynomial(const vector<double>& c_) {
   set_coefficients(c_);
 }
 
-polynomial::polynomial(const polynomial& p_) {
+polynomial::polynomial(const polynomial& p_) : i_unary_function(p_) {
   _c_ = p_._c_;
 }
 

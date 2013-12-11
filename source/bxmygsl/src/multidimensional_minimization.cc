@@ -195,7 +195,7 @@ namespace mygsl {
     return 0;
   }
 
-  int multidimensional_minimization_system::_eval_df (double * gradient_)
+  int multidimensional_minimization_system::_eval_df (double* /*gradient_*/)
   {
     datatools::logger::priority p= datatools::logger::PRIO_ERROR;
     DT_LOG_ERROR(p, "The 'multidimensional_minimization_system::_eval_df' method ");
@@ -331,7 +331,7 @@ namespace mygsl {
     return func_eval_f_MR(x_, const_cast<func_eval_f_param*> (this));
   }
 
-  void multidimensional_minimization_system::plot_f (const string & prefix_, int mode_) const
+  void multidimensional_minimization_system::plot_f (const string & prefix_, int /*mode_*/) const
   {
     string prefix = prefix_;
     string ext = ".data";

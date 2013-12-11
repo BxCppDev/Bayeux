@@ -98,7 +98,7 @@ namespace mygsl {
     }
   }
 
-  tabulated_function::tabulated_function(const tabulated_function& tab_func_) {
+  tabulated_function::tabulated_function(const tabulated_function& tab_func_) : i_unary_function(tab_func_) {
     pImpl = new tabfunc_impl;
     pImpl->_table_locked_ = false;
     pImpl->_gs_     = 0;
@@ -352,7 +352,7 @@ namespace mygsl {
     return y;
   }
 
-  void tabulated_function::tabfunc_load(std::istream& in_, void* context_) {
+  void tabulated_function::tabfunc_load(std::istream& in_, void* /*context_*/) {
     std::string interpolator_name;
     in_ >> interpolator_name >> std::ws;
     DT_THROW_IF (!interpolator_name_is_valid(interpolator_name),
@@ -369,7 +369,7 @@ namespace mygsl {
   }
 
   void tabulated_function::tabfunc_store(std::ostream& out_,
-                                         void *context_) const {
+                                         void* /*context_*/) const {
     out_ << pImpl->_interpolator_name_ << ' ';
     out_ << pImpl->_points_.size() << std::endl;
     for (points_map_type::const_iterator i = pImpl->_points_.begin();

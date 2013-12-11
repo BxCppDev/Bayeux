@@ -14,7 +14,7 @@ namespace mygsl {
 
   template<class Archive>
   void interval::serialize (Archive & ar,
-                            const unsigned int version)
+                            const unsigned int /*version*/)
   {
     ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
     ar & boost::serialization::make_nvp ("min_included", _min_included_);

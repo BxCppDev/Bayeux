@@ -24,7 +24,7 @@ namespace mygsl {
   public:
     static const std::string & goldensection_method_label();
     static const std::string & brent_method_label();
-    static const double        default_epsabs();
+    static double        default_epsabs();
     static const size_t        DEFAULT_MAX_ITER = 1000;
 
     class at_step_action

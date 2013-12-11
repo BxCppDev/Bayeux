@@ -48,10 +48,10 @@ namespace mygsl {
     return sys->compute_jacobian (t_,y_,dfdy_,dfdt_);
   }
 
-  int ode_system::compute_jacobian (double         t_   ,
-                                    const double * y_   ,
-                                    double  *      dfdy_,
-                                    double  *      dfdt_ )
+  int ode_system::compute_jacobian (double         /*t_*/   ,
+                                    const double * /*y_*/   ,
+                                    double  *      /*dfdy_*/,
+                                    double  *      /*dfdt_*/ )
   {
     return GSL_EINVAL;
   }
@@ -325,7 +325,7 @@ namespace mygsl {
     for (size_t istep=0; istep<n_steps; istep++) {
       double ti = istep*h;
       while (_t_ < ti) {
-        int status = gsl_odeiv_evolve_apply (
+        gsl_odeiv_evolve_apply (
                                              _evolve_,
                                              _control_,
                                              _step_,

@@ -18,7 +18,7 @@ namespace mygsl {
   
   template<class Archive>
   void histogram::serialize (Archive & ar,                
-                             const unsigned int version) 
+                             const unsigned int /*version*/) 
   {
     ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
     ar & boost::serialization::make_nvp ("binning_info", _binning_info_);
@@ -44,12 +44,12 @@ namespace mygsl {
       }
     if (_h_->n > 0)
       {
-        for (int ii = 0 ; ii < _h_->n + 1; ii ++ )
+        for (size_t ii = 0 ; ii < _h_->n + 1; ii ++ )
           {
             std::string tag = "range_" + boost::lexical_cast<std::string>(ii) ;
             ar & boost::serialization::make_nvp(tag.c_str(), _h_->range[ii]) ; 
           }
-        for (int ii = 0 ; ii < _h_->n; ii ++ )
+        for (size_t ii = 0 ; ii < _h_->n; ii ++ )
           {
             std::string tag = "bin_" + boost::lexical_cast<std::string>(ii) ;
             ar & boost::serialization::make_nvp(tag.c_str(), _h_->bin[ii]) ; 

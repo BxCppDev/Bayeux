@@ -18,7 +18,7 @@ namespace mygsl {
 
   template<class Archive>
   void histogram_2d::serialize (Archive & ar,
-                                const unsigned int version)
+                                const unsigned int /*version*/)
   {
     ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
     ar & boost::serialization::make_nvp ("x_binning_info", _x_binning_info_);
@@ -51,17 +51,17 @@ namespace mygsl {
       }
     if (_h_->nx > 0 && _h_->ny > 0)
       {
-        for (int ii = 0 ; ii < _h_->nx + 1; ii ++ )
+        for (size_t ii = 0 ; ii < _h_->nx + 1; ii ++ )
           {
             std::string tag = "xrange_" + boost::lexical_cast<std::string>(ii) ;
             ar & boost::serialization::make_nvp(tag.c_str(), _h_->xrange[ii]) ;
           }
-        for (int ii = 0 ; ii < _h_->ny + 1; ii ++ )
+        for (size_t ii = 0 ; ii < _h_->ny + 1; ii ++ )
           {
             std::string tag = "yrange_" + boost::lexical_cast<std::string>(ii) ;
             ar & boost::serialization::make_nvp(tag.c_str(), _h_->yrange[ii]) ;
           }
-        for (int ii = 0 ; ii < _h_->nx * _h_->ny; ii ++ )
+        for (size_t ii = 0 ; ii < _h_->nx * _h_->ny; ii ++ )
           {
             std::string tag = "bin_" + boost::lexical_cast<std::string>(ii) ;
             ar & boost::serialization::make_nvp(tag.c_str(), _h_->bin[ii]) ;

@@ -668,7 +668,7 @@ namespace mygsl {
   }
 
 
-  void histogram::print_ascii (std::ostream & out_, int mode_) const
+  void histogram::print_ascii (std::ostream & out_, int /*mode_*/) const
   {
     const size_t screen_width = 55;
     double ymin = min_val ();
@@ -803,7 +803,7 @@ namespace mygsl {
   return;
 }
 
-void histogram::dump (std::ostream & out_ , int precision_) const
+void histogram::dump (std::ostream & out_ , int /*precision_*/) const
 {
   out_.precision (9);
   out_ << "Histogram 1D:" << std::endl;

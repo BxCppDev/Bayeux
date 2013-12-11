@@ -30,7 +30,7 @@ namespace mygsl {
     return lbl;
   }
 
-  const double one_dimensional_minimization::default_epsabs()
+  double one_dimensional_minimization::default_epsabs()
   {
     return 1.e-3;
   }

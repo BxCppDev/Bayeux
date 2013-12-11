@@ -285,8 +285,8 @@ namespace mygsl {
 
   histogram_2d::histogram_2d (size_t nx_, double xmin_, double xmax_,
                               size_t ny_, double ymin_, double ymax_,
-                              unsigned int xmode_,
-                              unsigned int ymode_)
+                              unsigned int /*xmode_*/,
+                              unsigned int /*ymode_*/)
   {
     _x_binning_info_ = std::numeric_limits<double>::quiet_NaN ();
     _y_binning_info_ = std::numeric_limits<double>::quiet_NaN ();
@@ -772,7 +772,7 @@ namespace mygsl {
   }
 
 
-  void histogram_2d::dump (std::ostream & out_ , int precision_) const
+  void histogram_2d::dump (std::ostream & out_ , int /*precision_*/) const
   {
     out_.precision (9);
     out_ << "Histogram 2D:" << std::endl;

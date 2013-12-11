@@ -22,7 +22,7 @@ namespace mygsl {
  
   template<class Archive>
   void histogram_pool::histogram_entry_type::serialize (Archive & ar,                
-                                                        const unsigned int version) 
+                                                        const unsigned int /*version*/) 
   {
     ar & boost::serialization::make_nvp ("name", name);
     ar & boost::serialization::make_nvp ("title", title);
@@ -42,7 +42,7 @@ namespace mygsl {
  
   template<class Archive>
   void histogram_pool::serialize (Archive & ar,                
-                                  const unsigned int version) 
+                                  const unsigned int /*version*/) 
   {
     ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
     ar & boost::serialization::make_nvp ("description", _description_);

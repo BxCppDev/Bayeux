@@ -70,7 +70,7 @@ namespace mygsl {
     return false;
   }
 
-  bool i_unary_function::is_in_domain_of_definition(double x_) const
+  bool i_unary_function::is_in_domain_of_definition(double /*x_*/) const
   {
     return true;
   }
