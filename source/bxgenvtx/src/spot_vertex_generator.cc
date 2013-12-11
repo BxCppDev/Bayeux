@@ -45,8 +45,8 @@ namespace genvtx {
 
   GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(spot_vertex_generator,
                                       configuration_,
-                                      service_manager_,
-                                      vgens_)
+                                      /*service_manager_*/,
+                                      /*vgens_*/)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
 
@@ -92,7 +92,7 @@ namespace genvtx {
   // Destructor :
   GENVTX_VG_DEFAULT_DESTRUCTOR_IMPLEMENT(spot_vertex_generator)
 
-  GENVTX_VG_SHOOT_VERTEX_IMPLEMENT_HEAD(spot_vertex_generator,random_,vertex_)
+  GENVTX_VG_SHOOT_VERTEX_IMPLEMENT_HEAD(spot_vertex_generator,/*random_*/,vertex_)
   {
     DT_THROW_IF (! is_initialized(), std::logic_error, "Not initialized !");
     vertex_ = _spot_;

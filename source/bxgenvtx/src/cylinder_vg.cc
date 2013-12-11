@@ -51,7 +51,7 @@ namespace genvtx {
     return;
   }
 
-  void cylinder_vg::set_bulk (double skin_thickness_)
+  void cylinder_vg::set_bulk (double /*skin_thickness_*/)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
     _mode_ = MODE_BULK;
@@ -95,7 +95,7 @@ namespace genvtx {
   // Destructor :
   GENVTX_VG_DEFAULT_DESTRUCTOR_IMPLEMENT(cylinder_vg)
 
-  GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(cylinder_vg,setup_,service_manager_,vgens_)
+  GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(cylinder_vg,setup_,/*service_manager_*/,/*vgens_*/)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
 

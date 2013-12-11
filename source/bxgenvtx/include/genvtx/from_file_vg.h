@@ -27,7 +27,7 @@ namespace genvtx {
   {
   public:
 
-    static const double default_length_unit();
+    static double default_length_unit();
 
   protected:
 

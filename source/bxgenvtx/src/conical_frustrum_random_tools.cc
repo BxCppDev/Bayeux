@@ -60,7 +60,7 @@ namespace genvtx {
                                                   double a2_,
                                                   double b2_,
                                                   double length_,
-                                                  double thickness_,
+                                                  double /*thickness_*/,
                                                   double theta1_,
                                                   double theta2_)
   {

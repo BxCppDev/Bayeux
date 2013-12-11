@@ -46,7 +46,7 @@ namespace genvtx {
     return;
   }
 
-  void sphere_vg::set_bulk (double skin_thickness_)
+  void sphere_vg::set_bulk (double /*skin_thickness_*/)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
     _mode_ = MODE_BULK;
@@ -117,7 +117,7 @@ namespace genvtx {
   // Destructor :
   GENVTX_VG_DEFAULT_DESTRUCTOR_IMPLEMENT(sphere_vg)
 
-  GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(sphere_vg,setup_,service_manager_,vgens_)
+  GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(sphere_vg,setup_,/*service_manager_*/,/*vgens_*/)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
 
@@ -242,7 +242,7 @@ namespace genvtx {
   {
     DT_THROW_IF (! is_initialized (), std::logic_error, "Not initialized !");
     geomtools::invalidate (vertex_);
-    double x = 0.0, y = 0.0, z = 0.0;
+    //double x = 0.0, y = 0.0, z = 0.0;
     const geomtools::sphere * the_sphere = &_sphere_;
     if (has_sphere_ref ()) {
       the_sphere = _sphere_ref_;
@@ -260,7 +260,7 @@ namespace genvtx {
     if (_mode_ == MODE_SURFACE) {
       double r_min = the_sphere->get_radius() + _skin_skip_;
       double r_max = r_min;
-      double delta_thick = 0.0;
+      //double delta_thick = 0.0;
       if (_skin_thickness_ > 0.0) {
         r_min -= 0.5 * _skin_thickness_;
         r_max += 0.5 * _skin_thickness_;

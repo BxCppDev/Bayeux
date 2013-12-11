@@ -70,7 +70,7 @@ namespace genvtx {
 
     void set_surface (int surface_mask_);
 
-    void set_active_frustrum(int index_, bool active_);
+    void set_active_frustrum(size_t index_, bool active_);
 
     void set_polycone (const geomtools::polycone & polycone_);
 

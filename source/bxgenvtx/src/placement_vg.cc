@@ -125,7 +125,7 @@ namespace genvtx {
 
   GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(placement_vg,
                                       configuration_,
-                                      service_manager_,
+                                      /*service_manager_*/,
                                       vgens_)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");

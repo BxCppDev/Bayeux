@@ -251,7 +251,7 @@ namespace genvtx {
   }
 
   void i_vertex_generator::_initialize_basics (const datatools::properties & setup_,
-                                               datatools::service_manager & service_manager_)
+                                               datatools::service_manager & /*service_manager_*/)
   {
     // Fetch configuration parameters :
 

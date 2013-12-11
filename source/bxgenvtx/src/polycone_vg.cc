@@ -78,7 +78,7 @@ namespace genvtx {
     return;
   }
 
-  void polycone_vg::set_bulk (int bulk_mask_, double skin_thickness_)
+  void polycone_vg::set_bulk (int bulk_mask_, double /*skin_thickness_*/)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
     _mode_ = MODE_BULK;
@@ -106,7 +106,7 @@ namespace genvtx {
     return _polycone_;
   }
 
-  void polycone_vg::set_active_frustrum(int index_, bool active_)
+  void polycone_vg::set_active_frustrum(size_t index_, bool active_)
   {
     DT_THROW_IF(is_initialized(), std::logic_error, "Already initialized !");
     if (! _active_frustra_.size()) {
@@ -116,7 +116,7 @@ namespace genvtx {
       _active_frustra_.assign(_polycone_.number_of_frustra(), false);
       // std::cerr << "*** DEVEL *** assign _active_frustra_ array..." << std::endl;
     }
-    DT_THROW_IF(index_ < 0 || index_ >= _active_frustra_.size(),
+    DT_THROW_IF(index_ >= _active_frustra_.size(),
                  std::range_error,
                 "Invalid frustrum index (" << index_ << ") !");
     // std::cerr << "*** DEVEL *** _active_frustra_[" << index_ << "] = "
@@ -142,7 +142,7 @@ namespace genvtx {
   // Destructor :
   GENVTX_VG_DEFAULT_DESTRUCTOR_IMPLEMENT(polycone_vg)
 
-  GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(polycone_vg,setup_,service_manager_,vgens_)
+  GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(polycone_vg,setup_,/*service_manager_*/,/*vgens_*/)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
 
@@ -161,7 +161,7 @@ namespace genvtx {
     bool treat_bulk_mask      = false;
     bool treat_skin_skip      = false;
     bool treat_skin_thickness = false;
-    bool treat_angles         = false;
+    //bool treat_angles         = false;
 
     if (_mode_ == MODE_INVALID) {
       if (setup_.has_key ("mode")) {
@@ -283,7 +283,7 @@ namespace genvtx {
     }
 
     // Check fustrum activation:
-    for (int ifrustrum = 0; ifrustrum < _active_frustra_.size(); ifrustrum++) {
+    for (size_t ifrustrum = 0; ifrustrum < _active_frustra_.size(); ifrustrum++) {
       std::ostringstream frustrum_label;
       frustrum_label << "polycone.frustrum." << ifrustrum;
       if (setup_.has_flag(frustrum_label.str())) {
@@ -421,11 +421,11 @@ namespace genvtx {
         DT_LOG_TRACE (get_logging_priority (), "Surface weight [" << i << "] = " << _sum_surface_weight_[i]);
       }
       // Compute probability cumulative distributions:
-      for (int i = 0; i < _surface_inner_frustra_.size(); i++) {
+      for (size_t i = 0; i < _surface_inner_frustra_.size(); i++) {
         _surface_inner_frustra_[i] /= total_inner_surface;
         if (i > 0) _surface_inner_frustra_[i] += _surface_inner_frustra_[i-1];
       }
-      for (int i = 0; i < _surface_outer_frustra_.size(); i++) {
+      for (size_t i = 0; i < _surface_outer_frustra_.size(); i++) {
         _surface_outer_frustra_[i] /= total_outer_surface;
         if (i > 0) _surface_outer_frustra_[i] += _surface_outer_frustra_[i-1];
       }
@@ -446,13 +446,13 @@ namespace genvtx {
       }
       // Compute probability cumulative distributions:
       if (_bulk_mask_ & BULK_CAVITY) {
-        for (int i = 0; i < _volume_inner_frustra_.size(); i++) {
+        for (size_t i = 0; i < _volume_inner_frustra_.size(); i++) {
           _volume_inner_frustra_[i] /= total_inner_volume;
           if (i > 0) _volume_inner_frustra_[i] += _volume_inner_frustra_[i-1];
         }
       }
       if (_bulk_mask_ & BULK_BODY) {
-        for (int i = 0; i < _volume_frustra_.size(); i++) {
+        for (size_t i = 0; i < _volume_frustra_.size(); i++) {
           _volume_frustra_[i] /= total_volume;
           if (i > 0) _volume_frustra_[i] += _volume_frustra_[i-1];
         }
@@ -520,19 +520,19 @@ namespace genvtx {
          << "Surface mask: " << _surface_mask_ << std::endl;
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Bulk mask:    " << _bulk_mask_ << std::endl;
-    for (int i = 0; i < _active_frustra_.size(); i++) {
+    for (size_t i = 0; i < _active_frustra_.size(); i++) {
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Frustum #" << i << " : " << _active_frustra_[i] << std::endl;
     }
     if (_mode_ == MODE_BULK) {
       if (_bulk_mask_ & BULK_CAVITY) {
-        for (int i = 0; i < _volume_inner_frustra_.size(); i++) {
+        for (size_t i = 0; i < _volume_inner_frustra_.size(); i++) {
           out_ << indent << datatools::i_tree_dumpable::tag
                << "Cavity volume frustrum #" << i << " : " << _volume_inner_frustra_[i] << std::endl;
         }
       }
       if (_bulk_mask_ & BULK_BODY) {
-        for (int i = 0; i < _volume_frustra_.size(); i++) {
+        for (size_t i = 0; i < _volume_frustra_.size(); i++) {
           out_ << indent << datatools::i_tree_dumpable::tag
                << "Body volume frustrum   #" << i << " : " << _volume_frustra_[i] << std::endl;
         }
@@ -544,13 +544,13 @@ namespace genvtx {
     }
     if (_mode_ == MODE_SURFACE) {
       if (_surface_mask_ & geomtools::polycone::FACE_INNER_SIDE) {
-        for (int i = 0; i < _surface_inner_frustra_.size(); i++) {
+        for (size_t i = 0; i < _surface_inner_frustra_.size(); i++) {
           out_ << indent << datatools::i_tree_dumpable::tag
                << "Inner surface frustrum #" << i << " : " << _surface_inner_frustra_[i] << std::endl;
         }
       }
       if (_surface_mask_ & geomtools::polycone::FACE_OUTER_SIDE) {
-        for (int i = 0; i < _surface_outer_frustra_.size(); i++) {
+        for (size_t i = 0; i < _surface_outer_frustra_.size(); i++) {
           out_ << indent << datatools::i_tree_dumpable::tag
                << "Outer surface frustrum #" << i << " : " << _surface_outer_frustra_[i] << std::endl;
         }
@@ -580,7 +580,7 @@ namespace genvtx {
   {
     DT_THROW_IF (! is_initialized (), std::logic_error, "Not initialized !");
     geomtools::invalidate (vertex_);
-    double r = 0.0;
+    //double r = 0.0;
     double theta_min = _theta_min_;
     double theta_max = _theta_max_;
 
@@ -593,7 +593,7 @@ namespace genvtx {
       if (r0 < _sum_bulk_weight_[0]) {
         // Volume:
         double r1 = r0 / _sum_bulk_weight_[0];
-        for (int i = 0; i < _active_frustra_.size(); i++) {
+        for (size_t i = 0; i < _active_frustra_.size(); i++) {
           if (r1 <= _volume_frustra_[i]) {
             // std::cerr << "*** DEVEL *** polycone_vg::shoot_vertex:  -> Found frustrum " << i << std::endl;
             geomtools::polycone::frustrum_data fd;
@@ -612,7 +612,7 @@ namespace genvtx {
       } else {
         // Inner cavity
         double r1 = (r0 - _sum_bulk_weight_[0]) / (_sum_bulk_weight_[1] - _sum_bulk_weight_[0]);
-        for (int i = 0; i < _active_frustra_.size(); i++) {
+        for (size_t i = 0; i < _active_frustra_.size(); i++) {
           if (r1 <= _volume_inner_frustra_[i]) {
             // std::cerr << "*** DEVEL *** polycone_vg::shoot_vertex:  -> Found frustrum " << i << std::endl;
             geomtools::polycone::frustrum_data fd;
@@ -648,7 +648,7 @@ namespace genvtx {
         // std::cerr << "*** DEVEL *** polycone_vg::shoot_vertex: Inner surface..." << std::endl;
         double r1 = r0 / _sum_surface_weight_[0];
         // std::cerr << "*** DEVEL *** polycone_vg::shoot_vertex:  -> r1 = " << r1 << std::endl;
-        for (int i = 0; i < _active_frustra_.size(); i++) {
+        for (size_t i = 0; i < _active_frustra_.size(); i++) {
           if (r1 <= _surface_inner_frustra_[i]) {
             // std::cerr << "*** DEVEL *** polycone_vg::shoot_vertex:  -> Found inner frustrum " << i << std::endl;
             geomtools::polycone::frustrum_data fd;
@@ -668,7 +668,7 @@ namespace genvtx {
         // std::cerr << "*** DEVEL *** polycone_vg::shoot_vertex: Outer surface..." << std::endl;
         double r1 = (r0 - _sum_surface_weight_[0]) / (_sum_surface_weight_[1] - _sum_surface_weight_[0]);
         // std::cerr << "*** DEVEL *** polycone_vg::shoot_vertex:  -> r1 = " << r1 << std::endl;
-        for (int i = 0; i < _active_frustra_.size(); i++) {
+        for (size_t i = 0; i < _active_frustra_.size(); i++) {
           if (r1 <= _surface_outer_frustra_[i]) {
             // std::cerr << "*** DEVEL *** polycone_vg::shoot_vertex:  -> Found outer frustrum " << i << std::endl;
             geomtools::polycone::frustrum_data fd;

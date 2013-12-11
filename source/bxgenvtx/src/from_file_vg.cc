@@ -23,7 +23,7 @@ namespace genvtx {
 
   GENVTX_VG_REGISTRATION_IMPLEMENT(from_file_vg,"genvtx::from_file_vg");
 
-  const double from_file_vg::default_length_unit()
+  double from_file_vg::default_length_unit()
   {
     static double val = 1.0;
     return val;
@@ -94,8 +94,8 @@ namespace genvtx {
 
   GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(from_file_vg,
                                       configuration_,
-                                      service_manager_,
-                                      vgens_)
+                                      /*service_manager_*/,
+                                      /*vgens_*/)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
     double lunit = default_length_unit();
@@ -216,7 +216,7 @@ namespace genvtx {
     return const_cast<from_file_vg*>(this)->_has_next ();
   }
 
-  GENVTX_VG_SHOOT_VERTEX_IMPLEMENT_HEAD(from_file_vg,random_,vertex_)
+  GENVTX_VG_SHOOT_VERTEX_IMPLEMENT_HEAD(from_file_vg,/*random_*/,vertex_)
   {
     DT_THROW_IF (! is_initialized (), logic_error, "Not initialized !");
     // here apply the length unit:
