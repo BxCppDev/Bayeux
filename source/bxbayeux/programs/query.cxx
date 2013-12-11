@@ -141,7 +141,6 @@ int main(int argc_, char * argv_[])
     bpo::notify(vm);
 
     if (vm.count("help")) {
-      bool help = vm["help"].as<bool>();
       std::cout << opts << std::endl;
     } else if (vm.count("version")) {
       bool version = vm["version"].as<bool>();
@@ -209,7 +208,7 @@ int main(int argc_, char * argv_[])
       if (mod) {
         std::vector<std::string> modules;
         boost::split(modules, BAYEUX_SUBMODULES, boost::is_any_of(";"));
-        for (int i = 0; i < modules.size(); i++) {
+        for (size_t i = 0; i < modules.size(); i++) {
           std::cout << modules[i] << std::endl;
         }
       }

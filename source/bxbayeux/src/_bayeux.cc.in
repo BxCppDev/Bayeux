@@ -61,265 +61,172 @@
 #include <datatools/library_info.h>
 
 namespace bayeux {
+void _special_initialize_impl() {
+  DT_THROW_IF(!datatools::kernel::is_instantiated(),
+              std::runtime_error,
+              "The datatools kernel is not instantiated !");
+  datatools::kernel& krnl = datatools::kernel::instance();
 
-  void _special_initialize_impl()
-  {
-    DT_THROW_IF(!datatools::kernel::is_instantiated(),
-                std::runtime_error,
-                "The datatools kernel is not instantiated !");
-    datatools::kernel & krnl = datatools::kernel::instance();
+  // Populate the library info register:
+  if (krnl.has_library_info_register()) {
+    datatools::library_info& lib_info_reg = krnl.grab_library_info_register();
+    lib_info_reg.registration("datatools",
+                                "Serializable data structures based on Boost "
+                                "and general purpose utility classes and macros.",
+                                datatools::version::get_version());
 
-    // Populate the library info register:
-    if (krnl.has_library_info_register()) {
-      // Registration of the datatools component in the kernel's library info register:
-      datatools::library_info & lib_info_reg
-        = krnl.grab_library_info_register();
-      //lib_info_reg.tree_dump(std::cerr, "Bayeux -> Library info register: ", "DEVEL: ");
+    lib_info_reg.registration("cuts",
+                                "Generic tools for making arbitrary data selections.",
+                                cuts::version::get_version());
 
-      // Bundled submodules:
-      {
-        if (lib_info_reg.has("datatools")) {
-          //std::cerr << "***** DEVEL ***** datatools is already registered !!!!!" << std::endl;
-        }
-        datatools::properties & datatools_lib_infos
-          = lib_info_reg.registration("datatools",
-                                      "Serializable data structures based on Boost "
-                                      "and general purpose utility classes and macros.",
-                                      datatools::version::get_version()
-                                      );
-      }
-
-      {
-        datatools::properties & cuts_lib_infos
-          = lib_info_reg.registration("cuts",
-                                      "Generic tools for making arbitrary data selections.",
-                                      cuts::version::get_version()
-                                      );
-      }
-
-      {
-        datatools::properties & materials_lib_infos
+    datatools::properties & materials_lib_infos
           = lib_info_reg.registration("materials",
                                       "Description of isotopes, elements and materials plus tools "
                                       "for input to simulation applications (i.e. GDML/Geant4).",
                                       materials::version::get_version()
+                                     );
+      materials_lib_infos.store_string(datatools::library_info::keys::install_resource_dir(),
+                                       materials::get_resource_dir(false)
                                       );
-        materials_lib_infos.store_string(datatools::library_info::keys::install_resource_dir(),
-                                         materials::get_resource_dir(false)
-                                         );
-        materials_lib_infos.store_string(datatools::library_info::keys::env_resource_dir(),
-                                         std::string(MATERIALS_ENV_RESOURCE_DIR)
-                                         );
-
-      }
-
-
-      {
-        datatools::properties & mygsl_lib_infos
-          = lib_info_reg.registration("mygsl",
-                                      "C++ wrapper and extensions to the GNU Scientific Library.",
-                                      mygsl::version::get_version()
+      materials_lib_infos.store_string(datatools::library_info::keys::env_resource_dir(),
+                                       std::string(MATERIALS_ENV_RESOURCE_DIR)
                                       );
-      }
 
-      {
-        datatools::properties & geomtools_lib_infos
+      lib_info_reg.registration("mygsl",
+                                "C++ wrapper and extensions to the GNU Scientific Library.",
+                                mygsl::version::get_version());
+
+      datatools::properties & geomtools_lib_infos
           = lib_info_reg.registration("geomtools",
                                       "Generic tools for working with experiment geometries and "
                                       "provide input to simulation tools (i.e. GDML/Geant4).",
                                       geomtools::version::get_version()
+                                     );
+      geomtools_lib_infos.store_string(datatools::library_info::keys::install_resource_dir(),
+                                       geomtools::get_resource_dir(false)
                                       );
-        geomtools_lib_infos.store_string(datatools::library_info::keys::install_resource_dir(),
-                                         geomtools::get_resource_dir(false)
-                                         );
-        geomtools_lib_infos.store_string(datatools::library_info::keys::env_resource_dir(),
-                                         std::string(GEOMTOOLS_ENV_RESOURCE_DIR)
-                                         );
-      }
-
-      {
-        datatools::properties & emfield_lib_infos
-          = lib_info_reg.registration("emfield",
-                                      "Electromagnetic field modelling and management.",
-                                      emfield::version::get_version()
+      geomtools_lib_infos.store_string(datatools::library_info::keys::env_resource_dir(),
+                                       std::string(GEOMTOOLS_ENV_RESOURCE_DIR)
                                       );
-      }
 
-      {
-        datatools::properties & brio_lib_infos
-          = lib_info_reg.registration("brio",
-                                      "A Boost over ROOT I/O serialization system (extends datatools).",
-                                      brio::version::get_version()
-                                      );
-      }
+      lib_info_reg.registration("emfield",
+                                "Electromagnetic field modelling and management.",
+                                emfield::version::get_version());
 
-      {
-        datatools::properties & dpp_lib_infos
-          = lib_info_reg.registration("dpp",
-                                      "A basic data processing pipeline API.",
-                                      dpp::version::get_version()
-                                      );
-      }
+      lib_info_reg.registration("brio",
+                                "A Boost over ROOT I/O serialization system (extends datatools).",
+                                brio::version::get_version());
 
-      {
-        datatools::properties & genbb_help_lib_infos
+      lib_info_reg.registration("dpp",
+                                "A basic data processing pipeline API.",
+                                dpp::version::get_version());
+
+      datatools::properties & genbb_help_lib_infos
           = lib_info_reg.registration("genbb_help",
                                       "C++ port and extension to the Decay0/GENBB program by Vladimir Tretyak, "
                                       "for input to simulation applications.",
                                       genbb::version::get_version()
-                                      );
-        genbb_help_lib_infos.store_string(datatools::library_info::keys::install_resource_dir(),
-                                          genbb::get_resource_dir(false)
-                                          );
-        genbb_help_lib_infos.store_string(datatools::library_info::keys::env_resource_dir(),
-                                         std::string(GENBB_HELP_ENV_RESOURCE_DIR)
-                                         );
-      }
+                                     );
+      genbb_help_lib_infos.store_string(datatools::library_info::keys::install_resource_dir(),
+                                        genbb::get_resource_dir(false)
+                                       );
+      genbb_help_lib_infos.store_string(datatools::library_info::keys::env_resource_dir(),
+                                        std::string(GENBB_HELP_ENV_RESOURCE_DIR)
+                                       );
 
 
-      {
-        datatools::properties & genvtx_lib_infos
-          = lib_info_reg.registration("genvtx",
-                                      "Vertex random generator tools for input to simulation applications.",
-                                      genvtx::version::get_version()
-                                      );
-      }
+    lib_info_reg.registration("genvtx",
+                              "Vertex random generator tools for input to simulation applications.",
+                              genvtx::version::get_version());
 
-      {
-        datatools::properties & mctools_lib_infos
-          = lib_info_reg.registration("mctools",
-                                      "Monte-Carlo utilities with a Geant4 interface.",
-                                      mctools::version::get_version()
-                                      );
-      }
+    lib_info_reg.registration("mctools",
+                              "Monte-Carlo utilities with a Geant4 interface.",
+                              mctools::version::get_version());
 
-      // Top-level bundle library:
-      {
-        datatools::properties & bayeux_lib_infos
-          = lib_info_reg.registration("bayeux",
-                                      "A C++ foundation library for small particle/nuclear physics experiments.",
-                                      bayeux::version::get_version()
-                                      );
+    datatools::properties& bayeux_lib_infos = lib_info_reg.registration(
+        "bayeux",
+        "A C++ foundation library for small particle/nuclear physics experiments.",
+        bayeux::version::get_version());
 
-        // Additionnal stored parameters :
+    bayeux_lib_infos.store_string(
+        datatools::library_info::keys::libname(),
+        "Bayeux");
+    bayeux_lib_infos.store_string(
+        datatools::library_info::keys::install_lib_dir(),
+        "@CMAKE_INSTALL_PREFIX@/lib");
+    bayeux_lib_infos.store_string(
+        datatools::library_info::keys::install_include_dir(),
+        "@CMAKE_INSTALL_PREFIX@/include");
+    bayeux_lib_infos.store_string(
+        datatools::library_info::keys::install_bin_dir(),
+        "@CMAKE_INSTALL_PREFIX@/bin");
+    bayeux_lib_infos.store_string(
+        datatools::library_info::keys::install_resource_dir(),
+        "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/@Bayeux_RESOURCE_DIR@");
+    bayeux_lib_infos.store_string(
+        datatools::library_info::keys::env_resource_dir(),
+        std::string(BAYEUX_ENV_RESOURCE_DIR));
+    bayeux_lib_infos.store_integer(
+        datatools::library_info::keys::version_major(),
+        bayeux::version::get_major());
+    bayeux_lib_infos.store_integer(
+        datatools::library_info::keys::version_minor(),
+        bayeux::version::get_minor());
+    bayeux_lib_infos.store_integer(
+        datatools::library_info::keys::version_patch(),
+        bayeux::version::get_patch());
+    bayeux_lib_infos.store_string(
+        datatools::library_info::keys::modules(),
+        "@Bayeux_SUBMODULES@");
+    bayeux_lib_infos.store_string(
+        datatools::library_info::keys::url(),
+        "https://nemo.lpc-caen.in2p3.fr/wiki/Software/Bayeux");
+    bayeux_lib_infos.store_string(
+        datatools::library_info::keys::authors(),
+        "François Mauger, Xavier Garrido, Ben Morgan");
+    bayeux_lib_infos.store_string(
+        datatools::library_info::keys::copyright(),
+        "GNU General Public License version 3 or later");
 
-        /*
-         * Example for a library info property representing the Bayeux resources
-         * installation directory:
-         *
-         * // with hardcoded path:
-         *
-         * bayeux_lib_infos.store_string(datatools::library_info::keys::install_resource_dir(),
-         *                      "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@");
-         *
-         * // or dynamic (in case Bayeux should be relocatable, we use a runtime function
-         * to guess the correct path):
-         *
-         * bayeux_lib_infos.store_string(datatools::library_info::keys::install_resource_dir(),
-         *                        bayeux::resource::get_resource_dir());
-         *
-         */
-
-        bayeux_lib_infos.store_string(datatools::library_info::keys::libname(),
-                                      "Bayeux");
-        bayeux_lib_infos.store_string(datatools::library_info::keys::install_lib_dir(),
-                                      "@CMAKE_INSTALL_PREFIX@/lib");
-        bayeux_lib_infos.store_string(datatools::library_info::keys::install_include_dir(),
-                                      "@CMAKE_INSTALL_PREFIX@/include");
-        bayeux_lib_infos.store_string(datatools::library_info::keys::install_bin_dir(),
-                                      "@CMAKE_INSTALL_PREFIX@/bin");
-        bayeux_lib_infos.store_string(datatools::library_info::keys::install_resource_dir(),
-                                      "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/@Bayeux_RESOURCE_DIR@"
-                                      );
-        bayeux_lib_infos.store_string(datatools::library_info::keys::env_resource_dir(),
-                                      std::string(BAYEUX_ENV_RESOURCE_DIR)
-                                      );
-        bayeux_lib_infos.store_integer(datatools::library_info::keys::version_major(),
-                                       bayeux::version::get_major());
-        bayeux_lib_infos.store_integer(datatools::library_info::keys::version_minor(),
-                                       bayeux::version::get_minor());
-        bayeux_lib_infos.store_integer(datatools::library_info::keys::version_patch(),
-                                       bayeux::version::get_patch());
-        bayeux_lib_infos.store_string(datatools::library_info::keys::modules(),
-                                      "@Bayeux_SUBMODULES@");
-        bayeux_lib_infos.store_string(datatools::library_info::keys::url(),
-                                      "https://nemo.lpc-caen.in2p3.fr/wiki/Software/Bayeux");
-        bayeux_lib_infos.store_string(datatools::library_info::keys::authors(),
-                                      "François Mauger, Xavier Garrido, Ben Morgan");
-        bayeux_lib_infos.store_string(datatools::library_info::keys::copyright(),
-                                      "GNU General Public License version 3 or later");
-      }
-
-      if (lib_info_reg.get_logging() >= datatools::logger::PRIO_TRACE) {
-        DT_LOG_TRACE(lib_info_reg.get_logging(),
-                     "Status of the library info register: " );
-        lib_info_reg.tree_dump(std::cerr);
-      }
+    if(lib_info_reg.get_logging() >= datatools::logger::PRIO_TRACE) {
+      DT_LOG_TRACE(lib_info_reg.get_logging(),
+                 "Status of the library info register: " );
+      lib_info_reg.tree_dump(std::cerr);
     }
-    return;
   }
+}
 
-  void _special_terminate_impl()
-  {
-    if (datatools::kernel::is_instantiated()) {
-      datatools::kernel & krnl = datatools::kernel::instance();
-      if (krnl.has_library_info_register()) {
+void _special_terminate_impl() {
+  if (datatools::kernel::is_instantiated()) {
+    datatools::kernel & krnl = datatools::kernel::instance();
+    if (krnl.has_library_info_register()) {
+      datatools::library_info& lib_info_reg = krnl.grab_library_info_register();
+      // Unregistration of all registered submodules from the kernel's
+      // library info register:
+      if (lib_info_reg.has("bayeux")) lib_info_reg.unregistration("bayeux");
 
-        // Access to the datatools kernel library info register:
-        datatools::library_info & lib_info_reg = krnl.grab_library_info_register();
+      if (lib_info_reg.has("mctools")) lib_info_reg.unregistration("mctools");
 
-        // Unregistration of all registered submodules from the kernel's
-        // library info register:
-        if (lib_info_reg.has("bayeux")) {
-          lib_info_reg.unregistration("bayeux");
-        }
+      if (lib_info_reg.has("genvtx")) lib_info_reg.unregistration("genvtx");
 
-        if (lib_info_reg.has("mctools")) {
-          lib_info_reg.unregistration("mctools");
-        }
+      if (lib_info_reg.has("genbb_help")) lib_info_reg.unregistration("genbb_help");
 
-        if (lib_info_reg.has("genvtx")) {
-          lib_info_reg.unregistration("genvtx");
-        }
+      if (lib_info_reg.has("dpp")) lib_info_reg.unregistration("dpp");
 
-        if (lib_info_reg.has("genbb_help")) {
-          lib_info_reg.unregistration("genbb_help");
-        }
+      if (lib_info_reg.has("brio")) lib_info_reg.unregistration("brio");
 
-        if (lib_info_reg.has("dpp")) {
-          lib_info_reg.unregistration("dpp");
-        }
+      if (lib_info_reg.has("emfield")) lib_info_reg.unregistration("emfield");
+      if (lib_info_reg.has("geomtools")) lib_info_reg.unregistration("geomtools");
 
-        if (lib_info_reg.has("brio")) {
-          lib_info_reg.unregistration("brio");
-        }
+      if (lib_info_reg.has("mygsl")) lib_info_reg.unregistration("mygsl");
 
-        if (lib_info_reg.has("emfield")) {
-          lib_info_reg.unregistration("emfield");
-        }
+      if (lib_info_reg.has("materials")) lib_info_reg.unregistration("materials");
 
-        if (lib_info_reg.has("geomtools")) {
-          lib_info_reg.unregistration("geomtools");
-        }
+      if (lib_info_reg.has("cuts")) lib_info_reg.unregistration("cuts");
 
-        if (lib_info_reg.has("mygsl")) {
-          lib_info_reg.unregistration("mygsl");
-        }
-
-        if (lib_info_reg.has("materials")) {
-          lib_info_reg.unregistration("materials");
-        }
-
-        if (lib_info_reg.has("cuts")) {
-          lib_info_reg.unregistration("cuts");
-        }
-
-        if (lib_info_reg.has("datatools")) {
-          lib_info_reg.unregistration("datatools");
-        }
-      }
+      if (lib_info_reg.has("datatools")) lib_info_reg.unregistration("datatools");
     }
-    return;
   }
+}
 
 }
