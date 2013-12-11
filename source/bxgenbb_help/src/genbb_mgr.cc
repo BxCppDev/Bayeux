@@ -388,8 +388,8 @@ namespace genbb {
   }
 
   void genbb_mgr::initialize (const datatools::properties & config_,
-                              datatools::service_manager & service_manager_,
-                              detail::pg_dict_type & dictionary_)
+                              datatools::service_manager & /*service_manager_*/,
+                              detail::pg_dict_type & /*dictionary_*/)
   {
     DT_THROW_IF (_initialized_, logic_error, "Already initialized !");
     _initialize_base(config_);

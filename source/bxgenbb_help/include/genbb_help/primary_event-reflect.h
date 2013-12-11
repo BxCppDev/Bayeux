@@ -19,7 +19,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::genbb::primary_event, tag_)
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::genbb::primary_event, /*tag_*/)
         {
           // Declare and populate the reflection metaclass for the 'genbb::primary_event' class:
           DR_CLASS_DECLARE (::genbb::primary_event)
