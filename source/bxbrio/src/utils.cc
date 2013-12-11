@@ -65,7 +65,7 @@ namespace brio {
     return ext;
   }
 
-  const size_t
+  size_t
   store_info::constants::default_store_buffer_size()
   {
     static size_t sz = 0;
@@ -73,7 +73,7 @@ namespace brio {
     return sz;
   }
 
-  const size_t
+  size_t
   store_info::constants::default_stream_buffer_size()
   {
     static size_t sz = 0;

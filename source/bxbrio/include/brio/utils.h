@@ -42,8 +42,8 @@ class store_info {
     static const std::string & automatic_store_label();
     static const std::string & postponed_dedicated_serial_tag_label();
     static const std::string & no_dedicated_serial_tag_label();
-    static const size_t        default_store_buffer_size();
-    static const size_t        default_stream_buffer_size();
+    static size_t        default_store_buffer_size();
+    static size_t        default_stream_buffer_size();
   };
 
   enum mode_type {

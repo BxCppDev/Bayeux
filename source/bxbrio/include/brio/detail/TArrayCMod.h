@@ -34,8 +34,8 @@ class TArrayCMod : public TArray {
   void Set(Int_t n);
 
   // Mandatory by TArray inheritance:
-  Double_t GetAt(Int_t i) const {return 0.0;}
-  void SetAt(Double_t x, Int_t i) {return;}
+  Double_t GetAt(Int_t /*i*/) const {return 0.0;}
+  void SetAt(Double_t /*x*/, Int_t /*i*/) {return;}
 
   // Workaround
  private:
