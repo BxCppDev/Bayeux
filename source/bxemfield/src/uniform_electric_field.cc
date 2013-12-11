@@ -42,8 +42,8 @@ namespace emfield {
   }
 
   EMFIELD_COMPUTE_EFIELD_IMPLEMENT_HEAD(uniform_electric_field,
-                                        position_,
-                                        time_,
+                                        /*position_*/,
+                                        /*time_*/,
                                         electric_field_)
   {
     electric_field_ = _uniform_electric_field_;
@@ -51,8 +51,8 @@ namespace emfield {
   }
 
   EMFIELD_COMPUTE_BFIELD_IMPLEMENT_HEAD(uniform_electric_field,
-                                        position_,
-                                        time_,
+                                        /*position_*/,
+                                        /*time_*/,
                                         magnetic_field_)
   {
     geomtools::invalidate (magnetic_field_);

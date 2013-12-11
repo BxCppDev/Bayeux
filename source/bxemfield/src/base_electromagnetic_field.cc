@@ -137,7 +137,7 @@ namespace emfield {
     return;
    }
 
-  void base_electromagnetic_field::_set_magnetic_field_is_time_dependent (bool td_)
+  void base_electromagnetic_field::_set_magnetic_field_is_time_dependent (bool /*td_*/)
   {
     DT_THROW_IF (is_initialized (), std::logic_error, "Cannot change the magnetic field traits !");
     _magnetic_field_is_time_dependent_ = true;
@@ -191,9 +191,10 @@ namespace emfield {
   }
 
 
-  void base_electromagnetic_field::_parse_basic_parameters (const datatools::properties & setup_,
-                                                            datatools::service_manager & service_manager_,
-                                                            field_dict_type & dictionary_)
+  void base_electromagnetic_field::_parse_basic_parameters (
+      const datatools::properties & setup_,
+      datatools::service_manager & /*service_manager_*/,
+      field_dict_type & /*dictionary_*/)
   {
     DT_THROW_IF (is_initialized (),
                  std::logic_error,
