@@ -24,15 +24,23 @@ opwd=$(pwd)
 build_dir=$(pwd)/__build
 test -d ${build_dir} && rm -fr ${build_dir}
 
-pandoc -r rst -w html README.rst -o mctools-ex00_README.html
-
+which pandoc > /dev/null 2<&1
+if [ $? -eq 0 ]; then
+    echo -e "\nBuild the HTML README document..." 1>&2
+    pandoc -r rst -w html README.rst -o mctools-ex00_README.html
+    which xdg-open > /dev/null 2<&1
+    if [ $? -eq 0 ]; then
+	echo -e "\nBrowse the HTML README document..." 1>&2
+	xdg-open mctools-ex00_README.html &
+    fi
+fi
 mkdir ${build_dir}
 cd ${build_dir}
 
 echo -e "\nBuild the example programs..." 1>&2
 cmake \
     -DCMAKE_INSTALL_PREFIX=.. \
-    -Dmctools_DIR=$(mctools-config --prefix) \
+    -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
     ..
 if [ $? -ne 0 ]; then
     echo "ERROR: cmake failed !" 1>&2
@@ -60,8 +68,7 @@ echo -e "\nDefine the CONFIG_DIR environment variable..." 1>&2
 export CONFIG_DIR="./config"
 
 echo -e "\nCheck the geometry..." 1>&2
-echo "q" | geomtools_inspector \
-    --load-dll "emfield" \
+echo "q" | bxgeomtools_inspector \
     --manager-config ${CONFIG_DIR}/geometry/manager.conf \
     --without-visu
 if [ $? -ne 0 ]; then
@@ -70,7 +77,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo -e "\nList the event generators..." 1>&2
-genbb_inspector \
+bxgenbb_inspector \
     --configuration "${CONFIG_DIR}/event_generator/manager.conf" \
     --action "list"
 if [ $? -ne 0 ]; then
@@ -82,7 +89,7 @@ eg_name="electron_1MeV"
 vg_name="source_bulk.vg"
 
 echo -e "\nShoot some random events..." 1>&2
-genbb_inspector \
+bxgenbb_inspector \
     --configuration "${CONFIG_DIR}/event_generator/manager.conf" \
     --action "shoot" \
     --generator "${eg_name}" \
@@ -95,8 +102,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo -e "\nList the vertex generators..." 1>&2
-genvtx_production \
-    --load-dll "emfield" \
+bxgenvtx_production \
     --geometry-manager "${CONFIG_DIR}/geometry/manager.conf" \
     --vertex-generator-manager "${CONFIG_DIR}/vertex_generator/manager.conf" \
     --list
@@ -106,8 +112,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo -e "\nShoot some random vertexes..." 1>&2
-genvtx_production \
-    --load-dll "emfield" \
+bxgenvtx_production \
     --geometry-manager "${CONFIG_DIR}/geometry/manager.conf" \
     --vertex-generator-manager "${CONFIG_DIR}/vertex_generator/manager.conf" \
     --shoot \
@@ -128,7 +133,7 @@ if [ $do_simulation -eq 1 ]; then
 
     echo -e "\nRun the Geant4 simulation interactively..." 1>&2
     echo -e "/run/beamOn 5\nexit" | \
-	g4_production \
+	bxg4_production \
 	--logging-priority "warning" \
 	--number-of-events-modulo 1 \
 	--interactive \
@@ -156,7 +161,6 @@ if [ $do_simulation -eq 1 ]; then
     echo -e "\nBrowse the output plain simulated data file..." 1>&2
     ./ex00_read_plain_simdata \
 	--interactive  \
-        --load-dll "emfield" \
 	--with-visualization \
 	--logging-priority "notice" \
 	--input-file "mctools_ex00_${eg_name}_${vg_name}.xml"
@@ -166,7 +170,7 @@ if [ $do_simulation -eq 1 ]; then
     fi
 
     echo -e "\nRun the Geant4 simulation non-interactively..." 1>&2
-    g4_production \
+    bxg4_production \
         --logging-priority "warning" \
 	--number-of-events 100 \
         --number-of-events-modulo 0 \
@@ -188,7 +192,6 @@ if [ $do_simulation -eq 1 ]; then
 
     echo -e "\nBrowse the output plain simulated data file..." 1>&2
     ./ex00_read_plain_simdata \
-        --load-dll "emfield" \
 	--interactive \
 	--with-visualization \
 	--logging-priority "notice" \
@@ -201,7 +204,7 @@ if [ $do_simulation -eq 1 ]; then
     echo -e "\nRun the Geant4 simulation through a non-interactive data processing pipeline..." 1>&2
 
     sim_module="electron_1MeV_cone@source_bulk"
-    dpp_processing \
+    bxdpp_processing \
 	--logging-priority "warning" \
 	--dlls-config "${CONFIG_DIR}/pipeline/dlls.conf" \
 	--module-manager-config "${CONFIG_DIR}/pipeline/module_manager.conf" \
@@ -217,7 +220,6 @@ if [ $do_simulation -eq 1 ]; then
 
     # echo -e "\nBrowse the output pipeline simulated data file..." 1>&2
     # ./ex00_read_pipeline_simdata \
-    #     --load-dll "emfield"  \
     #     --logging-priority "notice" \
     #     --interactive \
     # 	  --with-visualization \
@@ -235,6 +237,7 @@ if [ ${do_clean} -eq 1 ]; then
     rm -f mctools_ex00_electron_1MeV_cone@source_bulk.dpp.brio
     rm -f mctools_ex00_electron_1MeV_source_bulk.vg.data.gz
     rm -f mctools_ex00_electron_1MeV_source_bulk.vg.xml
+    echo -e "\nDelete the HTML README document..." 1>&2
     rm -f mctools-ex00_README.html
     rm -f mctools_ex00_vertices2.txt
     rm -f mctools_ex00_vertices_source_bulk.vg.txt

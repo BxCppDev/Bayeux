@@ -67,7 +67,7 @@ namespace mctools {
         std::istringstream line_iss(line);
         std::string token;
         line_iss >> token;
-        if (token == "q" || line == "token") return false;
+        if (token == "q" || token == "quit") return false;
       }
       return true;
     }
