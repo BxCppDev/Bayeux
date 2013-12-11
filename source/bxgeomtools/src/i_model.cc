@@ -182,7 +182,7 @@ namespace geomtools {
   }
 
   // ctor:
-  i_model::i_model (const std::string & dummy_)
+  i_model::i_model (const std::string & /*dummy_*/)
   {
     _constructed_     = false;
     _logging_priority = datatools::logger::PRIO_WARNING;
@@ -221,7 +221,7 @@ namespace geomtools {
     }
   }
 
-  void i_model::_pre_construct (datatools::properties & setup_, models_col_type * models_)
+  void i_model::_pre_construct (datatools::properties & setup_, models_col_type * /*models_*/)
   {
     if (setup_.has_flag (i_model::phantom_solid_flag())) {
       _set_phantom_solid (true);
@@ -230,7 +230,7 @@ namespace geomtools {
     return;
   }
 
-  void i_model::_post_construct (datatools::properties & setup_, models_col_type * models_)
+  void i_model::_post_construct (datatools::properties & setup_, models_col_type * /*models_*/)
   {
     std::vector<std::string> exported_properties_prefixes;
     if (setup_.has_key(i_model::exported_properties_prefixes_key())) {

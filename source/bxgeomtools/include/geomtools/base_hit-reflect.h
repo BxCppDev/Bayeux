@@ -31,11 +31,11 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::base_hit, tag_)
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::base_hit, /*tag_*/)
       {
 // 				std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
 // 									<< "geomtools::base_hit" << std::endl;
-				
+
         DR_CLASS_DECLARE (::geomtools::base_hit)
           .DR_CLASS_BASE(::datatools::i_serializable)
           .DR_CLASS_BASE(::datatools::i_tree_dumpable)

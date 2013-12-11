@@ -39,7 +39,7 @@ namespace geomtools {
 
     static const int DISPLAY_LEVEL_NO_LIMIT = 1000;
 
-    static const int           display_level_no_limit();
+    static int           display_level_no_limit();
     static const std::string & view_key();
     static const std::string & view_2d_xy();
     static const std::string & view_2d_xz();

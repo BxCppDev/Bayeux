@@ -158,7 +158,7 @@ namespace geomtools {
   {
     double s = 0.0;
     int mask = a_mask;
-    if (a_mask == (int) ALL_SURFACES) mask = FACE_ALL;
+    if ((int) a_mask == (int) ALL_SURFACES) mask = FACE_ALL;
 
     if (mask & FACE_SIDE)
       {
@@ -176,7 +176,7 @@ namespace geomtools {
   }
 
   double
-  cylinder::get_volume (uint32_t flags) const
+  cylinder::get_volume (uint32_t /*flags*/) const
   {
     return M_PI * _radius_ * _radius_ * _z_;
   }
@@ -467,7 +467,7 @@ namespace geomtools {
 
   void cylinder::generate_wires (std::list<polyline_3d> & lpl_,
                                  const placement & p_,
-                                 uint32_t options_) const
+                                 uint32_t /*options_*/) const
   {
     const int nsamples = 36;
     for (int j = 0; j < 2; j++)

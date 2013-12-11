@@ -212,7 +212,7 @@ namespace geomtools {
 
   geomtools::vector_3d
   plane::get_normal_on_surface (const geomtools::vector_3d & position_,
-                                bool up_) const
+                                bool /*up_*/) const
   {
     if (is_on_surface (position_))
       {
@@ -223,7 +223,7 @@ namespace geomtools {
   bool plane::find_intercept (const vector_3d & from_,
                               const vector_3d & direction_,
                               intercept_t & intercept_,
-                              double tolerance_) const
+                              double /*tolerance_*/) const
   {
     const geomtools::vector_3d & P = from_;
     intercept_.reset ();

@@ -20,7 +20,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::geom_id, tag_)
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::geom_id, /*tag_*/)
       {
 // 				std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
 // 									<< "geomtools::geom_id" << std::endl;

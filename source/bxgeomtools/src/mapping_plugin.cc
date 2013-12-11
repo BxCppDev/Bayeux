@@ -33,8 +33,8 @@ namespace geomtools {
   }
 
   int mapping_plugin::initialize(const datatools::properties & config_,
-                                 const geomtools::manager::plugins_dict_type & plugins_,
-                                 const datatools::service_dict_type & services_)
+                                 const geomtools::manager::plugins_dict_type & /*plugins_*/,
+                                 const datatools::service_dict_type & /*services_*/)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Plugin is already initialized !");
     _build_mapping(config_);

@@ -95,7 +95,7 @@ namespace geomtools {
 
   void simple_boxed_model::_at_construct (const std::string & name_,
                                           const datatools::properties & config_,
-                                          models_col_type * models_)
+                                          models_col_type * /*models_*/)
   {
     //set_name (name_);
 

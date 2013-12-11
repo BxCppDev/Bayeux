@@ -16,7 +16,7 @@ namespace geomtools {
 
   /// Boost serialization template method
   template<class Archive>
-  void i_placement::serialize (Archive & ar_ , const unsigned int version_)
+  void i_placement::serialize (Archive & ar_ , const unsigned int /*version_*/)
   {
     ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
     return;

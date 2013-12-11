@@ -879,14 +879,10 @@ namespace geomtools {
   // Protected Interface Definitions
   //
 
-  void manager::_pre_init (const datatools::properties & config_)
-  {
-    return;
+  void manager::_pre_init (const datatools::properties & /*config_*/) {
   }
 
-  void manager::_post_init (const datatools::properties & config_)
-  {
-    return;
+  void manager::_post_init (const datatools::properties & /*config_*/) {
   }
 
 

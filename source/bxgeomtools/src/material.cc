@@ -70,6 +70,7 @@ namespace geomtools {
   std::string & material::material_gas_temperature_property()
   {
     static std::string token = "gas_temperature";
+    return token;
   }
 
   string material::make_key (const string & key_)

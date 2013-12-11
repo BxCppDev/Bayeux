@@ -54,7 +54,7 @@ namespace geomtools {
     {
     public:
       std::string category;                /// human readable category label
-      int         type;                    /// unique integral ID
+      uint32_t         type;                    /// unique integral ID
       std::string inherits;                /// the mother category from which the category is inherited
       std::string extends;                 /// the mother category from which the category is extented
       std::vector<std::string> ancestors;  /// the list of ancestor categories
@@ -83,7 +83,7 @@ namespace geomtools {
       void add_ancestor (const std::string & cat_);
 
       /// Get the type
-      int get_type () const;
+      uint32_t get_type () const;
 
       /// Get the name of the parent category (if any)
       const std::string & get_inherits () const;

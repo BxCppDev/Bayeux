@@ -41,7 +41,7 @@ namespace geomtools {
     return datatools::is_valid(get_volume(flags_));
   }
 
-  double i_shape_3d::get_volume(uint32_t flags_) const
+  double i_shape_3d::get_volume(uint32_t /*flags_*/) const
   {
     return std::numeric_limits<double>::quiet_NaN();
   }
@@ -51,7 +51,7 @@ namespace geomtools {
     return datatools::is_valid(get_surface(flags_));
   }
 
-  double i_shape_3d::get_surface(uint32_t flags_) const
+  double i_shape_3d::get_surface(uint32_t /*flags_*/) const
   {
     return std::numeric_limits<double>::quiet_NaN();
   }
@@ -323,10 +323,10 @@ namespace geomtools {
     return;
   }
 
-  bool i_shape_3d::find_intercept (const vector_3d & a_from,
-                                   const vector_3d & a_direction,
+  bool i_shape_3d::find_intercept (const vector_3d & /*a_from*/,
+                                   const vector_3d & /*a_direction*/,
                                    intercept_t & a_intercept,
-                                   double a_skin) const
+                                   double /*a_skin*/) const
   {
     // temporary:
     // NOT IMPLEMENTED !

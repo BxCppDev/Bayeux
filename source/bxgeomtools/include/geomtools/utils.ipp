@@ -23,7 +23,7 @@ namespace boost {
     template<class Archive>
     void save (Archive & a_ar ,
                const geomtools::vector_2d & a_vector,
-               const unsigned int a_version)
+               const unsigned int /*a_version*/)
     {
       double x = a_vector.x ();
       double y = a_vector.y ();
@@ -36,7 +36,7 @@ namespace boost {
     template<class Archive>
     void load (Archive & a_ar ,
                geomtools::vector_2d & a_vector,
-               const unsigned int a_version)
+               const unsigned int /*a_version*/)
     {
       double x;
       double y;
@@ -71,7 +71,7 @@ namespace boost {
     template<class Archive>
     void save (Archive & a_ar ,
                const geomtools::vector_3d & a_vector,
-               const unsigned int a_version)
+               const unsigned int /*a_version*/)
     {
       double x = a_vector.x ();
       double y = a_vector.y ();
@@ -86,7 +86,7 @@ namespace boost {
     template<class Archive>
     void load (Archive & a_ar ,
                geomtools::vector_3d & a_vector,
-               const unsigned int a_version)
+               const unsigned int /*a_version*/)
     {
       double x;
       double y;
@@ -122,7 +122,7 @@ namespace boost {
     template<class Archive>
     void save (Archive & a_ar ,
                const geomtools::rotation_3d & a_rotation,
-               const unsigned int a_version)
+               const unsigned int /*a_version*/)
     {
       double rxx = a_rotation.xx ();
       a_ar & boost::serialization::make_nvp ("xx", rxx);
@@ -153,7 +153,7 @@ namespace boost {
     template<class Archive>
     void load (Archive & a_ar ,
                geomtools::rotation_3d & a_rotation,
-               const unsigned int a_version)
+               const unsigned int /*a_version*/)
     {
       double rxx (0.0), rxy (0.0), rxz (0.0);
       double ryx (0.0), ryy (0.0), ryz (0.0);

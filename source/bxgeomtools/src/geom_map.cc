@@ -230,8 +230,8 @@ namespace geomtools {
     return get_geom_id (world_position_, requested_type, tolerance_);
   }
 
-  void geom_map::build_from (const model_factory & factory_,
-                             const string & mother_)
+  void geom_map::build_from (const model_factory & /*factory_*/,
+                             const string & /*mother_*/)
   {
     DT_THROW_IF(true, runtime_error, "Not implemented !");
   }

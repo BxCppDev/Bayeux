@@ -139,15 +139,15 @@ namespace geomtools {
     return bpl;
   }
 
-  bool polyline_3d::is_on_curve (const vector_3d & position_,
-                                 double tolerance_) const
+  bool polyline_3d::is_on_curve (const vector_3d & /*position_*/,
+                                 double /*tolerance_*/) const
   {
     bool on_curve = false;
     DT_THROW_IF (true, std::logic_error, "Not implemented yet !");
     return on_curve;
   }
 
-  vector_3d polyline_3d::get_direction_on_curve (const vector_3d & position_) const
+  vector_3d polyline_3d::get_direction_on_curve (const vector_3d & /*position_*/) const
   {
     vector_3d dir;
     DT_THROW_IF (true, std::logic_error, "Not implemented yet !");

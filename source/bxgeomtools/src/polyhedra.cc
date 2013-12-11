@@ -680,7 +680,7 @@ namespace geomtools {
   {
     double s = 0.0;
     int mask = mask_;
-    if (mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
+    if ((int) mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
     if (mask & FACE_INNER_SIDE) {
       s += _inner_side_surface_;
     }
@@ -696,7 +696,7 @@ namespace geomtools {
     return s;
   }
 
-  double polyhedra::get_volume (uint32_t flags) const
+  double polyhedra::get_volume (uint32_t /*flags*/) const
   {
     return _volume_;
   }
@@ -760,7 +760,7 @@ namespace geomtools {
     return false;
   }
 
-  vector_3d polyhedra::get_normal_on_surface (const vector_3d & position_) const
+  vector_3d polyhedra::get_normal_on_surface (const vector_3d & /*position_*/) const
   {
     DT_THROW_IF (true, std::logic_error, "Not implemented yet !");
     vector_3d normal;
@@ -801,8 +801,8 @@ namespace geomtools {
     return normal;
   }
 
-  bool polyhedra::is_on_surface (const vector_3d & point_ ,
-                                 int    mask_ ,
+  bool polyhedra::is_on_surface (const vector_3d & /*point_*/ ,
+                                 int    /*mask_*/ ,
                                  double skin_) const
   {
     DT_THROW_IF (true, std::logic_error, "Not implemented yet !");
@@ -867,10 +867,10 @@ namespace geomtools {
     return false;
   }
 
-  bool polyhedra::find_intercept (const vector_3d & from_,
-                                  const vector_3d & direction_,
-                                  intercept_t & intercept_,
-                                  double skin_) const
+  bool polyhedra::find_intercept (const vector_3d & /*from_*/,
+                                  const vector_3d & /*direction_*/,
+                                  intercept_t & /*intercept_*/,
+                                  double /*skin_*/) const
   {
     DT_THROW_IF (true, std::logic_error, "Not implemented yet !");
     return false;

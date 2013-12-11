@@ -1174,7 +1174,7 @@ namespace geomtools {
   void gdml_writer::add_orb (const string & name_,
                              const sphere & s_,
                              const string & lunit_str_,
-                             const string & aunit_str_)
+                             const string & /*aunit_str_*/)
   {
     add_gdml_orb (name_,
                   s_.get_r (),
@@ -1184,7 +1184,7 @@ namespace geomtools {
   void gdml_writer::add_sphere (const string & name_,
                                 const sphere & s_,
                                 const string & lunit_str_,
-                                const string & aunit_str_)
+                                const string & /*aunit_str_*/)
   {
     add_gdml_orb (name_,
                   s_.get_r (),
@@ -1270,7 +1270,7 @@ namespace geomtools {
                                         const string & solid_ref_,
                                         const replicavol & replicavol_,
                                         const string & lunit_str_,
-                                        const string & aunit_str_,
+                                        const string & /*aunit_str_*/,
                                         const map<string, string> & aux_)
   {
     double lunit = datatools::units::get_length_unit_from (lunit_str_);

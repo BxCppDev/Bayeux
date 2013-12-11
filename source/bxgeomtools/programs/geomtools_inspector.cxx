@@ -110,7 +110,6 @@ int main(int argc_, char ** argv_)
     po::store(parsed, vm);
     po::notify(vm);
 
-    datatools::logger::priority lp = datatools::logger::get_priority(logging_label);
     GDP_argv.push_back("--logging");
     GDP_argv.push_back(logging_label);
 
@@ -372,7 +371,7 @@ void print_help (const boost::program_options::options_description & opts_,
   return;
 }
 
-void print_shell_help (geomtools::geomtools_driver & gd_, std::ostream & out_)
+void print_shell_help (geomtools::geomtools_driver & /*gd_*/, std::ostream & out_)
 {
   out_ <<  "  h | help                       : Print this help                                  \n";
   out_ <<  "  s | status                     : Print the status of the geometry driver          \n";

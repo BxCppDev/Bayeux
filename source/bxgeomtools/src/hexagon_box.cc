@@ -101,7 +101,7 @@ namespace geomtools {
   {
     double s = 0.0;
     int mask = mask_;
-    if (mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
+    if ((int) mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
 
     double side_surf = get_side () * _z_;
     double top_bottom_surf = 1.5 * std::sqrt(3.) * get_side () * get_side ();
@@ -162,7 +162,7 @@ namespace geomtools {
   }
 
   double
-  hexagon_box::get_volume (uint32_t flags) const
+  hexagon_box::get_volume (uint32_t /*flags*/) const
   {
     return hexagon_box::get_surface (FACE_BOTTOM) * _z_;
   }
@@ -241,9 +241,9 @@ namespace geomtools {
   }
 
   bool
-  hexagon_box::is_on_surface (const vector_3d & point_ ,
-                              int    mask_ ,
-                              double skin_) const
+  hexagon_box::is_on_surface (const vector_3d & /*point_*/ ,
+                              int    /*mask_*/ ,
+                              double /*skin_*/) const
   {
     /*
       bool debug = false;
@@ -303,10 +303,10 @@ namespace geomtools {
   }
 
   bool
-  hexagon_box::find_intercept (const vector_3d & from_,
-                               const vector_3d & direction_,
+  hexagon_box::find_intercept (const vector_3d & /*from_*/,
+                               const vector_3d & /*direction_*/,
                                intercept_t & intercept_,
-                               double skin_) const
+                               double /*skin_*/) const
   {
     /*
       bool debug = false;

@@ -122,14 +122,14 @@ namespace geomtools {
   }
 
   bool circle::is_on_curve (const vector_3d &,
-                            double a_tolerance) const
+                            double /*a_tolerance*/) const
   {
     bool on_curve = false;
     DT_THROW_IF(true, runtime_error,"Not implemented yet !");
     return on_curve;
   }
 
-  vector_3d circle::get_direction_on_curve (const vector_3d & a_position) const
+  vector_3d circle::get_direction_on_curve (const vector_3d & /*a_position*/) const
   {
     vector_3d dir;
     invalidate (dir);
@@ -139,7 +139,7 @@ namespace geomtools {
 
   void circle::generate_wires (std::list<polyline_3d> & lpl_,
                                const placement & p_,
-                               uint32_t options_) const
+                               uint32_t /*options_*/) const
   {
     const int nsamples = 36;
     vector_3d vertex[nsamples];

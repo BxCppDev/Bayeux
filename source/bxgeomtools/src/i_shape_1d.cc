@@ -23,7 +23,7 @@ namespace geomtools {
     return datatools::is_valid(get_length(flags_));
   }
 
-  double i_shape_1d::get_length(uint32_t flags_) const
+  double i_shape_1d::get_length(uint32_t /*flags_*/) const
   {
     return std::numeric_limits<double>::quiet_NaN();
   }

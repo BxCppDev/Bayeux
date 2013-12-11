@@ -227,7 +227,7 @@ namespace geomtools {
   }
 
   const geom_id & smart_id_locator::get_geom_id (const vector_3d & world_position_,
-                                                 int type_,
+                                                 int /*type_*/,
                                                  double tolerance_) const
   {
     if (_mode_ & MODE_LAST)

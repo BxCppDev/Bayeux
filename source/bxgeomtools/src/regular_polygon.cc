@@ -152,8 +152,8 @@ namespace geomtools {
     return;
   }
 
-  bool regular_polygon::is_on_surface (const vector_3d & position_,
-                                       double tolerance_) const
+  bool regular_polygon::is_on_surface (const vector_3d & /*position_*/,
+                                       double /*tolerance_*/) const
   {
     DT_THROW_IF (true, std::logic_error, "Not implemented yet !");
     /*
@@ -186,10 +186,10 @@ namespace geomtools {
     return normal;
   }
 
-  bool regular_polygon::find_intercept (const vector_3d & from_,
-                                        const vector_3d & direction_,
+  bool regular_polygon::find_intercept (const vector_3d & /*from_*/,
+                                        const vector_3d & /*direction_*/,
                                         intercept_t & intercept_,
-                                        double tolerance_) const
+                                        double /*tolerance_*/) const
   {
     intercept_.reset ();
     DT_THROW_IF (true, std::logic_error, "Not implemented yet !");

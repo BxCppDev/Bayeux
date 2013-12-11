@@ -17,7 +17,7 @@ namespace geomtools {
 
   /// Boost serialization template method
   template<class Archive>
-  void blur_spot::serialize (Archive & ar_ , const unsigned int version_)
+  void blur_spot::serialize (Archive & ar_ , const unsigned int /*version_*/)
   {
     ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
     ar_ & boost::serialization::make_nvp ("blur_dimension", _blur_dimension_);

@@ -45,7 +45,7 @@ namespace geomtools {
   }
 
   int geometry_service::initialize (const datatools::properties & a_config,
-                                    datatools::service_dict_type & a_service_dict)
+                                    datatools::service_dict_type & /*a_service_dict*/)
   {
     DT_THROW_IF (is_initialized (),
                  std::logic_error,

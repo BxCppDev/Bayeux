@@ -615,8 +615,8 @@ namespace geomtools {
     return;
   }
 
-  void create_rotation_from (rotation_3d & rot_,
-                             const string & s_)
+  void create_rotation_from (rotation_3d & /*rot_*/,
+                             const string & /*s_*/)
   {
     DT_THROW_IF(true, runtime_error, "Not implemented yet !");
     /*
@@ -649,8 +649,8 @@ namespace geomtools {
     const double r10 = rot.yx ();
     const double r11 = rot.yy ();
     const double r12 = rot.yz ();
-    const double r20 = rot.zx ();
-    const double r21 = rot.zy ();
+    //const double r20 = rot.zx ();
+    //const double r21 = rot.zy ();
     const double r22 = rot.zz ();
     double thetaX  = numeric_limits<double>::quiet_NaN ();
     double thetaY  = numeric_limits<double>::quiet_NaN ();
@@ -769,8 +769,8 @@ namespace geomtools {
 
     // http://www.geometrictools.com/Documentation/EulerAngles.pdf
     rotation_3d rot = rot_.inverse ();
-    const double r00 = rot.xx ();
-    const double r01 = rot.xy ();
+    //const double r00 = rot.xx ();
+    //const double r01 = rot.xy ();
     const double r02 = rot.xz ();
     const double r10 = rot.yx ();
     const double r11 = rot.yy ();

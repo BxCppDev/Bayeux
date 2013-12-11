@@ -72,7 +72,7 @@ namespace geomtools {
 
   bool
   intersection_3d::is_on_surface (const vector_3d & position_,
-                                  int mask_,
+                                  int /*mask_*/,
                                   double skin_) const
   {
     const shape_type & sh1 = get_shape1 ();

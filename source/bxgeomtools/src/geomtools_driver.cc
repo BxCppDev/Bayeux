@@ -368,7 +368,7 @@ namespace geomtools {
     return;
   }
   int geomtools_driver::command_initialize(const std::vector<std::string> & argv_,
-                                           std::ostream & out_)
+                                           std::ostream & /*out_*/)
   {
     int code = 0;
     DT_LOG_TRACE(_params_.logging, "Entering...");
@@ -457,7 +457,7 @@ namespace geomtools {
                                     const std::string & gdml_file_,
                                     bool root_display_,
                                     int root_vis_option_,
-                                    int root_vis_level_,
+                                    int /*root_vis_level_*/,
                                     const std::string & root_top_volume_,
                                     datatools::logger::priority logging_)
   {

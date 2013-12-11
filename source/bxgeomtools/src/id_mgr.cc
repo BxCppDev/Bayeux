@@ -44,7 +44,7 @@ namespace geomtools {
     return type != geom_id::INVALID_TYPE;
   }
 
-  bool id_mgr::category_info::has_subaddress (const std::string & a_label, int a_count) const
+  bool id_mgr::category_info::has_subaddress (const std::string & a_label, int /*a_count*/) const
   {
     for (size_t i = 0; i < addresses.size (); i++) {
       if (addresses[i] == a_label) return true;
@@ -52,7 +52,7 @@ namespace geomtools {
     return false;
   }
 
-  int id_mgr::category_info::get_subaddress_index (const std::string & a_label, int a_count) const
+  int id_mgr::category_info::get_subaddress_index (const std::string & a_label, int /*a_count*/) const
   {
     for (size_t i = 0; i < addresses.size (); i++) {
       if (addresses[i] == a_label) return i;
@@ -99,7 +99,7 @@ namespace geomtools {
     return extends;
   }
 
-  int id_mgr::category_info::get_type () const
+  uint32_t id_mgr::category_info::get_type () const
   {
     return type;
   }

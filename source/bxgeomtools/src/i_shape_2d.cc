@@ -25,7 +25,7 @@ namespace geomtools {
     return datatools::is_valid(get_perimeter(flags_));
   }
 
-  double i_shape_2d::get_perimeter(uint32_t flags_) const
+  double i_shape_2d::get_perimeter(uint32_t /*flags_*/) const
   {
     return std::numeric_limits<double>::quiet_NaN();
   }
@@ -35,7 +35,7 @@ namespace geomtools {
     return datatools::is_valid(get_surface(flags_));
   }
 
-  double i_shape_2d::get_surface(uint32_t flags_) const
+  double i_shape_2d::get_surface(uint32_t /*flags_*/) const
   {
     return std::numeric_limits<double>::quiet_NaN();
   }

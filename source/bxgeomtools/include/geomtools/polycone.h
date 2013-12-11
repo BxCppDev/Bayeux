@@ -96,7 +96,7 @@ namespace geomtools {
 
     unsigned int number_of_frustra() const;
 
-    void get_frustrum(int i_, frustrum_data &) const;
+    void get_frustrum(size_t i_, frustrum_data &) const;
 
     const rz_col_type & points () const;
 

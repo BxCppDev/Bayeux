@@ -202,7 +202,7 @@ namespace geomtools {
     return get_distance_to_line ( position_ ) <= tolerance_;
   }
 
-  vector_3d line_3d::get_direction_on_curve (const vector_3d & position_) const
+  vector_3d line_3d::get_direction_on_curve (const vector_3d & /*position_*/) const
   {
     vector_3d dir;
     DT_THROW_IF(true, runtime_error, "Not implemented yet !");

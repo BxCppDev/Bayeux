@@ -50,7 +50,7 @@ namespace geomtools {
 
   template<class Archive>
   void display_data::display_entry::serialize (Archive & ar,
-                                               const unsigned int version)
+                                               const unsigned int /*version*/)
   {
     ar & boost::serialization::make_nvp ("entry_type",  entry_type);
     ar & boost::serialization::make_nvp ("group",       group);

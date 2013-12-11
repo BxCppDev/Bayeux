@@ -141,7 +141,7 @@ namespace geomtools {
 
   void cylindric_extrusion_boxed_model::_at_construct (const std::string & name_,
                                                        const datatools::properties & config_,
-                                                       models_col_type * models_)
+                                                       models_col_type * /*models_*/)
   {
     DT_LOG_TRACE (get_logging_priority (), "Entering...");
 

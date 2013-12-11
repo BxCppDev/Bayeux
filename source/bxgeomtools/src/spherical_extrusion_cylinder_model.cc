@@ -51,7 +51,7 @@ namespace geomtools {
 
   void spherical_extrusion_cylinder_model::_at_construct (const std::string & name_,
                                                           const datatools::properties & config_,
-                                                          geomtools::models_col_type * models_)
+                                                          geomtools::models_col_type * /*models_*/)
   {
     DT_LOG_TRACE (get_logging_priority (), "Entering...");
 

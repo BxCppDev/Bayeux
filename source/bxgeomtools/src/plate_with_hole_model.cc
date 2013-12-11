@@ -57,7 +57,7 @@ namespace geomtools {
 
   void plate_with_hole_model::_at_construct (const std::string & name_,
                                              const datatools::properties & config_,
-                                             geomtools::models_col_type * models_)
+                                             geomtools::models_col_type * /*models_*/)
   {
     //set_name (name_);
 

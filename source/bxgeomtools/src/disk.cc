@@ -224,7 +224,7 @@ namespace geomtools {
 
   void disk::generate_wires (std::list<polyline_3d> & lpl_,
                              const placement & p_,
-                             uint32_t options_) const
+                             uint32_t /*options_*/) const
   {
     const int nsamples = 36;
     for (int j = 0; j < 3; j++)

@@ -21,7 +21,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::vector_2d, tag_)
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::vector_2d, /*tag_*/)
       {
         // std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
         //           << "geomtools::vector_2d" << std::endl;
@@ -115,7 +115,7 @@ namespace datatools {
         return;
       }
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::vector_3d, tag_)
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::vector_3d, /*tag_*/)
       {
         // std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
         //        << "geomtools::vector_3d" << std::endl;
@@ -126,20 +126,20 @@ namespace datatools {
         //std::cerr << "******** DEVEL: theta_1_method=" << &theta_1_method << '\n';
 
         typedef double (::geomtools::vector_3d::*theta_2_method_type)(const geomtools::vector_3d &) const;
-        theta_2_method_type theta_2_method = &::geomtools::vector_3d::theta;
+        //theta_2_method_type theta_2_method = &::geomtools::vector_3d::theta;
         //std::cerr << "******** DEVEL: theta_2_method=" << &theta_2_method << '\n';
 
         typedef double (::geomtools::vector_3d::*perp_1_method_type)() const;
         perp_1_method_type perp_1_method = &::geomtools::vector_3d::perp;
 
         typedef double (::geomtools::vector_3d::*perp_2_method_type)(const geomtools::vector_3d &) const;
-        perp_2_method_type perp_2_method = &::geomtools::vector_3d::perp;
+        //perp_2_method_type perp_2_method = &::geomtools::vector_3d::perp;
 
         typedef double (::geomtools::vector_3d::*perp2_1_method_type)() const;
         perp2_1_method_type perp2_1_method = &::geomtools::vector_3d::perp2;
 
         typedef double (::geomtools::vector_3d::*perp2_2_method_type)(const geomtools::vector_3d &) const;
-        perp2_2_method_type perp2_2_method = &::geomtools::vector_3d::perp2;
+        //perp2_2_method_type perp2_2_method = &::geomtools::vector_3d::perp2;
 
         // Declare and populate the reflection metaclass for the 'geomtools::vector_3d' class:
         DR_CLASS_DECLARE (::geomtools::vector_3d)
@@ -268,7 +268,7 @@ namespace datatools {
         return;
       }
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::rotation_3d, tag_)
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::rotation_3d, /*tag_*/)
       {
         // Declare and populate the reflection metaclass for the 'geomtools::rotation_3d' class:
         DR_CLASS_DECLARE (::geomtools::rotation_3d)

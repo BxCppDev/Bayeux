@@ -112,7 +112,7 @@ namespace geomtools {
   }
 
   double
-  sphere::get_volume (uint32_t flags) const
+  sphere::get_volume (uint32_t /*flags*/) const
   {
     return 4.0 * M_PI * _r_ * _r_ * _r_ / 3.0;
   }

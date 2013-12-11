@@ -140,12 +140,12 @@ namespace geomtools {
     return _points_.size() - 1;
   }
 
-  void polycone::get_frustrum(int index_, frustrum_data & fd_) const
+  void polycone::get_frustrum(size_t index_, frustrum_data & fd_) const
   {
-    DT_THROW_IF (index_ < 0 || index_ >= number_of_frustra(),
+    DT_THROW_IF (index_ >= number_of_frustra(),
                  std::range_error,
                  "Invalid frustrum index (" << index_ << ") !");
-    int count = 0;
+    size_t count = 0;
     for (rz_col_type::const_iterator it = _points_.begin ();
          it != _points_.end ();
          it++) {
@@ -840,7 +840,7 @@ namespace geomtools {
   {
     double s = 0.0;
     int mask = mask_;
-    if (mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
+    if ((int) mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
     if (mask & FACE_INNER_SIDE) {
       s += _inner_side_surface_;
     }
@@ -856,7 +856,7 @@ namespace geomtools {
     return s;
   }
 
-  double polycone::get_volume (uint32_t flags) const
+  double polycone::get_volume (uint32_t /*flags*/) const
   {
     return _volume_;
   }
@@ -1010,10 +1010,10 @@ namespace geomtools {
     return false;
   }
 
-  bool polycone::find_intercept (const vector_3d & from_,
-                                 const vector_3d & direction_,
-                                 intercept_t & intercept_,
-                                 double skin_) const
+  bool polycone::find_intercept (const vector_3d & /*from_*/,
+                                 const vector_3d & /*direction_*/,
+                                 intercept_t & /*intercept_*/,
+                                 double /*skin_*/) const
   {
     DT_THROW_IF (true, std::logic_error, "Not implemented yet !");
     return false;

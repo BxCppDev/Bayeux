@@ -229,7 +229,7 @@ namespace geomtools {
 
   void simple_shaped_model::_construct_box (const std::string & name_,
                                             const datatools::properties & config_,
-                                            models_col_type * models_)
+                                            models_col_type * /*models_*/)
   {
     double lunit = CLHEP::mm;
     if (config_.has_key ("length_unit")) {
@@ -266,7 +266,7 @@ namespace geomtools {
 
   void simple_shaped_model::_construct_cylinder (const std::string & name_,
                                                  const datatools::properties & config_,
-                                                 models_col_type * models_)
+                                                 models_col_type * /*models_*/)
   {
     double lunit = CLHEP::mm;
     if (config_.has_key ("length_unit")) {
@@ -319,7 +319,7 @@ namespace geomtools {
 
   void simple_shaped_model::_construct_sphere (const std::string & name_,
                                                const datatools::properties & config_,
-                                               models_col_type* models_)
+                                               models_col_type* /*models_*/)
   {
     double lunit = CLHEP::mm;
     if (config_.has_key ("length_unit")) {
@@ -354,7 +354,7 @@ namespace geomtools {
 
   void simple_shaped_model::_construct_tube (const std::string & name_,
                                              const datatools::properties & config_,
-                                             models_col_type* models_)
+                                             models_col_type* /*models_*/)
   {
     double lunit = CLHEP::mm;
     if (config_.has_key ("length_unit")) {
@@ -514,7 +514,7 @@ namespace geomtools {
 
   void simple_shaped_model::_construct_polycone (const std::string & name_,
                                                  const datatools::properties & config_,
-                                                 models_col_type* models_)
+                                                 models_col_type* /*models_*/)
   {
     // Build the polycone:
     _polycone_ = new polycone ();
@@ -610,7 +610,7 @@ namespace geomtools {
 
   void simple_shaped_model::_construct_polyhedra (const std::string & name_,
                                                   const datatools::properties & config_,
-                                                  models_col_type* models_)
+                                                  models_col_type* /*models_*/)
   {
     _polyhedra_ = new polyhedra ();
     _polyhedra_->initialize (config_);

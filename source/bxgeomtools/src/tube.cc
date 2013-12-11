@@ -164,7 +164,7 @@ namespace geomtools {
     return s;
   }
 
-  double tube::get_volume (uint32_t flags) const
+  double tube::get_volume (uint32_t /*flags*/) const
   {
     return M_PI * (_outer_r_ * _outer_r_ - _inner_r_ * _inner_r_ ) * _z_;
   }
@@ -266,10 +266,10 @@ namespace geomtools {
     return false;
   }
 
-  bool tube::find_intercept (const vector_3d & from_,
-                             const vector_3d & direction_,
+  bool tube::find_intercept (const vector_3d & /*from_*/,
+                             const vector_3d & /*direction_*/,
                              intercept_t & intercept_,
-                             double skin_) const
+                             double /*skin_*/) const
   {
     intercept_.reset ();
     return intercept_.is_ok ();
@@ -365,7 +365,7 @@ namespace geomtools {
 
   void tube::generate_wires (std::list<polyline_3d> & lpl_,
                              const placement & p_,
-                             uint32_t options_) const
+                             uint32_t /*options_*/) const
   {
     const int nsamples = 36;
     double r[2];

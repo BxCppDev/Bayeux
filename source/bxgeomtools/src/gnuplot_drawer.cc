@@ -67,7 +67,7 @@ namespace geomtools {
   */
 
   // static
-  const int gnuplot_drawer::display_level_no_limit()
+  int gnuplot_drawer::display_level_no_limit()
   {
     return gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT;
   }
@@ -1028,8 +1028,8 @@ namespace geomtools {
     return;
   }
 
-  void gnuplot_drawer::_draw_display_data (const model_factory & mf_,
-                                           const placement & p_)
+  void gnuplot_drawer::_draw_display_data (const model_factory & /*mf_*/,
+                                           const placement & /*p_*/)
   {
     const datatools::logger::priority local_priority = datatools::logger::PRIO_FATAL;
     DT_LOG_TRACE (local_priority, "Entering...");

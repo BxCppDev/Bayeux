@@ -18,7 +18,7 @@ namespace geomtools {
 
   /// Boost serialization template method
   template<class Archive>
-  void placement::serialize (Archive & ar_ , const unsigned int version_)
+  void placement::serialize (Archive & ar_ , const unsigned int /*version_*/)
   {
     ar_ & BOOST_SERIALIZATION_BASE_OBJECT_NVP (i_placement);
     ar_ & boost::serialization::make_nvp ("translation",    _translation_);

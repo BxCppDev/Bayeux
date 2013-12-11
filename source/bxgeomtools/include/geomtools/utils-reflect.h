@@ -18,7 +18,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::orientation_type, tag_)
+      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::orientation_type, /*tag_*/)
       {
         //std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
         //          << "geomtools::orientation_type" << std::endl;
@@ -29,7 +29,7 @@ namespace datatools {
         return;
       }
 
-      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::direction_type, tag_)
+      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::direction_type, /*tag_*/)
       {
         // std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
         //        << "geomtools::direction_type" << std::endl;
@@ -44,7 +44,7 @@ namespace datatools {
         return;
       }
 
-      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::axis_type, tag_)
+      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::axis_type, /*tag_*/)
       {
         // std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
         //           << "geomtools::axis_type" << std::endl;
@@ -57,7 +57,7 @@ namespace datatools {
         return;
       }
 
-      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::rotation_axis_type, tag_)
+      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::rotation_axis_type, /*tag_*/)
       {
         // std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
         //           << "geomtools::rotation_axis_type" << std::endl;

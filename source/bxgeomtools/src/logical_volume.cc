@@ -490,7 +490,7 @@ namespace geomtools {
   // static
   bool logical_volume::same(const logical_volume & log1_,
                                const logical_volume & log2_,
-                               uint32_t mode_)
+                               uint32_t /*mode_*/)
   {
     if (&log1_ == &log2_) return true;
     const i_shape_3d * sh1 = &log1_.get_shape ();

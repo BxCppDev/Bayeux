@@ -231,7 +231,7 @@ namespace geomtools {
 
   void rectangle::generate_wires (std::list<polyline_3d> & lpl_,
                                   const placement & p_,
-                                  uint32_t options_) const
+                                  uint32_t /*options_*/) const
   {
     vector_3d vertex[4];
     vertex[0].set (-0.5 * get_x (), -0.5 * get_y (), 0.0);

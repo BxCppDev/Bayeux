@@ -231,7 +231,7 @@ namespace geomtools {
   }
 
   double
-  box::get_volume (uint32_t flags) const
+  box::get_volume (uint32_t /*flags*/) const
   {
     return _x_ * _y_ * _z_;
   }
@@ -287,7 +287,7 @@ namespace geomtools {
                       int    a_mask ,
                       double a_skin) const
   {
-    bool debug = false;
+    //bool debug = false;
     double skin = get_skin ();
     if (a_skin > USING_PROPER_SKIN) skin = 2 * a_skin;
 
@@ -467,7 +467,7 @@ namespace geomtools {
 
   void box::generate_wires (std::list<polyline_3d> & lpl_,
                             const placement & p_,
-                            uint32_t options_) const
+                            uint32_t /*options_*/) const
   {
     double dim[3];
     dim[0] = 0.5*get_x ();

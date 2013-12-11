@@ -660,7 +660,7 @@ namespace geomtools {
 
   void blur_spot::generate_wires (std::list<polyline_3d> & lpl_,
                                   const placement & p_,
-                                  uint32_t options_) const
+                                  uint32_t /*options_*/) const
   {
     double dx, dy, dz;
     dx = _tolerance_;

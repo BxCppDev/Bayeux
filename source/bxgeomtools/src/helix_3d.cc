@@ -403,8 +403,8 @@ namespace geomtools {
     return bpl;
   }
 
-  bool helix_3d::is_on_curve (const vector_3d & position_,
-                              double tolerance_) const
+  bool helix_3d::is_on_curve (const vector_3d & /*position_*/,
+                              double /*tolerance_*/) const
   {
     DT_THROW_IF (true, std::logic_error, "Not implemented yet !");
     bool on_curve = false;

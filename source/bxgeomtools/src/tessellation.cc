@@ -254,7 +254,7 @@ namespace geomtools {
   bool facet34::check_triangle (const geomtools::vector_3d & v0_,
                                 const geomtools::vector_3d & v1_,
                                 const geomtools::vector_3d & v2_,
-                                double tolerance_)
+                                double /*tolerance_*/)
   {
     // Check that all 3 vertices are different :
     const geomtools::vector_3d u01 = v1_ - v0_;
@@ -894,7 +894,7 @@ namespace geomtools {
       && (fs1_.vertex1_key == fs2_.vertex1_key);
   }
 
-  bool operator<(const facet_segment & fs1_, const facet_segment & fs2_)
+  bool operator<(const facet_segment & fs1_, const facet_segment & /*fs2_*/)
   {
     if (fs1_.vertex0_key < fs1_.vertex1_key) return true;
     return false;
@@ -1451,7 +1451,7 @@ namespace geomtools {
   }
 
   bool tessellated_solid::is_inside (const vector_3d &,
-                                     double skin_) const
+                                     double /*skin_*/) const
   {
     DT_THROW_IF (true,std::runtime_error, "Not implemented !");
     return false;
@@ -1459,24 +1459,24 @@ namespace geomtools {
 
   // if 'skin' < 0 no skin is taken into account:
   bool tessellated_solid::is_on_surface (const vector_3d & ,
-                                         int mask_,
-                                         double skin_) const
+                                         int /*mask_*/,
+                                         double /*skin_*/) const
   {
     DT_THROW_IF (true, std::runtime_error, "Not implemented !");
     return false;
   }
 
-  vector_3d tessellated_solid::get_normal_on_surface (const vector_3d & position_) const
+  vector_3d tessellated_solid::get_normal_on_surface (const vector_3d & /*position_*/) const
   {
     DT_THROW_IF (true, std::runtime_error, "Not implemented !");
     vector_3d v;
     return v;
   }
 
-  bool tessellated_solid::find_intercept (const vector_3d & from_,
-                                          const vector_3d & direction_,
-                                          intercept_t & intercept_,
-                                          double skin_) const
+  bool tessellated_solid::find_intercept (const vector_3d & /*from_*/,
+                                          const vector_3d & /*direction_*/,
+                                          intercept_t & /*intercept_*/,
+                                          double /*skin_*/) const
   {
     DT_THROW_IF (true,std::runtime_error, "Not implemented !");
     return false;
