@@ -9,7 +9,7 @@
 
 namespace mctools {
 
-  void initialize(int /*argc_*/, char * /*argv_[]*/)
+  void initialize(int /*argc_*/, char ** /*argv_*/)
   {
     //::mctools::_special_initialize_impl();
     return;

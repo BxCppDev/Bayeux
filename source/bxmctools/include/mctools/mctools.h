@@ -13,7 +13,7 @@
 /// Top-level namespace of the Bayeux/mctools module library
 namespace mctools {
 
-  void initialize(int argc_ = 0, char * argv_[] = 0);
+  void initialize(int argc_ = 0, char ** argv_ = 0);
 
   void terminate();
 
