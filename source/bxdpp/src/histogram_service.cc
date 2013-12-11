@@ -87,7 +87,7 @@ namespace dpp {
   }
 
   int histogram_service::initialize (const datatools::properties  & config_,
-                                     datatools::service_dict_type & service_dict_)
+                                     datatools::service_dict_type & /*service_dict_*/)
   {
     DT_THROW_IF (is_initialized (),std::logic_error,"Service '" << get_name () << "' is already initialized !");
 

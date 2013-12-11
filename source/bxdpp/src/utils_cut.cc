@@ -83,8 +83,8 @@ namespace dpp {
 
   CUT_INITIALIZE_IMPLEMENT_HEAD(utils_cut,
                                 configuration_,
-                                service_manager_,
-                                cut_dict_)
+                                /*service_manager_*/,
+                                /*cut_dict_*/)
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,

@@ -76,8 +76,8 @@ namespace dpp {
     return;
   }
 
-  bool i_data_source::_load_record (datatools::things & a_event_record,
-                                    int64_t a_entry)
+  bool i_data_source::_load_record (datatools::things & /*a_event_record*/,
+                                    int64_t /*a_entry*/)
   {
     DT_LOG_ERROR(get_logging_priority (),
                  "Load by entry number is not supported !");

@@ -45,7 +45,7 @@ namespace dpp {
   }
 
   void
-  base_module::set_debug (bool a_debug)
+  base_module::set_debug (bool /*a_debug*/)
   {
     _logging = datatools::logger::PRIO_DEBUG;
     return;

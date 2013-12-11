@@ -89,8 +89,8 @@ namespace dpp {
   // Initialization :
   DPP_MODULE_INITIALIZE_IMPLEMENT_HEAD(dummy_module,
                                        a_config,
-                                       a_service_manager,
-                                       a_module_dict)
+                                       /*a_service_manager*/,
+                                       /*a_module_dict*/)
   {
     DT_THROW_IF(is_initialized (),
                 std::logic_error,

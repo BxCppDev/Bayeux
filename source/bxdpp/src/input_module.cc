@@ -74,7 +74,7 @@ namespace dpp {
     io_common & ioc = _grab_common();
     datatools::smart_filename & filenames = ioc.grab_filenames();
     datatools::smart_filename::make_list(filenames, allow_duplicate_);
-    for (int i = 0; i < filepaths_.size(); i++) {
+    for (size_t i = 0; i < filepaths_.size(); i++) {
       filenames.add_to_list(filepaths_[i]);
     }
     return;
@@ -144,7 +144,7 @@ namespace dpp {
   DPP_MODULE_INITIALIZE_IMPLEMENT_HEAD(input_module,
                                        a_config,
                                        a_service_manager,
-                                       a_module_dict)
+                                       /*a_module_dict*/)
   {
     DT_THROW_IF(is_initialized (),
                 std::logic_error,

@@ -77,7 +77,7 @@ namespace dpp {
 
   DPP_MODULE_INITIALIZE_IMPLEMENT_HEAD(chain_module,
                                        a_config,
-                                       a_service_manager,
+                                       /*a_service_manager*/,
                                        a_module_dict)
   {
     DT_THROW_IF(is_initialized (),
