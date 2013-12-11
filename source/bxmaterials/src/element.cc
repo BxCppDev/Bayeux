@@ -407,7 +407,7 @@ namespace materials {
   void element::tree_dump (ostream & out_,
                            const string & title_,
                            const string & indent_,
-                           bool inherit_) const
+                           bool /*inherit_*/) const
   {
     string indent;
     if (! indent_.empty ()) indent = indent_;

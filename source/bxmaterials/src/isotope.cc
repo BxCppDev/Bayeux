@@ -546,7 +546,7 @@ namespace materials {
   }
 
   //________________________________________________________________________
-  void isotope::_build (bool use_decay_)
+  void isotope::_build (bool /*use_decay_*/)
   {
     bool use_decay_db = false;
     find_mass();
@@ -568,7 +568,7 @@ namespace materials {
   void isotope::tree_dump (ostream & out_,
                            const string & title_,
                            const string & indent_,
-                           bool inherit_) const
+                           bool /*inherit_*/) const
   {
 
     namespace du = datatools;

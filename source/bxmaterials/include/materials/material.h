@@ -66,7 +66,7 @@ namespace materials {
         MEAN_ZA = 2
       };
 
-    static const double g_per_cm3();
+    static double g_per_cm3();
 
     /// Defaut Constructor
     material (); //!< Defaut Constructor

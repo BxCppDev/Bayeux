@@ -12,7 +12,7 @@
 
 namespace materials {
 
-  void initialize(int argc_, char * argv_[])
+  void initialize(int /*argc_*/, char * /*argv_[]*/)
   {
     static bool _init = false;
     if (!_init) {

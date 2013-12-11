@@ -23,7 +23,7 @@ namespace materials {
 
   using namespace std;
 
-  const double material::g_per_cm3()
+  double material::g_per_cm3()
   {
     // static double u = -1.0;
     // if (u < 0.0) {
@@ -422,7 +422,7 @@ namespace materials {
   void material::tree_dump (ostream & out_,
                             const string & title_,
                             const string & indent_,
-                            bool inherit_) const
+                            bool /*inherit_*/) const
   {
     string indent;
     if (! indent_.empty ()) indent = indent_;
