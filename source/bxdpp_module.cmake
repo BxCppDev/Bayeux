@@ -30,7 +30,7 @@ set(dpp_VERSION "${dpp_VERSION_MAJOR}.${dpp_VERSION_MINOR}.${dpp_VERSION_PATCH}"
 
 # - Raw Headers and Sources
 set(${module_name}_MODULE_HEADERS
-  ${module_include_dir}/${module_name}/utils.h
+  #${module_include_dir}/${module_name}/utils.h
   ${module_include_dir}/${module_name}/base_module.h
   ${module_include_dir}/${module_name}/brio_common.h
   ${module_include_dir}/${module_name}/chain_module.h
@@ -42,7 +42,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/io_common.h
   ${module_include_dir}/${module_name}/input_module.h
   ${module_include_dir}/${module_name}/output_module.h
-  ${module_include_dir}/${module_name}/module_macros.h
+  #${module_include_dir}/${module_name}/module_macros.h
   ${module_include_dir}/${module_name}/module_manager.h
   ${module_include_dir}/${module_name}/module_tools.h
   ${module_include_dir}/${module_name}/simple_brio_data_sink.h
