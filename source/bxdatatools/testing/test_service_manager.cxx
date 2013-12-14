@@ -1,13 +1,13 @@
 /* test_service_manager.cxx
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-09
- * Last modified : 2012-12-15
+ * Last modified : 2013-12-14
  *
- * Copyright (C) 2011-2012 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * Description:
  *
- *  A test sample program that illustrate how to create a service manager.
+ *  A test sample program that illustrates how to create a service manager.
  *
  * Usage:
  *
@@ -27,7 +27,6 @@
 #include <datatools/utils.h>
 
 #include <datatools/base_service.h>
-#include <datatools/service_macros.h>
 #include <datatools/service_manager.h>
 
 // explicitly include this dummy service (with registration) :
@@ -41,26 +40,28 @@ using namespace std;
  *  in the event header of any processed event.
  *
  */
-DATATOOLS_SERVICE_CLASS_DECLARE(test_service)
+class test_service : public ::datatools::base_service
 {
-  /** Macro to automate the generation of the service interface :
-   * - default constructor
-   * - destructor
-   * - virtual interface methods
-   */
-  DATATOOLS_SERVICE_INTERFACE (test_service);
+public:
 
- public:
+  test_service();
+
+  virtual ~test_service();
 
   static const string DEFAULT_LABEL;
-
- public:
 
   void set_label (const string & a_label);
 
   const string & get_label () const;
 
- private:
+  virtual bool is_initialized() const;
+
+  virtual int initialize(const datatools::properties& /* config_ */,
+                         datatools::service_dict_type& /* service_map_ */);
+
+  virtual int reset();
+
+private:
 
   string label_;
 
@@ -69,6 +70,9 @@ DATATOOLS_SERVICE_CLASS_DECLARE(test_service)
    */
   DATATOOLS_SERVICE_REGISTRATION_INTERFACE (test_service);
 };
+
+/** Auto-registration of this service class in a central service Db */
+DATATOOLS_SERVICE_REGISTRATION_IMPLEMENT(test_service, "test_service")
 
 const string test_service::DEFAULT_LABEL = "test_service::label";
 
@@ -84,80 +88,53 @@ const string & test_service::get_label () const
 }
 
 // Constructor :
-DATATOOLS_SERVICE_CONSTRUCTOR_IMPLEMENT_HEAD(test_service,              \
-                                             "Test",                    \
-                                             "An event record processor test service", \
-                                             "0.1")
+test_service::test_service()
+  : datatools::base_service("Test",
+                            "An event record processor test service",
+                            "0.1")
 {
   label_ = "";
   return;
 }
 
 // Destructor :
-DATATOOLS_SERVICE_DESTRUCTOR_IMPLEMENT(test_service)
+test_service::~test_service()
+{
+  if (this->is_initialized()) this->test_service::reset();
+}
 
-DATATOOLS_SERVICE_IS_INITIALIZED_IMPLEMENT_HEAD(test_service)
+bool test_service::is_initialized() const
 {
   return ! label_.empty ();
 }
 
 // Initialization hook :
-DATATOOLS_SERVICE_INITIALIZE_IMPLEMENT_HEAD(test_service,       \
-                                            a_config,           \
-                                            a_dictionnary)
+int test_service::initialize(const datatools::properties& a_config,
+                             datatools::service_dict_type& a_dictionnary)
 {
-  /* const datatools::utils::properties & a_config
-   * service_dict_type *                  a_dictionary
-   */
 
-  if (!is_initialized ())
-    {
-      // If the label is not setup yet, pickup from the configuration list:
-      if (a_config.has_key ("label"))
-        {
-          string label = a_config.fetch_string ("label");
-          set_label (label);
-        }
+  if (!is_initialized ()) {
+    // If the label is not setup yet, pickup from the configuration list:
+    if (a_config.has_key ("label")) {
+      string label = a_config.fetch_string ("label");
+      set_label (label);
     }
+  }
 
   // Default label is none is setup :
-  if (label_.empty ())
-    {
-      label_ = DEFAULT_LABEL;
-    }
+  if (label_.empty ()){
+    label_ = DEFAULT_LABEL;
+  }
 
   return datatools::SUCCESS;
 }
 
 // Reset hook :
-DATATOOLS_SERVICE_RESET_IMPLEMENT_HEAD(test_service)
+int test_service::reset()
 {
   label_ = "";
   return datatools::SUCCESS;
 }
-
-// DATATOOLS_SERVICE_FETCH_DEPENDENCIES_IMPLEMENT_HEAD(test_service,a_dependency_list)
-// {
-//  /* Parameter:
-//   * service_dependency_dict_type & a_dependency_list;
-//   * this is a list of dependency_info_type objects
-//   * to be updated:
-//   */
-//  a_dependency_list.clear ();
-//  {
-//    // Here we add a dependency with the 'dummy' external service :
-//    dependency_info_type dit;
-//    dit.id      = "dummy_service";  // name of the service
-//    dit.version = "";      // requested version
-//    dit.meta    = "debug"; // meta information
-//    dit.level   = OPTIONAL_DEPENDENCY; //
-//    a_dependency_list["foo"] = dit;
-//  }
-//  return;
-// }
-
-/** Auto-registration of this service class in a central service Db */
-DATATOOLS_SERVICE_REGISTRATION_IMPLEMENT(test_service, "test_service")
 
 /************************************************************/
 

@@ -1,4 +1,5 @@
-/* service_macros.h
+/* THIS FILE IS OBSOLETE (2013-12-14)
+ * service_macros.h
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
  * Last modified : 2011-06-20
@@ -31,6 +32,7 @@
 #ifndef DATATOOLS_SERVICE_MACROS_H_
 #define DATATOOLS_SERVICE_MACROS_H_
 
+#warning datatools/service_macros.h is obsolete (2013-12-14)
 // Standard Library
 
 // Third Party
@@ -118,15 +120,4 @@
 
 /** Registration */
 
-#define DATATOOLS_SERVICE_REGISTRATION_INTERFACE(SERVICE_CLASS_NAME)	\
-  private:								\
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::datatools::base_service, SERVICE_CLASS_NAME); \
-  /**/
-
-#define DATATOOLS_SERVICE_REGISTRATION_IMPLEMENT(SERVICE_CLASS_NAME,SERVICE_ID) \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (::datatools::base_service,SERVICE_CLASS_NAME,SERVICE_ID); \
-  /**/
-
-
 #endif // DATATOOLS_SERVICE_MACROS_H_
-

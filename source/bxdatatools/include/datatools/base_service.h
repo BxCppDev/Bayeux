@@ -1,7 +1,7 @@
 /* base_service.h
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
- * Last modified : 2013-04-22
+ * Last modified : 2013-12-13
  *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -39,7 +39,7 @@
 // - Boost
 #include <boost/scoped_ptr.hpp>
 
-// Datatools
+// This project (Bayeux/datatools)
 #include <datatools/i_tree_dump.h>
 #include <datatools/service_tools.h>
 #include <datatools/factory_macros.h>
@@ -88,9 +88,6 @@ class base_service : public datatools::i_tree_dumpable {
   virtual void fetch_dependencies(
       service_dependency_dict_type& /*dependencies*/) const;
 
-  /// Check if service is initialized
-  virtual bool is_initialized() const = 0;
-
   /// Initialize the service using only a list of properties without the needs of other services
   virtual int initialize_standalone(
       const datatools::properties& config);
@@ -102,9 +99,18 @@ class base_service : public datatools::i_tree_dumpable {
   /// Reset the service
   virtual int reset() = 0;
 
+  /// Check if service is initialized
+  virtual bool is_initialized() const = 0;
+
   void set_logging_priority(datatools::logger::priority);
 
   datatools::logger::priority get_logging_priority() const;
+
+  /// Smart print
+  virtual void tree_dump(std::ostream& out = std::clog,
+                         const std::string & title = "",
+                         const std::string & indent = "",
+                         bool inherit = false) const;
 
  protected:
 
@@ -113,12 +119,6 @@ class base_service : public datatools::i_tree_dumpable {
 
   /// Common initialization of services
   void common_initialize(const datatools::properties & config);
-
-  /// Smart print
-  virtual void tree_dump(std::ostream& out = std::clog,
-                         const std::string & title = "",
-                         const std::string & indent = "",
-                         bool inherit = false) const;
 
  protected:
 
@@ -132,5 +132,15 @@ class base_service : public datatools::i_tree_dumpable {
 };
 
 }  // end of namespace datatools
+
+#define DATATOOLS_SERVICE_REGISTRATION_INTERFACE(SERVICE_CLASS_NAME)	\
+  private:								\
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::datatools::base_service, SERVICE_CLASS_NAME); \
+  /**/
+
+#define DATATOOLS_SERVICE_REGISTRATION_IMPLEMENT(SERVICE_CLASS_NAME,SERVICE_ID) \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (::datatools::base_service,SERVICE_CLASS_NAME,SERVICE_ID); \
+  /**/
+
 
 #endif // DATATOOLS_BASE_SERVICE_H_
