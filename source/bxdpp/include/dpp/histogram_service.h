@@ -38,7 +38,6 @@
 
 #include <datatools/base_service.h>
 #include <datatools/service_tools.h>
-#include <datatools/service_macros.h>
 
 #include <mygsl/histogram_pool.h>
 

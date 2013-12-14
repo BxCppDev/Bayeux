@@ -41,7 +41,6 @@
 // Service interface :
 #include <datatools/base_service.h>
 #include <datatools/service_tools.h>
-#include <datatools/service_macros.h>
 
 namespace datatools {
   class multi_properties;
