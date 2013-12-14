@@ -217,7 +217,6 @@ if [ $do_simulation -eq 1 ]; then
 	exit 1
     fi
 
-
     # echo -e "\nBrowse the output pipeline simulated data file..." 1>&2
     # ./ex00_read_pipeline_simdata \
     #     --logging-priority "notice" \
