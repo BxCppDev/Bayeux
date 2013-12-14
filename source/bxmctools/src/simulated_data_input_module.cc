@@ -189,17 +189,19 @@ namespace mctools {
 
 
   // Processing :
-  int simulated_data_input_module::process (datatools::things & a_record)
+  dpp::base_module::process_status
+  simulated_data_input_module::process (datatools::things & a_record)
   {
     DT_THROW_IF (! is_initialized (), std::logic_error,
                  "Simulated data reader module '" << get_name () << "' is not initialized !");
-    return _load (a_record);
+    return _load(a_record);
   }
 
 
-  int simulated_data_input_module::_load (datatools::things & a_record)
+  dpp::base_module::process_status
+  simulated_data_input_module::_load (datatools::things & a_record)
   {
-    int load_status = dpp::PROCESS_OK;
+    process_status load_status = dpp::base_module::PROCESS_OK;
 
     simulated_data * SD = 0;
     if (a_record.has(_sd_bank_label_)) {
@@ -220,10 +222,10 @@ namespace mctools {
     if (_reader_.get()->has_next()) {
       int ret = _reader_.get()->load_next(*SD);
       if (ret != 0) {
-        load_status = dpp::PROCESS_ERROR;
+        load_status = dpp::base_module::PROCESS_ERROR;
       }
     } else {
-      load_status = dpp::PROCESS_FATAL;
+      load_status = dpp::base_module::PROCESS_FATAL;
     }
 
     return load_status;

@@ -218,6 +218,8 @@ namespace mctools {
       DT_THROW_IF (! is_initialized (), std::logic_error,
                    "Module '" << get_name () << "' is not initialized !");
 
+      _set_initialized (false);
+
       if (_simulation_ctrl_ != 0) {
         // Destruction of the thread synchronization object :
         _simulation_ctrl_->set_stop_requested ();
@@ -234,18 +236,18 @@ namespace mctools {
       _Geo_label_ = "";
       _erase_former_SD_bank_ = false;
 
-      _set_initialized (false);
       DT_LOG_TRACE(get_logging_priority(),"Exiting.");
       return;
     }
 
     // Processing :
-    int simulation_module::process (datatools::things & event_record_)
+    dpp::base_module::process_status
+    simulation_module::process (datatools::things & event_record_)
     {
       DT_THROW_IF (! is_initialized (), std::logic_error,
                    "Module '" << get_name () << "' is not initialized !");
       int status = _simulate_event(event_record_);
-      return status;
+      return status == 0 ? dpp::base_module::PROCESS_OK : dpp::base_module::PROCESS_FATAL;
     }
 
     void simulation_module::_initialize_manager (datatools::service_manager & smgr_)
@@ -368,7 +370,7 @@ namespace mctools {
         }
 
       }
-      return dpp::PROCESS_OK;
+      return 0;
     }
 
   }  // end of namespace g4

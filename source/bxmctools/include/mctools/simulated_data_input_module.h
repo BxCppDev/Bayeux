@@ -12,18 +12,22 @@
 #ifndef MCTOOLS_SIMULATED_DATA_INPUT_MODULE_H_
 #define MCTOOLS_SIMULATED_DATA_INPUT_MODULE_H_ 1
 
+// Third party
+// - Bayeux/datatools
 #include <datatools/smart_filename.h>
 
+// - Bayeux/dpp (the abstract module interface):
 #include <dpp/base_module.h>
-#include <dpp/module_macros.h>
 
+// This project:
 #include <mctools/simulated_data.h>
 
 namespace mctools {
 
   class simulated_data_reader;
 
-  DPP_MODULE_CLASS_DECLARE(simulated_data_input_module)
+  /// \brief Simulation data input module
+  class simulated_data_input_module : public dpp::base_module
   {
   public:
 
@@ -33,12 +37,20 @@ namespace mctools {
     simulated_data_input_module(datatools::logger::priority logging_priority = datatools::logger::PRIO_FATAL);
 
     // Destructor :
-    virtual ~simulated_data_input_module ();
+    virtual ~simulated_data_input_module();
 
-    // This macro setup the module standard interface (initialize/reset/process) :
-    DPP_MODULE_INTERFACE ();
+    /// Initialization
+    virtual void initialize(const datatools::properties & /* config_ */,
+                            datatools::service_manager & /* service_mgr_ */,
+                            dpp::module_handle_dict_type & /* modules_map_ */);
 
-    bool is_terminated () const;
+    /// Reset
+    virtual void reset();
+
+    /// Data record processing
+    virtual dpp::base_module::process_status process(datatools::things & /* data_ */);
+
+    bool is_terminated() const;
 
     void set_single_input_file(const std::string & filepath_);
 
@@ -60,7 +72,7 @@ namespace mctools {
 
   protected:
 
-    int _load (datatools::things & a_event_record);
+    dpp::base_module::process_status _load(datatools::things & a_event_record);
 
   private:
 

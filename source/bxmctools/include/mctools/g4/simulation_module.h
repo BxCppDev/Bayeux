@@ -1,7 +1,7 @@
 /* simulation_module.h
  * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-07-04
- * Last modified : 2012-04-10
+ * Last modified : 2013-12-13
  *
  * Description:
  *
@@ -12,12 +12,11 @@
 #ifndef MCTOOLS_G4_SIMULATION_MODULE_H_
 #define MCTOOLS_G4_SIMULATION_MODULE_H_ 1
 
-// Load the abstract module interface :
+// Third party
+// - Bayeux/dpp (the abstract module interface):
 #include <dpp/base_module.h>
 
-// Load useful macros for module :
-#include <dpp/module_macros.h>
-
+// This project:
 #include <mctools/g4/manager_parameters.h>
 
 namespace geomtools {
@@ -36,21 +35,28 @@ namespace mctools {
     class simulation_ctrl;
 
     /// \brief The Geant4 simulation module
-    DPP_MODULE_CLASS_DECLARE(simulation_module)
+    class simulation_module : public dpp::base_module
     {
-
     public:
 
       void set_geometry_manager (const geomtools::manager & geometry_manager_);
 
       /// Constructor
       simulation_module (datatools::logger::priority logging_priority = datatools::logger::PRIO_FATAL);
-
       /// Destructor
       virtual ~simulation_module ();
 
-      // This macro setup the module standard interface (initialize/reset/process) :
-      DPP_MODULE_INTERFACE ();
+
+      /// Initialization
+      virtual void initialize(const datatools::properties & /* config_ */,
+                              datatools::service_manager & /* service_mgr_ */,
+                              dpp::module_handle_dict_type & /* modules_map_ */);
+
+      /// Reset
+      virtual void reset();
+
+      /// Data record processing
+      virtual dpp::base_module::process_status process(datatools::things & /* data_ */);
 
     protected :
 
