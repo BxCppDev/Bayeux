@@ -1,4 +1,4 @@
-//! \file    resource.h
+//! \file    materials/resource.h
 //! \brief   Utilities for accessing materials resource files
 //! \details The materials library makes use of several resource files
 //!          containing isotopic and radioactive decays data.
