@@ -35,11 +35,10 @@
 
 #include <datatools/base_service.h>
 #include <datatools/service_tools.h>
-#include <datatools/service_macros.h>
 
 // Forward declaration :
 namespace datatools {
-    class properties;
+  class properties;
 }
 
 namespace cuts {
