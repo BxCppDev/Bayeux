@@ -14,15 +14,12 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
   message(FATAL_ERROR "in-source build detected")
 endif()
 
-# - dpp :
-if (NOT dpp_DIR)
-  execute_process(COMMAND dpp-config --prefix
-                  OUTPUT_VARIABLE dpp_DIR )
-endif()
+# - Bayeux :
+find_package(Bayeux 1.0.0 REQUIRED)
+set(_incs ${Bayeux_INCLUDE_DIRS})
+set(_libs ${Bayeux_LIBRARIES})
 
-find_package(dpp 1.0.0 REQUIRED)
-
-include_directories(${PROJECT_SOURCE_DIR} ${dpp_INCLUDE_DIRS})
+include_directories(${PROJECT_SOURCE_DIR} ${_incs})
 
 add_library(dpp_ex01 SHARED
                      dpp_ex01/hit.h
@@ -37,7 +34,7 @@ add_library(dpp_ex01 SHARED
                      src/raw_generator_module.cc
            )
 
-target_link_libraries(dpp_ex01 ${dpp_LIBRARY} ${CMAKE_DL_LIBS})
+target_link_libraries(dpp_ex01 ${_libs} ${CMAKE_DL_LIBS})
 
 install( FILES
          ${PROJECT_BINARY_DIR}/libdpp_ex01${CMAKE_SHARED_LIBRARY_SUFFIX}

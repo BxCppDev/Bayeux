@@ -20,6 +20,7 @@ namespace dpp_ex01 {
   {
   public:
 
+    /// Default string for the raw data bank label
     static const std::string DEFAULT_RD_BANK_LABEL;
 
     /// Constructor
@@ -37,7 +38,7 @@ namespace dpp_ex01 {
     virtual void reset();
 
     /// Main data record processing method
-    virtual int process(datatools::things & a_data_record);
+    virtual dpp::base_module::process_status process(datatools::things & a_data_record);
 
     void set_raw_data_bank_label(const std::string &);
 
@@ -68,7 +69,7 @@ namespace dpp_ex01 {
     double _mean_number_of_hits_; /// The mean number of hits
     double _mean_energy_; /// The mean energy per hit
     double _sigma_energy_; /// The energy standart deviation per hit
-    mygsl::rng _prng_; /// Embeded PRNG
+    mygsl::rng _prng_; /// Embedded PRNG
 
     // Macro to automate the registration of the module :
     DPP_MODULE_REGISTRATION_INTERFACE(raw_generator_module);

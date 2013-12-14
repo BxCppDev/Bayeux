@@ -35,7 +35,7 @@ namespace dpp_ex01 {
   raw_generator_module::~raw_generator_module()
   {
     // Make sure all internal resources are terminated before destruction :
-    if (is_initialized()) reset();
+    if (is_initialized()) this->raw_generator_module::reset();
   }
 
   void raw_generator_module::initialize(const datatools::properties & a_config,
@@ -125,11 +125,15 @@ namespace dpp_ex01 {
     _set_defaults();
   }
 
-  int raw_generator_module::process(datatools::things & a_data_record)
+  dpp::base_module::process_status
+  raw_generator_module::process(datatools::things & a_data_record)
   {
     DT_THROW_IF(! is_initialized(),
                 std::logic_error,
                 "Raw generator module '" << get_name() << "' is not initialized !");
+
+    // Return status of the processing
+    dpp::base_module::process_status status = dpp::base_module::PROCESS_OK;
 
     // Pointer to the embeded ``dpp_ex01::raw_data`` instance :
     raw_data * RD = 0;
@@ -167,7 +171,7 @@ namespace dpp_ex01 {
       RD->grab_auxiliaries().store_flag("high_energy");
     }
 
-    return dpp::PROCESS_OK;
+    return status;
   }
 
   void raw_generator_module::set_raw_data_bank_label(const std::string & rd_bank_label_)
@@ -376,4 +380,3 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp_ex01::raw_generator_module,ocd_)
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
 DOCD_CLASS_SYSTEM_REGISTRATION(::dpp_ex01::raw_generator_module,"dpp_ex01::raw_generator_module")
-
