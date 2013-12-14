@@ -66,11 +66,12 @@
 
 #define DPP_MODULE_PROCESS_DECLARE()                                    \
   public :                                                              \
-  virtual int process(::datatools::things &);                           \
+  virtual dpp::base_module::process_status process(::datatools::things &); \
   /**/
 
 #define DPP_MODULE_PROCESS_IMPLEMENT_HEAD(T,DataRecord)     \
-  int T::process(::datatools::things & DataRecord)          \
+  dpp::base_module::process_status                          \
+  T::process(::datatools::things & DataRecord)              \
   /**/
 
 #define DPP_MODULE_CONSTRUCTOR_DECLARE(T)                             \

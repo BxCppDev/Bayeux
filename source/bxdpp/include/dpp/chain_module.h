@@ -33,16 +33,17 @@
 #ifndef DPP_CHAIN_MODULE_H_
 #define DPP_CHAIN_MODULE_H_ 1
 
+// Standard library
 #include <string>
 #include <list>
 
+// This project
 #include <dpp/base_module.h>
-#include <dpp/module_macros.h>
 
 namespace dpp {
 
   /// \brief A data processing module to chain children data processing modules
-  DPP_MODULE_CLASS_DECLARE(chain_module)
+  class chain_module : public base_module
   {
   public:
 
@@ -62,8 +63,22 @@ namespace dpp {
     /// Check if a module with a given name exists
     bool has_module(const std::string & label_) const;
 
-    /// Macro to declare the full module interface
-    DPP_MODULE_INTERFACE_CTOR_DTOR(chain_module);
+    /// Constructor
+    chain_module(datatools::logger::priority = datatools::logger::PRIO_FATAL);
+
+    /// Destructor
+    virtual ~chain_module();
+
+    /// Initialization
+    virtual void initialize(const ::datatools::properties & /* config_ */,
+                            datatools::service_manager & /* service_mgr_ */,
+                            dpp::module_handle_dict_type & /* modules_map_ */);
+
+    /// Reset
+    virtual void reset();
+
+    /// Data record processing
+    virtual process_status process(::datatools::things & /* data_ */);
 
     /// Smart print
     virtual void tree_dump(std::ostream      & out_    = std::clog,

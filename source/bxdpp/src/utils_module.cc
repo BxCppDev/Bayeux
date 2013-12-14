@@ -16,10 +16,9 @@ namespace dpp {
   DPP_MODULE_REGISTRATION_IMPLEMENT(utils_module,"dpp::utils_module");
 
   // Initialization :
-  DPP_MODULE_INITIALIZE_IMPLEMENT_HEAD(utils_module,
-                                       a_setup,
-                                       /*a_service_manager*/,
-                                       /*a_module_dict*/)
+  void utils_module::initialize(const datatools::properties & a_setup,
+                                datatools::service_manager & /*a_service_manager*/,
+                                dpp::module_handle_dict_type & /*a_module_dict*/)
   {
     DT_THROW_IF(is_initialized (),
                 std::logic_error,
@@ -100,7 +99,7 @@ namespace dpp {
     return;
   }
 
-  DPP_MODULE_RESET_IMPLEMENT_HEAD(utils_module)
+  void utils_module::reset()
   {
     DT_THROW_IF(! is_initialized (),
                 std::logic_error,
@@ -124,13 +123,18 @@ namespace dpp {
   }
 
   // Constructor :
-  DPP_MODULE_CONSTRUCTOR_IMPLEMENT_HEAD(utils_module,logging_priority_)
+  utils_module::utils_module(datatools::logger::priority logging_priority_)
+    : base_module(logging_priority_)
   {
     _set_defaults ();
     return;
   }
 
-  DPP_MODULE_DEFAULT_DESTRUCTOR_IMPLEMENT(utils_module)
+  utils_module::~utils_module()
+  {
+    if (is_initialized()) utils_module::reset();
+    return;
+  }
 
   void utils_module::_process_clear (datatools::things & a_data_record)
   {
@@ -206,7 +210,8 @@ namespace dpp {
   }
 
   // Processing :
-  DPP_MODULE_PROCESS_IMPLEMENT_HEAD(utils_module,a_data_record)
+  base_module::process_status
+  utils_module::process(::datatools::things & a_data_record)
   {
     DT_THROW_IF(! is_initialized (),
                 std::logic_error,

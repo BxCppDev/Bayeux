@@ -62,25 +62,6 @@ namespace dpp {
     return;
   }
 
-  // void base_module::_lock_guard (const std::string & where_, const std::string & what_)
-  // {
-  //   if (!is_initialized ()) return;
-  //   std::ostringstream message;
-  //   if (! where_.empty ()) {
-  //     message << where_ << " : ";
-  //   } else {
-  //     message << "dpp::base_module::_lock_guard" << " : ";
-  //   }
-  //   if (! what_.empty ()) {
-  //     message << what_;
-  //   } else {
-  //     message << "Operation prohibited ! Module '" << get_name ()
-  //             << "' is already initialized !";
-  //   }
-  //   throw std::logic_error (message.str ());
-  //   return;
-  // }
-
   void base_module::set_name (const std::string & a_new_value)
   {
     DT_THROW_IF(is_initialized (),
@@ -115,25 +96,35 @@ namespace dpp {
 
   void base_module::set_description (const std::string & a_description)
   {
+    DT_THROW_IF(is_initialized (),
+                std::logic_error,
+                "Module '" << _name << "' "
+                << "is already initialized ! "
+                << "Cannot change the description !");
     _description = a_description;
     return;
   }
 
-  bool base_module::has_version () const
-  {
-    return ! _version.empty ();
-  }
+  // bool base_module::has_version () const
+  // {
+  //   return ! _version.empty ();
+  // }
 
-  const std::string & base_module::get_version () const
-  {
-    return _version;
-  }
+  // const std::string & base_module::get_version () const
+  // {
+  //   return _version;
+  // }
 
-  void base_module::set_version (const std::string & a_version)
-  {
-    _version = a_version;
-    return;
-  }
+  // void base_module::set_version (const std::string & a_version)
+  // {
+  //   DT_THROW_IF(is_initialized (),
+  //               std::logic_error,
+  //               "Module '" << _name << "' "
+  //               << "is already initialized ! "
+  //               << "Cannot change the version !");
+  //   _version = a_version;
+  //   return;
+  // }
 
   bool base_module::has_last_error_message () const
   {
@@ -168,15 +159,14 @@ namespace dpp {
     return _last_error_message_;
   }
 
-  // ctor:
   base_module::base_module (datatools::logger::priority p)
   {
     _initialized = false;
+    _logging = datatools::logger::PRIO_FATAL;
     set_logging_priority(p);
     return;
   }
 
-  // dtor:
   base_module::~base_module ()
   {
     DT_THROW_IF(_initialized,
@@ -210,8 +200,8 @@ namespace dpp {
           << "Module name        : '" << _name << "'" << std::endl;
     a_out << indent << datatools::i_tree_dumpable::tag
           << "Module description : '" << _description << "'" << std::endl;
-    a_out << indent << datatools::i_tree_dumpable::tag
-          << "Module version     : '" << _version << "'" << std::endl;
+    // a_out << indent << datatools::i_tree_dumpable::tag
+    //       << "Module version     : '" << _version << "'" << std::endl;
     a_out << indent << datatools::i_tree_dumpable::tag
           << "Module logging threshold : '"
           << datatools::logger::get_priority_label(_logging) << "'" << std::endl;
@@ -235,6 +225,13 @@ namespace dpp {
 
   void base_module::_common_initialize (const datatools::properties & a_config)
   {
+    datatools::logger::priority p =
+      datatools::logger::extract_logging_configuration(a_config,
+                                                       datatools::logger::PRIO_FATAL,
+                                                       true);
+    set_logging_priority(p);
+
+    /*
     if (a_config.has_key("logging.priority")) {
       std::string prio_label = a_config.fetch_string("logging.priority");
       datatools::logger::priority p = datatools::logger::get_priority(prio_label);
@@ -243,6 +240,7 @@ namespace dpp {
                   "Unknow logging priority ``" << prio_label << "`` !");
       set_logging_priority(p);
     }
+    */
 
     if (! has_description ()) {
       if (a_config.has_key("description")) {
@@ -250,11 +248,11 @@ namespace dpp {
       }
     }
 
-    if (! has_version ()) {
-      if (a_config.has_key("version")) {
-        set_version(a_config.fetch_string("version"));
-      }
-    }
+    // if (! has_version ()) {
+    //   if (a_config.has_key("version")) {
+    //     set_version(a_config.fetch_string("version"));
+    //   }
+    // }
 
     return;
   }

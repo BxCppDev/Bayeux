@@ -31,17 +31,20 @@
 #ifndef DPP_IF_MODULE_H_
 #define DPP_IF_MODULE_H_ 1
 
+// Standard library
 #include <string>
 
-#include <dpp/base_module.h>
-#include <dpp/module_macros.h>
-
+// Third party
+// - Bayeux/cuts
 #include <cuts/cut_tools.h>
+
+// This project
+#include <dpp/base_module.h>
 
 namespace dpp {
 
   /// \brief A data processing module to be apply only if some cut is fulfilled
-  DPP_MODULE_CLASS_DECLARE(if_module)
+  class if_module : public base_module
   {
   public:
 
@@ -57,10 +60,13 @@ namespace dpp {
       module_handle_type handle; //!< Module handle
     };
 
+    /// Return the default label of an external cut service
     static const std::string & default_cut_service_label();
 
+    /// Set the label of the external cut service
     void set_cut_service_label (const std::string & label_);
 
+    /// Return the label of the external cut service
     const std::string & get_cut_service_label () const;
 
     void set_condition_cut (const std::string & label_,
@@ -76,15 +82,30 @@ namespace dpp {
 
     bool has_then_status () const;
 
-    void set_then_status (int status_);
+    void set_then_status (process_status status_);
 
     bool has_else_status () const;
 
-    void set_else_status (int status_);
+    void set_else_status (process_status status_);
 
-    // Constructor :
-    DPP_MODULE_INTERFACE_CTOR_DTOR(if_module);
+    /// Constructor
+    if_module(datatools::logger::priority = datatools::logger::PRIO_FATAL);
 
+    /// Destructor
+    virtual ~if_module();
+
+    /// Initialization
+    virtual void initialize(const ::datatools::properties & /* config_ */,
+                            datatools::service_manager & /* service_mgr_ */,
+                            dpp::module_handle_dict_type & /* modules_map_ */);
+
+    /// Reset
+    virtual void reset();
+
+    /// Data record processing
+    virtual process_status process(::datatools::things & /* data_ */);
+
+    /// Smart print
     virtual void tree_dump (std::ostream      & out_    = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
@@ -92,16 +113,17 @@ namespace dpp {
 
   protected:
 
+    /// Set default values before explicit settings and initialization
     void _set_defaults ();
 
   private:
 
-    std::string  _cut_service_label_; /// Label/name of the cut service
-    cut_entry    _condition_cut_;     /// Condition cut entry
-    int          _then_status_;       /// Status of the 'then' action module
-    module_entry _then_module_;       /// 'then' action module entry
-    int          _else_status_;       /// Status of the 'else' action module
-    module_entry _else_module_;       /// 'else' action module entry
+    std::string    _cut_service_label_; /// Label/name of the cut service
+    cut_entry      _condition_cut_;     /// Condition cut entry
+    process_status _then_status_;       /// Status of the 'then' action module
+    module_entry   _then_module_;       /// 'then' action module entry
+    process_status _else_status_;       /// Status of the 'else' action module
+    module_entry   _else_module_;       /// 'else' action module entry
 
     // Macro to automate the registration of the module :
     DPP_MODULE_REGISTRATION_INTERFACE(if_module);

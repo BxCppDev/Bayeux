@@ -29,11 +29,9 @@
 namespace dpp {
 
   /// \brief A data processing module for automated utility operations (bank removal)
-  DPP_MODULE_CLASS_DECLARE(utils_module)
+  class utils_module : public base_module
   {
   public:
-
-    DPP_MODULE_INTERFACE_CTOR_DTOR(utils_module);
 
     enum mode_type {
       MODE_INVALID         = 0, //!< Undefined mode
@@ -42,6 +40,23 @@ namespace dpp {
       MODE_REMOVE_BANKS    = 0x4, //!< Remove several banks by label (name)
       MODE_ADD_PROPERTY    = 0x8, //!< Add a property in a bank
     };
+
+    /// Constructor
+    utils_module(datatools::logger::priority = datatools::logger::PRIO_FATAL);
+
+    /// Destructor
+    virtual ~utils_module();
+
+    /// Initialization
+    virtual void initialize(const ::datatools::properties & /* config_ */,
+                            datatools::service_manager & /* service_mgr_ */,
+                            dpp::module_handle_dict_type & /* modules_map_ */);
+
+    /// Reset
+    virtual void reset();
+
+    /// Data record processing
+    virtual process_status process(::datatools::things & /* data_ */);
 
   protected:
 

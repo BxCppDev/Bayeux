@@ -32,6 +32,9 @@
 
 namespace dpp {
 
+  // Registration instantiation macro :
+  DPP_MODULE_REGISTRATION_IMPLEMENT(chain_module, "dpp::chain_module")
+
   bool chain_module::has_module (const std::string & a_label) const
   {
     for (module_list_type::const_iterator i = _modules_.begin ();
@@ -66,19 +69,21 @@ namespace dpp {
 
   /*** Implementation of the interface ***/
 
-  // Constructor :
-  DPP_MODULE_CONSTRUCTOR_IMPLEMENT_HEAD(chain_module,logging_priority_)
+  chain_module::chain_module(datatools::logger::priority logging_priority_)
+    : base_module(logging_priority_)
   {
     return;
   }
 
-  DPP_MODULE_DEFAULT_DESTRUCTOR_IMPLEMENT(chain_module)
+  chain_module::~chain_module()
+  {
+    if (is_initialized()) chain_module::reset();
+    return;
+  }
 
-
-  DPP_MODULE_INITIALIZE_IMPLEMENT_HEAD(chain_module,
-                                       a_config,
-                                       /*a_service_manager*/,
-                                       a_module_dict)
+  void chain_module::initialize(const datatools::properties & a_config,
+                                datatools::service_manager & a_service_manager,
+                                dpp::module_handle_dict_type & a_module_dict)
   {
     DT_THROW_IF(is_initialized (),
                 std::logic_error,
@@ -113,7 +118,7 @@ namespace dpp {
     return;
   }
 
-  DPP_MODULE_RESET_IMPLEMENT_HEAD(chain_module)
+  void chain_module::reset()
   {
     DT_THROW_IF(! is_initialized (),
                 std::logic_error,
@@ -123,7 +128,8 @@ namespace dpp {
     return;
   }
 
-  DPP_MODULE_PROCESS_IMPLEMENT_HEAD(chain_module,the_data_record)
+  base_module::process_status
+  chain_module::process(::datatools::things & the_data_record)
   {
     DT_THROW_IF(! is_initialized (),
                 std::logic_error,
@@ -147,7 +153,7 @@ namespace dpp {
       base_module & a_module = the_handle.grab ();
       a_module.reset_last_error_message ();
       try {
-        int status = a_module.process(the_data_record);
+        process_status status = a_module.process(the_data_record);
         DT_LOG_DEBUG(_logging,"Module='" << module_name << "' " << "status=" << status);
         if (status & PROCESS_FATAL || status & PROCESS_ERROR) {
           // Ask for the abortion of the full event record processing session
@@ -211,9 +217,6 @@ namespace dpp {
     }
     return;
   }
-
-  // Registration instantiation macro :
-  DPP_MODULE_REGISTRATION_IMPLEMENT(chain_module, "dpp::chain_module")
 
 }  // end of namespace dpp
 

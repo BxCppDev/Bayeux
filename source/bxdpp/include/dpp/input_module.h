@@ -1,7 +1,7 @@
 /* input_module.h
  * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2013-08-16
- * Last modified : 2013-08-16
+ * Last modified : 2013-12-13
  *
  * Copyright (C) 2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -44,7 +44,7 @@ namespace dpp {
   class io_common;
 
   /// \brief An input data processing module for automated I/O operations
-  DPP_MODULE_CLASS_DECLARE(input_module)
+  class input_module : public base_module
   {
   public:
 
@@ -64,23 +64,44 @@ namespace dpp {
                                      unsigned int start_ = 0,
                                      int increment_ = 1);
 
-    DPP_MODULE_INTERFACE_CTOR_DTOR(input_module);
+    /// Constructor
+    input_module(datatools::logger::priority = datatools::logger::PRIO_FATAL);
 
-    virtual void tree_dump (std::ostream & a_out         = std::clog,
-                            const std::string & a_title  = "",
-                            const std::string & a_indent = "",
-                            bool a_inherit          = false) const;
+    /// Destructor
+    virtual ~input_module();
 
-    bool is_terminated () const;
+    /// Initialization
+    virtual void initialize(const ::datatools::properties & /* config_ */,
+                            datatools::service_manager & /* service_mgr_ */,
+                            dpp::module_handle_dict_type & /* modules_map_ */);
 
+    /// Reset
+    virtual void reset();
+
+    /// Data record processing
+    virtual process_status process(::datatools::things & /* data_ */);
+
+    /// Smart print
+    virtual void tree_dump(std::ostream & a_out         = std::clog,
+                           const std::string & a_title  = "",
+                           const std::string & a_indent = "",
+                           bool a_inherit          = false) const;
+
+    /// Check input termination
+    bool is_terminated() const;
+
+    /// Return a reference to the non mutable internal I/O data structure
     const io_common & get_common() const;
 
   protected:
 
-    int _load (datatools::things & a_event_record);
+    /// Load a data record
+    process_status _load(datatools::things & a_data_record);
 
-    void _set_defaults ();
+    /// Set default values before explicit settings and initialization
+    void _set_defaults();
 
+    /// Return a reference to the mutable internal I/O data structure
     io_common & _grab_common();
 
   private:

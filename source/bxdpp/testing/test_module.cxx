@@ -41,23 +41,8 @@
  *  data record. It also adds a new data bank named "Test"
  *  and store some properties in it.
  *
- *  The declaration of the module can also be done using dedicated macros:
- *
- *   DPP_MODULE_CLASS_DECLARE(test_module)
- *   {
- *      // Automatic declaration of the basic interface of the module:
- *      DPP_MODULE_INTERFACE();
- *
- *      // Automatic declaration of the registration interface of the module:
- *      DPP_MODULE_REGISTRATION_INTERFACE(test_module, "test_module");
- *
- *      ...
- *
- *   };
- *
  */
-DPP_MODULE_CLASS_DECLARE(test_module)
-//class test_module : public dpp::base_module
+class test_module : public dpp::base_module
 {
  public:
 
@@ -74,20 +59,16 @@ DPP_MODULE_CLASS_DECLARE(test_module)
   // Destructor :
   virtual ~test_module();
 
-  // This macro setup the module standard interface (initialize/reset/process) :
-  DPP_MODULE_INTERFACE();
-  /*
-   * // Initialization method :
-   * virtual void initialize(const datatools::properties & a_config,
-   *                         datatools::service_manager & a_service_manager,
-   *                         module_handle_dict_type & a_module_dictionnary);
-   *
-   * // Termination method :
-   * virtual void reset();
-   *
-   * // Event processing method :
-   * virtual int process(datatools::things & a_data_record);
-   */
+  // Initialization method :
+  virtual void initialize(const datatools::properties & a_config,
+                          datatools::service_manager & a_service_manager,
+                          dpp::module_handle_dict_type & a_module_dictionnary);
+
+  // Termination method :
+  virtual void reset();
+
+  // Event processing method :
+  virtual dpp::base_module::process_status process(datatools::things & a_data_record);
 
  private:
 
@@ -97,78 +78,6 @@ DPP_MODULE_CLASS_DECLARE(test_module)
   DPP_MODULE_REGISTRATION_INTERFACE(test_module);
 
 };
-
-/** The definition of the module can also be done using macros:
- *
- * \code
- * // Automatic instantiation of registration code :
- * DPP_MODULE_REGISTRATION_IMPLEMENT(test_module);
- *
- * // Helper macro for the constructor proposed by default :
- * DPP_MODULE_CONSTRUCTOR_IMPLEMENT_HEAD(test_module,a_logging_priority)
- * {
- *   // specific code to construct internal resources of the module :
- *   ...
- *   return;
- * }
- *
- * // Helper macro for a destructor proposed by default:
- * DPP_MODULE_DEFAULT_DESTRUCTOR_IMPLEMENT(test_module)
- *
- * // Helper macro for the initialization method :
- * DPP_MODULE_INITIALIZE_IMPLEMENT_HEAD(test_module)
- * {
- *   if (is_initialized()) {
- *     std::ostringstream message;
- *     message << "test_module::initialize: "
- *             << "Module '" << get_name () << "' is already initialized ! ";
- *     throw std::logic_error (message.str ());
- *   }
- *
- *   // specific code to initialize internal resources of the module :
- *   ...
- *
- *   _set_initialized (true);
- *   return;
- * }
- *
- * // Helper macro for the termination method :
- * DPP_MODULE_RESET_IMPLEMENT_HEAD (test_module)
- * {
- *   if (! is_initialized ()) {
- *     std::ostringstream message;
- *     message << "test_module::reset: "
- *             << "Module '" << get_name () << "' is not initialized ! ";
- *     throw std::logic_error (message.str ());
- *   }
- *   _set_initialized (false);
- *
- *   // specific code to terminate internal resources of the module :
- *   ...
- *   return;
- * }
- *
- * // Helper macro for the processing method :
- * DPP_MODULE_PROCESS_IMPLEMENT_HEAD (test_module, the_data_record)
- * {
- *   // Where: 'the_data_record' is a non-const reference
- *   // to a 'dpp::things' instance.
- *
- *   if (! is_initialized ()) {
- *     std::ostringstream message;
- *     message << "test_module::process: "
- *             << "Module '" << get_name () << "' is not initialized ! ";
- *     throw std::logic_error (message.str ());
- *   }
- *
- *   // specific code to process the event record :
- *   ...
- *
- *   return 0;
- * }
- * \endcode
- *
- */
 
 // The string used to flag the not-initialized label of the module :
 const std::string test_module::UNINITIALIZED_LABEL = "";
@@ -249,7 +158,8 @@ void test_module::reset ()
 }
 
 // Processing :
-int test_module::process (datatools::things & the_data_record)
+dpp::base_module::process_status
+test_module::process (datatools::things & the_data_record)
 {
   DT_THROW_IF(! is_initialized (),
               std::logic_error,
@@ -279,7 +189,7 @@ int test_module::process (datatools::things & the_data_record)
               << "Could not find any event header !"
               << std::endl;
     // Cannot find the event header :
-    return dpp::PROCESS_ERROR;
+    return dpp::base_module::PROCESS_ERROR;
   }
 
   if (! the_data_record.has ("Test")) {
@@ -292,7 +202,7 @@ int test_module::process (datatools::things & the_data_record)
     test_properties.store ("date", (int) time(0));
   }
 
-  return dpp::PROCESS_OK;
+  return dpp::base_module::PROCESS_OK;
 }
 
 // Registration instantiation macro :
@@ -413,8 +323,8 @@ int main (int argc_, char ** argv_)
         source.load_next_record (DR);
 
         // Processing the event record :
-        int status = TM.process (DR);
-        if (status != dpp::PROCESS_OK) {
+        dpp::base_module::process_status status = TM.process (DR);
+        if (status != dpp::base_module::PROCESS_OK) {
           std::clog << datatools::io::warning
                     << "test_module: Processing has failed for this event record !" << std::endl;
         }

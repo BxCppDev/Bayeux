@@ -76,7 +76,8 @@ namespace dpp {
   /*** Implementation of the interface ***/
 
   // Constructor :
-  DPP_MODULE_CONSTRUCTOR_IMPLEMENT_HEAD(dummy_module,logging_priority_)
+  dummy_module::dummy_module(datatools::logger::priority logging_priority_)
+    : base_module(logging_priority_)
   {
     _flag_name_ = "";
     _GP_label_  = "";
@@ -84,13 +85,16 @@ namespace dpp {
   }
 
   // Destructor :
-  DPP_MODULE_DEFAULT_DESTRUCTOR_IMPLEMENT(dummy_module)
+  dummy_module::~dummy_module()
+  {
+    if (is_initialized()) dummy_module::reset();
+    return;
+  }
 
   // Initialization :
-  DPP_MODULE_INITIALIZE_IMPLEMENT_HEAD(dummy_module,
-                                       a_config,
-                                       /*a_service_manager*/,
-                                       /*a_module_dict*/)
+  void dummy_module::initialize(const datatools::properties & a_config,
+                     datatools::service_manager & /*a_service_manager*/,
+                     dpp::module_handle_dict_type & /*a_module_dict*/)
   {
     DT_THROW_IF(is_initialized (),
                 std::logic_error,
@@ -128,7 +132,7 @@ namespace dpp {
   }
 
   // Reset :
-  DPP_MODULE_RESET_IMPLEMENT_HEAD(dummy_module)
+  void dummy_module::reset()
   {
     DT_THROW_IF(! is_initialized (),
                 std::logic_error,
@@ -140,7 +144,8 @@ namespace dpp {
   }
 
   // Processing :
-  DPP_MODULE_PROCESS_IMPLEMENT_HEAD(dummy_module,the_data_record)
+  base_module::process_status
+  dummy_module::process(::datatools::things & the_data_record)
   {
     DT_THROW_IF(! is_initialized (),
                 std::logic_error,

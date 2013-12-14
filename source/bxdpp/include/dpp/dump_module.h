@@ -1,7 +1,7 @@
 /* dump_module.h
  * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-19
- * Last modified : 2013-05-15
+ * Last modified : 2013-12-13
  *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -31,15 +31,17 @@
 #ifndef DPP_DUMP_MODULE_H_
 #define DPP_DUMP_MODULE_H_ 1
 
-#include <dpp/base_module.h>
-#include <dpp/module_macros.h>
-
+// Third party
+// - Boost
 #include <boost/scoped_ptr.hpp>
+
+// This project
+#include <dpp/base_module.h>
 
 namespace dpp {
 
   /// \brief A data processing module to dump data records
-  DPP_MODULE_CLASS_DECLARE(dump_module)
+  class dump_module : public base_module
   {
   public:
 
@@ -57,8 +59,23 @@ namespace dpp {
     void set_output(const std::string & a_output,
                     const std::string & a_file = "");
 
-    // Constructor :
-    DPP_MODULE_INTERFACE_CTOR_DTOR(dump_module);
+
+    /// Constructor
+    dump_module(datatools::logger::priority = datatools::logger::PRIO_FATAL);
+
+    /// Destructor
+    virtual ~dump_module();
+
+    /// Initialization
+    virtual void initialize(const ::datatools::properties & /* config_ */,
+                            datatools::service_manager & /* service_mgr_ */,
+                            dpp::module_handle_dict_type & /* modules_map_ */);
+
+    /// Reset
+    virtual void reset();
+
+    /// Data record processing
+    virtual process_status process(::datatools::things & /* data_ */);
 
     /// Smart print :
     virtual void tree_dump (std::ostream & a_out         = std::clog,
@@ -68,7 +85,7 @@ namespace dpp {
 
   protected:
 
-    /// Set default internal structure/values
+    /// Set default values before explicit settings and initialization
     void _set_defaults ();
 
     /// Get a reference to the output stream

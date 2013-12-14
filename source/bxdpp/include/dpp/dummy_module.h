@@ -1,7 +1,7 @@
 /* dummy_module.h
  * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-19
- * Last modified : 2013-05-15
+ * Last modified : 2013-12-13
  *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -32,10 +32,11 @@
 #ifndef DPP_DUMMY_MODULE_H_
 #define DPP_DUMMY_MODULE_H_ 1
 
+// Standard library
 #include <string>
 
+// This project
 #include <dpp/base_module.h>
-#include <dpp/module_macros.h>
 
 namespace dpp {
 
@@ -76,12 +77,6 @@ namespace dpp {
      * external agent)
      * \param a_mod_dict a reference to a dictionnary of pre-existing modules
      * (provided by some external agent)
-     *
-     * The module interface (initialize, reset and process methods)
-     * can also be declared with the following macro :
-     * \code
-     * DPP_MODULE_INTERFACE(dummy_module);
-     * \endcode
      */
     virtual void initialize(const datatools::properties & a_properties,
                             datatools::service_manager & a_srv_mgr,
@@ -94,7 +89,7 @@ namespace dpp {
      *  \param a_data_record is a mutable reference to the data model instance to be processed.
      *  \return the error status of the data record processing
      */
-    virtual int process(datatools::things & a_data_record);
+    virtual process_status process(datatools::things & a_data_record);
 
   private:
 

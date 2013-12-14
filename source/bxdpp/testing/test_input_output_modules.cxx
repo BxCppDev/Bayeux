@@ -103,16 +103,16 @@ void test_io_1(bool debug, int max_events)
     datatools::things ER;
 
     // Loading next event record :
-    int status = input.process (ER);
+    dpp::base_module::process_status status = input.process (ER);
     if (debug) {
       std::clog << datatools::io::debug
                 << "test_input_output_modules: Input module processing status = " << status << std::endl;
     }
-    if (status == dpp::PROCESS_FATAL) {
+    if (status == dpp::base_module::PROCESS_FATAL) {
       std::clog << datatools::io::error
                 << "test_input_output_modules: Reader had a fatal error !" << std::endl;
       break;
-    } else if (status == dpp::PROCESS_ERROR) {
+    } else if (status == dpp::base_module::PROCESS_ERROR) {
       std::clog << datatools::io::error
                 << "test_input_output_modules: Reader had an error !" << std::endl;
       break;
@@ -139,11 +139,11 @@ void test_io_1(bool debug, int max_events)
     // Handle output :
     if (! output.is_terminated()) {
       status = output.process (ER);
-      if (status == dpp::PROCESS_FATAL) {
+      if (status == dpp::base_module::PROCESS_FATAL) {
         std::clog << datatools::io::error
                   << "test_input_output_modules: Writer had a fatal error !" << std::endl;
         break;
-      } else if (status == dpp::PROCESS_ERROR) {
+      } else if (status == dpp::base_module::PROCESS_ERROR) {
         std::clog << datatools::io::error
                   << "test_input_output_modules: Writer had an error !" << std::endl;
         break;
@@ -220,11 +220,11 @@ void test_io_2(bool debug, int max_events)
       std::clog << datatools::io::debug
                 << "test_input_output_modules: Input module processing status = " << status << std::endl;
     }
-    if (status == dpp::PROCESS_FATAL) {
+    if (status == dpp::base_module::PROCESS_FATAL) {
       std::clog << datatools::io::error
                 << "test_input_output_modules: Reader had a fatal error !" << std::endl;
       break;
-    } else if (status == dpp::PROCESS_ERROR) {
+    } else if (status == dpp::base_module::PROCESS_ERROR) {
       std::clog << datatools::io::error
                 << "test_input_output_modules: Reader had an error !" << std::endl;
       break;
@@ -251,11 +251,11 @@ void test_io_2(bool debug, int max_events)
     // Handle output :
     if (! output.is_terminated()) {
       status = output.process (ER);
-      if (status == dpp::PROCESS_FATAL) {
+      if (status == dpp::base_module::PROCESS_FATAL) {
         std::clog << datatools::io::error
                   << "test_input_output_modules: Writer had a fatal error !" << std::endl;
         break;
-      } else if (status == dpp::PROCESS_ERROR) {
+      } else if (status == dpp::base_module::PROCESS_ERROR) {
         std::clog << datatools::io::error
                   << "test_input_output_modules: Writer had an error !" << std::endl;
         break;

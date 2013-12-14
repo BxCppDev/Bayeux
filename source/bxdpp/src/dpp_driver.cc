@@ -374,7 +374,7 @@ namespace dpp {
           break;
         }
         int input_status = _source_->process (DR);
-        if (input_status != dpp::PROCESS_OK) {
+        if (input_status != dpp::base_module::PROCESS_OK) {
           DT_LOG_ERROR(_logging_, "Source of data records had an error ! Break !");
           break;
         }
@@ -386,18 +386,18 @@ namespace dpp {
 
       // Process the data record using the choosen processing module :
       DT_LOG_DEBUG(_logging_, "Processing the data record...");
-      int processing_status = dpp::PROCESS_OK;
+      int processing_status = dpp::base_module::PROCESS_OK;
       try {
         BOOST_FOREACH (dpp::base_module * active_module_ptr, _modules_) {
           dpp::base_module & the_active_module = *active_module_ptr;
           processing_status = the_active_module.process (DR);
           DT_LOG_DEBUG(_logging_, "Processing status : " << processing_status);
-          if (processing_status & dpp::PROCESS_FATAL) {
+          if (processing_status & dpp::base_module::PROCESS_FATAL) {
             // A fatal error has been met, we break the processing loop :
             DT_LOG_FATAL(_logging_, "Processing of data record #" << record_counter << " met a fatal error. Break !");
             do_break_record_loop = true;
             error_code = EXIT_FAILURE;
-          } else if (processing_status & dpp::PROCESS_ERROR) {
+          } else if (processing_status & dpp::base_module::PROCESS_ERROR) {
             // A non-fatal error has been met, we warn and
             // skip to the next data record :
             DT_LOG_ERROR(_logging_, "Processing of data record #" << record_counter << " failed.");
@@ -407,7 +407,7 @@ namespace dpp {
               error_code = EXIT_FAILURE;
               DT_LOG_FATAL(_logging_, "Error promoted as fatal; forcing termination... Break !");
            }
-          } else if (processing_status & dpp::PROCESS_STOP) {
+          } else if (processing_status & dpp::base_module::PROCESS_STOP) {
             DT_LOG_WARNING(_logging_, "Processing of data record #" << record_counter << " stopped at some stage.");
           }
           if (do_break_record_loop) {
@@ -422,13 +422,13 @@ namespace dpp {
       // Manage the sink if any :
       if (_sink_ && ! _sink_->is_terminated ()) {
         bool save_it = true;
-        if (processing_status & dpp::PROCESS_STOP) {
+        if (processing_status & dpp::base_module::PROCESS_STOP) {
           save_it = _params_.save_stopped_data_records;
         }
         if (save_it) {
           // Save the processed data record in the sink :
           int output_status = _sink_->process (DR);
-          if (output_status != dpp::PROCESS_OK) {
+          if (output_status != dpp::base_module::PROCESS_OK) {
             DT_LOG_ERROR(_logging_, "Error while storing data record #" << record_counter << " !");
           }
           stored_counter++;

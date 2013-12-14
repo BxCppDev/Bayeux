@@ -1,7 +1,7 @@
 /* output_module.h
  * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2013-08-16
- * Last modified : 2013-08-16
+ * Last modified : 2013-12-13
  *
  * Copyright (C) 2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -40,25 +40,45 @@
 
 namespace dpp {
 
+  // Forward declarations
   class i_data_sink;
   class io_common;
 
   /// \brief A output data processing module for automated I/O operations
-  DPP_MODULE_CLASS_DECLARE(output_module)
+  class output_module : public base_module
   {
   public:
 
-    DPP_MODULE_INTERFACE_CTOR_DTOR(output_module);
+    /// Constructor
+    output_module(datatools::logger::priority = datatools::logger::PRIO_FATAL);
 
+    /// Destructor
+    virtual ~output_module();
+
+    /// Initialization
+    virtual void initialize(const ::datatools::properties & /* config_ */,
+                            datatools::service_manager & /* service_mgr_ */,
+                            dpp::module_handle_dict_type & /* modules_map_ */);
+
+    /// Reset
+    virtual void reset();
+
+    /// Data record processing
+    virtual process_status process(::datatools::things & /* data_ */);
+
+    /// Set limits
     void set_limits(int max_record_total_,
                     int max_record_per_file_ = 0,
                     int max_files_ = -1);
 
+    /// Set the filename of a single output file
     void set_single_output_file(const std::string & filepath_);
 
+    /// Set the filenames of a list of output files
     void set_list_of_output_files(const std::vector<std::string> & filepaths_,
                                   bool allow_duplicate_ = false);
 
+    /// Set the incremented filenames of output files
     void set_incremental_output_files(const std::string & path_,
                                       const std::string & prefix_,
                                       const std::string & extension_,
@@ -66,23 +86,30 @@ namespace dpp {
                                       unsigned int start_ = 0,
                                       int increment_ = 1);
 
-    void set_preserve_existing_output (bool a_preserve_existing_output);
+    /// Set the flag for preserving existing output file (prevent from file overwriting)
+    void set_preserve_existing_output(bool a_preserve_existing_output);
 
-    virtual void tree_dump (std::ostream & a_out         = std::clog,
-                            const std::string & a_title  = "",
-                            const std::string & a_indent = "",
-                            bool a_inherit          = false) const;
+    /// Smart print
+    virtual void tree_dump(std::ostream & a_out         = std::clog,
+                           const std::string & a_title  = "",
+                           const std::string & a_indent = "",
+                           bool a_inherit          = false) const;
 
-    bool is_terminated () const;
+    /// Check output termination
+    bool is_terminated() const;
 
+    /// Return a reference to the non mutable  internal I/O data structure
     const io_common & get_common() const;
 
   protected:
 
-    int _store (const datatools::things & a_event_record);
+    /// Store a data record
+    process_status _store(const datatools::things & a_data_record);
 
-    void _set_defaults ();
+    /// Set default values before explicit settings and initialization
+    void _set_defaults();
 
+    /// Return a reference to the mutable internal I/O data structure
     io_common & _grab_common();
 
   private:

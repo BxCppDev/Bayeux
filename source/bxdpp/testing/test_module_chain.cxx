@@ -278,8 +278,8 @@ int main (int argc_, char ** argv_)
               source.load_next_record (DR);
               if (debug) std::clog << datatools::io::debug
                                    << "Processing the event record..." << std::endl;
-              int status = the_module.process (DR);
-              if (status & dpp::PROCESS_ERROR)
+              dpp::base_module::process_status status = the_module.process (DR);
+              if (status & dpp::base_module::PROCESS_ERROR)
                 {
                   std::cerr << datatools::io::error
                             << "Error at processing event record #"

@@ -1,7 +1,7 @@
 /* skip_module.h
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-19
- * Last modified : 2013-05-15
+ * Last modified : 2013-12-13
  *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -31,24 +31,40 @@
 #ifndef DPP_SKIP_MODULE_H_
 #define DPP_SKIP_MODULE_H_ 1
 
+// This project
 #include <dpp/base_module.h>
-#include <dpp/module_macros.h>
 
 namespace dpp {
 
   /// \brief A data processing module to skip some data records
-  DPP_MODULE_CLASS_DECLARE(skip_module)
+  class skip_module : public base_module
   {
   public:
 
-    DPP_MODULE_INTERFACE_CTOR_DTOR(skip_module);
-
+    /// Skip mode
     enum mode_type
     {
       SKIP_MODE_INVALID  = 0,
       SKIP_MODE_INTERVAL = 1,
       MODE_DEFAULT = SKIP_MODE_INTERVAL
     };
+
+    /// Constructor
+    skip_module(datatools::logger::priority = datatools::logger::PRIO_FATAL);
+
+    /// Destructor
+    virtual ~skip_module();
+
+    /// Initialization
+    virtual void initialize(const ::datatools::properties & /* config_ */,
+                            datatools::service_manager & /* service_mgr_ */,
+                            dpp::module_handle_dict_type & /* modules_map_ */);
+
+    /// Reset
+    virtual void reset();
+
+    /// Data record processing
+    virtual process_status process(::datatools::things & /* data_ */);
 
     /// \brief Internal class of the skip_module class
     struct module_entry
@@ -73,15 +89,16 @@ namespace dpp {
 
   protected:
 
+    /// Set default values before explicit settings and initialization
     void _set_defaults ();
 
   private:
 
     module_entry       _module_;   //!< The module
-    int                _counter_;
-    int                _first_;
-    int                _last_;
-    bool               _inverted_;
+    int                _counter_;  //!< Data record counter
+    int                _first_; //!< First data record to be skipped
+    int                _last_; //!< Last data record to be skipped
+    bool               _inverted_; //!< Invert data record selection flag
 
     // Macro to automate the registration of the module :
     DPP_MODULE_REGISTRATION_INTERFACE(skip_module);

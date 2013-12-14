@@ -141,20 +141,23 @@ namespace dpp {
   }
 
   // Constructor :
-  DPP_MODULE_CONSTRUCTOR_IMPLEMENT_HEAD(output_module,logging_priority_)
+  output_module::output_module(datatools::logger::priority logging_priority_)
+    : base_module(logging_priority_)
   {
     _set_defaults ();
     return;
   }
 
-
-  DPP_MODULE_DEFAULT_DESTRUCTOR_IMPLEMENT(output_module)
+  output_module::~output_module()
+  {
+    if (is_initialized()) output_module::reset();
+    return;
+  }
 
   // Initialization :
-  DPP_MODULE_INITIALIZE_IMPLEMENT_HEAD(output_module,
-                                       a_config,
-                                       a_service_manager,
-                                       /*a_module_dict*/)
+  void output_module::initialize(const datatools::properties & a_config,
+                                 datatools::service_manager & a_service_manager,
+                                 dpp::module_handle_dict_type & /*a_module_dict*/)
   {
     DT_THROW_IF(is_initialized (),
                 std::logic_error,
@@ -184,11 +187,14 @@ namespace dpp {
   }
 
   // Reset :
-  DPP_MODULE_RESET_IMPLEMENT_HEAD(output_module)
+  void output_module::reset()
   {
     DT_THROW_IF(! is_initialized (),
                 std::logic_error,
                 "Output module '" << get_name () << "' is not initialized !");
+
+    // Tag the module as un-initialized :
+    _set_initialized (false);
 
     /****************************
      *  revert to some defaults *
@@ -210,13 +216,12 @@ namespace dpp {
      *  end of the reset step   *
      ****************************/
 
-    // Tag the module as un-initialized :
-    _set_initialized (false);
     return;
   }
 
   // Processing :
-  DPP_MODULE_PROCESS_IMPLEMENT_HEAD(output_module, a_data_record)
+  base_module::process_status
+  output_module::process(::datatools::things & a_data_record)
   {
     DT_THROW_IF(! is_initialized(),
                 std::logic_error,
@@ -227,9 +232,10 @@ namespace dpp {
     return PROCESS_OK;
   }
 
-  int output_module::_store (const datatools::things & a_event_record)
+  base_module::process_status
+  output_module::_store (const datatools::things & a_event_record)
   {
-    int store_status = PROCESS_OK;
+    process_status store_status = PROCESS_OK;
     if (_sink_ == 0) {
       _grab_common().set_file_index(get_common().get_file_index()+1);
       if (get_common().get_file_index() >= (int)get_common().get_filenames().size ()) {

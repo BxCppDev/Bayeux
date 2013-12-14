@@ -131,20 +131,23 @@ namespace dpp {
   }
 
   // Constructor :
-  DPP_MODULE_CONSTRUCTOR_IMPLEMENT_HEAD(input_module,logging_priority_)
+  input_module::input_module(datatools::logger::priority logging_priority_)
+    : base_module(logging_priority_)
   {
     _set_defaults ();
     return;
   }
 
-
-  DPP_MODULE_DEFAULT_DESTRUCTOR_IMPLEMENT(input_module)
+  input_module::~input_module()
+  {
+    if (is_initialized()) input_module::reset();
+    return;
+  }
 
   // Initialization :
-  DPP_MODULE_INITIALIZE_IMPLEMENT_HEAD(input_module,
-                                       a_config,
-                                       a_service_manager,
-                                       /*a_module_dict*/)
+  void input_module::initialize(const datatools::properties & a_config,
+                                datatools::service_manager & a_service_manager,
+                                dpp::module_handle_dict_type & /*a_module_dict*/)
   {
     DT_THROW_IF(is_initialized (),
                 std::logic_error,
@@ -170,11 +173,14 @@ namespace dpp {
   }
 
   // Reset :
-  DPP_MODULE_RESET_IMPLEMENT_HEAD(input_module)
+  void input_module::reset()
   {
     DT_THROW_IF(! is_initialized (),
                 std::logic_error,
                 "Input module '" << get_name () << "' is not initialized !");
+
+    // Tag the module as un-initialized :
+    _set_initialized (false);
 
     /****************************
      *  revert to some defaults *
@@ -196,13 +202,12 @@ namespace dpp {
      *  end of the reset step   *
      ****************************/
 
-    // Tag the module as un-initialized :
-    _set_initialized (false);
     return;
   }
 
   // Processing :
-  DPP_MODULE_PROCESS_IMPLEMENT_HEAD(input_module, a_data_record)
+  base_module::process_status
+  input_module::process(::datatools::things & a_data_record)
   {
     DT_THROW_IF(! is_initialized(),
                 std::logic_error,
@@ -210,12 +215,13 @@ namespace dpp {
     return _load(a_data_record);
   }
 
-  int input_module::_load (datatools::things & a_event_record)
+  base_module::process_status
+  input_module::_load (datatools::things & a_data_record)
   {
     DT_LOG_TRACE(_logging, "Entering...");
     DT_LOG_TRACE(_logging, "filenames.size () = " << get_common().get_filenames().size ());
     // attempt to open a source of event records :
-    int load_status = PROCESS_OK;
+    process_status load_status = PROCESS_OK;
     while (_source_ == 0) {
       _grab_common().set_file_record_counter(0);
       _grab_common().set_file_index(get_common().get_file_index()+1);
@@ -250,18 +256,18 @@ namespace dpp {
     // load action :
     if (load_it) {
       // Check if
-      if ((a_event_record.size () > 0)) {
+      if ((a_data_record.size () > 0)) {
         load_status = PROCESS_ERROR;
         return load_status;
       }
-      a_event_record.clear ();
+      a_data_record.clear ();
       DT_THROW_IF(_source_ == 0,
                   std::logic_error,
                   "No available data source ! This is a bug !");
       DT_THROW_IF(! _source_->has_next_record (),
                   std::logic_error,
                   "No more available event record ! This is a bug !");
-      _source_->load_next_record (a_event_record);
+      _source_->load_next_record (a_data_record);
       _grab_common().set_file_record_counter(get_common().get_file_record_counter()+1);
       _grab_common().set_record_counter(get_common().get_record_counter()+1);
     }

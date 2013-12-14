@@ -80,12 +80,12 @@ namespace dpp {
     return ! (_else_status_ & PROCESS_INVALID);
   }
 
-  void if_module::set_then_status(int status_)
+  void if_module::set_then_status(process_status status_)
   {
     DT_THROW_IF(is_initialized (),
                 std::logic_error,
                 "If module '" << get_name () << "' is initialized !");
-    const processing_status_flags_type status = (processing_status_flags_type)status_;
+    const process_status status = status_;
     DT_THROW_IF(status != PROCESS_INVALID
                 && status != PROCESS_CONTINUE
                 && status != PROCESS_STOP,
@@ -98,12 +98,12 @@ namespace dpp {
     return;
   }
 
-  void if_module::set_else_status (int status_)
+  void if_module::set_else_status (process_status status_)
   {
     DT_THROW_IF(is_initialized (),
                 std::logic_error,
                 "If module '" << get_name () << "' is initialized !");
-    const processing_status_flags_type status = (processing_status_flags_type)status_;
+    const process_status status = status_;
     DT_THROW_IF(status != PROCESS_INVALID
                 && status != PROCESS_CONTINUE
                 && status != PROCESS_STOP,
@@ -161,19 +161,22 @@ namespace dpp {
   /*** Implementation of the interface ***/
 
   // Constructor :
-  DPP_MODULE_CONSTRUCTOR_IMPLEMENT_HEAD(if_module,logging_priority_)
+  if_module::if_module(datatools::logger::priority logging_priority_)
   {
     _set_defaults ();
     return;
   }
 
-  DPP_MODULE_DEFAULT_DESTRUCTOR_IMPLEMENT(if_module)
+  if_module::~if_module()
+  {
+    if (is_initialized()) if_module::reset();
+    return;
+  }
 
   // Initialization :
-  DPP_MODULE_INITIALIZE_IMPLEMENT_HEAD(if_module,
-                                       a_config,
-                                       a_service_manager,
-                                       a_module_dict)
+  void if_module::initialize(const datatools::properties & a_config,
+                             datatools::service_manager & a_service_manager,
+                             dpp::module_handle_dict_type & a_module_dict)
   {
     DT_THROW_IF(is_initialized (),
                 std::logic_error,
@@ -289,7 +292,7 @@ namespace dpp {
   }
 
   // Reset :
-  DPP_MODULE_RESET_IMPLEMENT_HEAD(if_module)
+  void if_module::reset()
   {
     DT_THROW_IF(! is_initialized (),
                 std::logic_error,
@@ -305,13 +308,14 @@ namespace dpp {
   }
 
   // Processing :
-  DPP_MODULE_PROCESS_IMPLEMENT_HEAD(if_module,the_data_record)
+  base_module::process_status
+  if_module::process(::datatools::things & the_data_record)
   {
     DT_THROW_IF(! is_initialized (),
                 std::logic_error,
                 "If module '" << get_name () << "' is not initialized !");
     this->reset_last_error_message ();
-    int process_status = PROCESS_ERROR;
+    process_status status = PROCESS_ERROR;
     cuts::i_cut & the_cut = _condition_cut_.handle.grab ();
     // Prepare the user data to be checked by the active 'cut':
     the_cut.set_user_data<datatools::things>(the_data_record);
@@ -323,46 +327,44 @@ namespace dpp {
     // Check the cut's returned value:
     if (cut_status == cuts::SELECTION_INAPPLICABLE) {
       DT_LOG_DEBUG(_logging, "Cut '" << _condition_cut_.label << "' was inapplicable.");
-      process_status = PROCESS_STOP & PROCESS_ERROR;
+      status = PROCESS_ERROR_STOP;
     } else if (cut_status == cuts::SELECTION_ACCEPTED) {
       DT_LOG_DEBUG(_logging, "Cut '" << _condition_cut_.label << "' has been checked.");
-      process_status = PROCESS_SUCCESS;
-      const processing_status_flags_type then_status = (processing_status_flags_type)_then_status_;
+      status = PROCESS_SUCCESS;
+      const process_status then_status = _then_status_;
       if (then_status != PROCESS_INVALID) {
         if (then_status == PROCESS_CONTINUE) {
-          process_status = PROCESS_SUCCESS;
+          status = PROCESS_SUCCESS;
         } else {
-          process_status = PROCESS_STOP;
+          status = PROCESS_STOP;
         }
       } else {
         base_module & the_then_module = _then_module_.handle.grab ();
         DT_LOG_DEBUG(_logging, "Applying module '" << _then_module_.label << "'...");
         the_then_module.reset_last_error_message ();
-        process_status = the_then_module.process (the_data_record);
+        status = the_then_module.process (the_data_record);
       }
-      return process_status;
+      return status;
     } else {
       DT_LOG_DEBUG(_logging, "Cut '" << _condition_cut_.label << "' has NOT been checked.");
-      process_status = PROCESS_SUCCESS;
-      const processing_status_flags_type else_status = (processing_status_flags_type)_else_status_;
+      status = PROCESS_SUCCESS;
+      const process_status else_status = _else_status_;
       if (else_status != PROCESS_INVALID) {
         if (else_status == PROCESS_CONTINUE) {
-          process_status = PROCESS_SUCCESS;
+          status = PROCESS_SUCCESS;
         } else {
-          process_status = PROCESS_STOP;
+          status = PROCESS_STOP;
         }
       } else {
         if (_else_module_.handle) {
           base_module & the_else_module = _else_module_.handle.grab ();
           DT_LOG_DEBUG(_logging, "Applying module '" << _else_module_.label << "'...");
           the_else_module.reset_last_error_message ();
-          process_status = the_else_module.process (the_data_record);
+          status = the_else_module.process (the_data_record);
         }
       }
-      // return process_status;
     }
-    return process_status;
-    //return PROCESS_ERROR;
+    return status;
   }
 
   void if_module::tree_dump (std::ostream      & out_,

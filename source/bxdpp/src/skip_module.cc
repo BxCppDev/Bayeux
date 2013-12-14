@@ -82,20 +82,24 @@ namespace dpp {
   /*** Implementation of the interface ***/
 
   // Constructor :
-  DPP_MODULE_CONSTRUCTOR_IMPLEMENT_HEAD(skip_module,logging_priority_)
+  skip_module::skip_module(datatools::logger::priority logging_priority_)
+    : base_module(logging_priority_)
   {
     _set_defaults ();
     return;
   }
 
   // Destructor :
-  DPP_MODULE_DEFAULT_DESTRUCTOR_IMPLEMENT(skip_module)
+  skip_module::~skip_module()
+  {
+    if (is_initialized()) skip_module::reset();
+    return;
+  }
 
   // Initialization :
-  DPP_MODULE_INITIALIZE_IMPLEMENT_HEAD(skip_module,
-                                       a_config,
-                                       /*a_service_manager*/,
-                                       a_module_dict)
+  void skip_module::initialize(const datatools::properties & a_config,
+                               datatools::service_manager & /* a_service_manager */,
+                               dpp::module_handle_dict_type & a_module_dict)
   {
     DT_THROW_IF(is_initialized (),
                 std::logic_error,
@@ -166,19 +170,20 @@ namespace dpp {
   }
 
   // Reset :
-  DPP_MODULE_RESET_IMPLEMENT_HEAD(skip_module)
+  void skip_module::reset()
   {
     DT_THROW_IF(! is_initialized (),
                 std::logic_error,
                 "Skip module '" << get_name () << "' is not initialized !");
-    _module_.handle.reset ();
-    _set_defaults ();
-    _set_initialized (false);
+    _set_initialized(false);
+    _module_.handle.reset();
+    _set_defaults();
     return;
   }
 
   // Processing :
-  DPP_MODULE_PROCESS_IMPLEMENT_HEAD(skip_module,the_data_record)
+  base_module::process_status
+  skip_module::process(::datatools::things & the_data_record)
   {
     DT_THROW_IF(! is_initialized (),
                 std::logic_error,
@@ -196,7 +201,7 @@ namespace dpp {
     if (_inverted_) {
       process_module = ! process_module;
     }
-    int status = PROCESS_SUCCESS;
+    process_status status = PROCESS_SUCCESS;
     if (process_module) {
       base_module & a_module = _module_.handle.grab ();
       try {
