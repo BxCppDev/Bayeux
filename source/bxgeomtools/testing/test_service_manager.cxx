@@ -28,7 +28,6 @@
 #include <datatools/utils.h>
 
 #include <datatools/base_service.h>
-#include <datatools/service_macros.h>
 #include <datatools/service_manager.h>
 
 #include <geomtools/geometry_service.h>
