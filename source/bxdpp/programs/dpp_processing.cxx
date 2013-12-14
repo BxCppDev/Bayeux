@@ -83,10 +83,15 @@ int main (int argc_, char ** argv_)
     bool run = true;
     ui::build_opts(opts, DP);
 
+    // Describe command line arguments :
+    po::positional_options_description args;
+    args.add ("input-file", -1);
+
     po::variables_map vm;
     po::parsed_options parsed =
       po::command_line_parser(argc_, argv_)
       .options(opts)
+      .positional(args)
       .allow_unregistered()
       .run();
     /*
