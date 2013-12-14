@@ -37,7 +37,6 @@
 #include <datatools/factory_macros.h>
 
 #include <dpp/base_module.h>
-#include <dpp/module_macros.h>
 #include <dpp/simple_data_source.h>
 #include <dpp/simple_data_sink.h>
 #include <dpp/dummy_module.h>

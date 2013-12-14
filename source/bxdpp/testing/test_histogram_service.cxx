@@ -31,7 +31,6 @@
 #include <datatools/clhep_units.h>
 
 #include <datatools/base_service.h>
-#include <datatools/service_macros.h>
 #include <datatools/service_manager.h>
 
 #include <dpp/histogram_service.h>
