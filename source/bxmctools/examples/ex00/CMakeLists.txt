@@ -24,14 +24,6 @@ find_package(Bayeux 1.0.0 REQUIRED)
 set(_incs ${Bayeux_INCLUDE_DIRS})
 set(_libs ${Bayeux_LIBRARIES})
 
-# - mctools :
-#if (NOT mctools_DIR)
-#  execute_process(COMMAND mctools-config --prefix
-#                  OUTPUT_VARIABLE mctools_DIR )
-#endif()
-
-#find_package(mctools 1.0.0 REQUIRED)
-
 include_directories(${PROJECT_SOURCE_DIR} ${_incs})
 
 add_library(mctools_ex00 SHARED ex00_inspector.h ex00_inspector.cc)
