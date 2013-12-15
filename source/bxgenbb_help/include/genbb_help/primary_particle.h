@@ -55,7 +55,7 @@
 
 namespace genbb {
 
-  struct primary_particle
+  class primary_particle
     : DATATOOLS_SERIALIZABLE_CLASS,
       public datatools::i_tree_dumpable
   {
