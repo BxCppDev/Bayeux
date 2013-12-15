@@ -58,8 +58,8 @@ BOOST_MPL_HAS_XXX_TRAIT_DEF(load);
 namespace datatools {
 
   template <typename ConfigurableType>
-  bool load_ocd(::datatools::object_configuration_description & ocd_,
-                typename boost::disable_if< has_load< ::datatools::detail::ocd::loader<ConfigurableType> > >::type* dummy = 0)
+  bool load_ocd(::datatools::object_configuration_description & /*ocd_*/,
+                typename boost::disable_if< has_load< ::datatools::detail::ocd::loader<ConfigurableType> > >::type* /*dummy*/ = 0)
   {
     return false;
   }
