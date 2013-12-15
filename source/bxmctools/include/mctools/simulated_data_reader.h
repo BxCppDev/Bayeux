@@ -82,7 +82,7 @@ namespace mctools {
     simulated_data_reader(datatools::logger::priority logging_ = datatools::logger::PRIO_FATAL);
 
     /// Destructor
-    ~simulated_data_reader();
+    virtual ~simulated_data_reader();
 
     /// Check if reader is initialized
     bool is_initialized() const;
