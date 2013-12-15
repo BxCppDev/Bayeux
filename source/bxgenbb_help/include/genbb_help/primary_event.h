@@ -53,7 +53,7 @@
 
 namespace genbb {
 
-  struct primary_event
+  class primary_event
     : DATATOOLS_SERIALIZABLE_CLASS,
       public datatools::i_tree_dumpable
   {
