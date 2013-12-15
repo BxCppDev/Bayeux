@@ -151,7 +151,6 @@ namespace mctools {
 
     bool                         _initialized_;     /// Initialized flag
     datatools::logger::priority  _logging_priority_;/// Logging priority threshold
-    bool                         _debug_;           /// Debug flag
     std::string                  _description_;     /// Description
     datatools::service_manager * _service_manager_; /// Service manager
     const geomtools::manager   * _geom_manager_;    /// Geometry manager

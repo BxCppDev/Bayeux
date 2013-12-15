@@ -428,7 +428,6 @@ namespace mctools {
       const datatools::multi_properties * _multi_config_;   /// Setup parameters
 
       // User interface mode:
-      int  _user_mode_; /// User mode
       bool _interactive_; /// Flag for interactive session
       bool _g4_visualization_; /// Flag to activate Geant4 visualization
       bool _use_event_number_as_seed_; // not used
