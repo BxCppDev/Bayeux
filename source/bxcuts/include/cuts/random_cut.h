@@ -17,7 +17,6 @@
 #define CUTS_RANDOM_CUT_H_ 1
 
 #include <cuts/i_cut.h>
-#include <cuts/cut_macros.h>
 
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_real.hpp>
@@ -25,7 +24,6 @@
 
 namespace cuts {
 
-  //CUT_CLASS_DECLARE (accept_cut)
   /// \brief A cut that randomly accepts
   class random_cut : public i_cut
   {
@@ -33,8 +31,25 @@ namespace cuts {
   public:
     typedef boost::mt19937 base_generator_type;
 
-    // ctor:
-    CUT_INTERFACE_CTOR_DTOR(random_cut);
+    /// Constructor
+    random_cut(datatools::logger::priority a_logging_priority =
+               datatools::logger::PRIO_FATAL);
+
+    /// Destructor
+    virtual ~random_cut();
+
+    /// Initialization
+    virtual void initialize(const datatools::properties &,
+                            datatools::service_manager &,
+                            cuts::cut_handle_dict_type &);
+
+    /// Reset
+    virtual void reset();
+
+  protected :
+
+    /// Selection
+    virtual int _accept();
 
   private:
 

@@ -21,12 +21,21 @@
 namespace cuts {
 
   /// \brief The AND binary cut
-  class and_cut : public i_binary_cut
+  class and_cut : public cuts::i_binary_cut
   {
   public:
 
-    /// Cut interface macro
-    CUT_INTERFACE_NOINIT_NORESET_CTOR_DTOR(and_cut);
+    /// Constructor
+    and_cut(datatools::logger::priority a_logging_priority =
+            datatools::logger::PRIO_FATAL);
+
+    /// Destructor
+    virtual ~and_cut();
+
+  protected :
+
+    /// Selection
+    virtual int _accept();
 
   private:
 

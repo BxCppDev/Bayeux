@@ -23,9 +23,15 @@ namespace cuts {
     return;
   }
 
-  CUT_DEFAULT_DESTRUCTOR_IMPLEMENT(multi_xor_cut)
+  multi_xor_cut::~multi_xor_cut()
+  {
+    if (is_initialized()) {
+      this->multi_xor_cut::reset();
+    }
+    return;
+  }
 
-  CUT_ACCEPT_IMPLEMENT_HEAD(multi_xor_cut)
+  int multi_xor_cut::_accept()
   {
     int status = SELECTION_REJECTED;
     DT_LOG_TRACE(_logging,"Entering: accept for multi-XOR cut named  '" << (has_name()? get_name() : "?") << "'");

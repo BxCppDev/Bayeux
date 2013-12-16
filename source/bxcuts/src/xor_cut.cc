@@ -23,9 +23,15 @@ namespace cuts {
   }
 
   // dtor:
-  CUT_DEFAULT_DESTRUCTOR_IMPLEMENT (xor_cut)
+  xor_cut::~xor_cut()
+  {
+    if (is_initialized()) {
+      this->xor_cut::reset();
+    }
+    return;
+  }
 
-  CUT_ACCEPT_IMPLEMENT_HEAD(xor_cut)
+  int xor_cut::_accept()
   {
     int status_1 = _handle_1.grab ().process();
     int status_2 = _handle_2.grab ().process();

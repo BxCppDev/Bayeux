@@ -60,8 +60,6 @@ namespace cuts {
 
   class i_cut;
 
-  //typedef std::map<std::string, i_cut *> cut_dict_type;
-
   typedef datatools::handle<i_cut> cut_handle_type;
 
   class cut_manager;
@@ -80,13 +78,6 @@ namespace cuts {
       STATUS_CREATED     = datatools::bit_mask::bit00,
       STATUS_INITIALIZED = datatools::bit_mask::bit01,
     };
-
-    // std::string                  cut_name;    //!< The name of the cut
-    // std::string                  cut_id;      //!< The ID (type) of the cut
-    // datatools::properties        cut_config;  //!< The configuration of the cut
-    // uint32_t                     cut_status;  //!< The status of the cut
-    // cut_handle_type              cut_handle;  //!< The handle for the allocated cut
-
 
     const datatools::properties & get_cut_config () const;
 

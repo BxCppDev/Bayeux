@@ -18,21 +18,24 @@ void color_cut::set_color (int color_)
   return;
 }
 
-// ctor:
-CUT_CONSTRUCTOR_IMPLEMENT_HEAD(color_cut,a_logging_priority)
+color_cut::color_cut(datatools::logger::priority a_logger_priority)
+  : i_cut(a_logger_priority)
 {
   _color_ = data::COLOR_BLACK;
   return;
 }
 
-// Destructor
-CUT_DEFAULT_DESTRUCTOR_IMPLEMENT (color_cut)
+color_cut::~color_cut()
+{
+  if (is_initialized()) {
+    this->color_cut::reset();
+  }
+  return;
+}
 
-// static method used within a cut factory:
-CUT_INITIALIZE_IMPLEMENT_HEAD (color_cut,
-                               a_configuration,
-                               a_service_manager,
-                               a_cut_dict)
+void color_cut::initialize(const datatools::properties & a_configuration,
+                            datatools::service_manager & /*a_service_manager*/,
+                            cuts::cut_handle_dict_type & /*a_cut_dict*/)
 {
   DT_THROW_IF(is_initialized (),
               std::logic_error,
@@ -62,7 +65,7 @@ CUT_INITIALIZE_IMPLEMENT_HEAD (color_cut,
   return;
 }
 
-CUT_RESET_IMPLEMENT_HEAD (color_cut)
+void color_cut::reset()
 {
   _set_initialized(false);
   _color_ = data::COLOR_BLACK;
@@ -70,7 +73,7 @@ CUT_RESET_IMPLEMENT_HEAD (color_cut)
   return;
 }
 
-CUT_ACCEPT_IMPLEMENT_HEAD (color_cut)
+int color_cut::_accept()
 {
   DT_THROW_IF(! is_initialized (),
               std::logic_error,

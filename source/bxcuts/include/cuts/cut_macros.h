@@ -1,7 +1,7 @@
 /* cut_macros.h
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
- * Last modified : 2013-05-16
+ * Last modified : 2013-12-14
  *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -134,19 +134,6 @@
   CUT_CONSTRUCTOR_DECLARE(T);                     \
   CUT_DESTRUCTOR_DECLARE(T);                      \
   CUT_ACCEPT_DECLARE();                           \
-  /**/
-
-/*** Macros for interface/implementation of static creator methods in cut classes ***/
-
-/** Registration */
-
-#define CUT_REGISTRATION_INTERFACE(T)                                   \
-  private:                                                              \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::cuts::i_cut,T); \
-  /**/
-
-#define CUT_REGISTRATION_IMPLEMENT(T,CutID)                             \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::cuts::i_cut,T,CutID); \
   /**/
 
 #endif // CUTS_CUT_MACROS_H_

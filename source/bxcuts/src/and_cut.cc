@@ -23,9 +23,15 @@ namespace cuts {
     return;
   }
 
-  CUT_DEFAULT_DESTRUCTOR_IMPLEMENT(and_cut)
+  and_cut::~and_cut()
+  {
+    if (is_initialized()) {
+      this->and_cut::reset();
+    }
+    return;
+  }
 
-  CUT_ACCEPT_IMPLEMENT_HEAD(and_cut)
+  int and_cut::_accept()
   {
     int status = SELECTION_REJECTED;
     DT_LOG_TRACE(_logging,"Entering: accept for AND cut named  '" << (has_name()? get_name() : "?") << "'");

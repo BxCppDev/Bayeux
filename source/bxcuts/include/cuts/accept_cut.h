@@ -17,16 +17,35 @@
 #define CUTS_ACCEPT_CUT_H_ 1
 
 #include <cuts/i_cut.h>
-#include <cuts/cut_macros.h>
 
 namespace cuts {
 
   /// \brief A cut that always accepts
-  CUT_CLASS_DECLARE (accept_cut)
+  class accept_cut : public cuts::i_cut
   {
   public:
+
     /// Constructor
-    CUT_INTERFACE_CTOR_DTOR(accept_cut);
+    accept_cut(datatools::logger::priority a_logging_priority =
+               datatools::logger::PRIO_FATAL);
+
+    /// Destructor
+    virtual ~accept_cut();
+
+    /// Initialization
+    virtual void initialize(const datatools::properties &,
+                            datatools::service_manager &,
+                            cuts::cut_handle_dict_type &);
+
+    /// Reset
+    virtual void reset();
+
+  protected :
+
+    /// Selection
+    virtual int _accept();
+
+  private:
 
     /// Macro to automate the registration of the cut
     CUT_REGISTRATION_INTERFACE(accept_cut);

@@ -54,17 +54,25 @@ namespace cuts {
     DT_LOG_TRACE(_logging, "Exiting.");
   }
 
-  CUT_CONSTRUCTOR_IMPLEMENT_HEAD(i_binary_cut,logging_priority_)
+  i_binary_cut::i_binary_cut(datatools::logger::priority a_logger_priority)
+    : i_cut(a_logger_priority)
   {
     return;
   }
 
-  CUT_DEFAULT_DESTRUCTOR_IMPLEMENT(i_binary_cut)
 
-  CUT_INITIALIZE_IMPLEMENT_HEAD(i_binary_cut,
-                                a_configuration,
-                                /*a_service_manager*/,
-                                a_cut_dict)
+  // dtor:
+  i_binary_cut::~i_binary_cut()
+  {
+    if (is_initialized()) {
+      this->i_binary_cut::reset();
+    }
+    return;
+  }
+
+  void i_binary_cut::initialize(const datatools::properties & a_configuration,
+                                datatools::service_manager & /*a_service_manager*/,
+                                cuts::cut_handle_dict_type & a_cut_dict)
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
@@ -75,7 +83,7 @@ namespace cuts {
     return;
   }
 
-  CUT_RESET_IMPLEMENT_HEAD(i_binary_cut)
+  void i_binary_cut::reset()
   {
     _set_initialized(false);
     _reset_cuts();

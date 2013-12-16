@@ -13,15 +13,31 @@
 #include <iostream>
 
 #include <cuts/i_cut.h>
-#include <cuts/cut_macros.h>
 
 /// \brief A cut on the color of object of class data
-CUT_CLASS_DECLARE(color_cut)
+class color_cut : public cuts::i_cut
 {
  public:
 
-  // Macro to provide the default interface of this cut class
-  CUT_INTERFACE_CTOR_DTOR(color_cut);
+  /// Constructor
+  color_cut(datatools::logger::priority a_logging_priority =
+            datatools::logger::PRIO_FATAL);
+
+  /// Destructor
+  virtual ~color_cut();
+
+  /// Initialization
+  virtual void initialize(const datatools::properties &,
+                          datatools::service_manager &,
+                          cuts::cut_handle_dict_type &);
+
+  /// Reset
+  virtual void reset();
+
+protected :
+
+  /// Selection
+  virtual int _accept();
 
   void set_color(int a_color);
 

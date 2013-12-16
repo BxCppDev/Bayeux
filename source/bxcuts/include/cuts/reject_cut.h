@@ -17,19 +17,34 @@
 #define CUTS_REJECT_CUT_H_ 1
 
 #include <cuts/i_cut.h>
-#include <cuts/cut_macros.h>
 
 namespace cuts {
 
-  //CUT_CLASS_DECLARE (reject_cut)
   /// \brief A cut that always rejects
   class reject_cut : public i_cut
   {
 
   public:
 
-    // ctor:
-    CUT_INTERFACE_CTOR_DTOR (reject_cut);
+    /// Constructor
+    reject_cut(datatools::logger::priority a_logging_priority =
+               datatools::logger::PRIO_FATAL);
+
+    /// Destructor
+    virtual ~reject_cut();
+
+    /// Initialization
+    virtual void initialize(const datatools::properties &,
+                            datatools::service_manager &,
+                            cuts::cut_handle_dict_type &);
+
+    /// Reset
+    virtual void reset();
+
+  protected :
+
+    /// Selection
+    virtual int _accept();
 
   private:
 

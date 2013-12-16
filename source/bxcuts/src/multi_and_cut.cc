@@ -23,9 +23,15 @@ namespace cuts {
     return;
   }
 
-  CUT_DEFAULT_DESTRUCTOR_IMPLEMENT(multi_and_cut)
+  multi_and_cut::~multi_and_cut()
+  {
+    if (is_initialized()) {
+      this->multi_and_cut::reset();
+    }
+    return;
+  }
 
-  CUT_ACCEPT_IMPLEMENT_HEAD(multi_and_cut)
+  int multi_and_cut::_accept()
   {
     int status = SELECTION_ACCEPTED;
     DT_LOG_TRACE(_logging,"Entering: accept for multi-AND cut named  '" << (has_name()? get_name() : "?") << "'");

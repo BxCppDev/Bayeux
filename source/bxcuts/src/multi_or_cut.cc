@@ -24,9 +24,15 @@ namespace cuts {
     return;
   }
 
-  CUT_DEFAULT_DESTRUCTOR_IMPLEMENT(multi_or_cut)
+  multi_or_cut::~multi_or_cut()
+  {
+    if (is_initialized()) {
+      this->multi_or_cut::reset();
+    }
+    return;
+  }
 
-  CUT_ACCEPT_IMPLEMENT_HEAD(multi_or_cut)
+  int multi_or_cut::_accept()
   {
     int status = SELECTION_REJECTED;
     DT_LOG_TRACE(_logging,"Entering: accept for multi-OR cut named  '" << (has_name()? get_name() : "?") << "'");

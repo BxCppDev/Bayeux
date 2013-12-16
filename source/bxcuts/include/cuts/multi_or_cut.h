@@ -20,7 +20,6 @@
 #include <list>
 
 #include <cuts/i_multi_cut.h>
-#include <cuts/cut_macros.h>
 
 namespace cuts {
 
@@ -29,8 +28,17 @@ namespace cuts {
   {
   public:
 
-    /// Cut interface macro
-    CUT_INTERFACE_NOINIT_NORESET_CTOR_DTOR(multi_or_cut);
+    /// Constructor
+    multi_or_cut(datatools::logger::priority a_logging_priority =
+                 datatools::logger::PRIO_FATAL);
+
+    /// Destructor
+    virtual ~multi_or_cut();
+
+  protected :
+
+    /// Selection
+    virtual int _accept();
 
   private:
 

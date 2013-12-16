@@ -21,12 +21,11 @@
 #include <datatools/properties.h>
 
 #include <cuts/i_cut.h>
-#include <cuts/cut_macros.h>
 
 namespace cuts {
 
   /// \brief The abstract base class for binary cuts
-  CUT_CLASS_DECLARE(i_binary_cut)
+  class i_binary_cut : public cuts::i_cut
   {
   public:
 
@@ -36,8 +35,20 @@ namespace cuts {
 
     void set_cuts(cut_handle_type &, cut_handle_type &);
 
-    /// Interface
-    CUT_INTERFACE_NOACCEPT_CTOR_DTOR(i_binary_cut);
+    /// Constructor
+    i_binary_cut(datatools::logger::priority a_logging_priority =
+                 datatools::logger::PRIO_FATAL);
+
+    /// Destructor
+    virtual ~i_binary_cut();
+
+    /// Initialization
+    virtual void initialize(const datatools::properties &,
+                            datatools::service_manager &,
+                            cuts::cut_handle_dict_type &);
+
+    /// Reset
+    virtual void reset();
 
     /// Smart print
     virtual void tree_dump (std::ostream & a_out         = std::clog,

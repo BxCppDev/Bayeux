@@ -15,7 +15,8 @@ namespace cuts {
   CUT_REGISTRATION_IMPLEMENT(random_cut, "cuts::random_cut");
 
   // ctor:
-  CUT_CONSTRUCTOR_IMPLEMENT_HEAD(random_cut,a_logging_priority)
+  random_cut::random_cut(datatools::logger::priority a_logger_priority)
+  : i_cut(a_logger_priority)
   {
     _seed_ = 0;
     _accept_probability_ = 0.5;
@@ -23,17 +24,22 @@ namespace cuts {
   }
 
   // dtor:
-  CUT_DEFAULT_DESTRUCTOR_IMPLEMENT(random_cut)
+  random_cut::~random_cut()
+  {
+    if (is_initialized()) {
+      this->random_cut::reset();
+    }
+    return;
+  }
 
-  CUT_ACCEPT_IMPLEMENT_HEAD(random_cut)
+  int random_cut::_accept()
   {
     return (*_uni_.get())() < _accept_probability_ ?  SELECTION_ACCEPTED : SELECTION_REJECTED;
   }
 
-  CUT_INITIALIZE_IMPLEMENT_HEAD(random_cut,
-                                a_configuration,
-                                /*a_service_manager*/,
-                                /*a_dict*/)
+  void random_cut::initialize(const datatools::properties & a_configuration,
+                              datatools::service_manager & /*a_service_manager*/,
+                              cuts::cut_handle_dict_type & /*a_cut_dict*/)
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
@@ -68,7 +74,7 @@ namespace cuts {
     return;
   }
 
-  CUT_RESET_IMPLEMENT_HEAD (random_cut)
+  void random_cut::reset()
   {
     _uni_.reset(0);
     _uni_dist_.reset(0);

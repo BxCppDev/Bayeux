@@ -47,7 +47,6 @@ void range_cut::set_reversed(bool reversed_)
 }
 
 
-// CUT_CONSTRUCTOR_IMPLEMENT_HEAD(range_cut,a_logger_priority)
 range_cut::range_cut(datatools::logger::priority a_logger_priority)
   : i_cut(a_logger_priority)
 {
@@ -58,7 +57,6 @@ range_cut::range_cut(datatools::logger::priority a_logger_priority)
   return;
 }
 
-// CUT_DEFAULT_DESTRUCTOR_IMPLEMENT(range_cut)
 range_cut::~range_cut()
 {
   if (is_initialized()) {
@@ -67,16 +65,9 @@ range_cut::~range_cut()
   return;
 }
 
-// static method used within a cut factory:
-/*
- *  CUT_INITIALIZE_IMPLEMENT_HEAD(range_cut,
- *                          a_configuration,
- *                          a_service_manager,
- *                          a_cut_dict)
- */
 void range_cut::initialize(const datatools::properties & a_configuration,
-                            datatools::service_manager & a_service_manager,
-                            cuts::cut_handle_dict_type & a_cut_dict)
+                           datatools::service_manager & /*a_service_manager*/,
+                           cuts::cut_handle_dict_type & /*a_cut_dict*/)
 {
   DT_THROW_IF(is_initialized(),
               std::logic_error,
@@ -125,7 +116,6 @@ void range_cut::initialize(const datatools::properties & a_configuration,
 }
 
 
-// CUT_RESET_IMPLEMENT_HEAD(range_cut)
 void range_cut::reset()
 {
   _set_initialized(false);
@@ -138,7 +128,6 @@ void range_cut::reset()
 }
 
 
-// CUT_ACCEPT_IMPLEMENT_HEAD(range_cut)
 int range_cut::_accept()
 {
   DT_THROW_IF(! is_initialized(),

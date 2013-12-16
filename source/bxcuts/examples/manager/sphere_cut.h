@@ -18,20 +18,37 @@
 #include <iostream>
 
 #include <cuts/i_cut.h>
-#include <cuts/cut_macros.h>
 
 /// \brief A cut to test the position of a 3D-point relatively to a sphere.
-CUT_CLASS_DECLARE(sphere_cut)
+class sphere_cut : public cuts::i_cut
 {
  public:
-
-  CUT_INTERFACE_CTOR_DTOR(sphere_cut);
 
   void set_radius(double a_radius);
 
   void set_center(double a_x0, double a_y0, double a_z0);
 
   void set_reversed(bool a_reversed);
+
+  /// Constructor
+  sphere_cut(datatools::logger::priority a_logging_priority =
+             datatools::logger::PRIO_FATAL);
+
+  /// Destructor
+  virtual ~sphere_cut();
+
+  /// Initialization
+  virtual void initialize(const datatools::properties &,
+                          datatools::service_manager &,
+                          cuts::cut_handle_dict_type &);
+
+  /// Reset
+  virtual void reset();
+
+protected :
+
+  /// Selection
+  virtual int _accept();
 
  private:
 

@@ -32,8 +32,8 @@ void sphere_cut::set_reversed(bool reversed_)
   return;
 }
 
-// ctor:
-CUT_CONSTRUCTOR_IMPLEMENT_HEAD(sphere_cut, a_logging_priority)
+sphere_cut::sphere_cut(datatools::logger::priority a_logger_priority)
+  : i_cut(a_logger_priority)
 {
   _radius_ = 1.0;
   _x0_ = 0.0;
@@ -43,13 +43,17 @@ CUT_CONSTRUCTOR_IMPLEMENT_HEAD(sphere_cut, a_logging_priority)
   return;
 }
 
-CUT_DEFAULT_DESTRUCTOR_IMPLEMENT(sphere_cut)
+sphere_cut::~sphere_cut()
+{
+  if (is_initialized()) {
+    this->sphere_cut::reset();
+  }
+  return;
+}
 
-// static method used within a cut factory:
-CUT_INITIALIZE_IMPLEMENT_HEAD(sphere_cut,
-                              a_configuration,
-                              a_service_manager,
-                              a_cut_dict)
+void sphere_cut::initialize(const datatools::properties & a_configuration,
+                            datatools::service_manager & /*a_service_manager*/,
+                            cuts::cut_handle_dict_type & /*a_cut_dict*/)
 {
   DT_THROW_IF(is_initialized(),
               std::logic_error,
@@ -94,7 +98,7 @@ CUT_INITIALIZE_IMPLEMENT_HEAD(sphere_cut,
   return;
 }
 
-CUT_RESET_IMPLEMENT_HEAD(sphere_cut)
+void sphere_cut::reset()
 {
   _set_initialized(false);
   _radius_ = 1.0;
@@ -106,7 +110,7 @@ CUT_RESET_IMPLEMENT_HEAD(sphere_cut)
   return;
 }
 
-CUT_ACCEPT_IMPLEMENT_HEAD(sphere_cut)
+int sphere_cut::_accept()
 {
   DT_THROW_IF(! is_initialized(),
               std::logic_error,

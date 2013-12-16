@@ -17,17 +17,21 @@ namespace cuts {
   // Registration instantiation macro :
   CUT_REGISTRATION_IMPLEMENT(xnor_cut, "cuts::xnor_cut");
 
-  // ctor:
   xnor_cut::xnor_cut (datatools::logger::priority logging_priority_)
     : i_binary_cut(logging_priority_)
   {
     return;
   }
 
-  // dtor:
-  CUT_DEFAULT_DESTRUCTOR_IMPLEMENT (xnor_cut)
+  xnor_cut::~xnor_cut()
+  {
+    if (is_initialized()) {
+      this->xnor_cut::reset();
+    }
+    return;
+  }
 
-  CUT_ACCEPT_IMPLEMENT_HEAD(xnor_cut)
+  int xnor_cut::_accept()
   {
     int status_1 = _handle_1.grab ().process();
     int status_2 = _handle_2.grab ().process();

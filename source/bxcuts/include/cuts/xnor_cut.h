@@ -25,8 +25,17 @@ namespace cuts {
   {
   public:
 
-    /// Cut interface macro
-    CUT_INTERFACE_NOINIT_NORESET_CTOR_DTOR (xnor_cut);
+    /// Constructor
+    xnor_cut(datatools::logger::priority a_logging_priority =
+             datatools::logger::PRIO_FATAL);
+
+    /// Destructor
+    virtual ~xnor_cut();
+
+  protected :
+
+    /// Selection
+    virtual int _accept();
 
   private:
 

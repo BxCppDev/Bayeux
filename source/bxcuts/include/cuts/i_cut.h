@@ -1,7 +1,7 @@
 /* i_cut.h
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
- * Last modified : 2013-05-16
+ * Last modified : 2013-12-14
  *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -53,7 +53,7 @@ namespace datatools {
 /// Top-level namespace of the Bayeux/cuts module library
 namespace cuts {
 
-  /// \brief The cut abstract base class
+  /// \brief The cut abstract base class (interface)
   class i_cut : public datatools::i_tree_dumpable
   {
   public:
@@ -139,7 +139,9 @@ namespace cuts {
     template<class T>
     void set_user_data(const T & obj_)
     {
-      DT_LOG_TRACE(_logging, "Adding user data of type \"" << typeid(T).name() << "\" in cut named '" << (has_name()?get_name():"?") << "'...");
+      DT_LOG_TRACE(_logging,
+                   "Cut '" << (has_name()?get_name():"?") << "' : "
+                   << "adding user data of type \"" << typeid(T).name() << "\"...");
       boost::shared_ptr<i_referenced_data> ud(new referenced_data<T>(obj_));
       _set_user_data(ud);
     }
@@ -149,7 +151,7 @@ namespace cuts {
     {
       DT_THROW_IF(! _user_data_,
                   std::logic_error,
-                  "Cut '" << (has_name()?get_name():"?") << "' references no user data of type '" << typeid(T).name() << "' !");
+                  "Cut '" << (has_name()?get_name():"?") << "' does not reference any user data of type '" << typeid(T).name() << "' !");
       const std::type_info & ti = typeid(T);
       return _user_data_.get()->match(&ti);
     }
@@ -159,11 +161,11 @@ namespace cuts {
     {
       DT_THROW_IF(! is_user_data<T>(),
                   std::logic_error,
-                  "Invalid request on user data !");
+                  "Invalid request on user data for cut named '" << (has_name()?get_name():"?") << "' !");
       const referenced_data<T> * rd = dynamic_cast<const referenced_data<T> *>(_user_data_.get());
       DT_THROW_IF(rd == 0,
                   std::logic_error,
-                  "Invalid cast !");
+                  "Invalid cast for reference data in cut named '" << (has_name()?get_name():"?") << "' !");
       return rd->get();
     }
 
@@ -204,8 +206,7 @@ namespace cuts {
     /// Function interface for the selection method @see process
     int operator()();
 
-    /** The main termination method
-     */
+    /// The main termination method
     virtual void reset() = 0;
 
     /// Constructor
@@ -277,7 +278,18 @@ namespace cuts {
 
 }  // end of namespace cuts
 
-#include <cuts/cut_macros.h>
+/** Interface macro for automated registration of a cut class in the global register */
+#define CUT_REGISTRATION_INTERFACE(T)                                   \
+  private:                                                              \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::cuts::i_cut,T); \
+  /**/
+
+/** Implementation macro for automated registration of a cut class in the global register */
+#define CUT_REGISTRATION_IMPLEMENT(T,CutID)                             \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::cuts::i_cut,T,CutID); \
+  /**/
+
+//#include <cuts/cut_macros.h>
 
 #endif // CUTS_I_CUT_H_
 

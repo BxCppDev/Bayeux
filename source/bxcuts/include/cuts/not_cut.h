@@ -22,14 +22,31 @@
 namespace cuts {
 
   /// \brief The NOT cut
-  CUT_CLASS_DECLARE(not_cut)
+  class not_cut : public cuts::i_cut
   {
   public:
 
     void set_cut(cut_handle_type &);
 
-    // Cut interface macro
-    CUT_INTERFACE_CTOR_DTOR (not_cut);
+    /// Constructor
+    not_cut(datatools::logger::priority a_logging_priority =
+            datatools::logger::PRIO_FATAL);
+
+    /// Destructor
+    virtual ~not_cut();
+
+    /// Initialization
+    virtual void initialize(const datatools::properties &,
+                            datatools::service_manager &,
+                            cuts::cut_handle_dict_type &);
+
+    /// Reset
+    virtual void reset();
+
+  protected :
+
+    /// Selection
+    virtual int _accept();
 
   protected:
 

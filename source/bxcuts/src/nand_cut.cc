@@ -23,9 +23,15 @@ namespace cuts {
   }
 
   // dtor:
-  CUT_DEFAULT_DESTRUCTOR_IMPLEMENT (nand_cut)
+  nand_cut::~nand_cut()
+  {
+    if (is_initialized()) {
+      this->nand_cut::reset();
+    }
+    return;
+  }
 
-  CUT_ACCEPT_IMPLEMENT_HEAD(nand_cut)
+  int nand_cut::_accept()
   {
     int status_1 = _handle_1.grab ().process ();
     int status_2 = _handle_2.grab ().process ();

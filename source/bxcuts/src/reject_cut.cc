@@ -14,24 +14,28 @@ namespace cuts {
   // Registration instantiation macro :
   CUT_REGISTRATION_IMPLEMENT(reject_cut, "cuts::reject_cut");
 
-  // ctor:
-  CUT_CONSTRUCTOR_IMPLEMENT_HEAD(reject_cut,logging_priority_)
+  reject_cut::reject_cut(datatools::logger::priority a_logger_priority)
+    : i_cut(a_logger_priority)
   {
     return;
   }
 
-  // dtor:
-  CUT_DEFAULT_DESTRUCTOR_IMPLEMENT(reject_cut)
+  reject_cut::~reject_cut()
+  {
+    if (is_initialized()) {
+      this->reject_cut::reset();
+    }
+    return;
+  }
 
-  CUT_ACCEPT_IMPLEMENT_HEAD(reject_cut)
+  int reject_cut::_accept()
   {
     return SELECTION_REJECTED;
   }
 
-  CUT_INITIALIZE_IMPLEMENT_HEAD(reject_cut,
-                                a_configuration,
-                                /*a_service_manager*/,
-                                /*a_dict*/)
+  void reject_cut::initialize(const datatools::properties & a_configuration,
+                              datatools::service_manager & /*a_service_manager*/,
+                              cuts::cut_handle_dict_type & /*a_cut_dict*/)
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
@@ -41,7 +45,7 @@ namespace cuts {
     return;
   }
 
-  CUT_RESET_IMPLEMENT_HEAD(reject_cut)
+  void reject_cut::reset()
   {
     _set_initialized(false);
     this->i_cut::_reset();

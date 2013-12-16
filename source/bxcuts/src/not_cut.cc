@@ -35,14 +35,21 @@ namespace cuts {
     _handle.grab().reset_user_data();
   }
 
-  CUT_CONSTRUCTOR_IMPLEMENT_HEAD(not_cut,a_logging_priority)
+  not_cut::not_cut(datatools::logger::priority a_logger_priority)
+    : i_cut(a_logger_priority)
   {
     return;
   }
 
-  CUT_DEFAULT_DESTRUCTOR_IMPLEMENT(not_cut)
+  not_cut::~not_cut()
+  {
+    if (is_initialized()) {
+      this->not_cut::reset();
+    }
+    return;
+  }
 
-  CUT_ACCEPT_IMPLEMENT_HEAD(not_cut)
+  int not_cut::_accept()
   {
     DT_THROW_IF(! _handle,
                 std::logic_error,
@@ -56,8 +63,7 @@ namespace cuts {
     return status;
   }
 
-
-  CUT_RESET_IMPLEMENT_HEAD (not_cut)
+  void not_cut::reset()
   {
     _set_initialized (false);
     _handle.reset ();
@@ -66,10 +72,9 @@ namespace cuts {
   }
 
 
-  CUT_INITIALIZE_IMPLEMENT_HEAD(not_cut,
-                                a_configuration,
-                                /*a_service_manager*/,
-                                a_cut_dict)
+  void not_cut::initialize(const datatools::properties & a_configuration,
+                           datatools::service_manager & /*a_service_manager*/,
+                           cuts::cut_handle_dict_type & a_cut_dict)
   {
     DT_THROW_IF(is_initialized (),
                 std::logic_error,
