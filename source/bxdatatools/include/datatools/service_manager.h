@@ -73,7 +73,7 @@ class service_manager : public datatools::i_tree_dumpable {
                   uint32_t flag = BLANK);
 
   /// Destructor
-  ~service_manager();
+  virtual ~service_manager();
 
   /// Set the name of the service
   void set_name(const std::string& name);
