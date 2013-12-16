@@ -31,7 +31,7 @@ set(cuts_VERSION "${cuts_VERSION_MAJOR}.${cuts_VERSION_MINOR}.${cuts_VERSION_PAT
 set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/accept_cut.h
   ${module_include_dir}/${module_name}/and_cut.h
-  ${module_include_dir}/${module_name}/cut_macros.h
+  #${module_include_dir}/${module_name}/cut_macros.h
   ${module_include_dir}/${module_name}/cut_manager.h
   ${module_include_dir}/${module_name}/cuts_config.h.in
   ${module_include_dir}/${module_name}/cut_service.h
