@@ -82,7 +82,7 @@ namespace dpp {
   }
 
   void chain_module::initialize(const datatools::properties & a_config,
-                                datatools::service_manager & a_service_manager,
+                                datatools::service_manager & /*a_service_manager*/,
                                 dpp::module_handle_dict_type & a_module_dict)
   {
     DT_THROW_IF(is_initialized (),

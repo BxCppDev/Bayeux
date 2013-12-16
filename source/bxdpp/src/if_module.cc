@@ -161,7 +161,7 @@ namespace dpp {
   /*** Implementation of the interface ***/
 
   // Constructor :
-  if_module::if_module(datatools::logger::priority logging_priority_)
+  if_module::if_module(datatools::logger::priority /*logging_priority_*/)
   {
     _set_defaults ();
     return;
