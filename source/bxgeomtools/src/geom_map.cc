@@ -220,7 +220,6 @@ namespace geomtools {
                                          const string & category_,
                                          double tolerance_) const
   {
-    geom_info_dict_type::const_iterator found = _geom_infos_.end ();
     DT_THROW_IF (! _id_manager_->has_category_info (category_),
                  logic_error,
                  "No geometry category named '" << category_ << "' !");
