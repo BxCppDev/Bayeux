@@ -149,6 +149,7 @@ namespace geomtools {
     void invalidate ();
 
     stackable_data ();
+    virtual ~stackable_data();
 
     virtual double get_xmin () const {return xmin;}
     virtual double get_xmax () const {return xmax;}

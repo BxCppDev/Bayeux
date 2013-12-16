@@ -380,6 +380,9 @@ namespace geomtools {
     invalidate ();
   }
 
+  stackable_data::~stackable_data() {
+  }
+
   void stackable_data::tree_dump (ostream & out_,
                                   const string & title_,
                                   const string & indent_,

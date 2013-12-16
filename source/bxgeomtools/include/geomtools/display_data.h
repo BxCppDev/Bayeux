@@ -76,7 +76,7 @@ namespace geomtools {
       //std::map<int,label_item>        labels;  //!< Future?
     public:
       display_item ();
-      ~display_item ();
+      virtual ~display_item ();
       void reset ();
       DATATOOLS_SERIALIZATION_DECLARATION();
     };
@@ -93,7 +93,7 @@ namespace geomtools {
       bool is_static () const;
       bool is_framed () const;
       display_entry ();
-      ~display_entry ();
+      virtual ~display_entry ();
       void reset ();
       const std::map<int32_t, display_item> & get_items () const;
       std::map<int32_t, display_item> & grab_items ();
