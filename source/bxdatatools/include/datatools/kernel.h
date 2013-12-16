@@ -75,7 +75,7 @@ namespace datatools {
     kernel(int argc_, char * argv_[]);
 
     /// Destruction with on-the-fly shutdown if needed
-    ~kernel();
+    virtual ~kernel();
 
     /// Initialization from command line arguments
     void initialize(int argc_, char * argv_[]);

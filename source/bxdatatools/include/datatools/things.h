@@ -90,6 +90,7 @@ class things :
     static const char MASK_CONST = 0x1;
    public:
     entry_type();
+    virtual ~entry_type();
 
     bool is_not_const() const;
 

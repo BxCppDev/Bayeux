@@ -83,7 +83,7 @@ namespace datatools {
     library_info();
 
     /// Destructor
-    ~library_info();
+    virtual ~library_info();
 
     /// Return the logging priority of the library info register
     logger::priority get_logging() const;

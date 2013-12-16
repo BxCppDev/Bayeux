@@ -66,6 +66,8 @@ things::entry_type::entry_type() {
   handle      = 0;
 }
 
+things::entry_type::~entry_type() {
+}
 
 bool things::entry_type::is_not_const() const {
   return (flags & MASK_CONST) == 0;
