@@ -683,7 +683,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::manager,ocd_)
   {
     configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("seed")
-      .set_terse_description("Embeded PRNG's seed")
+      .set_terse_description("Embedded PRNG's seed")
       .set_traits(datatools::TYPE_INTEGER)
       .set_mandatory(false)
       .set_complex_triggering_conditions(true)
@@ -730,6 +730,27 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::manager,ocd_)
                                 "  seed: integer = 314159                                    \n"
                                 "  generators.configuration_files : string[1] as path = \\   \n"
                                 "     \"${CONFIG_REPOSITORY_DIR}/event_generators.conf\"     \n"
+                                "                                                            \n"
+                                "The generator files use the ``datatools::multi_properties`` \n"
+                                "format. Some possible generators are:                       \n"
+                                "                                                            \n"
+                                " * ``genbb::wdecay0`` : see OCD support                     \n"
+                                " * ``genbb::single_particle_generator`` : see OCD support   \n"
+                                "                                                            \n"
+                                "Example of a generator file: ::                             \n"
+                                "                                                            \n"
+                                "  #@key_label  \"name\"                                     \n"
+                                "  #@meta_label \"type\"                                     \n"
+                                "                                                            \n"
+                                "  [name=\"Bi207\" type=\"genbb::wdecay0\"]                  \n"
+                                "  decay_type    : string  = \"background\"                  \n"
+                                "  decay_isotope : string  = \"Bi207+Pb207m\"                \n"
+                                "                                                            \n"
+                                "  [name=\"bb0nu_Se82\" type=\"genbb::wdecay0\"]             \n"
+                                "  decay_type    : string  = \"DBD\"                         \n"
+                                "  decay_isotope : string  = \"Se82\"                        \n"
+                                "  decay_dbd_level : integer = 0                             \n"
+                                "  decay_dbd_mode  : integer = 1                             \n"
                                 "                                                            \n"
                                 );
   ocd_.set_validation_support(true);

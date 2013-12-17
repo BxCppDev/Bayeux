@@ -133,6 +133,12 @@ namespace genbb {
 
 } // end of namespace genbb
 
+/***************
+ * OCD support *
+ ***************/
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(genbb::wdecay0)
+
 #endif // GENBB_HELP_WDECAY0_H_
 
 // end of wdecay0.h

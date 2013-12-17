@@ -32,6 +32,78 @@ namespace genbb
   const double utils::DEFAULT_ENERGY_RANGE_MIN = 0.0 * CLHEP::MeV;
   const double utils::DEFAULT_ENERGY_RANGE_MAX = 4.3 * CLHEP::MeV;
 
+  const std::vector<std::string> & utils::get_background_nuclides ()
+  {
+    static boost::scoped_ptr<std::vector<std::string> > vptr (0);
+    if (vptr.get () == 0) {
+      vptr.reset (new std::vector<std::string>());
+      std::vector<std::string> & v = *vptr.get ();
+      v.reserve (40);
+      v.push_back ("Ac228");
+      v.push_back ("Am241");
+      v.push_back ("Ar39");
+      v.push_back ("Ar42");
+      v.push_back ("As79+Se79m");
+      v.push_back ("Bi207+Pb207m");
+      v.push_back ("Bi208");
+      v.push_back ("Bi210");
+      v.push_back ("Bi212+Po212");
+      v.push_back ("Bi214+Po214");
+      v.push_back ("Ca48+Sc48");
+      v.push_back ("C14");
+      v.push_back ("Cd113");
+      v.push_back ("Co60");
+      v.push_back ("Cs136");
+      v.push_back ("Cs137+Ba137m");
+      v.push_back ("Eu147");
+      v.push_back ("Eu152");
+      v.push_back ("Eu154");
+      v.push_back ("Gd146");
+      v.push_back ("Hf182");
+      v.push_back ("I126");
+      v.push_back ("I133"); //
+      v.push_back ("I134"); //
+      v.push_back ("I135"); //
+      v.push_back ("K40"); //
+      v.push_back ("K42"); //
+      v.push_back ("Kr81"); //
+      v.push_back ("Kr85"); //
+      v.push_back ("Mn54"); //
+      v.push_back ("Na22"); //
+      v.push_back ("P32"); //
+      v.push_back ("Pa231"); //
+      v.push_back ("Pa234m"); //
+      v.push_back ("Pb210"); //
+      v.push_back ("Pb211"); //
+      v.push_back ("Pb212"); //
+      v.push_back ("Pb214"); //
+      v.push_back ("Ra226"); //
+      v.push_back ("Ra228"); //
+      v.push_back ("Rb87"); //
+      v.push_back ("Rh106"); //
+      v.push_back ("Sb125"); //
+      v.push_back ("Sb126"); //
+      v.push_back ("Sb133"); //
+      v.push_back ("Sr90"); //
+      v.push_back ("Ta182"); //
+      v.push_back ("Te133"); //
+      v.push_back ("Te133m"); //
+      v.push_back ("Te134"); //
+      v.push_back ("Th234"); //
+      v.push_back ("Tl207"); //
+      v.push_back ("Tl208"); //
+      v.push_back ("Xe129m"); //
+      v.push_back ("Xe131m"); //
+      v.push_back ("Xe133"); //
+      v.push_back ("Xe135"); //
+      v.push_back ("Y88"); //
+      v.push_back ("Y90"); //
+      v.push_back ("Zn95"); //
+      v.push_back ("Zr96+Nb96"); // (for Zr96+Nb96)
+    }
+    return *vptr.get();
+  }
+
   const std::vector<std::string> & utils::get_dbd_nuclides ()
   {
     static boost::scoped_ptr<std::vector<std::string> > vptr (0);
@@ -131,4 +203,3 @@ namespace genbb
 
 
 }
-

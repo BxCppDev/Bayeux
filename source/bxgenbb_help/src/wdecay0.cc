@@ -418,4 +418,268 @@ namespace genbb {
 
 } // end of namespace genbb
 
+
+/***************
+ * OCD support *
+ ***************/
+
+// OCD support for class '::genbb::wdecay0' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::wdecay0,ocd_)
+{
+  ocd_.set_class_name ("genbb::wdecay0");
+  ocd_.set_class_description ("The C++ port of the Genbb/Decay0 event generator");
+  ocd_.set_class_library("genbb_help");
+  ocd_.set_class_documentation("The ``genbb::wdecay0`` class is the C++ port of the    \n"
+                               "Genbb/Decay0 event generator by Vladimir Tretyak.      \n"
+                               "It provides a set of event generators for:             \n"
+                               "                                                       \n"
+                               " * various double beta decay processes for             \n"
+                               "   isotopes of experimental interest,                  \n"
+                               " * various nuclear decay processes for                 \n"
+                               "   common radioactive isotopes.                        \n"
+                               "                                                       \n"
+                              );
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("name")
+      .set_terse_description("The name of the generator")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_long_description("The name of the generator. This can only be   \n"
+                            "used if the name has not been set by some     \n"
+                            "external process.                             \n"
+                            "                                              \n"
+                            "Example::                                     \n"
+                            "                                              \n"
+                            "   name : string = \"PrimEvent\"              \n"
+                            "                                              \n"
+                            )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("seed")
+      .set_terse_description("Embedded PRNG's seed")
+      .set_traits(datatools::TYPE_INTEGER)
+      .set_mandatory(false)
+      .set_complex_triggering_conditions(true)
+      .set_long_description("The seed of the embedded PRNG.                \n"
+                            "Not used if some external PRNG is used.       \n"
+                            "Example::                                     \n"
+                            "                                              \n"
+                            "  seed: integer = 314159                      \n"
+                            "                                              \n"
+                            )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("decay_type")
+      .set_terse_description("The type of decay")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .set_long_description("The type of the decay can take two values:    \n"
+                            "                                              \n"
+                            "  * ``\"DBD\"`` : double beta decay process,  \n"
+                            "  * ``\"background\"`` : common radioactive   \n"
+                            "    process.                                  \n"
+                            "                                              \n"
+                            "Example::                                     \n"
+                            "                                              \n"
+                            "   decay_type: string = \"background\"        \n"
+                            "                                              \n"
+                            )
+      ;
+  }
+
+  {
+    const std::vector<std::string> & dbd_nuclides = genbb::utils::get_dbd_nuclides ();
+    std::ostringstream long_desc;
+    long_desc << "The decaying isotope.                         \n"
+              << "                                              \n"
+              << "List of supported DBD emitter isotopes:       \n"
+              << "                                              \n";
+    for (int i = 0; i < dbd_nuclides.size(); i++) {
+      long_desc << "  * ``\"" << dbd_nuclides[i] << "\"``  \n";
+    }
+
+    const std::vector<std::string> & bkg_nuclides = genbb::utils::get_background_nuclides ();
+    long_desc << "                                              \n"
+              << "List of supported background isotopes:        \n"
+              << "                                              \n";
+    for (int i = 0; i < bkg_nuclides.size(); i++) {
+      long_desc << "  * ``\"" << bkg_nuclides[i] << "\"``  \n";
+    }
+
+    long_desc <<
+      "                                              \n"
+      "Example of Tl208 decay: ::                    \n"
+      "                                              \n"
+      "   decay_type    : string = \"background\"    \n"
+      "   decay_isotope : string = \"Tl208\"         \n"
+      "                                              \n"
+      "Example of DBD of Se82: ::                    \n"
+      "                                              \n"
+      "   decay_type    : string = \"DBD\"           \n"
+      "   decay_isotope : string = \"Se82\"          \n"
+      "                                              \n"
+      ;
+
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("decay_isotope")
+      .set_terse_description("The decaying isotope")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .set_long_description(long_desc.str()
+                            )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("decay_dbd_level")
+      .set_terse_description("The daughter level for a DBD")
+      .set_traits(datatools::TYPE_INTEGER)
+      .set_mandatory(true)
+      .set_triggered_by_label("decay_type", "DBD")
+      .set_long_description("The daughter level for a DBD:                 \n"
+                            "                                              \n"
+                            "  * ``0`` : The ground state                  \n"
+                            "  * ``N`` : The Nth excited state of the      \n"
+                            "    daughter nucleus.                         \n"
+                            "                                              \n"
+                            "The number of available labels for a given    \n"
+                            "DBD process depends on the emitter isotope.   \n"
+                            "                                              \n"
+                            "TODO: documentation needed.                   \n"
+                            "                                              \n"
+                            "Example of DBD of Se82: ::                    \n"
+                            "                                              \n"
+                            "   decay_type      : string = \"DBD\"         \n"
+                            "   decay_isotope   : string = \"Se82\"        \n"
+                            "   decay_dbd_level : integer = 0              \n"
+                            "                                              \n"
+                            )
+      ;
+  }
+
+  {
+    const std::map<int,std::string> & dbd_modes = genbb::utils::get_dbd_modes();
+    std::ostringstream long_desc;
+    long_desc << "The mode of the DBD process.                  \n"
+              << "                                              \n"
+              << "List of supported DBD modes:                  \n"
+              << "                                              \n";
+    for (std::map<int,std::string>::const_iterator
+           i = dbd_modes.begin();
+         i != dbd_modes.end();
+         i++) {
+      long_desc << "  * ``" << i->first << "`` : " << i->second << "\n";
+    }
+    long_desc <<
+      "                                              \n"
+      "Example of DBD of Se82: ::                    \n"
+      "                                              \n"
+      "   decay_type      : string = \"DBD\"         \n"
+      "   decay_isotope   : string = \"Se82\"        \n"
+      "   decay_dbd_level : integer = 0              \n"
+      "   decay_dbd_mode  : integer = 4              \n"
+      "                                              \n"
+      ;
+
+   configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("decay_dbd_mode")
+      .set_terse_description("The mode of the DBD process")
+      .set_traits(datatools::TYPE_INTEGER)
+      .set_mandatory(true)
+      .set_triggered_by_label("decay_type", "DBD")
+      .set_long_description(long_desc.str()
+                            )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("energy_min")
+      .set_terse_description("Minimum energy for DBD process")
+      .set_traits(datatools::TYPE_REAL)
+      .set_triggered_by_label("decay_type", "DBD")
+      .set_complex_triggering_conditions(true)
+      .set_long_description("The minimum energy for generating the         \n"
+                            "energy spectrum of the DBD process.           \n"
+                            "Only possible for DBD modes: 4, 5, 6, 8, 10, 13, 14.\n"
+                            "                                              \n"
+                            "Example for the DBD of Se82: ::               \n"
+                            "                                              \n"
+                            "   decay_type      : string  = \"DBD\"        \n"
+                            "   decay_isotope   : string  = \"Se82\"       \n"
+                            "   decay_dbd_level : integer = 0              \n"
+                            "   decay_dbd_mode  : integer = 4              \n"
+                            "   energy_min      : real    = 2.2 MeV        \n"
+                            "                                              \n"
+                            )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("energy_max")
+      .set_terse_description("Maximum energy for DBD process")
+      .set_traits(datatools::TYPE_REAL)
+      .set_triggered_by_label("decay_type", "DBD")
+      .set_complex_triggering_conditions(true)
+      .set_long_description("The maximum energy for generating the         \n"
+                            "energy spectrum of the DBD process.           \n"
+                            "Only possible for DBD modes: 4, 5, 6, 8, 10, 13, 14.\n"
+                            "                                              \n"
+                            "Example for the DBD of Se82: ::               \n"
+                            "                                              \n"
+                            "   decay_type      : string  = \"DBD\"        \n"
+                            "   decay_isotope   : string  = \"Se82\"       \n"
+                            "   decay_dbd_level : integer = 0              \n"
+                            "   decay_dbd_mode  : integer = 4              \n"
+                            "   energy_min      : real    = 2.2 MeV        \n"
+                            "   energy_max      : real    = 3.5 MeV        \n"
+                            "                                              \n"
+                            )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("energy_unit")
+      .set_terse_description("The default energy unit")
+      .set_traits(datatools::TYPE_STRING)
+      .set_triggered_by_label("decay_type", "DBD")
+      .set_long_description("The symbol of the default energy unit.        \n"
+                            "                                              \n"
+                            "Example: ::                                   \n"
+                            "                                              \n"
+                            "   energy_unit : string  = \"MeV\"            \n"
+                            "   energy_min  : real    = 2.2                \n"
+                            "   energy_max  : real    = 3.5                \n"
+                            "                                              \n"
+                            )
+      ;
+  }
+
+  ocd_.set_configuration_hints ("Example::                                             \n"
+                                "                                                      \n"
+                                "  logging.priority : string  = \"notice\"             \n"
+                                "  seed             : integer = 314159                 \n"
+                                "  decay_type       : string  = \"background\"         \n"
+                                "  decay_isotope    : string  = \"Tl208\"              \n"
+                                "                                                      \n"
+                                );
+  ocd_.set_validation_support(true);
+  ocd_.lock();
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+
+DOCD_CLASS_SYSTEM_REGISTRATION(genbb::wdecay0,"genbb::wdecay0")
+
 // end of wdecay0.cc

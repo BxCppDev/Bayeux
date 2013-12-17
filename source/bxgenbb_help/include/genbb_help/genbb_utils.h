@@ -54,6 +54,8 @@ namespace genbb
 
     static const std::vector<std::string> & get_dbd_nuclides ();
 
+    static const std::vector<std::string> & get_background_nuclides ();
+
     static const std::map<int, std::string> & get_dbd_modes ();
 
     static const std::vector<int> & get_dbd_modes_with_energy_range ();
