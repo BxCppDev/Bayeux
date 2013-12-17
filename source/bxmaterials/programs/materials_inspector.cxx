@@ -273,13 +273,18 @@ namespace materials {
   void ui::print_usage(std::ostream & out_,
                        const boost::program_options::options_description & opts_)
   {
+#if MATERIALS_STANDALONE == 1
+    const std::string APP_NAME = "materials_inspector";
+#else
+    const std::string APP_NAME = "bxmaterials_inspector";
+#endif // MATERIALS_STANDALONE == 1
 
 
     out_ << "Inspect a manager of registered isotopes, elements and materials.           \n";
     out_ << "                                                                            \n";
     out_ << "Usage:                                                                      \n";
     out_ << "                                                                            \n";
-    out_ << "  materials_inspector [[option]... ] [manager config file]                  \n";
+    out_ << "  " << APP_NAME << " [[option]... ] [manager config file]                  \n";
     out_ << "                                                                            \n";
     out_ << opts_;
     out_ << "                                                                            \n";
@@ -287,13 +292,13 @@ namespace materials {
     out_ << "                                                                            \n";
     out_ << "  List the list of registered isotopes:                                     \n";
     out_ << "                                                                            \n";
-    out_ << "   $ materials_inspector \\                                                 \n";
+    out_ << "   $ " << APP_NAME << " \\                                                 \n";
     out_ << "       --manager-config \"${CONFIG_DIR}/materials/manager.conf\" \\         \n";
     out_ << "       --list-isotopes --with-decoration                                    \n";
     out_ << "                                                                            \n";
     out_ << "  Print a registered material:                                              \n";
     out_ << "                                                                            \n";
-    out_ << "   $ materials_inspector \\                                                 \n";
+    out_ << "   $ " << APP_NAME << " \\                                                 \n";
     out_ << "       --manager-config \"${CONFIG_DIR}/materials/manager.conf\" \\         \n";
     out_ << "       --show-material \"Steel100Cr6\"                                      \n";
     out_ << "                                                                            \n";
