@@ -33,9 +33,40 @@ namespace mctools {
       return;
     }
 
+    void manager_parameters::print(std::ostream & out_) const
+    {
+      out_ << "Geant4 simulation manager manager : " << std::endl;
+      out_ << "|-- " << "interactive = " << interactive << std::endl;
+      out_ << "|-- " << "g4_visu     = " << g4_visu << std::endl;
+      out_ << "|-- " << "g4_macro    = '" << g4_macro << "'" << std::endl;
+      out_ << "|-- " << "logging     = '" << logging<< "'" << std::endl;
+      out_ << "|-- " << "dlls        = " << dlls.size() << std::endl;
+      out_ << "|-- " << "manager_config_filename = '" << manager_config_filename<< "'" << std::endl;
+      out_ << "|-- " << "number_of_events        = " << number_of_events << std::endl;
+      out_ << "|-- " << "number_of_events_modulo = " << number_of_events_modulo << std::endl;
+      out_ << "|-- " << "mgr_seed                = " << mgr_seed << std::endl;
+      out_ << "|-- " << "input_prng_states_file  =' " << input_prng_states_file << "'" << std::endl;
+      out_ << "|-- " << "output_prng_states_file = '" << output_prng_states_file << "'" << std::endl;
+      out_ << "|-- " << "prng_states_save_modulo = " << prng_states_save_modulo << std::endl;
+      out_ << "|-- " << "input_prng_seeds_file   = '" << input_prng_seeds_file << "'" << std::endl;
+      out_ << "|-- " << "output_prng_seeds_file  = '" << output_prng_seeds_file << "'" << std::endl;
+      out_ << "|-- " << "output_data_file        = '" << output_data_file << "'" << std::endl;
+      out_ << "|-- " << "vg_name   = '" << vg_name << "'" << std::endl;
+      out_ << "|-- " << "vg_seed   = " << vg_seed << std::endl;
+      out_ << "|-- " << "eg_name   = '" << eg_name << "'" << std::endl;
+      out_ << "|-- " << "eg_seed   = " << eg_seed << std::endl;
+      out_ << "|-- " << "shpf_seed = " << shpf_seed << std::endl;
+      out_ << "|-- " << "using_time_stat     = " << using_time_stat << std::endl;
+      out_ << "|-- " << "forbid_private_hits = " << forbid_private_hits << std::endl;
+      out_ << "|-- " << "dont_save_no_sensitive_hit_events = " << dont_save_no_sensitive_hit_events << std::endl;
+      out_ << "|-- " << "use_run_header_footer = " << use_run_header_footer << std::endl;
+      out_ << "`-- " << "The end." << std::endl;
+      return;
+    }
+
     void manager_parameters::set_defaults ()
     {
-      this->logging = "warning";
+      this->logging = "fatal";
       this->dlls.clear();
       this->dll_loader_config.clear();
       this->manager_config_filename.clear();
@@ -81,6 +112,9 @@ namespace mctools {
                    std::logic_error,
                    "Invalid SHPF generator seed value !");
 
+      // DEVEL:
+      a_params.print(std::cerr);
+
       datatools::logger::priority mlogprio = datatools::logger::PRIO_WARNING;
       mlogprio = datatools::logger::get_priority(a_params.logging);
       DT_THROW_IF (mlogprio == datatools::logger::PRIO_UNDEFINED,
@@ -90,7 +124,7 @@ namespace mctools {
       a_manager.set_logging_priority (mlogprio);
       a_manager.set_using_time_stat (a_params.using_time_stat);
       if (a_params.prng_states_save_modulo > 0) {
-        a_manager.set_prng_state_save_modulo (a_params.prng_states_save_modulo);
+        a_manager.set_prng_state_save_modulo(a_params.prng_states_save_modulo);
       }
       if (! a_params.g4_macro.empty ()) {
         DT_LOG_NOTICE(a_manager.get_logging_priority (),

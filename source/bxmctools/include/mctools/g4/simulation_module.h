@@ -39,13 +39,38 @@ namespace mctools {
     {
     public:
 
-      void set_geometry_manager (const geomtools::manager & geometry_manager_);
+      /// Set the geometry service label (only used if no geometry manager is provided)
+      void set_geo_label(const std::string &);
+
+      /// Get the geometry service label (only used if no geometry manager is provided)
+      const std::string & get_geo_label() const;
+
+      /// Set the SD bank label
+      void set_sd_label(const std::string &);
+
+      /// Get the SD bank label
+      const std::string & get_sd_label() const;
+
+      /// Set the flag to erased existing SD bank in the current event record
+      void set_erase_former_SD_bank(bool e_);
+
+      /// Check if existing SD bank should be erased in the current event record
+      bool is_erase_former_SD_bank() const;
+
+      /// Set the reference to some external geoemtry manager
+      void set_geometry_manager(const geomtools::manager & geometry_manager_);
+
+      /// Set the simulation manager parameters
+      void set_simulation_manager_params(const manager_parameters &);
+
+      /// Return a non mutable reference to the simulation manager parameters
+      const manager_parameters & get_simulation_manager_params() const;
 
       /// Constructor
-      simulation_module (datatools::logger::priority logging_priority = datatools::logger::PRIO_FATAL);
-      /// Destructor
-      virtual ~simulation_module ();
+      simulation_module(datatools::logger::priority logging_priority = datatools::logger::PRIO_FATAL);
 
+      /// Destructor
+      virtual ~simulation_module();
 
       /// Initialization
       virtual void initialize(const datatools::properties & /* config_ */,
@@ -60,11 +85,11 @@ namespace mctools {
 
     protected :
 
-      void _initialize_manager (datatools::service_manager & smgr_);
+      void _initialize_manager(datatools::service_manager & smgr_);
 
-      void _terminate_manager ();
+      void _terminate_manager();
 
-      int _simulate_event (datatools::things & the_event_record);
+      int _simulate_event(datatools::things & the_event_record);
 
     private:
 

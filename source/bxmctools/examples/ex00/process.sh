@@ -28,11 +28,11 @@ which pandoc > /dev/null 2<&1
 if [ $? -eq 0 ]; then
     echo -e "\nBuild the HTML README document..." 1>&2
     pandoc -r rst -w html README.rst -o mctools-ex00_README.html
-    which xdg-open > /dev/null 2<&1
-    if [ $? -eq 0 ]; then
-	echo -e "\nBrowse the HTML README document..." 1>&2
-	xdg-open mctools-ex00_README.html &
-    fi
+    # which xdg-open > /dev/null 2<&1
+    # if [ $? -eq 0 ]; then
+    # 	echo -e "\nBrowse the HTML README document..." 1>&2
+    # 	xdg-open mctools-ex00_README.html &
+    # fi
 fi
 mkdir ${build_dir}
 cd ${build_dir}
@@ -224,9 +224,27 @@ if [ $do_simulation -eq 1 ]; then
     # 	  --with-visualization \
     #     --input-file "mctools_ex00_${sim_module}.dpp.brio"
 
+    echo -e "\nRun the standalone simulation module..." 1>&2
+    ./ex00_run_sim_module \
+	--geometry-config "${CONFIG_DIR}/geometry/manager.conf" \
+	--simulation-config "${CONFIG_DIR}/simulation/manager.conf" \
+	--output-file "mctools_ex00_ssm.brio"
+    if [ $? -ne 0 ]; then
+	echo "ERROR: ./ex00_run_sim_module failed !" 1>&2
+	exit 1
+    fi
+
+    echo -e "\nBrowse the output simulated data file..." 1>&2
+    ./ex00_read_pipeline_simdata \
+        --logging-priority "notice" \
+        --interactive \
+   	--with-visualization \
+        --input-file "mctools_ex00_ssm.brio"
+
 fi
 
 if [ ${do_clean} -eq 1 ]; then
+    rm -f ex00_run_sim_module
     rm -f ex00_read_plain_simdata
     rm -f ex00_read_pipeline_simdata
     rm -f geomtools_inspector.C
@@ -241,6 +259,7 @@ if [ ${do_clean} -eq 1 ]; then
     rm -f mctools_ex00_vertices2.txt
     rm -f mctools_ex00_vertices_source_bulk.vg.txt
     rm -f mctools_ex00_vertices.txt
+    rm -f mctools_ex00_ssm.brio
     rm -f histos_electron_1MeV.root
     rm -f prng_seeds.save
     rm -f prng_states.save

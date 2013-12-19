@@ -28,7 +28,8 @@
 #include <boost/foreach.hpp>
 #include <boost/scoped_ptr.hpp>
 
-#include <datatools/datatools.h>
+// - Bayeux
+#include <bayeux/bayeux.h>
 #include <datatools/properties.h>
 #include <datatools/library_loader.h>
 
@@ -37,15 +38,10 @@
 #include <mctools/simulated_data.h>
 #include <mctools/simulated_data_reader.h>
 
-#include <datatools/bio_guard.h>
-#include <mygsl/bio_guard.h>
-#include <geomtools/bio_guard.h>
-#include <mctools/bio_guard.h>
-
 #include <ex00_inspector.h>
 
 int main(int argc_, char **argv_) {
-  DATATOOLS_INIT_MAIN(argc_, argv_);
+  BAYEUX_INIT_MAIN(argc_, argv_);
 
   datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
   int error_code = EXIT_SUCCESS;
@@ -196,8 +192,8 @@ int main(int argc_, char **argv_) {
     error_code = EXIT_FAILURE;
   }
 
-  DATATOOLS_FINI();
+  BAYEUX_FINI();
   return error_code;
 }
 
-// end of ex00_read_plain_simdata
+// end of ex00_read_plain_simdata.cxx

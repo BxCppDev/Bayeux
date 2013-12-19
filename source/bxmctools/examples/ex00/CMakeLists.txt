@@ -26,6 +26,7 @@ set(_libs ${Bayeux_LIBRARIES})
 
 include_directories(${PROJECT_SOURCE_DIR} ${_incs})
 
+###########
 add_library(mctools_ex00 SHARED ex00_inspector.h ex00_inspector.cc)
 
 install( FILES
@@ -36,6 +37,23 @@ install( FILES
          WORLD_READ WORLD_EXECUTE
        )
 
+##############
+add_executable(ex00_run_sim_module ex00_run_sim_module.cxx)
+
+target_link_libraries(ex00_run_sim_module
+  ${_libs}
+  ${Bayeux_MCTOOLS_GEANT4_LIBRARY}
+  ${Boost_LIBRARIES} )
+
+install ( FILES
+    ${PROJECT_BINARY_DIR}/ex00_run_sim_module
+    DESTINATION ${CMAKE_INSTALL_PREFIX}
+    PERMISSIONS OWNER_READ OWNER_EXECUTE
+    GROUP_READ GROUP_EXECUTE
+    WORLD_READ WORLD_EXECUTE
+  )
+
+##############
 add_executable(ex00_read_plain_simdata ex00_read_plain_simdata.cxx)
 
 target_link_libraries(ex00_read_plain_simdata mctools_ex00
@@ -51,6 +69,7 @@ install ( FILES
     WORLD_READ WORLD_EXECUTE
   )
 
+##############
 add_executable(ex00_read_pipeline_simdata ex00_read_pipeline_simdata.cxx)
 
 target_link_libraries(ex00_read_pipeline_simdata mctools_ex00
