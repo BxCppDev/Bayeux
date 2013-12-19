@@ -110,6 +110,7 @@ if(Bayeux_WITH_GEANT4)
     ${module_include_dir}/${module_name}/g4/loggable_support.h
     ${module_include_dir}/${module_name}/g4/g4_prng.h
     ${module_include_dir}/${module_name}/g4/track_history.h
+    ${module_include_dir}/${module_name}/g4/simulation_module.h
     )
   # - Published headers
   foreach(_hdrin ${${module_name}_GEANT4_HEADERS})
