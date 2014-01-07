@@ -17,7 +17,6 @@
 #define CUTS_NOT_CUT_H_ 1
 
 #include <cuts/i_cut.h>
-#include <cuts/cut_macros.h>
 
 namespace cuts {
 

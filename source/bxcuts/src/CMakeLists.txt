@@ -21,7 +21,6 @@ endfunction()
 # use a simple listing and then prepend the actual source dir root
 
 set(cuts_PUBLIC_HEADERS
-include/cuts/cut_macros.h
 include/cuts/cut_manager.h
 include/cuts/cut_service.h
 include/cuts/cut_tools.h

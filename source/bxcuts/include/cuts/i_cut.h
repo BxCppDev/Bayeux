@@ -289,8 +289,6 @@ namespace cuts {
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::cuts::i_cut,T,CutID); \
   /**/
 
-//#include <cuts/cut_macros.h>
-
 #endif // CUTS_I_CUT_H_
 
 // end of i_cut.h
