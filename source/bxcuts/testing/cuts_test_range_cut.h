@@ -20,7 +20,6 @@
 #include <iostream>
 
 #include <cuts/i_cut.h>
-#include <cuts/cut_macros.h>
 
 #include <cuts_test_data.h>
 

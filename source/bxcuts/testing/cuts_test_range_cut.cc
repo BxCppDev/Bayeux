@@ -36,7 +36,8 @@ namespace cuts {
     }
 
     // ctor:
-    CUT_CONSTRUCTOR_IMPLEMENT_HEAD(range_cut,a_logging_priority)
+    range_cut::range_cut(datatools::logger::priority a_logger_priority)
+    : i_cut(a_logger_priority)
     {
       _mode_ = MODE_X;
       _min_ = 0.0;
@@ -45,7 +46,13 @@ namespace cuts {
       return;
     }
 
-    CUT_DEFAULT_DESTRUCTOR_IMPLEMENT(range_cut);
+    range_cut::~range_cut()
+    {
+      if (is_initialized()) {
+        this->range_cut::reset();
+      }
+    }
+
 
     /*
     CUT_DESTRUCTOR_IMPLEMENT_HEAD(range_cut)
@@ -57,7 +64,7 @@ namespace cuts {
     }
     */
 
-    CUT_RESET_IMPLEMENT_HEAD (range_cut)
+    void range_cut::reset()
     {
       _set_initialized (false);
       _mode_ = MODE_X;
@@ -68,7 +75,7 @@ namespace cuts {
       return;
     }
 
-    CUT_ACCEPT_IMPLEMENT_HEAD (range_cut)
+    int range_cut::_accept()
     {
       int result = SELECTION_ACCEPTED;
       DT_LOG_TRACE(_logging, "Entering...");

@@ -37,20 +37,26 @@ namespace cuts {
     }
 
     // ctor:
-    CUT_CONSTRUCTOR_IMPLEMENT_HEAD (sphere_cut,a_logging_priority)
+    sphere_cut::sphere_cut(datatools::logger::priority a_logger_priority)
+    : i_cut(a_logger_priority)
     {
       _radius_ = 1.0;
       _x0_ = 0.0;
       _y0_ = 0.0;
       _z0_ = 0.0;
       _reversed_ = false;
-      return;
     }
 
     // dtor:
-    CUT_DEFAULT_DESTRUCTOR_IMPLEMENT (sphere_cut)
+    sphere_cut::~sphere_cut()
+    {
+      if (is_initialized()) {
+        this->sphere_cut::reset();
+      }
+    }
 
-    CUT_RESET_IMPLEMENT_HEAD (sphere_cut)
+
+    void sphere_cut::reset()
     {
       _set_initialized (false);
       _radius_ = 1.0;
@@ -59,10 +65,9 @@ namespace cuts {
       _z0_ = 0.0;
       _reversed_ = false;
       i_cut::_reset();
-      return;
     }
 
-    CUT_ACCEPT_IMPLEMENT_HEAD(sphere_cut)
+    int sphere_cut::_accept()
     {
       int result = SELECTION_ACCEPTED;
       DT_LOG_TRACE(_logging, "Entering...");
@@ -85,10 +90,9 @@ namespace cuts {
     }
 
     // static method used within a cut factory:
-    CUT_INITIALIZE_IMPLEMENT_HEAD(sphere_cut,
-                                  a_configuration,
-                                  a_service_manager,
-                                  a_cut_dict)
+    void sphere_cut::initialize(const datatools::properties& a_configuration,
+                                datatools::service_manager& a_service_manager,
+                                cuts::cut_handle_dict_type& a_cut_dict)
     {
       using namespace std;
       if (is_initialized ())

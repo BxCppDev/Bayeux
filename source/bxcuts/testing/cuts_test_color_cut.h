@@ -1,17 +1,17 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* cuts_test_color_cut_h
  * Author (s) : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-20
  * Last modified: 2010-09-20
- * 
- * License: 
+ *
+ * License:
  */
 
-/** 
- * Description: 
- * A simple test data structure to perform 
+/**
+ * Description:
+ * A simple test data structure to perform
  *  simple cuts.
- * 
+ *
  */
 
 #ifndef __cuts__test__color_cut_h
@@ -20,7 +20,6 @@
 #include <iostream>
 
 #include <cuts/i_cut.h>
-#include <cuts/cut_macros.h>
 
 #include <cuts_test_data.h>
 
@@ -30,16 +29,29 @@ namespace cuts {
 
     using namespace std;
 
-    CUT_CLASS_DECLARE (color_cut)
+    class color_cut : public cuts::i_cut
     {
 
     public:
- 
+
       void set_color (int a_color);
 
     public:
+      color_cut(datatools::logger::priority a_logging_priority =
+            datatools::logger::PRIO_FATAL);
+      virtual ~color_cut();
 
-      CUT_INTERFACE_CTOR_DTOR (color_cut);
+      /// Initialization
+      virtual void initialize(const datatools::properties &,
+                              datatools::service_manager &,
+                              cuts::cut_handle_dict_type &);
+
+      /// Reset
+      virtual void reset();
+
+    protected :
+      /// Selection
+      virtual int _accept();
 
     private:
 
@@ -47,7 +59,7 @@ namespace cuts {
 
       // Macro to automate the registration of the cut :
       CUT_REGISTRATION_INTERFACE(color_cut);
- 
+
     };
 
   } // end of namespace test

@@ -23,24 +23,30 @@ namespace cuts {
     }
 
     // ctor:
-    CUT_CONSTRUCTOR_IMPLEMENT_HEAD (color_cut,a_logging_priority)
+    color_cut::color_cut(datatools::logger::priority a_logger_priority)
+    : i_cut(a_logger_priority)
+
     {
       _color_ = data::BLACK;
-      return;
     }
 
     // dtor:
-    CUT_DEFAULT_DESTRUCTOR_IMPLEMENT (color_cut)
+    color_cut::~color_cut()
+    {
+      if (is_initialized()) {
+        this->color_cut::reset();
+      }
+    }
 
-    CUT_RESET_IMPLEMENT_HEAD (color_cut)
+
+    void color_cut::reset()
     {
       _set_initialized (false);
       _color_ = data::BLACK;
-      this->i_cut::_reset ();
-      return;
+      this->i_cut::_reset();
     }
 
-    CUT_ACCEPT_IMPLEMENT_HEAD (color_cut)
+    int color_cut::_accept()
     {
       int result = SELECTION_ACCEPTED;
       DT_LOG_TRACE(_logging, "Entering...");
@@ -55,10 +61,9 @@ namespace cuts {
     }
 
     // static method used within a cut factory:
-    CUT_INITIALIZE_IMPLEMENT_HEAD (color_cut,
-                                   a_configuration,
-                                   a_service_manager,
-                                   a_cut_dict)
+    void color_cut::initialize(const datatools::properties& a_configuration,
+                               datatools::service_manager& a_service_manager,
+                               cuts::cut_handle_dict_type& a_cut_dict)
     {
       using namespace std;
       if (is_initialized ())
