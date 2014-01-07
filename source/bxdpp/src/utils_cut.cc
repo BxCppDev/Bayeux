@@ -73,18 +73,22 @@ namespace dpp {
     return;
   }
 
-  CUT_CONSTRUCTOR_IMPLEMENT_HEAD(utils_cut,a_logger_priority)
+  utils_cut::utils_cut(datatools::logger::priority a_logger_priority)
+    : i_cut(a_logger_priority)
   {
     _mode_ = MODE_UNDEFINED;
-    return;
   }
 
-  CUT_DEFAULT_DESTRUCTOR_IMPLEMENT(utils_cut)
+  utils_cut::~utils_cut()
+  {
+    if (is_initialized()) {
+      this->utils_cut::reset();
+    }
+  }
 
-  CUT_INITIALIZE_IMPLEMENT_HEAD(utils_cut,
-                                configuration_,
-                                /*service_manager_*/,
-                                /*cut_dict_*/)
+  void utils_cut::initialize(const datatools::properties& configuration_,
+                             datatools::service_manager& /*service_manager_*/,
+                             cuts::cut_handle_dict_type& /*cut_dict_*/)
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
@@ -151,7 +155,7 @@ namespace dpp {
     return;
   }
 
-  CUT_RESET_IMPLEMENT_HEAD (utils_cut)
+  void utils_cut::reset()
   {
     _set_initialized (false);
     _mode_ = MODE_UNDEFINED;
@@ -161,7 +165,7 @@ namespace dpp {
     return;
   }
 
-  CUT_ACCEPT_IMPLEMENT_HEAD (utils_cut)
+  int utils_cut::_accept()
   {
     const datatools::things & ER = get_user_data<datatools::things>();
     // Check if the event record has a bank with a specific

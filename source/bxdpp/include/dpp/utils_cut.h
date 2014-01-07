@@ -37,7 +37,6 @@
 #include <vector>
 
 #include <cuts/i_cut.h>
-#include <cuts/cut_macros.h>
 
 namespace datatools {
     class properties;
@@ -46,7 +45,7 @@ namespace datatools {
 
 namespace dpp {
 
-  CUT_CLASS_DECLARE(utils_cut)
+  class utils_cut : public cuts::i_cut
   {
   public:
 
@@ -74,12 +73,26 @@ namespace dpp {
     void set_has_bank (const std::string & bank_name_,
                        const std::string & bank_type_ = "");
 
-    CUT_INTERFACE_CTOR_DTOR (utils_cut);
+    utils_cut(datatools::logger::priority a_logging_priority =
+              datatools::logger::PRIO_FATAL);
+    virtual ~utils_cut();
+
+    /// Initialization
+    virtual void initialize(const datatools::properties &,
+                            datatools::service_manager &,
+                            cuts::cut_handle_dict_type &);
+
+    /// Reset
+    virtual void reset();
+
 
     virtual void tree_dump (std::ostream & a_out         = std::clog,
                             const std::string & a_title  = "",
                             const std::string & a_indent = "",
                             bool a_inherit               = false) const;
+
+  protected:
+    virtual int _accept();
 
   private:
 
