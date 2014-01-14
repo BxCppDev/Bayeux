@@ -214,10 +214,10 @@ namespace mctools {
 
 } // end of namespace mctools
 
-#if GEOMTOOLS_WITH_REFLECTION == 1
+#if MCTOOLS_WITH_REFLECTION == 1
 // Activate reflection layer for the mctools::base_step_hit class :
 DR_CLASS_INIT(::mctools::base_step_hit);
-#endif // GEOMTOOLS_WITH_REFLECTION
+#endif // MCTOOLS_WITH_REFLECTION
 
 #endif // MCTOOLS_BASE_STEP_HIT_H_
 
