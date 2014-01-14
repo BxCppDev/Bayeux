@@ -31,6 +31,18 @@
 namespace mctools {
 
   /// \brief The base class for all Monte-Carlo (MC) hit objects
+  /**
+   *   start
+   *    o
+   *     \
+   *      \
+   *       \    particle track step
+   *        \
+   *         \
+   *          o
+   *          stop
+   *
+   */
   class base_step_hit : public geomtools::base_hit
   {
 
@@ -183,9 +195,9 @@ namespace mctools {
     // Attributes :
 
     geomtools::vector_3d         _position_start_; /// Start position : beginning of the tiny track segment (step)
-    geomtools::vector_3d         _position_stop_;  /// Stop position : end of the tiny track segment (step)
-    double                       _time_start_;     /// Start time
-    double                       _time_stop_;      /// Stop time
+    geomtools::vector_3d         _position_stop_;  /// Stop position  : end of the tiny track segment (step)
+    double                       _time_start_;     /// Start time at start position
+    double                       _time_stop_;      /// Stop time at stop position
     geomtools::vector_3d         _momentum_start_; /// Momentum at start position
     geomtools::vector_3d         _momentum_stop_;  /// Momentum at stop position
     double                       _energy_deposit_; /// Energy deposit along the track segment (step)
