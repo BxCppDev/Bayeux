@@ -36,6 +36,7 @@
 #include <datatools/ioutils.h>
 #include <datatools/units.h>
 #include <datatools/version_id.h>
+#include <datatools/version_check.h>
 #include <datatools/exception.h>
 
 #include <geomtools/visibility.h>
@@ -70,6 +71,7 @@ namespace geomtools {
   manager::base_plugin::~base_plugin()
   {
     _geo_mgr_ = 0;
+    _geom_setup_requirements_.clear();
     return;
   }
 
@@ -92,6 +94,40 @@ namespace geomtools {
     return *_geo_mgr_;
   }
 
+  bool manager::base_plugin::_has_geom_setup_requirement() const
+  {
+    return ! _geom_setup_requirements_.empty();
+  }
+
+  void manager::base_plugin::_check_geom_setup_requirement() const
+  {
+    DT_THROW_IF(_geo_mgr_ == 0, std::logic_error,
+                "The geometry manager has not been set !");
+    if (_has_geom_setup_requirement()) {
+      const std::string & geom_mgr_setup_label = _geo_mgr_->get_setup_label ();
+      const std::string & geom_mgr_setup_version = _geo_mgr_->get_setup_version ();
+      datatools::version_id geom_mgr_setup_vid;
+      {
+        std::istringstream iss (geom_mgr_setup_version);
+        iss >> geom_mgr_setup_vid;
+      }
+      for (size_t i = 0; i < _geom_setup_requirements_.size(); i++)
+        {
+          if (datatools::validate_version (geom_mgr_setup_label,
+                                           geom_mgr_setup_vid,
+                                           _geom_setup_requirements_[i]))
+            {
+              DT_LOG_DEBUG(get_logging_priority(), "Geometry setup is validated");
+              return;
+            }
+        }
+      DT_THROW_IF(true, std::logic_error,
+                  "Geometry manager setup label '" << _geo_mgr_->get_setup_label ()
+                  << "' with version '" << geom_mgr_setup_vid
+                  << "' does not match one of the requested setup requirement");
+    }
+  }
+
   int manager::base_plugin::initialize_standalone(const datatools::properties& config_)
   {
     plugins_dict_type dummy;
@@ -108,6 +144,14 @@ namespace geomtools {
   void manager::base_plugin::_basic_initialize(const datatools::properties & config_)
   {
     set_logging_priority(datatools::logger::extract_logging_configuration(config_,datatools::logger::PRIO_WARNING));
+
+    if (config_.has_key("geometry.setup_requirement"))
+      {
+        DT_LOG_NOTICE(get_logging_priority(),
+                      "Loading 'geometry.setup_requirement' rules...");
+        config_.fetch("geometry.setup_requirement", _geom_setup_requirements_);
+        _check_geom_setup_requirement();
+      }
   }
 
   /************************************************/

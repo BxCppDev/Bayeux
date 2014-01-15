@@ -121,11 +121,18 @@ namespace geomtools {
       /// Get a mutable reference to the geometry manager
       manager & _grab_geo_manager();
 
+      /// Check presence of geometry requirements
+      bool _has_geom_setup_requirement() const;
+
+      /// Check geometry requirement
+      void _check_geom_setup_requirement() const;
+
       datatools::logger::priority _logging; /// The logging priority threshold
 
     private:
 
-      manager * _geo_mgr_; //!< Handle to the geometry manager
+      manager * _geo_mgr_;                                //!< Handle to the geometry manager
+      std::vector<std::string> _geom_setup_requirements_; //!< Minimal version of geometry setups
 
       // Factory stuff :
       DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_plugin);
