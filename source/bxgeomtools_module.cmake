@@ -353,19 +353,4 @@ set(${module_name}_MODULE_EXAMPLES
   ${module_examples_dir}
   )
 
-# - Utility script:
-configure_file(${module_app_dir}/geomtools_mkskelcfg.in
-               ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxgeomtools_mkskelcfg @ONLY)
 
-install(FILES
-    ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxgeomtools_mkskelcfg
-  DESTINATION
-    ${CMAKE_INSTALL_BINDIR}
-    PERMISSIONS
-      OWNER_READ OWNER_EXECUTE
-      GROUP_READ GROUP_EXECUTE
-      WORLD_READ WORLD_EXECUTE
-    COMPONENT Development
-  )
-
-# end
