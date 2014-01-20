@@ -272,7 +272,7 @@ function populate_genvtx_config_s2d4()
 
     #######################################################################
     cat > ${setup_base_dir}/README.rst <<EOF
-Primary event generation setup ${_dbq}${setup_label}${_dbq} (version ${_dbq}${setup_version}${_dbq})
+Primary vertex generation setup ${_dbq}${setup_label}${_dbq} (version ${_dbq}${setup_version}${_dbq})
 ==============================================================================
 
 This   README   file  has   been   automatically   generated  by   the
@@ -287,8 +287,8 @@ Files
  * ${_dbq}manager.conf${_dbq} : The main configuration file for the vertex generation manager.
  * ${_dbq}generators.def${_dbq} : Contains the definition of vertex generators.
 
-Genbb inspector
-------------------
+Bayeux/genvtx production program
+---------------------------------
 
 Run the Bayeux/genvtx production program: ::
 
@@ -344,10 +344,8 @@ EOF
 # List of multi-properties (datatools::multi_properties):
 
 #@description The list of vertex generators
-
-#@key_label   "name"
-#@meta_label  "type"
-
+#@key_label  "name"
+#@meta_label "type"
 
 #########################################################
 [name="source0_bulk.vg" type="genvtx::cylinder_model_vg"]
