@@ -87,11 +87,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_L
 # Option for building/installing developer tools
 #
 option(Bayeux_BUILD_DEVELOPER_TOOLS "Build/install developer tools" OFF)
-if(NOT Bayeux_BUILD_DEVELOPER_TOOLS)
-  set(Bayeux_BUILD_DEVELOPER_TOOLS 0)
-else()
-  set(Bayeux_BUILD_DEVELOPER_TOOLS 1)
-endif()
+mark_as_advanced(Bayeux_BUILD_DEVELOPER_TOOLS)
 
 #-----------------------------------------------------------------------
 # Use implicit Bayeux init/fini instruction
