@@ -297,7 +297,7 @@ function populate_mctools_g4_config_s2d4()
 
     #######################################################################
     cat > ${setup_base_dir}/README.rst <<EOF
-Primary event generation setup ${_dbq}${setup_label}${_dbq} (version ${_dbq}${setup_version}${_dbq})
+Geant4 simulation setup ${_dbq}${setup_label}${_dbq} (version ${_dbq}${setup_version}${_dbq})
 ==============================================================================
 
 This   README   file  has   been   automatically   generated  by   the
@@ -319,7 +319,7 @@ Files
 Geant4 production
 -----------------
 
-Run the Bayeux/genvtx production program: ::
+Run the Bayeux/mctools Geant4 simulation production program: ::
 
 EOF
     geo_setup_base_dir="${setup_path_dir}/geometry/${setup_version}"
@@ -410,9 +410,9 @@ EOF
 manager.config : string as path = \\
   "${config_prefix}${setup_path_dir}/geometry/${setup_version}/manager.conf"
 
-#############################################
-# GENBB PRIMARY PARTICLES/EVENTS GENERATION #
-#############################################
+#######################################
+# PRIMARY PARTICLES/EVENTS GENERATION #
+#######################################
 [name="event_generator"]
 
 #@config Configuration of the event generator manager
@@ -763,9 +763,8 @@ EOF
 # List of multi-properties (datatools::multi_properties):
 
 #@description A list of simulated step hit processors
-#@key_label   "name"
-#@meta_label  "type"
-
+#@key_label  "name"
+#@meta_label "type"
 
 ##############################################################################
 [name="detector.hit_processor" type="mctools::calorimeter_step_hit_processor"]
