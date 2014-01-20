@@ -32,7 +32,7 @@ function print_usage()
     cat<<EOF
 
 ${this_bxapp} -- Build and populate a skeleton configuration directory
-                 for the genbb_help primary event generator manager.
+                 for the Bayeux/genbb_help primary event generator manager.
 
 Usage:
 
@@ -287,8 +287,8 @@ Files
  * ${_dbq}manager.conf${_dbq} : The main configuration file for the primary event generation manager.
  * ${_dbq}generators.def${_dbq} : Contains the definition of primary event generators.
 
-Genbb inspector
-------------------
+Bayeux/genbb_help inspector program
+-----------------------------------
 
 Run the Bayeux/genbb_help inspector program: ::
 
@@ -339,14 +339,13 @@ EOF
 # List of multi-properties (datatools::multi_properties):
 
 #@description The list of calibration radioactive decay generators
-
-#@key_label   "name"
-#@meta_label  "type"
+#@key_label  "name"
+#@meta_label "type"
 
 
 ###################################
 [name="Co60" type="genbb::wdecay0"]
-#@config Co-60 decay [calibration]
+#@config Co-60 decay
 
 #@description The category of decay (genbb/decay0 syntax)
 decay_type    : string  = "background"
@@ -357,7 +356,7 @@ decay_isotope : string  = "Co60"
 
 ####################################
 [name="Bi207" type="genbb::wdecay0"]
-#@config Bi-207 decay [calibration]
+#@config Bi-207 decay
 
 #@description The category of decay (genbb/decay0 syntax)
 decay_type    : string  = "background"
@@ -368,7 +367,7 @@ decay_isotope : string  = "Bi207+Pb207m"
 
 ####################################
 [name="Am241" type="genbb::wdecay0"]
-#@config Am-241 decay [calibration]
+#@config Am-241 decay
 
 #@description The category of decay (genbb/decay0 syntax)
 decay_type    : string  = "background"
