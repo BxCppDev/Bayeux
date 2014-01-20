@@ -23,8 +23,8 @@
 #include <sstream>
 
 #include <datatools/properties.h>
+#include <datatools/multi_properties.h>
 #include <datatools/service_manager.h>
-//#include <datatools/ioutils.h>
 #include <datatools/exception.h>
 #include <datatools/io_factory.h>
 
@@ -40,6 +40,20 @@
 namespace dpp {
 
   /*** Implementation of the interface ***/
+
+  // static
+  const std::string & io_common::metadata_key()
+  {
+    static std::string s("__dpp.output_module.metadata.key");
+    return s;
+  }
+
+  // static
+  const std::string & io_common::metadata_rank()
+  {
+    static std::string s("__dpp.output_module.metadata.rank");
+    return s;
+  }
 
   // static
   io_common::format_type io_common::guess_format_from_filename(const std::string & filename_)
@@ -100,6 +114,28 @@ namespace dpp {
   const std::string & io_common::get_module_name() const
   {
     return _module_name_;
+  }
+
+  io_common::format_type io_common::get_format() const
+  {
+    return _format_;
+  }
+
+  void io_common::set_format(io_common::format_type f_)
+  {
+    _format_ = f_;
+    return;
+  }
+
+  io_common::io_type io_common::get_io() const
+  {
+    return _io_;
+  }
+
+  void io_common::set_io(io_common::io_type f_)
+  {
+    _io_ = f_;
+    return;
   }
 
   void io_common::set_context_label (const std::string & a_ctx_label)
@@ -264,6 +300,9 @@ namespace dpp {
     _file_record_counter_ = 0;
     _record_counter_ = 0;
     _file_index_ = -1;
+    _metadata_store_.set_key_label("name");
+    _metadata_store_.set_meta_label("");
+    _metadata_store_.set_description("Bayeux/dpp library's I/O module metadata store");
     return;
   }
 
@@ -358,6 +397,7 @@ namespace dpp {
      *  revert to some defaults *
      ****************************/
 
+    _metadata_store_.clear();
     _filenames_.reset ();
     _set_defaults ();
 
@@ -365,6 +405,25 @@ namespace dpp {
      *  end of the reset step   *
      ****************************/
 
+    return;
+  }
+
+  const datatools::multi_properties & io_common::get_metadata_store() const
+  {
+    return _metadata_store_;
+  }
+
+  datatools::multi_properties & io_common::grab_metadata_store()
+  {
+    DT_THROW_IF(_io_ == IO_INPUT,
+                std::logic_error,
+                "Cannot obtain write access on the metadata store in 'input' mode !");
+    return _metadata_store_;
+  }
+
+  void io_common::clear_metadata_store()
+  {
+    _metadata_store_.clear();
     return;
   }
 
@@ -380,6 +439,9 @@ namespace dpp {
     if (! a_title.empty ()) {
       a_out << indent << a_title << std::endl;
     }
+
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Metadata store : " << _metadata_store_.size() << std::endl;
 
     a_out << indent << datatools::i_tree_dumpable::tag
           << "Max record per file   : " << _max_record_per_file_ << std::endl;

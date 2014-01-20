@@ -1,9 +1,9 @@
 /* output_module.h
  * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2013-08-16
- * Last modified : 2013-12-13
+ * Last modified : 2014-01-15
  *
- * Copyright (C) 2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2013-2014 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,6 +89,18 @@ namespace dpp {
     /// Set the flag for preserving existing output file (prevent from file overwriting)
     void set_preserve_existing_output(bool a_preserve_existing_output);
 
+    /// Check if an embedded metadata store exists
+    bool has_metadata_store() const;
+
+    /// Return a const reference to the existing embedded metadata store
+    const datatools::multi_properties & get_metadata_store() const;
+
+    /// Return a mutable reference to the embedded metadata store, create it if it does not exist
+    datatools::multi_properties & grab_metadata_store();
+
+    /// Clear the embedded metadata store
+    void clear_metadata_store();
+
     /// Smart print
     virtual void tree_dump(std::ostream & a_out         = std::clog,
                            const std::string & a_title  = "",
@@ -98,7 +110,7 @@ namespace dpp {
     /// Check output termination
     bool is_terminated() const;
 
-    /// Return a reference to the non mutable  internal I/O data structure
+    /// Return a reference to the non mutable internal I/O data structure
     const io_common & get_common() const;
 
   protected:
@@ -114,9 +126,15 @@ namespace dpp {
 
   private:
 
+    /// Process metadata, if any
+    void _store_metadata_();
+
+  private:
+
     bool                         _preserve_existing_output_; //!< Flag to preserve existing output files
     boost::scoped_ptr<io_common> _common_; //!< Common data structure
     i_data_sink                * _sink_;   //!< Abstract data writer
+
 
     // Macro to automate the registration of the module :
     DPP_MODULE_REGISTRATION_INTERFACE(output_module);

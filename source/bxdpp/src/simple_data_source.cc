@@ -41,10 +41,9 @@ namespace dpp {
 
   void simple_data_source::reset ()
   {
-    if (is_open ())
-      {
-        this->simple_data_source::close ();
-      }
+    if (is_open ()) {
+      this->simple_data_source::close ();
+    }
     _source_record.reset ();
     return;
   }
@@ -52,14 +51,13 @@ namespace dpp {
   void simple_data_source::close ()
   {
     // std::cerr << "DEVEL: dpp::simple_data_source::close: TEST" << std::endl;
-    if (_source_record.status == source_record::STATUS_CLOSED)
-      {
-        return;
-      }
-    if (_boost_io_file_reader_ != 0)
-      {
-        this->simple_data_source::_close_file_source ();
-      }
+    if (_source_record.status == source_record::STATUS_CLOSED) {
+      return;
+    }
+    if (_boost_io_file_reader_ != 0) {
+      this->simple_data_source::_close_file_source ();
+    }
+    _metadata_col_.clear();
     return;
   }
 
@@ -121,11 +119,10 @@ namespace dpp {
 
     DT_THROW_IF (download_mode,std::logic_error,
                  "Source file download mode is not implemented yet !");
-    if (file_mode)
-      {
-        // std::cerr << "DEVEL: dpp::simple_data_source::set: TEST 3: invoke open_file_mode_" << std::endl;
-        this->simple_data_source::_open_file_source ();
-      }
+    if (file_mode) {
+      // std::cerr << "DEVEL: dpp::simple_data_source::set: TEST 3: invoke open_file_mode_" << std::endl;
+      this->simple_data_source::_open_file_source ();
+    }
 
     //cerr << "DEVEL: dpp::simple_data_source::set: Exiting." << std::endl;
     return;
@@ -164,13 +161,26 @@ namespace dpp {
                   "File format not recognized for '"
                  << _source_record.effective_label << "' !");
 
-    if (_boost_io_file_reader_ == 0)
-      {
-        _boost_io_file_reader_ = new ds::data_reader;
-        DT_LOG_NOTICE (get_logging_priority (), "Label is '" << _source_record.effective_label << "'");
-        _boost_io_file_reader_->init_multi (_source_record.effective_label);
-        _source_record.status = source_record::STATUS_OPENED;
+    if (_boost_io_file_reader_ == 0) {
+      _boost_io_file_reader_ = new ds::data_reader;
+      DT_LOG_NOTICE (get_logging_priority (), "Label is '" << _source_record.effective_label << "'");
+      _boost_io_file_reader_->init_multi (_source_record.effective_label);
+      _source_record.status = source_record::STATUS_OPENED;
+    }
+    while (_boost_io_file_reader_->has_record_tag ()) {
+      if (datatools::check_serial_tag<datatools::properties>(_boost_io_file_reader_->get_record_tag ())) {
+        // Load metadata as many as possible:
+        {
+          datatools::properties pushed_metadata;
+          _metadata_col_.push_back(pushed_metadata);
+        }
+        datatools::properties & new_metadata = _metadata_col_.back();
+        _boost_io_file_reader_->load(new_metadata);
+      } else {
+        break;
       }
+    }
+
     _has_next_record = false;
     _check_next_record ();
     return;
@@ -179,19 +189,16 @@ namespace dpp {
   void simple_data_source::_check_next_record ()
   {
     _has_next_record = false;
-    if (_boost_io_file_reader_ == 0)
-      {
-        return;
-      }
-    if (! _boost_io_file_reader_->has_record_tag ())
-      {
-        return;
-      }
-    if (datatools::check_serial_tag<datatools::things>(_boost_io_file_reader_->get_record_tag ()))
-      {
-        _has_next_record = true;
-        return;
-      }
+    if (_boost_io_file_reader_ == 0) {
+      return;
+    }
+    if (! _boost_io_file_reader_->has_record_tag ()) {
+      return;
+    }
+    if (datatools::check_serial_tag<datatools::things>(_boost_io_file_reader_->get_record_tag ())) {
+      _has_next_record = true;
+      return;
+    }
     return;
   }
 
@@ -200,28 +207,39 @@ namespace dpp {
     DT_THROW_IF (_source_record.label.empty (),
                  std::logic_error,
                  "No source label is available !");
-    if (_source_record.status == source_record::STATUS_CLOSED)
-      {
-        DT_LOG_NOTICE (get_logging_priority (), "Opening data source...");
-        this->simple_data_source::open ();
-      }
+    if (_source_record.status == source_record::STATUS_CLOSED) {
+      DT_LOG_NOTICE (get_logging_priority (), "Opening data source...");
+      this->simple_data_source::open ();
+    }
     return _has_next_record;
   }
 
   bool simple_data_source::load_next_record (datatools::things & a_event_record)
   {
     bool done = false;
-    if (! _has_next_record)
-      {
-        return done;
-      }
-    if (_boost_io_file_reader_ != 0)
-      {
-        _boost_io_file_reader_->load (a_event_record);
-        _check_next_record ();
-        done = true;
-      }
+    if (! _has_next_record) {
+      return done;
+    }
+    if (_boost_io_file_reader_ != 0) {
+      _boost_io_file_reader_->load (a_event_record);
+      _check_next_record ();
+      done = true;
+    }
     return done;
+  }
+
+  int64_t simple_data_source::get_number_of_metadata() const
+  {
+    return _metadata_col_.size();
+  }
+
+  bool simple_data_source::load_metadata(datatools::properties & a_metadata, int64_t a_entry)
+  {
+    if (a_entry < 0 || a_entry >= _metadata_col_.size()) {
+      return false;
+    }
+    a_metadata = _metadata_col_[a_entry];
+    return true;
   }
 
   // ctor:

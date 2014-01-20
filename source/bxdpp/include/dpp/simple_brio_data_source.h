@@ -64,6 +64,10 @@ namespace dpp {
 
     virtual bool load_next_record (datatools::things & a_event_record);
 
+    virtual int64_t get_number_of_metadata () const;
+
+    virtual bool load_metadata (datatools::properties & a_metadata, int64_t a_entry);
+
     virtual void close ();
 
     virtual void reset ();

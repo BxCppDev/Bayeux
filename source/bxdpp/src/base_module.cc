@@ -231,17 +231,6 @@ namespace dpp {
                                                        true);
     set_logging_priority(p);
 
-    /*
-    if (a_config.has_key("logging.priority")) {
-      std::string prio_label = a_config.fetch_string("logging.priority");
-      datatools::logger::priority p = datatools::logger::get_priority(prio_label);
-      DT_THROW_IF(p == datatools::logger::PRIO_UNDEFINED,
-                  std::domain_error,
-                  "Unknow logging priority ``" << prio_label << "`` !");
-      set_logging_priority(p);
-    }
-    */
-
     if (! has_description ()) {
       if (a_config.has_key("description")) {
         set_description(a_config.fetch_string("description"));

@@ -90,6 +90,10 @@ namespace dpp {
 
     virtual bool store_next_record (const datatools::things & a_event_record) = 0;
 
+    virtual bool can_store_meta_data () const = 0;
+
+    virtual bool store_metadata (const datatools::properties & a_meta_data) = 0;
+
     virtual void close () = 0;
 
     virtual void reset () = 0;

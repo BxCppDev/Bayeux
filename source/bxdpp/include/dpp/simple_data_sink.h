@@ -56,6 +56,10 @@ namespace dpp {
 
     virtual bool store_next_record (const datatools::things & a_event_record);
 
+    virtual bool can_store_meta_data () const;
+
+    virtual bool store_metadata (const datatools::properties & a_meta_data);
+
     virtual void close ();
 
     virtual void reset ();
@@ -79,6 +83,8 @@ namespace dpp {
 
   private:
 
+    unsigned int _record_counter_;
+    unsigned int _metadata_counter_;
     datatools::data_writer * _boost_io_file_writer_;
 
   };

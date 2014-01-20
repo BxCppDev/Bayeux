@@ -32,7 +32,12 @@
  *
  * Standard BOOST I/O file format for SuperNEMO data is :
  *
- *   Data: event record as 'snemo:core::model::event_record' (things)
+ *   Metadata: medadata as 'datatools::properties'
+ *    - metadata # 0
+ *    - metadata # 1
+ *    - ...
+ *    - metadata # M
+ *   Data: event record as 'datatools::things'
  *    - event record # 0
  *    - event record # 1
  *    - event record # 2
@@ -71,6 +76,10 @@ namespace dpp {
 
     virtual bool load_next_record (datatools::things & a_event_record);
 
+    virtual int64_t get_number_of_metadata () const;
+
+    virtual bool load_metadata (datatools::properties & a_metadata, int64_t a_entry);
+
     virtual void close ();
 
     virtual void reset ();
@@ -93,12 +102,9 @@ namespace dpp {
 
     virtual void _check_next_record ();
 
-    // virtual int64_t _get_number_of_entries () const;
-
-    // virtual bool _load_record (datatools::things & a_event_record, int64_t a_entry);
-
   private:
 
+    std::vector<datatools::properties> _metadata_col_;
     datatools::data_reader * _boost_io_file_reader_;
 
   };

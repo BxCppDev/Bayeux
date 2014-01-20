@@ -243,6 +243,7 @@ namespace dpp {
 
       if (! _source_->is_open ()) _source_->open ();
       DT_LOG_TRACE(_logging, "Source is open.");
+      _load_metadata_();
       // check if we have some records in it :
       if (! _source_->has_next_record ()) {
         DT_LOG_TRACE(_logging, "NO NEXT RECORD.");
@@ -301,6 +302,7 @@ namespace dpp {
         _source_->reset ();
         delete _source_;
         _source_ = 0;
+        _grab_common().clear_metadata_store();
       }
       _grab_common().set_file_record_counter(0);
       int effective_max_files = get_common().get_max_files();
@@ -330,6 +332,50 @@ namespace dpp {
       _grab_common().set_terminated(true);
     }
     return load_status;
+  }
+
+  bool input_module::has_metadata_store() const
+  {
+    return (_common_);
+  }
+
+  const datatools::multi_properties & input_module::get_metadata_store() const
+  {
+    DT_THROW_IF(!has_metadata_store(),
+                std::logic_error,
+                "No embedded metadata store exists!");
+    input_module * mutable_this = const_cast<input_module*>(this);
+    io_common & ioc = mutable_this->_grab_common();
+    return ioc.get_metadata_store();
+  }
+
+  void input_module::clear_metadata_store()
+  {
+    if (_common_) {
+      _common_->clear_metadata_store();
+    }
+    return;
+  }
+
+  void input_module::_load_metadata_()
+  {
+    // std::cerr << "DEVEL: dpp::input_module::_load_metadata_: Entering..." << std::endl;
+
+    int64_t nmetadata = _source_->get_number_of_metadata ();
+    // std::cerr << "DEVEL: dpp::input_module::_load_metadata_: #metadata = "
+    //           << nmetadata << std::endl;
+    datatools::multi_properties & MDS = _grab_common().grab_metadata_store();
+    for (int64_t i(0); i < nmetadata; i++) {
+      datatools::properties p;
+      _source_->load_metadata(p, i);
+      const std::string & key = p.fetch_string(io_common::metadata_key());
+      //p.tree_dump(std::cerr, "Metadata '" << key << "' :", "DEVEL: ");
+      p.clean(io_common::metadata_key());
+      p.clean(io_common::metadata_rank());
+      MDS.add(key, p);
+    }
+    // std::cerr << "DEVEL: dpp::input_module::_load_metadata_: Exiting." << std::endl;
+    return;
   }
 
   void input_module::tree_dump (std::ostream & a_out ,

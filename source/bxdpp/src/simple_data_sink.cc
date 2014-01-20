@@ -122,6 +122,8 @@ namespace dpp {
       _boost_io_file_writer_ = 0;
       _sink_record.status = sink_record::STATUS_CLOSED;
       _sink_record.reset ();
+      _record_counter_ = 0;
+      _metadata_counter_ = 0;
     }
     return;
   }
@@ -143,6 +145,8 @@ namespace dpp {
                  std::logic_error,
                  "File format not recognized for '" << _sink_record.effective_label << "' !");
     if (_boost_io_file_writer_ == 0) {
+      _record_counter_ = 0;
+      _metadata_counter_ = 0;
       _boost_io_file_writer_ = new ds::data_writer;
       _boost_io_file_writer_->init (_sink_record.effective_label,
                                     ds::using_multiple_archives);
@@ -155,8 +159,36 @@ namespace dpp {
   {
     bool done = false;
     if (_boost_io_file_writer_ != 0) {
-      _boost_io_file_writer_->store (a_event_record);
+      _boost_io_file_writer_->store(a_event_record);
+      _record_counter_++;
       done = true;
+    } else {
+      DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                   "Cannot store the event record !");
+    }
+    return done;
+  }
+
+  bool simple_data_sink::can_store_meta_data() const
+  {
+    return _record_counter_ == 0;
+  }
+
+  bool simple_data_sink::store_metadata (const datatools::properties & a_metadata)
+  {
+    bool done = false;
+    if (_boost_io_file_writer_ != 0) {
+      if (_record_counter_ == 0) {
+        _boost_io_file_writer_->store(a_metadata);
+        _metadata_counter_++;
+        done = true;
+      } else {
+        DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                     "Cannot store metadata because some event records have already been stored !");
+      }
+    } else {
+      DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                   "Cannot store the metadata !");
     }
     return done;
   }
@@ -164,7 +196,9 @@ namespace dpp {
   simple_data_sink::simple_data_sink (datatools::logger::priority a_priority)
     : i_data_sink (a_priority)
   {
-    this->simple_data_sink::set_defaults_ (a_priority);
+    _record_counter_ = 0;
+    _metadata_counter_ = 0;
+    this->simple_data_sink::set_defaults_(a_priority);
     return;
   }
 
@@ -173,6 +207,8 @@ namespace dpp {
     : i_data_sink (a_sink_label, a_priority)
   {
     _boost_io_file_writer_ = 0;
+    _record_counter_ = 0;
+    _metadata_counter_ = 0;
     this->simple_data_sink::open ();
     return;
   }

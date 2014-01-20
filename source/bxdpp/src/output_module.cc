@@ -140,6 +140,35 @@ namespace dpp {
     return *_common_.get();
   }
 
+  bool output_module::has_metadata_store() const
+  {
+    return (_common_);
+  }
+
+  const datatools::multi_properties & output_module::get_metadata_store() const
+  {
+    DT_THROW_IF(!has_metadata_store(),
+                std::logic_error,
+                "No embedded metadata store exists!");
+    output_module * mutable_this = const_cast<output_module*>(this);
+    io_common & ioc = mutable_this->_grab_common();
+    return ioc.get_metadata_store();
+  }
+
+  datatools::multi_properties & output_module::grab_metadata_store()
+  {
+    io_common & ioc = _grab_common();
+    return ioc.grab_metadata_store();
+  }
+
+  void output_module::clear_metadata_store()
+  {
+    if (_common_) {
+      _common_->clear_metadata_store();
+    }
+    return;
+  }
+
   // Constructor :
   output_module::output_module(datatools::logger::priority logging_priority_)
     : base_module(logging_priority_)
@@ -210,6 +239,7 @@ namespace dpp {
 
     _common_.get()->reset();
     _common_.reset(0);
+    // XXX
     _set_defaults ();
 
     /****************************
@@ -230,6 +260,21 @@ namespace dpp {
       return _store(a_data_record);
     }
     return PROCESS_OK;
+  }
+
+  void output_module::_store_metadata_()
+  {
+    // std::cerr << "DEVEL: dpp::output_module::_store_metadata_: Entering..." << std::endl;
+    datatools::multi_properties & MDS = grab_metadata_store();
+    for (int i(0); i < (int) MDS.size(); i++) {
+      const std::string & key = MDS.ordered_key(i);
+      datatools::properties & props = MDS.grab_section(key);
+      props.store_string(io_common::metadata_key(), key);
+      props.store_integer(io_common::metadata_rank(), i);
+      _sink_->store_metadata(props);
+    }
+    // std::cerr << "DEVEL: dpp::output_module::_store_metadata_: Exiting." << std::endl;
+    return;
   }
 
   base_module::process_status
@@ -256,6 +301,8 @@ namespace dpp {
       }
       if (! _sink_->is_open ()) _sink_->open ();
       _grab_common().set_file_record_counter(0);
+      // Process metadata:
+      _store_metadata_();
     }
     // force storage of the current data record :
     bool store_it = true;
@@ -299,6 +346,7 @@ namespace dpp {
         _sink_->reset ();
         delete _sink_;
         _sink_ = 0;
+        _grab_common().clear_metadata_store();
       }
       _grab_common().set_file_record_counter(0);
       if (get_common().get_max_files() > 0) {
@@ -319,6 +367,7 @@ namespace dpp {
     }
     return store_status;
   }
+
 
   void output_module::tree_dump (std::ostream & a_out ,
                                  const std::string & a_title,

@@ -65,26 +65,30 @@ namespace dpp {
 
     virtual bool store_next_record (const datatools::things & a_event_record);
 
+    virtual bool can_store_meta_data () const;
+
+    virtual bool store_metadata (const datatools::properties & a_meta_data);
+
     virtual void close ();
 
     virtual void reset ();
 
   public:
 
-    // ctor:
+    /// Constructor
     simple_brio_data_sink (datatools::logger::priority a_priority = datatools::logger::PRIO_NOTICE);
 
 
-    // ctor:
+    /// Constructor
     simple_brio_data_sink (const std::string & a_sink_label = "",
                            datatools::logger::priority a_priority = datatools::logger::PRIO_NOTICE);
 
-    // dtor:
+    /// Destructor
     virtual ~simple_brio_data_sink ();
 
   private:
 
-    brio::writer * _brio_file_writer_;
+    brio::writer * _brio_file_writer_; //!< handle to the brio writer
 
   };
 

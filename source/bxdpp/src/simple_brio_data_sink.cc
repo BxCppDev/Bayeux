@@ -181,7 +181,27 @@ namespace dpp {
       done = true;
     } else {
       DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
-                   "Cannot store the event record ! This is a bug !");
+                   "Cannot store the event record !");
+    }
+    return done;
+  }
+
+  bool simple_brio_data_sink::can_store_meta_data() const
+  {
+    return true;
+  }
+
+  bool simple_brio_data_sink::store_metadata (const datatools::properties & a_metadata)
+  {
+    bool done = false;
+    if (_brio_file_writer_ != 0) {
+      _brio_file_writer_->select_store(brio_common::general_info_store_label());
+      _brio_file_writer_->store(a_metadata);
+      _brio_file_writer_->select_store(brio_common::event_record_store_label());
+      done = true;
+    } else {
+      DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                   "Cannot store the metadata !");
     }
     return done;
   }

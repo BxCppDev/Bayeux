@@ -93,6 +93,15 @@ namespace dpp {
     /// Return a reference to the non mutable internal I/O data structure
     const io_common & get_common() const;
 
+    /// Check if an embedded metadata store exists
+    bool has_metadata_store() const;
+
+    /// Return a const reference to the existing embedded metadata store
+    const datatools::multi_properties & get_metadata_store() const;
+
+    /// Clear the embedded metadata store
+    void clear_metadata_store();
+
   protected:
 
     /// Load a data record
@@ -103,6 +112,11 @@ namespace dpp {
 
     /// Return a reference to the mutable internal I/O data structure
     io_common & _grab_common();
+
+  private:
+
+    /// Process metadata, if any
+    void _load_metadata_();
 
   private:
 

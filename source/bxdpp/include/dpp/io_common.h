@@ -34,6 +34,7 @@
 
 #include <datatools/smart_filename.h>
 #include <datatools/logger.h>
+#include <datatools/multi_properties.h>
 
 namespace dpp {
 
@@ -46,6 +47,14 @@ namespace dpp {
   {
   public:
 
+    /// \brief Input/output
+    enum io_type {
+      IO_INVALID = -1,
+      IO_OUTPUT  = 0,
+      IO_INPUT   = 1
+    };
+
+    /// \brief Format of the storage
     enum format_type {
       FORMAT_INVALID = -1,
       FORMAT_BIO     = 0,
@@ -60,6 +69,10 @@ namespace dpp {
     static i_data_sink * allocate_writer(const std::string &,
                                          datatools::logger::priority);
 
+    static const std::string & metadata_key();
+
+    static const std::string & metadata_rank();
+
     io_common(datatools::logger::priority & logging_,
               const std::string & module_name_);
 
@@ -68,6 +81,14 @@ namespace dpp {
     void set_module_name (const std::string &);
 
     const std::string & get_module_name() const;
+
+    format_type get_format() const;
+
+    void set_format(format_type);
+
+    io_type get_io() const;
+
+    void set_io(io_type);
 
     void set_context_label (const std::string &);
 
@@ -121,6 +142,15 @@ namespace dpp {
 
     void reset();
 
+    /// Return an embedded metadata store (const reference)
+    const datatools::multi_properties & get_metadata_store() const;
+
+    /// Return an embedded metadata store (mutable reference)
+    datatools::multi_properties & grab_metadata_store();
+
+    /// Clear the contents of the embedded metadata store
+    void clear_metadata_store();
+
     virtual void tree_dump (std::ostream & a_out         = std::clog,
                             const std::string & a_title  = "",
                             const std::string & a_indent = "",
@@ -134,6 +164,8 @@ namespace dpp {
 
     // Configuration attributes:
     std::string _module_name_;               //!< Name of the associated module
+    io_type     _io_;                        //!< I/O flag
+    format_type _format_;                    //!< Format flag
     datatools::logger::priority * _logging_; //!< Handle to the logging priority of the associated module
     int _max_record_per_file_;       //!< Maximum number of event records per file
     int _max_record_total_;          //!< Maximum number of event records to be processed
@@ -145,6 +177,10 @@ namespace dpp {
     int _file_record_counter_;    //!< Event record counter in the current file
     int _record_counter_;         //!< Total event record counter
     int _file_index_;             //!< Index of the current datafile index
+
+    // Metadata support:
+    //std::vector<std::string> _metadata_labels_;
+    datatools::multi_properties _metadata_store_;
 
     // Services:
     std::string            _Ctx_label_;      //!< The label of the context service

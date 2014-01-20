@@ -222,7 +222,7 @@ namespace dpp {
   {
     bool done = false;
     if (_brio_file_reader_ != 0) {
-      int status = _brio_file_reader_->load (a_event_record, a_entry);
+      int status = _brio_file_reader_->load(a_event_record, a_entry);
       if (status != 0) {
         return false;
       }
@@ -247,6 +247,27 @@ namespace dpp {
       done = true;
     }
     return done;
+  }
+
+  int64_t simple_brio_data_source::get_number_of_metadata() const
+  {
+    if (_brio_file_reader_ != 0) {
+      if (_brio_file_reader_->has_store_with_serial_tag (brio_common::general_info_store_label(),
+                                                         datatools::properties::serial_tag())) {
+        return _brio_file_reader_->get_number_of_entries(brio_common::general_info_store_label());
+      }
+    }
+    return 0;
+  }
+
+  bool simple_brio_data_source::load_metadata(datatools::properties & a_metadata, int64_t a_entry)
+  {
+    if (a_entry < 0 || a_entry >= get_number_of_metadata()) {
+      return false;
+    }
+    _brio_file_reader_->load(a_metadata, brio_common::general_info_store_label(), a_entry);
+    _brio_file_reader_->select_store(brio_common::event_record_store_label());
+    return true;
   }
 
   // ctor:
