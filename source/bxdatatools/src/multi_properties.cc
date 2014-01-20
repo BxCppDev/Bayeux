@@ -162,6 +162,9 @@ void multi_properties::set_key_label(const std::string& a_key_label) {
   DT_THROW_IF (a_key_label.empty(),
                std::logic_error,
                "Empty key is not allowed !");
+  DT_THROW_IF (size(),
+               std::logic_error,
+               "Changing key label is not allowed !");
   key_label_ = a_key_label;
 }
 
@@ -172,6 +175,9 @@ const std::string & multi_properties::get_key_label() const {
 
 
 void multi_properties::set_meta_label(const std::string& a_meta_label) {
+  DT_THROW_IF (this->size(),
+               std::logic_error,
+               "Changing meta label is not allowed !");
   meta_label_ = a_meta_label;
 }
 
@@ -412,6 +418,11 @@ properties& multi_properties::add_impl2(const std::string& a_key,
   DT_THROW_IF (entries_.find(a_key) != entries_.end(),
                std::logic_error,
                "Key '" << a_key << "' is already used !");
+  if (! meta_label_.empty() && ! a_meta.empty()) {
+    DT_THROW_IF (true,
+                 std::logic_error,
+                 "Key '" << a_key << "' should not have an empty '" << meta_label_ << "' !");
+  }
   entries_[a_key] = entry(a_key, a_meta);
   ordered_entries_.push_back(&entries_[a_key]);
   return entries_[a_key].get_properties ();
@@ -839,4 +850,3 @@ void multi_properties::tree_dump(std::ostream& a_out,
 }
 
 } // end of namespace datatools
-

@@ -2460,7 +2460,8 @@ namespace datatools {
               iss >> std::ws;
               std::string config_desc;
               if (!prop_config.empty()) {
-                DT_LOG_WARNING (logging, "Duplicated '@config' directive !");
+                DT_LOG_WARNING (logging, "Duplicated '@config' directive; "
+                                << "Configuration description '" << a_props.get_description() << "' already loaded!");
               }
               std::getline(iss, config_desc);
               if (!config_desc.empty()) {

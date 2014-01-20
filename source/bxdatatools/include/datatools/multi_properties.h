@@ -248,7 +248,7 @@ private:
            const std::string& a_meta = "");
 
   properties& add_section(const std::string& a_key,
-                          const std::string& a_meta);
+                          const std::string& a_meta = "");
 
   void remove(const std::string& a_key);
 
@@ -311,4 +311,3 @@ BOOST_CLASS_EXPORT_KEY2(datatools::multi_properties, "datatools::multi_propertie
 DR_CLASS_INIT(::datatools::multi_properties);
 
 #endif // DATATOOLS_MULTI_PROPERTIES_H_
-
