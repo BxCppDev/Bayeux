@@ -84,6 +84,16 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_B
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}")
 
 #-----------------------------------------------------------------------
+# Option for building/installing developer tools
+#
+option(Bayeux_BUILD_DEVELOPER_TOOLS "Build/install developer tools" OFF)
+if(NOT Bayeux_BUILD_DEVELOPER_TOOLS)
+  set(Bayeux_BUILD_DEVELOPER_TOOLS 0)
+else()
+  set(Bayeux_BUILD_DEVELOPER_TOOLS 1)
+endif()
+
+#-----------------------------------------------------------------------
 # Use implicit Bayeux init/fini instruction
 #
 option(BAYEUX_WITH_IMPLICIT_INIT_FINI "Build implicit init/fini code for Bayeux" OFF)
