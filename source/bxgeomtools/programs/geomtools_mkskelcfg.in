@@ -405,7 +405,6 @@ EOF
 #@key_label   "category"
 #@meta_label  "type"
 
-
 ###########################
 [category="world" type="0"]
 
@@ -459,9 +458,8 @@ EOF
 
 #@description The geometry model of the world (mother-of-all) volume
 
-#@key_label   "name"
-#@meta_label  "type"
-
+#@key_label  "name"
+#@meta_label "type"
 
 ####################################################
 [name="world" type="geomtools::simple_shaped_model"]
