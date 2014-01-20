@@ -26,6 +26,7 @@ namespace datatools {
   {
     _initialized_ = false;
     _logging_ = datatools::logger::PRIO_WARNING;
+    _db_.set_meta_label("type");
     return;
   }
 
