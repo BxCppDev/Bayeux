@@ -418,7 +418,8 @@ properties& multi_properties::add_impl2(const std::string& a_key,
   DT_THROW_IF (entries_.find(a_key) != entries_.end(),
                std::logic_error,
                "Key '" << a_key << "' is already used !");
-  if (! meta_label_.empty() && ! a_meta.empty()) {
+
+  if (meta_label_.empty() && a_meta.empty()) {
     DT_THROW_IF (true,
                  std::logic_error,
                  "Key '" << a_key << "' should not have an empty '" << meta_label_ << "' !");
