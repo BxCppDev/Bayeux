@@ -418,16 +418,13 @@ properties& multi_properties::add_impl2(const std::string& a_key,
   DT_THROW_IF (entries_.find(a_key) != entries_.end(),
                std::logic_error,
                "Key '" << a_key << "' is already used !");
-
+  /*
+  // Fix ticket #83:
   if (! meta_label_.empty() && a_meta.empty()) {
-    DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
-                   "Key '" << a_key << "' has a an empty '" << meta_label_ << "' !");
-    /*
-    DT_THROW_IF (true,
-                 std::logic_error,
-                 "Key '" << a_key << "' should not have an empty '" << meta_label_ << "' !");
-    */
+     DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
+    "Key '" << a_key << "' has a an empty '" << meta_label_ << "' !");
   }
+  */
   if (meta_label_.empty() && !a_meta.empty()) {
     DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
                    "Key '" << a_key << "' will ignore meta '" << a_meta << "' !");
