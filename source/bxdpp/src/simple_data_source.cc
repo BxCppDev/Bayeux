@@ -39,79 +39,67 @@ DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL_IN(datatools::things)
 
 namespace dpp {
 
-  void simple_data_source::reset ()
+  void simple_data_source::reset()
   {
-    if (is_open ()) {
-      this->simple_data_source::close ();
+    if (is_open()) {
+      this->simple_data_source::close();
     }
-    _source_record.reset ();
+    _source_record.reset();
     return;
   }
 
-  void simple_data_source::close ()
+  void simple_data_source::close()
   {
     // std::cerr << "DEVEL: dpp::simple_data_source::close: TEST" << std::endl;
     if (_source_record.status == source_record::STATUS_CLOSED) {
       return;
     }
     if (_boost_io_file_reader_ != 0) {
-      this->simple_data_source::_close_file_source ();
+      this->simple_data_source::_close_file_source();
     }
     _metadata_col_.clear();
     return;
   }
 
-  void simple_data_source::open ()
+  void simple_data_source::open()
   {
     //cerr << "DEVEL: dpp::simple_data_source::open: Entering..." << std::endl;
     std::string label = _source_record.effective_label;
     std::string file_name;
     bool   file_mode = false;
     bool   download_mode = false;
-    if (boost::find_first (label, "://"))
-      {
-        if (boost::starts_with (label, "file://"))
-          {
+    if (boost::find_first(label, "://")) {
+        if (boost::starts_with(label, "file://")) {
             file_mode = true;
             file_name = label;
-            boost::replace_first (file_name, "file://", "");
-          }
-        else if (boost::starts_with (label, "http://"))
-          {
+            boost::replace_first(file_name, "file://", "");
+          } else if (boost::starts_with (label, "http://")) {
             download_mode = true;
 #if BOOST_FILESYSTEM_VERSION == 3
-            file_name = boost::filesystem::path(label).filename ().string ();
+            file_name = boost::filesystem::path(label).filename().string();
+#else
+            file_name = boost::filesystem::path(label).filename();
+#endif
+          } else if (boost::starts_with(label, "https://")) {
+            download_mode = true;
+#if BOOST_FILESYSTEM_VERSION == 3
+            file_name = boost::filesystem::path(label).filename().string();
+#else
+            file_name = boost::filesystem::path(label).filename();
+#endif
+          } else if (boost::starts_with(label, "ftp://")) {
+            download_mode = true;
+#if BOOST_FILESYSTEM_VERSION == 3
+            file_name = boost::filesystem::path(label).filename ().string();
 #else
             file_name = boost::filesystem::path(label).filename ();
 #endif
-          }
-        else if (boost::starts_with (label, "https://"))
-          {
-            download_mode = true;
-#if BOOST_FILESYSTEM_VERSION == 3
-            file_name = boost::filesystem::path(label).filename ().string ();
-#else
-            file_name = boost::filesystem::path(label).filename ();
-#endif
-          }
-        else if (boost::starts_with (label, "ftp://"))
-          {
-            download_mode = true;
-#if BOOST_FILESYSTEM_VERSION == 3
-            file_name = boost::filesystem::path(label).filename ().string ();
-#else
-            file_name = boost::filesystem::path(label).filename ();
-#endif
-          }
-        else
-          {
+          } else {
             DT_THROW_IF(true,std::logic_error,
                         "Source labelled '" << _source_record.effective_label
                         << "' needs an unknown protocol !");
           }
-      }
-    else
-      {
+      } else {
         // std::cerr << "DEVEL: dpp::simple_data_source::set: TEST 2: file_mode" << std::endl;
         file_mode = true;
         file_name = _source_record.effective_label;
@@ -121,41 +109,41 @@ namespace dpp {
                  "Source file download mode is not implemented yet !");
     if (file_mode) {
       // std::cerr << "DEVEL: dpp::simple_data_source::set: TEST 3: invoke open_file_mode_" << std::endl;
-      this->simple_data_source::_open_file_source ();
+      this->simple_data_source::_open_file_source();
     }
 
     //cerr << "DEVEL: dpp::simple_data_source::set: Exiting." << std::endl;
     return;
   }
 
-  void simple_data_source::_close_file_source ()
+  void simple_data_source::_close_file_source()
   {
     //cerr << "DEVEL: dpp::simple_data_source::_close_file_source: Entering..." << std::endl;
     if (_boost_io_file_reader_ != 0) {
       if (_boost_io_file_reader_->is_initialized()) {
-        _boost_io_file_reader_->reset ();
+        _boost_io_file_reader_->reset();
       }
       delete _boost_io_file_reader_;
       _boost_io_file_reader_ = 0;
       _source_record.status = source_record::STATUS_CLOSED;
-      _source_record.reset ();
+      _source_record.reset();
       _has_next_record = false;
     }
     //cerr << "DEVEL: dpp::simple_data_source::_close_file_source: Exiting." << std::endl;
     return;
   }
 
-  void simple_data_source::_open_file_source ()
+  void simple_data_source::_open_file_source()
   {
     namespace ds = datatools;
     //cerr << "DEVEL: dpp::simple_data_source::_open_file_source: Entering..." << std::endl;
-    DT_THROW_IF (! boost::filesystem::exists (_source_record.effective_label),
+    DT_THROW_IF (! boost::filesystem::exists(_source_record.effective_label),
                  std::logic_error,
                  "File '" << _source_record.effective_label << "' does not exist !");
 
     int mode = 0;
     int status =
-      ds::io_factory::guess_mode_from_filename (_source_record.effective_label, mode);
+      ds::io_factory::guess_mode_from_filename(_source_record.effective_label, mode);
     DT_THROW_IF (status == ds::io_factory::ERROR,
                  std::logic_error,
                   "File format not recognized for '"
@@ -163,12 +151,12 @@ namespace dpp {
 
     if (_boost_io_file_reader_ == 0) {
       _boost_io_file_reader_ = new ds::data_reader;
-      DT_LOG_NOTICE (get_logging_priority (), "Label is '" << _source_record.effective_label << "'");
-      _boost_io_file_reader_->init_multi (_source_record.effective_label);
+      DT_LOG_NOTICE (get_logging_priority(), "Label is '" << _source_record.effective_label << "'");
+      _boost_io_file_reader_->init_multi(_source_record.effective_label);
       _source_record.status = source_record::STATUS_OPENED;
     }
-    while (_boost_io_file_reader_->has_record_tag ()) {
-      if (datatools::check_serial_tag<datatools::properties>(_boost_io_file_reader_->get_record_tag ())) {
+    while (_boost_io_file_reader_->has_record_tag()) {
+      if (datatools::check_serial_tag<datatools::properties>(_boost_io_file_reader_->get_record_tag())) {
         // Load metadata as many as possible:
         {
           datatools::properties pushed_metadata;
@@ -182,7 +170,7 @@ namespace dpp {
     }
 
     _has_next_record = false;
-    _check_next_record ();
+    _check_next_record();
     return;
   }
 
@@ -195,7 +183,7 @@ namespace dpp {
     if (! _boost_io_file_reader_->has_record_tag ()) {
       return;
     }
-    if (datatools::check_serial_tag<datatools::things>(_boost_io_file_reader_->get_record_tag ())) {
+    if (datatools::check_serial_tag<datatools::things>(_boost_io_file_reader_->get_record_tag())) {
       _has_next_record = true;
       return;
     }
@@ -208,7 +196,7 @@ namespace dpp {
                  std::logic_error,
                  "No source label is available !");
     if (_source_record.status == source_record::STATUS_CLOSED) {
-      DT_LOG_NOTICE (get_logging_priority (), "Opening data source...");
+      DT_LOG_NOTICE (get_logging_priority(), "Opening data source...");
       this->simple_data_source::open ();
     }
     return _has_next_record;
@@ -244,7 +232,7 @@ namespace dpp {
 
   // ctor:
   simple_data_source::simple_data_source (datatools::logger::priority a_priority)
-    : i_data_source (a_priority)
+    : i_data_source(a_priority)
   {
     _boost_io_file_reader_ = 0;
     return;
@@ -253,7 +241,7 @@ namespace dpp {
   // ctor:
   simple_data_source::simple_data_source (const std::string & a_source_label,
                                           datatools::logger::priority a_priority)
-    : i_data_source (a_source_label, a_priority)
+    : i_data_source(a_source_label, a_priority)
   {
     _boost_io_file_reader_ = 0;
     this->simple_data_source::open ();
@@ -263,7 +251,7 @@ namespace dpp {
   // dtor:
   simple_data_source::~simple_data_source ()
   {
-    this->simple_data_source::reset ();
+    this->simple_data_source::reset();
     return;
   }
 

@@ -44,14 +44,28 @@ namespace dpp {
   // static
   const std::string & io_common::metadata_key()
   {
-    static std::string s("__dpp.output_module.metadata.key");
+    static std::string s("__dpp.io.metadata.key");
     return s;
   }
 
   // static
   const std::string & io_common::metadata_rank()
   {
-    static std::string s("__dpp.output_module.metadata.rank");
+    static std::string s("__dpp.io.metadata.rank");
+    return s;
+  }
+
+  // static
+  const std::string & io_common::context_key()
+  {
+    static std::string s("__dpp.io.context.key");
+    return s;
+  }
+
+  // static
+  const std::string & io_common::context_rank()
+  {
+    static std::string s("__dpp.io.context.rank");
     return s;
   }
 
@@ -73,36 +87,56 @@ namespace dpp {
   i_data_source * io_common::allocate_reader(const std::string & filename_,
                                              datatools::logger::priority p_)
   {
+    i_data_source * reader = 0;
     io_common::format_type format = io_common::guess_format_from_filename(filename_);
     if (format == io_common::FORMAT_INVALID) {
-      DT_LOG_ERROR (datatools::logger::PRIO_ERROR,
+      DT_LOG_ERROR (p_, /* datatools::logger::PRIO_ERROR, */
                     "Cannot guess mode for input data file '"
                     << filename_ << "' !");
-      return 0;
-    }
-    if (format == io_common::FORMAT_BRIO) {
-      return new dpp::simple_brio_data_source(filename_, p_);
     } else {
-      return new dpp::simple_data_source(filename_, p_);
+      try {
+        if (format == io_common::FORMAT_BRIO) {
+          reader = new dpp::simple_brio_data_source(filename_, p_);
+        } else {
+          reader = new dpp::simple_data_source(filename_, p_);
+        }
+      }
+      catch (std::exception & error) {
+        DT_LOG_ERROR (p_, /* datatools::logger::PRIO_ERROR,*/
+                      "Cannot open data source for input data file '"
+                      << filename_ << "' : " << error.what());
+        reader = 0;
+      }
     }
+    return reader;
   }
 
   // static
   i_data_sink * io_common::allocate_writer(const std::string & filename_,
                                            datatools::logger::priority p_)
   {
+    i_data_sink * writer = 0;
     io_common::format_type format = io_common::guess_format_from_filename(filename_);
     if (format == io_common::FORMAT_INVALID) {
-      DT_LOG_ERROR (datatools::logger::PRIO_ERROR,
+      DT_LOG_ERROR (p_, /* datatools::logger::PRIO_ERROR, */
                     "Cannot guess mode for output data file '"
                     << filename_ << "' !");
-      return 0;
-    }
-    if (format == io_common::FORMAT_BRIO) {
-      return new dpp::simple_brio_data_sink(filename_, p_);
     } else {
-      return new dpp::simple_data_sink(filename_, p_);
+      try {
+        if (format == io_common::FORMAT_BRIO) {
+          writer = new dpp::simple_brio_data_sink(filename_, p_);
+        } else {
+          writer = new dpp::simple_data_sink(filename_, p_);
+        }
+      }
+      catch (std::exception & error) {
+        DT_LOG_ERROR (p_, /* datatools::logger::PRIO_ERROR, */
+                      "Cannot open data sink for output data file '"
+                      << filename_ << "' : " << error.what());
+        writer = 0;
+      }
     }
+    return writer;
   }
 
   void io_common::set_module_name (const std::string & modname_)
@@ -175,6 +209,37 @@ namespace dpp {
                 std::logic_error,
                 "I/O module '" << _module_name_ << "' has no context service !");
     return *_Ctx_service_;
+  }
+
+  void io_common::add_context_metadata(const std::string & a_label)
+  {
+    DT_THROW_IF(std::find(_Ctx_metadata_.begin(), _Ctx_metadata_.end(), a_label) != _Ctx_metadata_.end(),
+                std::logic_error,
+                "Context metadata with label '" << a_label<< "' already exists !");
+    _Ctx_metadata_.push_back(a_label);
+    return;
+  }
+
+  bool io_common::is_context_all() const
+  {
+    return _Ctx_metadata_all_;
+  }
+
+  void io_common::set_context_all(bool val_)
+  {
+    _Ctx_metadata_all_ = val_;
+    return;
+  }
+
+  void io_common::clear_context_metadata()
+  {
+    _Ctx_metadata_.clear();
+    return;
+  }
+
+  const std::vector<std::string> & io_common::get_context_metadata() const
+  {
+    return _Ctx_metadata_;
   }
 
   void io_common::set_max_files (int a_max_files)
@@ -303,6 +368,7 @@ namespace dpp {
     _metadata_store_.set_key_label("name");
     _metadata_store_.set_meta_label("");
     _metadata_store_.set_description("Bayeux/dpp library's I/O module metadata store");
+    _Ctx_metadata_all_ = false;
     return;
   }
 

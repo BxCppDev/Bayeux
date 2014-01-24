@@ -101,11 +101,11 @@ namespace dpp {
   public:
 
     // ctor:
-    i_data_sink (datatools::logger::priority a_priority = datatools::logger::PRIO_NOTICE);
+    i_data_sink (datatools::logger::priority a_priority = datatools::logger::PRIO_ERROR);
 
     // ctor:
     i_data_sink (const std::string & a_sink_label,
-                 datatools::logger::priority a_priority = datatools::logger::PRIO_NOTICE);
+                 datatools::logger::priority a_priority = datatools::logger::PRIO_ERROR);
 
     // dtor:
     virtual ~i_data_sink ();

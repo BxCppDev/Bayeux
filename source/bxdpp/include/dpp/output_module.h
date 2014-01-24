@@ -113,6 +113,15 @@ namespace dpp {
     /// Return a reference to the non mutable internal I/O data structure
     const io_common & get_common() const;
 
+    /// Set the label/name of the context service to be used
+    void set_context_label(const std::string &);
+
+    /// Export a metadata section with a given name from the context service to the output stream
+    void export_context_metadata(const std::string &);
+
+    /// Export all metadata sections from the context service to the output stream
+    void set_export_context_all(bool);
+
   protected:
 
     /// Store a data record
@@ -126,6 +135,9 @@ namespace dpp {
 
   private:
 
+    /// Open output file
+    base_module::process_status _open_sink();
+
     /// Process metadata, if any
     void _store_metadata_();
 
@@ -134,7 +146,6 @@ namespace dpp {
     bool                         _preserve_existing_output_; //!< Flag to preserve existing output files
     boost::scoped_ptr<io_common> _common_; //!< Common data structure
     i_data_sink                * _sink_;   //!< Abstract data writer
-
 
     // Macro to automate the registration of the module :
     DPP_MODULE_REGISTRATION_INTERFACE(output_module);

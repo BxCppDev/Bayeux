@@ -225,11 +225,14 @@ namespace dpp {
 
   void base_module::_common_initialize (const datatools::properties & a_config)
   {
+    DT_LOG_DEBUG(_logging, "Entering...");
     datatools::logger::priority p =
       datatools::logger::extract_logging_configuration(a_config,
-                                                       datatools::logger::PRIO_FATAL,
+                                                       datatools::logger::PRIO_UNDEFINED,
                                                        true);
-    set_logging_priority(p);
+    if (p != datatools::logger::PRIO_UNDEFINED) {
+      set_logging_priority(p);
+    }
 
     if (! has_description ()) {
       if (a_config.has_key("description")) {
@@ -243,6 +246,7 @@ namespace dpp {
     //   }
     // }
 
+    DT_LOG_DEBUG(_logging, "Exiting.");
     return;
   }
 

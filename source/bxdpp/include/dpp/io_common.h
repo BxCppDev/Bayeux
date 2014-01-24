@@ -32,8 +32,14 @@
 #ifndef DPP_IO_COMMON_H_
 #define DPP_IO_COMMON_H_ 1
 
-#include <datatools/smart_filename.h>
+// Standard library
+#include <string>
+#include <vector>
+
+// Third party library
+// - Bayeux/datatools
 #include <datatools/logger.h>
+#include <datatools/smart_filename.h>
 #include <datatools/multi_properties.h>
 
 namespace dpp {
@@ -73,6 +79,10 @@ namespace dpp {
 
     static const std::string & metadata_rank();
 
+    static const std::string & context_key();
+
+    static const std::string & context_rank();
+
     io_common(datatools::logger::priority & logging_,
               const std::string & module_name_);
 
@@ -102,6 +112,12 @@ namespace dpp {
     const dpp::context_service & get_context_service() const;
 
     dpp::context_service & grab_context_service();
+
+    void add_context_metadata(const std::string &);
+
+    void set_context_all(bool val_);
+
+    void clear_context_metadata();
 
     void set_max_files (int a_max_files);
 
@@ -151,6 +167,12 @@ namespace dpp {
     /// Clear the contents of the embedded metadata store
     void clear_metadata_store();
 
+    /// Return a const reference to the list of context metadata labels
+    const std::vector<std::string> & get_context_metadata() const;
+
+    /// Check if all context metadata are accepted
+    bool is_context_all() const;
+
     virtual void tree_dump (std::ostream & a_out         = std::clog,
                             const std::string & a_title  = "",
                             const std::string & a_indent = "",
@@ -179,12 +201,13 @@ namespace dpp {
     int _file_index_;             //!< Index of the current datafile index
 
     // Metadata support:
-    //std::vector<std::string> _metadata_labels_;
-    datatools::multi_properties _metadata_store_;
+    datatools::multi_properties _metadata_store_; //!< Embedded metadata container
 
-    // Services:
-    std::string            _Ctx_label_;      //!< The label of the context service
-    dpp::context_service * _Ctx_service_;    //!< The context service
+    // Context service (external metadata container):
+    std::string              _Ctx_label_;        //!< The label/name of the context service
+    dpp::context_service *   _Ctx_service_;      //!< The handle to the context service
+    std::vector<std::string> _Ctx_metadata_;     //!< The list of labels of the metadata to be taken into account
+    bool                     _Ctx_metadata_all_; //!< Flag to accept all metadata
 
   };
 

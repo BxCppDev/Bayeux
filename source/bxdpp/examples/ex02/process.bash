@@ -100,13 +100,18 @@ export LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH}
 echo "" 1>&2
 echo "NOTICE: Run the ./ex02 executable :" 1>&2
 ./ex02
-ls -l ./ex02.xml
+ls -l ./ex02*.xml
 
 if [ $clean -eq 1 ]; then
     echo "NOTICE: Clean..." 1>&2
     rm -f dpp-ex02_*.html
+    rm -f ex02
     rm -f ex02.xml
     rm -f ex02.brio
+    rm -f ex02b.xml
+    rm -f ex02b_*.xml
+    rm -f ex02c.xml
+    rm -f ex02c_*.xml
     rm -fr ${build_dir}
     find . -name "*~" -exec rm -f \{\} \;
 fi

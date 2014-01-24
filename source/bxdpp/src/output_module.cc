@@ -30,6 +30,7 @@
 #include <dpp/io_common.h>
 #include <dpp/simple_data_sink.h>
 #include <dpp/simple_brio_data_sink.h>
+#include <dpp/context_service.h>
 
 namespace dpp {
 
@@ -81,11 +82,11 @@ namespace dpp {
   }
 
   void output_module::set_incremental_output_files(const std::string & path_,
-                                                 const std::string & prefix_,
-                                                 const std::string & extension_,
-                                                 unsigned int stop_,
-                                                 unsigned int start_,
-                                                 int increment_)
+                                                   const std::string & prefix_,
+                                                   const std::string & extension_,
+                                                   unsigned int stop_,
+                                                   unsigned int start_,
+                                                   int increment_)
   {
     DT_THROW_IF (is_initialized (), std::logic_error,
                  "Output module '" << get_name () << "' is already initialized !");
@@ -122,7 +123,7 @@ namespace dpp {
   {
     _preserve_existing_output_ = false;
     _sink_   = 0;
-    return;
+     return;
   }
 
   const io_common & output_module::get_common() const
@@ -169,6 +170,36 @@ namespace dpp {
     return;
   }
 
+  void output_module::set_context_label(const std::string & label_)
+  {
+    DT_THROW_IF(is_initialized (),
+                std::logic_error,
+                "Output module '" << get_name () << "' is already initialized ! ");
+    io_common & ioc = _grab_common();
+    ioc.set_context_label(label_);
+    return;
+  }
+
+  void output_module::export_context_metadata(const std::string & metadata_label_)
+  {
+    DT_THROW_IF(is_initialized (),
+                std::logic_error,
+                "Output module '" << get_name () << "' is already initialized ! ");
+    io_common & ioc = _grab_common();
+    ioc.add_context_metadata(metadata_label_);
+    return;
+  }
+
+  void output_module::set_export_context_all(bool val_)
+  {
+    DT_THROW_IF(is_initialized (),
+                std::logic_error,
+                "Output module '" << get_name () << "' is already initialized ! ");
+    io_common & ioc = _grab_common();
+    ioc.set_context_all(val_);
+    return;
+  }
+
   // Constructor :
   output_module::output_module(datatools::logger::priority logging_priority_)
     : base_module(logging_priority_)
@@ -192,7 +223,7 @@ namespace dpp {
                 std::logic_error,
                 "Output module '" << get_name () << "' is already initialized ! ");
 
-    _common_initialize(a_config);
+    base_module::_common_initialize(a_config);
 
     /**************************************************************
      *   fetch setup parameters from the configuration container  *
@@ -205,6 +236,8 @@ namespace dpp {
     if (a_config.has_flag ("preserve_existing_files")) {
       set_preserve_existing_output (true);
     }
+
+    base_module::process_status status = _open_sink();
 
     /*************************************
      *  end of the initialization step   *
@@ -236,7 +269,7 @@ namespace dpp {
       delete _sink_;
       _sink_ = 0;
     }
-
+    _grab_common().clear_metadata_store();
     _common_.get()->reset();
     _common_.reset(0);
     // XXX
@@ -265,10 +298,65 @@ namespace dpp {
   void output_module::_store_metadata_()
   {
     // std::cerr << "DEVEL: dpp::output_module::_store_metadata_: Entering..." << std::endl;
+
+    // First consider the external context service (if any) and its global metadata sections:
+    if (get_common().has_context_service()) {
+      const context_service & ctx_service = get_common().get_context_service();
+      const datatools::multi_properties & ctx_store = ctx_service.get_store();
+      const std::vector<std::string> & ctx_md_labels = get_common().get_context_metadata();
+      int counter = 0;
+      for (datatools::multi_properties::entries_ordered_col_type::const_iterator i
+             = ctx_store.ordered_entries().begin();
+           i != ctx_store.ordered_entries().end();
+           i++) {
+        const datatools::multi_properties::entry * p_entry = *i;
+        const std::string & ctx_section_key = p_entry->get_key();
+        bool store_it = false;
+        if (get_common().is_context_all()) {
+          // Store all context sections:
+          store_it = true;
+        } else {
+          if (std::find(ctx_md_labels.begin(),
+                        ctx_md_labels.end(),
+                        ctx_section_key) != ctx_md_labels.end()) {
+            // Store only context sections that are registered in the output module:
+            store_it = true;
+          }
+        }
+        if (store_it) {
+          // Get a local copy:
+          datatools::properties ctx_props = ctx_store.get_section(ctx_section_key);
+          ctx_props.store_string(io_common::context_key(), ctx_section_key);
+          ctx_props.store_integer(io_common::context_rank(), counter);
+          _sink_->store_metadata(ctx_props);
+          counter++;
+        }
+      }
+      /*
+      for (unsigned int i(0); i < ctx_md_labels.size(); i++) {
+        const std::string & md_label = ctx_md_labels[i];
+        if (! ctx_store.has_section(md_label)) {
+          DT_LOG_WARNING(get_logging_priority(),
+                         "Output module requested context metadata with label '"
+                         << md_label << "' but context service '"
+                         << get_common().get_context_label() << "' does not provide it !");
+          continue;
+        }
+        // Get a local copy:
+        datatools::properties ctx_props = ctx_store.get_section(md_label);
+        ctx_props.store_string(io_common::context_key(), md_label);
+        ctx_props.store_integer(io_common::context_rank(), i);
+        _sink_->store_metadata(ctx_props);
+      }
+      */
+    }
+
+    // Then consider metadata to be stored from the embedded store to the output stream:
     datatools::multi_properties & MDS = grab_metadata_store();
     for (int i(0); i < (int) MDS.size(); i++) {
       const std::string & key = MDS.ordered_key(i);
-      datatools::properties & props = MDS.grab_section(key);
+      // Get a local copy:
+      datatools::properties props = MDS.grab_section(key);
       props.store_string(io_common::metadata_key(), key);
       props.store_integer(io_common::metadata_rank(), i);
       _sink_->store_metadata(props);
@@ -278,9 +366,45 @@ namespace dpp {
   }
 
   base_module::process_status
-  output_module::_store (const datatools::things & a_event_record)
+  output_module::_open_sink()
+  {
+    if (_sink_ == 0) {
+      _grab_common().set_file_index(get_common().get_file_index()+1);
+      if (get_common().get_file_index() >= (int)get_common().get_filenames().size ()) {
+        _grab_common().set_terminated(true);
+        return PROCESS_FATAL;
+      }
+      std::string sink_label = get_common().get_filenames()[get_common().get_file_index()];
+      _sink_ = io_common::allocate_writer(sink_label, get_logging_priority ());
+      if (! _sink_) {
+        DT_LOG_ERROR (get_logging_priority (),
+                      "Cannot allocate any data writer for file '"
+                      << sink_label << "' !");
+        return PROCESS_FATAL;
+      }
+      if (_preserve_existing_output_) {
+        _sink_->set_preserve_existing_sink (true);
+      }
+      if (! _sink_->is_open ()) _sink_->open ();
+      _grab_common().set_file_record_counter(0);
+      // Process metadata:
+      _store_metadata_();
+    }
+    return PROCESS_OK;
+  }
+
+  base_module::process_status
+  output_module::_store(const datatools::things & a_event_record)
   {
     process_status store_status = PROCESS_OK;
+    if (_sink_ == 0) {
+      // attempt to open a sink of event records :
+      store_status = _open_sink();
+      if (store_status != PROCESS_OK) {
+        return store_status;
+      }
+    }
+    /*
     if (_sink_ == 0) {
       _grab_common().set_file_index(get_common().get_file_index()+1);
       if (get_common().get_file_index() >= (int)get_common().get_filenames().size ()) {
@@ -304,6 +428,7 @@ namespace dpp {
       // Process metadata:
       _store_metadata_();
     }
+    */
     // force storage of the current data record :
     bool store_it = true;
     // store action :
@@ -346,7 +471,6 @@ namespace dpp {
         _sink_->reset ();
         delete _sink_;
         _sink_ = 0;
-        _grab_common().clear_metadata_store();
       }
       _grab_common().set_file_record_counter(0);
       if (get_common().get_max_files() > 0) {
@@ -369,10 +493,10 @@ namespace dpp {
   }
 
 
-  void output_module::tree_dump (std::ostream & a_out ,
-                                 const std::string & a_title,
-                                 const std::string & a_indent,
-                                 bool a_inherit) const
+  void output_module::tree_dump(std::ostream & a_out ,
+                                const std::string & a_title,
+                                const std::string & a_indent,
+                                bool a_inherit) const
   {
     this->base_module::tree_dump (a_out, a_title, a_indent, is_initialized ());
     if (! is_initialized ()) {
@@ -390,6 +514,9 @@ namespace dpp {
       indent2 << indent << datatools::i_tree_dumpable::skip_tag;
       get_common().tree_dump(a_out, "", indent2.str());
     }
+
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Has metadata store : " << has_metadata_store() << std::endl;
 
     a_out << indent << datatools::i_tree_dumpable::tag
           << "Preserve existing output : " << _preserve_existing_output_ << std::endl;

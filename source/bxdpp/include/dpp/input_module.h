@@ -48,21 +48,34 @@ namespace dpp {
   {
   public:
 
+    /// Set limits
     void set_limits(int max_record_total_,
                     int max_record_per_file_ = 0,
                     int max_files_ = -1);
 
+    /// Set the filename of a single input file
     void set_single_input_file(const std::string & filepath_);
 
+    /// Set the filenames of a list of input files
     void set_list_of_input_files(const std::vector<std::string> & filepaths_,
                                  bool allow_duplicate_ = false);
 
+    /// Set the incremented filenames of input files
     void set_incremental_input_files(const std::string & path_,
                                      const std::string & prefix_,
                                      const std::string & extension_,
                                      unsigned int stop_,
                                      unsigned int start_ = 0,
                                      int increment_ = 1);
+
+    /// Set the label/name of the context service to be used
+    void set_context_label(const std::string &);
+
+    /// Import a metadata section with given label from the input stream to the context service
+    void import_context_metadata(const std::string &);
+
+    /// Import all metadata sections from the output stream to the context service
+    void set_import_context_all(bool);
 
     /// Constructor
     input_module(datatools::logger::priority = datatools::logger::PRIO_FATAL);
@@ -96,16 +109,28 @@ namespace dpp {
     /// Check if an embedded metadata store exists
     bool has_metadata_store() const;
 
+    // /// Set the preload flag
+    // void set_preload_metadata(bool);
+
     /// Return a const reference to the existing embedded metadata store
     const datatools::multi_properties & get_metadata_store() const;
 
     /// Clear the embedded metadata store
     void clear_metadata_store();
 
+    /// Check is metadata has been possibly updated after last data record processing
+    bool metadata_was_updated() const;
+
   protected:
 
     /// Load a data record
     process_status _load(datatools::things & a_data_record);
+
+    /// Open the data record source
+    process_status _open_source();
+
+    /// Check the limits on input file(s)
+    void _check_limits();
 
     /// Set default values before explicit settings and initialization
     void _set_defaults();
@@ -122,6 +147,8 @@ namespace dpp {
 
     boost::scoped_ptr<io_common> _common_; //!< Common data structure
     i_data_source              * _source_; //!< Abstract data reader
+    // bool                         _metadata_preload_; //!< Preload metadata before processing data records
+    bool                         _metadata_updated_; //!< Flag for possible metadata update
 
     // Macro to automate the registration of the module :
     DPP_MODULE_REGISTRATION_INTERFACE(input_module);

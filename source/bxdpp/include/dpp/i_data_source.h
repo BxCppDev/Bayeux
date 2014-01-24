@@ -118,11 +118,11 @@ namespace dpp {
     virtual void reset () = 0;
 
     /// Constructor
-    i_data_source (datatools::logger::priority a_priority = datatools::logger::PRIO_NOTICE);
+    i_data_source (datatools::logger::priority a_priority = datatools::logger::PRIO_ERROR);
 
     /// Constructor
     i_data_source (const std::string & a_source_label,
-                   datatools::logger::priority a_priority = datatools::logger::PRIO_NOTICE);
+                   datatools::logger::priority a_priority = datatools::logger::PRIO_ERROR);
 
     /// Destructor:
     virtual ~i_data_source ();
