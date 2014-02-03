@@ -1,16 +1,20 @@
 
+// Standard library:
 #include <cmath>
 #include <limits>
 #include <iostream>
 
+// Thirs party:
+// - GSL:
 #include <gsl/gsl_math.h>
-
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/units.h>
-
+#include <datatools/logger.h>
+// - Bayeux/mygsl:
 #include <mygsl/rng.h>
+// - Bayeux/genbb_help:
 #include <genbb_help/primary_event.h>
-
 #include <genbb_help/decay0/bb.h>
 #include <genbb_help/decay0/particle.h>
 #include <genbb_help/decay0/gauss.h>
@@ -203,6 +207,11 @@ c             line 3 - 7 NMEs: chi_GTw, chi_Fw, chi'_GT, chi'_F, chi'_T, chi'_P,
     /*********************************************************************/
     void decay0_bb(mygsl::rng & prng, primary_event & event, void *params)
     {
+      bool TRACE = false;
+      if (TRACE) {
+        DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+                     "Entering...");
+      }
       bbpars * pars = static_cast<bbpars *>(params);
 
       // From enrange:
@@ -225,7 +234,7 @@ c             line 3 - 7 NMEs: chi_GTw, chi_Fw, chi'_GT, chi'_F, chi'_T, chi'_P,
       double & e0 = pars->e0;
       double & e1 = pars->e1;
 
-      //From eta_nme:
+      // From eta_nme:
       const double & chi_GTw = pars->chi_GTw;
       const double & chi_Fw  = pars->chi_Fw;
       const double & chip_GT = pars->chip_GT;
@@ -295,9 +304,17 @@ c             line 3 - 7 NMEs: chi_GTw, chi_Fw, chi'_GT, chi'_F, chi'_T, chi'_P,
 
       // If already initialized, skip
       if (istartbb == 0) {
+        if (TRACE) {
+          DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+                       "Initializing the kinematics...");
+        }
         // calculate the theoretical energy spectrum of first particle with step
         // of 1 keV and find its maximum
         // print *,'wait, please: calculation of theoretical spectrum'
+        if (TRACE) {
+          DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+                       "Calculation of theoretical spectrum...");
+        }
         if (ebb1 < 0.) {
           ebb1 = 0.;
         }
@@ -308,6 +325,7 @@ c             line 3 - 7 NMEs: chi_GTw, chi_Fw, chi'_GT, chi'_F, chi'_T, chi'_P,
         //double b2amin=+1.e20; // coefficients in angular correlation
         //double b2amax=-1.e20; // for eta-h term of 2b0nu
         relerr = 1.e-4;
+        //relerr = 1.e-3;
         imax = (int) (e0 * 1000.);
         for (int i = 1; i <= imax; i++) {
           e1 = i / 1000.;
@@ -329,7 +347,15 @@ c             line 3 - 7 NMEs: chi_GTw, chi_Fw, chi'_GT, chi'_F, chi'_T, chi'_P,
             spthe1[i-1] = decay0_gauss(decay0_fe12_mod4,elow,ehigh,relerr,params);
           }
           if (modebb == MODEBB_5 && e1 < e0) {
+            if (TRACE) {
+              DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+                           "MODEBB_5: decay0_gauss: e1=" << e1 << " e0=" << e0);
+            }
             spthe1[i-1] = decay0_gauss(decay0_fe12_mod5,elow,ehigh,relerr,params);
+            if (TRACE) {
+              DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+                           "MODEBB_5: decay0_gauss done.");
+            }
           }
           if (modebb == MODEBB_6 && e1 < e0) {
             spthe1[i-1] = decay0_gauss(decay0_fe12_mod6,elow,ehigh,relerr,params);
@@ -368,12 +394,20 @@ c             line 3 - 7 NMEs: chi_GTw, chi_Fw, chi'_GT, chi'_F, chi'_T, chi'_P,
         for (int i = imax + 1; i <= bbpars::SPSIZE; i++) {
           spthe1[i-1] = 0.;
         }
-        /*
-          c       open(unit=33,file='th-e1-spectrum.dat')
-          c       do i=1,4300
-          c          write(33,*) i,spthe1[i]
-          c       enddo
-        */
+        if (TRACE) {
+          DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+                       "Calculation of theoretical spectrum is done.");
+        }
+
+        if (TRACE) {
+          DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+                       "Store the spthe1 spectrum...");
+          std::ofstream f_spthe1;
+          f_spthe1.open("/tmp/th-e1-spectrum.dat");
+          for (int i = 0; i < bbpars::SPSIZE; i++) {
+            f_spthe1 << i << ' ' << spthe1[i] << std::endl;
+          }
+        }
         toallevents = 1.;
         if (modebb == MODEBB_4 || modebb == MODEBB_5 || modebb == MODEBB_6 ||
             modebb == MODEBB_8 || modebb == MODEBB_13 || modebb == MODEBB_14) {
@@ -392,6 +426,10 @@ c             line 3 - 7 NMEs: chi_GTw, chi_Fw, chi'_GT, chi'_F, chi'_T, chi'_P,
             /decay0_gauss(decay0_fe1_mod10,ebb1+1.e-4,ebb2+1.e-4,relerr,params);
         }
         istartbb = 1;
+        if (TRACE) {
+          DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+                       "Initialization is done.");
+        }
       }
 
       // Rejection method :
@@ -575,6 +613,10 @@ c             line 3 - 7 NMEs: chi_GTw, chi_Fw, chi'_GT, chi'_F, chi'_T, chi'_P,
       part.set_momentum (momentum * CLHEP::MeV);
       event.grab_particles ().push_back(part);
 
+      if (TRACE) {
+        DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+                     "Exiting.");
+      }
       return;
     }
 
