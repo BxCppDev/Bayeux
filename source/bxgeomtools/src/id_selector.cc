@@ -98,7 +98,12 @@ namespace geomtools {
     while (! rules_iss.eof () && (parsed_addr_rules < _cat_info_->get_depth ())) {
       string addr_token;
       rules_iss >> addr_token >> ws;
-      DT_THROW_IF (! rules_iss, logic_error, "Invalid address token !");
+      // Only throw if stream is bad and NOT at eof. Some c++ libraries
+      // (Apple clang on Mavericks) will set bad/failbit at eof. Seems
+      // not to be C++11 standard compliant, but is still present!
+      DT_THROW_IF (! rules_iss && !rules_iss.eof(),
+                   logic_error,
+                   "Invalid address token !");
       split_vector_type addr_token_vec;
       boost::split (addr_token_vec, addr_token, boost::algorithm::is_any_of ("="));
       DT_THROW_IF (addr_token_vec.size () != 2, logic_error, "Invalid address rule format !");
