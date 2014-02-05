@@ -1,5 +1,5 @@
 ===========================
-geomtools ``examples/ex01``
+geomtools ``examples/ex02``
 ===========================
 
 Introduction
@@ -7,13 +7,16 @@ Introduction
 
  * Description:
 
-   This  example illustrates  how to configure and use the event
-   generator manager.
-   Also it is shown how to use the ``bxgenbb_inspector`` utility.
+   This  example illustrates  how to  create a new event generator
+   class belonging to a shared library (plugin) and usable both from
+   standalone mode (from a simple executable program) or from the
+   ``bxgenbb_inspector`` utility.
 
- * Source file(s) :
+ * Source files :
 
-   * ``ex01.cxx`` : the main program.
+   * ``crazy_gun.hh`` : the header file of the ``crazy_gun`` class,
+   * ``crazy_gun.cc`` : the source file of the ``crazy_gun`` class,
+   * ``ex02.cxx`` : the main program.
 
  * Configuration files :
 
@@ -21,17 +24,14 @@ Introduction
      manager.
    * Event generators' configuration files :
 
-     * ``config/backgrounds.conf`` : some event generators
-     * ``config/calibrations.conf`` : some event generators
-     * ``config/dbd.conf`` : some event generators
-     * ``config/misc.conf.conf`` : some event generators
-     * ``config/electron_energy_spectrum_0.data`` : data file
-       which contains the tabulated energy spectrum used by
-       a specific electron generator
+     * ``config/generators.def`` : some event generators.
 
  * Built object(s) :
 
-     * ``ex01`` : the example executable linked to the ``Bayeux`` library.
+     * ``libgenbb_help_ex02[.so|.dylib]`` : the plugin DLL that
+       contains the new ''crazy_gun'' generator class.
+     * ``ex02`` : the example executable linked to the ``libgenbb_help_ex02`` and
+       ``Bayeux`` library.
 
  * Build method: CMake.
 
@@ -69,7 +69,7 @@ Quick start
       shell> bxgenbb_inspector \
                --configuration config/manager.conf \
                --action shoot \
-               --generator "Co60" \
+               --generator "Fool" \
                --prng-seed 314159 \
                --number-of-events 10000 \
                --modulo 1000 \
@@ -78,7 +78,7 @@ Quick start
                --prompt-time-limit 1 \
                --histo-def "@genbb_help:inspector/config/le_nuphy-1.0/inspector_histos_prompt.conf" \
                --histo-def "@genbb_help:inspector/config/le_nuphy-1.0/inspector_histos_delayed.conf" \
-               --output-file "histos_Co60.root"
+               --output-file "histos_Fool.root"
 
 6. Check the output file:
 
@@ -91,8 +91,9 @@ Quick start
 
 8. Clean::
 
-      shell> rm ex01
-      shell> rm -fr ./__build
+      shell> rm ex02
+      shell> rm -fr ./__build ./bin ./lib
+
 
 9. Note:
 
