@@ -246,23 +246,29 @@ if [ $debug -eq 1 ]; then
 	echo "DEBUG: env_config_dir='${env_config_dir}'"
     ) >&2
 fi
-
+rm_opt=
+if [ "x${registered_module}" != "x"]; then
+    rm_opt=" --registered-module ${registered_module} "
+fi
 if [ ${no_gve} -eq 0 ]; then
-    bxgeomtools_mkskelcfg \
-      --config-base-dir "${config_base_dir}" \
-      --setup-label "${setup_label}" \
-      --setup-version "${setup_version}" \
-      --skeleton-profile "s2d4"
-    bxgenbb_mkskelcfg \
-      --config-base-dir "${config_base_dir}" \
-      --setup-label "${setup_label}" \
-      --setup-version "${setup_version}" \
-      --skeleton-profile "calib"
-    bxgenvtx_mkskelcfg \
-      --config-base-dir "${config_base_dir}" \
-      --setup-label "${setup_label}" \
-      --setup-version "${setup_version}" \
-      --skeleton-profile "s2d4"
+    eval bxgeomtools_mkskelcfg \
+	--config-base-dir "${config_base_dir}" \
+	--setup-label "${setup_label}" \
+	--setup-version "${setup_version}" \
+	--skeleton-profile "s2d4" \
+	${rm_opt}
+    eval bxgenbb_mkskelcfg \
+	--config-base-dir "${config_base_dir}" \
+	--setup-label "${setup_label}" \
+	--setup-version "${setup_version}" \
+	--skeleton-profile "calib" \
+	${rm_opt}
+    eval bxgenvtx_mkskelcfg \
+	--config-base-dir "${config_base_dir}" \
+	--setup-label "${setup_label}" \
+	--setup-version "${setup_version}" \
+	--skeleton-profile "s2d4" \
+	${rm_opt}
 fi
 
 if [ -d ${setup_base_dir} ]; then
