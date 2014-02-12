@@ -584,7 +584,7 @@ namespace genbb {
            << "Entering..."
            << endl;
     }
-    DT_THROW_IF (! _initialized_, logic_error, "Generator is notlocked/initialized !");
+    DT_THROW_IF (! _initialized_, logic_error, "Generator is not locked/initialized !");
     event_.reset ();
 
     double kinetic_energy = -1.0;

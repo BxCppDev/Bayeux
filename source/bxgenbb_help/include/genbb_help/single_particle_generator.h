@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
 /* single_particle_generator.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-10-03
  * Last modified: 2013-02-26
  *

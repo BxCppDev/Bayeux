@@ -83,9 +83,9 @@ namespace genbb {
         MODEBB_15               = MODEBB_2NUBB_BOSE_0,
         MODEBB_2NUBB_BOSE_2     = 16, /// 2nubb with bosonic nu's   0+ -> 2+
         MODEBB_16               = MODEBB_2NUBB_BOSE_2,
-        MODEBB_0NUBB_RHCE_0     = 17, /// onubb with rhc-eta        0+ -> 0+       simplified expression
+        MODEBB_0NUBB_RHCE_0     = 17, /// 0nubb with rhc-eta        0+ -> 0+       simplified expression
         MODEBB_17               = MODEBB_0NUBB_RHCE_0,
-        MODEBB_0NUBB_RHCE_0_NME = 18, /// onubb with rhc-eta        0+ -> 0+       with specific NMEs
+        MODEBB_0NUBB_RHCE_0_NME = 18, /// 0nubb with rhc-eta        0+ -> 0+       with specific NMEs
         MODEBB_18               = MODEBB_0NUBB_RHCE_0_NME,
         MODEBB_MIN              = MODEBB_1,
         MODEBB_MAX              = MODEBB_18,
@@ -162,5 +162,3 @@ namespace genbb {
 // Local Variables: --
 // mode: c++ --
 // End: --
-
-
