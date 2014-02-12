@@ -192,12 +192,21 @@ namespace geomtools {
   gnuplot_draw::basic_draw_polyline (std::ostream & out_,
                                      const polyline_type & pl_)
   {
+    basic_draw_polyline(out_, pl_, true);
+    return;
+  }
+
+  void
+  gnuplot_draw::basic_draw_polyline (std::ostream & out_,
+                                     const polyline_type & pl_,
+                                     bool endl_)
+  {
     for (polyline_type::const_iterator i = pl_.begin ();
          i != pl_.end ();
          ++i) {
       basic_draw_point (out_, *i);
     }
-    out_ << std::endl;
+    if (endl_) out_ << std::endl;
     return;
   }
 
@@ -242,7 +251,7 @@ namespace geomtools {
                                const vector_3d & position_,
                                const rotation_3d & rotation_,
                                const polyline_type & pl_,
-                               bool  more_)
+                               bool  closed_)
   {
     rotation_3d inverse_rotation (rotation_);
     inverse_rotation.invert ();
@@ -261,7 +270,7 @@ namespace geomtools {
       }
       polyline.push_back (P);
     }
-    if (more_) polyline.push_back (first);
+    if (closed_) polyline.push_back (first);
     basic_draw_polyline (out_, polyline);
     return;
   }
@@ -323,7 +332,8 @@ namespace geomtools {
                                 const rotation_3d & rotation_,
                                 double length_,
                                 double width_,
-                                bool more_)
+                                bool closed_,
+                                bool endl_)
   {
     vector_3d A ( 0.5 * length_,  0.5 * width_, 0.);
     vector_3d B ( 0.5 * length_, -0.5 * width_, 0.);
@@ -355,8 +365,8 @@ namespace geomtools {
     polyline.push_back (C2);
     polyline.push_back (D2);
     polyline.push_back (A2);
-    if (more_) polyline.push_back (B2);
-    basic_draw_polyline (out_,polyline);
+    if (closed_) polyline.push_back (B2);
+    basic_draw_polyline(out_, polyline, endl_);
     return;
   }
 
@@ -365,10 +375,11 @@ namespace geomtools {
                                 const vector_3d & position_,
                                 const rotation_3d & rotation_,
                                 const rectangle & r_,
-                                bool more_)
+                                bool closed_,
+                                bool endl_)
   {
     draw_rectangle (out_, position_, rotation_,
-                    r_.get_x (), r_.get_y (), more_);
+                    r_.get_x (), r_.get_y (), closed_, endl_);
     return;
   }
 
