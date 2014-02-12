@@ -106,7 +106,7 @@ namespace genbb {
 
   void manager::set_embeded_prng_seed(int seed_)
   {
-    DT_THROW_IF (!_initialized_, std::logic_error,
+    DT_THROW_IF (this->is_initialized(), std::logic_error,
                  "Manager is already initialized !");
     DT_THROW_IF (! mygsl::rng::is_seed_valid(seed_), std::logic_error,
                  "Invalid seed value for embeded PRNG !");
