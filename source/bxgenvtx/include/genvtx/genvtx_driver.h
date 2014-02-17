@@ -77,11 +77,12 @@ namespace genvtx {
   public:
 
     /// \brief User interface access class (driver's friend)
-    struct ui_access {
+    class ui_access {
+     public:
       ui_access(genvtx_driver &);
       genvtx_driver_params & params();
       genvtx_driver & driver();
-    private:
+     private:
       genvtx_driver * _driver_;
     };
 
@@ -107,7 +108,6 @@ namespace genvtx {
     const genvtx_driver_params & get_params() const;
 
   private:
-
     genvtx_driver_params _params_;         /// Configuration parameters
     bool _initialized_;                    /// Initialization flags
     datatools::logger::priority _logging_; /// Logger priority threshold
