@@ -26,7 +26,23 @@
 #ifndef DATATOOLS_ARCHIVES_LIST_H_
 #define DATATOOLS_ARCHIVES_LIST_H_
 
+// Wrap Boost's archive/polymorphic_iarchive header
+// This header, indirectly, causes "unused parameter" warnings from
+// a transient include of boost/serialization/smart_cast.hpp.
+// This should be an innocuous warning, so remove diagnostic for this
+// header only.
+// We only use clang pragmas for now because GCC's are highly version
+// dependent - so need a bit more thought.
+// To be removed when Boost fix their headers...
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#endif
 #include <boost/archive/polymorphic_iarchive.hpp>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+
 #include <boost/archive/polymorphic_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
