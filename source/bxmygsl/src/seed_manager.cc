@@ -31,7 +31,24 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+// Wrap Boost's tokenizer header
+// This header, causes "unused parameter" warnings from its
+// static void assign(Iterator b, Iterator e, Token &t)
+// function.
+// This should be an innocuous warning, so remove diagnostic for this
+// header only.
+// We only use clang pragmas for now because GCC's are highly version
+// dependent - so need a bit more thought.
+// To be removed when Boost fix their headers...
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#endif
 #include <boost/tokenizer.hpp>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+
 #include <boost/filesystem.hpp>
 
 #include <mygsl/seed_manager.h>
