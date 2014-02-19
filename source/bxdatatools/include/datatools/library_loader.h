@@ -83,11 +83,9 @@ struct library_entry_type {
 class library_loader : boost::noncopyable {
  public:
   enum flag_type {
-    debug              = bit_mask::bit00,
     allow_unregistered = bit_mask::bit01,
     auto_all           = bit_mask::bit02,
     auto_none          = bit_mask::bit03,
-    test               = bit_mask::bit10
   };
 
  public:
@@ -103,20 +101,11 @@ class library_loader : boost::noncopyable {
   /// Destructor
   virtual ~library_loader();
 
-  //! Return true if the instance is in debug mode
-  bool is_debug() const;
-
-  //! Change debug mode
-  void set_debug(bool);
-
   //! Set the allow unregistered flag
   void set_allow_unregistered(bool);
 
   //! Check the allow unregistered flag
   bool allowing_unregistered() const;
-
-  //! Return true if the instance is in test mode
-  bool is_test() const;
 
   //! Return true if the DLL with name is setup
   bool has(const std::string& name) const;
@@ -164,16 +153,6 @@ class library_loader : boost::noncopyable {
 };
 
 } // end of namespace datatools
-
-#define DATATOOLS_DLL_FORCE_LOAD(DllName,FromWhere)                     \
-  {                                                                     \
-    ::datatools::library_loader dt_ll_(::datatools::library_loader::allow_unregistered); \
-    int load_status = dt_ll_.load(DllName);                             \
-    DT_THROW_IF (load_status != EXIT_SUCCESS,                           \
-                 std::logic_error,                                      \
-                 "Automatic loading of library '" << DllName << "' failed !"); \
-  }
-/**/
 
 /***************
  * OCD support *

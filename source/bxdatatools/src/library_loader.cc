@@ -88,22 +88,6 @@ void library_entry_type::print(std::ostream& out,
 
 //----------------------------------------------------------------------
 // library_loader class
-bool library_loader::is_debug() const {
-  return flags_ & debug;
-}
-
-void library_loader::set_debug(bool allow) {
-  if (allow) {
-    flags_ |= debug;
-  } else {
-    flags_ &= debug;
-  }
-}
-
-bool library_loader::is_test() const {
-  return flags_ & test;
-}
-
 void library_loader::set_allow_unregistered(bool allow) {
   if (allow) {
     flags_ |= allow_unregistered;
@@ -163,10 +147,6 @@ int library_loader::close_all() {
     } else {
       library_entry_type& le = hle.grab();
       if (le.handle != 0) {
-        if (this->is_debug()) {
-          DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG,"Closing library '" << le.name << "'...");
-        }
-
         int status = datatools::detail::DynamicLoader::CloseLibrary(le.handle);
         if (status != 1) {
           std::ostringstream message;
@@ -415,8 +395,6 @@ void library_loader::init() {
     }
     continue;
   } // BOOST_FOREACH
-
-  if (this->is_debug()) this->print(std::clog);
 }
 
 
