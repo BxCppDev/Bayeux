@@ -18,6 +18,7 @@
 #include <datatools/library_loader.h>
 #include <datatools/logger.h>
 #include <datatools/properties.h>
+#include <datatools/detail/ocd_utils.h>
 
 namespace datatools {
 

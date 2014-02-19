@@ -30,8 +30,8 @@
 
 // Standard Library
 #include <iostream>
-#include <list>
-#include <map>
+//#include <list>
+//#include <map>
 #include <string>
 
 // Third Party
@@ -42,46 +42,18 @@
 
 // This Project
 #include <datatools/datatools_config.h>
-#include <datatools/handle.h>
+//#include <datatools/handle.h>
 #include <datatools/bit_mask.h>
 #include <datatools/detail/DynamicLoader.h>
-#include <datatools/exception.h>
+//#include <datatools/exception.h>
 #include <datatools/multi_properties.h>
 
 namespace datatools {
-struct library_entry_type;
-typedef datatools::handle<library_entry_type> handle_library_entry_type;
-typedef std::map<std::string, handle_library_entry_type> handle_library_entry_dict_type;
-typedef std::list<handle_library_entry_type> handle_library_entry_stack_type;
-typedef datatools::detail::DynamicLoader::SymbolPointer symbol_ptr;
-
-//! \brief A class used internally by the library_loader class
-struct library_entry_type {
-  library_entry_type(const std::string& lib_name      = "",
-                     const std::string& lib_directory = "",
-                     const std::string& lib_filename  = "",
-                     const std::string& lib_full_path = "",
-                     const std::string& lib_version   = "",
-                     bool lib_autoload                = true);
-  virtual ~library_entry_type();
-
-  void print(std::ostream& out = std::clog, const std::string& indent = "") const;
-
- public:
-  std::string name;
-  std::string directory;
-  std::string filename;
-  std::string full_path;
-  std::string version;
-  bool   autoload;
-  int    status;
-  datatools::detail::DynamicLoader::LibraryHandle handle;
-};
-
-
 //! \brief A DLL loader class
 class library_loader : boost::noncopyable {
  public:
+  typedef datatools::detail::DynamicLoader::SymbolPointer symbol_ptr;
+
   enum flag_type {
     allow_unregistered = bit_mask::bit01,
     auto_all           = bit_mask::bit02,
@@ -148,16 +120,11 @@ class library_loader : boost::noncopyable {
  private:
   uint32_t    flags_; //!< Flags
   datatools::multi_properties config_; //!< Configuration
-  handle_library_entry_stack_type stacked_libraries_;
-  handle_library_entry_dict_type  libraries_;
+  class LibraryCollection;
+  boost::scoped_ptr<LibraryCollection> libEntries_;
 };
 
 } // end of namespace datatools
 
-/***************
- * OCD support *
- ***************/
-#include <datatools/ocd_macros.h>
-DOCD_CLASS_DECLARATION(datatools::library_loader)
 
 #endif // DATATOOLS_LIBRARY_LOADER_H_
