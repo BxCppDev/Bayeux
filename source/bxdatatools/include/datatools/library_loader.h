@@ -3,6 +3,7 @@
  * Creation date : 2011-06-30
  * Last modified : 2013-04-19
  *
+ * Copyright (C) 2014 Ben Morgan <Ben.Morgan@warwick.ac.uk>
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,10 +43,8 @@
 
 // This Project
 #include <datatools/datatools_config.h>
-//#include <datatools/handle.h>
 #include <datatools/bit_mask.h>
 #include <datatools/detail/DynamicLoader.h>
-//#include <datatools/exception.h>
 #include <datatools/multi_properties.h>
 
 namespace datatools {
