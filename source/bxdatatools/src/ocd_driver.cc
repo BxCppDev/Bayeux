@@ -89,8 +89,7 @@ void ocd_driver::initialize(const ocd_driver_params & params_)
 {
   _params_ = params_;
 
-  datatools::library_loader dll_loader(datatools::library_loader::allow_unregistered,
-                                       _params_.dll_loader_config);
+  datatools::library_loader dll_loader(_params_.dll_loader_config);
   BOOST_FOREACH (const std::string & dll_name, _params_.dlls) {
     if (_params_.debug) {
       DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "Loading DLL '" << dll_name << "'...");
