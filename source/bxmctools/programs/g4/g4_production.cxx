@@ -174,8 +174,7 @@ int main(int argc_, char ** argv_)
     ui::process_opts(vm, opts, params);
 
     // DLL loading:
-    datatools::library_loader dll_loader(datatools::library_loader::allow_unregistered,
-                                         params.dll_loader_config);
+    datatools::library_loader dll_loader(params.dll_loader_config);
     if (params.g4_visu) {
       std::string g4_vis_dll = "G4visXXX";
       if (std::find(params.dlls.begin(), params.dlls.end(), g4_vis_dll) == params.dlls.end()) {
