@@ -2,9 +2,9 @@
 /* \file genbb_inspector.cxx
  * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2013-04-20
- * Last modified : 2013-10-17
+ * Last modified : 2014-02-20
  *
- * Copyright (C) 2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2013-2014 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1303,8 +1303,7 @@ int main (int argc_, char ** argv_)
       LL_config = vm["dll-config"].as<std::string> ();
     }
 
-    uint32_t LL_flags = datatools::library_loader::allow_unregistered;
-    datatools::library_loader LL (LL_flags, LL_config);
+    datatools::library_loader LL(LL_config);
     BOOST_FOREACH (const std::string & dll_name, LL_dlls) {
       DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "Loading DLL '" << dll_name << "'...");
       DT_THROW_IF (LL.load (dll_name) != EXIT_SUCCESS,
