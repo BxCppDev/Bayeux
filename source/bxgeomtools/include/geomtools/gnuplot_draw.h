@@ -1,12 +1,13 @@
 // -*- mode: c++; -*-
-/* gnuplot_draw.h
+/** \file geomtools/gnuplot_draw.h
  * Author(s):     F. Mauger <mauger@lpccaen.in2p3.fr>
- * Creation date: <2006-11-19>
- * Last modified: <2006-11-22>
+ * Creation date: 2006-11-19
+ * Last modified: 2014-02-13
  *
  * License:
  *
  * Description:
+ *
  *   Gnuplot drawing tools
  *
  * History:
@@ -26,6 +27,7 @@
 
 // This project
 #include <geomtools/utils.h>
+#include <geomtools/color.h>
 
 namespace geomtools {
 
@@ -54,65 +56,105 @@ namespace geomtools {
   class gnuplot_draw
   {
   public:
+
+    /// \brief Alias for a 3D polyline
     typedef basic_polyline_3d polyline_type;
 
     /// \brief Mode of drawing
-    enum mode_flags_type
-      {
-        MODE_NULL = 0x0,
-        MODE_WIRED_CYLINDER = 0x1
-      };
+    enum mode_flags_type {
+      MODE_NULL = 0x0,
+      MODE_WIRED_CYLINDER = 0x1
+    };
 
   public:
 
-    /// \brief A XYZ range
-    struct xyz_range
-    {
-      mygsl::min_max x_range;
-      mygsl::min_max y_range;
-      mygsl::min_max z_range;
-      void reset ();
-      static xyz_range * instance (char mode_ = 'i');
+    /// \brief A XYZ range used to record drawn points in an effective bounding box
+    struct xyz_range {
+
+      /// Constructor
+      xyz_range();
+
+      /// Reset the embedded X, Y, Z ranges
+      void reset_ranges();
+
+      /// Activate the recording of drawn points
+      void activate();
+
+      /// Deactivate the recording of drawn points
+      void deactivate();
+
+      /// Check activation flag
+      bool is_activated() const;
+
+      /// Return the const range on X axis
+      const mygsl::min_max & get_x_range() const;
+
+      /// Return the const range on Y axis
+      const mygsl::min_max & get_y_range() const;
+
+      /// Return the const range on Z axis
+      const mygsl::min_max & get_z_range() const;
+
+      /// Add a point only if activated
+      void add_point(double x_, double y_, double z_);
+
+      /// Add a point only if activated
+      void add_point(const vector_3d & point_);
+
+     private:
+
+      bool           _activated_; /// Activation flag
+      mygsl::min_max _x_range_;   /// Range on X axis
+      mygsl::min_max _y_range_;   /// Range on Y axis
+      mygsl::min_max _z_range_;   /// Range on Z axis
+
     };
 
-    static bool   g_using_color;
-    static double g_current_color;
+    /// \brief On the fly bounding box action
+    enum bounding_box_action_type {
+      BB_ACTION_NONE       = 0,
+      BB_ACTION_ACTIVATE   = 1,
+      BB_ACTION_DEACTIVATE = 2,
+      BB_ACTION_RESET      = 3
+    };
+
+    /// Return a mutable reference to the display bounding box singleton
+    static xyz_range & bounding_box(bounding_box_action_type action_ = BB_ACTION_NONE);
+
+    /// Return a const reference to the display bounding box singleton
+    static const xyz_range & bounding_box_const();
+
+    /// Return a mutable reference to the color context singleton
+    static color::context & color_context();
+
+    /// Return a const reference to the color context singleton
+    static const color::context & color_context_const();
 
     /// Basic draw a colored point
     static void
     basic_draw_point_with_color (std::ostream &,
                                  double x_, double y_, double z_,
                                  double color_,
-                                 bool endl_ = true);
+                                 bool new_line_ = true);
 
     /// Basic draw a colored point
     static void
     basic_draw_point_with_color (std::ostream & out_,
                                  const vector_3d & point_,
                                  double color_,
-                                 bool endl_ = true);
+                                 bool new_line_ = true);
 
     /// Basic draw a point
     static void
     basic_draw_point (std::ostream &,
                       double x_, double y_, double z_,
-                      bool endl_);
-
-    /// Basic draw a point
-    static void
-    basic_draw_point (std::ostream & out_,
-                      double x_, double y_, double z_);
+                      bool new_line_);
 
     /// Basic draw a point
     static void
     basic_draw_point (std::ostream &,
                       const vector_3d &,
-                      bool endl_);
-
-    /// Basic draw a point
-    static void
-    basic_draw_point (std::ostream & out_,
-                      const vector_3d & v_);
+                      bool new_line_ = true);
 
     /// Basic draw a 3 vertice facet
     static void
@@ -140,19 +182,20 @@ namespace geomtools {
     static void
     basic_draw_polyline (std::ostream &,
                          const polyline_type &,
-                         bool endl_);
+                         bool new_line_);
 
     /// Draw a line
     static void
     draw_line (std::ostream &,
                const vector_3d &,
                const vector_3d &,
-               bool split_ = false);
+               bool gp_trick_ = false);
 
     /// Draw a line object
     static void
     draw_line (std::ostream &,
-               const line_3d &);
+               const line_3d &,
+               bool gp_trick_ = false);
 
     /// Draw a polyline
     static void
@@ -160,7 +203,8 @@ namespace geomtools {
                     const vector_3d &,
                     const rotation_3d &,
                     const polyline_type &,
-                    bool = false);
+                    bool closed_ = false,
+                    bool gp_trick_ = false);
 
     /// Draw a polyline
     static void
@@ -168,7 +212,8 @@ namespace geomtools {
                     const vector_3d &,
                     const rotation_3d &,
                     const polyline_3d &,
-                    bool = false);
+                    bool closed_ = false,
+                    bool gp_trick_ = false);
 
     /// Draw a segment
     static void
@@ -176,21 +221,24 @@ namespace geomtools {
                    const vector_3d &,
                    const rotation_3d &,
                    const vector_3d &,
-                   const vector_3d &);
+                   const vector_3d &,
+                   bool gp_trick_ = false);
 
     /// Draw a segment
     static void
     draw_segment  (std::ostream &,
                    const vector_3d &,
                    const rotation_3d &,
-                   const line_3d &);
+                   const line_3d &,
+                   bool gp_trick_ = false);
 
     /// Draw a line
     static void
     draw_line  (std::ostream &,
                 const vector_3d &,
                 const rotation_3d &,
-                const line_3d &);
+                const line_3d &,
+                bool gp_trick_ = false);
 
     /// Draw a rectangle
     static void
@@ -200,7 +248,7 @@ namespace geomtools {
                     double,
                     double,
                     bool closed_ = true,
-                    bool endl_ = true);
+                    bool gp_trick_ = false);
 
     /// Draw a rectangle
     static void
@@ -209,7 +257,7 @@ namespace geomtools {
                     const rotation_3d &,
                     const rectangle &,
                     bool closed_ = true,
-                    bool endl_ = true);
+                    bool gp_trick_ = false);
 
     /// Draw a circle
     static void
@@ -438,5 +486,3 @@ namespace geomtools {
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_GNUPLOT_DRAW_H_
-
-// end of gnuplot_draw.h

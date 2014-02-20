@@ -32,8 +32,10 @@
 
 namespace geomtools {
 
+  /// Alias for a list of 2D vertice as a 2D-polyline
   typedef std::list<vector_2d> basic_polyline_2d;
 
+  /// Alias for a list of 3D vertice as a 3D-polyline
   typedef std::list<vector_3d> basic_polyline_3d;
 
   void print_xy (std::ostream & out_,

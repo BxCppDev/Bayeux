@@ -1,5 +1,5 @@
 // -*- mode: c++; -*-
-/* clhep.h
+/** \file geomtools/clhep.h
  *
  */
 
@@ -19,9 +19,16 @@
 
 namespace geomtools {
 
+  /// Alias for the CLHEP 2D-vector class
   typedef CLHEP::Hep2Vector  vector_2d;
+
+  /// Alias for the CLHEP 3D-vector class
   typedef CLHEP::Hep3Vector  vector_3d;
+
+  /// Alias for the CLHEP 3D-rotation class
   typedef CLHEP::HepRotation rotation_3d;
+
+  /// Alias for the 3D-rotation class
   typedef rotation_3d        rotation;
 
 }
@@ -34,16 +41,14 @@ DR_CLASS_INIT(::geomtools::rotation_3d);
 
 namespace geomtools {
 
-  /* basic uniform deviates generator from CLHEP
-   * used for special geometry algorithms
-   */
+  /// \brief Basic uniform deviates generator from CLHEP used for special geometry algorithms
   class random_tools
   {
   public:
 
-    static double random_flat ()
+    static double random_flat()
     {
-      return CLHEP::RandFlat::shoot (0.0, 1.0);
+      return CLHEP::RandFlat::shoot(0.0, 1.0);
     }
 
   };
@@ -51,5 +56,3 @@ namespace geomtools {
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_CLHEP_H_
-
-// end of clhep.h

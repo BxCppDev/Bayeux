@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* base_hit.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/** \file geomtools/base_hit.h
+ * Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-03-16
  * Last modified: 2013-03-08
  *
@@ -39,7 +39,7 @@
 
 namespace geomtools {
 
-  /// The base class for all hit objects
+  /// \brief The base class for all hit objects
   class base_hit :
     DATATOOLS_SERIALIZABLE_CLASS,
     public datatools::i_tree_dumpable ,

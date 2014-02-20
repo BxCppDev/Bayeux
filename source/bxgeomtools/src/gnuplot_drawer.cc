@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /* gnuplot_drawer.cc
  */
 
@@ -315,7 +314,7 @@ namespace geomtools {
         new_cs.label = section_;
         new_cs.filename = "";
         new_cs.oss = new std::ostringstream;
-        new_cs.color = color::get_color (section_);
+        new_cs.color = color::get_color(section_);
         _cstreams_[section_] = new_cs;
         return *(new_cs.oss);
       }
@@ -528,27 +527,27 @@ namespace geomtools {
 
       // Draw the envelope volume :
       if (shown && shown_envelope){
-        if (is_wired ()) {
-          std::string color_label = color::constants::instance ().default_color;
-          if (visibility::has_envelope_color (log_visu_config)) {
+        if (is_wired()) {
+          std::string color_label = color::default_color();
+          if (visibility::has_envelope_color(log_visu_config)) {
             // First search for a forced envelope color :
-            color_label = visibility::get_envelope_color (log_visu_config);
-          } else if (visibility::has_color (log_visu_config)) {
+            color_label = visibility::get_envelope_color(log_visu_config);
+          } else if (visibility::has_color(log_visu_config)) {
             // Then search for color :
-            color_label = visibility::get_color (log_visu_config);
-            DT_LOG_TRACE (local_priority, "Found color '" << color_label
-                          << "' for logical '" << log.get_name () << "'...");
+            color_label = visibility::get_color(log_visu_config);
+            DT_LOG_TRACE(local_priority, "Found color '" << color_label
+                          << "' for logical '" << log.get_name() << "'...");
           }
 
-          if (color_label != color::constants::instance ().transparent) {
+          if (color_label != color::transparent()) {
             std::ostringstream & colored_oss = _get_stream (color_label);
             unsigned long mode = gnuplot_draw::MODE_NULL;
-            if (visibility::is_wired_cylinder (log_visu_config)) {
+            if (visibility::is_wired_cylinder(log_visu_config)) {
               mode |= gnuplot_draw::MODE_WIRED_CYLINDER;
             }
-            gnuplot_draw::draw (colored_oss,
+            gnuplot_draw::draw(colored_oss,
                                 p_,
-                                log.get_shape (),
+                                log.get_shape(),
                                 mode);
           }
         }
@@ -559,7 +558,7 @@ namespace geomtools {
 
       // check the display level of the geometry tree:
       if ((display_level < max_display_level)
-          && (log.get_physicals ().size () > 0)) {
+          && (log.get_physicals().size() > 0)) {
         // default is 'drawing children':
         draw_children = true;
       } else {
@@ -569,12 +568,12 @@ namespace geomtools {
       // test if it is forbidden by the visibility properties:
       if (! shown) {
         draw_children = false;
-      } else if (visibility::is_daughters_hidden (log_visu_config)) {
+      } else if (visibility::is_daughters_hidden(log_visu_config)) {
         draw_children = false;
       }
 
-      if (get_properties ().has_key (force_show_children_property_name())) {
-        draw_children = get_properties ().fetch_boolean (force_show_children_property_name());
+      if (get_properties().has_key(force_show_children_property_name())) {
+        draw_children = get_properties().fetch_boolean(force_show_children_property_name());
       }
 
       DT_LOG_TRACE (local_priority, "Drawing children...");
@@ -658,31 +657,30 @@ namespace geomtools {
       shown_envelope = false;
     }
 
-    int color = 1;
-    int former_color = color::get_color (color::constants::instance().default_color);
+    color::code_type color = color::COLOR_DEFAULT;
+    color::code_type former_color = color::get_color(color::default_color());
     if (visibility::has_color (visu_config)) {
-      color = color::get_color (visibility::get_color (visu_config));
+      color = color::get_color (visibility::get_color(visu_config));
       DT_LOG_TRACE (local_priority, "Found color '" << visibility::get_color (visu_config)
                     << "' color is : " << color);
     }
 
-    gnuplot_draw::g_current_color = color;
-    gnuplot_draw::g_current_color = former_color;
-
-    // Instantiate a XYZ range computer :
-    gnuplot_draw::xyz_range * xyzr = gnuplot_draw::xyz_range::instance ('i');
-
+    // Activate a drawing bounding box computer :
+    gnuplot_draw::xyz_range & BB = gnuplot_draw::bounding_box(gnuplot_draw::BB_ACTION_ACTIVATE);
+    // Reset it from scratch :
+    BB.reset_ranges();
+    gnuplot_draw::color_context().set_color_code(former_color);
 
     if (shown) {
-      gnuplot_drawer::_draw_ (log_, p_, max_display_level);
+      gnuplot_drawer::_draw_(log_, p_, max_display_level);
     }
 
-    _xrange_.min = xyzr->x_range.get_min ();
-    _xrange_.max = xyzr->x_range.get_max ();
-    _yrange_.min = xyzr->y_range.get_min ();
-    _yrange_.max = xyzr->y_range.get_max ();
-    _zrange_.min = xyzr->z_range.get_min ();
-    _zrange_.max = xyzr->z_range.get_max ();
+    _xrange_.min = BB.get_x_range().get_min ();
+    _xrange_.max = BB.get_x_range().get_max ();
+    _yrange_.min = BB.get_y_range().get_min ();
+    _yrange_.max = BB.get_y_range().get_max ();
+    _zrange_.min = BB.get_z_range().get_min ();
+    _zrange_.max = BB.get_z_range().get_max ();
 
     double dx = _xrange_.max - _xrange_.min;
     double dy = _yrange_.max - _yrange_.min;
@@ -690,15 +688,15 @@ namespace geomtools {
     double amax = std::max (dx, dy);
     amax = std::max (amax, dz);
     amax *= 1.1;
-    _xrange_.min = xyzr->x_range.get_median () - 0.5 * amax;
-    _xrange_.max = xyzr->x_range.get_median () + 0.5 * amax;
-    _yrange_.min = xyzr->y_range.get_median () - 0.5 * amax;
-    _yrange_.max = xyzr->y_range.get_median () + 0.5 * amax;
-    _zrange_.min = xyzr->z_range.get_median () - 0.5 * amax;
-    _zrange_.max = xyzr->z_range.get_median () + 0.5 * amax;
+    _xrange_.min = BB.get_x_range().get_median () - 0.5 * amax;
+    _xrange_.max = BB.get_x_range().get_median () + 0.5 * amax;
+    _yrange_.min = BB.get_y_range().get_median () - 0.5 * amax;
+    _yrange_.max = BB.get_y_range().get_median () + 0.5 * amax;
+    _zrange_.min = BB.get_z_range().get_median () - 0.5 * amax;
+    _zrange_.max = BB.get_z_range().get_median () + 0.5 * amax;
 
-    // Clear the XYZ range computer :
-    gnuplot_draw::xyz_range::instance ('c');
+    // Deactivate the drawing bounding box :
+    BB.deactivate();
 
     for (cstreams_col_type::iterator i = _cstreams_.begin ();
          i != _cstreams_.end ();
@@ -1151,5 +1149,3 @@ namespace geomtools {
   }
 
 } // end of namespace geomtools
-
-// end of gnuplot_drawer.cc

@@ -1,17 +1,19 @@
-// -*- mode: c++; -*-
-/* gnuplot_draw.cc
- */
+/// \file gnuplot_draw.cc
 
+// Ourselves:
 #include <geomtools/gnuplot_draw.h>
 
+// Standard library:
 #include <cmath>
 #include <stdexcept>
 
+// Third party:
+// - Boost:
 #include <boost/scoped_ptr.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/logger.h>
 
-
+// This project:
 #include <geomtools/i_placement.h>
 #include <geomtools/i_object_3d.h>
 #include <geomtools/placement.h>
@@ -38,45 +40,125 @@ namespace geomtools {
 
   using namespace std;
 
-  bool   gnuplot_draw::g_using_color   = false;
-  double gnuplot_draw::g_current_color = 1.0;
-
-  void gnuplot_draw::xyz_range::reset ()
+  gnuplot_draw::xyz_range::xyz_range()
   {
-    x_range.reset ();
-    y_range.reset ();
-    z_range.reset ();
+    _activated_ = false;
     return;
   }
 
-  gnuplot_draw::xyz_range * gnuplot_draw::xyz_range::instance (char mode_)
+  bool gnuplot_draw::xyz_range::is_activated() const
   {
-    static boost::scoped_ptr<gnuplot_draw::xyz_range> _g_instance (0);
-    if (mode_ == 'i') {
-      if (_g_instance.get () == NULL) {
-        _g_instance.reset (new gnuplot_draw::xyz_range);
-      }
-    } else if (mode_ == 'c') {
-      _g_instance.reset (0);
+    return _activated_;
+  }
+
+
+  void gnuplot_draw::xyz_range::deactivate()
+  {
+    _activated_ = false;
+    return;
+  }
+
+  void gnuplot_draw::xyz_range::activate()
+  {
+    _activated_ = true;
+    return;
+  }
+
+  const mygsl::min_max & gnuplot_draw::xyz_range::get_x_range() const
+  {
+    return _x_range_;
+  }
+
+  const mygsl::min_max & gnuplot_draw::xyz_range::get_y_range() const
+  {
+    return _y_range_;
+  }
+
+  const mygsl::min_max & gnuplot_draw::xyz_range::get_z_range() const
+  {
+    return _z_range_;
+  }
+
+  void gnuplot_draw::xyz_range::reset_ranges()
+  {
+    _x_range_.reset();
+    _y_range_.reset();
+    _z_range_.reset();
+    return;
+  }
+
+  void gnuplot_draw::xyz_range::add_point(double x_, double y_, double z_)
+  {
+    if (is_activated()) {
+      this->_x_range_.add (x_);
+      this->_y_range_.add (y_);
+      this->_z_range_.add (z_);
     }
-    return _g_instance.get ();
-  }
-
-  void
-  gnuplot_draw::basic_draw_point (std::ostream & out_,
-                                  double x_, double y_, double z_)
-  {
-    basic_draw_point (out_, x_, y_, z_, true);
     return;
   }
 
-  void
-  gnuplot_draw::basic_draw_point (std::ostream & out_,
-                                  const vector_3d & v_)
+  void gnuplot_draw::xyz_range::add_point(const vector_3d & point_)
   {
-    basic_draw_point (out_, v_, true);
+    this->add_point(point_.x(), point_.y(), point_.z());
     return;
   }
+
+  // static
+  gnuplot_draw::xyz_range & gnuplot_draw::bounding_box(gnuplot_draw::bounding_box_action_type action_)
+  {
+    // std::cerr << "DEVEL: gnuplot_draw::bounding_box: Entering..." << std::endl;
+    static boost::scoped_ptr<gnuplot_draw::xyz_range> _xyz_instance;
+    if (! _xyz_instance) {
+      // std::cerr << "DEVEL: gnuplot_draw::bounding_box: Allocating a new BB..." << std::endl;
+      _xyz_instance.reset(new gnuplot_draw::xyz_range);
+    }
+    if (action_ == BB_ACTION_ACTIVATE) {
+      _xyz_instance->activate();
+    } else if (action_ == BB_ACTION_DEACTIVATE){
+      _xyz_instance->deactivate();
+    } else if (action_ == BB_ACTION_RESET){
+      _xyz_instance->reset_ranges();
+    }
+    // std::cerr << "DEVEL: gnuplot_draw::bounding_box: Exiting." << std::endl;
+    return *_xyz_instance;
+  }
+
+  // static
+  const gnuplot_draw::xyz_range & gnuplot_draw::bounding_box_const()
+  {
+    return const_cast<xyz_range &>(bounding_box(BB_ACTION_NONE));
+  }
+
+  // static
+  color::context & gnuplot_draw::color_context()
+  {
+    // std::cerr << "DEVEL: gnuplot_draw::color_context: Entering..." << std::endl;
+    static boost::scoped_ptr<color::context> _cc;
+    if (!_cc) {
+      _cc.reset(new color::context);
+    }
+    // std::cerr << "DEVEL: gnuplot_draw::color_context: Exiting." << std::endl;
+    return *_cc;
+  }
+
+  // static
+  const color::context & gnuplot_draw::color_context_const()
+  {
+    // std::cerr << "DEVEL: gnuplot_draw::color_context_const: Entering..." << std::endl;
+    color::context & cc = color_context();
+    // std::cerr << "DEVEL: gnuplot_draw::color_context_const: Exiting." << std::endl;
+    return const_cast<color::context &>(cc);
+  }
+
+  // void
+  // gnuplot_draw::basic_draw_point (std::ostream & out_,
+  //                                 const vector_3d & v_)
+  // {
+  //   // std::cerr << "DEVEL: gnuplot_draw::basic_draw_point(4): Entering..." << std::endl;
+  //   basic_draw_point (out_, v_, true);
+  //   // std::cerr << "DEVEL: gnuplot_draw::basic_draw_point(4): Exiting." << std::endl;
+  //   return;
+  // }
 
   void
   gnuplot_draw::basic_draw_point_with_color (std::ostream & out_,
@@ -84,20 +166,20 @@ namespace geomtools {
                                              double y_,
                                              double z_,
                                              double color_,
-                                             bool   endl_)
+                                             bool   new_line_)
   {
+    // std::cerr << "DEVEL: gnuplot_draw::basic_draw_point_with_color(1): Entering..." << std::endl;
     double color = color_;
     out_.precision (15);
-    if (xyz_range::instance ('t') != NULL) {
-      xyz_range::instance ('i')->x_range.add (x_);
-      xyz_range::instance ('i')->y_range.add (y_);
-      xyz_range::instance ('i')->z_range.add (z_);
-    }
+    // Record the point in the display bounding box (if activated):
+    xyz_range & XYZ = gnuplot_draw::bounding_box(gnuplot_draw::gnuplot_draw::BB_ACTION_NONE);
+    XYZ.add_point(x_, y_, z_);
     out_ << x_ << ' '
          << y_ << ' '
          << z_ << ' '
          << color;
-    if (endl_) out_ << std::endl;
+    if (new_line_) out_ << std::endl;
+    // std::cerr << "DEVEL: gnuplot_draw::basic_draw_point_with_color(1): Exiting." << std::endl;
     return;
   }
 
@@ -105,51 +187,67 @@ namespace geomtools {
   gnuplot_draw::basic_draw_point_with_color (std::ostream & out_,
                                              const vector_3d & point_,
                                              double color_,
-                                             bool   endl_)
+                                             bool   new_line_)
   {
+    // std::cerr << "DEVEL: gnuplot_draw::basic_draw_point_with_color(2): Entering..." << std::endl;
     basic_draw_point_with_color (out_,
                                  point_.x (),
                                  point_.y (),
                                  point_.z (),
                                  color_,
-                                 endl_);
+                                 new_line_);
+    // std::cerr << "DEVEL: gnuplot_draw::basic_draw_point_with_color(2): Exiting." << std::endl;
     return;
   }
 
   void
   gnuplot_draw::basic_draw_point (std::ostream & out_,
                                   double x_, double y_, double z_,
-                                  bool endl_)
+                                  bool new_line_)
   {
-    if (gnuplot_draw::g_using_color) {
-      basic_draw_point_with_color (out_,
-                                   x_, y_, z_,
-                                   gnuplot_draw::g_current_color, false);
-    } else {
-      out_.precision (15);
-      if (xyz_range::instance ('t') != NULL) {
-        xyz_range::instance ('i')->x_range.add (x_);
-        xyz_range::instance ('i')->y_range.add (y_);
-        xyz_range::instance ('i')->z_range.add (z_);
-      }
-      out_ << x_ << ' '
-           << y_ << ' '
-           << z_;
+    // std::cerr << "DEVEL: gnuplot_draw::basic_draw_point: Entering..." << std::endl;
+    out_.precision(15);
+    // Record the point in the bounding box (if activated):
+    xyz_range & XYZ = gnuplot_draw::bounding_box(gnuplot_draw::gnuplot_draw::BB_ACTION_NONE);
+    // std::cerr << "DEVEL: gnuplot_draw::basic_draw_point: XYZ ok." << std::endl;
+    XYZ.add_point(x_, y_, z_);
+    // std::cerr << "DEVEL: gnuplot_draw::basic_draw_point: XYZ add_point ok." << std::endl;
+    // Print rendering data for this point:
+    out_ << x_ << ' '
+         << y_ << ' '
+         << z_;
+    // Print color information if color context is activated:
+    if (color_context_const().is_activated()) {
+      // std::cerr << "DEVEL: gnuplot_draw::basic_draw_point: Color context is activated." << std::endl;
+      out_ << ' ' << color_context_const().str();
+      // std::cerr << "DEVEL: gnuplot_draw::basic_draw_point: Color context streamed." << std::endl;
     }
-    if (endl_) out_ << std::endl;
+    /*
+      if (color_context_const().encoded_by_code()) {
+        out_ << ' ' << color_context_const().get_color_code();
+      } else if (color_context_const().encoded_by_value()) {
+        out_ << ' ' << color_context_const().get_color_value();
+      } else if (color_context_const().encoded_by_name()) {
+        out_ << ' ' << color_context_const().str();
+      }
+    */
+    if (new_line_) out_ << std::endl;
+    // std::cerr << "DEVEL: gnuplot_draw::basic_draw_point: Exiting." << std::endl;
     return;
   }
 
   void
   gnuplot_draw::basic_draw_point (std::ostream & out_,
                                   const vector_3d & point_,
-                                  bool endl_)
+                                  bool new_line_)
   {
+    // std::cerr << "DEVEL: gnuplot_draw::basic_draw_point(2): Entering..." << std::endl;
     gnuplot_draw::basic_draw_point (out_,
                                     point_.x (),
                                     point_.y (),
                                     point_.z (),
-                                    endl_);
+                                    new_line_);
+    // std::cerr << "DEVEL: gnuplot_draw::basic_draw_point(2): Exiting." << std::endl;
     return;
   }
 
@@ -192,29 +290,34 @@ namespace geomtools {
   gnuplot_draw::basic_draw_polyline (std::ostream & out_,
                                      const polyline_type & pl_)
   {
+    // std::cerr << "DEVEL: gnuplot_draw::basic_draw_polyline(2): Entering..." << std::endl;
     basic_draw_polyline(out_, pl_, true);
+    // std::cerr << "DEVEL: gnuplot_draw::basic_draw_polyline(2): Exiting." << std::endl;
     return;
   }
 
   void
   gnuplot_draw::basic_draw_polyline (std::ostream & out_,
                                      const polyline_type & pl_,
-                                     bool endl_)
+                                     bool new_line_)
   {
+    // std::cerr << "DEVEL: gnuplot_draw::basic_draw_polyline(1): Entering..." << std::endl;
     for (polyline_type::const_iterator i = pl_.begin ();
          i != pl_.end ();
          ++i) {
-      basic_draw_point (out_, *i);
+      basic_draw_point(out_, *i);
     }
-    if (endl_) out_ << std::endl;
+    if (new_line_) out_ << std::endl;
+    // std::cerr << "DEVEL: gnuplot_draw::basic_draw_polyline(1): Exiting." << std::endl;
     return;
   }
 
   void
   gnuplot_draw::draw_line (std::ostream & out_,
-                           const line_3d & l_)
+                           const line_3d & l_,
+                           bool gp_trick_)
   {
-    draw_line (out_, l_.get_first (), l_.get_last ());
+    draw_line (out_, l_.get_first (), l_.get_last (), gp_trick_);
     return;
   }
 
@@ -222,10 +325,10 @@ namespace geomtools {
   gnuplot_draw::draw_line (std::ostream & out_,
                            const vector_3d & start_ ,
                            const vector_3d & stop_,
-                           bool split_)
+                           bool gp_trick_)
   {
     basic_draw_point (out_, start_);
-    if (split_) {
+    if (gp_trick_) {
       basic_draw_point (out_, 0.5 * (start_ + stop_));
     }
     basic_draw_point (out_, stop_);
@@ -238,11 +341,12 @@ namespace geomtools {
                                const vector_3d & position_,
                                const rotation_3d & rotation_,
                                const polyline_3d & p_,
-                               bool  more_)
+                               bool closed_,
+                               bool gp_trick_)
   {
     polyline_3d::point_col c;
     p_.make_vertex_collection (c);
-    draw_polyline (out_, position_, rotation_, c, more_);
+    draw_polyline (out_, position_, rotation_, c, closed_, gp_trick_);
     return;
   }
 
@@ -251,24 +355,31 @@ namespace geomtools {
                                const vector_3d & position_,
                                const rotation_3d & rotation_,
                                const polyline_type & pl_,
-                               bool  closed_)
+                               bool closed_,
+                               bool gp_trick_)
   {
     rotation_3d inverse_rotation (rotation_);
     inverse_rotation.invert ();
     polyline_type polyline;
     vector_3d first;
-    bool start = true;
+    int counter = 0;
     for (polyline_type::const_iterator i = pl_.begin ();
          i != pl_.end ();
          i++) {
       vector_3d P (*i);
       P.transform (inverse_rotation);
       P += position_;
-      if (start) {
+      if (counter == 0) {
         first = P;
-        start = false;
+      } else if (counter == 1) {
+        if (gp_trick_) {
+          polyline.push_back(0.5*(first + P));
+
+          polyline.push_back(P);
+        }
       }
       polyline.push_back (P);
+      counter++;
     }
     if (closed_) polyline.push_back (first);
     basic_draw_polyline (out_, polyline);
@@ -280,8 +391,10 @@ namespace geomtools {
                               const vector_3d & position_,
                               const rotation_3d & rotation_,
                               const vector_3d & start_,
-                              const vector_3d & stop_)
+                              const vector_3d & stop_,
+                              bool gp_trick_)
   {
+    // Ugly trick:
     static bool even = true;
     rotation_3d inverse_rotation (rotation_);
     inverse_rotation.invert ();
@@ -293,7 +406,7 @@ namespace geomtools {
     B += position_;
     polyline_type polyline;
     polyline.push_back (A);
-    if (even) {
+    if (even || gp_trick_) {
       vector_3d M = 0.5 * (A + B);
       polyline.push_back (M);
       even = false;
@@ -309,11 +422,13 @@ namespace geomtools {
   gnuplot_draw::draw_segment (std::ostream & out_,
                               const vector_3d & position_,
                               const rotation_3d & rotation_,
-                              const line_3d & l_)
+                              const line_3d & l_,
+                              bool gp_trick_)
   {
     draw_segment (out_, position_, rotation_,
                   l_.get_first (),
-                  l_.get_last ());
+                  l_.get_last (),
+                  gp_trick_);
     return;
   }
 
@@ -321,9 +436,10 @@ namespace geomtools {
   gnuplot_draw::draw_line (std::ostream & out_,
                            const vector_3d & position_,
                            const rotation_3d & rotation_,
-                           const line_3d & l_)
+                           const line_3d & l_,
+                           bool gp_trick_ )
   {
-    draw_segment (out_, position_, rotation_, l_);
+    draw_segment (out_, position_, rotation_, l_, gp_trick_);
   }
 
   void
@@ -333,7 +449,7 @@ namespace geomtools {
                                 double length_,
                                 double width_,
                                 bool closed_,
-                                bool endl_)
+                                bool gp_trick_)
   {
     vector_3d A ( 0.5 * length_,  0.5 * width_, 0.);
     vector_3d B ( 0.5 * length_, -0.5 * width_, 0.);
@@ -361,12 +477,15 @@ namespace geomtools {
 
     polyline_type polyline;
     polyline.push_back (A2);
+    if (gp_trick_) {
+      polyline.push_back (0.5*(A2+B2));
+    }
     polyline.push_back (B2);
     polyline.push_back (C2);
     polyline.push_back (D2);
     polyline.push_back (A2);
     if (closed_) polyline.push_back (B2);
-    basic_draw_polyline(out_, polyline, endl_);
+    basic_draw_polyline(out_, polyline);
     return;
   }
 
@@ -376,10 +495,10 @@ namespace geomtools {
                                 const rotation_3d & rotation_,
                                 const rectangle & r_,
                                 bool closed_,
-                                bool endl_)
+                                bool gp_trick_)
   {
     draw_rectangle (out_, position_, rotation_,
-                    r_.get_x (), r_.get_y (), closed_, endl_);
+                    r_.get_x (), r_.get_y (), closed_, gp_trick_);
     return;
   }
 
@@ -786,24 +905,31 @@ namespace geomtools {
                              double radius_,
                              size_t arc_sampling_)
   {
-    rotation_3d inverse_rotation (rotation_);
-    inverse_rotation.invert ();
+    // std::cerr << "DEVEL: gnuplot_draw::draw_circle: Entering..." << std::endl;
+    rotation_3d inverse_rotation(rotation_);
+    inverse_rotation.invert();
 
     size_t sample =  arc_sampling_;
+    // std::cerr << "DEVEL: gnuplot_draw::draw_circle: sample=" << sample << std::endl;
     double dangle = 2 * M_PI * CLHEP::radian / sample;
     polyline_type polyline;
+    // std::cerr << "DEVEL: gnuplot_draw::draw_circle: polyline ctor" << std::endl;
     for (size_t i = 0; i <= sample; ++i) {
+      // std::cerr << "DEVEL: gnuplot_draw::draw_circle: loop on sample" << std::endl;
       vector_3d P;
       double angle = i * dangle;
-      P.set (radius_ * std::cos (angle),
-             radius_ * std::sin (angle),
-             0.0);
-      vector_3d P2 (P);
-      P2.transform (inverse_rotation);
+      P.set(radius_ * std::cos(angle),
+            radius_ * std::sin(angle),
+            0.0);
+      vector_3d P2(P);
+      P2.transform(inverse_rotation);
       P2 += position_;
-      polyline.push_back (P2);
+      // std::cerr << "DEVEL: gnuplot_draw::draw_circle: polyline=" << std::endl;
+      polyline.push_back(P2);
+      // std::cerr << "DEVEL: gnuplot_draw::draw_circle: pushed P2" << std::endl;
     }
-    basic_draw_polyline (out_, polyline);
+    // std::cerr << "DEVEL: gnuplot_draw::draw_circle: polyline ok" << std::endl;
+    basic_draw_polyline(out_, polyline);
     return;
   }
 
@@ -985,68 +1111,68 @@ namespace geomtools {
 
     // Outer surface:
     if (iobt_mask_ & 0x2) {
-    for (size_t i = 0; i <= phy_sample ; ++i) {
-      polyline_type polyline_meridian;
-      double phi = phi1 + i * dphi;
-      {
-        double z = z1_;
-        double r = rmax1_;
-        vector_3d P;
-        P.set (r * std::cos (phi),
-               r * std::sin (phi),
-               z);
-        vector_3d P2 (P);
-        P2.transform (inverse_rotation);
-        P2 += position_;
-        polyline_meridian.push_back (P2);
+      for (size_t i = 0; i <= phy_sample ; ++i) {
+        polyline_type polyline_meridian;
+        double phi = phi1 + i * dphi;
+        {
+          double z = z1_;
+          double r = rmax1_;
+          vector_3d P;
+          P.set (r * std::cos (phi),
+                 r * std::sin (phi),
+                 z);
+          vector_3d P2 (P);
+          P2.transform (inverse_rotation);
+          P2 += position_;
+          polyline_meridian.push_back (P2);
+        }
+        {
+          double z = z2_;
+          double r = rmax2_;
+          vector_3d P;
+          P.set (r * std::cos (phi),
+                 r * std::sin (phi),
+                 z);
+          vector_3d P2 (P);
+          P2.transform (inverse_rotation);
+          P2 += position_;
+          polyline_meridian.push_back (P2);
+        }
+        basic_draw_polyline (out_, polyline_meridian);
       }
-      {
-        double z = z2_;
-        double r = rmax2_;
-        vector_3d P;
-        P.set (r * std::cos (phi),
-               r * std::sin (phi),
-               z);
-        vector_3d P2 (P);
-        P2.transform (inverse_rotation);
-        P2 += position_;
-        polyline_meridian.push_back (P2);
-      }
-      basic_draw_polyline (out_, polyline_meridian);
-    }
     }
 
     // Inner surface:
     if (iobt_mask_ & 0x1) {
-    for (size_t i = 0; i <= phy_sample ; ++i) {
-      polyline_type polyline_meridian;
-      double phi = phi1 + i * dphi;
-      {
-        double z = z1_;
-        double r = rmin1_;
-        vector_3d P;
-        P.set (r * std::cos (phi),
-               r * std::sin (phi),
-               z);
-        vector_3d P2 (P);
-        P2.transform (inverse_rotation);
-        P2 += position_;
-        polyline_meridian.push_back (P2);
+      for (size_t i = 0; i <= phy_sample ; ++i) {
+        polyline_type polyline_meridian;
+        double phi = phi1 + i * dphi;
+        {
+          double z = z1_;
+          double r = rmin1_;
+          vector_3d P;
+          P.set (r * std::cos (phi),
+                 r * std::sin (phi),
+                 z);
+          vector_3d P2 (P);
+          P2.transform (inverse_rotation);
+          P2 += position_;
+          polyline_meridian.push_back (P2);
+        }
+        {
+          double z = z2_;
+          double r = rmin2_;
+          vector_3d P;
+          P.set (r * std::cos (phi),
+                 r * std::sin (phi),
+                 z);
+          vector_3d P2 (P);
+          P2.transform (inverse_rotation);
+          P2 += position_;
+          polyline_meridian.push_back (P2);
+        }
+        basic_draw_polyline (out_, polyline_meridian);
       }
-      {
-        double z = z2_;
-        double r = rmin2_;
-        vector_3d P;
-        P.set (r * std::cos (phi),
-               r * std::sin (phi),
-               z);
-        vector_3d P2 (P);
-        P2.transform (inverse_rotation);
-        P2 += position_;
-        polyline_meridian.push_back (P2);
-      }
-      basic_draw_polyline (out_, polyline_meridian);
-    }
     }
 
     // Outer parallels:
@@ -1348,7 +1474,7 @@ namespace geomtools {
     }
     if (p_.is_extruded ()) {
       /*
-        std::clog << "DEVEL: gnuplot_draw::draw_polyhedra: "
+        // std::cerr << "DEVEL: gnuplot_draw::draw_polyhedra: "
         << " EXTRUDED !!!" << std::endl;
       */
       for (size_t i = 0; i <= nsides ; ++i) {
@@ -1621,10 +1747,10 @@ namespace geomtools {
     const rotation_3d & rot = rotation_;
     string shape_name = o_.get_shape_name ();
 
-    //std::clog << "DEVEL: gnuplot_draw::basic_draw: Entering..." << std::endl;
+    //std::cerr << "DEVEL: gnuplot_draw::basic_draw: Entering..." << std::endl;
 
     if (o_.has_user_draw ()) {
-      //std::clog << "DEVEL: gnuplot_draw::basic_draw: has_user_draw..." << std::endl;
+      //std::cerr << "DEVEL: gnuplot_draw::basic_draw: has_user_draw..." << std::endl;
       void * user_draw = o_.get_user_draw ();
       gnuplot_draw::draw_user_function_type user_draw_f
         = reinterpret_cast<gnuplot_draw::draw_user_function_type> (user_draw);
@@ -1632,7 +1758,7 @@ namespace geomtools {
       return;
     }
 
-    //std::clog << "DEVEL: gnuplot_draw::basic_draw: Step 1" << std::endl;
+    //std::cerr << "DEVEL: gnuplot_draw::basic_draw: Step 1" << std::endl;
 
     if (shape_name == "line_3d")  {
       const line_3d & l = dynamic_cast<const line_3d &> (o_);
@@ -1871,5 +1997,3 @@ namespace geomtools {
   }
 
 } // end of namespace geomtools
-
-// end of gnuplot_draw.cc

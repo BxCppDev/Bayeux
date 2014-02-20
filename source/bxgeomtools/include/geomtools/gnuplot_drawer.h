@@ -1,5 +1,5 @@
 // -*- mode: c++ ; -*-
-/* gnuplot_drawer.h
+/** \file geomtools/gnuplot_drawer.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-20
  * Last modified: 2010-02-20
@@ -16,12 +16,16 @@
 #ifndef GEOMTOOLS_GNUPLOT_DRAWER_H_
 #define GEOMTOOLS_GNUPLOT_DRAWER_H_ 1
 
+// Standard library:
 #include <iostream>
 #include <string>
 #include <sstream>
 
+// Third party:
+// -  Bayeux/datatools:
 #include <datatools/properties.h>
 
+// This project:
 #include <geomtools/placement.h>
 
 namespace geomtools {
@@ -33,6 +37,7 @@ namespace geomtools {
   class mapping;
   class manager;
 
+  /// \brief An Gnuplot driver object responsible of the display of a virtual geometry
   class gnuplot_drawer
   {
   public:
