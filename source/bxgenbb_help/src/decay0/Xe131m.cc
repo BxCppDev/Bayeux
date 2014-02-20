@@ -46,7 +46,7 @@ namespace genbb {
 
     void Xe131m(mygsl::rng & prng_, genbb::primary_event & event_, double tcnuc, double & tdnuc)
     {
-      double t;
+      //double t;
       double tdlev;
       double tclev;
       double thlev;

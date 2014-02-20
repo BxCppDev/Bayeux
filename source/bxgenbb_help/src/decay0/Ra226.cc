@@ -69,7 +69,7 @@ namespace genbb {
       thnuc=5.03e10; // 1600 y
       tdnuc=tcnuc-thnuc/std::log(2.)*std::log(prng_());
       tclev=0.;
-      //t=0.0;
+      t=0.0;
       if (debug) std::cerr << "genbb::decay0::Ra226: " << "t=" << t << " sec" << std::endl;
 
       palpha=100.*prng_();

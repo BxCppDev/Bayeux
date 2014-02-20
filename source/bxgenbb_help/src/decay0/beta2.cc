@@ -38,11 +38,11 @@ namespace genbb {
       const parbeta2 * pars2 = static_cast<const parbeta2 *>(params_);
       const double & Zdtr  = pars2->Zdtr;
       const double & Qbeta = pars2->Qbeta;
-      const double & c1    = pars2->c1;
-      const double & c2    = pars2->c2;
-      const double & c3    = pars2->c3;
-      const double & c4    = pars2->c4;
-      const double & kf    = pars2->kf;
+      //const double & c1    = pars2->c1;
+      //const double & c2    = pars2->c2;
+      //const double & c3    = pars2->c3;
+      //const double & c4    = pars2->c4;
+      //const double & kf    = pars2->kf;
       double em, fm;
       decay0_tgold(50.e-6, 0.5 * Qbeta, Qbeta,
                    decay0_funbeta2, 0.001 * Qbeta, 2, 

@@ -47,7 +47,7 @@ namespace genbb {
     void P32(mygsl::rng & prng_, genbb::primary_event & event_, double tcnuc, double & tdnuc)
     {
       double t;
-      double tdlev;
+      //double tdlev;
       double thnuc;
       // Scheme of P32 beta decay, ToI'1998 and ENSDF'2004.
       // Input : tcnuc - time of creation of nucleus (sec)

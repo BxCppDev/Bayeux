@@ -218,8 +218,8 @@ c             line 3 - 7 NMEs: chi_GTw, chi_Fw, chi'_GT, chi'_F, chi'_T, chi'_P,
       double & ebb1 = pars->ebb1;
       double & ebb2 = pars->ebb2;
       double & toallevents = pars->toallevents;
-      int    & levelE = pars->levelE;
-      std::string & chdspin = pars->chdspin;
+      //int    & levelE = pars->levelE;
+      //std::string & chdspin = pars->chdspin;
       //double & lhelp = pars->levelE;
       //std::string & chhelp =  = pars->chdspin;
 
@@ -552,7 +552,7 @@ c             line 3 - 7 NMEs: chi_GTw, chi_Fw, chi'_GT, chi'_F, chi'_T, chi'_P,
         double a6 = 2. * ((gsl_pow_2(rksi) + 4. * gsl_pow_2(r))
                           * (et1 * et2 + 1.) - 4. * rksi * r *et0)
           /      (9. * gsl_pow_2(r) * et1 * et2);
-        double chi_1plus  = chip_GT + 3. * chip_F - 6. * chip_T;
+        //double chi_1plus  = chip_GT + 3. * chip_F - 6. * chip_T;
         double chi_1minus = chip_GT - 3. * chip_F - 6. * chip_T;
         double chi_2plus  = chi_GTw + chi_Fw - chi_1minus / 9.;
         double a_eta  =

@@ -46,7 +46,7 @@ namespace genbb {
 
     void Cd112low(mygsl::rng & prng_, genbb::primary_event & event_, int levelkev)
     {
-      double t;
+      //double t;
       double tdlev;
       double p;
       double tclev;

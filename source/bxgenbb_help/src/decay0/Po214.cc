@@ -50,8 +50,8 @@ namespace genbb {
       double tdlev;
       double palpha;
       double thnuc;
-      double tclev;
-      double thlev;
+      double tclev(0.0);
+      double thlev(0.0);
       // Scheme of Po214 decay (Nucl. Data Sheets 55(1988)665).
       // Alpha decay to excited level 1097.7 keV of Pb210 is neglected (6e-5%).
       // Input : tcnuc - time of creation of nucleus (sec)

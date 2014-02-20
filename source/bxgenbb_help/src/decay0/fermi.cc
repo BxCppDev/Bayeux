@@ -27,7 +27,7 @@ namespace genbb {
       double z = z_;
       static double emass = decay0_emass(); // MeV 
       double alpha = 1.0 / 137.036;
-      double me    = emass;
+      //double me    = emass;
       double w     = e / emass + 1.; 
       double p     = sqrt (w * w - 1.);
       double beta  = p / w;
@@ -117,15 +117,15 @@ namespace genbb {
       double aZ     = alpha * z;
       double we = e / emass + 1.; 
       double pe = sqrt (we * we - 1.);
-      double beta  = pe / we;
+      //double beta  = pe / we;
       double y = aZ * we / pe;
       double gamma1 = sqrt (1. - aZ * aZ); 
-      gsl_sf_result res, arg;
-      int err = gsl_sf_lngamma_complex_e (gamma1, y, &res, &arg);
+      gsl_sf_result res;
+      //int err = gsl_sf_lngamma_complex_e (gamma1, y, &res, &arg);
       double lnr     = res.val;
-      double lnr_err = res.err;
-      double zarg     = arg.val;
-      double zarg_err = arg.err;
+      //double lnr_err = res.err;
+      //double zarg     = arg.val;
+      //double zarg_err = arg.err;
       return std::exp (2. * (gamma1 - 1.) * std::log (pe)) 
         * std::exp (M_PI * y + 2. * lnr);
     }

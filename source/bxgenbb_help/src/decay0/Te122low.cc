@@ -46,8 +46,8 @@ namespace genbb {
 
     void Te122low(mygsl::rng & prng_, genbb::primary_event & event_, int levelkev)
     {
-      double t;
-      double tdlev;
+      //double t;
+      //double tdlev;
       double tclev;
       // Subroutine describes the deexcitation process in Te122 nucleus
       // after 2b-decay of Sn122 to ground and excited 0+ and 2+ levels

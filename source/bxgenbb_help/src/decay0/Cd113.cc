@@ -47,7 +47,7 @@ namespace genbb {
     void Cd113(mygsl::rng & prng_, genbb::primary_event & event_, double tcnuc, double & tdnuc)
     {
       double t;
-      double tdlev;
+      //double tdlev;
       double c1;
       double c2;
       double c3;

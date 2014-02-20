@@ -51,7 +51,7 @@ namespace genbb {
       double p;
       double pbeta;
       double tclev;
-      double thlev;
+      double thlev = 0.0;
       double thnuc;
       // Scheme of Pb211 decay ("Table of Isotopes", 7th ed., 1978).
       // Three- and four-figured labels correspond to energies of Bi211

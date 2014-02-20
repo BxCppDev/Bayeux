@@ -47,7 +47,7 @@ namespace genbb {
     void Po212(mygsl::rng & prng_, genbb::primary_event & event_, double tcnuc, double & tdnuc)
     {
       double t;
-      double tdlev;
+      //double tdlev;
       double thnuc;
       // Scheme of Po212 decay (Nucl. Data Sheets 66(1992)171).
       // Input : tcnuc - time of creation of nucleus (sec)

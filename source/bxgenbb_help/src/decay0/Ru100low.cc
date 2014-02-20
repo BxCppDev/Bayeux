@@ -45,13 +45,13 @@ namespace genbb
     void Ru100low (mygsl::rng & prng_, genbb::primary_event & event_,
                    int levelkev)
     {
-      static const double pi = M_PI;
+      //static const double pi = M_PI;
       static const double twopi = 2 * M_PI;
-      double t;
+      //double t;
       double tdlev;
       double cg;
       double cK;
-      double ctet;
+      //double ctet;
       double EbindK;
       double Egamma;
       double p;

@@ -39,10 +39,10 @@ namespace genbb {
       bj69sl2 * parssl2 = static_cast<bj69sl2 *>(params_);
       const double & Zdtr  = parssl2->Zdtr;
       const double & Qbeta = parssl2->Qbeta;
-      const double & c1    = parssl2->c1;
-      const double & c2    = parssl2->c2;
-      const double & c3    = parssl2->c3;
-      const double & c4    = parssl2->c4;
+      //const double & c1    = parssl2->c1;
+      //const double & c2    = parssl2->c2;
+      //const double & c3    = parssl2->c3;
+      //const double & c4    = parssl2->c4;
       double *       sl2   = parssl2->sl2;
       
       // Values of the "lambda2" Coulomb function for some Zdtr values from:

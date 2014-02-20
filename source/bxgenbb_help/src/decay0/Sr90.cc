@@ -47,7 +47,7 @@ namespace genbb {
     void Sr90(mygsl::rng & prng_, genbb::primary_event & event_, double tcnuc, double & tdnuc)
     {
       double t;
-      double tdlev;
+      //double tdlev;
       double thnuc;
       // Scheme of Sr90 decay ("Table of Isotopes", 7th ed., 1978).
       // Accuracy in description of: decay branches - 0.001%,

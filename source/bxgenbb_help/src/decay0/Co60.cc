@@ -46,7 +46,7 @@ namespace genbb
     void Co60 (mygsl::rng & prng_, genbb::primary_event & event_,
                double tcnuc, double &tdnuc)
     {
-      static const double pi = M_PI;
+      //static const double pi = M_PI;
       static const double twopi = 2 * M_PI;
       //double twopi = 2 * M_PI;
       double t;
@@ -54,7 +54,7 @@ namespace genbb
       double cg;
       double cK;
       double cp;
-      double ctet;
+      //double ctet;
       double EbindK;
       double Egamma;
       double p;

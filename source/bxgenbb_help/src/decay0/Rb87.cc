@@ -47,7 +47,7 @@ namespace genbb {
     void Rb87(mygsl::rng & prng_, genbb::primary_event & event_, double tcnuc, double & tdnuc)
     {
       double t;
-      double tdlev;
+      //double tdlev;
       double thnuc;
       // Scheme of Rb87 decay in accordance with NDS 95(2002)543 and ENSDF
       // at NNDC site on 6.08.2007.

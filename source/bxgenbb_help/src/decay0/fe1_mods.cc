@@ -125,7 +125,7 @@ namespace genbb {
       double a5=-8.*(rksi*(et1*et2+1.)-2.*r*et0)/(3.*r*r*et1*et2);
       double a6=2.*((rksi*rksi+4.*r*r)*(et1*et2+1.)-4.*rksi*r*et0)/
         (9.*r*r*et1*et2);
-      double chi_1plus =chip_GT+3.*chip_F-6.*chip_T;
+      //double chi_1plus =chip_GT+3.*chip_F-6.*chip_T;
       double chi_1minus=chip_GT-3.*chip_F-6.*chip_T;
       double chi_2plus =chi_GTw+chi_Fw-chi_1minus/9.;
       double a_eta=a1*gsl_pow_2(chi_2plus)

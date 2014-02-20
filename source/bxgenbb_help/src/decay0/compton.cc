@@ -19,7 +19,7 @@ namespace genbb {
                         double teta1,double teta2,
                         double phi1,double phi2)
     {
-      static double emass = decay0_emass();
+      //static double emass = decay0_emass();
       double pg0[3], pg1[3], pe1[3];
       double phi=phi1+(phi2-phi1)*prng();
       double ctet1=1.;

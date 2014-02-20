@@ -47,7 +47,7 @@ namespace genbb {
     void C14(mygsl::rng & prng_, genbb::primary_event & event_, double tcnuc, double & tdnuc)
     {
       double t;
-      double tdlev;
+      //double tdlev;
       double thnuc;
       // Scheme of C14 beta decay, NPA 523(1991)1 and ToI'1998.
       // Input : tcnuc - time of creation of nucleus (sec)

@@ -46,8 +46,8 @@ namespace genbb {
 
     void Pd108low(mygsl::rng & prng_, genbb::primary_event & event_, int levelkev)
     {
-      double t;
-      double tdlev;
+      //double t;
+      //double tdlev;
       double tclev;
       // Subroutine describes the deexcitation process in Pd108 nucleus
       // after 2b-decay of Cd108 to ground and excited 0+ and 2+ levels

@@ -41,7 +41,7 @@ namespace genbb
     void PbAtShell (mygsl::rng & prng_, genbb::primary_event & event_,
                     int KLMenergy, double tclev, double thlev, double &tdlev)
     {
-      double t;
+      //double t;
       int Lhole;
       int Mhole;
       double p;

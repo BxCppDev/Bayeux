@@ -46,8 +46,8 @@ namespace genbb {
 
     void Ge70low(mygsl::rng & prng_, genbb::primary_event & event_, int levelkev)
     {
-      double t;
-      double tdlev;
+      //double t;
+      //double tdlev;
       double tclev;
       // Subroutine describes the deexcitation process in Ge70 nucleus
       // after 2b-decay of Zn70 to ground and excited 0+ and 2+ levels

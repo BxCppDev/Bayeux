@@ -62,7 +62,7 @@ namespace genbb {
     }
 
 
-    void decay0_tgold(double a, double b, double c, func_type f,
+    void decay0_tgold(double a, double /*b*/, double c, func_type f,
                         double eps, int minmax,
                         double & xextr, double &fextr,
                         void * params)

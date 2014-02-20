@@ -502,7 +502,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::wdecay0,ocd_)
               << "                                              \n"
               << "List of supported DBD emitter isotopes:       \n"
               << "                                              \n";
-    for (int i = 0; i < dbd_nuclides.size(); i++) {
+    for (size_t i = 0; i < dbd_nuclides.size(); i++) {
       long_desc << "  * ``\"" << dbd_nuclides[i] << "\"``  \n";
     }
 
@@ -510,7 +510,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::wdecay0,ocd_)
     long_desc << "                                              \n"
               << "List of supported background isotopes:        \n"
               << "                                              \n";
-    for (int i = 0; i < bkg_nuclides.size(); i++) {
+    for (size_t i = 0; i < bkg_nuclides.size(); i++) {
       long_desc << "  * ``\"" << bkg_nuclides[i] << "\"``  \n";
     }
 

@@ -35,7 +35,7 @@ namespace genbb {
                            + gsl_pow_2(pe0[1])
                            + gsl_pow_3(pe0[2]));
       double xe = std::sqrt(gsl_pow_2(p)+gsl_pow_2(emass));
-      double te = xe-emass;
+      //double te = xe-emass;
       double gam = xe/emass;
       double gam2 = gam*gam;
       double t = gam-1.;

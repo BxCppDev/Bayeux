@@ -52,7 +52,7 @@ namespace genbb {
       double pbeta;
       double pdecay;
       double tclev;
-      double thlev;
+      double thlev = 0.0;
       double thnuc;
       // Model for scheme of Te133m decay (S.Rab, Nucl. Data Sheets
       // 75(1995)491

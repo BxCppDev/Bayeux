@@ -46,8 +46,8 @@ namespace genbb {
 
     void Ni64low(mygsl::rng & prng_, genbb::primary_event & event_, int levelkev)
     {
-      double t;
-      double tdlev;
+      //double t;
+      //double tdlev;
       double tclev;
       // Subroutine describes the deexcitation process in Ni64 nucleus
       // after 2b-decay of Zn64 to ground and excited 0+ and 2+ levels

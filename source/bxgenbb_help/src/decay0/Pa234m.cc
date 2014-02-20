@@ -52,7 +52,7 @@ namespace genbb {
       double pbeta;
       double pdecay;
       double tclev;
-      double thlev;
+      double thlev = 0.0;
       double thnuc;
       // Model (not the exact) scheme of Pa234m decay ("Table of Isotopes",
       // 7th ed., 1978):

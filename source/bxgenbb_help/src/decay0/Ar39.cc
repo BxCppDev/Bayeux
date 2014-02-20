@@ -47,7 +47,7 @@ namespace genbb {
     void Ar39(mygsl::rng & prng_, genbb::primary_event & event_, double tcnuc, double & tdnuc)
     {
       double t;
-      double tdlev;
+      //double tdlev;
       double thnuc;
       // Model for Ar39 decay (Nucl. Phys. A 633(1998)1).
       // Input : tcnuc - time of creation of nucleus (sec)
