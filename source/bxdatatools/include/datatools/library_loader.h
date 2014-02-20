@@ -53,6 +53,9 @@ class library_loader : boost::noncopyable {
 
  public:
   //! Default constructor
+  library_loader();
+  
+  //! Construct with path to config file
   explicit library_loader(const std::string& config_file);
 
   //! Construct and instance with default flags and multi_properties
