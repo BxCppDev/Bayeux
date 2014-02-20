@@ -224,8 +224,7 @@ namespace dpp {
       DT_LOG_NOTICE(_logging_, "No output data sink !");
     }
 
-    uint32_t LL_flags = datatools::library_loader::allow_unregistered;
-    datatools::library_loader LL (LL_flags, _params_.LL_config);
+    datatools::library_loader LL (_params_.LL_config);
     BOOST_FOREACH (const std::string & dll_name, _params_.LL_dlls) {
       DT_LOG_INFORMATION(_logging_, "Loading DLL '" << dll_name << "'...");
       DT_THROW_IF(LL.load (dll_name) != EXIT_SUCCESS,
