@@ -193,8 +193,7 @@ int main (int argc_, char ** argv_)
       bool load_gbio = false;
   
       string LL_config = "";
-      uint32_t LL_flags = datatools::library_loader::allow_unregistered;
-      datatools::library_loader LL (LL_flags, LL_config);
+      datatools::library_loader LL (LL_config);
       int iarg = 1;
       while (iarg < argc_)
         {
