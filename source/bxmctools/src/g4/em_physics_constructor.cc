@@ -383,7 +383,7 @@ namespace mctools {
 
     void em_physics_constructor::_set_defaults ()
     {
-     // Process:
+      // Process:
       _em_model_                        = EM_MODEL_STANDARD;
 
       // gamma:
@@ -548,7 +548,7 @@ namespace mctools {
              << "  Auger=" << (i->second.auger? "Yes" : "No")
              << "  PIXE=" << (i->second.pixe? "Yes" : "No")
              << std::endl;
-       }
+      }
 
       // Ion:
       out_ << indent << datatools::i_tree_dumpable::tag
@@ -764,7 +764,8 @@ namespace mctools {
             // Setting the FacRange to 0.005 instead of default value 0.2
             the_electron_multiple_scattering->SetRangeFactor(_em_electron_ms_range_factor_);
             //??? the_electron_multiple_scattering->SetStepLimitType (fUseDistanceToBoundary);
-            pmanager->AddProcess (the_electron_multiple_scattering, -1, ++process_rank, process_rank);
+            ++process_rank;
+            pmanager->AddProcess (the_electron_multiple_scattering, -1, process_rank, process_rank);
           }
 
           if (_em_electron_ionisation_) {
@@ -781,7 +782,8 @@ namespace mctools {
                 = new G4PenelopeIonisationModel ();
               the_electron_ionisation->SetEmModel(the_penelope_ionisation_model);
             }
-            pmanager->AddProcess (the_electron_ionisation, -1, ++process_rank, process_rank);
+            ++process_rank;
+            pmanager->AddProcess (the_electron_ionisation, -1, process_rank, process_rank);
           }
 
           if (_em_electron_bremsstrahlung_) {
@@ -798,7 +800,8 @@ namespace mctools {
                 = new G4PenelopeBremsstrahlungModel ();
               the_electron_bremsstrahlung->SetEmModel(the_penelope_bremsstrahlung_model);
             }
-            pmanager->AddProcess (the_electron_bremsstrahlung, -1, ++process_rank, process_rank);
+            ++process_rank;
+            pmanager->AddProcess (the_electron_bremsstrahlung, -1, process_rank, process_rank);
           }
 
           if (particle_name == "e+" && _em_positron_annihilation_) {
@@ -809,34 +812,39 @@ namespace mctools {
                 = new G4PenelopeAnnihilationModel ();
               the_positron_annihilation->SetModel(the_penelope_annihilation_model);
             }
-            pmanager->AddProcess (the_positron_annihilation,  0,-1, ++process_rank);
+            ++process_rank;
+            pmanager->AddProcess (the_positron_annihilation,  0,-1, process_rank);
           }
 
           if (_em_electron_step_limiter_) {
-            pmanager->AddProcess (new G4StepLimiter, -1, -1, ++process_rank);
+            ++process_rank;
+            pmanager->AddProcess (new G4StepLimiter, -1, -1, process_rank);
           }
 
         } else if (   particle_name == "alpha"    || particle_name == "anti_alpha"
-                   || particle_name == "deuteron" || particle_name == "anti_deuteron"
-                   || particle_name == "triton"   || particle_name == "anti_triton"
-                   || particle_name == "He3"      || particle_name == "anti_He3"
-                   || particle_name == "GenericIon") {
+                      || particle_name == "deuteron" || particle_name == "anti_deuteron"
+                      || particle_name == "triton"   || particle_name == "anti_triton"
+                      || particle_name == "He3"      || particle_name == "anti_He3"
+                      || particle_name == "GenericIon") {
           int process_rank = 0;
           /************
            *   Ions   *
            ************/
           if (_em_ion_multiple_scattering_) {
             G4hMultipleScattering * the_ion_multiple_scattering = new G4hMultipleScattering ();
-            pmanager->AddProcess (the_ion_multiple_scattering , -1, ++process_rank, process_rank);
+            ++process_rank;
+            pmanager->AddProcess (the_ion_multiple_scattering , -1, process_rank, process_rank);
           }
 
           if (_em_ion_ionisation_) {
             G4ionIonisation       * the_ion_ionisation = new G4ionIonisation ();
-            pmanager->AddProcess (the_ion_ionisation, -1, ++process_rank, process_rank);
+            ++process_rank;
+            pmanager->AddProcess (the_ion_ionisation, -1, process_rank, process_rank);
           }
 
           if (_em_ion_step_limiter_) {
-            pmanager->AddProcess (new G4StepLimiter, -1, -1, ++process_rank);
+            ++process_rank;
+            pmanager->AddProcess (new G4StepLimiter, -1, -1, process_rank);
           }
 
         } else if (particle_name == "mu+" ||
@@ -845,12 +853,18 @@ namespace mctools {
           /*************
            *   Muons   *
            *************/
-          pmanager->AddProcess (new G4MuMultipleScattering, -1, ++process_rank, process_rank);
-          pmanager->AddProcess (new G4MuIonisation,         -1, ++process_rank, process_rank);
-          pmanager->AddProcess (new G4MuBremsstrahlung,     -1, ++process_rank, process_rank);
-          pmanager->AddProcess (new G4MuPairProduction,     -1, ++process_rank, process_rank);
-          // pmanager->AddProcess (new G4StepLimiter,          -1, -1, ++process_rank);
-          // pmanager->AddProcess (new G4UserSpecialCuts,      -1, -1, ++process_rank);
+          ++process_rank;
+          pmanager->AddProcess (new G4MuMultipleScattering, -1, process_rank, process_rank);
+          ++process_rank;
+          pmanager->AddProcess (new G4MuIonisation,         -1, process_rank, process_rank);
+          ++process_rank;
+          pmanager->AddProcess (new G4MuBremsstrahlung,     -1, process_rank, process_rank);
+          ++process_rank;
+          pmanager->AddProcess (new G4MuPairProduction,     -1, process_rank, process_rank);
+          // ++process_rank;
+          // pmanager->AddProcess (new G4StepLimiter,          -1, -1, process_rank);
+          // ++process_rank;
+          // pmanager->AddProcess (new G4UserSpecialCuts,      -1, -1, process_rank);
         } else {
           int process_rank = 0;
           /***********************
@@ -859,10 +873,14 @@ namespace mctools {
           // all others charged particles
           if ((!particle->IsShortLived ()) &&
               (particle->GetPDGCharge () != 0.0)) {
-            pmanager->AddProcess (new G4hMultipleScattering, -1, ++process_rank, process_rank);
-            pmanager->AddProcess (new G4hIonisation,         -1, ++process_rank, process_rank);
-            //      pmanager->AddProcess(new G4StepLimiter,       -1,-1, ++process_rank);
-            //      pmanager->AddProcess(new G4UserSpecialCuts,   -1,-1, ++process_rank);
+            ++process_rank;
+            pmanager->AddProcess (new G4hMultipleScattering, -1, process_rank, process_rank);
+            ++process_rank;
+            pmanager->AddProcess (new G4hIonisation,         -1, process_rank, process_rank);
+            //      ++process_rank;
+            //      pmanager->AddProcess(new G4StepLimiter,       -1,-1, process_rank);
+            //      ++process_rank;
+            //      pmanager->AddProcess(new G4UserSpecialCuts,   -1,-1, process_rank);
           }
         }
       }
