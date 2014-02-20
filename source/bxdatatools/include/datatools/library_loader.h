@@ -31,8 +31,6 @@
 
 // Standard Library
 #include <iostream>
-//#include <list>
-//#include <map>
 #include <string>
 
 // Third Party
@@ -53,30 +51,15 @@ class library_loader : boost::noncopyable {
  public:
   typedef datatools::detail::DynamicLoader::SymbolPointer symbol_ptr;
 
-  enum flag_type {
-    allow_unregistered = bit_mask::bit01,
-    auto_all           = bit_mask::bit02,
-    auto_none          = bit_mask::bit03,
-  };
-
  public:
   //! Default constructor
-  explicit library_loader(uint32_t flags=0);
-
-  //! Construct an instance with default flags and a config file
-  library_loader(uint32_t flags, const std::string& config_file);
+  explicit library_loader(const std::string& config_file);
 
   //! Construct and instance with default flags and multi_properties
-  library_loader(uint32_t flags, const datatools::multi_properties& config);
+  library_loader(const datatools::multi_properties& config);
 
   /// Destructor
   virtual ~library_loader();
-
-  //! Set the allow unregistered flag
-  void set_allow_unregistered(bool);
-
-  //! Check the allow unregistered flag
-  bool allowing_unregistered() const;
 
   //! Return true if the DLL with name is setup
   bool has(const std::string& name) const;
@@ -117,7 +100,6 @@ class library_loader : boost::noncopyable {
   void init();
 
  private:
-  uint32_t    flags_; //!< Flags
   datatools::multi_properties config_; //!< Configuration
   class LibraryCollection;
   boost::scoped_ptr<LibraryCollection> libEntries_;

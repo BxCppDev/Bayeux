@@ -60,9 +60,8 @@ int main (int argc_ , char ** argv_)
         }
 
       string LL_config = "${DATATOOLS_TESTING_DIR}/config/test_library_loader.conf";
-      uint32_t LL_flags = datatools::library_loader::allow_unregistered;
-      datatools::library_loader LL (LL_flags, LL_config);
-      datatools::library_loader LL2 (LL_flags, LL_config);
+      datatools::library_loader LL (LL_config);
+      datatools::library_loader LL2 (LL_config);
 
       clog << " Loading 'ssl'..." << endl;
       LL.load ("ssl");

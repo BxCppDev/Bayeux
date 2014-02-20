@@ -126,16 +126,12 @@ void library_entry_type::print(std::ostream& out,
 //----------------------------------------------------------------------
 // library_loader class
 //
-library_loader::library_loader(uint32_t flags) 
-  : flags_(flags), 
-    config_(datatools::multi_properties("name", "filename")), 
-    libEntries_(new LibraryCollection) {
-  this->init();
-}
-
-library_loader::library_loader(uint32_t flags, const std::string& config_file) 
-  : flags_(flags), 
-    config_(datatools::multi_properties("name", "filename")), 
+library_loader::library_loader()
+  : config_(datatools::multi_properties("name", "filename")),
+    libEntries_(new LibraryCollection) {}
+  
+library_loader::library_loader(const std::string& config_file)
+  : config_(datatools::multi_properties("name", "filename")),
     libEntries_(new LibraryCollection) {
   if(!config_file.empty()) {
     std::string resolvedPathToConfig(config_file);
@@ -145,10 +141,8 @@ library_loader::library_loader(uint32_t flags, const std::string& config_file)
   this->init();
 }
 
-library_loader::library_loader(uint32_t flags,
-                               const datatools::multi_properties& config) 
-  : flags_(flags), 
-    config_(config), 
+library_loader::library_loader(const datatools::multi_properties& config)
+  : config_(config),
     libEntries_(new LibraryCollection) {
   this->init();
 }
@@ -156,18 +150,6 @@ library_loader::library_loader(uint32_t flags,
 // dtor :
 library_loader::~library_loader() {
   this->close_all();
-}
-
-void library_loader::set_allow_unregistered(bool allow) {
-  if (allow) {
-    flags_ |= allow_unregistered;
-  } else {
-    flags_ &= allow_unregistered;
-  }
-}
-
-bool library_loader::allowing_unregistered() const {
-  return flags_ & allow_unregistered;
 }
 
 bool library_loader::has(const std::string& name) const {
@@ -253,11 +235,7 @@ int library_loader::load(const std::string& lib_name_,
                          const std::string& version_) {
   handle_library_entry_dict_type::iterator found = libEntries_->libraries_.find(lib_name_);
   if (found == libEntries_->libraries_.end()) {
-    if (!this->allowing_unregistered()) {
-      DT_LOG_ERROR(datatools::logger::PRIO_ERROR,"Library '" << lib_name_ << "' is not registered !");
-      return EXIT_FAILURE;
-    } else {
-      int status = this->registration(lib_name_,
+    int status = this->registration(lib_name_,
                                       directory_,
                                       filename_,
                                       full_lib_path_,
@@ -272,7 +250,6 @@ int library_loader::load(const std::string& lib_name_,
         return EXIT_FAILURE;
       }
       found = libEntries_->libraries_.find(lib_name_);
-    }
   }
   library_entry_type& le = found->second.grab();
   std::string check = le.full_path;
@@ -368,7 +345,6 @@ int library_loader::close_all() {
 
 void library_loader::print(std::ostream& out) const {
   out << "Library loader : " << std::endl;
-  out << "Flags              : " << flags_ << std::endl;
   out << "List of registered shared libraries :" << std::endl;
   for (handle_library_entry_dict_type::const_iterator i
        = libEntries_->libraries_.begin();
