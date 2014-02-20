@@ -7,7 +7,6 @@
 #include <exception>
 
 #include <datatools/multi_properties.h>
-#include <datatools/library_loader.h>
 
 
 #include <mctools/step_hit_processor_factory.h>
@@ -30,11 +29,6 @@ int main(int argc_, char ** argv_)
   try {
     std::clog << "Test program for class 'step_hit_processor_factory'!" << std::endl;
 
-    string LL_config;
-    uint32_t LL_flags = datatools::library_loader::allow_unregistered;
-    datatools::library_loader LL(LL_flags, LL_config);
-    //LL.load ("emfield");
-    // Force granular emfield DLL to be linked:
     std::string emfver = emfield::version::get_version();
 
     bool debug = false;
