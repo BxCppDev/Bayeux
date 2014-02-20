@@ -109,8 +109,7 @@ int main (int argc_, char ** argv_)
           iarg++;
         }
 
-      uint32_t LL_flags = datatools::library_loader::allow_unregistered;
-      datatools::library_loader LL (LL_flags, LL_config);
+      datatools::library_loader LL(LL_config);
       BOOST_FOREACH (const std::string & dll_name, LL_dlls)
         {
           std::clog << datatools::io::notice << "Loading DLL '"
