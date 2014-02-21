@@ -6,21 +6,24 @@
  *
  */
 
+// Standard library:
 #include <cstdlib>
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
 
+// Third party:
+// - Boost:
 #include <boost/algorithm/string.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/exception.h>
-
-#include <mctools/g4/sensitive_detector.h>
-#include <mctools/g4/manager.h>
-
+// - Bayeux/geomtools:
 #include <geomtools/sensitive.h>
 #include <geomtools/material.h>
 
+// This project:
+#include <mctools/g4/sensitive_detector.h>
+#include <mctools/g4/manager.h>
 #include <mctools/utils.h>
 
 // G4 stuff:
