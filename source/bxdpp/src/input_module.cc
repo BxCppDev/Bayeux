@@ -224,7 +224,7 @@ namespace dpp {
       base_module::process_status status = _open_source();
     }
     */
-    base_module::process_status status = _open_source();
+    this->_open_source();
 
     /*************************************
      *  end of the initialization step   *
@@ -507,7 +507,7 @@ namespace dpp {
             }
           }
           if (load_it) {
-            int rank = p.fetch_integer(io_common::context_rank());
+            p.fetch_integer(io_common::context_rank());
             p.clean(io_common::context_key());
             p.clean(io_common::context_rank());
             if (ctx_store->has_section(ctx_section_key)) {

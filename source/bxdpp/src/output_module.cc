@@ -237,7 +237,7 @@ namespace dpp {
       set_preserve_existing_output (true);
     }
 
-    base_module::process_status status = _open_sink();
+    this->_open_sink();
 
     /*************************************
      *  end of the initialization step   *
