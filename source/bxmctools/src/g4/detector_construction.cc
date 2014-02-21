@@ -761,7 +761,7 @@ namespace mctools {
       DT_THROW_IF(config_files.size() == 0,
                   std::logic_error,
                   "Missing configuration file(s) for the step hit processor factory !");
-      for (int i = 0; i < config_files.size(); i++) {
+      for (size_t i = 0; i < config_files.size(); i++) {
         std::string config_file = config_files[i];
         datatools::fetch_path_with_env(config_file);
         datatools::multi_properties mconfig("name", "type");
