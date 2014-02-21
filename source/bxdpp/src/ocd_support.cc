@@ -2,7 +2,11 @@
 /* ocd_support.cc
  */
 
+// Ourselves:
 #include <dpp/ocd_support.h>
+
+// This project:
+#include <dpp/base_module.h>
 
 /****************************************************************/
 // OCD support for class '::dpp::dump_module' :
@@ -12,22 +16,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::dump_module,ocd_)
   ocd_.set_class_library ("dpp");
   ocd_.set_class_description ("A module that dumps the structure of the data record");
 
-  {
-    configuration_property_description & cpd = ocd_.add_configuration_property_info();
-    cpd.set_name_pattern("debug")
-      .set_terse_description("The debug flag")
-      .set_traits(datatools::TYPE_BOOLEAN)
-      .set_mandatory(false)
-      .set_long_description("The debug flag.                                \n"
-                            "Default value is false.                        \n"
-                           "                                                \n"
-                            "Example::                                      \n"
-                            "                                               \n"
-                            "    debug : boolean = 0                        \n"
-                            "                                               \n"
-                            )
-      ;
-  }
+  ::dpp::base_module::common_ocd(ocd_);
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
@@ -37,12 +26,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::dump_module,ocd_)
       .set_mandatory(false)
       .set_long_description("The title of the display.                      \n"
                             "Default value is empty.                        \n"
-                           "                                                \n"
-                            "Example::                                      \n"
-                            "                                               \n"
-                            "    title : string = \"The event record\"      \n"
-                            "                                               \n"
                             )
+      .add_example("Example::                                      \n"
+                   "                                               \n"
+                   "    title : string = \"The event record\"      \n"
+                   "                                               \n"
+                   )
       ;
   }
 
@@ -54,12 +43,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::dump_module,ocd_)
       .set_mandatory(false)
       .set_long_description("The indent string.                             \n"
                             "Default value is empty.                        \n"
-                            "                                               \n"
-                            "Example::                                      \n"
-                            "                                               \n"
-                            "    indent : string = \"DEBUG: \"              \n"
-                            "                                               \n"
-                           )
+                            )
+      .add_example(
+                   "Example::                                      \n"
+                   "                                               \n"
+                   "    indent : string = \"DEBUG: \"              \n"
+                   "                                               \n"
+                             )
       ;
   }
 
@@ -77,11 +67,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::dump_module,ocd_)
                             "  * ``cout`` : print to ``std::cout             \n"
                             "  * ``file`` : print to a file                  \n"
                             "                                                \n"
-                            "Example::                                       \n"
-                            "                                                \n"
-                            "    output : string = \"clog\"                  \n"
-                            "                                                \n"
-                           )
+                            )
+      .add_example("Example::                                       \n"
+                   "                                                \n"
+                   "    output : string = \"clog\"                  \n"
+                   "                                                \n"
+                   )
       ;
   }
 
@@ -93,16 +84,16 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::dump_module,ocd_)
       .set_path(true)
       .set_mandatory(true)
       .set_triggered_by_label("output", "file")
-      .set_long_description("The name of the file where to print the structure               \n"
-                            "of the data record.                                             \n"
-                            "The filename may contain an environment variable.               \n"
-                            "                                                                \n"
-                            "Example::                                                       \n"
-                            "                                                                \n"
-                            "    output          : string         = \"file\"                 \n"
-                            "    output.filename : string as path = \"${OUTPUT_DIR}/data.out\" \n"
-                            "                                                                \n"
-                           )
+      .set_long_description("The name of the file where to print the structure        \n"
+                            "of the data record.                                      \n"
+                            "The filename may contain an environment variable.        \n"
+                            )
+      .add_example("Example::                                                         \n"
+                   "                                                                  \n"
+                   "    output          : string         = \"file\"                   \n"
+                   "    output.filename : string as path = \"${OUTPUT_DIR}/data.out\" \n"
+                   "                                                                  \n"
+                   )
       ;
   }
 
@@ -118,7 +109,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::dump_module,ocd_)
                                 "    [name=\"dump_file\" type=\"dpp::dump_module\"]                    \n"
                                 "    #@config A dump module                                            \n"
                                 "    output          : string         = \"file\"                       \n"
-                                "    output.filename : string as path = \"${OUTPUT_DIR}/data.out\"       \n"
+                                "    output.filename : string as path = \"${OUTPUT_DIR}/data.out\"     \n"
                                 "                                                                      \n"
                                 "    [name=\"dump_stdout\" type=\"dpp::dump_module\"]                  \n"
                                 "    #@config A dump module                                            \n"
@@ -146,23 +137,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::chain_module,ocd_)
                                 "an ordered queue of data processing modules.          \n"
                                 );
 
-  {
-    configuration_property_description & cpd = ocd_.add_configuration_property_info();
-    cpd.set_name_pattern("debug")
-      .set_terse_description("Flag to activate debugging output")
-      .set_traits(datatools::TYPE_BOOLEAN)
-      .set_mandatory(false)
-      .set_long_description("This flag activates debugging output.          \n"
-                            "It is not recommended for a production run.    \n"
-                            "Default value is false.                        \n"
-                            "                                               \n"
-                            "Example::                                      \n"
-                            "                                               \n"
-                            "    debug : boolean = 0                        \n"
-                            "                                               \n"
-                            )
-      ;
-  }
+  ::dpp::base_module::common_ocd(ocd_);
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
@@ -173,23 +148,22 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::chain_module,ocd_)
       .set_mandatory(false)
       .set_long_description("The modules are searched by name from an external    \n"
                             "dictionnary, typically from a module manager object. \n"
-                            "                                                     \n"
-                            "Example::                                            \n"
-                            "                                                     \n"
-                            "    modules : string[3] = \\                         \n"
-                            "      \"read_from_file\"    \\                       \n"
-                            "      \"calibration\"       \\                       \n"
-                            "      \"write_in_file\"                              \n"
-                            "                                                     \n"
                             )
+      .add_example("Example::                                            \n"
+                   "                                                     \n"
+                   "    modules : string[3] = \\                         \n"
+                   "      \"read_from_file\"    \\                       \n"
+                   "      \"calibration\"       \\                       \n"
+                   "      \"write_in_file\"                              \n"
+                   "                                                     \n"
+                   )
       ;
   }
 
   ocd_.set_configuration_hints ("A ``dpp::chain_module`` object can be setup with the following syntax   \n"
                                 "in a ``datatools::multi_properties`` configuration file, typically from \n"
                                 "a module manager object.                                                \n"
-                                "                                                                      \n"
-                                "Examples::                                                            \n"
+                                "Example::                                                             \n"
                                 "                                                                      \n"
                                 "    #@key_label   \"name\"                                            \n"
                                 "    #@meta_label  \"type\"                                            \n"
@@ -223,22 +197,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::if_module,ocd_)
   ocd_.set_class_library ("dpp");
   ocd_.set_class_description ("A module that conditionnaly process data processing modules");
 
-  {
-    configuration_property_description & cpd = ocd_.add_configuration_property_info();
-    cpd.set_name_pattern("debug")
-      .set_terse_description("The debug flag")
-      .set_traits(datatools::TYPE_BOOLEAN)
-      .set_mandatory(false)
-      .set_long_description("The debug flag.                                \n"
-                            "Default value is false.                        \n"
-                            "                                               \n"
-                            "Example::                                      \n"
-                            "                                               \n"
-                            "    debug : boolean = 0                        \n"
-                            "                                               \n"
-                            )
-      ;
-  }
+  ::dpp::base_module::common_ocd(ocd_);
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
@@ -250,12 +209,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::if_module,ocd_)
                             "dictionnary, typically addressed through a service manager\n"
                             "handled by a module manager object.                       \n"
                             "Default value is : ``\"Cuts\"``.                          \n"
-                            "                                                          \n"
-                            "Example::                                                 \n"
-                            "                                                          \n"
-                            "    cut_service.label : string = \"Cuts\"                 \n"
-                            "                                                          \n"
                             )
+      .add_example("Example::                                                 \n"
+                   "                                                          \n"
+                   "    cut_service.label : string = \"Cuts\"                 \n"
+                   "                                                          \n"
+                   )
       ;
   }
 
@@ -269,11 +228,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::if_module,ocd_)
                             "dictionnary, typically addressed through the cut  \n"
                             "service handled by a module manager object.       \n"
                             "                                                  \n"
-                            "Example::                                         \n"
-                            "                                                  \n"
-                            "    condition_cut : string = \"Energy>=3MeV\"     \n"
-                            "                                                  \n"
                             )
+      .add_example("Example::                                         \n"
+                   "                                                  \n"
+                   "    condition_cut : string = \"Energy>=3MeV\"     \n"
+                   "                                                  \n"
+                   )
       ;
   }
 
@@ -289,13 +249,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::if_module,ocd_)
                             "   continues along the pipeline.                        \n"
                             " * ``\"stop\"``     : the data record is stopped.       \n"
                             "                                                        \n"
-                            "Example::                                               \n"
-                            "                                                        \n"
-                            "    then_status : string = \"continue\"                 \n"
-                            "                                                        \n"
                             "This property is not compatible with the ``then_module``\n"
                             "property.                                               \n"
                             )
+      .add_example("Example::                                               \n"
+                   "                                                        \n"
+                   "    then_status : string = \"continue\"                 \n"
+                   )
       ;
   }
 
@@ -311,13 +271,15 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::if_module,ocd_)
                             "   continues along the pipeline.                        \n"
                             " * ``\"stop\" ``    : the data record is stopped.       \n"
                             "                                                        \n"
-                            "Example::                                               \n"
-                            "                                                        \n"
-                            "    else_status : string = \"continue\"                 \n"
-                            "                                                        \n"
                             "This property is not compatible with the ``else_module``\n"
                             "property.                                               \n"
                             )
+      .add_example(
+                   "Example::                                               \n"
+                   "                                                        \n"
+                   "    else_status : string = \"continue\"                 \n"
+                   "                                                        \n"
+                   )
       ;
   }
 
@@ -331,13 +293,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::if_module,ocd_)
                             "dictionnary, typically addressed through the module     \n"
                             "manager object.                                         \n"
                             "                                                        \n"
-                            "Example::                                               \n"
-                            "                                                        \n"
-                            "    then_module : string = \"calibration\"              \n"
-                            "                                                        \n"
                             "This property is not compatible with the ``then_status``\n"
                             "property.                                               \n"
-                           )
+                            )
+      .add_example("Example::                                               \n"
+                   "                                                        \n"
+                   "    then_module : string = \"calibration\"              \n"
+                   )
       ;
   }
 
@@ -350,14 +312,15 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::if_module,ocd_)
       .set_long_description("The name of the module is searched from an external     \n"
                             "dictionnary, typically addressed through the module     \n"
                             "manager object.                                         \n"
-                            "                                                        \n"
-                            "Example::                                               \n"
-                            "                                                        \n"
-                            "    else_module : string = \"calibration\"              \n"
-                            "                                                        \n"
                             "This property is not compatible with the ``else_status``\n"
                             "property.                                               \n"
-                           )
+                            )
+      .add_example("Example::                                                        \n"
+                   "                                                                 \n"
+                   "    then_module : string = \"calibration\"              \n"
+                   "    else_module : string = \"calibration\"              \n"
+                   "                                                        \n"
+                   )
       ;
   }
 
@@ -404,6 +367,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::output_module,ocd_)
   ocd_.set_class_name ("dpp::output_module");
   ocd_.set_class_library ("dpp");
   ocd_.set_class_description ("An output module able to store data record in files");
+
+  ::dpp::base_module::common_ocd(ocd_);
 
 
   ocd_.set_configuration_hints ("A ``dpp::output_module`` object can be setup with the following syntax        \n"
@@ -457,6 +422,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::input_module,ocd_)
   ocd_.set_class_library ("dpp");
   ocd_.set_class_description ("An input module able to load data record from files");
 
+  ::dpp::base_module::common_ocd(ocd_);
 
   ocd_.set_configuration_hints ("A ``dpp::input_module`` object can be setup with the following syntax         \n"
                                 "in a ``datatools::multi_properties`` configuration file, typically from       \n"
@@ -511,23 +477,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::utils_module,ocd_)
                                 "arbitrary property in bank of type ``datatools::properties``.  \n"
                                 );
 
-
-  {
-    configuration_property_description & cpd = ocd_.add_configuration_property_info();
-    cpd.set_name_pattern("debug")
-      .set_terse_description("Flag to activate debugging output")
-      .set_traits(datatools::TYPE_BOOLEAN)
-      .set_mandatory(false)
-      .set_long_description("This flag activates debugging output.             \n"
-                            "It is not recommended for a production run.       \n"
-                            "                                                  \n"
-                            "Example::                                         \n"
-                            "                                                  \n"
-                            "   debug : boolean = 0                            \n"
-                            "                                                  \n"
-                            )
-      ;
-  }
+  ::dpp::base_module::common_ocd(ocd_);
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
@@ -544,11 +494,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::utils_module,ocd_)
                             "- ``remove_banks`` : remove a list of banks given their names\n"
                             "- ``add_property`` : add a key/value property in a bank      \n"
                             "                                                             \n"
-                            "Example::                                                    \n"
-                            "                                                             \n"
-                            "   mode : string = \"clear\"                                 \n"
-                            "                                                             \n"
                             )
+      .add_example("Remove all data banks::                                      \n"
+                   "                                                             \n"
+                   "   mode : string = \"clear\"                                 \n"
+                   "                                                             \n"
+                   )
       ;
   }
 
@@ -563,12 +514,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::utils_module,ocd_)
                             "removed from the data record while using the              \n"
                             "``remove_one_typed_bank`` mode.                           \n"
                             "                                                          \n"
-                            "Example to remove a bank named ``CD`` (calibration data)::\n"
-                            "                                                          \n"
-                            "   mode : string = \"remove_one_typed_bank\"              \n"
-                            "   mode.remove_one_typed_bank.label : string = \"CD\"     \n"
-                            "                                                          \n"
                             )
+      .add_example("Remove a bank named ``CD`` (calibration data):: \n"
+                   "                                                          \n"
+                   "   mode : string = \"remove_one_typed_bank\"              \n"
+                   "   mode.remove_one_typed_bank.label : string = \"CD\"     \n"
+                   "                                                          \n"
+                   )
       ;
   }
 
@@ -587,16 +539,15 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::utils_module,ocd_)
                             "the data bank's class serial tag character string to      \n"
                             "identify the type of the bank object.                     \n"
                             "This property is optional.                                \n"
-                            "                                                          \n"
-                            "Example to remove a bank named ``CD`` of type             \n"
-                            "``foo::calibration_data``::                               \n"
-                            "                                                          \n"
-                            "   mode : string = \"remove_one_typed_bank\"              \n"
-                            "   mode.remove_one_typed_bank.label : string = \"CD\"     \n"
-                            "   mode.remove_one_typed_bank.type : string = \\          \n"
-                            "     \"foo::calibration_data\"                            \n"
-                            "                                                          \n"
                             )
+      .add_example("Example:: Remove a bank named ``CD`` (calibration data) of type ``foo::calibration_data`` :: \n"
+                   "                                                          \n"
+                   "   mode : string = \"remove_one_typed_bank\"              \n"
+                   "   mode.remove_one_typed_bank.label : string = \"CD\"     \n"
+                   "   mode.remove_one_typed_bank.type : string = \\          \n"
+                   "     \"foo::calibration_data\"                            \n"
+                   "                                                          \n"
+                   )
       ;
   }
 
@@ -611,15 +562,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::utils_module,ocd_)
       .set_long_description("This property specifies the array of names of the data  \n"
                             "bansk to be removed from the data record while using the\n"
                             "``remove_banks`` mode.                                  \n"
-                            "                                                        \n"
-                            "Example to remove two banks named ``RD`` and ``CD``::   \n"
-                            "                                                        \n"
-                            "   mode : string = \"remove_banks\"                     \n"
-                            "   mode.remove_banks.labels : string[2] = \\            \n"
-                            "     \"RD\" \\                                          \n"
-                            "     \"CD\"                                             \n"
-                            "                                                        \n"
                             )
+      .add_example("Example:: Remove two banks named ``RD`` and ``CD``::    \n"
+                   "                                                        \n"
+                   "   mode : string = \"remove_banks\"                     \n"
+                   "   mode.remove_banks.labels : string[2] = \"RD\" \"CD\" \n"
+                   "                                                        \n"
+                   )
       ;
   }
 
@@ -630,15 +579,15 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::utils_module,ocd_)
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(true)
       .set_triggered_by_label("mode", "add_property")
-      .set_long_description("This property specifies the name of the data            \n"
-                            "bank to be enriched with one arbitrary property.        \n"
-                            "                                                        \n"
-                            "Example::                                               \n"
-                            "                                                        \n"
-                            "   mode : string = \"add_property\"                     \n"
-                            "   mode.add_property.bank_label : string = \"Header\"   \n"
-                            "                                                        \n"
+      .set_long_description("This property specifies the name of the data     \n"
+                            "bank to be enriched with one arbitrary property. \n"
                             )
+      .add_example("Example::                                             \n"
+                   "                                                      \n"
+                   "   mode : string = \"add_property\"                   \n"
+                   "   mode.add_property.bank_label : string = \"Header\" \n"
+                   "                                                      \n"
+                   )
       ;
   }
 
@@ -651,14 +600,14 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::utils_module,ocd_)
       .set_triggered_by_label("mode", "add_property")
       .set_long_description("This property specifies the name/key of the property    \n"
                             "to be added within the bank.                            \n"
-                            "                                                        \n"
-                            "Example::                                               \n"
-                            "                                                        \n"
-                            "   mode : string = \"add_property\"                     \n"
-                            "   mode.add_property.bank_label : string = \"Header\"   \n"
-                            "   mode.add_property.key        : string = \"my_name\"  \n"
-                            "                                                        \n"
                             )
+      .add_example("Example::                                               \n"
+                   "                                                        \n"
+                   "   mode : string = \"add_property\"                     \n"
+                   "   mode.add_property.bank_label : string = \"Header\"   \n"
+                   "   mode.add_property.key        : string = \"my_name\"  \n"
+                   "                                                        \n"
+                   )
       ;
   }
 
@@ -679,25 +628,25 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::utils_module,ocd_)
                             "                                                        \n"
                             "It may be a scalar or an array.                         \n"
                             "                                                        \n"
-                            "Examples::                                              \n"
-                            "                                                        \n"
-                            "   mode : string = \"add_property\"                     \n"
-                            "   mode.add_property.bank_label : string = \"Header\"   \n"
-                            "   mode.add_property.key   : string  = \"number\"       \n"
-                            "   mode.add_property.value : integer = 4                \n"
-                            "                                                        \n"
-                            "or::                                                    \n"
-                            "                                                        \n"
-                            "   mode : string = \"add_property\"                     \n"
-                            "   mode.add_property.bank_label : string = \"Header\"   \n"
-                            "   mode.add_property.key   : string    = \"tokens\"     \n"
-                            "   mode.add_property.value : string[2] = \"foo\" \"bar\"\n"
-                            "                                                        \n"
                             )
+      .add_example("Example::                                               \n"
+                   "                                                        \n"
+                   "   mode : string = \"add_property\"                     \n"
+                   "   mode.add_property.bank_label : string = \"Header\"   \n"
+                   "   mode.add_property.key   : string  = \"number\"       \n"
+                   "   mode.add_property.value : integer = 4                \n"
+                   "                                                        \n"
+                   )
+      .add_example("Example::                                               \n"
+                   "                                                        \n"
+                   "   mode : string = \"add_property\"                     \n"
+                   "   mode.add_property.bank_label : string = \"Header\"   \n"
+                   "   mode.add_property.key   : string    = \"tokens\"     \n"
+                   "   mode.add_property.value : string[2] = \"foo\" \"bar\"\n"
+                   "                                                        \n"
+                   )
       ;
   }
-
-
 
 
   //ocd_.set_configuration_hints ("Nothing special.");

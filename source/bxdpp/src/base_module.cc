@@ -19,12 +19,17 @@
  *
  */
 
+// Ourselves:
+#include <dpp/base_module.h>
+
+// Standard library
 #include <stdexcept>
 #include <string>
 #include <sstream>
 
-#include <dpp/base_module.h>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/ioutils.h>
 #include <datatools/utils.h>
@@ -32,6 +37,7 @@
 #include <datatools/exception.h>
 #include <datatools/logger.h>
 
+// This project:
 #include <dpp/module_manager.h>
 
 namespace dpp {
@@ -60,6 +66,11 @@ namespace dpp {
   {
     _initialized = a_initialized;
     return;
+  }
+
+  bool base_module::has_name () const
+  {
+    return ! _name.empty ();
   }
 
   void base_module::set_name (const std::string & a_new_value)
@@ -104,27 +115,6 @@ namespace dpp {
     _description = a_description;
     return;
   }
-
-  // bool base_module::has_version () const
-  // {
-  //   return ! _version.empty ();
-  // }
-
-  // const std::string & base_module::get_version () const
-  // {
-  //   return _version;
-  // }
-
-  // void base_module::set_version (const std::string & a_version)
-  // {
-  //   DT_THROW_IF(is_initialized (),
-  //               std::logic_error,
-  //               "Module '" << _name << "' "
-  //               << "is already initialized ! "
-  //               << "Cannot change the version !");
-  //   _version = a_version;
-  //   return;
-  // }
 
   bool base_module::has_last_error_message () const
   {
@@ -200,8 +190,6 @@ namespace dpp {
           << "Module name        : '" << _name << "'" << std::endl;
     a_out << indent << datatools::i_tree_dumpable::tag
           << "Module description : '" << _description << "'" << std::endl;
-    // a_out << indent << datatools::i_tree_dumpable::tag
-    //       << "Module version     : '" << _version << "'" << std::endl;
     a_out << indent << datatools::i_tree_dumpable::tag
           << "Module logging threshold : '"
           << datatools::logger::get_priority_label(_logging) << "'" << std::endl;
@@ -234,19 +222,55 @@ namespace dpp {
       set_logging_priority(p);
     }
 
+    if (! has_name ()) {
+      if (a_config.has_key("name")) {
+        set_name(a_config.fetch_string("name"));
+      }
+    }
+
     if (! has_description ()) {
       if (a_config.has_key("description")) {
         set_description(a_config.fetch_string("description"));
       }
     }
 
-    // if (! has_version ()) {
-    //   if (a_config.has_key("version")) {
-    //     set_version(a_config.fetch_string("version"));
-    //   }
-    // }
-
     DT_LOG_DEBUG(_logging, "Exiting.");
+    return;
+  }
+
+  void base_module::common_ocd(datatools::object_configuration_description & ocd_)
+  {
+    datatools::logger::declare_ocd_logging_configuration(ocd_, "fatal", "");
+
+    {
+      datatools::configuration_property_description & cpd = ocd_.add_property_info();
+      cpd.set_name_pattern("description")
+        .set_terse_description("The description of the module")
+        .set_traits(datatools::TYPE_STRING)
+        .set_mandatory(false)
+        .set_long_description("A description of the module.")
+        .add_example("Example::                                                \n"
+                     "                                                         \n"
+                     "  description : string = \"Calibration of the raw data\" \n"
+                     "                                                         \n"
+                     )
+        ;
+    }
+
+    {
+      datatools::configuration_property_description & cpd = ocd_.add_property_info();
+      cpd.set_name_pattern("name")
+        .set_terse_description("The name of the module")
+        .set_traits(datatools::TYPE_STRING)
+        .set_mandatory(false)
+        .set_long_description("A name given to the module.")
+        .add_example("Example::                                                \n"
+                     "                                                         \n"
+                     "  name : string = \"Calib0\"                             \n"
+                     "                                                         \n"
+                     )
+        ;
+    }
     return;
   }
 

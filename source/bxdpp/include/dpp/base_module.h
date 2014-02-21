@@ -104,6 +104,9 @@ namespace dpp {
     /// Set debug logging priority threshold
     void set_debug(bool);
 
+    /// Check the module name
+    bool has_name() const;
+
     /// Set the module name
     void set_name(const std::string &);
 
@@ -118,15 +121,6 @@ namespace dpp {
 
     /// Set the module description
     void set_description(const std::string & a_description);
-
-    /// Check the module version
-    // bool has_version() const;
-
-    // /// Return the module version
-    // const std::string & get_version() const;
-
-    // /// Set the module version
-    // void set_version(const std::string & a_version);
 
     /// Check the module last error message
     bool has_last_error_message() const;
@@ -194,6 +188,9 @@ namespace dpp {
     /// Returns logging priority
     datatools::logger::priority get_logging_priority() const;
 
+    /// Basic OCD support shared by all inherited modules
+    static void common_ocd(datatools::object_configuration_description & ocd_);
+
   protected:
 
     /// Set the name of the module
@@ -209,7 +206,6 @@ namespace dpp {
 
     std::string _name;           //!< The name of the module
     std::string _description;    //!< The description of the module
-    //std::string _version;        //!< The version of the module
     datatools::logger::priority _logging; //!< The logging priority threshold
 
     bool        _initialized;    //!< The initialization flag

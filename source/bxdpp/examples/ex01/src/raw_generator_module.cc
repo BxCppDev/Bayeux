@@ -53,13 +53,6 @@ namespace dpp_ex01 {
 
     // Parsing configuration parameters :
 
-    if (! dpp::base_module::is_debug()) {
-      // Optional ``debug`` property :
-      if (a_config.has_flag("debug")) {
-        dpp::base_module::set_debug(true);
-      }
-    }
-
     if (_raw_data_bank_label_.empty()) {
       // Optional ``rd_bank_label`` property :
       if (a_config.has_key("rd_bank_label")) {
@@ -233,23 +226,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp_ex01::raw_generator_module,ocd_)
   ocd_.set_class_library ("dpp_ex01");
   ocd_.set_class_description ("A module to randomly generate a ``dpp_ex01::raw_data`` instance within each data/event record");
 
-  {
-    configuration_property_description & cpd = ocd_.add_configuration_property_info();
-    cpd.set_name_pattern("debug")
-      .set_terse_description("Flag to activate debugging output")
-      .set_traits(datatools::TYPE_BOOLEAN)
-      .set_mandatory(false)
-      .set_long_description("This flag activates debugging output.          \n"
-                            "It is not recommended for a production run.    \n"
-                            "Default value is false.                        \n"
-                            "                                               \n"
-                            "Example::                                      \n"
-                            "                                               \n"
-                            "  debug : boolean = 0                          \n"
-                            "                                               \n"
-                            )
-      ;
-  }
+  ::dpp::base_module::common_ocd(ocd_);
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
@@ -258,8 +235,9 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp_ex01::raw_generator_module,ocd_)
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
       .set_long_description("Default value is : ``\"RD\"``.                 \n"
-                            "                                               \n"
-                            "Example::                                      \n"
+                            )
+      .add_example(
+                            "Use the 'RD2' label for the 'raw data' bank::  \n"
                             "                                               \n"
                             "  rd_bank_label : string = \"RD2\"             \n"
                             "                                               \n"
@@ -274,8 +252,9 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp_ex01::raw_generator_module,ocd_)
       .set_traits(datatools::TYPE_INTEGER)
       .set_mandatory(false)
       .set_long_description("Default value is : ``0``.                      \n"
-                            "                                               \n"
-                            "Example::                                      \n"
+                            )
+      .add_example(
+                            "Set the PRNG seed::                            \n"
                             "                                               \n"
                             "  prng_seed : integer = 314159                 \n"
                             "                                               \n"
@@ -289,11 +268,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp_ex01::raw_generator_module,ocd_)
       .set_terse_description("The mean number of raw hits to be generated")
       .set_traits(datatools::TYPE_REAL)
       .set_mandatory(true)
-      .set_long_description("Example::                                      \n"
-                            "                                               \n"
-                            "  mean_number_of_hits : real = 3.45            \n"
-                            "                                               \n"
-                            )
+      .add_example("Set a small mean number of raw hits::          \n"
+                   "                                               \n"
+                   "  mean_number_of_hits : real = 3.45            \n"
+                   "                                               \n"
+                   )
       ;
   }
 
@@ -304,12 +283,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp_ex01::raw_generator_module,ocd_)
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
       .set_long_description("Default value is : \"MeV\".                    \n"
-                            "                                               \n"
-                            "Example::                                      \n"
-                            "                                               \n"
-                            "  energy_unit : string = \"keV\"               \n"
-                            "                                               \n"
                             )
+      .add_example("Use keV as the default energy unit::           \n"
+                   "                                               \n"
+                   "  energy_unit : string = \"keV\"               \n"
+                   "                                               \n"
+                   )
       ;
   }
 
@@ -320,16 +299,17 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp_ex01::raw_generator_module,ocd_)
       .set_terse_description("The mean energy of raw hits to be generated")
       .set_traits(datatools::TYPE_REAL)
       .set_mandatory(true)
-      .set_long_description("Example with explicit unit::                   \n"
-                            "                                               \n"
-                            "  mean_energy : real = 1.35 MeV                \n"
-                            "                                               \n"
-                            "or using implicit unit::                       \n"
-                            "                                               \n"
-                            "  energy_unit : string = \"keV\"               \n"
-                            "  mean_energy : real = 1350                    \n"
-                            "                                               \n"
-                            )
+      .add_example("Example with explicit unit::                   \n"
+                   "                                               \n"
+                   "  mean_energy : real = 1.35 MeV                \n"
+                   "                                               \n"
+                   )
+      .add_example("Using implicit unit::                         \n"
+                  "                                               \n"
+                  "  energy_unit : string = \"keV\"               \n"
+                  "  mean_energy : real = 1350                    \n"
+                  "                                               \n"
+                  )
       ;
   }
 
@@ -339,16 +319,17 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp_ex01::raw_generator_module,ocd_)
       .set_terse_description("The energy standard deviation of raw hits to be generated")
       .set_traits(datatools::TYPE_REAL)
       .set_mandatory(true)
-      .set_long_description("Example with explicit unit::                   \n"
-                            "                                               \n"
-                            "  sigma_energy : real = 26.4 keV               \n"
-                            "                                               \n"
-                            "or using implicit unit::                       \n"
-                            "                                               \n"
-                            "  energy_unit : string = \"keV\"               \n"
-                            "  sigma_energy : real = 26.4                   \n"
-                            "                                               \n"
-                            )
+      .add_example("Example with explicit unit::                   \n"
+                   "                                               \n"
+                   "  sigma_energy : real = 26.4 keV               \n"
+                   "                                               \n"
+                   )
+      .add_example("Using implicit unit::                          \n"
+                   "                                               \n"
+                   "  energy_unit : string = \"keV\"               \n"
+                   "  sigma_energy : real = 26.4                   \n"
+                   "                                               \n"
+                   )
       ;
   }
 
