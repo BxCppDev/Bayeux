@@ -119,6 +119,20 @@ namespace mctools {
     return _processors_.find (name_) != _processors_.end ();
   }
 
+  void step_hit_processor_factory::_initialize()
+  {
+    DT_THROW_IF (is_initialized (), std::logic_error, "Factory is already initialized !");
+    _initialized_ = true;
+    return;
+  }
+
+  void step_hit_processor_factory::initialize()
+  {
+    DT_THROW_IF (is_initialized (), std::logic_error, "Factory is already initialized !");
+    _initialize();
+    return;
+  }
+
   void step_hit_processor_factory::initialize(const datatools::properties & config_)
   {
     DT_THROW_IF (is_initialized (), std::logic_error, "Factory is already initialized !");
@@ -162,7 +176,7 @@ namespace mctools {
       load(mp);
     }
 
-    _initialized_ = true;
+    _initialize();
     return;
   }
 
@@ -281,7 +295,7 @@ namespace mctools {
     return *proc;
   }
 
-  void step_hit_processor_factory::load (const datatools::multi_properties & mprop_)
+  void step_hit_processor_factory::load(const datatools::multi_properties & mprop_)
   {
     DT_LOG_TRACE (get_logging_priority (), "Entering...");
     if (is_debug ())
@@ -446,7 +460,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mctools::step_hit_processor_factory,ocd_)
       .set_path(true)
       .set_long_description("A list of filenames from where the MC step hit processors  \n"
                             "loads the directives to dynamically instantiate new        \n"
-                            "embeded MC step hit processors objects. The filenames      \n"
+                            "embedded MC step hit processors objects. The filenames      \n"
                             "main contain some environment variables.                   \n"
                             "Example::                                                  \n"
                             "                                                           \n"

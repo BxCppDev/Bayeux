@@ -751,16 +751,27 @@ namespace mctools {
       if (this->has_geometry_manager()) {
         _SHPF_.set_geometry_manager(this->get_geometry_manager());
       }
-      DT_THROW_IF(! _SHPF_config_.has_key ("config"), std::logic_error,
-                  "Missing configuration file for the step hit processor factory !");
-      std::string config_file = _SHPF_config_.fetch_string("config");
-      datatools::fetch_path_with_env(config_file);
-      datatools::multi_properties mconfig("name", "type");
-      DT_LOG_NOTICE(_logprio(), "SHPF: Parsing the SHPF configuration file...");
-      mconfig.read(config_file);
-      DT_LOG_NOTICE(_logprio(), "SHPF: The SHPF configuration file has been parsed.");
-      DT_LOG_NOTICE(_logprio(), "SHPF: Loading the hit processors from the SHPF...");
-      _SHPF_.load(mconfig);
+      std::vector<std::string> config_files;
+      if (_SHPF_config_.has_key("configs")) {
+        _SHPF_config_.fetch("configs", config_files);
+      } else if (_SHPF_config_.has_key("config")) {
+        std::string config_file = _SHPF_config_.fetch_string("config");
+        config_files.push_back(config_file);
+      }
+      DT_THROW_IF(config_files.size() == 0,
+                  std::logic_error,
+                  "Missing configuration file(s) for the step hit processor factory !");
+      for (int i = 0; i < config_files.size(); i++) {
+        std::string config_file = config_files[i];
+        datatools::fetch_path_with_env(config_file);
+        datatools::multi_properties mconfig("name", "type");
+        DT_LOG_NOTICE(_logprio(), "SHPF: Parsing the SHPF configuration file...");
+        mconfig.read(config_file);
+        DT_LOG_NOTICE(_logprio(), "SHPF: The SHPF configuration file has been parsed.");
+        DT_LOG_NOTICE(_logprio(), "SHPF: Loading the hit processors from the SHPF...");
+        _SHPF_.load(mconfig);
+      }
+      _SHPF_.initialize();
       DT_LOG_NOTICE(_logprio(), "SHPF: The step hit processors have been loaded from the SHPF.");
 
       /*****************************************************************
@@ -1405,12 +1416,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_long_description("Allowed values: ``\"local\"`` , ``\"remote\"``                \n"
                             "                                                              \n"
                             "Default value: ``\"remote\"`` (needs access to the Internet)  \n"
-                            "                                                              \n"
-                            "Example::                                                     \n"
-                            "                                                              \n"
-                            "  gdml.schema_location : string = \"local\"                   \n"
-                            "                                                              \n"
                             )
+      .add_example("Use local schema::                                                     \n"
+                   "                                                              \n"
+                   "  gdml.schema_location : string = \"local\"                   \n"
+                   "                                                              \n"
+                   )
       ;
   }
 
@@ -1422,14 +1433,62 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_terse_description("The name of the materials plugin embedded in the geometry manager for materials export in GDML")
       .set_traits(datatools::TYPE_STRING)
       .set_long_description("Default value: empty (plugin is autodetected from the geometry manager)\n"
-                            "                                                              \n"
-                            "Example::                                                     \n"
-                            "                                                              \n"
-                            "  materials.plugin_name : string = \"materials_driver\"       \n"
-                            "                                                              \n"
                             )
+      .add_example("Use a plugin for materials with a specific name::             \n"
+                   "                                                              \n"
+                   "  materials.plugin_name : string = \"materials_driver\"       \n"
+                   "                                                              \n"
+                   )
       ;
   }
+
+
+  {
+    // Description of the 'hit_processor_factory.configs' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("hit_processor_factory.configs")
+      .set_terse_description("The names of the files that contain the configurations\n"
+                             "of the back-end processors of truth hits.             \n")
+      .set_traits(datatools::TYPE_STRING,
+                  datatools::configuration_property_description::ARRAY)
+      .set_long_description("Default value: empty")
+      .add_example("Use two configuration files for back-end step hits processors:: \n"
+                   "                                                              \n"
+                   "  hit_processor_factory.configs : string[2] as path = \\      \n"
+                   "    \"truth_hits_processors-official.conf\" \\                \n"
+                   "    \"truth_hits_processors-visu.conf\"                       \n"
+                   "                                                              \n"
+                   )
+      ;
+  }
+
+
+  {
+    // Description of the 'hit_processor_factory.config' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("hit_processor_factory.config")
+      .set_terse_description("The name of the file that contains the configurations \n"
+                             "of all back-end processors of truth hits.             \n")
+      .set_traits(datatools::TYPE_STRING)
+      .set_long_description("Default value: empty                                   \n"
+                            "                                                       \n"
+                            "This property is not parsed if the \"hit_processor_factory.configs\" \n"
+                            "is provided.                                           \n"
+                            "                                                       \n"
+                            )
+      .add_example("Use only one configuration file for all step hits processors::  \n"
+                   "                                                                \n"
+                   "  hit_processor_factory.config : string as path = \\            \n"
+                   "    \"truth_hits_processors.conf\"                              \n"
+                   "                                                                \n"
+                   )
+      ;
+  }
+
+  //hit_processor_factory.config
+
 
   /*************************
    *  Sensitive detectors  *
@@ -1446,23 +1505,24 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_long_description("This is the list of so-called *official* sensitive detectors in the   \n"
                             "geometry setup. Each sensitive detectors is identified by its unique  \n"
                             "name.                                                                 \n"
-                            "                                                                      \n"
-                            "Example::                                                             \n"
-                            "                                                                      \n"
-                            "  sensitive.detectors : string[2] = \"calo_SD\" \"tracker_SD\"        \n"
-                            "                                                                      \n"
-                            "The configuration parameters of a given sensitive detector are        \n"
-                            "provided through additionnal properties with the following syntax ::  \n"
-                            "                                                                      \n"
-                            " sensitive.SDNAME.KEY1 : TYPE1 = VALUE1                     \n"
-                            " sensitive.SDNAME.KEY2 : TYPE2 = VALUE2                     \n"
-                            "                                                                      \n"
-                            "where ``SDNAME`` is the name of the sensitive detector                \n"
-                            "and ``KEY1``, ``TYPE1`` and  ``VALUE1`` are the property's name, type \n"
-                            "respectively. Please refer to the OCD manual of the                   \n"
-                            "``mctools::g4::sensitive_detector`` class for further documentation   \n"
-                            "about the available setup parameters for *sensitive detector* objects.\n"
                             )
+      .add_example(
+                   "Use two sensitive detector volumes::                                  \n"
+                   "                                                                      \n"
+                   "  sensitive.detectors : string[2] = \"calo_SD\" \"tracker_SD\"        \n"
+                   "                                                                      \n"
+                   "The configuration parameters for a given sensitive detector are        \n"
+                   "provided through additionnal properties with the following syntax ::  \n"
+                   "                                                                      \n"
+                   " sensitive.SDNAME.KEY1 : TYPE1 = VALUE1                     \n"
+                   " sensitive.SDNAME.KEY2 : TYPE2 = VALUE2                     \n"
+                   "                                                                      \n"
+                   "where ``SDNAME`` is the name of the sensitive detector                \n"
+                   "and ``KEY1``, ``TYPE1`` and  ``VALUE1`` are the property's identifier, type \n"
+                   "and value respectively. Please refer to the OCD manual of the         \n"
+                   "``mctools::g4::sensitive_detector`` class for further documentation   \n"
+                   "about the available configuration parameters for *sensitive detector* objects.\n"
+                   )
       ;
   }
 
@@ -1474,14 +1534,15 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_terse_description("Record the *track ID* attached to a given sensitive detector")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_default_value_boolean(false)
-      .set_long_description("Example::                                                             \n"
-                            "                                                                      \n"
-                            "  sensitive.detectors : string[2] = \"calo_SD\" \"tracker_SD\"        \n"
-                            "  sensitive.calo_SD.record_track_id    : boolean = 0                  \n"
-                            "  sensitive.tracker_SD.record_track_id : boolean = 1                  \n"
-                            "                                                                      \n"
-                            "See OCD manual of the ``mctools::g4::sensitive_detector`` class.      \n"
+      .set_long_description("See OCD manual of the ``mctools::g4::sensitive_detector`` class.\n"
                             )
+      .add_example("Record the track Id for the 'tracker' hits::                          \n"
+                   "                                                                      \n"
+                   "  sensitive.detectors : string[2] = \"calo_SD\" \"tracker_SD\"        \n"
+                   "  sensitive.calo_SD.record_track_id    : boolean = 0                  \n"
+                   "  sensitive.tracker_SD.record_track_id : boolean = 1                  \n"
+                   "                                                                      \n"
+                   )
       ;
   }
 
@@ -1493,14 +1554,15 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_terse_description("Record *primary particle* flag attached to a given sensitive detector")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_default_value_boolean(false)
-      .set_long_description("Example::                                                             \n"
-                            "                                                                      \n"
-                            "  sensitive.detectors : string[2] = \"calo_SD\" \"tracker_SD\"        \n"
-                            "  sensitive.calo_SD.record_primary_particle    : boolean = 1          \n"
-                            "  sensitive.tracker_SD.record_primary_particle : boolean = 0          \n"
-                            "                                                                      \n"
-                            "See OCD manual of the ``mctools::g4::sensitive_detector`` class.      \n"
+      .set_long_description("See OCD manual of the ``mctools::g4::sensitive_detector`` class.\n"
                             )
+      .add_example("Record the 'primary particle' flag::                                  \n"
+                   "                                                                      \n"
+                   "  sensitive.detectors : string[2] = \"calo_SD\" \"tracker_SD\"        \n"
+                   "  sensitive.calo_SD.record_primary_particle    : boolean = 1          \n"
+                   "  sensitive.tracker_SD.record_primary_particle : boolean = 0          \n"
+                   "                                                                      \n"
+                   )
       ;
   }
 
@@ -1512,14 +1574,15 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_terse_description("Record the *alpha quenching* flag attached to a given sensitive detector")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_default_value_boolean(false)
-      .set_long_description("Example::                                                             \n"
-                            "                                                                      \n"
-                            "  sensitive.detectors : string[2] = \"calo_SD\" \"tracker_SD\"        \n"
-                            "  sensitive.calo_SD.record_alpha_quenching    : boolean = 1           \n"
-                            "  sensitive.tracker_SD.record_alpha_quenching : boolean = 0           \n"
-                            "                                                                      \n"
-                            "See OCD manual of the ``mctools::g4::sensitive_detector`` class.      \n"
-                           )
+      .set_long_description("See OCD manual of the ``mctools::g4::sensitive_detector`` class.\n"
+                            )
+      .add_example("Activate alpha quenching for the 'calo' hits::                        \n"
+                   "                                                                      \n"
+                   "  sensitive.detectors : string[2] = \"calo_SD\" \"tracker_SD\"        \n"
+                   "  sensitive.calo_SD.record_alpha_quenching    : boolean = 1           \n"
+                   "  sensitive.tracker_SD.record_alpha_quenching : boolean = 0           \n"
+                   "                                                                      \n"
+                   )
       ;
   }
 
@@ -1531,7 +1594,9 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_terse_description("Record the *major track* flag attached to a given sensitive detector")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_default_value_boolean(false)
-      .set_long_description("Example::                                                             \n"
+      .set_long_description("See OCD manual of the ``mctools::g4::sensitive_detector`` class.\n"
+                            )
+      .add_example("Example::                                                             \n"
                             "                                                                      \n"
                             "  sensitive.detectors : string[2] = \"calo_SD\" \"tracker_SD\"        \n"
                             "  sensitive.calo_SD.record_major_track    : boolean = 1               \n"
@@ -1552,13 +1617,14 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_explicit_unit(true)
       .set_unit_label("energy")
       .set_default_value_real(0.0)
-      .set_long_description("Example::                                                                 \n"
+      .set_long_description("See OCD manual of the ``mctools::g4::sensitive_detector`` class.\n"
+                            )
+      .add_example("Example::                                                                 \n"
                             "                                                                          \n"
                             "  sensitive.detectors : string[2] = \"calo_SD\" \"tracker_SD\"            \n"
                             "  sensitive.calo_SD.record_major_track         : boolean = 1              \n"
                             "  sensitive.calo_SD.major_track_minimum_energy : real as energy = 50 keV  \n"
                             "                                                                          \n"
-                            "See OCD manual of the ``mctools::g4::sensitive_detector`` class.      \n"
                             )
       ;
   }
@@ -1571,14 +1637,15 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_terse_description("Record the *sensitive category* attached to a given sensitive detector")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_default_value_boolean(false)
-      .set_long_description("Example::                                                             \n"
-                            "                                                                      \n"
-                            "  sensitive.detectors : string[2] = \"calo_SD\" \"tracker_SD\"        \n"
-                            "  sensitive.calo_SD.record_category    : boolean = 1                  \n"
-                            "  sensitive.tracker_SD.record_category : boolean = 1                  \n"
-                            "                                                                      \n"
-                            "See OCD manual of the ``mctools::g4::sensitive_detector`` class.      \n"
+      .set_long_description("See OCD manual of the ``mctools::g4::sensitive_detector`` class.\n"
                             )
+      .add_example("Example::                                                             \n"
+                   "                                                                      \n"
+                   "  sensitive.detectors : string[2] = \"calo_SD\" \"tracker_SD\"        \n"
+                   "  sensitive.calo_SD.record_category    : boolean = 1                  \n"
+                   "  sensitive.tracker_SD.record_category : boolean = 1                  \n"
+                   "                                                                      \n"
+                   )
       ;
   }
 
@@ -1590,14 +1657,15 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_terse_description("Record the start and stop *momenta* of the step for a given sensitive detector")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_default_value_boolean(false)
-      .set_long_description("Example::                                                             \n"
-                            "                                                                      \n"
-                            "  sensitive.detectors : string[2] = \"calo_SD\" \"tracker_SD\"        \n"
-                            "  sensitive.calo_SD.record_momentum    : boolean = 0                  \n"
-                            "  sensitive.tracker_SD.record_momentum : boolean = 1                  \n"
-                            "                                                                      \n"
-                            "See OCD manual of the ``mctools::g4::sensitive_detector`` class.      \n"
+      .set_long_description("See OCD manual of the ``mctools::g4::sensitive_detector`` class.\n"
                             )
+      .add_example("Example::                                                             \n"
+                   "                                                                      \n"
+                   "  sensitive.detectors : string[2] = \"calo_SD\" \"tracker_SD\"        \n"
+                   "  sensitive.calo_SD.record_momentum    : boolean = 0                  \n"
+                   "  sensitive.tracker_SD.record_momentum : boolean = 1                  \n"
+                   "                                                                      \n"
+                   )
       ;
   }
 
@@ -1609,14 +1677,16 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_terse_description("Record the start and stop *kinetic energy* of the step for a given sensitive detector")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_default_value_boolean(false)
-      .set_long_description("Example::                                                             \n"
-                            "                                                                      \n"
-                            "  sensitive.detectors : string[2] = \"calo_SD\" \"tracker_SD\"        \n"
-                            "  sensitive.calo_SD.record_kinetic_energy    : boolean = 1            \n"
-                            "  sensitive.tracker_SD.record_kinetic_energy : boolean = 0            \n"
-                            "                                                                      \n"
-                            "See OCD manual of the ``mctools::g4::sensitive_detector`` class.      \n"
-                           )
+      .set_long_description("See OCD manual of the ``mctools::g4::sensitive_detector`` class.\n"
+                            )
+      .add_example("Example::                                                             \n"
+                   "                                                                      \n"
+                   "  sensitive.detectors : string[2] = \"calo_SD\" \"tracker_SD\"        \n"
+                   "  sensitive.calo_SD.record_kinetic_energy    : boolean = 1            \n"
+                   "  sensitive.tracker_SD.record_kinetic_energy : boolean = 0            \n"
+                   "                                                                      \n"
+                   "See OCD manual of the ``mctools::g4::sensitive_detector`` class.      \n"
+                   )
       ;
   }
 
@@ -1628,14 +1698,15 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_terse_description("Pre-allocate the initial capacity of a buffer of step hits associated to a given sensitive detector")
       .set_traits(datatools::TYPE_INTEGER)
       .set_default_value_integer(1000)
-      .set_long_description("Example::                                                             \n"
-                            "                                                                      \n"
-                            "  sensitive.detectors : string[2] = \"calo_SD\" \"tracker_SD\"        \n"
-                            "  sensitive.calo_SD.hits_buffer_capacity    : integer = 30            \n"
-                            "  sensitive.tracker_SD.hits_buffer_capacity : integer = 100           \n"
-                            "                                                                      \n"
-                            "See OCD manual of the ``mctools::g4::sensitive_detector`` class.      \n"
+      .set_long_description("See OCD manual of the ``mctools::g4::sensitive_detector`` class.\n"
                             )
+      .add_example("Example::                                                             \n"
+                   "                                                                      \n"
+                   "  sensitive.detectors : string[2] = \"calo_SD\" \"tracker_SD\"        \n"
+                   "  sensitive.calo_SD.hits_buffer_capacity    : integer = 30            \n"
+                   "  sensitive.tracker_SD.hits_buffer_capacity : integer = 100           \n"
+                   "                                                                      \n"
+                   )
       ;
   }
 
@@ -1647,14 +1718,15 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_terse_description("Drop zero energy deposit step hits for a given sensitive detector")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_default_value_boolean(false)
-      .set_long_description("Example::                                                             \n"
-                            "                                                                      \n"
-                            "  sensitive.detectors : string[2] = \"calo_SD\" \"tracker_SD\"        \n"
-                            "  sensitive.calo_SD.drop_zero_energy_deposit_steps    : boolean = 1   \n"
-                            "  sensitive.tracker_SD.drop_zero_energy_deposit_steps : boolean = 0   \n"
-                            "                                                                      \n"
-                            "See OCD manual of the ``mctools::g4::sensitive_detector`` class.      \n"
+      .set_long_description("See OCD manual of the ``mctools::g4::sensitive_detector`` class.\n"
                             )
+      .add_example("Example::                                                             \n"
+                   "                                                                      \n"
+                   "  sensitive.detectors : string[2] = \"calo_SD\" \"tracker_SD\"        \n"
+                   "  sensitive.calo_SD.drop_zero_energy_deposit_steps    : boolean = 1   \n"
+                   "  sensitive.tracker_SD.drop_zero_energy_deposit_steps : boolean = 0   \n"
+                   "                                                                      \n"
+                   )
       ;
   }
 
@@ -1666,14 +1738,15 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_terse_description("Record the Geant4 geometry volume informations for a given sensitive detector")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_default_value_boolean(false)
-      .set_long_description("Example::                                                             \n"
-                            "                                                                      \n"
-                            "  sensitive.detectors : string[2] = \"calo_SD\" \"tracker_SD\"        \n"
-                            "  sensitive.calo_SD.record_g4_volume_infos    : boolean = 1           \n"
-                            "  sensitive.tracker_SD.record_g4_volume_infos : boolean = 1           \n"
-                            "                                                                      \n"
-                            "See OCD manual of the ``mctools::g4::sensitive_detector`` class.      \n"
+      .set_long_description("See OCD manual of the ``mctools::g4::sensitive_detector`` class.\n"
                             )
+      .add_example("Example::                                                             \n"
+                    "                                                                      \n"
+                    "  sensitive.detectors : string[2] = \"calo_SD\" \"tracker_SD\"        \n"
+                    "  sensitive.calo_SD.record_g4_volume_infos    : boolean = 1           \n"
+                    "  sensitive.tracker_SD.record_g4_volume_infos : boolean = 1           \n"
+                    "                                                                      \n"
+                    )
       ;
   }
 
@@ -1689,11 +1762,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_terse_description("Flag to activate regions")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_default_value_boolean(true)
-      .set_long_description("Example::                                                             \n"
-                            "                                                                      \n"
-                            "  using_regions : boolean = 1                                         \n"
-                            "                                                                      \n"
-                            )
+      .add_example("Example::                                                             \n"
+                   "                                                                      \n"
+                   "  using_regions : boolean = 1                                         \n"
+                   "                                                                      \n"
+                   )
       ;
   }
 
@@ -1705,11 +1778,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_terse_description("The list of regions attached to the geometry")
       .set_traits(datatools::TYPE_STRING,
                   configuration_property_description::ARRAY)
-      .set_long_description("Example::                                                             \n"
-                            "                                                                      \n"
-                            "  regions : string[2] = \"calo\" \"tracker\"                          \n"
-                            "                                                                      \n"
-                            )
+      .add_example("Example::                                                             \n"
+                   "                                                                      \n"
+                   "  regions : string[2] = \"calo\" \"tracker\"                          \n"
+                   "                                                                      \n"
+                   )
       ;
   }
 
@@ -1722,13 +1795,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_traits(datatools::TYPE_STRING,
                   configuration_property_description::ARRAY)
       .set_mandatory(false)
-      .set_long_description("Example::                                                             \n"
-                            "                                                                      \n"
-                            "  regions : string[2] = \"calo\" \"tracker\"                          \n"
-                            "  regions.calo.volumes    : string[2] = \"calo0.log\" \"calo1.log\"   \n"
-                            "  regions.tracker.volumes : string[1] = \"cells.log\"                 \n"
-                            "                                                                      \n"
-                            )
+      .add_example("Example::                                                             \n"
+                   "                                                                      \n"
+                   "  regions : string[2] = \"calo\" \"tracker\"                          \n"
+                   "  regions.calo.volumes    : string[2] = \"calo0.log\" \"calo1.log\"   \n"
+                   "  regions.tracker.volumes : string[1] = \"cells.log\"                 \n"
+                   "                                                                      \n"
+                   )
       ;
   }
 
@@ -1741,13 +1814,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_traits(datatools::TYPE_STRING,
                   configuration_property_description::ARRAY)
       .set_mandatory(false)
-      .set_long_description("Example::                                                                \n"
-                            "                                                                         \n"
-                            "  regions : string[2] = \"calo\" \"tracker\"                             \n"
-                            "  regions.calo.volumes.with_materials    : string[2] = \"PVT\" \"NE110\" \n"
-                            "  regions.tracker.volumes.with_materials : string = \"tracking_gas\"     \n"
-                            "                                                                         \n"
-                            )
+      .add_example("Example::                                                                \n"
+                   "                                                                         \n"
+                   "  regions : string[2] = \"calo\" \"tracker\"                             \n"
+                   "  regions.calo.volumes.with_materials    : string[2] = \"PVT\" \"NE110\" \n"
+                   "  regions.tracker.volumes.with_materials : string = \"tracking_gas\"     \n"
+                   "                                                                         \n"
+                   )
       ;
   }
 
@@ -1763,11 +1836,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_terse_description("Flag to activate user limits")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_default_value_boolean(false)
-      .set_long_description("Example::                                                             \n"
-                            "                                                                      \n"
-                            "  using_user_limits : boolean = 1                                     \n"
-                            "                                                                      \n"
-                            )
+      .add_example("Example::                                                             \n"
+                   "                                                                      \n"
+                   "  using_user_limits : boolean = 1                                     \n"
+                   "                                                                      \n"
+                   )
       ;
   }
 
@@ -1779,11 +1852,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_terse_description("The list of volumes where to apply user limits")
       .set_traits(datatools::TYPE_STRING,
                   configuration_property_description::ARRAY)
-      .set_long_description("Example::                                                                      \n"
-                            "                                                                               \n"
-                            "  limits.list_of_volumes : string[2] = \"calo_block.log\" \"tracker_cell.log\" \n"
-                            "                                                                               \n"
-                            )
+      .add_example("Example::                                                                      \n"
+                   "                                                                               \n"
+                   "  limits.list_of_volumes : string[2] = \"calo_block.log\" \"tracker_cell.log\" \n"
+                   "                                                                               \n"
+                   )
       ;
   }
 
@@ -1796,13 +1869,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_traits(datatools::TYPE_REAL)
       .set_explicit_unit(true)
       .set_unit_label("length")
-      .set_long_description("Example::                                                                      \n"
-                            "                                                                               \n"
-                            "  limits.list_of_volumes : string[2] = \"calo_block.log\" \"tracker_cell.log\" \n"
-                            "  limits.max_step.calo_block.log   : real as length = 0.5 mm                   \n"
-                            "  limits.max_step.tracker_cell.log : real as length = 5 mm                     \n"
-                            "                                                                               \n"
-                            )
+      .add_example("Example::                                                                      \n"
+                   "                                                                               \n"
+                   "  limits.list_of_volumes : string[2] = \"calo_block.log\" \"tracker_cell.log\" \n"
+                   "  limits.max_step.calo_block.log   : real as length = 0.5 mm                   \n"
+                   "  limits.max_step.tracker_cell.log : real as length = 5 mm                     \n"
+                   "                                                                               \n"
+                   )
       ;
   }
 
@@ -1820,7 +1893,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_terse_description("Flag to activate a magnetic field")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_default_value_boolean(false)
-      .set_long_description("Example::                                                             \n"
+      .add_example("Example::                                                             \n"
                             "                                                                      \n"
                             "  using_magnetic_field : boolean = 0                                  \n"
                             "                                                                      \n"
@@ -1837,7 +1910,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(true)
       .set_triggered_by_flag("using_magnetic_field")
-      .set_long_description("Example::                                                             \n"
+      .add_example("Example::                                                             \n"
                             "                                                                      \n"
                             "  magnetic_field.plugin_name : string = \"coil_driver\"               \n"
                             "                                                                      \n"
@@ -1855,7 +1928,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_mandatory(false)
       .set_triggered_by_flag("using_magnetic_field")
       .set_default_value_string("``\"mm\"``")
-      .set_long_description("Example::                                                             \n"
+      .add_example("Example::                                                             \n"
                             "                                                                      \n"
                             "  magnetic_field.miss_distance.unit : string = \"mm\"                 \n"
                             "                                                                      \n"
@@ -1872,7 +1945,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_traits(datatools::TYPE_REAL)
       .set_mandatory(false)
       .set_triggered_by_flag("using_magnetic_field")
-      .set_long_description("Example::                                                             \n"
+      .add_example("Example::                                                             \n"
                             "                                                                      \n"
                             "  magnetic_field.miss_distance : real as length = 1.2 mm              \n"
                             "                                                                      \n"
@@ -1919,7 +1992,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_traits(datatools::TYPE_STRING,
                   configuration_property_description::ARRAY)
       .set_mandatory(false)
-      .set_long_description("Example::                                                           \n"
+      .add_example("Example::                                                           \n"
                             "                                                                    \n"
                             "  magnetic_field.associations : string[2] = \"coil\" \"lab\"        \n"
                             "                                                                    \n"
@@ -1940,8 +2013,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_explicit_unit(true)
       .set_unit_label("length")
       .set_long_description("Apply a special miss distance for a given geom. volume/mag. field association. \n"
-                            "                                                                    \n"
-                            "Example::                                                           \n"
+                            )
+      .add_example("Example::                                                           \n"
                             "                                                                    \n"
                             "  magnetic_field.associations       : string[2] = \"coil\" \"lab\"  \n"
                             "  magnetic_field.miss_distance.coil : real as length = 1 mm         \n"
@@ -1964,16 +2037,16 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_default_value_boolean(false)
       .set_long_description("Activate the checking of position/time while computing the           \n"
                             "magnetic field referenced by a given geom. volume/mag. field association. \n"
-                            "                                                                    \n"
-                            "Example::                                                           \n"
-                            "                                                                    \n"
-                            "  magnetic_field.associations        : string[2] = \"coil\" \"lab\" \n"
-                            "  magnetic_field.check_pos_time.coil : boolean = 1                  \n"
-                            "  magnetic_field.check_pos_time.lab  : boolean = 0                  \n"
-                            "                                                                    \n"
-                            "Note: the geometry volume/magnetic field association must exist in  \n"
-                            "the dedicated plugin.                                               \n"
                             )
+      .add_example("Example::                                                           \n"
+                   "                                                                    \n"
+                   "  magnetic_field.associations        : string[2] = \"coil\" \"lab\" \n"
+                   "  magnetic_field.check_pos_time.coil : boolean = 1                  \n"
+                   "  magnetic_field.check_pos_time.lab  : boolean = 0                  \n"
+                   "                                                                    \n"
+                   "Note: the geometry volume/magnetic field association must exist in  \n"
+                   "the dedicated plugin.                                               \n"
+                   )
       ;
   }
 

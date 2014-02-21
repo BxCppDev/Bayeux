@@ -98,6 +98,9 @@ namespace mctools {
     mygsl::rng & grab_external_prng();
 
     /// Initialization method
+    void initialize();
+
+    /// Initialization method from a list of parameters
     void initialize(const datatools::properties & config_);
 
     /// Reset method
@@ -144,6 +147,11 @@ namespace mctools {
     datatools::logger::priority  get_logging_priority() const;
 
     void set_logging_priority(datatools::logger::priority);
+
+  protected:
+
+    /// Initialization method
+    void _initialize();
 
   private:
 
