@@ -270,6 +270,26 @@ double units::get_mass_activity_unit_from(const std::string& word) {
 }
 
 
+double units::get_speed_unit_from(const std::string& word) {
+  if ((word == "km/s"))  return CLHEP::kilometer/CLHEP::second;
+  if ((word == "km/h"))  return CLHEP::kilometer/(3600.0 * CLHEP::second);
+  if ((word == "m/s"))   return CLHEP::meter/CLHEP::second;
+  if ((word == "mm/s"))  return CLHEP::millimeter/CLHEP::second;
+  if ((word == "cm/s"))  return CLHEP::centimeter/CLHEP::second;
+  if ((word == "m/ms"))  return CLHEP::meter/CLHEP::millisecond;
+  if ((word == "mm/ms")) return CLHEP::millimeter/CLHEP::millisecond;
+  if ((word == "cm/ms")) return CLHEP::centimeter/CLHEP::millisecond;
+  if ((word == "m/us"))  return CLHEP::meter/CLHEP::microsecond;
+  if ((word == "mm/us")) return CLHEP::millimeter/CLHEP::microsecond;
+  if ((word == "cm/us")) return CLHEP::centimeter/CLHEP::microsecond;
+  if ((word == "m/ns"))  return CLHEP::meter/CLHEP::nanosecond;
+  if ((word == "mm/ns")) return CLHEP::millimeter/CLHEP::nanosecond;
+  if ((word == "cm/ns")) return CLHEP::centimeter/CLHEP::nanosecond;
+  DT_THROW_BAD_UNIT("speed", word);
+  // return std::numeric_limits<double>::quiet_NaN();
+}
+
+
 double units::get_unit_from(const std::string& unit_type,
                             const std::string& unit_str) {
   if (unit_type == "length") {
@@ -314,6 +334,8 @@ double units::get_unit_from(const std::string& unit_type,
     return get_electric_charge_unit_from(unit_str);
   } else if (unit_type == "electric_current") {
     return get_electric_current_unit_from(unit_str);
+  } else if (unit_type == "speed") {
+    return get_speed_unit_from(unit_str);
   }
   DT_THROW_BAD_UNIT(unit_type,unit_str);
   //return std::numeric_limits<double>::quiet_NaN();
@@ -371,6 +393,8 @@ std::string units::get_default_unit_symbol_from_label(const std::string & unit_t
     return "C";
   } else if (unit_type == "electric_current") {
     return "A";
+  } else if (unit_type == "speed") {
+    return "m/s";
   }
   DT_THROW_IF(true,std::logic_error,"Invalid unit label " << unit_type << "' !");
   //return "";
@@ -403,6 +427,7 @@ const std::vector<std::string>& units::get_unit_labels_registry() {
     ulabels.push_back("frequency");
     ulabels.push_back("electric_charge");
     ulabels.push_back("electric_current");
+    ulabels.push_back("speed");
   }
   return *ulabels_ptr.get();
 }
@@ -497,4 +522,3 @@ double units::get_value_with_unit(const std::string& word) {
 
 
 } // end of namespace datatools
-

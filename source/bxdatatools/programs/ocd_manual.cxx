@@ -141,7 +141,8 @@ namespace datatools {
        po::value<std::vector<std::string> >(&params_.dlls),
        "set a DLL to be loaded.                     \n"
        "Example :                                   \n"
-       " --load-dll genvtx                          "
+       " --load-dll \"foo\"                         \n"
+       " --load-dll \"foo@/usr/local/foo/1.0/lib\"  \n"
        )
 
       ("class-id,c",

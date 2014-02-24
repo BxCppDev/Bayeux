@@ -54,7 +54,7 @@ class library_loader : boost::noncopyable {
  public:
   //! Default constructor
   library_loader();
-  
+
   //! Construct with path to config file
   explicit library_loader(const std::string& config_file);
 
@@ -79,6 +79,15 @@ class library_loader : boost::noncopyable {
                    bool autoload = false);
 
   //! Load a DLL
+  /** @arg name the name of the library
+   *       if the directory is empty, then the name
+   *       can use the following format:
+   *         name@directory
+   *  @arg directory the directory where the shared library file is stored
+   *  @arg filename the name of the shared library file
+   *  @arg full_path the full path of the shared library file
+   *  @arg version the version of the shared library
+   */
   int load(const std::string& name,
            const std::string& directory = "",
            const std::string& filename  = "",

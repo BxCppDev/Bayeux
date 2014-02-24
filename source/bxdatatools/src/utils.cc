@@ -21,6 +21,7 @@
 //#include <boost/tokenizer.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
 
 // This Project
 #include <datatools/ioutils.h>
@@ -128,6 +129,15 @@ class fetch_path_processor {
     USE_KERNEL_LIBINFO = bit_mask::bit04
   };
 
+  struct lib_info_keys_entry_type
+  {
+    std::string install_path_key;
+    std::string environ_path_key;
+  };
+  typedef std::map<std::string, lib_info_keys_entry_type> lib_info_keys_dict_type;
+
+  static const lib_info_keys_dict_type & lib_info_keys();
+
   fetch_path_processor(std::string parent_path_ = "",
                        bool use_global_path_ = false,
                        bool use_env_ = true,
@@ -154,6 +164,28 @@ class fetch_path_processor {
   bool _use_kernel_libinfo_;
   std::string _parent_path_;
 };
+
+bool resolve_library_info_path_keys(const std::string & library_topic_,
+                                    std::string & install_path_key_,
+                                    std::string & environ_path_key_)
+{
+  typedef fetch_path_processor::lib_info_keys_dict_type dict_type;
+  const dict_type & lik = fetch_path_processor::lib_info_keys();
+  dict_type::const_iterator found = lik.find(library_topic_);
+  if (found == lik.end()) {
+    return false;
+  }
+  bool valid = false;
+  if (! found->second.install_path_key.empty()) {
+    install_path_key_ = found->second.install_path_key;
+    valid = true;
+  }
+  if (! found->second.environ_path_key.empty()) {
+    environ_path_key_ = found->second.environ_path_key;
+    valid = true;
+  }
+  return valid;
+}
 
 
 const std::string & _gp::global_path(int action_,
@@ -245,14 +277,70 @@ bool fetch_path_processor::process(std::string& path) {
   return true;
 }
 
+// static
+const fetch_path_processor::lib_info_keys_dict_type & fetch_path_processor::lib_info_keys()
+{
+  static boost::scoped_ptr<lib_info_keys_dict_type> _lik;
+  if (! _lik) {
+    _lik.reset(new lib_info_keys_dict_type);
+    lib_info_keys_dict_type & keys = *_lik;
+
+    {
+      lib_info_keys_entry_type e;
+      e.install_path_key = library_info::keys().install_prefix();
+      e.environ_path_key = library_info::keys().env_prefix();
+      keys["prefix"] = e;
+    }
+
+    {
+      lib_info_keys_entry_type e;
+      e.install_path_key = library_info::keys().install_resource_dir();
+      e.environ_path_key = library_info::keys().env_resource_dir();
+      keys["resources"] = e;
+      keys[""] = e;
+    }
+
+    {
+      lib_info_keys_entry_type e;
+      e.install_path_key = library_info::keys().install_lib_dir();
+      e.environ_path_key = library_info::keys().env_lib_dir();
+      keys["libraries"] = e;
+    }
+
+    {
+      lib_info_keys_entry_type e;
+      e.install_path_key = library_info::keys().install_bin_dir();
+      e.environ_path_key = library_info::keys().env_bin_dir();
+      keys["binaries"] = e;
+    }
+
+    {
+      lib_info_keys_entry_type e;
+      e.install_path_key = library_info::keys().install_plugin_lib_dir();
+      e.environ_path_key = library_info::keys().env_plugin_lib_dir();
+      keys["plugins"] = e;
+    }
+
+    {
+      lib_info_keys_entry_type e;
+      e.install_path_key = library_info::keys().install_doc_dir();
+      keys["docs"] = e;
+    }
+
+  }
+  return *_lik;
+}
+
 // Hmmm probably this method needs refactoring... (with Boost/Spirit?)
+// Well, Boost Spirit is probably expensive for such a simple parsing
+// (compilation tilme and size of code explodes with many levels of templatization...)
 void fetch_path_processor::process_impl(std::string& path) {
   bool trace = _trace_;
-  //trace = true;
+  // trace = true;
 
   // working buffer:
   std::string text = path;
-  bool registered_lib_resource = false;
+  bool registered_lib_topic = false;
   if (text[0] == '@') {
     DT_THROW_IF(! datatools::kernel::is_instantiated(),
                 std::runtime_error,
@@ -262,77 +350,108 @@ void fetch_path_processor::process_impl(std::string& path) {
     DT_THROW_IF(! dtk.has_library_info_register(),
                 std::runtime_error,
                 "The datatools kernel library info register has not been activated !"
-                << "No support for '@foo:bar/blah.txt' syntax !");
+                << "No support for '@foo[.topic]:bar/blah.txt' syntax !");
     const datatools::library_info & lib_info_reg =
       datatools::kernel::instance().get_library_info_register();
     size_t pos = text.find(':');
     DT_THROW_IF(pos == text.npos,
                 std::logic_error,
                 "Invalid syntax for library location !");
-    std::string library_name = text.substr(1, pos-1);
+    std::string library_directive = text.substr(1, pos-1);
+    std::vector<std::string> lib_tokens;
+    boost::split(lib_tokens, library_directive, boost::is_any_of("."));
+    /*
+    for (int i = 0; i < lib_tokens.size(); i++) {
+      std::cerr << "DEVEL: tok = " << lib_tokens[i] << std::endl;
+    }
+    */
+    DT_THROW_IF(lib_tokens.size() == 0, std::logic_error,
+                "Missing library directive !");
+    std::string library_name = lib_tokens[0];
+    std::string library_topic;
+    if (lib_tokens.size() > 1) {
+      library_topic = lib_tokens[1];
+      if (trace) {
+        DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+                     "Found library topic '" << library_topic
+                     << "'.");
+      }
+    }
+
+    std::string install_path_key;
+    std::string environ_path_key;
+    if (! resolve_library_info_path_keys(library_topic, install_path_key, environ_path_key)) {
+      DT_THROW_IF(true,
+                  std::logic_error,
+                  "Topic '" << library_topic << "' is not registered !");
+    }
+
     if (trace) {
       DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
-                   "Found resource directive for library '" << library_name
+                   "Found '" << library_topic << "' directive for library '" << library_name
                    << "' in path '" << path << ".");
+      DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+                   "with install_path_key='" << install_path_key << "'");
+      DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+                   "and  environ_path_key='" << environ_path_key << "'");
     }
     DT_THROW_IF(! lib_info_reg.has(library_name),
                 std::logic_error,
-                "Unregistered resource path for library '" << library_name << "' !");
-    if (trace) {
-      lib_info_reg.print(library_name, std::cerr);
-      DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
-                   "INSTALL_RESOURCE_DIR key is = '"
-                   << datatools::library_info::keys::install_resource_dir() << "'");
-    }
+                "Unregistered library '" << library_name << "' in the kernel library register!");
 
     const datatools::properties & lib_infos = lib_info_reg.get(library_name);
 
-    // Search for resource directory path from the register:
-    std::string resource_dir_str;
+    // Search for topic directory path from the register:
+    std::string topic_dir_str;
 
     // From the registered environment variable name (if any):
-    if (resource_dir_str.empty() && lib_infos.has_key(datatools::library_info::keys::env_resource_dir())) {
-      std::string env_resource_dir = lib_infos.fetch_string(datatools::library_info::keys::env_resource_dir());
-      if (! env_resource_dir.empty()) {
-        const char *env_value = getenv(env_resource_dir.c_str());
-        if (env_value != 0) {
-          resource_dir_str = std::string(env_value);
+    if (!environ_path_key.empty()) {
+      if (topic_dir_str.empty() && lib_infos.has_key(environ_path_key)) {
+        std::string env_topic_dir = lib_infos.fetch_string(environ_path_key);
+        if (! env_topic_dir.empty()) {
+          const char *env_value = getenv(env_topic_dir.c_str());
+          if (env_value != 0) {
+            topic_dir_str = std::string(env_value);
+          }
         }
       }
     }
 
     // From the registered installation path (if any):
-    if (resource_dir_str.empty() && lib_infos.has_key(datatools::library_info::keys::install_resource_dir())) {
-       resource_dir_str = lib_infos.fetch_string(datatools::library_info::keys::install_resource_dir());
+    if (!install_path_key.empty()) {
+      if (topic_dir_str.empty() && lib_infos.has_key(install_path_key)) {
+        topic_dir_str = lib_infos.fetch_string(install_path_key);
+      }
     }
 
-    if (! resource_dir_str.empty()) {
-      boost::filesystem::path resource_dir = resource_dir_str;
+    if (! topic_dir_str.empty()) {
+      boost::filesystem::path topic_dir = topic_dir_str;
       if (trace) {
         DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
-                     "Resource installation path for library '" << library_name
-                     << "' in path '" << path << " is '" << resource_dir << "'.");
+                     "Topic installation path for library '" << library_name
+                     << "' in path '" << path << " is '" << topic_dir << "'.");
       }
-      boost::filesystem::path resource_relative_path = text.substr(pos+1);
+      boost::filesystem::path topic_relative_path = text.substr(pos+1);
       if (trace) {
         DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
-                     "Resource relative path for library '" << library_name
-                     << "' in path '" << path << " is '" << resource_relative_path << "'.");
+                     "Topic relative path for library '" << library_name
+                       << "' in path '" << path << " is '" << topic_relative_path << "'.");
       }
-      boost::filesystem::path resource_full_path = resource_dir / resource_relative_path;
-      text = resource_full_path.string();
-      if (trace) {
-        DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
-                     "Resource absolute path for library '" << library_name
-                     << "' in path '" << path << " is '" << text << "'.");
-      }
-      registered_lib_resource = true;
+      boost::filesystem::path topic_full_path = topic_dir / topic_relative_path;
+      text = topic_full_path.string();
+        if (trace) {
+          DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+                       "Topic absolute path for library '" << library_name
+                       << "' in path '" << path << " is '" << text << "'.");
+        }
+        registered_lib_topic = true;
     } else {
       DT_THROW_IF(true, std::logic_error,
-                 "No resource installation directory for library '" << library_name
-                 << "' in path '" << path << "' !");
+                  "No '" << library_topic << "' directory for library '" << library_name
+                  << "' as been resolved from path '" << path << "' !");
     }
-  }
+
+  } // end if (text[0] == '@')
 
   DT_THROW_IF(text.find('?') != text.npos || text.find('*') != text.npos,
               std::logic_error,
@@ -368,8 +487,8 @@ void fetch_path_processor::process_impl(std::string& path) {
   }
   path = text;
 
-  if (! registered_lib_resource) {
-    // If the path does not start with a "@libname:" prefix
+  if (! registered_lib_topic) {
+    // If the path does not start with a "@libname[.XXX]:" prefix
     // we can search for an explicit parent path :
     // Check for an explicit parent path :
     std::string parent_path = _parent_path_;

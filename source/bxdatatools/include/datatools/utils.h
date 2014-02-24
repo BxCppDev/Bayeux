@@ -61,6 +61,12 @@ void infinity(double& value);
 
 /* Functions to expand string as path */
 
+/** Extract the keys used by library information registration mechanism
+ */
+bool resolve_library_info_path_keys(const std::string & library_topic_,
+                                    std::string & install_path_key_,
+                                    std::string & environ_path_key_);
+
 /** Fetch the expanded path computed from the 'word' string.
  */
 std::string fetch_path(const std::string& path_str);
@@ -175,4 +181,3 @@ bool check_bit(Integral& number, int pos) {
 } // namespace datatools
 
 #endif // DATATOOLS_UTILS_H_
-

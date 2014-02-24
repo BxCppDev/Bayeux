@@ -212,10 +212,31 @@ namespace datatools {
     return key;
   }
 
+  const std::string &library_info::keys::install_plugin_lib_dir()
+  {
+    static std::string key;
+    if (key.empty()) key = "install.plugin_library_dir";
+    return key;
+  }
+
   const std::string &library_info::keys::install_doc_dir()
   {
     static std::string key;
     if (key.empty()) key = "install.doc_dir";
+    return key;
+  }
+
+  const std::string &library_info::keys::env_prefix()
+  {
+    static std::string key;
+    if (key.empty()) key = "env.prefix";
+    return key;
+  }
+
+  const std::string &library_info::keys::env_include_dir()
+  {
+    static std::string key;
+    if (key.empty()) key = "env.include_dir";
     return key;
   }
 
@@ -226,10 +247,31 @@ namespace datatools {
     return key;
   }
 
+  const std::string &library_info::keys::env_bin_dir()
+  {
+    static std::string key;
+    if (key.empty()) key = "env.bin_dir";
+    return key;
+  }
+
   const std::string &library_info::keys::env_resource_dir()
   {
     static std::string key;
     if (key.empty()) key = "env.resource_dir";
+    return key;
+  }
+
+  const std::string &library_info::keys::env_plugin_lib_dir()
+  {
+    static std::string key;
+    if (key.empty()) key = "env.plugin_library_dir";
+    return key;
+  }
+
+  const std::string &library_info::keys::env_doc_dir()
+  {
+    static std::string key;
+    if (key.empty()) key = "env.doc_dir";
     return key;
   }
 
@@ -336,6 +378,16 @@ namespace datatools {
     DT_THROW_IF(library_name_.empty(),
                 std::logic_error,
                 "Missing library name !");
+    DT_THROW_IF(library_name_.find('.') != std::string::npos,
+                std::logic_error,
+                "Invalid library name (cannot contain a dot '.') !");
+    DT_THROW_IF(library_name_.find(':') != std::string::npos,
+                std::logic_error,
+                "Invalid library name (cannot contain a semicolum ':') !");
+    DT_THROW_IF(library_name_.find('@') != std::string::npos,
+                std::logic_error,
+                "Invalid library name (cannot contain '@') !");
+
     DT_THROW_IF(_db_.has_key(library_name_),
                 std::logic_error,
                 "Library '" << library_name_ << "' is already registered !");
@@ -531,7 +583,6 @@ namespace datatools {
          << std::endl;
     return;
   }
-
 
 } // end of namespace datatools
 

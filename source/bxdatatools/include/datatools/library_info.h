@@ -74,10 +74,16 @@ namespace datatools {
       static const std::string & install_lib_dir();
       static const std::string & install_bin_dir();
       static const std::string & install_resource_dir();
+      static const std::string & install_plugin_lib_dir();
       static const std::string & install_doc_dir();
+      static const std::string & env_prefix();
+      static const std::string & env_include_dir();
       static const std::string & env_lib_dir();
+      static const std::string & env_bin_dir();
       static const std::string & env_resource_dir();
-    };
+      static const std::string & env_plugin_lib_dir();
+      static const std::string & env_doc_dir();
+     };
 
     /// Constructor
     library_info();

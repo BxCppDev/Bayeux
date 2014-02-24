@@ -67,17 +67,23 @@ public:
 
 protected:
 
+  /// Interactive session
   void _run_interactive();
 
+  /// Run the requested action
   int _run_action();
 
+  /// Run the 'list' action
   int _run_list(std::ostream & out_ = std::cout, std::ostream & log_ = std::clog);
 
+  /// Run the 'show' action
   int _run_show(const std::string & class_id_, std::ostream & out_ = std::cout);
 
+  /// Run the 'generate skeleton' action
   int _run_generate_skeleton(const std::string & class_id_,
                              const std::string & path_ = "");
 
+  /// Run the 'validate' action
   int _run_validate(const std::string & class_id_,
                     const std::string & path_);
 private:

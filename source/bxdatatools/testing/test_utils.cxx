@@ -16,6 +16,10 @@
 // This Project
 #include <datatools/datatools_config.h>
 #include <datatools/ioutils.h>
+#include <datatools/kernel.h>
+#include <datatools/library_info.h>
+#include <datatools/properties.h>
+#include <datatools/version.h>
 
 void test_bit_manipulation()
 {
@@ -259,7 +263,84 @@ void test_path_manipulation()
 
   {
     std::clog << std::endl;
-    std::string path = "@datatools:data/values.data";
+    std::string path = "@foo:data/values.data";
+    std::clog << "Original path : '" << path << "'" << std::endl;
+    if (datatools::fetch_path_with_env(path)) {
+      std::clog << "Fetched path  : '" << path << "'" << std::endl;
+    } else {
+      std::cerr << "Cannot fetch path  : '" << path << "'" << std::endl;
+    }
+  }
+
+  {
+    std::clog << std::endl;
+    std::string path = "@foo:/data/values.data";
+    std::clog << "Original path : '" << path << "'" << std::endl;
+    if (datatools::fetch_path_with_env(path)) {
+      std::clog << "Fetched path  : '" << path << "'" << std::endl;
+    } else {
+      std::cerr << "Cannot fetch path  : '" << path << "'" << std::endl;
+    }
+  }
+
+  {
+    std::clog << std::endl;
+    std::string path = "@foo:/data/${USER}/values.data";
+    std::clog << "Original path : '" << path << "'" << std::endl;
+    if (datatools::fetch_path_with_env(path)) {
+      std::clog << "Fetched path  : '" << path << "'" << std::endl;
+    } else {
+      std::cerr << "Cannot fetch path  : '" << path << "'" << std::endl;
+    }
+  }
+
+  std::clog << "\n***** From here: kernel registration of the 'foo' library *****" << std::endl;
+  if (! datatools::kernel::is_instantiated()) {
+    datatools::kernel::instantiate();
+  }
+  datatools::kernel & krnl = datatools::kernel::instance();
+  if (! krnl.is_initialized()) {
+    krnl.initialize(0, 0);
+  }
+  if (krnl.has_library_info_register()) {
+    datatools::library_info & lib_info_reg
+      = krnl.grab_library_info_register();
+    datatools::properties & datatools_lib_infos
+      = lib_info_reg.registration("foo",
+                                  "Foo registration test",
+                                  datatools::version::get_version()
+                                  );
+
+    // Register some paths related to foo in the datatools' kernel:
+    datatools_lib_infos.store_string(datatools::library_info::keys::install_resource_dir(),
+                                     "/tmp/${USER}/foo/resources"
+                                     );
+    datatools_lib_infos.store_string(datatools::library_info::keys::env_resource_dir(),
+                                     "FOO_RESOURCE_DIR"
+                                     );
+    datatools_lib_infos.store_string(datatools::library_info::keys::install_plugin_lib_dir(),
+                                     "/tmp/${USER}/foo/plugins"
+                                     );
+    datatools_lib_infos.store_string(datatools::library_info::keys::env_plugin_lib_dir(),
+                                     "FOO_PLUGIN_LIB_DIR"
+                                     );
+
+  }
+
+  {
+    std::clog << std::endl;
+    std::string path = "@foo:data/${USER}/values.data";
+    std::clog << "Original path : '" << path << "'" << std::endl;
+    if (datatools::fetch_path_with_env(path)) {
+      std::clog << "Fetched path  : '" << path << "'" << std::endl;
+    } else {
+      std::cerr << "Cannot fetch path  : '" << path << "'" << std::endl;
+    }
+  }
+
+  {
+    std::clog << std::endl;
+    std::string path = "@foo:/data/${USER}/values.data";
     std::clog << "Original path : '" << path << "'" << std::endl;
     datatools::fetch_path_with_env(path);
     std::clog << "Fetched path  : '" << path << "'" << std::endl;
@@ -267,18 +348,36 @@ void test_path_manipulation()
 
   {
     std::clog << std::endl;
-    std::string path = "@datatools:/data/values.data";
+    std::string path = "@foo.resources:data/${USER}/values.data";
     std::clog << "Original path : '" << path << "'" << std::endl;
-    datatools::fetch_path_with_env(path);
-    std::clog << "Fetched path  : '" << path << "'" << std::endl;
+    if (datatools::fetch_path_with_env(path)) {
+      std::clog << "Fetched path  : '" << path << "'" << std::endl;
+    } else {
+      std::cerr << "Cannot fetch path  : '" << path << "'" << std::endl;
+    }
   }
 
   {
     std::clog << std::endl;
-    std::string path = "@datatools:/data/${USER}/values.data";
+    std::string path = "@foo.plugins:releases/1.0";
     std::clog << "Original path : '" << path << "'" << std::endl;
-    datatools::fetch_path_with_env(path);
-    std::clog << "Fetched path  : '" << path << "'" << std::endl;
+    if (datatools::fetch_path_with_env(path)) {
+      std::clog << "Fetched path  : '" << path << "'" << std::endl;
+    } else {
+      std::cerr << "Cannot fetch path  : '" << path << "'" << std::endl;
+    }
+  }
+
+  {
+    std::clog << std::endl;
+    setenv("FOO_PLUGIN_LIB_DIR", "${HOME}/foo.d/plugins", 1);
+    std::string path = "@foo.plugins:releases/1.0";
+    std::clog << "Original path : '" << path << "'" << std::endl;
+    if (datatools::fetch_path_with_env(path)) {
+      std::clog << "Fetched path  : '" << path << "'" << std::endl;
+    } else {
+      std::cerr << "Cannot fetch path  : '" << path << "'" << std::endl;
+    }
   }
 
   return;

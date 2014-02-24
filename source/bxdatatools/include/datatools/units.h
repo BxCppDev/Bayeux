@@ -3,7 +3,7 @@
 /* units.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-03-18
- * Last modified: 2011-03-25
+ * Last modified: 2014-02-24
  *
  * License:
  *
@@ -100,6 +100,9 @@ class units {
 
   //! Get the electric current unit from a string.
   static double get_electric_current_unit_from(const std::string&);
+
+  //! Get the speed unit from a string.
+  static double get_speed_unit_from(const std::string&);
 
   //! Get the CLHEP unit from a string specifiying the unit type.
   /**
@@ -198,4 +201,3 @@ class units {
 /**/
 
 #endif // DATATOOLS_UNITS_H_
-
