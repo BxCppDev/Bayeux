@@ -25,7 +25,16 @@
 // - Boost
 #include <boost/iostreams/stream.hpp>
 #include <boost/iostreams/device/array.hpp>
+
+// Supress known unused parameter warning from Boost's smart_cast header
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#endif
 #include <boost/archive/text_iarchive.hpp>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
 // - datatools
 #include <datatools/eos/portable_iarchive.hpp>

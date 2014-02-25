@@ -25,7 +25,15 @@
 #include <boost/iostreams/stream.hpp>
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/filesystem.hpp>
+
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#endif
 #include <boost/archive/text_oarchive.hpp>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
 // - datatools
 #include <datatools/eos/portable_oarchive.hpp>
