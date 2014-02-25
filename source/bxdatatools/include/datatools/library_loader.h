@@ -82,7 +82,7 @@ class library_loader : boost::noncopyable {
   /** @arg name the name of the library
    *       if the directory is empty, then the name
    *       can use the following format:
-   *         name@directory
+   *         name\@directory
    *  @arg directory the directory where the shared library file is stored
    *  @arg filename the name of the shared library file
    *  @arg full_path the full path of the shared library file
