@@ -59,6 +59,21 @@ void minus_infinity(double& value);
 // Set a double to +infinity:
 void infinity(double& value);
 
+// Check if a string is quoted
+bool is_quoted(const std::string & text_, char q_ = '"');
+
+// Add quotes to a string
+void add_quotes(const std::string & from_, std::string & to_, char q_ = '"');
+
+// Add quotes to a string
+void add_quotes(std::string & text_, char q_ = '"');
+
+// Remove quotes from a string
+void remove_quotes(const std::string & from_, std::string & to_, char q_ = '"');
+
+// Remove quotes from a string
+void remove_quotes(std::string & text_, char q_ = '"');
+
 /* Functions to expand string as path */
 
 /** Extract the keys used by library information registration mechanism

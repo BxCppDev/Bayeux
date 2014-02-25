@@ -21,6 +21,54 @@
 #include <datatools/properties.h>
 #include <datatools/version.h>
 
+void test_quotes_manipulation()
+{
+  std::clog << std::endl;
+  std::clog << "Quotes manipulation: " << std::endl;
+  std::string text;
+  std::string text2;
+
+  text = "\"a text\"";
+
+  if (datatools::is_quoted(text, '"')) {
+    std::clog << "Text <" << text << "> is quoted by <\">." << std::endl;
+  }
+
+  datatools::remove_quotes(text, text2, '"');
+  std::clog << "Text2 = <" << text2 << ">." << std::endl;
+
+  datatools::add_quotes(text2, text, '\'');
+  std::clog << "Text  = <" << text << ">." << std::endl;
+
+  datatools::add_quotes(text, text2, '"');
+  std::clog << "Text2 = <" << text2 << ">." << std::endl;
+
+  datatools::add_quotes(text2, text, '\'');
+  std::clog << "Text  = <" << text << ">." << std::endl;
+
+  if (datatools::is_quoted(text, '\'')) {
+    std::clog << "Text <" << text << "> is quoted by <'>." << std::endl;
+  }
+
+  datatools::remove_quotes(text, text2, '\'');
+  std::clog << "Text2 = <" << text2 << ">." << std::endl;
+
+  datatools::remove_quotes(text2, text, '\'');
+  std::clog << "Text = <" << text << ">." << std::endl;
+
+  datatools::remove_quotes(text, '"');
+  std::clog << "Text = <" << text << ">." << std::endl;
+
+  datatools::remove_quotes(text, '\'');
+  std::clog << "Text = <" << text << ">." << std::endl;
+
+  datatools::add_quotes(text, '"');
+  std::clog << "Text = <" << text << ">." << std::endl;
+
+
+  return;
+}
+
 void test_bit_manipulation()
 {
   std::clog << std::endl;
@@ -391,6 +439,8 @@ int main(int /*argc*/, const char** /*argv*/)
     test_bit_manipulation();
 
     test_path_manipulation();
+
+    test_quotes_manipulation();
 
   }
   catch (std::exception & x) {

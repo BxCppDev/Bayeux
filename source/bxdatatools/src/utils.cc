@@ -87,6 +87,62 @@ void infinity(float& x) {
   plus_infinity(x);
 }
 
+bool is_quoted(const std::string & text_, char q_)
+{
+  DT_THROW_IF(q_ != '\'' && q_ != '"',
+              std::range_error,
+              "Unsupported quoting character '" << q_ << "'!");
+  char c = q_;
+  if (text_.size() > 1) {
+    return (text_[0] == c) && (text_[text_.size() - 1] == c);
+  }
+  return false;
+}
+
+void add_quotes(const std::string & from_, std::string & to_, char q_)
+{
+  DT_THROW_IF(q_ != '\'' && q_ != '"',
+              std::range_error,
+              "Unsupported quoting character '" << q_ << "'!");
+  if (! is_quoted(from_, q_)) {
+    std::ostringstream oss;
+    oss << q_ << from_ << q_;
+    to_ = oss.str();
+  } else {
+    to_ = from_;
+  }
+  return;
+}
+
+void add_quotes(std::string & text_, char q_)
+{
+  std::string t;
+  add_quotes(text_, t, q_);
+  text_ = t;
+  return;
+}
+
+void remove_quotes(const std::string & from_, std::string & to_, char q_)
+{
+  DT_THROW_IF(q_ != '\'' && q_ != '"',
+              std::range_error,
+              "Unsupported quoting character '" << q_ << "'!");
+  if (is_quoted(from_, q_)) {
+    to_ = from_.substr(1,from_.length()-2);
+  } else {
+    to_ = from_;
+  }
+  return;
+}
+
+void remove_quotes(std::string & text_, char q_)
+{
+  std::string t;
+  remove_quotes(text_, t, q_);
+  text_ = t;
+  return;
+}
+
 struct _gp {
   enum action_type {
     ACTION_GET = 1,
