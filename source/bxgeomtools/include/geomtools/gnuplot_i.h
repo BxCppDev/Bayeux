@@ -119,7 +119,7 @@ class Gnuplot
   //----------------------------------------------------------------------------------
   ///\brief gnuplot path found?
   ///
-  /// \param ---
+  ///
   ///
   /// \return <-- found the gnuplot path  (yes == true, no == false)
   // ---------------------------------------------------------------------------------
@@ -252,7 +252,7 @@ class Gnuplot
   /// \brief unset _smooth_
   /// attention: _smooth_ is not set by default
   ///
-  /// \param ---
+  ///
   ///
   /// \return <-- a reference to a gnuplot object
   // ----------------------------------------------------------------------
@@ -270,7 +270,7 @@ class Gnuplot
   // -----------------------------------------------
   /// set the mulitplot mode
   ///
-  /// \param ---
+  ///
   ///
   /// \return <-- reference to the gnuplot object
   // -----------------------------------------------
@@ -279,7 +279,7 @@ class Gnuplot
   // -----------------------------------------------
   /// unsets the mulitplot mode
   ///
-  /// \param ---
+  ///
   ///
   /// \return <-- reference to the gnuplot object
   // -----------------------------------------------
@@ -295,7 +295,7 @@ class Gnuplot
   // --------------------------------------------------------------------------
   /// enables/disables hidden line removal for surface plotting  (for 3d plot)
   ///
-  /// \param ---
+  ///
   ///
   /// \return <-- reference to the gnuplot object
   // --------------------------------------------------------------------------
@@ -304,7 +304,7 @@ class Gnuplot
   // ---------------------------------------------------------------------------
   /// hidden3d is not set by default
   ///
-  /// \param ---
+  ///
   ///
   /// \return <-- reference to the gnuplot object
   // ---------------------------------------------------------------------------
@@ -316,7 +316,7 @@ class Gnuplot
   // --------------------------------------------------------------------------
   /// contour is not set by default, it disables contour drawing for surfaces
   ///
-  /// \param ---
+  ///
   ///
   /// \return <-- reference to the gnuplot object
   // ------------------------------------------------------------------
@@ -325,7 +325,7 @@ class Gnuplot
   // ------------------------------------------------------------
   /// enables/disables the display of surfaces  (for 3d plot)
   ///
-  /// \param ---
+  ///
   ///
   /// \return <-- reference to the gnuplot object
   // ------------------------------------------------------------------
@@ -335,7 +335,7 @@ class Gnuplot
   /// surface is set by default,
   /// it disables the display of surfaces  (for 3d plot)
   ///
-  /// \param ---
+  ///
   ///
   /// \return <-- reference to the gnuplot object
   // ------------------------------------------------------------------
@@ -350,7 +350,7 @@ class Gnuplot
   /// \brief  Switches legend off
   /// attention:legend is set by default
   ///
-  /// \param ---
+  ///
   ///
   /// \return <-- reference to the gnuplot object
   // ------------------------------------------------------------------
@@ -377,7 +377,7 @@ class Gnuplot
   ///\brief Clears the title of a gnuplot session
   /// The title is not set by default.
   ///
-  /// \param ---
+  ///
   ///
   /// \return <-- reference to the gnuplot object
   // ---------------------------------------------------------------------------------
@@ -402,7 +402,7 @@ class Gnuplot
                        const double iTo);
   /// autoscale axis  (set by default) of xaxis
   ///
-  /// \param ---
+  ///
   ///
   /// \return <-- reference to the gnuplot object
   // -----------------------------------------------
@@ -411,7 +411,7 @@ class Gnuplot
   // -----------------------------------------------
   /// autoscale axis  (set by default) of yaxis
   ///
-  /// \param ---
+  ///
   ///
   /// \return <-- reference to the gnuplot object
   // -----------------------------------------------
@@ -420,7 +420,7 @@ class Gnuplot
   // -----------------------------------------------
   /// autoscale axis  (set by default) of zaxis
   ///
-  /// \param ---
+  ///
   ///
   /// \return <-- reference to the gnuplot object
   // -----------------------------------------------
@@ -437,7 +437,7 @@ class Gnuplot
   // -----------------------------------------------
   /// turns off log scaling for the x axis
   ///
-  /// \param ---
+  ///
   ///
   /// \return <-- reference to the gnuplot object
   // -----------------------------------------------
@@ -446,7 +446,7 @@ class Gnuplot
   // -----------------------------------------------
   /// turns off log scaling for the y axis
   ///
-  /// \param ---
+  ///
   ///
   /// \return <-- reference to the gnuplot object
   // -----------------------------------------------
@@ -455,7 +455,7 @@ class Gnuplot
   // -----------------------------------------------
   /// turns off log scaling for the z axis
   ///
-  /// \param ---
+  ///
   ///
   /// \return <-- reference to the gnuplot object
   // -----------------------------------------------
@@ -709,7 +709,7 @@ class Gnuplot
   ///  this can be useful for viewing a plot with different set options,
   ///  or when generating the same plot for several devices  (showonscreen, savetops)
   ///
-  /// \param ---
+  ///
   ///
   /// \return ---
   //----------------------------------------------------------------------------------
@@ -728,7 +728,7 @@ class Gnuplot
   /// \brief Is the gnuplot session valid ??
   ///
   ///
-  /// \param ---
+  ///
   ///
   /// \return true if valid, false if not
   // -------------------------------------------------------------------
