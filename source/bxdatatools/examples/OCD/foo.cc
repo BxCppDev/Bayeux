@@ -267,8 +267,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_const(true)
       .set_long_description("A character string that helps to identify the foo \n"
                             "instance within a program.                        \n"
-                            "                                                  \n"
-                            "Example::                                         \n"
+                            )
+      .add_example(         "The object name::                                 \n"
                             "                                                  \n"
                             "  name : string = \"bar\"                         \n"
                             "                                                  \n"
@@ -287,8 +287,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_const(true)
       .set_long_description("An  user-friendly description character string \n"
                             "It may spread over several lines.              \n"
-                            "                                               \n"
-                            "Example::                                      \n"
+                            )
+      .add_example(         "The description string::                       \n"
                             "                                               \n"
                             "  what : string = \"the description of some resource\"\n"
                             "                                               \n"
@@ -308,8 +308,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_const(true)
       .set_long_description("A valid filesystem path to a file. \n"
                             "instance within a program.                        \n"
-                            "                                                  \n"
-                            "Example::                                         \n"
+                            )
+      .add_example(         "The name of a temp file::                         \n"
                             "                                                  \n"
                             "  tmpfile : string as path = \"/tmp/foo.tmp\"     \n"
                             "                                                  \n"
@@ -326,8 +326,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_mandatory(true)
       .set_long_description("The width of the foo object is expressed in       \n"
                             "implicit length unit (cm).                        \n"
-                            "                                                  \n"
-                            "Example::                                         \n"
+                            )
+      .add_example(         "A width::                                         \n"
                             "                                                  \n"
                             "  width : real = 1.3                              \n"
                             "                                                  \n"
@@ -344,8 +344,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_mandatory(true)
       .set_long_description("The weight of the foo object is explicitely       \n"
                             "passed with its units.                            \n"
-                            "                                                  \n"
-                            "Example::                                         \n"
+                            )
+      .add_example(         "A weight::                                        \n"
                             "                                                  \n"
                             "  weight : real as mass = 34.1 kg                 \n"
                             "                                                  \n"
@@ -365,8 +365,9 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_mandatory(false)
       .set_long_description("A list of string labels representing external objects      \n"
                             "addressed through their name from an external dictionnary. \n"
-                            "                                                           \n"
-                            "Example::                                                  \n"
+                            )
+      .add_example(
+                            "Two labels::                                               \n"
                             "                                                           \n"
                             "  labels : string[2] = \"Obj1\" \"Obj2\"                   \n"
                             "                                                           \n"
@@ -383,8 +384,9 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_mandatory(true)
       .set_long_description("The label of the object is picked from the 'labels' \n"
                             "vector of properties.                               \n"
-                            "                                                           \n"
-                            "Example::                                                  \n"
+                            )
+      .add_example(
+                            "A set of interdependant parameters::                       \n"
                             "                                                           \n"
                             "  labels : string[2] = \"Obj1\" \"Obj2\"                   \n"
                             "  objects.Obj1.value : integer = 3                         \n"
@@ -406,8 +408,9 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_long_description("The label of the object is picked from the 'labels' vector     \n"
                             "of string properties. If unspecified for a given label value,  \n"
                             "a default color is used.                                       \n"
-                            "                                                           \n"
-                            "Example::                                                  \n"
+                            )
+      .add_example(
+                            "A set of configuration parameters::                        \n"
                             "                                                           \n"
                             "  labels : string[2] = \"Obj1\" \"Obj2\"                   \n"
                             "  # objects.Obj1.color : string = \"white\"                \n"
@@ -432,12 +435,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
                             "1. The ``name`` property is not empty            \n"
                             "2. The ``labels`` property has at least 2 entries\n"
                             "                                                 \n"
+                            )
+      .add_example(
+                            "A set of configuration parameters::              \n"
                             "                                                 \n"
-                            "Example::                                        \n"
-                            "                                                 \n"
-                            "  name : string = \"bar\"                        \n"
+                            "  name   : string = \"bar\"                      \n"
                             "  labels : string[2] = \"Obj1\" \"Obj2\"         \n"
-                            "  dummy : integer = 7                            \n"
+                            "  dummy  : integer = 7                           \n"
                             "                                                 \n"
                             )
       ;
