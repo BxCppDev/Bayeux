@@ -9,6 +9,7 @@
 
 // This Project
 #include <datatools/exception.h>
+#include <datatools/logger.h>
 
 // Support for serialization tag :
 DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_IMPLEMENTATION(::datatools::multi_properties,
@@ -62,6 +63,11 @@ multi_properties::entry::~entry() {
 
 
 const properties& multi_properties::entry::get_properties() const {
+  return properties_;
+}
+
+
+properties& multi_properties::entry::grab_properties() {
   return properties_;
 }
 
@@ -186,6 +192,18 @@ const std::string & multi_properties::get_meta_label() const {
   return meta_label_;
 }
 
+/*
+const std::string & multi_properties::any_meta_label()
+{
+  static std::string value;
+  if (value.empty()) value = "*";
+  return value;
+}
+
+bool multi_properties::has_any_meta_label() const {
+  return (meta_label_ == multi_properties::any_meta_label());
+}
+*/
 
 uint32_t multi_properties::size() const {
   DT_THROW_IF (ordered_entries_.size() != entries_.size(),
@@ -261,10 +279,48 @@ multi_properties::~multi_properties() {
   entries_.clear();
 }
 
+void multi_properties::_copy_impl_(const multi_properties & source_)
+{
+  this->debug_       = source_.debug_;
+  this->description_ = source_.description_;
+  this->key_label_   = source_.key_label_;
+  this->meta_label_  = source_.meta_label_;
+  this->entries_     = source_.entries_;
+  for (entries_ordered_col_type::const_iterator i = source_.ordered_entries_.begin();
+       i != source_.ordered_entries_.end();
+       i++) {
+    const entry * source_entry = *i;
+    const std::string & source_key = source_entry->get_key();
+    entries_col_type::iterator found = this->entries_.find(source_key);
+    this->ordered_entries_.push_back(&found->second);
+  }
+  return;
+}
+
+multi_properties::multi_properties(const multi_properties & source_)
+{
+  _copy_impl_(source_);
+  return;
+}
+
+multi_properties & multi_properties::operator=(const multi_properties & source_)
+{
+  if (this != &source_) { // protect against invalid self-assignment
+    _copy_impl_(source_);
+  }
+  return *this;
+}
 
 bool multi_properties::has_key(const std::string& a_key) const {
   entries_col_type::const_iterator found = entries_.find(a_key);
   return found != entries_.end();
+}
+
+bool multi_properties::has_key_with_meta(const std::string& a_key, const std::string& a_meta) const
+{
+  entries_col_type::const_iterator found = entries_.find(a_key);
+  if (found == entries_.end()) return false;
+  return found->second.get_meta() == a_meta;
 }
 
 const std::string & multi_properties::key (int key_index_) const
@@ -293,8 +349,8 @@ const std::string & multi_properties::ordered_key (int key_index_) const
        iter != ordered_entries_.end();
        ++iter, ++key_count) {
     if (key_count == key_index_) {
-        break;
-      };
+      break;
+    }
   }
   DT_THROW_IF (iter == ordered_entries_.end(),
                std::logic_error,
@@ -352,8 +408,11 @@ const multi_properties::entry& multi_properties::get(
   return found->second;
 }
 
-
 multi_properties::entry& multi_properties::get(const std::string& a_key) {
+  return grab(a_key);
+}
+
+multi_properties::entry& multi_properties::grab(const std::string& a_key) {
   entries_col_type::iterator found = entries_.find(a_key);
   DT_THROW_IF (found == entries_.end(),
                std::logic_error,
@@ -488,7 +547,7 @@ void multi_properties::write(const std::string& a_filename,
     const std::string& name = pentry->get_key();
     const entry& an_entry = *pentry;
     if (!a_write_private) {
-     if (properties::key_is_private(name)) {
+      if (properties::key_is_private(name)) {
         continue;
       }
     }
@@ -552,7 +611,7 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
     }
     line_goon = false;
 
-    // check if line should go on:
+    // Check if line should go on:
     if (line_continue) line_goon = true;
 
     bool process_block = false;
@@ -563,14 +622,14 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
       bool skip_line = false;
       std::string line = line_in;
 
-      // check if line is blank:
+      // Check if line is blank:
       std::istringstream check_iss(line_in);
       std::string check_word;
       check_iss >> std::ws >> check_word;
 
       if (check_word.empty()) skip_line = true;
 
-      // check if line is a comment:
+      // Check if line is a comment:
       if (!skip_line) {
         std::istringstream iss(line);
         char c = 0;
@@ -582,6 +641,14 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
           iss >> token;
 
           if (token == "@description" && mprop_description.empty()) {
+          //if (token == "@description") {
+            /*
+            if (!mprop_description.empty()) {
+              DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
+                             "Duplicated '@description' directive for container described by '"
+                             << mprop_description << "' !");
+            }
+            */
             iss >> std::ws;
             std::string desc;
             std::getline(iss, desc);
@@ -592,14 +659,21 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
           }
 
           if (token == "@key_label" && mprop_key_label.empty()) {
+            /*
+          if (token == "@key_label") {
+            if (!mprop_key_label.empty()) {
+              DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
+                             "Duplicated '@key_label' directive for container described by '"
+                             << mprop_description << "' !");
+            }
+            */
             iss >> std::ws;
             std::string key_label;
             DT_THROW_IF (!properties::config::read_quoted_string(iss, key_label),
                          std::logic_error,
-                         "Unquoted value for 'key_label'");
+                         "Unquoted value for '@key_label'");
             std::string tmp;
             std::getline(iss, tmp);
-
             if (!key_label.empty()) {
               mprop_key_label = key_label;
               if (key_label_.empty()) {
@@ -609,18 +683,26 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
                              std::logic_error,
                              "Incompatible key label '"
                              << mprop_key_label
-                             << "' with setup '"
+                             << "' with required '"
                              << key_label_ << "' !");
               }
             }
           }
 
           if (token == "@meta_label" && mprop_meta_label.empty()) {
+            /*
+          if (token == "@meta_label") {
+            if (!mprop_meta_label.empty()) {
+              DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
+                             "Duplicated '@meta_label' directive for container described by '"
+                             << mprop_description << "' !");
+            }
+            */
             iss >> std::ws;
             std::string meta_label;
             DT_THROW_IF (!properties::config::read_quoted_string(iss, meta_label),
                          std::logic_error,
-                         "Unquoted value for 'meta_label'");
+                         "Unquoted value for '@meta_label'");
             std::string tmp;
             std::getline(iss, tmp);
             if (meta_label.empty()) {
@@ -637,7 +719,7 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
                              std::logic_error,
                              "Incompatible meta label '"
                              << mprop_meta_label
-                             << "' with setup '"
+                             << "' with required '"
                              << meta_label_ << "' !");
               }
             }
@@ -652,14 +734,14 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
         }
       } // if ( ! skip_line )
 
-      // parse line:
+      // Parse line:
       if (!skip_line)  {
         std::istringstream iss(line);
         char c = 0;
         iss >> c >> std::ws;
-        // search for 'key/meta' line:
+        // Search for 'key/meta' line:
         if (c == '[') {
-          // parse 'key/meta' line:
+          // Parse 'key/meta' line:
           iss >> std::ws;
           std::string key_label;
           std::getline(iss, key_label, '=');
@@ -667,14 +749,16 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
                        std::logic_error,
                        "Incompatible key label '"
                        << key_label
-                       << "' with setup '"
+                       << "' with required '"
                        << key_label_ << "' !");
+          new_key.clear();
           DT_THROW_IF (! properties::config::read_quoted_string(iss, new_key),
                        std::logic_error,
-                       "Cannot read quoted std::string key value from line '"
+                       "Cannot read quoted string key value from line '"
                        << line << "' !");
           iss >> std::ws;
           char dummy = iss.peek();
+          new_meta.clear();
           if (dummy != ']') {
             std::string meta_label;
             std::getline(iss, meta_label, '=');
@@ -683,20 +767,30 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
                            std::logic_error,
                            "Incompatible meta label '"
                            << meta_label
-                           << "' with setup '"
+                           << "' with required '"
                            << meta_label_ << "' !");
               DT_THROW_IF (!properties::config::read_quoted_string(iss, new_meta),
                            std::logic_error,
-                           "Cannot read quoted std::string meta value from line '"
+                           "Cannot read quoted string meta value from line '"
                            << line << "' !");
             }
           } else {
+            // Missing meta directive:
+            if (!this->get_meta_label().empty()) {
+              DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
+                             "Missing meta directive with meta label '"
+                             << this->get_meta_label() << "' for container described by '"
+                             << mprop_description << "'!");
+            }
+            /*
+            // 2014-02-26 FM: we accept if the meta directive (meta_label="blah") is missing...
             DT_THROW_IF (!this->get_meta_label().empty(),
                          std::logic_error,
                          "Expected meta record '"
                          << this->get_meta_label()
                          << '='
                          << "\"???\"" << "' is missing !");
+            */
           }
           iss >> std::ws;
           c = 0;
@@ -704,7 +798,7 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
           DT_THROW_IF (c != ']', std::logic_error, "Cannot read 'key/meta' closing symbol !");
           process_block = true;
         } else {
-          // append line to the current block stream:
+          // Append line to the current block stream:
           current_block_oss << line << std::endl;
         }
       } // !skip_line

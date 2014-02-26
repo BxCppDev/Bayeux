@@ -1,5 +1,5 @@
-// -*- mode: c++; -*- 
-// test_multi_properties_0.cxx 
+// -*- mode: c++; -*-
+// test_multi_properties_0.cxx
 
 #include <datatools/multi_properties.h>
 
@@ -19,12 +19,11 @@ int main (int argc_ , char ** argv_)
     e1.get_properties ().store ("colour", "blue");
     e1.get_properties ().store ("depth", 1.234);
 
-    if (my_bag_of_bags.get_section ("display").has_key ("colour"))
-      {
-        clog << "Display section has colour : " 
-             << my_bag_of_bags.get_section ("display").fetch_string ("colour") 
-             << endl;
-      } 
+    if (my_bag_of_bags.get_section ("display").has_key ("colour")) {
+      clog << "Display section has colour : "
+           << my_bag_of_bags.get_section ("display").fetch_string ("colour")
+           << endl;
+    }
 
     // Add a new 'water' bag;
     my_bag_of_bags.add ("water", "material_type");
@@ -35,7 +34,7 @@ int main (int argc_ , char ** argv_)
     e2.get_properties ().store ("pressure", 1.0);
     e2.get_properties ().store ("temperature.unit", "kelvin");
     e2.get_properties ().store ("pressure.unit", "bar");
-         
+
     // Add a new 'particle' bag;
     my_bag_of_bags.add ("shape", "shape_type");
     datatools::multi_properties::entry & e3 = my_bag_of_bags.get ("shape");
@@ -52,22 +51,26 @@ int main (int argc_ , char ** argv_)
 
     my_bag_of_bags.get_section ("shape").store ("author", "Pablo Picasso");
 
-    // Save in ASCII file: 
-    my_bag_of_bags.write ("my_bag_of_bags.conf", 
+    // Save in ASCII file:
+    my_bag_of_bags.write ("my_bag_of_bags.conf",
                           datatools::multi_properties::with_header_footer,
-                          datatools::multi_properties::write_private_also);  
+                          datatools::multi_properties::write_private_also);
   }
-  
+
+  datatools::multi_properties copy_bag;
   {
     // Load from ASCII file:
     datatools::multi_properties my_bag_of_bags ("name", "type");
-    my_bag_of_bags.read ("my_bag_of_bags.conf", 
-                         datatools::multi_properties::read_public_only);  
+    my_bag_of_bags.read ("my_bag_of_bags.conf",
+                         datatools::multi_properties::read_public_only);
 
     // Print:
     my_bag_of_bags.dump (clog);
+    copy_bag = my_bag_of_bags;
+    datatools::multi_properties clone_bag = my_bag_of_bags;
+    clone_bag.tree_dump(std::cerr, "Clone bag:");
   }
- 
+  copy_bag.tree_dump(std::cerr, "Copy bag:");
   return 0;
 }
 

@@ -3,11 +3,11 @@
 /* multi_properties.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009
- * Last modified: 2011-03-09
+ * Last modified: 2014-02-26
  *
  * License:
  *
- * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2014 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,117 +101,176 @@ class multi_properties :
     public datatools::i_tree_dumpable,
     public datatools::i_cloneable {
  public:
-  static const char OPEN;
-  static const char CLOSE;
-  static const char COMMENT;
-  static const bool with_header_footer;
-  static const bool without_header_footer;
-  static const bool write_public_only;
-  static const bool write_private_also;
-  static const bool read_public_only;
-  static const bool read_private_also;
 
+  static const char OPEN; /// Open section character
+  static const char CLOSE; /// Close section character
+  static const char COMMENT; /// Comment character
+  static const bool with_header_footer; /// Flag to add a header and a footer when writing
+  static const bool without_header_footer; /// Flag to remove header and footer when writing
+  static const bool write_public_only; /// Flag to write only sections with a public key
+  static const bool write_private_also; /// Flag to also write sections with a private key
+  static const bool read_public_only; /// Flag to read only sections with a public key
+  static const bool read_private_also; /// Flag to also read sections with a private key
+
+  /// \brief Default values
   struct defaults {
+    /// Default label for primary keys
     static const std::string & key_label();
+    /// Default label for meta information text
     static const std::string & meta_label();
   };
 
  public:
-  //! \brief Internal data stored within the dictionary of the multi_properties class.
+  //! \brief Section entry handle internal data stored within the dictionary of the multi_properties class.
   class entry : public datatools::i_tree_dumpable {
    public:
+
+    /// Constructor
     entry(const std::string& a_key = "",
           const std::string& a_meta = "");
 
+    /// Destructor
     virtual ~entry();
 
+    /// Return a const reference to the collection of properties
     const properties& get_properties() const;
 
-    properties& get_properties ();
+    /// Return a mutable reference to the collection of properties
+    properties& grab_properties();
 
+    /// \deprecated Return a mutable reference to the collection of properties
+    properties& get_properties();
+
+    /// Return the primary key
     const std::string& get_key() const;
 
+    /// Set the primary key
     void set_key(const std::string&);
 
+    /// Return the meta information text
     const std::string& get_meta() const;
 
+    /// Set the meta information text
     void set_meta(const std::string&);
 
+    /// Check if meta information text is not empty
     bool has_meta() const;
 
+    /// Smart print
     virtual void tree_dump(std::ostream& a_out = std::clog,
                            const std::string& a_title = "",
                            const std::string& a_oindent = "",
                            bool a_inherit = false) const;
 
    private:
-    std::string key_;
-    std::string meta_;
-    properties properties_;
+    std::string key_;   /// Primary key of the section
+    std::string meta_;  /// Meta information text of the section
+    properties properties_; /// Container of properties stored in the section
 
     BOOST_SERIALIZATION_BASIC_DECLARATION();
 
   }; // multi_properties::entry
 
 
- public:
+public:
+
+  /// Dictionary of section
   typedef std::map<std::string, entry> entries_col_type;
+
+  /// List of handles on sections
   typedef std::list<entry*> entries_ordered_col_type;
 
 private:
 
+  /// Private initialization
   void _init_ (const std::string& a_key_label,
                const std::string& a_meta_label,
                const std::string& a_description,
                bool a_debug);
 
+  /// Private copy
+  void _copy_impl_(const multi_properties &);
+
  public:
 
+  /// Default constructor
   multi_properties();
 
+  /// Constructor specifying key label and meta label
   multi_properties(const std::string& a_key_label,
                    const std::string& a_meta_label);
 
+  /// Constructor specifying key label, meta label, description and debug flag
   multi_properties(const std::string& a_key_label,
                    const std::string& a_meta_label,
                    const std::string& a_description,
                    bool a_debug = false);
 
+  /// Destructor
   virtual ~multi_properties();
 
+  /// Copy constructor
+  multi_properties(const multi_properties &);
+
+  /// Assignment operator
+  multi_properties & operator=(const multi_properties &);
+
+  /// Check the debug flag
   bool is_debug() const;
 
+  /// Set the debug flag
   void set_debug(bool = true);
 
+  /// Set the description
   void set_description(const std::string& a_description);
 
+  /// Get the description
   const std::string& get_description() const;
 
+  /// Set the key label
   void set_key_label(const std::string& a_key_label);
 
+  /// Return the key label
   const std::string& get_key_label() const;
 
+  /// Set the meta label
   void set_meta_label(const std::string& a_meta_label);
 
+  /// Return the meta label
   const std::string& get_meta_label() const;
 
+  /// Return the number of entries
   uint32_t size() const;
 
+  /// Check if the collection of entries is empty
   bool empty () const;
 
+  /// Reset
   void reset();
 
+  /// Clear the dictionary of sections
   virtual void clear();
 
+  /// Return the const reference to the collection of entries
   const entries_col_type& entries() const;
 
+  /// Return the const reference to the ordered collection of entries
   const entries_ordered_col_type& ordered_entries() const;
 
+  /// Return a const reference to the stored entry
   const entry& get(const std::string& a_key) const;
 
+  /// \deprecated Return a mutable reference to the stored entry
   entry& get(const std::string& a_key);
 
+  /// Return a mutable reference to the stored entry
+  entry& grab(const std::string& a_key);
+
+  /// Check if a section with a given key exists
   bool has_key(const std::string& a_key) const;
+
+  /// Check if a section with given key and meta exists
+  bool has_key_with_meta(const std::string& a_key, const std::string& a_meta) const;
 
   //! Returns the ith key
   const std::string & key (int) const;
@@ -219,62 +278,84 @@ private:
   //! Returns the ith ordered key
   const std::string & ordered_key (int) const;
 
+  /// Return an array of keys
   std::vector<std::string> keys () const;
 
+  /// Build an array of keys
   void keys(std::vector<std::string>&k) const;
 
+  /// Return an array of orderered keys
   std::vector<std::string> ordered_keys () const;
 
+  /// Build an array of orderered keys
   void ordered_keys(std::vector<std::string>&k) const;
 
+  /// Check if a section exists
   bool has_section(const std::string& a_key) const;
 
+  /// Return the const reference to the properties store in a section
   const properties& get_section(const std::string& a_key) const;
 
+  /// Return the const reference to the properties store in a section
   const properties& get_section_const(const std::string& a_key) const;
 
+  /// \deprecated Return the mutable reference to the properties store in a section
   properties& get_section(const std::string& a_key);
 
+  /// Return the mutable reference to the properties store in a section
   properties& grab_section(const std::string& a_key);
 
+  /// Add a new section with primary key, meta information text and a collection of properties
   void add(const std::string& a_key,
            const std::string& a_meta,
            const properties& a_props);
 
+  /// Add a new section with primary key and a collection of properties
   void add(const std::string& a_key,
            const properties& a_props);
 
+  /// Add an empty section with primary key and meta information text
   void add(const std::string& a_key,
            const std::string& a_meta = "");
 
+  /// Add a new section with primary key and meta information text and return a mutable reference to the store collection of properties
   properties& add_section(const std::string& a_key,
                           const std::string& a_meta = "");
 
+  /// Remove a section
   void remove(const std::string& a_key);
 
+  /// Write in a file
   void write(const std::string& a_filename,
              bool a_header_footer = true,
              bool a_write_private = false) const;
 
+  /// Read from a file
   void read(const std::string& a_filename,
             bool a_skip_private = false);
 
+  /// Default print
   void dump(std::ostream& a_out = std::clog) const;
 
+  /// Smart print
   virtual void tree_dump(std::ostream& a_out         = std::clog,
                          const std::string& a_title  = "",
                          const std::string& a_indent = "",
                          bool a_inherit          = false) const;
 
  private:
+  /// Remove section implementation
   void remove_impl(const std::string& a_key);
 
+  /// Add section implementation
   void add_impl(const std::string& a_key,
                 const std::string& a_meta = "");
 
+  /// Add section implementation
   properties& add_impl2(const std::string& a_key,
                         const std::string& a_meta = "");
 
+  /// Read section implementation
   void read_impl(std::istream& a_in, bool a_skip_private);
 
  private:

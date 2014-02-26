@@ -10,10 +10,12 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+#include <algorithm>
 
 // Third Party
 // - A
 #include <boost/algorithm/string/replace.hpp>
+#include <boost/algorithm/string.hpp>
 //#include <boost/archive/polymorphic_oarchive.hpp>
 //#include <boost/archive/polymorphic_iarchive.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -2428,6 +2430,7 @@ namespace datatools {
       // check if line should go on:
       if (line_continue) line_goon = true;
 
+      bool allow_include = true;
       if (!line_goon) {
         bool skip_line = false;
         std::string line = line_in;
@@ -2447,6 +2450,7 @@ namespace datatools {
           char c = 0;
           iss >> c;
           if (c == _comment_char_) {
+            // Handle meta comments:
             DT_LOG_NOTICE (logging, "Line " << _read_line_count_ << " is a comment");
             iss >> std::ws;
             std::string token;
@@ -2454,6 +2458,7 @@ namespace datatools {
             if (token == "@end") {
               break;
             }
+
             // Maybe we should ensure only one '@config' directive
             // here only warn...
             if (token == "@config") {
@@ -2470,9 +2475,35 @@ namespace datatools {
               }
             }
 
+            if (allow_include) {
+              if (token == "@include") {
+                std::cerr << "DEVEL: " << "Using '@include' directive from line '" << line << "'" << std::endl;
+                iss >> std::ws;
+                std::string include_desc;
+                std::getline(iss, include_desc);
+                boost::trim(include_desc);
+                if (!include_desc.empty()) {
+                  std::string include_config_file;
+                  if (datatools::is_quoted(include_desc, '\'')) {
+                    datatools::remove_quotes(include_desc, include_config_file, '\'');
+                  } else if (datatools::is_quoted(include_desc, '"')) {
+                    datatools::remove_quotes(include_desc, include_config_file, '"');
+                  } else {
+                    include_config_file = include_desc;
+                  }
+                  datatools::fetch_path_with_env(include_config_file);
+                  std::cerr << "DEVEL: " << "Included file is : '" << include_config_file << "'" << std::endl;
+                  datatools::properties::read_config(include_config_file, a_props);
+                  return;
+                }
+              }
+            }
+            allow_include = false;
+
             if (token == "@enable_real_with_unit") {
               enable_real_with_unit = true;
             }
+
             if (token == "@disable_real_with_unit") {
               enable_real_with_unit = false;
             }
