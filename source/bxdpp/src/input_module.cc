@@ -491,9 +491,10 @@ namespace dpp {
         if (p.has_key(io_common::metadata_meta())) {
           meta = p.fetch_string(io_common::metadata_meta());
         }
-        p.clean(io_common::metadata_key());
-        if (!meta.empty()) p.clean(io_common::metadata_meta());
-        p.clean(io_common::metadata_rank());
+        if (p.has_key(io_common::metadata_key())) p.clean(io_common::metadata_key());
+        if (p.has_key(io_common::metadata_meta())) p.clean(io_common::metadata_meta());
+        if (p.has_key(io_common::metadata_rank())) p.clean(io_common::metadata_rank());
+        // if (p.has_key(io_common::metadata_topic())) p.clean(io_common::metadata_topic());
         MDS.add(key, meta, p);
       } else if (p.has_key(io_common::context_key())) {
         std::string ctx_section_key = p.fetch_string(io_common::context_key());
@@ -517,9 +518,10 @@ namespace dpp {
           }
           if (load_it) {
             p.fetch_integer(io_common::context_rank());
-            p.clean(io_common::context_key());
-            if (!ctx_section_meta.empty()) p.clean(io_common::context_meta());
-            p.clean(io_common::context_rank());
+            if (p.has_key(io_common::context_key())) p.clean(io_common::context_key());
+            if (p.has_key(io_common::context_meta())) p.clean(io_common::context_meta());
+            if (p.has_key(io_common::context_rank())) p.clean(io_common::context_rank());
+            // if (p.has_key(io_common::context_topic())) p.clean(io_common::context_topic());
             if (ctx_store->has_section(ctx_section_key)) {
               // Update the existing store with new contents:
               ctx_store->remove(ctx_section_key);
