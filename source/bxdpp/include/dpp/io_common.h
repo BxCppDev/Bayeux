@@ -77,11 +77,19 @@ namespace dpp {
 
     static const std::string & metadata_key();
 
+    static const std::string & metadata_meta();
+
     static const std::string & metadata_rank();
+
+    static const std::string & metadata_topic();
 
     static const std::string & context_key();
 
+    static const std::string & context_meta();
+
     static const std::string & context_rank();
+
+    static const std::string & context_topic();
 
     io_common(datatools::logger::priority & logging_,
               const std::string & module_name_);

@@ -311,6 +311,7 @@ namespace dpp {
            i++) {
         const datatools::multi_properties::entry * p_entry = *i;
         const std::string & ctx_section_key = p_entry->get_key();
+        const std::string & ctx_section_meta = p_entry->get_meta();
         bool store_it = false;
         if (get_common().is_context_all()) {
           // Store all context sections:
@@ -327,6 +328,7 @@ namespace dpp {
           // Get a local copy:
           datatools::properties ctx_props = ctx_store.get_section(ctx_section_key);
           ctx_props.store_string(io_common::context_key(), ctx_section_key);
+          ctx_props.store_string(io_common::context_meta(), ctx_section_meta);
           ctx_props.store_integer(io_common::context_rank(), counter);
           _sink_->store_metadata(ctx_props);
           counter++;
@@ -355,9 +357,11 @@ namespace dpp {
     datatools::multi_properties & MDS = grab_metadata_store();
     for (int i(0); i < (int) MDS.size(); i++) {
       const std::string & key = MDS.ordered_key(i);
-      // Get a local copy:
+      const std::string & meta = MDS.get(key).get_meta();
+      // Get a working local copy:
       datatools::properties props = MDS.grab_section(key);
       props.store_string(io_common::metadata_key(), key);
+      props.store_string(io_common::metadata_meta(), meta);
       props.store_integer(io_common::metadata_rank(), i);
       _sink_->store_metadata(props);
     }

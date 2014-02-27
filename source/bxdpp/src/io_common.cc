@@ -49,6 +49,13 @@ namespace dpp {
   }
 
   // static
+  const std::string & io_common::metadata_meta()
+  {
+    static std::string s("__dpp.io.metadata.meta");
+    return s;
+  }
+
+  // static
   const std::string & io_common::metadata_rank()
   {
     static std::string s("__dpp.io.metadata.rank");
@@ -56,9 +63,30 @@ namespace dpp {
   }
 
   // static
+  const std::string & io_common::metadata_topic()
+  {
+    static std::string s("__dpp.io.metadata.topic");
+    return s;
+  }
+
+  // static
   const std::string & io_common::context_key()
   {
     static std::string s("__dpp.io.context.key");
+    return s;
+  }
+
+  // static
+  const std::string & io_common::context_meta()
+  {
+    static std::string s("__dpp.io.context.meta");
+    return s;
+  }
+
+  // static
+  const std::string & io_common::context_topic()
+  {
+    static std::string s("__dpp.io.context.topic");
     return s;
   }
 

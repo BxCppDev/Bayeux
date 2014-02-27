@@ -486,12 +486,21 @@ namespace dpp {
       _source_->load_metadata(p, i);
       if (p.has_key(io_common::metadata_key())) {
         // Metadata to be embedded in the input module itself:
-        const std::string & key = p.fetch_string(io_common::metadata_key());
+        std::string key = p.fetch_string(io_common::metadata_key());
+        std::string meta;
+        if (p.has_key(io_common::metadata_meta())) {
+          meta = p.fetch_string(io_common::metadata_meta());
+        }
         p.clean(io_common::metadata_key());
+        if (!meta.empty()) p.clean(io_common::metadata_meta());
         p.clean(io_common::metadata_rank());
-        MDS.add(key, p);
+        MDS.add(key, meta, p);
       } else if (p.has_key(io_common::context_key())) {
         std::string ctx_section_key = p.fetch_string(io_common::context_key());
+        std::string ctx_section_meta;
+        if (p.has_key(io_common::context_meta())) {
+          ctx_section_meta = p.fetch_string(io_common::context_meta());
+        }
         // Metadata to be embedded in the context service store, if any:
         if (ctx_store) {
           bool load_it = false;
@@ -509,12 +518,13 @@ namespace dpp {
           if (load_it) {
             p.fetch_integer(io_common::context_rank());
             p.clean(io_common::context_key());
+            if (!ctx_section_meta.empty()) p.clean(io_common::context_meta());
             p.clean(io_common::context_rank());
             if (ctx_store->has_section(ctx_section_key)) {
               // Update the existing store with new contents:
               ctx_store->remove(ctx_section_key);
             }
-            ctx_store->add(ctx_section_key, p);
+            ctx_store->add(ctx_section_key, ctx_section_meta, p);
           } else {
             DT_LOG_WARNING(get_logging_priority(),
                            "Input module '" << get_name()
