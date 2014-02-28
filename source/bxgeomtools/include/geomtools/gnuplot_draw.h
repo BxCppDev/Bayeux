@@ -2,7 +2,7 @@
 /** \file geomtools/gnuplot_draw.h
  * Author(s):     F. Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2006-11-19
- * Last modified: 2014-02-13
+ * Last modified: 2014-02-28
  *
  * License:
  *
@@ -39,6 +39,7 @@ namespace geomtools {
   class sphere;
   class tube;
   class line_3d;
+  class helix_3d;
   class polyline_3d;
   class rectangle;
   class circle;
@@ -197,6 +198,13 @@ namespace geomtools {
                const line_3d &,
                bool gp_trick_ = false);
 
+    /// Draw a helix object
+    static void
+    draw_helix (std::ostream &,
+                const helix_3d &,
+                double step_angle_ = 0.0,
+                bool gp_trick_ = false);
+
     /// Draw a polyline
     static void
     draw_polyline  (std::ostream &,
@@ -239,6 +247,15 @@ namespace geomtools {
                 const rotation_3d &,
                 const line_3d &,
                 bool gp_trick_ = false);
+
+    /// Draw a helix
+    static void
+    draw_helix  (std::ostream &,
+                 const vector_3d &,
+                 const rotation_3d &,
+                 const helix_3d &,
+                 double step_angle_ = 0.0,
+                 bool gp_trick_ = false);
 
     /// Draw a rectangle
     static void
