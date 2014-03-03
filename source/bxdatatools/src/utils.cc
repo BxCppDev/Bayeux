@@ -389,11 +389,21 @@ const fetch_path_processor::lib_info_keys_dict_type & fetch_path_processor::lib_
 
 // Hmmm probably this method needs refactoring... (with Boost/Spirit?)
 // Well, Boost Spirit is probably expensive for such a simple parsing
-// (compilation tilme and size of code explodes with many levels of templatization...)
+// (compilation time and size of code explodes with many levels of templatization...)
 void fetch_path_processor::process_impl(std::string& path) {
   bool trace = _trace_;
-  // trace = true;
-
+  {
+    // Special environment variable to trace the resolution of path
+    char * env = getenv("DATATOOLS_FETCH_PATH_TRACE");
+    if (env != NULL) {
+      std::string str_env = env;
+      if (str_env == "1") {
+        trace = true;
+        DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+                     "Activating the TRACE logging level thanks to the 'DATATOOLS_FETCH_PATH_TRACE' environment variable...");
+      }
+    }
+  }
   // working buffer:
   std::string text = path;
   bool registered_lib_topic = false;
@@ -462,11 +472,15 @@ void fetch_path_processor::process_impl(std::string& path) {
 
     // From the registered environment variable name (if any):
     if (!environ_path_key.empty()) {
+      DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+                   "Search to resolve the path from an environment variable...");
       if (topic_dir_str.empty() && lib_infos.has_key(environ_path_key)) {
         std::string env_topic_dir = lib_infos.fetch_string(environ_path_key);
         if (! env_topic_dir.empty()) {
           const char *env_value = getenv(env_topic_dir.c_str());
           if (env_value != 0) {
+            DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+                         "Found the '" << env_topic_dir << "' environment variable.");
             topic_dir_str = std::string(env_value);
           }
         }
@@ -540,7 +554,7 @@ void fetch_path_processor::process_impl(std::string& path) {
     s << w[0];
     wordfree( &p );
     text = s.str();
-  }
+  } // if (text[0] == '@')
   path = text;
 
   if (! registered_lib_topic) {
