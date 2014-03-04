@@ -472,8 +472,10 @@ void fetch_path_processor::process_impl(std::string& path) {
 
     // From the registered environment variable name (if any):
     if (!environ_path_key.empty()) {
-      DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
-                   "Search to resolve the path from an environment variable...");
+      if (trace) {
+        DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+                     "Search to resolve the path from an environment variable...");
+      }
       if (topic_dir_str.empty() && lib_infos.has_key(environ_path_key)) {
         std::string env_topic_dir = lib_infos.fetch_string(environ_path_key);
         if (! env_topic_dir.empty()) {
