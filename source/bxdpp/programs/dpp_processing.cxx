@@ -35,7 +35,6 @@
 #include <datatools/kernel.h>
 #include <datatools/logger.h>
 #include <datatools/exception.h>
-#include <datatools/kernel.h>
 
 // - Boost I/O guard
 #include <datatools/bio_guard.h>
