@@ -443,7 +443,7 @@ namespace datatools {
                    std::logic_error,
                    "Cannot register library '" << lib_name << "' !");
       if (lib_autoload) {
-        DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,"Automatic loading of library  '" << lib_name << "'...");
+        DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,"Automatic loading of library '" << lib_name << "'...");
         int load_status = this->load(lib_name);
         DT_THROW_IF (load_status != EXIT_SUCCESS,
                      std::logic_error,
