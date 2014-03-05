@@ -367,7 +367,7 @@ namespace dpp {
       DT_LOG_DEBUG(_logging_, "Clear the working data record object...");
       DR.clear();
 
-      // Manage the source is any (fill the data record from it) :
+      // Manage the source if any (fill the data record from it) :
       if (_source_) {
         if (_source_->is_terminated ()) {
           break;
