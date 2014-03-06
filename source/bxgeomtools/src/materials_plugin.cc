@@ -61,30 +61,10 @@ namespace geomtools {
   void materials_plugin::_build_manager (const datatools::properties & manager_config_)
   {
     DT_LOG_TRACE(get_logging_priority(),"Entering...");
-    if (manager_config_.has_flag ("materials.debug")) {
-        _manager_.set_debug (true);
-      }
-
-    std::vector<std::string> input_files;
-    if (manager_config_.has_key ("materials.files")) {
-        manager_config_.fetch("materials.files", input_files);
-      }
-    for (std::vector<std::string>::const_iterator i = input_files.begin ();
-         i != input_files.end ();
-         i++) {
-        datatools::multi_properties config ("name", "type");
-        std::string filename = *i;
-        datatools::fetch_path_with_env (filename);
-        config.read (filename);
-        if (_manager_.is_debug()) {
-          DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG,
-                       "Config file '" << filename << "' : ");
-          config.tree_dump (std::clog);
-        }
-        _manager_.load (config);
-      }
-
-    _manager_.lock ();
+    datatools::properties materials_config;
+    manager_config_.export_and_rename_starting_with(materials_config,
+                                                    "materials.", "");
+    _manager_.initialize(materials_config);
 
     DT_LOG_TRACE(get_logging_priority(),"Exiting.");
     return;
