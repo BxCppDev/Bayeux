@@ -152,8 +152,8 @@ namespace materials {
     if (setup_.has_flag("alias_allow_overload")) {
       set_alias_allow_overload(true);
     }
-    std::vector<std::string> conf_files;
 
+    std::vector<std::string> conf_files;
     if (setup_.has_key("configuration_files")) {
       setup_.fetch("configuration_files", conf_files);
     }
