@@ -938,12 +938,12 @@ class properties :
       bool a_quoted_strings = true) const;
 
   //! Store the properties' container object in an ASCII text file
-  void write_configuration (const std::string& filename,
-                            bool a_use_smart_modulo = true,
-                            bool a_write_public_only = true) const;
+  void write_configuration(const std::string& filename,
+                           bool a_use_smart_modulo = true,
+                           bool a_write_public_only = true) const;
 
   //! Load the properties' container object from an ASCII text file
-  void read_configuration (const std::string& filename);
+  void read_configuration(const std::string& filename);
 
   //! Store the properties' container object in an ASCII text file
   static void write_config(const std::string& filename,
@@ -955,7 +955,7 @@ class properties :
   static void read_config(const std::string& filename,
                           properties& props);
 
-  //! Build a new propery key from a prefix and a key
+  //! Build a new property key from a prefix and a key
   static std::string build_property_key(const std::string& a_prefix,
                                         const std::string& a_subkey);
 
