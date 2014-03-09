@@ -34,9 +34,13 @@ get_filename_component(__bayeux_config_dir "${CMAKE_CURRENT_LIST_FILE}" PATH)
 #-----------------------------------------------------------------------
 # Hard code paths to headers for now...
 #
-get_filename_component(Bayeux_INCLUDE_DIR "${__bayeux_config_dir}/../../../include/" ABSOLUTE CACHE)
+if (CMAKE_LIBRARY_ARCHITECTURE STREQUAL "")
+  get_filename_component(Bayeux_INCLUDE_DIR "${__bayeux_config_dir}/../../../include/" ABSOLUTE CACHE)
+else()
+  # Debian/Ubuntu multiarch support has one more subdir level from lib:
+  get_filename_component(Bayeux_INCLUDE_DIR "${__bayeux_config_dir}/../../../../../include/" ABSOLUTE CACHE)
+endif()
 mark_as_advanced(Bayeux_INCLUDE_DIR)
-
 set(Bayeux_INCLUDE_DIRS "${Bayeux_INCLUDE_DIR}" "${Bayeux_INCLUDE_DIR}/bayeux")
 
 set(Bayeux_DEFINITIONS)
@@ -123,4 +127,3 @@ endif()
 # Documentation - loaded optionally from its own file
 #
 include("${__bayeux_config_dir}/BayeuxDocs.cmake" OPTIONAL)
-
