@@ -51,6 +51,23 @@ set(Bayeux_VERSION_MINOR 0)
 set(Bayeux_VERSION_PATCH 0)
 set(Bayeux_VERSION "${Bayeux_VERSION_MAJOR}.${Bayeux_VERSION_MINOR}.${Bayeux_VERSION_PATCH}")
 
+# - Enforce all warnings, but ensure other flags are retained
+# Note that the added flags *won't* show up in the cache.
+# TODO : better way to do this with the "Make Override" system?
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  set(Bayeux_CXX_FLAGS "-W -Wall")
+
+  # On clang, need larger template depth
+  if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    set(Bayeux_CXX_FLAGS "${Bayeux_CXX_FLAGS} -ftemplate-depth=512")
+  endif()
+elseif(CMAKE_CXX_COMPILER MATCHES "icpc.*|icc.*")
+  # Needs more testing
+  set(Bayeux_CXX_FLAGS "-w2")
+endif()
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Bayeux_CXX_FLAGS}")
+
+
 # - SVN Versioning, if available
 set(Bayeux_VERSION_REVISION 0)
 
