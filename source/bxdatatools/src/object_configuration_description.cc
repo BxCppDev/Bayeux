@@ -1534,7 +1534,7 @@ namespace datatools {
            default_value = cpd_.get_default_value_real();
          }
          prop_.store_real(cpd_.get_name_pattern(),
-                          1.1,
+                          default_value,
                           cpd_.get_terse_description(),
                           cpd_.is_const());
        }
