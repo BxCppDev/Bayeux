@@ -260,17 +260,17 @@ namespace mygsl {
     for (points_map_type::const_iterator i = pImpl->_points_.begin();
          i != pImpl->_points_.end();
          i++) {
-      double x, y;
+      double x;
+      // double y;
       x = i->first;
-      y = i->second;
+      // y = i->second;
       if (pImpl->_x_max_ < pImpl->_x_min_) {
         pImpl->_x_min_ = x;
         pImpl->_x_max_ = x;
-      } else
-        {
-          if (x > pImpl->_x_max_) pImpl->_x_max_ = x;
-          if (x < pImpl->_x_min_) pImpl->_x_min_ = x;
-        }
+      } else {
+        if (x > pImpl->_x_max_) pImpl->_x_max_ = x;
+        if (x < pImpl->_x_min_) pImpl->_x_min_ = x;
+      }
       x_tmp[bin] = i->first;
       y_tmp[bin] = i->second;
       bin++;

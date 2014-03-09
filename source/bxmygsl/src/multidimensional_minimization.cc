@@ -12,7 +12,7 @@
 
 namespace mygsl {
 
-  using namespace std;
+  // using namespace std;
 
   const size_t multidimensional_minimization::DEFAULT_MAX_ITER    = 1000;
   const size_t multidimensional_minimization::DEFAULT_MODULO_ITER = 100;
@@ -21,8 +21,6 @@ namespace mygsl {
 
   const double multidimensional_minimization_system::DEFAULT_OUT_OF_LIMIT_SLOPE = 1.e10;
 
-
-  /************************************************************************/
   void multidimensional_minimization_system::set_numeric_eval_df (bool use_)
   {
     _numeric_eval_df_ = use_;
@@ -38,10 +36,9 @@ namespace mygsl {
                                                                               bool use_numeric_eval_)
   {
     _out_of_limit_slope_ = slope_;
-    if (slope_ <= 0)
-      {
-        _out_of_limit_slope_ = DEFAULT_OUT_OF_LIMIT_SLOPE;
-      }
+    if (slope_ <= 0) {
+      _out_of_limit_slope_ = DEFAULT_OUT_OF_LIMIT_SLOPE;
+    }
     _numeric_eval_df_ = use_numeric_eval_;
     return;
   }
@@ -53,8 +50,6 @@ namespace mygsl {
 
   double multidimensional_minimization_system::func_eval_f_MR  (double x_, void * params_)
   {
-    // bool local_devel = false;
-    //if (local_devel) clog << "DEVEL: func_eval_f: entering... " << endl;
     func_eval_f_param * fefp = static_cast<func_eval_f_param *>(params_);
     int free_param_index = fefp->free_param_index;
     multidimensional_minimization_system * sys = fefp->sys;
@@ -66,13 +61,12 @@ namespace mygsl {
     sys->grab_free_param (free_param_index).set_value_no_check (x_);
     sys->init_params_values ();
 
-    double result = numeric_limits<double>::quiet_NaN ();
+    double result = std::numeric_limits<double>::quiet_NaN ();
     DT_THROW_IF (sys->_eval_f_MR_(result) != 0, std::logic_error, "Cannot evaluate function!");
 
     // restore former 'x' value:
     sys->grab_free_param (free_param_index).set_value_no_check (save_x);
     sys->init_params_values ();
-    //if (local_devel) clog << "DEVEL: func_eval_f: exiting." << endl;
     return result;
   }
 
@@ -80,118 +74,97 @@ namespace mygsl {
   {
     bool local_debug = false;
     int code = _eval_f (f_);
-    if (code != 0)
-      {
-        return code;
-      }
+    if (code != 0) {
+      return code;
+    }
 
     // search for 'out of limits' free parameters:
     double slope = _out_of_limit_slope_;
     bool dump = false;
-    for (size_t i = 0; i < get_number_of_free_params (); i++)
-      {
-        double dist = get_free_param (i).get_dist_to_limit ();
-        double step = get_free_param (i).get_step ();
-        // add arbitrary huge value:
-        double df = slope * dist / step;
-        if (local_debug)
-          {
-            if (df != 0.0)
-              {
-                DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "out of limits == " << get_free_param (i).get_name () << " : Delta(f) == " << df);
-                dump = true; //print_status (clog);
-              }
-          }
-        f_ += df;
+    for (size_t i = 0; i < get_number_of_free_params (); i++) {
+      double dist = get_free_param (i).get_dist_to_limit ();
+      double step = get_free_param (i).get_step ();
+      // add arbitrary huge value:
+      double df = slope * dist / step;
+      if (local_debug) {
+        if (df != 0.0) {
+          DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "out of limits == " << get_free_param (i).get_name () << " : Delta(f) == " << df);
+          dump = true; //print_status (clog);
+        }
       }
+      f_ += df;
+    }
 
     // search for 'out of limits' auto parameters:
-    for (size_t i = 0; i < get_number_of_auto_params (); i++)
-      {
-        double dist = get_auto_param (i).get_dist_to_limit ();
-        double step = get_auto_param (i).get_step ();
-        // add arbitrary huge value:
-        double df = slope * dist / step;
-        if (local_debug)
-          {
-            if (df != 0.0)
-              {
-                DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "out of limits == " << get_auto_param (i).get_name () << " : Delta(f) == " << df);
-                dump = true; //print_status (clog);
-              }
-          }
-        f_ += df;
+    for (size_t i = 0; i < get_number_of_auto_params (); i++) {
+      double dist = get_auto_param (i).get_dist_to_limit ();
+      double step = get_auto_param (i).get_step ();
+      // add arbitrary huge value:
+      double df = slope * dist / step;
+      if (local_debug) {
+        if (df != 0.0) {
+          DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "out of limits == " << get_auto_param (i).get_name () << " : Delta(f) == " << df);
+          dump = true; //print_status (clog);
+        }
       }
-    if (dump) print_status (clog);
+      f_ += df;
+    }
+    if (dump) print_status (std::clog);
     return code;
   }
 
   int multidimensional_minimization_system::_eval_df_MR_ (double * gradient_)
   {
     int code = _eval_df (gradient_);
-    if (code != 0)
-      {
-        return code;
-      }
+    if (code != 0) {
+      return code;
+    }
 
     // search for 'out of limits' free parameters:
-    for (size_t i = 0; i < get_number_of_free_params (); i++)
-      {
-        double sign = get_free_param (i).get_sign_limit ();
-        // add arbitrary derivative value:
-        gradient_[i] += sign * _out_of_limit_slope_;
-      }
+    for (size_t i = 0; i < get_number_of_free_params (); i++) {
+      double sign = get_free_param (i).get_sign_limit ();
+      // add arbitrary derivative value:
+      gradient_[i] += sign * _out_of_limit_slope_;
+    }
 
     // search for 'out of limits' auto parameters:
-    for (size_t i = 0; i < get_number_of_auto_params (); i++)
-      {
-        double sign = get_auto_param (i).get_sign_limit ();
-        // add arbitrary derivative value:
-        gradient_[i] += sign * _out_of_limit_slope_;
-      }
+    for (size_t i = 0; i < get_number_of_auto_params (); i++) {
+      double sign = get_auto_param (i).get_sign_limit ();
+      // add arbitrary derivative value:
+      gradient_[i] += sign * _out_of_limit_slope_;
+    }
 
     return code;
   }
 
   int multidimensional_minimization_system::_numerical_eval_df_MR_ (double * gradient_)
   {
-    // clog << "DEVEL: MMS::_numerical_eval_df_MR_" << endl;
-    //bool local_devel = false;
-    //if (local_devel) clog << "DEVEL: __numerical_eval_df: entering..." << endl;
-    for (size_t i = 0; i < get_number_of_free_params (); i++)
-      {
-        double save_value = get_free_param (i).get_value ();
-        double x = save_value;
-        double h = get_free_param (i).get_step ();
-        double df = 0.0;
-        double df_err = 0.0;
-        int res_deriv = GSL_SUCCESS;
-        gsl_function func;
-        func_eval_f_param fefp (i, *this);
-        func.params = &fefp;
-        func.function = multidimensional_minimization_system::func_eval_f_MR;
-        if (get_free_param (i).is_in_safe_range ())
-          {
-            //if (local_devel) clog << "DEVEL: __numerical_eval_df: gsl_deriv_central... " << endl;
-            res_deriv = gsl_deriv_central (&func, x, h, &df, &df_err);
-          }
-        else if (get_free_param (i).is_in_range_but_close_to_min ())
-          {
-            //if (local_devel) clog << "DEVEL: __numerical_eval_df: gsl_deriv_forward... " << endl;
-            res_deriv = gsl_deriv_forward (&func, x, h, &df, &df_err);
-          }
-        else if (get_free_param (i).is_in_range_but_close_to_max ())
-          {
-            //if (local_devel) clog << "DEVEL: __numerical_eval_df: gsl_deriv_backward... " << endl;
-            res_deriv = gsl_deriv_backward (&func, x, h, &df, &df_err);
-          }
-        else
-          {
-            df = 0.0;
-          }
-        gradient_[i] = df;
+    for (size_t i = 0; i < get_number_of_free_params (); i++) {
+      double save_value = get_free_param (i).get_value ();
+      double x = save_value;
+      double h = get_free_param (i).get_step ();
+      double df = 0.0;
+      double df_err = 0.0;
+      // Do not use the return type as it is always zero (see GSL deriv.c source file)
+      // int res_deriv = GSL_SUCCESS;
+      gsl_function func;
+      func_eval_f_param fefp (i, *this);
+      func.params = &fefp;
+      func.function = multidimensional_minimization_system::func_eval_f_MR;
+      if (get_free_param (i).is_in_safe_range ()) {
+        // res_deriv =
+        gsl_deriv_central (&func, x, h, &df, &df_err);
+      } else if (get_free_param (i).is_in_range_but_close_to_min ()) {
+        // res_deriv =
+        gsl_deriv_forward (&func, x, h, &df, &df_err);
+      } else if (get_free_param (i).is_in_range_but_close_to_max ()) {
+        // res_deriv =
+        gsl_deriv_backward (&func, x, h, &df, &df_err);
+      } else {
+        df = 0.0;
       }
-    //if (local_devel) clog << "DEVEL: __numerical_eval_df: exiting." << endl;
+      gradient_[i] = df;
+    }
     return 0;
   }
 
@@ -214,7 +187,6 @@ namespace mygsl {
   int multidimensional_minimization_system::eval_f (const double * x_,
                                                     double & f_)
   {
-    // clog << "DEVEL: MMS::eval_f" << endl;
     from_double_star (x_, get_number_of_free_params ());
     int code = _eval_f_MR_ (f_);
     return code;
@@ -223,17 +195,13 @@ namespace mygsl {
   int multidimensional_minimization_system::eval_df (const double * x_,
                                                      double * gradient_)
   {
-    // clog << "DEVEL: MMS::eval_df" << endl;
     from_double_star (x_, get_number_of_free_params ());
     int code = 0;
-    if (! _numeric_eval_df_)
-      {
-        code = _eval_df_MR_ (gradient_);
-      }
-    else
-      {
-        code = multidimensional_minimization_system::_numerical_eval_df_MR_ (gradient_);
-      }
+    if (! _numeric_eval_df_) {
+      code = _eval_df_MR_ (gradient_);
+    } else {
+      code = multidimensional_minimization_system::_numerical_eval_df_MR_ (gradient_);
+    }
     return code;
   }
 
@@ -241,12 +209,10 @@ namespace mygsl {
                                                       double & f_,
                                                       double * gradient_)
   {
-    // clog << "DEVEL: MMS::eval_fdf" << endl;
     int code = eval_f (x_, f_);
-    if (code != 0)
-      {
-        return code;
-      }
+    if (code != 0) {
+      return code;
+    }
     return eval_df (x_, gradient_);
   }
 
@@ -263,10 +229,9 @@ namespace mygsl {
   {
     const size_t fd = get_number_of_free_params ();
     DT_THROW_IF (dimension_ != fd, std::range_error, "Invalid dimension!");
-    for (size_t i = 0; i < fd; i++)
-      {
-        pars_[i] = get_free_param (i).get_value ();
-      }
+    for (size_t i = 0; i < fd; i++) {
+      pars_[i] = get_free_param (i).get_value ();
+    }
     return;
   }
 
@@ -274,10 +239,9 @@ namespace mygsl {
                                                                size_t dimension_)
   {
     DT_THROW_IF (dimension_ != get_number_of_free_params (), std::range_error, "Invalid dimension!");
-    for (size_t i = 0; i < get_number_of_free_params (); i++)
-      {
-        grab_free_param (i).set_value_no_check (pars_[i]);
-      }
+    for (size_t i = 0; i < get_number_of_free_params (); i++) {
+      grab_free_param (i).set_value_no_check (pars_[i]);
+    }
     init_params_values ();
     return;
   }
@@ -331,74 +295,60 @@ namespace mygsl {
     return func_eval_f_MR(x_, const_cast<func_eval_f_param*> (this));
   }
 
-  void multidimensional_minimization_system::plot_f (const string & prefix_, int /*mode_*/) const
+  void multidimensional_minimization_system::plot_f (const std::string & prefix_, int /*mode_*/) const
   {
-    string prefix = prefix_;
-    string ext = ".data";
-    if (prefix.empty ())
-      {
-        prefix = "mms_param_";
-      }
+    std::string prefix = prefix_;
+    std::string ext = ".data";
+    if (prefix.empty ()) {
+      prefix = "mms_param_";
+    }
     int param_begin = 0;
     int param_end = get_number_of_free_params ();
     for (int param_index = param_begin;
          param_index < param_end;
-         param_index++)
-      {
-        const mygsl::param_entry & param = get_free_param (param_index);
-        // clog << "NOTICE: multidimensional_minimization_system::plot_f: "
-        //      << "Plot function to be minimized for parameter '"
-        //      << param.get_name ()
-        //      << "' in the current parameters' region: " << endl;
-        ostringstream fname;
-        fname << prefix
-              << param.get_name () << ext;
-        ofstream f_param (fname.str ().c_str ());
-        int count = 0;
-        double h  = param.get_step ();
-        double h2 = h / 50.;
-        double dt = h;
-        double min = param.get_min ();
-        double max = param.get_max ();
-        for (double p = (min - 5.5 * h);
-             p < (max + 5.5 * h);
-             p += dt)
-          {
-            if (p < (min - 1.5 * h))
-              {
-                dt = h;
-              }
-            else if (p < (min + h))
-              {
-                dt = h2;
-              }
-            else if (p < (max - 1.5 * h ))
-              {
-                dt = h;
-              }
-            else if (p < (max + h ))
-              {
-                dt = h2;
-              }
-            else
-              {
-                dt = h;
-              }
-            mygsl::multidimensional_minimization_system::func_eval_f_param
-              func (param_index, const_cast<mygsl::multidimensional_minimization_system&>(*this));
-            //func.free_param_index = param_index;
-            //func.sys              = const_cast<mygsl::multidimensional_minimization_system*>(this);
-            double f
-              = mygsl::multidimensional_minimization_system::func_eval_f_MR (p, &func);
-            f_param.precision (14);
-            f_param << p << ' ' << f << endl;
-            //if ((count % 100) == 0) clog << "  Count #" << count << endl;
-            count++;
-          }
-        f_param.close ();
-        // clog << "NOTICE: multidimensional_minimization_system::plot_f: "
-        //      << "done." << endl;
+         param_index++) {
+      const mygsl::param_entry & param = get_free_param (param_index);
+      // clog << "NOTICE: multidimensional_minimization_system::plot_f: "
+      //      << "Plot function to be minimized for parameter '"
+      //      << param.get_name ()
+      //      << "' in the current parameters' region: " << endl;
+      std::ostringstream fname;
+      fname << prefix
+            << param.get_name () << ext;
+      std::ofstream f_param (fname.str ().c_str ());
+      int count = 0;
+      double h  = param.get_step ();
+      double h2 = h / 50.;
+      double dt = h;
+      double min = param.get_min ();
+      double max = param.get_max ();
+      for (double p = (min - 5.5 * h);
+           p < (max + 5.5 * h);
+           p += dt) {
+        if (p < (min - 1.5 * h)) {
+          dt = h;
+        } else if (p < (min + h)) {
+          dt = h2;
+        } else if (p < (max - 1.5 * h )) {
+          dt = h;
+        } else if (p < (max + h )) {
+          dt = h2;
+        } else {
+          dt = h;
+        }
+        mygsl::multidimensional_minimization_system::func_eval_f_param
+          func (param_index, const_cast<mygsl::multidimensional_minimization_system&>(*this));
+        //func.free_param_index = param_index;
+        //func.sys              = const_cast<mygsl::multidimensional_minimization_system*>(this);
+        double f
+          = mygsl::multidimensional_minimization_system::func_eval_f_MR (p, &func);
+        f_param.precision (14);
+        f_param << p << ' ' << f << std::endl;
+        //if ((count % 100) == 0) clog << "  Count #" << count << endl;
+        count++;
       }
+      f_param.close ();
+    }
     return;
   }
 
@@ -435,8 +385,6 @@ namespace mygsl {
     return;
   }
 
-  /****************************************************************************/
-
   multidimensional_minimization::default_step_action multidimensional_minimization::__default_step_action;
 
   void multidimensional_minimization::set_default_step_action ()
@@ -468,24 +416,15 @@ namespace mygsl {
     double * x    = x_;
     size_t dim    = dim_;
     double   f    = f_;
-    // if (g_debug)
-    //   {
-    //     std::cerr << "DEBUG: Iteration: " << iter << " ("
-    //               << ((status == GSL_SUCCESS)? "minimum found": "continue")
-    //               << ')' << std::endl;
-    //   }
     std::cout << iter << ' ' << dim << ' ';
-    for (size_t i = 0; i < dim ; i++)
-      {
-        std::cout.precision (15);
-        std::cout << x[i] << ' ';
-      }
+    for (size_t i = 0; i < dim ; i++) {
+      std::cout.precision (15);
+      std::cout << x[i] << ' ';
+    }
     std::cout << f << ' ' << status << ' ';
     std::cout << std::endl;
     return;
   }
-
-  /**********************************************************/
 
   void multidimensional_minimization::print_types (std::ostream & out_)
   {
@@ -509,14 +448,12 @@ namespace mygsl {
 
   std::string multidimensional_minimization::get_name () const
   {
-    if (_mode_ == MODE_FDF && _fdfmin_ != 0 )
-      {
-        return std::string (gsl_multimin_fdfminimizer_name (_fdfmin_));
-      }
-    if (_mode_ == MODE_F && _fmin_ != 0)
-      {
-        return std::string (gsl_multimin_fminimizer_name (_fmin_));
-      }
+    if (_mode_ == MODE_FDF && _fdfmin_ != 0 ) {
+      return std::string (gsl_multimin_fdfminimizer_name (_fdfmin_));
+    }
+    if (_mode_ == MODE_F && _fmin_ != 0) {
+      return std::string (gsl_multimin_fminimizer_name (_fmin_));
+    }
     return "";
   }
 
@@ -525,35 +462,30 @@ namespace mygsl {
     DT_THROW_IF (! name_is_valid (name_), std::logic_error, "Invalid minimization algorithm '"
                  << name_ << "' !");
 
-    if (name_ == "conjugate_fr")
-      {
-        _algo_fdf_ = gsl_multimin_fdfminimizer_conjugate_fr;
-        _set_mode_ (MODE_FDF);
-      }
+    if (name_ == "conjugate_fr") {
+      _algo_fdf_ = gsl_multimin_fdfminimizer_conjugate_fr;
+      _set_mode_ (MODE_FDF);
+    }
 
-    if (name_ == "conjugate_pr")
-      {
-        _algo_fdf_ = gsl_multimin_fdfminimizer_conjugate_pr;
-        _set_mode_ (MODE_FDF);
-      }
+    if (name_ == "conjugate_pr") {
+      _algo_fdf_ = gsl_multimin_fdfminimizer_conjugate_pr;
+      _set_mode_ (MODE_FDF);
+    }
 
-    if (name_ == "vector_bfgs")
-      {
-        _algo_fdf_ = gsl_multimin_fdfminimizer_vector_bfgs;
-        _set_mode_ (MODE_FDF);
-      }
+    if (name_ == "vector_bfgs") {
+      _algo_fdf_ = gsl_multimin_fdfminimizer_vector_bfgs;
+      _set_mode_ (MODE_FDF);
+    }
 
-    if (name_ == "steepest_descent")
-      {
-        _algo_fdf_ = gsl_multimin_fdfminimizer_steepest_descent;
-        _set_mode_ (MODE_FDF);
-      }
+    if (name_ == "steepest_descent") {
+      _algo_fdf_ = gsl_multimin_fdfminimizer_steepest_descent;
+      _set_mode_ (MODE_FDF);
+    }
 
-    if (name_ == "nmsimplex")
-      {
-        _algo_f_ = gsl_multimin_fminimizer_nmsimplex;
-        _set_mode_ (MODE_F);
-      }
+    if (name_ == "nmsimplex") {
+      _algo_f_ = gsl_multimin_fminimizer_nmsimplex;
+      _set_mode_ (MODE_F);
+    }
     return;
   }
 
@@ -566,11 +498,10 @@ namespace mygsl {
 
   void multidimensional_minimization::devel_dump_x () const
   {
-    if (_x_ == 0)
-      {
-        std::cerr << "DEVEL: _x_==0" << std::endl;
-        return;
-      }
+    if (_x_ == 0) {
+      std::cerr << "DEVEL: _x_==0" << std::endl;
+      return;
+    }
     std::cerr << "DEVEL ================================= " << std::endl;
     std::cerr << "DEVEL: "
               << " _x_.size  = " << _x_->size
@@ -584,21 +515,19 @@ namespace mygsl {
     std::cerr << "DEVEL: "
               << " _x_.owner  = " << _x_->owner
               << std::endl;
-    for (size_t i = 0; i < _x_->size; i++)
-      {
-        std::cerr << "DEVEL: "
-                  << " _x_.data[" << i << "]  = " << _x_->data[i]
-                  << std::endl;
-      }
+    for (size_t i = 0; i < _x_->size; i++) {
+      std::cerr << "DEVEL: "
+                << " _x_.data[" << i << "]  = " << _x_->data[i]
+                << std::endl;
+    }
     std::cerr << "DEVEL: "
               << " _x_.block.size  = " << _x_->block->size
               << std::endl;
-    for (size_t i = 0; i < _x_->block->size; i++)
-      {
-        std::cerr << "DEVEL: "
-                  << " _x_.block[" << i << "]  = " << _x_->block->data[i]
-                  << std::endl;
-      }
+    for (size_t i = 0; i < _x_->block->size; i++) {
+      std::cerr << "DEVEL: "
+                << " _x_.block[" << i << "]  = " << _x_->block->data[i]
+                << std::endl;
+    }
     std::cerr << "DEVEL ================================= " << std::endl;
     return;
   }
@@ -607,91 +536,72 @@ namespace mygsl {
                                             multidimensional_minimization_system & ms_)
   {
     _sys_ = &ms_;
-    if (! _sys_->is_lock_params ())
-      {
-        _sys_->lock_params ();
-      }
+    if (! _sys_->is_lock_params ()) {
+      _sys_->lock_params ();
+    }
     size_t n = _sys_->get_number_of_free_params ();
     _init_algorithm_ (name_);
 
-    if (_mode_ == MODE_FDF)
-      {
-        _fdf_.f      = &multidimensional_minimization::f;
-        _fdf_.df     = &multidimensional_minimization::df;
-        _fdf_.fdf    = &multidimensional_minimization::fdf;
-        _fdf_.n      = n;
-        _fdf_.params = (void *) _sys_;
-        _fdfmin_     = gsl_multimin_fdfminimizer_alloc (_algo_fdf_, _fdf_.n);
-      }
+    if (_mode_ == MODE_FDF) {
+      _fdf_.f      = &multidimensional_minimization::f;
+      _fdf_.df     = &multidimensional_minimization::df;
+      _fdf_.fdf    = &multidimensional_minimization::fdf;
+      _fdf_.n      = n;
+      _fdf_.params = (void *) _sys_;
+      _fdfmin_     = gsl_multimin_fdfminimizer_alloc (_algo_fdf_, _fdf_.n);
+    }
 
-    if (_mode_ == MODE_F)
-      {
-        _f_.f      = &multidimensional_minimization::f;
-        _f_.n      = n;
-        _f_.params = (void *) _sys_;
-        _fmin_     = gsl_multimin_fminimizer_alloc (_algo_f_, _f_.n);
-      }
+    if (_mode_ == MODE_F) {
+      _f_.f      = &multidimensional_minimization::f;
+      _f_.n      = n;
+      _f_.params = (void *) _sys_;
+      _fmin_     = gsl_multimin_fminimizer_alloc (_algo_f_, _f_.n);
+    }
 
     _x_ = gsl_vector_alloc (n);
     gsl_vector_set_zero (_x_);
 
     _sys_->to_double_star (_x_->data, n);
 
-    // if (g_debug)
-    //   {
-    //     for (int i = 0; i < n; i++)
-    //       {
-    //         double par = gsl_vector_get (_x_, i);
-    //         std::clog << "DEBUG: multidimensional_minimization::init: par=" << par << std::endl;
-    //       }
-    //   }
+    if (_mode_ == MODE_FDF) {
+      _fdf_step_size_ = 0.01;
+      _fdf_tol_       = 1.e-4;
+      gsl_multimin_fdfminimizer_set (_fdfmin_,
+                                     &_fdf_,
+                                     _x_,
+                                     _fdf_step_size_,
+                                     _fdf_tol_);
+    }
 
-    if (_mode_ == MODE_FDF)
-      {
-        _fdf_step_size_ = 0.01;
-        _fdf_tol_       = 1.e-4;
-        gsl_multimin_fdfminimizer_set (_fdfmin_,
-                                       &_fdf_,
-                                       _x_,
-                                       _fdf_step_size_,
-                                       _fdf_tol_);
+    if (_mode_ == MODE_F) {
+      _ss_ = gsl_vector_alloc (n);
+      gsl_vector_set_zero (_ss_);
+      for (size_t i = 0; i < _sys_->get_number_of_free_params (); i++) {
+        gsl_vector_set (_ss_, i, _sys_->get_param (i).get_step ());
       }
-
-    if (_mode_ == MODE_F)
-      {
-        _ss_ = gsl_vector_alloc (n);
-        gsl_vector_set_zero (_ss_);
-        for (size_t i = 0; i < _sys_->get_number_of_free_params (); i++)
-          {
-            gsl_vector_set (_ss_, i, _sys_->get_param (i).get_step ());
-          }
-        gsl_multimin_fminimizer_set (_fmin_, &_f_, _x_, _ss_);
-      }
+      gsl_multimin_fminimizer_set (_fmin_, &_f_, _x_, _ss_);
+    }
     return;
   }
 
   void multidimensional_minimization::reset ()
   {
-    if (_fdfmin_ != 0)
-      {
-        gsl_multimin_fdfminimizer_free (_fdfmin_);
-        _fdfmin_ = 0;
-      }
-    if (_fmin_ != 0)
-      {
-        gsl_multimin_fminimizer_free (_fmin_);
-        _fmin_ = 0;
-      }
-    if (_x_ != 0)
-      {
-        gsl_vector_free (_x_);
-        _x_ = 0;
-      }
-    if (_ss_ != 0)
-      {
-        gsl_vector_free (_ss_);
-        _ss_ = 0;
-      }
+    if (_fdfmin_ != 0) {
+      gsl_multimin_fdfminimizer_free (_fdfmin_);
+      _fdfmin_ = 0;
+    }
+    if (_fmin_ != 0) {
+      gsl_multimin_fminimizer_free (_fmin_);
+      _fmin_ = 0;
+    }
+    if (_x_ != 0) {
+      gsl_vector_free (_x_);
+      _x_ = 0;
+    }
+    if (_ss_ != 0) {
+      gsl_vector_free (_ss_);
+      _ss_ = 0;
+    }
     _algo_fdf_ = 0;
     _algo_f_   = 0;
     _fdf_step_size_ = 0.01;
@@ -711,11 +621,10 @@ namespace mygsl {
     _stopping_       = STOPPING_SIZE;
     _epsabs_         = DEFAULT_EPSABS;
     _at_step_action_ = 0;
-    if (_sys_ != 0)
-      {
-        _sys_->unlock_params ();
-        _sys_ = 0;
-      }
+    if (_sys_ != 0) {
+      _sys_->unlock_params ();
+      _sys_ = 0;
+    }
     _n_iter_ = 0;
     _fval_   = 0.0;
     return;
@@ -799,13 +708,9 @@ namespace mygsl {
                                                      size_t dim_,
                                                      double f_)
   {
-    // if (g_debug) std::clog << "DEBUG: multidimensional_minimization::_at_step_hook: entering..." << std::endl;
-    if (_at_step_action_ != 0)
-      {
-        // if (g_debug) std::clog << "DEBUG: multidimensional_minimization::_at_step_hook: _at_step_action_..." << std::endl;
-        (*_at_step_action_) (status_, iter_, x_, dim_, f_);
-      }
-    // if (g_debug) std::clog << "DEBUG: multidimensional_minimization::_at_step_hook: exiting." << std::endl;
+    if (_at_step_action_ != 0) {
+      (*_at_step_action_) (status_, iter_, x_, dim_, f_);
+    }
     return;
   }
 
@@ -816,72 +721,55 @@ namespace mygsl {
 
   int multidimensional_minimization::minimize (double epsabs_)
   {
-    // clog << ">>> TEST 100" << endl;
     size_t iter   = 0;
     int    status = 0;
     size_t dim    = 0;
     double * x    = 0;
     _epsabs_      = epsabs_;
-    if (epsabs_ < 0.0)
-      {
-        _epsabs_ = DEFAULT_EPSABS;
-      }
+    if (epsabs_ < 0.0) {
+      _epsabs_ = DEFAULT_EPSABS;
+    }
     double f;
 
     do {
-      // if (g_debug) std::cerr << std::endl << "DEBUG: multidimensional_minimization::minimize: NEW ITERATTION" << std::endl;
-
       iter++;
 
-      if (_mode_ == MODE_F)
-        {
-          // if (g_debug) std::cerr << "DEBUG: multidimensional_minimization::minimize: MODE_F" << std::endl;
-          dim = _f_.n;
-          status = gsl_multimin_fminimizer_iterate (_fmin_);
-          if (status != 0)
-            {
-              break;
-            }
-          double size = gsl_multimin_fminimizer_size (_fmin_);
-          // if (g_debug)
-          //   {
-          //     std::cerr << "DEBUG: multidimensional_minimization::minimize: "
-          //               << "MODE_F size=" << size
-          //               << " epsabs=" << _epsabs_ << std::endl;
-          //   }
-          status = gsl_multimin_test_size (size, _epsabs_);
-          x = _fmin_->x->data;
-          f = _fmin_->fval;
+      if (_mode_ == MODE_F) {
+        dim = _f_.n;
+        status = gsl_multimin_fminimizer_iterate (_fmin_);
+        if (status != 0) {
+          break;
         }
+        double size = gsl_multimin_fminimizer_size (_fmin_);
+        status = gsl_multimin_test_size (size, _epsabs_);
+        x = _fmin_->x->data;
+        f = _fmin_->fval;
+      }
 
-      if (_mode_ == MODE_FDF)
-        {
-          // if (g_debug) std::cerr << "DEBUG: multidimensional_minimization::minimize: MODE_FDF" << std::endl;
-          dim = _fdf_.n;
-          status = gsl_multimin_fdfminimizer_iterate (_fdfmin_);
-          if (status != 0)
-            {
-              break;
-            }
-          status = gsl_multimin_test_gradient (_fdfmin_->gradient, _epsabs_);
-          x = _fdfmin_->x->data;
-          f = _fdfmin_->f;
+      if (_mode_ == MODE_FDF) {
+        dim = _fdf_.n;
+        status = gsl_multimin_fdfminimizer_iterate (_fdfmin_);
+        if (status != 0) {
+          break;
         }
+        status = gsl_multimin_test_gradient (_fdfmin_->gradient, _epsabs_);
+        x = _fdfmin_->x->data;
+        f = _fdfmin_->f;
+      }
       _at_step_hook (status, iter, x, dim, f);
       _fval_ = f;
       if ((iter % _modulo_iter_) == 0) {
-          clog << "mygsl::multidimensional_minimization::minimize: Iteration #" << iter << " Fval == " << _fval_ << endl;
-          _sys_->print_status (clog);
-          clog << endl;
-        }
+        DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "Iteration #" << iter << " Fval == " << _fval_);
+        _sys_->print_status (std::clog);
+        std::clog << std::endl;
+      }
 
     } while ((status == GSL_CONTINUE) && (iter < _max_iter_));
 
     _n_iter_ = iter;
     if (status == GSL_SUCCESS) {
-        // if (g_debug) std::clog << "multidimensional_minimization::minimize: END" << std::endl;
-        _sys_->from_double_star (x, dim);
-      }
+      _sys_->from_double_star (x, dim);
+    }
 
     return status;
   }
