@@ -26,23 +26,23 @@
 namespace genbb {
   namespace decay0 {
 
-    // Sc48.f 
+    // Sc48.f
     // This file was extracted from the 'decay0' program by V.I. Tretyak
     // Copyright 1995-2011 V.I. Tretyak
     // This program is free software
     // it under the terms of the GNU General Public License as published by
     // the Free Software Foundation
     // your option) any later version.
-    // 
+    //
     // This program is distributed in the hope that it will be useful, but
     // WITHOUT ANY WARRANTY
     // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
     // General Public License for more details.
-    // 
+    //
     // You should have received a copy of the GNU General Public License
     // along with this program
     // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-    // 
+    //
 
     void Sc48(mygsl::rng & prng_, genbb::primary_event & event_, double tcnuc, double & tdnuc)
     {
@@ -68,7 +68,7 @@ namespace genbb {
       goto label_3333;
     label_3509  :
       decay0_beta(prng_, event_, 0.483,22.,0.,0.,t);
-    label_35090  :
+      ////    label_35090  :
       thlev=1.4e-12;
       p=100.*prng_();
       if (p <= 24.14) goto label_35091;
@@ -99,8 +99,8 @@ namespace genbb {
 
 
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
+  } // end of namespace decay0
+} // end of namespace genbb
 
 // end of Sc48.cc
 // Local Variables: --

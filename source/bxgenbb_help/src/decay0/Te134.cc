@@ -26,23 +26,23 @@
 namespace genbb {
   namespace decay0 {
 
-    // Te134.f 
+    // Te134.f
     // This file was extracted from the 'decay0' program by V.I. Tretyak
     // Copyright 1995-2011 V.I. Tretyak
     // This program is free software
     // it under the terms of the GNU General Public License as published by
     // the Free Software Foundation
     // your option) any later version.
-    // 
+    //
     // This program is distributed in the hope that it will be useful, but
     // WITHOUT ANY WARRANTY
     // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
     // General Public License for more details.
-    // 
+    //
     // You should have received a copy of the GNU General Public License
     // along with this program
     // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-    // 
+    //
 
     void Te134(mygsl::rng & prng_, genbb::primary_event & event_, double tcnuc, double & tdnuc)
     {
@@ -68,7 +68,7 @@ namespace genbb {
       goto label_847;  // 42%
     label_1106  :
       decay0_beta(prng_, event_, 0.454,53.,0.,0.,t);
-    label_11060  :
+      ////    label_11060  :
       thlev=0.;
       p=100.*prng_();
       if (p <=  3.33) goto label_11061;  // 3.33%
@@ -200,8 +200,8 @@ namespace genbb {
 
 
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
+  } // end of namespace decay0
+} // end of namespace genbb
 
 // end of Te134.cc
 // Local Variables: --

@@ -26,23 +26,23 @@
 namespace genbb {
   namespace decay0 {
 
-    // Th234.f 
+    // Th234.f
     // This file was extracted from the 'decay0' program by V.I. Tretyak
     // Copyright 1995-2011 V.I. Tretyak
     // This program is free software
     // it under the terms of the GNU General Public License as published by
     // the Free Software Foundation
     // your option) any later version.
-    // 
+    //
     // This program is distributed in the hope that it will be useful, but
     // WITHOUT ANY WARRANTY
     // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
     // General Public License for more details.
-    // 
+    //
     // You should have received a copy of the GNU General Public License
     // along with this program
     // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-    // 
+    //
 
     void Th234(mygsl::rng & prng_, genbb::primary_event & event_, double tcnuc, double & tdnuc)
     {
@@ -70,7 +70,7 @@ namespace genbb {
       goto label_74;  // 78.067%
     label_187  :
       decay0_beta(prng_, event_, 0.086,91.,0.,0.,t);
-    label_18700  :
+      ////    label_18700  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 17.0) goto label_18701;  // 17.0%
@@ -87,7 +87,7 @@ namespace genbb {
       goto label_16700;
     label_177  :
       decay0_beta(prng_, event_, 0.096,91.,0.,0.,t);
-    label_17700  :
+      ////    label_17700  :
       thlev=0.;
       decay0_nucltransK(prng_, event_, 0.103,0.021,3.8e0,0.,tclev,thlev,tdlev);
       goto label_74000;
@@ -106,7 +106,7 @@ namespace genbb {
       goto label_10300;
     label_166  :
       decay0_beta(prng_, event_, 0.106,91.,0.,0.,t);
-    label_16600  :
+      ////    label_16600  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 97.0) goto label_16601;  // 97.0%
@@ -134,8 +134,8 @@ namespace genbb {
 
 
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
+  } // end of namespace decay0
+} // end of namespace genbb
 
 // end of Th234.cc
 // Local Variables: --

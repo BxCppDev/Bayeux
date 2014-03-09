@@ -26,23 +26,23 @@
 namespace genbb {
   namespace decay0 {
 
-    // Xe135.f 
+    // Xe135.f
     // This file was extracted from the 'decay0' program by V.I. Tretyak
     // Copyright 1995-2011 V.I. Tretyak
     // This program is free software
     // it under the terms of the GNU General Public License as published by
     // the Free Software Foundation
     // your option) any later version.
-    // 
+    //
     // This program is distributed in the hope that it will be useful, but
     // WITHOUT ANY WARRANTY
     // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
     // General Public License for more details.
-    // 
+    //
     // You should have received a copy of the GNU General Public License
     // along with this program
     // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-    // 
+    //
 
     void Xe135(mygsl::rng & prng_, genbb::primary_event & event_, double tcnuc, double & tdnuc)
     {
@@ -70,7 +70,7 @@ namespace genbb {
       goto label_250;  // 96.098%
     label_1062  :
       decay0_beta(prng_, event_, 0.089,55.,0.,0.,t);
-    label_10620  :
+      ////    label_10620  :
       thlev=0.;
       p=100.*prng_();
       if (p <=  3.34) goto label_10621;  // 3.34%
@@ -91,7 +91,7 @@ namespace genbb {
       goto label_60800;
     label_981  :
       decay0_beta(prng_, event_, 0.170,55.,0.,0.,t);
-    label_98100  :
+      ////    label_98100  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 73.53) goto label_98101;  // 73.53%
@@ -148,8 +148,8 @@ namespace genbb {
 
 
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
+  } // end of namespace decay0
+} // end of namespace genbb
 
 // end of Xe135.cc
 // Local Variables: --

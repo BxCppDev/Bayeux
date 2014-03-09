@@ -75,7 +75,7 @@ namespace genbb {
       goto label_10000;
     label_226  :
       decay0_alpha(prng_, event_, 5.322,0.,0.,t);
-    label_22600  :
+      //// label_22600  :
       thlev=0.;
       p=100.*prng_();
       if (p <=  0.43) goto label_22601;
@@ -115,7 +115,7 @@ namespace genbb {
       goto label_10300;
     label_130  :
       decay0_alpha(prng_, event_, 5.416,0.,0.,t);
-    label_13000  :
+      //// REMOVE WARNING: label_13000  :
       thlev=0.;
       decay0_nucltransKLM(prng_, event_, 0.054,0.119,0.,0.022,23.2,0.005,7.7,
                           0.,tclev,thlev,tdlev);

@@ -26,23 +26,23 @@
 namespace genbb {
   namespace decay0 {
 
-    // Cs136.f 
+    // Cs136.f
     // This file was extracted from the 'decay0' program by V.I. Tretyak
     // Copyright 1995-2011 V.I. Tretyak
     // This program is free software
     // it under the terms of the GNU General Public License as published by
     // the Free Software Foundation
     // your option) any later version.
-    // 
+    //
     // This program is distributed in the hope that it will be useful, but
     // WITHOUT ANY WARRANTY
     // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
     // General Public License for more details.
-    // 
+    //
     // You should have received a copy of the GNU General Public License
     // along with this program
     // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-    // 
+    //
 
     void Cs136(mygsl::rng & prng_, genbb::primary_event & event_, double tcnuc, double & tdnuc)
     {
@@ -71,7 +71,7 @@ namespace genbb {
       goto label_1867;  // 12.903%
     label_2374  :
       decay0_beta(prng_, event_, 0.174,56.,0.,0.,t);
-    label_23740  :
+      ////label_23740  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 48.02) goto label_23741;  // 48.02%
@@ -92,7 +92,7 @@ namespace genbb {
       goto label_22070;
     label_2357  :
       decay0_beta(prng_, event_, 0.191,56.,0.,0.,t);
-    label_23570  :
+      ////label_23570  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 47.12) goto label_23571;  // 47.12%
@@ -182,8 +182,8 @@ namespace genbb {
 
 
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
+  } // end of namespace decay0
+} // end of namespace genbb
 
 // end of Cs136.cc
 // Local Variables: --

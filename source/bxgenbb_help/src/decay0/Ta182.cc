@@ -26,23 +26,23 @@
 namespace genbb {
   namespace decay0 {
 
-    // Ta182.f 
+    // Ta182.f
     // This file was extracted from the 'decay0' program by V.I. Tretyak
     // Copyright 1995-2011 V.I. Tretyak
     // This program is free software
     // it under the terms of the GNU General Public License as published by
     // the Free Software Foundation
     // your option) any later version.
-    // 
+    //
     // This program is distributed in the hope that it will be useful, but
     // WITHOUT ANY WARRANTY
     // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
     // General Public License for more details.
-    // 
+    //
     // You should have received a copy of the GNU General Public License
     // along with this program
     // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-    // 
+    //
 
     void Ta182(mygsl::rng & prng_, genbb::primary_event & event_, double tcnuc, double & tdnuc)
     {
@@ -75,7 +75,7 @@ namespace genbb {
       goto label_100;
     label_1553  :
       decay0_beta(prng_, event_, 0.258,74.,0.,0.,t);
-    label_15530  :
+      ////    label_15530  :
       thlev=1.23e-9;
       p=100.*prng_();
       if (p <=  0.25) goto label_15531;
@@ -108,7 +108,7 @@ namespace genbb {
       goto label_14880;
     label_1510  :
       decay0_beta(prng_, event_, 0.301,74.,0.,0.,t);
-    label_15100  :
+      ////    label_15100  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 34.) goto label_15101;
@@ -280,8 +280,8 @@ namespace genbb {
 
 
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
+  } // end of namespace decay0
+} // end of namespace genbb
 
 // end of Ta182.cc
 // Local Variables: --

@@ -11,6 +11,7 @@
 #include <datatools/utils.h>
 #include <datatools/units.h>
 #include <datatools/logger.h>
+#include <datatools/exception.h>
 // - Bayeux/mygsl:
 #include <mygsl/rng.h>
 // - Bayeux/genbb_help:
@@ -189,7 +190,7 @@ c             line 3 - 7 NMEs: chi_GTw, chi_Fw, chi'_GT, chi'_F, chi'_T, chi'_P,
       datatools::invalidate(Zdbb);
       datatools::invalidate(Adbb);
       istartbb = 0;
-      for (int i = 0; i < genbb::decay0::bbpars::SPSIZE; i++) {
+      for (int i = 0; i < (int) genbb::decay0::bbpars::SPSIZE; i++) {
         spthe1[i] = 0.0;
         spthe2[i] = 0.0;
       }
@@ -391,7 +392,7 @@ c             line 3 - 7 NMEs: chi_GTw, chi_Fw, chi'_GT, chi'_F, chi'_T, chi'_P,
             spmax = spthe1[i-1];
           }
         }
-        for (int i = imax + 1; i <= bbpars::SPSIZE; i++) {
+        for (int i = imax + 1; i <= (int) bbpars::SPSIZE; i++) {
           spthe1[i-1] = 0.;
         }
         if (TRACE) {
@@ -404,7 +405,7 @@ c             line 3 - 7 NMEs: chi_GTw, chi_Fw, chi'_GT, chi'_F, chi'_T, chi'_P,
                        "Store the spthe1 spectrum...");
           std::ofstream f_spthe1;
           f_spthe1.open("/tmp/th-e1-spectrum.dat");
-          for (int i = 0; i < bbpars::SPSIZE; i++) {
+          for (int i = 0; i < (int) bbpars::SPSIZE; i++) {
             f_spthe1 << i << ' ' << spthe1[i] << std::endl;
           }
         }
@@ -478,6 +479,8 @@ c             line 3 - 7 NMEs: chi_GTw, chi_Fw, chi'_GT, chi'_F, chi'_T, chi'_P,
         }
         // Rejection method :
         double fe2;
+        fe2 = 0.0;
+        e2 = std::numeric_limits<double>::quiet_NaN();
         do {
           e2 = re2s + (re2f - re2s) * prng();
           if (modebb == MODEBB_4)  fe2 = decay0_fe2_mod4(e2,params);
@@ -489,8 +492,7 @@ c             line 3 - 7 NMEs: chi_GTw, chi_Fw, chi'_GT, chi'_F, chi'_T, chi'_P,
           if (modebb == MODEBB_15) fe2 = decay0_fe2_mod15(e2,params);
           if (modebb == MODEBB_16) fe2 = decay0_fe2_mod16(e2,params);
         } while (f2max * prng() > fe2);
-      }
-      else if (modebb == MODEBB_10) {
+      } else if (modebb == MODEBB_10) {
         // c energy of X-ray is fixed; no angular correlation
         // c          allevents=allevents+1.
         // c          if (e1 < ebb1 || e1.gt.ebb2) go to 1
@@ -498,6 +500,8 @@ c             line 3 - 7 NMEs: chi_GTw, chi_Fw, chi'_GT, chi'_F, chi'_T, chi'_P,
         decay0_particle(prng,event,GAMMA,EK,EK,0.,pi,0.,twopi,0.,0.,t);
         return;
       }
+      DT_THROW_IF (e2 != e2,
+                   std::runtime_error, "Undefined e2 or fe2 ! This is a bug!");
       double p1 = std::sqrt(e1 * (e1 + 2. * emass));
       double p2 = std::sqrt(e2 * (e2 + 2. * emass));
       double b1 = p1 / (e1 + emass);

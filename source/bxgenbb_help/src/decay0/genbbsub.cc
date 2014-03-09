@@ -27,6 +27,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 
 #include <datatools/units.h>
+#include <datatools/exception.h>
 #include <mygsl/rng.h>
 
 #include <genbb_help/primary_event.h>
@@ -1349,10 +1350,13 @@ namespace genbb {
             // checking the consistency of data: (1) energy
             double El=bb_params_.levelE/1000.;
             double e0;
+            e0 = std::numeric_limits<double>::quiet_NaN();
             if ( bb_params_.Zdbb >= 0.) e0=bb_params_.Qbb;
             if ( bb_params_.Zdbb < 0.) e0=bb_params_.Qbb-4.*emass;
             if (bb_params_.modebb == MODEBB_9 || bb_params_.modebb == MODEBB_10) e0=bb_params_.Qbb- bb_params_.EK-2.*emass;
             if (bb_params_.modebb == MODEBB_11 || bb_params_.modebb == MODEBB_12) e0=bb_params_.Qbb-2.* bb_params_.EK;
+            DT_THROW_IF(e0 != e0, std::runtime_error,
+                        "Undefined e0 ! Bug!");
             if (e0 <= El) {
               std::cerr << "ERROR: " << "genbb::decay0::genbbsub: "
                         << "Not enough energy for transition to this level : "

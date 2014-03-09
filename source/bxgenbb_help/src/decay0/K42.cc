@@ -26,23 +26,23 @@
 namespace genbb {
   namespace decay0 {
 
-    // K42.f 
+    // K42.f
     // This file was extracted from the 'decay0' program by V.I. Tretyak
     // Copyright 1995-2011 V.I. Tretyak
     // This program is free software
     // it under the terms of the GNU General Public License as published by
     // the Free Software Foundation
     // your option) any later version.
-    // 
+    //
     // This program is distributed in the hope that it will be useful, but
     // WITHOUT ANY WARRANTY
     // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
     // General Public License for more details.
-    // 
+    //
     // You should have received a copy of the GNU General Public License
     // along with this program
     // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-    // 
+    //
 
     void K42(mygsl::rng & prng_, genbb::primary_event & event_, double tcnuc, double & tdnuc)
     {
@@ -70,7 +70,7 @@ namespace genbb {
       goto label_10000;
     label_3446  :
       decay0_beta(prng_, event_, 0.080,20.,0.,0.,t);
-    label_34460  :
+      ////    label_34460  :
       thlev=250.e-15  ;// ToI-1998
       p=100.*prng_();
       if (p <= 63.66) goto label_34461;
@@ -87,7 +87,7 @@ namespace genbb {
       goto label_27530;
     label_27530  :
       thlev=3.0e-12  ;// ToI-1998
-    label_27531  :
+      ////    label_27531  :
       decay0_nucltransK(prng_, event_, 1.228,0.004,5.6e-5,1.4e-5,tclev,thlev,tdlev);
       goto label_15250;
     label_2424  :
@@ -106,7 +106,7 @@ namespace genbb {
       // change to the 1st forbidden unique
     label_1837  :
       decay0_beta_1fu(prng_, event_, 1.688,20.,0.,0.,t,0.,0.,0.,0.);
-    label_18370  :
+      ////    label_18370  :
       thlev=0.33e-9;
       p=100.*prng_();
       if (p <= 2.1) goto label_18371;  // ToI-1978
@@ -114,10 +114,10 @@ namespace genbb {
     label_18371  :
       p=100.*prng_();
       if (p <= 90.) {;
-	decay0_pair(prng_, event_, 0.815,tclev,thlev,tdlev);
+        decay0_pair(prng_, event_, 0.815,tclev,thlev,tdlev);
       } else {;
-	decay0_electron(prng_, event_, 1.833,tclev,thlev,tdlev);
-	decay0_gamma(prng_, event_, 0.004,0.,0.,tdlev);
+        decay0_electron(prng_, event_, 1.833,tclev,thlev,tdlev);
+        decay0_gamma(prng_, event_, 0.004,0.,0.,tdlev);
       };
       return;
     label_18372  :
@@ -142,8 +142,8 @@ namespace genbb {
 
 
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
+  } // end of namespace decay0
+} // end of namespace genbb
 
 // end of K42.cc
 // Local Variables: --

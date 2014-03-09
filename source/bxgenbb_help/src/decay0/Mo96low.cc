@@ -26,23 +26,23 @@
 namespace genbb {
   namespace decay0 {
 
-    // Mo96low.f 
+    // Mo96low.f
     // This file was extracted from the 'decay0' program by V.I. Tretyak
     // Copyright 1995-2011 V.I. Tretyak
     // This program is free software
     // it under the terms of the GNU General Public License as published by
     // the Free Software Foundation
     // your option) any later version.
-    // 
+    //
     // This program is distributed in the hope that it will be useful, but
     // WITHOUT ANY WARRANTY
     // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
     // General Public License for more details.
-    // 
+    //
     // You should have received a copy of the GNU General Public License
     // along with this program
     // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-    // 
+    //
 
     void Mo96low(mygsl::rng & prng_, genbb::primary_event & event_, int levelkev)
     {
@@ -88,7 +88,7 @@ namespace genbb {
     label_2713  :
       thlev=0.;
       // 2+ to 6+ E4 transition is supposed
-    label_27131  :
+      ///    label_27131  :
       decay0_nucltransK(prng_, event_, 0.272,0.020,5.9e-1,0.,tclev,thlev,tdlev);
       goto label_2441;
     label_2700  :
@@ -116,7 +116,7 @@ namespace genbb {
       return;
     label_2623  :
       thlev=0.6e-12;
-    label_26231  :
+      ////    label_26231  :
       decay0_nucltransK(prng_, event_, 1.844,0.020,2.2e-4,2.3e-4,tclev,thlev,tdlev);
       goto label_778;
     label_2540  :
@@ -136,7 +136,7 @@ namespace genbb {
       goto label_778;
     label_2441  :
       thlev=0.208e-12;
-    label_24411  :
+      ////    label_24411  :
       decay0_nucltransK(prng_, event_, 0.813,0.020,1.3e-3,0.,tclev,thlev,tdlev);
       goto label_1628;
     label_2426  :
@@ -217,7 +217,7 @@ namespace genbb {
       goto label_778;
     label_1628  :
       thlev=1.2e-12;
-    label_16281  :
+      ////    label_16281  :
       decay0_nucltransK(prng_, event_, 0.850,0.020,1.1e-3,0.,tclev,thlev,tdlev);
       goto label_778;
     label_1626  :
@@ -248,7 +248,7 @@ namespace genbb {
       goto label_778;
     label_1148  :
       thlev=61.e-12;
-    label_11481  :
+      ////    label_11481  :
       decay0_nucltransK(prng_, event_, 0.370,0.020,1.2e-2,0.,tclev,thlev,tdlev);
       goto label_778;
     label_778  :
@@ -266,8 +266,8 @@ namespace genbb {
 
 
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
+  } // end of namespace decay0
+} // end of namespace genbb
 
 // end of Mo96low.cc
 // Local Variables: --

@@ -153,13 +153,13 @@ namespace genbb {
       goto label_20001;  // 18.255%
     label_3184  :
       decay0_beta(prng_, event_, 0.088,84.,0.,0.,t);
-    label_31840  :
+      //// label_31840  :
       thlev=0.;
       decay0_nucltransK(prng_, event_, 3.184,0.093,4.0e-4,8.0e-4,tclev,thlev,tdlev);
       return;
     label_3160  :
       decay0_beta(prng_, event_, 0.112,84.,0.,0.,t);
-    label_31600  :
+      //// label_31600  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 41.) goto label_31601;  // 41%
@@ -172,19 +172,19 @@ namespace genbb {
       goto label_60900;
     label_3143  :
       decay0_beta(prng_, event_, 0.129,84.,0.,0.,t);
-    label_31430  :
+      //// label_31430  :
       thlev=0.;
       decay0_nucltransK(prng_, event_, 3.143,0.093,4.0e-4,8.0e-4,tclev,thlev,tdlev);
       return;
     label_3082  :
       decay0_beta(prng_, event_, 0.190,84.,0.,0.,t);
-    label_30820  :
+      //// label_30820  :
       thlev=0.;
       decay0_nucltransK(prng_, event_, 3.082,0.093,4.2e-4,8.0e-4,tclev,thlev,tdlev);
       return;
     label_3054  :
       decay0_beta(prng_, event_, 0.218,84.,0.,0.,t);
-    label_30540  :
+      //// label_30540  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 60.0) goto label_30541;  // 60.0%
@@ -201,7 +201,7 @@ namespace genbb {
       goto label_14150;
     label_3014  :
       decay0_beta(prng_, event_, 0.258,84.,0.,0.,t);
-    label_30140  :
+      //// label_30140  :
       thlev=0.;
       p=100.*prng_();
       if (p <=  0.9) goto label_30141;  // 0.9%
@@ -226,13 +226,13 @@ namespace genbb {
       goto label_17300;
     label_3003  :
       decay0_beta(prng_, event_, 0.269,84.,0.,0.,t);
-    label_30030  :
+      //// label_30030  :
       thlev=0.;
       decay0_nucltransK(prng_, event_, 1.156,0.093,1.8e-2,3.0e-6,tclev,thlev,tdlev);
       goto label_18470;
     label_3000  :
       decay0_beta(prng_, event_, 0.272,84.,0.,0.,t);
-    label_30000  :
+      //// label_30000  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 84.6) goto label_30001;  // 84.6%
@@ -245,7 +245,7 @@ namespace genbb {
       goto label_60900;
     label_2986  :
       decay0_beta(prng_, event_, 0.286,84.,0.,0.,t);
-    label_29860  :
+      //// label_29860  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 83.0) goto label_29861;  // 83.0%
@@ -258,7 +258,7 @@ namespace genbb {
       goto label_12750;
     label_2979  :
       decay0_beta(prng_, event_, 0.293,84.,0.,0.,t);
-    label_29790  :
+      //// label_29790  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 83.6) goto label_29791;  // 83.6%
@@ -271,7 +271,7 @@ namespace genbb {
       goto label_60900;
     label_2941  :
       decay0_beta(prng_, event_, 0.331,84.,0.,0.,t);
-    label_29410  :
+      //// label_29410  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 52.1) goto label_29411;  // 52.1%
@@ -288,7 +288,7 @@ namespace genbb {
       goto label_16610;
     label_2935  :
       decay0_beta(prng_, event_, 0.337,84.,0.,0.,t);
-    label_29350  :
+      //// label_29350  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 21.3) goto label_29351;  // 21.3%
@@ -301,7 +301,7 @@ namespace genbb {
       goto label_60900;
     label_2929  :
       decay0_beta(prng_, event_, 0.343,84.,0.,0.,t);
-    label_29290  :
+      //// label_29290  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 73.3) goto label_29291;  // 73.3%
@@ -314,7 +314,7 @@ namespace genbb {
       goto label_60900;
     label_2922  :
       decay0_beta(prng_, event_, 0.350,84.,0.,0.,t);
-    label_29220  :
+      //// label_29220  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 60.9) goto label_29221;  // 60.9%
@@ -327,19 +327,19 @@ namespace genbb {
       goto label_60900;
     label_2920  :
       decay0_beta(prng_, event_, 0.352,84.,0.,0.,t);
-    label_29200  :
+      //// label_29200  :
       thlev=0.;
       decay0_nucltransK(prng_, event_, 2.310,0.093,3.0e-3,3.7e-4,tclev,thlev,tdlev);
       goto label_60900;
     label_2897  :
       decay0_beta(prng_, event_, 0.375,84.,0.,0.,t);
-    label_28970  :
+      //// label_28970  :
       thlev=0.;
       decay0_nucltransK(prng_, event_, 2.287,0.093,3.0e-3,3.6e-4,tclev,thlev,tdlev);
       goto label_60900;
     label_2894  :
       decay0_beta(prng_, event_, 0.378,84.,0.,0.,t);
-    label_28940  :
+      //// label_28940  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 26.1) goto label_28941;  // 26.1%
@@ -360,7 +360,7 @@ namespace genbb {
       goto label_22660;
     label_2880  :
       decay0_beta(prng_, event_, 0.392,84.,0.,0.,t);
-    label_28800  :
+      //// label_28800  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 87.6) goto label_28801;  // 87.6%
@@ -373,7 +373,7 @@ namespace genbb {
       goto label_60900;
     label_2870  :
       decay0_beta(prng_, event_, 0.402,84.,0.,0.,t);
-    label_28700  :
+      //// label_28700  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 63.5) goto label_28701;  // 63.5%
@@ -386,7 +386,7 @@ namespace genbb {
       goto label_12750;
     label_2861  :
       decay0_beta(prng_, event_, 0.411,84.,0.,0.,t);
-    label_28610  :
+      //// label_28610  :
       thlev=0.;
       p=100.*prng_();
       if (p <=  2.7) goto label_28611;  // 2.7%
@@ -403,13 +403,13 @@ namespace genbb {
       goto label_18470;
     label_2827  :
       decay0_beta(prng_, event_, 0.445,84.,0.,0.,t);
-    label_28270  :
+      //// label_28270  :
       thlev=0.;
       decay0_nucltransK(prng_, event_, 2.827,0.093,1.8e-3,5.8e-4,tclev,thlev,tdlev);
       return;
     label_2786  :
       decay0_beta(prng_, event_, 0.486,84.,0.,0.,t);
-    label_27860  :
+      //// label_27860  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 15.4) goto label_27861;  // 15.4%
@@ -430,7 +430,7 @@ namespace genbb {
       goto label_18470;
     label_2770  :
       decay0_beta(prng_, event_, 0.502,84.,0.,0.,t);
-    label_27700  :
+      //// label_27700  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 54.6) goto label_27701;  // 54.6%
@@ -447,7 +447,7 @@ namespace genbb {
       goto label_13780;
     label_2729  :
       decay0_beta(prng_, event_, 0.543,84.,0.,0.,t);
-    label_27290  :
+      //// label_27290  :
       thlev=0.;
       p=100.*prng_();
       if (p <=  1.2) goto label_27291;  // 1.2%
@@ -480,7 +480,7 @@ namespace genbb {
       goto label_24480;
     label_2719  :
       decay0_beta(prng_, event_, 0.553,84.,0.,0.,t);
-    label_27190  :
+      //// label_27190  :
       thlev=0.;
       p=100.*prng_();
       if (p <=  0.7) goto label_27191;  // 0.7%
@@ -513,7 +513,7 @@ namespace genbb {
       goto label_21190;
     label_2699  :
       decay0_beta(prng_, event_, 0.573,84.,0.,0.,t);
-    label_26990  :
+      //// label_26990  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 5.3) goto label_26991;  // 5.3%
@@ -526,7 +526,7 @@ namespace genbb {
       goto label_60900;
     label_2698  :
       decay0_beta(prng_, event_, 0.574,84.,0.,0.,t);
-    label_26980  :
+      //// label_26980  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 29.5) goto label_26981;  // 29.5%
@@ -551,7 +551,7 @@ namespace genbb {
       goto label_22040;
     label_2695  :
       decay0_beta(prng_, event_, 0.577,84.,0.,0.,t);
-    label_26950  :
+      //// label_26950  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 11.9) goto label_26951;  // 11.9%
@@ -600,7 +600,7 @@ namespace genbb {
       goto label_22090;
     label_2662  :
       decay0_beta(prng_, event_, 0.610,84.,0.,0.,t);
-    label_26620  :
+      //// label_26620  :
       thlev=0.;
       p=100.*prng_();
       if (p <=  0.2) goto label_26621;  // 0.2%
@@ -625,7 +625,7 @@ namespace genbb {
       goto label_17130;
     label_2631  :
       decay0_beta(prng_, event_, 0.641,84.,0.,0.,t);
-    label_26310  :
+      ////label_26310  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 3.8) goto label_26311;  // 3.8%
@@ -638,7 +638,7 @@ namespace genbb {
       goto label_60900;
     label_2605  :
       decay0_beta(prng_, event_, 0.667,84.,0.,0.,t);
-    label_26050  :
+      //// label_26050  :
       thlev=0.;
       p=100.*prng_();
       if (p <=  0.5) goto label_26051;  // 0.5%
@@ -667,7 +667,7 @@ namespace genbb {
       goto label_22090;
     label_2545  :
       decay0_beta(prng_, event_, 0.727,84.,0.,0.,t);
-    label_25450  :
+      ////label_25450  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 77.4) goto label_25451;  // 77.4%
@@ -680,7 +680,7 @@ namespace genbb {
       goto label_13780;
     label_2508  :
       decay0_beta(prng_, event_, 0.764,84.,0.,0.,t);
-    label_25080  :
+      ////label_25080  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 49.8) goto label_25081;  // 49.8%
@@ -701,7 +701,7 @@ namespace genbb {
       goto label_20110;
     label_2505  :
       decay0_beta(prng_, event_, 0.767,84.,0.,0.,t);
-    label_25050  :
+      ////label_25050  :
       thlev=0.;
       p=100.*prng_();
       if (p <=  3.0) goto label_25051;  // 3.0%
@@ -722,7 +722,7 @@ namespace genbb {
       goto label_15430;
     label_2482  :
       decay0_beta(prng_, event_, 0.790,84.,0.,0.,t);
-    label_24820  :
+      ////label_24820  :
       thlev=0.;
       p=100.*prng_();
       if (p <=  0.1) goto label_24821;  // 0.1%
@@ -829,7 +829,7 @@ namespace genbb {
       goto label_19950;
     label_2423  :
       decay0_beta(prng_, event_, 0.849,84.,0.,0.,t);
-    label_24230  :
+      ////label_24230  :
       thlev=0.;
       p=100.*prng_();
       if (p <=  7.2) goto label_24231;  // 7.2%
@@ -854,7 +854,7 @@ namespace genbb {
       goto label_17640;
     label_2293  :
       decay0_beta(prng_, event_, 0.979,84.,0.,0.,t);
-    label_22930  :
+      ////label_22930  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 54.6) goto label_22931;  // 54.6%
@@ -958,7 +958,7 @@ namespace genbb {
       goto label_17430;
     label_2193  :
       decay0_beta(prng_, event_, 1.079,84.,0.,0.,t);
-    label_21930  :
+      ////label_21930  :
       thlev=0.;
       p=100.*prng_();
       if (p <=  4.1) goto label_21931;  // 4.1%
@@ -986,7 +986,7 @@ namespace genbb {
       goto label_15430;
     label_2148  :
       decay0_beta(prng_, event_, 1.122,84.,0.,0.,t);
-    label_21480  :
+      ////label_21480  :
       thlev=0.;
       p=100.*prng_();
       if (p <=  3.2) goto label_21481;  // 3.2%
@@ -1128,7 +1128,7 @@ namespace genbb {
       goto label_16610;
     label_1890  :
       decay0_beta(prng_, event_, 1.380,84.,0.,0.,t);
-    label_18900  :
+      ////label_18900  :
       thlev=0.;
       p=100.*prng_();
       if (p <=  5.0) goto label_18901;  // 5.0%

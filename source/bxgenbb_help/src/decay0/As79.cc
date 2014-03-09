@@ -26,23 +26,23 @@
 namespace genbb {
   namespace decay0 {
 
-    // As79.f 
+    // As79.f
     // This file was extracted from the 'decay0' program by V.I. Tretyak
     // Copyright 1995-2011 V.I. Tretyak
     // This program is free software
     // it under the terms of the GNU General Public License as published by
     // the Free Software Foundation
     // your option) any later version.
-    // 
+    //
     // This program is distributed in the hope that it will be useful, but
     // WITHOUT ANY WARRANTY
     // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
     // General Public License for more details.
-    // 
+    //
     // You should have received a copy of the GNU General Public License
     // along with this program
     // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-    // 
+    //
 
     void As79(mygsl::rng & prng_, genbb::primary_event & event_, double tcnuc, double & tdnuc)
     {
@@ -72,7 +72,7 @@ namespace genbb {
       goto label_96;
     label_1089  :
       decay0_beta(prng_, event_, 1.192,34.,0.,0.,t);
-    label_10890  :
+      //// label_10890  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 53.70) goto label_10891;
@@ -85,7 +85,7 @@ namespace genbb {
       goto label_36500;
     label_1080  :
       decay0_beta(prng_, event_, 1.201,34.,0.,0.,t);
-    label_10800  :
+      //// label_10800  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 68.97) goto label_10801;
@@ -98,7 +98,7 @@ namespace genbb {
       goto label_52800;
     label_975  :
       decay0_beta(prng_, event_, 1.306,34.,0.,0.,t);
-    label_97500  :
+      ///// label_97500  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 79.37) goto label_97501;
@@ -157,8 +157,8 @@ namespace genbb {
 
 
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
+  } // end of namespace decay0
+} // end of namespace genbb
 
 // end of As79.cc
 // Local Variables: --

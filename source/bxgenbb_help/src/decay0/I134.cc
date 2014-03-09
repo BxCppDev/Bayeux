@@ -26,23 +26,23 @@
 namespace genbb {
   namespace decay0 {
 
-    // I134.f 
+    // I134.f
     // This file was extracted from the 'decay0' program by V.I. Tretyak
     // Copyright 1995-2011 V.I. Tretyak
     // This program is free software
     // it under the terms of the GNU General Public License as published by
     // the Free Software Foundation
     // your option) any later version.
-    // 
+    //
     // This program is distributed in the hope that it will be useful, but
     // WITHOUT ANY WARRANTY
     // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
     // General Public License for more details.
-    // 
+    //
     // You should have received a copy of the GNU General Public License
     // along with this program
     // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-    // 
+    //
 
     void I134(mygsl::rng & prng_, genbb::primary_event & event_, double tcnuc, double & tdnuc)
     {
@@ -84,7 +84,7 @@ namespace genbb {
       goto label_1731;
     label_3492  :
       decay0_beta(prng_, event_, 0.678,54.,0.,0.,t);
-    label_34920  :
+      ////    label_34920  :
       thlev=0.;
       p=100.*prng_();
       if (p <=  5.17) goto label_34921;  // 5.17%
@@ -97,7 +97,7 @@ namespace genbb {
       goto label_23020;
     label_3477  :
       decay0_beta(prng_, event_, 0.693,54.,0.,0.,t);
-    label_34770  :
+      ////    label_34770  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 18.77) goto label_34771;  // 18.77%
@@ -110,7 +110,7 @@ namespace genbb {
       goto label_33140;
     label_3375  :
       decay0_beta(prng_, event_, 0.795,54.,0.,0.,t);
-    label_33750  :
+      ////    label_33750  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 21.79) goto label_33751;
@@ -131,7 +131,7 @@ namespace genbb {
       goto label_24080;
     label_3360  :
       decay0_beta(prng_, event_, 0.810,54.,0.,0.,t);
-    label_33600  :
+      ////    label_33600  :
       thlev=0.;
       p=100.*prng_();
       if (p <=  6.16) goto label_33601;
@@ -161,13 +161,13 @@ namespace genbb {
       goto label_19200;
     label_3300  :
       decay0_beta(prng_, event_, 0.870,54.,0.,0.,t);
-    label_33000  :
+      ////    label_33000  :
       thlev=0.;
       decay0_nucltransK(prng_, event_, 2.453,0.035,2.0e-4,4.4e-4,tclev,thlev,tdlev);
       goto label_84700;
     label_3256  :
       decay0_beta(prng_, event_, 0.914,54.,0.,0.,t);
-    label_32560  :
+      ////    label_32560  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 35.78) goto label_32561;
@@ -180,7 +180,7 @@ namespace genbb {
       goto label_19200;
     label_3084  :
       decay0_beta(prng_, event_, 1.086,54.,0.,0.,t);
-    label_30840  :
+      ////    label_30840  :
       thlev=0.;
       p=100.*prng_();
       if (p <=  3.95) goto label_30841;
@@ -201,7 +201,7 @@ namespace genbb {
       goto label_19200;
     label_2867  :
       decay0_beta(prng_, event_, 1.303,54.,0.,0.,t);
-    label_28670  :
+      ////    label_28670  :
       thlev=0.;
       p=100.*prng_();
       if (p <=  0.62) goto label_28671;
@@ -242,7 +242,7 @@ namespace genbb {
       goto label_25880;
     label_2773  :
       decay0_beta(prng_, event_, 1.397,54.,0.,0.,t);
-    label_27730  :
+      ////    label_27730  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 34.62) goto label_27731;
@@ -419,8 +419,8 @@ namespace genbb {
 
 
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
+  } // end of namespace decay0
+} // end of namespace genbb
 
 // end of I134.cc
 // Local Variables: --

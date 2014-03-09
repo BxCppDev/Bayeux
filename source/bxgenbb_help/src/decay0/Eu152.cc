@@ -26,23 +26,23 @@
 namespace genbb {
   namespace decay0 {
 
-    // Eu152.f 
+    // Eu152.f
     // This file was extracted from the 'decay0' program by V.I. Tretyak
     // Copyright 1995-2011 V.I. Tretyak
     // This program is free software
     // it under the terms of the GNU General Public License as published by
     // the Free Software Foundation
     // your option) any later version.
-    // 
+    //
     // This program is distributed in the hope that it will be useful, but
     // WITHOUT ANY WARRANTY
     // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
     // General Public License for more details.
-    // 
+    //
     // You should have received a copy of the GNU General Public License
     // along with this program
     // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-    // 
+    //
 
     void Eu152(mygsl::rng & prng_, genbb::primary_event & event_, double tcnuc, double & tdnuc)
     {
@@ -480,7 +480,7 @@ namespace genbb {
       goto label_344;
     label_1692  :
       decay0_beta(prng_, event_, 0.126,64.,0.,0.,t);
-    label_16920  :
+      ////label_16920  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 84.03) goto label_16921;
@@ -493,7 +493,7 @@ namespace genbb {
       goto label_75500;
     label_1643  :
       decay0_beta(prng_, event_, 0.175,64.,0.,0.,t);
-    label_16430  :
+      ////label_16430  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 89.21) goto label_16431;
@@ -522,7 +522,7 @@ namespace genbb {
       goto label_14340;
     label_1606  :
       decay0_beta(prng_, event_, 0.212,64.,0.,0.,t);
-    label_16060  :
+      ////label_16060  :
       thlev=0.;
       p=100.*prng_();
       if (p <=  7.64) goto label_16061;
@@ -617,7 +617,7 @@ namespace genbb {
       goto label_11230;
     label_1282  :
       decay0_beta(prng_, event_, 0.536,64.,0.,0.,t);
-    label_12820  :
+      ////label_12820  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 58.41) goto label_12821;
@@ -740,8 +740,8 @@ namespace genbb {
 
 
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
+  } // end of namespace decay0
+} // end of namespace genbb
 
 // end of Eu152.cc
 // Local Variables: --

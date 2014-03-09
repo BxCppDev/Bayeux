@@ -26,23 +26,23 @@
 namespace genbb {
   namespace decay0 {
 
-    // Ra222.f 
+    // Ra222.f
     // This file was extracted from the 'decay0' program by V.I. Tretyak
     // Copyright 1995-2011 V.I. Tretyak
     // This program is free software
     // it under the terms of the GNU General Public License as published by
     // the Free Software Foundation
     // your option) any later version.
-    // 
+    //
     // This program is distributed in the hope that it will be useful, but
     // WITHOUT ANY WARRANTY
     // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
     // General Public License for more details.
-    // 
+    //
     // You should have received a copy of the GNU General Public License
     // along with this program
     // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-    // 
+    //
 
     void Ra222(mygsl::rng & prng_, genbb::primary_event & event_, double tcnuc, double & tdnuc)
     {
@@ -70,7 +70,7 @@ namespace genbb {
       goto label_10000;
     label_840  :
       decay0_alpha(prng_, event_, 5.734,0.,0.,t);
-    label_84000  :
+      //// label_84000  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 66.35) goto label_84001;
@@ -83,7 +83,7 @@ namespace genbb {
       goto label_32400;
     label_797  :
       decay0_alpha(prng_, event_, 5.776,0.,0.,t);
-    label_79700  :
+      ////    label_79700  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 96.75) goto label_79701;
@@ -115,8 +115,8 @@ namespace genbb {
 
 
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
+  } // end of namespace decay0
+} // end of namespace genbb
 
 // end of Ra222.cc
 // Local Variables: --

@@ -66,7 +66,7 @@ namespace genbb {
       if (pdecay > 43.6 && pdecay <= 83.8) Egamma=0.016  ;// EC-L 40.2%
       if (pdecay > 83.8) Egamma=0.004  ;// EC-M 16.2%
       decay0_gamma(prng_, event_, Egamma,0.,0.,t);
-    label_2615  :
+      //// label_2615  :
       thlev=32.e-12;
       decay0_nucltransK(prng_, event_, 2.615,0.088,8.5e-3,4.3e-4,tclev,thlev,tdlev);
       return;

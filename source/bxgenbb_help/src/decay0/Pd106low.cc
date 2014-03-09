@@ -26,23 +26,23 @@
 namespace genbb {
   namespace decay0 {
 
-    // Pd106low.f 
+    // Pd106low.f
     // This file was extracted from the 'decay0' program by V.I. Tretyak
     // Copyright 1995-2011 V.I. Tretyak
     // This program is free software
     // it under the terms of the GNU General Public License as published by
     // the Free Software Foundation
     // your option) any later version.
-    // 
+    //
     // This program is distributed in the hope that it will be useful, but
     // WITHOUT ANY WARRANTY
     // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
     // General Public License for more details.
-    // 
+    //
     // You should have received a copy of the GNU General Public License
     // along with this program
     // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-    // 
+    //
 
     void Pd106low(mygsl::rng & prng_, genbb::primary_event & event_, int levelkev)
     {
@@ -74,7 +74,7 @@ namespace genbb {
       if (levelkev ==  512) goto label_512;
       if (levelkev ==  0) goto label_10000;
       goto label_20000;
-    label_2741  :
+      ////    label_2741  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 66.2) goto label_27411;
@@ -153,8 +153,8 @@ namespace genbb {
 
 
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
+  } // end of namespace decay0
+} // end of namespace genbb
 
 // end of Pd106low.cc
 // Local Variables: --

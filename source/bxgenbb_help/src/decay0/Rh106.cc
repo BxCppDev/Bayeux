@@ -26,23 +26,23 @@
 namespace genbb {
   namespace decay0 {
 
-    // Rh106.f 
+    // Rh106.f
     // This file was extracted from the 'decay0' program by V.I. Tretyak
     // Copyright 1995-2011 V.I. Tretyak
     // This program is free software
     // it under the terms of the GNU General Public License as published by
     // the Free Software Foundation
     // your option) any later version.
-    // 
+    //
     // This program is distributed in the hope that it will be useful, but
     // WITHOUT ANY WARRANTY
     // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
     // General Public License for more details.
-    // 
+    //
     // You should have received a copy of the GNU General Public License
     // along with this program
     // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-    // 
+    //
 
     void Rh106(mygsl::rng & prng_, genbb::primary_event & event_, double tcnuc, double & tdnuc)
     {
@@ -74,7 +74,7 @@ namespace genbb {
       goto label_10000;
     label_2002  :
       decay0_beta(prng_, event_, 1.539,46.,0.,0.,t);
-    label_20020  :
+      ////    label_20020  :
       thlev=0.;
       p=100.*prng_();
       if (p <=  0.4) goto label_20021;
@@ -91,7 +91,7 @@ namespace genbb {
       goto label_15620;
     label_1707  :
       decay0_beta(prng_, event_, 1.834,46.,0.,0.,t);
-    label_17070  :
+      ////    label_17070  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 89.0) goto label_17071;
@@ -155,8 +155,8 @@ namespace genbb {
 
 
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
+  } // end of namespace decay0
+} // end of namespace genbb
 
 // end of Rh106.cc
 // Local Variables: --

@@ -26,23 +26,23 @@
 namespace genbb {
   namespace decay0 {
 
-    // Xe129m.f 
+    // Xe129m.f
     // This file was extracted from the 'decay0' program by V.I. Tretyak
     // Copyright 1995-2011 V.I. Tretyak
     // This program is free software
     // it under the terms of the GNU General Public License as published by
     // the Free Software Foundation
     // your option) any later version.
-    // 
+    //
     // This program is distributed in the hope that it will be useful, but
     // WITHOUT ANY WARRANTY
     // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
     // General Public License for more details.
-    // 
+    //
     // You should have received a copy of the GNU General Public License
     // along with this program
     // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-    // 
+    //
 
     void Xe129m(mygsl::rng & prng_, genbb::primary_event & event_, double tcnuc, double & tdnuc)
     {
@@ -60,15 +60,15 @@ namespace genbb {
       thnuc=767232.;
       tdnuc=tcnuc-thnuc/std::log(2.)*std::log(prng_());
       tclev=0.;
-    label_23600  :
+      ////    label_23600  :
       thlev=0.;
       decay0_nucltransKLM(prng_, event_, 0.197,0.035,13.94,0.005,5.34,0.001,1.52,
-			  0.,tclev,thlev,tdlev);
+                          0.,tclev,thlev,tdlev);
       goto label_40000;
     label_40000  :
       thlev=0.97e-9;
       decay0_nucltransKLM(prng_, event_, 0.040,0.035,10.49,0.005,1.43,0.001,0.39,
-			  0.,tclev,thlev,tdlev);
+                          0.,tclev,thlev,tdlev);
       return;
     }
     // end of Xe129m.f
@@ -76,8 +76,8 @@ namespace genbb {
 
 
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
+  } // end of namespace decay0
+} // end of namespace genbb
 
 // end of Xe129m.cc
 // Local Variables: --

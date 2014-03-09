@@ -73,8 +73,8 @@ namespace genbb {
       pdecay=100.*prng_();
       // IT to Pa234
       if (pdecay <= 0.16) {;
-	decay0_nucltransK(prng_, event_, 0.074,0.021,1.1e+1,0.,tclev,thlev,tdlev);
-	return;
+        decay0_nucltransK(prng_, event_, 0.074,0.021,1.1e+1,0.,tclev,thlev,tdlev);
+        return;
       };
       // beta decay to U234
       pbeta=100.*prng_();
@@ -86,7 +86,7 @@ namespace genbb {
       goto label_10000;  // 98.256%
     label_1045  :
       decay0_beta(prng_, event_, 1.224,92.,0.,0.,t);
-    label_10450  :
+      ////    label_10450  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 83.7) goto label_10451;  // 83.7%
@@ -108,7 +108,7 @@ namespace genbb {
       goto label_85200;
     label_989  :
       decay0_beta(prng_, event_, 1.280,92.,0.,0.,t);
-    label_98900  :
+      //// label_98900  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 44.8) goto label_98901;  // 44.8%

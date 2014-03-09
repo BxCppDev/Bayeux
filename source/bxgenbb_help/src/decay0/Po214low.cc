@@ -26,29 +26,31 @@
 namespace genbb {
   namespace decay0 {
 
-    // Po214low.f 
+    // Po214low.f
     // This file was extracted from the 'decay0' program by V.I. Tretyak
     // Copyright 1995-2011 V.I. Tretyak
     // This program is free software
     // it under the terms of the GNU General Public License as published by
     // the Free Software Foundation
     // your option) any later version.
-    // 
+    //
     // This program is distributed in the hope that it will be useful, but
     // WITHOUT ANY WARRANTY
     // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
     // General Public License for more details.
-    // 
+    //
     // You should have received a copy of the GNU General Public License
     // along with this program
     // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-    // 
+    //
 
-    void Po214low(mygsl::rng & prng_, genbb::primary_event & event_, int levelkev)
+    void Po214low(mygsl::rng & /* prng_ */,
+                  genbb::primary_event & /* event_ */,
+                  int levelkev)
     {
       //double t;
       //double tdlev;
-      double tclev;
+      /// double tclev;
       // Subroutine describes the deexcitation process in Po214 nucleus
       // after 2b-decay of Pb214 to ground and excited 0+ and 2+ levels
       // of Po214.
@@ -58,7 +60,7 @@ namespace genbb {
       // 0+(gs) - 0 keV.
       // Output: // common/genevent/tevst,npfull,npgeant(100),pmoment(3,100),// ptime(100).
       // VIT, 19.11.2007.
-      tclev=0.;
+      ////tclev=0.;
       if (levelkev ==  0) goto label_10000;
       goto label_20000;
     label_10000  :
@@ -72,8 +74,8 @@ namespace genbb {
 
 
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
+  } // end of namespace decay0
+} // end of namespace genbb
 
 // end of Po214low.cc
 // Local Variables: --

@@ -13,8 +13,8 @@
 
 namespace genbb {
   namespace decay0 {
-    
-    void decay0_pairext(mygsl::rng & prng, primary_event & event, 
+
+    void decay0_pairext(mygsl::rng & prng, primary_event & event,
                         double E1,double E2,
                         double teta1,double teta2,
                         double phi1,double phi2,double Z)
@@ -51,19 +51,19 @@ namespace genbb {
       geomtools::vector_3d momentum;
       geomtools::vector_3d vertex;
       geomtools::invalidate(vertex);
-      double pmass;
-      
+      //// double pmass;
+
       // Positron:
-      pmass = decay0_particle_mass (POSITRON);
+      //// pmass = decay0_particle_mass (POSITRON);
       part.set_type(POSITRON);
       part.set_time (0. * CLHEP::second);
       momentum.set(pe1[0], pe1[1], pe1[2]);
       part.set_momentum (momentum* CLHEP::MeV);
       part.set_vertex (vertex);
       event.grab_particles ().push_back(part);
-     
+
       // Electron:
-      pmass = decay0_particle_mass (ELECTRON);
+      //// pmass = decay0_particle_mass (ELECTRON);
       part.set_type(ELECTRON);
       part.set_time (0. * CLHEP::second);
       momentum.set(pe2[0], pe2[1], pe2[2]);
@@ -74,11 +74,11 @@ namespace genbb {
       return;
     }
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
-// 
+  } // end of namespace decay0
+} // end of namespace genbb
+//
 // end of pairext.cc
-// 
+//
 // Local Variables: --
 // mode: c++ --
 // End: --

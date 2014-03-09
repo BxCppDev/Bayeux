@@ -125,7 +125,7 @@ namespace genbb {
       } else {
         PbAtShell(prng_, event_, 15,0.,0.,t);
       }
-    label_23400  :
+      ////    label_23400  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 98.13) goto label_23401;
@@ -191,7 +191,7 @@ namespace genbb {
       else { // 6.9% EC from M shell
         PbAtShell(prng_, event_, 3,0.,0.,t);
       }
-    label_16330  :
+      ////    label_16330  :
       thlev=0.80;
       Egamma=1.064;
       cK=9.42e-2;
@@ -360,4 +360,3 @@ namespace genbb {
 // Local Variables: --
 // mode: c++ --
 // End: --
-

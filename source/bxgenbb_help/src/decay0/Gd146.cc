@@ -26,23 +26,23 @@
 namespace genbb {
   namespace decay0 {
 
-    // Gd146.f 
+    // Gd146.f
     // This file was extracted from the 'decay0' program by V.I. Tretyak
     // Copyright 1995-2011 V.I. Tretyak
     // This program is free software
     // it under the terms of the GNU General Public License as published by
     // the Free Software Foundation
     // your option) any later version.
-    // 
+    //
     // This program is distributed in the hope that it will be useful, but
     // WITHOUT ANY WARRANTY
     // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
     // General Public License for more details.
-    // 
+    //
     // You should have received a copy of the GNU General Public License
     // along with this program
     // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-    // 
+    //
 
     void Gd146(mygsl::rng & prng_, genbb::primary_event & event_, double tcnuc, double & tdnuc)
     {
@@ -68,7 +68,7 @@ namespace genbb {
       goto label_230;
     label_806  :
       decay0_gamma(prng_, event_, 0.049,0.,0.,t);
-    label_80600  :
+      ////label_80600  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 36.) goto label_80601;
@@ -81,7 +81,7 @@ namespace genbb {
       goto label_38500;
     label_743  :
       decay0_gamma(prng_, event_, 0.049,0.,0.,t);
-    label_74300  :
+      ////label_74300  :
       thlev=0.;
       decay0_nucltransK(prng_, event_, 0.743,0.049,1.0e-2,0.,tclev,thlev,tdlev);
       return;
@@ -123,8 +123,8 @@ namespace genbb {
 
 
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
+  } // end of namespace decay0
+} // end of namespace genbb
 
 // end of Gd146.cc
 // Local Variables: --

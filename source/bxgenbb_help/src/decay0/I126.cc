@@ -77,7 +77,7 @@ namespace genbb {
       return;
     label_880  :
       decay0_beta(prng_, event_, 0.378,54.,0.,0.,t);
-    label_88000  :
+      //// label_88000  :
       thlev=0.;
       p=100.*prng_();
       if (p <= 20.51) goto label_88001;

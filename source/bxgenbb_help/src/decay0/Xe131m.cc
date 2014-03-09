@@ -26,23 +26,23 @@
 namespace genbb {
   namespace decay0 {
 
-    // Xe131m.f 
+    // Xe131m.f
     // This file was extracted from the 'decay0' program by V.I. Tretyak
     // Copyright 1995-2011 V.I. Tretyak
     // This program is free software
     // it under the terms of the GNU General Public License as published by
     // the Free Software Foundation
     // your option) any later version.
-    // 
+    //
     // This program is distributed in the hope that it will be useful, but
     // WITHOUT ANY WARRANTY
     // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
     // General Public License for more details.
-    // 
+    //
     // You should have received a copy of the GNU General Public License
     // along with this program
     // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-    // 
+    //
 
     void Xe131m(mygsl::rng & prng_, genbb::primary_event & event_, double tcnuc, double & tdnuc)
     {
@@ -60,10 +60,10 @@ namespace genbb {
       thnuc=1.022976e+6;
       tdnuc=tcnuc-thnuc/std::log(2.)*std::log(prng_());
       tclev=0.;
-    label_16400  :
+      ////label_16400  :
       thlev=0.;
       decay0_nucltransKLM(prng_, event_, 0.164,0.035,31.60,0.005,14.75,0.001,4.15,
-			  0.,tclev,thlev,tdlev);
+                          0.,tclev,thlev,tdlev);
       return;
     }
     // end of Xe131m.f
@@ -71,8 +71,8 @@ namespace genbb {
 
 
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
+  } // end of namespace decay0
+} // end of namespace genbb
 
 // end of Xe131m.cc
 // Local Variables: --
