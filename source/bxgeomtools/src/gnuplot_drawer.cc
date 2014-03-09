@@ -646,7 +646,7 @@ namespace geomtools {
     visibility::extract (log_.get_parameters (), visu_config);
 
     bool shown = true;
-    bool shown_envelope = true;
+    //bool shown_envelope = true;
     if (visibility::is_hidden (visu_config)) {
       shown = false;
     }
@@ -654,7 +654,7 @@ namespace geomtools {
       shown = true;
     }
     if (visibility::is_hidden_envelope (visu_config)) {
-      shown_envelope = false;
+      //shown_envelope = false;
     }
 
     color::code_type color = color::COLOR_DEFAULT;

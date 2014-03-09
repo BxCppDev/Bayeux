@@ -760,14 +760,14 @@ namespace geomtools {
       rz_col_type::const_iterator i = _points_.begin ();
       double z0 = i->first;
       double rmin0 = i->second.rmin;
-      double rmax0 = i->second.rmax;
+      // double rmax0 = i->second.rmax;
       double s = 0.0;
       rz_col_type::const_iterator j = i;
       j++;
       while (j != _points_.end ()) {
         const double z1 = j->first;
         const double rmin1 = j->second.rmin;
-        const double rmax1 = j->second.rmax;
+        // const double rmax1 = j->second.rmax;
         // See: http://en.wikipedia.org/wiki/Frustum#Surface_Area
         const double R1 = rmin0;
         const double R2 = rmin1;
@@ -777,7 +777,7 @@ namespace geomtools {
         j++;
         z0 = z1;
         rmin0 = rmin1;
-        rmax0 = rmax1;
+        // rmax0 = rmax1;
       }
       _inner_side_surface_ = s;
     }

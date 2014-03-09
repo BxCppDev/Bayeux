@@ -274,11 +274,11 @@ namespace geomtools {
       lunit = datatools::units::get_length_unit_from (lunit_str);
     }
 
-    double aunit = CLHEP::degree;
-    if (config_.has_key ("angle_unit")) {
-      const std::string aunit_str = config_.fetch_string ("angle_unit");
-      aunit = datatools::units::get_angle_unit_from (aunit_str);
-    }
+    // double aunit = CLHEP::degree;
+    // if (config_.has_key ("angle_unit")) {
+    //   const std::string aunit_str = config_.fetch_string ("angle_unit");
+    //   aunit = datatools::units::get_angle_unit_from (aunit_str);
+    // }
 
     double r;
     datatools::invalidate (r);
@@ -327,11 +327,11 @@ namespace geomtools {
       lunit = datatools::units::get_length_unit_from (lunit_str);
     }
 
-    double aunit = CLHEP::degree;
-    if (config_.has_key ("angle_unit")) {
-      const std::string aunit_str = config_.fetch_string ("angle_unit");
-      aunit = datatools::units::get_angle_unit_from (aunit_str);
-    }
+    // double aunit = CLHEP::degree;
+    // if (config_.has_key ("angle_unit")) {
+    //   const std::string aunit_str = config_.fetch_string ("angle_unit");
+    //   aunit = datatools::units::get_angle_unit_from (aunit_str);
+    // }
 
     DT_THROW_IF (! config_.has_key ("r"), std::logic_error,
                  "Missing sphere 'r' property in simple shaped (sphere) model '" << name_ << "' !");
@@ -362,11 +362,11 @@ namespace geomtools {
       lunit = datatools::units::get_length_unit_from (lunit_str);
     }
 
-    double aunit = CLHEP::degree;
-    if (config_.has_key ("angle_unit")) {
-      const std::string aunit_str = config_.fetch_string ("angle_unit");
-      aunit = datatools::units::get_angle_unit_from (aunit_str);
-    }
+    // double aunit = CLHEP::degree;
+    // if (config_.has_key ("angle_unit")) {
+    //   const std::string aunit_str = config_.fetch_string ("angle_unit");
+    //   aunit = datatools::units::get_angle_unit_from (aunit_str);
+    // }
 
     double inner_r;
     datatools::invalidate (inner_r);

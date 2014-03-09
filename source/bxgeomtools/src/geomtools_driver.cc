@@ -347,13 +347,13 @@ namespace geomtools {
     }
 
     // Default model :
-    bool _has_world_ = false;
+    //bool _has_world_ = false;
     for (models_col_type::const_iterator i
            = geometry_factory.get_models ().begin ();
          i != geometry_factory.get_models ().end ();
          i++) {
       if (i->second->get_name () == geomtools::model_factory::default_world_label()) {
-        _has_world_ = true;
+        //_has_world_ = true;
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
         if (_params_.visu_object_name.empty ()) {
           _params_.visu_object_name = geomtools::model_factory::default_world_label();

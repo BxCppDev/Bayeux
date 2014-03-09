@@ -115,12 +115,11 @@ namespace geomtools {
                                     int mode_)
   {
     double r = r_;
-    set_n_sides (n_sides_);
-    if (mode_ == BUILD_BY_APOTHEM)
-      {
-        r = r_ / cos (M_PI / n_sides_);
-      }
-    set_r (r_);
+    set_n_sides(n_sides_);
+    if (mode_ == BUILD_BY_APOTHEM) {
+      r = r_ / std::cos(M_PI / n_sides_);
+    }
+    set_r(r);
     return;
   }
 

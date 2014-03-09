@@ -341,7 +341,7 @@ namespace geomtools {
   gnuplot_draw::draw_helix(std::ostream & out_,
                             const helix_3d & h_,
                             double step_angle_,
-                            bool gp_trick_)
+                            bool /* gp_trick_ */)
   {
     double delta_t = 1. / 360.; // default
     if(step_angle_ > 0.0) delta_t = helix_3d::angle_to_t(step_angle_);
@@ -479,7 +479,7 @@ namespace geomtools {
                              const rotation_3d & rotation_,
                              const helix_3d & h_,
                              double step_angle_,
-                             bool gp_trick_)
+                             bool /* gp_trick_ */)
   {
     double delta_t = 1. / 360.; // default
     if(step_angle_ > 0.0) delta_t = helix_3d::angle_to_t(step_angle_);
