@@ -91,7 +91,7 @@ namespace dpp {
     DT_THROW_IF (is_initialized (), std::logic_error,
                  "Input module '" << get_name () << "' is already initialized !");
     io_common & ioc = _grab_common();
-    if (stop_ >= 0) {
+    if (stop_ > 0) {
       datatools::smart_filename::make_incremental(ioc.grab_filenames(),
                                                   path_,
                                                   prefix_,
@@ -521,7 +521,7 @@ namespace dpp {
             if (p.has_key(io_common::context_key())) p.clean(io_common::context_key());
             if (p.has_key(io_common::context_meta())) p.clean(io_common::context_meta());
             if (p.has_key(io_common::context_rank())) p.clean(io_common::context_rank());
-            // if (p.has_key(io_common::context_topic())) p.clean(io_common::context_topic());
+            //if (p.has_key(io_common::context_topic())) p.clean(io_common::context_topic());
             if (ctx_store->has_section(ctx_section_key)) {
               // Update the existing store with new contents:
               ctx_store->remove(ctx_section_key);

@@ -223,7 +223,7 @@ namespace dpp {
 
   bool simple_data_source::load_metadata(datatools::properties & a_metadata, int64_t a_entry)
   {
-    if (a_entry < 0 || a_entry >= _metadata_col_.size()) {
+    if (a_entry < 0 || a_entry >= (int) _metadata_col_.size()) {
       return false;
     }
     a_metadata = _metadata_col_[a_entry];

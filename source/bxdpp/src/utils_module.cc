@@ -150,7 +150,7 @@ namespace dpp {
                 "Missing bank label to be removed !");
     bool remove = false;
     if (a_data_record.has (removable_bank_label)) {
-      bool remove = true;
+      remove = true;
       if (! _remove_one_typed_bank_type_.empty()) {
         remove = false;
         if (a_data_record.has_serial_tag(removable_bank_label,
