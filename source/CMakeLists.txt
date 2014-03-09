@@ -206,6 +206,8 @@ if(Bayeux_WITH_GEANT4)
 
   # - Create the public link interface
   set_target_properties(Bayeux_mctools_geant4 PROPERTIES LINK_INTERFACE_LIBRARIES "")
+  # or shall we use this one ?
+  # set_target_properties(Bayeux_mctools_geant4 PROPERTIES INTERFACE_LINK_LIBRARIES "")
 
   list(APPEND Bayeux_ADDON_TARGETS Bayeux_mctools_geant4)
 endif()
