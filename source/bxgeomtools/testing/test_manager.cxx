@@ -109,8 +109,8 @@ bool test_plugin::is_initialized() const
 }
 
 int test_plugin::initialize(const datatools::properties & config_,
-                            const geomtools::manager::plugins_dict_type & plugins_,
-                            const datatools::service_dict_type & services_)
+                            const geomtools::manager::plugins_dict_type & /* plugins_ */,
+                            const datatools::service_dict_type & /* services_ */)
 {
   if (is_initialized())
     {
@@ -152,8 +152,6 @@ int main (int argc_, char ** argv_)
       std::clog << "Test program for class 'geomtools::manager' !" << std::endl;
 
       bool   debug = false;
-      bool   devel = false;
-      bool   du_debug = false;
       bool   verbose = false;
       std::string manager_config_file;
       bool   dump = false;
@@ -181,14 +179,6 @@ int main (int argc_, char ** argv_)
               if ((option == "-d") || (option == "--debug"))
                 {
                   debug = true;
-                }
-              else if (option == "--devel")
-                {
-                  devel = true;
-                }
-              else if (option == "--du-debug")
-                {
-                  du_debug = true;
                 }
               else if ((option == "-V") || (option == "--verbose"))
                 {
@@ -520,7 +510,7 @@ int main (int argc_, char ** argv_)
                     dd_ptrs.push_back(p);
                   }
 
-                  for(int i = 1; i < dd_ptrs.size(); i++)
+                  for(int i = 1; i < (int) dd_ptrs.size(); i++)
                     {
                       boost::shared_ptr<geomtools::display_data> & dd_ptr = dd_ptrs[i];
                       geomtools::blur_spot bs(3, 1 *CLHEP::mm);
