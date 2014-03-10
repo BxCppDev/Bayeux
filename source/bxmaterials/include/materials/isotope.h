@@ -18,14 +18,17 @@ namespace materials {
 
   /*! \brief A simple class to handle known isotopes (ZAI) and their basic properties (mass & decays).
    *
-   *  - Isotope are build with a name and (Z, A, I) attributes :
+   *   - Isotope are built with a name and (Z, A, I) attributes :
    *           - name : which should be used as its id  ( = 'ChA-(I)' or '?-0' by default )
    *           - Z :  number of protons equivalent to the chemical symbol     ( = 0 by default )
    *           - A :  number of nucleons    ( = 0 by default )
-   *           - I  :  Isomeric state if long half-life time excited states { 0 = ground state =' ' ; 1 =
-   *                  first excited ='M' ;  2 =.....='N'  ;  3 = third  excited='O' }  ( = 0 by default )
+   *           - I  : Isomeric state if long half-life time excited states
+   *                  0 = ground state   = ' ' ( = 0 by default )
+   *                  1 = first excited  = 'M'
+   *                  2 = second excited = 'N'
+   *                  3 = third  excited = 'O'
    *
-   *     - I suppose we will only use known isotopes, thus it 's should be not possible to create an unknow ZAI ( except with default constructor ) :
+   *   - I suppose we will only use known isotopes, thus it 's should be not possible to create an unknow ZAI ( except with default constructor ) :
    *           - For consistency, the 3 attributes (Z,A,I) cannot be initialized separately
    *           - Tabulated value of (Z,A) are searched in data file ( 'resources/mass.mas03' by default )
    *           - Note : Isomeric state (I) stay a 'free' parameter which is not checked for the moment

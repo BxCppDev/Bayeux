@@ -12,33 +12,33 @@
 
 using namespace std;
 
-int main (int argc_, char ** argv_)
+int main (int /*argc_*/, char ** /*argv_*/)
 {
   int error_code = EXIT_SUCCESS;
   try {
-    cout << "Test program for class 'element'!" << endl;
-    bool debug = false;
+    clog << "Test program for class 'element'!" << endl;
+    // bool debug = false;
 
-    int iarg = 1;
-    while (iarg < argc_) {
-      string token = argv_[iarg];
+    // int iarg = 1;
+    // while (iarg < argc_) {
+    //   string token = argv_[iarg];
 
-      if (token[0] == '-') {
-        string option = token;
-        if ((option == "-d") || (option == "--debug")) {
-          debug = true;
-        } else {
-          clog << "warning: ignoring option '" << option << "'!" << endl;
-        }
-      } else {
-        string argument = token;
-        /* Here you may add more argument handlers... */
-        {
-          clog << "warning: ignoring argument '" << argument << "'!" << endl;
-        }
-      }
-      iarg++;
-    }
+    //   if (token[0] == '-') {
+    //     string option = token;
+    //     if ((option == "-d") || (option == "--debug")) {
+    //       debug = true;
+    //     } else {
+    //       clog << "warning: ignoring option '" << option << "'!" << endl;
+    //     }
+    //   } else {
+    //     string argument = token;
+    //     /* Here you may add more argument handlers... */
+    //     {
+    //       clog << "warning: ignoring argument '" << argument << "'!" << endl;
+    //     }
+    //   }
+    //   iarg++;
+    // }
 
     std::cout << "MATERIALS_RESOURCE_DIR='" << getenv("MATERIALS_RESOURCE_DIR") << "'" << std::endl;
 

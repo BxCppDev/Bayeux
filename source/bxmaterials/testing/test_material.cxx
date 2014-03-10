@@ -12,41 +12,41 @@
 
 using namespace std;
 
-int main (int argc_, char ** argv_)
+int main (int /* argc */, char ** /* argv_ */)
 {
   int error_code = EXIT_SUCCESS;
   try
     {
       clog << "Test program for class 'material'!" << endl;
 
-      bool debug = false;
+      // bool debug = false;
 
-      int iarg = 1;
-      while (iarg < argc_)
-        {
-          string token = argv_[iarg];
+      // int iarg = 1;
+      // while (iarg < argc_)
+      //   {
+      //     string token = argv_[iarg];
 
-          if (token[0] == '-')
-            {
-               string option = token;
-               if ((option == "-d") || (option == "--debug"))
-                 {
-                   debug = true;
-                 }
-               else
-                 {
-                    clog << "warning: ignoring option '" << option << "'!" << endl;
-                 }
-            }
-          else
-            {
-              string argument = token;
-              {
-                clog << "warning: ignoring argument '" << argument << "'!" << endl;
-              }
-            }
-          iarg++;
-      }
+      //     if (token[0] == '-')
+      //       {
+      //          string option = token;
+      //          if ((option == "-d") || (option == "--debug"))
+      //            {
+      //              debug = true;
+      //            }
+      //          else
+      //            {
+      //               clog << "warning: ignoring option '" << option << "'!" << endl;
+      //            }
+      //       }
+      //     else
+      //       {
+      //         string argument = token;
+      //         {
+      //           clog << "warning: ignoring argument '" << argument << "'!" << endl;
+      //         }
+      //       }
+      //     iarg++;
+      // }
 
  // Definition of Isotopes :
 
