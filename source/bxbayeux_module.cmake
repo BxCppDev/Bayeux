@@ -78,3 +78,8 @@ endif()
 set(${module_name}_MODULE_APPS
   ${module_app_dir}/query.cxx
   )
+
+
+set(${module_name}_MODULE_TESTS
+${module_test_dir}/test_bayeux.cxx
+)
