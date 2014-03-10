@@ -402,8 +402,9 @@ extern "C" {
     if (exe == NULL) {
       //fprintf(stderr,"ERROR: br_init_lib: error=%d\n", (int) brerror);
     } else {
-      //fprintf(stderr,"DEVEL: br_init_lib: exe=%s\n", exe);
+      //fprintf(stderr,"DEVEL: Bayeux: br_init_lib: exe=%s\n", exe);
     }
+
     return exe != NULL;
   }
 
@@ -476,7 +477,7 @@ extern "C" {
   char *
   br_find_prefix (const char *default_prefix)
   {
-    char *dir1, *dir2;
+    char *dir1, *dir2, *tmp0, *tmp2;
 
     if (exe == (char *) NULL) {
       /* BinReloc not initialized. */
@@ -487,7 +488,13 @@ extern "C" {
     }
 
     dir1 = br_dirname (exe);
-    dir2 = br_dirname (dir1);
+    if (strlen(BR_LIB_ARCH) == 0) {
+      dir2 = br_dirname (dir1);
+    } else {
+      tmp0 = br_dirname (dir1);
+      dir2 = br_dirname (tmp0);
+      free (tmp0);
+    }
     free (dir1);
     return dir2;
   }
@@ -645,6 +652,7 @@ extern "C" {
     char *prefix, *dir;
 
     prefix = br_find_prefix ((const char *) NULL);
+    //fprintf(stderr,"DEVEL: Bayeux: br_find_lib_dir: prefix=%s\n", prefix);
     if (prefix == (char *) NULL) {
       /* BinReloc not initialized. */
       if (default_lib_dir != (const char *) NULL)
@@ -653,7 +661,11 @@ extern "C" {
         return (char *) NULL;
     }
 
-    dir = br_build_path (prefix, "lib");
+    if (strlen(BR_LIB_ARCH) == 0) {
+      dir = br_build_path (prefix, "lib");
+    } else {
+      dir = br_build_path (prefix, "lib/"BR_LIB_ARCH);
+    }
     free (prefix);
     return dir;
   }
