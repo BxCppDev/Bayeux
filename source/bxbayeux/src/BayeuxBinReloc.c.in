@@ -488,7 +488,7 @@ extern "C" {
     }
 
     dir1 = br_dirname (exe);
-    if (strlen(BR_LIB_ARCH) == 0) {
+    if (strlen("@CMAKE_LIBRARY_ARCHITECTURE@") == 0) {
       dir2 = br_dirname (dir1);
     } else {
       tmp0 = br_dirname (dir1);
@@ -527,7 +527,9 @@ extern "C" {
         return (char *) NULL;
     }
 
-    dir = br_build_path (prefix, "bin");
+    // dir = br_build_path (prefix, "bin");
+    dir = br_build_path (prefix, "@CMAKE_INSTALL_BINDIR@");
+
     free (prefix);
     return dir;
   }
@@ -560,7 +562,8 @@ extern "C" {
         return (char *) NULL;
     }
 
-    dir = br_build_path (prefix, "sbin");
+    // dir = br_build_path (prefix, "sbin");
+    dir = br_build_path (prefix, "@CMAKE_INSTALL_SBINDIR@");
     free (prefix);
     return dir;
   }
@@ -594,7 +597,8 @@ extern "C" {
         return (char *) NULL;
     }
 
-    dir = br_build_path (prefix, "share");
+    //dir = br_build_path (prefix, "share");
+    dir = br_build_path (prefix, "@CMAKE_INSTALL_DATAROOTDIR@");
     free (prefix);
     return dir;
   }
@@ -627,7 +631,8 @@ extern "C" {
         return (char *) NULL;
     }
 
-    dir = br_build_path (data_dir, "locale");
+    // dir = br_build_path (data_dir, "locale");
+    dir = br_build_path(data_dir, "@CMAKE_INSTALL_LOCALEDIR@");
     free (data_dir);
     return dir;
   }
@@ -661,11 +666,9 @@ extern "C" {
         return (char *) NULL;
     }
 
-    if (strlen(BR_LIB_ARCH) == 0) {
-      dir = br_build_path (prefix, "lib");
-    } else {
-      dir = br_build_path (prefix, "lib/"BR_LIB_ARCH);
-    }
+    /* fprintf(stderr,"DEVEL: Bayeux: br_find_lib_dir: CMAKE_INSTALL_LIBDIR=%s\n", "@CMAKE_INSTALL_LIBDIR@"); */
+    /* fprintf(stderr,"DEVEL: Bayeux: br_find_lib_dir: CMAKE_LIBRARY_ARCHITECTURE=%s\n", "@CMAKE_LIBRARY_ARCHITECTURE@"); */
+    dir = br_build_path (prefix, "@CMAKE_INSTALL_LIBDIR@");
     free (prefix);
     return dir;
   }
@@ -698,7 +701,8 @@ extern "C" {
         return (char *) NULL;
     }
 
-    dir = br_build_path (prefix, "libexec");
+    //dir = br_build_path (prefix, "libexec");
+    dir = br_build_path (prefix, "@CMAKE_INSTALL_LIBEXECDIR@");
     free (prefix);
     return dir;
   }
@@ -731,7 +735,8 @@ extern "C" {
         return (char *) NULL;
     }
 
-    dir = br_build_path (prefix, "etc");
+    //dir = br_build_path (prefix, "etc");
+    dir = br_build_path (prefix, "@CMAKE_INSTALL_SYSCONFDIR@");
     free (prefix);
     return dir;
   }

@@ -44,15 +44,20 @@ configure_file(${module_source_dir}/reloc.cc.in
   bx${module_name}/reloc.cc
   @ONLY
   )
+configure_file(${module_source_dir}/BayeuxBinReloc.c.in
+  bx${module_name}/BayeuxBinReloc.c
+  @ONLY
+  )
 
 set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/version.cc
   ${module_source_dir}/bayeux.cc
   ${module_source_dir}/the_introspectable.cc
-  ${module_source_dir}/BayeuxBinReloc.c
+  #${module_source_dir}/BayeuxBinReloc.c
   bx${module_name}/_bayeux.cc
   bx${module_name}/reloc.cc
   bx${module_name}/${module_name}/BayeuxBinReloc.h
+  bx${module_name}/BayeuxBinReloc.c
   )
 
 set(${module_name}_ENDING_MODULE_SOURCES )

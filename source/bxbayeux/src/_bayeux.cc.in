@@ -153,13 +153,13 @@ void _special_initialize_impl() {
         "Bayeux");
     bayeux_lib_infos.store_string(
         datatools::library_info::keys::install_lib_dir(),
-        "@CMAKE_INSTALL_PREFIX@/lib");
+        "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@");
     bayeux_lib_infos.store_string(
         datatools::library_info::keys::install_include_dir(),
-        "@CMAKE_INSTALL_PREFIX@/include");
+        "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_INCLUDEDIR@");
     bayeux_lib_infos.store_string(
         datatools::library_info::keys::install_bin_dir(),
-        "@CMAKE_INSTALL_PREFIX@/bin");
+        "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@");
     bayeux_lib_infos.store_string(
         datatools::library_info::keys::install_resource_dir(),
         "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/@Bayeux_RESOURCE_DIR@");
@@ -216,6 +216,7 @@ void _special_terminate_impl() {
       if (lib_info_reg.has("brio")) lib_info_reg.unregistration("brio");
 
       if (lib_info_reg.has("emfield")) lib_info_reg.unregistration("emfield");
+
       if (lib_info_reg.has("geomtools")) lib_info_reg.unregistration("geomtools");
 
       if (lib_info_reg.has("mygsl")) lib_info_reg.unregistration("mygsl");

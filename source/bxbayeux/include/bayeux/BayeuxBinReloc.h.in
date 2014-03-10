@@ -29,9 +29,6 @@ extern "C" {
     BR_INIT_ERROR_DISABLED
   } BrInitError;
 
-// Multiarch support (Debian/Ubuntu)
-#define BR_LIB_ARCH "@CMAKE_LIBRARY_ARCHITECTURE@"
-
 #ifndef BINRELOC_RUNNING_DOXYGEN
   /* Mangle symbol names to avoid symbol
    * collisions with other ELF objects.
