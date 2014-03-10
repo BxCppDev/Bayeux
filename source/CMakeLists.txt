@@ -297,7 +297,7 @@ install(
 # - NB assumes each test .cxx file generates a single executable
 # - We also output the executables to a dedicated directory
 if(Bayeux_ENABLE_TESTING)
-  foreach(_m ${Bayeux_SUBMODULES})
+  foreach(_m ${Bayeux_SUBMODULES} bayeux)
     foreach(_testsource ${${_m}_MODULE_TESTS})
       get_filename_component(_testname "${_testsource}" NAME_WE)
       set(_testname "${_m}-${_testname}")
