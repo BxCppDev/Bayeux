@@ -88,6 +88,11 @@ foreach(_dir BINDIR LIBDIR INCLUDEDIR DATAROOTDIR)
   endif()
 endforeach()
 
+# Add a path for CMake config files
+set(CMAKE_INSTALL_CMAKEDIR ${CMAKE_INSTALL_LIBDIR}/cmake)
+set(CMAKE_INSTALL_FULL_CMAKEDIR ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
+
+
 # - Configure output paths for products to give inplace build that roughly
 #   matches install layout.
 #   We allow a parent project to change the output root so that Bayeux
@@ -95,6 +100,9 @@ endforeach()
 if(NOT Bayeux_EMBEDDED OR NOT Bayeux_BUILDPRODUCT_DIR)
   set(Bayeux_BUILDPRODUCT_DIR "${PROJECT_BINARY_DIR}/BuildProducts")
 endif()
+
+file(RELATIVE_PATH Bayeux_BINDIR_TO_RESOURCEDIR "${CMAKE_INSTALL_FULL_BINDIR}"  "${CMAKE_INSTALL_FULL_DATAROOTDIR}/Bayeux-${Bayeux_VERSION}")
+file(RELATIVE_PATH Bayeux_CMAKEDIR_TO_INCLUDEDIR "${CMAKE_INSTALL_FULL_CMAKEDIR}/Bayeux-${Bayeux_VERSION}"  "${CMAKE_INSTALL_FULL_INCLUDEDIR}")
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}")
