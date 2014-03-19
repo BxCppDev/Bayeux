@@ -1085,6 +1085,12 @@ namespace datatools {
     return pd;
   }
 
+  void properties::store(const std::string& prop_key, const data& value) {
+    this->_check_nokey_(prop_key);
+    this->_validate_key_(prop_key);
+    _props_[prop_key] = value;
+  }
+
   const std::string & properties::key (int key_index_) const
   {
     int key_count = 0;

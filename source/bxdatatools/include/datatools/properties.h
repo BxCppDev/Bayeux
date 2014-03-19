@@ -501,6 +501,9 @@ class properties :
   //! Access to a non-mutable reference to a property data object
   const data & get(const std::string& prop_key) const;
 
+  //! Store data item with supplied key
+  void store(const std::string& key, const data& value);
+
   //! builds the list of keys (by reference) stored in the map that start with prefix.
   void keys_not_starting_with(std::vector<std::string>&, const std::string& prefix) const;
 
