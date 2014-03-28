@@ -154,6 +154,9 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(geomtools::simple_shaped_model)
+
 #endif // GEOMTOOLS_SIMPLE_SHAPED_MODEL_H_
 
 // end of simple_shaped_model.h

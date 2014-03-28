@@ -343,6 +343,34 @@ namespace geomtools {
     return;
   }
 
+  void i_model::init_ocd(datatools::object_configuration_description & ocd_)
+  {
+
+    // Logging:
+    datatools::logger::declare_ocd_logging_configuration(ocd_);
+
+    {
+      datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+      cpd.set_name_pattern(i_model::phantom_solid_flag())
+        .set_terse_description("The flag for a phantom solid")
+        .set_traits(datatools::TYPE_BOOLEAN)
+        .set_mandatory(false)
+        .set_default_value_boolean(false)
+        .set_long_description("This property marks the solid as 'phantom'. \n"
+                              "It is not used yet in the Bayeux/geomtools  \n"
+                              "library.                                    \n"
+                              )
+        .add_example("Make the solid a phantom::         \n"
+                     "                                   \n"
+                     "  phantom_solid : boolean = false  \n"
+                     "                                   \n"
+                     )
+        ;
+    }
+
+    return;
+  }
+
 } // end of namespace geomtools
 
 // end of i_model.cc

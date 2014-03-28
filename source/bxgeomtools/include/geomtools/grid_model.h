@@ -1,22 +1,22 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* grid_model.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-02-21
  * Last modified: 2013-02-21
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *   Grid model
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
 #ifndef GEOMTOOLS_GRID_MODEL_H_
 #define GEOMTOOLS_GRID_MODEL_H_ 1
 
-#include <string> 
+#include <string>
 #include <iostream>
 
 #include <geomtools/i_boxed_model.h>
@@ -29,11 +29,11 @@ namespace geomtools {
 
   class box;
 
-  // define a geometry model with a single box: 
+  // define a geometry model with a single box:
   GEOMTOOLS_BOXED_MODEL_CLASS_DECLARE(grid_model)
   {
 
-  public: 
+  public:
 
     size_t get_number_of_items (int);
 
@@ -56,18 +56,18 @@ namespace geomtools {
     const std::string & get_grid_daughter_label () const;
 
     grid_model ();
-  
+
     virtual ~grid_model ();
 
     virtual std::string get_model_id () const;
-      
-    virtual void tree_dump (std::ostream & out_         = std::clog, 
-                            const std::string & title_  = "", 
-                            const std::string & indent_ = "", 
+
+    virtual void tree_dump (std::ostream & out_         = std::clog,
+                            const std::string & title_  = "",
+                            const std::string & indent_ = "",
                             bool inherit_          = false) const;
 
   protected:
-  
+
     virtual void _at_construct (const std::string & name_,
                                 const datatools::properties & config_,
                                 models_col_type * models_ = 0);
@@ -88,10 +88,13 @@ namespace geomtools {
 
     // registration interface :
     GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(grid_model);
-  
+
   };
 
 } // end of namespace geomtools
+
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(geomtools::grid_model)
 
 #endif // GEOMTOOLS_GRID_MODEL_H_
 

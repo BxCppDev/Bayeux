@@ -13,6 +13,9 @@
 
 namespace geomtools {
 
+  // Registration :
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(grid_model,"geomtools::grid_model");
+
   const geomtools::box & grid_model::get_box () const
   {
     return _solid_;
@@ -394,9 +397,332 @@ namespace geomtools {
     return;
   }
 
-  // registration :
-  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(grid_model,"geomtools::grid_model");
-
 } // end of namespace geomtools
+
+// OCD support for class '::geomtools::grid_model' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::grid_model,
+                                ocd_)
+{
+  ocd_.set_class_name("geomtools::grid_model");
+  ocd_.set_class_description("A geometry model implementing a mother box with some daughter volume placed on a 2D mesh");
+  ocd_.set_class_library("geomtools");
+  /*
+  ocd_.set_class_documentation("  \n"
+                               );
+  */
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("length_unit")
+      .set_terse_description("The length unit symbol")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_default_value_string("mm")
+      .set_long_description("This property set the symbol of the default length\n"
+                            "unit.                                             \n"
+                            )
+      .add_example("Using cm::                                       \n"
+                   "                                                 \n"
+                   "   length_unit : string = \"cm\"                 \n"
+                   "                                                 \n"
+                   )
+      ;
+  }
+
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("material.ref")
+      .set_terse_description("The label of the material the grid mother volume is made of")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .set_long_description("This label of the material the grid mother volume is made of."
+                            )
+      .add_example("Using 'air'::                                  \n"
+                   "                                               \n"
+                   "   material.ref : string = \"air\"             \n"
+                   "                                               \n"
+                   )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("grid.force_stackable")
+      .set_terse_description("Flag to force the use of explicit stacking informations while stacking the geometry model")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("This property triggers the use of some stacking  \n"
+                            "informations for the geometry model being placed \n"
+                            "on the grid layout.                              \n"
+                            )
+      .add_example("Force some stacking informations::                \n"
+                   "                                                 \n"
+                   "  grid.force_stackable : boolean = 1             \n"
+                   "                                                 \n"
+                   )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("grid.plane")
+      .set_terse_description("The label of the grid plane")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .set_long_description("This property set the label of the grid plane.    \n"
+                            "Possible values are :  'xy' ,'xz' and 'yz'.       \n"
+                            )
+      .add_example("Set the plane of the grid::                      \n"
+                   "                                                 \n"
+                   "   grid.plane : string = \"xy\"                  \n"
+                   "                                                 \n"
+                   )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("grid.x.number_of_items")
+      .set_terse_description("The number of columns along the X axis")
+      .set_traits(datatools::TYPE_INTEGER)
+      .set_mandatory(true)
+      .set_triggered_by_label("grid.plane", "xy;xz")
+      .set_long_description("The number of columns along the X axis.    \n")
+      .add_example("Set the number of items on the X axis of the grid:: \n")
+      .add_example("A grid in the XY plane with 4 items placed      \n"
+                   "along the X axis::                              \n"
+                   "                                                \n"
+                   "   grid.plane             : string = \"xy\"     \n"
+                   "   grid.x.number_of_items : integer = 4         \n"
+                   "                                                \n"
+                   )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("grid.x.step")
+      .set_terse_description("The step dimension along the X axis")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(true)
+      .set_triggered_by_label("grid.plane", "xy;xz")
+      .set_long_description("The step dimension along the X axis.             \n"
+                            )
+      .add_example("A grid in the XY plane with 4 items placed every 23.4 cm  \n"
+                   "along the X axis::                                        \n"
+                   "                                                \n"
+                   "   grid.plane             : string = \"xy\"     \n"
+                   "   grid.x.number_of_items : integer = 4         \n"
+                   "   grid.x.step            : real    = 23.4 cm   \n"
+                   "                                                \n"
+                   )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("grid.y.number_of_items")
+      .set_terse_description("The number of columns along the Y axis")
+      .set_traits(datatools::TYPE_INTEGER)
+      .set_mandatory(true)
+      .set_triggered_by_label("grid.plane", "xy;yz")
+      .set_long_description("The number of columns along the Y axis.          \n")
+      .add_example("A grid in the YZ plane with 7 items placed      \n"
+                   "along the Y axis::                              \n"
+                   "                                                \n"
+                   "   grid.plane : string = \"yz\"                 \n"
+                   "   grid.y.number_of_items : integer = 7         \n"
+                   "                                                \n"
+                   )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("grid.y.step")
+      .set_terse_description("The step dimension along the Y axis")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(true)
+      .set_triggered_by_label("grid.plane", "xy;yz")
+      .set_long_description("The step dimension along the Y axis.             \n")
+      .add_example("A grid in the XY plane with 4 items placed every 7.2 mm   \n"
+                   "along the Y axis::                              \n"
+                   "                                                \n"
+                   "   grid.plane             : string = \"xy\"     \n"
+                   "   grid.y.number_of_items : integer = 4         \n"
+                   "   grid.y.step            : real    = 7.3 mm    \n"
+                   "                                                \n"
+                   )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("grid.z.number_of_items")
+      .set_terse_description("The number of columns along the Z axis")
+      .set_traits(datatools::TYPE_INTEGER)
+      .set_mandatory(true)
+      .set_triggered_by_label("grid.plane", "xz;yz")
+      .set_long_description("The number of columns along the Z axis.          \n"
+                            "Example::                                        \n"
+                            "                                                \n"
+                            "   grid.plane : string = \"yz\"                 \n"
+                            "   grid.z.number_of_items : integer = 3         \n"
+                            "                                                \n"
+                            )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("grid.z.step")
+      .set_terse_description("The step dimension along the Z axis")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(true)
+      .set_triggered_by_label("grid.plane", "xz;yz")
+      .set_long_description("The step dimension along the Z axis.             \n")
+      .add_example("A grid in the XZ plane with 2 items placed every 12.4 mm  \n"
+                   "along the Z axis::                                        \n"
+                   "                                                          \n"
+                   "  grid.plane             : string = \"xz\"     \n"
+                   "  grid.z.number_of_items : integer = 2         \n"
+                   "  grid.z.step            : real    = 12.4 mm   \n"
+                   "                                               \n"
+                   )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("grid.model")
+      .set_terse_description("The name of the geometry model to be placed on the grid layout")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .set_long_description("The geometry model is searched for an external   \n"
+                            "dictionnary of models, typically from a model    \n"
+                            "factory.                                         \n"
+                            )
+      .add_example("Grid replication of model named ``\"block\"``:: \n"
+                   "                                                \n"
+                   "   grid.model : string = \"block\"              \n"
+                   "                                                \n"
+                   )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("x")
+      .set_terse_description("The X dimension of the box")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(false)
+      .set_long_description("This property sets X dimension of the box."
+                            )
+      .add_example("Set the X dimension ::                           \n"
+                   "                                                 \n"
+                   "   x : real as length = 24.5 cm                  \n"
+                   "                                                 \n"
+                   "or ::                                            \n"
+                   "                                                 \n"
+                   "   length_unit : string = \"cm\"                 \n"
+                   "   x : real = 24.5                               \n"
+                   "                                                 \n"
+                   )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("y")
+      .set_terse_description("The Y dimension of the box")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(false)
+      .set_long_description("This property sets Y dimension of the box.       \n")
+      .add_example("Set the Y dimension ::                          \n"
+                   "                                                \n"
+                   "   y : real as length = 12.34 mm                 \n"
+                   "                                                \n"
+                   "or ::                                           \n"
+                   "                                                \n"
+                   "   length_unit : string = \"cm\"                \n"
+                   "   y : real = 12.34                              \n"
+                   "                                                \n"
+                   )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("z")
+      .set_terse_description("The Z dimension of the box")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(false)
+      .set_long_description("This property sets Z dimension of the box.")
+      .add_example("Set the Z dimension ::                          \n"
+                   "                                                \n"
+                   "   z : real as length = 170.0 um                \n"
+                   "                                                \n"
+                   "or ::                                           \n"
+                   "                                                \n"
+                   "   length_unit : string = \"cm\"                \n"
+                   "   z : real = 24.5                              \n"
+                   "                                                \n"
+                   )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("material.ref")
+      .set_terse_description("The label of the material the volume is made of")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .set_long_description("This label of the material the volume is made of.")
+      .add_example("Use 'inox' ::                                   \n"
+                   "                                                \n"
+                   "    material.ref : string = \"inox\"            \n"
+                   "                                                \n"
+                   )
+      ;
+  }
+
+  ocd_.set_configuration_hints("This model is configured through a configuration file that \n"
+                               "uses the format of 'datatools::properties' setup file.     \n"
+                               "                                                           \n"
+                               "Example ::                                                 \n"
+                               "                                                           \n"
+                               "  length_unit      : string = \"cm\"                       \n"
+                               "  x                : real   =  30.0 mm                     \n"
+                               "  y                : real   =  30.0 mm                     \n"
+                               "  z                : real   =  1.3                         \n"
+                               "  grid.model       : string =  \"brick\"                   \n"
+                               "  grid.plane       : string =  \"xy\"                      \n"
+                               "  grid.x.number_of_items : integer = 2                     \n"
+                               "  grid.x.step            : real    = 12.4 mm               \n"
+                               "  grid.y.number_of_items : integer = 4                     \n"
+                               "  grid.y.step            : real    = 5.2 mm                \n"
+                               "  material.ref     : string = \"air\"                      \n"
+                               "                                                           \n"
+                               "It is also possible to add stacking informations to change \n"
+                               "the default stacking behaviour of the model ::             \n"
+                               "                                                           \n"
+                               "  grid.force_stackable       : boolean = 1                 \n"
+                               "  grid.force_stackable.length_unit : string = \"mm\"       \n"
+                               "  grid.force_stackable.xmin : real =  1.3                  \n"
+                               "  grid.force_stackable.xmax : real = -3.4                  \n"
+                               "  grid.force_stackable.ymin : real =  4.3                  \n"
+                               "  grid.force_stackable.ymax : real =  2.4                  \n"
+                               "                                                           \n"
+                               );
+
+  ocd_.set_validation_support(true);
+  ocd_.lock();
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+DOCD_CLASS_SYSTEM_REGISTRATION(::geomtools::grid_model,
+                               "geomtools::grid_model")
+
 
 // end of grid_model.cc

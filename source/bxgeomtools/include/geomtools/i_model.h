@@ -1,8 +1,8 @@
 // -*- mode: c++ ; -*-
-/* i_model.h
+/* \file geomtools/i_model.h
  * Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-20
- * Last modified: 2013-06-17
+ * Last modified: 2014-03-27
  *
  * License:
  *
@@ -17,18 +17,24 @@
 #ifndef GEOMTOOLS_I_MODEL_H_
 #define GEOMTOOLS_I_MODEL_H_ 1
 
+// Standard library:
 #include <iostream>
 #include <string>
 
+// Third party:
+// - Boost
 #include <boost/scoped_ptr.hpp>
 
+// Bayeux:
 #include <datatools/i_tree_dump.h>
 #include <datatools/properties.h>
 #include <datatools/logger.h>
+#include <datatools/factory_macros.h>
+#include <datatools/ocd_macros.h>
 
+// This library:
 #include <geomtools/logical_volume.h>
 #include <geomtools/detail/model_tools.h>
-#include <datatools/factory_macros.h>
 
 namespace geomtools {
 
@@ -109,6 +115,9 @@ namespace geomtools {
 
     /// Force the debug logging priority threshold
     void set_debug (bool);
+
+    /// OCD support
+    static void init_ocd(datatools::object_configuration_description & ocd_);
 
   protected:
 

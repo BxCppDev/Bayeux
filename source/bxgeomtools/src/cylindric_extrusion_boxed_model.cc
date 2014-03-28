@@ -2,19 +2,19 @@
 /* cylindric_extrusion_boxed_model.cc
  */
 
+// Ourselves:
 #include <geomtools/cylindric_extrusion_boxed_model.h>
 
-#include <mygsl/min_max.h>
-
+// Third party libraries:
+// - Bayeux:
 #include <datatools/units.h>
 #include <datatools/exception.h>
-
+#include <mygsl/min_max.h>
 #include <geomtools/i_boxed_model.h>
 #include <geomtools/physical_volume.h>
 #include <geomtools/placement.h>
 #include <geomtools/visibility.h>
 #include <geomtools/gnuplot_draw.h>
-
 
 namespace geomtools {
 
@@ -369,5 +369,153 @@ namespace geomtools {
   GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(cylindric_extrusion_boxed_model,"geomtools::cylindric_extrusion_boxed_model");
 
 } // end of namespace geomtools
+
+
+// OCD support for class '::geomtools::cylindric_extrusion_boxed_model' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::cylindric_extrusion_boxed_model,
+                                ocd_)
+{
+  ocd_.set_class_name("geomtools::cylindric_extrusion_boxed_model");
+  ocd_.set_class_description("A geometry model implementing a box with a cylindric extrusion centered along its Z axis");
+  ocd_.set_class_library("geomtools");
+  /*
+  ocd_.set_class_documentation("  \n"
+                               );
+  */
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("length_unit")
+      .set_terse_description("The length unit symbol")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_default_value_string("mm")
+      .set_long_description("This property set the symbol of the default length\n"
+                            "unit.                                             \n"
+                            "Example ::                                        \n"
+                            "                                                  \n"
+                            "   length_unit : string = \"cm\"                  \n"
+                            "                                                  \n"
+                            )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("x")
+      .set_terse_description("The X dimension of the box")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(true)
+      .set_long_description("This property sets X dimension of the box.      \n"
+                            "Example ::                                      \n"
+                            "                                                \n"
+                            "   x : real = 24.5 cm                           \n"
+                            "                                                \n"
+                            "or ::                                           \n"
+                            "                                                \n"
+                            "   length_unit : string = \"cm\"                \n"
+                            "   x : real = 24.5                              \n"
+                            "                                                \n"
+                            )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("y")
+      .set_terse_description("The Y dimension of the box")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(true)
+      .set_long_description("This property sets Y dimension of the box.      \n"
+                            "Example ::                                      \n"
+                            "                                                \n"
+                            "   y : real = 24.5 cm                           \n"
+                            "                                                \n"
+                            "                                                \n"
+                            "or ::                                           \n"
+                            "                                                \n"
+                            "   length_unit : string = \"cm\"                \n"
+                            "   y : real = 24.5                              \n"
+                            "                                                \n"
+                            )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("z")
+      .set_terse_description("The Z dimension of the box")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(true)
+      .set_long_description("This property sets Z dimension of the box.      \n"
+                            "Example ::                                      \n"
+                            "                                                \n"
+                            "   z : real = 24.5 cm                           \n"
+                            "                                                \n"
+                            "or ::                                           \n"
+                            "                                                \n"
+                            "   length_unit : string = \"cm\"                \n"
+                            "   z : real = 24.5                              \n"
+                            "                                                \n"
+                            )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("extrusion_radius")
+      .set_terse_description("The radius in the XY plane of the cylindric extrusion")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(true)
+      .set_long_description("This property sets Z dimension of the box.       \n"
+                            "Example ::                                        \n"
+                            "                                                \n"
+                            "   extrusion_radius : real = 4.6 cm             \n"
+                            "                                                \n"
+                            "or ::                                             \n"
+                            "                                                \n"
+                            "   length_unit : string = \"cm\"                \n"
+                            "   extrusion_radius : real = 4.6                \n"
+                            "                                                \n"
+                            )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("material.ref")
+      .set_terse_description("The label of the material the volume is made of")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .set_long_description("This label of the material the volume is made of.\n")
+      .add_example("Use 'inox' as the material::                    \n"
+                   "                                                \n"
+                   "    material.ref : string = \"inox\"            \n"
+                   "                                                \n"
+                   )
+      ;
+  }
+
+  ocd_.set_configuration_hints("This model is configured through a configuration file that  \n"
+                               "obeys the format of 'datatools::properties' setup file.     \n"
+                               "Example ::                                                  \n"
+                               "                                                           \n"
+                               "  length_unit      : string = \"cm\"                       \n"
+                               "  x                : real   =  30.0                        \n"
+                               "  y                : real   =  30.0                        \n"
+                               "  z                : real   =  10.0 mm                     \n"
+                               "  extrusion_radius : real   =  40.0 mm                     \n"
+                               "  material.ref     : string = \"inox\"                     \n"
+                               "  \n"
+                               );
+
+  ocd_.set_validation_support(false);
+  ocd_.lock();
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+DOCD_CLASS_SYSTEM_REGISTRATION(::geomtools::cylindric_extrusion_boxed_model,
+                               "geomtools::cylindric_extrusion_boxed_model")
+
 
 // end of cylindric_extrusion_boxed_model.cc

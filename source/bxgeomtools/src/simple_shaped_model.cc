@@ -889,4 +889,57 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
+// OCD support for class '::geomtools::simple_shaped_model' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::simple_shaped_model,
+                                ocd_)
+{
+  ocd_.set_class_name("geomtools::simple_shaped_model");
+  ocd_.set_class_description("A geometry model implementing a simple 3D shape");
+  ocd_.set_class_library("geomtools");
+  ocd_.set_class_description("This very useful geometry model is able to implement \n"
+                             "volumes with various simple 3D shapes. The following \n"
+                             "shapes are supported:                                \n"
+                             "                                                     \n"
+                             " * Box                                               \n"
+                             " * Cylinder                                          \n"
+                             " * Tube                                              \n"
+                             " * Sphere                                            \n"
+                             " * Polycone                                          \n"
+                             " * Polyhedron                                        \n"
+                             "                                                     \n"
+                             "The generated volume can also host daughter volumes, \n"
+                             "thanks to the 'internal items' interface.            \n"
+                             );
+
+  // Inherit parent class/interface OCD support:
+  geomtools::i_model::init_ocd(ocd_);
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("length_unit")
+      .set_terse_description("The length unit symbol")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_default_value_string("mm")
+      .set_long_description("This property set the symbol of the default length\n"
+                            "unit.                                             \n"
+                            "Example ::                                        \n"
+                            "                                                  \n"
+                            "   length_unit : string = \"cm\"                  \n"
+                            "                                                  \n"
+                            )
+      ;
+  }
+
+
+  ocd_.set_validation_support(false);
+  ocd_.lock();
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+DOCD_CLASS_SYSTEM_REGISTRATION(::geomtools::simple_shaped_model,
+                               "geomtools::simple_shaped_model")
+
+
+
 // end of simple_shaped_model.cc
