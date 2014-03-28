@@ -706,13 +706,16 @@ EOF
 ############################################################
 [name="materials_driver" type="geomtools::materials_plugin"]
 
-#@config The list of properties to configure the materials plugins
+#@config The list of properties to configure the materials plugin
 
 #@description Debug flag
 materials.debug  : boolean = 0
 
+#@description Flag to allow material alias overloading
+materials.alias_allow_overload : boolean = 1
+
 #@description The list of files that describes isotopes/elements/materials
-materials.files : string[4] as path = \\
+materials.configuration_files : string[4] as path = \\
   "@materials:data/std_isotopes.def" \\
   "@materials:data/std_elements.def" \\
   "@materials:data/std_materials.def" \\
