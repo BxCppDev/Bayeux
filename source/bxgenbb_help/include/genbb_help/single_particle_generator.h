@@ -79,8 +79,6 @@ namespace genbb {
       };
 
   public:
-    bool is_debug () const;
-    void set_debug (bool);
     void set_direction_mode (int);
     int get_direction_mode () const;
     bool is_randomized_direction () const;
@@ -159,7 +157,6 @@ namespace genbb {
 
   private:
 
-    bool   _debug_;
     bool   _initialized_;
     int    _particle_type_;
     std::string _particle_name_;

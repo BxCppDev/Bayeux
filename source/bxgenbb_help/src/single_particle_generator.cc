@@ -42,17 +42,6 @@ namespace genbb {
 
   GENBB_PG_REGISTRATION_IMPLEMENT(single_particle_generator,"genbb::single_particle_generator");
 
-  bool single_particle_generator::is_debug () const
-  {
-    return _debug_;
-  }
-
-  void single_particle_generator::set_debug (bool new_value_)
-  {
-    _debug_ = new_value_;
-    return;
-  }
-
   bool single_particle_generator::can_external_random () const
   {
     return true;
@@ -283,7 +272,6 @@ namespace genbb {
   // ctor:
   single_particle_generator::single_particle_generator () : i_genbb ()
   {
-    _debug_ = false;
     _initialized_ = false;
 
     _particle_name_ = "";
@@ -383,10 +371,6 @@ namespace genbb {
     DT_THROW_IF(_initialized_,logic_error, "Operation prohibited ! Object is already initialized !");
 
     _initialize_base(config_);
-
-    if (config_.has_flag ("debug")) {
-      set_debug (true);
-    }
 
     if (! has_external_random ()) {
       DT_THROW_IF (! config_.has_key ("seed"), logic_error,
@@ -579,11 +563,7 @@ namespace genbb {
   void single_particle_generator::_load_next (primary_event & event_,
                                               bool compute_classification_)
   {
-    if (_debug_) {
-      clog << "debug: " << "genbb::single_particle_generator::_load_next: "
-           << "Entering..."
-           << endl;
-    }
+    DT_LOG_TRACE(_logging_priority, "Entering...");
     DT_THROW_IF (! _initialized_, logic_error, "Generator is not locked/initialized !");
     event_.reset ();
 
@@ -647,11 +627,7 @@ namespace genbb {
       event_.compute_classification ();
     }
 
-    if (_debug_) {
-      clog << "debug: " << "genbb::single_particle_generator::_load_next: "
-           << "Exiting."
-           << endl;
-    }
+    DT_LOG_TRACE(_logging_priority, "Exiting.");
     return;
   }
 
@@ -680,8 +656,8 @@ namespace genbb {
         if ((word.length () > 0) && (word[0] == '#')) {
           if (word == "#@limits") {
             lineiss >> nbins >> min >> max;
-            // initalize histo
-            _energy_histo_.init (nbins, min*energy_unit, max*energy_unit);
+            // initialize histo
+            _energy_histo_.init (nbins, min * energy_unit, max * energy_unit);
           } else if (word == "#@energy_unit") {
             string energy_unit_str;
             lineiss >> energy_unit_str;
@@ -832,6 +808,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::single_particle_generator,ocd_)
       .set_terse_description("Set the logging priority threshold")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
+      .set_default_value_string("warning")
       .set_long_description("Allowed values are:                           \n"
                             "                                              \n"
                             " * ``\"trace\"``                              \n"
@@ -843,13 +820,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::single_particle_generator,ocd_)
                             " * ``\"critical\"``                           \n"
                             " * ``\"fatal\"``                              \n"
                             "                                              \n"
-                            "Default value: ``\"warning\"``                \n"
-                            "                                              \n"
-                            "Example::                                     \n"
-                            "                                              \n"
-                            "  logging.priority: string = \"notice\"       \n"
-                            "                                              \n"
                             )
+      .add_example("Set the logging threshold::                   \n"
+                   "                                              \n"
+                   "  logging.priority: string = \"notice\"       \n"
+                   "                                              \n"
+                   )
       ;
   }
 
@@ -862,11 +838,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::single_particle_generator,ocd_)
       .set_complex_triggering_conditions(true)
       .set_long_description("The seed of the embeded PRNG.                 \n"
                             "Not used if some external PRNG is used.       \n"
-                            "Example::                                     \n"
-                            "                                              \n"
-                            "  seed: integer = 314159                      \n"
-                            "                                              \n"
                             )
+      .add_example("Set the PRNG seed with an arbitrary value::   \n"
+                   "                                              \n"
+                   "  seed: integer = 314159                      \n"
+                   "                                              \n"
+                   )
       ;
   }
 
@@ -888,12 +865,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::single_particle_generator,ocd_)
                             "  * ``\"mu-\"``                               \n"
                             "  * ``\"mu+\" ``                              \n"
                             "                                              \n"
-                            "                                              \n"
-                            "Example::                                     \n"
-                            "                                              \n"
-                            "  particle_name: string = \"gamma\"           \n"
-                            "                                              \n"
                             )
+      .add_example("Generate gamma particles::                    \n"
+                   "                                              \n"
+                   "  particle_name: string = \"gamma\"           \n"
+                   "                                              \n"
+                   )
       ;
   }
 
@@ -909,21 +886,131 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::single_particle_generator,ocd_)
                             "  * \"z_axis\" : the particle is emitted along the positive Z axis.        \n"
                             "  * \"randomized\" : the particle is emitted in a random direction (4xPi). \n"
                             "  * \"cone\" : the particle is emitted within an arbitrary cone of         \n"
-                            "    which the characteristics (angles and axis) must be provided.          \n"
-                            "                                                   \n"
-                            "Examples::                                         \n"
-                            "                                                   \n"
-                            "  emission_direction : string = \"randomized\"     \n"
-                            "                                                   \n"
-                            "or:                                                \n"
-                            "                                                   \n"
-                            "  emission_direction : string = \"cone\"           \n"
-                            "  cone.min_angle : real as angle =  0 degree       \n"
-                            "  cone.max_angle : real as angle = 25 degree       \n"
-                            "  cone.axis : string = \"30 45 degree\"            \n"
-                            "                                                   \n"
-                            )
+                            "    which the characteristics (angles and axis) must be provided.          \n")
+      .add_example("Randomization (4 pi) of the direction::            \n"
+                   "                                                   \n"
+                   "  emission_direction : string = \"randomized\"     \n"
+                   "                                                   \n"
+                   )
+      .add_example("Randomization in a cone of the direction::         \n"
+                   "                                                   \n"
+                   "  emission_direction : string = \"cone\"           \n"
+                   "  cone.min_angle : real as angle =  0 degree       \n"
+                   "  cone.max_angle : real as angle = 25 degree       \n"
+                   "  cone.axis : string = \"30 45 degree\"            \n"
+                   "                                                   \n"
+                   )
        ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("angle_unit")
+      .set_terse_description("The default unit used for angular parameters")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_default_value_string("degree")
+      .set_long_description("The angle unit can be taken from the following list: ``\"rad\"``,  \n"
+                            "``\"radian\"``, ``\"mrad\"``, ``\"milliradian\"``, ``\"deg\"``     \n"
+                            "and ``\"degree\"``.                                                \n"
+                            )
+      .add_example("Use degree as the default angle unit::            \n"
+                   "                                                  \n"
+                   "  angle_unit : string = \"degree\"                \n"
+                   )
+      ;
+
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("energy_unit")
+      .set_terse_description("The default unit used for energy parameters")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_default_value_string("keV")
+      .set_long_description("The energy unit can be taken from the following list::       \n"
+                            "``\"keV\"``, ``\"MeV\"``...                                  \n"
+                            )
+      .add_example("Use keV as the default angle unit::             \n"
+                   "                                                \n"
+                   "  energy_unit : string = \"keV\"                \n"
+                   )
+      ;
+
+  }
+
+  // cone.axis
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("cone.axis")
+      .set_terse_description("The axis of the emission cone")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_default_value_string("+Z")
+      .set_triggered_by_label("emission_direction", "cone")
+      .set_long_description("The axis of the emission cone can be taken from the following list:          \n"
+                            "                                                                             \n"
+                            "  * ``\"x\"``, ``\"X\"``, ``\"+x\"``, ``\"+X\"`` : positive X-axis direction \n"
+                            "  * ``\"y\"``, ``\"Y\"``, ``\"+y\"``, ``\"+Y\"`` : positive Y-axis direction \n"
+                            "  * ``\"z\"``, ``\"Z\"``, ``\"+y\"``, ``\"+Y\"`` : positive Z-axis direction \n"
+                            "  * ``\"-x\"``, ``\"-X\"`` : negative X-axis direction                       \n"
+                            "  * ``\"-y\"``, ``\"-Y\"`` : negative Y-axis direction                       \n"
+                            "  * ``\"-z\"``, ``\"-Z\"`` : negative Z-axis direction                       \n"
+                            "                                                                             \n"
+                            "or explicitely set with phi and theta angles:  ``\"PHI THETA [UNIT]\"``  \n"
+                            "                                                                             \n"
+                            )
+      .add_example("Use the positive Y axis direction::               \n"
+                   "                                                  \n"
+                   "  cone.axis : string = \"+Y\"                     \n"
+                   "                                                  \n"
+                   )
+      .add_example("Use an arbitrary axis::                           \n"
+                   "                                                  \n"
+                   "  cone.axis : string = \"30.0 45.0 degree\"       \n"
+                   "                                                  \n"
+                   )
+      ;
+
+  }
+
+  // cone.min_angle
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("cone.min_angle")
+      .set_terse_description("The minimum angle of the emission cone")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(false)
+      .set_default_value_real(0.0)
+      .set_triggered_by_label("emission_direction", "cone")
+      .set_long_description("The minimum angle of the emission cone.  \n"
+                            )
+      .add_example("Minimal cone angle is set to 0::                  \n"
+                   "                                                  \n"
+                   "  cone.min_angle : real as angle = 0 degree       \n"
+                   "                                                  \n"
+                   )
+      ;
+  }
+
+  // cone.max_angle
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("cone.max_angle")
+      .set_terse_description("The maximum angle of the emission cone")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(false)
+      .set_default_value_real(0.0)
+      .set_triggered_by_label("emission_direction", "cone")
+      .set_long_description("The maximum angle of the emission cone.  \n"
+                            )
+      .add_example("Maximum cone angle is set to 30 degrees::         \n"
+                   "                                                  \n"
+                   "  cone.max_angle : real as angle = 30 degree      \n"
+                   "                                                  \n"
+                   )
+      ;
   }
 
   {
@@ -935,89 +1022,285 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::single_particle_generator,ocd_)
       .set_long_description("The label representing the energy dspectrum mode \n"
                             "must be taken from the following list:             \n"
                             "                                                   \n"
-                            "  * \"monokinetic\" : the particle is emitted with a monokinetic energy        \n"
-                            "  * \"gaussian_energy\" : the particle is emitted with a random kinetic energy \n"
-                            "    of which the characteristics must be provided.                             \n"
-                            "  * \"energy_range\" : the particle is emitted with a flat distributed         \n"
-                            "    kinetic energy in a range of which the characteristics must be provided.   \n"
-                            "  * \'spectrum\" : the particle is emitted with a kinetic energ following      \n"
-                            "     a PDF read from a file that must be provided.                             \n"
-                            "                                                   \n"
-                            "Examples::                                         \n"
-                            "                                                   \n"
-                            "  mode : string = \"monokinetic\"                  \n"
-                            "  energy_unit : string = \"keV\"                   \n"
-                            "  energy      : real = 511.0                       \n"
-                            "                                                   \n"
-                            "or::                                               \n"
-                            "                                                   \n"
-                            "  mode : string = \"gaussian_energy\"              \n"
-                            "  energy_unit : string = \"keV\"                   \n"
-                            "  mean_energy  : real as energy  = 1.0 MeV         \n"
-                            "  sigma_energy : real as energy = 100.0 keV        \n"
-                            "  energy      : real = 511.0                       \n"
-                            "                                                   \n"
-                            "or::                                               \n"
-                            "                                                   \n"
-                            "  mode : string = \"energy_range\"                 \n"
-                            "  energy_unit : string = \"keV\"                   \n"
-                            "  min_energy : real = 50                           \n"
-                            "  max_energy : real as energy = 3.0 MeV            \n"
-                            "                                                   \n"
+                            "  * ``\"monokinetic\"`` : the particle is emitted with a monokinetic energy        \n"
+                            "  * ``\"gaussian_energy\"`` : the particle is emitted with a gaussian random       \n"
+                            "    kinetic energy of which the characteristics must be provided.                  \n"
+                            "  * ``\"energy_range\"`` : the particle is emitted with a flat distributed         \n"
+                            "    kinetic energy in a range of which the characteristics must be provided.       \n"
+                            "  * ``\"spectrum\"`` : the particle is emitted with a kinetic energy following     \n"
+                            "    a PDF read from a file that must be provided.                                  \n"
                             )
+      .add_example("Monokinetic energy mode::                          \n"
+                   "                                                   \n"
+                   "  mode        : string = \"monokinetic\"           \n"
+                   "  energy_unit : string = \"keV\"                   \n"
+                   "  energy      : real   = 511.0 # use default unit  \n"
+                   "                                                   \n"
+                   )
+      .add_example("Gaussian random energy mode::                      \n"
+                   "                                                   \n"
+                   "  mode         : string = \"gaussian_energy\"      \n"
+                   "  energy_unit  : string = \"keV\"                  \n"
+                   "  mean_energy  : real as energy  = 1.0 MeV         \n"
+                   "  sigma_energy : real as energy = 100.0 keV        \n"
+                  "                                                    \n"
+                   )
+      .add_example("Energy range mode::                                \n"
+                   "                                                   \n"
+                   "  mode        : string = \"energy_range\"          \n"
+                   "  energy_unit : string = \"keV\"                   \n"
+                   "  min_energy  : real   = 50 # use default unit     \n"
+                   "  max_energy  : real as energy = 3.0 MeV           \n"
+                   "                                                   \n"
+                   )
       ;
 
   }
 
-  ocd_.set_configuration_hints ("Examples:                                                   \n"
+  // energy
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("energy")
+      .set_terse_description("The energy for the monokinetic mode")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_triggered_by_label("mode", "monokinetic")
+      .set_long_description("The monokinetic energy of the emitted particles.\n"
+                            )
+      .add_example("Kinetic energy set to some arbitrary value::      \n"
+                   "                                                  \n"
+                   "  energy : real as energy = 1.333 MeV             \n"
+                   "                                                  \n"
+                   )
+      ;
+  }
+
+  // sigma_energy
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("sigma_energy")
+      .set_terse_description("The energy standard deviation for the gaussian energy mode")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(false)
+      .set_triggered_by_label("mode", "gaussian_energy")
+      .set_long_description("The standard deviation energy of the emitted particles.\n"
+                            )
+      .add_example("Standard deviation of the kinetic energy set to some arbitrary value::      \n"
+                   "                                                  \n"
+                   "  sigma_energy : real as energy = 100 keV         \n"
+                   "                                                  \n"
+                   )
+      ;
+  }
+
+  // mean_energy
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("mean_energy")
+      .set_terse_description("The energy for the monokinetic mode")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(false)
+      .set_triggered_by_label("mode", "gaussian_energy")
+      .set_long_description("The mean energy of the emitted particles.\n"
+                            )
+      .add_example("Kinetic energy set to some arbitrary value::      \n"
+                   "                                                  \n"
+                   "  mean_energy : real as energy = 850 keV          \n"
+                   "                                                  \n"
+                   )
+      ;
+  }
+
+  // min_energy
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("min_energy")
+      .set_terse_description("The minimum energy for the range mode")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(false)
+      .set_triggered_by_label("mode", "energy_range")
+      .set_long_description("The minimum energy of the emitted particles.\n"
+                            )
+      .add_example("Minimum kinetic energy set to some arbitrary value:: \n"
+                   "                                                     \n"
+                   "  min_energy : real as energy = 50 keV               \n"
+                   "                                                     \n"
+                   )
+      ;
+  }
+
+  // max_energy
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("max_energy")
+      .set_terse_description("The maximum energy for the range mode")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(false)
+      .set_triggered_by_label("mode", "energy_range")
+      .set_long_description("The maximum energy of the emitted particles.\n"
+                            )
+      .add_example("Maximum kinetic energy set to some arbitrary value:: \n"
+                   "                                                     \n"
+                   "  max_energy : real as energy = 1000 keV             \n"
+                   "                                                     \n"
+                   )
+      ;
+  }
+
+  // spectrum.data_file
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("spectrum.data_file")
+      .set_terse_description("The filename that contains the shape of the energy spectrum")
+      .set_traits(datatools::TYPE_STRING)
+      .set_path(true)
+      .set_triggered_by_label("mode", "spectrum")
+      .set_long_description("The shape of the energy spectrum can be provided through a file\n"
+                            "with two different modes  :                                    \n"
+                            "                                                               \n"
+                            " * from a tabulated function from which the shape of the       \n"
+                            "   spectrum will be interpolated and used by a Von Neumann     \n"
+                            "   rejection method,                                           \n"
+                            " * from the an histogram of which the PDF will be used to      \n"
+                            "   sample the spectrum.                                        \n"
+                            "                                                               \n"
+                            "The mode is set via the ``spectrum.mode`` property.            \n"
+                            "The file uses an ASCII format.                                 \n"
+                            "Each mode uses its own format. See the configuration hints     \n"
+                            "section for a detailed description.                            \n"
+                            )
+      .add_example("Load the energy spectrum from a specific file: ::                       \n"
+                   "                                                                        \n"
+                   "  spectrum.data_file : string as path = \"energy_spectrum.data\"        \n"
+                   "                                                                        \n"
+                   )
+      ;
+  }
+
+  // spectrum.mode
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("spectrum.mode")
+      .set_terse_description("The mode used to build the energy spectrum")
+      .set_traits(datatools::TYPE_STRING)
+      .set_triggered_by_label("mode", "spectrum")
+      .set_long_description("The supported modes are:                                        \n"
+                            "                                                                \n"
+                            " * ``\"tabulated_function\"`` : from a tabulated function       \n"
+                            " * ``\"histogram_pdf\"`` : from the PDF of an histogram         \n"
+                            "                                                                \n"
+                            "Each mode uses its own format. See the configuration hints      \n"
+                            "section for a detailed description.                             \n"
+                           )
+      .add_example("Use a tabulated function as the input energy spectrum::                 \n"
+                   "                                                                        \n"
+                   "  spectrum.mode : string = \"tabulated_function\"                       \n"
+                   "                                                                        \n"
+                   )
+      ;
+  }
+
+  ocd_.set_configuration_hints ("Here are some typical configurations:                       \n"
+                                "                                                            \n"
+                                "***Example 1***                                             \n"
                                 "                                                            \n"
                                 "Monokinetic gamma::                                         \n"
                                 "                                                            \n"
-                                "  logging.priority: string = \"notice\"                     \n"
-                                "  seed: integer = 314159                                    \n"
-                                "  particle_name: string = \"gamma\"                         \n"
+                                "  logging.priority   : string = \"notice\"                  \n"
+                                "  seed               : integer = 314159                     \n"
+                                "  particle_name      : string = \"gamma\"                   \n"
                                 "  emission_direction : string = \"randomized\"              \n"
-                                "  mode : string = \"monokinetic\"                           \n"
-                                "  energy_unit : string = \"keV\"                            \n"
-                                "  energy      : real   = 511                                \n"
+                                "  mode               : string = \"monokinetic\"             \n"
+                                "  energy_unit        : string = \"keV\"                     \n"
+                                "  energy             : real as energy = 511 keV             \n"
+                                "                                                            \n"
+                                "***Example 2***                                             \n"
                                 "                                                            \n"
                                 "Gamma with gaussian energy::                                \n"
                                 "                                                            \n"
-                                "  logging.priority: string = \"notice\"                     \n"
-                                "  seed: integer = 314159                                    \n"
-                                "  particle_name: string = \"gamma\"                         \n"
+                                "  logging.priority   : string = \"notice\"                  \n"
+                                "  seed               : integer = 314159                     \n"
+                                "  particle_name      : string = \"gamma\"                   \n"
                                 "  emission_direction : string = \"randomized\"              \n"
-                                "  mode : string = \"gaussian_energy\"                       \n"
-                                "  energy_unit : string = \"keV\"                            \n"
-                                "  mean_energy : real as energy = 1.0 MeV                    \n"
-                                "  sigma_energy : real = 100.0                               \n"
+                                "  mode               : string = \"gaussian_energy\"         \n"
+                                "  energy_unit        : string = \"keV\"                     \n"
+                                "  mean_energy        : real as energy = 1.0 MeV             \n"
+                                "  sigma_energy       : real as energy = 100.0 keV           \n"
+                                "                                                            \n"
+                                "***Example 3***                                             \n"
                                 "                                                            \n"
                                 "Gamma with flat ranged energy::                             \n"
                                 "                                                            \n"
-                                "  logging.priority: string = \"notice\"                     \n"
-                                "  seed: integer = 314159                                    \n"
-                                "  particle_name: string = \"gamma\"                         \n"
+                                "  logging.priority   : string = \"notice\"                  \n"
+                                "  seed               : integer = 314159                     \n"
+                                "  particle_name      : string = \"gamma\"                   \n"
                                 "  emission_direction : string = \"randomized\"              \n"
-                                "  mode : string = \"energy_range\"                          \n"
-                                "  energy_unit : string = \"keV\"                            \n"
-                                "  min_energy : real as energy = 50 keV                      \n"
-                                "  max_energy : real as energy = 3.0 MeV                     \n"
+                                "  mode               : string = \"energy_range\"            \n"
+                                "  energy_unit        : string = \"keV\"                     \n"
+                                "  min_energy         : real as energy = 50 keV              \n"
+                                "  max_energy         : real as energy = 3.0 MeV             \n"
+                                "                                                            \n"
+                                "***Example 4***                                             \n"
                                 "                                                            \n"
                                 "Gamma with energy PDF from a spectrum::                     \n"
                                 "                                                            \n"
-                                "  logging.priority: string = \"notice\"                     \n"
-                                "  seed: integer = 314159                                    \n"
-                                "  particle_name: string = \"gamma\"                         \n"
-                                "  emission_direction : string = \"cone\"                    \n"
-                                "  angle_unit : string = \"degree\"                          \n"
-                                "  cone.max_angle : real = 25 degree                         \n"
-                                "  cone.min_angle : real = 0 degree                          \n"
-                                "  cone.axis : string = \"20 45 degree\"                     \n"
-                                "  mode : string = \"spectrum\"                              \n"
-                                "  energy_unit : string = \"keV\"                            \n"
-                                "  spectrum.data_file : string = \"energy_spectrum.data\"    \n"
+                                "  logging.priority    : string = \"notice\"                 \n"
+                                "  seed                : integer = 314159                    \n"
+                                "  particle_name       : string = \"gamma\"                  \n"
+                                "  emission_direction  : string = \"cone\"                   \n"
+                                "  angle_unit          : string = \"degree\"                 \n"
+                                "  cone.max_angle      : real = 25 degree                    \n"
+                                "  cone.min_angle      : real = 0 degree                     \n"
+                                "  cone.axis           : string = \"20 45 degree\"           \n"
+                                "  mode                : string = \"spectrum\"               \n"
+                                "  energy_unit         : string = \"keV\"                    \n"
+                                "  spectrum.mode       : string = \"tabulated_function\"     \n"
+                                "  spectrum.data_file  : string = \"energy_spectrum.data\"   \n"
                                 "  spectrum.min_energy : real as energy = 300 keV            \n"
                                 "  spectrum.max_energy : real as energy = 2.0 MeV            \n"
+                                "                                                            \n"
+                                "where the ASCII file ``\"energy_spectrum.data\"`` contains  \n"
+                                "a tabulated function and uses the following format::        \n"
+                                "                                                            \n"
+                                "  #@interpolation_name cspline ### used by the GSL library  \n"
+                                "  #@energy_unit keV            ### for the first column     \n"
+                                "  0     1.00                                                \n"
+                                "  50    1.05                                                \n"
+                                "  100   1.10                                                \n"
+                                "  150   1.20                                                \n"
+                                "  200   1.25                                                \n"
+                                "  ...                                                       \n"
+                                "  950   0.12                                                \n"
+                                "  1000  0.05                                                \n"
+                                "  1200  0.02                                                \n"
+                                "  1500  0.01                                                \n"
+                                "                                                            \n"
+                                "The step of the interpolation samples needs not to be uniform.\n"
+                                "                                                            \n"
+                                "***Example 5***                                             \n"
+                                "                                                            \n"
+                                "If an ASCII histogram file is used as the source of the     \n"
+                                "spectrum shape, one should use::                            \n"
+                                "                                                            \n"
+                                "  ...                                                       \n"
+                                "  mode               : string = \"spectrum\"                \n"
+                                "  spectrum.mode      : string = \"histogram_pdf\"           \n"
+                                "  spectrum.data_file : string = \"energy_histo.data\"       \n"
+                                "                                                            \n"
+                                "where the file ``\"energy_histo.data\"`` uses the           \n"
+                                "following format::                                          \n"
+                                "                                                            \n"
+                                "  #@limits 8 25.0 2000.0  ### number of bins, lower and     \n"
+                                "                          ### upper bounds of the histogram \n"
+                                "  #@energy_unit keV       ### for the first and second columns\n"
+                                "  25     50  1.00                                           \n"
+                                "  50    100  1.05                                           \n"
+                                "  100   200  2.10                                           \n"
+                                "  200   350  3.50                                           \n"
+                                "  350   400  5.60                                           \n"
+                                "  400   900  12.3                                           \n"
+                                "  900  1000  0.35                                           \n"
+                                "  1000 2000  0.05                                           \n"
                                 "                                                            \n"
                                 );
   ocd_.set_validation_support(false);
