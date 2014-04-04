@@ -40,7 +40,8 @@ struct foo {
   double weight;
 
  private:
-  datatools::logger::priority _logging_; /// Logging priority
+  bool _logging_;
+  datatools::logger::priority _logging_level_; /// Logging priority
 
 };
 

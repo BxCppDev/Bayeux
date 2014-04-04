@@ -14,32 +14,39 @@ foo::foo() {
   datatools::invalidate(weight);
   dummy = -1;
   tmpfile = "";
-  _logging_ = datatools::logger::PRIO_FATAL;
+  _logging_ = false;
+  _logging_level_ = datatools::logger::PRIO_FATAL;
 }
 
 void foo::set_logging_priority(const datatools::logger::priority & p_) {
-  _logging_ = p_;
+  if (p_ != logger::PRIO_UNDEFINED) {
+    _logging_ = true;
+  } else {
+    _logging_ = false;
+  }
+  _logging_level_ = p_;
 }
 
 void foo::initialize(const datatools::properties & config_) {
-  datatools_trace(_logging_, "Entering initialization...");
+  if (_logging_) datatools_trace(_logging_level_, "Entering initialization...");
 
   double length_unit = CLHEP::cm; // implicit length unit
   bool hello = false;
 
-  datatools_notice(_logging_, "Parsing configuration parameters...");
+  if (_logging_) datatools_notice(_logging_level_, "Parsing configuration parameters...");
 
   // Parse 'logging' :
   const std::string logging_key = "logging";
   if (config_.has_flag(logging_key)) {
+    _logging_ = true;
     // Parse mandatory 'logging.level' :
     const std::string logging_level_key = "logging.level";
     DT_THROW_IF(! config_.has_key(logging_level_key),
                 std::logic_error,
                 "foo::initialize: Missing '" << logging_level_key << "' property!");
     std::string logging_label = config_.fetch_string(logging_level_key);
-    _logging_ = datatools::logger::get_priority(logging_label);
-    DT_THROW_IF(_logging_ == datatools::logger::PRIO_UNDEFINED,
+    _logging_level_ = datatools::logger::get_priority(logging_label);
+    DT_THROW_IF(_logging_level_ == datatools::logger::PRIO_UNDEFINED,
                 std::logic_error,
                 "foo::initialize: Undefined logging level '" << logging_label << "' !");
   }
@@ -118,7 +125,7 @@ void foo::initialize(const datatools::properties & config_) {
   if (config_.has_key(secret_key)) {
     secret = config_.fetch_integer(secret_key);
     if (secret > 3) {
-      datatools_warning(_logging_,
+      if (_logging_)  datatools_warning(_logging_level_,
                         "Ha ! Ha ! "
                         << "You have found how to use my secret property !");
       hello = true;
@@ -126,21 +133,21 @@ void foo::initialize(const datatools::properties & config_) {
   }
 
   // Initialization :
-  datatools_notice(_logging_, "Processing initialization operations...");
+  if (_logging_) datatools_notice(_logging_level_, "Processing initialization operations...");
   if (hello) {
     std::clog << "                                       \n"
               << "     Welcome to the OCD system !       \n"
               << "                                       \n";
   }
 
-  datatools_notice(_logging_, "Initialization is done.");
+  if (_logging_) datatools_notice(_logging_level_, "Initialization is done.");
 
   initialized = true;
-  datatools_trace(_logging_, "Exiting initialization.");
+  if (_logging_) datatools_trace(_logging_level_, "Exiting initialization.");
 }
 
 void foo::reset() {
-  datatools_trace(_logging_, "Entering reset...");
+  if (_logging_) datatools_trace(_logging_level_, "Entering reset...");
   initialized = false;
   name.clear();
   what.clear();
@@ -149,13 +156,15 @@ void foo::reset() {
   dummy = 0;
   datatools::invalidate(width);
   datatools::invalidate(weight);
-  datatools_trace(_logging_, "Exiting reset.");
-  _logging_ = datatools::logger::PRIO_FATAL;
+  if (_logging_) datatools_trace(_logging_level_, "Exiting reset.");
+  _logging_ = false;
+  _logging_level_ = datatools::logger::PRIO_FATAL;
 }
 
 void foo::dump(std::ostream & out_) const {
   out_ << "|-- Initialized : " << initialized << std::endl;
-  out_ << "|-- Logging threshold: \"" << datatools::logger::get_priority_label(_logging_) << '"' << std::endl;
+  out_ << "|-- Logging     : " << _logging_ << std::endl;
+  out_ << "|-- Logging threshold: \"" << datatools::logger::get_priority_label(_logging_level_) << '"' << std::endl;
   out_ << "|-- Name : \"" << name << "\"" << std::endl;
   out_ << "|-- What : \"" << what << "\"" << std::endl;
   out_ << "|-- Tmpfile : \"" << tmpfile << "\"" << std::endl;
@@ -215,13 +224,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_terse_description("Flag to activate logging")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
-      .set_long_description("The allowed values are 0 (false) or 1 (true). \n"
-                            "                                \n"
-                            "Example::                       \n"
-                            "                                \n"
-                            "  logging : boolean = 0         \n"
-                            "                                \n"
-                            )
+      .set_long_description("The allowed values are 0 (false) or 1 (true).")
+      .add_example("Deactivation of the logging fonctionality::"
+                   "                                \n"
+                   "  logging : boolean = 0         \n"
+                   "                                \n"
+                   )
       ;
   }
 
@@ -245,14 +253,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
                             "* ``debug``                     \n"
                             "* ``trace``                     \n"
                             "                                \n"
-                            "It is mandatory if the 'logging' flag property is set. \n"
-                            "                                      \n"
-                            "Example::                             \n"
-                            "                                      \n"
-                            "  logging : boolean = 1               \n"
-                            "  logging.level : string = \"notice\" \n"
-                            "                                      \n"
-                          )
+                            "It is mandatory if the 'logging' flag property is set. \n")
+      .add_example("Activation of the logging fonctionality with ``notice`` level::"
+                   "                                      \n"
+                   "  logging : boolean = 1               \n"
+                   "  logging.level : string = \"notice\" \n"
+                   "                                      \n"
+                   )
       ;
   }
 

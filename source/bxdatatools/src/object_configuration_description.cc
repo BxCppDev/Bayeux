@@ -752,7 +752,23 @@ namespace datatools {
            << "Depends on property " << "``" << _dynamic_dependee_.name << "``";
       spe_dpcy = true;
     }
-    if (! spe_dpcy)  out_ << "none";
+    if (is_triggered_by_flag()) {
+      out_ << std::endl << indent << "  " << " + "
+           << "Triggered by the flag/boolean property " << "``" << _triggered_by_flag_.name << "``";
+      spe_dpcy = true;
+    }
+    if (is_triggered_by_label()) {
+      out_ << std::endl << indent << "  " << " + "
+           << "Triggered by the string property " << "``" << _triggered_by_label_.name << "`` with any value ";
+      out_ << "from the following list: ";
+      for (int itl = 0; itl < (int) _triggered_by_label_.triggering_labels.size(); itl++) {
+        out_ << "``\"" << _triggered_by_label_.triggering_labels[itl] << "\"`` ";
+        if (itl != (int) _triggered_by_label_.triggering_labels.size() - 1) out_ << ", ";
+      }
+      spe_dpcy = true;
+
+    }
+     if (! spe_dpcy)  out_ << "none";
     out_ << std::endl;
 
     out_ << indent << "* Depender properties : ";
@@ -780,6 +796,12 @@ namespace datatools {
       // }
       // out_ << " :** " << std::endl;
       for (size_t i = 0; i < get_number_of_examples(); i++) {
+        // out_ << std::endl << indent << ".. topic:: Example ";
+        // if (get_number_of_examples() > 1) {
+        //   out_ << (i + 1);
+        // }
+        // out_ << std::endl;
+        // print_multi_lines(out_, get_example(i), indent + "   ");
         out_ << std::endl << indent << "***Example ";
         if (get_number_of_examples() > 1) {
           out_ << (i + 1);
