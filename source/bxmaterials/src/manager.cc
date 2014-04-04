@@ -1,13 +1,14 @@
-// -*- mode: c++ ; -*-
-/* manager.cc
- */
+/* materials: manager.cc */
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
+// Datatools:
 #include <datatools/multi_properties.h>
 #include <datatools/utils.h>
 
+// This project:
 #include <materials/materials_config.h>
 #include <materials/isotope.h>
 #include <materials/element.h>
@@ -444,12 +445,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::materials::manager,ocd_)
       .set_default_value_boolean(false)
       .set_long_description("Superseded by a previous call to :              \n"
                             "  ``materials::manager::set_debug(true)``       \n"
-                            "                                                \n"
-                            "Example::                                       \n"
-                            "                                                \n"
-                            "  debug : boolean = 0                           \n"
-                            "                                                \n"
                             )
+      .add_example("Do not activate debug print::                   \n"
+                   "                                                \n"
+                   "  debug : boolean = 0                           \n"
+                   "                                                \n"
+                   )
       ;
   }
 
@@ -462,7 +463,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::materials::manager,ocd_)
       .set_default_value_boolean(false)
       .set_long_description("Users are invited to define material aliases, i.e. some     \n"
                             "human-friendly character strings that are associated        \n"
-                            "to material objects stored in the manager's dictionnary  .  \n"
+                            "to material objects stored in the manager's dictionnary.    \n"
                             "Typically, one may want to use the alias ``metal`` as a     \n"
                             "shortcut for the ``std::inox`` material.                    \n"
                             "If the user changes his/her mind, it is easy to make the    \n"
@@ -472,17 +473,18 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::materials::manager,ocd_)
                             "materials like copper or inox registered in some standard   \n"
                             "dictionnary.                                                \n"
                             "When the ``alias_allow_overload`` is set, it is possible to \n"
-                            "provide duplicated definitions of an alias, the last one    \n"
-                            "overloading the former ones. Otherwise, multiple alias      \n"
-                            "definition is considered as an error.                       \n"
+                            "overload some previous definitions of a material alias, the \n"
+                            "last one overloading the former ones. Otherwise, alias      \n"
+                            "redefinition is considered as an error.                     \n"
+                            "                                                            \n"
                             "Superseded by a previous call of :                          \n"
                             "  ``materials::manager::set_alias_allow_overload(true)``    \n"
-                            "                                                \n"
-                            "Example::                                       \n"
-                            "                                                \n"
-                            "  alias_allow_overload : boolean = 1            \n"
-                            "                                                \n"
                             )
+      .add_example("This example allows alias overloading::         \n"
+                   "                                                \n"
+                   "  alias_allow_overload : boolean = 1            \n"
+                   "                                                \n"
+                   )
       ;
   }
 
@@ -499,33 +501,38 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::materials::manager,ocd_)
                             "elements, materials and material aliases objects.         \n"
                             "The filenames may contains some environment variables.    \n"
                             "                                                          \n"
-                            "Example::                                                  \n"
-                            "                                                          \n"
-                            "   configuration_files : string[4] as path =   \\         \n"
-                            "     \"${CONFIG_REPOSITORY_DIR}/isotopes.conf\"  \\       \n"
-                            "     \"${CONFIG_REPOSITORY_DIR}/elements.conf\"  \\       \n"
-                            "     \"${CONFIG_REPOSITORY_DIR}/materials.conf\" \\       \n"
-                            "     \"${CONFIG_REPOSITORY_DIR}/aliases.conf\"            \n"
-                            "                                                          \n"
-                            "The target files must use the format of the               \n"
-                            "``datatools::multi_properties`` class.                      \n"
+                            "The configuration files must use the format of the        \n"
+                            "``datatools::multi_properties`` class.                    \n"
                             "The loading order of the files is critical                \n"
                             "because some isotopes, elements or materials objects may  \n"
-                            "depend on other ones which should thus be defined **before**\n"
-                            "their dependers.                                          \n"
+                            "depend on other ones which should thus be defined         \n"
+                            "**before** their dependers.                               \n"
+                            "                                                          \n"
                             "Extends the instantiation of objects triggered by         \n"
-                            "previous calls to :                                         \n"
-                            "  ``materials::manager::load(...)``                          \n"
+                            "previous calls to :                                       \n"
+                            "  ``materials::manager::load(...)``                       \n"
                             )
+      .add_example("This example loads 4 configuration files respectively for isotopes,\n"
+                   "elements, materials and material aliases::                         \n"
+                   "                                                                   \n"
+                   "   configuration_files : string[4] as path =   \\                  \n"
+                   "     \"${CONFIG_REPOSITORY_DIR}/isotopes.conf\"  \\                \n"
+                   "     \"${CONFIG_REPOSITORY_DIR}/elements.conf\"  \\                \n"
+                   "     \"${CONFIG_REPOSITORY_DIR}/materials.conf\" \\                \n"
+                   "     \"${CONFIG_REPOSITORY_DIR}/aliases.conf\"                     \n"
+                   "                                                                   \n"
+                   )
       ;
   }
 
   ocd_.set_configuration_hints ("A materials manager is configured through a set of configuration      \n"
-                                "files that obeys the format of ``datatools::multi_properties`` setup  \n"
-                                "file.                                                                 \n"
+                                "files that use the format of the ``datatools::multi_properties``      \n"
+                                "configuration file.                                                   \n"
+                                "                                                                      \n"
                                 "The method used to instantiate isotopes, elements and materials       \n"
                                 "objects is :                                                          \n"
                                 "   ``void manager::load(const datatools::multi_properties & config_);``\n"
+                                "                                                                      \n"
                                 "Each file contains a list of records that describe isotopes, elements,\n"
                                 "materials and possibly material aliases.                              \n"
                                 "The order used to load the files is important because some materials  \n"
@@ -610,5 +617,3 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::materials::manager,ocd_)
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
 DOCD_CLASS_SYSTEM_REGISTRATION(::materials::manager,"materials::manager")
-
-// end of manager.cc
