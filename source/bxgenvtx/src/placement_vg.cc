@@ -16,6 +16,8 @@ namespace genvtx {
 
   using namespace std;
 
+  GENVTX_VG_REGISTRATION_IMPLEMENT(placement_vg,"genvtx::placement_vg");
+
   const geomtools::placement & placement_vg::get_placement () const
   {
     return _placement_;
