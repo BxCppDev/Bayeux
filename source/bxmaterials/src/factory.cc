@@ -618,4 +618,306 @@ namespace materials {
 
 } // end of namespace materials
 
+/****************************************************************/
+// OCD support for class '::materials::isotope' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::materials::isotope,ocd_)
+{
+  ocd_.set_class_name("materials::isotope");
+  ocd_.set_class_description("An object that describes an isotope");
+  ocd_.set_class_library("materials");
+  ocd_.set_class_documentation("This description is related to the functionalities  \n"
+                               "implemented from the ``materials::factory`` and     \n"
+                               "``materials::manager`` classes.                     \n"
+                               "This definition of an isotope is compatible with the\n"
+                               "GDML format used by Geant4.                         \n"
+                               );
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("z")
+      .set_terse_description("The atomic number of the isotope")
+      .set_traits(datatools::TYPE_INTEGER)
+      .set_mandatory(true)
+      // .set_long_description("Superseded by a previous call to :              \n"
+      //                       "  ``materials::manager::set_debug(true)``       \n"
+      //                       )
+      .add_example("Set the atomic number for a Carbon isotope::    \n"
+                   "                                                \n"
+                   "  z : integer = 6                               \n"
+                   "                                                \n"
+                   )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("a")
+      .set_terse_description("The number of nucleons of the isotope")
+      .set_traits(datatools::TYPE_INTEGER)
+      .set_mandatory(true)
+      .add_example("Set the number of nucleons for Carbon 12:: \n"
+                   "                                           \n"
+                   "  a : integer = 12                         \n"
+                   "                                           \n"
+                   )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("I")
+      .set_terse_description("The isomeric level of the isotope")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_default_value_string("GS")
+      .set_long_description("The isomeric state can use the following values:  \n"
+                            "                                                  \n"
+                            "  * ``\"GS\"`` : ground state                     \n"
+                            "  * ``\"M\"`` : M state                           \n"
+                            "  * ``\"N\"`` : N state                           \n"
+                            "  * ``\"O\"`` : O state                           \n"
+                            "                                                  \n"
+                            )
+      .add_example("Set the isomeric level of the isotope to the ground state:: \n"
+                   "                                                            \n"
+                   "  I : string = \"GS\"                                       \n"
+                   "                                                            \n"
+                   )
+      ;
+  }
+
+  ocd_.set_configuration_hints ("From the configuration files used by the      \n"
+                                "``materials::manager`` class, one must        \n"
+                                "typically use the following syntax::          \n"
+                                "                                              \n"
+                                "    [name=\"C-14\" type=\"isotope\"]          \n"
+                                "    #@config The Carbon 14 isotope            \n"
+                                "    #@description The number of protons       \n"
+                                "    z : integer = 6                           \n"
+                                "    #@description The number of nucleons      \n"
+                                "    a : integer = 14                          \n"
+                                "                                              \n"
+                                "where the name ``\"C-14\"`` is chosen to be self\n"
+                                "explanatory.                                  \n"
+                                );
+
+  ocd_.set_validation_support(true);
+  ocd_.lock();
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+DOCD_CLASS_SYSTEM_REGISTRATION(::materials::isotope,"materials::isotope")
+
+/****************************************************************/
+// OCD support for class '::materials::element' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::materials::element,ocd_)
+{
+  ocd_.set_class_name("materials::element");
+  ocd_.set_class_description("An object that describes an element");
+  ocd_.set_class_library("materials");
+  ocd_.set_class_documentation("This description is related to the functionalities    \n"
+                               "implemented from the ``materials::factory`` and       \n"
+                               "``materials::manager`` classes.                       \n"
+                               "This definition of an element is compatible with the  \n"
+                               "GDML format used by Geant4.                           \n"
+                               );
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("z")
+      .set_terse_description("The atomic number of the element")
+      .set_traits(datatools::TYPE_INTEGER)
+      .set_mandatory(true)
+      // .set_long_description("Superseded by a previous call to :              \n"
+      //                       "  ``materials::manager::set_debug(true)``       \n"
+      //                       )
+      .add_example("Set the atomic number for a Carbon element::    \n"
+                   "                                                \n"
+                   "  z : integer = 6                               \n"
+                   "                                                \n"
+                   )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("a")
+      .set_terse_description("The number of nucleons of the element")
+      .set_traits(datatools::TYPE_INTEGER)
+      .set_mandatory(false)
+      .set_long_description("Is this property is not used to build the element, \n"
+                            "one must use the ``isotope\n"
+                            )
+      .add_example("Set the number of nucleons for Carbon 12:: \n"
+                   "                                           \n"
+                   "  a : integer = 12                         \n"
+                   "                                           \n"
+                   )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("isotope.names")
+      .set_terse_description("The names of the isotopes that compose the element")
+      .set_traits(datatools::TYPE_STRING,
+                  true)
+      .set_mandatory(false)
+      .set_long_description("This property is only needed when the element \n"
+                            "is not built from the ``a`` property.           \n")
+      .add_example("Set the name of the used isotopes for natural Hydrogen:: \n"
+                   "                                                         \n"
+                   "  isotope.names : integer[2] = \"H\" \"D\"               \n"
+                   "                                                         \n"
+                   )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("isotope.weights")
+      .set_terse_description("The weights of the isotopes that compose the element")
+      .set_traits(datatools::TYPE_REAL,
+                  true)
+      .set_mandatory(false)
+      .set_complex_triggering_conditions(true)
+      .set_long_description("This property is only needed when the element is  \n"
+                            "not built from the ``a`` property and thus the    \n"
+                            "``isotope.names`` property is provided.           \n"
+                            )
+      .add_example("Set the name of the used isotopes for natural Hydrogen:: \n"
+                   "                                                         \n"
+                   "  isotope.names   : integer[2] = \"H\"   \"D\"           \n"
+                   "  isotope.weights : real[2]    = 99.9885 0.0115          \n"
+                   "                                                         \n"
+                   )
+      ;
+  }
+
+  ocd_.set_configuration_hints ("From the configuration files used by the             \n"
+                                "``materials::manager`` class, one must               \n"
+                                "typically use the following syntax::                 \n"
+                                "                                                     \n"
+                                "    [name=\"NatCarbon\" type=\"element\"]            \n"
+                                "    #@config The natural Carbon element              \n"
+                                "    #@description The number of protons              \n"
+                                "    z : integer = 6                                  \n"
+                                "    #@description The names of the Carbon isotopes   \n"
+                                "    isotope.names   : string[2] = \"C-12\" \"C-13\"  \n"
+                                "    #@description The names of the Carbon isotopes   \n"
+                                "    isotope.weights : real[2]   =  98.93   1.07      \n"
+                                "                                                     \n"
+                                "where the name ``\"NatCarbon\"`` is chosen to be self\n"
+                                "explanatory.                                         \n"
+                                );
+
+  ocd_.set_validation_support(true);
+  ocd_.lock();
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+DOCD_CLASS_SYSTEM_REGISTRATION(::materials::element,"materials::element")
+
+/****************************************************************/
+// OCD support for class '::materials::material' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::materials::material,ocd_)
+{
+  ocd_.set_class_name("materials::material");
+  ocd_.set_class_description("An object that describes an material");
+  ocd_.set_class_library("materials");
+  ocd_.set_class_documentation("This description is related to the functionalities    \n"
+                               "implemented from the ``materials::factory`` and       \n"
+                               "``materials::manager`` classes.                       \n"
+                               "This definition of an material is compatible with the \n"
+                               "GDML format used by Geant4.                           \n"
+                               "                                                      \n"
+                               "A material is made of a mix of elements and/or other  \n"
+                               "materials.                                            \n"
+                               );
+
+  ocd_.set_configuration_hints (
+                                "From the configuration files used by the              \n"
+                                "``materials::manager`` class, one must               \n"
+                                "typically use the following syntax:                  \n"
+                                "                                                     \n"
+                                "***Example 1***                                      \n"
+                                "                                                     \n"
+                                "A material defined by a mix of elements by fraction mass::\n"
+                                "                                                     \n"
+                                "    #@key_label   \"name\"                           \n"
+                                "    #@meta_label  \"type\"                           \n"
+                                "                                                     \n"
+                                "    [name=\"StdAir\" type=\"material\"]              \n"
+                                "    #@config The air gas in some typical temperature/pressure conditions\n"
+                                "    density.unit     : string = \"mg/cm3\"           \n"
+                                "    density          : real   = 1.2931               \n"
+                                "    state            : string = \"gas\"              \n"
+                                "    temperature      : real   = 300.                 \n"
+                                "    temperature.unit : string = \"kelvin\"           \n"
+                                "    pressure         : real   = 1.                   \n"
+                                "    pressure.unit    : string = \"bar\"              \n"
+                                "    composition.mode          : string     = \"fraction_mass\"        \n"
+                                "    composition.names         : string [2] = \"Nitrogen\" \"Oxygen\"  \n"
+                                "    composition.fraction_mass : real   [2] =  0.8          0.2        \n"
+                                "                                                     \n"
+                                "where the name ``\"StdAir\"`` is chosen to be self   \n"
+                                "explanatory.                                         \n"
+                                "                                                     \n"
+                               "                                                      \n"
+                                "***Example 2***                                      \n"
+                                "                                                     \n"
+                                "A material defined by a mix of elements by number of atoms::\n"
+                                "                                                     \n"
+                                "    [name=\"StdWater\" type=\"material\"]              \n"
+                                "    #@config The water in some typical temperature/pressure conditions\n"
+                                "    density.unit     : string = \"g/cm3\"            \n"
+                                "    density          : real   = 1.0                  \n"
+                                "    state            : string = \"liquid\"           \n"
+                                "    temperature      : real   = 300.                 \n"
+                                "    temperature.unit : string = \"kelvin\"           \n"
+                                "    pressure         : real   = 1.                   \n"
+                                "    pressure.unit    : string = \"bar\"              \n"
+                                "    composition.mode            : string      = \"number_of_atoms\"     \n"
+                                "    composition.names           : string  [2] = \"Hydrogen\" \"Oxygen\" \n"
+                                "    composition.number_of_atoms : integer [2] =  2           1          \n"
+                                "                                                     \n"
+                                "                                                     \n"
+                                "***Example 3***                                      \n"
+                                "                                                     \n"
+                                "A material defined by mean Z and A::\n"
+                                "                                                     \n"
+                                "    [name=\"Diamond\" type=\"material\"]             \n"
+                                "    #@config The diamond material                    \n"
+                                "    density.unit     : string = \"g/cm3\"            \n"
+                                "    density          : real   = 3.517                \n"
+                                "    state            : string = \"solid\"            \n"
+                                "    temperature      : real   = 300.                 \n"
+                                "    temperature.unit : string = \"kelvin\"           \n"
+                                "    pressure         : real   = 1.                   \n"
+                                "    pressure.unit    : string = \"bar\"              \n"
+                                "    composition.mode : string = \"mean_za\"          \n"
+                                "    mean_z           : real   = 6.0                  \n"
+                                "    mean_a           : real   = 12.0                 \n"
+                                "                                                     \n"
+                                "where the name ``\"StdAir\"`` is chosen to be self   \n"
+                                "explanatory.                                         \n"
+                                "                                                     \n"
+                                "***Example 4***                                      \n"
+                                "                                                     \n"
+                                "A material alias can be defined with the following   \n"
+                                "syntax::                                             \n"
+                                "                                                     \n"
+                                "    [name=\"Gas\" type=\"alias\"]                    \n"
+                                "    #@config An alias for the \"StdAir\" material    \n"
+                                "    material : string = \"StdAir\"                   \n"
+                                "                                                     \n"
+                                );
+
+  ocd_.set_validation_support(false);
+  ocd_.lock();
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+DOCD_CLASS_SYSTEM_REGISTRATION(::materials::material,"materials::material")
+
 // end of factory.cc

@@ -70,6 +70,15 @@ namespace materials {
 
 } // end of namespace materials
 
+/***************
+ * OCD support *
+ ***************/
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(materials::isotope)
+DOCD_CLASS_DECLARATION(materials::element)
+DOCD_CLASS_DECLARATION(materials::material)
+//DOCD_CLASS_DECLARATION(materials::alias)
+
 #endif // MATERIALS_FACTORY_H_
 
 // end of factory.h

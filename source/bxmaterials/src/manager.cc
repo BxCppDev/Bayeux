@@ -434,7 +434,17 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::materials::manager,ocd_)
   ocd_.set_class_name("materials::manager");
   ocd_.set_class_description("A manager to describe and handle isotopes, elements and materials objects");
   ocd_.set_class_library("materials");
-  ocd_.set_class_documentation("not documented yet");
+  ocd_.set_class_documentation("The ``materials::manager`` class is a high-level object    \n"
+                               "able to create and manage various objects of the following \n"
+                               "types:                                                     \n"
+                               "                                                           \n"
+                               " * ``materials::isotope`` : Description of an isotope.     \n"
+                               " * ``materials::elements`` : Description of an element.    \n"
+                               " * ``materials::material`` : Description of a material.    \n"
+                               "                                                           \n"
+                               "It is also possible to create *material aliases*.          \n"
+                               "See the OCD specific support for these classes.            \n"
+                               );
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
