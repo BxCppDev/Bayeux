@@ -53,6 +53,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/i_unary_function.h
   ${module_include_dir}/${module_name}/i_unary_function_with_derivative.h
   ${module_include_dir}/${module_name}/linear_regression.h
+  ${module_include_dir}/${module_name}/linear_regression.ipp
   ${module_include_dir}/${module_name}/linear_system_solver.h
   ${module_include_dir}/${module_name}/mean.h
   ${module_include_dir}/${module_name}/min_max.h
