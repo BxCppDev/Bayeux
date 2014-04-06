@@ -51,8 +51,8 @@ namespace mctools {
  */
 struct bio_guard {
   bio_guard() {
-    mctools::detail::serialization::dynamic_link_guard& dlg
-      = mctools::detail::serialization::dynamic_link_guard::instance();
+    //mctools::detail::serialization::dynamic_link_guard& dlg =
+    ::mctools::detail::serialization::dynamic_link_guard::instance();
   }
 
   static bio_guard _g_trigger_link_guard_;
