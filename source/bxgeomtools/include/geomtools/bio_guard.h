@@ -51,8 +51,8 @@ namespace geomtools {
  */
 struct bio_guard {
   bio_guard() {
-    geomtools::detail::serialization::dynamic_link_guard& dlg
-      = geomtools::detail::serialization::dynamic_link_guard::instance();
+    // geomtools::detail::serialization::dynamic_link_guard& dlg
+    ::geomtools::detail::serialization::dynamic_link_guard::instance();
   }
 
   static bio_guard _g_trigger_link_guard_;
