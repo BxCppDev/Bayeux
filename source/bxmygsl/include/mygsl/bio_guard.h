@@ -51,8 +51,8 @@ namespace mygsl {
  */
 struct bio_guard {
   bio_guard() {
-    mygsl::detail::serialization::dynamic_link_guard& dlg
-      = mygsl::detail::serialization::dynamic_link_guard::instance();
+    //mygsl::detail::serialization::dynamic_link_guard& dlg =
+    ::mygsl::detail::serialization::dynamic_link_guard::instance();
   }
 
   static bio_guard _g_trigger_link_guard_;

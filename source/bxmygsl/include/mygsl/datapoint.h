@@ -1,56 +1,66 @@
-// -*- mode:c++; -*- 
-// datapoint.h
+// \file mygsl/datapoint.h
 
-#ifndef MYGSL_DATAPOINT_H_ 
-#define MYGSL_DATAPOINT_H_ 1
+#ifndef MYGSL_DATAPOINT_H
+#define MYGSL_DATAPOINT_H 1
 
+// Standard library:
 #include <iostream>
 #include <limits>
 
-// Serialization interface :
+// Third party :
+// - Bayeux/deatatools:
 #include <datatools/i_serializable.h>
 
+// This project:
 #include <mygsl/ioutils.h>
 
 namespace mygsl {
 
-  /// \brief A (x,y,sigma(y)) triplet
-  class datapoint :
-    DATATOOLS_SERIALIZABLE_CLASS
+  /// \brief A serializable (x,y,sigma(y)) triplet
+  class datapoint : DATATOOLS_SERIALIZABLE_CLASS
   {
 
   public:
 
+    /// Default constructor
     datapoint ();
 
-    datapoint (double x_, 
-               double y_, 
+    /// Constructor with a (x, y, sigma_y) triplet
+    datapoint (double x_,
+               double y_,
                double sigma_y_ = std::numeric_limits<double>::quiet_NaN ());
 
+    /// Destructor
     virtual ~datapoint ();
 
+    /// Return the X coordinate
     const double & x () const;
 
+    /// Return the Y coordinate
     const double & y () const;
 
+    /// Return the error on the Y coordinate
     const double & sigma_y () const;
 
+    /// Check if the error on the Y coordinate is provided
     bool has_sigma_y () const;
 
+    /// Check if the datapoints in weighted with the error on the Y coordinate
     bool is_weighted () const;
 
     friend std::ostream & operator<< (std::ostream &, const datapoint &);
 
     friend std::istream & operator>> (std::istream &, datapoint &);
 
-    static bool comp_by_x (const datapoint & p1_, 
+    /// Compare two datapoint using their X coordinate
+    static bool comp_by_x (const datapoint & p1_,
                            const datapoint & p2_);
 
   private:
 
-    double _x_;
-    double _y_;
-    double _sigma_y_;
+    double _x_;       /// X coordinate
+    double _y_;       /// Y coordinate
+    double _sigma_y_; /// Error on Y coordinate
 
     DATATOOLS_SERIALIZATION_DECLARATION();
 
@@ -58,6 +68,9 @@ namespace mygsl {
 
 }
 
-#endif // MYGSL_DATAPOINT_H_
+#endif // MYGSL_DATAPOINT_H
 
-// end of datapoint.h
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

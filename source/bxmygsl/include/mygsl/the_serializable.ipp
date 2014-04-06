@@ -1,12 +1,11 @@
-// -*- mode: c++; -*- 
-/* mygsl/the_serializable.ipp */
+/** \file mygsl/the_serializable.ipp */
 /*
  * This includes the implementation code
- * for Boost/Serialization layer.
+ * for the Boost/Serialization layer.
  *
  */
-#ifndef MYGSL_THE_SERIALIZABLE_IPP_
-#define MYGSL_THE_SERIALIZABLE_IPP_ 1
+#ifndef MYGSL_THE_SERIALIZABLE_IPP
+#define MYGSL_THE_SERIALIZABLE_IPP 1
 
 /*********************
  * mygsl::best_value *
@@ -17,6 +16,11 @@
  * mygsl::datapoint *
  ********************/
 #include <mygsl/datapoint.ipp>
+
+/****************************
+ * mygsl::linear_regression *
+ ****************************/
+#include <mygsl/linear_regression.ipp>
 
 /*******************
  * mygsl::interval *
@@ -48,6 +52,9 @@
  *************************/
 #include <mygsl/histogram_pool.ipp>
 
-#endif // MYGSL_THE_SERIALIZABLE_IPP_
+#endif // MYGSL_THE_SERIALIZABLE_IPP
 
-/* end of mygsl/the_serializable.ipp */
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

@@ -1,14 +1,18 @@
-// -*- mode: c++ ; -*-
-/* mygsl/datapoint.ipp */
+// \file mygsl/datapoint.ipp
 
-#ifndef MYGSL_DATAPOINT_IPP_
-#define MYGSL_DATAPOINT_IPP_ 1
+#ifndef MYGSL_DATAPOINT_IPP
+#define MYGSL_DATAPOINT_IPP 1
 
+// Ourselves:
 #include <mygsl/datapoint.h>
 
+// Third party:
+// - Boost:
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
+// - Bayeux/datatools:
 #include <datatools/i_serializable.ipp>
+
 namespace mygsl {
 
   template<class Archive>
@@ -24,6 +28,9 @@ namespace mygsl {
 
 } // end of namespace mygsl
 
-#endif // MYGSL_DATAPOINT_IPP_
+#endif // MYGSL_DATAPOINT_IPP
 
-// end of mygsl/datapoint.ipp
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

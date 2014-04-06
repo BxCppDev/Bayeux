@@ -65,6 +65,7 @@ include/mygsl/polynomial.ipp
 include/mygsl/histogram_2d.ipp
 include/mygsl/histogram.ipp
 include/mygsl/histogram_pool.ipp
+include/mygsl/linear_regression.ipp
 include/mygsl/the_serializable.ipp
   )
 list_prepend(mygsl_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
