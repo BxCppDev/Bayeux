@@ -417,61 +417,61 @@ namespace genbb {
 
   double inspector_data::get_electron_phi(int i_) const
   {
-    if ( i_ < 0 || i_ >= electrons_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) electrons_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
     return electrons_momenta[i_].phi();
   }
 
   double inspector_data::get_positron_phi(int i_) const
   {
-    if ( i_ < 0 || i_ >= positrons_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) positrons_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
     return positrons_momenta[i_].phi();
   }
 
   double inspector_data::get_gamma_phi(int i_) const
   {
-    if ( i_ < 0 || i_ >= gammas_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) gammas_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
     return gammas_momenta[i_].phi();
   }
 
   double inspector_data::get_alpha_phi(int i_) const
   {
-    if ( i_ < 0 || i_ >= alphas_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) alphas_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
     return alphas_momenta[i_].phi();
   }
 
   double inspector_data::get_neutron_phi(int i_) const
   {
-    if ( i_ < 0 || i_ >= neutrons_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) neutrons_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
     return neutrons_momenta[i_].phi();
   }
 
   double inspector_data::get_muon_minus_phi(int i_) const
   {
-    if ( i_ < 0 || i_ >= muons_minus_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) muons_minus_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
     return muons_minus_momenta[i_].phi();
   }
 
   double inspector_data::get_muon_plus_phi(int i_) const
   {
-    if ( i_ < 0 || i_ >= muons_plus_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) muons_plus_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
     return muons_plus_momenta[i_].phi();
   }
 
   double inspector_data::get_other_neutral_particle_phi(int i_) const
   {
-    if ( i_ < 0 || i_ >= other_neutral_particles_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) other_neutral_particles_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
     return other_neutral_particles_momenta[i_].phi();
   }
 
   double inspector_data::get_other_positive_particle_phi(int i_) const
   {
-    if ( i_ < 0 || i_ >= other_positive_particles_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) other_positive_particles_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
     return other_positive_particles_momenta[i_].phi();
   }
 
   double inspector_data::get_other_negative_particle_phi(int i_) const
   {
-    if ( i_ < 0 || i_ >= other_positive_particles_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) other_positive_particles_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
     return other_positive_particles_momenta[i_].phi();
   }
 
@@ -480,182 +480,182 @@ namespace genbb {
 
   double inspector_data::get_electron_cos_theta(int i_) const
   {
-    if ( i_ < 0 || i_ >= electrons_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) electrons_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
     return electrons_momenta[i_].cosTheta();
   }
 
   double inspector_data::get_positron_cos_theta(int i_) const
   {
-    if ( i_ < 0 || i_ >= positrons_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) positrons_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
     return positrons_momenta[i_].cosTheta();
   }
 
   double inspector_data::get_gamma_cos_theta(int i_) const
   {
-    if ( i_ < 0 || i_ >= gammas_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) gammas_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
     return gammas_momenta[i_].cosTheta();
   }
 
   double inspector_data::get_alpha_cos_theta(int i_) const
   {
-    if ( i_ < 0 || i_ >= alphas_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) alphas_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
     return alphas_momenta[i_].cosTheta();
   }
 
   double inspector_data::get_neutron_cos_theta(int i_) const
   {
-    if ( i_ < 0 || i_ >= neutrons_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) neutrons_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
     return neutrons_momenta[i_].cosTheta();
   }
 
   double inspector_data::get_muon_minus_cos_theta(int i_) const
   {
-    if ( i_ < 0 || i_ >= muons_minus_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) muons_minus_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
     return muons_minus_momenta[i_].cosTheta();
   }
 
   double inspector_data::get_muon_plus_cos_theta(int i_) const
   {
-    if ( i_ < 0 || i_ >= muons_plus_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) muons_plus_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
     return muons_plus_momenta[i_].cosTheta();
   }
 
   double inspector_data::get_other_neutral_particle_cos_theta(int i_) const
   {
-    if ( i_ < 0 || i_ >= other_neutral_particles_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) other_neutral_particles_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
     return other_neutral_particles_momenta[i_].cosTheta();
   }
 
   double inspector_data::get_other_positive_particle_cos_theta(int i_) const
   {
-    if ( i_ < 0 || i_ >= other_positive_particles_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) other_positive_particles_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
     return other_positive_particles_momenta[i_].cosTheta();
   }
 
   double inspector_data::get_other_negative_particle_cos_theta(int i_) const
   {
-    if ( i_ < 0 || i_ >= other_positive_particles_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) other_positive_particles_momenta.size()) return std::numeric_limits<double>::quiet_NaN();
     return other_positive_particles_momenta[i_].cosTheta();
   }
 
   /***/
   double inspector_data::get_electron_energy(int i_) const
   {
-    if ( i_ < 0 || i_ >= electrons_energies.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) electrons_energies.size()) return std::numeric_limits<double>::quiet_NaN();
     return electrons_energies[i_];
   }
 
   double inspector_data::get_positron_energy(int i_) const
   {
-    if ( i_ < 0 || i_ >= positrons_energies.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) positrons_energies.size()) return std::numeric_limits<double>::quiet_NaN();
     return positrons_energies[i_];
   }
 
   double inspector_data::get_gamma_energy(int i_) const
   {
-    if ( i_ < 0 || i_ >= gammas_energies.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) gammas_energies.size()) return std::numeric_limits<double>::quiet_NaN();
     return gammas_energies[i_];
   }
 
   double inspector_data::get_alpha_energy(int i_) const
   {
-    if ( i_ < 0 || i_ >= alphas_energies.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) alphas_energies.size()) return std::numeric_limits<double>::quiet_NaN();
     return alphas_energies[i_];
   }
 
   double inspector_data::get_neutron_energy(int i_) const
   {
-    if ( i_ < 0 || i_ >= neutrons_energies.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) neutrons_energies.size()) return std::numeric_limits<double>::quiet_NaN();
     return neutrons_energies[i_];
   }
 
   double inspector_data::get_muon_minus_energy(int i_) const
   {
-    if ( i_ < 0 || i_ >= muons_minus_energies.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) muons_minus_energies.size()) return std::numeric_limits<double>::quiet_NaN();
     return muons_minus_energies[i_];
   }
 
   double inspector_data::get_muon_plus_energy(int i_) const
   {
-    if ( i_ < 0 || i_ >= muons_plus_energies.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) muons_plus_energies.size()) return std::numeric_limits<double>::quiet_NaN();
     return muons_plus_energies[i_];
   }
 
   double inspector_data::get_other_neutral_particle_energy(int i_) const
   {
-    if ( i_ < 0 || i_ >= other_neutral_particles_energies.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) other_neutral_particles_energies.size()) return std::numeric_limits<double>::quiet_NaN();
     return other_neutral_particles_energies[i_];
   }
 
   double inspector_data::get_other_positive_particle_energy(int i_) const
   {
-    if ( i_ < 0 || i_ >= other_positive_particles_energies.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) other_positive_particles_energies.size()) return std::numeric_limits<double>::quiet_NaN();
     return other_positive_particles_energies[i_];
   }
 
   double inspector_data::get_other_negative_particle_energy(int i_) const
   {
-    if ( i_ < 0 || i_ >= other_positive_particles_energies.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) other_positive_particles_energies.size()) return std::numeric_limits<double>::quiet_NaN();
     return other_positive_particles_energies[i_];
   }
 
   double inspector_data::get_electron_time(int i_) const
   {
-    if ( i_ < 0 || i_ >= electrons_times.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) electrons_times.size()) return std::numeric_limits<double>::quiet_NaN();
     return electrons_times[i_];
   }
 
   double inspector_data::get_positron_time(int i_) const
   {
-    if ( i_ < 0 || i_ >= positrons_times.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) positrons_times.size()) return std::numeric_limits<double>::quiet_NaN();
     return positrons_times[i_];
   }
 
   double inspector_data::get_gamma_time(int i_) const
   {
-    if ( i_ < 0 || i_ >= gammas_times.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) gammas_times.size()) return std::numeric_limits<double>::quiet_NaN();
     return gammas_times[i_];
   }
 
   double inspector_data::get_alpha_time(int i_) const
   {
-    if ( i_ < 0 || i_ >= alphas_times.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) alphas_times.size()) return std::numeric_limits<double>::quiet_NaN();
     return alphas_times[i_];
   }
 
   double inspector_data::get_neutron_time(int i_) const
   {
-    if ( i_ < 0 || i_ >= neutrons_times.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) neutrons_times.size()) return std::numeric_limits<double>::quiet_NaN();
     return neutrons_times[i_];
   }
 
   double inspector_data::get_muon_minus_time(int i_) const
   {
-    if ( i_ < 0 || i_ >= muons_minus_times.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) muons_minus_times.size()) return std::numeric_limits<double>::quiet_NaN();
     return muons_minus_times[i_];
   }
 
   double inspector_data::get_muon_plus_time(int i_) const
   {
-    if ( i_ < 0 || i_ >= muons_plus_times.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) muons_plus_times.size()) return std::numeric_limits<double>::quiet_NaN();
     return muons_plus_times[i_];
   }
 
   double inspector_data::get_other_neutral_particle_time(int i_) const
   {
-    if ( i_ < 0 || i_ >= other_neutral_particles_times.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) other_neutral_particles_times.size()) return std::numeric_limits<double>::quiet_NaN();
     return other_neutral_particles_times[i_];
   }
 
   double inspector_data::get_other_positive_particle_time(int i_) const
   {
-    if ( i_ < 0 || i_ >= other_positive_particles_times.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) other_positive_particles_times.size()) return std::numeric_limits<double>::quiet_NaN();
     return other_positive_particles_times[i_];
   }
 
   double inspector_data::get_other_negative_particle_time(int i_) const
   {
-    if ( i_ < 0 || i_ >= other_positive_particles_times.size()) return std::numeric_limits<double>::quiet_NaN();
+    if ( i_ < 0 || i_ >= (int) other_positive_particles_times.size()) return std::numeric_limits<double>::quiet_NaN();
     return other_positive_particles_times[i_];
   }
 

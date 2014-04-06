@@ -51,8 +51,8 @@ namespace genbb {
  */
 struct bio_guard {
   bio_guard() {
-    genbb::detail::serialization::dynamic_link_guard& dlg
-      = genbb::detail::serialization::dynamic_link_guard::instance();
+    // genbb::detail::serialization::dynamic_link_guard& dlg =
+    ::genbb::detail::serialization::dynamic_link_guard::instance();
   }
 
   static bio_guard _g_trigger_link_guard_;
