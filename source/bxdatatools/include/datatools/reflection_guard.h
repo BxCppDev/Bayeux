@@ -52,8 +52,8 @@ namespace datatools {
  */
 struct reflection_guard {
   reflection_guard() {
-    ::datatools::detail::reflection::dynamic_link_guard& dlg
-      = ::datatools::detail::reflection::dynamic_link_guard::instance();
+    //::datatools::detail::reflection::dynamic_link_guard& dlg =
+    ::datatools::detail::reflection::dynamic_link_guard::instance();
   }
   static reflection_guard _g_trigger_link_guard_;
 };

@@ -1041,6 +1041,9 @@ namespace datatools {
       out_ << indent_ << std::endl;
     }
 
+    out_ << indent_ << ".. contents:: :depth: 2" << std::endl;
+    out_ << indent_ << std::endl;
+
     out_ << indent_ << std::endl;
     out_ << indent_ << "Generalities" << std::endl;
     out_ << indent_ << "------------" << std::endl;

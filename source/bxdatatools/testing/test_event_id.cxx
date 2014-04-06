@@ -13,23 +13,21 @@
 // Some pre-processor guard about Boost I/O usage and linkage :
 #include <datatools/bio_guard.h>
 
-int main (int argc_ , char ** argv_)
+int main (int /* argc_ */, char ** /* argv_ */)
 {
   using namespace std;
   int error_code = EXIT_SUCCESS;
   try
     {
       clog << "Hello, this is a sample program for class 'event_id'!" << endl;
-      bool debug = false;
+      // bool debug = false;
 
-      int iarg = 1;
-      while (iarg < argc_) {
-        string arg = argv_[iarg];
-
-        if ((arg == "-d") || (arg == "--debug")) debug = true;
-
-        iarg++;
-      }
+      // int iarg = 1;
+      // while (iarg < argc_) {
+      //   string arg = argv_[iarg];
+      //   if ((arg == "-d") || (arg == "--debug")) debug = true;
+      //   iarg++;
+      // }
 
       datatools::event_id my_id;
 
@@ -38,10 +36,10 @@ int main (int argc_ , char ** argv_)
       clog << "Event id = " << my_id << endl;
 
       try {
-        std::istringstream sin("666_7635");
+        std::istringstream ins("666_7635");
         clog << "Enter event id [format=XXX_YYY] ? ";
-        sin >> my_id;
-        if (! sin) {
+        ins >> my_id;
+        if (! ins) {
           throw runtime_error ("Format error!");
         }
         clog << "Event id = " << my_id << endl;

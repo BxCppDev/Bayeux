@@ -759,8 +759,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::smart_filename,ocd_)
       .set_mandatory(false)
       .set_triggered_by_label("mode", "list")
       .set_long_description("The specified file stores one filename per line.    \n")
-      .add_example(
-                   "Set the name of the list file ::                             \n"
+      .add_example("Set the name of the list file ::                             \n"
                    "                                                             \n"
                    "   mode      : string = \"list\"                             \n"
                    "   list.file : string as path = \"my_files.lis\"             \n"
@@ -797,8 +796,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::smart_filename,ocd_)
       .set_triggered_by_label("mode", "list")
       .set_long_description("The names of the several filenames in *list* mode.      \n"
                             "The filenames may contain some environment variable(s). \n")
-      .add_example(
-                   "Declare three filenames in *list* mode: ::             \n"
+      .add_example("Declare three filenames in *list* mode: ::             \n"
                    "                                                           \n"
                    "   mode           : string = \"list\"                      \n"
                    "   list.filenames : string[3] as path = \\                 \n"
@@ -818,8 +816,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::smart_filename,ocd_)
       .set_mandatory(true)
       .set_triggered_by_label("mode", "incremental")
       .set_long_description("The filenames prefix in *incremental* mode.\n")
-      .add_example(
-                   "The prefix of the incremented filenames: ::                \n"
+      .add_example("The prefix of the incremented filenames: ::                \n"
                    "                                                           \n"
                    "   mode               : string = \"incremental\"           \n"
                    "   incremental.prefix : string = \"run_\"                  \n"
@@ -837,12 +834,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::smart_filename,ocd_)
       .set_triggered_by_label("mode", "incremental")
       .set_long_description("The filenames suffix in *incremental* mode.       \n"
                             "The default value is empty.                       \n")
-     .add_example(
-                   "The suffix of the incremented filenames: ::                \n"
-                   "                                                           \n"
-                   "   mode               : string = \"incremental\"           \n"
-                   "   incremental.suffix : string = \"_special\"              \n"
-                   "                                                           \n"
+     .add_example("The suffix of the incremented filenames: ::                \n"
+                  "                                                           \n"
+                  "   mode               : string = \"incremental\"           \n"
+                  "   incremental.suffix : string = \"_special\"              \n"
+                  "                                                           \n"
                   )
       ;
   }
@@ -958,11 +954,15 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::smart_filename,ocd_)
 
   ocd_.set_configuration_hints ("Configuration examples for a ``datatools::smart_filename`` object :\n"
                                 "                                                             \n"
+                                "***Example 1:***                                             \n"
+                                "                                                             \n"
                                 "A unique filename: ::                                        \n"
                                 "                                                             \n"
                                 "   mode            : string = \"single\"                     \n"
                                 "   single.filename : string as path = \"${TMP_DIR}/test.tmp\"\n"
                                 "                                                             \n"
+                                "                                                             \n"
+                                "***Example 2:***                                             \n"
                                 "                                                             \n"
                                 "A list of filenames: ::                                      \n"
                                 "                                                             \n"
@@ -974,6 +974,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::smart_filename,ocd_)
                                 "     \"${DATA_DIR}/run_2.data\"                              \n"
                                 "                                                             \n"
                                 "                                                             \n"
+                                "***Example 3:***                                             \n"
+                                "                                                             \n"
                                 "Incremented filenames: ::                                    \n"
                                 "                                                             \n"
                                 "   mode                  : string = \"incremental\"          \n"
@@ -984,6 +986,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::smart_filename,ocd_)
                                 "   incremental.start     : integer = 0                       \n"
                                 "   incremental.stop      : integer = 49                      \n"
                                 "                                                             \n"
+                                "***Example 4:***                                             \n"
                                 "                                                             \n"
                                 "Unranged incremented filenames (no ``incremental.stop`` index property): ::\n"
                                 "                                                             \n"
@@ -994,6 +997,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::smart_filename,ocd_)
                                 "   incremental.increment : integer = 1                       \n"
                                 "   incremental.start     : integer = 0                       \n"
                                 "                                                             \n"
+                                "***Example 5:***                                             \n"
                                 "                                                             \n"
                                 "Decremented filenames: ::                                    \n"
                                 "                                                             \n"
@@ -1012,5 +1016,4 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::smart_filename,ocd_)
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
 
-DOCD_CLASS_SYSTEM_REGISTRATION(datatools::smart_filename,
-                               "datatools::smart_filename")
+DOCD_CLASS_SYSTEM_REGISTRATION(datatools::smart_filename, "datatools::smart_filename")

@@ -53,7 +53,7 @@ void test_reflection()
 }
 //#endif // DATATOOLS_WITH_REFLECTION == 1
 
-int main (int argc_, char ** argv_) {
+int main (int /* argc_ */, char ** /* argv_ */) {
   int error_code = EXIT_SUCCESS;
   try {
     datatools::enriched_base obj;

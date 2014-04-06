@@ -19,17 +19,18 @@
 #include <datatools/properties.ipp>
 
 namespace datatools {
-  /// Boost serialization template method
-DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(enriched_base, archive, version)
-{
-  archive & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-  archive & boost::serialization::make_nvp("name",              _name_);
-  archive & boost::serialization::make_nvp("display_name",      _display_name_);
-  archive & boost::serialization::make_nvp("terse_description", _terse_description_);
-  archive & boost::serialization::make_nvp("logging_priority",  _logging_priority_);
-  archive & boost::serialization::make_nvp("auxiliaries",       _auxiliaries_);
-  return;
-}
+  template<class Archive>
+  void enriched_base::serialize (Archive & archive,
+                                 const unsigned int /*version*/)
+  {
+    archive & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
+    archive & boost::serialization::make_nvp("name",              _name_);
+    archive & boost::serialization::make_nvp("display_name",      _display_name_);
+    archive & boost::serialization::make_nvp("terse_description", _terse_description_);
+    archive & boost::serialization::make_nvp("logging_priority",  _logging_priority_);
+    archive & boost::serialization::make_nvp("auxiliaries",       _auxiliaries_);
+    return;
+  }
 } // end of namespace datatools
 
 //#include <boost/serialization/version.hpp>

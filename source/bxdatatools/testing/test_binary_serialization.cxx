@@ -17,20 +17,20 @@
 
 using namespace std;
 
-int main (int argc_, char ** argv_) 
+int main (int /* argc_ */ , char ** /* argv_ */)
 {
-  /** Serialize **/ 
+  /** Serialize **/
   {
     clog << "Storing..." << endl;
     ofstream output_stream ("test_binary_serialization.data");
     eos::portable_oarchive oa (output_stream);
     clog << "Output archive is setup !" << endl;
-    uint32_t i0 = 0; 
-    uint32_t i1 = 42;  
-    uint32_t i2 = 666; 
-    uint32_t i3 = 100000000; 
-    uint32_t i4 = 0xFFFFFFFF; 
-    int32_t  i5 = -1; 
+    uint32_t i0 = 0;
+    uint32_t i1 = 42;
+    uint32_t i2 = 666;
+    uint32_t i3 = 100000000;
+    uint32_t i4 = 0xFFFFFFFF;
+    int32_t  i5 = -1;
     clog << "i0 = '" << i0 << "'" << endl;
     clog << "i1 = '" << i1 << "'" << endl;
     clog << "i2 = '" << i2 << "'" << endl;
@@ -61,12 +61,12 @@ int main (int argc_, char ** argv_)
     ifstream input_stream ("test_binary_serialization.data");
     eos::portable_iarchive ia (input_stream);
     clog << "Input archive is setup !" << endl;
-    uint32_t i0; 
-    uint32_t i1;  
-    uint32_t i2; 
-    uint32_t i3; 
-    uint32_t i4; 
-    int32_t  i5; 
+    uint32_t i0;
+    uint32_t i1;
+    uint32_t i2;
+    uint32_t i3;
+    uint32_t i4;
+    int32_t  i5;
 
     ia >> i0;
     clog << "i0 = '" << i0 << "'" << endl;

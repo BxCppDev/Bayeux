@@ -1,0 +1,187 @@
+#!/usr/bin/env bash
+
+debug=0
+build_dir=
+namespace=
+index_html_filename=
+tmp_dir=
+title=
+_list_of_processed_namespaces=
+
+which bxocd_manual > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "ERROR: Cannot find the 'bxocd_manual' executable !" >&2
+fi
+which pandoc > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "ERROR: Cannot find the 'pandoc' executable !" >&2
+fi
+
+while [ -n "$1" ]; do
+      token="$1"
+      if [ "x${token:0:1}" = "x-" ]; then
+        option="${token}"
+	if [ "${option}" = "--debug" ]; then
+	    debug=1
+	elif [ "${option}" = "-d" ]; then
+	    shift 1
+	    build_dir="$1"
+	elif [ "${option}" = "-n" ]; then
+	    shift 1
+	    namespace="$1"
+	elif [ "${option}" = "-i" ]; then
+	    shift 1
+	    index_html_filename="$1"
+	elif [ "${option}" = "-t" ]; then
+	    shift 1
+	    tmp_dir="$1"
+	elif [ "${option}" = "-T" ]; then
+	    shift 1
+	    title="$1"
+	else
+	    echo "WARNING: Ignoring option '${option}' !" >&2
+	fi
+      else
+        argument="${token}"
+	echo "WARNING: Ignoring argument '${argument}' !" >&2
+      fi
+      shift 1
+done
+
+if [ -z "${build_dir}" ]; then
+    build_dir="Bayeux-$(bxquery --version)/OCD"
+fi
+
+if [ -z "${index_html_filename}" ]; then
+    index_html_filename="index.html"
+fi
+
+if [ -z "${tmp_dir}" ]; then
+    tmp_dir="/tmp/${USER}/__bxocd_make_doc"
+fi
+
+if [ ${debug} -eq 1 ]; then
+    echo "DEBUG: build_dir='${build_dir}'" >&2
+    echo "DEBUG: namespace='${namespace}'" >&2
+    echo "DEBUG: index_html_filename='${index_html_filename}'" >&2
+    echo "DEBUG: tmp_dir='${tmp_dir}'" >&2
+    echo "DEBUG: title='${title}'" >&2
+fi
+
+if [ ! -d ${tmp_dir} ]; then
+    mkdir -p ${tmp_dir}
+fi
+
+list_of_classes=$(bxocd_manual --action list 2> /dev/null)
+
+index_rst_filename=`mktemp ${tmp_dir}/ocd_index.rst.XXXXXX`
+
+test ${debug} -eq 1 && echo "DEBUG: index_rst_filename='${index_rst_filename}'" >&2
+
+touch ${index_rst_filename}
+if [ "x${title}" != "x" ]; then
+    cat >> ${index_rst_filename} <<EOF
+================================================================================================
+${title}
+================================================================================================
+EOF
+else
+    cat >> ${index_rst_filename} <<EOF
+================================================================================================
+Object Configuration Description
+================================================================================================
+EOF
+fi
+cat >> ${index_rst_filename} <<EOF
+
+List of classes with OCD [1]_ support
+==================================================================
+
+.. [1] Object Configuration Description is a mechanism implemented
+   in Bayeux to provide a description of the configuration parameters
+   used to initialize objects of some specific classes.
+EOF
+
+function process_class()
+{
+    test ${debug} -eq 1 && echo "DEBUG: process_class: Entering..." >&2
+
+    local _classname="$1"
+    local _namespace=$(echo "${_classname}" | cut -d: -f1)
+    test ${debug} -eq 1 && echo "DEBUG: process_class: namespace='${_namespace}'..." >&2
+    local _bd=${build_dir}
+    if [ "x${_namespace}" != "x" ]; then
+	_bd=${build_dir}/${_namespace}
+	if [ ! -d ${_bd} ]; then
+	    test ${debug} -eq 1 && echo "DEBUG: process_class: Creating directory '${_bd}'..." >&2
+	    mkdir -p ${_bd}
+	fi
+	echo "${_list_of_processed_namespaces}" | tr [[:space:]] '\n' | grep ${_namespace} > /dev/null 2>&1
+	if [ $? -eq 1 ]; then
+	    cat >> ${index_rst_filename} <<EOF
+
+Namespace ``${_namespace}``
+-----------------------------------------------------------
+
+EOF
+	    _list_of_processed_namespaces="${_list_of_processed_namespaces} ${_namespace}"
+	fi
+    fi
+    #echo "DEVEL: LOPN='${_list_of_processed_namespaces}'" >&2
+    local _class_rst_filename=`mktemp ${tmp_dir}/${_classname}.rst.XXXXXX`
+    local _class_html_filename="${_classname}.html"
+    test ${debug} -eq 1 && echo "DEBUG: process_class: Generating RST file '${_class_rst_filename}'..." >&2
+    bxocd_manual --action show ${_classname} > ${_class_rst_filename}
+    test ${debug} -eq 1 && echo "DEBUG: process_class: Generating HTML file '${_bd}/${_class_html_filename}'..." >&2
+    cat >> ${_class_rst_filename} <<EOF
+
+--------
+
+\`Back<../${index_html_filename}>\`_
+
+EOF
+
+    pandoc -w html -r rst ${_class_rst_filename} -o ${_bd}/${_class_html_filename}
+
+
+    cat >> ${index_rst_filename} <<EOF
+  * \`${_classname}<${_namespace}/${_class_html_filename}>\`_
+EOF
+    test ${debug} -eq 1 && echo "DEBUG: process_class: Exiting." >&2
+    return 0
+}
+
+if [ ! -d ${build_dir} ]; then
+    mkdir -p ${build_dir}
+fi
+
+
+test ${debug} -eq 1 && echo "DEBUG: Entering class loop..." >&2
+for classname in ${list_of_classes}; do
+    test ${debug} -eq 1 && echo "DEBUG: Class='${classname}'" >&2
+    if [ -n "${namespace}" ]; then
+	test ${debug} -eq 1 && echo "DEBUG: Checking namespace='${namespace}'" >&2
+	echo "${classname}" | grep "^${namespace}::" > /dev/null 2>&1
+	if [ $? -ne 0 ]; then
+	    continue
+	fi
+    fi
+    test ${debug} -eq 1 && echo "DEBUG: Processing class='${classname}'..." >&2
+    process_class ${classname}
+    if [ $? -ne 0 ]; then
+	echo "ERROR: Cannot process class '${classname}' !" 1>&2
+    fi
+done
+
+cat >> ${index_rst_filename} <<EOF
+
+--------
+
+Generated by Bayeux $(bxquery --version)
+EOF
+
+pandoc -w html -r rst ${index_rst_filename} -o ${build_dir}/${index_html_filename}
+
+### â†©
+
+exit 0

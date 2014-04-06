@@ -51,8 +51,8 @@ namespace datatools {
  */
 struct bio_guard {
   bio_guard() {
-    datatools::detail::serialization::dynamic_link_guard& dlg
-      = datatools::detail::serialization::dynamic_link_guard::instance();
+    // datatools::detail::serialization::dynamic_link_guard& dlg =
+    ::datatools::detail::serialization::dynamic_link_guard::instance();
   }
 
   static bio_guard _g_trigger_link_guard_;
