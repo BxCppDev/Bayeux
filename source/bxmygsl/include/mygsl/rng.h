@@ -1,4 +1,4 @@
-// rng.h
+// \file mygsl/rng.h
 /*
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -19,22 +19,26 @@
  *
  */
 
-#ifndef MYGSL_RNG_H_
-#define MYGSL_RNG_H_ 1
+#ifndef MYGSL_RNG_H
+#define MYGSL_RNG_H 1
 
+// Standard library
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <map>
 #include <vector>
 
+// Third party:
+// - Boost
 #include <boost/cstdint.hpp>
 #include <boost/scoped_ptr.hpp>
-
+// - GSL
 #include <gsl/gsl_rng.h>
-
+// - Bayeux/datatools:
 #include <datatools/exception.h>
 
+// This project:
 #include <mygsl/random_utils.h>
 
 namespace datatools {
@@ -43,6 +47,7 @@ namespace datatools {
 
 namespace mygsl {
 
+  /// \brief Pseudo random number generator
   class rng
   {
   public:
@@ -52,26 +57,26 @@ namespace mygsl {
 
     typedef std::vector<unsigned char> state_buffer_type;
 
-    static void default_setup ();
+    static void default_setup();
 
-    static void print_dict (std::ostream &);
+    static void print_dict(std::ostream &);
 
     static bool is_id_valid(const std::string & id_);
 
     static bool is_seed_valid(int32_t seed_);
 
-    bool is_initialized () const;
+    bool is_initialized() const;
 
-    void initialize ();
+    void initialize();
 
-    void initialize (int32_t seed_);
+    void initialize(int32_t seed_);
 
-    void initialize (const std::string & id_, int32_t seed_ = 0);
+    void initialize(const std::string & id_, int32_t seed_ = 0);
 
-    void initialize (const datatools::properties & config_);
+    void initialize(const datatools::properties & config_);
 
-    // Deprecated :
-    void init (const std::string & id_, int32_t seed_ = 0);
+    /// \deprecated
+    void init(const std::string & id_, int32_t seed_ = 0);
 
     bool is_seed_invalid() const;
 
@@ -83,19 +88,19 @@ namespace mygsl {
 
     int32_t get_seed() const;
 
-    void set_seed (int32_t seed_ = 0);
+    void set_seed(int32_t seed_ = 0);
 
     const std::string & get_id() const;
 
-    void set_id (const std::string & id_ = "");
+    void set_id(const std::string & id_ = "");
 
     void set_trunc(int);
 
     bool has_tracker() const;
 
-    void set_tracker (const std::string & filename_);
+    void set_tracker(const std::string & filename_);
 
-    void reset_tracker ();
+    void reset_tracker();
 
     template<class Type>
     void tracker_tag(const std::string & tag_) {
@@ -109,82 +114,94 @@ namespace mygsl {
       *_tracker_.get() << '#' << ' ' << tag_ << " = " << value_ << std::endl;
     }
 
-    rng ();
+    /// Default constructor
+    rng();
 
-    rng (int32_t seed_, bool init_now_ = true);
+    /// Constructor from a seed
+    rng(int32_t seed_, bool init_now_ = true);
 
-    rng (const std::string & id_, int32_t seed_, bool init_now_ = true);
+    /// Constructor from a GSL PRNG id and a seed
+    rng(const std::string & id_, int32_t seed_, bool init_now_ = true);
 
-    void reset ();
+    /// Reset
+    void reset();
 
-    void clear ();
+    void clear();
 
-    virtual ~rng ();
+    /// Destructor
+    virtual ~rng();
 
-    rng (const rng &); // not implemented
+    rng(const rng &); // not implemented
 
-    void dump (std::ostream & = std::clog) const;
+    /// Raw print
+    void dump(std::ostream & = std::clog) const;
 
-    rng & operator= (const rng &); // not implemented
+    rng & operator=(const rng &); // not implemented
 
-    unsigned long int get ();
+    unsigned long int get();
 
-    double uniform ();
+    /// Shoot a real between 0 and 1
+    double uniform();
 
-    double uniform_pos ();
+    /// Shoot a real between 0 (excluded) and 1
+    double uniform_pos();
 
-    unsigned long int uniform_int (unsigned long int n_);
+    unsigned long int uniform_int(unsigned long int n_);
 
-    std::string name () const;
+    /// Return the name/ID of the embedded GSL PRNG
+    std::string name() const;
 
-    unsigned long int min () const;
+    unsigned long int min() const;
 
-    unsigned long int max () const;
+    unsigned long int max() const;
 
-    void store (const std::string & filename_) const;
+    void store(const std::string & filename_) const;
 
-    void load (const std::string & filename_);
+    void load(const std::string & filename_);
 
-    void to_stream (std::ostream &) const;
+    void to_stream(std::ostream &) const;
 
-    void from_stream (std::istream &);
+    void from_stream(std::istream &);
 
-    void to_buffer (state_buffer_type &) const;
+    void to_buffer(state_buffer_type &) const;
 
-    void from_buffer (const state_buffer_type &);
+    void from_buffer(const state_buffer_type &);
 
-    size_t get_internal_state_size () const;
+    size_t get_internal_state_size() const;
 
     // specific useful distributions:
 
-    double flat (double a_, double b_);
+    double flat(double a_, double b_);
 
-    double gaussian (double sigma_ = 1.0);
+    double gaussian(double sigma_ = 1.0);
 
-    double gaussian (double mu_, double sigma_);
+    double gaussian(double mu_, double sigma_);
 
-    double gaussian_tail (double min_, double sigma_ = 1.0);
+    double gaussian_tail(double min_, double sigma_ = 1.0);
 
-    double exponential (double sigma_ = 1.0);
+    double exponential(double sigma_ = 1.0);
 
-    double chisquare (double nu_ = 1.0);
+    double chisquare(double nu_ = 1.0);
 
-    unsigned long int poisson (double mu_);
+    unsigned long int poisson(double mu_);
 
-    unsigned long int bernoulli (double p_ = 0.5);
+    unsigned long int bernoulli(double p_ = 0.5);
 
-    unsigned long int binomial (double p_,
-                                unsigned long int n_);
+    unsigned long int binomial(double p_,
+                               unsigned long int n_);
 
     // 2009-11-08 FM: to be used as a functor:
-    double operator () (void);
+    double operator()(void);
 
   private:
 
+    /// Set default values
     void _init_defaults_();
 
+    /// Initialize
     void _initialize_();
 
+    /// Reset
     void _reset_();
 
   private:
@@ -194,16 +211,15 @@ namespace mygsl {
     gsl_rng *    _r_;    /// The internal GSL random number generator
     int          _trunc_;                       /// Precision truncation index (debug)
     unsigned long int _trunc_norm_;             /// Precision truncation denominator (debug)
-    boost::scoped_ptr<std::ofstream> _tracker_; /// Embeded tracker (debug)
-    int _tracker_counter_;                      /// Embeded counter (debug)
+    boost::scoped_ptr<std::ofstream> _tracker_; /// Embedded tracker (debug)
+    int _tracker_counter_;                      /// Embedded counter (debug)
 
   };
 
 }
 
-#endif // MYGSL_RNG_H_
+#endif // MYGSL_RNG_H
 
-// end of rng.h
 /*
 ** Local Variables: --
 ** mode: c++ --

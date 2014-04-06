@@ -92,16 +92,21 @@ namespace mygsl {
 
     public:
 
+      /// Constructor
       function(const fit_data &);
 
+      /// Set the fit fata
       void set_fit_data(const fit_data &);
 
+      /// Return the fit data
       const fit_data & get_fit_data() const;
 
+      /// Evaluate the Y value and associated error for a given X from the result of the fit
       void eval_err(double x_, double & y_, double & yerr_) const;
 
     protected:
 
+      /// Evaluate the Y value for a given X
       virtual double _eval(double x_) const;
 
     private:
@@ -112,6 +117,7 @@ namespace mygsl {
 
   public:
 
+    /// Minimum number of data points to perform the linear regression fit
     static const unsigned int MINIMUM_NUMBER_OF_DATA_POINTS = 2;
 
     /// Check initialization flag
@@ -131,18 +137,18 @@ namespace mygsl {
 
     /// Construct from plain arrays of x, y and w values
     linear_regression(size_t npoints_,
-                       const double * x_,
-                       const double * y_,
-                       const double * w_ = 0);
+                      const double * x_,
+                      const double * y_,
+                      const double * w_ = 0);
 
     /// Construct from vectors of x, y and w values
     linear_regression(const std::vector<double> & x_,
-                       const std::vector<double> & y_,
-                       const std::vector<double> & w_);
+                      const std::vector<double> & y_,
+                      const std::vector<double> & w_);
 
     /// Construct from vectors of x and y values (no weights)
     linear_regression(const std::vector<double> & x_,
-                       const std::vector<double> & y_);
+                      const std::vector<double> & y_);
 
     /// Destructor
     virtual ~linear_regression();
@@ -152,18 +158,18 @@ namespace mygsl {
 
     /// Initialize from plain arrays of x, y and optional w values
     void init(size_t npoints_,
-               const double * x_,
-               const double * y_,
-               const double * w_ = 0);
+              const double * x_,
+              const double * y_,
+              const double * w_ = 0);
 
     /// Initialize from vectors of x, y and w values
     void init(const std::vector<double> & x_,
-               const std::vector<double> & y_,
-               const std::vector<double> & w_);
+              const std::vector<double> & y_,
+              const std::vector<double> & w_);
 
     /// Construct from vectors of x and y values (no weights)
     void init(const std::vector<double> & x_,
-               const std::vector<double> & y_);
+              const std::vector<double> & y_);
 
     /// Reset
     void reset();

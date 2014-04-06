@@ -256,11 +256,11 @@ namespace mygsl {
     for (size_t i = 0; i < n; i++) {
       _x_[i] = p_[i].x ();
       _y_[i] = p_[i].y ();
-      if (! p_[i].is_weighted ()) {
+      if (! p_[i].is_weighted()) {
         DT_LOG_WARNING(datatools::logger::PRIO_WARNING, "Datapoint #" << i << " is not weighted !");
         _can_weighted_ = false;
       }
-      _w_[i] = p_[i].sigma_y ();
+      _w_[i] = 1. / (p_[i].sigma_y() * p_[i].sigma_y());
     }
     _fit_data_.n = n;
     _initialized_ = true;

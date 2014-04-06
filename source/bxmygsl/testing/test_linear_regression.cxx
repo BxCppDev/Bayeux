@@ -11,7 +11,7 @@
 
 using namespace std;
 
-int main (int argc_ , char ** argv_)
+int main (int /* argc_ */, char ** /* argv_ */)
 {
   try
     {
@@ -22,7 +22,7 @@ int main (int argc_ , char ** argv_)
       time (&now);
       seed = (long) now;
 
-      mygsl::rng r (rng_id, seed);
+      mygsl::rng r(rng_id, seed);
 
       double a     = -0.83;
       double b     = +10.21;
@@ -38,7 +38,7 @@ int main (int argc_ , char ** argv_)
       // second method:
       vector<double> vx;
       vector<double> vy;
-      vector<double> vy_err;
+      vector<double> vy_weight;
 
       // fill data vectors:
       for (int i = 0; i < (int) npoints; i++)
@@ -52,10 +52,10 @@ int main (int argc_ , char ** argv_)
           // second method:
           vx.push_back (x);
           vy.push_back (y);
-          vy_err.push_back (y_err);
+          vy_weight.push_back (1.0 / (y_err * y_err));
         }
 
-      sort (points.begin (), points.end (), mygsl::datapoint::comp_by_x);
+      std::sort (points.begin (), points.end (), mygsl::datapoint::comp_by_x);
 
       // draw datapoints:
       for (int i = 0; i < (int) points.size (); i++)
@@ -68,10 +68,10 @@ int main (int argc_ , char ** argv_)
       cout << endl;
       cout << endl;
 
-      mygsl::linear_regression lr (points);
+      mygsl::linear_regression lr(points);
 
       // draw unweighted fit result:
-      if (lr.fit_linear ())
+      if (lr.fit_linear())
         {
           mygsl::linear_regression::function lr_func(lr.get_fit_data());
           double dx = 0.1;
@@ -79,7 +79,7 @@ int main (int argc_ , char ** argv_)
             {
               double y;
               double y_err;
-              lr_func.eval_err (x, y, y_err);
+              lr_func.eval_err(x, y, y_err);
               cout << x << ' '
                    << y << ' '
                    << y_err << endl;
@@ -88,12 +88,12 @@ int main (int argc_ , char ** argv_)
           cout << endl;
           cout << endl;
 
-          for (int i = 0; i < (int) points.size (); i++)
+          for (int i = 0; i < (int) points.size(); i++)
             {
-              double x = points[i].x ();
+              double x = points[i].x();
               double y;
               double y_err;
-              lr_func.eval_err (x, y, y_err);
+              lr_func.eval_err(x, y, y_err);
               cout << x << ' '
                    << y << ' '
                    << y_err << endl;
@@ -127,7 +127,7 @@ int main (int argc_ , char ** argv_)
             {
               double y;
               double y_err;
-              lr_func.eval_err (x, y, y_err);
+              lr_func.eval_err(x, y, y_err);
               cout << x << ' '
                    << y << ' '
                    << y_err << endl;
@@ -136,12 +136,12 @@ int main (int argc_ , char ** argv_)
           cout << endl;
           cout << endl;
 
-          for (int i = 0; i < points.size (); i++)
+          for (int i = 0; i < (int) points.size(); i++)
             {
-              double x = points[i].x ();
+              double x = points[i].x();
               double y;
               double y_err;
-              lr_func.eval_err (x, y, y_err);
+              lr_func.eval_err(x, y, y_err);
               cout << x << ' '
                    << y << ' '
                    << y_err << endl;
@@ -166,9 +166,9 @@ int main (int argc_ , char ** argv_)
           cerr << "WARNING: Cannot fit a straight line (WLF)!" << endl;
         }
 
-      lr.init (vx, vy, vy_err);
+      lr.init(vx, vy, vy_weight);
       // draw weighted fit result:
-      if (lr.fit_weighted_linear ())
+      if (lr.fit_weighted_linear())
         {
 
           clog << "Weighted linear least-squares fit (method 2): " << endl;
