@@ -4,6 +4,7 @@
 // This project
 #include <electronics/component_manager.h>
 #include <electronics/mapping_utils.h>
+#include <electronics/physical_component.h>
 
 namespace electronics {
 
@@ -23,13 +24,14 @@ namespace electronics {
 
   mapping::mapping()
   {
-    _logging_ = datatools::logger::PRIO_FATAL;
+    _logging_priority_ = datatools::logger::PRIO_FATAL;
     _initialized_ = false;
     _manager_ = 0;
     _max_depth_ = depth_no_limit();
+    _top_level_mapping_ = false;
 
     _eid_manager_ = 0;
-    _top_level_component_ = 0;
+    _top_level_logical_ = 0;
     _depth_ = 0;
     return;
   }
@@ -44,12 +46,12 @@ namespace electronics {
 
   datatools::logger::priority mapping::get_logging_priority() const
   {
-    return _logging_;
+    return _logging_priority_;
   }
 
   void mapping::set_logging_priority(datatools::logger::priority l_)
   {
-    _logging_ = l_;
+    _logging_priority_ = l_;
     return;
   }
 
@@ -61,8 +63,20 @@ namespace electronics {
 
   void mapping::set_manager(const component_manager & mgr_)
   {
-   DT_THROW_IF(is_initialized(), std::logic_error, "Mapping is already initialized !");
+    DT_THROW_IF(is_initialized(), std::logic_error, "Mapping is already initialized !");
     _manager_ = &mgr_;
+    return;
+  }
+
+  bool mapping::is_top_level_mapping() const
+  {
+    return _top_level_mapping_;
+  }
+
+  void mapping::set_top_level_mapping(bool tlm_)
+  {
+    DT_THROW_IF(is_initialized(), std::logic_error, "Mapping is already initialized !");
+    _top_level_mapping_ = tlm_;
     return;
   }
 
@@ -186,7 +200,8 @@ namespace electronics {
 
   void mapping::initialize()
   {
-    std::cerr << "DEVEL: mapping::initialize: Entering..." << std::endl;
+    DT_LOG_TRACE(get_logging_priority(), "Entering...");
+
     DT_THROW_IF(is_initialized(), std::logic_error, "Mapping is already initialized !");
 
     DT_THROW_IF(! has_manager(), std::logic_error, "Missing electronics component manager !");
@@ -201,12 +216,13 @@ namespace electronics {
     build();
 
     _initialized_ = true;
-    std::cerr << "DEVEL: mapping::initialize: Exiting." << std::endl;
+    DT_LOG_TRACE(get_logging_priority(), "Exiting.");
     return;
   }
 
   void mapping::reset()
   {
+    DT_LOG_TRACE(get_logging_priority(), "Entering...");
     DT_THROW_IF(!is_initialized(), std::logic_error, "Mapping is not initialized !");
     _initialized_ = false;
 
@@ -217,66 +233,73 @@ namespace electronics {
     _max_depth_ = depth_no_limit();
 
     _eid_manager_ = 0;
-    _top_level_component_ = 0;
+    _top_level_logical_ = 0;
     _depth_ = 0;
 
+    DT_LOG_TRACE(get_logging_priority(), "Exiting.");
     return;
   }
 
   void mapping::build(const std::string & setup_name_)
   {
-    std::cerr << "DEVEL: mapping::build: Entering..." << std::endl;
+    DT_LOG_TRACE(get_logging_priority(), "Entering...");
+
     std::string setup_name = setup_name_;
     if (setup_name.empty()) {
       setup_name = component_manager::default_top_level_name();
     }
 
-    if (_top_level_component_ == 0) {
-      std::string top_level_name = "setup";
-      DT_THROW_IF(!_manager_->has(top_level_name),
+    if (_top_level_logical_ == 0) {
+      DT_THROW_IF(!_manager_->has(setup_name),
                   std::logic_error,
-                  "Cannot find the top-level component model with name '" << top_level_name
+                  "Cannot find the top-level component model with name '" << setup_name
                   << "' in the virtual electronic component models manager !");
-      _top_level_component_ = &(_manager_->get<component_model_base>(top_level_name));
-      std::cerr << "DEVEL: mapping::build: Top level component @ " << _top_level_component_ << std::endl;
+      _top_level_logical_ = &(_manager_->get<component_model_base>(setup_name).get_logical());
+      DT_LOG_TRACE(get_logging_priority(), "Top level logical @ " << _top_level_logical_);
     }
 
     _build();
 
-    std::cerr << "DEVEL: mapping::build: Exiting." << std::endl;
+    DT_LOG_TRACE(get_logging_priority(), "Exiting.");
     return;
   }
 
-  void mapping::tree_dump(std::ostream& out,
-                          const std::string& title,
-                          const std::string& a_indent,
-                          bool inherit) const {
+  void mapping::tree_dump(std::ostream& out_,
+                          const std::string& title_,
+                          const std::string& indent_,
+                          bool inherit_) const {
     std::string indent;
-    if (!a_indent.empty()) indent = a_indent;
+    if (!indent_.empty()) indent = indent_;
 
-    if (!title.empty()) out << indent << title << std::endl;
+    if (!title_.empty()) out_ << indent << title_ << std::endl;
 
-    out << indent << i_tree_dumpable::tag
+    out_ << indent << i_tree_dumpable::tag
         << "Logging priority : '"
         << datatools::logger::get_priority_label(get_logging_priority())
         << "'" << std::endl;
 
-    out << indent << i_tree_dumpable::tag
+    out_ << indent << i_tree_dumpable::tag
         << "Top-level mapping : " << _top_level_mapping_ << std::endl;
 
-    out << indent << i_tree_dumpable::tag
+    out_ << indent << i_tree_dumpable::tag
         << "Max depth : " << _max_depth_ << std::endl;
 
-    out << indent << i_tree_dumpable::tag
+    out_ << indent << i_tree_dumpable::tag
         << "Manager : " << _manager_ << std::endl;
 
-    out << indent << i_tree_dumpable::tag
+    out_ << indent << i_tree_dumpable::tag
         << "EID manager : " << _eid_manager_ << std::endl;
 
-    out << indent << i_tree_dumpable::tag
-        << "Top-level component : " << _top_level_component_ << std::endl;
+    out_ << indent << i_tree_dumpable::tag
+        << "Top-level logical : ";
+    if (_top_level_logical_) {
+      out_ << "'" << _top_level_logical_->get_name() << "'";
+    } else {
+      out_ << "<none>";
+    }
+    out_ << std::endl;
 
-    out << indent << i_tree_dumpable::tag
+    out_ << indent << i_tree_dumpable::tag
         << "Component information dictionary : " << _component_infos_.size() << std::endl;
 
     for (component_info_dict_type::const_iterator i = _component_infos_.begin();
@@ -284,17 +307,17 @@ namespace electronics {
          i++) {
       component_info_dict_type::const_iterator j = i;
       j++;
-      out << indent << i_tree_dumpable::skip_tag;
+      out_ << indent << i_tree_dumpable::skip_tag;
       if (j == _component_infos_.end()) {
-        out << i_tree_dumpable::last_tag;
+        out_ << i_tree_dumpable::last_tag;
       } else {
-        out << i_tree_dumpable::tag;
+        out_ << i_tree_dumpable::tag;
       }
-      out << "EID=" << i->first << " (as component model named '" << i->second.get_model().get_name() << "')";
-      out << std::endl;
+      out_ << "EID=" << i->first << " (as logical component named '" << i->second.get_logical().get_name() << "')";
+      out_ << std::endl;
     }
 
-    out << indent << i_tree_dumpable::inherit_tag(inherit)
+    out_ << indent << i_tree_dumpable::inherit_tag(inherit_)
         << "Initialized    : "
         << this->is_initialized()
         << std::endl;
@@ -304,7 +327,7 @@ namespace electronics {
 
   void mapping::_build()
   {
-    std::cerr << "DEVEL: mapping::_build: Entering..." << std::endl;
+    DT_LOG_TRACE(get_logging_priority(), "Entering...");
 
     std::string setup_cat_name = mapping::default_setup_category();
 
@@ -316,77 +339,73 @@ namespace electronics {
     geomtools::geom_id setup_eid;
     setup_cat_info.create (setup_eid);
     setup_eid.set_address (0);
-    DT_LOG_TRACE (_logging_, "Setup ID = " << setup_eid << ' '
+    DT_LOG_TRACE (_logging_priority_, "Setup ID = " << setup_eid << ' '
                   << (setup_eid.is_valid () ? "[Valid]": "[Invalid]"));
 
     // Add setup mapping info :
     if (_top_level_mapping_)  {
-      component_info setup_ci;
+      {
+        component_info dummy_ci;
+        _component_infos_[setup_eid] = dummy_ci;
+      }
+      component_info & setup_ci = _component_infos_[setup_eid];
       setup_ci.set_eid(setup_eid);
-      setup_ci.set_model(*_top_level_component_);
-      _component_infos_[setup_eid] = setup_ci;
+      setup_ci.set_logical(*_top_level_logical_);
     }
 
     bool build_mode_strict_mothership = true;
     if (build_mode_strict_mothership) {
-      _build_embedded_components(*_top_level_component_, setup_eid);
+      _build_embedded_components(*_top_level_logical_, setup_eid);
     }
 
-    std::cerr << "DEVEL: mapping::_build: Exiting." << std::endl;
+    DT_LOG_TRACE(get_logging_priority(), "Exiting.");
     return;
   }
 
-  void mapping::_build_embedded_components(const component_model_base & mother_,
-                                            const geomtools::geom_id & mother_eid_)
+  void mapping::_build_embedded_components(const logical_component & mother_,
+                                           const geomtools::geom_id & mother_eid_)
   {
-    std::cerr << "DEVEL: mapping::_build_embedded_components: Entering..." << std::endl;
-    const component_model_base & mother_model = mother_;
-    mother_model.get_auxiliaries().tree_dump(std::cerr, "Mother model auxiliaries: ", "***** ");
+    DT_LOG_TRACE(get_logging_priority(), "Entering...");
+    ++_depth_;
+    const logical_component & mother_log = mother_;
+    mother_log.get_auxiliaries().tree_dump(std::cerr, "Mother logical auxiliaries: ", "***** ");
 
-    for (component_dict_type::const_iterator i
-           = mother_model.get_embedded_components().begin();
-         i !=  mother_model.get_embedded_components().end();
+    for (logical_component::daughters_dict_type::const_iterator i
+           = mother_log.get_daughters().begin();
+         i != mother_log.get_daughters().end();
          i++) {
       const std::string & embedded_label = i->first;
-      const component_model_base & comp_model = mother_model.get_embedded(embedded_label).get();
-      std::cerr << "DEVEL: mapping::_build_embedded_components: Embedded = '"
-                << embedded_label << "'" << std::endl;
+      const physical_component & embedded_phys = *(i->second);
+      DT_LOG_TRACE (get_logging_priority (),
+                    "Embedded physical component '" << embedded_label << "' with physical name "
+                    << "'" << embedded_phys.get_name () << "'");
 
-      const std::string embedded_model_name = comp_model.get_name();
-      std::string embedded_category_info;
-      mother_model.get_auxiliaries().tree_dump(std::cerr, "Mother model auxiliaries: ", "DEVEL: ");
-      if (mapping_utils::has_embedded_id(mother_model.get_auxiliaries(),
+      //const std::string & embedded_phys_name = embedded_phys.get_name();
+      std::string embedded_mapping_info;
+      if (mapping_utils::has_embedded_id(mother_log.get_auxiliaries(),
                                          embedded_label)) {
-        mapping_utils::fetch_embedded_id(mother_model.get_auxiliaries(),
+        mapping_utils::fetch_embedded_id(mother_log.get_auxiliaries(),
                                          embedded_label,
-                                         embedded_category_info);
+                                         embedded_mapping_info);
         DT_LOG_TRACE (get_logging_priority(),
-                      "Found EID mapping info for embedded component '" << embedded_label << "'");
-        std::cerr << "DEVEL: mapping::_build_embedded_components: "
-                  << "Found EID mapping info for embedded component '" << embedded_label << "'."
-                  << std::endl;
+                      "Found EID mapping info for embedded physical component '" << embedded_label << "'");
       } else {
         DT_LOG_TRACE (get_logging_priority(),
-                      "No EID mapping info for embedded component '" << embedded_label << "'");
-        std::cerr << "DEVEL: mapping::_build_embedded_components: "
-                  << "No EID mapping info for embedded component '" << embedded_label << "'."
-                  << std::endl;
+                      "No EID mapping info for embedded physical component '" << embedded_label << "'");
       }
-
+      const logical_component & embedded_logical = embedded_phys.get_logical ();
       geomtools::geom_id propagated_parent_eid = mother_eid_;
-
-      if (! embedded_category_info.empty()) {
-
+      if (! embedded_mapping_info.empty()) {
         geomtools::geom_id embedded_eid;
         std::vector<uint32_t> embedded_index;
         _eid_manager_->compute_id_from_info(embedded_eid,
                                             mother_eid_,
-                                            embedded_category_info,
+                                            embedded_mapping_info,
                                             embedded_index);
         if (_eid_manager_->validate_id(embedded_eid)) {
           component_info embedded_ci;
           embedded_ci.set_eid(embedded_eid);
-          embedded_ci.set_model(comp_model);
+          embedded_ci.set_logical(embedded_logical);
           bool add_it = true;
           if (is_mode_only() || is_mode_excluded()) {
             // get the category associated to the embedded EID:
@@ -427,14 +446,14 @@ namespace electronics {
         }
       }
       if (build_it) {
-        _build_embedded_components(comp_model, propagated_parent_eid);
+        _build_embedded_components(embedded_logical, propagated_parent_eid);
       } else {
-        DT_LOG_TRACE (get_logging_priority (), "-> DO NOT TRAVERSE THE GEOMETRY TREE FURTHER.");
+        DT_LOG_TRACE(get_logging_priority (), "-> DO NOT TRAVERSE THE GEOMETRY TREE FURTHER.");
       }
 
     } // for embedded components
-
-    std::cerr << "DEVEL: mapping::_build_embedded_components: Exiting." << std::endl;
+    --_depth_;
+    DT_LOG_TRACE(get_logging_priority(), "Exiting.");
     return;
   }
 

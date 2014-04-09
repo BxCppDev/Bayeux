@@ -18,10 +18,11 @@
 // along with Bayeux/electronics. If not, see <http://www.gnu.org/licenses/>.
 
 // Ourselves
-#include "electronics/board_model_base.h"
+#include <electronics/board_model_base.h>
 
 // This project
-#include "electronics/component_types.h"
+#include <electronics/component_types.h>
+#include <electronics/physical_component.h>
 
 namespace electronics {
 
@@ -30,6 +31,7 @@ namespace electronics {
   board_model_base::board_model_base()
   {
     set_type(TYPE_MODULE_BOARD);
+    set_allow_embedded_components(true);
     _slot_width_ = 0;
     _max_number_of_mezzanine_boards_ = 0;
     return;
@@ -43,7 +45,7 @@ namespace electronics {
     return;
   }
 
-  uint32_t board_model_base::get_slot_with() const
+  uint32_t board_model_base::get_slot_width() const
   {
     return _slot_width_;
   }
@@ -52,7 +54,7 @@ namespace electronics {
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
-                "Board '" << get_name() << "' is already initialized !");
+                "Board model '" << get_name() << "' is already initialized !");
     _slot_width_ = sw_;
     return;
   }
@@ -66,7 +68,10 @@ namespace electronics {
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
-                "Board '" << get_name() << "' is already initialized !");
+                "Board model '" << get_name() << "' is already initialized !");
+    DT_THROW_IF(_mezzanine_labels_.size() > 0,
+                std::logic_error,
+                "Board model '" << get_name() << "' already has mezzanine boards !");
     _max_number_of_mezzanine_boards_ = n_;
     return;
   }
@@ -85,7 +90,7 @@ namespace electronics {
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
-                "Board '" << get_name() << "' is already initialized !");
+                "Board model '" << get_name() << "' is already initialized !");
     _format_ = format_;
     return;
   }
@@ -104,101 +109,110 @@ namespace electronics {
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
-                "Board '" << get_name() << "' is already initialized !");
+                "Board model '" << get_name() << "' is already initialized !");
     _mezzanine_format_ = format_;
     return;
   }
 
   bool board_model_base::has_mezzanine_board(uint32_t mezzanine_slot_) const
   {
-    return _mezzanine_boards_.find(mezzanine_slot_) != _mezzanine_boards_.end();
+    return _mezzanine_labels_.find(mezzanine_slot_) != _mezzanine_labels_.end();
   }
 
   void board_model_base::remove_mezzanine_board(uint32_t mezzanine_slot_)
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
-                "Board '" << get_name() << "' is already locked !");
+                "Board model '" << get_name() << "' is initialized !");
     DT_THROW_IF(!has_mezzanine_board(mezzanine_slot_),
                 std::logic_error,
-                "Board '" << get_name() << "' does not have a mezzanine board at slot '"
+                "Board model '" << get_name() << "' does not have a mezzanine board at slot '"
                 << mezzanine_slot_ << "' !");
-    _mezzanine_boards_.erase(_mezzanine_boards_.find(mezzanine_slot_));
     {
-      std::ostringstream mez_label;
-      mez_label << "mezzanine_" << mezzanine_slot_;
-      this->remove_embedded(mez_label.str());
+      std::string mezzanine_label = _mezzanine_labels_[mezzanine_slot_];
+      // Explicit unregistration of the mezzanine label at its slot:
+      _mezzanine_labels_.erase(_mezzanine_labels_.find(mezzanine_slot_));
+      this->_remove_embedded_physical(mezzanine_label);
     }
     return;
   }
 
-  void board_model_base::add_mezzanine_board(uint32_t mezzanine_slot_,
-                                       component_handle_type & mezzanine_)
+  physical_component &
+  board_model_base::add_mezzanine_board(uint32_t mezzanine_slot_,
+                                        const component_model_base & mezzanine_model_,
+                                        const std::string & mezzanine_label_)
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
-                "Board '" << get_name() << "' is already locked !");
-    indexed_component_dict_type::iterator found = _mezzanine_boards_.find(mezzanine_slot_);
+                "Board model '" << get_name() << "' is already initialized !");
+    indexed_labels_dict_type::iterator found = _mezzanine_labels_.find(mezzanine_slot_);
     DT_THROW_IF(_max_number_of_mezzanine_boards_ == 0,
                 std::logic_error,
-                "Board '" << get_name() << "' does not accept mezzanine boards !");
+                "Board model '" << get_name() << "' does not accept mezzanine boards !");
     DT_THROW_IF(mezzanine_slot_ >= _max_number_of_mezzanine_boards_,
                 std::logic_error,
-                "Board '" << get_name() << "' : Invalid mezzanine slot '" << mezzanine_slot_ << "' !");
+                "Board model '" << get_name() << "' : Invalid mezzanine slot '" << mezzanine_slot_ << "' !");
     DT_THROW_IF(has_mezzanine_board(mezzanine_slot_),
                 std::logic_error,
-                "Board '" << get_name() << "' already has a mezzanine board at slot '" << mezzanine_slot_ << "' !");
-    DT_THROW_IF(! mezzanine_.has_data(),
+                "Board model '" << get_name() << "' already has a mezzanine board at slot '" << mezzanine_slot_ << "' !");
+    const board_model_base * mez_board = dynamic_cast<const board_model_base *>(&mezzanine_model_);
+    DT_THROW_IF(mez_board == 0 || mezzanine_model_.get_type() != TYPE_MODULE_MEZZANINE_BOARD,
                 std::logic_error,
-                "Board '" << get_name() << "' cannot embed a NULL mezzanine board at slot '" << mezzanine_slot_ << "' !");
-    const board_model_base * mez_board = dynamic_cast<const board_model_base *>(&mezzanine_.get());
-    DT_THROW_IF(mez_board == 0 || mez_board->get_type() != TYPE_MODULE_MEZZANINE_BOARD,
-                std::logic_error,
-                "Board '" << get_name() << "' : Attempt to embed a non mezzanine component '"
-                <<  mezzanine_.get().get_name()
+                "Board model '" << get_name() << "' : Attempt to embed a non mezzanine component '"
+                << mezzanine_model_.get_name()
                 << "' at slot '" << mezzanine_slot_ << "' !");
 
     if (has_mezzanine_format() && mez_board->has_format()) {
       DT_THROW_IF(_mezzanine_format_ != mez_board->get_format(),
                   std::logic_error,
-                  "Board '" << get_name() << "' :  Attempt to embed a mezzanine board with incompatible format ('"
+                  "Board model '" << get_name() << "' :  Attempt to embed a mezzanine board with incompatible format ('"
                   << mez_board->get_format()
                   << "') at slot '" << mezzanine_slot_ << "' !");
     }
-    // Finally, insert the mezzanine board:
-    {
-      std::ostringstream mez_label;
-      mez_label << "mezzanine_" << mezzanine_slot_;
-      // ... as a embedded component:
-      this->add_embedded(mez_label.str(), mezzanine_);
+    // Finally, insert the mezzanine as a embedded component:
+    // Compute the mezzanine label:
+    std::string mezzanine_label = mezzanine_label_;
+    if (mezzanine_label.empty()) {
+      if (_mezzanine_labels_.find(mezzanine_slot_) != _mezzanine_labels_.end()) {
+        mezzanine_label = _mezzanine_labels_[mezzanine_slot_];
+      } else {
+        // Automated mezzanine label:
+        std::ostringstream mod_label;
+        mod_label << "mezzanine_" << mezzanine_slot_;
+        mezzanine_label = mod_label.str();
+      }
     }
-    // ... as an explicit mezzanine at its slot:
-    _mezzanine_boards_[mezzanine_slot_] = mezzanine_;
+    // Explicit registration of the mezzanine label at its slot:
+    _mezzanine_labels_[mezzanine_slot_] = mezzanine_label;
+    return this->_add_embedded_physical(mezzanine_label, mezzanine_model_.get_logical());
+  }
+
+  const physical_component &
+  board_model_base::get_mezzanine_board(uint32_t mezzanine_slot_)
+  {
+    indexed_labels_dict_type::iterator found = _mezzanine_labels_.find(mezzanine_slot_);
+    DT_THROW_IF(found == _mezzanine_labels_.end(),
+                std::logic_error,
+                "Board model '" << get_name() << "' has no embedded mezzanine board at slot '" << mezzanine_slot_ << "' !");
+    return get_embedded_component(found->second);
+  }
+
+  void board_model_base::_at_initialize(const datatools::properties& config_,
+                                        component_model_pool_type& components_)
+  {
+    this->_board_initialize(config_, components_);
     return;
   }
 
-  component_handle_type & board_model_base::grab_mezzanine_board(uint32_t mezzanine_slot_)
+  void board_model_base::_at_reset()
   {
-    indexed_component_dict_type::iterator found = _mezzanine_boards_.find(mezzanine_slot_);
-    DT_THROW_IF(found == _mezzanine_boards_.end(),
-                std::logic_error,
-                "Board '" << get_name() << "' has no embedded mezzanine board at slot '" << mezzanine_slot_ << "' !");
-    return found->second;
-  }
-
-  const component_handle_type & board_model_base::get_mezzanine_board(uint32_t mezzanine_slot_) const
-  {
-    indexed_component_dict_type::const_iterator found = _mezzanine_boards_.find(mezzanine_slot_);
-    DT_THROW_IF(found == _mezzanine_boards_.end(),
-                std::logic_error,
-                "Board '" << get_name() << "' has no embedded mezzanine board at slot '"
-                << mezzanine_slot_ << "' !");
-    return found->second;
+    this->_board_reset();
+    return;
   }
 
   void board_model_base::_board_reset()
   {
-    _mezzanine_boards_.clear();
+    _mezzanine_labels_.clear();
     _slot_width_ = 0;
     _max_number_of_mezzanine_boards_ = 0;
     _mezzanine_format_.clear();
@@ -208,9 +222,9 @@ namespace electronics {
   }
 
   void board_model_base::_board_initialize(const datatools::properties & config_,
-                                     component_pool_type& components_)
+                                           component_model_pool_type& component_models_)
   {
-    this->_component_initialize(config_, components_);
+    this->_component_initialize(config_, component_models_);
 
     if (! has_format()) {
       if (config_.has_key("board.format")) {
@@ -248,39 +262,59 @@ namespace electronics {
 
     if (_max_number_of_mezzanine_boards_ > 0) {
       for (int islot = 0; islot < _max_number_of_mezzanine_boards_; islot++) {
+       // Attempt to find a mezzanine model at the visited slot:
+        std::ostringstream mezzanine_slot_model_key;
+        mezzanine_slot_model_key << "board.mezzanine_boards.slot_" << islot << ".model" ;
+        if (config_.has_key(mezzanine_slot_model_key.str())) {
+          std::string mezzanine_model = config_.fetch_string(mezzanine_slot_model_key.str());
+          component_model_pool_type::iterator found = component_models_.find(mezzanine_model);
+          DT_THROW_IF(found == component_models_.end(),
+                      std::logic_error,
+                      "Cannot find a component model named '" << mezzanine_model << "' !");
+          component_model_handle_type & mezzanine_model_handle
+            = found->second.grab_initialized_component_model_handle();
+          std::ostringstream mezzanine_slot_label_key;
+          mezzanine_slot_label_key << "board.mezzanine_boards.slot_" << islot << ".label";
+          std::string mezzanine_label;
+          // Attempt to find a mezzanine label:
+          if (config_.has_key(mezzanine_slot_label_key.str())) {
+            mezzanine_label = config_.fetch_string(mezzanine_slot_label_key.str());
+          }
+          add_mezzanine_board(islot, mezzanine_model_handle.get(), mezzanine_label);
+        }
+      }
+      /*
+      for (int islot = 0; islot < _max_number_of_mezzanine_boards_; islot++) {
         std::ostringstream mb_slot_key;
         mb_slot_key << "board.mezzanine_boards.slot_" << islot;
         if (config_.has_key(mb_slot_key.str())) {
-          std::string mezzanine_name = config_.fetch_string(mb_slot_key.str());
-          component_handle_type & mezzanine_handle
-            = components_.find(mezzanine_name)->second.grab_component_handle();
-          add_mezzanine_board(islot, mezzanine_handle);
+          std::string mezzanine_model_name = config_.fetch_string(mb_slot_key.str());
+          component_model_handle_type & mezzanine_handle
+            = component_models_.find(mezzanine_model_name)->second.grab_initialized_component_model_handle();
+          this->add_mezzanine_board(islot, mezzanine_handle.get());
         }
       }
+      */
     }
+
     return;
   }
 
-  void board_model_base::initialize(const datatools::properties& config_,
-                              component_pool_type& components_)
+  /// Post remove
+  void board_model_base::_post_remove_embedded_physical(const std::string & embedded_label_)
   {
-    DT_THROW_IF(is_initialized(),
-                std::logic_error,
-                "Board '" << get_name() << "' is already initialized !");
-
-    this->_board_initialize(config_, components_);
-
-    _set_initialized(true);
-    return;
-  }
-
-  void board_model_base::reset()
-  {
-    DT_THROW_IF(! is_initialized(),
-                std::logic_error,
-                "Board '" << get_name() << "' is not initialized !");
-    _set_initialized(false);
-    this->_board_reset();
+    // Explicitely unregistration of a mezzanine board:
+    indexed_labels_dict_type::iterator found
+      = std::find_if(_mezzanine_labels_.begin(),
+                     _mezzanine_labels_.end(),
+                     std::bind2nd(map_data_compare<indexed_labels_dict_type>(),
+                                  embedded_label_));
+    if (found != _mezzanine_labels_.end()) {
+      // If the removed embedded component is one of the registered mezzanine boards, it is unregistered:
+      DT_LOG_TRACE(get_logging_priority(),
+                   "Unregistering mezzanine board at slot='" << found->first << "'");
+      _mezzanine_labels_.erase(found);
+    }
     return;
   }
 
@@ -295,7 +329,7 @@ namespace electronics {
          << "Format : '" << _format_ << "'" << std::endl;
 
     out_ << indent_ << i_tree_dumpable::tag
-         << "Slot width : '" << _slot_width_ << "'" << std::endl;
+         << "Slot width : " << _slot_width_ << std::endl;
 
     out_ << indent_ << i_tree_dumpable::inherit_tag(inherits_)
          << "Mezzanine boards : ";
@@ -303,33 +337,43 @@ namespace electronics {
       out_ << "<none>";
     }
     out_ << std::endl;
+    out_ << indent_
+         << i_tree_dumpable::inherit_skip_tag(inherits_)
+         << i_tree_dumpable::tag
+         << "Number of slots : "
+         << _max_number_of_mezzanine_boards_ << std::endl;
 
-    if (_max_number_of_mezzanine_boards_) {
-      out_ << indent_ << i_tree_dumpable::inherit_skip_tag(inherits_)
-           << i_tree_dumpable::tag
-           << "Max number of mezzanine boards : '" << _max_number_of_mezzanine_boards_ << "'" << std::endl;
-      out_ << indent_ << i_tree_dumpable::inherit_skip_tag(inherits_)
-           << i_tree_dumpable::tag
-           << "Mezzanine format : '" << _mezzanine_format_ << "'" << std::endl;
-      out_ << indent_ << i_tree_dumpable::inherit_skip_tag(inherits_)
-           << i_tree_dumpable::last_tag
-           << "Mezzanine boards : " << _mezzanine_boards_.size() << std::endl;
-      for (int islot = 0; islot < _max_number_of_mezzanine_boards_; islot++) {
-        out_ << indent_ << i_tree_dumpable::inherit_skip_tag(inherits_)
-             << i_tree_dumpable::last_skip_tag;
-        if (islot == _max_number_of_mezzanine_boards_ - 1) {
-          out_ << i_tree_dumpable::last_tag;
-        } else {
-          out_ << i_tree_dumpable::tag;
-        }
-        out_ << "Slot #" << islot << " : ";
-        if (has_mezzanine_board(islot)) {
-          out_ << "'" << get_mezzanine_board(islot).get().get_name() << "'";
-        } else {
-          out_ << "<empty>";
-        }
-        out_ << std::endl;
+    out_ << indent_
+         << i_tree_dumpable::inherit_skip_tag(inherits_)
+         << i_tree_dumpable::tag
+         << "Format : '" << _mezzanine_format_ << "'" << std::endl;
+
+    out_ << indent_
+         << i_tree_dumpable::inherit_skip_tag(inherits_)
+         << i_tree_dumpable::last_tag
+         << "Mezzanine boards : ";
+    if (_mezzanine_labels_.size() > 0) {
+      out_ << _mezzanine_labels_.size();
+    } else {
+      out_ << "<none>";
+    }
+    out_ << std::endl;
+    for (int islot = 0; islot < _max_number_of_mezzanine_boards_; islot++) {
+      out_ << indent_ << i_tree_dumpable::inherit_skip_tag(inherits_);
+      out_ << i_tree_dumpable::last_skip_tag;
+      if (islot == _max_number_of_mezzanine_boards_ - 1) {
+        out_ << i_tree_dumpable::last_tag;
+      } else {
+        out_ << i_tree_dumpable::tag;
       }
+      out_ << "Slot #" << islot << " : ";
+      indexed_labels_dict_type::const_iterator found_at_slot = _mezzanine_labels_.find(islot);
+      if (found_at_slot != _mezzanine_labels_.end()) {
+        out_ << "Model '" << get_embedded_component(found_at_slot->second).get_logical().get_model().get_name() << "'";
+      } else {
+        out_ << "<empty>";
+      }
+      out_ << std::endl;
     }
 
     return;

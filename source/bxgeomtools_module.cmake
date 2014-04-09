@@ -313,6 +313,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_serializable.cxx
   ${module_test_dir}/test_service_manager.cxx
   ${module_test_dir}/test_sphere.cxx
+  ${module_test_dir}/test_sphere_2.cxx
   ${module_test_dir}/test_stl_tools.cxx
   ${module_test_dir}/test_subtraction_3d.cxx
   ${module_test_dir}/test_tessellated_solid.cxx

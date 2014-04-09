@@ -11,7 +11,7 @@ namespace electronics {
 
   component_info::component_info()
   {
-    _model_ = 0;
+    _logical_ = 0;
     return;
   }
 
@@ -53,33 +53,33 @@ namespace electronics {
     return _eid_;
   }
 
-  bool component_info::has_model() const
+  bool component_info::has_logical() const
   {
-    return _model_ != 0;
+    return _logical_ != 0;
   }
 
-  void component_info::set_model(const component_model_base & m_)
+  void component_info::set_logical(const logical_component & l_)
   {
-    _model_ = &m_;
+    _logical_ = &l_;
   }
 
-  const component_model_base & component_info::get_model() const
+  const logical_component & component_info::get_logical() const
   {
-    DT_THROW_IF(!has_model(), std::logic_error,
-                "Missing component model !");
-    return *_model_;
+    DT_THROW_IF(! has_logical(), std::logic_error,
+                "Missing logical component !");
+    return *_logical_;
   }
 
   bool component_info::is_valid() const
   {
-    return _eid_.is_valid() && has_model() && _model_->is_initialized();
+    return _eid_.is_valid() && has_logical() && _logical_->is_initialized();
   }
 
   void component_info::reset()
   {
     _eid_.reset();
     _parent_eid_.reset();
-    _model_ = 0;
+    _logical_ = 0;
     return;
   }
 
@@ -88,9 +88,9 @@ namespace electronics {
   {
     out_ << ci_._eid_ << "="
          << "{"
-         << "model=";
-    if (ci_.has_model()) {
-      out_ << ci_.get_model().get_name();
+         << "logical=";
+    if (ci_.has_logical()) {
+      out_ << ci_.get_logical().get_name();
     } else {
       out_ << "<none>";
     }

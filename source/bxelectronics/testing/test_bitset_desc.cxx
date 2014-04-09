@@ -16,16 +16,24 @@ int main( int argc_, char * argv_[])
 
     electronics::bitset_desc bsd;
     bsd.set_name("CALOBLKMULT");
-    bsd.set_logging_priority(datatools::logger::PRIO_DEBUG);
+    bsd.set_logging_priority(datatools::logger::PRIO_WARNING);
     bsd.set_display_name("Calo. Block Mult.");
     bsd.set_terse_description("Calorimeter block multiplicity threshold");
     bsd.grab_auxiliaries().store_flag("test");
-    bsd.grab_auxiliaries().store("version", "1.0");
+    bsd.grab_auxiliaries().store("display.color", "blue");
     bsd.set_size(5);
     bsd.set_lsb_position(2);
+    bsd.initialize();
     bsd.tree_dump(std::clog, "Bitset description: ");
+    std::clog << "Bitset description: " << bsd << std::endl;
+    std::clog << "To string : '" << bsd.to_string() << "'" << std::endl;
+    std::clog << std::endl;
+
     bsd.reset();
-    bsd.tree_dump(std::clog, "Bitset description: ");
+    bsd.tree_dump(std::clog, "Bitset description (reset): ");
+    std::clog << "Bitset description: " << bsd << std::endl;
+    std::clog << "To string : '" << bsd.to_string() << "'" << std::endl;
+    std::clog << std::endl;
 
     datatools::properties bsd_cfg;
     bsd_cfg.store("name", "TRKBLKMASK");
@@ -35,6 +43,7 @@ int main( int argc_, char * argv_[])
     bsd_cfg.store("lsb_position", 3);
     bsd.initialize(bsd_cfg);
     bsd.tree_dump(std::clog, "Another bitset description: ");
+    std::clog << std::endl;
 
     boost::dynamic_bitset<> work;
     bsd.make(work);

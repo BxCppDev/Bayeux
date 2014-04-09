@@ -5,53 +5,139 @@
 #@meta_label "type"
 
 
+###########################
 [category="setup" type="0"]
+
+#@config Top-level category (ala "world" in Geant4 geometry hierarchy)
+
+#@description A top-level setup is addressed by its 'setup number'
 addresses : string[1] = "setup"
 
 
-[category="detector.ec" type="1000"]
+###########################################
+[category="detector_module.ec" type="1000"]
+
+#@config Front end setup category for a given detector module
+
+#@description Addressed by a 'module number'
 addresses : string[1] = "module_id"
 
 
+################################
 [category="rack.ec" type="1100"]
-extends : string    = "detector.ec"
+
+#@config Category for a given electronic rack
+
+#@description Extends a detector module address
+extends : string    = "detector_module.ec"
+
+#@description Addressed by a 'rack number'
 by      : string[1] = "rack_id"
 
 
+#################################
 [category="crate.ec" type="1200"]
+
+#@config Category for a given electronic crate
+
+#@description Extends a rack address
 extends : string    = "rack.ec"
+
+#@description Append a 'crate number'
 by      : string[1] = "crate_id"
 
 
+######################################
 [category="ctrl_board.ec" type="1300"]
+
+#@config Category for a control board plugged in a given electronic crate
+
+#@description Inherits the crate address it is plugged in
 inherits : string = "crate.ec"
 
 
-[category="feb_board.ec" type="1400"]
+#############################################
+[category="ctrl_board.fe_pga.ec" type="1310"]
+
+#@config Category for a control board FE PGA
+
+#@description Extends a control board address
+extends : string    = "ctrl_board.ec"
+
+#@description Append a 'pga number'
+by      : string[1] = "pga_id"
+
+
+###############################################
+[category="ctrl_board.ctrl_pga.ec" type="1320"]
+
+#@config Category for a control board control PGA
+
+#@description Inherits the control board address it is plugged in
+inherits : string = "ctrl_board.ec"
+
+
+#########################################
+[category="trigger_board.ec" type="1400"]
+
+#@config Category for a trigger board plugged in a given electronic crate
+
+#@description Inherits the crate address it is plugged in
+inherits : string = "crate.ec"
+
+
+##################################################
+[category="trigger_board.ctrl_pga.ec" type="1420"]
+
+#@config Category for a trigger board control PGA
+
+#@description Inherits the trigger board address it is plugged in
+inherits : string = "trigger_board.ec"
+
+
+#####################################
+[category="feb_board.ec" type="1500"]
+
+#@config Category for a front end board plugged in a given electronic crate
+
+#@description Extends a crate address
 extends : string    = "crate.ec"
-by      : string[1] = "module_id"
+
+#@description Append a 'board number'
+by      : string[1] = "board_id"
 
 
-[category="wavecatcher_asic.ec" type="2000"]
+#######################################################
+[category="wavecatcher_input_connector.ec" type="2010"]
+extends : string    = "feb_board.ec"
+by      : string[1] = "channel_id"
+
+
+############################################
+[category="wavecatcher_asic.ec" type="2100"]
 extends : string    = "feb_board.ec"
 by      : string[1] = "asic_id"
 
 
-[category="wavecatcher_feb_fpga.ec" type="2100"]
+################################################
+[category="wavecatcher_feb_pga.ec" type="2200"]
 extends : string    = "feb_board.ec"
 by      : string[1] = "feb_fpga_id"
 
 
-[category="wavecatcher_ctrl_fpga.ec" type="2200"]
+#################################################
+[category="wavecatcher_ctrl_pga.ec" type="2300"]
 inherits : string   = "feb_board.ec"
 
 
-[category="trackerfeb_asic.ec" type="3000"]
+###########################################
+[category="trackerfeb_asic.ec" type="3100"]
 extends : string    = "feb_board.ec"
 by      : string[1] = "asic_id"
 
 
-[category="trackerfeb_ctrl_fpga.ec" type="3100"]
+################################################
+[category="trackerfeb_ctrl_fpga.ec" type="3300"]
 inherits : string   = "feb_board.ec"
 
 

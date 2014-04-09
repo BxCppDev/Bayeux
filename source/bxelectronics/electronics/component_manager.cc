@@ -98,7 +98,7 @@ namespace electronics {
     return;
   }
 
-  bool component_manager::get_preload() const
+  bool component_manager::is_preload() const
   {
     return _preload_;
   }
@@ -109,7 +109,7 @@ namespace electronics {
     return;
   }
 
-  bool component_manager::get_force_initialization_at_load() const
+  bool component_manager::is_force_initialization_at_load() const
   {
     return _force_initialization_at_load_;
   }
@@ -120,14 +120,14 @@ namespace electronics {
     return;
   }
 
-  bool component_manager::get_mapping_requested() const
+  bool component_manager::is_mapping_requested() const
   {
     return _mapping_requested_;
   }
 
   void component_manager::add_auxiliary_property_prefix(const std::string & prefix_)
   {
-    //std::cerr << "DEVEL: component_manager::add_auxiliary_property_prefix: Entering..." << std::endl;
+    DT_LOG_TRACE(get_logging_priority(), "Entering...");
     DT_THROW_IF(prefix_.empty(),
                 std::logic_error,
                 "Property prefix to be preserved cannot be empty !");
@@ -136,10 +136,9 @@ namespace electronics {
                            prefix_) != _auxiliary_property_prefixes_.end()),
                 std::logic_error,
                 "Property prefix to be preserved '" << prefix_<< "' already exists !");
-    //std::cerr << "DEVEL: component_manager::add_auxiliary_property_prefix: Prefix '"
-    //          << prefix_ << "'" << std::endl;
+    DT_LOG_DEBUG(get_logging_priority(), "Add prefix '" << prefix_ << "'");
     _auxiliary_property_prefixes_.push_back(prefix_);
-    //std::cerr << "DEVEL: component_manager::add_auxiliary_property_prefix: Exiting." << std::endl;
+    DT_LOG_TRACE(get_logging_priority(), "Exiting.");
     return;
   }
 
@@ -148,7 +147,6 @@ namespace electronics {
   {
     return _auxiliary_property_prefixes_;
   }
-
 
   bool component_manager::is_debug() const {
     return get_logging_priority() >= datatools::logger::PRIO_DEBUG;
@@ -170,10 +168,9 @@ namespace electronics {
   void component_manager::load(const std::string& name_,
                                const std::string& id_,
                                const datatools::properties& config_) {
-    this->load_component(name_, id_, config_);
+    this->_load_component_model(name_, id_, config_);
     return;
   }
-
 
   void component_manager::load(const datatools::multi_properties& config_) {
     DT_LOG_TRACE(get_logging_priority(), "Entering...");
@@ -189,13 +186,14 @@ namespace electronics {
       DT_LOG_DEBUG (get_logging_priority(), "Configuration for component named '"
                     << component_name << "' "
                     << " with ID '" << component_id << "'...");
-      this->load_component(component_name, component_id, mpe->get_properties());
+      this->_load_component_model(component_name, component_id, mpe->get_properties());
     }
+    DT_LOG_TRACE(get_logging_priority(), "Exiting.");
     return;
   }
 
-
   void component_manager::initialize(const datatools::properties& config_) {
+    DT_LOG_TRACE(get_logging_priority(), "Entering...");
     DT_THROW_IF(this->is_initialized(), std::logic_error, "Component manager is already initialized !");
 
     // Parse logging parameteres:
@@ -205,7 +203,7 @@ namespace electronics {
     if (config_.has_key("no_preload")) {
       set_preload(config_.fetch_boolean("no_preload"));
     }
-    if (get_preload()) {
+    if (is_preload()) {
       _do_preload_global_dict();
     }
 
@@ -241,16 +239,16 @@ namespace electronics {
     {
       typedef std::vector<std::string> CFList;
       typedef CFList::iterator CFListIterator;
-      std::string conf_file_key("components.configuration_files");
+      std::string models_conf_file_key("component_models.configuration_files");
 
-      CFList conf_file_list;
+      CFList models_conf_file_list;
 
-      if (config_.has_key(conf_file_key)) {
-        config_.fetch(conf_file_key, conf_file_list);
+      if (config_.has_key(models_conf_file_key)) {
+        config_.fetch(models_conf_file_key, models_conf_file_list);
       }
 
-      for (CFListIterator i = conf_file_list.begin();
-           i < conf_file_list.end();
+      for (CFListIterator i = models_conf_file_list.begin();
+           i < models_conf_file_list.end();
            ++i) {
         datatools::fetch_path_with_env(*i);
         datatools::multi_properties mconfig;
@@ -312,21 +310,23 @@ namespace electronics {
       add_auxiliary_property_prefix(prefix);
     }
 
+    // Set the initialization flag:
     _initialized_ = true;
 
     // Mapping :
-    if (get_mapping_requested()) {
+    if (is_mapping_requested()) {
       _mapping_.set_manager(*this);
       _mapping_.set_eid_manager(_eid_manager_);
       _mapping_.set_top_level_name(default_top_level_name());
       datatools::properties mapping_config;
       config_.export_and_rename_starting_with(mapping_config, "mapping.", "");
       _mapping_.configure(mapping_config);
-      //std::cerr << "DEVEL: component_manager::initialize: Initializing the mapping..." << std::endl;
+      DT_LOG_DEBUG(get_logging_priority(), "Initializing the mapping...");
       _mapping_.initialize();
-      //std::cerr << "DEVEL: component_manager::initialize: mapping is built." << std::endl;
+      DT_LOG_DEBUG(get_logging_priority(), "Mapping is built");
     }
 
+    DT_LOG_TRACE(get_logging_priority(), "Exiting.");
     return;
   }
 
@@ -338,28 +338,26 @@ namespace electronics {
     return;
   }
 
-
   void component_manager::initialize() {
     datatools::properties dummy_config;
     this->initialize(dummy_config);
     return;
   }
 
-
   void component_manager::reset() {
     DT_LOG_TRACE(get_logging_priority(),"Entering...");
     DT_THROW_IF(!_initialized_,std::logic_error,"Manager is not initialized !");
     _initialized_ = false;
-    size_t count = _components_.size();
-    size_t initial_size = _components_.size();
-    while (_components_.size() > 0) {
-      for (component_pool_type::iterator it = _components_.begin();
-           it != _components_.end();
+    size_t count = _component_models_.size();
+    size_t initial_size = _component_models_.size();
+    while (_component_models_.size() > 0) {
+      for (component_model_pool_type::iterator it = _component_models_.begin();
+           it != _component_models_.end();
            ++it) {
-        component_entry& entry = it->second;
+        component_model_entry& entry = it->second;
         DT_LOG_DEBUG(get_logging_priority(), "Removing component '" << entry.get_component_name ()  << "'...");
-        this->reset_component(entry);
-        _components_.erase(it);
+        this->_reset_component_model(entry);
+        _component_models_.erase(it);
         --count;
         break;
       }
@@ -367,14 +365,14 @@ namespace electronics {
         break;
       }
     }
-    if (_components_.size() > 0) {
+    if (_component_models_.size() > 0) {
       DT_LOG_WARNING(get_logging_priority(), "There are some left components !");
     }
     if (_mapping_.is_initialized()) {
       _mapping_.reset();
     }
     _eid_manager_.reset();
-    _components_.clear();
+    _component_models_.clear();
     _factory_register_.reset();
     _force_initialization_at_load_ = false;
     _preload_ = true;
@@ -384,7 +382,6 @@ namespace electronics {
     DT_LOG_TRACE(get_logging_priority(), "Exiting.");
     return;
   }
-
 
   // Constructor :
   component_manager::component_manager(uint32_t flag)
@@ -415,7 +412,6 @@ namespace electronics {
     return;
   }
 
-
   // Destructor :
   component_manager::~component_manager () {
     if (_initialized_) this->reset();
@@ -432,58 +428,66 @@ namespace electronics {
    ****************/
 
   bool component_manager::has(const std::string& name) const {
-    return _components_.find(name) != _components_.end();
+    return _component_models_.find(name) != _component_models_.end();
   }
 
   bool component_manager::is_initialized(const std::string& name) const {
-    component_pool_type::const_iterator found = _components_.find(name);
-    return found != _components_.end() && found->second.is_initialized();
+    component_model_pool_type::const_iterator found = _component_models_.find(name);
+    return found != _component_models_.end() && found->second.is_initialized();
   }
 
-  // Who needs this (components is an implementation detail....)
-  const component_pool_type& component_manager::get_components() const {
-    return _components_;
+  const component_manager::logical_component_dict_type &
+  component_manager::get_logical_components() const
+  {
+    return _logical_components_;
   }
 
-
-  component_pool_type& component_manager::grab_components() {
-    return _components_;
+  const component_model_pool_type&
+  component_manager::get_component_models() const
+  {
+    return _component_models_;
   }
 
-  void component_manager::dump_components(std::ostream& out,
-                                          const std::string& title,
-                                          const std::string& an_indent) const {
+  const mapping & component_manager::get_mapping() const
+  {
+    return _mapping_;
+  }
+
+  void component_manager::dump_component_models(std::ostream& out_,
+                                                const std::string& title_,
+                                                const std::string& indent_) const
+  {
     std::string indent;
-    if (!an_indent.empty()) indent = an_indent;
+    if (!indent_.empty()) indent = indent_;
 
-    if (!title.empty()) out << title << ":" << std::endl;
+    if (!title_.empty()) out_ << title_ << ":" << std::endl;
 
     // Components:
     {
-      size_t sz = _components_.size();
+      size_t sz = _component_models_.size();
       size_t count = 0;
-      for (component_pool_type::const_iterator it = _components_.begin();
-           it != _components_.end();
+      for (component_model_pool_type::const_iterator it = _component_models_.begin();
+           it != _component_models_.end();
            ++it) {
         count++;
-        out << indent;
+        out_ << indent;
         if (count == sz) {
-          out << "`-- ";
+          out_ << "`-- ";
         } else {
-          out << "|-- ";
+          out_ << "|-- ";
         }
         const std::string& component_name = it->first;
-        const component_entry& component_record = it->second;
+        const component_model_entry& component_record = it->second;
 
-        out << "Name : '" << component_name << "' "
+        out_ << "Name : '" << component_name << "' "
             << "Type : '" << component_record.get_component_id () << "' ";
-        out << '(';
+        out_ << '(';
         int count = 0;
         if (component_record.is_initialized()) {
-          out << "initialized";
+          out_ << "initialized";
           count++;
         }
-        out << std::endl;
+        out_ << std::endl;
       }
     }
     return;
@@ -564,9 +568,9 @@ namespace electronics {
       out << std::endl;
     }
 
-    out << indent << i_tree_dumpable::tag
-        << "Mapping : "
-        << std::endl;
+    // out << indent << i_tree_dumpable::tag
+    //     << "Mapping : "
+    //     << std::endl;
 
     out << indent << i_tree_dumpable::tag
         << "List of registered electronic component models : " << std::endl;
@@ -579,24 +583,24 @@ namespace electronics {
     {
       out << indent << i_tree_dumpable::tag
           << "Components       : ";
-      size_t sz = _components_.size();
+      size_t sz = _component_models_.size();
       if (sz == 0) {
         out << "<none>";
       }
 
       out << std::endl;
-      for (component_pool_type::const_iterator i = _components_.begin();
-           i != _components_.end();
+      for (component_model_pool_type::const_iterator i = _component_models_.begin();
+           i != _component_models_.end();
            ++i) {
         const std::string& component_name = i->first;
-        const component_entry& component_entry = i->second;
+        const component_model_entry& comp_entry = i->second;
         out << indent << i_tree_dumpable::skip_tag;
 
         std::ostringstream indent_oss;
         indent_oss << indent << i_tree_dumpable::skip_tag;
-        component_pool_type::const_iterator j = i;
+        component_model_pool_type::const_iterator j = i;
         j++;
-        if (j == _components_.end()) {
+        if (j == _component_models_.end()) {
           out << i_tree_dumpable::last_tag;
           indent_oss << i_tree_dumpable::last_skip_tag;
         } else {
@@ -604,7 +608,7 @@ namespace electronics {
           indent_oss << i_tree_dumpable::skip_tag;
         }
         out << "Component : '" << component_name << "'" << std::endl;
-        component_entry.tree_dump(out, "", indent_oss.str());
+        comp_entry.tree_dump(out, "", indent_oss.str());
       }
     }
 
@@ -637,41 +641,6 @@ namespace electronics {
   }
 
 
-  //----------------------------------------------------------------------
-  // Protected Interface Definitions
-  //
-
-  void component_manager::load_component(const std::string& name,
-                                         const std::string& id,
-                                         const datatools::properties& config) {
-    DT_LOG_TRACE(get_logging_priority(), "Entering...");
-    DT_THROW_IF (this->has(name),
-                 std::logic_error,
-                 "Component '" << name << "' already exists !");
-    {
-      // Add a new entry :
-      component_entry tmp_entry;
-      tmp_entry.set_component_name(name);
-      DT_LOG_DEBUG(get_logging_priority(),
-                   "Add an entry for component '"<< name << "'...");
-      _components_[name] = tmp_entry;
-    }
-    // fetch a reference on it and update :
-    component_entry& new_entry = _components_.find(name)->second;
-    new_entry.set_component_manager(*this);
-    new_entry.set_component_id(id);
-    new_entry.set_component_config(config);
-    //new_entry.component_status = component_entry::STATUS_BLANK;
-    DT_LOG_DEBUG(get_logging_priority(),"Fetch...");
-    this->create_component(new_entry);
-    if (_force_initialization_at_load_) {
-      this->initialize_component(new_entry);
-    }
-    DT_LOG_TRACE(get_logging_priority(),"Exiting.");
-    return;
-  }
-
-
   void component_manager::_do_preload_global_dict() {
     if (! _preloaded_) {
       DT_LOG_TRACE(get_logging_priority(),"Entering !");
@@ -683,65 +652,109 @@ namespace electronics {
   }
 
 
-  void component_manager::create_component(component_entry& entry) {
-    if (!entry.is_created()) {
+  //----------------------------------------------------------------------
+  // Interface Definitions
+  //
+
+  void component_manager::_load_component_model(const std::string& name,
+                                               const std::string& id,
+                                               const datatools::properties& config) {
+    DT_LOG_TRACE(get_logging_priority(), "Entering...");
+    DT_THROW_IF (this->has(name),
+                 std::logic_error,
+                 "Component '" << name << "' already exists !");
+    {
+      // Add a new entry :
+      component_model_entry tmp_entry;
+      tmp_entry.set_component_name(name);
       DT_LOG_DEBUG(get_logging_priority(),
-                   "Creating component named '" <<  entry.get_component_name()
+                   "Add an entry for component '"<< name << "'...");
+      _component_models_[name] = tmp_entry;
+    }
+    // fetch a reference on it and update :
+    component_model_entry& new_entry = _component_models_.find(name)->second;
+    new_entry.set_component_manager(*this);
+    new_entry.set_component_id(id);
+    new_entry.set_component_config(config);
+    //new_entry.component_status = component_model_entry::STATUS_BLANK;
+    DT_LOG_DEBUG(get_logging_priority(),"Fetch...");
+    this->_create_component_model(new_entry);
+    if (_force_initialization_at_load_) {
+      this->_initialize_component_model(new_entry);
+    }
+    DT_LOG_TRACE(get_logging_priority(),"Exiting.");
+    return;
+  }
+
+
+  void component_manager::_create_component_model(component_model_entry& entry) {
+    DT_LOG_TRACE(get_logging_priority(), "Entering...");
+    if (!entry.is_created()) {
+      entry.tree_dump(std::cerr, "Entry: ", ">>> ");
+      DT_LOG_DEBUG(get_logging_priority(),
+                   "Creating component model named '" << entry.get_component_name()
                    << "'...");
-      // search for the component's label in the factory dictionary:
+      // search for the component model's label in the factory dictionary:
       DT_THROW_IF (!_factory_register_.has(entry.get_component_id()),
                    std::logic_error,
-                   "Cannot find component factory with ID '"
+                   "Cannot find component model factory with ID '"
                    << entry.get_component_id()
-                   << "' for component named '"
+                   << "' for component model named '"
                    << entry.get_component_name() << "' !");
 
       typedef component_model_base::factory_register_type::factory_type FactoryType;
       const FactoryType& the_factory = _factory_register_.get(entry.get_component_id());
       component_model_base* ptr = the_factory();
       ptr->set_name(entry.get_component_name());
-      entry.grab_component_handle().reset(ptr);
-      entry.update_component_status(component_entry::STATUS_CREATED);
+      entry.grab_component_model_handle().reset(ptr);
+      entry.update_component_status(component_model_entry::STATUS_CREATED);
       DT_LOG_DEBUG(get_logging_priority(),
-                   "Component named '" <<  entry.get_component_name() << "' has been created !");
+                   "Component model named '" <<  entry.get_component_name() << "' has been created !");
     }
+    DT_LOG_TRACE(get_logging_priority(), "Exiting.");
     return;
   }
 
 
-  void component_manager::initialize_component(component_entry& entry) {
+  void component_manager::_initialize_component_model(component_model_entry& entry) {
+    DT_LOG_TRACE(get_logging_priority(), "Entering...");
     // If not created, first do it :
     if (!entry.is_created()) {
-      this->create_component(entry);
+      this->_create_component_model(entry);
     }
 
     // If not initialized, do it :
     if (!entry.is_initialized()) {
       DT_LOG_DEBUG(get_logging_priority(),
-                   "Initializing component named '"
+                   "Initializing component model named '"
                    << entry.get_component_name()
                    << "'...");
-      component_model_base& the_component = entry.grab_component_handle().grab();
-      the_component.initialize(entry.get_component_config(), _components_);
+      component_model_base& the_component = entry.grab_component_model_handle().grab();
+      the_component.initialize(entry.get_component_config(), _component_models_);
+      DT_LOG_DEBUG(get_logging_priority(),
+                   "Initialization done.");
       for (int i = 0; i < _auxiliary_property_prefixes_.size(); i++) {
         const std::string & prefix = _auxiliary_property_prefixes_[i];
         DT_LOG_DEBUG(get_logging_priority(), "Export auxiliary properties starting with '"
                      << prefix << "' to the component model named '" << entry.get_component_name() << "'...");
-        entry.get_component_config().export_starting_with(the_component.grab_auxiliaries(),
+        entry.get_component_config().export_starting_with(the_component._grab_logical().grab_auxiliaries(),
                                                           prefix);
       }
-      entry.update_component_status(component_entry::STATUS_INITIALIZED);
+      entry.update_component_status(component_model_entry::STATUS_INITIALIZED);
     }
+    DT_LOG_TRACE(get_logging_priority(), "Exiting.");
     return;
   }
 
 
-  void component_manager::reset_component(component_entry& entry) {
+  void component_manager::_reset_component_model(component_model_entry& entry) {
+    DT_LOG_TRACE(get_logging_priority(), "Entering...");
     if (entry.is_initialized()) {
-      component_model_base& the_component = entry.grab_component_handle().grab();
+      component_model_base& the_component = entry.grab_component_model_handle().grab();
       the_component.reset();
-      entry.reset_component_status(component_entry::STATUS_INITIALIZED);
+      entry.reset_component_status(component_model_entry::STATUS_INITIALIZED);
     }
+    DT_LOG_TRACE(get_logging_priority(), "Exiting.");
     return;
   }
 

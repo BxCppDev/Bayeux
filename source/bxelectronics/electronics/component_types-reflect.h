@@ -31,6 +31,8 @@ namespace datatools {
             .DR_ENUM_PAIR("chip_pld",     ::electronics::TYPE_CHIP_PLD)
             .DR_ENUM_PAIR("chip_asic",    ::electronics::TYPE_CHIP_ASIC)
             .DR_ENUM_PAIR("chip_eprom",   ::electronics::TYPE_CHIP_EPROM)
+            .DR_ENUM_PAIR("io",           ::electronics::TYPE_IO)
+            .DR_ENUM_PAIR("io_clock",     ::electronics::TYPE_IO_CLOCK)
             .DR_ENUM_PAIR("connector",    ::electronics::TYPE_CONNECTOR)
             .DR_ENUM_PAIR("cable",        ::electronics::TYPE_CABLE)
             ;

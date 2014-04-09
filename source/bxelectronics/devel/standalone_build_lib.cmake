@@ -17,19 +17,29 @@ message( STATUS "electronics_SOURCE_DIR='${electronics_SOURCE_DIR}'")
 set(electronicsLibrary_HEADERS
   ${electronics_SOURCE_DIR}/config.h.in
   ${electronics_SOURCE_DIR}/version.h.in
-  ${electronics_SOURCE_DIR}/component_utils.h
+  ${electronics_SOURCE_DIR}/io_types.h
+  ${electronics_SOURCE_DIR}/io_types-reflect.h
+  ${electronics_SOURCE_DIR}/utils.h
+  ${electronics_SOURCE_DIR}/bitset_desc.h
+  ${electronics_SOURCE_DIR}/register_desc.h
+  ${electronics_SOURCE_DIR}/digital_port_desc.h
+  ${electronics_SOURCE_DIR}/digital_channel_desc.h
   ${electronics_SOURCE_DIR}/component_types.h
   ${electronics_SOURCE_DIR}/component_types-reflect.h
+  ${electronics_SOURCE_DIR}/component_utils.h
   ${electronics_SOURCE_DIR}/component_model_base.h
-  ${electronics_SOURCE_DIR}/bitset_desc.h
-  ${electronics_SOURCE_DIR}/register_model_base.h
-  ${electronics_SOURCE_DIR}/board_model_base.h
-  ${electronics_SOURCE_DIR}/crate_model_base.h
-  ${electronics_SOURCE_DIR}/rack_model_base.h
+  ${electronics_SOURCE_DIR}/physical_component.h
+  ${electronics_SOURCE_DIR}/logical_component.h
+  # ${electronics_SOURCE_DIR}/connector_model_base.h
+  # ${electronics_SOURCE_DIR}/board_model_base.h
+  # ${electronics_SOURCE_DIR}/crate_model_base.h
+  # ${electronics_SOURCE_DIR}/rack_model_base.h
+  # ${electronics_SOURCE_DIR}/replicated_model.h
   ${electronics_SOURCE_DIR}/component_manager.h
   ${electronics_SOURCE_DIR}/component_info.h
   ${electronics_SOURCE_DIR}/mapping_utils.h
   ${electronics_SOURCE_DIR}/mapping.h
+  #${electronics_SOURCE_DIR}/driver.h
   #${electronics_SOURCE_DIR}/digitized_signal.h
  )
 
@@ -48,19 +58,28 @@ endforeach()
 # - Configure source
 set(electronicsLibrary_SOURCES
   ${electronics_SOURCE_DIR}/version.cc
+  ${electronics_SOURCE_DIR}/io_types.cc
+  ${electronics_SOURCE_DIR}/utils.cc
+  ${electronics_SOURCE_DIR}/bitset_desc.cc
+  ${electronics_SOURCE_DIR}/digital_port_desc.cc
+  ${electronics_SOURCE_DIR}/digital_channel_desc.cc
+  ${electronics_SOURCE_DIR}/register_desc.cc
   ${electronics_SOURCE_DIR}/component_types.cc
   ${electronics_SOURCE_DIR}/component_utils.cc
   ${electronics_SOURCE_DIR}/component_model_base.cc
-  ${electronics_SOURCE_DIR}/bitset_desc.cc
-  ${electronics_SOURCE_DIR}/register_model_base.cc
-  ${electronics_SOURCE_DIR}/board_model_base.cc
-  ${electronics_SOURCE_DIR}/crate_model_base.cc
-  ${electronics_SOURCE_DIR}/rack_model_base.cc
+  ${electronics_SOURCE_DIR}/physical_component.cc
+  ${electronics_SOURCE_DIR}/logical_component.cc
+  # ${electronics_SOURCE_DIR}/connector_model_base.cc
+  # ${electronics_SOURCE_DIR}/board_model_base.cc
+  # ${electronics_SOURCE_DIR}/crate_model_base.cc
+  # ${electronics_SOURCE_DIR}/rack_model_base.cc
   ${electronics_SOURCE_DIR}/component_manager.cc
-  ${electronics_SOURCE_DIR}/the_introspectable.cc
+  # ${electronics_SOURCE_DIR}/replicated_model.cc
   ${electronics_SOURCE_DIR}/component_info.cc
   ${electronics_SOURCE_DIR}/mapping_utils.cc
   ${electronics_SOURCE_DIR}/mapping.cc
+  # # ${electronics_SOURCE_DIR}/the_introspectable.cc
+  #${electronics_SOURCE_DIR}/driver.cc
   #${electronics_SOURCE_DIR}/digitized_signal.cc
   #${CMAKE_CURRENT_BINARY_DIR}/test.cc
 )

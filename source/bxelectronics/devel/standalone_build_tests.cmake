@@ -3,14 +3,21 @@ set(electronics_TEST_DIR ${electronics_BASE_DIR}/testing)
 message( STATUS "electronics_TEST_DIR='${electronics_TEST_DIR}'")
 
 set(electronics_TESTS
-  ${electronics_TEST_DIR}/test_component_model_base.cxx
+  ${electronics_TEST_DIR}/test_qi_0.cxx
+  ${electronics_TEST_DIR}/test_qi.cxx
+  #${electronics_TEST_DIR}/test_karma.cxx
+  ${electronics_TEST_DIR}/test_digital_port_desc.cxx
+  ${electronics_TEST_DIR}/test_digital_channel_desc.cxx
   ${electronics_TEST_DIR}/test_bitset_desc.cxx
-  ${electronics_TEST_DIR}/test_register_model_base.cxx
-  ${electronics_TEST_DIR}/test_board_model_base.cxx
-  ${electronics_TEST_DIR}/test_crate_model_base.cxx
-  ${electronics_TEST_DIR}/test_rack_model_base.cxx
-  ${electronics_TEST_DIR}/test_component_manager.cxx
-  #${electronics_TEST_DIR}/test_digitized_signal.cxx
+  ${electronics_TEST_DIR}/test_register_desc.cxx
+  ${electronics_TEST_DIR}/test_component_model_base.cxx
+  #${electronics_TEST_DIR}/test_connector_desc.cxx
+  #${electronics_TEST_DIR}/test_board_model_base.cxx
+  #${electronics_TEST_DIR}/test_crate_model_base.cxx
+  #${electronics_TEST_DIR}/test_rack_model_base.cxx
+  #${electronics_TEST_DIR}/test_replicated_model.cxx
+  #${electronics_TEST_DIR}/test_component_manager.cxx
+  # ${electronics_TEST_DIR}/test_digitized_signal.cxx
   )
 
 include_directories(${electronics_TEST_DIR}

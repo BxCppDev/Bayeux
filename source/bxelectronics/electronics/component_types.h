@@ -22,12 +22,14 @@ namespace electronics {
     TYPE_MODULE_BOARD           = 1310, /// Generic board
     TYPE_MODULE_MEZZANINE_BOARD = 1320, /// Generic mezzanine board
     TYPE_CHIP                   = 1400, /// Generic chip
-    TYPE_CHIP_PLD               = 1410, /// Programmable logic device (FPGA)
-    TYPE_CHIP_ASIC              = 1420, /// Application-specific integrated circuit
-    TYPE_CHIP_EPROM             = 1430, /// e-PROM device
-    TYPE_CONNECTOR              = 1500, /// Generic connector
-    TYPE_CABLE                  = 1600, /// Generic cable
-    TYPE_REGISTER               = 1700, /// Generic register
+    TYPE_CHIP_PLD               = 1410, /// Generic Programmable Logic Device (Example: FPGA)
+    TYPE_CHIP_ASIC              = 1420, /// Generic Application-Specific Integrated Circuit (ASIC)
+    TYPE_CHIP_EPROM             = 1430, /// Generic e-PROM device
+    TYPE_IO                     = 2000, /// Generic I/O
+    TYPE_IO_CLOCK               = 2100, /// Generic clock I/O
+    TYPE_CONNECTOR              = 3000, /// Generic connector
+    TYPE_CABLE                  = 4000, /// Generic cable
+    TYPE_REGISTER               = 5000, /// Generic register
   };
 
   component_type get_component_type(const std::string & label_);

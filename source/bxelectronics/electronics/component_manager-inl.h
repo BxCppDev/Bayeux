@@ -15,34 +15,34 @@ namespace electronics {
 
   template <class T>
   bool component_manager::is_a(const std::string& name) const {
-    component_pool_type::const_iterator found = _components_.find(name);
-    DT_THROW_IF (found == _components_.end(),
+    component_model_pool_type::const_iterator found = _component_models_.find(name);
+    DT_THROW_IF (found == _component_models_.end(),
                  std::logic_error,
                  "No component named '" << name << "' !");
-    const component_entry& entry = found->second;
+    const component_model_entry& entry = found->second;
     if (!entry.is_initialized()) {
       DT_LOG_NOTICE(get_logging_priority(),"Forcing initialization of the component named '" <<name << "'...");
       component_manager * mutable_this = const_cast<component_manager *>(this);
-      component_entry& mutable_entry = const_cast<component_entry &>(entry);
-      mutable_this->initialize_component(mutable_entry);
+      component_model_entry& mutable_entry = const_cast<component_model_entry &>(entry);
+      mutable_this->_initialize_component_model(mutable_entry);
     }
     const std::type_info& ti = typeid(T);
-    const std::type_info& tf = typeid(found->second.get_component_handle().get());
+    const std::type_info& tf = typeid(found->second.get_component_model_handle().get());
     return (ti == tf);
   }
 
 
   template<class T>
   T& component_manager::grab(const std::string& name) {
-    component_pool_type::iterator found = _components_.find(name);
-    DT_THROW_IF (found == _components_.end(),
+    component_model_pool_type::iterator found = _component_models_.find(name);
+    DT_THROW_IF (found == _component_models_.end(),
                  std::logic_error,
                  "No component named '" << name << "' !");
-    component_entry& entry = found->second;
+    component_model_entry& entry = found->second;
     if (!entry.is_initialized()) {
-      this->initialize_component(entry);
+      this->_initialize_component_model(entry);
     }
-    return dynamic_cast<T&>(entry.grab_component_handle().grab());
+    return dynamic_cast<T&>(entry.grab_component_model_handle().grab());
   }
 
   template<class T>

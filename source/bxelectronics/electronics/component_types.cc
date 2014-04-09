@@ -55,6 +55,8 @@ namespace {
       ("chip_pld",               electronics::TYPE_CHIP_PLD)
       ("chip_asic",              electronics::TYPE_CHIP_ASIC)
       ("chip_eprom",             electronics::TYPE_CHIP_EPROM)
+      ("io",                     electronics::TYPE_IO)
+      ("io_clock",               electronics::TYPE_IO_CLOCK)
       ("connector",              electronics::TYPE_CONNECTOR)
       ("cable",                  electronics::TYPE_CABLE)
       ;

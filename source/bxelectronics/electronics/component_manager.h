@@ -2,7 +2,7 @@
 /* component_manager.h
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2013-11-12
- * Last modified : 2013-11-13
+ * Last modified : 2013-11-28
  *
  * Copyright (C) 2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -70,6 +70,11 @@ namespace electronics {
 
   public:
 
+    friend class component_model_entry;
+
+    /// Dictionary of logical component handles
+    typedef std::map<std::string, const logical_component *> logical_component_dict_type;
+
     static const std::string & default_top_level_name();
 
     enum flag_type {
@@ -108,19 +113,19 @@ namespace electronics {
     void set_preload(bool);
 
     /// Get the factory preload flag
-    bool get_preload() const;
+    bool is_preload() const;
 
     /// Set the build mapping flag
     void set_mapping_requested(bool);
 
     /// Get the build mapping flag
-    bool get_mapping_requested() const;
+    bool is_mapping_requested() const;
 
     /// Set the 'force initialization at load' flag
     void set_force_initialization_at_load(bool);
 
     /// Get the 'force initialization at load' flag
-    bool get_force_initialization_at_load() const;
+    bool is_force_initialization_at_load() const;
 
     /// Add a property prefix to be preserved in models
     void add_auxiliary_property_prefix(const std::string & prefix_);
@@ -192,13 +197,15 @@ namespace electronics {
 
     void load_eid_categories(const std::string &);
 
-    const component_pool_type& get_components() const;
+    const component_model_pool_type& get_component_models() const;
 
-    component_pool_type& grab_components();
+    const logical_component_dict_type & get_logical_components() const;
 
-    void dump_components(std::ostream& out = std::clog,
-                         const std::string& title  = "",
-                         const std::string& indent = "") const;
+    const mapping & get_mapping() const;
+
+    void dump_component_models(std::ostream& out = std::clog,
+                               const std::string& title  = "",
+                               const std::string& indent = "") const;
 
     /// Smart print
     virtual void tree_dump(std::ostream& out         = std::clog,
@@ -210,17 +217,17 @@ namespace electronics {
 
     datatools::logger::priority get_logging_priority() const;
 
-    void load_component(const std::string& name,
-                        const std::string& id,
-                        const datatools::properties& config);
-
-    void create_component(component_entry& entry);
-
-    void initialize_component(component_entry& entry);
-
-    void reset_component(component_entry& entry);
-
   protected:
+
+    void _load_component_model(const std::string& name,
+                               const std::string& id,
+                               const datatools::properties& config);
+
+    void _create_component_model(component_model_entry& entry);
+
+    void _initialize_component_model(component_model_entry& entry);
+
+    void _reset_component_model(component_model_entry& entry);
 
     void _do_preload_global_dict();
 
@@ -237,11 +244,12 @@ namespace electronics {
     std::vector<std::string> _auxiliary_property_prefixes_; //!< List of property prefixes to be preserved in component models auxiliary properties
 
     component_model_base::factory_register_type  _factory_register_; //!< Factory register
-    component_pool_type _components_;       //!< Dictionary of components
+    component_model_pool_type                    _component_models_; //!< Dictionary of component models
+    logical_component_dict_type                  _logical_components_; //!< Dictionary of logical components
+
     geomtools::id_mgr _eid_manager_; //!< manager of electronics ID
     bool              _mapping_requested_; //!< Mapping build request flag
     mapping           _mapping_; //!< Default mapping
-    // Mapping...
 
   };
 

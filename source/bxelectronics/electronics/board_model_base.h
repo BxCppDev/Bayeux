@@ -7,6 +7,34 @@
 namespace electronics {
 
   /// \brief Generic base model of a electronic board
+  /**
+   *
+   *  Board model:
+   *  +--------------------------------+
+   *  |                                |
+   *  |     Slot 0 +-------------+     |
+   *  |            | Mezzanine 0 |     |
+   *  |            |             |     |
+   *  |            |             |     |
+   *  |            +-------------+     |
+   *  |                                |
+   *  |     Slot 1 +-------------+     |
+   *  |            | Mezzanine 1 |     |
+   *  |            |             |     |
+   *  |            |             |     |
+   *  |            +-------------+     |
+   *  |                                |
+   *  |     Slot 2 + - - - - - - +     |
+   *  |            :   <empty>   :     |
+   *  |            :             :     |
+   *  |            :             :     |
+   *  |            + - - - - - - +     |
+   *  |                                |
+   *  +--------------------------------+
+   *
+   *
+   *
+   */
   class board_model_base : public component_model_base
   {
   public:
@@ -18,7 +46,7 @@ namespace electronics {
     virtual ~board_model_base();
 
     /// Return the slot width
-    uint32_t get_slot_with() const;
+    uint32_t get_slot_width() const;
 
     /// Set the slot width
     void set_slot_width(uint32_t);
@@ -51,28 +79,16 @@ namespace electronics {
     bool has_mezzanine_board(uint32_t mezzanine_slot_) const;
 
     /// Add a mezzanine board
-    void add_mezzanine_board(uint32_t mezzanine_slot_,
-                             component_handle_type & mezzanine_);
+    physical_component &
+    add_mezzanine_board(uint32_t mezzanine_slot_,
+                        const component_model_base & mezzanine_model_,
+                        const std::string & mezzanine_label_ = "");
 
     /// Remove a mezzanine board
     void remove_mezzanine_board(uint32_t mezzanine_slot_);
 
-    /// Return a mutable handle to the mezzanine board
-    component_handle_type & grab_mezzanine_board(uint32_t mezzanine_slot_);
-
-    /// Return a non mutable handle to the mezzanine board
-    const component_handle_type & get_mezzanine_board(uint32_t mezzanine_slot_) const;
-
-    /* ***********
-     * INTERFACE *
-     *************/
-
-    /// Initialize the board
-    virtual void initialize(const datatools::properties& config_,
-                            component_pool_type& components_);
-
-    /// Reset the board
-    virtual void reset();
+    /// Return a non mutable reference to an embedded mezzanine_board by slot
+    const physical_component & get_mezzanine_board(uint32_t mezzanine_slot_);
 
     // Smart print
     virtual void tree_dump(std::ostream& out_ = std::clog,
@@ -82,27 +98,35 @@ namespace electronics {
 
   protected:
 
+    /// Overloaded initialization method
+    virtual void _at_initialize(const datatools::properties & config_,
+                                component_model_pool_type& components_);
+
+    /// Overloaded reset method
+    virtual void _at_reset();
+
     /// Common initialization of the board
     void _board_initialize(const datatools::properties & config_,
-                           component_pool_type& components_);
+                           component_model_pool_type& components_);
 
     /// Common termination of the board
     void _board_reset();
 
+    /// Post remove
+    virtual void _post_remove_embedded_physical(const std::string & embedded_label_);
+
   private:
 
     std::string _format_; //!< Format of the board
-    uint32_t    _slot_width_; //!< Width of the board in slot units
+    uint32_t    _slot_width_; //!< Width of the board in slot unit
     uint32_t    _max_number_of_mezzanine_boards_; //!< Maximum number of mezzanine boards
     std::string _mezzanine_format_; //!< Format of the embedded mezzanine boards
-    indexed_component_dict_type _mezzanine_boards_; //!< Embedded mezzanine boards addressed by slot
+    indexed_labels_dict_type _mezzanine_labels_; //!< List of mezzanine labels by slot index
 
     // Automated registration in the system factory register
     ELECTRONICS_COMPONENT_REGISTRATION_INTERFACE(board_model_base);
 
   };
-
-  typedef board_model_base module_model_base;
 
 } // end of namespace electronics
 

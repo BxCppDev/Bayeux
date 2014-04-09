@@ -55,6 +55,10 @@ namespace electronics {
 
     const component_manager & get_manager() const;
 
+    bool is_top_level_mapping() const;
+
+    void set_top_level_mapping(bool);
+
     bool has_eid_manager() const;
 
     void set_eid_manager(const geomtools::id_mgr & mgr_);
@@ -103,23 +107,23 @@ namespace electronics {
 
     void _build();
 
-    void _build_embedded_components(const component_model_base & mother_,
+    void _build_embedded_components(const logical_component & mother_,
                                     const geomtools::geom_id & mother_eid_);
 
   private:
 
     // Configuration attributes:
-    datatools::logger::priority  _logging_;     //!< Logging priority threshold
+    datatools::logger::priority  _logging_priority_;     //!< Logging priority threshold
     bool                         _initialized_; //!< Initialization flag
     const component_manager  *   _manager_;     //!< Handle to the component model manager
-    bool                         _top_level_mapping_;
+    bool                         _top_level_mapping_; //!< Flag to activate the mapping of the top-level logical
     unsigned int                 _max_depth_;   //!< Maximum mapping depth at build
     std::string                  _top_level_name_; //!< Name of the top-level component model
     std::vector<std::string>     _only_categories_; //!< List of electronic component categories to be mapped
     std::vector<std::string>     _excluded_categories_; //!< List of electronic component categories to be excluded from the mapping
 
     // Dynamic attributes:
-    const component_model_base * _top_level_component_; //!< Handle to the top-level component model
+    const logical_component *    _top_level_logical_; //!< Handle to the top-level logical component
     const geomtools::id_mgr *    _eid_manager_; //!< EID manager
     unsigned int                 _depth_;       //!< Running depth at build
     component_info_dict_type     _component_infos_; //!< Dictionnary of information about electronic components in the setup

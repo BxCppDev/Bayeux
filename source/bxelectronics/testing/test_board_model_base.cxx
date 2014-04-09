@@ -15,69 +15,74 @@ int main( int argc_, char * argv_[])
 
   try {
 
-    // Board:
-    electronics::component_handle_type board_handle;
+    // Control FPGA model (as a generic component model):
+    electronics::component_model_base ctrl_fpga;
+    ctrl_fpga.set_type(electronics::TYPE_CHIP_PLD);
+    ctrl_fpga.set_name("CTRL_FPGA");
+    ctrl_fpga.set_display_name("Control FPGA");
+    ctrl_fpga.set_terse_description("The control FPGA model for the front end board");
+    ctrl_fpga.grab_auxiliaries().store_string("manufacturer", "ALTERA");
+    ctrl_fpga.grab_auxiliaries().store_string("model.label", "Cyclone");
+    ctrl_fpga.grab_auxiliaries().store_string("model.version", "II");
+    ctrl_fpga.grab_auxiliaries().store_string("firmware.label", "CTRLsys");
+    ctrl_fpga.grab_auxiliaries().store_string("firmware.version", "1.0");
+    ctrl_fpga.initialize_simple();
+    ctrl_fpga.tree_dump(std::cout, ctrl_fpga.get_display_name() + ":");
+    std::cout << std::endl;
 
-    board_handle.reset(new electronics::board_model_base);
-    electronics::board_model_base & board = dynamic_cast<electronics::board_model_base &>(board_handle.grab());
-    board.set_name(electronics::make_indexed_name("FEB_", 0));
-    board.set_display_name(electronics::make_indexed_name("FEB #", 0));
-    board.set_terse_description("A dummy frontend board");
+    // FEB FPGA model (as a generic component model):
+    electronics::component_model_base feb_fpga;
+    feb_fpga.set_type(electronics::TYPE_CHIP_PLD);
+    feb_fpga.set_name("FEB_FPGA");
+    feb_fpga.set_display_name("FEB FPGA");
+    feb_fpga.set_terse_description("The FEB FPGA model for the front end board");
+    feb_fpga.grab_auxiliaries().store_string("manufacturer", "ALTERA");
+    feb_fpga.grab_auxiliaries().store_string("model.label", "Cyclone");
+    feb_fpga.grab_auxiliaries().store_string("model.version", "II");
+    feb_fpga.grab_auxiliaries().store_string("firmware.label", "FEBsys");
+    feb_fpga.grab_auxiliaries().store_string("firmware.version", "1.3");
+    feb_fpga.initialize_simple();
+    feb_fpga.tree_dump(std::cout, feb_fpga.get_display_name() + ":");
+    std::cout << std::endl;
+
+    // Mezzanine board:
+    electronics::board_model_base mezzanine_board;
+    mezzanine_board.set_name("FEBMez");
+    mezzanine_board.set_display_name("FEB mezzanine board");
+    mezzanine_board.set_terse_description("A mezzanine board model for the front end board");
+    mezzanine_board.set_type(electronics::TYPE_MODULE_MEZZANINE_BOARD);
+    mezzanine_board.grab_auxiliaries().store_string("manufacturer", "ACME");
+    mezzanine_board.set_format("mezz");
+    mezzanine_board.initialize_simple();
+    mezzanine_board.tree_dump(std::cout, mezzanine_board.get_display_name() + ":");
+    std::cout << std::endl;
+
+    // Board:
+    electronics::board_model_base board;
+    board.set_name("FEB");
+    board.set_display_name("Front end board");
+    board.set_terse_description("The frontend board model");
     board.grab_auxiliaries().store_string("model.label", "Dummy");
     board.grab_auxiliaries().store_string("model.version", "1");
     board.grab_auxiliaries().store_string("manufacturer", "ACME");
-    board.grab_auxiliaries().store_string("serial_number", "00102030");
-    board.grab_auxiliaries().store_string("inventory_number", "CNRS-999-777-3232");
     board.set_slot_width(1);
     board.set_format("VME-6U");
-    board.set_mezzanine_format("VME-6U-mezz");
-    board.set_max_number_of_mezzanine_boards(4);
-
-    for (int imezz = 0; imezz < 4; imezz++) {
-      if (imezz == 1) continue;
-      // Mezzanine:
-      electronics::component_handle_type mezzanine_handle;
-      mezzanine_handle.reset(new electronics::board_model_base);
-      electronics::board_model_base & mezzanine =
-        dynamic_cast<electronics::board_model_base &>(mezzanine_handle.grab());
-      mezzanine.set_name(electronics::make_indexed_name("Mezzanine_", imezz));
-      mezzanine.set_display_name(electronics::make_indexed_name("Mezzanine board #", imezz));
-      mezzanine.set_terse_description("Mezzanine board");
-      mezzanine.set_type(electronics::TYPE_MODULE_MEZZANINE_BOARD);
-      mezzanine.grab_auxiliaries().store_string("manufacturer", "ACME");
-      mezzanine.grab_auxiliaries().store_string("serial_number", "?");
-      mezzanine.set_format("VME-6U-mezz");
-      mezzanine.tree_dump(std::cout, "Mezzanine board: ");
-      mezzanine.initialize_simple();
-
-      board.add_mezzanine_board(imezz, mezzanine_handle);
-    }
-
-    {
-      // Control FPGA:
-      electronics::component_handle_type ctrl_fpga_handle;
-      ctrl_fpga_handle.reset(new electronics::component_model_base);
-      electronics::component_model_base & ctrl_fpga = ctrl_fpga_handle.grab();
-      ctrl_fpga.set_name("CTRL_FPGA");
-      ctrl_fpga.set_display_name("Control FPGA");
-      ctrl_fpga.set_terse_description("Control FPGA");
-      ctrl_fpga.set_type(electronics::TYPE_CHIP_PLD);
-      ctrl_fpga.grab_auxiliaries().store_string("manufacturer", "ALTERA");
-      ctrl_fpga.grab_auxiliaries().store_string("serial_number", "?");
-      ctrl_fpga.grab_auxiliaries().store_string("model.label", "Cyclone");
-      ctrl_fpga.grab_auxiliaries().store_string("model.version", "II");
-      ctrl_fpga.grab_auxiliaries().store_string("firmware.label", "CTRL");
-      ctrl_fpga.grab_auxiliaries().store_string("firmware.version", "1.0");
-      ctrl_fpga.tree_dump(std::cout, "CTRL_FPGA: ");
-      ctrl_fpga.initialize_simple();
-
-      board.add_embedded("CTRL_FPGA", ctrl_fpga_handle);
-    }
-
-    board.tree_dump(std::cout, "Virtual FEB: ");
+    board.set_mezzanine_format("mezz");
+    board.set_max_number_of_mezzanine_boards(6);
+    board.add_mezzanine_board(0, mezzanine_board);
+    board.add_mezzanine_board(1, mezzanine_board);
+    board.add_mezzanine_board(2, mezzanine_board);
+    board.add_mezzanine_board(4, mezzanine_board);
+    board.add_embedded_component("CTRL_FPGA", ctrl_fpga);
+    board.add_embedded_component(electronics::make_indexed_name("FEB_FPGA_", 0), feb_fpga);
+    board.add_embedded_component(electronics::make_indexed_name("FEB_FPGA_", 1), feb_fpga);
+    board.tree_dump(std::cout, board.get_display_name() + ":");
+    std::cout << std::endl;
     board.remove_mezzanine_board(2);
-    board.tree_dump(std::cout, "Virtual FEB: ");
+    board.remove_embedded_component("mezzanine_4");
     board.initialize_simple();
+    board.tree_dump(std::cout, board.get_display_name() + ":");
+    std::cout << std::endl;
 
   }
   catch (std::exception& error) {
