@@ -42,12 +42,13 @@ namespace geomtools {
     enum faces_mask_type {
       FACE_NONE             = geomtools::FACE_NONE,
       FACE_SIDE             = datatools::bit_mask::bit00,
+      FACE_OUTER_SIDE       = FACE_SIDE,
       FACE_INNER_SIDE       = datatools::bit_mask::bit01,
       FACE_START_THETA_SIDE = datatools::bit_mask::bit02,
       FACE_STOP_THETA_SIDE  = datatools::bit_mask::bit03,
       FACE_START_PHI_SIDE   = datatools::bit_mask::bit04,
       FACE_STOP_PHI_SIDE    = datatools::bit_mask::bit05,
-      FACE_ALL    = FACE_SIDE | FACE_INNER_SIDE
+      FACE_ALL    = FACE_OUTER_SIDE | FACE_INNER_SIDE
       | FACE_START_THETA_SIDE | FACE_STOP_THETA_SIDE
       | FACE_START_PHI_SIDE | FACE_STOP_PHI_SIDE
     };
