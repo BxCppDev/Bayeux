@@ -1,5 +1,5 @@
 // -*- mode: c++; -*-
-/* object_configuration_description.h */
+/// \file datatools/object_configuration_description.h
 /*
  * Description :
  *
@@ -7,7 +7,7 @@
  *  that uses a deferred initilization mechanism using 'datatools::properties'
  *  container.
  *
- * Copyright (C) 2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2013-2014 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,8 @@
  *
  */
 
-#ifndef DATATOOLS_OBJECT_CONFIGURATION_DESCRIPTION_H_
-#define DATATOOLS_OBJECT_CONFIGURATION_DESCRIPTION_H_
+#ifndef DATATOOLS_OBJECT_CONFIGURATION_DESCRIPTION_H
+#define DATATOOLS_OBJECT_CONFIGURATION_DESCRIPTION_H
 
 // Standard library
 #include <iostream>
@@ -89,9 +89,11 @@ public:
     const configuration_property_description * address;
   };
 
+  /// Constructor
   configuration_property_description();
 
   configuration_property_description & set_name_pattern(const std::string &np_);
+  configuration_property_description & set_from(const std::string &from_);
   configuration_property_description & set_terse_description(const std::string &desc_);
   configuration_property_description & set_long_description(const std::string &desc_);
   configuration_property_description & set_mandatory(bool m_ = true);
@@ -135,6 +137,7 @@ public:
   bool is_triggered_by_flag() const;
   bool is_triggered_by_label() const;
   const std::string & get_name_pattern() const;
+  const std::string & get_from() const;
   bool has_terse_description() const;
   const std::string & get_terse_description() const;
   bool has_long_description() const;
@@ -171,44 +174,46 @@ public:
   unsigned int get_number_of_triggered_dependers() const;
   const dependency_entry & get_triggered_depender(int i_) const;
 
+  /// Raw print
   void dump(std::ostream & out_ = std::clog,
             const std::string & title_ = "",
             const std::string & indent_ = "") const;
 
 private:
 
-  std::string  _name_pattern_; /// The name pattern of the property
-  std::string  _section_;      /// An optional string describing the configuration section
-  std::string  _terse_description_; /// Terse description of the property
-  std::string  _long_description_; /// Detailed description of the property
+  std::string  _name_pattern_;         /// The name pattern of the property
+  std::string  _from_;                 /// The name of a class from which the property is declared
+  std::string  _section_;              /// An optional string describing the configuration section
+  std::string  _terse_description_;    /// Terse description of the property
+  std::string  _long_description_;     /// Detailed description of the property
   std::vector<std::string> _examples_; /// List of examples
-  int          _type_; /// property's type (BOOLEAN, INTEGER, REAL, STRING)
-  bool         _const_; /// Constness of the property's value
-  bool         _path_; /// Explicit path trait for STRING property
+  int          _type_;          /// property's type (BOOLEAN, INTEGER, REAL, STRING)
+  bool         _const_;         /// Constness of the property's value
+  bool         _path_;          /// Explicit path trait for STRING property
   bool         _explicit_unit_; /// Explicit unit trait for REAL property
-  std::string  _unit_label_; /// Explicit unit label for REAL property with 'path' trait
-  std::string  _unit_symbol_; /// Explicit unit symbol for REAL property with 'path' trait
-  bool         _array_; /// Array trait (any type)
-  int          _array_fixed_size_; /// Array fixed size (-1 if not fixed)
+  std::string  _unit_label_;    /// Explicit unit label for REAL property with 'path' trait
+  std::string  _unit_symbol_;   /// Explicit unit symbol for REAL property with 'path' trait
+  bool         _array_;              /// Array trait (any type)
+  int          _array_fixed_size_;   /// Array fixed size (-1 if not fixed)
   int          _default_array_size_; /// Default array size (-1 if not set)
   boost::logic::tribool _default_value_boolean_; /// Default boolean value description
-  int          _default_value_integer_; /// Default integer value description
-  double       _default_value_real_; /// Default real value description
-  std::string  _default_value_string_; /// Default string value description
-  bool         _mandatory_; /// Flag for a mandatory property
-  bool         _complex_triggering_conditions_; /// Flag for complex triggering conditions of the property that cannot be describe through the 'configuration_property_description' mechanism
-  bool         _complex_dependencies_; /// Flag for complex dependencies of the property that cannot be describe through the 'configuration_property_description' mechanism
-  std::vector<dependency_entry> _dynamic_dependers_; /// List of dynamic properties that depends on this property (static property only)
-  dependency_entry              _dynamic_dependee_; /// Dependee of this property (dynamic property only)
-  std::vector<dependency_entry> _triggering_; /// List of properties triggered by this property
-  dependency_entry              _triggered_by_flag_; /// Flag (BOOLEAN) property this property depends on
+  int          _default_value_integer_;          /// Default integer value description
+  double       _default_value_real_;             /// Default real value description
+  std::string  _default_value_string_;           /// Default string value description
+  bool         _mandatory_;                           /// Flag for a mandatory property
+  bool         _complex_triggering_conditions_;       /// Flag for complex triggering conditions of the property that cannot be describe through the 'configuration_property_description' mechanism
+  bool         _complex_dependencies_;                /// Flag for complex dependencies of the property that cannot be describe through the 'configuration_property_description' mechanism
+  std::vector<dependency_entry> _dynamic_dependers_;  /// List of dynamic properties that depends on this property (static property only)
+  dependency_entry              _dynamic_dependee_;   /// Dependee of this property (dynamic property only)
+  std::vector<dependency_entry> _triggering_;         /// List of properties triggered by this property
+  dependency_entry              _triggered_by_flag_;  /// Flag (BOOLEAN) property this property depends on
   dependency_entry              _triggered_by_label_; /// Label (STRING) property this property depends on
 
   friend class object_configuration_description;
 };
 
 
-/// \brief An object that describes the way an objet of a given class can be configured.
+/// \brief An object that describes the way an object of a given class can be configured through properties.
 class object_configuration_description
 {
  public:
@@ -294,17 +299,22 @@ class object_configuration_description
   /// Obsolete
   configuration_property_description & add_property_info();
 
+  /// Check the validity of a container of properties with respect to the OCD description
   bool validate(const datatools::properties & config_,
                 std::string & error_message_) const;
 
+  /// Generate a sample configuration stream
   void generate_sample_configuration(std::ostream & out_,
                                      const std::string & topic_ = "",
                                      uint32_t sgo_flags_ = 0) const;
 
+  /// Check the lock flag
   bool is_locked() const;
 
+  /// Lock the object
   void lock();
 
+  /// Raw print
   void dump(std::ostream & out_ = std::clog,
             const std::string & title_ = "",
             const std::string & indent_ = "") const;
@@ -324,25 +334,24 @@ protected:
 
 private:
 
+  /// Action performed at lock
   void _at_lock_();
 
 private:
 
-  bool         _locked_; /// Lock flag
-  std::string  _class_name_; /// The name of the class to be documented
-  std::string  _class_description_; /// An optional description string
-  std::string  _class_documentation_; /// An optional documentation string
-  std::string  _class_library_;       /// An optional string describing the library the class belongs to
+  bool         _locked_;                         /// Lock flag
+  std::string  _class_name_;                     /// The name of the class to be documented
+  std::string  _class_description_;              /// An optional description string
+  std::string  _class_documentation_;            /// An optional documentation string
+  std::string  _class_library_;                  /// An optional string describing the library the class belongs to
   cpd_col_type _configuration_properties_infos_; /// Collection of documented properties
-  std::string  _configuration_hints_; /// Some embeded plain text documentation
+  std::string  _configuration_hints_;            /// Some embeded plain text documentation
   //csd_col_type _configuration_sections_infos_; /// Collection of documented sections
-  bool         _validation_support_; /// Flag to support validation
+  bool         _validation_support_;             /// Flag to support validation
 
 
 };
 
-} // namespace datatools;
+} // namespace datatools
 
-#endif // DATATOOLS_OBJECT_CONFIGURATION_DESCRIPTION_H_
-
-// end of object_configuration_description.h
+#endif // DATATOOLS_OBJECT_CONFIGURATION_DESCRIPTION_H

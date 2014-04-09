@@ -227,6 +227,14 @@ namespace datatools {
     return;
   }
 
+
+  configuration_property_description &
+  configuration_property_description::set_from(const std::string &from_)
+  {
+    _from_ = from_;
+    return *this;
+  }
+
   configuration_property_description &
   configuration_property_description::set_name_pattern(const std::string &np_)
   {
@@ -367,7 +375,7 @@ namespace datatools {
   configuration_property_description &
   configuration_property_description::set_default_value_boolean(bool dv_)
   {
-    DT_THROW_IF(! is_boolean(), std::logic_error, "Not a boolean property description !");
+    DT_THROW_IF(! is_boolean(), std::logic_error, "Not a boolean property description for the property with name pattern '" << get_name_pattern() << "' !");
     _default_value_boolean_ = boost::logic::tribool(dv_);
     return *this;
   }
@@ -375,7 +383,7 @@ namespace datatools {
   configuration_property_description &
   configuration_property_description::set_default_value_integer(int dv_)
   {
-    DT_THROW_IF(! is_integer(), std::logic_error, "Not an integer property description !");
+    DT_THROW_IF(! is_integer(), std::logic_error, "Not an integer property description for the property with name pattern '" << get_name_pattern() << "' !");
     _default_value_integer_ = dv_;
     return *this;
   }
@@ -383,7 +391,7 @@ namespace datatools {
   configuration_property_description &
   configuration_property_description::set_default_value_real(double dv_)
   {
-    DT_THROW_IF(! is_real(), std::logic_error, "Not a real property description !");
+    DT_THROW_IF(! is_real(), std::logic_error, "Not a real property description for the property with name pattern '" << get_name_pattern() << "' !");
     _default_value_real_ = dv_;
     return *this;
   }
@@ -391,7 +399,7 @@ namespace datatools {
   configuration_property_description &
   configuration_property_description::set_default_value_string(const std::string & dv_)
   {
-    DT_THROW_IF(! is_string(), std::logic_error, "Not a string property description !");
+    DT_THROW_IF(! is_string(), std::logic_error, "Not a string property description for the property with name pattern '" << get_name_pattern() << "' !");
     _default_value_string_ = dv_;
     return *this;
   }
@@ -592,6 +600,12 @@ namespace datatools {
   }
 
   const std::string &
+  configuration_property_description::get_from() const
+  {
+    return _from_;
+  }
+
+  const std::string &
   configuration_property_description::get_terse_description() const
   {
     return _terse_description_;
@@ -670,6 +684,10 @@ namespace datatools {
     out_ << std::endl << indent << "**General informations :** " << std::endl;
 
     out_ << indent << std::endl;
+
+    if (! _from_.empty()) {
+      out_  << indent << "* From : ``" << _from_ << "``" << std::endl;
+    }
 
     out_ << indent << "* Type: ";
     if (! has_type()) {
