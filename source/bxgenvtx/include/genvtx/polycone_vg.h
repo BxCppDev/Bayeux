@@ -1,8 +1,7 @@
-// -*- mode: c++ ; -*-
-/* polycone_vg.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file genvtx/polycone_vg.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-10-11
- * Last modified: 2013-10-11
+ * Last modified: 2014-04-09
  *
  * License:
  *
@@ -14,8 +13,8 @@
  *
  */
 
-#ifndef GENVTX_POLYCONE_VG_H_
-#define GENVTX_POLYCONE_VG_H_ 1
+#ifndef GENVTX_POLYCONE_VG_H
+#define GENVTX_POLYCONE_VG_H 1
 
 // Standard library
 #include <iostream>
@@ -34,7 +33,8 @@ namespace datatools {
 
 namespace genvtx {
 
-  GENVTX_VG_CLASS_DECLARE(polycone_vg)
+  /// \brief A vertex generator based on the geometry of a 3D polycone
+  class polycone_vg : public i_vertex_generator
   {
   public:
 
@@ -49,8 +49,6 @@ namespace genvtx {
       BULK_CAVITY   = datatools::bit_mask::bit01,
       BULK_ALL      = (BULK_BODY | BULK_CAVITY)
     };
-
-  public:
 
     int get_mode () const;
 
@@ -81,7 +79,28 @@ namespace genvtx {
                     const std::string & indent_ = "",
                     bool inherit_ = false) const;
 
-    GENVTX_VG_INTERFACE_CTOR_DTOR (polycone_vg);
+
+    /// Constructor
+    polycone_vg();
+
+    /// Destructor
+    virtual ~polycone_vg();
+
+    /// Check initialization status
+    virtual bool is_initialized() const;
+
+    /// Initialization
+    virtual void initialize(const ::datatools::properties &,
+                             ::datatools::service_manager &,
+                             ::genvtx::vg_dict_type &);
+
+    /// Reset
+    virtual void reset();
+
+  protected :
+
+    /// Randomize vertex
+    virtual void _shoot_vertex(::mygsl::rng & random_, ::geomtools::vector_3d & vertex_);
 
   private:
 
@@ -112,12 +131,20 @@ namespace genvtx {
     double _surface_bottom_;
     double _surface_top_;
 
+    /// Registration macro
+    /// @arg polycone_vg the class to be registered
     GENVTX_VG_REGISTRATION_INTERFACE(polycone_vg);
 
   };
 
 } // end of namespace genvtx
 
-#endif // GENVTX_POLYCONE_VG_H_
+#endif // GENVTX_POLYCONE_VG_H
 
-// end of polycone_vg.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

@@ -1,16 +1,18 @@
-// -*- mode: c++ ; -*-
 /* geom_materials_access.cc
  */
 
 #include <genvtx/detail/geom_manager_utils.h>
 
+// Standard library:
 #include <string>
 #include <stdexcept>
 
+// Third party:
+// - Bayeux/datatools
 #include <datatools/exception.h>
-
+// - Bayeux/materials
 #include <materials/manager.h>
-
+// - Bayeux/geomtools
 #include <geomtools/materials_plugin.h>
 #include <geomtools/mapping_plugin.h>
 #include <geomtools/mapping.h>
@@ -79,5 +81,3 @@ namespace genvtx {
 
   } // end of namespace detail
 } // end of namespace genvtx
-
-// end of geom_materials_access.cc

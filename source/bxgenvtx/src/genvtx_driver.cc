@@ -1,7 +1,7 @@
-// -*- mode: c++ ; -*-
 /* genvtx_driver.cc
  */
 
+// Ourselves:
 #include <genvtx/genvtx_driver.h>
 
 // Third Party

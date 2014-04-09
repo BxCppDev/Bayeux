@@ -1,14 +1,20 @@
-// -*- mode: c++ ; -*-
 /* vg_tools.cc
  */
 
+// Ourselves:
 #include <genvtx/detail/vg_tools.h>
-#include <genvtx/i_vertex_generator.h>
-#include <genvtx/manager.h>
 
-#include <datatools/properties.h>
+// Standard library:
 #include <sstream>
 #include <stdexcept>
+
+// Third party:
+// - Bayeux/datatools
+#include <datatools/properties.h>
+
+// This project:
+#include <genvtx/i_vertex_generator.h>
+#include <genvtx/manager.h>
 
 namespace genvtx {
 
@@ -226,5 +232,3 @@ namespace genvtx {
   }
 
 } // end of namespace genvtx
-
-// end of vg_tools.cc

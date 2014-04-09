@@ -1,16 +1,19 @@
-// -*- mode: c++ ; -*-
 /* cylinder_vg.cc
  */
 
+// Ourselves:
 #include <genvtx/cylinder_vg.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
+// Third party:
+// - Bayeux/datatools
 #include <datatools/units.h>
 #include <datatools/properties.h>
 #include <datatools/exception.h>
-
+// - Bayeux/mygsl
 #include <mygsl/rng.h>
 
 namespace genvtx {
@@ -78,13 +81,12 @@ namespace genvtx {
     return _cylinder_;
   }
 
-  GENVTX_VG_IS_INITIALIZED_IMPLEMENT_HEAD(cylinder_vg)
+  bool cylinder_vg::is_initialized () const
   {
     return _initialized_;
   }
 
-  // Constructor :
-  GENVTX_VG_CONSTRUCTOR_IMPLEMENT_HEAD(cylinder_vg)
+  cylinder_vg::cylinder_vg() : genvtx::i_vertex_generator()
   {
     _initialized_ = false;
     _cylinder_.reset ();
@@ -92,12 +94,19 @@ namespace genvtx {
     return;
   }
 
-  // Destructor :
-  GENVTX_VG_DEFAULT_DESTRUCTOR_IMPLEMENT(cylinder_vg)
+  cylinder_vg::~cylinder_vg()
+  {
+    if (is_initialized ()) reset ();
+    return;
+  }
 
-  GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(cylinder_vg,setup_,/*service_manager_*/,/*vgens_*/)
+  void cylinder_vg::initialize (const ::datatools::properties & setup_,
+                                ::datatools::service_manager & service_manager_,
+                                ::genvtx::vg_dict_type & /*vgens_*/)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
+
+    this->::genvtx::i_vertex_generator::_initialize_basics(setup_, service_manager_);
 
     // parameters of the cylinder vertex generator:
     int    mode = MODE_INVALID;
@@ -199,7 +208,7 @@ namespace genvtx {
     return;
   }
 
-  GENVTX_VG_RESET_IMPLEMENT_HEAD(cylinder_vg)
+  void cylinder_vg::reset()
   {
     DT_THROW_IF (! is_initialized (), std::logic_error, "Not initialized !");
     _reset_ ();
@@ -207,7 +216,7 @@ namespace genvtx {
     return;
   }
 
-  void cylinder_vg::_init_ ()
+  void cylinder_vg::_init_()
   {
     if (_mode_ == MODE_SURFACE) {
       DT_THROW_IF (_surface_mask_ == 0, std::logic_error, "Surface mask is zero !");
@@ -264,7 +273,8 @@ namespace genvtx {
     return;
   }
 
-  GENVTX_VG_SHOOT_VERTEX_IMPLEMENT_HEAD(cylinder_vg,random_,vertex_)
+  void cylinder_vg::_shoot_vertex(::mygsl::rng & random_,
+                                  ::geomtools::vector_3d & vertex_)
   {
     DT_THROW_IF (! is_initialized (), std::logic_error, "Not initialized !");
     geomtools::invalidate (vertex_);
@@ -313,5 +323,3 @@ namespace genvtx {
   }
 
 } // end of namespace genvtx
-
-// end of cylinder_vg.cc

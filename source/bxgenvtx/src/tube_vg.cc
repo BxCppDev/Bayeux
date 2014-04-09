@@ -1,18 +1,21 @@
-// -*- mode: c++ ; -*-
 /* tube_vg.cc
  */
 
+// Ourselves:
 #include <genvtx/tube_vg.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
-#include <mygsl/rng.h>
 
+// Third party:
+// - Bayeux/datatools
 #include <datatools/units.h>
 #include <datatools/utils.h>
 #include <datatools/properties.h>
-
+// - Bayeux/mygsl
+#include <mygsl/rng.h>
 
 namespace genvtx {
 
@@ -80,13 +83,12 @@ namespace genvtx {
     return _tube_;
   }
 
-  GENVTX_VG_IS_INITIALIZED_IMPLEMENT_HEAD(tube_vg)
+  bool tube_vg::is_initialized () const
   {
     return _initialized_;
   }
 
-  // Constructor :
-  GENVTX_VG_CONSTRUCTOR_IMPLEMENT_HEAD(tube_vg)
+  tube_vg::tube_vg() : genvtx::i_vertex_generator()
   {
     _initialized_ = false;
     _tube_.reset ();
@@ -94,11 +96,16 @@ namespace genvtx {
     return;
   }
 
-  // Destructor :
-  GENVTX_VG_DEFAULT_DESTRUCTOR_IMPLEMENT(tube_vg)
+  tube_vg::~tube_vg()
+  {
+    if (is_initialized ()) reset ();
+    return;
+  }
 
 
-  GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(tube_vg,setup_,/*service_manager_*/,/*vgens_*/)
+  void tube_vg::initialize (const ::datatools::properties & setup_,
+                            ::datatools::service_manager & /*service_manager_*/,
+                            ::genvtx::vg_dict_type & /*vgens_*/)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
 
@@ -207,7 +214,7 @@ namespace genvtx {
     return;
   }
 
-  GENVTX_VG_RESET_IMPLEMENT_HEAD(tube_vg)
+  void tube_vg::reset ()
   {
     DT_THROW_IF (! is_initialized(), std::logic_error, "Not initialized !");
     _reset_ ();
@@ -280,7 +287,8 @@ namespace genvtx {
     return;
   }
 
-  GENVTX_VG_SHOOT_VERTEX_IMPLEMENT_HEAD(tube_vg,random_,vertex_)
+  void tube_vg::_shoot_vertex(::mygsl::rng & random_,
+                              ::geomtools::vector_3d & vertex_)
   {
     DT_THROW_IF (! is_initialized (), std::logic_error, "Not initialized !");
     geomtools::invalidate (vertex_);
@@ -354,5 +362,3 @@ namespace genvtx {
   }
 
 } // end of namespace genvtx
-
-// end of tube_vg.cc

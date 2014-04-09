@@ -1,9 +1,10 @@
-/* vg_macros.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file genvtx/vg_macros.h
+/// \brief Macros to automatically register vertex generator class.
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2012-04-24
- * Last modified : 2013-02-24
+ * Last modified : 2014-04-09
  *
- * Copyright (C) 2012-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2012-2014 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,123 +21,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
- *
- *
  * Description:
  *
- *   Macros to help build vertex generator classes.
+ *   Macros to register vertex generator classes.
  *
  * History:
  *
  */
 
-/*! \file vg_macros.h
- * \brief Macros to automatically generate some parts of the vertex generator class interface.
- *
- */
+#ifndef GENVTX_VG_MACROS_H
+#define GENVTX_VG_MACROS_H 1
 
-#ifndef GENVTX_VG_MACROS_H_
-#define GENVTX_VG_MACROS_H_ 1
-
+// This project:
 #include <genvtx/i_vertex_generator.h>
 
-#define GENVTX_VG_CLASS_DECLARE(T)              \
-  class T : public ::genvtx::i_vertex_generator \
-  /**/
-
-#define GENVTX_VG_IS_INITIALIZED_DECLARE()      \
-  public:                                       \
-  virtual bool is_initialized () const;         \
-  /**/
-
-#define GENVTX_VG_IS_INITIALIZED_IMPLEMENT_HEAD(T)  \
-  bool T::is_initialized () const                   \
-  /**/
-
-#define GENVTX_VG_HAS_NEXT_VERTEX_DECLARE()     \
-  public:                                       \
-  virtual bool has_next_vertex () const;        \
-  /**/
-
-#define GENVTX_VG_HAS_NEXT_VERTEX_IMPLEMENT_HEAD(T) \
-  bool T::has_next_vertex () const                  \
-  /**/
-
-#define GENVTX_VG_INITIALIZE_DECLARE()                      \
-  public:                                                   \
-  virtual void initialize (const ::datatools::properties &, \
-                           ::datatools::service_manager &,  \
-                           ::genvtx::vg_dict_type &);       \
-  /**/
-
-#define GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(T,CONF,SERVICE_MANAGER,DICT) \
-  void T::initialize (const ::datatools::properties & CONF,             \
-                      ::datatools::service_manager & SERVICE_MANAGER,   \
-                      ::genvtx::vg_dict_type & DICT)                    \
-  /**/
-
-#define GENVTX_VG_RESET_DECLARE()               \
-  public:                                       \
-  virtual void reset ();                        \
-  /**/
-
-#define GENVTX_VG_RESET_IMPLEMENT_HEAD(T)       \
-  void T::reset ()                              \
-  /**/
- 
-#define GENVTX_VG_SHOOT_VERTEX_DECLARE()                                \
-  protected :                                                           \
-  virtual void _shoot_vertex (::mygsl::rng & random_, ::geomtools::vector_3d & vertex_); \
-  /**/
-
-#define GENVTX_VG_SHOOT_VERTEX_IMPLEMENT_HEAD(T,Random,Vertex)          \
-  void T::_shoot_vertex (::mygsl::rng & Random, ::geomtools::vector_3d & Vertex) \
-  /**/
-
-#define GENVTX_VG_CONSTRUCTOR_DECLARE(T)        \
-  public:                                       \
-  T ();                                         \
-  /**/
-
-#define GENVTX_VG_CONSTRUCTOR_IMPLEMENT_HEAD(T) \
-  T::T ()                                       \
-    : genvtx::i_vertex_generator ()             \
-      /**/
-
-#define GENVTX_VG_DESTRUCTOR_DECLARE(T)         \
-  public:                                       \
-  virtual ~T ();                                \
-  /**/
-
-#define GENVTX_VG_DESTRUCTOR_IMPLEMENT_HEAD(T)  \
-  T::~T ()                                      \
-  /**/
-
-#define GENVTX_VG_DEFAULT_DESTRUCTOR_IMPLEMENT(T) \
-  GENVTX_VG_DESTRUCTOR_IMPLEMENT_HEAD (T)         \
-  {                                               \
-    if (is_initialized ()) reset ();              \
-    return;                                       \
-  }                                               \
-  /**/
-
-/*** Macro for the declaration of the minimal interface ***/
-#define GENVTX_VG_INTERFACE()                   \
-  GENVTX_VG_IS_INITIALIZED_DECLARE();           \
-  GENVTX_VG_INITIALIZE_DECLARE();               \
-  GENVTX_VG_RESET_DECLARE();                    \
-  GENVTX_VG_SHOOT_VERTEX_DECLARE();             \
-public:                                         \
-/**/
-
-/*** Macro for the declaration of the minimal interface ***/
-#define GENVTX_VG_INTERFACE_CTOR_DTOR(GENVTX_CLASS_NAME)  \
-  GENVTX_VG_CONSTRUCTOR_DECLARE(GENVTX_CLASS_NAME);       \
-  GENVTX_VG_DESTRUCTOR_DECLARE(GENVTX_CLASS_NAME);        \
-  GENVTX_VG_INTERFACE ();                                 \
-  /**/
-
-/*** Macros for interface/implementation of static creator methods in EM field classes ***/
+/*** Macros for registration of static creator methods for vertex generator classes ***/
 
 /** Registration */
 
@@ -149,16 +48,8 @@ public:                                         \
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (::genvtx::i_vertex_generator,GENVTX_CLASS_NAME,GENVTX_ID); \
   /**/
 
-#define GENVTX_VG_INITIALIZE_BASICS_INVOKE(Setup,ServiceManager)        \
-  this->::genvtx::i_vertex_generator::_initialize_basics(Setup,ServiceManager); \
-  /**/
+#endif // GENVTX_VG_MACROS_H
 
-#define GENVTX_VG_INITIALIZE_GEO_MANAGER_INVOKE(Setup,ServiceManager)   \
-  this->::genvtx::i_vertex_generator::_initialize_geo_manager(Setup,ServiceManager); \
-
-#endif // GENVTX_VG_MACROS_H_
-
-// end of vg_macros.h
 /*
 ** Local Variables: --
 ** mode: c++ --

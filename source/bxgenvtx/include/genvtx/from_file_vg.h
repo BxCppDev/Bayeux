@@ -1,8 +1,7 @@
-// -*- mode: c++ ; -*-
-/* from_file_vg.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file genvtx/from_file_vg.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-13
- * Last modified: 2012-04-27
+ * Last modified: 2014-04-09
  *
  * License:
  *
@@ -13,33 +12,24 @@
  *
  */
 
-#ifndef GENVTX_FROM_FILE_VG_H_
-#define GENVTX_FROM_FILE_VG_H_ 1
+#ifndef GENVTX_FROM_FILE_VG_H
+#define GENVTX_FROM_FILE_VG_H 1
 
+// Standard library:
 #include <fstream>
 #include <string>
 
+// This project:
 #include <genvtx/i_vertex_generator.h>
 
 namespace genvtx {
 
-  GENVTX_VG_CLASS_DECLARE(from_file_vg)
+  /// \brief Generate vertex from a file storing precomputed vertexes
+  class from_file_vg : public i_vertex_generator
   {
   public:
 
     static double default_length_unit();
-
-  protected:
-
-    void _open_source ();
-
-    void _close_source ();
-
-    void _read_next ();
-
-    bool _has_next ();
-
-  public:
 
     bool is_open () const;
 
@@ -51,11 +41,38 @@ namespace genvtx {
 
     double get_length_unit () const;
 
-  public:
+    /// Constructor
+    from_file_vg();
 
-    GENVTX_VG_INTERFACE_CTOR_DTOR (from_file_vg)
+    /// Destructor
+    virtual ~from_file_vg();
 
-    GENVTX_VG_HAS_NEXT_VERTEX_DECLARE();
+    /// Initialization
+    virtual void initialize(const ::datatools::properties &,
+                             ::datatools::service_manager &,
+                             ::genvtx::vg_dict_type &);
+
+    /// Reset
+    virtual void reset();
+
+    /// Check initialization status
+    virtual bool is_initialized() const;
+
+    /// Check if at least one more vertex is available
+    virtual bool has_next_vertex() const;
+
+  protected :
+
+    /// Randomize vertex
+    virtual void _shoot_vertex(::mygsl::rng & random_, ::geomtools::vector_3d & vertex_);
+
+    void _open_source ();
+
+    void _close_source ();
+
+    void _read_next ();
+
+    bool _has_next ();
 
   private:
 
@@ -65,8 +82,8 @@ namespace genvtx {
     geomtools::vector_3d _next_;
     double               _length_unit_; // default length unit (default == 1);
 
-  private:
-
+    /// Registration macro
+    /// @arg from_file_vg the class to be registered
     GENVTX_VG_REGISTRATION_INTERFACE(from_file_vg);
 
   };
@@ -75,6 +92,12 @@ namespace genvtx {
 
 } // end of namespace genvtx
 
-#endif // GENVTX_FROM_FILE_VG_H_
+#endif // GENVTX_FROM_FILE_VG_H
 
-// end of from_file_vg.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

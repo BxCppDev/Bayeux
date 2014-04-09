@@ -1,9 +1,7 @@
-// -*- mode: c++; -*-
-/* genvtx_config.h header file
- */
+/// \file genvtx/genvtx_config.h
 
-#ifndef GENVTX_GENVTX_CONFIG_H_
-#define GENVTX_GENVTX_CONFIG_H_ 1
+#ifndef GENVTX_GENVTX_CONFIG_H
+#define GENVTX_GENVTX_CONFIG_H 1
 
 /*** genvtxdatatools is built built standalone or not ***/
 #cmakedefine01 GENVTX_STANDALONE
@@ -17,6 +15,12 @@
 /***  genvtx embedded CAMP-based reflection ***/
 #cmakedefine01 GENVTX_WITH_REFLECTION
 
-#endif // GENVTX_GENVTX_CONFIG_H_
+#endif // GENVTX_GENVTX_CONFIG_H
 
-// end of genvtx_config.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

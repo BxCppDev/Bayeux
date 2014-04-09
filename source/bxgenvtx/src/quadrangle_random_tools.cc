@@ -1,11 +1,15 @@
-// -*- mode: c++ ; -*-
 /* quadrangle_random_tools.cc
  */
 
+// Ourselves:
 #include <genvtx/quadrangle_random_tools.h>
-#include <genvtx/triangle_random_tools.h>
 
+// Third party:
+// - Bayeux/datatools
 #include <datatools/utils.h>
+
+// This project:
+#include <genvtx/triangle_random_tools.h>
 
 namespace genvtx {
 
@@ -38,5 +42,3 @@ namespace genvtx {
 
 
 } // end of namespace genvtx
-
-// end of triangle_random_tools.cc

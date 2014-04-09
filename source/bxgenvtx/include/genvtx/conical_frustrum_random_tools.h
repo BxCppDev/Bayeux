@@ -1,22 +1,21 @@
-// -*- mode: c++ ; -*-
-/* conical_frustrum_random_tools.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file genvtx/conical_frustrum_random_tools.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-09-26
- * Last modified: 2013-02-24
+ * Last modified: 2014-04-09
  *
  * License:
  *
  * Description:
  *
- *    Algorithm to randomize points on the surface of a conical_frustrum
+ *    Algorithms to randomize points on the surface or volume of a conical_frustrum
  *
  * History:
  *
  *
  */
 
-#ifndef GENVTX_CONICAL_FRUSTRUM_RANDOM_TOOLS_H_
-#define GENVTX_CONICAL_FRUSTRUM_RANDOM_TOOLS_H_ 1
+#ifndef GENVTX_CONICAL_FRUSTRUM_RANDOM_TOOLS_H
+#define GENVTX_CONICAL_FRUSTRUM_RANDOM_TOOLS_H 1
 
 // Standard library
 #include <cmath>
@@ -31,6 +30,7 @@ namespace genvtx {
 
   struct right_circular_conical_frustrum {
 
+    /// Randomize points from the surface of a right circular conical frustrum
     static
     geomtools::vector_3d
     random_surface (mygsl::rng & random_,
@@ -41,6 +41,7 @@ namespace genvtx {
                     double theta1_ = 0.0,
                     double theta2_ = M_PI);
 
+    /// Randomize points from the volume of a right circular conical frustrum
     static
     geomtools::vector_3d
     random_volume (mygsl::rng & random_,
@@ -57,6 +58,12 @@ namespace genvtx {
 
 } // end of namespace genvtx
 
-#endif // GENVTX_CONICAL_FRUSTRUM_RANDOM_TOOLS_H_
+#endif // GENVTX_CONICAL_FRUSTRUM_RANDOM_TOOLS_H
 
-// end of conical_frustrum_random_tools.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

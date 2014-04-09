@@ -1,18 +1,22 @@
-// -*- mode: c++ ; -*-
 /* combined_vg.cc
  */
 
+// Ourselves:
 #include <genvtx/combined_vg.h>
 
+// Standard library:
 #include <limits>
 #include <stdexcept>
 
+// Third party:
+// - Bayeux/datatools
 #include <datatools/ioutils.h>
 #include <datatools/units.h>
 #include <datatools/exception.h>
-
+// - Bayeux/mygsl
 #include <mygsl/rng.h>
 
+// This project:
 #include <genvtx/manager.h>
 
 namespace genvtx {
@@ -27,21 +31,23 @@ namespace genvtx {
     return;
   }
 
-  // Constructor :
-  GENVTX_VG_CONSTRUCTOR_IMPLEMENT_HEAD(combined_vg)
+  combined_vg::combined_vg() : genvtx::i_vertex_generator()
   {
     _initialized_ = false;
     _set_defaults_ ();
     return;
   }
 
-  GENVTX_VG_IS_INITIALIZED_IMPLEMENT_HEAD(combined_vg)
+  bool combined_vg::is_initialized () const
   {
     return _initialized_;
   }
 
-  // Destructor :
-  GENVTX_VG_DEFAULT_DESTRUCTOR_IMPLEMENT(combined_vg)
+  combined_vg::~combined_vg()
+  {
+    if (is_initialized ()) reset ();
+    return;
+  }
 
   void combined_vg::_set_defaults_ ()
   {
@@ -56,7 +62,7 @@ namespace genvtx {
     return;
   }
 
-  GENVTX_VG_RESET_IMPLEMENT_HEAD(combined_vg)
+  void combined_vg::reset ()
   {
     DT_THROW_IF (! is_initialized (), std::logic_error, "Vertex generator '" << get_name() << "' is not initialized !");
     _reset_ ();
@@ -64,7 +70,8 @@ namespace genvtx {
     return;
   }
 
-  GENVTX_VG_SHOOT_VERTEX_IMPLEMENT_HEAD(combined_vg,random_,vertex_)
+  void combined_vg::_shoot_vertex(::mygsl::rng & random_,
+                                  ::geomtools::vector_3d & vertex_)
   {
     DT_THROW_IF (! is_initialized (), std::logic_error, "Vertex generator '" << get_name() << "' is not initialized !");
     geomtools::invalidate (vertex_);
@@ -152,12 +159,14 @@ namespace genvtx {
     return;
   }
 
-  GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(combined_vg,setup_,service_manager_,vgens_)
+  void combined_vg::initialize (const ::datatools::properties & setup_,
+                                ::datatools::service_manager & service_manager_,
+                                ::genvtx::vg_dict_type & vgens_)
   {
     using namespace std;
     DT_THROW_IF (is_initialized (), std::logic_error, "Already initialized !");
-    GENVTX_VG_INITIALIZE_BASICS_INVOKE(setup_,service_manager_);
-    GENVTX_VG_INITIALIZE_GEO_MANAGER_INVOKE(setup_,service_manager_);
+    this->::genvtx::i_vertex_generator::_initialize_basics(setup_, service_manager_);
+    this->::genvtx::i_vertex_generator::_initialize_geo_manager(setup_,service_manager_);
     // Parsing configuration parameters :
     DT_THROW_IF (! setup_.has_key ("generators"),
                  std::logic_error,
@@ -377,5 +386,3 @@ namespace genvtx {
   }
 
 } // end of namespace genvtx
-
-// end of combined_vg.cc

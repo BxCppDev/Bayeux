@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /* conical_frustrum_random_tools.cc
  *
  * maxima:

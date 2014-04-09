@@ -1,13 +1,16 @@
-// -*- mode: c++ ; -*-
 /* i_vertex_generator.cc
  */
 
+// Ourselves:
 #include <genvtx/i_vertex_generator.h>
 
+// Standard library:
 #include <string>
 #include <stdexcept>
 #include <sstream>
 
+// Third party:
+// - Bayeux/datatools
 #include <datatools/properties.h>
 #include <datatools/service_manager.h>
 #include <datatools/version_id.h>
@@ -15,12 +18,13 @@
 #include <datatools/utils.h>
 #include <datatools/logger.h>
 #include <datatools/exception.h>
-
+// - Bayeux/mygsl
 #include <mygsl/rng.h>
-
+// - Bayeux/geomtools
 #include <geomtools/manager.h>
 #include <geomtools/geometry_service.h>
 
+// This project:
 #include <genvtx/utils.h>
 
 namespace genvtx {
@@ -394,5 +398,3 @@ namespace genvtx {
   }
 
 } // end of namespace genvtx
-
-// end of i_vertex_generator.cc

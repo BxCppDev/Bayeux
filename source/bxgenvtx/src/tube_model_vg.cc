@@ -1,20 +1,22 @@
-// -*- mode: c++ ; -*-
 /* tube_model_vg.cc
  */
 
+// Standard library:
 #include <iostream>
 #include <stdexcept>
 #include <sstream>
 #include <limits>
 
+// Third party:
+// - Bayeux/datatools
 #include <datatools/ioutils.h>
 #include <datatools/units.h>
 #include <datatools/exception.h>
-
+// - Bayeux/mygsl
 #include <mygsl/rng.h>
-
+// - Bayeux/materials
 #include <materials/manager.h>
-
+// - Bayeux/geomtools
 #include <geomtools/geom_info.h>
 #include <geomtools/logical_volume.h>
 #include <geomtools/i_shape_3d.h>
@@ -24,6 +26,7 @@
 #include <geomtools/mapping_plugin.h>
 #include <geomtools/materials_plugin.h>
 
+// This project:
 #include <genvtx/utils.h>
 #include <genvtx/tube_model_vg.h>
 #include <genvtx/detail/geom_manager_utils.h>
@@ -171,21 +174,23 @@ namespace genvtx {
     return;
   }
 
-  // Constructor:
-  GENVTX_VG_CONSTRUCTOR_IMPLEMENT_HEAD(tube_model_vg)
+  tube_model_vg::tube_model_vg() : genvtx::i_vertex_generator()
   {
     _initialized_ = false;
     _set_defaults_ ();
     return;
   }
 
-  GENVTX_VG_IS_INITIALIZED_IMPLEMENT_HEAD(tube_model_vg)
+  bool tube_model_vg::is_initialized () const
   {
     return _initialized_;
   }
 
-  // Destructor :
-  GENVTX_VG_DEFAULT_DESTRUCTOR_IMPLEMENT(tube_model_vg)
+  tube_model_vg::~tube_model_vg()
+  {
+    if (is_initialized ()) reset ();
+    return;
+  }
 
   void tube_model_vg::_set_defaults_ ()
   {
@@ -214,7 +219,7 @@ namespace genvtx {
     return;
   }
 
-  GENVTX_VG_RESET_IMPLEMENT_HEAD(tube_model_vg)
+  void tube_model_vg::reset ()
   {
     DT_THROW_IF (! is_initialized (), std::logic_error, "Vertex generator '" << get_name() << "' is not initialized !");
     _reset_ ();
@@ -222,7 +227,8 @@ namespace genvtx {
     return;
   }
 
-  GENVTX_VG_SHOOT_VERTEX_IMPLEMENT_HEAD(tube_model_vg,random_,vertex_)
+  void tube_model_vg::_shoot_vertex(::mygsl::rng & random_,
+                                    ::geomtools::vector_3d & vertex_)
   {
     DT_THROW_IF (! is_initialized (), std::logic_error, "Vertex generator '" << get_name() << "' is not initialized !");
     geomtools::invalidate (vertex_);
@@ -407,12 +413,14 @@ namespace genvtx {
     return;
   }
 
-  GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(tube_model_vg,setup_,service_manager_,/*vgens_*/)
+  void tube_model_vg::initialize (const ::datatools::properties & setup_,
+                                 ::datatools::service_manager & service_manager_,
+                                 ::genvtx::vg_dict_type & /*vgens_*/)
   {
     DT_THROW_IF (is_initialized (), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
 
-    GENVTX_VG_INITIALIZE_BASICS_INVOKE(setup_,service_manager_);
-    GENVTX_VG_INITIALIZE_GEO_MANAGER_INVOKE(setup_,service_manager_);
+    this->::genvtx::i_vertex_generator::_initialize_basics(setup_, service_manager_);
+    this->::genvtx::i_vertex_generator::_initialize_geo_manager(setup_, service_manager_);
 
     int mode = utils::MODE_INVALID;
     std::string origin_rules;
@@ -528,5 +536,3 @@ namespace genvtx {
   }
 
 } // end of namespace genvtx
-
-// end of tube_model_vg.cc

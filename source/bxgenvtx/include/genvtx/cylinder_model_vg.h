@@ -1,6 +1,5 @@
-// -*- mode: c++; -*-
-/* cylinder_model_vg.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file genvtx/cylinder_model_vg.h
+/*  Author(s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-13
  * Last modified: 2013-03-10
  *
@@ -15,20 +14,25 @@
  *
  */
 
-#ifndef GENVTX_CYLINDER_MODEL_VG_H_
-#define GENVTX_CYLINDER_MODEL_VG_H_ 1
+#ifndef GENVTX_CYLINDER_MODEL_VG_H
+#define GENVTX_CYLINDER_MODEL_VG_H 1
 
+// Standard library:
 #include <string>
 
+// Third party:
+// - Bayeux/geomtools
 #include <geomtools/id_selector.h>
 
+// This project:
 #include <genvtx/cylinder_vg.h>
 #include <genvtx/vg_macros.h>
 #include <genvtx/utils.h>
 
 namespace genvtx {
 
-  GENVTX_VG_CLASS_DECLARE(cylinder_model_vg)
+  /// \brief A vertex generator based on a cylindric geometry model
+  class cylinder_model_vg : public i_vertex_generator
   {
   public:
 
@@ -79,7 +83,30 @@ namespace genvtx {
                             const std::string & indent_ = "",
                             bool inherit_ = false) const;
 
-    GENVTX_VG_INTERFACE_CTOR_DTOR (cylinder_model_vg);
+    /// Constructor
+    cylinder_model_vg();
+
+    /// Destructor
+    virtual ~cylinder_model_vg();
+
+    /// Initialization
+    virtual void initialize(const ::datatools::properties &,
+                             ::datatools::service_manager &,
+                             ::genvtx::vg_dict_type &);
+
+    /// Reset
+    virtual void reset();
+
+    /// Check initialization status
+    virtual bool is_initialized() const;
+
+  protected :
+
+    /// Randomize vertex
+    virtual void _shoot_vertex(::mygsl::rng & random_, ::geomtools::vector_3d & vertex_);
+
+    void _shoot_vertex_cylinders (mygsl::rng & random_,
+                                  geomtools::vector_3d & vertex_);
 
   private:
 
@@ -88,11 +115,6 @@ namespace genvtx {
     void _reset_ ();
 
     void _set_defaults_ ();
-
-  protected:
-
-    void _shoot_vertex_cylinders (mygsl::rng & random_,
-                                  geomtools::vector_3d & vertex_);
 
   private:
 
@@ -110,12 +132,20 @@ namespace genvtx {
     geomtools::id_selector  _src_selector_;          //!< A selector of GIDs
     std::vector<weight_entry_type> _entries_;        //!< Information about the weights
 
-    GENVTX_VG_REGISTRATION_INTERFACE(cylinder_model_vg);
+    /// Registration macro
+    /// @arg cylinder_model_vg the class to be registered
+     GENVTX_VG_REGISTRATION_INTERFACE(cylinder_model_vg);
 
   };
 
 } // end of namespace genvtx
 
-#endif // GENVTX_CYLINDER_MODEL_VG_H_
+#endif // GENVTX_CYLINDER_MODEL_VG_H
 
-// end of cylinder_model_vg.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

@@ -1,7 +1,7 @@
-// -*- mode: c++ ; -*-
 /* triangle_random_tools.cc
  */
 
+// Ourselves:
 #include <genvtx/triangle_random_tools.h>
 
 namespace genvtx {
@@ -26,7 +26,4 @@ namespace genvtx {
     return p;
   }
 
-
 } // end of namespace genvtx
-
-// end of triangle_random_tools.cc

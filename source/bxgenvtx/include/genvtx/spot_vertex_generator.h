@@ -1,21 +1,21 @@
-// -*- mode: c++ ; -*- 
-/* spot_vertex_generator.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file genvtx/spot_vertex_generator.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-12
- * Last modified: 2013-02-24
- * 
- * License: 
- * 
- * Description: 
+ * Last modified: 2014-04-09
+ *
+ * License:
+ *
+ * Description:
  *   Spot vertex generator
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
-#ifndef GENVTX_SPOT_VERTEX_GENERATOR_H_
-#define GENVTX_SPOT_VERTEX_GENERATOR_H_ 1
+#ifndef GENVTX_SPOT_VERTEX_GENERATOR_H
+#define GENVTX_SPOT_VERTEX_GENERATOR_H 1
 
+// This project:
 #include <genvtx/i_vertex_generator.h>
 
 namespace datatools {
@@ -24,41 +24,64 @@ namespace datatools {
 
 namespace genvtx {
 
-  GENVTX_VG_CLASS_DECLARE(spot_vertex_generator)
+  /// \brief Vertex generator from a single point
+  class spot_vertex_generator : public i_vertex_generator
   {
 
-  public: 
+  public:
 
     const geomtools::vector_3d & get_spot () const;
 
     void set_spot (double x_, double y_, double z_);
 
     void set_spot (const geomtools::vector_3d &);
-  
-  public: 
 
-    GENVTX_VG_INTERFACE_CTOR_DTOR(spot_vertex_generator);
- 
-  public: 
+    /// Constructor
+    spot_vertex_generator();
 
-    // ctor:
+    /// Constructor
     spot_vertex_generator (double x_, double y_, double z_);
 
-    // ctor:
+    /// Constructor
     spot_vertex_generator (const geomtools::vector_3d & spot_);
 
-  private: 
+    /// Destructor
+    virtual ~spot_vertex_generator();
 
-    geomtools::vector_3d _spot_;
- 
+    /// Initialization
+    virtual void initialize(const ::datatools::properties &,
+                             ::datatools::service_manager &,
+                             ::genvtx::vg_dict_type &);
+
+    /// Reset
+    virtual void reset();
+
+    /// Check initialization status
+    virtual bool is_initialized() const;
+
+  protected :
+
+    /// Randomize vertex
+    virtual void _shoot_vertex(::mygsl::rng & random_, ::geomtools::vector_3d & vertex_);
+
   private:
 
+    geomtools::vector_3d _spot_; /// The position of the vertexes
+
+    /// Registration macro
+    /// @arg spot_vertex_generator the class to be registered
     GENVTX_VG_REGISTRATION_INTERFACE(spot_vertex_generator);
 
   };
 
 } // end of namespace genvtx
 
-#endif // GENVTX_SPOT_VERTEX_GENERATOR_H_
+#endif // GENVTX_SPOT_VERTEX_GENERATOR_H
 
-// end of spot_vertex_generator.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

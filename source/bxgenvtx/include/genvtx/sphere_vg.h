@@ -1,8 +1,7 @@
-// -*- mode: c++ ; -*-
-/* sphere_vg.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file genvtx/sphere_vg.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-10-10
- * Last modified: 2013-10-10
+ * Last modified: 2014-04-09
  *
  * License:
  *
@@ -14,19 +13,23 @@
  *
  */
 
-#ifndef GENVTX_SPHERE_VG_H_
-#define GENVTX_SPHERE_VG_H_ 1
+#ifndef GENVTX_SPHERE_VG_H
+#define GENVTX_SPHERE_VG_H 1
 
+// Standard library:
 #include <iostream>
 
-#include <genvtx/i_vertex_generator.h>
-
+// Third party:
+// - Bayeux/geomtools
 #include <geomtools/sphere.h>
+
+// This project:
+#include <genvtx/i_vertex_generator.h>
 
 namespace genvtx {
 
-  /// \brief Vertex generator fro a sphere
-  GENVTX_VG_CLASS_DECLARE(sphere_vg)
+  /// \brief Vertex generator from a sphere
+  class sphere_vg : public i_vertex_generator
   {
   public:
 
@@ -34,8 +37,6 @@ namespace genvtx {
     static const int MODE_BULK    =  0;
     static const int MODE_SURFACE =  1;
     static const int MODE_DEFAULT = MODE_BULK;
-
-  public:
 
     int get_mode () const;
 
@@ -68,7 +69,27 @@ namespace genvtx {
                     const std::string & indent_ = "",
                     bool inherit_ = false) const;
 
-    GENVTX_VG_INTERFACE_CTOR_DTOR (sphere_vg);
+    /// Constructor
+    sphere_vg();
+
+    /// Destructor
+    virtual ~sphere_vg();
+
+    /// Initialization
+    virtual void initialize(const ::datatools::properties &,
+                             ::datatools::service_manager &,
+                             ::genvtx::vg_dict_type &);
+
+    /// Reset
+    virtual void reset();
+
+    /// Check initialization status
+    virtual bool is_initialized() const;
+
+  protected :
+
+    /// Randomize vertex
+    virtual void _shoot_vertex(::mygsl::rng & random_, ::geomtools::vector_3d & vertex_);
 
   private:
 
@@ -84,12 +105,12 @@ namespace genvtx {
     geomtools::sphere         _sphere_;      /// Embedded sphere object
     const geomtools::sphere * _sphere_ref_;  /// External sphere object handle
 
-    int            _mode_;         /// Vertex randomization mode (bulk/surface)
-    double         _skin_skip_;    /// Skip (normal to the surface) to an effective position of the skin relative to the surface of the sphere
+    int            _mode_;          /// Vertex randomization mode (bulk/surface)
+    double         _skin_skip_;     /// Skip (normal to the surface) to an effective position of the skin relative to the surface of the sphere
     double         _skin_thickness_; /// Intrinsic thickness of the surface
 
-  private:
-
+    /// Registration macro
+    /// @arg sphere_vg the class to be registered
     GENVTX_VG_REGISTRATION_INTERFACE(sphere_vg);
 
   };
@@ -102,6 +123,12 @@ namespace genvtx {
 
 } // end of namespace genvtx
 
-#endif // GENVTX_SPHERE_VG_H_
+#endif // GENVTX_SPHERE_VG_H
 
-// end of sphere_vg.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

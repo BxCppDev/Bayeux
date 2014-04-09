@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 // ex01.cxx
 
 // Ourselves
@@ -119,5 +118,3 @@ int main(int argc_, char ** argv_)
 #endif
   return(error_code);
 }
-
-// end of ex01.cxx

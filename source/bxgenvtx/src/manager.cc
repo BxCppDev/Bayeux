@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /* manager.cc
  *
  * Copyright 2007-2013 F. Mauger
@@ -20,8 +19,10 @@
  *
  */
 
+// Ourselves:
 #include <genvtx/manager.h>
 
+// Standard library:
 #include <ctime>
 #include <cstdlib>
 #include <stdexcept>
@@ -29,11 +30,13 @@
 #include <sstream>
 #include <list>
 
+// Third party:
+// - Boost
 #include <boost/type_traits.hpp>
-
+// - Bayeux/datatools
 #include <datatools/service_manager.h>
 #include <datatools/exception.h>
-
+// - Bayeux/geomtools
 #include <geomtools/manager.h>
 
 namespace genvtx {
@@ -720,7 +723,6 @@ namespace genvtx {
 
 #include <datatools/ocd_macros.h>
 
-
 // OCD support for class '::datatools::service_manager' :
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genvtx::manager,ocd_)
 {
@@ -728,7 +730,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genvtx::manager,ocd_)
   ocd_.set_class_description ("A generic manager for vertex generators");
   ocd_.set_class_library ("genvtx");
   ocd_.set_class_documentation ("nothing yet.");
-
 
   {
     configuration_property_description & cpd = ocd_.add_property_info();
@@ -856,5 +857,3 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genvtx::manager,ocd_)
 DOCD_CLASS_IMPLEMENT_LOAD_END()
 
 DOCD_CLASS_SYSTEM_REGISTRATION(genvtx::manager,"genvtx::manager")
-
-// end of manager.cc

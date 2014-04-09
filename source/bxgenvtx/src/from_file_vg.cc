@@ -1,9 +1,10 @@
-// -*- mode: c++ ; -*-
 /* from_file_vg.cc
  */
 
+// Ourselves:
 #include <genvtx/from_file_vg.h>
 
+// Standard library:
 #include <cstdlib>
 #include <stdexcept>
 #include <iostream>
@@ -11,8 +12,10 @@
 #include <sstream>
 #include <list>
 
+// Third party:
+// - Boost
 #include <boost/filesystem.hpp>
-
+// - Bayeux/datatools
 #include <datatools/utils.h>
 #include <datatools/units.h>
 #include <datatools/exception.h>
@@ -87,15 +90,14 @@ namespace genvtx {
     return _length_unit_;
   }
 
-  GENVTX_VG_IS_INITIALIZED_IMPLEMENT_HEAD(from_file_vg)
+  bool from_file_vg::is_initialized () const
   {
     return is_open ();
   }
 
-  GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(from_file_vg,
-                                      configuration_,
-                                      /*service_manager_*/,
-                                      /*vgens_*/)
+  void from_file_vg::initialize (const ::datatools::properties & configuration_,
+                                 ::datatools::service_manager & /*service_manager_*/,
+                                 ::genvtx::vg_dict_type & /*vgens_*/)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
     double lunit = default_length_unit();
@@ -122,7 +124,7 @@ namespace genvtx {
     return;
   }
 
-  GENVTX_VG_RESET_IMPLEMENT_HEAD(from_file_vg)
+  void from_file_vg::reset()
   {
     if (_open_) {
       _close_source ();
@@ -130,8 +132,7 @@ namespace genvtx {
     return;
   }
 
-  // Constructor :
-  GENVTX_VG_CONSTRUCTOR_IMPLEMENT_HEAD(from_file_vg)
+  from_file_vg::from_file_vg() : genvtx::i_vertex_generator()
   {
     _filename_ = "";
     _open_ = false;
@@ -140,8 +141,11 @@ namespace genvtx {
     return;
   }
 
-  // Destructor :
-  GENVTX_VG_DEFAULT_DESTRUCTOR_IMPLEMENT(from_file_vg)
+  from_file_vg::~from_file_vg()
+  {
+    if (is_initialized ()) reset ();
+    return;
+  }
 
   /*
     from_file_vg::from_file_vg (const std::string & filename_)
@@ -211,12 +215,13 @@ namespace genvtx {
     return geomtools::is_valid (_next_);
   }
 
-  GENVTX_VG_HAS_NEXT_VERTEX_IMPLEMENT_HEAD(from_file_vg)
+  bool from_file_vg::has_next_vertex() const
   {
     return const_cast<from_file_vg*>(this)->_has_next ();
   }
 
-  GENVTX_VG_SHOOT_VERTEX_IMPLEMENT_HEAD(from_file_vg,/*random_*/,vertex_)
+  void from_file_vg::_shoot_vertex(::mygsl::rng & /*random_*/,
+                                   ::geomtools::vector_3d & vertex_)
   {
     DT_THROW_IF (! is_initialized (), logic_error, "Not initialized !");
     // here apply the length unit:
@@ -226,5 +231,3 @@ namespace genvtx {
   }
 
 } // end of namespace genvtx
-
-// end of from_file_vg.cc

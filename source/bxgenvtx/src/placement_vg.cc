@@ -1,14 +1,17 @@
-// -*- mode: c++ ; -*-
 /* placement_vg.cc
  */
 
+// Ourselves:
 #include <genvtx/placement_vg.h>
 
+// Standard library:
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
 #include <string>
 
+// Third party:
+// - Bayeux/datatools
 #include <datatools/units.h>
 #include <datatools/exception.h>
 
@@ -112,7 +115,7 @@ namespace genvtx {
     return;
   }
 
-  GENVTX_VG_HAS_NEXT_VERTEX_IMPLEMENT_HEAD(placement_vg)
+  bool placement_vg::has_next_vertex() const
   {
     if (! has_vg ()) {
       return false;
@@ -120,15 +123,14 @@ namespace genvtx {
     return get_vg ().has_next_vertex ();
   }
 
-  GENVTX_VG_IS_INITIALIZED_IMPLEMENT_HEAD(placement_vg)
+  bool placement_vg::is_initialized () const
   {
     return _placement_.is_valid () && has_vg ();
   }
 
-  GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(placement_vg,
-                                      configuration_,
-                                      /*service_manager_*/,
-                                      vgens_)
+  void placement_vg::initialize (const ::datatools::properties & configuration_,
+                                 ::datatools::service_manager & /*service_manager_*/,
+                                 ::genvtx::vg_dict_type & vgens_)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
     double x, y, z;
@@ -206,7 +208,7 @@ namespace genvtx {
     return;
   }
 
-  GENVTX_VG_RESET_IMPLEMENT_HEAD(placement_vg)
+  void placement_vg::reset()
   {
     _clear_vg_ ();
     _hvg_.reset ();
@@ -214,8 +216,7 @@ namespace genvtx {
     return;
   }
 
-  // Constructor :
-  GENVTX_VG_CONSTRUCTOR_IMPLEMENT_HEAD(placement_vg)
+  placement_vg::placement_vg() : genvtx::i_vertex_generator()
   {
     _placement_.invalidate ();
     _owned_ = false;
@@ -223,10 +224,14 @@ namespace genvtx {
     return;
   }
 
-  // Destructor :
-  GENVTX_VG_DEFAULT_DESTRUCTOR_IMPLEMENT(placement_vg)
+  placement_vg::~placement_vg()
+  {
+    if (is_initialized ()) reset ();
+    return;
+  }
 
-  GENVTX_VG_SHOOT_VERTEX_IMPLEMENT_HEAD(placement_vg,random_,vertex_)
+  void placement_vg::_shoot_vertex(::mygsl::rng & random_,
+                                   ::geomtools::vector_3d & vertex_)
   {
     DT_THROW_IF (! is_initialized(), std::logic_error, "Not initialized !");
     geomtools::invalidate (vertex_);
@@ -240,5 +245,3 @@ namespace genvtx {
   }
 
 } // end of namespace genvtx
-
-// end of placement_vg.cc

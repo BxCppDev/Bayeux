@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /* ring_random_tools.cc
  */
 
@@ -49,5 +48,3 @@ namespace genvtx {
   }
 
 } // end of namespace genvtx
-
-// end of ring_random_tools.cc

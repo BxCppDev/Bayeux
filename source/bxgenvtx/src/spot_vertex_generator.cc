@@ -1,17 +1,19 @@
-// -*- mode: c++ ; -*-
 /* spot_vertex_generator.cc
  */
 
+// Ourselves:
 #include <genvtx/spot_vertex_generator.h>
 
+// Standard library:
 #include <stdexcept>
-
 #include <cstdlib>
 
+// Third party:
+// - Bayeux/datatools
 #include <datatools/units.h>
-#include <geomtools/utils.h>
-
 #include <datatools/exception.h>
+// - Bayeux/geomtools
+#include <geomtools/utils.h>
 
 namespace genvtx {
 
@@ -38,15 +40,14 @@ namespace genvtx {
     return;
   }
 
-  GENVTX_VG_IS_INITIALIZED_IMPLEMENT_HEAD(spot_vertex_generator)
+  bool spot_vertex_generator::is_initialized () const
   {
     return geomtools::is_valid (_spot_);
   }
 
-  GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(spot_vertex_generator,
-                                      configuration_,
-                                      /*service_manager_*/,
-                                      /*vgens_*/)
+  void spot_vertex_generator::initialize (const ::datatools::properties & configuration_,
+                                          ::datatools::service_manager & /*service_manager_*/,
+                                          ::genvtx::vg_dict_type & /*vgens_*/)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
 
@@ -76,23 +77,26 @@ namespace genvtx {
     return;
   }
 
-  GENVTX_VG_RESET_IMPLEMENT_HEAD(spot_vertex_generator)
+  void spot_vertex_generator::reset ()
+   {
+    geomtools::invalidate (_spot_);
+    return;
+  }
+
+  spot_vertex_generator::spot_vertex_generator() : genvtx::i_vertex_generator()
   {
     geomtools::invalidate (_spot_);
     return;
   }
 
-  // Constructor:
-  GENVTX_VG_CONSTRUCTOR_IMPLEMENT_HEAD(spot_vertex_generator)
+  spot_vertex_generator::~spot_vertex_generator()
   {
-    geomtools::invalidate (_spot_);
+    if (is_initialized ()) reset ();
     return;
   }
 
-  // Destructor :
-  GENVTX_VG_DEFAULT_DESTRUCTOR_IMPLEMENT(spot_vertex_generator)
-
-  GENVTX_VG_SHOOT_VERTEX_IMPLEMENT_HEAD(spot_vertex_generator,/*random_*/,vertex_)
+  void spot_vertex_generator::_shoot_vertex(::mygsl::rng & /*random_*/,
+                                            ::geomtools::vector_3d & vertex_)
   {
     DT_THROW_IF (! is_initialized(), std::logic_error, "Not initialized !");
     vertex_ = _spot_;
@@ -114,5 +118,3 @@ namespace genvtx {
   }
 
 } // end of namespace genvtx
-
-// end of spot_vertex_generator.cc

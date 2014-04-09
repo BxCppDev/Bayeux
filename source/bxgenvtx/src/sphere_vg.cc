@@ -1,18 +1,22 @@
-// -*- mode: c++ ; -*-
 /* sphere_vg.cc
  */
 
+// Ourselves:
 #include <genvtx/sphere_vg.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 #include <string>
 #include <vector>
 
+// Third party:
+// - GSL:
+#include <gsl/gsl_math.h>
+// - Bayeux/datatools:
 #include <datatools/units.h>
 #include <datatools/exception.h>
-#include <gsl/gsl_math.h>
-
+// - Bayeux/mygsl
 #include <mygsl/rng.h>
 
 namespace genvtx {
@@ -99,13 +103,12 @@ namespace genvtx {
     return get_sphere ();
   }
 
-  GENVTX_VG_IS_INITIALIZED_IMPLEMENT_HEAD(sphere_vg)
+  bool sphere_vg::is_initialized () const
   {
     return _initialized_;
   }
 
-  // Constructor :
-  GENVTX_VG_CONSTRUCTOR_IMPLEMENT_HEAD(sphere_vg)
+  sphere_vg::sphere_vg() : genvtx::i_vertex_generator()
   {
     _initialized_ = false;
     _sphere_.reset ();
@@ -114,10 +117,15 @@ namespace genvtx {
     return;
   }
 
-  // Destructor :
-  GENVTX_VG_DEFAULT_DESTRUCTOR_IMPLEMENT(sphere_vg)
+  sphere_vg::~sphere_vg()
+  {
+    if (is_initialized ()) reset ();
+    return;
+  }
 
-  GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(sphere_vg,setup_,/*service_manager_*/,/*vgens_*/)
+  void sphere_vg::initialize (const ::datatools::properties & setup_,
+                              ::datatools::service_manager & /*service_manager_*/,
+                              ::genvtx::vg_dict_type & /*vgens_*/)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
 
@@ -187,7 +195,7 @@ namespace genvtx {
     return;
   }
 
-  GENVTX_VG_RESET_IMPLEMENT_HEAD(sphere_vg)
+  void sphere_vg::reset ()
   {
     DT_THROW_IF (! is_initialized(), std::logic_error, "Not initialized !");
     _reset_ ();
@@ -238,7 +246,8 @@ namespace genvtx {
     return;
   }
 
-  GENVTX_VG_SHOOT_VERTEX_IMPLEMENT_HEAD(sphere_vg,random_,vertex_)
+  void sphere_vg::_shoot_vertex(::mygsl::rng & random_,
+                                ::geomtools::vector_3d & vertex_)
   {
     DT_THROW_IF (! is_initialized (), std::logic_error, "Not initialized !");
     geomtools::invalidate (vertex_);
@@ -301,5 +310,3 @@ namespace genvtx {
   }
 
 } // end of namespace genvtx
-
-// end of sphere_vg.cc

@@ -1,12 +1,11 @@
-// -*- mode: c++ ; -*-
-/* manager.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file genvtx/manager.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-03-17
- * Last modified: 2013-03-10
+ * Last modified: 2014-04-09
  *
  * License:
  *
- * Copyright 2007-2013 F. Mauger
+ * Copyright 2007-2014 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,26 +30,29 @@
  *
  */
 
-#ifndef GENVTX_MANAGER_H_
-#define GENVTX_MANAGER_H_ 1
+#ifndef GENVTX_MANAGER_H
+#define GENVTX_MANAGER_H 1
 
+// Standard library:
 #include <string>
 #include <map>
 #include <vector>
 
+// Third party:
+// - Bayeux/datatools
 #include <datatools/multi_properties.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/logger.h>
-
+// - Bayeux/geomtools
 #include <geomtools/utils.h>
-
+// - Bayeux/mygsl
 #include <mygsl/rng.h>
 #include <mygsl/random_utils.h>
 
+// This project:
 #include <genvtx/detail/vg_tools.h>
 #include <genvtx/i_vertex_generator.h>
 #include <genvtx/utils.h>
-
 
 namespace datatools {
   class service_manager;
@@ -58,6 +60,7 @@ namespace datatools {
 
 namespace genvtx {
 
+  /// \brief Vertex generator manager class
   /** The main vertex generator manager drives the generation of
    *  random vertexes within a given geometry setup.
    *  The geometry setup is described through a dedicated
@@ -238,6 +241,12 @@ namespace genvtx {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(genvtx::manager)
 
-#endif // GENVTX_MANAGER_H_
+#endif // GENVTX_MANAGER_H
 
-// end of manager.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

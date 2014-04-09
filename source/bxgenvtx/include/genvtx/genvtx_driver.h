@@ -1,10 +1,9 @@
-// -*- mode: c++ ; -*-
-/* genvtx_driver.h
- * Author(s) : Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file genvtx/genvtx_driver.h
+/* Author(s) : Francois Mauger <mauger@lpccaen.in2p3.fr>
  */
 
-#ifndef GENVTX_GENVTX_DRIVER_H_
-#define GENVTX_GENVTX_DRIVER_H_ 1
+#ifndef GENVTX_GENVTX_DRIVER_H
+#define GENVTX_GENVTX_DRIVER_H 1
 
 // Standard libraries:
 #include <cstdlib>
@@ -16,9 +15,7 @@
 // - Boost:
 #include <boost/cstdint.hpp>
 #include <boost/scoped_ptr.hpp>
-
-// Bayeux
-// - datatools:
+// - Bayeux/datatools:
 #include <datatools/logger.h>
 
 namespace geomtools {
@@ -120,6 +117,12 @@ namespace genvtx {
 
 } // end of namespace genvtx
 
-#endif // GENVTX_GENVTX_DRIVER_H_
+#endif // GENVTX_GENVTX_DRIVER_H
 
-// end of genvtx_driver.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

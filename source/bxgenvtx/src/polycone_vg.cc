@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /* polycone_vg.cc
  */
 
@@ -125,13 +124,12 @@ namespace genvtx {
     return;
   }
 
-  GENVTX_VG_IS_INITIALIZED_IMPLEMENT_HEAD(polycone_vg)
+  bool polycone_vg::is_initialized () const
   {
     return _initialized_;
   }
 
-  // Constructor :
-  GENVTX_VG_CONSTRUCTOR_IMPLEMENT_HEAD(polycone_vg)
+  polycone_vg::polycone_vg() : genvtx::i_vertex_generator()
   {
     _initialized_ = false;
     _polycone_.reset();
@@ -139,10 +137,15 @@ namespace genvtx {
     return;
   }
 
-  // Destructor :
-  GENVTX_VG_DEFAULT_DESTRUCTOR_IMPLEMENT(polycone_vg)
+  polycone_vg::~polycone_vg()
+  {
+    if (is_initialized ()) reset ();
+    return;
+  }
 
-  GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(polycone_vg,setup_,/*service_manager_*/,/*vgens_*/)
+  void polycone_vg::initialize (const ::datatools::properties & setup_,
+                                ::datatools::service_manager & /*service_manager_*/,
+                                ::genvtx::vg_dict_type & /*vgens_*/)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
 
@@ -296,7 +299,7 @@ namespace genvtx {
     return;
   }
 
-  GENVTX_VG_RESET_IMPLEMENT_HEAD(polycone_vg)
+  void polycone_vg::reset()
   {
     DT_THROW_IF (! is_initialized (), std::logic_error, "Not initialized !");
     _reset_ ();
@@ -576,7 +579,8 @@ namespace genvtx {
     return;
   }
 
-  GENVTX_VG_SHOOT_VERTEX_IMPLEMENT_HEAD(polycone_vg,random_,vertex_)
+  void polycone_vg::_shoot_vertex(::mygsl::rng & random_,
+                                   ::geomtools::vector_3d & vertex_)
   {
     DT_THROW_IF (! is_initialized (), std::logic_error, "Not initialized !");
     geomtools::invalidate (vertex_);
@@ -707,5 +711,3 @@ namespace genvtx {
   }
 
 } // end of namespace genvtx
-
-// end of polycone_vg.cc

@@ -1,8 +1,7 @@
-// -*- mode: c++ ; -*-
-/* ring_random_tools.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file genvtx/ring_random_tools.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-09-26
- * Last modified: 2013-02-24
+ * Last modified: 2014-04-09
  *
  * License:
  *
@@ -15,8 +14,8 @@
  *
  */
 
-#ifndef GENVTX_RING_RANDOM_TOOLS_H_
-#define GENVTX_RING_RANDOM_TOOLS_H_ 1
+#ifndef GENVTX_RING_RANDOM_TOOLS_H
+#define GENVTX_RING_RANDOM_TOOLS_H 1
 
 // Standard library
 #include <cmath>
@@ -39,6 +38,12 @@ namespace genvtx {
 
 } // end of namespace genvtx
 
-#endif // GENVTX_RING_RANDOM_TOOLS_H_
+#endif // GENVTX_RING_RANDOM_TOOLS_H
 
-// end of ring_random_tools.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

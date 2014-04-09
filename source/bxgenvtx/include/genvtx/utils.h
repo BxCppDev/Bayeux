@@ -1,11 +1,11 @@
-// -*- mode: c++ ; -*-
-/* utils.h
- * Author(s) : Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file genvtx/utils.h
+/* Author(s) : Francois Mauger <mauger@lpccaen.in2p3.fr>
  */
 
-#ifndef GENVTX_UTILS_H_
-#define GENVTX_UTILS_H_ 1
+#ifndef GENVTX_UTILS_H
+#define GENVTX_UTILS_H 1
 
+// Standard library:
 #include <string>
 #include <iostream>
 
@@ -90,7 +90,6 @@ namespace genvtx {
 
     void dump(std::ostream & = std::clog, const std::string & title_ = "") const;
 
-    //public:
   private:
     double value; //<! Surface or volume (in CLHEP units)
     double mass;  //<! Mass (in CLHEP units)
@@ -100,6 +99,12 @@ namespace genvtx {
 
 } // end of namespace genvtx
 
-#endif // GENVTX_UTILS_H_
+#endif // GENVTX_UTILS_H
 
-// end of utils.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

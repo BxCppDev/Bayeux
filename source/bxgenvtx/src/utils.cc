@@ -1,12 +1,14 @@
-// -*- mode: c++ ; -*-
 /* utils.cc
  */
 
+// Ourselves:
 #include <genvtx/utils.h>
 
+// Third party:
+// - Bayeux/datatools
 #include <datatools/utils.h>
 #include <datatools/clhep_units.h>
-
+// - Bayeux/geomtools
 #include <geomtools/geom_info.h>
 
 namespace genvtx {
@@ -144,5 +146,3 @@ namespace genvtx {
   }
 
 } // end of namespace genvtx
-
-// end of utils.cc
