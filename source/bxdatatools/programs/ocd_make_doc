@@ -7,15 +7,70 @@ index_html_filename=
 tmp_dir=
 title=
 _list_of_processed_namespaces=
+list_of_dlls=
+output_format=
+browse=0
+home_url=
 
 which bxocd_manual > /dev/null 2>&1
 if [ $? -ne 0 ]; then
-    echo "ERROR: Cannot find the 'bxocd_manual' executable !" >&2
+    echo "ERROR: bxocd_make_doc: Cannot find the 'bxocd_manual' executable !" >&2
 fi
 which pandoc > /dev/null 2>&1
 if [ $? -ne 0 ]; then
-    echo "ERROR: Cannot find the 'pandoc' executable !" >&2
+    echo "ERROR: bxocd_make_doc: Cannot find the 'pandoc' executable !" >&2
 fi
+
+function do_help()
+{
+cat<<EOF
+
+bxocd_make_doc -- Build HTML documentation from the Bayeux/datatools
+                  OCD support for classes within a library.
+
+Usage:
+
+  bxocd_make_doc [OPTIONS]
+
+Options:
+
+  --help         : Print this help then exit.
+
+  --debug        : Print debug messages.
+
+  -d "BUILD_DIR" : Use the BUILD_DIR as the output directory for
+                   HTML files.
+                   Default is 'Bayeux-$(bxquery --version)/OCD'.
+
+  -n "NAMESPACE" : Only process classes with namespace NAMESPACE.
+
+  -t "TMP_DIR"   : Use the TMP_DIR as the temporary working directory
+                   for intermediate ReST files.
+
+  -T "TITLE"     : Use the TITLE string as the main title for
+                   output HTML files.
+
+                   Example:
+
+                    -T "OCD documentation for classes in the Bayeux library"
+
+  -B             : Browse the generated HTML OCD documentation.
+
+  -L "LIB"       : Load the LIB dynamic library.
+
+                   Example:
+
+                    -L "Bayeux_mctools_geant4@/opt/Bayeux/lib/x86_64-linux-gnu"
+
+  -H             : Generate a link to a mother URL.
+
+                   Example:
+
+                    -H "https://nemo.lpc-caen.in2p3.fr/wiki/Software/Bayeux"
+
+EOF
+    return
+}
 
 while [ -n "$1" ]; do
       token="$1"
@@ -23,6 +78,9 @@ while [ -n "$1" ]; do
         option="${token}"
 	if [ "${option}" = "--debug" ]; then
 	    debug=1
+	elif [ "${option}" = "--help" ]; then
+	    do_help
+	    exit 0
 	elif [ "${option}" = "-d" ]; then
 	    shift 1
 	    build_dir="$1"
@@ -38,12 +96,23 @@ while [ -n "$1" ]; do
 	elif [ "${option}" = "-T" ]; then
 	    shift 1
 	    title="$1"
+	elif [ "${option}" = "-o" ]; then
+	    shift 1
+	    output_format="$1"
+	elif [ "${option}" = "-L" ]; then
+	    shift 1
+	    list_of_dlls="${list_of_dlls} $1"
+	elif [ "${option}" = "-B" ]; then
+	    browse=1
+	elif [ "${option}" = "-H" ]; then
+	    shift 1
+	    home_url="$1"
 	else
-	    echo "WARNING: Ignoring option '${option}' !" >&2
+	    echo "WARNING: bxocd_make_doc: Ignoring option '${option}' !" >&2
 	fi
       else
         argument="${token}"
-	echo "WARNING: Ignoring argument '${argument}' !" >&2
+	echo "WARNING: bxocd_make_doc: Ignoring argument '${argument}' !" >&2
       fi
       shift 1
 done
@@ -60,23 +129,40 @@ if [ -z "${tmp_dir}" ]; then
     tmp_dir="/tmp/${USER}/__bxocd_make_doc"
 fi
 
+if [ -z "${output_format}" ]; then
+    output_format="html"
+fi
+
+if [ "x${title}" = "x" ]; then
+    title="Object Configuration Description"
+fi
+
 if [ ${debug} -eq 1 ]; then
-    echo "DEBUG: build_dir='${build_dir}'" >&2
-    echo "DEBUG: namespace='${namespace}'" >&2
-    echo "DEBUG: index_html_filename='${index_html_filename}'" >&2
-    echo "DEBUG: tmp_dir='${tmp_dir}'" >&2
-    echo "DEBUG: title='${title}'" >&2
+    echo "DEBUG: bxocd_make_doc: build_dir='${build_dir}'" >&2
+    echo "DEBUG: bxocd_make_doc: namespace='${namespace}'" >&2
+    echo "DEBUG: bxocd_make_doc: index_html_filename='${index_html_filename}'" >&2
+    echo "DEBUG: bxocd_make_doc: tmp_dir='${tmp_dir}'" >&2
+    echo "DEBUG: bxocd_make_doc: title='${title}'" >&2
+    echo "DEBUG: bxocd_make_doc: output_format='${output_format}'" >&2
+    echo "DEBUG: bxocd_make_doc: list_of_dlls='${list_of_dlls}'" >&2
+    echo "DEBUG: bxocd_make_doc: home_url='${home_url}'" >&2
 fi
 
 if [ ! -d ${tmp_dir} ]; then
     mkdir -p ${tmp_dir}
 fi
 
-list_of_classes=$(bxocd_manual --action list 2> /dev/null)
+if [ "x${output_format}" != "xhtml" ]; then
+    echo "ERROR: bxocd_make_doc: Unsupported output format '${output_format}' ! Abort !" >&2
+    exit 1
+fi
+
+load_dll_opt="--load-dll m"
+list_of_classes=$(bxocd_manual ${load_dll_opt} --action list 2> /dev/null)
 
 index_rst_filename=`mktemp ${tmp_dir}/ocd_index.rst.XXXXXX`
 
-test ${debug} -eq 1 && echo "DEBUG: index_rst_filename='${index_rst_filename}'" >&2
+test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: index_rst_filename='${index_rst_filename}'" >&2
 
 touch ${index_rst_filename}
 if [ "x${title}" != "x" ]; then
@@ -85,17 +171,17 @@ if [ "x${title}" != "x" ]; then
 ${title}
 ================================================================================================
 EOF
-else
-    cat >> ${index_rst_filename} <<EOF
-================================================================================================
-Object Configuration Description
-================================================================================================
-EOF
+# else
+#     cat >> ${index_rst_filename} <<EOF
+# ================================================================================================
+# Object Configuration Description
+# ================================================================================================
+# EOF
 fi
 cat >> ${index_rst_filename} <<EOF
 
 List of classes with OCD [1]_ support
-==================================================================
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 .. [1] Object Configuration Description is a mechanism implemented
    in Bayeux to provide a description of the configuration parameters
@@ -104,16 +190,16 @@ EOF
 
 function process_class()
 {
-    test ${debug} -eq 1 && echo "DEBUG: process_class: Entering..." >&2
+    test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: process_class: Entering..." >&2
 
     local _classname="$1"
     local _namespace=$(echo "${_classname}" | cut -d: -f1)
-    test ${debug} -eq 1 && echo "DEBUG: process_class: namespace='${_namespace}'..." >&2
+    test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: process_class: namespace='${_namespace}'..." >&2
     local _bd=${build_dir}
     if [ "x${_namespace}" != "x" ]; then
 	_bd=${build_dir}/${_namespace}
 	if [ ! -d ${_bd} ]; then
-	    test ${debug} -eq 1 && echo "DEBUG: process_class: Creating directory '${_bd}'..." >&2
+	    test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: process_class: Creating directory '${_bd}'..." >&2
 	    mkdir -p ${_bd}
 	fi
 	echo "${_list_of_processed_namespaces}" | tr [[:space:]] '\n' | grep ${_namespace} > /dev/null 2>&1
@@ -130,9 +216,9 @@ EOF
     #echo "DEVEL: LOPN='${_list_of_processed_namespaces}'" >&2
     local _class_rst_filename=`mktemp ${tmp_dir}/${_classname}.rst.XXXXXX`
     local _class_html_filename="${_classname}.html"
-    test ${debug} -eq 1 && echo "DEBUG: process_class: Generating RST file '${_class_rst_filename}'..." >&2
+    test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: process_class: Generating RST file '${_class_rst_filename}'..." >&2
     bxocd_manual --action show ${_classname} > ${_class_rst_filename}
-    test ${debug} -eq 1 && echo "DEBUG: process_class: Generating HTML file '${_bd}/${_class_html_filename}'..." >&2
+    test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: process_class: Generating HTML file '${_bd}/${_class_html_filename}'..." >&2
     cat >> ${_class_rst_filename} <<EOF
 
 --------
@@ -141,13 +227,13 @@ EOF
 
 EOF
 
-    pandoc -w html -r rst ${_class_rst_filename} -o ${_bd}/${_class_html_filename}
+    pandoc --toc --standalone --title-prefix "${_classname}" -w html -r rst ${_class_rst_filename} -o ${_bd}/${_class_html_filename}
 
 
     cat >> ${index_rst_filename} <<EOF
   * \`${_classname}<${_namespace}/${_class_html_filename}>\`_
 EOF
-    test ${debug} -eq 1 && echo "DEBUG: process_class: Exiting." >&2
+    test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: process_class: Exiting." >&2
     return 0
 }
 
@@ -156,9 +242,9 @@ if [ ! -d ${build_dir} ]; then
 fi
 
 
-test ${debug} -eq 1 && echo "DEBUG: Entering class loop..." >&2
+test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: Entering class loop..." >&2
 for classname in ${list_of_classes}; do
-    test ${debug} -eq 1 && echo "DEBUG: Class='${classname}'" >&2
+    test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: Class='${classname}'" >&2
     if [ -n "${namespace}" ]; then
 	test ${debug} -eq 1 && echo "DEBUG: Checking namespace='${namespace}'" >&2
 	echo "${classname}" | grep "^${namespace}::" > /dev/null 2>&1
@@ -166,12 +252,23 @@ for classname in ${list_of_classes}; do
 	    continue
 	fi
     fi
-    test ${debug} -eq 1 && echo "DEBUG: Processing class='${classname}'..." >&2
+    test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: Processing class='${classname}'..." >&2
     process_class ${classname}
     if [ $? -ne 0 ]; then
-	echo "ERROR: Cannot process class '${classname}' !" 1>&2
+	echo "ERROR: bxocd_make_doc: Cannot process class '${classname}' !" 1>&2
     fi
 done
+
+
+if [ -n "${home_url}" ]; then
+    cat >> ${index_rst_filename} <<EOF
+
+--------
+
+\`Back<${home_url}>\`_
+
+EOF
+fi
 
 cat >> ${index_rst_filename} <<EOF
 
@@ -180,8 +277,25 @@ cat >> ${index_rst_filename} <<EOF
 Generated by Bayeux $(bxquery --version)
 EOF
 
-pandoc -w html -r rst ${index_rst_filename} -o ${build_dir}/${index_html_filename}
+pandoc --toc --standalone --title-prefix "${title}" -w html -r rst ${index_rst_filename} -o ${build_dir}/${index_html_filename}
 
+echo "NOTICE: bxocd_make_doc: File '${build_dir}/${index_html_filename}' has been generated." >&2
+
+###
 ### â†©
+###
+
+if [ ${browse} -eq 1 ]; then
+    which xdg-open > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+	echo "WARNING: bxocd_make_doc: Cannot find the 'xdg-open' executable ! No browsing !" >&2
+    else
+	echo "INFO: bxocd_make_doc: Browsing the HTML OCD documentation !" >&2
+	xdg-open ${build_dir}/${index_html_filename} &
+    fi
+fi
+
+echo "INFO: bxocd_make_doc: Now you can safely copy the content of the " >&2
+echo "                      '${build_dir}' directory in the place of your choice." >&2
 
 exit 0

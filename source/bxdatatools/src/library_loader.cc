@@ -169,7 +169,7 @@ namespace datatools {
                                    const std::string& lib_filename_,
                                    const std::string& lib_full_path_,
                                    const std::string& lib_version_,
-                                   bool           autoload_) {
+                                   bool               autoload_) {
     if (this->has(lib_name_)) {
       return EXIT_FAILURE;
     }
@@ -195,11 +195,16 @@ namespace datatools {
       le.filename = filename_ss.str();
     }
 
+    //std::cerr << "DEVEL: ********* Full path = '" << le.full_path << "'\n";
     if (le.full_path.empty()) {
       std::ostringstream full_path_ss;
       if (!le.directory.empty()) {
-        full_path_ss << le.directory;
-        if (!boost::algorithm::ends_with(le.directory, "/")) {
+        std::string expdir = le.directory;
+        //std::cerr << "DEVEL: ********* le.directory = '" << le.directory << "'\n";
+        fetch_path_with_env(expdir);
+        //std::cerr << "DEVEL: ********* expdir = '" << expdir << "'\n";
+         full_path_ss << expdir;
+        if (!boost::algorithm::ends_with(expdir, "/")) {
           full_path_ss << '/';
         }
       }

@@ -23,7 +23,7 @@
  *
  * Description:
  *
- *  A shared library loader facility (base on kwsys).
+ *  A shared library loader facility (based on kwsys).
  *
  */
 #ifndef DATATOOLS_LIBRARY_LOADER_H_
