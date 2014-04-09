@@ -346,7 +346,11 @@ namespace geomtools {
         _writer_.add_tube (solid_name_, t, _length_unit_, _angle_unit_);
       } else if (shape_name == "sphere") {
         const sphere & s = static_cast<const sphere &> (shape_);
-        _writer_.add_orb (solid_name_, s, _length_unit_, _angle_unit_);
+        if (s.is_orb()) {
+          _writer_.add_orb (solid_name_, s, _length_unit_, _angle_unit_);
+        } else {
+          _writer_.add_sphere (solid_name_, s, _length_unit_, _angle_unit_);
+        }
       } else if (shape_name == "polycone") {
         const polycone & p = static_cast<const polycone &> (shape_);
         _writer_.add_polycone (solid_name_, p, _length_unit_, _angle_unit_);

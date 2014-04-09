@@ -1184,11 +1184,23 @@ namespace geomtools {
   void gdml_writer::add_sphere (const string & name_,
                                 const sphere & s_,
                                 const string & lunit_str_,
-                                const string & /*aunit_str_*/)
+                                const string & aunit_str_)
   {
-    add_gdml_orb (name_,
-                  s_.get_r (),
-                  lunit_str_);
+    if (s_.is_orb()) {
+      add_gdml_orb (name_,
+                    s_.get_r (),
+                    lunit_str_);
+    } else {
+      add_gdml_sphere(name_,
+                      s_.get_r_min(),
+                      s_.get_r_max(),
+                      s_.get_start_phi(),
+                      s_.get_delta_phi(),
+                      s_.get_start_theta(),
+                      s_.get_delta_theta(),
+                      lunit_str_,
+                      aunit_str_);
+    }
   }
 
   void gdml_writer::add_polycone (const string & name_,
@@ -1199,14 +1211,13 @@ namespace geomtools {
     map<double, pair<double, double> > zplanes;
     for (polycone::rz_col_type::const_iterator i = p_.points ().begin ();
          i != p_.points ().end ();
-         i++)
-      {
-        double z = i->first;
-        pair<double, double> rminmax;
-        rminmax.first = i->second.rmin;
-        rminmax.second = i->second.rmax;
-        zplanes[z] = rminmax;
-      }
+         i++) {
+      double z = i->first;
+      pair<double, double> rminmax;
+      rminmax.first = i->second.rmin;
+      rminmax.second = i->second.rmax;
+      zplanes[z] = rminmax;
+    }
     add_gdml_polycone (name_,
                        zplanes,
                        0.0,

@@ -2,13 +2,18 @@
 /* i_model.cc
  */
 
+// Ourselves:
 #include <geomtools/i_model.h>
 
+// Standard library:
 #include <stdexcept>
 #include <iostream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/exception.h>
 
+// This project:
 #include <geomtools/sensitive.h>
 #include <geomtools/material.h>
 #include <geomtools/visibility.h>
@@ -352,6 +357,7 @@ namespace geomtools {
     {
       datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
       cpd.set_name_pattern(i_model::phantom_solid_flag())
+        .set_from("geomtools::i_model")
         .set_terse_description("The flag for a phantom solid")
         .set_traits(datatools::TYPE_BOOLEAN)
         .set_mandatory(false)
@@ -372,5 +378,3 @@ namespace geomtools {
   }
 
 } // end of namespace geomtools
-
-// end of i_model.cc

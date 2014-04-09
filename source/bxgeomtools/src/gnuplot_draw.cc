@@ -1073,23 +1073,201 @@ namespace geomtools {
 
   void
   gnuplot_draw::draw_sphere(std::ostream & out_,
-                             const vector_3d & position_,
-                             const rotation_3d & rotation_,
-                             const sphere & s_,
-                             size_t arc_sampling_,
-                             size_t z_sampling_)
+                            const vector_3d & position_,
+                            const rotation_3d & rotation_,
+                            const sphere & s_,
+                            size_t arc_sampling_,
+                            size_t z_sampling_)
   {
-    draw_sphere(out_, position_, rotation_, s_.get_r(),
-                 arc_sampling_, z_sampling_);
+    if (s_.is_orb()) {
+      draw_sphere(out_, position_, rotation_,
+                  s_.get_r(),
+                  arc_sampling_, z_sampling_);
+    } else {
+      draw_sphere(out_, position_, rotation_,
+                  s_.get_r_min(), s_.get_r_max(),
+                  s_.get_start_phi(), s_.get_delta_phi(),
+                  s_.get_start_theta(), s_.get_delta_theta(),
+                  arc_sampling_, z_sampling_);
+    }
   }
 
   void
   gnuplot_draw::draw_sphere(std::ostream & out_,
-                             const vector_3d & position_,
-                             const rotation_3d & rotation_,
-                             double radius_,
-                             size_t arc_sampling_,
-                             size_t z_sampling_)
+                            const vector_3d & position_,
+                            const rotation_3d & rotation_,
+                            double r_min_,
+                            double r_max_,
+                            double phi_min_,
+                            double delta_phi_,
+                            double theta_min_,
+                            double delta_theta_,
+                            size_t arc_sampling_,
+                            size_t z_sampling_)
+  {
+    rotation_3d inverse_rotation(rotation_);
+    inverse_rotation.invert();
+    size_t phy_sample = arc_sampling_;
+    size_t z_sample = z_sampling_;
+    double dphi = delta_phi_ * CLHEP::radian / phy_sample;
+    double theta_min = theta_min_;
+    double theta_max = theta_min + delta_theta_;
+    double zmax   = r_max_ * std::cos(theta_min);
+    double zmin   = r_max_ * std::cos(theta_max);
+    double zmaxi  = r_min_ * std::cos(theta_min);
+    double zmini  = r_min_ * std::cos(theta_max);
+    double dz     = (zmax - zmin) / z_sample;
+    double dzi    = (zmaxi - zmini) / z_sample;
+    double factor = 0.25;
+
+    // Draw meridians:
+    {
+      for(size_t i = 0; i <= phy_sample ; ++i) {
+        polyline_type polyline_meridian;
+        double phi = phi_min_ + i * dphi;
+        double z = zmin;
+        for(size_t j = 0; j < z_sample + 3; j++) {
+          if (z > zmax) z = zmax;
+          double theta = std::acos(z / r_max_);
+          vector_3d P;
+          P.set(r_max_ * std::cos(phi) * std::sin(theta),
+                r_max_ * std::sin(phi) * std::sin(theta),
+                z);
+          vector_3d P2(P);
+          P2.transform(inverse_rotation);
+          P2 += position_;
+          polyline_meridian.push_back(P2);
+          // Increment z:
+          if (j == 0) z += factor * dz;
+          else if (j == 1) z += (1 - factor) * dz;
+          else if (j == z_sample) z += (1 - factor) * dz;
+          else if (j == z_sample + 1) z += factor * dz;
+          else z += dz;
+        }
+        basic_draw_polyline(out_, polyline_meridian);
+      }
+    }
+
+    if (r_min_ > 0.0) {
+     for(size_t i = 0; i <= phy_sample ; ++i) {
+        polyline_type polyline_meridian;
+        double phi = phi_min_ + i * dphi;
+        double z = zmini;
+        for(size_t j = 0; j < z_sample + 3; j++) {
+          if (z > zmaxi) z = zmaxi;
+          double theta = std::acos(z / r_min_);
+          vector_3d P;
+          P.set(r_min_ * std::cos(phi) * std::sin(theta),
+                r_min_ * std::sin(phi) * std::sin(theta),
+                z);
+          vector_3d P2(P);
+          P2.transform(inverse_rotation);
+          P2 += position_;
+          polyline_meridian.push_back(P2);
+          // Increment z:
+          if (j == 0) z += factor * dzi;
+          else if (j == 1) z += (1 - factor) * dzi;
+          else if (j == z_sample) z += (1 - factor) * dzi;
+          else if (j == z_sample + 1) z += factor * dzi;
+          else z += dzi;
+        }
+        basic_draw_polyline(out_, polyline_meridian);
+      }
+    }
+
+    // Draw parallels:
+    {
+      double z = zmin;
+      for(size_t j = 0; j < z_sample + 3; j++) {
+        polyline_type polyline_parallel;
+        if (z > zmax) z = zmax;
+        for(size_t i = 0; i <= phy_sample ; ++i) {
+          vector_3d P;
+          double phi = phi_min_ + i * dphi;
+          double theta = std::acos(z / r_max_);
+          P.set(r_max_ * std::cos(phi) * std::sin(theta),
+                r_max_ * std::sin(phi) * std::sin(theta),
+                z);
+          vector_3d P2(P);
+          P2.transform(inverse_rotation);
+          P2 += position_;
+          polyline_parallel.push_back(P2);
+        }
+        basic_draw_polyline(out_, polyline_parallel);
+        // Increment z:
+        if (j == 0) z += factor * dz;
+        else if (j == 1) z += (1 - factor) * dz;
+        else if (j == z_sample) z += (1 - factor) * dz;
+        else if (j == z_sample + 1) z += factor * dz;
+        else z += dz;
+      }
+    }
+
+    if (r_min_ > 0.0) {
+      double z = zmini;
+      for(size_t j = 0; j < z_sample + 3; j++) {
+        if (z > zmaxi) z = zmaxi;
+        polyline_type polyline_parallel;
+        for(size_t i = 0; i <= phy_sample ; ++i) {
+          vector_3d P;
+          double phi = phi_min_ + i * dphi;
+          double theta = std::acos(z / r_min_);
+          P.set(r_min_ * std::cos(phi) * std::sin(theta),
+                r_min_ * std::sin(phi) * std::sin(theta),
+                z);
+          vector_3d P2(P);
+          P2.transform(inverse_rotation);
+          P2 += position_;
+          polyline_parallel.push_back(P2);
+        }
+        basic_draw_polyline(out_, polyline_parallel);
+        // Increment z:
+        if (j == 0) z += factor * dzi;
+        else if (j == 1) z += (1 - factor) * dzi;
+        else if (j == z_sample) z += (1 - factor) * dzi;
+        else if (j == z_sample + 1) z += factor * dzi;
+        else z += dzi;
+      }
+    }
+
+    if (delta_phi_ < (2. * M_PI - 1.e-13) && delta_theta_ < (M_PI -  1.e-13) ) {
+
+      for (int i = 0; i < 2; i++) {
+        double theta = theta_min_ + i * delta_theta_;
+        for (double phi = phi_min_;
+             phi <= phi_min_ + delta_phi_ + 0.1 * dphi;
+             phi += dphi) {
+          polyline_type polyline_radial_segment;
+          vector_3d A,B,C,D;
+          A.set(r_min_ * std::cos(phi) * std::sin(theta),
+                r_min_ * std::sin(phi) * std::sin(theta),
+                r_min_ * std::cos(theta));
+          B.set(r_max_ * std::cos(phi) * std::sin(theta),
+                r_max_ * std::sin(phi) * std::sin(theta),
+                r_max_ * std::cos(theta));
+          vector_3d TA(A);
+          TA.transform(inverse_rotation);
+          TA += position_;
+          polyline_radial_segment.push_back(TA);
+          vector_3d TB(B);
+          TB.transform(inverse_rotation);
+          TB += position_;
+          polyline_radial_segment.push_back(TB);
+          basic_draw_polyline(out_, polyline_radial_segment);
+        }
+      }
+    }
+
+    return;
+  }
+
+  void
+  gnuplot_draw::draw_sphere(std::ostream & out_,
+                            const vector_3d & position_,
+                            const rotation_3d & rotation_,
+                            double radius_,
+                            size_t arc_sampling_,
+                            size_t z_sampling_)
   {
     rotation_3d inverse_rotation(rotation_);
     inverse_rotation.invert();

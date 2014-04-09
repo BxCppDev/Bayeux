@@ -1,7 +1,6 @@
-// -*- mode: c++; -*-
-/* i_shape_3d.cc
- */
+/// \file geomtools/i_shape_3d.cc
 
+// Ourselves:
 #include <geomtools/i_shape_3d.h>
 
 #include <datatools/utils.h>
@@ -212,72 +211,65 @@ namespace geomtools {
     return *_stackable_data_;
   }
 
-  void i_shape_3d::set_stackable_data (const stackable_data & a_stackable_data)
+  void i_shape_3d::reset_stackable_data()
   {
-    if (_stackable_data_ != 0)
-      {
-        if (&a_stackable_data == _stackable_data_) return;
-        if (_owns_stackable_data_)
-          {
-            delete _stackable_data_;
-            _stackable_data_ = 0;
-          }
+    if (_stackable_data_ != 0) {
+      if (_owns_stackable_data_) {
+        delete _stackable_data_;
+        _stackable_data_ = 0;
       }
+    }
+    return;
+  }
+
+  void i_shape_3d::set_stackable_data(const stackable_data & a_stackable_data)
+  {
+    if (&a_stackable_data == _stackable_data_) return;
+    reset_stackable_data();
     _owns_stackable_data_ = false;
     _stackable_data_ = &a_stackable_data;
     return;
   }
 
-  void i_shape_3d::set_stackable_data (const stackable_data * a_stackable_data)
+  void i_shape_3d::set_stackable_data(const stackable_data * a_stackable_data)
   {
-    if (_stackable_data_ != 0)
-      {
-        if (a_stackable_data == _stackable_data_) return;
-        if (_owns_stackable_data_)
-          {
-            delete _stackable_data_;
-            _stackable_data_ = 0;
-          }
-      }
+    if (a_stackable_data == _stackable_data_) return;
+    reset_stackable_data();
     _owns_stackable_data_ = true;
     _stackable_data_ = a_stackable_data;
     return;
   }
 
-  // ctor:
-  i_shape_3d::i_shape_3d () : i_object_3d ()
+  i_shape_3d::i_shape_3d() : i_object_3d()
   {
     _owns_stackable_data_ = false;
     _stackable_data_ = 0;
     return;
   }
 
-  // ctor:
-  i_shape_3d::i_shape_3d (double a_skin) : i_object_3d (a_skin)
+  i_shape_3d::i_shape_3d(double a_skin) : i_object_3d(a_skin)
   {
     _owns_stackable_data_ = false;
     _stackable_data_ = 0;
-    /*
-      clog << "DEVEL: i_shape_3d::i_shape_3d: i_object_3d::DEFAULT_TOLERANCE = "
-      << i_object_3d::DEFAULT_TOLERANCE << endl;
-      clog << "DEVEL: i_shape_3d::i_shape_3d: i_shape_3d::DEFAULT_SKIN = "
-      << i_shape_3d::DEFAULT_SKIN << endl;
-      clog << "DEVEL: i_shape_3d::i_shape_3d: a_skin = " << a_skin << endl;
-    */
     return;
   }
 
-  // dtor:
   i_shape_3d::~i_shape_3d ()
   {
-    if (_stackable_data_ == 0)
-      {
-        if (_owns_stackable_data_)
-          {
-            delete _stackable_data_;
-            _stackable_data_ = 0;
-          }
-      }
+    reset_stackable_data();
+    return;
+  }
+
+  void i_shape_3d::initialize(const datatools::properties & config_)
+  {
+    this->i_object_3d::initialize(config_);
+    return;
+  }
+
+  void i_shape_3d::reset()
+  {
+    reset_stackable_data();
+    this->i_object_3d::reset();
     return;
   }
 
@@ -333,6 +325,15 @@ namespace geomtools {
     // default: no intercept on any face of the 3D shape...
     a_intercept.reset ();
     return a_intercept.is_ok ();
+  }
+
+  // static
+  void i_shape_3d::init_ocd(datatools::object_configuration_description & ocd_)
+  {
+    i_object_3d::init_ocd(ocd_);
+
+
+    return;
   }
 
 } // end of namespace geomtools

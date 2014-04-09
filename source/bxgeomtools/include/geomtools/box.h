@@ -13,8 +13,8 @@
  *
  */
 
-#ifndef GEOMTOOLS_BOX_H_
-#define GEOMTOOLS_BOX_H_ 1
+#ifndef GEOMTOOLS_BOX_H
+#define GEOMTOOLS_BOX_H 1
 
 // Third party:
 // -  Boost:
@@ -26,6 +26,11 @@
 #include <geomtools/polyline_3d.h>
 #include <geomtools/placement.h>
 #include <geomtools/i_wires_3d_rendering.h>
+
+namespace datatools {
+  // Forward class declaration:
+  class properties;
+}
 
 namespace geomtools {
 
@@ -137,8 +142,8 @@ namespace geomtools {
     // Check the validity of the object
     bool is_valid() const;
 
-    /// Initialize
-    void init();
+    /// Initialize the box from properties
+    void initialize(const datatools::properties &);
 
     /// Reset
     void reset();
@@ -188,6 +193,9 @@ namespace geomtools {
                                 const placement &,
                                 uint32_t options_ = 0) const;
 
+    /// OCD support
+    static void init_ocd(datatools::object_configuration_description &);
+
   private:
 
     double _x_; //!< Width (in arbitrary units)
@@ -198,4 +206,8 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_BOX_H_
+/// OCD support declaration
+// @arg geomtools::box the name the class
+DOCD_CLASS_DECLARATION(geomtools::box)
+
+#endif // GEOMTOOLS_BOX_H

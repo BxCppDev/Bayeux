@@ -28,8 +28,8 @@
  *
  */
 
-#ifndef GEOMTOOLS_REFLECTION_GUARD_H_
-#define GEOMTOOLS_REFLECTION_GUARD_H_
+#ifndef GEOMTOOLS_REFLECTION_GUARD_H
+#define GEOMTOOLS_REFLECTION_GUARD_H
 
 // Standard Library
 
@@ -52,8 +52,8 @@ namespace geomtools {
  */
 struct reflection_guard {
   reflection_guard() {
-    ::geomtools::detail::reflection::dynamic_link_guard& dlg
-      = ::geomtools::detail::reflection::dynamic_link_guard::instance();
+    //::geomtools::detail::reflection::dynamic_link_guard& dlg =
+    ::geomtools::detail::reflection::dynamic_link_guard::instance();
   }
   static reflection_guard _g_trigger_link_guard_;
 };
@@ -63,4 +63,4 @@ reflection_guard reflection_guard::_g_trigger_link_guard_;
 } // end namespace geomtools
 #endif // GEOMTOOLS_WITH_REFLECTION != 1
 
-#endif // GEOMTOOLS_REFLECTION_GUARD_H_
+#endif // GEOMTOOLS_REFLECTION_GUARD_H

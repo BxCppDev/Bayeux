@@ -385,6 +385,20 @@ namespace geomtools {
     draw_sphere (std::ostream &,
                  const vector_3d &,
                  const rotation_3d &,
+                 double r_min_,
+                 double r_max_,
+                 double phi_min_,
+                 double delta_phi_,
+                 double theta_min_,
+                 double delta_theta_,
+                 size_t arc_sampling_ = 36,
+                 size_t z_sampling_ = 16);
+
+    /// Draw a sphere
+    static void
+    draw_sphere (std::ostream &,
+                 const vector_3d &,
+                 const rotation_3d &,
                  const sphere &,
                  size_t = 36,
                  size_t = 16);

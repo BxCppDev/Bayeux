@@ -1,24 +1,26 @@
-// -*- mode: c++ ; -*-
-/* simple_shaped_model.cc
- */
+/** \file geomtools/simple_shaped_model.cc */
 
+// Ourselves:
 #include <geomtools/simple_shaped_model.h>
 
+// Standard library:
 #include <iostream>
 #include <exception>
 #include <sstream>
 #include <limits>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/units.h>
 
+// This project:
 #include <geomtools/box.h>
 #include <geomtools/cylinder.h>
 #include <geomtools/tube.h>
 #include <geomtools/sphere.h>
 #include <geomtools/polycone.h>
 #include <geomtools/polyhedra.h>
-
 #include <geomtools/visibility.h>
 #include <geomtools/material.h>
 #include <geomtools/sensitive.h>
@@ -109,7 +111,6 @@ namespace geomtools {
     return "geomtools::simple_shaped_model";
   }
 
-  // ctor:
   simple_shaped_model::simple_shaped_model () : i_model ()
   {
     _box_                    = 0;
@@ -127,7 +128,6 @@ namespace geomtools {
     return;
   }
 
-  // dtor:
   simple_shaped_model::~simple_shaped_model ()
   {
     _solid_ = 0;
@@ -231,6 +231,7 @@ namespace geomtools {
                                             const datatools::properties & config_,
                                             models_col_type * /*models_*/)
   {
+    /*
     double lunit = CLHEP::mm;
     if (config_.has_key ("length_unit")) {
       const std::string lunit_str = config_.fetch_string ("length_unit");
@@ -252,10 +253,19 @@ namespace geomtools {
     if (! config_.has_explicit_unit ("z")) {
       z *= lunit;
     }
+    */
 
-    // build the box:
-    _box_ = new box (x, y, z);
-    DT_THROW_IF (! _box_->is_valid (), std::logic_error, "Invalid box dimensions in simple shaped (box) model '" << name_ << "' !");
+    // Build the box:
+    _box_ = new box;
+    try {
+      _box_->initialize(config_);
+    } catch (std::exception & error) {
+      DT_LOG_ERROR(datatools::logger::PRIO_ERROR, error.what());
+      delete _box_;
+      throw error;
+    }
+    DT_THROW_IF (! _box_->is_valid (), std::logic_error,
+                 "Invalid box parameters in simple shaped (box) model '" << name_ << "' !");
     _solid_ = _box_;
     grab_logical ().set_material_ref (_material_name_);
 
@@ -321,31 +331,103 @@ namespace geomtools {
                                                const datatools::properties & config_,
                                                models_col_type* /*models_*/)
   {
+    /*
     double lunit = CLHEP::mm;
     if (config_.has_key ("length_unit")) {
       const std::string lunit_str = config_.fetch_string ("length_unit");
       lunit = datatools::units::get_length_unit_from (lunit_str);
     }
 
-    // double aunit = CLHEP::degree;
-    // if (config_.has_key ("angle_unit")) {
-    //   const std::string aunit_str = config_.fetch_string ("angle_unit");
-    //   aunit = datatools::units::get_angle_unit_from (aunit_str);
-    // }
-
-    DT_THROW_IF (! config_.has_key ("r"), std::logic_error,
-                 "Missing sphere 'r' property in simple shaped (sphere) model '" << name_ << "' !");
-    double r = config_.fetch_real ("r");
-    if (! config_.has_explicit_unit ("r")) {
-      r *= lunit;
+    double aunit = CLHEP::degree;
+    if (config_.has_key ("angle_unit")) {
+      const std::string aunit_str = config_.fetch_string ("angle_unit");
+      aunit = datatools::units::get_angle_unit_from (aunit_str);
     }
 
-    // build the sphere:
-    _sphere_ = new sphere (r);
+    double rmin, rmax;
+    rmin = 0.0;
+    if (config_.has_key ("rmax")) {
+      rmax = config_.fetch_real ("rmax");
+      if (! config_.has_explicit_unit ("rmax")) {
+        rmax *= lunit;
+      }
+    } else {
+      DT_THROW_IF (! config_.has_key ("r"), std::logic_error,
+                   "Missing sphere 'r' property in simple shaped (sphere) model '" << name_ << "' !");
+      rmax = config_.fetch_real ("r");
+      if (! config_.has_explicit_unit ("r")) {
+        rmax *= lunit;
+      }
+    }
+    if (config_.has_key ("rmin")) {
+      rmin = config_.fetch_real ("rmin");
+      if (! config_.has_explicit_unit ("rmin")) {
+        rmin *= lunit;
+      }
+    }
+
+    double theta_min = 0.0;
+    double delta_theta = 2 * M_PI * CLHEP::radian;
+    bool not_full_theta = false;
+    if (config_.has_key ("theta_min")) {
+      theta_min = config_.fetch_real ("theta_min");
+      if (! config_.has_explicit_unit ("theta_min")) {
+        theta_min *= aunit;
+      }
+      not_full_theta = true;
+    }
+    if (config_.has_key ("delta_theta")) {
+      delta_theta = config_.fetch_real ("delta_theta");
+      if (! config_.has_explicit_unit ("delta_theta")) {
+        delta_theta *= aunit;
+      }
+      not_full_theta = true;
+    }
+
+    double phi_min = 0.0;
+    double delta_phi = M_PI * CLHEP::radian;
+    bool not_full_phi = false;
+    if (config_.has_key ("phi_min")) {
+      phi_min = config_.fetch_real ("phi_min");
+      if (! config_.has_explicit_unit ("phi_min")) {
+        phi_min *= aunit;
+      }
+      not_full_phi = true;
+    }
+    if (config_.has_key ("delta_phi")) {
+      delta_phi = config_.fetch_real ("delta_phi");
+      if (! config_.has_explicit_unit ("delta_phi")) {
+        delta_phi *= aunit;
+      }
+      not_full_phi = true;
+    }
+    */
+
+    // Build the sphere:
+    _sphere_ = new sphere;
+    try {
+      _sphere_->initialize(config_);
+    } catch (std::exception & error) {
+      DT_LOG_ERROR(datatools::logger::PRIO_ERROR, error.what());
+      delete _sphere_;
+      throw error;
+    }
+    /*
+    if (rmin > 0.0) {
+      _sphere_->set_r_min(rmin);
+    }
+    _sphere_->set_r_max(rmax);
+    if (not_full_theta) {
+      _sphere_->set_theta(theta_min, delta_theta);
+    }
+    if (not_full_phi) {
+      _sphere_->set_phi(phi_min, delta_phi);
+    }
+    */
     DT_THROW_IF (! _sphere_->is_valid (), std::logic_error,
-                 "Invalid sphere dimension in simple shaped (sphere) model '" << name_ << "' !");
+                 "Invalid sphere parameters in simple shaped (sphere) model '" << name_ << "' !");
     _solid_ = _sphere_;
-    grab_logical ().set_material_ref (_material_name_);
+    grab_logical ().set_material_ref(_material_name_);
 
     return;
   }
@@ -900,10 +982,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::simple_shaped_model,
                              "volumes with various simple 3D shapes. The following \n"
                              "shapes are supported:                                \n"
                              "                                                     \n"
-                             " * Box                                               \n"
+                             " * Box : see OCD support for class ``geomtool::box``.\n"
                              " * Cylinder                                          \n"
                              " * Tube                                              \n"
-                             " * Sphere                                            \n"
+                             " * Sphere : see OCD support for class ``geomtool::sphere``.\n"
                              " * Polycone                                          \n"
                              " * Polyhedron                                        \n"
                              "                                                     \n"
@@ -914,22 +996,22 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::simple_shaped_model,
   // Inherit parent class/interface OCD support:
   geomtools::i_model::init_ocd(ocd_);
 
-  {
-    configuration_property_description & cpd = ocd_.add_configuration_property_info();
-    cpd.set_name_pattern("length_unit")
-      .set_terse_description("The length unit symbol")
-      .set_traits(datatools::TYPE_STRING)
-      .set_mandatory(false)
-      .set_default_value_string("mm")
-      .set_long_description("This property set the symbol of the default length\n"
-                            "unit.                                             \n"
-                            "Example ::                                        \n"
-                            "                                                  \n"
-                            "   length_unit : string = \"cm\"                  \n"
-                            "                                                  \n"
-                            )
-      ;
-  }
+  // {
+  //   configuration_property_description & cpd = ocd_.add_configuration_property_info();
+  //   cpd.set_name_pattern("length_unit")
+  //     .set_terse_description("The length unit symbol")
+  //     .set_traits(datatools::TYPE_STRING)
+  //     .set_mandatory(false)
+  //     .set_default_value_string("mm")
+  //     .set_long_description("This property set the symbol of the default length\n"
+  //                           "unit.                                             \n"
+  //                           "Example ::                                        \n"
+  //                           "                                                  \n"
+  //                           "   length_unit : string = \"cm\"                  \n"
+  //                           "                                                  \n"
+  //                           )
+  //     ;
+  // }
 
 
   ocd_.set_validation_support(false);
@@ -939,7 +1021,3 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::simple_shaped_model,
 DOCD_CLASS_IMPLEMENT_LOAD_END()
 DOCD_CLASS_SYSTEM_REGISTRATION(::geomtools::simple_shaped_model,
                                "geomtools::simple_shaped_model")
-
-
-
-// end of simple_shaped_model.cc

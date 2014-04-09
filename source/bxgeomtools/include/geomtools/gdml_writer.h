@@ -17,17 +17,21 @@
  *
  */
 
-#ifndef GEOMTOOLS_GDML_WRITER_H_
-#define GEOMTOOLS_GDML_WRITER_H_ 1
+#ifndef GEOMTOOLS_GDML_WRITER_H
+#define GEOMTOOLS_GDML_WRITER_H 1
 
+// Standard library:
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <map>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/logger.h>
-#include <geomtools/utils.h>
 
+// This project:
+#include <geomtools/utils.h>
 #include <geomtools/box.h>
 #include <geomtools/cylinder.h>
 #include <geomtools/tube.h>
@@ -423,6 +427,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_GDML_WRITER_H_
-
-// end of gdml_writer.h
+#endif // GEOMTOOLS_GDML_WRITER_H
