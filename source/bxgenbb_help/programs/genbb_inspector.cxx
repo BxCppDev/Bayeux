@@ -822,7 +822,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::genbb::inspector_data,tag_)
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::genbb::inspector_data, /* tag_ */ )
       {
         // Declare and populate the introspection metaclass for the 'genbb::inspector_data' class:
         DR_CLASS_DECLARE (::genbb::inspector_data)
@@ -1520,7 +1520,7 @@ namespace genbb {
                         "Using default definition file for histograms : '" << filename.str() << "'");
         }
       }
-      for (int i = 0; i < _params_.histos_definitions.size(); i++) {
+      for (int i = 0; i < (int) _params_.histos_definitions.size(); i++) {
         std::string hconfig = _params_.histos_definitions[i];
         datatools::fetch_path_with_env(hconfig);
         pool_histo_setups.push_back(hconfig);
@@ -1729,7 +1729,7 @@ namespace genbb {
       _histos_->names (histo_names, std::string("group=") + time_range_label[timing]);
       DR_OBJECT idObj = idata;
 
-      for (int ihn = 0; ihn < histo_names.size(); ihn++) {
+      for (int ihn = 0; ihn < (int) histo_names.size(); ihn++) {
         const std::string & hn = histo_names[ihn];
         /*
           std::cerr << "DEVEL: " << "genbb::inspector::_inspect: "

@@ -23,10 +23,11 @@ int main (int argc_, char ** argv_)
     std::clog << "Test program for the 'genbb::manager' class." << std::endl;
 
     bool debug = false;
-    bool verbose = false;
     std::string pg_name;
     int nevents = 10000;
+#if GENBB_HELP_WITH_FORTRAN == 1
     bool use_fortran_lib = false;
+#endif // GENBB_HELP_WITH_FORTRAN == 1
 
     int iarg = 1;
     while (iarg < argc_) {
@@ -35,12 +36,12 @@ int main (int argc_, char ** argv_)
         std::string option = token;
         if ((option == "-d") || (option == "--debug"))  {
           debug = true;
-        } else if ((option == "-v") || (option == "--verbose"))  {
-          verbose = true;
         } else if ((option == "-g") || (option == "--particle-generator"))  {
           pg_name = argv_[++iarg];
+#if GENBB_HELP_WITH_FORTRAN == 1
         } else if ((option == "-f") || (option == "--use-fortran"))  {
           use_fortran_lib = true;
+#endif // GENBB_HELP_WITH_FORTRAN == 1
         } else  {
           std::clog << "warning: ignoring option '" << option << "'!" << std::endl;
         }

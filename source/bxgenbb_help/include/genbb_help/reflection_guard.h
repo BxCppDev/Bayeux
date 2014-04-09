@@ -52,8 +52,8 @@ namespace genbb {
  */
 struct reflection_guard {
   reflection_guard() {
-    ::genbb::detail::reflection::dynamic_link_guard& dlg
-      = ::genbb::detail::reflection::dynamic_link_guard::instance();
+    //::genbb::detail::reflection::dynamic_link_guard& dlg =
+    ::genbb::detail::reflection::dynamic_link_guard::instance();
   }
   static reflection_guard _g_trigger_link_guard_;
 };

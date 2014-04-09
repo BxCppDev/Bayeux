@@ -29,7 +29,7 @@ int main (int argc_, char ** argv_)
     bool debug = false;
     int  many = 0;
     bool randomized_direction = false;
-    bool energy_range_mode = false;
+    // bool energy_range_mode = false;
 
     string spectrum_data_file = "";
 
@@ -73,7 +73,7 @@ int main (int argc_, char ** argv_)
       mygsl::histogram h (nbins, xmin, xmax);
 
       const size_t nshoots = 1000;
-      for (int i= 0; i < nshoots; i++) {
+      for (int i= 0; i < (int) nshoots; i++) {
         double x = -std::log(drand48());
         h.fill(x);
       }

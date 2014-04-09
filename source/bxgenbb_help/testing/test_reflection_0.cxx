@@ -55,7 +55,7 @@ void test_primary_particle()
 
 void test_primary_event()
 {
-  datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
+  //datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
   const DR_CLASS & peMetaClass  = DR_CLASS_BY_NAME("genbb::primary_event");
   boost::scoped_ptr<genbb::primary_event> event0(peMetaClass.construct<genbb::primary_event>());
 
@@ -67,7 +67,7 @@ void test_primary_event()
 
 #include <camp/classget.hpp>
 
-int main (int argc_, char ** argv_)
+int main (int /* argc_ */, char ** /* argv_ */)
 {
   datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
   int error_code = EXIT_SUCCESS;
@@ -75,7 +75,7 @@ int main (int argc_, char ** argv_)
 
     DT_LOG_NOTICE(logging, "Number of metaclasses = " << camp::classCount());
 
-    for (int i = 0; i < camp::classCount(); i++) {
+    for (int i = 0; i < (int) camp::classCount(); i++) {
       const camp::Class & c = camp::classByIndex(i);
       DT_LOG_NOTICE(logging, "Metaclass #" << i << " : " << c.name());
     }

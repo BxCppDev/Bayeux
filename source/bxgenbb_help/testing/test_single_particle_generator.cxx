@@ -131,7 +131,7 @@ int main (int argc_, char ** argv_)
     if (many == 1) max_count = 100;
     if (many == 2) max_count = 1000;
     genbb::primary_event pe; // working primary event
-    for (int i = 0; i < max_count; i++) {
+    for (int i = 0; i < (int) max_count; i++) {
       clog << "Count : " << i << endl;
       SPG.load_next (pe);
       if (debug) pe.dump ();
