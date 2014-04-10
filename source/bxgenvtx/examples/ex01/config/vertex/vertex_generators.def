@@ -162,7 +162,6 @@ generators.all_mezzanine_pcb_bulk.vg.activity : string = "1.0 mBq/kg"
 generators.board_pcb_bulk.vg.activity         : string = "0.25 mBq/kg"
 
 
-
 ################################################################
 # Generate vertex from the dummy's bulk:
 ################################################################
@@ -170,20 +169,14 @@ generators.board_pcb_bulk.vg.activity         : string = "0.25 mBq/kg"
 
 #@config Vertex generation from the bulk of all balls
 
-#@description Debug flag
-debug  : boolean = 1
+# #@description Debug flag
+# debug  : boolean = 1
 
 #@description The rule that describe the geometry origin of vertex in term of geometry category and addresses (geom ID)
 origin : string  = "category='dummy.gc' board={*} "
 
 #@description The mode used for vertex generator from the underlying tube model associated to the target logical volume ("surface" or "bulk")
 mode   : string  = "bulk"
-
-#@description Surface mode cylinder inner side face activation
-#mode.surface.inner_side  : boolean = 1
-
-#@description Surface mode cylinder outer side face activation
-#mode.surface.outer_side  : boolean = 0
 
 
 ################################################################
@@ -193,8 +186,8 @@ mode   : string  = "bulk"
 
 #@config Vertex generation from the bulk of all balls
 
-#@description Debug flag
-debug  : boolean = 1
+# #@description Debug flag
+# debug  : boolean = 0
 
 #@description The rule that describe the geometry origin of vertex in term of geometry category and addresses (geom ID)
 origin : string  = "category='dummy.gc' board={*} "
@@ -213,5 +206,47 @@ skin_thickness : real as length = 4 mm
 
 #@description Skin thickness
 skin_skip : real as length = 2 mm
+
+
+################################################################
+# Generate vertex from the dummy's bulk:
+################################################################
+[name="dummy_some_surfaces.vg" type="genvtx::sphere_model_vg"]
+
+#@config Vertex generation from the bulk of all balls
+
+# #@description Debug flag
+# debug  : boolean = 0
+
+#@description The rule that describe the geometry origin of vertex in term of geometry category and addresses (geom ID)
+origin : string  = "category='dummy.gc' board={*} "
+
+#@description The mode used for vertex generator from the underlying tube model associated to the target logical volume ("surface" or "bulk")
+mode   : string  = "surface"
+
+#@description Surface mode cylinder inner side face activation
+mode.surface.inner_side       : boolean = 0
+
+#@description Surface mode cylinder outer side face activation
+mode.surface.outer_side       : boolean = 0
+
+#@description Surface mode cylinder start phi side face activation
+mode.surface.start_phi_side   : boolean = 1
+
+#@description Surface mode cylinder stop phi side face activation
+mode.surface.stop_phi_side    : boolean = 1
+
+#@description Surface mode cylinder start theta side face activation
+mode.surface.start_theta_side : boolean = 1
+
+#@description Surface mode cylinder stop theta side face activation
+mode.surface.stop_theta_side  : boolean = 0
+
+# #@description Skin thickness
+# skin_thickness : real as length = 4 mm
+
+# #@description Skin thickness
+# skin_skip : real as length = 2 mm
+
 
 # End of list of multi-properties.
