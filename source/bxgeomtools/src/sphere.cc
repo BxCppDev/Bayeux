@@ -85,14 +85,14 @@ namespace geomtools {
   double
   sphere::get_radius () const
   {
-    return get_r();
+    return get_r_max();
   }
 
   void
   sphere::set_r (double new_value_)
   {
-    DT_THROW_IF  (new_value_ < 0.0,std::domain_error,
-                  "Invalid radius (" << new_value_ << ") !");
+    DT_THROW_IF(new_value_ <= 0.0, std::domain_error,
+                "Invalid radius (" << new_value_ << ") !");
     _r_ = new_value_;
     if (_r_ < _r_min_) {
       reset_r_min ();
@@ -150,6 +150,9 @@ namespace geomtools {
 
   void sphere::set_phi(double start_phi_, double delta_phi_)
   {
+    DT_THROW_IF(delta_phi_ > 2 * M_PI,
+                std::domain_error,
+                "Delta theta is too large (> 2 pi)!");
     _start_phi_ = start_phi_;
     _delta_phi_ = delta_phi_;
   }
@@ -166,6 +169,9 @@ namespace geomtools {
 
   void sphere::set_theta(double start_theta_, double delta_theta_)
   {
+    DT_THROW_IF(delta_theta_ > M_PI,
+                std::domain_error,
+                "Delta theta is too large (> pi)!");
     _start_theta_ = start_theta_;
     _delta_theta_ = delta_theta_;
   }
@@ -301,11 +307,31 @@ namespace geomtools {
   sphere::get_surface (uint32_t mask_) const
   {
     double s = 0.0;
-    if  (mask_ & FACE_SIDE) {
-      s += 4.0 * M_PI * _r_ * _r_;
+    if  (mask_ & FACE_OUTER_SIDE) {
+      s += _delta_phi_
+        * (std::cos(_start_theta_) - std::cos(_start_theta_ + _delta_theta_))
+        * _r_ * _r_;
     }
     if  (mask_ & FACE_INNER_SIDE) {
-      s += 4.0 * M_PI * _r_min_ * _r_min_;
+      s += _delta_phi_
+        * (std::cos(_start_theta_) - std::cos(_start_theta_ + _delta_theta_))
+        * _r_min_ * _r_min_;
+    }
+    if  (mask_ & FACE_START_PHI_SIDE) {
+      s += 0.5 * ( _r_ * _r_ -  _r_min_ * _r_min_)
+        * _delta_theta_;
+    }
+    if  (mask_ & FACE_STOP_PHI_SIDE) {
+      s += 0.5 * ( _r_ * _r_ -  _r_min_ * _r_min_)
+        * _delta_theta_;
+    }
+    if  (mask_ & FACE_START_THETA_SIDE) {
+      double theta =  _start_theta_;
+      s += 0.5 * _delta_phi_ * ( _r_ * _r_ - _r_min_ * _r_min_ ) * std::sin(theta);
+    }
+    if  (mask_ & FACE_STOP_THETA_SIDE) {
+      double theta =  _start_theta_ + _delta_theta_;
+      s += 0.5 * _delta_phi_ * ( _r_ * _r_ - _r_min_ * _r_min_ ) * std::sin(theta);
     }
     return s;
   }
@@ -313,10 +339,10 @@ namespace geomtools {
   double
   sphere::get_volume (uint32_t /*flags*/) const
   {
-    double v = 4.0 * M_PI * gsl_pow_3(_r_) / 3.0;
-    if (datatools::is_valid(_r_min_)) {
-      v -=  4.0 * M_PI * gsl_pow_3(_r_min_) / 3.0;
-    }
+    double v =
+      _delta_phi_
+      * (std::cos(_start_theta_) - std::cos(_start_theta_ + _delta_theta_))
+      * (gsl_pow_3(_r_) - gsl_pow_3(_r_min_)) / 3.0;
     return v;
   }
 
