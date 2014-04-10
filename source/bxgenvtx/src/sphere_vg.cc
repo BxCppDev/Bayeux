@@ -36,6 +36,13 @@ namespace genvtx {
     return;
   }
 
+  void sphere_vg::set_surface_mask (int surface_mask_)
+  {
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
+    _surface_mask_ = surface_mask_;
+    return;
+  }
+
   void sphere_vg::set_skin_skip (double skin_skip_)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
@@ -54,6 +61,14 @@ namespace genvtx {
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
     _mode_ = MODE_BULK;
+    return;
+  }
+
+  void sphere_vg::set_surface (int surface_mask_)
+  {
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
+    _mode_ = MODE_SURFACE;
+    set_surface_mask (surface_mask_);
     return;
   }
 
@@ -133,9 +148,11 @@ namespace genvtx {
     int    mode = MODE_INVALID;
     double skin_skip = 0.0;
     double skin_thickness = 0.0;
+    int    surface_mask = geomtools::sphere::FACE_NONE;
     double lunit = CLHEP::mm;
     std::string lunit_str;
     bool treat_mode           = false;
+    bool treat_surface_mask   = false;
     bool treat_skin_skip      = false;
     bool treat_skin_thickness = false;
 
@@ -170,10 +187,31 @@ namespace genvtx {
       treat_skin_thickness = true;
     }
 
+    if (mode == MODE_SURFACE) {
+      std::vector<std::string> surfaces;
+      if (setup_.has_key ("surfaces")) {
+        setup_.fetch ("surfaces", surfaces);
+        treat_surface_mask = true;
+      }
+
+      for (size_t i = 0; i < surfaces.size (); i++) {
+        if (surfaces[i] == "all") {
+          surface_mask = geomtools::sphere::FACE_INNER_SIDE | geomtools::sphere::FACE_OUTER_SIDE;
+          break;
+        } else if (surfaces[i] == "outer_side") {
+          surface_mask |= geomtools::sphere::FACE_OUTER_SIDE;
+        } else if (surfaces[i] == "inner_side") {
+          surface_mask |= geomtools::sphere::FACE_INNER_SIDE;
+        }
+      }
+    }
 
     if (treat_mode) set_mode (mode);
     if (treat_skin_skip) set_skin_skip (skin_skip);
     if (treat_skin_thickness) set_skin_thickness (skin_thickness);
+    if (mode == MODE_SURFACE && treat_surface_mask) {
+      set_surface_mask (surface_mask);
+    }
 
     if (! has_sphere_safe ()) {
       double sphere_r;
@@ -205,42 +243,67 @@ namespace genvtx {
 
   void sphere_vg::_init_ ()
   {
+    const geomtools::sphere * the_sphere = &_sphere_;
+    if (has_sphere_ref ()) {
+      the_sphere = _sphere_ref_;
+    }
+    if (_mode_ == MODE_SURFACE) {
+      DT_THROW_IF (_surface_mask_ == 0, std::logic_error, "Surface mask is null !");
+      const double s = the_sphere->get_surface(_surface_mask_);
+      DT_LOG_DEBUG (get_logging_priority(), "Total surface = " << s);
+      _sum_weight_[0] = the_sphere->get_surface(_surface_mask_ & geomtools::sphere::FACE_OUTER_SIDE);
+      _sum_weight_[1] = the_sphere->get_surface(_surface_mask_ & geomtools::sphere::FACE_INNER_SIDE);
+      _sum_weight_[2] = the_sphere->get_surface(_surface_mask_ & geomtools::sphere::FACE_START_PHI_SIDE);
+      _sum_weight_[3] = the_sphere->get_surface(_surface_mask_ & geomtools::sphere::FACE_STOP_PHI_SIDE);
+      _sum_weight_[4] = the_sphere->get_surface(_surface_mask_ & geomtools::sphere::FACE_START_THETA_SIDE);
+      _sum_weight_[5] = the_sphere->get_surface(_surface_mask_ & geomtools::sphere::FACE_STOP_THETA_SIDE);
+      for (size_t i = 0; i < 6; i++) {
+        _sum_weight_[i] /= s;
+        if (i > 0) {
+          _sum_weight_[i] += _sum_weight_[i - 1];
+        }
+        DT_LOG_TRACE (get_logging_priority(), "Surface weight [" << i << "] = " << _sum_weight_[i]);
+      }
+    }
     return;
   }
 
-  void sphere_vg::_reset_ ()
+  void sphere_vg::_reset_()
   {
-    _set_defaults_ ();
+    _set_defaults_();
     return;
   }
 
-  void sphere_vg::_set_defaults_ ()
+  void sphere_vg::_set_defaults_()
   {
-    _sphere_.reset ();
+    _sphere_.reset();
     _sphere_ref_ = 0;
     _mode_ = MODE_INVALID;
+    _surface_mask_ = 0;
     _skin_skip_ = 0.0;
     _skin_thickness_ = 0.0;
+    for (int i = 0; i < 6; i++) _sum_weight_[i] = 0.0;
     return;
   }
 
   void sphere_vg::tree_dump (std::ostream & out_,
-                          const std::string & title_,
-                          const std::string & indent_,
-                          bool inherit_) const
+                             const std::string & title_,
+                             const std::string & indent_,
+                             bool inherit_) const
   {
     std::string indent;
-    if (! indent_.empty ()) indent = indent_;
+    if (! indent_.empty()) indent = indent_;
     i_vertex_generator::tree_dump (out_, title_, indent_, true);
     out_ << indent << datatools::i_tree_dumpable::tag;
-    if (has_sphere_ref ()) {
+    if (has_sphere_ref()) {
       out_ << "External sphere : " << *_sphere_ref_ << " [" << _sphere_ref_ << ']';
     } else {
       out_ << "Embedded sphere : " << _sphere_;
     }
     out_ << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::tag << "Mode :        " << _mode_ << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::tag << "Skin skip:    " << _skin_skip_ << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::tag << "Mode :         " << _mode_ << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::tag << "Surface mask : " << _surface_mask_ << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::tag << "Skin skip:     " << _skin_skip_ << std::endl;
     out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
          << "Skin thickness: " << _skin_thickness_ << std::endl;
     return;
@@ -249,39 +312,63 @@ namespace genvtx {
   void sphere_vg::_shoot_vertex(::mygsl::rng & random_,
                                 ::geomtools::vector_3d & vertex_)
   {
-    DT_THROW_IF (! is_initialized (), std::logic_error, "Not initialized !");
+    DT_THROW_IF (! is_initialized(), std::logic_error, "Not initialized !");
     geomtools::invalidate (vertex_);
-    //double x = 0.0, y = 0.0, z = 0.0;
     const geomtools::sphere * the_sphere = &_sphere_;
-    if (has_sphere_ref ()) {
+    if (has_sphere_ref()) {
       the_sphere = _sphere_ref_;
     }
 
+    double theta_min = the_sphere->get_start_theta();
+    double theta_max = theta_min + the_sphere->get_delta_theta();
+    double phi_min   = the_sphere->get_start_phi();
+    double phi_max   = phi_min   + the_sphere->get_delta_phi();
+
     if (_mode_ == MODE_BULK) {
-      double r_max = the_sphere->get_radius() - 0.5 * _skin_thickness_;
+      double r_max = the_sphere->get_r_max() - 0.5 * _skin_thickness_;
+      double r_min = the_sphere->get_r_min() + 0.5 * _skin_thickness_;
       randomize_sphere(random_,
-                       0.0, r_max,
-                       0.0, M_PI,
-                       0.0, 2 * M_PI,
+                       r_min, r_max,
+                       theta_min, theta_max,
+                       phi_min, phi_max,
                        vertex_);
     }
 
     if (_mode_ == MODE_SURFACE) {
-      double r_min = the_sphere->get_radius() + _skin_skip_;
-      double r_max = r_min;
-      //double delta_thick = 0.0;
-      if (_skin_thickness_ > 0.0) {
-        r_min -= 0.5 * _skin_thickness_;
-        r_max += 0.5 * _skin_thickness_;
-      }
-      randomize_sphere(random_,
-                       r_min, r_max,
-                       0.0, M_PI,
-                       0.0, 2 * M_PI,
-                       vertex_);
-     }
+      const double r0 = random_.uniform ();
 
-     return;
+      if (r0 < _sum_weight_[0]) {
+        // Outer surface :
+        double r_min = the_sphere->get_r_max() + _skin_skip_;
+        double r_max = r_min;
+        if (_skin_thickness_ > 0.0) {
+          r_min -= 0.5 * _skin_thickness_;
+          r_max += 0.5 * _skin_thickness_;
+        }
+        randomize_sphere(random_,
+                         r_min, r_max,
+                         theta_min, theta_max,
+                         phi_min, phi_max,
+                         vertex_);
+      } else if (r0 < _sum_weight_[1]) {
+        // Inner surface :
+        double r_max = the_sphere->get_r_min() - _skin_skip_;
+        double r_min = r_max;
+        if (_skin_thickness_ > 0.0) {
+          r_min -= 0.5 * _skin_thickness_;
+          r_max += 0.5 * _skin_thickness_;
+        }
+        randomize_sphere(random_,
+                         r_min, r_max,
+                         theta_min, theta_max,
+                         phi_min, phi_max,
+                         vertex_);
+      } else {
+        DT_THROW_IF(true, std::logic_error, "Ranomization of vertex on other surfaces of the sphere in not implemented yet!");
+      }
+    }
+
+    return;
   }
 
   void randomize_sphere(mygsl::rng & random_,
@@ -290,11 +377,11 @@ namespace genvtx {
                         double phi1_, double phi2_,
                         geomtools::vector_3d & vertex_)
   {
-    double phi = random_.flat(phi1_, phi2_);
+    double phi   = random_.flat(phi1_, phi2_);
     double cost1 = std::cos(theta1_);
     double cost2 = std::cos(theta2_);
-    double cost =  random_.flat(cost1, cost2);
-    double sint = std::sqrt(1.0 - gsl_pow_2(cost));
+    double cost  = random_.flat(cost1, cost2);
+    double sint  = std::sqrt(1.0 - gsl_pow_2(cost));
     double r = r1_;
     if (r1_ != r2_) {
       double r13 = gsl_pow_3(r1_);

@@ -31,6 +31,9 @@ addresses : string[1] = "board"
 [category="board_pcb.gc"  type="200"]
 inherits : string = "board.gc"
 
+# Dummy category
+[category="dummy.gc"  type="199"]
+inherits : string = "board.gc"
 
 # This category represents the rule to identify a given mezzanine
 # board on its mother board :

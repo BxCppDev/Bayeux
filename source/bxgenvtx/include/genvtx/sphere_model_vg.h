@@ -42,6 +42,14 @@ namespace genvtx {
 
     bool is_mode_surface () const;
 
+    bool is_surface_inner_side () const;
+
+    bool is_surface_outer_side () const;
+
+    void set_surface_inner_side (bool);
+
+    void set_surface_outer_side (bool);
+
     void set_skin_skip (double skin_skip_);
 
     void set_skin_thickness (double skin_thickness_);
@@ -110,6 +118,8 @@ namespace genvtx {
 
     bool                    _initialized_;    //!< Initialization flag
     int                     _mode_;           //!< Mode : "bulk" of "surface"
+    bool                    _surface_inner_side_;    //!< Flag for inner side surface generation mode
+    bool                    _surface_outer_side_;    //!< Flag for outer side surface generation mode
     double                  _skin_skip_;      //!< Skip (normal to the surface) to an effective position of the skin relative to the surface of the sphere
     double                  _skin_thickness_; //!< Intrinsic thickness of the surface
     genvtx::sphere_vg       _sphere_vg_;         //!< Embeded vertex generator from a sphere

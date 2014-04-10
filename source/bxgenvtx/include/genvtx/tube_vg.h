@@ -98,7 +98,7 @@ namespace genvtx {
 
   private:
 
-    bool            _initialized_;
+    bool            _initialized_; /// Initialization flag
     geomtools::tube _tube_;
     int             _mode_;
     int             _surface_mask_;

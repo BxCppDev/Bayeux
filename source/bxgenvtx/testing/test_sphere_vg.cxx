@@ -1,11 +1,12 @@
-// -*- mode: c++ ; -*-
 // test_sphere_vg.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
+#include <datatools/units.h>
 #include <geomtools/gnuplot_draw.h>
 #include <genvtx/sphere_vg.h>
 #include <mygsl/rng.h>
@@ -46,12 +47,16 @@ int main (int argc_, char ** argv_)
 
     size_t nshoots = 50000;
 
-    geomtools::sphere ball(2.0);
+    geomtools::sphere ball;
+    ball.set_r_max(2.0);
+    ball.set_r_min(1.0);
+    ball.set_theta(20.0 * CLHEP::degree, 120.0 * CLHEP::degree);
+    ball.set_phi(30.0 * CLHEP::degree, 70.0 * CLHEP::degree);
 
     {
       geomtools::vector_3d pos;
       geomtools::rotation_3d rot;
-      geomtools::gnuplot_draw::draw_sphere(cout, pos, rot, ball);
+      geomtools::gnuplot_draw::draw_sphere(cout, pos, rot, ball, 12, 8);
       cout << endl << endl;
     }
 
@@ -62,17 +67,19 @@ int main (int argc_, char ** argv_)
     if (surface) {
       vg.set_sphere(ball);
       vg.set_mode(genvtx::sphere_vg::MODE_SURFACE);
+      vg.set_surface_mask(geomtools::sphere::FACE_OUTER_SIDE |
+                          geomtools::sphere::FACE_INNER_SIDE);
       clog << "warning: mode = " << vg.get_mode() << "\n";
-      vg.set_skin_skip(0.40);
-      vg.set_skin_thickness(0.10);
+      vg.set_skin_skip(0.025);
+      vg.set_skin_thickness(0.05);
       vg.initialize_simple();
       vg.tree_dump(clog, "Sphere vertex generator (side, skipped)");
       geomtools::vector_3d vertex;
       for (int i = 0; i < nshoots; i++) {
         vg.shoot_vertex(random, vertex);
-        if (vertex.x() < 0.0 && vertex.y() < 0.0) {
-          geomtools::gnuplot_draw::basic_draw_point (cout, vertex, true);
-        }
+        //if (vertex.x() < 0.0 && vertex.y() < 0.0) {
+        geomtools::gnuplot_draw::basic_draw_point (cout, vertex, true);
+        //}
       }
       cout << endl << endl;
     }
@@ -86,16 +93,16 @@ int main (int argc_, char ** argv_)
       vg.set_mode(genvtx::sphere_vg::MODE_BULK);
       clog << "warning: mode = " << vg.get_mode() << "\n";
       vg.set_skin_skip(0.0);
-      vg.set_skin_thickness(0.20);
+      vg.set_skin_thickness(0.05);
       vg.initialize_simple();
       vg.tree_dump(clog, "Sphere vertex generator (bulk)");
       //nshoots = 50;
       geomtools::vector_3d vertex;
       for (int i = 0; i < nshoots; i++) {
         vg.shoot_vertex(random, vertex);
-        if (vertex.y() > 0.0) { // && vertex.x() > 0.0) {
-          geomtools::gnuplot_draw::basic_draw_point(cout, vertex, true);
-        }
+        //if (vertex.y() > 0.0) { // && vertex.x() > 0.0) {
+        geomtools::gnuplot_draw::basic_draw_point(cout, vertex, true);
+        //}
       }
       cout << endl << endl;
     }
@@ -129,5 +136,3 @@ int main (int argc_, char ** argv_)
   }
   return (error_code);
 }
-
-// end of test_sphere_vg.cxx

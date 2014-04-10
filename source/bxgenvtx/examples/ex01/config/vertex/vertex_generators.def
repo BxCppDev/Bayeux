@@ -106,7 +106,7 @@ materials.plugin_name : string = "materials_driver"
 ################################################################
 [name="all_capacitors_side.vg" type="genvtx::cylinder_model_vg"]
 
-#@config Vertex generation from the side surface of all  capacitors
+#@config Vertex generation from the side surface of all capacitors
 
 #@description Debug flag
 debug  : boolean = 0
@@ -126,7 +126,7 @@ mode.surface.side  : boolean = 1
 ################################################################
 [name="all_coil_body_bulk.vg" type="genvtx::tube_model_vg"]
 
-#@config Vertex generation from the bulk surface of all coils
+#@config Vertex generation from the bulk of all coils
 
 #@description Debug flag
 debug  : boolean = 1
@@ -161,5 +161,57 @@ generators.all_mezzanine_pcb_bulk.vg.activity : string = "1.0 mBq/kg"
 #@description The mass activity associated to the second generator
 generators.board_pcb_bulk.vg.activity         : string = "0.25 mBq/kg"
 
+
+
+################################################################
+# Generate vertex from the dummy's bulk:
+################################################################
+[name="dummy_bulk.vg" type="genvtx::sphere_model_vg"]
+
+#@config Vertex generation from the bulk of all balls
+
+#@description Debug flag
+debug  : boolean = 1
+
+#@description The rule that describe the geometry origin of vertex in term of geometry category and addresses (geom ID)
+origin : string  = "category='dummy.gc' board={*} "
+
+#@description The mode used for vertex generator from the underlying tube model associated to the target logical volume ("surface" or "bulk")
+mode   : string  = "bulk"
+
+#@description Surface mode cylinder inner side face activation
+#mode.surface.inner_side  : boolean = 1
+
+#@description Surface mode cylinder outer side face activation
+#mode.surface.outer_side  : boolean = 0
+
+
+################################################################
+# Generate vertex from the dummy's bulk:
+################################################################
+[name="dummy_inner_surface.vg" type="genvtx::sphere_model_vg"]
+
+#@config Vertex generation from the bulk of all balls
+
+#@description Debug flag
+debug  : boolean = 1
+
+#@description The rule that describe the geometry origin of vertex in term of geometry category and addresses (geom ID)
+origin : string  = "category='dummy.gc' board={*} "
+
+#@description The mode used for vertex generator from the underlying tube model associated to the target logical volume ("surface" or "bulk")
+mode   : string  = "surface"
+
+#@description Surface mode cylinder inner side face activation
+mode.surface.inner_side  : boolean = 1
+
+#@description Surface mode cylinder outer side face activation
+mode.surface.outer_side  : boolean = 0
+
+#@description Skin thickness
+skin_thickness : real as length = 4 mm
+
+#@description Skin thickness
+skin_skip : real as length = 2 mm
 
 # End of list of multi-properties.

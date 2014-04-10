@@ -42,6 +42,8 @@ namespace genvtx {
 
     void set_mode (int mode_);
 
+    void set_surface_mask (int surface_mask_);
+
     void set_skin_skip (double skin_skip_);
 
     void set_skin_thickness (double skin_thickness_);
@@ -106,8 +108,10 @@ namespace genvtx {
     const geomtools::sphere * _sphere_ref_;  /// External sphere object handle
 
     int            _mode_;          /// Vertex randomization mode (bulk/surface)
+    int            _surface_mask_;  /// Surface mask
     double         _skin_skip_;     /// Skip (normal to the surface) to an effective position of the skin relative to the surface of the sphere
     double         _skin_thickness_; /// Intrinsic thickness of the surface
+    double         _sum_weight_[6];
 
     /// Registration macro
     /// @arg sphere_vg the class to be registered

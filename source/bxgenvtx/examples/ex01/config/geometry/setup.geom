@@ -8,6 +8,51 @@
 
 
 ##############################################################
+[name="ball.model" type="geomtools::simple_shaped_model"]
+
+#@config Configuration of the coil made of an iron tube with an air cavity
+
+#@description The name of the 3D shape
+shape_type   : string =  "sphere"
+
+#@description The default implicit length unit
+length_unit  : string  = "mm"
+
+#@description The inner R dimension
+r_min     : real   = 25.0
+
+#@description The outer R dimension
+r_max     : real   = 30.0
+
+#@description The start theta angle
+start_theta : real as angle = 20.0 degree
+
+#@description The delta theta angle
+delta_theta : real as angle = 90.0 degree
+
+#@description The start phi angle
+start_phi : real as angle = 45.0 degree
+
+#@description The delta phi angle
+delta_phi : real as angle = 30.0 degree
+
+#@description The name of the material
+material.ref : string = "iron"
+
+#@description The visibility hidden flag for the display
+visibility.hidden : boolean = 0
+
+#@description The recommended color for the display
+visibility.color  : string  = "green"
+
+#@description The visibility hidden flag for the envelope
+visibility.hidden_envelope  : boolean = 0
+
+#@description The visibility hidden flag for the daughters volumes
+visibility.daughters.hidden : boolean = 0
+
+
+##############################################################
 [name="coil.model" type="geomtools::simple_shaped_model"]
 
 #@config Configuration of the coil made of an iron tube with an air cavity
@@ -315,30 +360,34 @@ visibility.color  : string  = "transparent"
 
 
 #@description The list of daughter volumes by labels
-internal_item.labels : string[5] = \
+internal_item.labels : string[6] = \
   "pcb"  \
   "daughter_board_a" \
   "daughter_board_b" \
   "daughter_board_c" \
-  "daughter_board_d"
+  "daughter_board_d" \
+  "dummy"
 
 internal_item.model.pcb              : string = "board_pcb.model"
 internal_item.model.daughter_board_a : string = "mezzanine.model"
 internal_item.model.daughter_board_b : string = "mezzanine.model"
 internal_item.model.daughter_board_c : string = "mezzanine.model"
 internal_item.model.daughter_board_d : string = "mezzanine.model"
+internal_item.model.dummy            : string = "ball.model"
 
 internal_item.placement.pcb              : string = "  0   0  -3 (mm)"
 internal_item.placement.daughter_board_a : string = "+30  15  +5 (mm)"
 internal_item.placement.daughter_board_b : string = "+30 -60  +5 (mm)"
 internal_item.placement.daughter_board_c : string = "-50 -10  +5 (mm) / z 90 (deg)"
 internal_item.placement.daughter_board_d : string = "+30  70  +5 (mm)"
+internal_item.placement.dummy            : string = " 0   0  +30 (mm)"
 
 mapping.daughter_id.pcb              : string = "[board_pcb.gc]"
 mapping.daughter_id.daughter_board_a : string = "[mezzanine.gc:daughter=0]"
 mapping.daughter_id.daughter_board_b : string = "[mezzanine.gc:daughter=1]"
 mapping.daughter_id.daughter_board_c : string = "[mezzanine.gc:daughter=2]"
 mapping.daughter_id.daughter_board_d : string = "[mezzanine.gc:daughter=10]"
+mapping.daughter_id.dummy            : string = "[dummy.gc]"
 
 
 ###################################################

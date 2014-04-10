@@ -51,6 +51,30 @@ namespace genvtx {
     return get_mode () == utils::MODE_SURFACE;
   }
 
+  bool sphere_model_vg::is_surface_inner_side () const
+  {
+    return _surface_inner_side_;
+  }
+
+  bool sphere_model_vg::is_surface_outer_side () const
+  {
+    return _surface_outer_side_;
+  }
+
+  void sphere_model_vg::set_surface_inner_side (bool s_)
+  {
+    DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
+    _surface_inner_side_ = s_;
+    return;
+  }
+
+  void sphere_model_vg::set_surface_outer_side (bool s_)
+  {
+    DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
+    _surface_outer_side_ = s_;
+    return;
+  }
+
   void sphere_model_vg::set_skin_skip (double skin_skip_)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
@@ -150,6 +174,8 @@ namespace genvtx {
     // Internal reset:
     utils::origin_invalidate (_origin_rules_);
     _mode_           = utils::MODE_INVALID;
+    _surface_inner_side_ = false;
+    _surface_outer_side_ = false;
     _skin_skip_ = 0.0;
     _skin_thickness_ = 0.0;
     if (_sphere_vg_.is_initialized()) _sphere_vg_.reset ();
@@ -186,7 +212,7 @@ namespace genvtx {
   }
 
   void sphere_model_vg::_shoot_vertex_spheres (mygsl::rng & random_,
-                                          geomtools::vector_3d & vertex_)
+                                               geomtools::vector_3d & vertex_)
   {
     double ran_w = random_.uniform ();
     int index = -1;
@@ -224,10 +250,8 @@ namespace genvtx {
     DT_THROW_IF (mapping_ptr == 0, std::logic_error,
                  "No available geometry mapping was found in vertex generator '" << get_name() << "' !");
 
-    //DT_LOG_FATAL(get_logging_priority(), "*** Origin rules : " << _origin_rules_);
     _src_selector_.set_id_mgr (get_geom_manager ().get_id_mgr ());
     _src_selector_.initialize (_origin_rules_);
-    //_src_selector_.dump (clog, "genvtx::sphere_model_vg::initialize: ID selector:");
 
     const geomtools::mapping & the_mapping = *mapping_ptr;
     const geomtools::geom_info_dict_type & geom_infos
@@ -301,8 +325,14 @@ namespace genvtx {
         }
       }
     }
+
+    int surface_mask = 0;
     if (is_mode_surface ()) {
       _sphere_vg_.set_mode (utils::MODE_SURFACE);
+      if (_surface_inner_side_) surface_mask |= geomtools::sphere::FACE_INNER_SIDE;
+      if (_surface_outer_side_) surface_mask |= geomtools::sphere::FACE_OUTER_SIDE;
+      // ...
+      _sphere_vg_.set_surface_mask (surface_mask);
     } else {
       _sphere_vg_.set_mode (utils::MODE_BULK);
     }
@@ -328,7 +358,7 @@ namespace genvtx {
     //_sphere_vg_.tree_dump(std::cerr, "Sphere VG: ", "***** DEVEL ***** ");
     double weight = 0.0;
     if (is_mode_surface ()) {
-      weight = sphere_shape.get_surface();
+      weight = sphere_shape.get_surface(surface_mask);
     } else {
       weight = sphere_shape.get_volume();
     }
@@ -377,6 +407,8 @@ namespace genvtx {
     std::string origin_rules;
     utils::origin_invalidate (origin_rules);
     std::string mode_str;
+    bool surface_inner_side   = false;
+    bool surface_outer_side   = false;
     double lunit = CLHEP::mm;
     double skin_skip = 0.0 * CLHEP::mm;
     double skin_thickness = 0.0 * CLHEP::mm;
@@ -405,6 +437,27 @@ namespace genvtx {
     if (mode_str == "bulk") mode = utils::MODE_BULK;
     if (mode_str == "surface") mode = utils::MODE_SURFACE;
 
+    if (mode == utils::MODE_SURFACE) {
+      if (setup_.has_key ("mode.surface.inner_side")) {
+        surface_inner_side = setup_.fetch_boolean ("mode.surface.inner_side");
+      }
+      if (setup_.has_key ("mode.surface.outer_side")) {
+        surface_outer_side = setup_.fetch_boolean ("mode.surface.outer_side");
+      }
+      // if (setup_.has_key ("mode.surface.phi_start")) {
+      //   surface_phi_start = setup_.fetch_boolean ("mode.surface.phi_start");
+      // }
+      // if (setup_.has_key ("mode.surface.phi_stop")) {
+      //   surface_phi_stop = setup_.fetch_boolean ("mode.surface.phi_stop");
+      // }
+      bool surface_all =
+        surface_inner_side || surface_outer_side
+        // || surface_bottom || surface_top
+        ;
+      DT_THROW_IF (! surface_all, std::logic_error,
+                   "Missing some activated surface(s) property in vertex generator '" << get_name() << "' !");
+    }
+
     if (setup_.has_key ("skin_skip")) {
       skin_skip = setup_.fetch_real ("skin_skip");
       if (! setup_.has_explicit_unit ("skin_skip")) skin_skip *= lunit;
@@ -419,6 +472,12 @@ namespace genvtx {
     set_skin_thickness(skin_thickness);
     set_origin_rules (origin_rules);
     set_mode (mode);
+    if (is_mode_surface ()) {
+      set_surface_inner_side (surface_inner_side);
+      set_surface_outer_side (surface_outer_side);
+      // set_surface_bottom (surface_bottom);
+      // set_surface_top (surface_top);
+    }
 
     _init_ ();
     _initialized_ = true;
@@ -436,6 +495,12 @@ namespace genvtx {
     this->i_vertex_generator::tree_dump (out_, title_, indent_, true);
     out_ << indent << du::i_tree_dumpable::tag
          << "Mode           : '" << _mode_ << "'" << std::endl;
+    if (is_mode_surface ()) {
+      out_ << indent << du::i_tree_dumpable::tag
+           << "Surface inner side   : " << _surface_inner_side_ << std::endl;
+      out_ << indent << du::i_tree_dumpable::tag
+           << "Surface outer side   : " << _surface_outer_side_ << std::endl;
+    }
     out_ << indent << du::i_tree_dumpable::tag
          << "Skin skip      : " << _skin_skip_ / CLHEP::mm << std::endl;
     out_ << indent << du::i_tree_dumpable::tag
