@@ -18,16 +18,18 @@
  *
  */
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
 #include <string>
 
+// Third party:
+// - Boost
 #include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
 #include <boost/foreach.hpp>
 #include <boost/scoped_ptr.hpp>
-
 // - Bayeux
 #include <bayeux/bayeux.h>
 #include <datatools/properties.h>
