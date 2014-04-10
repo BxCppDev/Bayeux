@@ -46,9 +46,25 @@ namespace genvtx {
 
     bool is_surface_outer_side () const;
 
+    bool is_surface_start_phi_side () const;
+
+    bool is_surface_stop_phi_side () const;
+
+    bool is_surface_start_theta_side () const;
+
+    bool is_surface_stop_theta_side () const;
+
     void set_surface_inner_side (bool);
 
     void set_surface_outer_side (bool);
+
+    void set_surface_start_phi_side (bool);
+
+    void set_surface_stop_phi_side (bool);
+
+    void set_surface_start_theta_side (bool);
+
+    void set_surface_stop_theta_side (bool);
 
     void set_skin_skip (double skin_skip_);
 
@@ -120,6 +136,10 @@ namespace genvtx {
     int                     _mode_;           //!< Mode : "bulk" of "surface"
     bool                    _surface_inner_side_;    //!< Flag for inner side surface generation mode
     bool                    _surface_outer_side_;    //!< Flag for outer side surface generation mode
+    bool                    _surface_start_phi_side_;   //!< Flag for start phi side surface generation mode
+    bool                    _surface_stop_phi_side_;    //!< Flag for stop phi side surface generation mode
+    bool                    _surface_start_theta_side_;   //!< Flag for start theta side surface generation mode
+    bool                    _surface_stop_theta_side_;    //!< Flag for stop theta side surface generation mode
     double                  _skin_skip_;      //!< Skip (normal to the surface) to an effective position of the skin relative to the surface of the sphere
     double                  _skin_thickness_; //!< Intrinsic thickness of the surface
     genvtx::sphere_vg       _sphere_vg_;         //!< Embeded vertex generator from a sphere

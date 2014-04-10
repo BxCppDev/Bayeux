@@ -95,10 +95,13 @@ namespace genvtx {
 
   private:
 
+    /// Internal initialization
     void _init_ ();
 
+    /// Internal reset
     void _reset_ ();
 
+    /// Set default attributes
     void _set_defaults_ ();
 
   private:

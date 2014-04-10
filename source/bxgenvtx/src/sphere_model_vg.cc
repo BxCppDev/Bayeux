@@ -61,6 +61,26 @@ namespace genvtx {
     return _surface_outer_side_;
   }
 
+  bool sphere_model_vg::is_surface_start_phi_side () const
+  {
+    return _surface_start_phi_side_;
+  }
+
+  bool sphere_model_vg::is_surface_stop_phi_side () const
+  {
+    return _surface_stop_phi_side_;
+  }
+
+  bool sphere_model_vg::is_surface_start_theta_side () const
+  {
+    return _surface_start_theta_side_;
+  }
+
+  bool sphere_model_vg::is_surface_stop_theta_side () const
+  {
+    return _surface_stop_theta_side_;
+  }
+
   void sphere_model_vg::set_surface_inner_side (bool s_)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
@@ -72,6 +92,34 @@ namespace genvtx {
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
     _surface_outer_side_ = s_;
+    return;
+  }
+
+  void sphere_model_vg::set_surface_start_phi_side (bool s_)
+  {
+    DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
+    _surface_start_phi_side_ = s_;
+    return;
+  }
+
+  void sphere_model_vg::set_surface_stop_phi_side (bool s_)
+  {
+    DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
+    _surface_stop_phi_side_ = s_;
+    return;
+  }
+
+  void sphere_model_vg::set_surface_start_theta_side (bool s_)
+  {
+    DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
+    _surface_start_theta_side_ = s_;
+    return;
+  }
+
+  void sphere_model_vg::set_surface_stop_theta_side (bool s_)
+  {
+    DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
+    _surface_stop_theta_side_ = s_;
     return;
   }
 
@@ -176,6 +224,10 @@ namespace genvtx {
     _mode_           = utils::MODE_INVALID;
     _surface_inner_side_ = false;
     _surface_outer_side_ = false;
+    _surface_start_phi_side_ = false;
+    _surface_stop_phi_side_ = false;
+    _surface_start_theta_side_ = false;
+    _surface_stop_theta_side_ = false;
     _skin_skip_ = 0.0;
     _skin_thickness_ = 0.0;
     if (_sphere_vg_.is_initialized()) _sphere_vg_.reset ();
@@ -331,7 +383,10 @@ namespace genvtx {
       _sphere_vg_.set_mode (utils::MODE_SURFACE);
       if (_surface_inner_side_) surface_mask |= geomtools::sphere::FACE_INNER_SIDE;
       if (_surface_outer_side_) surface_mask |= geomtools::sphere::FACE_OUTER_SIDE;
-      // ...
+      if (_surface_start_phi_side_) surface_mask |= geomtools::sphere::FACE_START_PHI_SIDE;
+      if (_surface_stop_phi_side_) surface_mask |= geomtools::sphere::FACE_STOP_PHI_SIDE;
+      if (_surface_start_theta_side_) surface_mask |= geomtools::sphere::FACE_START_THETA_SIDE;
+      if (_surface_stop_theta_side_) surface_mask |= geomtools::sphere::FACE_STOP_THETA_SIDE;
       _sphere_vg_.set_surface_mask (surface_mask);
     } else {
       _sphere_vg_.set_mode (utils::MODE_BULK);
@@ -409,6 +464,10 @@ namespace genvtx {
     std::string mode_str;
     bool surface_inner_side   = false;
     bool surface_outer_side   = false;
+    bool surface_start_phi_side   = false;
+    bool surface_stop_phi_side    = false;
+    bool surface_start_theta_side = false;
+    bool surface_stop_theta_side  = false;
     double lunit = CLHEP::mm;
     double skin_skip = 0.0 * CLHEP::mm;
     double skin_thickness = 0.0 * CLHEP::mm;
@@ -444,15 +503,22 @@ namespace genvtx {
       if (setup_.has_key ("mode.surface.outer_side")) {
         surface_outer_side = setup_.fetch_boolean ("mode.surface.outer_side");
       }
-      // if (setup_.has_key ("mode.surface.phi_start")) {
-      //   surface_phi_start = setup_.fetch_boolean ("mode.surface.phi_start");
-      // }
-      // if (setup_.has_key ("mode.surface.phi_stop")) {
-      //   surface_phi_stop = setup_.fetch_boolean ("mode.surface.phi_stop");
-      // }
+      if (setup_.has_key ("mode.surface.start_phi_side")) {
+        surface_start_phi_side = setup_.fetch_boolean ("mode.surface.start_phi_side");
+      }
+      if (setup_.has_key ("mode.surface.stop_phi_side")) {
+        surface_stop_phi_side = setup_.fetch_boolean ("mode.surface.stop_phi_side");
+      }
+      if (setup_.has_key ("mode.surface.start_theta_side")) {
+        surface_start_theta_side = setup_.fetch_boolean ("mode.surface.start_theta_side");
+      }
+      if (setup_.has_key ("mode.surface.stop_theta_side")) {
+        surface_stop_theta_side = setup_.fetch_boolean ("mode.surface.stop_theta_side");
+      }
       bool surface_all =
         surface_inner_side || surface_outer_side
-        // || surface_bottom || surface_top
+        || surface_start_phi_side || surface_stop_phi_side
+        || surface_start_theta_side || surface_stop_theta_side
         ;
       DT_THROW_IF (! surface_all, std::logic_error,
                    "Missing some activated surface(s) property in vertex generator '" << get_name() << "' !");
@@ -475,8 +541,10 @@ namespace genvtx {
     if (is_mode_surface ()) {
       set_surface_inner_side (surface_inner_side);
       set_surface_outer_side (surface_outer_side);
-      // set_surface_bottom (surface_bottom);
-      // set_surface_top (surface_top);
+      set_surface_start_phi_side (surface_start_phi_side);
+      set_surface_stop_phi_side (surface_stop_phi_side);
+      set_surface_start_theta_side (surface_start_theta_side);
+      set_surface_stop_theta_side (surface_stop_theta_side);
     }
 
     _init_ ();
@@ -497,9 +565,17 @@ namespace genvtx {
          << "Mode           : '" << _mode_ << "'" << std::endl;
     if (is_mode_surface ()) {
       out_ << indent << du::i_tree_dumpable::tag
-           << "Surface inner side   : " << _surface_inner_side_ << std::endl;
+           << "Surface inner side       : " << _surface_inner_side_ << std::endl;
       out_ << indent << du::i_tree_dumpable::tag
-           << "Surface outer side   : " << _surface_outer_side_ << std::endl;
+           << "Surface outer side       : " << _surface_outer_side_ << std::endl;
+      out_ << indent << du::i_tree_dumpable::tag
+           << "Surface start phi side   : " << _surface_start_phi_side_ << std::endl;
+      out_ << indent << du::i_tree_dumpable::tag
+           << "Surface stop phi side    : " << _surface_stop_phi_side_ << std::endl;
+      out_ << indent << du::i_tree_dumpable::tag
+           << "Surface start theta side : " << _surface_start_theta_side_ << std::endl;
+      out_ << indent << du::i_tree_dumpable::tag
+           << "Surface stop theta side  : " << _surface_stop_theta_side_ << std::endl;
     }
     out_ << indent << du::i_tree_dumpable::tag
          << "Skin skip      : " << _skin_skip_ / CLHEP::mm << std::endl;

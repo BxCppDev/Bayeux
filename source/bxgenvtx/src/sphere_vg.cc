@@ -202,6 +202,14 @@ namespace genvtx {
           surface_mask |= geomtools::sphere::FACE_OUTER_SIDE;
         } else if (surfaces[i] == "inner_side") {
           surface_mask |= geomtools::sphere::FACE_INNER_SIDE;
+        } else if (surfaces[i] == "start_phi_side") {
+          surface_mask |= geomtools::sphere::FACE_START_PHI_SIDE;
+        } else if (surfaces[i] == "stop_phi_side") {
+          surface_mask |= geomtools::sphere::FACE_STOP_PHI_SIDE;
+        } else if (surfaces[i] == "start_theta_side") {
+          surface_mask |= geomtools::sphere::FACE_START_THETA_SIDE;
+        } else if (surfaces[i] == "stop_theta_side") {
+          surface_mask |= geomtools::sphere::FACE_STOP_THETA_SIDE;
         }
       }
     }
@@ -258,11 +266,13 @@ namespace genvtx {
       _sum_weight_[4] = the_sphere->get_surface(_surface_mask_ & geomtools::sphere::FACE_START_THETA_SIDE);
       _sum_weight_[5] = the_sphere->get_surface(_surface_mask_ & geomtools::sphere::FACE_STOP_THETA_SIDE);
       for (size_t i = 0; i < 6; i++) {
+        DT_LOG_TRACE (datatools::logger::PRIO_TRACE, "Surface [" << i << "] = " << _sum_weight_[i]);
         _sum_weight_[i] /= s;
         if (i > 0) {
           _sum_weight_[i] += _sum_weight_[i - 1];
         }
         DT_LOG_TRACE (get_logging_priority(), "Surface weight [" << i << "] = " << _sum_weight_[i]);
+        DT_LOG_TRACE (datatools::logger::PRIO_TRACE, "Surface weight [" << i << "] = " << _sum_weight_[i]);
       }
     }
     return;
@@ -363,8 +373,43 @@ namespace genvtx {
                          theta_min, theta_max,
                          phi_min, phi_max,
                          vertex_);
+      } else if (r0 < _sum_weight_[2]) {
+        // Start phi surface:
+        double r_max = the_sphere->get_r_min();
+        double r_min = the_sphere->get_r_max();
+        randomize_sphere(random_,
+                         r_min, r_max,
+                         theta_min, theta_max,
+                         phi_min, phi_min,
+                         vertex_);
+      } else if (r0 < _sum_weight_[3]) {
+        // Stop phi surface:
+        double r_max = the_sphere->get_r_min();
+        double r_min = the_sphere->get_r_max();
+        randomize_sphere(random_,
+                         r_min, r_max,
+                         theta_min, theta_max,
+                         phi_max, phi_max,
+                         vertex_);
+      } else if (r0 < _sum_weight_[4]) {
+        // Start theta surface:
+        double r_max = the_sphere->get_r_min();
+        double r_min = the_sphere->get_r_max();
+        randomize_sphere(random_,
+                         r_min, r_max,
+                         theta_min, theta_min,
+                         phi_min, phi_max,
+                         vertex_);
       } else {
-        DT_THROW_IF(true, std::logic_error, "Ranomization of vertex on other surfaces of the sphere in not implemented yet!");
+        // Stop theta surface:
+        double r_max = the_sphere->get_r_min();
+        double r_min = the_sphere->get_r_max();
+        randomize_sphere(random_,
+                         r_min, r_max,
+                         theta_max, theta_max,
+                         phi_min, phi_max,
+                         vertex_);
+        //        DT_THROW_IF(true, std::logic_error, "Ranomization of vertex on other surfaces of the sphere in not implemented yet!");
       }
     }
 
