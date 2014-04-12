@@ -199,11 +199,11 @@ namespace genbb {
       cM=0.73e-2;
       p=prng_()*(cg+cK+cL+cM);
       if (p <= cg) {
-        decay0_gamma(prng_, event_, Egamma,tclev,thlev,tdlev);
+        decay0_gamma(prng_, event_, Egamma, tclev, thlev, tdlev);
         ipg1064 = &event_.grab_particles().back();
       }
       else if (p <= cg+cK) {
-        decay0_electron(prng_, event_, Egamma-EbindK,tclev,thlev,tdlev);
+        decay0_electron(prng_, event_, Egamma-EbindK, tclev, thlev, tdlev);
         ipe1064 = &event_.grab_particles().back();
         PbAtShell(prng_, event_, 88,0.,0.,tdlev);
       }
@@ -215,7 +215,7 @@ namespace genbb {
         decay0_electron(prng_, event_, Egamma-EbindM,tclev,thlev,tdlev);
         ipe1064 = &event_.grab_particles().back();
         PbAtShell(prng_, event_, 3,0.,0.,tdlev);
-      };
+      }
       goto label_57000;
     label_89800  :
       thlev=0.;
@@ -301,7 +301,7 @@ namespace genbb {
       // coefficients are used.
       // Thanks to V.Vasilyev for correcting formula in previous DECAY0 version
       // for case of two conversion electrons emitted.
-      if (ipg1064 != 0 && ip570 != 0) {
+      if (ipg1064 != 0 && ipg570 != 0) {
         a2=0.231;
         a4=-0.023;
         ip1064=ipg1064;
@@ -311,7 +311,7 @@ namespace genbb {
         a2=0.223;
         a4=-0.020;
         ip1064=ipe1064;
-        ip570=ipe570;
+        ip570=ipg570;
       }
       else if (ipg1064 != 0 && ipe570 != 0) {
         a2=0.275;
