@@ -1615,8 +1615,8 @@ namespace genbb {
         if (_params_.debug) decay_event.tree_dump(std::clog, "Decay event: ", "DEBUG: ");
         _inspect(decay_event);
         count++;
-        const int modulo = _params_.print_modulo;
-        if ((count == 1) || (count % modulo) == 0 || count == max_count) {
+        const int modulo = (_params_.print_modulo > 0 ? _params_.print_modulo : 10);
+        if (count == 1 || count % modulo == 0 || count == max_count) {
           DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "Generated event #" << count);
         }
         if (count >= max_count) break;
