@@ -1,10 +1,11 @@
-/* foo.cc */
-
+// Ourselves:
 #include<foo.h>
 
+// This project:
 #include <datatools/units.h>
 #include <datatools/clhep_units.h>
 #include <datatools/exception.h>
+#include <datatools/logger.h>
 
 foo::foo() {
   initialized = false;
@@ -12,6 +13,7 @@ foo::foo() {
   what = "";
   datatools::invalidate(width);
   datatools::invalidate(weight);
+  datatools::invalidate(length);
   dummy = -1;
   tmpfile = "";
   _logging_ = false;
@@ -19,7 +21,7 @@ foo::foo() {
 }
 
 void foo::set_logging_priority(const datatools::logger::priority & p_) {
-  if (p_ != logger::PRIO_UNDEFINED) {
+  if (p_ != datatools::logger::PRIO_UNDEFINED) {
     _logging_ = true;
   } else {
     _logging_ = false;
@@ -31,6 +33,7 @@ void foo::initialize(const datatools::properties & config_) {
   if (_logging_) datatools_trace(_logging_level_, "Entering initialization...");
 
   double length_unit = CLHEP::cm; // implicit length unit
+  double weight_unit = CLHEP::g; // implicit weight unit
   bool hello = false;
 
   if (_logging_) datatools_notice(_logging_level_, "Parsing configuration parameters...");
@@ -74,7 +77,23 @@ void foo::initialize(const datatools::properties & config_) {
   const std::string width_key = "width";
   if (config_.has_key(width_key)) {
     width = config_.fetch_real(width_key);
-    width *= length_unit;
+    DT_THROW_IF(config_.has_explicit_unit(width_key),
+                std::logic_error,
+                "Explicit width unit is not allowed for the '"
+                << width_key << "' property!");
+    width *= length_unit; // force the implicit unit.
+  }
+
+  // Parse 'length' :
+  const std::string length_key = "length";
+  if (config_.has_key(length_key)) {
+    length = config_.fetch_real(length_key);
+    if (! config_.has_explicit_unit(length_key)) {
+      length *= length_unit;
+    }
+  }
+  if (! datatools::is_valid(length)) {
+    length = 6.0 * length_unit;
   }
 
   // Parse 'weight' :
@@ -83,7 +102,7 @@ void foo::initialize(const datatools::properties & config_) {
     weight = config_.fetch_real(weight_key);
     DT_THROW_IF(! config_.has_explicit_unit(weight_key),
                 std::logic_error,
-                "foo::initialize: Missing explicit weight unit for the '"
+                "Missing explicit weight unit for the '"
                 << weight_key << "' property!");
   }
 
@@ -125,9 +144,8 @@ void foo::initialize(const datatools::properties & config_) {
   if (config_.has_key(secret_key)) {
     secret = config_.fetch_integer(secret_key);
     if (secret > 3) {
-      if (_logging_)  datatools_warning(_logging_level_,
-                        "Ha ! Ha ! "
-                        << "You have found how to use my secret property !");
+      if (_logging_) datatools_warning(_logging_level_,
+                                       "Ha ! Ha ! You have found how to use my secret property !");
       hello = true;
     }
   }
@@ -162,8 +180,8 @@ void foo::reset() {
 }
 
 void foo::dump(std::ostream & out_) const {
-  out_ << "|-- Initialized : " << initialized << std::endl;
-  out_ << "|-- Logging     : " << _logging_ << std::endl;
+  out_ << "|-- Initialized : " << (initialized ? "yes" : "no") << std::endl;
+  out_ << "|-- Logging     : " << (_logging_ ? "activated" : "deactivated")<< std::endl;
   out_ << "|-- Logging threshold: \"" << datatools::logger::get_priority_label(_logging_level_) << '"' << std::endl;
   out_ << "|-- Name : \"" << name << "\"" << std::endl;
   out_ << "|-- What : \"" << what << "\"" << std::endl;
@@ -183,6 +201,7 @@ void foo::dump(std::ostream & out_) const {
   }
   out_ << "|-- Dummy : " <<dummy << " " << std::endl;
   out_ << "|-- Width : " << width / CLHEP::mm << " mm" << std::endl;
+  out_ << "|-- Length : " << length / CLHEP::mm << " mm" << std::endl;
   out_ << "`-- Weight : "
        << weight / datatools::units::get_unit(datatools::units::get_default_unit_symbol_from_label("mass"))
        << " " << datatools::units::get_default_unit_symbol_from_label("mass")
@@ -207,6 +226,9 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
   // The class name :
   ocd_.set_class_name ("foo");
 
+  // The class name :
+  // ocd_.set_from ("foo");
+
   // The class terse description :
   ocd_.set_class_description ("A foo class");
 
@@ -225,6 +247,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_long_description("The allowed values are 0 (false) or 1 (true).")
+      .set_default_value_boolean(false)
       .add_example("Deactivation of the logging fonctionality::"
                    "                                \n"
                    "  logging : boolean = 0         \n"
@@ -242,6 +265,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_traits(datatools::TYPE_STRING)
       .set_triggered_by_flag("logging")
       .set_mandatory(true)
+      .set_default_value_string("fatal")
       .set_long_description("A label taken from:             \n"
                             "                                \n"
                             "* ``fatal``                     \n"
@@ -254,7 +278,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
                             "* ``trace``                     \n"
                             "                                \n"
                             "It is mandatory if the 'logging' flag property is set. \n")
-      .add_example("Activation of the logging fonctionality with ``notice`` level::"
+      .add_example("Activation of the logging fonctionality with ``notice`` level::\n"
                    "                                      \n"
                    "  logging : boolean = 1               \n"
                    "  logging.level : string = \"notice\" \n"
@@ -275,11 +299,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_long_description("A character string that helps to identify the foo \n"
                             "instance within a program.                        \n"
                             )
-      .add_example(         "The object name::                                 \n"
-                            "                                                  \n"
-                            "  name : string = \"bar\"                         \n"
-                            "                                                  \n"
-                            )
+      .add_example("The object name::                                 \n"
+                   "                                                  \n"
+                   "  name : string = \"bar\"                         \n"
+                   "                                                  \n"
+                   )
       ;
   }
 
@@ -288,18 +312,18 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
     datatools::configuration_property_description & cpd
       = ocd_.add_property_info();
     cpd.set_name_pattern("what")
-      .set_terse_description("The foo object's embeded description string")
+      .set_terse_description("The foo object's embedded description string")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
       .set_const(true)
       .set_long_description("An  user-friendly description character string \n"
                             "It may spread over several lines.              \n"
                             )
-      .add_example(         "The description string::                       \n"
-                            "                                               \n"
-                            "  what : string = \"the description of some resource\"\n"
-                            "                                               \n"
-                            )
+      .add_example("The description string::                       \n"
+                   "                                               \n"
+                   "  what : string = \"the description of some resource\"\n"
+                   "                                               \n"
+                   )
       ;
   }
 
@@ -314,13 +338,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_mandatory(true)
       .set_const(true)
       .set_long_description("A valid filesystem path to a file. \n"
-                            "instance within a program.                        \n"
+                            "instance within a program.         \n"
                             )
-      .add_example(         "The name of a temp file::                         \n"
-                            "                                                  \n"
-                            "  tmpfile : string as path = \"/tmp/foo.tmp\"     \n"
-                            "                                                  \n"
-                            )
+      .add_example("The name of a temp file: ::                       \n"
+                   "                                                  \n"
+                   "  tmpfile : string as path = \"/tmp/foo.tmp\"     \n"
+                   "                                                  \n"
+                   )
       ;
   }
 
@@ -334,11 +358,35 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_long_description("The width of the foo object is expressed in       \n"
                             "implicit length unit (cm).                        \n"
                             )
-      .add_example(         "A width::                                         \n"
-                            "                                                  \n"
-                            "  width : real = 1.3                              \n"
-                            "                                                  \n"
+      .add_example("The value of the width using implicit unit::     \n"
+                   "                                                 \n"
+                   "  width : real = 1.3                             \n"
+                   "                                                 \n"
+                   )
+      ;
+  }
+
+  {
+    // Description of the 'length' configuration property :
+    datatools::configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("length")
+      .set_terse_description("The length of the foo object")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(false)
+      .set_default_value_real(6.0 * CLHEP::cm, "cm")
+      .set_long_description("The length of the foo object may be expressed in   \n"
+                            "explicit length unit. Otherwise it uses cm.        \n"
                             )
+      .add_example("The value of the length using implicit unit::     \n"
+                   "                                                  \n"
+                   " length : real = 1.3                              \n"
+                   "                                                  \n"
+                   )
+      .add_example("The value of the length using explicit unit::     \n"
+                   "                                                  \n"
+                   " length : real = 13.0 mm                          \n"
+                   "                                                  \n"
+                   )
       ;
   }
 
@@ -349,14 +397,14 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_terse_description("The weight of the foo object")
       .set_traits(datatools::TYPE_REAL)
       .set_mandatory(true)
-      .set_long_description("The weight of the foo object is explicitely       \n"
-                            "passed with its units.                            \n"
+      .set_long_description("The weight of the foo object is explicitely \n"
+                            "passed with its units.                      \n"
                             )
-      .add_example(         "A weight::                                        \n"
-                            "                                                  \n"
-                            "  weight : real as mass = 34.1 kg                 \n"
-                            "                                                  \n"
-                            )
+      .add_example("The value of the weight using explicit unit::     \n"
+                   "                                                  \n"
+                   "  weight : real as mass = 34.1 kg                 \n"
+                   "                                                  \n"
+                   )
       .set_explicit_unit(true)
       .set_unit_label("mass")
       ;
@@ -373,12 +421,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_long_description("A list of string labels representing external objects      \n"
                             "addressed through their name from an external dictionnary. \n"
                             )
-      .add_example(
-                            "Two labels::                                               \n"
-                            "                                                           \n"
-                            "  labels : string[2] = \"Obj1\" \"Obj2\"                   \n"
-                            "                                                           \n"
-                            )
+      .add_example("Define two labels::                                        \n"
+                   "                                                           \n"
+                   "  labels : string[2] = \"Obj1\" \"Obj2\"                   \n"
+                   "                                                           \n"
+                   )
       ;
   }
 
@@ -392,16 +439,15 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_long_description("The label of the object is picked from the 'labels' \n"
                             "vector of properties.                               \n"
                             )
-      .add_example(
-                            "A set of interdependant parameters::                       \n"
-                            "                                                           \n"
-                            "  labels : string[2] = \"Obj1\" \"Obj2\"                   \n"
-                            "  objects.Obj1.value : integer = 3                         \n"
-                            "  objects.Obj2.value : integer = 5                         \n"
-                            "                                                           \n"
-                            "This property is mandatory if the ``labels`` has been      \n"
-                            "provided.                                                  \n"
-                            )
+      .add_example("A set of interdependant parameters::                       \n"
+                   "                                                           \n"
+                   "  labels : string[2] = \"Obj1\" \"Obj2\"                   \n"
+                   "  objects.Obj1.value : integer = 3                         \n"
+                   "  objects.Obj2.value : integer = 5                         \n"
+                   "                                                           \n"
+                   "This property is mandatory if the ``labels`` has been      \n"
+                   "provided.                                                  \n"
+                   )
       ;
   }
 
@@ -416,14 +462,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
                             "of string properties. If unspecified for a given label value,  \n"
                             "a default color is used.                                       \n"
                             )
-      .add_example(
-                            "A set of configuration parameters::                        \n"
-                            "                                                           \n"
-                            "  labels : string[2] = \"Obj1\" \"Obj2\"                   \n"
-                            "  # objects.Obj1.color : string = \"white\"                \n"
-                            "  objects.Obj2.color : string = \"red\"                    \n"
-                            "                                                           \n"
-                            )
+      .add_example("A set of configuration parameters::                        \n"
+                            "                                                  \n"
+                   "  labels : string[2] = \"Obj1\" \"Obj2\"                   \n"
+                   "  # objects.Obj1.color : string = \"white\"                \n"
+                   "  objects.Obj2.color : string = \"red\"                    \n"
+                   "                                                           \n"
+                   )
       ;
   }
 
@@ -478,6 +523,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
                                "  tmpfile : const string as path = \"/tmp/log.tmp\"\n"
                                "  width : real = 1.23                            \n"
                                "  weight : real as mass = 1.23 mg                \n"
+                               "  length : real = 4.56      # cm                 \n"
                                "  labels : string[2] = \"Obj0\" \"Obj1\"         \n"
                                "  objects.Obj0.value : integer = 67              \n"
                                "  objects.Obj1.value : integer = 12              \n"
@@ -505,5 +551,3 @@ DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
 
 // Registration macro for class 'foo' :
 DOCD_CLASS_SYSTEM_REGISTRATION(foo,"foo")
-
-/* end of foo.cc */

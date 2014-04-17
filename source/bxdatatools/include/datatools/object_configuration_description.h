@@ -114,7 +114,7 @@ public:
   configuration_property_description & set_section(const std::string & section_name_);
   configuration_property_description & set_default_value_boolean(bool);
   configuration_property_description & set_default_value_integer(int);
-  configuration_property_description & set_default_value_real(double);
+  configuration_property_description & set_default_value_real(double, const std::string & unit_symbol_ = "");
   configuration_property_description & set_default_value_string(const std::string &);
   configuration_property_description & set_default_array_size(int);
   configuration_property_description & add_example(const std::string &example_);
@@ -148,6 +148,7 @@ public:
   bool get_default_value_boolean() const;
   int get_default_value_integer() const;
   double get_default_value_real() const;
+  const std::string & get_default_value_real_unit() const;
   const std::string & get_default_value_string() const;
   bool has_default_array_size() const;
   int get_default_array_size() const;
@@ -191,14 +192,15 @@ private:
   bool         _const_;         /// Constness of the property's value
   bool         _path_;          /// Explicit path trait for STRING property
   bool         _explicit_unit_; /// Explicit unit trait for REAL property
-  std::string  _unit_label_;    /// Explicit unit label for REAL property with 'path' trait
-  std::string  _unit_symbol_;   /// Explicit unit symbol for REAL property with 'path' trait
+  std::string  _unit_label_;    /// Explicit unit label for REAL property with 'explicit unit' trait
+  std::string  _unit_symbol_;   /// Explicit unit symbol for REAL property with 'explicit unit' trait
   bool         _array_;              /// Array trait (any type)
   int          _array_fixed_size_;   /// Array fixed size (-1 if not fixed)
   int          _default_array_size_; /// Default array size (-1 if not set)
   boost::logic::tribool _default_value_boolean_; /// Default boolean value description
   int          _default_value_integer_;          /// Default integer value description
   double       _default_value_real_;             /// Default real value description
+  std::string  _default_value_real_unit_;        /// Default real value unit symbol
   std::string  _default_value_string_;           /// Default string value description
   bool         _mandatory_;                           /// Flag for a mandatory property
   bool         _complex_triggering_conditions_;       /// Flag for complex triggering conditions of the property that cannot be describe through the 'configuration_property_description' mechanism

@@ -30,14 +30,15 @@ struct foo {
 
   // Attributes (should be private but here this is just an example) :
  public:
-  bool initialized;
-  std::string name;
-  std::string what;
-  std::string tmpfile;
-  std::map<std::string, std::pair<int,std::string> > dict;
-  int dummy;
-  double width;
-  double weight;
+  bool initialized; /// Initialization flag
+  std::string name; /// Name
+  std::string what; /// Description
+  std::string tmpfile; /// Temporary filename
+  std::map<std::string, std::pair<int,std::string> > dict; /// A dictionary
+  int dummy; /// A dummy attributes
+  double width; /// Width
+  double weight; /// Weight
+  double length; /// Length
 
  private:
   bool _logging_;
@@ -55,5 +56,3 @@ struct foo {
 DOCD_CLASS_DECLARATION(foo)
 
 #endif // FOO_H_
-
-/* end of foo.h */

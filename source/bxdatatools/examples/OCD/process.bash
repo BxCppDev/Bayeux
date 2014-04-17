@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
 
+clean=1
+
+while [ -n "$1" ]; do
+    token="$1"
+    if [ "x${token}" = "x-C" ]; then
+	clean=0
+    fi
+    shift 1
+done
+
 which bxquery > /dev/null 2>&1
 if [ $? -ne 0 ]; then
     echo "ERROR: Missing Bayeux's bxquery !" >&2
@@ -64,15 +74,17 @@ fi
 
 ### firefox file://$(pwd)/foo_ocd.html &
 
-rm -f foo_ocd.html
-rm -f foo_ocd.rst
-rm -f ex_OCD.foo.doc.rst
-rm -f ex_OCD.foo.skeleton.conf
-rm -f ex_OCD.service_manager.doc.rst
-rm -f ex_OCD.service_manager.skeleton.conf
-rm -f ex_OCD
-rm -fr ./lib
-rm -fr ${build_dir}
+if [ ${clean} -eq 1 ]; then
+    rm -f foo_ocd.html
+    rm -f foo_ocd.rst
+    rm -f ex_OCD.foo.doc.rst
+    rm -f ex_OCD.foo.skeleton.conf
+    rm -f ex_OCD.service_manager.doc.rst
+    rm -f ex_OCD.service_manager.skeleton.conf
+    rm -f ex_OCD
+    rm -fr ./lib
+    rm -fr ${build_dir}
+fi
 
 my_exit 0
 

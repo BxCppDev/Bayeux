@@ -389,10 +389,11 @@ namespace datatools {
   }
 
   configuration_property_description &
-  configuration_property_description::set_default_value_real(double dv_)
+  configuration_property_description::set_default_value_real(double dv_, const std::string & unit_symbol_)
   {
     DT_THROW_IF(! is_real(), std::logic_error, "Not a real property description for the property with name pattern '" << get_name_pattern() << "' !");
     _default_value_real_ = dv_;
+    _default_value_real_unit_ = unit_symbol_;
     return *this;
   }
 
@@ -439,6 +440,12 @@ namespace datatools {
   configuration_property_description::get_default_value_real() const
   {
     return _default_value_real_;
+  }
+
+  const std::string &
+  configuration_property_description::get_default_value_real_unit() const
+  {
+    return _default_value_real_unit_;
   }
 
   const std::string &
@@ -728,7 +735,15 @@ namespace datatools {
       } else if (is_integer()) {
         out_ << "``" << get_default_value_integer() << "``";
       } else if (is_real()) {
-        out_ << "``" << get_default_value_real() << "``";
+        double val = get_default_value_real();
+        if (! get_default_value_real_unit().empty()) {
+          val /= datatools::units::get_unit(get_default_value_real_unit());
+        }
+        out_ << "``" << val;
+        if (! get_default_value_real_unit().empty()) {
+          out_ << " " << get_default_value_real_unit();
+        }
+        out_ << "``";
       } else if (is_string()) {
         out_ << "``\"" << get_default_value_string() << "\"``";
       }
