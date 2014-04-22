@@ -31,7 +31,6 @@ int main (int argc_, char ** argv_)
     std::clog << "Test program for the 'emfield::emfield_geom_plugin' class." << std::endl;
 
     bool   debug   = false;
-    bool   verbose = false;
     bool   plot    = false;
     double b_scale = 1.0;
 
@@ -42,9 +41,6 @@ int main (int argc_, char ** argv_)
         std::string option = token;
         if ((option == "-d") || (option == "--debug")) {
           debug = true;
-        }
-        else if ((option == "-v") || (option == "--verbose")) {
-          verbose = true;
         }
         else if ((option == "-p") || (option == "--plot")) {
           plot = true;
@@ -133,7 +129,7 @@ int main (int argc_, char ** argv_)
         std::string association_name = i->first;
         //std::cerr << "DEVEL: association = '" << association_name << "'  ";
         const emfield::geom_map::association_entry & e = i->second;
-        const geomtools::logical_volume & logvol = e.get_logvol();
+        //const geomtools::logical_volume & logvol = e.get_logvol();
         const emfield::base_electromagnetic_field & field = e.get_field();
         if (! field.is_magnetic_field()) continue;
         if ( association_name != "vessel" ) continue;
@@ -177,9 +173,9 @@ int main (int argc_, char ** argv_)
       geomtools::placement DD_pl;
       DD_pl.set_translation(0,0,0);
       GPD.add_display_data(DD, DD_pl);
-      int view_code = GPD.draw(geo_manager,
-                               visu_object_name,
-                               visu_depth);
+      /* int view_code = */ GPD.draw(geo_manager,
+                                     visu_object_name,
+                                     visu_depth);
     }
 
     std::clog << "The end." << std::endl;

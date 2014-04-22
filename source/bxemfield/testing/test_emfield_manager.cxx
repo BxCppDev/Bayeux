@@ -28,7 +28,6 @@ int main (int argc_, char ** argv_)
       clog << "Test program for the 'emfield::electromagnetic_field_manager' class." << endl;
 
       bool   debug   = false;
-      bool   verbose = false;
       bool   plot    = false;
       bool   plot2   = false;
       double e_scale = 1.0;
@@ -46,15 +45,11 @@ int main (int argc_, char ** argv_)
                 {
                   debug = true;
                 }
-              else if ((option == "-v") || (option == "--verbose"))
-                {
-                  verbose = true;
-                }
               else if ((option == "-p") || (option == "--plot"))
                 {
                   plot = true;
                 }
-             else if ((option == "-p2") || (option == "--plot2"))
+              else if ((option == "-p2") || (option == "--plot2"))
                 {
                   plot2 = true;
                 }
