@@ -75,7 +75,7 @@ int main (int argc_, char ** argv_)
       vg.initialize_simple();
       vg.tree_dump(clog, "Sphere vertex generator (side, skipped)");
       geomtools::vector_3d vertex;
-      for (int i = 0; i < nshoots; i++) {
+      for (int i = 0; i < (int) nshoots; i++) {
         vg.shoot_vertex(random, vertex);
         //if (vertex.x() < 0.0 && vertex.y() < 0.0) {
         geomtools::gnuplot_draw::basic_draw_point (cout, vertex, true);
@@ -98,7 +98,7 @@ int main (int argc_, char ** argv_)
       vg.tree_dump(clog, "Sphere vertex generator (bulk)");
       //nshoots = 50;
       geomtools::vector_3d vertex;
-      for (int i = 0; i < nshoots; i++) {
+      for (int i = 0; i < (int) nshoots; i++) {
         vg.shoot_vertex(random, vertex);
         //if (vertex.y() > 0.0) { // && vertex.x() > 0.0) {
         geomtools::gnuplot_draw::basic_draw_point(cout, vertex, true);
@@ -109,7 +109,7 @@ int main (int argc_, char ** argv_)
 
     {
       geomtools::vector_3d vertex;
-      for (int i = 0; i < nshoots/10; i++) {
+      for (int i = 0; i < (int) (nshoots/10); i++) {
         genvtx::randomize_sphere(random,
                                  0.6, 1.4,
                                  M_PI/5, M_PI/3,

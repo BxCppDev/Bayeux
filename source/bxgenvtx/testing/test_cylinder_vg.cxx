@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 // test_cylinder_vg.cxx
 
 #include <cstdlib>
@@ -12,50 +12,48 @@
 
 using namespace std;
 
-int main (int argc_, char ** argv_)
+int main (int /* argc_ */, char ** /* argv_ */)
 {
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'cylinder_vg'!" << endl; 
-  
-      bool debug = false;
+      clog << "Test program for class 'cylinder_vg'!" << endl;
 
-      int iarg = 1;
-      while (iarg < argc_)
-        {
-          string token = argv_[iarg];
-
-          if (token[0] == '-')
-            {
-               string option = token; 
-               if ((option == "-d") || (option == "--debug")) 
-                 {
-                   debug = true;
-                 }
-               else 
-                 { 
-                    clog << "warning: ignoring option '" << option << "'!" << endl; 
-                 }
-            }
-          else
-            {
-              string argument = token; 
-               { 
-                clog << "warning: ignoring argument '" << argument << "'!" << endl; 
-              }
-            }
-          iarg++;
-      }
+      // bool debug = false;
+      // int iarg = 1;
+      // while (iarg < argc_)
+      //   {
+      //     string token = argv_[iarg];
+      //     if (token[0] == '-')
+      //       {
+      //          string option = token;
+      //          if ((option == "-d") || (option == "--debug"))
+      //            {
+      //              debug = true;
+      //            }
+      //          else
+      //            {
+      //               clog << "warning: ignoring option '" << option << "'!" << endl;
+      //            }
+      //       }
+      //     else
+      //       {
+      //         string argument = token;
+      //          {
+      //           clog << "warning: ignoring argument '" << argument << "'!" << endl;
+      //         }
+      //       }
+      //     iarg++;
+      // }
 
       std::string       rng_id = "mt19937";
       unsigned long int rng_seed = 12345;
       mygsl::rng random (rng_id, rng_seed);
-         
+
       geomtools::cylinder c (2., 4.);
 
       genvtx::cylinder_vg vg;
-      vg.set_debug (debug);
+      //vg.set_debug (debug);
 
       {
         vg.set_cylinder (c);
@@ -70,8 +68,8 @@ int main (int argc_, char ** argv_)
         vg.initialize_simple ();
         vg.tree_dump (clog, "Cylinder vertex generator (side/bottom surface)");
         size_t nshoots = 2000;
-        geomtools::vector_3d vertex;      
-        for (int i = 0; i < nshoots; i++)
+        geomtools::vector_3d vertex;
+        for (int i = 0; i < (int) nshoots; i++)
           {
             vg.shoot_vertex (random, vertex);
             geomtools::gnuplot_draw::basic_draw_point (cout, vertex, true);
@@ -88,8 +86,8 @@ int main (int argc_, char ** argv_)
         vg.initialize_simple ();
         vg.tree_dump (clog, "Cylinder vertex generator (bulk)");
         size_t nshoots = 5000;
-        geomtools::vector_3d vertex;     
-        for (int i = 0; i < nshoots; i++)
+        geomtools::vector_3d vertex;
+        for (int i = 0; i < (int) nshoots; i++)
           {
             vg.shoot_vertex (random, vertex);
             geomtools::gnuplot_draw::basic_draw_point (cout, vertex, true);
@@ -98,7 +96,7 @@ int main (int argc_, char ** argv_)
       }
 
       {
-        geomtools::vector_3d pos; 
+        geomtools::vector_3d pos;
         geomtools::rotation_3d rot;
         geomtools::gnuplot_draw::draw_cylinder (cout, pos, rot, vg.get_cylinder ());
         cout << endl << endl;
@@ -107,15 +105,13 @@ int main (int argc_, char ** argv_)
     }
   catch (exception & x)
     {
-      cerr << "error: " << x.what () << endl; 
+      cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);
 }
-
-// end of test_cylinder_vg.cxx

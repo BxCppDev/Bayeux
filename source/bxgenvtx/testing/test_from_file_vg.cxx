@@ -18,19 +18,19 @@ int main (int argc_, char ** argv_)
   try {
     clog << "Test program for class 'genvtx::from_file_vg'!" << endl;
 
-    bool debug = false;
+    // bool debug = false;
     std::string input_vertex_file;
     int iarg = 1;
     while (iarg < argc_) {
       string token = argv_[iarg];
 
       if (token[0] == '-') {
-        string option = token;
-        if ((option == "-d") || (option == "--debug")) {
-          debug = true;
-        } else {
-          clog << "warning: ignoring option '" << option << "'!" << endl;
-        }
+        // string option = token;
+        // if ((option == "-d") || (option == "--debug")) {
+        //   debug = true;
+        // } else {
+        //   clog << "warning: ignoring option '" << option << "'!" << endl;
+        // }
       } else {
         string argument = token;
         if (input_vertex_file.empty()) {

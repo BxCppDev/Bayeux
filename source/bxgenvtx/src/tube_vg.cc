@@ -203,10 +203,10 @@ namespace genvtx {
         if (! setup_.has_explicit_unit("tube.z")) tube_z *= lunit;
       }
 
-      geomtools::tube cyl (tube_inner_r,
-                           tube_outer_r,
-                           tube_z);
-      set_tube (cyl);
+      geomtools::tube cyl(tube_inner_r,
+                          tube_outer_r,
+                          tube_z);
+      set_tube(cyl);
     }
 
     _init_ ();

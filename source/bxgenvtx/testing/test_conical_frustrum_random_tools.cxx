@@ -29,19 +29,20 @@ int main (int argc_, char ** argv_)
   try {
     clog << "Test program for the 'genvtx' conical_frustrum_random_tools library." << endl;
 
-    bool debug = false;
-    bool verbose = false;
+    // bool debug = false;
+    // bool verbose = false;
     bool draw = false;
     int iarg = 1;
     while (iarg < argc_) {
       string token = argv_[iarg];
       if (token[0] == '-') {
         string option = token;
-        if ((option == "-d") || (option == "--debug")) {
-          debug = true;
-        } else if ((option == "-v") || (option == "--verbose")) {
-          verbose = true;
-        } else if ((option == "-D") || (option == "--draw")) {
+        // if ((option == "-d") || (option == "--debug")) {
+        //   debug = true;
+        // } else if ((option == "-v") || (option == "--verbose")) {
+        //   verbose = true;
+        // } else
+        if ((option == "-D") || (option == "--draw")) {
           draw = true;
         } else {
           clog << "warning: ignoring option '" << option << "'!" << endl;

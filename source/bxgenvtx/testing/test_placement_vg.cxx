@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 // test_placement_vg.cxx
 
 #include <cstdlib>
@@ -19,52 +19,51 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'placement_vg'!" << endl; 
-  
-      bool debug = false;
+      clog << "Test program for class 'placement_vg'!" << endl;
+
+      // bool debug = false;
 
       int iarg = 1;
       while (iarg < argc_)
         {
           string token = argv_[iarg];
-
           if (token[0] == '-')
             {
-               string option = token; 
-               if ((option == "-d") || (option == "--debug")) 
-                 {
-                   debug = true;
-                 }
-               else 
-                 { 
-                    clog << "warning: ignoring option '" << option << "'!" << endl; 
-                 }
+               // string option = token;
+               // if ((option == "-d") || (option == "--debug"))
+               //   {
+               //     debug = true;
+               //   }
+               // else
+               //   {
+               //      clog << "warning: ignoring option '" << option << "'!" << endl;
+               //   }
             }
           else
             {
-              string argument = token; 
-              { 
-                clog << "warning: ignoring argument '" << argument << "'!" << endl; 
+              string argument = token;
+              {
+                clog << "warning: ignoring argument '" << argument << "'!" << endl;
               }
             }
           iarg++;
       }
-    
+
       std::string       rng_id = "mt19937";
       unsigned long int rng_seed = 12345;
       mygsl::rng random (rng_id, rng_seed);
-         
+
       // define a box and its placement:
       geomtools::box b (4., 2., 3.);
-      geomtools::placement pl (2., 3., 4., 
-                               30. * CLHEP::degree, 
-                               20. * CLHEP::degree, 
-                               -45. * CLHEP::degree); 
+      geomtools::placement pl (2., 3., 4.,
+                               30. * CLHEP::degree,
+                               20. * CLHEP::degree,
+                               -45. * CLHEP::degree);
       {
-        // draw it:      
-        geomtools::gnuplot_draw::draw_box (cout, 
-                                           pl.get_translation (), 
-                                           pl.get_rotation (), 
+        // draw it:
+        geomtools::gnuplot_draw::draw_box (cout,
+                                           pl.get_translation (),
+                                           pl.get_rotation (),
                                            b);
         cout << endl << endl;
       }
@@ -80,7 +79,7 @@ int main (int argc_, char ** argv_)
       surface_mask |= geomtools::box::FACE_TOP;
       vg.set_surface_mask (surface_mask);
       vg.set_skin_skip (0.10);
-      vg.set_skin_thickness (0.20);  
+      vg.set_skin_thickness (0.20);
       vg.initialize_simple ();
       vg.tree_dump (clog, "Box vertex generator");
 
@@ -88,11 +87,11 @@ int main (int argc_, char ** argv_)
       genvtx::placement_vg pvg;
       pvg.set_vg (vg);
       pvg.set_placement (pl);
-      
+
       // shoot vertices:
       size_t nshoots = 2000;
-      geomtools::vector_3d vertex;     
-      for (int i = 0; i < nshoots; i++)
+      geomtools::vector_3d vertex;
+      for (int i = 0; i < (int) nshoots; i++)
         {
           pvg.shoot_vertex (random, vertex);
           geomtools::gnuplot_draw::basic_draw_point (cout, vertex, true);
@@ -102,15 +101,13 @@ int main (int argc_, char ** argv_)
     }
   catch (exception & x)
     {
-      cerr << "error: " << x.what () << endl; 
+      cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);
 }
-
-// end of test_placement_vg.cxx

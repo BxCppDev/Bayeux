@@ -181,37 +181,39 @@ namespace genvtx {
       double cylinder_r, cylinder_z;
       datatools::invalidate (cylinder_r);
       datatools::invalidate (cylinder_z);
-      double length_unit = CLHEP::millimeter;
+      // double length_unit = CLHEP::millimeter;
 
-      if (setup_.has_key ("length_unit")) {
-        std::string length_unit_str = setup_.fetch_string ("length_unit");
-        length_unit = datatools::units::get_length_unit_from (length_unit_str);
+      // if (setup_.has_key("length_unit")) {
+      //   std::string length_unit_str = setup_.fetch_string("length_unit");
+      //   length_unit = datatools::units::get_length_unit_from(length_unit_str);
+      // }
+
+      if (setup_.has_key("cylinder.r")) {
+        cylinder_r = setup_.fetch_real("cylinder.r");
+        if (!setup_.has_explicit_unit("cylinder.r")) {
+          cylinder_r *= lunit;
+        }
       }
 
-      if (setup_.has_key ("cylinder.r")) {
-        cylinder_r = setup_.fetch_real ("cylinder.r");
+      if (setup_.has_key("cylinder.z")) {
+        cylinder_z = setup_.fetch_real("cylinder.z");
+        if (!setup_.has_explicit_unit("cylinder.z")) {
+          cylinder_z *= lunit;
+        }
       }
-
-      if (setup_.has_key ("cylinder.z")) {
-        cylinder_z = setup_.fetch_real ("cylinder.z");
-      }
-      {
-        cylinder_r *= lunit;
-        cylinder_z *= lunit;
-      }
-      geomtools::cylinder cyl (cylinder_r, cylinder_z);
-      set_cylinder (cyl);
+      geomtools::cylinder cyl(cylinder_r, cylinder_z);
+      set_cylinder(cyl);
     }
 
-    _init_ ();
+    _init_();
     _initialized_ = true;
     return;
   }
 
   void cylinder_vg::reset()
   {
-    DT_THROW_IF (! is_initialized (), std::logic_error, "Not initialized !");
-    _reset_ ();
+    DT_THROW_IF (! is_initialized(), std::logic_error, "Not initialized !");
+    _reset_();
     _initialized_ = false;
     return;
   }
@@ -219,32 +221,32 @@ namespace genvtx {
   void cylinder_vg::_init_()
   {
     if (_mode_ == MODE_SURFACE) {
-      DT_THROW_IF (_surface_mask_ == 0, std::logic_error, "Surface mask is zero !");
-      const double s = _cylinder_.get_surface (_surface_mask_);
-      DT_LOG_DEBUG (get_logging_priority (), "Total surface = " << s);
-      _sum_weight_[0] = _cylinder_.get_surface (_surface_mask_ & geomtools::cylinder::FACE_SIDE);
-      _sum_weight_[1] = _cylinder_.get_surface (_surface_mask_ & geomtools::cylinder::FACE_BOTTOM);
-      _sum_weight_[2] = _cylinder_.get_surface (_surface_mask_ & geomtools::cylinder::FACE_TOP);
+      DT_THROW_IF(_surface_mask_ == 0, std::logic_error, "Surface mask is zero !");
+      const double s = _cylinder_.get_surface(_surface_mask_);
+      DT_LOG_DEBUG(get_logging_priority(), "Total surface = " << s);
+      _sum_weight_[0] = _cylinder_.get_surface(_surface_mask_ & geomtools::cylinder::FACE_SIDE);
+      _sum_weight_[1] = _cylinder_.get_surface(_surface_mask_ & geomtools::cylinder::FACE_BOTTOM);
+      _sum_weight_[2] = _cylinder_.get_surface(_surface_mask_ & geomtools::cylinder::FACE_TOP);
       for (size_t i = 0; i < 3; i++) {
         _sum_weight_[i] /= s;
         if (i > 0) {
           _sum_weight_[i] += _sum_weight_[i - 1];
         }
-        DT_LOG_TRACE (get_logging_priority (), "Surface weight [" << i << "] = " << _sum_weight_[i]);
+        DT_LOG_TRACE(get_logging_priority(), "Surface weight [" << i << "] = " << _sum_weight_[i]);
       }
     }
     return;
   }
 
-  void cylinder_vg::_reset_ ()
+  void cylinder_vg::_reset_()
   {
-    _set_defaults_ ();
+    _set_defaults_();
     return;
   }
 
-  void cylinder_vg::_set_defaults_ ()
+  void cylinder_vg::_set_defaults_()
   {
-    _cylinder_.reset ();
+    _cylinder_.reset();
     _mode_ = MODE_INVALID;
     _surface_mask_ = geomtools::cylinder::FACE_ALL;
     _skin_skip_ = 0.0;
@@ -284,7 +286,7 @@ namespace genvtx {
     double x = 0.0, y = 0.0, z = 0.0;
     if (_mode_ == MODE_BULK) {
       double r_max = _cylinder_.get_r () - 0.5 * _skin_thickness_;
-      r = sqrt (random_.uniform ()) * r_max;
+      r = std::sqrt (random_.uniform ()) * r_max;
       z = (random_.uniform () - 0.5) * (_cylinder_.get_z () - _skin_thickness_);
     }
 
@@ -304,21 +306,21 @@ namespace genvtx {
         double r_max  = r_min + _skin_thickness_;
         double r_min2 = r_min * r_min;
         double r_max2 = r_max * r_max;
-        r = (sqrt (r_min2 + random_.uniform () * (r_max2 - r_min2)));
+        r = (std::sqrt (r_min2 + random_.uniform () * (r_max2 - r_min2)));
         z = +(random_.uniform () - 0.5) * (_cylinder_.get_z ());
       } else if (r0 < _sum_weight_[1]) {
         double r_max = _cylinder_.get_r ();
-        r = sqrt (random_.uniform ()) * r_max;
+        r = std::sqrt (random_.uniform ()) * r_max;
         z = -(_cylinder_.get_half_z () + _skin_skip_ + delta_thick);
       } else if (r0 < _sum_weight_[2]) {
         double r_max = _cylinder_.get_r ();
-        r = sqrt (random_.uniform ()) * r_max;
+        r = std::sqrt (random_.uniform ()) * r_max;
         z = +(_cylinder_.get_half_z () + _skin_skip_ + delta_thick);
       }
     }
-    x = r * cos (t);
-    y = r * sin (t);
-    vertex_.set (x,y, z);
+    x = r * std::cos(t);
+    y = r * std::sin(t);
+    vertex_.set(x,y, z);
     return;
   }
 

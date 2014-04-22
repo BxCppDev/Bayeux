@@ -28,8 +28,8 @@ int main (int argc_, char ** argv_)
   try {
     clog << "Test program for the 'genvtx' program library." << endl;
 
-    bool debug = false;
-    bool verbose = false;
+    // bool debug = false;
+    // bool verbose = false;
     bool draw = false;
     int iarg = 1;
     while (iarg < argc_) {
@@ -37,11 +37,12 @@ int main (int argc_, char ** argv_)
 
       if (token[0] == '-') {
         string option = token;
-        if ((option == "-d") || (option == "--debug")) {
-          debug = true;
-        } else if ((option == "-v") || (option == "--verbose")) {
-          verbose = true;
-        } else if ((option == "-D") || (option == "--draw")) {
+        // if ((option == "-d") || (option == "--debug")) {
+        //   debug = true;
+        // } else if ((option == "-v") || (option == "--verbose")) {
+        //   verbose = true;
+        // } else
+        if ((option == "-D") || (option == "--draw")) {
           draw = true;
         } else {
           clog << "warning: ignoring option '" << option << "'!" << endl;

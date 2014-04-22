@@ -1,6 +1,6 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 // test_triangle_random_tools.cxx
- 
+
 #include <cstdlib>
 #include <fstream>
 #include <string>
@@ -27,44 +27,45 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for the 'genvtx' program library." << endl; 
-  
-      bool debug = false;
-      bool verbose = false;
+      clog << "Test program for the 'genvtx' program library." << endl;
+
+      // bool debug = false;
+      // bool verbose = false;
       bool draw = false;
       int iarg = 1;
       while (iarg < argc_)
         {
           string token = argv_[iarg];
 
-          if (token[0] == '-') 
+          if (token[0] == '-')
             {
-               string option = token; 
-               if ((option == "-d") || (option == "--debug")) 
-                 {
-                   debug = true;
-                 }
-               else if ((option == "-v") || (option == "--verbose")) 
-                 {
-                   verbose = true;
-                 }
-               else if ((option == "-D") || (option == "--draw")) 
+               string option = token;
+               // if ((option == "-d") || (option == "--debug"))
+               //   {
+               //     debug = true;
+               //   }
+               // else if ((option == "-v") || (option == "--verbose"))
+               //   {
+               //     verbose = true;
+               //   }
+               // else
+               if ((option == "-D") || (option == "--draw"))
                  {
                    draw = true;
                  }
-               else 
-                 { 
-                    clog << "warning: ignoring option '" << option << "'!" << endl; 
+               else
+                 {
+                    clog << "warning: ignoring option '" << option << "'!" << endl;
                  }
             }
           else
             {
-              string argument = token; 
-              { 
-                clog << "warning: ignoring argument '" << argument << "'!" << endl; 
+              string argument = token;
+              {
+                clog << "warning: ignoring argument '" << argument << "'!" << endl;
               }
-            } 
-          iarg++; 
+            }
+          iarg++;
       }
 
       std::string       rng_id = "mt19937";
@@ -81,8 +82,8 @@ int main (int argc_, char ** argv_)
         {
           geomtools::vector_3d vertex
             = genvtx::triangle_random_surface (A, B, C, random);
-          geomtools::gnuplot_draw::basic_draw_point (tmp_file.out (), 
-                                                     vertex, 
+          geomtools::gnuplot_draw::basic_draw_point (tmp_file.out (),
+                                                     vertex,
                                                      true);
         }
       tmp_file.out () << endl << endl;
@@ -95,9 +96,9 @@ int main (int argc_, char ** argv_)
       tmp_file.out () << endl << endl;
 
       if (draw)
-        {         
-          Gnuplot g1 ("dots"); 
-          { 
+        {
+          Gnuplot g1 ("dots");
+          {
             g1.cmd ("set grid");
             g1.cmd ("set title 'test triangle_random_tools'");
             g1.cmd ("set size ratio -1");
@@ -106,9 +107,9 @@ int main (int argc_, char ** argv_)
             g1.set_xrange (-3, +3).set_yrange (-3, +3).set_zrange (-3, +3);
             g1.set_xlabel ("x").set_ylabel ("y").set_zlabel ("z");
             std::ostringstream plot_cmd;
-            plot_cmd << "splot '" << tmp_file.get_filename () 
+            plot_cmd << "splot '" << tmp_file.get_filename ()
                      << "' index 0 title 'Random vertices' with dots , ";
-            plot_cmd << " '" << tmp_file.get_filename () 
+            plot_cmd << " '" << tmp_file.get_filename ()
                      << "' index 1 title 'Facet' with lines lt 3 lw 1" ;
             g1.cmd (plot_cmd.str ());
 
@@ -119,17 +120,17 @@ int main (int argc_, char ** argv_)
           }
         }
 
-  
+
       clog << "The end." << endl;
     }
   catch (exception & x)
-    { 
-      cerr << "error: " << x.what () << endl; 
+    {
+      cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error !" << endl; 
+      cerr << "error: " << "unexpected error !" << endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);

@@ -28,12 +28,12 @@ int main (int argc_, char ** argv_)
   try {
     clog << "Test program for class 'polycone_vg'!" << endl;
     bool debug = false;
-    bool bulk = false;
+    // bool bulk = false;
     bool draw = false;
-    bool fr0 = false;
-    bool fr1 = false;
-    bool fr2 = false;
-    bool fr3 = false;
+    // bool fr0 = false;
+    // bool fr1 = false;
+    // bool fr2 = false;
+    // bool fr3 = false;
 
     int iarg = 1;
     while (iarg < argc_) {
@@ -42,18 +42,18 @@ int main (int argc_, char ** argv_)
         string option = token;
         if ((option == "-d") || (option == "--debug")) {
           debug = true;
-        } else if ((option == "-b") || (option == "--bulk")) {
-          bulk = true;
+        // } else if ((option == "-b") || (option == "--bulk")) {
+        //   bulk = true;
         } else if ((option == "-D") || (option == "--draw")) {
           draw = true;
-        } else if ((option == "-0")) {
-          fr0 = true;
-        } else if ((option == "-1")) {
-          fr1 = true;
-        } else if ((option == "-2")) {
-          fr2 = true;
-        } else if ((option == "-3")) {
-          fr3 = true;
+        // } else if ((option == "-0")) {
+        //   fr0 = true;
+        // } else if ((option == "-1")) {
+        //   fr1 = true;
+        // } else if ((option == "-2")) {
+        //   fr2 = true;
+        // } else if ((option == "-3")) {
+        //   fr3 = true;
         } else {
           clog << "warning: ignoring option '" << option << "'!" << endl;
         }
@@ -147,7 +147,7 @@ int main (int argc_, char ** argv_)
       vg.tree_dump(clog, "Fingerprint : ");
       size_t nshoots = 5000;
       geomtools::vector_3d vertex;
-      for (int i = 0; i < nshoots; i++) {
+      for (int i = 0; i < (int) nshoots; i++) {
         vg.shoot_vertex(random, vertex);
         geomtools::gnuplot_draw::basic_draw_point(tmp_file.out(), vertex, true);
       }
@@ -173,7 +173,7 @@ int main (int argc_, char ** argv_)
       vg.tree_dump(clog, "Lipstick : ");
       size_t nshoots = 4000;
       geomtools::vector_3d vertex;
-      for (int i = 0; i < nshoots; i++) {
+      for (int i = 0; i < (int) nshoots; i++) {
         vg.shoot_vertex(random, vertex);
         geomtools::gnuplot_draw::basic_draw_point(tmp_file.out(), vertex, true);
       }
@@ -205,7 +205,7 @@ int main (int argc_, char ** argv_)
       vg.tree_dump(clog, "Polycone vertex generator 2 : ");
       size_t nshoots = 30000;
       geomtools::vector_3d vertex;
-      for (int i = 0; i < nshoots; i++) {
+      for (int i = 0; i < (int) nshoots; i++) {
         vg.shoot_vertex(random, vertex);
          geomtools::gnuplot_draw::basic_draw_point(tmp_file.out(), vertex, true);
       }
@@ -230,7 +230,7 @@ int main (int argc_, char ** argv_)
       vg.tree_dump(clog, "Polycone vertex generator 3 : ");
       size_t nshoots = 30000;
       geomtools::vector_3d vertex;
-      for (int i = 0; i < nshoots; i++) {
+      for (int i = 0; i < (int) nshoots; i++) {
         vg.shoot_vertex(random, vertex);
          geomtools::gnuplot_draw::basic_draw_point(tmp_file.out(), vertex, true);
       }
@@ -255,7 +255,7 @@ int main (int argc_, char ** argv_)
       vg.tree_dump(clog, "Polycone vertex generator 4 : ");
       size_t nshoots = 30000;
       geomtools::vector_3d vertex;
-      for (int i = 0; i < nshoots; i++) {
+      for (int i = 0; i < (int) nshoots; i++) {
         vg.shoot_vertex(random, vertex);
          geomtools::gnuplot_draw::basic_draw_point(tmp_file.out(), vertex, true);
       }
@@ -288,7 +288,7 @@ int main (int argc_, char ** argv_)
       vg.tree_dump(clog, "Polycone vertex generator 3 : ");
       size_t nshoots = 10000;
       geomtools::vector_3d vertex;
-      for (int i = 0; i < nshoots; i++) {
+      for (int i = 0; i < (int) nshoots; i++) {
         vg.shoot_vertex(random, vertex);
          geomtools::gnuplot_draw::basic_draw_point(tmp_file.out(), vertex, true);
       }
@@ -339,7 +339,7 @@ int main (int argc_, char ** argv_)
         vg.tree_dump(clog, "Orange vertex generator: ");
         size_t nshoots = 10000;
         geomtools::vector_3d vertex;
-        for (int i = 0; i < nshoots; i++) {
+        for (int i = 0; i < (int) nshoots; i++) {
           vg.shoot_vertex(random, vertex);
           geomtools::vector_3d vtx;
           pl.child_to_mother(vertex, vtx);
@@ -373,7 +373,7 @@ int main (int argc_, char ** argv_)
           vg.tree_dump(clog, "Orange pulp vertex generator: ");
           size_t nshoots = 200 * (phi2-phi1) / 0.25 * M_PI;
           geomtools::vector_3d vertex;
-          for (int i = 0; i < nshoots; i++) {
+          for (int i = 0; i < (int) nshoots; i++) {
             vg.shoot_vertex(random, vertex);
             geomtools::vector_3d vtx;
             pl.child_to_mother(vertex, vtx);
@@ -400,7 +400,7 @@ int main (int argc_, char ** argv_)
       vg.tree_dump(clog, "Sugar : ");
       size_t nshoots = 5000;
       geomtools::vector_3d vertex;
-      for (int i = 0; i < nshoots; i++) {
+      for (int i = 0; i < (int) nshoots; i++) {
         vg.shoot_vertex(random, vertex);
         if (vertex.y() > 0. || vertex.x() > 0.) {
           geomtools::gnuplot_draw::basic_draw_point(tmp_file.out(), vertex, true);

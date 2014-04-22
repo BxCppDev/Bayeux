@@ -26,7 +26,7 @@ int main (int argc_, char ** argv_)
   try {
     clog << "Test program for class 'polycone_vg'!" << endl;
     bool debug = false;
-    bool bulk = false;
+    // bool bulk = false;
     bool draw = false;
     bool fr0 = false;
     bool fr1 = false;
@@ -40,8 +40,8 @@ int main (int argc_, char ** argv_)
         string option = token;
         if ((option == "-d") || (option == "--debug")) {
           debug = true;
-        } else if ((option == "-b") || (option == "--bulk")) {
-          bulk = true;
+        // } else if ((option == "-b") || (option == "--bulk")) {
+        //   bulk = true;
         } else if ((option == "-D") || (option == "--draw")) {
           draw = true;
         } else if ((option == "-0")) {
@@ -111,7 +111,7 @@ int main (int argc_, char ** argv_)
       vg.tree_dump(clog, "Polycone vertex generator 1 : ");
       size_t nshoots = 10000;
       geomtools::vector_3d vertex;
-      for (int i = 0; i < nshoots; i++) {
+      for (int i = 0; i < (int) nshoots; i++) {
         vg.shoot_vertex(random, vertex);
         geomtools::gnuplot_draw::basic_draw_point(tmp_file.out(), vertex, true);
       }
@@ -141,7 +141,7 @@ int main (int argc_, char ** argv_)
       vg.tree_dump(clog, "Polycone vertex generator 2 : ");
       size_t nshoots = 30000;
       geomtools::vector_3d vertex;
-      for (int i = 0; i < nshoots; i++) {
+      for (int i = 0; i < (int) nshoots; i++) {
         vg.shoot_vertex(random, vertex);
         vertex += geomtools::vector_3d(3.5,0.0,0.0);
         geomtools::gnuplot_draw::basic_draw_point(tmp_file.out(), vertex, true);
@@ -172,7 +172,7 @@ int main (int argc_, char ** argv_)
       vg.tree_dump(clog, "Polycone vertex generator 3 : ");
       size_t nshoots = 30000;
       geomtools::vector_3d vertex;
-      for (int i = 0; i < nshoots; i++) {
+      for (int i = 0; i < (int) nshoots; i++) {
         vg.shoot_vertex(random, vertex);
         vertex += geomtools::vector_3d(0.0, 3.5, 0.0);
         geomtools::gnuplot_draw::basic_draw_point(tmp_file.out(), vertex, true);

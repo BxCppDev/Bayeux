@@ -86,7 +86,7 @@ int main (int argc_, char ** argv_)
         vg.tree_dump (clog, "Box vertex generator (bottom+right surface, skipped)");
         // size_t nshoots = 20;
         geomtools::vector_3d vertex;
-        for (int i = 0; i < nshoots; i++)
+        for (int i = 0; i < (int) nshoots; i++)
           {
             vg.shoot_vertex (random, vertex);
             geomtools::gnuplot_draw::basic_draw_point (cout, vertex, true);
@@ -109,7 +109,7 @@ int main (int argc_, char ** argv_)
         vg.tree_dump (clog, "Box vertex generator (bulk)");
         //size_t nshoots = 50;
         geomtools::vector_3d vertex;
-        for (int i = 0; i < nshoots; i++)
+        for (int i = 0; i < (int) nshoots; i++)
           {
             vg.shoot_vertex (random, vertex);
             geomtools::gnuplot_draw::basic_draw_point (cout, vertex, true);
@@ -145,7 +145,7 @@ int main (int argc_, char ** argv_)
         ivg->initialize_standalone (config);
         //size_t nshoots = 10;
         geomtools::vector_3d vertex;
-        for (int i = 0; i < nshoots; i++)
+        for (int i = 0; i < (int) nshoots; i++)
           {
             ivg->shoot_vertex (random, vertex);
             geomtools::gnuplot_draw::basic_draw_point (cout, vertex, true);
@@ -167,5 +167,3 @@ int main (int argc_, char ** argv_)
     }
   return (error_code);
 }
-
-// end of test_box_vg.cxx
