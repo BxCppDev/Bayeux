@@ -155,7 +155,7 @@ int main (int argc_, char ** argv_)
     while (mgr.has_next ()) {
       mgr.load_next (pe);
       if (debug) pe.dump ();
-      double e_sum = 0.0;
+      // double e_sum = 0.0;
       count++;
       if (debug) clog << datatools::io::debug << "me="
                       << me / CLHEP::MeV

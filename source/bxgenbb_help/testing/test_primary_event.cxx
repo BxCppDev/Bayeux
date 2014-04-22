@@ -1,20 +1,23 @@
 // -*- mode: c++; -*-
 // test_primary_event.cxx
 
+// Standard library
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
+// Ourselves:
 #include <genbb_help/primary_event.h>
 
-int main (int argc_, char ** argv_)
+int main (int /* argc_ */, char ** /* argv_ */)
 {
   using namespace std;
   int error_code = EXIT_SUCCESS;
   try {
     clog << "Hello, this is a sample program for class 'dummy_genbb_help'!" << endl;
 
+    /*
     bool debug = false;
 
     int iarg = 1;
@@ -25,6 +28,7 @@ int main (int argc_, char ** argv_)
 
       iarg++;
     }
+    */
 
     genbb::primary_event my_event;
     my_event.set_time (15 * CLHEP::ns);

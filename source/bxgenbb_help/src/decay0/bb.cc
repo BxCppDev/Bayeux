@@ -450,6 +450,7 @@ c             line 3 - 7 NMEs: chi_GTw, chi_Fw, chi'_GT, chi'_F, chi'_T, chi'_P,
 
       // second e-/e+ or X-ray
       double e2;
+      e2 = std::numeric_limits<double>::quiet_NaN();
       if (modebb == MODEBB_1 || modebb == MODEBB_2 || modebb == MODEBB_3 ||
           modebb == MODEBB_7 || modebb == MODEBB_17 || modebb == MODEBB_18) {
         // modes with no emission of other particles beside of two e-/e+:

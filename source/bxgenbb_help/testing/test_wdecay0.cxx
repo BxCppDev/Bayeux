@@ -15,7 +15,7 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try {
     bool debug = false;
-    bool test  = false;
+    // bool test  = false;
     bool dump  = false;
     size_t max_count = 10;
 
@@ -24,7 +24,7 @@ int main (int argc_, char ** argv_)
       string arg = argv_[iarg];
 
       if (arg == "-d" || arg == "--debug") debug = true;
-      if (arg == "-t" || arg == "--test") test = true;
+      // if (arg == "-t" || arg == "--test") test = true;
       if (arg == "-D" || arg == "--dump") dump = true;
       if (arg == "-1000") max_count = 1000;
       iarg++;
@@ -49,7 +49,7 @@ int main (int argc_, char ** argv_)
     // working primary event:
     genbb::primary_event pe;
 
-    for (int i = 0; i < max_count; i++) {
+    for (int i = 0; i < (int) max_count; i++) {
       if (((i % 100) == 0) || (i + 1) == max_count) {
         clog << "Count : " << i << endl;
       }

@@ -20,7 +20,7 @@ int main(void)
   bb_params.Zdbb     = 44.0;
   bb_params.Adbb     = 100.0;
   bb_params.istartbb = 0;
-  for (int i = 0; i < genbb::decay0::bbpars::SPSIZE; i++)
+  for (int i = 0; i < (int) genbb::decay0::bbpars::SPSIZE; i++)
     {
       bb_params.spthe1[i] = 0.0;
       bb_params.spthe2[i] = 0.0;
@@ -49,9 +49,9 @@ int main(void)
       double ke1 = beta1.get_kinetic_energy ();
       double ke2 = beta2.get_kinetic_energy ();
       double kesum = ke1 + ke2;
-      std::cout << ke1 / CLHEP::MeV 
-                << ' ' << ke2 / CLHEP::MeV 
-                << ' ' << kesum / CLHEP::MeV 
+      std::cout << ke1 / CLHEP::MeV
+                << ' ' << ke2 / CLHEP::MeV
+                << ' ' << kesum / CLHEP::MeV
                 << '\n';
       if (i == 0) event.tree_dump(std::clog, "Double beta decay: ");
     }
