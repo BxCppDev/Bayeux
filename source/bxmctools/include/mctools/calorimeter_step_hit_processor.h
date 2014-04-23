@@ -1,8 +1,7 @@
-// -*- mode: c++ ; -*-
-/** \file mctools/calorimeter_step_hit_processor.h */
-/** Author(s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mctools/calorimeter_step_hit_processor.h
+/* Author(s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-05-26
- * Last modified: 2013-03-30
+ * Last modified: 2014-04-23
  *
  * License:
  *
@@ -100,6 +99,9 @@ namespace mctools {
                    const std::string & indent_ = "",
                    bool inherit_ = false) const;
 
+    /// OCD support
+    static void init_ocd(datatools::object_configuration_description &);
+
   protected:
 
     void _init(const ::datatools::properties & config_,
@@ -148,6 +150,9 @@ namespace mctools {
                                                        * block where some hit
                                                        * lies in.
                                                        */
+
+    bool _alpha_quenching_; /// Flag to take into account quenching of alpha particle at low energy
+
     // Registration macro :
     MCTOOLS_STEP_HIT_PROCESSOR_REGISTRATION_INTERFACE(calorimeter_step_hit_processor);
 
@@ -155,4 +160,15 @@ namespace mctools {
 
 } // end of namespace mctools
 
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(mctools::calorimeter_step_hit_processor)
+
 #endif // MCTOOLS_CALORIMETER_STEP_HIT_PROCESSOR_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

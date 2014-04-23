@@ -1,10 +1,9 @@
-// -*- mode: c++; -*-
-//! \file   mctools.h
+//! \file   mctools/mctools.h
 //! \author François Mauger
 //! \brief  Describe the mctools API configuration
 
-#ifndef MCTOOLS_MCTOOLS_H_
-#define MCTOOLS_MCTOOLS_H_ 1
+#ifndef MCTOOLS_MCTOOLS_H
+#define MCTOOLS_MCTOOLS_H 1
 
 // This project
 #include <datatools/datatools.h>
@@ -37,6 +36,12 @@ namespace mctools {
   /**/
 
 
-#endif // MCTOOLS_MCTOOLS_H_
+#endif // MCTOOLS_MCTOOLS_H
 
-// end of mctools.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

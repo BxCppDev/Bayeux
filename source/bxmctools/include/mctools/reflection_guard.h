@@ -1,4 +1,4 @@
-/* reflection_guard.h */
+/// \file mctools/reflection_guard.h
 /*
  * Description :
  *
@@ -28,8 +28,8 @@
  *
  */
 
-#ifndef MCTOOLS_REFLECTION_GUARD_H_
-#define MCTOOLS_REFLECTION_GUARD_H_
+#ifndef MCTOOLS_REFLECTION_GUARD_H
+#define MCTOOLS_REFLECTION_GUARD_H
 
 // Standard Library
 
@@ -63,4 +63,12 @@ reflection_guard reflection_guard::_g_trigger_link_guard_;
 } // end namespace mctools
 #endif // MCTOOLS_WITH_REFLECTION != 1
 
-#endif // MCTOOLS_REFLECTION_GUARD_H_
+#endif // MCTOOLS_REFLECTION_GUARD_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

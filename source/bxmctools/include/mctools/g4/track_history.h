@@ -1,5 +1,5 @@
-/* simulated_data_cut.h
- * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mctools/simulated_data_cut.h
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-09-18
  * Last modified : 2013-06-03
  *
@@ -30,9 +30,10 @@
  *
  */
 
-#ifndef MCTOOLS_G4_TRACK_HISTORY_H_
-#define MCTOOLS_G4_TRACK_HISTORY_H_ 1
+#ifndef MCTOOLS_G4_TRACK_HISTORY_H
+#define MCTOOLS_G4_TRACK_HISTORY_H 1
 
+// Standard library:
 #include <string>
 #include <map>
 
@@ -40,10 +41,12 @@ namespace mctools {
 
   namespace g4 {
 
+    /// \brief Recording of tracks history
     class track_history
     {
     public:
 
+      /// \brief Recording of information about a single track
       class track_info
       {
       public:
@@ -74,10 +77,13 @@ namespace mctools {
 
         void set_creator_sensitive_category (const std::string & category_);
 
+        /// Constructor
         track_info ();
 
+        /// Destructor
         ~track_info ();
 
+        /// Reset
         void reset ();
 
       private:
@@ -108,15 +114,18 @@ namespace mctools {
 
       void add_track_info (const int id_, const track_info & tinfo_);
 
+      /// Constructor
       track_history ();
 
+      /// Destructor
       ~track_history ();
 
+      /// Reset the track history object
       void reset ();
 
     private:
 
-      track_info_dict_type _track_infos_;
+      track_info_dict_type _track_infos_; /// Dictionary of track informations
 
     };
 
@@ -124,13 +133,12 @@ namespace mctools {
 
 }// end of namespace mctools
 
-#endif // MCTOOLS_G4_TRACK_HISTORY_H_
+#endif // MCTOOLS_G4_TRACK_HISTORY_H
 
-// end of track_history.h
 /*
 ** Local Variables: --
 ** mode: c++ --
 ** c-file-style: "gnu" --
+** tab-width: 2 --
 ** End: --
 */
-

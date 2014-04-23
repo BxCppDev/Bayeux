@@ -1,6 +1,5 @@
-// -*- mode: c++ ; -*-
-/* sensitive_hit_collection.h
- * Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mctools/g4/sensitive_hit_collection.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-05-26
  * Last modified: 2013-07-02
  *
@@ -14,11 +13,14 @@
  *
  */
 
-#ifndef MCTOOLS_G4_SENSITIVE_HIT_COLLECTION_H_
-#define MCTOOLS_G4_SENSITIVE_HIT_COLLECTION_H_ 1
+#ifndef MCTOOLS_G4_SENSITIVE_HIT_COLLECTION_H
+#define MCTOOLS_G4_SENSITIVE_HIT_COLLECTION_H 1
 
+// Standard library:
 #include <vector>
 
+// Third party:
+// - Geant4
 #include <G4VHitsCollection.hh>
 
 namespace mctools {
@@ -61,6 +63,12 @@ namespace mctools {
 
 } // end of namespace mctools
 
-#endif // MCTOOLS_G4_SENSITIVE_HIT_COLLECTION_H_
+#endif // MCTOOLS_G4_SENSITIVE_HIT_COLLECTION_H
 
-// end of sensitive_hit_collection
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

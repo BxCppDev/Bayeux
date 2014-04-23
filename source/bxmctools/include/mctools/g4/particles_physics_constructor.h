@@ -1,6 +1,5 @@
-// -*- mode: c++ ; -*-
-/* particles_physics_constructor.h
- * Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mctools/g4/particles_physics_constructor.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-07-04
  * Last modified: 2013-07-04
  *
@@ -14,9 +13,10 @@
  *
  */
 
-#ifndef MCTOOLS_G4_PARTICLES_PHYSICS_CONSTRUCTOR_H_
-#define MCTOOLS_G4_PARTICLES_PHYSICS_CONSTRUCTOR_H_ 1
+#ifndef MCTOOLS_G4_PARTICLES_PHYSICS_CONSTRUCTOR_H
+#define MCTOOLS_G4_PARTICLES_PHYSICS_CONSTRUCTOR_H 1
 
+// This project:
 #include <mctools/g4/base_physics_constructor.h>
 
 namespace mctools {
@@ -88,6 +88,12 @@ namespace mctools {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(mctools::g4::particles_physics_constructor)
 
-#endif // MCTOOLS_G4_PARTICLES_PHYSICS_CONSTRUCTOR_H_
+#endif // MCTOOLS_G4_PARTICLES_PHYSICS_CONSTRUCTOR_H
 
-// end of particles_physics_constructor.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

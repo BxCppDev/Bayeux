@@ -90,3 +90,10 @@ static bool has_feature(const std::string& feature);
 
 #endif // MCTOOLS_VERSION_H
 
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

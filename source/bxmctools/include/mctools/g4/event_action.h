@@ -1,6 +1,5 @@
-// -*- mode: c++ ; -*-
-/* event_action.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mctools/g4/event_action.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-10
  * Last modified: 2013-03-09
  *
@@ -14,16 +13,18 @@
  *
  */
 
-#ifndef MCTOOLS_G4_EVENT_ACTION_H_
-#define MCTOOLS_G4_EVENT_ACTION_H_ 1
+#ifndef MCTOOLS_G4_EVENT_ACTION_H
+#define MCTOOLS_G4_EVENT_ACTION_H 1
 
+// Third party:
+// - Geant4:
+#include <G4UserEventAction.hh>
+
+// This project:
 #include <mctools/simulated_data.h>
 #include <mctools/base_step_hit_processor.h>
-
 #include <mctools/g4/loggable_support.h>
 
-// G4 stuff:
-#include <G4UserEventAction.hh>
 
 namespace datatools {
   class properties;
@@ -101,6 +102,12 @@ namespace mctools {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(mctools::g4::event_action)
 
-#endif // MCTOOLS_G4d_EVENT_ACTION_H_
+#endif // MCTOOLS_G4d_EVENT_ACTION_H
 
-// end of event_action.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

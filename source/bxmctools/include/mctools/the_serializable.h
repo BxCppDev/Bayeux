@@ -1,10 +1,12 @@
-// -*- mode: c++; -*-
-/* the_serializable.h */
+/// \file mctools/the_serializable.h
 
-#ifndef MCTOOLS_THE_SERIALIZABLE_H_
-#define MCTOOLS_THE_SERIALIZABLE_H_ 1
+#ifndef MCTOOLS_THE_SERIALIZABLE_H
+#define MCTOOLS_THE_SERIALIZABLE_H 1
 
+// Third party:
+// - Boost :
 #include <boost/serialization/export.hpp>
+// - Bayeux/datatools :
 #include <datatools/archives_instantiation.h>
 
 
@@ -25,7 +27,12 @@ DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(mctools::simulated_data)
 BOOST_CLASS_EXPORT_IMPLEMENT(mctools::simulated_data)
 
 
-#endif // MCTOOLS_THE_SERIALIZABLE_H_
+#endif // MCTOOLS_THE_SERIALIZABLE_H
 
-/* end of the_serializable.h */
-
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

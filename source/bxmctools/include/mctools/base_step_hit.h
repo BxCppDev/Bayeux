@@ -1,6 +1,5 @@
-// -*- mode: c++ ; -*-
-/* base_step_hit.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mctools/base_step_hit.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-05-26
  * Last modified: 2013-06-02
  *
@@ -14,16 +13,17 @@
  *
  */
 
-#ifndef MCTOOLS_BASE_STEP_HIT_H_
-#define MCTOOLS_BASE_STEP_HIT_H_ 1
+#ifndef MCTOOLS_BASE_STEP_HIT_H
+#define MCTOOLS_BASE_STEP_HIT_H 1
 
+// Standard library:
 #include <iostream>
 #include <string>
 
-// Datatools :
+// Third party:
+// - Bayeux/datatools :
 #include <datatools/bit_mask.h>
-
-// This project :
+// - Bayeux/geomtools :
 #include <geomtools/geomtools_config.h>
 #include <geomtools/utils.h>
 #include <geomtools/base_hit.h>
@@ -47,9 +47,6 @@ namespace mctools {
   {
 
   public:
-
-    /// The invalid hit ID value
-    //static const int32_t INVALID_HIT_ID = -1;
 
     /// \brief Masks to automatically tag the attributes to be stored
     enum store_mask_type {
@@ -154,8 +151,6 @@ namespace mctools {
     /// Reset/invalidate the particle name associated to the hit
     void invalidate_particle_name ();
 
-  public:
-
     /// Check if the hit has a valid internal structure
     /** We consider a base step hit valid if:
      * - a valid hit ID is set
@@ -187,8 +182,7 @@ namespace mctools {
                             bool a_inherit          = false) const;
 
     /// Smart print (default behaviour/shortcut)
-    void dump () const;
-
+    void dump() const;
 
   private:
 
@@ -219,6 +213,12 @@ namespace mctools {
 DR_CLASS_INIT(::mctools::base_step_hit);
 #endif // MCTOOLS_WITH_REFLECTION
 
-#endif // MCTOOLS_BASE_STEP_HIT_H_
+#endif // MCTOOLS_BASE_STEP_HIT_H
 
-// end of base_step_hit.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

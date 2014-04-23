@@ -1,5 +1,5 @@
-/* simulated_data_input_module.h
- * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mctools/simulated_data_input_module.h
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-07-04
  * Last modified : 2013-06-22
  *
@@ -9,8 +9,8 @@
  *
  */
 
-#ifndef MCTOOLS_SIMULATED_DATA_INPUT_MODULE_H_
-#define MCTOOLS_SIMULATED_DATA_INPUT_MODULE_H_ 1
+#ifndef MCTOOLS_SIMULATED_DATA_INPUT_MODULE_H
+#define MCTOOLS_SIMULATED_DATA_INPUT_MODULE_H 1
 
 // Third party
 // - Bayeux/datatools
@@ -92,9 +92,8 @@ namespace mctools {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(mctools::simulated_data_input_module)
 
-#endif // MCTOOLS_SIMULATED_DATA_INPUT_MODULE_H_
+#endif // MCTOOLS_SIMULATED_DATA_INPUT_MODULE_H
 
-// end of simulated_data_input_module.h
 /*
 ** Local Variables: --
 ** mode: c++ --

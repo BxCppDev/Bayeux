@@ -1,17 +1,18 @@
-// -*- mode: c++ ; -*- 
-/* stepping_verbose.h
- */
+/// \file mctools/stepping_verbose.h
 
-#ifndef MCTOOLS_G4_STEPPING_VERBOSE_H_
-#define MCTOOLS_G4_STEPPING_VERBOSE_H_ 1
+#ifndef MCTOOLS_G4_STEPPING_VERBOSE_H
+#define MCTOOLS_G4_STEPPING_VERBOSE_H 1
 
+// Third party:
+// - Geant4:
 #include <G4SteppingVerbose.hh>
 
 namespace mctools {
 
   namespace g4 {
-  
-    class stepping_verbose: public G4SteppingVerbose 
+
+    /// \brief Stepping verbose support using the Geant4 interface
+    class stepping_verbose: public G4SteppingVerbose
     {
     public:
 
@@ -21,10 +22,10 @@ namespace mctools {
       /// Destructor
       virtual ~stepping_verbose ();
 
-      // Geant4 interface :
-
+      /// Geant4 interface
       void StepInfo ();
 
+      /// Geant4 interface
       void TrackingStarted ();
 
     };
@@ -33,6 +34,12 @@ namespace mctools {
 
 } // end of namespace snemo
 
-#endif // MCTOOLS_G4_STEPPING_VERBOSE_H_
+#endif // MCTOOLS_G4_STEPPING_VERBOSE_H
 
-// end of stepping_verbose.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

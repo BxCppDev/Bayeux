@@ -39,10 +39,10 @@ namespace mctools {
   {
     _scintillation_cluster_time_range_  = 1.0 * CLHEP::ns;
     _scintillation_cluster_space_range_ = 1.0 * CLHEP::cm;
-
     _mapping_    = 0;
     _categories_ = 0;
     _calo_block_type_ = geomtools::geom_id::INVALID_TYPE;
+    _alpha_quenching_ = true;
     return;
   }
 
@@ -101,6 +101,11 @@ namespace mctools {
       if (! config_.has_explicit_unit("cluster.space_range")) {
         _scintillation_cluster_space_range_ *= CLHEP::mm;
       }
+    }
+
+    // set the flag for alpha quenching:
+    if (config_.has_key ("alpha_quenching")) {
+      _alpha_quenching_ = config_.fetch_boolean ("alpha_quenching");
     }
 
     DT_LOG_DEBUG (get_logging_priority (), "Parsed setup properties for processor '" << get_name () << "' ...");
@@ -173,10 +178,9 @@ namespace mctools {
    * - be an alpha or a delta ray if it is a scintillation hit with an alpha
    *   in order to be able to collect the ionization energy deposited
    *   along an alpha track and then apply some realistic quenching factor
-   *   Note: the case for
-   * - be in time with the cluster time window @ requested precision (~1ns)
+   * - be in time with the cluster time window @ requested precision (~1 ns)
    * - be located within the volume of a fiducial sphere centered around
-   *   the existing cluster hit @ requested precision (~1cm)
+   *   the existing cluster hit @ requested precision (~1 cm)
    *
    */
   bool calorimeter_step_hit_processor::match_scintillation_hit (const base_step_hit & scintillation_hit_,
@@ -214,77 +218,83 @@ namespace mctools {
     // check the case of alpha particle:
     const std::string & hit_pname = step_hit_.get_particle_name ();
 
-    bool track_match = false;
-    // check the special case of an alpha scintillation hit:
-    if (scintillation_hit_.get_particle_name () == "alpha") {
-      if (hit_pname == "e-") {
-        // search for delta rays originated from an alpha track:
-        const bool is_delta_ray_from_alpha
-          = step_hit_.get_auxiliaries ().has_flag(mctools::track_utils::DELTA_RAY_FROM_ALPHA_FLAG);
-        if (is_delta_ray_from_alpha) {
-          /*  delta ray production along the alpha track:
-           *
-           *       e-   e-     e-
-           *      /    /      /
-           *  ---+----+-+----+---> alpha
-           *             \
-           *              e-
-           *
-           *  the resulting ionization of the primary alpha
-           *  plus its associated delta rays has some quenching effect: all these step
-           *  hits should share the same scintillation cluster hit.
-           */
+    // Default value:
+    bool track_match = true;
+
+    if (_alpha_quenching_) {
+      // Check the special case of an alpha scintillation hit:
+      track_match = false;
+      if (scintillation_hit_.get_particle_name () == "alpha") {
+        if (hit_pname == "e-") {
+          // search for delta rays originated from an alpha track:
+          const bool is_delta_ray_from_alpha
+            = step_hit_.get_auxiliaries ().has_flag(mctools::track_utils::DELTA_RAY_FROM_ALPHA_FLAG);
+          if (is_delta_ray_from_alpha) {
+            /*  delta ray production along the alpha track:
+             *
+             *       e-   e-     e-
+             *      /    /      /
+             *  ---+----+-+----+---> alpha
+             *                                  \
+             *              e-
+             *
+             *  the resulting ionization of the primary alpha
+             *  plus its associated delta rays has some quenching effect: all these step
+             *  hits should share the same scintillation cluster hit.
+             */
+            track_match = true;
+          }
+        } else if (hit_pname == "alpha") {
           track_match = true;
+          /** pile-up of different alpha particles within the same scintillator
+           *  volume is not supported, despite it should lead to
+           *  two coexisting quenching effects because in principle:
+           *
+           *     1 MeV alpha + 1 MeV alpha != 2 MeV alpha
+           *
+           *  Anyway such event is out the scope of the SN physics...
+           *
+           * Note: to support this effect, we should use the track ID of the scintillation hit
+           * and compare it to the track ID of the step hit
+           *
+           *            / alpha 1
+           *           /
+           *  --------+------ alpha 2
+           *         /
+           *        /
+           *
+           * Both alpha track have their own quenching effect and should not share
+           * the same cluster.
+           * Special treatment would be needed for delta rays too. Oh my !
+           */
         }
-      } else if (hit_pname == "alpha") {
-        track_match = true;
-        /** pile-up of different alpha particles within the same scintillator
-         *  volume is not supported, despite it should lead to
-         *  two coexisting quenching effects because in principle:
-         *
-         *     1 MeV alpha + 1 MeV alpha != 2 MeV alpha
-         *
-         *  Anyway such event is out the scope of the SN physics...
-         *
-         * Note: to support this effect, we should use the track ID of the scintillation hit
-         * and compare it to the track ID of the step hit
-         *
-         *            / alpha 1
-         *           /
-         *  --------+------ alpha 2
-         *         /
-         *        /
-         *
-         * Both alpha track have their own quenching effect and should not share
-         * the same cluster
-         * Special treatment would be needed for delta rays too.
-         */
+        else {
+          track_match = false;
+        }
       }
       else {
-        track_match = false;
-      }
-    }
-    else {
-      // e-/e+/gamma
-      if (hit_pname == "e-") {
-        // reject delta rays originated from an alpha track for they should be clusterized
-        // within the scintillation cluister of an alpha particle:
-        const bool is_delta_ray_from_alpha
-          = step_hit_.get_auxiliaries ().has_flag (mctools::track_utils::DELTA_RAY_FROM_ALPHA_FLAG);
-        if (is_delta_ray_from_alpha) {
+        // e-/e+/gamma
+        if (hit_pname == "e-") {
+          // reject delta rays originated from an alpha track for they should be clusterized
+          // within the scintillation cluster of an alpha particle:
+          const bool is_delta_ray_from_alpha
+            = step_hit_.get_auxiliaries ().has_flag (mctools::track_utils::DELTA_RAY_FROM_ALPHA_FLAG);
+          if (is_delta_ray_from_alpha) {
+            track_match = false;
+          }
+          else {
+            track_match = true;
+          }
+        }
+        else if (hit_pname == "alpha") {
           track_match = false;
         }
         else {
           track_match = true;
         }
       }
-      else if (hit_pname == "alpha") {
-        track_match = false;
-      }
-      else {
-        track_match = true;
-      }
     }
+
     // no particle type match:
     if (! track_match) return false;
 
@@ -298,13 +308,13 @@ namespace mctools {
      *
      *   for gamma
      */
-    const double t1 = scintillation_hit_.get_time_start () - _scintillation_cluster_time_range_;
-    const double t2 = scintillation_hit_.get_time_stop () + _scintillation_cluster_time_range_;
-    double ta = step_hit_.get_time_start ();
+    const double t1 = scintillation_hit_.get_time_start() - _scintillation_cluster_time_range_;
+    const double t2 = scintillation_hit_.get_time_stop() + _scintillation_cluster_time_range_;
+    double ta = step_hit_.get_time_start();
     if (hit_pname == "gamma") {
-      ta = step_hit_.get_time_stop ();
+      ta = step_hit_.get_time_stop();
     }
-    const double tb = step_hit_.get_time_stop ();
+    const double tb = step_hit_.get_time_stop();
     bool time_match = false;
     if ((ta > t1) && (ta < t2)) time_match = true;
     else if ((tb > t1) && (tb < t2)) time_match = true;
@@ -314,14 +324,14 @@ namespace mctools {
     // no timing match:
     if (! time_match) return false;
 
-    /** check the position:
+    /* check the position:
      *  a matching step hit has to be located in a fiducial sphere
      *  that wraps the scintillation cluster hit.
      */
-    const double cluster_dx = abs (scintillation_hit_.get_position_stop ().x () - scintillation_hit_.get_position_start ().x ());
-    const double cluster_dy = abs (scintillation_hit_.get_position_stop ().y () - scintillation_hit_.get_position_start ().y ());
-    const double cluster_dz = abs (scintillation_hit_.get_position_stop ().z () - scintillation_hit_.get_position_start ().z ());
-    const double cluster_radius = 0.5 * sqrt (cluster_dx * cluster_dx + cluster_dy * cluster_dy + cluster_dz * cluster_dz);
+    const double cluster_dx = std::abs (scintillation_hit_.get_position_stop ().x () - scintillation_hit_.get_position_start ().x ());
+    const double cluster_dy = std::abs (scintillation_hit_.get_position_stop ().y () - scintillation_hit_.get_position_start ().y ());
+    const double cluster_dz = std::abs (scintillation_hit_.get_position_stop ().z () - scintillation_hit_.get_position_start ().z ());
+    const double cluster_radius = 0.5 * std::sqrt (cluster_dx * cluster_dx + cluster_dy * cluster_dy + cluster_dz * cluster_dz);
 
     // define the cluster fiducial spherical region:
     geomtools::sphere cluster_sphere;
@@ -340,16 +350,14 @@ namespace mctools {
     bool pos_match = false;
     if (hit_pname == "gamma") {
       // only check the interaction point at end of the step:
-      if (cluster_sphere.is_inside (step_hit_.get_position_stop () - cluster_center)) {
+      if (cluster_sphere.is_inside(step_hit_.get_position_stop () - cluster_center)) {
         pos_match = true;
       }
-    }
-    else {
+    } else {
       // both start and stop of the step are checked:
       if (cluster_sphere.is_inside (step_hit_.get_position_start () - cluster_center)) {
         pos_match = true;
-      }
-      else if (cluster_sphere.is_inside (step_hit_.get_position_stop () - cluster_center)) {
+      } else if (cluster_sphere.is_inside (step_hit_.get_position_stop () - cluster_center)) {
         pos_match = true;
       }
     }
@@ -614,7 +622,7 @@ namespace mctools {
     // pickup a reference to the proper list of hits:
     //simulated_data::hit_handle_collection_type & scintillation_hits = scintillation_hits_;
 
-    // NOT IMPLEMENTED YET...
+    // NOT IMPLEMENTED...
 
     return;
   }
@@ -670,4 +678,202 @@ namespace mctools {
     return;
   }
 
+  // static
+  void calorimeter_step_hit_processor::init_ocd(datatools::object_configuration_description & ocd_)
+  {
+
+    // Inherits configuration properties from its base class:
+    ::mctools::base_step_hit_processor::init_ocd(ocd_);
+
+
+    {
+      datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+      cpd.set_name_pattern("mapping.category")
+        .set_terse_description("Specify the geometry category associated to the sensitive volume")
+        .set_from("mctools::base_step_hit_processor")
+        .set_traits(datatools::TYPE_STRING)
+        .set_mandatory(true)
+        .add_example("Use a specific geometry category::            \n"
+                     "                                              \n"
+                     "  mapping.category : string = \"hcalo.block\" \n"
+                     "                                              \n"
+                     )
+        .set_long_description("The processor needs to know, from the geometry Id mapping of the \n"
+                           "virtual geometry setup, the geometry category that is associated \n"
+                           "to the attached sensitive volume. This allows the computing of   \n"
+                           "the geometry Id that must be associated to the final hit.        \n")
+        ;
+    }
+
+
+    {
+      datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+      cpd.set_name_pattern("mapping.category.any_addresses")
+        .set_terse_description("Specify the subaddress of the geometry category that should be ignored")
+        .set_from("mctools::base_step_hit_processor")
+        .set_traits(datatools::TYPE_STRING,
+                    datatools::configuration_property_description::ARRAY
+                    )
+        .set_mandatory(false)
+        .add_example("Specify the name of the geometry Id subaddress that is irrelevant\n"
+                     "while computing the Gid of the clustered hit::                   \n"
+                     "                                                                 \n"
+                     "  mapping.category.any_addresses : string[1] = \"part\"          \n"
+                     "                                                                 \n"
+                     )
+        .set_long_description("Not documented yet\n")
+        ;
+    }
+
+
+    {
+      datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+      cpd.set_name_pattern("cluster.time_range")
+        .set_terse_description("The time window to clusterize two step hits in the same cluster")
+        .set_from("mctools::base_step_hit_processor")
+        .set_traits(datatools::TYPE_REAL)
+        .set_mandatory(false)
+        .set_default_value_real(1.0 * CLHEP::ns, "ns")
+        .add_example("Use a 1 ns delay between two consecutive hits to consider        \n"
+                     "then as part of the same calorimeter cluster hit (within the     \n"
+                     "same physical volume)::                                          \n"
+                     "                                                                 \n"
+                     "  cluster.time_range : real as time = 1 ns                       \n"
+                     "                                                                 \n"
+                     )
+        .set_long_description("Not documented yet\n")
+        ;
+    }
+
+    {
+      datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+      cpd.set_name_pattern("cluster.space_range")
+        .set_terse_description("The space window to clusterize two step hits in the same cluster")
+        .set_from("mctools::base_step_hit_processor")
+        .set_traits(datatools::TYPE_REAL)
+        .set_mandatory(false)
+        .set_default_value_real(1.0 * CLHEP::cm, "cm")
+        .add_example("Use a 1 cm distance between two neighbour hits to consider       \n"
+                     "then as part of the same calorimeter cluster hit (within the     \n"
+                     "same physical volume)::                                          \n"
+                     "                                                                 \n"
+                     "  cluster.space_range : real as length = 1 cm                    \n"
+                     "                                                                 \n"
+                     )
+        .set_long_description("Not documented yet\n")
+        ;
+    }
+
+    {
+      datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+      cpd.set_name_pattern("alpha_quenching")
+        .set_terse_description("Activate special algorithm to aggregate delta rays emitted by an alpha particle to the alpha cluster hit")
+        .set_from("mctools::base_step_hit_processor")
+        .set_traits(datatools::TYPE_BOOLEAN)
+        .set_mandatory(false)
+        .set_default_value_boolean(true)
+        .add_example("Activate the alpha quenching::                                   \n"
+                     "                                                                 \n"
+                     "  alpha_quenching : boolean = 1                                  \n"
+                     "                                                                 \n"
+                     )
+        .set_long_description("When an alpha particle of a few MeV traverses some special material       \n"
+                              "(example: plastic scintillator), its total energy deposit may be quenched \n"
+                              "because of the high local density of energy deposit. This includes the    \n"
+                              "contribution of the energy deposit by secondary delta-rays emitted by the \n"
+                              "*primary* alpha particle.                                                 \n"
+                              "When activated, this flag triggers a specific algorithm that is able to   \n"
+                              "score the sum of energy deposit along an alpha track. This makes possible \n"
+                              "to take properly into account the energy quenching effects at further     \n"
+                              "digitization stage, using difference response functions for alpha particle\n"
+                              "compared to electrons for example. Within a calorimeter sensitive volume, \n"
+                              "a separated output clustered hit is generated, distinct of other possible \n"
+                              "hits from low ionization particles such as electrons or positrons. It will be \n"
+                              "then up to the digitization algorithm to apply different yields on hits from  \n"
+                              "different particles and score the effective visible energy in the detector.   \n"
+                              )
+        ;
+    }
+
+    return;
+  }
+
 } // end of namespace mctools
+
+
+// OCD support for class '::mctools::calorimeter_step_hit_processor' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mctools::calorimeter_step_hit_processor, ocd_)
+{
+  ocd_.set_class_name ("mctools::calorimeter_step_hit_processor");
+  ocd_.set_class_description ("A Monte Carlo step hit post-processor that scores the total energy deposit in some specific sensitive volumes considered as *calorimeters*");
+  ocd_.set_class_library ("mctools");
+  ocd_.set_class_documentation ("A Monte-Carlo step hit post-processor that accumulates the many     \n"
+                                "microscopic Monte Carlo truth hits generated from a sensitive       \n"
+                                "detector and sums up the total energy deposit in the associated     \n"
+                                "volumes. The processor typically produces a single *clustered* hit  \n"
+                                "per sensitive volume from the collection of small primary step hits \n"
+                                "traversing the volume, thus reducing the total amount of primary    \n"
+                                "physics informations but preserving some essential parameters       \n"
+                                "for further post-processing (for example : digitization).           \n"
+                                "The output is an object of type ``mctools::base_step_hit`` and      \n"
+                                "contains the following informations/attributes:                     \n"
+                                "                                                                    \n"
+                                "  * an unique hit Id                                             \n"
+                                "  * the geometry Id of the geometry volume where the energy was  \n"
+                                "    deposited                                                    \n"
+                                "  * the name of the traversing particle (assuming the first aggregated  \n"
+                                "    microscopic hit is associated to a some kind of primary track \n"
+                                "    and that subsequent aggregated hits could come from secondary \n"
+                                "    particle, the name of the more primary particle is stored)    \n"
+                                "  * the total energy deposit                                      \n"
+                                "  * the bounds of a bounding box enclosing the aggregated primary \n"
+                                "    hits                                                          \n"
+                                "  * the minimum and maximum times of the first and last hits      \n"
+                                "    aggregated in the cluster                                     \n"
+                                "                                                                  \n"
+                                "                                                                  \n"
+                                );
+  ocd_.set_class_library ("mctools");
+
+  // Load OCD support for this class:
+  ::mctools::calorimeter_step_hit_processor::init_ocd(ocd_);
+
+  ocd_.set_configuration_hints ("The calorimeter step hit processor factory uses a 'datatools::properties' \n"
+                                "object to initialize its behaviour and contents.                  \n"
+                                "                                                                  \n"
+                                "Example of the configuration for a calorimeter sensitive detector \n"
+                                "from which we want to score the total energy deposit::            \n"
+                                "                                                                  \n"
+                                "  sensitive.category    : string  = \"calo_SD\"                   \n"
+                                "  use_private_pool      : boolean = 1                             \n"
+                                "  private_pool_capacity : integer = 10                            \n"
+                                "  hit.category          : string  = \"calo\"                      \n"
+                                "  cluster.time_range    : real as time   = 1 ns                   \n"
+                                "  cluster.space_range   : real as length = 1 cm                   \n"
+                                "  mapping.category      : string  = \"calo.block\"                \n"
+                                "  alpha_quenching       : boolean = 0                             \n"
+                                "                                                                  \n"
+                                "From the main configuration file of a *step hit processor factory*,               \n"
+                                "one must use the 'datatools::multi_properties' format. Example of                 \n"
+                                "a calorimeter step hit processor attached to some scintillator                    \n"
+                                "blocks in an experimental setup::                                                 \n"
+                                "                                                                                  \n"
+                                "  [name=\"scin.hit_processor\" type=\"mctools::calorimeter_step_hit_processor\"]  \n"
+                                "  sensitive.category    : string  = \"scin_SD\"                                   \n"
+                                "  use_private_pool      : boolean = 1                                             \n"
+                                "  private_pool_capacity : integer = 10                                            \n"
+                                "  hit.category          : string  = \"scin\"                                      \n"
+                                "  cluster.time_range    : real as time   = 1 ns                                   \n"
+                                "  cluster.space_range   : real as length = 1 cm                                   \n"
+                                "  mapping.category      : string  = \"scin.block\"                                \n"
+                                "  alpha_quenching       : boolean = 1                                             \n"
+                                )
+    ;
+
+  ocd_.set_validation_support(true);
+  ocd_.lock();
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+DOCD_CLASS_SYSTEM_REGISTRATION(::mctools::calorimeter_step_hit_processor,
+                               "mctools::calorimeter_step_hit_processor")

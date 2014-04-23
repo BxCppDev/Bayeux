@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /** \file mctools/step_hit_processor_factory.h */
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-06-04
@@ -183,3 +182,11 @@ namespace mctools {
 DOCD_CLASS_DECLARATION(mctools::step_hit_processor_factory)
 
 #endif // MCTOOLS_STEP_HIT_PROCESSOR_FACTORY_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

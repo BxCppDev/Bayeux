@@ -1,25 +1,29 @@
-// -*- mode: c++; -*-
-/* the_serializable.ipp */
+/// \file mctools/the_serializable.ipp
 
-#ifndef MCTOOLS_THE_SERIALIZABLE_IPP_
-#define MCTOOLS_THE_SERIALIZABLE_IPP_ 1
+#ifndef MCTOOLS_THE_SERIALIZABLE_IPP
+#define MCTOOLS_THE_SERIALIZABLE_IPP 1
 
 
 /*************************************
- * mctools::base_step_hit *
+ * mctools::base_step_hit            *
  *************************************/
 
 #include <mctools/base_step_hit.ipp>
 
 
 /**************************************
- * mctools::simulated_data *
+ * mctools::simulated_data            *
  **************************************/
 
 #include <mctools/simulated_data.ipp>
 
 
-#endif // MCTOOLS_THE_SERIALIZABLE_IPP_
+#endif // MCTOOLS_THE_SERIALIZABLE_IPP
 
-/* end of the_serializable.ipp */
-
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

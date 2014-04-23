@@ -1,4 +1,4 @@
-/* the_introspectable.h */
+/// \file mctools/the_introspectable.h
 /*
  * Description :
  *
@@ -25,14 +25,20 @@
  *
  */
 
-#ifndef MCTOOLS_THE_INTROSPECTABLE_H_
-#define MCTOOLS_THE_INTROSPECTABLE_H_
+#ifndef MCTOOLS_THE_INTROSPECTABLE_H
+#define MCTOOLS_THE_INTROSPECTABLE_H
 
+// This project:
 #include <mctools/mctools_config.h>
-
 #include <mctools/base_step_hit-reflect.h>
 #include <mctools/simulated_data-reflect.h>
 
-#endif // MCTOOLS_THE_INTROSPECTABLE_H_
+#endif // MCTOOLS_THE_INTROSPECTABLE_H
 
-/* end of the_introspectable.h */
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

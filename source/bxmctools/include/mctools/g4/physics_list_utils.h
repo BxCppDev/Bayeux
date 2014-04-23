@@ -1,21 +1,23 @@
-// -*- mode: c++ ; -*-
-/* physics_list_utils.h
- * Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mctools/g4/physics_list_utils.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-07-04
  * Last modified: 2013-07-04
  */
 
-#ifndef MCTOOLS_G4_PHYSICS_LIST_UTILS_H_
-#define MCTOOLS_G4_PHYSICS_LIST_UTILS_H_ 1
+#ifndef MCTOOLS_G4_PHYSICS_LIST_UTILS_H
+#define MCTOOLS_G4_PHYSICS_LIST_UTILS_H 1
 
+// Standard library:
 #include <string>
 #include <map>
 
+// Third party:
+// - Boost :
 #include <boost/cstdint.hpp>
-
+// - Bayeux/datatools :
 #include <datatools/properties.h>
 #include <datatools/handle.h>
-
+// - Boost :
 #include <G4VPhysicsConstructor.hh>
 #include <G4VModularPhysicsList.hh>
 #include <G4BuilderType.hh>
@@ -101,4 +103,12 @@ namespace mctools {
 
 } // end of namespace mctools
 
-#endif // MCTOOLS_G4_PHYSICS_LIST_UTILS_H_
+#endif // MCTOOLS_G4_PHYSICS_LIST_UTILS_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

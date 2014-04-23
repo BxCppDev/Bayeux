@@ -1,6 +1,5 @@
-// -*- mode: c++ ; -*-
-/* simulated_data.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mctools/simulated_data.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-03-15
  * Last modified: 2013-03-08
  *
@@ -14,29 +13,29 @@
  *
  */
 
-#ifndef MCTOOLS_SIMULATED_DATA_H_
-#define MCTOOLS_SIMULATED_DATA_H_ 1
+#ifndef MCTOOLS_SIMULATED_DATA_H
+#define MCTOOLS_SIMULATED_DATA_H 1
 
+// Standard Library
 #include <string>
 #include <map>
 #include <vector>
 
-// Boost serialization hook :
+// Third party:
+// - Boost :
 #include <boost/serialization/access.hpp>
-
-// Interfaces :
+#include <boost/cstdint.hpp>
+// - Bayeux/datatools :
 #include <datatools/i_serializable.h>
 #include <datatools/i_clear.h>
 #include <datatools/i_tree_dump.h>
-
-// Utilities :
-#include <boost/cstdint.hpp>
 #include <datatools/handle.h>
 #include <datatools/bit_mask.h>
-
-// Attributes :
 #include <datatools/properties.h>
+// - Bayeux/genbb_help :
 #include <genbb_help/primary_event.h>
+
+// This project:
 #include <mctools/base_step_hit.h>
 
 namespace mctools {
@@ -232,6 +231,12 @@ BOOST_CLASS_EXPORT_KEY2(mctools::simulated_data, "mctools::simulated_data")
 DR_CLASS_INIT(::mctools::simulated_data);
 #endif // MCTOOLS_WITH_REFLECTION
 
-#endif // MCTOOLS_SIMULATED_DATA_H_
+#endif // MCTOOLS_SIMULATED_DATA_H
 
-// end of simulated_data.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

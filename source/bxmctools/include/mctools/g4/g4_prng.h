@@ -1,6 +1,5 @@
-// -*- mode: c++; -*-
-/* g4_prng.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mctools/g4/g4_prng.h
+/* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-02-26
  * Last modified : 2013-03-09
  *
@@ -29,12 +28,15 @@
  *
  */
 
-#ifndef MCTOOLS_G4_G4_PRNG_H_
-#define MCTOOLS_G4_G4_PRNG_H_ 1
+#ifndef MCTOOLS_G4_G4_PRNG_H
+#define MCTOOLS_G4_G4_PRNG_H 1
 
+// Standard library:
 #include <iostream>
 #include <string>
 
+// Third party:
+// - CLHEP:
 #include <CLHEP/Random/RandomEngine.h>
 
 namespace mygsl {
@@ -89,9 +91,8 @@ namespace mctools {
 
 }  // end of namespace mctools
 
-#endif // MCTOOLS_G4_G4_PRNG_H_
+#endif // MCTOOLS_G4_G4_PRNG_H
 
-// end of g4_prng.h
 /*
 ** Local Variables: --
 ** mode: c++ --

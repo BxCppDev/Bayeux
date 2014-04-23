@@ -1,6 +1,5 @@
-// -*- mode: c++ ; -*-
-/* base_step_hit-reflect.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mctools/base_step_hit-reflect.h */
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-06-01
  * Last modified: 2013-06-01
  *
@@ -8,19 +7,19 @@
  *
  * Description:
  *
- *   Base hit.
+ *   Base step hit reflection code.
  *
  * History:
  *
  */
 
-#ifndef MCTOOLS_BASE_STEP_HIT_REFLECT_H_
-#define MCTOOLS_BASE_STEP_HIT_REFLECT_H_ 1
+#ifndef MCTOOLS_BASE_STEP_HIT_REFLECT_H
+#define MCTOOLS_BASE_STEP_HIT_REFLECT_H 1
 
-// Datatools
+// Third party:
+// - Bayeux/datatools :
 #include <datatools/reflection_macros.h>
-
-// Geomtools
+// - Bayeux/mctools :
 #include <mctools/base_step_hit.h>
 
 // Export the introspection code for the 'mctools::base_step_hit' class:
@@ -37,7 +36,7 @@ namespace datatools {
           .DR_CLASS_BASE(::geomtools::base_hit)
           .DR_CLASS_CONSTRUCTOR()
 
-	  // Properties :
+          // Properties :
           .DR_CLASS_PROPERTY_GETTER_SETTER("position_start",
                                            ::mctools::base_step_hit::get_position_start,
                                            ::mctools::base_step_hit::set_position_start)
@@ -47,23 +46,23 @@ namespace datatools {
           .DR_CLASS_PROPERTY_GETTER_SETTER("momentum_start",
                                            ::mctools::base_step_hit::get_momentum_start,
                                            ::mctools::base_step_hit::set_momentum_start)
-	  .DR_CLASS_PROPERTY_GETTER_SETTER("momentum_stop",
+          .DR_CLASS_PROPERTY_GETTER_SETTER("momentum_stop",
                                            ::mctools::base_step_hit::get_momentum_stop,
                                            ::mctools::base_step_hit::set_momentum_stop)
-	  .DR_CLASS_PROPERTY_GETTER_SETTER("time_start",
+          .DR_CLASS_PROPERTY_GETTER_SETTER("time_start",
                                            ::mctools::base_step_hit::get_time_start,
                                            ::mctools::base_step_hit::set_time_start)
-	  .DR_CLASS_PROPERTY_GETTER_SETTER("time_stop",
+          .DR_CLASS_PROPERTY_GETTER_SETTER("time_stop",
                                            ::mctools::base_step_hit::get_time_stop,
                                            ::mctools::base_step_hit::set_time_stop)
-	  .DR_CLASS_PROPERTY_GETTER_SETTER("energy_deposit",
+          .DR_CLASS_PROPERTY_GETTER_SETTER("energy_deposit",
                                            ::mctools::base_step_hit::get_energy_deposit,
                                            ::mctools::base_step_hit::set_energy_deposit)
-	  .DR_CLASS_PROPERTY_GETTER_SETTER("particle_name",
+          .DR_CLASS_PROPERTY_GETTER_SETTER("particle_name",
                                            ::mctools::base_step_hit::get_particle_name,
                                            ::mctools::base_step_hit::set_particle_name)
 
-	  // Methods:
+          // Methods:
           .DR_CLASS_METHOD_CONST("is_primary_particle",
                                  ::mctools::base_step_hit,
                                  ::mctools::base_step_hit::is_primary_particle,
@@ -103,11 +102,11 @@ namespace datatools {
           .DR_CLASS_VOID_METHOD("invalidate_time_stop",
                                 ::mctools::base_step_hit,
                                 ::mctools::base_step_hit::invalidate_time_stop)
-	  .DR_CLASS_VOID_METHOD("invalidate_energy_deposit",
+          .DR_CLASS_VOID_METHOD("invalidate_energy_deposit",
                                 ::mctools::base_step_hit,
                                 ::mctools::base_step_hit::invalidate_energy_deposit)
-	  .DR_CLASS_VOID_METHOD("invalidate_particle_name",
-				::mctools::base_step_hit,
+          .DR_CLASS_VOID_METHOD("invalidate_particle_name",
+                                ::mctools::base_step_hit,
                                 ::mctools::base_step_hit::invalidate_particle_name)
           ;
         return;
@@ -117,6 +116,12 @@ namespace datatools {
   } // end of namespace detail
 } // end of namespace datatools
 
-#endif // GEOMTOOLS_BASE_STEP_HIT_REFLECT_H_
+#endif // GEOMTOOLS_BASE_STEP_HIT_REFLECT_H
 
-// end of base_step_hit-reflect.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

@@ -1,6 +1,5 @@
-// -*- mode: c++ ; -*-
-/* manager_parameters.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mctools/g4/manager_parameters.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-16
  * Last modified: 2013-06-03
  *
@@ -12,8 +11,8 @@
  *
  */
 
-#ifndef MCTOOLS_G4_MANAGER_PARAMETERS_H_
-#define MCTOOLS_G4_MANAGER_PARAMETERS_H_ 1
+#ifndef MCTOOLS_G4_MANAGER_PARAMETERS_H
+#define MCTOOLS_G4_MANAGER_PARAMETERS_H 1
 
 // Standard library:
 #include <string>
@@ -84,6 +83,12 @@ namespace mctools {
 
 } // end of namespace mctools
 
-#endif // MCTOOLS_G4_MANAGER_PARAMETERS_H_
+#endif // MCTOOLS_G4_MANAGER_PARAMETERS_H
 
-// end of manager_parameters.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

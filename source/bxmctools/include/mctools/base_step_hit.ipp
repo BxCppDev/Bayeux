@@ -1,17 +1,20 @@
-// -*- mode: c++ ; -*-
-/* base_step_hit.ipp */
+/** \file mctools/base_step_hit.ipp */
 
-#ifndef MCTOOLS_BASE_STEP_HIT_IPP_
-#define MCTOOLS_BASE_STEP_HIT_IPP_ 1
+#ifndef MCTOOLS_BASE_STEP_HIT_IPP
+#define MCTOOLS_BASE_STEP_HIT_IPP 1
 
+// Ourselves:
 #include <mctools/base_step_hit.h>
 
+// Third party:
+// - Boost:
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
+#include <boost/serialization/string.hpp>
 
+// - Bayeux/geomtools
 #include <geomtools/base_hit.ipp>
 #include <geomtools/utils.ipp>
-#include <boost/serialization/string.hpp>
 
 namespace mctools {
 
@@ -63,6 +66,12 @@ namespace mctools {
 
 } // end of namespace mctools
 
-#endif // MCTOOLS_BASE_STEP_HIT_IPP_
+#endif // MCTOOLS_BASE_STEP_HIT_IPP
 
-// end of base_step_hit.ipp
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

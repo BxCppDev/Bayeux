@@ -1,6 +1,5 @@
-// -*- mode: c++ ; -*-
-/* manager.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mctools/g4/manager.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-05-04
  * Last modified: 2013-06-04
  *
@@ -31,24 +30,31 @@
  *
  */
 
-#ifndef MCTOOLS_G4_MANAGER_H_
-#define MCTOOLS_G4_MANAGER_H_ 1
+#ifndef MCTOOLS_G4_MANAGER_H
+#define MCTOOLS_G4_MANAGER_H 1
 
+// Standard library:
 #include <string>
 #include <map>
-#include <boost/cstdint.hpp>
 
+// Third party:
+// - Boost:
+#include <boost/cstdint.hpp>
+// - Bayeux/datatools :
 #include <datatools/time_tools.h>
 #include <datatools/logger.h>
-
+// - Bayeux/mygsl :
 #include <mygsl/rng.h>
 #include <mygsl/seed_manager.h>
 #include <mygsl/prng_state_manager.h>
-
+// - Bayeux/geomtools :
 #include <geomtools/manager.h>
+// - Bayeux/genvtx :
 #include <genvtx/manager.h>
+// - Bayeux/genbb_help :
 #include <genbb_help/manager.h>
 
+// This project:
 #include <mctools/g4/loggable_support.h>
 
 namespace genvtx {
@@ -526,7 +532,12 @@ namespace mctools {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(mctools::g4::manager)
 
+#endif // MCTOOLS_G4_MANAGER_H
 
-#endif // MCTOOLS_G4_MANAGER_H_
-
-// end of manager.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

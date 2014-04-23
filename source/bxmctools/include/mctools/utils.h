@@ -1,6 +1,5 @@
-// -*- mode: c++ ; -*-
-/*  utils.h
- * Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mctools/utils.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-03-08
  * Last modified: 2013-03-08
  *
@@ -14,9 +13,10 @@
  *
  */
 
-#ifndef MCTOOLS_UTILS_H_
-#define MCTOOLS_UTILS_H_ 1
+#ifndef MCTOOLS_UTILS_H
+#define MCTOOLS_UTILS_H 1
 
+// Standard library:
 #include <string>
 
 namespace mctools {
@@ -90,6 +90,12 @@ namespace mctools {
 
 } // end of namespace mctools
 
-#endif // MCTOOLS_UTILS_H_
+#endif // MCTOOLS_UTILS_H
 
-// end of utils.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /** \file mctools/base_step_hit_processor.h */
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-05-26
@@ -137,10 +136,13 @@ namespace mctools {
                             const std::string & indent_ = "",
                             bool inherit_               = false) const;
 
+    /// Return the logging priority threshold
     datatools::logger::priority get_logging_priority() const;
 
+    /// Set the logging priority threshold
     void set_logging_priority(datatools::logger::priority);
 
+    /// OCD support
     static void init_ocd(datatools::object_configuration_description &);
 
   protected:
@@ -270,3 +272,11 @@ DOCD_CLASS_DECLARATION(mctools::push_all_step_hit_processor)
 DOCD_CLASS_DECLARATION(mctools::kill_all_step_hit_processor)
 
 #endif // MCTOOLS_BASE_STEP_HIT_PROCESSOR_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

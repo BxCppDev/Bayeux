@@ -1,6 +1,5 @@
-// -*- mode: c++ ; -*-
-/* sensitive_detector.h
- * Author(s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mctools/g4/sensitive_detector.h
+/* Author(s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-05-26
  * Last modified: 2013-03-09
  *
@@ -14,26 +13,27 @@
  *
  */
 
-#ifndef MCTOOLS_G4_SENSITIVE_DETECTOR_H_
-#define MCTOOLS_G4_SENSITIVE_DETECTOR_H_ 1
+#ifndef MCTOOLS_G4_SENSITIVE_DETECTOR_H
+#define MCTOOLS_G4_SENSITIVE_DETECTOR_H 1
 
+// Standard library:
 #include <string>
 #include <map>
 #include <vector>
 #include <list>
 
+// Third party:
+// - Boost:
 #include <boost/cstdint.hpp>
-
+// - Bayeux/datatools :
 #include <datatools/properties.h>
+#include <G4VSensitiveDetector.hh>
 
+// This project:
 #include <mctools/base_step_hit_processor.h>
 #include <mctools/g4/sensitive_hit.h>
 #include <mctools/g4/sensitive_hit_collection.h>
 #include <mctools/g4/track_history.h>
-
-// G4 stuff:
-#include <G4VSensitiveDetector.hh>
-
 #include <mctools/g4/loggable_support.h>
 
 class G4Step;
@@ -184,6 +184,12 @@ namespace mctools {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(mctools::g4::sensitive_detector)
 
-#endif // MCTOOLS_G4_SENSITIVE_DETECTOR_H_
+#endif // MCTOOLS_G4_SENSITIVE_DETECTOR_H
 
-// end of sensitive_detector.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

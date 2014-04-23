@@ -1,6 +1,5 @@
-// -*- mode: c++ ; -*-
-/* simulated_data-reflect.h
- * Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mctools/simulated_data-reflect.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-06-03
  * Last modified: 2013-06-03
  *
@@ -8,19 +7,20 @@
  *
  * Description:
  *
- *   Base hit.
+ *   Simulated data reflection code.
  *
  * History:
  *
  */
 
-#ifndef MCTOOLS_SIMULATED_DATA_REFLECT_H_
-#define MCTOOLS_SIMULATED_DATA_REFLECT_H_ 1
+#ifndef MCTOOLS_SIMULATED_DATA_REFLECT_H
+#define MCTOOLS_SIMULATED_DATA_REFLECT_H 1
 
-// Datatools
+// Third party:
+// - Bayeux/datatools :
 #include <datatools/reflection_macros.h>
 
-// Geomtools
+// This project:
 #include <mctools/simulated_data.h>
 
 // Export the introspection code for the 'mctools::simulated_data' class:
@@ -37,7 +37,7 @@ namespace datatools {
           .DR_CLASS_BASE(::datatools::i_serializable)
           .DR_CLASS_CONSTRUCTOR()
 
-	  // Properties :
+          // Properties :
           .DR_CLASS_PROPERTY_GETTER_SETTER("vertex",
                                            ::mctools::simulated_data::get_vertex,
                                            ::mctools::simulated_data::set_vertex)
@@ -48,7 +48,7 @@ namespace datatools {
                                            ::mctools::simulated_data::get_properties,
                                            ::mctools::simulated_data::set_properties)
 
-	  // Methods:
+          // Methods:
           .DR_CLASS_METHOD_CONST("has_vertex",
                                  ::mctools::simulated_data,
                                  ::mctools::simulated_data::has_vertex,
@@ -60,21 +60,21 @@ namespace datatools {
           .DR_CLASS_METHOD1_CONST("has_step_hits",
                                  ::mctools::simulated_data,
                                  ::mctools::simulated_data::has_step_hits,
-				  bool,
-				  const std::string &)
+                                  bool,
+                                  const std::string &)
           .DR_CLASS_METHOD1_CONST("get_number_of_step_hits",
                                  ::mctools::simulated_data,
                                  ::mctools::simulated_data::get_number_of_step_hits,
-				  size_t,
-				  const std::string &)
+                                  size_t,
+                                  const std::string &)
           .DR_CLASS_METHOD2_CONST("get_step_hit",
-				  ::mctools::simulated_data,
-				  ::mctools::simulated_data::get_step_hit,
-				  const ::mctools::base_step_hit &,
-				  const std::string &, int)
+                                  ::mctools::simulated_data,
+                                  ::mctools::simulated_data::get_step_hit,
+                                  const ::mctools::base_step_hit &,
+                                  const std::string &, int)
           .DR_CLASS_VOID_METHOD("clear",
-				::mctools::simulated_data,
-				::mctools::simulated_data::clear)
+                                ::mctools::simulated_data,
+                                ::mctools::simulated_data::clear)
 
           ;
         return;
@@ -84,6 +84,12 @@ namespace datatools {
   } // end of namespace detail
 } // end of namespace datatools
 
-#endif // MCTOOLS_SIMULATED_DATA_REFLECT_H_
+#endif // MCTOOLS_SIMULATED_DATA_REFLECT_H
 
-// end of simulated_data-reflect.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

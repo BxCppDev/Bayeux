@@ -1,6 +1,5 @@
-// -*- mode: c++ ; -*-
-/* base_physics_constructor.h
- * Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mctools/g4/base_physics_constructor.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-07-03
  * Last modified: 2013-07-03
  *
@@ -14,19 +13,22 @@
  *
  */
 
-#ifndef MCTOOLS_G4_BASE_PHYSICS_CONSTRUCTOR_H_
-#define MCTOOLS_G4_BASE_PHYSICS_CONSTRUCTOR_H_ 1
+#ifndef MCTOOLS_G4_BASE_PHYSICS_CONSTRUCTOR_H
+#define MCTOOLS_G4_BASE_PHYSICS_CONSTRUCTOR_H 1
 
-
+// Standard library:
 #include <string>
 #include <map>
 
+// Third party:
+// - Bayeux/datatools :
 #include <datatools/i_tree_dump.h>
 #include <datatools/factory_macros.h>
-
+// - Geant4
 #include <G4VPhysicsConstructor.hh>
 #include <globals.hh>
 
+// This project:
 #include <mctools/g4/loggable_support.h>
 #include <mctools/g4/physics_list_utils.h>
 
@@ -104,6 +106,12 @@ namespace mctools {
 
 } // end of namespace mctools
 
-#endif // MCTOOLS_G4_BASE_PHYSICS_CONSTRUCTOR_H_
+#endif // MCTOOLS_G4_BASE_PHYSICS_CONSTRUCTOR_H
 
-// end of base_physics_constructor.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

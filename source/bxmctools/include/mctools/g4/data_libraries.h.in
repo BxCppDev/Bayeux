@@ -26,8 +26,8 @@
 // You should have received a copy of the GNU General Public License
 // along with MCTools.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MCTOOLS_G4_DATA_LIBRARIES_HH
-#define MCTOOLS_G4_DATA_LIBRARIES_HH
+#ifndef MCTOOLS_G4_DATA_LIBRARIES_H
+#define MCTOOLS_G4_DATA_LIBRARIES_H
 
 // Standard Library
 #include <cstdlib>
@@ -64,5 +64,12 @@ class geant4_data_library {
 };
 }
 
-#endif // MCTOOLS_G4_DATA_LIBRARIES_HH
+#endif // MCTOOLS_G4_DATA_LIBRARIES_H
 
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

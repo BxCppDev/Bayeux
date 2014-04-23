@@ -1,6 +1,5 @@
-// -*- mode: c++ ; -*-
-/* physics_list.h
- * Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mctools/g4/physics_list.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-10
  * Last modified: 2013-06-03
  *
@@ -14,20 +13,22 @@
  *
  */
 
-#ifndef MCTOOLS_G4_PHYSICS_LIST_H_
-#define MCTOOLS_G4_PHYSICS_LIST_H_ 1
+#ifndef MCTOOLS_G4_PHYSICS_LIST_H
+#define MCTOOLS_G4_PHYSICS_LIST_H 1
 
+// Standard library:
 #include <string>
 #include <map>
 
+// Third party:
+// - Boost:
 #include <boost/scoped_ptr.hpp>
-
+// - Bayeux/datatools :
 #include <datatools/i_tree_dump.h>
-
-//#include "G4VUserPhysicsList.hh"
+// - Geant4:
 #include "G4VModularPhysicsList.hh"
-//#include "globals.hh"
 
+// This project:
 #include <mctools/g4/loggable_support.h>
 #include <mctools/g4/physics_list_utils.h>
 #include <mctools/g4/base_physics_constructor.h>
@@ -146,6 +147,12 @@ namespace mctools {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(mctools::g4::physics_list)
 
-#endif // MCTOOLS_G4_PHYSICS_LIST_H_
+#endif // MCTOOLS_G4_PHYSICS_LIST_H
 
-// end of physics_list.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

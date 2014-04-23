@@ -1,6 +1,5 @@
-// -*- mode: c++ ; -*-
-/* simulated_data_reader.h
- * Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mctools/simulated_data_reader.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-06-22
  * Last modified: 2013-06-22
  *
@@ -13,14 +12,17 @@
  *
  */
 
-#ifndef MCTOOLS_SIMULATED_DATA_READER_H_
-#define MCTOOLS_SIMULATED_DATA_READER_H_ 1
+#ifndef MCTOOLS_SIMULATED_DATA_READER_H
+#define MCTOOLS_SIMULATED_DATA_READER_H 1
 
+// Standard library:
 #include <string>
 #include <vector>
 
+// Third party:
+// - Boost :
 #include <boost/scoped_ptr.hpp>
-
+// - Bayeux/datatools :
 #include <datatools/logger.h>
 #include <datatools/smart_filename.h>
 #include <datatools/utils.h>
@@ -184,6 +186,12 @@ namespace mctools {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(mctools::simulated_data_reader)
 
-#endif // MCTOOLS_SIMULATED_DATA_READER_H_
+#endif // MCTOOLS_SIMULATED_DATA_READER_H
 
-// end of simulated_data_reader.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

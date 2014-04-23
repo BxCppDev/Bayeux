@@ -1,6 +1,5 @@
-// -*- mode: c++ ; -*-
-/* magnetic_field.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mctools/g4/magnetic_field.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-06-19
  * Last modified: 2013-03-09
  *
@@ -14,18 +13,21 @@
  *
  */
 
-#ifndef MCTOOLS_G4_MAGNETIC_FIELD_H_
-#define MCTOOLS_G4_MAGNETIC_FIELD_H_ 1
+#ifndef MCTOOLS_G4_MAGNETIC_FIELD_H
+#define MCTOOLS_G4_MAGNETIC_FIELD_H 1
 
+// Standard library:
 #include <map>
 
+// Third party:
+// - Boost:
 #include <boost/cstdint.hpp>
-
+// - Bayeux/geomtools :
 #include <geomtools/smart_id_locator.h>
-
-// G4 stuff:
+// - Geant4:
 #include <G4MagneticField.hh>
 
+// This project:
 #include <mctools/g4/loggable_support.h>
 
 namespace datatools {
@@ -47,6 +49,7 @@ namespace mctools {
 
     class detector_construction;
 
+    /// \brief Magnetic field using the Geant4 interface
     class magnetic_field : public G4MagneticField,
                            public loggable_support
     {
@@ -104,6 +107,12 @@ namespace mctools {
 
 } // end of namespace mctools
 
-#endif // MCTOOLS_G4_MAGNETIC_FIELD_H_
+#endif // MCTOOLS_G4_MAGNETIC_FIELD_H
 
-// end of manager.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

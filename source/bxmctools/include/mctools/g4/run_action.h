@@ -1,6 +1,5 @@
-// -*- mode: c++ ; -*-
-/* run_action.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mctools/g4/run_action.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-10
  * Last modified: 2013-03-09
  *
@@ -14,23 +13,24 @@
  *
  */
 
-#ifndef MCTOOLS_G4_RUN_ACTION_H_
-#define MCTOOLS_G4_RUN_ACTION_H_ 1
+#ifndef MCTOOLS_G4_RUN_ACTION_H
+#define MCTOOLS_G4_RUN_ACTION_H 1
 
+// Standard library:
 #include <string>
 
+// Third party:
+// - Boost:
 #include <boost/cstdint.hpp>
-
-// Utilities :
+// - Bayeux/datatools :
 #include <datatools/properties.h>
-
-// Reader/writer :
 #include <datatools/io_factory.h>
+// - Bayeux/brio :
 #include <brio/writer.h>
-
-// G4 stuff :
+// - Geant4
 #include <G4UserRunAction.hh>
 
+// This project:
 #include <mctools/g4/loggable_support.h>
 
 namespace mctools {
@@ -142,6 +142,12 @@ namespace mctools {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(mctools::g4::run_action)
 
-#endif // MCTOOLS_G4_RUN_ACTION_H_
+#endif // MCTOOLS_G4_RUN_ACTION_H
 
-// end of run_action.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

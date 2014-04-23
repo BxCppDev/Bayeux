@@ -1,4 +1,4 @@
-/* bio_guard.h */
+/// \file mctools/bio_guard.h
 /*
  * Description :
  *
@@ -28,14 +28,14 @@
  *
  */
 
-#ifndef MCTOOLS_BIO_GUARD_H_
-#define MCTOOLS_BIO_GUARD_H_
+#ifndef MCTOOLS_BIO_GUARD_H
+#define MCTOOLS_BIO_GUARD_H
 
-// Standard Library
+// Standard Library:
 
-// Third Party
+// Third Party:
 
-// Mctools
+// This project:
 #include <mctools/mctools_config.h>
 #include <mctools/detail/bio_link_guard.h>
 
@@ -63,4 +63,12 @@ bio_guard bio_guard::_g_trigger_link_guard_;
 } // end namespace mctools
 #endif // MCTOOLS_WITH_BIO != 1
 
-#endif // MCTOOLS_BIO_GUARD_H_
+#endif // MCTOOLS_BIO_GUARD_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

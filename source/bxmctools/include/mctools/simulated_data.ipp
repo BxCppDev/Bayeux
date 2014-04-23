@@ -1,22 +1,27 @@
-// -*- mode: c++ ; -*-
-/* simulated_data.ipp */
+/// \file mctools/simulated_data.ipp
 
-#ifndef MCTOOLS_SIMULATED_DATA_IPP_
-#define MCTOOLS_SIMULATED_DATA_IPP_ 1
+#ifndef MCTOOLS_SIMULATED_DATA_IPP
+#define MCTOOLS_SIMULATED_DATA_IPP 1
 
+// Ourselves:
 #include <mctools/simulated_data.h>
 
+// Third party:
+// - Boost:
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
-
-// Specific serialization method implementations:
+// - Bayeux/datatools :
 #include <datatools/i_serializable.ipp>
-#include <geomtools/utils.ipp>
-#include <genbb_help/primary_event.ipp>
 #include <datatools/properties.ipp>
-#include <mctools/base_step_hit.ipp>
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/map.hpp>
+// - Bayeux/geomtools :
+#include <geomtools/utils.ipp>
+// - Bayeux/genbb_help :
+#include <genbb_help/primary_event.ipp>
+
+// This project:
+#include <mctools/base_step_hit.ipp>
 
 namespace mctools {
 
@@ -54,6 +59,12 @@ namespace mctools {
 #include <boost/serialization/version.hpp>
 BOOST_CLASS_VERSION(mctools::simulated_data, 2)
 
-#endif // MCTOOLS_SIMULATED_DATA_IPP_
+#endif // MCTOOLS_SIMULATED_DATA_IPP
 
-// end of simulated_data.ipp
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

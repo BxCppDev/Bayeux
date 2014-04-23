@@ -1,12 +1,14 @@
-/* loggable_support.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mctools/g4/loggable_support.h
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2013-06-03
  * Last modified : 2013-06-03
  */
 
-#ifndef MCTOOLS_G4_LOGGABLE_SUPPORT_H_
-#define MCTOOLS_G4_LOGGABLE_SUPPORT_H_ 1
+#ifndef MCTOOLS_G4_LOGGABLE_SUPPORT_H
+#define MCTOOLS_G4_LOGGABLE_SUPPORT_H 1
 
+// Third party:
+// - Bayeux/datatools :
 #include <datatools/logger.h>
 
 namespace datatools {
@@ -17,6 +19,7 @@ namespace mctools {
 
   namespace g4 {
 
+    /// \brief Base class with logging support
     class loggable_support {
 
     public:
@@ -55,13 +58,11 @@ namespace mctools {
 
 } // end of namespace mctools
 
-#endif //MCTOOLS_G4_LOGGABLE_SUPPORT_H_
+#endif // MCTOOLS_G4_LOGGABLE_SUPPORT_H
 
-// end of track_history.h
 /*
 ** Local Variables: --
 ** mode: c++ --
 ** c-file-style: "gnu" --
 ** End: --
 */
-

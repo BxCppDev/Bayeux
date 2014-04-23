@@ -1,7 +1,6 @@
-// -*- mode: c++ ; -*-
-/* detector_construction.h
- * Author (s) :  Benoit Guillon <guillon@lpccaen.in2p3.fr>
- *               François Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mctools/g4/detector_construction.h
+/* Author(s) :  Benoit Guillon <guillon@lpccaen.in2p3.fr>
+ *              François Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-05-04
  * Last modified: 2013-06-15
  *
@@ -15,24 +14,26 @@
  *
  */
 
-#ifndef MCTOOLS_G4_DETECTOR_CONSTRUCTION_H_
-#define MCTOOLS_G4_DETECTOR_CONSTRUCTION_H_ 1
+#ifndef MCTOOLS_G4_DETECTOR_CONSTRUCTION_H
+#define MCTOOLS_G4_DETECTOR_CONSTRUCTION_H 1
 
+// Standard library:
 #include <string>
 #include <map>
 #include <vector>
 
+// Third party:
+// - Bayeux/datatools :
 #include <datatools/properties.h>
 #include <datatools/multi_properties.h>
-
+// - Bayeux/mygsl :
 #include <mygsl/rng.h>
-
-#include <mctools/step_hit_processor_factory.h>
-
-#include <mctools/g4/loggable_support.h>
-
 // G4 stuff:
 #include <G4VUserDetectorConstruction.hh>
+
+// This project:
+#include <mctools/step_hit_processor_factory.h>
+#include <mctools/g4/loggable_support.h>
 
 class G4UserLimits;
 class G4VisAttributes;
@@ -218,6 +219,12 @@ namespace mctools {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(mctools::g4::detector_construction)
 
-#endif // MCTOOLS_G4_DETECTOR_CONSTRUCTION_H_
+#endif // MCTOOLS_G4_DETECTOR_CONSTRUCTION_H
 
-// end of detector_construction.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

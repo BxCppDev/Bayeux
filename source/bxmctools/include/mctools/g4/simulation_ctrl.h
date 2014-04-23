@@ -1,5 +1,5 @@
-/* simulation_ctrl.h
- * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mctools/simulation_ctrl.h
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-07-04
  * Last modified : 2013-06-03
  *
@@ -9,14 +9,17 @@
  *
  */
 
-#ifndef MCTOOLS_G4_SIMULATION_CTRL_H_
-#define MCTOOLS_G4_SIMULATION_CTRL_H_ 1
+#ifndef MCTOOLS_G4_SIMULATION_CTRL_H
+#define MCTOOLS_G4_SIMULATION_CTRL_H 1
 
+// Third party:
+// - Boost :
 #include <boost/thread/thread.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/condition.hpp>
 #include <boost/cstdint.hpp>
 
+// This project:
 #include <mctools/g4/loggable_support.h>
 
 namespace mctools {
@@ -44,10 +47,13 @@ namespace mctools {
 
     public :
 
+      /// Set the requested stop flag
       void set_stop_requested ();
 
+      /// Check the requested stop flag
       bool is_stop_requested () const;
 
+      /// Set the Geant4 simulation manager
       void set_simulation_manager (manager & simulation_manager_);
 
       /// Constructor
@@ -56,8 +62,10 @@ namespace mctools {
       /// Destructor
       ~simulation_ctrl ();
 
+      /// Start
       void start ();
 
+      /// Start the simulation run
       void start_simulation_run ();
 
     public:
@@ -77,7 +85,7 @@ namespace mctools {
 
 }  // end of namespace mctools
 
-#endif // MCTOOLS_G4_SIMULATION_CTRL_H_
+#endif // MCTOOLS_G4_SIMULATION_CTRL_H
 
 // end of simulation_ctrl.h
 /*
