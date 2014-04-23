@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /* sensitive_detector.cc
  *
  * How to access informations from a G4Step:

@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* step_hit_processor_factory.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/** \file mctools/step_hit_processor_factory.h */
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-06-04
  * Last modified: 2013-03-09
  *
@@ -14,20 +14,24 @@
  *
  */
 
-#ifndef MCTOOLS_STEP_HIT_PROCESSOR_FACTORY_H_
-#define MCTOOLS_STEP_HIT_PROCESSOR_FACTORY_H_ 1
+#ifndef MCTOOLS_STEP_HIT_PROCESSOR_FACTORY_H
+#define MCTOOLS_STEP_HIT_PROCESSOR_FACTORY_H 1
 
+// Standard library:
 #include <sstream>
 #include <string>
 #include <map>
 #include <stdexcept>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/ioutils.h>
 #include <datatools/properties.h>
 #include <datatools/multi_properties.h>
 #include <datatools/handle.h>
 #include <datatools/i_tree_dump.h>
 
+// This project:
 #include <mctools/base_step_hit_processor.h>
 
 namespace datatools {
@@ -178,6 +182,4 @@ namespace mctools {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(mctools::step_hit_processor_factory)
 
-#endif // MCTOOLS_STEP_HIT_PROCESSOR_FACTORY_H_
-
-// end of step_hit_processor_factory.h
+#endif // MCTOOLS_STEP_HIT_PROCESSOR_FACTORY_H

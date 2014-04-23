@@ -41,7 +41,7 @@ int main (int argc_, char ** argv_)
     clog << "Test program for class 'simulated_data_reader'!" << endl;
 
     bool debug = false;
-    bool hf = false; // store header/footer
+    // bool hf = false; // store header/footer
 
     int iarg = 1;
     while (iarg < argc_) {

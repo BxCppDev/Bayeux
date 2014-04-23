@@ -1,9 +1,10 @@
-// -*- mode: c++ ; -*-
-/* detector_construction.cc
- */
+/* detector_construction.cc */
 
+// Ourselves:
+#include <mctools/g4/detector_construction.h>
+
+// Third party:
 #include <boost/algorithm/string/predicate.hpp>
-
 #include <boost/filesystem.hpp>
 
 #include <datatools/utils.h>
@@ -28,11 +29,6 @@
 #include <emfield/emfield_geom_plugin.h>
 #include <emfield/geom_map.h>
 
-#include <mctools/g4/detector_construction.h>
-#include <mctools/g4/sensitive_detector.h>
-#include <mctools/g4/magnetic_field.h>
-#include <mctools/g4/manager.h>
-
 // G4 stuff
 #include <globals.hh>
 #include <G4FieldManager.hh>
@@ -44,6 +40,11 @@
 #include <G4Color.hh>
 #include <G4VisAttributes.hh>
 #include <G4UserLimits.hh>
+
+// This project:
+#include <mctools/g4/sensitive_detector.h>
+#include <mctools/g4/magnetic_field.h>
+#include <mctools/g4/manager.h>
 
 namespace mctools {
 
@@ -310,7 +311,7 @@ namespace mctools {
                    ++ilogical) {
                 // Get a reference to the associated logical volume :
                 const geomtools::logical_volume & log = *(ilogical->second);
-                // Check if it is tagged as a 'sensitive' detector :
+                // Check if it is tagged with a 'material' :
                 if (log.get_parameters().has_key("material.ref")) {
                   const std::string & mr = log.get_parameters().fetch_string("material.ref");
                   for (size_t i = 0; i < material_refs.size(); i++) {

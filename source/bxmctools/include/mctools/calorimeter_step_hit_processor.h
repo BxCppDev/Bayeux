@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* calorimeter_step_hit_processor.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/** \file mctools/calorimeter_step_hit_processor.h */
+/** Author(s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-05-26
  * Last modified: 2013-03-30
  *
@@ -28,31 +28,41 @@
  *
  */
 
-#ifndef MCTOOLS_CALORIMETER_STEP_HIT_PROCESSOR_H_
-#define MCTOOLS_CALORIMETER_STEP_HIT_PROCESSOR_H_ 1
+#ifndef MCTOOLS_CALORIMETER_STEP_HIT_PROCESSOR_H
+#define MCTOOLS_CALORIMETER_STEP_HIT_PROCESSOR_H 1
 
+// Standard library:
 #include <string>
 
+// Third party:
+// - Boost:
 #include <boost/cstdint.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/ioutils.h>
-
+// - Bayeux/geomtools:
 #include <geomtools/i_shape_3d.h>
 #include <geomtools/smart_id_locator.h>
 #include <geomtools/box.h>
 #include <geomtools/sphere.h>
 #include <geomtools/placement.h>
 
+// This project:
 #include <mctools/base_step_hit_processor.h>
 
 namespace mctools {
 
-  MCTOOLS_STEP_HIT_PROCESSOR_CLASS_DECLARE(calorimeter_step_hit_processor)
+  class calorimeter_step_hit_processor : public base_step_hit_processor
   {
   public:
 
+    /// Find the Gid of the calorimeter block at a given position
+    virtual bool locate_calorimeter_block(const geomtools::vector_3d & position_,
+                                          geomtools::geom_id & gid_) const;
+
+    /// Return the geometry mapping category
     const std::string & get_mapping_category() const;
 
+    /// Set the geometry mapping category
     void set_mapping_category(const std::string & sc_);
 
     const std::vector<int> & get_mapping_category_any_addresses() const;
@@ -60,16 +70,20 @@ namespace mctools {
     /// Constructor
     calorimeter_step_hit_processor();
 
+    /// Destructor
     virtual ~calorimeter_step_hit_processor();
 
-    //! Main setup routine
-    MCTOOLS_STEP_HIT_PROCESSOR_INITIALIZE_DECLARE();
+    /// Main setup routine
+    virtual void initialize (const ::datatools::properties & config_,
+                             ::datatools::service_manager & service_mgr_);
 
-    //! Main processing routine :
-    MCTOOLS_STEP_HIT_PROCESSOR_PROCESS_HANDLE_DECLARE();
+    /// Main processing routine :
+    virtual void process (const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
+                          ::mctools::simulated_data::hit_handle_collection_type & the_handle_hits);
 
-    //! Main processing routine :
-    MCTOOLS_STEP_HIT_PROCESSOR_PROCESS_PLAIN_DECLARE();
+    /// Main processing routine :
+    virtual void process (const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
+                          ::mctools::simulated_data::hit_collection_type & the_plain_hits);
 
     /** Check if a step hit in a candidate for clusterization within
      * the proposed scintillation hit
@@ -87,6 +101,11 @@ namespace mctools {
                    bool inherit_ = false) const;
 
   protected:
+
+    void _init(const ::datatools::properties & config_,
+               ::datatools::service_manager & service_mgr_);
+
+    // void _reset();
 
     /// Main non-public algorithm
     void _process(const base_step_hit_processor::step_hit_ptr_collection_type & base_step_hits_,
@@ -126,7 +145,7 @@ namespace mctools {
     geomtools::smart_id_locator _calo_block_locator_; /** a locator to
                                                        * compute the geometry
                                                        * ID of the detector
-                                                       * block some hit
+                                                       * block where some hit
                                                        * lies in.
                                                        */
     // Registration macro :
@@ -136,6 +155,4 @@ namespace mctools {
 
 } // end of namespace mctools
 
-#endif // MCTOOLS_CALORIMETER_STEP_HIT_PROCESSOR_H_
-
-// end of calorimeter_step_hit_processor.h
+#endif // MCTOOLS_CALORIMETER_STEP_HIT_PROCESSOR_H

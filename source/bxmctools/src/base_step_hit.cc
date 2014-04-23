@@ -1,25 +1,26 @@
-// -*- mode: c++ ; -*-
-/* base_step_hit.cc
- */
+/* base_step_hit.cc */
 
+// Ourselves:
 #include <mctools/base_step_hit.h>
 
+// Standard library:
 #include <cstdlib>
 #include <stdexcept>
 #include <sstream>
 
-// misc :
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/exception.h>
 
+// This project:
 #include <mctools/utils.h>
 
 namespace mctools {
 
-  // serial tag for datatools::serialization::i_serializable interface :
+  // Serial tag for datatools::serialization::i_serializable interface :
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(base_step_hit, "mctools::base_step_hit")
 
-  // special properties:
   bool base_step_hit::is_primary_particle () const
   {
     return get_auxiliaries ().has_flag (mctools::track_utils::PRIMARY_PARTICLE_FLAG);
@@ -48,10 +49,9 @@ namespace mctools {
   int base_step_hit::get_parent_track_id () const
   {
     int parent_track_id = INVALID_HIT_ID;
-    if (get_auxiliaries ().has_key (mctools::track_utils::PARENT_TRACK_ID_KEY))
-      {
-        parent_track_id = get_auxiliaries ().fetch_integer (mctools::track_utils::PARENT_TRACK_ID_KEY);
-      }
+    if (get_auxiliaries ().has_key (mctools::track_utils::PARENT_TRACK_ID_KEY)) {
+      parent_track_id = get_auxiliaries ().fetch_integer (mctools::track_utils::PARENT_TRACK_ID_KEY);
+    }
     return parent_track_id;
   }
 
@@ -285,9 +285,11 @@ namespace mctools {
     geomtools::base_hit::tree_dump (a_out, a_title, indent, true);
 
     a_out << indent << datatools::i_tree_dumpable::tag
-          << "Position start : " << _position_start_ / CLHEP::mm  << " mm" << std::endl;
+          << "Position start : "
+          << std::setprecision(15) << _position_start_ / CLHEP::mm  << " mm" << std::endl;
     a_out << indent << datatools::i_tree_dumpable::tag
-          << "Position stop  : " << _position_stop_ / CLHEP::mm << " mm" << std::endl;
+          << "Position stop  : "
+          << std::setprecision(15) << _position_stop_ / CLHEP::mm << " mm" << std::endl;
     a_out << indent << datatools::i_tree_dumpable::tag
           << "Time start     : " << _time_start_ / CLHEP::ns << " ns" << std::endl;
     a_out << indent << datatools::i_tree_dumpable::tag
@@ -311,5 +313,3 @@ namespace mctools {
   }
 
 } // end of namespace mctools
-
-// end of base_step_hit.cc

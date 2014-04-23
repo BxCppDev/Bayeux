@@ -25,34 +25,33 @@
 
 using namespace std;
 
-int main (int argc_, char ** argv_)
+int main (int /* argc_ */, char ** /* argv_ */)
 {
   datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
   int error_code = EXIT_SUCCESS;
   try {
     clog << "Test program for class 'simulated_data_input_module'!" << endl;
 
-    bool debug = false;
-
-    int iarg = 1;
-    while (iarg < argc_) {
-      string token = argv_[iarg];
-      if (token[0] == '-') {
-        string option = token;
-        if ((option == "-d") || (option == "--debug")) {
-          logging = datatools::logger::PRIO_DEBUG;
-          clog << "warning: ignoring option '" << option << "'!" << endl;
-        }
-      }
-      else {
-        string argument = token;
-        {
-          clog << "warning: ignoring argument '"
-               << argument << "'!" << endl;
-        }
-      }
-      iarg++;
-    }
+    // bool debug = false;
+    // int iarg = 1;
+    // while (iarg < argc_) {
+    //   string token = argv_[iarg];
+    //   if (token[0] == '-') {
+    //     string option = token;
+    //     if ((option == "-d") || (option == "--debug")) {
+    //       logging = datatools::logger::PRIO_DEBUG;
+    //       clog << "warning: ignoring option '" << option << "'!" << endl;
+    //     }
+    //   }
+    //   else {
+    //     string argument = token;
+    //     {
+    //       clog << "warning: ignoring argument '"
+    //            << argument << "'!" << endl;
+    //     }
+    //   }
+    //   iarg++;
+    // }
 
     // The input data processing module :
     mctools::simulated_data_input_module PSDIM(logging);

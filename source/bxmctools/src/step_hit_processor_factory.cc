@@ -1,15 +1,16 @@
-// -*- mode: c++ ; -*-
-/* step_hit_processor_factory.cc
- */
+/** \file mctools/step_hit_processor_factory.cc */
 
+// Ourselves:
 #include <mctools/step_hit_processor_factory.h>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/service_manager.h>
 #include <datatools/exception.h>
-
+// - Bayeux/mygsl:
 #include <mygsl/rng.h>
-
+// - Bayeux/geomtools:
 #include <geomtools/manager.h>
 #include <geomtools/geometry_service.h>
 
@@ -503,8 +504,5 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mctools::step_hit_processor_factory,ocd_)
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
-
 DOCD_CLASS_SYSTEM_REGISTRATION(::mctools::step_hit_processor_factory,
                                "mctools::step_hit_processor_factory")
-
-// end of step_hit_processor_factory.cc

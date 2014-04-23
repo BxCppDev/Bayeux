@@ -1,20 +1,23 @@
-// -*- mode: c++ ; -*-
-/* base_step_hit_processor.cc
- */
+/** mctools/base_step_hit_processor.cc */
 
+// Ourselves:
 #include <mctools/base_step_hit_processor.h>
-#include <mctools/utils.h>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/ioutils.h>
 #include <datatools/service_manager.h>
 #include <datatools/exception.h>
-
-
+// - Bayeux/geomtools:
 #include <geomtools/geometry_service.h>
+
+// This project:
+#include <mctools/utils.h>
 
 namespace mctools {
 
-  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(base_step_hit_processor, "mctools::base_step_hit_processor/__system__");
+  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(base_step_hit_processor,
+                                                   "mctools::base_step_hit_processor/__system__");
 
   datatools::logger::priority base_step_hit_processor::get_logging_priority() const
   {
@@ -37,7 +40,7 @@ namespace mctools {
     if (d_) {
       _logging_priority = datatools::logger::PRIO_DEBUG;
     } else {
-      _logging_priority = datatools::logger::PRIO_NOTICE;
+      _logging_priority = datatools::logger::PRIO_WARNING;
     }
     return;
   }
@@ -88,14 +91,13 @@ namespace mctools {
         _private_pool->resize(capacity_);
       }
     }
-    else
-      {
-        DT_LOG_WARNING(_logging_priority,
-                       "Setup a private pool of hits for processor '" << get_name()
-                       << "' with capacity = " << capacity_);
-        _private_pool = new pool_type(capacity_);
-        _pool_owner = false;
-      }
+    else {
+      DT_LOG_WARNING(_logging_priority,
+                     "Setup a private pool of hits for processor '" << get_name()
+                     << "' with capacity = " << capacity_);
+      _private_pool = new pool_type(capacity_);
+      _pool_owner = false;
+    }
     _pool = _private_pool;
     return;
   }
@@ -121,10 +123,9 @@ namespace mctools {
 
   void base_step_hit_processor::add_new_hit(simulated_data::hit_handle_collection_type & the_hits)
   {
-    if (has_pool())
-      {
-        the_hits.push_back(_pool->create());
-        /*
+    if (has_pool()) {
+      the_hits.push_back(_pool->create());
+      /*
 //////////// 2013-05-13 FM : remove this test for now, may be unuseful...
 // There is 2 references here:
 // - one from the pool itself
@@ -136,12 +137,10 @@ message << "mctools::base_step_hit_processor::add_new_hit: "
 << "This hit is already referenced by another handle !";
 th row logic_error(message.str());
 }
-        */
-           }
-    else
-      {
-        the_hits.push_back(simulated_data::hit_handle_type(new base_step_hit()));
-      }
+      */
+    } else {
+      the_hits.push_back(simulated_data::hit_handle_type(new base_step_hit()));
+    }
     return;
   }
 
@@ -216,6 +215,13 @@ th row logic_error(message.str());
 
   void base_step_hit_processor::initialize(const datatools::properties & config_,
                                            datatools::service_manager & service_mgr_)
+  {
+    _initialize(config_, service_mgr_);
+    return;
+  }
+
+  void base_step_hit_processor::_initialize(const datatools::properties & config_,
+                                            datatools::service_manager & service_mgr_)
   {
 
     // Logging priority:
@@ -407,7 +413,93 @@ th row logic_error(message.str());
     return;
   }
 
-  /****************************************************/
+  // static
+  void base_step_hit_processor::init_ocd(datatools::object_configuration_description & ocd_)
+  {
+
+    datatools::logger::declare_ocd_logging_configuration(ocd_, "warning");
+
+    {
+      datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+      cpd.set_name_pattern("geometry_service.name")
+        .set_terse_description("Set the name of the geometry service")
+        .set_from("mctools::base_step_hit_processor")
+        .set_traits(datatools::TYPE_STRING)
+        .set_mandatory(false)
+        .add_example("Use a specific geometry service::          \n"
+                     "                                           \n"
+                     "  geometry_service.name : string = \"Geo\" \n"
+                     "                                           \n"
+                     )
+        ;
+    }
+
+    {
+      datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+      cpd.set_name_pattern("hit.category")
+        .set_terse_description("Set the category of output hits to be produced")
+        .set_from("mctools::base_step_hit_processor")
+        .set_traits(datatools::TYPE_STRING)
+        .set_mandatory(true)
+        .add_example("Use a specific geometry service::          \n"
+                     "                                           \n"
+                     "  hit.category : string = \"calo\"         \n"
+                     "                                           \n"
+                     )
+        ;
+    }
+
+    {
+      datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+      cpd.set_name_pattern("sensitive.category")
+        .set_terse_description("Set the category of input sensitive hits to be processed")
+        .set_from("mctools::base_step_hit_processor")
+        .set_traits(datatools::TYPE_STRING)
+        .set_mandatory(true)
+        .add_example("Use a specific source of sensitive hits::   \n"
+                     "                                            \n"
+                     "  sensitive.category : string = \"calo_SD\" \n"
+                     "                                            \n"
+                     )
+        ;
+    }
+
+    {
+      datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+      cpd.set_name_pattern("use_private_pool")
+        .set_terse_description("Activate the use of a private pool of preallocated hits")
+        .set_from("mctools::base_step_hit_processor")
+        .set_traits(datatools::TYPE_BOOLEAN)
+        .set_mandatory(false)
+        .set_default_value_boolean(false)
+        .add_example("Use a private pool of preallocated hits::   \n"
+                     "                                            \n"
+                     "  use_private_pool : boolean = 1            \n"
+                     "                                            \n"
+                     )
+        ;
+    }
+
+    {
+      datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+      cpd.set_name_pattern("private_pool_capacity")
+        .set_terse_description("Activate the use of a private pool of preallocated hits")
+        .set_from("mctools::base_step_hit_processor")
+        .set_traits(datatools::TYPE_INTEGER)
+        .set_mandatory(false)
+        .set_default_value_integer(DEFAULT_POOL_CAPACITY)
+        .set_triggered_by_flag("use_private_pool")
+        .add_example("Set the capacity of the pool of preallocated hits:: \n"
+                     "                                            \n"
+                     "  private_pool_capacity : integer = 100     \n"
+                     "                                            \n"
+                     )
+        ;
+    }
+
+
+    return;
+  }
 
   void push_all_step_hit_processor::set_visu_highlighted_hits(bool h_)
   {
@@ -444,9 +536,8 @@ th row logic_error(message.str());
     return;
   }
 
-  MCTOOLS_STEP_HIT_PROCESSOR_INITIALIZE_IMPLEMENT_HEAD(push_all_step_hit_processor,
-                                                       config_,
-                                                       service_mgr_)
+  void push_all_step_hit_processor::initialize(const ::datatools::properties & config_,
+                                               ::datatools::service_manager & service_mgr_)
   {
     this->base_step_hit_processor::initialize(config_,
                                               service_mgr_);
@@ -462,9 +553,9 @@ th row logic_error(message.str());
     return;
   }
 
-  MCTOOLS_STEP_HIT_PROCESSOR_PROCESS_HANDLE_IMPLEMENT_HEAD(push_all_step_hit_processor,
-                                                           the_base_step_hits,
-                                                           the_hits)
+  void push_all_step_hit_processor::process(
+    const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
+    ::mctools::simulated_data::hit_handle_collection_type & the_hits)
   {
     uint32_t count = 0;
     // 2011-04-14 FM : BUG FIX : several processors may use the same
@@ -496,9 +587,9 @@ th row logic_error(message.str());
     return;
   }
 
-  MCTOOLS_STEP_HIT_PROCESSOR_PROCESS_PLAIN_IMPLEMENT_HEAD(push_all_step_hit_processor,
-                                                          the_base_step_hits,
-                                                          the_plain_hits)
+  void push_all_step_hit_processor::process(
+    const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
+    ::mctools::simulated_data::hit_collection_type & the_plain_hits)
   {
     uint32_t count = 0;
     size_t current_size = the_plain_hits.size();
@@ -524,8 +615,6 @@ th row logic_error(message.str());
   MCTOOLS_STEP_HIT_PROCESSOR_REGISTRATION_IMPLEMENT(push_all_step_hit_processor,
                                                     "mctools::push_all_step_hit_processor");
 
-  /****************************************************/
-
   kill_all_step_hit_processor::kill_all_step_hit_processor()
     : base_step_hit_processor()
   {
@@ -537,26 +626,24 @@ th row logic_error(message.str());
     return;
   }
 
-  MCTOOLS_STEP_HIT_PROCESSOR_INITIALIZE_IMPLEMENT_HEAD(kill_all_step_hit_processor,
-                                                       config_,
-                                                       service_mgr_)
+  void kill_all_step_hit_processor::initialize(const ::datatools::properties & config_,
+                                               ::datatools::service_manager & service_mgr_)
   {
-    this->base_step_hit_processor::initialize(config_,
-                                              service_mgr_);
+    this->base_step_hit_processor::_initialize(config_, service_mgr_);
     return;
   }
 
-  MCTOOLS_STEP_HIT_PROCESSOR_PROCESS_HANDLE_IMPLEMENT_HEAD(kill_all_step_hit_processor,
-                                                           /*the_base_step_hits*/,
-                                                           /*the_hits*/)
+  void kill_all_step_hit_processor::process(
+     const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & /*the_base_step_hits*/,
+     ::mctools::simulated_data::hit_handle_collection_type & /*the_hits*/)
   {
     // nothing to be done here.
     return;
   }
 
-  MCTOOLS_STEP_HIT_PROCESSOR_PROCESS_PLAIN_IMPLEMENT_HEAD(kill_all_step_hit_processor,
-                                                          /*the_base_step_hits*/,
-                                                          /*the_plain_hits*/)
+  void kill_all_step_hit_processor::process(
+    const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & /*the_base_step_hits*/,
+    ::mctools::simulated_data::hit_collection_type & /*the_plain_hits*/)
   {
     // nothing to be done here.
     return;
@@ -567,4 +654,197 @@ th row logic_error(message.str());
 
 } // end of namespace mctools
 
-// end of base_step_hit_processor.cc
+  /***************
+   * OCD support *
+   ***************/
+
+// OCD support for class '::mctools::push_all_step_hit_processor' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mctools::push_all_step_hit_processor,ocd_)
+{
+  ocd_.set_class_name ("mctools::push_all_step_hit_processor");
+  ocd_.set_class_description ("A Monte Carlo step hit post-processors that preserves all sensitive hits it processes");
+  ocd_.set_class_library ("mctools");
+  ocd_.set_class_documentation ("The *push all* step hit processor is used whenever one wants  \n"
+                                "to preserve and store all Monte Carlo truth hits generated by \n"
+                                "some particle tracking/simulation engine (i.e. Geant4) and    \n"
+                                "associated to a given sensitive detector.                     \n"
+                                "These hits are thus collected through the *push all* processor            \n"
+                                "and stored as is in some output collection of hits addressed by a         \n"
+                                "so-called *hit category*.                                                 \n"
+                                "This approach enables to preserve all the physics informations            \n"
+                                "produced by the simulation engine at the price of memory and storage.     \n"
+                                "The raw simulation information is thus not downgraded, nor reduced.       \n"
+                                "                                                                          \n"
+                                "This is particularly useful when we want to visualize the truth step      \n"
+                                "hits from an external rendering tools. In such case, we conventionnaly    \n"
+                                "use a hit category named ``__visu.tracks`` that collects truth MC hits    \n"
+                                "from various *push all* processors attached to various sensitive detector.\n"
+                                "However this name ``__visu.tracks`` is not mandatory and users are free to\n"
+                                "use another name. We recommend that this name starts with a double        \n"
+                                "underscore prefix to highlight the fact that the output hit category is   \n"
+                                "likely to be used for visualisation, debugging but does not strictly      \n"
+                                "represent the output of a realistic sensitive detector.                   \n"
+                                "                                                                          \n"
+                                "Another usage of this processor is when we don't want to loose some raw   \n"
+                                "physics truth informations in order to apply an off-line processing       \n"
+                                "(digitization...). In this case, the output hit category should use       \n"
+                                "an explicit name (example: ``\"calo\"``).                                 \n"
+                                "                                                                          \n"
+                                "Keep in mind that, depending of your setup, the *push all* processor is   \n"
+                                "generally expensive in term of CPU usage and storage because it tracks    \n"
+                                "and stores many truth hits (delt-rays, secondary particles...).           \n"
+                                "As an alterbative, consider to use your own step hit processor            \n"
+                                "as a backend processing of truth hits in order to produce a reduced sets  \n"
+                                "of output hits from which your digitization algorithm will be able to     \n"
+                                "extract and use valuable informations.                                    \n"
+                                "The ``mctools::calorimeter_step_hit_processor`` class implements          \n"
+                                "such a processor.\n"
+                                ""
+                                );
+
+  // Inherits configuration properties from its base class:
+  ::mctools::base_step_hit_processor::init_ocd(ocd_);
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("visu.highlighted_hits")
+      .set_terse_description("Tag the output hits with some special 'highlight' property")
+      .set_from("mctools::base_step_hit_processor")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_default_value_boolean(false)
+      .add_example("Do not flag the hits::                      \n"
+                   "                                            \n"
+                   "  visu.highlighted_hits : boolean = 0       \n"
+                   "                                            \n"
+                   )
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("record_mc_step_hit_processor")
+      .set_terse_description("Record the name of the Monte-Carlo step hit processor which processed the hits")
+      .set_from("mctools::base_step_hit_processor")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_default_value_boolean(false)
+      .add_example("Do not flag the hits::                       \n"
+                   "                                             \n"
+                   "  record_mc_step_hit_processor : boolean = 1 \n"
+                   "                                             \n"
+                   )
+      ;
+  }
+
+  ocd_.set_configuration_hints ("A *push all* processor can be associated to an existing sensitive \n"
+                                "detector addressed through its *sensitive category*, this category\n"
+                                "being *officially* declared in the description of the geometry    \n"
+                                "logicial volume/model. In this case, the processor connects and   \n"
+                                "scans the sensitive raw hits produced by the detector and stores  \n"
+                                "them unchanged in its target hit collection.                      \n"
+                                "                                                                  \n"
+                                "The MC step hit processor factory uses a 'datatools::properties'  \n"
+                                "object to initialize its behaviour and contents.                  \n"
+                                "                                                                  \n"
+                                "Example of configuration::                                        \n"
+                                "                                                                  \n"
+                                "  logging.priority      : string  = \"warning\"                   \n"
+                                "  sensitive.category    : string  = \"ecalo_SD\"                  \n"
+                                "  use_private_pool      : boolean = 1                             \n"
+                                "  private_pool_capacity : integer = 50                            \n"
+                                "  hit.category          : string  = \"ecalo\"                     \n"
+                                "                                                                  \n"
+                                "Another possibility is to attach a *push all* processor to some   \n"
+                                "non officially existing sensitive detector(s), i.e. volumes not   \n"
+                                "considered as *sensitive* in the description of the experiment).  \n"
+                                "This is for example the case of the film wrapped around a scintillator\n"
+                                "block from which we don't expect to collect any signal unlike the  \n"
+                                "scintillator block itself which is considered as the *official*    \n"
+                                "source of some collectable physics informations for digitization.  \n"
+                                "However, we may be interested in the study                         \n"
+                                "of the energy loss of some kind of particle in the wrapping film   \n"
+                                "or in the visualization of backscattered tracks in the film.       \n"
+                                "A *push all* processor can then be associated to the logical volume\n"
+                                "of the wrapping film. A *non-official* sensitive detector will then\n"
+                                "be created and associated on the fly to the processor.             \n"
+                                "                                                                   \n"
+                                "Note that various properties are systematically considered, namely \n"
+                                "the ones of which the name starts with the following prefixes:     \n"
+                                "                                                                        \n"
+                                " * ``sensitive.`` : properties related to the sensitive detector traits \n"
+                                "   and the informations we want to store in the output hits.            \n"
+                                "   See the ``mctools::g4::sensitive_detector`` class OCD manual         \n"
+                                "   from the ``Bayeux_mctools_geant4`` plugin library.                   \n"
+                                " * ``geometry.`` : geometry related properties used to associate the    \n"
+                                "   processor to some specific volumes of the virtual geometry.          \n"
+                                "                                                                        \n"
+                                "Example for a step hit processor attached to all volumes with some      \n"
+                                "specific material::                                                     \n"
+                                "                                                                        \n"
+                                "  sensitive.category    : string  = \"__gas_visu_SD\"                   \n"
+                                "  hit.category          : string  = \"__visu.tracks\"                   \n"
+                                "  geometry.volumes.with_materials : string[1] = \"tracking_gas\"        \n"
+                                "                                                                        \n"
+                                "Example for a step hit processor attached to some specific volumes::    \n"
+                                "                                                                        \n"
+                                "  sensitive.category    : string  = \"__calos_visu_SD\"                 \n"
+                                "  hit.category          : string  = \"__visu.tracks\"                   \n"
+                                "  geometry.volumes : string[2] = \"hcalo.model.log\" \"ecalo.model.log\"\n"
+                                "                                                                        \n"
+                                "Example for a step hit processor attached to all volumes of the virtual \n"
+                                "geometry but some specific volumes. This configuration is generally     \n"
+                                "extremely expensive in term of memory and storage but can be very useful\n"
+                                "for debugging and/or visualization tasks::                              \n"
+                                "                                                                        \n"
+                                "  sensitive.category    : string  = \"__calos_visu_SD\"                 \n"
+                                "  hit.category          : string  = \"__visu.tracks\"                   \n"
+                                "  geometry.volumes.all  : boolean = 1                                   \n"
+                                "  geometry.volumes.excluded  : string[3] = \\                           \n"
+                                "     \"wires.model.log\"  \\                                            \n"
+                                "     \"bold.model.log\"  \\                                             \n"
+                                "     \"screw.model.log\"                                                \n"
+                                "                                                                        \n"
+                                )
+    ;
+
+  ocd_.set_validation_support(true);
+  ocd_.lock();
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+DOCD_CLASS_SYSTEM_REGISTRATION(::mctools::push_all_step_hit_processor,
+                               "mctools::push_all_step_hit_processor")
+
+
+// OCD support for class '::mctools::kill_all_step_hit_processor' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mctools::kill_all_step_hit_processor,ocd_)
+{
+  ocd_.set_class_name ("mctools::kill_all_step_hit_processor");
+  ocd_.set_class_description ("A Monte-Carlo step hit post-processors that discards all sensitive hits it processes");
+  ocd_.set_class_library ("mctools");
+
+  // Inherits configuration properties from its base class:
+  ::mctools::base_step_hit_processor::init_ocd(ocd_);
+
+  ocd_.set_configuration_hints ("The MC step hit processor factory uses a 'datatools::properties'  \n"
+                                "object to initialize its behaviour and contents.                  \n"
+                                "                                                                  \n"
+                                "Example of configuration::                                        \n"
+                                "                                                                  \n"
+                                "  sensitive.category    : string = \"off_detector_SD\"            \n"
+                                "  use_private_pool      : boolean = 1                             \n"
+                                "  private_pool_capacity : integer = 100                           \n"
+                                "  hit.category          : string = \"NULL\"                       \n"
+                                "                                                                  \n"
+                                "                                                                  \n"
+                               )
+    ;
+
+  ocd_.set_validation_support(true);
+  ocd_.lock();
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+DOCD_CLASS_SYSTEM_REGISTRATION(::mctools::kill_all_step_hit_processor,
+                               "mctools::kill_all_step_hit_processor")

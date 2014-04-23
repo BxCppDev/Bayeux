@@ -1,17 +1,20 @@
-// -*- mode: c++ ; -*-
-/* calorimeter_step_hit_processor.cc
- */
+/** mctools/calorimeter_step_hit_processor.cc */
 
+// Ourselves:
 #include <mctools/calorimeter_step_hit_processor.h>
 
-
+// Standard library:
 #include <algorithm>
+#include <cstdlib>
 
+// Third party:
+// - Boost:
 #include <boost/algorithm/string.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/ioutils.h>
 #include <datatools/exception.h>
 
+// This project:
 #include <mctools/utils.h>
 
 namespace mctools {
@@ -48,12 +51,22 @@ namespace mctools {
     return;
   }
 
-  MCTOOLS_STEP_HIT_PROCESSOR_INITIALIZE_IMPLEMENT_HEAD (calorimeter_step_hit_processor,
-                                                        config_,
-                                                        service_mgr_)
+  // void calorimeter_step_hit_processor::_reset()
+  // {
+  //   return;
+  // }
+
+  void calorimeter_step_hit_processor::initialize(const ::datatools::properties & config_,
+                                                  ::datatools::service_manager & service_mgr_)
   {
-    this->base_step_hit_processor::initialize(config_,
-                                              service_mgr_);
+    _init(config_, service_mgr_);
+    return;
+  }
+
+  void calorimeter_step_hit_processor::_init(const ::datatools::properties & config_,
+                                             ::datatools::service_manager & service_mgr_)
+  {
+     this->base_step_hit_processor::initialize(config_, service_mgr_);
 
     // The geometry manager is mandatory for this processor:
     DT_THROW_IF (! has_geom_manager (), std::logic_error,
@@ -106,8 +119,7 @@ namespace mctools {
 
     const geomtools::id_mgr::category_info & mapping_cat_info = icat->second;
 
-    // initialize the smart ID locator for this
-    // category of volumes:
+    // Initialize the smart ID locator for this category of volumes:
     _calo_block_type_ = mapping_cat_info.get_type ();
     _calo_block_locator_.set_gmap (*_mapping_);
     _calo_block_locator_.initialize (_calo_block_type_);
@@ -146,6 +158,13 @@ namespace mctools {
   const std::vector<int> & calorimeter_step_hit_processor::get_mapping_category_any_addresses () const
   {
     return _mapping_category_any_addresses_;
+  }
+
+  bool calorimeter_step_hit_processor::locate_calorimeter_block(const geomtools::vector_3d & position_,
+                                                                geomtools::geom_id & gid_) const
+  {
+    gid_ = _calo_block_locator_.get_geom_id(position_, _calo_block_type_);
+    return gid_.is_valid();
   }
 
   /** Check if a 'step hit' could be aggregated to an existing 'scintillation hit'.
@@ -341,17 +360,17 @@ namespace mctools {
     return true;
   }
 
-  MCTOOLS_STEP_HIT_PROCESSOR_PROCESS_PLAIN_IMPLEMENT_HEAD(calorimeter_step_hit_processor,
-                                                          the_base_step_hits,
-                                                          a_plain_gg_hits)
+  void calorimeter_step_hit_processor::process(
+    const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
+    ::mctools::simulated_data::hit_collection_type & the_plain_calo_hits)
   {
-    _process(the_base_step_hits, (simulated_data::hit_handle_collection_type *) 0, &a_plain_gg_hits);
+    _process(the_base_step_hits, (simulated_data::hit_handle_collection_type *) 0, &the_plain_calo_hits);
     return;
   }
 
-  MCTOOLS_STEP_HIT_PROCESSOR_PROCESS_HANDLE_IMPLEMENT_HEAD(calorimeter_step_hit_processor,
-                                                           the_base_step_hits,
-                                                           the_calo_hits)
+  void calorimeter_step_hit_processor::process(
+    const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
+    ::mctools::simulated_data::hit_handle_collection_type & the_calo_hits)
   {
     _process(the_base_step_hits, &the_calo_hits, (simulated_data::hit_collection_type *) 0);
     return;
@@ -397,14 +416,35 @@ namespace mctools {
       if (hit_energy_deposit < 1.e-10 * CLHEP::keV) continue;
 
       // locate the hit using the mean position through the smart locator:
-      geomtools::geom_id gid = _calo_block_locator_.get_geom_id (hit_position_mean,
-                                                                 _calo_block_type_);
+      geomtools::geom_id gid;
+      locate_calorimeter_block(hit_position_mean, gid);
       if (! gid.is_valid ()) {
+        // 2014-04-23, FM: Development/debugging:
+        /*
+        if (get_logging_priority () >= datatools::logger::PRIO_WARNING) {
+          the_step_hit.tree_dump(std::clog, "Current step hit: ", "WARNING: ");
+        }
+        DT_LOG_WARNING (get_logging_priority (), "Calo block locator : " );
+        _calo_block_locator_.dump(std::clog);
+        DT_LOG_WARNING (get_logging_priority (), "Calo block type    = " << _calo_block_type_);
+        DT_LOG_WARNING (get_logging_priority (), "Hit position start = " << std::setprecision(15) << hit_position_start / CLHEP::mm);
+        DT_LOG_WARNING (get_logging_priority (), "Hit position stop  = " << std::setprecision(15) << hit_position_stop  / CLHEP::mm);
+        DT_LOG_WARNING (get_logging_priority (), "Hit position mean  = " << std::setprecision(15) << hit_position_mean  / CLHEP::mm);
+        setenv("geomtools_geom_map_check_inside_devel", "1", 1);
+        geomtools::geom_id gid_start;
+        locate_calorimeter_block(hit_position_start, gid_start);
+        DT_LOG_WARNING (get_logging_priority (), "GID start = " << gid_start);
+        geomtools::geom_id gid_stop;
+        locate_calorimeter_block(hit_position_stop, gid_stop);
+        unsetenv("geomtools_geom_map_check_inside_devel");
+        DT_LOG_WARNING (get_logging_priority (), "GID stop  = " << gid_stop);
+        */
         // we do not process such a hit:
         DT_LOG_WARNING (get_logging_priority (),
                         "We skip this hit for one cannot locate it through the locator attached to the '"
                         << get_mapping_category() << "' ! "
-                        << " This is probably due to another mapping category registered in the current '"
+                        << " This may be due to a roundoff error while checking the geometry of the volume "
+                        << "or to another mapping category registered in the current '"
                         << get_hit_category() << "' hit category "
                         << "that may generate its own step hits ! Consider to write your own hit processor able "
                         << "to handle several mapping categories (using several suitable locators) !");
@@ -413,9 +453,9 @@ namespace mctools {
 
       // Set 'any' for some GID subaddresses :
       for (size_t i = 0; i < _mapping_category_any_addresses_.size (); i++) {
-        gid.set_any (_mapping_category_any_addresses_[i]);
+        gid.set_any(_mapping_category_any_addresses_[i]);
       }
-      the_step_hit.set_geom_id (gid);
+      the_step_hit.set_geom_id(gid);
 
       // first search match with the current cluster (if any):
       base_step_hit * matching_scintillation_cluster = 0;
@@ -631,5 +671,3 @@ namespace mctools {
   }
 
 } // end of namespace mctools
-
-// end of calorimeter_step_hit_processor.cc

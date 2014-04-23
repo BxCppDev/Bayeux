@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* base_step_hit_processor.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/** \file mctools/base_step_hit_processor.h */
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-05-26
  * Last modified: 2013-03-08
  *
@@ -14,24 +14,30 @@
  *
  */
 
-#ifndef MCTOOLS_BASE_STEP_HIT_PROCESSOR_H_
-#define MCTOOLS_BASE_STEP_HIT_PROCESSOR_H_ 1
+#ifndef MCTOOLS_BASE_STEP_HIT_PROCESSOR_H
+#define MCTOOLS_BASE_STEP_HIT_PROCESSOR_H 1
 
+// Standard library:
 #include <sstream>
 #include <string>
 #include <map>
 #include <stdexcept>
 #include <vector>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/handle_pool.h>
 #include <datatools/factory_macros.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/logger.h>
+#include <datatools/object_configuration_description.h>
 
+// - Bayeux/mygsl:
 #include <mygsl/rng.h>
-
+// - Bayeux/geomtools:
 #include <geomtools/manager.h>
 
+// This project:
 #include <mctools/base_step_hit.h>
 #include <mctools/simulated_data.h>
 
@@ -135,7 +141,12 @@ namespace mctools {
 
     void set_logging_priority(datatools::logger::priority);
 
+    static void init_ocd(datatools::object_configuration_description &);
+
   protected:
+
+     void _initialize(const datatools::properties & a_config,
+                      datatools::service_manager & a_service_mgr);
 
     /*
     /// Main hidden algorithm
@@ -179,22 +190,27 @@ namespace mctools {
   /** A step hit processor that pushes the simulated base step hits
    *  as is in an output list, just cleaning the 'user data' pointer.
    */
-  MCTOOLS_STEP_HIT_PROCESSOR_CLASS_DECLARE(push_all_step_hit_processor)
+  class push_all_step_hit_processor : public base_step_hit_processor
   {
   public:
 
+    /// Constructor
     push_all_step_hit_processor ();
 
+    /// Destructor
     virtual ~push_all_step_hit_processor ();
 
-    //! Main setup routine
-    MCTOOLS_STEP_HIT_PROCESSOR_INITIALIZE_DECLARE();
+    /// Main setup routine
+    virtual void initialize (const ::datatools::properties & config_,
+                             ::datatools::service_manager & service_mgr_);
 
-    //! Main processing routine :
-    MCTOOLS_STEP_HIT_PROCESSOR_PROCESS_HANDLE_DECLARE();
+    /// Main processing routine :
+    virtual void process (const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
+                          ::mctools::simulated_data::hit_handle_collection_type & the_handle_hits);
 
-    //! Main processing routine :
-    MCTOOLS_STEP_HIT_PROCESSOR_PROCESS_PLAIN_DECLARE();
+    /// Main processing routine :
+    virtual void process (const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
+                          ::mctools::simulated_data::hit_collection_type & the_plain_hits);
 
     void set_visu_highlighted_hits (bool);
 
@@ -220,21 +236,27 @@ namespace mctools {
   /** A step hit processor that does nothing with the available step hits
    *  and let the output list empty.
    */
-  MCTOOLS_STEP_HIT_PROCESSOR_CLASS_DECLARE(kill_all_step_hit_processor)
+  class kill_all_step_hit_processor : public base_step_hit_processor
   {
   public:
 
+    /// Constructor
     kill_all_step_hit_processor ();
 
+    /// Destructor
     virtual ~kill_all_step_hit_processor ();
 
-    MCTOOLS_STEP_HIT_PROCESSOR_INITIALIZE_DECLARE();
+    /// Main setup routine
+    virtual void initialize (const ::datatools::properties & config_,
+                             ::datatools::service_manager & service_mgr_);
 
-    //! Main processing routine :
-    MCTOOLS_STEP_HIT_PROCESSOR_PROCESS_HANDLE_DECLARE();
+    /// Main processing routine :
+    virtual void process (const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
+                          ::mctools::simulated_data::hit_handle_collection_type & the_handle_hits);
 
-    //! Main processing routine :
-    MCTOOLS_STEP_HIT_PROCESSOR_PROCESS_PLAIN_DECLARE();
+    /// Main processing routine :
+    virtual void process (const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
+                          ::mctools::simulated_data::hit_collection_type & the_plain_hits);
 
     // Registration macro :
     MCTOOLS_STEP_HIT_PROCESSOR_REGISTRATION_INTERFACE (kill_all_step_hit_processor);
@@ -243,6 +265,8 @@ namespace mctools {
 
 } // end of namespace mctools
 
-#endif // MCTOOLS_BASE_STEP_HIT_PROCESSOR_H_
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(mctools::push_all_step_hit_processor)
+DOCD_CLASS_DECLARATION(mctools::kill_all_step_hit_processor)
 
-// end of base_step_hit_processor.h
+#endif // MCTOOLS_BASE_STEP_HIT_PROCESSOR_H
