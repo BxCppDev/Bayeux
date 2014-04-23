@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_rotation_3d.cxx
 
 #include <cstdlib>
@@ -10,27 +10,27 @@
 
 using namespace std;
 
-int main (int argc_, char ** argv_)
+int main (int /* argc_ */, char ** /* argv_ */)
 {
   int error_code = EXIT_SUCCESS;
   try
   {
 
-    clog << "Hello, this is a sample program for class 'rotation_3d'!" << endl; 
-  
-    bool debug = false;
- 
-    int iarg = 1;
-    while (iarg < argc_)
-    {
-    
-      string arg = argv_[iarg];
+    clog << "Hello, this is a sample program for class 'rotation_3d'!" << endl;
 
-      if (arg == "-d" || arg == "--debug") debug = true;
+    // bool debug = false;
 
-      iarg++;
-    }
-    
+    // int iarg = 1;
+    // while (iarg < argc_)
+    // {
+
+    //   string arg = argv_[iarg];
+
+    //   if (arg == "-d" || arg == "--debug") debug = true;
+
+    //   iarg++;
+    // }
+
     geomtools::rotation_3d r;
     double phi = 30. * CLHEP::degree;
     double theta = 45. * CLHEP::degree;
@@ -44,12 +44,12 @@ int main (int argc_, char ** argv_)
   }
   catch (exception & x)
   {
-    cerr << "error: " << x.what() << endl; 
+    cerr << "error: " << x.what() << endl;
     error_code = EXIT_FAILURE;
   }
   catch (...)
   {
-    cerr << "error: " << "unexpected error!" << endl; 
+    cerr << "error: " << "unexpected error!" << endl;
     error_code = EXIT_FAILURE;
   }
   return error_code;

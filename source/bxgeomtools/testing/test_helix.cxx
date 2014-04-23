@@ -1,6 +1,6 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_helix.cxx
- 
+
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -29,14 +29,14 @@ void test0 ()
 {
   std::clog << "\n********** test0: Check 'get_length' value \n";
   geomtools::vector_3d O ( 0., 0., 0. );
- 
+
   geomtools::helix_3d H;
   H.set_radius ( 1. * CLHEP::m  );
   H.set_center ( O );
   H.set_step   ( 1. * CLHEP::m );
   H.set_t1     ( 0.0 );
   H.set_t2     ( 0.1 );
-  
+
   double l = H.get_length ();
 
   std::clog << "H length = " << l /CLHEP::mm  << " mm" << std::endl;
@@ -50,7 +50,7 @@ void test0 ()
       geomtools::vector_3d pp = H.get_point (tp);
       sum += (pp - p).mag ();
     }
-  double S = H.get_curvilinear_position (H.get_t2 ()) 
+  double S = H.get_curvilinear_position (H.get_t2 ())
     - H.get_curvilinear_position (H.get_t1 ());
   std::clog << "H sum-length = " << sum / CLHEP::mm  << " mm" << std::endl;
   std::clog << "H S-length = " << S / CLHEP::mm  << " mm" << std::endl;
@@ -58,23 +58,23 @@ void test0 ()
   return;
 }
 
-int 
+int
 main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
-  try 
+  try
     {
-      bool debug   = false;
+      // bool debug   = false;
       bool gnuplot = false;
       bool only_test_0 = false;
 
       int iarg = 1;
-      while (iarg < argc_) 
+      while (iarg < argc_)
         {
           std::string arg = argv_[iarg];
 
-          if (arg == "-d" || arg == "--debug")
-            debug = true;
+          // if (arg == "-d" || arg == "--debug")
+          //   debug = true;
           if (arg == "-g" || arg == "--gnuplot")
             gnuplot = true;
           if (arg == "-0" || arg == "--only-test-0")
@@ -93,7 +93,7 @@ main (int argc_, char ** argv_)
       geomtools::helix_3d my_helix_2;
 
       geomtools::vector_3d helix_center_1 ( 0., 0., 0. );
-       
+
       my_helix_1.set_radius ( 1. * CLHEP::m  );
       my_helix_1.set_center ( helix_center_1 );
       my_helix_1.set_step   ( 10. * CLHEP::mm  );
@@ -101,7 +101,7 @@ main (int argc_, char ** argv_)
       my_helix_1.set_t2     ( 2.0 );
 
       geomtools::vector_3d helix_center_2 ( 0., 0., 0. );
-       
+
       my_helix_2.set_radius ( 0.5 * CLHEP::m );
       my_helix_2.set_center ( helix_center_2 );
       my_helix_2.set_step   ( -1. * CLHEP::mm );
@@ -118,24 +118,24 @@ main (int argc_, char ** argv_)
         {
           std::vector<double> x1, y1, z1;
           for ( double t = my_helix_1.get_t1();
-                t <= my_helix_1.get_t2(); 
+                t <= my_helix_1.get_t2();
                 t += ( ( my_helix_1.get_t2() - my_helix_1.get_t1() ) / 1000. ) )
             {
               x1.push_back ( my_helix_1.get_point ( t ).x() );
               y1.push_back ( my_helix_1.get_point ( t ).y() );
               z1.push_back ( my_helix_1.get_point ( t ).z() );
             }
-          
+
           std::vector<double> x2, y2, z2;
           for ( double t = my_helix_2.get_t1();
-                t <= my_helix_2.get_t2(); 
+                t <= my_helix_2.get_t2();
                 t += ( ( my_helix_2.get_t2() - my_helix_2.get_t1() ) / 1000. ) )
             {
               x2.push_back ( my_helix_2.get_point ( t ).x() );
               y2.push_back ( my_helix_2.get_point ( t ).y() );
               z2.push_back ( my_helix_2.get_point ( t ).z() );
             }
-          
+
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
           Gnuplot g1("lines");
           g1.set_xlabel("x").set_ylabel("y").set_zlabel("z");
@@ -148,12 +148,12 @@ main (int argc_, char ** argv_)
       else
         {
           my_helix_1.print_xyz  ( std::cout, my_helix_1, 0.1, 0 );
-          
+
           std::cout << std::endl;
           std::cout << std::endl;
-          
+
           for ( double t = my_helix_1.get_t1();
-                t <= my_helix_1.get_t2(); 
+                t <= my_helix_1.get_t2();
                 t += ( ( my_helix_1.get_t2() - my_helix_1.get_t1() ) / 2. ) )
             {
               geomtools::vector_3d position ( my_helix_1.get_point ( t ).x(),
@@ -164,15 +164,15 @@ main (int argc_, char ** argv_)
               std::cout << position.x() << " "
                         << position.y() << " "
                         << position.z() << std::endl;
-              
+
               geomtools::vector_3d end_point = position + dir_vec;
-              
+
               std::cout << end_point.x() << " "
                         << end_point.y() << " "
                         << end_point.z() << std::endl;
 
               std::cout << std::endl;
-              std::cout << std::endl;     
+              std::cout << std::endl;
             }
 
           my_helix_2.print_xyz  ( std::cout, my_helix_2, 0.1, 0 );
@@ -181,12 +181,12 @@ main (int argc_, char ** argv_)
     }
   catch (std::exception & x)
     {
-      std::cerr << "error: " << x.what () << std::endl; 
+      std::cerr << "error: " << x.what () << std::endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      std::cerr << "error: " << "unexpected error!" << std::endl; 
+      std::cerr << "error: " << "unexpected error!" << std::endl;
       error_code = EXIT_FAILURE;
     }
   return error_code;

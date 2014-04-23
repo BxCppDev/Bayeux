@@ -20,7 +20,7 @@ int main (int argc_, char ** argv_)
     {
       clog << "Test program for 'intersection' utilities !" << endl;
 
-      bool debug = false;
+      // bool debug = false;
       bool interactive = false;
 
       int iarg = 1;
@@ -31,11 +31,12 @@ int main (int argc_, char ** argv_)
           if (token[0] == '-')
             {
                string option = token;
-               if ((option == "-d") || (option == "--debug"))
-                 {
-                   debug = true;
-                 }
-               else if ((option == "-i") || (option == "--interactive"))
+               // if ((option == "-d") || (option == "--debug"))
+               //   {
+               //     debug = true;
+               //   }
+               // else
+               if ((option == "-i") || (option == "--interactive"))
                  {
                    interactive = true;
                  }

@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_placement_3.cxx
 
 #include <cstdlib>
@@ -12,10 +12,10 @@
 
 using namespace std;
 
-int main (int argc_, char ** argv_)
+int main (int /* argc_ */, char ** /* argv_ */)
 {
   int error_code = EXIT_SUCCESS;
-  try 
+  try
     {
       using namespace geomtools;
 
@@ -24,7 +24,7 @@ int main (int argc_, char ** argv_)
       placement p1 (O1, M_PI / 4, 0.0, 0.0);
       placement p2 (O2, M_PI / 2, 0.0, 0.0);
       clog << "O1O2= " << (O2 - O1) << endl;
-      
+
       p1.tree_dump (clog, "Placement 1");
       p2.tree_dump (clog, "Placement 2");
 
@@ -48,12 +48,12 @@ int main (int argc_, char ** argv_)
     }
   catch (exception & x)
     {
-      cerr << "error: " << x.what() << endl; 
+      cerr << "error: " << x.what() << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return error_code;

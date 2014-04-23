@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_placement_2.cxx
 
 #include <cstdlib>
@@ -10,10 +10,10 @@
 
 using namespace std;
 
-int main (int argc_, char ** argv_)
+int main (int /* argc_ */, char ** /* argv_ */)
 {
   int error_code = EXIT_SUCCESS;
-  try 
+  try
     {
       using namespace geomtools;
       vector_3d M1 (0.3, 0.2);
@@ -29,7 +29,7 @@ int main (int argc_, char ** argv_)
       double phi1   = 45.0 * CLHEP::degree;
       double theta1 = 20.0 * CLHEP::degree;
       double delta1  = 30.0 * CLHEP::degree;
-      
+
       placement p1 (O1, phi1, theta1, delta1);
       p1.test ();
       p1.tree_dump (clog, "Placement 1", ">>> ");
@@ -41,7 +41,7 @@ int main (int argc_, char ** argv_)
       double phi2   = 10.0 * CLHEP::degree;
       double theta2 = 72.0 * CLHEP::degree;
       double delta2 = 61.0 * CLHEP::degree;
-      
+
       placement p2 (O2, phi2, theta2, delta2);
       p2.test ();
       p2.tree_dump (clog, "Placement 2" , ">>> ");
@@ -51,7 +51,7 @@ int main (int argc_, char ** argv_)
       p1.child_to_mother (p2, p2p);
       p2p.tree_dump (clog, "Placement 2'" , ">>> ");
       clog << "******* Placement 2': " << p2p << endl;
- 
+
       vector_3d M1p;
       vector_3d M2p;
       p2.child_to_mother (M1, M1p);
@@ -88,23 +88,23 @@ int main (int argc_, char ** argv_)
       double phi0    = 43.0 * CLHEP::degree;
       double theta0  = 20.0 * CLHEP::degree;
       double delta0  = 12.0 * CLHEP::degree;
-      
+
       placement p0 (O1, phi0, theta0, delta0);
       p0.tree_dump (clog, "Placement 0", ">>> ");
       p0.test ();
       clog << "******* Placement 0: " << p0 << endl;
 
       //clog << "******* 1 radian = " << CLHEP::radian << endl;
-     
+
     }
   catch (exception & x)
     {
-      cerr << "error: " << x.what() << endl; 
+      cerr << "error: " << x.what() << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return error_code;

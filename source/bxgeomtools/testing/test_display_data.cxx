@@ -1,6 +1,7 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 // test_display_data.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -43,13 +44,13 @@ std::string make_name (const std::string & prefix_, unsigned int i_)
   return out.str ();
 }
 
-std::string make_name2 (const std::string & prefix_, 
+std::string make_name2 (const std::string & prefix_,
                         unsigned int i_, unsigned int j_)
 {
   return make_name (make_name (prefix_, i_), j_);
 }
 
-std::string make_name3 (const std::string & prefix_, 
+std::string make_name3 (const std::string & prefix_,
                         unsigned int i_, unsigned int j_, unsigned int k_)
 {
   return make_name2 (make_name (prefix_, i_), j_, k_);
@@ -58,8 +59,8 @@ std::string make_name3 (const std::string & prefix_,
 int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
-  long seed = 314159;
-  bool debug = false;
+  // long seed = 314159;
+  // bool debug = false;
   bool draw = false;
   std::string draw_group;
 
@@ -67,26 +68,27 @@ int main (int argc_, char ** argv_)
   while (iarg < argc_)
     {
       std::string arg = argv_[iarg];
-      
-      if (arg == "-d" || arg == "--debug") 
-        {
-          debug = true;
-        }
-      else if (arg == "-D" || arg == "--draw") 
+
+      // if (arg == "-d" || arg == "--debug")
+      //   {
+      //     debug = true;
+      //   }
+      // else
+      if (arg == "-D" || arg == "--draw")
         {
           draw = true;
         }
-     else if (arg == "-g" || arg == "--draw-group") 
+      else if (arg == "-g" || arg == "--draw-group")
         {
           draw = true;
           draw_group = argv_[++iarg];
         }
-       
+
       iarg++;
     }
   try
     {
-      std::clog << "Test program for class 'display_data' !" << std::endl; 
+      std::clog << "Test program for class 'display_data' !" << std::endl;
 
       // A display data object :
       geomtools::display_data DD;
@@ -96,7 +98,7 @@ int main (int argc_, char ** argv_)
       {
         geomtools::blur_spot a_spot (geomtools::blur_spot::DIMENSION_ZERO,
                                      15.0 * CLHEP::mm);
-        geomtools::display_data::display_item & spot_DI 
+        geomtools::display_data::display_item & spot_DI
           = DD.add_static_item ("spot",
                                 "group::misc",
                                 "red");
@@ -104,9 +106,9 @@ int main (int argc_, char ** argv_)
         geomtools::placement plcmt;
         plcmt.set_translation (-10 * CLHEP::cm, +15 * CLHEP::cm, 30 * CLHEP::cm);
         plcmt.set_orientation (geomtools::AXIS_X, 30.*CLHEP::degree);
-        
+
         // Fill the 'wires' structure of this circle :
-        a_spot.generate_wires (spot_DI.paths, plcmt);       
+        a_spot.generate_wires (spot_DI.paths, plcmt);
       }
 
       // Draw 1D blur spot :
@@ -114,7 +116,7 @@ int main (int argc_, char ** argv_)
         geomtools::blur_spot a_spot (geomtools::blur_spot::DIMENSION_ONE,
                                      10.0 * CLHEP::mm);
         a_spot.set_errors(85.0 * CLHEP::mm);
-        geomtools::display_data::display_item & spot_DI 
+        geomtools::display_data::display_item & spot_DI
           = DD.add_static_item ("spot1",
                                 "group::misc",
                                 "magenta");
@@ -122,9 +124,9 @@ int main (int argc_, char ** argv_)
         geomtools::placement plcmt;
         plcmt.set_translation (-30 * CLHEP::cm, +15 * CLHEP::cm, 20 * CLHEP::cm);
         plcmt.set_orientation (geomtools::AXIS_X, -15.*CLHEP::degree);
-        
+
         // Fill the 'wires' structure of this circle :
-        a_spot.generate_wires (spot_DI.paths, plcmt);       
+        a_spot.generate_wires (spot_DI.paths, plcmt);
       }
 
       // Draw 2D blur spot :
@@ -132,7 +134,7 @@ int main (int argc_, char ** argv_)
         geomtools::blur_spot a_spot (geomtools::blur_spot::DIMENSION_TWO,
                                      10.0 * CLHEP::mm);
         a_spot.set_errors(65.0 * CLHEP::mm, 135.0 * CLHEP::mm);
-        geomtools::display_data::display_item & spot_DI 
+        geomtools::display_data::display_item & spot_DI
           = DD.add_static_item ("spot2",
                                 "group::misc",
                                 "blue");
@@ -140,9 +142,9 @@ int main (int argc_, char ** argv_)
         geomtools::placement plcmt;
         plcmt.set_translation (-10 * CLHEP::cm, -15 * CLHEP::cm, -20 * CLHEP::cm);
         plcmt.set_orientation (geomtools::AXIS_X, -15.*CLHEP::degree);
-        
+
         // Fill the 'wires' structure of this circle :
-        a_spot.generate_wires (spot_DI.paths, plcmt);       
+        a_spot.generate_wires (spot_DI.paths, plcmt);
       }
 
       // Draw 3D blur spot :
@@ -150,7 +152,7 @@ int main (int argc_, char ** argv_)
         geomtools::blur_spot a_spot (geomtools::blur_spot::DIMENSION_THREE,
                                      10.0 * CLHEP::mm);
         a_spot.set_errors(65.0 * CLHEP::mm, 65.0 * CLHEP::mm, 100.0 * CLHEP::mm);
-        geomtools::display_data::display_item & spot_DI 
+        geomtools::display_data::display_item & spot_DI
           = DD.add_static_item ("spot3",
                                 "group::misc",
                                 "green");
@@ -158,15 +160,15 @@ int main (int argc_, char ** argv_)
         geomtools::placement plcmt;
         plcmt.set_translation (-10 * CLHEP::cm, -35 * CLHEP::cm, -20 * CLHEP::cm);
         plcmt.set_orientation (geomtools::AXIS_Y, 75.*CLHEP::degree);
-        
+
         // Fill the 'wires' structure of this circle :
-        a_spot.generate_wires (spot_DI.paths, plcmt);       
+        a_spot.generate_wires (spot_DI.paths, plcmt);
       }
 
       // Draw a circle :
       {
         geomtools::circle a_circle (5. * CLHEP::cm);
-        geomtools::display_data::display_item & circle_DI 
+        geomtools::display_data::display_item & circle_DI
           = DD.add_static_item ("circle",
                                 "group::misc",
                                 "green");
@@ -174,16 +176,16 @@ int main (int argc_, char ** argv_)
         geomtools::placement plcmt;
         plcmt.set_translation (-20 * CLHEP::cm, +25 * CLHEP::cm, 40 * CLHEP::cm);
         plcmt.set_orientation (geomtools::AXIS_Y, 45.*CLHEP::degree);
-        
+
         // Fill the 'wires' structure of this circle :
-        a_circle.generate_wires (circle_DI.paths, plcmt);       
+        a_circle.generate_wires (circle_DI.paths, plcmt);
       }
 
 
       // Draw a disk :
       {
         geomtools::disk a_disk (8. * CLHEP::cm);
-        geomtools::display_data::display_item & disk_DI 
+        geomtools::display_data::display_item & disk_DI
           = DD.add_static_item ("disk",
                                 "group::misc",
                                 "blue");
@@ -191,16 +193,16 @@ int main (int argc_, char ** argv_)
         geomtools::placement plcmt;
         plcmt.set_translation (-20 * CLHEP::cm, -75 * CLHEP::cm, 40 * CLHEP::cm);
         plcmt.set_orientation (geomtools::AXIS_Y, 45.*CLHEP::degree);
-        
+
         // Fill the 'wires' structure of this disk :
-        a_disk.generate_wires (disk_DI.paths, plcmt);       
+        a_disk.generate_wires (disk_DI.paths, plcmt);
       }
 
 
       // Draw a cylinder :
       {
         geomtools::cylinder a_cylinder (10. *CLHEP::cm, 15. * CLHEP::cm);
-        geomtools::display_data::display_item & cylinder_DI 
+        geomtools::display_data::display_item & cylinder_DI
           = DD.add_static_item ("cylinder",
                                 "group::misc",
                                 "blue");
@@ -208,16 +210,16 @@ int main (int argc_, char ** argv_)
         geomtools::placement plcmt;
         plcmt.set_translation (20 * CLHEP::cm, 75 * CLHEP::cm, 30 * CLHEP::cm);
         plcmt.set_orientation (geomtools::AXIS_Y, 30.*CLHEP::degree);
-        
+
         // Fill the 'wires' structure of this cylinder:
-        a_cylinder.generate_wires (cylinder_DI.paths, plcmt);       
+        a_cylinder.generate_wires (cylinder_DI.paths, plcmt);
       }
 
 
       // Draw a tube :
       {
         geomtools::tube a_tube (10. *CLHEP::cm, 20. *CLHEP::cm, 8. * CLHEP::cm);
-        geomtools::display_data::display_item & tube_DI 
+        geomtools::display_data::display_item & tube_DI
           = DD.add_static_item ("tube",
                                 "group::misc",
                                 "blue");
@@ -225,9 +227,9 @@ int main (int argc_, char ** argv_)
         geomtools::placement plcmt;
         plcmt.set_translation (-30 * CLHEP::cm, -50 * CLHEP::cm, 40 * CLHEP::cm);
         plcmt.set_orientation (geomtools::AXIS_Y, 30.*CLHEP::degree);
-        
+
         // Fill the 'wires' structure of this tube:
-        a_tube.generate_wires (tube_DI.paths, plcmt);       
+        a_tube.generate_wires (tube_DI.paths, plcmt);
       }
 
       // Draw the calorimeter walls :
@@ -235,7 +237,7 @@ int main (int argc_, char ** argv_)
         // The 3D volume of a calorimeter block :
         geomtools::box calo_block_box (254. *CLHEP::mm,254. *CLHEP::mm, 180. *CLHEP::mm);
 
-        // Layout of the segmented calorimeter (2 walls) :      
+        // Layout of the segmented calorimeter (2 walls) :
         int ncols = 4;
         int nrows = 3;
         for (int side = 0; side < 2; side++)
@@ -245,14 +247,14 @@ int main (int argc_, char ** argv_)
                 for (int j = 0; j < nrows; j++)
                   {
                     // Adding a static display item corresponding to each block :
-                    geomtools::display_data::display_item & calo_block 
+                    geomtools::display_data::display_item & calo_block
                       = DD.add_static_item (make_name3 ("calo_block", side, i, j),
                                             "group::detector",
                                             "cyan");
                     // Compute position of the block :
                     geomtools::placement plcmt;
                     plcmt.set_translation ((1 - 2 * side) * 52 * CLHEP::cm,
-                                           -0.5 * ncols * calo_block_box.get_y () + (i + 0.5) * calo_block_box.get_y (), 
+                                           -0.5 * ncols * calo_block_box.get_y () + (i + 0.5) * calo_block_box.get_y (),
                                            -0.5 * nrows * calo_block_box.get_x () + (j + 0.5) * calo_block_box.get_x ()
                                            );
                     plcmt.set_orientation (geomtools::AXIS_Y, 90.*CLHEP::degree);
@@ -267,7 +269,7 @@ int main (int argc_, char ** argv_)
       // Draw the source foil :
       {
         geomtools::rectangle source_foil_rect (50*CLHEP::cm, 80*CLHEP::cm);
-        geomtools::display_data::display_item & srcfoil 
+        geomtools::display_data::display_item & srcfoil
           = DD.add_static_item ("source_foil",
                                 "group::detector",
                                 "magenta");
@@ -275,29 +277,29 @@ int main (int argc_, char ** argv_)
         geomtools::placement plcmt;
         plcmt.set_translation (0, 0, 0);
         plcmt.set_orientation (geomtools::AXIS_Y, 90.*CLHEP::degree);
- 
+
         // Fill the 'wires' structure of the source foil :
         source_foil_rect.generate_wires (srcfoil.paths, plcmt);
       }
 
-      geomtools::vector_3d true_vertex (0.0 * CLHEP::mm, 
-                                        35 * CLHEP::mm, 
+      geomtools::vector_3d true_vertex (0.0 * CLHEP::mm,
+                                        35 * CLHEP::mm,
                                         -105 * CLHEP::mm);
       // Draw some Geiger hits :
       {
         for (int i = 0; i < 9; i++)
           {
-            geomtools::display_data::display_item & gghit 
+            geomtools::display_data::display_item & gghit
               = DD.add_static_item (make_name ("gg_hit", i),
                                     "group::gg_hits",
                                     "blue");
- 
+
             double x = (10 + (0.5 + i) * 44) * CLHEP::mm;
             double y = 45 * CLHEP::mm + i * 44 * CLHEP::mm;
             double z = (-100 + 20 * i) * CLHEP::mm;
             double r = (10 + 30 * drand48 ())*CLHEP::mm;
-            double dr = 0.5*CLHEP::mm; 
-            double dz = 1.5*CLHEP::cm; 
+            double dr = 0.5*CLHEP::mm;
+            double dz = 1.5*CLHEP::cm;
             geomtools::circle gg_hit_circ1 (r+dr);
             geomtools::circle gg_hit_circ2 (r-dr);
             geomtools::line_3d gg_hit_segmt (geomtools::vector_3d (0, 0, - dz),
@@ -306,14 +308,14 @@ int main (int argc_, char ** argv_)
             // Compute position of the hit :
             geomtools::placement plcmt;
             plcmt.set_translation (x, y, z);
-            plcmt.set_orientation (0, 0, 0); 
-          
+            plcmt.set_orientation (0, 0, 0);
+
             // Fill the 'wires' structure of the the hit :
             gg_hit_circ1.generate_wires (gghit.paths, plcmt);
             gg_hit_circ2.generate_wires (gghit.paths, plcmt);
             gg_hit_segmt.generate_wires (gghit.paths, plcmt);
-         
-          } 
+
+          }
       }
 
       // Draw some data from the steps of an algorithm
@@ -321,7 +323,7 @@ int main (int argc_, char ** argv_)
       {
         for (int istep = 0; istep < n_algo_steps; istep++)
           {
-            geomtools::display_data::display_item & algovtx 
+            geomtools::display_data::display_item & algovtx
               = DD.add_framed_item ("vertex",
                                     istep,
                                     "group::algo::vertex",
@@ -336,10 +338,10 @@ int main (int argc_, char ** argv_)
             geomtools::vector_3d algo_vertex = true_vertex + (n_algo_steps - istep) * geomtools::vector_3d (4, -3, 6) * CLHEP::cm;
             geomtools::placement plcmt;
             plcmt.set_translation (algo_vertex);
-            plcmt.set_orientation (0, 0, 0); 
+            plcmt.set_orientation (0, 0, 0);
             // Fill the 'wires' structure of the the hit :
             std::ostringstream frame_info_ss;
-            frame_info_ss << "Vertex estimated @ loop #" << istep;  
+            frame_info_ss << "Vertex estimated @ loop #" << istep;
             algovtx.frame_info = frame_info_ss.str ();
             vertex_circ.generate_wires (algovtx.paths, plcmt);
           }
@@ -352,7 +354,7 @@ int main (int argc_, char ** argv_)
         {
           geomtools::vector_3d scene_origin (0, 0, 0);
           geomtools::rotation_3d scene_rotation;
- 
+
           std::string the_group = draw_group;
           /*
           the_group = "group::detector";
@@ -367,7 +369,7 @@ int main (int argc_, char ** argv_)
               tmp_file.set_remove_at_destroy (true);
               tmp_file.create ("/tmp", "test_display_data_static_");
               int plot_index = 0;
-              for (std::vector<std::string>::const_iterator icolor 
+              for (std::vector<std::string>::const_iterator icolor
                      = DD.get_colors ().begin ();
                    icolor != DD.get_colors ().end ();
                    icolor++)
@@ -375,10 +377,10 @@ int main (int argc_, char ** argv_)
                   const std::string & the_color = *icolor;
                   tmp_file.out () << "#plot_index=" << plot_index << std::endl;
                   tmp_file.out () << "#color=" << the_color << std::endl;
-                  // Gnuplot trick : 
+                  // Gnuplot trick :
                   geomtools::gnuplot_draw::basic_draw_point (tmp_file.out (), scene_origin);
                   tmp_file.out () << std::endl;
- 
+
                   geomtools::gnuplot_draw::draw_display_data(tmp_file.out (),
                                                              scene_origin,
                                                              scene_rotation,
@@ -395,8 +397,8 @@ int main (int argc_, char ** argv_)
               usleep (200);
 
               {
-                Gnuplot g1 ("lines"); 
-                { 
+                Gnuplot g1 ("lines");
+                {
                   std::ostringstream title_cmd;
                   title_cmd << "set title '";
                   title_cmd << "Display data -- " << DD.get_frames().find(frame_index)->second;
@@ -426,7 +428,7 @@ int main (int argc_, char ** argv_)
                 usleep (200);
               }
 
-            } 
+            }
         }
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
@@ -434,12 +436,12 @@ int main (int argc_, char ** argv_)
     }
   catch (std::exception & x)
     {
-      std::cerr << "error: " << x.what () << std::endl; 
+      std::cerr << "error: " << x.what () << std::endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      std::cerr << "error: " << "unexpected error!" << std::endl; 
+      std::cerr << "error: " << "unexpected error!" << std::endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);

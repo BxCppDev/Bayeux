@@ -1,6 +1,4 @@
-// -*- mode: c++; -*-
 // test_intersection_3d.cxx
-// gnuplot macro: ./tests/test_intersection_3d.gpl
 
 #include <cstdlib>
 #include <iostream>
@@ -10,169 +8,224 @@
 #include <geomtools/box.h>
 #include <geomtools/intersection_3d.h>
 #include <geomtools/gnuplot_draw.h>
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
+#include <geomtools/gnuplot_i.h>
+#include <geomtools/gnuplot_drawer.h>
+#endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
+#include <datatools/temporary_files.h>
+#include <datatools/utils.h>
 
 int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
-  try
-    {
-      bool debug = false;
-      long seed = 314159;
-      bool test2 = true;
+  try {
+    bool debug = false;
+    long seed = 314159;
+    bool draw = false;
+    bool zero = false;
+    bool center2 = false;
+    bool surf_first = false;
+    bool surf_second = false;
+    bool bulk = false;
 
-      int iarg = 1;
-      while (iarg < argc_)
-	{
-	  std::string arg = argv_[iarg];
+    int iarg = 1;
+    while (iarg < argc_) {
+      std::string arg = argv_[iarg];
 
-	  if (arg == "-d" || arg == "--debug") debug = true;
-	  if (arg == "-t2" || arg == "--test2") test2 = false;
+      if (arg == "-d" || arg == "--debug") debug = true;
+      if (arg == "-D" || arg == "--draw") draw = true;
+      if (arg == "-z" || arg == "--zero") zero = true;
+      if (arg == "-c2" || arg == "--center2") center2 = true;
 
-	  iarg++;
-	}
+      if (arg == "-s1" || arg == "--surf1") surf_first = true;
+      if (arg == "-s2" || arg == "--surf2") surf_second = true;
+      if (arg == "-B" || arg == "--bulk") bulk = true;
 
-      srand48 (seed);
+      iarg++;
+    }
 
-      using namespace geomtools;
+    srand48 (seed);
 
-      // test 1:
-      {
-	box b1 (4.0 * CLHEP::mm,
-		4.0 * CLHEP::mm,
-		4.0 * CLHEP::mm);
-	placement p1 (vector_3d (0, 0, 0),
-		      0, 0, 0);
+    using namespace geomtools;
 
-	box b2 (3.0 * CLHEP::mm,
-		3.0 * CLHEP::mm,
-		3.0 * CLHEP::mm);
-	placement p2 (vector_3d (2, 2, 2),
-		      M_PI / 2., 0.0, 0.0);
+    datatools::temp_file tmp_file;
+    tmp_file.set_remove_at_destroy (true);
+    tmp_file.create ("/tmp", "test_intersection_3d_");
 
-	//		      M_PI / 3., M_PI / 3., M_PI / 6.);
+    box b1 (4.0 * CLHEP::mm,
+            4.0 * CLHEP::mm,
+            4.0 * CLHEP::mm);
+    placement p1 (vector_3d (0, 0, 0),
+                  0, 0, 0);
 
-	intersection_3d inter1;
-	inter1.set_shape1 (b1, p1);
-	inter1.set_shape2 (b2, p2);
-	inter1.dump (std::clog);
+    box b2 (3.0 * CLHEP::mm,
+            3.0 * CLHEP::mm,
+            3.0 * CLHEP::mm);
+    placement p2 (vector_3d (2, 2, 2),
+                  M_PI / 2., 0.0, 0.0);
 
-	geomtools::vector_3d pos (4.0 * CLHEP::mm,
-				  3.0 * CLHEP::mm,
-				  5.0 * CLHEP::mm);
-	geomtools::vector_3d dir (-1., -1., -2.);
-	geomtools::intercept_t intercept;
-	std::clog << "test 1: pos=" << pos
-		  << " dir=" << dir
-		  << " impact=" << intercept.get_impact ()
-		  << std::endl;
+    intersection_3d inter1;
+    inter1.set_shape1 (b1, p1);
+    inter1.set_shape2 (b2, p2);
+    inter1.dump (std::clog);
 
-	if (inter1.find_intercept (pos, dir, intercept))
-	  {
-	    std::clog << "test 1: Intercept face=" << intercept.get_face ()
-		      << " at impact=" << intercept.get_impact ()
-		      << std::endl;
-	  }
-	else
-	  {
-	    std::clog << "test 1: No intercept." << std::endl;
-	  }
+    geomtools::vector_3d pos (4.0 * CLHEP::mm,
+                              3.0 * CLHEP::mm,
+                              5.0 * CLHEP::mm);
+    geomtools::vector_3d dir (-1., -1., -2.);
+    geomtools::intercept_t intercept;
+    std::clog << "test 1: pos=" << pos
+              << " dir=" << dir
+              << " impact=" << intercept.get_impact ()
+              << std::endl;
 
-	geomtools::gnuplot_draw::draw_box (std::cout,
-					   p1.get_translation (),
-					   p1.get_rotation (),
-					   b1.get_x (),
-					   b1.get_y (),
-					   b1.get_z ());
-	geomtools::gnuplot_draw::draw_box (std::cout,
-					   p2.get_translation (),
-					   p2.get_rotation (),
-					   b2.get_x (),
-					   b2.get_y (),
-					   b2.get_z ());
-	std::cout << std::endl << std::endl;
+    if (inter1.find_intercept (pos, dir, intercept)) {
+      std::clog << "test 1: Intercept face=" << intercept.get_face ()
+                << " at impact=" << intercept.get_impact ()
+                << std::endl;
+    } else {
+      std::clog << "test 1: No intercept." << std::endl;
+    }
 
-	geomtools::gnuplot_draw::basic_draw_point (std::cout, pos);
-	std::cout << std::endl << std::endl;
+    geomtools::gnuplot_draw::draw_box (tmp_file.out(),
+                                       p1.get_translation (),
+                                       p1.get_rotation (),
+                                       b1.get_x (),
+                                       b1.get_y (),
+                                       b1.get_z ());
+    geomtools::gnuplot_draw::draw_box (tmp_file.out(),
+                                       p2.get_translation (),
+                                       p2.get_rotation (),
+                                       b2.get_x (),
+                                       b2.get_y (),
+                                       b2.get_z ());
+    tmp_file.out() << std::endl << std::endl;
 
-	geomtools::gnuplot_draw::basic_draw_point (std::cout,
-						   intercept.get_impact ());
-	std::cout << std::endl << std::endl;
+    geomtools::gnuplot_draw::basic_draw_point (tmp_file.out(), pos);
+    tmp_file.out() << std::endl << std::endl;
 
-	geomtools::gnuplot_draw::basic_draw_point (std::cout, pos);
-	std::clog << "test 1: intercept=" << intercept.get_impact () << std::endl;
-	if (intercept.is_valid ())
-	  {
-	    geomtools::gnuplot_draw::basic_draw_point (std::cout,
-						       intercept.get_impact ());
-	  }
-	else
-	  {
-	    geomtools::gnuplot_draw::basic_draw_point (std::cout,
-						       pos + 3 * dir);
-	  }
-	std::cout << std::endl << std::endl;
+    geomtools::gnuplot_draw::basic_draw_point (tmp_file.out(),
+                                               intercept.get_impact ());
+    tmp_file.out() << std::endl << std::endl;
 
-	std::clog << "test 1: End." << std::endl;
+    geomtools::gnuplot_draw::basic_draw_point (tmp_file.out(), pos);
+    std::clog << "test 1: intercept=" << intercept.get_impact () << std::endl;
+    if (intercept.is_valid ()) {
+      geomtools::gnuplot_draw::basic_draw_point (tmp_file.out(),
+                                                 intercept.get_impact ());
+    } else {
+      geomtools::gnuplot_draw::basic_draw_point (tmp_file.out(),
+                                                 pos + 3 * dir);
+    }
+    tmp_file.out() << std::endl << std::endl;
 
-	if (test2)
-	  {
-	    size_t nshoots = 100000;
-	    for (int i = 0; i < (int) nshoots; i++)
-	      {
-		if ((i%1000) == 0) std::clog << "Loop #" << i << std::endl;
-		//std::clog << "DEVEL: Loop #" << i << std::endl;
+    std::clog << "test 1: End." << std::endl;
 
-		// special debug activation:
-		// int idevel = -1;
-		// geomtools::intersection_3d::g_devel = false;
-		// idevel = 1817;
-		// if (i == idevel)
-		//   {
-		//     geomtools::intersection_3d::g_devel = true;
-		//   }
+    size_t nshoots = 100000;
+    for (int i = 0; i < (int) nshoots; i++) {
+      if ((i%1000) == 0) std::clog << "Loop #" << i << std::endl;
 
-		double dim = 6. * CLHEP::mm;
-		geomtools::vector_3d pos (dim * drand48 (),
-					  dim * drand48 (),
-					  dim * drand48 ());
-		//pos.set (2.0, 2.0, 2.0);
-		//pos.set (.0, .0, .0);
-		geomtools::vector_3d dir;
-		geomtools::randomize_direction (drand48, dir);
+      double dim = 6. * CLHEP::mm;
+      geomtools::vector_3d pos (0, 0, 0);
+      if (! zero) pos.set(dim * drand48 (),
+                          dim * drand48 (),
+                          dim * drand48 ());
+      if (center2) pos.set(2. * CLHEP::mm, 2. * CLHEP::mm, 2. * CLHEP::mm);
 
-		geomtools::intercept_t intercept;
-		int intercept_face;
-		if (inter1.find_intercept (pos, dir,
-					   intercept))
-		  {
-		    if (debug) std::clog << "test 1: Intercept face="
-					 << intercept.get_face ()
-					 << " at impact="
-					 << intercept.get_impact ()
-					 << std::endl;
-		    geomtools::gnuplot_draw::basic_draw_point (std::cout,
-							       intercept.get_impact ());
-		  }
-		else
-		  {
-		    if (debug) std::clog << "test 1: No intercept." << std::endl;
-		  }
-	      }
-	  }
+      geomtools::vector_3d dir;
+      geomtools::randomize_direction (drand48, dir);
+
+      geomtools::intercept_t intercept;
+      // int intercept_face;
+      if (inter1.find_intercept (pos, dir, intercept)) {
+        if (debug) std::clog << "test 1: Intercept face="
+                             << intercept.get_face ()
+                             << " at impact="
+                             << intercept.get_impact ()
+                             << std::endl;
+        geomtools::gnuplot_draw::basic_draw_point (tmp_file.out(),
+                                                   intercept.get_impact ());
+      } else {
+        if (debug) std::clog << "test 1: No intercept." << std::endl;
       }
+    }
+    tmp_file.out() << std::endl << std::endl;
 
+    nshoots = 10000000;
+    for (int i = 0; i < (int) nshoots; i++) {
+      double dim = 6. * CLHEP::mm;
+      geomtools::vector_3d position(0, 0, 0);
+      position.set(dim * (-1 + 2 * drand48()),
+                   dim * (-1 + 2 * drand48()),
+                   dim * (-1 + 2 * drand48()));
+      double skin = 0.1 * CLHEP::mm;
+      if (surf_first && inter1.is_on_surface(position,
+                                             geomtools::intersection_3d::COMPONENT_SHAPE_FIRST, skin)) {
+        tmp_file.out() << position.x() << ' ' << position.y() << ' ' << position.z() << ' '
+                       << 3
+                       << std::endl;
+      } else if (surf_second && inter1.is_on_surface(position,
+                                                     geomtools::intersection_3d::COMPONENT_SHAPE_SECOND, skin)) {
+        tmp_file.out() << position.x() << ' ' << position.y() << ' ' << position.z() << ' '
+                       << 4
+                       << std::endl;
+      } else if (bulk && inter1.is_inside(position, skin)) {
+        tmp_file.out() << position.x() << ' ' << position.y() << ' ' << position.z() << ' '
+                       << 2
+                       << std::endl;
+      }
     }
-  catch (std::exception & x)
-    {
-      std::cerr << "error: " << x.what () << std::endl;
-      error_code = EXIT_FAILURE;
+    tmp_file.out() << std::endl << std::endl;
+
+    if (draw) {
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
+      Gnuplot g1;
+      g1.cmd ("set title 'Test geomtools::intersection_3d' ");
+      g1.cmd ("set grid");
+      g1.cmd ("set key out");
+      g1.cmd ("set size ratio -1");
+      g1.cmd ("set view equal xyz");
+      //g1.cmd ("set xyplane at -10");
+      g1.set_xlabel ("x").set_ylabel ("y").set_zlabel ("z");
+      {
+        std::ostringstream plot_cmd;
+        plot_cmd << "splot '" << tmp_file.get_filename () << "' index 0 title 'Intersection' with lines ";
+        plot_cmd << ", '' index 1 title 'Source' with points pt 6 ps 1 ";
+        plot_cmd << ", '' index 2 title 'Impact' with points pt 6 ps 1 ";
+        plot_cmd << ", '' index 3 title 'Track' with lines ";
+        g1.cmd (plot_cmd.str ());
+        g1.showonscreen (); // window output
+        geomtools::gnuplot_drawer::wait_for_key ();
+        usleep (200);
+      }
+      {
+        std::ostringstream plot_cmd;
+        plot_cmd << "splot '" << tmp_file.get_filename () << "' index 0 title 'Intersection' with lines ";
+        plot_cmd << ", '' index 4 title 'Impacts' with dots ";
+        g1.cmd (plot_cmd.str ());
+        g1.showonscreen (); // window output
+        geomtools::gnuplot_drawer::wait_for_key ();
+        usleep (200);
+      }
+      {
+        std::ostringstream plot_cmd;
+        plot_cmd << "splot '" << tmp_file.get_filename () << "' index 0 title 'Intersection' with lines , ";
+        plot_cmd << " '' index 5 using 1:2:3:4 notitle with points pt 6 ps 0.3 linecolor variable ";
+        g1.cmd (plot_cmd.str ());
+        g1.showonscreen (); // window output
+        geomtools::gnuplot_drawer::wait_for_key ();
+        usleep (200);
+      }
+#endif
     }
-  catch (...)
-    {
-      std::cerr << "error: " << "unexpected error!" << std::endl;
-      error_code = EXIT_FAILURE;
-    }
+  }
+  catch (std::exception & x) {
+    std::cerr << "error: " << x.what () << std::endl;
+    error_code = EXIT_FAILURE;
+  }
+  catch (...) {
+    std::cerr << "error: " << "unexpected error!" << std::endl;
+    error_code = EXIT_FAILURE;
+  }
   return error_code;
 }
-
-// end of test_interscetion_3d.cxx

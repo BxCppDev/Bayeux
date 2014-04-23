@@ -191,7 +191,7 @@ void test_solid (bool draw_, std::string stlfp_)
       geomtools::tessellated_solid gtts;
       geomtools::stl::stl_to_geomtools_converter stl2gt;
       stl2gt.set_fix_attempt (true);
-      int error = stl2gt.convert (sld, gtts);
+      /* int error = */ stl2gt.convert (sld, gtts);
 
       gtts.dump (std::clog);
 
@@ -303,7 +303,7 @@ void test_solid (bool draw_, std::string stlfp_)
 
 int main(int argc_, char **argv_)
 {
-  bool debug = false;
+  // bool debug = false;
   bool draw = false;
   std::string fn;
 
@@ -312,11 +312,12 @@ int main(int argc_, char **argv_)
     {
       std::string arg = argv_[iarg];
 
-      if (arg == "-d" || arg == "--debug")
-        {
-          debug = true;
-        }
-      else if (arg == "-D" || arg == "--draw")
+      // if (arg == "-d" || arg == "--debug")
+      //   {
+      //     debug = true;
+      //   }
+      // else
+      if (arg == "-D" || arg == "--draw")
         {
           draw = true;
         }

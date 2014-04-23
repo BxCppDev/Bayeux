@@ -20,7 +20,7 @@
 
 using namespace std;
 
-int main (int argc_, char ** argv_)
+int main (int /* argc_ */, char ** /* argv_ */)
 {
   cerr << "Program starts..." << endl;
   int error_code = EXIT_SUCCESS;

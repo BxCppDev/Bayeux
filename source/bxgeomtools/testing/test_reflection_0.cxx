@@ -139,7 +139,7 @@ void test_geom_id()
 
 void test_vector_3d()
 {
-  datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
+  // datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
 
   const DR_CLASS & v3dMetaClass = DR_CLASS_BY_NAME("geomtools::vector_3d");
 
@@ -169,13 +169,13 @@ void test_enums()
   std::clog << std::endl << "*** test_enums : Reflection..." << std::endl;
 
   std::clog <<  "Number of meta-classes = " << camp::classCount() << std::endl;
-  for (int i = 0; i < camp::classCount(); i++) {
+  for (int i = 0; i < (int) camp::classCount(); i++) {
     const camp::Class & c = camp::classByIndex(i);
     std::clog << "Metaclass #" << i << " : " << c.name() << std::endl;
   }
 
   std::clog <<  "Number of meta-enums = " << camp::enumCount() << std::endl;
-  for (int i = 0; i < camp::enumCount(); i++) {
+  for (int i = 0; i < (int) camp::enumCount(); i++) {
     const camp::Enum & e = camp::enumByIndex(i);
     std::clog << "Metaenum #" << i << " : " << e.name() << std::endl;
   }
@@ -186,7 +186,7 @@ void test_enums()
   {
     const DR_ENUM & tMetaEnum = camp::enumByName("datatools::logger::priority");
     std::clog << "Meta Enum '" << tMetaEnum.name() << std::endl;
-    for (int i = 0; i < tMetaEnum.size(); i++) {
+    for (int i = 0; i < (int) tMetaEnum.size(); i++) {
       std::clog << " - Key '" << tMetaEnum.pair(i).name
                 << "' has value = " << tMetaEnum.pair(i).value << std::endl;
     }
@@ -196,7 +196,7 @@ void test_enums()
   {
     const DR_ENUM & tMetaEnum = camp::enumByName("geomtools::orientation_type");
     std::clog << "Meta Enum '" << tMetaEnum.name() << std::endl;
-    for (int i = 0; i < tMetaEnum.size(); i++) {
+    for (int i = 0; i < (int) tMetaEnum.size(); i++) {
       std::clog << " - Key '" << tMetaEnum.pair(i).name
                 << "' has value = " << tMetaEnum.pair(i).value << std::endl;
     }
@@ -205,7 +205,7 @@ void test_enums()
   {
     const DR_ENUM & tMetaEnum = camp::enumByName("geomtools::axis_type");
     std::clog << "Meta Enum '" << tMetaEnum.name() << std::endl;
-     for (int i = 0; i < tMetaEnum.size(); i++) {
+     for (int i = 0; i < (int) tMetaEnum.size(); i++) {
       std::clog << " - Key '" << tMetaEnum.pair(i).name
                 << "' has value = " << tMetaEnum.pair(i).value << std::endl;
     }
@@ -217,7 +217,7 @@ void test_enums()
 
 #include <camp/classget.hpp>
 
-int main (int argc_, char ** argv_)
+int main (int /* argc_ */, char ** /* argv_ */)
 {
   datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
   int error_code = EXIT_SUCCESS;
@@ -225,7 +225,7 @@ int main (int argc_, char ** argv_)
 
     DT_LOG_NOTICE(logging, "Number of metaclasses = " << camp::classCount());
 
-    for (int i = 0; i < camp::classCount(); i++) {
+    for (int i = 0; i < (int) camp::classCount(); i++) {
       const camp::Class & c = camp::classByIndex(i);
       DT_LOG_NOTICE(logging, "Metaclass #" << i << " : " << c.name());
     }

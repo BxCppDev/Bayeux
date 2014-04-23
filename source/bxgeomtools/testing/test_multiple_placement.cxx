@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_multiple_placement.cxx
 
 #include <cstdlib>
@@ -24,9 +24,9 @@ using namespace std;
 int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
-  try 
+  try
     {
-      bool debug = false;
+      // bool debug = false;
       bool rotate = false;
       bool draw = false;
 
@@ -37,35 +37,36 @@ int main (int argc_, char ** argv_)
 
           if (token[0] == '-')
             {
-               string option = token; 
-               if ((option == "-d") || (option == "--debug")) 
-                 {
-                   debug = true;
-                 }
-               else if (option == "-r") 
+               string option = token;
+               // if ((option == "-d") || (option == "--debug"))
+               //   {
+               //     debug = true;
+               //   }
+               // else
+               if (option == "-r")
                  {
                    rotate = true;
                  }
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
-               else if (option == "--no-draw") 
+               else if (option == "--no-draw")
                  {
                    draw = false;
                  }
-               else if (option == "--draw") 
+               else if (option == "--draw")
                  {
                    draw = true;
                  }
 #endif
-               else 
-                 { 
-                    clog << "warning: ignoring option '" << option << "'!" << endl; 
+               else
+                 {
+                    clog << "warning: ignoring option '" << option << "'!" << endl;
                  }
             }
           else
             {
-              string argument = token; 
-              { 
-                clog << "warning: ignoring argument '" << argument << "'!" << endl; 
+              string argument = token;
+              {
+                clog << "warning: ignoring argument '" << argument << "'!" << endl;
               }
             }
           iarg++;
@@ -74,7 +75,7 @@ int main (int argc_, char ** argv_)
       geomtools::multiple_placement mp;
 
       size_t sz = 20;
-      for (int i = 0; i < sz; i++)
+      for (int i = 0; i < (int) sz; i++)
         {
           double x = 3.0 + 0.5 * i;
           double y = 1.5 * sin (x - 2);
@@ -98,9 +99,9 @@ int main (int argc_, char ** argv_)
         {
           datatools::temp_file tmp_file;
           tmp_file.set_remove_at_destroy (true);
-          tmp_file.create ("./", "tmp_drawer_");        
+          tmp_file.create ("./", "tmp_drawer_");
           geomtools::box b (0.3, 0.2, 0.1);
-          for (int i = 0; i < mp.get_number_of_items (); i++)
+          for (int i = 0; i < (int) mp.get_number_of_items (); i++)
             {
               geomtools::gnuplot_draw::draw (tmp_file.out (),
                                              mp.i_placement::get_placement (i),
@@ -114,7 +115,7 @@ int main (int argc_, char ** argv_)
           g1.set_title ("test_multiple_placement");
           g1.set_xlabel ("x").set_ylabel ("y").set_zlabel ("z");
           g1.plotfile_xyz (tmp_file.get_filename () , 1, 2, 3, "3D view");
-          g1.showonscreen (); 
+          g1.showonscreen ();
           geomtools::gnuplot_drawer::wait_for_key ();
           usleep (200);
         }
@@ -122,12 +123,12 @@ int main (int argc_, char ** argv_)
      }
   catch (exception & x)
     {
-      cerr << "error: " << x.what() << endl; 
+      cerr << "error: " << x.what() << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return error_code;

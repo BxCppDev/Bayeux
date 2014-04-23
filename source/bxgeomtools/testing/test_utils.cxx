@@ -155,7 +155,7 @@ void test1()
 }
 
 int
-main (int argc_, char ** argv_)
+main (int /* argc_ */, char ** /* argv_ */)
 {
   int error_code = EXIT_SUCCESS;
   try
@@ -179,5 +179,3 @@ main (int argc_, char ** argv_)
     }
   return error_code;
 }
-
-// end of test_utils.cxx

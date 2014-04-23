@@ -31,13 +31,13 @@ namespace geomtools {
 
   void test_model_1::_at_construct (const string & name_,
                                     const datatools::properties & config_,
-                                    models_col_type * models_)
+                                    models_col_type * /* models_ */)
   {
     bool devel = false;
     if (devel) clog << "DEVEL: test_model_1::_at_construct: Entering..." << endl;
     set_name (name_);
-    double width;
-    double height;
+    double width = 1.0 * CLHEP::mm;
+    double height = 1.0 * CLHEP::mm;
     string material;
 
     if (config_.has_key ("width"))

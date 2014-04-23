@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 // test_physical_volume.cxx
 
 #include <cstdlib>
@@ -21,7 +20,7 @@ int main (int argc_, char ** argv_)
     {
       clog << "Test program for class 'geom_id'!" << endl;
 
-      bool debug = false;
+      // bool debug = false;
 
       bool step1 = false;
       bool step2 = false;
@@ -30,11 +29,11 @@ int main (int argc_, char ** argv_)
       while (iarg < argc_)
         {
           string arg = argv_[iarg];
-          if ((arg == "-d") || (arg == "--debug"))
-            {
-              debug = true;
-            }
-         if (arg == "-1")
+          // if ((arg == "-d") || (arg == "--debug"))
+          //   {
+          //     debug = true;
+          //   }
+          if (arg == "-1")
            {
              step1 = true;
            }
@@ -140,5 +139,3 @@ int main (int argc_, char ** argv_)
     }
   return error_code;
 }
-
-// end of test_physical_volume.cxx

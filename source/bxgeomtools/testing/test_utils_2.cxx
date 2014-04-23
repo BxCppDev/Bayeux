@@ -19,7 +19,7 @@
 
 using namespace std;
 
-int main (int argc_, char ** argv_)
+int main (int  /* argc_ */, char **  /* argv_ */)
 {
   int error_code = EXIT_SUCCESS;
   try
@@ -93,6 +93,25 @@ int main (int argc_, char ** argv_)
       gnuplot_draw::draw_box (tmp_file.out (), pos, rot, b);
       tmp_file.close ();
       usleep (200);
+
+
+      {
+        double start_phi = 15.0 * CLHEP::degree;
+        double delta_phi = 85.0 * CLHEP::degree;
+        for (double phi = -500 * CLHEP::degree;
+             phi < +500 * CLHEP::degree;
+             phi += 5 * CLHEP::degree) {
+          bool test = angle_is_in(ceil(phi), start_phi, delta_phi);
+          std::clog << "phi=" << phi / CLHEP::degree
+                    << " is ";
+          if (! test) {
+            std::clog << "not ";
+          }
+          std::clog << "in [" << start_phi/CLHEP::degree
+                    << ':' << (start_phi + delta_phi)/CLHEP::degree << "]"
+                    << std::endl;
+        }
+      }
 
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
       if (draw)

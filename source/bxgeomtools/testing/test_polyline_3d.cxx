@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_polyline_3d.cxx
 
 #include <cstdlib>
@@ -12,11 +12,11 @@
 using namespace std;
 using namespace geomtools;
 
-int 
-main (int argc_, char ** argv_)
+int
+main (int /* argc_ */, char ** /* argv_ */)
 {
   int error_code = EXIT_SUCCESS;
-  try 
+  try
     {
       long seed = 314159;
       srand48 (seed);
@@ -24,17 +24,17 @@ main (int argc_, char ** argv_)
       polyline_3d pl (polyline_3d::open);
 
       for (int i = 0; i < 10; i++)
-	{
-	  geomtools::vector_3d p(2.0 * i + geomtools::random_tools::random_flat (),
-				 geomtools::random_tools::random_flat (),
-				 geomtools::random_tools::random_flat ());
-	  pl.add (p);
-	}
+        {
+          geomtools::vector_3d p(2.0 * i + geomtools::random_tools::random_flat (),
+                                 geomtools::random_tools::random_flat (),
+                                 geomtools::random_tools::random_flat ());
+          pl.add (p);
+        }
 
       basic_polyline_3d bpl = pl.make_vertex_collection ();
       gnuplot_draw::basic_draw_polyline (cout, bpl);
 
-      
+
       vector_3d pos;
       pos.set (1., 2., 3.);
       std::clog << "Vector: " << pos << std::endl;
@@ -48,12 +48,12 @@ main (int argc_, char ** argv_)
     }
   catch (std::exception & x)
     {
-      std::cerr << "error: " << x.what() << std::endl; 
+      std::cerr << "error: " << x.what() << std::endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      std::cerr << "error: " << "unexpected error!" << std::endl; 
+      std::cerr << "error: " << "unexpected error!" << std::endl;
       error_code = EXIT_FAILURE;
     }
   return error_code;

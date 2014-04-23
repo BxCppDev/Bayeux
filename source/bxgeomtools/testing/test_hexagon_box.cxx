@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 // test_hexagon_box.cxx
 // gnuplot macro: ./tests/test_hexagon_box.gpl
 
@@ -12,23 +11,23 @@
 #include <geomtools/gnuplot_draw.h>
 
 int
-main (int argc_, char ** argv_)
+main (int /* argc_ */, char ** /* argv_ */)
 {
   int error_code = EXIT_SUCCESS;
   try
     {
-      bool debug = false;
+      //bool debug = false;
       long seed = 314159;
 
-      int iarg = 1;
-      while (iarg < argc_)
-        {
-          std::string arg = argv_[iarg];
+      // int iarg = 1;
+      // while (iarg < argc_)
+      //   {
+      //     std::string arg = argv_[iarg];
 
-          if (arg == "-d" || arg == "--debug") debug = true;
+      //     if (arg == "-d" || arg == "--debug") debug = true;
 
-          iarg++;
-        }
+      //     iarg++;
+      //   }
 
       srand48 (seed);
 
@@ -201,5 +200,3 @@ main (int argc_, char ** argv_)
     }
   return error_code;
 }
-
-// end of test_hexagon_box.cxx

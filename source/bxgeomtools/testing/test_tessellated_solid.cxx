@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_tessellated_solid.cxx
 
 #include <cstdlib>
@@ -15,7 +15,7 @@ void test0()
 {
   geomtools::vector_3d v0 (0, 0, 0);
   geomtools::vector_3d v1 (1,0, 0);
-  geomtools::vector_3d v2 (1.0, 1.0, 0); 
+  geomtools::vector_3d v2 (1.0, 1.0, 0);
   geomtools::vector_3d v3 (0, 1, 0);
   bool c = geomtools::facet34::check_quadrangle (v0, v1, v2, v3);
   if (!c)
@@ -33,7 +33,7 @@ void test1()
 {
   geomtools::vector_3d v0 (0, 0, 0);
   geomtools::vector_3d v1 (1,0, 0);
-  geomtools::vector_3d v2 (0.5, 0.5, 0); 
+  geomtools::vector_3d v2 (0.5, 0.5, 0);
   geomtools::vector_3d v3 (0, 1, 0);
   bool c = geomtools::facet34::check_quadrangle (v0, v1, v2, v3);
   if (!c)
@@ -51,7 +51,7 @@ void test2()
 {
   geomtools::vector_3d v0 (0, 0, 0);
   geomtools::vector_3d v1 (1,0, 0);
-  geomtools::vector_3d v2 (0.25, 0.25, 0); 
+  geomtools::vector_3d v2 (0.25, 0.25, 0);
   geomtools::vector_3d v3 (0, 1, 0);
   bool c = geomtools::facet34::check_quadrangle (v0, v1, v2, v3);
   if (!c)
@@ -69,7 +69,7 @@ void test3()
 {
   geomtools::vector_3d v0 (0, 0, 0);
   geomtools::vector_3d v1 (1,0, 0);
-  geomtools::vector_3d v2 (0.25, 0.25, 0); 
+  geomtools::vector_3d v2 (0.25, 0.25, 0);
   bool c = geomtools::facet34::check_triangle (v0, v1, v2);
   if (!c)
     {
@@ -86,7 +86,7 @@ void test4()
 {
   geomtools::vector_3d v0 (0, 0, 0);
   geomtools::vector_3d v1 (1, 0, 0);
-  geomtools::vector_3d v2 (2, 0, 0); 
+  geomtools::vector_3d v2 (2, 0, 0);
   bool c = geomtools::facet34::check_triangle (v0, v1, v2);
   if (!c)
     {
@@ -99,27 +99,27 @@ void test4()
   return;
 }
 
-int main (int argc_, char ** argv_)
+int main (int /* argc_ */, char ** /* argv_ */)
 {
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Hello, this is a sample program " 
-           << "for class 'tessellated_solid'!" << endl; 
-  
-      bool debug = false;
+      clog << "Hello, this is a sample program "
+           << "for class 'tessellated_solid'!" << endl;
 
-      int iarg = 1;
-      while (iarg < argc_)
-        {
-    
-          string arg = argv_[iarg];
+      // bool debug = false;
 
-          if (arg == "-d" || arg == "--debug") debug = true;
+      // int iarg = 1;
+      // while (iarg < argc_)
+      //   {
 
-          iarg++;
-        }
-    
+      //     string arg = argv_[iarg];
+
+      //     if (arg == "-d" || arg == "--debug") debug = true;
+
+      //     iarg++;
+      //   }
+
 
       test0 ();
 
@@ -149,7 +149,7 @@ int main (int argc_, char ** argv_)
 
       TS1.lock ();
       TS1.dump (clog);
-   
+
       geomtools::tessellated_solid TS2;
       double z0 = 2;
       int A1 = TS2.add_vertex (ivtx++, 0, 0, z0);
@@ -170,7 +170,7 @@ int main (int argc_, char ** argv_)
 
       TS2.lock ();
       TS2.dump (clog);
-      
+
       geomtools::vector_3d tessel_pos;
       geomtools::rotation_3d tessel_rot;
       geomtools::create_rotation (tessel_rot, 0.0, 0.0, 0.0);
@@ -178,16 +178,16 @@ int main (int argc_, char ** argv_)
       cout << endl;
       geomtools::gnuplot_draw::draw_tessellated (cout, tessel_pos, tessel_rot, TS2);
       cout << endl << endl;
- 
+
     }
   catch (exception & x)
     {
-      cerr << "error: " << x.what () << endl; 
+      cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return error_code;

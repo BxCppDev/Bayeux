@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 // test_polycone_2.cxx
 
 #include <cstdlib>
@@ -19,7 +18,7 @@ int main (int argc_, char ** argv_)
     {
       clog << "Test program for class 'polycone'!" << endl;
 
-      bool debug = false;
+      //bool debug = false;
       string datafile;
       double zmin = std::numeric_limits<double>::quiet_NaN ();
       double zmax = std::numeric_limits<double>::quiet_NaN ();
@@ -31,15 +30,15 @@ int main (int argc_, char ** argv_)
 
           if (token[0] == '-')
             {
-               string option = token;
-               if ((option == "-d") || (option == "--debug"))
-                 {
-                   debug = true;
-                 }
-               else
-                 {
-                    clog << "warning: ignoring option '" << option << "'!" << endl;
-                 }
+               // string option = token;
+               // if ((option == "-d") || (option == "--debug"))
+               //   {
+               //     debug = true;
+               //   }
+               // else
+               //   {
+               //      clog << "warning: ignoring option '" << option << "'!" << endl;
+               //   }
             }
           else
             {
@@ -108,5 +107,3 @@ int main (int argc_, char ** argv_)
     }
   return (error_code);
 }
-
-// end of test_polycone_2.cxx

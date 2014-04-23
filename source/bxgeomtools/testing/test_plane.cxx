@@ -1,6 +1,6 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 // test_plane.cxx
- 
+
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -35,26 +35,26 @@ void test0 ( bool draw_ )
   //B = A + 0.2 * pN;
   //B = A;
   double dist_pB = p.distance (B);
-  std::clog << "Distance from B to p is : " 
+  std::clog << "Distance from B to p is : "
             << dist_pB << std::endl;
   geomtools::vector_3d H = p.orthogonal_projection (B);
   geomtools::vector_3d shoot_dir (0.0, 1.2, -0.5);
   geomtools::vector_3d I = p.projection (B, shoot_dir);
-  std::clog << "Distance from B to H is : " 
+  std::clog << "Distance from B to H is : "
             << (H - B).mag () << std::endl;
-  std::clog << "Distance from B to I is : " 
+  std::clog << "Distance from B to I is : "
             << (I - B).mag () << std::endl;
 
   geomtools::intercept_t impact;
   geomtools::vector_3d shoot_dir2 (0.0, -1.2, +0.25);
   if (p.find_intercept (B, shoot_dir2, impact))
     {
-      std::clog << "Distance from B to impact is : " 
-                << (impact.get_impact () - B).mag () << std::endl;      
+      std::clog << "Distance from B to impact is : "
+                << (impact.get_impact () - B).mag () << std::endl;
     }
   else
     {
-      std::clog << "No impact was found !" << std::endl;      
+      std::clog << "No impact was found !" << std::endl;
     }
 
   if (draw_)
@@ -84,7 +84,7 @@ void test0 ( bool draw_ )
 
 
       {
-        Gnuplot g1 ("lines"); 
+        Gnuplot g1 ("lines");
         g1.cmd ("set title 'Test geomtools::plane -- test0' ");
         g1.cmd ("set grid");
         g1.cmd ("set size ratio -1");
@@ -102,7 +102,7 @@ void test0 ( bool draw_ )
         usleep (200);
       }
       {
-        Gnuplot g1 ("lines"); 
+        Gnuplot g1 ("lines");
         g1.cmd ("set title 'Test geomtools::plane -- test0' ");
         g1.cmd ("set grid");
         g1.cmd ("set size ratio -1");
@@ -119,7 +119,7 @@ void test0 ( bool draw_ )
         usleep (200);
       }
 
-    } 
+    }
   return;
 }
 
@@ -129,10 +129,10 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for the 'geomtools::plane' class." << endl; 
-  
-      bool debug = false;
-      bool verbose = false;
+      clog << "Test program for the 'geomtools::plane' class." << endl;
+
+      // bool debug = false;
+      // bool verbose = false;
       bool draw = false;
 
       int iarg = 1;
@@ -140,34 +140,35 @@ int main (int argc_, char ** argv_)
         {
           string token = argv_[iarg];
 
-          if (token[0] == '-') 
+          if (token[0] == '-')
             {
-               string option = token; 
-               if ((option == "-d") || (option == "--debug")) 
-                 {
-                   debug = true;
-                 }
-               else if ((option == "-v") || (option == "--verbose")) 
-                 {
-                   verbose = true;
-                 }
-               else if ((option == "-D") || (option == "--draw")) 
+               string option = token;
+               // if ((option == "-d") || (option == "--debug"))
+               //   {
+               //     debug = true;
+               //   }
+               // else if ((option == "-v") || (option == "--verbose"))
+               //   {
+               //     verbose = true;
+               //   }
+               // else
+               if ((option == "-D") || (option == "--draw"))
                  {
                    draw = true;
                  }
-               else 
-                 { 
-                    clog << "warning: ignoring option '" << option << "'!" << endl; 
+               else
+                 {
+                    clog << "warning: ignoring option '" << option << "'!" << endl;
                  }
             }
           else
             {
-              string argument = token; 
-              { 
-                clog << "warning: ignoring argument '" << argument << "'!" << endl; 
+              string argument = token;
+              {
+                clog << "warning: ignoring argument '" << argument << "'!" << endl;
               }
-            } 
-          iarg++; 
+            }
+          iarg++;
       }
 
       test0 (draw);
@@ -175,13 +176,13 @@ int main (int argc_, char ** argv_)
       clog << "The end." << endl;
     }
   catch (exception & x)
-    { 
-      cerr << "error: " << x.what () << endl; 
+    {
+      cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error !" << endl; 
+      cerr << "error: " << "unexpected error !" << endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);

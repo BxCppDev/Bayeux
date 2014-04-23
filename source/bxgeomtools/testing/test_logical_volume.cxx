@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 // test_logical_volume.cxx
 
 #include <cstdlib>
@@ -164,7 +163,7 @@ int main (int argc_, char ** argv_)
     tmp_setup.out() << std::endl;
 
     // Source holes solids drawing infos:
-    for (int item = 0; item < source_hole_placement.get_number_of_items(); item++) {
+    for (int item = 0; item < (int) source_hole_placement.get_number_of_items(); item++) {
       tmp_setup.out() << "# source hole " << item << " : " << std::endl;
       geomtools::placement item_placement;
       source_hole_placement.get_placement(item, item_placement);
@@ -177,7 +176,6 @@ int main (int argc_, char ** argv_)
     tmp_setup.out() << std::endl;
 
     int nvertexes = 40000;
-    int vertex_counter = 0;
     for (int vertex_counter = 0; vertex_counter < nvertexes; vertex_counter++) {
       int ntries = 0;
       geomtools::vector_3d vertex;
@@ -221,14 +219,14 @@ int main (int argc_, char ** argv_)
       //geomtools::gnuplot_draw::basic_draw_point(tmp_vertexes_.out(), vertex);
     }
     /*
-    std::cerr << "DEBUG: TEST INSIDE_DAUGHTER =" << (geomtools::SHAPE_DOMAIN_INSIDE_DAUGHTER)
-              << std::endl;
-    std::cerr << "DEBUG: TEST ON_DAUGHTER_SURFACE =" << (geomtools::SHAPE_DOMAIN_ON_DAUGHTER_SURFACE)
-              << std::endl;
-    std::cerr << "DEBUG: TEST INSIDE_DAUGHTER =" << (geomtools::SHAPE_DOMAIN_INSIDE | geomtools::SHAPE_DOMAIN_INSIDE_DAUGHTER)
-              << std::endl;
-    std::cerr << "DEBUG: TEST ON_DAUGHTER_SURFACE=" << (geomtools::SHAPE_DOMAIN_INSIDE | geomtools::SHAPE_DOMAIN_ON_DAUGHTER_SURFACE)
-              << std::endl;
+      std::cerr << "DEBUG: TEST INSIDE_DAUGHTER =" << (geomtools::SHAPE_DOMAIN_INSIDE_DAUGHTER)
+      << std::endl;
+      std::cerr << "DEBUG: TEST ON_DAUGHTER_SURFACE =" << (geomtools::SHAPE_DOMAIN_ON_DAUGHTER_SURFACE)
+      << std::endl;
+      std::cerr << "DEBUG: TEST INSIDE_DAUGHTER =" << (geomtools::SHAPE_DOMAIN_INSIDE | geomtools::SHAPE_DOMAIN_INSIDE_DAUGHTER)
+      << std::endl;
+      std::cerr << "DEBUG: TEST ON_DAUGHTER_SURFACE=" << (geomtools::SHAPE_DOMAIN_INSIDE | geomtools::SHAPE_DOMAIN_ON_DAUGHTER_SURFACE)
+      << std::endl;
     */
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
     if (draw) {
@@ -300,5 +298,3 @@ int main (int argc_, char ** argv_)
   }
   return error_code;
 }
-
-// end of test_logical_volume.cxx

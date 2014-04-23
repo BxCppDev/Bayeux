@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_regular_linear_placement.cxx
 
 #include <cstdlib>
@@ -24,9 +24,9 @@ using namespace std;
 int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
-  try 
+  try
     {
-      bool debug = false;
+      // bool debug = false;
       bool draw = false;
       int iarg = 1;
       while (iarg < argc_)
@@ -35,43 +35,44 @@ int main (int argc_, char ** argv_)
 
           if (token[0] == '-')
             {
-              string option = token; 
-              if ((option == "-d") || (option == "--debug")) 
-                {
-                  debug = true;
-                }
+              string option = token;
+              // if ((option == "-d") || (option == "--debug"))
+              //   {
+              //     debug = true;
+              //   }
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
-             else if (option == "--no-draw") 
+              // else
+             if (option == "--no-draw")
                 {
                   draw = false;
                 }
-             else if (option == "--draw") 
+             else if (option == "--draw")
                 {
                   draw = true;
                 }
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
-              else 
-                { 
-                  clog << "warning: ignoring option '" << option << "'!" << endl; 
+              else
+                {
+                  clog << "warning: ignoring option '" << option << "'!" << endl;
                 }
             }
           else
             {
-              string argument = token; 
-              { 
-                clog << "warning: ignoring argument '" << argument << "'!" << endl; 
+              string argument = token;
+              {
+                clog << "warning: ignoring argument '" << argument << "'!" << endl;
               }
             }
           iarg++;
         }
- 
+
       geomtools::vector_3d  basic_position (1., 2., 3.);
       cout << "Basic position : " << basic_position << endl;
 
       double phi   = -30.0 * CLHEP::degree;
       double theta = 75.0 * CLHEP::degree;
       double delta = 0.0 * CLHEP::degree;
- 
+
       geomtools::placement basic_placement (basic_position, phi, theta, delta);
 
       geomtools::vector_3d step (+1, +0.5, 0.0);
@@ -80,7 +81,7 @@ int main (int argc_, char ** argv_)
       geomtools::regular_linear_placement rlp (basic_placement, step, 4);
       rlp.tree_dump (clog, "regular_linear_placement", ">>> ");
 
-      for (int i = 0; i < rlp.get_number_of_items (); i++)
+      for (int i = 0; i < (int) rlp.get_number_of_items (); i++)
         {
           ostringstream title;
           title << "Item #" << i << " placement:";
@@ -93,9 +94,9 @@ int main (int argc_, char ** argv_)
         datatools::temp_file tmp_file;
         tmp_file.set_remove_at_destroy (true);
         tmp_file.create ("/tmp", ".tmp_drawer_");
-        
+
         geomtools::box b (3.0, 1.0, 0.3);
-        for (int i = 0; i < rlp.get_number_of_items (); i++)
+        for (int i = 0; i < (int) rlp.get_number_of_items (); i++)
           {
             geomtools::gnuplot_draw::draw (tmp_file.out (),
                                            rlp.i_placement::get_placement (i),
@@ -106,7 +107,7 @@ int main (int argc_, char ** argv_)
         g1.set_title ("test_regular_linear_placement");
         g1.set_xlabel ("x").set_ylabel ("y").set_zlabel ("z");
         g1.plotfile_xyz (tmp_file.get_filename (), 1, 2, 3, "3D view");
-        g1.showonscreen (); 
+        g1.showonscreen ();
         geomtools::gnuplot_drawer::wait_for_key ();
         usleep (200);
       }
@@ -115,15 +116,13 @@ int main (int argc_, char ** argv_)
     }
   catch (exception & x)
     {
-      cerr << "error: " << x.what() << endl; 
+      cerr << "error: " << x.what() << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return error_code;
 }
-
-// end of test_regular_linear_placement.cxx

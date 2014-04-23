@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_blur_spot.cxx
 
 #include <cstdlib>
@@ -31,10 +31,10 @@ using namespace std;
 
 void wait_for_key ();  // Programm halts until keypress
 
-int main (int argc_, char ** argv_)
+int main (int /* argc_ */, char ** /* argv_ */)
 {
   int error_code = EXIT_SUCCESS;
-  try 
+  try
     {
       long seed = 314159;
       bool draw = false;
@@ -63,13 +63,13 @@ int main (int argc_, char ** argv_)
         geomtools::blur_spot v1 (geomtools::blur_spot::dimension_one);
         v1.set_z_error (2.4 * CLHEP::mm);
         string s1 = "10 -15 20 (mm) @ 45 30 0 (deg)";
-        geomtools::placement::from_string (s1, v1.grab_placement ());       
+        geomtools::placement::from_string (s1, v1.grab_placement ());
         fout << "# index 1 " << endl;
         for (int i = 0; i < 100; i++)
           {
             geomtools::vector_3d vtx;
             v1.randomize_boost (my_prng_boost, vtx, geomtools::blur_spot::mode_gaussian);
-            geomtools::print_xyz(fout, vtx);           
+            geomtools::print_xyz(fout, vtx);
           }
         fout << endl << endl;
 
@@ -83,10 +83,10 @@ int main (int argc_, char ** argv_)
           {
             geomtools::vector_3d vtx;
             v2.randomize_boost (my_prng_boost, vtx, geomtools::blur_spot::mode_gaussian);
-            geomtools::print_xyz(fout, vtx);           
+            geomtools::print_xyz(fout, vtx);
           }
         fout << endl << endl;
-       
+
         geomtools::blur_spot v3 (geomtools::blur_spot::dimension_three);
         v3.set_x_error (4.3 * CLHEP::mm);
         v3.set_y_error (3.1 * CLHEP::mm);
@@ -98,7 +98,7 @@ int main (int argc_, char ** argv_)
           {
             geomtools::vector_3d vtx;
             v3.randomize_boost (my_prng_boost, vtx, geomtools::blur_spot::mode_interval);
-            geomtools::print_xyz(fout, vtx);           
+            geomtools::print_xyz(fout, vtx);
           }
         fout << endl << endl;
 
@@ -117,26 +117,26 @@ int main (int argc_, char ** argv_)
               bool keep = false;
               double nsigma = 2.0;
               double tolerance = 2.5 * CLHEP::mm;
-              if (! keep && v0.match (vtx, 
+              if (! keep && v0.match (vtx,
                                       geomtools::blur_spot::MODE_GAUSSIAN,
                                       tolerance)) keep = true;
-              if (! keep && v1.match (vtx, 
+              if (! keep && v1.match (vtx,
                                       geomtools::blur_spot::MODE_GAUSSIAN,
                                       nsigma,
                                       tolerance)) keep = true;
-              if (! keep && v2.match (vtx, 
+              if (! keep && v2.match (vtx,
                                       geomtools::blur_spot::MODE_GAUSSIAN,
                                       nsigma,
                                       nsigma,
                                       tolerance)) keep = true;
-              if (! keep && v3.match (vtx, 
+              if (! keep && v3.match (vtx,
                                       geomtools::blur_spot::MODE_GAUSSIAN,
                                       nsigma,
                                       nsigma,
                                       nsigma)) keep = true;
               if (keep)
                 {
-                  geomtools::print_xyz(fout, vtx);           
+                  geomtools::print_xyz(fout, vtx);
                 }
             }
           fout << endl << endl;
@@ -176,17 +176,17 @@ int main (int argc_, char ** argv_)
                                          datatools::using_multi_archives);
           while (reader.has_record_tag ())
             {
-              clog << "notice: " << "Next..."  << endl; 
+              clog << "notice: " << "Next..."  << endl;
               if (reader.record_tag_is (geomtools::blur_spot::SERIAL_TAG))
-                {    
+                {
                   geomtools::blur_spot bs;
                   reader.load (bs);
                   bs.tree_dump (clog, "Blur spot : ");
                 }
               else
                 {
-                  clog << "error: " << "Unsupported record tag : '" 
-                       << reader.get_record_tag () << "' ! " << endl; 
+                  clog << "error: " << "Unsupported record tag : '"
+                       << reader.get_record_tag () << "' ! " << endl;
                   break;
                 }
             }
@@ -199,12 +199,12 @@ int main (int argc_, char ** argv_)
     }
   catch (exception & x)
     {
-      cerr << "error: " << x.what() << endl; 
+      cerr << "error: " << x.what() << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return error_code;
