@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
-/* box.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/** \file geomtools/box.h */
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
  * Last modified: 2012-10-24
  *
@@ -160,6 +160,10 @@ namespace geomtools {
     /// Check if a point is inside the box
     virtual bool is_inside(const vector_3d &,
                            double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
+
+    /// Check if a point is inside the box
+    virtual bool is_outside(const vector_3d &,
+                            double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     /// Check if a point is on some surface of the box
     /// If 'skin' < 0 no skin is taken into account.

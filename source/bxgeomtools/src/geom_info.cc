@@ -2,8 +2,10 @@
 /* geom_info.cc
  */
 
+// Ourselves:
 #include <geomtools/geom_info.h>
 
+// This project:
 #include <geomtools/logical_volume.h>
 
 namespace geomtools {
@@ -88,5 +90,3 @@ namespace geomtools {
   }
 
 } // end of namespace geomtools
-
-// end of geom_info.cc

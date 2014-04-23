@@ -1,9 +1,9 @@
 // -*- mode: c++; -*-
-/* geomtools_config.h header file
+/** \file geomtools/geomtools_config.h
  */
 
-#ifndef GEOMTOOLS_GEOMTOOLS_CONFIG_H_
-#define GEOMTOOLS_GEOMTOOLS_CONFIG_H_ 1
+#ifndef GEOMTOOLS_GEOMTOOLS_CONFIG_H
+#define GEOMTOOLS_GEOMTOOLS_CONFIG_H 1
 
 /***  geomtools is built standalone or not ***/
 #cmakedefine01 GEOMTOOLS_STANDALONE
@@ -21,7 +21,11 @@
 
 #define GEOMTOOLS_DEFAULT_TOLERANCE (1.e-7*CLHEP::mm)
 
-#define GEOMTOOLS_PROPER_TOLERANCE 0.0
+#define GEOMTOOLS_DEFAULT_ANGULAR_TOLERANCE (1.e-12*CLHEP::degree)
+
+#define GEOMTOOLS_ZERO_TOLERANCE 0.0
+
+#define GEOMTOOLS_PROPER_TOLERANCE -1.0
 
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
 #define GEOMTOOLS_GNUPLOT_EXECUTABLE "@GNUPLOT_EXECUTABLE@"
@@ -33,6 +37,4 @@
 
 #define GEOMTOOLS_ENV_RESOURCE_DIR "GEOMTOOLS_RESOURCE_DIR"
 
-#endif // GEOMTOOLS_GEOMTOOLS_CONFIG_H_
-
-// end of geomtools_config.h
+#endif // GEOMTOOLS_GEOMTOOLS_CONFIG_H

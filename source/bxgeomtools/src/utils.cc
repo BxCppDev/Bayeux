@@ -1,23 +1,70 @@
-// -*- mode: c++; -*-
-/* utils.cc
- */
+/** utils.cc */
 
+// Ourselves:
 #include <geomtools/utils.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 #include <iomanip>
 #include <limits>
 #include <cmath>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/exception.h>
 
 namespace geomtools {
 
   using namespace std;
 
-  const double constants::DEFAULT_TOLERANCE = constants::get_default_tolerance ();
+  bool angle_is_in(double angle_,
+                   double start_angle_, double delta_angle_,
+                   double angular_tolerance_,
+                   bool bounds_excluded_)
+  {
+    static const double two_pi = 2. * M_PI;
+    bool in = false;
+    if (delta_angle_ >= two_pi) {
+      in = true;
+    } else {
+      double stop_angle = start_angle_ + delta_angle_;
+      double a = angle_;
+      if (bounds_excluded_) {
+        if (a > (start_angle_ - angular_tolerance_) && (a < stop_angle + angular_tolerance_)) {
+          in = true;
+        } else {
+          double n = ceil((start_angle_ - a) / two_pi);
+          a = angle_ + n * two_pi;
+          if (a > (start_angle_ - angular_tolerance_) && (a < stop_angle + angular_tolerance_)) {
+            in = true;
+          }
+        }
+      } else {
+        if (a >= (start_angle_ - angular_tolerance_) && (a <= stop_angle + angular_tolerance_)) {
+          in = true;
+        } else {
+          double n = ceil((start_angle_ - a) / two_pi);
+          a = angle_ + n * two_pi;
+          if (a >= (start_angle_ - angular_tolerance_) && (a <= stop_angle + angular_tolerance_)) {
+            in = true;
+          }
+        }
+      }
+    }
+    return in;
+  }
+
+  const double constants::DEFAULT_TOLERANCE      = constants::get_default_tolerance ();
+  const double constants::DEFAULT_ANGULAR_TOLERANCE = constants::get_default_angular_tolerance ();
+  const double constants::ZERO_TOLERANCE         = constants::get_zero_tolerance ();
   const double constants::USING_PROPER_TOLERANCE = constants::get_proper_tolerance ();
+
+  // static
+  double constants::get_default_angular_tolerance ()
+  {
+    return GEOMTOOLS_DEFAULT_ANGULAR_TOLERANCE;
+  }
 
   // static
   double constants::get_default_tolerance ()
@@ -29,6 +76,12 @@ namespace geomtools {
   double constants::get_proper_tolerance ()
   {
     return GEOMTOOLS_PROPER_TOLERANCE;
+  }
+
+  // static
+  double constants::get_zero_tolerance ()
+  {
+    return GEOMTOOLS_ZERO_TOLERANCE;
   }
 
   const string & io::vector_2d_serial_tag()
@@ -1116,5 +1169,3 @@ namespace geomtools {
   }
 
 } // end of namespace geomtools
-
-// end of utils.cc

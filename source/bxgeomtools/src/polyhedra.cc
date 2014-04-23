@@ -1,9 +1,9 @@
-// -*- mode: c++ ; -*-
-/* polyhedra.cc
- */
+/** \file geomtools/polyhedra.cc */
 
+// Ourselves:
 #include <geomtools/polyhedra.h>
 
+// Standard library:
 #include <cmath>
 #include <stdexcept>
 #include <iostream>
@@ -13,9 +13,12 @@
 #include <fstream>
 #include <limits>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/units.h>
 
+// This project:
 #include <geomtools/regular_polygon.h>
 
 namespace geomtools {
@@ -29,97 +32,95 @@ namespace geomtools {
     return label;
   }
 
-  double polyhedra::get_xmin () const
+  double polyhedra::get_xmin() const
   {
     return -_xy_max_;
   }
 
-  double polyhedra::get_xmax () const
+  double polyhedra::get_xmax() const
   {
     return +_xy_max_;
   }
 
-  double polyhedra::get_ymin () const
+  double polyhedra::get_ymin() const
   {
     return -_xy_max_;
   }
 
-  double polyhedra::get_ymax () const
+  double polyhedra::get_ymax() const
   {
     return +_xy_max_;
   }
 
-  double polyhedra::get_zmin () const
+  double polyhedra::get_zmin() const
   {
     return _z_min_;
   }
 
-  double polyhedra::get_zmax () const
+  double polyhedra::get_zmax() const
   {
     return _z_max_;
   }
 
-  std::string polyhedra::get_shape_name () const
+  std::string polyhedra::get_shape_name() const
   {
     return polyhedra_label();
   }
 
-  void polyhedra::set_n_sides (size_t n_sides_)
+  void polyhedra::set_n_sides(size_t n_sides_)
   {
     DT_THROW_IF (n_sides_ < MIN_NUMBER_OF_SIDES, std::domain_error, "Invalid number of sides '" << n_sides_ << "'");
     _n_sides_ = n_sides_;
     return;
   }
 
-  bool polyhedra::is_extruded () const
+  bool polyhedra::is_extruded() const
   {
     return _extruded_;
   }
 
-  size_t polyhedra::get_n_sides () const
+  size_t polyhedra::get_n_sides() const
   {
     return _n_sides_;
   }
 
-  double polyhedra::get_z_min () const
+  double polyhedra::get_z_min() const
   {
     return _z_min_;
   }
 
-  double polyhedra::get_z_max () const
+  double polyhedra::get_z_max() const
   {
     return _z_max_;
   }
 
-  double polyhedra::get_xy_max () const
+  double polyhedra::get_xy_max() const
   {
     return _xy_max_;
   }
 
-  double polyhedra::get_r_max () const
+  double polyhedra::get_r_max() const
   {
     return _r_max_;
   }
 
-  const polyhedra::rz_col_type & polyhedra::points () const
+  const polyhedra::rz_col_type & polyhedra::points() const
   {
     return _points_;
   }
 
-  // ctor:
-  polyhedra::polyhedra ()
+  polyhedra::polyhedra()
   {
     reset ();
     return;
   }
 
-  // dtor:
-  polyhedra::~polyhedra ()
+  polyhedra::~polyhedra()
   {
     return;
   }
 
-  void polyhedra::initialize (const datatools::properties & setup_)
+  void polyhedra::initialize(const datatools::properties & setup_)
   {
     double lunit = CLHEP::mm;
     if (setup_.has_key ("length_unit")) {
@@ -209,7 +210,7 @@ namespace geomtools {
   }
 
 
-  void polyhedra::initialize (const std::string & filename_, int dc_mode_)
+  void polyhedra::initialize(const std::string & filename_, int dc_mode_)
   {
     const std::string filename = filename_;
     std::ifstream ifs;
@@ -721,14 +722,16 @@ namespace geomtools {
                              double skin_) const
   {
     DT_THROW_IF (true, std::logic_error, "Not implemented yet !");
-    double skin = get_skin ();
-    if (skin_ > USING_PROPER_SKIN) skin = skin_;
+    double skin = get_skin(skin_);
+    double hskin = 0.5 * skin;
 
     double z = point_.z ();
-    if (z > get_z_max () + 0.5 * skin) return false;
-    if (z < get_z_min () - 0.5 * skin) return false;
-    double r = hypot (point_.x (), point_.y ());
-    if (r > get_r_max () + 0.5 * skin) return false;
+    // Exclude points outside the bounding cylinder:
+    if (z > get_z_max() - hskin) return false;
+    if (z < get_z_min() + hskin) return false;
+    const double r = hypot(point_.x(), point_.y());
+    if (r > get_r_max() - hskin) return false;
+
     /*
       for (rz_col_type::const_iterator i = _points_.begin ();
       i != _points_.end ();
@@ -764,7 +767,7 @@ namespace geomtools {
   {
     DT_THROW_IF (true, std::logic_error, "Not implemented yet !");
     vector_3d normal;
-    invalidate (normal);
+    invalidate(normal);
     /*
       double x = position_.x ();
       double y = position_.y ();

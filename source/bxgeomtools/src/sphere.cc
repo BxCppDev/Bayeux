@@ -1,4 +1,4 @@
-/* geomtools/sphere.cc */
+/** geomtools/sphere.cc */
 
 // Ourselves:
 #include <geomtools/sphere.h>
@@ -76,6 +76,11 @@ namespace geomtools {
     return _r_;
   }
 
+  bool sphere::has_r_min() const
+  {
+    return _r_min_ > 0.0;
+  }
+
   double
   sphere::get_r_min () const
   {
@@ -132,6 +137,7 @@ namespace geomtools {
   sphere::set_radius (double new_value_)
   {
     set_r (new_value_);
+    return;
   }
 
   void
@@ -139,6 +145,7 @@ namespace geomtools {
   {
     reset_r_min();
     set_r_max(r_);
+    return;
   }
 
   void
@@ -146,15 +153,26 @@ namespace geomtools {
   {
     set_r_min(r_min_);
     set_r_max(r_max_);
+    return;
   }
 
   void sphere::set_phi(double start_phi_, double delta_phi_)
   {
+    DT_THROW_IF(start_phi_ < 0.0,
+                std::domain_error,
+                "Start theta is negative !");
+    DT_THROW_IF(start_phi_ >= 2 * M_PI,
+                std::domain_error,
+                "Start theta is too large (> 2 pi) !");
     DT_THROW_IF(delta_phi_ > 2 * M_PI,
                 std::domain_error,
                 "Delta theta is too large (> 2 pi)!");
+    DT_THROW_IF(delta_phi_ < 0,
+                std::domain_error,
+                "Delta phi is negative (< 0)!");
     _start_phi_ = start_phi_;
     _delta_phi_ = delta_phi_;
+    return;
   }
 
   double sphere::get_start_phi() const
@@ -169,11 +187,24 @@ namespace geomtools {
 
   void sphere::set_theta(double start_theta_, double delta_theta_)
   {
-    DT_THROW_IF(delta_theta_ > M_PI,
+    DT_THROW_IF(start_theta_ < 0.0,
                 std::domain_error,
-                "Delta theta is too large (> pi)!");
+                "Start theta is too small (< 0)!");
+    DT_THROW_IF(start_theta_ > M_PI,
+                std::domain_error,
+                "Start theta is too large (> pi)!");
+    DT_THROW_IF(delta_theta_ < 0,
+                std::domain_error,
+                "Delta theta is negative (< 0)!");
+    // DT_THROW_IF(delta_theta_ > M_PI,
+    //             std::domain_error,
+    //             "Delta theta is too large (> pi)!");
+    DT_THROW_IF((start_theta_ + delta_theta_) > M_PI,
+                std::domain_error,
+                "Theta bound is too large (> pi)!");
     _start_theta_ = start_theta_;
     _delta_theta_ = delta_theta_;
+    return;
   }
 
   double sphere::get_start_theta() const
@@ -194,6 +225,7 @@ namespace geomtools {
     _delta_phi_ = 2 * M_PI;
     _start_theta_ = 0.0;
     _delta_theta_ = M_PI;
+    return;
   }
 
   sphere::sphere ()
@@ -362,14 +394,26 @@ namespace geomtools {
     _set_default();
   }
 
+  bool sphere::has_partial_phi() const
+  {
+    if (_delta_phi_ == 2 * M_PI) return false;
+    if (_start_phi_ > 0.0) return true;
+    return false;
+  }
+
+  bool sphere::has_partial_theta() const
+  {
+    if (_delta_theta_ == M_PI) return false;
+    if (_start_theta_ > 0.0) return true;
+    return false;
+  }
+
   bool sphere::is_orb() const
   {
     if (! datatools::is_valid(_r_)) return false;
-    if (_r_min_ > 0.0) return false;
-    if (_start_phi_ > 0.0) return false;
-    if (_delta_phi_ < 2 * M_PI) return false;
-    if (_start_theta_ > 0.0) return false;
-    if (_delta_theta_ < M_PI) return false;
+    if (has_r_min()) return false;
+    if (has_partial_phi()) return false;
+    if (has_partial_theta()) return false;
     return true;
   }
 
@@ -382,12 +426,42 @@ namespace geomtools {
   bool
   sphere::is_inside (const vector_3d & point_, double skin_) const
   {
-    double skin = get_skin ();
-    if  (skin_ > USING_PROPER_SKIN) skin = skin_;
-    double r = point_.mag ();
-    if  (r > _r_ + 0.5 * skin) return false;
-    if  (r < _r_min_ - 0.5 * skin) return false;
-    return true;
+    double skin = get_skin(skin_);
+    double hskin = 0.5 * skin;
+    double r = point_.mag();
+    if ( r <= (_r_ - hskin) ) {
+      if ( r >= (_r_min_ + hskin)) {
+        double theta = point_.theta();
+        double rho   = r * std::sin(theta);
+        double phi = point_.phi();
+        double eps_phi   = std::atan2(hskin, rho);
+        if (angle_is_in(phi, _start_phi_ + eps_phi , _delta_phi_ - 2 * eps_phi, 0.0)) {
+          double eps_theta = std::atan2(hskin, r);
+          if (angle_is_in(theta, _start_theta_ + eps_theta, _delta_theta_ - 2 * eps_theta, 0.0)) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  bool
+  sphere::is_outside (const vector_3d & point_, double skin_) const
+  {
+    double skin = get_skin(skin_);
+    double hskin = 0.5 * skin;
+    double r = point_.mag();
+    if ( r > (_r_ + hskin) ) return true;
+    if ( r < (_r_min_ - hskin) ) return true;
+    double theta = point_.theta();
+    double rho = r * std::sin(theta);
+    double phi = point_.phi();
+    double eps_phi   = std::atan2(hskin, rho);
+    if (! angle_is_in(phi, _start_phi_, _delta_phi_, eps_phi)) return true;
+    double eps_theta = std::atan2(hskin, r);
+    if (! angle_is_in(theta, _start_theta_, _delta_theta_, eps_theta))  return true;
+    return false;
   }
 
   double
@@ -397,12 +471,17 @@ namespace geomtools {
     if  (flag_ == "radius") return get_r ();
     if  (flag_ == "outer_radius") return get_r_max();
     if  (flag_ == "inner_radius") return get_r_min();
-    if  (flag_ == "outer_diameter") return 2 * get_r_max ();
-    if  (flag_ == "diameter") return 2 * get_r ();
-    if  (flag_ == "inner_diameter") return 2 * get_r_min ();
-    if  (flag_ == "volume") return get_volume ();
-    if  (flag_ == "surface.side") return get_surface (FACE_SIDE);
-    if  (flag_ == "surface.inner_side") return get_surface (FACE_INNER_SIDE);
+    if  (flag_ == "outer_diameter") return 2 * get_r_max();
+    if  (flag_ == "diameter") return 2 * get_r();
+    if  (flag_ == "inner_diameter") return 2 * get_r_min();
+    if  (flag_ == "volume") return get_volume();
+    if  (flag_ == "surface.side") return get_surface(FACE_SIDE);
+    if  (flag_ == "surface.outer_side") return get_surface(FACE_SIDE);
+    if  (flag_ == "surface.inner_side") return get_surface(FACE_INNER_SIDE);
+    if  (flag_ == "surface.start_theta_side") return get_surface(FACE_START_THETA_SIDE);
+    if  (flag_ == "surface.stop_theta_side") return get_surface(FACE_STOP_THETA_SIDE);
+    if  (flag_ == "surface.start_phi_side") return get_surface(FACE_START_PHI_SIDE);
+    if  (flag_ == "surface.stop_phi_side") return get_surface(FACE_STOP_PHI_SIDE);
     if  (flag_ == "surface") return get_surface (FACE_ALL);
     DT_THROW_IF(true, std::logic_error,"Unknown flag '" << flag_ << "' !");
   }
@@ -425,19 +504,22 @@ namespace geomtools {
 
   bool
   sphere::is_on_surface (const vector_3d & point_,
-                         int mask_    ,
+                         int mask_,
                          double skin_) const
   {
     // bool debug = false;
     //debug = true;
-    double skin = get_skin ();
-    if (skin_ > USING_PROPER_SKIN) skin = skin_;
+    double skin = get_skin(skin_);
 
     int mask = mask_;
     if (mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
 
     double hskin = 0.5 * skin;
-    double r = point_.mag ();
+    double r     = point_.mag ();
+    double phi   = point_.phi();
+    double theta = point_.theta();
+    double rho   = r * std::sin(theta);
+
     // if (debug)
     //   {
     //     std::clog << "DEVEL: sphere::is_on_surface: r= "
@@ -450,16 +532,94 @@ namespace geomtools {
     //               << hskin
     //               << std::endl;
     //   }
+
+
     if (mask & FACE_SIDE) {
-      if (std::abs(r - _r_) < hskin) return true;
+      if (std::abs(r - _r_) < hskin) {
+        if (angle_is_in(phi, _start_phi_, _delta_phi_, 0.0)
+            && angle_is_in(theta, _start_theta_, _delta_theta_, 0.0)) {
+          return true;
+        }
+      }
     }
-    if (mask & FACE_INNER_SIDE) {
-      if (std::abs(r - _r_min_) < hskin) return true;
+
+    if (has_r_min()) {
+      if (mask & FACE_INNER_SIDE) {
+        if (std::abs(r - _r_min_) < hskin) {
+          if (angle_is_in(phi, _start_phi_, _delta_phi_, 0.0)
+              && angle_is_in(theta, _start_theta_, _delta_theta_, 0.0)) {
+            return true;
+          }
+        }
+      }
     }
-    double phi = point_.phi();
-    if (phi >= _start_phi_ && phi <= _start_phi_ + _delta_phi_) return true;
-    double theta = point_.theta();
-    if (theta >= _start_theta_ && theta <= _start_theta_ + _delta_theta_) return true;
+
+    if (has_partial_phi()) {
+      if (mask & FACE_START_PHI_SIDE) {
+        if (r <= _r_ && r >= _r_min_) {
+          if (angle_is_in(theta, _start_theta_, _delta_theta_, 0.0)) {
+            double eps_phi = std::atan2(hskin, rho);
+            double phi1 = _start_phi_ - eps_phi;
+            double delta_phi1 = 2  * eps_phi;
+            if (angle_is_in(phi, phi1, delta_phi1, 0.0)) {
+              return true;
+            }
+          }
+        }
+      }
+
+      if (mask & FACE_STOP_PHI_SIDE) {
+        if (r <= _r_ && r >= _r_min_) {
+          if (angle_is_in(theta, _start_theta_, _delta_theta_, 0.0)) {
+            double eps_phi = std::atan2(hskin, rho);
+            double phi1 = _start_phi_ + _delta_phi_ - eps_phi;
+            double delta_phi1 = 2  * eps_phi;
+            if (angle_is_in(phi, phi1, delta_phi1, 0.0)) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+
+    if (has_partial_theta()) {
+      if (mask & FACE_START_THETA_SIDE) {
+        if (r <= _r_ && r >= _r_min_) {
+          if (angle_is_in(phi, _start_phi_, _delta_phi_, 0.0)) {
+            double eps_theta = std::atan2(hskin, r);
+            double theta1 = _start_theta_ - eps_theta;
+            double delta_theta1 = 2  * eps_theta;
+            if (angle_is_in(theta, theta1, delta_theta1, 0.0)) {
+              return true;
+            }
+          }
+        }
+      }
+
+      if (mask & FACE_STOP_THETA_SIDE) {
+        if (r <= _r_ && r >= _r_min_) {
+          if (angle_is_in(phi, _start_phi_, _delta_phi_, 0.0)) {
+            double eps_theta = std::atan2(hskin, r);
+            double theta1 = _start_theta_ + _delta_theta_ - eps_theta;
+            double delta_theta1 = 2  * eps_theta;
+            if (angle_is_in(theta, theta1, delta_theta1, 0.0)) {
+              // std::cerr << "DEVEL: geomtools::sphere::is_on_surface: On FACE_STOP_THETA_SIDE:"
+              //           << std::endl;
+              // std::cerr << "DEVEL: geomtools::sphere::is_on_surface:   eps_theta = " << eps_theta / CLHEP::degree << " °"
+              //           << std::endl;
+              // std::cerr << "DEVEL: geomtools::sphere::is_on_surface:   theta1 = " << theta1 / CLHEP::degree << " °"
+              //           << std::endl;
+              // std::cerr << "DEVEL: geomtools::sphere::is_on_surface:   theta2 = " << theta2 / CLHEP::degree << " °"
+              //           << std::endl;
+              // std::cerr << "DEVEL: geomtools::sphere::is_on_surface:   theta = "  << theta / CLHEP::degree << " °"
+              //           << std::endl;
+              return true;
+            }
+          }
+        }
+      }
+    }
+
     return false;
   }
 
@@ -631,9 +791,18 @@ namespace geomtools {
     i_object_3d::tree_dump (out_, title_, indent_, true);
 
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "R : " << get_r () / CLHEP::mm << " mm" << endl;
+         << "R : " << _r_ / CLHEP::mm << " mm" << endl;
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "R(min) : " << _r_min_ / CLHEP::mm << " mm" << endl;
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Start phi : " << _start_phi_ / CLHEP::degree << " degree" << endl;
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Delta phi : " << _delta_phi_ / CLHEP::degree << " degree" << endl;
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Start theta : " << _start_theta_ / CLHEP::degree << " degree" << endl;
     out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
-         << "R(min) : " << get_r_min () / CLHEP::mm << " mm" << endl;
+         << "Delta theta : " << _delta_theta_ / CLHEP::degree << " degree" << endl;
+
     return;
   }
 

@@ -1,12 +1,14 @@
-// -*- mode: c++; -*-
-/* cylinder.cc
- */
+/** \file geomtools/cylinder.cc */
 
+// Standard library:
 #include <string>
 
-#include <geomtools/cylinder.h>
-
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/exception.h>
+
+// This project:
+#include <geomtools/cylinder.h>
 
 namespace geomtools {
 
@@ -220,14 +222,24 @@ namespace geomtools {
   }
 
   bool
-  cylinder::is_inside (const vector_3d & a_position, double a_skin) const
+  cylinder::is_inside(const vector_3d & a_position, double a_skin) const
   {
-    double skin = get_skin ();
-    if (a_skin > USING_PROPER_SKIN) skin = a_skin;
+    double skin = get_skin (a_skin);
+    double hskin = 0.5 * skin;
+    double r = hypot(a_position.x(), a_position.y());
+    if ( (r <= (_radius_ - hskin)) &&
+         ( std::abs(a_position.z()) <= (0.5 * _z_ - hskin) ) ) return true;
+    return false;
+  }
 
-    double r = hypot (a_position.x (), a_position.y ());
-    if ( r > _radius_ + 0.5 * skin ) return false;
-    if ( abs (a_position.z ()) > 0.5 *_z_ + 0.5 * skin ) return false;
+  bool
+  cylinder::is_outside(const vector_3d & a_position, double a_skin) const
+  {
+    double skin = get_skin (a_skin);
+    double hskin = 0.5 * skin;
+    double r = hypot(a_position.x(), a_position.y());
+    if ( (r >= (_radius_ + hskin)) ||
+         ( std::abs(a_position.z()) >= (0.5 * _z_ + hskin) ) ) return true;
     return true;
   }
 
@@ -235,15 +247,14 @@ namespace geomtools {
   cylinder::get_normal_on_surface (const vector_3d & a_position) const
   {
     vector_3d normal;
-    invalidate (normal);
-    if (is_on_surface (a_position, FACE_SIDE))
-      {
-        double phi = a_position.phi ();
-        normal.set (cos (phi), sin (phi), 0.0);
-      }
-    else if (is_on_surface (a_position, FACE_BOTTOM)) normal.set (0.0, 0.0, -1.0);
-    else if (is_on_surface (a_position, FACE_TOP)) normal.set (0.0, 0.0, +1.0);
-    return (normal);
+    invalidate(normal);
+    if (is_on_surface(a_position, FACE_SIDE)) {
+      double phi = a_position.phi();
+      normal.set(std::cos(phi), std::sin(phi), 0.0);
+    }
+    else if (is_on_surface(a_position, FACE_BOTTOM)) normal.set(0.0, 0.0, -1.0);
+    else if (is_on_surface(a_position, FACE_TOP)) normal.set(0.0, 0.0, +1.0);
+    return normal;
   }
 
   bool
@@ -251,29 +262,28 @@ namespace geomtools {
                            int    a_mask ,
                            double a_skin) const
   {
-    double skin = get_skin ();
-    if (a_skin > USING_PROPER_SKIN) skin = a_skin;
-
+    double skin = get_skin (a_skin);
     int mask = a_mask;
     if (a_mask == (int) ALL_SURFACES) mask = FACE_ALL;
 
     double hskin = 0.5 * skin;
-    double r = hypot (a_position.x (), a_position.y ());
-    if (mask & FACE_BOTTOM)
-      {
-        if ((abs (a_position.z () + 0.5 * _z_) < hskin)
-            && (r < (_radius_ + hskin))) return true;
-      }
-    if (mask & FACE_TOP)
-      {
-        if ((abs (a_position.z () - 0.5 * _z_) < hskin)
-            && (r < (_radius_ + hskin))) return true;
-      }
-    if (mask & FACE_SIDE)
-      {
-        if ((abs (a_position.z ()) < (0.5 * _z_ + hskin))
-            && (abs (r - _radius_) < hskin)) return true;
-      }
+    double r = hypot(a_position.x(), a_position.y());
+
+    if (mask & FACE_BOTTOM) {
+      if ((std::abs(a_position.z() + 0.5 * _z_) < hskin)
+          && (r < (_radius_ + hskin))) return true;
+    }
+
+    if (mask & FACE_TOP) {
+      if ((std::abs(a_position.z() - 0.5 * _z_) < hskin)
+          && (r < (_radius_ + hskin))) return true;
+    }
+
+    if (mask & FACE_SIDE) {
+      if ((std::abs(a_position.z()) < (0.5 * _z_ + hskin))
+          && (std::abs(r - _radius_) < hskin)) return true;
+    }
+
     return false;
   }
 
@@ -564,5 +574,3 @@ namespace geomtools {
   }
 
 } // end of namespace geomtools
-
-// end of cylinder.cc

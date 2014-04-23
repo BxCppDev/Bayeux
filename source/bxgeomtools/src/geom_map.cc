@@ -1,11 +1,15 @@
-// -*- mode: c++ ; -*-
-/* geom_map.cc
- */
+/* geom_map.cc */
 
+// Ourselves:
 #include <geomtools/geom_map.h>
 
+// Standard library:
+#include <cstdlib>
+
+// Third party:
 #include <datatools/exception.h>
 
+// This project:
 #include <geomtools/id_mgr.h>
 
 namespace geomtools {
@@ -171,16 +175,44 @@ namespace geomtools {
 
   bool geom_map::check_inside (const geom_info & ginfo_,
                                const vector_3d & world_position_,
-                               double tolerance_)
+                               double tolerance_,
+                               bool reverse_)
   {
+    bool devel = false;
+    char * dummy = 0;
+    dummy = getenv("geomtools_geom_map_check_inside_devel");
+    if (dummy != 0) {
+      std::string dummys = dummy;
+      if (dummys == "1") {
+        devel = true;
+      }
+    }
     const geom_info & ginfo = ginfo_;
     vector_3d local_position;
     const placement & pl = ginfo.get_world_placement ();
     pl.mother_to_child (world_position_, local_position);
     const logical_volume & log = ginfo.get_logical ();
     const i_shape_3d & shape = log.get_shape ();
-    if (shape.is_inside (local_position, tolerance_)) {
-      return true;
+    if (devel) {
+      //if (shape.get_shape_name() != "box") {
+        std::clog << "DEVEL: geomtools::geom_map::check_inside: "
+                  << "ginfo = " << ginfo_.get_geom_id()
+                  << " world_position = " << world_position_ / CLHEP::mm
+                  << " local_position = " << local_position / CLHEP::mm
+                  << " logical_volume = " << log.get_name()
+                  << " shape = '" << shape.get_shape_name() << "' "
+                  << " tolerance = " << tolerance_ / CLHEP::mm << " "
+                  << std::endl;
+      //}
+    }
+    if (reverse_) {
+      if (! shape.is_outside(local_position, tolerance_)) {
+        return true;
+      }
+    } else {
+      if (shape.is_inside(local_position, tolerance_)) {
+        return true;
+      }
     }
     return false;
   }
@@ -189,6 +221,7 @@ namespace geomtools {
                                          int type_,
                                          double tolerance_) const
   {
+    bool reverse = true;
     const size_t requested_type = type_;
     for (geom_info_dict_type::const_iterator i = _geom_infos_.begin ();
          i != _geom_infos_.end ();
@@ -197,7 +230,7 @@ namespace geomtools {
       const geom_id & gid = ginfo.get_id ();
       if (gid.get_type () != requested_type) continue;
 
-      if (geom_map::check_inside (ginfo, world_position_, tolerance_)) {
+      if (geom_map::check_inside (ginfo, world_position_, tolerance_, reverse)) {
         return gid;
       }
 
@@ -283,5 +316,3 @@ namespace geomtools {
   }
 
 } // end of namespace geomtools
-
-// end of geom_map.cc

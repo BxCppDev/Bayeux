@@ -213,15 +213,29 @@ namespace geomtools {
   bool
   hexagon_box::is_inside (const vector_3d & point_, double skin_) const
   {
-    double skin = get_skin ();
-    if (skin_ > USING_PROPER_SKIN) skin = skin_;
-    if (std::abs (point_.z ()) > (0.5 * _z_ - 0.5 * skin)) return false;
+    double skin = get_skin (skin_);
+    double hskin = 0.5 * skin;
+    if ( (std::abs(point_.z ()) < (0.5 * _z_ - hskin))
+         && ( xy_is_in_hexagon (_radius_ - hskin,
+                                point_.x (),
+                                point_.y (),
+                                0.0))
+         ) return true;
+    return false;
+  }
 
-    if (! xy_is_in_hexagon (_radius_ - 0.5 * skin,
-                            point_.x (),
-                            point_.y (),
-                            0.0)) return false;
-    return true;
+  bool
+  hexagon_box::is_outside (const vector_3d & point_, double skin_) const
+  {
+    double skin = get_skin (skin_);
+    double hskin = 0.5 * skin;
+    if ( (std::abs(point_.z ()) > (0.5 * _z_ + hskin))
+         || ( xy_is_out_hexagon (_radius_ + hskin,
+                                 point_.x (),
+                                 point_.y (),
+                                 0.0))
+         ) return true;
+    return false;
   }
 
   vector_3d
@@ -241,64 +255,54 @@ namespace geomtools {
   }
 
   bool
-  hexagon_box::is_on_surface (const vector_3d & /*point_*/ ,
-                              int    /*mask_*/ ,
-                              double /*skin_*/) const
+  hexagon_box::is_on_surface (const vector_3d & point_ ,
+                              int    mask_ ,
+                              double skin_) const
   {
-    /*
-      bool debug = false;
-      double skin = get_skin ();
-      if (skin_ > USING_PROPER_SKIN) skin = 2 * skin_;
+    double skin = get_skin (skin_);
+    double hskin = 0.5 * skin;
+    int mask = mask_;
+    if (mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
 
-      int mask = mask_;
-      if (mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
+    if (is_outside(point_, skin_)) return false;
+    if (is_inside(point_, skin_)) return false;
 
-      double hskin = 0.5 * skin;
-      if (mask & FACE_BACK)
-      {
-      if ((std::abs (point_.x () + 0.5 * __x) < hskin)
-      && (std::abs (point_.y ()) < 0.5 * __y)
-      && (std::abs (point_.z ()) < 0.5 * _z_)) return true;
-      }
-      if (mask & FACE_FRONT)
-      {
-      if ((std::abs (point_.x () - 0.5 * __x) < hskin)
-      && (std::abs (point_.y ()) < 0.5 * __y)
-      && (std::abs (point_.z ()) < 0.5 * _z_)) return true;
-      }
-      if (mask & FACE_LEFT)
-      {
-      if ((std::abs (point_.y () + 0.5 * __y) < hskin)
-      && (std::abs (point_.x ()) < 0.5 * __x)
-      && (std::abs (point_.z ()) < 0.5 * _z_)) return true;
-      }
-      if (mask & FACE_RIGHT)
-      {
-      if (debug)
-      {
-      std::clog << "DEVEL: hexagon_box::is_on_surface: FACE_RIGHT" << std::endl;
-      std::clog << "DEVEL: hexagon_box::is_on_surface: hskin=" << hskin << std::endl;
-      std::clog << "DEVEL: hexagon_box::is_on_surface: point=" << point_ << std::endl;
-      std::clog << "DEVEL: hexagon_box::is_on_surface: dim radius=" << _radius_ << std::endl;
-      std::clog << "DEVEL: hexagon_box::is_on_surface: dim z=" << _z_ << std::endl;
-      }
-      if ((std::abs (point_.y () - 0.5 * __y) < hskin)
-      && (std::abs (point_.x ()) < 0.5 * __x)
-      && (std::abs (point_.z ()) < 0.5 * _z_)) return true;
-      }
-      if (mask & FACE_BOTTOM)
-      {
-      if ((std::abs (point_.z () + 0.5 * _z_) < hskin)
-      && (std::abs (point_.x ()) < 0.5 * __x)
-      && (std::abs (point_.y ()) < 0.5 * __y)) return true;
-      }
-      if (mask & FACE_TOP)
-      {
-      if ((std::abs (point_.z () - 0.5 * _z_) < hskin)
-      && (std::abs (point_.x ()) < 0.5 * __x)
-      && (std::abs (point_.y ()) < 0.5 * __y)) return true;
-      }
-    */
+    if (mask & FACE_BOTTOM) {
+      if ( (std::abs(point_.z() + 0.5 * _z_) < hskin)) return true;
+    }
+
+    if (mask & FACE_TOP) {
+      if ( (std::abs(point_.z() - 0.5 * _z_) < hskin)) return true;
+    }
+
+    double phi = point_.phi();
+    double cp = std::cos(phi);
+    double sp = std::sin(phi);
+
+    if (mask & FACE_FRONT) {
+      if ((cp > 0.) && (std::abs(sp) <= 0.5)) return true;
+    }
+
+    if (mask & FACE_FRONT_RIGHT) {
+      if ((cp >= 0.) && (sp > 0.5)) return true;
+    }
+
+    if (mask & FACE_FRONT_LEFT) {
+      if ((cp >= 0.) && (sp < -0.5)) return true;
+    }
+
+    if (mask & FACE_BACK) {
+      if ((cp < 0.) && (std::abs(sp) <= 0.5)) return true;
+    }
+
+    if (mask & FACE_BACK_RIGHT) {
+      if ((cp <= 0.) && (sp > 0.5)) return true;
+    }
+
+    if (mask & FACE_BACK_LEFT) {
+      if ((cp <= 0.) && (sp < -0.5)) return true;
+    }
+
     return false;
   }
 

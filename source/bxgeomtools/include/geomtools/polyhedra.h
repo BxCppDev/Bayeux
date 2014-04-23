@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* polyhedra.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/** \file geomtools/polyhedra.h */
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-10-08
  * Last modified: 2010-10-14
  *
@@ -15,13 +15,15 @@
  *
  */
 
-#ifndef GEOMTOOLS_POLYHEDRA_H_
-#define GEOMTOOLS_POLYHEDRA_H_ 1
+#ifndef GEOMTOOLS_POLYHEDRA_H
+#define GEOMTOOLS_POLYHEDRA_H 1
 
+// Standard library:
 #include <iostream>
 #include <string>
 #include <map>
 
+// This project:
 #include <geomtools/i_shape_3d.h>
 #include <geomtools/i_stackable.h>
 
@@ -165,11 +167,9 @@ namespace geomtools {
     virtual bool is_inside (const vector_3d &,
                             double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
-    // if 'skin' < 0 no skin is taken into account:
-    virtual bool
-    is_on_surface (const vector_3d & ,
-                   int mask_    = FACE_ALL ,
-                   double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+    virtual bool is_on_surface (const vector_3d & ,
+                                int mask_    = FACE_ALL ,
+                                double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     virtual vector_3d get_normal_on_surface (const vector_3d & position_) const;
 
@@ -208,6 +208,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_POLYHEDRA_H_
-
-// end of polyhedra.h
+#endif // GEOMTOOLS_POLYHEDRA_H

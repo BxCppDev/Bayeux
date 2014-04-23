@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
 /* cone.h
- * Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-10-11
  * Last modified: 2013-10-11
  *
@@ -11,8 +11,8 @@
  *
  */
 
-#ifndef GEOMTOOLS_CONE_H_
-#define GEOMTOOLS_CONE_H_ 1
+#ifndef GEOMTOOLS_CONE_H
+#define GEOMTOOLS_CONE_H 1
 
 namespace geomtools {
 
@@ -31,6 +31,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_CONE_H_
-
-// end of cone.h
+#endif // GEOMTOOLS_CONE_H

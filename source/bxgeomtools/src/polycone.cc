@@ -1,9 +1,9 @@
-// -*- mode: c++ ; -*-
-/* polycone.cc
- */
+/** \file geomtools/polycone.cc */
 
+// Ourselves:
 #include <geomtools/polycone.h>
 
+// Standard library:
 #include <cmath>
 #include <stdexcept>
 #include <iomanip>
@@ -12,12 +12,16 @@
 #include <fstream>
 #include <limits>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/units.h>
-
+// - Bayeux/mygsl:
 #include <mygsl/tabulated_function.h>
 #include <mygsl/numerical_differentiation.h>
 #include <mygsl/interval.h>
+
+// This project:
 #include <geomtools/cone.h>
 
 namespace geomtools {
@@ -878,34 +882,47 @@ namespace geomtools {
     DT_THROW_IF (true, std::logic_error, "Unknown parameter '" << flag_ << "' flag !");
   }
 
-  bool polycone::is_inside (const vector_3d & point_,
-                            double skin_) const
+  bool polycone::is_inside (const vector_3d & point_, double skin_) const
   {
-    double skin = get_skin ();
-    if (skin_ > USING_PROPER_SKIN) skin = skin_;
+    double skin = get_skin(skin_);
+    double hskin = 0.5 * skin;
 
-    const double z = point_.z ();
-    if (z > get_z_max () + 0.5 * skin) return false;
-    if (z < get_z_min () - 0.5 * skin) return false;
-    const double r = hypot (point_.x (), point_.y ());
-    if (r > get_r_max () + 0.5 * skin) return false;
-    for (rz_col_type::const_iterator i = _points_.begin ();
-         i != _points_.end ();
+    const double z = point_.z();
+    // Exclude points outside the bounding cylinder:
+    if (z > get_z_max() - hskin) return false;
+    if (z < get_z_min() + hskin) return false;
+    const double r = hypot(point_.x(), point_.y());
+    if (r > get_r_max() - hskin) return false;
+
+    // Scan the conical frustra:
+    for (rz_col_type::const_iterator i = _points_.begin();
+         i != _points_.end();
          i++) {
       const double z1 = i->first;
       rz_col_type::const_iterator j = i;
       j++;
-      if (j == _points_.end ()) {
+      if (j == _points_.end()) {
         break;
       }
       const double z2 = j->first;
       if ((z >= z1) && (z <= z2)) {
-        const double r1 = i->second.rmax;
-        const double r2 = j->second.rmax;
-        const double alpha = atan2 (r2 - r1, z2 - z1);
-        const double epsilon = skin / cos (alpha);
-        const double rs = r1 + (r2 - r1) * (z2 - z1) / ( z - z1);
-        if (r < (rs + 0.5 * epsilon)) {
+        // We found the right conical frustrum:
+        const double r1max = i->second.rmax;
+        const double r2max = j->second.rmax;
+        const double r1min = i->second.rmin;
+        const double r2min = j->second.rmin;
+        const double alpha_max = std::atan2(r2max - r1max, z2 - z1);
+        const double epsilon_max = hskin / std::cos(alpha_max);
+        const double rsmax = r1max + (r2max - r1max) * (z - z1) / ( z2 - z1);
+        double rmax = rsmax - epsilon_max;
+        double rmin = -1.0;
+        if (r1min + r2min > 0.0) {
+          const double alpha_min = std::atan2(r2min - r1min, z2 - z1);
+          const double epsilon_min = hskin / std::cos(alpha_min);
+          const double rsmin = r1min + (r2min - r1min) * (z - z1) / ( z2 - z1);
+          rmin = rsmin + epsilon_min;
+        }
+        if ( (r <= rmax) && (r >= rmin) ) {
           return true;
         }
         break;
@@ -955,33 +972,52 @@ namespace geomtools {
                                 int    mask_ ,
                                 double skin_) const
   {
-    DT_THROW_IF (true, std::logic_error, "Not implemented yet !");
-    double skin = get_skin ();
-    if (skin_ > USING_PROPER_SKIN) skin = skin_;
-    const double z = point_.z ();
-    const double r = hypot (point_.x (), point_.y ());
+    //DT_THROW_IF (true, std::logic_error, "Not implemented yet !");
+    double skin = get_skin(skin_);
     const double hskin = 0.5 * skin;
 
     int mask = mask_;
     if (mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
 
+    const double z = point_.z();
+    const double r = hypot(point_.x(), point_.y());
+
     if (mask & FACE_BOTTOM) {
-      const double zbottom = _points_.begin ()->first;
-      const double rbottom = _points_.begin ()->second.rmax;
-      if ((std::abs(z - zbottom) < hskin)
-          && (r < (rbottom + hskin))) return true;
+      const double zbottom = _points_.begin()->first;
+      const double rmaxbottom = _points_.begin()->second.rmax;
+      if (rmaxbottom > 0.0) {
+        double rmax = rmaxbottom;
+        double rmin = -1.0;
+        const double rminbottom = _points_.begin()->second.rmin;
+        if (rminbottom > 0.0) {
+          rmin = rminbottom;
+        }
+        if ((std::abs(z - zbottom) < hskin)
+            && (r < rmax) && (r > rmin) ) {
+          return true;
+        }
+      }
     }
 
     if (mask & FACE_TOP) {
-      const double ztop = _points_.rbegin ()->first;
-      const double rtop = _points_.rbegin ()->second.rmax;
-      if ((std::abs(z - ztop) < hskin)
-          && (r < (rtop + hskin))) return true;
+      const double ztop = _points_.rbegin()->first;
+      const double rmaxtop = _points_.rbegin()->second.rmax;
+      if (rmaxtop > 0.0) {
+        double rmax = rmaxtop;
+        double rmin = -1.0;
+        const double rmintop = _points_.rbegin()->second.rmin;
+        if (rmintop > 0.0) {
+          rmin = rmintop;
+        }
+        if ((std::abs(z - ztop) < hskin)
+            && (r < rmax) && (r > rmin) ) {
+          return true;
+        }
+      }
     }
 
-    DT_THROW_IF (mask & FACE_INNER_SIDE, std::logic_error, "Not implemented yet !");
-
     if (mask & FACE_OUTER_SIDE) {
+      // Scan the conical frustra:
       for (rz_col_type::const_iterator i = _points_.begin ();
            i != _points_.end ();
            i++) {
@@ -992,21 +1028,52 @@ namespace geomtools {
           break;
         }
         const double z2 = j->first;
-
         if ((z >= z1) && (z <= z2)) {
-          const double r1 = i->second.rmax;
-          const double r2 = j->second.rmax;
-          const double alpha = atan2 (r2 - r1, z2 - z1);
-          const double epsilon = skin / cos (alpha);
-          const double rs = r1 + (r2 - r1) * (z2 - z1) / ( z - z1);
-          if (std::abs(r - rs) < 0.5 * epsilon)
-            {
-              return true;
-            }
+          // We found the right conical frustrum:
+          const double r1max = i->second.rmax;
+          const double r2max = j->second.rmax;
+          const double alpha_max = std::atan2(r2max - r1max, z2 - z1);
+          const double epsilon_max = hskin / std::cos(alpha_max);
+          const double rsmax = r1max + (r2max - r1max) * (z - z1) / ( z2 - z1);
+          if (std::abs(r - rsmax) < epsilon_max) {
+            return true;
+          }
           break;
         }
       }
     }
+
+    if (mask & FACE_INNER_SIDE) {
+      // Scan the conical frustra:
+      for (rz_col_type::const_iterator i = _points_.begin ();
+           i != _points_.end ();
+           i++) {
+        const double z1 = i->first;
+        rz_col_type::const_iterator j = i;
+        j++;
+        if (j == _points_.end ()) {
+          break;
+        }
+        const double z2 = j->first;
+        if ((z >= z1) && (z <= z2)) {
+          // We found the right conical frustrum:
+          const double r1min = i->second.rmin;
+          const double r2min = j->second.rmin;
+          double rmin = -1.0;
+          if (r1min + r2min > 0.0) {
+            const double alpha_min = std::atan2(r2min - r1min, z2 - z1);
+            const double epsilon_min = hskin / std::cos(alpha_min);
+            const double rsmin = r1min + (r2min - r1min) * (z - z1) / ( z2 - z1);
+            rmin = rsmin + epsilon_min;
+            if (std::abs(r - rsmin) < epsilon_min) {
+              return true;
+            }
+          }
+          break;
+        }
+      }
+    }
+
     return false;
   }
 

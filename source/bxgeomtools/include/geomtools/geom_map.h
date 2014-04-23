@@ -15,9 +15,10 @@
  *
  */
 
-#ifndef GEOMTOOLS_GEOM_MAP_H_
-#define GEOMTOOLS_GEOM_MAP_H_ 1
+#ifndef GEOMTOOLS_GEOM_MAP_H
+#define GEOMTOOLS_GEOM_MAP_H 1
 
+// Standard library:
 #include <cstdlib>
 #include <stdexcept>
 #include <iostream>
@@ -28,10 +29,13 @@
 #include <list>
 #include <algorithm>
 
+// Third party:
+// - Boost:
 #include <boost/cstdint.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/logger.h>
 
+// This project:
 #include <geomtools/utils.h>
 #include <geomtools/i_locator.h>
 #include <geomtools/geom_id.h>
@@ -117,13 +121,17 @@ namespace geomtools {
     virtual void build_from (const model_factory & factory_,
                              const std::string & mother_ = "world");
 
-
-    /* tolerance is the thickness of the skin at the surface of the shape :
+    /** Check if a given position (in WCS) is inside the volume described by the geometry info object.
+     * \arg ginfo_          a geometry info object
+     * \arg world_position_ a position in the World coordinate system
+     * \arg tolerance_      is the thickness of the skin at the surface of the shape
+     * \arg reverse_        if set, this flag test if the position is NOT outside rather than inside the volume
      *
      */
     static bool check_inside (const geom_info & ginfo_,
                               const vector_3d & world_position_,
-                              double tolerance_);
+                              double tolerance_,
+                              bool reverse_ = false);
 
     bool has_ginfo_collection_with_type (uint32_t type_) const;
 
@@ -153,6 +161,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_GEOM_MAP_H_
-
-// end of geom_map.h
+#endif // GEOMTOOLS_GEOM_MAP_H

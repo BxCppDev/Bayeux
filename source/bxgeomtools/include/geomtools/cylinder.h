@@ -13,12 +13,14 @@
  *
  */
 
-#ifndef GEOMTOOLS_CYLINDER_H_
-#define GEOMTOOLS_CYLINDER_H_ 1
+#ifndef GEOMTOOLS_CYLINDER_H
+#define GEOMTOOLS_CYLINDER_H 1
 
+// Standard library:
 #include <sstream>
 #include <stdexcept>
 
+// This project:
 #include <geomtools/i_shape_3d.h>
 #include <geomtools/i_stackable.h>
 #include <geomtools/i_wires_3d_rendering.h>
@@ -31,20 +33,18 @@ namespace geomtools {
     {
 
     public:
+
       static const std::string & cylinder_label();
 
-      enum faces_mask_type
-        {
-          FACE_NONE   = geomtools::FACE_NONE,
-          FACE_SIDE   = 0x1,
-          FACE_BOTTOM = 0x2,
-          FACE_TOP    = 0x4,
-          FACE_ALL    = (FACE_SIDE
-                         | FACE_BOTTOM
-                         | FACE_TOP)
-        };
-
-    public:
+      enum faces_mask_type {
+        FACE_NONE   = geomtools::FACE_NONE,
+        FACE_SIDE   = 0x1,
+        FACE_BOTTOM = 0x2,
+        FACE_TOP    = 0x4,
+        FACE_ALL    = (FACE_SIDE
+                       | FACE_BOTTOM
+                       | FACE_TOP)
+      };
 
       double get_xmin () const;
 
@@ -80,18 +80,15 @@ namespace geomtools {
 
       void set_alternative (double, double);
 
-    public:
-
-      // ctor:
+      /// Constructor
       cylinder ();
 
-      // ctor:
+      /// Constructor
       cylinder (double a_radius, double a_z);
 
-      // dtor:
+      /// Destructor
       virtual ~cylinder ();
 
-      // methods:
       virtual std::string get_shape_name () const;
 
       virtual double get_parameter (const std::string &) const;
@@ -108,6 +105,9 @@ namespace geomtools {
 
       virtual bool is_inside (const vector_3d &,
                              double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
+
+      virtual bool is_outside (const vector_3d &,
+                               double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
 
       virtual bool is_on_surface (const vector_3d &,
                                  int a_mask    = FACE_ALL,
@@ -143,7 +143,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_CYLINDER_H_
-
-// end of cylinder.h
-
+#endif // GEOMTOOLS_CYLINDER_H

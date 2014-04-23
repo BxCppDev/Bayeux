@@ -1,17 +1,18 @@
-// -*- mode: c++; -*-
-/* union_3d.cc
- */
+/** \file geomtools/union_3d.cc */
 
+// Ourselves:
 #include <geomtools/union_3d.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/exception.h>
 #include <datatools/logger.h>
 
 namespace geomtools {
-
 
   const std::string & union_3d::union_3d_label()
   {
@@ -40,56 +41,87 @@ namespace geomtools {
   bool union_3d::is_inside (const vector_3d & position_,
                             double skin_) const
   {
-    const shape_type & sh1 = get_shape1 ();
-    const shape_type & sh2 = get_shape2 ();
-    const placement & p1 = sh1.get_placement ();
-    const placement & p2 = sh2.get_placement ();
-    const i_shape_3d & sh3d1 = sh1.get_shape ();
-    const i_shape_3d & sh3d2 = sh2.get_shape ();
-    const vector_3d pos1 = p1.mother_to_child (position_);
-    const vector_3d pos2 = p2.mother_to_child (position_);
-    return sh3d1.is_inside (pos1, skin_) || sh3d2.is_inside (pos2, skin_);
+    const shape_type & sh1 = get_shape1();
+    const shape_type & sh2 = get_shape2();
+    const placement & p1 = sh1.get_placement();
+    const placement & p2 = sh2.get_placement();
+    const i_shape_3d & sh3d1 = sh1.get_shape();
+    const i_shape_3d & sh3d2 = sh2.get_shape();
+    const vector_3d pos1 = p1.mother_to_child(position_);
+    const vector_3d pos2 = p2.mother_to_child(position_);
+    if (    sh3d1.is_inside(pos1, skin_)
+         || sh3d2.is_inside(pos2, skin_) ) {
+      return true;
+    }
+    return false;
+  }
+
+  bool union_3d::is_outside (const vector_3d & position_,
+                             double skin_) const
+  {
+    if (is_inside(position_, skin_)) {
+      return false;
+    }
+    if (skin_ != get_zero_skin()) {
+      if (is_on_surface(position_, COMPONENT_SHAPE_ALL, skin_)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   vector_3d
-  union_3d::get_normal_on_surface (const vector_3d & position_) const
+  union_3d::get_normal_on_surface(const vector_3d & position_) const
   {
     vector_3d normal;
-    invalidate (normal);
-    const shape_type & sh1 = get_shape1 ();
-    const shape_type & sh2 = get_shape2 ();
-    const placement & p1 = sh1.get_placement ();
-    const placement & p2 = sh2.get_placement ();
+    invalidate(normal);
+    const shape_type & sh1 = get_shape1();
+    const shape_type & sh2 = get_shape2();
+    const placement & p1 = sh1.get_placement();
+    const placement & p2 = sh2.get_placement();
     const i_shape_3d & sh3d1 = sh1.get_shape ();
     const i_shape_3d & sh3d2 = sh2.get_shape ();
     const vector_3d pos1 = p1.mother_to_child (position_);
     const vector_3d pos2 = p2.mother_to_child (position_);
-    if (sh3d1.is_on_surface (pos1, ALL_SURFACES) && ! sh3d2.is_inside (pos2))
-      {
-        normal = sh3d1.get_normal_on_surface (pos1);
-      }
-    if (sh3d2.is_on_surface (pos2, ALL_SURFACES) && ! sh3d1.is_inside (pos1))
-      {
-        normal = sh3d2.get_normal_on_surface (pos2);
-      }
+    if (sh3d1.is_on_surface (pos1, ALL_SURFACES) && ! sh3d2.is_inside (pos2)) {
+      normal = sh3d1.get_normal_on_surface (pos1);
+    }
+    if (sh3d2.is_on_surface (pos2, ALL_SURFACES) && ! sh3d1.is_inside (pos1)) {
+      normal = sh3d2.get_normal_on_surface (pos2);
+    }
     return normal;
   }
 
   bool
-  union_3d::is_on_surface (const vector_3d & position_,
-                           int /*mask_*/,
-                           double skin_) const
+  union_3d::is_on_surface(const vector_3d & position_,
+                          int mask_,
+                          double skin_) const
   {
-    const shape_type & sh1 = get_shape1 ();
-    const shape_type & sh2 = get_shape2 ();
-    const placement & p1 = sh1.get_placement ();
-    const placement & p2 = sh2.get_placement ();
-    const i_shape_3d & sh3d1 = sh1.get_shape ();
-    const i_shape_3d & sh3d2 = sh2.get_shape ();
-    const vector_3d pos1 = p1.mother_to_child (position_);
-    const vector_3d pos2 = p2.mother_to_child (position_);
-    return (sh3d1.is_on_surface (pos1, ALL_SURFACES, skin_) && ! sh3d2.is_inside (pos2, skin_))
-      || (sh3d2.is_on_surface (pos2, ALL_SURFACES, skin_)   && ! sh3d1.is_inside (pos1, skin_));
+    const shape_type & sh1 = get_shape1();
+    const shape_type & sh2 = get_shape2();
+    const placement & p1 = sh1.get_placement();
+    const placement & p2 = sh2.get_placement();
+    const i_shape_3d & sh3d1 = sh1.get_shape();
+    const i_shape_3d & sh3d2 = sh2.get_shape();
+    const vector_3d pos1 = p1.mother_to_child(position_);
+    const vector_3d pos2 = p2.mother_to_child(position_);
+
+    int mask = mask_;
+    if (mask_ == (int) ALL_SURFACES) mask = COMPONENT_SHAPE_ALL;
+
+    if (mask & COMPONENT_SHAPE_FIRST) {
+      if (sh3d1.is_on_surface(pos1, ALL_SURFACES, skin_)
+          && ! sh3d2.is_inside(pos2, skin_)) {
+        return true;
+      }
+    }
+    if (mask & COMPONENT_SHAPE_SECOND) {
+      if (sh3d2.is_on_surface(pos2, ALL_SURFACES, skin_)
+          && ! sh3d1.is_inside(pos1, skin_)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   bool
@@ -100,9 +132,8 @@ namespace geomtools {
   {
     datatools::logger::priority local_priority = datatools::logger::PRIO_FATAL;
     DT_LOG_TRACE (local_priority, "Entering...");
-    double skin = get_skin ();
-    if (skin_ > USING_PROPER_SKIN) skin = skin_;
-    //else skin = USING_PROPER_SKIN;
+    double skin = get_skin (skin_);
+
     // extract shapes' infos:
     const shape_type & sh1 = get_shape1 ();
     const shape_type & sh2 = get_shape2 ();
@@ -264,5 +295,3 @@ namespace geomtools {
   }
 
 } // end of namespace geomtools
-
-// end of union_3d.cc

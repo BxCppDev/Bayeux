@@ -14,8 +14,8 @@
  *
  */
 
-#ifndef GEOMTOOLS_GNUPLOT_DRAW_H_
-#define GEOMTOOLS_GNUPLOT_DRAW_H_ 1
+#ifndef GEOMTOOLS_GNUPLOT_DRAW_H
+#define GEOMTOOLS_GNUPLOT_DRAW_H 1
 
 // Standard library
 #include <iostream>
@@ -66,6 +66,8 @@ namespace geomtools {
       MODE_NULL = 0x0,
       MODE_WIRED_CYLINDER = 0x1
     };
+
+    static const uint32_t DEFAULT_SAMPLING = 0;
 
   public:
 
@@ -282,7 +284,7 @@ namespace geomtools {
                  const vector_3d &,
                  const rotation_3d &,
                  double,
-                 size_t = 36 );
+                 size_t = DEFAULT_SAMPLING );
 
     /// Draw a circle
     static void
@@ -290,7 +292,7 @@ namespace geomtools {
                  const vector_3d &,
                  const rotation_3d &,
                  const circle & ,
-                 size_t = 36 );
+                 size_t = DEFAULT_SAMPLING );
 
     /// Draw a disk
     static void
@@ -298,7 +300,7 @@ namespace geomtools {
                const vector_3d &,
                const rotation_3d &,
                double,
-               size_t = 36 );
+               size_t = DEFAULT_SAMPLING );
 
     /// Draw a disk
     static void
@@ -306,7 +308,7 @@ namespace geomtools {
                const vector_3d &,
                const rotation_3d &,
                const disk & ,
-               size_t = 36 );
+               size_t = DEFAULT_SAMPLING );
 
     /// Draw a regular polygon
     static void
@@ -325,7 +327,7 @@ namespace geomtools {
               double,
               double,
               int tube_axis_ = AXIS_INVALID,
-              size_t n_tube_sampling_ = 10);
+              size_t n_tube_sampling_ = DEFAULT_SAMPLING);
 
     /// Draw a box
     static void
@@ -334,7 +336,7 @@ namespace geomtools {
               const rotation_3d &,
               const box &,
               int tube_axis_ = AXIS_INVALID,
-              size_t n_tube_sampling_ = 10);
+              size_t n_tube_sampling_ = DEFAULT_SAMPLING);
 
     /// Draw a cylinder
     static void
@@ -343,7 +345,7 @@ namespace geomtools {
                    const rotation_3d &,
                    double,
                    double,
-                   size_t = 36);
+                   size_t = DEFAULT_SAMPLING);
 
     /// Draw a cylinder
     static void
@@ -351,7 +353,7 @@ namespace geomtools {
                    const vector_3d &,
                    const rotation_3d &,
                    const cylinder &,
-                   size_t = 36);
+                   size_t = DEFAULT_SAMPLING);
 
     /// Draw a tube
     static void
@@ -369,15 +371,15 @@ namespace geomtools {
                const vector_3d &,
                const rotation_3d &,
                const tube &,
-               size_t = 36);
+               size_t = DEFAULT_SAMPLING);
 
     /// Draw a sphere
     static void
     draw_sphere (std::ostream &,
                  const vector_3d &,
                  const rotation_3d &,
-                 double,
-                 size_t = 36,
+                 double radius_,
+                 size_t = DEFAULT_SAMPLING,
                  size_t = 16);
 
     /// Draw a sphere
@@ -391,7 +393,7 @@ namespace geomtools {
                  double delta_phi_,
                  double theta_min_,
                  double delta_theta_,
-                 size_t arc_sampling_ = 36,
+                 size_t arc_sampling_ = DEFAULT_SAMPLING,
                  size_t z_sampling_ = 16);
 
     /// Draw a sphere
@@ -400,7 +402,7 @@ namespace geomtools {
                  const vector_3d &,
                  const rotation_3d &,
                  const sphere &,
-                 size_t = 36,
+                 size_t = DEFAULT_SAMPLING,
                  size_t = 16);
 
     /// Draw a polycone sector
@@ -410,7 +412,7 @@ namespace geomtools {
                           const rotation_3d &,
                           const polycone &,
                           double phi1_, double phi2_,
-                          size_t arc_sampling_ = 36);
+                          size_t arc_sampling_ = DEFAULT_SAMPLING);
 
     /// Draw a polycone object
     static void
@@ -418,7 +420,7 @@ namespace geomtools {
                    const vector_3d &,
                    const rotation_3d &,
                    const polycone &,
-                   size_t arc_sampling_ = 36);
+                   size_t arc_sampling_ = DEFAULT_SAMPLING);
 
     /// Draw a right circular conical frustrum object
     static void
@@ -428,7 +430,7 @@ namespace geomtools {
                                           double z1_, double rmin1_, double rmax1_,
                                           double z2_, double rmin2_, double rmax2_,
                                           double phi1_ = 0.0, double phi2_ = 2 * M_PI,
-                                          size_t arc_sampling_ = 36,
+                                          size_t arc_sampling_ = DEFAULT_SAMPLING,
                                           uint32_t iobt_mask_ = 0xF);
 
     /// Draw a polyhedra object
@@ -516,4 +518,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_GNUPLOT_DRAW_H_
+#endif // GEOMTOOLS_GNUPLOT_DRAW_H

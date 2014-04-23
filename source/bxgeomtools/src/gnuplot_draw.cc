@@ -6,6 +6,7 @@
 // Standard library:
 #include <cmath>
 #include <stdexcept>
+#include <algorithm>
 
 // Third party:
 // - Boost:
@@ -619,6 +620,12 @@ namespace geomtools {
     vector_3d R(-0.5 * length_, -0.5 * width_, -0.5 * height_);
     vector_3d S(-0.5 * length_,  0.5 * width_, -0.5 * height_);
 
+    size_t n_tube_sampling = n_tube_sampling_;
+    if (n_tube_sampling == DEFAULT_SAMPLING) {
+      n_tube_sampling = 10;
+    }
+    n_tube_sampling = std::max(1U, (unsigned int) n_tube_sampling);
+
     rotation_3d inverse_rotation(rotation_);
     inverse_rotation.invert();
 
@@ -690,7 +697,7 @@ namespace geomtools {
     polyline.push_back(S2);
     basic_draw_polyline(out_, polyline);
 
-    if(tube_axis_ >= AXIS_X && tube_axis_ <= AXIS_Z && n_tube_sampling_ > 1) {
+    if(tube_axis_ >= AXIS_X && tube_axis_ <= AXIS_Z && n_tube_sampling > 1) {
       const vector_3d * P1 = 0;
       const vector_3d * P2 = 0;
       const vector_3d * Q1 = 0;
@@ -730,9 +737,9 @@ namespace geomtools {
         S2 = &C;
       }
 
-      for(size_t i = 1; i < n_tube_sampling_; i++) {
-        vector_3d D1 =(*Q1-*P1)/n_tube_sampling_;
-        vector_3d D2 =(*Q2-*P2)/n_tube_sampling_;
+      for(size_t i = 1; i < n_tube_sampling; i++) {
+        vector_3d D1 =(*Q1-*P1)/n_tube_sampling;
+        vector_3d D2 =(*Q2-*P2)/n_tube_sampling;
         vector_3d U = *P1 + i * D1;
         vector_3d V = *P2 + i * D2;
         vector_3d UT(U);
@@ -746,9 +753,9 @@ namespace geomtools {
         polyline.push_back(VT);
         basic_draw_polyline(out_, polyline);
       }
-      for(size_t i = 1; i < n_tube_sampling_; i++) {
-        vector_3d D1 =(*S1-*R1)/n_tube_sampling_;
-        vector_3d D2 =(*S2-*R2)/n_tube_sampling_;
+      for(size_t i = 1; i < n_tube_sampling; i++) {
+        vector_3d D1 =(*S1-*R1)/n_tube_sampling;
+        vector_3d D2 =(*S2-*R2)/n_tube_sampling;
         vector_3d U = *R1 + i * D1;
         vector_3d V = *R2 + i * D2;
         vector_3d UT(U);
@@ -762,9 +769,9 @@ namespace geomtools {
         polyline.push_back(VT);
         basic_draw_polyline(out_, polyline);
       }
-      for(size_t i = 1; i < n_tube_sampling_; i++) {
-        vector_3d D1 =(*R1-*Q1)/n_tube_sampling_;
-        vector_3d D2 =(*R2-*Q2)/n_tube_sampling_;
+      for(size_t i = 1; i < n_tube_sampling; i++) {
+        vector_3d D1 =(*R1-*Q1)/n_tube_sampling;
+        vector_3d D2 =(*R2-*Q2)/n_tube_sampling;
         vector_3d U = *Q1 + i * D1;
         vector_3d V = *Q2 + i * D2;
         vector_3d UT(U);
@@ -778,9 +785,9 @@ namespace geomtools {
         polyline.push_back(VT);
         basic_draw_polyline(out_, polyline);
       }
-      for(size_t i = 1; i < n_tube_sampling_; i++) {
-        vector_3d D1 =(*P1-*S1)/n_tube_sampling_;
-        vector_3d D2 =(*P2-*S2)/n_tube_sampling_;
+      for(size_t i = 1; i < n_tube_sampling; i++) {
+        vector_3d D1 =(*P1-*S1)/n_tube_sampling;
+        vector_3d D2 =(*P2-*S2)/n_tube_sampling;
         vector_3d U = *S1 + i * D1;
         vector_3d V = *S2 + i * D2;
         vector_3d UT(U);
@@ -824,7 +831,12 @@ namespace geomtools {
     rotation_3d inverse_rotation(rotation_);
     inverse_rotation.invert();
 
-    size_t sample =  arc_sampling_;
+    size_t sample = arc_sampling_;
+    if (sample == DEFAULT_SAMPLING) {
+      sample = 36;
+    }
+    sample = std::max(12U, (unsigned int)  sample);
+
     double dangle =  2 * M_PI * CLHEP::radian / sample;
     polyline_type polyline_top;
     polyline_type polyline_bottom;
@@ -883,6 +895,11 @@ namespace geomtools {
     inverse_rotation.invert();
 
     size_t sample = arc_sampling_;
+    if (sample == DEFAULT_SAMPLING) {
+      sample = 36;
+    }
+    sample = std::max(12U, (unsigned int)  sample);
+
     double dangle = 2 * M_PI * CLHEP::radian / sample;
     polyline_type polyline_top_i;
     polyline_type polyline_bottom_i;
@@ -977,7 +994,12 @@ namespace geomtools {
     rotation_3d inverse_rotation(rotation_);
     inverse_rotation.invert();
 
-    size_t sample =  arc_sampling_;
+    size_t sample = arc_sampling_;
+    if (sample == DEFAULT_SAMPLING) {
+      sample = 36;
+    }
+    sample = std::max(12U, (unsigned int)  sample);
+
     // std::cerr << "DEVEL: gnuplot_draw::draw_circle: sample=" << sample << std::endl;
     double dangle = 2 * M_PI * CLHEP::radian / sample;
     polyline_type polyline;
@@ -1022,7 +1044,12 @@ namespace geomtools {
     rotation_3d inverse_rotation(rotation_);
     inverse_rotation.invert();
 
-    size_t sample =  arc_sampling_;
+    size_t sample = arc_sampling_;
+    if (sample == DEFAULT_SAMPLING) {
+      sample = 36;
+    }
+    sample = std::max(12U, (unsigned int)  sample);
+
     double dangle = 2 * M_PI * CLHEP::radian / sample;
     polyline_type polyline;
     for(size_t i = 0; i <= sample; ++i) {
@@ -1107,9 +1134,20 @@ namespace geomtools {
   {
     rotation_3d inverse_rotation(rotation_);
     inverse_rotation.invert();
-    size_t phy_sample = arc_sampling_;
+
+    size_t phi_sample = arc_sampling_;
+    if (phi_sample == DEFAULT_SAMPLING) {
+      phi_sample = (size_t) (18.00001 * delta_phi_ / M_PI);
+    }
+    phi_sample = std::max(3U, (unsigned int) phi_sample);
+
     size_t z_sample = z_sampling_;
-    double dphi = delta_phi_ * CLHEP::radian / phy_sample;
+    if (z_sample == DEFAULT_SAMPLING) {
+      z_sample = (size_t) (16.00001 * delta_theta_ / M_PI);
+    }
+    z_sample = std::max(4U, (unsigned int)  z_sample);
+
+    double dphi = delta_phi_ * CLHEP::radian / phi_sample;
     double theta_min = theta_min_;
     double theta_max = theta_min + delta_theta_;
     double zmax   = r_max_ * std::cos(theta_min);
@@ -1122,7 +1160,7 @@ namespace geomtools {
 
     // Draw meridians:
     {
-      for(size_t i = 0; i <= phy_sample ; ++i) {
+      for(size_t i = 0; i <= phi_sample ; ++i) {
         polyline_type polyline_meridian;
         double phi = phi_min_ + i * dphi;
         double z = zmin;
@@ -1149,7 +1187,7 @@ namespace geomtools {
     }
 
     if (r_min_ > 0.0) {
-     for(size_t i = 0; i <= phy_sample ; ++i) {
+     for(size_t i = 0; i <= phi_sample ; ++i) {
         polyline_type polyline_meridian;
         double phi = phi_min_ + i * dphi;
         double z = zmini;
@@ -1181,7 +1219,7 @@ namespace geomtools {
       for(size_t j = 0; j < z_sample + 3; j++) {
         polyline_type polyline_parallel;
         if (z > zmax) z = zmax;
-        for(size_t i = 0; i <= phy_sample ; ++i) {
+        for(size_t i = 0; i <= phi_sample ; ++i) {
           vector_3d P;
           double phi = phi_min_ + i * dphi;
           double theta = std::acos(z / r_max_);
@@ -1208,7 +1246,7 @@ namespace geomtools {
       for(size_t j = 0; j < z_sample + 3; j++) {
         if (z > zmaxi) z = zmaxi;
         polyline_type polyline_parallel;
-        for(size_t i = 0; i <= phy_sample ; ++i) {
+        for(size_t i = 0; i <= phi_sample ; ++i) {
           vector_3d P;
           double phi = phi_min_ + i * dphi;
           double theta = std::acos(z / r_min_);
@@ -1272,15 +1310,25 @@ namespace geomtools {
     rotation_3d inverse_rotation(rotation_);
     inverse_rotation.invert();
 
-    size_t phy_sample = arc_sampling_;
+    size_t phi_sample = arc_sampling_;
+    if (phi_sample == DEFAULT_SAMPLING) {
+      phi_sample = 36;
+    }
+    phi_sample = std::max(3U, (unsigned int)  phi_sample);
+
     size_t z_sample = z_sampling_;
-    double dphi =  2 * M_PI * CLHEP::radian / phy_sample;
+    if (z_sample == DEFAULT_SAMPLING) {
+      z_sample = 16;
+    }
+    z_sample = std::max(4U, (unsigned int)  z_sample);
+
+    double dphi =  2 * M_PI * CLHEP::radian / phi_sample;
     double dz   =  2 * radius_ / z_sample;
     double factor = 0.25;
 
     // draw meridians:
     {
-      for(size_t i = 0; i <= phy_sample ; ++i) {
+      for(size_t i = 0; i <= phi_sample ; ++i) {
         polyline_type polyline_meridian;
         double phi = i * dphi;
         double z = -radius_;
@@ -1313,7 +1361,7 @@ namespace geomtools {
       double z = -radius_ + factor * dz;
       for(size_t j = 1; j <= z_sample + 1; j++) {
         polyline_type polyline_parallel;
-        for(size_t i = 0; i <= phy_sample ; ++i) {
+        for(size_t i = 0; i <= phi_sample ; ++i) {
           vector_3d P;
           double phi = i * dphi;
           double theta = std::acos(z / radius_);
@@ -1352,12 +1400,18 @@ namespace geomtools {
     double phi2 = phi2_;
     rotation_3d inverse_rotation(rotation_);
     inverse_rotation.invert();
-    size_t phy_sample = arc_sampling_;
-    double dphi =(phi2 - phi1) * CLHEP::radian / phy_sample;
+
+    size_t phi_sample = arc_sampling_;
+    if (phi_sample == DEFAULT_SAMPLING) {
+      phi_sample = (size_t) (18.00001 * (phi2_ - phi1_) / M_PI);
+    }
+    phi_sample = std::max(3U, (unsigned int)  phi_sample);
+
+    double dphi =(phi2 - phi1) * CLHEP::radian / phi_sample;
 
     // Outer surface:
     if(iobt_mask_ & 0x2) {
-      for(size_t i = 0; i <= phy_sample ; ++i) {
+      for(size_t i = 0; i <= phi_sample ; ++i) {
         polyline_type polyline_meridian;
         double phi = phi1 + i * dphi;
         {
@@ -1390,7 +1444,7 @@ namespace geomtools {
 
     // Inner surface:
     if(iobt_mask_ & 0x1) {
-      for(size_t i = 0; i <= phy_sample ; ++i) {
+      for(size_t i = 0; i <= phi_sample ; ++i) {
         polyline_type polyline_meridian;
         double phi = phi1 + i * dphi;
         {
@@ -1426,7 +1480,7 @@ namespace geomtools {
       polyline_type polyline_parallel;
       double z = z1_;
       double r = rmax1_;
-      for(size_t i = 0; i <= phy_sample ; ++i) {
+      for(size_t i = 0; i <= phi_sample ; ++i) {
         vector_3d P;
         double phi = phi1 + i * dphi;
         P.set(r * std::cos(phi),
@@ -1443,7 +1497,7 @@ namespace geomtools {
       polyline_type polyline_parallel;
       double z = z2_;
       double r = rmax2_;
-      for(size_t i = 0; i <= phy_sample ; ++i) {
+      for(size_t i = 0; i <= phi_sample ; ++i) {
         vector_3d P;
         double phi = phi1 + i * dphi;
         P.set(r * std::cos(phi),
@@ -1462,7 +1516,7 @@ namespace geomtools {
       polyline_type polyline_parallel;
       double z = z1_;
       double r = rmin1_;
-      for(size_t i = 0; i <= phy_sample ; ++i) {
+      for(size_t i = 0; i <= phi_sample ; ++i) {
         vector_3d P;
         double phi = phi1 + i * dphi;
         P.set(r * std::cos(phi),
@@ -1479,7 +1533,7 @@ namespace geomtools {
       polyline_type polyline_parallel;
       double z = z2_;
       double r = rmin2_;
-      for(size_t i = 0; i <= phy_sample ; ++i) {
+      for(size_t i = 0; i <= phi_sample ; ++i) {
         vector_3d P;
         double phi = phi1 + i * dphi;
         P.set(r * std::cos(phi),
@@ -1577,11 +1631,15 @@ namespace geomtools {
     rotation_3d inverse_rotation(rotation_);
     inverse_rotation.invert();
 
-    size_t phy_sample = arc_sampling_;
-    double dphi =(phi2_ - phi1_) / phy_sample;
+    size_t phi_sample = arc_sampling_;
+    if (phi_sample == DEFAULT_SAMPLING) {
+      phi_sample = (size_t) (18.00001 * (phi2_ - phi1_) / M_PI);
+    }
+    phi_sample = std::max(3U, (unsigned int) phi_sample);
+    double dphi = (phi2_ - phi1_) * CLHEP::radian / phi_sample;
 
     // outer surface:
-    for(size_t i = 0; i <= phy_sample ; ++i) {
+    for(size_t i = 0; i <= phi_sample ; ++i) {
       polyline_type polyline_meridian;
       double phi = phi1_ + i * dphi;
       for(polycone::rz_col_type::const_iterator j = p_.points().begin();
@@ -1607,7 +1665,7 @@ namespace geomtools {
       polyline_type polyline_parallel;
       double z = j->first;
       double r = j->second.rmax;
-      for(size_t i = 0; i <= phy_sample ; ++i) {
+      for(size_t i = 0; i <= phi_sample ; ++i) {
         vector_3d P;
         double phi = phi1_ + i * dphi;
         P.set(r * std::cos(phi),
@@ -1623,7 +1681,7 @@ namespace geomtools {
 
     if(p_.is_extruded()) {
       // inner surface:
-      for(size_t i = 0; i <= phy_sample ; ++i)
+      for(size_t i = 0; i <= phi_sample ; ++i)
         {
           polyline_type polyline_meridian;
           double phi = phi1_ + i * dphi;
@@ -1650,7 +1708,7 @@ namespace geomtools {
         polyline_type polyline_parallel;
         double z = j->first;
         double r = j->second.rmin;
-        for(size_t i = 0; i <= phy_sample ; ++i) {
+        for(size_t i = 0; i <= phi_sample ; ++i) {
           vector_3d P;
           double phi = phi1_ + i * dphi;
           P.set(r * std::cos(phi),

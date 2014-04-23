@@ -1,5 +1,5 @@
 // -*- mode: c++; -*-
-/* tube.h
+/** \file geomtools/tube.h
  * Author(s):     F.Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2006-11-28
  * Last modified: 2010-10-13
@@ -13,12 +13,14 @@
  *
  */
 
-#ifndef GEOMTOOLS_TUBE_H_
-#define GEOMTOOLS_TUBE_H_ 1
+#ifndef GEOMTOOLS_TUBE_H
+#define GEOMTOOLS_TUBE_H 1
 
+// Standard library:
 #include <iostream>
 #include <string>
 
+// This project:
 #include <geomtools/i_shape_3d.h>
 #include <geomtools/i_stackable.h>
 #include <geomtools/i_wires_3d_rendering.h>
@@ -111,6 +113,9 @@ namespace geomtools {
     virtual bool is_inside (const vector_3d &,
                             double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
+    virtual bool is_outside (const vector_3d &,
+                             double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+
     virtual bool is_on_surface (const vector_3d &,
                                 int mask_    = FACE_ALL,
                                 double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
@@ -147,6 +152,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_TUBE_H_
-
-// end of tube.h
+#endif // GEOMTOOLS_TUBE_H

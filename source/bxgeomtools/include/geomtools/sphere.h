@@ -73,6 +73,8 @@ namespace geomtools {
 
     double get_radius() const;
 
+    bool has_r_min() const;
+
     double get_r_min() const;
 
     void set_r(double);
@@ -97,11 +99,15 @@ namespace geomtools {
 
     double get_delta_phi() const;
 
+    bool has_partial_phi() const;
+
     void set_theta(double start_theta_, double delta_theta_);
 
     double get_start_theta() const;
 
     double get_delta_theta() const;
+
+    bool has_partial_theta() const;
 
     bool is_orb() const;
 
@@ -138,6 +144,9 @@ namespace geomtools {
 
     virtual bool is_inside(const vector_3d &,
                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+
+    virtual bool is_outside(const vector_3d &,
+                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     virtual bool is_on_surface(const vector_3d & ,
                                int mask_    = FACE_ALL ,

@@ -13,8 +13,8 @@
  *
  */
 
-#ifndef GEOMTOOLS_HEXAGON_BOX_H_
-#define GEOMTOOLS_HEXAGON_BOX_H_ 1
+#ifndef GEOMTOOLS_HEXAGON_BOX_H
+#define GEOMTOOLS_HEXAGON_BOX_H 1
 
 #include <sstream>
 #include <stdexcept>
@@ -89,15 +89,16 @@ namespace geomtools {
 
     void set (double radius_, double z_);
 
-    // ctor/dtor:
   public:
+
+    /// Default constructor
     hexagon_box ();
 
+    /// Constructor
     hexagon_box (double, double);
 
+    /// Destructor
     virtual ~hexagon_box ();
-
-    // methods:
 
     virtual std::string get_shape_name () const;
 
@@ -116,7 +117,9 @@ namespace geomtools {
     virtual bool is_inside (const vector_3d &,
                             double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
-    // if 'skin' < 0 no skin is taken into account:
+    virtual bool is_outside (const vector_3d &,
+                             double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+
     virtual bool is_on_surface (const vector_3d & ,
                                 int mask_    = FACE_ALL ,
                                 double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
@@ -140,14 +143,11 @@ namespace geomtools {
 
   private:
 
-    double _radius_;
-    double _z_;
+    double _radius_; /// Radius of the hexagonal box
+    double _z_;      /// Height of the hexagonal box
 
   };
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_HEXAGON_BOX_H_
-
-// end of hexagon_box.h
-
+#endif // GEOMTOOLS_HEXAGON_BOX_H

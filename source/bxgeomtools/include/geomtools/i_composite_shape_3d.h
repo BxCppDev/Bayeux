@@ -1,5 +1,5 @@
 // -*- mode: c++; -*-
-/* i_composite_shape_3d.h
+/** \file geomtools/i_composite_shape_3d.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
  * Last modified: 2008-05-23
@@ -7,22 +7,25 @@
  * License:
  *
  * Description:
- *  Basic interface for composite 3D shapes (union, intersection, difference)
+ *  Basic interface for binary composite 3D shapes (union, intersection, difference)
  *
  * History:
  *
  */
 
-#ifndef __geomtools__i_composite_shape_3d_h
-#define __geomtools__i_composite_shape_3d_h 1
+#ifndef GEOMTOOLS_I_COMPOSITE_SHAPE_3D_H
+#define GEOMTOOLS_I_COMPOSITE_SHAPE_3D_H 1
 
+// Standard library:
 #include <string>
 
+// This project:
 #include <geomtools/i_shape_3d.h>
 #include <geomtools/placement.h>
 
 namespace geomtools {
 
+  /// \brief Bas eclass for binary composite shapes:
   class i_composite_shape_3d : public i_shape_3d
   {
 
@@ -30,9 +33,9 @@ namespace geomtools {
 
     class shape_type : public datatools::i_tree_dumpable
     {
-      bool         _delete_;
-      i_shape_3d * _shape_;
-      placement    _placement_;
+      bool         _delete_; /// Flag to delete the handled shape
+      i_shape_3d * _shape_;  /// Handle to the component shape
+      placement    _placement_; /// Placement of the component shape
 
     private:
 
@@ -43,7 +46,7 @@ namespace geomtools {
 
     public:
 
-      void copy (shape_type &);
+      void copy(shape_type &);
 
       void reset ();
 
@@ -63,7 +66,8 @@ namespace geomtools {
 
       placement & get_placement ();
 
-      // factory methods:
+      // Factory methods:
+
       static void make_shape (i_shape_3d &,
                               const placement &,
                               shape_type &);
@@ -80,6 +84,13 @@ namespace geomtools {
 
       void dump (std::ostream & out_ = std::clog) const;
 
+    };
+
+    enum component_shape_type {
+      COMPONENT_SHAPE_NONE   = 0,
+      COMPONENT_SHAPE_FIRST  = datatools::bit_mask::bit00,
+      COMPONENT_SHAPE_SECOND = datatools::bit_mask::bit01,
+      COMPONENT_SHAPE_ALL    = COMPONENT_SHAPE_FIRST | COMPONENT_SHAPE_SECOND
     };
 
 
@@ -123,6 +134,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // __geomtools__i_composite_shape_3d_h
-
-// end of i_composite_shape_3d.h
+#endif // GEOMTOOLS_I_COMPOSITE_SHAPE_3D_H

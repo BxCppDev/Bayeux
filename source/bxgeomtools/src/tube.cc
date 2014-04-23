@@ -1,15 +1,18 @@
-// -*- mode: c++; -*-
-/* tube.cc
- */
+/** \file geomtools/tube.cc */
 
+// Ourselves:
 #include <geomtools/tube.h>
 
+// Standard library:
 #include <cmath>
 #include <stdexcept>
 #include <sstream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/exception.h>
 
+// This project:
 #include <geomtools/cylinder.h>
 
 namespace geomtools {
@@ -188,14 +191,26 @@ namespace geomtools {
 
   bool tube::is_inside ( const vector_3d & point_ , double skin_ ) const
   {
-    double skin = get_skin ();
-    if (skin_ > USING_PROPER_SKIN) skin = skin_;
+    double skin = get_skin (skin_);
+    double hskin = 0.5 * skin;
+    double r = hypot(point_.x(), point_.y());
+    if ( (r <= (_outer_r_ - hskin))
+         && (r >= (_inner_r_ + hskin))
+         && (std::abs(point_.z()) <= (0.5 * _z_ - hskin))
+         ) return true;
+    return false;
+  }
 
-    double r = hypot (point_.x (), point_.y ());
-    if (r > _outer_r_ + 0.5 * skin
-        || r < _inner_r_ - 0.5 * skin) return false;
-    if (std::abs (point_.z ()) > 0.5 * _z_ + 0.5 * skin ) return false;
-    return true;
+  bool tube::is_outside ( const vector_3d & point_ , double skin_ ) const
+  {
+    double skin = get_skin (skin_);
+    double hskin = 0.5 * skin;
+    double r = hypot(point_.x(), point_.y());
+    if ( (r >= (_outer_r_ + hskin))
+         || (r <= (_inner_r_ - hskin))
+         || (std::abs(point_.z()) >= (0.5 * _z_ + hskin))
+         ) return true;
+    return false;
   }
 
   double tube::get_parameter ( const std::string & flag_ ) const
@@ -271,6 +286,7 @@ namespace geomtools {
                              intercept_t & intercept_,
                              double /*skin_*/) const
   {
+    DT_THROW_IF(true, std::runtime_error, "Not implemented !");
     intercept_.reset ();
     return intercept_.is_ok ();
   }
@@ -423,5 +439,3 @@ namespace geomtools {
   }
 
 } // end of namespace geomtools
-
-// end of tube.cc

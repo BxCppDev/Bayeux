@@ -1,6 +1,7 @@
 // -*- mode: c++; -*-
-/* subtraction_3d.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/** \file geomtools/subtraction_3d.h
+ */
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-24
  * Last modified: 2013-05-22
  *
@@ -13,9 +14,10 @@
  *
  */
 
-#ifndef GEOMTOOLS_SUBTRACTION_3D_H_
-#define GEOMTOOLS_SUBTRACTION_3D_H_ 1
+#ifndef GEOMTOOLS_SUBTRACTION_3D_H
+#define GEOMTOOLS_SUBTRACTION_3D_H 1
 
+// This project:
 #include <geomtools/i_composite_shape_3d.h>
 
 namespace geomtools {
@@ -35,6 +37,9 @@ namespace geomtools {
     virtual bool is_inside (const vector_3d & position_,
                             double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
+    virtual bool is_outside (const vector_3d & position_,
+                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+
     virtual bool is_on_surface (const vector_3d & position_,
                                 int mask_    = FACE_ALL_BITS,
                                 double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
@@ -50,6 +55,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_SUBTRACTION_3D_H_
-
-// end of subtraction_3d.h
+#endif // GEOMTOOLS_SUBTRACTION_3D_H

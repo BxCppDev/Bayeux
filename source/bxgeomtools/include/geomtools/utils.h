@@ -32,6 +32,13 @@
 
 namespace geomtools {
 
+  /// \brief Check if an angle is inside an angular interval
+  ///
+  bool angle_is_in(double angle_,
+                   double start_angle_, double delta_angle_,
+                   double angular_tolerance_ = 0.0,
+                   bool bounds_excluded_ = false);
+
   /// Alias for a list of 2D vertice as a 2D-polyline
   typedef std::list<vector_2d> basic_polyline_2d;
 
@@ -147,7 +154,6 @@ namespace geomtools {
   enum face_3d
     {
       FACE_NONE = 0x0,
-      //FACE_NONE_BIT = 0x0, // Obsolete
       FACE_ALL_BITS = 0xFFFFFFFF
     };
 
@@ -167,9 +173,13 @@ namespace geomtools {
   {
     static const int    NO_INTERCEPT = -1;
     static const double DEFAULT_TOLERANCE;
+    static const double DEFAULT_ANGULAR_TOLERANCE;
+    static const double ZERO_TOLERANCE;
     static const double USING_PROPER_TOLERANCE;
 
     static double get_default_tolerance ();
+    static double get_default_angular_tolerance ();
+    static double get_zero_tolerance ();
     static double get_proper_tolerance ();
   };
 

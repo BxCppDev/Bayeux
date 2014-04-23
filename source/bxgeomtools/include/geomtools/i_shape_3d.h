@@ -35,13 +35,26 @@ namespace geomtools {
   class i_shape_3d : public i_object_3d
   {
   public:
+
     static const double DEFAULT_SKIN;
+    static const double ZERO_SKIN;
     static const double USING_PROPER_SKIN;
 
-  public:
-
+    /// Return the default skin value
     static double get_default_skin ();
+
+    /// Return the zero skin value (0 == no thickness)
+    static double get_zero_skin ();
+
+    /// Return the special skin value that tells to use the intrinsic skin of the shape itself (< 0)
     static double get_proper_skin ();
+
+    // Return the property key for the volume property
+    static const std::string volume_key();
+
+    // Return the property key for the surface property
+    static const std::string surface_key();
+
 
     /* Check if a 3D-shape can be stacked using some
      *  stacking algorithms. There are 2 checks:
@@ -64,19 +77,21 @@ namespace geomtools {
 
     static bool is_zmax_stackable (const i_shape_3d &);
 
-    /* Initialize a 'stackable_data' instance
-     *  from stackable data attached to the 3D-shape.
-     */
+    /// Initialize a 'stackable_data' instance from stackable data attached to the 3D-shape
     static bool pickup_stackable (const i_shape_3d &, stackable_data &);
 
+    /// Initialize a 'stackable_data' instance from properties embedded in the shape itself
     static bool pickup_stackable_with_properties (const i_shape_3d & a_shape,
                                                   stackable_data & a_stackable_data);
 
-    /// Return stackable data
+    /// Return the stackable data associated to the shape
     const stackable_data & get_stackable_data () const;
 
     /// Check if some stackable data are available
     bool has_stackable_data () const;
+
+    /// Check if some stackable data are available and owned by the shape itself
+    bool owns_stackable_data () const;
 
     /// Set external stackable data
     void set_stackable_data (const stackable_data & a_stackable_data);
@@ -90,10 +105,13 @@ namespace geomtools {
     /// Return the dimension (3)
     virtual int get_dimensional () const;
 
-    /// Return the skin tolerance
+    /// Return the effective skin tolerance associated to the 3D shape
+    double get_skin (double a_skin) const;
+
+    /// Return the intrinsic skin tolerance
     double get_skin () const;
 
-    ///Set the skin tolerance
+    /// Set the intrinsic skin tolerance
     void set_skin (double a_skin);
 
     /// Constructor
@@ -141,12 +159,15 @@ namespace geomtools {
                                 int a_surface_mask = FACE_ALL_BITS,
                                 double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const = 0;
 
-    /// Return the normal at a point of the surface
-    virtual vector_3d get_normal_on_surface (const vector_3d & a_position) const = 0;
-
     /// Check is a point is outside the solid
     virtual bool is_outside (const vector_3d &,
                              double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
+
+    /// Localize a point with respect to the shape
+    virtual shape_domain_flags_type where_is(const vector_3d &, double a_skin) const;
+
+    /// Return the normal at a point of the surface
+    virtual vector_3d get_normal_on_surface (const vector_3d & a_position) const = 0;
 
     /// Find intercept of a segment on the surface of the solid
     virtual bool find_intercept (const vector_3d & a_from,

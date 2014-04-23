@@ -1,26 +1,31 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* geom_info.h
  * Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-30
  * Last modified: 2010-04-30
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *
  *   Geometry information about an object from a geomertry setup.
  *
- * History: 
- * 
+ * History:
+ *
  */
 
-#ifndef GEOMTOOLS_GEOM_INFO_H_
-#define GEOMTOOLS_GEOM_INFO_H_ 1
+#ifndef GEOMTOOLS_GEOM_INFO_H
+#define GEOMTOOLS_GEOM_INFO_H 1
 
+// Standard library:
 #include <iostream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/i_predicate.h>
+
+// This project:
 #include <geomtools/geom_id.h>
 #include <geomtools/placement.h>
 #include <geomtools/logical_volume.h>
@@ -38,7 +43,7 @@ namespace geomtools {
 
     geom_info (const geom_id &);
 
-    geom_info (const geom_id &, 
+    geom_info (const geom_id &,
                const placement &,
                const logical_volume &);
 
@@ -86,6 +91,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_GEOM_INFO_H_
-
-// end of geom_info.h
+#endif // GEOMTOOLS_GEOM_INFO_H

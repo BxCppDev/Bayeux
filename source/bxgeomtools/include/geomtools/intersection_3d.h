@@ -1,5 +1,6 @@
 // -*- mode: c++; -*-
-/* intersection_3d.h
+/** \file geomtools/intersection_3d.h */
+/*
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009-01-11
  * Last modified: 2009-01-11
@@ -13,9 +14,10 @@
  *
  */
 
-#ifndef GEOMTOOLS_INTERSECTION_3D_H_
-#define GEOMTOOLS_INTERSECTION_3D_H_ 1
+#ifndef GEOMTOOLS_INTERSECTION_3D_H
+#define GEOMTOOLS_INTERSECTION_3D_H 1
 
+// This project:
 #include <geomtools/i_composite_shape_3d.h>
 
 namespace geomtools {
@@ -35,8 +37,11 @@ namespace geomtools {
     virtual bool is_inside (const vector_3d & position_,
                             double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
+    virtual bool is_outside (const vector_3d & position_,
+                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+
     virtual bool is_on_surface (const vector_3d & position_,
-                                int mask_    = FACE_ALL_BITS,
+                                int mask_    = COMPONENT_SHAPE_ALL,
                                 double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     virtual vector_3d get_normal_on_surface (const vector_3d & position_) const;
@@ -50,6 +55,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_INTERSECTION_3D_H_
-
-// end of intersection_3d.h
+#endif // GEOMTOOLS_INTERSECTION_3D_H

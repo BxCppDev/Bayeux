@@ -341,5 +341,3 @@ namespace geomtools {
 DR_CLASS_INIT(::geomtools::base_hit);
 
 #endif // GEOMTOOLS_BASE_HIT_H_
-
-// end of base_hit.h

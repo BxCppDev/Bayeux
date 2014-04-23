@@ -1,6 +1,7 @@
-// -*- mode: c++ ; -*-
-/* polycone.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+// -*- mode: c++; -*-
+/** \file geomtools/polycone.h
+ */
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-03-14
  * Last modified: 2010-03-14
  *
@@ -13,14 +14,16 @@
  *
  */
 
-#ifndef GEOMTOOLS_POLYCONE_H_
-#define GEOMTOOLS_POLYCONE_H_ 1
+#ifndef GEOMTOOLS_POLYCONE_H
+#define GEOMTOOLS_POLYCONE_H 1
 
+// Standard library:
 #include <iostream>
 #include <string>
 #include <map>
 #include <limits>
 
+// This project:
 #include <geomtools/i_shape_3d.h>
 #include <geomtools/i_stackable.h>
 
@@ -195,7 +198,9 @@ namespace geomtools {
     virtual bool is_inside (const vector_3d &,
                             double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
-    // if 'skin' < 0 no skin is taken into account:
+    // virtual bool is_outside (const vector_3d &,
+    //                          double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+
     virtual bool is_on_surface (const vector_3d & ,
                                 int mask_    = FACE_ALL ,
                                 double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
@@ -235,6 +240,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_POLYCONE_H_
-
-// end of polycone.h
+#endif // GEOMTOOLS_POLYCONE_H

@@ -279,15 +279,31 @@ namespace geomtools {
   }
 
   bool
+  box::is_outside(const vector_3d & a_position, double a_skin) const
+  {
+    double skin = get_skin(a_skin);
+    double hskin = 0.5 * skin;
+    if (   (std::abs(a_position.x()) >= (0.5 * _x_ + hskin))
+        || (std::abs(a_position.y()) >= (0.5 * _y_ + hskin))
+        || (std::abs(a_position.z()) >= (0.5 * _z_ + hskin))
+        ) {
+      return true;
+    }
+    return false;
+  }
+
+  bool
   box::is_inside(const vector_3d & a_position, double a_skin) const
   {
-    double skin = get_skin();
-    if (a_skin > USING_PROPER_SKIN) skin = a_skin;
-
-    if (std::abs(a_position.x()) > 0.5 * _x_ + 0.5 * skin) return false;
-    if (std::abs(a_position.y()) > 0.5 * _y_ + 0.5 * skin) return false;
-    if (std::abs(a_position.z()) > 0.5 * _z_ + 0.5 * skin) return false;
-    return true;
+    double skin = get_skin(a_skin);
+    double hskin = 0.5 * skin;
+    if (   (std::abs(a_position.x()) <= (0.5 * _x_ - hskin))
+        && (std::abs(a_position.y()) <= (0.5 * _y_ - hskin))
+        && (std::abs(a_position.z()) <= (0.5 * _z_ - hskin))
+        ) {
+      return true;
+    }
+    return false;
   }
 
   vector_3d
@@ -309,51 +325,41 @@ namespace geomtools {
                      int    a_mask ,
                      double a_skin) const
   {
-    //bool debug = false;
-    double skin = get_skin();
-    if (a_skin > USING_PROPER_SKIN) skin = 2 * a_skin;
+    double skin = get_skin(a_skin);
 
     int mask = a_mask;
-    if (a_mask ==(int) ALL_SURFACES) mask = FACE_ALL;
+    if (a_mask == (int) ALL_SURFACES) mask = FACE_ALL;
 
     double hskin = 0.5 * skin;
     if (mask & FACE_BACK) {
       if ((std::abs(a_position.x() + 0.5 * _x_) < hskin)
-          &&(std::abs(a_position.y()) < 0.5 * _y_)
-          &&(std::abs(a_position.z()) < 0.5 * _z_)) return true;
+          && (std::abs(a_position.y()) < 0.5 * _y_)
+          && (std::abs(a_position.z()) < 0.5 * _z_)) return true;
     }
     if (mask & FACE_FRONT) {
       if ((std::abs(a_position.x() - 0.5 * _x_) < hskin)
-          &&(std::abs(a_position.y()) < 0.5 * _y_)
-          &&(std::abs(a_position.z()) < 0.5 * _z_)) return true;
+          && (std::abs(a_position.y()) < 0.5 * _y_)
+          && (std::abs(a_position.z()) < 0.5 * _z_)) return true;
     }
     if (mask & FACE_LEFT) {
       if ((std::abs(a_position.y() + 0.5 * _y_) < hskin)
-          &&(std::abs(a_position.x()) < 0.5 * _x_)
-          &&(std::abs(a_position.z()) < 0.5 * _z_)) return true;
+          && (std::abs(a_position.x()) < 0.5 * _x_)
+          && (std::abs(a_position.z()) < 0.5 * _z_)) return true;
     }
     if (mask & FACE_RIGHT) {
-      // if (debug) {
-      //     std::clog << "DEVEL: box::is_on_surface: FACE_RIGHT" << std::endl;
-      //     std::clog << "DEVEL: box::is_on_surface: hskin=" << hskin << std::endl;
-      //     std::clog << "DEVEL: box::is_on_surface: point=" << a_position << std::endl;
-      //     std::clog << "DEVEL: box::is_on_surface: dim x=" << 0.5 * _x_ << std::endl;
-      //     std::clog << "DEVEL: box::is_on_surface: dim y=" << 0.5 * _y_ << std::endl;
-      //     std::clog << "DEVEL: box::is_on_surface: dim z=" << 0.5 * _z_ << std::endl;
-      //   }
       if ((std::abs(a_position.y() - 0.5 * _y_) < hskin)
-          &&(std::abs(a_position.x()) < 0.5 * _x_)
-          &&(std::abs(a_position.z()) < 0.5 * _z_)) return true;
+          && (std::abs(a_position.x()) < 0.5 * _x_)
+          && (std::abs(a_position.z()) < 0.5 * _z_)) return true;
     }
     if (mask & FACE_BOTTOM) {
       if ((std::abs(a_position.z() + 0.5 * _z_) < hskin)
-          &&(std::abs(a_position.x()) < 0.5 * _x_)
-          &&(std::abs(a_position.y()) < 0.5 * _y_)) return true;
+          && (std::abs(a_position.x()) < 0.5 * _x_)
+          && (std::abs(a_position.y()) < 0.5 * _y_)) return true;
     }
     if (mask & FACE_TOP) {
       if ((std::abs(a_position.z() - 0.5 * _z_) < hskin)
-          &&(std::abs(a_position.x()) < 0.5 * _x_)
-          &&(std::abs(a_position.y()) < 0.5 * _y_)) return true;
+          && (std::abs(a_position.x()) < 0.5 * _x_)
+          && (std::abs(a_position.y()) < 0.5 * _y_)) return true;
     }
     return false;
   }

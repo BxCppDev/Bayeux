@@ -88,7 +88,7 @@ namespace geomtools {
   {
     _logging = datatools::logger::PRIO_FATAL;
     _tolerance_ = GEOMTOOLS_DEFAULT_TOLERANCE;
-    _angular_tolerance_ = 1e-13;
+    _angular_tolerance_ = GEOMTOOLS_DEFAULT_ANGULAR_TOLERANCE;
     _user_draw_ = 0;
      return;
   }

@@ -1,10 +1,11 @@
-// -*- mode: c++ ; -*-
 /* base_hit.cc
  */
 
+// Ourselves:
 #include <geomtools/base_hit.h>
 
-// misc :
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
 
@@ -14,8 +15,6 @@ namespace geomtools {
 
   // serial tag for datatools::serialization::i_serializable interface :
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(base_hit, "snemo::core::model::base_hit")
-
-  /*** measurement ***/
 
   base_hit & base_hit::i_measurement::operator () (base_hit & a_hit)
   {
@@ -27,8 +26,6 @@ namespace geomtools {
   {
     return a_measurement (*this);
   }
-
-  /*** HIT ID ***/
 
   bool base_hit::has_hit_id () const
   {
@@ -61,8 +58,6 @@ namespace geomtools {
     return;
   }
 
-  /*** GEOM ID ***/
-
   bool base_hit::has_geom_id () const
   {
     return _geom_id_.is_valid ();
@@ -94,9 +89,7 @@ namespace geomtools {
     return;
   }
 
-  /*** AUXILIARIES ***/
-
-  /// Check if there are stored auxiliary properties
+  // Check if there are stored auxiliary properties
   bool base_hit::has_auxiliaries () const
   {
     return (_store & STORE_AUXILIARIES) && ! _auxiliaries_.empty();
@@ -127,9 +120,6 @@ namespace geomtools {
     return;
   }
 
-  /*** ***/
-
-  // ctor:
   base_hit::base_hit ()
   {
     _store = STORE_NOTHING;
@@ -138,7 +128,6 @@ namespace geomtools {
     return;
   }
 
-  // dtor:
   base_hit::~base_hit ()
   {
     this->base_hit::reset ();
@@ -170,8 +159,6 @@ namespace geomtools {
     base_hit::reset ();
     return;
   }
-
-  /*** tree_dump ***/
 
   void base_hit::tree_dump (ostream & a_out,
                             const string & a_title,
@@ -239,5 +226,3 @@ namespace geomtools {
   }
 
 } // end of namespace geomtools
-
-// end of base_hit.cc
