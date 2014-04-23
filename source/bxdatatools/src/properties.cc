@@ -2483,7 +2483,7 @@ namespace datatools {
 
             if (allow_include) {
               if (token == "@include") {
-                std::cerr << "DEVEL: " << "Using '@include' directive from line '" << line << "'" << std::endl;
+                // std::cerr << "DEVEL: " << "Using '@include' directive from line '" << line << "'" << std::endl;
                 iss >> std::ws;
                 std::string include_desc;
                 std::getline(iss, include_desc);
@@ -2498,7 +2498,7 @@ namespace datatools {
                     include_config_file = include_desc;
                   }
                   datatools::fetch_path_with_env(include_config_file);
-                  std::cerr << "DEVEL: " << "Included file is : '" << include_config_file << "'" << std::endl;
+                  // std::cerr << "DEVEL: " << "Included file is : '" << include_config_file << "'" << std::endl;
                   datatools::properties::read_config(include_config_file, a_props);
                   return;
                 }

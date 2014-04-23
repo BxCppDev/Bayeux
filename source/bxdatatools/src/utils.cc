@@ -400,14 +400,21 @@ void fetch_path_processor::process_impl(std::string& path) {
       if (str_env == "1") {
         trace = true;
         DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
-                     "Activating the TRACE logging level thanks to the 'DATATOOLS_FETCH_PATH_TRACE' environment variable...");
+                     "Activating the TRACE logging level thanks to the 'DATATOOLS_FETCH_PATH_TRACE' environment variable for path '" << path << "'...");
       }
     }
+  }
+
+  if (trace) {
+    DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Entering...");
   }
   // working buffer:
   std::string text = path;
   bool registered_lib_topic = false;
   if (text[0] == '@') {
+    if (trace) {
+      DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Entering '@' mode...");
+    }
     DT_THROW_IF(! datatools::kernel::is_instantiated(),
                 std::runtime_error,
                 "The datatools kernel has not been instantiated !"
@@ -426,11 +433,12 @@ void fetch_path_processor::process_impl(std::string& path) {
     std::string library_directive = text.substr(1, pos-1);
     std::vector<std::string> lib_tokens;
     boost::split(lib_tokens, library_directive, boost::is_any_of("."));
-    /*
-    for (int i = 0; i < lib_tokens.size(); i++) {
-      std::cerr << "DEVEL: tok = " << lib_tokens[i] << std::endl;
-    }
-    */
+    // if (trace) {
+    //   for (int i = 0; i < (int) lib_tokens.size(); i++) {
+    //     std::cerr << "DEVEL: tok = " << lib_tokens[i] << std::endl;
+    //   }
+    // }
+
     DT_THROW_IF(lib_tokens.size() == 0, std::logic_error,
                 "Missing library directive !");
     std::string library_name = lib_tokens[0];
@@ -535,9 +543,12 @@ void fetch_path_processor::process_impl(std::string& path) {
     wordexp_t p;
     int we_error = wordexp( text.c_str(), &p, WRDE_NOCMD|WRDE_SHOWERR|WRDE_UNDEF);
 
-    DT_THROW_IF(we_error != 0,
-                std::logic_error,
-                "wordexp error, code = " << we_error << ", input = '" << path << "'");
+    if (we_error != 0) {
+      wordfree( &p );
+      DT_THROW_IF(true,
+                  std::logic_error,
+                  "wordexp error, code = " << we_error << ", input = '" << path << "'");
+    }
 
     if (p.we_wordc == 0) {
       DT_THROW_IF(true, std::logic_error, "Nothing to expand !");
