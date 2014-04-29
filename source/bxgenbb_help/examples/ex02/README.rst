@@ -41,8 +41,8 @@ Quick start
 1. Build, install and setup the Bayeux library
 2. Make a copy of the example directory::
 
-      shell> cp -a $(bxquery --exampledir)/genbb_help/examples/ex01 /tmp/genbb_help_ex01
-      shell> cd /tmp/genbb_help_ex01
+      shell> cp -a $(bxquery --exampledir)/genbb_help/examples/ex02 /tmp/genbb_help_ex02
+      shell> cd /tmp/genbb_help_ex02
 
 3. Build and install the example::
 
@@ -55,10 +55,14 @@ Quick start
       shell> make
       shell> make install
       shell> cd ..
+      shell> ls -1 ./lib/
+      libgenbb_help_ex02.so
+      shell> ls -1 ./bin/
+      ex02
 
 4. Run the example::
 
-      shell> ./ex01
+      shell> ./bin/ex02
 
 5. Run the ``bxgenbb_inspector`` ::
 
