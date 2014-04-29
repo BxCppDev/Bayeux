@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_tabulated_function.cxx
 /*
  * Test program for the 'tabulated_function' class
@@ -21,17 +21,17 @@
 
 #include <mygsl/tabulated_function.h>
 
-int main (int argc_ , char ** argv_)
+int main (int /* argc_ */ , char ** /* argv_ */)
 {
   int error_code = EXIT_SUCCESS;
-  try 
+  try
     {
       bool debug = false;
-      std::cerr << "Test program for the 'mygsl::tabulated_function' class" 
-                << std::endl; 
-  
+      std::cerr << "Test program for the 'mygsl::tabulated_function' class"
+                << std::endl;
+
       mygsl::tabulated_function tf ("cspline"); // also available "linear";
-    
+
       std::vector<double> xs;
       xs.push_back (0.0);
       xs.push_back (0.1);
@@ -45,7 +45,7 @@ int main (int argc_ , char ** argv_)
       xs.push_back (8);
       xs.push_back (10.7);
 
-      for (int i = 0; i < xs.size (); i++) 
+      for (int i = 0; i < (int) xs.size (); i++)
         {
           tf.add_point (xs[i],
                         std::exp (-xs[i]),
@@ -56,14 +56,14 @@ int main (int argc_ , char ** argv_)
       if (debug)
         {
           std::cerr.precision (10);
-          std::cerr << "DEBUG: min=" << tf.x_min () << std::endl; 
-          std::cerr << "DEBUG: max=" << tf.x_max () << std::endl; 
+          std::cerr << "DEBUG: min=" << tf.x_min () << std::endl;
+          std::cerr << "DEBUG: max=" << tf.x_max () << std::endl;
         }
 
       double dx = 0.01;
-      for (double x = tf.x_min (); x <= tf.x_max () + 0.001 * dx; x += dx) 
+      for (double x = tf.x_min (); x <= tf.x_max () + 0.001 * dx; x += dx)
         {
-          if (tf.is_valid (x)) 
+          if (tf.is_valid (x))
             {
               std::cout << x << ' ' << tf (x) << std::endl;
             }
@@ -71,9 +71,9 @@ int main (int argc_ , char ** argv_)
       std::cout << std::endl << std::endl;
 
       tf.lock_table ("cspline"); // change interpolation scheme
-      for (double x = tf.x_min (); x <= tf.x_max () + 0.001 * dx; x += dx) 
+      for (double x = tf.x_min (); x <= tf.x_max () + 0.001 * dx; x += dx)
         {
-          if (tf.is_valid (x)) 
+          if (tf.is_valid (x))
             {
               std::cout << x << ' ' << tf (x) << std::endl;
             }
@@ -81,9 +81,9 @@ int main (int argc_ , char ** argv_)
       std::cout << std::endl << std::endl;
 
       tf.lock_table ("polynomial"); // change interpolation scheme
-      for (double x = tf.x_min (); x <= tf.x_max () + 0.001 * dx; x += dx) 
+      for (double x = tf.x_min (); x <= tf.x_max () + 0.001 * dx; x += dx)
         {
-          if (tf.is_valid (x)) 
+          if (tf.is_valid (x))
             {
               std::cout << x << ' ' << tf (x) << std::endl;
             }
@@ -91,9 +91,9 @@ int main (int argc_ , char ** argv_)
       std::cout << std::endl << std::endl;
 
       tf.lock_table ("akima"); // change interpolation scheme
-      for (double x = tf.x_min (); x <= tf.x_max () + 0.001 * dx; x += dx) 
+      for (double x = tf.x_min (); x <= tf.x_max () + 0.001 * dx; x += dx)
         {
-          if (tf.is_valid (x)) 
+          if (tf.is_valid (x))
             {
               std::cout << x << ' ' << tf (x) << std::endl;
             }
@@ -103,9 +103,9 @@ int main (int argc_ , char ** argv_)
       tf.print_points (std::cout);
       std::cout << std::endl << std::endl;
 
-      for (double x = tf.x_min (); x <= tf.x_max () + 0.001 * dx; x += dx) 
+      for (double x = tf.x_min (); x <= tf.x_max () + 0.001 * dx; x += dx)
         {
-          if (tf.is_valid (x)) 
+          if (tf.is_valid (x))
             {
               std::cout << x << ' ' << std::exp (-x) << std::endl;
             }
@@ -115,12 +115,12 @@ int main (int argc_ , char ** argv_)
     }
   catch (std::exception & x)
     {
-      std::cerr << "ERROR: " << x.what () << std::endl; 
+      std::cerr << "ERROR: " << x.what () << std::endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      std::cerr << "ERROR: " << "unexpected error!" << std::endl; 
+      std::cerr << "ERROR: " << "unexpected error!" << std::endl;
       error_code = EXIT_FAILURE;
     }
   return error_code;

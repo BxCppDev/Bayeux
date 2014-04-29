@@ -22,7 +22,7 @@ protected :
   }
 };
 
-int main (int argc_, char ** argv_)
+int main (int /* argc_ */, char ** /* argv_ */)
 {
   try {
     string       rng_id = "mt19937";
@@ -36,7 +36,7 @@ int main (int argc_, char ** argv_)
     VNM.dump ();
 
     size_t nshoots = 10000;
-    for (int i = 0; i < nshoots; i++)   {
+    for (int i = 0; i < (int) nshoots; i++)   {
       double ran = VNM.shoot (rand);
       cout << ran << endl;
     }
@@ -48,5 +48,3 @@ int main (int argc_, char ** argv_)
   }
   return (EXIT_SUCCESS);
 }
-
-// end of test_von_neumann_method.cxx

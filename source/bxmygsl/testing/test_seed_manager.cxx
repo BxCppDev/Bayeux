@@ -2,15 +2,15 @@
 /*
  *
  * shell> MYGSL_SEED_MANAGER_INIT_SEED_FROM="current_time" ./__build-Linux-x86_64/testing/test_seed_manager
- * shell> MYGSL_SEED_MANAGER_INIT_SEED_FROM="current_pid" ./__build-Linux-x86_64/testing/test_seed_manager 
- * shell> MYGSL_SEED_MANAGER_INIT_SEED_FROM="urandom" ./__build-Linux-x86_64/testing/test_seed_manager 
+ * shell> MYGSL_SEED_MANAGER_INIT_SEED_FROM="current_pid" ./__build-Linux-x86_64/testing/test_seed_manager
+ * shell> MYGSL_SEED_MANAGER_INIT_SEED_FROM="urandom" ./__build-Linux-x86_64/testing/test_seed_manager
  * shell> MYGSL_SEED_MANAGER_INIT_SEED_FROM="foo" ./__build-Linux-x86_64/testing/test_seed_manager
  * ...
  * WARNING: mygsl::seed_manager::_set_init_seed_flags_: Invalid \
  *   value ('foo') for the 'MYGSL_SEED_MANAGER_INIT_SEED_FROM' environment \
  *   variable !
  * ...
- * 
+ *
  */
 #include <cstdlib>
 #include <iostream>
@@ -125,7 +125,7 @@ void test2()
 
   SM2.transform_time_seeds (true);
   SM2.dump (clog);
-  
+
   return;
 }
 
@@ -149,7 +149,7 @@ void test3()
 
   SM2.transform_time_seeds (true);
   SM2.dump (clog);
-  
+
   return;
 }
 
@@ -171,7 +171,7 @@ void test4()
 
   SM2.transform_time_seeds (true);
   SM2.dump (clog);
-  
+
   return;
 }
 
@@ -180,8 +180,8 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'mygsl::seed_manager'!" << endl; 
-  
+      clog << "Test program for class 'mygsl::seed_manager'!" << endl;
+
       bool debug = false;
 
       int iarg = 1;
@@ -191,26 +191,29 @@ int main (int argc_, char ** argv_)
 
           if (token[0] == '-')
             {
-              string option = token; 
-              if ((option == "-d") || (option == "--debug")) 
+              string option = token;
+              if ((option == "-d") || (option == "--debug"))
                 {
                   debug = true;
                 }
-              else  
-                { 
-                  clog << "warning: ignoring option '" << option << "'!" << endl; 
+              else
+                {
+                  clog << "warning: ignoring option '" << option << "'!" << endl;
                 }
             }
           else
             {
-              string argument = token; 
-              { 
-                clog << "warning: ignoring argument '" << argument << "'!" << endl; 
+              string argument = token;
+              {
+                clog << "warning: ignoring argument '" << argument << "'!" << endl;
               }
             }
           iarg++;
         }
-    
+
+      if (debug) {
+      }
+
       test0();
       test1();
       test2();
@@ -220,12 +223,12 @@ int main (int argc_, char ** argv_)
     }
   catch (exception & x)
     {
-      cerr << "error: " << x.what () << endl; 
+      cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);

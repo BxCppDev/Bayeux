@@ -57,7 +57,7 @@ double Sqrt::_eval(double x_) const
   return std::sqrt(x_);
 }
 
-int main(int argc_ , char ** argv_)
+int main(int /* argc_ */, char ** /* argv_ */)
 {
   try {
 
@@ -75,18 +75,18 @@ int main(int argc_ , char ** argv_)
     int fx_precision = 16;
 
     // Write sampled values for all functors :
-    c.write_ascii_file(datafile, xmin, xmax, nsamples, 
-                       x_precision, fx_precision, 
-                       mygsl::i_unary_function::wo_append 
+    c.write_ascii_file(datafile, xmin, xmax, nsamples,
+                       x_precision, fx_precision,
+                       mygsl::i_unary_function::wo_append
                        | mygsl::i_unary_function::wo_data_index);
-    s.write_ascii_file(datafile, xmin, xmax, nsamples, 
-                       x_precision, fx_precision, 
-                       mygsl::i_unary_function::wo_append 
+    s.write_ascii_file(datafile, xmin, xmax, nsamples,
+                       x_precision, fx_precision,
+                       mygsl::i_unary_function::wo_append
                        | mygsl::i_unary_function::wo_data_index);
-    sr.write_ascii_file(datafile, xmin, xmax, nsamples, 
-                        x_precision, fx_precision, 
+    sr.write_ascii_file(datafile, xmin, xmax, nsamples,
+                        x_precision, fx_precision,
                         mygsl::i_unary_function::wo_append
-                        | mygsl::i_unary_function::wo_data_index 
+                        | mygsl::i_unary_function::wo_data_index
                         | mygsl::i_unary_function::wo_skip_odod);
 
   }

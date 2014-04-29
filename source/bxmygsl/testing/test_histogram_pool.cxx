@@ -63,7 +63,7 @@ void test_1 ()
   mygsl::rng    random (random_id, random_seed);
 
   unsigned int nshoots = 100000;
-  for (int i= 0; i < nshoots; i++)
+  for (int i= 0; i < (int) nshoots; i++)
     {
       double x1 = random.exponential (3.3);
       h1.fill(x1);
@@ -307,7 +307,7 @@ void test_5 ()
 
 
 
-int main (int argc_, char ** argv_)
+int main (int /* argc_ */, char ** /* argv_ */)
 {
   long seed48 = 314159;
   srand48 (seed48);
@@ -340,5 +340,3 @@ int main (int argc_, char ** argv_)
     }
   return (EXIT_SUCCESS);
 }
-
-// end of test_histogram_pool.cxx

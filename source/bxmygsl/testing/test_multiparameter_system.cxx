@@ -31,7 +31,7 @@ public:
   }
 };
 
-int main(int argc_ , char ** argv_)
+int main(int /* argc_ */ , char ** /* argv_ */)
 {
   try
     {

@@ -147,7 +147,7 @@ public:
   {
     h_.init (1024, 0., 1024.);
     mygsl::rng ran ("mt19937", __seed);
-    for (int i = 0; i < __nevents; i++)
+    for (int i = 0; i < (int) __nevents; i++)
       {
         double energy;
         double r = ran.uniform ();
@@ -289,7 +289,7 @@ public:
   {
     double a = get_param (0).get_value ();
     double b = get_param (1).get_value ();
-    for (int ich = 0; ich < __hdata->bins (); ich++)
+    for (int ich = 0; ich < (int) __hdata->bins (); ich++)
       {
         double ipos = ich + 0.5;
         double energy = a * ipos + b;
@@ -311,12 +311,12 @@ public:
     double a  = get_param (0).get_value_safe ();
     double b  = get_param (1).get_value_safe ();
     double r  = get_param (2).get_value_safe ();
-    double p1 = get_param (3).get_value_safe ();
-    double p2 = get_param (4).get_value_safe ();
-    double p3 = get_param (5).get_value_safe ();
-    double p4 = get_param (6).get_value_safe ();
+    // double p1 = get_param (3).get_value_safe ();
+    // double p2 = get_param (4).get_value_safe ();
+    // double p3 = get_param (5).get_value_safe ();
+    // double p4 = get_param (6).get_value_safe ();
 
-    for (int ich = ch_min; ich < ch_max; ich++)
+    for (int ich = ch_min; ich < (int) ch_max; ich++)
       {
         double nexp         = __hdata->at (ich);
         double energy       = a * (ich + 0.5) + b;
@@ -369,15 +369,15 @@ public:
 
     double a  = get_param (0).get_value_safe ();
     double b  = get_param (1).get_value_safe ();
-    double r  = get_param (2).get_value_safe ();
-    double p1 = get_param (3).get_value_safe ();
-    double p2 = get_param (4).get_value_safe ();
-    double p3 = get_param (5).get_value_safe ();
-    double p4 = get_param (6).get_value_safe ();
+    // double r  = get_param (2).get_value_safe ();
+    // double p1 = get_param (3).get_value_safe ();
+    // double p2 = get_param (4).get_value_safe ();
+    // double p3 = get_param (5).get_value_safe ();
+    // double p4 = get_param (6).get_value_safe ();
 
-    double bv  = get_param (1).get_value ();
+    // double bv  = get_param (1).get_value ();
 
-    for (int ich = ch_min; ich < ch_max; ich++)
+    for (int ich = ch_min; ich < (int) ch_max; ich++)
       {
         double nexp       = __hdata->at (ich);
         double sigma_nexp = sqrt (nexp);
@@ -533,10 +533,6 @@ int main (int argc_, char ** argv_)
                   if (! iss)
                     {
                       throw runtime_error ("Invalid seed format !");
-                    }
-                  if (seed < 0)
-                    {
-                      throw runtime_error ("Invalid seed value !");
                     }
                 }
               else if (arg == "--likelihood" || arg == "-l")
@@ -748,7 +744,7 @@ int main (int argc_, char ** argv_)
           clog << "Found minimum!" << endl;
 
           sys.init_params_values ();
-          for (int i = 0; i < sys.get_number_of_params (); i++)
+          for (int i = 0; i < (int) sys.get_number_of_params (); i++)
             {
               mygsl::best_value bv (sys.get_param (i).get_value ());
               cerr << "TEST: " << sys.get_param (i).get_name ()

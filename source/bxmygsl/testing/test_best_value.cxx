@@ -11,7 +11,7 @@
 
 using namespace std;
 
-int main(int argc_ , char ** argv_)
+int main(int /* argc_ */, char ** /* argv_ */)
 {
   try {
       mygsl::best_value bv1 (M_E, 0.1, 0.953);

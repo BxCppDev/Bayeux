@@ -24,7 +24,7 @@
 
 using namespace std;
 
-int main (int argc_ , char ** argv_)
+int main (int /* argc_ */, char ** /* argv_ */)
 {
   int error_code = EXIT_SUCCESS;
   try {
@@ -63,7 +63,7 @@ int main (int argc_ , char ** argv_)
 
     // Build tabulated function f(x):
     clog << "Build tabulated function f(x): " << endl;
-    for (int i = 0; i < xs.size (); i++) {
+    for (int i = 0; i < (int) xs.size (); i++) {
       tf.add_point (xs[i], 0.6 * cos (2. * xs[i]) + 0.65, false);
     }
     tf.lock_table ();
@@ -116,7 +116,7 @@ int main (int argc_ , char ** argv_)
         deriv = mygsl::derivative_central (tf, xi, 0.1 * dx);
       }
 
-      double ux = 1.0;
+      // double ux = 1.0;
       double uy = deriv;
       double dyij = skin / sqrt (1 + uy * uy);
       double dxij = - dyij * uy;
