@@ -489,8 +489,10 @@ void fetch_path_processor::process_impl(std::string& path) {
         if (! env_topic_dir.empty()) {
           const char *env_value = getenv(env_topic_dir.c_str());
           if (env_value != 0) {
-            DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
-                         "Found the '" << env_topic_dir << "' environment variable.");
+            if (trace) {
+              DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+                           "Found the '" << env_topic_dir << "' environment variable.");
+            }
             topic_dir_str = std::string(env_value);
           }
         }
@@ -539,35 +541,76 @@ void fetch_path_processor::process_impl(std::string& path) {
 
   if (_use_env_) {
     // Activate the parsing of embedded environment variables:
-    std::ostringstream s;
     wordexp_t p;
-    int we_error = wordexp( text.c_str(), &p, WRDE_NOCMD|WRDE_SHOWERR|WRDE_UNDEF);
-
-    if (we_error != 0) {
-      wordfree( &p );
+    // bool freed = false;
+    std::string error_message;
+    const char * word = text.c_str();
+    try {
+      int we_error = wordexp( word, &p, WRDE_NOCMD|WRDE_SHOWERR|WRDE_UNDEF);
+      switch (we_error) {
+      case WRDE_BADCHAR:
+        //std::cerr << "ERROR ************* WRDE_BADCHAR" << std::endl;
+        DT_THROW_IF(true,
+                    std::logic_error,
+                    "wordexp error, code = " << we_error << " : Unquoted characters for input = '" << path << "'");
+      case WRDE_BADVAL:
+        //std::cerr << "ERROR ************* WRDE_BADVAL" << std::endl;
+        DT_THROW_IF(true,
+                    std::logic_error,
+                    "wordexp error, code = " << we_error << " : Undefined shell variable for input = '" << path << "'");
+      case WRDE_CMDSUB:
+        //std::cerr << "ERROR ************* WRDE_CMDSUB" << std::endl;
+        DT_THROW_IF(true,
+                    std::logic_error,
+                    "wordexp error, code = " << we_error << " : Unauthorized command substitution for input = '" << path << "'");
+      case WRDE_NOSPACE:
+        //std::cerr << "ERROR ************* WRDE_NOSPACE" << std::endl;
+        // 2014-04-29 FM: Calling wordfree here at least (following the GNU example)
+        wordfree( &p );
+        // freed = true;
+        DT_THROW_IF(true,
+                    std::logic_error,
+                    "wordexp error, code = " << we_error << " : Attempt to allocate memory failed for input = '" << path << "'");
+      case WRDE_SYNTAX:
+        //std::cerr << "ERROR ************* WRDE_SYNTAX" << std::endl;
+        DT_THROW_IF(true,
+                    std::logic_error,
+                    "wordexp error, code = " << we_error << " : Shell syntax error for input = '" << path << "'");
+      default:
+        if (p.we_wordc == 0) {
+          DT_THROW_IF(true, std::logic_error, "Nothing to expand !");
+        } else {
+          char** w = p.we_wordv;
+          if (p.we_wordc > 1) {
+            std::ostringstream message;
+            message << "wordexp expands to many tokens : ";
+            for (size_t i = 0; i < p.we_wordc; i++) {
+              message << " '" << w[i]<< "'";
+            }
+            DT_THROW_IF(true, std::logic_error, message.str());
+          } else {
+            // std::ostringstream s;
+            // s << w[0];
+            text = w[0]; //s.str();
+          }
+        }
+      } // switch (we_error)
+    }
+    catch (std::exception & we_x) {
+      error_message = we_x.what();
+    }
+    // 2014-04-29 FM: Calling wordfree segfaults!!! (the manual is not clear about the need for wordfree)
+    // if (! freed) {
+    //   std::cerr << "FATAL ************* " << std::endl;
+    //   usleep(100000);
+    //   wordfree( &p );
+    // }
+    if (!error_message.empty()) {
       DT_THROW_IF(true,
                   std::logic_error,
-                  "wordexp error, code = " << we_error << ", input = '" << path << "'");
+                  "Shell expansion error: " << error_message);
     }
-
-    if (p.we_wordc == 0) {
-      DT_THROW_IF(true, std::logic_error, "Nothing to expand !");
-    }
-
-    char** w = p.we_wordv;
-    if (p.we_wordc > 1) {
-      std::ostringstream message;
-      message << "wordexp expands to many tokens : ";
-      for (size_t i = 0; i < p.we_wordc; i++) {
-        message << " '" << w[i]<< "'";
-      }
-      wordfree( &p );
-      DT_THROW_IF(true, std::logic_error, message.str());
-    }
-    s << w[0];
-    wordfree( &p );
-    text = s.str();
-  } // if (text[0] == '@')
+  } // if (_use_env_)
   path = text;
 
   if (! registered_lib_topic) {
