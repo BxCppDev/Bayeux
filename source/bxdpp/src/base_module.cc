@@ -245,6 +245,7 @@ namespace dpp {
     {
       datatools::configuration_property_description & cpd = ocd_.add_property_info();
       cpd.set_name_pattern("description")
+        .set_from("dpp::base_module")
         .set_terse_description("The description of the module")
         .set_traits(datatools::TYPE_STRING)
         .set_mandatory(false)
@@ -260,6 +261,7 @@ namespace dpp {
     {
       datatools::configuration_property_description & cpd = ocd_.add_property_info();
       cpd.set_name_pattern("name")
+        .set_from("dpp::base_module")
         .set_terse_description("The name of the module")
         .set_traits(datatools::TYPE_STRING)
         .set_mandatory(false)
