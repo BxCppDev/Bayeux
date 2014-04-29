@@ -130,7 +130,8 @@ struct logger {
 
   static void declare_ocd_logging_configuration(datatools::object_configuration_description &,
 						const std::string & default_value_ = "fatal",
-						const std::string & prefix_ = "");
+						const std::string & prefix_ = "",
+						const std::string & from_ = "");
 
 };
 } // namespace datatools

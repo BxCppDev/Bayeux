@@ -124,7 +124,8 @@ logger::priority logger::extract_logging_configuration(
 
 void logger::declare_ocd_logging_configuration(datatools::object_configuration_description & ocd_,
                                                const std::string & default_value_,
-                                               const std::string & prefix_)
+                                               const std::string & prefix_,
+                                               const std::string & from_)
 {
   {
     std::ostringstream desc;
@@ -157,7 +158,10 @@ void logger::declare_ocd_logging_configuration(datatools::object_configuration_d
       .set_long_description(desc.str())
       .add_example(example.str())
       ;
+    if (! from_.empty()) {
+      cpd.set_from(from_);
     }
+  }
 
   return;
 }
