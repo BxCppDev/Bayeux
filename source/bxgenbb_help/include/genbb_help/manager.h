@@ -1,6 +1,5 @@
-// -*- mode: c++; -*-
-/* manager.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file genbb_help/manager.h
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2013-02-24
  * Last modified :
  *
@@ -30,8 +29,8 @@
  * History:
  *
  */
-#ifndef GENBB_HELP_MANAGER_H_
-#define GENBB_HELP_MANAGER_H_ 1
+#ifndef GENBB_HELP_MANAGER_H
+#define GENBB_HELP_MANAGER_H 1
 
 // Standard Library
 #include <string>
@@ -262,4 +261,12 @@ namespace genbb {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(genbb::manager)
 
-#endif // GENBB_HELP_MANAGER_H_
+#endif // GENBB_HELP_MANAGER_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

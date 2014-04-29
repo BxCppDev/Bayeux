@@ -1,6 +1,5 @@
-// -*- mode: c++ ; -*-
-/* crazy_gun.h
- * Author(s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file crazy_gun.h
+/* Author(s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2014-02-04
  * Last modified: 2014-02-04
  *
@@ -106,7 +105,7 @@ namespace genbb {
       unsigned int _min_number_of_particles_;
       unsigned int _max_number_of_particles_;
 
-
+      /// Class registration macro
       GENBB_PG_REGISTRATION_INTERFACE(crazy_gun);
 
     };
@@ -123,4 +122,10 @@ DOCD_CLASS_DECLARATION(genbb::ex02::crazy_gun)
 
 #endif // GENBB_HELP_EX02_CRAZY_GUN_H
 
-// end of crazy_gun.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

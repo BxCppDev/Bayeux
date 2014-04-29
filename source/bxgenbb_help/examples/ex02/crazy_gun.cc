@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 // crazy_gun.cc
 
 // Ourselves:
@@ -17,6 +16,7 @@ namespace genbb {
 
   namespace ex02 {
 
+    // Class registration macro:
     GENBB_PG_REGISTRATION_IMPLEMENT(crazy_gun,"genbb::ex02::crazy_gun");
 
     void crazy_gun::_set_defaults()

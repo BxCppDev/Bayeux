@@ -1,6 +1,5 @@
-// -*- mode: c++; -*-
-/* i_genbb.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file genbb_help/i_genbb.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-28
  * Last modified: 2011-02-13
  *
@@ -29,8 +28,8 @@
  *
  */
 
-#ifndef GENBB_HELP_I_GENBB_H_
-#define GENBB_HELP_I_GENBB_H_ 1
+#ifndef GENBB_HELP_I_GENBB_H
+#define GENBB_HELP_I_GENBB_H 1
 
 #include <genbb_help/detail/pg_tools.h>
 
@@ -162,6 +161,12 @@ namespace genbb {
 
 #include <genbb_help/genbb_macros.h>
 
-#endif // GENBB_HELP_I_GENBB_H_
+#endif // GENBB_HELP_I_GENBB_H
 
-// end of i_genbb.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

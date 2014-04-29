@@ -50,3 +50,7 @@ energy        : real   = 1000.
 
 #@description The kinetic energy unit
 energy_unit   : string = "keV"
+
+# Local Variables: --
+# mode: conf-unix --
+# End: --
