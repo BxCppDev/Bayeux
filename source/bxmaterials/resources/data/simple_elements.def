@@ -1,5 +1,5 @@
 # -*- mode: conf-unix; -*-
-# List of multi-properties (datatools::utils::multi_properties):
+# List of multi-properties (datatools::multi_properties):
 
 #@description A list of elements (given Z and mean molar mass)
 #@key_label   "name"
@@ -17,7 +17,7 @@ a               : real      = 4.002602
 
 [name="Boron" type="element"]
 #@config The B natural element
-z               : integer   = 5 
+z               : integer   = 5
 a               : real      = 10.811
 
 [name="Carbon" type="element"]
@@ -154,5 +154,3 @@ a               : real      = 95.96
 #@config The Lead natural element
 z               : integer   = 82
 a               : real      = 207.2
-
-# end

@@ -1,5 +1,5 @@
 # -*- mode: conf-unix; -*-
-# List of multi-properties (datatools::utils::multi_properties):
+# List of multi-properties (datatools::multi_properties):
 
 #@description A list of standard isotopes
 #@key_label   "name"
@@ -762,5 +762,3 @@ a : integer = 148
 #@config The Nd-150 isotope
 z : integer = 60
 a : integer = 150
-
-# end

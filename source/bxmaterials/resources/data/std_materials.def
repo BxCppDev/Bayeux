@@ -1,5 +1,5 @@
 # -*- mode: conf-unix; -*-
-# List of multi-properties (datatools::utils::multi_properties):
+# List of multi-properties (datatools::multi_properties):
 
 #@description A list of common materials
 #@key_label   "name"
@@ -61,7 +61,7 @@ composition.fraction_mass : real   [1]  =  1.0
 
 [name="std::iron" type="material"]
 #@config Iron material
-density        : real   = 7.874 
+density        : real   = 7.874
 density.unit   : string = "g/cm3"
 state          : string = "solid"
 composition.mode          : string      = "fraction_mass"
@@ -95,7 +95,7 @@ composition.number_of_atoms : integer [2]  =  2          1
 
 # Example of auxiliary properties :
 #contamination.radiocontaminants : string [3] = "Bi-214" "Tl-208" "Pa-234"
-#contamination.activities        : real   [3] =  20.e-6   5.e-6   25.e-6   
+#contamination.activities        : real   [3] =  20.e-6   5.e-6   25.e-6
 
 
 [name="std::diamond" type="material"]
@@ -258,7 +258,7 @@ density          : real   = 2.23
 density.unit     : string = "g/cm3"
 state            : string = "solid"
 composition.mode          : string      = "fraction_mass"
-composition.names         : string [6]  = "Silicium" "Oxygen" "Boron" "Sodium" "Aluminium" "Potassium" 
+composition.names         : string [6]  = "Silicium" "Oxygen" "Boron" "Sodium" "Aluminium" "Potassium"
 composition.fraction_mass : real   [6]  =  0.377      0.540    0.040   0.028    0.012  0.003
 
 
@@ -268,7 +268,7 @@ density          : real   = 8.0
 density.unit     : string = "g/cm3"
 state            : string = "solid"
 composition.mode            : string     = "fraction_mass"
-composition.names           : string [4] = "Iron" "Nickel" "Chromium" "Molybdenum" 
+composition.names           : string [4] = "Iron" "Nickel" "Chromium" "Molybdenum"
 composition.fraction_mass   : real [4]   =  0.703  0.103    0.173      0.021
 
 
@@ -278,7 +278,7 @@ composition.fraction_mass   : real [4]   =  0.703  0.103    0.173      0.021
 # density.unit     : string = "g/cm3"
 # state            : string = "solid"
 # composition.mode            : string     = "fraction_mass"
-# composition.names           : string [4] = "Iron" "Nickel" "Chromium" "Molybdenum" 
+# composition.names           : string [4] = "Iron" "Nickel" "Chromium" "Molybdenum"
 # composition.fraction_mass   : real [4]  =  67.75  12.5     17.0       2.75
 
 
@@ -320,6 +320,3 @@ state            : string = "solid"
 composition.mode            : string       = "number_of_atoms"
 composition.names           : string  [2]  = "Carbon" "Fluorine"
 composition.number_of_atoms : integer [2]  =     1        2
-
-
-# end

@@ -1,5 +1,5 @@
 # -*- mode: conf-unix; -*-
-# List of multi-properties (datatools::utils::multi_properties):
+# List of multi-properties (datatools::multi_properties):
 
 #@description A standard list of elements (based on natural isotopic abundances)
 #@key_label   "name"
@@ -197,5 +197,3 @@ isotope.weights : real[1]   =  100
 z               : integer   = 82
 isotope.names   : string[4] = "Pb-204" "Pb-206" "Pb-207" "Pb-208"
 isotope.weights : real[4]   = 1.4      24.1     22.1     52.4
-
-# end
