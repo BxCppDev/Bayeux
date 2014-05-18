@@ -680,8 +680,14 @@ namespace datatools {
                                                  const std::string & indent_) const
   {
     out_ << indent_ << std::endl;
+    /*
     out_ << indent_ << "* Property : ``" << get_name_pattern() << "``"
          << std::endl << std::endl;
+    */
+    out_ << indent_ << "Property ``" << get_name_pattern() << "``" << std::endl;
+    out_ << indent_ << "............................................................................................"  << std::endl;
+    out_ << indent_ << std::endl;
+
     std::string indent = indent_ + "   ";
 
     if (has_terse_description()) {

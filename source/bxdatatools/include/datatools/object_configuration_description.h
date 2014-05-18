@@ -48,7 +48,7 @@ namespace datatools {
 
 class object_configuration_description;
 
-/// \brief An object that describes the way an objet of a given class can be configured.
+/// \brief An object that describes the way an objet of a given class can be configured from properties.
 class configuration_property_description
 {
 public:
