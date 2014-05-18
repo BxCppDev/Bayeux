@@ -1,5 +1,5 @@
 // -*- mode: c++; -*-
-/** \file geomtools/box.h */
+/// \file geomtools/box.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
  * Last modified: 2012-10-24
@@ -17,8 +17,10 @@
 #define GEOMTOOLS_BOX_H 1
 
 // Third party:
-// -  Boost:
+// - Boost:
 #include <boost/cstdint.hpp>
+// - Bayeux/datatools:
+#include <datatools/object_configuration_description.h>
 
 // This project:
 #include <geomtools/i_shape_3d.h>
@@ -34,7 +36,7 @@ namespace datatools {
 
 namespace geomtools {
 
-  /// \brief A box shape
+  /// \brief The 3D shape model for a box
   class box : public i_shape_3d ,
               public i_stackable,
               public i_wires_3d_rendering
@@ -211,7 +213,7 @@ namespace geomtools {
 } // end of namespace geomtools
 
 /// OCD support declaration
-// @arg geomtools::box the name the class
+// @arg geomtools::box the name the class with registered OCD support
 DOCD_CLASS_DECLARATION(geomtools::box)
 
 #endif // GEOMTOOLS_BOX_H

@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* \file geomtools/i_model.h
- * Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/i_model.h
+/* Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-20
  * Last modified: 2014-03-27
  *
@@ -42,13 +42,14 @@ namespace geomtools {
   {
   public:
 
-    /// \brief Constants parameters used by geometry models
+    // Constants parameters used by geometry models:
     static const std::string & solid_suffix();
     static const std::string & logical_suffix();
     static const std::string & physical_suffix();
     static const std::string & phantom_solid_flag();
     static const std::string & exported_properties_prefixes_key();
 
+    /// \brief The collection of geometry models:
     typedef geomtools::models_col_type models_col_type;
 
     /// Check if the construction of the geometry model is completed
@@ -183,5 +184,3 @@ namespace geomtools {
 #include <geomtools/model_macros.h>
 
 #endif // GEOMTOOLS_I_MODEL_H_
-
-// end of i_model.h

@@ -1,15 +1,19 @@
-// -*- mode: c++ ; -*-
-/* replicated_model.cc
- */
+// replicated_model.cc
 
+// Ourselves:
 #include <geomtools/replicated_model.h>
 
+// Standard library:
 #include <exception>
 #include <limits>
 
+// Third party library:
+// - Bayeux/datatools:
+#include <datatools/units.h>
+
+// This project:
 #include <geomtools/physical_volume.h>
 #include <geomtools/visibility.h>
-#include <datatools/units.h>
 
 namespace geomtools {
 
@@ -30,7 +34,7 @@ namespace geomtools {
     return;
   }
 
-  size_t replicated_model::get_number_of_items ()
+  size_t replicated_model::get_number_of_items () const
   {
     return _number_of_items_;
   }
@@ -88,6 +92,54 @@ namespace geomtools {
     return;
   }
 
+  void replicated_model::_pre_construct (datatools::properties & setup_,
+                                         models_col_type * models_)
+  {
+    datatools::logger::priority log_level = get_logging_priority ();
+    //log_level = datatools::logger::PRIO_DEBUG;
+    this->i_model::_pre_construct(setup_,models_);
+
+    std::vector<std::string> properties_prefixes;
+    if (setup_.has_key(i_model::exported_properties_prefixes_key())) {
+      setup_.fetch(i_model::exported_properties_prefixes_key(),
+                   properties_prefixes);
+    }
+
+    {
+      const std::string & ii_prefix = model_with_internal_items_tools::INTERNAL_ITEM_PREFIX;
+      if (std::find(properties_prefixes.begin(),
+                    properties_prefixes.end(),
+                    ii_prefix) == properties_prefixes.end()) {
+        // Add "internal_item." as exported prefixed properties:
+        properties_prefixes.push_back(ii_prefix);
+        // Update the vector of exported prefixed properties:
+        setup_.update(i_model::exported_properties_prefixes_key(),
+                      properties_prefixes);
+        DT_LOG_DEBUG(log_level,
+                     "Update the vector of exported prefixed properties.");
+      }
+    }
+
+    return;
+  }
+
+  void replicated_model::_post_construct (datatools::properties & setup_,
+                                          models_col_type * models_)
+  {
+    //datatools::logger::priority log_level = get_logging_priority ();
+    //log_level = datatools::logger::PRIO_DEBUG;
+    DT_LOG_NOTICE(get_logging_priority (),
+                  "Post-construction processing for model '" << get_name() << "' ...");
+    this->i_model::_post_construct(setup_, models_);
+
+    // Processing possible internal daughter volumes in the mother volume:
+    _internals_.plug_internal_models(get_logical().get_parameters(),
+                                     grab_logical(),
+                                     models_);
+
+    return;
+  }
+
   void replicated_model::_at_construct (const std::string & name_,
                                         const datatools::properties & config_,
                                         models_col_type * models_)
@@ -127,21 +179,47 @@ namespace geomtools {
     DT_THROW_IF (! config_.has_key ("replicated.model"), std::logic_error, "Missing 'replicated.model' property in replicated model '" << name_ << "' !");
     const std::string model_name = config_.fetch_string ("replicated.model");
 
-    double length_unit = CLHEP::mm;
-    if (config_.has_key ("length_unit"))
-      {
-        const std::string lunit_str = config_.fetch_string ("length_unit");
-        length_unit = datatools::units::get_length_unit_from (lunit_str);
-      }
+    double default_length_unit = CLHEP::mm;
+    if (config_.has_key ("length_unit")) {
+      const std::string lunit_str = config_.fetch_string ("length_unit");
+      default_length_unit = datatools::units::get_length_unit_from (lunit_str);
+    }
 
-    if (config_.has_key ("replicated.step"))
-      {
-        _step_ = config_.fetch_real ("replicated.step");
-        DT_THROW_IF (_step_ <= 0.0, std::logic_error, "Invalid value for 'replicated.step' property in replicated model '" << name_ << "' !");
-        if (! config_.has_explicit_unit ("replicated.step")) {
-          _step_ *= length_unit;
-        }
+    double x_box;
+    double y_box;
+    double z_box;
+    datatools::invalidate(x_box);
+    datatools::invalidate(y_box);
+    datatools::invalidate(z_box);
+
+    if (config_.has_key("x")) {
+      x_box = config_.fetch_real("x");
+      if (! config_.has_explicit_unit("x")) {
+        x_box *= default_length_unit;
       }
+    }
+
+    if (config_.has_key("y")) {
+      y_box = config_.fetch_real("y");
+      if (! config_.has_explicit_unit("y")) {
+        y_box *= default_length_unit;
+      }
+    }
+
+    if (config_.has_key("z")) {
+      z_box = config_.fetch_real("z");
+      if (! config_.has_explicit_unit("z")) {
+        z_box *= default_length_unit;
+      }
+    }
+
+    if (config_.has_key ("replicated.step")) {
+      _step_ = config_.fetch_real ("replicated.step");
+      DT_THROW_IF (_step_ <= 0.0, std::logic_error, "Invalid value for 'replicated.step' property in replicated model '" << name_ << "' !");
+      if (! config_.has_explicit_unit ("replicated.step")) {
+        _step_ *= default_length_unit;
+      }
+    }
 
     DT_THROW_IF (number_of_items == 0, std::logic_error, "Number of items is zero in replicated model '" << name_ << "' !");
     set_number_of_items (number_of_items);
@@ -170,79 +248,75 @@ namespace geomtools {
     double dx = sd.get_xmax () - sd.get_xmin ();
     double dy = sd.get_ymax () - sd.get_ymin ();
     double dz = sd.get_zmax () - sd.get_zmin ();
-    if (_sd_.is_valid_weak())
-      {
-        if (replicant_axis_label == "x" && _sd_.is_valid_x())
-          {
-            dx = _sd_.get_xmax () - _sd_.get_xmin ();
-          }
-        if (replicant_axis_label == "y" && _sd_.is_valid_y())
-          {
-            dy = _sd_.get_ymax () - _sd_.get_ymin ();
-          }
-        if (replicant_axis_label == "z" && _sd_.is_valid_z())
-          {
-            dz = _sd_.get_zmax () - _sd_.get_zmin ();
-          }
+    if (_sd_.is_valid_weak()) {
+      if (replicant_axis_label == "x" && _sd_.is_valid_x()) {
+        dx = _sd_.get_xmax () - _sd_.get_xmin ();
       }
+      if (replicant_axis_label == "y" && _sd_.is_valid_y()) {
+        dy = _sd_.get_ymax () - _sd_.get_ymin ();
+      }
+      if (replicant_axis_label == "z" && _sd_.is_valid_z()) {
+        dz = _sd_.get_zmax () - _sd_.get_zmin ();
+      }
+    }
     _x_ = dx;
     _y_ = dy;
     _z_ = dz;
     double x0, y0, z0;
     x0 = y0 = z0 = 0.0;
-    if (replicant_axis_label == "x")
-      {
-        const double step_x = datatools::is_valid (_step_) ? _step_ : dx;
-        _replica_placement_.set_replicant_step_x (step_x);
-        _x_ = dx + step_x * (get_number_of_items () - 1);
-        x0 = -0.5 * _x_ + 0.5 * dx;
-      }
-    if (replicant_axis_label == "y")
-      {
-        const double step_y = datatools::is_valid (_step_) ? _step_ : dy;
-        _replica_placement_.set_replicant_step_y (step_y);
-        _y_ =  dy + step_y * (get_number_of_items () - 1);
-        y0 = -0.5 * _y_ + 0.5 * dy;
-      }
-    if (replicant_axis_label == "z")
-      {
-        const double step_z = datatools::is_valid (_step_) ? _step_ : dz;
-        _replica_placement_.set_replicant_step_z (step_z);
-        _z_ =  dz + step_z * (get_number_of_items () - 1);
-        z0 = -0.5 * _z_ + 0.5 * dz;
-      }
+    if (replicant_axis_label == "x") {
+      const double step_x = datatools::is_valid (_step_) ? _step_ : dx;
+      _replica_placement_.set_replicant_step_x (step_x);
+      _x_ = dx + step_x * (get_number_of_items () - 1);
+      x0 = -0.5 * _x_ + 0.5 * dx;
+    }
+    if (replicant_axis_label == "y") {
+      const double step_y = datatools::is_valid (_step_) ? _step_ : dy;
+      _replica_placement_.set_replicant_step_y (step_y);
+      _y_ =  dy + step_y * (get_number_of_items () - 1);
+      y0 = -0.5 * _y_ + 0.5 * dy;
+    }
+    if (replicant_axis_label == "z") {
+      const double step_z = datatools::is_valid (_step_) ? _step_ : dz;
+      _replica_placement_.set_replicant_step_z (step_z);
+      _z_ =  dz + step_z * (get_number_of_items () - 1);
+      z0 = -0.5 * _z_ + 0.5 * dz;
+    }
     _replica_placement_.set_number_of_items (get_number_of_items ());
 
-    _solid_.reset ();
-    _solid_.set_x (_x_);
-    _solid_.set_y (_y_);
-    _solid_.set_z (_z_);
-    DT_THROW_IF (! _solid_.is_valid (), std::logic_error, "Invalid solid in replicated model '" << name_ << "' !");
+    if (datatools::is_valid(x_box)) {
+      DT_THROW_IF(x_box < _x_, std::logic_error, "Invalid request on X dimension of the mother box!");
+      _x_ = x_box;
+    }
+    if (datatools::is_valid(y_box)) {
+      DT_THROW_IF(y_box < _y_, std::logic_error, "Invalid request on Y dimension of the mother box!");
+      _y_ = y_box;
+    }
+    if (datatools::is_valid(z_box)) {
+      DT_THROW_IF(z_box < _z_, std::logic_error, "Invalid request on Z dimension of the mother box!");
+      _z_ = z_box;
+    }
 
-    grab_logical ().set_name (i_model::make_logical_volume_name (name_));
-    grab_logical ().set_shape (_solid_);
-    // 2013-06-13 FM : we cannot use the boxed model material here
-    // There is no garantee it is the proper one to be used for the envelope solid.
-    // std::string material_name = material::constants::instance ().MATERIAL_REF_DEFAULT;
-    // if (_boxed_model_->get_logical ().has_material_ref ())
-    //   {
-    //     material_name = _boxed_model_->get_logical ().get_material_ref ();
-    //   }
-    grab_logical ().set_material_ref (material_name);
-    // DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
-    //              "******** Replicated model '" << get_name() << "' has material '"
-    //              << material_name << "'.");
+    _solid_.reset();
+    _solid_.set_x(_x_);
+    _solid_.set_y(_y_);
+    _solid_.set_z(_z_);
+    DT_THROW_IF (! _solid_.is_valid(), std::logic_error, "Invalid solid in replicated model '" << name_ << "' !");
+
+    grab_logical().set_name(i_model::make_logical_volume_name(name_));
+    grab_logical().set_shape(_solid_);
+    grab_logical().set_material_ref(material_name);
 
     placement basic_p;
-    basic_p.set (x0, y0, z0, 0, 0, 0);
-    _replica_placement_.set_basic_placement (basic_p);
-    _phys_.set_name (i_model::make_physical_volume_name (replicated_label,
-                                                         get_number_of_items ()));
-    _phys_.set_placement (_replica_placement_);
-    _phys_.set_logical (_model_->get_logical ());
-    _phys_.set_mother (_logical);
+    basic_p.set(x0, y0, z0, 0, 0, 0);
+    _replica_placement_.set_basic_placement(basic_p);
+    _phys_.set_name(i_model::make_physical_volume_name(replicated_label,
+                                                         get_number_of_items()));
+    _phys_.set_placement(_replica_placement_);
+    _phys_.set_logical(_model_->get_logical ());
+    _phys_.set_mother(_logical);
 
-    DT_LOG_TRACE (get_logging_priority (), "Exiting.");
+    DT_LOG_TRACE (get_logging_priority(), "Exiting.");
     return;
   }
 
@@ -297,4 +371,202 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-// end of replicated_model.cc
+// OCD support for class '::geomtools::replicated_model' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::replicated_model, ocd_)
+{
+  ocd_.set_class_name("geomtools::replicated_model");
+  ocd_.set_class_description("A geometry model implementing a mother tube with some daughter volumes regularily placed on a circle");
+  ocd_.set_class_library("geomtools");
+
+  // Inherit the OCD support from the parent class:
+  geomtools::i_model::init_ocd(ocd_);
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("length_unit")
+      .set_terse_description("The length unit symbol")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_default_value_string("mm")
+      .set_long_description("This property set the symbol of the default length\n"
+                            "unit.                                             \n"
+                            )
+      .add_example("Using cm::                                       \n"
+                   "                                                 \n"
+                   "   length_unit : string = \"cm\"                 \n"
+                   "                                                 \n"
+                   )
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("material.ref")
+      .set_terse_description("The label of the material the mother volume is made of")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      // .set_long_description("This label of the material the mother volume is made of."
+      //                       )
+      .add_example("Using 'air'::                                  \n"
+                   "                                               \n"
+                   "   material.ref : string = \"air\"             \n"
+                   "                                               \n"
+                   )
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("replicated.label")
+      .set_terse_description("The label used to name the daughter volumes")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_default_value_string("replicated")
+      .add_example("Using an alternative label::                      \n"
+                   "                                                  \n"
+                   "   replicated.label : string = \"go_round_items\" \n"
+                   "                                                  \n"
+                   )
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("replicated.axis")
+      .set_terse_description("The label of the replication axis")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .set_long_description("The value is taken from:          \n"
+                            "                                  \n"
+                            " * ``x`` : the X axis             \n"
+                            " * ``y`` : the Y axis             \n"
+                            " * ``z`` : the Z axis             \n"
+                            "                                  \n"
+                            )
+      .add_example("Replication along the Y axis::                  \n"
+                   "                                                \n"
+                   "   replicated.axis : string = \"y\"             \n"
+                   "                                                \n"
+                   )
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("replicated.model")
+      .set_terse_description("The name of the geometry model to be replicated")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .set_long_description("The geometry model is searched for an external  \n"
+                            "dictionary of models, typically from a model    \n"
+                            "factory.                                        \n"
+                            )
+      .add_example("Replication of model named ``\"block\"``:: \n"
+                   "                                                    \n"
+                   "   replicated.model : string = \"block\"            \n"
+                   "                                                    \n"
+                   )
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("replicated.number_of_items")
+      .set_terse_description("The number of replicated volumes")
+      .set_traits(datatools::TYPE_INTEGER)
+      .set_mandatory(true)
+      .add_example("Replicate 3 objects::                           \n"
+                   "                                                \n"
+                   "   replicated.number_of_items : integer = 3     \n"
+                   "                                                \n"
+                   )
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("replicated.step")
+      .set_terse_description("The step length along the replication axis")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(false)
+      .set_long_description("If not given explicitely, the step length      \n"
+                            "is computed from the dimension of the daughter \n"
+                            "volumes which must have *stackable* support.   \n"
+                            )
+      .add_example("Set an arbitrary step: ::                       \n"
+                   "                                                \n"
+                   "  replicated.step : real as length = 20.0 mm    \n"
+                   "                                                \n"
+                   )
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("x")
+      .set_terse_description("The X dimension of the mother box")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(true)
+      .add_example("Set an arbitrary length::          \n"
+                   "                                   \n"
+                   "  x : real as length = 30.0 mm     \n"
+                   "                                   \n"
+                   )
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("y")
+      .set_terse_description("The Y dimension of the mother box")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(true)
+      .add_example("Set an arbitrary width::           \n"
+                   "                                   \n"
+                   "  y : real as length = 30.0 mm     \n"
+                   "                                   \n"
+                   )
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("z")
+      .set_terse_description("The Z dimension of the mother box")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(true)
+      .add_example("Set an arbitrary height::          \n"
+                   "                                   \n"
+                   "  z : real as length = 30.0 mm     \n"
+                   "                                   \n"
+                   )
+      ;
+  }
+
+  // Add support for internal/daughter volumes:
+  geomtools::MWIM::init_ocd(ocd_);
+
+  ocd_.set_configuration_hints("This model is configured through a configuration file that \n"
+                               "uses the format of 'datatools::properties' setup file.     \n"
+                               "                                                           \n"
+                               "Example: ::                                                \n"
+                               "                                                           \n"
+                               "  length_unit                : string  = \"mm\"            \n"
+                               "  x                          : real as length = 10.0 mm    \n"
+                               "  y                          : real as length = 30.0 mm    \n"
+                               "  z                          : real as length = 50.0 mm    \n"
+                               "  material.ref               : string  = \"air\"           \n"
+                               "  replicated.axis            : string  = \"x\"             \n"
+                               "  replicated.model           : string  = \"detector_unit\" \n"
+                               "  replicated.number_of_items : integer = 4                 \n"
+                               "  replicated.step            : real as length = 10.0 cm    \n"
+                               "                                                           \n"
+                               );
+
+  ocd_.set_validation_support(true);
+  ocd_.lock();
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+DOCD_CLASS_SYSTEM_REGISTRATION(::geomtools::replicated_model,
+                               "geomtools::replicated_model")

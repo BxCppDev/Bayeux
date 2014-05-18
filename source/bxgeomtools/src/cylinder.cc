@@ -1,4 +1,4 @@
-/** \file geomtools/cylinder.cc */
+/// \file geomtools/cylinder.cc
 
 // Standard library:
 #include <string>
@@ -6,6 +6,8 @@
 // Third party:
 // - Bayeux/datatools:
 #include <datatools/exception.h>
+#include <datatools/properties.h>
+#include <datatools/units.h>
 
 // This project:
 #include <geomtools/cylinder.h>
@@ -573,4 +575,196 @@ namespace geomtools {
     return;
   }
 
+  void cylinder::initialize(const datatools::properties & config_)
+  {
+    reset();
+    double lunit = CLHEP::mm;
+    if (config_.has_key("length_unit")) {
+      const std::string lunit_str = config_.fetch_string("length_unit");
+      lunit = datatools::units::get_length_unit_from(lunit_str);
+    }
+
+    double r;
+    datatools::invalidate(r);
+    if(config_.has_key("r")) {
+      r = config_.fetch_real("r");
+      if(! config_.has_explicit_unit("r")) {
+        r *= lunit;
+      }
+    } else if(config_.has_key("radius")) {
+      r = config_.fetch_real("radius");
+      if(! config_.has_explicit_unit("radius")) {
+        r *= lunit;
+      }
+    } else if(config_.has_key("diameter")) {
+      r = 0.5 * config_.fetch_real("diameter");
+      if(! config_.has_explicit_unit("diameter")) {
+        r *= lunit;
+      }
+    }
+    DT_THROW_IF(! datatools::is_valid(r), std::logic_error, "Missing cylinder 'r', 'radius' or 'diameter' property !");
+
+    DT_THROW_IF (! config_.has_key("z"), std::logic_error, "Missing cylinder 'z' property !");
+    double z = config_.fetch_real("z");
+    if (! config_.has_explicit_unit("z")) {
+      z *= lunit;
+    }
+
+    set_r(r);
+    set_z(z);
+
+    return;
+  }
+
+  // static
+  void cylinder::init_ocd(datatools::object_configuration_description & ocd_)
+  {
+    i_shape_3d::init_ocd(ocd_);
+
+    {
+      datatools::configuration_property_description & cpd
+        = ocd_.add_property_info();
+      cpd.set_name_pattern("length_unit")
+        .set_from("geomtools::cylinder")
+        .set_terse_description("The unit symbol used for length unit")
+        .set_traits(datatools::TYPE_STRING)
+        .set_mandatory(false)
+        .set_default_value_string("mm")
+        .set_long_description("A character string that represents the default    \n"
+                              "length unit for length parameters of the cylinder.\n"
+                              )
+        .add_example("Set the default length unit::       \n"
+                     "                                    \n"
+                     "  length_unit : string = \"mm\"     \n"
+                     "                                    \n"
+                     )
+        ;
+    }
+
+    {
+      datatools::configuration_property_description & cpd
+        = ocd_.add_property_info();
+      cpd.set_name_pattern("r")
+        .set_from("geomtools::cylinder")
+        .set_terse_description("The radius of the cylinder")
+        .set_traits(datatools::TYPE_REAL)
+        .set_mandatory(true)
+        .add_example("Set the radius::               \n"
+                     "                               \n"
+                     "  r : real as length = 5.0 cm  \n"
+                     "                               \n"
+                     )
+        ;
+    }
+
+    {
+      datatools::configuration_property_description & cpd
+        = ocd_.add_property_info();
+      cpd.set_name_pattern("radius")
+        .set_from("geomtools::cylinder")
+        .set_terse_description("The radius of the cylinder")
+        .set_traits(datatools::TYPE_REAL)
+        .set_mandatory(false)
+        .set_long_description("Alias of the ``r`` property.\n"
+                              "Not used if the ``r`` property is set."
+                              )
+        .add_example("Set the radius::               \n"
+                     "                               \n"
+                     "  radius : real as length = 5.0 cm  \n"
+                     "                               \n"
+                     )
+        ;
+    }
+
+    {
+      datatools::configuration_property_description & cpd
+        = ocd_.add_property_info();
+      cpd.set_name_pattern("diameter")
+        .set_from("geomtools::cylinder")
+        .set_terse_description("The diameter of the cylinder")
+        .set_traits(datatools::TYPE_REAL)
+        .set_mandatory(false)
+        .set_long_description("Not used if the ``r`` or ``radius`` property is set.")
+        .add_example("Set the diameter::                    \n"
+                     "                                      \n"
+                     "  diameter : real as length = 10.0 cm \n"
+                     "                                      \n"
+                     )
+        ;
+    }
+
+    {
+      datatools::configuration_property_description & cpd
+        = ocd_.add_property_info();
+      cpd.set_name_pattern("z")
+        .set_from("geomtools::cylinder")
+        .set_terse_description("The dimension of the cylinder along the Z axis")
+        .set_traits(datatools::TYPE_REAL)
+        .set_mandatory(true)
+        .add_example("Set the Z dimension::          \n"
+                     "                               \n"
+                     "  z : real as length = 5.0 mm  \n"
+                     "                               \n"
+                     )
+        ;
+    }
+
+    return;
+  }
+
 } // end of namespace geomtools
+
+/** Opening macro for implementation
+ *  @arg geomtools::cylinder the full class name
+ *  @arg ocd_ is the identifier of the 'datatools::object_configuration_description'
+ *            to be initialized(passed by mutable reference).
+ *  This macro must be used outside of any namespace.
+ */
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(geomtools::cylinder, ocd_)
+{
+  // The class name :
+  ocd_.set_class_name("geomtools::cylinder");
+
+  // The class terse description :
+  ocd_.set_class_description("A class representing a 3D cylinder solid shape");
+
+  // The library the class belongs to :
+  ocd_.set_class_library("geomtools");
+
+  // The class detailed documentation :
+  ocd_.set_class_documentation("The cylinder solid 3D-shape is defined by its two \n"
+                               "dimensions.                                       \n"
+                               );
+
+  // Populate the specific OCD :
+  geomtools::cylinder::init_ocd(ocd_);
+
+  // Additionnal configuration hints :
+  ocd_.set_configuration_hints("Here is a full configuration example in the      \n"
+                               "``datatools::properties`` ASCII format::         \n"
+                               "                                                 \n"
+                               "  tolerance.length : real = 1.0e-6 um            \n"
+                               "  length_unit      : string = \"mm\"             \n"
+                               "  r : real as length = 25.0 cm                   \n"
+                               "  z : real           =  2.5                      \n"
+                               "                                                 \n"
+                               );
+
+  /* Set the validation support flag :
+   *  we activate this if the description of all configuration
+   *  properties has been provides(see above). This enables the
+   *  OCD tools to check the syntax and validaty of a given
+   *  configuration file.
+   */
+  ocd_.set_validation_support(true);
+
+  // Lock the description:
+  ocd_.lock();
+
+  // ... and we are done.
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
+
+// Registration macro for class 'geomtools::cylinder' :
+DOCD_CLASS_SYSTEM_REGISTRATION(geomtools::cylinder, "geomtools::cylinder")

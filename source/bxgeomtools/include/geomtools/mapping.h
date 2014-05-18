@@ -18,12 +18,16 @@
 #ifndef GEOMTOOLS_MAPPING_H_
 #define GEOMTOOLS_MAPPING_H_ 1
 
+// Standard library:
 #include <string>
 #include <list>
 
+// Third party library:
+// - Bayeux/datatools:
 #include <datatools/ioutils.h>
 #include <datatools/bit_mask.h>
 
+// This project:
 #include <geomtools/utils.h>
 #include <geomtools/geom_map.h>
 
@@ -141,6 +145,7 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_MAPPING_H_
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(geomtools::mapping)
 
-// end of mapping.h
+#endif // GEOMTOOLS_MAPPING_H_

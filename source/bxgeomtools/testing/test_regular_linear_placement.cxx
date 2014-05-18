@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 // test_regular_linear_placement.cxx
 
 #include <cstdlib>

@@ -1,11 +1,9 @@
-// -*- mode: c++ ; -*-
-/* mapping_utils.cc
- */
+// mapping_utils.cc
 
-#include <sstream>
-
+// Ourselves:
 #include <geomtools/mapping_utils.h>
 
+// Standard library:
 #include <sstream>
 
 namespace geomtools {
@@ -102,5 +100,3 @@ namespace geomtools {
   }
 
 } // end of namespace geomtools
-
-// end of mapping_utils.cc

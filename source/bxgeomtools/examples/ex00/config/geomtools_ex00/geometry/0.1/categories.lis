@@ -1,0 +1,64 @@
+# -*- mode: conf-unix; -*-
+# List of geometry ID categories/types (datatools::multi_properties):
+
+#@description A  list of geometry ID categories/types
+#@key_label   "category"
+#@meta_label  "type"
+
+###########################
+[category="world" type="0"]
+
+#@config The mandatory geometry category of the top-level world volume
+
+#@description The GID address of the world volume is characterized by its 'world' number
+addresses : string[1] = "world"
+
+# This is mandatory in the library, by convention :
+#  the category name is : 'world'
+#  the type Id is: 0
+
+
+##############################
+[category="box.gc" type="100"]
+
+#@config The geometry category associated to simple box volumes
+
+#@description The GID address of a box is characterized by its 'position' number
+addresses : string[1] = "position"
+
+
+################################
+[category="brick.gc" type="200"]
+
+#@config The geometry category associated to brick volumes in a wall
+
+#@description The GID address of a brick is characterized by its 'column' and 'row' numbers in the wall
+addresses : string[2] = "column" "row"
+
+
+#####################################
+[category="any_column.gc" type="300"]
+
+#@config The geometry category associated to some column, subset of a 2D grid pattern
+
+#@description The GID address of a column of nodes is characterized by its 'column' number
+addresses : string[1] = "column"
+
+
+###################################
+[category="any_node.gc" type="310"]
+
+#@config The geometry category associated to some volumes on a 2D grid pattern
+
+#@description The GID address of a volume at a given node inherits the "column" number \
+ of the column it belongs to
+extends : string = "any_column.gc"
+
+#@description The GID address is extended by an additional address, i.e. 'row' number \
+ of the node in the column
+by : string[1] = "row"
+
+
+
+
+# end

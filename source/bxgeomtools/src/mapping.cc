@@ -1,19 +1,19 @@
-// -*- mode: c++ ; -*-
-/* mapping.cc
- */
+// mapping.cc
 
+// Ourselves:
 #include <geomtools/mapping.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
+
+// This project:
 #include <geomtools/physical_volume.h>
 #include <geomtools/model_factory.h>
 #include <geomtools/id_mgr.h>
 #include <geomtools/mapping_utils.h>
 
 namespace geomtools {
-
-  /*** Properties manipulation ***/
 
   // static
   const mapping::constants & mapping::constants::instance ()
@@ -56,8 +56,6 @@ namespace geomtools {
   {
     return (config_.has_key (mapping::make_key (key_)));
   }
-
-  /******/
 
   bool mapping::is_initialized () const
   {
@@ -192,7 +190,6 @@ namespace geomtools {
     return;
   }
 
-  // ctor:
   mapping::mapping () : geom_map ()
   {
     _initialized_ = false;
@@ -206,7 +203,6 @@ namespace geomtools {
     return;
   }
 
-  // dtor:
   mapping::~mapping ()
   {
     return;
@@ -742,4 +738,140 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-// end of mapping.cc
+// OCD support for class '::geomtools::mapping' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::mapping, ocd_)
+{
+  ocd_.set_class_name("geomtools::mapping");
+  ocd_.set_class_description("The mapping of volumes with their associated geometry Ids (GIDs)");
+  ocd_.set_class_library("geomtools");
+
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("mapping.no_world_mapping")
+      .set_terse_description("Inhibition of the mapping of the world volume")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_default_value_boolean(false)
+      .add_example("Use the default build mode::                \n"
+                   "                                            \n"
+                   "  mapping.no_world_mapping : boolean = 1    \n"
+                   "                                            \n"
+                   )
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("mapping.build_mode")
+      .set_terse_description("The mapping build mode")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_default_value_string("strict_mothership")
+      .set_long_description("This property set the build mode of the mapping.         \n"
+                            "The only supported mode is ``strict_mothership``.        \n"
+                            "The ``strict_mothership`` mode implies that daughter     \n"
+                            "volume GIDs are built from their strict inheritance      \n"
+                            "hierarchical relationship with their mother volume.      \n"
+                            )
+      .add_example("Use the default build mode::                              \n"
+                   "                                                          \n"
+                   "  mapping.build_mode : string = \"strict_mothership\"     \n"
+                   "                                                          \n"
+                   )
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("mapping.max_depth")
+      .set_terse_description("The mapping maximum depth")
+      .set_traits(datatools::TYPE_INTEGER)
+      .set_mandatory(false)
+      .set_default_value_integer(0)
+      .set_long_description("This property set the maximum depth of the mapping. \n"
+                            "Value ``0`` means infinite depth.                   \n"
+                            )
+      .add_example("Use depth up to 10 hierarchical levels: :: \n"
+                   "                                       \n"
+                   "  mapping.max_depth : integer = 10     \n"
+                   "                                       \n"
+                   )
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("mapping.only_categories")
+      .set_terse_description("The list of categories to be processed by the mapping algorithm")
+      .set_traits(datatools::TYPE_STRING,
+                  datatools::configuration_property_description::ARRAY)
+      .set_mandatory(false)
+      .set_long_description("This is the list of the only geometry categories one  \n"
+                            "want to process to generate the dictionary of geometry\n"
+                            "Ids (GIDs).                                           \n"
+                            )
+      .add_example("Process only two categories: ::                                \n"
+                   "                                                               \n"
+                   "  mapping.only_categories : string[2] = \"calo\" \"tracker\"   \n"
+                   "                                                               \n"
+                   )
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("mapping.excluded_categories")
+      .set_terse_description("The list of categories not to be processed by the mapping algorithm")
+      .set_traits(datatools::TYPE_STRING,
+                  datatools::configuration_property_description::ARRAY)
+      .set_mandatory(false)
+      .set_long_description("This is the list of the only geometry categories one  \n"
+                            "want to process to generate the dictionary of geometry\n"
+                            "Ids (GIDs).                                           \n"
+                            )
+      .add_example("Exclude two specific categories: ::                            \n"
+                   "                                                               \n"
+                   "  mapping.excluded_categories : string[2] = \"screw\" \"rivet\"\n"
+                   "                                                               \n"
+                   )
+      ;
+  }
+
+  ocd_.set_configuration_hints("This model is configured through a configuration file that               \n"
+                               "uses the format of 'datatools::properties' setup file.                   \n"
+                               "                                                                         \n"
+                               "Example: build all possible GIDs but world volume::                      \n"
+                               "                                                                         \n"
+                               "  mapping.no_world_mapping    : boolean = 1                              \n"
+                               "  mapping.build_mode          : string = \"strict_mothership\"           \n"
+                               "  mapping.max_depth           : integer = 0                              \n"
+                               "                                                                         \n"
+                               "Example: build all possible GIDs up to depth 4 in the geometry hierarchy::\n"
+                               "                                                                         \n"
+                               "  mapping.no_world_mapping    : boolean = 0                              \n"
+                               "  mapping.build_mode          : string = \"strict_mothership\"           \n"
+                               "  mapping.max_depth           : integer = 4                              \n"
+                                "                                                                        \n"
+                               "Example: build only GIDs for geometry categories given by their names::  \n"
+                               "                                                                         \n"
+                               "  mapping.no_world_mapping    : boolean = 0                              \n"
+                               "  mapping.build_mode          : string = \"strict_mothership\"           \n"
+                               "  mapping.only_categories     : string[2] = \"calorimeter\" \"tracker\"  \n"
+                               "                                                                         \n"
+                               "Example: build all possible GIDs up to depth 10 in the geometry hierarchy,  \n"
+                               "excluding GIDs associated to some geometry categories given by their names::\n"
+                               "                                                                         \n"
+                               "  mapping.no_world_mapping    : boolean = 0                              \n"
+                               "  mapping.build_mode          : string = \"strict_mothership\"           \n"
+                               "  mapping.max_depth           : integer = 10                             \n"
+                               "  mapping.excluded_categories : string[2] = \"screw\" \"rivet\"          \n"
+                               "                                                                         \n"
+                               );
+
+  ocd_.set_validation_support(true);
+  ocd_.lock();
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+DOCD_CLASS_SYSTEM_REGISTRATION(::geomtools::mapping, "geomtools::mapping")

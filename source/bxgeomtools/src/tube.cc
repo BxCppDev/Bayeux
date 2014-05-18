@@ -1,4 +1,4 @@
-/** \file geomtools/tube.cc */
+/// \file geomtools/tube.cc
 
 // Ourselves:
 #include <geomtools/tube.h>
@@ -11,6 +11,7 @@
 // Third party:
 // - Bayeux/datatools:
 #include <datatools/exception.h>
+#include <datatools/units.h>
 
 // This project:
 #include <geomtools/cylinder.h>
@@ -125,22 +126,19 @@ namespace geomtools {
     return;
   }
 
-  // ctor:
   tube::tube ()
   {
     reset ();
     return;
   }
 
-  // ctor:
   tube::tube (double ir_, double or_, double z_)
   {
     set (ir_, or_, z_);
     return;
   }
 
-  // dtor:
-  tube::~tube ()
+   tube::~tube ()
   {
     return;
   }
@@ -438,4 +436,281 @@ namespace geomtools {
     return;
   }
 
+  void tube::initialize(const datatools::properties & config_)
+  {
+    reset();
+    double lunit = CLHEP::mm;
+    if (config_.has_key("length_unit")) {
+      const std::string lunit_str = config_.fetch_string("length_unit");
+      lunit = datatools::units::get_length_unit_from(lunit_str);
+    }
+
+    // double aunit = CLHEP::degree;
+    // if (config_.has_key("angle_unit")) {
+    //   const std::string aunit_str = config_.fetch_string("angle_unit");
+    //   aunit = datatools::units::get_angle_unit_from(aunit_str);
+    // }
+
+    double inner_r;
+    datatools::invalidate (inner_r);
+    if (config_.has_key ("inner_r")) {
+      inner_r = config_.fetch_real ("inner_r");
+      if (! config_.has_explicit_unit ("inner_r")) {
+        inner_r *= lunit;
+      }
+    } else if (config_.has_key ("inner_radius")) {
+      inner_r = config_.fetch_real ("inner_radius");
+      if (! config_.has_explicit_unit ("inner_radius")) {
+        inner_r *= lunit;
+      }
+    } else if (config_.has_key ("inner_diameter")) {
+      inner_r = 0.5 * config_.fetch_real ("inner_diameter");
+      if (! config_.has_explicit_unit ("inner_diameter")) {
+        inner_r *= lunit;
+      }
+    }
+    if (! datatools::is_valid(inner_r)) {
+      // DT_LOG_WARNING (get_logging_priority (),
+      //                 "Missing tube 'inner_r' property ! Using 0-default inner radius !");
+      inner_r = 0.0;
+    }
+
+    double outer_r;
+    datatools::invalidate (outer_r);
+    if (config_.has_key ("outer_r")) {
+      outer_r = config_.fetch_real ("outer_r");
+      if (! config_.has_explicit_unit ("outer_r")) {
+        outer_r *= lunit;
+      }
+    } else if (config_.has_key ("outer_radius")) {
+      outer_r = config_.fetch_real ("outer_radius");
+      if (! config_.has_explicit_unit ("outer_radius")) {
+        outer_r *= lunit;
+      }
+    } else if (config_.has_key ("outer_diameter")) {
+      outer_r = 0.5 * config_.fetch_real ("outer_diameter");
+      if (! config_.has_explicit_unit ("outer_diameter")) {
+        outer_r *= lunit;
+      }
+    }
+    DT_THROW_IF (! datatools::is_valid (outer_r), std::logic_error,
+                 "Missing tube 'outer_r' property !");
+
+
+    DT_THROW_IF (! config_.has_key("z"), std::logic_error,
+                 "Missing tube 'z' property !");
+    double z = config_.fetch_real("z");
+    if (! config_.has_explicit_unit("z")) {
+      z *= lunit;
+    }
+
+    set_radii(inner_r, outer_r);
+    set_z(z);
+
+    return;
+  }
+
+  // static
+  void tube::init_ocd(datatools::object_configuration_description & ocd_)
+  {
+    i_shape_3d::init_ocd(ocd_);
+
+    {
+      datatools::configuration_property_description & cpd
+        = ocd_.add_property_info();
+      cpd.set_name_pattern("length_unit")
+        .set_from("geomtools::tube")
+        .set_terse_description("The unit symbol used for length unit")
+        .set_traits(datatools::TYPE_STRING)
+        .set_mandatory(false)
+        .set_default_value_string("mm")
+        .set_long_description("A character string that represents the default    \n"
+                              "length unit for length parameters of the tube.\n"
+                              )
+        .add_example("Set the default length unit::       \n"
+                     "                                    \n"
+                     "  length_unit : string = \"mm\"     \n"
+                     "                                    \n"
+                     )
+        ;
+    }
+
+    {
+      datatools::configuration_property_description & cpd
+        = ocd_.add_property_info();
+      cpd.set_name_pattern("inner_r")
+        .set_from("geomtools::tube")
+        .set_terse_description("The inner radius of the tube")
+        .set_traits(datatools::TYPE_REAL)
+        .set_mandatory(false)
+        .set_default_value_real(0.0)
+        .add_example("Set the inner radius::               \n"
+                     "                                     \n"
+                     "  inner_r : real as length = 2.0 cm  \n"
+                     "                                     \n"
+                     )
+        ;
+    }
+
+    {
+      datatools::configuration_property_description & cpd
+        = ocd_.add_property_info();
+      cpd.set_name_pattern("inner_radius")
+        .set_from("geomtools::cylinder")
+        .set_terse_description("The inner radius of the cylinder")
+        .set_traits(datatools::TYPE_REAL)
+        .set_mandatory(false)
+        .set_long_description("Alias of the ``inner_r`` property.\n"
+                              "Not used if the ``inner_r`` property is set."
+                              )
+        .add_example("Set the inner radius::                    \n"
+                     "                                          \n"
+                     "  inner_radius : real as length = 2.0 cm  \n"
+                     "                                          \n"
+                     )
+        ;
+    }
+
+    {
+      datatools::configuration_property_description & cpd
+        = ocd_.add_property_info();
+      cpd.set_name_pattern("inner_diameter")
+        .set_from("geomtools::cylinder")
+        .set_terse_description("The inner diameter of the cylinder")
+        .set_traits(datatools::TYPE_REAL)
+        .set_mandatory(false)
+        .set_long_description("Not used if the ``inner_r`` or ``inner_radius`` property is set.")
+        .add_example("Set the inner diameter::                    \n"
+                     "                                            \n"
+                     "  inner_diameter : real as length = 4.0 cm  \n"
+                     "                                            \n"
+                     )
+        ;
+    }
+
+    {
+      datatools::configuration_property_description & cpd
+        = ocd_.add_property_info();
+      cpd.set_name_pattern("outer_r")
+        .set_from("geomtools::tube")
+        .set_terse_description("The outer radius of the tube")
+        .set_traits(datatools::TYPE_REAL)
+        .set_mandatory(true)
+        .add_example("Set the outer radius::               \n"
+                     "                                     \n"
+                     "  outer_r : real as length = 5.0 cm  \n"
+                     "                                     \n"
+                     )
+        ;
+    }
+
+    {
+      datatools::configuration_property_description & cpd
+        = ocd_.add_property_info();
+      cpd.set_name_pattern("outer_radius")
+        .set_from("geomtools::cylinder")
+        .set_terse_description("The outer radius of the cylinder")
+        .set_traits(datatools::TYPE_REAL)
+        .set_mandatory(false)
+        .set_long_description("Not used if the ``outer_r`` property is set.")
+        .add_example("Set the outer radius::                   \n"
+                     "                                         \n"
+                     "  outer_radius : real as length = 5.0 cm \n"
+                     "                                         \n"
+                     )
+        ;
+    }
+
+    {
+      datatools::configuration_property_description & cpd
+        = ocd_.add_property_info();
+      cpd.set_name_pattern("outer_diameter")
+        .set_from("geomtools::cylinder")
+        .set_terse_description("The outer diameter of the cylinder")
+        .set_traits(datatools::TYPE_REAL)
+        .set_mandatory(false)
+        .set_long_description("Not used if the ``outer_r`` or ``outer_radius`` property is set.")
+        .add_example("Set the outer diameter::                    \n"
+                     "                                            \n"
+                     "  outer_diameter : real as length = 10.0 cm \n"
+                     "                                            \n"
+                     )
+        ;
+    }
+
+    {
+      datatools::configuration_property_description & cpd
+        = ocd_.add_property_info();
+      cpd.set_name_pattern("z")
+        .set_from("geomtools::tube")
+        .set_terse_description("The dimension of the tube along the Z axis")
+        .set_traits(datatools::TYPE_REAL)
+        .set_mandatory(true)
+        .add_example("Set the Z dimension::          \n"
+                     "                               \n"
+                     "  z : real as length = 5.0 mm  \n"
+                     "                               \n"
+                     )
+        ;
+    }
+
+    return;
+  }
+
 } // end of namespace geomtools
+
+/** Opening macro for implementation
+ *  @arg geomtools::tube the full class name
+ *  @arg ocd_ is the identifier of the 'datatools::object_configuration_description'
+ *            to be initialized(passed by mutable reference).
+ *  This macro must be used outside of any namespace.
+ */
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(geomtools::tube, ocd_)
+{
+  // The class name :
+  ocd_.set_class_name("geomtools::tube");
+
+  // The class terse description :
+  ocd_.set_class_description("A class representing a 3D tube solid shape");
+
+  // The library the class belongs to :
+  ocd_.set_class_library("geomtools");
+
+  // The class detailed documentation :
+  ocd_.set_class_documentation("The tube solid 3D-shape is defined by its three  \n"
+                               "dimensions.                                       \n"
+                               );
+
+  // Populate the specific OCD :
+  geomtools::tube::init_ocd(ocd_);
+
+  // Additionnal configuration hints :
+  ocd_.set_configuration_hints("Here is a full configuration example in the      \n"
+                               "``datatools::properties`` ASCII format::         \n"
+                               "                                                 \n"
+                               "  tolerance.length : real = 1.0e-6 um            \n"
+                               "  length_unit      : string = \"mm\"             \n"
+                               "  inner_r : real as length = 15.0 mm             \n"
+                               "  outer_r : real as length = 25.0 mm             \n"
+                               "  z       : real           = 25.3 cm             \n"
+                               "                                                 \n"
+                               );
+
+  /* Set the validation support flag :
+   *  we activate this if the description of all configuration
+   *  properties has been provides(see above). This enables the
+   *  OCD tools to check the syntax and validaty of a given
+   *  configuration file.
+   */
+  ocd_.set_validation_support(true);
+
+  // Lock the description:
+  ocd_.lock();
+
+  // ... and we are done.
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
+
+// Registration macro for class 'geomtools::tube' :
+DOCD_CLASS_SYSTEM_REGISTRATION(geomtools::tube, "geomtools::tube")

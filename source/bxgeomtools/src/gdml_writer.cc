@@ -1,14 +1,16 @@
-// -*- mode: c++ ; -*-
-/* gdml_writer.cc
- */
+// gdml_writer.cc
 
+// Standard library:
 #include <stdexcept>
 
+// Third party:
+// - Boost:
 #include <boost/algorithm/string.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/units.h>
 #include <datatools/exception.h>
 
+// This project:
 #include <geomtools/geomtools_config.h>
 #include <geomtools/gdml_writer.h>
 

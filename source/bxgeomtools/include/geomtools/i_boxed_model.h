@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* i_boxed_model.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/i_boxed_model.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-24
  * Last modified: 2010-02-24
  *
@@ -16,6 +16,7 @@
 #ifndef GEOMTOOLS_I_BOXED_MODEL_H_
 #define GEOMTOOLS_I_BOXED_MODEL_H_ 1
 
+// This project:
 #include <geomtools/i_model.h>
 #include <geomtools/model_macros.h>
 
@@ -28,11 +29,11 @@ namespace geomtools {
   {
   public:
 
-    virtual const geomtools::box & get_box () const = 0;
+    virtual const geomtools::box & get_box() const = 0;
 
-    i_boxed_model (const std::string & dummy_ = "");
+    i_boxed_model(const std::string & dummy_ = "");
 
-    virtual ~i_boxed_model ();
+    virtual ~i_boxed_model();
 
   };
 
@@ -44,9 +45,6 @@ namespace geomtools {
 
 #define GEOMTOOLS_BOXED_MODEL_CLASS_DECLARE(BoxedModelClassName) \
   class BoxedModelClassName : GEOMTOOLS_BOXED_MODEL_INHERIT      \
-   /**/
+  /**/
 
 #endif // GEOMTOOLS_I_BOXED_MODEL_H_
-
-// end of i_boxed_model.h
-

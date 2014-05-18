@@ -1,4 +1,4 @@
-/** \file geomtools/simple_shaped_model.cc */
+/// \file geomtools/simple_shaped_model.cc
 
 // Ourselves:
 #include <geomtools/simple_shaped_model.h>
@@ -232,27 +232,27 @@ namespace geomtools {
                                             models_col_type * /*models_*/)
   {
     /*
-    double lunit = CLHEP::mm;
-    if (config_.has_key ("length_unit")) {
+      double lunit = CLHEP::mm;
+      if (config_.has_key ("length_unit")) {
       const std::string lunit_str = config_.fetch_string ("length_unit");
       lunit = datatools::units::get_length_unit_from (lunit_str);
-    }
+      }
 
-    DT_THROW_IF (! config_.has_key ("x"), std::logic_error, "Missing box 'x' property in simple shaped (box) model '" << name_ << "' !");
-    double x = config_.fetch_real ("x");
-    if (! config_.has_explicit_unit ("x")) {
+      DT_THROW_IF (! config_.has_key ("x"), std::logic_error, "Missing box 'x' property in simple shaped (box) model '" << name_ << "' !");
+      double x = config_.fetch_real ("x");
+      if (! config_.has_explicit_unit ("x")) {
       x *= lunit;
-    }
-    DT_THROW_IF (! config_.has_key ("y"), std::logic_error, "Missing box 'y' property in simple shaped (box) model '" << name_ << "' !");
-    double y = config_.fetch_real ("y");
-    if (! config_.has_explicit_unit ("y")) {
+      }
+      DT_THROW_IF (! config_.has_key ("y"), std::logic_error, "Missing box 'y' property in simple shaped (box) model '" << name_ << "' !");
+      double y = config_.fetch_real ("y");
+      if (! config_.has_explicit_unit ("y")) {
       y *= lunit;
-    }
-    DT_THROW_IF (! config_.has_key ("z"), std::logic_error, "Missing box 'z' property in simple shaped (box) model '" << name_ << "' !");
-    double z = config_.fetch_real ("z");
-    if (! config_.has_explicit_unit ("z")) {
+      }
+      DT_THROW_IF (! config_.has_key ("z"), std::logic_error, "Missing box 'z' property in simple shaped (box) model '" << name_ << "' !");
+      double z = config_.fetch_real ("z");
+      if (! config_.has_explicit_unit ("z")) {
       z *= lunit;
-    }
+      }
     */
 
     // Build the box:
@@ -264,10 +264,10 @@ namespace geomtools {
       delete _box_;
       throw error;
     }
-    DT_THROW_IF (! _box_->is_valid (), std::logic_error,
+    DT_THROW_IF (! _box_->is_valid(), std::logic_error,
                  "Invalid box parameters in simple shaped (box) model '" << name_ << "' !");
     _solid_ = _box_;
-    grab_logical ().set_material_ref (_material_name_);
+    grab_logical().set_material_ref(_material_name_);
 
     return;
   }
@@ -278,6 +278,8 @@ namespace geomtools {
                                                  const datatools::properties & config_,
                                                  models_col_type * /*models_*/)
   {
+
+    /*
     double lunit = CLHEP::mm;
     if (config_.has_key ("length_unit")) {
       const std::string lunit_str = config_.fetch_string ("length_unit");
@@ -318,9 +320,21 @@ namespace geomtools {
 
     // build the cylinder:
     _cylinder_ = new cylinder (r, z);
-    DT_THROW_IF (! _cylinder_->is_valid (), std::logic_error, "Invalid cylinder dimensions in simple shaped (cylinder) model '" << name_ << "'");
+    */
+
+    // Build the cylinder:
+    _cylinder_ = new cylinder;
+    try {
+      _cylinder_->initialize(config_);
+    } catch (std::exception & error) {
+      DT_LOG_ERROR(datatools::logger::PRIO_ERROR, error.what());
+      delete _cylinder_;
+      throw error;
+    }
+    DT_THROW_IF (! _cylinder_->is_valid(), std::logic_error,
+                 "Invalid cylinder dimensions in simple shaped (cylinder) model '" << name_ << "'");
     _solid_ = _cylinder_;
-    grab_logical ().set_material_ref (_material_name_);
+    grab_logical().set_material_ref(_material_name_);
 
     return;
   }
@@ -332,75 +346,75 @@ namespace geomtools {
                                                models_col_type* /*models_*/)
   {
     /*
-    double lunit = CLHEP::mm;
-    if (config_.has_key ("length_unit")) {
+      double lunit = CLHEP::mm;
+      if (config_.has_key ("length_unit")) {
       const std::string lunit_str = config_.fetch_string ("length_unit");
       lunit = datatools::units::get_length_unit_from (lunit_str);
-    }
+      }
 
-    double aunit = CLHEP::degree;
-    if (config_.has_key ("angle_unit")) {
+      double aunit = CLHEP::degree;
+      if (config_.has_key ("angle_unit")) {
       const std::string aunit_str = config_.fetch_string ("angle_unit");
       aunit = datatools::units::get_angle_unit_from (aunit_str);
-    }
+      }
 
-    double rmin, rmax;
-    rmin = 0.0;
-    if (config_.has_key ("rmax")) {
+      double rmin, rmax;
+      rmin = 0.0;
+      if (config_.has_key ("rmax")) {
       rmax = config_.fetch_real ("rmax");
       if (! config_.has_explicit_unit ("rmax")) {
-        rmax *= lunit;
+      rmax *= lunit;
       }
-    } else {
+      } else {
       DT_THROW_IF (! config_.has_key ("r"), std::logic_error,
-                   "Missing sphere 'r' property in simple shaped (sphere) model '" << name_ << "' !");
+      "Missing sphere 'r' property in simple shaped (sphere) model '" << name_ << "' !");
       rmax = config_.fetch_real ("r");
       if (! config_.has_explicit_unit ("r")) {
-        rmax *= lunit;
+      rmax *= lunit;
       }
-    }
-    if (config_.has_key ("rmin")) {
+      }
+      if (config_.has_key ("rmin")) {
       rmin = config_.fetch_real ("rmin");
       if (! config_.has_explicit_unit ("rmin")) {
-        rmin *= lunit;
+      rmin *= lunit;
       }
-    }
+      }
 
-    double theta_min = 0.0;
-    double delta_theta = 2 * M_PI * CLHEP::radian;
-    bool not_full_theta = false;
-    if (config_.has_key ("theta_min")) {
+      double theta_min = 0.0;
+      double delta_theta = 2 * M_PI * CLHEP::radian;
+      bool not_full_theta = false;
+      if (config_.has_key ("theta_min")) {
       theta_min = config_.fetch_real ("theta_min");
       if (! config_.has_explicit_unit ("theta_min")) {
-        theta_min *= aunit;
+      theta_min *= aunit;
       }
       not_full_theta = true;
-    }
-    if (config_.has_key ("delta_theta")) {
+      }
+      if (config_.has_key ("delta_theta")) {
       delta_theta = config_.fetch_real ("delta_theta");
       if (! config_.has_explicit_unit ("delta_theta")) {
-        delta_theta *= aunit;
+      delta_theta *= aunit;
       }
       not_full_theta = true;
-    }
+      }
 
-    double phi_min = 0.0;
-    double delta_phi = M_PI * CLHEP::radian;
-    bool not_full_phi = false;
-    if (config_.has_key ("phi_min")) {
+      double phi_min = 0.0;
+      double delta_phi = M_PI * CLHEP::radian;
+      bool not_full_phi = false;
+      if (config_.has_key ("phi_min")) {
       phi_min = config_.fetch_real ("phi_min");
       if (! config_.has_explicit_unit ("phi_min")) {
-        phi_min *= aunit;
+      phi_min *= aunit;
       }
       not_full_phi = true;
-    }
-    if (config_.has_key ("delta_phi")) {
+      }
+      if (config_.has_key ("delta_phi")) {
       delta_phi = config_.fetch_real ("delta_phi");
       if (! config_.has_explicit_unit ("delta_phi")) {
-        delta_phi *= aunit;
+      delta_phi *= aunit;
       }
       not_full_phi = true;
-    }
+      }
     */
 
     // Build the sphere:
@@ -413,21 +427,21 @@ namespace geomtools {
       throw error;
     }
     /*
-    if (rmin > 0.0) {
+      if (rmin > 0.0) {
       _sphere_->set_r_min(rmin);
-    }
-    _sphere_->set_r_max(rmax);
-    if (not_full_theta) {
+      }
+      _sphere_->set_r_max(rmax);
+      if (not_full_theta) {
       _sphere_->set_theta(theta_min, delta_theta);
-    }
-    if (not_full_phi) {
+      }
+      if (not_full_phi) {
       _sphere_->set_phi(phi_min, delta_phi);
-    }
+      }
     */
-    DT_THROW_IF (! _sphere_->is_valid (), std::logic_error,
+    DT_THROW_IF (! _sphere_->is_valid(), std::logic_error,
                  "Invalid sphere parameters in simple shaped (sphere) model '" << name_ << "' !");
     _solid_ = _sphere_;
-    grab_logical ().set_material_ref(_material_name_);
+    grab_logical().set_material_ref(_material_name_);
 
     return;
   }
@@ -438,17 +452,12 @@ namespace geomtools {
                                              const datatools::properties & config_,
                                              models_col_type* /*models_*/)
   {
+    /*
     double lunit = CLHEP::mm;
     if (config_.has_key ("length_unit")) {
       const std::string lunit_str = config_.fetch_string ("length_unit");
       lunit = datatools::units::get_length_unit_from (lunit_str);
     }
-
-    // double aunit = CLHEP::degree;
-    // if (config_.has_key ("angle_unit")) {
-    //   const std::string aunit_str = config_.fetch_string ("angle_unit");
-    //   aunit = datatools::units::get_angle_unit_from (aunit_str);
-    // }
 
     double inner_r;
     datatools::invalidate (inner_r);
@@ -504,13 +513,25 @@ namespace geomtools {
 
     // Build the tube:
     _tube_ = new tube (inner_r, outer_r, z);
+    */
+
+    // Build the tube:
+    _tube_ = new tube;
+    try {
+      _tube_->initialize(config_);
+    } catch (std::exception & error) {
+      DT_LOG_ERROR(datatools::logger::PRIO_ERROR, error.what());
+      delete _tube_;
+      throw error;
+    }
+
     DT_THROW_IF (! _tube_->is_valid (), std::logic_error,
                  "Invalid tube dimensions in simple shaped (tube) model '" << name_ << "' !");
 
     // Use the plain tube as solid envelope of the model:
     if (_filled_mode_ == filled_utils::FILLED_NONE) {
       _solid_ = _tube_;
-      grab_logical ().set_material_ref (_material_name_);
+      grab_logical().set_material_ref (_material_name_);
     }
 
 
@@ -568,11 +589,11 @@ namespace geomtools {
     if (_filled_mode_ == filled_utils::FILLED_BY_ENVELOPE) {
       // Make the envelope a cylinder:
       _cylinder_ = new cylinder;
-      _tube_->compute_outer_cylinder (*_cylinder_);
-      DT_THROW_IF (! _cylinder_->is_valid (), std::logic_error,
+      _tube_->compute_outer_cylinder(*_cylinder_);
+      DT_THROW_IF (! _cylinder_->is_valid(), std::logic_error,
                    "Invalid 'outer' cylinder dimensions in simple shaped (tube) model '" << name_ << "' !");
       _solid_ = _cylinder_;
-      grab_logical ().set_material_ref (_filled_material_name_);
+      grab_logical().set_material_ref(_filled_material_name_);
       //grab_logical ().set_effective_shape (*_tube_);
       //grab_logical ().set_effective_material_ref (_material_name_);
       // If the tube is extruded, add the tube within the 'outer' envelope cylinder:
@@ -599,8 +620,14 @@ namespace geomtools {
                                                  models_col_type* /*models_*/)
   {
     // Build the polycone:
-    _polycone_ = new polycone ();
-    _polycone_->initialize (config_);
+    _polycone_ = new polycone;
+    try {
+      _polycone_->initialize(config_);
+    } catch (std::exception & error) {
+      DT_LOG_ERROR(datatools::logger::PRIO_ERROR, error.what());
+      delete _polycone_;
+      throw error;
+    }
     DT_THROW_IF (! _polycone_->is_valid (), std::logic_error,
                  "Invalid polycone build parameters in simple shaped (polycone) model '" << name_ << "' !");
 
@@ -694,9 +721,17 @@ namespace geomtools {
                                                   const datatools::properties & config_,
                                                   models_col_type* /*models_*/)
   {
-    _polyhedra_ = new polyhedra ();
+    _polyhedra_ = new polyhedra;
+    try {
+      _polyhedra_->initialize(config_);
+    } catch (std::exception & error) {
+      DT_LOG_ERROR(datatools::logger::PRIO_ERROR, error.what());
+      delete _polyhedra_;
+      throw error;
+    }
     _polyhedra_->initialize (config_);
-    DT_THROW_IF (! _polyhedra_->is_valid (), std::logic_error, "Invalid polyhedra build parameters in simple shaped (polyhedra) model '" << name_ << "' !");
+    DT_THROW_IF (! _polyhedra_->is_valid (), std::logic_error,
+                 "Invalid polyhedra build parameters in simple shaped (polyhedra) model '" << name_ << "' !");
 
     DT_LOG_TRACE (get_logging_priority (), "Polyhedra:");
     if (get_logging_priority () >= datatools::logger::PRIO_TRACE) {
@@ -807,7 +842,7 @@ namespace geomtools {
                       properties_prefixes);
         DT_LOG_DEBUG(log_level,
                      "Update the vector of exported prefixed properties.");
-       }
+      }
     }
 
     return;
@@ -972,8 +1007,7 @@ namespace geomtools {
 } // end of namespace geomtools
 
 // OCD support for class '::geomtools::simple_shaped_model' :
-DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::simple_shaped_model,
-                                ocd_)
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::simple_shaped_model, ocd_)
 {
   ocd_.set_class_name("geomtools::simple_shaped_model");
   ocd_.set_class_description("A geometry model implementing a simple 3D shape");
@@ -981,13 +1015,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::simple_shaped_model,
   ocd_.set_class_description("This very useful geometry model is able to implement \n"
                              "volumes with various simple 3D shapes. The following \n"
                              "shapes are supported:                                \n"
-                             "                                                     \n"
-                             " * Box : see OCD support for class ``geomtool::box``.\n"
-                             " * Cylinder                                          \n"
-                             " * Tube                                              \n"
-                             " * Sphere : see OCD support for class ``geomtool::sphere``.\n"
+                             "                                                             \n"
+                             " * Box : see OCD support for class ``geomtool::box``.        \n"
+                             " * Cylinder: see OCD support for class ``geomtool::cylinder``\n"
+                             " * Tube : see OCD support for class ``geomtool::tube``       \n"
+                             " * Sphere : see OCD support for class ``geomtool::sphere``.  \n"
                              " * Polycone                                          \n"
-                             " * Polyhedron                                        \n"
+                             " * Polyhedra                                         \n"
                              "                                                     \n"
                              "The generated volume can also host daughter volumes, \n"
                              "thanks to the 'internal items' interface.            \n"
@@ -996,23 +1030,225 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::simple_shaped_model,
   // Inherit parent class/interface OCD support:
   geomtools::i_model::init_ocd(ocd_);
 
-  // {
-  //   configuration_property_description & cpd = ocd_.add_configuration_property_info();
-  //   cpd.set_name_pattern("length_unit")
-  //     .set_terse_description("The length unit symbol")
-  //     .set_traits(datatools::TYPE_STRING)
-  //     .set_mandatory(false)
-  //     .set_default_value_string("mm")
-  //     .set_long_description("This property set the symbol of the default length\n"
-  //                           "unit.                                             \n"
-  //                           "Example ::                                        \n"
-  //                           "                                                  \n"
-  //                           "   length_unit : string = \"cm\"                  \n"
-  //                           "                                                  \n"
-  //                           )
-  //     ;
-  // }
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("shape_type")
+      .set_terse_description("The name of the 3D shape implemented within the geometry model")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .set_long_description("This property specifies the type of solid shape.  \n"
+                            "Allowed values are.                               \n"
+                            "                                                  \n"
+                            " * ``\"box\"`` : a 3D box                         \n"
+                            " * ``\"cylinder\"`` : a cylinder                  \n"
+                            " * ``\"tube\"`` : a tube                          \n"
+                            " * ``\"sphere\"`` : a spherical section           \n"
+                            " * ``\"polycone\"`` : a polycone                  \n"
+                            " * ``\"polyhedra\"`` : a polyhedra                \n"
+                            "                                                  \n"
+                            "Depending on the requested shape, additional      \n"
+                            "configuration properties can/must be used to      \n"
+                            "setup the logical volume(s) associated to this    \n"
+                            "model. You may read the specific OCD support      \n"
+                            "for each shape (if available).                    \n"
+                            )
+      .add_example("Use a box: ::                                     \n"
+                   "                                                  \n"
+                   " #@description The box type                       \n"
+                   " shape_type  : string = \"box\"                   \n"
+                   " #@description The default length unit            \n"
+                   " length_unit : string = \"cm\"                    \n"
+                   " #@description The X dimension of the box         \n"
+                   " x           : real as length = 100.0 mm          \n"
+                   " #@description The Y dimension of the box         \n"
+                   " y           : real as length = 5.1 # default unit\n"
+                   " #@description The Z dimension of the box         \n"
+                   " z           : real as length = 2.4 # default unit\n"
+                   "                                                  \n"
+                   )
+      .add_example("Use a cylinder ::                                 \n"
+                   "                                                  \n"
+                   " #@description The box type                       \n"
+                   " shape_type  : string = \"cylinder\"              \n"
+                   " #@description The default length unit            \n"
+                   " length_unit : string = \"cm\"                    \n"
+                   " #@description The radius of the cylinder         \n"
+                   " r           : real as length = 53.3 mm           \n"
+                   " #@description The height of the cylinder         \n"
+                   " z           : real as length = 2.4 # default unit\n"
+                   "                                                  \n"
+                   )
+      .add_example("Use a spherical section ::                        \n"
+                   "                                                  \n"
+                   " #@description The box type                       \n"
+                   " shape_type  : string = \"sphere\"                \n"
+                   " #@description The default length unit            \n"
+                   " length_unit : string = \"mm\"                    \n"
+                   " #@description The default angle unit             \n"
+                   " angle_unit  : string = \"degree\"                \n"
+                   " #@description The outer radius of the spherical section\n"
+                   " r_max       : real as length = 200.0 mm                \n"
+                   " #@description The inner radius of the spherical section\n"
+                   " r_min       : real as length = 125.0 mm                \n"
+                   " #@description The starting phi angle                   \n"
+                   " start_phi   : real as angle= 30.0 degree               \n"
+                   " #@description The delta phi angle                      \n"
+                   " delta_phi   : real as angle= 60.0 degree               \n"
+                   " #@description The starting theta angle                 \n"
+                   " start_theta   : real as angle= 20.0 degree             \n"
+                   " #@description The delta theta angle                    \n"
+                   " delta_theta   : real as angle= 70.0 degree             \n"
+                   "                                                        \n"
+                   )
+      .add_example("Use a tube with (no filled mode)::                \n"
+                   "                                                  \n"
+                   " #@description The tube type                      \n"
+                   " shape_type  : string = \"tube\"                  \n"
+                   " #@description The default length unit            \n"
+                   " length_unit : string = \"cm\"                    \n"
+                   " #@description The inner radius of the tube       \n"
+                   " inner_r     : real as length = 24.3 mm           \n"
+                   " #@description The outer radius of the tube       \n"
+                   " outer_r     : real as length = 53.3 mm           \n"
+                   " #@description The height of the tube             \n"
+                   " z           : real as length = 5.3 # default unit\n"
+                   "                                                  \n"
+                   )
+      .add_example("Use a polycone (no filled mode)::                        \n"
+                   "                                                         \n"
+                   " #@description The tube type                             \n"
+                   " shape_type  : string = \"polycone\"                     \n"
+                   " #@description The default length unit                   \n"
+                   " length_unit : string = \"cm\"                           \n"
+                   " #@description The build mode                            \n"
+                   " build_mode  : string = \"points\"                       \n"
+                   " #@description The Z positions of three polycone sections\n"
+                   " list_of_z   : real[4] in mm = -30.0 -15.0 5.0 23.0      \n"
+                   " #@description The outer radius of the polycone sections \n"
+                   " list_of_rmax : real[4] in mm = 10.0 15.0 20.0 20.0      \n"
+                   " #@description The inner radius of the polycone sections \n"
+                   " list_of_rmin : real[4] in mm =  5.0  5.0 10.0 10.0      \n"
+                   "                                                         \n"
+                   )
+      .add_example("Use a polyhedra (no filled mode)::                        \n"
+                   "                                                          \n"
+                   " #@description The tube type                              \n"
+                   " shape_type  : string = \"polyhedra\"                     \n"
+                   " #@description The default length unit                    \n"
+                   " length_unit : string = \"cm\"                            \n"
+                   " #@description The build mode                             \n"
+                   " build_mode  : string = \"points\"                        \n"
+                   " #@description The number of sides of the polyhedra       \n"
+                   " sides       : integer        = 4                         \n"
+                   " #@description The Z positions of three polyhedra sections\n"
+                   " list_of_z   : real[4] in mm  = -30.0 -15.0 5.0 23.0      \n"
+                   " #@description The outer radius of the polyhedra sections \n"
+                   " list_of_rmax : real[4] in mm =  10.0 15.0 20.0 20.0      \n"
+                   " #@description The inner radius of the polyhedra sections \n"
+                   " list_of_rmin : real[4] in mm =   5.0  5.0 10.0 10.0      \n"
+                   "                                                          \n"
+                   )
+      ;
+  }
 
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("filled_mode")
+      .set_terse_description("The mode for filling shapes with an excavation")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_long_description("This property specifies the way one must build the    \n"
+                            "requested shape when it has a natural excavation/hole \n"
+                            "in it (tube, polycone, polyhedra).                    \n"
+                            "Allowed values are.                                   \n"
+                            "                                                                  \n"
+                            " * ``\"none\"`` : Nothing special to do (default value).          \n"
+                            " * ``\"by_envelope\"`` : A two step build mode impling a          \n"
+                            "   mother volume used as the envelope of the requested shape:     \n"
+                            "                                                                  \n"
+                            "    * for a tube: the model is implemented                        \n"
+                            "      with a cylinder mother/envelope volume filled with its own material  \n"
+                            "      and the requested tube shape itself is placed within        \n"
+                            "      this mother shape with its own material.                    \n"
+                            "    * for a polycone: the model is implemented                    \n"
+                            "      with a polycone mother volume (without a hole) filled       \n"
+                            "      with its own material. The requested polycone shape itself  \n"
+                            "      is placed within this mother shape with its own material.   \n"
+                            "    * for a polyhedra: the model is implemented                   \n"
+                            "      with a polyhedra mother volume (without a hole) filled      \n"
+                            "      with its own material. The requested polyhedra shape itself \n"
+                            "      is placed within this mother shape with its own material.   \n"
+                             "                                                                 \n"
+                            "This property must be used by experts only because                \n"
+                            "it may be rather difficult to understand and manipulate.          \n"
+                            "                                                                  \n"
+                            )
+      .add_example("This example shows how to construct a tube using the *by envelope* mode.          \n"
+                   "Additional properties must/may be used, like the mandatory ``material.filled.ref``\n"
+                   "property that specify the material used within the central hole: ::               \n"
+                   "                                                  \n"
+                   " #@description The tube type                      \n"
+                   " shape_type  : string = \"tube\"                  \n"
+                   " #@description The default length unit            \n"
+                   " length_unit : string = \"cm\"                    \n"
+                   " #@description The inner radius of the tube       \n"
+                   " inner_r     : real as length = 24.3 mm           \n"
+                   " #@description The outer radius of the tube       \n"
+                   " outer_r     : real as length = 53.3 mm           \n"
+                   " #@description The height of the tube             \n"
+                   " z           : real as length = 5.3 # default unit\n"
+                   " #@description The filled mode                       \n"
+                   " filled_mode         : string = \"by_envelope\"      \n"
+                   " filled_label        : string = \"hole\"             \n"
+                   " material.ref        : string = \"Iron\"             \n"
+                   " material.filled.ref : string = \"Air\"              \n"
+                   "                                                     \n"
+                   )
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("filled_label")
+      .set_terse_description("The label used for the embedded volume in *by envelope* mode")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_triggered_by_label("filled_mode", "by_envelope")
+      .set_default_value_string("by_envelope")
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("material.ref")
+      .set_terse_description("The label of the material the mother volume is made of")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .add_example("Using 'Mylar': ::                              \n"
+                   "                                               \n"
+                   "   material.ref : string = \"Iron\"            \n"
+                   "                                               \n"
+                   )
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("material.filled.ref")
+      .set_terse_description("The label of the material the excavated volume is made of in *by envelope* mode")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .set_triggered_by_label("filled_mode", "by_envelope")
+      .add_example("Using 'Air': ::                                \n"
+                   "                                               \n"
+                   "   material.filled.ref : string = \"Air\"      \n"
+                   "                                               \n"
+                   )
+      ;
+  }
+
+  // Add support for internal/daughter volumes:
+  geomtools::MWIM::init_ocd(ocd_);
 
   ocd_.set_validation_support(false);
   ocd_.lock();

@@ -1,8 +1,6 @@
-// -*- mode: c++ ; -*-
-/* geomtools_driver.cc
- */
+// geomtools_driver.cc
 
-// Ourself
+// Ourselves:
 #include <geomtools/geomtools_driver.h>
 
 // Standard Library
@@ -454,6 +452,7 @@ namespace geomtools {
                                     const std::string & materials_plugin_name_,
                                     const std::string & top_mapping_model_name_,
                                     const std::string & gdml_file_,
+                                    bool replica_support_,
                                     bool root_display_,
                                     int root_vis_option_,
                                     int /*root_vis_level_*/,
@@ -465,6 +464,12 @@ namespace geomtools {
     geomtools::gdml_export GDML;
     std::string materials_plugin_name = materials_plugin_name_;
     std::string top_mapping_model_name = top_mapping_model_name_;
+    bool replica_support = replica_support_;
+    if (replica_support && root_display_) {
+      DT_LOG_WARNING(logging_,"Replica support is not compatible with ROOT export!");
+      DT_LOG_WARNING(logging_,"Inhibit replica support...");
+      replica_support = false;
+    }
     if (top_mapping_model_name.empty ()) {
       top_mapping_model_name = geomtools::model_factory::default_world_label();
     }
@@ -503,7 +508,7 @@ namespace geomtools {
     }
 
     GDML.add_auxiliary_support (false);
-    GDML.add_replica_support (true);
+    GDML.add_replica_support (replica_support);
     GDML.parameters ().store ("xml_version",
                               geomtools::gdml_writer::default_xml_version());
     GDML.parameters ().store ("xml_encoding",
@@ -569,9 +574,10 @@ namespace geomtools {
 
         int errcode = 0;
 
-        std::ostringstream cat_com;
-        cat_com << "cat " << rvm_name << std::ends;
-        errcode = system(cat_com.str().c_str());
+        // DEVEL: cat the macro:
+        // std::ostringstream cat_com;
+        // cat_com << "cat " << rvm_name << std::ends;
+        // errcode = system(cat_com.str().c_str());
 
         std::ostringstream rvm_com;
         rvm_com << "root -l " << rvm_name << std::ends;
@@ -722,6 +728,7 @@ namespace geomtools {
       return 1;
     }
     std::string gdml_file;
+    bool replica_support = true;
     bool root_display   = false;
     int root_vis_option = 1;
     int root_vis_level  = 100;
@@ -738,6 +745,8 @@ namespace geomtools {
                << "\n";
           out_ << "  Options: \n";
           out_ << "    -h | --help           Print this help\n"
+               << "    --with-replica        With replica support\n"
+               << "    --without-replica     Without replica support\n"
                << "    --no-root-display     Do not display the GDML geometry from ROOT\n"
                << "    --root-display        Display the GDML geometry from ROOT\n"
                << "                          (interactive mode only)\n"
@@ -748,8 +757,12 @@ namespace geomtools {
           out_ << "  GDML_FILE : The name of the GDML file to be generated (optional)\n";
           out_ << std::flush;
           return -1;
-        } if (option  == "--root-display") {
+        } else if (option  == "--root-display") {
           root_display = true;
+        } else if (option  == "--with-replica") {
+          replica_support = true;
+        } else if (option  == "--without-replica") {
+          replica_support = false;
         } else if (option == "--no-root-display") {
           root_display = false;
         } else if (option == "--root-vis-option") {
@@ -801,6 +814,7 @@ namespace geomtools {
                        _params_.materials_plugin_name,
                        _params_.top_mapping_model_name,
                        gdml_file,
+                       replica_support,
                        root_display,
                        root_vis_option,
                        root_vis_level,
@@ -814,14 +828,12 @@ namespace geomtools {
   {
     int error_code = 0;
     if (! is_initialized()) {
-      DT_LOG_ERROR(_params_.logging,
-                   "Driver is not initialized !");
+      DT_LOG_ERROR(_params_.logging, "Driver is not initialized !");
       error_code = 1;
       return error_code;
     }
     if (! _params_.visu) {
-      DT_LOG_ERROR(_params_.logging,
-                   "Visualization is inhibited !");
+      DT_LOG_ERROR(_params_.logging, "Visualization is inhibited !");
       error_code = 1;
       return error_code;
     }

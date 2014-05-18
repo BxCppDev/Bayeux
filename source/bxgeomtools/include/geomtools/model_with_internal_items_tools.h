@@ -1,12 +1,13 @@
 // -*- mode: c++ ; -*-
-/* model_with_internal_items_tools.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/model_with_internal_items_tools.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-10-16
- * Last modified: 2010-10-16
+ * Last modified: 2014-05-17
  *
  * License:
  *
  * Description:
+ *
  *   Some tools to make a model owning internal items
  *   within its mother shape
  *
@@ -17,9 +18,15 @@
 #ifndef GEOMTOOLS_MODEL_WITH_INTERNAL_ITEMS_TOOLS_H_
 #define GEOMTOOLS_MODEL_WITH_INTERNAL_ITEMS_TOOLS_H_ 1
 
+// Standard library:
 #include <string>
 #include <map>
 
+// Third party:
+// - Bayeux/datatools:
+#include <datatools/object_configuration_description.h>
+
+// This project:
 #include <geomtools/i_model.h>
 #include <geomtools/placement.h>
 #include <geomtools/physical_volume.h>
@@ -78,6 +85,10 @@ namespace geomtools {
                                logical_volume & log_,
                                models_col_type * models_);
 
+
+    static void init_ocd(datatools::object_configuration_description & ocd_,
+                         const std::string & prefix_ = "");
+
   private:
 
     item_dict_type _items_; //!< Collection of internal items
@@ -89,5 +100,3 @@ namespace geomtools {
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_MODEL_WITH_INTERNAL_ITEMS_TOOLS_H_
-
-// end of model_with_internal_items_tools.h

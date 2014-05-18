@@ -1,15 +1,19 @@
-// -*- mode: c++ ; -*-
-/* grid_model.cc
- */
+// grid_model.cc
 
+// Ourselves:
 #include <geomtools/grid_model.h>
 
+// Standard library:
 #include <exception>
 #include <limits>
 
+// Third party library:
+// - Bayeux/datatools:
+#include <datatools/units.h>
+
+// This project:
 #include <geomtools/physical_volume.h>
 #include <geomtools/visibility.h>
-#include <datatools/units.h>
 
 namespace geomtools {
 
@@ -31,7 +35,7 @@ namespace geomtools {
     return _grid_daughter_label_;
   }
 
-  size_t grid_model::get_number_of_items (int i_)
+  size_t grid_model::get_number_of_items (int i_) const
   {
     return _number_of_items_[i_];
   }
@@ -88,6 +92,52 @@ namespace geomtools {
 
   grid_model::~grid_model ()
   {
+    return;
+  }
+
+  void grid_model::_pre_construct (datatools::properties & setup_,
+                                   models_col_type * models_)
+  {
+    datatools::logger::priority log_level = get_logging_priority ();
+    //log_level = datatools::logger::PRIO_DEBUG;
+    this->i_model::_pre_construct(setup_,models_);
+
+    std::vector<std::string> properties_prefixes;
+    if (setup_.has_key(i_model::exported_properties_prefixes_key())) {
+      setup_.fetch(i_model::exported_properties_prefixes_key(),
+                   properties_prefixes);
+    }
+
+    {
+      const std::string & ii_prefix = model_with_internal_items_tools::INTERNAL_ITEM_PREFIX;
+      if (std::find(properties_prefixes.begin(),
+                    properties_prefixes.end(),
+                    ii_prefix) == properties_prefixes.end()) {
+        // Add "internal_item." as exported prefixed properties:
+        properties_prefixes.push_back(ii_prefix);
+        // Update the vector of exported prefixed properties:
+        setup_.update(i_model::exported_properties_prefixes_key(),
+                      properties_prefixes);
+        DT_LOG_DEBUG(log_level,
+                     "Update the vector of exported prefixed properties.");
+      }
+    }
+
+    return;
+  }
+
+  void grid_model::_post_construct (datatools::properties & setup_,
+                                          models_col_type * models_)
+  {
+    DT_LOG_NOTICE(get_logging_priority (),
+                  "Post-construction processing for model '" << get_name() << "' ...");
+    this->i_model::_post_construct(setup_, models_);
+
+    // Processing possible internal daughter volumes in the mother volume:
+    _internals_.plug_internal_models(get_logical().get_parameters(),
+                                     grab_logical(),
+                                     models_);
+
     return;
   }
 
@@ -400,8 +450,7 @@ namespace geomtools {
 } // end of namespace geomtools
 
 // OCD support for class '::geomtools::grid_model' :
-DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::grid_model,
-                                ocd_)
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::grid_model, ocd_)
 {
   ocd_.set_class_name("geomtools::grid_model");
   ocd_.set_class_description("A geometry model implementing a mother box with some daughter volume placed on a 2D mesh");
@@ -411,8 +460,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::grid_model,
                                );
   */
 
+  // Inherit the OCD support from the parent class:
+  geomtools::i_model::init_ocd(ocd_);
+
   {
-    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("length_unit")
       .set_terse_description("The length unit symbol")
       .set_traits(datatools::TYPE_STRING)
@@ -431,7 +483,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::grid_model,
 
 
   {
-    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("material.ref")
       .set_terse_description("The label of the material the grid mother volume is made of")
       .set_traits(datatools::TYPE_STRING)
@@ -447,7 +499,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::grid_model,
   }
 
   {
-    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("grid.force_stackable")
       .set_terse_description("Flag to force the use of explicit stacking informations while stacking the geometry model")
       .set_traits(datatools::TYPE_BOOLEAN)
@@ -465,13 +517,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::grid_model,
   }
 
   {
-    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("grid.plane")
       .set_terse_description("The label of the grid plane")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(true)
-      .set_long_description("This property set the label of the grid plane.    \n"
-                            "Possible values are :  'xy' ,'xz' and 'yz'.       \n"
+      .set_long_description("This property set the label of the grid plane.               \n"
+                            "Possible values are : ``\"xy\"``, ``\"xz\"`` and ``\"yz\"``. \n"
                             )
       .add_example("Set the plane of the grid::                      \n"
                    "                                                 \n"
@@ -482,7 +534,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::grid_model,
   }
 
   {
-    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("grid.x.number_of_items")
       .set_terse_description("The number of columns along the X axis")
       .set_traits(datatools::TYPE_INTEGER)
@@ -501,7 +553,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::grid_model,
   }
 
   {
-    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("grid.x.step")
       .set_terse_description("The step dimension along the X axis")
       .set_traits(datatools::TYPE_REAL)
@@ -521,7 +573,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::grid_model,
   }
 
   {
-    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("grid.y.number_of_items")
       .set_terse_description("The number of columns along the Y axis")
       .set_traits(datatools::TYPE_INTEGER)
@@ -539,7 +591,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::grid_model,
   }
 
   {
-    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("grid.y.step")
       .set_terse_description("The step dimension along the Y axis")
       .set_traits(datatools::TYPE_REAL)
@@ -558,7 +610,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::grid_model,
   }
 
   {
-    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("grid.z.number_of_items")
       .set_terse_description("The number of columns along the Z axis")
       .set_traits(datatools::TYPE_INTEGER)
@@ -575,7 +627,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::grid_model,
   }
 
   {
-    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("grid.z.step")
       .set_terse_description("The step dimension along the Z axis")
       .set_traits(datatools::TYPE_REAL)
@@ -594,13 +646,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::grid_model,
   }
 
   {
-    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("grid.model")
       .set_terse_description("The name of the geometry model to be placed on the grid layout")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(true)
       .set_long_description("The geometry model is searched for an external   \n"
-                            "dictionnary of models, typically from a model    \n"
+                            "dictionary of models, typically from a model    \n"
                             "factory.                                         \n"
                             )
       .add_example("Grid replication of model named ``\"block\"``:: \n"
@@ -612,7 +664,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::grid_model,
   }
 
   {
-    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("x")
       .set_terse_description("The X dimension of the box")
       .set_traits(datatools::TYPE_REAL)
@@ -633,7 +685,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::grid_model,
   }
 
   {
-    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("y")
       .set_terse_description("The Y dimension of the box")
       .set_traits(datatools::TYPE_REAL)
@@ -653,7 +705,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::grid_model,
   }
 
   {
-    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("z")
       .set_terse_description("The Z dimension of the box")
       .set_traits(datatools::TYPE_REAL)
@@ -673,7 +725,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::grid_model,
   }
 
   {
-    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("material.ref")
       .set_terse_description("The label of the material the volume is made of")
       .set_traits(datatools::TYPE_STRING)
@@ -686,6 +738,9 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::grid_model,
                    )
       ;
   }
+
+  // Add support for internal/daughter volumes:
+  geomtools::MWIM::init_ocd(ocd_);
 
   ocd_.set_configuration_hints("This model is configured through a configuration file that \n"
                                "uses the format of 'datatools::properties' setup file.     \n"
@@ -723,6 +778,3 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::grid_model,
 DOCD_CLASS_IMPLEMENT_LOAD_END()
 DOCD_CLASS_SYSTEM_REGISTRATION(::geomtools::grid_model,
                                "geomtools::grid_model")
-
-
-// end of grid_model.cc

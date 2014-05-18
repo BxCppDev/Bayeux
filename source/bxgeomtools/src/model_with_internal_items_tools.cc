@@ -1,9 +1,9 @@
-// -*- mode: c++ ; -*-
-/* model_with_internal_items_tools.cc
- */
+/// model_with_internal_items_tools.cc
 
+// Ourselves:
 #include <geomtools/model_with_internal_items_tools.h>
 
+// Standard library:
 #include <cstdlib>
 #include <cmath>
 #include <stdexcept>
@@ -11,8 +11,10 @@
 #include <iomanip>
 #include <sstream>
 
+// Third party:
 #include <datatools/units.h>
 
+// This project:
 #include <geomtools/logical_volume.h>
 #include <geomtools/utils.h>
 #include <geomtools/visibility.h>
@@ -75,8 +77,6 @@ namespace geomtools {
     return _phys_;
   }
 
-  /************************************************/
-
   bool model_with_internal_items_tools::has_item (const std::string & label_) const
   {
     DT_THROW_IF (label_.length () == 0, std::logic_error, "Empty label !");
@@ -133,13 +133,11 @@ namespace geomtools {
     return _items_;
   }
 
-  // ctor:
   model_with_internal_items_tools::model_with_internal_items_tools ()
   {
     return;
   }
 
-  // dtor:
   model_with_internal_items_tools::~model_with_internal_items_tools ()
   {
     _items_.clear ();
@@ -215,6 +213,76 @@ namespace geomtools {
     return;
   }
 
-} // end of namespace geomtools
+  // static
+  void model_with_internal_items_tools::init_ocd(datatools::object_configuration_description & ocd_,
+                                                 const std::string & /* prefix_ */)
+  {
 
-// end of model_with_internal_items_tools.cc
+
+    {
+      datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+      cpd.set_name_pattern("internal_item.labels")
+        .set_from("geomtools::model_with_internal_items_tools")
+        .set_terse_description("The labels/Ids that identify the internal/daughter volumes")
+        .set_traits(datatools::TYPE_STRING,
+                    datatools::configuration_property_description::ARRAY
+                    )
+        .set_mandatory(true)
+        .add_example("Using two daughter/internal volumes::                 \n"
+                     "                                                      \n"
+                     "  internal_item.labels : string[2] = \"Sub0\"\"Sub1\" \n"
+                     "                                                      \n"
+                     )
+        ;
+    }
+
+    {
+      datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+      cpd.set_name_pattern("internal_item.model.${internal_item.labels}")
+        .set_from("geomtools::model_with_internal_items_tools")
+        .set_terse_description("The labels/Ids that identify the internal/daughter volumes")
+        .set_traits(datatools::TYPE_STRING)
+        .set_mandatory(true)
+        .add_example("Set the geometry model of two internal/daughter volumes:: \n"
+                     "                                                          \n"
+                     "  internal_item.labels : string[2] = \"Sub0\" \"Sub1\"    \n"
+                     "  internal_item.model.Sub0 : string = \"block.model\"     \n"
+                     "  internal_item.model.Sub1 : string = \"screen.model\"    \n"
+                     "                                                          \n"
+                     )
+        ;
+    }
+
+    {
+      datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+      cpd.set_name_pattern("internal_item.placement.${internal_item.labels}")
+        .set_from("geomtools::model_with_internal_items_tools")
+        .set_terse_description("The placement directives of the internal/daughter volumes")
+        .set_traits(datatools::TYPE_STRING)
+        .set_mandatory(true)
+        .add_example("Set the translations of two internal/daughter volumes::                         \n"
+                     "                                                                                \n"
+                     "  internal_item.labels         : string[2] = \"Sub0\" \"Sub1\"                  \n"
+                     "  internal_item.placement.Sub0 : string = \"2.0 0.0 -6.0 (mm) \"                \n"
+                     "  internal_item.placement.Sub1 : string = \"8.0 0.0 -6.0 (mm) \"                \n"
+                     "                                                                                \n"
+                     )
+        .add_example("Set the translations and rotation of three internal/daughter volumes::           \n"
+                     "                                                                                 \n"
+                     "  internal_item.labels         : string[3] = \"Sub0\" \"Sub1\" \"Sub2\"          \n"
+                     "  internal_item.placement.Sub0 : string = \" 2.0 0.0 -6.0 (mm) @ 30.0 45.0 23.0 (degree)\" \n"
+                     "  internal_item.placement.Sub1 : string = \" 8.0 0.0 -6.0 (mm) / z 45 (degree)\" \n"
+                     "  internal_item.placement.Sub2 : string = \"14.0 0.0 -6.0 (mm) / x 60 (degree)\" \n"
+                     "                                                                                 \n"
+                     "It is thus possible to use special rotations around the X, Y or Z axis, or        \n"
+                     "arbitrary rotations using ZYZ Euler angles (phi, theta, delta).                   \n"
+                     )
+        ;
+    }
+
+
+    return;
+  }
+
+
+} // end of namespace geomtools

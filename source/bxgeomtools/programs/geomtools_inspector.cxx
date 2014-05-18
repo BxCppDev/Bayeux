@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 // geomtools_inspector.cxx
 
 // Ourselves
@@ -14,11 +13,19 @@
 // Third Party
 // - Boost
 #include <boost/program_options.hpp>
+#include <boost/filesystem.hpp>
 
 #if GEOMTOOLS_STANDALONE == 0
 // - bayeux:
 #include <bayeux/bayeux.h>
 #endif
+
+#ifdef GEOMTOOLS_WITH_READLINE
+#include <readline/readline.h>
+#include <readline/history.h>
+#include <curses.h>
+#include <term.h>
+#endif // GEOMTOOLS_WITH_READLINE
 
 // - datatools:
 #include <datatools/datatools.h>
@@ -48,12 +55,21 @@ int main(int argc_, char ** argv_)
 #else
   BAYEUX_INIT_MAIN(argc_, argv_);
 #endif
+#if GEOMTOOLS_STANDALONE == 1
+  const std::string APP_NAME = "geomtools_inspector";
+#else
+  const std::string APP_NAME = "bxgeomtools_inspector";
+#endif // GEOMTOOLS_STANDALONE == 1
 
   int error_code = EXIT_SUCCESS;
   datatools::logger::priority logging = datatools::logger::PRIO_WARNING;
   namespace po = boost::program_options;
   boost::program_options::options_description opts("geomtools inspector configuration parameters");
-
+#ifdef GEOMTOOLS_WITH_READLINE
+  bool without_readline = false;
+  std::string history_filename = "~/.bxgeomtools_inspector.history";
+  datatools::fetch_path_with_env(history_filename);
+#endif // GEOMTOOLS_WITH_READLINE
   try {
     std::string prompt = "geomtools> ";
     std::string prompt_continue = "> ";
@@ -71,6 +87,14 @@ int main(int argc_, char ** argv_)
        ->default_value(false),
        "Print help then exit.  \n"
        )
+#ifdef GEOMTOOLS_WITH_READLINE
+      ("without-readline",
+       po::value<bool>(&without_readline)
+       ->zero_tokens()
+       ->default_value(false),
+       "Deactivate readline.\n"
+       )
+ #endif // GEOMTOOLS_WITH_READLINE
       ("logging,G",
        po::value<std::string>(&logging_label)
        ->default_value("warning"),
@@ -113,6 +137,19 @@ int main(int argc_, char ** argv_)
     GDP_argv.push_back("--logging");
     GDP_argv.push_back(logging_label);
 
+#ifdef GEOMTOOLS_WITH_READLINE
+    //if (! without_readline) {
+      using_history (); // use readline library
+      if (boost::filesystem::exists(history_filename)) {
+        int error = read_history(history_filename.c_str());
+        if (error) {
+          DT_LOG_ERROR(datatools::logger::PRIO_ERROR, APP_NAME << ": "
+                       << "Cannot read history file '" << history_filename << "'!");
+        }
+      }
+      //}
+#endif // GEOMTOOLS_WITH_READLINE
+
     if (! no_splash) {
       print_splash(std::cerr);
     }
@@ -141,18 +178,35 @@ int main(int argc_, char ** argv_)
     bool go_on = run;
     /// Browser main loop :
     while (go_on) {
+#ifndef GEOMTOOLS_WITH_READLINE
       if (!std::cin || std::cin.eof()) {
         std::cerr << std::flush;
         std::cout << std::endl;
         break;
       }
+#endif
+      std::string line;
+#ifdef GEOMTOOLS_WITH_READLINE
+      char * readline_line = 0;
+      go_on = false;
+      readline_line = readline (prompt.c_str ()); // use readline library
+      if (readline_line != 0) {
+        go_on = true;
+        line = readline_line; // use readline library
+        if (! line.empty()) {
+          add_history(readline_line); // use readline/history library
+        }
+        free(readline_line);
+        readline_line = 0;
+      }
+#else // GEOMTOOLS_WITH_READLINE
       // Prompt:
       std::cerr << prompt << std::flush;
-      std::string line;
       std::getline (std::cin, line);
       if (! std::cin || std::cin.eof()) {
         go_on = false;
       }
+#endif // GEOMTOOLS_WITH_READLINE
       {
         // Skip blank line and lines starting with '#' :
         std::istringstream dummy(line);
@@ -165,12 +219,29 @@ int main(int argc_, char ** argv_)
       if (go_on) {
         while (line[line.length()-1] == '\\') {
           line = line.substr(0, line.length()-1);
-          std::cerr << prompt_continue << std::flush;
           std::string more;
+#ifdef GEOMTOOLS_WITH_READLINE
+          {
+            char * readline_line = 0;
+            go_on = false;
+            readline_line = readline (prompt_continue.c_str ()); // use readline library
+            if (readline_line != 0) {
+              go_on = true;
+              more = readline_line; // use readline library
+              if (! more.empty()) {
+                add_history(readline_line); // use readline/history library
+              }
+              free(readline_line);
+              readline_line = 0;
+            }
+          }
+#else // GEOMTOOLS_WITH_READLINE
+          std::cerr << prompt_continue << std::flush;
           std::getline (std::cin, more);
           if (! std::cin || std::cin.eof()) {
             go_on = false;
           }
+#endif // GEOMTOOLS_WITH_READLINE
           line += more;
         }
       }
@@ -296,14 +367,26 @@ int main(int argc_, char ** argv_)
       }
     } // End of browser main loop.
 
+#ifdef GEOMTOOLS_WITH_READLINE
+    DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, APP_NAME << ": "
+                  << "Saving history file '" << history_filename << "'...");
+    int error = write_history(history_filename.c_str());
+    if (error) {
+      DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                   APP_NAME << ": " << "Cannot write history file '" << history_filename << "' !");
+    }
+    history_truncate_file(history_filename.c_str(), 200);
+    clear_history();
+#endif // GEOMTOOLS_WITH_READLINE
+
   }
   catch (std::exception & x) {
     print_help(opts);
-    DT_LOG_FATAL(datatools::logger::PRIO_FATAL, "geomtools_inspector: " << x.what ());
+    DT_LOG_FATAL(datatools::logger::PRIO_FATAL, APP_NAME << ": " << x.what ());
     error_code = EXIT_FAILURE;
   }
   catch (...) {
-    DT_LOG_FATAL(datatools::logger::PRIO_FATAL, "geomtools_inspector: " << "Unexpected error !");
+    DT_LOG_FATAL(datatools::logger::PRIO_FATAL, APP_NAME << ": " << "Unexpected error !");
     error_code = EXIT_FAILURE;
   }
 
@@ -322,7 +405,7 @@ void print_splash(std::ostream & out_)
        << "\tVersion " << GEOMTOOLS_LIB_VERSION << "        \n"
        << "                                                 \n"
        << "\tCopyright (C) 2009-2013                        \n"
-       << "\tFrancois Mauger, Xavier Garrido and Ben Morgan \n"
+       << "\tFrancois Mauger, Xavier Garrido, Benoit Guillon and Ben Morgan \n"
        << "                                                 \n"
        << "\timmediate help: type \"help\"                  \n"
        << "\tquit:           type \"quit\"                  \n";
@@ -340,11 +423,11 @@ void print_help (const boost::program_options::options_description & opts_,
                  std::ostream & out_)
 {
 #if GEOMTOOLS_STANDALONE == 1
-    const std::string APP_NAME = "geomtools_inspector";
+  const std::string APP_NAME = "geomtools_inspector";
 #else
-    const std::string APP_NAME = "bxgeomtools_inspector";
+  const std::string APP_NAME = "bxgeomtools_inspector";
 #endif // GEOMTOOLS_STANDALONE == 1
-    out_ << APP_NAME << " -- Inspect and display a virtual geometry" << std::endl;
+  out_ << APP_NAME << " -- Inspect and display a virtual geometry" << std::endl;
   out_ << "\n";
   out_ << "Usage: \n\n";
 

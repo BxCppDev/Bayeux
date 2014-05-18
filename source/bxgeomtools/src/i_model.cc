@@ -1,6 +1,5 @@
 // -*- mode: c++ ; -*-
-/* i_model.cc
- */
+// i_model.cc
 
 // Ourselves:
 #include <geomtools/i_model.h>
@@ -362,9 +361,10 @@ namespace geomtools {
         .set_traits(datatools::TYPE_BOOLEAN)
         .set_mandatory(false)
         .set_default_value_boolean(false)
-        .set_long_description("This property marks the solid as 'phantom'. \n"
+        .set_long_description("This property tags the solid as 'phantom'.  \n"
                               "It is not used yet in the Bayeux/geomtools  \n"
-                              "library.                                    \n"
+                              "library because the 'phantom' solid concept \n"
+                              "is not implemented yet.                     \n"
                               )
         .add_example("Make the solid a phantom::         \n"
                      "                                   \n"

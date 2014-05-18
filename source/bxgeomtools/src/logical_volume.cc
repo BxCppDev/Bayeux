@@ -2,12 +2,15 @@
 /* logical_volume.cc
  */
 
+// Ourselves:
 #include <geomtools/logical_volume.h>
 
+// Standard library:
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
 
+// This project:
 #include <geomtools/i_placement.h>
 #include <geomtools/placement.h>
 #include <geomtools/physical_volume.h>
@@ -316,16 +319,16 @@ namespace geomtools {
     DT_THROW_IF (name.empty (), std::logic_error, "Missing physical's name in logical volume '" <<  get_name()  << "' !");
     DT_THROW_IF (_parameters_.has_flag(logical_volume::has_replica_flag()), std::logic_error,
                  "Cannot add more physical volume for a 'replica' already exists in logical volume '" <<  get_name()  << "' !");
-    if (phys_.get_placement ().is_replica ()) {
+    if (phys_.get_placement().is_replica()) {
       DT_THROW_IF (_physicals_.size () > 0, std::logic_error,
                    "Cannot add a 'replica' physical volume for other physicals already exist in logical volume '" <<  get_name()  << "' !");
-      _parameters_.store_flag (logical_volume::has_replica_flag());
+      _parameters_.store_flag(logical_volume::has_replica_flag());
     }
     _physicals_[name] = &phys_;
     return;
   }
 
-  bool logical_volume::is_replica () const
+  bool logical_volume::is_replica() const
   {
     if (_physicals_.size () != 1) return false;
     const physical_volume & phys = *(_physicals_.begin ()->second);

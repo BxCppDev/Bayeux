@@ -158,6 +158,7 @@ namespace geomtools {
                            const std::string & materials_plugin_name_ = "",
                            const std::string & top_mapping_model_name_ = "",
                            const std::string & gdml_file_= "",
+                           bool replica_support_ = true,
                            bool root_display_ = false,
                            int root_vis_option_ = 1,
                            int root_vis_level_ = 100,

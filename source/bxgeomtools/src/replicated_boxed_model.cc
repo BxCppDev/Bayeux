@@ -1,12 +1,13 @@
-// -*- mode: c++ ; -*-
-/* replicated_boxed_model.cc
- */
+/// replicated_boxed_model.cc
 
+// Ourselves:
 #include <geomtools/replicated_boxed_model.h>
 
+// Standard library:
 #include <exception>
 #include <limits>
 
+// This project:
 #include <geomtools/physical_volume.h>
 #include <geomtools/visibility.h>
 

@@ -159,7 +159,6 @@ namespace geomtools {
       && (!geomtools::is_valid(_step_) || _step_.mag() == 0.0);
   }
 
-  // ctor:
   regular_linear_placement::regular_linear_placement () : i_placement ()
   {
     _basic_placement_.invalidate ();
@@ -169,7 +168,6 @@ namespace geomtools {
     return;
   }
 
-  // ctor:
   regular_linear_placement::regular_linear_placement (const placement & basic_placement_,
                                                       const vector_3d & step_,
                                                       size_t number_of_items_) : i_placement ()
@@ -180,7 +178,6 @@ namespace geomtools {
     return;
   }
 
-  // ctor:
   regular_linear_placement::regular_linear_placement (const placement & basic_placement_,
                                                       double step_,
                                                       size_t number_of_items_,

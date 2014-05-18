@@ -20,15 +20,26 @@
 #include <iostream>
 #include <string>
 
+// Third party:
+// - Bayeux/datatools:
+#include <datatools/object_configuration_description.h>
+
 // This project:
 #include <geomtools/i_shape_3d.h>
 #include <geomtools/i_stackable.h>
 #include <geomtools/i_wires_3d_rendering.h>
 
+namespace datatools {
+  // Forward class declaration:
+  class properties;
+}
+
 namespace geomtools {
 
+  // Forward class declaration:
   class cylinder;
 
+  /// \brief The 3D shape model for a tube
   class tube : public i_shape_3d, public i_stackable
   {
   public:
@@ -87,13 +98,13 @@ namespace geomtools {
 
   public:
 
-    // ctor:
+    /// Default constructor
     tube();
 
-    // ctor:
+    /// Constructor
     tube (double inner_radius_, double outer_radius_, double z_);
 
-    // dtor:
+    /// Destructor
     virtual ~tube ();
 
     virtual std::string get_shape_name () const;
@@ -104,7 +115,11 @@ namespace geomtools {
 
     bool is_valid () const;
 
-    void reset ();
+    /// Initialize the cylinder from properties
+    void initialize(const datatools::properties &);
+
+    /// Reset the cylinder
+    void reset();
 
     virtual double get_surface (uint32_t mask_ = FACE_ALL_BITS) const;
 
@@ -142,6 +157,9 @@ namespace geomtools {
                                  const placement & ,
                                  uint32_t options_ = 0) const;
 
+    /// OCD support
+    static void init_ocd(datatools::object_configuration_description &);
+
   private:
 
     double _z_;
@@ -151,5 +169,9 @@ namespace geomtools {
   };
 
 } // end of namespace geomtools
+
+/// OCD support declaration
+// @arg geomtools::tube the name the class
+DOCD_CLASS_DECLARATION(geomtools::tube)
 
 #endif // GEOMTOOLS_TUBE_H

@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* simple_shaped_model.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/simple_shaped_model.h
+/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-10-13
  * Last modified: 2010-10-13
  *
@@ -17,8 +17,10 @@
 #ifndef GEOMTOOLS_SIMPLE_SHAPED_MODEL_H_
 #define GEOMTOOLS_SIMPLE_SHAPED_MODEL_H_ 1
 
+// Standard library:
 #include <string>
 
+// This project:
 #include <geomtools/i_model.h>
 #include <geomtools/placement.h>
 #include <geomtools/physical_volume.h>
@@ -158,5 +160,3 @@ namespace geomtools {
 DOCD_CLASS_DECLARATION(geomtools::simple_shaped_model)
 
 #endif // GEOMTOOLS_SIMPLE_SHAPED_MODEL_H_
-
-// end of simple_shaped_model.h

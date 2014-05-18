@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* ocd_support.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/ocd_support.h
+/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-04-24
  * Last modified: 2013-04-24
  *
@@ -46,5 +46,3 @@
 /* DOCD_CLASS_DECLARATION(geomtools::surrounded_boxed_model)             */
 
 #endif // GEOMTOOLS_OCD_SUPPORT_H_
-
-// end of ocd_support.h

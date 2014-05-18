@@ -1,0 +1,5 @@
+# Ordered list of geometry models:
+${SETUP_CONFIG_DIR}/config/geomtools_ex00/geometry/0.1/models/simple_shaped_models.geom
+${SETUP_CONFIG_DIR}/config/geomtools_ex00/geometry/0.1/models/replica_models.geom
+${SETUP_CONFIG_DIR}/config/geomtools_ex00/geometry/0.1/models/world.geom
+# end of the list.
