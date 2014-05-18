@@ -36,6 +36,16 @@ set(GEOMTOOLS_WITH_REFLECTION 1)
 set(GEOMTOOLS_WITH_GNUPLOT_DISPLAY 1)
 set(GEOMTOOLS_WITH_ROOT_DISPLAY 1)
 
+find_package(Readline QUIET)
+if (Readline_FOUND)
+  message (STATUS "bxgeomtools: Found readline library...")
+  message (STATUS "bxgeomtools: Readline_INCLUDE_DIR = '${Readline_INCLUDE_DIR}' ")
+  message (STATUS "bxgeomtools: Readline_LIBRARIES   = '${Readline_LIBRARIES}' ")
+  set(GEOMTOOLS_WITH_READLINE 1)
+else()
+  message (STATUS "bxgeomtools: Readline library not found!")
+endif()
+
 # - Raw Headers and Sources
 set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/address_set.h
@@ -117,9 +127,11 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/polyline_3d.ipp
   ${module_include_dir}/${module_name}/rectangle.h
   ${module_include_dir}/${module_name}/regular_grid_placement.h
+  ${module_include_dir}/${module_name}/regular_circular_placement.h
   ${module_include_dir}/${module_name}/regular_linear_placement.h
   ${module_include_dir}/${module_name}/regular_polygon.h
   ${module_include_dir}/${module_name}/replicated_boxed_model.h
+  ${module_include_dir}/${module_name}/replicated_circular_model.h
   ${module_include_dir}/${module_name}/replicated_model.h
   ${module_include_dir}/${module_name}/rotated_boxed_model.h
   ${module_include_dir}/${module_name}/sensitive.h
@@ -194,6 +206,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/physical_volume.cc
   ${module_source_dir}/multiple_placement.cc
   ${module_source_dir}/regular_grid_placement.cc
+  ${module_source_dir}/regular_circular_placement.cc
   ${module_source_dir}/regular_linear_placement.cc
   ${module_source_dir}/placement.cc
   ${module_source_dir}/regular_polygon.cc
@@ -211,6 +224,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/spherical_extrusion_box_model.cc
   ${module_source_dir}/cylindric_extrusion_boxed_model.cc
   ${module_source_dir}/replicated_boxed_model.cc
+  ${module_source_dir}/replicated_circular_model.cc
   ${module_source_dir}/replicated_model.cc
   ${module_source_dir}/grid_model.cc
   ${module_source_dir}/rotated_boxed_model.cc
@@ -304,6 +318,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_polyline_3d.cxx
   ${module_test_dir}/test_rectangle.cxx
   ${module_test_dir}/test_regular_grid_placement.cxx
+  ${module_test_dir}/test_regular_circular_placement.cxx
   ${module_test_dir}/test_regular_linear_placement.cxx
   ${module_test_dir}/test_regular_polygon.cxx
   ${module_test_dir}/test_rotation_3d.cxx
