@@ -2,7 +2,7 @@
 Bayeux C++ Library for Experimental Particle/Nuclear Physics
 ============================================================
 
-:Authors: François Mauger, Xavier Garrido, Ben Morgan
+:Authors: François Mauger, Xavier Garrido, Benoit Guillon, Ben Morgan
 :Date:    Today
 
 .. contents::
@@ -131,6 +131,7 @@ clicking on the Downloads tab, and then installing Command Line Tools.
        - with GDML support enabled (through the XercesC library)
    -  ROOT 5.34.0 or higher: http://root.cern.ch
       geomtools requires you setup ROOT at least with support for:
+
        * minimal X11,
        * GDML,
        * OpenGL.
@@ -143,7 +144,10 @@ packages.
 -  **Additional Software Required**
 
    - geomtools also requires Gnuplot 4.0 or higher: http://www.gnuplot.info
+   - geomtools uses the Readline library, if available:
 
+      * http://cnswww.cns.cwru.edu/php/chet/readline/rltop.html
+      * http://askubuntu.com/questions/194523/how-do-i-install-gnu-readline
 
 Known Issues on Tested Platforms
 --------------------------------
