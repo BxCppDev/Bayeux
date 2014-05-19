@@ -244,6 +244,14 @@ foreach(_bxapp IN LISTS Bayeux_APPS Bayeux_GEANT4_APPS)
   endif()
   target_link_libraries(bx${_app_basename} Bayeux)
 
+  # - Use Readline
+  if ("${_app_basename}" STREQUAL "geomtools_inspector")
+    if(GEOMTOOLS_WITH_READLINE)
+      include_directories(${Readline_INCLUDE_DIR})
+      target_link_libraries(bx${_app_basename} ${Readline_LIBRARIES})
+    endif()
+  endif()
+
   # - Hack to get program_options in without linking it to libBayeux
   target_link_libraries(bx${_app_basename} ${Boost_program_options_LIBRARY})
 
