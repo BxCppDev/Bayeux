@@ -13,12 +13,14 @@
  *
  */
 
-#ifndef GEOMTOOLS_REPLICATED_BOXED_MODEL_H_
-#define GEOMTOOLS_REPLICATED_BOXED_MODEL_H_ 1
+#ifndef GEOMTOOLS_REPLICATED_BOXED_MODEL_H
+#define GEOMTOOLS_REPLICATED_BOXED_MODEL_H 1
 
+// Standard libraries:
 #include <string>
 #include <iostream>
 
+// This project:
 #include <geomtools/i_boxed_model.h>
 #include <geomtools/regular_linear_placement.h>
 #include <geomtools/physical_volume.h>
@@ -28,8 +30,8 @@ namespace geomtools {
 
   class box;
 
-  // define a geometry model with a single box:
-  GEOMTOOLS_BOXED_MODEL_CLASS_DECLARE(replicated_boxed_model)
+  // \brief A geometry model implementing a single box with daughter boxes replicated along an axis
+  class replicated_boxed_model : public i_boxed_model
   {
 
   public:
@@ -79,4 +81,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_REPLICATED_BOXED_MODEL_H_
+#endif // GEOMTOOLS_REPLICATED_BOXED_MODEL_H

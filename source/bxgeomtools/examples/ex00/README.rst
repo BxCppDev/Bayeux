@@ -46,10 +46,13 @@ Quick start
         bxgeomtools_inspector \
          --manager-config config/geomtools_ex00/geometry/0.1/manager.conf --visu-view-3d
 
+   where the ``SETUP_CONFIG_DIR`` environment variable represents the base source directory
+   of the ``ex00`` example.
+
 Documentation
 =============
 
 You can generate documentation HTML pages about the geomtools primitive classes
-through the following command: ::
+using the following command: ::
 
       $ bxocd_make_doc -n geomtools -B

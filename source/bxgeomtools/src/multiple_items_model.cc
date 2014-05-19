@@ -1,9 +1,9 @@
-// -*- mode: c++ ; -*-
-/* multiple_items_model.cc
- */
+// multiple_items_model.cc
 
+// Ourselves:
 #include <geomtools/multiple_items_model.h>
 
+// Standard library:
 #include <cstdlib>
 #include <cmath>
 #include <stdexcept>
@@ -11,9 +11,12 @@
 #include <iomanip>
 #include <sstream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/units.h>
 #include <datatools/exception.h>
 
+// This project:
 #include <geomtools/placement.h>
 #include <geomtools/physical_volume.h>
 #include <geomtools/utils.h>
@@ -22,7 +25,7 @@
 
 namespace geomtools {
 
-  MWIM & multiple_items_model::get_internals ()
+  MWIM & multiple_items_model::grab_internals ()
   {
     return _internals_;
   }
@@ -60,14 +63,12 @@ namespace geomtools {
      return _material_name_;
   }
 
-  // ctor:
   multiple_items_model::multiple_items_model ()
     : i_boxed_model ()
   {
     return;
   }
 
-  // dtor:
   multiple_items_model::~multiple_items_model ()
   {
     //__items.clear ();
@@ -82,11 +83,10 @@ namespace geomtools {
 
     /*** box dimensions ***/
     double lunit = CLHEP::mm;
-    if (config_.has_key ("length_unit"))
-      {
-        const std::string length_unit_str = config_.fetch_string ("length_unit");
-        lunit = datatools::units::get_length_unit_from (length_unit_str);
-      }
+    if (config_.has_key ("length_unit")) {
+      const std::string length_unit_str = config_.fetch_string ("length_unit");
+      lunit = datatools::units::get_length_unit_from (length_unit_str);
+    }
 
     double x;
     datatools::invalidate (x);
@@ -115,7 +115,6 @@ namespace geomtools {
       z *= lunit;
     }
 
-    /*** material ***/
     DT_THROW_IF (! config_.has_key ("material.ref"),
                  std::logic_error,
                  "Missing 'material.ref' property in multiple items model '" << name_ << "' !");
@@ -178,5 +177,3 @@ namespace geomtools {
   GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(multiple_items_model,"geomtools::multiple_items_model");
 
 } // end of namespace geomtools
-
-// end of multiple_items_model.cc

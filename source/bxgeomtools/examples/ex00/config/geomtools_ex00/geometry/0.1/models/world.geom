@@ -42,12 +42,13 @@ material.ref : string = "vacuum"
 ###################
 
 #@description The list of daughter volumes by labels
-internal_item.labels : string[18] = \
+internal_item.labels : string[21] = \
   "BoxA" "BoxB" "BoxC" "BoxD" "BoxE" \
   "ManyBoxes" "CircleBoxes" \
   "WallBricks" \
   "CylA" "CylB" "CylC" "CylD" "CylE" "CylF" \
-  "CylCol0" "CylCol1a" "CylCol2a" "CylSubGrid"
+  "CylCol0" "CylCol1a" "CylCol2a" "CylSubGrid" \
+  "DetStack0" "DetStack1" "SpecialStack"
 
 #@description The model of the "BoxA" daughter volume
 internal_item.model.BoxA       : string  = "blue_box0.model"
@@ -157,6 +158,25 @@ internal_item.model.CylSubGrid      : string  = "box0_small_grid.model"
 #@description The placement of the "CylSubGrid" daughter volume
 internal_item.placement.CylSubGrid  : string  = "10 45 20 (cm)"
 
+#@description The model of the "DetStack0" daughter volume
+internal_item.model.DetStack0      : string  = "detector_stack.model"
+
+#@description The placement of the "DetStack0" daughter volume
+internal_item.placement.DetStack0  : string  = "35 -20 -20 (cm) / x -90 (degree)"
+
+#@description The model of the "DetStack1" daughter volume
+internal_item.model.DetStack1      : string  = "detector_stack.model"
+
+#@description The placement of the "DetStack1" daughter volume
+internal_item.placement.DetStack1  : string  = "35 +20 -20 (cm) / x 90 (degree)"
+
+#@description The model of the "SpecialStack" daughter volume
+internal_item.model.SpecialStack      : string  = "stack_with_insertion.model"
+
+#@description The placement of the "SpecialStack" daughter volume
+internal_item.placement.SpecialStack  : string  = "35 +10 +20 (cm) / x 90 (degree)"
+
+
 ###########
 # Mapping #
 ###########
@@ -215,6 +235,12 @@ mapping.daughter_id.CylCol1a : string = "[any_column.gc:column=1]"
 
 #@description The mapping directives for the "CylCol2a" daughter volume
 mapping.daughter_id.CylCol2a : string = "[any_column.gc:column=2]"
+
+#@description The mapping directives for the "DetStack0" daughter volume
+mapping.daughter_id.DetStack0 : string = "[detector.gc:unit=0]"
+
+#@description The mapping directives for the "DetStack1" daughter volume
+mapping.daughter_id.DetStack1 : string = "[detector.gc:unit=1]"
 
 
 ##############

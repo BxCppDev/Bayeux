@@ -13,8 +13,8 @@
  *
  */
 
-#ifndef GEOMTOOLS_REPLICATED_MODEL_H_
-#define GEOMTOOLS_REPLICATED_MODEL_H_ 1
+#ifndef GEOMTOOLS_REPLICATED_MODEL_H
+#define GEOMTOOLS_REPLICATED_MODEL_H 1
 
 // Standard library:
 #include <string>
@@ -32,8 +32,8 @@ namespace geomtools {
 
   class box;
 
-  // define a geometry model with a single box:
-  GEOMTOOLS_BOXED_MODEL_CLASS_DECLARE(replicated_model)
+  // \brief A geometry model implementing a single box with daughter volumes replicated along an axis
+  class replicated_model : public i_boxed_model
   {
 
   public:

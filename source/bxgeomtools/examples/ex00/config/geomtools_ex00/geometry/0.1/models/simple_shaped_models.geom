@@ -219,6 +219,45 @@ visibility.color  : string  = "blue"
 visibility.hidden : boolean = 0
 
 
+########################################################################
+[name="long_blue_cylinder0.model" type="geomtools::simple_shaped_model"]
+
+#@config Configuration parameters for a geometry model with a simple (blue) cylinder of arbitrary dimensions and material
+
+############
+# Geometry #
+############
+
+#@description The default length unit
+length_unit : string = "mm"
+
+#@description The name of the 3D shape of the volume
+shape_type  : string = "cylinder"
+
+#@description The radius of the cylinder
+r           : real as length =  40.0 mm
+
+#@description The height of the cylinder
+z           : real as length =  120.0 mm
+
+############
+# Material #
+############
+
+#@description The name of the material that fills the box
+material.ref : string = "lead"
+
+##############
+# Visibility #
+##############
+
+#@description The recommended color for the display of the box
+visibility.color  : string  = "blue"
+
+#@description The visibility hidden flag for the display of the box
+visibility.hidden : boolean = 0
+
+
 #####################################################################
 [name="orange_cylinder0.model" type="geomtools::simple_shaped_model"]
 
@@ -333,4 +372,244 @@ material.ref : string = "lead"
 visibility.color  : string  = "red"
 
 #@description The visibility hidden flag for the display of the box
+visibility.hidden : boolean = 0
+
+
+##########################################################################
+[name="blue_medium_cylinder0.model" type="geomtools::simple_shaped_model"]
+
+#@config Configuration parameters for a geometry model with a simple (blue) cylinder of arbitrary dimensions and material
+
+############
+# Geometry #
+############
+
+#@description The default length unit
+length_unit : string = "mm"
+
+#@description The name of the 3D shape of the volume
+shape_type  : string = "cylinder"
+
+#@description The radius of the cylinder
+r           : real as length =  60.0 mm
+
+#@description The height of the cylinder
+z           : real as length =  40.0 mm
+
+############
+# Material #
+############
+
+#@description The name of the material that fills the box
+material.ref : string = "lead"
+
+##############
+# Visibility #
+##############
+
+#@description The recommended color for the display of the box
+visibility.color  : string  = "blue"
+
+#@description The visibility hidden flag for the display of the box
+visibility.hidden : boolean = 0
+
+
+############################################################################
+[name="orange_medium_cylinder0.model" type="geomtools::simple_shaped_model"]
+
+#@config Configuration parameters for a geometry model with a simple (orange) cylinder of arbitrary dimensions and material
+
+############
+# Geometry #
+############
+
+#@description The default length unit
+length_unit : string = "mm"
+
+#@description The name of the 3D shape of the volume
+shape_type  : string = "cylinder"
+
+#@description The radius of the cylinder
+r           : real as length =  65.0 mm
+
+#@description The height of the cylinder
+z           : real as length =  45.0 mm
+
+############
+# Material #
+############
+
+#@description The name of the material that fills the box
+material.ref : string = "lead"
+
+##############
+# Visibility #
+##############
+
+#@description The recommended color for the display of the box
+visibility.color  : string  = "orange"
+
+#@description The visibility hidden flag for the display of the box
+visibility.hidden : boolean = 0
+
+
+###########################################################################
+[name="green_medium_cylinder0.model" type="geomtools::simple_shaped_model"]
+
+#@config Configuration parameters for a geometry model with a simple (green) cylinder of arbitrary dimensions and material
+
+############
+# Geometry #
+############
+
+#@description The default length unit
+length_unit : string = "mm"
+
+#@description The name of the 3D shape of the volume
+shape_type  : string = "cylinder"
+
+#@description The radius of the cylinder
+r           : real as length =  40.0 mm
+
+#@description The height of the cylinder
+z           : real as length =  50.0 mm
+
+############
+# Material #
+############
+
+#@description The name of the material that fills the box
+material.ref : string = "lead"
+
+##############
+# Visibility #
+##############
+
+#@description The recommended color for the display of the box
+visibility.color  : string  = "green"
+
+#@description The visibility hidden flag for the display of the box
+visibility.hidden : boolean = 0
+
+
+#########################################################################
+[name="red_medium_cylinder0.model" type="geomtools::simple_shaped_model"]
+
+#@config Configuration parameters for a geometry model with a simple (red) cylinder of arbitrary dimensions and material
+
+############
+# Geometry #
+############
+
+#@description The default length unit
+length_unit : string = "mm"
+
+#@description The name of the 3D shape of the volume
+shape_type  : string = "cylinder"
+
+#@description The radius of the cylinder
+r           : real as length =  70.0 mm
+
+#@description The height of the cylinder
+z           : real as length =  55.0 mm
+
+############
+# Material #
+############
+
+#@description The name of the material that fills the box
+material.ref : string = "lead"
+
+##############
+# Visibility #
+##############
+
+#@description The recommended color for the display of the box
+visibility.color  : string  = "red"
+
+#@description The visibility hidden flag for the display of the box
+visibility.hidden : boolean = 0
+
+
+#####################################################################
+[name="blue_large_tube0.model" type="geomtools::simple_shaped_model"]
+
+#@config Configuration parameters for a geometry model with a simple (blue) tube of arbitrary dimensions and material
+
+############
+# Geometry #
+############
+
+#@description The default length unit
+length_unit : string = "mm"
+
+#@description The name of the 3D shape of the volume
+shape_type  : string = "tube"
+
+#@description The inner radius of the cylinder
+inner_r     : real as length =  80.0 mm
+
+#@description The outer radius of the cylinder
+outer_r     : real as length =  100.0 mm
+
+#@description The height of the cylinder
+z           : real as length =  100.0 mm
+
+############
+# Material #
+############
+
+#@description The name of the material the tube is made of
+material.ref : string = "iron"
+
+##############
+# Visibility #
+##############
+
+#@description The recommended color for the display of the tube
+visibility.color  : string  = "blue"
+
+#@description The visibility hidden flag for the display of the tube
+visibility.hidden : boolean = 0
+
+
+###################################################################
+[name="red_huge_tube0.model" type="geomtools::simple_shaped_model"]
+
+#@config Configuration parameters for a geometry model with a simple (red) tube of arbitrary dimensions and material
+
+############
+# Geometry #
+############
+
+#@description The default length unit
+length_unit : string = "mm"
+
+#@description The name of the 3D shape of the volume
+shape_type  : string = "tube"
+
+#@description The inner radius of the cylinder
+inner_r     : real as length =  65.0 mm
+
+#@description The outer radius of the cylinder
+outer_r     : real as length =  90 mm
+
+#@description The height of the cylinder
+z           : real as length =  200.0 mm
+
+############
+# Material #
+############
+
+#@description The name of the material the tube is made of
+material.ref : string = "iron"
+
+##############
+# Visibility #
+##############
+
+#@description The recommended color for the display of the tube
+visibility.color  : string  = "red"
+
+#@description The visibility hidden flag for the display of the tube
 visibility.hidden : boolean = 0

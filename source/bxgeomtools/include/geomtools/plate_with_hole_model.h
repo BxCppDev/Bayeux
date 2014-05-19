@@ -1,22 +1,23 @@
-// -*- mode: c++ ; -*- 
-/* plate_with_hole_model.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+// -*- mode: c++ ; -*-
+/// \file geomtools/plate_with_hole_model.h
+/* Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-04-04
- * Last modified: 2012-04-04
- * 
- * License: 
- * 
- * Description: 
+ * Last modified: 2014-05-19
+ *
+ * License:
+ *
+ * Description:
  *
  *   A box extruded by a spherical volumes on top or bottom face.
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
-#ifndef GEOMTOOLS_PLATE_WITH_HOLE_MODEL_H_
-#define GEOMTOOLS_PLATE_WITH_HOLE_MODEL_H_ 1
+#ifndef GEOMTOOLS_PLATE_WITH_HOLE_MODEL_H
+#define GEOMTOOLS_PLATE_WITH_HOLE_MODEL_H 1
 
+// Standard library:
 #include <cstdlib>
 #include <cmath>
 #include <stdexcept>
@@ -25,54 +26,60 @@
 #include <sstream>
 #include <string>
 
+// This project:
 #include <geomtools/i_model.h>
 #include <geomtools/box.h>
 #include <geomtools/cylinder.h>
 #include <geomtools/subtraction_3d.h>
-
 #include <geomtools/placement.h>
 #include <geomtools/physical_volume.h>
 #include <geomtools/logical_volume.h>
 #include <geomtools/gnuplot_draw.h>
 
 namespace geomtools {
- 
-  GEOMTOOLS_MODEL_CLASS_DECLARE(plate_with_hole_model)
-  {
-  public: 
 
+  /// \brief A geometry model implementing a box/plate with cylindrical hole
+  /// This class is similar to the geomtools::cylindric_extrusion_boxed_model
+  /// class.
+  class plate_with_hole_model : public i_model
+  {
+  public:
+
+    /// Return the name of the material
     const std::string & get_material () const;
 
+    /// Return the top level solid
     const geomtools::subtraction_3d & get_solid () const;
 
+    /// Return the geometry model class Id
     virtual std::string get_model_id () const;
 
-  public: 
-    // ctor:
+    /// Default constructor
     plate_with_hole_model ();
 
-    // dtor:
+    /// Destructor
     virtual ~plate_with_hole_model ();
-      
-  public: 
-    virtual void tree_dump (std::ostream & out_         = std::clog, 
-                            const std::string & title_  = "", 
-                            const std::string & indent_ = "", 
+
+    /// Smart print
+    virtual void tree_dump (std::ostream & out_         = std::clog,
+                            const std::string & title_  = "",
+                            const std::string & indent_ = "",
                             bool inherit_          = false) const;
+
+    /// Special Gnuplot rendering
+    static void gnuplot_draw_user_function (std::ostream &,
+                                            const geomtools::vector_3d &,
+                                            const geomtools::rotation_3d &,
+                                            const geomtools::i_object_3d &,
+                                            void * = 0);
   protected:
 
+    /// Construction
     virtual void _at_construct (const std::string & name_,
                                 const datatools::properties & setup_,
                                 geomtools::models_col_type * models_ = 0);
-     
-  public: 
 
-    static void gnuplot_draw_user_function (std::ostream &, 
-                                            const geomtools::vector_3d &, 
-                                            const geomtools::rotation_3d &,
-                                            const geomtools::i_object_3d &, 
-                                            void * = 0);
-  private: 
+  private:
 
     std::string               _material_;
     geomtools::box            _mother_;
@@ -82,7 +89,7 @@ namespace geomtools {
     double                    _x_; /// X box
     double                    _y_; /// Y box
     double                    _z_; /// Z box
-    
+
     double                    _r_hole_;
     double                    _x_hole_;
     double                    _y_hole_;
@@ -92,13 +99,11 @@ namespace geomtools {
 
   private:
 
+    // Registration interface :
     GEOMTOOLS_MODEL_REGISTRATION_INTERFACE (plate_with_hole_model);
-
 
   };
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_PLATE_WITH_HOLE_MODEL_H_
-
-// end of plate_with_hole_model.h
+#endif // GEOMTOOLS_PLATE_WITH_HOLE_MODEL_H

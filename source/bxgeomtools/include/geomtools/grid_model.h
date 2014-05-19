@@ -13,8 +13,8 @@
  *
  */
 
-#ifndef GEOMTOOLS_GRID_MODEL_H_
-#define GEOMTOOLS_GRID_MODEL_H_ 1
+#ifndef GEOMTOOLS_GRID_MODEL_H
+#define GEOMTOOLS_GRID_MODEL_H 1
 
 // Standard library:
 #include <string>
@@ -32,8 +32,8 @@ namespace geomtools {
 
   class box;
 
-  // define a geometry model with a single box:
-  GEOMTOOLS_BOXED_MODEL_CLASS_DECLARE(grid_model)
+  /// \brief A geometry model implementing a mother box volume with some daughter volumes positioned on a 2D grid
+  class grid_model : public i_boxed_model
   {
 
   public:
@@ -123,4 +123,4 @@ namespace geomtools {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(geomtools::grid_model)
 
-#endif // GEOMTOOLS_GRID_MODEL_H_
+#endif // GEOMTOOLS_GRID_MODEL_H

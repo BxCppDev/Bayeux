@@ -768,7 +768,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::mapping, ocd_)
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
       .set_default_value_string("strict_mothership")
-      .set_long_description("This property set the build mode of the mapping.         \n"
+      .set_long_description("This property sets the build mode of the mapping.         \n"
                             "The only supported mode is ``strict_mothership``.        \n"
                             "The ``strict_mothership`` mode implies that daughter     \n"
                             "volume GIDs are built from their strict inheritance      \n"
@@ -789,7 +789,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::mapping, ocd_)
       .set_traits(datatools::TYPE_INTEGER)
       .set_mandatory(false)
       .set_default_value_integer(0)
-      .set_long_description("This property set the maximum depth of the mapping. \n"
+      .set_long_description("This property sets the maximum depth of the mapping. \n"
                             "Value ``0`` means infinite depth.                   \n"
                             )
       .add_example("Use depth up to 10 hierarchical levels: :: \n"

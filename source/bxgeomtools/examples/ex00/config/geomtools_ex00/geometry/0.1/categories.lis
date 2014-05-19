@@ -50,13 +50,50 @@ addresses : string[1] = "column"
 
 #@config The geometry category associated to some volumes on a 2D grid pattern
 
-#@description The GID address of a volume at a given node inherits the "column" number \
- of the column it belongs to
+#@description The GID address of a volume at a given node inherits the "column" number of the column it belongs to
 extends : string = "any_column.gc"
 
-#@description The GID address is extended by an additional address, i.e. 'row' number \
- of the node in the column
+#@description The GID address is extended by an additional address, i.e. 'row' number of the node in the column
 by : string[1] = "row"
+
+
+###################################
+[category="detector.gc" type="400"]
+
+#@config The geometry category associated to a detection unit
+
+#@description The GID address of a detector is characterized by its 'unit' number
+addresses : string[1] = "unit"
+
+
+#####################################
+[category="attenuator.gc" type="410"]
+
+#@config The geometry category associated to the attenuator in a detection unit
+
+#@description The GID address of an attenuator is characterized in the same way the detector unit it belongs to
+inherits : string = "detector.gc"
+
+
+####################################
+[category="collector.gc" type="420"]
+
+#@config The geometry category associated to the collector in a detection unit
+
+#@description The GID address of a collector is characterized in the same way the detector unit it belongs to
+inherits : string = "detector.gc"
+
+
+#################################
+[category="sensor.gc" type="430"]
+
+#@config The geometry category associated to sensors volumes in a detection unit
+
+#@description The GID address of a sensor volume inherits the 'unit' number of the detector unit it belongs too
+extends : string = "detector.gc"
+
+#@description The GID address is extended by an additional address, i.e. 'position' number of the sensor along the detector stack
+by : string[1] = "position"
 
 
 

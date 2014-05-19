@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* cylindric_extrusion_boxed_model.h
- * Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/cylindric_extrusion_boxed_model.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-02
  * Last modified: 2014-03-27
  *
@@ -14,8 +14,8 @@
  *
  */
 
-#ifndef GEOMTOOLS_CYLINDRIC_EXTRUSION_BOXED_MODEL_H_
-#define GEOMTOOLS_CYLINDRIC_EXTRUSION_BOXED_MODEL_H_ 1
+#ifndef GEOMTOOLS_CYLINDRIC_EXTRUSION_BOXED_MODEL_H
+#define GEOMTOOLS_CYLINDRIC_EXTRUSION_BOXED_MODEL_H 1
 
 // Standard libraries:
 #include <iostream>
@@ -35,8 +35,8 @@
 
 namespace geomtools {
 
-  // define a geometry model:
-  GEOMTOOLS_MODEL_CLASS_DECLARE (cylindric_extrusion_boxed_model)
+  /// \brief A geometry model implementing a box with a cylindrical extrusion
+  class cylindric_extrusion_boxed_model : public i_model
   {
   public:
 
@@ -139,6 +139,4 @@ namespace geomtools {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(geomtools::cylindric_extrusion_boxed_model)
 
-#endif // GEOMTOOLS_CYLINDRIC_EXTRUSION_BOXED_MODEL_H_
-
-// end of cylindric_extrusion_boxed_model.h
+#endif // GEOMTOOLS_CYLINDRIC_EXTRUSION_BOXED_MODEL_H

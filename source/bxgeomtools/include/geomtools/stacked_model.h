@@ -14,13 +14,15 @@
  *
  */
 
-#ifndef GEOMTOOLS_STACKED_MODEL_H_
-#define GEOMTOOLS_STACKED_MODEL_H_ 1
+#ifndef GEOMTOOLS_STACKED_MODEL_H
+#define GEOMTOOLS_STACKED_MODEL_H 1
 
+// Standard library:
 #include <string>
 #include <iostream>
 #include <map>
 
+// This project:
 #include <geomtools/i_boxed_model.h>
 #include <geomtools/physical_volume.h>
 #include <geomtools/placement.h>
@@ -30,9 +32,8 @@
 
 namespace geomtools {
 
-  // define a geometry model with some stacked boxed models along
-  // a specific axis (X, Y or Z)
-  GEOMTOOLS_BOXED_MODEL_CLASS_DECLARE(stacked_model)
+  /// \brief A geometry model with some stacked boxed models along a specific axis (X, Y or Z)
+  class stacked_model : public i_boxed_model
   {
   public:
 
@@ -43,13 +44,12 @@ namespace geomtools {
     static const double DEFAULT_MECHANICS_PLAY;
     static const double DEFAULT_NUMERICS_PLAY;
 
-    enum stacking_axis_t
-      {
-        STACKING_ALONG_INVALID = -1,
-        STACKING_ALONG_X = AXIS_X,
-        STACKING_ALONG_Y = AXIS_Y,
-        STACKING_ALONG_Z = AXIS_Z
-      };
+    enum stacking_axis_t {
+      STACKING_ALONG_INVALID = -1,
+      STACKING_ALONG_X = AXIS_X,
+      STACKING_ALONG_Y = AXIS_Y,
+      STACKING_ALONG_Z = AXIS_Z
+    };
 
     struct stacked_item
     {
@@ -128,22 +128,24 @@ namespace geomtools {
 
     virtual std::string get_model_id () const;
 
+    /// Default constructor
     stacked_model ();
 
+    /// Destructor
     virtual ~stacked_model ();
 
-  protected:
-
-    virtual void _at_construct (const std::string & name_,
-                                const datatools::properties & config_,
-                                models_col_type * models_ = 0);
-
-  public:
-
+    /// Smart print
     virtual void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
                             bool inherit_          = false) const;
+
+  protected:
+
+    /// Construction
+    virtual void _at_construct (const std::string & name_,
+                                const datatools::properties & config_,
+                                models_col_type * models_ = 0);
 
   private:
 
@@ -157,8 +159,7 @@ namespace geomtools {
     double            _mechanics_play_;
 
     // 2011-12-05 FM : add support for additional internal objects :
-    // internal items :
-    MWIM              _internals_;
+    MWIM              _internals_; /// Internal/daughter volumes
 
     // registration interface :
     GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(stacked_model);
@@ -167,6 +168,7 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_STACKED_MODEL_H_
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(geomtools::stacked_model)
 
-// end of stacked_model.h
+#endif // GEOMTOOLS_STACKED_MODEL_H

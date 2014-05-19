@@ -1,8 +1,8 @@
 // -*- mode: c++ ; -*-
 /// \file geomtools/simple_shaped_model.h
-/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-10-13
- * Last modified: 2010-10-13
+ * Last modified: 2014-05-19
  *
  * License:
  *
@@ -14,8 +14,8 @@
  *
  */
 
-#ifndef GEOMTOOLS_SIMPLE_SHAPED_MODEL_H_
-#define GEOMTOOLS_SIMPLE_SHAPED_MODEL_H_ 1
+#ifndef GEOMTOOLS_SIMPLE_SHAPED_MODEL_H
+#define GEOMTOOLS_SIMPLE_SHAPED_MODEL_H 1
 
 // Standard library:
 #include <string>
@@ -38,8 +38,8 @@ namespace geomtools {
   class i_shape_3d;
   class logical_volume;
 
-  // define a geometry model made of a unique simple 3D shape:
-  GEOMTOOLS_MODEL_CLASS_DECLARE(simple_shaped_model)
+  /// \brief A geometry model implementing an unique simple 3D shape, possibly with internal/daughter volumes
+  class simple_shaped_model : public i_model
   {
   public:
 
@@ -159,4 +159,4 @@ namespace geomtools {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(geomtools::simple_shaped_model)
 
-#endif // GEOMTOOLS_SIMPLE_SHAPED_MODEL_H_
+#endif // GEOMTOOLS_SIMPLE_SHAPED_MODEL_H

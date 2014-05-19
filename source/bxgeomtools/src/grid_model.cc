@@ -453,7 +453,7 @@ namespace geomtools {
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::grid_model, ocd_)
 {
   ocd_.set_class_name("geomtools::grid_model");
-  ocd_.set_class_description("A geometry model implementing a mother box with some daughter volume placed on a 2D mesh");
+  ocd_.set_class_description("A geometry model implementing a mother box with a daughter volume replicated on a 2D mesh");
   ocd_.set_class_library("geomtools");
   /*
   ocd_.set_class_documentation("  \n"
@@ -541,7 +541,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::grid_model, ocd_)
       .set_mandatory(true)
       .set_triggered_by_label("grid.plane", "xy;xz")
       .set_long_description("The number of columns along the X axis.    \n")
-      .add_example("Set the number of items on the X axis of the grid:: \n")
       .add_example("A grid in the XY plane with 4 items placed      \n"
                    "along the X axis::                              \n"
                    "                                                \n"

@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* rotated_boxed_model.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/rotated_boxed_model.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-24
  * Last modified: 2013-06-27
  *
@@ -13,23 +13,23 @@
  *
  */
 
-#ifndef GEOMTOOLS_ROTATED_BOXED_MODEL_H_
-#define GEOMTOOLS_ROTATED_BOXED_MODEL_H_ 1
+#ifndef GEOMTOOLS_ROTATED_BOXED_MODEL_H
+#define GEOMTOOLS_ROTATED_BOXED_MODEL_H 1
 
+// Standard libraries:
 #include <iostream>
 #include <string>
 
+// This project:
 #include <geomtools/i_boxed_model.h>
-
 #include <geomtools/box.h>
 #include <geomtools/physical_volume.h>
 #include <geomtools/placement.h>
 
 namespace geomtools {
 
-  // define a geometry model with a boxed model rotated
-  // by some simple rotation:
-  GEOMTOOLS_BOXED_MODEL_CLASS_DECLARE(rotated_boxed_model)
+  /// \brief A geometry model implementing a box with an unique rotated boxed model
+  class rotated_boxed_model : public i_boxed_model
   {
 
   public:
@@ -66,13 +66,11 @@ namespace geomtools {
     physical_volume  _boxed_phys_;
     geomtools::box   _solid_;
 
-    // registration interface :
+    // Registration interface
     GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(rotated_boxed_model);
 
   };
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_ROTATED_BOXED_MODEL_H_
-
-// end of rotated_boxed_model.h
+#endif // GEOMTOOLS_ROTATED_BOXED_MODEL_H

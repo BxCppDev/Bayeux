@@ -13,8 +13,8 @@
  *
  */
 
-#ifndef GEOMTOOLS_I_BOXED_MODEL_H_
-#define GEOMTOOLS_I_BOXED_MODEL_H_ 1
+#ifndef GEOMTOOLS_I_BOXED_MODEL_H
+#define GEOMTOOLS_I_BOXED_MODEL_H 1
 
 // This project:
 #include <geomtools/i_model.h>
@@ -39,12 +39,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#define GEOMTOOLS_BOXED_MODEL_INHERIT \
-  public ::geomtools::i_boxed_model   \
-  /**/
-
-#define GEOMTOOLS_BOXED_MODEL_CLASS_DECLARE(BoxedModelClassName) \
-  class BoxedModelClassName : GEOMTOOLS_BOXED_MODEL_INHERIT      \
-  /**/
-
-#endif // GEOMTOOLS_I_BOXED_MODEL_H_
+#endif // GEOMTOOLS_I_BOXED_MODEL_H

@@ -1,18 +1,21 @@
-// -*- mode: c++ ; -*-
-/* stacked_model.cc
- */
+// stacked_model.cc
 
+// Ourselves
 #include <geomtools/stacked_model.h>
-//
+
+// Standard library:
 #include <exception>
 #include <limits>
 
-#include <mygsl/min_max.h>
-
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/units.h>
 #include <datatools/exception.h>
 #include <datatools/logger.h>
+// - Bayeux/mygsl:
+#include <mygsl/min_max.h>
 
+// This project:
 #include <geomtools/i_stackable.h>
 #include <geomtools/visibility.h>
 
@@ -25,8 +28,6 @@ namespace geomtools {
   const double stacked_model::DEFAULT_MECHANICS_PLAY = 0.0 * CLHEP::mm;
   const double stacked_model::DEFAULT_NUMERICS_PLAY  = 0.0 * CLHEP::mm;
 
-
-  /****************************************************************/
 
   bool stacked_model::is_box_solid() const
   {
@@ -82,8 +83,6 @@ namespace geomtools {
   {
     return phys;
   }
-
-  /****************************************************************/
 
   // registration ID:
   std::string stacked_model::get_model_id () const
@@ -239,7 +238,6 @@ namespace geomtools {
     return *(found->second.model);
   }
 
-  // ctor:
   stacked_model::stacked_model () : i_boxed_model ()
   {
     _material_name_  = "";
@@ -249,7 +247,6 @@ namespace geomtools {
     return;
   }
 
-  // dtor:
   stacked_model::~stacked_model ()
   {
     return;
@@ -368,8 +365,7 @@ namespace geomtools {
     double stacked_z = 0.0;
     for (stacked_dict_type::const_iterator i = _stacked_models_.begin ();
          i != _stacked_models_.end ();
-         i++)
-      {
+         i++) {
         const int index = i->first;
         const stacked_item & bi = i->second;
         const i_model * stacked_model = bi.model;
@@ -385,8 +381,7 @@ namespace geomtools {
         DT_LOG_TRACE (get_logging_priority (),
                       "Dump stackable data for '" << stacked_model->get_name () <<
                       "' from '" << name_ << "'...");
-        if (get_logging_priority () >= datatools::logger::PRIO_TRACE)
-          {
+        if (get_logging_priority () >= datatools::logger::PRIO_TRACE) {
             the_SD.tree_dump (std::cerr);
           }
 
@@ -711,4 +706,308 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-// end of stacked_model.cc
+
+// OCD support for class '::geomtools::stacked_model' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::stacked_model, ocd_)
+{
+  ocd_.set_class_name("geomtools::stacked_model");
+  ocd_.set_class_description("A geometry model implementing a mother box with some daughter volumes stacked along an axis");
+  ocd_.set_class_library("geomtools");
+  /*
+  ocd_.set_class_documentation("  \n"
+                               );
+  */
+
+  // Inherit the OCD support from the parent class:
+  geomtools::i_model::init_ocd(ocd_);
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("material.ref")
+      .set_terse_description("The label of the material the mother volume is made of")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .add_example("Using the 'Air' material::                     \n"
+                   "                                               \n"
+                   "   material.ref : string = \"Air\"             \n"
+                   "                                               \n"
+                   )
+      ;
+  }
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("length_unit")
+      .set_terse_description("The length unit symbol")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_default_value_string("mm")
+      .set_long_description("This property set the symbol of the default length\n"
+                            "unit.                                             \n"
+                            )
+      .add_example("Using cm::                                       \n"
+                   "                                                 \n"
+                   "   length_unit : string = \"cm\"                 \n"
+                   "                                                 \n"
+                   )
+      ;
+  }
+
+  //"mechanics_play"
+
+  //"numerics_play"
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("stacked.axis")
+      .set_terse_description("The label of the stacking axis")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .set_long_description("This property set the label of the stacking axis.         \n"
+                            "Possible values are : ``\"x\"``, ``\"y\"`` and ``\"z\"``. \n"
+                            )
+      .add_example("Set the Y axis as the stacking axis::            \n"
+                   "                                                 \n"
+                   "   stacked.axis : string = \"y\"                 \n"
+                   "                                                 \n"
+                   )
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("stacked.number_of_items")
+      .set_terse_description("The number of objects stacked along the axis")
+      .set_traits(datatools::TYPE_INTEGER)
+      .set_mandatory(true)
+      .add_example("A stacked model with 4 items placed along the X axis::  \n"
+                   "                                                \n"
+                   "   stacked.axis            : string = \"x\"     \n"
+                   "   stacked.number_of_items : integer = 4        \n"
+                   "                                                \n"
+                   )
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("stacked.model_N")
+      .set_terse_description("The name of the geometry model to be placed as the Nth slot of the stack")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .set_long_description("All geometry models is searched for an external     \n"
+                            "dictionary of models, typically from a model        \n"
+                            "factory. They must provide a *stackable* interface. \n"
+                            )
+      .add_example("Name of the models stacked at slots 0 to 3 of a stack:: \n"
+                   "                                                        \n"
+                   "   stacked.number_of_items : integer = 4                \n"
+                   "   stacked.model_0 : string = \"phoswich_fast.model\"   \n"
+                   "   stacked.model_1 : string = \"phoswich_slow.model\"   \n"
+                   "   stacked.model_2 : string = \"light_guide.model\"     \n"
+                   "   stacked.model_3 : string = \"PMT.model\"             \n"
+                   "                                                        \n"
+                   )
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("stacked.label_N")
+      .set_terse_description("The label associated to the volume placed as the Nth slot of the stack")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .add_example("Name of the models stacked at slots 0 to 3 of a stack:: \n"
+                   "                                                        \n"
+                   "   stacked.number_of_items : integer = 4                \n"
+                   "   stacked.model_0 : string = \"phoswich_fast.model\"   \n"
+                   "   stacked.model_1 : string = \"phoswich_slow.model\"   \n"
+                   "   stacked.model_2 : string = \"light_guide.model\"     \n"
+                   "   stacked.model_3 : string = \"PMT.model\"             \n"
+                   "                                                        \n"
+                   "   stacked.label_0 : string = \"FastPulse\"             \n"
+                   "   stacked.label_1 : string = \"SlowPulse\"             \n"
+                   "   stacked.label_2 : string = \"stacked_2\" # Default label \n"
+                   "   stacked.label_3 : string = \"stacked_3\" # Default label \n"
+                   "                                                            \n"
+                   "Figure::                                                    \n"
+                   "                                                            \n"
+                   " Slot #0                                                    \n"
+                   "  : Slot #1                                                 \n"
+                   "  :  :                                                      \n"
+                   "  v  v   Slot #2   Slot #3                                  \n"
+                   " +-+---+--------+--                                         \n"
+                   " | |   |        |  `-------+                                \n"
+                   " | |   |        |          |----> Stacking axis             \n"
+                   " | |   |        |   -------+                                \n"
+                   " +-+---+--------+--'                                        \n"
+                   "                                                            \n"
+                   )
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("stacked.limit_min_N")
+      .set_terse_description("Stacking distance with the previous stacked volume            \n")
+      .set_long_description("The distance, along the stacking axis between the              \n"
+                            "center of the volume placed as the Nth slot of the stack       \n"
+                            "and its contact point with the stacked volume at (N-1)th slot. \n")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(false)
+      .add_example("Making the stacked cylinder volume #1 penetrate inside the holes        \n"
+                   "of stacked tube volumes #0 and #2::                                     \n"
+                   "                                                                        \n"
+                   "   stacked.number_of_items : integer = 1                                \n"
+                   "   stacked.model_0 : string = \"tube_with_large_hole.model\"            \n"
+                   "   stacked.model_1 : string = \"cylinder_with_small_radius.model\"      \n"
+                   "   stacked.model_2 : string = \"tube_with_large_hole.model\"            \n"
+                   "                                                                        \n"
+                   "   stacked.limit_max_0 : real as length = 1 cm                          \n"
+                   "   stacked.limit_min_2 : real as length = 4 cm                          \n"
+                   "                                                                        \n"
+                   "Figure::                                                                \n"
+                   "                                                                        \n"
+                   " +-------------+       +-------------+                                  \n"
+                   " |   Tube #0   |       |  Tube #2    |                                  \n"
+                   " +-------------+       +-------------+                                  \n"
+                   " :        +--------------+  4 cm     :                                  \n"
+                   " :      + |  Cylinder #1 |<-->+      :----> Stacking axis               \n"
+                   " : 1 cm <>+--------------+           :                                  \n"
+                   " +-------------+       +-------------+                                  \n"
+                   " |             |       |             |                                  \n"
+                   " +-------------+       +-------------+                                  \n"
+                   "                                                                        \n"
+                   )
+
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("stacked.limit_max_N")
+      .set_terse_description("Stacking distance with the next stacked volume                \n")
+      .set_long_description("The distance, along the stacking axis between the              \n"
+                            "center of the volume placed as the Nth slot of the stack       \n"
+                            "and its contact point with the stacked volume at (N+1)th slot. \n")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(false)
+      .add_example("See example for the ``stacked.limit_min_N`` parameter. \n")
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("x")
+      .set_terse_description("The X dimension of the mother box")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(false)
+      .set_long_description("This property enforces the X dimension of the mother box.\n"
+                            "If not set, the dimensions of the mother box are computed \n"
+                            "automatically.\n")
+      .add_example("Set the X dimension ::                           \n"
+                   "                                                 \n"
+                   "   x : real as length = 24.5 cm                  \n"
+                   "                                                 \n"
+                   "or ::                                            \n"
+                   "                                                 \n"
+                   "   length_unit : string = \"cm\"                 \n"
+                   "   x : real = 24.5                               \n"
+                   "                                                 \n"
+                   )
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("y")
+      .set_terse_description("The Y dimension of the mother box")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(false)
+      .set_long_description("This property enforces the Y dimension of the mother box.\n"
+                            "If not set, the dimensions of the mother box are computed \n"
+                            "automatically.       \n")
+      .add_example("Set the Y dimension ::                          \n"
+                   "                                                \n"
+                   "   y : real as length = 12.34 mm                \n"
+                   "                                                \n"
+                   "or ::                                           \n"
+                   "                                                \n"
+                   "   length_unit : string = \"cm\"                \n"
+                   "   y : real = 12.34                             \n"
+                   "                                                \n"
+                   )
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("z")
+      .set_terse_description("The Z dimension of the mother box")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(false)
+      .set_long_description("This property enforces the Z dimension of the mother box.\n"
+                            "If not set, the dimensions of the mother box are computed \n"
+                            "automatically.\n")
+      .add_example("Set the Z dimension ::                          \n"
+                   "                                                \n"
+                   "   z : real as length = 170.0 um                \n"
+                   "                                                \n"
+                   "or ::                                           \n"
+                   "                                                \n"
+                   "   length_unit : string = \"cm\"                \n"
+                   "   z : real = 24.5                              \n"
+                   "                                                \n"
+                   )
+      ;
+  }
+
+  // Add support for internal/daughter volumes:
+  geomtools::MWIM::init_ocd(ocd_);
+
+  ocd_.set_configuration_hints("This model is configured through a configuration file that \n"
+                               "uses the format of 'datatools::properties' setup file.     \n"
+                               "                                                           \n"
+                               "Example ::                                              \n"
+                               "                                                        \n"
+                               "   material.ref    : string = \"Vacuum\"                \n"
+                               "   length_unit     : string = \"cm\"                    \n"
+                               "   stacked.axis    : string = \"z\"                     \n"
+                               "   stacked.number_of_items : integer = 4                \n"
+                               "   stacked.model_0 : string = \"phoswich_fast.model\"   \n"
+                               "   stacked.model_1 : string = \"phoswich_slow.model\"   \n"
+                               "   stacked.model_2 : string = \"light_guide.model\"     \n"
+                               "   stacked.model_3 : string = \"PMT.model\"             \n"
+                               "                                                        \n"
+                               "   stacked.label_0 : string = \"FastPulse\"             \n"
+                               "   stacked.label_1 : string = \"SlowPulse\"             \n"
+                               "   stacked.label_2 : string = \"LightGuide\"            \n"
+                               "   stacked.label_3 : string = \"PMT_3\"                 \n"
+                               "                                                        \n"
+                               "   # Special directive to position the PMT inside       \n"
+                               "   # the extrusion of the light guide (see figure):     \n"
+                               "   stacked.limit_max_2 : real as length = 2.4 cm        \n"
+                               "                                                        \n"
+                               "                                                        \n"
+                               "Figure::                                                \n"
+                               "                                                        \n"
+                               " Slot #0                                                \n"
+                               "  : Slot #1                                             \n"
+                               "  :  :                                                  \n"
+                               "  v  v   Slot #2   Slot #3                              \n"
+                               " +-+---+-----------+---                                 \n"
+                               " | |   |          /    `--------+                       \n"
+                               " |+| + |     +<-->|      +      |----> Stacking axis    \n"
+                               " | |   |     2.4cm\\     --------+                       \n"
+                               " +-+---+-----------+---'                                \n"
+                               "                                                        \n"
+                               "                                                        \n"
+                              );
+
+
+  ocd_.set_validation_support(true);
+  ocd_.lock();
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+DOCD_CLASS_SYSTEM_REGISTRATION(::geomtools::stacked_model,
+                               "geomtools::stacked_model")

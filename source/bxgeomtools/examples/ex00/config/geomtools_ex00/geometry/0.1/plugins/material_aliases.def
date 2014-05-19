@@ -24,4 +24,10 @@ material : string = "std::copper"
 material : string = "std::lead"
 
 
+##########################
+[name="iron" type="alias"]
+#@description The alias for the standard iron material
+material : string = "std::iron"
+
+
 # end
