@@ -623,6 +623,7 @@ namespace genbb {
       event_.rotate (phi_dir, theta_dir, 0.0);
     }
 
+    event_.set_label (i_genbb::get_name ());
     if (compute_classification_) {
       event_.compute_classification ();
     }
