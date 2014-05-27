@@ -74,7 +74,7 @@ z     : real = 120.0
 #######################
 
 #@description The name of the material that fills the vessel internal volume
-material.ref : string = "vacuum"
+material.ref : string = "vessel_gas"
 
 #########################
 # Visibility parameters #
@@ -210,7 +210,7 @@ stacked.model_1  : string = "vessel_body.model"
 stacked.label_1  : string = "body"
 
 #@description The upper bound of the second stacked volume
-stacked.limit_max_1 : real as length = -60. cm
+stacked.limit_max_1 : real as length = -60.0 cm
 
 #@description The model of the third stacked volume
 stacked.model_2  : string = "vessel_inner_volume.model"
@@ -253,16 +253,13 @@ visibility.hidden_envelope  : boolean = 1
 ##########################################
 
 #@description The mapping directives for the "endcap0" daughter volume
-mapping.daughter_id.endcap0 : string  = "[vessel_part.gc:part=0]"
+mapping.daughter_id.endcap0      : string  = "[vessel_part.gc:part=0]"
 
 #@description The mapping directives for the "body" daughter volume
-mapping.daughter_id.body : string  = "[vessel_part.gc:part=1]"
+mapping.daughter_id.body         : string  = "[vessel_part.gc:part=1]"
 
 #@description The mapping directives for the "endcap1" daughter volume
-mapping.daughter_id.endcap1 : string  = "[vessel_part.gc:part=2]"
+mapping.daughter_id.endcap1      : string  = "[vessel_part.gc:part=2]"
 
 #@description The mapping directives for the "inner_volume" daughter volume
 mapping.daughter_id.inner_volume : string  = "[vessel_vacuum.gc]"
-
-
-# End of list of multi-properties.

@@ -18,30 +18,29 @@
  *
  */
 
-// Standard library
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
 #include <string>
 
-// Third party
-// - Boost
+// Third party:
+// - Boost:
 #include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
 #include <boost/foreach.hpp>
 #include <boost/scoped_ptr.hpp>
-// - Bayeux
+// - Bayeux:
 #include <bayeux/bayeux.h>
-// - Bayeux/datatools
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/things.h>
 #include <datatools/library_loader.h>
-
-// - Bayeux/geomtools
+// - Bayeux/geomtools:
 #include <geomtools/manager.h>
-// - Bayeux/dpp
+// - Bayeux/dpp:
 #include <dpp/output_module.h>
-// - Bayeux/mctools
+// - Bayeux/mctools:
 #include <mctools/g4/simulation_module.h>
 
 int main(int argc_, char **argv_) {
@@ -50,9 +49,9 @@ int main(int argc_, char **argv_) {
   datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
   int error_code = EXIT_SUCCESS;
   try {
-    std::string geometry_config_filename;
-    std::string simulation_config_filename;
-    std::string output_filename;
+    std::string  geometry_config_filename;
+    std::string  simulation_config_filename;
+    std::string  output_filename;
     unsigned int number_of_events = 10;
 
     // Parse options:
@@ -69,7 +68,6 @@ int main(int argc_, char **argv_) {
       ("output-file,o",
        po::value<std::string>(&output_filename),
        "set the output filename")
-
       ; // end of options description
 
     // Describe command line arguments :
@@ -108,8 +106,8 @@ int main(int argc_, char **argv_) {
     sim_mod_params.mgr_seed  = 11111; // Geant4 PRNG seed
     sim_mod_params.vg_seed   = 22222; // Vertex generator PRNG seed
     sim_mod_params.eg_seed   = 33333; // Event generator PRNG seed
-    sim_mod_params.shpf_seed = 44444; // Hit post-proessing PRNG seed
-    sim_mod_params.eg_name   = "electron_1MeV";
+    sim_mod_params.shpf_seed = 44444; // Hit post-processing PRNG seed
+    sim_mod_params.eg_name   = "electron_1MeV_cone";
     sim_mod_params.vg_name   = "source_bulk.vg";
     // sim_mod_params.input_prng_seeds_file   = "prng_seeds.conf";
     // sim_mod_params.input_prng_states_file  = "prng_states.conf";
@@ -179,5 +177,3 @@ int main(int argc_, char **argv_) {
   BAYEUX_FINI();
   return error_code;
 }
-
-// end of ex00_run_sim_module.cxx

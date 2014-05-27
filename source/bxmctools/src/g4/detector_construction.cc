@@ -1,20 +1,21 @@
-/* detector_construction.cc */
+/// \file mctools/detector_construction.cc
 
 // Ourselves:
 #include <mctools/g4/detector_construction.h>
 
 // Third party:
+// - Boost:
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem.hpp>
-
+// - Bayeux/datatools :
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
 #include <datatools/units.h>
 #include <datatools/logger.h>
 #include <datatools/exception.h>
-
+// - Bayeux/mygsl :
 #include <mygsl/random_utils.h>
-
+// - Bayeux/geomtools :
 #include <geomtools/gdml_export.h>
 #include <geomtools/sensitive.h>
 #include <geomtools/color.h>
@@ -23,7 +24,7 @@
 #include <geomtools/materials_plugin.h>
 #include <geomtools/materials_utils.h>
 #include <geomtools/resource.h>
-
+// - Bayeux/emfield :
 #include <emfield/base_electromagnetic_field.h>
 #include <emfield/electromagnetic_field_manager.h>
 #include <emfield/emfield_geom_plugin.h>
@@ -84,8 +85,6 @@ namespace mctools {
       return *_geom_manager_;
     }
 
-    //____________________________________  ctor:
-
     detector_construction::detector_construction(manager & g4_mgr_)
     {
       _initialized_ = false;
@@ -112,7 +111,6 @@ namespace mctools {
       return;
     }
 
-    //____________________________________  dtor:
     detector_construction::~detector_construction()
     {
 
@@ -140,21 +138,18 @@ namespace mctools {
       return;
     }
 
-    //____________________________________
     bool detector_construction::is_initialized() const
     {
       return _initialized_;
     }
 
 
-    //____________________________________
     bool detector_construction::has_geometry_manager() const
     {
       return _geom_manager_ != 0;
     }
 
 
-    //____________________________________
     void detector_construction::set_geometry_manager(const geomtools::manager & gm_)
     {
       DT_THROW_IF (is_initialized(), std::logic_error, "Operation prohibited !");
@@ -162,7 +157,6 @@ namespace mctools {
       return;
     }
 
-    //____________________________________
     void detector_construction::initialize(const datatools::properties & config_)
     {
       DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
@@ -201,7 +195,6 @@ namespace mctools {
       DT_THROW_IF(_SHPF_config_.empty (), std::logic_error,
                   "Missing property '" << "hit_processor_factory" << "' !");
 
-      /*************************/
 
       if (config_.has_key("using_user_limits")) {
         _using_user_limits_ = config_.fetch_boolean("using_user_limits");
@@ -434,7 +427,6 @@ namespace mctools {
     }
 
 
-    //____________________________________
     G4VPhysicalVolume * detector_construction::Construct()
     {
       DT_LOG_TRACE(_logprio(), "Entering...");
@@ -456,7 +448,6 @@ namespace mctools {
       return world_physical_volume;
     }
 
-    //____________________________________
     G4VPhysicalVolume * detector_construction::_g4_construct()
     {
       DT_LOG_TRACE(_logprio(), "Entering...");
@@ -651,7 +642,6 @@ namespace mctools {
       return;
     }
 
-    //____________________________________
     void detector_construction::_construct_sensitive_detectors()
     {
       DT_LOG_TRACE(_logprio(),"Entering...");
@@ -719,7 +709,7 @@ namespace mctools {
                         << sensitive_category << "'");
         }
 
-        // update the list of logical volumes(identified by their names) attached
+        // Update the list of logical volumes(identified by their names) attached
         // to this sensitive detector:
         _sensitive_detectors_[sensitive_category]->attach_logical_volume(log.get_name());
 
@@ -732,7 +722,7 @@ namespace mctools {
           }
         }
 
-        // associate this sensitive detector to the G4 logical volume:
+        // Associate this sensitive detector to the G4 logical volume:
         g4_log->SetSensitiveDetector(_sensitive_detectors_[sensitive_category]);
 
       } // for (logical_volumes)
@@ -752,6 +742,10 @@ namespace mctools {
       if (this->has_geometry_manager()) {
         _SHPF_.set_geometry_manager(this->get_geometry_manager());
       }
+
+      // Set the set of activated output profiles from the manager:
+      _SHPF_.set_output_profiles(_g4_manager_->get_activated_output_profile_ids());
+
       std::vector<std::string> config_files;
       if (_SHPF_config_.has_key("configs")) {
         _SHPF_config_.fetch("configs", config_files);
@@ -789,214 +783,215 @@ namespace mctools {
              = _SHPF_.get_processors().begin();
            iSHP != _SHPF_.get_processors().end();
            ++iSHP) {
-        const std::string & hit_category = iSHP->second->get_hit_category();
-          if (_g4_manager_->forbids_private_hits()) {
-            if (boost::starts_with(hit_category, "_")) {
-              DT_LOG_WARNING(_logprio(),
-                             "SHPF: Sensitive detector '" << iSHP->second->get_name()
-                             << "' initialized with private hit category '"
-                             << hit_category << "' is not used !");
-              continue;
+        const base_step_hit_processor * processor = iSHP->second;
+        const std::string & hit_category = processor->get_hit_category();
+        if (_g4_manager_->forbids_private_hits()) {
+          if (boost::starts_with(hit_category, "_")) {
+            DT_LOG_WARNING(_logprio(),
+                           "SHPF: Sensitive detector '" << processor->get_name()
+                           << "' initialized with private hit category '"
+                           << hit_category << "' is not used !");
+            continue;
+          }
+        }
+
+        const std::string & from_processor_sensitive_category = iSHP->second->get_sensitive_category();
+
+        // If the sensitive_category already exists (from the geometry model setup):
+        if (_sensitive_detectors_.find(from_processor_sensitive_category)
+            != _sensitive_detectors_.end()) {
+          DT_LOG_WARNING(_logprio(),
+                         "SHPF: A sensitive detector '" << processor->get_name()
+                         << "' with category '"
+                         << from_processor_sensitive_category
+                         << "' already exists ! Ignore this rule !");
+          continue;
+        } else {
+          // At this point, we know that some geometry volumes(s)
+          // are attached to the newly created sensitive detector:
+          DT_LOG_NOTICE(_logprio(),
+                        "SHPF: Create a new sensitive detector with category '"
+                        << from_processor_sensitive_category << "'");
+
+          sensitive_detector * SD = new sensitive_detector(from_processor_sensitive_category);
+          SD->set_manager(*_g4_manager_);
+
+          // Setup special behaviour of the sensitive detector:
+          SD->configure(processor->get_auxiliaries());
+
+          SDman->AddNewDetector(SD);
+          _sensitive_detectors_[from_processor_sensitive_category] = SD;
+
+          // Extract the logical volumes this sensitive detector is attached to:
+          std::vector<std::string> logicals;
+
+          bool all_logicals = false;
+          if (processor->get_auxiliaries().has_flag("geometry.volumes.all")) {
+            all_logicals = true;
+          }
+          if (all_logicals) {
+            for (geomtools::logical_volume::dict_type::const_iterator ilogical
+                   = _geom_manager_->get_factory().get_logicals().begin();
+                 ilogical != _geom_manager_->get_factory().get_logicals().end();
+                 ++ilogical) {
+              const std::string & logical_name = ilogical->first;
+              if (std::find(logicals.begin(), logicals.end(), logical_name) == logicals.end()) {
+                logicals.push_back(logical_name);
+              }
             }
           }
 
-          const std::string & from_processor_sensitive_category = iSHP->second->get_sensitive_category();
-
-          // If the sensitive_category already exists (from the geometry model setup):
-          if (_sensitive_detectors_.find(from_processor_sensitive_category)
-              != _sensitive_detectors_.end()) {
-            DT_LOG_WARNING(_logprio(),
-                           "SHPF: A sensitive detector '" << iSHP->second->get_name()
-                           << "' with category '"
-                           << from_processor_sensitive_category
-                           << "' already exists ! Ignore this rule !");
-            continue;
-          } else {
-            // At this point, we know that some geometry volumes(s)
-            // are attached to the newly created sensitive detector:
-            DT_LOG_NOTICE(_logprio(),
-                          "SHPF: Create a new sensitive detector with category '"
-                          << from_processor_sensitive_category << "'");
-
-            sensitive_detector * SD = new sensitive_detector(from_processor_sensitive_category);
-            SD->set_manager(*_g4_manager_);
-
-            // Setup special behaviour of the sensitive detector:
-            SD->configure(iSHP->second->get_auxiliaries());
-
-            SDman->AddNewDetector(SD);
-            _sensitive_detectors_[from_processor_sensitive_category] = SD;
-
-            // Extract the logical volumes this sensitive detector is attached to:
-            std::vector<std::string> logicals;
-
-            bool all_logicals = false;
-            if (iSHP->second->get_auxiliaries().has_flag("geometry.volumes.all")) {
-              all_logicals = true;
+          // Fetch the list of logical volumes associated to this 'sensitive category' :
+          if (! all_logicals) {
+            if (processor->get_auxiliaries().has_key("geometry.volumes")) {
+              DT_LOG_NOTICE(_logprio(),
+                            "SHPF: Fetch the list of logical volumes associated to a sensitive category '"
+                            << from_processor_sensitive_category << "'");
+              // Logicals are given by name :
+              processor->get_auxiliaries().fetch("geometry.volumes", logicals);
             }
-            if (all_logicals) {
-              for (geomtools::logical_volume::dict_type::const_iterator ilogical
-                     = _geom_manager_->get_factory().get_logicals().begin();
-                   ilogical != _geom_manager_->get_factory().get_logicals().end();
-                   ++ilogical) {
-                const std::string & logical_name = ilogical->first;
+          }
+
+          DT_LOG_NOTICE(_logprio(), "SHPF: Number of logical volumes associated to sensitive category '"
+                        << from_processor_sensitive_category << "' : " << logicals.size());
+
+          // Also fetch the list of logical volumes associated to this 'sensitive category'
+          // and *with* a given list of materials :
+          if (processor->get_auxiliaries().has_key("geometry.volumes.with_materials")) {
+            // Volumes are given by material(s) :
+            std::vector<std::string> materials;
+            DT_LOG_NOTICE(_logprio(),
+                          "SHPF: Fetch the list of materials for sensitive category '"
+                          << from_processor_sensitive_category << "'");
+            processor->get_auxiliaries().fetch("geometry.volumes.with_materials", materials);
+
+            std::ostringstream message;
+            message << "SHPF: Searching for logical volumes with material in (";
+            for (size_t j = 0; j < materials.size(); j++) {
+              if (j != 0) message << ',';
+              message << ' ' << '"' << materials[j] << '"';
+            }
+            message << ") to be associated to the new sensitive detector with category '"
+                    << from_processor_sensitive_category << "'";
+            DT_LOG_NOTICE(_logprio(), message.str());
+
+            // Traverse all logical volumes :
+            for (geomtools::logical_volume::dict_type::const_iterator ilogical
+                   = _geom_manager_->get_factory().get_logicals().begin();
+                 ilogical != _geom_manager_->get_factory().get_logicals().end();
+                 ++ilogical) {
+              const std::string & logical_name = ilogical->first;
+              const geomtools::logical_volume & log = *(ilogical->second);;
+              bool checked_material = false;
+              std::string mat_name;
+              for (size_t imat = 0; imat < materials.size(); imat++) {
+                mat_name = materials[imat];
+                if (log.get_material_ref() == mat_name) {
+                  checked_material = true;
+                  break;
+                }
+              }
+              if (checked_material) {
                 if (std::find(logicals.begin(), logicals.end(), logical_name) == logicals.end()) {
+                  std::ostringstream message;
+                  message << "SHPF: Associate the logical volume '" << logical_name << "' with material '"
+                          << mat_name << "' to the new sensitive detector with category '"
+                          << from_processor_sensitive_category << "'";
+                  DT_LOG_NOTICE(_logprio(), message.str());
                   logicals.push_back(logical_name);
                 }
               }
             }
+          }
+          DT_LOG_NOTICE(_logprio(), "SHPF: Number of logical volumes associated to sensitive category '"
+                        << from_processor_sensitive_category << "' : " << logicals.size());
 
-            // Fetch the list of logical volumes associated to this 'sensitive category' :
-            if (! all_logicals) {
-              if (iSHP->second->get_auxiliaries().has_key("geometry.volumes")) {
-                DT_LOG_NOTICE(_logprio(),
-                              "SHPF: Fetch the list of logical volumes associated to a sensitive category '"
-                              << from_processor_sensitive_category << "'");
-                // Logicals are given by name :
-                iSHP->second->get_auxiliaries().fetch("geometry.volumes", logicals);
-              }
+          // Skip the logical volumes that should be excluded :
+          if (processor->get_auxiliaries().has_key("geometry.volumes.excluded")) {
+            std::vector<std::string> excluded_logicals;
+            processor->get_auxiliaries().fetch("geometry.volumes.excluded", excluded_logicals);
+            std::ostringstream message;
+            message << "SHPF: Excluding logical volumes in (";
+            for (size_t j = 0; j < excluded_logicals.size(); j++) {
+              if (j != 0) message << ',';
+              message << ' ' << '"' << excluded_logicals[j] << '"';
             }
+            message << ") from the list of volumes to be associated to the new sensitive detector from SHPF with category '"
+                    << from_processor_sensitive_category << "'";
+            DT_LOG_NOTICE(_logprio(), message.str());
 
-            DT_LOG_NOTICE(_logprio(), "SHPF: Number of logical volumes associated to sensitive category '"
-                          << from_processor_sensitive_category << "' : " << logicals.size());
-
-            // Also fetch the list of logical volumes associated to this 'sensitive category'
-            // and *with* a given list of materials :
-            if (iSHP->second->get_auxiliaries().has_key("geometry.volumes.with_materials")) {
-              // Volumes are given by material(s) :
-              std::vector<std::string> materials;
-              DT_LOG_NOTICE(_logprio(),
-                            "SHPF: Fetch the list of materials for sensitive category '"
-                            << from_processor_sensitive_category << "'");
-              iSHP->second->get_auxiliaries().fetch("geometry.volumes.with_materials", materials);
-
-              std::ostringstream message;
-              message << "SHPF: Searching for logical volumes with material in (";
-              for (size_t j = 0; j < materials.size(); j++) {
-                if (j != 0) message << ',';
-                message << ' ' << '"' << materials[j] << '"';
-              }
-              message << ") to be associated to the new sensitive detector with category '"
-                      << from_processor_sensitive_category << "'";
-              DT_LOG_NOTICE(_logprio(), message.str());
-
-              // Traverse all logical volumes :
-              for (geomtools::logical_volume::dict_type::const_iterator ilogical
-                     = _geom_manager_->get_factory().get_logicals().begin();
-                   ilogical != _geom_manager_->get_factory().get_logicals().end();
-                   ++ilogical) {
-                const std::string & logical_name = ilogical->first;
-                const geomtools::logical_volume & log = *(ilogical->second);;
-                bool checked_material = false;
-                std::string mat_name;
-                for (size_t imat = 0; imat < materials.size(); imat++) {
-                  mat_name = materials[imat];
-                  if (log.get_material_ref() == mat_name) {
-                    checked_material = true;
-                    break;
-                  }
-                }
-                if (checked_material) {
-                  if (std::find(logicals.begin(), logicals.end(), logical_name) == logicals.end()) {
-                    std::ostringstream message;
-                    message << "SHPF: Associate the logical volume '" << logical_name << "' with material '"
-                            << mat_name << "' to the new sensitive detector with category '"
-                            << from_processor_sensitive_category << "'";
-                    DT_LOG_NOTICE(_logprio(), message.str());
-                    logicals.push_back(logical_name);
-                  }
-                }
-              }
+            for (size_t ixm = 0; ixm < excluded_logicals.size(); ixm++) {
+              logicals.erase(std::remove(logicals.begin(), logicals.end(), excluded_logicals[ixm]), logicals.end());
             }
-            DT_LOG_NOTICE(_logprio(), "SHPF: Number of logical volumes associated to sensitive category '"
-                          << from_processor_sensitive_category << "' : " << logicals.size());
+          }
 
-            // Skip the logical volumes that should be excluded :
-            if (iSHP->second->get_auxiliaries().has_key("geometry.volumes.excluded")) {
-              std::vector<std::string> excluded_logicals;
-              iSHP->second->get_auxiliaries().fetch("geometry.volumes.excluded", excluded_logicals);
-              std::ostringstream message;
-              message << "SHPF: Excluding logical volumes in (";
-              for (size_t j = 0; j < excluded_logicals.size(); j++) {
-                if (j != 0) message << ',';
-                message << ' ' << '"' << excluded_logicals[j] << '"';
-              }
-              message << ") from the list of volumes to be associated to the new sensitive detector from SHPF with category '"
-                      << from_processor_sensitive_category << "'";
-              DT_LOG_NOTICE(_logprio(), message.str());
+          if (logicals.size() == 0) {
+            DT_LOG_WARNING(_logprio(),
+                           "SHPF: New sensitive category '" << from_processor_sensitive_category
+                           << "' has no associated logical volumes !");
+            continue;
+          }
 
-              for (size_t ixm = 0; ixm < excluded_logicals.size(); ixm++) {
-                logicals.erase(std::remove(logicals.begin(), logicals.end(), excluded_logicals[ixm]), logicals.end());
-              }
-            }
-
-            if (logicals.size() == 0) {
+          // Loop on the specified logical volumes and make them sensitive
+          // with the new sensitive detector.
+          // Detect conflict(more than one sensitive detector per logical volume).
+          for (std::vector<std::string>::const_iterator ilogical = logicals.begin();
+               ilogical != logicals.end();
+               ++ilogical) {
+            const std::string & logical_name = *ilogical;
+            geomtools::logical_volume::dict_type::const_iterator found
+              = _geom_manager_->get_factory().get_logicals().find(logical_name);
+            if (found == _geom_manager_->get_factory().get_logicals().end()) {
               DT_LOG_WARNING(_logprio(),
-                             "SHPF: New sensitive category '" << from_processor_sensitive_category
-                             << "' has no associated logical volumes !");
+                             "SHPF: No logical volume with name '"
+                             << logical_name  << "' exists in the geometry manager ! Ignore !");
+              continue;
+            }
+            const geomtools::logical_volume & log = *(found->second);
+
+            // Check sensitivity of the logical volume):
+            if (geomtools::sensitive::is_sensitive(log.get_parameters())) {
+              DT_LOG_WARNING(_logprio(),
+                             "SHPF: Logical volume '"
+                             << logical_name  << "' is already associated to sensitive category '"
+                             << geomtools::sensitive::get_sensitive_category(log.get_parameters())
+                             << "' !");
               continue;
             }
 
-            // Loop on the specified logical volumes and make them sensitive
-            // with the new sensitive detector.
-            // Detect conflict(more than one sensitive detector per logical volume).
-            for (std::vector<std::string>::const_iterator ilogical = logicals.begin();
-                 ilogical != logicals.end();
-                 ++ilogical) {
-              const std::string & logical_name = *ilogical;
-              geomtools::logical_volume::dict_type::const_iterator found
-                = _geom_manager_->get_factory().get_logicals().find(logical_name);
-              if (found == _geom_manager_->get_factory().get_logicals().end()) {
-                DT_LOG_WARNING(_logprio(),
-                               "SHPF: No logical volume with name '"
-                               << logical_name  << "' exists in the geometry manager ! Ignore !");
-                continue;
-              }
-              const geomtools::logical_volume & log = *(found->second);
-
-              // Check sensitivity of the logical volume):
-              if (geomtools::sensitive::is_sensitive(log.get_parameters())) {
-                DT_LOG_WARNING(_logprio(),
-                               "SHPF: Logical volume '"
-                               << logical_name  << "' is already associated to sensitive category '"
-                               << geomtools::sensitive::get_sensitive_category(log.get_parameters())
-                               << "' !");
-                continue;
-              }
-
-              // pickup the corresponding G4 logical volume:
-              G4LogicalVolume * g4_log = 0;
-              G4String log_name = log.get_name().c_str();
-              g4_log = g4_LV_store->GetVolume(log_name, false);
-              if (g4_log == 0) {
-                DT_LOG_WARNING(_logprio(),
-                               "SHPF: No logical volume has been found '" << log.get_name()
-                               << "' in the G4LogicalVolumeStore !");
-                continue;
-              }
-
-              // Local scope:
-              {
-                // Makes the logical sensitive (using a trick because of the const-ness
-                // of the logical volume instance after building the model factory from
-                // the geometry manager) :
-                geomtools::logical_volume * mutable_log
-                  = const_cast<geomtools::logical_volume *>(&log);
-                geomtools::sensitive::set_sensitive_category(mutable_log->grab_parameters(),
-                                                             from_processor_sensitive_category);
-              }
-
-              std::ostringstream message;
-              message << "SHPF: Make the G4 logical volume '" << log.get_name()
-                      << "' a sensitive detector with category '"
-                      << from_processor_sensitive_category << "'";
-              DT_LOG_NOTICE(_logprio(), message.str());
-              _sensitive_detectors_[from_processor_sensitive_category]->attach_logical_volume(log.get_name());
-
-              g4_log->SetSensitiveDetector(_sensitive_detectors_[from_processor_sensitive_category]);
+            // Pickup the corresponding G4 logical volume:
+            G4LogicalVolume * g4_log = 0;
+            G4String log_name = log.get_name().c_str();
+            g4_log = g4_LV_store->GetVolume(log_name, false);
+            if (g4_log == 0) {
+              DT_LOG_WARNING(_logprio(),
+                             "SHPF: No logical volume has been found '" << log.get_name()
+                             << "' in the G4LogicalVolumeStore !");
+              continue;
             }
+
+            // Local scope:
+            {
+              // Makes the logical sensitive (using a trick because of the const-ness
+              // of the logical volume instance after building the model factory from
+              // the geometry manager) :
+              geomtools::logical_volume * mutable_log
+                = const_cast<geomtools::logical_volume *>(&log);
+              geomtools::sensitive::set_sensitive_category(mutable_log->grab_parameters(),
+                                                           from_processor_sensitive_category);
+            }
+
+            std::ostringstream message;
+            message << "SHPF: Make the G4 logical volume '" << log.get_name()
+                    << "' a sensitive detector with category '"
+                    << from_processor_sensitive_category << "'";
+            DT_LOG_NOTICE(_logprio(), message.str());
+            _sensitive_detectors_[from_processor_sensitive_category]->attach_logical_volume(log.get_name());
+
+            g4_log->SetSensitiveDetector(_sensitive_detectors_[from_processor_sensitive_category]);
           }
-        } // for (hit processors)
+        }
+      } // for (hit processors)
 
       // Associate a sensitive detector to a particular step hit processor
       // from the factory:
@@ -1005,23 +1000,24 @@ namespace mctools {
            iSHP != _SHPF_.get_processors().end();
            ++iSHP) {
         const std::string & processor_name = iSHP->first;
-        const std::string & hit_category = iSHP->second->get_hit_category();
+        base_step_hit_processor * processor = iSHP->second;
+        const std::string & hit_category = processor->get_hit_category();
         if (_g4_manager_->forbids_private_hits()) {
           if (boost::starts_with(hit_category, "_")) {
-            DT_LOG_WARNING(_logprio(), "SHPF: Sensitive detector '" << iSHP->second->get_name()
+            DT_LOG_WARNING(_logprio(), "SHPF: Sensitive detector '" << processor->get_name()
                            << "' initialized from SHPF with private hit category '"
                            << hit_category << "' is not used !");
             continue;
           }
         }
-        const std::string & from_processor_sensitive_category = iSHP->second->get_sensitive_category();
+        const std::string & from_processor_sensitive_category = processor->get_sensitive_category();
         sensitive_detector_dict_type::iterator iSD
           = _sensitive_detectors_.find(from_processor_sensitive_category);
         if (iSD == _sensitive_detectors_.end()) {
           continue;
         }
         sensitive_detector * SD = iSD->second;
-        SD->add_hit_processor(processor_name, *iSHP->second);
+        SD->add_hit_processor(processor_name, *processor);
       } // SHPF
 
       // Dump:
@@ -1041,7 +1037,6 @@ namespace mctools {
       return;
     }
 
-    //____________________________________
     void detector_construction::set_materials_geom_plugin_name(const std::string & mpn_)
     {
       DT_THROW_IF (is_initialized(), std::logic_error, "Operation prohibited !");
@@ -1049,7 +1044,6 @@ namespace mctools {
       return;
     }
 
-    //____________________________________
     void detector_construction::set_emfield_geom_plugin_name(const std::string & fpn_)
     {
       DT_THROW_IF (is_initialized(), std::logic_error, "Operation prohibited !");
@@ -1057,7 +1051,6 @@ namespace mctools {
       return;
     }
 
-    //____________________________________
     void detector_construction::write_tmp_gdml_file()
     {
 
@@ -1094,7 +1087,6 @@ namespace mctools {
       // The GDML export object :
       geomtools::gdml_export GDML;
 
-      /*******************************************************************/
       geomtools::gdml_writer materials_writer; // GDML writer for materials
       const materials::manager * mat_mgr_ref = 0;
       std::string materials_plugin_name = _materials_geom_plugin_name_;
@@ -1140,7 +1132,6 @@ namespace mctools {
       return;
     }
 
-    //____________________________________
     void detector_construction::_set_user_limits()
     {
       DT_LOG_TRACE(_logprio(),  "Entering...");
@@ -1222,25 +1213,24 @@ namespace mctools {
             //                << logical_volume_name << "' to be added in the '"
             //                << the_region_name << "' region !");
             DT_THROW_IF(true,std::logic_error, "No logical volume named '"
-                           << logical_volume_name << "' to be added in the '"
-                           << the_region_name << "' region !");
+                        << logical_volume_name << "' to be added in the '"
+                        << the_region_name << "' region !");
           }
         }
       }
       return;
     }
 
-    //____________________________________
     void detector_construction::_set_visualization_attributes()
     {
       DT_LOG_TRACE(_logprio(),"Entering...");
 
       // Look for visibility properties :
       /*
-      for (geomtools::models_col_type::const_iterator i
-             = _geom_manager_->get_factory().get_models().begin();
-           i != _geom_manager_->get_factory().get_models().end();
-           ++i) {
+        for (geomtools::models_col_type::const_iterator i
+        = _geom_manager_->get_factory().get_models().begin();
+        i != _geom_manager_->get_factory().get_models().end();
+        ++i) {
         const geomtools::i_model & model = *(i->second);
         const geomtools::logical_volume & log = model.get_logical();
       */
@@ -1362,7 +1352,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
                                 "   associated volumes.                                                   \n"
                                 " * initialization of visualization attributes for Geant4 3D rendering.   \n"
                                 "                                                                         \n"
-                               );
+                                );
 
 
   logger::declare_ocd_logging_configuration(ocd_, "");
@@ -1598,13 +1588,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_long_description("See OCD manual of the ``mctools::g4::sensitive_detector`` class.\n"
                             )
       .add_example("Example::                                                             \n"
-                            "                                                                      \n"
-                            "  sensitive.detectors : string[2] = \"calo_SD\" \"tracker_SD\"        \n"
-                            "  sensitive.calo_SD.record_major_track    : boolean = 1               \n"
-                            "  sensitive.tracker_SD.record_major_track : boolean = 0               \n"
-                            "                                                                      \n"
-                            "See OCD manual of the ``mctools::g4::sensitive_detector`` class.      \n"
-                           )
+                   "                                                                      \n"
+                   "  sensitive.detectors : string[2] = \"calo_SD\" \"tracker_SD\"        \n"
+                   "  sensitive.calo_SD.record_major_track    : boolean = 1               \n"
+                   "  sensitive.tracker_SD.record_major_track : boolean = 0               \n"
+                   "                                                                      \n"
+                   "See OCD manual of the ``mctools::g4::sensitive_detector`` class.      \n"
+                   )
       ;
   }
 
@@ -1621,12 +1611,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_long_description("See OCD manual of the ``mctools::g4::sensitive_detector`` class.\n"
                             )
       .add_example("Example::                                                                 \n"
-                            "                                                                          \n"
-                            "  sensitive.detectors : string[2] = \"calo_SD\" \"tracker_SD\"            \n"
-                            "  sensitive.calo_SD.record_major_track         : boolean = 1              \n"
-                            "  sensitive.calo_SD.major_track_minimum_energy : real as energy = 50 keV  \n"
-                            "                                                                          \n"
-                            )
+                   "                                                                          \n"
+                   "  sensitive.detectors : string[2] = \"calo_SD\" \"tracker_SD\"            \n"
+                   "  sensitive.calo_SD.record_major_track         : boolean = 1              \n"
+                   "  sensitive.calo_SD.major_track_minimum_energy : real as energy = 50 keV  \n"
+                   "                                                                          \n"
+                   )
       ;
   }
 
@@ -1742,12 +1732,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_long_description("See OCD manual of the ``mctools::g4::sensitive_detector`` class.\n"
                             )
       .add_example("Example::                                                             \n"
-                    "                                                                      \n"
-                    "  sensitive.detectors : string[2] = \"calo_SD\" \"tracker_SD\"        \n"
-                    "  sensitive.calo_SD.record_g4_volume_infos    : boolean = 1           \n"
-                    "  sensitive.tracker_SD.record_g4_volume_infos : boolean = 1           \n"
-                    "                                                                      \n"
-                    )
+                   "                                                                      \n"
+                   "  sensitive.detectors : string[2] = \"calo_SD\" \"tracker_SD\"        \n"
+                   "  sensitive.calo_SD.record_g4_volume_infos    : boolean = 1           \n"
+                   "  sensitive.tracker_SD.record_g4_volume_infos : boolean = 1           \n"
+                   "                                                                      \n"
+                   )
       ;
   }
 
@@ -1895,10 +1885,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_default_value_boolean(false)
       .add_example("Example::                                                             \n"
-                            "                                                                      \n"
-                            "  using_magnetic_field : boolean = 0                                  \n"
-                            "                                                                      \n"
-                            )
+                   "                                                                      \n"
+                   "  using_magnetic_field : boolean = 0                                  \n"
+                   "                                                                      \n"
+                   )
       ;
   }
 
@@ -1912,10 +1902,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_mandatory(true)
       .set_triggered_by_flag("using_magnetic_field")
       .add_example("Example::                                                             \n"
-                            "                                                                      \n"
-                            "  magnetic_field.plugin_name : string = \"coil_driver\"               \n"
-                            "                                                                      \n"
-                            )
+                   "                                                                      \n"
+                   "  magnetic_field.plugin_name : string = \"coil_driver\"               \n"
+                   "                                                                      \n"
+                   )
       ;
   }
 
@@ -1930,10 +1920,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_triggered_by_flag("using_magnetic_field")
       .set_default_value_string("``\"mm\"``")
       .add_example("Example::                                                             \n"
-                            "                                                                      \n"
-                            "  magnetic_field.miss_distance.unit : string = \"mm\"                 \n"
-                            "                                                                      \n"
-                            )
+                   "                                                                      \n"
+                   "  magnetic_field.miss_distance.unit : string = \"mm\"                 \n"
+                   "                                                                      \n"
+                   )
       ;
   }
 
@@ -1947,10 +1937,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_mandatory(false)
       .set_triggered_by_flag("using_magnetic_field")
       .add_example("Example::                                                             \n"
-                            "                                                                      \n"
-                            "  magnetic_field.miss_distance : real as length = 1.2 mm              \n"
-                            "                                                                      \n"
-                            )
+                   "                                                                      \n"
+                   "  magnetic_field.miss_distance : real as length = 1.2 mm              \n"
+                   "                                                                      \n"
+                   )
       .set_explicit_unit(true)
       .set_unit_label("length")
       ;
@@ -1994,12 +1984,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
                   configuration_property_description::ARRAY)
       .set_mandatory(false)
       .add_example("Example::                                                           \n"
-                            "                                                                    \n"
-                            "  magnetic_field.associations : string[2] = \"coil\" \"lab\"        \n"
-                            "                                                                    \n"
-                            "Note: the geometry volume/magnetic field association must exist in  \n"
-                            "the dedicated plugin.                                               \n"
-                            )
+                   "                                                                    \n"
+                   "  magnetic_field.associations : string[2] = \"coil\" \"lab\"        \n"
+                   "                                                                    \n"
+                   "Note: the geometry volume/magnetic field association must exist in  \n"
+                   "the dedicated plugin.                                               \n"
+                   )
       ;
   };
 
@@ -2016,14 +2006,14 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
       .set_long_description("Apply a special miss distance for a given geom. volume/mag. field association. \n"
                             )
       .add_example("Example::                                                           \n"
-                            "                                                                    \n"
-                            "  magnetic_field.associations       : string[2] = \"coil\" \"lab\"  \n"
-                            "  magnetic_field.miss_distance.coil : real as length = 1 mm         \n"
-                            "  magnetic_field.miss_distance.lab  : real as length = 1 cm         \n"
-                            "                                                                    \n"
-                            "Note: the geometry volume/magnetic field association must exist in  \n"
-                            "the dedicated plugin.                                               \n"
-                            )
+                   "                                                                    \n"
+                   "  magnetic_field.associations       : string[2] = \"coil\" \"lab\"  \n"
+                   "  magnetic_field.miss_distance.coil : real as length = 1 mm         \n"
+                   "  magnetic_field.miss_distance.lab  : real as length = 1 cm         \n"
+                   "                                                                    \n"
+                   "Note: the geometry volume/magnetic field association must exist in  \n"
+                   "the dedicated plugin.                                               \n"
+                   )
       ;
   }
 
@@ -2083,5 +2073,3 @@ DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
 
 // Registration macro for class 'mctools::g4::detector_construction' :
 DOCD_CLASS_SYSTEM_REGISTRATION(mctools::g4::detector_construction,"mctools::g4::detector_construction")
-
-// end of detector_construction.cc

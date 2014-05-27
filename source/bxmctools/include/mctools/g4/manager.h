@@ -36,6 +36,7 @@
 // Standard library:
 #include <string>
 #include <map>
+#include <set>
 
 // Third party:
 // - Boost:
@@ -105,9 +106,9 @@ namespace mctools {
 
       // 2012-04-24 : limit the maximum alowed number of events:
       // http://hypernews.slac.stanford.edu/HyperNews/geant4/get/particles/528/1.html
-      static const uint32_t NUMBER_OF_EVENTS_UPPER_LIMIT = 1000000000; /// Maximum number of events to be processed
-      static const uint32_t NUMBER_OF_EVENTS_LOWER_LIMIT = 1; /// Minimum number of events to be processed
-      static const uint32_t NUMBER_OF_EVENTS_WARNING_LIMIT = 1000000; /// Number of events that triggers an alarm
+      static const uint32_t NUMBER_OF_EVENTS_UPPER_LIMIT   = 1000000000; /// Maximum number of events to be processed
+      static const uint32_t NUMBER_OF_EVENTS_LOWER_LIMIT   = 1;          /// Minimum number of events to be processed
+      static const uint32_t NUMBER_OF_EVENTS_WARNING_LIMIT = 1000000;    /// Number of events that triggers an alarm
       static const std::string DEFAULT_PRNG_ID; /// Default safe PRNG identifier (see mygsl::rng class)
 
       /// \brief A set of constants used by the Geant4 manager
@@ -165,10 +166,13 @@ namespace mctools {
       /// Return a mutable event_action reference
       event_action & grab_user_event_action ();
 
+      /// Check if a modulo on number of events is defined
       bool has_number_of_events_modulo () const;
 
+      /// Set the number of events modulo
       void set_number_of_events_modulo (int);
 
+      /// Return the number of events modulo
       int get_number_of_events_modulo () const;
 
       void set_use_run_header_footer (bool a_use_run_header_footer);
@@ -197,19 +201,21 @@ namespace mctools {
 
       CT_map & grab_CT_map ();
 
+      /// Check the initialization flag
       bool is_initialized () const;
 
       bool is_automatic () const;
 
+      /// Check the interactive session flag
       bool is_interactive () const;
 
+      /// Check the non interactive session flag
       bool is_batch () const;
 
+      /// Set the interactive session flag
       void set_interactive (bool);
 
       bool using_event_number_as_seed () const;
-
-      /*** input seeds file ***/
 
       bool has_input_prng_seeds_file () const;
 
@@ -219,8 +225,6 @@ namespace mctools {
 
       const std::string & get_input_prng_seeds_file () const;
 
-      /*** output seeds file ***/
-
       bool has_output_prng_seeds_file () const;
 
       void reset_output_prng_seeds_file ();
@@ -228,8 +232,6 @@ namespace mctools {
       void set_output_prng_seeds_file (const std::string &);
 
       const std::string & get_output_prng_seeds_file () const;
-
-      /*** output PRNG states file ***/
 
       void reset_output_prng_states_file ();
 
@@ -239,8 +241,6 @@ namespace mctools {
 
       const std::string & get_output_prng_states_file () const;
 
-      /*** input PRNG states file ***/
-
       void reset_input_prng_states_file ();
 
       bool has_input_prng_states_file () const;
@@ -249,75 +249,131 @@ namespace mctools {
 
       const std::string & get_input_prng_states_file () const;
 
-      /*** the seed of the G4 main random engine ***/
-
+      /// Check the seed of the G4 simulation engine
       bool has_mgr_prng_seed () const;
 
+      /// Get the seed of the G4 simulation engine
       int get_mgr_prng_seed () const;
 
+      /// Set the seed of the G4 simulation engine
       void set_mgr_prng_seed (int rseed_);
 
-      /*** the output data file name ***/
-
+      /// Set the output data file name
       void set_output_data_file (const std::string &);
 
-      /*** the number of events to be generated ***/
-
+      /// Set the number of events to be generated
       void set_number_of_events (uint32_t);
 
+      /// Return the number of events to be generated
       uint32_t get_number_of_events () const;
 
-      /*** the G4 visualization flag ***/
+      // G4 visualization:
 
+      /// Set the Geant4 visualization flag
       void set_g4_visualization (bool);
 
+      /// Check the Geant4 visualization flag
       bool has_g4_visualization () const;
 
-      /*** the G4 macro ***/
+      // G4 macro:
 
+      /// Set the Geant4 macro
       void set_g4_macro (const std::string & g4_macro_);
 
+      /// Return the Geant4 macro
       const std::string & get_g4_macro () const;
 
+      /// Check if the manager has a Geant4 macro
       bool has_g4_macro () const;
 
-      /*** PRNG management ***/
+      // PRNG management:
 
+      /// Return a mutable reference to the vertex generator's PRNG
       mygsl::rng & grab_vg_prng ();
 
+      /// Return a mutable reference to the event generator's PRNG
       mygsl::rng & grab_eg_prng ();
 
+      /// Return a mutable reference to the Step Hit Processor Factory's PRNG
       mygsl::rng & grab_shpf_prng ();
 
+      /// Return a non mutable reference to the Geant4 engine's PRNG
       const mygsl::rng & get_mgr_prng () const;
 
+      /// Return a mutable reference to the Geant4 engine's PRNG
       mygsl::rng & grab_mgr_prng ();
 
+      /// Return a non mutable reference to the Geant4 engine's PRNG
       const g4_prng & get_g4_prng () const;
 
+      /// Return a mutable reference to the Geant4 engine's PRNG
       g4_prng & grab_g4_prng ();
 
+      /// Return a non mutable reference to the manager of PRNG's seeds
       const mygsl::seed_manager & get_seed_manager () const;
 
+      /// Return a mutable reference to the manager of PRNG's seeds
       mygsl::seed_manager & grab_seed_manager ();
 
+      /// Return a non mutable reference to the manager of PRNG's states
       const mygsl::prng_state_manager & get_state_manager () const;
 
+      /// Return a mutable reference to the manager of PRNG's states
       mygsl::prng_state_manager & grab_state_manager ();
 
+      /// Record the current states of all PRNGs
       void record_current_prng_states ();
 
+      /// Set the name of the active event generator
       void set_event_generator_name (const std::string &);
 
+      /// Set the seed for the event generator's PRNG
       void set_event_generator_seed (int);
 
+      /// Set the name of the active vertex generator
       void set_vertex_generator_name (const std::string &);
 
+      /// Set the seed for the vertex generator's PRNG
       void set_vertex_generator_seed (int);
 
+      /// Set the seed for the Step Hit Processor Factory's PRNG
       void set_shpf_prng_seed (int);
 
-      /*** Track history management ***/
+      /// Check if some output profile is officially supported by the manager
+      bool has_supported_output_profile(const std::string & profile_id_) const;
+
+      /// Add an output profile officially supported by the manager
+      void add_supported_output_profile(const std::string & profile_id_,
+                                        const std::string & description_);
+
+      /// Return the dictionary of supported output profiles
+      const std::map<std::string, std::string> & get_supported_output_profiles() const;
+
+      /// Check if some output profiles are activated
+      bool has_activated_output_profiles() const;
+
+      /// Check if a given output profile is activated
+      bool has_activated_output_profile(const std::string & profile_id_) const;
+
+      /// Activate a given output profile
+      void activate_output_profile (const std::string & profile_id_);
+
+      /// Deactivate a given output profile
+      void deactivate_output_profile (const std::string & profile_id_);
+
+      /// Set the activation rule for output profiles
+      void set_output_profiles_activation_rule(const std::string & rule_);
+
+      /// Apply activation rule for output profile
+      void apply_output_profiles_activation_rule(const std::string & output_profiles_activation_rule_);
+
+      /// Build the list of output profiles' Ids
+      void fetch_activated_output_profile_ids(std::vector<std::string> & activated_output_profile_ids_) const;
+
+      /// Return the set of activated output profiles' Ids
+      const std::set<std::string> & get_activated_output_profile_ids() const;
+
+      // Track history management:
 
       /// (De)Activate the track history object
       void set_use_track_history (const bool);
@@ -334,7 +390,7 @@ namespace mctools {
       /// Get a non-mutable reference to the geometry manager
       const geomtools::manager & get_geom_manager () const;
 
-      /*** Vertex/Event generation ***/
+      // Vertex/Event generation:
 
       /// Get a non-mutable reference to the vertex generator manager
       const genvtx::manager & get_vg_manager () const;
@@ -368,11 +424,11 @@ namespace mctools {
                       const std::string & title_ = "",
                       const std::string & indent_ = "") const;
 
-      /// Constructor:
-      manager ();
+      /// Default constructor:
+      manager();
 
       /// Destructor
-      virtual ~manager ();
+      virtual ~manager();
 
       /// Initialize the Geant4 manager
       void initialize (const datatools::multi_properties & mp_);
@@ -385,44 +441,64 @@ namespace mctools {
 
     protected:
 
+      /// Initialize attirbutes' default values
       void _init_defaults ();
 
+      /// Initialize the manager's core functionalities
       virtual void _init_core ();
 
+      /// Initialize the geometry
       virtual void _init_geometry ();
 
+      /// Initialize the vertex generator
       virtual void _init_vertex_generator ();
 
+      /// Initialize the event generator
       virtual void _init_event_generator ();
 
+      /// Initialize the detector construction
       virtual void _init_detector_construction ();
 
+      /// Initialize the physics list
       virtual void _init_physics_list ();
 
+      /// Initialize the run action
       virtual void _init_run_action ();
 
+      /// Initialize the event action
       virtual void _init_event_action ();
 
+      /// Initialize the primary generator action
       virtual void _init_primary_generator_action ();
 
+      /// Initialize the tracking action
       virtual void _init_tracking_action ();
 
+      /// Initialize the stepping action
       virtual void _init_stepping_action ();
 
+      /// Initialize the stacking action
       virtual void _init_stacking_action ();
 
+      /// Initialize the seeds for embedded PRNGs
       void _init_seeds ();
 
+      /// Initialize the internal states of embedded PRNGs
       void _init_prngs_states ();
 
+      /// Initialize the embedded PRNGs
       virtual void _init_prngs ();
 
+      /// Initialize the time statistics
       virtual void _init_time_stat ();
 
+      /// Initialization actions
       virtual void _at_init ();
 
+      /// Termination actions
       virtual void _at_reset ();
 
+      /// Simulation actions
       virtual void _at_run_simulation ();
 
     private:
@@ -440,6 +516,10 @@ namespace mctools {
 
       std::string       _simulation_ctrl_label_; /// Label for simulation thread control
       simulation_ctrl * _simulation_ctrl_; /// Simulation thread control instance
+
+      std::map<std::string,std::string> _supported_output_profile_ids_; /// Supported simulation output profiles
+      std::string           _output_profiles_activation_rule_; /// Activation rule for output profiles
+      std::set<std::string> _activated_output_profile_ids_;    /// Activated simulation output profile Ids
 
       // Service manager :
       datatools::service_manager * _service_manager_; /// Service manager

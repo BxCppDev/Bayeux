@@ -1,32 +1,30 @@
-// -*- mode: c++ ; -*-
-/* run_action.cc
- */
+// run_action.cc
 
+// Standard library:
 #include <cstdlib>
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
 #include <map>
 
+// Third party:
+// - Boost:
 #include <boost/filesystem.hpp>
 #include <boost/thread/mutex.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/utils.h>
+#include <datatools/properties.ipp>
+// - Bayeux/mygsl:
 #include <mygsl/seed_manager.h>
-
-// Packages' versions :
+// - Bayeux/geomtools:
 #include <geomtools/geomtools_config.h>
+// - Bayeux/dpp:
 #include <dpp/dpp_config.h>
+// - Bayeux/genbb_help:
 #include <genbb_help/genbb_help_config.h>
+// - Bayeux/genvtx:
 #include <genvtx/genvtx_config.h>
-#include <mctools/simulated_data.h>
-
-#include <mctools/mctools_config.h>
-#include <mctools/utils.h>
-#include <mctools/g4/run_action.h>
-#include <mctools/g4/manager.h>
-#include <mctools/g4/simulation_ctrl.h>
-
+// - Geant4:
 #include <globals.hh>
 #include <G4Run.hh>
 #include <G4RunManager.hh>
@@ -34,7 +32,13 @@
 #include <G4VVisManager.hh>
 #include <G4ios.hh>
 
-#include <datatools/properties.ipp>
+// This project:
+#include <mctools/simulated_data.h>
+#include <mctools/mctools_config.h>
+#include <mctools/utils.h>
+#include <mctools/g4/run_action.h>
+#include <mctools/g4/manager.h>
+#include <mctools/g4/simulation_ctrl.h>
 
 namespace mctools {
 
@@ -155,7 +159,6 @@ namespace mctools {
       return _writer_;
     }
 
-    // ctor:
     run_action::run_action (manager & a_mgr)
     {
       _initialized_                           = false;
@@ -175,7 +178,6 @@ namespace mctools {
       return;
     }
 
-    // dtor:
     run_action::~run_action ()
     {
       return;
@@ -828,5 +830,3 @@ DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
 
 // Registration macro for class 'mctools::g4::manager' :
 DOCD_CLASS_SYSTEM_REGISTRATION(mctools::g4::run_action,"mctools::g4::run_action")
-
-// end of run_action.cc

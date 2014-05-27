@@ -17,6 +17,10 @@ material : string = "std::aluminium"
 #@description The alias for inox
 material : string = "std::inox"
 
+[name="lead" type="alias"]
+#@description The alias for lead
+material : string = "std::lead"
+
 [name="copper" type="alias"]
 #@description The alias for copper
 material : string = "std::copper"

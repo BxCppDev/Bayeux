@@ -1,13 +1,11 @@
-// -*- mode: c++ ; -*-
-// g4_production.cxx
-/*
- * Description :
+/// \file mctools/g4_production.cxx
+/* Description :
  *
  *   The main mctools Geant4 simulation program.
  *
  * Licence :
  *
- * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2014 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,11 +41,10 @@
 #include <boost/program_options.hpp>
 
 #if MCTOOLS_STANDALONE == 0
-// - bayeux:
+// - Bayeux:
 #include <bayeux/bayeux.h>
 #endif
-
-// - datatools
+// - Bayeux/datatools
 #include <datatools/datatools.h>
 #include <datatools/datatools_config.h>
 #include <datatools/utils.h>
@@ -57,14 +54,11 @@
 #include <datatools/logger.h>
 #include <datatools/exception.h>
 #include <datatools/kernel.h>
-
-// - mygsl
+// - Bayeux/mygsl
 #include <mygsl/random_utils.h>
-
-// - geomtools
+// - Bayeux/geomtools
 #include <geomtools/geomtools.h>
-
-// - mctools
+// - Bayeux/mctools
 #include <mctools/version.h>
 #include <mctools/g4/manager.h>
 #include <mctools/g4/manager_parameters.h>
@@ -114,7 +108,7 @@ int main(int argc_, char ** argv_)
   datatools::logger::priority logging = datatools::logger::PRIO_WARNING;
 
   try {
-    //DT_LOG_NOTICE(logging, "mctools Geant4 program for simulation production.");
+    // DT_LOG_NOTICE(logging, "mctools Geant4 program for simulation production.");
 
     // Configuration parameters for the G4 manager:
     mctools::g4::manager_parameters params;
@@ -253,7 +247,7 @@ void ui::splash(std::ostream & out_)
 }
 
 void ui::print_usage(const boost::program_options::options_description & opts_,
-                 std::ostream & out_)
+                     std::ostream & out_)
 {
 #if MCTOOLS_STANDALONE == 1
   const std::string APP_NAME = "g4_production";
@@ -284,7 +278,7 @@ void ui::print_usage(const boost::program_options::options_description & opts_,
 }
 
 void ui::build_opts(boost::program_options::options_description & opts_,
-                mctools::g4::manager_parameters & params_)
+                    mctools::g4::manager_parameters & params_)
 {
   namespace po = boost::program_options;
   opts_.add_options()
@@ -424,6 +418,13 @@ void ui::build_opts(boost::program_options::options_description & opts_,
      ->default_value(false),
      "store the run header and footer info\ntogether with the output data file")
 
+    ("output-profiles",
+     po::value<std::string>(),
+     "Set the rule for activated output profiles. \n"
+     "Example :                                   \n"
+     " --output-profiles \"calo_details\"           "
+     )
+
     ("dlls-config,L",
      po::value<std::string> (&params_.dll_loader_config),
      "Set the DLL loader configuration file.      \n"
@@ -443,8 +444,8 @@ void ui::build_opts(boost::program_options::options_description & opts_,
 }
 
 void ui::process_opts( const boost::program_options::variables_map & vm_,
-                   const boost::program_options::options_description & /*opts_*/,
-                   mctools::g4::manager_parameters & params_)
+                       const boost::program_options::options_description & /*opts_*/,
+                       mctools::g4::manager_parameters & params_)
 {
   // Fetch the opts/args :
 
@@ -466,8 +467,7 @@ void ui::process_opts( const boost::program_options::variables_map & vm_,
         params_.g4_visu = false;
       }
     }
-  }
-  else {
+  } else {
     params_.g4_visu = false;
   }
 
@@ -508,56 +508,60 @@ void ui::process_opts( const boost::program_options::variables_map & vm_,
       = vm_["output-data-file"].as<std::string>();
   }
 
+  if (vm_.count("output-profiles")) {
+    params_.output_profiles_activation_rule
+      = vm_["output-profiles"].as<std::string>();
+  }
+
   if (vm_.count("g4-macro")) {
     params_.g4_macro
       = vm_["g4-macro"].as<std::string>();
   }
+
   return;
 }
 
-    void ui::print_examples (std::ostream & a_out,
-                             const std::string & a_name,
-                             const std::string & a_title)
-    {
-      if (! a_title.empty ()) {
-        a_out << a_title << std::endl;
-      }
-      a_out << std::endl;
-      a_out << " 1) Interactive test:" << std::endl;
-      a_out << "    " << a_name << " \\" << std::endl;
-      a_out << "         --interactive \\" << std::endl;
-      a_out << "         --g4-visu \\" << std::endl;
-      a_out << "         --vertex-generator-name \"source_bulk.vg\"  \\" << std::endl;
-      a_out << "         --vertex-generator-seed 0 \\" << std::endl;
-      a_out << "         --event-generator-name \"K40\" \\" << std::endl;
-      a_out << "         --event-generator-seed 0  \\" << std::endl;
-      a_out << "         --g4-manager-seed 0       \\" << std::endl;
-      a_out << "         --shpf-seed 0             \\" << std::endl;
-      a_out << "         --output-prng-seeds-file mc_g4_production.seeds   \\" << std::endl;
-      a_out << "         --output-prng-states-file mc_g4_production.states \\" << std::endl;
-      a_out << "         --config ${CONFIG_DIR}/simulation/manager.conf \\" << std::endl;
-      a_out << "                  ${CONFIG_DIR}/simulation/geant4_visualization.macro" << std::endl;
-      a_out << std::endl;
-      a_out << " 2) Run the simulation in batch mode:" << std::endl;
-      a_out << "    " << a_name << " \\" << std::endl;
-      a_out << "         --batch                  \\" << std::endl;
-      a_out << "         --using-time-statistics  \\" << std::endl;
-      a_out << "         --vertex-generator-name \"source_bulk.vg\"  \\" << std::endl;
-      a_out << "         --vertex-generator-seed 0 \\" << std::endl;
-      a_out << "         --event-generator-name \"K40\"  \\" << std::endl;
-      a_out << "         --event-generator-seed 0 \\" << std::endl;
-      a_out << "         --g4-manager-seed 0      \\" << std::endl;
-      a_out << "         --shpf-seed 0            \\" << std::endl;
-      a_out << "         --output-prng-seeds-file mc_g4_production.seeds   \\" << std::endl;
-      a_out << "         --output-prng-states-file mc_g4_production.states \\" << std::endl;
-      a_out << "         --number-of-events 1     \\" << std::endl;
-      a_out << "         --config ${CONFIG_DIR}/simulation/manager.conf \\" << std::endl;
-      a_out << "         --output-data-file mc_g4_sample_0.xml \\" << std::endl;
-      a_out << "         > g4_production.log 2>&1" << std::endl;
-      a_out << std::endl;
-      a_out << std::endl;
+void ui::print_examples (std::ostream & a_out,
+                         const std::string & a_name,
+                         const std::string & a_title)
+{
+  if (! a_title.empty ()) {
+    a_out << a_title << std::endl;
+  }
+  a_out << std::endl;
+  a_out << " 1) Interactive test:" << std::endl;
+  a_out << "    " << a_name << " \\" << std::endl;
+  a_out << "         --interactive \\" << std::endl;
+  a_out << "         --g4-visu \\" << std::endl;
+  a_out << "         --vertex-generator-name \"source_bulk.vg\"  \\" << std::endl;
+  a_out << "         --vertex-generator-seed 0 \\" << std::endl;
+  a_out << "         --event-generator-name \"K40\" \\" << std::endl;
+  a_out << "         --event-generator-seed 0  \\" << std::endl;
+  a_out << "         --g4-manager-seed 0       \\" << std::endl;
+  a_out << "         --shpf-seed 0             \\" << std::endl;
+  a_out << "         --output-prng-seeds-file mc_g4_production.seeds   \\" << std::endl;
+  a_out << "         --output-prng-states-file mc_g4_production.states \\" << std::endl;
+  a_out << "         --config ${CONFIG_DIR}/simulation/manager.conf \\" << std::endl;
+  a_out << "                  ${CONFIG_DIR}/simulation/geant4_visualization.macro" << std::endl;
+  a_out << std::endl;
+  a_out << " 2) Run the simulation in batch mode:" << std::endl;
+  a_out << "    " << a_name << " \\" << std::endl;
+  a_out << "         --batch                  \\" << std::endl;
+  a_out << "         --using-time-statistics  \\" << std::endl;
+  a_out << "         --vertex-generator-name \"source_bulk.vg\"  \\" << std::endl;
+  a_out << "         --vertex-generator-seed 0 \\" << std::endl;
+  a_out << "         --event-generator-name \"K40\"  \\" << std::endl;
+  a_out << "         --event-generator-seed 0 \\" << std::endl;
+  a_out << "         --g4-manager-seed 0      \\" << std::endl;
+  a_out << "         --shpf-seed 0            \\" << std::endl;
+  a_out << "         --output-prng-seeds-file mc_g4_production.seeds   \\" << std::endl;
+  a_out << "         --output-prng-states-file mc_g4_production.states \\" << std::endl;
+  a_out << "         --number-of-events 1     \\" << std::endl;
+  a_out << "         --config ${CONFIG_DIR}/simulation/manager.conf \\" << std::endl;
+  a_out << "         --output-data-file mc_g4_sample_0.xml \\" << std::endl;
+  a_out << "         > g4_production.log 2>&1" << std::endl;
+  a_out << std::endl;
+  a_out << std::endl;
 
-      return;
-    }
-
-// end of g4_production.cxx
+  return;
+}

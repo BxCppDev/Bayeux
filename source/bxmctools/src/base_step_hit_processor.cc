@@ -13,6 +13,7 @@
 
 // This project:
 #include <mctools/utils.h>
+#include <mctools/step_hit_processor_factory.h>
 
 namespace mctools {
 
@@ -161,9 +162,11 @@ th row logic_error(message.str());
 
   base_step_hit_processor::~base_step_hit_processor()
   {
+    // std::cerr << "DEVEL: " << "base_step_hit_processor::DTOR: Entering..." << std::endl;
     if (_private_pool != 0) {
       delete _private_pool;
     }
+    // std::cerr << "DEVEL: " << "base_step_hit_processor::DTOR: Exiting." << std::endl;
     return;
   }
 
@@ -223,6 +226,7 @@ th row logic_error(message.str());
   void base_step_hit_processor::_initialize(const datatools::properties & config_,
                                             datatools::service_manager & service_mgr_)
   {
+    // std::cerr << "DEVEL: base_step_hit_processor::_initialize: Entering..." << std::endl;
 
     // Logging priority:
     datatools::logger::priority lp
@@ -263,31 +267,11 @@ th row logic_error(message.str());
     // Export others 'sensitive' properties :
     config_.export_starting_with(_auxiliaries, "sensitive.");
 
-
     // Export others 'geometry' properties :
     config_.export_starting_with(_auxiliaries, "geometry.");
-    /*
-      if (config_.has_key("geometry.models"))
-      {
-      vector<string> models;
-      config_.fetch("geometry.models" ,models);
-      _auxiliaries.store("geometry.models", models);
-      }
 
-      if (config_.has_key("geometry.models.with_materials"))
-      {
-      vector<string> models_with_materials;
-      config_.fetch("geometry.models.with_materials", models_with_materials);
-      _auxiliaries.store("geometry.models.with_materials", models_with_materials);
-      }
-
-      if (config_.has_key("geometry.models.excluded"))
-      {
-      vector<string> models_excluded;
-      config_.fetch("geometry.models.excluded", models_excluded);
-      _auxiliaries.store("geometry.models.excluded", models_excluded);
-      }
-    */
+    // Export others 'output_profiles' properties :
+    config_.export_starting_with(_auxiliaries, "output_profiles.");
 
     // Check:
     DT_THROW_IF (_hit_category.empty(),
@@ -314,6 +298,7 @@ th row logic_error(message.str());
       }
     }
 
+    // std::cerr << "DEVEL: base_step_hit_processor::_initialize: Exiting." << std::endl;
     return;
   }
 
@@ -528,6 +513,7 @@ th row logic_error(message.str());
   {
     _visu_highlighted_hits_ = false;
     _record_mc_step_hit_processor_ = false;
+
     return;
   }
 
@@ -539,6 +525,10 @@ th row logic_error(message.str());
   void push_all_step_hit_processor::initialize(const ::datatools::properties & config_,
                                                ::datatools::service_manager & service_mgr_)
   {
+    if (get_hit_category().empty()) {
+      set_hit_category(step_hit_processor_factory::default_detailed_hit_collection());
+    }
+
     this->base_step_hit_processor::initialize(config_,
                                               service_mgr_);
 
@@ -629,6 +619,9 @@ th row logic_error(message.str());
   void kill_all_step_hit_processor::initialize(const ::datatools::properties & config_,
                                                ::datatools::service_manager & service_mgr_)
   {
+    if (get_hit_category().empty()) {
+      set_hit_category("__null");
+    }
     this->base_step_hit_processor::_initialize(config_, service_mgr_);
     return;
   }

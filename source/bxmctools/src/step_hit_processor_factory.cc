@@ -1,4 +1,4 @@
-/** \file mctools/step_hit_processor_factory.cc */
+/// \file mctools/step_hit_processor_factory.cc
 
 // Ourselves:
 #include <mctools/step_hit_processor_factory.h>
@@ -15,6 +15,43 @@
 #include <geomtools/geometry_service.h>
 
 namespace mctools {
+
+  // static
+  const std::string & step_hit_processor_factory::default_detailed_hit_collection()
+  {
+    static const std::string _name("__visu.tracks");
+    return _name;
+  }
+
+  // static
+  const std::string & step_hit_processor_factory::matching_output_profiles_key()
+  {
+    static const std::string _name("output_profiles.matching");
+    return _name;
+  }
+
+  step_hit_processor_factory::processor_entry_type::~processor_entry_type()
+  {
+    reset();
+    return;
+  }
+
+  void step_hit_processor_factory::processor_entry_type::reset()
+  {
+    datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
+    // logging = datatools::logger::PRIO_TRACE;
+    DT_LOG_TRACE(logging,"Entering...");
+    DT_LOG_TRACE(logging,"name='" << name << "'");
+    DT_LOG_TRACE(logging,"type='" << type << "'");
+    if (handle.has_data()) {
+      DT_LOG_TRACE(logging,"handle=" << &handle.get());
+    } else {
+      DT_LOG_TRACE(logging,"handle=" << "<none>");
+    }
+    handle.reset(0);
+    DT_LOG_TRACE(logging,"Exiting.");
+    return;
+  }
 
   bool step_hit_processor_factory::is_initialized () const
   {
@@ -50,7 +87,17 @@ namespace mctools {
 
   void step_hit_processor_factory::set_description (const std::string & description_)
   {
+    DT_THROW_IF (is_initialized(), std::logic_error,
+                 "Factory is initialized and locked !");
     _description_ = description_;
+    return;
+  }
+
+  void step_hit_processor_factory::set_instantiate_at_loading(bool ial_)
+  {
+    DT_THROW_IF (is_initialized(), std::logic_error,
+                 "Factory is initialized and locked !");
+    _instantiate_at_loading_ = ial_;
     return;
   }
 
@@ -72,6 +119,20 @@ namespace mctools {
     DT_THROW_IF (_external_prng_ == 0, std::logic_error,
                  "No external PRNG is referenced !");
     return *_external_prng_;
+  }
+
+  void step_hit_processor_factory::set_output_profiles(const std::set<std::string> & output_profiles_)
+  {
+    DT_THROW_IF (is_initialized(), std::logic_error,
+                 "Factory is initialized and locked !");
+    _output_profiles_ = output_profiles_;
+    return;
+  }
+
+  void step_hit_processor_factory::reset_output_profiles()
+  {
+   _output_profiles_.clear();
+    return;
   }
 
   bool step_hit_processor_factory::has_geometry_manager () const
@@ -115,17 +176,86 @@ namespace mctools {
     return *_service_manager_;
   }
 
-  bool step_hit_processor_factory::has_processor (const std::string & name_)
+  bool step_hit_processor_factory::has_processor (const std::string & name_) const
   {
-    return _processors_.find (name_) != _processors_.end ();
+    return _entries_.find(name_) != _entries_.end ();
+    // return _processors_.find (name_) != _processors_.end ();
+  }
+
+  bool step_hit_processor_factory::is_processor_instantiated(const std::string & name_) const
+  {
+    processor_entry_dict_type::const_iterator found = _entries_.find(name_);
+    DT_THROW_IF(found ==  _entries_.end(), std::logic_error,
+                "Processor '" << name_ << "' does not exist !");
+    return found->second.handle.has_data();
+  }
+
+  bool step_hit_processor_factory::is_processor_instantiable(const std::string & name_) const
+  {
+    bool result = true;
+    processor_entry_dict_type::const_iterator found = _entries_.find(name_);
+    DT_THROW_IF(found ==  _entries_.end(), std::logic_error,
+                "Processor '" << name_ << "' does not exist !");
+    const processor_entry_type & pe = found->second;
+    // Access to configuration properties:
+    const datatools::properties & config = pe.config;
+
+    // Analyse the possible output profiles for this processor:
+    std::vector<std::string> matching_output_profile_ids;
+    if (config.has_key(matching_output_profiles_key())) {
+      // Does the processor have specific simulation output profiles:
+      config.fetch(matching_output_profiles_key(), matching_output_profile_ids);
+    }
+
+    if (matching_output_profile_ids.size()) {
+      // We consider the processor instantiable only if the
+      // factory has activated at least one of the matching
+      // output profiles:
+      result = false;
+      int matching_count = 0;
+      for (int i = 0; i < (int) matching_output_profile_ids.size(); i++) {
+        const std::string & profile_id = matching_output_profile_ids[i];
+        if (_output_profiles_.count(profile_id) == 1) {
+          matching_count++;
+        }
+      }
+      if (matching_count > 0) {
+        result = true;
+      }
+    }
+
+    return result;
   }
 
   void step_hit_processor_factory::_initialize()
   {
-    DT_THROW_IF (is_initialized (), std::logic_error, "Factory is already initialized !");
+    DT_LOG_TRACE(_logging_priority_,"Entering...");
+    DT_THROW_IF (is_initialized(), std::logic_error, "Factory is already initialized !");
+
+    for (processor_entry_dict_type::iterator i = _entries_.begin();
+         i != _entries_.end();
+         i++) {
+      processor_entry_type & pe = i->second;
+      const std::string & processor_name = pe.name;
+
+      if (! pe.handle.has_data()) {
+        base_step_hit_processor * proc = _create(processor_name);
+        if (proc != 0) {
+          DT_LOG_NOTICE(get_logging_priority(),
+                        "Instantiation of step hit processor '" << processor_name << "' as "
+                        << "a '" <<  pe.type << "'.");
+        } else {
+          DT_LOG_WARNING(get_logging_priority(),
+                        "No instantiation of step hit processor '" << processor_name << "' as "
+                        << "a '" <<  pe.type << "' !");
+        }
+      }
+    }
+
     _initialized_ = true;
+    DT_LOG_TRACE(_logging_priority_,"Exiting.");
     return;
-  }
+   }
 
   void step_hit_processor_factory::initialize()
   {
@@ -140,6 +270,10 @@ namespace mctools {
 
     if (config_.has_flag("debug")) {
       set_debug(true);
+    }
+
+    if (config_.has_flag("instantiate_at_loading")) {
+      set_instantiate_at_loading(true);
     }
 
     if (_description_.empty()) {
@@ -183,11 +317,25 @@ namespace mctools {
 
   void step_hit_processor_factory::reset ()
   {
+    DT_LOG_TRACE(_logging_priority_,"Entering...");
     DT_THROW_IF (! is_initialized (), std::logic_error,
                  "Factory is not initialized !");
     _initialized_ = false;
-    _processors_.clear ();
-    _handles_.clear ();
+    _processors_.clear();
+    usleep(1000);
+    for (processor_entry_dict_type::iterator i = _entries_.begin ();
+         i != _entries_.end ();
+         i++) {
+      processor_entry_type & pe = i->second;
+      DT_LOG_TRACE(_logging_priority_,"Cleaning '" << pe.name << "'...");
+      pe.config.clear();
+      pe.handle.reset(0);
+      DT_LOG_TRACE(_logging_priority_,"Done.");
+    }
+    _entries_.clear();
+    _output_profiles_.clear ();
+    _instantiate_at_loading_ = false;
+    DT_LOG_TRACE(_logging_priority_,"Exiting.");
     return;
   }
 
@@ -199,7 +347,8 @@ namespace mctools {
     set_debug(debug_);
     _factory_register_.set_label ("mctools::base_step_hit_processor/factory");
     _factory_register_.set_verbose (is_debug());
-
+    _instantiate_at_loading_ = false;
+    _external_prng_ = 0;
     bool preload = true;
     if (preload) {
       _factory_register_.import (DATATOOLS_FACTORY_GET_SYSTEM_REGISTER (::mctools::base_step_hit_processor));
@@ -210,7 +359,9 @@ namespace mctools {
   // Destructor :
   step_hit_processor_factory::~step_hit_processor_factory ()
   {
-    if (is_initialized()) reset ();
+    if (is_initialized()) {
+      reset();
+    }
     return;
   }
 
@@ -224,31 +375,120 @@ namespace mctools {
   base_step_hit_processor &
   step_hit_processor_factory::grab_processor (const std::string & name_)
   {
+    processor_entry_dict_type::iterator found = _entries_.find (name_);
+    DT_THROW_IF (found == _entries_.end (), std::logic_error,
+                 "No step hit processor named '" << name_ << "' !");
+    processor_entry_type & pe = found->second;
+    base_step_hit_processor * proc_ptr = 0;
+    if (! pe.handle.has_data()) {
+      proc_ptr = this->_create(name_);
+      DT_THROW_IF (proc_ptr == 0, std::logic_error,
+                   "Step hit processor named '" << name_ << "' cannot be instantiated !");
+
+    }
+    return pe.handle.grab();
+    /*
     processor_dict_type::iterator found = _processors_.find (name_);
     DT_THROW_IF (found == _processors_.end (), std::logic_error,
                  "No step hit processor named '" << name_ << "' !");
     return *(found->second);
+    */
   }
 
-  step_hit_processor_factory::processor_dict_type &
-  step_hit_processor_factory::grab_processors ()
-  {
-    return _processors_;
-  }
+  // step_hit_processor_factory::processor_dict_type &
+  // step_hit_processor_factory::grab_processors ()
+  // {
+  //   return _processors_;
+  // }
 
   const step_hit_processor_factory::processor_dict_type &
   step_hit_processor_factory::get_processors () const
   {
+    DT_THROW_IF (! is_initialized(), std::logic_error,
+                 "Factory is not yet initialized and locked !");
     return _processors_;
   }
 
-  base_step_hit_processor &
+  base_step_hit_processor * step_hit_processor_factory::_create(const std::string & name_)
+  {
+    DT_LOG_TRACE (get_logging_priority (), "Entering...");
+    base_step_hit_processor * proc = 0;
+    DT_THROW_IF (name_.empty (), std::logic_error,
+                 "Missing step hit processor name !");
+    processor_entry_dict_type::iterator found = _entries_.find(name_);
+    DT_THROW_IF (found == _entries_.end(), std::logic_error,
+                 "Step hit processor named '" << name_ << "' does not exists !");
+    processor_entry_type & pe = found->second;
+
+    bool create_it = false;
+    if (is_processor_instantiable(pe.name)) {
+      create_it = true;
+    }
+
+    if (create_it) {
+      const base_step_hit_processor::factory_register_type::factory_type & the_factory
+        = _factory_register_.get(pe.type);
+      DT_LOG_DEBUG (get_logging_priority (), "About to create a new step hit processor of type '"
+                    << pe.type << "' with name '" << pe.name << "'...");
+      proc = the_factory();
+      DT_LOG_DEBUG (get_logging_priority (), "Store the new instantiated '" << pe.type
+                    << "' step hit processor with name '" << pe.name << "' ...");
+      proc->set_name(pe.name);
+
+      if (proc->accept_external_rng () && has_external_prng ()) {
+        proc->set_external_rng (*_external_prng_);
+      }
+      DT_LOG_DEBUG (get_logging_priority (), "Initialize the new processor '" << pe.name << "'...");
+      bool accept_geom_manager = true;
+      if (pe.config.has_flag("reject_geometry_manager_from_factory")) {
+        accept_geom_manager = false;
+      }
+
+      if (accept_geom_manager && has_geometry_manager ()) {
+        proc->set_geom_manager(get_geometry_manager ());
+      }
+
+      if (has_service_manager()) {
+        proc->initialize (pe.config, *_service_manager_);
+      } else {
+        proc->initialize (pe.config);
+      }
+      // Initialize the handle with the newly created processor:
+      pe.handle.reset(proc);
+      // Record the processor address in the dictionnary of instantiated processors:
+      _processors_[pe.name] = &pe.handle.grab();
+    }
+
+    DT_LOG_TRACE (get_logging_priority (), "Exiting");
+    return proc;
+  }
+
+  void step_hit_processor_factory::fetch_processor_names(std::vector<std::string> & pnames_,
+                                                         bool only_instantiated_)  const
+  {
+    for (processor_entry_dict_type::const_iterator i = _entries_.begin();
+         i != _entries_.end();
+         i++) {
+      bool fetch_it = true;
+      if (only_instantiated_) {
+        if (! i->second.handle.has_data()) {
+           fetch_it = false;
+        }
+      }
+      if (fetch_it) {
+        pnames_.push_back(i->first);
+      }
+    }
+    return;
+  }
+
+
+  bool
   step_hit_processor_factory::create (const std::string & name_,
                                       const std::string & type_,
                                       const datatools::properties & config_)
   {
     DT_LOG_TRACE (get_logging_priority (), "Entering...");
-    base_step_hit_processor * proc = 0;
     DT_THROW_IF (name_.empty (), std::logic_error,
                  "Missing step hit processor name !");
     DT_THROW_IF (type_.empty (), std::logic_error,
@@ -260,6 +500,17 @@ namespace mctools {
                  "No registered step hit processor class with ID '"
                  << type_ << "' for step hit processor named '" << name_ << " !");
 
+    processor_entry_type pe;
+    pe.name = name_;
+    pe.type = type_;
+    pe.config = config_;
+    _entries_[pe.name] = pe;
+
+    DT_LOG_TRACE (get_logging_priority (), "Exiting.");
+    base_step_hit_processor * proc = _create(name_);
+    if (proc == 0) return false;
+    return true;
+    /*
     const base_step_hit_processor::factory_register_type::factory_type & the_factory
       = _factory_register_.get (type_);
     DT_LOG_TRACE (get_logging_priority (), "About to create a new step hit processor of type '"
@@ -294,13 +545,13 @@ namespace mctools {
     _processors_[name_] = proc;
     DT_LOG_TRACE (get_logging_priority (), "Exiting.");
     return *proc;
+    */
   }
 
   void step_hit_processor_factory::load(const datatools::multi_properties & mprop_)
   {
     DT_LOG_TRACE (get_logging_priority (), "Entering...");
-    if (is_debug ())
-      {
+    if (is_debug ()) {
         DT_LOG_DEBUG (get_logging_priority (), "Step hit processors factory rules:");
         mprop_.tree_dump (std::clog);
       }
@@ -309,13 +560,16 @@ namespace mctools {
          i != mprop_.entries ().end ();
          i++) {
       const datatools::multi_properties::entry & e = i->second;
-      const std::string & name = e.get_key ();
-      const std::string & type = e.get_meta ();
-      const datatools::properties & config = e.get_properties ();
-      DT_LOG_TRACE (get_logging_priority (), "Processor name = '" << name << "'");
-      DT_LOG_TRACE (get_logging_priority (), "Processor type = '" << type << "'");
-      //base_step_hit_processor & SHP =
-      this->create (name, type, config);
+      processor_entry_type pe;
+      pe.name = e.get_key();
+      pe.type = e.get_meta();
+      pe.config = e.get_properties();
+      _entries_[pe.name] = pe;
+      DT_LOG_TRACE (get_logging_priority (), "Processor name = '" << pe.name << "'");
+      DT_LOG_TRACE (get_logging_priority (), "Processor type = '" << pe.type << "'");
+      if (_instantiate_at_loading_) {
+        this->create (pe.name, pe.type, pe.config);
+      }
     }
     return;
   }
@@ -334,6 +588,8 @@ namespace mctools {
       a_out << indent << a_title << std::endl;
     }
 
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Initialized : " << is_initialized() << std::endl;
     {
       a_out << indent << datatools::i_tree_dumpable::tag
             << "Factory register : " << std::endl;
@@ -342,16 +598,65 @@ namespace mctools {
       _factory_register_.tree_dump (a_out, "", indent_ss.str ());
     }
     a_out << indent << datatools::i_tree_dumpable::tag
-          << "Logging priority  : " << datatools::logger::get_priority_label(_logging_priority_) << std::endl;
+          << "Logging priority : " << datatools::logger::get_priority_label(_logging_priority_) << std::endl;
     a_out << indent << datatools::i_tree_dumpable::tag
-          << "Description : '" << _description_ << "'" << std::endl;
+          << "Description      : '" << _description_ << "'" << std::endl;
     a_out << indent << datatools::i_tree_dumpable::tag
-          << "Service manager : " << _service_manager_ << std::endl;
+          << "Service manager  : " << _service_manager_ << std::endl;
     a_out << indent << datatools::i_tree_dumpable::tag
-          << "Processor handles  : " << _handles_.size () << std::endl;
+          << "Output profiles  : " << _output_profiles_.size() << std::endl;
+    for (std::set<std::string>::const_iterator i = _output_profiles_.begin();
+         i != _output_profiles_.end();
+         i++) {
+      std::set<std::string>::const_iterator j = i;
+      j++;
+      a_out << indent << datatools::i_tree_dumpable::skip_tag;
+      if (j == _output_profiles_.end()) {
+        a_out << indent << datatools::i_tree_dumpable::last_tag;
+      } else {
+        a_out << indent << datatools::i_tree_dumpable::tag;
+      }
+      a_out << "Output profile : '" << *i << "'" << std::endl;
+    }
+
     {
       a_out << indent << datatools::i_tree_dumpable::tag
-            << "Processors : " << std::endl;
+            << "Processor entries  : ";
+      if ( _entries_.size() ) {
+        a_out << _entries_.size();
+      } else {
+        a_out << "<none>";
+      }
+      a_out << std::endl;
+      for (processor_entry_dict_type::const_iterator i = _entries_.begin ();
+           i != _entries_.end ();
+           i++) {
+        a_out << indent << datatools::i_tree_dumpable::skip_tag;
+        processor_entry_dict_type::const_iterator j = i;
+        j++;
+        if (j == _entries_.end ()) {
+          a_out << datatools::i_tree_dumpable::last_tag;
+        } else {
+          a_out << datatools::i_tree_dumpable::tag;
+        }
+        const processor_entry_type & pe =  i->second;
+        a_out << "Name: '" << pe.name << "' Type: '" << pe.type << "' ";
+        if (pe.handle) {
+          a_out << "(address: " << &pe.handle.get() << ")";
+        }
+        a_out << std::endl;
+      }
+    }
+
+    {
+      a_out << indent << datatools::i_tree_dumpable::tag
+            << "Instantiated processors: ";
+      if ( _processors_.size() ) {
+        a_out << _processors_.size();
+      } else {
+        a_out << "<none>";
+      }
+      a_out << std::endl;
       for (processor_dict_type::const_iterator i = _processors_.begin ();
            i != _processors_.end ();
            i++) {
@@ -373,7 +678,13 @@ namespace mctools {
 
     }
     a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
-          << "External PRNG : " << _external_prng_ << std::endl;
+          << "External PRNG : ";
+    if (has_external_prng()) {
+      a_out << _external_prng_;
+    } else {
+      a_out << "<none>";
+    }
+    a_out << std::endl;
 
     return;
   }

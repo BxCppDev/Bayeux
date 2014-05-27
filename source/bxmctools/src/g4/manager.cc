@@ -1,6 +1,5 @@
-// -*- mode: c++ ; -*-
-/* manager.cc
- *
+/// \file mctools/g4/manager.cc
+/*
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,8 +18,11 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+
+// Ourselves:
 #include <mctools/g4/manager.h>
 
+// Standard library:
 #include <ctime>
 #include <cstdlib>
 #include <stdexcept>
@@ -30,21 +32,27 @@
 #include <string>
 #include <map>
 
+// Third party:
+// - Boost:
 #include <boost/filesystem.hpp>
 #include <boost/scoped_ptr.hpp>
-
+#include <boost/algorithm/string.hpp>
+// - CLHEP:
+#include <CLHEP/Random/Random.h>
+// - Bayeux/datatools:
 #include <datatools/ioutils.h>
 #include <datatools/multi_properties.h>
 #include <datatools/service_manager.h>
 #include <datatools/exception.h>
-
+// - Bayeux/mygsl:
 #include <mygsl/random_utils.h>
-
+// - Bayeux/genvtx:
 #include <genvtx/i_vertex_generator.h>
-
+// - Bayeux/genbb_help:
 #include <genbb_help/manager.h>
 #include <genbb_help/i_genbb.h>
 
+// This project:
 #include <mctools/g4/run_action.h>
 #include <mctools/g4/event_action.h>
 #include <mctools/g4/detector_construction.h>
@@ -56,8 +64,6 @@
 #include <mctools/g4/simulation_ctrl.h>
 #include <mctools/g4/data_libraries.h>
 
-#include <CLHEP/Random/Random.h>
-
 // G4 stuff:
 #include <globals.hh>
 #include <G4ParticleDefinition.hh>
@@ -66,7 +72,7 @@
 #include <G4RunManager.hh>
 
 #ifdef G4UI_USE_TCSH
-#include "G4UItcsh.hh"      // For terminal tcsh use
+#include "G4UItcsh.hh" // For terminal tcsh use
 #endif // G4UI_USE_TCSH
 
 #ifdef G4VIS_USE
@@ -117,7 +123,7 @@ namespace mctools {
       return;
     }
 
-    void manager::reset_simulation_ctrl ()
+    void manager::reset_simulation_ctrl()
     {
       DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
       _simulation_ctrl_ = 0;
@@ -190,6 +196,7 @@ namespace mctools {
 
     void manager::set_external_geom_manager(const geomtools::manager & a_geometry_manager)
     {
+      DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
       DT_THROW_IF (_geom_manager_.is_initialized(),
                    std::logic_error,
                    "Embedded geometry manager is already initialized ! "
@@ -223,6 +230,7 @@ namespace mctools {
 
     void manager::set_forbid_private_hits(bool a_forbid)
     {
+      DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
       _forbid_private_hits_ = a_forbid;
       return;
     }
@@ -236,6 +244,7 @@ namespace mctools {
 
     void manager::set_dont_save_no_sensitive_hit_events(bool a_dont_save)
     {
+      DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
       _dont_save_no_sensitive_hit_events_ = a_dont_save;
       return;
     }
@@ -269,6 +278,101 @@ namespace mctools {
       _interactive_ = new_value_;
       if (! _interactive_) _g4_visualization_ = false;
       return;
+    }
+
+    bool manager::has_supported_output_profile(const std::string & profile_id_) const
+    {
+      return _supported_output_profile_ids_.find(profile_id_) != _supported_output_profile_ids_.end();
+    }
+
+    void manager::add_supported_output_profile(const std::string & profile_id_, const std::string & description_)
+    {
+      DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
+      std::string profile_id = profile_id_;
+      boost::trim(profile_id);
+      DT_THROW_IF(profile_id.empty(),
+                  std::logic_error,
+                  "Empty output profile Id !");
+      DT_THROW_IF(profile_id.find('+') != profile_id.npos,
+                  std::logic_error,
+                  "Forbidden '+' character in the output profile Id '" << profile_id << "' !");
+      DT_THROW_IF(profile_id.find(' ') != profile_id.npos,
+                  std::logic_error,
+                  "Forbidden space character in the output profile Id '" << profile_id << "' !");
+      DT_THROW_IF(has_supported_output_profile(profile_id), std::logic_error,
+                  "Supported profile with Id '" << profile_id << "' already exists !");
+      _supported_output_profile_ids_[profile_id] =  description_;
+      return;
+    }
+
+    const std::map<std::string, std::string> & manager::get_supported_output_profiles() const
+    {
+      return _supported_output_profile_ids_;
+    }
+
+    bool manager::has_activated_output_profiles() const
+    {
+      return _activated_output_profile_ids_.size() > 0;
+    }
+
+    bool manager::has_activated_output_profile(const std::string & output_profile_id_) const
+    {
+      return _activated_output_profile_ids_.count(output_profile_id_) == 1;
+    }
+
+    void manager::set_output_profiles_activation_rule(const std::string & rule_)
+    {
+      DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
+      _output_profiles_activation_rule_ = rule_;
+      return;
+    }
+
+    void manager::apply_output_profiles_activation_rule(const std::string & output_profiles_activation_rule_)
+    {
+      DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
+      if (output_profiles_activation_rule_.empty()) return;
+      std::vector<std::string> activated_output_profile_ids;
+      boost::split(activated_output_profile_ids, output_profiles_activation_rule_,boost::is_any_of("+"));
+      for (int i = 0; i < (int) activated_output_profile_ids.size(); i++) {
+        std::string profile_id = activated_output_profile_ids[i];
+        boost::trim(profile_id);
+        activate_output_profile(profile_id);
+      }
+      return;
+    }
+
+    void manager::activate_output_profile(const std::string & output_profile_id_)
+    {
+      DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
+      DT_THROW_IF(! has_supported_output_profile(output_profile_id_),
+                  std::logic_error,
+                  "Unsupported output profile '" << output_profile_id_ << "' !");
+      _activated_output_profile_ids_.insert(output_profile_id_);
+      return;
+    }
+
+    void  manager::deactivate_output_profile(const std::string & output_profile_id_)
+    {
+      DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
+      if (has_activated_output_profile(output_profile_id_)) {
+        _activated_output_profile_ids_.erase(output_profile_id_);
+      }
+      return;
+    }
+
+    void manager::fetch_activated_output_profile_ids(std::vector<std::string> & activated_output_profile_ids_) const
+    {
+      for (std::set<std::string>::const_iterator i = _activated_output_profile_ids_.begin();
+           i != _activated_output_profile_ids_.end();
+           i++) {
+        activated_output_profile_ids_.push_back(*i);
+      }
+      return;
+    }
+
+    const std::set<std::string> & manager::get_activated_output_profile_ids() const
+    {
+      return _activated_output_profile_ids_;
     }
 
     bool manager::has_g4_visualization() const
@@ -414,7 +518,7 @@ namespace mctools {
 
     void manager::_init_defaults()
     {
-      // pointers:
+      // Pointers:
       _g4_stepping_verbosity_   = 0;
       _g4_run_manager_          = 0;
       _g4_UI_                   = 0;
@@ -429,6 +533,7 @@ namespace mctools {
       _g4_vis_manager_          = 0;
 #endif // G4VIS_USE
 
+      // Default seeds:
       _vg_prng_seed_             = mygsl::random_utils::SEED_INVALID;
       _eg_prng_seed_             = mygsl::random_utils::SEED_INVALID;
       _mgr_prng_seed_            = mygsl::random_utils::SEED_INVALID;
@@ -449,6 +554,11 @@ namespace mctools {
       _multi_config_     = 0;
       _interactive_      = false;
       _g4_visualization_ = false;
+
+      // Output profiles support:
+      _output_profiles_activation_rule_.clear();
+      _activated_output_profile_ids_.clear();
+      _supported_output_profile_ids_.clear();
 
       _forbid_private_hits_               = false;
       _dont_save_no_sensitive_hit_events_ = false;
@@ -515,9 +625,7 @@ namespace mctools {
       return _prng_state_save_modulo_ > 0;
     }
 
-    /********************
-     * vertex generator *
-     ********************/
+    // Vertex generator:
 
     const genvtx::manager & manager::get_vg_manager() const
     {
@@ -541,9 +649,7 @@ namespace mctools {
       return *_vertex_generator_;
     }
 
-    /*******************
-     * event generator *
-     *******************/
+    // Event generator:
 
     const genbb::manager & manager::get_eg_manager() const
     {
@@ -801,7 +907,6 @@ namespace mctools {
       return _g4_prng_;
     }
 
-    // ctor:
     manager::manager()
     {
       _initialized_           = false;
@@ -815,7 +920,6 @@ namespace mctools {
       return;
     }
 
-    // dtor:
     manager::~manager()
     {
       if (_initialized_) {
@@ -962,7 +1066,7 @@ namespace mctools {
         }
       }
 
-      /*** begin of property parsing ***/
+      // Begin of property parsing:
 
       // 2011-02-26 FM : only search for the 'number_of_events' property
       // if '_number_of_events' has not been set yet :
@@ -977,6 +1081,66 @@ namespace mctools {
           }
           set_number_of_events(unoevts);
         }
+      }
+
+      // 2014-05-01 FM: add support for output profiles:
+
+      // If no supported output profiles have been defined before,
+      // search them from setup properties:
+      if (_supported_output_profile_ids_.empty()) {
+        std::cerr << "DEVEL: " << "mctools::g4::manager::_init_core: "
+                  << "No supported output profiles are defined yet..."
+                  << std::endl;
+
+        if (manager_config.has_key("output_profiles")) {
+          std::cerr << "DEVEL: " << "mctools::g4::manager::_init_core: "
+                    << "Fetch supported output profiles yet..."
+                    << std::endl;
+          std::vector<std::string> sops;
+          manager_config.fetch("output_profiles", sops);
+          for (int i = 0; i < (int) sops.size(); i++) {
+            const std::string & profile_id = sops[i];
+            std::ostringstream key_oss;
+            key_oss << "output_profiles." << profile_id << ".description";
+            std::string profile_description;
+            if (manager_config.has_key(key_oss.str())) {
+              profile_description = manager_config.fetch_string(key_oss.str());
+            }
+            add_supported_output_profile(profile_id, profile_description);
+            std::cerr << "DEVEL: " << "mctools::g4::manager::_init_core: "
+                      << "Output profile '" << profile_id << "' is supported."
+                      << std::endl;
+          }
+        }
+      }
+
+      // If no output profiles have been activated before,
+      // search them from a setup property:
+      if (! has_activated_output_profiles()) {
+
+        std::cerr << "DEVEL: " << "mctools::g4::manager::_init_core: "
+                  << "No activated output profiles is defined yet..."
+                  << std::endl;
+
+        // If no activation rule for output profiles is defined for this session:
+        if (_output_profiles_activation_rule_.empty()) {
+          std::cerr << "DEVEL: " << "mctools::g4::manager::_init_core: "
+                    << "No activation rule for output profiles is defined yet..."
+                    << std::endl;
+          // Search one from the configuration object:
+          if (manager_config.has_key("output_profiles.activation")) {
+            std::cerr << "DEVEL: " << "mctools::g4::manager::_init_core: "
+                      << "Found an activation rule for output profiles..."
+                      << std::endl;
+            std::string output_profiles_activation_rule =
+              manager_config.fetch_string("output_profiles.activation");
+            set_output_profiles_activation_rule(output_profiles_activation_rule);
+          }
+        }
+        std::cerr << "DEVEL: " << "mctools::g4::manager::_init_core: "
+                  << "Apply the activation rule for output profiles..."
+                  << std::endl;
+        apply_output_profiles_activation_rule(_output_profiles_activation_rule_);
       }
 
       // 2011-02-26 FM : only search for the 'g4_macro' property if '_g4_macro_' is not set yet :
@@ -1000,24 +1164,22 @@ namespace mctools {
         }
       }
 
-      /*** end of property parsing ***/
+      // End of property parsing.
 
-      /********************************************************************/
+      // Begin of special configuration:
 
-      /*** begin of special configuration ***/
-
-      // init the seed of PRNG embedded in components :
+      // Init the seed of PRNG embedded in components :
       _init_seeds();
 
-      // some specific init for the G4 PRNG :
+      // Some specific init for the G4 PRNG :
       _init_prngs();
 
-      // some specific init for the G4 PRNG :
+      // Some specific init for the G4 PRNG :
       if (_use_time_stat_) {
         _init_time_stat();
       }
 
-      /*** end of special configuration ***/
+      // End of special configuration.
 
       return;
     }
@@ -1032,7 +1194,7 @@ namespace mctools {
                      std::logic_error,
                      "External geometry manager is not initialized !");
       } else {
-        DT_LOG_NOTICE(_logprio(), "Use embeded geometry manager...");
+        DT_LOG_NOTICE(_logprio(), "Use embedded geometry manager...");
         const datatools::properties & geometry_config
           = _multi_config_->get("geometry").get_properties();
         if (is_debug()) {
@@ -1861,6 +2023,45 @@ namespace mctools {
            << _input_prng_states_file_ << "' " << std::endl;
       out_ << indent << "|-- PRNG states output file: '"
            << _output_prng_states_file_ << "' " << std::endl;
+      out_ << indent << "|-- Supported output profiles = ";
+      if (_supported_output_profile_ids_.size()) {
+        out_ << _supported_output_profile_ids_.size() << std::endl;
+      } else {
+        out_ << "<none>" << std::endl;
+      }
+      for (std::map<std::string,std::string>::const_iterator i = _supported_output_profile_ids_.begin();
+           i != _supported_output_profile_ids_.end();
+           i++) {
+        std::map<std::string,std::string>::const_iterator j = i;
+        j++;
+        out_ << "|   ";
+        if (j == _supported_output_profile_ids_.end()) {
+          out_ << "`-- ";
+        } else {
+          out_ << "|-- ";
+        }
+        out_ << "Profile : '" << i->first << "' : " << i->second << std::endl;
+      }
+
+      out_ << indent << "|-- Activated output profiles = ";
+      if (_activated_output_profile_ids_.size()) {
+        out_ << _activated_output_profile_ids_.size() << std::endl;
+      } else {
+        out_ << "<none>" << std::endl;
+      }
+      for (std::set<std::string>::const_iterator i = _activated_output_profile_ids_.begin();
+           i != _activated_output_profile_ids_.end();
+           i++) {
+        std::set<std::string>::const_iterator j = i;
+        j++;
+        out_ << "|   ";
+        if (j == _activated_output_profile_ids_.end()) {
+          out_ << "`-- ";
+        } else {
+          out_ << "|-- ";
+        }
+        out_ << "Profile : '" << *i << std::endl;
+      }
       out_ << indent << "`-- end" << std::endl;
       return;
     }
@@ -1920,8 +2121,27 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::manager,ocd_)
                                 "                                                        \n"
                                 " * a Geant4 user interface (UI) manager                 \n"
                                 " * a Geant4 visualization manager (optional)            \n"
-                                "                                                        \n"
-                               );
+                                "                                                                \n"
+                                "The ``datatools::multi_properties`` configuration object        \n"
+                                "has several sections, each of them with specific setup          \n"
+                                "parameters:                                                     \n"
+                                "                                                                \n"
+                                " * ``[manager]`` : manager's core setup parameters              \n"
+                                " * ``[geometry]`` : geometry setup parameters                   \n"
+                                " * ``[event_generator]`` : event generator setup parameters     \n"
+                                " * ``[vertex_generator]`` : vertex generator setup parameters   \n"
+                                " * ``[detector_construction]`` : detector construction setup    \n"
+                                "   parameters                                                   \n"
+                                " * ``[physics_list]`` : physics list setup parameters           \n"
+                                " * ``[run_action]`` : run action setup parameters               \n"
+                                " * ``[event_action]`` : event action setup parameters           \n"
+                                " * ``[primary_generator_action]`` : primary event generator     \n"
+                                "   action setup parameters                                      \n"
+                                " * ``[tracking_action]`` : tracking action setup parameters     \n"
+                                " * ``[stepping_action]`` : stepping action setup parameters     \n"
+                                " * ``[stacking_action]`` : stacking action setup parameters     \n"
+                                "                                                                \n"
+                                );
 
   {
     // Description of the 'logging.priority' configuration property :
@@ -1932,6 +2152,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::manager,ocd_)
       .set_terse_description("Logging priority threshold")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
+      .set_default_value_string("warning")
       .set_long_description("Allowed values are:                                    \n"
                             "                                                       \n"
                             " * ``\"fatal\"``       : print fatal error messages    \n"
@@ -1941,16 +2162,16 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::manager,ocd_)
                             " * ``\"notice\"``      : print notice messages         \n"
                             " * ``\"information\"`` : print informational messages  \n"
                             " * ``\"debug\"``       : print debug messages          \n"
+                            "                                                       \n"
                             " * ``\"trace\"``       : print trace messages          \n"
-                            "                                                       \n"
-                            "Default value: ``\"warning\"``                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            "  [name=\"manager\"]                                   \n"
-                            "  logging.priority : string = \"warning\"              \n"
-                            "                                                       \n"
                             )
+      .add_example("Explicitly set the logging threshold: ::  \n"
+                   "                                          \n"
+                   "  [name=\"manager\"]                      \n"
+                   "  logging.priority : string = \"notice\"  \n"
+                   "                                          \n"
+                   )
+
       ;
   }
 
@@ -1965,17 +2186,101 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::manager,ocd_)
       .set_mandatory(false)
       .set_long_description("Allowed value: from ``1`` to ``100000000``                              \n"
                             "                                                                        \n"
-                            "Example::                                                               \n"
-                            "                                                                        \n"
-                            "  [name=\"manager\"]                                                    \n"
-                            "  number_of_events : integer = 100000                                   \n"
-                            "                                                                        \n"
                             "This property is not taken into account if the                          \n"
                             "*number of events* attributes has been set previously through           \n"
                             "the ``mctools::g4::manager::set_number_of_events(...)`` method.         \n"
                             "                                                                        \n"
                             )
+      .add_example("Set a specific number of events to simulate: ::   \n"
+                   "                                                  \n"
+                   "  [name=\"manager\"]                              \n"
+                   "  number_of_events : integer = 100000             \n"
+                   "                                                  \n"
+                   )
       ;
+  }
+
+  {
+    // Description of the 'output_profiles.supported' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("output_profiles")
+      .set_section("manager")
+      .set_terse_description("List of supported output profiles")
+      .set_traits(datatools::TYPE_STRING,
+                  datatools::configuration_property_description::ARRAY
+                  )
+      .set_mandatory(false)
+      .set_long_description("This property is not taken into account if some supported               \n"
+                            "output profiles have already been set in the simulation manager,        \n"
+                            "through the ``mctools::g4::manager::add_supported_output_profile(...)`` \n"
+                            "method.                                                                 \n"
+                            )
+      .add_example("Define some supported output profiles: ::                       \n"
+                   "                                                                \n"
+                   "  [name=\"manager\"]                                            \n"
+                   "  output_profiles : string[2] =  \\                             \n"
+                   "        \"calorimeter_details\"  \\                             \n"
+                   "        \"tracker_details\"                                     \n"
+                   "                                                                \n"
+                   )
+       ;
+  }
+
+  {
+    // Description of the 'output_profiles.supported.${id}.description' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("output_profiles.${output_profiles}.description")
+      .set_section("manager")
+      .set_terse_description("Description of supported output profiles")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_long_description("Each supported output profile can be associated to a description.       \n"
+                            "output profiles have already been set in the simulation manager,        \n"
+                            "through the ``mctools::g4::manager::add_supported_output_profile(...)`` \n"
+                            "method.                                                                 \n"
+                            )
+      .add_example("Describe the supported output profiles: ::                      \n"
+                   "                                                                \n"
+                   "  [name=\"manager\"]                                            \n"
+                   "  output_profiles : string[2] = \\                              \n"
+                   "        \"calorimeter_details\"  \\                             \n"
+                   "        \"tracker_details\"                                     \n"
+                   "  output_profiles.calorimeter_details.description : string = \\ \n"
+                   "        \"Detailed true hits from the calorimeter volume\"      \n"
+                   "  output_profiles.tracker_details.description : string = \\     \n"
+                   "        \"Detailed true hits from the tracker volume\"          \n"
+                   "                                                                \n"
+                   )
+       ;
+  }
+
+  {
+    // Description of the 'output_profiles.supported' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("output_profiles.activation")
+      .set_section("manager")
+      .set_terse_description("The activation rule for output profiles")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_long_description("This property is not taken into account if some                               \n"
+                            "output profiles have already been activated in the simulation manager,        \n"
+                            "through the ``mctools::g4::manager::activate_output_profile(...)`` or the     \n"
+                            "``mctools::g4::manager::apply_output_profiles_activation_rule(...)`` methods. \n"
+                            )
+      .add_example("Activate two output profiles from the list of supported ones: ::\n"
+                   "                                                                \n"
+                   "  [name=\"manager\"]                                            \n"
+                   "  output_profiles : string[4] =  \\                             \n"
+                   "        \"ecalo_details\"  \\                                   \n"
+                   "        \"hcalo_details\"  \\                                   \n"
+                   "        \"muons_details\"  \\                                   \n"
+                   "        \"tracker_details\"                                     \n"
+                   "  output_profiles.activation: string = \"ecalo_details + muons_details\" \n"
+                   )
+       ;
   }
 
   {
@@ -1987,16 +2292,17 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::manager,ocd_)
       .set_terse_description("Geant4 macro to be executed")
       .set_traits(datatools::TYPE_STRING)
       .set_path(true)
-      .set_long_description("Example::                                                               \n"
-                            "                                                                        \n"
-                            "  [name=\"manager\"]                                                    \n"
-                            "  g4_macro : string as path = \"g4.mac\"                                \n"
-                            "                                                                        \n"
-                            "This property is not taken into account if a Geant4 *macro*             \n"
+      .set_long_description("This property is not taken into account if a Geant4 *macro*             \n"
                             "has already been set by the simulation manager, through                 \n"
                             "the ``mctools::g4::manager::set_g4_macro(...)`` method.                 \n"
                             "                                                                        \n"
                             )
+      .add_example("Set the name of a Geant4 macro: ::                              \n"
+                   "                                                                \n"
+                   "  [name=\"manager\"]                                            \n"
+                   "  g4_macro : string as path = \"g4.mac\"                        \n"
+                   "                                                                \n"
+                   )
       ;
   }
 
@@ -2079,7 +2385,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::manager,ocd_)
                                "  logging.priority : string = \"warning\"                             \n"
                                "                                                                      \n"
                                "  #@description Number of events to be simulated                      \n"
-                               "  number_of_events :integer = 10000                                   \n"
+                               "  number_of_events : integer = 10000                                  \n"
                                "                                                                      \n"
                                "                                                                      \n"
                                "  [name=\"geometry\"]                                                 \n"
@@ -2170,6 +2476,3 @@ DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
 
 // Registration macro for class 'mctools::g4::manager' :
 DOCD_CLASS_SYSTEM_REGISTRATION(mctools::g4::manager,"mctools::g4::manager")
-
-
-// end of manager.cc

@@ -1,26 +1,28 @@
-// -*- mode: c++ ; -*-
-/* manager_parameters.cc
- */
+/// \file mctools/g4/manager_parameters.cc
 
+// Ourselves:
 #include <mctools/g4/manager_parameters.h>
-#include <mctools/g4/manager.h>
 
+// Third party:
+// - Boost:
 #include <boost/filesystem.hpp>
-
-#include <mctools/utils.h>
-
+#include <boost/algorithm/string.hpp>
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
 #include <datatools/exception.h>
 #include <datatools/logger.h>
-
+// - Bayeux/mygsl:
 #include <mygsl/random_utils.h>
+
+// This project:
+#include <mctools/utils.h>
+#include <mctools/g4/manager.h>
 
 namespace mctools {
 
   namespace g4 {
 
-    // ctor:
     manager_parameters::manager_parameters ()
     {
       set_defaults ();
@@ -56,6 +58,7 @@ namespace mctools {
       out_ << "|-- " << "eg_name   = '" << eg_name << "'" << std::endl;
       out_ << "|-- " << "eg_seed   = " << eg_seed << std::endl;
       out_ << "|-- " << "shpf_seed = " << shpf_seed << std::endl;
+      out_ << "|-- " << "output_profiles_activation_rule = '" << output_profiles_activation_rule << "'" << std::endl;
       out_ << "|-- " << "using_time_stat     = " << using_time_stat << std::endl;
       out_ << "|-- " << "forbid_private_hits = " << forbid_private_hits << std::endl;
       out_ << "|-- " << "dont_save_no_sensitive_hit_events = " << dont_save_no_sensitive_hit_events << std::endl;
@@ -87,6 +90,7 @@ namespace mctools {
       this->eg_seed = mygsl::random_utils::SEED_INVALID;
       this->mgr_seed = mygsl::random_utils::SEED_INVALID;
       this->shpf_seed = mygsl::random_utils::SEED_INVALID;
+      this->output_profiles_activation_rule.clear();
       this->using_time_stat = false;
       this->forbid_private_hits = false;
       this->dont_save_no_sensitive_hit_events = false;
@@ -180,6 +184,12 @@ namespace mctools {
       a_manager.set_number_of_events_modulo (a_params.number_of_events_modulo);
       //}
 
+      // Support for output profiles:
+      if (! a_params.output_profiles_activation_rule.empty ()) {
+        // Defered activation rule for output profiles
+        a_manager.set_output_profiles_activation_rule(a_params.output_profiles_activation_rule);
+      }
+
       if (a_params.forbid_private_hits) {
         a_manager.set_forbid_private_hits (true);
       }
@@ -221,5 +231,3 @@ namespace mctools {
   } // end of namespace g4
 
 } // end of namespace mctools
-
-// end of manager_parameters.cc

@@ -41,6 +41,10 @@ material : string = "std::polystyrene"
 #@description The alias for vacuum
 material : string = "std::vacuum"
 
+[name="vessel_gas" type="alias"]
+#@description The alias for low pressure air in the vessel
+material : string = "low_pressure_air"
+
 [name="lead" type="alias"]
 #@description The alias for lead
 material : string = "std::lead"

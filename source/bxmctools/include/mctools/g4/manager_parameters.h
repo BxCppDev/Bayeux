@@ -18,9 +18,10 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <set>
 
 // Third party:
-// - Boost
+// - Boost:
 #include <boost/cstdint.hpp>
 
 namespace mctools {
@@ -32,32 +33,32 @@ namespace mctools {
     /// \brief The set of parameters for the Geant4 simulation manager
     struct manager_parameters
     {
-      bool        interactive; /// Flag to activate the interactive mode
-      std::string g4_macro; /// Name of a Geant4 macro to be executed
-      bool        g4_visu; /// Flag to activate Geant4 visulization
-
-      std::string logging; /// Logging priority threshold label
-      std::vector<std::string> dlls; /// List of DLLs to be loaded
-      std::string dll_loader_config; /// Configuration file of the DLL loader
+      bool        interactive;             /// Flag to activate the interactive mode
+      std::string g4_macro;                /// Name of a Geant4 macro to be executed
+      bool        g4_visu;                 /// Flag to activate Geant4 visulization
+      std::string logging;                 /// Logging priority threshold label
+      std::vector<std::string> dlls;       /// List of DLLs to be loaded
+      std::string dll_loader_config;       /// Configuration file of the DLL loader
       std::string manager_config_filename; /// Main manager configuration file
-      uint32_t    number_of_events; /// Number of simulated event
+      uint32_t    number_of_events;        /// Number of simulated event
       uint32_t    number_of_events_modulo; /// Number of events modulo
-      int         mgr_seed; /// Seed for the Geant4 engine's PRNG
-      std::string input_prng_states_file;
-      std::string output_prng_states_file;
+      int         mgr_seed;                /// Seed for the Geant4 engine's PRNG
+      std::string input_prng_states_file;  /// Input file for PRNG's states
+      std::string output_prng_states_file; /// Output file for PRNG's states
       int         prng_states_save_modulo; /// Period saving the PRNG's internal states
-      std::string input_prng_seeds_file;
-      std::string output_prng_seeds_file;
-      std::string output_data_file; /// Name of the output data file
-      std::string vg_name; /// Name of the vertex generator
-      int         vg_seed; /// Seed for the vertex generator's PRNG
-      std::string eg_name; /// Name of the primary event generator
-      int         eg_seed; /// Seed for the primary event generator's PRNG
-      int         shpf_seed; /// Seed for the hit post-processing factory
-      bool        using_time_stat; /// Print time statistic at the end of simulation run
-      bool        forbid_private_hits; /// Do not save 'private' MC hits at the end of the simulated event
+      std::string input_prng_seeds_file;   /// Input file for PRNG's seeds
+      std::string output_prng_seeds_file;  /// Output file for PRNG's seeds
+      std::string output_data_file;        /// Name of the output data file
+      std::string vg_name;                 /// Name of the vertex generator
+      int         vg_seed;                 /// Seed for the vertex generator's PRNG
+      std::string eg_name;                 /// Name of the primary event generator
+      int         eg_seed;                 /// Seed for the primary event generator's PRNG
+      int         shpf_seed;               /// Seed for the hit post-processing factory
+      bool        using_time_stat;         /// Print time statistic at the end of simulation run
+      std::string output_profiles_activation_rule; /// The rule to activate Monte Carlo simulation output profiles
+      bool        forbid_private_hits;     /// Do not save 'private' MC hits at the end of the simulated event
       bool        dont_save_no_sensitive_hit_events; /// Do not save 'no sensitive' MC hits
-      bool        use_run_header_footer; /// Add a header/footer in the output data file
+      bool        use_run_header_footer;   /// Add a header/footer in the output data file
 
     public:
 
@@ -77,7 +78,7 @@ namespace mctools {
       static void setup(const manager_parameters & a_params,
                         manager & a_manager);
 
-    }; // end of class manager_parameters
+    };
 
   } // end of namespace g4
 

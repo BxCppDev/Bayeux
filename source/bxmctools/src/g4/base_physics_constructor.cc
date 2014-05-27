@@ -126,19 +126,17 @@ namespace mctools {
            << "Class ID              : '" << _class_id_ << "'" << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Logging priority      : "
-           << datatools::logger::get_priority_label(_logprio()) << std::endl;
+           << "Logging priority      : '"
+           << datatools::logger::get_priority_label(_logprio()) << "'" << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Mother physics list   : " << (_mother_physics_list_ != 0 ? "Yes": "No") << std::endl;
+           << "Mother physics list   : " << (_mother_physics_list_ != 0 ? "Yes": "No") << "" << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
-           << "Initialized           : " << (is_initialized() ? "Yes": "No") << std::endl;
+           << "Initialized           : " << (is_initialized() ? "Yes": "No") << "" << std::endl;
       return;
     }
 
   } // end of namespace g4
 
 } // end of namespace mctools
-
-// end of base_physics_constructor.cc

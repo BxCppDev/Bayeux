@@ -83,7 +83,7 @@ filled_mode : string = "by_envelope"
 material.ref : string = "aluminium"
 
 #@description The name of the material that fills the void volume within the ring
-material.filled.ref : string = "vacuum"
+material.filled.ref : string = "vessel_gas"
 
 #########################
 # Visibility parameters #
@@ -157,7 +157,7 @@ replicated.step            : real as length = 10 cm
 #######################
 
 #@description The name of the material around the sources objects
-material.ref               : string = "vacuum"
+material.ref               : string = "vessel_gas"
 
 ###########################
 # Internal/daughter items #
@@ -165,6 +165,3 @@ material.ref               : string = "vacuum"
 
 #@description The mapping directives for the "sources" daughter volumes
 mapping.daughter_id.sources : string  = "[source.gc:position+0]"
-
-
-# End of list of multi-properties.

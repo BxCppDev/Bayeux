@@ -152,15 +152,14 @@ Quick start
 
 4. Standalone Geometry:
 
-   First create the ``CONFIG_DIR`` environment variable::
+   First create the ``CONFIG_DIR`` environment variable: ::
 
      $ export CONFIG_DIR="$(pwd)/config"
 
 
-   a. Run the ``bxgeomtools_inspector`` to check the virtual geometry::
+   a. Run the ``bxgeomtools_inspector`` to check the virtual geometry: ::
 
          $ bxgeomtools_inspector \
-                  --load-dll emfield \
                   --manager-config ${CONFIG_DIR}/geometry/manager.conf \
                   --with-visu --visu-view-3d
          geomtools> help
@@ -169,10 +168,6 @@ Quick start
          geomtools> display [2020:0.0]
          geomtools> export_gdml
          geomtools> quit
-
-      Note: here we load the ``emfield`` library because the geometry setup depends on
-      a plugin dedicated to the modelization of electromagnetic fields provided by the
-      ``emfield`` library.
 
       It displays views of the setup using the ``geomtools`` Gnuplot viewer.
 
@@ -188,7 +183,7 @@ Quick start
          :alt: The 2D view of the setup (file ``images/ex00_geometry_2.jpg``)
          :align: center
 
-   b. ROOT display of the setup via the ``mctools_ex00-1.0.gdml`` GDML file ::
+   b. ROOT display of the setup via the ``mctools_ex00-1.0.gdml`` GDML file: ::
 
          $ root
          root [0] TGeoManager * geo = new TGeoManager("geo","mctools examples/ex00 virtual setup");
@@ -200,7 +195,7 @@ Quick start
 
       Select ``Wiew|View With|OpenGL`` and type the ``t``, ``r`` and ``w`` to switch different rendering modes.
 
-      To exit the ROOT shell::
+      To exit the ROOT shell: ::
 
          root [5] .q
 
@@ -214,7 +209,7 @@ Quick start
 
 5. Standalone event generation:
 
-    a. Show the list of available generators::
+    a. Show the list of available generators: ::
 
          $ bxgenbb_inspector \
                   --configuration "${CONFIG_DIR}/event_generator/manager.conf" \
@@ -228,7 +223,7 @@ Quick start
          |-- electron_50-2000keV_flat       : genbb::single_particle_generator (not initialized)
          `-- electron_pdf                   : genbb::single_particle_generator (not initialized)
 
-    b. Shoot some primary events from one event generator::
+    b. Shoot some primary events from one event generator: ::
 
          $ bxgenbb_inspector \
                   --configuration "${CONFIG_DIR}/event_generator/manager.conf" \
@@ -238,7 +233,7 @@ Quick start
                   --number-of-events 10000 \
                   --output-file "histos_electron_1MeV_gaussian_100keV.root"
 
-    c. Display histograms associated to the event kinematics::
+    c. Display histograms associated to the event kinematics: ::
 
          $ root histos_electron_1MeV_gaussian_100keV.root
          root [1] TBrowser b; // then use the GUI to display the histograms
@@ -255,10 +250,9 @@ Quick start
 
 6. Standalone vertex generation:
 
-    a. Show the list of available generators::
+    a. Show the list of available generators: ::
 
          $ bxgenvtx_production \
-                 --load-dll "emfield" \
                  --geometry-manager "${CONFIG_DIR}/geometry/manager.conf" \
                  --vertex-generator-manager "${CONFIG_DIR}/vertex_generator/manager.conf" \
                  --list
@@ -277,10 +271,9 @@ Quick start
          `-- source_surface.vg  : Vertex generation from the source bulk
 
 
-    b. Shoot some random vertex generators and visualize them::
+    b. Shoot some random vertex generators and visualize them: ::
 
          $ bxgenvtx_production \
-                 --load-dll "emfield"  \
                  --geometry-manager "${CONFIG_DIR}/geometry/manager.conf" \
                  --vertex-generator-manager "${CONFIG_DIR}/vertex_generator/manager.conf" \
                  --shoot \
@@ -300,10 +293,9 @@ Quick start
          :align: center
 
 
-    c. Another random vertex generators::
+    c. Another random vertex generators: ::
 
          $ bxgenvtx_production \
-                 --load-dll "emfield"  \
                  --geometry-manager "${CONFIG_DIR}/geometry/manager.conf" \
                  --vertex-generator-manager "${CONFIG_DIR}/vertex_generator/manager.conf" \
                  --shoot \
@@ -322,7 +314,7 @@ Quick start
 
 7. Geant4 simulation:
 
-    a. Run the Geant4 simulation through a Geant4 interactive session with visualization::
+    a. Run the Geant4 simulation through a Geant4 interactive session with visualization: ::
 
          $ bxg4_production \
                 --logging-priority "warning" \
@@ -338,6 +330,7 @@ Quick start
                 --g4-manager-seed 0 \
                 --output-prng-seeds-file "prng_seeds.save" \
                 --output-prng-states-file "prng_states.save" \
+		--output-profiles "all_details" \
                 --output-data-file "mctools_ex00_electron_1MeV_source_bulk.xml" \
                 --g4-macro "${CONFIG_DIR}/simulation/geant4_visualization.mac"
 
@@ -389,7 +382,6 @@ Quick start
          $ ls -l mctools_ex00_electron_1MeV_source_bulk.xml
          $ export LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH}
          $ ./ex00_read_plain_simdata \
-                 --load-dll "emfield"  \
                  --logging-priority "notice" \
                  --interactive \
                  --with-visualization \
@@ -451,7 +443,6 @@ Quick start
 
          $ ls -l mctools_ex00_electron_1MeV_source_bulk.data.gz
          $ ./ex00_read_plain_simdata \
-                 --load-dll "emfield"  \
                  --logging-priority "notice" \
                  --interactive \
                  --with-visualization \
@@ -482,7 +473,6 @@ Quick start
 
          $ ls -l mctools_ex00_electron_1MeV_cone@source_bulk.dpp.brio
          $ ./ex00_read_pipeline_simdata \
-                 --load-dll emfield  \
                  --logging-priority "notice" \
                  --interactive \
                  --with-visualization \

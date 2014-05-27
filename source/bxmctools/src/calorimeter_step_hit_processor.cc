@@ -48,6 +48,8 @@ namespace mctools {
 
   calorimeter_step_hit_processor::~calorimeter_step_hit_processor ()
   {
+    // std::cerr << "DEVEL: " << "calorimeter_step_hit_processor::DTOR: Entering..." << std::endl;
+    // std::cerr << "DEVEL: " << "calorimeter_step_hit_processor::DTOR: Exiting." << std::endl;
     return;
   }
 

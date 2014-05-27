@@ -95,6 +95,48 @@ visibility.hidden          : boolean = 0
 visibility.color           : string  = "blue"
 
 
+#################################################################
+[name="shield_brick.model" type="geomtools::simple_shaped_model"]
+
+#@config The configuration parameters for the light guide
+
+############
+# Geometry #
+############
+
+#@description The default implicit length unit
+length_unit : string = "mm"
+
+#@description The name of the 3D shape
+shape_type : string = "box"
+
+#@description The list of X coordinates
+x  : real as length =  200. mm
+
+#@description The list of Y coordinates
+y  : real as length =   50. mm
+
+#@description The list of Y coordinates
+z  : real as length =  100. mm
+
+#######################
+# Material parameters #
+#######################
+
+#@description The name of the material
+material.ref : string  = "lead"
+
+#########################
+# Visibility parameters #
+#########################
+
+#@description The visibility hidden flag for the display
+visibility.hidden          : boolean = 0
+
+#@description The recommended color for the display
+visibility.color           : string  = "orange"
+
+
 ########################################################
 [name="lab.model" type="geomtools::simple_shaped_model"]
 
@@ -144,7 +186,7 @@ visibility.daughters.hidden : boolean = 0
 ###########################
 
 #@description The list of daughter volumes by labels
-internal_item.labels : string[4] = "source" "detector" "box" "absorber0"
+internal_item.labels : string[6] = "source" "detector" "box" "absorber0" "brick0" "brick1"
 
 #@description The model of the "source" daughter volume
 internal_item.model.source        : string  = "source.model"
@@ -169,6 +211,20 @@ internal_item.model.absorber0     : string  = "thin_absorber.model"
 
 #@description The placement of the "absorber0" daughter volume
 internal_item.placement.absorber0 : string  = "0 0 0 (cm) @  0 90 0 (degree) "
+
+#@description The model of the "brick0" daughter volume
+internal_item.model.brick0     : string  = "shield_brick.model"
+
+#@description The placement of the "brick0" daughter volume
+internal_item.placement.brick0 : string  = "-15 -10 0 (cm) "
+
+#@description The model of the "brick1" daughter volume
+internal_item.model.brick1     : string  = "shield_brick.model"
+
+#@description The placement of the "brick1" daughter volume
+internal_item.placement.brick1 : string  = "-15 +10 0 (cm) "
+
+
 
 
 ##########################################

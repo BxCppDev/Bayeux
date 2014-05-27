@@ -196,5 +196,3 @@ int main(int argc_, char **argv_) {
   BAYEUX_FINI();
   return error_code;
 }
-
-// end of ex00_read_plain_simdata.cxx

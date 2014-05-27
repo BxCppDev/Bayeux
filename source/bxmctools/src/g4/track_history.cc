@@ -1,9 +1,9 @@
-// -*- mode: c++ ; -*-
-/* track_history.cc
- */
+/// track_history.cc
 
+// Ourselves:
 #include <mctools/g4/track_history.h>
 
+// Standard library:
 #include <sstream>
 #include <stdexcept>
 
@@ -162,7 +162,6 @@ namespace mctools {
 
 }  // end of namespace mctools
 
-// end of track_history.cc
 /*
 ** Local Variables: --
 ** mode: c++ --

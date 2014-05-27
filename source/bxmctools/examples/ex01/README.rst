@@ -11,22 +11,22 @@ Introduction
    to simulate Co-60 radioactive decays from a given location in a virtual geometry and track the
    Monte-Carlo particles.
 
-   It is first shown how to use the ``geomtools_inspector`` utility
+   It is first shown how to use the ``bxgeomtools_inspector`` utility
    to visualize the setup and generate a GDML file usable by Geant4
    and browsable by ROOT.
 
    The event and vertex generators are also tested in a standalone mode
-   thanks to the ``genbb_inspector`` and ``genvtx_production`` programs
+   thanks to the ``bxgenbb_inspector`` and ``bxgenvtx_production`` programs
    respectively.
 
-   The ``g4_production`` program is used to run a Geant4 based
+   The ``bxg4_production`` program is used to run a Geant4 based
    Monte-Carlo simulation and produce an output simulated data file both in interactive mode
    (with online Geant4 visualization) and non-interactive mode.
 
    A sample program is provided to browse (ASCII mode) the output simulated data files
    which contains plain object records of the ``mctools::simulated_data`` class.
 
-   Finally the ``dpp_processing`` program is used to run the Geant4 simulation
+   Finally the ``bxdpp_processing`` program is used to run the Geant4 simulation
    through a data processing pipeline, using the dedicated data processing
    module class ``mctools::g4::simulation_module``.
 
@@ -160,11 +160,10 @@ Quick start
 4. Standalone Geometry:
 
 
-   a. Run the ``geomtools_inspector`` to check the virtual geometry::
+   a. Run the ``bxgeomtools_inspector`` to check the virtual geometry::
 
          $ export CONFIG_DIR="$(pwd)/config"
-         $ geomtools_inspector \
-                  --load-dll "emfield" \
+         $ bxgeomtools_inspector \
                   --manager-config "${CONFIG_DIR}/geometry/manager.conf" \
                   --with-visu --visu-view-3d
          geomtools> help
@@ -173,10 +172,6 @@ Quick start
          geomtools> display [2020:0.0]
          geomtools> export_gdml
          geomtools> quit
-
-      Note: here we load the ``emfield`` library because the geometry setup depends on
-      a plugin dedicated to the modelization of electromagnetic fields provided by the
-      ``emfield`` library.
 
       It displays views of the setup using the ``geomtools`` Gnuplot viewer :
 
@@ -218,13 +213,13 @@ Quick start
 
     a. Show the list of available generators::
 
-         $ genbb_inspector \
+         $ bxgenbb_inspector \
                   --configuration "${CONFIG_DIR}/event_generator/manager.conf" \
                   --action "list"
 
     b. Shoot some primary events from one event generator::
 
-         $ genbb_inspector \
+         $ bxgenbb_inspector \
                   --configuration "${CONFIG_DIR}/event_generator/manager.conf" \
                   --action "shoot" \
                   --generator "Co60" \
@@ -268,8 +263,7 @@ Quick start
 
     a. Show the list of available generators::
 
-         $ genvtx_production \
-                 --load-dll "emfield"  \
+         $ bxgenvtx_production \
                  --geometry-manager "${CONFIG_DIR}/geometry/manager.conf" \
                  --vertex-generator-manager "${CONFIG_DIR}/vertex_generator/manager.conf" \
                  --list
@@ -277,8 +271,7 @@ Quick start
 
     b. Shoot some random vertex generators and visualize them::
 
-         $ genvtx_production \
-                 --load-dll "emfield"  \
+         $ bxgenvtx_production \
                  --geometry-manager "${CONFIG_DIR}/geometry/manager.conf" \
                  --vertex-generator-manager "${CONFIG_DIR}/vertex_generator/manager.conf" \
                  --shoot \
@@ -300,8 +293,7 @@ Quick start
 
     c. Another random vertex generators::
 
-         $ genvtx_production \
-                 --load-dll "emfield"  \
+         $ bxgenvtx_production \
                  --geometry-manager "${CONFIG_DIR}/geometry/manager.conf" \
                  --vertex-generator-manager "${CONFIG_DIR}/vertex_generator/manager.conf" \
                  --shoot \
@@ -321,8 +313,7 @@ Quick start
 
     d. Yet another random vertex generators::
 
-         $ genvtx_production \
-                 --load-dll emfield  \
+         $ bxgenvtx_production \
                  --geometry-manager "${CONFIG_DIR}/geometry/manager.conf" \
                  --vertex-generator-manager "${CONFIG_DIR}/vertex_generator/manager.conf" \
                  --shoot \
@@ -342,9 +333,11 @@ Quick start
 
 7. Geant4 simulation:
 
-    a. Run the simulation through a Geant4 interactive session with visualization::
+    a. Run the simulation through a Geant4 interactive session with visualization.
+       Here we activate the ``"all_visu"`` output profile that stores the true hits from
+       various volumes of interest in the geometry (scintillator blocks, the inner volume of the vessel and sources): ::
 
-         $ g4_production \
+         $ bxg4_production \
                 --logging-priority "warning" \
                 --number-of-events-modulo 1 \
                 --interactive \
@@ -356,6 +349,28 @@ Quick start
                 --event-generator-seed 0 \
                 --shpf-seed 0 \
                 --g4-manager-seed 0 \
+                --output-profiles "all_visu" \
+                --output-prng-seeds-file "prng_seeds.save" \
+                --output-prng-states-file "prng_states.save" \
+                --output-data-file "mctools_ex01_Co60_source_0_bulk.xml" \
+                --g4-macro "${CONFIG_DIR}/simulation/geant4_visualization.macro"
+
+       We can also activate the ``"full_truth"`` output profile that stores the true hits from
+       all volumes in the geometry: ::
+
+         $ bxg4_production \
+                --logging-priority "warning" \
+                --number-of-events-modulo 1 \
+                --interactive \
+                --g4-visu \
+                --config "${CONFIG_DIR}/simulation/manager.conf" \
+                --vertex-generator-name "source_0_bulk.vg" \
+                --vertex-generator-seed 0 \
+                --event-generator-name "Co60" \
+                --event-generator-seed 0 \
+                --shpf-seed 0 \
+                --g4-manager-seed 0 \
+                --output-profiles "full_truth" \
                 --output-prng-seeds-file "prng_seeds.save" \
                 --output-prng-states-file "prng_states.save" \
                 --output-data-file "mctools_ex01_Co60_source_0_bulk.xml" \
@@ -378,9 +393,7 @@ Quick start
       Then browse the output plain simulated data file: ::
 
          $ ls -l mctools_ex01_Co60_source_0_bulk.xml
-         $ export LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH}
          $ ./ex01_read_plain_simdata \
-                 --load-dll "emfield"  \
                  --logging-priority "notice" \
                  --interactive \
                  --with-visualization \
@@ -397,10 +410,10 @@ Quick start
 
     b. Run the simulation in non-interactive mode::
 
-         $ g4_production \
+         $ bxg4_production \
                 --logging-priority "warning" \
-                --number-of-events 100 \
-                --number-of-events-modulo 10 \
+                --number-of-events 10 \
+                --number-of-events-modulo 2 \
                 --batch \
                 --config "${CONFIG_DIR}/simulation/manager.conf" \
                 --vertex-generator-name "source_0_bulk.vg" \
@@ -409,6 +422,7 @@ Quick start
                 --event-generator-seed 0 \
                 --shpf-seed 0 \
                 --g4-manager-seed 0 \
+                --output-profiles "all_visu" \
                 --output-prng-seeds-file "prng_seeds.save" \
                 --output-prng-states-file "prng_states.save" \
                 --output-data-file "mctools_ex01_Co60_source_0_bulk.data.gz"
@@ -417,7 +431,6 @@ Quick start
 
          $ ls -l mctools_ex01_Co60_source_0_bulk.data.gz
          $ ./ex01_read_plain_simdata \
-                 --load-dll "emfield" \
                  --logging-priority "notice" \
                  --interactive \
                  --with-visualization \
@@ -425,7 +438,7 @@ Quick start
 
     c. Run the geant4 simulation through the data processing pipeline::
 
-         $ dpp_processing \
+         $ bxdpp_processing \
           --logging-priority "notice" \
           --dlls-config "${CONFIG_DIR}/pipeline/dlls.conf" \
           --module-manager-config "${CONFIG_DIR}/pipeline/module_manager.conf" \
@@ -440,7 +453,6 @@ Quick start
 
          $ ls -l mctools_ex01_Co60_source_0_bulk.dpp.brio
          $ ./ex01_read_pipeline_simdata \
-                 --load-dll emfield  \
                  --logging-priority "notice" \
                  --interactive \
                  --with-visualization \

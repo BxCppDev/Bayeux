@@ -1,0 +1,19 @@
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description A list of common materials
+#@key_label   "name"
+#@meta_label  "type"
+
+[name="low_pressure_air" type="material"]
+#@config Low pressure (1 millibar) air material
+density        : real   = 1.2931e-3
+density.unit   : string = "mg/cm3"
+state          : string = "gas"
+temperature      : real   = 300.
+temperature.unit : string = "kelvin"
+pressure         : real   = 0.001
+pressure.unit    : string = "bar"
+composition.mode : string   = "fraction_mass"
+composition.names         : string [2]  = "Nitrogen" "Oxygen"
+composition.fraction_mass : real   [2]  =  0.8        0.2

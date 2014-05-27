@@ -32,8 +32,6 @@ int main (int argc_, char ** argv_)
   try {
     clog << "Test program for class 'simulated_data_input_module'!" << endl;
 
-    bool debug = false;
-
     int iarg = 1;
     while (iarg < argc_) {
       string token = argv_[iarg];

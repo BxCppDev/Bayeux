@@ -1,6 +1,7 @@
-// -*- mode: c++ ; -*-
-/* em_physics_constructor.cc
+// em_physics_constructor.cc
+/*
  * https://twiki.cern.ch/twiki/bin/view/Geant4/LoweMigratedLivermore
+ * https://twiki.cern.ch/twiki/bin/view/Geant4/LoweAtomicDeexcitation
  */
 
 #include <mctools/g4/em_physics_constructor.h>
@@ -22,6 +23,7 @@
 
 // Particles:
 #include <G4ParticleDefinition.hh>
+#include <G4LossTableManager.hh>
 #include <G4ParticleTypes.hh>
 #include <G4ParticleTable.hh>
 #include <G4Gamma.hh>
@@ -80,6 +82,7 @@
 // Positrons :
 #include <G4PenelopeAnnihilationModel.hh>
 
+#include "G4UAtomicDeexcitation.hh"
 #include <G4RegionStore.hh>
 #include <G4StepLimiter.hh>
 
@@ -130,16 +133,20 @@ namespace mctools {
       return pixe;
     }
 
-
-
     // *** em_physics_constructor *** //
 
     const std::string em_physics_constructor::EM_MODEL_STANDARD               = "standard";
     const std::string em_physics_constructor::EM_MODEL_LOW_ENERGY_LIVERMORE   = "livermore";
     const std::string em_physics_constructor::EM_MODEL_LOW_ENERGY_PENELOPE    = "penelope";
-    const std::string em_physics_constructor::EM_PIXE_MODEL_EMPIRICAL         = "Empirical";
-    const std::string em_physics_constructor::EM_PIXE_MODEL_ECPSSR_FORMFACTOR = "ECPSSR_FormFactor";
-    const std::string em_physics_constructor::EM_PIXE_MODEL_ECPSSR_ANALYTICAL = "ECPSSR_Analytical";
+
+    const std::string em_physics_constructor::EM_PIXE_MODEL_EMPIRICAL         = "empirical";
+    const std::string em_physics_constructor::EM_PIXE_MODEL_ECPSSR_FORMFACTOR = "ecpssr_formfactor";
+    const std::string em_physics_constructor::EM_PIXE_MODEL_ECPSSR_ANALYTICAL = "ecpssr_analytical";
+
+    const std::string em_physics_constructor::EM_PIXE_ELECTRON_MODEL_LIVERMORE         = "livermore";
+    const std::string em_physics_constructor::EM_PIXE_ELECTRON_MODEL_PROTON_ANALYTICAL = "proton_analytical";
+    const std::string em_physics_constructor::EM_PIXE_ELECTRON_MODEL_PROTON_EMPIRICAL  = "proton_empirical";
+    const std::string em_physics_constructor::EM_PIXE_ELECTRON_MODEL_PENELOPE          = "penelope";
 
     const std::string & em_physics_constructor::get_em_model () const
     {
@@ -272,20 +279,23 @@ namespace mctools {
 
       /* **** Atomic deexcitation **** */
 
-      if (config_.has_flag ("em.deexcitation.fluorescence")) {
-        _em_fluorescence_ = true;
+      if (config_.has_key("em.deexcitation.fluorescence")) {
+        _em_fluorescence_ = config_.fetch_boolean("em.deexcitation.fluorescence");
       }
-      DT_LOG_DEBUG(_logprio(),"EM fluroescence set to : " << _em_fluorescence_);
+      DT_LOG_DEBUG(_logprio(),"EM fluorescence set to : " << _em_fluorescence_);
 
       if (_em_fluorescence_) {
-        if (config_.has_flag ("em.deexcitation.auger")) {
-          _em_auger_ = true;
+        if (config_.has_key("em.deexcitation.auger")) {
+          _em_auger_ = config_.fetch_boolean("em.deexcitation.auger");
+          // if (_em_auger_) {
+          //   _em_fluorescence_ = true;
+          // }
         }
         DT_LOG_DEBUG(_logprio(),"EM Auger set to : " << _em_auger_);
       }
 
-      if (config_.has_flag ("em.deexcitation.pixe")) {
-        _em_pixe_ = true;
+      if (config_.has_key("em.deexcitation.pixe")) {
+        _em_pixe_ = config_.fetch_boolean("em.deexcitation.pixe");
       }
       DT_LOG_DEBUG(_logprio(),"EM PIXE set to : " << _em_pixe_);
 
@@ -299,6 +309,17 @@ namespace mctools {
         DT_LOG_DEBUG(_logprio(),"EM PIXE cross-section model set to : " << _em_pixe_cross_section_model_);
       }
 
+      if (config_.has_key ("em.deexcitation.pixe.electron_cross_section_model")) {
+        _em_pixe_electron_cross_section_model_ = config_.fetch_string ("em.deexcitation.pixe.electron_cross_section_model");
+        DT_THROW_IF (   _em_pixe_electron_cross_section_model_ != EM_PIXE_ELECTRON_MODEL_LIVERMORE
+                     && _em_pixe_electron_cross_section_model_ != EM_PIXE_ELECTRON_MODEL_PROTON_ANALYTICAL
+                     && _em_pixe_electron_cross_section_model_ != EM_PIXE_ELECTRON_MODEL_PROTON_EMPIRICAL
+                     && _em_pixe_electron_cross_section_model_ != EM_PIXE_ELECTRON_MODEL_PENELOPE,
+                     std::logic_error,
+                     "Invalid EM PIXE e+/e- cross-section model '" << _em_pixe_electron_cross_section_model_ << "' !");
+        DT_LOG_DEBUG(_logprio(),"EM PIXE e+/e- cross-section model set to : " << _em_pixe_electron_cross_section_model_);
+      }
+
       /* **** Atomic deexcitation per region **** */
       std::vector<std::string> deexcitation_regions;
       if (config_.has_key ("em.deexcitation.regions")) {
@@ -308,23 +329,30 @@ namespace mctools {
       for (size_t i  = 0; i < deexcitation_regions.size(); i++) {
         const std::string & region_name = deexcitation_regions[i];
         region_deexcitation_type rd(false,false,false);
-        if (_em_fluorescence_) {
-          std::ostringstream region_fluo_key;
-          region_fluo_key << "em.deexcitation.regions." << region_name << ".fluorescence";
-          if (config_.has_flag (region_fluo_key.str())) {
-            rd.fluorescence = true;
-          }
+        std::ostringstream region_fluo_key;
+        region_fluo_key << "em.deexcitation.regions." << region_name << ".fluorescence";
+        if (config_.has_key(region_fluo_key.str())) {
+          rd.fluorescence = config_.fetch_boolean(region_fluo_key.str());
           if (rd.fluorescence) {
-            std::ostringstream region_auger_key;
-            region_auger_key << "em.deexcitation.regions." << region_name << ".auger";
-            if (config_.has_flag (region_auger_key.str())) {
-              rd.auger = true;
+            _em_fluorescence_ = true;
+          }
+        }
+        if (rd.fluorescence) {
+          std::ostringstream region_auger_key;
+          region_auger_key << "em.deexcitation.regions." << region_name << ".auger";
+          if (config_.has_key(region_auger_key.str())) {
+            rd.auger = config_.fetch_boolean(region_auger_key.str());
+            if (rd.auger) {
+              _em_auger_ = true;
             }
           }
-          std::ostringstream region_pixe_key;
-          region_pixe_key << "em.deexcitation.regions." << region_name << ".pixe";
-          if (config_.has_flag (region_pixe_key.str())) {
-            rd.pixe = true;
+        }
+        std::ostringstream region_pixe_key;
+        region_pixe_key << "em.deexcitation.regions." << region_name << ".pixe";
+        if (config_.has_key(region_pixe_key.str())) {
+          rd.pixe = config_.fetch_boolean(region_pixe_key.str());
+          if (rd.pixe) {
+            _em_pixe_ = true;
           }
         }
         _em_regions_deexcitation_[region_name] = rd;
@@ -376,6 +404,11 @@ namespace mctools {
 
       _set_initialized(true);
 
+      if (_logprio() >= datatools::logger::PRIO_INFORMATION) {
+        DT_LOG_INFORMATION(_logprio(), "EM Physics Constructor: ");
+        this->tree_dump(std::clog, "", "");
+      }
+
       DT_LOG_TRACE(_logprio(), "Exiting.");
       return;
     }
@@ -405,7 +438,8 @@ namespace mctools {
       _em_fluorescence_                 = false;
       _em_auger_                        = false;
       _em_pixe_                         = false;
-      _em_pixe_cross_section_model_     = EM_PIXE_MODEL_EMPIRICAL; // clear();
+      _em_pixe_cross_section_model_          = EM_PIXE_MODEL_EMPIRICAL; // clear();
+      _em_pixe_electron_cross_section_model_ = EM_PIXE_ELECTRON_MODEL_LIVERMORE; // clear();
       _em_regions_deexcitation_.clear();
 
       // ion:
@@ -526,6 +560,11 @@ namespace mctools {
            << "PIXE cross section model : "
            << "'" << _em_pixe_cross_section_model_ << "'" << std::endl;
 
+      out_ << indent << datatools::i_tree_dumpable::skip_tag
+           << datatools::i_tree_dumpable::tag
+           << "PIXE e+/e- cross section model : "
+           << "'" << _em_pixe_electron_cross_section_model_ << "'" << std::endl;
+
       // Atomic deexcitation per region :
       out_ << indent << datatools::i_tree_dumpable::skip_tag
            << datatools::i_tree_dumpable::last_tag
@@ -607,22 +646,37 @@ namespace mctools {
     {
       DT_THROW_IF (! is_initialized(), std::logic_error, "Not initialized !");
 
-      em_physics_constructor::_ConstructEMProcess ();
+      this->em_physics_constructor::_ConstructEMProcess();
+
+      if (_em_fluorescence_ || _em_auger_ || _em_pixe_ || _em_regions_deexcitation_.size() > 0) {
+        DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "Activating EM deexcitation...");
+        this->em_physics_constructor::_ConstructEMDeexcitation();
+      }
 
       return;
     }
 
     void em_physics_constructor::_ConstructEMDeexcitation ()
     {
-      // Activate deexcitation processes :
+      // First setup the static atomic deexcitation:
+      G4VAtomDeexcitation* de = new G4UAtomicDeexcitation();
+      G4LossTableManager::Instance()->SetAtomDeexcitation(de);
+
+      // Activate deexcitation processes through the EM options:
       G4EmProcessOptions emOptions;
+      int verbose = 1;
+      emOptions.SetVerbose(verbose);
+      //emOptions.SetPolarAngleLimit(CLHEP::pi);
+
       emOptions.SetFluo(_em_fluorescence_);
       if (_em_fluorescence_) {
         emOptions.SetAuger(_em_auger_);
       }
       emOptions.SetPIXE(_em_pixe_);
-      if (! _em_pixe_cross_section_model_.empty()) {
-        emOptions.SetPIXECrossSectionModel(_em_pixe_cross_section_model_);
+      if (_em_pixe_) {
+        if (! _em_pixe_cross_section_model_.empty()) {
+          emOptions.SetPIXECrossSectionModel(_em_pixe_cross_section_model_);
+        }
       }
 
       // Activate deexcitation processes per region :
@@ -636,8 +690,20 @@ namespace mctools {
         DT_THROW_IF(a_region == 0, std::logic_error,
                     "Cannot find region named '" << region_name
                     << "' to apply de-excitation processes !");
+        DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "Activating EM deexcitation for region '" << region_name << "' :"
+                      << " Fluorescence=" << rd.fluorescence
+                      << " Auger=" << rd.auger
+                      << " PIXE=" << rd.pixe
+                      << "..."
+                      );
         emOptions.SetDeexcitationActiveRegion(region_name, rd.fluorescence, rd.auger, rd.pixe);
       }
+
+     // de->SetFluo(true);
+     //  //de->SetFluo(_em_fluorescence_);
+     //  //de->SetFluo(true);
+     // de->SetAuger(true);
+     // de->SetPIXE(true);
 
       return;
     }
@@ -831,13 +897,13 @@ namespace mctools {
            *   Ions   *
            ************/
           if (_em_ion_multiple_scattering_) {
-            G4hMultipleScattering * the_ion_multiple_scattering = new G4hMultipleScattering ();
+            G4hMultipleScattering * the_ion_multiple_scattering = new G4hMultipleScattering();
             ++process_rank;
             pmanager->AddProcess (the_ion_multiple_scattering , -1, process_rank, process_rank);
           }
 
           if (_em_ion_ionisation_) {
-            G4ionIonisation       * the_ion_ionisation = new G4ionIonisation ();
+            G4ionIonisation       * the_ion_ionisation = new G4ionIonisation();
             ++process_rank;
             pmanager->AddProcess (the_ion_ionisation, -1, process_rank, process_rank);
           }
@@ -1207,16 +1273,40 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
       .set_terse_description("The name of the PIXE cross-section model")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
-      .set_default_value_string("Empirical")
+      .set_default_value_string("empirical")
       .set_long_description("Allowed values are:                                    \n"
                             "                                                       \n"
-                            " * ``\"Empirical\"``                                   \n"
-                            " * ``\"ECPSSR_FormFactor\"``                           \n"
-                            " * ``\"ECPSSR_Analytical\"``                           \n"
+                            " * ``\"empirical\"``                                   \n"
+                            " * ``\"ecpssr_formfactor\"``                           \n"
+                            " * ``\"ecpssr_analytical\"``                           \n"
                             )
       .add_example("Use the *empirical* PIXE model : :: \n"
                    "                                                       \n"
-                   " em.deexcitation.pixe.cross_section_model : string = \"Empirical\"  \n"
+                   " em.deexcitation.pixe.cross_section_model : string = \"empirical\"  \n"
+                   "                                                       \n"
+                   )
+      ;
+  }
+
+  {
+    // Description of the 'em.deexcitation.pixe.cross_section_model' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("em.deexcitation.pixe.electron_cross_section_model")
+      .set_terse_description("The name of the PIXE e+/e- cross-section model")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_default_value_string("empirical")
+      .set_long_description("Allowed values are:                                    \n"
+                            "                                                       \n"
+                            " * ``\"livermore\"``                                   \n"
+                            " * ``\"proton_analytical\"``                           \n"
+                            " * ``\"proton_empirical\"``                            \n"
+                            " * ``\"penelope\"``                                    \n"
+                            )
+      .add_example("Use the *empirical* PIXE model : :: \n"
+                   "                                                       \n"
+                   " em.deexcitation.pixe.electron_cross_section_model : string = \"livermore\"  \n"
                    "                                                       \n"
                    )
       ;

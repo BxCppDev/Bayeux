@@ -1,7 +1,7 @@
-/** \file mctools/step_hit_processor_factory.h */
+/// \file mctools/step_hit_processor_factory.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-06-04
- * Last modified: 2013-03-09
+ * Last modified: 2014-04-30
  *
  * License:
  *
@@ -21,6 +21,7 @@
 #include <string>
 #include <map>
 #include <stdexcept>
+#include <set>
 
 // Third party:
 // - Bayeux/datatools:
@@ -44,16 +45,31 @@ namespace mygsl {
 
 namespace mctools {
 
+  /// \brief The factory responsible of the step hit processors
   class step_hit_processor_factory
     : public datatools::i_tree_dumpable
   {
   public:
 
     typedef datatools::handle<base_step_hit_processor>       processor_handle_type;
-    typedef std::map<std::string, processor_handle_type>     processor_handle_dict_type;
+
+    /// \brief A processor entry in the factory's embedded dictionary
+    struct processor_entry_type {
+      std::string name;
+      std::string type;
+      datatools::properties config;
+      processor_handle_type handle;
+      virtual ~processor_entry_type();
+      void reset();
+    };
+    typedef std::map<std::string, processor_entry_type>      processor_entry_dict_type;
     typedef std::map<std::string, base_step_hit_processor *> processor_dict_type;
 
-  public:
+    /// Default name for the output collection of detailed hits (a.k.a. "visu tracks")
+    static const std::string & default_detailed_hit_collection();
+
+    /// Property key for the set of output profiles a processor is associated to
+    static const std::string & matching_output_profiles_key();
 
     /// Check the initialization flag
     bool is_initialized () const;
@@ -91,6 +107,9 @@ namespace mctools {
     /// Return a non mutable reference to the service manager
     const datatools::service_manager & get_service_manager () const;
 
+    /// Set the flag for instantiation of processor at load stage
+    void set_instantiate_at_loading(bool);
+
     /// Check for a PRNG
     bool has_external_prng () const;
 
@@ -99,6 +118,12 @@ namespace mctools {
 
     /// Get a mutable reference to the PRNG
     mygsl::rng & grab_external_prng();
+
+    /// Set output profiles
+    void set_output_profiles(const std::set<std::string> & output_profiles_);
+
+    /// Reset output profiles
+    void reset_output_profiles();
 
     /// Initialization method
     void initialize();
@@ -115,19 +140,29 @@ namespace mctools {
     /// Destructor
     virtual ~step_hit_processor_factory ();
 
-    /// Returns the mutable dictionary of instantiated processors
-    processor_dict_type & grab_processors ();
+    // /// Returns the mutable dictionary of instantiated processors
+    // processor_dict_type & grab_processors ();
 
-    /// Returns the non mutable dictionary of instantiated processors
+    /// Returns the non mutable dictionary of instantiated processors.
+    /// The factory must be initialized.
     const processor_dict_type & get_processors () const;
 
+    /// Build the list of names of the processors managed by the factory
+    void fetch_processor_names(std::vector<std::string> & vprocs_, bool only_instantiated_ = false) const;
+
     /// Create a processor object
-    base_step_hit_processor & create (const std::string & name_,
-                                      const std::string & type_,
-                                      const datatools::properties & config_);
+    bool create(const std::string & name_,
+                const std::string & type_,
+                const datatools::properties & config_);
 
     /// Check if a processor exists given its name
-    bool has_processor (const std::string & name_);
+    bool has_processor (const std::string & name_) const;
+
+    /// Check if a processor is instantiated
+    bool is_processor_instantiated(const std::string & name_) const;
+
+    /// Check if a processor can be instantiated with respect to the setup (output profiles...)
+    bool is_processor_instantiable(const std::string & name_) const;
 
     /// Returns a mutable reference to a given processor addressed by its by name
     base_step_hit_processor & grab_processor (const std::string & name_);
@@ -147,11 +182,16 @@ namespace mctools {
     /// Load a configuration object
     void load (const datatools::multi_properties & mprop_);
 
-    datatools::logger::priority  get_logging_priority() const;
+    /// Return the logging priority threshold
+    datatools::logger::priority get_logging_priority() const;
 
+    /// Set the logging priority threshold
     void set_logging_priority(datatools::logger::priority);
 
   protected:
+
+    /// Instantiate a processor object
+    base_step_hit_processor * _create(const std::string & name_);
 
     /// Initialization method
     void _initialize();
@@ -166,8 +206,10 @@ namespace mctools {
     datatools::service_manager * _service_manager_; /// Service manager
     const geomtools::manager   * _geom_manager_;    /// Geometry manager
     mygsl::rng                 * _external_prng_;   /// External PRNG
-    processor_handle_dict_type   _handles_;         /// Dictionnary of handles
-    processor_dict_type          _processors_;      /// Dictionnary of pointers
+    std::set<std::string>        _output_profiles_; /// Set of activated output profile ids
+    bool                         _instantiate_at_loading_; /// Flag to instantiate processors at load stage
+    processor_entry_dict_type    _entries_;         /// The main dictionnary of processor entries
+    processor_dict_type          _processors_;      /// Dictionnary of pointers to instantiated processors
 
   };
 

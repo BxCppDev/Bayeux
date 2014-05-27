@@ -101,7 +101,7 @@ namespace mctools {
       const hit_processor_dict_type & get_hit_processors() const;
       bool has_hit_processor(const std::string & name_) const;
       void add_hit_processor(const std::string & name_,
-                              mctools::base_step_hit_processor & shp_);
+                             mctools::base_step_hit_processor & shp_);
       mctools::base_step_hit_processor & grab_hit_processor(const std::string & name_);
 
       static std::string make_hit_collection_name(const std::string & sensitive_category_);

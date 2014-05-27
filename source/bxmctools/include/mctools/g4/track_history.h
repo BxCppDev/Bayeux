@@ -1,4 +1,4 @@
-/// \file mctools/simulated_data_cut.h
+/// \file mctools/g4/track_history.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-09-18
  * Last modified : 2013-06-03
@@ -46,7 +46,7 @@ namespace mctools {
     {
     public:
 
-      /// \brief Recording of information about a single track
+      /// \brief Recording of informations about a single track
       class track_info
       {
       public:
@@ -99,8 +99,6 @@ namespace mctools {
     public:
 
       typedef std::map<int, track_info> track_info_dict_type;
-
-    public:
 
       const track_info_dict_type & get_track_infos () const;
 

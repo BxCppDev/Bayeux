@@ -33,6 +33,13 @@ namespace mctools {
       static const std::string EM_MODEL_STANDARD;
       static const std::string EM_MODEL_LOW_ENERGY_LIVERMORE;
       static const std::string EM_MODEL_LOW_ENERGY_PENELOPE;
+      static const std::string EM_PIXE_MODEL_EMPIRICAL;
+      static const std::string EM_PIXE_MODEL_ECPSSR_FORMFACTOR;
+      static const std::string EM_PIXE_MODEL_ECPSSR_ANALYTICAL;
+      static const std::string EM_PIXE_ELECTRON_MODEL_LIVERMORE;
+      static const std::string EM_PIXE_ELECTRON_MODEL_PROTON_ANALYTICAL;
+      static const std::string EM_PIXE_ELECTRON_MODEL_PROTON_EMPIRICAL;
+      static const std::string EM_PIXE_ELECTRON_MODEL_PENELOPE;
 
       struct region_deexcitation_type {
         bool fluorescence;
@@ -113,9 +120,7 @@ namespace mctools {
       bool        _em_auger_;
       bool        _em_pixe_;
       std::string _em_pixe_cross_section_model_;
-      static const std::string EM_PIXE_MODEL_EMPIRICAL;
-      static const std::string EM_PIXE_MODEL_ECPSSR_FORMFACTOR;
-      static const std::string EM_PIXE_MODEL_ECPSSR_ANALYTICAL;
+      std::string _em_pixe_electron_cross_section_model_;
       std::map<std::string, region_deexcitation_type> _em_regions_deexcitation_;
       bool        _em_ion_ionisation_;
       bool        _em_ion_multiple_scattering_;

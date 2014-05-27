@@ -195,7 +195,7 @@ rotated.label : string = "light_guide"
 #######################
 
 #@description The name of the material around the light guide to be rotated
-material.ref      : string  = "vacuum"
+material.ref      : string  = "vessel_gas"
 
 #########################
 # Visibility parameters #
@@ -559,7 +559,7 @@ stacked.label_0   : string  = "PMT_base"
 #######################
 
 #@description The name of the material
-material.ref      : string    = "vacuum"
+material.ref      : string    = "vessel_gas"
 
 #########################
 # Visibility parameters #
@@ -617,7 +617,7 @@ replicated.step            : real = 30
 #######################
 
 #@description The name of the material around the optical modules
-material.ref      : string    = "vacuum"
+material.ref      : string    = "vessel_gas"
 
 ###########################
 # Internal/daughter items #
@@ -659,7 +659,7 @@ replicated.step            : real = 30
 #######################
 
 #@description The name of the material around the replicated volumes
-material.ref      : string    = "vacuum"
+material.ref      : string    = "vessel_gas"
 
 ##########################################
 # GID mapping of internal/daughter items #
@@ -667,6 +667,3 @@ material.ref      : string    = "vacuum"
 
 #@description The mapping directives for the "optical_modules" daughter volumes
 mapping.daughter_id.optical_modules : string  = "[optical_module_column.gc:column+0]"
-
-
-# End of list of multi-properties.

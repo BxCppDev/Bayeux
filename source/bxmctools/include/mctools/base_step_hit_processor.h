@@ -22,6 +22,7 @@
 #include <map>
 #include <stdexcept>
 #include <vector>
+// #include <set>
 
 // Third party:
 // - Bayeux/datatools:
@@ -160,8 +161,7 @@ namespace mctools {
   protected:
 
     datatools::logger::priority      _logging_priority; /// Logging priority threshold
-    bool                             _debug; /// Debug flag
-    std::string                      _name;  /// Name of the step hit processor
+    std::string                      _name;             /// Name of the step hit processor
     std::string                      _hit_category; /** The name of the category
                                                      * of hits the hit processor
                                                      * accumulates
@@ -173,7 +173,7 @@ namespace mctools {
                                                            */
     const geomtools::manager       * _geom_manager; /// The geometry manager
     datatools::properties            _auxiliaries;  /// Some auxiliary properties
-    pool_type                      * _private_pool; /// A private embeded pool of hits
+    pool_type                      * _private_pool; /// A private embedded pool of hits
     bool                             _pool_owner;   /// Pool of hits ownership flag
     pool_type                      * _pool;         /// Reference to an external pool of hits
 
