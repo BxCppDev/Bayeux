@@ -234,11 +234,9 @@ namespace geomtools {
     DT_THROW_IF(! config_.has_key("z"),
                 std::logic_error,
                 "Missing 'z' property in replicated circular model '" << name_ << "' !");
-    if (config_.has_key("z")) {
-      mother_z = config_.fetch_real("z");
-      if (! config_.has_explicit_unit("z")) {
-        mother_z *= default_length_unit;
-      }
+    mother_z = config_.fetch_real("z");
+    if (! config_.has_explicit_unit("z")) {
+      mother_z *= default_length_unit;
     }
 
     // Placement of the replica:

@@ -8,18 +8,20 @@
  * License:
  *
  * Description:
+ *
  *   Geometry locator abstract interface
  *
  * History:
  *
  */
 
-#ifndef GEOMTOOLS_I_LOCATOR_H_
-#define GEOMTOOLS_I_LOCATOR_H_ 1
+#ifndef GEOMTOOLS_I_LOCATOR_H
+#define GEOMTOOLS_I_LOCATOR_H 1
 
+// This project:
+#include <geomtools/clhep.h>
 #include <geomtools/geomtools_config.h>
 #include <geomtools/geom_id.h>
-#include <geomtools/clhep.h>
 
 namespace geomtools {
 
@@ -121,6 +123,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_I_LOCATOR_H_
-
-// end of i_locator.h
+#endif // GEOMTOOLS_I_LOCATOR_H

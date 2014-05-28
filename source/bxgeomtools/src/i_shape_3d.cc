@@ -364,7 +364,7 @@ namespace geomtools {
   }
 
   bool i_shape_3d::is_inside_or_surface (const vector_3d & a_position,
-                                         double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const
+                                         double a_skin) const
   {
     return ! is_outside(a_position, a_skin);
   }

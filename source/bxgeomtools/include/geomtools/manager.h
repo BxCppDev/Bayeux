@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* manager.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/manager.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-21
  * Last modified: 2013-02-19
  *
@@ -31,8 +31,11 @@
  *
  */
 
-#ifndef GEOMTOOLS_MANAGER_H_
-#define GEOMTOOLS_MANAGER_H_ 1
+#ifndef GEOMTOOLS_MANAGER_H
+#define GEOMTOOLS_MANAGER_H 1
+
+#include <string>
+#include <map>
 
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
@@ -48,9 +51,6 @@
 #include <geomtools/model_factory.h>
 #include <geomtools/id_mgr.h>
 #include <geomtools/mapping.h>
-
-#include <string>
-#include <map>
 
 namespace datatools {
   class version_id;
@@ -414,6 +414,4 @@ DOCD_CLASS_DECLARATION(geomtools::manager)
 
 #include <geomtools/detail/manager-inl.h>
 
-#endif // GEOMTOOLS_MANAGER_H_
-
-// end of manager.h
+#endif // GEOMTOOLS_MANAGER_H

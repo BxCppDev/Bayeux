@@ -13,8 +13,8 @@
  *
  */
 
-#ifndef GEOMTOOLS_REPLICATED_CIRCULAR_MODEL_H_
-#define GEOMTOOLS_REPLICATED_CIRCULAR_MODEL_H_ 1
+#ifndef GEOMTOOLS_REPLICATED_CIRCULAR_MODEL_H
+#define GEOMTOOLS_REPLICATED_CIRCULAR_MODEL_H 1
 
 // Standard library:
 #include <string>
@@ -101,4 +101,4 @@ namespace geomtools {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(geomtools::replicated_circular_model)
 
-#endif // GEOMTOOLS_REPLICATED_CIRCULAR_MODEL_H_
+#endif // GEOMTOOLS_REPLICATED_CIRCULAR_MODEL_H

@@ -28,9 +28,9 @@ void test1(bool draw_)
     geomtools::vector_3d basic_position(0. * CLHEP::cm, 0. * CLHEP::cm, 0. * CLHEP::cm);
     cout << "Basic position : " << basic_position << endl;
 
-    double phi   = -30.0 * CLHEP::degree;
-    double theta =  75.0 * CLHEP::degree;
-    double delta =   0.0 * CLHEP::degree;
+    // double phi   = -30.0 * CLHEP::degree;
+    // double theta =  75.0 * CLHEP::degree;
+    // double delta =   0.0 * CLHEP::degree;
 
     double radius      = 10.0 * CLHEP::cm;
     double step_angle  = 30.0 * CLHEP::degree;
@@ -87,9 +87,9 @@ void test2(bool draw_)
     geomtools::vector_3d basic_position(0. * CLHEP::cm, 0. * CLHEP::cm, 0. * CLHEP::cm);
     cout << "Basic position : " << basic_position << endl;
 
-    double phi   = -30.0 * CLHEP::degree;
-    double theta =  75.0 * CLHEP::degree;
-    double delta =   0.0 * CLHEP::degree;
+    // double phi   = -30.0 * CLHEP::degree;
+    // double theta =  75.0 * CLHEP::degree;
+    // double delta =   0.0 * CLHEP::degree;
 
     double radius      = 10.0 * CLHEP::cm;
     double step_angle  = 30.0 * CLHEP::degree;
@@ -147,9 +147,9 @@ void test3(bool draw_)
     geomtools::vector_3d basic_position(0. * CLHEP::cm, 0. * CLHEP::cm, 0. * CLHEP::cm);
     cout << "Basic position : " << basic_position << endl;
 
-    double phi   = -30.0 * CLHEP::degree;
-    double theta =  75.0 * CLHEP::degree;
-    double delta =   0.0 * CLHEP::degree;
+    // double phi   = -30.0 * CLHEP::degree;
+    // double theta =  75.0 * CLHEP::degree;
+    // double delta =   0.0 * CLHEP::degree;
 
     double radius      = 10.0 * CLHEP::cm;
     double step_angle  = 30.0 * CLHEP::degree;

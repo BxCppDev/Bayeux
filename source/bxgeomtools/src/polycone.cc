@@ -1059,12 +1059,12 @@ namespace geomtools {
           // We found the right conical frustrum:
           const double r1min = i->second.rmin;
           const double r2min = j->second.rmin;
-          double rmin = -1.0;
+          //double rmin = -1.0;
           if (r1min + r2min > 0.0) {
             const double alpha_min = std::atan2(r2min - r1min, z2 - z1);
             const double epsilon_min = hskin / std::cos(alpha_min);
             const double rsmin = r1min + (r2min - r1min) * (z - z1) / ( z2 - z1);
-            rmin = rsmin + epsilon_min;
+            //rmin = rsmin + epsilon_min;
             if (std::abs(r - rsmin) < epsilon_min) {
               return true;
             }
