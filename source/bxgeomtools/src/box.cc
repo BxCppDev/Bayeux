@@ -297,9 +297,9 @@ namespace geomtools {
   {
     double skin = get_skin(a_skin);
     double hskin = 0.5 * skin;
-    if (   (std::abs(a_position.x()) <= (0.5 * _x_ + hskin))
-        && (std::abs(a_position.y()) <= (0.5 * _y_ + hskin))
-        && (std::abs(a_position.z()) <= (0.5 * _z_ + hskin))
+    if (   (std::abs(a_position.x()) <= (0.5 * _x_ - hskin))
+        && (std::abs(a_position.y()) <= (0.5 * _y_ - hskin))
+        && (std::abs(a_position.z()) <= (0.5 * _z_ - hskin))
         ) {
       return true;
     }

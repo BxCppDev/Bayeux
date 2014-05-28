@@ -163,6 +163,10 @@ namespace geomtools {
     virtual bool is_outside (const vector_3d &,
                              double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
 
+    /// Check is a point is inside the solid at a given tolerance
+    virtual bool is_inside_or_surface (const vector_3d &,
+                                       double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
+
     /// Localize a point with respect to the shape
     virtual shape_domain_flags_type where_is(const vector_3d &, double a_skin) const;
 
