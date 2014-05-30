@@ -73,5 +73,3 @@ int main (void)
 
   return 0;
 }
-
-// end of test_properties_0.cxx
