@@ -1,20 +1,23 @@
-// -*- mode: c++ ; -*-
-/* surrounded_boxed_model.cc
- */
+// surrounded_boxed_model.cc
 
+// Ourselves:
 #include <geomtools/surrounded_boxed_model.h>
 
+// Standard library:
 #include <exception>
 #include <limits>
 #include <list>
 #include <map>
 
-#include <mygsl/min_max.h>
-
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/ioutils.h>
 #include <datatools/units.h>
 #include <datatools/exception.h>
+// - Bayeux/mygsl:
+#include <mygsl/min_max.h>
 
+// This project:
 #include <geomtools/visibility.h>
 
 namespace geomtools {
@@ -49,7 +52,6 @@ namespace geomtools {
     return _solid_;
   }
 
-  /*** surrounded model ***/
   void surrounded_boxed_model::set_surrounded_label (const std::string & label_)
   {
     _surrounded_label_ = label_;
@@ -74,7 +76,6 @@ namespace geomtools {
     return;
   }
 
-  /*** surrounding models ***/
   size_t surrounded_boxed_model::get_number_of_surrounding_items () const
   {
     return _surrounding_items_.size ();
@@ -90,7 +91,7 @@ namespace geomtools {
                                                       const i_model & model_,
                                                       const std::string & label_)
   {
-    DT_THROW_IF (is_constructed (), std::logic_error, "Operation not allowed ! Model has already been constructed yet");
+    DT_THROW_IF (is_constructed (), std::logic_error, "Operation not allowed ! Model has already been constructed yet!");
 
     surrounding_dict_type::const_iterator found = _surrounding_items_.find (i_);
     DT_THROW_IF (found != _surrounding_items_.end (),
@@ -101,10 +102,9 @@ namespace geomtools {
     _surrounding_items_[i_].model = &model_;
     _surrounding_items_[i_].placmt.invalidate ();
     std::string label = label_;
-    if (label.empty ())
-      {
-        label = SURROUNDING_LABEL + "_" + _position_labels_[i_];
-      }
+    if (label.empty ()) {
+      label = SURROUNDING_LABEL + "_" + position_labels()[i_];
+    }
     DT_THROW_IF (_surrounding_labels_.find (label) != _surrounding_labels_.end (),
                  std::logic_error,
                  "Label '" << label << "' is already used !");
@@ -161,25 +161,28 @@ namespace geomtools {
     return *(found->second.model);
   }
 
-  /*** model ID ***/
-
   std::string surrounded_boxed_model::get_model_id () const
   {
     return "geomtools::surrounded_boxed_model";
   }
 
-  // ctor:
+  // static
+  const std::vector<std::string> & surrounded_boxed_model::position_labels()
+  {
+    static std::vector<std::string> _position_labels;
+    if (_position_labels.size () == 0) {
+      _position_labels.push_back("back");
+      _position_labels.push_back("front");
+      _position_labels.push_back("left");
+      _position_labels.push_back("right");
+      _position_labels.push_back("bottom");
+      _position_labels.push_back("top");
+    }
+    return _position_labels;
+  }
+
   surrounded_boxed_model::surrounded_boxed_model () : i_boxed_model ()
   {
-    if (_position_labels_.size () == 0)
-      {
-        _position_labels_.push_back ("back");
-        _position_labels_.push_back ("front");
-        _position_labels_.push_back ("left");
-        _position_labels_.push_back ("right");
-        _position_labels_.push_back ("bottom");
-        _position_labels_.push_back ("top");
-      }
     _material_name_ = "";
     _surrounded_model_ = 0;
     _centered_x_ = false;
@@ -201,33 +204,33 @@ namespace geomtools {
     DT_LOG_TRACE (get_logging_priority (),  "Entering...");
     //set_name (name_);
 
-    /*** material ***/
+    // material:
     DT_THROW_IF (! config_.has_key ("material.ref"),
                  std::logic_error,
                  "Missing 'material.ref' property in surrounded boxed model '" << name_ << "' !");
     const std::string material_name = config_.fetch_string ("material.ref");
     set_material_name (material_name);
 
-    /*** length unit ***/
+    // length unit:
     double lunit = CLHEP::mm;
     if (config_.has_key ("length_unit")) {
       const std::string length_unit_str = config_.fetch_string ("length_unit");
       lunit = datatools::units::get_length_unit_from (length_unit_str);
     }
 
-    /*** Surrounded model ***/
+    // Surrounded model:
     DT_THROW_IF (! config_.has_key ("surrounded.model"),
                  std::logic_error,
                  "Missing 'surrounded.model' property in surrounded boxed model '" << name_ << "' !");
     const std::string surrounded_model_name = config_.fetch_string ("surrounded.model");
 
-    /*** Surrounded label ***/
+    // Surrounded label:
     _surrounded_label_ = SURROUNDED_LABEL;
     if (config_.has_key ("surrounded.label")) {
       set_surrounded_label (config_.fetch_string ("surrounded.label"));
     }
 
-    /*** Centering of the surrounded item ***/
+    // Centering of the surrounded item:
     if (config_.has_flag ("surrounded.centered_x")) {
       DT_LOG_TRACE (get_logging_priority (), "X-centered");
       _centered_x_ = true;
@@ -243,10 +246,10 @@ namespace geomtools {
       _centered_z_ = true;
     }
 
-    /*** check models ***/
+    // check models:
     DT_THROW_IF (! models_, std::logic_error, "Missing logicals dictionary in surrounded boxed model '" << name_ << "' !");
 
-    /*** check if surrounded model exists ***/
+    // check if surrounded model exists:
     {
       models_col_type::const_iterator found = models_->find (surrounded_model_name);
       DT_THROW_IF (found == models_->end (),
@@ -259,11 +262,11 @@ namespace geomtools {
       set_surrounded_model (*(found->second));
     }
 
-    /*** loop over surrounding models ***/
+    // loop over surrounding models:
     {
       int ipos = BACK;
-      for (std::vector<std::string>::const_iterator ilabel = _position_labels_.begin ();
-           ilabel != _position_labels_.end ();
+      for (std::vector<std::string>::const_iterator ilabel = position_labels().begin ();
+           ilabel != position_labels().end ();
            ilabel++, ipos++){
         std::string surrounding_model_name;
         std::ostringstream surrounding_item_prop;
@@ -295,9 +298,9 @@ namespace geomtools {
         add_surrounding_model (ipos, *(found->second), label_name);
       } // end of for
     }
-    /*** end of loop over surrounding models ***/
+    // end of loop over surrounding models.
 
-    /*** compute main box dimensions ***/
+    // compute main box dimensions:
     mygsl::min_max mmx0;
     mygsl::min_max mmy0;
     mygsl::min_max mmz0;
@@ -353,60 +356,54 @@ namespace geomtools {
       const double g2zmin = the_SD2.get_zmin ();
       const double g2zmax = the_SD2.get_zmax ();
 
-      if (position == BACK)
-        {
-          dx0 = std::abs (g2xmax - g2xmin);
-          x0 -= dx0;
-          mmy0.add (g2ymin);
-          mmy1.add (g2ymax);
-          mmz0.add (g2zmin);
-          mmz1.add (g2zmax);
-        }
-      if (position == FRONT)
-        {
-          dx1 = std::abs (g2xmax - g2xmin);
-          x1 += dx1;
-          mmy0.add (g2ymin);
-          mmy1.add (g2ymax);
-          mmz0.add (g2zmin);
-          mmz1.add (g2zmax);
-        }
-      if (position == LEFT)
-        {
-          dy0 = std::abs (g2ymax - g2ymin);
-          y0 -= dy0;
-          mmx0.add (g2xmin);
-          mmx1.add (g2xmax);
-          mmz0.add (g2zmin);
-          mmz1.add (g2zmax);
-        }
-      if (position == RIGHT)
-        {
-          dy1 = std::abs (g2ymax - g2ymin);
-          y1 += dy1;
-          mmx0.add (g2xmin);
-          mmx1.add (g2xmax);
-          mmz0.add (g2zmin);
-          mmz1.add (g2zmax);
-        }
-      if (position == BOTTOM)
-        {
-          dz0 = std::abs (g2zmax - g2zmin);
-          z0 -= dz0;
-          mmx0.add (g2xmin);
-          mmx1.add (g2xmax);
-          mmy0.add (g2ymin);
-          mmy1.add (g2ymax);
-        }
-      if (position == TOP)
-        {
-          dz1 = std::abs (g2zmax - g2zmin);
-          z1 += dz1;
-          mmx0.add (g2xmin);
-          mmx1.add (g2xmax);
-          mmy0.add (g2ymin);
-          mmy1.add (g2ymax);
-        }
+      if (position == BACK) {
+        dx0 = std::abs (g2xmax - g2xmin);
+        x0 -= dx0;
+        mmy0.add (g2ymin);
+        mmy1.add (g2ymax);
+        mmz0.add (g2zmin);
+        mmz1.add (g2zmax);
+      }
+      if (position == FRONT) {
+        dx1 = std::abs (g2xmax - g2xmin);
+        x1 += dx1;
+        mmy0.add (g2ymin);
+        mmy1.add (g2ymax);
+        mmz0.add (g2zmin);
+        mmz1.add (g2zmax);
+      }
+      if (position == LEFT) {
+        dy0 = std::abs (g2ymax - g2ymin);
+        y0 -= dy0;
+        mmx0.add (g2xmin);
+        mmx1.add (g2xmax);
+        mmz0.add (g2zmin);
+        mmz1.add (g2zmax);
+      }
+      if (position == RIGHT) {
+        dy1 = std::abs (g2ymax - g2ymin);
+        y1 += dy1;
+        mmx0.add (g2xmin);
+        mmx1.add (g2xmax);
+        mmz0.add (g2zmin);
+        mmz1.add (g2zmax);
+      }
+      if (position == BOTTOM) {
+        dz0 = std::abs (g2zmax - g2zmin);
+        z0 -= dz0;
+        mmx0.add (g2xmin);
+        mmx1.add (g2xmax);
+        mmy0.add (g2ymin);
+        mmy1.add (g2ymax);
+      }
+      if (position == TOP) {
+        dz1 = std::abs (g2zmax - g2zmin);
+        z1 += dz1;
+        mmx0.add (g2xmin);
+        mmx1.add (g2xmax);
+        mmy0.add (g2ymin);
+        mmy1.add (g2ymax);
+      }
     }
 
     if (mmx0.get_min () < x0) x0 = mmx0.get_min ();
@@ -421,60 +418,54 @@ namespace geomtools {
     double dim_x = 2 * std::max (x1, std::abs (x0));
     double dim_y = 2 * std::max (y1, std::abs (y0));
     double dim_z = 2 * std::max (z1, std::abs (z0));
-    if (! _centered_x_)
-      {
-        DT_LOG_TRACE (get_logging_priority (), "X-centered with x0=" << x0);
-        dim_x = x1 - x0;
-        surrounded_x = -0.5 * dim_x - x0;
-      }
-    if (! _centered_y_)
-      {
-        DT_LOG_TRACE (get_logging_priority (), "Y-centered with y0=" << y0);
-        dim_y = y1 - y0;
-        surrounded_y = -0.5 * dim_y - y0;
-      }
-    if (! _centered_z_)
-      {
-        DT_LOG_TRACE (get_logging_priority (), "Z-centered with z0=" << z0);
-        dim_z = z1 - z0;
-        surrounded_z = -0.5 * dim_z - z0;
-      }
+    if (! _centered_x_) {
+      DT_LOG_TRACE (get_logging_priority (), "X-centered with x0=" << x0);
+      dim_x = x1 - x0;
+      surrounded_x = -0.5 * dim_x - x0;
+    }
+    if (! _centered_y_) {
+      DT_LOG_TRACE (get_logging_priority (), "Y-centered with y0=" << y0);
+      dim_y = y1 - y0;
+      surrounded_y = -0.5 * dim_y - y0;
+    }
+    if (! _centered_z_) {
+      DT_LOG_TRACE (get_logging_priority (), "Z-centered with z0=" << z0);
+      dim_z = z1 - z0;
+      surrounded_z = -0.5 * dim_z - z0;
+    }
 
     double x = 0.0;
-    if (config_.has_key ("x"))
-      {
-        x = config_.fetch_real ("x");
-        if (! config_.has_explicit_unit ("x")) x *= lunit;
-        DT_THROW_IF (x < dim_x,
-                     std::logic_error,
-                     "Enforced X dimension '" << x / CLHEP::mm
-                     << "' mm (<" << dim_x / CLHEP::mm << ") is too small for surrounded components to fit in surrounded boxed model '" << name_ << "' !");
-        dim_x = x;
-      }
+    if (config_.has_key ("x")) {
+      x = config_.fetch_real ("x");
+      if (! config_.has_explicit_unit ("x")) x *= lunit;
+      DT_THROW_IF (x < dim_x,
+                   std::logic_error,
+                   "Enforced X dimension '" << x / CLHEP::mm
+                   << "' mm (<" << dim_x / CLHEP::mm << ") is too small for surrounded components to fit in surrounded boxed model '" << name_ << "' !");
+      dim_x = x;
+    }
 
     double y = 0.0;
-    if (config_.has_key ("y"))
-      {
-        y = config_.fetch_real ("y");
-        if (! config_.has_explicit_unit ("y")) y *= lunit;
-        DT_THROW_IF (y < dim_y,
-                     std::logic_error,
-                     "Enforced Y dimension '" << y / CLHEP::mm
-                     << "' mm (<" << dim_y / CLHEP::mm << ") is too small for surrounded components to fit !");
-        dim_y = y;
-      }
+    if (config_.has_key ("y")) {
+      y = config_.fetch_real ("y");
+      if (! config_.has_explicit_unit ("y")) y *= lunit;
+      DT_THROW_IF (y < dim_y,
+                   std::logic_error,
+                   "Enforced Y dimension '" << y / CLHEP::mm
+                   << "' mm (<" << dim_y / CLHEP::mm << ") is too small for surrounded components to fit !");
+      dim_y = y;
+    }
 
     double z = 0.0;
-    if (config_.has_key ("z"))
-      {
-        z = config_.fetch_real ("z");
-        if (! config_.has_explicit_unit ("z")) z *= lunit;
-        DT_THROW_IF (z < dim_z,
-                     std::logic_error,
-                     "Enforced Z dimension '" << z / CLHEP::mm
-                     << "' mm (<" << dim_z / CLHEP::mm << ") is too small for surrounded components to fit in surrounded boxed model '" << name_ << "' !");
-        dim_z = z;
-      }
+    if (config_.has_key ("z")) {
+      z = config_.fetch_real ("z");
+      if (! config_.has_explicit_unit ("z")) z *= lunit;
+      DT_THROW_IF (z < dim_z,
+                   std::logic_error,
+                   "Enforced Z dimension '" << z / CLHEP::mm
+                   << "' mm (<" << dim_z / CLHEP::mm << ") is too small for surrounded components to fit in surrounded boxed model '" << name_ << "' !");
+      dim_z = z;
+    }
 
     // define the enclosing solid box:
     _solid_.reset ();
@@ -548,9 +539,9 @@ namespace geomtools {
 
     // 2011-12-05 FM : add support for additional internal objects :
     if (_internals_.get_number_of_items () == 0) {
-       _internals_.plug_internal_models (config_,
-                                         grab_logical (),
-                                         models_);
+      _internals_.plug_internal_models (config_,
+                                        grab_logical (),
+                                        models_);
     }
 
     DT_LOG_TRACE (get_logging_priority (), "Exiting.");
@@ -614,4 +605,207 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-// end of surrounded_boxed_model.cc
+
+// OCD support for class '::geomtools::surrounded_boxed_model' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::surrounded_boxed_model, ocd_)
+{
+  ocd_.set_class_name("geomtools::surrounded_boxed_model");
+  ocd_.set_class_description("A geometry model implementing a boxed model surrounded with some other volumes on their 6 faces");
+  ocd_.set_class_library("geomtools");
+  /*
+    ocd_.set_class_documentation("  \n"
+    );
+  */
+
+  // Inherit the OCD support from the parent class:
+  geomtools::i_model::init_ocd(ocd_);
+
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("material.ref")
+      .set_terse_description("The label of the material the mother volume is made of")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .add_example("Using the 'Air' material::                     \n"
+                   "                                               \n"
+                   "   material.ref : string = \"Air\"             \n"
+                   "                                               \n"
+                   )
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("length_unit")
+      .set_terse_description("The length unit symbol")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_default_value_string("mm")
+      .set_long_description("This property set the symbol of the default length\n"
+                            "unit.                                             \n"
+                            )
+      .add_example("Using cm::                                       \n"
+                   "                                                 \n"
+                   "   length_unit : string = \"cm\"                 \n"
+                   "                                                 \n"
+                   )
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("surrounded.model")
+      .set_terse_description("The name of the geometry model to be surrounded")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .set_long_description("All geometry models are searched for an external     \n"
+                            "dictionary of models, typically from a model        \n"
+                            "factory. They must provide a *stackable* interface. \n"
+                            )
+      .add_example("Set the name of the model to be surrounded by other models:: \n"
+                   "                                                             \n"
+                   "   surrounded.model : string = \"vertex_detector.model\"     \n"
+                   "                                                             \n"
+                   )
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("surrounded.label")
+      .set_terse_description("The label associated to the geometry model to be surrounded")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_default_value_string(geomtools::surrounded_boxed_model::SURROUNDED_LABEL)
+      .add_example("Set a label associated to the geometry model to be surrounded:: \n"
+                   "                                                                \n"
+                   "   surrounded.label : string = \"VertexDetector\"               \n"
+                   "                                                                \n"
+                   )
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("surrounded.centered_x")
+      .set_terse_description("A flag to center setup in the mother box the along the X axis")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_default_value_boolean(false)
+      .add_example("Center the setup along the X axis::      \n"
+                   "                                         \n"
+                   "   surrounded.centered_x : boolean = 1   \n"
+                   "                                         \n"
+                   )
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("surrounded.centered_y")
+      .set_terse_description("A flag to center setup in the mother box the along the Y axis")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_default_value_boolean(false)
+      .add_example("Center the setup along the Y axis::      \n"
+                   "                                         \n"
+                   "   surrounded.centered_y : boolean = 1   \n"
+                   "                                         \n"
+                   )
+      ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("surrounded.centered_z")
+      .set_terse_description("A flag to center setup in the mother box the along the Z axis")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_default_value_boolean(false)
+      .add_example("Center the setup along the Z axis::      \n"
+                   "                                         \n"
+                   "   surrounded.centered_z : boolean = 1   \n"
+                   "                                         \n"
+                   )
+      ;
+  }
+
+  int ipos = geomtools::BACK;
+  for (std::vector<std::string>::const_iterator ilabel
+         = geomtools::surrounded_boxed_model::position_labels().begin ();
+       ilabel != geomtools::surrounded_boxed_model::position_labels().end ();
+       ilabel++, ipos++) {
+    {
+      std::ostringstream surrounding_item_key;
+      surrounding_item_key << "surrounded." <<  *ilabel << "_" << geomtools::surrounded_boxed_model::MODEL_PROPERTY_PREFIX;
+      datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+      cpd.set_name_pattern(surrounding_item_key.str())
+        .set_terse_description(std::string("The name of the surrounding geometry model at ") + *ilabel + " position")
+        .set_traits(datatools::TYPE_STRING)
+        .set_mandatory(false)
+        .set_long_description("All geometry models are searched for an external     \n"
+                              "dictionary of models, typically from a model        \n"
+                              "factory. They must provide a *stackable* interface. \n"
+                              )
+        // .add_example("Set the name of the model to be surrounded by other models:: \n"
+        //              "                                                             \n"
+        //              "   surrounded.model : string = \"vertex_detector.model\"     \n"
+        //              "                                                             \n"
+        //              )
+        ;
+    }
+
+    {
+      std::ostringstream surrounding_label_key;
+      surrounding_label_key << "surrounded." <<  *ilabel << "_" << geomtools::surrounded_boxed_model::LABEL_PROPERTY_PREFIX;
+      std::ostringstream def_surrounding_label_key;
+      def_surrounding_label_key << geomtools::surrounded_boxed_model::SURROUNDING_LABEL + "_" + *ilabel;
+      datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
+      cpd.set_name_pattern(surrounding_label_key.str())
+        .set_terse_description(std::string("The label associated to the surrounding geometry model at ") + *ilabel + " position")
+        .set_traits(datatools::TYPE_STRING)
+        .set_mandatory(false)
+        .set_default_value_string(def_surrounding_label_key.str())
+        // .add_example("Set a label associated to the geometry model to be surrounded:: \n"
+        //              "                                                                \n"
+        //              "   surrounded.label : string = \"VertexDetector\"               \n"
+        //              "                                                                \n"
+        //              )
+        ;
+    }
+  }
+
+  ocd_.set_configuration_hints("This model is configured through a configuration file that \n"
+                               "uses the format of 'datatools::properties' setup file.     \n"
+                               "                                                           \n"
+                               "Example: ::                                                \n"
+                               "                                                           \n"
+                               "   material.ref     : string = \"Vacuum\"                        \n"
+                               "   length_unit      : string = \"cm\"                            \n"
+                               "   surrounded.model        : string = \"dragon_body.model\"      \n"
+                               "   surrounded.label        : string = \"Body\"                   \n"
+                               "   surrounded.front.model  : string = \"dragon_head.model\"      \n"
+                               "   surrounded.front.label  : string = \"Head\"                   \n"
+                               "   surrounded.back.model   : string = \"dragon_tail.model\"      \n"
+                               "   surrounded.back.label   : string = \"Tail\"                   \n"
+                               "   surrounded.left.model   : string = \"dragon_left_wing.model\" \n"
+                               "   surrounded.left.label   : string = \"LeftWing\"               \n"
+                               "   surrounded.right.model  : string = \"dragon_right_wing.model\"\n"
+                               "   surrounded.right.label  : string = \"RightWing\"              \n"
+                               "   surrounded.top.model    : string = \"dragon_spine.model\"     \n"
+                               "   surrounded.top.label    : string = \"Spine\"                  \n"
+                               "   surrounded.bottom.model : string = \"dragon_legs.model\"      \n"
+                               "   surrounded.bottom.label : string = \"Legs\"                   \n"
+                               "   surrounded.centered_x   : boolean = 0                         \n"
+                               "   surrounded.centered_y   : boolean = 1                         \n"
+                               "   surrounded.centered_z   : boolean = 0                         \n"
+                               "                                                                 \n"
+                               );
+
+  ocd_.set_validation_support(true);
+  ocd_.lock();
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+DOCD_CLASS_SYSTEM_REGISTRATION(::geomtools::surrounded_boxed_model, "geomtools::surrounded_boxed_model")

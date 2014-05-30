@@ -17,11 +17,13 @@
 #ifndef GEOMTOOLS_SURROUNDED_BOXED_MODEL_H
 #define GEOMTOOLS_SURROUNDED_BOXED_MODEL_H 1
 
+// Standard library:
 #include <string>
 #include <iostream>
 #include <vector>
 #include <map>
 
+// This project:
 #include <geomtools/i_boxed_model.h>
 #include <geomtools/box.h>
 #include <geomtools/physical_volume.h>
@@ -41,13 +43,9 @@ namespace geomtools {
     static const std::string SURROUNDED_LABEL;
     static const std::string SURROUNDING_LABEL;
 
-    struct surrounding_item
-    {
-      std::string      label;
-      const i_model *  model;
-      placement        placmt;
-      physical_volume  phys;
+    static const std::vector<std::string> & position_labels();
 
+    struct surrounding_item {
     public:
       const std::string & get_label () const
       {
@@ -65,6 +63,11 @@ namespace geomtools {
       {
         return phys;
       }
+    public:
+      std::string      label;
+      const i_model *  model;
+      placement        placmt;
+      physical_volume  phys;
     };
 
     typedef std::map<int, surrounding_item> surrounding_dict_type;
@@ -104,12 +107,15 @@ namespace geomtools {
 
     const surrounding_dict_type & get_surrounding_items () const;
 
+    /// Default constructor
     surrounded_boxed_model ();
 
+    /// Destructor
     virtual ~surrounded_boxed_model ();
 
     virtual std::string get_model_id () const;
 
+    /// Smart print
     virtual void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
@@ -117,13 +123,13 @@ namespace geomtools {
 
   protected:
 
+    /// Construction
     virtual void _at_construct (const std::string & name_,
                                 const datatools::properties & config_,
                                 models_col_type * models_ = 0);
 
   private:
 
-    std::vector<std::string> _position_labels_;
     std::string              _material_name_;
 
     const i_model *     _surrounded_model_;

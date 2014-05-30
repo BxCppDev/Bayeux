@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* stacked_model.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/stacked_model.h
+/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-02
  * Last modified: 2010-10-16
  *

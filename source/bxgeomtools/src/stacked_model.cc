@@ -1,6 +1,6 @@
 // stacked_model.cc
 
-// Ourselves
+// Ourselves:
 #include <geomtools/stacked_model.h>
 
 // Standard library:
@@ -734,6 +734,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::stacked_model, ocd_)
                    )
       ;
   }
+
   {
     datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("length_unit")
@@ -794,7 +795,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::stacked_model, ocd_)
       .set_terse_description("The name of the geometry model to be placed as the Nth slot of the stack")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(true)
-      .set_long_description("All geometry models is searched for an external     \n"
+      .set_long_description("All geometry models are searched for an external     \n"
                             "dictionary of models, typically from a model        \n"
                             "factory. They must provide a *stackable* interface. \n"
                             )
@@ -816,7 +817,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::stacked_model, ocd_)
       .set_terse_description("The label associated to the volume placed as the Nth slot of the stack")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
-      .add_example("Name of the models stacked at slots 0 to 3 of a stack:: \n"
+      .add_example("Label associated to the models stacked at slots 0 to 3 of a stack:: \n"
                    "                                                        \n"
                    "   stacked.number_of_items : integer = 4                \n"
                    "   stacked.model_0 : string = \"phoswich_fast.model\"   \n"
@@ -1009,5 +1010,4 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::stacked_model, ocd_)
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
-DOCD_CLASS_SYSTEM_REGISTRATION(::geomtools::stacked_model,
-                               "geomtools::stacked_model")
+DOCD_CLASS_SYSTEM_REGISTRATION(::geomtools::stacked_model, "geomtools::stacked_model")
