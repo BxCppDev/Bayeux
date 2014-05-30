@@ -1,5 +1,5 @@
-/* base_service.cc
- *
+/// \file datatools/base_service.cc
+/*
  * Copyright (C) 2011-2012 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
