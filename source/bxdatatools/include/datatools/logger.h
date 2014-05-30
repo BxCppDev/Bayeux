@@ -1,4 +1,4 @@
-//! \file    logger.h
+//! \file    datatools/logger.h
 //! \brief   Utilities for logging information
 //! \details Logging information from the progress of an application
 //!          often requires finer granularity than offered by the
