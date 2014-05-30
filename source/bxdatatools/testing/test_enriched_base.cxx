@@ -53,23 +53,49 @@ void test_reflection()
 }
 //#endif // DATATOOLS_WITH_REFLECTION == 1
 
+
+void test1()
+{
+  datatools::enriched_base obj;
+  obj.set_name_c("object1")
+    .set_display_name_c("o1")
+    .set_terse_description_c("A dummy object.")
+    .set_logging_priority_c(datatools::logger::PRIO_DEBUG)
+    .grab_auxiliaries().store("color", "blue")
+    ;
+  obj.tree_dump(std::cout, "An object : ");
+
+  {
+    datatools::data_writer writer("test_enriched_base.xml");
+    writer.store(obj);
+  }
+  return;
+}
+
+void test2()
+{
+
+  datatools::properties config;
+  config.store("name", "testing_name");
+  config.store("display_name", "Testing");
+  config.store("terse_description", "This is a test object");
+  config.store("logging.priority", "debug");
+  config.store_flag("aux.flag");
+  config.store("aux.dummy", "foo");
+  config.store("aux.user", "John Doe");
+
+  datatools::enriched_base obj;
+  obj.initialize(config);
+  obj.tree_dump(std::cout, "An object : ");
+
+  return;
+}
+
 int main (int /* argc_ */, char ** /* argv_ */) {
   int error_code = EXIT_SUCCESS;
   try {
-    datatools::enriched_base obj;
-    obj.set_name_c("object1")
-      .set_display_name_c("o1")
-      .set_terse_description_c("A dummy object.")
-      .set_logging_priority_c(datatools::logger::PRIO_DEBUG)
-      .grab_auxiliaries().store("color", "blue")
-      ;
-    obj.tree_dump(std::cout, "An object : ");
-
-    {
-      datatools::data_writer writer("test_enriched_base.xml");
-      writer.store(obj);
-    }
-
+    test1();
+    test2();
 #if DATATOOLS_WITH_REFLECTION == 1
     test_reflection();
 #endif // DATATOOLS_WITH_REFLECTION == 1
