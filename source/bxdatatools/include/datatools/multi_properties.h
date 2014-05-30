@@ -31,19 +31,20 @@
  * History:
  *
  */
-#ifndef DATATOOLS_MULTI_PROPERTIES_H_
-#define DATATOOLS_MULTI_PROPERTIES_H_
-// Standard Library
+#ifndef DATATOOLS_MULTI_PROPERTIES_H
+#define DATATOOLS_MULTI_PROPERTIES_H
+
+// Standard Library:
 #include <map>
 #include <list>
 #include <string>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/cstdint.hpp>
 #include <boost/serialization/access.hpp>
 
-// This Project
+// This project:
 #include <datatools/i_serializable.h>
 #include <datatools/i_clear.h>
 #include <datatools/i_tree_dump.h>
@@ -391,4 +392,4 @@ BOOST_CLASS_EXPORT_KEY2(datatools::multi_properties, "datatools::multi_propertie
 // Activate reflection layer for the 'datatools::multi_properties' class:
 DR_CLASS_INIT(::datatools::multi_properties);
 
-#endif // DATATOOLS_MULTI_PROPERTIES_H_
+#endif // DATATOOLS_MULTI_PROPERTIES_H
