@@ -223,8 +223,42 @@ namespace datatools {
     return;
   }
 
+  void enriched_base::initialize(const datatools::properties & config_, bool clear_)
+  {
+    if (clear_) this->clear();
+
+    // Parse logging priority:
+    logger::priority prio = logger::extract_logging_configuration(config_, logger::PRIO_FATAL, true);
+
+    // Parse name:
+    if (!has_name()) {
+      if (config_.has_key("name")) {
+        set_name(config_.fetch_string("name"));
+      }
+    }
+
+    // Parse display name:
+    if (!has_display_name()) {
+      if (config_.has_key("display_name")) {
+        set_display_name(config_.fetch_string("display_name"));
+      }
+    }
+
+    // Parse terse description:
+    if (!has_terse_description()) {
+      if (config_.has_key("terse_description")) {
+        set_terse_description(config_.fetch_string("terse_description"));
+      }
+    }
+
+    // Import auxiliary properties:
+    config_.export_and_rename_starting_with(grab_auxiliaries(), "aux.", "");
+
+    return;
+  }
+
   // static
-  void enriched_base::_load_ocd(datatools::object_configuration_description & ocd_)
+  void enriched_base::init_ocd(datatools::object_configuration_description & ocd_)
   {
     logger::declare_ocd_logging_configuration(ocd_, "fatal");
 
