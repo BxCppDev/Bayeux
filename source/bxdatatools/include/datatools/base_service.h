@@ -1,5 +1,5 @@
-/* base_service.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file datatools/base_service.h
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
  * Last modified : 2013-12-13
  *
@@ -102,8 +102,10 @@ class base_service : public datatools::i_tree_dumpable {
   /// Check if service is initialized
   virtual bool is_initialized() const = 0;
 
+  /// Set the logging priority threshold
   void set_logging_priority(datatools::logger::priority);
 
+  /// Return the logging priority threshold
   datatools::logger::priority get_logging_priority() const;
 
   /// Smart print
