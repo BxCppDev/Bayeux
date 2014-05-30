@@ -1,5 +1,5 @@
-/* enriched_base.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file datatools/enriched_base.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-09-12
  * Last modified: 2013-11-25
  *
@@ -43,7 +43,6 @@
 #include <datatools/properties.h>
 #include <datatools/reflection_macros.h>
 #include <datatools/object_configuration_description.h>
-//#include <datatools/ocd_macros.h>
 
 namespace datatools {
 
@@ -111,9 +110,9 @@ namespace datatools {
 			     const std::string& indent_ = "",
 			     bool inherit_ = false) const;
 
-  protected:
+      void initialize(const datatools::properties & config_, bool clear_ = false);
 
-      static void _load_ocd(datatools::object_configuration_description &);
+      static void init_ocd(datatools::object_configuration_description &);
 
   private:
 
