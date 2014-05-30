@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 // test_properties_2b.cxx
 
 #include <cstdlib>
@@ -151,5 +150,3 @@ int main (int argc_, char ** argv_)
     }
   return error_code;
 }
-
-// end of test_properties_2b.cxx
