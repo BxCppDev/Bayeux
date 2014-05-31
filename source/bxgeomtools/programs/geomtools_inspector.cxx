@@ -23,8 +23,8 @@
 #ifdef GEOMTOOLS_WITH_READLINE
 #include <readline/readline.h>
 #include <readline/history.h>
-#include <curses.h>
-#include <term.h>
+//#include <curses.h>
+//#include <term.h>
 #endif // GEOMTOOLS_WITH_READLINE
 
 // - datatools:
@@ -482,5 +482,3 @@ void print_shell_help (geomtools::geomtools_driver & /*gd_*/, std::ostream & out
   out_ <<  "  q | quit                       : Quit                                          \n";
   return;
 }
-
-// end of geomtools_inspector.cxx

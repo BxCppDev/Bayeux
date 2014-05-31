@@ -182,5 +182,3 @@ namespace geomtools {
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_GEOMTOOLS_DRIVER_H_
-
-// end of geomtools_driver.h

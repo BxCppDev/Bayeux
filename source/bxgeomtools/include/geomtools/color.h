@@ -34,7 +34,10 @@ namespace geomtools {
   {
   public:
 
+    static const int COLOR_TEST = 0;
+
     /// \brief Color code for gnuplot (x11 terminal)
+    // May collide with some macros from ncurses.h
     enum code_type {
       COLOR_INVALID     = -4,
       COLOR_TRANSPARENT = -3,
