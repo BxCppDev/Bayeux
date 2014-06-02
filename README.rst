@@ -219,7 +219,7 @@ To do
 
 * Implement support for configuration variants in the datatools module
   (through the datatools::properties and datatools::multi_properties classes).
-* Implement support for radioactive decays from Geant4 in the genbb_help module.
+* Implement support for radioactive decays using ENSDF from Geant4 in the genbb_help module.
 * Implement support for mapped electromagnetic fields in the emfield module.
 
 
