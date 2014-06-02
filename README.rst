@@ -2,7 +2,7 @@
 Bayeux C++ Library for Experimental Particle/Nuclear Physics
 ============================================================
 
-:Authors: François Mauger, Xavier Garrido, Benoit Guillon, Ben Morgan
+:Authors: Xavier Garrido, Benoit Guillon, François Mauger, Ben Morgan
 :Date:    Today
 
 .. contents::
@@ -17,7 +17,7 @@ for the simulation, recording and analysis of data for experimental
 particle and nuclear physics projects. This functionality is split
 into several specialized submodules:
 
-datatools :  Serializable data structures based on Boost.
+datatools :  Serializable data structures based on Boost and core utilities.
 
 cuts :       Generic tools for making arbitrary data selections.
 
@@ -45,6 +45,7 @@ mctools :    Utilities for particle and nuclear physics simulation with
              a Geant4 interface.
 
 
+
 Naming
 ------
 Bayeux is named thus because it weaves together several threads of software
@@ -55,6 +56,10 @@ Licensing
 ---------
 Please study the file ``LICENSE.txt`` for the distribution terms and
 conditions of use of Bayeux.
+
+Bayeux contains some code extracted from the Kitware System Library (OSI-approved BSD License),
+the BinReloc library (Do What The Fuck You Want To Public License, Version 2)
+and the eos portable archive library (Boost Software License).
 
 
 Getting Help
@@ -149,6 +154,9 @@ packages.
       * http://cnswww.cns.cwru.edu/php/chet/readline/rltop.html
       * http://askubuntu.com/questions/194523/how-do-i-install-gnu-readline
 
+   - pandoc is useful to generate documentation in user friendly format:
+     http://johnmacfarlane.net/pandoc/
+
 Known Issues on Tested Platforms
 --------------------------------
 None known at present.
@@ -208,3 +216,21 @@ scientific software projects (badly mis)use it.
 
 To do
 =====
+
+* Implement support for configuration variants in the datatools module
+  (through the datatools::properties and datatools::multi_properties classes).
+* Implement support for radioactive decays from Geant4 in the genbb_help module.
+* Implement support for mapped electromagnetic fields in the emfield module.
+
+
+Acknowledgements
+================
+
+The authors gratefully thank the following persons for their direct or indirect
+contributions to the Bayeux library:
+
+* Vladimir Tretyak is the author of the original Decay0/GENBB generator (written in Fortran 77)
+  from which  large part of the genbb_help module is derived.
+* Christian Pfligersdorffer is the author of the Boost/Serialization based
+  *portable binary archive* classes which is supported by the datatools I/O system of the
+  datatools module.

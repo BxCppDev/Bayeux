@@ -1,4 +1,4 @@
-Copyright (C) 2011-2012 Ben Morgan <Ben.Morgan@warwick.ac.uk>
+Copyright (C) 2011-2014 Ben Morgan <Ben.Morgan@warwick.ac.uk>
 
 This file is part of the Bayeux meta-package.
 
@@ -14,4 +14,3 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Bayeux.  If not, see <http://www.gnu.org/licenses/>.
-
