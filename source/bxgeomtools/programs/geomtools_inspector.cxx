@@ -20,7 +20,7 @@
 #include <bayeux/bayeux.h>
 #endif
 
-#ifdef GEOMTOOLS_WITH_READLINE
+#if GEOMTOOLS_WITH_READLINE == 1
 #include <readline/readline.h>
 #include <readline/history.h>
 //#include <curses.h>
@@ -65,7 +65,7 @@ int main(int argc_, char ** argv_)
   datatools::logger::priority logging = datatools::logger::PRIO_WARNING;
   namespace po = boost::program_options;
   boost::program_options::options_description opts("geomtools inspector configuration parameters");
-#ifdef GEOMTOOLS_WITH_READLINE
+#if GEOMTOOLS_WITH_READLINE == 1
   bool without_readline = false;
   std::string history_filename = "~/.bxgeomtools_inspector.history";
   datatools::fetch_path_with_env(history_filename);
@@ -87,7 +87,7 @@ int main(int argc_, char ** argv_)
        ->default_value(false),
        "Print help then exit.  \n"
        )
-#ifdef GEOMTOOLS_WITH_READLINE
+#if GEOMTOOLS_WITH_READLINE == 1
       ("without-readline",
        po::value<bool>(&without_readline)
        ->zero_tokens()
@@ -137,7 +137,7 @@ int main(int argc_, char ** argv_)
     GDP_argv.push_back("--logging");
     GDP_argv.push_back(logging_label);
 
-#ifdef GEOMTOOLS_WITH_READLINE
+#if GEOMTOOLS_WITH_READLINE == 1
     //if (! without_readline) {
       using_history (); // use readline library
       if (boost::filesystem::exists(history_filename)) {
@@ -178,7 +178,7 @@ int main(int argc_, char ** argv_)
     bool go_on = run;
     /// Browser main loop :
     while (go_on) {
-#ifndef GEOMTOOLS_WITH_READLINE
+#if GEOMTOOLS_WITH_READLINE == 0
       if (!std::cin || std::cin.eof()) {
         std::cerr << std::flush;
         std::cout << std::endl;
@@ -186,7 +186,7 @@ int main(int argc_, char ** argv_)
       }
 #endif
       std::string line;
-#ifdef GEOMTOOLS_WITH_READLINE
+#if GEOMTOOLS_WITH_READLINE == 1
       char * readline_line = 0;
       go_on = false;
       readline_line = readline (prompt.c_str ()); // use readline library
@@ -220,7 +220,7 @@ int main(int argc_, char ** argv_)
         while (line[line.length()-1] == '\\') {
           line = line.substr(0, line.length()-1);
           std::string more;
-#ifdef GEOMTOOLS_WITH_READLINE
+#if GEOMTOOLS_WITH_READLINE == 1
           {
             char * readline_line = 0;
             go_on = false;
@@ -367,7 +367,7 @@ int main(int argc_, char ** argv_)
       }
     } // End of browser main loop.
 
-#ifdef GEOMTOOLS_WITH_READLINE
+#if GEOMTOOLS_WITH_READLINE == 1
     DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, APP_NAME << ": "
                   << "Saving history file '" << history_filename << "'...");
     int error = write_history(history_filename.c_str());
