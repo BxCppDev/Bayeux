@@ -35,6 +35,7 @@
 //#include <G4RegionStore.hh>
 // EM processes :
 
+#include <G4RadioactiveDecay.hh>
 #include <G4EmProcessOptions.hh>
 
 #include <G4ComptonScattering.hh>
@@ -160,12 +161,12 @@ namespace mctools {
 
     bool em_physics_constructor::is_em_low_energy_livermore () const
     {
-      return _em_model_ == EM_MODEL_LOW_ENERGY_PENELOPE;
+      return _em_model_ == EM_MODEL_LOW_ENERGY_LIVERMORE;
     }
 
     bool em_physics_constructor::is_em_low_energy_penelope () const
     {
-      return _em_model_ == EM_MODEL_LOW_ENERGY_LIVERMORE;
+      return _em_model_ == EM_MODEL_LOW_ENERGY_PENELOPE;
     }
 
     em_physics_constructor::em_physics_constructor () : base_physics_constructor ()
@@ -659,6 +660,11 @@ namespace mctools {
     void em_physics_constructor::_ConstructEMDeexcitation ()
     {
       // First setup the static atomic deexcitation:
+      // G4RadioactiveDecay* radioactiveDecay = new G4RadioactiveDecay();
+      // radioactiveDecay->SetHLThreshold(nanosecond);
+      // radioactiveDecay->SetICM(true); // Internal Conversion
+      // radioactiveDecay->SetARM(true); // Atomic Rearangement
+
       G4VAtomDeexcitation* de = new G4UAtomicDeexcitation();
       G4LossTableManager::Instance()->SetAtomDeexcitation(de);
 
@@ -666,7 +672,14 @@ namespace mctools {
       G4EmProcessOptions emOptions;
       int verbose = 1;
       emOptions.SetVerbose(verbose);
-      //emOptions.SetPolarAngleLimit(CLHEP::pi);
+      /*
+      emOptions.SetMinEnergy(10*eV);     //default=100eV
+      emOptions.SetMaxEnergy(10*TeV);    //default=100TeV
+      emOptions.SetDEDXBinning(12*10);   //default=12*7
+      emOptions.SetLambdaBinning(12*10); //default=12*7
+      emOptions.SetMscStepLimitation(fUseDistanceToBoundary); //default=fUseSafety
+      emOptions.SetPolarAngleLimit(CLHEP::pi);
+      */
 
       emOptions.SetFluo(_em_fluorescence_);
       if (_em_fluorescence_) {
@@ -686,6 +699,14 @@ namespace mctools {
            i++) {
         const std::string & region_name = i->first;
         const region_deexcitation_type & rd = i->second;
+        /*
+          std::cerr << "Regions are:";
+          for ( std::vector<G4Region *>::const_iterator i = G4RegionStore::GetInstance ()->begin();
+          i != G4RegionStore::GetInstance ()->end(); i++ ) {
+          std::cerr << " '" << (*i)->GetName () << "'";
+          }
+          std::cerr << std::endl;
+        */
         G4Region * a_region = G4RegionStore::GetInstance ()->GetRegion (region_name);
         DT_THROW_IF(a_region == 0, std::logic_error,
                     "Cannot find region named '" << region_name
@@ -836,38 +857,50 @@ namespace mctools {
 
           if (_em_electron_ionisation_) {
             // Ionisation:
-            G4eIonisation * the_electron_ionisation = new G4eIonisation ();
+            G4eIonisation * the_e_ionisation = new G4eIonisation ();
             if (is_em_low_energy_livermore ()) {
               // Livermore:
-              G4LivermoreIonisationModel* the_livermore_ionisation_model
-                = new G4LivermoreIonisationModel ();
-              the_electron_ionisation->SetEmModel(the_livermore_ionisation_model);
+              if (particle_name == "e-"){
+                G4LivermoreIonisationModel* the_livermore_ionisation_model
+                  = new G4LivermoreIonisationModel ();
+                the_e_ionisation->SetEmModel(the_livermore_ionisation_model);
+              } else if (particle_name == "e+"){
+                G4PenelopeIonisationModel* the_penelope_ionisation_model
+                  = new G4PenelopeIonisationModel ();
+                the_e_ionisation->SetEmModel(the_penelope_ionisation_model);
+              }
             } else if (is_em_low_energy_penelope ()) {
               // Penelope:
               G4PenelopeIonisationModel* the_penelope_ionisation_model
                 = new G4PenelopeIonisationModel ();
-              the_electron_ionisation->SetEmModel(the_penelope_ionisation_model);
+              the_e_ionisation->SetEmModel(the_penelope_ionisation_model);
             }
             ++process_rank;
-            pmanager->AddProcess (the_electron_ionisation, -1, process_rank, process_rank);
+            pmanager->AddProcess (the_e_ionisation, -1, process_rank, process_rank);
           }
 
           if (_em_electron_bremsstrahlung_) {
             // Bremsstrahlung:
-            G4eBremsstrahlung * the_electron_bremsstrahlung = new G4eBremsstrahlung ();
+            G4eBremsstrahlung * the_e_bremsstrahlung = new G4eBremsstrahlung ();
             if (is_em_low_energy_livermore ()) {
               // Livermore:
-              G4LivermoreBremsstrahlungModel * the_livermore_bremsstrahlung_model
-                = new G4LivermoreBremsstrahlungModel ();
-              the_electron_bremsstrahlung->SetEmModel(the_livermore_bremsstrahlung_model);
+              if (particle_name == "e-"){
+                G4LivermoreBremsstrahlungModel * the_livermore_bremsstrahlung_model
+                  = new G4LivermoreBremsstrahlungModel ();
+                the_e_bremsstrahlung->SetEmModel(the_livermore_bremsstrahlung_model);
+              } else if (particle_name == "e+"){
+                G4PenelopeBremsstrahlungModel* the_penelope_bremsstrahlung_model
+                  = new G4PenelopeBremsstrahlungModel ();
+                the_e_bremsstrahlung->SetEmModel(the_penelope_bremsstrahlung_model);
+              }
             } else if (is_em_low_energy_penelope ()) {
               // Penelope:
               G4PenelopeBremsstrahlungModel* the_penelope_bremsstrahlung_model
                 = new G4PenelopeBremsstrahlungModel ();
-              the_electron_bremsstrahlung->SetEmModel(the_penelope_bremsstrahlung_model);
+              the_e_bremsstrahlung->SetEmModel(the_penelope_bremsstrahlung_model);
             }
             ++process_rank;
-            pmanager->AddProcess (the_electron_bremsstrahlung, -1, process_rank, process_rank);
+            pmanager->AddProcess (the_e_bremsstrahlung, -1, process_rank, process_rank);
           }
 
           if (particle_name == "e+" && _em_positron_annihilation_) {
