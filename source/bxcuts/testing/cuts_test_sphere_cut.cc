@@ -91,8 +91,8 @@ namespace cuts {
 
     // static method used within a cut factory:
     void sphere_cut::initialize(const datatools::properties& a_configuration,
-                                datatools::service_manager& a_service_manager,
-                                cuts::cut_handle_dict_type& a_cut_dict)
+                                datatools::service_manager& /*a_service_manager*/,
+                                cuts::cut_handle_dict_type& /*a_cut_dict*/)
     {
       using namespace std;
       if (is_initialized ())
@@ -157,5 +157,3 @@ namespace cuts {
   } // end of namespace test
 
 } // end of namespace cuts
-
-// end of cuts_test_sphere_cut.cc

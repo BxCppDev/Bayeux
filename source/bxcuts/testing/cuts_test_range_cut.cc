@@ -80,7 +80,7 @@ namespace cuts {
       int result = SELECTION_ACCEPTED;
       DT_LOG_TRACE(_logging, "Entering...");
       const data & a_data = get_user_data<data>();
-      double t;
+      double t = MODE_X;
       if (_mode_ == MODE_X)
         {
           t = a_data.x;
@@ -119,8 +119,8 @@ namespace cuts {
      *                          a_cut_dict)
      */
     void range_cut::initialize (const datatools::properties & a_configuration,
-                                datatools::service_manager & a_service_manager,
-                                cuts::cut_handle_dict_type & a_cut_dict)
+                                datatools::service_manager & /*a_service_manager*/,
+                                cuts::cut_handle_dict_type & /*a_cut_dict*/)
     {
       using namespace std;
       if (is_initialized ())
@@ -186,5 +186,3 @@ namespace cuts {
   } // end of namespace test
 
 } // end of namespace cuts
-
-// end of cuts_test_range_cut.cc

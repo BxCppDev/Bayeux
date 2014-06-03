@@ -10,13 +10,14 @@
 
 using namespace std;
 
-int main(int argc_, char ** argv_)
+int main(int /* argc_*/, char ** /* argv_ */)
 {
   int error_code = EXIT_SUCCESS;
   try
     {
       clog << "Test program for class 'cuts::accept_cut'!" << endl;
 
+      /*
       bool debug = false;
 
       int iarg = 1;
@@ -45,7 +46,7 @@ int main(int argc_, char ** argv_)
             }
           iarg++;
       }
-
+      */
       cuts::accept_cut my_accept_cut;
       int i;
       my_accept_cut.set_user_data(&i);

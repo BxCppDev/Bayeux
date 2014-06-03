@@ -13,13 +13,14 @@
 
 using namespace std;
 
-int main (int argc_, char ** argv_)
+int main (int /*argc_*/, char ** /*argv_*/)
 {
   int error_code = EXIT_SUCCESS;
   try
     {
       clog << "Test program for class 'cuts::and_cut'!" << endl;
 
+      /*
       bool debug = false;
 
       int iarg = 1;
@@ -48,6 +49,7 @@ int main (int argc_, char ** argv_)
             }
           iarg++;
       }
+      */
 
       cuts::cut_handle_type ha1 (new cuts::accept_cut);
       cuts::cut_handle_type ha2 (new cuts::accept_cut);
