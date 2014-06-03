@@ -17,7 +17,7 @@ int main (int argc_, char ** argv_)
     {
       clog << "Test program for class 'geom_id'!" << endl;
 
-      bool debug = false;
+      //bool debug = false;
       bool interactive = false;
 
       int iarg = 1;
@@ -25,7 +25,7 @@ int main (int argc_, char ** argv_)
         {
           string arg = argv_[iarg];
 
-          if (arg == "-d" || arg == "--debug") debug = true;
+          //if (arg == "-d" || arg == "--debug") debug = true;
           if (arg == "-i" || arg == "--interactive") interactive = true;
 
           iarg++;

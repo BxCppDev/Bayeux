@@ -11,26 +11,26 @@
 
 using namespace std;
 
-int main (int argc_, char ** argv_)
+int main (/*int argc_, char ** argv_*/)
 {
   int error_code = EXIT_SUCCESS;
   try
   {
-    cerr << "Hello, this is a sample program for class 'color'!"
-              << endl;
+    clog << "Hello, this is a sample program for class 'color'!"
+         << endl;
 
-    bool debug = false;
+    // bool debug = false;
 
-    int iarg = 1;
-    while (iarg < argc_)
-    {
+    // int iarg = 1;
+    // while (iarg < argc_)
+    // {
 
-      string arg = argv_[iarg];
+    //   string arg = argv_[iarg];
 
-      if (arg == "-d" || arg == "--debug") debug = true;
+    //   if (arg == "-d" || arg == "--debug") debug = true;
 
-      iarg++;
-    }
+    //   iarg++;
+    // }
 
     geomtools::color color;
     color.code = 1;
@@ -43,7 +43,7 @@ int main (int argc_, char ** argv_)
     int color_index = geomtools::color::get_color (color_name);
     cout << "Color '" << color_name << "' index is : " << color_index << endl;
 
-    geomtools::color::code_type code = geomtools::color::COLOR_MAGENTA;
+    //geomtools::color::code_type code = geomtools::color::COLOR_MAGENTA;
 
   }
   catch (exception & x)

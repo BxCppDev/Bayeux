@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 // test_base_hit.cxx
 
 #include <cstdlib>
@@ -18,43 +18,43 @@
 
 using namespace std;
 
-int main (int argc_, char ** argv_)
+int main (/*int argc_, char ** argv_*/)
 {
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'geomtools::base_hit'!" << endl; 
-  
-      bool debug = false;
+      clog << "Test program for class 'geomtools::base_hit'!" << endl;
 
-      int iarg = 1;
-      while (iarg < argc_)
-        {
-          string token = argv_[iarg];
+      // bool debug = false;
 
-          if (token[0] == '-')
-            {
-               string option = token; 
-               if ((option == "-d") || (option == "--debug")) 
-                 {
-                   debug = true;
-                 }
-               else 
-                 { 
-                    clog << "warning: ignoring option '" << option << "'!" << endl; 
-                 }
-            }
-          else
-            {
-              string argument = token; 
-              { 
-                clog << "warning: ignoring argument '" 
-                     << argument << "'!" << endl; 
-              }
-            }
-          iarg++;
-      }
-    
+      // int iarg = 1;
+      // while (iarg < argc_)
+      //   {
+      //     string token = argv_[iarg];
+
+      //     if (token[0] == '-')
+      //       {
+      //          string option = token;
+      //          if ((option == "-d") || (option == "--debug"))
+      //            {
+      //              debug = true;
+      //            }
+      //          else
+      //            {
+      //               clog << "warning: ignoring option '" << option << "'!" << endl;
+      //            }
+      //       }
+      //     else
+      //       {
+      //         string argument = token;
+      //         {
+      //           clog << "warning: ignoring argument '"
+      //                << argument << "'!" << endl;
+      //         }
+      //       }
+      //     iarg++;
+      // }
+
       clog << "Step 0:" << endl;
       {
         geomtools::base_hit my_base_hit;
@@ -72,23 +72,23 @@ int main (int argc_, char ** argv_)
       clog << "Step 1:" << endl;
       {
         // Serialization:
-        datatools::data_writer DW ("test_base_hit.xml", 
+        datatools::data_writer DW ("test_base_hit.xml",
                                    datatools::using_multi_archives);
-        
+
         // create a list of random base hits:
         srand48 (314159);
         srandom (314159);
         base_hit_col_type list_of_base_hits;
         size_t nb_hits = 10;
-        double cell_radius = 15.0 * CLHEP::mm;
-        for (int i = 0; i < nb_hits; i++)
+        //double cell_radius = 15.0 * CLHEP::mm;
+        for (int i = 0; i < (int) nb_hits; i++)
           {
             // append a new empty hit in the list:
             list_of_base_hits.push_back (geomtools::base_hit ());
             // get a reference to the newly pushed hit:
             geomtools::base_hit & my_base_hit = list_of_base_hits.back ();
             my_base_hit.set_hit_id (5715 + i);
-            geomtools::geom_id gid (10, // module 
+            geomtools::geom_id gid (10, // module
                                     1,  // half chamber
                                     (random () % 10), // layer
                                     4 + (random () % 3)); // cell
@@ -96,11 +96,11 @@ int main (int argc_, char ** argv_)
             my_base_hit.grab_auxiliaries ().store ("strange", "");
             double t = drand48 () * 5000. * CLHEP::picosecond;
             my_base_hit.grab_auxiliaries ().store ("drift_time", t);
-            if (drand48 () < 0.3) 
+            if (drand48 () < 0.3)
               {
                 my_base_hit.grab_auxiliaries ().store_flag ("noisy");
               }
-            
+
             // a trick for test:
             if (i == (nb_hits / 2))
               {
@@ -118,7 +118,7 @@ int main (int argc_, char ** argv_)
 
         {
           geomtools::base_hit::has_hit_id_predicate hit_id_pred (5717);
-          base_hit_col_type::const_iterator found 
+          base_hit_col_type::const_iterator found
             = std::find_if (list_of_base_hits.begin (),
                             list_of_base_hits.end (),
                             hit_id_pred);
@@ -129,7 +129,7 @@ int main (int argc_, char ** argv_)
         }
         {
           geomtools::base_hit::has_hit_id_predicate hit_id_pred (666);
-          base_hit_col_type::const_iterator found 
+          base_hit_col_type::const_iterator found
             = std::find_if (list_of_base_hits.begin (),
                             list_of_base_hits.end (),
                             hit_id_pred);
@@ -140,18 +140,18 @@ int main (int argc_, char ** argv_)
         }
 
       }
- 
+
       clog << "Step 2:" << endl;
       {
         // Serialization:
-        datatools::data_reader DR ("test_base_hit.xml", 
+        datatools::data_reader DR ("test_base_hit.xml",
                                    datatools::using_multi_archives);
 
         // Load the list of base hits from Boost serialization XML file:
         base_hit_col_type list_of_base_hits;
-        while (DR.has_record_tag ()) 
+        while (DR.has_record_tag ())
           {
-            if (DR.record_tag_is (geomtools::base_hit::SERIAL_TAG)) 
+            if (DR.record_tag_is (geomtools::base_hit::SERIAL_TAG))
               {
                 {
                   geomtools::base_hit BH;
@@ -161,11 +161,11 @@ int main (int argc_, char ** argv_)
                 DR.load (base_hit);
                 base_hit.tree_dump (clog, "A new base hit loaded from the reader:");
               }
-            else 
+            else
               {
                 string bad_tag = DR.get_record_tag ();
-                clog << "ERROR: unknown data tag '" 
-                     << bad_tag << "'!" << endl; 
+                clog << "ERROR: unknown data tag '"
+                     << bad_tag << "'!" << endl;
                 break;
               }
           }
@@ -191,23 +191,23 @@ int main (int argc_, char ** argv_)
                 else if (base_hit.get_auxiliaries ().fetch_real ("drift_time")
                          < tmin_base_ref.get ().get_auxiliaries ().fetch_real ("drift_time"))
                   {
-                    tmin_base_ref.set (base_hit);             
+                    tmin_base_ref.set (base_hit);
                   }
             }
           }
         tmin_base_ref.get ().tree_dump (clog, "Base hit with min drift time:");
       }
-      
+
       clog << "DEVEL: The End." << endl;
     }
   catch (exception & x)
     {
-      cerr << "error: " << x.what () << endl; 
+      cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);

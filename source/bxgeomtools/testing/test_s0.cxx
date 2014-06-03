@@ -1,11 +1,11 @@
 /* test_s0.cxx */
- 
+
 #include <cstdlib>
 #include <string>
 #include <iostream>
 #include <sstream>
-#include <stdexcept> 
- 
+#include <stdexcept>
+
 
 //#include <datatools/serialization/io_factory.h>
 
@@ -26,14 +26,14 @@
 
 using namespace std;
 
-int main (int argc_, char ** argv_) 
+int main (/*int argc_, char ** argv_*/)
 {
   clog << endl << "**************** Starting program..." << endl;
-  try 
+  try
     {
 
     }
-  catch (exception & x) 
+  catch (exception & x)
     {
       clog << "test_s0: ERROR: " << x.what () << endl;
       exit (EXIT_FAILURE);
@@ -42,5 +42,3 @@ int main (int argc_, char ** argv_)
 
   return (EXIT_SUCCESS);
 }
-
-/* end of test_s0.cxx */

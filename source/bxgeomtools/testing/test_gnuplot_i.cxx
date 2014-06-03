@@ -12,13 +12,13 @@
 
 void wait_for_key();  // Program halts until keypress
 
-using std::cout;
+using std::clog;
 using std::endl;
 
-int main(int argc, char* argv[])
+int main(/*int argc, char* argv[]*/)
 {
 
-    cout << "*** example of gnuplot control through C++ ***" << endl << endl;
+    clog << "*** example of gnuplot control through C++ ***" << endl << endl;
     bool interactive = false;
 
     //
@@ -31,16 +31,16 @@ int main(int argc, char* argv[])
         //
         // Slopes
         //
-        cout << "*** plotting slopes" << endl;
+        clog << "*** plotting slopes" << endl;
         g1.set_title("Slopes\\nNew Line");
 
-        cout << "y = x" << endl;
+        clog << "y = x" << endl;
         g1.plot_slope(1.0,0.0,"y=x");
 
-        cout << "y = 2*x" << endl;
+        clog << "y = 2*x" << endl;
         g1.plot_slope(2.0,0.0,"y=2x");
 
-        cout << "y = -x" << endl;
+        clog << "y = -x" << endl;
         g1.plot_slope(-1.0,0.0,"y=-x");
         g1.unset_title();
 
@@ -48,32 +48,32 @@ int main(int argc, char* argv[])
         // Equations
         //
         g1.reset_plot();
-        cout << endl << endl << "*** various equations" << endl;
+        clog << endl << endl << "*** various equations" << endl;
 
-        cout << "y = sin(x)" << endl;
+        clog << "y = sin(x)" << endl;
         g1.plot_equation("sin(x)","sine");
 
-        cout << "y = log(x)" << endl;
+        clog << "y = log(x)" << endl;
         g1.plot_equation("log(x)","logarithm");
 
-        cout << "y = sin(x) * cos(2*x)" << endl;
+        clog << "y = sin(x) * cos(2*x)" << endl;
         g1.plot_equation("sin(x)*cos(2*x)","sine product");
 
         //
         // Styles
         //
         g1.reset_plot();
-        cout << endl << endl << "*** showing styles" << endl;
+        clog << endl << endl << "*** showing styles" << endl;
 
-        cout << "sine in points" << endl;
+        clog << "sine in points" << endl;
         g1.set_pointsize(0.8).set_style("points");
         g1.plot_equation("sin(x)","points");
 
-        cout << "sine in impulses" << endl;
+        clog << "sine in impulses" << endl;
         g1.set_style("impulses");
         g1.plot_equation("sin(x)","impulses");
 
-        cout << "sine in steps" << endl;
+        clog << "sine in steps" << endl;
         g1.set_style("steps");
         g1.plot_equation("sin(x)","steps");
 
@@ -81,9 +81,9 @@ int main(int argc, char* argv[])
         // Save to ps
         //
         g1.reset_all();
-        cout << endl << endl << "*** save to ps " << endl;
+        clog << endl << endl << "*** save to ps " << endl;
 
-        cout << "y = sin(x) saved to test_output.ps in working directory" << endl;
+        clog << "y = sin(x) saved to test_output.ps in working directory" << endl;
         g1.savetops("test_output");
         g1.set_style("lines").set_samples(300).set_xrange(0,5);
         g1.plot_equation("sin(12*x)*exp(-x)").plot_equation("exp(-x)");
@@ -108,77 +108,77 @@ int main(int argc, char* argv[])
 
 
         g1.reset_all();
-        cout << endl << endl << "*** user-defined lists of doubles" << endl;
+        clog << endl << endl << "*** user-defined lists of doubles" << endl;
         g1.set_style("impulses").plot_x(y,"user-defined doubles");
 
         g1.reset_plot();
-        cout << endl << endl << "*** user-defined lists of points (x,y)" << endl;
+        clog << endl << endl << "*** user-defined lists of points (x,y)" << endl;
         g1.set_grid();
         g1.set_style("points").plot_xy(x,y,"user-defined points 2d");
 
         g1.reset_plot();
-        cout << endl << endl << "*** user-defined lists of points (x,y,z)" << endl;
+        clog << endl << endl << "*** user-defined lists of points (x,y,z)" << endl;
         g1.unset_grid();
         g1.plot_xyz(x,y,z,"user-defined points 3d");
 
         g1.reset_plot();
-        cout << endl << endl << "*** user-defined lists of points (x,y,dy)" << endl;
+        clog << endl << endl << "*** user-defined lists of points (x,y,dy)" << endl;
         g1.plot_xy_err(x,y,dy,"user-defined points 2d with errorbars");
 
 
         //
         // Multiple output screens
         //
-        cout << endl << endl;
-        cout << "*** multiple output windows" << endl;
+        clog << endl << endl;
+        clog << "*** multiple output windows" << endl;
 
         g1.reset_plot();
         g1.set_style("lines");
-        cout << "window 1: sin(x)" << endl;
+        clog << "window 1: sin(x)" << endl;
         g1.set_grid().set_samples(600).set_xrange(0,300);
         g1.plot_equation("sin(x)+sin(x*1.1)");
 
         g1.set_xautoscale().replot();
 
         Gnuplot g2;
-        cout << "window 2: user defined points" << endl;
+        clog << "window 2: user defined points" << endl;
         g2.plot_x(y2,"points");
         g2.set_smooth().plot_x(y2,"cspline");
         g2.set_smooth("bezier").plot_x(y2,"bezier");
         g2.unset_smooth();
 
         Gnuplot g3("lines");
-        cout << "window 3: log(x)/x" << endl;
+        clog << "window 3: log(x)/x" << endl;
         g3.set_grid();
         g3.plot_equation("log(x)/x","log(x)/x");
 
         Gnuplot g4("lines");
-        cout << "window 4: splot x*x+y*y" << endl;
+        clog << "window 4: splot x*x+y*y" << endl;
         g4.set_zrange(0,100);
         g4.set_xlabel("x-axis").set_ylabel("y-axis").set_zlabel("z-axis");
         g4.plot_equation3d("x*x+y*y");
 
         Gnuplot g5("lines");
-        cout << "window 5: splot with hidden3d" << endl;
+        clog << "window 5: splot with hidden3d" << endl;
         g5.set_isosamples(25).set_hidden3d();
         g5.plot_equation3d("x*y*y");
 
         Gnuplot g6("lines");
-        cout << "window 6: splot with contour" << endl;
+        clog << "window 6: splot with contour" << endl;
         g6.set_isosamples(60).set_contour();
         g6.unset_surface().plot_equation3d("sin(x)*sin(y)+4");
 
         g6.set_surface().replot();
 
         Gnuplot g7("lines");
-        cout << "window 7: set_samples" << endl;
+        clog << "window 7: set_samples" << endl;
         g7.set_xrange(-30,20).set_samples(40);
         g7.plot_equation("besj0(x)*0.12e1").plot_equation("(x**besj0(x))-2.5");
 
         g7.set_samples(400).replot();
 
         Gnuplot g8("filledcurves");
-        cout << "window 8: filledcurves" << endl;
+        clog << "window 8: filledcurves" << endl;
         g8.set_legend("outside right top").set_xrange(-5,5);
         g8.plot_equation("x*x").plot_equation("-x*x+4");
 
@@ -186,7 +186,7 @@ int main(int argc, char* argv[])
         // Plot an image
         //
         Gnuplot g9;
-        cout << "window 9: plot_image" << endl;
+        clog << "window 9: plot_image" << endl;
         const int iWidth  = 255;
         const int iHeight = 255;
         g9.set_xrange(0,iWidth).set_yrange(0,iHeight).set_cbrange(0,255);
@@ -205,7 +205,7 @@ int main(int argc, char* argv[])
         // manual control
         //
         Gnuplot g10;
-        cout << "window 10: manual control" << endl;
+        clog << "window 10: manual control" << endl;
         g10.cmd("set samples 400").cmd("plot abs(x)/2"); // either with cmd()
         g10 << "replot sqrt(x)" << "replot sqrt(-x)";    // or with <<
 
@@ -214,11 +214,11 @@ int main(int argc, char* argv[])
     }
     catch (GnuplotException ge)
     {
-        cout << ge.what() << endl;
+        clog << ge.what() << endl;
     }
 
 
-    cout << endl << "*** end of gnuplot example" << endl;
+    clog << endl << "*** end of gnuplot example" << endl;
 
     return 0;
 }
@@ -228,7 +228,7 @@ int main(int argc, char* argv[])
 void wait_for_key ()
 {
 #if defined(unix) || defined(__unix) || defined(__unix__) || defined(__APPLE__)
-    cout << endl << "Press ENTER to continue..." << endl;
+    clog << endl << "Press ENTER to continue..." << endl;
 
     std::cin.clear();
     std::cin.ignore(std::cin.rdbuf()->in_avail());

@@ -17,7 +17,6 @@ int main (int argc_, char ** argv_)
     {
       clog << "Test program for class 'id_mgr'!" << endl;
 
-      bool debug = false;
       bool test_mapping = false;
       bool test_extraction = true;
       int iarg = 1;
@@ -28,11 +27,7 @@ int main (int argc_, char ** argv_)
           if (token[0] == '-')
             {
               string option = token;
-              if ((option == "-d") || (option == "--debug"))
-                {
-                  debug = true;
-                }
-              else if ((option == "-m") || (option == "--mapping"))
+              if ((option == "-m") || (option == "--mapping"))
                 {
                   test_mapping = true;
                 }

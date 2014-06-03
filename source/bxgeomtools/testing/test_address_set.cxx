@@ -19,7 +19,7 @@ int main (int argc_, char ** argv_)
     {
       clog << "Hello, this is a sample program for class 'address_set'!" << endl;
 
-      bool debug = false;
+      // bool debug = false;
       bool interactive = false;
       int iarg = 1;
       while (iarg < argc_)
@@ -27,7 +27,7 @@ int main (int argc_, char ** argv_)
 
           string arg = argv_[iarg];
 
-          if (arg == "-d" || arg == "--debug") debug = true;
+          // if (arg == "-d" || arg == "--debug") debug = true;
           if (arg == "-i" || arg == "--interactive") interactive = true;
 
           iarg++;
