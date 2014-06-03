@@ -1,5 +1,5 @@
 // -*- mode: c++ ; -*-
-/// \file geeomtools/surrounded_boxed_model.h
+/// \file geomtools/surrounded_boxed_model.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-02
  * Last modified: 2010-04-02
