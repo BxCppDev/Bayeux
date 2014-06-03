@@ -13,7 +13,7 @@
 // - Datatools
 #include "datatools/exception.h"
 
-int main(int argc, const char *argv[])
+int main(/*int argc, const char *argv[]*/)
 {
   try {
     //! Check that version symbols and method return values match

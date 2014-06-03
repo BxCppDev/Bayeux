@@ -68,7 +68,7 @@ bool test_valid_resource() {
 
 
 //! group tests
-int main(int argc, const char *argv[]) {
+int main(/*int argc, const char *argv[]*/) {
   if(!test_invalid_resource()) return EXIT_FAILURE;
   if(!test_valid_resource()) return EXIT_FAILURE;
 
