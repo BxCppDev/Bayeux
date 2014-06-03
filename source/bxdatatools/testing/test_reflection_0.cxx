@@ -21,7 +21,8 @@
 // Some pre-processor guard about CAMP reflection usage and linkage :
 #include <datatools/reflection_guard.h>
 
-void test_things (bool debug_)
+void test_things (bool // debug_
+                  )
 {
   std::clog << "*** test_things : " << std::endl;
 
@@ -87,7 +88,8 @@ void test_things (bool debug_)
   }
 }
 
-void test_multi_properties (bool debug_)
+void test_multi_properties (bool // debug_
+                            )
 {
   std::clog << "*** test_multi_properties : " << std::endl;
   const DR_CLASS & mpropsMetaClass = DR_CLASS_BY_NAME("datatools::multi_properties");
@@ -146,7 +148,8 @@ void test_multi_properties (bool debug_)
 }
 
 
-void test_properties (bool debug_)
+void test_properties (bool // debug_
+                      )
 {
   std::clog << "*** test_properties : " << std::endl;
   const DR_CLASS & propsMetaClass = DR_CLASS_BY_NAME("datatools::properties");
@@ -191,7 +194,8 @@ void test_properties (bool debug_)
 }
 
 
-void test_event_id (bool debug_)
+void test_event_id (bool // debug_
+                    )
 {
   std::clog << "*** test_event_id : " << std::endl;
   const DR_CLASS & evIdMetaClass = DR_CLASS_BY_NAME("datatools::event_id");
@@ -224,7 +228,8 @@ void test_event_id (bool debug_)
 }
 
 
-void test_logger (bool debug_)
+void test_logger (bool // debug_
+                  )
 {
   std::clog << "*** test_logger : " << std::endl;
   {
@@ -242,7 +247,7 @@ void test_logger (bool debug_)
        }
 
       const DR_ENUM & tMetaEnum = camp::enumByName("datatools::logger::priority");
-      for (int i = 0; i < tMetaEnum.size(); i++) {
+      for (int i = 0; i < (int) tMetaEnum.size(); i++) {
         std::clog << " - Key '" << tMetaEnum.pair(i).name
                   << "' has value = " << tMetaEnum.pair(i).value << std::endl;
       }
@@ -256,44 +261,44 @@ void test_logger (bool debug_)
 }
 
 
-int main (int argc_, char ** argv_)
+int main (// int argc_, char ** argv_
+         )
 {
   datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
   try
     {
       bool debug = false;
       long seed  = 12345;
-      bool test = false;
-      int nrecords = 3;
+      //int nrecords = 3;
 
-      int iarg = 1;
-      while (iarg < argc_)
-        {
-          std::string arg = argv_[iarg];
-          if (arg[0] == '-')
-            {
-              if (arg == "-d") debug = true;
-              if (arg == "-10") nrecords = 10;
-              if (arg == "-100") nrecords = 100;
-              if (arg == "-1000") nrecords = 1000;
-            }
-          else
-            {
-            }
-          iarg++;
-        }
+      // int iarg = 1;
+      // while (iarg < argc_)
+      //   {
+      //     std::string arg = argv_[iarg];
+      //     if (arg[0] == '-')
+      //       {
+      //         if (arg == "-d") debug = true;
+      //         if (arg == "-10") nrecords = 10;
+      //         if (arg == "-100") nrecords = 100;
+      //         if (arg == "-1000") nrecords = 1000;
+      //       }
+      //     else
+      //       {
+      //       }
+      //     iarg++;
+      //   }
 
       srand48 (seed);
 
 
       DT_LOG_NOTICE(logging, "Number of metaclasses = " << camp::classCount());
-      for (int i = 0; i < camp::classCount(); i++) {
+      for (int i = 0; i < (int) camp::classCount(); i++) {
         const camp::Class & c = camp::classByIndex(i);
         DT_LOG_NOTICE(logging, "Metaclass #" << i << " : " << c.name());
       }
 
       DT_LOG_NOTICE(logging, "Number of metaenums = " << camp::enumCount());
-      for (int i = 0; i < camp::enumCount(); i++) {
+      for (int i = 0; i < (int) camp::enumCount(); i++) {
         const camp::Enum & e = camp::enumByIndex(i);
         DT_LOG_NOTICE(logging, "Metaenum #" << i << " : " << e.name());
       }

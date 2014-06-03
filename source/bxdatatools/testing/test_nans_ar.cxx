@@ -122,7 +122,9 @@ public:
 private:
   friend class boost::serialization::access;
   template<class Archive>
-  void serialize(Archive & ar_, const unsigned int version_)
+  void serialize(Archive & ar_,
+                 const unsigned int // version_
+                 )
   {
     ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
     ar_ & boost::serialization::make_nvp ("v1", __v1);
@@ -148,7 +150,9 @@ const string & data_t::get_serial_tag () const
 void test ()
 {
   double x = 2.0625;
-  uint64_t ux = *((const uint64_t *) (&x));
+  double * px = &x;
+  void * apx = static_cast<void *>(px);
+  uint64_t ux = *(static_cast<uint64_t *>(apx));
   clog << "test: x = " << x << endl;
   clog << "test: ux = " << hex << ux << dec << endl;
 
@@ -272,5 +276,3 @@ int main (int argc_ , char ** argv_)
     }
   return (EXIT_SUCCESS);
 }
-
-/* end of test_nans_ar.cxx */

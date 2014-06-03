@@ -34,7 +34,6 @@ int main (int argc_, char ** argv_)
           FORMAT_BIN = 2
         };
       int fmt   = FORMAT_XML;
-      bool test = false;
 
       int iarg = 1;
       while (iarg < argc_)
@@ -49,7 +48,6 @@ int main (int argc_, char ** argv_)
               if (arg == "-xml") fmt = FORMAT_XML;
               if (arg == "-txt") fmt = FORMAT_TXT;
               if (arg == "-bin") fmt = FORMAT_BIN;
-              if (arg == "-test") test = true;
             }
           else
             {
@@ -111,7 +109,7 @@ int main (int argc_, char ** argv_)
           {
             if (debug) clog << "DEBUG: Counts = " << i << endl;
             bitset_data.make ();
-            for (int i = 0; i < BSSZ; i++)
+            for (int i = 0; i < (int) BSSZ; i++)
               {
                 bitset_data.get ().set(i, drand48 () < 0.5 ? true: false);
               }

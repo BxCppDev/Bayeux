@@ -13,28 +13,28 @@
 #include <datatools/datatools_config.h>
 #include <datatools/detail/DynamicLoader.h>
 
-int main (int argc_ , char ** argv_)
+int main (/*int argc_ , char ** argv_*/)
 {
   int error_code = EXIT_SUCCESS;
   try
     {
       std::clog << "Test of the 'datatools::library_loader' class." << std::endl;
 
-      bool debug = false;
+      // bool debug = false;
 
-      int iarg = 1;
-      while (iarg <  argc_)
-        {
-          std::string arg = argv_[iarg];
-          if (boost::algorithm::starts_with (arg, "-"))
-            {
-              if (arg == "-d" || arg == "--debug")
-                {
-                  debug =  true;
-                }
-            }
-          iarg++;
-        }
+      // int iarg = 1;
+      // while (iarg <  argc_)
+      //   {
+      //     std::string arg = argv_[iarg];
+      //     if (boost::algorithm::starts_with (arg, "-"))
+      //       {
+      //         if (arg == "-d" || arg == "--debug")
+      //           {
+      //             debug =  true;
+      //           }
+      //       }
+      //     iarg++;
+      //   }
 
       std::vector<datatools::detail::DynamicLoader::LibraryHandle> h;
 

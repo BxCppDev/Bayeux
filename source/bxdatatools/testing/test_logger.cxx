@@ -174,7 +174,7 @@ void test_priority_initialize() {
 
 }
 
-int main(int argc, const char *argv[])
+int main(/*int argc, const char *argv[]*/)
 {
 
   test_logger_macros();

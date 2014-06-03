@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_cloneable.cxx
 
 #include <cstdlib>
@@ -48,22 +48,22 @@ public:
 
 DATATOOLS_CLONEABLE_IMPLEMENTATION(foo)
 
-int main (int argc_ , char ** argv_)
+int main (int /* argc_ */, char ** /*argv_*/)
 {
   int error_code = EXIT_SUCCESS;
-  try 
+  try
     {
-      clog << "Test of the 'datatools::i_cloneable' interface..." << endl; 
-      bool debug = false;
+      clog << "Test of the 'datatools::i_cloneable' interface..." << endl;
+      // bool debug = false;
 
-      int iarg =  1;
-      while (iarg < argc_) 
-        {
-          string arg = argv_[iarg];
-          if ((arg == "-d") || (arg == "--debug")) debug = true;
-          iarg++;
-        }
-    
+      // int iarg =  1;
+      // while (iarg < argc_)
+      //   {
+      //     string arg = argv_[iarg];
+      //     if ((arg == "-d") || (arg == "--debug")) debug = true;
+      //     iarg++;
+      //   }
+
       {
         foo f1 ("f1", 1);
         foo f2 ("f2", 2);
@@ -80,7 +80,7 @@ int main (int argc_ , char ** argv_)
         vector<datatools::i_cloneable * > v2;
         v2.reserve (v.size ());
         v2.assign (v.size (), 0); // filled with NULL pointers
-        for (int i = 0; i < v2.size (); i++)
+        for (int i = 0; i < (int) v2.size (); i++)
           {
             v2[i] = v[i]->clone ();
             dynamic_cast<foo*>(v2[i])->prime ().print ();
@@ -88,12 +88,12 @@ int main (int argc_ , char ** argv_)
           }
 
         // delete cloned objects:
-        for (int i = 0; i < v2.size (); i++)
+        for (int i = 0; i < (int)v2.size (); i++)
           {
             if (v2[i] != 0) delete v2[i];
           }
       }
- 
+
       {
         foo f4 ("f4", 4);
         f4.print ();
@@ -104,17 +104,16 @@ int main (int argc_ , char ** argv_)
 
     }
   catch (exception & x)
-    { 
-      clog << "error: " << x.what () << endl; 
+    {
+      clog << "error: " << x.what () << endl;
       error_code =  EXIT_FAILURE;
     }
-  catch (...) 
-    { 
-      clog << "error: " << "unexpected error!" << endl;  
-      error_code = EXIT_FAILURE; 
-    } 
+  catch (...)
+    {
+      clog << "error: " << "unexpected error!" << endl;
+      error_code = EXIT_FAILURE;
+    }
   return error_code;
-} 
+}
 
-// end of test_cloneable.cxx 
-  
+// end of test_cloneable.cxx

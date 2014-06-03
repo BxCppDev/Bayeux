@@ -36,19 +36,19 @@ using namespace std;
   /**/
 
 
-int main (int argc_ , char ** argv_)
+int main (/*int argc_ , char ** argv_*/)
 {
   int error_code = EXIT_SUCCESS;
   try {
     clog << "Test of the 'handle<>' template class..." << endl;
-    bool debug = false;
+    // bool debug = false;
 
-    int iarg =  1;
-    while (iarg < argc_) {
-      string arg = argv_[iarg];
-      if ((arg == "-d") || (arg == "--debug")) debug = true;
-      iarg++;
-    }
+    // int iarg =  1;
+    // while (iarg < argc_) {
+    //   string arg = argv_[iarg];
+    //   if ((arg == "-d") || (arg == "--debug")) debug = true;
+    //   iarg++;
+    // }
 
     using namespace datatools;
 
@@ -104,4 +104,3 @@ int main (int argc_ , char ** argv_)
 }
 
 // end of test_handle_3.cxx
-

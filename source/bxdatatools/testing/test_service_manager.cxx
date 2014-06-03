@@ -110,7 +110,7 @@ bool test_service::is_initialized() const
 
 // Initialization hook :
 int test_service::initialize(const datatools::properties& a_config,
-                             datatools::service_dict_type& a_dictionnary)
+                             datatools::service_dict_type& /*a_dictionnary*/)
 {
 
   if (!is_initialized ()) {

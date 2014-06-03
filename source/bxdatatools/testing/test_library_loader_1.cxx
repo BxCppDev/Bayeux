@@ -20,8 +20,8 @@ int main (int argc_ , char ** argv_)
     {
       clog << "Test of the 'datatools::library_loader' class." << endl;
 
-      bool   debug = false;
-      bool   test = false;
+      // bool   debug = false;
+      // bool   test = false;
       string libdir = "";
       string libname = "";
 
@@ -31,14 +31,14 @@ int main (int argc_ , char ** argv_)
           string arg = argv_[iarg];
           if (boost::algorithm::starts_with (arg, "-"))
             {
-              if (arg == "-d" || arg == "--debug")
-                {
-                  debug =  true;
-                }
-             if (arg == "-t" || arg == "--test")
-                {
-                  test =  true;
-                }
+             //  if (arg == "-d" || arg == "--debug")
+             //    {
+             //      debug =  true;
+             //    }
+             //  if (arg == "-t" || arg == "--test")
+             //    {
+             //      test =  true;
+             //    }
             }
           else
             {
@@ -96,5 +96,3 @@ int main (int argc_ , char ** argv_)
     }
   return error_code;
 }
-
-// end of test_library_loader_1.cxx

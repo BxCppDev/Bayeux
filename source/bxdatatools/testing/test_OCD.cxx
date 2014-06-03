@@ -86,7 +86,7 @@ struct foo {
       std::vector<std::string> labels;
       config_.fetch(labels_key, labels);
       // Parse dependees of the 'labels' property :
-      for (int i = 0; i < labels.size() ; i++) {
+      for (int i = 0; i < (int) labels.size() ; i++) {
         std::string value_key = "objects." + labels[i] + ".value";
         if (! config_.has_key(value_key)) {
           throw std::logic_error("foo::initialize: Missing '"+value_key+"' property!");
@@ -369,15 +369,15 @@ DOCD_CLASS_SYSTEM_REGISTRATION(foo,"foo")
 
 #include <datatools/service_manager.h>
 
-int main (int argc_, char ** argv_)
+int main (int /*argc_*/, char ** /*argv_*/)
 {
   int error_code = EXIT_SUCCESS;
   try
     {
       clog << "Test program for the 'OCD' tools." << endl;
 
+      /*
       bool debug = false;
-      bool verbose = false;
 
       int iarg = 1;
       while (iarg < argc_)
@@ -390,10 +390,6 @@ int main (int argc_, char ** argv_)
               if ((option == "-d") || (option == "--debug"))
                 {
                   debug = true;
-                }
-              else if ((option == "-v") || (option == "--verbose"))
-                {
-                  verbose = true;
                 }
               else
                 {
@@ -409,6 +405,7 @@ int main (int argc_, char ** argv_)
             }
           iarg++;
         }
+      */
 
       {
         clog << endl;

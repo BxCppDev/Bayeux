@@ -94,27 +94,27 @@ bool hit::g_debug = false;
 
 template<class Archive>
 void hit::serialize (Archive & ar_,
-                     const unsigned int version_)
+                     const unsigned int /* version_ */)
 {
   ar_ & boost::serialization::make_nvp ("id",  id_);
   ar_ & boost::serialization::make_nvp ("tdc", tdc_);
   return;
 }
 
-int main (int argc_ , char ** argv_)
+int main (int /*argc_*/ , char ** /*argv_*/)
 {
   int error_code = EXIT_SUCCESS;
   try
     {
       std::clog << "Test of the 'handle<>' template class..." << std::endl;
-      bool debug = false;
+      // bool debug = false;
 
-      int iarg =  1;
-      while (iarg < argc_) {
-          std::string arg = argv_[iarg];
-          if ((arg == "-d") || (arg == "--debug")) debug = true;
-          iarg++;
-        }
+      // int iarg =  1;
+      // while (iarg < argc_) {
+      //     std::string arg = argv_[iarg];
+      //     if ((arg == "-d") || (arg == "--debug")) debug = true;
+      //     iarg++;
+      //   }
 
       typedef datatools::handle<hit> hit_handle_t;
       typedef std::vector<hit_handle_t> hit_handles_col_t;
@@ -231,4 +231,3 @@ int main (int argc_ , char ** argv_)
 }
 
 // end of test_handle_2.cxx
-

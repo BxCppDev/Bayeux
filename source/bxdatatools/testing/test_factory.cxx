@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_factory.cxx
 
 #include <cstdlib>
@@ -16,7 +16,7 @@
  *                         |
  *            +------------+-------------------+
  *            |                                |
- *  derived_1_type                       derived_2_type 
+ *  derived_1_type                       derived_2_type
  *   -> _g_system_factory_registration_        | -> _g_system_factory_registration_
  *                                             |
  *                                             |
@@ -37,7 +37,7 @@ namespace my
     virtual ~base_type ();
 
     virtual std::string to_string  () const = 0;
-  
+
     // Factory stuff :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_type);
 
@@ -70,7 +70,7 @@ namespace my
     {
       std::cout << "derived_1_type: destruction." << std::endl;
     }
-    virtual std::string to_string  () const 
+    virtual std::string to_string  () const
     {
       return "derived_1_type";
     }
@@ -93,7 +93,7 @@ namespace my
     {
       std::cout << "derived_2_type: destruction." << std::endl;
     }
-    virtual std::string to_string  () const 
+    virtual std::string to_string  () const
     {
       return "derived_2_type";
     }
@@ -115,7 +115,7 @@ namespace my
     {
       std::cout << "derived_2_1_type: destruction." << std::endl;
     }
-    virtual std::string to_string  () const 
+    virtual std::string to_string  () const
     {
       return "derived_2_1_type";
     }
@@ -124,31 +124,31 @@ namespace my
 } // end of namespace my;
 
 
-int main (int argc_ , char ** argv_)
+int main (int /*argc_*/ , char ** /*argv_*/)
 {
   int error_code = EXIT_SUCCESS;
-  try 
+  try
     {
-      std::clog << "Test of the 'factory' template class." << std::endl; 
-      bool verbose = false;
+      std::clog << "Test of the 'factory' template class." << std::endl;
+      // bool verbose = false;
 
-      int iarg =  1;
-      while (iarg < argc_) 
-        {
-          std::string arg = argv_[iarg];
+      // int iarg =  1;
+      // while (iarg < argc_)
+      //   {
+      //     std::string arg = argv_[iarg];
 
-          if ((arg == "-v") || (arg == "--verbose")) verbose = true;
+      //     if ((arg == "-v") || (arg == "--verbose")) verbose = true;
 
-          iarg++;
-        }
- 
+      //     iarg++;
+      //   }
+
       // Print the contents of the system factory register :
       DATATOOLS_FACTORY_GET_SYSTEM_REGISTER (my::base_type).print (std::clog, "NOTICE: ");
       //my::base_type::get_system_factory_register ().print (std::clog, "NOTICE: ");
 
       // Declare a factory register :
       my::base_type::factory_register_type the_factory_register (
-        "my::base_type/test", 
+        "my::base_type/test",
         my::base_type::factory_register_type::verbose);
       the_factory_register.import (DATATOOLS_FACTORY_GET_SYSTEM_REGISTER (my::base_type));
       //the_factory_register.import (my::base_type::get_system_factory_register ());
@@ -173,7 +173,7 @@ int main (int argc_ , char ** argv_)
       object_map_type objects;
 
       std::clog << "Creating objects..." << std::endl;
-      for (directives_list_type::const_iterator i 
+      for (directives_list_type::const_iterator i
              = factory_directives.begin ();
            i != factory_directives.end ();
            i++)
@@ -182,45 +182,44 @@ int main (int argc_ , char ** argv_)
           const std::string & obj_type_id = i->second;
           if (! the_factory_register.has (obj_type_id))
             {
-              std::cerr << "No registered class with ID '" 
+              std::cerr << "No registered class with ID '"
                         << obj_type_id << "' !" << std::endl;
             }
           else
             {
-              const my::base_type::factory_register_type::factory_type & the_factory 
+              const my::base_type::factory_register_type::factory_type & the_factory
                 = the_factory_register.get (obj_type_id);
               object_smart_ptr_type tmp_ptr (the_factory ());
               objects[obj_name] = tmp_ptr;
             }
         }
-  
+
       std::clog << "Done." << std::endl;
-  
-      for (object_map_type::const_iterator i 
+
+      for (object_map_type::const_iterator i
              = objects.begin ();
            i != objects.end ();
            i++)
         {
           const std::string & obj_name = i->first;
-          const my::base_type * obj_ptr = i->second.get (); 
+          const my::base_type * obj_ptr = i->second.get ();
           std::clog << "'" << obj_name << "' is a '" << obj_ptr->to_string () << "'" << std::endl;
         }
-  
+
       std::clog << "End." << std::endl;
     }
   catch (std::exception & x)
-    { 
-      std::clog << "error: " << x.what () << std::endl; 
+    {
+      std::clog << "error: " << x.what () << std::endl;
       error_code =  EXIT_FAILURE;
     }
-  catch (...) 
-    { 
-      std::clog << "error: " << "unexpected error !" << std::endl;  
-      error_code = EXIT_FAILURE; 
-    } 
+  catch (...)
+    {
+      std::clog << "error: " << "unexpected error !" << std::endl;
+      error_code = EXIT_FAILURE;
+    }
   std::clog << "End." << std::endl;
   return error_code;
-}  
+}
 
-// end of test_factory.cxx 
-  
+// end of test_factory.cxx

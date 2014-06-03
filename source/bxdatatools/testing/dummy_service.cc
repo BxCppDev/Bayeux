@@ -43,7 +43,7 @@ namespace datatools {
   }
 
   int dummy_service::initialize (const datatools::properties & a_config,
-                                 service_dict_type & a_service_dict)
+                                 service_dict_type & /*a_service_dict*/)
   {
     if (a_config.has_key ("label"))
       this->set_label (a_config.fetch_string ("label"));

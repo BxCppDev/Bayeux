@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_named.cxx
 
 #include <cstdlib>
@@ -29,25 +29,26 @@ public:
   }
 };
 
-int main (int argc_ , char ** argv_)
+int main (// int argc_ , char ** argv_
+          )
 {
   int error_code = EXIT_SUCCESS;
-  try 
+  try
     {
 
-      clog << "Test of the 'i_named' interface..." << endl; 
-      bool debug = false;
+      clog << "Test of the 'i_named' interface..." << endl;
+      // bool debug = false;
 
-      int iarg =  1;
-      while (iarg < argc_) 
-        {
-          string arg = argv_[iarg];
+      // int iarg =  1;
+      // while (iarg < argc_)
+      //   {
+      //     string arg = argv_[iarg];
 
-          if ((arg == "-d") || (arg == "--debug")) debug = true;
+      //     if ((arg == "-d") || (arg == "--debug")) debug = true;
 
-          iarg++;
-        }
-    
+      //     iarg++;
+      //   }
+
       foo t1 ("t",1);
       foo t2 ("t",2);
       foo t3 ("t",666);
@@ -58,17 +59,16 @@ int main (int argc_ , char ** argv_)
 
     }
   catch (exception & x)
-    { 
-      clog << "error: " << x.what () << endl; 
+    {
+      clog << "error: " << x.what () << endl;
       error_code =  EXIT_FAILURE;
     }
-  catch (...) 
-    { 
-      clog << "error: " << "unexpected error!" << endl;  
-      error_code = EXIT_FAILURE; 
-    } 
+  catch (...)
+    {
+      clog << "error: " << "unexpected error!" << endl;
+      error_code = EXIT_FAILURE;
+    }
   return error_code;
-} 
+}
 
-// end of test_named.cxx 
-  
+// end of test_named.cxx

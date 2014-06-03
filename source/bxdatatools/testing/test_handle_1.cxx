@@ -94,7 +94,7 @@ bool hit::g_debug = false;
 
 template<class Archive>
 void hit::serialize (Archive & ar_,
-                     const unsigned int version_)
+                     const unsigned int /*version_*/)
 {
   ar_ & boost::serialization::make_nvp ("id",  id_);
   ar_ & boost::serialization::make_nvp ("tdc", tdc_);
@@ -261,4 +261,3 @@ int main (int argc_ , char ** argv_)
 }
 
 // end of test_handle_1.cxx
-

@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 //! \file datatools/test/my_data.ipp
 
 #ifndef __datatools__test__my_data_ipp
@@ -16,14 +16,14 @@
 #include <datatools_test_my_data.h>
 
 #include <datatools/i_serializable.ipp>
-         
+
 namespace datatools {
-                 
+
   namespace test {
 
     template<class Archive>
-    void data_t::serialize (Archive            & a_ar, 
-                            const unsigned int   a_version)
+    void data_t::serialize (Archive            & a_ar,
+                            const unsigned int   /*a_version*/)
     {
       a_ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
       a_ar & boost::serialization::make_nvp ("flags", __flags);
@@ -34,17 +34,16 @@ namespace datatools {
     }
 
     template<class Archive>
-    void more_data_t::serialize (Archive &          a_ar, 
-                                 const unsigned int a_version)
+    void more_data_t::serialize (Archive &          a_ar,
+                                 const unsigned int /*a_version*/)
     {
       a_ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP (data_t);
       a_ar & boost::serialization::make_nvp ("name", __name);
       return;
     }
 
-  } // end of namespace test 
+  } // end of namespace test
 
-} // end of namespace datatools 
+} // end of namespace datatools
 
 #endif // __datatools__test__my_data_ipp
-

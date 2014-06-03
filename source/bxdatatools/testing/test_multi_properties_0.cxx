@@ -3,7 +3,8 @@
 
 #include <datatools/multi_properties.h>
 
-int main (int argc_ , char ** argv_)
+int main (// int argc_ , char ** argv_
+          )
 {
   using namespace std;
   {
@@ -73,5 +74,3 @@ int main (int argc_ , char ** argv_)
   copy_bag.tree_dump(std::cerr, "Copy bag:");
   return 0;
 }
-
-// end of test_multi_properties_0.cxx

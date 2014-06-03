@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_predicate_1.cxx
 // Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
 
@@ -16,9 +16,9 @@
 using namespace std;
 
 
-/** Some test class 
+/** Some test class
  */
-class smell 
+class smell
 {
 private:
   string fragrance_;
@@ -40,7 +40,7 @@ public:
   smell (const string & a_fragrance) : fragrance_ (a_fragrance)
   {
   }
-  ~smell () 
+  ~smell ()
   {
   }
   void print () const
@@ -58,7 +58,7 @@ struct smell_stinks_predicate : public datatools::i_predicate<smell>
   }
 };
 
-/** Some test class 
+/** Some test class
  */
 class foo : public smell
 {
@@ -85,7 +85,7 @@ public:
   foo (const string & a_fragrance, const string & a_color) : smell (a_fragrance), color_ (a_color)
   {
   }
-  ~foo () 
+  ~foo ()
   {
   }
   void print () const
@@ -103,21 +103,22 @@ struct foo_is_blue_predicate : public datatools::i_predicate<foo>
   }
 };
 
-int main (int argc_ , char ** argv_)
+int main (// int argc_ , char ** argv_
+          )
 {
   int error_code = EXIT_SUCCESS;
-  try 
+  try
     {
-      clog << "Test of the 'i_predicate' interface with a STL collection of handle<>'s..." << endl; 
-      bool debug = false;
+      clog << "Test of the 'i_predicate' interface with a STL collection of handle<>'s..." << endl;
+      // bool debug = false;
 
-      int iarg =  1;
-      while (iarg < argc_) 
-        {
-          string arg = argv_[iarg];
-          if ((arg == "-d") || (arg == "--debug")) debug = true;
-          iarg++;
-        }
+      // int iarg =  1;
+      // while (iarg < argc_)
+      //   {
+      //     string arg = argv_[iarg];
+      //     if ((arg == "-d") || (arg == "--debug")) debug = true;
+      //     iarg++;
+      //   }
 
       using namespace datatools;
       {
@@ -139,7 +140,7 @@ int main (int argc_ , char ** argv_)
           {
             clog << "f2 is blue !" << endl;
           }
-        
+
         typedef datatools::handle<foo> handle_type;
         typedef vector<handle_type> collection_type;
         collection_type foos;
@@ -157,11 +158,11 @@ int main (int argc_ , char ** argv_)
           {
             if (i->has_data ()) i->get ().print ();
           }
-          
+
         // a predicate to check if a foo is `blue' colored :
         foo_is_blue_predicate BP;
 
-        // the `handle_predicate' is a wrapper for the `BP' predicate 
+        // the `handle_predicate' is a wrapper for the `BP' predicate
         // that enable to apply the BP predicate through the collection iterators :
         datatools::handle_predicate<foo> HP (BP);
         collection_type::const_iterator found = find_if (foos.begin (), foos.end (), HP);
@@ -170,11 +171,11 @@ int main (int argc_ , char ** argv_)
             clog << "Found handle with a blue foo !" << endl;
             found->get().print ();
           }
-          
+
         // a predicate to check if a foo stinks :
         smell_stinks_predicate SP;
         datatools::mother_to_daughter_predicate<smell, foo> M2DP (SP);
-        // the `handle_predicate' is a wrapper for the `SP' predicate 
+        // the `handle_predicate' is a wrapper for the `SP' predicate
         // that enable to apply the BP predicate through the collection iterators :
         datatools::handle_predicate<foo> HP2 (M2DP);
         collection_type::const_iterator found2 = find_if (foos.begin (), foos.end (), HP2);
@@ -183,22 +184,21 @@ int main (int argc_ , char ** argv_)
             clog << "Found handle with a foo which stinks !" << endl;
             found2->get().print ();
           }
-          
+
       }
-     
+
     }
   catch (exception & x)
-    { 
-      clog << "error: " << x.what () << endl; 
+    {
+      clog << "error: " << x.what () << endl;
       error_code =  EXIT_FAILURE;
     }
-  catch (...) 
-    { 
-      clog << "error: " << "unexpected error!" << endl;  
-      error_code = EXIT_FAILURE; 
-    } 
+  catch (...)
+    {
+      clog << "error: " << "unexpected error!" << endl;
+      error_code = EXIT_FAILURE;
+    }
   return error_code;
-} 
+}
 
-// end of test_predicate_1.cxx 
-
+// end of test_predicate_1.cxx

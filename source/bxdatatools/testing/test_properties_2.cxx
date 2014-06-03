@@ -20,7 +20,6 @@ int main (int argc_, char ** argv_)
     {
       clog << "Test of the 'properties' class..." << endl;
 
-      bool debug = false;
       bool use_validator = true;
       long seed = 12345;
 
@@ -28,7 +27,6 @@ int main (int argc_, char ** argv_)
       while (iarg < argc_)
         {
           string arg = argv_[iarg];
-          if ( arg == "-d" || arg == "--debug" ) debug = true;
           if ( arg == "-v" || arg == "--no-validator" ) use_validator = false;
           iarg++;
         }
@@ -146,5 +144,3 @@ int main (int argc_, char ** argv_)
     }
   return error_code;
 }
-
-// end of test_properties_2.cxx

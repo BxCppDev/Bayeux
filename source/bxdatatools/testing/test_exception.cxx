@@ -1,6 +1,6 @@
 // test_exception.cxx - unit tests for datatools/exception.h
 //
-// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com> 
+// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com>
 // Copyright (c) 2013 by The University of Warwick
 
 // Ourselves
@@ -15,8 +15,8 @@
 
 //! throw an exception if parameter is negative
 void check_throws(int i) {
-  DT_THROW_IF(i < 0, 
-              std::invalid_argument, 
+  DT_THROW_IF(i < 0,
+              std::invalid_argument,
               "argument i[i = " << i << "] is negative");
 }
 
@@ -39,7 +39,7 @@ struct foo {
 } // namespace datatools
 
 
-int main(int argc, const char *argv[])
+int main(int /*argc*/, const char **/*argv*/)
 {
   //TEST: Must throw
   try {
@@ -90,6 +90,3 @@ int main(int argc, const char *argv[])
 
   return 0;
 }
-
-
-
