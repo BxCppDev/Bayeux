@@ -11,12 +11,13 @@
 
 using namespace std;
 
-int main (int argc_, char ** argv_)
+int main (int /* argc_ */, char ** /* argv_ */)
 {
   int error_code = EXIT_SUCCESS;
   try {
     clog << "Test program for the 'brio' program library." << endl;
 
+    /*
     bool debug = false;
     bool verbose = false;
 
@@ -41,6 +42,7 @@ int main (int argc_, char ** argv_)
       }
       iarg++;
     }
+    */
 
     clog << "brio version : " << BRIO_LIB_VERSION << endl;
 

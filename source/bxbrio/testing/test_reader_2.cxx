@@ -26,7 +26,6 @@ int main (int argc_, char ** argv_)
 
       datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
       bool dump = false;
-      size_t data_count = 10;
       bool text = false;
 
       int iarg = 1;
@@ -48,14 +47,6 @@ int main (int argc_, char ** argv_)
                else if ((option == "-v") || (option == "--verbose"))
                  {
                    logging = datatools::logger::PRIO_NOTICE;
-                 }
-               else if ((option == "-m") || (option == "--many"))
-                 {
-                   data_count = 1000;
-                 }
-               else if ((option == "-M") || (option == "--manymany"))
-                 {
-                   data_count = 100000;
                  }
                else if ((option == "-t"))
                  {
@@ -121,5 +112,3 @@ int main (int argc_, char ** argv_)
     }
   return (error_code);
 }
-
-// end of test_reader_2.cxx

@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 //! \file brio_test_data.ipp
 
 #ifndef __brio__test__data_ipp
@@ -11,7 +11,7 @@
 #include <boost/serialization/nvp.hpp>
 
 // Support Boost serialization of STL vector templatized objects:
-#include <boost/serialization/vector.hpp> 
+#include <boost/serialization/vector.hpp>
 
 // Support Boost serialization of STL string objects:
 #include <boost/serialization/string.hpp>
@@ -20,14 +20,14 @@
 #include <brio_test_data.h>
 
 #include <datatools/i_serializable.ipp>
-         
+
 namespace brio {
-                 
+
   namespace test {
 
     template<class Archive>
     void data_t::serialize (Archive & ar,                // an archive type (ASCII, XML or binary)
-                          const unsigned int version)  // the version number (here not used)
+                            const unsigned int /* version */)  // the version number (here not used)
     {
       ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
       ar & boost::serialization::make_nvp ("bval",     __bval);
@@ -40,9 +40,8 @@ namespace brio {
       return;
     }
 
-  } // end of namespace test 
+  } // end of namespace test
 
-} // end of namespace brio 
+} // end of namespace brio
 
 #endif // __brio__test__data_ipp
-

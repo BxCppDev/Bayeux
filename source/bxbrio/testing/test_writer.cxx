@@ -223,7 +223,7 @@ int main (int argc_, char ** argv_)
           my_writer.unselect_store ();
         }
       // Store `data' randomized objects within another store;
-      for (int i = 0; i < data_count; i++)
+      for (int i = 0; i < (int) data_count; i++)
         {
           brio::test::data_t data;
           data.randomize ();
@@ -304,5 +304,3 @@ int main (int argc_, char ** argv_)
     }
   return (error_code);
 }
-
-// end of test_writer.cxx

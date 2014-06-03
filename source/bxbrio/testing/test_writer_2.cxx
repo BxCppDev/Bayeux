@@ -91,7 +91,7 @@ int main (int argc_, char ** argv_)
       //my_writer.add_store ("data");
 
       // Store `data' randomized objects within an *automatic* store;
-      for (int i = 0; i < data_count; i++)
+      for (int i = 0; i < (int) data_count; i++)
         {
           brio::test::data_t data;
           data.randomize ();
@@ -130,5 +130,3 @@ int main (int argc_, char ** argv_)
     }
   return (error_code);
 }
-
-// end of test_writer_2.cxx

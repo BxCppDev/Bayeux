@@ -26,7 +26,6 @@ int main (int argc_, char ** argv_)
 
       bool debug = false;
       bool verbose = false;
-      size_t data_count = 10;
       bool check_tag = true;
       int iarg = 1;
       bool text = false;
@@ -45,14 +44,6 @@ int main (int argc_, char ** argv_)
                else if ((option == "-v") || (option == "--verbose"))
                  {
                    verbose = true;
-                 }
-               else if ((option == "-m") || (option == "--many"))
-                 {
-                   data_count = 1000;
-                 }
-               else if ((option == "-M") || (option == "--manymany"))
-                 {
-                   data_count = 100000;
                  }
                else if ((option == "-c"))
                  {
@@ -153,5 +144,3 @@ int main (int argc_, char ** argv_)
     }
   return (error_code);
 }
-
-// end of test_reader.cxx

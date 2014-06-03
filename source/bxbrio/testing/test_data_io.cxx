@@ -24,9 +24,6 @@ int main (int argc_, char ** argv_)
     {
       clog << "Test program for serialization of the 'brio::test::data_t' sample class !" << endl;
 
-      bool devel = false;
-      bool debug = false;
-      bool verbose = false;
       bool delete_file = false;
       size_t data_count = 10;
       int iarg = 1;
@@ -37,15 +34,7 @@ int main (int argc_, char ** argv_)
           if (token[0] == '-')
             {
                string option = token;
-               if ((option == "-d") || (option == "--debug"))
-                 {
-                   debug = true;
-                 }
-               else if ((option == "-v") || (option == "--verbose"))
-                 {
-                   verbose = true;
-                 }
-               else if ((option == "-m") || (option == "--many"))
+               if ((option == "-m") || (option == "--many"))
                  {
                    data_count = 1000;
                  }
@@ -53,11 +42,7 @@ int main (int argc_, char ** argv_)
                  {
                    data_count = 100000;
                  }
-              else if ((option == "-V") || (option == "--devel"))
-                 {
-                   devel = true;
-                 }
-              else if ((option == "-F") || (option == "--delete-file"))
+               else if ((option == "-F") || (option == "--delete-file"))
                  {
                    delete_file = true;
                  }
@@ -81,7 +66,7 @@ int main (int argc_, char ** argv_)
         // Declare a brio writer:
         brio::writer my_writer ("test_data_io.brio");
         // Store `data' objects within the *automatic* store;
-        for (int i = 0; i < data_count; i++)
+        for (int i = 0; i < (int) data_count; i++)
           {
             brio::test::data_t a_data;
             my_writer.store (a_data);
@@ -126,5 +111,3 @@ int main (int argc_, char ** argv_)
     }
   return (error_code);
 }
-
-// end of test_data_io.cxx

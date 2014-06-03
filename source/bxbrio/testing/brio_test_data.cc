@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* brio_test_data.cc
  */
 
@@ -25,7 +25,7 @@ namespace brio {
       __dval_vec.push_back (__dval);
       return;
     }
-  
+
     // dtor:
     data_t::~data_t ()
     {
@@ -43,23 +43,23 @@ namespace brio {
       __dval_vec.clear ();
       size_t sz = (size_t) (drand48 () * 10);
       __dval_vec.reserve (sz);
-      for (int i = 0; i < sz; i++)
-	{
-	  __dval_vec.push_back (i * 1.0);
-	}
+      for (int i = 0; i < (int) sz; i++)
+        {
+          __dval_vec.push_back (i * 1.0);
+        }
       return;
     }
-  
+
     void data_t::dump (ostream & a_out, const string & a_title) const
     {
       if (a_title.empty ())
-	{
-	  a_out << "brio::test::data_t::dump: " << endl;
-	}
+        {
+          a_out << "brio::test::data_t::dump: " << endl;
+        }
       else
-	{
-	  a_out << a_title << endl;
-	}
+        {
+          a_out << a_title << endl;
+        }
       a_out << "|-- " << "bval  =  " << __bval << endl;
       a_out << "|-- " << "cval  =  '" << __cval << "'" << endl;
       a_out << "|-- " << "ival  =  " << __ival << endl;
@@ -67,17 +67,17 @@ namespace brio {
       a_out << "|-- " << "dval  =  " << __dval << endl;
       a_out << "|-- " << "sval  =  '" << __sval << "'" << endl;
       a_out << "`-- " << "dval_vec = {";
-      for (int i = 0; i < __dval_vec.size (); i++)
-	{
-	  if (i != 0) a_out << "; ";
-	  a_out << __dval_vec[i];
-	}
+      for (int i = 0; i < (int) __dval_vec.size (); i++)
+        {
+          if (i != 0) a_out << "; ";
+          a_out << __dval_vec[i];
+        }
       a_out << "}" << endl;
       return;
     }
-  
+
   } // end of namespace test
-  
+
 } // end of namespace brio
 
 // end of brio_test_data.cc
