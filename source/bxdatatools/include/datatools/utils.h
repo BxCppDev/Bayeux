@@ -1,8 +1,8 @@
 // -*- mode: c++; -*-
 // utils.h
 
-#ifndef DATATOOLS_UTILS_H_
-#define DATATOOLS_UTILS_H_
+#ifndef DATATOOLS_UTILS_H
+#define DATATOOLS_UTILS_H
 
 // Standard Library
 #include <cstdlib>
@@ -158,7 +158,7 @@ void split_string(const std::string& word, const std::string& separators,
 
 template<typename Integral>
 void set_bit(Integral& number, int pos) {
-  DT_THROW_IF(pos < 0 || pos >= sizeof(Integral) * 8,
+  DT_THROW_IF(pos < 0 || pos >= (int) sizeof(Integral) * 8,
               std::range_error,
               "Invalid bit position [pos = " << pos << "]");
   number |= 1 << pos;
@@ -167,7 +167,7 @@ void set_bit(Integral& number, int pos) {
 
 template<typename Integral>
 void unset_bit(Integral& number, int pos) {
-  DT_THROW_IF(pos < 0 || pos >= sizeof(Integral) * 8,
+  DT_THROW_IF(pos < 0 || pos >= (int) sizeof(Integral) * 8,
               std::range_error,
               "Invalid bit position [pos = " << pos << "]");
   number &= ~(1 << pos);
@@ -176,7 +176,7 @@ void unset_bit(Integral& number, int pos) {
 
 template<typename Integral>
 void toggle_bit(Integral& number, int pos) {
-  DT_THROW_IF(pos < 0 || pos >= sizeof(Integral) * 8,
+  DT_THROW_IF(pos < 0 || pos >= (int) sizeof(Integral) * 8,
               std::range_error,
               "Invalid bit position [pos = " << pos << "]");
   number ^= 1 << pos;
@@ -185,7 +185,7 @@ void toggle_bit(Integral& number, int pos) {
 
 template<typename Integral>
 bool check_bit(Integral& number, int pos) {
-  DT_THROW_IF(pos < 0 || pos >= sizeof(Integral) * 8,
+  DT_THROW_IF(pos < 0 || pos >= (int) sizeof(Integral) * 8,
               std::range_error,
               "Invalid bit position [pos = " << pos << "]");
 
@@ -195,4 +195,4 @@ bool check_bit(Integral& number, int pos) {
 
 } // namespace datatools
 
-#endif // DATATOOLS_UTILS_H_
+#endif // DATATOOLS_UTILS_H
