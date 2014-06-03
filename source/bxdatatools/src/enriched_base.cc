@@ -229,6 +229,9 @@ namespace datatools {
 
     // Parse logging priority:
     logger::priority prio = logger::extract_logging_configuration(config_, logger::PRIO_FATAL, true);
+    if (prio != logger::PRIO_UNDEFINED) {
+      set_logging_priority(prio);
+    }
 
     // Parse name:
     if (!has_name()) {
