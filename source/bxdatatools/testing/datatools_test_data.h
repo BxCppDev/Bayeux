@@ -45,6 +45,10 @@ namespace datatools {
 
     public:
 
+      bool is_bval() const {
+        return __bval;
+      }
+
       // Here we provide a default constructor:
       data ()
         {

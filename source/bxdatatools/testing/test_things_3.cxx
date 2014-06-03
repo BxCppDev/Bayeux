@@ -74,7 +74,8 @@ private :
 const string A::SERIAL_TAG = "test_things::A";
 
 template<class Archive>
-void A::serialize (Archive & ar, const unsigned int file_version)
+void A::serialize (Archive & ar, const unsigned int /* version*/
+                   )
 {
   ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
   ar & boost::serialization::make_nvp ("value", value_);
@@ -157,7 +158,7 @@ private:
 };
 
 template<class Archive>
-void B::serialize (Archive & ar, const unsigned int file_version)
+void B::serialize (Archive & ar, const unsigned int /*file_version*/)
 {
   ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
   ar & boost::serialization::make_nvp ("index", index_);
@@ -207,7 +208,6 @@ int main (int argc_, char ** argv_)
     {
       clog << "Test program for class 'datatools::things' !" << endl;
 
-      bool debug = false;
       bool out   = true;
       bool in    = true;
       string format = "text";
@@ -221,11 +221,7 @@ int main (int argc_, char ** argv_)
           if (token[0] == '-')
             {
               string option = token;
-              if ((option == "-d") || (option == "--debug"))
-                {
-                  debug = true;
-                }
-              else if ((option == "-O") || (option == "--no-out"))
+              if ((option == "-O") || (option == "--no-out"))
                 {
                   out = false;
                 }
@@ -306,8 +302,9 @@ int main (int argc_, char ** argv_)
 
           datatools::test::data_t & d1 = bag.add<datatools::test::data_t> ("d1");
           datatools::test::more_data_t & d2 = bag.add<datatools::test::more_data_t> ("d2");
-          d1.dump (clog);
-          d2.dump (clog);
+          clog << "d1.dval=" << d1.dval() << endl;
+          clog << "d2.dval=" << d2.dval() << endl;
+
           // fetch the 'things' container stored with name 'g1' :
           datatools::things & g1 = bag.grab<datatools::things> ("g1");
           g1.add<A> ("x1").set_value (33.0);
