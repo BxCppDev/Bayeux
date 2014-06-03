@@ -16,14 +16,14 @@ int main (int argc_ , char ** argv_)
     {
       clog << "Test of the 'temp_file' class..." << endl;
 
-      bool debug = false;
+      //bool debug = false;
       bool temp_file_delete = true;
       int iarg = 1;
       while (iarg <  argc_)
         {
           string arg = argv_[iarg];
 
-          if (arg == "-d" || arg == "--debug") debug = true;
+          //if (arg == "-d" || arg == "--debug") debug = true;
           if (arg == "-D" || arg == "--no-delete") temp_file_delete = false;
 
           iarg++;
@@ -87,5 +87,3 @@ int main (int argc_ , char ** argv_)
     }
   return error_code;
 }
-
-// end of test_temp_file.cxx

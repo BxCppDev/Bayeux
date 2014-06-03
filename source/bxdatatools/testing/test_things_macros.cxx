@@ -17,21 +17,21 @@
 
 using namespace std;
 
-int main (int argc_ , char ** argv_)
+int main (/*int argc_ , char ** argv_*/)
 {
   int error_code = EXIT_SUCCESS;
   try
     {
       clog << "Test of the 'things_macros'..." << endl;
-      bool debug = false;
+      // bool debug = false;
 
-      int iarg =  1;
-      while (iarg < argc_)
-        {
-          string arg = argv_[iarg];
-          if ((arg == "-d") || (arg == "--debug")) debug = true;
-          iarg++;
-        }
+      // int iarg =  1;
+      // while (iarg < argc_)
+      //   {
+      //     string arg = argv_[iarg];
+      //     if ((arg == "-d") || (arg == "--debug")) debug = true;
+      //     iarg++;
+      //   }
 
       datatools::things bag;
 
@@ -51,7 +51,7 @@ int main (int argc_ , char ** argv_)
         DATATOOLS_THINGS_CONST_BANK(bag, "Prop", datatools::properties, p);
         p.tree_dump (std::clog, "Prop (with pi and lion)");
       }
- 
+
       bag.tree_dump (std::clog, "bag");
 
       {
@@ -62,12 +62,12 @@ int main (int argc_ , char ** argv_)
 
       if (! DATATOOLS_THINGS_CHECK_BANK (bag, "Bar", datatools::properties))
         {
-          clog << "Ok ! We cannot find a bank named '" << "Bar" << "' as expected !" << endl;   
+          clog << "Ok ! We cannot find a bank named '" << "Bar" << "' as expected !" << endl;
         }
 
       try
         {
-          DATATOOLS_THINGS_CONST_BANK(bag, "Foo", 
+          DATATOOLS_THINGS_CONST_BANK(bag, "Foo",
                                             datatools::multi_properties, m);
           m.tree_dump (std::clog, "Foo");
         }
@@ -90,4 +90,3 @@ int main (int argc_ , char ** argv_)
 }
 
 // end of test_things_macros.cxx
-

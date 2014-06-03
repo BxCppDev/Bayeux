@@ -10,12 +10,12 @@
 #include <iostream>
 
 // Third Party
-// - 
+// -
 
 // This Project
 #include "datatools/exception.h"
 
-int main(int argc, const char *argv[])
+int main(/*int argc, const char *argv[]*/)
 {
   try {
     //! Check that version symbols and method return values match
@@ -60,7 +60,7 @@ int main(int argc, const char *argv[])
                                       DATATOOLS_VERSION_PATCH),
         std::runtime_error,
         "DATATOOLS_IS_AT_LEAST expands to true when supplied minor version is greater than current");
-   
+
     DT_THROW_IF(DATATOOLS_IS_AT_LEAST(DATATOOLS_VERSION_MAJOR,
                                       DATATOOLS_VERSION_MINOR,
                                       DATATOOLS_VERSION_PATCH+1),

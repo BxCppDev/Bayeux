@@ -70,7 +70,7 @@ private:
 const string A::SERIAL_TAG = "test_things::A";
 
 template<class Archive>
-void A::serialize (Archive & ar, const unsigned int file_version)
+void A::serialize (Archive & ar, const unsigned int /*version*/)
 {
   ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
   ar & boost::serialization::make_nvp ("value", value_);
@@ -153,7 +153,7 @@ private:
 };
 
 template<class Archive>
-void B::serialize (Archive & ar, const unsigned int file_version)
+void B::serialize (Archive & ar, const unsigned int /*version*/)
 {
   ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
   ar & boost::serialization::make_nvp ("index", index_);
@@ -197,9 +197,8 @@ int main (int argc_, char ** argv_)
     {
       clog << "Test program for class 'datatools::things' !" << endl;
 
-      bool debug = false;
-      bool out   = true;
-      bool in    = true;
+      // bool out   = true;
+      // bool in    = true;
       string format = "text";
       string compression = "";
 
@@ -211,19 +210,16 @@ int main (int argc_, char ** argv_)
           if (token[0] == '-')
             {
               string option = token;
-              if ((option == "-d") || (option == "--debug"))
-                {
-                  debug = true;
-                }
-              else if ((option == "-O") || (option == "--no-out"))
-                {
-                  out = false;
-                }
-              else if ((option == "-I") || (option == "--no-in"))
-                {
-                  in = false;
-                }
-              else if ((option == "-x") || (option == "--xml"))
+              // if ((option == "-O") || (option == "--no-out"))
+              //   {
+              //     out = false;
+              //   }
+              // else if ((option == "-I") || (option == "--no-in"))
+              //   {
+              //     in = false;
+              //  }
+              //else
+              if ((option == "-x") || (option == "--xml"))
                 {
                   format = "xml";
                 }
@@ -340,7 +336,6 @@ int main (int argc_, char ** argv_)
   return (error_code);
 }
 
-// end of test_things_1.cxx
 /*
 ** Local Variables: --
 ** mode: c++ --

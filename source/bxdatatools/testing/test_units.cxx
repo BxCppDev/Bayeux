@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 // test_units.cxx
 
 #include <cstdlib>
@@ -14,46 +14,46 @@
 
 using namespace std;
 
-int main (int argc_, char ** argv_)
+int main (/*int argc_, char ** argv_*/)
 {
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'datatools::units'!" << endl; 
-  
-      bool debug = false;
+      clog << "Test program for class 'datatools::units'!" << endl;
 
-      int iarg = 1;
-      while (iarg < argc_)
-        {
-          string token = argv_[iarg];
+      // bool debug = false;
 
-          if (token[0] == '-')
-            {
-               string option = token; 
-               if ((option == "-d") || (option == "--debug")) 
-                 {
-                   debug = true;
-                 }
-               else 
-                 { 
-                    clog << "warning: ignoring option '" << option << "'!" << endl; 
-                 }
-            }
-          else
-            {
-              string argument = token; 
-              { 
-                clog << "warning: ignoring argument '" << argument << "'!" << endl; 
-              }
-            }
-          iarg++;
-      }
-    
+      // int iarg = 1;
+      // while (iarg < argc_)
+      //   {
+      //     string token = argv_[iarg];
+
+      //     if (token[0] == '-')
+      //       {
+      //          string option = token;
+      //          if ((option == "-d") || (option == "--debug"))
+      //            {
+      //              debug = true;
+      //            }
+      //          else
+      //            {
+      //               clog << "warning: ignoring option '" << option << "'!" << endl;
+      //            }
+      //       }
+      //     else
+      //       {
+      //         string argument = token;
+      //         {
+      //           clog << "warning: ignoring argument '" << argument << "'!" << endl;
+      //         }
+      //       }
+      //     iarg++;
+      // }
+
       clog << "Known units : " << endl;
-      const std::vector<std::string> & ulreg 
+      const std::vector<std::string> & ulreg
         = datatools::units::get_unit_labels_registry ();
-      for (int i = 0; i < ulreg.size (); i++)
+      for (int i = 0; i < (int) ulreg.size (); i++)
         {
           clog << "Unit label = '" << ulreg[i] << "'" << endl;
         }
@@ -63,7 +63,7 @@ int main (int argc_, char ** argv_)
       clog << "Parsing expression : '" << word << "'" << endl;
 
       istringstream iss (word);
-      double length; 
+      double length;
       iss >> length;
       if (! iss)
         {
@@ -90,7 +90,7 @@ int main (int argc_, char ** argv_)
       cout << "  1 s      ==  " << CLHEP::second << endl;
       cout << "    1 ms   ==  " << CLHEP::millisecond << endl;
       cout << "    1 ns   ==  " << CLHEP::nanosecond << endl;
-      
+
       // apply the unit to the value:
       length *= lunit;
 
@@ -99,21 +99,22 @@ int main (int argc_, char ** argv_)
       cout << "Length is : " << length / CLHEP::parsec << " parsec" << endl;
 
       double lengthu = datatools::units::get_value_with_unit ("8 inch");
-      cout << "Length (2) is : " 
+      cout << "Length (2) is : "
            << lengthu / CLHEP::cm << " cm" << endl;
 
       double temperature = datatools::units::get_value_with_unit ("300 kelvin");
-      cout << "Temperature is : " 
+      cout << "Temperature is : "
            << temperature / CLHEP::kelvin << " kelvin" << endl;
 
       double pressure = datatools::units::get_value_with_unit ("1 millibar");
-      cout << "Pressure is : " 
+      cout << "Pressure is : "
            << pressure / CLHEP::atmosphere << " atm" << endl;
- 
+
       try
         {
           // this fails:
           double fail = datatools::units::get_value_with_unit ("3.14159 dummy");
+          clog << "fail=" << fail << endl;
         }
       catch (exception & x)
         {
@@ -129,7 +130,7 @@ int main (int argc_, char ** argv_)
             clog << "Unit value = " << unit_value << "\n";
           }
       }
-      
+
       {
         double mass_activity_value;
         string unit_label;
@@ -147,10 +148,10 @@ int main (int argc_, char ** argv_)
         double activity = mass_activity_value * mass_value;
         double uBq_unit = 1.e-6 * CLHEP::becquerel;
         clog << "Activity value = " << activity / uBq_unit << " uBq\n";
-        
+
       }
 
-      
+
       {
         double frequency_value;
         string unit_label;
@@ -161,17 +162,17 @@ int main (int argc_, char ** argv_)
           }
       }
 
-      clog << "The end." << endl; 
-     
+      clog << "The end." << endl;
+
     }
   catch (exception & x)
     {
-      cerr << "error: " << x.what () << endl; 
+      cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);

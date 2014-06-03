@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_version_check.cxx
 
 #include <cstdlib>
@@ -13,27 +13,27 @@
 
 using namespace std;
 
-int main (int argc_ , char ** argv_)
+int main (/*int argc_ , char ** argv_*/)
 {
   int error_code = EXIT_SUCCESS;
-  try 
+  try
     {
-      clog << "Test of the 'version_check' algos..." << endl; 
-      bool debug = false;
+      clog << "Test of the 'version_check' algos..." << endl;
+      // bool debug = false;
 
-      int iarg =  1;
-      while (iarg < argc_) 
-        {
-          string arg = argv_[iarg];
+      // int iarg =  1;
+      // while (iarg < argc_)
+      //   {
+      //     string arg = argv_[iarg];
 
-          if ((arg == "-d") || (arg == "--debug")) debug = true;
+      //     if ((arg == "-d") || (arg == "--debug")) debug = true;
 
-          iarg++;
-        }
+      //     iarg++;
+      //   }
 
       clog << endl;
 
-      std::string rules; 
+      std::string rules;
       std::string label = "datatools";
       rules = "foo (>=3.2) | bar (==6.7) | bar (==debug)";
       datatools::version_id v0 (3,1,4,"159");
@@ -52,8 +52,8 @@ int main (int argc_ , char ** argv_)
       std::ostringstream rules_iss;
       rules_iss << "foo";
       rules_iss << '|' << "datatools(>=3.0 & <=3.1.3 & !=3.0.1-buggy)";
-      rules_iss << '|' << "datatools(=3.1.4-159)"; 
-      rules_iss << '|' << "datatools(>4)"; 
+      rules_iss << '|' << "datatools(=3.1.4-159)";
+      rules_iss << '|' << "datatools(>4)";
       rules = rules_iss.str ();
 
       if (datatools::validate_version (label, v0, rules))
@@ -139,7 +139,7 @@ int main (int argc_ , char ** argv_)
 
       label = "datatools";
       datatools::version_id v6 (4,2,1);
-      rules_iss << '|' << "datatools(>4.0)"; 
+      rules_iss << '|' << "datatools(>4.0)";
       rules = rules_iss.str ();
       if (datatools::validate_version (label, v6, rules))
         {
@@ -194,17 +194,16 @@ int main (int argc_ , char ** argv_)
 
     }
   catch (exception & x)
-    { 
-      clog << "error: " << x.what () << endl; 
+    {
+      clog << "error: " << x.what () << endl;
       error_code =  EXIT_FAILURE;
     }
-  catch (...) 
-    { 
-      clog << "error: " << "unexpected error!" << endl;  
-      error_code = EXIT_FAILURE; 
-    } 
+  catch (...)
+    {
+      clog << "error: " << "unexpected error!" << endl;
+      error_code = EXIT_FAILURE;
+    }
   return error_code;
-} 
+}
 
-// end of test_version_check.cxx 
-  
+// end of test_version_check.cxx

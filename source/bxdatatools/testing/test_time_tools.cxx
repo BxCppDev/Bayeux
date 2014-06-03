@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_time_tools.cxx
 
 #include <cstdlib>
@@ -15,14 +15,14 @@ using namespace std;
 int main (int argc_ , char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
-  try 
+  try
     {
-      clog << "Test of the 'time_tools' classes..." << endl; 
-  
+      clog << "Test of the 'time_tools' classes..." << endl;
+
       bool debug = false;
 
       int iarg = 1;
-      while (iarg <  argc_) 
+      while (iarg <  argc_)
         {
           string arg = argv_[iarg];
 
@@ -30,24 +30,26 @@ int main (int argc_ , char ** argv_)
 
           iarg++;
         }
-    
+
       long seed = 314159;
       srand48 (seed);
 
       datatools::computing_time CT;
 
       size_t max_run = 50;
-      for (int run = 0; run < max_run; run++)
+      for (int run = 0; run < (int) max_run; run++)
         {
           size_t run_size = (size_t) (10000 + 10000 * drand48 ());
           if (debug) cerr << "DEBUG: Run size = " << run_size << endl;
           CT.start (); // start the clock
-          for (int i = 0; i < run_size; i++)
+          for (int i = 0; i < (int) run_size; i++)
             {
               double t = drand48 () * 2 * M_PI;
               double x = cos (t);
               CT.pause ();
+              clog << "x=" << x << endl;
               double y = sin (t);
+              clog << "y=" << y << endl;
               CT.resume ();
             }
           CT.stop (); // stop the clock
@@ -62,12 +64,12 @@ int main (int argc_ , char ** argv_)
     }
   catch (exception & x)
     {
-      cerr << "error: " << x.what() << endl; 
+      cerr << "error: " << x.what() << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return error_code;

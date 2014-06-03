@@ -66,7 +66,7 @@ void test_tracer_4() {
   DT_TRACER_MESSAGE(4000, "overwrite");
 }
 
-int main(int argc, const char *argv[])
+int main(/*int argc, const char *argv[]*/)
 {
   datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
   try {

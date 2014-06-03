@@ -11,42 +11,40 @@
 
 using namespace std;
 
-int main (int argc_, char ** argv_)
+int main (/* int argc_, char ** argv_ */)
 {
   int error_code = EXIT_SUCCESS;
   try
     {
       clog << "Test program for class 'datatools::smart_filename'!" << endl;
 
-      bool debug = false;
-
-      int iarg = 1;
-      while (iarg < argc_)
-        {
-          string token = argv_[iarg];
-
-          if (token[0] == '-')
-            {
-              string option = token;
-              if ((option == "-d") || (option == "--debug"))
-                {
-                  debug = true;
-                }
-              else
-                {
-                  clog << "warning: ignoring option '" << option << "'!" << endl;
-                }
-            }
-          else
-            {
-              string argument = token;
-              /* Here you may add more argument handlers... */
-              {
-                clog << "warning: ignoring argument '" << argument << "'!" << endl;
-              }
-            }
-          iarg++;
-        }
+      //bool debug = false;
+      // int iarg = 1;
+      // while (iarg < argc_)
+      //   {
+      //     string token = argv_[iarg];
+      //     if (token[0] == '-')
+      //       {
+      //         string option = token;
+      //         if ((option == "-d") || (option == "--debug"))
+      //           {
+      //             debug = true;
+      //           }
+      //         else
+      //           {
+      //             clog << "warning: ignoring option '" << option << "'!" << endl;
+      //           }
+      //       }
+      //     else
+      //       {
+      //         string argument = token;
+      //         /* Here you may add more argument handlers... */
+      //         {
+      //           clog << "warning: ignoring argument '" << argument << "'!" << endl;
+      //         }
+      //       }
+      //     iarg++;
+      //   }
 
       {
         cout << endl << "*** Single filename : " << endl;
@@ -79,7 +77,7 @@ int main (int argc_, char ** argv_)
         sf2.add_to_list ("~/test_h.data");
         sf2.add_to_list ("~/test_i.data");
         sf2.add_to_list ("~/test_j.data");
-        for (int i = 0; i < sf2.size (); ++i)
+        for (int i = 0; i < (int) sf2.size (); ++i)
           {
             cout << "  Filename = '" << sf2[i] << "'" << endl;
           }
@@ -103,7 +101,7 @@ int main (int argc_, char ** argv_)
                                                      +1);
 
         sf3.dump ();
-        for (int i = 0; i < sf3.size (); ++i)
+        for (int i = 0; i < (int) sf3.size (); ++i)
           {
             cout << "  Filename = '" << sf3[i] << "'" << endl;
           }
@@ -119,7 +117,7 @@ int main (int argc_, char ** argv_)
         datatools::smart_filename sf4;
         datatools::smart_filename::make_list (sf4, string ("test_smart_filename.lis"));
         sf4.dump ();
-        for (int i = 0; i < sf4.size (); ++i)
+        for (int i = 0; i < (int) sf4.size (); ++i)
           {
             cout << "  Filename = '" << sf4[i] << "'" << endl;
           }
@@ -142,7 +140,7 @@ int main (int argc_, char ** argv_)
                                           -1);
 
         sf5.dump ();
-        for (int i = 0; i < sf5.size (); ++i)
+        for (int i = 0; i < (int) sf5.size (); ++i)
           {
             cout << "  Filename = '" << sf5[i] << "'" << endl;
           }

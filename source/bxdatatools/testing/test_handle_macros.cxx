@@ -12,22 +12,22 @@
 
 #include <datatools/handle_macros.h>
 
-int main (int argc_ , char ** argv_)
+int main (/*int argc_ , char ** argv_*/)
 {
   using namespace std;
   int error_code = EXIT_SUCCESS;
   try
     {
       clog << "Test of the 'handle_macros'..." << endl;
-      bool debug = false;
+      // bool debug = false;
 
-      int iarg =  1;
-      while (iarg < argc_)
-        {
-          string arg = argv_[iarg];
-          if ((arg == "-d") || (arg == "--debug")) debug = true;
-          iarg++;
-        }
+      // int iarg =  1;
+      // while (iarg < argc_)
+      //   {
+      //     string arg = argv_[iarg];
+      //     if ((arg == "-d") || (arg == "--debug")) debug = true;
+      //     iarg++;
+      //   }
 
       {
         cout << "************ DATATOOLS_HANDLE_DECLARE: " << endl;
@@ -60,6 +60,7 @@ int main (int argc_ , char ** argv_)
           cout << "************ DATATOOLS_HANDLE_GET_REF: " << endl;
           // The following operation will fail :
           DATATOOLS_HANDLE_GET_REF(ki, hi, int);
+          cout << "ki = " << ki << endl;
         }
       catch (exception & x)
         {
@@ -80,4 +81,3 @@ int main (int argc_ , char ** argv_)
 }
 
 // end of test_handle_macros.cxx
-

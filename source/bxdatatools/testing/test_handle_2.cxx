@@ -141,7 +141,8 @@ int main (int /*argc_*/ , char ** /*argv_*/)
               {
                 CT.start ();
                 boost::archive::text_oarchive oa (foa);
-                oa << hits;
+                //oa << hits;
+                oa & hits;
                 CT.stop ();
               }
               hits.clear ();
@@ -172,7 +173,8 @@ int main (int /*argc_*/ , char ** /*argv_*/)
               {
                 CT.start ();
                 boost::archive::text_oarchive oa (foa);
-                oa << hits;
+                //oa << hits;
+                oa & hits;
                 CT.stop ();
               }
               hits.clear ();
@@ -205,7 +207,8 @@ int main (int /*argc_*/ , char ** /*argv_*/)
               {
                 CT.start ();
                 boost::archive::text_oarchive oa (foa);
-                oa << hits;
+                //oa << hits;
+                oa & hits;
                 CT.stop ();
               }
               hits.clear ();

@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_shared_ptr_1.cxx
 // Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
 
@@ -54,16 +54,16 @@ public:
   }
 
 private:
-  friend class boost::serialization::access; 
+  friend class boost::serialization::access;
   template <class Archive>
-  void serialize (Archive & ar, int version)
+  void serialize (Archive & ar, int /*version*/)
   {
     ar & boost::serialization::make_nvp ("sp", sp_);
     return;
   }
 };
 
-class hit 
+class hit
 {
 public:
   static int g_count;
@@ -72,7 +72,7 @@ private:
   int32_t   id_;
   double    tdc_;
 private:
-  friend class boost::serialization::access; 
+  friend class boost::serialization::access;
   BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
   public:
   hit & set_id (int a_id)
@@ -97,7 +97,7 @@ private:
     g_count++;
     if (g_debug) clog << "DEBUG: hit::ctor: g_count=" << g_count << endl;
   }
-  ~hit () 
+  ~hit ()
   {
     if (g_debug) clog << "DEBUG: hit::dtor: Destruction @" << this << "." << endl;
     g_count--;
@@ -113,8 +113,8 @@ int hit::g_count  = 0;
 bool hit::g_debug = false;
 
 template<class Archive>
-void hit::serialize (Archive & ar_, 
-                     const unsigned int version_)
+void hit::serialize (Archive & ar_,
+                     const unsigned int /*version_*/)
 {
   ar_ & boost::serialization::make_nvp ("id",  id_);
   ar_ & boost::serialization::make_nvp ("tdc", tdc_);
@@ -124,13 +124,13 @@ void hit::serialize (Archive & ar_,
 int main (int argc_ , char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
-  try 
+  try
     {
-      clog << "Test of the 'boost::shared_ptr<>' class..." << endl; 
+      clog << "Test of the 'boost::shared_ptr<>' class..." << endl;
       bool debug = false;
 
       int iarg =  1;
-      while (iarg < argc_) 
+      while (iarg < argc_)
         {
           string arg = argv_[iarg];
           if ((arg == "-d") || (arg == "--debug")) debug = true;
@@ -213,26 +213,29 @@ int main (int argc_ , char ** argv_)
           {
             ofstream foa ("test_shared_ptr_1.txt");
             boost::archive::text_oarchive oa (foa);
-            oa << hits << hits2;
+            // oa << hits << hits2;
+            oa & hits & hits2;
           }
           {
             ofstream foa ("test_shared_ptr_1.xml");
             boost::archive::xml_oarchive oa (foa);
-            oa << boost::serialization::make_nvp ("hits", hits);
-            oa << boost::serialization::make_nvp ("hits2", hits2);
+            // oa << boost::serialization::make_nvp ("hits", hits);
+            // oa << boost::serialization::make_nvp ("hits2", hits2);
+            oa & boost::serialization::make_nvp ("hits", hits);
+            oa & boost::serialization::make_nvp ("hits2", hits2);
           }
           clog << "Done." << endl;
-        
+
           clog << "Destroy 'hits'..." << endl;
           hits.clear ();
           clog << "Destroy 'hits2'..." << endl;
           hits2.clear ();
           clog << "Done." << endl;
-        
+
         }
         if (hit::g_debug) clog << "DEBUG: g_count=" << hit::g_count << endl;
 
-        {       
+        {
           hit_handles_col_t hits;
           hit_handles_col_t hits2;
           if (hit::g_debug) clog << "DEBUG: g_count=" << hit::g_count << endl;
@@ -240,7 +243,8 @@ int main (int argc_ , char ** argv_)
             clog << endl << "Deserialize (from text archive)..." << endl;
             ifstream fia ("test_shared_ptr_1.txt");
             boost::archive::text_iarchive ia (fia);
-            ia >> hits >> hits2;
+            //ia >> hits >> hits2;
+            ia & hits & hits2;
             clog << "Done." << endl;
             clog << "Hits (loaded) : " << endl;
             for (hit_handles_col_t::const_iterator i = hits.begin ();
@@ -257,24 +261,21 @@ int main (int argc_ , char ** argv_)
                 i->get ().print ();
               }
           }
-          
+
         }
         if (hit::g_debug) clog << "DEBUG: g_count=" << hit::g_count << endl;
       }
-     
+
     }
   catch (exception & x)
-    { 
-      clog << "error: " << x.what () << endl; 
+    {
+      clog << "error: " << x.what () << endl;
       error_code =  EXIT_FAILURE;
     }
-  catch (...) 
-    { 
-      clog << "error: " << "unexpected error!" << endl;  
-      error_code = EXIT_FAILURE; 
-    } 
+  catch (...)
+    {
+      clog << "error: " << "unexpected error!" << endl;
+      error_code = EXIT_FAILURE;
+    }
   return error_code;
-} 
-
-// end of test_shared_ptr_1.cxx 
-
+}

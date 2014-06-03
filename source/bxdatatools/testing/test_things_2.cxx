@@ -23,7 +23,7 @@
 
 // Some pre-processor guard about Boost I/O usage and linkage :
 #include <datatools/bio_guard.h>
- 
+
 using namespace std;
 
 /*** the serializable A sample class ***/
@@ -35,7 +35,7 @@ public:
   static const string SERIAL_TAG;
 
 public:
-  
+
   void set_value (double v)
   {
     value_ = v;
@@ -51,7 +51,7 @@ public:
 
   A (double v_);
 
-  virtual ~A (); 
+  virtual ~A ();
 
   virtual const string & get_serial_tag () const;
 
@@ -66,11 +66,11 @@ private :
   double value_;
 
 };
-  
+
 const string A::SERIAL_TAG = "test_things::A";
-  
+
 template<class Archive>
-void A::serialize (Archive & ar, const unsigned int file_version)
+void A::serialize (Archive & ar, const unsigned int /*version*/)
 {
   ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
   ar & boost::serialization::make_nvp ("value", value_);
@@ -83,12 +83,12 @@ void A::dump (ostream & out) const
   return;
 }
 
-A::A () : value_ (0.0) 
+A::A () : value_ (0.0)
 {
   return;
 }
- 
-A::A (double v) : value_ (v) 
+
+A::A (double v) : value_ (v)
 {
   return;
 }
@@ -111,7 +111,7 @@ public:
   static const string SERIAL_TAG;
 
 public:
-  
+
   void set_index (int i)
   {
     index_ = i;
@@ -153,7 +153,7 @@ private:
 };
 
 template<class Archive>
-void B::serialize (Archive & ar, const unsigned int file_version)
+void B::serialize (Archive & ar, const unsigned int /*version*/)
 {
   ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
   ar & boost::serialization::make_nvp ("index", index_);
@@ -197,9 +197,8 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'datatools::things' !" << endl; 
-  
-      bool debug = false;
+      clog << "Test program for class 'datatools::things' !" << endl;
+
       bool out   = true;
       bool in    = true;
       string format = "text";
@@ -212,66 +211,62 @@ int main (int argc_, char ** argv_)
 
           if (token[0] == '-')
             {
-              string option = token; 
-              if ((option == "-d") || (option == "--debug")) 
-                {
-                  debug = true;
-                }
-              else if ((option == "-O") || (option == "--no-out")) 
+              string option = token;
+              if ((option == "-O") || (option == "--no-out"))
                 {
                   out = false;
                 }
-              else if ((option == "-I") || (option == "--no-in")) 
+              else if ((option == "-I") || (option == "--no-in"))
                 {
                   in = false;
                 }
-              else if ((option == "-x") || (option == "--xml")) 
+              else if ((option == "-x") || (option == "--xml"))
                 {
                   format = "xml";
                 }
-              else if ((option == "-b") || (option == "--bin")) 
+              else if ((option == "-b") || (option == "--bin"))
                 {
                   format = "binary";
                 }
-              else if ((option == "-z") || (option == "--gzip")) 
+              else if ((option == "-z") || (option == "--gzip"))
                 {
                   compression = ".gz";
                 }
-              else if ((option == "-B") || (option == "--bz2")) 
+              else if ((option == "-B") || (option == "--bz2"))
                 {
                   compression = ".bz2";
                 }
-              else 
-                { 
-                  clog << "warning: ignoring option '" << option << "'!" << endl; 
+              else
+                {
+                  clog << "warning: ignoring option '" << option << "'!" << endl;
                 }
             }
           else
             {
-              string argument = token; 
-              { 
-                clog << "warning: ignoring argument '" << argument << "'!" << endl; 
+              string argument = token;
+              {
+                clog << "warning: ignoring argument '" << argument << "'!" << endl;
               }
             }
           iarg++;
         }
- 
+
       string filename = "test_things_2.txt";
       if (format == "xml")
         {
           filename = "test_things_2.xml";
-        }       
+        }
       if (format == "binary")
         {
           filename = "test_things_2.data";
-        }       
+        }
       filename = filename + compression;
-      
+
       if (out)
         {
           // declare the 'bag' instance as a 'things' container:
-          datatools::things bag ("bag1", "A bag with things in it");  
-      
+          datatools::things bag ("bag1", "A bag with things in it");
+
           // add some objects of type 'A' and 'B' in it
           // perform some on-the-fly setter on some of them :
           bag.add<A> ("a1").set_value (666.6666);
@@ -282,8 +277,8 @@ int main (int argc_, char ** argv_)
           bag.add<A> ("a3").set_value (42.0);
           bag.add<datatools::properties> ("p1").set_description ("A list of properties");
           bag.add<A> ("a4");
-          bag.grab<B> ("b3").set_index (7777); 
-          bag.grab<A> ("a4").set_value (1.6e-19); 
+          bag.grab<B> ("b3").set_index (7777);
+          bag.grab<A> ("a4").set_value (1.6e-19);
           bag.add<B> ("b4");
           // here we put a bag in the bag :
           bag.add<datatools::things> ("g1").set_name ("sub_bag").set_description ("A bag stored in another bag");
@@ -301,10 +296,10 @@ int main (int argc_, char ** argv_)
           g1.add<A> ("x1").set_value (33.0);
           g1.add<A> ("x2").set_value (12.0);
           g1.add<B> ("y1").set_index (7);
- 
+
           // dump the bag :
           bag.dump (clog);
-        
+
           // now we store the 'bag' contents within a Boost archive :
           clog << "Store 'things'..." << endl;
           datatools::data_writer writer (filename,datatools::using_multi_archives);
@@ -340,11 +335,11 @@ int main (int argc_, char ** argv_)
           // dump it and check that is has been properly restored
           // from the serialization stream :
           bag.dump (clog);
-        
+
           clog << "Fetching 'p1'..." << endl;
           const datatools::properties & p1 = bag.get<datatools::properties> ("p1");
           p1.tree_dump (clog, "p1");
- 
+
           // fetch the 'things' container stored with name 'g1' :
           datatools::things & g1 = bag.grab<datatools::things> ("g1");
           g1.dump (clog);
@@ -363,24 +358,23 @@ int main (int argc_, char ** argv_)
               const B & y1 = g1.get<B> ("y1");
               y1.dump (clog);
             }
-            
+
         }
 
     }
   catch (exception & x)
     {
-      cerr << "error: " << x.what () << endl; 
+      cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);
 }
- 
-// end of test_things_2.cxx
+
 /*
 ** Local Variables: --
 ** mode: c++ --

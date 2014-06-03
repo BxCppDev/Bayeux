@@ -194,5 +194,3 @@ int main (int argc_, char ** argv_)
 
   return (EXIT_SUCCESS);
 }
-
-/* end of test_serialization_2.cxx */

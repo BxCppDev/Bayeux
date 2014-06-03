@@ -22,7 +22,8 @@ int main (int /*argc_*/, char ** /*argv_*/)
     boost::archive::text_oarchive oa (output_stream);
 
     datatools::test::data a_data;
-    oa << a_data;
+    // oa << a_data;
+    oa & a_data;
     output_stream.flush ();
   }
 

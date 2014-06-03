@@ -199,7 +199,8 @@ int main (int argc_ , char ** argv_)
           {
             ofstream foa ("test_handle_1.txt");
             boost::archive::text_oarchive oa (foa);
-            oa << hits << hits2;
+            // oa << hits << hits2;
+            oa & hits & hits2;
           }
           {
             ofstream foa ("test_handle_1.xml");

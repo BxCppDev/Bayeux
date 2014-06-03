@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_version_id.cxx
 
 #include <cstdlib>
@@ -49,52 +49,52 @@ void check_match (const datatools::version_id & v0_,
     {
       if (v0_.matches (rule_, major_only_))
         {
-          clog << "  " << v0_ << " matches rule '" << rule_ << "'"; 
+          clog << "  " << v0_ << " matches rule '" << rule_ << "'";
         }
       else
         {
-          clog << "  " << v0_ << " does NOT match rule '" << rule_ << "'"; 
-        
+          clog << "  " << v0_ << " does NOT match rule '" << rule_ << "'";
+
         }
       if (major_only_) clog << " (major only)";
       clog << endl;
     }
   catch (exception & x)
     {
-      clog << "  " << "error: Cannot check matching for '" 
+      clog << "  " << "error: Cannot check matching for '"
            << v0_ << "' with rule '" << rule_ << "' : " << x.what () << endl;
-    } 
+    }
   return;
 }
 
-int main (int argc_ , char ** argv_)
+int main (/*int argc_ , char ** argv_*/)
 {
   int error_code = EXIT_SUCCESS;
-  try 
+  try
     {
-      clog << "Test of the 'version_id' class..." << endl; 
-      bool debug = false;
+      clog << "Test of the 'version_id' class..." << endl;
+      // bool debug = false;
 
-      int iarg =  1;
-      while (iarg < argc_) 
-        {
-          string arg = argv_[iarg];
+      // int iarg =  1;
+      // while (iarg < argc_)
+      //   {
+      //     string arg = argv_[iarg];
 
-          if ((arg == "-d") || (arg == "--debug")) debug = true;
+      //     if ((arg == "-d") || (arg == "--debug")) debug = true;
 
-          iarg++;
-        }
-    
+      //     iarg++;
+      //   }
+
       {
         datatools::version_id v0;
         v0.dump (clog, "v0 : ");
-   
+
         datatools::version_id v1 (1);
         v1.dump (clog, "v1 : ");
-   
+
         datatools::version_id v2 (1,-1,0);
         v2.dump (clog, "v2 : ");
- 
+
         datatools::version_id v3 (3,1,4);
         v3.dump (clog, "v3 : ");
 
@@ -103,14 +103,14 @@ int main (int argc_ , char ** argv_)
 
         datatools::version_id v5 ("159");
         v5.dump (clog, "v5 : ");
- 
+
         try
           {
             datatools::version_id v6 ("!1.5.9");
           }
         catch (exception & x)
-          { 
-            clog << "As expected there is an error: " << x.what () << endl; 
+          {
+            clog << "As expected there is an error: " << x.what () << endl;
           }
 
         datatools::version_id v7 (3,1,4, "159");
@@ -128,36 +128,36 @@ int main (int argc_ , char ** argv_)
         datatools::version_id v11 (3,1,4, "rc666");
         v11.dump (clog, "v11 : ");
         }
-      
+
       {
         clog << "Format : " << endl;
         datatools::version_id v0 (3, 1, 4);
         clog << "  v0 = " << v0 << endl;
-   
+
         datatools::version_id v1 (3, 1, 4);
         clog << "  v1 = " << v1 << endl;
-       
+
         datatools::version_id v2 (3, 1, 5);
         clog << "  v2 = " << v2 << endl;
-       
+
         datatools::version_id v3 (3, 1, 5, "159");
         clog << "  v3 = " << v3 << endl;
-      
+
         datatools::version_id v4 (3, 1, 5, "test");
         clog << "  v4 = " << v4 << endl;
-      
+
         datatools::version_id v5 (3, 1, 5, "alpha");
         clog << "  v5 = " << v5 << endl;
-      
+
         datatools::version_id v6 (3, 1, 5, "beta");
         clog << "  v6 = " << v6 << endl;
-      
+
         datatools::version_id v7 (3, 1, 5, "rc0");
         clog << "  v7 = " << v7 << endl;
-     
+
         datatools::version_id v8 (3, 1, 5, "rc1");
         clog << "  v8 = " << v8 << endl;
-    
+
         datatools::version_id v9 (3);
         clog << "  v9 = " << v9 << endl;
 
@@ -207,11 +207,12 @@ int main (int argc_ , char ** argv_)
         try
           {
             int comp = v0.compare (v4);
+            clog << "comp=" << comp << endl;
           }
         catch (exception & x)
-          { 
-            clog << "  As expected : " << x.what () << endl; 
-          } 
+          {
+            clog << "  As expected : " << x.what () << endl;
+          }
         check_compare (v0, v4);
         check_compare (v0, v5);
         check_compare (v5, v6);
@@ -221,7 +222,7 @@ int main (int argc_ , char ** argv_)
         check_compare (v2, v5);
         check_compare (v3, v9);
         check_compare (v3, v9, true);
-     
+
       }
 
       {
@@ -263,14 +264,14 @@ int main (int argc_ , char ** argv_)
          tokens.push_back ("0azerty");
          tokens.push_back ("a-banana");
 
-         for (int i = 0; i < tokens.size (); i++)
+         for (int i = 0; i < (int) tokens.size (); i++)
            {
              datatools::version_id v;
              istringstream v_iss (tokens[i]);
              clog << "  Token '" << tokens[i] << "' : ";
              v_iss >> v;
              if (v_iss)
-               { 
+               {
                  clog << v << " (ok)";
                }
              else
@@ -313,17 +314,16 @@ int main (int argc_ , char ** argv_)
 
     }
   catch (exception & x)
-    { 
-      clog << "error: " << x.what () << endl; 
+    {
+      clog << "error: " << x.what () << endl;
       error_code =  EXIT_FAILURE;
     }
-  catch (...) 
-    { 
-      clog << "error: " << "unexpected error!" << endl;  
-      error_code = EXIT_FAILURE; 
-    } 
+  catch (...)
+    {
+      clog << "error: " << "unexpected error!" << endl;
+      error_code = EXIT_FAILURE;
+    }
   return error_code;
-} 
+}
 
-// end of test_version_id.cxx 
-  
+// end of test_version_id.cxx

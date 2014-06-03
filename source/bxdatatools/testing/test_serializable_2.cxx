@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_serializable_2.cxx
 // Author(s) : Francois Mauger <mauger@lpccaen.in2p3.fr>
 
@@ -32,7 +32,7 @@ private:
   DATATOOLS_SERIALIZATION_DECLARATION()
 
   /* Macro to enable the use of an old serialization tag */
-  DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT() 
+  DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT()
 
 public:
   hit & set_id (int a_id)
@@ -57,7 +57,7 @@ public:
     g_count++;
     if (g_debug) clog << "DEBUG: hit::ctor: g_count=" << g_count << endl;
   }
-  ~hit () 
+  ~hit ()
   {
     if (g_debug) clog << "DEBUG: hit::dtor: Destruction @" << this << "." << endl;
     g_count--;
@@ -84,8 +84,8 @@ DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(hit);
 DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_IMPLEMENTATION(hit, "old_hit");
 
 template<class Archive>
-void hit::serialize (Archive & ar_, 
-                     const unsigned int version_)
+void hit::serialize (Archive & ar_,
+                     const unsigned int /* version_ */)
 {
   ar_ & boost::serialization::make_nvp ("id",  id_);
   ar_ & boost::serialization::make_nvp ("tdc", tdc_);
@@ -105,11 +105,13 @@ void test1 ()
 
     ofstream foa ("test_serializable_2.txt");
     boost::archive::text_oarchive oa (foa);
-    oa << datatools::backward_serial_tag<hit> () << h0;
-    oa << datatools::backward_serial_tag<datatools::event_id> () << evId;
+    // oa << datatools::backward_serial_tag<hit> () << h0;
+    // oa << datatools::backward_serial_tag<datatools::event_id> () << evId;
+    oa & datatools::backward_serial_tag<hit> () & h0;
+    oa & datatools::backward_serial_tag<datatools::event_id> () & evId;
   }
   clog << "Done." << endl;
-  
+
   clog << endl << "Loading..." << endl;
   {
     hit h0;
@@ -118,14 +120,14 @@ void test1 ()
     boost::archive::text_iarchive ia (fia);
     std::string serial_tag;
     ia >> serial_tag;
-    if (serial_tag == datatools::backward_serial_tag<hit> () 
+    if (serial_tag == datatools::backward_serial_tag<hit> ()
         || serial_tag == datatools::serial_tag<hit> () )
       {
         ia >> h0;
       }
     else
       {
-        std::cerr << "ERROR: Unexpected 'hit' serial tag '" << serial_tag << "' !" << std::endl; 
+        std::cerr << "ERROR: Unexpected 'hit' serial tag '" << serial_tag << "' !" << std::endl;
         return;
       }
     h0.print ();
@@ -137,7 +139,7 @@ void test1 ()
       }
     else
       {
-        std::cerr << "ERROR: Unexpected 'event_id' serial tag '" << serial_tag << "' !" << std::endl; 
+        std::cerr << "ERROR: Unexpected 'event_id' serial tag '" << serial_tag << "' !" << std::endl;
         return;
       }
     evId.tree_dump (std::clog, "Event ID : ");
@@ -158,7 +160,7 @@ void test2 ()
     writer.store (datatools::backward_serial_tag<datatools::event_id> (), evId);
   }
   clog << "Done." << endl;
-  
+
   clog << endl << "Loading..." << endl;
   {
     hit h0;
@@ -183,13 +185,13 @@ void test2 ()
 int main (int argc_ , char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
-  try 
+  try
     {
-      clog << "Test of features from the 'boost::serialization' lib..." << endl; 
+      clog << "Test of features from the 'boost::serialization' lib..." << endl;
       bool debug = false;
 
       int iarg =  1;
-      while (iarg < argc_) 
+      while (iarg < argc_)
         {
           string arg = argv_[iarg];
           if ((arg == "-d") || (arg == "--debug")) debug = true;
@@ -202,17 +204,14 @@ int main (int argc_ , char ** argv_)
       test2 ();
     }
   catch (exception & x)
-    { 
-      clog << "error: " << x.what () << endl; 
+    {
+      clog << "error: " << x.what () << endl;
       error_code =  EXIT_FAILURE;
     }
-  catch (...) 
-    { 
-      clog << "error: " << "unexpected error!" << endl;  
-      error_code = EXIT_FAILURE; 
-    } 
+  catch (...)
+    {
+      clog << "error: " << "unexpected error!" << endl;
+      error_code = EXIT_FAILURE;
+    }
   return error_code;
-} 
-
-// end of test_serializable_2.cxx 
-
+}

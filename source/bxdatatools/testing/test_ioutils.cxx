@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_ioutils.cxx
 
 #include <cstdlib>
@@ -11,46 +11,46 @@
 int main (int argc_ , char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
-  try 
+  try
     {
-      std::clog << "Test of the 'ioutils' class..." << std::endl; 
-  
-      bool debug = false;
+      std::clog << "Test of the 'ioutils' class..." << std::endl;
+
+      //bool debug = false;
       bool color = false;
 
       int iarg = 1;
-      while (iarg <  argc_)  
+      while (iarg <  argc_)
         {
-          std::string arg = argv_[iarg]; 
+          std::string arg = argv_[iarg];
 
-          if (arg == "-d" || arg == "--debug") debug =  true;
+          //if (arg == "-d" || arg == "--debug") debug =  true;
 
           if (arg == "-c" || arg == "--color") color =  true;
 
           iarg++;
         }
-    
+
       datatools::io::set_colored (color);
-      std::clog << datatools::io::indent << datatools::io::warning << "This is a warning print ! " 
+      std::clog << datatools::io::indent << datatools::io::warning << "This is a warning print ! "
                 << datatools::io::normal << std::endl;
       datatools::io::indent++;
-      std::clog << datatools::io::indent << datatools::io::notice << "This is a notice print ! " 
+      std::clog << datatools::io::indent << datatools::io::notice << "This is a notice print ! "
                 << datatools::io::normal << std::endl;
-      std::clog << datatools::io::indent << datatools::io::debug << "This is a debug print ! " 
+      std::clog << datatools::io::indent << datatools::io::debug << "This is a debug print ! "
                 << datatools::io::normal << std::endl;
       datatools::io::indent++;
-      std::clog << datatools::io::indent << datatools::io::normal << datatools::io::notice << "More print ! " 
+      std::clog << datatools::io::indent << datatools::io::normal << datatools::io::notice << "More print ! "
                 << datatools::io::normal << std::endl;
-      std::clog << datatools::io::indent << datatools::io::normal << datatools::io::notice << "Yet another print ! " 
+      std::clog << datatools::io::indent << datatools::io::normal << datatools::io::notice << "Yet another print ! "
                 << datatools::io::normal << std::endl;
       datatools::io::indent--;
-      std::clog << datatools::io::indent << datatools::io::normal << datatools::io::notice << "Back to margin ! " 
+      std::clog << datatools::io::indent << datatools::io::normal << datatools::io::notice << "Back to margin ! "
                 << datatools::io::normal << std::endl;
       datatools::io::indent (0);
-      std::clog << datatools::io::indent << datatools::io::devel << "Done." 
+      std::clog << datatools::io::indent << datatools::io::devel << "Done."
                 << datatools::io::normal << std::endl;
-      datatools::io::indent (6);  
-      std::clog << datatools::io::indent << datatools::io::error << "Ooops !" 
+      datatools::io::indent (6);
+      std::clog << datatools::io::indent << datatools::io::error << "Ooops !"
                 << datatools::io::normal << std::endl;
 
       datatools::io::indenter ind;
@@ -72,12 +72,12 @@ int main (int argc_ , char ** argv_)
     }
   catch ( std::exception & x)
     {
-      std::cerr << "error: " << x.what() << std::endl; 
+      std::cerr << "error: " << x.what() << std::endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      std::cerr << "error: " << "unexpected error!" << std::endl; 
+      std::cerr << "error: " << "unexpected error!" << std::endl;
       error_code = EXIT_FAILURE;
     }
   return error_code;

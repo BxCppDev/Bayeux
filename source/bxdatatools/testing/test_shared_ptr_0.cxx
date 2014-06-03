@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_shared_ptr_0.cxx
 // Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
 
@@ -24,13 +24,13 @@
 
 using namespace std;
 
-class hit 
+class hit
 {
 private:
   int32_t   id_;
   double    tdc_;
 private:
-  friend class boost::serialization::access; 
+  friend class boost::serialization::access;
   BOOST_SERIALIZATION_SERIALIZE_DECLARATION();
 
 public:
@@ -52,7 +52,7 @@ public:
     id_ (a_id) , tdc_ (a_tdc)
   {
   }
-  ~hit () 
+  ~hit ()
   {
     clog << "DEBUG: hit::dtor: Destruction @" << this << "." << endl;
   }
@@ -63,30 +63,30 @@ public:
 };
 
 template<class Archive>
-void hit::serialize (Archive & ar_, 
-                     const unsigned int version_)
+void hit::serialize (Archive & ar_,
+                     const unsigned int /*version_*/)
 {
   ar_ & boost::serialization::make_nvp ("id",  id_);
   ar_ & boost::serialization::make_nvp ("tdc", tdc_);
   return;
 }
 
-int main (int argc_ , char ** argv_)
+int main (/*int argc_ , char ** argv_*/)
 {
   int error_code = EXIT_SUCCESS;
-  try 
+  try
     {
-      clog << "Test of the 'boost::shared_ptr<>' class..." << endl; 
-      bool debug = false;
+      clog << "Test of the 'boost::shared_ptr<>' class..." << endl;
+      //bool debug = false;
 
-      int iarg =  1;
-      while (iarg < argc_) 
-        {
-          string arg = argv_[iarg];
-          if ((arg == "-d") || (arg == "--debug")) debug = true;
-          iarg++;
-        }
-    
+      // int iarg =  1;
+      // while (iarg < argc_)
+      //   {
+      //     string arg = argv_[iarg];
+      //     if ((arg == "-d") || (arg == "--debug")) debug = true;
+      //     iarg++;
+      //   }
+
       {
         clog << endl << "Test 1: " << endl;
         hit h0 (0, 123);
@@ -100,7 +100,7 @@ int main (int argc_ , char ** argv_)
       {
         typedef boost::shared_ptr<hit> hit_ptr;
         typedef vector<hit_ptr> hits_col_t;
-        // see: 
+        // see:
         // http://www.boost.org/doc/libs/1_43_0/libs/smart_ptr/example/shared_ptr_example.cpp
         clog << endl << "Test 2: " << endl;
 
@@ -158,13 +158,16 @@ int main (int argc_ , char ** argv_)
           {
             ofstream foa ("test_shared_ptr_0.txt");
             boost::archive::text_oarchive oa (foa);
-            oa << hits << hits2;
+            //oa << hits << hits2;
+            oa & hits & hits2;
           }
           {
             ofstream foa ("test_shared_ptr_0.xml");
             boost::archive::xml_oarchive oa (foa);
-            oa << boost::serialization::make_nvp ("hits", hits);
-            oa << boost::serialization::make_nvp ("hits2", hits2);
+            // oa << boost::serialization::make_nvp ("hits", hits);
+            // oa << boost::serialization::make_nvp ("hits2", hits2);
+            oa & boost::serialization::make_nvp ("hits", hits);
+            oa & boost::serialization::make_nvp ("hits2", hits2);
           }
           clog << "Done." << endl;
 
@@ -175,7 +178,7 @@ int main (int argc_ , char ** argv_)
           clog << "Done." << endl;
         }
 
-        {       
+        {
           hits_col_t hits;
           hits_col_t hits2;
 
@@ -203,20 +206,19 @@ int main (int argc_ , char ** argv_)
 
         }
       }
- 
+
     }
   catch (exception & x)
-    { 
-      clog << "error: " << x.what () << endl; 
+    {
+      clog << "error: " << x.what () << endl;
       error_code =  EXIT_FAILURE;
     }
-  catch (...) 
-    { 
-      clog << "error: " << "unexpected error!" << endl;  
-      error_code = EXIT_FAILURE; 
-    } 
+  catch (...)
+    {
+      clog << "error: " << "unexpected error!" << endl;
+      error_code = EXIT_FAILURE;
+    }
   return error_code;
-} 
+}
 
-// end of test_shared_ptr_0.cxx 
-  
+// end of test_shared_ptr_0.cxx

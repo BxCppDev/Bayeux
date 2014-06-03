@@ -11,7 +11,7 @@
 #include <exception>
 
 
-int main (int argc_, char ** argv_) {
+int main (/* int argc_, char ** argv_ */) {
   try {
     std::cerr << "Datatools version is: " << datatools::version::get_version() << std::endl;
   }

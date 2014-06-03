@@ -120,7 +120,8 @@ int main (int argc_ , char ** argv_)
       {
         ofstream foa ("test_serializable_1.txt");
         boost::archive::text_oarchive oa (foa);
-        oa << h0.get_serial_tag () << h0;
+        // oa << h0.get_serial_tag() << h0;
+        oa & h0.get_serial_tag() & h0;
       }
       clog << "Done." << endl;
 
@@ -137,5 +138,3 @@ int main (int argc_ , char ** argv_)
     }
   return error_code;
 }
-
-// end of test_serializable_1.cxx

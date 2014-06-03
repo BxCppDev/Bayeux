@@ -42,7 +42,7 @@ const string & data_t::get_serial_tag () const
 
 template<class Archive>
 void data_t::serialize (Archive & ar_,
-                        const unsigned int version_)
+                        const unsigned int /*version_*/)
 {
   ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
   ar_ & boost::serialization::make_nvp ("value", value);
@@ -182,5 +182,3 @@ int main (int argc_, char ** argv_)
 
   return (EXIT_SUCCESS);
 }
-
-/* end of test_serialization_3.cxx */

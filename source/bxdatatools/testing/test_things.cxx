@@ -76,7 +76,7 @@ const string & A::get_serial_tag () const
 }
 
 template<class Archive>
-void A::serialize (Archive & ar, const unsigned int file_version)
+void A::serialize (Archive & ar, const unsigned int /*version*/)
 {
   ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
   ar & boost::serialization::make_nvp ("value", value_);
@@ -161,7 +161,7 @@ const string & B::get_serial_tag () const
 }
 
 template<class Archive>
-void B::serialize (Archive & ar, const unsigned int file_version)
+void B::serialize (Archive & ar, const unsigned int /*version*/)
 {
   ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
   ar & boost::serialization::make_nvp ("index", index_);
@@ -197,7 +197,6 @@ int main (int argc_, char ** argv_)
     {
       clog << "Test program for class 'datatools::things' !" << endl;
 
-      bool debug = false;
       bool out   = true;
       bool in    = true;
       bool xml   = true;
@@ -210,11 +209,7 @@ int main (int argc_, char ** argv_)
           if (token[0] == '-')
             {
               string option = token;
-              if ((option == "-d") || (option == "--debug"))
-                {
-                  debug = true;
-                }
-              else if ((option == "-O") || (option == "--no-out"))
+              if ((option == "-O") || (option == "--no-out"))
                 {
                   out = false;
                 }
@@ -322,6 +317,8 @@ int main (int argc_, char ** argv_)
              * checked with 'bag.is_a<A> ("b3")' :
              */
             const A & tmp = bag.get<A> ("b3");
+
+            clog << "tmp.value = " << tmp.get_value () << endl;
           }
         catch (datatools::bad_things_cast & x)
           {
@@ -332,6 +329,7 @@ int main (int argc_, char ** argv_)
          *   bag.is_a<A> ("a3")
          */
         const A & a3 = bag.get<A> ("a3");
+        clog << "a3.value = " << a3.get_value () << endl;
 
         // add more empty objects and play with them :
         bag.add<A> ("a4", "another A instance");

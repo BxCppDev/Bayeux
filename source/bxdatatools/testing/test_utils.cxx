@@ -100,7 +100,7 @@ void test_path_manipulation()
     int i;
     wordexp("${HOME}/testing/test_[a-c]*.cxx", &p, 0);
     w = p.we_wordv;
-    for (i = 0; i < p.we_wordc; i++)
+    for (i = 0; i < (int) p.we_wordc; i++)
       std::clog << w[i] << '\n';
     wordfree(&p);
   }
