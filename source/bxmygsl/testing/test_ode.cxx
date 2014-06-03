@@ -64,7 +64,7 @@ public:
   }
 
   virtual int
-  compute_derivatives(double         t_ ,
+  compute_derivatives(double         /*t_*/ ,
                       const double * y_ ,
                       double  *      f_)
   {
@@ -76,8 +76,8 @@ public:
   }
 
   virtual int
-  compute_jacobian(double t_ ,
-                   const double * y_ ,
+  compute_jacobian(double /*t_*/ ,
+                   const double * /*y_*/ ,
                    double  * dfdy_  ,
                    double  * dfdt_)
   {

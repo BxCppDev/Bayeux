@@ -9,7 +9,7 @@
 
 #include <mygsl/fft_real.h>
 
-int main(int argc_ , char ** argv_)
+int main(/*int argc_ , char ** argv_*/)
 {
   long seed = 12345;
 

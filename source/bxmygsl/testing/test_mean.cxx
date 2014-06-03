@@ -9,18 +9,18 @@
 using namespace std;
 using namespace mygsl;
 
-int main (int argc_ , char ** argv_)
+int main (/*int argc_ , char ** argv_*/)
 {
-  try 
+  try
     {
       long seed = 314159;
       srand48 (seed);
 
       arithmetic_mean AM;
       for (int i = 0; i < 10; i++)
-	{
-	  AM.add (drand48 ());
-	}
+        {
+          AM.add (drand48 ());
+        }
       cout << "Number of values = "<< AM.get_n () << endl;
       cout << "Arithmetic mean  = "<< AM.get_mean () << endl;
       cout << "Variance         = "<< AM.get_variance () << endl << endl;
@@ -33,9 +33,9 @@ int main (int argc_ , char ** argv_)
 
       weighted_mean WM;
       for (int i = 0; i < 10; i++)
-	{
-	  WM.add (drand48 (), drand48 ());
-	}
+        {
+          WM.add (drand48 (), drand48 ());
+        }
       cout << "Weighted mean    = "<< WM.get_mean () << endl << endl;
 
     }

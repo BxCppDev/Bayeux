@@ -14,41 +14,41 @@
 
 using namespace std;
 
-int main (int argc_, char ** argv_)
+int main (/*int argc_, char ** argv_*/)
 {
   int error_code = EXIT_SUCCESS;
   try
     {
       clog << "Test program for class 'mygsl::prng_state_manager'!" << endl;
 
-      bool debug = false;
+      // bool debug = false;
 
-      int iarg = 1;
-      while (iarg < argc_)
-        {
-          string token = argv_[iarg];
+      // int iarg = 1;
+      // while (iarg < argc_)
+      //   {
+      //     string token = argv_[iarg];
 
-          if (token[0] == '-')
-            {
-              string option = token;
-              if ((option == "-d") || (option == "--debug"))
-                {
-                  debug = true;
-                }
-              else
-                {
-                  clog << "warning: ignoring option '" << option << "'!" << endl;
-                }
-            }
-          else
-            {
-              string argument = token;
-              {
-                clog << "warning: ignoring argument '" << argument << "'!" << endl;
-              }
-            }
-          iarg++;
-        }
+      //     if (token[0] == '-')
+      //       {
+      //         string option = token;
+      //         if ((option == "-d") || (option == "--debug"))
+      //           {
+      //             debug = true;
+      //           }
+      //         else
+      //           {
+      //             clog << "warning: ignoring option '" << option << "'!" << endl;
+      //           }
+      //       }
+      //     else
+      //       {
+      //         string argument = token;
+      //         {
+      //           clog << "warning: ignoring argument '" << argument << "'!" << endl;
+      //         }
+      //       }
+      //     iarg++;
+      //   }
 
       mygsl::rng r1("taus2", 123456);
       mygsl::rng r2("taus2", 314159);

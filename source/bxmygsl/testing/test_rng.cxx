@@ -7,7 +7,7 @@
 
 #include <mygsl/rng.h>
 
-int main(int argc_ , char ** argv_)
+int main(/*int argc_ , char ** argv_*/)
 {
   using namespace std;
   try {
@@ -29,7 +29,7 @@ int main(int argc_ , char ** argv_)
     cerr << "max=" << r.max() << endl;
     cerr << endl;
 
-    for (int i = 0; i < nshoots; i++) {
+    for (int i = 0; i < (int) nshoots; i++) {
       double ran = r.uniform();
       cout << ran << endl;
     }
@@ -41,7 +41,7 @@ int main(int argc_ , char ** argv_)
     r.load("test_rng.state");
 
     cerr << endl;
-    for (int i = 0; i < nshoots; i++) {
+    for (int i = 0; i < (int) nshoots; i++) {
       double ran = r.uniform();
       cout << ran << endl;
     }
@@ -52,7 +52,7 @@ int main(int argc_ , char ** argv_)
     r.to_stream(ofstate);
     ofstate.close();
     cerr << endl << "Play a sequence : " << endl;
-    for (int i = 0; i < nshoots; i++) {
+    for (int i = 0; i < (int) nshoots; i++) {
       double ran = r.uniform();
       cout << ran << endl;
     }
@@ -64,7 +64,7 @@ int main(int argc_ , char ** argv_)
     ifstate.close();
 
     cerr << endl << "Replay the same sequence : " << endl;
-    for (int i = 0; i < nshoots; i++) {
+    for (int i = 0; i < (int) nshoots; i++) {
       double ran = r.uniform();
       cout << ran << endl;
     }
@@ -76,7 +76,7 @@ int main(int argc_ , char ** argv_)
     r.initialize(rng_id, seed);
     r.set_tracker("test_rng.trk2");
     cerr << endl << "Play again the first sequence from the original seed : " << endl;
-    for (int i = 0; i < nshoots; i++) {
+    for (int i = 0; i < (int) nshoots; i++) {
       double ran = r.uniform();
       cout << ran << endl;
     }
@@ -103,5 +103,3 @@ int main(int argc_ , char ** argv_)
   }
   return(EXIT_SUCCESS);
 }
-
-// end of test_rng.cxx

@@ -9,18 +9,18 @@
 using namespace std;
 using namespace mygsl;
 
-int main (int argc_ , char ** argv_)
+int main (/*int argc_ , char ** argv_*/)
 {
-  try 
+  try
     {
       long seed = 314159;
       srand48 (seed);
 
       min_max mM;
       for (int i = 0; i < 10; i++)
-	{
-	  mM.add (drand48 ());
-	}
+        {
+          mM.add (drand48 ());
+        }
       cout << "Minimum value = "<< mM.get_min () << endl;
       cout << "Maximum value = "<< mM.get_max () << endl;
       cout << "Median value  = "<< mM.get_median () << endl;
