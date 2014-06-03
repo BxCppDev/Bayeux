@@ -3,7 +3,7 @@ Bayeux C++ Library for Experimental Particle/Nuclear Physics
 ============================================================
 
 :Authors: Xavier Garrido, Benoit Guillon, François Mauger, Ben Morgan
-:Date:    Today
+:Date:    2014-06-03
 
 .. contents::
    :depth: 3
@@ -17,32 +17,32 @@ for the simulation, recording and analysis of data for experimental
 particle and nuclear physics projects. This functionality is split
 into several specialized submodules:
 
-datatools :  Serializable data structures based on Boost and core utilities.
+-  datatools :  Serializable data structures based on Boost and core utilities.
 
-cuts :       Generic tools for making arbitrary data selections.
+-  cuts :       Generic tools for making arbitrary data selections.
 
-materials :  Description of isotopes, elements and materials plus tools
-	     for input to simulation applications (i.e. GDML/Geant4).
+-  materials :  Description of isotopes, elements and materials plus tools
+	        for input to simulation applications (i.e. GDML/Geant4).
 
-mygsl :      C++ wrapper and extensions to the GNU Scientific Library.
+-  mygsl :      C++ wrapper and extensions to the GNU Scientific Library.
 
-geomtools :  Generic tools for working with experiment geometries and
-             provide input to simulation tools (i.e. GDML/Geant4).
+-  geomtools :  Generic tools for working with experiment geometries and
+                provide input to simulation tools (i.e. GDML/Geant4).
 
-emfield :    Electromagnetic field modelling and management.
+-  emfield :    Electromagnetic field modelling and management.
 
-brio :       A Boost over ROOT I/O serialization system (extends datatools).
+-  brio :       A Boost over ROOT I/O serialization system (extends datatools).
 
-dpp :        A basic data processing pipeline API.
+-  dpp :        A basic data processing pipeline API.
 
-genbb_help : C++ wrapper and extensions to the Decay0/GENBB program
-             by Vladimir Tretyak, for input to simulation applications.
+-  genbb_help : C++ wrapper and extensions to the Decay0/GENBB program
+                by Vladimir Tretyak, for input to simulation applications.
 
-genvtx :     Vertex random generator tools for input to
-             simulation applications.
+-  genvtx :     Vertex random generator tools for input to
+                simulation applications.
 
-mctools :    Utilities for particle and nuclear physics simulation with
-             a Geant4 interface.
+-  mctools :    Utilities for particle and nuclear physics simulation with
+                a Geant4 interface.
 
 
 
@@ -57,9 +57,9 @@ Licensing
 Please study the file ``LICENSE.txt`` for the distribution terms and
 conditions of use of Bayeux.
 
-Bayeux contains some code extracted from the Kitware System Library (OSI-approved BSD License),
-the BinReloc library (Do What The Fuck You Want To Public License, Version 2)
-and the eos portable archive library (Boost Software License).
+Bayeux contains some code extracted from the *Kitware System* library (OSI-approved BSD License),
+the *BinReloc* library (Do What The Fuck You Want To Public License, Version 2)
+and the *EOS portable archive* library (Boost Software License).
 
 
 Getting Help
@@ -164,20 +164,118 @@ None known at present.
 
 Installing Bayeux
 =================
+
 Bayeux provides a CMake based build system. We'll assume for brevity
 that you are using a UNIX system on the command line (i.e. Mac or Linux).
 We'll also assume that you're going to use the Cadfael SDK to provide
 the required third party packages.
 
-To build Bayeux, simply do, from the directory in which this file
-resides:
+Configuring the Installation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The directory in which this ``README.rst`` file resides is called the
+"source directory" of Bayeux. Because CMake generates many files as
+part of the configuration and build process, we perform configuration in
+a directory isolated from the source directory. This enables us to
+quickly clean up in the event of issues, and prevents commital of
+generated (and hence system dependent) files to the repository.
+
+To configure Bayeux, simply do, from the source directory of Bayeux:
 
 .. code:: sh
 
-    $ mkdir build
-    $ cd build
+    $ mkdir Bayeux-build
+    $ cd Bayeux-build
     $ cmake -DCMAKE_INSTALL_PREFIX=<where you want to install> -DCMAKE_PREFIX_PATH=<path to your Cadfael install> ..
-    $ make && make install
+
+You may also use an arbitrary build directory somewhere in your filesystem:
+
+.. code:: sh
+
+    $ mkdir /tmp/Bayeux-build
+    $ cd /tmp/Bayeux-build
+    $ cmake -DCMAKE_INSTALL_PREFIX=<where you want to install> -DCMAKE_PREFIX_PATH=<path to your Cadfael install> <path to the Bayeux source directory>
+
+CMake Configuration Options
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+These options control the underlying CMake system, a full list can be
+obtained from the CMake documentation, but in Bayeux you will only need
+to deal with the following three in most cases:
+
+-  ``CMAKE_INSTALL_PREFIX``
+
+   -  Path under which to install Bayeux. It should point to an empty,
+      writable directory. It defaults to ``/usr/local`` so you will want
+      to change this.
+
+-  ``CMAKE_PREFIX_PATH``
+
+   -  Path under which Cadfael is installed.
+
+
+-  ``CMAKE_BUILD_TYPE``
+
+   -  Build type, e.g. Release, Debug. You will want this to be set to
+      Release in most cases. Debug builds are only needed if you are
+      needing to follow debugging symbols into one of Cadfael's
+      binaries. It defaults to Release, so you will not need to change
+      it in most cases.
+
+Bayeux Configuration Options
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+These options control the core configuration of Bayeux.
+
+-  ``Bayeux_ENABLE_TESTING``
+
+   -  Build the collection of Bayeux's test programs. Default is OFF.
+
+-  ``Bayeux_WITH_GEANT4``
+
+   -  Build the Bayeux/mctools Geant4 extension module. Default is OFF.
+
+-  ``Bayeux_WITH_EXAMPLES``
+
+   -  Install the Bayeux example projects. Default is ON.
+
+-  ``Bayeux_BUILD_DOCS``
+
+   -  Build and install the documentation. Default is OFF.
+
+-  ``Bayeux_BUILD_DEVELOPER_TOOLS``
+
+   -  Build and install additional tools for developers and *normal* users.
+      Default is OFF.
+
+Building and Installing
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Once you have generated the buildsystem for Bayeux, as described
+earlier, you are ready to build. Note that if you want to reconfigure at
+any time, you can simply run ``ccmake`` again in the build directory.
+
+By default Bayeux generates a Makefile based system, so to build and
+install Bayeux, simply run
+
+.. code:: sh
+
+    $ make [-j4]
+    $ make install
+
+where ``-j4`` indicates the number of processors to be used to build Bayeux.
+
+
+Running test
+~~~~~~~~~~~~
+
+In order to run the test programs provided with the various Bayeux submodules, you should have
+activated the ``Bayeux_ENABLE_TESTING`` configuration option. From the build directory, simply run
+
+.. code:: sh
+
+    $ make test
+
 
 
 Troubleshooting
