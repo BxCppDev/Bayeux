@@ -285,7 +285,7 @@ void test_io_2(bool debug, int max_events)
   return;
 }
 
-void test_brio_1(bool debug)
+void test_brio_1(bool /*debug*/)
 {
   int error_code = 0;
   // Example of usage of the 'simple_brio_data_source' class (reader):
@@ -352,6 +352,8 @@ void test_brio_1(bool debug)
     indent << datatools::io::notice << "test_input_output_modules: " ;
     ER.tree_dump (std::clog, title.str (), indent.str ());
   }
+  std::clog << datatools::io::notice
+            << "test_brio_1: Error status         : " << error_code << std::endl;
   return;
 }
 
@@ -416,7 +418,6 @@ int main (int argc_, char ** argv_)
   return (error_code);
 }
 
-// end of test_input_output_modules.cxx
 /*
 ** Local Variables: --
 ** mode: c++ --

@@ -61,8 +61,8 @@ class test_module : public dpp::base_module
 
   // Initialization method :
   virtual void initialize(const datatools::properties & a_config,
-                          datatools::service_manager & a_service_manager,
-                          dpp::module_handle_dict_type & a_module_dictionnary);
+                          datatools::service_manager & /*a_service_manager*/,
+                          dpp::module_handle_dict_type & /*a_module_dictionnary*/);
 
   // Termination method :
   virtual void reset();
@@ -119,8 +119,8 @@ test_module::~test_module ()
 
 // Initialization :
 void test_module::initialize (const datatools::properties & a_config,
-                              datatools::service_manager & a_service_manager,
-                              dpp::module_handle_dict_type & a_module_dictionnary)
+                              datatools::service_manager & /*a_service_manager*/,
+                              dpp::module_handle_dict_type & /*a_module_dictionnary*/)
 {
   DT_THROW_IF(is_initialized (),
               std::logic_error,

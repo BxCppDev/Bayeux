@@ -235,7 +235,7 @@ int main (int argc_, char ** argv_)
       std::vector<std::pair<std::string,std::string> > modules_infos;
       MM.build_modules_infos(modules_infos);
       std::clog << "\nManaged modules are: " << std::endl;
-      for (int i = 0; i < modules_infos.size(); i++) {
+      for (int i = 0; i < (int) modules_infos.size(); i++) {
         std::clog << "'" << modules_infos[i].first << "' as a '" <<   modules_infos[i].second << "'"
                   << std::endl;
       }
@@ -258,7 +258,7 @@ int main (int argc_, char ** argv_)
       std::clog << "\nList of manager registered modules IDs: " << std::endl;
       std::vector<std::string> mmods;
       MM.build_registered_module_types(mmods);
-      for (int i = 0; i < mmods.size(); i++) {
+      for (int i = 0; i < (int) mmods.size(); i++) {
         std::clog << mmods[i] << std::endl;
       }
 
@@ -280,7 +280,7 @@ int main (int argc_, char ** argv_)
       std::vector<std::string> mods;
       DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(dpp::base_module).list_of_factories(mods);
       std::clog << "\nList of system registered modules: " << std::endl;
-      for (int i = 0; i < mods.size(); i++) {
+      for (int i = 0; i < (int) mods.size(); i++) {
         std::clog << mods[i] << std::endl;
       }
 
@@ -298,7 +298,6 @@ int main (int argc_, char ** argv_)
   return (error_code);
 }
 
-// end of test_module_manager.cxx
 /*
 ** Local Variables: --
 ** mode: c++ --
