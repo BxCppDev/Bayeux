@@ -771,25 +771,25 @@ namespace mctools {
             if (the_rayleigh_scattering) {
               G4LivermoreRayleighModel * the_livermore_rayleigh_model
                 = new G4LivermoreRayleighModel ();
-              the_rayleigh_scattering->SetModel (the_livermore_rayleigh_model);
+              the_rayleigh_scattering->SetEmModel (the_livermore_rayleigh_model);
             }
 
             if (the_photoelectric_effect) {
               G4LivermorePhotoElectricModel* the_livermore_photoelectric_model
                 = new G4LivermorePhotoElectricModel ();
-              the_photoelectric_effect->SetModel (the_livermore_photoelectric_model);
+              the_photoelectric_effect->SetEmModel (the_livermore_photoelectric_model);
             }
 
             if (the_compton_scattering) {
               G4LivermoreComptonModel* the_livermore_compton_model
                 = new G4LivermoreComptonModel ();
-              the_compton_scattering->SetModel (the_livermore_compton_model);
+              the_compton_scattering->SetEmModel (the_livermore_compton_model);
             }
 
             if (the_gamma_conversion) {
               G4LivermoreGammaConversionModel* the_livermore_gamma_conversion_model
                 = new G4LivermoreGammaConversionModel ();
-              the_gamma_conversion->SetModel (the_livermore_gamma_conversion_model);
+              the_gamma_conversion->SetEmModel (the_livermore_gamma_conversion_model);
             }
 
           } else if (is_em_low_energy_penelope ()) {
@@ -798,25 +798,25 @@ namespace mctools {
             if (the_rayleigh_scattering) {
               G4PenelopeRayleighModel * the_penelope_rayleigh_model
                 = new G4PenelopeRayleighModel ();
-              the_rayleigh_scattering->SetModel (the_penelope_rayleigh_model);
+              the_rayleigh_scattering->SetEmModel (the_penelope_rayleigh_model);
             }
 
             if (the_photoelectric_effect) {
               G4PenelopePhotoElectricModel* the_penelope_photoelectric_model
                 = new G4PenelopePhotoElectricModel ();
-              the_photoelectric_effect->SetModel (the_penelope_photoelectric_model);
+              the_photoelectric_effect->SetEmModel (the_penelope_photoelectric_model);
             }
 
             if (the_compton_scattering) {
               G4PenelopeComptonModel* the_penelope_compton_model
                 = new G4PenelopeComptonModel ();
-              the_compton_scattering->SetModel (the_penelope_compton_model);
+              the_compton_scattering->SetEmModel (the_penelope_compton_model);
             }
 
             if (the_gamma_conversion) {
               G4PenelopeGammaConversionModel* the_penelope_gamma_conversion_model
                 = new G4PenelopeGammaConversionModel ();
-              the_gamma_conversion->SetModel (the_penelope_gamma_conversion_model);
+              the_gamma_conversion->SetEmModel (the_penelope_gamma_conversion_model);
             }
 
           }
@@ -909,7 +909,7 @@ namespace mctools {
             if (is_em_low_energy_penelope ()) {
               G4PenelopeAnnihilationModel * the_penelope_annihilation_model
                 = new G4PenelopeAnnihilationModel ();
-              the_positron_annihilation->SetModel(the_penelope_annihilation_model);
+              the_positron_annihilation->SetEmModel(the_penelope_annihilation_model);
             }
             ++process_rank;
             pmanager->AddProcess (the_positron_annihilation,  0,-1, process_rank);

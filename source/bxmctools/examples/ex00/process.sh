@@ -257,6 +257,8 @@ if [ ${do_clean} -eq 1 ]; then
     rm -f mctools_ex00_electron_1MeV_cone@source_bulk.dpp.brio
     rm -f mctools_ex00_electron_1MeV_source_bulk.vg.data.gz
     rm -f mctools_ex00_electron_1MeV_source_bulk.vg.xml
+    rm -f mctools_ex00_electron_1MeV_cone_source_bulk.vg.data.gz
+    rm -f mctools_ex00_electron_1MeV_cone_source_bulk.vg.xml
     echo -e "\nDelete the HTML README document..." 1>&2
     rm -f mctools-ex00_README.html
     rm -f mctools_ex00_vertices2.txt
