@@ -9,10 +9,9 @@
 
 #include <datatools/exception.h>
 #include <datatools/logger.h>
+#include <datatools/utils.h>
 
 namespace mygsl {
-
-  // using namespace std;
 
   const size_t multidimensional_minimization::DEFAULT_MAX_ITER    = 1000;
   const size_t multidimensional_minimization::DEFAULT_MODULO_ITER = 100;
@@ -730,6 +729,7 @@ namespace mygsl {
       _epsabs_ = DEFAULT_EPSABS;
     }
     double f;
+    datatools::invalidate(f);
 
     do {
       iter++;
