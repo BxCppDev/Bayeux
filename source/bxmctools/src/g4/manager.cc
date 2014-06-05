@@ -348,6 +348,7 @@ namespace mctools {
                   std::logic_error,
                   "Unsupported output profile '" << output_profile_id_ << "' !");
       _activated_output_profile_ids_.insert(output_profile_id_);
+      DT_LOG_NOTICE(_logprio(), "Activate the output profile '" << output_profile_id_ << "'");
       return;
     }
 
@@ -1088,14 +1089,10 @@ namespace mctools {
       // If no supported output profiles have been defined before,
       // search them from setup properties:
       if (_supported_output_profile_ids_.empty()) {
-        std::cerr << "DEVEL: " << "mctools::g4::manager::_init_core: "
-                  << "No supported output profiles are defined yet..."
-                  << std::endl;
+        DT_LOG_TRACE(_logprio(), "No supported output profiles are defined yet...");
 
         if (manager_config.has_key("output_profiles")) {
-          std::cerr << "DEVEL: " << "mctools::g4::manager::_init_core: "
-                    << "Fetch supported output profiles yet..."
-                    << std::endl;
+          DT_LOG_TRACE(_logprio(), "Fetch supported output profiles yet...");
           std::vector<std::string> sops;
           manager_config.fetch("output_profiles", sops);
           for (int i = 0; i < (int) sops.size(); i++) {
@@ -1107,9 +1104,7 @@ namespace mctools {
               profile_description = manager_config.fetch_string(key_oss.str());
             }
             add_supported_output_profile(profile_id, profile_description);
-            std::cerr << "DEVEL: " << "mctools::g4::manager::_init_core: "
-                      << "Output profile '" << profile_id << "' is supported."
-                      << std::endl;
+            DT_LOG_TRACE(_logprio(), "Output profile '" << profile_id << "' is supported.");
           }
         }
       }
@@ -1117,29 +1112,19 @@ namespace mctools {
       // If no output profiles have been activated before,
       // search them from a setup property:
       if (! has_activated_output_profiles()) {
-
-        std::cerr << "DEVEL: " << "mctools::g4::manager::_init_core: "
-                  << "No activated output profiles is defined yet..."
-                  << std::endl;
+        DT_LOG_TRACE(_logprio(), "No activated output profiles is defined yet...");
 
         // If no activation rule for output profiles is defined for this session:
         if (_output_profiles_activation_rule_.empty()) {
-          std::cerr << "DEVEL: " << "mctools::g4::manager::_init_core: "
-                    << "No activation rule for output profiles is defined yet..."
-                    << std::endl;
+          DT_LOG_TRACE(_logprio(), "No activation rule for output profiles is defined yet...");
           // Search one from the configuration object:
           if (manager_config.has_key("output_profiles.activation")) {
-            std::cerr << "DEVEL: " << "mctools::g4::manager::_init_core: "
-                      << "Found an activation rule for output profiles..."
-                      << std::endl;
+            DT_LOG_TRACE(_logprio(), "Found an activation rule for output profiles...");
             std::string output_profiles_activation_rule =
               manager_config.fetch_string("output_profiles.activation");
             set_output_profiles_activation_rule(output_profiles_activation_rule);
           }
         }
-        std::cerr << "DEVEL: " << "mctools::g4::manager::_init_core: "
-                  << "Apply the activation rule for output profiles..."
-                  << std::endl;
         apply_output_profiles_activation_rule(_output_profiles_activation_rule_);
       }
 
