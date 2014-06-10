@@ -284,7 +284,6 @@ namespace dpp {
     // Setup the data output sink :
     if (_params_.output_files.size () > 0) {
       _sink_.reset (new dpp::output_module(_logging_));
-      _sink_->set_logging_priority(_logging_);
       datatools::properties sink_config;
       if (_params_.preserve_existing_files) sink_config.store_flag("preserve_existing_files");
       sink_config.store ("files.mode", "list");
