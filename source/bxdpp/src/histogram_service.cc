@@ -151,15 +151,12 @@ namespace dpp {
   void histogram_service::store_as_boost_file (const std::string & filename_) const
   {
     DT_LOG_NOTICE(get_logging_priority(),"Exporting histograms to Boost file '" << filename_ << "'...");
-    std::string fn = filename_;
+    const std::string fn = filename_;
     datatools::fetch_path_with_env (fn);
-
-    namespace ds = datatools;
-    ds::data_writer writer (fn,
-                            ds::using_multi_archives,
-                            ds::no_append_mode);
+    datatools::data_writer writer (fn,
+                                   datatools::using_multi_archives,
+                                   datatools::no_append_mode);
     writer.store (_pool_);
-
     return;
   }
 
