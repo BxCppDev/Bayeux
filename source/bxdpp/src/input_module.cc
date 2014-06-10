@@ -289,8 +289,8 @@ namespace dpp {
       if (get_common().get_filenames().is_ranged()) {
         if (get_common().get_file_index() >= (int)get_common().get_filenames().size()) {
           _grab_common().set_terminated(true);
-          DT_LOG_ERROR (get_logging_priority(), "No more available input data file !");
-          return PROCESS_FATAL;
+          DT_LOG_NOTICE (get_logging_priority(), "No more available input data file !");
+          return PROCESS_STOP;
         }
       }
       std::string source_label = get_common().get_filenames()[get_common().get_file_index()];
