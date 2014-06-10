@@ -373,8 +373,11 @@ namespace dpp {
           break;
         }
         int input_status = _source_->process (DR);
-        if (input_status != dpp::base_module::PROCESS_OK) {
-          DT_LOG_ERROR(_logging_, "Source of data records had an error ! Break !");
+        if (input_status & dpp::base_module::PROCESS_FATAL) {
+          DT_LOG_ERROR(_logging_, "Source of data records had a fatal error ! Break !");
+          break;
+        } else if (input_status & dpp::base_module::PROCESS_STOP) {
+          DT_LOG_NOTICE(_logging_, "No more available input data file.");
           break;
         }
       } // end of if (source)

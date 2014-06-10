@@ -289,7 +289,7 @@ namespace dpp {
       if (get_common().get_filenames().is_ranged()) {
         if (get_common().get_file_index() >= (int)get_common().get_filenames().size()) {
           _grab_common().set_terminated(true);
-          DT_LOG_NOTICE (get_logging_priority(), "No more available input data file !");
+          DT_LOG_TRACE (get_logging_priority(), "No more available input data file !");
           return PROCESS_STOP;
         }
       }
