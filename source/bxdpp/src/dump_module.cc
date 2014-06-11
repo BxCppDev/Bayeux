@@ -183,7 +183,7 @@ namespace dpp {
                 "Dump module '" << get_name () << "' is not initialized !");
 
     std::vector<std::string> bank_labels;
-    the_data_record.get_names( bank_labels);
+    the_data_record.get_names(bank_labels);
 
     if (!_title_.empty()) {
       _grab_output () << _indent_ << _title_ << ": " << std::endl;
