@@ -150,7 +150,22 @@ namespace dpp {
 
   void histogram_service::store_as_boost_file (const std::string & filename_) const
   {
-    DT_LOG_NOTICE(get_logging_priority(),"Exporting histograms to Boost file '" << filename_ << "'...");
+    DT_LOG_NOTICE(get_logging_priority(), "Exporting histograms to Boost file '" << filename_ << "'...");
+    DT_LOG_DEBUG(get_logging_priority(), "Cleaning histogram templates");
+    std::vector<std::string> histo_names;
+    _pool_.names (histo_names);
+    for (size_t i = 0; i < histo_names.size (); i++) {
+      const std::string & hname = histo_names[i];
+      const std::string & hgroup = _pool_.get_group (hname);
+      // If histogram group starts with '__' we consider it as 'private' and do
+      // not export it. This trick is particularly useful when defining
+      // 'template' histogram to avoid the export of these templates.
+      const bool is_private_histogram = boost::starts_with (hgroup, "__");
+      if (is_private_histogram) {
+        mygsl::histogram_pool * pool = const_cast<mygsl::histogram_pool*>(&_pool_);
+        pool->remove (hname);
+      }
+    }
     std::string fn = filename_;
     datatools::fetch_path_with_env (fn);
     datatools::data_writer writer (fn,
@@ -477,9 +492,8 @@ namespace dpp {
         DT_LOG_ERROR(get_logging_priority(),"TRIO format is not supported !");
       } else {
         int mode_guess;
-        namespace ds = datatools;
-        if (ds::io_factory::guess_mode_from_filename (fn, mode_guess)
-            == ds::io_factory::SUCCESS) {
+        if (datatools::io_factory::guess_mode_from_filename (fn, mode_guess)
+            == datatools::io_factory::SUCCESS) {
           store_as_boost_file (fn);
         } else {
           DT_THROW_IF(true,std::logic_error,"Cannot guess mode for file '" << fn << "' !");
