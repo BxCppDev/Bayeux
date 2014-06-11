@@ -286,6 +286,7 @@ namespace dpp {
       _sink_.reset (new dpp::output_module(_logging_));
       datatools::properties sink_config;
       if (_params_.preserve_existing_files) sink_config.store_flag("preserve_existing_files");
+      sink_config.store ("name", "data_output_sink");
       sink_config.store ("files.mode", "list");
       sink_config.store ("files.list.filenames", _params_.output_files);
       if (_params_.max_records_per_output_file > 0) {
@@ -304,6 +305,7 @@ namespace dpp {
     if (_params_.input_files.size () > 0) {
       _source_.reset (new dpp::input_module(_logging_));
       datatools::properties source_config;
+      source_config.store ("name", "data_input_source");
       source_config.store ("files.mode", "list");
       source_config.store ("files.list.filenames", _params_.input_files);
       if (_module_mgr_ && _module_mgr_->has_service_manager()) {
