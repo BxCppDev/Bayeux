@@ -175,6 +175,16 @@ namespace dpp {
     return;
   }
 
+  void histogram_service::load_from_boost_file (const std::string & filename_)
+  {
+    DT_LOG_NOTICE(get_logging_priority(), "Loading histograms from Boost file '" << filename_ << "'...");
+    std::string fn = filename_;
+    datatools::fetch_path_with_env (fn);
+    datatools::data_reader reader (fn, datatools::using_multi_archives);
+    reader.load (_pool_);
+    return;
+  }
+
   // static
   void histogram_service::export_to_root (const mygsl::histogram_2d & h2d_,
                                           const std::string & name_,

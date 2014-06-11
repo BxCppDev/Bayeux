@@ -78,6 +78,8 @@ namespace dpp {
 
     virtual int reset ();
 
+    void load_from_boost_file (const std::string & filename_);
+
     void store_as_boost_file (const std::string & filename_) const;
 
     void store_as_root_file (const std::string & filename_) const;
