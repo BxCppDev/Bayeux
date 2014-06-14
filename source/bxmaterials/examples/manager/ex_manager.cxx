@@ -1,14 +1,17 @@
-// -*- mode: c++ ; -*-
-// ex_manager.cxx
+// materials example: ex_manager.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
+// Third party:
+// - Bayeux/datatools;
 #include <datatools/utils.h>
 #include <datatools/properties.h>
 
+// This project:
 #include <materials/materials.h>
 #include <materials/materials_config.h>
 #include <materials/manager.h>
@@ -65,6 +68,7 @@ int main(int argc_, char ** argv_)
 
     // Initialization from the set of parameters extracted from the configuration file :
     my_material_manager.initialize(material_manager_config);
+
     my_material_manager.tree_dump(std::clog, "The material manager : ");
 
     // Pickup a specific material by name :
@@ -92,5 +96,3 @@ int main(int argc_, char ** argv_)
   MATERIALS_FINI();
   return(error_code);
 }
-
-// end of ex_manager.cxx

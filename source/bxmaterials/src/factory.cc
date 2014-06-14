@@ -1,153 +1,156 @@
-// -*- mode: c++ ; -*-
-/* factory.cc
- */
+// factory.cc
+
+// Ourselves:
+#include <materials/factory.h>
+
+// Standard Library:
 #include <iostream>
 #include <stdexcept>
 #include <sstream>
 
+// Third Party:
+// - Bayeux/datatools:
 #include <datatools/clhep_units.h>
 #include <datatools/units.h>
 #include <datatools/properties.h>
 #include <datatools/logger.h>
 #include <datatools/exception.h>
 
+// This Project:
 #include <materials/detail/tools.h>
-#include <materials/factory.h>
 #include <materials/isotope.h>
 #include <materials/element.h>
 #include <materials/material.h>
+#include <materials/manager.h>
 
 namespace materials {
 
-  using namespace std;
-
-  bool factory::is_debug () const
+  bool factory::is_debug() const
   {
     return _debug_;
   }
 
-  void factory::set_debug (bool new_value_)
+  void factory::set_debug(bool new_value_)
   {
     _debug_ = new_value_;
     return;
   }
 
-  // ctor:
-  factory::factory ()
+  factory::factory()
   {
     _debug_ = false;
+    _manager_ = 0;
     return;
   }
 
-  // dtor:
-  factory::~factory ()
+  factory::~factory()
   {
     return;
   }
 
-  isotope * factory::create_isotope (const string & name_,
-                                     const datatools::properties & config_) const
+  bool factory::has_manager() const
   {
-    int z = 0;
+    // std::cerr << "DEVEL: ************** factory::has_manager: @" << _manager_ << std::endl;
+    return _manager_ != 0;
+  }
+
+  void factory::set_manager(manager & mgr_)
+  {
+    _manager_ = &mgr_;
+    // std::cerr << "DEVEL: ************** factory::set_manager: manager @" << _manager_ << std::endl;
+    return;
+  }
+
+  isotope * factory::create_isotope(const std::string & name_,
+                                    const datatools::properties & config_) const
+  {
+    int z = chemical_symbol::Z_UNDEFINED;
     int a = 0;
-    int i = isotope::GROUND_STATE;
+    isotope::isomeric_level_type i = isotope::GROUND_STATE;
 
-    DT_THROW_IF(!config_.has_key ("z"),
+    DT_THROW_IF (!config_.has_key("z"),
                 std::logic_error, "Missing 'z' property for isotope '" << name_ << "' !");
-    z =  config_.fetch_integer ("z");
+    z = config_.fetch_integer("z");
 
-    DT_THROW_IF(!config_.has_key ("a"),
+    DT_THROW_IF (!config_.has_key("a"),
                 std::logic_error, "Missing 'a' property for isotope '" << name_ << "' !");
-    a =  config_.fetch_integer ("a");
+    a = config_.fetch_integer("a");
 
-    if (config_.has_key ("I"))
-      {
-        string i_str = config_.fetch_string ("I");
-        if (i_str == "GS")
-          {
-            i = isotope::GROUND_STATE;
-          }
-        else if (i_str == "M")
-          {
-            i = isotope::ISOMERIC_M;
-          }
-        else if (i_str == "N")
-          {
-            i = isotope::ISOMERIC_N;
-          }
-        else if (i_str == "O")
-          {
-            i = isotope::ISOMERIC_O;
-          }
-        else
-          {
-            DT_THROW_IF(true,
-                        std::logic_error, "Invalid 'I' property label: '" << i_str << "' for isotope '" << name_ << "' !");
-          }
+    if (config_.has_key("I")) {
+      std::string i_str = config_.fetch_string("I");
+      i = isotope::label_to_isomeric(i_str);
+      DT_THROW_IF (i == isotope::ISOMERIC_INVALID,
+                  std::logic_error, "Invalid 'I' property label: '" << i_str << "' for isotope '" << name_ << "' !");
+    }
+    isotope * iso = new isotope(name_, z, a, i);
+    unsigned int iso_build_flag = isotope::BF_LOCK;
+    if (has_manager()) {
+      if (_manager_->is_load_isotope_mass_data()) {
+        iso_build_flag |= isotope::BF_MASS_DATA;
       }
-    isotope * iso = new isotope (name_, z, a, i);
-    iso->build ();
+      if (_manager_->is_load_isotope_decay_data()) {
+        iso_build_flag |= isotope::BF_DECAY_DATA;
+      }
+    }
+    iso->build(iso_build_flag);
     return iso;
   }
 
 
-  element * factory::create_element (const string & name_,
-                                     const datatools::properties & config_,
-                                     const isotope_dict_type & isotopes_) const
+  element * factory::create_element(const std::string & name_,
+                                    const datatools::properties & config_,
+                                    const isotope_dict_type & isotopes_) const
   {
     int z = 0;
     double a = -1.0;
-    vector<string> isotopes;
-    vector<double> weights;
+    std::vector<std::string> isotopes;
+    std::vector<double> weights;
 
-    DT_THROW_IF (!config_.has_key ("z"),
+    DT_THROW_IF (!config_.has_key("z"),
                  std::logic_error ,
                  "Missing 'z' property for element '" << name_ << "' !");
-    z = config_.fetch_integer ("z");
+    z = config_.fetch_integer("z");
 
-    if (config_.has_key ("a")) {
-      a = config_.fetch_real ("a");
+    if (config_.has_key("a")) {
+      a = config_.fetch_real("a");
       DT_THROW_IF (config_.has_explicit_unit("a"),
                    std::logic_error,
                    "Atomic mass property 'a' does not support any explicit unit !");
     } else {
-      DT_THROW_IF (! config_.has_key ("isotope.names"),
+      DT_THROW_IF (! config_.has_key("isotope.names"),
                    std::logic_error ,
                    "Missing 'isotope.names' property for element '" << name_ << "' !");
-      config_.fetch ("isotope.names", isotopes);
+      config_.fetch("isotope.names", isotopes);
 
-      DT_THROW_IF (! config_.has_key ("isotope.weights"),
+      DT_THROW_IF (! config_.has_key("isotope.weights"),
                    std::logic_error , "Missing 'isotope.weights' property for element '" << name_ << "' !");
-      config_.fetch ("isotope.weights", weights);
+      config_.fetch("isotope.weights", weights);
 
-      DT_THROW_IF (isotopes.size () != weights.size (),
+      DT_THROW_IF (isotopes.size() != weights.size(),
                    std::logic_error ,"Unmatching isotopes/weights vector size for element '" << name_ << "' !");
     }
 
-    element * elmt = new element (name_, z);
+    element * elmt = new element(name_, z);
 
-    if (a > 0.0)
-      {
-        elmt->set_molar_mass (a);
-      }
-    else
-      {
+    if (a > 0.0) {
+        elmt->set_molar_mass(a);
+      } else {
         // add isotopes in element:
-        for (size_t i = 0; i < isotopes.size (); i++)
-          {
-            isotope_dict_type::const_iterator found = isotopes_.find (isotopes[i]);
-            DT_THROW_IF (found == isotopes_.end (),
+        for (size_t i = 0; i < isotopes.size(); i++) {
+            isotope_dict_type::const_iterator found = isotopes_.find(isotopes[i]);
+            DT_THROW_IF (found == isotopes_.end(),
                          std::logic_error,
                          "Isotope '" << isotopes[i] << "' not found in map of isotopes for element '" << name_ << "' !");
-            const isotope & iso = found->second.get_ref ();
-            elmt->add_isotope (iso, weights[i]);
+            const isotope & iso = found->second.get_ref();
+            elmt->add_isotope(iso, weights[i]);
           }
       }
-    elmt->build ();
+    unsigned int iso_build_flag = element::BF_LOCK;
+    elmt->build(iso_build_flag);
     return elmt;
   }
 
-  material * factory::create_material (const string & name_,
+  material * factory::create_material(const std::string & name_,
                                        const datatools::properties & config_,
                                        const element_dict_type & elements_,
                                        const material_dict_type & materials_) const
@@ -158,19 +161,19 @@ namespace materials {
     double density_unit = material::g_per_cm3();
     //cerr << "DEVEL: factory::create_material: 1 g=" << CLHEP::g << endl;
     //cerr << "DEVEL: factory::create_material: 1 cm3=" << CLHEP::cm3 << endl;
-    string formula;
+    std::string formula;
     double temperature = -1.0;
     double temperature_unit = CLHEP::kelvin;
     double pressure = -1.0;
     double pressure_unit = CLHEP::bar;
     double molar_volume_unit = CLHEP::cm3/CLHEP::mole;
     double molar_concentration_unit = CLHEP::mole/CLHEP::cm3;
-    string state = "";
+    std::string state = "";
 
-    vector<string> composition_names;
-    vector<int>    composition_nb_of_atoms;
-    vector<double> composition_fraction_mass;
-    string         composition_mode_label;
+    std::vector<std::string> composition_names;
+    std::vector<int>    composition_nb_of_atoms;
+    std::vector<double> composition_fraction_mass;
+    std::string         composition_mode_label;
     int            composition_mode = -1;
     double         mean_z = -1.0;
     double         mean_a = -1.0;
@@ -180,40 +183,40 @@ namespace materials {
 
     int build_mode = BM_COMPOSITION;
 
-    if (config_.has_key ("build_mode")) {
-      std::string bm_label = config_.fetch_string ("build_mode");
+    if (config_.has_key("build_mode")) {
+      std::string bm_label = config_.fetch_string("build_mode");
       if (bm_label == "composition") {
         build_mode = BM_COMPOSITION;
       } else if (bm_label == "doping") {
         build_mode = BM_DOPING;
       } else {
-        DT_THROW_IF(true, std::logic_error,
+        DT_THROW_IF (true, std::logic_error,
                     "Invalid build mode '" << bm_label << "' for material '" << name_ <<"' !");
       }
     }
 
-    if (config_.has_key ("density.unit")) {
-      std::string density_unit_str = config_.fetch_string ("density.unit");
-      density_unit = datatools::units::get_density_unit_from (density_unit_str);
+    if (config_.has_key("density.unit")) {
+      std::string density_unit_str = config_.fetch_string("density.unit");
+      density_unit = datatools::units::get_density_unit_from(density_unit_str);
     }
     if (devel) std::cerr << "DEVEL: material '" << name_ << "' : density_unit = "
-                         << density_unit / (CLHEP::g/CLHEP::cm3) << " [g/cm3]" << std::endl;
+                         << density_unit /(CLHEP::g/CLHEP::cm3) << " [g/cm3]" << std::endl;
 
-    if (config_.has_key ("molar_volume.unit")) {
-      std::string molar_volume_unit_str = config_.fetch_string ("molar_volume.unit");
+    if (config_.has_key("molar_volume.unit")) {
+      std::string molar_volume_unit_str = config_.fetch_string("molar_volume.unit");
       if (molar_volume_unit_str == "cm3/mol") {
         molar_volume_unit = CLHEP::cm3/CLHEP::mole;
       } else {
-        DT_THROW_IF(true, std::logic_error, "Invalid molar volume unit '"
+        DT_THROW_IF (true, std::logic_error, "Invalid molar volume unit '"
                     << molar_volume_unit_str << "' !");
       }
     }
     if (devel) std::cerr << "DEVEL: material '" << name_ << "' : molar_volume_unit = "
-                         << molar_volume_unit / (CLHEP::cm3/CLHEP::mole) << " [cm3/mol]"
+                         << molar_volume_unit /(CLHEP::cm3/CLHEP::mole) << " [cm3/mol]"
                          << std::endl;
 
-    if (config_.has_key ("molar_concentration.unit")) {
-      std::string molar_concentration_unit_str = config_.fetch_string ("molar_concentration.unit");
+    if (config_.has_key("molar_concentration.unit")) {
+      std::string molar_concentration_unit_str = config_.fetch_string("molar_concentration.unit");
       if (molar_concentration_unit_str == "mol/cm3") {
         molar_concentration_unit = CLHEP::mole/CLHEP::cm3;
       } else if (molar_concentration_unit_str == "mol/dm3"
@@ -224,64 +227,64 @@ namespace materials {
       } else if (molar_concentration_unit_str == "/cm3"
                  || molar_concentration_unit_str == "atom/cm3"
                  || molar_concentration_unit_str == "atoms/cm3") {
-        molar_concentration_unit = (CLHEP::mole/CLHEP::Avogadro)/CLHEP::cm3;
+        molar_concentration_unit =(CLHEP::mole/CLHEP::Avogadro)/CLHEP::cm3;
       } else {
-        DT_THROW_IF(true, std::logic_error, "Invalid molar concentration unit '" << molar_concentration_unit_str << "' !");
+        DT_THROW_IF (true, std::logic_error, "Invalid molar concentration unit '" << molar_concentration_unit_str << "' !");
       }
     }
     if (devel) std::cerr << "DEVEL: material '" << name_ << "' : molar_concentration_unit = "
-                         << molar_concentration_unit / ((CLHEP::mole/CLHEP::Avogadro)/CLHEP::cm3)
+                         << molar_concentration_unit /((CLHEP::mole/CLHEP::Avogadro)/CLHEP::cm3)
                          << " [atoms/cm3]"
                          << std::endl;
 
-    if (config_.has_key ("temperature.unit")) {
-      std::string temperature_unit_str =  config_.fetch_string ("temperature.unit");
-      temperature_unit = datatools::units::get_temperature_unit_from (temperature_unit_str);
+    if (config_.has_key("temperature.unit")) {
+      std::string temperature_unit_str =  config_.fetch_string("temperature.unit");
+      temperature_unit = datatools::units::get_temperature_unit_from(temperature_unit_str);
     }
     if (devel) std::cerr << "DEVEL: material '" << name_ << "' : temperature_unit = "
-                         << temperature_unit / (CLHEP::kelvin) << " [K]"
+                         << temperature_unit /(CLHEP::kelvin) << " [K]"
                          << std::endl;
 
-    if (config_.has_key ("pressure.unit")) {
-      string pressure_unit_str =  config_.fetch_string ("pressure.unit");
-      pressure_unit = datatools::units::get_pressure_unit_from (pressure_unit_str);
+    if (config_.has_key("pressure.unit")) {
+      std::string pressure_unit_str =  config_.fetch_string("pressure.unit");
+      pressure_unit = datatools::units::get_pressure_unit_from(pressure_unit_str);
     }
     if (devel) std::cerr << "DEVEL: material '" << name_ << "' : pressure_unit = "
-                         << pressure_unit / (CLHEP::pascal) << " [Pa]"
+                         << pressure_unit /(CLHEP::pascal) << " [Pa]"
                          << std::endl;
 
     if (build_mode == BM_COMPOSITION) {
-      DT_THROW_IF (!config_.has_key ("density"),
+      DT_THROW_IF (!config_.has_key("density"),
                    std::logic_error,
                    "Missing 'density' property for material '" << name_ << "' !");
-      density = config_.fetch_real ("density");
+      density = config_.fetch_real("density");
       if (! config_.has_explicit_unit("density")) density *= density_unit;
     }
 
-    if (config_.has_key ("temperature")) {
-      temperature = config_.fetch_real ("temperature");
+    if (config_.has_key("temperature")) {
+      temperature = config_.fetch_real("temperature");
       if (! config_.has_explicit_unit("temperature")) temperature *= temperature_unit;
     }
 
-    if (config_.has_key ("pressure")) {
-      pressure = config_.fetch_real ("pressure");
+    if (config_.has_key("pressure")) {
+      pressure = config_.fetch_real("pressure");
       if (! config_.has_explicit_unit("pressure")) pressure *= pressure_unit;
     }
 
-    if (config_.has_key ("formula")) {
-      formula = config_.fetch_string ("formula");
+    if (config_.has_key("formula")) {
+      formula = config_.fetch_string("formula");
     }
 
-    if (config_.has_key ("state")) {
-      state = config_.fetch_string ("state");
+    if (config_.has_key("state")) {
+      state = config_.fetch_string("state");
     }
 
     if (build_mode == BM_COMPOSITION) {
 
-      DT_THROW_IF (! config_.has_key ("composition.mode"),
+      DT_THROW_IF (! config_.has_key("composition.mode"),
                    std::logic_error,
                    "Missing 'composition.mode' property for material '" << name_ << "' !");
-      composition_mode_label =  config_.fetch_string ("composition.mode");
+      composition_mode_label =  config_.fetch_string("composition.mode");
 
       if (composition_mode_label == "number_of_atoms") {
         composition_mode = material::NUMBER_OF_ATOMS;
@@ -290,44 +293,44 @@ namespace materials {
       } else if (composition_mode_label == "mean_za") {
         composition_mode = material::MEAN_ZA;
       }  else {
-        DT_THROW_IF (true,std::logic_error,"Invalid 'composition.mode' property ('" << composition_mode_label << "') for material '" << name_ << "' !");
+        DT_THROW_IF (true,std::logic_error,"Invalid 'composition.mode' property('" << composition_mode_label << "') for material '" << name_ << "' !");
       }
 
       if (composition_mode == material::MEAN_ZA) {
-        DT_THROW_IF (! config_.has_key ("mean_z"),
+        DT_THROW_IF (! config_.has_key("mean_z"),
                      std::logic_error,
                      "Missing 'mean_z' property !");
-        mean_z = config_.fetch_real ("mean_z");
+        mean_z = config_.fetch_real("mean_z");
 
-        DT_THROW_IF (! config_.has_key ("mean_a"),
+        DT_THROW_IF (! config_.has_key("mean_a"),
                      std::logic_error,
                      "Missing 'mean_a' property !");
-        mean_a = config_.fetch_real ("mean_a");
+        mean_a = config_.fetch_real("mean_a");
       } else {
-        DT_THROW_IF (! config_.has_key ("composition.names"),
+        DT_THROW_IF (! config_.has_key("composition.names"),
                      std::logic_error,
                      "Missing 'composition.names' property for material '" << name_ << "' !");
-        config_.fetch ("composition.names", composition_names);
-        DT_THROW_IF (composition_names.size () == 0,
+        config_.fetch("composition.names", composition_names);
+        DT_THROW_IF (composition_names.size() == 0,
                      std::logic_error,
                      "Empty list of compounds for material '" << name_ << "' !");
 
         if (composition_mode == material::NUMBER_OF_ATOMS) {
-          DT_THROW_IF (! config_.has_key ("composition.number_of_atoms"),
+          DT_THROW_IF (! config_.has_key("composition.number_of_atoms"),
                        std::logic_error,
                        "Missing 'composition.number_of_atoms' property for material '" << name_ << "' !");
-          config_.fetch ("composition.number_of_atoms", composition_nb_of_atoms);
-          DT_THROW_IF (composition_names.size () != composition_nb_of_atoms.size (),
+          config_.fetch("composition.number_of_atoms", composition_nb_of_atoms);
+          DT_THROW_IF (composition_names.size() != composition_nb_of_atoms.size(),
                        std::logic_error,
                        "Unmatching sizes of list of compounds/number of atoms !");
         }
 
         if (composition_mode == material::FRACTION_MASS) {
-          DT_THROW_IF (! config_.has_key ("composition.fraction_mass"),
+          DT_THROW_IF (! config_.has_key("composition.fraction_mass"),
                        std::logic_error,
                        "Missing 'composition.fraction_mass' property for material '" << name_ << "' !");
-          config_.fetch ("composition.fraction_mass", composition_fraction_mass);
-          DT_THROW_IF (composition_names.size () != composition_fraction_mass.size (),
+          config_.fetch("composition.fraction_mass", composition_fraction_mass);
+          DT_THROW_IF (composition_names.size() != composition_fraction_mass.size(),
                        std::logic_error,
                        "Unmatching sizes of list of compounds/fraction mass for material '" << name_ << "' !");
         }
@@ -342,17 +345,17 @@ namespace materials {
       std::vector<double> doping_molar_masses;
 
       // Doped material:
-      DT_THROW_IF(! config_.has_key("doping.doped_material"), std::logic_error,
+      DT_THROW_IF (! config_.has_key("doping.doped_material"), std::logic_error,
                   "Missing 'doping.doped_material' property for material '" << name_ << "' !");
       doped_material_name = config_.fetch_string("doping.doped_material");
       if (devel) std::cerr << "DEVEL: material '" << name_ << "' : doped_material = '"
                            << doped_material_name << "'"  << std::endl;
 
       // List of doping elements:
-      DT_THROW_IF(! config_.has_key("doping.doping_elements"), std::logic_error,
+      DT_THROW_IF (! config_.has_key("doping.doping_elements"), std::logic_error,
                   "Missing 'doping.doping_elements' property for material '" << name_ << "' !");
       config_.fetch("doping.doping_elements", doping_elements);
-      DT_THROW_IF(doping_elements.size()<1, std::logic_error,
+      DT_THROW_IF (doping_elements.size()<1, std::logic_error,
                   "Invalid 'doping.doping_elements' property value for material '" << name_ << "' !");
       if (devel) {
         std::cerr << "DEVEL: material '" << name_ << "' : doping elements = ";
@@ -362,10 +365,10 @@ namespace materials {
         std::cerr << std::endl;
       }
       // List of doping concentrations:
-      DT_THROW_IF(! config_.has_key("doping.doping_concentrations"), std::logic_error,
+      DT_THROW_IF (! config_.has_key("doping.doping_concentrations"), std::logic_error,
                   "Missing 'doping.doping_concentrations' property for material '" << name_ << "' !");
       config_.fetch("doping.doping_concentrations", doping_concentrations);
-      DT_THROW_IF(doping_elements.size() != doping_concentrations.size(), std::logic_error,
+      DT_THROW_IF (doping_elements.size() != doping_concentrations.size(), std::logic_error,
                   "'doping.doping_concentrations' and 'doping.doping_elements' size mismatch for material '" << name_ << "' !");
       DT_THROW_IF (config_.has_explicit_unit("doping.doping_concentrations"),
                    std::logic_error,
@@ -383,10 +386,10 @@ namespace materials {
         std::cerr << " [atoms/cm3]" << std::endl;
       }
       // List of doping molar volumes:
-      DT_THROW_IF(! config_.has_key("doping.doping_molar_volumes"), std::logic_error,
+      DT_THROW_IF (! config_.has_key("doping.doping_molar_volumes"), std::logic_error,
                   "Missing 'doping.doping_molar_volumes' property for material '" << name_ << "' !");
       config_.fetch("doping.doping_molar_volumes", doping_molar_volumes);
-      DT_THROW_IF(doping_elements.size() != doping_molar_volumes.size(), std::logic_error,
+      DT_THROW_IF (doping_elements.size() != doping_molar_volumes.size(), std::logic_error,
                   "'doping.doping_molar_volumes' and 'doping.doping_elements' size mismatch for material '" << name_ << "' !");
       DT_THROW_IF (config_.has_explicit_unit("doping.doping_molar_volumes"),
                    std::logic_error,
@@ -398,19 +401,19 @@ namespace materials {
       if (devel) {
         std::cerr << "DEVEL: material '" << name_ << "' : doping molar volumes = ";
         for (size_t i = 0; i < doping_molar_volumes.size(); i++) {
-          std::cerr << " " << doping_molar_volumes[i] / (CLHEP::cm3/CLHEP::mole) << " ";
+          std::cerr << " " << doping_molar_volumes[i] /(CLHEP::cm3/CLHEP::mole) << " ";
         }
         std::cerr << " [cm3/mol]" << std::endl;
       }
 
-      material_dict_type::const_iterator found_doped = materials_.find (doped_material_name);
-      DT_THROW_IF (found_doped == materials_.end (),
+      material_dict_type::const_iterator found_doped = materials_.find(doped_material_name);
+      DT_THROW_IF (found_doped == materials_.end(),
                    std::logic_error,
                    "Unknown doped material '" << doped_material_name << "' for material '" << name_ << "' !");
 
       double doped_density = found_doped->second.get_ref().get_density();
       if (devel) std::cerr << "DEVEL: material '" << name_ << "' : doped_density  = "
-                           << doped_density / (CLHEP::g/CLHEP::cm3) << " [g/cm3]" << std::endl;
+                           << doped_density /(CLHEP::g/CLHEP::cm3) << " [g/cm3]" << std::endl;
 
       // Reference volume for the computing of fraction masses:
       const double volume_ref = 1. * CLHEP::cm3;
@@ -427,15 +430,15 @@ namespace materials {
         const std::string & doping_element_name = doping_elements[i];
         if (devel) std::cerr << "DEVEL: material '" << name_ << "' :  --> doping_element_name = '"
                              << doping_element_name << "': " << std::endl;
-        element_dict_type::const_iterator found_doping = elements_.find (doping_element_name);
-        DT_THROW_IF (found_doped == materials_.end (),
+        element_dict_type::const_iterator found_doping = elements_.find(doping_element_name);
+        DT_THROW_IF (found_doped == materials_.end(),
                      std::logic_error,
                      "Unknown doping element '" << doping_element_name
                      << "' for material '" << name_ << "' !");
-        const element & doping_elmt = found_doping->second.get_ref ();
-        double doping_molar_mass    = doping_elmt.get_molar_mass() * (CLHEP::g/CLHEP::mole);
+        const element & doping_elmt = found_doping->second.get_ref();
+        double doping_molar_mass    = doping_elmt.get_molar_mass() *(CLHEP::g/CLHEP::mole);
         if (devel) std::cerr << "DEVEL: material '" << name_ << "' :    --> doping_molar_mass  = "
-                             << doping_molar_mass / (CLHEP::g/CLHEP::mole) << " [g/mol]" << std::endl;
+                             << doping_molar_mass /(CLHEP::g/CLHEP::mole) << " [g/mol]" << std::endl;
         double doping_concentration = doping_concentrations[i];
         double doping_molar_volume  = doping_molar_volumes[i];
         double doping_amount_ref    = doping_concentration * volume_ref;
@@ -450,7 +453,7 @@ namespace materials {
         doping_masses_ref.push_back(doping_mass_ref);
         total_mass_ref += doping_mass_ref;
         doped_volume_ref -= doping_volume_ref;
-        DT_THROW_IF(doped_volume_ref <= 0.0, std::logic_error,
+        DT_THROW_IF (doped_volume_ref <= 0.0, std::logic_error,
                     "Invalid remaining quantity of doped material for material '" << name_ << "' !");
 
       }
@@ -485,24 +488,24 @@ namespace materials {
 
       density = total_mass_ref / volume_ref;
       if (devel) std::cerr << "DEVEL: material '" << name_ << "' : density = "
-                           << density / (CLHEP::g / CLHEP::cm3) << " [g/cm3]" << std::endl;
+                           << density /(CLHEP::g / CLHEP::cm3) << " [g/cm3]" << std::endl;
 
       if (devel) std::cerr << "DEVEL: material '" << name_ << "' : Done." << std::endl;
       // end of BM_DOPING
     }
 
     // Build the new material:
-    material * matl = new material ();
+    material * matl = new material();
     try {
       if (devel) std::cerr << "DEVEL: material '" << name_ << "' : Allocating new material..." << std::endl;
-      matl->set_name (name_);
-      matl->set_density (density);
+      matl->set_name(name_);
+      matl->set_density(density);
       if (devel) std::cerr << "DEVEL: material '" << name_ << "' : density = "
-                           <<  matl->get_density() / (CLHEP::g / CLHEP::cm3) << " [g/cm3]" << std::endl;
+                           <<  matl->get_density() /(CLHEP::g / CLHEP::cm3) << " [g/cm3]" << std::endl;
 
       if (composition_mode == material::MEAN_ZA) {
         if (devel) std::cerr << "DEVEL: material '" << name_ << "' : by MEAN_ZA..." << std::endl;
-        matl->set_mean_z_a (mean_z, mean_a);
+        matl->set_mean_z_a(mean_z, mean_a);
         if (devel) std::cerr << "DEVEL: material '" << name_ << "' : by MEAN_ZA done." << std::endl;
       }
       if (devel) std::cerr << "DEVEL: material '" << name_ << "' : composition_mode = "
@@ -511,17 +514,17 @@ namespace materials {
       if (composition_mode == material::NUMBER_OF_ATOMS) {
         if (devel) std::cerr << "DEVEL: material '" << name_ << "' : by NUMBER_OF_ATOMS..." << std::endl;
         if (devel) std::cerr << "DEVEL: material '" << name_ << "' : number of compounds = "
-                             << composition_names.size () << std::endl;
-        for (size_t i = 0; i < composition_names.size (); i++) {
+                             << composition_names.size() << std::endl;
+        for (size_t i = 0; i < composition_names.size(); i++) {
           if (devel) std::cerr << "DEVEL: material '" << name_ << "' : compound name = '"
                                << composition_names[i] << "'" << std::endl;
-          element_dict_type::const_iterator found = elements_.find (composition_names[i]);
-          DT_THROW_IF (found == elements_.end (),
+          element_dict_type::const_iterator found = elements_.find(composition_names[i]);
+          DT_THROW_IF (found == elements_.end(),
                        std::logic_error,
                        "Unknown element '" << composition_names[i] << "') !");
-          const element & elmt = found->second.get_ref ();
+          const element & elmt = found->second.get_ref();
           int nb_atoms = composition_nb_of_atoms[i];
-          matl->add_element_by_nb_of_atoms (elmt , nb_atoms);
+          matl->add_element_by_nb_of_atoms(elmt , nb_atoms);
         }
         if (devel) std::cerr << "DEVEL: material '" << name_ << "' : by NUMBER_OF_ATOMS done." << std::endl;
       }
@@ -529,51 +532,51 @@ namespace materials {
       if (composition_mode == material::FRACTION_MASS) {
         if (devel) std::cerr << "DEVEL: material '" << name_ << "' : by FRACTION_MASS..." << std::endl;
         if (devel) std::cerr << "DEVEL: material '" << name_ << "' : number of compounds = "
-                             << composition_names.size () << std::endl;
-        for (size_t i = 0; i < composition_names.size (); i++) {
+                             << composition_names.size() << std::endl;
+        for (size_t i = 0; i < composition_names.size(); i++) {
           if (devel) std::cerr << "DEVEL: material '" << name_ << "' : compound name = '"
                                << composition_names[i] << "'" << std::endl;
           const element * a_elmt = 0;
           const material * a_matl = 0;
           if (composition_names[i] == name_) {
-            ostringstream message;
+            std::ostringstream message;
             message << "Self-referenced material with name '"
                     << composition_names[i] << "' for material '" << name_ << "' !";
             delete matl;
-            DT_THROW_IF(true, std::logic_error, message.str ());
+            DT_THROW_IF (true, std::logic_error, message.str());
           }
-          element_dict_type::const_iterator found = elements_.find (composition_names[i]);
-          if (found != elements_.end ()) {
-            a_elmt = found->second.get_ptr ();
+          element_dict_type::const_iterator found = elements_.find(composition_names[i]);
+          if (found != elements_.end()) {
+            a_elmt = found->second.get_ptr();
             if (devel) std::cerr << "DEVEL: material '" << name_ << "' : Found compound element '"
                                  << composition_names[i] << "'" << std::endl;
           } else {
             if (devel) std::cerr << "DEVEL: material '" << name_ << "' : Compound '"
                                  << composition_names[i] << "' is not a known element..." << std::endl;
-            material_dict_type::const_iterator found2 = materials_.find (composition_names[i]);
-            if (found2 != materials_.end ()) {
+            material_dict_type::const_iterator found2 = materials_.find(composition_names[i]);
+            if (found2 != materials_.end()) {
               DT_THROW_IF (found2->second.is_alias(),
                            std::logic_error,
                            "Cannot use material alias '" << composition_names[i]
                            << "' as a component for material '" << name_ << "' !");
-              a_matl = found2->second.get_ptr ();
+              a_matl = found2->second.get_ptr();
               if (devel) std::cerr << "DEVEL: material '" << name_ << "' : Found compound material '"
                                    << composition_names[i] << "'" << std::endl;
             } else {
-              ostringstream message;
+              std::ostringstream message;
               message << "materials::factory::create_material: "
                       << "Unknown element or material '" << composition_names[i]
                       << "' for material '" << name_ << "' !";
-              DT_THROW_IF(true, std::logic_error,
+              DT_THROW_IF (true, std::logic_error,
                           "Unknown element or material '" << composition_names[i]
                           << "' for material '" << name_ << "' !");
             }
           }
           double f_mass = composition_fraction_mass[i];
           if (a_elmt !=  0) {
-            matl->add_element_by_mass (*a_elmt, f_mass);
+            matl->add_element_by_mass(*a_elmt, f_mass);
           }  else {
-            matl->add_material_by_mass (*a_matl, f_mass);
+            matl->add_material_by_mass(*a_matl, f_mass);
           }
         }
         if (devel) std::cerr << "DEVEL: material '" << name_ << "' : by FRACTION_MASS done." << std::endl;
@@ -582,33 +585,40 @@ namespace materials {
       if (devel) std::cerr << "DEVEL: material '" << name_ << "' : auxiliary properties..." << std::endl;
 
       // Some auxiliary properties:
-      if (! formula.empty ()) {
-        matl->grab_properties ().store ("formula", formula);
+      if (! formula.empty()) {
+        matl->grab_properties().store("formula", formula);
       }
 
-      if (! state.empty ()) {
-        matl->grab_properties ().store ("state", state);
+      if (! state.empty()) {
+        matl->grab_properties().store("state", state);
       }
 
       if (temperature > 0.0) {
-        matl->grab_properties ().store ("temperature", temperature);
+        matl->grab_properties().store("temperature", temperature);
       }
 
       if (pressure > 0.0) {
-        matl->grab_properties ().store ("pressure", pressure);
+        matl->grab_properties().store("pressure", pressure);
       }
 
-      // 2012-11-03 FM : support for various "Material Properties Tables"
-      // ala Geant4 :
-      config_.export_starting_with (matl->grab_properties (), "mpt.");
-
+      if (has_manager()) {
+        const std::set<std::string> & prefixes
+          = _manager_->get_material_exported_prefixes();
+        for (std::set<std::string>::const_iterator i = prefixes.begin();
+             i != prefixes.end();
+             i++) {
+          const std::string & prefix = *i;
+          config_.export_starting_with(matl->grab_properties(), prefix);
+        }
+      }
       if (devel) std::cerr << "DEVEL: material '" << name_ << "' : building..." << std::endl;
-      matl->build ();
+      unsigned int iso_build_flag = material::BF_LOCK;
+      matl->build(iso_build_flag);
       if (devel) std::cerr << "DEVEL: material '" << name_ << "' : building done." << std::endl;
     }
-    catch (exception & x) {
-      DT_LOG_ERROR(datatools::logger::PRIO_ERROR, x.what ());
-      //cerr << "materials::factory::create_material: " << "Exception : " << x.what () << endl;
+    catch (std::exception & x) {
+      DT_LOG_ERROR(datatools::logger::PRIO_ERROR, x.what());
+      //cerr << "materials::factory::create_material: " << "Exception : " << x.what() << endl;
       delete matl;
       matl = 0;
       throw x;
@@ -620,7 +630,7 @@ namespace materials {
 
 /****************************************************************/
 // OCD support for class '::materials::isotope' :
-DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::materials::isotope,ocd_)
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::materials::isotope, ocd_)
 {
   ocd_.set_class_name("materials::isotope");
   ocd_.set_class_description("An object that describes an isotope");

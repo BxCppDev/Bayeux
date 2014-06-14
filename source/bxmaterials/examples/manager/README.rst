@@ -52,10 +52,10 @@ Quick start
        ..
      $ make
      $ make install
-     $ cd ..
 
 4. Inspect the material manager configuration::
 
+     $ cd ..
      $ bxmaterials_inspector --manager-config "config/manager.conf" --with-decoration -M
 
 5. Run the example program::

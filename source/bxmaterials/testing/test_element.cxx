@@ -1,11 +1,12 @@
-// -*- mode: c++ ; -*-
 // test_element.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
+// This project
 #include <materials/isotope.h>
 #include <materials/element.h>
 #include <materials/materials.h>
@@ -16,84 +17,68 @@ int main (int /*argc_*/, char ** /*argv_*/)
 {
   int error_code = EXIT_SUCCESS;
   try {
-    clog << "Test program for class 'element'!" << endl;
-    // bool debug = false;
+    std::clog << "Test program for class 'element'!" << std::endl;
 
-    // int iarg = 1;
-    // while (iarg < argc_) {
-    //   string token = argv_[iarg];
+    std::clog << "MATERIALS_RESOURCE_DIR='" << getenv("MATERIALS_RESOURCE_DIR") << "'" << std::endl;
 
-    //   if (token[0] == '-') {
-    //     string option = token;
-    //     if ((option == "-d") || (option == "--debug")) {
-    //       debug = true;
-    //     } else {
-    //       clog << "warning: ignoring option '" << option << "'!" << endl;
-    //     }
-    //   } else {
-    //     string argument = token;
-    //     /* Here you may add more argument handlers... */
-    //     {
-    //       clog << "warning: ignoring argument '" << argument << "'!" << endl;
-    //     }
-    //   }
-    //   iarg++;
-    // }
+    materials::isotope iso_H1(std::string("H"), 1,
+                              materials::isotope::GROUND_STATE,
+                              materials::isotope::BF_MASS_DATA);
 
-    std::cout << "MATERIALS_RESOURCE_DIR='" << getenv("MATERIALS_RESOURCE_DIR") << "'" << std::endl;
+    materials::isotope iso_H2(std::string("Hydrogen 2"),
+                              std::string("H"), 2,
+                              materials::isotope::GROUND_STATE);
 
-    materials::isotope iso_H1;
-    iso_H1 = materials::isotope("Hydrogen 1","H",1,0,true);
+    materials::isotope iso_H3("Hydrogen 3", "H", 3,
+                              materials::isotope::GROUND_STATE);
 
-    materials::isotope iso_H2 = materials::isotope ("Hydrogen 2", "H", 2, materials::isotope::GROUND_STATE, true);
-    materials::isotope iso_H3 = materials::isotope ("Hydrogen 3", "H", 3, materials::isotope::GROUND_STATE, true);
-    materials::isotope iso_H4 = materials::isotope ("Hydrogen 4", "H", 4);
-    materials::isotope iso_H5 = materials::isotope ("Hydrogen 5",   1, 5);
-    materials::isotope iso_C12 = materials::isotope ("Carbon 12", "C", 12, materials::isotope::GROUND_STATE,true);
-    iso_H4.build ();
-    //iso_H5.build ();   // not locked for test
+    materials::isotope iso_H4("Hydrogen 4", "H", 4);
 
-    iso_H1.tree_dump (cout, "Isotope Hydrogen 1");
-    iso_H2.tree_dump (cout, "Isotope Hydrogen 2");
-    iso_H3.tree_dump (cout, "Isotope Hydrogen 3");
-    iso_H4.tree_dump (cout, "Isotope Hydrogen 4");
-    iso_H5.tree_dump (cout, "Isotope Hydrogen 5");
-    iso_C12.tree_dump (cout, "Isotope Carbon 12");
+    materials::isotope iso_H5(std::string("Hydrogen 5"), 1, 5);
 
-    materials::element elt_H("Hydrogen",1);
-    //elt_H.add_isotope (iso_C12, 0.1);
-    elt_H.add_isotope (iso_H1, 0.2);
-    elt_H.add_isotope (iso_H2, 0.5);
-    elt_H.add_isotope (iso_H3, 0.1);
-    //elt_H.add_isotope (iso_C12, 0.1);
-    //elt_H.add_isotope (iso_H5, 0.1);
-    elt_H.build ();
-    elt_H.tree_dump (cout, "my element Hydrogen");
+    materials::isotope iso_C12("Carbon 12", "C", 12,
+                               materials::isotope::GROUND_STATE);
+    iso_H1.lock();
+    iso_H2.build(materials::isotope::BF_MASS_DATA);
+    iso_H2.lock();
+    iso_H3.build(materials::isotope::BF_MASS_DATA | materials::isotope::BF_LOCK);
+    iso_H4.build(materials::isotope::BF_MASS_DATA | materials::isotope::BF_LOCK);
+    // iso_H5.lock(); // Not locked for test
 
-    /*
-      elt_H.add_isotope (iso_H4, 0.1);
-      elt_H.add_isotope (iso_H5, 0.1);
-      elt_H.add_isotope (new materials::isotope("Hydrogen 5",1,5,0,true),0.2);
-      elt_H.build ();
-      elt_H.tree_dump (cout, "my element Hydrogen");
-    */
+    iso_H1.tree_dump(std::clog, "Isotope Hydrogen 1");
+    iso_H2.tree_dump(std::clog, "Isotope Hydrogen 2");
+    iso_H3.tree_dump(std::clog, "Isotope Hydrogen 3");
+    iso_H4.tree_dump(std::clog, "Isotope Hydrogen 4");
+    iso_H5.tree_dump(std::clog, "Isotope Hydrogen 5");
+    iso_C12.tree_dump(std::clog, "Isotope Carbon 12");
 
-    materials::isotope iso_Na = materials::isotope ("Sodium", 11, 23, 0, true);
-    materials::element elt_Na("Sodium", "Na");
-    elt_Na.add_isotope (iso_Na);
-    elt_Na.build ();
-    elt_Na.tree_dump (cout, "my element Sodium");
+    materials::element elt_H(std::string("Hydrogen"),1);
+    //elt_H.add_isotope(iso_C12, 0.1);
+    elt_H.add_isotope(iso_H1, 0.2);
+    elt_H.add_isotope(iso_H2, 0.5);
+    elt_H.add_isotope(iso_H3, 0.1);
+    //elt_H.add_isotope(iso_C12, 0.1);
+    //elt_H.add_isotope(iso_H5, 0.1);
+    elt_H.build();
+    elt_H.tree_dump(std::clog, "my element Hydrogen");
+
+    materials::isotope iso_Na = materials::isotope(std::string("Sodium"),
+                                                   11, 23,
+                                                   materials::isotope::GROUND_STATE,
+                                                   materials::isotope::BF_LOCK);
+    materials::element elt_Na(std::string("Sodium"), std::string("Na"));
+    elt_Na.add_isotope(iso_Na);
+    elt_Na.build();
+    elt_Na.tree_dump(std::clog, "My element Sodium");
 
   }
-  catch (exception & x) {
-    cerr << "error: " << x.what () << endl;
+  catch (std::exception & x) {
+    std::cerr << "error: " << x.what() << std::endl;
     error_code = EXIT_FAILURE;
   }
   catch (...) {
-    cerr << "error: " << "unexpected error!" << endl;
+    std::cerr << "error: " << "unexpected error!" << std::endl;
     error_code = EXIT_FAILURE;
   }
   return (error_code);
 }
-
-// end of test_element.cxx

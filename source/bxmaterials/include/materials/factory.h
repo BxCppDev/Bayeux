@@ -1,8 +1,8 @@
 // -*- mode: c++ ; -*-
-/* factory.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file materials/factory.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-22
- * Last modified: 2013-02-23
+ * Last modified: 2014-06-13
  *
  * License:
  *
@@ -13,22 +13,27 @@
  *
  */
 
-#ifndef MATERIALS_FACTORY_H_
-#define MATERIALS_FACTORY_H_ 1
+#ifndef MATERIALS_FACTORY_H
+#define MATERIALS_FACTORY_H 1
 
+// Standard library:
 #include <string>
 
+// This project:
 #include <materials/detail/tools.h>
 
 namespace datatools {
+  // Forward declarations:
   class properties;
 }
 
 namespace materials {
 
+  // Forward declarations:
   class isotope;
   class element;
   class material;
+  class manager;
 
   /// \brief Factory for isotopes, elements and materials
   class factory
@@ -36,35 +41,42 @@ namespace materials {
   public:
 
     /// Check debug status
-    bool is_debug () const;
+    bool is_debug() const;
 
     /// Set debug status
-    void set_debug (bool);
+    void set_debug(bool);
 
     /// Constructor
-    factory ();
+    factory();
 
     /// Destructor
-    virtual ~factory ();
+    virtual ~factory();
+
+    /// Check for a manager
+    bool has_manager() const;
+
+    /// Set a manager
+    void set_manager(manager &);
 
     /// Isotope factory method
-    isotope * create_isotope (const std::string & name_,
-                              const datatools::properties & config_) const;
+    isotope * create_isotope(const std::string & name_,
+                             const datatools::properties & config_) const;
 
     /// Element factory method
-    element * create_element (const std::string & name_,
-                              const datatools::properties & config_,
-                              const isotope_dict_type & isotopes_) const;
+    element * create_element(const std::string & name_,
+                             const datatools::properties & config_,
+                             const isotope_dict_type & isotopes_) const;
 
     /// Material factory method
-    material * create_material (const std::string & name_,
-                                const datatools::properties & config_,
-                                const element_dict_type & elements_,
-                                const material_dict_type & materials_) const;
+    material * create_material(const std::string & name_,
+                               const datatools::properties & config_,
+                               const element_dict_type & elements_,
+                               const material_dict_type & materials_) const;
 
   private:
 
-    bool _debug_; //!< Debug flag
+    bool _debug_; /// Debug flag
+    manager * _manager_; /// Handle to a manager
 
   };
 
@@ -77,8 +89,5 @@ namespace materials {
 DOCD_CLASS_DECLARATION(materials::isotope)
 DOCD_CLASS_DECLARATION(materials::element)
 DOCD_CLASS_DECLARATION(materials::material)
-//DOCD_CLASS_DECLARATION(materials::alias)
 
-#endif // MATERIALS_FACTORY_H_
-
-// end of factory.h
+#endif // MATERIALS_FACTORY_H

@@ -1,69 +1,35 @@
-// -*- mode: c++ ; -*-
 // test_chemical_symbol.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
+// This project
 #include <materials/chemical_symbol.h>
-
-using namespace std;
 
 int main (/*int argc_, char ** argv_*/)
 {
   int error_code = EXIT_SUCCESS;
-  try
-    {
-      clog << "Test program for class 'chemical_symbol' !" << endl;
+  try {
+      std::clog << "Test program for class 'chemical_symbol' !" << std::endl;
 
-      // bool debug = false;
+      for (int i = 0; i < (int) materials::chemical_symbol::nb_chemical_symbols(); i++) {
+        std::clog << i << " " << materials::chemical_symbol::z_is_tabulated(i) << std::endl;
+      }
 
-      // int iarg = 1;
-      // while (iarg < argc_)
-      //   {
-      //     string token = argv_[iarg];
+      std::string symbol = "H";
+      std::clog << "Symbol='" << symbol << "' Z=" << materials::chemical_symbol::z_from_symbol (symbol)  << std::endl;
 
-      //     if (token[0] == '-')
-      //       {
-      //          string option = token;
-      //          if ((option == "-d") || (option == "--debug"))
-      //            {
-      //              debug = true;
-      //            }
-      //          else
-      //            {
-      //               clog << "warning: ignoring option '" << option << "'!" << endl;
-      //            }
-      //       }
-      //     else
-      //       {
-      //         string argument = token;
-      //         {
-      //           clog << "warning: ignoring argument '" << argument << "'!" << endl;
-      //         }
-      //       }
-      //     iarg++;
-      // }
-
-      for (int i = 0; i < (int) materials::chemical_symbol::NB_CHEMICAL_SYMBOLS; i++)
-        {
-          cout << i << " " << materials::chemical_symbol::table[i] << endl;
-        }
-
-      string symbol = "H";
-      cout << "Symbol='" << symbol << "' Z=" << materials::chemical_symbol::z_from_symbol (symbol)  << endl;
-
-    }
-  catch (exception & x)
-    {
-      cerr << "error: " << x.what () << endl;
-      error_code = EXIT_FAILURE;
-    }
-  catch (...)
-    {
-      cerr << "error: " << "unexpected error!" << endl;
-      error_code = EXIT_FAILURE;
-    }
+  }
+  catch (std::exception & x) {
+    std::cerr << "error: " << x.what() << std::endl;
+    error_code = EXIT_FAILURE;
+  }
+  catch (...) {
+    std::cerr << "error: " << "unexpected error!" << std::endl;
+    error_code = EXIT_FAILURE;
+  }
   return (error_code);
 }

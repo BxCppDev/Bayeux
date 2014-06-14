@@ -1,5 +1,5 @@
 # -*- mode: conf-unix; -*-
-# List of multi-properties (datatools::utils::multi_properties):
+# List of multi-properties (datatools::multi_properties):
 
 #@description A sample list of elements
 #@key_label   "name"
@@ -14,6 +14,10 @@ composition.mode          : string   = "fraction_mass"
 composition.names         : string [1]  = "Hydrogen"
 composition.fraction_mass : real   [1]  =    1.0
 
+# Example of auxiliary properties:
+visualization.texture : string = "no"
+visualization.transparency : real = 1.0
+
 [name="air" type="material"]
 #@config Air material
 density.unit              : string = "mg/cm3"
@@ -22,6 +26,11 @@ state                     : string = "gas"
 composition.mode          : string   = "fraction_mass"
 composition.names         : string [2]  = "Nitrogen" "Oxygen"
 composition.fraction_mass : real   [2]  =    0.7       0.3
+
+# Example of auxiliary properties:
+visualization.texture : string = "none"
+visualization.color   : string = "cyan"
+visualization.transparency : real = 0.95
 
 [name="hydrogen_gas" type="material"]
 #@config Hydrogen gas
@@ -32,6 +41,11 @@ composition.mode          : string   = "fraction_mass"
 composition.names         : string [1]  = "Hydrogen"
 composition.fraction_mass : real   [1]  =    1.0
 
+# Example of auxiliary properties:
+visualization.texture : string = "none"
+visualization.color   : string = "red"
+visualization.transparency : real = 0.95
+
 [name="copper" type="material"]
 #@config Copper material
 density.unit              : string = "g/cm3"
@@ -40,6 +54,11 @@ state                     : string = "solid"
 composition.mode          : string      = "fraction_mass"
 composition.names         : string [1]  = "Copper"
 composition.fraction_mass : real   [1]  =   1.0
+
+# Example of auxiliary properties:
+visualization.texture : string = "metallic"
+visualization.color   : string = "red"
+visualization.transparency : real = 0.0
 
 [name="water" type="material"]
 #@config Water material
@@ -53,8 +72,12 @@ state                       : string = "liquid"
 composition.mode            : string       = "number_of_atoms"
 composition.names           : string  [2]  = "Hydrogen" "Oxygen"
 composition.number_of_atoms : integer [2]  =      2        1
+
+# Example of auxiliary properties:
 mpt.op.pp     : real [5] = 1.0   2.0 3.0  5.0  10.0
 mpt.op.rindex : real [5] = 1.33 1.34 1.35 1.40  1.42
+visualization.texture : string = "liquid"
+visualization.color   : string = "transparent"
 
 [name="borated_water_3%" type="material"]
 #@config Borated (3%) water material
@@ -69,7 +92,7 @@ composition.mode            : string       = "fraction_mass"
 composition.names           : string  [2]  = "water" "Boron"
 composition.fraction_mass   : real    [2]  =  0.97    0.03
 
-# Example of auxiliary properties :
+# Example of auxiliary properties:
 contamination.radiocontaminants : string [3] = "Bi-214" "Tl-208" "Pa-234"
 contamination.activities        : real   [3] =  20.e-6    5e-6    25e-6
 

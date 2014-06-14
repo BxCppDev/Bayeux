@@ -1,9 +1,8 @@
 // -*- mode: c++; -*-
-/* materials_config.h header file
- */
+/// \file materials/materials_config.h header file
 
-#ifndef MATERIALS_MATERIALS_CONFIG_H_
-#define MATERIALS_MATERIALS_CONFIG_H_ 1
+#ifndef MATERIALS_MATERIALS_CONFIG_H
+#define MATERIALS_MATERIALS_CONFIG_H 1
 
 /*** materials is built standalone or not ***/
 #cmakedefine01 MATERIALS_STANDALONE
@@ -13,6 +12,4 @@
 
 #define MATERIALS_ENV_RESOURCE_DIR "MATERIALS_RESOURCE_DIR"
 
-#endif // MATERIALS_MATERIALS_CONFIG_H_
-
-// end of materials_config.h
+#endif // MATERIALS_MATERIALS_CONFIG_H

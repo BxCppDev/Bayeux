@@ -3,11 +3,14 @@
 //! \author François Mauger
 //! \brief  Describe the materials API configuration
 
-#ifndef MATERIALS_MATERIALS_H_
-#define MATERIALS_MATERIALS_H_ 1
+#ifndef MATERIALS_MATERIALS_H
+#define MATERIALS_MATERIALS_H 1
+
+// Third party:
+// - Bayeux/datatools:
+#include <datatools/datatools.h>
 
 // This project
-#include <datatools/datatools.h>
 #include <materials/materials_config.h>
 
 namespace materials {
@@ -20,6 +23,7 @@ namespace materials {
   void _special_initialize_impl();
 
   void _special_terminate_impl();
+
 }
 
 /// materials' kernel initialization macro using main function arguments
@@ -39,7 +43,4 @@ namespace materials {
   DATATOOLS_FINI();                             \
   /**/
 
-
-#endif // MATERIALS_MATERIALS_H_
-
-// end of materials.h
+#endif // MATERIALS_MATERIALS_H

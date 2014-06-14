@@ -1,143 +1,108 @@
-// -*- mode: c++ ; -*-
 // test_isotope.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
-#include <materials/isotope.h>
+// Third Party:
+// - Bayeux/datatools:
+#include <datatools/clhep_units.h>
 
-using namespace std;
+// This project:
+#include <materials/isotope.h>
 
 int main (int /*argc_*/, char ** /*argv_*/)
 {
   int error_code = EXIT_SUCCESS;
-  try
-    {
-      clog << "Test program for class 'isotope'!" << endl;
+  try {
+    std::clog << "Test program for class 'materials::isotope'!" << std::endl;
 
-      /*
-      bool debug = false;
+    // My isotope 0 :
+    materials::isotope my_isotope_0;
+    std::clog << std::endl;
+    my_isotope_0.tree_dump( std::clog, "My isotope 0: ");
+    my_isotope_0.set_zai(1, 1);
+    std::clog << std::endl;
+    my_isotope_0.tree_dump( std::clog, "My isotope 0 (bis): ");
+    my_isotope_0.set_name("hydrogen-1 (ground state)");
+    my_isotope_0.find_mass_data();
+    std::clog << std::endl;
+    my_isotope_0.tree_dump( std::clog, "My isotope 0 (ter): ");
 
-      int iarg = 1;
-      while (iarg < argc_)
-        {
-          string token = argv_[iarg];
+    // My isotope 1 :
+    materials::isotope my_isotope_1(std::string("some hydrogen isotope"));
+    std::clog << std::endl;
+    my_isotope_1.tree_dump( std::clog, "My isotope 1: ");
+    my_isotope_1.set_zai(2, 6, materials::isotope::GROUND_STATE);
+    my_isotope_1.set_half_life(806.7 * CLHEP::ms, 0.1 * CLHEP::ms);
+    my_isotope_1.set_mass_excess(17595.106 * CLHEP::keV, 0.755 * CLHEP::keV);
+    std::clog << std::endl;
+    my_isotope_1.tree_dump( std::clog, "My isotope 1: ");
 
-          if (token[0] == '-')
-            {
-              string option = token;
-              if ((option == "-d") || (option == "--debug"))
-                {
-                  debug = true;
-                }
-              else
-                {
-                  clog << "warning: ignoring option '" << option << "'!" << endl;
-                }
-            }
-          else
-            {
-              string argument = token;
-              {
-                clog << "warning: ignoring argument '" << argument << "'!" << endl;
-              }
-            }
-          iarg++;
-        }
-      */
+    // My isotope 2 :
+    materials::isotope my_isotope_2;
+    my_isotope_2.set_zai(2, 6);
+    std::clog << std::endl;
+    my_isotope_2.tree_dump(std::clog, "My isotope 2: ");
+    my_isotope_2.find_mass_data();
+    my_isotope_2.find_decay_data();
+    std::clog << std::endl;
+    my_isotope_2.tree_dump(std::clog, "My isotope 2: ");
 
-      //  my isotope 0 :
-
-      materials::isotope my_isotope_0;
-      cerr << endl;
-      my_isotope_0.tree_dump ( cout, "my isotope 0");
-
-      my_isotope_0.set_zai (1,1);
-      cerr << endl;
-      my_isotope_0.tree_dump ( cout, "my isotope 0");
-
-      my_isotope_0.set_name("hydrogen-1 (ground state)");
-      my_isotope_0.find_mass();
-      my_isotope_0.find_decay();
-      cerr << endl;
-      my_isotope_0.tree_dump ( cout, "my isotope 0");
-
-      //  my isotope 1 :
-
-      materials::isotope my_isotope_1("unknown hydrogen-1 (1st excited state)");
-      cerr << endl;
-      my_isotope_1.tree_dump ( cout, "my isotope 1");
-
-      my_isotope_1.set_zai(1,1,1);
-      my_isotope_1.find_mass ();
-      my_isotope_1.set_decay (1.5,1.5);
-      cerr << endl;
-      my_isotope_1.tree_dump ( cout,"my_isotope 1");
-
-
-      //  my isotope 2 :
-
-      materials::isotope my_isotope_2;
-      my_isotope_2.set_zai(1,2);
-      cerr << endl;
-      my_isotope_2.tree_dump (cout, "my_isotope 2");
-      my_isotope_2.find_mass ();
-      my_isotope_2.find_decay ();
-      cerr << endl;
-      my_isotope_2.tree_dump (cout, "my_isotope 2");
-
-      //  my isotope 3 :
-
-      materials::isotope my_isotope_3("Sodium 22 (ground state)",11,22,0);
-      my_isotope_3.find_mass();
-      my_isotope_3.find_decay();
-      cerr << endl;
-      my_isotope_3.tree_dump (cout, "my_isotope 3");
-
-      //  my isotope 4 :
-
-      cerr << endl;
-      materials::isotope my_isotope_4("Tungsten-184","W",184,0);
-      my_isotope_4.grab_properties ().store ("class", "transition metal");
-      my_isotope_4.find_mass();
-      my_isotope_4.find_decay();
-      my_isotope_4.tree_dump (cout, "my_isotope 4");
-
-      //  my isotope 5 :
-
-      cerr << endl;
-      materials::isotope my_isotope_5("Iode-120 (1st excited state)","I",120,1);
-      my_isotope_5.find_mass();
-      my_isotope_5.find_decay();
-      my_isotope_5.grab_properties ().store ("state","solid");
-      my_isotope_5.tree_dump (cout, "my_isotope 5");
-
-      //  my isotope 6 :
-
-      cerr << endl;
-      try
-        {
-        materials::isotope my_isotope_6("Unknown Sodium-45",11,45,0);
-        }
-      catch (exception & x)
-        {
-          clog << "As expected, Sodium-45 is not valid !" << endl;
-        }
-
+    // My isotope 3 :
+    try {
+      materials::isotope my_isotope_3("Sodium 22 (ground state)",
+                                      11, 22,
+                                      materials::isotope::GROUND_STATE);
+      my_isotope_3.find_mass_data();
+      my_isotope_3.find_decay_data();
+      std::clog << std::endl;
+      my_isotope_3.tree_dump(std::clog, "My isotope 3: ");
     }
-  catch (exception & x)
-    {
-      cerr << "error: " << x.what () << endl;
-      error_code = EXIT_FAILURE;
+    catch (std::exception & x) {
+      std::clog << "NOTICE: As expected : " << x.what() << std::endl;
     }
-  catch (...)
-    {
-      cerr << "error: " << "unexpected error!" << endl;
-      error_code = EXIT_FAILURE;
+
+
+    // My isotope 4 :
+    std::clog << std::endl;
+    materials::isotope my_isotope_4("Tungsten-184",
+                                    "W", 184,
+                                    materials::isotope::GROUND_STATE);
+    my_isotope_4.grab_properties ().store ("class", "transition metal");
+    my_isotope_4.find_mass_data();
+    my_isotope_4.find_decay_data();
+    my_isotope_4.tree_dump (std::clog, "My isotope 4: ");
+
+    // My isotope 5 :
+    std::clog << std::endl;
+    materials::isotope my_isotope_5("Iode-120 metastable",
+                                    "I", 120,
+                                    materials::isotope::ISOMERIC_STATE);
+    my_isotope_5.grab_properties ().store("color","solid");
+    my_isotope_5.tree_dump (std::clog, "My isotope 5: ");
+
+    // My isotope 6 :
+    std::clog << std::endl;
+    try {
+      materials::isotope my_isotope_6("Unknown Sodium-45",
+                                      11, 45,
+                                      materials::isotope::GROUND_STATE);
     }
+    catch (std::exception & x) {
+      std::clog << "As expected, Sodium-45 is not valid !" << std::endl;
+    }
+
+  }
+  catch (std::exception & x) {
+    std::clog << "error: " << x.what() << std::endl;
+    error_code = EXIT_FAILURE;
+  }
+  catch (...) {
+    std::clog << "error: " << "unexpected error!" << std::endl;
+    error_code = EXIT_FAILURE;
+  }
   return (error_code);
 }
-
-// end of test_isotope.cxx

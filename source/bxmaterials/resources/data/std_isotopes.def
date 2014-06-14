@@ -1,7 +1,7 @@
 # -*- mode: conf-unix; -*-
 # List of multi-properties (datatools::multi_properties):
 
-#@description A list of standard isotopes
+#@description A list of stable isotopes found in nature as compounds of chemical elements
 #@key_label   "name"
 #@meta_label  "type"
 
@@ -16,11 +16,6 @@ a : integer = 1
 #@config The D hydrogen isotope
 z : integer = 1
 a : integer = 2
-
-[name="T" type="isotope"]
-#@config The D hydrogen isotope
-z : integer = 1
-a : integer = 3
 
 ### Helium:
 
@@ -48,7 +43,7 @@ a : integer = 7
 
 ### Beryllium:
 
-[name="Be-6" type="isotope"]
+[name="Be-9" type="isotope"]
 #@config The Be-9 isotope
 z : integer = 4
 a : integer = 9
@@ -218,7 +213,6 @@ a : integer = 35
 #@config The Cl-37 isotope
 z : integer = 17
 a : integer = 37
-
 
 ### Argon
 
@@ -590,6 +584,69 @@ a : integer = 85
 z : integer = 37
 a : integer = 87
 
+### Strontium
+
+[name="Sr-84" type="isotope"]
+#@config The Sr-84 isotope
+z : integer = 38
+a : integer = 84
+
+[name="Sr-86" type="isotope"]
+#@config The Sr-86 isotope
+z : integer = 38
+a : integer = 86
+
+[name="Sr-87" type="isotope"]
+#@config The Sr-87 isotope
+z : integer = 38
+a : integer = 87
+
+[name="Sr-88" type="isotope"]
+#@config The Sr-88 isotope
+z : integer = 38
+a : integer = 88
+
+### Yttrium
+
+[name="Y-89" type="isotope"]
+#@config The Y-89 isotope
+z : integer = 39
+a : integer = 89
+
+### Zirconium
+
+[name="Zr-90" type="isotope"]
+#@config The Zr-90 isotope
+z : integer = 40
+a : integer = 90
+
+[name="Zr-91" type="isotope"]
+#@config The Zr-91 isotope
+z : integer = 40
+a : integer = 91
+
+[name="Zr-92" type="isotope"]
+#@config The Zr-92 isotope
+z : integer = 40
+a : integer = 92
+
+[name="Zr-94" type="isotope"]
+#@config The Zr-94 isotope
+z : integer = 40
+a : integer = 94
+
+[name="Zr-96" type="isotope"]
+#@config The Zr-96 isotope
+z : integer = 40
+a : integer = 96
+
+### Niobium
+
+[name="Nb-93" type="isotope"]
+#@config The Nb-93 isotope
+z : integer = 41
+a : integer = 93
+
 ### Molybdenum
 
 [name="Mo-92" type="isotope"]
@@ -627,6 +684,82 @@ a : integer = 98
 z : integer = 42
 a : integer = 100
 
+### Ruthenium
+
+[name="Ru-96" type="isotope"]
+#@config The Ru-96 isotope
+z : integer = 44
+a : integer = 96
+
+[name="Ru-98" type="isotope"]
+#@config The Ru-98 isotope
+z : integer = 44
+a : integer = 98
+
+[name="Ru-99" type="isotope"]
+#@config The Ru-99 isotope
+z : integer = 44
+a : integer = 99
+
+[name="Ru-100" type="isotope"]
+#@config The Ru-100 isotope
+z : integer = 44
+a : integer = 100
+
+[name="Ru-101" type="isotope"]
+#@config The Ru-101 isotope
+z : integer = 44
+a : integer = 101
+
+[name="Ru-102" type="isotope"]
+#@config The Ru-102 isotope
+z : integer = 44
+a : integer = 102
+
+[name="Ru-104" type="isotope"]
+#@config The Ru-104 isotope
+z : integer = 44
+a : integer = 104
+
+### Rhodium
+
+[name="Rh-103" type="isotope"]
+#@config The Rh-103 isotope
+z : integer = 45
+a : integer = 103
+
+### Palladium
+
+[name="Pd-102" type="isotope"]
+#@config The Pd-102 isotope
+z : integer = 46
+a : integer = 102
+
+[name="Pd-104" type="isotope"]
+#@config The Pd-104 isotope
+z : integer = 46
+a : integer = 104
+
+[name="Pd-105" type="isotope"]
+#@config The Pd-105 isotope
+z : integer = 46
+a : integer = 105
+
+[name="Pd-106" type="isotope"]
+#@config The Pd-106 isotope
+z : integer = 46
+a : integer = 106
+
+[name="Pd-108" type="isotope"]
+#@config The Pd-108 isotope
+z : integer = 46
+a : integer = 108
+
+[name="Pd-110" type="isotope"]
+#@config The Pd-110 isotope
+z : integer = 46
+a : integer = 110
+
 ### Silver
 
 [name="Ag-107" type="isotope"]
@@ -639,6 +772,58 @@ a : integer = 107
 z : integer = 47
 a : integer = 109
 
+### Tin
+
+[name="Sn-112" type="isotope"]
+#@config The Sn-112 isotope
+z : integer = 50
+a : integer = 112
+
+[name="Sn-114" type="isotope"]
+#@config The Sn-114 isotope
+z : integer = 50
+a : integer = 114
+
+[name="Sn-115" type="isotope"]
+#@config The Sn-115 isotope
+z : integer = 50
+a : integer = 115
+
+[name="Sn-116" type="isotope"]
+#@config The Sn-116 isotope
+z : integer = 50
+a : integer = 116
+
+[name="Sn-117" type="isotope"]
+#@config The Sn-117 isotope
+z : integer = 50
+a : integer = 117
+
+[name="Sn-118" type="isotope"]
+#@config The Sn-118 isotope
+z : integer = 50
+a : integer = 118
+
+[name="Sn-119" type="isotope"]
+#@config The Sn-119 isotope
+z : integer = 50
+a : integer = 119
+
+[name="Sn-120" type="isotope"]
+#@config The Sn-120 isotope
+z : integer = 50
+a : integer = 120
+
+[name="Sn-122" type="isotope"]
+#@config The Sn-122 isotope
+z : integer = 50
+a : integer = 122
+
+[name="Sn-124" type="isotope"]
+#@config The Sn-124 isotope
+z : integer = 50
+a : integer = 124
+
 ### Iodine
 
 [name="I-127" type="isotope"]
@@ -646,85 +831,59 @@ a : integer = 109
 z : integer = 53
 a : integer = 127
 
+### Xenon
+
+[name="Xe-124" type="isotope"]
+#@config The Xe-124 isotope
+z : integer = 54
+a : integer = 124
+
+[name="Xe-126" type="isotope"]
+#@config The Xe-126 isotope
+z : integer = 54
+a : integer = 126
+
+[name="Xe-128" type="isotope"]
+#@config The Xe-128 isotope
+z : integer = 54
+a : integer = 128
+
+[name="Xe-129" type="isotope"]
+#@config The Xe-129 isotope
+z : integer = 54
+a : integer = 129
+
+[name="Xe-130" type="isotope"]
+#@config The Xe-130 isotope
+z : integer = 54
+a : integer = 130
+
+[name="Xe-131" type="isotope"]
+#@config The Xe-131 isotope
+z : integer = 54
+a : integer = 131
+
+[name="Xe-132" type="isotope"]
+#@config The Xe-132 isotope
+z : integer = 54
+a : integer = 132
+
+[name="Xe-134" type="isotope"]
+#@config The Xe-134 isotope
+z : integer = 54
+a : integer = 134
+
+[name="Xe-136" type="isotope"]
+#@config The Xe-136 isotope
+z : integer = 54
+a : integer = 136
+
 ### Cesium
 
 [name="Cs-133" type="isotope"]
 #@config The Cs-133 isotope
 z : integer = 55
 a : integer = 133
-
-### Tungsten
-
-[name="W-180" type="isotope"]
-#@config The W-180 isotope
-z : integer = 74
-a : integer = 180
-
-[name="W-182" type="isotope"]
-#@config The W-182 isotope
-z : integer = 74
-a : integer = 182
-
-[name="W-183" type="isotope"]
-#@config The W-183 isotope
-z : integer = 74
-a : integer = 183
-
-[name="W-184" type="isotope"]
-#@config The W-184 isotope
-z : integer = 74
-a : integer = 184
-
-[name="W-186" type="isotope"]
-#@config The W-186 isotope
-z : integer = 74
-a : integer = 186
-
-### Gold
-
-[name="Au-197" type="isotope"]
-#@config The Au-197 isotope
-z : integer = 79
-a : integer = 197
-
-### Lead
-
-[name="Pb-204" type="isotope"]
-#@config The Pb-204 isotope
-z : integer = 82
-a : integer = 204
-
-[name="Pb-206" type="isotope"]
-#@config The Pb-206 isotope
-z : integer = 82
-a : integer = 206
-
-[name="Pb-207" type="isotope"]
-#@config The Pb-207 isotope
-z : integer = 82
-a : integer = 207
-
-[name="Pb-208" type="isotope"]
-#@config The Pb-208 isotope
-z : integer = 82
-a : integer = 208
-
-### Uranium
-
-[name="U-234" type="isotope"]
-#@config The U-234 isotope
-z : integer = 92
-a : integer = 234
-
-[name="U-235" type="isotope"]
-#@config The U-235 isotope
-z : integer = 92
-a : integer = 235
-
-[name="U-238" type="isotope"]
-#@config The U-238 isotope
-z : integer = 92
-a : integer = 238
 
 ### Neodymium
 
@@ -762,3 +921,223 @@ a : integer = 148
 #@config The Nd-150 isotope
 z : integer = 60
 a : integer = 150
+
+### Gadolinium
+
+[name="Gd-152" type="isotope"]
+#@config The Gd-152 isotope
+z : integer = 64
+a : integer = 152
+
+[name="Gd-154" type="isotope"]
+#@config The Gd-154 isotope
+z : integer = 64
+a : integer = 154
+
+[name="Gd-155" type="isotope"]
+#@config The Gd-155 isotope
+z : integer = 64
+a : integer = 155
+
+[name="Gd-156" type="isotope"]
+#@config The Gd-156 isotope
+z : integer = 64
+a : integer = 156
+
+[name="Gd-157" type="isotope"]
+#@config The Gd-157 isotope
+z : integer = 64
+a : integer = 157
+
+[name="Gd-158" type="isotope"]
+#@config The Gd-158 isotope
+z : integer = 64
+a : integer = 158
+
+[name="Gd-160" type="isotope"]
+#@config The Gd-160 isotope
+z : integer = 64
+a : integer = 160
+
+### Terbium
+
+[name="Tb-159" type="isotope"]
+#@config The Tb-159 isotope
+z : integer = 65
+a : integer = 159
+
+### Tantalum
+
+[name="Ta-180" type="isotope"]
+#@config The Ta-180 isotope
+z : integer = 73
+a : integer = 180
+
+[name="Ta-181" type="isotope"]
+#@config The Ta-181 isotope
+z : integer = 73
+a : integer = 181
+
+### Tungsten
+
+[name="W-180" type="isotope"]
+#@config The W-180 isotope
+z : integer = 74
+a : integer = 180
+
+[name="W-182" type="isotope"]
+#@config The W-182 isotope
+z : integer = 74
+a : integer = 182
+
+[name="W-183" type="isotope"]
+#@config The W-183 isotope
+z : integer = 74
+a : integer = 183
+
+[name="W-184" type="isotope"]
+#@config The W-184 isotope
+z : integer = 74
+a : integer = 184
+
+[name="W-186" type="isotope"]
+#@config The W-186 isotope
+z : integer = 74
+a : integer = 186
+
+### Platinum
+
+[name="Pt-190" type="isotope"]
+#@config The Pt-190 isotope
+z : integer = 78
+a : integer = 190
+
+[name="Pt-192" type="isotope"]
+#@config The Pt-192 isotope
+z : integer = 78
+a : integer = 192
+
+[name="Pt-194" type="isotope"]
+#@config The Pt-194 isotope
+z : integer = 78
+a : integer = 194
+
+[name="Pt-195" type="isotope"]
+#@config The Pt-195 isotope
+z : integer = 78
+a : integer = 195
+
+[name="Pt-196" type="isotope"]
+#@config The Pt-196 isotope
+z : integer = 78
+a : integer = 196
+
+[name="Pt-198" type="isotope"]
+#@config The Pt-198 isotope
+z : integer = 78
+a : integer = 198
+
+### Gold
+
+[name="Au-197" type="isotope"]
+#@config The Au-197 isotope
+z : integer = 79
+a : integer = 197
+
+### Mercury
+
+[name="Hg-196" type="isotope"]
+#@config The Hg-196 isotope
+z : integer = 80
+a : integer = 196
+
+[name="Hg-198" type="isotope"]
+#@config The Hg-198 isotope
+z : integer = 80
+a : integer = 198
+
+[name="Hg-199" type="isotope"]
+#@config The Hg-199 isotope
+z : integer = 80
+a : integer = 199
+
+[name="Hg-200" type="isotope"]
+#@config The Hg-200 isotope
+z : integer = 80
+a : integer = 200
+
+[name="Hg-201" type="isotope"]
+#@config The Hg-201 isotope
+z : integer = 80
+a : integer = 201
+
+[name="Hg-202" type="isotope"]
+#@config The Hg-202 isotope
+z : integer = 80
+a : integer = 202
+
+[name="Hg-204" type="isotope"]
+#@config The Hg-204 isotope
+z : integer = 80
+a : integer = 204
+
+
+### Lead
+
+[name="Pb-204" type="isotope"]
+#@config The Pb-204 isotope
+z : integer = 82
+a : integer = 204
+
+[name="Pb-206" type="isotope"]
+#@config The Pb-206 isotope
+z : integer = 82
+a : integer = 206
+
+[name="Pb-207" type="isotope"]
+#@config The Pb-207 isotope
+z : integer = 82
+a : integer = 207
+
+[name="Pb-208" type="isotope"]
+#@config The Pb-208 isotope
+z : integer = 82
+a : integer = 208
+
+### Bismuth
+
+[name="Bi-209" type="isotope"]
+#@config The Bi-209 isotope
+z : integer = 83
+a : integer = 209
+
+### Thorium
+
+[name="Th-232" type="isotope"]
+#@config The Th-232 isotope
+z : integer = 90
+a : integer = 232
+
+### Protactinium
+
+[name="Pa-231" type="isotope"]
+#@config The Pa-231 isotope
+z : integer = 91
+a : integer = 231
+
+### Uranium
+
+[name="U-234" type="isotope"]
+#@config The U-234 isotope
+z : integer = 92
+a : integer = 234
+
+[name="U-235" type="isotope"]
+#@config The U-235 isotope
+z : integer = 92
+a : integer = 235
+
+[name="U-238" type="isotope"]
+#@config The U-238 isotope
+z : integer = 92
+a : integer = 238

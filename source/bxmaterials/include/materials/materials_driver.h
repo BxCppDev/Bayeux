@@ -1,34 +1,38 @@
 // -*- mode: c++ ; -*-
-/* materials_driver.h
- * Author (s) : François Mauger <mauger@lpccaen.in2p3.fr>
+/// \file materials/materials_driver.h
+/* Author(s)    : François Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-08-23
- * Last modified: 2013-08-23
+ * Last modified: 2014-06-11
  *
  * Description:  Isotopes/elements/materials application driver.
  */
 
-#ifndef MATERIALS_MATERIALS_DRIVER_H_
-#define MATERIALS_MATERIALS_DRIVER_H_ 1
+#ifndef MATERIALS_MATERIALS_DRIVER_H
+#define MATERIALS_MATERIALS_DRIVER_H 1
 
 // Standard Library
 #include <iostream>
 #include <string>
 #include <vector>
 
-// Datatools
-#include <datatools/logger.h>
-
 // Third Party
+// - Boost:
 #include <boost/scoped_ptr.hpp>
+// - Bayeux/datatools:
+#include <datatools/logger.h>
 
 /// The namespace of the Bayeux/materials module library
 namespace materials {
 
+  // Forward declaration
   class manager;
 
-  struct materials_driver_params {
+  /// \brief Parameters for the material driver
+  struct materials_driver_params
+  {
   public:
 
+    /// \brief Supported actions
     enum action_flag_type {
       ACTION_UNDEFINED      = -1,
       ACTION_LIST_ISOTOPES  =  0x1,
@@ -41,12 +45,16 @@ namespace materials {
       ACTION_DUMP_MANAGER   =  0x1000,
     };
 
+    /// Default constructor
     materials_driver_params();
 
+    /// Destructor
     virtual ~materials_driver_params();
 
+    /// Reset
     void reset();
 
+    /// Basic print
     void dump(std::ostream & = std::clog) const;
 
   public:
@@ -62,6 +70,7 @@ namespace materials {
 
   };
 
+  /// \brief Driver for materials
   class materials_driver
   {
   public:
@@ -87,13 +96,12 @@ namespace materials {
 
   private:
 
-    bool _initialized_; /// Initialization flag
+    bool _initialized_;               /// Initialization flag
     materials_driver_params _params_; /// Configuration parameters
     boost::scoped_ptr<manager> _mgr_; /// Embeded manager
+
   };
 
 } // end of namespace materials
 
-#endif // MATERIALS_MATERIALS_DRIVER_H_
-
-// end of materials_driver.h
+#endif // MATERIALS_MATERIALS_DRIVER_H

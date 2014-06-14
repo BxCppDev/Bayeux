@@ -1,8 +1,9 @@
 // -*- mode: c++; -*-
-/* chemical_symbol.h
- * Author(s):  Benoit Guillon <guillon@lpccaen.in2p3.fr>
+/// \file materials/chemical_symbol.h
+/* Author(s):  Benoit Guillon <guillon@lpccaen.in2p3.fr>
+ *             François Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-02-25
- * Last modified: 2008-02-25
+ * Last modified: 2014-06-11
  *
  * License:
  *
@@ -17,35 +18,50 @@
  *
  *  Author:
  *   - Benoit Guillon <guillon@lpccaen.in2p3.fr>
+ *   - François Mauger <mauger@lpccaen.in2p3.fr>
  *
  *  Mainteners:
- *   - Benoit Guillon <guillon@lpccaen.in2p3.fr>
+ *   - François Mauger <mauger@lpccaen.in2p3.fr>
  *
  */
 
-#ifndef MATERIALS_CHEMICAL_SYMBOL_H_
-#define MATERIALS_CHEMICAL_SYMBOL_H_ 1
+#ifndef MATERIALS_CHEMICAL_SYMBOL_H
+#define MATERIALS_CHEMICAL_SYMBOL_H 1
 
+// Standard library:
 #include <string>
+#include <vector>
 
 namespace materials {
 
+  /// Utilities for chemical symbols
   class chemical_symbol
   {
   public:
 
-    static const unsigned int NB_CHEMICAL_SYMBOLS = 119;
+    /// Invalid Z value
+    static const int Z_UNDEFINED = -1;
 
-    static const std::string table[NB_CHEMICAL_SYMBOLS];
+    /// Return the vector of tabulated chemical symbols
+    static const std::vector<std::string> & table_of_symbols();
 
+    /// Return the number of tabulated chemical symbols
+    static unsigned int nb_chemical_symbols();
+
+    /// Check is a chemical symbol is tabulated
+    static bool symbol_is_tabulated(const std::string & symbol_);
+
+    /// Check is a Z value is tabulated
+    static bool z_is_tabulated(int z_);
+
+    /// Return the Z value from a chemical symbol
     static int z_from_symbol(const std::string & symbol_);
 
-    static const std::string & symbol_from_z(size_t z_);
+    /// Return the chemical symbol associated to a Z value
+    static const std::string & symbol_from_z(int z_);
 
   };
 
 } // end of namespace materials
 
-#endif // MATERIALS_CHEMICAL_SYMBOL_H_
-
-// end of chemical_symbol.h
+#endif // MATERIALS_CHEMICAL_SYMBOL_H
