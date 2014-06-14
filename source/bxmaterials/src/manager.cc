@@ -146,8 +146,7 @@ namespace materials {
   manager::manager ()
   {
     _logging_priority_ = datatools::logger::PRIO_WARNING;
-    _locked_ = false;
-    _alias_allow_overload_= false;
+    reset();
     return;
   }
 
