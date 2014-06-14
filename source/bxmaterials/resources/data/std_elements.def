@@ -202,7 +202,7 @@ isotope.weights : real[5]   =  20.84   27.54   7.73    36.28   7.61
 #@config The Arsenic natural element
 z               : integer   = 33
 isotope.names   : string[1] = "As-75"
-isotope.weights : real[2]   =  100.0
+isotope.weights : real[1]   =  100.0
 
 [name="Selenium" type="element"]
 #@config The Selenium natural element
@@ -296,5 +296,5 @@ isotope.weights : real[4]   = 1.4      24.1     22.1     52.4
 [name="Bismuth" type="element"]
 #@config The Bismuth natural element
 z               : integer   = 83
-isotope.names   : string[1] = "Pb-209"
+isotope.names   : string[1] = "Bi-209"
 isotope.weights : real[1]   = 100.0
