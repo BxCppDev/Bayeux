@@ -101,9 +101,7 @@ set(${module_name}_MODULE_APPS
 # - Resource files
 set(${module_name}_MODULE_RESOURCES
   ${module_resource_dir}/data/isotopic_compositions_nist.dat
-  ${module_resource_dir}/data/JEFF311RDD_ALL.OUT
   ${module_resource_dir}/data/mass.mas03
-  ${module_resource_dir}/data/README.txt
   ${module_resource_dir}/data/simple_elements.def
   ${module_resource_dir}/data/std_elements.def
   ${module_resource_dir}/data/std_isotopes.def
