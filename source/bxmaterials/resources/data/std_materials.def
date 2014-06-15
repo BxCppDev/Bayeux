@@ -294,7 +294,7 @@ composition.number_of_atoms : integer [2]  =  2          3
 
 [name="std::concrete" type="material"]
 #@config Concrete
-density          : real   = 1.14
+density          : real   = 2.0
 density.unit     : string = "g/cm3"
 state            : string = "solid"
 composition.mode          : string      = "fraction_mass"
