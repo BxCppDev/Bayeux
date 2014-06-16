@@ -27,7 +27,6 @@
 #include <string>
 #include <sstream>
 
-
 // Third party:
 // - Bayeux/datatools:
 #include <datatools/properties.h>
@@ -35,7 +34,6 @@
 #include <datatools/utils.h>
 #include <datatools/service_manager.h>
 #include <datatools/exception.h>
-#include <datatools/logger.h>
 
 // This project:
 #include <dpp/module_manager.h>

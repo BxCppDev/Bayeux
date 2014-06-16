@@ -555,6 +555,9 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::histogram_service,ocd_)
   ocd_.set_class_library ("dpp");
   ocd_.set_class_documentation ("A service that hosts a pool of histograms");
 
+  // Invoke OCD support from parent class :
+  ::datatools::base_service::common_ocd(ocd_);
+
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("pool_config")
@@ -562,11 +565,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::histogram_service,ocd_)
       .set_traits(datatools::TYPE_STRING)
       .set_path(true)
       .set_mandatory(false)
-      .set_long_description("Example:                                                        \n"
-                            "  |                                                             \n"
-                            "  | pool_config : string as path = \"histos_pool.conf\"         \n"
-                            "  |                                                             \n"
-                            "See dedicated OCD support for class 'dpp::histogram_pool'.    \n"
+      .set_long_description("Example:                                                   \n"
+                            "  |                                                        \n"
+                            "  | pool_config : string as path = \"histos_pool.conf\"    \n"
+                            "  |                                                        \n"
+                            "See dedicated OCD support for class 'dpp::histogram_pool'. \n"
                             )
       ;
   }
@@ -579,17 +582,17 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::histogram_service,ocd_)
                   datatools::configuration_property_description::ARRAY)
       .set_path(true)
       .set_mandatory(false)
-      .set_long_description("Extends former calls of :                          \n"
-                            "  dpp::histogram_service::add_output_file(...)   \n"
-                            "Supported formats are :                            \n"
-                            " * ROOT (with extension '.root')                   \n"
-                            " * BRIO (with extension '.brio')                   \n"
-                            " * TRIO (with extension '.trio')                   \n"
-                            " * datatools Boost/archive :                       \n"
-                            "   - text   (with extension '.txt' or '.txt.gz')   \n"
-                            "   - XML    (with extension '.xml' or '.xml.gz')   \n"
-                            "   - binary (with extension '.data' or '.data.gz') \n"
-                            "Example :                                          \n"
+      .set_long_description("Extends former calls of :                                      \n"
+                            "  dpp::histogram_service::add_output_file(...)                 \n"
+                            "Supported formats are :                                        \n"
+                            " * ROOT (with extension '.root')                               \n"
+                            " * BRIO (with extension '.brio')                               \n"
+                            " * TRIO (with extension '.trio')                               \n"
+                            " * datatools Boost/archive :                                   \n"
+                            "   - text   (with extension '.txt' or '.txt.gz')               \n"
+                            "   - XML    (with extension '.xml' or '.xml.gz')               \n"
+                            "   - binary (with extension '.data' or '.data.gz')             \n"
+                            "Example :                                                      \n"
                             "  |                                                            \n"
                             "  | output_files : string[2] = \"histos.data\" \"histos.root\" \n"
                             "  |                                                            \n"
@@ -603,8 +606,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::histogram_service,ocd_)
       .set_terse_description("Flag to save ROOT statistics")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
-      .set_long_description("If the histograms are saved in a ROOT file, \n"
-                            "this flag activates the histograms' statistics box within ROOT.\n"
+      .set_long_description("If the histograms are saved in a ROOT file,                     \n"
+                            "this flag activates the histograms' statistics box within ROOT. \n"
                             )
       ;
   }
@@ -615,29 +618,29 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::histogram_service,ocd_)
       .set_terse_description("A title prefix for all ROOT exported histograms")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
-      .set_long_description("If the histograms are saved in a ROOT file, \n"
-                            "this string is prepend to all histograms' titles.\n"
+      .set_long_description("If the histograms are saved in a ROOT file,       \n"
+                            "this string is prepend to all histograms' titles. \n"
                             )
       ;
   }
 
-  ocd_.set_configuration_hints ("The histogram service uses a 'datatools::properties' object      \n"
-                                "to initialize its behaviour and contents.                        \n"
-                                "                                                                 \n"
-                                "If the 'pool_config' path property is not set, all properties    \n"
-                                "the name of which starts with the prefix \"pool.\" are used      \n"
-                                "to initialize the embeded histogram pool object.                 \n"
-                                "Example:                                                         \n"
-                                "  |                                                              \n"
-                                "  | pool.description : string = \"Histograms\"                   \n"
-                                "  | pool.histo.setups : string[2] = \\                           \n"
-                                "  |   \"${DPP_TESTING_DIR}/config/test_histos_1.conf\" \\ \n"
-                                "  |   \"${DPP_TESTING_DIR}/config/test_histos_2.conf\"    \n"
-                                "  | pool.histo.export_prefixes : string[1] = \\                  \n"
-                                "  |   \"value.\" \\                                              \n"
-                                "  |                                                              \n"
-                                "See dedicated OCD support for class 'mygsl::histogram_pool' for  \n"
-                                "the description of histogram builing rules.                      \n"
+  ocd_.set_configuration_hints ("The histogram service uses a 'datatools::properties' object     \n"
+                                "to initialize its behaviour and contents.                       \n"
+                                "                                                                \n"
+                                "If the 'pool_config' path property is not set, all properties   \n"
+                                "the name of which starts with the prefix \"pool.\" are used     \n"
+                                "to initialize the embeded histogram pool object.                \n"
+                                "Example:                                                        \n"
+                                "  |                                                             \n"
+                                "  | pool.description : string = \"Histograms\"                  \n"
+                                "  | pool.histo.setups : string[2] = \\                          \n"
+                                "  |   \"${DPP_TESTING_DIR}/config/test_histos_1.conf\" \\       \n"
+                                "  |   \"${DPP_TESTING_DIR}/config/test_histos_2.conf\"          \n"
+                                "  | pool.histo.export_prefixes : string[1] = \\                 \n"
+                                "  |   \"value.\" \\                                             \n"
+                                "  |                                                             \n"
+                                "See dedicated OCD support for class 'mygsl::histogram_pool' for \n"
+                                "the description of histogram builing rules.                     \n"
                                 );
 
   ocd_.set_validation_support(true);
