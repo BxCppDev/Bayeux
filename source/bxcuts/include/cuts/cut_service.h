@@ -51,12 +51,6 @@ namespace cuts {
   {
   public:
 
-    /// Check the debug status
-    bool is_debug () const;
-
-    /// Set the debug status
-    void set_debug (bool);
-
     /// Check if the cut manager is owned by the service
     bool owns_cut_manager () const;
 
@@ -69,8 +63,6 @@ namespace cuts {
     /// Set the reference to an external cut manager
     void set_cut_manager (const cut_manager & a_cut_manager);
 
-  public:
-
     /// Check the initialization status
     virtual bool is_initialized () const;
 
@@ -80,8 +72,6 @@ namespace cuts {
 
     /// Reset
     virtual int reset ();
-
-  public:
 
     /// Constructor
     cut_service ();
@@ -93,11 +83,10 @@ namespace cuts {
     virtual void tree_dump (std::ostream & a_out         = std::clog,
                             const std::string & a_title  = "",
                             const std::string & a_indent = "",
-                            bool a_inherit          = false) const;
+                            bool a_inherit               = false) const;
 
   private:
 
-    bool          _debug_;        //!< Debug flag
     bool          _owns_manager_; //!< Flag for embedded cut manager ownership
     cut_manager * _cut_manager_;  //!< Handle to the embedded cut manager
 

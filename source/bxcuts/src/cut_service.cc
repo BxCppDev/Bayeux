@@ -31,21 +31,8 @@
 
 namespace cuts {
 
-  using namespace std;
-
   /** Auto-registration of this service class in a central service Db */
   DATATOOLS_SERVICE_REGISTRATION_IMPLEMENT(cut_service, "cuts::cut_service")
-
-  bool cut_service::is_debug () const
-  {
-    return _debug_;
-  }
-
-  void cut_service::set_debug (bool a_debug)
-  {
-    _debug_ = a_debug;
-    return;
-  }
 
   bool cut_service::owns_cut_manager () const
   {
@@ -94,9 +81,7 @@ namespace cuts {
                 std::logic_error,
                 "Service '" << get_name () << "' is already initialized !");
 
-    if (a_config.has_flag ("debug")) {
-      set_debug (true);
-    }
+    datatools::base_service::common_initialize(a_config);
 
     if (_cut_manager_ == 0) {
       DT_THROW_IF(! a_config.has_key("cut_manager.config"),
@@ -110,9 +95,6 @@ namespace cuts {
                                           cut_manager_config);
       _cut_manager_ = new cut_manager;
       _owns_manager_ = true;
-      if (is_debug()) {
-        _cut_manager_->set_logging_priority(datatools::logger::PRIO_DEBUG);
-      }
       _cut_manager_->initialize (cut_manager_config);
     }
 
@@ -137,7 +119,6 @@ namespace cuts {
   cut_service::cut_service () : base_service ("cuts::cut_service",
                                               "A cut service")
   {
-    _debug_ = false;
     _owns_manager_ = false;
     _cut_manager_ = 0;
     return;
@@ -152,16 +133,16 @@ namespace cuts {
     return;
   }
 
-  void cut_service::tree_dump (ostream & a_out ,
-                               const string & a_title,
-                               const string & a_indent,
+  void cut_service::tree_dump (std::ostream & a_out ,
+                               const std::string & a_title,
+                               const std::string & a_indent,
                                bool a_inherit) const
   {
     this->base_service::tree_dump (a_out, a_title, a_indent, true);
     a_out << a_indent << datatools::i_tree_dumpable::tag
-          << "Owns manager : '" << _owns_manager_ << "'" << endl;
+          << "Owns manager : '" << _owns_manager_ << "'" << std::endl;
     a_out << a_indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
-          << "Cut manager  :  " << _cut_manager_ << endl;
+          << "Cut manager  :  " << _cut_manager_ << std::endl;
     return;
   }
 
@@ -182,17 +163,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_service,ocd_)
   ocd_.set_class_library ("cuts");
   ocd_.set_class_documentation ("not documented yet");
 
-  {
-    configuration_property_description & cpd = ocd_.add_configuration_property_info();
-    cpd.set_name_pattern("debug")
-      .set_terse_description("Debug flag")
-      .set_traits(datatools::TYPE_BOOLEAN)
-      .set_mandatory(false)
-      .set_long_description("This flag activates debug printing.               \n"
-                            )
-      ;
-  }
-
+  ::datatools::base_service::common_ocd(ocd_);
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
@@ -212,29 +183,29 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_service,ocd_)
       ;
   }
 
-  ocd_.set_configuration_hints ("The cut service uses a 'datatools::properties' object          \n"
-                                "to initialize its behaviour and contents.                      \n"
-                                "                                                               \n"
-                                "Example::                                                      \n"
-                                "                                                               \n"
-                                "   debug : boolean = 0                                         \n"
-                                "   cut_manager.config : string as path = \"my_cut_mgr.conf\"   \n"
-                                "                                                               \n"
-                                "See dedicated OCD support for the ``cuts::cut_manager`` class  \n"
-                                "and ``cuts::XXX_cut`` classes for a description of the syntax  \n"
-                                "used to instantiate cuts objects from a cut manager.           \n"
-                                "                                                               \n"
-                                "From a service manager (``datatools::service_manager`` class)  \n"
-                                "one uses the following syntax from a ``datatools::multi_properties``\n"
-                                "config file::                                                  \n"
-                                "                                                               \n"
-                                "   #@key_label   \"name\"                                      \n"
-                                "   #@meta_label  \"type\"                                      \n"
-                                "                                                               \n"
-                                "   [name=\"my_cuts\" type=\"cuts::cut_service\"]               \n"
-                                "   debug : boolean = 0                                         \n"
-                                "   cut_manager.config : string as path = \"my_cut_mgr.conf\"   \n"
-                                "                                                               \n"
+  ocd_.set_configuration_hints ("The cut service uses a 'datatools::properties' object                \n"
+                                "to initialize its behaviour and contents.                            \n"
+                                "                                                                     \n"
+                                "Example::                                                            \n"
+                                "                                                                     \n"
+                                "   logging.priority   : string = \"warning\"                         \n"
+                                "   cut_manager.config : string as path = \"my_cut_mgr.conf\"         \n"
+                                "                                                                     \n"
+                                "See dedicated OCD support for the ``cuts::cut_manager`` class        \n"
+                                "and ``cuts::XXX_cut`` classes for a description of the syntax        \n"
+                                "used to instantiate cuts objects from a cut manager.                 \n"
+                                "                                                                     \n"
+                                "From a service manager (``datatools::service_manager`` class)        \n"
+                                "one uses the following syntax from a ``datatools::multi_properties`` \n"
+                                "config file::                                                        \n"
+                                "                                                                     \n"
+                                "   #@key_label   \"name\"                                            \n"
+                                "   #@meta_label  \"type\"                                            \n"
+                                "                                                                     \n"
+                                "   [name=\"my_cuts\" type=\"cuts::cut_service\"]                     \n"
+                                "   logging.priority   : string = \"warning\"                         \n"
+                                "   cut_manager.config : string as path = \"my_cut_mgr.conf\"         \n"
+                                "                                                                     \n"
                                 );
 
   ocd_.set_validation_support(true);
