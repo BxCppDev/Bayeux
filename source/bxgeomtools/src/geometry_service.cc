@@ -136,6 +136,64 @@ namespace geomtools {
 
 }  // end of namespace geomtools
 
+// OCD support for class '::cuts::cut_service' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::geometry_service,ocd_)
+{
+  ocd_.set_class_name ("geometools::geometry_service");
+  ocd_.set_class_description ("A geometry service");
+  ocd_.set_class_library ("geomtools");
+  ocd_.set_class_documentation ("not documented yet");
+
+  // Invoke OCD support from parent class :
+  ::datatools::base_service::common_ocd(ocd_);
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("manager.configuration_file")
+      .set_terse_description("The name of the configuration file for the embeded geometry manager")
+      .set_traits(datatools::TYPE_STRING)
+      .set_path(true)
+      .set_mandatory(true)
+      .set_long_description("Example::                                                                            \n"
+                            "                                                                                     \n"
+                            "    manager.configuration_file : string as path = \"geometry_manager.conf\"          \n"
+                            "                                                                                     \n"
+                            "This property must be set in order to properly setup                                 \n"
+                            "the internal geometry manager (see OCD support for the ``geomtools::manager`` class) \n"
+                            )
+      ;
+  }
+
+  ocd_.set_configuration_hints ("The geometry service uses a 'datatools::properties' object            \n"
+                                "to initialize its behaviour and contents.                             \n"
+                                "                                                                      \n"
+                                "Example::                                                             \n"
+                                "                                                                      \n"
+                                "   logging.priority   : string = \"warning\"                          \n"
+                                "   manager.configuration_file : string as path = \"my_geom_mgr.conf\" \n"
+                                "                                                                      \n"
+                                "See dedicated OCD support for the ``geomtools::manager`` class        \n"
+                                "                                                                      \n"
+                                "From a service manager (``datatools::service_manager`` class)         \n"
+                                "one uses the following syntax from a ``datatools::multi_properties``  \n"
+                                "config file::                                                         \n"
+                                "                                                                      \n"
+                                "   #@key_label   \"name\"                                             \n"
+                                "   #@meta_label  \"type\"                                             \n"
+                                "                                                                      \n"
+                                "   [name=\"my_geometry_mgr\" type=\"geomtools::geometry_service\"]    \n"
+                                "   logging.priority   : string = \"warning\"                          \n"
+                                "   manager.configuration_file : string as path = \"my_geom_mgr.conf\" \n"
+                                "                                                                      \n"
+                                );
+
+  ocd_.set_validation_support(true);
+  ocd_.lock();
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+
+DOCD_CLASS_SYSTEM_REGISTRATION(::geomtools::geometry_service,"geomtools::geometry_service")
 
 // end of geometry_service.cc
 /*

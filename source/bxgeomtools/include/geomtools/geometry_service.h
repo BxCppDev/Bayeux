@@ -91,6 +91,11 @@ namespace geomtools {
 
 #endif // GEOMTOOLS_GEOMETRY_SERVICE_H_
 
+#include <datatools/ocd_macros.h>
+
+// Declare the OCD interface of the module
+DOCD_CLASS_DECLARATION(geomtools::geometry_service)
+
 // end of geometry_service.h
 /*
 ** Local Variables: --
