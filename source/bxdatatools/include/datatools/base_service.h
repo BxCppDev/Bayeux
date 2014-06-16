@@ -108,6 +108,9 @@ class base_service : public datatools::i_tree_dumpable {
   /// Return the logging priority threshold
   datatools::logger::priority get_logging_priority() const;
 
+  /// Basic OCD support shared by all inherited modules
+  static void common_ocd(datatools::object_configuration_description & ocd_);
+
   /// Smart print
   virtual void tree_dump(std::ostream& out = std::clog,
                          const std::string & title = "",
