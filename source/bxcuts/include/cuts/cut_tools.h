@@ -147,7 +147,7 @@ namespace cuts {
   };
 
   typedef std::map<std::string, cut_entry_type> cut_handle_dict_type;
-
+  typedef std::vector<std::string>              ordered_cut_list_type;
 } // end of cuts
 
 #endif // CUTS_CUT_TOOLS_H_

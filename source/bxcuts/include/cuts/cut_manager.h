@@ -60,7 +60,7 @@ namespace cuts {
       BLANK             = 0,
       FACTORY_VERBOSE   = datatools::bit_mask::bit00,
       FACTORY_NOPRELOAD = datatools::bit_mask::bit01,
-      FACTORY_INITIALIZATION_AT_LOAD = datatools::bit_mask::bit02,
+      FACTORY_INITIALIZATION_AT_LOAD = datatools::bit_mask::bit02
     };
 
     /// Set logging priority
@@ -76,6 +76,8 @@ namespace cuts {
     bool is_no_preload() const;
 
     bool is_initialization_at_load() const;
+
+    bool has_print_report() const;
 
     bool has(const std::string & a_cut_name) const;
 
@@ -113,6 +115,8 @@ namespace cuts {
                            const std::string & a_title  = "",
                            const std::string & a_indent = "",
                            bool a_inherit          = false) const;
+
+    void print_report(std::ostream & a_out = std::clog) const;
 
     void load_cut(const std::string & cut_name_,
                   const std::string & cut_id_,
@@ -153,13 +157,15 @@ namespace cuts {
 
   private:
 
-    datatools::logger::priority  _logging_;          //!< Logging priority threshold
-    bool                         _initialized_;      //!< Initialization status
-    uint32_t                     _flags_;            //!< Some flags
-    i_cut::factory_register_type _factory_register_; //!< Factory register
-    cut_handle_dict_type         _cuts_;             //!< Dictionnary of cuts
+    datatools::logger::priority  _logging_;               //!< Logging priority threshold
+    bool                         _initialized_;           //!< Initialization status
+    uint32_t                     _flags_;                 //!< Some flags
+    i_cut::factory_register_type _factory_register_;      //!< Factory register
+    cut_handle_dict_type         _cuts_;                  //!< Dictionnary of cuts
     bool                         _service_manager_owner_; //!< Owner flag for the embedded service manager
-    datatools::service_manager * _service_manager_;  //!< Handle to the embedded service manager
+    datatools::service_manager * _service_manager_;       //!< Handle to the embedded service manager
+    bool                         _print_report_;          //!< Print report flag
+    ordered_cut_list_type        _ordered_cuts_;          //!< Ordered list of created cuts
 
     friend class cut_entry_type;
   };
