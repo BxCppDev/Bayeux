@@ -128,6 +128,8 @@ namespace cuts {
   {
     _initialized_ = false;
     _logging = p;
+    _number_event_accepted_ = 0;
+    _number_event_rejected_ = 0;
     return;
   }
 
@@ -173,7 +175,7 @@ namespace cuts {
           << "Cut logging priority : " << datatools::logger::get_priority_label(_logging) << std::endl;
     a_out << indent << datatools::i_tree_dumpable::tag
           << "Cut initialized : " << is_initialized () << std::endl;
-    a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
+    a_out << indent << datatools::i_tree_dumpable::tag
           << "User data : ";
     if (_user_data_.get() != 0) {
       a_out << "Yes (type=\"" << _user_data_.get()->get_typeinfo()->name() << "\")";
@@ -181,6 +183,17 @@ namespace cuts {
       a_out << "No";
     }
     a_out << std::endl;
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Number of processed entries : " << _number_event_accepted_ + _number_event_rejected_
+          << std::endl;
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Number of selected entries  : " << _number_event_accepted_ << " ("
+          << 100.0*_number_event_accepted_/(_number_event_accepted_+_number_event_rejected_)
+          << "%)" << std::endl;
+    a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
+          << "Number of rejected entries  : " << _number_event_rejected_ << " ("
+          << 100.0*_number_event_rejected_/(_number_event_accepted_+_number_event_rejected_)
+          << "%)" << std::endl;
     return;
   }
 
@@ -318,6 +331,8 @@ namespace cuts {
   int i_cut::_finish_cut (int a_selection_status)
   {
     DT_LOG_TRACE(_logging, "Visiting with selection status = " << a_selection_status);
+    if (a_selection_status == SELECTION_ACCEPTED) _number_event_accepted_++;
+    else _number_event_rejected_++;
     return a_selection_status;
   }
 

@@ -271,6 +271,9 @@ namespace cuts {
     bool         _initialized_;  //!< The initialization flag
     boost::shared_ptr<i_referenced_data> _user_data_; //!< Internal weak (not managed) handle to user data;
 
+    size_t _number_event_accepted_; //!< Number of events accepted by the cut
+    size_t _number_event_rejected_; //!< Number of events rejected by the cut
+
     // Factory stuff :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_cut);
 
@@ -279,13 +282,13 @@ namespace cuts {
 }  // end of namespace cuts
 
 /** Interface macro for automated registration of a cut class in the global register */
-#define CUT_REGISTRATION_INTERFACE(T)                                   \
-  private:                                                              \
+#define CUT_REGISTRATION_INTERFACE(T)                                    \
+  private:                                                               \
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::cuts::i_cut,T); \
   /**/
 
 /** Implementation macro for automated registration of a cut class in the global register */
-#define CUT_REGISTRATION_IMPLEMENT(T,CutID)                             \
+#define CUT_REGISTRATION_IMPLEMENT(T,CutID)                                         \
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::cuts::i_cut,T,CutID); \
   /**/
 
