@@ -186,16 +186,16 @@ namespace materials {
       set_debug(true);
     }
 
-    if (setup_.has_flag("alias_allow_overload")) {
-      set_alias_allow_overload(true);
+    if (setup_.has_key("alias_allow_overload")) {
+      set_alias_allow_overload(setup_.fetch_boolean("alias_allow_overload"));
     }
 
-    if (setup_.has_flag("load_isotope_mass_data")) {
-      set_load_isotope_mass_data(true);
+    if (setup_.has_key("load_isotope_mass_data")) {
+      set_load_isotope_mass_data(setup_.fetch_boolean("load_isotope_mass_data"));
     }
 
     if (setup_.has_flag("load_isotope_decay_data")) {
-      set_load_isotope_decay_data(true);
+      set_load_isotope_decay_data(setup_.fetch_boolean("load_decay_mass_data"));
     }
 
     std::vector<std::string> material_exported_prefixes;
@@ -336,7 +336,7 @@ namespace materials {
     _isotopes_.clear ();
     _creator_.reset();
     _alias_allow_overload_ = false;
-    _load_isotope_mass_data_ = false;
+    _load_isotope_mass_data_ = true;
     _load_isotope_decay_data_ = false;
     _material_exported_prefixes_.clear();
     return;
