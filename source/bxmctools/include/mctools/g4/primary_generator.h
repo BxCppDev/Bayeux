@@ -49,50 +49,51 @@ namespace mctools {
     class run_action;
     class event_action;
 
+    /// \brief Generator of primary particles
     class primary_generator : public G4VUserPrimaryGeneratorAction,
                               public loggable_support
     {
     public:
 
-      bool is_initialized () const;
+      bool is_initialized() const;
 
-      void set_run_action (mctools::g4::run_action & run_action_);
+      void set_run_action(mctools::g4::run_action & run_action_);
 
-      void set_event_action (mctools::g4::event_action & event_action_);
+      void set_event_action(mctools::g4::event_action & event_action_);
 
       bool has_vertex_generator() const;
 
       ///
-      void set_vertex_generator (genvtx::i_vertex_generator & vertex_generator_);
+      void set_vertex_generator(genvtx::i_vertex_generator & vertex_generator_);
 
-      void set_event_generator (genbb::i_genbb & event_generator_);
+      void set_event_generator(genbb::i_genbb & event_generator_);
 
-      size_t get_event_counter () const;
+      size_t get_event_counter() const;
 
-      void reset_event_counter ();
+      void reset_event_counter();
 
-      primary_generator ();
+      primary_generator();
 
-      virtual ~primary_generator ();
+      virtual ~primary_generator();
 
-      void initialize (const datatools::properties & config_);
+      void initialize(const datatools::properties & config_);
 
-      void reset ();
+      void reset();
 
-      std::string get_g4_particle_name_from_genbb_particle (const ::genbb::primary_particle & p_) const;
+      std::string get_g4_particle_name_from_genbb_particle(const ::genbb::primary_particle & p_) const;
 
       // G4 interface:
-      void GeneratePrimaries (G4Event *);
+      void GeneratePrimaries(G4Event *);
 
     protected:
 
-      void _set_defaults ();
+      void _set_defaults();
 
-      void _check ();
+      void _check();
 
-      void _generate_vertex ();
+      void _generate_vertex();
 
-      void _generate_event (G4Event * g4_event_);
+      void _generate_event(G4Event * g4_event_);
 
     private:
 
