@@ -46,12 +46,12 @@ namespace mctools {
                          public loggable_support
     {
     public:
-      enum g4_verbosity_type
-        {
-          VERBOSITY_SILENT  = 0,
-          VERBOSITY_WARNING = 1,
-          VERBOSITY_MORE    = 2
-        };
+
+      enum g4_verbosity_type {
+        VERBOSITY_SILENT  = 0,
+        VERBOSITY_WARNING = 1,
+        VERBOSITY_MORE    = 2
+      };
 
       struct production_cuts_info {
       public:
