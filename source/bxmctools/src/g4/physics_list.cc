@@ -1,36 +1,34 @@
-// -*- mode: c++ ; -*-
 /* physics_list.cc
- */
-/*
  *
  * http://geant4.cern.ch/UserDocumentation/UsersGuides/ForApplicationDeveloper/html/ch06.html
  *
  *
  */
 
+// Ourselves:
 #include <mctools/g4/physics_list.h>
 
+// Standard library:
 #include <stdexcept>
 
+// Third party:
+// - Boost:
 #include <boost/algorithm/string/predicate.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/units.h>
 #include <datatools/ioutils.h>
 #include <datatools/clhep_units.h>
 #include <datatools/properties.h>
 #include <datatools/exception.h>
-
-// G4 stuff :
+// - Geant4 :
 #include <globals.hh>
 #include <G4Version.hh>
 #include <G4UnitsTable.hh>
 //#include <G4ProcessManager.hh>
-
 // Particles:
 #include <G4ParticleDefinition.hh>
 #include <G4ParticleTypes.hh>
 #include <G4ParticleTable.hh>
-
 #include <G4ProductionCuts.hh>
 #include <G4RegionStore.hh>
 #include <G4PhysListFactory.hh>
@@ -299,10 +297,18 @@ namespace mctools {
 
       // *********************** Production cuts *************************** //
 
-      if (config_.has_key ("using_production_cuts")) {
+      if (config_.has_key("using_production_cuts")) {
         _using_production_cuts_ = config_.fetch_boolean ("using_production_cuts");
       }
       DT_LOG_DEBUG(_logprio(),"Use production cuts set to: " << _using_production_cuts_);
+
+      datatools::properties pc_config;
+      config_.export_and_rename_starting_with(pc_config, "production_cuts.", "");
+
+      // Warning for users:
+      if (pc_config.size() > 0 && !_using_production_cuts_) {
+        DT_LOG_WARNING(_logprio(), "Your configuration has 'production_cuts' related parameters but 'using_production_cuts' is not activated!");
+      }
 
       if (_using_production_cuts_) {
 
@@ -312,20 +318,20 @@ namespace mctools {
         double eunit = CLHEP::MeV;
 
         // Production cuts length unit :
-        if (config_.has_key ("production_cuts.length_unit")) {
-          std::string lunit_str = config_.fetch_string ("production_cuts.length_unit");
-          lunit = datatools::units::get_length_unit_from (lunit_str);
+        if (config_.has_key("production_cuts.length_unit")) {
+          std::string lunit_str = config_.fetch_string("production_cuts.length_unit");
+          lunit = datatools::units::get_length_unit_from(lunit_str);
         }
 
         // Production cuts energy unit :
-        if (config_.has_key ("production_cuts.energy_unit")) {
-          std::string eunit_str = config_.fetch_string ("production_cuts.energy_unit");
-          eunit = datatools::units::get_energy_unit_from (eunit_str);
+        if (config_.has_key("production_cuts.energy_unit")) {
+          std::string eunit_str = config_.fetch_string("production_cuts.energy_unit");
+          eunit = datatools::units::get_energy_unit_from(eunit_str);
         }
 
         // Production cuts low edge energy :
-        if (config_.has_key ("production_cuts.low_energy")) {
-          _production_cuts_low_energy_ = config_.fetch_real ("production_cuts.low_energy");
+        if (config_.has_key("production_cuts.low_energy")) {
+          _production_cuts_low_energy_ = config_.fetch_real("production_cuts.low_energy");
           if (! config_.has_explicit_unit("production_cuts.low_energy")) _production_cuts_low_energy_ *= eunit;
         }
         DT_LOG_NOTICE(_logprio(), "Production cuts low edge energy: " << _production_cuts_low_energy_ / CLHEP::eV << " eV");
@@ -510,7 +516,7 @@ namespace mctools {
 
       //SetVerboseLevel (_g4_verbosity_);
       DT_LOG_NOTICE (_logprio (),
-                     "Original default cut Length : " << G4BestUnit (defaultCutValue, "Length"));
+                     "Original default cut Length : " << G4BestUnit(defaultCutValue, "Length"));
 
       _register_physics_constructors();
 
@@ -890,17 +896,15 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
       .set_traits(datatools::TYPE_STRING)
       .set_path(true)
       .set_mandatory(true)
-      .set_long_description("Default: empty                                                             \n"
-                            "                                                                           \n"
-                            "Example::                                                                  \n"
-                            "                                                                           \n"
-                            " physics_constructors.names : string[2] = \"particles\" \"electromagnetic\" \n"
-                            " physics_constructors.particles.config : string as path = \\               \n"
-                            "    \"config/simulation/particles.conf\"                                   \n"
-                            " physics_constructors.electromagnetic.config : string as path = \\         \n"
-                            "    \"config/simulation/electromagnetic.conf\"                             \n"
-                            "                                                                           \n"
-                            )
+      .add_example("Specify the configuration files for some physics lists: ::                  \n"
+                   "                                                                            \n"
+                   " physics_constructors.names : string[2] = \"particles\" \"electromagnetic\" \n"
+                   " physics_constructors.particles.config : string as path = \\                \n"
+                   "    \"config/simulation/particles.conf\"                                    \n"
+                   " physics_constructors.electromagnetic.config : string as path = \\          \n"
+                   "    \"config/simulation/electromagnetic.conf\"                              \n"
+                   "                                                                            \n"
+                   )
       ;
   }
 
@@ -914,13 +918,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
       .set_terse_description("Flag to activate production cuts")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
-      .set_long_description("Default: ``0``                                         \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " using_production_cuts : boolean = 0                   \n"
-                            "                                                       \n"
-                            )
+      .set_default_value_boolean(false)
+      .add_example("Activate the production cuts mechanism: ::         \n"
+                   "                                                   \n"
+                   " using_production_cuts : boolean = 1               \n"
+                   "                                                   \n"
+                   )
       ;
   }
 
@@ -932,13 +935,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
       .set_terse_description("The production cuts length unit symbol")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
-      .set_long_description("Default: ``\"mm\"``                                    \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " production_cuts.length_unit : string = \"mm\"         \n"
-                            "                                                       \n"
-                            )
+      .set_triggered_by_flag("using_production_cuts", true)
+      .set_default_value_string("mm")
+      .add_example("Set the production cut default length unit: ::         \n"
+                   "                                                       \n"
+                   " production_cuts.length_unit : string = \"mm\"         \n"
+                   "                                                       \n"
+                   )
       ;
   }
 
@@ -950,13 +953,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
       .set_terse_description("The production cuts energy unit symbol")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
-      .set_long_description("Default: ``\"mm\"``                                    \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " production_cuts.energy_unit : string = \"MeV\"        \n"
-                            "                                                       \n"
-                            )
+      .set_triggered_by_flag("using_production_cuts", true)
+      .set_default_value_string("MeV")
+      .add_example("Set the production cut default energy unit: ::          \n"
+                   "                                                        \n"
+                   " production_cuts.energy_unit : string = \"MeV\"         \n"
+                   "                                                        \n"
+                   )
       ;
   }
 
@@ -970,14 +973,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
       .set_mandatory(false)
       .set_explicit_unit(true)
       .set_unit_label("length")
-      .set_long_description("Default: ``10 um``                                      \n"
-                            "                                                        \n"
-                            "Example::                                               \n"
-                            "                                                        \n"
-                            " production_cuts.default_value : real as length = 10 um \n"
-                            "                                                        \n"
-                            )
-      ;
+      .set_triggered_by_flag("using_production_cuts", true)
+      .add_example("Set the production cut default value::                  \n"
+                   "                                                        \n"
+                   " production_cuts.default_value : real as length = 10 um \n"
+                   "                                                        \n"
+                   )
+     ;
   }
 
   {
@@ -990,14 +992,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
       .set_mandatory(false)
       .set_explicit_unit(true)
       .set_unit_label("energy")
-      .set_long_description("Default: not used                                      \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " production_cuts.low_energy : real as energy =  250 eV \n"
-                            "                                                       \n"
-                            )
-      ;
+      .set_triggered_by_flag("using_production_cuts", true)
+      .add_example("Set the production cut low energy bound::              \n"
+                   "                                                       \n"
+                   " production_cuts.low_energy : real as energy =  250 eV \n"
+                   "                                                       \n"
+                   )
+     ;
   }
 
   {
@@ -1010,14 +1011,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
       .set_mandatory(false)
       .set_explicit_unit(true)
       .set_unit_label("energy")
-      .set_long_description("Default: not used                                      \n"
-                            "                                                       \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " production_cuts.high_energy : real as energy =  1 GeV \n"
-                            "                                                       \n"
-                            )
-      ;
+      .set_triggered_by_flag("using_production_cuts", true)
+      .add_example("Set the production cut high energy bound::             \n"
+                   "                                                       \n"
+                   " production_cuts.high_energy : real as energy =  1 GeV \n"
+                   "                                                       \n"
+                   )
+     ;
   }
 
   {
@@ -1030,13 +1030,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
       .set_explicit_unit(true)
       .set_unit_label("length")
       .set_mandatory(false)
-      .set_long_description("Default: empty                                           \n"
-                            "                                                          \n"
-                            "Example::                                                \n"
-                            "                                                         \n"
-                            " production_cuts.electron : real as length = 1 mm \n"
-                            "                                                         \n"
-                            )
+      .set_triggered_by_flag("using_production_cuts", true)
+      .add_example("Set the production cut for electrons::                   \n"
+                   "                                                         \n"
+                   " production_cuts.electron : real as length = 1 mm        \n"
+                   "                                                         \n"
+                   )
       ;
   }
 
@@ -1050,14 +1049,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
       .set_explicit_unit(true)
       .set_unit_label("length")
       .set_mandatory(false)
-      .set_long_description("Default: empty                                           \n"
-                            "                                                          \n"
-                            "Example::                                                \n"
-                            "                                                         \n"
-                            " production_cuts.positron : real as length = 1 mm \n"
-                            "                                                         \n"
-                            )
-      ;
+      .set_triggered_by_flag("using_production_cuts", true)
+      .add_example("Set the production cut for positrons::                   \n"
+                   "                                                         \n"
+                   " production_cuts.positron : real as length = 1 mm        \n"
+                   "                                                         \n"
+                   )
+       ;
   }
 
   {
@@ -1070,13 +1068,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
       .set_explicit_unit(true)
       .set_unit_label("length")
       .set_mandatory(false)
-      .set_long_description("Default: empty                                           \n"
-                            "                                                          \n"
-                            "Example::                                                \n"
-                            "                                                         \n"
-                            " production_cuts.gamma : real as length = 1 mm    \n"
-                            "                                                         \n"
-                            )
+      .set_triggered_by_flag("using_production_cuts", true)
+      .add_example("Set the production cut for gammas::                   \n"
+                   "                                                      \n"
+                   " production_cuts.gamma : real as length = 1 mm        \n"
+                   "                                                      \n"
+                   )
       ;
   }
 
@@ -1089,13 +1086,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
       .set_traits(datatools::TYPE_STRING,
                   datatools::configuration_property_description::ARRAY)
       .set_mandatory(false)
-      .set_long_description("Default: empty                                         \n"
-                            "                                                        \n"
-                            "Example::                                              \n"
-                            "                                                       \n"
-                            " production_cuts.regions : string[2] = \"A\" \"B\"     \n"
-                            "                                                       \n"
-                            )
+      .set_triggered_by_flag("using_production_cuts", true)
+      .add_example("Define regions where to apply production cuts: ::      \n"
+                   "                                                       \n"
+                   " production_cuts.regions : string[2] = \"A\" \"B\"     \n"
+                   "                                                       \n"
+                   )
       ;
   }
 
@@ -1109,15 +1105,14 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
       .set_explicit_unit(true)
       .set_unit_label("length")
       .set_mandatory(false)
-      .set_long_description("Default: empty                                           \n"
-                            "                                                          \n"
-                            "Example::                                                \n"
-                            "                                                         \n"
-                            " production_cuts.regions : string[2] = \"A\" \"B\"       \n"
-                            " production_cuts.regions.A.all : real as length = 5 mm   \n"
-                            " production_cuts.regions.B.all : real as length = 1 mm   \n"
-                            "                                                         \n"
-                            )
+      .set_triggered_by_flag("using_production_cuts", true)
+      .add_example("Define production cuts for all particles in specific regions: :: \n"
+                   "                                                         \n"
+                   " production_cuts.regions : string[2] = \"A\" \"B\"       \n"
+                   " production_cuts.regions.A.all : real as length = 5 mm   \n"
+                   " production_cuts.regions.B.all : real as length = 1 mm   \n"
+                   "                                                         \n"
+                   )
       ;
   }
 
@@ -1131,15 +1126,14 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
       .set_explicit_unit(true)
       .set_unit_label("length")
       .set_mandatory(false)
-      .set_long_description("Default: empty                                           \n"
-                            "                                                          \n"
-                            "Example::                                                \n"
-                            "                                                         \n"
-                            " production_cuts.regions : string[2] = \"A\" \"B\"       \n"
-                            " production_cuts.regions.A.gamma : real as length = 5 mm \n"
-                            " production_cuts.regions.B.gamma : real as length = 1 mm \n"
-                            "                                                         \n"
-                            )
+      .set_triggered_by_flag("using_production_cuts", true)
+      .add_example("Define production cuts for gammas in specific regions: :: \n"
+                   "                                                         \n"
+                   " production_cuts.regions : string[2] = \"A\" \"B\"       \n"
+                   " production_cuts.regions.A.gamma : real as length = 5 mm \n"
+                   " production_cuts.regions.B.gamma : real as length = 1 mm \n"
+                   "                                                         \n"
+                   )
       ;
   }
 
@@ -1153,15 +1147,14 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
       .set_explicit_unit(true)
       .set_unit_label("length")
       .set_mandatory(false)
-      .set_long_description("Default: empty                                           \n"
-                            "                                                          \n"
-                            "Example::                                                \n"
-                            "                                                         \n"
-                            " production_cuts.regions : string[2] = \"A\" \"B\"       \n"
-                            " production_cuts.regions.A.electron : real as length = 5 mm \n"
-                            " production_cuts.regions.B.electron : real as length = 1 mm \n"
-                            "                                                         \n"
-                            )
+      .set_triggered_by_flag("using_production_cuts", true)
+      .add_example("Define production cuts for electrons in specific regions: :: \n"
+                   "                                                            \n"
+                   " production_cuts.regions : string[2] = \"A\" \"B\"          \n"
+                   " production_cuts.regions.A.electron : real as length = 5 mm \n"
+                   " production_cuts.regions.B.electron : real as length = 1 mm \n"
+                   "                                                            \n"
+                   )
       ;
   }
 
@@ -1175,20 +1168,19 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
       .set_explicit_unit(true)
       .set_unit_label("length")
       .set_mandatory(false)
-      .set_long_description("Default: empty                                           \n"
-                            "                                                          \n"
-                            "Example::                                                \n"
-                            "                                                         \n"
-                            " production_cuts.regions : string[2] = \"A\" \"B\"       \n"
-                            " production_cuts.regions.A.positron : real as length = 5 mm \n"
-                            " production_cuts.regions.B.positron : real as length = 1 mm \n"
-                            "                                                         \n"
-                            )
+      .set_triggered_by_flag("using_production_cuts", true)
+      .add_example("Define production cuts for positrons in specific regions: :: \n"
+                   "                                                            \n"
+                   " production_cuts.regions : string[2] = \"A\" \"B\"          \n"
+                   " production_cuts.regions.A.positron : real as length = 5 mm \n"
+                   " production_cuts.regions.B.positron : real as length = 1 mm \n"
+                   "                                                            \n"
+                   )
       ;
   }
 
   // Additionnal configuration hints :
-  ocd_.set_configuration_hints("Not available yet                    \n"
+  ocd_.set_configuration_hints("Not available yet\n"
                                );
 
   ocd_.set_validation_support(true);
@@ -1203,6 +1195,3 @@ DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
 
 // Registration macro for class 'mctools::g4::physics_list' :
 DOCD_CLASS_SYSTEM_REGISTRATION(mctools::g4::physics_list,"mctools::g4::physics_list")
-
-
-// end of physics_list.cc
