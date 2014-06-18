@@ -4,23 +4,25 @@
  * https://twiki.cern.ch/twiki/bin/view/Geant4/LoweAtomicDeexcitation
  */
 
+// Ourselves:
 #include <mctools/g4/em_physics_constructor.h>
 
+// Standard library:
 #include <stdexcept>
 #include <iostream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/units.h>
 #include <datatools/ioutils.h>
 #include <datatools/clhep_units.h>
 #include <datatools/properties.h>
 #include <datatools/exception.h>
-
-// G4 stuff :
+// - Geant4:
 #include <globals.hh>
 #include <G4Version.hh>
 #include <G4UnitsTable.hh>
 #include <G4ProcessManager.hh>
-
 // Particles:
 #include <G4ParticleDefinition.hh>
 #include <G4LossTableManager.hh>
@@ -31,58 +33,46 @@
 #include <G4Positron.hh>
 #include <G4MuonPlus.hh>
 #include <G4MuonMinus.hh>
-
 //#include <G4RegionStore.hh>
 // EM processes :
-
 #include <G4RadioactiveDecay.hh>
 #include <G4EmProcessOptions.hh>
-
 #include <G4ComptonScattering.hh>
 #include <G4RayleighScattering.hh>
 #include <G4GammaConversion.hh>
 #include <G4GammaConversionToMuons.hh>
 #include <G4PhotoElectricEffect.hh>
-
 #include <G4eMultipleScattering.hh>
 #include <G4eIonisation.hh>
 #include <G4eBremsstrahlung.hh>
 #include <G4eplusAnnihilation.hh>
-
 #include <G4MuMultipleScattering.hh>
 #include <G4MuIonisation.hh>
 #include <G4MuBremsstrahlung.hh>
 #include <G4MuPairProduction.hh>
-
 #include <G4hMultipleScattering.hh>
 #include <G4hIonisation.hh>
 #include <G4ionIonisation.hh>
-
 /* **** LIVERMORE **** */
 // Gammas :
 #include <G4LivermoreComptonModel.hh>
 #include <G4LivermoreRayleighModel.hh>
 #include <G4LivermoreGammaConversionModel.hh>
 #include <G4LivermorePhotoElectricModel.hh>
-
 // Electrons :
 #include <G4LivermoreIonisationModel.hh>
 #include <G4LivermoreBremsstrahlungModel.hh>
-
 /* **** PENELOPE **** */
 // Gammas :
 #include <G4PenelopeComptonModel.hh>
 #include <G4PenelopeRayleighModel.hh>
 #include <G4PenelopeGammaConversionModel.hh>
 #include <G4PenelopePhotoElectricModel.hh>
-
 // Electrons/positrons :
 #include <G4PenelopeIonisationModel.hh>
 #include <G4PenelopeBremsstrahlungModel.hh>
-
 // Positrons :
 #include <G4PenelopeAnnihilationModel.hh>
-
 #include "G4UAtomicDeexcitation.hh"
 #include <G4RegionStore.hh>
 #include <G4StepLimiter.hh>
@@ -140,14 +130,14 @@ namespace mctools {
     const std::string em_physics_constructor::EM_MODEL_LOW_ENERGY_LIVERMORE   = "livermore";
     const std::string em_physics_constructor::EM_MODEL_LOW_ENERGY_PENELOPE    = "penelope";
 
-    const std::string em_physics_constructor::EM_PIXE_MODEL_EMPIRICAL         = "empirical";
-    const std::string em_physics_constructor::EM_PIXE_MODEL_ECPSSR_FORMFACTOR = "ecpssr_formfactor";
-    const std::string em_physics_constructor::EM_PIXE_MODEL_ECPSSR_ANALYTICAL = "ecpssr_analytical";
+    const std::string em_physics_constructor::EM_PIXE_MODEL_EMPIRICAL         = "Empirical";
+    const std::string em_physics_constructor::EM_PIXE_MODEL_ECPSSR_FORMFACTOR = "ECPSSR_FormFactor";
+    const std::string em_physics_constructor::EM_PIXE_MODEL_ECPSSR_ANALYTICAL = "ECPSSR_Analytical";
 
-    const std::string em_physics_constructor::EM_PIXE_ELECTRON_MODEL_LIVERMORE         = "livermore";
-    const std::string em_physics_constructor::EM_PIXE_ELECTRON_MODEL_PROTON_ANALYTICAL = "proton_analytical";
-    const std::string em_physics_constructor::EM_PIXE_ELECTRON_MODEL_PROTON_EMPIRICAL  = "proton_empirical";
-    const std::string em_physics_constructor::EM_PIXE_ELECTRON_MODEL_PENELOPE          = "penelope";
+    const std::string em_physics_constructor::EM_PIXE_ELECTRON_MODEL_LIVERMORE         = "Livermore";
+    const std::string em_physics_constructor::EM_PIXE_ELECTRON_MODEL_PENELOPE          = "Penelope";
+    const std::string em_physics_constructor::EM_PIXE_ELECTRON_MODEL_PROTON_ANALYTICAL = "Analytical";
+    const std::string em_physics_constructor::EM_PIXE_ELECTRON_MODEL_PROTON_EMPIRICAL  = "Empirical";
 
     const std::string & em_physics_constructor::get_em_model () const
     {
@@ -571,7 +561,8 @@ namespace mctools {
            << datatools::i_tree_dumpable::last_tag
            << "Atomic deexcitation per region : " << std::endl;
 
-      for (std::map<std::string, region_deexcitation_type>::const_iterator i = _em_regions_deexcitation_.begin();
+      for (std::map<std::string, region_deexcitation_type>::const_iterator i
+             = _em_regions_deexcitation_.begin();
            i != _em_regions_deexcitation_.end();
            i++) {
         out_ << indent << datatools::i_tree_dumpable::skip_tag
@@ -1435,6 +1426,3 @@ DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
 
 // Registration macro for class 'mctools::g4::em_physics_constructor' :
 DOCD_CLASS_SYSTEM_REGISTRATION(mctools::g4::em_physics_constructor,"mctools::g4::em_physics_constructor")
-
-
-// end of em_physics_constructor.cc
