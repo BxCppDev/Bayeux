@@ -133,27 +133,20 @@ void things::entry_type::tree_dump(std::ostream& a_out,
  const bool things::copyable     = true;
  const bool things::noncopyable  = !copyable;
 
-// ctor:
 things::things() : datatools::i_serializable() {}
 
-
-// ctor:
 things::things(const std::string& a_name, const std::string& a_description) {
   this->set_name(a_name);
   this->set_description(a_description);
 }
 
-
-// dtor:
 things::~things() {
   this->reset();
 }
 
-
 const std::string & things::get_name() const {
   return name_;
 }
-
 
 void things::set_name_impl(const std::string& a_name) {
   name_ = a_name;
