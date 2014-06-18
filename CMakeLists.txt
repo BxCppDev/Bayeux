@@ -50,6 +50,15 @@ ENDIF()
 # CMake/project requirements and configuration
 #
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+
+# If Policy CMP0022 exists, use OLD because Bayeux still needs
+# to support versions of CMake < 2.8.12.
+# This relates to LINK_INTERFACE_LIBRARIES and can be removed once
+# minimum required CMake version reaches 2.8.12
+if(POLICY CMP0022)
+  cmake_policy(SET CMP0022 OLD)
+endif()
+
 project(Bayeux)
 
 # - Load Custom Modules
