@@ -236,6 +236,13 @@ namespace datatools {
   }
 
   configuration_property_description &
+  configuration_property_description::set_group(const std::string &group_)
+  {
+    _group_ = group_;
+    return *this;
+  }
+
+  configuration_property_description &
   configuration_property_description::set_name_pattern(const std::string &np_)
   {
     _name_pattern_ = np_;
@@ -613,6 +620,12 @@ namespace datatools {
   }
 
   const std::string &
+  configuration_property_description::get_group() const
+  {
+    return _group_;
+  }
+
+  const std::string &
   configuration_property_description::get_terse_description() const
   {
     return _terse_description_;
@@ -685,7 +698,7 @@ namespace datatools {
          << std::endl << std::endl;
     */
     out_ << indent_ << "Property ``" << get_name_pattern() << "``" << std::endl;
-    out_ << indent_ << "............................................................................................"  << std::endl;
+    out_ << indent_ << ".........................................................................."  << std::endl;
     out_ << indent_ << std::endl;
 
     std::string indent = indent_ + "   ";
@@ -700,6 +713,10 @@ namespace datatools {
 
     if (! _from_.empty()) {
       out_  << indent << "* From : ``" << _from_ << "``" << std::endl;
+    }
+
+    if (! _group_.empty()) {
+      out_  << indent << "* Group : ``" << _group_ << "``" << std::endl;
     }
 
     out_ << indent << "* Type: ";
@@ -1029,6 +1046,19 @@ namespace datatools {
     return _class_documentation_;
   }
 
+  void object_configuration_description::add_group(const std::string &group_)
+  {
+    if (_groups_.count(group_) == 0) {
+      _groups_.insert(group_);
+    }
+    return;
+  }
+
+  const std::set<std::string> & object_configuration_description::get_groups() const
+  {
+    return _groups_;
+  }
+
   bool object_configuration_description::has_class_description() const
   {
     return !_class_description_.empty();
@@ -1112,6 +1142,12 @@ namespace datatools {
     } else {
       out_ << std::endl << std::endl;
       print_multi_lines(out_, _class_documentation_, indent_ + "  ");
+    }
+
+    if (_groups_.size()) {
+      out_ << indent_ << "* Group(s) : " << _groups_.size() << std::endl;
+      //for (
+      out_ << indent_ << std::endl;
     }
 
     out_ << indent_ << "* Validation support : " << (_validation_support_ ? "yes" : "no") << std::endl;

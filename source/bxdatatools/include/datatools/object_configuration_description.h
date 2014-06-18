@@ -33,6 +33,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <set>
 
 // Third party
 // - Boost
@@ -43,6 +44,7 @@
 // This project
 #include <datatools/properties.h>
 #include <datatools/types.h>
+#include <datatools/bit_mask.h>
 
 namespace datatools {
 
@@ -53,20 +55,22 @@ class configuration_property_description
 {
 public:
 
-  static const bool SCALAR; // = false;
-  static const bool ARRAY; //  = true;
+  static const bool SCALAR;        // = false;
+  static const bool ARRAY;         // = true;
   static const bool IMPLICIT_UNIT; // = false;
   static const bool EXPLICIT_UNIT; // = true;
-  static const bool MUTABLE; // = false;
-  static const bool CONST; // = true;
+  static const bool MUTABLE;       // = false;
+  static const bool CONST;         // = true;
 
+  /// \brief Dependency type
   enum dependency_type {
-    DEP_UNDEFINED = 0,
-    DEP_DYNAMIC = 1,
-    DEP_BY_FLAG = 2,
-    DEP_BY_LABEL = 3,
+    DEP_UNDEFINED = 0, /// undefined dependency
+    DEP_DYNAMIC   = 1, /// Dynamic dependency from another property of which the name is used to build the property's name
+    DEP_BY_FLAG   = 2, /// Dependency from a boolean property (flag) with a specific value (true or false)
+    DEP_BY_LABEL  = 3, /// Dependency from a string property (label) with a specific value
   };
 
+  /// \brief Description of a dependency
   struct dependency_entry {
   public:
     bool dynamic() const;
@@ -81,11 +85,10 @@ public:
     dependency_entry();
     ~dependency_entry();
   public:
-    int type; /// The type of dependency
+    int type; /// The type of dependency (should be a dependency_type ! TO BE FIXED!)
     std::string name; /// The name of the dependee property
     bool triggering_status; /// The triggering value of a flag dependee property (DEP_BY_FLAG)
-    //std::string triggering_label; /// The triggering value of a string dependee property (DEP_BY_LABEL)
-    std::vector<std::string> triggering_labels; /// The triggering value of a string dependee property (DEP_BY_LABEL)
+    std::vector<std::string> triggering_labels; /// The triggering values of a string dependee property (DEP_BY_LABEL)
     const configuration_property_description * address;
   };
 
@@ -94,6 +97,7 @@ public:
 
   configuration_property_description & set_name_pattern(const std::string &np_);
   configuration_property_description & set_from(const std::string &from_);
+  configuration_property_description & set_group(const std::string &group_);
   configuration_property_description & set_terse_description(const std::string &desc_);
   configuration_property_description & set_long_description(const std::string &desc_);
   configuration_property_description & set_mandatory(bool m_ = true);
@@ -138,6 +142,7 @@ public:
   bool is_triggered_by_label() const;
   const std::string & get_name_pattern() const;
   const std::string & get_from() const;
+  const std::string & get_group() const;
   bool has_terse_description() const;
   const std::string & get_terse_description() const;
   bool has_long_description() const;
@@ -185,6 +190,7 @@ private:
   std::string  _name_pattern_;         /// The name pattern of the property
   std::string  _from_;                 /// The name of a class from which the property is declared
   std::string  _section_;              /// An optional string describing the configuration section
+  std::string  _group_;                /// An optional string describing the group the object belongs too
   std::string  _terse_description_;    /// Terse description of the property
   std::string  _long_description_;     /// Detailed description of the property
   std::vector<std::string> _examples_; /// List of examples
@@ -221,21 +227,19 @@ class object_configuration_description
  public:
 
   /// \brief Print option flags
-  enum po_flags_type
-    {
-      po_none = 0,
-      po_no_config = 0x1,
-      po_no_title = 0x2,
-    };
+  enum po_flags_type {
+    po_none = 0,
+    po_no_config = 0x1,
+    po_no_title = 0x2,
+  };
 
   /// \brief Skeleton/sample generator option flags
-  enum sgo_flags_type
-    {
-      sgo_none = 0,
-      sgo_no_add_infos = 0x1,
-      sgo_no_config_hints = 0x2,
-      sgo_minimal = sgo_no_add_infos | sgo_no_config_hints
-    };
+  enum sgo_flags_type {
+    sgo_none = 0,
+    sgo_no_add_infos = 0x1,
+    sgo_no_config_hints = 0x2,
+    sgo_minimal = sgo_no_add_infos | sgo_no_config_hints
+  };
 
   /*
   struct configuration_section_description {
@@ -277,6 +281,10 @@ class object_configuration_description
   const std::string & get_class_documentation() const;
 
   const std::string & get_class_library() const;
+
+  void add_group(const std::string &group_);
+
+  const std::set<std::string> & get_groups() const;
 
   bool has_class_description() const;
 
@@ -346,6 +354,7 @@ private:
   std::string  _class_description_;              /// An optional description string
   std::string  _class_documentation_;            /// An optional documentation string
   std::string  _class_library_;                  /// An optional string describing the library the class belongs to
+  std::set<std::string> _groups_;                /// The set of groups the class belongs to
   cpd_col_type _configuration_properties_infos_; /// Collection of documented properties
   std::string  _configuration_hints_;            /// Some embeded plain text documentation
   //csd_col_type _configuration_sections_infos_; /// Collection of documented sections
