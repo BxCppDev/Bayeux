@@ -340,9 +340,11 @@ Acknowledgements
 The authors gratefully thank the following persons for their direct or
 indirect contributions to the Bayeux library:
 
-* Vladimir  Tretyak  is  the   author  of  the  original  Decay0/GENBB
+* Vladimir  Tretyak  is  the   author  of  the  original  *Decay0/GENBB*
   generator  (written in  Fortran 77)  from  which large  part of  the
   genbb_help module is derived.
 * Christian Pfligersdorffer  is the author of  the Boost/Serialization
   *based portable  binary archive* classes  which is supported  by the
   I/O system of the datatools and brio modules.
+* Nicolas Devillard and Rajarshi Guha are the authors of the *Gnuplot pipe*
+  library that is embedded in geomtools.
