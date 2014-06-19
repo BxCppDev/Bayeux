@@ -75,7 +75,14 @@ set(Bayeux_VERSION "${Bayeux_VERSION_MAJOR}.${Bayeux_VERSION_MINOR}.${Bayeux_VER
 # Note that the added flags *won't* show up in the cache.
 # TODO : better way to do this with the "Make Override" system?
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  set(Bayeux_CXX_FLAGS "-W -Wall")
+  # Developers may need to mute warnings in order to track easily
+  # error and warning messages mixed up in the output stream with
+  # multi-threaded build. So we make this compiler flag an option,
+  # activated by default for a production build:
+  option(Bayeux_FORCE_CXX_ALL_WARNINGS "Force all C++ compiler warnings" ON)
+  if (Bayeux_FORCE_CXX_ALL_WARNINGS)
+    set(Bayeux_CXX_FLAGS "-W -Wall")
+  endif()
 
   # On clang, need larger template depth
   if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
