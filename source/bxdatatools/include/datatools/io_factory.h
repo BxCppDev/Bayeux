@@ -24,8 +24,8 @@
  *
  */
 
-#ifndef DATATOOLS_IO_FACTORY_H_
-#define DATATOOLS_IO_FACTORY_H_
+#ifndef DATATOOLS_IO_FACTORY_H
+#define DATATOOLS_IO_FACTORY_H
 
 // Standard Library
 #include <stdexcept>
@@ -769,5 +769,4 @@ class data_writer {
 
 } // end of namespace datatools
 
-#endif // DATATOOLS_IO_FACTORY_H_
-
+#endif // DATATOOLS_IO_FACTORY_H
