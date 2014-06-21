@@ -95,6 +95,13 @@ int main (int /*argc_*/, char ** /*argv_*/)
       std::clog << "As expected, Sodium-45 is not valid !" << std::endl;
     }
 
+    // My isotope 7 :
+    materials::isotope my_isotope_7;
+    my_isotope_7.set_zai(2, 4);
+    my_isotope_7.find_mass_data();
+    std::clog << std::endl;
+    my_isotope_7.tree_dump(std::clog, "My isotope 7: ");
+
   }
   catch (std::exception & x) {
     std::clog << "error: " << x.what() << std::endl;

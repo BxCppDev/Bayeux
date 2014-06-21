@@ -210,6 +210,8 @@ namespace materials {
   isotope::record_type::record_type()
   {
     symbol  = "";
+    Z       = -1;
+    A       =  0;
     mx      = std::numeric_limits<double>::quiet_NaN();
     mx_err  = std::numeric_limits<double>::quiet_NaN();
     bea     = std::numeric_limits<double>::quiet_NaN();
@@ -217,6 +219,41 @@ namespace materials {
     am      = std::numeric_limits<double>::quiet_NaN();
     am_err  = std::numeric_limits<double>::quiet_NaN();
     return;
+  }
+
+  int isotope::record_type::get_Z() const
+  {
+    return Z;
+  }
+
+  int isotope::record_type::get_A() const
+  {
+    return A;
+  }
+
+  int isotope::record_type::get_N() const
+  {
+    return A - Z;
+  }
+
+  double isotope::record_type::get_mass_excess() const
+  {
+    return mx;
+  }
+
+  double isotope::record_type::get_binding_energy_per_nucleon() const
+  {
+    return bea;
+  }
+
+  double isotope::record_type::get_atomic_mass() const
+  {
+    return am;
+  }
+
+  double isotope::record_type::get_nucleus_mass() const
+  {
+    return compute_nucleus_mass(Z, A, bea);
   }
 
   void isotope::record_type::tree_dump(std::ostream & out_,
@@ -229,57 +266,73 @@ namespace materials {
     }
     out_.precision(15);
     out_ << indent_ << i_tree_dumpable::tag
-         << "symbol  = '" << symbol << "'" << std::endl;
+         << "Symbol  = '" << symbol << "'" << std::endl;
     out_ << indent_ << i_tree_dumpable::tag
-         << "mx      = " << mx / CLHEP::keV     << " [keV]" << std::endl;
+         << "Z       = " << Z << std::endl;
     out_ << indent_ << i_tree_dumpable::tag
-         << "mx_err  = " << mx_err / CLHEP::keV << " [keV]" << std::endl;
+         << "A       = " << A << std::endl;
     out_ << indent_ << i_tree_dumpable::tag
-         << "bea     = " << bea / CLHEP::keV     << " [keV/A]" << std::endl;
+         << "Mass excess = " << mx / CLHEP::keV
+         << " +/- " << mx_err / CLHEP::keV << " [keV]" << std::endl;
     out_ << indent_ << i_tree_dumpable::tag
-         << "bea_err = " << bea_err / CLHEP::keV << " [keV/A]" << std::endl;
+         << "Binding energy per nucleon = " << bea / CLHEP::keV
+         << " +/- " << bea_err / CLHEP::keV << " [keV/A]" << std::endl;
     out_ << indent_ << i_tree_dumpable::tag
-         << "am      = " << am     << " [u]" << std::endl;
+         << "Atomic mass = " << am
+         << " +/- " << am_err << " [u]" << std::endl;
     out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)
-         << "am_err  = " << am_err << " [u]" << std::endl;
+         << "Mass    = " << get_nucleus_mass() / CLHEP::MeV << " MeV" << std::endl;
     return;
   }
 
   // static
-  void isotope::load_ame2003_table(isotope::isotope_dict_type & db_)
+  void isotope::load_ame_table(isotope::isotope_dict_type & db_, ame_release_type ame_release_)
   {
     bool devel = false;
-    // devel = true;
-    int a_max = 0;
+    //devel = true;
+    // int a_max = 0;
     // a_max = 250;
-    // Open an ifstream from file 'mass.mas03':
-    std::string tape_name = materials::get_resource("data/mass.mas03", true);
+    int zMax = 118;
+    int aMax = 295;
+    std::string ame_mass_file;
+    switch (ame_release_) {
+    case AME_RELEASE_2003:
+      ame_mass_file = "data/mass.mas03";
+      break;
+    case AME_RELEASE_2012:
+      ame_mass_file = "data/mass.mas12";
+      break;
+    default:
+      DT_THROW_IF(true, std::logic_error, "Invalid AME release " << ame_release_ << "!");
+    }
+    std::string tape_name = materials::get_resource(ame_mass_file, true);
+    // Open an ifstream from AME file:
     std::ifstream ifstr_tape;
     ifstr_tape.open(tape_name.c_str());
     DT_THROW_IF(! ifstr_tape.is_open(), std::runtime_error, "Cannot open '" << tape_name << "' !");
-    std::string ame03_line;
+    std::string ame_line;
     // Skip header:
     for (int i = 0 ; i < 39 ; i++) {
-      std::getline(ifstr_tape, ame03_line);
+      std::getline(ifstr_tape, ame_line);
     }
     // Load records:
-    while (std::getline(ifstr_tape, ame03_line) ) {
+    while (std::getline(ifstr_tape, ame_line) ) {
       if (devel) {
-        std::cerr << "DEVEL: materials::isotope::load_ame2003_table: "
-                  << "line =\n'" <<  ame03_line << "'"
+        std::cerr << "DEVEL: materials::isotope::load_ame_table: "
+                  << "line =\n'" <<  ame_line << "'"
                   << std::endl;
       }
       // Parse the line record:
-      std::string z_str       = ame03_line.substr(9, 5);
-      std::string a_str       = ame03_line.substr(14, 5);
-      std::string el_str      = ame03_line.substr(20, 3);
-      std::string mx_str      = ame03_line.substr(29, 13);
-      std::string mx_err_str  = ame03_line.substr(41, 11);
-      std::string bea_str     = ame03_line.substr(52, 11);
-      std::string bea_err_str = ame03_line.substr(63, 9);
-      std::string am_str      = ame03_line.substr(96, 3);
-      std::string am_def_str  = ame03_line.substr(100, 12);
-      std::string am_err_str  = ame03_line.substr(112, 11);
+      std::string z_str       = ame_line.substr(9, 5);
+      std::string a_str       = ame_line.substr(14, 5);
+      std::string el_str      = ame_line.substr(20, 3);
+      std::string mx_str      = ame_line.substr(29, 13);
+      std::string mx_err_str  = ame_line.substr(41, 11);
+      std::string bea_str     = ame_line.substr(52, 11);
+      std::string bea_err_str = ame_line.substr(63, 9);
+      std::string am_str      = ame_line.substr(96, 3);
+      std::string am_def_str  = ame_line.substr(100, 12);
+      std::string am_err_str  = ame_line.substr(112, 11);
       if (devel) {
         std::cerr << "DEVEL: materials::isotope::load_ame2003_table: " << std::endl
                   << "  z_str=" << z_str << " a_str=" << a_str << std::endl
@@ -290,25 +343,28 @@ namespace materials {
       }
       isotope::id iid;
       int z;
-      DT_THROW_IF (! token_to_int(z_str, 0, 118, z), std::logic_error,
+      DT_THROW_IF (! token_to_int(z_str, 0, zMax, z), std::logic_error,
                    "Invalid Z format !");
       int a;
-      DT_THROW_IF (! token_to_int(a_str, 1, 293, a), std::logic_error,
+      DT_THROW_IF (! token_to_int(a_str, 1, aMax, a), std::logic_error,
                    "Invalid A format !");
       if (devel) {
         std::cerr << "DEVEL: materials::isotope::load_ame2003_table: "
                   << "Z=" << z << " A=" << a
                   << std::endl;
       }
+      /*
       if (a_max > 0 && a > a_max) {
         break;
       }
+      */
       iid.set(z, a);
 
       isotope::record_type r;
       DT_THROW_IF (! token_to_string(el_str, r.symbol), std::logic_error,
                    "Invalid format for element symbol !");
-
+      r.Z = z;
+      r.A = a;
       DT_THROW_IF (! token_to_double(mx_str, r.mx), std::logic_error,
                    "Invalid format for mass excess !");
       r.mx *= CLHEP::keV;
@@ -409,6 +465,25 @@ namespace materials {
     return;
   }
 
+  // static
+  double isotope::compute_electron_binding_energy(int z_)
+  {
+    return (14.4381 * std::pow(z_, 2.39) + 1.55468e-6 * std::pow(z_, 5.35)) * CLHEP::eV;
+  }
+
+  // static
+  double isotope::compute_nucleus_mass(int z_, int a_, double binding_energy_per_nucleon_)
+  {
+    return z_ * CLHEP::proton_mass_c2 + (a_ - z_) * CLHEP::neutron_mass_c2 - a_ * binding_energy_per_nucleon_;
+  }
+
+  // static
+  double isotope::compute_nucleus_mass(int z_, double atomic_mass_)
+  {
+    return atomic_mass_ - z_ * CLHEP::electron_mass_c2 + compute_electron_binding_energy(z_);
+  }
+
+  // static
   const isotope::isotope_dict_type & isotope::table_of_isotopes()
   {
     bool devel = false;
@@ -420,13 +495,13 @@ namespace materials {
                   << std::endl;
       }
       _TOI.reset(new isotope_dict_type);
-      // For now we use the Ame2003 table.
+      // For now we use the AME table.
       if (devel) {
         std::cerr << "DEVEL: materials::isotope::table_of_isotopes: "
-                  << "Loading the AME 2033 table..."
+                  << "Loading the AME table..."
                   << std::endl;
       }
-      load_ame2003_table(*_TOI);
+      load_ame_table(*_TOI, AME_RELEASE_2012);
       if (devel) {
         std::cerr << "DEVEL: materials::isotope::table_of_isotopes: "
                   << "Loaded : " << _TOI->size() << " records."
@@ -511,10 +586,14 @@ namespace materials {
 
   void isotope::set_default_data()
   {
+    // From AME:
     datatools::invalidate(_mass_excess_);
     datatools::invalidate(_err_mass_excess_);
+    datatools::invalidate(_bea_);
+    datatools::invalidate(_err_bea_);
     datatools::invalidate(_atomic_mass_);
     datatools::invalidate(_err_atomic_mass_);
+
     datatools::invalidate(_half_life_);
     datatools::invalidate(_err_half_life_);
     return;
@@ -526,6 +605,7 @@ namespace materials {
     _a_ = 0;
     _isomeric_ = ISOMERIC_INVALID;
     _name_.clear();
+    datatools::invalidate(_mass_);
     set_default_data();
     return;
   }
@@ -720,6 +800,16 @@ namespace materials {
     return iid;
   }
 
+  bool isotope::has_mass() const
+  {
+    return datatools::is_valid(_mass_);
+  }
+
+  double isotope::get_mass() const
+  {
+    return _mass_;
+  }
+
   double isotope::get_mass_excess() const
   {
     return _mass_excess_;
@@ -780,7 +870,11 @@ namespace materials {
     if (id_is_tabulated(iid)) {
       const record_type & record = table_record_from_id(iid);
       set_mass_excess(record.mx, record.mx_err);
+      set_binding_energy_per_nucleon(record.bea, record.bea_err);
       set_atomic_mass(record.am, record.am_err);
+      if (!has_mass()) {
+        set_mass(compute_nucleus_mass(_z_, _a_, record.bea));
+      }
     }
     return true;
   }
@@ -791,25 +885,6 @@ namespace materials {
     DT_LOG_WARNING(datatools::logger::PRIO_WARNING, "Unsupported method !");
     return false;
   }
-
-  /*
-    {
-    is_za_found = true;
-    std::string m_str = ame03_line.substr(96, 4);
-    std::string m2_str = ame03_line.substr(100, 12);
-    std::string m3_str = ame03_line.substr(113, 11);
-    //cerr << "DEVEL: find_mass:   m_str=" << m_str << endl;
-    //cerr << "DEVEL: find_mass:   m2_str=" << m2_str << endl;
-    //cerr << "DEVEL: find_mass:   m3_str=" << m3_str << endl;
-    double mass = ame3line_to_double (m_str);
-    double mass_default = ame3line_to_double (m2_str) * 1.E-6;
-    double error_mass = ame3line_to_double (m3_str) * 1.E-6;
-    //cerr << "DEVEL: find_mass:   mass=" << mass << " amu" << endl;
-    //cerr << "DEVEL: find_mass:   mass_default=" << mass_default << " amu" << endl;
-    //cerr << "DEVEL: find_mass:   error_mass=" << error_mass << " amu" << endl;
-    _set_mass_ (mass + mass_default, error_mass);
-    }
-  */
 
   const std::string & isotope::get_chemical_symbol() const
   {
@@ -852,6 +927,17 @@ namespace materials {
     return;
   }
 
+  void isotope::set_mass(double mass_)
+  {
+    DT_THROW_IF(is_locked(), std::logic_error, "Locked isotope !");
+    DT_THROW_IF (mass_ < 0.,
+                 std::logic_error,
+                 "Invalid mass error value : '"
+                 << mass_ << " '!");
+    _mass_ = mass_;
+    return;
+  }
+
   void isotope::set_mass_excess(double mass_excess_, double err_mass_excess_)
   {
     DT_THROW_IF(is_locked(), std::logic_error, "Locked isotope !");
@@ -861,6 +947,18 @@ namespace materials {
                  << err_mass_excess_ << " '!");
     _mass_excess_ = mass_excess_;
     _err_mass_excess_ = err_mass_excess_;
+    return;
+  }
+
+  void isotope::set_binding_energy_per_nucleon(double bea_, double err_bea_)
+  {
+    DT_THROW_IF(is_locked(), std::logic_error, "Locked isotope !");
+    DT_THROW_IF (err_bea_ < 0.,
+                 std::logic_error,
+                 "Invalid binding energy per nucleon error value : '"
+                 << err_bea_ << " '!");
+    _bea_ = bea_;
+    _err_bea_ = err_bea_;
     return;
   }
 
@@ -959,6 +1057,14 @@ namespace materials {
          << "Isomeric state : '" << isomeric_to_label(get_isomeric()) << "'" << std::endl;
     out_ << indent << i_tree_dumpable::tag
          << "ZAI name   : '" << get_zai_name() << "'" << std::endl;
+    out_ << indent << i_tree_dumpable::tag
+         << "Mass       : ";
+    if (!has_mass()) {
+      out_ << "<none>";
+    } else {
+      out_ << get_mass() / CLHEP::GeV << "  GeV";
+    }
+    out_ << std::endl;
 
     if (has_mass_excess_data()) {
       out_ << indent << i_tree_dumpable::tag
@@ -973,7 +1079,7 @@ namespace materials {
       out_ << indent << i_tree_dumpable::tag
            << "Atomic mass : " <<  get_atomic_mass() << " +- "
            << get_err_atomic_mass() << " [g/mol]" << std::endl;
-    }else {
+    } else {
       out_ << indent << i_tree_dumpable::tag
            << "Atomic mass : " <<  "<no data>" << std::endl;
     }

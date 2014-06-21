@@ -32,18 +32,19 @@ namespace materials {
    *           - name : which should be used as its id  ( = 'ChA-(I)' or '?-0' by default )
    *           - Z :  number of protons equivalent to the chemical symbol     ( = 0 by default )
    *           - A :  number of nucleons    ( = 0 by default )
-   *           - I  : Isomeric state if long half-life time excited states
-   *                - 0 = ground state   = ' ' (default)
-   *                - 1 = first excited  = 'M'
-   *                - 2 = second excited = 'N'
-   *                - 3 = third  excited = 'O'
+   *           - I  : Isomeric state if long half-life time/metastable excited states
+   *                - GROUND_STATE = ground state      = ' ' (default)
+   *                - ISOMERIC_M   = unique metastable = 'm'
+   *                - ISOMERIC_M1  = first  metastable = 'm1'
+   *                - ISOMERIC_M2  = second metastable = 'm2'
+   *                - ISOMERIC_M3  = third  metastable = 'm3'
    *
    * - We suppose we will only use known isotopes, thus it's should be
    *      not possible  to create  an unknow  ZAI (except with default
    *      constructor) :
    *
    *           - For consistency, the 3 attributes (Z,A,I) cannot be initialized separately
-   *           - Tabulated value of (Z,A) are searched in data file ( 'resources/mass.mas03' by default )
+   *           - Tabulated value of (Z,A) are searched in data file ( 'resources/mass.mas12' by default )
    *           - Note : Isomeric state (I) stay a 'free' parameter which is not checked for the moment
    *
    *    Isotope may have mass excess data [mass excess with its error] and/or mass data [mass with its error],
@@ -136,24 +137,45 @@ namespace materials {
       BF_MASS_DATA  = datatools::bit_mask::bit00, /// Extract mass excess and mass from tabulated isotopes
       BF_DECAY_DATA = datatools::bit_mask::bit01, /// Extract decay half-life from tabulated isotopes
       BF_LOCK       = datatools::bit_mask::bit31  /// Lock after building
-     };
+    };
 
-    /// \brief Isotope record
+    /// \brief Isotope record from AME table
     struct record_type  : public datatools::i_tree_dumpable {
-      std::string symbol; /// Chemical symbol of the element
-      double mx;          /// Mass excess
-      double mx_err;      /// Error on mass excess
-      double bea;         /// Binding energy per nucleon
-      double bea_err;     /// Error on binding energy per nucleon
-      double am;          /// Atomic mass
-      double am_err;      /// Error on atomic mass
+    public:
+      /// Return Z
+      int get_Z() const;
+      /// Return A
+      int get_A() const;
+      /// Return N
+      int get_N() const;
+      /// Return nucleus mass
+      double get_nucleus_mass() const;
+      /// Return mass excess
+      double get_mass_excess() const;
+      /// Return binding energy per nucleon
+      double get_binding_energy_per_nucleon() const;
+      /// Return atomic mass
+      double get_atomic_mass() const;
       /// Default constructor
       record_type();
       /// Smart print
       virtual void tree_dump(std::ostream & out_         = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool inherit_          = false) const;
+                             bool inherit_               = false) const;
+
+    public:
+
+      std::string symbol; /// Chemical symbol of the element
+      int    Z;           /// The number of protons
+      int    A;           /// The number of nucleons
+      double mx;          /// Mass excess
+      double mx_err;      /// Error on mass excess
+      double bea;         /// Binding energy per nucleon
+      double bea_err;     /// Error on binding energy per nucleon
+      double am;          /// Atomic mass
+      double am_err;      /// Error on atomic mass
+
    };
 
     /// Dictionary of isotope records
@@ -172,8 +194,13 @@ namespace materials {
     /// Check if the database knows a given isotope id
     static bool id_is_tabulated(const id &);
 
-    /// Load a dictionary of isotope records from the Ame 2003 data file
-    static void load_ame2003_table(isotope::isotope_dict_type &);
+    enum ame_release_type {
+      AME_RELEASE_2003 = 0,
+      AME_RELEASE_2012 = 1,
+    };
+
+    /// Load a dictionary of isotope records from the AME (2003/2012) data file
+    static void load_ame_table(isotope::isotope_dict_type &, ame_release_type ame_release_ = AME_RELEASE_2012);
 
     /// Return the isotope record from the table
     static const record_type & table_record_from_id(const id &);
@@ -194,7 +221,7 @@ namespace materials {
       ISOMERIC_INVALID       =  datatools::bit_mask::bit31                           /// Invalid isomeric level
     };
 
-    /// Return the label associated to a isomeric level
+    /// Return the label associated to an isomeric level
     static std::string isomeric_to_label(isomeric_level_type);
 
     /// Return the isomeric level associated to a label
@@ -362,6 +389,9 @@ namespace materials {
     /// Return the isotope Id
     id get_id() const;
 
+    /// Return the mass in unit of energy
+    double get_mass() const;
+
     /// Return the isomeric state
     isomeric_level_type get_isomeric() const;
 
@@ -418,11 +448,20 @@ namespace materials {
      */
     void set_zai(int z_, int a_, isomeric_level_type i_ = GROUND_STATE);
 
+    /// Check if the mass of the nucleus is defined
+    bool has_mass() const;
+
     /// Set the name
     /*!
      * \param name_ : user name  of the isotope
      */
     void set_name(const std::string & name_);
+
+    /// Set the mass
+    /*!
+     * \param mass_     : Mass of the nucleus
+     */
+    void set_mass(double mass_);
 
     /// Set the mass excess and its error in explicit unit of energy
     /*!
@@ -430,6 +469,13 @@ namespace materials {
      * \param err_mass_excess_ : Mass excess error
      */
     void set_mass_excess(double mass_excess_, double err_mass_excess_ = 0.0);
+
+    /// Set the binding energy per nucleon and its error in explicit unit of energy
+    /*!
+     * \param bea_     : Binding energy per nucleon
+     * \param err_bea_ : Binding energy per nucleon error
+     */
+    void set_binding_energy_per_nucleon(double bea_, double err_bea_ = 0.0);
 
     /// Set the atomic mass and its error in implicit unit of [u]
     /*!
@@ -487,6 +533,15 @@ namespace materials {
                            const std::string & indent_ = "",
                            bool inherit_          = false) const;
 
+    /// Compute the atomic electron binding energy for ion with given Z
+    static double compute_electron_binding_energy(int z_);
+
+    /// Compute the mass of the nucleus from its Z, A and binding energy per nucleon (in unit of energy)
+    static double compute_nucleus_mass(int z_, int a_, double binding_energy_per_nucleon_);
+
+    /// Compute the mass of the nucleus from its Z and atomic mass (in unit of energy)
+    static double compute_nucleus_mass(int z_, double atomic_mass_);
+
   protected:
 
     /// Set default attributes
@@ -499,8 +554,11 @@ namespace materials {
     int _a_;                        /// Number of nucleons  (Z<=A<=293)
     isomeric_level_type _isomeric_; /// Isomeric states I={0,1,2,3} ={' ','M','N','O'} for "long half-life" time excited states
     std::string _name_;             /// Name of the isotope, which could be used as an string identifier
+    double _mass_;            /// Mass of the nucleus in unit of energy
     double _mass_excess_;     /// Mass excess in unit of energy
     double _err_mass_excess_; /// Error on mass excess in unit of energy
+    double _bea_;             /// Binding energy per nucleonin unit of energy
+    double _err_bea_;         /// Error on finding energy per nucleonin unit of energy
     double _atomic_mass_;     /// Atomic mass in unit of [u (or g/mol)]
     double _err_atomic_mass_; /// Error on the atomic mass in unit of [u (or g/mol)]
     double _half_life_;       /// Half life time in unit of time
