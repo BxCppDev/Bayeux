@@ -102,6 +102,7 @@ set(${module_name}_MODULE_APPS
 set(${module_name}_MODULE_RESOURCES
   ${module_resource_dir}/data/README.rst
   ${module_resource_dir}/data/mass.mas03
+  ${module_resource_dir}/data/mass.mas12
   ${module_resource_dir}/data/isotopic_compositions_nist.dat
   ${module_resource_dir}/data/simple_elements.def
   ${module_resource_dir}/data/std_elements.def
