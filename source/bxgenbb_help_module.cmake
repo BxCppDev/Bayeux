@@ -44,6 +44,15 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/primary_event.h
   ${module_include_dir}/${module_name}/primary_particle.h
   ${module_include_dir}/${module_name}/single_particle_generator.h
+  ${module_include_dir}/${module_name}/save_to_file_wrapper.h
+  ${module_include_dir}/${module_name}/from_file_generator.h
+  # Not ready yet for weak exotic physics and radioactive decay from ENSDF tables...
+  # ${module_include_dir}/${module_name}/fermi_function.h
+  # ${module_include_dir}/${module_name}/beta_decay.h
+  # ${module_include_dir}/${module_name}/nuclear_level.h
+  # ${module_include_dir}/${module_name}/nuclear_decay.h
+  # ${module_include_dir}/${module_name}/nuclear_decay_manager.h
+  # ${module_include_dir}/${module_name}/weak_exotic_beta_decay_generator.h
   ${module_include_dir}/${module_name}/wdecay0.h
   ${module_include_dir}/${module_name}/primary_event.ipp
   ${module_include_dir}/${module_name}/primary_particle.ipp
@@ -237,6 +246,14 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/genbb_mgr.cc
   ${module_source_dir}/single_particle_generator.cc
   ${module_source_dir}/combined_particle_generator.cc
+  ${module_source_dir}/save_to_file_wrapper.cc
+  ${module_source_dir}/from_file_generator.cc
+  #${module_source_dir}/fermi_function.cc
+  #${module_source_dir}/beta_decay.cc
+  #${module_source_dir}/nuclear_level.cc
+  #${module_source_dir}/nuclear_decay.cc
+  #${module_source_dir}/nuclear_decay_manager.cc
+  #${module_source_dir}/weak_exotic_beta_decay_generator.cc
   ${module_source_dir}/manager.cc
   ${module_source_dir}/version.cc
   ${module_source_dir}/the_serializable.cc
@@ -423,7 +440,14 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_primary_event.cxx
   ${module_test_dir}/test_single_particle_generator_2.cxx
   ${module_test_dir}/test_single_particle_generator_3.cxx
+  ${module_test_dir}/test_single_particle_generator_4.cxx
   ${module_test_dir}/test_single_particle_generator.cxx
+  ${module_test_dir}/test_from_to_file_generator.cxx
+  #${module_test_dir}/test_fermi_function.cxx
+  #${module_test_dir}/test_beta_decay.cxx
+  #${module_test_dir}/test_nuclear_level.cxx
+  #${module_test_dir}/test_nuclear_decay.cxx
+  #${module_test_dir}/test_nuclear_decay_manager.cxx
   ${module_test_dir}/test_wdecay0.cxx
   ${module_test_dir}/test_manager.cxx
   ${module_test_dir}/decay0/test_decay0_alpha.cxx
