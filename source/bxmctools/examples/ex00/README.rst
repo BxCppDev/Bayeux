@@ -233,6 +233,25 @@ Quick start
                   --number-of-events 10000 \
                   --output-file "histos_electron_1MeV_gaussian_100keV.root"
 
+       or: ::
+
+         $ bxgenbb_inspector \
+                  --configuration "${CONFIG_DIR}/event_generator/manager.conf" \
+                  --action "shoot" \
+                  --generator "C12_monokinetic_125MeV" \
+                  --prng-seed 314159 \
+                  --number-of-events 100 \
+                  --output-file "histos_C12_monokinetic_125MeV.root"
+
+       or: ::
+
+         $ bxgenbb_inspector \
+                  --configuration "${CONFIG_DIR}/event_generator/manager.conf" \
+                  --action "shoot" \
+                  --generator "save" \
+                  --prng-seed 314159 \
+                  --number-of-events 100
+
     c. Display histograms associated to the event kinematics: ::
 
          $ root histos_electron_1MeV_gaussian_100keV.root
@@ -332,6 +351,26 @@ Quick start
                 --output-prng-states-file "prng_states.save" \
 		--output-profiles "all_details" \
                 --output-data-file "mctools_ex00_electron_1MeV_source_bulk.xml" \
+                --g4-macro "${CONFIG_DIR}/simulation/geant4_visualization.mac"
+
+      or: ::
+
+         $ bxg4_production \
+                --logging-priority "warning" \
+                --number-of-events-modulo 1 \
+                --interactive \
+                --g4-visu \
+                --config "${CONFIG_DIR}/simulation/manager.conf" \
+                --vertex-generator-name "source_surface.vg" \
+                --vertex-generator-seed 0 \
+                --event-generator-name "Li6_monokinetic_100MeV" \
+                --event-generator-seed 0 \
+                --shpf-seed 0 \
+                --g4-manager-seed 0 \
+                --output-prng-seeds-file "prng_seeds.save" \
+                --output-prng-states-file "prng_states.save" \
+		--output-profiles "all_details" \
+                --output-data-file "mctools_ex00_Li6_monokinetic_100MeV_source_surface.xml" \
                 --g4-macro "${CONFIG_DIR}/simulation/geant4_visualization.mac"
 
       From the Geant4 interactive session::
