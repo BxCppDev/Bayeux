@@ -19,13 +19,17 @@
  *
  */
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/service_manager.h>
 #include <datatools/exception.h>
 
+// This project:
 #include <dpp/output_module.h>
 #include <dpp/io_common.h>
 #include <dpp/simple_data_sink.h>
@@ -200,7 +204,6 @@ namespace dpp {
     return;
   }
 
-  // Constructor :
   output_module::output_module(datatools::logger::priority logging_priority_)
     : base_module(logging_priority_)
   {
@@ -214,7 +217,6 @@ namespace dpp {
     return;
   }
 
-  // Initialization :
   void output_module::initialize(const datatools::properties & a_config,
                                  datatools::service_manager & a_service_manager,
                                  dpp::module_handle_dict_type & /*a_module_dict*/)
@@ -248,7 +250,6 @@ namespace dpp {
     return;
   }
 
-  // Reset :
   void output_module::reset()
   {
     DT_THROW_IF(! is_initialized (),
@@ -282,7 +283,6 @@ namespace dpp {
     return;
   }
 
-  // Processing :
   base_module::process_status
   output_module::process(::datatools::things & a_data_record)
   {
@@ -456,7 +456,7 @@ namespace dpp {
     bool stop_file   = false;
     bool stop_output = false;
     if (get_common().get_max_record_total() > 0) {
-      if (get_common().get_file_record_counter() >= get_common().get_max_record_total()) {
+      if (get_common().get_record_counter() >= get_common().get_max_record_total()) {
         stop_output = true;
         stop_file   = true;
         DT_LOG_NOTICE(_logging, "Output module '" << get_name () << "' has reached the maximum number "
@@ -533,7 +533,6 @@ namespace dpp {
 
 } // namespace dpp
 
-// end of output_module.cc
 /*
 ** Local Variables: --
 ** mode: c++ --

@@ -19,17 +19,21 @@
  *
  */
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/multi_properties.h>
 #include <datatools/service_manager.h>
 #include <datatools/exception.h>
 #include <datatools/io_factory.h>
-
+// - Bayeux/brio:
 #include <brio/utils.h>
 
+// This project:
 #include <dpp/io_common.h>
 #include <dpp/context_service.h>
 #include <dpp/simple_data_source.h>
@@ -569,7 +573,6 @@ namespace dpp {
 
 } // namespace dpp
 
-// end of io_common.cc
 /*
 ** Local Variables: --
 ** mode: c++ --
