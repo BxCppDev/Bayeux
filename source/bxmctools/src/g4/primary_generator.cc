@@ -1,7 +1,6 @@
-// -*- mode: c++ ; -*-
-/* primary_generator.cc
- */
+// primary_generator.cc
 
+// Standard library:
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
@@ -11,19 +10,17 @@
 #include <fstream>
 #include <string>
 
+// Third party:
+// - Boost:
 #include <boost/algorithm/string.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/units.h>
 #include <datatools/properties.h>
 #include <datatools/exception.h>
-
+// - Bayeux/genbb_help:
 #include <genbb_help/i_genbb.h>
+// - Bayeux/genvtx:
 #include <genvtx/i_vertex_generator.h>
-
-#include <mctools/g4/primary_generator.h>
-#include <mctools/g4/manager.h>
-#include <mctools/g4/run_action.h>
-#include <mctools/g4/event_action.h>
 
 // G4 Stuff:
 #include <globals.hh>
@@ -36,11 +33,16 @@
 #include <G4ParticleDefinition.hh>
 #include <G4ParticleMomentum.hh>
 #include <Randomize.hh>
-
 #include <G4Gamma.hh>
 #include <G4Electron.hh>
 #include <G4Positron.hh>
 #include <G4Alpha.hh>
+
+// - This project:
+#include <mctools/g4/primary_generator.h>
+#include <mctools/g4/manager.h>
+#include <mctools/g4/run_action.h>
+#include <mctools/g4/event_action.h>
 
 namespace mctools {
 
@@ -101,7 +103,6 @@ namespace mctools {
       return;
     }
 
-    // ctor:
     primary_generator::primary_generator ()
     {
       _initialized_ = false;
@@ -115,7 +116,6 @@ namespace mctools {
       return;
     }
 
-    // dtor:
     primary_generator::~primary_generator ()
     {
       if (_initialized_) {
@@ -259,69 +259,73 @@ namespace mctools {
       // FIX BUG: 2011-05-10  FM+XG : DO CLEAR THE EVENT DATA MODEL HERE !
       // clog << "DEVEL: primary_generator::GeneratePrimaries: "
       //      << "Clear event data..." << endl;
-      _event_action_->grab_event_data ().clear ();
+      _event_action_->grab_event_data().clear();
 
       // Generate the vertex:
-      geomtools::invalidate (_current_vertex_);
+      geomtools::invalidate(_current_vertex_);
       if (_vertex_generator_ != 0) {
-        _generate_vertex ();
+        _generate_vertex();
       }
       // Generate the primary event:
-      _generate_event (g4_event_);
+      _generate_event(g4_event_);
       // Increment the event counter:
       _event_counter_++;
       return;
     }
 
-    void primary_generator::_generate_vertex ()
+    void primary_generator::_generate_vertex()
     {
       // Invoke the vertex generator:
-      manager & mgr = _event_action_->grab_run_action ().grab_manager ();
-      if (! _vertex_generator_->has_next_vertex ()) {
+      manager & mgr = _event_action_->grab_run_action().grab_manager();
+      if (! _vertex_generator_->has_next_vertex()) {
         DT_LOG_ERROR(_logprio(),
                      "No more generated vertex from the vertex generator after "
                      << _event_counter_ << " generated events !");
-        G4RunManager::GetRunManager ()->AbortRun ();
-        _event_action_->set_aborted_event (true);
+        G4RunManager::GetRunManager()->AbortRun();
+        _event_action_->set_aborted_event(true);
         return;
       }
       if (mgr.using_time_stat ()) {
         mgr.grab_CT_map ()["VG"].start ();
       }
-      _vertex_generator_->shoot_vertex (mgr.grab_vg_prng(), _current_vertex_);
-      if (mgr.using_time_stat ()) {
-        mgr.grab_CT_map ()["VG"].stop ();
+      _vertex_generator_->shoot_vertex(mgr.grab_vg_prng(), _current_vertex_);
+      if (mgr.using_time_stat()) {
+        mgr.grab_CT_map()["VG"].stop ();
       }
 
       // save current event vertex:
-      _event_action_->grab_event_data ().set_vertex (_current_vertex_);
+      _event_action_->grab_event_data().set_vertex(_current_vertex_);
       return;
     }
 
-    void primary_generator::_generate_event (G4Event * g4_event_)
+    void primary_generator::_generate_event(G4Event * g4_event_)
     {
-      if (! _event_generator_->has_next ()) {
+      if (! _event_generator_->has_next()) {
         DT_LOG_ERROR(_logprio(),
                      "No more generated event from the event generator after "
                      << _event_counter_ << " generated events !");
-        G4RunManager::GetRunManager ()->AbortRun ();
-        _event_action_->set_aborted_event (true);
+        G4RunManager::GetRunManager()->AbortRun();
+        _event_action_->set_aborted_event(true);
         return;
       }
 
       ::genbb::primary_event & current_generated_event
-          = _event_action_->grab_event_data ().grab_primary_event ();
+          = _event_action_->grab_event_data().grab_primary_event();
 
-      manager & mgr = _event_action_->grab_run_action ().grab_manager ();
-      if (mgr.using_time_stat ()) {
-        mgr.grab_CT_map ()["EG"].start ();
+      manager & mgr = _event_action_->grab_run_action ().grab_manager();
+      if (mgr.using_time_stat()) {
+        mgr.grab_CT_map()["EG"].start();
       }
-      _event_generator_->load_next (current_generated_event);
-      if (mgr.using_time_stat ()) {
-        mgr.grab_CT_map ()["EG"].stop ();
+      _event_generator_->load_next(current_generated_event);
+      if (mgr.using_time_stat()) {
+        mgr.grab_CT_map()["EG"].stop();
       }
-      current_generated_event.set_time (0.0 * CLHEP::ns);
-      double event_time = current_generated_event.get_time ();
+      current_generated_event.set_time(0.0 * CLHEP::ns);
+
+      // Should we check the validity of the primary event here ?
+
+      double event_time = current_generated_event.get_time();
+
       /*
         if (devel)
         {
@@ -330,7 +334,7 @@ namespace mctools {
         "DEVEL: primary_generator::_generate_event: ");
         }
       */
-      G4ParticleTable * particle_table = G4ParticleTable::GetParticleTable ();
+      G4ParticleTable * particle_table = G4ParticleTable::GetParticleTable();
 
       // Use the recently randomized vertex:
       /*
@@ -342,17 +346,26 @@ namespace mctools {
       // Loop on particles:
       size_t particle_counter = 0;
       for (::genbb::primary_event::particles_col_type::const_iterator i
-             = current_generated_event.grab_particles ().begin ();
-           i != current_generated_event.grab_particles ().end ();
+             = current_generated_event.grab_particles().begin();
+           i != current_generated_event.grab_particles().end();
            i++) {
         const ::genbb::primary_particle & genbb_particle = *i;
         particle_counter += 1;
 
-        const std::string particle_label = ::genbb::primary_particle::get_label (genbb_particle.get_type());
-        double particle_time       = genbb_particle.get_time ();
-        double total_momentum      = genbb_particle.get_momentum ().mag ();
-        double relativistic_energy = 0.;
-        double kinetic_energy      = 0.;
+        const std::string genbb_particle_label = genbb_particle.get_particle_label();
+
+        //  = ::genbb::primary_particle::particle_label_from_type(genbb_particle.get_type());
+        double particle_time  = genbb_particle.get_time();
+        double total_momentum = genbb_particle.get_momentum().mag();
+        double particle_mass;
+        datatools::invalidate(particle_mass);
+        if (genbb_particle.mass_is_known()) {
+          particle_mass = genbb_particle.get_mass();
+        }
+        double relativistic_energy;
+        datatools::invalidate(relativistic_energy);
+        double kinetic_energy;
+        datatools::invalidate(kinetic_energy);
 
         /* Note:
          * G4 particle not implemented:
@@ -361,56 +374,188 @@ namespace mctools {
          *  "opticalphoton"
          *  ...
          */
-        G4String g4_particle_name = get_g4_particle_name_from_genbb_particle (genbb_particle);
-        if (g4_particle_name[0] == '?') {
-          std::ostringstream message;
-          message << "genbb's particle type " << genbb_particle.get_type() << " (with label='"
-                  << genbb_particle.get_particle_label()
-                  << "') is not recognized as a Geant4 particle !";
-          G4Exception ("mctools::g4::primary_generator::_generate_event",
-                       "InvalidArgument",
-                       RunMustBeAborted,
-                       message.str ().c_str());
-        }
-        G4ParticleDefinition * g4_particle = particle_table->FindParticle (g4_particle_name);
-        if (g4_particle == 0) {
-          std::ostringstream message;
-          message << "mctools::g4::primary_generator::_generate_event: "
-                  << "Particle named '" << g4_particle_name << "' is not defined within the Geant4 framework !";
-          G4Exception ("mctools::g4::primary_generator::_generate_event",
-                       "InvalidArgument",
-                       RunMustBeAborted,
-                       message.str ().c_str());
-        }
-        double mass = g4_particle->GetPDGMass ();
-        relativistic_energy = hypot (total_momentum, mass);
-        kinetic_energy = relativistic_energy - mass;
+        G4String g4_particle_name; // = get_g4_particle_name_from_genbb_particle(genbb_particle);
+        G4ParticleDefinition * g4_particle = 0;
 
-        // Extract momentum:
-        G4ThreeVector momentum (genbb_particle.get_momentum ().x (),
-                                genbb_particle.get_momentum ().y (),
-                                genbb_particle.get_momentum ().z ());
+        if (genbb_particle.has_pdg_code()) {
+          // Support for particle PDG encoding: NOT USABLE YET FOR NOW BECAUSE THIS INTERFACE
+          // NEEDS MORE WORKS, PARTICULARLY FOR PARTIALLY IONIZED IONS.
+          g4_particle = particle_table->FindParticle(genbb_particle.get_pdg_code());
+          if (g4_particle == 0) {
+            std::ostringstream message;
+            message << "genbb's nucleus particle with PDG code='"
+                    << genbb_particle.get_pdg_code()
+                    << "') cannot not be processed as a Geant4 particle !";
+            G4Exception("mctools::g4::primary_generator::_generate_event",
+                        "InvalidArgument",
+                        RunMustBeAborted,
+                        message.str().c_str());
+          }
+          g4_particle_name = g4_particle->GetParticleName();
+          _particle_gun_->SetParticleDefinition(g4_particle);
+          DT_LOG_TRACE(_logprio(),std::cerr << "Found a PDG particle: "
+                       << g4_particle_name
+                       << " with G4 PDG mass = " << g4_particle->GetPDGMass() / CLHEP::MeV << " MeV "
+                       << " and PDG charge = " << g4_particle->GetPDGCharge()
+                       );
+        } else if (genbb_particle.has_type()) {
+          // Support for traditional particle 'types' from genbb_help (extended Geant3 codes):
+          if (genbb_particle.is_nucleus()) {
+            /*
+            // Typical Support for radioactive ion (from G4 examples):
+            G4int Z = 10, A = 24;
+            G4double ionCharge   = 0.*eplus;
+            G4double excitEnergy = 0.*keV;
+            G4ParticleDefinition* ion
+            = G4ParticleTable::GetParticleTable()->GetIon(Z,A,excitEnergy);
+            fParticleGun->SetParticleDefinition(ion);
+            fParticleGun->SetParticleCharge(ionCharge);
+            */
+            int Z = -1;
+            int A =  0;
+            double excitation_energy = 0.0;
+            // Fetch the characteristics of the nucleus from the GENBB particle label:
+            bool nucleus_parsing =
+              genbb::primary_particle::label_to_nucleus(genbb_particle_label,
+                                                        Z,
+                                                        A,
+                                                        excitation_energy);
+            if (! nucleus_parsing) {
+              std::ostringstream message;
+              message << "genbb's nucleus particle with label='"
+                      << genbb_particle_label
+                      << "') cannot not be processed as a Geant4 particle !";
+              G4Exception("mctools::g4::primary_generator::_generate_event",
+                          "InvalidArgument",
+                          RunMustBeAborted,
+                          message.str().c_str());
+            }
+            // Instantiate the G4 corresponding ion:
+            g4_particle =
+              G4ParticleTable::GetParticleTable()->GetIon(Z, A, excitation_energy);
+            g4_particle_name = g4_particle->GetParticleName();
+            _particle_gun_->SetParticleDefinition(g4_particle);
+            DT_LOG_TRACE(_logprio(),std::cerr << "Found a nucleus: "
+                         << g4_particle_name
+                         << " with G4 PDG mass = " << g4_particle->GetPDGMass() / CLHEP::MeV << " MeV "
+                         << " (GENBB mass = " << particle_mass/ CLHEP::MeV << " MeV)"
+                         << " and PDG charge = " << g4_particle->GetPDGCharge()
+                         << " (charge set in the gun = " << _particle_gun_->GetParticleCharge() / CLHEP::eplus << " e)"
+                         );
+          } else if (genbb_particle.is_ion()) {
+            int Z = -1;
+            int A =  0;
+            double excitation_energy = 0.0;
+            int ion_charge = 0;
+            // Fetch the characteristics of the ion (partially ionized) from the GENBB particle label:
+            bool ion_parsing =
+              genbb::primary_particle::label_to_ion(genbb_particle_label,
+                                                    Z,
+                                                    A,
+                                                    excitation_energy,
+                                                    ion_charge);
+            if (!ion_parsing) {
+              std::ostringstream message;
+              message << "genbb's ion particle with label='"
+                      << genbb_particle_label
+                      << "') cannot not be processed as a Geant4 particle !";
+              G4Exception("mctools::g4::primary_generator::_generate_event",
+                          "InvalidArgument",
+                          RunMustBeAborted,
+                          message.str().c_str());
+            }
+            g4_particle =
+              G4ParticleTable::GetParticleTable()->GetIon(Z, A, excitation_energy);
+            g4_particle_name = g4_particle->GetParticleName();
+            _particle_gun_->SetParticleDefinition(g4_particle);
+            // QUESTION: IS IT THE RIGHT WAY TO SET THE EFFECTIVE ION CHARGE ???
+            _particle_gun_->SetParticleCharge(ion_charge * CLHEP::eplus);
+            DT_LOG_TRACE(_logprio(),std::cerr << "Found an ion: "
+                         << g4_particle_name
+                         << " with G4 PDG mass = " << g4_particle->GetPDGMass() / CLHEP::MeV << " MeV "
+                         << " (GENBB mass = " << particle_mass/ CLHEP::MeV << " MeV)"
+                         << " and PDG charge = " << g4_particle->GetPDGCharge()
+                         << " (GENBB charge set in the gun = " << _particle_gun_->GetParticleCharge() / CLHEP::eplus << " e)"
+                         );
+            } else {
+            // Fetch the G4 particle name from the traditional GENBB particle:
+            g4_particle_name = get_g4_particle_name_from_genbb_particle(genbb_particle);
+            if (g4_particle_name[0] == '?') {
+              std::ostringstream message;
+              message << "genbb's particle type " << genbb_particle.get_type() << " (with label='"
+                      << genbb_particle_label
+                      << "') is not recognized as a Geant4 particle !";
+              G4Exception ("mctools::g4::primary_generator::_generate_event",
+                           "InvalidArgument",
+                           RunMustBeAborted,
+                           message.str ().c_str());
+            }
+            // Make it a G4 particle:
+            g4_particle = particle_table->FindParticle(g4_particle_name);
+            if (g4_particle == 0) {
+              std::ostringstream message;
+              message << "mctools::g4::primary_generator::_generate_event: "
+                      << "Particle named '" << g4_particle_name << "' is not defined within the Geant4 framework !";
+              G4Exception ("mctools::g4::primary_generator::_generate_event",
+                           "InvalidArgument",
+                           RunMustBeAborted,
+                           message.str ().c_str());
+            }
+            _particle_gun_->SetParticleDefinition(g4_particle);
+            g4_particle_name = g4_particle->GetParticleName();
+            DT_LOG_TRACE(_logprio(),std::cerr << "Found the Geant4 '" <<
+                         g4_particle_name << "' particle from the GENBB particle"
+                         << " with G4 PDG mass = " << g4_particle->GetPDGMass() / CLHEP::MeV << " MeV "
+                         << " and PDG charge = " << g4_particle->GetPDGCharge()
+                         );
+          }
+        }
+
+        // Fetch the mass of the particle from PDG data if mass is not known yet:
+        if (! datatools::is_valid(particle_mass)) {
+          particle_mass = g4_particle->GetPDGMass();
+        }
+
+        // For ultra low energy particles (i.e. UCN): may be we should use
+        // other formulas (non relativistic approximation) because of roundoff errors in
+        // relativistic formula (is G4 aware of that? to be checked in the G4 code)...
+        relativistic_energy = hypot(total_momentum, particle_mass);
+        kinetic_energy      = relativistic_energy - particle_mass;
+
+        // Extract momentum from the GENBB particle:
+        G4ThreeVector momentum(genbb_particle.get_momentum().x(),
+                               genbb_particle.get_momentum().y(),
+                               genbb_particle.get_momentum().z());
         // Plug in G4:
         if (geomtools::is_valid(_current_vertex_)) {
-          // All particles originate from an unique vertex provided by the vertex generator
-          _particle_gun_->SetParticlePosition (_current_vertex_);
+          // All particles originate from an unique vertex provided by the vertex generator:
+          _particle_gun_->SetParticlePosition(_current_vertex_);
         } else {
-          if (! genbb_particle.has_vertex ()) {
+          // Search for a specific vertex associated to any individual particle:
+          if (! genbb_particle.has_vertex()) {
             std::ostringstream message;
             message << "Particle named '" << g4_particle_name << "' has no valid vertex provided by the event generator !";
             G4Exception ("mctools::g4::primary_generator::_generate_event",
                          "InvalidArgument",
                          RunMustBeAborted,
-                         message.str ().c_str());
+                         message.str().c_str());
           }
-          // Each particle originate from its own vertex provided by the event generator
-          _particle_gun_->SetParticlePosition (genbb_particle.get_vertex ());
+          // Each particle originates from its own vertex provided by the event generator:
+          _particle_gun_->SetParticlePosition(genbb_particle.get_vertex ());
         }
-        _particle_gun_->SetParticleDefinition (g4_particle);
-        _particle_gun_->SetParticleMomentumDirection (momentum);
-        _particle_gun_->SetParticleEnergy     (kinetic_energy);
-        _particle_gun_->SetParticleTime       (event_time + particle_time);
-        _particle_gun_->GeneratePrimaryVertex (g4_event_);
+        // Do not use anymore the kinetic energy but the original momentum from GENBB.
+        // This avoid us to recompute the corresponding kinetic energy from the momentum
+        // and the mass of the particle:
+        _particle_gun_->SetParticleMomentum(momentum);
+        /*
+          _particle_gun_->SetParticleMomentumDirection(momentum);
+          if (datatools::is_valid(kinetic_energy)) {
+          _particle_gun_->SetParticleEnergy(kinetic_energy);
+          }
+        */
+        _particle_gun_->SetParticleTime(event_time + particle_time);
+        // And finaly, we fill the Geant4 primary event:
+        _particle_gun_->GeneratePrimaryVertex(g4_event_);
 
         if (_logprio() == datatools::logger::PRIO_TRACE) {
           const std::string tag           = "|-- ";
@@ -425,63 +570,84 @@ namespace mctools {
           }
           DT_LOG_TRACE(_logprio(), "Particle #" << particle_counter << " : ");
           std::clog << tag2 << tag      << "Type       = "
-                    << genbb_particle.get_type() << " ('" << particle_label << "')"
+                    << genbb_particle.get_type() << " ('" << genbb_particle_label << "')"
                     << std::endl;
-          std::clog << tag2 << tag      << "Time       = "
-                    << _particle_gun_->GetParticleTime () / CLHEP::ns << " ns"
+          std::clog << tag2 << tag      << "PDG code   = "
+                    << genbb_particle.get_pdg_code()
                     << std::endl;
-          std::clog << tag2 << tag      << "Energy     = " << kinetic_energy / CLHEP::keV << " keV" << std::endl;
+          std::clog << tag2 << tag      << "Geant4 name  = "
+                    << g4_particle_name
+                    << std::endl;
+           std::clog << tag2 << tag      << "Time       = "
+                    << _particle_gun_->GetParticleTime() / CLHEP::ns << " ns"
+                    << std::endl;
           std::clog << tag2 << tag      << "Position   = " << _current_vertex_ / CLHEP::mm << " mm" << std::endl;
-          std::clog << tag2 << last_tag << "Momentum   = " << genbb_particle.get_momentum() / CLHEP::keV << " keV" << std::endl;
+          std::clog << tag2 << tag << "Momentum   = " << genbb_particle.get_momentum() / CLHEP::keV << " keV" << std::endl;
+          if (datatools::is_valid(kinetic_energy)) {
+            std::clog << tag2 << last_tag    << "Energy     = " << kinetic_energy / CLHEP::keV << " keV (FYI)" << std::endl;
+          }
         }
-      }
+      } // Particle loop
 
       return;
     }
 
-    std::string primary_generator::get_g4_particle_name_from_genbb_particle (const ::genbb::primary_particle & p_) const
+    std::string primary_generator::get_g4_particle_name_from_genbb_particle(const ::genbb::primary_particle & p_) const
     {
-      if (p_.is_gamma ()) {
+      if (p_.is_gamma()) {
         return "gamma";
       }
-      if (p_.is_positron ()) {
+      if (p_.is_positron()) {
         return "e+";
       }
-      if (p_.is_electron ()) {
+      if (p_.is_electron()) {
         return "e-";
       }
-      if (p_.is_alpha ()) {
+      if (p_.is_alpha()) {
         return "alpha";
       }
-      if (p_.get_type () == ::genbb::primary_particle::PROTON) {
+      if (p_.get_type() == ::genbb::primary_particle::PROTON) {
         return "proton";
       }
-      if (p_.get_type () == ::genbb::primary_particle::NEUTRON) {
+      if (p_.get_type() == ::genbb::primary_particle::NEUTRON) {
         return "neutron";
       }
-      if (p_.get_type () == ::genbb::primary_particle::MUON_MINUS) {
+      if (p_.get_type() == ::genbb::primary_particle::MUON_MINUS) {
         return "mu-";
       }
-      if (p_.get_type () == ::genbb::primary_particle::MUON_PLUS) {
+      if (p_.get_type() == ::genbb::primary_particle::MUON_PLUS) {
         return "mu+";
       }
-      if (p_.get_type () == ::genbb::primary_particle::PION_0) {
+      if (p_.get_type() == ::genbb::primary_particle::PION_0) {
         return "pi0";
       }
-      if (p_.get_type () == ::genbb::primary_particle::PION_PLUS) {
+      if (p_.get_type() == ::genbb::primary_particle::PION_PLUS) {
         return "pi+";
       }
-      if (p_.get_type () == ::genbb::primary_particle::PION_MINUS) {
+      if (p_.get_type() == ::genbb::primary_particle::PION_MINUS) {
         return "pi-";
       }
-      const std::string & part_label = p_.get_particle_label ();
+      if (p_.is_nucleus()) {
+        // What to do here ? shoud we support it from this method
+        // return "ElA[E*]"; // G4 syntax seems to be : He6[0.0]
+        return "?"; // FOR NOW THUS METHOD DOES NOT WORK FOR NUCLEI
+      }
+      if (p_.is_ion()) {
+        // What to do here ? shoud we support it from this method
+        // return "ElA[E*]"; //  G4 syntax seems to be : He6[0.0] but there is no way to set the ion charge
+        return "?"; // FOR NOW THUS METHOD DOES NOT WORK FOR ION
+      }
 
+      // If no GENBB supported particle is found, we try to decode
+      // the GENBB particle label:
+      const std::string & part_label = p_.get_particle_label();
+      // and use a lookup table kindly provided by the user:
       std::map<std::string, std::string>::const_iterator found
         = _particle_names_map_.find(part_label);
       if (found != _particle_names_map_.end()) {
         return found->second;
       }
-      return "?";
+      return "?"; // This means that no G4 particle name has been found.
     }
 
   } // namespace g4
@@ -584,6 +750,3 @@ DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
 
 // Registration macro for class 'mctools::g4::primary_generator' :
 DOCD_CLASS_SYSTEM_REGISTRATION(mctools::g4::primary_generator,"mctools::g4::primary_generator")
-
-
-// end of primary_generator.cc

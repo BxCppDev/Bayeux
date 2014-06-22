@@ -145,7 +145,7 @@
 
 
 // Ions:
-//#include <G4IonConstructor.hh>
+// #include <G4IonConstructor.hh>
 // Nuclei
 #include <G4Alpha.hh>
 #include <G4Deuteron.hh>
@@ -419,8 +419,8 @@ namespace mctools {
     void particles_physics_constructor::_ConstructIons ()
     {
       if (_use_light_nuclei_) {
-       DT_LOG_NOTICE(_logprio(), "Activating light nuclei...");
-       G4Alpha::AlphaDefinition();
+        DT_LOG_NOTICE(_logprio(), "Activating light nuclei...");
+        G4Alpha::AlphaDefinition();
         G4Deuteron::DeuteronDefinition();
         G4Triton::TritonDefinition();
         if (! _he3_as_generic_ion_) {
@@ -440,6 +440,11 @@ namespace mctools {
         DT_LOG_NOTICE(_logprio(), "Activating generic ion...");
         G4GenericIon::GenericIonDefinition();
       }
+
+      // Extracted from:
+      // G4IonConstructor ion_constructor;
+      // ion_constructor.ConstructParticle();
+
       return;
     }
 
