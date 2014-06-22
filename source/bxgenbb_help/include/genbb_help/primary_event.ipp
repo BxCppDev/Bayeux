@@ -1,82 +1,78 @@
 // -*- mode: c++; -*-
-/* genbb_help::primary_event.ipp */
+/// \file genbb_help/primary_event.ipp
 
-#ifndef GENBB_HELP_PRIMARY_EVENT_IPP_
-#define GENBB_HELP_PRIMARY_EVENT_IPP_ 1
+#ifndef GENBB_HELP_PRIMARY_EVENT_IPP
+#define GENBB_HELP_PRIMARY_EVENT_IPP 1
 
+// Ourselves:
 #include <genbb_help/primary_event.h>
 
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
-
-//#include <datatools/serialization/utils.h>
-#include <datatools/i_serializable.ipp>
-#include <genbb_help/primary_particle.ipp>
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/string.hpp>
+
+#include <datatools/i_serializable.ipp>
+#include <genbb_help/primary_particle.ipp>
 
 namespace genbb {
 
   /// Boost serialization template method
   template<class Archive>
-  void primary_event::serialize (Archive            & a_ar,
-                                 const unsigned int   a_version)
+  void primary_event::serialize(Archive & ar_,
+                                const unsigned int version_)
   {
-    if (a_version > 0)
-      {
-        a_ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-      }
+    if (Archive::is_saving::value) {
+      // DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "saving with version=" << version_);
+    } else {
+      // DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "loading with version=" << version_);
+    }
+    if (version_ > 0) {
+      ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
+    }
+
     // 2012-06-26 FM : support GENBB 'labelled' MC event :
-    if (a_version < 3)
-      {
-        if (Archive::is_saving::value)
-          {
-            a_ar & boost::serialization::make_nvp ("label", _label_);
-          }
-        else
-          {
-            _label_.clear ();
-          }
+    if (version_ < 3) {
+      if (Archive::is_saving::value) {
+        ar_ & boost::serialization::make_nvp("label", _label_);
+      } else {
+        _label_.clear();
       }
-    else
-      {
-        a_ar & boost::serialization::make_nvp ("label", _label_);
-      }
-    a_ar & boost::serialization::make_nvp ("time", _time_);
-    a_ar & boost::serialization::make_nvp ("particles", _particles_);
-    a_ar & boost::serialization::make_nvp ("classification", _classification_);
+    } else {
+      ar_ & boost::serialization::make_nvp("label", _label_);
+    }
+
+    // Time:
+    ar_ & boost::serialization::make_nvp("time", _time_);
+
+    // List of primary particles:
+    ar_ & boost::serialization::make_nvp("particles", _particles_);
+
+    // Classification:
+    ar_ & boost::serialization::make_nvp("classification", _classification_);
+
     // 2012-06-21 FM : support GENBB 'weighted' MC event :
-    if (a_version < 2)
-      {
-        if (Archive::is_saving::value)
-          {
-            a_ar & boost::serialization::make_nvp ("genbb_weight", _genbb_weight_);
-          }
-        else
-          {
-            _genbb_weight_ = 1.0;
-          }
+    if (version_ < 2) {
+      if (Archive::is_saving::value) {
+        ar_ & boost::serialization::make_nvp("genbb_weight", _genbb_weight_);
+      } else {
+        _genbb_weight_ = 1.0;
       }
-    else
-      {
-        a_ar & boost::serialization::make_nvp ("genbb_weight", _genbb_weight_);
-      }
+    } else {
+      ar_ & boost::serialization::make_nvp("genbb_weight", _genbb_weight_);
+    }
+
     // 2013-03-6 FM : support 'auxiliaries' :
-    if (a_version < 4)
-      {
-        if (Archive::is_saving::value)
-          {
-            a_ar & boost::serialization::make_nvp ("auxiliaries", _auxiliaries_);
-          }
-        else
-          {
-            _auxiliaries_.clear ();
-          }
+    if (version_ < 4) {
+      if (Archive::is_saving::value){
+        ar_ & boost::serialization::make_nvp("auxiliaries", _auxiliaries_);
+      } else {
+        _auxiliaries_.clear();
       }
-    else
-      {
-        a_ar & boost::serialization::make_nvp ("auxiliaries", _auxiliaries_);
-      }
+    } else {
+      ar_ & boost::serialization::make_nvp("auxiliaries", _auxiliaries_);
+    }
+
     return;
   }
 
@@ -85,6 +81,4 @@ namespace genbb {
 #include <boost/serialization/version.hpp>
 BOOST_CLASS_VERSION(genbb::primary_event, 4)
 
-#endif // GENBB_HELP_PRIMARY_EVENT_IPP_
-
-// end of genbb_help::primary_event.ipp
+#endif // GENBB_HELP_PRIMARY_EVENT_IPP

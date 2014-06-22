@@ -1,7 +1,7 @@
 // -*- mode: c++; -*-
 //! \file primary_particle-reflect.h
-#ifndef GENBB_HELP_PRIMARY_PARTICLE_REFLECT_H_
-#define GENBB_HELP_PRIMARY_PARTICLE_REFLECT_H_
+#ifndef GENBB_HELP_PRIMARY_PARTICLE_REFLECT_H
+#define GENBB_HELP_PRIMARY_PARTICLE_REFLECT_H
 
 // Standard Library
 
@@ -30,9 +30,15 @@ namespace datatools {
             .DR_CLASS_PROPERTY_GETTER_SETTER("type",
                                              ::genbb::primary_particle::get_type,
                                              ::genbb::primary_particle::set_type)
+            .DR_CLASS_PROPERTY_GETTER_SETTER("pdg_code",
+                                             ::genbb::primary_particle::get_pdg_code,
+                                             ::genbb::primary_particle::set_pdg_code)
             .DR_CLASS_PROPERTY_GETTER_SETTER("particle_label",
                                              ::genbb::primary_particle::get_particle_label,
                                              ::genbb::primary_particle::set_particle_label)
+            .DR_CLASS_PROPERTY_GETTER_SETTER("mass",
+                                             ::genbb::primary_particle::get_mass,
+                                             ::genbb::primary_particle::set_mass)
             .DR_CLASS_PROPERTY_GETTER_SETTER("time",
                                              ::genbb::primary_particle::get_time,
                                              ::genbb::primary_particle::set_time)
@@ -42,16 +48,28 @@ namespace datatools {
             .DR_CLASS_PROPERTY_GETTER_SETTER("vertex",
                                              ::genbb::primary_particle::get_vertex,
                                              ::genbb::primary_particle::set_vertex)
+            .DR_CLASS_PROPERTY_GETTER("auxiliaries",
+                                      ::genbb::primary_particle::get_auxiliaries)
             .DR_CLASS_PROPERTY_GETTER("charge",
                                       ::genbb::primary_particle::get_charge)
-            .DR_CLASS_PROPERTY_GETTER("mass",
-                                      ::genbb::primary_particle::get_mass)
             .DR_CLASS_PROPERTY_GETTER("total_energy",
                                       ::genbb::primary_particle::get_total_energy)
             .DR_CLASS_PROPERTY_GETTER("kinetic_energy",
                                       ::genbb::primary_particle::get_kinetic_energy)
             .DR_CLASS_PROPERTY_GETTER("beta",
                                       ::genbb::primary_particle::get_beta)
+            .DR_CLASS_METHOD_CONST("has_type",
+                                   ::genbb::primary_particle,
+                                   ::genbb::primary_particle::has_type,
+                                   bool)
+            .DR_CLASS_METHOD_CONST("has_pdg_code",
+                                   ::genbb::primary_particle,
+                                   ::genbb::primary_particle::has_pdg_code,
+                                   bool)
+            .DR_CLASS_METHOD_CONST("has_particle_label",
+                                   ::genbb::primary_particle,
+                                   ::genbb::primary_particle::has_particle_label,
+                                   bool)
             .DR_CLASS_METHOD_CONST("has_vertex",
                                    ::genbb::primary_particle,
                                    ::genbb::primary_particle::has_vertex,
@@ -62,6 +80,14 @@ namespace datatools {
             .DR_CLASS_METHOD_CONST("is_valid",
                                    ::genbb::primary_particle,
                                    ::genbb::primary_particle::is_valid,
+                                   bool)
+            .DR_CLASS_METHOD_CONST("charge_is_known",
+                                   ::genbb::primary_particle,
+                                   ::genbb::primary_particle::charge_is_known,
+                                   bool)
+            .DR_CLASS_METHOD_CONST("mass_is_known",
+                                   ::genbb::primary_particle,
+                                   ::genbb::primary_particle::mass_is_known,
                                    bool)
             .DR_CLASS_VOID_METHOD("reset",
                                   ::genbb::primary_particle,
@@ -94,6 +120,14 @@ namespace datatools {
                                    ::genbb::primary_particle,
                                    ::genbb::primary_particle::is_muon_minus,
                                    bool)
+            .DR_CLASS_METHOD_CONST("is_nucleus",
+                                   ::genbb::primary_particle,
+                                   ::genbb::primary_particle::is_nucleus,
+                                   bool)
+            .DR_CLASS_METHOD_CONST("is_ion",
+                                   ::genbb::primary_particle,
+                                   ::genbb::primary_particle::is_ion,
+                                   bool)
             .DR_CLASS_METHOD_CONST("get_charge",
                                    ::genbb::primary_particle,
                                    ::genbb::primary_particle::get_charge,
@@ -102,10 +136,10 @@ namespace datatools {
                                    ::genbb::primary_particle,
                                    ::genbb::primary_particle::mass_is_known,
                                    bool)
-            .DR_CLASS_METHOD_CONST("get_mass",
-                                   ::genbb::primary_particle,
-                                   ::genbb::primary_particle::get_mass,
-                                   double)
+            // .DR_CLASS_METHOD_CONST("get_mass",
+            //                        ::genbb::primary_particle,
+            //                        ::genbb::primary_particle::get_mass,
+            //                        double)
             .DR_CLASS_METHOD_CONST("get_total_energy",
                                    ::genbb::primary_particle,
                                    ::genbb::primary_particle::get_total_energy,
@@ -130,5 +164,4 @@ namespace datatools {
   } // end of namespace detail
 } // end of namespace datatools
 
-#endif // GENBB_HELP_PRIMARY_PARTICLE_REFLECT_H_
-
+#endif // GENBB_HELP_PRIMARY_PARTICLE_REFLECT_H

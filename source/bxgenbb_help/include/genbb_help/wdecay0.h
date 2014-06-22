@@ -45,6 +45,7 @@ namespace genbb {
 
   /// Nested namespace of the Bayeux/genbb_help module library (decay0 C++ port)
   namespace decay0 {
+    //struct bkgpars;
     struct bbpars;
   }
 
@@ -109,12 +110,15 @@ namespace genbb {
 
     void _set_decay_isotope_ (const std::string & di_);
 
+    void _set_decay_version_ (int ver_);
+
   private:
 
     bool   _initialized_;
 
     int    _decay_type_;
     std::string _decay_isotope_;
+    int    _decay_version_;
     int    _decay_dbd_level_;
     int    _decay_dbd_mode_;
     size_t _event_count_;

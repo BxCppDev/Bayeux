@@ -4,7 +4,7 @@
 #include <limits>
 #include <iostream>
 
-// Thirs party:
+// Third party:
 // - GSL:
 #include <gsl/gsl_math.h>
 // - Bayeux/datatools:

@@ -1,7 +1,6 @@
-// -*- mode: c++ ; -*-
 // single_particle_generator.cc
 /*
- * Copyright 2007-2013 F. Mauger
+ * Copyright 2007-2014 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +19,10 @@
  *
  */
 
+// Ourselves:
 #include <genbb_help/single_particle_generator.h>
 
+// Standard library:
 #include <cstdlib>
 #include <cmath>
 #include <stdexcept>
@@ -29,18 +30,25 @@
 #include <sstream>
 #include <fstream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/units.h>
 #include <datatools/exception.h>
-
+// - Bayeux/materials:
+#include <materials/isotope.h>
+// - Bayeux/datatools:
 #include <geomtools/utils.h>
+
+// This project:
 #include <genbb_help/primary_event.h>
+#include <genbb_help/primary_particle.h>
 
 namespace genbb {
 
   using namespace std;
 
-  GENBB_PG_REGISTRATION_IMPLEMENT(single_particle_generator,"genbb::single_particle_generator");
+  GENBB_PG_REGISTRATION_IMPLEMENT(single_particle_generator, "genbb::single_particle_generator");
 
   bool single_particle_generator::can_external_random () const
   {
@@ -149,7 +157,17 @@ namespace genbb {
   void single_particle_generator::set_particle_name (const string & new_value_)
   {
     DT_THROW_IF(_initialized_,logic_error, "Operation prohibited ! Object is locked/initialized !");
+    // DT_THROW_IF (! single_particle_generator::particle_name_is_valid (particle_name),
+    //              logic_error,
+    //              "Invalid particle name '" << particle_name << "' !");
     _particle_name_ = new_value_;
+    return;
+  }
+
+  void single_particle_generator::set_particle_mass (double mass_)
+  {
+    DT_THROW_IF(_initialized_,logic_error, "Operation prohibited ! Object is locked/initialized !");
+    _particle_mass_ = mass_;
     return;
   }
 
@@ -173,7 +191,7 @@ namespace genbb {
     return false;
   }
 
-  double single_particle_generator::get_particle_mass_from_label (const string & particle_name_)
+  double single_particle_generator::get_particle_mass_from_label(const string & particle_name_)
   {
     double mass;
     datatools::invalidate (mass);
@@ -269,15 +287,11 @@ namespace genbb {
     return;
   }
 
-  // ctor:
-  single_particle_generator::single_particle_generator () : i_genbb ()
+  void single_particle_generator::_set_defaults()
   {
-    _initialized_ = false;
-
     _particle_name_ = "";
     _particle_type_ = primary_particle::PARTICLE_UNDEFINED;
     datatools::invalidate (_particle_mass_);
-
     _mode_ = MODE_INVALID;
     _mean_energy_ = 0.0;
     datatools::invalidate (_mean_energy_);
@@ -286,20 +300,23 @@ namespace genbb {
     datatools::invalidate (_min_energy_);
     _max_energy_ = 0.0;
     datatools::invalidate (_max_energy_);
-
-    // GSL (mygsl::tabulated_function class)
     _spectrum_interpolation_name_ = mygsl::tabulated_function::linear_interp_name ();
-
     _direction_mode_ = DIRECTION_DEFAULT;
     _cone_max_angle_ = 0.0 * CLHEP::degree;
     _cone_min_angle_ = 0.0 * CLHEP::degree;
     _cone_axis_.set(0.0, 0.0, 1.0);
-
+    _energy_spectrum_filename_.clear();
     _seed_ = 0;
     return;
   }
 
-  // dtor:
+  single_particle_generator::single_particle_generator () : i_genbb ()
+  {
+    _initialized_ = false;
+    _set_defaults();
+    return;
+  }
+
   single_particle_generator::~single_particle_generator ()
   {
     if (_initialized_) {
@@ -324,42 +341,24 @@ namespace genbb {
     return _random_;
   }
 
-  void single_particle_generator::_at_reset_ ()
+  void single_particle_generator::_at_reset_()
   {
-    _mode_ = MODE_INVALID;
-
-    _particle_name_ = "";
-    _particle_type_ = primary_particle::PARTICLE_UNDEFINED;
-    datatools::invalidate (_particle_mass_);
-
-    _mean_energy_ = 0.0;
-    datatools::invalidate (_mean_energy_);
-    _sigma_energy_ = 0.0;
-    datatools::invalidate (_min_energy_);
-    datatools::invalidate (_max_energy_);
-
-    _vnm_.reset ();
-    _energy_spectrum_.reset ();
-    _energy_spectrum_filename_ = "";
-    _spectrum_interpolation_name_ = mygsl::tabulated_function::linear_interp_name ();
-
-    _direction_mode_ = DIRECTION_DEFAULT;
-    _cone_max_angle_ = 0.0 * CLHEP::degree;
-    _cone_min_angle_ = 0.0 * CLHEP::degree;
-    _cone_axis_.set(0.0, 0.0, 1.0);
-
-    if (_random_.is_initialized ()) {
-      _random_.reset ();
+    if (_ion_data_) {
+      _ion_data_.reset();
     }
-    _seed_ = 0;
-
+    _vnm_.reset();
+    _energy_spectrum_.reset();
+    if (_random_.is_initialized()) {
+      _random_.reset();
+    }
+    _set_defaults();
     return;
   }
 
   void single_particle_generator::reset ()
   {
     if (! _initialized_) return;
-    _at_reset_ ();
+    _at_reset_();
     _initialized_ = false;
     return;
   }
@@ -383,10 +382,7 @@ namespace genbb {
     DT_THROW_IF(!config_.has_key ("particle_name"), logic_error,
                 "Missing 'particle_name' property for particle generator '" << get_name() << "' !");
     string particle_name = config_.fetch_string ("particle_name");
-    DT_THROW_IF (! single_particle_generator::particle_name_is_valid (particle_name),
-                 logic_error,
-                 "Invalid particle name '" << particle_name << "' !");
-    set_particle_name (particle_name);
+    set_particle_name(particle_name);
 
     if (config_.has_key ("emission_direction")) {
       std::string emission_direction = config_.fetch_string("emission_direction");
@@ -549,7 +545,7 @@ namespace genbb {
       set_energy_range (min_energy, max_energy);
     }
 
-    _at_init_ ();
+    _at_init_();
 
     _initialized_  = true;
     return;
@@ -569,100 +565,103 @@ namespace genbb {
 
     double kinetic_energy = -1.0;
     double mass = _particle_mass_;
-
     if (_mode_ == MODE_MONOKINETIC) {
       kinetic_energy = _mean_energy_;
     }
 
     if (_mode_ == MODE_GAUSSIAN_ENERGY) {
       while (kinetic_energy <= 0.0) {
-        kinetic_energy = grab_random ().gaussian (_mean_energy_, _sigma_energy_);
+        kinetic_energy = grab_random().gaussian(_mean_energy_, _sigma_energy_);
       }
     }
 
     if (_mode_ == MODE_ENERGY_RANGE) {
-      kinetic_energy = grab_random ().flat (_min_energy_, _max_energy_);
+      kinetic_energy = grab_random().flat(_min_energy_, _max_energy_);
     }
 
     if (_mode_ == MODE_SPECTRUM) {
       if (_spectrum_mode_ == SPECTRUM_MODE_TABFUNC) {
-        kinetic_energy = _vnm_.shoot (grab_random ());
+        kinetic_energy = _vnm_.shoot (grab_random());
       } else if (_spectrum_mode_ == SPECTRUM_MODE_HISTPDF) {
-        kinetic_energy = _energy_histo_pdf_.sample (grab_random ());
+        kinetic_energy = _energy_histo_pdf_.sample(grab_random ());
       }
     }
 
-    double momentum = sqrt (kinetic_energy * (kinetic_energy + 2 * mass));
+    double momentum = std::sqrt(kinetic_energy * (kinetic_energy + 2 * mass));
     double px, py, pz;
     px = 0.0;
     py = 0.0;
     pz = momentum;
 
-    event_.set_time (0.0 * CLHEP::second);
+    event_.set_time(0.0 * CLHEP::second);
     primary_particle pp;
-    pp.set_type (_particle_type_);
-    pp.set_time (0.0 * CLHEP::second);
-    geomtools::vector_3d p (px, py, pz);
-    pp.set_momentum (p);
-    event_.add_particle (pp);
+    pp.set_type(_particle_type_);
+    if (pp.needs_particle_label()) {
+      pp.set_particle_label(_particle_name_);
+    }
+    pp.set_mass(_particle_mass_);
+    pp.set_time(0.0 * CLHEP::second);
+    geomtools::vector_3d p(px, py, pz);
+    pp.set_momentum(p);
+    event_.add_particle(pp);
 
     if (is_randomized_direction()) {
-      double phi = grab_random ().flat (0.0, 360.0 * CLHEP::degree);
-      double cos_theta = grab_random ().flat (-1.0, +1.0);
-      double theta = std::acos (cos_theta);
-      double psi = grab_random ().flat (0.0, 360.0 * CLHEP::degree);
-      event_.rotate (phi, theta, psi);
-    } else if (is_cone_direction ()) {
-      double phi = grab_random ().flat (0.0, 360.0 * CLHEP::degree);
-      double cos_theta = grab_random ().flat (std::cos(_cone_max_angle_), std::cos(_cone_min_angle_));
-      double theta = std::acos (cos_theta);
-      double psi = grab_random ().flat (0.0, 360.0 * CLHEP::degree);
-      event_.rotate (phi, theta, psi);
+      double phi = grab_random().flat(0.0, 360.0 * CLHEP::degree);
+      double cos_theta = grab_random().flat(-1.0, +1.0);
+      double theta = std::acos(cos_theta);
+      double psi = grab_random().flat(0.0, 360.0 * CLHEP::degree);
+      event_.rotate(phi, theta, psi);
+    } else if (is_cone_direction()) {
+      double phi = grab_random().flat(0.0, 360.0 * CLHEP::degree);
+      double cos_theta = grab_random().flat(std::cos(_cone_max_angle_), std::cos(_cone_min_angle_));
+      double theta = std::acos(cos_theta);
+      double psi = grab_random().flat(0.0, 360.0 * CLHEP::degree);
+      event_.rotate(phi, theta, psi);
       double theta_dir = _cone_axis_.getTheta();
       double phi_dir = _cone_axis_.getPhi();
-      event_.rotate (phi_dir, theta_dir, 0.0);
+      event_.rotate(phi_dir, theta_dir, 0.0);
     }
 
-    event_.set_label (i_genbb::get_name ());
+    event_.set_label(i_genbb::get_name());
     if (compute_classification_) {
-      event_.compute_classification ();
+      event_.compute_classification();
     }
 
     DT_LOG_TRACE(_logging_priority, "Exiting.");
     return;
   }
 
-  void single_particle_generator::_init_energy_histo_pdf ()
+  void single_particle_generator::_init_energy_histo_pdf()
   {
     using namespace std;
     string filename = _energy_spectrum_filename_;
-    datatools::fetch_path_with_env (filename);
-    ifstream ifile (filename.c_str());
+    datatools::fetch_path_with_env(filename);
+    ifstream ifile(filename.c_str());
     DT_THROW_IF (! ifile, logic_error, "Cannot open data file '" << _energy_spectrum_filename_ << "' !");
 
     double energy_unit = CLHEP::MeV;
     size_t nbins = 0;
     double min = 0.0, max = 0.0;
     // load histo
-    while (! ifile.eof ()) {
+    while (! ifile.eof()) {
       string line;
-      getline (ifile, line);
-      if (line.empty ())  {
+      getline(ifile, line);
+      if (line.empty())  {
         continue;
       }
       {
-        istringstream lineiss (line);
+        istringstream lineiss(line);
         string word;
         lineiss >> word;
-        if ((word.length () > 0) && (word[0] == '#')) {
+        if ((word.length() > 0) && (word[0] == '#')) {
           if (word == "#@limits") {
             lineiss >> nbins >> min >> max;
             // initialize histo
-            _energy_histo_.init (nbins, min * energy_unit, max * energy_unit);
+            _energy_histo_.init(nbins, min * energy_unit, max * energy_unit);
           } else if (word == "#@energy_unit") {
             string energy_unit_str;
             lineiss >> energy_unit_str;
-            energy_unit = datatools::units::get_energy_unit_from (energy_unit_str);
+            energy_unit = datatools::units::get_energy_unit_from(energy_unit_str);
           }
           continue;
         }
@@ -671,7 +670,7 @@ namespace genbb {
       DT_THROW_IF (!nbins, logic_error, "Limits to histogram are not given in data file '"
                    << _energy_spectrum_filename_ << "' !");
 
-      istringstream lineiss (line);
+      istringstream lineiss(line);
       double xmin, xmax;
       double weight;
       lineiss >> xmin >> xmax >> weight;
@@ -759,14 +758,89 @@ namespace genbb {
     return;
   }
 
-  void single_particle_generator::_at_init_ ()
+  void single_particle_generator::_at_init_()
   {
-    _particle_type_ = primary_particle::get_particle_type_from_label (_particle_name_);
-    _particle_mass_ = get_particle_mass_from_label (_particle_name_);
-    DT_THROW_IF (! datatools::is_valid (_particle_mass_), logic_error,
-                 "Particle mass is not defined !");
-    DT_THROW_IF (_cone_min_angle_ > _cone_max_angle_, out_of_range,
-                 "Invalid  cone angle range (" << _cone_min_angle_ << ">" << _cone_max_angle_ << ") !");
+    bool devel = false;
+    if (devel) std::cerr << "DEVEL: single_particle_generator::_at_init_: " << "Entering..." << std::endl;
+    _particle_type_ = primary_particle::PARTICLE_UNDEFINED;
+
+    // Search for a nucleus (Z,A,E*):
+    if (_particle_type_ == primary_particle::PARTICLE_UNDEFINED) {
+      if (devel) std::cerr << "DEVEL: single_particle_generator::_at_init_: " << "Search for a nucleus..." << std::endl;
+      int Z, A;
+      double Estar;
+      if (primary_particle::label_to_nucleus(_particle_name_, Z, A, Estar)) {
+        if (devel) std::cerr << "DEVEL: single_particle_generator::_at_init_: " << "Found a nucleus..." << std::endl;
+        _ion_data_.reset(new ion_data_type);
+        _ion_data_->Z = Z;
+        _ion_data_->A = A;
+        _ion_data_->Estar = Estar;
+        _particle_type_ = primary_particle::NUCLEUS;
+        if (!datatools::is_valid(_particle_mass_)) {
+          if (devel) std::cerr << "DEVEL: single_particle_generator::_at_init_: " << "Searching for the mass of the nucleus..." << std::endl;
+          materials::isotope::id nucleus_id(Z, A);
+          if (materials::isotope::id_is_tabulated(nucleus_id)) {
+           if (devel) std::cerr << "DEVEL: single_particle_generator::_at_init_: " << "Nucleus is tabulated..." << std::endl;
+           const materials::isotope::record_type & isorec
+              = materials::isotope::table_record_from_id(nucleus_id);
+            double bea = isorec.get_binding_energy_per_nucleon();
+            if (devel) std::cerr << "DEVEL: single_particle_generator::_at_init_: "
+                      << "Nucleus' binding energy per nucleon is " << bea / CLHEP::keV << " keV" << std::endl;
+            DT_THROW_IF(!datatools::is_valid(bea), std::logic_error,
+                        "Cannot fetch binding energy per nucleon for isotope " << nucleus_id.to_string() << " !");
+            set_particle_mass(materials::isotope::compute_nucleus_mass(Z, A, bea));
+            if (devel) std::cerr << "DEVEL: single_particle_generator::_at_init_: " << "Nucleus' mass is " << get_particle_mass() / CLHEP::GeV << " GeV" << std::endl;
+          } else {
+            DT_THROW_IF(true, std::logic_error, "No registered isotope " << nucleus_id.to_string() << " !");
+          }
+        }
+      }
+    }
+
+    // Search for an ion (Z,A,E*,Q):
+    if (_particle_type_ == primary_particle::PARTICLE_UNDEFINED) {
+      if (devel) std::cerr << "DEVEL: single_particle_generator::_at_init_: " << "Search for an ion..." << std::endl;
+      int Z, A, Q;
+      double Estar;
+      if (primary_particle::label_to_ion(_particle_name_, Z, A, Estar, Q)) {
+        _ion_data_.reset(new ion_data_type);
+        _ion_data_->Z = Z;
+        _ion_data_->A = A;
+        _ion_data_->Estar = Estar;
+        _ion_data_->Q = Q;
+        _particle_type_ = primary_particle::ION;
+        if (!datatools::is_valid(_particle_mass_)) {
+          materials::isotope::id nucleus_id(Z, A);
+          if (materials::isotope::id_is_tabulated(nucleus_id)) {
+            const materials::isotope::record_type & isorec
+              = materials::isotope::table_record_from_id(nucleus_id);
+            double atomic_mass = isorec.get_atomic_mass();
+            DT_THROW_IF(!datatools::is_valid(atomic_mass), std::logic_error, "Cannot fetch atomic mass for isotope " << nucleus_id.to_string() << " !");
+            double ion_mass = atomic_mass * CLHEP::amu_c2 - Q * CLHEP::electron_mass_c2;
+            set_particle_mass(ion_mass);
+          } else {
+            DT_THROW_IF(true, std::logic_error, "No registered isotope " << nucleus_id.to_string() << " !");
+          }
+        }
+      }
+    }
+
+    // Search for other particles:
+    if (_particle_type_ == primary_particle::PARTICLE_UNDEFINED) {
+      if (devel) std::cerr << "DEVEL: single_particle_generator::_at_init_: " << "Search for a particle..." << std::endl;
+      _particle_type_ = primary_particle::particle_type_from_label(_particle_name_);
+      if (!datatools::is_valid(_particle_mass_)) {
+        _particle_mass_ = get_particle_mass_from_label(_particle_name_);
+      }
+      DT_THROW_IF (! datatools::is_valid (_particle_mass_), logic_error,
+                   "Particle mass is not defined !");
+      DT_THROW_IF (_cone_min_angle_ > _cone_max_angle_, out_of_range,
+                   "Invalid  cone angle range (" << _cone_min_angle_ << ">" << _cone_max_angle_ << ") !");
+    }
+
+    DT_THROW_IF (_particle_type_ == primary_particle::PARTICLE_UNDEFINED,
+                 std::logic_error,
+                 "Unsupported particule!");
 
     if (_mode_ == MODE_SPECTRUM) {
       if (_spectrum_mode_ == SPECTRUM_MODE_TABFUNC) {
@@ -1311,5 +1385,3 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::single_particle_generator,ocd_)
 DOCD_CLASS_IMPLEMENT_LOAD_END()
 
 DOCD_CLASS_SYSTEM_REGISTRATION(genbb::single_particle_generator,"genbb::single_particle_generator")
-
-// end of single_particle_generator.cc

@@ -30,18 +30,23 @@
  *
  */
 
-#ifndef GENBB_HELP_COMBINED_PARTICLE_GENERATOR_H_
-#define GENBB_HELP_COMBINED_PARTICLE_GENERATOR_H_ 1
+#ifndef GENBB_HELP_COMBINED_PARTICLE_GENERATOR_H
+#define GENBB_HELP_COMBINED_PARTICLE_GENERATOR_H 1
 
+// Standard library:
 #include <string>
 
-#include <genbb_help/i_genbb.h>
-
-#include <mygsl/rng.h>
-
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/units.h>
+// - Bayeux/mygsl:
+#include <mygsl/rng.h>
+// - Bayeux/geomtools:
 #include <geomtools/utils.h>
+
+// This project:
+#include <genbb_help/i_genbb.h>
 
 namespace genbb {
 
@@ -127,6 +132,4 @@ namespace genbb {
 
 } // end of namespace genbb
 
-#endif // GENBB_HELP_COMBINED_PARTICLE_GENERATOR_H_
-
-// end of combined_particle_generator.h
+#endif // GENBB_HELP_COMBINED_PARTICLE_GENERATOR_H

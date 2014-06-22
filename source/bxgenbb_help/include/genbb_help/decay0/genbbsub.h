@@ -40,6 +40,11 @@ namespace genbb {
   class primary_event;
   namespace decay0 {
 
+    // struct bkgpars {
+    //   bkgpars();
+    //   void reset();
+    // };
+
     struct bbpars;
 
     enum genbbsub_i2bbs_type {
@@ -55,14 +60,14 @@ namespace genbb {
 
     /// Main decay0 C++ port interface function
     void genbbsub(mygsl::rng & prng_,
-		  primary_event & event_,
-		  int i2bbs_,
-		  std::string chnuclide_,
-		  int ilevel_,
-		  int modebb_,
-		  int istart_,
-		  int & ier_,
-		  bbpars & bb_params_);
+                  primary_event & event_,
+                  int i2bbs_,
+                  const std::string & chnuclide_,
+                  int ilevel_,
+                  int modebb_,
+                  int istart_,
+                  int & ier_,
+                  bbpars & bb_params_);
 
   } // end of namespace decay0
 } // end of namespace genbb
@@ -71,5 +76,3 @@ namespace genbb {
 // Local Variables: --
 // mode: c++ --
 // End: --
-
-// end of genbbsub.h

@@ -1,12 +1,12 @@
-// -*- mode: c++; -*- 
-/* genbb_help::the_serializable.ipp */
+// -*- mode: c++; -*-
+/// \file genbb_help/the_serializable.ipp
 /*
  * This includes the implementation code
  * for Boost/Serialization layer.
  *
  */
-#ifndef GENBB_HELP_THE_SERIALIZABLE_IPP_
-#define GENBB_HELP_THE_SERIALIZABLE_IPP_ 1
+#ifndef GENBB_HELP_THE_SERIALIZABLE_IPP
+#define GENBB_HELP_THE_SERIALIZABLE_IPP 1
 
 /***************************
  * genbb::primary_particle *
@@ -20,6 +20,4 @@
 
 #include <genbb_help/primary_event.ipp>
 
-#endif // GENBB_HELP_THE_SERIALIZABLE_IPP_
-
-/* end of genbb_help::the_serializable.ipp */
+#endif // GENBB_HELP_THE_SERIALIZABLE_IPP

@@ -1,11 +1,11 @@
 // -*- mode: c++; -*-
-/* primary_event.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file genbb_help/primary_event.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-11
- * Last modified: 2013-02-25
+ * Last modified: 2014-06-19
  *
  * License:
- * Copyright 2007-2013 F. Mauger
+ * Copyright 2007-2014 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,113 +36,154 @@
  *
  */
 
-#ifndef GENBB_HELP_PRIMARY_EVENT_H_
-#define GENBB_HELP_PRIMARY_EVENT_H_ 1
+#ifndef GENBB_HELP_PRIMARY_EVENT_H
+#define GENBB_HELP_PRIMARY_EVENT_H 1
 
+// Standard library:
 #include <string>
 #include <list>
 
-// Interface base class from datatools to support serialization tools:
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/i_serializable.h>
-
 #include <datatools/units.h>
 #include <datatools/properties.h>
 #include <datatools/i_tree_dump.h>
 
+// This project:
 #include <genbb_help/primary_particle.h>
 
 namespace genbb {
 
+  /// \brief A primary event from a Monte-Carlo generator
   class primary_event
     : DATATOOLS_SERIALIZABLE_CLASS,
       public datatools::i_tree_dumpable
   {
 
   public:
+
+    /// Collection of primary particles
     typedef std::list<primary_particle> particles_col_type;
-    typedef particles_col_type particles_col_t; // Backward comp.
+
+    // Backward comp. (obsolete)
+    typedef particles_col_type particles_col_t;
 
   public:
 
-    bool is_valid () const;
+    /// Check the validity of the primary event
+    bool is_valid() const;
 
-    void reset ();
+    /// Reset the primary event
+    void reset();
 
-    void set_time (double);
+    /// Set the time
+    void set_time(double);
 
-    double get_time () const;
+    /// Return the time
+    double get_time() const;
 
-    void set_genbb_weight (double genbb_weight_);
+    /// Set the weight
+    void set_genbb_weight(double genbb_weight_);
 
-    double get_genbb_weight () const;
+    /// Return the weight
+    double get_genbb_weight() const;
 
-    bool is_genbb_weighted () const;
+    /// Check if the event is weighted
+    bool is_genbb_weighted() const;
 
-    const particles_col_type & get_particles () const;
+    /// Return a const reference to the list of primary particles
+    const particles_col_type & get_particles() const;
 
-    particles_col_type & grab_particles ();
+    /// Return a mutable reference to the list of primary particles
+    particles_col_type & grab_particles();
 
-    void add_particle (const primary_particle &);
+    /// Add a primary particle
+    void add_particle(const primary_particle &);
 
+    /// Return the number of primary particles
     unsigned int get_number_of_particles() const;
 
+    /// Return a const reference to primary particle at given index
     const primary_particle & get_particle(int) const;
 
+    /// Return a mutable reference to primary particle at given index
     primary_particle & grab_particle(int);
 
-    const std::string & get_label () const;
+    /// Return the label
+    const std::string & get_label() const;
 
-    void set_label (const std::string & l_);
+    /// Set the label
+    void set_label(const std::string & l_);
 
-    void reset_label ();
+    /// Reset the label
+    void reset_label();
 
-    const std::string & get_classification () const;
+    /// Return the classification string
+    const std::string & get_classification() const;
 
-    void set_classification (const std::string & c_);
+    /// Set the classification string
+    void set_classification(const std::string & c_);
 
-    void reset_classification ();
+    /// Reset the classification string
+    void reset_classification();
 
-    void compute_classification ();
+    /// Compute the classification string
+    void compute_classification();
 
-    void rotate (double a_phi, double a_theta, double a_delta);
+    /// Rotate the event
+    void rotate(double a_phi, double a_theta, double a_delta);
 
-    double get_total_kinetic_energy () const;
+    /// Return the total kinetic energy of the event
+    double get_total_kinetic_energy() const;
 
-    const datatools::properties & get_auxiliaries () const;
+    /// Return a const reference to the auxiliary properties
+    const datatools::properties & get_auxiliaries() const;
 
-    datatools::properties & grab_auxiliaries ();
+    /// Return a mutable reference to the auxiliary properties
+    datatools::properties & grab_auxiliaries();
 
+    /// Set auxiliary properties
     void set_auxiliaries(const datatools::properties &);
 
+    /// Shift the time of the particles by a delay
     void shift_particles_time(double delta_time_, int from_ = 0);
 
     /// Constructor
-    primary_event ();
+    primary_event();
 
     /// Destructor
-    virtual ~primary_event ();
+    virtual ~primary_event();
 
+    /// Smart print
     virtual void
-    tree_dump (std::ostream      & out_    = std::clog,
+    tree_dump(std::ostream      & out_    = std::clog,
                const std::string & title_  = "",
                const std::string & indent_ = "",
                bool inherit_               = false) const;
 
-    void dump (std::ostream & a_out = std::clog,
-               const std::string & a_indent = "") const;
+    /// Print
+    void dump(std::ostream & a_out = std::clog,
+              const std::string & a_indent = "") const;
 
-    void dump (std::ostream & a_out,
+    /// Print
+    void dump(std::ostream & a_out,
                const std::string & a_title,
                const std::string & a_indent) const;
 
+  protected:
+
+    /// Set default attibutes values
+    void _set_defaults();
+
   private:
 
-    std::string           _label_;
-    double                _time_;
-    particles_col_type    _particles_;
-    std::string           _classification_;
-    double                _genbb_weight_;
-    datatools::properties _auxiliaries_;
+    double                _time_;           /// The generation time
+    particles_col_type    _particles_;      /// The list of primary particles
+    std::string           _label_;          /// A label associated to the generated event
+    std::string           _classification_; /// A classification string id
+    double                _genbb_weight_;   /// The weight of the generated event with respect to a reference sample
+    datatools::properties _auxiliaries_;    /// Auxiliary properties
 
     //! Support for Boost-based serialization
     DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(primary_event)
@@ -165,6 +206,4 @@ DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::genbb::primary_eve
 // Activate reflection layer for the genbb::primary_event class :
 DR_CLASS_INIT(::genbb::primary_event);
 
-#endif // GENBB_HELP_PRIMARY_EVENT_H_
-
-// end of primary_event.h
+#endif // GENBB_HELP_PRIMARY_EVENT_H

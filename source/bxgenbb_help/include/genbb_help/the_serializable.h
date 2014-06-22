@@ -1,8 +1,8 @@
-// -*- mode: c++; -*- 
-/* genbb_help::the_serializable.h */
+// -*- mode: c++; -*-
+/// \file genbb_help/the_serializable.h
 
-#ifndef GENBB_HELP_THE_SERIALIZABLE_H_
-#define GENBB_HELP_THE_SERIALIZABLE_H_ 1
+#ifndef GENBB_HELP_THE_SERIALIZABLE_H
+#define GENBB_HELP_THE_SERIALIZABLE_H 1
 
 #include <datatools/archives_instantiation.h>
 #include <boost/serialization/export.hpp>
@@ -27,8 +27,6 @@ DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(genbb::primary_particle)
  ************************/
 
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(genbb::primary_event)
-BOOST_CLASS_EXPORT_IMPLEMENT(genbb::primary_event) 
+BOOST_CLASS_EXPORT_IMPLEMENT(genbb::primary_event)
 
-#endif // GENBB_HELP_THE_SERIALIZABLE_H_
-
-/* end of genbb_help::the_serializable.h */
+#endif // GENBB_HELP_THE_SERIALIZABLE_H

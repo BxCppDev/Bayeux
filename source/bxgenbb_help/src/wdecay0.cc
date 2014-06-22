@@ -51,13 +51,13 @@ namespace genbb {
     return _initialized_;
   }
 
-  // ctor:
   wdecay0::wdecay0 () : i_genbb ()
   {
     _initialized_ = false;
     _event_count_ = 0;
     _decay_type_ = DECAY_TYPE_UNDEFINED;
     _decay_isotope_ = "";
+    _decay_version_ = 0;
     _decay_dbd_level_ = 0;
     _decay_dbd_mode_ = DBD_MODE_INVALID;
     _seed_ = 0;
@@ -66,7 +66,6 @@ namespace genbb {
     return;
   }
 
-  // dtor:
   wdecay0::~wdecay0 ()
   {
     if (_initialized_) {
@@ -103,6 +102,7 @@ namespace genbb {
     _decay_type_ = DECAY_TYPE_UNDEFINED;
     _decay_isotope_.clear();
     _decay_dbd_level_ = 0;
+    _decay_version_ = 0;
     _decay_dbd_mode_ = DBD_MODE_INVALID;
 
     datatools::invalidate (_energy_min_);
@@ -214,6 +214,11 @@ namespace genbb {
       }
     }
 
+    if (config_.has_key ("decay_version")) {
+      int decay_version = config_.fetch_integer("decay_version");
+      _set_decay_version_(decay_version);
+    }
+
     if (datatools::is_valid (_energy_min_)) {
       if (! datatools::is_valid (_energy_max_)) {
         _energy_max_ = utils::DEFAULT_ENERGY_RANGE_MAX;
@@ -245,6 +250,12 @@ namespace genbb {
   void wdecay0::_set_decay_isotope_ (const std::string & di_)
   {
     _decay_isotope_ = di_;
+    return;
+  }
+
+  void wdecay0::_set_decay_version_ (int ver_)
+  {
+    _decay_version_ = ver_;
     return;
   }
 
@@ -534,6 +545,29 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::wdecay0,ocd_)
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(true)
       .set_long_description(long_desc.str()
+                            )
+      ;
+  }
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("decay_version")
+      .set_terse_description("The version of the generator")
+      .set_traits(datatools::TYPE_INTEGER)
+      .set_mandatory(false)
+      .set_default_value_integer(0)
+      .set_long_description("The version number of the generator:          \n"
+                            "                                              \n"
+                            "  * ``0`` : The default version               \n"
+                            "  * ``N`` : The version number N if available \n"
+                            "                                              \n"
+                            )
+      .add_example("Generator for the                                            \n"
+                            "Example of DBD of Se82: ::                    \n"
+                            "                                              \n"
+                            "   decay_type      : string = \"DBD\"         \n"
+                            "   decay_isotope   : string = \"Se82\"        \n"
+                            "   decay_dbd_level : integer = 0              \n"
+                            "                                              \n"
                             )
       ;
   }

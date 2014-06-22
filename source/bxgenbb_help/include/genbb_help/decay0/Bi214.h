@@ -12,9 +12,8 @@ namespace genbb {
 
     void Bi214(mygsl::rng & prng_, primary_event & event_, double tcnuc, double & tdnuc);
 
-
-  } // end of namespace decay0 
-} // end of namespace genbb 
+  } // end of namespace decay0
+} // end of namespace genbb
 
 #endif // GENBB_DECAY0_BI214_H_
 // Local Variables: --

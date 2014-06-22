@@ -165,7 +165,7 @@ namespace genbb {
     void genbbsub(mygsl::rng & prng_,
                   primary_event & event_,
                   int i2bbs_,
-                  std::string chnuclide_,
+                  const std::string & chnuclide_,
                   int ilevel_,
                   int modebb_,
                   int istart_,

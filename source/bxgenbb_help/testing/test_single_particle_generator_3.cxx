@@ -1,25 +1,25 @@
-// -*- mode: c++ ; -*-
 // test_single_particle_generator_3.cxx
 /*
  * Usage:
  *
- * shell> ./Linux-i686/bin/test_single_particle_generator_3 \
+ * shell$ <...>/test_single_particle_generator_3 \
  *   | gsl-histogram 0 2 100 > ke.his
  *
  * gnuplot> plot './ke.his' using 1:3 with histep
  *
  */
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
+// This project:
 #include <genbb_help/single_particle_generator.h>
 #include <genbb_help/primary_event.h>
 
-
-int main (int argc_, char ** argv_)
+int main(int argc_, char ** argv_)
 {
   using namespace std;
   int error_code = EXIT_SUCCESS;

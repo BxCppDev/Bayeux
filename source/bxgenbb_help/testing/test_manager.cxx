@@ -1,5 +1,10 @@
 // -*- mode: c++ ; -*-
 // test_manager.cxx
+//
+// Run from the build dir:
+//  $ GENBB_HELP_TESTING_DIR=<Bayeux source dir>/source/bxgenbb_help/testing ./BuildProducts/bin/bxtests/genbb_help-test_manager  -g to_file
+
+//
 
 #include <cstdlib>
 #include <iostream>
@@ -24,7 +29,7 @@ int main (int argc_, char ** argv_)
 
     bool debug = false;
     std::string pg_name;
-    int nevents = 10000;
+    int nevents = 22000;
 #if GENBB_HELP_WITH_FORTRAN == 1
     bool use_fortran_lib = false;
 #endif // GENBB_HELP_WITH_FORTRAN == 1
@@ -83,7 +88,7 @@ int main (int argc_, char ** argv_)
       pg_name = "bkg_Co60";
     }
     if (PGMgr.has(pg_name)) {
-      mygsl::histogram hEc(70, 0.0 * CLHEP::keV, 3500.0 * CLHEP::keV);
+      mygsl::histogram hEc(350, 0.0 * CLHEP::keV, 3500.0 * CLHEP::keV);
       std::clog << "NOTICE: " << "Found particle generator named '"
                 << pg_name << "'" << std::endl;
       genbb::i_genbb & PG = PGMgr.grab(pg_name);
@@ -101,7 +106,7 @@ int main (int argc_, char ** argv_)
         if (count >= nevents) break;
       }
       PGMgr.reset(pg_name);
-      std::string sname = "electron.hist";
+      std::string sname = "generator.hist";
       std::ofstream ofhist(sname.c_str());
       hEc.print(ofhist);
       ofhist.close();
@@ -112,7 +117,7 @@ int main (int argc_, char ** argv_)
 
     pg_name = "electron_pdf";
     if (PGMgr.has(pg_name)) {
-      mygsl::histogram hEc(100, 0.0 * CLHEP::keV, 3500.0 * CLHEP::keV);
+      mygsl::histogram hEc(350, 0.0 * CLHEP::keV, 3500.0 * CLHEP::keV);
       std::clog << "NOTICE: " << "Found particle generator named '"
                 << pg_name << "'" << std::endl;
       genbb::i_genbb & PG = PGMgr.grab(pg_name);
@@ -148,5 +153,3 @@ int main (int argc_, char ** argv_)
   }
   return (error_code);
 }
-
-// end of test_manager.cxx

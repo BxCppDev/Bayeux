@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 // combined_particle_generator.cc
 /*
  * Copyright 2007-2011 F. Mauger
@@ -20,8 +19,10 @@
  *
  */
 
+// Ourselves:
 #include <genbb_help/combined_particle_generator.h>
 
+// Standard library:
 #include <cstdlib>
 #include <cmath>
 #include <stdexcept>
@@ -29,11 +30,15 @@
 #include <sstream>
 #include <fstream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/utils.h>
-#include <geomtools/utils.h>
 #include <datatools/units.h>
 #include <datatools/exception.h>
+// - Bayeux/geomtools:
+#include <geomtools/utils.h>
 
+// This project:
 #include <genbb_help/primary_event.h>
 #include <genbb_help/manager.h>
 
@@ -80,7 +85,6 @@ namespace genbb {
     return true;
   }
 
-  // ctor:
   combined_particle_generator::combined_particle_generator () : i_genbb ()
   {
     _debug_ = false;
@@ -90,7 +94,6 @@ namespace genbb {
     return;
   }
 
-  // dtor:
   combined_particle_generator::~combined_particle_generator ()
   {
     if (_initialized_) {
@@ -384,5 +387,3 @@ namespace genbb {
   }
 
 } // end of namespace genbb
-
-  // end of combined_particle_generator.cc

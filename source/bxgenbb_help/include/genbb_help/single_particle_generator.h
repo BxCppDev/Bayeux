@@ -1,6 +1,5 @@
-// -*- mode: c++ ; -*-
-/* single_particle_generator.h
- * Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file genbb_help/single_particle_generator.h
+/* Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-10-03
  * Last modified: 2013-02-26
  *
@@ -30,136 +29,154 @@
  *
  */
 
-#ifndef GENBB_HELP_SINGLE_PARTICLE_GENERATOR_H_
-#define GENBB_HELP_SINGLE_PARTICLE_GENERATOR_H_ 1
+#ifndef GENBB_HELP_SINGLE_PARTICLE_GENERATOR_H
+#define GENBB_HELP_SINGLE_PARTICLE_GENERATOR_H 1
 
+// Standard library:
 #include <string>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/units.h>
-
+// - Bayeux/mygsl:
 #include <mygsl/rng.h>
 #include <mygsl/tabulated_function.h>
 #include <mygsl/von_neumann_method.h>
 #include <mygsl/histogram.h>
-
+// - Bayeux/geomtools:
 #include <geomtools/utils.h>
 
+// This project:
 #include <genbb_help/i_genbb.h>
 
 namespace genbb {
 
-  /// Generator for single particles with some special kinematics
+  /// \brief Generator for single particles with some special kinematics
   class single_particle_generator : public i_genbb
   {
   public:
 
-    enum mode_type
-      {
-        MODE_INVALID         = -1,
-        MODE_MONOKINETIC     =  0,
-        MODE_GAUSSIAN_ENERGY =  1,
-        MODE_ENERGY_RANGE    =  2,
-        MODE_SPECTRUM        =  3,
-        MODE_DEFAULT         =  MODE_MONOKINETIC
-      };
+    enum mode_type {
+      MODE_INVALID         = -1,
+      MODE_MONOKINETIC     =  0,
+      MODE_GAUSSIAN_ENERGY =  1,
+      MODE_ENERGY_RANGE    =  2,
+      MODE_SPECTRUM        =  3,
+      MODE_DEFAULT         =  MODE_MONOKINETIC
+    };
 
-    enum spectrum_mode_type
-      {
-        SPECTRUM_MODE_TABFUNC = 0,
-        SPECTRUM_MODE_HISTPDF = 1
-      };
+    enum spectrum_mode_type {
+      SPECTRUM_MODE_TABFUNC = 0,
+      SPECTRUM_MODE_HISTPDF = 1
+    };
 
-    enum direction_mode_type
-      {
-        DIRECTION_Z_AXIS     =  0,
-        DIRECTION_RANDOMIZED =  1,
-        DIRECTION_CONE       =  2,
-        DIRECTION_DEFAULT    = DIRECTION_Z_AXIS
-      };
+    enum direction_mode_type {
+      DIRECTION_Z_AXIS     =  0,
+      DIRECTION_RANDOMIZED =  1,
+      DIRECTION_CONE       =  2,
+      DIRECTION_DEFAULT    = DIRECTION_Z_AXIS
+    };
+
+    struct ion_data_type {
+      int Z; /// Atomic number
+      int A; /// Number of nucleons
+      double Estar; /// Excitation energy
+      int Q; /// Ion charge
+    };
 
   public:
-    void set_direction_mode (int);
-    int get_direction_mode () const;
-    bool is_randomized_direction () const;
-    void set_randomized_direction (bool);
-    bool is_cone_direction () const;
-    void set_cone_direction (bool);
+
+    void set_direction_mode(int);
+    int get_direction_mode() const;
+    bool is_randomized_direction() const;
+    void set_randomized_direction(bool);
+    bool is_cone_direction() const;
+    void set_cone_direction(bool);
     void set_cone_max_angle(double);
     double get_cone_max_angle() const;
     void set_cone_min_angle(double);
     double get_cone_min_angle() const;
-    void set_cone_axis (const geomtools::vector_3d & axis_);
-    void set_z_direction (bool);
-    bool is_z_direction () const;
+    void set_cone_axis(const geomtools::vector_3d & axis_);
+    void set_z_direction(bool);
+    bool is_z_direction() const;
     const geomtools::vector_3d & get_cone_axis() const;
 
-    const std::string & get_particle_name () const;
-    void set_particle_name (const std::string &);
-    double get_particle_mass () const;
-    void set_particle_mass (double);
+    const std::string & get_particle_name() const;
+    void set_particle_name(const std::string &);
+    double get_particle_mass() const;
+    void set_particle_mass(double);
 
-    virtual bool can_external_random () const;
-    const mygsl::rng & get_random () const;
-    mygsl::rng & grab_random ();
+    virtual bool can_external_random() const;
+    const mygsl::rng & get_random() const;
+    mygsl::rng & grab_random();
 
-    int get_mode () const;
-    void set_mode (int);
+    int get_mode() const;
+    void set_mode(int);
 
-    double get_mean_energy () const;
-    double get_sigma_energy () const;
-    void set_mean_energy (double mean_, double sigma_ = 0.0);
+    double get_mean_energy() const;
+    double get_sigma_energy() const;
+    void set_mean_energy(double mean_, double sigma_ = 0.0);
 
-    double get_min_energy () const;
-    double get_max_energy () const;
-    void set_energy_range (double min_, double max_);
+    double get_min_energy() const;
+    double get_max_energy() const;
+    void set_energy_range(double min_, double max_);
 
-    void set_energy_spectrum_filename (const std::string & filename_);
+    void set_energy_spectrum_filename(const std::string & filename_);
 
     /// Constructor
-    single_particle_generator ();
+    single_particle_generator();
 
     /// Destructor
-    virtual ~single_particle_generator ();
+    virtual ~single_particle_generator();
 
     /// Main initialization interface method
-    virtual void initialize (const datatools::properties & setup_,
+    virtual void initialize(const datatools::properties & setup_,
                              datatools::service_manager & service_manager_,
                              detail::pg_dict_type & dictionary_);
 
-    virtual void reset ();
+    /// Reset
+    virtual void reset();
 
-    virtual bool has_next ();
+    /// Check if a next primary event is available
+    virtual bool has_next();
 
     /// Check initialization status
-    virtual bool is_initialized () const;
+    virtual bool is_initialized() const;
 
   protected:
 
-    virtual void _load_next (primary_event & event_,
-                             bool compute_classification_ = true);
+    /// Shoot the primary event
+    virtual void _load_next(primary_event & event_,
+                            bool compute_classification_ = true);
 
-    void _init_energy_spectrum ();
+    /// Insitialize the energy spectrum
+    void _init_energy_spectrum();
 
-    void _init_energy_histo_pdf ();
+    /// Insitialize the energy PDF from an histogram
+    void _init_energy_histo_pdf();
+
+    /// Set default attributes' values
+    void _set_defaults();
 
   private:
 
-    void _at_init_ ();
+    void _at_init_();
 
-    void _at_reset_ ();
+    void _at_reset_();
 
   public:
 
-    static double get_particle_mass_from_label (const std::string & particle_name_);
+    static double get_particle_mass_from_label(const std::string & particle_name_);
 
-    static bool particle_name_is_valid (const std::string & particle_name_);
+    static bool particle_name_is_valid(const std::string & particle_name_);
 
   private:
 
     bool   _initialized_;
     int    _particle_type_;
     std::string _particle_name_;
+    boost::scoped_ptr<ion_data_type> _ion_data_;
     double _particle_mass_;
     int    _mode_;
     double _mean_energy_;
@@ -194,6 +211,8 @@ namespace genbb {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(genbb::single_particle_generator)
 
-#endif // GENBB_HELP_SINGLE_PARTICLE_GENERATOR_H_
+#endif // GENBB_HELP_SINGLE_PARTICLE_GENERATOR_H
 
-// end of single_particle_generator.h
+// Local Variables: --
+// mode: c++ --
+// End: --

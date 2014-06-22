@@ -82,35 +82,35 @@ namespace genbb {
     return *_external_prng_;
   }
 
-  mygsl::rng & manager::grab_embeded_prng ()
+  mygsl::rng & manager::grab_embedded_prng ()
   {
-    return _embeded_prng_;
+    return _embedded_prng_;
   }
 
-  const mygsl::rng & manager::get_embeded_prng () const
+  const mygsl::rng & manager::get_embedded_prng () const
   {
-    return _embeded_prng_;
+    return _embedded_prng_;
   }
 
   mygsl::rng & manager::grab_prng ()
   {
     if (has_external_prng()) return grab_external_prng ();
-    return grab_embeded_prng ();
+    return grab_embedded_prng ();
   }
 
   const mygsl::rng & manager::get_prng () const
   {
     if (has_external_prng()) return get_external_prng ();
-    return get_embeded_prng ();
+    return get_embedded_prng ();
   }
 
-  void manager::set_embeded_prng_seed(int seed_)
+  void manager::set_embedded_prng_seed(int seed_)
   {
     DT_THROW_IF (this->is_initialized(), std::logic_error,
                  "Manager is already initialized !");
     DT_THROW_IF (! mygsl::rng::is_seed_valid(seed_), std::logic_error,
-                 "Invalid seed value for embeded PRNG !");
-    _embeded_prng_seed_ = seed_;
+                 "Invalid seed value for embedded PRNG !");
+    _embedded_prng_seed_ = seed_;
     return;
   }
 
@@ -187,10 +187,10 @@ namespace genbb {
       } else {
         if (config.has_key("seed")) {
           int seed = config.fetch_integer("seed");
-          set_embeded_prng_seed(seed);
+          set_embedded_prng_seed(seed);
         }
 
-        _embeded_prng_.initialize("taus2", _embeded_prng_seed_);
+        _embedded_prng_.initialize("taus2", _embedded_prng_seed_);
       }
 
     _initialized_ = true;
@@ -226,9 +226,9 @@ namespace genbb {
     _force_initialization_at_load_ = false;
     _preload_ = true;
 
-    if (_embeded_prng_.is_initialized()) {
-        _embeded_prng_.reset();
-        _embeded_prng_seed_ = mygsl::random_utils::SEED_INVALID;
+    if (_embedded_prng_.is_initialized()) {
+        _embedded_prng_.reset();
+        _embedded_prng_seed_ = mygsl::random_utils::SEED_INVALID;
       }
     _external_prng_ = 0;
 
@@ -275,7 +275,7 @@ namespace genbb {
     }
 
     _external_prng_ = 0;
-    _embeded_prng_seed_ = mygsl::random_utils::SEED_INVALID;
+    _embedded_prng_seed_ = mygsl::random_utils::SEED_INVALID;
 
     this->_set_preload_(preload);
     return;
@@ -687,11 +687,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::manager,ocd_)
       .set_traits(datatools::TYPE_INTEGER)
       .set_mandatory(false)
       .set_complex_triggering_conditions(true)
-      .set_long_description("The seed of the embeded PRNG.                 \n"
+      .set_long_description("The seed of the embedded PRNG.                \n"
                             "Not used if some external PRNG is used.       \n"
                             "Example::                                     \n"
                             "                                              \n"
-                            "  seed: integer = 314159                      \n"
+                            "  seed : integer = 314159                     \n"
                             "                                              \n"
                             )
       ;
@@ -758,7 +758,4 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::manager,ocd_)
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
-
 DOCD_CLASS_SYSTEM_REGISTRATION(genbb::manager,"genbb::manager")
-
-// end of manager.cc
