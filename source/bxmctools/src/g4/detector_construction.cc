@@ -108,6 +108,7 @@ namespace mctools {
       _mag_field_manager_         = 0;
       _miss_distance_unit_        = CLHEP::mm;
       _general_miss_distance_     = DEFAULT_MISS_DISTANCE;
+      _SD_params_.set_meta_label("type");
       return;
     }
 
