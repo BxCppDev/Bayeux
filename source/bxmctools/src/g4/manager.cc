@@ -1509,18 +1509,12 @@ namespace mctools {
 
     void manager::_at_init()
     {
-      //_g4_stepping_verbosity = new stepping_verbose;
-      //G4VSteppingVerbose::SetInstance(_g4_stepping_verbosity);
 
       /****************
        * MAIN MANAGER *
        ****************/
 
       // Main manager:
-      // const datatools::properties & manager_config
-      //   = _multi_config_->get("manager").get_properties();
-      // loggable_support::_initialize_logging_support(manager_config);
-
       _init_core();
 
 
@@ -1530,139 +1524,17 @@ namespace mctools {
 
       _init_geometry();
 
-      /*
-      // Geometry manager:
-      DT_LOG_NOTICE(_logprio(), "Geometry manager settings...");
-      if (has_external_geom_manager()) {
-        DT_LOG_NOTICE(_logprio(), "Use external geometry manager...");
-        DT_THROW_IF (! _external_geom_manager_->is_initialized(),
-                     std::logic_error,
-                     "External geometry manager is not initialized !");
-      } else {
-        DT_LOG_NOTICE(_logprio(), "Use embeded geometry manager...");
-        const datatools::properties & geometry_config
-          = _multi_config_->get("geometry").get_properties();
-        if (is_debug()) {
-          DT_LOG_DEBUG(_logprio(), "Geometry configuration : ");
-          geometry_config.tree_dump(std::clog);
-        }
-        DT_THROW_IF (! geometry_config.has_key("geometry.config"),
-                     logic_error, "Missing geometry configuration !");
-        std::string geom_mgr_prop_filename = geometry_config.fetch_string("geometry.config");
-        datatools::fetch_path_with_env(geom_mgr_prop_filename);
-        datatools::properties geom_mgr_config;
-        datatools::properties::read_config(geom_mgr_prop_filename, geom_mgr_config);
-        _geom_manager_.set_mapping_requested(true);
-        if (_use_time_stat_) {
-          _CTs_["GB"].start();
-        }
-        _geom_manager_.initialize(geom_mgr_config);
-        if (_use_time_stat_) {
-          _CTs_["GB"].stop();
-        }
-      }
-      */
-
       /********************
        * VERTEX GENERATOR *
        ********************/
 
       _init_vertex_generator();
 
-      /*
-      // Vertex generator:
-      DT_LOG_NOTICE(_logprio(),"Vertex generator settings...");
-      if (_multi_config_->has_section("vertex_generator")) {
-        const datatools::properties & vertex_generator_config
-          = _multi_config_->get("vertex_generator").get_properties();
-        _vg_manager_.set_external_random(_vg_prng_);
-        if (has_service_manager()) {
-          _vg_manager_.set_service_manager(*_service_manager_);
-        }
-        _vg_manager_.set_geometry_manager(get_geom_manager());
-        _vg_manager_.set_generator_name(_vg_name_);
-        if (vertex_generator_config.has_key("manager_config")) {
-          // using an external configuration file:
-          std::string vtx_gtor_prop_filename
-            = vertex_generator_config.fetch_string("manager_config");
-          datatools::fetch_path_with_env(vtx_gtor_prop_filename);
-          datatools::properties vtx_gtor_config;
-          datatools::properties::read_config(vtx_gtor_prop_filename,
-                                             vtx_gtor_config);
-          _vg_manager_.initialize(vtx_gtor_config);
-        } else {
-          _vg_manager_.initialize(vertex_generator_config);
-        }
-        // if (vertex_generator_config.has_key("config")) {
-        //   // using an external configuration file:
-        //   std::string vtx_gtor_prop_filename
-        //     = vertex_generator_config.fetch_string("config");
-        //   datatools::fetch_path_with_env(vtx_gtor_prop_filename);
-        //   datatools::properties vtx_gtor_config;
-        //   datatools::properties::read_config(vtx_gtor_prop_filename, vtx_gtor_config);
-        //   _vg_manager_.initialize(vtx_gtor_config);
-        // }
-        // else {
-        //   // using properties:
-        //   _vg_manager_.initialize(vertex_generator_config);
-        // }
-        if (is_debug()) {
-          DT_LOG_DEBUG(_logprio(),"Vertex generator manager : ");
-          _vg_manager_.tree_dump(std::clog);
-        }
-        DT_THROW_IF (! _vg_manager_.has_generator(_vg_name_),
-                     std::logic_error,
-                     "Cannot find vertex generator named '"
-                     + _vg_name_ + "' !");
-        _vertex_generator_ = &_vg_manager_.grab(_vg_name_);
-      } else {
-        DT_LOG_WARNING(_logprio(), "No vertex generator settings.");
-      }
-      */
-
       /*******************
        * EVENT GENERATOR *
        *******************/
 
       _init_event_generator();
-
-      /*
-      // Event generator:
-      DT_LOG_NOTICE(_logprio(), "Event generator settings...");
-      DT_THROW_IF (!_multi_config_->has_section("primary_generator"),
-                   std::logic_error,
-                   "Missing primary event generator configuration !");
-      const datatools::properties & primary_generator_config
-        = _multi_config_->get("primary_generator").get_properties();
-      _eg_manager_.set_external_prng(_eg_prng_);
-      if (primary_generator_config.has_key("manager_config")) {
-        // using an external configuration file:
-        std::string event_gtor_prop_filename
-          = primary_generator_config.fetch_string("manager_config");
-        datatools::fetch_path_with_env(event_gtor_prop_filename);
-        datatools::properties event_gtor_config;
-        datatools::properties::read_config(event_gtor_prop_filename,
-                                           event_gtor_config);
-        _eg_manager_.initialize(event_gtor_config);
-      } else {
-        _eg_manager_.initialize(primary_generator_config);
-      }
-      // if (primary_generator_config.has_key("config")) {
-      //   // using an external configuration file:
-      //   std::string event_gtor_prop_filename = primary_generator_config.fetch_string("config");
-      //   datatools::fetch_path_with_env(event_gtor_prop_filename);
-      //   datatools::multi_properties event_gtor_mconfig;
-      //   event_gtor_mconfig.read(event_gtor_prop_filename);
-      //   _eg_manager_.initialize(event_gtor_mconfig);
-      // }
-      // else {
-      //   throw std::logic_error("mctools::g4::manager::reset: Missing primary event generator configuration !");
-      // }
-      DT_THROW_IF (! _eg_manager_.has(_eg_name_),
-                   std::logic_error,
-                   "Cannot find primary event generator named '" << _eg_name_ << "' !");
-      _event_generator_ = &_eg_manager_.grab(_eg_name_);
-      */
 
       /****************************
        * USER ACTIONS FOR GEANT 4 *
@@ -1678,43 +1550,8 @@ namespace mctools {
       // Detector construction:
       _init_detector_construction ();
 
-      /*
-      DT_LOG_NOTICE(_logprio(), "Detector construction...");
-      const datatools::properties & detector_construction_config
-        = _multi_config_->get("detector_construction").get_properties();
-      _user_detector_construction_ = new detector_construction(*this);
-      // the SHPF generator :
-
-        // if (_seed_manager_.has_seed(constants::instance().SHPF_LABEL))
-        // {
-        // int seed = _seed_manager_.get_seed(constants::instance().SHPF_LABEL);
-        // _user_detector_construction_->set_SHPF_random_seed(seed);
-        // std::clog << datatools::io::notice
-        // << "mctools::g4::manager::_at_init: "
-        // << "Using registered seed for '"
-        // << constants::instance().SHPF_LABEL << "' : "
-        // << seed
-        // << std::endl;
-        // }
-
-      _user_detector_construction_->grab_step_hit_processor_factory().set_external_prng(_shpf_prng_);
-      _user_detector_construction_->set_geometry_manager(get_geom_manager());
-      _user_detector_construction_->initialize(detector_construction_config);
-      _g4_run_manager_->SetUserInitialization(_user_detector_construction_);
-      */
-
       // Physics list:
       _init_physics_list ();
-      /*
-      DT_LOG_NOTICE(_logprio(), "Physics list...");
-      const datatools::properties & physics_list_config
-        = _multi_config_->get("physics_list").get_properties();
-      _user_physics_list_ = new physics_list;
-      _user_physics_list_->initialize(physics_list_config);
-      _g4_run_manager_->SetUserInitialization(_user_physics_list_);
-      DT_LOG_DEBUG(_logprio(), "Physics list: ");
-      if (is_debug()) _user_physics_list_->tree_dump(std::clog);
-      */
 
 #ifdef G4VIS_USE
       // G4 visualization:
@@ -1729,64 +1566,24 @@ namespace mctools {
 
       // Run action:
       _init_run_action ();
-      // DT_LOG_NOTICE(_logprio(), "Run action construction...");
-      // const datatools::properties & run_action_config
-      //   = _multi_config_->get("run_action").get_properties();
-      // _user_run_action_ = new run_action(*this);
-      // if (! _output_data_file_.empty()) {
-      //   _user_run_action_->set_output_file(_output_data_file_);
-      // }
-      // if (has_number_of_events_modulo()) {
-      //   _user_run_action_->set_number_of_events_modulo(get_number_of_events_modulo());
-      // }
-      // _user_run_action_->set_use_run_header_footer(using_run_header_footer());
-      // _user_run_action_->initialize(run_action_config);
-      // _g4_run_manager_->SetUserAction(_user_run_action_);
 
       // Event action:
       _init_event_action ();
-      // DT_LOG_NOTICE(_logprio(), "Event action construction...");
-      // const datatools::properties & event_action_config
-      //   = _multi_config_->get("event_action").get_properties();
-      // _user_event_action_ = new event_action(*_user_run_action_,
-      //                                        *_user_detector_construction_);
-      // _user_event_action_->initialize(event_action_config);
-      // _g4_run_manager_->SetUserAction(_user_event_action_);
 
       // Primary generator:
       _init_primary_generator_action ();
 
       // Tracking action:
       _init_tracking_action ();
-      // DT_LOG_NOTICE(_logprio(), "Tracking action...");
-      // const datatools::properties & tracking_action_config
-      //   = _multi_config_->get("tracking_action").get_properties();
-      // _user_tracking_action_ = new tracking_action;
-      // _user_tracking_action_->initialize(tracking_action_config);
-      // _g4_run_manager_->SetUserAction(_user_tracking_action_);
 
       // Stepping action:
       bool use_stepping_action = false;
       if (use_stepping_action) {
         _init_stepping_action ();
-        // DT_LOG_NOTICE(_logprio(), "Stepping action...");
-        // const datatools::properties & stepping_action_config
-        //   = _multi_config_->get("stepping_action").get_properties();
-        // _user_stepping_action_ = new stepping_action;
-        // _user_stepping_action_->initialize(stepping_action_config);
-        // _g4_run_manager_->SetUserAction(_user_stepping_action_);
       }
 
       // Stacking action:
       _init_stacking_action ();
-      /*
-      DT_LOG_NOTICE(_logprio(), "Stacking action...");
-      const datatools::properties & stacking_action_config
-        = _multi_config_->get("stacking_action").get_properties();
-      _user_stacking_action_ = new stacking_action;
-      _user_stacking_action_->initialize(stacking_action_config);
-      _g4_run_manager_->SetUserAction(_user_stacking_action_);
-      */
 
       // G4 kernel initialization:
       DT_LOG_NOTICE(_logprio(), "G4 kernel initialization...");
