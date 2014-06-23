@@ -301,7 +301,8 @@ namespace mctools {
                   "Forbidden space character in the output profile Id '" << profile_id << "' !");
       DT_THROW_IF(has_supported_output_profile(profile_id), std::logic_error,
                   "Supported profile with Id '" << profile_id << "' already exists !");
-      _supported_output_profile_ids_[profile_id] =  description_;
+      _supported_output_profile_ids_[profile_id] = description_;
+      DT_LOG_NOTICE(_logprio(), "Output profile '" << profile_id << "' is supported.");
       return;
     }
 
@@ -428,7 +429,7 @@ namespace mctools {
                   std::domain_error,
                   "Invalid 'too large' number of events !");
       _number_of_events_ = nevents_;
-      if (_number_of_events_ > NUMBER_OF_EVENTS_WARNING_LIMIT) {
+      if (_number_of_events_ > NUMBER_OF_EVENTS_WARNING_LIMIT && !has_simulation_ctrl()) {
         DT_LOG_WARNING(_logprio(), "Number of events is high = " << _number_of_events_);
       }
       DT_LOG_DEBUG(_logprio(), "Number of events = " << _number_of_events_);
@@ -1104,7 +1105,6 @@ namespace mctools {
               profile_description = manager_config.fetch_string(key_oss.str());
             }
             add_supported_output_profile(profile_id, profile_description);
-            DT_LOG_TRACE(_logprio(), "Output profile '" << profile_id << "' is supported.");
           }
         }
       }
@@ -1256,7 +1256,7 @@ namespace mctools {
       DT_THROW_IF (!_multi_config_->has_section("event_generator"),
                    std::logic_error,
                    "Missing primary event generator configuration !");
-      primary_generator_config  = _multi_config_->get("event_generator").get_properties();
+      primary_generator_config = _multi_config_->get("event_generator").get_properties();
       _eg_manager_.set_external_prng(_eg_prng_);
       if (primary_generator_config.has_key("manager.config")) {
         // using an external configuration file:

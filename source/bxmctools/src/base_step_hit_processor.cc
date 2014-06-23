@@ -41,7 +41,7 @@ namespace mctools {
     if (d_) {
       _logging_priority = datatools::logger::PRIO_DEBUG;
     } else {
-      _logging_priority = datatools::logger::PRIO_WARNING;
+      _logging_priority = datatools::logger::PRIO_FATAL;
     }
     return;
   }
@@ -93,7 +93,7 @@ namespace mctools {
       }
     }
     else {
-      DT_LOG_WARNING(_logging_priority,
+      DT_LOG_NOTICE(_logging_priority,
                      "Setup a private pool of hits for processor '" << get_name()
                      << "' with capacity = " << capacity_);
       _private_pool = new pool_type(capacity_);
@@ -152,7 +152,7 @@ th row logic_error(message.str());
 
   base_step_hit_processor::base_step_hit_processor()
   {
-    _logging_priority = datatools::logger::PRIO_WARNING;
+    _logging_priority = datatools::logger::PRIO_ERROR;
     _geom_manager = 0;
     _private_pool = 0;
     _pool_owner = false;
@@ -231,7 +231,7 @@ th row logic_error(message.str());
     // Logging priority:
     datatools::logger::priority lp
       = datatools::logger::extract_logging_configuration(config_,
-                                                         datatools::logger::PRIO_WARNING);
+                                                         datatools::logger::PRIO_ERROR);
     DT_THROW_IF(lp ==  datatools::logger::PRIO_UNDEFINED,
                 std::logic_error,
                 "Invalid logging priority !");
@@ -402,7 +402,7 @@ th row logic_error(message.str());
   void base_step_hit_processor::init_ocd(datatools::object_configuration_description & ocd_)
   {
 
-    datatools::logger::declare_ocd_logging_configuration(ocd_, "warning");
+    datatools::logger::declare_ocd_logging_configuration(ocd_, "error");
 
     {
       datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();

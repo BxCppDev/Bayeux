@@ -47,7 +47,7 @@ namespace mctools {
       out_ << "|-- " << "number_of_events        = " << number_of_events << std::endl;
       out_ << "|-- " << "number_of_events_modulo = " << number_of_events_modulo << std::endl;
       out_ << "|-- " << "mgr_seed                = " << mgr_seed << std::endl;
-      out_ << "|-- " << "input_prng_states_file  =' " << input_prng_states_file << "'" << std::endl;
+      out_ << "|-- " << "input_prng_states_file  = '" << input_prng_states_file << "'" << std::endl;
       out_ << "|-- " << "output_prng_states_file = '" << output_prng_states_file << "'" << std::endl;
       out_ << "|-- " << "prng_states_save_modulo = " << prng_states_save_modulo << std::endl;
       out_ << "|-- " << "input_prng_seeds_file   = '" << input_prng_seeds_file << "'" << std::endl;

@@ -218,7 +218,7 @@ namespace mctools {
 
       // Inhibit the data file saving in pipeine mode :
       if (grab_manager().has_simulation_ctrl()) {
-        DT_LOG_WARNING(_logprio(), "Inhibit plain data saving in multi-thread mode !");
+        DT_LOG_WARNING(_logprio(), "Inhibit plain data saving in thread-driven mode !");
         _save_data_ = false;
       }
 
@@ -288,21 +288,7 @@ namespace mctools {
 
     void run_action::_build_run_header ()
     {
-      _run_header_.set_description ("mctools::g4_production run header");
-
-      // _run_header_.store ("sngeometry_version",  SNGEOMETRY_LIB_VERSION);
-      // _run_header_.store ("sncore_version",      SNCORE_LIB_VERSION);
-      // _run_header_.store ("sngenbb_version",     SNGENBB_LIB_VERSION);
-      // _run_header_.store ("sngenvertex_version", SNGENVERTEX_LIB_VERSION);
-      // _run_header_.store ("sng4_version",        SNG4_LIB_VERSION);
-      // _run_header_.store ("geometry_setup_label",
-      //                     _manager_->get_geom_manager ().get_setup_label ());
-      // _run_header_.store ("geometry_setup_version",
-      //                     _manager_->get_geom_manager ().get_setup_version ());
-      // _run_header_.store ("vertex_generator_name",
-      //                     _manager_->get_vertex_generator ().get_generator_name ());
-      // _run_header_.store ("event_generator_name",
-      //                     _manager_->get_event_generator ().get_generator_name ());
+      _run_header_.set_description ("mctools::g4 run header");
 
       const mygsl::seed_manager & the_seed_manager = _manager_->get_seed_manager ();
       std::vector<std::string> seed_labels;
@@ -319,7 +305,7 @@ namespace mctools {
 
     void run_action::_build_run_footer ()
     {
-      _run_footer_.set_description ("mctools::g4_production run footer");
+      _run_footer_.set_description ("mctools::g4 run footer");
 
       _run_footer_.store ("number_of_processed_events", _number_of_processed_events_);
       _run_footer_.store ("number_of_saved_events", _number_of_saved_events_);
@@ -576,7 +562,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::run_action,ocd_)
                             "                                                        \n"
                             "Example::                                               \n"
                             "                                                        \n"
-                            "  number_of_events_modulo : integer = 100                  \n"
+                            "  number_of_events_modulo : integer = 100               \n"
                             "                                                        \n"
                             )
       ;

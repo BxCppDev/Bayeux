@@ -450,7 +450,7 @@ namespace mctools {
         DT_LOG_WARNING (get_logging_priority (), "GID stop  = " << gid_stop);
         */
         // we do not process such a hit:
-        DT_LOG_WARNING (get_logging_priority (),
+        DT_LOG_ERROR (get_logging_priority (),
                         "We skip this hit for one cannot locate it through the locator attached to the '"
                         << get_mapping_category() << "' ! "
                         << " This may be due to a roundoff error while checking the geometry of the volume "
