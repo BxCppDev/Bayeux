@@ -1,9 +1,8 @@
 // -*- mode: c++ ; -*-
-/*! \file datatools/bit_mask.h */
-/* bit_mask.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file datatools/bit_mask.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2011-02-07
- * Last modified: 2013-22-04
+ * Last modified: 2014-06-23
  *
  * License:
  *
@@ -14,16 +13,12 @@
  * History:
  *
  */
-#ifndef DATATOOLS_BIT_MASK_H_
-#define DATATOOLS_BIT_MASK_H_
-// Standard Library
+#ifndef DATATOOLS_BIT_MASK_H
+#define DATATOOLS_BIT_MASK_H
 
 // Third Party
-// - A
+// - Boost
 #include <boost/cstdint.hpp>
-
-// This Project
-
 
 namespace datatools {
 /**!  \struct bit_mask
@@ -100,5 +95,4 @@ struct bit_mask {
 
 } // end of namespace datatools
 
-#endif // DATATOOLS_BIT_MASK_H_
-
+#endif // DATATOOLS_BIT_MASK_H

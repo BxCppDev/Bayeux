@@ -1,8 +1,10 @@
-// -*- mode: c++; -*-
 // types.cc
+
 // Ourselves
 #include <datatools/types.h>
 
+// Third party:
+// - Boost:
 #include <boost/scoped_ptr.hpp>
 #include <boost/bimap.hpp>
 
@@ -44,4 +46,3 @@ namespace datatools {
   }
 
 } // namespace datatools
-
