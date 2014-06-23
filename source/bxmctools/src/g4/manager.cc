@@ -1556,7 +1556,7 @@ namespace mctools {
 #ifdef G4VIS_USE
       // G4 visualization:
       _g4_vis_manager_ = 0;
-      if (_g4_visualization_) {
+      if (has_g4_visualization()) {
         _g4_vis_manager_ = new G4VisExecutive;
         _g4_vis_manager_->Initialize();
       }
