@@ -36,6 +36,7 @@
 // - GSL
 #include <gsl/gsl_rng.h>
 // - Bayeux/datatools:
+#include <datatools/logger.h>
 #include <datatools/exception.h>
 
 // This project:
@@ -193,6 +194,12 @@ namespace mygsl {
     // 2009-11-08 FM: to be used as a functor:
     double operator()(void);
 
+    /// Return the logging priority
+    datatools::logger::priority get_logging_priority() const;
+
+    /// Set the logging priority
+    void set_logging_priority(datatools::logger::priority);
+
   private:
 
     /// Set default values
@@ -206,6 +213,7 @@ namespace mygsl {
 
   private:
 
+    datatools::logger::priority _logging_priority_; /// Logging priority
     std::string  _id_;   /// The ID(type) of GSL random number generator algorithm
     int32_t      _seed_; /// The initial seed set before initialization
     gsl_rng *    _r_;    /// The internal GSL random number generator

@@ -326,8 +326,20 @@ namespace mygsl {
     return;
   }
 
+  datatools::logger::priority rng::get_logging_priority() const
+  {
+    return _logging_priority_;
+  }
+
+  void rng::set_logging_priority(datatools::logger::priority prio_)
+  {
+    _logging_priority_ = prio_;
+    return;
+  }
+
   void rng::_init_defaults_()
   {
+    _logging_priority_ = datatools::logger::PRIO_FATAL;
     _id_   = DEFAULT_RNG_ID;
     _seed_ = random_utils::SEED_INVALID;
     _tracker_counter_ = 0;
@@ -350,7 +362,7 @@ namespace mygsl {
     DT_THROW_IF (_seed_ < 0, std::logic_error, "Invalid seed '" << _seed_ << "' !");
     if (is_seed_time()) {
       _seed_ = (int32_t) (time(0) & 0x8FFFFFFF);
-      DT_LOG_WARNING (datatools::logger::PRIO_WARNING,
+      DT_LOG_WARNING (_logging_priority_,
                       "Seed initialized with current time (seed=" << _seed_ << ") ! "
                       << "This may be a problem if multiple PRNGs are initialized within the same second.");
     }
