@@ -1,11 +1,13 @@
-// -*- mode: c++ ; -*-
-/* loggable_support.cc
- */
+// loggable_support.cc
 
+// Ourselves:
 #include <mctools/g4/loggable_support.h>
 
+// Standard library:
 #include <string>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/exception.h>
 
@@ -15,7 +17,7 @@ namespace mctools {
 
     loggable_support::loggable_support()
     {
-      _logging_priority = datatools::logger::PRIO_WARNING;
+      _logging_priority = datatools::logger::PRIO_FATAL;
     }
 
     loggable_support::loggable_support(datatools::logger::priority p)
@@ -40,7 +42,7 @@ namespace mctools {
           set_logging_priority(datatools::logger::PRIO_DEBUG);
         }
       } else {
-        set_logging_priority(datatools::logger::PRIO_WARNING);
+        set_logging_priority(datatools::logger::PRIO_FATAL);
       }
     }
 
@@ -56,7 +58,7 @@ namespace mctools {
           set_logging_priority(datatools::logger::PRIO_NOTICE);
         }
       } else {
-        set_logging_priority(datatools::logger::PRIO_WARNING);
+        set_logging_priority(datatools::logger::PRIO_FATAL);
       }
     }
 
@@ -82,12 +84,10 @@ namespace mctools {
     void loggable_support::_initialize_logging_support(const datatools::properties & config_)
     {
       set_logging_priority(datatools::logger::extract_logging_configuration(config_,
-                                                                            datatools::logger::PRIO_WARNING));
+                                                                            datatools::logger::PRIO_FATAL));
       return;
     }
 
   } // end of namespace g4
 
 } // end of namespace mctools
-
-// end of loggable_support.cc
