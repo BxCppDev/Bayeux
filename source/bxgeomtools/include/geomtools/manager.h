@@ -34,12 +34,15 @@
 #ifndef GEOMTOOLS_MANAGER_H
 #define GEOMTOOLS_MANAGER_H 1
 
+// Standard library:
 #include <string>
 #include <map>
 
+// Third party:
+// - Boost:
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/handle.h>
 #include <datatools/properties.h>
 #include <datatools/multi_properties.h>
@@ -48,11 +51,13 @@
 #include <datatools/i_tree_dump.h>
 #include <datatools/logger.h>
 
+// This project:
 #include <geomtools/model_factory.h>
 #include <geomtools/id_mgr.h>
 #include <geomtools/mapping.h>
 
 namespace datatools {
+  // Forward declaration:
   class version_id;
 }
 
@@ -66,8 +71,10 @@ namespace geomtools {
   {
   public:
 
+    // Forward declaration:
     class plugin_entry;
 
+    /// Dictionary of plugin entries
     typedef std::map<std::string, plugin_entry> plugins_dict_type;
 
     /// \brief The geometry manager's plugin base class
@@ -113,9 +120,9 @@ namespace geomtools {
       /// Set the logging priority threshold
       void set_logging_priority( datatools::logger::priority);
 
-
     protected:
 
+      /// Basic initialization
       void _basic_initialize(const datatools::properties & config_);
 
       /// Get a mutable reference to the geometry manager
@@ -144,10 +151,12 @@ namespace geomtools {
     class plugin_entry : public datatools::i_tree_dumpable
     {
     public:
+
+      /// \brief Status of a plugin entry
       enum status_type {
-        STATUS_BLANK             = 0x0,
-        STATUS_CREATED           = 0x1,
-        STATUS_INITIALIZED       = 0x2,
+        STATUS_BLANK             = 0x0, /// Not created not initialized
+        STATUS_CREATED           = 0x1, /// Created
+        STATUS_INITIALIZED       = 0x2, /// Initialized
       };
 
       /// Set the name of the plugin
@@ -169,31 +178,36 @@ namespace geomtools {
       const std::string& get_description() const;
 
       /// Set the configuration
-      const datatools::properties & get_config () const;
+      const datatools::properties & get_config() const;
 
       /// Get the configuration
-      void set_config (const datatools::properties &);
+      void set_config(const datatools::properties &);
 
       /// Grab the configuration
-      datatools::properties & grab_config ();
+      datatools::properties & grab_config();
 
       /// Check if plugin is created
-      bool is_created () const;
+      bool is_created() const;
 
       /// Check if plugin is initialized
-      bool is_initialized () const;
+      bool is_initialized() const;
 
       /// Check if plugin can be dropped by the manager
-      bool can_be_dropped () const;
+      bool can_be_dropped() const;
 
+      /// Default constructor
       plugin_entry();
 
+      /// Destructor
       ~plugin_entry();
 
-      base_plugin & grab ();
+      /// Return a reference to the mutable plugin
+      base_plugin & grab();
 
-      const base_plugin & get () const;
+      /// Return a reference to the non mutable plugin
+      const base_plugin & get() const;
 
+      /// Smart print
       virtual void tree_dump(std::ostream &      out_ = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
@@ -201,7 +215,8 @@ namespace geomtools {
 
     protected:
 
-      void _set_status (uint32_t);
+      /// Modify the status of the plugin entry
+      void _set_status(uint32_t);
 
     public:
 
@@ -215,55 +230,77 @@ namespace geomtools {
       friend class manager;
     };
 
-    bool is_debug () const;
+    /// Check the debug flag
+    bool is_debug() const;
 
-    bool is_verbose () const;
+    /// Check the verbose flag
+    bool is_verbose() const;
 
-    bool is_initialized () const;
+    /// Check the initialization flag
+    bool is_initialized() const;
 
-    bool has_services () const;
+    /// Check if manager has services
+    bool has_services() const;
 
-    void set_services (datatools::service_dict_type & services_);
+    /// Set the dictionary of services
+    void set_services(datatools::service_dict_type & services_);
 
-    void reset_services ();
+    /// Reset the dictionary of services
+    void reset_services();
 
-    void set_setup_label (const std::string &);
+    /// Set the label of the setup
+    void set_setup_label(const std::string &);
 
-    const std::string & get_setup_label () const;
+    /// Return the label of the setup
+    const std::string & get_setup_label() const;
 
-    void set_setup_version (const std::string &);
+    /// Set the version of the setup
+    void set_setup_version(const std::string &);
 
-    const std::string & get_setup_version () const;
+    /// Return the version of the setup
+    const std::string & get_setup_version() const;
 
-    void set_setup_description (const std::string &);
+    /// Set the description of the setup
+    void set_setup_description(const std::string &);
 
-    const std::string & get_setup_description () const;
+    /// Return the description of the setup
+    const std::string & get_setup_description() const;
 
-    void fetch_setup_version_id (datatools::version_id & vid_) const;
+    /// Construct the version id associated to the setup
+    void fetch_setup_version_id(datatools::version_id & vid_) const;
 
-    void set_mapping_requested (bool);
+    /// Request the build of the mapping
+    void set_mapping_requested(bool);
 
-    bool is_mapping_requested () const;
+    /// Check if the build of the mapping has been requested
+    bool is_mapping_requested() const;
 
-    bool is_mapping_available () const;
+    /// Check if the mapping is built
+    bool is_mapping_available() const;
 
-    void set_world_name (const std::string &);
+    /// Set the name of the world volume
+    void set_world_name(const std::string &);
 
-    const std::string & get_world_name () const;
+    /// Return the name of the world volume
+    const std::string & get_world_name() const;
 
-    void build_mapping (const datatools::properties & config_);
+    /// Build the mapping
+    void build_mapping(const datatools::properties & config_);
 
-    const geomtools::model_factory & get_factory () const;
+    /// Return a reference to the non mutable factory of geometry models
+    const geomtools::model_factory & get_factory() const;
 
-    geomtools::model_factory & grab_factory ();
+    /// Return a reference to the mutable factory of geometry models
+    geomtools::model_factory & grab_factory();
 
-    const geomtools::id_mgr & get_id_mgr () const;
+    /// Return a reference to the non mutable geometry ID manager
+    const geomtools::id_mgr & get_id_mgr() const;
 
-    geomtools::id_mgr & grab_id_mgr ();
+    /// Return a reference to the mutable geometry ID manager
+    geomtools::id_mgr & grab_id_mgr();
 
-    const geomtools::mapping & get_mapping (const std::string & mapping_name_ = "") const;
-
-    //geomtools::mapping & grab_mapping ();
+    /// Return a reference to the non mutable mapping with explicit name
+    const geomtools::mapping & get_mapping(const std::string & mapping_name_ = "") const;
 
     /* Plugins management */
 
@@ -277,62 +314,66 @@ namespace geomtools {
                      bool only_lock_ = false);
 
     void load_plugins(const datatools::multi_properties& plugin_config_,
-                     bool only_lock_ = false);
+                      bool only_lock_ = false);
 
-    const plugins_dict_type & get_plugins () const;
+    const plugins_dict_type & get_plugins() const;
 
-    plugins_dict_type & grab_plugins ();
+    plugins_dict_type & grab_plugins();
 
     /**  @param a_plugin_name The name of the plugin to be checked
      *   @return true if the plugin is of the requested type
      */
     template<class T>
-    bool is_plugin_a (const std::string & a_plugin_name) const;
+    bool is_plugin_a(const std::string & a_plugin_name) const;
 
     /** @param a_plugin_name The name of the plugin to be grabbed
      *  @return a mutable reference to the plugin instance requested by name and type
      */
     template<class T>
-    T& grab_plugin (const std::string & a_plugin_name);
+    T& grab_plugin(const std::string & a_plugin_name);
 
     /**  @param a_plugin_name The name of the plugin to be grabbed
      *   @return a non-mutable reference to the plugin instance requested by name and type
      */
     template<class T>
-    const T& get_plugin (const std::string & a_plugin_name) const;
+    const T& get_plugin(const std::string & a_plugin_name) const;
 
     /**  @param a_plugin_name The name of the plugin to be checked
      *   @return true if the manager hosts the plugin requested by name
      */
-    bool has_plugin (const std::string & a_plugin_name) const;
+    bool has_plugin(const std::string & a_plugin_name) const;
 
     void print_plugins(std::ostream& out = std::clog,
                        const std::string& title  = "",
                        const std::string& indent = "") const;
 
-    void clear_plugins ();
+    /// Clear the plugins
+    void clear_plugins();
 
+    /// Check if some plugin type is known
     bool has_plugin_type(const std::string& plugin_id) const;
 
+    /// Register a plugin type
     template <class PluginClass>
     void register_plugin_type(const std::string& plugin_id);
 
+    /// Unregister a plugin type
     void unregister_plugin_type(const std::string& plugin_id);
 
     /// Default constructor
-    manager ();
+    manager();
 
     /// Destructor
-    virtual ~manager ();
+    virtual ~manager();
 
     /// Initialize the geometry manager from a container of properties
-    void init (const datatools::properties & config_);
+    void init(const datatools::properties & config_);
 
     /// Initialize the geometry manager from a container of properties
-    void initialize (const datatools::properties & config_);
+    void initialize(const datatools::properties & config_);
 
     /// Reset the geometry manager
-    void reset ();
+    void reset();
 
     virtual void tree_dump(std::ostream &      out_ = std::clog,
                            const std::string & title_  = "",
@@ -351,13 +392,13 @@ namespace geomtools {
 
   protected:
 
-    virtual void _pre_init (const datatools::properties & config_);
+    virtual void _pre_init(const datatools::properties & config_);
 
-    virtual void _post_init (const datatools::properties & config_);
+    virtual void _post_init(const datatools::properties & config_);
 
     void _load_plugin(const std::string& name,
-                     const std::string& id,
-                     const datatools::properties& config);
+                      const std::string& id,
+                      const datatools::properties& config);
 
     void _preload_plugins_global_dict();
 
@@ -369,13 +410,13 @@ namespace geomtools {
 
   private:
 
-    //void _set_plugins_factory_preload_ (bool preload);
+    //void _set_plugins_factory_preload_(bool preload);
 
     /// Core initialization private method (wrapped by 'initialize')
-    virtual void _at_init_ (const datatools::properties & config_);
+    virtual void _at_init_(const datatools::properties & config_);
 
     /// Plugins initialization private method
-    void _init_plugins_ (const datatools::properties & config_);
+    void _init_plugins_(const datatools::properties & config_);
 
   protected:
 
@@ -398,7 +439,7 @@ namespace geomtools {
     //const materials::manager * _materials_manager_; //!< Material manager
 
     bool                                _plugins_factory_preload_;  //!< Flagfor preloading of plugins system factory
-    bool                                _plugins_force_initialization_at_load_;  //!< Flag to enforce initialization of plugins at load
+    bool                                _plugins_force_initialization_at_load_; //!< Flag to enforce initialization of plugins at load
     base_plugin::factory_register_type  _plugins_factory_register_; //!< Plugins registration
     plugins_dict_type                   _plugins_;                  //!< Plugins dictionary
 
