@@ -769,6 +769,9 @@ namespace mctools {
       }
       _SHPF_.initialize();
       DT_LOG_NOTICE(_logprio(), "SHPF: The step hit processors have been loaded from the SHPF.");
+      if (_logprio() >= datatools::logger::PRIO_NOTICE) {
+        _SHPF_.tree_dump(std::clog, "SHPF: ", "notice: ");
+      }
 
       /*****************************************************************
        * Install some step hit processors into the sensitive detectors *
