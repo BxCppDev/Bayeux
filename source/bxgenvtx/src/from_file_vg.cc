@@ -198,7 +198,11 @@ namespace genvtx {
       if (! goon) {
         istringstream iss (line);
         iss >> x >> y >> z >> ws;
-        DT_THROW_IF (! iss, logic_error,
+        // Only throw if stream is bad and NOT at eof. Some c++ libraries
+        // (Apple clang on Mavericks) will set bad/failbit at eof. Seems
+        // not to be C++11 standard compliant, but is still present!
+        DT_THROW_IF (! iss && !iss.eof(),
+                     logic_error,
                      "'x y z' format error at invalid line '" << line << "' !");
         _next_.set (x, y, z);
         break;
