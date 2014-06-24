@@ -6,7 +6,19 @@
 // Third party:
 // - Boost:
 #include <boost/scoped_ptr.hpp>
+
+// Clang doesn't like bimap's use of BOOST_PP...
+#if defined (__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wredeclared-class-member"
+#endif
+
 #include <boost/bimap.hpp>
+
+#if defined (__clang__)
+#pragma clang diagnostic pop
+#endif
+
 
 namespace datatools {
 

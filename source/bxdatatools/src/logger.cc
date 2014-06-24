@@ -27,9 +27,19 @@
 // - Boost
 #include "boost/assign.hpp"
 #include "boost/algorithm/string.hpp"
+// Clang doesn't like bimap's use of BOOST_PP...
+#if defined (__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wredeclared-class-member"
+#endif
+
 #include "boost/bimap.hpp"
 #include "boost/bimap/set_of.hpp"
 #include "boost/bimap/multiset_of.hpp"
+
+#if defined (__clang__)
+#pragma clang diagnostic pop
+#endif
 
 // This Project
 #include "datatools/exception.h"
