@@ -20,8 +20,6 @@ foreach(dir root_dir include_dir source_dir test_dir app_dir)
   set(${module_name}_${dir} ${module_${dir}})
 endforeach()
 
-#option(DATATOOLS_WITH_CONFIGURATION_VARIANT "Configuration variant support" 1)
-
 # - In place defs for module CMake variables...
 # - Versioning
 set(datatools_VERSION_MAJOR 5)
@@ -132,13 +130,6 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/detail/reflection_version.h
 )
 
-# if (DATATOOLS_WITH_CONFIGURATION_VARIANT)
-#   list(APPEND ${module_name}_MODULE_HEADER
-#     ${module_include_dir}/${module_name}/configuration_parameter.h
-#     ${module_include_dir}/${module_name}/configuration_variant.h
-#     )
-# endif()
-
 # - configure special source file
 configure_file(${module_source_dir}/_datatools.cc.in
                bx${module_name}/_datatools.cc
@@ -191,12 +182,6 @@ ${module_source_dir}/version_id.cc
 bx${module_name}/_datatools.cc
   )
 
-# if (DATATOOLS_WITH_CONFIGURATION_VARIANT)
-#   list(APPEND ${module_name}_MODULE_SOURCES
-#     ${module_source_dir}/configuration_parameter.cc
-#     ${module_source_dir}/configuration_variant.cc
-#     )
-# endif()
 
 # - Reflection component - still optional, so factor out and allow for
 #   inclusion later
@@ -305,13 +290,6 @@ ${module_test_dir}/test_version_id.cxx
 #${module_test_dir}/test_configuration_variant.cxx
 
 )
-
-# if (DATATOOLS_WITH_CONFIGURATION_VARIANT)
-#   list(APPEND ${module_name}_MODULE_TESTS
-#     ${module_test_dir}/test_configuration_parameter.cxx
-#     ${module_test_dir}/test_configuration_variant.cxx
-#     )
-# endif()
 
 # - Applications
 set(${module_name}_MODULE_APPS
