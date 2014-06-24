@@ -10,6 +10,7 @@
 // This Project
 #include <datatools/exception.h>
 #include <datatools/logger.h>
+#include <datatools/ioutils.h>
 
 // Support for serialization tag :
 DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_IMPLEMENTATION(::datatools::multi_properties,
@@ -252,19 +253,19 @@ void multi_properties::_init_(const std::string& a_key_label,
   this->set_description(a_description);
 }
 
-// ctor:
+
 multi_properties::multi_properties() {
   debug_ = false;
   _init_("", "", "", false);
 }
 
-// ctor:
+
 multi_properties::multi_properties(const std::string& a_key_label,
                                    const std::string& a_meta_label) {
   _init_(a_key_label,a_meta_label,"",false);
 }
 
-// ctor:
+
 multi_properties::multi_properties(const std::string& a_key_label,
                                    const std::string& a_meta_label,
                                    const std::string& a_description,
@@ -273,7 +274,6 @@ multi_properties::multi_properties(const std::string& a_key_label,
 }
 
 
-// dtor:
 multi_properties::~multi_properties() {
   ordered_entries_.clear();
   entries_.clear();
@@ -669,7 +669,7 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
             */
             iss >> std::ws;
             std::string key_label;
-            DT_THROW_IF (!properties::config::read_quoted_string(iss, key_label),
+            DT_THROW_IF (!io::read_quoted_string(iss, key_label),
                          std::logic_error,
                          "Unquoted value for '@key_label'");
             std::string tmp;
@@ -700,7 +700,7 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
             */
             iss >> std::ws;
             std::string meta_label;
-            DT_THROW_IF (!properties::config::read_quoted_string(iss, meta_label),
+            DT_THROW_IF (!io::read_quoted_string(iss, meta_label),
                          std::logic_error,
                          "Unquoted value for '@meta_label'");
             std::string tmp;
@@ -752,7 +752,7 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
                        << "' with required '"
                        << key_label_ << "' !");
           new_key.clear();
-          DT_THROW_IF (! properties::config::read_quoted_string(iss, new_key),
+          DT_THROW_IF (! io::read_quoted_string(iss, new_key),
                        std::logic_error,
                        "Cannot read quoted string key value from line '"
                        << line << "' !");
@@ -769,7 +769,7 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
                            << meta_label
                            << "' with required '"
                            << meta_label_ << "' !");
-              DT_THROW_IF (!properties::config::read_quoted_string(iss, new_meta),
+              DT_THROW_IF (!io::read_quoted_string(iss, new_meta),
                            std::logic_error,
                            "Cannot read quoted string meta value from line '"
                            << line << "' !");

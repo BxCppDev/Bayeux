@@ -1,7 +1,7 @@
 // -*- mode: c++; -*-
 // ioutils.h
-#ifndef DATATOOLS_IOUTILS_H_
-#define DATATOOLS_IOUTILS_H_
+#ifndef DATATOOLS_IOUTILS_H
+#define DATATOOLS_IOUTILS_H
 
 // Standard Library
 #include <iostream>
@@ -118,11 +118,11 @@ struct io {
 
   };
 
-  // io struct
- public:
-  static indenter indent;
+  /// Utility to parse boolean token
+  static bool read_boolean(std::istream&, bool&);
 
- public:
+  /// Utility to parse quoted string token
+  static bool read_quoted_string(std::istream&, std::string&);
 
   /// \brief Read a double value from an ASCII stream
   static bool read_real_number(std::istream & in_, double & val_, bool & normal_);
@@ -132,9 +132,9 @@ struct io {
                                 const double & val_,
                                 int precision_ = REAL_PRECISION);
 
-  static bool is_colored();
+  bool is_colored() const;
 
-  static void set_colored(bool);
+  void set_colored(bool);
 
   static std::ostream& normal(std::ostream&);
 
@@ -184,25 +184,29 @@ struct io {
 
   static std::string to_binary(const uint32_t& val, bool show_all = false);
 
-  //static ostream_manipulator<int> yesno(const bool & yn);
+  // Return singleton indenter
+  static indenter & indent();
 
-  //static std::ostream& yesno(std::ostream& os, const bool&);
+  // Return singleton io
+  static io & instance();
 
- private:
+protected:
+
   /// \brief Default constructor
-  io() {}
+  io();
 
-  /// \brief Default destructor
-  ~io() {
-    this->set_colored(false);
-  }
+public:
 
- private:
-  static bool g_colored_stream_;
-  static io   g_io_;
+  /// \brief Destructor
+  // boost::check_delete<> needs it to be public
+  ~io();
+
+private:
+
+  bool _colored_stream_; /// Color flag
+
 };
 
 } // namespace datatools
 
-#endif // DATATOOLS_IOUTILS_H_
-
+#endif // DATATOOLS_IOUTILS_H

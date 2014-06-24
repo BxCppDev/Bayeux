@@ -1,12 +1,12 @@
 // -*- mode: c++; -*-
-/* datatools/properties.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file datatools/properties.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-02-19
- * Last modified: 2013-03-23
+ * Last modified: 2014-06-24
  *
  * License:
  *
- * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2014 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +30,8 @@
  * History:
  *
  */
-#ifndef DATATOOLS_PROPERTIES_H_
-#define DATATOOLS_PROPERTIES_H_
+#ifndef DATATOOLS_PROPERTIES_H
+#define DATATOOLS_PROPERTIES_H
 // Standard Library
 #include <iostream>
 #include <list>
@@ -381,8 +381,8 @@ class properties :
     /// Write a properties container to an output stream
     void write(std::ostream& a_out, const properties& a_prop);
 
-    /// Utility to parse quoted string token
-    static bool read_quoted_string(std::istream&, std::string&);
+    // /// Utility to parse quoted string token
+    // static bool read_quoted_string(std::istream&, std::string&);
 
     /// Write a property data
     void write_data(std::ostream& a_out,
@@ -1053,4 +1053,4 @@ BOOST_CLASS_EXPORT_KEY2(datatools::properties, "datatools::properties");
 // Activate reflection layer for the 'datatools::properties' class:
 DR_CLASS_INIT(::datatools::properties);
 
-#endif // DATATOOLS_UTILS_PROPERTIES_H_
+#endif // DATATOOLS_UTILS_PROPERTIES_H

@@ -1,6 +1,5 @@
-// -*- mode: c++; -*-
-/* properties.cc
- */
+/// \file datatools/properties.cc
+
 // Ourselves
 #include <datatools/properties.h>
 
@@ -11,6 +10,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <algorithm>
+#include <list>
 
 // Third Party
 // - A
@@ -732,14 +732,12 @@ namespace datatools {
   }
 
 
-  // ctor:
   properties::properties() : _debug_(false), _key_validator_(0) {
     this->set_description("");
     this->set_default_key_validator();
   }
 
 
-  // ctor:
   properties::properties(const std::string& a_description)
     : _debug_(false), _key_validator_(0) {
     this->set_description(a_description);
@@ -747,7 +745,6 @@ namespace datatools {
   }
 
 
-  // ctor:
   properties::properties(const std::string& a_description,
                          const basic_key_validator& prop_key_validator)
     : _debug_(false), _key_validator_(0) {
@@ -756,7 +753,6 @@ namespace datatools {
   }
 
 
-  // ctor:
   properties::properties(const basic_key_validator& prop_key_validator)
     : _debug_(false), _key_validator_(0) {
     this->set_description("");
@@ -764,7 +760,6 @@ namespace datatools {
   }
 
 
-  // ctor:
   properties::properties(const std::string& a_description,
                          const basic_key_validator* prop_key_validator,
                          bool a_deletion_on_destroy)
@@ -782,7 +777,6 @@ namespace datatools {
   }
 
 
-  // dtor:
   properties::~properties() {
     _props_.clear();
     _clear_key_validator_();
@@ -2405,6 +2399,7 @@ namespace datatools {
     bool line_goon = false;
     // 2013-04-05 FM : default is to allow unit directives for real numbers
     bool enable_real_with_unit = true;
+    // std::list<std::string> variant_blocks;
 
     while (a_in) {
       DT_LOG_NOTICE (logging, "Loop on input stream...");
@@ -2447,8 +2442,27 @@ namespace datatools {
         check_iss >> std::ws >> check_word;
         if (check_word.empty()) {
           DT_LOG_NOTICE (logging, "Line " << _read_line_count_ << " is blank");
-          skip_line=true;
+          skip_line = true;
         }
+
+        bool parsing = true;
+
+        /*
+        if (variant_blocks.size()) {
+          DT_LOG_NOTICE (logging, "Checking variant '" << variant_blocks.front() << "'...");
+          const std::string & current_variant = variant_blocks.front();
+          if (! current_variant.empty()) {
+            bool active_variant = false;
+
+            // ...
+
+            if (! active_variant) {
+              DT_LOG_NOTICE (logging, "Variant '" << variant_blocks.front() << "' is not active.");
+              parsing = false;
+            }
+          }
+        }
+        */
 
         // check if line is a comment:
         if (!skip_line) {
@@ -2457,7 +2471,7 @@ namespace datatools {
           iss >> c;
           if (c == _comment_char_) {
             // Handle meta comments:
-            DT_LOG_NOTICE (logging, "Line " << _read_line_count_ << " is a comment");
+            DT_LOG_NOTICE (logging, "Line " << _read_line_count_ << " is a comment.");
             iss >> std::ws;
             std::string token;
             iss >> token;
@@ -2465,74 +2479,97 @@ namespace datatools {
               break;
             }
 
-            // Maybe we should ensure only one '@config' directive
-            // here only warn...
-            if (token == "@config") {
-              iss >> std::ws;
-              std::string config_desc;
-              if (!prop_config.empty()) {
-                DT_LOG_WARNING (logging, "Duplicated '@config' directive; "
-                                << "Configuration description '" << a_props.get_description() << "' already loaded!");
-              }
-              std::getline(iss, config_desc);
-              if (!config_desc.empty()) {
-                prop_config = config_desc;
-                a_props.set_description(config_desc);
-              }
-            }
-
-            if (allow_include) {
-              if (token == "@include") {
-                // std::cerr << "DEVEL: " << "Using '@include' directive from line '" << line << "'" << std::endl;
-                iss >> std::ws;
-                std::string include_desc;
-                std::getline(iss, include_desc);
-                boost::trim(include_desc);
-                if (!include_desc.empty()) {
-                  std::string include_config_file;
-                  if (datatools::is_quoted(include_desc, '\'')) {
-                    datatools::remove_quotes(include_desc, include_config_file, '\'');
-                  } else if (datatools::is_quoted(include_desc, '"')) {
-                    datatools::remove_quotes(include_desc, include_config_file, '"');
-                  } else {
-                    include_config_file = include_desc;
-                  }
-                  datatools::fetch_path_with_env(include_config_file);
-                  // std::cerr << "DEVEL: " << "Included file is : '" << include_config_file << "'" << std::endl;
-                  datatools::properties::read_config(include_config_file, a_props);
-                  return;
-                }
-              }
-            }
-            allow_include = false;
-
-            if (token == "@enable_real_with_unit") {
-              enable_real_with_unit = true;
-            }
-
-            if (token == "@disable_real_with_unit") {
-              enable_real_with_unit = false;
-            }
-
             if (token == "@verbose_parsing") {
               logging = datatools::logger::PRIO_NOTICE;
-            }
+            } else if (token == "@mute_parsing") {
+              logging = datatools::logger::PRIO_WARNING;
+            /*
+            } else if (token.substr(0, 9) == "@variant_") {
 
-            if (token == "@description") {
-              iss >> std::ws;
-              std::string desc;
-              std::getline(iss, desc);
-              if (!desc.empty()) {
-                prop_description = desc;
+              if (token == "@variant_if") {
+                std::string variant_name;
+                iss >> std::ws >> variant_name;
+                variant_blocks.push_front(variant_name);
+                DT_LOG_NOTICE (logging, "Current variant is '" << variant_blocks.front() << "'");
+              } else if (token == "@variant_endif") {
+                std::string variant_name;
+                iss >> std::ws >> variant_name;
+                DT_THROW_IF(variant_name != variant_blocks.front(),
+                            std::logic_error,
+                            "Unmatching closing variant block '" << variant_name << "' !"
+                            << "Expected variant name is '" << variant_blocks.front() << "' !");
+                variant_blocks.pop_front();
+                DT_LOG_NOTICE (logging, "Current variant is '"
+                               << variant_blocks.front() << "' (was '" << variant_name << "')");;
+              }
+            */
+            } else if (parsing) {
+
+              // Maybe we should ensure only one '@config' directive
+              // here only warn...
+              if (token == "@config") {
+                iss >> std::ws;
+                std::string config_desc;
+                if (!prop_config.empty()) {
+                  DT_LOG_WARNING (logging, "Duplicated '@config' directive; "
+                                  << "Configuration description '" << a_props.get_description() << "' already loaded!");
+                }
+                std::getline(iss, config_desc);
+                if (!config_desc.empty()) {
+                  prop_config = config_desc;
+                  a_props.set_description(config_desc);
+                }
+              }
+
+              if (allow_include) {
+                if (token == "@include") {
+                  DT_LOG_NOTICE (logging, "Using '@include' directive from line '" << line << "'");
+                  iss >> std::ws;
+                  std::string include_desc;
+                  std::getline(iss, include_desc);
+                  boost::trim(include_desc);
+                  if (!include_desc.empty()) {
+                    std::string include_config_file;
+                    if (datatools::is_quoted(include_desc, '\'')) {
+                      datatools::remove_quotes(include_desc, include_config_file, '\'');
+                    } else if (datatools::is_quoted(include_desc, '"')) {
+                      datatools::remove_quotes(include_desc, include_config_file, '"');
+                    } else {
+                      include_config_file = include_desc;
+                    }
+                    datatools::fetch_path_with_env(include_config_file);
+                    DT_LOG_NOTICE (logging, "Included file is : '" << include_config_file << "'");
+                    datatools::properties::read_config(include_config_file, a_props);
+                    return;
+                  }
+                }
+              }
+              allow_include = false;
+
+              if (token == "@enable_real_with_unit") {
+                enable_real_with_unit = true;
+              }
+
+              if (token == "@disable_real_with_unit") {
+                enable_real_with_unit = false;
+              }
+
+              if (token == "@description") {
+                iss >> std::ws;
+                std::string desc;
+                std::getline(iss, desc);
+                if (!desc.empty()) {
+                  prop_description = desc;
+                }
               }
             }
 
             skip_line = true;
-          }
+          } // comment char
         } // if (! skip_line)
 
         // parse line:
-        if (!skip_line) {
+        if (!skip_line && parsing ) {
           DT_LOG_NOTICE(logging, "Line " << _read_line_count_ << " is '" << line << "'");
           std::string line_parsing = line;
           int flag_pos = line_parsing.find_first_of(_assign_char_);
@@ -2548,7 +2585,7 @@ namespace datatools {
           bool scalar = true;
           bool locked = false;
           int  vsize  = -1;
-          char type   = 0;
+          char type   =  0;
           std::string prop_key;
           int desc_pos = property_desc_str.find_first_of(_desc_char_);
           if (desc_pos == (int)property_desc_str.npos) {
@@ -2559,7 +2596,7 @@ namespace datatools {
             std::string key_str = property_desc_str.substr(0, desc_pos);
             std::istringstream key_ss(key_str);
             key_ss >> std::ws >> prop_key;
-            std::string type_str = property_desc_str.substr(desc_pos+1);
+            std::string type_str = property_desc_str.substr(desc_pos + 1);
             std::string type_str2;
             std::string type_str3;
             DT_LOG_NOTICE(logging, "type_str='" << type_str << "'");
@@ -2667,7 +2704,7 @@ namespace datatools {
                   type_ss >> std::ws >> requested_unit_label;
                   DT_THROW_IF (requested_unit_label.empty(),
                                std::logic_error,
-                               "Missing unit label (as) for real value with key '"
+                               "Missing unit label (ex: 'as length') for real value with key '"
                                << prop_key
                                << "' at line '"
                                << line << "' !");
@@ -2683,7 +2720,7 @@ namespace datatools {
                   type_ss >> std::ws >> requested_unit_symbol;
                   DT_THROW_IF (requested_unit_symbol.empty(),
                                std::logic_error,
-                               "Missing unit symbol (in) for real value with key '"
+                               "Missing unit symbol (ex: 'in millimeter') for real value with key '"
                                << prop_key << "' at line '" << line << "' !");
                   // For vectors of real:
                   if (! scalar) {
@@ -2696,7 +2733,7 @@ namespace datatools {
                   } else {
                     DT_THROW_IF (true,
                                  std::logic_error,
-                                 "Directive 'as " << requested_unit_symbol
+                                 "Directive 'in " << requested_unit_symbol
                                  << "' is not supported for scalar real value with key '"
                                  << prop_key
                                  << "' at line '"
@@ -2705,7 +2742,7 @@ namespace datatools {
                 } else {
                   DT_THROW_IF (true,
                                std::logic_error,
-                               "Unknow directive '" << token
+                               "Unknown directive '" << token
                                << "' for real value with key '"
                                << prop_key
                                << "' at line '"
@@ -2739,8 +2776,7 @@ namespace datatools {
                                   properties::data::defaults::boolean_value());
               }
             }
-            if (type == properties::data::TYPE_INTEGER_SYMBOL && !scalar)
-              {
+            if (type == properties::data::TYPE_INTEGER_SYMBOL && !scalar) {
                 if (vsize > 0) {
                   v_integers.assign(vsize,
                                     properties::data::defaults::integer_value());
@@ -2764,19 +2800,27 @@ namespace datatools {
              ***************/
             if (type == properties::data::TYPE_BOOLEAN_SYMBOL) {
               if (scalar) {
-                iss >> a_boolean;
-                DT_THROW_IF (!iss,
+                DT_THROW_IF (!io::read_boolean(iss, a_boolean),
                              std::logic_error,
                              "Cannot read boolean value for key '"
                              << prop_key << "' at line '" << line << "' !");
+                // iss >> a_boolean;
+                // DT_THROW_IF (!iss,
+                //              std::logic_error,
+                //              "Cannot read boolean value for key '"
+                             // << prop_key << "' at line '" << line << "' !");
               } else {
                 for (int i = 0; i < vsize; ++i) {
                   bool b;
-                  iss >> b;
-                  DT_THROW_IF (!iss,
+                  DT_THROW_IF (!io::read_boolean(iss, b),
                                std::logic_error,
                                "Cannot read vector boolean value for key '"
-                               << prop_key << "' at line '" << line << "' !");
+                             << prop_key << "' at line '" << line << "' !");
+                  // iss >> b;
+                  // DT_THROW_IF (!iss,
+                  //              std::logic_error,
+                  //              "Cannot read vector boolean value for key '"
+                  //              << prop_key << "' at line '" << line << "' !");
                   v_booleans[i] = b;
                 }
               }
@@ -2817,7 +2861,7 @@ namespace datatools {
                 DT_THROW_IF (! datatools::io::read_real_number(iss, a_real, normal_value),
                              std::logic_error,
                              "Cannot read vector real value for key '"
-                             << prop_key << "' at line '" << line << "' !");
+                             << prop_key << "' at line '" << line << "' (" << a_props.get_description() << ") !");
                 iss >> std::ws;
                 if (! iss.eof())  {
                   std::string unit_word;
@@ -2872,14 +2916,14 @@ namespace datatools {
              **************/
             if (type == properties::data::TYPE_STRING_SYMBOL) {
               if (scalar) {
-                DT_THROW_IF (!read_quoted_string(iss, a_string),
+                DT_THROW_IF (!io::read_quoted_string(iss, a_string),
                              std::logic_error,
                              "Cannot read string value for key '"
                              << prop_key << "' at line '" << line << "' !");
               } else {
                 for (int i = 0; i < vsize; ++i) {
                   std::string str;
-                  DT_THROW_IF (!read_quoted_string(iss, str),
+                  DT_THROW_IF (!io::read_quoted_string(iss, str),
                                std::logic_error,
                                "Cannot read string value for key '"
                                << prop_key << "' at line '" << line << "' !");
@@ -2888,98 +2932,53 @@ namespace datatools {
               }
             }
 
-            // scalar :
-            if (type == properties::data::TYPE_BOOLEAN_SYMBOL && scalar) {
-              a_props.store(prop_key, a_boolean, prop_description, locked);
-            }
-            if (type == properties::data::TYPE_INTEGER_SYMBOL && scalar) {
-              a_props.store(prop_key, a_integer, prop_description, locked);
-            }
-            if (type == properties::data::TYPE_REAL_SYMBOL && scalar) {
-              a_props.store(prop_key, a_real, prop_description, locked);
-            }
-            if (type == properties::data::TYPE_STRING_SYMBOL && scalar) {
-              a_props.store(prop_key, a_string, prop_description, locked);
-            }
+            bool store_it = true;
+            if (store_it) {
+              // scalar :
+              if (type == properties::data::TYPE_BOOLEAN_SYMBOL && scalar) {
+                a_props.store(prop_key, a_boolean, prop_description, locked);
+              }
+              if (type == properties::data::TYPE_INTEGER_SYMBOL && scalar) {
+                a_props.store(prop_key, a_integer, prop_description, locked);
+              }
+              if (type == properties::data::TYPE_REAL_SYMBOL && scalar) {
+                a_props.store(prop_key, a_real, prop_description, locked);
+              }
+              if (type == properties::data::TYPE_STRING_SYMBOL && scalar) {
+                a_props.store(prop_key, a_string, prop_description, locked);
+              }
 
-            // vector :
-            if (type == properties::data::TYPE_BOOLEAN_SYMBOL && !scalar) {
-              a_props.store(prop_key, v_booleans, prop_description, locked);
-            }
-            if (type == properties::data::TYPE_INTEGER_SYMBOL && !scalar) {
-              a_props.store(prop_key, v_integers, prop_description, locked);
-            }
-            if (type == properties::data::TYPE_REAL_SYMBOL && !scalar) {
-              a_props.store(prop_key, v_reals, prop_description, locked);
-            }
-            if (type == properties::data::TYPE_STRING_SYMBOL && !scalar) {
-              a_props.store(prop_key, v_strings, prop_description, locked);
-            }
+              // vector :
+              if (type == properties::data::TYPE_BOOLEAN_SYMBOL && !scalar) {
+                a_props.store(prop_key, v_booleans, prop_description, locked);
+              }
+              if (type == properties::data::TYPE_INTEGER_SYMBOL && !scalar) {
+                a_props.store(prop_key, v_integers, prop_description, locked);
+              }
+              if (type == properties::data::TYPE_REAL_SYMBOL && !scalar) {
+                a_props.store(prop_key, v_reals, prop_description, locked);
+              }
+              if (type == properties::data::TYPE_STRING_SYMBOL && !scalar) {
+                a_props.store(prop_key, v_strings, prop_description, locked);
+              }
 
-            // Special flags:
-            if (type == properties::data::TYPE_STRING_SYMBOL && with_explicit_path) {
-              a_props.set_explicit_path(prop_key, true);
-            }
-            if (type == properties::data::TYPE_REAL_SYMBOL && with_explicit_unit) {
-              a_props.set_explicit_unit(prop_key, true);
-            }
-            prop_description = "";
+              // Special flags:
+              if (type == properties::data::TYPE_STRING_SYMBOL && with_explicit_path) {
+                a_props.set_explicit_path(prop_key, true);
+              }
+              if (type == properties::data::TYPE_REAL_SYMBOL && with_explicit_unit) {
+                a_props.set_explicit_unit(prop_key, true);
+              }
+              prop_description = "";
+            } // if (store_it)
+
           }
-        } // !skip_line
+        } // !skip_line && parsing
       } // if (! line_goon)
     } // while (*_in)
     return;
   }
 
-
-  bool properties::config::read_quoted_string(std::istream& a_in,
-                                              std::string& a_str) {
-    std::string chain = "";
-    a_in >> std::ws;
-    if (!a_in) {
-      a_str = chain;
-      return true;
-    }
-
-    bool quoted = false;
-    char lastc = 0;
-    do {
-      char c = 0;
-      a_in.get(c);
-      if (! a_in) break;
-      if (c == '"') {
-        if (quoted) {
-          quoted=false;
-          break;
-        } else {
-          if (lastc == 0) {
-            quoted = true;
-            continue;
-          } else {
-            chain += c;
-            lastc  = c;
-          }
-        }
-      } else {
-        if (isspace(c)) {
-          if (!quoted) {
-            a_in.putback(c);
-            break;
-          }
-        }
-        chain += c;
-        lastc = c;
-      }
-
-    } while(a_in);
-
-    if (quoted) {
-      return false;
-    }
-
-    a_str = chain;
-    return true;
-  }
 
 
   std::string properties::build_property_key(const std::string& prefix,
