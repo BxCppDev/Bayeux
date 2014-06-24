@@ -299,7 +299,12 @@ namespace genbb {
     {
       std::istringstream line_iss (line);
       line_iss >> ws >> evnum >> time >> npart >> ws;
-      DT_THROW_IF (! line_iss, logic_error, "Format error !");
+      // Only throw if stream is bad and NOT at eof. Some c++ libraries
+      // (Apple clang on Mavericks) will set bad/failbit at eof. Seems
+      // not to be C++11 standard compliant, but is still present!
+      DT_THROW_IF (! line_iss && !line_iss.eof(),
+                   logic_error,
+                   "Format error !");
     }
 
     /*
