@@ -286,7 +286,7 @@ namespace mygsl {
       _w_ = const_cast<double *> (w_);
       _can_weighted_ = true;
       for (size_t i = 0; i < n; i++) {
-        if (isnan(_w_[i])) {
+        if (std::isnan(_w_[i])) {
           DT_LOG_WARNING(datatools::logger::PRIO_WARNING, "Datapoint #" << i << " is not weighted !");
           _can_weighted_ = false;
         }
@@ -350,7 +350,7 @@ namespace mygsl {
       _can_weighted_ = true;
       for (size_t i = 0; i < n; i++) {
         _w_[i] = w_[i];
-        if (isnan (_w_[i])) {
+        if (std::isnan (_w_[i])) {
           DT_LOG_WARNING(datatools::logger::PRIO_WARNING, "Datapoint #" << i << " is not weighted !");
           _can_weighted_ = false;
         }
