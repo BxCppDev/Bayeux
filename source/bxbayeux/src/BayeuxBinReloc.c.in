@@ -21,6 +21,7 @@
 #include <string.h>
 #if defined(__APPLE__) && defined(__MACH__)
 #include <sys/param.h>
+#include <dlfcn.h>
 #include <mach-o/dyld.h>
 #endif
 #include "bayeux/BayeuxBinReloc.h"
@@ -397,14 +398,17 @@ extern "C" {
   int
   br_init_lib (BrInitError *error)
   {
-    BrInitError brerror;
-    exe = _br_find_exe_for_symbol ((const void *) "", &brerror);
-    if (exe == NULL) {
-      //fprintf(stderr,"ERROR: br_init_lib: error=%d\n", (int) brerror);
-    } else {
-      //fprintf(stderr,"DEVEL: Bayeux: br_init_lib: exe=%s\n", exe);
+#if defined (__APPLE__) && defined (__MACH__)
+    // OS X does provide dladdr, but will only work for dynamically linked
+    // programs.
+    Dl_info local;
+    int result = dladdr((const void *) br_init_lib, &local);
+    if (result != 0) {
+      exe = strdup(local.dli_fname);
     }
-
+#else 
+    exe = _br_find_exe_for_symbol ((const void *) "", error);
+#endif
     return exe != NULL;
   }
 
