@@ -13,8 +13,6 @@
 
 namespace mygsl {
 
-  using namespace std;
-
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(histogram_pool::histogram_entry_type,"mygsl::histogram_pool::histogram_entry_type")
 
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(histogram_pool,"mygsl::histogram_pool")
@@ -1099,7 +1097,7 @@ namespace mygsl {
     if (_dict_.empty ()) {
       out_ << "<empty>";
     }
-    out_ << endl;
+    out_ << std::endl;
     for (dict_type::const_iterator i = _dict_.begin ();
          i != _dict_.end ();
          i++) {
@@ -1127,9 +1125,9 @@ namespace mygsl {
     if (_auxiliaries_.empty ()) {
       out_ << "<empty>";
     }
-    out_ << endl;
+    out_ << std::endl;
     {
-      ostringstream indent_oss;
+      std::ostringstream indent_oss;
       indent_oss << indent;
       indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_) ;
       _auxiliaries_.tree_dump (out_, "", indent_oss.str ());
