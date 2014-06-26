@@ -17,7 +17,7 @@ int main (int argc_, char ** argv_)
     bool debug = false;
     // bool test  = false;
     bool dump  = false;
-    size_t max_count = 10;
+    int max_count = 10;
 
     int iarg = 1;
     while (iarg < argc_) {
