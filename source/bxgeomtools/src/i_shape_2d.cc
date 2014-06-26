@@ -1,9 +1,9 @@
-// -*- mode: c++; -*-
-/* i_shape_2d.cc
- */
+// i_shape_2d.cc
 
+// Ourselves:
 #include <geomtools/i_shape_2d.h>
 
+/// - Bayeux/datatools
 #include <datatools/utils.h>
 
 namespace geomtools {
@@ -40,21 +40,19 @@ namespace geomtools {
     return std::numeric_limits<double>::quiet_NaN();
   }
 
-  int i_shape_2d::get_dimensional () const
+  int i_shape_2d::get_dimensional() const
   {
     return DIMENSIONAL_2;
   }
 
-  i_shape_2d::i_shape_2d (double skin_) : i_object_3d (skin_)
+  i_shape_2d::i_shape_2d(double skin_) : i_object_3d(skin_)
   {
     return;
   }
 
-  i_shape_2d::~i_shape_2d ()
+  i_shape_2d::~i_shape_2d()
   {
     return;
   }
 
 } // end of namespace geomtools
-
-// end of i_shape_2d.cc

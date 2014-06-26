@@ -1,9 +1,9 @@
 // -*- mode: c++; -*-
-/* helix_3d.h
- * Author(s): Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/helix_3d.h
+/* Author(s): Francois Mauger <mauger@lpccaen.in2p3.fr>
  *            Arnaud Chapon   <chapon@lpccaen.in2p3.fr>
  * Creation date: 2008-12-18
- * Last modified: 2010-04-15
+ * Last modified: 2014-06-25
  *
  * License:
  *
@@ -15,149 +15,189 @@
  *
  */
 
-#ifndef GEOMTOOLS_HELIX_3D_H_
-#define GEOMTOOLS_HELIX_3D_H_ 1
+#ifndef GEOMTOOLS_HELIX_3D_H
+#define GEOMTOOLS_HELIX_3D_H 1
 
+// Standard library:
 #include <iostream>
 #include <string>
 
-#include <geomtools/i_shape_1d.h>
-#include <geomtools/utils.h>
-
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/i_tree_dump.h>
 #include <datatools/i_serializable.h>
 #include <datatools/bit_mask.h>
 
+// This project:
+#include <geomtools/i_shape_1d.h>
+#include <geomtools/utils.h>
+
 namespace geomtools {
 
+  /// \brief An helix (1D shape) in a 3D space
   class helix_3d :
     public i_shape_1d,
     DATATOOLS_SERIALIZABLE_CLASS
   {
   public:
+
+    /// Return the identifier label for the class
     static const std::string & helix_3d_label();
 
+    /// Check if the shape is normal
     bool is_normal();
 
-    virtual std::string get_shape_name () const;
+    /// Return the identifier/name of the shape
+    virtual std::string get_shape_name() const;
 
-    bool is_valid () const;
+    /// Check if the helix is valid
+    bool is_valid() const;
 
-    void invalidate ();
+    /// Invalidate the helix
+    void invalidate();
 
-    const vector_3d & get_center () const;
+    /// Return a reference to the non mutable center
+    const vector_3d & get_center() const;
 
-    vector_3d & grab_center ();
+    /// Return a reference to the mutable center
+    vector_3d & grab_center();
 
-    void   set_center (const vector_3d &);
+    /// Set the center
+    void set_center(const vector_3d &);
 
-    double get_radius () const;
+    /// Return the radius
+    double get_radius() const;
 
-    void   set_radius (double);
+    /// Set the radius
+    void set_radius(double);
 
-    double get_step () const;
+    /// Return the step
+    double get_step() const;
 
-    void   set_step (double);
+    /// Set the step
+    void set_step(double);
 
-    double get_t1 () const;
+    /// Return the normalized start angle
+    double get_t1() const;
 
-    void   set_t1 (double);
+    /// Set the normalized start angle
+    void set_t1(double);
 
-    double get_t2 () const;
+    /// Return the normalized stop angle
+    double get_t2() const;
 
-    void   set_t2 (double);
+    /// Set the normalized stop angle
+    void set_t2(double);
 
-    void   set_angle1 (double);
+    /// Set the start angle
+    void set_angle1(double);
 
-    void   set_angle2 (double);
+    /// Set the stop angle
+    void set_angle2(double);
 
-    double get_angle1 () const;
+    /// Return the start angle
+    double get_angle1() const;
 
-    double get_angle2 () const;
+    /// Return the stop angle
+    double get_angle2() const;
 
-    double get_length () const;
+    /// Return the length
+    virtual double get_length(uint32_t flags_ = PATH_ALL_BITS) const;
 
-    double get_curvilinear_position (double t_) const;
+    /// Return the curvilinear position from the normalized angle
+    double get_curvilinear_position(double t_) const;
 
-    bool   t_is_valid (double t_) const;
+    /// Check if a given normalized angle is valid
+    bool   t_is_valid(double t_) const;
 
-    double get_theta_from_xy (double x_, double y_) const;
+    /// Return the angle associated to given (x,y) position in the reference frame of the helix
+    double get_theta_from_xy(double x_, double y_) const;
 
-    double get_t (vector_3d point_) const;
+    /// Return the normalized angle associated to a position in the reference frame of the helix
+    double get_t(vector_3d point_) const;
 
-    double get_t_from_xyz (double x_, double y_, double z_) const;
+    /// Return the normalized angle associated to a (x,y,z) position triplet in the reference frame of the helix
+    double get_t_from_xyz(double x_, double y_, double z_) const;
 
-    double get_t_from_z (double t_) const;
+    /// Return the normalized angle associated to a z position in the reference frame of the helix
+    double get_t_from_z(double z_) const;
 
-    double get_z_from_t (double t_) const;
+    /// Return the z position associated to a normalized angle
+    double get_z_from_t(double t_) const;
 
-    vector_3d get_point (double t_) const;
+    /// Return the position on the helix for a given normalized angle
+    vector_3d get_point(double t_) const;
 
-    vector_3d get_point_xy (double theta_) const;
+    /// Return the position on the helix for a given angle
+    vector_3d get_point_xy(double theta_) const;
 
-    void   invalidate_angles ();
+    /// Invalidate helix's angles
+    void invalidate_angles();
 
-    bool   angles_are_valid () const;
+    /// Check if angles are valid
+    bool angles_are_valid() const;
 
-    vector_3d get_first () const;
+    /// Return the start position on the helix
+    vector_3d get_first() const;
 
-    vector_3d get_last () const;
+    /// Return the stop position on the helix
+    vector_3d get_last() const;
 
-  public:
+    /// Default constructor
+    helix_3d();
 
-    // ctor/dtor:
-    helix_3d ();
+    /// Destructor
+    virtual ~helix_3d();
 
-    virtual ~helix_3d ();
-
-    /* interface i_tree_dumpable */
-    virtual void tree_dump (std::ostream & out_         = std::clog,
+    /// Smart print
+    virtual void tree_dump(std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
                             bool inherit_               = false) const;
 
-    void dump () const;
+    /// Basic print
+    void dump() const;
 
-    void make_vertex_collection (basic_polyline_3d &, double angular_step_ = 0.0) const;
+    /// Compute a collection of vertexes representing the helix
+    void make_vertex_collection(basic_polyline_3d &, double angular_step_ = 0.0) const;
 
-    basic_polyline_3d make_vertex_collection () const;
+    /// Return a collection of vertexes representing the helix
+    basic_polyline_3d make_vertex_collection() const;
 
-  public:
+    /// Convert parametric to angle in radian:
+    static double t_to_angle(double t_);
 
-    // convert parametric to angle in radian:
-    static double t_to_angle (double t_);
+    /// Convert angle in radian to parametric:
+    static double angle_to_t(double angle_);
 
-    // convert angle in radian to parametric:
-    static double angle_to_t (double angle_);
+    enum print_flags_type {
+      PRINT_XYZ_EXPAND1 = datatools::bit_mask::bit00,
+      PRINT_XYZ_EXPAND2 = datatools::bit_mask::bit01,
+      PRINT_XYZ_CENTER = datatools::bit_mask::bit02
+    };
 
-    enum print_flags_type
-      {
-        PRINT_XYZ_EXPAND1 = datatools::bit_mask::bit00,
-        PRINT_XYZ_EXPAND2 = datatools::bit_mask::bit01,
-        PRINT_XYZ_CENTER = datatools::bit_mask::bit02
-      };
+    /// Print approximated data (x,y,z) triplets representing the helix
+    static void print_xyz(std::ostream & out_,
+                          const helix_3d & helix_,
+                          double step_angle_ = 0.0,
+                          unsigned int flags_ = 0);
 
-    static void print_xyz (std::ostream & out_,
-                           const helix_3d & helix_,
-                           double step_angle_ = 0.0,
-                           unsigned int flags_ = 0);
+    /// Check if a position in on the curve
+    virtual bool is_on_curve(const vector_3d & position_,
+                             double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
-  public:
-
-    virtual bool is_on_curve (const vector_3d & position_,
-                              double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
-
-    virtual vector_3d get_direction_on_curve (const vector_3d & position_) const;
+    /// Return the direction ar some position in on the curve
+    virtual vector_3d get_direction_on_curve(const vector_3d & position_) const;
 
   private:
 
-    double    _radius_;
-    vector_3d _center_;
-    double    _step_;
-    double    _t1_;    // angle1 / (2 pi)
-    double    _t2_;    // angle2 / (2 pi)
+    double    _radius_; /// The radius of the helix
+    vector_3d _center_; /// The center of the helix
+    double    _step_;   /// The pitch of the helix
+    double    _t1_;     /// The start angle divided by (2 pi)
+    double    _t2_;     /// The stop angle divided by (2 pi)
 
-    /* interface i_serializable */
+    // Serialization interface
     DATATOOLS_SERIALIZATION_DECLARATION();
 
   };
@@ -167,6 +207,4 @@ namespace geomtools {
 #include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT_KEY2(geomtools::helix_3d, "geomtools::helix_3d")
 
-#endif // __geomtools__helix_3d_h
-
-// end of helix_3d.h
+#endif // GEOMTOOLS_HELIX_3D_H

@@ -12,21 +12,27 @@
  *
  */
 
-#ifndef GEOMTOOLS_TESSELLATION_H_
-#define GEOMTOOLS_TESSELLATION_H_ 1
+#ifndef GEOMTOOLS_TESSELLATION_H
+#define GEOMTOOLS_TESSELLATION_H 1
 
+// Standard library:
 #include <iostream>
 #include <string>
 #include <map>
 
+// Third party:
+// - Boost:
 #include <boost/cstdint.hpp>
-
-#include <geomtools/i_shape_3d.h>
+// - Bayeux/mygsl:
 #include <mygsl/min_max.h>
+
+// This project:
+#include <geomtools/i_shape_3d.h>
 
 namespace geomtools {
 
   class facet34;
+  class box;
 
   /// A vertex (corner) of a triangle or quadrangle facet in a tessellated solid
   struct facet_vertex
@@ -41,23 +47,23 @@ namespace geomtools {
 
   public:
 
-    bool is_valid () const;
+    bool is_valid() const;
 
-    facet_vertex ();
+    facet_vertex();
 
-    facet_vertex (double x_, double y_, double z_);
+    facet_vertex(double x_, double y_, double z_);
 
-    void print_xyz (std::ostream & out_, int color_ = 0) const;
+    void print_xyz(std::ostream & out_, int color_ = 0) const;
 
-    void print (std::ostream & out_) const;
+    void print(std::ostream & out_) const;
 
-    void add_ref_facet (int facet_index_, int facet_node_);
+    void add_ref_facet(int facet_index_, int facet_node_);
 
-    const vector_3d & get_position () const;
+    const vector_3d & get_position() const;
 
-    void reset ();
+    void reset();
 
-    friend std::ostream & operator<< (std::ostream &, const facet_vertex &);
+    friend std::ostream & operator<<(std::ostream &, const facet_vertex &);
 
   };
 
@@ -71,67 +77,67 @@ namespace geomtools {
     static const unsigned int MAX_CATEGORY = 30;
     static const int INVALID_CATEGORY = -1;
 
-    bool has_category () const;
+    bool has_category() const;
 
-    void set_category (unsigned int c_);
+    void set_category(unsigned int c_);
 
-    void unset_category ();
+    void unset_category();
 
-    uint32_t get_number_of_vertices () const;
+    uint32_t get_number_of_vertices() const;
 
-    const facet_vertex & get_vertex (int i_) const;
+    const facet_vertex & get_vertex(int i_) const;
 
-    int32_t get_vertex_key (int i_) const;
+    int32_t get_vertex_key(int i_) const;
 
-    void compute_normal ();
+    void compute_normal();
 
-    void compute_surface ();
+    void compute_surface();
 
-    void compute_internal_angles (); // Not implemented yet
+    void compute_internal_angles(); // Not implemented yet
 
-    void compute_internals ();
+    void compute_internals();
 
-    bool has_normal () const;
+    bool has_normal() const;
 
     bool has_surface() const;
 
-    bool is_valid () const;
+    bool is_valid() const;
 
-    const vector_3d & get_normal () const;
+    const vector_3d & get_normal() const;
 
-    double get_surface () const;
+    double get_surface() const;
 
-    double get_surface_tri () const;
+    double get_surface_tri() const;
 
-    double get_surface_tri_bis () const;
+    double get_surface_tri_bis() const;
 
-    double get_internal_angle (int i_) const;
+    double get_internal_angle(int i_) const;
 
-    void print (std::ostream & out_) const;
+    void print(std::ostream & out_) const;
 
-    static bool check_triangle (const geomtools::vector_3d & v0_,
+    static bool check_triangle(const geomtools::vector_3d & v0_,
                                 const geomtools::vector_3d & v1_,
                                 const geomtools::vector_3d & v2_,
                                 double tolerance_ = 0.0);
 
-    static bool check_quadrangle (const geomtools::vector_3d & v0_,
+    static bool check_quadrangle(const geomtools::vector_3d & v0_,
                                   const geomtools::vector_3d & v1_,
                                   const geomtools::vector_3d & v2_,
                                   const geomtools::vector_3d & v3_,
                                   double tolerance_ = 0.0);
 
-    bool is_triangle () const;
+    bool is_triangle() const;
 
-    bool is_quadrangle () const;
+    bool is_quadrangle() const;
 
-    void set_triangle (const facet_vertex & v0_,
+    void set_triangle(const facet_vertex & v0_,
                        const facet_vertex & v1_,
                        const facet_vertex & v2_,
                        int iv0_,
                        int iv1_,
                        int iv2_);
 
-    void set_quadrangle (const facet_vertex & v0_,
+    void set_quadrangle(const facet_vertex & v0_,
                          const facet_vertex & v1_,
                          const facet_vertex & v2_,
                          const facet_vertex & v3_,
@@ -140,14 +146,14 @@ namespace geomtools {
                          int iv2_,
                          int iv3_);
 
-    facet34 ();
+    facet34();
 
-    facet34 (const facet_vertex & v0_,
+    facet34(const facet_vertex & v0_,
              const facet_vertex & v1_,
              const facet_vertex & v2_,
              int, int, int);
 
-    facet34 (const facet_vertex & v0_,
+    facet34(const facet_vertex & v0_,
              const facet_vertex & v1_,
              const facet_vertex & v2_,
              const facet_vertex & v3_,
@@ -155,7 +161,7 @@ namespace geomtools {
 
   protected:
 
-    void _set_defaults ();
+    void _set_defaults();
 
   private:
 
@@ -182,25 +188,25 @@ namespace geomtools {
     int facet1_key;
     bool shown;
 
-    bool is_valid () const;
+    bool is_valid() const;
 
-    bool is_shown () const;
+    bool is_shown() const;
 
-    void set_shown (bool);
+    void set_shown(bool);
 
-    facet_segment ();
+    facet_segment();
 
-    void set_vertex_keys (int,int);
+    void set_vertex_keys(int,int);
 
-    void set_facet_keys (int,int);
+    void set_facet_keys(int,int);
 
-    void set (int,int,int,int);
+    void set(int,int,int,int);
 
     friend bool operator==(const facet_segment & fs1_, const facet_segment & fs2_);
 
     friend bool operator<(const facet_segment & fs1_, const facet_segment & fs2_);
 
-    void dump (std::ostream & out_) const;
+    void dump(std::ostream & out_) const;
   };
 
   /*** tessellated_solid ***/
@@ -212,88 +218,95 @@ namespace geomtools {
     static const uint32_t FACE_ALL   = FACE_ALL_BITS;
     static const int INVALID_VERTEX  = -1;
     static const int MAX_VERTEX      = 0x0FFFFFFF;
+
+    /// Return the identifier label for the class
     static const std::string & tessellated_label();
 
     typedef std::map<unsigned int, facet_vertex> vertices_col_type;
     typedef std::map<unsigned int, facet34> facets_col_type;
     typedef std::map<unsigned int, facet_segment> facet_segments_col_type;
 
-    virtual std::string get_shape_name () const;
+    /// Return the identifier/name of the shape
+    virtual std::string get_shape_name() const;
 
-    static bool validate_index (int);
+    static bool validate_index(int);
 
-    bool is_consistent () const;
+    bool is_consistent() const;
 
-    bool is_locked () const;
+    bool is_locked() const;
 
-    tessellated_solid ();
+    /// Default constructor
+    tessellated_solid();
 
-    virtual ~tessellated_solid ();
+   /// Destructor
+     virtual ~tessellated_solid();
 
-    const vertices_col_type & vertices () const;
+    const vertices_col_type & vertices() const;
 
-    const facets_col_type & facets () const;
+    const facets_col_type & facets() const;
 
-    const facet_segments_col_type & facet_segments () const;
+    const facet_segments_col_type & facet_segments() const;
 
-    vertices_col_type & grab_vertices ();
+    vertices_col_type & grab_vertices();
 
-    facets_col_type & grab_facets ();
+    facets_col_type & grab_facets();
 
-    facet_segments_col_type & grab_facet_segments ();
+    facet_segments_col_type & grab_facet_segments();
 
-    int add_vertex (unsigned int vtx_key_, const facet_vertex & vtx_);
+    int add_vertex(unsigned int vtx_key_, const facet_vertex & vtx_);
 
-    int add_vertex (unsigned int vtx_key_,
+    int add_vertex(unsigned int vtx_key_,
                     double x_, double y_, double z_);
 
-    void add_facet (unsigned int facet_key_,
+    void add_facet(unsigned int facet_key_,
                     int ivtx0_, int ivtx1_, int ivtx2_, int ivtx3_ = INVALID_VERTEX);
 
-    void add_facet3 (unsigned int facet_key_,
+    void add_facet3(unsigned int facet_key_,
                      int ivtx0_, int ivtx1_, int ivtx2_);
 
-    void add_facet4 (unsigned int facet_key_,
+    void add_facet4(unsigned int facet_key_,
                      int ivtx0_, int ivtx1_, int ivtx2_, int ivtx3_);
 
-    void remove_facet (unsigned int facet_key_);
+    void remove_facet(unsigned int facet_key_);
 
-    void lock ();
+    void lock();
 
-    void unlock ();
+    void unlock();
 
-    void compute_bounding_box ();
+    virtual void compute_bounding_box(box & bb_);
 
-    void compute_facet_segments ();
+    void compute_bounding_box();
 
-    const mygsl::min_max & get_bounding_box_x () const;
+    void compute_facet_segments();
 
-    const mygsl::min_max & get_bounding_box_y () const;
+    const mygsl::min_max & get_bounding_box_x() const;
 
-    const mygsl::min_max & get_bounding_box_z () const;
+    const mygsl::min_max & get_bounding_box_y() const;
 
-    void print_xyz (std::ostream & out_) const;
+    const mygsl::min_max & get_bounding_box_z() const;
 
-    void dump (std::ostream & out_ = std::clog) const;
+    void print_xyz(std::ostream & out_) const;
 
-    virtual bool is_inside (const vector_3d &,
+    void dump(std::ostream & out_ = std::clog) const;
+
+    virtual bool is_inside(const vector_3d &,
                             double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     // if 'skin' < 0 no skin is taken into account:
-    virtual bool is_on_surface (const vector_3d & ,
+    virtual bool is_on_surface(const vector_3d & ,
                                 int index_   = FACE_ALL ,
                                 double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
-    virtual vector_3d get_normal_on_surface (const vector_3d & position_) const;
+    virtual vector_3d get_normal_on_surface(const vector_3d & position_) const;
 
-    virtual bool find_intercept (const vector_3d & from_,
+    virtual bool find_intercept(const vector_3d & from_,
                                  const vector_3d & direction_,
                                  intercept_t & intercept_,
                                  double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
   private:
 
-    bool _check_ ();
+    bool _check_();
 
   private:
 
@@ -310,6 +323,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_TESSELLATION_H_
-
-// end of tessellation.h
+#endif // GEOMTOOLS_TESSELLATION_H

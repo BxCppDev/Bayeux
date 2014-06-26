@@ -1,16 +1,18 @@
-// -*- mode: c++ ; -*-
-/* rectangle.cc
- */
+/// rectangle.cc
 
+/// Ourselves:
 #include <geomtools/rectangle.h>
 
+// Standard library:
 #include <cstdlib>
 #include <cmath>
 #include <stdexcept>
 #include <sstream>
 
+// - GSL:
 #include <gsl/gsl_poly.h>
 
+// This project:
 #include <geomtools/geomtools_config.h>
 #include <geomtools/placement.h>
 
@@ -43,53 +45,55 @@ namespace geomtools {
     return _y_;
   }
 
-  void rectangle::set_x (double new_value_)
+  void rectangle::set_x(double new_value_)
   {
     DT_THROW_IF (new_value_ < 0.0, std::domain_error, "Invalid '" << new_value_ << "' X value!");
     _x_ = new_value_;
   }
 
-  void rectangle::set_y (double new_value_)
+  void rectangle::set_y(double new_value_)
   {
     DT_THROW_IF (new_value_ < 0.0, std::domain_error, "Invalid '" << new_value_ << "' Y value!");
     _y_ = new_value_;
   }
 
-  double rectangle::get_diagonal () const
+  double rectangle::get_diagonal() const
   {
     return  hypot (_x_, _y_);
   }
 
-  double rectangle::get_surface () const
+  double rectangle::get_surface(uint32_t /* flags_ */) const
   {
     return  _x_ * _y_;
   }
 
-  double rectangle::get_circumference () const
+  double rectangle::get_perimeter(uint32_t /* flags_ */) const
+  {
+    return get_circumference();
+  }
+
+  double rectangle::get_circumference() const
   {
     return 2 * (_x_ + _y_);
   }
 
-  bool rectangle::is_valid () const
+  bool rectangle::is_valid() const
   {
     return (_x_ > 0.0) && (_y_ > 0.0);
   }
 
-  // ctor:
   rectangle::rectangle ()
   {
     _x_ = -1.0;
     _y_ = -1.0;
   }
 
-  // ctor:
   rectangle::rectangle (double x_, double y_)
   {
     set_x (x_);
     set_y (y_);
   }
 
-  // dtor:
   rectangle::~rectangle ()
   {
   }
@@ -254,5 +258,3 @@ namespace geomtools {
   }
 
 } // end of namespace geomtools
-
-// end of rectangle.cc

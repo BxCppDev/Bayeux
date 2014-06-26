@@ -1,5 +1,5 @@
 // -*- mode: c++; -*-
-/** \file geomtools/i_object_3d.h */
+/// \file geomtools/i_object_3d.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
  * Last modified: 2014-04-09

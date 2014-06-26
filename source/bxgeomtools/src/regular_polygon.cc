@@ -1,9 +1,9 @@
-// -*- mode: c++ ; -*-
-/* regular_polygon.cc
- */
+/// regular_polygon.cc
 
+// Ourselves:
 #include <geomtools/regular_polygon.h>
 
+// Standard library:
 #include <cstdlib>
 #include <cmath>
 #include <stdexcept>
@@ -11,8 +11,10 @@
 #include <sstream>
 #include <string>
 
+// - GSL:
 #include <gsl/gsl_poly.h>
 
+// This project:
 #include <geomtools/i_shape_2d.h>
 #include <geomtools/utils.h>
 
@@ -29,45 +31,45 @@ namespace geomtools {
     return label;
   }
 
-  string regular_polygon::get_shape_name () const
+  string regular_polygon::get_shape_name() const
   {
     return regular_polygon_label();
   }
 
-  uint32_t regular_polygon::get_n_sides () const
+  uint32_t regular_polygon::get_n_sides() const
   {
     return _n_sides_;
   }
 
-  void regular_polygon::set_n_sides (uint32_t ns_)
+  void regular_polygon::set_n_sides(uint32_t ns_)
   {
-    DT_THROW_IF (ns_ < 3, std::logic_error, "Invalid number of sides !");
+    DT_THROW_IF(ns_ < 3, std::logic_error, "Invalid number of sides !");
     _n_sides_ = ns_;
     return;
   }
 
-  double regular_polygon::get_r () const
+  double regular_polygon::get_r() const
   {
     return _r_;
   }
 
-  double regular_polygon::get_radius () const
+  double regular_polygon::get_radius() const
   {
     return get_r ();
   }
 
-  void regular_polygon::set_diameter (double new_value_)
+  void regular_polygon::set_diameter(double new_value_)
   {
     set_r (new_value_ * 0.5);
     return;
   }
 
-  double regular_polygon::get_diameter () const
+  double regular_polygon::get_diameter() const
   {
     return (_r_ + _r_);
   }
 
-  void regular_polygon::set_r (double new_value_)
+  void regular_polygon::set_r(double new_value_)
   {
     DT_THROW_IF (new_value_ < 0.0, std::logic_error, "Invalid '" << new_value_ << "' R value!");
     _r_ = new_value_;
@@ -75,44 +77,42 @@ namespace geomtools {
   }
 
 
-  double regular_polygon::get_apothem () const
+  double regular_polygon::get_apothem() const
   {
-    double a = _r_ * cos (M_PI / _n_sides_);
+    double a = _r_ * std::cos(M_PI / _n_sides_);
     return a;
   }
 
-  double regular_polygon::get_side_length () const
+  double regular_polygon::get_side_length() const
   {
-    double sl = 2 * _r_ * sin (M_PI / _n_sides_);
+    double sl = 2 * _r_ * std::sin(M_PI / _n_sides_);
     return sl;
   }
 
-  double regular_polygon::get_perimeter () const
+  double regular_polygon::get_perimeter(uint32_t /* flags_ */) const
   {
-    return get_side_length () * _n_sides_;
+    return get_side_length() * _n_sides_;
   }
 
-  double regular_polygon::get_surface () const
+  double regular_polygon::get_surface(uint32_t /* flags_ */) const
   {
-    return get_apothem () * get_side_length () * _n_sides_ * 0.5;
+    return get_apothem() * get_side_length() * _n_sides_ * 0.5;
   }
 
-  bool regular_polygon::is_valid () const
+  bool regular_polygon::is_valid() const
   {
     return (_r_ > 0.0);
   }
 
-  // ctor:
-  regular_polygon::regular_polygon ()
+  regular_polygon::regular_polygon()
   {
     _r_ = -1.0;
     return;
   }
 
-  // ctor:
-  regular_polygon::regular_polygon (uint32_t n_sides_,
-                                    double r_,
-                                    int mode_)
+  regular_polygon::regular_polygon(uint32_t n_sides_,
+                                   double r_,
+                                   int mode_)
   {
     double r = r_;
     set_n_sides(n_sides_);
@@ -123,38 +123,37 @@ namespace geomtools {
     return;
   }
 
-  // dtor:
-  regular_polygon::~regular_polygon ()
+  regular_polygon::~regular_polygon()
   {
     return;
   }
 
-  double regular_polygon::get_reference_angle () const
+  double regular_polygon::get_reference_angle() const
   {
     return 2 * M_PI / _n_sides_;
   }
 
-  void regular_polygon::get_vertex (int i_, double & x_, double & y_) const
+  void regular_polygon::get_vertex(int i_, double & x_, double & y_) const
   {
-    double alpha = get_reference_angle ();
+    double alpha = get_reference_angle();
     double theta = (0.5 * alpha) + i_ * alpha;
-    x_ = _r_ * cos (theta);
-    y_ = _r_ * sin (theta);
+    x_ = _r_ * std::cos(theta);
+    y_ = _r_ * std::sin(theta);
     return;
   }
 
-  void regular_polygon::get_vertex (int n_, vector_3d & vertex_) const
+  void regular_polygon::get_vertex(int n_, vector_3d & vertex_) const
   {
     double x, y;
-    get_vertex (n_, x, y);
-    vertex_.set (x, y, 0.0);
+    get_vertex(n_, x, y);
+    vertex_.set(x, y, 0.0);
     return;
   }
 
-  bool regular_polygon::is_on_surface (const vector_3d & /*position_*/,
-                                       double /*tolerance_*/) const
+  bool regular_polygon::is_on_surface(const vector_3d & /*position_*/,
+                                      double /*tolerance_*/) const
   {
-    DT_THROW_IF (true, std::logic_error, "Not implemented yet !");
+    DT_THROW_IF(true, std::logic_error, "Not implemented yet !");
     /*
       double tolerance = get_tolerance ();
       if (tolerance_ > GEOMTOOLS_PROPER_TOLERANCE) tolerance = tolerance_;
@@ -172,33 +171,32 @@ namespace geomtools {
     return true;
   }
 
-  vector_3d regular_polygon::get_normal_on_surface (const vector_3d & position_,
-                                                    bool up_) const
+  vector_3d regular_polygon::get_normal_on_surface(const vector_3d & position_,
+                                                   bool up_) const
   {
     vector_3d normal;
-    geomtools::invalidate (normal);
-    if (is_on_surface (position_))
-      {
-        normal.set (0.0, 0.0, 1.0);
-        if (! up_) normal.setZ (-1.0);
-      }
+    geomtools::invalidate(normal);
+    if (is_on_surface(position_)) {
+      normal.set(0.0, 0.0, 1.0);
+      if (! up_) normal.setZ(-1.0);
+    }
     return normal;
   }
 
-  bool regular_polygon::find_intercept (const vector_3d & /*from_*/,
-                                        const vector_3d & /*direction_*/,
-                                        intercept_t & intercept_,
-                                        double /*tolerance_*/) const
+  bool regular_polygon::find_intercept(const vector_3d & /*from_*/,
+                                       const vector_3d & /*direction_*/,
+                                       intercept_t & intercept_,
+                                       double /*tolerance_*/) const
   {
-    intercept_.reset ();
-    DT_THROW_IF (true, std::logic_error, "Not implemented yet !");
+    intercept_.reset();
+    DT_THROW_IF(true, std::logic_error, "Not implemented yet !");
     /*
-      double ux = direction_.x ();
-      double uy = direction_.y ();
-      double uz = direction_.z ();
-      double xf = from_.x ();
-      double yf = from_.y ();
-      double zf = from_.z ();
+      double ux = direction_.x();
+      double uy = direction_.y();
+      double uz = direction_.z();
+      double xf = from_.x();
+      double yf = from_.y();
+      double zf = from_.z();
       if (uz == 0.0)
       {
       intercept_.reset ();
@@ -268,31 +266,29 @@ namespace geomtools {
       intercept_.set (0, face, vector_3d (xi, yi, zi));
       }
     */
-    return intercept_.is_ok ();
+    return intercept_.is_ok();
   }
 
-  void regular_polygon::tree_dump (ostream & out_,
-                                   const string & title_,
-                                   const string & indent_,
-                                   bool inherit_) const
+  void regular_polygon::tree_dump(std::ostream & out_,
+                                  const std::string & title_,
+                                  const std::string & indent_,
+                                  bool inherit_) const
   {
-    string indent;
-    if (! indent_.empty ()) indent = indent_;
-    i_object_3d::tree_dump (out_, title_, indent_, true);
+    std::string indent;
+    if (! indent_.empty()) indent = indent_;
+    i_object_3d::tree_dump(out_, title_, indent_, true);
 
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "Number of sides : " << get_n_sides () << endl;
+         << "Number of sides : " << get_n_sides() << endl;
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "R : " << get_r () / CLHEP::mm << " mm" << endl;
+         << "R : " << get_r() / CLHEP::mm << " mm" << endl;
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "Side length : " << get_side_length () / CLHEP::mm << " mm" << endl;
+         << "Side length : " << get_side_length() / CLHEP::mm << " mm" << endl;
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "Angle : " << get_reference_angle () / CLHEP::degree << " degree" << endl;
-    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
-         << "Apothem : " << get_apothem () / CLHEP::mm << " mm" << endl;
+         << "Angle : " << get_reference_angle() / CLHEP::degree << " degree" << endl;
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
+         << "Apothem : " << get_apothem() / CLHEP::mm << " mm" << endl;
     return;
   }
 
 } // end of namespace geomtools
-
-// end of regular_polygon.cc

@@ -1,15 +1,17 @@
-// -*- mode: c++; -*-
-/* helix_3d.cc
- */
+/// helix_3d.cc
 
+// Ourselves:
 #include <geomtools/helix_3d.h>
 
+// Standard library:
 #include <cmath>
 #include <sstream>
 #include <stdexcept>
 #include <limits>
 
 namespace geomtools {
+
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (helix_3d, "geomtools::helix_3d")
 
   const std::string & helix_3d::helix_3d_label()
   {
@@ -20,9 +22,7 @@ namespace geomtools {
     return label;
   }
 
-  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (helix_3d,"geomtools::helix_3d")
-
-  bool helix_3d::is_normal ()
+  bool helix_3d::is_normal()
   {
     return std::isfinite(_radius_) &&
       std::isfinite(_step_) &&
@@ -38,7 +38,7 @@ namespace geomtools {
     return helix_3d::helix_3d_label();
   }
 
-  bool helix_3d::is_valid () const
+  bool helix_3d::is_valid() const
   {
     return (_radius_ == _radius_);
   }
@@ -49,75 +49,75 @@ namespace geomtools {
     return;
   }
 
-  const vector_3d & helix_3d::get_center () const
+  const vector_3d & helix_3d::get_center() const
   {
     return _center_;
   }
 
-  vector_3d & helix_3d::grab_center ()
+  vector_3d & helix_3d::grab_center()
   {
     return _center_;
   }
 
-  void helix_3d::set_center (const vector_3d & new_value_)
+  void helix_3d::set_center(const vector_3d & new_value_)
   {
     _center_ = new_value_;
     return;
   }
 
-  double helix_3d::get_radius () const
+  double helix_3d::get_radius() const
   {
     return _radius_;
   }
 
-  void helix_3d::set_radius (double new_value_)
+  void helix_3d::set_radius(double new_value_)
   {
     _radius_ = new_value_;
     return;
   }
 
-  double helix_3d::get_step () const
+  double helix_3d::get_step() const
   {
     return _step_;
   }
 
-  void helix_3d::set_step (double new_value_)
+  void helix_3d::set_step(double new_value_)
   {
     _step_ = new_value_;
     return;
   }
 
-  double helix_3d::get_t1 () const
+  double helix_3d::get_t1() const
   {
     return _t1_;
   }
 
-  void helix_3d::set_t1 (double new_value_)
+  void helix_3d::set_t1(double new_value_)
   {
     _t1_ = new_value_;
     return;
   }
 
-  double helix_3d::get_t2 () const
+  double helix_3d::get_t2() const
   {
     return _t2_;
   }
 
-  void helix_3d::set_t2 (double new_value_)
+  void helix_3d::set_t2(double new_value_)
   {
     _t2_ = new_value_;
     return;
   }
 
-  void helix_3d::set_angle1 (double new_value_)
+  void helix_3d::set_angle1(double new_value_)
   {
-    _t1_ = angle_to_t (new_value_);
+    _t1_ = angle_to_t(new_value_);
     return;
   }
 
-  void helix_3d::set_angle2 (double new_value_)
+  void helix_3d::set_angle2(double new_value_)
   {
-    _t2_ = angle_to_t (new_value_);
+    _t2_ = angle_to_t(new_value_);
     return;
   }
 
@@ -131,7 +131,7 @@ namespace geomtools {
     return t_to_angle (_t2_);
   }
 
-  double helix_3d::get_length () const
+  double helix_3d::get_length (uint32_t /* flags_ */) const
   {
     // 2012-11-29, FM: fix wrong formula inconsistent with the computation
     // of curvilinear values.
@@ -146,8 +146,7 @@ namespace geomtools {
     return l;
   }
 
-  // ctor/dtor:
-  helix_3d::helix_3d () : i_shape_1d ()
+  helix_3d::helix_3d() : i_shape_1d()
   {
     _radius_ = 1.0;
     _center_.set (0.0, 0.0, 0.0);

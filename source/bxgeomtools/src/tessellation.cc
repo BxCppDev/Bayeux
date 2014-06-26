@@ -1,18 +1,22 @@
-// -*- mode: c++; -*-
-/* tessellation.cc
- */
+// tessellation.cc
 
+// Ourselves:
 #include <geomtools/tessellation.h>
 
+// Standard library:
 #include <sstream>
 #include <fstream>
 #include <cmath>
 #include <stdexcept>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/exception.h>
 
+// This project:
 #include <geomtools/utils.h>
+#include <geomtools/box.h>
 
 namespace geomtools {
 
@@ -64,14 +68,12 @@ namespace geomtools {
   void facet_vertex::print (std::ostream & out_) const
   {
     out_ << '(' << position.x () << ' ' << position.y () << ' ' << position.z () << ')'
-         << " #ref=" << ref_facets.size  ();
-    if ( ref_facets.size  ())
-      {
+         << " #ref=" << ref_facets.size();
+    if ( ref_facets.size()) {
         out_ << " facets=";
         for (std::map<int32_t, int32_t>::const_iterator ifr = ref_facets.begin ();
              ifr != ref_facets.end ();
-             ifr++)
-          {
+             ifr++) {
             out_ << " " << ifr->first;
           }
       }
@@ -83,12 +85,10 @@ namespace geomtools {
   {
     out_ << "position=" << '(' << vtx_.position.x () << ';' << vtx_.position.y () << ';' << vtx_.position.z () << ')'
          << ";facets={";
-    if ( vtx_.ref_facets.size  ())
-      {
+    if ( vtx_.ref_facets.size  ()) {
         for (std::map<int32_t, int32_t>::const_iterator ifr = vtx_.ref_facets.begin ();
              ifr != vtx_.ref_facets.end ();
-             ifr++)
-          {
+             ifr++) {
             if (ifr != vtx_.ref_facets.begin ())
               out_ << ";";
             out_ << ifr->first;
@@ -153,14 +153,12 @@ namespace geomtools {
     geomtools::vector_3d n = u01.cross (u12);
     const double m = n.mag ();
     n /= m;
-    if (_number_of_vertices_ == 4)
-      {
+    if (_number_of_vertices_ == 4) {
         const geomtools::vector_3d & v3 = _vertices_[3]->get_position ();
         const geomtools::vector_3d u23 = v3 - v2;
         geomtools::vector_3d n2 = u12.cross (u23);
         n2 /= m;
-        if (! geomtools::are_near (n, n2, 1.e-5))
-          {
+        if (! geomtools::are_near (n, n2, 1.e-5)) {
              invalidate (_normal_);
              return;
           }
@@ -172,8 +170,7 @@ namespace geomtools {
   void facet34::_set_defaults ()
   {
     _number_of_vertices_ = 0;
-    for (unsigned int i = 0; i < 4; i++)
-      {
+    for (unsigned int i = 0; i < 4; i++) {
         _vertices_[i] = 0;
         _vertices_keys_[i] = -1;
         datatools::invalidate (_internal_angles_[i]);
@@ -258,18 +255,15 @@ namespace geomtools {
   {
     // Check that all 3 vertices are different :
     const geomtools::vector_3d u01 = v1_ - v0_;
-    if (u01.mag2 () == 0)
-      {
+    if (u01.mag2 () == 0) {
         return false;
       }
     const geomtools::vector_3d u12 = v2_ - v1_;
-    if (u12.mag2 () == 0)
-      {
+    if (u12.mag2 () == 0) {
         return false;
       }
     const geomtools::vector_3d u20 = v0_ - v2_;
-    if (u20.mag2 () == 0)
-      {
+    if (u20.mag2 () == 0) {
         return false;
       }
 
@@ -285,8 +279,7 @@ namespace geomtools {
     // Vertices 0, 1, 2 :
     const geomtools::vector_3d n012 = u01.cross (u12);
     const double m012 = n012.mag ();
-    if (m012 == 0.0)
-      {
+    if (m012 == 0.0) {
         DT_LOG_WARNING (datatools::logger::PRIO_WARNING, "Vertices 0, 1, 2 are aligned !");
         return false;
       }
@@ -1208,19 +1201,42 @@ namespace geomtools {
     return _zrange_;
   }
 
-  void tessellated_solid::compute_bounding_box ()
+  // virtual
+  void tessellated_solid::compute_bounding_box(box & bb_)
   {
-    _xrange_.reset ();
-    _yrange_.reset ();
-    _zrange_.reset ();
-    for (vertices_col_type::const_iterator i = _vertices_.begin ();
-         i != _vertices_.end ();
-         i++)
-      {
+    this->i_object_3d::compute_bounding_box(bb_);
+    if (_xrange_.is_valid() && _yrange_.is_valid() && _zrange_.is_valid()) {
+      double x = std::abs(_xrange_.get_min());
+      if (std::abs(_xrange_.get_max()) > x) {
+        x = std::abs(_xrange_.get_max());
+      }
+      double y = std::abs(_yrange_.get_min());
+      if (std::abs(_yrange_.get_max()) > y) {
+        y = std::abs(_yrange_.get_max());
+      }
+      double z = std::abs(_zrange_.get_min());
+      if (std::abs(_zrange_.get_max()) > z) {
+        z = std::abs(_zrange_.get_max());
+      }
+      bb_.set_x(2 * x);
+      bb_.set_y(2 * y);
+      bb_.set_z(2 * z);
+    }
+    return;
+  }
+
+  void tessellated_solid::compute_bounding_box()
+  {
+    _xrange_.reset();
+    _yrange_.reset();
+    _zrange_.reset();
+    for (vertices_col_type::const_iterator i = _vertices_.begin();
+         i != _vertices_.end();
+         i++) {
         const facet_vertex & vtx = i->second;
-        _xrange_.add (vtx.position.x ());
-        _yrange_.add (vtx.position.y ());
-        _zrange_.add (vtx.position.z ());
+        _xrange_.add(vtx.position.x());
+        _yrange_.add(vtx.position.y());
+        _zrange_.add(vtx.position.z());
       }
     return;
   }
@@ -1594,6 +1610,3 @@ return (u >= 0) && (v >= 0) && (u + v < 1)
 
 
 **/
-
-
-// end of tessellation.cc
