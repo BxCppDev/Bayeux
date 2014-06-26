@@ -226,7 +226,6 @@ th row logic_error(message.str());
   void base_step_hit_processor::_initialize(const datatools::properties & config_,
                                             datatools::service_manager & service_mgr_)
   {
-    // std::cerr << "DEVEL: base_step_hit_processor::_initialize: Entering..." << std::endl;
 
     // Logging priority:
     datatools::logger::priority lp
@@ -298,7 +297,6 @@ th row logic_error(message.str());
       }
     }
 
-    // std::cerr << "DEVEL: base_step_hit_processor::_initialize: Exiting." << std::endl;
     return;
   }
 
