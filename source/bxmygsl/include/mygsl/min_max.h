@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
-/* min_max.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mygsl/min_max.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009-10-02
  * Last modified: 2013-04-23
  *
@@ -13,11 +13,12 @@
  *
  */
 
-#ifndef MYGSL_MIN_MAX_H_
-#define MYGSL_MIN_MAX_H_ 1
+#ifndef MYGSL_MIN_MAX_H
+#define MYGSL_MIN_MAX_H 1
 
 namespace mygsl {
 
+  /// \brief Record the min and max values from a set of values
   class min_max
   {
   public:
@@ -35,6 +36,4 @@ namespace mygsl {
 
 } // end of namespace mygsl
 
-#endif // MYGSL_MIN_MAX_H_
-
-// end of min_max.h
+#endif // MYGSL_MIN_MAX_H
