@@ -1,17 +1,17 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* smart_ref.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-03-16
  * Last modified: 2010-03-16
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *   Smart reference to an existing instance
  *   The referenced type must have a default constructor.
  *
- * History: 
- * 
+ * History:
+ *
  */
 #ifndef DATATOOLS_SMART_REF_H_
 #define DATATOOLS_SMART_REF_H_
@@ -45,7 +45,7 @@ class smart_ref {
   typedef std::list<instance_type> col_type;
   typedef smart_ref<instance_type> smart_ref_type;
 
- public: 
+ public:
   // ctor:
   smart_ref() : ref_(0), properties_() {}
 
@@ -89,15 +89,15 @@ class smart_ref {
 
 
  private:
-  friend class boost::serialization::access; 
+  friend class boost::serialization::access;
 
   template<class Archive>
-  void serialize(Archive& ar, const unsigned int version) {
+  void serialize(Archive& ar, const unsigned int /*version*/) {
     ar & boost::serialization::make_nvp("properties", properties_);
     ar & boost::serialization::make_nvp("ref", ref_);
   }
 
- private: 
+ private:
   pointer_type          ref_;
   datatools::properties properties_;
 

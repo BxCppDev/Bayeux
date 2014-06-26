@@ -17,10 +17,18 @@
 #include <boost/serialization/shared_ptr.hpp>
 
 #include <datatools/serialization_macros.h>
+
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#endif
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
 #include <boost/archive/xml_iarchive.hpp>
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
 
 using namespace std;
 
