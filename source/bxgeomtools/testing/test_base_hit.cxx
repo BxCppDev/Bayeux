@@ -79,7 +79,7 @@ int main (/*int argc_, char ** argv_*/)
         srand48 (314159);
         srandom (314159);
         base_hit_col_type list_of_base_hits;
-        size_t nb_hits = 10;
+        int nb_hits = 10;
         //double cell_radius = 15.0 * CLHEP::mm;
         for (int i = 0; i < (int) nb_hits; i++)
           {
