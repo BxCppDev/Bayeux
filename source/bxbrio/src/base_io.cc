@@ -1,6 +1,5 @@
-// -*- mode: c++ ; -*-
-/* base_io.cc
- */
+/// \file brio/base_io.cc
+
 // Ourselves
 #include <brio/detail/base_io.h>
 
@@ -12,14 +11,19 @@
 // - Boost
 #include <boost/archive/codecvt_null.hpp>
 #include <boost/filesystem.hpp>
-
-// - datatools
-#include <datatools/exception.h>
-
 // - ROOT
 #include <TFile.h>
+// - Bayeux/datatools
+#include <datatools/exception.h>
 
-// This Project
+#if defined (__clang__)
+//#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Woverloaded-virtual"
+#endif
+#if defined (__gnuc__)
+//#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+#endif
 
 namespace brio {
 namespace detail {
