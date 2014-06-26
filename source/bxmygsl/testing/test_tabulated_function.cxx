@@ -49,7 +49,7 @@ int main (int /* argc_ */ , char ** /* argv_ */)
         {
           tf.add_point (xs[i],
                         std::exp (-xs[i]),
-                        i == (xs.size () - 1));
+                        i == ((int)xs.size () - 1));
         }
       tf.lock_table ("linear"); // change interpolation scheme
 
