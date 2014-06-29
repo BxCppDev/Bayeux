@@ -1,5 +1,5 @@
-/// \file brio/brio_record.h
-/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file brio/detail/brio_record.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-07-16
  * Last modified: 2010-07-16
  *
