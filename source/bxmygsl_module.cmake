@@ -21,7 +21,7 @@ endforeach()
 
 # - In place defs for module CMake variables...
 # - Versioning
-set(mygsl_VERSION_MAJOR 4)
+set(mygsl_VERSION_MAJOR 5)
 set(mygsl_VERSION_MINOR 0)
 set(mygsl_VERSION_PATCH 0)
 set(mygsl_VERSION "${mygsl_VERSION_MAJOR}.${mygsl_VERSION_MINOR}.${mygsl_VERSION_PATCH}")
