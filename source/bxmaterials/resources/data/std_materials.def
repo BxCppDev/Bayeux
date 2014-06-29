@@ -1,30 +1,30 @@
 # -*- mode: conf-unix; -*-
 # List of multi-properties (datatools::multi_properties):
 
-#@description A list of common materials
+#@description A list of common materials composed from elements with isotopic composition
 #@key_label   "name"
 #@meta_label  "type"
 
 [name="std::vacuum" type="material"]
 #@config Vacuum material
-density        : real   = 1.0e-13
-density.unit   : string = "mg/cm3"
-state          : string = "gas"
-composition.mode : string   = "fraction_mass"
+density                   : real   = 1.0e-13
+density.unit              : string = "mg/cm3"
+state                     : string = "gas"
+composition.mode          : string = "fraction_mass"
 composition.names         : string [1]  = "Hydrogen"
 composition.fraction_mass : real   [1]  =  1.0
 
 
 [name="std::air" type="material"]
 #@config Air material
-density        : real   = 1.2931
-density.unit   : string = "mg/cm3"
-state          : string = "gas"
+density          : real   = 1.2931
+density.unit     : string = "mg/cm3"
+state            : string = "gas"
 temperature      : real   = 300.
 temperature.unit : string = "kelvin"
 pressure         : real   = 1.
 pressure.unit    : string = "bar"
-composition.mode : string   = "fraction_mass"
+composition.mode : string = "fraction_mass"
 composition.names         : string [2]  = "Nitrogen" "Oxygen"
 composition.fraction_mass : real   [2]  =  0.8        0.2
 
@@ -81,42 +81,37 @@ composition.fraction_mass : real   [1]  =  1.0
 
 [name="std::water" type="material"]
 #@config Water material
-density          : real   = 1.0
-density.unit     : string = "g/cm3"
-temperature      : real   = 300.
-temperature.unit : string = "kelvin"
-pressure         : real   = 1.
-pressure.unit    : string = "bar"
-state            : string = "liquid"
+density                   : real   = 1.0
+density.unit              : string = "g/cm3"
+temperature               : real   = 300.
+temperature.unit          : string = "kelvin"
+pressure                  : real   = 1.
+pressure.unit             : string = "bar"
+state                     : string = "liquid"
 composition.mode            : string       = "number_of_atoms"
 composition.names           : string  [2]  = "Hydrogen" "Oxygen"
 composition.number_of_atoms : integer [2]  =  2          1
 
 
-# Example of auxiliary properties :
-#contamination.radiocontaminants : string [3] = "Bi-214" "Tl-208" "Pa-234"
-#contamination.activities        : real   [3] =  20.e-6   5.e-6   25.e-6
-
-
 [name="std::diamond" type="material"]
 #@config Diamond material
-density          : real   = 3.517
-density.unit     : string = "g/cm3"
-temperature      : real   = 300.
-temperature.unit : string = "kelvin"
-pressure         : real   = 1.
-pressure.unit    : string = "bar"
-state            : string = "solid"
-composition.mode : string = "mean_za"
-mean_z           : real   = 6.0
-mean_a           : real   = 12.0
+density                   : real   = 3.517
+density.unit              : string = "g/cm3"
+temperature               : real   = 300.
+temperature.unit          : string = "kelvin"
+pressure                  : real   = 1.
+pressure.unit             : string = "bar"
+state                     : string = "solid"
+composition.mode          : string      = "fraction_mass"
+composition.names         : string [1]  = "Carbon"
+composition.fraction_mass : real   [1]  =  1.0
 
 
 [name="std::mylar" type="material"]
 #@config Mylar material (C10H8O4)
-density          : real   = 1.397
-density.unit     : string = "g/cm3"
-state            : string = "solid"
+density                     : real   = 1.397
+density.unit                : string = "g/cm3"
+state                       : string = "solid"
 composition.mode            : string       = "number_of_atoms"
 composition.names           : string  [3]  = "Hydrogen" "Oxygen"  "Carbon"
 composition.number_of_atoms : integer [3]  =      8        4        10
@@ -124,9 +119,9 @@ composition.number_of_atoms : integer [3]  =      8        4        10
 
 [name="std::polycarbonate" type="material"]
 #@config Polycarbonate material (C16H14O3)
-density          : real   = 1.2
-density.unit     : string = "g/cm3"
-state            : string = "solid"
+density                     : real   = 1.2
+density.unit                : string = "g/cm3"
+state                       : string = "solid"
 composition.mode            : string       = "number_of_atoms"
 composition.names           : string  [3]  = "Hydrogen"  "Carbon" "Oxygen"
 composition.number_of_atoms : integer [3]  =     14         16       3
@@ -134,9 +129,9 @@ composition.number_of_atoms : integer [3]  =     14         16       3
 
 [name="std::polyethylene" type="material"]
 #@config Polyethylene material (C2H4)
-density          : real   = 0.94
-density.unit     : string = "g/cm3"
-state            : string = "solid"
+density                     : real   = 0.94
+density.unit                : string = "g/cm3"
+state                       : string = "solid"
 composition.mode            : string       = "number_of_atoms"
 composition.names           : string  [2]  = "Hydrogen"  "Carbon"
 composition.number_of_atoms : integer [2]  =      4         2
@@ -144,9 +139,9 @@ composition.number_of_atoms : integer [2]  =      4         2
 
 [name="std::polypropylene" type="material"]
 #@config Polypropylene material (C3H5)
-density          : real   = 0.90
-density.unit     : string = "g/cm3"
-state            : string = "solid"
+density                     : real   = 0.90
+density.unit                : string = "g/cm3"
+state                       : string = "solid"
 composition.mode            : string       = "number_of_atoms"
 composition.names           : string  [2]  = "Hydrogen"  "Carbon"
 composition.number_of_atoms : integer [2]  =      5         3
@@ -154,9 +149,9 @@ composition.number_of_atoms : integer [2]  =      5         3
 
 [name="std::polystyrene" type="material"]
 #@config Polystyrene material
-density          : real   = 1.032
-density.unit     : string = "g/cm3"
-state            : string = "solid"
+density                     : real   = 1.032
+density.unit                : string = "g/cm3"
+state                       : string = "solid"
 composition.mode            : string       = "number_of_atoms"
 composition.names           : string  [2]  = "Hydrogen"  "Carbon"
 composition.number_of_atoms : integer [2]  =      8         8
@@ -164,9 +159,9 @@ composition.number_of_atoms : integer [2]  =      8         8
 
 [name="std::NE110" type="material"]
 #@config NE110 scintillator (C9H10)
-density          : real   = 1.032
-density.unit     : string = "g/cm3"
-state            : string = "solid"
+density                     : real   = 1.032
+density.unit                : string = "g/cm3"
+state                       : string = "solid"
 composition.mode            : string       = "number_of_atoms"
 composition.names           : string  [2]  = "Hydrogen"  "Carbon"
 composition.number_of_atoms : integer [2]  =     10        9
@@ -174,9 +169,9 @@ composition.number_of_atoms : integer [2]  =     10        9
 
 [name="std::PVT" type="material"]
 #@config PVT (polyvinyl-toluene) material CH2CH (C6H4CH3)n
-density          : real   = 1.032
-density.unit     : string = "g/cm3"
-state            : string = "solid"
+density                     : real   = 1.032
+density.unit                : string = "g/cm3"
+state                       : string = "solid"
 composition.mode            : string       = "number_of_atoms"
 composition.names           : string  [2]  = "Hydrogen"  "Carbon"
 composition.number_of_atoms : integer [2]  =     10         9
@@ -213,7 +208,7 @@ composition.number_of_atoms : integer [2]  =     1       1
 
 
 [name="std::SiO2" type="material"]
-#@config SiO2 silicon detector material
+#@config SiO2 silicon oxyde material
 density          : real   = 2.320
 density.unit     : string = "g/cm3"
 state            : string = "solid"
@@ -270,16 +265,6 @@ state            : string = "solid"
 composition.mode            : string     = "fraction_mass"
 composition.names           : string [4] = "Iron" "Nickel" "Chromium" "Molybdenum"
 composition.fraction_mass   : real [4]   =  0.703  0.103    0.173      0.021
-
-
-# [name="std::inox_316L" type="material"]
-# #@config Inox 316L (67.75%Fe+12.5%Ni+17.0%Cr+2.75%Mo by weight)
-# density          : real   = 8.0
-# density.unit     : string = "g/cm3"
-# state            : string = "solid"
-# composition.mode            : string     = "fraction_mass"
-# composition.names           : string [4] = "Iron" "Nickel" "Chromium" "Molybdenum"
-# composition.fraction_mass   : real [4]  =  67.75  12.5     17.0       2.75
 
 
 [name="std::sapphire" type="material"]
