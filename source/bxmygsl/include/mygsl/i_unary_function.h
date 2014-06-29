@@ -1,17 +1,20 @@
-// -*- mode:c++; -*-
-// i_unary_function.h
+/// \file mygsl/i_unary_function.h
 
-#ifndef MYGSL_I_UNARY_FUNCTION_H_
-#define MYGSL_I_UNARY_FUNCTION_H_ 1
+#ifndef MYGSL_I_UNARY_FUNCTION_H
+#define MYGSL_I_UNARY_FUNCTION_H 1
 
+// Standard library:
 #include <iostream>
 #include <limits>
 #include <functional>
 #include <string>
 #include <vector>
 
+// Third party:
+// - Boost:
 #include <boost/cstdint.hpp>
 
+// This project:
 #include <mygsl/ioutils.h>
 #include <mygsl/interval.h>
 
@@ -169,6 +172,9 @@ namespace mygsl {
 
 } // namespace mygsl
 
-#endif // MYGSL_I_UNARY_FUNCTION_H_
+#endif // MYGSL_I_UNARY_FUNCTION_H
 
-// end of i_unary_function.h
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

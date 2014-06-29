@@ -1,20 +1,25 @@
-// multidimensional_minimization.h
+/// \file mygsl/multidimensional_minimization.h
 
-#ifndef MYGSL_MULTIDIMENSIONAL_MINIMIZATION_H_
-#define MYGSL_MULTIDIMENSIONAL_MINIMIZATION_H_ 1
+#ifndef MYGSL_MULTIDIMENSIONAL_MINIMIZATION_H
+#define MYGSL_MULTIDIMENSIONAL_MINIMIZATION_H 1
 
+// Standard library:
 #include <string>
 
+// Third party:
+// - GSL:
 #include <gsl/gsl_multimin.h>
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_deriv.h>
 
+// This project:
 #include <mygsl/error.h>
 #include <mygsl/i_unary_function.h>
 #include <mygsl/multiparameter_system.h>
 
 namespace mygsl {
 
+  /// \brief System for multidimensional minimization algorithm
   class multidimensional_minimization_system :
   public mygsl::multiparameter_system
     {
@@ -45,11 +50,9 @@ namespace mygsl {
       void from_double_star (const double * pars_ ,
                              size_t dimension_);
 
-      // ctor:
       multidimensional_minimization_system (double slope_ = DEFAULT_OUT_OF_LIMIT_SLOPE,
                                             bool use_numeric_eval_ = false);
 
-      // dtor:
       virtual ~multidimensional_minimization_system ();
 
       struct func_eval_f_param : public mygsl::i_unary_function
@@ -89,8 +92,7 @@ namespace mygsl {
 
     };
 
-  /********************************************************/
-
+  /// \brief Multidimensional minimization algorithm
   class multidimensional_minimization
   {
   public:
@@ -238,6 +240,9 @@ namespace mygsl {
 
 } // namespace mygsl
 
-#endif // MYGSL_MULTIDIMENSIONAL_MINIMIZATION_H_
+#endif // MYGSL_MULTIDIMENSIONAL_MINIMIZATION_H
 
-// end of multidimensional_minimization.h
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

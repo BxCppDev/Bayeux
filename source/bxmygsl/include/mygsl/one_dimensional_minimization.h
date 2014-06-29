@@ -1,9 +1,9 @@
-// -*- mode: c++; -*-
-// one_dimensional_minimization.h
+/// \file mygsl/one_dimensional_minimization.h
 
-#ifndef MYGSL_ONE_DIMENSIONAL_MINIMIZATION_H_
-#define MYGSL_ONE_DIMENSIONAL_MINIMIZATION_H_ 1
+#ifndef MYGSL_ONE_DIMENSIONAL_MINIMIZATION_H
+#define MYGSL_ONE_DIMENSIONAL_MINIMIZATION_H 1
 
+// Standard library:
 #include <algorithm>
 #include <iostream>
 #include <sstream>
@@ -12,13 +12,17 @@
 #include <vector>
 #include <cmath>
 
+// Third party:
+// - GSL:
 #include <gsl/gsl_min.h>
 
+// This project:
 #include <mygsl/i_unary_function.h>
 #include <mygsl/best_value.h>
 
 namespace mygsl {
 
+  /// \brief One dimensional minimization algorithm
   class one_dimensional_minimization
   {
   public:
@@ -138,6 +142,9 @@ namespace mygsl {
 
 } // namespace mygsl
 
-#endif // MYGSL_ONE_DIMENSIONAL_MINIMIZATION_H_
+#endif // MYGSL_ONE_DIMENSIONAL_MINIMIZATION_H
 
-// end of one_dimensional_minimization.h
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

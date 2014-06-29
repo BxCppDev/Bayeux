@@ -24,15 +24,10 @@
 
 #ifndef MYGSL_VERSION_H
 #define MYGSL_VERSION_H
-// Standard Library
+
+// Standard Library:
 #include <string>
 
-// Third Party
-// - A
-
-// This Project
-
-//----------------------------------------------------------------------
 // - Compile Time API
 //! Major version number of mygsl
 #define MYGSL_VERSION_MAJOR @mygsl_VERSION_MAJOR@
@@ -90,3 +85,7 @@ static bool has_feature(const std::string& feature);
 
 #endif // MYGSL_VERSION_H
 
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

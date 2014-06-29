@@ -1,6 +1,5 @@
-// -*- mode: c++ ; -*-
-/** \file mygsl/random_utils.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mygsl/random_utils.h
+/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-16
  * Last modified: 2014-02-12
  *
@@ -31,8 +30,8 @@
  *
  */
 
-#ifndef MYGSL_RANDOM_UTILS_H_
-#define MYGSL_RANDOM_UTILS_H_ 1
+#ifndef MYGSL_RANDOM_UTILS_H
+#define MYGSL_RANDOM_UTILS_H 1
 
 // Third party:
 // - Boost:
@@ -57,6 +56,9 @@ namespace mygsl {
 
 } // end of namespace mygsl
 
-#endif // MYGSL_RANDOM_UTILS_H_
+#endif // MYGSL_RANDOM_UTILS_H
 
-// end of random_utils.h
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

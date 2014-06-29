@@ -1,11 +1,15 @@
 // mygsl::error.cc
 
+// Ourselves:
 #include <mygsl/error.h>
 
+// Standard library:
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/exception.h>
 
 namespace mygsl {
@@ -90,6 +94,3 @@ namespace mygsl {
   }
 
 }
-
-// end of mygsl::error.cc
-

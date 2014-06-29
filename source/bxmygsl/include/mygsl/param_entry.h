@@ -1,12 +1,13 @@
-// -*- mode: c++; -*-
-// param_entry.h
+/// \file mygsl/param_entry.h
 
-#ifndef MYGSL_PARAM_ENTRY_H_
-#define MYGSL_PARAM_ENTRY_H_ 1
+#ifndef MYGSL_PARAM_ENTRY_H
+#define MYGSL_PARAM_ENTRY_H 1
 
+// Standard library:
 #include <iostream>
 #include <string>
 
+// This project:
 #include <mygsl/best_value.h>
 
 namespace mygsl {
@@ -272,6 +273,9 @@ namespace mygsl {
 
 } // namespace mygsl
 
-#endif // MYGSL_PARAM_ENTRY_H_
+#endif // MYGSL_PARAM_ENTRY_H
 
-// end of param_entry.h
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

@@ -1,4 +1,5 @@
-/* bio_guard.h */
+/// \file mygsl/bio_guard.h
+
 /*
  * Description :
  *
@@ -28,14 +29,10 @@
  *
  */
 
-#ifndef MYGSL_BIO_GUARD_H_
-#define MYGSL_BIO_GUARD_H_
+#ifndef MYGSL_BIO_GUARD_H
+#define MYGSL_BIO_GUARD_H
 
-// Standard Library
-
-// Third Party
-
-// Mygsl
+// This project:
 #include <mygsl/mygsl_config.h>
 #include <mygsl/detail/bio_link_guard.h>
 
@@ -63,4 +60,9 @@ bio_guard bio_guard::_g_trigger_link_guard_;
 } // end namespace mygsl
 #endif // MYGSL_WITH_BIO != 1
 
-#endif // MYGSL_BIO_GUARD_H_
+#endif // MYGSL_BIO_GUARD_H
+
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

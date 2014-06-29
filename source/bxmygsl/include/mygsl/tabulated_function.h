@@ -1,6 +1,5 @@
-// -*- mode: c++; -*-
-/* tabulated_function.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mygsl/tabulated_function.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2007-12-07
  * Last modified: 2013-04-23
  *
@@ -13,13 +12,15 @@
  *
  */
 
-#ifndef MYGSL_TABULATED_FUNCTION_H_
-#define MYGSL_TABULATED_FUNCTION_H_ 1
+#ifndef MYGSL_TABULATED_FUNCTION_H
+#define MYGSL_TABULATED_FUNCTION_H 1
 
+// Standard library:
 #include <iostream>
 #include <map>
 #include <string>
 
+// This project:
 #include <mygsl/i_unary_function.h>
 
 namespace mygsl {
@@ -103,6 +104,9 @@ namespace mygsl {
 
 } // end of namespace mygsl
 
-#endif // MYGSL_TABULATED_FUNCTION_H_
+#endif // MYGSL_TABULATED_FUNCTION_H
 
-// end of tabulated_function.h
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

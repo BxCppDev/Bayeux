@@ -1,13 +1,12 @@
-// -*- mode: c++; -*- 
-/* interval.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mygsl/interval.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009-10-02
  * Last modified: 2013-04-11
- * 
- * License: 
- * 
- * 
- * Description: 
+ *
+ * License:
+ *
+ *
+ * Description:
  *
  *   A simple interval [min:max] for double precision values
  *
@@ -21,18 +20,20 @@
  * ( : )
  * [!]
  *
- * History: 
- * 
+ * History:
+ *
  *
  *
  */
 
-#ifndef MYGSL_INTERVAL_H_
-#define MYGSL_INTERVAL_H_ 1
+#ifndef MYGSL_INTERVAL_H
+#define MYGSL_INTERVAL_H 1
 
+// Standard library:
 #include <iostream>
 
-// Serialization interfaces :
+// Third party:
+// - Bayeux/datatools :
 #include <datatools/i_serializable.h>
 
 namespace mygsl {
@@ -68,8 +69,8 @@ namespace mygsl {
       interval (double min_, double max_, double eps_ = AUTO_EPS);
 
       // ctor:
-      interval (double min_, bool min_include_, 
-                double max_, bool max_include_, 
+      interval (double min_, bool min_include_,
+                double max_, bool max_include_,
                 double eps_ = AUTO_EPS);
 
       // dtor:
@@ -100,9 +101,9 @@ namespace mygsl {
       double get_max () const;
 
       double get_eps () const;
-      
+
       bool union_with (const interval &);
-      
+
       bool intercept_with (const interval &);
 
       bool is_in (double x_) const;
@@ -135,10 +136,10 @@ namespace mygsl {
 
       static interval make_neighbourhood (double value_, double delta_, bool included_ = excluded);
 
-      static interval make_min (double min_, bool min_include_ = excluded, 
+      static interval make_min (double min_, bool min_include_ = excluded,
                                 double eps_ = AUTO_EPS);
 
-      static interval make_max (double max_, bool max_include_ = excluded, 
+      static interval make_max (double max_, bool max_include_ = excluded,
                                 double eps_ = AUTO_EPS);
 
       static interval make_min_max_included (double min_,
@@ -159,11 +160,11 @@ namespace mygsl {
 
     private:
 
-      bool   _min_included_; /// Flag to include the min bound 
-      bool   _max_included_; /// Flag to include the max bound 
-      double _min_; /// Min bound 
-      double _max_; /// Max bound 
-      double _eps_; /// Epsilon 
+      bool   _min_included_; /// Flag to include the min bound
+      bool   _max_included_; /// Flag to include the max bound
+      double _min_; /// Min bound
+      double _max_; /// Max bound
+      double _eps_; /// Epsilon
 
       DATATOOLS_SERIALIZATION_DECLARATION();
 
@@ -171,6 +172,9 @@ namespace mygsl {
 
 } // end of namespace mygsl
 
-#endif // MYGSL_INTERVAL_H_
+#endif // MYGSL_INTERVAL_H
 
-// end of interval.h
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

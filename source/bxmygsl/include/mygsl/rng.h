@@ -22,7 +22,7 @@
 #ifndef MYGSL_RNG_H
 #define MYGSL_RNG_H 1
 
-// Standard library
+// Standard library:
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -30,10 +30,10 @@
 #include <vector>
 
 // Third party:
-// - Boost
+// - Boost:
 #include <boost/cstdint.hpp>
 #include <boost/scoped_ptr.hpp>
-// - GSL
+// - GSL:
 #include <gsl/gsl_rng.h>
 // - Bayeux/datatools:
 #include <datatools/logger.h>
@@ -228,10 +228,7 @@ namespace mygsl {
 
 #endif // MYGSL_RNG_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

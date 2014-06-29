@@ -1,15 +1,18 @@
-// linear_system_solver.h
+/// \file mygsl/linear_system_solver.h
 
-#ifndef MYGSL_LINEAR_SYSTEM_SOLVER_H_
-#define MYGSL_LINEAR_SYSTEM_SOLVER_H_ 1
+#ifndef MYGSL_LINEAR_SYSTEM_SOLVER_H
+#define MYGSL_LINEAR_SYSTEM_SOLVER_H 1
 
+// Standard library:
+#include <iostream>
+#include <vector>
+
+// Third party:
+// - GSL:
 #include <gsl/gsl_histogram.h>
 #include <gsl/gsl_vector.h>
-
-#include <iostream>
 #include <gsl/gsl_linalg.h>
 #include <gsl/gsl_errno.h>
-#include <vector>
 
 /*
  * Solve:  A.X = B
@@ -30,6 +33,7 @@
 
 namespace mygsl {
 
+  /// brief Linear system solver algorithm
   class linear_system_solver
   {
   public:
@@ -79,6 +83,9 @@ namespace mygsl {
 
 } // end of namespace mygsl
 
-#endif // MYGSL_LINEAR_SYSTEM_SOLVER_H_
+#endif // MYGSL_LINEAR_SYSTEM_SOLVER_H
 
-// end of linear_system_solver.h
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

@@ -1,4 +1,4 @@
-/** \file mygsl/the_serializable.ipp */
+/// \file mygsl/the_serializable.ipp
 /*
  * This includes the implementation code
  * for the Boost/Serialization layer.

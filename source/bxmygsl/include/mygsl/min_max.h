@@ -1,5 +1,4 @@
-// -*- mode: c++; -*-
-/// \file mygsl/min_max.h
+//// \file mygsl/min_max.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009-10-02
  * Last modified: 2013-04-23
@@ -37,3 +36,8 @@ namespace mygsl {
 } // end of namespace mygsl
 
 #endif // MYGSL_MIN_MAX_H
+
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

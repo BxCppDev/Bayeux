@@ -1,5 +1,5 @@
-/* prng_state_manager.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mygsl/prng_state_manager.h
+/* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-03-02
  * Last modified : 2012-06-15
  *
@@ -28,21 +28,24 @@
  *
  */
 
-#ifndef MYGSL_PRNG_STATE_MANAGER_H_
-#define MYGSL_PRNG_STATE_MANAGER_H_ 1
+#ifndef MYGSL_PRNG_STATE_MANAGER_H
+#define MYGSL_PRNG_STATE_MANAGER_H 1
 
+// Standard library:
 #include <iostream>
 #include <string>
 #include <map>
 
-#include <mygsl/rng.h>
-
+// Third party:
+// - Boost:
 #include <boost/cstdint.hpp>
+
+// This project:
+#include <mygsl/rng.h>
 
 namespace mygsl {
 
-  /** A manager that can store the internal states associated to
-   * a set of PRNGs addressed with some labels.
+  /** \brief A manager that can store the internal states associated to  a set of PRNGs addressed with some labels.
    */
   class prng_state_manager
   {
@@ -173,13 +176,9 @@ namespace mygsl {
 
 }  // end of namespace mygsl
 
-#endif // MYGSL_PRNG_STATE_MANAGER_H_
+#endif // MYGSL_PRNG_STATE_MANAGER_H
 
-// end of prng_state_manager.h
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

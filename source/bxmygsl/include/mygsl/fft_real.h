@@ -1,17 +1,20 @@
-// -*-mode: c++; -*-
-// mygsl/fft_real.h
+/// \file mygsl/fft_real.h
 
-#ifndef MYGSL_FFT_REAL_H_
-#define MYGSL_FFT_REAL_H_ 1
+#ifndef MYGSL_FFT_REAL_H
+#define MYGSL_FFT_REAL_H 1
 
+// Standard library:
 #include <iostream>
 #include <vector>
 
+// Third party:
+// - GSL:
 #include <gsl/gsl_fft_real.h>
 #include <gsl/gsl_fft_halfcomplex.h>
 
 namespace mygsl {
 
+  /// \brief Fast Fourier transform algorithm
   class fft_real
   {
   public:
@@ -72,6 +75,9 @@ namespace mygsl {
 
 }
 
-#endif // MYGSL_FFT_REAL_H_
+#endif // MYGSL_FFT_REAL_H
 
-// end of mygsl/fft_real.h
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

@@ -1,4 +1,4 @@
-// \file mygsl/datapoint.ipp
+/// \file mygsl/datapoint.ipp
 
 #ifndef MYGSL_DATAPOINT_IPP
 #define MYGSL_DATAPOINT_IPP 1

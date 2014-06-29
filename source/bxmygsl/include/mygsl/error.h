@@ -1,13 +1,18 @@
-// mygsl/error.h
+/// \file mygsl/error.h
 
-#ifndef MYGSL_ERROR_H_
-#define MYGSL_ERROR_H_ 1
+#ifndef MYGSL_ERROR_H
+#define MYGSL_ERROR_H 1
 
+// Standard library:
 #include <string>
+
+// Third party:
+// - GSL:
 #include <gsl/gsl_errno.h>
 
 namespace mygsl {
 
+  /// \brief GSL error handling
   class error
   {
   public:
@@ -33,9 +38,9 @@ namespace mygsl {
 				int gsl_errno_);
   private:
 
-    error ();
+    error();
 
-    ~error ();
+    ~error();
 
   private:
 
@@ -51,6 +56,4 @@ namespace mygsl {
 
 }
 
-#endif // MYGSL_ERROR_H_
-
-// end of mygsl/error.h
+#endif // MYGSL_ERROR_H

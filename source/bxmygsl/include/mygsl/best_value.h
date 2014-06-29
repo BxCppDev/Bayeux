@@ -1,16 +1,18 @@
-// best_value.h
-// -*- mode: C++; -*-
+/// \file mygsl/best_value.h
 
-#ifndef MYGSL_BEST_VALUE_H_
-#define MYGSL_BEST_VALUE_H_ 1
+#ifndef MYGSL_BEST_VALUE_H
+#define MYGSL_BEST_VALUE_H 1
 
+// Standard library:
 #include <iostream>
 
-// Serialization interfaces :
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/i_serializable.h>
 
 namespace mygsl {
- 
+
+  /// \brief A data structure representing a numeric value and its associated error
   class best_value :
     DATATOOLS_SERIALIZABLE_CLASS
     {
@@ -43,15 +45,15 @@ namespace mygsl {
 
       best_value (double value_);
 
-      best_value (double value_, 
+      best_value (double value_,
                   double error_);
 
-      best_value (double value_, 
-                  double error_, 
+      best_value (double value_,
+                  double error_,
                   double CL_);
 
-      best_value (double value_, 
-                  double error_low_, 
+      best_value (double value_,
+                  double error_low_,
                   double error_high_,
                   double CL_);
 
@@ -72,9 +74,7 @@ namespace mygsl {
 
 } // namespace mygsl
 
-#endif // MYGSL_BEST_VALUE_H_
-
-// end of best_value.h
+#endif // MYGSL_BEST_VALUE_H
 
 /* Local Variables: */
 /* mode: c++        */

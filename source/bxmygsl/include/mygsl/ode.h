@@ -1,18 +1,21 @@
-// -*- mode : c++; -*-
-// ode.h
+/// \file mygsl/ode.h
 
-#ifndef MYGSL_ODE_H_
-#define MYGSL_ODE_H_ 1
+#ifndef MYGSL_ODE_H
+#define MYGSL_ODE_H 1
 
+// Standard library:
 #include <string>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
 
+// Third party:
+// - GSL:
 #include <gsl/gsl_odeiv.h>
 
 namespace mygsl {
 
+  /// \brief System for ODE solving
   struct ode_system
   {
   public:
@@ -163,7 +166,9 @@ namespace mygsl {
 
 }
 
-#endif //  MYGSL_ODE_H_
+#endif //  MYGSL_ODE_H
 
-// end of ode.h
-
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

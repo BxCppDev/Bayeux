@@ -1,4 +1,4 @@
-/** \file mygsl/the_serializable.h */
+/// \file mygsl/the_serializable.h
 
 #ifndef MYGSL_THE_SERIALIZABLE_H
 #define MYGSL_THE_SERIALIZABLE_H 1
@@ -67,6 +67,9 @@ BOOST_CLASS_EXPORT_IMPLEMENT(mygsl::histogram_pool)
  * DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(mygsl::instantiated_serializable_data)
  */
 
-#endif // MYGSL_THE_SERIALIZABLE_H_
+#endif // MYGSL_THE_SERIALIZABLE_H
 
-/* end of mygsl/the_serializable.h */
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

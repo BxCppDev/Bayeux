@@ -1,4 +1,4 @@
-// \file mygsl/datapoint.h
+/// \file mygsl/datapoint.h
 
 #ifndef MYGSL_DATAPOINT_H
 #define MYGSL_DATAPOINT_H 1

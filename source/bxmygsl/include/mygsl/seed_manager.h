@@ -1,5 +1,5 @@
-/* seed_manager.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mygsl/seed_manager.h
+/* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-02-26
  * Last modified : 2012-06-08
  *
@@ -28,16 +28,19 @@
  *
  */
 
-#ifndef MYGSL_SEED_MANAGER_H_
-#define MYGSL_SEED_MANAGER_H_ 1
+#ifndef MYGSL_SEED_MANAGER_H
+#define MYGSL_SEED_MANAGER_H 1
 
+// Standard library:
 #include <iostream>
 #include <map>
 #include <string>
 #include <vector>
 
+// Third party:
+// - Boost:
 #include <boost/cstdint.hpp>
-
+// - Bayeux/datatools :
 #include <datatools/logger.h>
 #include <datatools/bit_mask.h>
 
@@ -180,13 +183,9 @@ namespace mygsl {
 
 }  // end of namespace mygsl
 
-#endif // MYGSL_SEED_MANAGER_H_
+#endif // MYGSL_SEED_MANAGER_H
 
-// end of seed_manager.h
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

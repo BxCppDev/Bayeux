@@ -1,22 +1,23 @@
-// -*- mode: c++; -*-
-// histogram_pool.h
+/// \file mygsl/histogram_pool.h
 
-#ifndef MYGSL_HISTOGRAM_POOL_H_
-#define MYGSL_HISTOGRAM_POOL_H_ 1
+#ifndef MYGSL_HISTOGRAM_POOL_H
+#define MYGSL_HISTOGRAM_POOL_H 1
 
+// Standard library:
 #include <iostream>
 #include <string>
 #include <map>
 #include <vector>
 
-// Serialization interfaces :
+// Third party:
+// - Bayeux/datatools :
 #include <datatools/i_serializable.h>
-
 #include <datatools/properties.h>
 #include <datatools/multi_properties.h>
 #include <datatools/handle.h>
 #include <datatools/logger.h>
 
+// This project:
 #include <mygsl/histogram.h>
 #include <mygsl/histogram_2d.h>
 #include <mygsl/histogram_utils.h>
@@ -175,6 +176,9 @@ DOCD_CLASS_DECLARATION(mygsl::histogram_pool)
 DOCD_CLASS_DECLARATION(mygsl::histogram)
 DOCD_CLASS_DECLARATION(mygsl::histogram_2d)
 
-#endif // MYGSL_HISTOGRAM_POOL_H_
+#endif // MYGSL_HISTOGRAM_POOL_H
 
-// end of mygsl::histogram_pool.h
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

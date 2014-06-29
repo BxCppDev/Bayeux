@@ -1,27 +1,31 @@
-// -*- mode: c++; -*-
-// histogram_2d.h
+/// \file mygsl/histogram_2d.h
 
-#ifndef MYGSL_HISTOGRAM_2D_H_
-#define MYGSL_HISTOGRAM_2D_H_ 1
+#ifndef MYGSL_HISTOGRAM_2D_H
+#define MYGSL_HISTOGRAM_2D_H 1
 
-#include <gsl/gsl_histogram2d.h>
-#include <gsl/gsl_vector.h>
-
+// Standard library:
 #include <iostream>
 #include <vector>
+
+// Third party:
+// - GSL:
+#include <gsl/gsl_histogram2d.h>
+#include <gsl/gsl_vector.h>
+// - Boost:
 #include <boost/cstdint.hpp>
-
-// Serialization interfaces :
+// - Bayeux/datatools :
 #include <datatools/i_serializable.h>
-
 #include <datatools/properties.h>
 #include <datatools/i_tree_dump.h>
+
+// This project:
 #include <mygsl/histogram_utils.h>
 
 namespace mygsl {
 
   class histogram;
 
+  /// \brief Two dimensional histogram
   class histogram_2d :
     DATATOOLS_SERIALIZABLE_CLASS
   {
@@ -67,11 +71,11 @@ namespace mygsl {
     void initialize (const std::vector<double> & xranges_,
                      const std::vector<double> & yranges_);
 
-    void initialize (const histogram & hx_, const histogram & hy_, 
-                     const std::vector<std::string> & imported_aux_prefixes_); 
-    
-    void initialize (const histogram_2d & h_, 
-                     const std::vector<std::string> & imported_aux_prefixes_); 
+    void initialize (const histogram & hx_, const histogram & hy_,
+                     const std::vector<std::string> & imported_aux_prefixes_);
+
+    void initialize (const histogram_2d & h_,
+                     const std::vector<std::string> & imported_aux_prefixes_);
 
     void init (size_t nx_, double xmin_, double xmax_,
                size_t ny_, double ymin_, double ymax_,
@@ -322,6 +326,9 @@ namespace mygsl {
 
 } // end of namespace mygsl
 
-#endif // MYGSL_HISTOGRAM_2D_H_
+#endif // MYGSL_HISTOGRAM_2D_H
 
-// end of histogram_2d.h
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

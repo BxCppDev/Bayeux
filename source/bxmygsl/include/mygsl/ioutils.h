@@ -1,9 +1,9 @@
-// -*- mode: c++; -*-
-// ioutils.h
+/// \file mygsl/ioutils.h
 
-#ifndef MYGSL_IOUTILS_H_
-#define MYGSL_IOUTILS_H_ 1
+#ifndef MYGSL_IOUTILS_H
+#define MYGSL_IOUTILS_H 1
 
+// Standard library:
 #include <iostream>
 
 namespace mygsl {
@@ -77,6 +77,9 @@ namespace mygsl {
 
 }
 
-#endif // MYGSL_IOUTILS_H_
+#endif // MYGSL_IOUTILS_H
 
-// end of ioutils.h
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

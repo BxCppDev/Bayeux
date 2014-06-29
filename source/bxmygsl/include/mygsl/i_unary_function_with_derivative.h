@@ -1,6 +1,5 @@
-// -*- mode: c++; -*-
-/* i_unary_function_with_derivative.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mygsl/i_unary_function_with_derivative.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2007-12-07
  * Last modified: 2013-04-23
  *
@@ -15,9 +14,10 @@
  *
  */
 
-#ifndef MYGSL_I_UNARY_FUNCTION_WITH_DERIVATIVE_H_
-#define MYGSL_I_UNARY_FUNCTION_WITH_DERIVATIVE_H_ 1
+#ifndef MYGSL_I_UNARY_FUNCTION_WITH_DERIVATIVE_H
+#define MYGSL_I_UNARY_FUNCTION_WITH_DERIVATIVE_H 1
 
+// This project:
 #include <mygsl/i_unary_function.h>
 #include <mygsl/interval.h>
 
@@ -70,6 +70,9 @@ namespace mygsl {
 
 } // end of namespace mygsl
 
-#endif // MYGSL_I_UNARY_FUNCTION_WITH_DERIVATIVE_H_
+#endif // MYGSL_I_UNARY_FUNCTION_WITH_DERIVATIVE_H
 
-// end of i_unary_function_with_derivative.h
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

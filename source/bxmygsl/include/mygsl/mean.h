@@ -1,6 +1,5 @@
-// -*- mode: c++; -*-
-/* mean.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mygsl/mean.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009-10-02
  * Last modified: 2013-04-23
  *
@@ -13,14 +12,19 @@
  *
  */
 
-#ifndef MYGSL_MEAN_H_
-#define MYGSL_MEAN_H_ 1
+#ifndef MYGSL_MEAN_H
+#define MYGSL_MEAN_H 1
 
+// Standard library:
 #include <cstdlib>
+
+// Third party:
+// - Boost:
 #include <boost/cstdint.hpp>
 
 namespace mygsl {
 
+  /// \brief Arithmetic mean computing algorithm
   class arithmetic_mean
     {
     public:
@@ -41,8 +45,9 @@ namespace mygsl {
       double  _sum_of_squared_;
    };
 
+  /// \brief Weighted mean computing algorithm
   class weighted_mean
-    {
+  {
     public:
       bool is_valid () const;
       double get_weight () const;
@@ -58,6 +63,9 @@ namespace mygsl {
 
 } // end of namespace mygsl
 
-#endif // MYGSL_MEAN_H_
+#endif // MYGSL_MEAN_H
 
-// end ofmean.h
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

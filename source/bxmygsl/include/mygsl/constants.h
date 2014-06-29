@@ -1,7 +1,7 @@
-// constants.h
+/// mygsl/constants.h
 
-#ifndef MYGSL_CONSTANTS_H_
-#define MYGSL_CONSTANTS_H_ 1
+#ifndef MYGSL_CONSTANTS_H
+#define MYGSL_CONSTANTS_H 1
 
 /// Top-level namespace of the Bayeux/mygsl module library
 namespace mygsl {
@@ -253,11 +253,9 @@ namespace mygsl {
 
 } // end of namespace mygsl
 
-#endif // MYGSL_CONSTANTS_H_
+#endif // MYGSL_CONSTANTS_H
 
 /* Local Variables: */
 /* mode: c++        */
 /* coding: utf-8    */
 /* End:             */
-
-// end of constants.h

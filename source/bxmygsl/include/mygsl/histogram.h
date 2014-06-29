@@ -1,27 +1,31 @@
-// -*- mode: c++; -*-
-// mygsl/histogram.h
+/// \file mygsl/histogram.h
 
-#ifndef MYGSL_HISTOGRAM_H_
-#define MYGSL_HISTOGRAM_H_ 1
+#ifndef MYGSL_HISTOGRAM_H
+#define MYGSL_HISTOGRAM_H 1
 
-#include <gsl/gsl_histogram.h>
-#include <gsl/gsl_vector.h>
-
+// Standard library:
 #include <iostream>
 #include <vector>
+
+// Third party:
+// - GSL:
+#include <gsl/gsl_histogram.h>
+#include <gsl/gsl_vector.h>
+// - Boost:
 #include <boost/cstdint.hpp>
-
-// Serialization interfaces :
+// - Bayeux/datatools :
 #include <datatools/i_serializable.h>
-
 #include <datatools/properties.h>
-#include <mygsl/histogram_utils.h>
 #include <datatools/i_tree_dump.h>
+
+// This project:
+#include <mygsl/histogram_utils.h>
 
 namespace mygsl {
 
   class histogram_2d;
 
+  /// \brief One dimensional histogram
   class histogram :
     DATATOOLS_SERIALIZABLE_CLASS,
     public datatools::i_tree_dumpable
@@ -244,6 +248,7 @@ namespace mygsl {
 
   public:
 
+    /// \brief PDF associated to a one dimensional histogram
     class pdf
     {
 
@@ -285,6 +290,9 @@ namespace mygsl {
 
 } // end of namespace mygsl
 
-#endif // MYGSL_HISTOGRAM_H_
+#endif // MYGSL_HISTOGRAM_H
 
-// end of mygsl/histogram.h
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

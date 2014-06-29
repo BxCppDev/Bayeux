@@ -1,7 +1,8 @@
 // -*- mode: c++; -*-
-/* bio_link_guard.h */
-#ifndef MYGSL_DETAIL_BIO_LINK_GUARD_H_
-#define MYGSL_DETAIL_BIO_LINK_GUARD_H_
+/// \file mygsl/detail/bio_link_guard.h
+
+#ifndef MYGSL_DETAIL_BIO_LINK_GUARD_H
+#define MYGSL_DETAIL_BIO_LINK_GUARD_H
 
 namespace mygsl {
 /// Nested private namespace of the Bayeux/mygsl module library (detail)
@@ -28,4 +29,4 @@ class dynamic_link_guard {
 } // end namespace detail
 } // end namespace mygsl
 
-#endif // MYGSL_DETAIL_BIO_LINK_GUARD_H_
+#endif // MYGSL_DETAIL_BIO_LINK_GUARD_H

@@ -1,6 +1,5 @@
-// -*- mode: c++; -*-
-/* mygsl::von_neumann_method.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mygsl/von_neumann_method.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009-09-23
  * Last modified: 2009-09-23
  *
@@ -16,16 +15,19 @@
  *
  */
 
-#ifndef MYGSL_VON_NEUMANN_METHOD_H_
-#define MYGSL_VON_NEUMANN_METHOD_H_ 1
+#ifndef MYGSL_VON_NEUMANN_METHOD_H
+#define MYGSL_VON_NEUMANN_METHOD_H 1
 
+// Standard library:
 #include <iostream>
 
+// This project:
 #include <mygsl/rng.h>
 #include <mygsl/i_unary_function.h>
 
 namespace mygsl {
 
+  /// \brief Von Neumann's rejection method for one dimensional PDF
   class von_neumann_method
   {
   public:
@@ -79,6 +81,9 @@ namespace mygsl {
 
 } // end of namespace mygsl
 
-#endif // MYGSL_VON_NEUMANN_METHOD_H_
+#endif // MYGSL_VON_NEUMANN_METHOD_H
 
-// end of von_neumann_method.h
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

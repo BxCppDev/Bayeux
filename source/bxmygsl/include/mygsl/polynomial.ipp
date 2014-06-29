@@ -1,14 +1,17 @@
-// -*- mode: c++ ; -*-
-/* mygsl/polynomial.ipp */
+/// \file mygsl/polynomial.ipp
 
-#ifndef MYGSL_POLYNOMIAL_IPP_
-#define MYGSL_POLYNOMIAL_IPP_ 1
+#ifndef MYGSL_POLYNOMIAL_IPP
+#define MYGSL_POLYNOMIAL_IPP 1
 
+// Ourselves:
 #include <mygsl/polynomial.h>
 
+// Third party:
+// - Boost:
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/vector.hpp>
+// - Bayeux/datatools :
 #include <datatools/i_serializable.ipp>
 
 namespace mygsl {
@@ -24,6 +27,9 @@ namespace mygsl {
 
 } // end of namespace mygsl
 
-#endif // MYGSL_POLYNOMIAL_IPP_
+#endif // MYGSL_POLYNOMIAL_IPP
 
-// end of mygsl/polynomial.ipp
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

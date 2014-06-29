@@ -1,13 +1,16 @@
-// -*- mode: c++ ; -*-
-/* mygsl/best_value.ipp */
+/// \file mygsl/best_value.ipp
 
-#ifndef MYGSL_BEST_VALUE_IPP_
-#define MYGSL_BEST_VALUE_IPP_ 1
+#ifndef MYGSL_BEST_VALUE_IPP
+#define MYGSL_BEST_VALUE_IPP 1
 
+// Ourselves:
 #include <mygsl/best_value.h>
 
+// Third party:
+// - Boost:
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
+// - Bayeux/datatools:
 #include <datatools/i_serializable.ipp>
 
 namespace mygsl {
@@ -26,6 +29,9 @@ namespace mygsl {
 
 } // end of namespace mygsl
 
-#endif // MYGSL_BEST_VALUE_IPP_
+#endif // MYGSL_BEST_VALUE_IPP
 
-// end of mygsl/best_value.ipp
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

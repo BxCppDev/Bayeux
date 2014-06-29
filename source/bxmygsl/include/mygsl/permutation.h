@@ -1,6 +1,5 @@
-// -*- mode: c++; -*-
-/* mygsl::permutation.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mygsl/permutation.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009-10-02
  * Last modified: 2013-04-23
  *
@@ -15,9 +14,10 @@
  *
  */
 
-#ifndef MYGSL_PERMUTATION_H_
-#define MYGSL_PERMUTATION_H_ 1
+#ifndef MYGSL_PERMUTATION_H
+#define MYGSL_PERMUTATION_H 1
 
+// Standard library:
 #include <iostream>
 #include <string>
 
@@ -86,7 +86,9 @@ class permutation {
 
 } // end of namespace mygsl
 
-#endif // MYGSL_PERMUTATION_H_
+#endif // MYGSL_PERMUTATION_H
 
-// end of permutation.h
-
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

@@ -1,9 +1,7 @@
-// -*- mode: c++; -*-
-/* mygsl_config.h header file
- */
+/// \brief mygsl/mygsl_config.h
 
-#ifndef MYGSL_MYGSL_CONFIG_H_
-#define MYGSL_MYGSL_CONFIG_H_ 1
+#ifndef MYGSL_MYGSL_CONFIG_H
+#define MYGSL_MYGSL_CONFIG_H 1
 
 /***  mygsl debug flag ***/
 #cmakedefine01 MYGSL_WITH_DEBUG
@@ -14,6 +12,9 @@
 /***  mygsl embedded CAMP-based reflection ***/
 #cmakedefine01 MYGSL_WITH_REFLECTION
 
-#endif // MYGSL_MYGSL_CONFIG_H_
+#endif // MYGSL_MYGSL_CONFIG_H
 
-// end of mygsl_config.h
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

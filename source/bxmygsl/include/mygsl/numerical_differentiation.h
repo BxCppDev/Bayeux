@@ -1,6 +1,5 @@
-// -*- mode: c++; -*-
-/* numerical_differentiation.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mygsl/numerical_differentiation.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009-10-02
  * Last modified: 2013-04-23
  *
@@ -14,9 +13,10 @@
  *
  */
 
-#ifndef MYGSL_NUMERICAL_DIFFERENTIATION_H_
-#define MYGSL_NUMERICAL_DIFFERENTIATION_H_ 1
+#ifndef MYGSL_NUMERICAL_DIFFERENTIATION_H
+#define MYGSL_NUMERICAL_DIFFERENTIATION_H 1
 
+// This project:
 #include <mygsl/i_unary_function.h>
 #include <mygsl/interval.h>
 
@@ -148,6 +148,9 @@ namespace mygsl {
 
 } // end of namespace mygsl
 
-#endif // MYGSL_NUMERICAL_DIFFERENTIATION_H_
+#endif // MYGSL_NUMERICAL_DIFFERENTIATION_H
 
-// end of numerical_differentiation.h
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

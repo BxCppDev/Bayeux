@@ -1,22 +1,26 @@
-// polynomial.h
+/// \file mygsl/polynomial.h
 
-#ifndef MYGSL_POLYNOMIAL_H_ 
-#define MYGSL_POLYNOMIAL_H_ 1
+#ifndef MYGSL_POLYNOMIAL_H
+#define MYGSL_POLYNOMIAL_H 1
 
+// Standard library:
 #include <vector>
 
-// Serialization interfaces :
+// Third party:
+// - Bayeux/datatools :
 #include <datatools/i_serializable.h>
+
+// This project:
 #include <mygsl/i_unary_function.h>
 
 namespace mygsl {
 
   /// \brief A real polynomial of arbitrary degree
-  class polynomial : 
+  class polynomial :
     public i_unary_function,
     DATATOOLS_SERIALIZABLE_CLASS {
   public:
-    
+
     bool is_valid() const;
 
     polynomial();
@@ -42,10 +46,10 @@ namespace mygsl {
     unsigned int get_ncoeffs() const;
     double get_coeff(unsigned int i_) const;
     void set_coeff(unsigned int i_, double c_);
-  
- 
-    void print (std::ostream& out_ = std::clog, 
-		int format_ = 0, 
+
+
+    void print (std::ostream& out_ = std::clog,
+		int format_ = 0,
 		bool eol_ = false) const;
 
     /*
@@ -59,15 +63,15 @@ namespace mygsl {
      * Q(x) = p0 + p1 * x^1 + p2 * x^2
      *
      */
-    static bool solve_quadratic(double p0_, double p1_, double p2_, 
+    static bool solve_quadratic(double p0_, double p1_, double p2_,
 				unsigned int & nsols_, double & x0_, double & x1_);
 
     /*
      * C(x) =  p0 + p1 * x^1 + p2 * x^2 + x^3
      *
      */
-    static bool solve_cubic(double p0_, double p1_, double p2_, 
-			    unsigned int & nsols_, 
+    static bool solve_cubic(double p0_, double p1_, double p2_,
+			    unsigned int & nsols_,
 			    double & x0_, double & x1_, double & x2_);
 
     /*
@@ -77,7 +81,7 @@ namespace mygsl {
     static bool solve_cubic(double p0_, double p1_, double p2_, double p3_,
 			    unsigned int & nsols_,
 			    double & x0_, double & x1_, double & x2_);
- 
+
   protected :
 
     double _eval(double x_) const;
@@ -89,7 +93,7 @@ namespace mygsl {
       solver(unsigned int sz_ = 0);
       virtual ~solver();
       bool solve(const polynomial& p_);
- 
+
     private:
       void _init_(unsigned int);
       void _reset_();
@@ -106,5 +110,9 @@ namespace mygsl {
   };
 }
 
-#endif // MYGSL_POLYNOMIAL_H_
+#endif // MYGSL_POLYNOMIAL_H
 
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

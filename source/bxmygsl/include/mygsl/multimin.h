@@ -1,16 +1,19 @@
-// -*- mode: c++; -*-
-// multimin.h
+/// \file mygsl/multimin.h
 
-#ifndef MYGSL_MULTIMIN_H_
-#define MYGSL_MULTIMIN_H_ 1
+#ifndef MYGSL_MULTIMIN_H
+#define MYGSL_MULTIMIN_H 1
 
+// Standard library:
 #include <iostream>
 #include <string>
 #include <vector>
 
+// Third party:
+// - GSL:
 #include <gsl/gsl_multimin.h>
 #include <gsl/gsl_vector.h>
 
+// This project:
 #include <mygsl/i_unary_function.h>
 
 namespace mygsl {
@@ -392,6 +395,9 @@ namespace mygsl {
 
 } // namespace mygsl
 
-#endif // MYGSL_MULTIMIN_H_
+#endif // MYGSL_MULTIMIN_H
 
-// end of multimin.h
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

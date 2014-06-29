@@ -1,13 +1,16 @@
-// -*- mode: c++ ; -*-
-/* mygsl/interval.ipp */
+//// \file mygsl/interval.ipp
 
-#ifndef MYGSL_INTERVAL_IPP_
-#define MYGSL_INTERVAL_IPP_ 1
+#ifndef MYGSL_INTERVAL_IPP
+#define MYGSL_INTERVAL_IPP 1
 
+// Ourselves:
 #include <mygsl/interval.h>
 
+// Third party:
+// - Boost:
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
+// - Bayeux/datatools :
 #include <datatools/i_serializable.ipp>
 
 namespace mygsl {
@@ -27,6 +30,9 @@ namespace mygsl {
 
 } // end of namespace mygsl
 
-#endif // MYGSL_INTERVAL_IPP_
+#endif // MYGSL_INTERVAL_IPP
 
-// end of mygsl/interval.ipp
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

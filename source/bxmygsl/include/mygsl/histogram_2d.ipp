@@ -1,15 +1,19 @@
-// -*- mode: c++ ; -*-
-/* mygsl/histogram_2d.ipp */
+/// \file mygsl/histogram_2d.ipp
 
-#ifndef MYGSL_HISTOGRAM_2D_IPP_
-#define MYGSL_HISTOGRAM_2D_IPP_ 1
+#ifndef MYGSL_HISTOGRAM_2D_IPP
+#define MYGSL_HISTOGRAM_2D_IPP 1
 
+// Ourselves:
 #include <mygsl/histogram_2d.h>
+
+// Standard library:
 #include <string>
 
+// Third party:
+// - Boost:
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
-
+// - Bayeux/datatools :
 #include <datatools/i_serializable.ipp>
 #include <datatools/utils.h>
 #include <datatools/properties.ipp>
@@ -73,7 +77,9 @@ namespace mygsl {
 
 } // end of namespace mygsl
 
+#endif // MYGSL_HISTOGRAM_2D_IPP
 
-#endif // MYGSL_HISTOGRAM_2D_IPP_
-
-// end of mygsl/histogram_2d.ipp
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

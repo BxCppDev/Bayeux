@@ -1,20 +1,24 @@
-// -*- mode : c++; -*- 
-// one_dimensional_root_finding.h
+/// \file mygsl/one_dimensional_root_finding.h
 
-#ifndef MYGSL_ONE_DIMENSIONAL_ROOT_FINDING_H_
-#define MYGSL_ONE_DIMENSIONAL_ROOT_FINDING_H_ 1
+#ifndef MYGSL_ONE_DIMENSIONAL_ROOT_FINDING_H
+#define MYGSL_ONE_DIMENSIONAL_ROOT_FINDING_H 1
 
+
+// Third party:
+// - GSL:
 #include <gsl/gsl_roots.h>
 
+// This project:
 #include <mygsl/i_unary_function.h>
 #include <mygsl/i_unary_function_with_derivative.h>
 #include <mygsl/best_value.h>
 
 namespace mygsl {
 
+  /// \brief One dimensional root solver algorithm
   class one_dimensional_root_solver
   {
-  public: 
+  public:
 
     static const std::string BISECTION_METHOD_LABEL;
     static const std::string FALSEPOS_METHOD_LABEL;
@@ -35,35 +39,35 @@ namespace mygsl {
 
     class at_step_action
     {
-          
+
     public:
 
       virtual void action (int status_,
-                           size_t iter_, 
-                           double a_, 
+                           size_t iter_,
+                           double a_,
                            double b_,
                            double c_) = 0;
 
       void operator () (int status_,
-                        size_t iter_, 
-                        double a_, 
+                        size_t iter_,
+                        double a_,
                         double b_,
                         double c_);
     };
-      
+
     struct default_step_action : public at_step_action
     {
       virtual void action (int status_,
-                           size_t iter_, 
-                           double a_, 
+                           size_t iter_,
+                           double a_,
                            double b_,
                            double c_);
     };
 
     void unset_step_action ();
-      
+
     void set_default_step_action ();
-      
+
     void set_step_action (at_step_action & action_);
 
     bool is_fsolver () const;
@@ -77,13 +81,13 @@ namespace mygsl {
     std::string get_name () const;
 
     void set_debug (bool debug_ = true);
-      
+
     bool is_debug () const;
-   
+
     size_t get_iter () const;
-   
+
     size_t get_max_iter () const;
-   
+
     double get_epsabs () const;
 
     bool is_converged () const;
@@ -106,30 +110,30 @@ namespace mygsl {
 
     static void   g_fdfunction (double x_, void * params_, double * y_, double * dy_);
 
-    static best_value solve (const i_unary_function & sys_, 
-                             double epsabs_, 
-                             double a_, 
-                             double b_, 
+    static best_value solve (const i_unary_function & sys_,
+                             double epsabs_,
+                             double a_,
+                             double b_,
                              const std::string & method_ = BRENT_METHOD_LABEL);
-      
-    static best_value solve (const i_unary_function_with_derivative & sys_, 
-                             double epsabs_, 
-                             double a_, 
+
+    static best_value solve (const i_unary_function_with_derivative & sys_,
+                             double epsabs_,
+                             double a_,
                              double b_,
                              const std::string & method_ = STEFFENSON_METHOD_LABEL);
 
   protected:
 
     void _at_step_hook (int status_,
-                        size_t iter_, 
-                        double a_, 
+                        size_t iter_,
+                        double a_,
                         double b_,
                         double c_);
 
   private:
-      
+
     static default_step_action _default_step_action_;
- 
+
   private:
 
     bool _debug_;
@@ -154,9 +158,12 @@ namespace mygsl {
     at_step_action *            _at_step_action_;
 
   };
-  
+
 } // namespace mygsl
 
-#endif // MYGSL_ONE_DIMENSIONAL_ROOT_FINDING_H_
+#endif // MYGSL_ONE_DIMENSIONAL_ROOT_FINDING_H
 
-// end of one_dimensional_root_finding.h
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */

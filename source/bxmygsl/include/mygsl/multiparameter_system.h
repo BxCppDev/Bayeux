@@ -1,15 +1,18 @@
-// multiparameter_system.h
+/// \file mygsl/multiparameter_system.h
 
-#ifndef MYGSL_MULTIPARAMETER_SYSTEM_H_
-#define MYGSL_MULTIPARAMETER_SYSTEM_H_ 1
+#ifndef MYGSL_MULTIPARAMETER_SYSTEM_H
+#define MYGSL_MULTIPARAMETER_SYSTEM_H 1
 
+// Standard library:
 #include <iostream>
 #include <vector>
 
+// This project:
 #include <mygsl/param_entry.h>
 
 namespace mygsl {
 
+  /// \brief System with several parameters
   class multiparameter_system
     {
     public:
@@ -130,6 +133,9 @@ namespace mygsl {
 
 } // namespace mygsl
 
-#endif // MYGSL_MULTIPARAMETER_SYSTEM_H_
+#endif // MYGSL_MULTIPARAMETER_SYSTEM_H
 
-// end of multiparameter_system.h
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */
