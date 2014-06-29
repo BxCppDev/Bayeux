@@ -22,7 +22,7 @@ endforeach()
 
 # - In place defs for module CMake variables...
 # - Versioning
-set(datatools_VERSION_MAJOR 5)
+set(datatools_VERSION_MAJOR 6)
 set(datatools_VERSION_MINOR 0)
 set(datatools_VERSION_PATCH 0)
 set(datatools_VERSION "${datatools_VERSION_MAJOR}.${datatools_VERSION_MINOR}.${datatools_VERSION_PATCH}")
