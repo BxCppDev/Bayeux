@@ -19,8 +19,12 @@
 // You should have received a copy of the GNU General Public License
 // along with brio.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef BRIO_WRITER_INL_HH
-#define BRIO_WRITER_INL_HH
+#ifndef BRIO_WRITER_INL_H
+#define BRIO_WRITER_INL_H
+
+// Third Party:
+// - ROOT:
+#include <TTree.h>
 
 namespace brio {
 template <typename T>
@@ -141,5 +145,4 @@ int writer::_at_store(const T& a_data, store_info *a_store_info) {
 }
 
 } // namespace brio
-#endif // BRIO_READER_INL_HH
-
+#endif // BRIO_READER_INL_H

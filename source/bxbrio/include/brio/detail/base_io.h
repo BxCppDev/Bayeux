@@ -1,5 +1,5 @@
-/* base_io.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file brio/detail/base_io.h
+/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-11-03
  * Last modified: 2012-12-20
  *
@@ -13,26 +13,26 @@
  *
  */
 
-#ifndef BRIO_DETAIL_BASE_IO_H_
-#define BRIO_DETAIL_BASE_IO_H_ 1
+#ifndef BRIO_DETAIL_BASE_IO_H
+#define BRIO_DETAIL_BASE_IO_H 1
 
-// Standard Library
+// Standard Library:
 #include <string>
 #include <list>
 #include <locale>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 // 2012-01-09 FM : now use the Boost 1.47 header :
 //#include <boost/math/nonfinite_num_facets.hpp>
 #include <boost/math/special_functions/nonfinite_num_facets.hpp>
 
-// - datatools
+// - Bayeux/datatools:
 #include <datatools/i_serializable.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/logger.h>
 
-// This Project
+// This Project:
 #include <brio/utils.h>
 
 class TFile;
@@ -175,4 +175,4 @@ bool base_io::has_store_with_matching_serial_tag(const std::string& label_) cons
 } // end of namespace detail
 } // end of namespace brio
 
-#endif // BRIO_DETAIL_BASE_IO_H_
+#endif // BRIO_DETAIL_BASE_IO_H

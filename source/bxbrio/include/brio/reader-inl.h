@@ -1,4 +1,4 @@
-//! \file  reader-inl.h
+//! \file  brio/reader-inl.h
 //! \brief Definitions of brio::reader template functions
 //
 // Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com>
@@ -19,8 +19,12 @@
 // You should have received a copy of the GNU General Public License
 // along with brio.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef BRIO_READER_INL_HH
-#define BRIO_READER_INL_HH
+#ifndef BRIO_READER_INL_H
+#define BRIO_READER_INL_H
+
+// Third Party:
+// - ROOT:
+#include <TTree.h>
 
 namespace brio {
 template<typename T>
@@ -66,7 +70,7 @@ int reader::_at_load(T& data_, store_info *ptr_si_, int64_t nentry_) {
   store_info& si = *ptr_si_;
 
   if (_check_serial_tag_) {
-    // We check if the serialization tag from the store matches the 
+    // We check if the serialization tag from the store matches the
     // data's one:
     if (si.has_dedicated_serialization_tag()) {
       // 2013-02-19 FM : change the way we check the serial tag :
@@ -89,7 +93,7 @@ int reader::_at_load(T& data_, store_info *ptr_si_, int64_t nentry_) {
                 "Source store '" << si.label << "' has "
                 << "no serialized entry at index '" << nentry_ << "' !");
   } else {
-    // if nentry_ < 0: use entry index relative to the current entry 
+    // if nentry_ < 0: use entry index relative to the current entry
     // position
     if (si.current_entry < 0) {// at rewind position
       // start with first entry:
@@ -114,7 +118,7 @@ int reader::_at_load(T& data_, store_info *ptr_si_, int64_t nentry_) {
     DT_THROW_IF(true,
                 std::logic_error,
                 "An I/O error occurs from entry '"
-                << nentry 
+                << nentry
                 << "' in source store labelled '" << si.label.c_str()
                 << "' from  file '" << _filename << "' !");
   } else {
@@ -132,18 +136,18 @@ int reader::_at_load(T& data_, store_info *ptr_si_, int64_t nentry_) {
       // if (data_.get_serial_tag () != serial_tag)
       DT_THROW_IF(!datatools::check_serial_tag<T>(serial_tag),
                   std::logic_error,
-                  "Entry '" << nentry 
-                  << "' with serial tag '" << serial_tag 
+                  "Entry '" << nentry
+                  << "' with serial tag '" << serial_tag
                   << "' in (mixed) source store labelled '" << si.label.c_str()
 
-                  << "' from  file '" << _filename 
+                  << "' from  file '" << _filename
                   << "' does not match the requested '"
                   << data_.get_serial_tag() << "' data type !");
     }
   }
 
   // Deserialize from the archive:
-  boost::iostreams::stream<boost::iostreams::array_source> 
+  boost::iostreams::stream<boost::iostreams::array_source>
       input_stream(si.record.fDataBuffer.fArray,si.record.fDataBuffer.fN);
   // 2011-06-16 FM: restored
   if (this->is_format_pba()) {
@@ -162,5 +166,4 @@ int reader::_at_load(T& data_, store_info *ptr_si_, int64_t nentry_) {
   return 0;
 }
 } // namespace brio
-#endif // BRIO_READER_INL_HH
-
+#endif // BRIO_READER_INL_H

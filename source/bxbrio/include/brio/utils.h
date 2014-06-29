@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* utils.h
- * Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file brio/utils.h
+/* Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-11-01
  * Last modified: 2013-04-22
  *
@@ -13,19 +13,19 @@
  *
  */
 
-#ifndef BRIO_UTILS_H_
-#define BRIO_UTILS_H_ 1
+#ifndef BRIO_UTILS_H
+#define BRIO_UTILS_H 1
 
-// Standard Library
+// Standard Library:
 #include <string>
 #include <vector>
 #include <map>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/cstdint.hpp>
 
-// This Project
+// This Project:
 #include <brio/detail/brio_record.h>
 
 class TTree;
@@ -87,6 +87,4 @@ typedef std::map<std::string, store_info> store_info_dict_type;
 
 } // end of namespace brio
 
-#endif // BRIO_UTILS_H_
-// end of utils.h
-
+#endif // BRIO_UTILS_H

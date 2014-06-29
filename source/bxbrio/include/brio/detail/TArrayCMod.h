@@ -1,6 +1,7 @@
 // -*- mode: c++; -*-
-#ifndef BRIO_DETAIL_TARRAYCMOD_H_
-#define BRIO_DETAIL_TARRAYCMOD_H_
+/// \file brio/detail/TArrayCMod.h
+#ifndef BRIO_DETAIL_TARRAYCMOD_H
+#define BRIO_DETAIL_TARRAYCMOD_H
 
 //////////////////////////////////////////////////////////////////////////
 //                                                                      //
@@ -10,15 +11,11 @@
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
-// Standard Library
-
-// Third Party
-// - ROOT
+// Third Party:
+// - ROOT:
 #ifndef ROOT_TArray
 #include "TArray.h"
 #endif
-
-// This Project
 
 //! \brief The internal ROOT I/O buffer of bytes
 class TArrayCMod : public TArray {
@@ -43,7 +40,4 @@ class TArrayCMod : public TArray {
   ClassDef(TArrayCMod,1)  //Array of chars
 };
 
-#endif // BRIO_DETAIL_TARRAYCMOD_H_
-
-// end of TArrayCMod.h
-
+#endif // BRIO_DETAIL_TARRAYCMOD_H

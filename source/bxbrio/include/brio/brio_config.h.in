@@ -1,12 +1,9 @@
 // -*- mode: c++; -*-
-/* brio_config.h header file
- */
+/// \file brio/brio_config.h
 
-#ifndef BRIO_BRIO_CONFIG_H_
-#define BRIO_BRIO_CONFIG_H_ 1
+#ifndef BRIO_BRIO_CONFIG_H
+#define BRIO_BRIO_CONFIG_H 1
 
+// Nothing special
 
-#endif // BRIO_BRIO_CONFIG_H_
-
-// end of brio_config.h
-
+#endif // BRIO_BRIO_CONFIG_H

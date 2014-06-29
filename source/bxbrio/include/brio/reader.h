@@ -1,5 +1,5 @@
-/* reader.h
- * Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file brio/reader.h
+/* Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-11-01
  * Last modified: 2013-05-19
  *
@@ -12,17 +12,18 @@
  * History:
  *
  */
-#ifndef BRIO_READER_H_
-#define BRIO_READER_H_ 1
 
-// Standard Library
+#ifndef BRIO_READER_H
+#define BRIO_READER_H 1
+
+// Standard Library:
 #include <iostream>
 #include <stdexcept>
 #include <sstream>
 #include <string>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/iostreams/stream.hpp>
 #include <boost/iostreams/device/array.hpp>
 
@@ -36,14 +37,11 @@
 #pragma clang diagnostic pop
 #endif
 
-// - datatools
+// - Bayeux/datatools:
 #include <datatools/eos/portable_iarchive.hpp>
 #include <datatools/exception.h>
 
-// - ROOT
-#include <TTree.h>
-
-// This Project
+// This Project:
 #include <brio/detail/base_io.h>
 
 namespace brio {
@@ -111,7 +109,7 @@ class reader : public detail::base_io {
   //! Load template method for arbitrary store and entry
   template<typename T>
   int load(T& data_, const std::string& label_, int64_t nentry_ = -1);
-  
+
   //! Smart print
   virtual void tree_dump(std::ostream& out_ = std::clog,
                          const std::string& title_ = "",
@@ -125,7 +123,7 @@ class reader : public detail::base_io {
   virtual void _at_open(const std::string& filename_);
 
   template<class T>
-  int _at_load(T& data_, store_info *ptr_si_, int64_t nentry_); 
+  int _at_load(T& data_, store_info *ptr_si_, int64_t nentry_);
 
   void _set_default();
 
@@ -146,5 +144,4 @@ class reader : public detail::base_io {
 
 #include <brio/reader-inl.h>
 
-#endif // BRIO_READER_H_
-
+#endif // BRIO_READER_H

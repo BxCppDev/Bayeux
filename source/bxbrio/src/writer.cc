@@ -1,23 +1,19 @@
-/* writer.cc
- */
-// Ourselves
+/// writer.cc
+
+// Ourselves:
 #include <brio/writer.h>
 
-// Standard Library
+// Standard Library:
 #include <cstdlib>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/filesystem.hpp>
-
-// - ROOT
+// - ROOT:
 #include <TTree.h>
 #include <TFile.h>
-
-// - datatools
+// - Bayeux/datatools:
 #include <datatools/utils.h>
-
-// This Project
 
 namespace brio {
 void writer::lock() {
@@ -32,25 +28,25 @@ bool writer::is_locked() const {
   return _locked_;
 }
 
-void writer::__only_if_unlocked(const std::string& where_) const {
-  if (this->is_locked()) {
-    std::ostringstream message;
-    message << "brio::writer::__only_if_unlocked: ";
-    if (!where_.empty()) message << where_ << ": ";
-    message << "Operation prohibited; writer is locked !";
-    throw std::logic_error(message.str());
-  }
-}
+// void writer::_only_if_unlocked_(const std::string& where_) const {
+//   if (this->is_locked()) {
+//     std::ostringstream message;
+//     message << "brio::writer::__only_if_unlocked: ";
+//     if (!where_.empty()) message << where_ << ": ";
+//     message << "Operation prohibited; writer is locked !";
+//     throw std::logic_error(message.str());
+//   }
+// }
 
-void writer::__only_if_locked (const std::string& where_) const {
-  if (!this->is_locked()) {
-    std::ostringstream message;
-    message << "brio::writer::__only_if_locked: ";
-    if (!where_.empty()) message << where_ << ": ";
-    message << "Operation prohibited; writer is locked !";
-    throw std::logic_error(message.str());
-  }
-}
+// void writer::_only_if_locked_ (const std::string& where_) const {
+//   if (!this->is_locked()) {
+//     std::ostringstream message;
+//     message << "brio::writer::_only_if_locked_: ";
+//     if (!where_.empty()) message << where_ << ": ";
+//     message << "Operation prohibited; writer is locked !";
+//     throw std::logic_error(message.str());
+//   }
+// }
 
 bool writer::is_existing_file_protected() const {
   return _existing_file_protected_;
@@ -292,5 +288,3 @@ void writer::_at_open (const std::string& filename_) {
   _file->cd();
 }
 } // end of namespace brio
-
-// end of writer.cc

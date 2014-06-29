@@ -1,5 +1,5 @@
-/* writer.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file brio/writer.h
+/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-11-01
  * Last modified: 2013-04-22
  *
@@ -12,16 +12,18 @@
  * History:
  *
  */
-#ifndef BRIO_WRITER_H_
-#define BRIO_WRITER_H_ 1
-// Standard Library
+
+#ifndef BRIO_WRITER_H
+#define BRIO_WRITER_H 1
+
+// Standard Library:
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
 #include <string>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/iostreams/stream.hpp>
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/filesystem.hpp>
@@ -35,15 +37,12 @@
 #pragma clang diagnostic pop
 #endif
 
-// - datatools
+// - Bayeux/datatools:
 #include <datatools/eos/portable_oarchive.hpp>
 #include <datatools/logger.h>
 #include <datatools/exception.h>
 
-// - ROOT
-#include <TTree.h>
-
-// This Project
+// This Project:
 #include <brio/detail/base_io.h>
 
 namespace brio {
@@ -145,9 +144,9 @@ class writer : public detail::base_io {
 
   virtual void _at_open(const std::string& a_filename);
 
- private:
-  void __only_if_unlocked(const std::string& a_where) const;
-  void __only_if_locked(const std::string& a_where) const;
+ /* private: */
+ /*  void _only_if_unlocked_(const std::string& a_where) const; */
+ /*  void _only_if_locked_(const std::string& a_where) const; */
 
  private:
   bool _locked_; /// Flag to lock the writer storage structure
@@ -160,5 +159,4 @@ class writer : public detail::base_io {
 
 #include <brio/writer-inl.h>
 
-#endif // BRIO_WRITER_H_
-
+#endif // BRIO_WRITER_H

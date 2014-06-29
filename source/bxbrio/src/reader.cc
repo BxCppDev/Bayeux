@@ -1,32 +1,29 @@
-/* reader.cc
- */
-// Ourselves
+/// reader.cc
+
+// Ourselves:
 #include <brio/reader.h>
 
 // Standard Library
 #include <cstdlib>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/filesystem.hpp>
-
-// - ROOT
+// - ROOT:
+#include <TTree.h>
 #include <TFile.h>
 #include <TKey.h>
-
-// - datatools
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/exception.h>
 
-// This Project
-
 namespace brio {
-// ctor:
+
 reader::reader() : detail::base_io(RW_READ) {
   reader::_set_default();
 }
 
-// ctor:
+
 reader::reader(const std::string& filename_, datatools::logger::priority p_)
   : detail::base_io (RW_READ, p_) {
   reader::_set_default();
@@ -39,7 +36,7 @@ reader::reader(const std::string& filename_, datatools::logger::priority p_)
   this->open(filename_);
 }
 
-// ctor:
+
 reader::reader(const std::string& filename_, const std::string& format_str_,
                datatools::logger::priority p_)
   : detail::base_io (RW_READ, p_) {
@@ -48,7 +45,7 @@ reader::reader(const std::string& filename_, const std::string& format_str_,
   open(filename_);
 }
 
-// dtor:
+
 reader::~reader() {
   if (this->is_opened()) {
     this->close();
@@ -282,5 +279,3 @@ store_info* reader::get_store_or_throw(const std::string& label) {
 }
 
 } // end of namespace brio
-
-// end of reader.cc

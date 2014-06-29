@@ -16,12 +16,11 @@
 // - Bayeux/datatools
 #include <datatools/exception.h>
 
+// Seems not to work:
 #if defined (__clang__)
-//#pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Woverloaded-virtual"
 #endif
 #if defined (__gnuc__)
-//#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
 #endif
 
