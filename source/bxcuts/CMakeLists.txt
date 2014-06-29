@@ -25,7 +25,7 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(cuts)
 
 # - Versioning
-set(cuts_VERSION_MAJOR 4)
+set(cuts_VERSION_MAJOR 5)
 set(cuts_VERSION_MINOR 0)
 set(cuts_VERSION_PATCH 0)
 set(cuts_VERSION "${cuts_VERSION_MAJOR}.${cuts_VERSION_MINOR}.${cuts_VERSION_PATCH}")

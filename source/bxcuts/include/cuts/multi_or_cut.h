@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* multi_or_cut.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file cuts/multi_or_cut.h
+/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-18
  * Last modified: 2013-05-16
  *
@@ -13,12 +13,14 @@
  *
  */
 
-#ifndef CUTS_MULTI_OR_CUT_H_
-#define CUTS_MULTI_OR_CUT_H_ 1
+#ifndef CUTS_MULTI_OR_CUT_H
+#define CUTS_MULTI_OR_CUT_H 1
 
+// Standard library:
 #include <string>
 #include <list>
 
+// This project:
 #include <cuts/i_multi_cut.h>
 
 namespace cuts {
@@ -49,6 +51,4 @@ namespace cuts {
 
 } // end of namespace cuts
 
-#endif // CUTS_MULTI_OR_CUT_H_
-
-// end of multi_or_cut.h
+#endif // CUTS_MULTI_OR_CUT_H

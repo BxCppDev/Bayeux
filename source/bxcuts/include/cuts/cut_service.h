@@ -1,5 +1,5 @@
-/* cut_service.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file cuts/cut_service.h
+/* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-09-20
  * Last modified : 2013-04-22
  *
@@ -28,11 +28,14 @@
  *
  */
 
-#ifndef CUTS_CUT_SERVICE_H_
-#define CUTS_CUT_SERVICE_H_ 1
+#ifndef CUTS_CUT_SERVICE_H
+#define CUTS_CUT_SERVICE_H 1
 
+// Standard library:
 #include <string>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/base_service.h>
 #include <datatools/service_tools.h>
 
@@ -97,8 +100,7 @@ namespace cuts {
 
 }  // end of namespace cuts
 
-#endif // CUTS_CUT_SERVICE_H_
-
+#endif // CUTS_CUT_SERVICE_H
 
 /***************
  * OCD support *
@@ -106,7 +108,6 @@ namespace cuts {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(cuts::cut_service)
 
-// end of cut_service.h
 /*
 ** Local Variables: --
 ** mode: c++ --

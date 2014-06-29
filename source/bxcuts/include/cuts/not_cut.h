@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* not_cut.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file cuts/not_cut.h
+/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-18
  * Last modified: 2013-04-22
  *
@@ -13,9 +13,10 @@
  *
  */
 
-#ifndef CUTS_NOT_CUT_H_
-#define CUTS_NOT_CUT_H_ 1
+#ifndef CUTS_NOT_CUT_H
+#define CUTS_NOT_CUT_H 1
 
+// This project:
 #include <cuts/i_cut.h>
 
 namespace cuts {
@@ -66,6 +67,4 @@ namespace cuts {
 
 } // end of namespace cuts
 
-#endif // _CUTS_NOT_CUT_H_
-
-// end of not_cut.h
+#endif // _CUTS_NOT_CUT_H

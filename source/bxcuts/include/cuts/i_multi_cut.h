@@ -1,6 +1,7 @@
 // -*- mode: c++ ; -*-
-/* i_multi_cut.h
- * Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file cuts/i_multi_cut.h
+
+/* Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-05-16
  * Last modified: 2013-05-16
  *
@@ -13,13 +14,17 @@
  *
  */
 
-#ifndef CUTS_I_MULTI_CUT_H_
-#define CUTS_I_MULTI_CUT_H_ 1
+#ifndef CUTS_I_MULTI_CUT_H
+#define CUTS_I_MULTI_CUT_H 1
 
+// Standard library:
 #include <string>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 
+// This project:
 #include <cuts/i_cut.h>
 
 namespace cuts {
@@ -29,8 +34,10 @@ namespace cuts {
   {
   public:
 
+    /// Collection of cut handles
     typedef std::list<cut_handle_type> cuts_col_type;
 
+    /// Add a cut in the list of cut handle
     void add_cut(cut_handle_type &);
 
     /// Constructor
@@ -61,12 +68,10 @@ namespace cuts {
 
   protected:
 
-    cuts_col_type _cuts;
+    cuts_col_type _cuts; /// List of cut handles
 
   };
 
 } // end of namespace cuts
 
-#endif // CUTS_I_MULTI_CUT_H_
-
-// end of i_multi_cut.h
+#endif // CUTS_I_MULTI_CUT_H

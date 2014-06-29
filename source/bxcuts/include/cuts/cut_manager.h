@@ -1,5 +1,6 @@
-/* cut_manager.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file cuts/cut_manager.h
+
+/* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-22
  * Last modified : 2013-05-17
  *
@@ -28,17 +29,21 @@
  *
  */
 
-#ifndef CUTS_CUT_MANAGER_H_
-#define CUTS_CUT_MANAGER_H_ 1
+#ifndef CUTS_CUT_MANAGER_H
+#define CUTS_CUT_MANAGER_H 1
 
+// Standard library:
 #include <string>
 
+// Third party:
+// - Boost:
 #include <boost/cstdint.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/i_tree_dump.h>
 #include <datatools/properties.h>
 #include <datatools/logger.h>
 
+// This project:
 #include <cuts/i_cut.h>
 #include <cuts/cut_tools.h>
 
@@ -179,9 +184,8 @@ namespace cuts {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(cuts::cut_manager)
 
-#endif // CUTS_CUT_MANAGER_H_
+#endif // CUTS_CUT_MANAGER_H
 
-// end of cut_manager.h
 /*
 ** Local Variables: --
 ** mode: c++ --

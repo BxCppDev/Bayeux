@@ -1,5 +1,5 @@
-/* cut_tools.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file cuts/cut_tools.h
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
  * Last modified : 2013-03-22
  *
@@ -30,16 +30,19 @@
  *
  */
 
-#ifndef CUTS_CUT_TOOLS_H_
-#define CUTS_CUT_TOOLS_H_ 1
+#ifndef CUTS_CUT_TOOLS_H
+#define CUTS_CUT_TOOLS_H 1
 
+// Standard library:
 #include <iostream>
 #include <string>
 #include <map>
 #include <exception>
 
+// Third party:
+// - Boost:
 #include <boost/scoped_ptr.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/handle.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/properties.h>
@@ -150,9 +153,8 @@ namespace cuts {
   typedef std::vector<std::string>              ordered_cut_list_type;
 } // end of cuts
 
-#endif // CUTS_CUT_TOOLS_H_
+#endif // CUTS_CUT_TOOLS_H
 
-// end of cut_tools.h
 /*
 ** Local Variables: --
 ** mode: c++ --

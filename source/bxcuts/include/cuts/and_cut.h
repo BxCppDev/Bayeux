@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* and_cut.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file cuts/and_cut.h
+/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-18
  * Last modified: 2013-05-16
  *
@@ -13,9 +13,10 @@
  *
  */
 
-#ifndef CUTS_AND_CUT_H_
-#define CUTS_AND_CUT_H_ 1
+#ifndef CUTS_AND_CUT_H
+#define CUTS_AND_CUT_H 1
 
+// This project:
 #include <cuts/i_binary_cut.h>
 
 namespace cuts {
@@ -46,6 +47,4 @@ namespace cuts {
 
 } // end of namespace cuts
 
-#endif // CUTS_AND_CUT_H_
-
-// end of and_cut.h
+#endif // CUTS_AND_CUT_H

@@ -1,13 +1,10 @@
 // -*- mode: c++; -*-
-/* cuts_config.h header file
- */
+/// \file cuts/cuts_config.h
 
-#ifndef CUTS_CUTS_CONFIG_H_
-#define CUTS_CUTS_CONFIG_H_ 1
+#ifndef CUTS_CUTS_CONFIG_H
+#define CUTS_CUTS_CONFIG_H 1
 
 /*  cuts debug flag */
 #cmakedefine01 CUTS_WITH_DEBUG
 
-#endif // CUTS_CUTS_CONFIG_H_
-
-// end of cuts_config.h
+#endif // CUTS_CUTS_CONFIG_H

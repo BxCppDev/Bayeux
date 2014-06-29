@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* i_binary_cut.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file cuts/i_binary_cut.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-18
  * Last modified: 2013-05-16
  *
@@ -13,13 +13,17 @@
  *
  */
 
-#ifndef CUTS_I_BINARY_CUT_H_
-#define CUTS_I_BINARY_CUT_H_ 1
+#ifndef CUTS_I_BINARY_CUT_H
+#define CUTS_I_BINARY_CUT_H 1
 
+// Standard library:
 #include <string>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 
+// This project:
 #include <cuts/i_cut.h>
 
 namespace cuts {
@@ -76,6 +80,4 @@ namespace cuts {
 
 } // end of namespace cuts
 
-#endif // CUTS_I_BINARY_CUT_H_
-
-// end of i_binary_cut.h
+#endif // CUTS_I_BINARY_CUT_H

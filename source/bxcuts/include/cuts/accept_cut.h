@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* accept_cut.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file cuts/accept_cut.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-18
  * Last modified: 2013-04-22
  *
@@ -13,9 +13,10 @@
  *
  */
 
-#ifndef CUTS_ACCEPT_CUT_H_
-#define CUTS_ACCEPT_CUT_H_ 1
+#ifndef CUTS_ACCEPT_CUT_H
+#define CUTS_ACCEPT_CUT_H 1
 
+// This project:
 #include <cuts/i_cut.h>
 
 namespace cuts {
@@ -54,6 +55,4 @@ namespace cuts {
 
 } // end of namespace cuts
 
-#endif // CUTS_ACCEPT_CUT_H_
-
-// end of accept_cut.h
+#endif // CUTS_ACCEPT_CUT_H

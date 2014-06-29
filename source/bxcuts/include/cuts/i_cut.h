@@ -1,5 +1,5 @@
-/* i_cut.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file cuts/i_cut.h
+/* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
  * Last modified : 2013-12-14
  *
@@ -28,21 +28,25 @@
  *
  */
 
-#ifndef CUTS_I_CUT_H_
-#define CUTS_I_CUT_H_ 1
+#ifndef CUTS_I_CUT_H
+#define CUTS_I_CUT_H 1
 
+// Standard library:
 #include <ostream>
 #include <string>
 #include <typeinfo>
 
+// Third party:
+// - Boost:
 #include <boost/cstdlib.hpp>
 #include <boost/shared_ptr.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/i_tree_dump.h>
 #include <datatools/factory_macros.h>
 #include <datatools/bit_mask.h>
 #include <datatools/logger.h>
 
+// This project:
 #include <cuts/cut_tools.h>
 
 namespace datatools {
@@ -292,9 +296,8 @@ namespace cuts {
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::cuts::i_cut,T,CutID); \
   /**/
 
-#endif // CUTS_I_CUT_H_
+#endif // CUTS_I_CUT_H
 
-// end of i_cut.h
 /*
 ** Local Variables: --
 ** mode: c++ --
