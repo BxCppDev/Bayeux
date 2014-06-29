@@ -1,14 +1,13 @@
-// time_tools.h
-#ifndef DATATOOLS_TIME_TOOLS_H_
-#define DATATOOLS_TIME_TOOLS_H_
-// Standard Library
+/// \file datatools/time_tools.h
+
+#ifndef DATATOOLS_TIME_TOOLS_H
+#define DATATOOLS_TIME_TOOLS_H
+
+// Standard Library:
 #include <iostream>
 #include <sys/time.h>
 
-// Third Party
-// - A
-
-// This Project
+// This Project:
 #include <datatools/i_tree_dump.h>
 
 namespace datatools {
@@ -18,13 +17,13 @@ namespace datatools {
   */
 class computing_time : public i_tree_dumpable {
  public:
-    //static double g_system_dead_time;
+
   static double system_dead_time();
 
-  // ctor:
+  /// Constructor
   computing_time();
 
-  // dtor:
+  /// Destructor
   virtual ~computing_time();
 
   bool is_stopped() const;
@@ -85,5 +84,4 @@ class computing_time : public i_tree_dumpable {
 
 } // namespace datatools
 
-#endif // DATATOOLS_TIME_TOOLS_H_
-
+#endif // DATATOOLS_TIME_TOOLS_H

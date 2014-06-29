@@ -1,5 +1,5 @@
-/* datatools/handle.h */
-/* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file datatools/handle.h
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-04-01
  * Last modified : 2013-04-22
  *
@@ -26,24 +26,24 @@
  *  a hiden shared pointer.
  *
  */
-#ifndef DATATOOLS_HANDLE_H_
-#define DATATOOLS_HANDLE_H_
-// Standard Library
+#ifndef DATATOOLS_HANDLE_H
+#define DATATOOLS_HANDLE_H
+
+// Standard Library:
 #include <iostream>
 #include <stdexcept>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/shared_ptr.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/tracking.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 
-// This Project
+// This Project:
 #include <datatools/i_predicate.h>
 #include <datatools/exception.h>
 
-//! \file datatools/handle.h
 
 namespace datatools {
 
@@ -282,5 +282,4 @@ struct tracking_level< ::datatools::handle<T> > {
   /**/
 #endif
 
-#endif // DATATOOLS_HANDLE_H_
-
+#endif // DATATOOLS_HANDLE_H

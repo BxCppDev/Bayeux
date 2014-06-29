@@ -1,6 +1,5 @@
-/* caster_utils.h */
 //! \file datatools/caster_utils.h
-/* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-04-01
  * Last modified : 2013-04-22
  *
@@ -26,18 +25,16 @@
  *  Some templatized caster utilities and associated macros.
  *
  */
-#ifndef DATATOOLS_CASTER_UTILS_H_
-#define DATATOOLS_CASTER_UTILS_H_
+#ifndef DATATOOLS_CASTER_UTILS_H
+#define DATATOOLS_CASTER_UTILS_H
 
 // Standard Library
 #include <iostream>
 #include <typeinfo>
 
 // Third Party
-// - A
+// - Boost:
 #include <boost/scoped_ptr.hpp>
-
-// This Project
 
 namespace datatools {
 
@@ -74,6 +71,8 @@ bool is_covariant(const Base& b) {
 
 } // end of namespace datatools
 
+
+/// Macro to declare a caster class
 #define DATATOOLS_CASTER_DECLARATION(From,ToBase,ToDaughter,CasterId,CasterGetter) \
  private:                                                              \
   static boost::scoped_ptr<datatools::caster<From,ToBase,ToDaughter> > CasterId; \
@@ -81,6 +80,7 @@ bool is_covariant(const Base& b) {
   virtual datatools::i_caster<From,ToBase>* CasterGetter() const; \
 /**/
 
+/// Macro to implement a caster class
 #define DATATOOLS_CASTER_IMPLEMENTATION(From,ToBase,ToDaughter,CasterId,CasterGetter) \
     boost::scoped_ptr<datatools::caster<From,ToBase,ToDaughter> > ToDaughter::CasterId; \
 datatools::i_caster<From,ToBase>* ToDaughter::CasterGetter() const { \
@@ -100,5 +100,4 @@ datatools::i_caster<From,ToBase>* ToDaughter::CasterGetter() const { \
 //          << typeid (From).name () << "' !" << std::endl;             \
 */
 
-#endif // DATATOOLS_CASTER_UTILS_H_
-
+#endif // DATATOOLS_CASTER_UTILS_H

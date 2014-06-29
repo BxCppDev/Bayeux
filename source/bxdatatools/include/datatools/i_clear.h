@@ -1,8 +1,6 @@
-/* datatools/i_clear.h */
-
 //! \file datatools/i_clear.h
-#ifndef DATATOOLS_I_CLEAR_H_
-#define DATATOOLS_I_CLEAR_H_
+#ifndef DATATOOLS_I_CLEAR_H
+#define DATATOOLS_I_CLEAR_H
 
 namespace datatools {
 
@@ -18,5 +16,4 @@ class i_clear {
 
 } // end of namespace datatools
 
-#endif // DATATOOLS_I_CLEAR_H_
-
+#endif // DATATOOLS_I_CLEAR_H

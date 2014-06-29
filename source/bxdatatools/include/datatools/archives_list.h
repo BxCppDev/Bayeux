@@ -1,4 +1,4 @@
-/* archives_list.h */
+/// \file datatools/archives_list.h
 /*
  * Description :
  *
@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef DATATOOLS_ARCHIVES_LIST_H_
-#define DATATOOLS_ARCHIVES_LIST_H_
+#ifndef DATATOOLS_ARCHIVES_LIST_H
+#define DATATOOLS_ARCHIVES_LIST_H
 
 // Wrap Boost's archive/polymorphic_iarchive header
 // This header, indirectly, causes "unused parameter" warnings from
@@ -72,4 +72,4 @@ namespace boost
   }
 }
 
-#endif // DATATOOLS_ARCHIVES_LIST_H_
+#endif // DATATOOLS_ARCHIVES_LIST_H

@@ -1,14 +1,12 @@
 // -*- mode: c++; -*-
 //! \file datatools/i_serializable-reflect.h
-#ifndef DATATOOLS_I_SERIALIZABLE_REFLECT_H_
-#define DATATOOLS_I_SERIALIZABLE_REFLECT_H_
+#ifndef DATATOOLS_I_SERIALIZABLE_REFLECT_H
+#define DATATOOLS_I_SERIALIZABLE_REFLECT_H
 
-// Standard Library
+// Standard Library:
 #include <iostream>
 
-// Third Party
-
-// Ourselves
+// Ourselves:
 #include <datatools/i_serializable.h>
 
 // Export the introspection code for the 'datatools::i_serializable' class:
@@ -20,8 +18,8 @@ namespace datatools {
 
       DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::i_serializable, /*tag_*/)
       {
-// 				std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
-// 									<< "datatools::i_serializable" << std::endl;
+//                              std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
+//                                                                      << "datatools::i_serializable" << std::endl;
         DR_CLASS_DECLARE (::datatools::i_serializable)
           /*
           .DR_CLASS_METHOD_CONST("get_serial_tag",
@@ -37,4 +35,4 @@ namespace datatools {
   } // end of namespace detail
 } // end of namespace datatools
 
-#endif // DATATOOLS_I_SERIALIZABLE_REFLECT_H_
+#endif // DATATOOLS_I_SERIALIZABLE_REFLECT_H

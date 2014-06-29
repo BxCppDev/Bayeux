@@ -1,18 +1,15 @@
 // -*- mode: c++; -*-
-// utils.h
+/// \file datatools/utils.h
 
 #ifndef DATATOOLS_UTILS_H
 #define DATATOOLS_UTILS_H
 
-// Standard Library
+// Standard Library:
 #include <cstdlib>
 #include <list>
 #include <string>
 
-// Third Party
-// - A
-
-// This Project
+// This Project:
 #include "datatools/exception.h"
 
 namespace datatools {

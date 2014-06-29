@@ -1,15 +1,16 @@
-/* things-inl.h */
+/// \file datatools/things-inl.h
 
-#ifndef DATATOOLS_THINGS_INL_H_
-#define DATATOOLS_THINGS_INL_H_
+#ifndef DATATOOLS_THINGS_INL_H
+#define DATATOOLS_THINGS_INL_H
 
+// This project:
 #include <datatools/exception.h>
 
 namespace datatools {
 
-//----------------------------------------------------------------------
-// things template methods
-//
+// Template methods of the things class:
+
+// Add a new bank of given type, name, description and constness
 template<class T>
 T& things::add(const std::string& a_name, const std::string& a_desc,
                bool a_const) {
@@ -110,4 +111,4 @@ const T& things::get(const std::string& a_name) const {
 
 }  // end of namespace datatools
 
-#endif // DATATOOLS_THINGS_INL_H_
+#endif // DATATOOLS_THINGS_INL_H

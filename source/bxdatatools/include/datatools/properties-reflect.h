@@ -1,16 +1,15 @@
 // -*- mode: c++; -*-
 //! \file datatools/properties-reflect.h
-#ifndef DATATOOLS_PROPERTIES_REFLECT_H_
-#define DATATOOLS_PROPERTIES_REFLECT_H_
 
-// Standard Library
+#ifndef DATATOOLS_PROPERTIES_REFLECT_H
+#define DATATOOLS_PROPERTIES_REFLECT_H
 
-// Third Party
+// Third Party:
+// - Boost:
 #include <boost/scoped_ptr.hpp>
 
-// Datatools
+// This project:
 #include <datatools/properties.h>
-
 
 // Export the introspection code for the 'datatools::properties' class:
 DR_CLASS_EXPORT (::datatools::properties, "datatools::properties")
@@ -349,4 +348,4 @@ namespace datatools {
   } // end of namespace detail
 } // end of namespace datatools
 
-#endif // DATATOOLS_INTROSPECTION_UTILS_PROPERTIES_REFLECT_H_
+#endif // DATATOOLS_PROPERTIES_REFLECT_H

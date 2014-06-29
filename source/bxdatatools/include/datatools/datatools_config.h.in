@@ -1,10 +1,10 @@
 // -*- mode: c++; -*-
-//! \file   datatools_config.h
+//! \file   datatools/datatools_config.h
 //! \author François Mauger, Ben Morgan
 //! \brief  Describe the datatools API configuration
 
-#ifndef DATATOOLS_DATATOOLS_CONFIG_H_
-#define DATATOOLS_DATATOOLS_CONFIG_H_ 1
+#ifndef DATATOOLS_DATATOOLS_CONFIG_H
+#define DATATOOLS_DATATOOLS_CONFIG_H 1
 
 //! Evaluates to true if datatools is built within a bundle library (Bayeux)
 
@@ -20,6 +20,4 @@
 //! Evaluates to true if datatools was built with automated init/fini operation at DLL loading
 #cmakedefine01 DATATOOLS_WITH_IMPLICIT_INIT_FINI
 
-#endif // DATATOOLS_DATATOOLS_CONFIG_H_
-
-// end of datatools_config.h
+#endif // DATATOOLS_DATATOOLS_CONFIG_H

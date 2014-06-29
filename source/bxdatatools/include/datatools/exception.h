@@ -1,15 +1,15 @@
-//! \file    exception.h
+//! \file    datatools/exception.h
 //! \brief   Utility macros for exception handling
 //! \details Exceptions are often thrown based on the value of a boolean
 //!          expression. The exception, if it holds a string based
 //!          message about what went wrong, should report where it was
 //!          thrown from.
 //!
-//!          To help developers throwing exceptions in this fashion, 
+//!          To help developers throwing exceptions in this fashion,
 //!          datatools supplies a macro to assist in simplifying this
-//!          work, and making the intent clearer in code. 
+//!          work, and making the intent clearer in code.
 //
-// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com> 
+// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com>
 // Copyright (c) 2013 by The University of Warwick
 //
 // This file is part of datatools.
@@ -29,15 +29,13 @@
 
 #ifndef DATATOOLS_EXCEPTION_H
 #define DATATOOLS_EXCEPTION_H
-// Standard Library
+// Standard Library:
 #include <stdexcept>
 #include <sstream>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/current_function.hpp>
-
-// This Project
 
 /*! Throw ExceptionType with Message if the expression Condition is true
     This macro is intended to simplify the common use case of throwing
@@ -85,5 +83,3 @@
 }
 
 #endif // DATATOOLS_EXCEPTION_H
-
-

@@ -1,20 +1,18 @@
 // -*- mode: c++; -*-
-//! \file enriched_base.ipp
-#ifndef DATATOOLS_ENRICHED_BASE_IPP_
-#define DATATOOLS_ENRICHED_BASE_IPP_
+//! \file datatools/enriched_base.ipp
+#ifndef DATATOOLS_ENRICHED_BASE_IPP
+#define DATATOOLS_ENRICHED_BASE_IPP
 
-// Ourselves
+// Ourselves:
 #include <datatools/enriched_base.h>
 
-// Standard Library
-
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 
-// Datatools
+// This project:
 #include <datatools/utils.h>
 #include <datatools/properties.ipp>
 
@@ -33,7 +31,7 @@ namespace datatools {
   }
 } // end of namespace datatools
 
-//#include <boost/serialization/version.hpp>
-//BOOST_CLASS_VERSION(datatools::enriched_base, 1)
+// #include <boost/serialization/version.hpp>
+// BOOST_CLASS_VERSION(datatools::enriched_base, 0)
 
-#endif // DATATOOLS_ENRICHED_BASE_IPP_
+#endif // DATATOOLS_ENRICHED_BASE_IPP

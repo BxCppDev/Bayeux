@@ -1,12 +1,12 @@
 /* -*- mode: c++; -*- */
-/* datatools::ocd_macros.h */
-/* 
+/// \file datatools/ocd_macros.h
+/*
  * Description :
  *
  *  Some useful macros related to OCD features.
  *
  * Copyright (C) 2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -19,13 +19,14 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
- */ 
-#ifndef DATATOOLS_OCD_MACROS_H_
-#define DATATOOLS_OCD_MACROS_H_
+ */
+#ifndef DATATOOLS_OCD_MACROS_H
+#define DATATOOLS_OCD_MACROS_H
 
+// This project:
 #include <datatools/detail/ocd_utils.h>
 
 #define DOCD_CLASS_DECLARATION(ClassName)                               \
@@ -72,5 +73,5 @@
 #define DOCD_GET_SYSTEM_REGISTRATION()                                  \
   ::datatools::detail::ocd::ocd_registration::get_system_registration() \
   /**/
-#endif // DATATOOLS_OCD_MACROS_H_
 
+#endif // DATATOOLS_OCD_MACROS_H

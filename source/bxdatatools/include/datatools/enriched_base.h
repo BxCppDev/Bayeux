@@ -29,10 +29,10 @@
  *
  */
 
-#ifndef DATATOOLS_ENRICHED_BASE_H_
-#define DATATOOLS_ENRICHED_BASE_H_
+#ifndef DATATOOLS_ENRICHED_BASE_H
+#define DATATOOLS_ENRICHED_BASE_H
 
-// Standard library
+// Standard library:
 #include <string>
 
 // This project:
@@ -46,81 +46,110 @@
 
 namespace datatools {
 
+  /// \brief A base class with useful attributes usable in many contexts
   class enriched_base  :
     DATATOOLS_SERIALIZABLE_CLASS,
     public datatools::i_tree_dumpable {
 
   public:
 
+      /// Validate a name
       static bool validate_name(const std::string & candidate_name_);
 
+      /// Default constructor
       enriched_base();
 
+      /// Constructor
       enriched_base(const std::string & name_,
 		    const std::string & display_name_ = "",
 		    const std::string & terse_description_ = "",
 		    logger::priority lp_ = logger::PRIO_WARNING);
 
+      /// Destructor
       virtual ~enriched_base();
 
+      /// Check if the name is not empty
       bool has_name() const;
 
+      /// Set the name
       void set_name(const std::string & name_);
 
+      /// Set the name
       enriched_base & set_name_c(const std::string & name_);
 
+      /// Return the name
       const std::string & get_name() const;
 
+      /// Check if the display name is empty
       bool has_display_name() const;
 
+      /// Set the display name
       void set_display_name(const std::string & display_name_);
 
+      /// Set the display name
       enriched_base & set_display_name_c(const std::string & display_name_);
 
+      /// Return the display name
       const std::string & get_display_name() const;
 
+      /// Check if the description is empty
       bool has_terse_description() const;
 
+      /// Set the description
       void set_terse_description(const std::string & terse_description_);
 
+      /// Set the description
       enriched_base & set_terse_description_c(const std::string & terse_description_);
 
+      /// Return the description
       const std::string & get_terse_description() const;
 
+      /// Check if the container of auxiliary properties is empty
       bool has_auxiliaries() const;
 
+      /// Return a reference to the non mutable container of auxiliary properties
       const datatools::properties & get_auxiliaries() const;
 
+      /// Return a reference to the mutable container of auxiliary properties
       datatools::properties & grab_auxiliaries();
 
+      /// Remove all auxiliary properties
       void reset_auxiliaries();
 
+      /// Chekc the debug status
       bool is_debug() const;
 
+      /// Set the logging priority threshold
       void set_logging_priority(logger::priority lp_);
 
+      /// Set the logging priority threshold
       enriched_base & set_logging_priority_c(logger::priority lp_);
 
+      /// Return the logging priority threshold
       logger::priority get_logging_priority() const;
 
+      /// Clear
       void clear();
 
+      /// Smart print
       virtual void tree_dump(std::ostream& out_ = std::clog,
 			     const std::string& title_  = "",
 			     const std::string& indent_ = "",
 			     bool inherit_ = false) const;
 
+      /// Initialization from a container of properties
       void initialize(const datatools::properties & config_, bool clear_ = false);
 
+      /// OCD support
       static void init_ocd(datatools::object_configuration_description &);
 
   private:
 
-      std::string _name_;
-      std::string _display_name_;
-      std::string _terse_description_;
-      logger::priority _logging_priority_;
-      datatools::properties _auxiliaries_;
+      std::string _name_; /// Name
+      std::string _display_name_; /// Display name
+      std::string _terse_description_; /// Description
+      logger::priority _logging_priority_; /// Logging priority threshold
+      datatools::properties _auxiliaries_; /// Container of auxiliary properties
 
       //! Serialization interface
       DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(enriched_base);
@@ -137,4 +166,4 @@ BOOST_CLASS_EXPORT_KEY2(datatools::enriched_base, "datatools::enriched_base");
 // Activate reflection layer for the 'datatools::enriched_base' class:
 DR_CLASS_INIT(::datatools::enriched_base);
 
-#endif // DATATOOLS_ENRICHED_BASE_H_
+#endif // DATATOOLS_ENRICHED_BASE_H

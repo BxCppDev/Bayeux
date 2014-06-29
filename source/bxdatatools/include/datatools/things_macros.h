@@ -1,16 +1,12 @@
-/* things_macros.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file datatools/things_macros.h
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2012-03-31
  * Last modified : 2013-04-22
  */
-#ifndef DATATOOLS_THINGS_MACROS_H_
-#define DATATOOLS_THINGS_MACROS_H_
-// Standard Library
+#ifndef DATATOOLS_THINGS_MACROS_H
+#define DATATOOLS_THINGS_MACROS_H
 
-// Third Party
-// - A
-
-// This Project
+// This Project:
 #include <datatools/things.h>
 
 #define DATATOOLS_THINGS_ADD_BANK(ThingsVar,BankName,BankType,BankVar)  \
@@ -39,5 +35,4 @@
   BankType& BankVar = ThingsVar.grab<BankType>(BankName);
 /**/
 
-#endif // DATATOOLS_THINGS_MACROS_H_
-
+#endif // DATATOOLS_THINGS_MACROS_H

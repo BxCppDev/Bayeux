@@ -1,13 +1,13 @@
 // -*- mode: c++; -*-
 //! \file datatools/enriched_base-reflect.h
-#ifndef DATATOOLS_ENRICHED_BASE_REFLECT_H_
-#define DATATOOLS_ENRICHED_BASE_REFLECT_H_
+#ifndef DATATOOLS_ENRICHED_BASE_REFLECT_H
+#define DATATOOLS_ENRICHED_BASE_REFLECT_H
 
-// Standard Library
-
+// Third party:
+// - CAMP:
 #include <camp/enum.hpp>
 
-// Datatools
+// This project:
 #include <datatools/enriched_base.h>
 #include <datatools/properties.h>
 
@@ -20,8 +20,6 @@ namespace datatools {
 
     DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::enriched_base, /*tag_*/)
     {
-//                      std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
-//                                                              << "datatools::enriched_base" << std::endl;
       // Declare and populate the reflection metaclass for the 'datatools::enriched_base' class:
       DR_CLASS_DECLARE (::datatools::enriched_base)
         .DR_CLASS_BASE(::datatools::i_serializable)
@@ -82,7 +80,6 @@ namespace datatools {
       //   const camp::Enum & e = camp::enumByIndex(i);
       //   std::cerr << "DEVEL: Metaenum #" << i << " : " << e.name() << std::endl;
       // }
-      // std::cerr << "DEVEL: ***** Registering class '::datatools::enriched_base' done." << std::endl;
       return;
     }
 
@@ -90,4 +87,4 @@ namespace datatools {
   } // end of namespace detail
 } // end of namespace datatools
 
-#endif // DATATOOLS_ENRICHED_BASE_REFLECT_H_
+#endif // DATATOOLS_ENRICHED_BASE_REFLECT_H

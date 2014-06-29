@@ -1,4 +1,4 @@
-/* datatools::reflection_guard.h */
+/// \file datatools/reflection_guard.h
 /*
  * Description :
  *
@@ -28,14 +28,10 @@
  *
  */
 
-#ifndef DATATOOLS_REFLECTION_GUARD_H_
-#define DATATOOLS_REFLECTION_GUARD_H_
+#ifndef DATATOOLS_REFLECTION_GUARD_H
+#define DATATOOLS_REFLECTION_GUARD_H
 
-// Standard Library
-
-// Third Party
-
-// Datatools
+// This project:
 #include <datatools/datatools_config.h>
 #include <datatools/detail/reflection_link_guard.h>
 
@@ -63,4 +59,4 @@ reflection_guard reflection_guard::_g_trigger_link_guard_;
 } // end namespace datatools
 #endif // DATATOOLS_WITH_REFLECTION != 1
 
-#endif // DATATOOLS_REFLECTION_GUARD_H_
+#endif // DATATOOLS_REFLECTION_GUARD_H

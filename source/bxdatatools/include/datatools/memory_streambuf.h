@@ -1,19 +1,18 @@
-// -*- mode: c++;-*-
-// memory_streambuf.h
-#ifndef DATATOOLS_MEMORY_STREAMBUF_H_
-#define DATATOOLS_MEMORY_STREAMBUF_H_
+// -*- mode: c++; -*-
+/// \file datatools/memory_streambuf.h
+#ifndef DATATOOLS_MEMORY_STREAMBUF_H
+#define DATATOOLS_MEMORY_STREAMBUF_H
 
-// Standard Library
+// Standard Library:
 #include <streambuf>
 #include <iostream>
 #include <vector>
 #include <stdexcept>
 
+// This project:
 #include <datatools/exception.h>
 
 namespace datatools {
-//----------------------------------------------------------------------
-// input from a plain array of characters/bytes:
 
 //! \brief Input stream buffer associated to a plain array of characters (char *)
 class array_input_buffer : public std::streambuf {
@@ -41,9 +40,6 @@ class iarraystream
 };
 
 
-//----------------------------------------------------------------------
-// input from vector of characters:
-
 //! \brief Input stream buffer associated to a std::vector of characters (std::vector<char>)
 class vector_input_buffer : public std::streambuf {
  public:
@@ -65,12 +61,6 @@ class ivectorstream
         std::istream (this) {}
 };
 
-
-//----------------------------------------------------------------------
-// output to vector of characters:
-//  [                                    ]
-//  pbase    pptr   epptr
-//
 
 //! \brief Output stream buffer associated to a std::vector of characters (std::vector<char>)
 class vector_output_buffer : public std::streambuf {
@@ -246,5 +236,4 @@ class ovectorstream
 
 } // end of namespace datatools
 
-#endif // DATATOOLS_MEMORY_STREAMBUF_H_
-
+#endif // DATATOOLS_MEMORY_STREAMBUF_H

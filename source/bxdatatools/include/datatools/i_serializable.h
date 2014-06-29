@@ -1,5 +1,5 @@
 // -*- mode: c++; -*-
-/* i_serializable.h */
+/// \file datatools/i_serializable.h
 /*
  * Copyright (C) 2011-2012 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -19,31 +19,29 @@
  * Boston, MA 02110-1301, USA.
  *
  */
-#ifndef DATATOOLS_I_SERIALIZABLE_H_
-#define DATATOOLS_I_SERIALIZABLE_H_
+#ifndef DATATOOLS_I_SERIALIZABLE_H
+#define DATATOOLS_I_SERIALIZABLE_H
 
-// Standard Library
+// Standard Library:
 #include <string>
 #include <typeinfo>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/serialization/access.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/scoped_ptr.hpp>
 
-// Datatools
+// This project:
 #include <datatools/datatools_config.h>
 #include <datatools/serialization_macros.h>
 #include <datatools/factory_macros.h>
 #include <datatools/utils.h>
-
-// Datatools reflection utilities :
 #include <datatools/reflection_macros.h>
 
-/// Main namespace of the datatools library
+// Main namespace of the datatools library
 namespace datatools {
 
   //! \brief Base abstract class of all serializable (and possibly introspectable) classes
@@ -51,15 +49,19 @@ namespace datatools {
 
   public:
 
+    /// Default constructor
     i_serializable() {};
 
+    /// Destructor
     virtual ~i_serializable() {}
 
+    /// Return the serialization string identifier of the class
     virtual const std::string& get_serial_tag() const = 0;
 
-    BOOST_SERIALIZATION_BASIC_DECLARATION ();
+    ///
+    BOOST_SERIALIZATION_BASIC_DECLARATION();
 
-    // Factory stuff :
+    /// Interface of the factory
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_serializable);
 
     DR_CLASS_RTTI();
@@ -447,5 +449,4 @@ namespace datatools {
 
 }
 
-#endif // DATATOOLS_I_SERIALIZABLE_H_
-
+#endif // DATATOOLS_I_SERIALIZABLE_H

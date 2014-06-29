@@ -1,13 +1,13 @@
-// -*- mode: c++; -*- 
-/* datatools/real_range.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+// -*- mode: c++; -*-
+/// file datatools/real_range.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2011-09-25
  * Last modified: 2011-09-25
- * 
- * License: 
- * 
+ *
+ * License:
+ *
  * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -20,29 +20,26 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- * 
- * Description: 
+ *
+ * Description:
  *
  *   Real range/interval class.
- * 
- * History: 
- *  
+ *
+ * History:
+ *
  */
-#ifndef DATATOOLS_REAL_RANGE_H_
-#define DATATOOLS_REAL_RANGE_H_
-// Standard Library
+#ifndef DATATOOLS_REAL_RANGE_H
+#define DATATOOLS_REAL_RANGE_H
+
+// Standard Library:
 #include <iostream>
 #include <string>
 #include <set>
 
-// Third Party
-// - A
-
-// This Project
+// This Project:
 #include <datatools/range_tools.h>
-
 
 namespace datatools {
 
@@ -57,8 +54,8 @@ class real_range {
   real_range();
 
   // Ctor:
-  real_range(value_type from, value_type to, 
-             int from_policy = range_bound_included, 
+  real_range(value_type from, value_type to,
+             int from_policy = range_bound_included,
              int to_policy = range_bound_included);
 
   bool is_valid() const;
@@ -75,8 +72,8 @@ class real_range {
 
   void set_upper(value_type to, int policy = range_bound_included);
 
-  void set(value_type from, value_type to, 
-           int from_policy = range_bound_included, 
+  void set(value_type from, value_type to,
+           int from_policy = range_bound_included,
            int to_policy = range_bound_included);
 
   bool is_lower_bounded() const;
@@ -116,7 +113,7 @@ class real_range {
   // "]lower;upper]" or "]lower;upper["
   // "[lower;upper]" or "[lower;upper["
   void make_bounded(value_type from, value_type to,
-                    bool lower_included = true, 
+                    bool lower_included = true,
                     bool upper_included = true);
 
   bool has(value_type value) const;
@@ -125,8 +122,8 @@ class real_range {
 
   static double compute_epsilon(double a_lower, double a_upper);
 
-  friend std::ostream& operator<<(std::ostream& a_out, 
-                                  const real_range& a_range); 
+  friend std::ostream& operator<<(std::ostream& a_out,
+                                  const real_range& a_range);
 
  private:
   value_type abs_epsilon_;
@@ -137,7 +134,6 @@ class real_range {
 };
 
 
-} // end of namespace datatools 
+} // end of namespace datatools
 
-#endif // DATATOOLS_REAL_RANGE_H_
-
+#endif // DATATOOLS_REAL_RANGE_H

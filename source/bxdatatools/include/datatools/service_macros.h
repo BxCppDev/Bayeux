@@ -29,15 +29,12 @@
  * History:
  *
  */
-#ifndef DATATOOLS_SERVICE_MACROS_H_
-#define DATATOOLS_SERVICE_MACROS_H_
+#ifndef DATATOOLS_SERVICE_MACROS_H
+#define DATATOOLS_SERVICE_MACROS_H
 
 #warning datatools/service_macros.h is obsolete (2013-12-14)
-// Standard Library
 
-// Third Party
-
-// Datatools
+// This project:
 #include <datatools/base_service.h>
 
 #define DATATOOLS_SERVICE_CLASS_DECLARE(T)	\
@@ -76,7 +73,7 @@
 
 #define DATATOOLS_SERVICE_IS_INITIALIZED_IMPLEMENT_HEAD(T)	\
   bool T::is_initialized() const				\
-  /**/
+	 /**/
 
 
 #define DATATOOLS_SERVICE_INITIALIZE_DECLARE()		\
@@ -103,21 +100,12 @@
 
 
 #define DATATOOLS_SERVICE_INTERFACE(SERVICE_CLASS_NAME)		\
-								\
   public:							\
-								\
   DATATOOLS_SERVICE_CONSTRUCTOR_DECLARE(SERVICE_CLASS_NAME);	\
-								\
   DATATOOLS_SERVICE_DESTRUCTOR_DECLARE(SERVICE_CLASS_NAME);	\
-								\
   DATATOOLS_SERVICE_IS_INITIALIZED_DECLARE();			\
-								\
   DATATOOLS_SERVICE_INITIALIZE_DECLARE();			\
-								\
   DATATOOLS_SERVICE_RESET_DECLARE();				\
-								\
   /**/
 
-/** Registration */
-
-#endif // DATATOOLS_SERVICE_MACROS_H_
+#endif // DATATOOLS_SERVICE_MACROS_H

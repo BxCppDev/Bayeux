@@ -1,12 +1,13 @@
 // -*- mode: c++; -*-
 //! \file datatools/multi_properties-reflect.h
-#ifndef DATATOOLS_MULTI_PROPERTIES_REFLECT_H_
-#define DATATOOLS_MULTI_PROPERTIES_REFLECT_H_
 
-// Standard Library
+#ifndef DATATOOLS_MULTI_PROPERTIES_REFLECT_H
+#define DATATOOLS_MULTI_PROPERTIES_REFLECT_H
+
+// Standard Library:
 #include <string>
 
-// Datatools
+// This project:
 #include <datatools/multi_properties.h>
 
 // Export the reflection code for the 'datatools::multi_properties' class:
@@ -138,4 +139,4 @@ namespace datatools {
   } // end of namespace detail
 } // end of namespace datatools
 
-#endif // DATATOOLS_MULTI_PROPERTIES_REFLECT_H_
+#endif // DATATOOLS_MULTI_PROPERTIES_REFLECT_H

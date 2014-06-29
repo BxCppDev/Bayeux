@@ -32,7 +32,8 @@
  */
 #ifndef DATATOOLS_PROPERTIES_H
 #define DATATOOLS_PROPERTIES_H
-// Standard Library
+
+// Standard Library:
 #include <iostream>
 #include <list>
 #include <map>
@@ -40,12 +41,12 @@
 #include <string>
 #include <vector>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/cstdint.hpp>
 #include <boost/serialization/access.hpp>
 
-// This Project
+// This Project:
 #include <datatools/datatools_config.h>
 #include <datatools/i_serializable.h>
 #include <datatools/i_tree_dump.h>
@@ -53,7 +54,6 @@
 #include <datatools/i_cloneable.h>
 #include <datatools/bit_mask.h>
 #include <datatools/exception.h>
-
 #include <datatools/reflection_macros.h>
 
 namespace datatools {

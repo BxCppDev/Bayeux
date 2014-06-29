@@ -1,5 +1,5 @@
-/* datatools/handle.h */
-/* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file datatools/handle.h
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-05-10
  * Last modified : 2013-04-22
  *
@@ -25,21 +25,17 @@
  *  A pool of handles.
  *
  */
-#ifndef DATATOOLS_HANDLE_POOL_H_
-#define DATATOOLS_HANDLE_POOL_H_
+#ifndef DATATOOLS_HANDLE_POOL_H
+#define DATATOOLS_HANDLE_POOL_H
 
-// Standard Library
+// Standard Library:
 #include <iostream>
 #include <string>
 #include <stdexcept>
 #include <vector>
 
-// Third Party
-// - A
-
-// This Project
+// This Project:
 #include <datatools/handle.h>
-
 
 namespace datatools {
 
@@ -275,5 +271,4 @@ void handle_pool<T>::resize_impl(size_t size) {
 
 } // namespace datatools
 
-#endif // DATATOOLS_HANDLE_POOL_H_
-
+#endif // DATATOOLS_HANDLE_POOL_H

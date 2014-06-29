@@ -1,11 +1,11 @@
-/* datatools::serialization_macros.h */
-/* 
+/// \file datatools/serialization_macros.h
+/*
  * Description :
  *
  *  Some useful macros related to Boost/Serialisation within datatools.
  *
  * Copyright (C) 2011-2012 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -18,26 +18,22 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
- */ 
-#ifndef DATATOOLS_SERIALIZATION_MACROS_H_
-#define DATATOOLS_SERIALIZATION_MACROS_H_
+ */
+#ifndef DATATOOLS_SERIALIZATION_MACROS_H
+#define DATATOOLS_SERIALIZATION_MACROS_H
 
-// Standard Library
-
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/serialization/split_member.hpp>
 
-// Datatools
-
 // declare the template load member function from the header file :
-#define BOOST_SERIALIZATION_SPLIT_MEMBER_LOAD_DECLARATION()      \
-template<class Archive>                                          \
-void load(Archive& ar, const unsigned int file_version);				 \
-/**/
+#define BOOST_SERIALIZATION_SPLIT_MEMBER_LOAD_DECLARATION()		\
+  template<class Archive>						\
+  void load(Archive& ar, const unsigned int file_version);		\
+  /**/
 
 // declare the template save member function from the header file :
 #define BOOST_SERIALIZATION_SPLIT_MEMBER_SAVE_DECLARATION()      \
@@ -55,8 +51,8 @@ void serialize(Archive& ar, const unsigned int file_version);    \
 /** Intrusive macro to generate the proper prototype of the
  * Boost serialization method :
  * Example:
- * \code          
- * class Foo 
+ * \code
+ * class Foo
  * {
  *   BOOST_SERIALIZATION_BASIC_DECLARATION()
  * };
@@ -86,5 +82,4 @@ void T::serialize(Archive& ar, const unsigned int file_version) {    \
 /**/
 
 
-#endif // DATATOOLS_SERIALIZATION_MACROS_H_
-
+#endif // DATATOOLS_SERIALIZATION_MACROS_H

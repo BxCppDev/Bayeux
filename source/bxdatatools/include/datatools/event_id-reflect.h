@@ -1,15 +1,16 @@
 // -*- mode: c++; -*-
 //! \file datatools/event_id-reflect.h
-#ifndef DATATOOLS_EVENT_ID_REFLECT_H_
-#define DATATOOLS_EVENT_ID_REFLECT_H_
+#ifndef DATATOOLS_EVENT_ID_REFLECT_H
+#define DATATOOLS_EVENT_ID_REFLECT_H
 
-// Standard Library
+// Standard Library:
 #include <iostream>
 
-// Third Party
+// Third Party:
+// - Boost:
 #include <boost/scoped_ptr.hpp>
 
-// Datatools
+// This project:
 #include <datatools/event_id.h>
 
 // Export the introspection code for the 'datatools::event_id' class:
@@ -76,4 +77,4 @@ namespace datatools {
   } // end of namespace detail
 } // end of namespace datatools
 
-#endif // DATATOOLS_EVENT_ID_REFLECT_H_
+#endif // DATATOOLS_EVENT_ID_REFLECT_H

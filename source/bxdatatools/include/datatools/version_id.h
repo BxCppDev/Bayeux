@@ -1,16 +1,16 @@
 // -*- mode: c++; -*-
-// version_id.h
-#ifndef DATATOOLS_VERSION_ID_H_
-#define DATATOOLS_VERSION_ID_H_
-// Standard Library
+/// \file datatools/version_id.h
+
+#ifndef DATATOOLS_VERSION_ID_H
+#define DATATOOLS_VERSION_ID_H
+
+// Standard Library:
 #include <iostream>
 #include <string>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/cstdlib.hpp>
-
-// This Project
 
 namespace datatools {
 /*! \brief A class representing a version ID :
@@ -177,5 +177,4 @@ class version_id {
 
 } // namespace datatools
 
-#endif // DATATOOLS_VERSION_ID_H_
-
+#endif // DATATOOLS_VERSION_ID_H

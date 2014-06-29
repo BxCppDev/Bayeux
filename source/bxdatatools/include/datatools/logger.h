@@ -53,14 +53,15 @@
 
 #ifndef DATATOOLS_LOGGER_H
 #define DATATOOLS_LOGGER_H
-// Standard Library
+
+// Standard Library:
 #include <iostream>
 
-// Third Party
-// - A
+// Third Party:
+// - Boost:
 #include "boost/current_function.hpp"
 
-// This module
+// This project:
 #include <datatools/reflection_macros.h>
 
 namespace datatools {

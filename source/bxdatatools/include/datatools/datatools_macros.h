@@ -1,13 +1,13 @@
-// datatools_macros.h
+/// \file datatools/datatools_macros.h
 
-#ifndef DATATOOLS_DATATOOLS_MACROS_H_
-#define DATATOOLS_DATATOOLS_MACROS_H_
+#ifndef DATATOOLS_DATATOOLS_MACROS_H
+#define DATATOOLS_DATATOOLS_MACROS_H
 
-// Standard library
+// Standard library:
 #include <string>
 
-// Third party
-// - Boost
+// Third party:
+// - Boost:
 #include <boost/scoped_ptr.hpp>
 
 #define DT_STATIC_CONST_STRING_REF_DECLARATION(Name) \
@@ -28,6 +28,4 @@
   return _token;							\
   /**/
 
-#endif // DATATOOLS_DATATOOLS_MACROS_H_
-
-// end of datatools_macros.h
+#endif // DATATOOLS_DATATOOLS_MACROS_H

@@ -1,5 +1,5 @@
-/* service_manager.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file datatools/service_manager.h
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
  * Last modified : 2013-05-19
  *
@@ -29,20 +29,20 @@
  * History:
  *
  */
-#ifndef DATATOOLS_SERVICE_MANAGER_H_
-#define DATATOOLS_SERVICE_MANAGER_H_
+#ifndef DATATOOLS_SERVICE_MANAGER_H
+#define DATATOOLS_SERVICE_MANAGER_H
 
-// Standard Library
+// Standard Library:
 #include <string>
 #include <sstream>
 #include <typeinfo>
 #include <stdexcept>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/cstdint.hpp>
 
-// Datatools
+// This project:
 #include <datatools/service_tools.h>
 #include <datatools/base_service.h>
 #include <datatools/i_tree_dump.h>
@@ -217,5 +217,4 @@ class service_manager : public datatools::i_tree_dumpable {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(datatools::service_manager)
 
-#endif // DATATOOLS_SERVICE_MANAGER_H_
-
+#endif // DATATOOLS_SERVICE_MANAGER_H

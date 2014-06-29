@@ -1,14 +1,13 @@
 // -*- mode: c++; -*-
 //! \file datatools/things-reflect.h
-#ifndef DATATOOLS_THINGS_REFLECT_H_
-#define DATATOOLS_THINGS_REFLECT_H_
 
-// Standard Library
+#ifndef DATATOOLS_THINGS_REFLECT_H
+#define DATATOOLS_THINGS_REFLECT_H
 
-// Third Party
+// Third Party:
 #include <boost/scoped_ptr.hpp>
 
-// Datatools
+// This project:
 #include <datatools/things.h>
 
 // Export the reflection code for the 'datatools::things' class:
@@ -137,4 +136,4 @@ namespace datatools {
   } // end of namespace detail
 } // end of namespace datatools
 
-#endif // DATATOOLS_THINGS_REFLECT_H_
+#endif // DATATOOLS_THINGS_REFLECT_H

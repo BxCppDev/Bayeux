@@ -1,26 +1,24 @@
-/* datatools/handle_macros.h */
-/* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file datatools/handle_macros.h
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2012-03-20
  * Last modified : 2013-04-23
  */
 
-#ifndef DATATOOLS_HANDLE_MACROS_H_
-#define DATATOOLS_HANDLE_MACROS_H_
+#ifndef DATATOOLS_HANDLE_MACROS_H
+#define DATATOOLS_HANDLE_MACROS_H
 
-// Standard Library
+// Standard Library:
 #include <stdexcept>
 #include <sstream>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/preprocessor/stringize.hpp>
 
-// This Project
+// This Project:
 #include <datatools/handle.h>
 
-/************
- *  MACROS  *
- ************/
+// Macros:
 
 #define DATATOOLS_HANDLE_DECLARE(HandleVar,Type)	\
   ::datatools::handle<Type> HandleVar;			\
@@ -46,5 +44,4 @@
   Type& RefVar = HandleVar.grab();
   /**/
 
-#endif // DATATOOLS_HANDLE_MACROS_H_
-
+#endif // DATATOOLS_HANDLE_MACROS_H

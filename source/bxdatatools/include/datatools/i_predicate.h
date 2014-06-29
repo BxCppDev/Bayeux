@@ -1,13 +1,9 @@
-/* i_predicate.h */
-#ifndef DATATOOLS_I_PREDICATE_H_
-#define DATATOOLS_I_PREDICATE_H_
-// Standard Library
+/// \file datatools/i_predicate.h
+#ifndef DATATOOLS_I_PREDICATE_H
+#define DATATOOLS_I_PREDICATE_H
+
+// Standard Library:
 #include<functional>
-
-// Third Party
-// - A
-
-// This Project
 
 
 namespace datatools {
@@ -37,7 +33,6 @@ class mother_to_daughter_predicate : public i_predicate<Daughter> {
   i_predicate<Mother> *mother_predicate_;
 };
 
-} // end of namespace datatools 
+} // end of namespace datatools
 
-#endif // DATATOOLS_I_PREDICATE_H_
-
+#endif // DATATOOLS_I_PREDICATE_H

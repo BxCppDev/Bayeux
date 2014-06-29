@@ -4,10 +4,10 @@
  * Last modified : 2013-04-22
  *
  */
-#ifndef DATATOOLS_FACTORY_H_
-#define DATATOOLS_FACTORY_H_
+#ifndef DATATOOLS_FACTORY_H
+#define DATATOOLS_FACTORY_H
 
-// Standard Library
+// Standard Library:
 #include <string>
 #include <map>
 #include <vector>
@@ -15,13 +15,13 @@
 #include <sstream>
 #include <stdexcept>
 
-// - Third Party
-// Boost
+// Third Party:
+// - Boost:
 #include <boost/function.hpp>
 #include <boost/functional/factory.hpp>
 #include <boost/scoped_ptr.hpp>
 
-// Datatools
+// This project:
 #include <datatools/i_tree_dump.h>
 #include <datatools/exception.h>
 #include <datatools/logger.h>
@@ -179,4 +179,4 @@ class _system_factory_registrator {
 
 } // end of namespace datatools
 
-#endif // DATATOOLS_FACTORY_H_
+#endif // DATATOOLS_FACTORY_H

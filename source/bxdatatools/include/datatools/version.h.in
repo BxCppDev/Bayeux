@@ -24,13 +24,9 @@
 
 #ifndef DATATOOLS_VERSION_H
 #define DATATOOLS_VERSION_H
+
 // Standard Library
 #include <string>
-
-// Third Party
-// - A
-
-// This Project
 
 //----------------------------------------------------------------------
 // - Compile Time API
@@ -89,4 +85,3 @@ static bool has_feature(const std::string& feature);
 } // namespace datatools
 
 #endif // DATATOOLS_VERSION_H
-

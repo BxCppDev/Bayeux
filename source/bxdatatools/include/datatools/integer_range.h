@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
-/* datatools/integer_range.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file datatools/integer_range.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2011-09-22
  * Last modified: 2013-04-22
  *
@@ -30,20 +30,20 @@
  * History:
  *
  */
-#ifndef DATATOOLS_INTEGER_RANGE_H_
-#define DATATOOLS_INTEGER_RANGE_H_
-// Standard Library
+#ifndef DATATOOLS_INTEGER_RANGE_H
+#define DATATOOLS_INTEGER_RANGE_H
+
+// Standard Library:
 #include <iostream>
 #include <string>
 #include <set>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/cstdint.hpp>
 
-// This Project
+// This Project:
 #include <datatools/range_tools.h>
-
 
 namespace datatools {
 
@@ -53,29 +53,36 @@ class integer_range {
   typedef int32_t value_type;
 
  public:
-  // Ctor:
+  /// Default constructor
   integer_range();
 
-  // Ctor:
+  // Constructor
   integer_range(value_type from, value_type to,
                 int from_policy = range_bound_included,
                 int to_policy = range_bound_included);
 
-
+  /// Check the validity of the interval
   bool is_valid() const;
 
+  /// Invalidate the interval
   void invalidate();
 
+  /// Reset lower bound
   void reset_lower();
 
+  /// Reset upper bound
   void reset_upper();
 
+  /// Reset the interval
   void reset();
 
+  /// Set the lower bound
   void set_lower(value_type from, int policy = range_bound_included);
 
+  /// Set the upper bound
   void set_upper(value_type to, int policy = range_bound_included);
 
+  /// Set the bounds
   void set(value_type from, value_type to,
            int from_policy = range_bound_included,
            int to_policy = range_bound_included);
@@ -149,5 +156,4 @@ class integer_range {
 
 } // end of namespace datatools
 
-#endif // DATATOOLS_INTEGER_RANGE_H_
-
+#endif // DATATOOLS_INTEGER_RANGE_H

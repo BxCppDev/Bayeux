@@ -1,16 +1,16 @@
 // -*- mode: c++; -*-
-// version_check.h
-#ifndef DATATOOLS_VERSION_CHECK_H_
-#define DATATOOLS_VERSION_CHECK_H_
-// Standard Library
+/// \file datatools/version_check.h
+
+#ifndef DATATOOLS_VERSION_CHECK_H
+#define DATATOOLS_VERSION_CHECK_H
+
+// Standard Library:
 #include <iostream>
 #include <string>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/cstdlib.hpp>
-
-// This Project
 
 namespace datatools {
 
@@ -21,5 +21,4 @@ bool validate_version(const std::string& label, const version_id& vid,
 
 } // namespace datatools
 
-#endif // DATATOOLS_VERSION_CHECK_H_
-
+#endif // DATATOOLS_VERSION_CHECK_H

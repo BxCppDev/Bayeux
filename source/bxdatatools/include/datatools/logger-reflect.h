@@ -1,12 +1,12 @@
 // -*- mode: c++; -*-
 //! \file datatools/logger-reflect.h
-#ifndef DATATOOLS_LOGGER_REFLECT_H_
-#define DATATOOLS_LOGGER_REFLECT_H_
+#ifndef DATATOOLS_LOGGER_REFLECT_H
+#define DATATOOLS_LOGGER_REFLECT_H
 
-// Standard Library
+// Standard Library:
 #include <iostream>
 
-// Datatools
+// This project:
 #include <datatools/logger.h>
 
 // Export the introspection code for the 'datatools::logger::priority' enum:
@@ -44,4 +44,4 @@ namespace datatools {
   } // end of namespace detail
 } // end of namespace datatools
 
-#endif // DATATOOLS_LOGGER_REFLECT_H_
+#endif // DATATOOLS_LOGGER_REFLECT_H

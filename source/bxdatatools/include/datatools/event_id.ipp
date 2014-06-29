@@ -1,18 +1,18 @@
 // -*- mode: c++; -*-
 //! \file datatools/event_id.ipp
-#ifndef DATATOOLS_EVENT_ID_IPP_
-#define DATATOOLS_EVENT_ID_IPP_
+#ifndef DATATOOLS_EVENT_ID_IPP
+#define DATATOOLS_EVENT_ID_IPP
 
-// Ourselves
+// Ourselves:
 #include <datatools/event_id.h>
 
 // Standard Library
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/serialization/nvp.hpp>
 
-// Datatools
+// This project:
 #include <datatools/utils.h>
 
 namespace datatools {
@@ -30,4 +30,4 @@ DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(event_id, archive, version)
 #include <boost/serialization/version.hpp>
 BOOST_CLASS_VERSION(datatools::event_id, 1)
 
-#endif // DATATOOLS_EVENT_ID_IPP_
+#endif // DATATOOLS_EVENT_ID_IPP

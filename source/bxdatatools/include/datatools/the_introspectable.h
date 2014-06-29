@@ -1,4 +1,4 @@
-/* datatools/the_introspectable.h */
+/// \file datatools/the_introspectable.h
 /*
  * Description :
  *
@@ -25,29 +25,18 @@
  *
  */
 
-#ifndef DATATOOLS_THE_INTROSPECTABLE_H_
-#define DATATOOLS_THE_INTROSPECTABLE_H_
+#ifndef DATATOOLS_THE_INTROSPECTABLE_H
+#define DATATOOLS_THE_INTROSPECTABLE_H
 
+// This project:
 #include <datatools/datatools_config.h>
-
 #include <datatools/logger-reflect.h>
-
 #include <datatools/i_serializable-reflect.h>
-
 #include <datatools/i_tree_dump-reflect.h>
-
 #include <datatools/event_id-reflect.h>
-
 #include <datatools/properties-reflect.h>
-
 #include <datatools/multi_properties-reflect.h>
-
 #include <datatools/things-reflect.h>
-
-//#include <datatools/advanced_object-reflect.h>
-
 #include <datatools/enriched_base-reflect.h>
 
-#endif // DATATOOLS_THE_INTROSPECTABLE_H_
-
-/* end of datatools/the_introspectable.h */
+#endif // DATATOOLS_THE_INTROSPECTABLE_H

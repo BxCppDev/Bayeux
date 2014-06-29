@@ -1,18 +1,15 @@
 // -*- mode: c++; -*-
-// ioutils.h
+/// \file datatools/ioutils.h
 #ifndef DATATOOLS_IOUTILS_H
 #define DATATOOLS_IOUTILS_H
 
-// Standard Library
+// Standard Library:
 #include <iostream>
 #include <string>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/cstdint.hpp>
-
-// This Project
-
 
 namespace datatools {
 

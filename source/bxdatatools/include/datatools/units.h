@@ -14,17 +14,15 @@
  * History:
  *
  */
-#ifndef DATATOOLS_UNITS_H_
-#define DATATOOLS_UNITS_H_
-// Standard Library
+#ifndef DATATOOLS_UNITS_H
+#define DATATOOLS_UNITS_H
+
+// Standard Library:
 #include <string>
 #include <vector>
 #include <limits>
 
-// Third Party
-// - A
-
-// This Project
+// This Project:
 #include <datatools/exception.h>
 
 namespace datatools {
@@ -200,4 +198,4 @@ class units {
               "Invalid '" << UnitType << "' unit for symbol '" << UnitSymbol << "' !")
 /**/
 
-#endif // DATATOOLS_UNITS_H_
+#endif // DATATOOLS_UNITS_H

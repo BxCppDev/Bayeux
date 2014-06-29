@@ -29,19 +29,19 @@
 #ifndef DATATOOLS_OBJECT_CONFIGURATION_DESCRIPTION_H
 #define DATATOOLS_OBJECT_CONFIGURATION_DESCRIPTION_H
 
-// Standard library
+// Standard library:
 #include <iostream>
 #include <string>
 #include <vector>
 #include <set>
 
-// Third party
-// - Boost
+// Third party:
+// - Boost:
 #include <boost/scoped_ptr.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/logic/tribool.hpp>
 
-// This project
+// This project:
 #include <datatools/properties.h>
 #include <datatools/types.h>
 #include <datatools/bit_mask.h>

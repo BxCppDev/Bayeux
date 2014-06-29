@@ -1,8 +1,8 @@
 /* -*- mode: c++; -*- */
-/* ocd_driver.h */
+/// \file datatools/ocd_driver.h
 
-#ifndef DATATOOLS_OCD_DRIVER_H_
-#define DATATOOLS_OCD_DRIVER_H_
+#ifndef DATATOOLS_OCD_DRIVER_H
+#define DATATOOLS_OCD_DRIVER_H
 
 // Standard Library
 #include <string>
@@ -95,4 +95,4 @@ private:
 
 } // end of namespace datatools
 
-#endif // DATATOOLS_OCD_DRIVER_H_
+#endif // DATATOOLS_OCD_DRIVER_H

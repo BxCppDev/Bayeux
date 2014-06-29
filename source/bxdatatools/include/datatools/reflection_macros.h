@@ -1,5 +1,5 @@
 /* -*- mode: c++; -*- */
-/* reflection_macros.h */
+/// \file datatools/reflection_macros.h
 /*
  * Description :
  *
@@ -23,14 +23,15 @@
  * Boston, MA 02110-1301, USA.
  *
  */
-#ifndef DATATOOLS_REFLECTION_MACROS_H_
-#define DATATOOLS_REFLECTION_MACROS_H_
 
-// Standard Library
+#ifndef DATATOOLS_REFLECTION_MACROS_H
+#define DATATOOLS_REFLECTION_MACROS_H
+
+// Standard Library:
 #include <string>
 
-// Third Party
-// - Camp
+// Third Party:
+// - Camp:
 #include <camp/camptype.hpp>
 #include <camp/class.hpp>
 #include <camp/enum.hpp>
@@ -49,7 +50,7 @@
 #include <camp/args.hpp>
 #include <camp/function.hpp>
 
-// Ourself :
+// This project :
 #include <datatools/detail/reflection_utils.h>
 #include <datatools/detail/reflection_export.h>
 #include <datatools/detail/reflection_version.h>
@@ -586,5 +587,4 @@
       }}}                                                               \
   /**/
 
-#endif // DATATOOLS_REFLECTION_MACROS_H_
-
+#endif // DATATOOLS_REFLECTION_MACROS_H

@@ -1,16 +1,21 @@
-// -*- mode: c++; -*-
-/* io_factory.cc
- */
-// Ourselves
+// io_factory.cc
+
+// Ourselves:
 #include <datatools/io_factory.h>
 
-// Standard Library
-
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/archive/codecvt_null.hpp>
 
-// Datatools
+
+#if defined (__clang__)
+//#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Woverloaded-virtual"
+#endif
+#if defined (__gnuc__)
+//#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+#endif
 
 namespace datatools {
 
@@ -1106,5 +1111,3 @@ void data_writer::init_single(const std::string& filename) {
 
 
 } // end of namespace datatools
-
-

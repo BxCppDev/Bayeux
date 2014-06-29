@@ -1,5 +1,5 @@
-/* datatools/range_tools.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file datatools/range_tools.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2011-09-25
  * Last modified: 2011-09-25
  *
@@ -29,9 +29,10 @@
  * History:
  *
  */
-#ifndef DATATOOLS_RANGE_TOOLS_H_
-#define DATATOOLS_RANGE_TOOLS_H_
+#ifndef DATATOOLS_RANGE_TOOLS_H
+#define DATATOOLS_RANGE_TOOLS_H
 
+// This project:
 #include <datatools/bit_mask.h>
 
 namespace datatools {
@@ -52,5 +53,4 @@ enum range_bound_info_type {
 
 } // end of namespace datatools
 
-#endif // DATATOOLS_RANGE_TOOLS_H_
-
+#endif // DATATOOLS_RANGE_TOOLS_H

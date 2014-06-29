@@ -35,7 +35,7 @@
 #ifndef DATATOOLS_THINGS_H
 #define DATATOOLS_THINGS_H
 
-// Standard Library
+// Standard Library:
 #include <exception>
 #include <iostream>
 #include <map>
@@ -45,13 +45,13 @@
 #include <typeinfo>
 #include <vector>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/cstdint.hpp>
 #include <boost/utility.hpp>
 #include <boost/serialization/access.hpp>
 
-// This Project
+// This Project:
 #include <datatools/i_serializable.h>
 #include <datatools/serialization_macros.h>
 #include <datatools/i_clear.h>

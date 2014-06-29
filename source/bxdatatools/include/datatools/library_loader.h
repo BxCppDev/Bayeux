@@ -1,5 +1,5 @@
-/* datatools/library_loader.h */
-/* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file datatools/library_loader.h
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-30
  * Last modified : 2013-04-19
  *
@@ -26,20 +26,20 @@
  *  A shared library loader facility (based on kwsys).
  *
  */
-#ifndef DATATOOLS_LIBRARY_LOADER_H_
-#define DATATOOLS_LIBRARY_LOADER_H_
+#ifndef DATATOOLS_LIBRARY_LOADER_H
+#define DATATOOLS_LIBRARY_LOADER_H
 
-// Standard Library
+// Standard Library:
 #include <iostream>
 #include <string>
 
-// Third Party
-// - A
+// Third Party:
+// - Boost:
 #include <boost/cstdint.hpp>
 #include <boost/utility.hpp>
 #include <boost/scoped_ptr.hpp>
 
-// This Project
+// This Project:
 #include <datatools/datatools_config.h>
 #include <datatools/bit_mask.h>
 #include <datatools/detail/DynamicLoader.h>
@@ -119,5 +119,4 @@ class library_loader : boost::noncopyable {
 
 } // end of namespace datatools
 
-
-#endif // DATATOOLS_LIBRARY_LOADER_H_
+#endif // DATATOOLS_LIBRARY_LOADER_H

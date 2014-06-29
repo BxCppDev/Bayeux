@@ -1,16 +1,10 @@
-/* datatools/i_named.h */
-#ifndef DATATOOLS_I_NAMED_H_
-#define DATATOOLS_I_NAMED_H_
-// Standard Library
+#ifndef DATATOOLS_I_NAMED_H
+#define DATATOOLS_I_NAMED_H
+
+// Standard Library:
 #include <string>
 
-// Third Party
-// - A
-
-// This Project
-
 //! \file datatools/i_named.h
-
 namespace datatools {
 
 //! \brief A pure abstract class (interface) for inherited named objects.
@@ -33,5 +27,4 @@ class i_named {
 
 } // end of namespace datatools
 
-#endif // DATATOOLS_I_NAMED_H_
-
+#endif // DATATOOLS_I_NAMED_H

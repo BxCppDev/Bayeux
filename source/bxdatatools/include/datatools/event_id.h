@@ -1,7 +1,6 @@
 // -*- mode: c++; -*-
 //! \file datatools/event_id.h
-/* event_id.h
- * Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-02-15
  * Last modified: 2013-03-22
  *
@@ -14,20 +13,20 @@
  * History:
  *
  */
-#ifndef DATATOOLS_EVENT_ID_H_
-#define DATATOOLS_EVENT_ID_H_
+#ifndef DATATOOLS_EVENT_ID_H
+#define DATATOOLS_EVENT_ID_H
 
-// Standard Library
+// Standard Library:
 #include <string>
 #include <sstream>
 #include <iostream>
 #include <stdexcept>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/cstdint.hpp>
 
-// Datatools
+// Datatools:
 #include <datatools/i_serializable.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/i_clear.h>
@@ -225,4 +224,4 @@ DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::datatools::event_i
 // Activate reflection layer for the 'datatools::event_id' class:
 DR_CLASS_INIT(::datatools::event_id);
 
-#endif // DATATOOLS_EVENT_ID_H_
+#endif // DATATOOLS_EVENT_ID_H

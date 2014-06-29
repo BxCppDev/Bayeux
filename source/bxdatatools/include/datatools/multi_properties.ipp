@@ -1,14 +1,13 @@
 // -*- mode: c++; -*-
 //! \file datatools/multi_properties.ipp
-#ifndef DATATOOLS_MULTI_PROPERTIES_IPP_
-#define DATATOOLS_MULTI_PROPERTIES_IPP_
-// Ourselves
+#ifndef DATATOOLS_MULTI_PROPERTIES_IPP
+#define DATATOOLS_MULTI_PROPERTIES_IPP
+
+// Ourselves:
 #include <datatools/multi_properties.h>
 
-// Standard Library
-
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/archive/archive_exception.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
@@ -17,7 +16,7 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/string.hpp>
 
-// This Project
+// This Project:
 #include <datatools/i_serializable.ipp>
 #include <datatools/utils.h>
 #include <datatools/properties.ipp>
@@ -56,5 +55,4 @@ DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(multi_properties, archive, ve
 #include <boost/serialization/version.hpp>
 BOOST_CLASS_VERSION(datatools::multi_properties, 2)
 
-#endif // DATATOOLS_MULTI_PROPERTIES_IPP_
-
+#endif // DATATOOLS_MULTI_PROPERTIES_IPP

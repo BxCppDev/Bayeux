@@ -1,15 +1,13 @@
-/* i_tree_dump.h */
-#ifndef DATATOOLS_I_TREE_DUMP_H_
-#define DATATOOLS_I_TREE_DUMP_H_
+/// \file datatools/i_tree_dump.h
+#ifndef DATATOOLS_I_TREE_DUMP_H
+#define DATATOOLS_I_TREE_DUMP_H
 
-// Standard Library
+// Standard Library:
 #include <iostream>
 #include <string>
 
-// Datatools
+// This project:
 #include <datatools/datatools_config.h>
-
-// Datatools reflection utilities :
 #include <datatools/reflection_macros.h>
 
 namespace datatools {
@@ -93,5 +91,4 @@ class i_tree_dumpable {
 // Activate reflection layer for the 'datatools::i_tree_dumpable' class:
 DR_CLASS_INIT(::datatools::i_tree_dumpable);
 
-#endif // DATATOOLS_I_TREE_DUMP_H_
-
+#endif // DATATOOLS_I_TREE_DUMP_H

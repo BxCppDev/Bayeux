@@ -1,10 +1,10 @@
-/* service_tools.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file datatools/service_tools.h
+/* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
  * Last modified : 2012-12-15
- * 
+ *
  * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -17,36 +17,37 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
- * 
- * 
- * Description: 
+ *
+ *
+ * Description:
  *
  *   Service tools, typedefs.
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
-#ifndef DATATOOLS_SERVICE_TOOLS_H_
-#define DATATOOLS_SERVICE_TOOLS_H_
+#ifndef DATATOOLS_SERVICE_TOOLS_H
+#define DATATOOLS_SERVICE_TOOLS_H
 
-// Standard Library
+// Standard Library:
 #include <string>
 #include <map>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/cstdint.hpp>
 
-// Datatools
+// This project:
 #include <datatools/handle.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/properties.h>
 
 namespace datatools {
 
+/// \brief Base class for all services
 class base_service;
 typedef datatools::handle<base_service> service_handle_type;
 
@@ -63,7 +64,7 @@ enum dependency_level_type {
 struct dependency_info_type {
   std::string id;      //!< ID of the external service
   std::string version; //!< Version of the external service
-  std::string meta;    //!< Auxiliary information 
+  std::string meta;    //!< Auxiliary information
   int level;           //!< Level of the dependency (see dependency_level_type enum)
   dependency_info_type();
 };
@@ -74,7 +75,7 @@ typedef std::map<std::string, dependency_info_type> service_dependency_dict_type
 
 class service_manager;
 
-// Record that handles a dynamically allocated service and additional 
+// Record that handles a dynamically allocated service and additional
 // informations :
 
 //! \brief Internal entry for service objects stored in the service manager class
@@ -121,7 +122,7 @@ class service_entry : public datatools::i_tree_dumpable  {
 
   void remove_slave(const std::string& name);
 
-  virtual void tree_dump(std::ostream& out = std::clog, 
+  virtual void tree_dump(std::ostream& out = std::clog,
                          const std::string & title  = "",
                          const std::string & indent = "",
                          bool inherit = false) const;
@@ -131,14 +132,14 @@ class service_entry : public datatools::i_tree_dumpable  {
   service_handle_type & grab_service_handle();
 
  public: // TO BE CHANGED
- private: 
+ private:
   // WHY ARE THESE PUBLIC?? service_entry has functionality, it's
   // not just a bag of data...
   // Either that, or it should be a pImpl of service_manager
   //
   std::string  service_name;    //!< The name of the service
   std::string  service_id;      //!< The ID (type) of the service
-  datatools::properties service_config;  //!< The configuration of the service 
+  datatools::properties service_config;  //!< The configuration of the service
   uint32_t service_status;  //!< The status of the service
   service_handle_type service_handle;  //!< The handle for the allocated service
  public:
@@ -152,5 +153,4 @@ typedef std::map<std::string, service_entry> service_dict_type;
 
 }  // end of namespace datatools
 
-#endif // DATATOOLS_SERVICE_TOOLS_H_
-
+#endif // DATATOOLS_SERVICE_TOOLS_H

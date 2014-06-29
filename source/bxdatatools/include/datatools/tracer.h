@@ -1,4 +1,4 @@
-//! \file    logger.h
+//! \file    datatools/tracer.h
 //! \brief   Utilities for tracing values in a log file
 //! \details Tracing information from the progress of an application
 //!          is useful to record the history of some values of interest
@@ -26,16 +26,16 @@
 #ifndef DATATOOLS_TRACER_H
 #define DATATOOLS_TRACER_H
 
-// Standard Library
+// Standard Library:
 #include <iostream>
 #include <fstream>
 #include <string>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/scoped_ptr.hpp>
 
-// This Project
+// This Project:
 #include <datatools/utils.h>
 
 namespace datatools {

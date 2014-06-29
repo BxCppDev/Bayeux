@@ -28,8 +28,8 @@
  * History:
  *
  */
-#ifndef DATATOOLS_BASE_SERVICE_H_
-#define DATATOOLS_BASE_SERVICE_H_
+#ifndef DATATOOLS_BASE_SERVICE_H
+#define DATATOOLS_BASE_SERVICE_H
 
 // Standard Library
 #include <string>
@@ -148,4 +148,4 @@ class base_service : public datatools::i_tree_dumpable {
   /**/
 
 
-#endif // DATATOOLS_BASE_SERVICE_H_
+#endif // DATATOOLS_BASE_SERVICE_H

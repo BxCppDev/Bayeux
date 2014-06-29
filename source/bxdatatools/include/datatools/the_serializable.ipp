@@ -1,12 +1,12 @@
-// -*- mode: c++; -*- 
-/* datatools::the_serializable.ipp */
+// -*- mode: c++; -*-
+/// \file datatools/the_serializable.ipp
 /*
  * This includes the implementation code
  * for Boost/Serialization layer.
  *
  */
-#ifndef DATATOOLS_THE_SERIALIZABLE_IPP_
-#define DATATOOLS_THE_SERIALIZABLE_IPP_
+#ifndef DATATOOLS_THE_SERIALIZABLE_IPP
+#define DATATOOLS_THE_SERIALIZABLE_IPP
 
 /********************************************
  * datatools::i_serializable                *
@@ -33,5 +33,4 @@
  *********************************/
 #include <datatools/event_id.ipp>
 
-#endif // DATATOOLS_THE_SERIALIZABLE_IPP_
-
+#endif // DATATOOLS_THE_SERIALIZABLE_IPP

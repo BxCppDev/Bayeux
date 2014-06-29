@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* smart_ref.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file datatools/smart_ref.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-03-16
  * Last modified: 2010-03-16
  *
@@ -13,9 +13,11 @@
  * History:
  *
  */
-#ifndef DATATOOLS_SMART_REF_H_
-#define DATATOOLS_SMART_REF_H_
-// Standard Library
+
+#ifndef DATATOOLS_SMART_REF_H
+#define DATATOOLS_SMART_REF_H
+
+// Standard Library:
 #include <cstdlib>
 #include <iostream>
 #include <list>
@@ -23,12 +25,12 @@
 #include <stdexcept>
 #include <sstream>
 
-// Third Party
-// - A
+// Third Party:
+// - Boost:
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 
-// This Project
+// This Project:
 #include <datatools/properties.h>
 
 namespace datatools {
@@ -46,65 +48,58 @@ class smart_ref {
   typedef smart_ref<instance_type> smart_ref_type;
 
  public:
-  // ctor:
+
+  /// Default constructor
   smart_ref() : ref_(0), properties_() {}
 
-  // ctor:
+  /// Constructor
   smart_ref(const_reference_type obj) {
     this->set(obj);
   }
 
-  // dtor:
+  /// Destructor
   virtual ~smart_ref() {}
 
-
+  /// Set the internal reference to the target object
   void set(const_reference_type obj) {
     ref_ = const_cast<pointer_type>(&obj);
   }
 
+  /// Return the reference to the target object
   const_reference_type get() const {
     return *ref_;
   }
 
-
+  /// Return a non mutable reference to the container of properties
   const datatools::properties& get_properties() const {
     return properties_;
   }
 
+  /// Return a mutable reference to the container of properties
+  datatools::properties& grab_properties() {
+    return properties_;
+  }
+
+  /// \deprecated Return a mutable reference to the container of properties
   datatools::properties& get_properties() {
     return properties_;
   }
 
+  /// Set the container of properties
   void set_properties(const datatools::properties& props) {
     properties_ = props;
   }
 
+  /// Reset the internal reference
   void reset() {
     ref_ = 0;
   }
 
+  /// Check the validity of the smart reference
   bool is_valid() const {
     return ref_ != 0;
   }
 
-
- private:
-  friend class boost::serialization::access;
-
-  template<class Archive>
-  void serialize(Archive& ar, const unsigned int /*version*/) {
-    ar & boost::serialization::make_nvp("properties", properties_);
-    ar & boost::serialization::make_nvp("ref", ref_);
-  }
-
- private:
-  pointer_type          ref_;
-  datatools::properties properties_;
-
-
-//----------------------------------------------------------------------
-// has_flag predicate (inner class)
- public:
   //! \brief Predicate used by the smart_ref template class
   class has_flag : public std::unary_function<smart_ref_type, bool> {
    public:
@@ -117,9 +112,23 @@ class smart_ref {
    private:
     std::string flag_;
   };
+
+ private:
+
+  pointer_type          ref_; /// Handle to the target object
+  datatools::properties properties_; /// Container of auxiliary properties
+
+  friend class boost::serialization::access;
+
+  /// Boost serialization method
+  template<class Archive>
+  void serialize(Archive& ar, const unsigned int /*version*/) {
+    ar & boost::serialization::make_nvp("properties", properties_);
+    ar & boost::serialization::make_nvp("ref", ref_);
+  }
+
 };
 
 } // end of namespace datatools
 
-#endif // DATATOOLS_SMART_REF_H_
-
+#endif // DATATOOLS_SMART_REF_H

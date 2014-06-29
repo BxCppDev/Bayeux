@@ -1,5 +1,5 @@
-/* library_info.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file datatools/library_info.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-09-16
  * Last modified: 2013-09-26
  *
@@ -28,15 +28,15 @@
  *
  */
 
-#ifndef DATATOOLS_LIBRARY_INFO_H_
-#define DATATOOLS_LIBRARY_INFO_H_
+#ifndef DATATOOLS_LIBRARY_INFO_H
+#define DATATOOLS_LIBRARY_INFO_H
 
-// Standard library
+// Standard library:
 #include <iostream>
 #include <string>
 #include <vector>
 
-// Datatools
+// This project:
 #include <datatools/logger.h>
 #include <datatools/multi_properties.h>
 #include <datatools/i_tree_dump.h>
@@ -163,4 +163,4 @@ namespace datatools {
 
 } // end of namespace datatools
 
-#endif // DATATOOLS_LIBRARY_INFO_H_
+#endif // DATATOOLS_LIBRARY_INFO_H

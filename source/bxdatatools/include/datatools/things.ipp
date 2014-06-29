@@ -1,14 +1,14 @@
 // -*- mode: c++; -*-
 //! \file datatools/things.ipp
-#ifndef DATATOOLS_THINGS_IPP_
-#define DATATOOLS_THINGS_IPP_
-// Ourselves
+
+#ifndef DATATOOLS_THINGS_IPP
+#define DATATOOLS_THINGS_IPP
+
+// Ourselves:
 #include <datatools/things.h>
 
-// Standard Library
-
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/archive/archive_exception.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/list.hpp>
@@ -17,7 +17,7 @@
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/vector.hpp>
 
-// This Project
+// This Project:
 #include <datatools/i_serializable.ipp>
 #include <datatools/utils.h>
 
@@ -51,5 +51,4 @@ DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(things, archive, version)
 #include <boost/serialization/version.hpp>
 BOOST_CLASS_VERSION(datatools::things, 1)
 
-#endif // DATATOOLS_THINGS_IPP_
-
+#endif // DATATOOLS_THINGS_IPP

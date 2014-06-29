@@ -1,5 +1,5 @@
-/* kernel.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file datatools/kernel.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-09-26
  * Last modified: 2013-09-26
  *
@@ -28,18 +28,18 @@
  *
  */
 
-#ifndef DATATOOLS_KERNEL_H_
-#define DATATOOLS_KERNEL_H_
+#ifndef DATATOOLS_KERNEL_H
+#define DATATOOLS_KERNEL_H
 
-// Standard Library
+// Standard Library:
 #include <iostream>
 
-// Third Party
+// Third Party:
 #include <boost/scoped_ptr.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/program_options.hpp>
 
-// This project
+// This project:
 #include <datatools/logger.h>
 #include <datatools/i_tree_dump.h>
 
@@ -119,10 +119,13 @@ namespace datatools {
     /// Return a non mutable reference to the kernel singleton
     static const kernel & const_instance();
 
+    /// Build description of options
     static void build_opt_desc(boost::program_options::options_description &, param_type &);
 
+    /// Print splash screen
     static void print_splash(std::ostream & = std::clog);
 
+    /// Print description of options
     static void print_opt_desc(const boost::program_options::options_description &,
                                std::ostream & = std::clog,
                                const std::string & indent_ = "");
@@ -135,6 +138,7 @@ namespace datatools {
 
   protected:
 
+    /// Initialization
     void _initialize(const param_type & params_);
 
   private:
@@ -153,4 +157,4 @@ namespace datatools {
 
 } // end of namespace datatools
 
-#endif // DATATOOLS_KERNEL_H_
+#endif // DATATOOLS_KERNEL_H

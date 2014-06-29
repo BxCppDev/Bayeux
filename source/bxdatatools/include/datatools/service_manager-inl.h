@@ -1,11 +1,11 @@
-/* service_manager-inl.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file datatools/service_manager-inl.h
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
  * Last modified : 2013-02-24
  */
 
-#ifndef DATATOOLS_SERVICE_MANAGER_INL_H_
-#define DATATOOLS_SERVICE_MANAGER_INL_H_
+#ifndef DATATOOLS_SERVICE_MANAGER_INL_H
+#define DATATOOLS_SERVICE_MANAGER_INL_H
 
 namespace datatools {
 
@@ -64,6 +64,4 @@ void service_manager::register_service_type(const std::string& id) {
 }
 }  // end of namespace datatools
 
-#endif // DATATOOLS_SERVICE_MANAGER_INL_H_
-
-// end of service_manager-inl.h
+#endif // DATATOOLS_SERVICE_MANAGER_INL_H

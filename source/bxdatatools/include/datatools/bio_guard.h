@@ -1,4 +1,4 @@
-/* bio_guard.h */
+/// \file datatools/bio_guard.h
 /*
  * Description :
  *
@@ -28,14 +28,10 @@
  *
  */
 
-#ifndef DATATOOLS_BIO_GUARD_H_
-#define DATATOOLS_BIO_GUARD_H_
+#ifndef DATATOOLS_BIO_GUARD_H
+#define DATATOOLS_BIO_GUARD_H
 
-// Standard Library
-
-// Third Party
-
-// Datatools
+// This project:
 #include <datatools/datatools_config.h>
 #include <datatools/detail/bio_link_guard.h>
 
@@ -63,4 +59,4 @@ bio_guard bio_guard::_g_trigger_link_guard_;
 } // end namespace datatools
 #endif // DATATOOLS_WITH_BIO != 1
 
-#endif // DATATOOLS_BIO_GUARD_H_
+#endif // DATATOOLS_BIO_GUARD_H

@@ -5,15 +5,13 @@
  * Last modified : 2012-12-15
  *
  */
-#ifndef DATATOOLS_FACTORY_MACROS_H_
-#define DATATOOLS_FACTORY_MACROS_H_
+#ifndef DATATOOLS_FACTORY_MACROS_H
+#define DATATOOLS_FACTORY_MACROS_H
 
-// Standard Library
-
-// Third Party
+// Third Party:
 #include <boost/preprocessor/stringize.hpp>
 
-// Datatools
+// This project:
 #include <datatools/factory.h>
 
 /**
@@ -76,7 +74,7 @@
   }									\
   /**/
 
-/// Useful macros
+// Useful macros
 #define DATATOOLS_FACTORY_GRAB_SYSTEM_REGISTER(BaseType)	\
   BaseType::grab_system_factory_register()			\
   /**/
@@ -85,13 +83,14 @@
   BaseType::get_system_factory_register()		\
   /**/
 
-/// Automated registration for derived classes:
+/// Interface macro of the automated registration for derived classes
 #define DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(BaseType, DerivedType) \
   private:								\
   static ::datatools::_system_factory_registrator< BaseType , DerivedType > _g_system_factory_registration_; \
   static std::string get_system_factory_auto_registration_id();		\
   /**/
 
+/// Implementation macro of the automated registration for derived classes
 #define DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(BaseType, DerivedType, TypeId) \
   ::datatools::_system_factory_registrator< BaseType , DerivedType > DerivedType::_g_system_factory_registration_(TypeId); \
   std::string DerivedType::get_system_factory_auto_registration_id()	\
@@ -100,4 +99,4 @@
   }									\
   /**/
 
-#endif // DATATOOLS_FACTORY_FACTORY_MACROS_H_
+#endif // DATATOOLS_FACTORY_FACTORY_MACROS_H

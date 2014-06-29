@@ -1,5 +1,5 @@
-/* datatools/i_cloneable.h */
-/* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file datatools/i_cloneable.h
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-03-24
  * Last modified : 2013-04-22
  *
@@ -26,18 +26,14 @@
  *
  */
 
-//! \file datatools/i_cloneable.h
-#ifndef DATATOOLS_I_CLONEABLE_H_
-#define DATATOOLS_I_CLONEABLE_H_
+#ifndef DATATOOLS_I_CLONEABLE_H
+#define DATATOOLS_I_CLONEABLE_H
 
-// Standard Library
+// Standard Library:
 #include <iostream>
 #include <typeinfo>
 
-// Third Party
-// - A
-
-// This Project
+// This Project:
 #include <datatools/caster_utils.h>
 
 namespace datatools {
@@ -123,5 +119,4 @@ class i_cloneable {
   /**/
 
 
-#endif // DATATOOLS_UTILS_I_CLONEABLE_H_
-
+#endif // DATATOOLS_UTILS_I_CLONEABLE_H

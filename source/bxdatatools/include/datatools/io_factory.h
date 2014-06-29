@@ -1,5 +1,5 @@
 // -*- mode: C++; -*-
-/* io_factory.h */
+/// \file datatools/io_factory.h
 /*
  * Description :
  *
@@ -27,7 +27,7 @@
 #ifndef DATATOOLS_IO_FACTORY_H
 #define DATATOOLS_IO_FACTORY_H
 
-// Standard Library
+// Standard Library:
 #include <stdexcept>
 #include <iostream>
 #include <string>
@@ -36,8 +36,8 @@
 #include <locale>
 #include <typeinfo>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 // 2012-01-09 FM : now use the Boost 1.47 header :
 //#include <boost/math/nonfinite_num_facets.hpp>
 #include <boost/math/special_functions/nonfinite_num_facets.hpp>

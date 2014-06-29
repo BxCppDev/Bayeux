@@ -1,5 +1,5 @@
-/* smart_filename.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file datatools/smart_filename.h
+/* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-09-12
  * Last modified : 2011-09-12
  *
@@ -29,18 +29,19 @@
  * History:
  *
  */
-#ifndef DATATOOLS_SMART_FILENAME_H_
-#define DATATOOLS_SMART_FILENAME_H_
-// Standard Library
+#ifndef DATATOOLS_SMART_FILENAME_H
+#define DATATOOLS_SMART_FILENAME_H
+
+// Standard Library:
 #include <iostream>
 #include <string>
 #include <vector>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/cstdint.hpp>
 
-// This Project
+// This Project:
 #include <datatools/properties.h>
 
 namespace datatools {
@@ -244,4 +245,4 @@ class smart_filename {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(datatools::smart_filename)
 
-#endif // DATATOOLS_SMART_FILENAME_H_
+#endif // DATATOOLS_SMART_FILENAME_H
