@@ -1,9 +1,7 @@
-// -*- mode: c++; -*-
-/* genbb_help_config.h header file
- */
+/// \file genbb_help/genbb_help_config.h
 
-#ifndef GENBB_HELP_GENBB_HELP_CONFIG_H_
-#define GENBB_HELP_GENBB_HELP_CONFIG_H_ 1
+#ifndef GENBB_HELP_GENBB_HELP_CONFIG_H
+#define GENBB_HELP_GENBB_HELP_CONFIG_H 1
 
 /***  genbb_help is built standalone or not ***/
 #cmakedefine01 GENBB_HELP_STANDALONE
@@ -28,6 +26,8 @@
 
 #define GENBB_HELP_ENV_RESOURCE_DIR "GENBB_HELP_RESOURCE_DIR"
 
-#endif // GENBB_HELP_GENBB_HELP_CONFIG_H_
+#endif // GENBB_HELP_GENBB_HELP_CONFIG_H
 
-// end of genbb_help_config.h
+// Local Variables: --
+// mode: c++ --
+// End: --

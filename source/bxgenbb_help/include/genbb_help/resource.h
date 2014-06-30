@@ -27,13 +27,9 @@
 
 #ifndef GENBB_HELP_RESOURCE_H
 #define GENBB_HELP_RESOURCE_H
-// Standard Library
+
+// Standard Library:
 #include <string>
-
-// Third Party
-// - A
-
-// This Project
 
 namespace genbb {
 
@@ -56,3 +52,7 @@ std::string get_resource(const std::string& rname, bool overriden_env = false);
 } // namespace genbb
 
 #endif // GENBB_HELP_RESOURCE_H
+
+// Local Variables: --
+// mode: c++ --
+// End: --

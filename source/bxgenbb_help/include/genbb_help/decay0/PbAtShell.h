@@ -1,8 +1,6 @@
 #ifndef GENBB_DECAY0_PBATSHELL_H_
 #define GENBB_DECAY0_PBATSHELL_H_ 1
 
-#include <cmath>
-
 namespace mygsl
 {
   class rng;
@@ -17,8 +15,8 @@ namespace genbb
                     double tclev, double thlev, double &tdlev);
 
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
+  } // end of namespace decay0
+} // end of namespace genbb
 
 #endif // GENBB_DECAY0_PBATSHELL_H_
 // Local Variables: --

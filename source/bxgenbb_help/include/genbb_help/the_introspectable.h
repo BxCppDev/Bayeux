@@ -1,4 +1,4 @@
-/* the_introspectable.h */
+/// \file genbb_help/the_introspectable.h
 /*
  * Description :
  *
@@ -25,14 +25,16 @@
  *
  */
 
-#ifndef GENBB_HELP_THE_INTROSPECTABLE_H_
-#define GENBB_HELP_THE_INTROSPECTABLE_H_
+#ifndef GENBB_HELP_THE_INTROSPECTABLE_H
+#define GENBB_HELP_THE_INTROSPECTABLE_H
 
+// This project:
 #include <genbb_help/genbb_help_config.h>
-
 #include <genbb_help/primary_particle-reflect.h>
 #include <genbb_help/primary_event-reflect.h>
 
-#endif // GENBB_HELP_THE_INTROSPECTABLE_H_
+#endif // GENBB_HELP_THE_INTROSPECTABLE_H
 
-/* end of the_introspectable.h */
+// Local Variables: --
+// mode: c++ --
+// End: --

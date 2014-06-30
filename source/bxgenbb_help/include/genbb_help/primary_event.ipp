@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file genbb_help/primary_event.ipp
 
 #ifndef GENBB_HELP_PRIMARY_EVENT_IPP
@@ -7,12 +6,16 @@
 // Ourselves:
 #include <genbb_help/primary_event.h>
 
+// Third party:
+// - Boost:
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/string.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/i_serializable.ipp>
+
+// This project:
 #include <genbb_help/primary_particle.ipp>
 
 namespace genbb {
@@ -82,3 +85,7 @@ namespace genbb {
 BOOST_CLASS_VERSION(genbb::primary_event, 4)
 
 #endif // GENBB_HELP_PRIMARY_EVENT_IPP
+
+// Local Variables: --
+// mode: c++ --
+// End: --

@@ -1,11 +1,15 @@
-// -*- mode: c++; -*-
 /// \file genbb_help/the_serializable.h
 
 #ifndef GENBB_HELP_THE_SERIALIZABLE_H
 #define GENBB_HELP_THE_SERIALIZABLE_H 1
 
-#include <datatools/archives_instantiation.h>
+// Third party:
+// - Boost:
 #include <boost/serialization/export.hpp>
+// - Bayeux/datatools:
+#include <datatools/archives_instantiation.h>
+
+// This project:
 #include <genbb_help/the_serializable.ipp>
 
 /** Information:
@@ -30,3 +34,7 @@ DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(genbb::primary_event)
 BOOST_CLASS_EXPORT_IMPLEMENT(genbb::primary_event)
 
 #endif // GENBB_HELP_THE_SERIALIZABLE_H
+
+// Local Variables: --
+// mode: c++ --
+// End: --

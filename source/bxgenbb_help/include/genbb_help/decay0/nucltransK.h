@@ -1,7 +1,7 @@
 #ifndef GENBB_DECAY0_NUCLTRANSK_H_
 #define GENBB_DECAY0_NUCLTRANSK_H_ 1
 
-#include <cmath>
+// This project:
 #include <genbb_help/decay0/common.h>
 
 namespace mygsl{
@@ -13,7 +13,7 @@ namespace genbb {
   class primary_event;
 
   namespace decay0 {
-    
+
     // Subroutine nucltransK choise one of the three concurent processes
     // by which the transition from one nuclear state to another is
     // occured: gamma-ray emission, internal conversion and internal
@@ -36,8 +36,7 @@ namespace genbb {
 			   double conve,double convp,double tclev,
 			   double thlev,double & tdlev);
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
+  } // end of namespace decay0
+} // end of namespace genbb
 
 #endif // GENBB_DECAY0_NUCLTRANSK_H_
-

@@ -24,13 +24,9 @@
 
 #ifndef GENBB_HELP_VERSION_H
 #define GENBB_HELP_VERSION_H
-// Standard Library
+
+// Standard Library:
 #include <string>
-
-// Third Party
-// - A
-
-// This Project
 
 //----------------------------------------------------------------------
 // - Compile Time API
@@ -90,3 +86,6 @@ static bool has_feature(const std::string& feature);
 
 #endif // GENBB_HELP_VERSION_H
 
+// Local Variables: --
+// mode: c++ --
+// End: --

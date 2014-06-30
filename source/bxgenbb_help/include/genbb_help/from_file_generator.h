@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file genbb_help/from_file_generator.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2014-06-18
@@ -95,3 +94,7 @@ namespace genbb {
 DOCD_CLASS_DECLARATION(genbb::from_file_generator)
 
 #endif // GENBB_HELP_FROM_FILE_GENERATOR_H
+
+// Local Variables: --
+// mode: c++ --
+// End: --

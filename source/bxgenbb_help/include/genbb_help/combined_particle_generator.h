@@ -1,6 +1,5 @@
-// -*- mode: c++ ; -*-
-/* combined_particle_generator.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file genbb_help/combined_particle_generator.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-10-03
  * Last modified: 2013-02-26
  *
@@ -133,3 +132,7 @@ namespace genbb {
 } // end of namespace genbb
 
 #endif // GENBB_HELP_COMBINED_PARTICLE_GENERATOR_H
+
+// Local Variables: --
+// mode: c++ --
+// End: --

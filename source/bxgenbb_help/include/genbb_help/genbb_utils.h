@@ -1,6 +1,5 @@
-// -*- mode: c++; -*-
-/* genbb_utils.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// file genbb_help/genbb_utils.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-28
  * Last modified: 2013-05-07
  *
@@ -27,9 +26,10 @@
  *
  */
 
-#ifndef GENBB_HELP_GENBB_UTILS_H_
-#define GENBB_HELP_GENBB_UTILS_H_
+#ifndef GENBB_HELP_GENBB_UTILS_H
+#define GENBB_HELP_GENBB_UTILS_H
 
+// Standard library:
 #include <string>
 #include <vector>
 #include <map>
@@ -64,4 +64,8 @@ namespace genbb
 
 } // end of namespace genbb
 
-#endif // GENBB_HELP_GENBB_UTILS_H_
+#endif // GENBB_HELP_GENBB_UTILS_H
+
+// Local Variables: --
+// mode: c++ --
+// End: --

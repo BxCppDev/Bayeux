@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file genbb_help/primary_particle.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-11
@@ -352,3 +351,7 @@ DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::genbb::primary_par
 DR_CLASS_INIT(::genbb::primary_particle);
 
 #endif // GENBB_HELP_PRIMARY_PARTICLE_H
+
+// Local Variables: --
+// mode: c++ --
+// End: --

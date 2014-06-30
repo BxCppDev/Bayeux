@@ -1,6 +1,7 @@
 #ifndef GENBB_DECAY0_PARTICLE_H_
 #define GENBB_DECAY0_PARTICLE_H_ 1
 
+// Standard library:
 #include <string>
 
 namespace mygsl{
@@ -21,37 +22,37 @@ namespace genbb {
         NEUTRINO       = 4,  // neutrino
         MUONPLUS       = 5,  // muon+
         MUONMINUS      = 6,  // muon-
-        PION0          = 7,  // pion0 
-        PIONPLUS       = 8,  // pion+ 
+        PION0          = 7,  // pion0
+        PIONPLUS       = 8,  // pion+
         PIONMINUS      = 9,  // pion-
         KAON0LONG      = 10, // kaon0 long
-        KAONPLUS       = 11, // kaon+ 
+        KAONPLUS       = 11, // kaon+
         KAONMINUS      = 12, // kaon-
-        NEUTRON        = 13, // neutron 
+        NEUTRON        = 13, // neutron
         PROTON         = 14, // proton
         ANTIPROTON     = 15, // antiproton
         KAON0SHORT     = 16, // kaon0 short
         ETA            = 17, // eta
         LAMBDA         = 18, // lambda
-        SIGMAPLUS      = 19, // sigma+ 
-        SIGMA0         = 20, // sigma0 
+        SIGMAPLUS      = 19, // sigma+
+        SIGMA0         = 20, // sigma0
         SIGMAMINUS     = 21, // sigma-
-        XI0            = 22, // xi0 
+        XI0            = 22, // xi0
         XIMINUS        = 23, // xi-
         OMEGA          = 24, // omega
         ANTINEUTRON    = 25, // antineutron
         ANTILAMBDA     = 26, // antilambda
         ANTISIGMAMINUS = 27, // antisigma-
         ANTISIGMA0     = 28, // antisigma0
-        ANTISIGMAPLUS  = 29, // antisigma+ 
+        ANTISIGMAPLUS  = 29, // antisigma+
         ANTIXI0        = 30, // antixi0
-        ANTIXIPLUS     = 31, // antixi+ 
+        ANTIXIPLUS     = 31, // antixi+
         ANTIOMEGAPLUS  = 32, // antiomega+
         DEUTERON       = 45, // deuteron
         TRITIUM        = 46, // tritium
-        ALPHA          = 47, // alpha 
+        ALPHA          = 47, // alpha
         GEANTINO       = 48, // geantino
-        HE3            = 49, // He3 
+        HE3            = 49, // He3
         CERENKOV       = 50, // Cerenkov
       };
 
@@ -92,12 +93,11 @@ namespace genbb {
                          double phi1, double phi2,
                          double tclev, double thlev, double & tdlev);
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
+  } // end of namespace decay0
+} // end of namespace genbb
 
 #endif // GENBB_DECAY0_PARTICLE_H_
-// 
+//
 // Local Variables: --
 // mode: c++ --
 // End: --
-

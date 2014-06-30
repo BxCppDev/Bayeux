@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file genbb_help/save_to_file_wrapper.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2014-06-05
@@ -103,3 +102,7 @@ namespace genbb {
 DOCD_CLASS_DECLARATION(genbb::save_to_file_wrapper)
 
 #endif // GENBB_HELP_SAVE_TO_FILE_WRAPPER_H
+
+// Local Variables: --
+// mode: c++ --
+// End: --

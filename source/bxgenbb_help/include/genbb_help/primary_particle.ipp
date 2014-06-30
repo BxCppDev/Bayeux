@@ -1,10 +1,9 @@
-// -*- mode: c++; -*-
 /// \file genbb_help/primary_particle.ipp
 
 #ifndef GENBB_HELP_PRIMARY_PARTICLE_IPP
 #define GENBB_HELP_PRIMARY_PARTICLE_IPP 1
 
-// Ourselves
+// Ourselves:
 #include <genbb_help/primary_particle.h>
 
 // Third party:
@@ -96,3 +95,7 @@ namespace genbb {
 BOOST_CLASS_VERSION(genbb::primary_particle, 3)
 
 #endif // GENBB_HELP_PRIMARY_PARTICLE_IPP
+
+// Local Variables: --
+// mode: c++ --
+// End: --

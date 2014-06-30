@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
-/* genbbsub.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file genbb_help/decay0/genbbsub.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-05-05
  * Last modified: 2013-05-05
  *
@@ -30,6 +30,7 @@
 #ifndef GENBB_HELP_GENBBSUB_H_
 #define GENBB_HELP_GENBBSUB_H_ 1
 
+// Standard library:
 #include <string>
 #include <cmath>
 
@@ -73,6 +74,7 @@ namespace genbb {
 } // end of namespace genbb
 
 #endif // GENBB_HELP_GENBBSUB_H_
+
 // Local Variables: --
 // mode: c++ --
 // End: --

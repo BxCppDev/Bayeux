@@ -1,7 +1,7 @@
 #ifndef GENBB_DECAY0_TSIMPR_H_
 #define GENBB_DECAY0_TSIMPR_H_ 1
 
-#include <cmath>
+// This project:
 #include <genbb_help/decay0/common.h>
 
 namespace genbb {
@@ -12,14 +12,14 @@ namespace genbb {
     // (b-a)/h must be equal 2*m where m is integer.
     // Function f must be decribed as external in main program.
     // VIT, DLP KINR, 20.11.1984.
-    double decay0_tsimpr(func_type f, double a, double b, double h, 
-			 void * params);
+    double decay0_tsimpr(func_type f, double a, double b, double h,
+                         void * params);
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
+  } // end of namespace decay0
+} // end of namespace genbb
 
 #endif // GENBB_DECAY0_TSIMPR_H_
-// 
+//
 // Local Variables: --
 // mode: c++ --
 // End: --

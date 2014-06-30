@@ -1,13 +1,15 @@
-// -*- mode: c++; -*-
-//! \file   genbb_help.h
+//! \file   genbb_help/genbb_help.h
 //! \author François Mauger
 //! \brief  Describe the genbb_help API configuration
 
-#ifndef GENBB_HELP_GENBB_HELP_H_
-#define GENBB_HELP_GENBB_HELP_H_ 1
+#ifndef GENBB_HELP_GENBB_HELP_H
+#define GENBB_HELP_GENBB_HELP_H 1
 
-// This project
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/datatools.h>
+
+// This project:
 #include <genbb_help/genbb_help_config.h>
 
 namespace genbb {
@@ -24,22 +26,23 @@ namespace genbb {
 
 /// genbb_help' kernel initialization macro using main function arguments
 #define GENBB_HELP_INIT_MAIN(Argc,Argv)          \
-  DATATOOLS_INIT_MAIN( Argc , Argv );		 \
-  ::genbb::initialize( Argc , Argv );		 \
+  DATATOOLS_INIT_MAIN( Argc , Argv );            \
+  ::genbb::initialize( Argc , Argv );            \
   /**/
 
 /// genbb_help' kernel initialization macro
 #define GENBB_HELP_INIT()                        \
-  DATATOOLS_INIT_MAIN( 0, 0 );			 \
-  ::genbb::initialize(0, 0);			 \
+  DATATOOLS_INIT_MAIN( 0, 0 );                   \
+  ::genbb::initialize(0, 0);                     \
   /**/
 
 #define GENBB_HELP_FINI()                        \
   ::genbb::terminate();                          \
-  DATATOOLS_FINI();				 \
+  DATATOOLS_FINI();                              \
   /**/
 
+#endif // GENBB_HELP_GENBB_HELP_H
 
-#endif // GENBB_HELP_GENBB_HELP_H_
-
-// end of genbb_help.h
+// Local Variables: --
+// mode: c++ --
+// End: --

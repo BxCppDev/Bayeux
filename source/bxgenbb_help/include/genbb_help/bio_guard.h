@@ -1,4 +1,4 @@
-/* bio_guard.h */
+/// \file genbb_help/bio_guard.h
 /*
  * Description :
  *
@@ -28,14 +28,10 @@
  *
  */
 
-#ifndef GENBB_HELP_BIO_GUARD_H_
-#define GENBB_HELP_BIO_GUARD_H_
+#ifndef GENBB_HELP_BIO_GUARD_H
+#define GENBB_HELP_BIO_GUARD_H
 
-// Standard Library
-
-// Third Party
-
-// genbb_help
+// This project:
 #include <genbb_help/genbb_help_config.h>
 #include <genbb_help/detail/bio_link_guard.h>
 
@@ -63,4 +59,8 @@ bio_guard bio_guard::_g_trigger_link_guard_;
 } // end namespace genbb
 #endif // GENBB_HELP_WITH_BIO != 1
 
-#endif // GENBB_HELP_BIO_GUARD_H_
+#endif // GENBB_HELP_BIO_GUARD_H
+
+// Local Variables: --
+// mode: c++ --
+// End: --

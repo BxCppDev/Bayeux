@@ -1,15 +1,9 @@
-// -*- mode: c++; -*-
-//! \file genbb_help/primary_event-reflect.h
+/// \file genbb_help/primary_event-reflect.h
+
 #ifndef GENBB_HELP_PRIMARY_EVENT_REFLECT_H
 #define GENBB_HELP_PRIMARY_EVENT_REFLECT_H
 
-// Standard Library
-
-// Third Party
-
-// Datatools
-
-// Genbb_help
+// This project:
 #include <genbb_help/primary_event.h>
 
 // Export the introspection code for the 'genbb::primary_event' class:
@@ -88,3 +82,7 @@ namespace datatools {
 } // end of namespace datatools
 
 #endif // GENBB_HELP_PRIMARY_EVENT_REFLECT_H
+
+// Local Variables: --
+// mode: c++ --
+// End: --

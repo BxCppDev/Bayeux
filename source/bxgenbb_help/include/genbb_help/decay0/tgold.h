@@ -1,7 +1,7 @@
 #ifndef GENBB_DECAY0_TGOLD_H_
 #define GENBB_DECAY0_TGOLD_H_ 1
 
-#include <cmath>
+// This project:
 #include <genbb_help/decay0/common.h>
 
 namespace genbb {
@@ -35,4 +35,3 @@ namespace genbb {
 } // end of namespace genbb
 
 #endif // GENBB_DECAY0_TGOLD_H_
-

@@ -1,40 +1,41 @@
-// -*- mode: c++; -*- 
-/* genbb_writer.h
- * Author(s):     Arnaud Chapon <chapon@lpccaen.in2p3.fr>
+/// \file genbb_help/genbb_writer.h
+/* Author(s):     Arnaud Chapon <chapon@lpccaen.in2p3.fr>
  * Creation date: 2010-01-20
  * Last modified: 2012-06-22
- * 
- * License: 
+ *
+ * License:
  * Copyright 2007-2012 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * 
- * Description: 
+ *
+ * Description:
  *
  *   Save GENBB event in a file
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
-#ifndef GENBB_HELP_GENBB_WRITER_H_
-#define GENBB_HELP_GENBB_WRITER_H_ 1
+#ifndef GENBB_HELP_GENBB_WRITER_H
+#define GENBB_HELP_GENBB_WRITER_H 1
 
+// Standard library:
 #include <string>
 #include <iostream>
 
+// This project:
 #include <geomtools/utils.h>
 
 namespace genbb {
@@ -69,7 +70,7 @@ namespace genbb {
     double get_Emax() const;
 
     void set_phi_min ( double phi_min_ );
-  
+
     double get_phi_min() const;
 
     void set_phi_max ( double phi_max_ );
@@ -83,7 +84,7 @@ namespace genbb {
     void set_debug ( bool d_ );
 
     bool is_debug () const;
- 
+
     void run ();
 
     void dump ( std::ostream & out_ ) const;
@@ -91,9 +92,9 @@ namespace genbb {
     /// Constructor
     genbb_writer ();
 
-    /// Destructor    
+    /// Destructor
     virtual ~genbb_writer ();
- 
+
     double myrandom ( double min_, double max_ );
 
     void init ();
@@ -111,6 +112,8 @@ namespace genbb {
 
 } // end of namespace genbb
 
-#endif // GENBB_HELP_GENBB_WRITER_H_
+#endif // GENBB_HELP_GENBB_WRITER_H
 
-// end of genbb_writer.h
+// Local Variables: --
+// mode: c++ --
+// End: --

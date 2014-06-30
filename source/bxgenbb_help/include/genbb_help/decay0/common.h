@@ -1,6 +1,7 @@
 #ifndef GENBB_DECAY0_COMMON_H_
 #define GENBB_DECAY0_COMMON_H_ 1
 
+// Standard library:
 #include <cmath>
 #include <string>
 
@@ -25,5 +26,3 @@ namespace genbb {
 } // end of namespace genbb
 
 #endif // GENBB_DECAY0_COMMON_H_
-
-

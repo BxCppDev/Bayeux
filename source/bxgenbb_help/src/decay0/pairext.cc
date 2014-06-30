@@ -7,6 +7,7 @@
 #include <datatools/units.h>
 #include <mygsl/rng.h>
 
+#include <genbb_help/primary_event.h>
 #include <genbb_help/decay0/pairext.h>
 #include <genbb_help/decay0/pairext1.h>
 #include <genbb_help/decay0/particle.h>

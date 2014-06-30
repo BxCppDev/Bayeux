@@ -1,15 +1,9 @@
-// -*- mode: c++; -*-
-//! \file primary_particle-reflect.h
+/// \file primary_particle-reflect.h
+
 #ifndef GENBB_HELP_PRIMARY_PARTICLE_REFLECT_H
 #define GENBB_HELP_PRIMARY_PARTICLE_REFLECT_H
 
-// Standard Library
-
-// Third Party
-
-// Datatools
-
-// Genbb_help
+// This project:
 #include <genbb_help/primary_particle.h>
 
 // Export the introspection code for the 'genbb::primary_particle' class:
@@ -165,3 +159,7 @@ namespace datatools {
 } // end of namespace datatools
 
 #endif // GENBB_HELP_PRIMARY_PARTICLE_REFLECT_H
+
+// Local Variables: --
+// mode: c++ --
+// End: --

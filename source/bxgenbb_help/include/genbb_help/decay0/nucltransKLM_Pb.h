@@ -1,12 +1,7 @@
 #ifndef GENBB_DECAY0_NUCLTRANSKLM_PB_H_
 #define GENBB_DECAY0_NUCLTRANSKLM_PB_H_ 1
 
-#include <cmath>
-
-#include <mygsl/rng.h>
-
-#include <genbb_help/primary_event.h>
-
+// This project:
 #include <genbb_help/decay0/nucltransKLM_Pb.h>
 #include <genbb_help/decay0/particle.h>
 #include <genbb_help/decay0/gamma.h>
@@ -24,14 +19,14 @@ namespace genbb {
   namespace decay0 {
 
     // The same as nucltransKLM but two X rays are emitted after K conversion
-    // in deexcitation of 208-Pb in decay 208Tl->208Pb. 
+    // in deexcitation of 208-Pb in decay 208Tl->208Pb.
     // VIT, 4.02.2009.
     //
     // Subroutine nucltransKLM choises one of the three concurent processes
     // by which the transition from one nuclear state to another is
     // occured: gamma-ray emission, internal conversion and internal
     // pair creation. Conversion electrons are emitted with three fixed energies:
-    // Egamma-E(K)_binding_energy, Egamma-E(L)_binding_energy and 
+    // Egamma-E(K)_binding_energy, Egamma-E(L)_binding_energy and
     // Egamma-E(M)_binding_energy).
     // Call  : common/genevent/tevst,npfull,npgeant(100),pmoment(3,100),ptime(100)
     //         call nucltransKLM(Egamma,EbindeK,conveK,EbindeL,conveL,
@@ -59,8 +54,7 @@ namespace genbb {
 				double convp,
 				double tclev,double thlev,double & tdlev);
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
+  } // end of namespace decay0
+} // end of namespace genbb
 
 #endif // GENBB_DECAY0_NUCLTRANSKLM_PB_H_
-

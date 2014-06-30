@@ -1,6 +1,5 @@
-// -*- mode: c++; -*-
-/* genbb_mgr.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file genbb_help/genbb_mgr.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009-01-19
  * Last modified: 2013-02-25
  *
@@ -30,18 +29,23 @@
  *
  */
 
-#ifndef GENBB_HELP_GENBB_MGR_H_
-#define GENBB_HELP_GENBB_MGR_H_ 1
+#ifndef GENBB_HELP_GENBB_MGR_H
+#define GENBB_HELP_GENBB_MGR_H 1
 
+// Standard library:
 #include <string>
 #include <list>
 #include <iostream>
 #include <fstream>
 
-#include <genbb_help/i_genbb.h>
-#include <genbb_help/primary_event.h>
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/io_factory.h>
 #include <datatools/properties.h>
+
+// This project:
+#include <genbb_help/i_genbb.h>
+#include <genbb_help/primary_event.h>
 
 // Implementation of serialization method for the 'primary_event'
 // class, implies also <genbb_help/primary_particle.ipp> :
@@ -131,6 +135,8 @@ namespace genbb {
 
 } // end of namespace genbb
 
-#endif // GENBB_HELP_GENBB_MGR_H_
+#endif // GENBB_HELP_GENBB_MGR_H
 
-// end of genbb_mgr.h
+// Local Variables: --
+// mode: c++ --
+// End: --

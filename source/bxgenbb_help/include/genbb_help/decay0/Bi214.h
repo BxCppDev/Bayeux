@@ -1,8 +1,6 @@
 #ifndef GENBB_DECAY0_BI214_H_
 #define GENBB_DECAY0_BI214_H_ 1
 
-#include <cmath>
-
 namespace mygsl {
   class rng;
 }

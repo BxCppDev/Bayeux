@@ -1,6 +1,5 @@
-// -*- mode: c++; -*-
-/* genbb.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file genbb_help/genbb.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-28
  * Last modified:
  *
@@ -30,20 +29,23 @@
  *
  */
 
-#ifndef GENBB_HELP_GENBB_H_
-#define GENBB_HELP_GENBB_H_ 1
+#ifndef GENBB_HELP_GENBB_H
+#define GENBB_HELP_GENBB_H 1
 
+// Standard library:
 #include <iostream>
 #include <fstream>
 #include <string>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
-
+// - Bayeux/mygsl:
 #include <mygsl/rng.h>
 
+// This project:
 #include <genbb_help/i_genbb.h>
 #include <genbb_help/genbb_utils.h>
-
 
 namespace genbb {
 
@@ -155,6 +157,8 @@ namespace genbb {
 
 } // end of namespace genbb
 
-#endif // GENBB_HELP_GENBB_H_
+#endif // GENBB_HELP_GENBB_H
 
-// end of genbb.h
+// Local Variables: --
+// mode: c++ --
+// End: --

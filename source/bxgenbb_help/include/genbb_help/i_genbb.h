@@ -31,11 +31,14 @@
 #ifndef GENBB_HELP_I_GENBB_H
 #define GENBB_HELP_I_GENBB_H 1
 
-#include <genbb_help/detail/pg_tools.h>
-
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/factory_macros.h>
 #include <datatools/logger.h>
 #include <datatools/i_tree_dump.h>
+
+// This project:
+#include <genbb_help/detail/pg_tools.h>
 
 namespace datatools {
   class properties;
@@ -163,10 +166,6 @@ namespace genbb {
 
 #endif // GENBB_HELP_I_GENBB_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// End: --

@@ -1,9 +1,6 @@
 #ifndef GENBB_DECAY0_PAIREXT1_H_
 #define GENBB_DECAY0_PAIREXT1_H_ 1
 
-#include <cmath>
-#include <genbb_help/primary_event.h>
-#include <mygsl/rng.h>
 
 namespace mygsl {
   class rng;
@@ -23,16 +20,14 @@ namespace genbb {
     // Which particle is e+ and which e-, should be selected randomly.
     // VIT, 11.03.1998 from GEANT subroutines GPAIRG of G.Patrick, L.Urban
     // and GBTETH of L.Urban.
-    void decay0_pairext1(mygsl::rng & prng, double Z, 
+    void decay0_pairext1(mygsl::rng & prng, double Z,
                          const double *pg0, double *pe1, double *pe2);
 
-  } // end of namespace decay0 
-} // end of namespace genbb 
+  } // end of namespace decay0
+} // end of namespace genbb
 
 #endif // GENBB_DECAY0_PAIREXT1_H_
-// 
+//
 // Local Variables: --
 // mode: c++ --
 // End: --
-
-

@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file genbb_help/primary_event.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-11
@@ -207,3 +206,7 @@ DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::genbb::primary_eve
 DR_CLASS_INIT(::genbb::primary_event);
 
 #endif // GENBB_HELP_PRIMARY_EVENT_H
+
+// Local Variables: --
+// mode: c++ --
+// End: --

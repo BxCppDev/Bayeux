@@ -1,12 +1,6 @@
 #ifndef GENBB_DECAY0_PLOG69_H_
 #define GENBB_DECAY0_PLOG69_H_ 1
 
-//#include <boost/scoped_ptr.hpp>
-
-// namespace mygsl {
-//   class tabulated_function;
-// }
-
 namespace genbb {
 
   namespace decay0 {

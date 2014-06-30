@@ -263,10 +263,6 @@ DOCD_CLASS_DECLARATION(genbb::manager)
 
 #endif // GENBB_HELP_MANAGER_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// End: --

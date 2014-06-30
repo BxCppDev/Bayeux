@@ -1,6 +1,7 @@
 #ifndef GENBB_DECAY0_GAUSS_H_
 #define GENBB_DECAY0_GAUSS_H_ 1
 
+// This project:
 #include <genbb_help/decay0/common.h>
 
 namespace genbb {
