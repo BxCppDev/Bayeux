@@ -1,13 +1,14 @@
 // -*- mode: c++ ; -*-
-/* geom_manager_utils.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file genvtx/detail/geom_manager_utils.h
+/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-03-11
  * Last modified:
  */
 
-#ifndef GENVTX_DETAIL_GEOM_MANAGER_UTILS_H_
-#define GENVTX_DETAIL_GEOM_MANAGER_UTILS_H_ 1
+#ifndef GENVTX_DETAIL_GEOM_MANAGER_UTILS_H
+#define GENVTX_DETAIL_GEOM_MANAGER_UTILS_H 1
 
+// Standard library:
 #include <string>
 
 namespace materials {
@@ -34,6 +35,4 @@ namespace genvtx {
   } // end of namespace detail
 } // end of namespace genvtx
 
-#endif // GENVTX_DETAIL_GEOM_MANAGER_UTILS_H_
-
-// end of geom_manager_utils.h
+#endif // GENVTX_DETAIL_GEOM_MANAGER_UTILS_H

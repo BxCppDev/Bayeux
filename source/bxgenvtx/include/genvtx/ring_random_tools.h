@@ -17,13 +17,13 @@
 #ifndef GENVTX_RING_RANDOM_TOOLS_H
 #define GENVTX_RING_RANDOM_TOOLS_H 1
 
-// Standard library
+// Standard library:
 #include <cmath>
 
-// Third party
-// - geomtools
+// Third party:
+// - Bayeux/geomtools:
 #include <geomtools/utils.h>
-// - mygsl
+// - Bayeux/mygsl:
 #include <mygsl/rng.h>
 
 namespace genvtx {
