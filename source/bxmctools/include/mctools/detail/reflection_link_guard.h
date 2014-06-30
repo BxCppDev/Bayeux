@@ -1,4 +1,4 @@
-/* reflection_link_guard.h */
+/// \file mctools/detail/reflection_link_guard.h
 /*
  * Description :
  *
@@ -22,8 +22,8 @@
  * Boston, MA 02110-1301, USA.
  *
  */
-#ifndef MCTOOLS_DETAIL_REFLECTION_LINK_GUARD_H_
-#define MCTOOLS_DETAIL_REFLECTION_LINK_GUARD_H_
+#ifndef MCTOOLS_DETAIL_REFLECTION_LINK_GUARD_H
+#define MCTOOLS_DETAIL_REFLECTION_LINK_GUARD_H
 
 namespace mctools {
 namespace detail {
@@ -46,4 +46,12 @@ class dynamic_link_guard {
 } // end namespace detail
 } // end namespace mctools
 
-#endif // MCTOOLS_DETAIL_REFLECTION_LINK_GUARD_H_
+#endif // MCTOOLS_DETAIL_REFLECTION_LINK_GUARD_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

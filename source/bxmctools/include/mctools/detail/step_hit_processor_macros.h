@@ -1,4 +1,4 @@
-/** \file mctools/detail/step_hit_processor_macros.h */
+/// \file mctools/detail/step_hit_processor_macros.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2012-05-03
  * Last modified : 2014-04-23

@@ -31,10 +31,6 @@
 #ifndef MCTOOLS_BIO_GUARD_H
 #define MCTOOLS_BIO_GUARD_H
 
-// Standard Library:
-
-// Third Party:
-
 // This project:
 #include <mctools/mctools_config.h>
 #include <mctools/detail/bio_link_guard.h>

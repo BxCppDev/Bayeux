@@ -31,11 +31,7 @@
 #ifndef MCTOOLS_REFLECTION_GUARD_H
 #define MCTOOLS_REFLECTION_GUARD_H
 
-// Standard Library
-
-// Third Party
-
-// Mctools
+// This project:
 #include <mctools/mctools_config.h>
 #include <mctools/detail/reflection_link_guard.h>
 

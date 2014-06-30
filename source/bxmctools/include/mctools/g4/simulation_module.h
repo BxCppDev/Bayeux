@@ -1,5 +1,5 @@
-/* simulation_module.h
- * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file mctools/g4/simulation_module.h
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-07-04
  * Last modified : 2013-12-13
  *
@@ -9,11 +9,11 @@
  *
  */
 
-#ifndef MCTOOLS_G4_SIMULATION_MODULE_H_
-#define MCTOOLS_G4_SIMULATION_MODULE_H_ 1
+#ifndef MCTOOLS_G4_SIMULATION_MODULE_H
+#define MCTOOLS_G4_SIMULATION_MODULE_H 1
 
-// Third party
-// - Bayeux/dpp (the abstract module interface):
+// Third party:
+// - Bayeux/dpp :
 #include <dpp/base_module.h>
 
 // This project:
@@ -118,9 +118,8 @@ namespace mctools {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(mctools::g4::simulation_module)
 
-#endif // MCTOOLS_G4_SIMULATION_MODULE_H_
+#endif // MCTOOLS_G4_SIMULATION_MODULE_H
 
-// end of simulation_module.h
 /*
 ** Local Variables: --
 ** mode: c++ --

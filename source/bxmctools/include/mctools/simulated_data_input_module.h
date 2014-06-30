@@ -12,11 +12,10 @@
 #ifndef MCTOOLS_SIMULATED_DATA_INPUT_MODULE_H
 #define MCTOOLS_SIMULATED_DATA_INPUT_MODULE_H 1
 
-// Third party
-// - Bayeux/datatools
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/smart_filename.h>
-
-// - Bayeux/dpp (the abstract module interface):
+// - Bayeux/dpp:
 #include <dpp/base_module.h>
 
 // This project:

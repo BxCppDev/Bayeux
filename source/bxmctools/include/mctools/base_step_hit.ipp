@@ -1,4 +1,4 @@
-/** \file mctools/base_step_hit.ipp */
+/// \file mctools/base_step_hit.ipp
 
 #ifndef MCTOOLS_BASE_STEP_HIT_IPP
 #define MCTOOLS_BASE_STEP_HIT_IPP 1

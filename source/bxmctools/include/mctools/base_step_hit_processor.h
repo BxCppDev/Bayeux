@@ -1,4 +1,4 @@
-/** \file mctools/base_step_hit_processor.h */
+/// \file mctools/base_step_hit_processor.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-05-26
  * Last modified: 2013-03-08
@@ -22,7 +22,6 @@
 #include <map>
 #include <stdexcept>
 #include <vector>
-// #include <set>
 
 // Third party:
 // - Bayeux/datatools:

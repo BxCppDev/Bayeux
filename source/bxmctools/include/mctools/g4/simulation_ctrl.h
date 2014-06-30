@@ -87,7 +87,6 @@ namespace mctools {
 
 #endif // MCTOOLS_G4_SIMULATION_CTRL_H
 
-// end of simulation_ctrl.h
 /*
 ** Local Variables: --
 ** mode: c++ --

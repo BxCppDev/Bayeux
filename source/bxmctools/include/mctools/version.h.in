@@ -24,13 +24,9 @@
 
 #ifndef MCTOOLS_VERSION_H
 #define MCTOOLS_VERSION_H
-// Standard Library
+
+// Standard Library:
 #include <string>
-
-// Third Party
-// - A
-
-// This Project
 
 //----------------------------------------------------------------------
 // - Compile Time API

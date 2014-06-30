@@ -5,8 +5,11 @@
 #ifndef MCTOOLS_MCTOOLS_H
 #define MCTOOLS_MCTOOLS_H 1
 
-// This project
+// Third party:
+// - Bayeux/datatools :
 #include <datatools/datatools.h>
+
+// This project
 #include <mctools/mctools_config.h>
 
 /// Top-level namespace of the Bayeux/mctools module library

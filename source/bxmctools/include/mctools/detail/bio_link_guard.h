@@ -1,7 +1,7 @@
-// -*- mode: c++; -*-
-/* bio_link_guard.h */
-#ifndef MCTOOLS_DETAIL_BIO_LINK_GUARD_H_
-#define MCTOOLS_DETAIL_BIO_LINK_GUARD_H_
+/// \file mctools/detail/bio_link_guard.h
+
+#ifndef MCTOOLS_DETAIL_BIO_LINK_GUARD_H
+#define MCTOOLS_DETAIL_BIO_LINK_GUARD_H
 
 namespace mctools {
 /// Nested private namespace of the Bayeux/mctools module library (detail)
@@ -28,4 +28,12 @@ class dynamic_link_guard {
 } // end namespace detail
 } // end namespace mctools
 
-#endif // MCTOOLS_DETAIL_BIO_LINK_GUARD_H_
+#endif // MCTOOLS_DETAIL_BIO_LINK_GUARD_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

@@ -1,4 +1,4 @@
-/// \file mctools/base_step_hit-reflect.h */
+/// \file mctools/base_step_hit-reflect.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-06-01
  * Last modified: 2013-06-01
