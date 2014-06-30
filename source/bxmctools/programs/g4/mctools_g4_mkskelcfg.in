@@ -246,29 +246,37 @@ if [ $debug -eq 1 ]; then
 	echo "DEBUG: env_config_dir='${env_config_dir}'"
     ) >&2
 fi
+dbg_opt=
+if [ $debug -eq 1 ]; then
+    dbg_opt=" --debug "
+fi
 rm_opt=
-if [ "x${registered_module}" != "x"]; then
+if [ "x${registered_module}" != "x" ]; then
     rm_opt=" --registered-module ${registered_module} "
 fi
+echo "DEBUG: rm_opt='${rm_opt}'"
 if [ ${no_gve} -eq 0 ]; then
     eval bxgeomtools_mkskelcfg \
 	--config-base-dir "${config_base_dir}" \
 	--setup-label "${setup_label}" \
 	--setup-version "${setup_version}" \
 	--skeleton-profile "s2d4" \
-	${rm_opt}
+	${rm_opt} \
+	${dbg_opt}
     eval bxgenbb_mkskelcfg \
 	--config-base-dir "${config_base_dir}" \
 	--setup-label "${setup_label}" \
 	--setup-version "${setup_version}" \
 	--skeleton-profile "calib" \
-	${rm_opt}
+	${rm_opt} \
+	${dbg_opt}
     eval bxgenvtx_mkskelcfg \
 	--config-base-dir "${config_base_dir}" \
 	--setup-label "${setup_label}" \
 	--setup-version "${setup_version}" \
 	--skeleton-profile "s2d4" \
-	${rm_opt}
+	${rm_opt} \
+	${dbg_opt}
 fi
 
 if [ -d ${setup_base_dir} ]; then
