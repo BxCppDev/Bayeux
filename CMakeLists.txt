@@ -82,6 +82,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   option(Bayeux_FORCE_CXX_ALL_WARNINGS "Force all C++ compiler warnings" ON)
   if (Bayeux_FORCE_CXX_ALL_WARNINGS)
     set(Bayeux_CXX_FLAGS "-W -Wall")
+    ### set(Bayeux_CXX_FLAGS "-W -Wall -Woverloaded-virtual")
   endif()
 
   # On clang, need larger template depth
