@@ -1,54 +1,59 @@
-// -*- mode: c++ ; -*- 
-/* placement_field.h
- * Author (s):    Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file emfield/placement_field.h
+/* Author (s):    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-04-27
  * Last modified: 2013-02-24
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *
  *   Placement field
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
-#include <emfield/base_electromagnetic_field.h>
+// Third party:
+// - Bayeux/geomtools:
 #include <geomtools/placement.h>
 
-#ifndef EMFIELD_PLACEMENT_FIELD_H_
-#define EMFIELD_PLACEMENT_FIELD_H_ 1
+// This project:
+#include <emfield/base_electromagnetic_field.h>
+
+#ifndef EMFIELD_PLACEMENT_FIELD_H
+#define EMFIELD_PLACEMENT_FIELD_H 1
 
 namespace emfield {
- 
-  /** Class representing an uniform (in space) and constant (in time) 
+
+  /** Class representing an uniform (in space) and constant (in time)
    *  electric field
    */
-  EMFIELD_CLASS_DECLARE(placement_field) 
+  EMFIELD_CLASS_DECLARE(placement_field)
   {
   public:
 
     EMFIELD_INTERFACE_CTOR_DTOR(placement_field);
-    
+
     const geomtools::placement & get_placement () const;
 
     void set_placement (const geomtools::placement & p_);
 
     void set_field (base_electromagnetic_field::handle_type &);
- 
+
   private:
-    
+
     base_electromagnetic_field::handle_type _field_;
     geomtools::placement _placement_;
-    
+
     // Macro to automate the registration of the EM field :
     EMFIELD_REGISTRATION_INTERFACE(placement_field);
-    
+
   };
 
 } // end of namespace emfield
 
-#endif // EMFIELD_PLACEMENT_FIELD_H_
+#endif // EMFIELD_PLACEMENT_FIELD_H
 
-// end of placement_field.h
+// Local Variables: --
+// mode: c++ --
+// End: --

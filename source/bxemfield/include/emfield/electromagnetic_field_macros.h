@@ -1,5 +1,4 @@
-/* electromagnetic_field_macros.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2012-04-24
  * Last modified : 2013-02-24
  *
@@ -30,15 +29,16 @@
  *
  */
 
-/*! \file electromagnetic_field_macros.h
- * \brief Macros to automatically generate some parts of the electromagnetic 
+/*! \file emfield/electromagnetic_field_macros.h
+ * \brief Macros to automatically generate some parts of the electromagnetic
  *        fields interface.
  *
  */
 
-#ifndef EMFIELD_ELECTROMAGNETIC_FIELD_MACROS_H_
-#define EMFIELD_ELECTROMAGNETIC_FIELD_MACROS_H_ 1
+#ifndef EMFIELD_ELECTROMAGNETIC_FIELD_MACROS_H
+#define EMFIELD_ELECTROMAGNETIC_FIELD_MACROS_H 1
 
+// Ourselves:
 #include <emfield/base_electromagnetic_field.h>
 
 #define EMFIELD_CLASS_DECLARE(T)                          \
@@ -150,9 +150,9 @@
   EMFIELD_INTERFACE ();                                 \
   /**/
 
-/*** Macros for interface/implementation of static creator methods in EM field classes ***/
+/* Macros for interface/implementation of static creator methods in EM field classes */
 
-/** Registration */
+/* Registration */
 
 #define EMFIELD_REGISTRATION_INTERFACE(EMFIELD_CLASS_NAME)              \
   private:                                                              \
@@ -163,9 +163,8 @@
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (::emfield::base_electromagnetic_field,EMFIELD_CLASS_NAME,EMFIELD_ID); \
   /**/
 
-#endif // EMFIELD_ELECTROMAGNETIC_FIELD_MACROS_H_
+#endif // EMFIELD_ELECTROMAGNETIC_FIELD_MACROS_H
 
-// end of electromagnetic_field_macros.h
 /*
 ** Local Variables: --
 ** mode: c++ --

@@ -1,5 +1,4 @@
-// -*- mode: c++; -*-
-//! \file emfield/emfield_geom_plugin.h
+/// \file emfield/emfield_geom_plugin.h
 /* emfield.h
  * Author(s):  François Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-02-23
@@ -15,20 +14,24 @@
  *
  */
 
-#ifndef EMFIELD_EMFIELD_GEOM_PLUGIN_H_
-#define EMFIELD_EMFIELD_GEOM_PLUGIN_H_ 1
+#ifndef EMFIELD_EMFIELD_GEOM_PLUGIN_H
+#define EMFIELD_EMFIELD_GEOM_PLUGIN_H 1
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/utils.h>
-
+// - Bayeux/geomtools:
 #include <geomtools/manager.h>
 #include <geomtools/manager_macros.h>
 
+// This project:
 #include <emfield/electromagnetic_field_manager.h>
 
 namespace emfield {
@@ -72,6 +75,8 @@ namespace emfield {
 
 } // end of namespace emfield
 
-#endif // EMFIELD_EMFIELD_GEOM_PLUGIN_H_
+#endif // EMFIELD_EMFIELD_GEOM_PLUGIN_H
 
-// end of emfield_geom_plugin.h
+// Local Variables: --
+// mode: c++ --
+// End: --

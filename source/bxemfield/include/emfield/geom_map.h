@@ -1,6 +1,5 @@
-// -*- mode: c++ ; -*-
-/* geom_map.h
- * Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file emfieldgeom_map.h
+/* Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-03-18
  * Last modified: 2013-03-18
  *
@@ -14,18 +13,22 @@
  *
  */
 
+// Standard library:
 #include <iostream>
 #include <string>
 
+// Third party:
+// - Boost:
 #include <boost/cstdint.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/i_tree_dump.h>
 #include <datatools/multi_properties.h>
 
+// This project:
 #include <emfield/base_electromagnetic_field.h>
 
-#ifndef EMFIELD_GEOM_MAP_H_
-#define EMFIELD_GEOM_MAP_H_
+#ifndef EMFIELD_GEOM_MAP_H
+#define EMFIELD_GEOM_MAP_H
 
 namespace datatools {
   class properties;
@@ -40,7 +43,7 @@ namespace emfield {
 
   class electromagnetic_field_manager;
 
-  /// \brief Electromagnetic fields manager class
+  /// \brief Mapping of electromagnetic fields with geometry volume
   class geom_map :
     public datatools::i_tree_dumpable
   {
@@ -124,6 +127,8 @@ namespace emfield {
 
 } // end of namespace emfield
 
-#endif // EMFIELD_GEOM_MAP_H_ 1
+#endif // EMFIELD_GEOM_MAP_H 1
 
-// end of geom_map.h
+// Local Variables: --
+// mode: c++ --
+// End: --

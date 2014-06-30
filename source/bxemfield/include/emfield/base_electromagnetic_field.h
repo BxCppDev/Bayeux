@@ -1,6 +1,5 @@
-// -*- mode: c++; -*-
-/* base_electromagnetic_field.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file emfield/base_electromagnetic_field.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-04-24
  * Last modified: 2012-05-22
  *
@@ -14,21 +13,24 @@
  *
  */
 
+// Standard library:
 #include <iostream>
 #include <string>
 #include <map>
 
+// Third party:
+// - Boost:
 #include <boost/cstdint.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/factory_macros.h>
 #include <datatools/handle.h>
 #include <datatools/bit_mask.h>
 #include <datatools/i_tree_dump.h>
-
+// - Bayeux/geomtoolsdatatools:
 #include <geomtools/utils.h>
 
-#ifndef EMFIELD_BASE_ELECTROMAGNETIC_FIELD_H_
-#define EMFIELD_BASE_ELECTROMAGNETIC_FIELD_H_ 1
+#ifndef EMFIELD_BASE_ELECTROMAGNETIC_FIELD_H
+#define EMFIELD_BASE_ELECTROMAGNETIC_FIELD_H 1
 
 namespace datatools {
     class properties;
@@ -194,6 +196,8 @@ namespace emfield {
 
 #include <emfield/electromagnetic_field_macros.h>
 
-#endif // EMFIELD_BASE_ELECTROMAGNETIC_FIELD_H_
+#endif // EMFIELD_BASE_ELECTROMAGNETIC_FIELD_H
 
-// end of base_electromagnetic_field.h
+// Local Variables: --
+// mode: c++ --
+// End: --

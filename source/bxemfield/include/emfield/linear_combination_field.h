@@ -1,6 +1,5 @@
-// -*- mode: c++ ; -*-
-/* linear_combination_field.h
- * Author (s):    Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file emfield/linear_combination_field.h
+/* Author (s):    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-04-26
  * Last modified: 2013-04-24
  *
@@ -14,13 +13,15 @@
  *
  */
 
-#include <emfield/base_electromagnetic_field.h>
-
+// Standard library:
 #include <vector>
 #include <map>
 
-#ifndef EMFIELD_LINEAR_COMBINATION_FIELD_H_
-#define EMFIELD_LINEAR_COMBINATION_FIELD_H_ 1
+// This project:
+#include <emfield/base_electromagnetic_field.h>
+
+#ifndef EMFIELD_LINEAR_COMBINATION_FIELD_H
+#define EMFIELD_LINEAR_COMBINATION_FIELD_H 1
 
 namespace emfield {
 
@@ -59,6 +60,8 @@ namespace emfield {
 
 } // end of namespace emfield
 
-#endif // EMFIELD_LINEAR_COMBINATION_FIELD_H_
+#endif // EMFIELD_LINEAR_COMBINATION_FIELD_H
 
-// end of linear_combination_field.h
+// Local Variables: --
+// mode: c++ --
+// End: --

@@ -1,6 +1,5 @@
-// -*- mode: c++ ; -*-
-/* electromagnetic_field_manager.h
- * Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file emfield/electromagnetic_field_manager.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-04-24
  * Last modified: 2013-06-19
  *
@@ -14,19 +13,23 @@
  *
  */
 
+// Standard library:
 #include <iostream>
 #include <string>
 
+// Third party:
+// - Boost:
 #include <boost/cstdint.hpp>
 #include <boost/scoped_ptr.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/i_tree_dump.h>
 #include <datatools/multi_properties.h>
 
+// This project:
 #include <emfield/base_electromagnetic_field.h>
 
-#ifndef EMFIELD_ELECTROMAGNETIC_FIELD_MANAGER_H_
-#define EMFIELD_ELECTROMAGNETIC_FIELD_MANAGER_H_ 1
+#ifndef EMFIELD_ELECTROMAGNETIC_FIELD_MANAGER_H
+#define EMFIELD_ELECTROMAGNETIC_FIELD_MANAGER_H 1
 
 namespace datatools {
   class service_manager;
@@ -127,6 +130,8 @@ namespace emfield {
 
 #include <emfield/electromagnetic_field_macros.h>
 
-#endif // EMFIELD_ELECTROMAGNETIC_FIELD_MANAGER_H_ 1
+#endif // EMFIELD_ELECTROMAGNETIC_FIELD_MANAGER_H 1
 
-// end of electromagnetic_field_manager.h
+// Local Variables: --
+// mode: c++ --
+// End: --
