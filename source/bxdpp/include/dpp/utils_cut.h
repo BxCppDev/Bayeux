@@ -1,5 +1,5 @@
-/* utils_cut.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file dpp/utils_cut.h
+/* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-09-18
  * Last modified : 2013-02-18
  *
@@ -30,12 +30,15 @@
  *
  */
 
-#ifndef DPP_UTILS_CUT_H_
-#define DPP_UTILS_CUT_H_ 1
+#ifndef DPP_UTILS_CUT_H
+#define DPP_UTILS_CUT_H 1
 
+// Standard library:
 #include <string>
 #include <vector>
 
+// Third party:
+// - Bayeux/:
 #include <cuts/i_cut.h>
 
 namespace datatools {
@@ -109,9 +112,8 @@ namespace dpp {
 
 }  // end of namespace dpp
 
-#endif //DPP_UTILS_CUT_H_
+#endif //DPP_UTILS_CUT_H
 
-// end of utils_cut.h
 /*
 ** Local Variables: --
 ** mode: c++ --

@@ -1,5 +1,5 @@
-/* simple_data_source.h
- * Author(s)     : Xavier Garrido <garrido@lal.in2p3.fr>
+/// \file dpp/simple_data_source.h
+/* Author(s)     : Xavier Garrido <garrido@lal.in2p3.fr>
  * Creation date : 2011-08-05
  * Last modified : 2013-02-16
  *
@@ -34,13 +34,17 @@
  *
  */
 
-#ifndef DPP_SIMPLE_BRIO_DATA_SOURCE_H_
-#define DPP_SIMPLE_BRIO_DATA_SOURCE_H_ 1
+#ifndef DPP_SIMPLE_BRIO_DATA_SOURCE_H
+#define DPP_SIMPLE_BRIO_DATA_SOURCE_H 1
 
+// Standard library:
 #include <string>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/things.h>
 
+// This project:
 #include <dpp/i_data_source.h>
 
 // forward declaration:
@@ -102,9 +106,8 @@ namespace dpp {
 
 }  // end of namespace dpp
 
-#endif // DPP_SIMPLE_BRIO_DATA_SOURCE_H_
+#endif // DPP_SIMPLE_BRIO_DATA_SOURCE_H
 
-// end of simple_brio_data_source.h
 /*
 ** Local Variables: --
 ** mode: c++ --

@@ -1,12 +1,12 @@
-/* utils.h
- * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file dpp/utils.h
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2013-02-15
  * Last modified :
  *
  */
 
-#ifndef DPP_UTILS_H_
-#define DPP_UTILS_H_ 1
+#ifndef DPP_UTILS_H
+#define DPP_UTILS_H 1
 
 namespace dpp {
 
@@ -34,9 +34,8 @@ namespace dpp {
 
 } // end of namespace dpp
 
-#endif // DPP_UTILS_H_
+#endif // DPP_UTILS_H=
 
-// end of utils.h
 /*
 ** Local Variables: --
 ** mode: c++ --

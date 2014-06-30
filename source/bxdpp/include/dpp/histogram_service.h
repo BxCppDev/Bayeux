@@ -1,5 +1,5 @@
-/* histogram_service.h
- * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file dpp/histogram_service.h
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2012-10-23
  * Last modified : 2013-02-16
  *
@@ -28,18 +28,22 @@
  *
  */
 
-#ifndef DPP_HISTOGRAM_SERVICE_H_
-#define DPP_HISTOGRAM_SERVICE_H_ 1
+#ifndef DPP_HISTOGRAM_SERVICE_H
+#define DPP_HISTOGRAM_SERVICE_H 1
 
+// Standard library:
 #include <string>
 #include <vector>
 
-#include <dpp/dpp_config.h>
-
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/base_service.h>
 #include <datatools/service_tools.h>
-
+// - Bayeux/mygsl:
 #include <mygsl/histogram_pool.h>
+
+// This project:
+#include <dpp/dpp_config.h>
 
 class TH1D;
 class TH2D;
@@ -126,9 +130,8 @@ namespace dpp {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(dpp::histogram_service)
 
-#endif // DPP_HISTOGRAM_SERVICE_H_
+#endif // DPP_HISTOGRAM_SERVICE_H
 
-// end of histogram_service.h
 /*
 ** Local Variables: --
 ** mode: c++ --

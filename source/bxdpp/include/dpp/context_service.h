@@ -1,5 +1,5 @@
-/* context_service.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file dpp/context_service.h
+/* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
  * Last modified : 2013-02-16
  *
@@ -30,17 +30,20 @@
  *
  */
 
-#ifndef DPP_CONTEXT_SERVICE_H_
-#define DPP_CONTEXT_SERVICE_H_ 1
+#ifndef DPP_CONTEXT_SERVICE_H
+#define DPP_CONTEXT_SERVICE_H 1
 
+// Standard library:
 #include <iostream>
 #include <string>
 
-#include <dpp/dpp_config.h>
-
-// Service interface :
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/base_service.h>
 #include <datatools/service_tools.h>
+
+// This project:
+#include <dpp/dpp_config.h>
 
 namespace datatools {
   class multi_properties;
@@ -109,9 +112,8 @@ namespace dpp {
 
 }  // end of namespace dpp
 
-#endif // DPP_CONTEXT_SERVICE_H_
+#endif // DPP_CONTEXT_SERVICE_H
 
-// end of context_service.h
 /*
 ** Local Variables: --
 ** mode: c++ --

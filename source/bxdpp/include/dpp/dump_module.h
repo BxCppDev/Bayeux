@@ -1,5 +1,5 @@
-/* dump_module.h
- * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file dpp/dump_module.h
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-19
  * Last modified : 2013-12-13
  *
@@ -28,14 +28,14 @@
  *
  */
 
-#ifndef DPP_DUMP_MODULE_H_
-#define DPP_DUMP_MODULE_H_ 1
+#ifndef DPP_DUMP_MODULE_H
+#define DPP_DUMP_MODULE_H 1
 
-// Third party
-// - Boost
+// Third party:
+// - Boost:
 #include <boost/scoped_ptr.hpp>
 
-// This project
+// This project:
 #include <dpp/base_module.h>
 
 namespace dpp {
@@ -107,9 +107,8 @@ namespace dpp {
 
 }  // end of namespace dpp
 
-#endif // DPP_DUMP_MODULE_H_
+#endif // DPP_DUMP_MODULE_H
 
-// end of dump_module.h
 /*
 ** Local Variables: --
 ** mode: c++ --

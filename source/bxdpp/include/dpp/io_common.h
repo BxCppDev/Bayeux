@@ -1,5 +1,5 @@
-/* io_common.h
- * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file dpp/io_common.h
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2013-08-16
  * Last modified : 2013-08-16
  *
@@ -29,15 +29,15 @@
  *
  */
 
-#ifndef DPP_IO_COMMON_H_
-#define DPP_IO_COMMON_H_ 1
+#ifndef DPP_IO_COMMON_H
+#define DPP_IO_COMMON_H 1
 
-// Standard library
+// Standard library:
 #include <string>
 #include <vector>
 
-// Third party library
-// - Bayeux/datatools
+// Third party library:
+// - Bayeux/datatools:
 #include <datatools/logger.h>
 #include <datatools/smart_filename.h>
 #include <datatools/multi_properties.h>
@@ -221,9 +221,8 @@ namespace dpp {
 
 } // namespace dpp
 
-#endif // DPP_IO_COMMON_H_
+#endif // DPP_IO_COMMON_H
 
-// end of io_common.h
 /*
 ** Local Variables: --
 ** mode: c++ --

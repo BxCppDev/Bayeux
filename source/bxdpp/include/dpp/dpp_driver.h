@@ -1,5 +1,5 @@
-/* dpp_driver.h
- * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file dpp/dpp_driver.h
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-19
  * Last modified : 2013-10-08
  *
@@ -26,20 +26,18 @@
  *
  */
 
-#ifndef DPP_DPP_DRIVER_H_
-#define DPP_DPP_DRIVER_H_ 1
+#ifndef DPP_DPP_DRIVER_H
+#define DPP_DPP_DRIVER_H 1
 
-// Standard library
+// Standard library:
 #include <iostream>
 #include <string>
 #include <vector>
 
-// Third party
-// - Boost
-//#include <boost/program_options.hpp>
+// Third party:
+// - Boost:
 #include <boost/scoped_ptr.hpp>
-
-// - datatools
+// - Bayeux/datatools:
 #include <datatools/logger.h>
 
 namespace dpp {
@@ -99,4 +97,12 @@ namespace dpp {
 
 }
 
-#endif // DPP_DPP_DRIVER_H_
+#endif // DPP_DPP_DRIVER_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

@@ -1,5 +1,5 @@
-/* brio_common.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file dpp/brio_common.h
+/* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
  * Last modified : 2013-02-15
  *
@@ -45,9 +45,10 @@
  *
  */
 
-#ifndef DPP_BRIO_COMMON_H_
-#define DPP_BRIO_COMMON_H_ 1
+#ifndef DPP_BRIO_COMMON_H
+#define DPP_BRIO_COMMON_H 1
 
+// Standard library:
 #include <string>
 
 namespace dpp {
@@ -61,9 +62,8 @@ namespace dpp {
 
 } // end of namespace dpp
 
-#endif // DPP_BRIO_COMMON_H_
+#endif // DPP_BRIO_COMMON_H
 
-// end of brio_common.h
 /*
 ** Local Variables: --
 ** mode: c++ --

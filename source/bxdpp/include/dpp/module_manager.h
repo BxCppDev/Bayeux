@@ -1,5 +1,5 @@
-/* module_manager.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file dpp/module_manager.h
+/* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-22
  * Last modified : 2013-11-13
  *
@@ -28,20 +28,20 @@
  *
  */
 
-#ifndef DPP_MODULE_MANAGER_H_
-#define DPP_MODULE_MANAGER_H_ 1
+#ifndef DPP_MODULE_MANAGER_H
+#define DPP_MODULE_MANAGER_H 1
 
-// Standard library
+// Standard library:
 #include <string>
 #include <vector>
 
-// Third party
-// - Boost
+// Third party:
+// - Boost:
 #include <boost/cstdint.hpp>
-// - Bayeux/datatools
+// - Bayeux/datatools:
 #include <datatools/logger.h>
 
-// This project
+// This project:
 #include <dpp/base_module.h>
 #include <dpp/module_tools.h>
 
@@ -190,9 +190,8 @@ namespace dpp {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(dpp::module_manager)
 
-#endif // DPP_MODULE_MANAGER_H_
+#endif // DPP_MODULE_MANAGER_H
 
-// end of module_manager.h
 /*
 ** Local Variables: --
 ** mode: c++ --

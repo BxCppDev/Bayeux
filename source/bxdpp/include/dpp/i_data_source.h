@@ -1,5 +1,5 @@
-/* i_data_source.h
- * Author(s)     : Xavier Garrido <garrido@lal.in2p3.fr>
+/// \file dpp/i_data_source.h
+/* Author(s)     : Xavier Garrido <garrido@lal.in2p3.fr>
  * Creation date : 2011-08-05
  * Last modified : 2013-02-15
  *
@@ -29,18 +29,22 @@
  *
  */
 
-#ifndef DPP_I_DATA_SOURCE_H_
-#define DPP_I_DATA_SOURCE_H_ 1
+#ifndef DPP_I_DATA_SOURCE_H
+#define DPP_I_DATA_SOURCE_H 1
 
+// Standard library:
 #include <ostream>
 #include <string>
 
+// Third party:
+// - Boost:
 #include <boost/cstdint.hpp>
-
-#include <dpp/dpp_config.h>
-
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/things.h>
+
+// This project:
+#include <dpp/dpp_config.h>
 
 namespace dpp {
 
@@ -137,9 +141,8 @@ namespace dpp {
 
 }  // end of namespace dpp
 
-#endif // DPP_I_DATA_SOURCE_H_
+#endif // DPP_I_DATA_SOURCE_H
 
-// end of i_data_source.h
 /*
 ** Local Variables: --
 ** mode: c++ --

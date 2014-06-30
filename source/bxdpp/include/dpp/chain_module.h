@@ -1,5 +1,5 @@
-/* chain_module.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file dpp/chain_module.h
+/* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
  * Last modified : 2013-02-15
  *
@@ -30,14 +30,14 @@
  *
  */
 
-#ifndef DPP_CHAIN_MODULE_H_
-#define DPP_CHAIN_MODULE_H_ 1
+#ifndef DPP_CHAIN_MODULE_H
+#define DPP_CHAIN_MODULE_H 1
 
-// Standard library
+// Standard library:
 #include <string>
 #include <list>
 
-// This project
+// This project:
 #include <dpp/base_module.h>
 
 namespace dpp {
@@ -97,9 +97,8 @@ namespace dpp {
 
 }  // end of namespace dpp
 
-#endif // DPP_CHAIN_MODULE_H_
+#endif // DPP_CHAIN_MODULE_H
 
-// end of chain_module.h
 /*
 ** Local Variables: --
 ** mode: c++ --

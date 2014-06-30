@@ -1,5 +1,5 @@
-/* dummy_module.h
- * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file dpp/dummy_module.h
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-19
  * Last modified : 2013-12-13
  *
@@ -29,13 +29,13 @@
  *
  */
 
-#ifndef DPP_DUMMY_MODULE_H_
-#define DPP_DUMMY_MODULE_H_ 1
+#ifndef DPP_DUMMY_MODULE_H
+#define DPP_DUMMY_MODULE_H 1
 
-// Standard library
+// Standard library:
 #include <string>
 
-// This project
+// This project:
 #include <dpp/base_module.h>
 
 namespace dpp {
@@ -103,9 +103,8 @@ namespace dpp {
 
 }  // end of namespace dpp
 
-#endif // DPP_DUMMY_MODULE_H_
+#endif // DPP_DUMMY_MODULE_H
 
-// end of dummy_module.h
 /*
 ** Local Variables: --
 ** mode: c++ --

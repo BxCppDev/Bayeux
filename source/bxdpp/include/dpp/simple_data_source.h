@@ -1,5 +1,5 @@
-/* simple_data_source.h
- * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file dpp/simple_data_source.h
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
  * Last modified : 2013-02-16
  *
@@ -46,15 +46,18 @@
  *
  *
  */
-#ifndef DPP_SIMPLE_DATA_SOURCE_H_
-#define DPP_SIMPLE_DATA_SOURCE_H_ 1
+#ifndef DPP_SIMPLE_DATA_SOURCE_H
+#define DPP_SIMPLE_DATA_SOURCE_H 1
 
+// Standard library:
 #include <string>
 
-#include <dpp/dpp_config.h>
-
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/things.h>
 
+// This project:
+#include <dpp/dpp_config.h>
 #include <dpp/i_data_source.h>
 
 // forward declaration:
@@ -111,9 +114,8 @@ namespace dpp {
 
 }  // end of namespace dpp
 
-#endif // DPP_SIMPLE_DATA_SOURCE_H_
+#endif // DPP_SIMPLE_DATA_SOURCE_H
 
-// end of simple_data_source.h
 /*
 ** Local Variables: --
 ** mode: c++ --

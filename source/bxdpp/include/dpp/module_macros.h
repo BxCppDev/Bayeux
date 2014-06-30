@@ -1,5 +1,5 @@
-/* module_macros.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file dpp/module_macros.h
+/* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
  * Last modified : 2013-05-15
  *
@@ -33,9 +33,10 @@
  *
  */
 
-#ifndef DPP_MODULE_MACROS_H_
-#define DPP_MODULE_MACROS_H_ 1
+#ifndef DPP_MODULE_MACROS_H
+#define DPP_MODULE_MACROS_H 1
 
+// This project:
 #include <dpp/base_module.h>
 
 #define DPP_MODULE_CLASS_DECLARE(T)             \
@@ -128,9 +129,8 @@
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::dpp::base_module,T,ModuleID); \
   /**/
 
-#endif // DPP_MODULE_MACROS_H_
+#endif // DPP_MODULE_MACROS_H
 
-// end of module_macros.h
 /*
 ** Local Variables: --
 ** mode: c++ --

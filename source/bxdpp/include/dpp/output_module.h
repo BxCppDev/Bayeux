@@ -1,5 +1,5 @@
-/* output_module.h
- * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file dpp/output_module.h
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2013-08-16
  * Last modified : 2014-01-15
  *
@@ -29,14 +29,17 @@
  *
  */
 
-#ifndef DPP_OUTPUT_MODULE_H_
-#define DPP_OUTPUT_MODULE_H_ 1
+#ifndef DPP_OUTPUT_MODULE_H
+#define DPP_OUTPUT_MODULE_H 1
 
+// Third party:
+// - Boost:
 #include <boost/scoped_ptr.hpp>
-
-#include <dpp/base_module.h>    // data processing module abstract base class
-
+// - Bayeux/datatools:
 #include <datatools/smart_filename.h>
+
+// This project:
+#include <dpp/base_module.h>
 
 namespace dpp {
 
@@ -154,9 +157,8 @@ namespace dpp {
 
 } // namespace dpp
 
-#endif // DPP_OUTPUT_MODULE_H_
+#endif // DPP_OUTPUT_MODULE_H
 
-// end of output_module.h
 /*
 ** Local Variables: --
 ** mode: c++ --

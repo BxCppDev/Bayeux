@@ -25,7 +25,7 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(dpp)
 
 # - Versioning
-set(dpp_VERSION_MAJOR 1)
+set(dpp_VERSION_MAJOR 2)
 set(dpp_VERSION_MINOR 0)
 set(dpp_VERSION_PATCH 0)
 set(dpp_VERSION "${dpp_VERSION_MAJOR}.${dpp_VERSION_MINOR}.${dpp_VERSION_PATCH}")

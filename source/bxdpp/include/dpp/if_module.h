@@ -1,5 +1,5 @@
-/* if_module.h
- * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file dpp/if_module.h
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-19
  * Last modified : 2013-05-15
  *
@@ -28,17 +28,17 @@
  *
  */
 
-#ifndef DPP_IF_MODULE_H_
-#define DPP_IF_MODULE_H_ 1
+#ifndef DPP_IF_MODULE_H
+#define DPP_IF_MODULE_H 1
 
-// Standard library
+// Standard library:
 #include <string>
 
-// Third party
-// - Bayeux/cuts
+// Third party:
+// - Bayeux/cuts:
 #include <cuts/cut_tools.h>
 
-// This project
+// This project:
 #include <dpp/base_module.h>
 
 namespace dpp {
@@ -132,9 +132,8 @@ namespace dpp {
 
 }  // end of namespace dpp
 
-#endif // DPP_IF_MODULE_H_
+#endif // DPP_IF_MODULE_H
 
-// end of if_module.h
 /*
 ** Local Variables: --
 ** mode: c++ --

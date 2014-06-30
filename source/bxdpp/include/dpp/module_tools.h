@@ -1,10 +1,10 @@
-/* module_tools.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file dpp/module_tools.h
+/* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
  * Last modified : 2013-02-15
- * 
+ *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -17,37 +17,41 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
- * Description: 
+ * Description:
  *
  *   Typedefs for the event record processing module factory.
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
-#ifndef DPP_MODULE_TOOLS_H_
-#define DPP_MODULE_TOOLS_H_ 1
+#ifndef DPP_MODULE_TOOLS_H
+#define DPP_MODULE_TOOLS_H 1
 
+// Standard library:
 #include <iostream>
 #include <string>
 #include <map>
 #include <exception>
 
+// Third party:
+// - Boost:
 #include <boost/scoped_ptr.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/handle.h>
 #include <datatools/bit_mask.h>
 #include <datatools/properties.h>
 
+// This project:
 #include <dpp/dpp_config.h>
 
 namespace dpp {
 
   class base_module;
- 
+
   typedef std::map<std::string, base_module *> module_dict_type;
 
   typedef datatools::handle<base_module> module_handle_type;
@@ -55,7 +59,7 @@ namespace dpp {
   class module_manager;
 
   /// \brief Module record entry class
-  class module_entry_type : public datatools::i_tree_dumpable 
+  class module_entry_type : public datatools::i_tree_dumpable
   {
   public:
 
@@ -83,17 +87,17 @@ namespace dpp {
     void set_ptr (base_module *);
 
     void set_module_id (const std::string &);
-        
+
     bool has_manager () const;
 
     void set_manager (module_manager &);
-      
+
     void set_blank ();
-         
+
     void set_created ();
-       
+
     void set_initialized ();
-       
+
     void set_uninitialized ();
 
     bool is_created () const;
@@ -110,7 +114,7 @@ namespace dpp {
     bool has_module () const;
 
     const base_module & get_module () const;
- 
+
     base_module & grab_module ();
 
     const module_handle_type & get_module_handle () const;
@@ -119,7 +123,7 @@ namespace dpp {
 
     module_handle_type & grab_initialized_module_handle ();
 
-    virtual void tree_dump (std::ostream & out_         = std::clog, 
+    virtual void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
                             bool inherit_               = false) const;
@@ -128,7 +132,7 @@ namespace dpp {
 
     std::string        _module_name_;   /// Module name
     std::string        _module_id_;     /// Module class registration ID
-    datatools::properties _module_config_; /// The configuration of the module 
+    datatools::properties _module_config_; /// The configuration of the module
     uint32_t           _module_status_; /// The status of the module
     module_handle_type _module_handle_; /// The handle for the allocated service
     module_manager *   _manager_;       /// Handle to the module manager
@@ -140,9 +144,8 @@ namespace dpp {
 
 }  // end of namespace dpp
 
-#endif // DPP_MODULE_TOOLS_H_
+#endif // DPP_MODULE_TOOLS_H
 
-// end of module_tools.h
 /*
 ** Local Variables: --
 ** mode: c++ --

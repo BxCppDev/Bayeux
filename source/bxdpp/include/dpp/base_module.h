@@ -1,5 +1,5 @@
-/* base_module.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file dpp/base_module.h
+/* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
  * Last modified : 2013-12-13
  *
@@ -28,22 +28,22 @@
  *
  */
 
-#ifndef DPP_BASE_MODULE_H_
-#define DPP_BASE_MODULE_H_ 1
+#ifndef DPP_BASE_MODULE_H
+#define DPP_BASE_MODULE_H 1
 
-// Standard library
+// Standard library:
 #include <iostream>
 #include <string>
 
-// Third party
-// - Bayeux/datatools
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/bit_mask.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/factory_macros.h>
 #include <datatools/logger.h>
 #include <datatools/things.h>
 
-// This project
+// This project:
 #include <dpp/dpp_config.h>
 #include <dpp/module_tools.h>
 
@@ -249,9 +249,8 @@ namespace dpp {
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::dpp::base_module,T,ModuleID); \
   /**/
 
-#endif // DPP_BASE_MODULE_H_
+#endif // DPP_BASE_MODULE_H
 
-// end of base_module.h
 /*
 ** Local Variables: --
 ** mode: c++ --

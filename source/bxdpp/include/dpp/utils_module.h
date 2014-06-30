@@ -1,6 +1,5 @@
-// -*- mode: c++ ; -*-
-/* utils_module.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file dpp/utils_module.h
+/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2011-01-09
  * Last modified: 2013-05-15
  *
@@ -14,16 +13,20 @@
  *
  */
 
-#ifndef DPP_UTILS_MODULE_H_
-#define DPP_UTILS_MODULE_H_ 1
+#ifndef DPP_UTILS_MODULE_H
+#define DPP_UTILS_MODULE_H 1
 
+// Standard library:
 #include <cstdlib>
 #include <stdexcept>
 #include <iostream>
 #include <string>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 
+// This project:
 #include <dpp/base_module.h>
 
 namespace dpp {
@@ -94,6 +97,13 @@ namespace dpp {
 
 } // end of namespace dpp
 
-#endif // DPP_UTILS_MODULE_H_
+#endif // DPP_UTILS_MODULE_H
 
-// end of utils_module.h
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/
