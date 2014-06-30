@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* physical_volume.h
- * Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/physical_volume.h
+/* Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-08
  * Last modified: 2010-02-08
  *
@@ -13,13 +13,16 @@
  *
  */
 
-#ifndef GEOMTOOLS_PHYSICAL_VOLUME_H_
-#define GEOMTOOLS_PHYSICAL_VOLUME_H_ 1
+#ifndef GEOMTOOLS_PHYSICAL_VOLUME_H
+#define GEOMTOOLS_PHYSICAL_VOLUME_H 1
 
+// Standard library:
 #include <iostream>
 #include <string>
 #include <map>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/logger.h>
@@ -29,6 +32,7 @@ namespace geomtools {
   class i_placement;
   class logical_volume;
 
+  /// \brief A physical geoemtry volume (ala GDML)
   class physical_volume
     : public datatools::i_tree_dumpable
   {
@@ -147,6 +151,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_PHYSICAL_VOLUME_H_
-
-// end of physical_volume.h
+#endif // GEOMTOOLS_PHYSICAL_VOLUME_H

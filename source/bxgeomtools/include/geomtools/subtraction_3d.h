@@ -1,6 +1,5 @@
 // -*- mode: c++; -*-
-/** \file geomtools/subtraction_3d.h
- */
+/// \file geomtools/subtraction_3d.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-24
  * Last modified: 2013-05-22

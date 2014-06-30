@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
-/* blur_spot.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/blur_spot.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-03-22
  * Last modified: 2012-03-22
  *
@@ -18,18 +18,21 @@
  *
  */
 
-#ifndef GEOMTOOLS_BLUR_SPOT_H_
-#define GEOMTOOLS_BLUR_SPOT_H_ 1
+#ifndef GEOMTOOLS_BLUR_SPOT_H
+#define GEOMTOOLS_BLUR_SPOT_H 1
 
+// Third party:
+// - Boost;
 #include <boost/serialization/access.hpp>
 #include <boost/random/normal_distribution.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/i_serializable.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/properties.h>
-
+// - Bayeux/mygsl:
 #include <mygsl/rng.h>
 
+// This project:
 #include <geomtools/geomtools_config.h>
 #include <geomtools/utils.h>
 #include <geomtools/placement.h>
@@ -322,6 +325,4 @@ namespace geomtools {
 // Activate reflection layer for the blur_spot class :
 DR_CLASS_INIT(::geomtools::blur_spot);
 
-#endif // GEOMTOOLS_BLUR_SPOT_H_
-
-// end of blur_spot.h
+#endif // GEOMTOOLS_BLUR_SPOT_H

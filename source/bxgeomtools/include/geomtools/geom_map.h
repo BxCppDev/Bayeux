@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* geom_map.h
- * Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/geom_map.h
+/* Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-30
  * Last modified: 2010-04-30
  *

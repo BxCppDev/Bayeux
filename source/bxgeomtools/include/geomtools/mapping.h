@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* mapping.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/mapping.h
+/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-21
  * Last modified: 2010-23-20
  *
@@ -15,8 +15,8 @@
  *
  */
 
-#ifndef GEOMTOOLS_MAPPING_H_
-#define GEOMTOOLS_MAPPING_H_ 1
+#ifndef GEOMTOOLS_MAPPING_H
+#define GEOMTOOLS_MAPPING_H 1
 
 // Standard library:
 #include <string>
@@ -148,4 +148,4 @@ namespace geomtools {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(geomtools::mapping)
 
-#endif // GEOMTOOLS_MAPPING_H_
+#endif // GEOMTOOLS_MAPPING_H

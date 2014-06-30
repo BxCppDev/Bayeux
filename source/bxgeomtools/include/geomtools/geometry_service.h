@@ -1,5 +1,5 @@
-/* geometry_service.h
- * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/geometry_service.h
+/* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
  * Last modified : 2013-12-14
  *
@@ -28,13 +28,15 @@
  *
  */
 
-#ifndef GEOMTOOLS_GEOMETRY_SERVICE_H_
-#define GEOMTOOLS_GEOMETRY_SERVICE_H_ 1
+#ifndef GEOMTOOLS_GEOMETRY_SERVICE_H
+#define GEOMTOOLS_GEOMETRY_SERVICE_H 1
 
+// Standard library:
 #include <iostream>
 #include <string>
 
-// Service interface :
+// Third party :
+// - Bayeux/datatools:
 #include <datatools/base_service.h>
 #include <datatools/service_tools.h>
 
@@ -89,14 +91,13 @@ namespace geomtools {
 
 }  // end of namespace geomtools
 
-#endif // GEOMTOOLS_GEOMETRY_SERVICE_H_
-
 #include <datatools/ocd_macros.h>
 
 // Declare the OCD interface of the module
 DOCD_CLASS_DECLARATION(geomtools::geometry_service)
 
-// end of geometry_service.h
+#endif // GEOMTOOLS_GEOMETRY_SERVICE_H
+
 /*
 ** Local Variables: --
 ** mode: c++ --

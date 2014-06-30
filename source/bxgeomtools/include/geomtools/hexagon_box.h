@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
-/* hexagon_box.h
- * Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/hexagon_box.h
+/* Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
  * Last modified: 2008-05-23
  *
@@ -16,9 +16,11 @@
 #ifndef GEOMTOOLS_HEXAGON_BOX_H
 #define GEOMTOOLS_HEXAGON_BOX_H 1
 
+// Standard library:
 #include <sstream>
 #include <stdexcept>
 
+// This project:
 #include <geomtools/i_shape_3d.h>
 
 namespace geomtools {

@@ -1,13 +1,16 @@
 // -*- mode: c++; -*-
-//! \file geomtools/blur_spot.ipp
+/// \file geomtools/blur_spot.ipp
 
-#ifndef __geomtools__blur_spot_ipp
-#define __geomtools__blur_spot_ipp 1
+#ifndef GEOMTOOLS_BLUR_SPOT_IPP
+#define GEOMTOOLS_BLUR_SPOT_IPP 1
 
+// Third party:
+// - Boost:
 #include <boost/archive/archive_exception.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
 
+// This project:
 #include <geomtools/blur_spot.h>
 #include <datatools/i_serializable.ipp>
 #include <datatools/properties.ipp>
@@ -38,5 +41,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // __geomtools__blur_spot_ipp
-
+#endif // GEOMTOOLS_BLUR_SPOT_IPP

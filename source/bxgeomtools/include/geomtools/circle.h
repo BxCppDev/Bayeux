@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* circle.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/circle.h
+/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-14
  * Last modified: 2010-02-14
  *
@@ -13,24 +13,26 @@
  *
  */
 
-#ifndef GEOMTOOLS_CIRCLE_H_
-#define GEOMTOOLS_CIRCLE_H_ 1
+#ifndef GEOMTOOLS_CIRCLE_H
+#define GEOMTOOLS_CIRCLE_H 1
 
+// Standard library:
 #include <iostream>
 #include <string>
 
+// This project:
 #include <geomtools/i_shape_1d.h>
 #include <geomtools/i_wires_3d_rendering.h>
 
 namespace geomtools {
 
+  /// \brief A circle (1D shape)
   class circle : public i_shape_1d,
                  public i_wires_3d_rendering
   {
 
   public:
 
-    //DT_STATIC_CONST_STRING_REF_DECLARATION(circle_label);
     static const std::string & circle_label();
 
     bool is_valid () const;
@@ -87,6 +89,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_CIRCLE_H_
-
-// end of circle.h
+#endif // GEOMTOOLS_CIRCLE_H

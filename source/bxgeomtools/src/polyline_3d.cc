@@ -139,6 +139,30 @@ namespace geomtools {
     return bpl;
   }
 
+  // virtual
+  double polyline_3d::get_length(uint32_t /* flags_ */) const
+  {
+    double l(0.0);
+    if (_points_.size() > 1) {
+      for (point_col::const_iterator i = _points_.begin();
+           i != _points_.end();
+           i++) {
+        point_col::const_iterator j = i;
+        j++;
+        if (j == _points_.end()) {
+          break;
+        }
+        const vector_3d & A = *i;
+        const vector_3d & B = *j;
+        l += (B-A).mag();
+      }
+      if (is_closed()) {
+        l +=  (*_points_.begin() - *_points_.end()).mag();
+      }
+    }
+    return l;
+  }
+
   bool polyline_3d::is_on_curve (const vector_3d & /*position_*/,
                                  double /*tolerance_*/) const
   {

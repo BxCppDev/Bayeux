@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* display_data.h
- * Author (s) : François Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/display_data.h
+/* Author (s) : François Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-10-19
  * Last modified: 2012-10-20
  *
@@ -15,25 +15,25 @@
  *
  */
 
-#ifndef GEOMTOOLS_DISPLAY_DATA_H_
-#define GEOMTOOLS_DISPLAY_DATA_H_ 1
+#ifndef GEOMTOOLS_DISPLAY_DATA_H
+#define GEOMTOOLS_DISPLAY_DATA_H 1
 
+// Standard library:
 #include <string>
 #include <vector>
 #include <map>
 #include <list>
 
-// Boost  serialization hook :
+// Third party:
+// - Boost :
 #include <boost/serialization/access.hpp>
 #include <boost/cstdint.hpp>
-
-// Interfaces :
+// - Bayeux/datatools :
 #include <datatools/i_serializable.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/i_clear.h>
-
 #include <datatools/properties.h>
-
+// - Bayeux/geomtools :
 #include <geomtools/polyline_3d.h>
 #include <geomtools/placement.h>
 
@@ -183,6 +183,4 @@ namespace geomtools {
 #include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT_KEY2(geomtools::display_data, "geomtools::display_data")
 
-#endif // GEOMTOOLS_DISPLAY_DATA_H_
-
-// end of display_data.h
+#endif // GEOMTOOLS_DISPLAY_DATA_H

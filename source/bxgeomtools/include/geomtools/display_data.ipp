@@ -1,22 +1,24 @@
 // -*- mode: c++ ; -*-
-/* display_data.ipp */
+/// \file geomtools/display_data.ipp
 
-#ifndef GEOMTOOLS_DISPLAY_DATA_IPP_
-#define GEOMTOOLS_DISPLAY_DATA_IPP_ 1
+#ifndef GEOMTOOLS_DISPLAY_DATA_IPP
+#define GEOMTOOLS_DISPLAY_DATA_IPP 1
 
+// Ourselves:
 #include <geomtools/display_data.h>
 
+// Third party:
+// - Boost:
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
-
-
-// Specific serialization method implementations:
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/map.hpp>
 #include <boost/serialization/string.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/i_serializable.h>
 #include <datatools/properties.ipp>
+
+// This project:
 #include <geomtools/polyline_3d.ipp>
 
 namespace geomtools {
@@ -94,6 +96,4 @@ namespace geomtools {
 BOOST_CLASS_VERSION(geomtools::display_data::display_item, 1)
 BOOST_CLASS_VERSION(geomtools::display_data, 1)
 
-#endif // GEOMTOOLS_DISPLAY_DATA_IPP_
-
-// end of display_data.ipp
+#endif // GEOMTOOLS_DISPLAY_DATA_IPP

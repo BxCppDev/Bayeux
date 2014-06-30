@@ -1,31 +1,31 @@
-// -*- mode: c++; -*- 
-/* regular_grid_placement.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+// -*- mode: c++; -*-
+/// \file geomtools/regular_grid_placement.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-26
  * Last modified: 2010-02-26
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *  XY grid 2D placement
  *
  *   y^
- *    |   column  0      1      2      3      4                                          
- *    |           :      :      :      :      :     row              
- *    |           x......x......x......x......x......2                           
- *    |           :10    :11    :12    :13    :14                              
- * yc +.......... x......x......c......x......x......1                        
- *    |      dy   :5     :6     :7     :8     :9                        
- * yo +...........o......x......x......x......x......0                        
- *    |           :0 dx   1     :2      3      4                      
- *    |           :             :                                  
- *    +-----------+-------------+--------------------> x           
+ *    |   column  0      1      2      3      4
+ *    |           :      :      :      :      :     row
+ *    |           x......x......x......x......x......2
+ *    |           :10    :11    :12    :13    :14
+ * yc +.......... x......x......c......x......x......1
+ *    |      dy   :5     :6     :7     :8     :9
+ * yo +...........o......x......x......x......x......0
+ *    |           :0 dx   1     :2      3      4
+ *    |           :             :
+ *    +-----------+-------------+--------------------> x
  *   O           xo             xc
  *
  *
  *
- * History: 
- * 
+ * History:
+ *
  */
 
 #ifndef GEOMTOOLS_REGULAR_GRID_PLACEMENT_H_
@@ -39,9 +39,9 @@
 #include <geomtools/placement.h>
 
 namespace geomtools {
- 
+
   class regular_grid_placement
-    : public i_placement 
+    : public i_placement
   {
   public:
     enum mode_type
@@ -99,16 +99,16 @@ namespace geomtools {
     void set_number_of_rows (size_t nr_);
 
     void set_number_of_columns (size_t nc_);
- 
+
     size_t get_number_of_rows () const;
- 
+
     size_t get_number_of_columns () const;
 
     void get_placement (int col_, int row_, placement & p_) const;
 
     placement get_placement (int col_, int row_) const;
 
-  public: 
+  public:
 
     // i_placement interface:
 
@@ -119,44 +119,44 @@ namespace geomtools {
     virtual bool is_replica () const;
 
     virtual size_t get_number_of_items () const;
-   
+
     virtual void get_placement (int item_, placement & p_) const;
 
-    virtual size_t compute_index_map (std::vector<uint32_t> & map_, 
+    virtual size_t compute_index_map (std::vector<uint32_t> & map_,
                                       int item_) const;
 
-  public: 
+  public:
     // ctor:
     regular_grid_placement ();
-                
+
     // ctor:
-    regular_grid_placement (const placement & basic_placement_, 
+    regular_grid_placement (const placement & basic_placement_,
                             double column_step_,
                             double row_step_,
                             size_t number_of_columns_,
                             size_t number_of_rows_,
                             int mode_,
                             bool centered_ = true);
-      
+
     // dtor:
     virtual ~regular_grid_placement ();
 
-    void init (const placement & basic_placement_, 
+    void init (const placement & basic_placement_,
                double column_step_,
                double row_step_,
                size_t number_of_columns_,
                size_t number_of_rows_,
                int mode_,
                bool centered_ = true);
-      
+
     virtual void reset ();
 
     // i_tree_dump interface:
-    virtual void tree_dump (std::ostream & out_  = std::clog, 
-                            const std::string & title_ = "geomutils::regular_grid_placement", 
-                            const std::string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_  = std::clog,
+                            const std::string & title_ = "geomutils::regular_grid_placement",
+                            const std::string & indent_ = "",
                             bool inherit_ = false) const;
-      
+
   private:
 
     placement _basic_placement_;
@@ -171,6 +171,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_REGULAR_GRID_PLACEMENT_H_
-
-// end of regular_grid_placement.h
+#endif // GEOMTOOLS_REGULAR_GRID_PLACEMENT_H

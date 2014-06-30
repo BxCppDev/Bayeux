@@ -13,8 +13,8 @@
  *
  */
 
-#ifndef GEOMTOOLS_REGULAR_CIRCULAR_PLACEMENT_H_
-#define GEOMTOOLS_REGULAR_CIRCULAR_PLACEMENT_H_ 1
+#ifndef GEOMTOOLS_REGULAR_CIRCULAR_PLACEMENT_H
+#define GEOMTOOLS_REGULAR_CIRCULAR_PLACEMENT_H 1
 
 // Standard library:
 #include <iostream>
@@ -133,4 +133,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_REGULAR_CIRCULAR_PLACEMENT_H_
+#endif // GEOMTOOLS_REGULAR_CIRCULAR_PLACEMENT_H

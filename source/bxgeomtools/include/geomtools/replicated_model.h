@@ -121,4 +121,4 @@ namespace geomtools {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(geomtools::replicated_model)
 
-#endif // GEOMTOOLS_REPLICATED_MODEL_H_
+#endif // GEOMTOOLS_REPLICATED_MODEL_H

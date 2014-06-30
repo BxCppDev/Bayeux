@@ -1,4 +1,4 @@
-/* the_introspectable.h */
+/// \file geomtools/the_introspectable.h
 /*
  * Description :
  *
@@ -25,13 +25,16 @@
  *
  */
 
-#ifndef GEOMTOOLS_THE_INTROSPECTABLE_H_
-#define GEOMTOOLS_THE_INTROSPECTABLE_H_
+#ifndef GEOMTOOLS_THE_INTROSPECTABLE_H
+#define GEOMTOOLS_THE_INTROSPECTABLE_H
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/datatools_config.h>
 #include <datatools/reflection_macros.h>
-#include <geomtools/geomtools_config.h>
 
+// This project:
+#include <geomtools/geomtools_config.h>
 #include <geomtools/clhep-reflect.h>
 #include <geomtools/utils-reflect.h>
 #include <geomtools/geom_id-reflect.h>
@@ -40,6 +43,4 @@
 #include <geomtools/placement-reflect.h>
 #include <geomtools/blur_spot-reflect.h>
 
-#endif // GEOMTOOLS_THE_INTROSPECTABLE_H_
-
-/* end of the_introspectable.h */
+#endif // GEOMTOOLS_THE_INTROSPECTABLE_H

@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* model_macros.h
- * Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/model_macros.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2011-12-05
  * Last modified: 2011-12-05
  *

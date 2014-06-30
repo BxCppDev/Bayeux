@@ -1,4 +1,4 @@
-/* bio_guard.h */
+/// \file geomtools/bio_guard.h
 /*
  * Description :
  *
@@ -28,17 +28,12 @@
  *
  */
 
-#ifndef GEOMTOOLS_BIO_GUARD_H_
-#define GEOMTOOLS_BIO_GUARD_H_
+#ifndef GEOMTOOLS_BIO_GUARD_H
+#define GEOMTOOLS_BIO_GUARD_H
 
-// Standard Library
-
-// Third Party
-
-// Geomtools
+// This project:
 #include <geomtools/geomtools_config.h>
 #include <geomtools/detail/bio_link_guard.h>
-
 #if GEOMTOOLS_WITH_BIO != 1
 #warning This executable is built with its own geomtools Boost/Serialization code.
 #include <geomtools/the_serializable.h>
@@ -63,4 +58,4 @@ bio_guard bio_guard::_g_trigger_link_guard_;
 } // end namespace geomtools
 #endif // GEOMTOOLS_WITH_BIO != 1
 
-#endif // GEOMTOOLS_BIO_GUARD_H_
+#endif // GEOMTOOLS_BIO_GUARD_H

@@ -1,6 +1,5 @@
 // -*- mode: c++; -*-
-/** \file geomtools/geomtools_config.h
- */
+/// \file geomtools/geomtools_config.h
 
 #ifndef GEOMTOOLS_GEOMTOOLS_CONFIG_H
 #define GEOMTOOLS_GEOMTOOLS_CONFIG_H 1

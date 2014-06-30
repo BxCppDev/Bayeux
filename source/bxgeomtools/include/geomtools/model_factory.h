@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* model_factory.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/model_factory.h
+/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-24
  * Last modified: 2010-02-24
  *
@@ -13,24 +13,27 @@
  *
  */
 
-#ifndef GEOMTOOLS_MODEL_FACTORY_H_
-#define GEOMTOOLS_MODEL_FACTORY_H_ 1
+#ifndef GEOMTOOLS_MODEL_FACTORY_H
+#define GEOMTOOLS_MODEL_FACTORY_H 1
 
+// Standard library:
 #include <iostream>
 #include <string>
 #include <vector>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/multi_properties.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/factory.h>
 #include <datatools/logger.h>
-
+// - Bayeux/geomtools:
 #include <geomtools/logical_volume.h>
 #include <geomtools/i_model.h>
 
-
 namespace geomtools {
 
+  /// \brief The factory of geometry models
   class model_factory : public datatools::i_tree_dumpable
   {
   public:
@@ -142,6 +145,4 @@ namespace geomtools {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(geomtools::model_factory)
 
-#endif // GEOMTOOLS_MODEL_FACTORY_H_
-
-// end of model_factory.h
+#endif // GEOMTOOLS_MODEL_FACTORY_H

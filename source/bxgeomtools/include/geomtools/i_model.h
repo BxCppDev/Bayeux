@@ -14,8 +14,8 @@
  *
  */
 
-#ifndef GEOMTOOLS_I_MODEL_H_
-#define GEOMTOOLS_I_MODEL_H_ 1
+#ifndef GEOMTOOLS_I_MODEL_H
+#define GEOMTOOLS_I_MODEL_H 1
 
 // Standard library:
 #include <iostream>
@@ -183,4 +183,4 @@ namespace geomtools {
 
 #include <geomtools/model_macros.h>
 
-#endif // GEOMTOOLS_I_MODEL_H_
+#endif // GEOMTOOLS_I_MODEL_H

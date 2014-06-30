@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
-/* tessellation.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/tessellation.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-06-04
  * Last modified: 2012-09-26
  *

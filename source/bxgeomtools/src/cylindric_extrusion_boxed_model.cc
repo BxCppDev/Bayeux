@@ -1,6 +1,4 @@
-// -*- mode: c++ ; -*-
-/* cylindric_extrusion_boxed_model.cc
- */
+// cylindric_extrusion_boxed_model.cc
 
 // Ourselves:
 #include <geomtools/cylindric_extrusion_boxed_model.h>
@@ -9,7 +7,10 @@
 // - Bayeux:
 #include <datatools/units.h>
 #include <datatools/exception.h>
+// - mygsl:
 #include <mygsl/min_max.h>
+
+// This project:
 #include <geomtools/i_boxed_model.h>
 #include <geomtools/physical_volume.h>
 #include <geomtools/placement.h>
@@ -516,6 +517,3 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::cylindric_extrusion_boxed_model,
 DOCD_CLASS_IMPLEMENT_LOAD_END()
 DOCD_CLASS_SYSTEM_REGISTRATION(::geomtools::cylindric_extrusion_boxed_model,
                                "geomtools::cylindric_extrusion_boxed_model")
-
-
-// end of cylindric_extrusion_boxed_model.cc

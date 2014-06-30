@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
-/* visibility.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/visibility.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
  * Last modified: 2009-03-31
  *
@@ -16,9 +16,10 @@
  *
  */
 
-#ifndef GEOMTOOLS_VISIBILITY_H_
-#define GEOMTOOLS_VISIBILITY_H_ 1
+#ifndef GEOMTOOLS_VISIBILITY_H
+#define GEOMTOOLS_VISIBILITY_H 1
 
+// Standard library:
 #include <string>
 #include <iostream>
 
@@ -91,6 +92,4 @@ namespace geomtools {
 
 }  // end of namespace geomtools
 
-#endif // GEOMTOOLS_VISIBILITY_H_
-
-// end of visibility.h
+#endif // GEOMTOOLS_VISIBILITY_H

@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* rectangle.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/rectangle.h
+/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-14
  * Last modified: 2010-02-14
  *

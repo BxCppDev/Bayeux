@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* i_locator.h
- * Author(s):  Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/i_locator.h
+/* Author(s):  Francois Mauger <mauger@lpccaen.in2p3.fr>
  *             Xavier Garrido <garrido@lal.in2p3.fr>
  * Creation date: 2010-02-09
  * Last modified: 2013-07-16

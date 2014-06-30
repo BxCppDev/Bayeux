@@ -1,45 +1,42 @@
-// -*- mode: c++ ; -*- 
-/* spherical_extrusion_box_model.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+// -*- mode: c++ ; -*-
+/// \file geomtools/spherical_extrusion_box_model.h
+/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-04-04
  * Last modified: 2012-04-04
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *
  *   A box extruded by a spherical volumes on top or bottom face.
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
-#ifndef GEOMTOOLS_SPHERICAL_EXTRUSION_BOX_MODEL_H_
-#define GEOMTOOLS_SPHERICAL_EXTRUSION_BOX_MODEL_H_ 1
+#ifndef GEOMTOOLS_SPHERICAL_EXTRUSION_BOX_MODEL_H
+#define GEOMTOOLS_SPHERICAL_EXTRUSION_BOX_MODEL_H 1
 
-#include <cstdlib>
-#include <cmath>
-#include <stdexcept>
+// Standard library:
 #include <iostream>
-#include <iomanip>
-#include <sstream>
 #include <string>
 
+// This project:
 #include <geomtools/i_model.h>
 #include <geomtools/box.h>
 #include <geomtools/sphere.h>
 #include <geomtools/subtraction_3d.h>
-
 #include <geomtools/placement.h>
 #include <geomtools/physical_volume.h>
 #include <geomtools/logical_volume.h>
 #include <geomtools/gnuplot_draw.h>
 
 namespace geomtools {
- 
-  GEOMTOOLS_MODEL_CLASS_DECLARE(spherical_extrusion_box_model) 
+
+  /// \brief A box volume with a spherical extrusion
+  class spherical_extrusion_box_model : public i_model
   {
-  public: 
+  public:
 
     const std::string & get_material () const;
 
@@ -47,29 +44,27 @@ namespace geomtools {
 
     virtual std::string get_model_id () const;
 
-    // ctor:
     spherical_extrusion_box_model ();
 
-    // dtor:
     virtual ~spherical_extrusion_box_model ();
-      
-    virtual void tree_dump (std::ostream & out_         = std::clog, 
-                            const std::string & title_  = "", 
-                            const std::string & indent_ = "", 
-                            bool inherit_          = false) const;
-     
 
-    static void gnuplot_draw_user_function (std::ostream &, 
-                                            const geomtools::vector_3d &, 
+    virtual void tree_dump (std::ostream & out_         = std::clog,
+                            const std::string & title_  = "",
+                            const std::string & indent_ = "",
+                            bool inherit_          = false) const;
+
+
+    static void gnuplot_draw_user_function (std::ostream &,
+                                            const geomtools::vector_3d &,
                                             const geomtools::rotation_3d &,
-                                            const geomtools::i_object_3d &, 
+                                            const geomtools::i_object_3d &,
                                             void * = 0);
   protected:
 
     virtual void _at_construct (const std::string & name_,
                                 const datatools::properties & setup_,
                                 geomtools::models_col_type * models_ = 0);
-  private: 
+  private:
 
     std::string               _material_;
     geomtools::sphere         _extrusion_;
@@ -90,6 +85,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_SPHERICAL_EXTRUSION_BOX_MODEL_H_
-
-// end of spherical_extrusion_box_model.h
+#endif // GEOMTOOLS_SPHERICAL_EXTRUSION_BOX_MODEL_H

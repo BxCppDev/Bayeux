@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
-/* utils.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/utils.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
  * Last modified: 2013-09-29
  *
@@ -13,27 +13,27 @@
  *
  */
 
-#ifndef GEOMTOOLS_UTILS_H_
-#define GEOMTOOLS_UTILS_H_ 1
+#ifndef GEOMTOOLS_UTILS_H
+#define GEOMTOOLS_UTILS_H 1
 
-// Standard library
+// Standard library:
 #include <string>
 #include <iostream>
 #include <list>
 #include <vector>
 
-// Datatools
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/bit_mask.h>
 #include <datatools/reflection_macros.h>
 
-// This module
+// This project:
 #include <geomtools/geomtools_config.h>
 #include <geomtools/clhep.h>
 
 namespace geomtools {
 
   /// \brief Check if an angle is inside an angular interval
-  ///
   bool angle_is_in(double angle_,
                    double start_angle_, double delta_angle_,
                    double angular_tolerance_ = 0.0,
@@ -56,8 +56,6 @@ namespace geomtools {
   void print_xy_stdout (const vector_2d & p_);
 
   void print_xy_stderr (const vector_2d & p_);
-
-  /******/
 
   void print_xyz (std::ostream & out_,
                   const vector_3d & p_,
@@ -87,8 +85,6 @@ namespace geomtools {
 
   void print_xy_stderr (const basic_polyline_2d & p_);
 
-  /******/
-
   void print_xyz (std::ostream & out_,
                   const basic_polyline_3d & p_,
                   bool endl_ = true);
@@ -101,76 +97,65 @@ namespace geomtools {
 
   void print_xyz_stderr (const basic_polyline_3d & p_);
 
-  /******/
-
   //! Orientation constants
-  enum orientation_type
-    {
-      VERTICAL   = 0,
-      HORIZONTAL = 1
-    };
+  enum orientation_type {
+    VERTICAL   = 0,
+    HORIZONTAL = 1
+  };
 
 
   //! Direction flags
-  enum direction_flags_type
-    {
-      DIRECTION_NONE   = 0x0,
-      DIRECTION_BACK   = datatools::bit_mask::bit00, // -x
-      DIRECTION_FRONT  = datatools::bit_mask::bit01, // +x
-      DIRECTION_LEFT   = datatools::bit_mask::bit02, // -y
-      DIRECTION_RIGHT  = datatools::bit_mask::bit03, // +y
-      DIRECTION_BOTTOM = datatools::bit_mask::bit04, // -z
-      DIRECTION_TOP    = datatools::bit_mask::bit05  // +z
-    };
+  enum direction_flags_type {
+    DIRECTION_NONE   = 0x0,
+    DIRECTION_BACK   = datatools::bit_mask::bit00, // -x
+    DIRECTION_FRONT  = datatools::bit_mask::bit01, // +x
+    DIRECTION_LEFT   = datatools::bit_mask::bit02, // -y
+    DIRECTION_RIGHT  = datatools::bit_mask::bit03, // +y
+    DIRECTION_BOTTOM = datatools::bit_mask::bit04, // -z
+    DIRECTION_TOP    = datatools::bit_mask::bit05  // +z
+  };
 
-  enum direction_type
-    {
-      BACK   = 0, // -x
-      FRONT  = 1, // +x
-      LEFT   = 2, // -y
-      RIGHT  = 3, // +y
-      BOTTOM = 4, // -z
-      TOP    = 5  // +z
-    };
+  enum direction_type {
+    BACK   = 0, // -x
+    FRONT  = 1, // +x
+    LEFT   = 2, // -y
+    RIGHT  = 3, // +y
+    BOTTOM = 4, // -z
+    TOP    = 5  // +z
+  };
 
-  enum vertex_1d
-    {
-      VERTEX_NONE     = 0x0,
-      VERTEX_ALL_BITS = 0xFFFFFFFF
-    };
+  enum vertex_1d {
+    VERTEX_NONE     = 0x0,
+    VERTEX_ALL_BITS = 0xFFFFFFFF
+  };
 
-  enum path_1d
-    {
-      PATH_NONE = 0x0,
-      PATH_ALL_BITS = 0xFFFFFFFF
-    };
+  enum path_1d {
+    PATH_NONE = 0x0,
+    PATH_ALL_BITS = 0xFFFFFFFF
+  };
 
-  enum side_2d
-    {
-      SIDE_NONE = 0x0,
-      SIDE_ALL_BITS = 0xFFFFFFFF
-    };
+  enum side_2d {
+    SIDE_NONE = 0x0,
+    SIDE_ALL_BITS = 0xFFFFFFFF
+  };
 
-  enum face_3d
-    {
-      FACE_NONE = 0x0,
-      FACE_ALL_BITS = 0xFFFFFFFF
-    };
+  enum face_3d {
+    FACE_NONE = 0x0,
+    FACE_ALL_BITS = 0xFFFFFFFF
+  };
 
-  enum shape_domain_flags_type
-    {
-      SHAPE_DOMAIN_NONE                = 0x0,
-      SHAPE_DOMAIN_INSIDE              = datatools::bit_mask::bit00,
-      SHAPE_DOMAIN_OUTSIDE             = datatools::bit_mask::bit01,
-      SHAPE_DOMAIN_ON_SURFACE          = datatools::bit_mask::bit02,
-      SHAPE_DOMAIN_INSIDE_DAUGHTER     = datatools::bit_mask::bit03,
-      SHAPE_DOMAIN_ON_DAUGHTER_SURFACE = datatools::bit_mask::bit04
-    };
+  enum shape_domain_flags_type {
+    SHAPE_DOMAIN_NONE                = 0x0,
+    SHAPE_DOMAIN_INSIDE              = datatools::bit_mask::bit00,
+    SHAPE_DOMAIN_OUTSIDE             = datatools::bit_mask::bit01,
+    SHAPE_DOMAIN_ON_SURFACE          = datatools::bit_mask::bit02,
+    SHAPE_DOMAIN_INSIDE_DAUGHTER     = datatools::bit_mask::bit03,
+    SHAPE_DOMAIN_ON_DAUGHTER_SURFACE = datatools::bit_mask::bit04
+  };
 
 
   //! Some constants
-  struct constants
-  {
+  struct constants {
     static const int    NO_INTERCEPT = -1;
     static const double DEFAULT_TOLERANCE;
     static const double DEFAULT_ANGULAR_TOLERANCE;
@@ -187,13 +172,12 @@ namespace geomtools {
   {
   public:
 
-    enum filled_type
-      {
-        FILLED_UNDEFINED    = -1,
-        FILLED_NONE         =  0,
-        FILLED_BY_ENVELOPE  =  1,
-        FILLED_BY_EXTRUSION =  2
-      };
+    enum filled_type {
+      FILLED_UNDEFINED    = -1,
+      FILLED_NONE         =  0,
+      FILLED_BY_ENVELOPE  =  1,
+      FILLED_BY_EXTRUSION =  2
+    };
 
     static const std::string & filled_none_label();
     static const std::string & filled_by_envelope_label();
@@ -295,30 +279,25 @@ namespace geomtools {
 
   std::string get_special_rotation_angle_label (int);
 
-  /********************/
-  enum axis_type
-    {
-      AXIS_INVALID = -1,
-      AXIS_X = 0,
-      AXIS_Y = 1,
-      AXIS_Z = 2
-    };
+  enum axis_type {
+    AXIS_INVALID = -1,
+    AXIS_X = 0,
+    AXIS_Y = 1,
+    AXIS_Z = 2
+  };
 
-  enum rotation_axis_type
-    {
-      ROTATION_AXIS_INVALID = -1,
-      ROTATION_AXIS_X = AXIS_X,
-      ROTATION_AXIS_Y = AXIS_Y,
-      ROTATION_AXIS_Z = AXIS_Z
-    };
+  enum rotation_axis_type {
+    ROTATION_AXIS_INVALID = -1,
+    ROTATION_AXIS_X = AXIS_X,
+    ROTATION_AXIS_Y = AXIS_Y,
+    ROTATION_AXIS_Z = AXIS_Z
+  };
 
   bool check_rotation_axis (int);
 
   int get_rotation_axis_from_label (const std::string & );
 
   std::string get_rotation_label (int);
-
-  /********************/
 
   void create_rotation_from_axis (rotation_3d & rot_,
                                   int axis_,
@@ -354,7 +333,6 @@ namespace geomtools {
 
   bool is_valid_rotation_3d (const rotation_3d & rot_);
 
-  /******/
   void create (vector_3d &,
                double x_,
                double y_,
@@ -397,8 +375,6 @@ namespace geomtools {
                            const vector_3d & vec2_,
                            double tolerance_);
 
-  /*****/
-
   void set (vector_2d & vec_, double x_, double y_);
 
   void set_r_phi (vector_2d & vec_, double r_, double phi_);
@@ -417,8 +393,6 @@ namespace geomtools {
   void vector_3d_to_vector_2d (const vector_3d & v3d_, vector_2d & v2d_);
 
   void make_phi_theta (vector_3d & vec_, double phi_, double theta_);
-
-  /*****/
 
   /* the 'ran_func' (functor) must have the following operator
    * defined:
@@ -692,6 +666,4 @@ DR_TYPE_INIT(::geomtools::direction_type);
 DR_TYPE_INIT(::geomtools::axis_type);
 DR_TYPE_INIT(::geomtools::rotation_axis_type);
 
-#endif // GEOMTOOLS_UTILS_H_
-
-// end of utils.h
+#endif // GEOMTOOLS_UTILS_H

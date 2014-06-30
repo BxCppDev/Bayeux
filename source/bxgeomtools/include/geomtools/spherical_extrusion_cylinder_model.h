@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* spherical_extrusion_cylinder_model.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/spherical_extrusion_cylinder_model.h
+/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-04-04
  * Last modified: 2012-04-04
  *
@@ -14,22 +14,19 @@
  *
  */
 
-#ifndef GEOMTOOLS_SPHERICAL_EXTRUSION_CYLINDER_MODEL_H_
-#define GEOMTOOLS_SPHERICAL_EXTRUSION_CYLINDER_MODEL_H_ 1
+#ifndef GEOMTOOLS_SPHERICAL_EXTRUSION_CYLINDER_MODEL_H
+#define GEOMTOOLS_SPHERICAL_EXTRUSION_CYLINDER_MODEL_H 1
 
-#include <cstdlib>
-#include <cmath>
-#include <stdexcept>
+// Standard library:
 #include <iostream>
 #include <iomanip>
-#include <sstream>
 #include <string>
 
+// This project:
 #include <geomtools/i_model.h>
 #include <geomtools/cylinder.h>
 #include <geomtools/sphere.h>
 #include <geomtools/subtraction_3d.h>
-
 #include <geomtools/placement.h>
 #include <geomtools/physical_volume.h>
 #include <geomtools/logical_volume.h>
@@ -37,7 +34,8 @@
 
 namespace geomtools {
 
-  GEOMTOOLS_MODEL_CLASS_DECLARE(spherical_extrusion_cylinder_model)
+  /// \brief A cylinder volume with a spherical extrusion
+  class spherical_extrusion_cylinder_model : public i_model
   {
 
   public:
@@ -87,6 +85,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_SPHERICAL_EXTRUSION_CYLINDER_MODEL_H_
-
-// end of spherical_extrusion_cylinder_model.h
+#endif // GEOMTOOLS_SPHERICAL_EXTRUSION_CYLINDER_MODEL_H

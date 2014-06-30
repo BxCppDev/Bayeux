@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* logical_volume.h
- * Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/ logical_volume.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-08
  * Last modified: 2013-06-26
  *
@@ -13,17 +13,20 @@
  *
  */
 
-#ifndef GEOMTOOLS_LOGICAL_VOLUME_H_
-#define GEOMTOOLS_LOGICAL_VOLUME_H_ 1
+#ifndef GEOMTOOLS_LOGICAL_VOLUME_H
+#define GEOMTOOLS_LOGICAL_VOLUME_H 1
 
+// Standard library:
 #include <string>
 #include <map>
 
-
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/logger.h>
 
+// This project:
 #include <geomtools/i_shape_3d.h>
 #include <geomtools/material.h>
 
@@ -33,6 +36,7 @@ namespace geomtools {
   class i_model;
   class placement;
 
+  /// \brief A logical geometry volume (ala GDML)
   class logical_volume
     : public datatools::i_tree_dumpable
   {
@@ -186,6 +190,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_LOGICAL_VOLUME_H_
-
-// end of logical_volume.h
+#endif // GEOMTOOLS_LOGICAL_VOLUME_H

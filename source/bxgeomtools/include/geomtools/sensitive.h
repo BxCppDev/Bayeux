@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
-/* sensitive.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/sensitive.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-03-13
  * Last modified: 2010-03-13
  *
@@ -14,11 +14,14 @@
  *
  */
 
-#ifndef GEOMTOOLS_SENSITIVE_H_
-#define GEOMTOOLS_SENSITIVE_H_ 1
+#ifndef GEOMTOOLS_SENSITIVE_H
+#define GEOMTOOLS_SENSITIVE_H 1
 
+// Standard library:
 #include <string>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 
 namespace geomtools {
@@ -60,6 +63,4 @@ namespace geomtools {
 
 }  // end of namespace geomtools
 
-#endif // GEOMTOOLS_SENSITIVE_H_
-
-// end of sensitive.h
+#endif // GEOMTOOLS_SENSITIVE_H

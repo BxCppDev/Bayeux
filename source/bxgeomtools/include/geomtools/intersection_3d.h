@@ -1,5 +1,5 @@
 // -*- mode: c++; -*-
-/** \file geomtools/intersection_3d.h */
+/// \file geomtools/intersection_3d.h
 /*
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009-01-11

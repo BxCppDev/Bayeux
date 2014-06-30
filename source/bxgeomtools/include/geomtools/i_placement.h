@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
-/* i_placement.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/i_placement.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
  * Last modified: 2008-05-23
  *
@@ -13,29 +13,33 @@
  *
  */
 
-#ifndef GEOMTOOLS_I_PLACEMENT_H_
-#define GEOMTOOLS_I_PLACEMENT_H_ 1
+#ifndef GEOMTOOLS_I_PLACEMENT_H
+#define GEOMTOOLS_I_PLACEMENT_H 1
 
+// Standard library:
 #include <iostream>
 #include <string>
 #include <vector>
 
+// Third party:
+// - Boost:
 #include <boost/cstdint.hpp>
 #include <boost/serialization/access.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/i_serializable.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/reflection_macros.h>
+#include <datatools/reflection_macros.h>
 
+// This project:
 #include <geomtools/geomtools_config.h>
 #include <geomtools/utils.h>
-
-#include <datatools/reflection_macros.h>
 
 namespace geomtools {
 
   class placement;
 
+  /// \brief Abstract interface for all placement objects
   class i_placement
     : DATATOOLS_SERIALIZABLE_CLASS ,
       public datatools::i_tree_dumpable
@@ -86,6 +90,4 @@ namespace geomtools {
 // Activate reflection layer for the geomtools::i_placement class :
 DR_CLASS_INIT(::geomtools::i_placement);
 
-#endif // GEOMTOOLS_I_PLACEMENT_H_
-
-// end of i_placement.h
+#endif // GEOMTOOLS_I_PLACEMENT_H

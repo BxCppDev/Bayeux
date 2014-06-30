@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* base_hit-reflect.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/base_hit-reflect.h
+/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-05-31
  * Last modified: 2013-05-31
  *
@@ -14,13 +14,14 @@
  *
  */
 
-#ifndef GEOMTOOLS_BASE_HIT_REFLECT_H_
-#define GEOMTOOLS_BASE_HIT_REFLECT_H_ 1
+#ifndef GEOMTOOLS_BASE_HIT_REFLECT_H
+#define GEOMTOOLS_BASE_HIT_REFLECT_H 1
 
-// Datatools
+// Third party:
+// - Bayeux/datatools
 #include <datatools/reflection_macros.h>
 
-// Geomtools
+// This project :
 #include <geomtools/base_hit.h>
 
 // Export the introspection code for the 'geomtools::base_hit' class:
@@ -33,8 +34,8 @@ namespace datatools {
 
       DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::base_hit, /*tag_*/)
       {
-// 				std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
-// 									<< "geomtools::base_hit" << std::endl;
+//                              std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
+//                                                                      << "geomtools::base_hit" << std::endl;
 
         DR_CLASS_DECLARE (::geomtools::base_hit)
           .DR_CLASS_BASE(::datatools::i_serializable)
@@ -99,6 +100,4 @@ namespace datatools {
   } // end of namespace detail
 } // end of namespace datatools
 
-#endif // GEOMTOOLS_BASE_HIT_REFLECT_H_
-
-// end of base_hit-reflect.h
+#endif // GEOMTOOLS_BASE_HIT_REFLECT_H

@@ -1,6 +1,5 @@
 // -*- mode: c++; -*-
-/** \file geomtools/union_3d.h
- */
+/// \file geomtools/union_3d.h
 /*
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-24

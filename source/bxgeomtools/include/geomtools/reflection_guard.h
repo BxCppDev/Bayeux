@@ -1,4 +1,4 @@
-/* reflection_guard.h */
+/// \file geomtools/reflection_guard.h
 /*
  * Description :
  *
@@ -31,11 +31,7 @@
 #ifndef GEOMTOOLS_REFLECTION_GUARD_H
 #define GEOMTOOLS_REFLECTION_GUARD_H
 
-// Standard Library
-
-// Third Party
-
-// Geomtools
+// This project:
 #include <geomtools/geomtools_config.h>
 #include <geomtools/detail/reflection_link_guard.h>
 

@@ -1,15 +1,20 @@
 // -*- mode: c++; -*-
 //! \file geomtools/helix_3d.ipp
 
-#ifndef GEOMTOOLS_HELIX_3D_IPP_
-#define GEOMTOOLS_HELIX_3D_IPP_ 1
+#ifndef GEOMTOOLS_HELIX_3D_IPP
+#define GEOMTOOLS_HELIX_3D_IPP 1
 
+// Ourselves:
 #include <geomtools/helix_3d.h>
 
+// Third party:
+// - Boost:
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/i_serializable.ipp>
+
+// This project:
 #include <geomtools/utils.ipp>
 
 namespace geomtools {
@@ -41,6 +46,4 @@ namespace geomtools {
 #include <boost/serialization/version.hpp>
 BOOST_CLASS_VERSION(geomtools::helix_3d, 1)
 
-#endif // GEOMTOOLS_HELIX_3D_IPP_
-
-// end of helix_3d.ipp
+#endif // GEOMTOOLS_HELIX_3D_IPP

@@ -27,10 +27,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
-#ifndef _GNUPLOT_PIPES_H_
-#define _GNUPLOT_PIPES_H_
+#ifndef GNUPLOT_PIPES_H
+#define GNUPLOT_PIPES_H
 
-
+// Standard library:
 #include <iostream>
 #include <string>
 #include <vector>
@@ -736,7 +736,4 @@ class Gnuplot
 
 };
 
-#endif // _GNUPLOT_PIPES_H_
-
-// end of gnuplot_i.h
-
+#endif // GNUPLOT_PIPES_H

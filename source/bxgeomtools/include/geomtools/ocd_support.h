@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
 /// \file geomtools/ocd_support.h
-/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-04-24
  * Last modified: 2013-04-24
  *
@@ -14,9 +14,11 @@
  *
  */
 
-#ifndef GEOMTOOLS_OCD_SUPPORT_H_
-#define GEOMTOOLS_OCD_SUPPORT_H_ 1
+#ifndef GEOMTOOLS_OCD_SUPPORT_H
+#define GEOMTOOLS_OCD_SUPPORT_H 1
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/ocd_macros.h>
 
 /* #include <geomtools/multiple_items_model.h>   */
@@ -45,4 +47,4 @@
 /* DOCD_CLASS_DECLARATION(geomtools::stacked_model)                      */
 /* DOCD_CLASS_DECLARATION(geomtools::surrounded_boxed_model)             */
 
-#endif // GEOMTOOLS_OCD_SUPPORT_H_
+#endif // GEOMTOOLS_OCD_SUPPORT_H

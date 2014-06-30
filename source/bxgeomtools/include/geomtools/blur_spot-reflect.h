@@ -1,14 +1,10 @@
 // -*- mode: c++; -*-
-//! \file geomtools/blur_spot-reflect.h
-#ifndef GEOMTOOLS_BLUR_SPOT_REFLECT_H_
-#define GEOMTOOLS_BLUR_SPOT_REFLECT_H_
+/// \file geomtools/blur_spot-reflect.h
 
-// Standard Library
+#ifndef GEOMTOOLS_BLUR_SPOT_REFLECT_H
+#define GEOMTOOLS_BLUR_SPOT_REFLECT_H
 
-// Datatools
-//#include <datatools/reflection_macros.h>
-
-// Geomtools
+// Ourselves:
 #include <geomtools/blur_spot.h>
 
 // Export the introspection code for the 'geomtools::blur_spot' class:
@@ -21,8 +17,8 @@ namespace datatools {
 
       DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::blur_spot, /*tag_*/)
       {
-// 				std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
-// 									<< "geomtools::blur_spot" << std::endl;
+//                              std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
+//                                                                      << "geomtools::blur_spot" << std::endl;
 
         DR_CLASS_DECLARE (::geomtools::blur_spot)
           .DR_CLASS_BASE(::datatools::i_serializable)
@@ -104,4 +100,4 @@ namespace datatools {
   } // end of namespace detail
 } // end of namespace datatools
 
-#endif // GEOMTOOLS_BLUR_SPOT_REFLECT_H_
+#endif // GEOMTOOLS_BLUR_SPOT_REFLECT_H

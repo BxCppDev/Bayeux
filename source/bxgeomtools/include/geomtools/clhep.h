@@ -1,20 +1,19 @@
 // -*- mode: c++; -*-
-/** \file geomtools/clhep.h
- *
- */
+/// \file geomtools/clhep.h
 
-#ifndef GEOMTOOLS_CLHEP_H_
-#define GEOMTOOLS_CLHEP_H_ 1
+#ifndef GEOMTOOLS_CLHEP_H
+#define GEOMTOOLS_CLHEP_H 1
 
+// Third party:
+// - CLHEP:
 #include <CLHEP/Units/SystemOfUnits.h>
 #include <CLHEP/Units/PhysicalConstants.h>
-
 #include <CLHEP/Vector/TwoVector.h>
 #include <CLHEP/Vector/ThreeVector.h>
 #include <CLHEP/Vector/Rotation.h>
-
 #include <CLHEP/Random/RandFlat.h>
 
+// This project:
 #include <geomtools/geomtools_config.h>
 
 namespace geomtools {
@@ -55,4 +54,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_CLHEP_H_
+#endif // GEOMTOOLS_CLHEP_H

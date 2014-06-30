@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/** \file geomtools/base_hit.h
- * Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/base_hit.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-03-16
  * Last modified: 2013-03-08
  *
@@ -14,16 +14,14 @@
  *
  */
 
-#ifndef GEOMTOOLS_BASE_HIT_H_
-#define GEOMTOOLS_BASE_HIT_H_ 1
+#ifndef GEOMTOOLS_BASE_HIT_H
+#define GEOMTOOLS_BASE_HIT_H 1
 
-// Boost  serialization hook :
+// Third party:
+// - Boost:
 #include <boost/serialization/access.hpp>
-
-// Portable integral types (mandatory):
 #include <boost/cstdint.hpp>
-
-// Datatools :
+// - Bayeux/datatools :
 #include <datatools/i_serializable.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/i_clear.h>
@@ -31,11 +29,10 @@
 #include <datatools/bit_mask.h>
 #include <datatools/properties.h>
 
-// Geomtools :
+// This project :
 #include <geomtools/geomtools_config.h>
 #include <geomtools/geom_id.h>
 #include <datatools/properties.h>
-
 
 namespace geomtools {
 
@@ -340,4 +337,4 @@ namespace geomtools {
 // Activate reflection layer for the geomtools::base_hit class :
 DR_CLASS_INIT(::geomtools::base_hit);
 
-#endif // GEOMTOOLS_BASE_HIT_H_
+#endif // GEOMTOOLS_BASE_HIT_H

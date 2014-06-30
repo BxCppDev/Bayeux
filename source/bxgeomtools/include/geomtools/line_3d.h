@@ -72,6 +72,7 @@ namespace geomtools {
     /// Return the position at given parameter
     vector_3d get_point(double t_) const;
 
+    /// Return the length of the linear segment
     virtual double get_length(uint32_t flags_ = PATH_ALL_BITS) const;
 
     /// Default constructor

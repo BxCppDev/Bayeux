@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* geom_id.h
- * Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/geom_id.h
+/* Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-08
  * Last modified: 2013-05-30
  *
@@ -20,17 +20,21 @@
  *
  */
 
-#ifndef GEOMTOOLS_GEOM_ID_H_
-#define GEOMTOOLS_GEOM_ID_H_ 1
+#ifndef GEOMTOOLS_GEOM_ID_H
+#define GEOMTOOLS_GEOM_ID_H 1
 
+// Standard library:
 #include <iostream>
 #include <vector>
 
+// Third party:
+// - Boost:
 #include <boost/cstdint.hpp>
-
+// - Bayeux/datatools :
 #include <datatools/i_serializable.h>
 #include <datatools/reflection_macros.h>
 
+// This project :
 #include <geomtools/geomtools_config.h>
 
 namespace geomtools {
@@ -212,6 +216,4 @@ BOOST_CLASS_EXPORT_KEY2(geomtools::geom_id, "geomtools::geom_id")
 // Activate reflection layer for the geomtools::geom_id class :
 DR_CLASS_INIT(::geomtools::geom_id);
 
-#endif // GEOMTOOLS_GEOM_ID_H_
-
-// end of geom_id.h
+#endif // GEOMTOOLS_GEOM_ID_H

@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* geomtools_driver.h
- * Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/geomtools_driver.h
+/* Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-08-24
  * Last modified: 2013-08-24
  *
@@ -14,22 +14,22 @@
  *
  */
 
-#ifndef GEOMTOOLS_GEOMTOOLS_DRIVER_H_
-#define GEOMTOOLS_GEOMTOOLS_DRIVER_H_ 1
+#ifndef GEOMTOOLS_GEOMTOOLS_DRIVER_H
+#define GEOMTOOLS_GEOMTOOLS_DRIVER_H 1
 
-// Standard Library
+// Standard Library:
 #include <iostream>
 #include <string>
 #include <vector>
 
-// Third Party
+// Third Party:
+// - Boost:
 #include <boost/cstdint.hpp>
 #include <boost/scoped_ptr.hpp>
-
-// Datatools
+// - Bayeux/datatools:
 #include <datatools/logger.h>
 
-// Geomtools
+// This project:
 #include <geomtools/geomtools_config.h>
 
 /// Top-level namespace of the Bayeux/geomtools module library
@@ -178,7 +178,6 @@ namespace geomtools {
 
   };
 
-
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_GEOMTOOLS_DRIVER_H_
+#endif // GEOMTOOLS_GEOMTOOLS_DRIVER_H

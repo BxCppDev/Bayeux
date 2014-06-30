@@ -1,6 +1,5 @@
 // -*- mode: c++; -*-
-/** \file geomtools/polycone.h
- */
+/// \file geomtools/polycone.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-03-14
  * Last modified: 2010-03-14

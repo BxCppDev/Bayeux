@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* cone.h
- * Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/cone.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-10-11
  * Last modified: 2013-10-11
  *
@@ -16,6 +16,7 @@
 
 namespace geomtools {
 
+  /// \brief Cone utilities
   class cone {
   public:
 

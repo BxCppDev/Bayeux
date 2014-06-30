@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
-/* intersection.h
- * Author(s):     F.Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/intersection.h
+/* Author(s):     F.Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2006-11-28
  * Last modified: 2008-05-24
  *
@@ -13,9 +13,10 @@
  *
  */
 
-#ifndef __geomtools__intersection_h
-#define __geomtools__intersection_h 1
+#ifndef GEOMTOOLS_INTERSECTION_H
+#define GEOMTOOLS_INTERSECTION_H 1
 
+// This project:
 #include <geomtools/utils.h>
 
 namespace geomtools {
@@ -52,6 +53,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // ___geomtools__intersection_h
-
-// end of intersection.h
+#endif // GEOMTOOLS_INTERSECTION_H

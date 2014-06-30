@@ -1,24 +1,24 @@
-// -*- mode: c++; -*- 
-//! \file geomtools/materials_utils.h
-/* materials_utils.h
- * Author(s):  François Mauger <mauger@lpccaen.in2p3.fr>
+// -*- mode: c++; -*-
+/// \file geomtools/materials_utils.h
+/* Author(s):  François Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-03-10
  * Last modified: 2013-03-10
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *
  *   Utilities for materials
- *  
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
-#ifndef GEOMTOOLS_MATERIALS_UTILS_H_
-#define GEOMTOOLS_MATERIALS_UTILS_H_ 1
+#ifndef GEOMTOOLS_MATERIALS_UTILS_H
+#define GEOMTOOLS_MATERIALS_UTILS_H 1
 
-#include <iostream> 
+// Standard library:
+#include <iostream>
 
 namespace materials {
   class manager;
@@ -33,8 +33,6 @@ namespace geomtools {
   void export_gdml (const materials::manager &, std::ostream & out_);
 
 
-} // end of namespace geomtools 
+} // end of namespace geomtools
 
-#endif // GEOMTOOLS_MATERIALS_UTILS_H_
-
-// end of materials_utils.h
+#endif // GEOMTOOLS_MATERIALS_UTILS_H

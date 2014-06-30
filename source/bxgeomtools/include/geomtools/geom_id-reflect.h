@@ -1,15 +1,10 @@
 // -*- mode: c++; -*-
-//! \file geomtools/geom_id-reflect.h
-#ifndef GEOMTOOLS_GEOM_ID_REFLECT_H_
-#define GEOMTOOLS_GEOM_ID_REFLECT_H_
+/// \file geomtools/geom_id-reflect.h
 
-// Standard Library
+#ifndef GEOMTOOLS_GEOM_ID_REFLECT_H
+#define GEOMTOOLS_GEOM_ID_REFLECT_H
 
-// Datatools
-//#include <datatools/reflection_macros.h>
-
-// Geomtools
-//#include <geomtools/geomtools_config.h>
+// This project:
 #include <geomtools/geom_id.h>
 
 // Export the introspection code for the 'geomtools::geom_id' class:
@@ -22,8 +17,8 @@ namespace datatools {
 
       DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::geom_id, /*tag_*/)
       {
-// 				std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
-// 									<< "geomtools::geom_id" << std::endl;
+//                              std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
+//                                                                      << "geomtools::geom_id" << std::endl;
         DR_CLASS_DECLARE (::geomtools::geom_id)
           .DR_CLASS_BASE(::datatools::i_serializable)
           .DR_CLASS_CONSTRUCTOR()
@@ -107,4 +102,4 @@ namespace datatools {
   } // end of namespace detail
 } // end of namespace datatools
 
-#endif // GEOMTOOLS_GEOM_ID_REFLECT_H_
+#endif // GEOMTOOLS_GEOM_ID_REFLECT_H

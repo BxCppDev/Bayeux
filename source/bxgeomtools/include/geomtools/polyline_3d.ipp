@@ -1,15 +1,19 @@
 // -*- mode: c++; -*-
-//! \file geomtools/polyline_3d.ipp
+/// \file geomtools/polyline_3d.ipp
 
-#ifndef __geomtools__polyline_3d_ipp
-#define __geomtools__polyline_3d_ipp 1
+#ifndef GEOMTOOLS_POLYLINE_3D_IPP
+#define GEOMTOOLS_POLYLINE_3D_IPP 1
 
+// Third party:
+// - Boost:
 #include <boost/archive/archive_exception.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/list.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/utils.h>
+
+// This project:
 #include <geomtools/polyline_3d.h>
 
 namespace geomtools {
@@ -32,6 +36,4 @@ namespace geomtools {
 #include <boost/serialization/version.hpp>
 BOOST_CLASS_VERSION(geomtools::polyline_3d, 1)
 
-#endif // __geomtools__polyline_3d_ipp
-
-// end of polyline_3d.ipp
+#endif // GEOMTOOLS_POLYLINE_3D_IPP

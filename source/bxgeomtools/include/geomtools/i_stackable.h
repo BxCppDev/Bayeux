@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* i_stackable.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/i_stackable.h
+/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-02
  * Last modified: 2010-04-02
  *
@@ -14,11 +14,15 @@
  *
  */
 
-#ifndef GEOMTOOLS_I_STACKABLE_H_
-#define GEOMTOOLS_I_STACKABLE_H_ 1
+#ifndef GEOMTOOLS_I_STACKABLE_H
+#define GEOMTOOLS_I_STACKABLE_H 1
 
+// Standard library:
 #include <iostream>
 #include <string>
+
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/properties.h>
 #include <datatools/i_tree_dump.h>
@@ -180,6 +184,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_I_STACKABLE_H_
-
-// end of i_stackable.h
+#endif // GEOMTOOLS_I_STACKABLE_H

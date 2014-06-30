@@ -1,27 +1,29 @@
-// -*- mode: c++ ; -*- 
-/* id_selector.h
- * Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+// -*- mode: c++ ; -*-
+/// \file geomtools/id_selector.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-08
  * Last modified: 2010-02-08
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *   A selector for geometry ID
- * 
+ *
  */
- 
-#ifndef __geomtools__id_selector_h
-#define __geomtools__id_selector_h 1
 
+#ifndef GEOMTOOLS_ID_SELECTOR_H
+#define GEOMTOOLS_ID_SELECTOR_H 1
+
+// Standard library:
 #include <string>
 #include <map>
 
+// This project:
 #include <geomtools/id_mgr.h>
 #include <geomtools/address_set.h>
 
 namespace geomtools {
-  
+
   class geom_id;
 
   class id_selector
@@ -59,11 +61,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-
-#endif // __geomtools__id_selector_h
-
-
-// end of id_selector.h
-
-
-
+#endif // GEOMTOOLS_ID_SELECTOR_H

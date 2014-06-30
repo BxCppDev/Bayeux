@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
-/** \file geomtools/gnuplot_draw.h
- * Author(s):     F. Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/gnuplot_draw.h
+/* Author(s):     F. Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2006-11-19
  * Last modified: 2014-02-28
  *
@@ -17,15 +17,15 @@
 #ifndef GEOMTOOLS_GNUPLOT_DRAW_H
 #define GEOMTOOLS_GNUPLOT_DRAW_H 1
 
-// Standard library
+// Standard library:
 #include <iostream>
 #include <cmath>
 
-// Third party
-// - mygsl
+// Third party:
+// - Bayeux/mygsl:
 #include <mygsl/min_max.h>
 
-// This project
+// This project:
 #include <geomtools/utils.h>
 #include <geomtools/color.h>
 

@@ -1,16 +1,15 @@
 // -*- mode: c++; -*-
-//! \file geomtools/placement-reflect.h
-#ifndef GEOMTOOLS_PLACEMENT_REFLECT_H_
-#define GEOMTOOLS_PLACEMENT_REFLECT_H_
+/// \file geomtools/placement-reflect.h
 
-// Standard Library
+#ifndef GEOMTOOLS_PLACEMENT_REFLECT_H
+#define GEOMTOOLS_PLACEMENT_REFLECT_H
 
-// Datatools
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/reflection_macros.h>
 
-// Geomtools
+// This project:
 #include <geomtools/placement.h>
-
 
 // Export the introspection code for the 'geomtools::placement' class:
 DR_CLASS_EXPORT (::geomtools::placement, "geomtools::placement")
@@ -22,8 +21,8 @@ namespace datatools {
 
       DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::placement, /*tag_*/)
         {
-// 					std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
-// 										<< "geomtools::placement" << std::endl;
+//                                      std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
+//                                                                              << "geomtools::placement" << std::endl;
           // Declare and populate the reflection metaclass for the 'geomtools::placement' class:
           DR_CLASS_DECLARE (::geomtools::placement)
             .DR_CLASS_BASE(::geomtools::i_placement)
@@ -103,4 +102,4 @@ namespace datatools {
   } // end of namespace detail
 } // end of namespace datatools
 
-#endif // GEOMTOOLS_PLACEMENT_REFLECT_H_
+#endif // GEOMTOOLS_PLACEMENT_REFLECT_H

@@ -1,16 +1,22 @@
 // -*- mode: c++; -*-
-//! \file geomtools/placement.ipp
+/// \file geomtools/placement.ipp
 
-#ifndef GEOMTOOLS_PLACEMENT_IPP_
-#define GEOMTOOLS_PLACEMENT_IPP_ 1
+#ifndef GEOMTOOLS_PLACEMENT_IPP
+#define GEOMTOOLS_PLACEMENT_IPP 1
 
+// Ourselves:
+#include <geomtools/placement.h>
+
+// Third party:
+// - Boost:
 #include <boost/archive/archive_exception.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/i_serializable.ipp>
 #include <datatools/utils.h>
-#include <geomtools/placement.h>
+
+// This project:
 #include <geomtools/utils.ipp>
 #include <geomtools/i_placement.ipp>
 
@@ -40,4 +46,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_PLACEMENT_IPP_
+#endif // GEOMTOOLS_PLACEMENT_IPP

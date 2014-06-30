@@ -1,30 +1,36 @@
 // -*- mode: c++; -*-
-/* polyline_3d.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/polyline_3d.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009-03-31
  * Last modified: 2009-03-31
  */
 
-#ifndef GEOMTOOLS_POLYLINE_3D_H_
-#define GEOMTOOLS_POLYLINE_3D_H_ 1
+#ifndef GEOMTOOLS_POLYLINE_3D_H
+#define GEOMTOOLS_POLYLINE_3D_H 1
 
+// Standard library:
 #include <iostream>
 #include <stdexcept>
 #include <list>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/i_serializable.h>
 
+// This project:
 #include <geomtools/i_shape_1d.h>
 #include <geomtools/utils.h>
 
 namespace geomtools {
 
+  /// \brief A sequence of connected linear segments (3D)
   class polyline_3d :
     public i_shape_1d,
     DATATOOLS_SERIALIZABLE_CLASS
   {
   public:
 
+    /// Return the identifier of the polyline 3D-object
     static const std::string & polyline_3d_label();
 
     static const bool CLOSED = true;
@@ -33,55 +39,74 @@ namespace geomtools {
     static const bool open   = OPEN;
     static const bool DEFAULT_CLOSED = OPEN;
 
+    /// A sequence of vertexes
     typedef basic_polyline_3d point_col;
 
   public:
 
-    virtual std::string get_shape_name () const;
+    /// Return the name of the shape
+    virtual std::string get_shape_name() const;
 
-    bool is_closed () const;
+    /// Check if the polyline is closed
+    bool is_closed() const;
 
-    void set_closed (bool);
+    /// Set the 'closed' flag
+    void set_closed(bool);
 
-    bool is_empty () const;
+    /// Check if the polyline has no points
+    bool is_empty() const;
 
-    polyline_3d ();
+    /// Default constructor
+    polyline_3d();
 
-    polyline_3d (bool closed_);
+    /// Constructor
+    polyline_3d(bool closed_);
 
-    virtual ~polyline_3d ();
+    /// Destructor
+    virtual ~polyline_3d();
 
-    void clear ();
+    /// Remove all points
+    void clear();
 
-    void add (const vector_3d &);
+    /// Add a point at the end of the sequence
+    void add(const vector_3d &);
 
-    int get_number_of_points () const;
+    /// Return the number of points in the sequence
+    int get_number_of_points() const;
 
-    const vector_3d & get_point (int i_) const;
+    /// Return the point at given index
+    const vector_3d & get_point(int i_) const;
 
-    int get_number_of_vertex () const;
+    /// Return the number of points in the sequence
+    int get_number_of_vertex() const;
 
-    const vector_3d & get_vertex (int i_) const;
+    /// Return the point at given index
+    const vector_3d & get_vertex(int i_) const;
+
+    /// Return the length of the linear segment
+    virtual double get_length(uint32_t flags_ = PATH_ALL_BITS) const;
 
     // inefficient algorithm:
-    void make_vertex_collection (basic_polyline_3d &) const;
+    void make_vertex_collection(basic_polyline_3d &) const;
 
     // inefficient algorithm:
-    basic_polyline_3d make_vertex_collection () const;
+    basic_polyline_3d make_vertex_collection() const;
 
   public:
 
-    virtual bool is_on_curve (const vector_3d & position_,
-                              double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+    /// Check if a point belongs to the polyline
+    virtual bool is_on_curve(const vector_3d & position_,
+                             double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
-    virtual vector_3d get_direction_on_curve (const vector_3d & position_) const;
+    /// Return the direction at some position along the polyline
+    virtual vector_3d get_direction_on_curve(const vector_3d & position_) const;
 
   private:
 
-    bool      _closed_;
-    point_col _points_;
+    bool      _closed_; /// Flag to close the polyline
+    point_col _points_; /// Sequence of points/vertexes
 
-    /* interface i_serializable */
+    //// interface i_serializable */
     DATATOOLS_SERIALIZATION_DECLARATION();
 
   };
@@ -91,7 +116,4 @@ namespace geomtools {
 #include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT_KEY2(geomtools::polyline_3d, "geomtools::polyline_3d")
 
-#endif // GEOMTOOLS_POLYLINE_3D_H_
-
-// end of box.h
-
+#endif // GEOMTOOLS_POLYLINE_3D_H

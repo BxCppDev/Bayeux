@@ -1,11 +1,10 @@
 // -*- mode: c++; -*-
-//! \file geomtools/utils-reflect.h
-#ifndef GEOMTOOLS_UTILS_REFLECT_H_
-#define GEOMTOOLS_UTILS_REFLECT_H_
+/// \file geomtools/utils-reflect.h
 
-// Standard Library
+#ifndef GEOMTOOLS_UTILS_REFLECT_H
+#define GEOMTOOLS_UTILS_REFLECT_H
 
-// Geomtools
+// Ourselves:
 #include <geomtools/utils.h>
 
 // Export the introspection code for the 'geomtools::XXX' enums:
@@ -74,4 +73,4 @@ namespace datatools {
   } // end of namespace detail
 } // end of namespace datatools
 
-#endif // GEOMTOOLS_UTILS_REFLECT_H_
+#endif // GEOMTOOLS_UTILS_REFLECT_H

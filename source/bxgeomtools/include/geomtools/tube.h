@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
-/** \file geomtools/tube.h
- * Author(s):     F.Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/tube.h
+/* Author(s):     F.Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2006-11-28
  * Last modified: 2010-10-13
  *

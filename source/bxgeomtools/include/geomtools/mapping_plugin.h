@@ -1,22 +1,23 @@
-// -*- mode: c++ ; -*- 
-/* mapping_plugin.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+// -*- mode: c++ ; -*-
+/// mapping_plugin.h
+/* Author(s) :    \file geomtools/Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-02-24
  * Last modified: 2013-02-24
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *
  *   A geometry manager plugin with embeded mapping.
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
-#ifndef GEOMTOOLS_MAPPING_PLUGIN_H_
-#define GEOMTOOLS_MAPPING_PLUGIN_H_ 1
+#ifndef GEOMTOOLS_MAPPING_PLUGIN_H
+#define GEOMTOOLS_MAPPING_PLUGIN_H 1
 
+// This project:
 #include <geomtools/manager.h>
 #include <geomtools/manager_macros.h>
 #include <geomtools/mapping.h>
@@ -38,16 +39,16 @@ public:
   virtual int initialize(const datatools::properties & config_,
                          const geomtools::manager::plugins_dict_type & plugins_,
                          const datatools::service_dict_type & services_);
-  
+
   /// Plugin reset method
   virtual int reset();
-  
+
   /// Check if plugin is initialized
   virtual bool is_initialized() const;
 
   /// Returns a non-mutable reference to the embeded mapping instance
   const geomtools::mapping & get_mapping () const;
-  
+
 protected:
 
   /// Internal mapping build method
@@ -64,6 +65,4 @@ private:
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_MAPPING_PLUGIN_H_
-
-// end of mapping_plugin.h
+#endif // GEOMTOOLS_MAPPING_PLUGIN_H

@@ -16,8 +16,10 @@
 #ifndef GEOMTOOLS_SIMPLE_BOXED_MODEL_H
 #define GEOMTOOLS_SIMPLE_BOXED_MODEL_H 1
 
+// Standard library:
 #include <string>
 
+// This project:
 #include <geomtools/i_boxed_model.h>
 #include <geomtools/box.h>
 

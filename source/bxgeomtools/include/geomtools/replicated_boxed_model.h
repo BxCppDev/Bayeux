@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* replicated_boxed_model.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/replicated_boxed_model.h
+/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-24
  * Last modified: 2010-02-24
  *

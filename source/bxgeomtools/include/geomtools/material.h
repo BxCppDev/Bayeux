@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
-/* material.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/material.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-03-13
  * Last modified: 2010-03-13
  *
@@ -13,9 +13,10 @@
  *
  */
 
-#ifndef GEOMTOOLS_MATERIAL_H_
-#define GEOMTOOLS_MATERIAL_H_ 1
+#ifndef GEOMTOOLS_MATERIAL_H
+#define GEOMTOOLS_MATERIAL_H 1
 
+// Standard library:
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -23,6 +24,8 @@
 #include <cmath>
 #include <list>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 
 namespace geomtools {
@@ -64,6 +67,4 @@ namespace geomtools {
 
 }  // end of namespace geomtools
 
-#endif // GEOMTOOLS_MATERIAL_H_
-
-// end of material.h
+#endif // GEOMTOOLS_MATERIAL_H

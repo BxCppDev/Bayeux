@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
-/* stl_tools.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/stl_tools.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-09-23
  * Last modified: 2013-06-11
  *
@@ -19,13 +19,16 @@
  *
  */
 
-#ifndef GEOMTOOLS_STL_TOOLS_H_
-#define GEOMTOOLS_STL_TOOLS_H_ 1
+#ifndef GEOMTOOLS_STL_TOOLS_H
+#define GEOMTOOLS_STL_TOOLS_H 1
 
+// Standard library:
 #include <iostream>
 #include <vector>
 #include <string>
 
+// Third party:
+// - Boost:
 // Ignore unused parameter warning from transiently included
 // qi/real.hpp
 #ifdef __clang__
@@ -347,7 +350,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-
-#endif // GEOMTOOLS_STL_TOOLS_H_
-
-// end of stl_tools.h
+#endif // GEOMTOOLS_STL_TOOLS_H

@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* id_mgr.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/id_mgr.h
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-03-14
  * Last modified: 2010-03-14
  *
@@ -14,17 +14,21 @@
  *
  */
 
-#ifndef GEOMTOOLS_ID_MGR_H_
-#define GEOMTOOLS_ID_MGR_H_ 1
+#ifndef GEOMTOOLS_ID_MGR_H
+#define GEOMTOOLS_ID_MGR_H 1
 
+// Standard library:
 #include <string>
 #include <vector>
 #include <map>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/logger.h>
-
 #include <datatools/multi_properties.h>
+
+// This project:
 #include <geomtools/geom_id.h>
 
 namespace geomtools {
@@ -270,6 +274,4 @@ namespace geomtools {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(geomtools::id_mgr)
 
-#endif // GEOMTOOLS_ID_MGR_H_
-
-// end of id_mgr.h
+#endif // GEOMTOOLS_ID_MGR_H

@@ -1,7 +1,6 @@
-
 // -*- mode: c++ ; -*-
-/* gdml_export.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/gdml_export.h
+/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-14
  * Last modified: 2010-02-14
  *
@@ -14,18 +13,22 @@
  *
  */
 
-#ifndef GEOMTOOLS_GDML_EXPORT_H_
-#define GEOMTOOLS_GDML_EXPORT_H_ 1
+#ifndef GEOMTOOLS_GDML_EXPORT_H
+#define GEOMTOOLS_GDML_EXPORT_H 1
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <list>
 
+// Third party:
+// - Bayeux/datatools :
 #include <datatools/utils.h>
 #include <datatools/properties.h>
 
+// This project:
 #include <geomtools/model_factory.h>
 #include <geomtools/gdml_writer.h>
 
@@ -109,6 +112,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_GDML_EXPORT_H_
-
-// end of gdml_export.h
+#endif // GEOMTOOLS_GDML_EXPORT_H

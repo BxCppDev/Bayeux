@@ -1,15 +1,19 @@
 // -*- mode: c++; -*-
 //! \file geomtools/utils.ipp
 
-#ifndef GEOMTOOLS_UTILS_IPP_
-#define GEOMTOOLS_UTILS_IPP_ 1
+#ifndef GEOMTOOLS_UTILS_IPP
+#define GEOMTOOLS_UTILS_IPP 1
 
+// Third party:
+// - Boost:
 #include <boost/archive/archive_exception.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/split_free.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/utils.h>
+
+// This project:
 #include <geomtools/utils.h>
 
 //! Serialization stuff for CLHEP 'vector_2d'
@@ -194,6 +198,4 @@ namespace boost {
 } // namespace boost
 
 
-#endif // GEOMTOOLS_UTILS_IPP_
-
-// end of utils.ipp
+#endif // GEOMTOOLS_UTILS_IPP

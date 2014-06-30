@@ -24,13 +24,9 @@
 
 #ifndef GEOMTOOLS_VERSION_H
 #define GEOMTOOLS_VERSION_H
-// Standard Library
+
+// Standard Library:
 #include <string>
-
-// Third Party
-// - A
-
-// This Project
 
 //----------------------------------------------------------------------
 // - Compile Time API
@@ -89,4 +85,3 @@ static bool has_feature(const std::string& feature);
 } // namespace geomtools
 
 #endif // GEOMTOOLS_VERSION_H
-

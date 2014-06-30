@@ -15,8 +15,8 @@
  *
  */
 
-#ifndef GEOMTOOLS_MODEL_WITH_INTERNAL_ITEMS_TOOLS_H_
-#define GEOMTOOLS_MODEL_WITH_INTERNAL_ITEMS_TOOLS_H_ 1
+#ifndef GEOMTOOLS_MODEL_WITH_INTERNAL_ITEMS_TOOLS_H
+#define GEOMTOOLS_MODEL_WITH_INTERNAL_ITEMS_TOOLS_H 1
 
 // Standard library:
 #include <string>
@@ -99,4 +99,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_MODEL_WITH_INTERNAL_ITEMS_TOOLS_H_
+#endif // GEOMTOOLS_MODEL_WITH_INTERNAL_ITEMS_TOOLS_H

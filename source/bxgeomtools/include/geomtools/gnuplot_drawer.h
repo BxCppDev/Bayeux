@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/** \file geomtools/gnuplot_drawer.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/gnuplot_drawer.h
+/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-20
  * Last modified: 2010-02-20
  *
@@ -13,8 +13,8 @@
  *
  */
 
-#ifndef GEOMTOOLS_GNUPLOT_DRAWER_H_
-#define GEOMTOOLS_GNUPLOT_DRAWER_H_ 1
+#ifndef GEOMTOOLS_GNUPLOT_DRAWER_H
+#define GEOMTOOLS_GNUPLOT_DRAWER_H 1
 
 // Standard library:
 #include <iostream>
@@ -22,7 +22,7 @@
 #include <sstream>
 
 // Third party:
-// -  Bayeux/datatools:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 
 // This project:
@@ -265,6 +265,4 @@ namespace geomtools {
 
 } // end of namespace snemo
 
-#endif // GEOMTOOLS_GNUPLOT_DRAWER_H_
-
-// end of gnuplot_drawer.h
+#endif // GEOMTOOLS_GNUPLOT_DRAWER_H

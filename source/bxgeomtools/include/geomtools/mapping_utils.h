@@ -1,12 +1,15 @@
 // -*- mode: c++ ; -*-
-/* mapping_utils.h
- */
+/// \file geomtools/mapping_utils.h
 
-#ifndef __geomtools__mapping_utils_h
-#define __geomtools__mapping_utils_h 1
 
+#ifndef GEOMTOOLS_MAPPING_UTILS_H
+#define GEOMTOOLS_MAPPING_UTILS_H 1
+
+// Standard library:
 #include <string>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 
 namespace geomtools {
@@ -52,6 +55,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // __geomtools__mapping_utils_h
-
-// end of mapping_utils.h
+#endif // GEOMTOOLS_MAPPING_UTILS_H

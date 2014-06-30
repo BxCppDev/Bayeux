@@ -27,13 +27,9 @@
 
 #ifndef GEOMTOOLS_RESOURCE_H
 #define GEOMTOOLS_RESOURCE_H
-// Standard Library
+
+// Standard Library:
 #include <string>
-
-// Third Party
-// - A
-
-// This Project
 
 namespace geomtools {
 

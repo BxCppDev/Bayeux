@@ -1,21 +1,24 @@
-// -*- mode: c++; -*- 
-//! \file geomtools/geom_id.ipp
+// -*- mode: c++; -*-
+/// \file geomtools/geom_id.ipp
 
-#ifndef __geomtools__geom_id_ipp
-#define __geomtools__geom_id_ipp 1
+#ifndef GEOMTOOLS_GEOM_ID_IPP
+#define GEOMTOOLS_GEOM_ID_IPP 1
 
+// Third party:
+// - Boost:
 #include <boost/archive/archive_exception.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
-
 #include <boost/serialization/vector.hpp>
-
+// - Bayeux/datatools :
 #include <datatools/utils.h>
-#include <geomtools/geom_id.h>
 #include <datatools/i_serializable.ipp>
-         
+
+// This project :
+#include <geomtools/geom_id.h>
+
 namespace geomtools {
-    
+
   template<class Archive>
   void geom_id::serialize (Archive & a_ar , const unsigned int a_version)
   {
@@ -31,11 +34,9 @@ namespace geomtools {
     return;
   }
 
-} // end of namespace geomtools 
+} // end of namespace geomtools
 
 #include <boost/serialization/version.hpp>
 BOOST_CLASS_VERSION(geomtools::geom_id, 1)
 
-#endif // __geomtools__geom_id_ipp
-
-// end of geom_id.ipp
+#endif // GEOMTOOLS_GEOM_ID_IPP

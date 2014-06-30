@@ -1,14 +1,14 @@
 // -*- mode: c++; -*-
-//! \file geomtools/clhep-reflect.h
-#ifndef GEOMTOOLS_CLHEP_REFLECT_H_
-#define GEOMTOOLS_CLHEP_REFLECT_H_
 
-// Standard Library
+/// \file geomtools/clhep-reflect.h
+#ifndef GEOMTOOLS_CLHEP_REFLECT_H
+#define GEOMTOOLS_CLHEP_REFLECT_H
 
-// Datatools
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/reflection_macros.h>
 
-// Geomtools
+// This project:
 #include <geomtools/clhep.h>
 
 // Export the introspection code for the CLHEP class:
@@ -298,4 +298,4 @@ namespace datatools {
   } // end of namespace detail
 } // end of namespace datatools
 
-#endif // GEOMTOOLS_CLHEP_REFLECT_H_
+#endif // GEOMTOOLS_CLHEP_REFLECT_H

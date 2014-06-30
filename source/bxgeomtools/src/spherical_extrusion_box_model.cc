@@ -1,13 +1,17 @@
-// -*- mode: c++ ; -*-
-/* spherical_extrusion_box_model.cc
- */
+// spherical_extrusion_box_model.cc
 
+// Ourselves:
 #include <geomtools/spherical_extrusion_box_model.h>
 
+// Standard library:
 #include <cmath>
 #include <sstream>
 #include <stdexcept>
+#include <iomanip>
+#include <cstdlib>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/units.h>
 
@@ -364,5 +368,3 @@ namespace geomtools {
   }
 
 } // end of namespace geomtools
-
-// end of spherical_extrusion_box_model.cc

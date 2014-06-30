@@ -1,12 +1,12 @@
-// -*- mode: c++; -*- 
-/* geomtools::the_serializable.ipp */
+// -*- mode: c++; -*-
+/// \file geomtools/the_serializable.ipp
 /*
  * This includes the implementation code
  * for Boost/Serialization layer.
  *
  */
-#ifndef GEOMTOOLS_THE_SERIALIZABLE_IPP_
-#define GEOMTOOLS_THE_SERIALIZABLE_IPP_
+#ifndef GEOMTOOLS_THE_SERIALIZABLE_IPP
+#define GEOMTOOLS_THE_SERIALIZABLE_IPP
 
 /**********************
  * geomtools::geom_id *
@@ -68,6 +68,4 @@
 
 #include <geomtools/display_data.ipp>
 
-#endif // GEOMTOOLS_THE_SERIALIZABLE_IPP_
-
-/* end of geomtools::the_serializable.ipp */
+#endif // GEOMTOOLS_THE_SERIALIZABLE_IPP

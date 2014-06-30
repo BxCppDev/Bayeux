@@ -1,23 +1,28 @@
-// -*- mode: c++ ; -*- 
-/* geomtools/base_hit.ipp */
+// -*- mode: c++; -*-
+/// \file geomtools/base_hit.ipp
 
-#ifndef GEOMTOOOLS_BASE_HIT_IPP_
-#define GEOMTOOOLS_BASE_HIT_IPP_ 1
+#ifndef GEOMTOOOLS_BASE_HIT_IPP
+#define GEOMTOOOLS_BASE_HIT_IPP 1
 
+// Ourselves:
 #include <geomtools/base_hit.h>
 
+// Third party:
+// - Boost:
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/i_serializable.ipp>
-#include <geomtools/geom_id.ipp>
 #include <datatools/properties.ipp>
 
+// This project :
+#include <geomtools/geom_id.ipp>
+
 namespace geomtools {
-    
+
   template<class Archive>
-  void base_hit::serialize (Archive & ar,                
-                            const unsigned int version) 
+  void base_hit::serialize (Archive & ar,
+                            const unsigned int version)
   {
     if (version > 0)
       {
@@ -38,12 +43,10 @@ namespace geomtools {
       }
     return;
   }
- 
+
 } // end of namespace geomtools
 
 #include <boost/serialization/version.hpp>
 BOOST_CLASS_VERSION(geomtools::base_hit, 1)
 
-#endif // GEOMTOOOLS_BASE_HIT_IPP_
-
-// end of geomtools/base_hit.ipp
+#endif // GEOMTOOOLS_BASE_HIT_IPP

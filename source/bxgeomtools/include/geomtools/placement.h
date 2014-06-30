@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
-/* placement.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/placement.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
  * Last modified: 2008-05-23
  *
@@ -13,19 +13,21 @@
  *
  */
 
-#ifndef GEOMTOOLS_PLACEMENT_H_
-#define GEOMTOOLS_PLACEMENT_H_ 1
+#ifndef GEOMTOOLS_PLACEMENT_H
+#define GEOMTOOLS_PLACEMENT_H 1
 
+// Standard library:
 #include <iostream>
 #include <string>
 #include <vector>
 
+// This project:
 #include <geomtools/i_placement.h>
-
 #include <geomtools/geomtools_config.h>
 
 namespace geomtools {
 
+  /// \brief The placement for a geometry volume with its translation and rotation
   class placement : public i_placement
   {
 
@@ -228,6 +230,4 @@ namespace geomtools {
 // Activate reflection layer for the ::geomtools::placement class :
 DR_CLASS_INIT(::geomtools::placement);
 
-#endif // GEOMTOOLS_PLACEMENT_H_
-
-// end of placement.h
+#endif // GEOMTOOLS_PLACEMENT_H

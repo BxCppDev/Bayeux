@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
-/* plane.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/plane.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-09-27
  * Last modified: 2012-09-27
  *
@@ -17,11 +17,13 @@
 #ifndef GEOMTOOLS_PLANE_H
 #define GEOMTOOLS_PLANE_H 1
 
+// This project:
 #include <geomtools/utils.h>
 #include <geomtools/i_shape_2d.h>
 
 namespace geomtools {
 
+  /// \brief A plane (2D shape) in a 3D space
   class plane : public i_shape_2d
   {
   public:
@@ -93,5 +95,3 @@ namespace geomtools {
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_PLANE_H
-
-// end of plane.h

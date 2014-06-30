@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
-/** \file geomtools/color.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file geomtools/color.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-03-23
  * Last modified: 2014-02-12
  *
@@ -14,8 +14,8 @@
  *
  */
 
-#ifndef GEOMTOOLS_COLOR_H_
-#define GEOMTOOLS_COLOR_H_ 1
+#ifndef GEOMTOOLS_COLOR_H
+#define GEOMTOOLS_COLOR_H 1
 
 // Standard library:
 #include <iostream>
@@ -229,4 +229,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_COLOR_H_
+#endif // GEOMTOOLS_COLOR_H
