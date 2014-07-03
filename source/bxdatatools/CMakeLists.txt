@@ -33,7 +33,7 @@ endif()
 # - Versioning
 set(datatools_VERSION_MAJOR 6)
 set(datatools_VERSION_MINOR 0)
-set(datatools_VERSION_PATCH 0)
+set(datatools_VERSION_PATCH 1)
 set(datatools_VERSION "${datatools_VERSION_MAJOR}.${datatools_VERSION_MINOR}.${datatools_VERSION_PATCH}")
 
 # - Fixup default install prefix on Mac
